@@ -1,0 +1,140 @@
+/*@import @angular/material/theming;
+@import ~highlight.js/styles/stackoverflow-dark.css;
+@include mat-core();
+
+$cockpit-primary: (
+    50 : #e0f0f5,
+    100 : #b3dae6,
+    200 : #80c1d6,
+    300 : #4da8c6,
+    400 : #2695b9,
+    500 : #0082ad,
+    600 : #007aa6,
+    700 : #006f9c,
+    800 : #006593,
+    900 : #005283,
+    A100 : #b0ddff,
+    A200 : #7dc6ff,
+    A400 : #4ab0ff,
+    A700 : #30a5ff,
+    contrast: (
+        50:red,
+        100: red,
+        200: red,
+        300: red,
+        400: red,
+        500: white,
+        600: white,
+        700: white,
+        800: white,
+        900: white,
+        A100: red,
+        A200: red,
+        A400: red,
+        A700: white,
+    )
+) !default;
+
+$my-app-primary: mat-palette($cockpit-primary);
+$my-app-accent:  mat-palette($cockpit-primary);
+$my-app-warn:    mat-palette($cockpit-primary);
+$my-app-theme: mat-light-theme($my-app-primary, $my-app-accent, $my-app-warn);
+@include angular-material-theme($my-app-theme);
+
+$custom-typography: mat-typography-config(
+  $font-family: Avenir Black
+);
+@include mat-core($custom-typography);
+
+// Emit theme-dependent styles for common features used across multiple components.
+@include  mat-core($my-app-theme);
+
+// Emit styles for MatButton based on `$my-theme`. Because the configuration
+// passed to `define-light-theme` omits typography, `button-theme` will not
+// emit any typography styles.
+@include  button-theme($my-app-theme);
+*/
+
+@import "~@angular/material/theming";
+
+@include mat-core();
+
+// generated custom palette
+$primary-palette: (
+  50 : #e0f0f5,
+  100 : #b3dae6,
+  200 : #80c1d6,
+  300 : #4da8c6,
+  400 : #2695b9,
+  500 : #0082ad,
+  600 : #007aa6,
+  700 : #006f9c,
+  800 : #006593,
+  900 : #005283,
+  A100 : #b0ddff,
+  A200 : #7dc6ff,
+  A400 : #4ab0ff,
+  A700 : #30a5ff,
+    contrast: (
+        50 : #ffffff,
+        100 : #ffffff,
+        200 : #ffffff,
+        300 : #ffffff,
+        400 : #ffffff,
+        500 : #ffffff,
+        600 : #ffffff,
+        700 : #ffffff,
+        800 : #ffffff,
+        900 : #ffffff,
+        A100 : #ffffff,
+        A200 : #ffffff,
+        A400 : #ffffff,
+        A700 : #ffffff,
+    )
+);
+
+$warn-palette: (
+  50 : #fdf8f7,
+  100 : #efbeb8,
+  200 : #e5938b,
+  300 : #d85d50,
+  400 : #d24637,
+  500 : #c0392b,
+  600 : #a73225,
+  700 : #8e2a20,
+  800 : #75231a,
+  900 : #5c1b15,
+  A100 : #feedec,
+  A200 : #fb9489,
+  A400 : #e74837,
+  A700 : #d83d2d,
+    contrast: (
+        50 : #ffffff,
+        100 : #ffffff,
+        200 : #ffffff,
+        300 : #ffffff,
+        400 : #ffffff,
+        500 : #ffffff,
+        600 : #ffffff,
+        700 : #ffffff,
+        800 : #ffffff,
+        900 : #ffffff,
+        A100 : #ffffff,
+        A200 : #ffffff,
+        A400 : #ffffff,
+        A700 : #ffffff,
+    )
+);
+
+$primary: mat-palette($primary-palette);
+$secondary: mat-palette($mat-pink);
+$warn: mat-palette($warn-palette);
+
+$theme: mat-light-theme($primary, $secondary, $warn);
+
+@include angular-material-theme($theme);
+
+$custom-typography: mat-typography-config(
+  $font-family: Avenir Black
+);
+@include mat-core($custom-typography);

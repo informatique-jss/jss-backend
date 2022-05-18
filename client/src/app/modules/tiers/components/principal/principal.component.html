@@ -1,0 +1,156 @@
+<div class="mat-elevation-z2 form-div">
+  <form [formGroup]="generatorForm">
+    <table class="full-width">
+      <tr>
+        <td>
+          <mat-form-field class="full-width">
+            <mat-label>Type</mat-label>
+            <mat-select formControlName="tiersType" [(ngModel)]="tiers.tiersType">
+              <mat-option *ngFor="let type of tiersTypes" [value]="type">
+                {{type.label}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </td>
+        <td>
+          <mat-form-field class="full-width">
+            <mat-label>N° client/prospect</mat-label>
+            <input matInput formControlName="tiersId" [(ngModel)]="tiers.id" placeholder="N° client/prospect">
+          </mat-form-field>
+        </td>
+        <td *ngIf="tiers.isIndividual==false">
+          <mat-form-field class="full-width">
+            <mat-label>Denomination</mat-label>
+            <input matInput formControlName="denomination" [(ngModel)]="tiers.denomination" placeholder="Dénomination">
+          </mat-form-field>
+        </td>
+        <td>
+          <mat-form-field class="full-width">
+            <mat-label>Première facturation</mat-label>
+            <input matInput [matDatepicker]="datePickerFirstBilling" [disabled]="true" [(ngModel)]="tiers.firstBilling"
+              formControlName="firstBilling">
+            <mat-datepicker-toggle matSuffix [for]="datePickerFirstBilling"></mat-datepicker-toggle>
+            <mat-datepicker #datePickerFirstBilling></mat-datepicker>
+          </mat-form-field>
+        </td>
+      </tr>
+    </table>
+
+    <table class="full-width">
+      <tr>
+        <td>
+          <mat-slide-toggle formControlName="isIndividual" [(ngModel)]="tiers.isIndividual">Particulier ?
+          </mat-slide-toggle>
+        </td>
+        <td *ngIf="tiers.isIndividual==true">
+          <mat-radio-group class="radio-group-column" [(ngModel)]="tiers.civility" formControlName="civility">
+            <mat-radio-button *ngFor="let civility of civilities" [value]="civility">
+              {{civility.label}}
+            </mat-radio-button>
+          </mat-radio-group>
+        </td>
+        <td *ngIf="tiers.isIndividual==true">
+          <mat-form-field class="full-width">
+            <mat-label>Nom</mat-label>
+            <input matInput formControlName="lastname" [(ngModel)]="tiers.lastname" placeholder="Nom">
+          </mat-form-field>
+        </td>
+        <td *ngIf="tiers.isIndividual==true">
+          <mat-form-field class="full-width">
+            <mat-label>Prénom</mat-label>
+            <input matInput formControlName="firstname" [(ngModel)]="tiers.firstname" placeholder="Nom">
+          </mat-form-field>
+        </td>
+      </tr>
+    </table>
+
+    <table class="full-width">
+      <tr>
+        <td>
+          <mat-form-field class="full-width">
+            <mat-label>Catégorie</mat-label>
+            <mat-select formControlName="tiersCategory" [(ngModel)]="tiers.tiersCategory">
+              <mat-option *ngFor="let tiersCategory of tiersCategories" [value]="tiersCategory">
+                {{tiersCategory.label}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </td>
+        <td>
+          <mat-form-field class="full-width">
+            <mat-label>Commercial</mat-label>
+            <input type="text" matInput formControlName="salesEmployee" [matAutocomplete]="autoCompleteSalesEmployee"
+              [(ngModel)]="tiers.salesEmployee">
+            <mat-autocomplete autoActiveFirstOption #autoCompleteSalesEmployee="matAutocomplete"
+              [displayWith]="displayEmployee">
+              <mat-option *ngFor="let employee of filteredSalesEmployees | async" [value]="employee">
+                {{employee.firstname}} {{employee.lastname}}
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+        </td>
+        <td>
+          <mat-form-field class="full-width">
+            <mat-label>Formaliste</mat-label>
+            <input type="text" matInput formControlName="formalisteEmployee"
+              [matAutocomplete]="autoCompleteFormalisteEmployee" [(ngModel)]="tiers.formalisteEmployee">
+            <mat-autocomplete autoActiveFirstOption #autoCompleteFormalisteEmployee="matAutocomplete"
+              [displayWith]="displayEmployee">
+              <mat-option *ngFor="let employee of filteredFormalisteEmployees | async" [value]="employee">
+                {{employee.firstname}} {{employee.lastname}}
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+        </td>
+        <td>
+          <mat-form-field class="full-width">
+            <mat-label>Insertion</mat-label>
+            <input type="text" matInput formControlName="insertionEmployee"
+              [matAutocomplete]="autoCompleteInsertionEmployee" [(ngModel)]="tiers.insertionEmployee">
+            <mat-autocomplete autoActiveFirstOption #autoCompleteInsertionEmployee="matAutocomplete"
+              [displayWith]="displayEmployee">
+              <mat-option *ngFor="let employee of filteredInsertionEmployees | async" [value]="employee">
+                {{employee.firstname}} {{employee.lastname}}
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+        </td>
+      </tr>
+    </table>
+
+    <table class="full-width">
+      <tr>
+        <td>
+          <mat-form-field>
+            <mat-label>Destinataire courrier</mat-label>
+            <textarea (keyup)="limitTextareaSize('mailRecipient',3)" (keydown)="limitTextareaSize('mailRecipient',3)"
+              (paste)="limitTextareaSize('mailRecipient',3)" rows="3" matInput formControlName="mailRecipient"
+              [(ngModel)]="tiers.mailRecipient"></textarea>
+          </mat-form-field>
+        </td>
+        <td>
+          <label>Langue de communication</label>
+          <mat-radio-group class="radio-group-column" [(ngModel)]="tiers.language" formControlName="language">
+            <mat-radio-button *ngFor="let language of languages" [value]="language">
+              {{language.label}}
+            </mat-radio-button>
+          </mat-radio-group>
+        </td>
+        <td>
+          <mat-form-field class="full-width">
+            <mat-label>Service de livraison</mat-label>
+            <mat-select formControlName="deliveryService" [(ngModel)]="tiers.deliveryService">
+              <mat-option *ngFor="let deliveryService of deliveryServices" [value]="deliveryService">
+                {{deliveryService.label}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </td>
+      </tr>
+    </table>
+
+    <div class="button-row">
+      <button mat-raised-button class="mat-raised-button" color="accent" (click)="saveTiers()">Sauvegarder</button>
+    </div>
+  </form>
+</div>

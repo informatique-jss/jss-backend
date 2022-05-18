@@ -1,0 +1,85 @@
+#menu {
+  cursor: pointer;
+}
+
+.navbar-brand {
+  padding: 0;
+  padding-right: 15px;
+  border-radius: 3px;
+  margin-right: 2px;
+  position: absolute;
+  left: 62px;
+  z-index: 1;
+  height: 70px;
+  top:30px;
+}
+
+.sidebar-header {
+  padding-top: 35px;
+  padding-bottom: 45px;
+  padding-left: 25px;
+  padding-right: 43px;
+  border-bottom: solid #ebebeb 1px;
+  display: inline-flex;
+  width: 100%;
+}
+
+#menu {
+  width: 0px;
+  height: 0px;
+  cursor: pointer;
+  color: #0082ad;
+  background-color: #f0f0f0;
+  padding: 16px;
+  border-radius: 23px;
+  margin-right: 20px;
+}
+
+#menu .mat-icon {
+  position: relative;
+  top: -10px;
+  left: -10px;
+  font-size: 20px;
+}
+
+#menu:hover {
+  background: #4d4d4d;
+  color: #ffffff;
+}
+
+mat-nav-list {
+  padding-top: 22px;
+}
+
+mat-nav-list a {
+  display: block;
+  padding-left: 0px;
+  margin-right: 22px;
+  margin-bottom: 10px;
+  margin-left: 22px;
+  width: 168px;
+  height: 32px;
+  border-radius: 24px;
+  font-family: "Antagometrica BT";
+  font-size: 14px;
+  letter-spacing: 0;
+  text-decoration: none;
+  color: #0082ad;
+  background: #ffffff;
+  border: 1px solid #0082ad;
+  z-index: 99;
+}
+
+.mat-ripple-element {
+  border-radius: 24px !important;
+}
+
+mat-nav-list a mat-icon {
+  padding-right: 5px;
+}
+
+mat-nav-list a:hover,
+.menu-item-active {
+  color: #ffffff !important;
+  background: #0082ad !important;
+}

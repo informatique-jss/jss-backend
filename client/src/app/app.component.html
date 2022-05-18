@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="fr">
+
+<head>
+  <meta charset="utf-8">
+  <title>Cockpit</title>
+  <base href="/">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/png" href='../assets/images/cockpit_icon.svg' />
+</head>
+
+<body>
+  <ng-progress #progressBar></ng-progress>
+  <mat-drawer-container autosize>
+    <mat-drawer #sidenav [opened]="sidenavOpenState" mode="side">
+      <app-sidenav-list (sidenavClose)="sidenav.close()"></app-sidenav-list>
+    </mat-drawer>
+    <app-header (sidenavToggle)="sidenav.toggle()"></app-header>
+    <main>
+      <router-outlet></router-outlet>
+    </main>
+
+  </mat-drawer-container>
+</body>
+
+</html>

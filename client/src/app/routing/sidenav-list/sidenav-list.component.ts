@@ -1,0 +1,30 @@
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { AppService } from 'src/app/app.service';
+import { HabilitationsService } from 'src/app/habilitations.service';
+@Component({
+  selector: 'app-sidenav-list',
+  templateUrl: './sidenav-list.component.html',
+  styleUrls: ['./sidenav-list.component.css']
+})
+export class SidenavListComponent implements OnInit {
+  logoCockpit: string = '/assets/images/jss_icon.png';
+
+  constructor(protected appService: AppService, protected router: Router, protected habilitationService: HabilitationsService) { }
+
+  ngOnInit() {
+  }
+
+  public onSidenavClose = () => {
+    this.appService.changeSidenavOpenState(false);
+  }
+
+  public getCurrentRoute = () => {
+    return this.router.url;
+  }
+
+  canViewTiersModule() {
+    return this.habilitationService.canViewTiersModule();
+  }
+
+}

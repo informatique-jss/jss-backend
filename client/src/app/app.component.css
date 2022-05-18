@@ -1,0 +1,18 @@
+mat-sidenav-container, mat-sidenav-content, mat-sidenav {
+    height: 100%;
+}
+
+mat-sidenav {
+    width: 250px;
+}
+
+mat-drawer-container {
+    height: 100%;
+}
+
+main {
+    padding-left: 30px;
+    padding-right: 10px;
+    padding-bottom: 30px;
+    padding-top: 10px;
+}
