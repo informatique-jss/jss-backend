@@ -16,10 +16,14 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public Team getTeamById(Integer id) {
-        Optional<Team> employee = teamRepository.findById(id);
-        if (!employee.isEmpty())
-            return employee.get();
+        Optional<Team> team = teamRepository.findById(id);
+        if (!team.isEmpty())
+            return team.get();
         return null;
     }
 
+    @Override
+    public Team getTeamIdByCode(String code) {
+        return teamRepository.findByCode(code);
+    }
 }

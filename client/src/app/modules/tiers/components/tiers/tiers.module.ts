@@ -1,3 +1,4 @@
+import { SpecialOffersDialogComponent } from './../special-offers-dialog/special-offers-dialog.component';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -13,6 +14,10 @@ import { MatNativeDateModule, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatTableModule } from '@angular/material/table';
+import { MatIconModule } from '@angular/material/icon';
+import { MatChipsModule } from '@angular/material/chips';
 
 @NgModule({
   imports: [
@@ -28,10 +33,15 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
     MatNativeDateModule,
     MatSlideToggleModule,
     MatRadioModule,
-    MatAutocompleteModule
+    MatAutocompleteModule,
+    MatDialogModule,
+    MatTableModule,
+    MatIconModule,
+    MatChipsModule
   ],
   declarations: [TiersComponent,
-    PrincipalComponent],
+    PrincipalComponent,
+    SpecialOffersDialogComponent],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'fr-FR' }
   ]

@@ -61,37 +61,71 @@ $custom-typography: mat-typography-config(
 
 // generated custom palette
 $primary-palette: (
-  50 : #e0f0f5,
-  100 : #b3dae6,
-  200 : #80c1d6,
-  300 : #4da8c6,
-  400 : #2695b9,
-  500 : #0082ad,
-  600 : #007aa6,
-  700 : #006f9c,
-  800 : #006593,
-  900 : #005283,
-  A100 : #b0ddff,
-  A200 : #7dc6ff,
-  A400 : #4ab0ff,
-  A700 : #30a5ff,
-    contrast: (
-        50 : #ffffff,
-        100 : #ffffff,
-        200 : #ffffff,
-        300 : #ffffff,
-        400 : #ffffff,
-        500 : #ffffff,
-        600 : #ffffff,
-        700 : #ffffff,
-        800 : #ffffff,
-        900 : #ffffff,
-        A100 : #ffffff,
-        A200 : #ffffff,
-        A400 : #ffffff,
-        A700 : #ffffff,
-    )
+  50: #f9f6ea,
+  100: #e7dbaf,
+  200: #dac784,
+  300: #caaf4d,
+  400: #c0a239,
+  500: #a88e32,
+  600: #907a2b,
+  700: #796624,
+  800: #61521d,
+  900: #4a3e16,
+  A100: #fcf5dd,
+  A200: #f4da7f,
+  A400: #dab533,
+  A700: #c2a232,
+  contrast: (
+    50 : #ffffff,
+    100 : #ffffff,
+    200 : #ffffff,
+    300 : #ffffff,
+    400 : #ffffff,
+    500 : #ffffff,
+    600 : #ffffff,
+    700 : #ffffff,
+    800 : #ffffff,
+    900 : #ffffff,
+    A100 : #ffffff,
+    A200 : #ffffff,
+    A400 : #ffffff,
+    A700 : #ffffff,
+)
 );
+
+$secondary-palette:  (
+  50: #d4dae3,
+  100: #a5b3c5,
+  200: #8396af,
+  300: #5c728f,
+  400: #50637d,
+  500: #44546a,
+  600: #384557,
+  700: #2c3645,
+  800: #202832,
+  900: #14191f,
+  A100: #c1d3eb,
+  A200: #749cd3,
+  A400: #476a9a,
+  A700: #49607e,
+  contrast: (
+    50 : #ffffff,
+    100 : #ffffff,
+    200 : #ffffff,
+    300 : #ffffff,
+    400 : #ffffff,
+    500 : #ffffff,
+    600 : #ffffff,
+    700 : #ffffff,
+    800 : #ffffff,
+    900 : #ffffff,
+    A100 : #ffffff,
+    A200 : #ffffff,
+    A400 : #ffffff,
+    A700 : #ffffff,
+)
+);
+
 
 $warn-palette: (
   50 : #fdf8f7,
@@ -127,7 +161,7 @@ $warn-palette: (
 );
 
 $primary: mat-palette($primary-palette);
-$secondary: mat-palette($mat-pink);
+$secondary: mat-palette($secondary-palette);
 $warn: mat-palette($warn-palette);
 
 $theme: mat-light-theme($primary, $secondary, $warn);

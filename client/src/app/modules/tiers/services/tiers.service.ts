@@ -17,4 +17,7 @@ export class TiersService extends AppRestService<Tiers>{
     return this.getById("tiers", id);
   }
 
+  addOrUpdateTiers(tiers: Tiers) {
+    return this.addOrUpdate(new HttpParams(), "tiers", tiers, "Tiers enregistré", "Erreur lors de l'enregistrement du tiers");
+  }
 }

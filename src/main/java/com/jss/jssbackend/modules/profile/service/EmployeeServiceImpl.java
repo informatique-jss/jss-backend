@@ -20,9 +20,9 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Autowired
     TeamService teamService;
 
-    private Integer SALES_TEAM_ID = 1;
-    private Integer FORMALISTES_TEAM_ID = 2;
-    private Integer INSERTIONS_TEAM_ID = 3;
+    private String SALES_TEAM_CODE = "COMMERCIAL";
+    private String FORMALISTES_TEAM_CODE = "FORMALISTE";
+    private String INSERTIONS_TEAM_CODE = "INSERTIONS";
 
     @Override
     public Employee getEmployeeById(Integer id) {
@@ -34,7 +34,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public List<Employee> getSalesEmployees() {
-        Team team = teamService.getTeamById(SALES_TEAM_ID);
+        Team team = teamService.getTeamIdByCode(SALES_TEAM_CODE);
         if (team != null)
             return employeeRepository.findAllEmployeesByTeam(team);
         return new ArrayList<Employee>();
@@ -42,7 +42,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public List<Employee> getFormalisteEmployees() {
-        Team team = teamService.getTeamById(FORMALISTES_TEAM_ID);
+        Team team = teamService.getTeamIdByCode(FORMALISTES_TEAM_CODE);
         if (team != null)
             return employeeRepository.findAllEmployeesByTeam(team);
         return new ArrayList<Employee>();
@@ -50,7 +50,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public List<Employee> getInsertionEmployees() {
-        Team team = teamService.getTeamById(INSERTIONS_TEAM_ID);
+        Team team = teamService.getTeamIdByCode(INSERTIONS_TEAM_CODE);
         if (team != null)
             return employeeRepository.findAllEmployeesByTeam(team);
         return new ArrayList<Employee>();

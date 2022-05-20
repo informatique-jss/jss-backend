@@ -1,6 +1,6 @@
 package com.jss.jssbackend.modules.targetPackage.repository;
 
-import com.jss.jssbackend.modules.miscellaneous.model.NewEntity;
+import com.jss.jssbackend.modules.targetPackage.model.NewEntity;
 
 import org.springframework.data.repository.CrudRepository;
 

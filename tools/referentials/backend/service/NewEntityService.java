@@ -1,8 +1,8 @@
-package com.jss.jssbackend.modules.miscellaneous.service;
+package com.jss.jssbackend.modules.targetPackage.service;
 
 import java.util.List;
 
-import com.jss.jssbackend.modules.miscellaneous.model.NewEntity;
+import com.jss.jssbackend.modules.targetPackage.model.NewEntity;
 
 public interface NewEntityService {
     public List<NewEntity> getNewEntities();

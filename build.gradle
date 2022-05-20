@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        springBootVersion = '2.6.7'
+        springBootVersion = '2.6.4'
     }
     repositories {
        maven { url = 'https://repo1.maven.org/maven2/' }
@@ -21,16 +21,16 @@ repositories {
  
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-web:2.6.7'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa:2.6.7' 
+    implementation 'org.springframework.boot:spring-boot-starter-web:2.6.4'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa:2.6.4' 
     implementation 'org.hibernate:hibernate-c3p0:5.6.2.Final'
 	implementation 'org.postgresql:postgresql:42.3.5' 
 	implementation 'org.apache.commons:commons-collections4:4.4'
-    implementation 'org.springframework.boot:spring-boot-starter-cache:2.6.7'
+    implementation 'org.springframework.boot:spring-boot-starter-cache:2.6.4'
     implementation 'org.ehcache:ehcache:3.9.7'
-    
-    runtimeOnly 'org.springframework.boot:spring-boot-devtools:2.6.7'
-    
+    implementation 'commons-validator:commons-validator:1.7'
+
+    runtimeOnly 'org.springframework.boot:spring-boot-devtools:2.6.4'
 }
  
 group = 'com.jss'

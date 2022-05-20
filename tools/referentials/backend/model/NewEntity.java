@@ -17,6 +17,8 @@ public class NewEntity implements Serializable {
 
 	@Column(nullable = false)
 	private String label;
+	
+	private String code;
 
 	public Integer getId() {
 		return id;
@@ -32,6 +34,14 @@ public class NewEntity implements Serializable {
 
 	public void setLabel(String label) {
 		this.label = label;
+	}
+	
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
 	}
 
 }

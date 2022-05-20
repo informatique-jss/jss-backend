@@ -1,9 +1,14 @@
-import { Employee } from "../../profile/model/Employee";
+import { City } from "../../miscellaneous/model/City";
 import { Civility } from "../../miscellaneous/model/Civility";
+import { Country } from "../../miscellaneous/model/Country";
+import { DeliveryService } from "../../miscellaneous/model/DeliveryService";
+import { Language } from "../../miscellaneous/model/Language";
+import { Employee } from "../../profile/model/Employee";
+import { Mail } from "./Mail";
+import { Phone } from "./Phone";
+import { SpecialOffer } from "./SpecialOffer";
 import { TiersCategory } from "./TiersCategory";
 import { TiersType } from "./TiersType";
-import { Language } from "../../miscellaneous/model/Language";
-import { DeliveryService } from "../../miscellaneous/model/DeliveryService";
 
 export interface Tiers {
   id: number;
@@ -15,10 +20,23 @@ export interface Tiers {
   firstname: string | null;
   lastname: string | null;
   tiersCategory: TiersCategory;
-  salesEmployee: Employee;
-  formalisteEmployee: Employee;
-  insertionEmployee: Employee;
+  salesEmployee: Employee | null;
+  formalisteEmployee: Employee | null;
+  insertionEmployee: Employee | null;
   mailRecipient: string | null;
   language: Language;
   deliveryService: DeliveryService;
+  address: string;
+  postalCode: string;
+  city: City;
+  country: Country;
+  intercom: string;
+  intercommunityVat: string | null;
+  specialOffer: SpecialOffer | null;
+  rcaFormaliteRate: number;
+  rcaInsertionRate: number;
+  mails: Mail[];
+  phones: Phone[];
+  instructions: string;
+  observations: string;
 }

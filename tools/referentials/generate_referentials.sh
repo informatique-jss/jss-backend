@@ -40,7 +40,7 @@ moveAndTransform client/services/newentity.service.ts ../../client/src/app/modul
 
 echo "@Autowired"
 echo  "${entityUpperCased}Service  ${entityLowerCased}Service;"
-echo "@GetMapping(inputEntryPoint + \"$entryPointName\")"
+echo "@GetMapping(inputEntryPoint + \"/$entryPointName\")"
 echo "public ResponseEntity<List<$entityUpperCased>> get$entityPlural() {"
 echo "List<$entityUpperCased> $entityPluralLowerCased = null;"
 echo "	try {"

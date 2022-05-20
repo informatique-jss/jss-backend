@@ -11,7 +11,7 @@
   left: 62px;
   z-index: 1;
   height: 70px;
-  top:30px;
+  top: 30px;
 }
 
 .sidebar-header {
@@ -28,7 +28,7 @@
   width: 0px;
   height: 0px;
   cursor: pointer;
-  color: #0082ad;
+  color: #44546A;
   background-color: #f0f0f0;
   padding: 16px;
   border-radius: 23px;
@@ -64,9 +64,9 @@ mat-nav-list a {
   font-size: 14px;
   letter-spacing: 0;
   text-decoration: none;
-  color: #0082ad;
+  color: #44546A;
   background: #ffffff;
-  border: 1px solid #0082ad;
+  border: 1px solid #44546A;
   z-index: 99;
 }
 
@@ -81,5 +81,5 @@ mat-nav-list a mat-icon {
 mat-nav-list a:hover,
 .menu-item-active {
   color: #ffffff !important;
-  background: #0082ad !important;
+  background: #44546A !important;
 }

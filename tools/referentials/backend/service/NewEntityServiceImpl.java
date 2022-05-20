@@ -3,8 +3,8 @@ package com.jss.jssbackend.modules.targetPackage.service;
 import java.util.List;
 import java.util.Optional;
 
-import com.jss.jssbackend.modules.miscellaneous.model.NewEntity;
-import com.jss.jssbackend.modules.miscellaneous.repository.NewEntityRepository;
+import com.jss.jssbackend.modules.targetPackage.model.NewEntity;
+import com.jss.jssbackend.modules.targetPackage.repository.NewEntityRepository;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,0 +1,31 @@
+package com.jss.jssbackend.modules.miscellaneous.service;
+
+import java.util.List;
+import java.util.Optional;
+
+import com.jss.jssbackend.modules.miscellaneous.model.Country;
+import com.jss.jssbackend.modules.miscellaneous.repository.CountryRepository;
+
+import org.apache.commons.collections4.IterableUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service
+public class CountryServiceImpl implements CountryService {
+
+    @Autowired
+    CountryRepository countryRepository;
+
+    @Override
+    public List<Country> getCountries() {
+        return IterableUtils.toList(countryRepository.findAll());
+    }
+
+    @Override
+    public Country getCountry(Integer id) {
+        Optional<Country> country = countryRepository.findById(id);
+        if (!country.isEmpty())
+            return country.get();
+        return null;
+    }
+}
