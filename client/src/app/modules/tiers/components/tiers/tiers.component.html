@@ -1,10 +1,22 @@
-<mat-tab-group animationDuration="0ms">
-  <mat-tab label="Principal">
-    <tiers-principal [tiers]="tiers" [eventsTiersLoaded]="eventsTiersLoaded.asObservable()"></tiers-principal>
-  </mat-tab>
-  <mat-tab label="Responsable(s)">Content 2</mat-tab>
-  <mat-tab label="Gestion des pièces">Content 3</mat-tab>
-  <mat-tab label="Réglement, facturation & relance">Content 3</mat-tab>
-  <mat-tab label="Documents">Content 3</mat-tab>
-  <mat-tab label="Suivi">Content 3</mat-tab>
-</mat-tab-group>
+<div>
+  <mat-tab-group animationDuration="0ms" [selectedIndex]="2">
+    <mat-tab label="Principal">
+      <tiers-principal [tiers]="tiers" [editMode]="editMode" [eventsTiersLoaded]="eventsTiersLoaded.asObservable()">
+      </tiers-principal>
+    </mat-tab>
+    <mat-tab label="Responsable(s)">Content 2</mat-tab>
+    <mat-tab label="Gestion des pièces" *ngIf="isTiersTypeProspect()==false">
+      <document-management [tiers]="tiers" [editMode]="editMode" [eventsTiersLoaded]="eventsTiersLoaded.asObservable()">
+      </document-management>
+    </mat-tab>
+    <mat-tab label="Réglement, facturation & relance">Content 3</mat-tab>
+    <mat-tab label="Documents">Content 3</mat-tab>
+    <mat-tab label="Suivi">Content 3</mat-tab>
+  </mat-tab-group>
+</div>
+<button mat-fab color="warn" class="fab-button" *ngIf="editMode==true" (click)="saveTiers()">
+  <mat-icon>save</mat-icon>
+</button>
+<button mat-fab color="accent" class="fab-button" *ngIf="editMode==false" (click)="editTiers()">
+  <mat-icon>edit</mat-icon>
+</button>

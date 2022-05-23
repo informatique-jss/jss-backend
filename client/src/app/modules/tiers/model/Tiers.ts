@@ -8,6 +8,7 @@ import { Mail } from "./Mail";
 import { Phone } from "./Phone";
 import { SpecialOffer } from "./SpecialOffer";
 import { TiersCategory } from "./TiersCategory";
+import { TiersDocument } from "./TiersDocument";
 import { TiersType } from "./TiersType";
 
 export interface Tiers {
@@ -39,4 +40,5 @@ export interface Tiers {
   phones: Phone[];
   instructions: string;
   observations: string;
+  documents: TiersDocument[];
 }

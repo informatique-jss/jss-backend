@@ -1,0 +1,436 @@
+<form [formGroup]="documentManagementForm" *ngIf="tiers">
+  <div class="mat-accordion-container full-width">
+    <fieldset [disabled]="editMode==false" class="fieldset-no-border">
+      <mat-accordion>
+        <mat-expansion-panel expanded>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Justificatif de parution
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <table class="full-width">
+            <tr>
+              <td>
+                <h4>Destinataire de d'adressage</h4>
+                <mat-checkbox formControlName="publicationRecipientTypeAffaire" class="checkbox-margin"
+                  [(ngModel)]="publicationDocument.isRecipientAffaire">Affaire
+                </mat-checkbox>
+                <mat-checkbox formControlName="publicationRecipientTypeClient" class="checkbox-margin"
+                  [(ngModel)]="publicationDocument.isRecipientClient">Client
+                </mat-checkbox>
+              </td>
+              <td>
+                <h4>Type d'adressage</h4>
+                <mat-checkbox formControlName="publicationMailingTypePaper" class="checkbox-margin"
+                  [(ngModel)]="publicationDocument.isMailingPaper">Papier</mat-checkbox>
+                <mat-checkbox formControlName="publicationMailingTypePdf" class="checkbox-margin"
+                  [(ngModel)]="publicationDocument.isMailingPdf">PDF</mat-checkbox>
+              </td>
+              <td *ngIf="publicationDocument.isMailingPaper && publicationDocument.isRecipientAffaire">
+                <mat-form-field class="mat-form-field-padding">
+                  <mat-label>Nombre d'exemplaire Affaire</mat-label>
+                  <input matInput formControlName="publicationNumberMailingAffaire"
+                    [(ngModel)]="publicationDocument.numberMailingAffaire" autocomplete="do-not-autofill">
+                </mat-form-field>
+              </td>
+              <td *ngIf="publicationDocument.isMailingPaper && publicationDocument.isRecipientClient">
+                <mat-form-field class="mat-form-field-padding">
+                  <mat-label>Nombre d'exemplaire Client</mat-label>
+                  <input matInput formControlName="publicationNumberMailingClient"
+                    [(ngModel)]="publicationDocument.numberMailingClient" autocomplete="do-not-autofill">
+                </mat-form-field>
+              </td>
+            </tr>
+            <tr *ngIf="publicationDocument.isMailingPaper && publicationDocument.isRecipientAffaire">
+              <td [hidden]="overridePublicationAffaireAddress">
+                <button mat-raised-button class="mat-raised-button" color="accent"
+                  (click)="overridePublicationAffaireAddress=true">Utiliser une autre adresse
+                  Affaire</button>
+              </td>
+              <td [hidden]="!overridePublicationAffaireAddress">
+                <mat-form-field class="full-width">
+                  <mat-label>Autre destinataire Affaire</mat-label>
+                  <input matInput formControlName="publicationAffaireRecipient"
+                    [(ngModel)]="publicationDocument.affaireRecipient" autocomplete="do-not-autofill">
+                </mat-form-field>
+              </td>
+              <td [hidden]="!overridePublicationAffaireAddress" colspan="2">
+                <mat-form-field class="full-width">
+                  <mat-label>Autre adresse Affaire</mat-label>
+                  <input matInput formControlName="publicationAffaireAddress"
+                    [(ngModel)]="publicationDocument.affaireAddress" autocomplete="do-not-autofill">
+                </mat-form-field>
+              </td>
+              <td [hidden]="!overridePublicationAffaireAddress || !editMode" align="end"><button mat-icon-button
+                  color="accent"
+                  (click)="overridePublicationAffaireAddress=false ; publicationDocument.affaireRecipient='' ; publicationDocument.affaireAddress=''">
+                  <mat-icon>close</mat-icon>
+                </button>
+              </td>
+            </tr>
+            <tr *ngIf="publicationDocument.isMailingPdf && publicationDocument.isRecipientAffaire">
+              <td [hidden]="overridePublicationAffaireMail">
+                <button mat-raised-button class="mat-raised-button" color="accent"
+                  (click)="overridePublicationAffaireMail=true">Utiliser une autre adresse mail Affaire</button>
+              </td>
+              <td [hidden]="!overridePublicationAffaireMail" colspan="3">
+                <mat-form-field class="full-width">
+                  <mat-label>Mails</mat-label>
+                  <mat-chip-list #chipListMails>
+                    <mat-chip *ngFor="let mail of publicationDocument.mailsAffaire"
+                      (removed)="removeMailPublicationAffaire(mail)">
+                      {{mail.mail}}
+                      <button matChipRemove *ngIf="editMode">
+                        <mat-icon>cancel</mat-icon>
+                      </button>
+                      <mat-icon matChipRemove *ngIf="editMode==false" (click)="prepareMail(mail)">mail</mat-icon>
+                    </mat-chip>
+                    <input placeholder="Saisir un mail" #mailInput formControlName="publicationMailsAffaire"
+                      [matChipInputFor]="chipListMails" [matChipInputSeparatorKeyCodes]="SEPARATOR_KEY_CODES"
+                      (matChipInputTokenEnd)="addMailPublicationAffaire($event)">
+                  </mat-chip-list>
+                </mat-form-field>
+              </td>
+              <td [hidden]="!overridePublicationAffaireMail || !editMode" align="end"><button mat-icon-button
+                  color="accent" (click)="overridePublicationAffaireMail=false ; removeAllMailPublicationAffaire()">
+                  <mat-icon>close</mat-icon>
+                </button>
+              </td>
+            </tr>
+            <tr *ngIf="publicationDocument.isMailingPaper && publicationDocument.isRecipientClient">
+              <td [hidden]="overridePublicationClientAddress">
+                <button mat-raised-button class="mat-raised-button" color="accent"
+                  (click)="overridePublicationClientAddress=true">Utiliser une autre adresse
+                  Client</button>
+              </td>
+              <td [hidden]="!overridePublicationClientAddress">
+                <mat-form-field class="full-width">
+                  <mat-label>Autre destinataire Client</mat-label>
+                  <input matInput formControlName="publicationClientRecipient"
+                    [(ngModel)]="publicationDocument.clientRecipient" autocomplete="do-not-autofill">
+                </mat-form-field>
+              </td>
+              <td [hidden]="!overridePublicationClientAddress" colspan="2">
+                <mat-form-field class="full-width">
+                  <mat-label>Autre adresse Client</mat-label>
+                  <input matInput formControlName="publicationClientAddress"
+                    [(ngModel)]="publicationDocument.clientAddress" autocomplete="do-not-autofill">
+                </mat-form-field>
+              </td>
+              <td [hidden]="!overridePublicationClientAddress || !editMode" align="end"><button mat-icon-button
+                  color="accent"
+                  (click)="overridePublicationClientAddress=false ; publicationDocument.clientAddress='' ; publicationDocument.clientRecipient=''">
+                  <mat-icon>close</mat-icon>
+                </button>
+              </td>
+            </tr>
+            <tr *ngIf="publicationDocument.isMailingPdf && publicationDocument.isRecipientClient">
+              <td [hidden]="overridePublicationClientMail">
+                <button mat-raised-button class="mat-raised-button" color="accent"
+                  (click)="overridePublicationClientMail=true">
+                  Utiliser une autre adresse mail Client
+                </button>
+              </td>
+              <td [hidden]="!overridePublicationClientMail" colspan="3">
+                <mat-form-field class="full-width">
+                  <mat-label>Mails</mat-label>
+                  <mat-chip-list #chipListMails>
+                    <mat-chip *ngFor="let mail of publicationDocument.mailsClient"
+                      (removed)="removeMailPublicationClient(mail)">
+                      {{mail.mail}}
+                      <button matChipRemove *ngIf="editMode">
+                        <mat-icon>cancel</mat-icon>
+                      </button>
+                      <mat-icon matChipRemove *ngIf="editMode==false" (click)="prepareMail(mail)">mail</mat-icon>
+                    </mat-chip>
+                    <input placeholder="Saisir un mail" #mailInput formControlName="publicationMailsClient"
+                      [matChipInputFor]="chipListMails" [matChipInputSeparatorKeyCodes]="SEPARATOR_KEY_CODES"
+                      (matChipInputTokenEnd)="addMailPublicationClient($event)">
+                  </mat-chip-list>
+                </mat-form-field>
+              </td>
+              <td [hidden]="!overridePublicationClientMail || !editMode" align="end"><button mat-icon-button
+                  color="accent" (click)="overridePublicationClientMail=false ;removeAllMailPublicationClient()">
+                  <mat-icon>close</mat-icon>
+                </button>
+              </td>
+            </tr>
+          </table>
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              CFE
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <table class="full-width">
+            <tr>
+              <td>
+                <h4>Destinataire de d'adressage</h4>
+                <mat-checkbox formControlName="cfeRecipientTypeAffaire" class="checkbox-margin"
+                  [(ngModel)]="cfeDocument.isRecipientAffaire">Affaire
+                </mat-checkbox>
+                <mat-checkbox formControlName="cfeRecipientTypeClient" class="checkbox-margin"
+                  [(ngModel)]="cfeDocument.isRecipientClient">Client
+                </mat-checkbox>
+              </td>
+              <td>
+                <h4>Type d'adressage</h4>
+                <mat-checkbox formControlName="cfeMailingTypePaper" class="checkbox-margin"
+                  [(ngModel)]="cfeDocument.isMailingPaper">Papier</mat-checkbox>
+                <mat-checkbox formControlName="cfeMailingTypePdf" class="checkbox-margin"
+                  [(ngModel)]="cfeDocument.isMailingPdf">PDF</mat-checkbox>
+              </td>
+            </tr>
+            <tr *ngIf="cfeDocument.isMailingPaper && cfeDocument.isRecipientAffaire">
+              <td [hidden]="overrideCfeAffaireAddress">
+                <button mat-raised-button class="mat-raised-button" color="accent"
+                  (click)="overrideCfeAffaireAddress=true">Utiliser une autre adresse
+                  Affaire</button>
+              </td>
+              <td [hidden]="!overrideCfeAffaireAddress">
+                <mat-form-field class="full-width">
+                  <mat-label>Autre destinataire Affaire</mat-label>
+                  <input matInput formControlName="cfeAffaireRecipient" [(ngModel)]="cfeDocument.affaireRecipient"
+                    autocomplete="do-not-autofill">
+                </mat-form-field>
+              </td>
+              <td [hidden]="!overrideCfeAffaireAddress" colspan="2">
+                <mat-form-field class="full-width">
+                  <mat-label>Autre adresse Affaire</mat-label>
+                  <input matInput formControlName="cfeAffaireAddress" [(ngModel)]="cfeDocument.affaireAddress"
+                    autocomplete="do-not-autofill">
+                </mat-form-field>
+              </td>
+              <td [hidden]="!overrideCfeAffaireAddress || !editMode" align="end"><button mat-icon-button color="accent"
+                  (click)="overrideCfeAffaireAddress=false ; cfeDocument.affaireRecipient='' ; cfeDocument.affaireAddress=''">
+                  <mat-icon>close</mat-icon>
+                </button>
+              </td>
+            </tr>
+            <tr *ngIf="cfeDocument.isMailingPdf && cfeDocument.isRecipientAffaire">
+              <td [hidden]="overrideCfeAffaireMail">
+                <button mat-raised-button class="mat-raised-button" color="accent"
+                  (click)="overrideCfeAffaireMail=true">Utiliser une autre adresse mail Affaire</button>
+              </td>
+              <td [hidden]="!overrideCfeAffaireMail" colspan="3">
+                <mat-form-field class="full-width">
+                  <mat-label>Mails</mat-label>
+                  <mat-chip-list #chipListMails>
+                    <mat-chip *ngFor="let mail of cfeDocument.mailsAffaire" (removed)="removeMailCfeAffaire(mail)">
+                      {{mail.mail}}
+                      <button matChipRemove *ngIf="editMode">
+                        <mat-icon>cancel</mat-icon>
+                      </button>
+                      <mat-icon matChipRemove *ngIf="editMode==false" (click)="prepareMail(mail)">mail</mat-icon>
+                    </mat-chip>
+                    <input placeholder="Saisir un mail" #mailInput formControlName="cfeMailsAffaire"
+                      [matChipInputFor]="chipListMails" [matChipInputSeparatorKeyCodes]="SEPARATOR_KEY_CODES"
+                      (matChipInputTokenEnd)="addMailCfeAffaire($event)">
+                  </mat-chip-list>
+                </mat-form-field>
+              </td>
+              <td [hidden]="!overrideCfeAffaireMail || !editMode" align="end"><button mat-icon-button color="accent"
+                  (click)="overrideCfeAffaireMail=false ; removeAllMailCfeAffaire()">
+                  <mat-icon>close</mat-icon>
+                </button>
+              </td>
+            </tr>
+            <tr *ngIf="cfeDocument.isMailingPaper && cfeDocument.isRecipientClient">
+              <td [hidden]="overrideCfeClientAddress">
+                <button mat-raised-button class="mat-raised-button" color="accent"
+                  (click)="overrideCfeClientAddress=true">Utiliser une autre adresse
+                  Client</button>
+              </td>
+              <td [hidden]="!overrideCfeClientAddress">
+                <mat-form-field class="full-width">
+                  <mat-label>Autre destinataire Client</mat-label>
+                  <input matInput formControlName="cfeClientRecipient" [(ngModel)]="cfeDocument.clientRecipient"
+                    autocomplete="do-not-autofill">
+                </mat-form-field>
+              </td>
+              <td [hidden]="!overrideCfeClientAddress" colspan="2">
+                <mat-form-field class="full-width">
+                  <mat-label>Autre adresse Client</mat-label>
+                  <input matInput formControlName="cfeClientAddress" [(ngModel)]="cfeDocument.clientAddress"
+                    autocomplete="do-not-autofill">
+                </mat-form-field>
+              </td>
+              <td [hidden]="!overrideCfeClientAddress || !editMode" align="end"><button mat-icon-button color="accent"
+                  (click)="overrideCfeClientAddress=false ; cfeDocument.clientAddress='' ; cfeDocument.clientRecipient=''">
+                  <mat-icon>close</mat-icon>
+                </button>
+              </td>
+            </tr>
+            <tr *ngIf="cfeDocument.isMailingPdf && cfeDocument.isRecipientClient">
+              <td [hidden]="overrideCfeClientMail">
+                <button mat-raised-button class="mat-raised-button" color="accent" (click)="overrideCfeClientMail=true">
+                  Utiliser une autre adresse mail Client
+                </button>
+              </td>
+              <td [hidden]="!overrideCfeClientMail" colspan="3">
+                <mat-form-field class="full-width">
+                  <mat-label>Mails</mat-label>
+                  <mat-chip-list #chipListMails>
+                    <mat-chip *ngFor="let mail of cfeDocument.mailsClient" (removed)="removeMailCfeClient(mail)">
+                      {{mail.mail}}
+                      <button matChipRemove *ngIf="editMode">
+                        <mat-icon>cancel</mat-icon>
+                      </button>
+                      <mat-icon matChipRemove *ngIf="editMode==false" (click)="prepareMail(mail)">mail</mat-icon>
+                    </mat-chip>
+                    <input placeholder="Saisir un mail" #mailInput formControlName="cfeMailsClient"
+                      [matChipInputFor]="chipListMails" [matChipInputSeparatorKeyCodes]="SEPARATOR_KEY_CODES"
+                      (matChipInputTokenEnd)="addMailCfeClient($event)">
+                  </mat-chip-list>
+                </mat-form-field>
+              </td>
+              <td [hidden]="!overrideCfeClientMail || !editMode" align="end"><button mat-icon-button color="accent"
+                  (click)="overrideCfeClientMail=false ;removeAllMailCfeClient()">
+                  <mat-icon>close</mat-icon>
+                </button>
+              </td>
+            </tr>
+          </table>
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Kbis
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <table class="full-width">
+            <tr>
+              <td>
+                <h4>Destinataire de d'adressage</h4>
+                <mat-checkbox formControlName="kbisRecipientTypeAffaire" class="checkbox-margin"
+                  [(ngModel)]="kbisDocument.isRecipientAffaire">Affaire
+                </mat-checkbox>
+                <mat-checkbox formControlName="kbisRecipientTypeClient" class="checkbox-margin"
+                  [(ngModel)]="kbisDocument.isRecipientClient">Client
+                </mat-checkbox>
+              </td>
+              <td>
+                <h4>Type d'adressage</h4>
+                <mat-checkbox formControlName="kbisMailingTypePaper" class="checkbox-margin"
+                  [(ngModel)]="kbisDocument.isMailingPaper">Papier</mat-checkbox>
+                <mat-checkbox formControlName="kbisMailingTypePdf" class="checkbox-margin"
+                  [(ngModel)]="kbisDocument.isMailingPdf">PDF</mat-checkbox>
+              </td>
+            </tr>
+            <tr *ngIf="kbisDocument.isMailingPaper && kbisDocument.isRecipientAffaire">
+              <td [hidden]="overrideKbisAffaireAddress">
+                <button mat-raised-button class="mat-raised-button" color="accent"
+                  (click)="overrideKbisAffaireAddress=true">Utiliser une autre adresse
+                  Affaire</button>
+              </td>
+              <td [hidden]="!overrideKbisAffaireAddress">
+                <mat-form-field class="full-width">
+                  <mat-label>Autre destinataire Affaire</mat-label>
+                  <input matInput formControlName="kbisAffaireRecipient" [(ngModel)]="kbisDocument.affaireRecipient"
+                    autocomplete="do-not-autofill">
+                </mat-form-field>
+              </td>
+              <td [hidden]="!overrideKbisAffaireAddress" colspan="2">
+                <mat-form-field class="full-width">
+                  <mat-label>Autre adresse Affaire</mat-label>
+                  <input matInput formControlName="kbisAffaireAddress" [(ngModel)]="kbisDocument.affaireAddress"
+                    autocomplete="do-not-autofill">
+                </mat-form-field>
+              </td>
+              <td [hidden]="!overrideKbisAffaireAddress || !editMode" align="end"><button mat-icon-button color="accent"
+                  (click)="overrideKbisAffaireAddress=false ; kbisDocument.affaireRecipient='' ; kbisDocument.affaireAddress=''">
+                  <mat-icon>close</mat-icon>
+                </button>
+              </td>
+            </tr>
+            <tr *ngIf="kbisDocument.isMailingPdf && kbisDocument.isRecipientAffaire">
+              <td [hidden]="overrideKbisAffaireMail">
+                <button mat-raised-button class="mat-raised-button" color="accent"
+                  (click)="overrideKbisAffaireMail=true">Utiliser une autre adresse mail Affaire</button>
+              </td>
+              <td [hidden]="!overrideKbisAffaireMail" colspan="3">
+                <mat-form-field class="full-width">
+                  <mat-label>Mails</mat-label>
+                  <mat-chip-list #chipListMails>
+                    <mat-chip *ngFor="let mail of kbisDocument.mailsAffaire" (removed)="removeMailKbisAffaire(mail)">
+                      {{mail.mail}}
+                      <button matChipRemove *ngIf="editMode">
+                        <mat-icon>cancel</mat-icon>
+                      </button>
+                      <mat-icon matChipRemove *ngIf="editMode==false" (click)="prepareMail(mail)">mail</mat-icon>
+                    </mat-chip>
+                    <input placeholder="Saisir un mail" #mailInput formControlName="kbisMailsAffaire"
+                      [matChipInputFor]="chipListMails" [matChipInputSeparatorKeyCodes]="SEPARATOR_KEY_CODES"
+                      (matChipInputTokenEnd)="addMailKbisAffaire($event)">
+                  </mat-chip-list>
+                </mat-form-field>
+              </td>
+              <td [hidden]="!overrideKbisAffaireMail || !editMode" align="end"><button mat-icon-button color="accent"
+                  (click)="overrideKbisAffaireMail=false ; removeAllMailKbisAffaire()">
+                  <mat-icon>close</mat-icon>
+                </button>
+              </td>
+            </tr>
+            <tr *ngIf="kbisDocument.isMailingPaper && kbisDocument.isRecipientClient">
+              <td [hidden]="overrideKbisClientAddress">
+                <button mat-raised-button class="mat-raised-button" color="accent"
+                  (click)="overrideKbisClientAddress=true">Utiliser une autre adresse
+                  Client</button>
+              </td>
+              <td [hidden]="!overrideKbisClientAddress">
+                <mat-form-field class="full-width">
+                  <mat-label>Autre destinataire Client</mat-label>
+                  <input matInput formControlName="kbisClientRecipient" [(ngModel)]="kbisDocument.clientRecipient"
+                    autocomplete="do-not-autofill">
+                </mat-form-field>
+              </td>
+              <td [hidden]="!overrideKbisClientAddress" colspan="2">
+                <mat-form-field class="full-width">
+                  <mat-label>Autre adresse Client</mat-label>
+                  <input matInput formControlName="kbisClientAddress" [(ngModel)]="kbisDocument.clientAddress"
+                    autocomplete="do-not-autofill">
+                </mat-form-field>
+              </td>
+              <td [hidden]="!overrideKbisClientAddress || !editMode" align="end"><button mat-icon-button color="accent"
+                  (click)="overrideKbisClientAddress=false ; kbisDocument.clientAddress='' ; kbisDocument.clientRecipient=''">
+                  <mat-icon>close</mat-icon>
+                </button>
+              </td>
+            </tr>
+            <tr *ngIf="kbisDocument.isMailingPdf && kbisDocument.isRecipientClient">
+              <td [hidden]="overrideKbisClientMail">
+                <button mat-raised-button class="mat-raised-button" color="accent"
+                  (click)="overrideKbisClientMail=true">
+                  Utiliser une autre adresse mail Client
+                </button>
+              </td>
+              <td [hidden]="!overrideKbisClientMail" colspan="3">
+                <mat-form-field class="full-width">
+                  <mat-label>Mails</mat-label>
+                  <mat-chip-list #chipListMails>
+                    <mat-chip *ngFor="let mail of kbisDocument.mailsClient" (removed)="removeMailKbisClient(mail)">
+                      {{mail.mail}}
+                      <button matChipRemove *ngIf="editMode">
+                        <mat-icon>cancel</mat-icon>
+                      </button>
+                      <mat-icon matChipRemove *ngIf="editMode==false" (click)="prepareMail(mail)">mail</mat-icon>
+                    </mat-chip>
+                    <input placeholder="Saisir un mail" #mailInput formControlName="kbisMailsClient"
+                      [matChipInputFor]="chipListMails" [matChipInputSeparatorKeyCodes]="SEPARATOR_KEY_CODES"
+                      (matChipInputTokenEnd)="addMailKbisClient($event)">
+                  </mat-chip-list>
+                </mat-form-field>
+              </td>
+              <td [hidden]="!overrideKbisClientMail || !editMode" align="end"><button mat-icon-button color="accent"
+                  (click)="overrideKbisClientMail=false ;removeAllMailKbisClient()">
+                  <mat-icon>close</mat-icon>
+                </button>
+              </td>
+            </tr>
+          </table>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </fieldset>
+  </div>
+</form>

@@ -27,6 +27,7 @@ import com.jss.jssbackend.modules.tiers.model.Phone;
 import com.jss.jssbackend.modules.tiers.model.SpecialOffer;
 import com.jss.jssbackend.modules.tiers.model.Tiers;
 import com.jss.jssbackend.modules.tiers.model.TiersCategory;
+import com.jss.jssbackend.modules.tiers.model.TiersDocumentType;
 import com.jss.jssbackend.modules.tiers.model.TiersType;
 import com.jss.jssbackend.modules.tiers.service.BillingItemService;
 import com.jss.jssbackend.modules.tiers.service.BillingTypeService;
@@ -34,6 +35,7 @@ import com.jss.jssbackend.modules.tiers.service.MailService;
 import com.jss.jssbackend.modules.tiers.service.PhoneService;
 import com.jss.jssbackend.modules.tiers.service.SpecialOfferService;
 import com.jss.jssbackend.modules.tiers.service.TiersCategoryService;
+import com.jss.jssbackend.modules.tiers.service.TiersDocumentTypeService;
 import com.jss.jssbackend.modules.tiers.service.TiersService;
 import com.jss.jssbackend.modules.tiers.service.TiersTypesService;
 
@@ -107,6 +109,24 @@ public class TiersController {
 
 	@Autowired
 	PhoneService phoneService;
+
+	@Autowired
+	TiersDocumentTypeService tiersDocumentTypeService;
+
+	@GetMapping(inputEntryPoint + "/document-types")
+	public ResponseEntity<List<TiersDocumentType>> getDocumentTypes() {
+		List<TiersDocumentType> documentTypes = null;
+		try {
+			documentTypes = tiersDocumentTypeService.getTiersDocumentTypes();
+		} catch (HttpStatusCodeException e) {
+			logger.error("HTTP error when fetching documentTypes", e);
+			return new ResponseEntity<List<TiersDocumentType>>(HttpStatus.INTERNAL_SERVER_ERROR);
+		} catch (Exception e) {
+			logger.error("Error when fetching documentTypes", e);
+			return new ResponseEntity<List<TiersDocumentType>>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		return new ResponseEntity<List<TiersDocumentType>>(documentTypes, HttpStatus.OK);
+	}
 
 	@GetMapping(inputEntryPoint + "/phones/search")
 	public ResponseEntity<List<Phone>> findPhones(@RequestParam String phone) {
@@ -369,6 +389,8 @@ public class TiersController {
 		Tiers tiers = null;
 		try {
 			tiers = tiersService.getTiersById(id);
+			if (tiers == null)
+				tiers = new Tiers();
 		} catch (HttpStatusCodeException e) {
 			logger.error("HTTP error when fetching client types", e);
 			return new ResponseEntity<Tiers>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -381,6 +403,9 @@ public class TiersController {
 
 	@PostMapping(inputEntryPoint + "/tiers")
 	public ResponseEntity<Tiers> addOrUpdateTiers(@RequestBody Tiers tiers) {
+		if (tiers.getIsIndividual() == null)
+			tiers.setIsIndividual(false);
+
 		if (tiers.getTiersType() == null || tiers.getTiersType().getId() == null
 				|| clientTypesService.getTiersType(tiers.getTiersType().getId()) == null)
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

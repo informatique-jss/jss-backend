@@ -15,8 +15,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.jss.jssbackend.modules.miscellaneous.model.City;
 import com.jss.jssbackend.modules.miscellaneous.model.Civility;
 import com.jss.jssbackend.modules.miscellaneous.model.Country;
@@ -113,6 +115,10 @@ public class Tiers implements Serializable {
 	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "asso_tiers_phone", joinColumns = @JoinColumn(name = "id_tiers"), inverseJoinColumns = @JoinColumn(name = "id_phone"))
 	private List<Phone> phones;
+
+	@OneToMany(targetEntity = TiersDocument.class, mappedBy = "tiers", cascade = CascadeType.ALL)
+	@JsonManagedReference
+	private List<TiersDocument> documents;
 
 	public Integer getId() {
 		return id;
@@ -336,6 +342,14 @@ public class Tiers implements Serializable {
 
 	public void setPhones(List<Phone> phones) {
 		this.phones = phones;
+	}
+
+	public List<TiersDocument> getDocuments() {
+		return documents;
+	}
+
+	public void setDocuments(List<TiersDocument> documents) {
+		this.documents = documents;
 	}
 
 }

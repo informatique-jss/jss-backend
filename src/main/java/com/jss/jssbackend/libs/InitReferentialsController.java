@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.jss.jssbackend.modules.miscellaneous.model.Civility;
+import com.jss.jssbackend.modules.miscellaneous.model.DeliveryService;
 import com.jss.jssbackend.modules.miscellaneous.model.Language;
 import com.jss.jssbackend.modules.miscellaneous.model.VatRate;
 import com.jss.jssbackend.modules.miscellaneous.repository.CivilityRepository;
+import com.jss.jssbackend.modules.miscellaneous.repository.DeliveryServiceRepository;
 import com.jss.jssbackend.modules.miscellaneous.repository.LanguageRepository;
 import com.jss.jssbackend.modules.miscellaneous.repository.VatRateRepository;
 import com.jss.jssbackend.modules.profile.model.Employee;
@@ -19,6 +21,7 @@ import com.jss.jssbackend.modules.tiers.model.Mail;
 import com.jss.jssbackend.modules.tiers.model.Phone;
 import com.jss.jssbackend.modules.tiers.model.SpecialOffer;
 import com.jss.jssbackend.modules.tiers.model.TiersCategory;
+import com.jss.jssbackend.modules.tiers.model.TiersDocumentType;
 import com.jss.jssbackend.modules.tiers.model.TiersType;
 import com.jss.jssbackend.modules.tiers.repository.BillingItemRepository;
 import com.jss.jssbackend.modules.tiers.repository.BillingTypeRepository;
@@ -26,6 +29,9 @@ import com.jss.jssbackend.modules.tiers.repository.MailRepository;
 import com.jss.jssbackend.modules.tiers.repository.PhoneRepository;
 import com.jss.jssbackend.modules.tiers.repository.SpecialOfferRepository;
 import com.jss.jssbackend.modules.tiers.repository.TiersCategoryRepository;
+import com.jss.jssbackend.modules.tiers.repository.TiersDocumentRepository;
+import com.jss.jssbackend.modules.tiers.repository.TiersDocumentTypeRepository;
+import com.jss.jssbackend.modules.tiers.repository.TiersRepository;
 import com.jss.jssbackend.modules.tiers.repository.TiersTypeRepository;
 
 import org.apache.commons.collections4.IterableUtils;
@@ -77,8 +83,27 @@ public class InitReferentialsController {
 	@Autowired
 	PhoneRepository phoneRepository;
 
+	@Autowired
+	TiersDocumentTypeRepository tiersDocumentTypeRepository;
+
+	@Autowired
+	TiersDocumentRepository tiersDocumentRepository;
+
+	@Autowired
+	TiersRepository tiersRepository;
+
+	@Autowired
+	DeliveryServiceRepository deliveryServiceRepository;
+
 	@GetMapping(inputEntryPoint + "/create")
 	public void create() {
+		tiersRepository.deleteAll();
+
+		deliveryServiceRepository.deleteAll();
+		DeliveryService deliveryService = new DeliveryService();
+		deliveryService.setLabel("La Poste");
+		deliveryServiceRepository.save(deliveryService);
+
 		tiersTypeRepository.deleteAll();
 		TiersType tiersType = new TiersType();
 		tiersType.setCode("CLIENT");
@@ -217,5 +242,58 @@ public class InitReferentialsController {
 		phone = new Phone();
 		phone.setPhoneNumber("+33123465789");
 		phoneRepository.save(phone);
+
+		tiersDocumentRepository.deleteAll();
+		tiersDocumentTypeRepository.deleteAll();
+		TiersDocumentType tiersDocumentType = new TiersDocumentType();
+		tiersDocumentType.setCode("1");
+		tiersDocumentType.setLabel("JUSTIFICATIF PARUTION");
+		tiersDocumentTypeRepository.save(tiersDocumentType);
+
+		tiersDocumentType = new TiersDocumentType();
+		tiersDocumentType.setCode("2");
+		tiersDocumentType.setLabel("CFE");
+		tiersDocumentTypeRepository.save(tiersDocumentType);
+
+		tiersDocumentType = new TiersDocumentType();
+		tiersDocumentType.setCode("3");
+		tiersDocumentType.setLabel("KBIS");
+		tiersDocumentTypeRepository.save(tiersDocumentType);
+
+		tiersDocumentType = new TiersDocumentType();
+		tiersDocumentType.setCode("4");
+		tiersDocumentType.setLabel("FACTURE");
+		tiersDocumentTypeRepository.save(tiersDocumentType);
+
+		tiersDocumentType = new TiersDocumentType();
+		tiersDocumentType.setCode("5");
+		tiersDocumentType.setLabel("RELANCE");
+		tiersDocumentTypeRepository.save(tiersDocumentType);
+
+		tiersDocumentType = new TiersDocumentType();
+		tiersDocumentType.setCode("6");
+		tiersDocumentType.setLabel("REMBOURSEMENT");
+		tiersDocumentTypeRepository.save(tiersDocumentType);
+
+		tiersDocumentType = new TiersDocumentType();
+		tiersDocumentType.setCode("7");
+		tiersDocumentType.setLabel("ARRETE COMPTABLE");
+		tiersDocumentTypeRepository.save(tiersDocumentType);
+
+		tiersDocumentType = new TiersDocumentType();
+		tiersDocumentType.setCode("8");
+		tiersDocumentType.setLabel("ARRETE PAR AFFAIRE");
+		tiersDocumentTypeRepository.save(tiersDocumentType);
+
+		tiersDocumentType = new TiersDocumentType();
+		tiersDocumentType.setCode("9");
+		tiersDocumentType.setLabel("RECU DE PROVISION");
+		tiersDocumentTypeRepository.save(tiersDocumentType);
+
+		tiersDocumentType = new TiersDocumentType();
+		tiersDocumentType.setCode("10");
+		tiersDocumentType.setLabel("DIVERS");
+		tiersDocumentTypeRepository.save(tiersDocumentType);
+
 	}
 }

@@ -1,182 +1,188 @@
 /* for sidenav to take a whole page */
 
 html, body {
-    margin: 0;
-    height: 100%;
-    font-family: Roboto, "Helvetica Neue", sans-serif;
+  margin: 0;
+  height: 100%;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
 .full-width {
-    width: 100%;
-    max-width: 100%;
+  width: 100%;
+  max-width: 100%;
 }
 
 .third-width {
-    width: 33%;
+  width: 33%;
 }
 
 .double-third-width {
-    width: 66%;
+  width: 66%;
 }
 
 .mat-drawer-inner-container {
-    overflow: hidden !important;
+  overflow: hidden !important;
 }
 
 .mat-drawer-content {
-    background-color: #F0F0F0 !important;
+  background-color: #F0F0F0 !important;
 }
 
 .mat-raised-button {
-    margin-right: 8px !important;
+  margin-right: 8px !important;
 }
 
 .button-row>button {
-    margin-right: 10px;
+  margin-right: 10px;
 }
 
 .row-field-container {
-    flex-direction: row;
-    display: flex;
+  flex-direction: row;
+  display: flex;
 }
 
 .row-field-container>.button-row>button {
-    bottom: -5px;
+  bottom: -5px;
 }
 
 .row-field-container .mat-form-field+.mat-form-field {
-    margin-left: 8px;
-    width: 170px
+  margin-left: 8px;
+  width: 170px
 }
 
 .row-field-container-flex-item {
-    flex: 1;
+  flex: 1;
 }
 
 .radio-group {
-    display: flex;
-    flex-direction: column;
-    margin: 15px 0;
+  display: flex;
+  flex-direction: column;
+  margin: 15px 0;
 }
 
 mat-form-field.mat-form-field, mat-option, .mat-cell {
-    font-size: 12px !important;
+  font-size: 12px !important;
 }
 
 .mat-list-item-content {
-    font-size: 12px !important;
+  font-size: 12px !important;
 }
 
 .mat-list-item {
-    height: 30px !important;
+  height: 30px !important;
 }
 
 .mat-cell {
-    padding: 4px !important;
+  padding: 4px !important;
 }
 
 .form-div {
-    min-height: 600px;
-    background-color: white;
-    margin-top: 15px;
-    padding: 10px;
+  min-height: 600px;
+  background-color: white;
+  margin-top: 15px;
+  padding: 10px;
 }
 
 .pointer {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .tooltip {
-    margin-top: 5px !important;
+  margin-top: 5px !important;
 }
 
 .mat-menu-content {
-    padding-top: 0px !important;
-    padding-bottom: 0px !important;
+  padding-top: 0px !important;
+  padding-bottom: 0px !important;
 }
 
 .mat-menu-panel {
-    min-height: auto !important;
+  min-height: auto !important;
 }
 
 .fab-button {
-    position: fixed !important;
-    bottom: 40px !important;
-    right: 40px !important;
+  position: fixed !important;
+  bottom: 40px !important;
+  right: 40px !important;
+  z-index: 9999;
 }
 
 .mat-expansion-panel-header-description {
-    flex-grow: 0 !important;
+  flex-grow: 0 !important;
 }
 
 tr.table-row:hover {
-    background: whitesmoke;
+  background: whitesmoke;
+}
+
+.fieldset-no-border {
+  border: none;
+  display: contents;
 }
 
 @font-face {
-    font-family: 'Material Icons';
-    font-style: normal;
-    font-weight: 400;
-    src: url(https://fonts.gstatic.com/s/materialicons/v76/flUhRq6tzZclQEJ-Vdg-IuiaDsNc.woff2) format('woff2');
+  font-family: 'Material Icons';
+  font-style: normal;
+  font-weight: 400;
+  src: url(https://fonts.gstatic.com/s/materialicons/v76/flUhRq6tzZclQEJ-Vdg-IuiaDsNc.woff2) format('woff2');
 }
 
 @font-face {
-    font-family: "Antagometrica BT";
-    src: url("https://db.onlinewebfonts.com/t/d0b6817fff760d3bbe95277bce46e6d4.eot");
-    /* IE9*/
-    src: url("https://db.onlinewebfonts.com/t/d0b6817fff760d3bbe95277bce46e6d4.eot?#iefix") format("embedded-opentype"),
-        /* IE6-IE8 */
-        url("https://db.onlinewebfonts.com/t/d0b6817fff760d3bbe95277bce46e6d4.woff2") format("woff2"),
-        /* chrome firefox */
-        url("https://db.onlinewebfonts.com/t/d0b6817fff760d3bbe95277bce46e6d4.woff") format("woff"),
-        /* chrome firefox */
-        url("https://db.onlinewebfonts.com/t/d0b6817fff760d3bbe95277bce46e6d4.ttf") format("truetype"),
-        /* chrome firefox opera Safari, Android, iOS 4.2+*/
-        url("https://db.onlinewebfonts.com/t/d0b6817fff760d3bbe95277bce46e6d4.svg#Antagometrica BT") format("svg");
-    /* iOS 4.1- */
+  font-family: "Antagometrica BT";
+  src: url("https://db.onlinewebfonts.com/t/d0b6817fff760d3bbe95277bce46e6d4.eot");
+  /* IE9*/
+  src: url("https://db.onlinewebfonts.com/t/d0b6817fff760d3bbe95277bce46e6d4.eot?#iefix") format("embedded-opentype"),
+    /* IE6-IE8 */
+    url("https://db.onlinewebfonts.com/t/d0b6817fff760d3bbe95277bce46e6d4.woff2") format("woff2"),
+    /* chrome firefox */
+    url("https://db.onlinewebfonts.com/t/d0b6817fff760d3bbe95277bce46e6d4.woff") format("woff"),
+    /* chrome firefox */
+    url("https://db.onlinewebfonts.com/t/d0b6817fff760d3bbe95277bce46e6d4.ttf") format("truetype"),
+    /* chrome firefox opera Safari, Android, iOS 4.2+*/
+    url("https://db.onlinewebfonts.com/t/d0b6817fff760d3bbe95277bce46e6d4.svg#Antagometrica BT") format("svg");
+  /* iOS 4.1- */
 }
 
 @font-face {
-    font-family: "Avenir Black";
-    src: url("https://db.onlinewebfonts.com/t/275de2221d9f0c4c9257d17f5a1e4006.eot");
-    /* IE9*/
-    src: url("https://db.onlinewebfonts.com/t/275de2221d9f0c4c9257d17f5a1e4006.eot?#iefix") format("embedded-opentype"),
-        /* IE6-IE8 */
-        url("https://db.onlinewebfonts.com/t/275de2221d9f0c4c9257d17f5a1e4006.woff2") format("woff2"),
-        /* chrome firefox */
-        url("https://db.onlinewebfonts.com/t/275de2221d9f0c4c9257d17f5a1e4006.woff") format("woff"),
-        /* chrome firefox */
-        url("https://db.onlinewebfonts.com/t/275de2221d9f0c4c9257d17f5a1e4006.ttf") format("truetype"),
-        /* chrome firefox opera Safari, Android, iOS 4.2+*/
-        url("https://db.onlinewebfonts.com/t/275de2221d9f0c4c9257d17f5a1e4006.svg#Avenir Black") format("svg");
-    /* iOS 4.1- */
+  font-family: "Avenir Black";
+  src: url("https://db.onlinewebfonts.com/t/275de2221d9f0c4c9257d17f5a1e4006.eot");
+  /* IE9*/
+  src: url("https://db.onlinewebfonts.com/t/275de2221d9f0c4c9257d17f5a1e4006.eot?#iefix") format("embedded-opentype"),
+    /* IE6-IE8 */
+    url("https://db.onlinewebfonts.com/t/275de2221d9f0c4c9257d17f5a1e4006.woff2") format("woff2"),
+    /* chrome firefox */
+    url("https://db.onlinewebfonts.com/t/275de2221d9f0c4c9257d17f5a1e4006.woff") format("woff"),
+    /* chrome firefox */
+    url("https://db.onlinewebfonts.com/t/275de2221d9f0c4c9257d17f5a1e4006.ttf") format("truetype"),
+    /* chrome firefox opera Safari, Android, iOS 4.2+*/
+    url("https://db.onlinewebfonts.com/t/275de2221d9f0c4c9257d17f5a1e4006.svg#Avenir Black") format("svg");
+  /* iOS 4.1- */
 }
 
 
 /** Mat Table **/
 
 .mat-header-row {
-    opacity: 1 !important;
-    background: 0% 0% no-repeat padding-box padding-box #0082ad !important;
+  opacity: 1 !important;
+  background: 0% 0% no-repeat padding-box padding-box #0082ad !important;
 }
 
 .mat-header-row>th {
-    color: white !important;
-    text-align: center !important;
+  color: white !important;
+  text-align: center !important;
 }
 
 .mat-row:nth-child(odd) {
-    background-color: #d4e3e3;
+  background-color: #d4e3e3;
 }
 
 .mat-row:nth-child(even) {
-    background-color: #FFFFFF;
+  background-color: #FFFFFF;
 }
 
 .mat-row:nth-child(odd):hover {
-    background-color: #b5cfcf;
+  background-color: #b5cfcf;
 }
 
 .mat-row:nth-child(even):hover {
-    background-color: #e6e6e6;
+  background-color: #e6e6e6;
 }

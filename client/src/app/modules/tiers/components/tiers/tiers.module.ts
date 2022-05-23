@@ -1,3 +1,4 @@
+import { DocumentManagementComponent } from './../document-management/document-management.component';
 import { SpecialOffersDialogComponent } from './../special-offers-dialog/special-offers-dialog.component';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -18,6 +19,8 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 @NgModule({
   imports: [
@@ -37,11 +40,14 @@ import { MatChipsModule } from '@angular/material/chips';
     MatDialogModule,
     MatTableModule,
     MatIconModule,
-    MatChipsModule
+    MatChipsModule,
+    MatExpansionModule,
+    MatCheckboxModule
   ],
   declarations: [TiersComponent,
     PrincipalComponent,
-    SpecialOffersDialogComponent],
+    SpecialOffersDialogComponent,
+    DocumentManagementComponent],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'fr-FR' }
   ]

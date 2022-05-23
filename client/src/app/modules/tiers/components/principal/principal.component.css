@@ -12,8 +12,3 @@ td {
   flex-direction: column;
   align-items: flex-start;
 }
-
-.fieldset-no-border {
-  border: none;
-  display: contents;
-}

@@ -1,14 +1,13 @@
-import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
-import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { MatDialog } from '@angular/material/dialog';
-import { Observable, Subscription } from 'rxjs';
+import { Observable, Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter, map, startWith, switchMap, tap } from 'rxjs/operators';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
 import { compareWithId } from 'src/app/libs/CompareHelper';
-import { validateEmail, validateFrenchPhone, validateInternationalPhone } from 'src/app/libs/CustomFormsValidatorsHelper';
+import { SEPARATOR_KEY_CODES } from 'src/app/libs/Constants';
+import { validateEmail, validateFrenchPhone, validateInternationalPhone, validateVat } from 'src/app/libs/CustomFormsValidatorsHelper';
 import { callNumber, prepareMail } from 'src/app/libs/MailHelper';
 import { City } from 'src/app/modules/miscellaneous/model/City';
 import { Country } from 'src/app/modules/miscellaneous/model/Country';
@@ -27,8 +26,6 @@ import { Phone } from '../../model/Phone';
 import { Tiers } from '../../model/Tiers';
 import { TiersCategory } from '../../model/TiersCategory';
 import { TiersType } from '../../model/TiersType';
-import { MailService } from '../../services/mail.service';
-import { PhoneService } from '../../services/phone.service';
 import { SpecialOfferService } from '../../services/special-offer.service';
 import { TiersCategoryService } from '../../services/tiers.category.service';
 import { TiersService } from '../../services/tiers.service';
@@ -44,16 +41,16 @@ import { SpecialOffersDialogComponent } from './../special-offers-dialog/special
 
 export class PrincipalComponent implements OnInit {
   matcher: CustomErrorStateMatcher = new CustomErrorStateMatcher();
-  separatorKeysCodes: number[] = [ENTER, COMMA];
   @ViewChild('mailInput') mailInput: ElementRef<HTMLInputElement> | undefined;
   @ViewChild('phoneInput') phoneInput: ElementRef<HTMLInputElement> | undefined;
 
-  editMode: boolean = false;
-
   @Input() tiers: Tiers = {} as Tiers;
+  @Input() editMode: boolean = false;
 
   @Input() eventsTiersLoaded: Observable<void> | undefined;
   private eventsTiersLoadedSubscription: Subscription | undefined;
+
+  SEPARATOR_KEY_CODES = SEPARATOR_KEY_CODES;
 
   tiersTypes: TiersType[] = [] as Array<TiersType>;
   tiersCategories: TiersCategory[] = [] as Array<TiersCategory>;
@@ -90,8 +87,9 @@ export class PrincipalComponent implements OnInit {
     private cityService: CityService,
     private countryService: CountryService,
     private sepcialOfferService: SpecialOfferService,
-    public specialOfferDialog: MatDialog,
-    private tiersService: TiersService) { }
+    public specialOfferDialog: MatDialog) { }
+
+  // TODO : reprendre les RG (notamment facturation / commande) lorsque les modules correspondants seront faits
 
   ngOnDestroy() {
     this.eventsTiersLoadedSubscription?.unsubscribe();
@@ -108,6 +106,15 @@ export class PrincipalComponent implements OnInit {
         this.deliveryServices = response;
         this.tiers.deliveryService = this.deliveryServices[0];
       })
+      this.countryService.getCountries().subscribe(response => {
+        this.countries = response;
+        if (this.tiers.country == null && this.countries.length > 0)
+          this.tiers.country = this.countries[0]
+      })
+
+      // Set default value
+      if (this.tiers.isIndividual == undefined || this.tiers.isIndividual == null)
+        this.tiers.isIndividual = false;
     })
 
     // Referential loading
@@ -135,36 +142,30 @@ export class PrincipalComponent implements OnInit {
     this.sepcialOfferService.getSpecialOffers().subscribe(response => {
       this.specialOffers = response;
     })
-    this.countryService.getCountries().subscribe(response => {
-      this.countries = response;
-    })
 
-    // Set default value
-    if (this.tiers.isIndividual == undefined || this.tiers.isIndividual == null)
-      this.tiers.isIndividual = false;
 
     // Initialize autocomplete fields
-    this.filteredSalesEmployees = this.generatorForm.get("salesEmployee")?.valueChanges.pipe(
+    this.filteredSalesEmployees = this.principalForm.get("salesEmployee")?.valueChanges.pipe(
       startWith(''),
       map(value => this._filterEmployee(this.salesEmployees, value)),
     );
 
-    this.filteredFormalisteEmployees = this.generatorForm.get("formalisteEmployee")?.valueChanges.pipe(
+    this.filteredFormalisteEmployees = this.principalForm.get("formalisteEmployee")?.valueChanges.pipe(
       startWith(''),
       map(value => this._filterEmployee(this.formalisteEmployees, value)),
     );
 
-    this.filteredInsertionEmployees = this.generatorForm.get("insertionEmployee")?.valueChanges.pipe(
+    this.filteredInsertionEmployees = this.principalForm.get("insertionEmployee")?.valueChanges.pipe(
       startWith(''),
       map(value => this._filterEmployee(this.insertionEmployees, value)),
     );
 
-    this.filteredSpecialOffers = this.generatorForm.get("specialOffer")?.valueChanges.pipe(
+    this.filteredSpecialOffers = this.principalForm.get("specialOffer")?.valueChanges.pipe(
       startWith(''),
       map(value => (typeof value === 'string') ? this._filterByCode(this.specialOffers, value) : [])
     );
 
-    this.generatorForm.get("postalCode")?.valueChanges.pipe(
+    this.principalForm.get("postalCode")?.valueChanges.pipe(
       filter(res => {
         return res != undefined && res !== null && res.length >= 2
       }),
@@ -179,7 +180,7 @@ export class PrincipalComponent implements OnInit {
       this.filteredPostalCodes = [...new Set(response.map(city => city.postalCode))];
     });
 
-    this.generatorForm.get("city")?.valueChanges.pipe(
+    this.principalForm.get("city")?.valueChanges.pipe(
       filter(res => {
         return res != undefined && res !== null && res.length >= 2
       }),
@@ -194,14 +195,16 @@ export class PrincipalComponent implements OnInit {
       this.filteredCities = response as City[];
     });
 
-    this.filteredCountries = this.generatorForm.get("country")?.valueChanges.pipe(
+    this.filteredCountries = this.principalForm.get("country")?.valueChanges.pipe(
       startWith(''),
       map(value => this._filterCountry(value)),
     );
 
+    // Trigger it to show mandatory fields
+    this.principalForm.markAllAsTouched();
   }
 
-  generatorForm = this.formBuilder.group({
+  principalForm = this.formBuilder.group({
     tiersType: ['', Validators.required],
     tiersId: [{ value: '', disabled: true }],
     denomination: ['', [Validators.required, Validators.maxLength(60)]],
@@ -222,7 +225,7 @@ export class PrincipalComponent implements OnInit {
     city: ['', [Validators.required, Validators.maxLength(30)]],
     country: ['', [Validators.required, this.checkAutocompleteField("country")]],
     intercom: ['', [Validators.maxLength(12)]],
-    intercommunityVat: ['', [Validators.required, Validators.maxLength(20)]],
+    intercommunityVat: ['', [this.checkVAT("intercommunityVat")]],
     specialOffer: ['', [this.checkAutocompleteField("specialOffer")]],
     rcaFormaliteRate: ['', []],
     rcaInsertionRate: ['', []],
@@ -234,38 +237,11 @@ export class PrincipalComponent implements OnInit {
     observations: ['', []],
   });
 
-  saveTiers() {
-    if (this.checkFormValidation())
-      this.tiersService.addOrUpdateTiers(this.tiers).subscribe(response => {
-        this.tiers = response;
-        this.editMode = false;
-      })
-  }
-
-  editTiers() {
-    console.log("totto");
-    this.editMode = true;
-  }
-
-  checkFormValidation(): boolean {
-    if (this.tiers.isIndividual == true) {
-      this.tiers.denomination = null;
-      this.tiers.intercommunityVat = null;
-    }
-
-    if (this.tiers.isIndividual == false) {
-      this.tiers.civility = null;
-    }
-    console.log(this.generatorForm.valid);
-    return this.generatorForm.valid;
-  }
-
   openSpecialOffersDialog() {
     let dialogSpecialOffer = this.specialOfferDialog.open(SpecialOffersDialogComponent, {
       width: '90%'
     });
     dialogSpecialOffer.afterClosed().subscribe(response => {
-      console.log(response);
       if (response && response != null)
         this.tiers.specialOffer = response;
     });
@@ -291,6 +267,19 @@ export class PrincipalComponent implements OnInit {
 
       const fieldValue = root.get(fieldName)?.value;
       if (this.tiers.country != null && this.tiers.country.code == "FR" && (fieldValue == undefined || fieldValue == null || fieldValue.length == 0))
+        return {
+          notFilled: true
+        };
+      return null;
+    };
+  }
+
+  checkVAT(fieldName: string): ValidationErrors | null {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const root = control.root as FormGroup;
+
+      const fieldValue = root.get(fieldName)?.value;
+      if (!this.tiers.isIndividual && (fieldValue == undefined || fieldValue == null || fieldValue.length == 0 || !validateVat(fieldValue)))
         return {
           notFilled: true
         };
@@ -335,13 +324,13 @@ export class PrincipalComponent implements OnInit {
   }
 
   limitTextareaSize(fieldName: string, maxLines: number) {
-    let fieldValue = this.generatorForm.get(fieldName)?.value != undefined ? this.generatorForm.get(fieldName)?.value : "";
+    let fieldValue = this.principalForm.get(fieldName)?.value != undefined ? this.principalForm.get(fieldName)?.value : "";
     var l = fieldValue.replace(/\r\n/g, "\n").replace(/\r/g, "").split(/\n/g);//split lines
     if (l.length > maxLines) {
       fieldValue = l.slice(0, maxLines).join("\n");
     }
 
-    this.generatorForm.get(fieldName)?.setValue(fieldValue);
+    this.principalForm.get(fieldName)?.setValue(fieldValue);
   }
 
   addMail(event: MatChipInputEvent): void {
@@ -354,7 +343,7 @@ export class PrincipalComponent implements OnInit {
       this.tiers.mails.push(mail);
     }
     event.chipInput!.clear();
-    this.generatorForm.get("mails")?.setValue(null);
+    this.principalForm.get("mails")?.setValue(null);
   }
 
   removeMail(inputMail: Mail): void {
@@ -378,7 +367,7 @@ export class PrincipalComponent implements OnInit {
       this.tiers.phones.push(phone);
     }
     event.chipInput!.clear();
-    this.generatorForm.get("phones")?.setValue(null);
+    this.principalForm.get("phones")?.setValue(null);
   }
 
   removePhone(inputPhone: Phone): void {
@@ -393,7 +382,6 @@ export class PrincipalComponent implements OnInit {
   }
 
   prepareMail = function (mail: Mail) {
-    console.log("ok");
     prepareMail(mail.mail, null, null);
   }
 
@@ -402,4 +390,17 @@ export class PrincipalComponent implements OnInit {
   }
 
   compareWithId = compareWithId;
+
+  getFormStatus(): boolean {
+    if (this.tiers.isIndividual == true) {
+      this.tiers.denomination = null;
+      this.tiers.intercommunityVat = null;
+    }
+
+    if (this.tiers.isIndividual == false) {
+      this.tiers.civility = null;
+    }
+    console.log(this.principalForm);
+    return this.principalForm.valid;
+  }
 }
