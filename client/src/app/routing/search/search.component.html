@@ -1,0 +1,39 @@
+<div class="mat-elevation-z2 form-div">
+  <form [formGroup]="searchForm">
+    <table class="full-width">
+      <tr>
+        <td>
+          <mat-form-field class="full-width">
+            <mat-label>Rechercher</mat-label>
+            <input matInput formControlName="search" [(ngModel)]="search" (keyup)="searchEntities()"
+              (keydown)="searchEntities()" (paste)="searchEntities()">
+            <button (click)="search=''" *ngIf="search!=null && search.length>0" matSuffix mat-icon-button>
+              <mat-icon>close</mat-icon>
+            </button>
+          </mat-form-field>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <div>
+            <mat-tab-group animationDuration="0ms" [selectedIndex]="selectedTabIndex">
+              <mat-tab [label]="getTabLabel(TIERS_ENTITY_TYPE)">
+                <mat-card class="pointer" *ngFor="let entity of getEntitiesForTab(TIERS_ENTITY_TYPE)"
+                  (click)="openEntity(entity)">
+                  <mat-card-title-group>
+                    <mat-card-title>{{entity.text.denomination}} {{entity.text.firstname}} {{entity.text.lastname}}
+                      ({{entity.text.id}})</mat-card-title>
+                    <mat-card-subtitle>{{entity.text.salesEmployee.firstname}} {{entity.text.salesEmployee.lastname}} -
+                      {{entity.text.address}} {{entity.text.postalCode}} {{entity.text.city.label}}
+                    </mat-card-subtitle>
+                    <mat-icon class="mat-card-icon">group</mat-icon>
+                  </mat-card-title-group>
+                </mat-card>
+              </mat-tab>
+            </mat-tab-group>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </form>
+</div>

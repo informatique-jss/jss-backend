@@ -5,6 +5,7 @@ import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgProgressModule } from 'ngx-progressbar';
@@ -15,7 +16,7 @@ import { TiersModule } from './modules/tiers/components/tiers/tiers.module';
 import { HeaderComponent } from './routing/header/header.component';
 import { RoutingModule } from './routing/routing.module';
 import { SidenavListComponent } from './routing/sidenav-list/sidenav-list.component';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 
 @NgModule({
@@ -42,6 +43,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     MatListModule,
     MatSidenavModule,
     MatSnackBarModule,
+    MatTooltipModule,
     // App modules
     TiersModule
   ],

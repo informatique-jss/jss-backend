@@ -1,6 +1,11 @@
+import { RefundType } from './RefundType';
+import { BillingLabelType } from "./BillingLabelType";
 import { Mail } from "./Mail";
+import { PaymentDeadlineType } from "./PaymentDeadlineType";
 import { Tiers } from "./Tiers";
 import { TiersDocumentType } from "./TiersDocumentType";
+import { BillingClosureType } from './BillingClosureType';
+import { BillingClosureRecipientType } from './BillingClosureRecipientType';
 
 export interface TiersDocument {
   id: number;
@@ -20,4 +25,16 @@ export interface TiersDocument {
   numberMailingClient: number;
   mailsClient: Mail[];
   mailsAffaire: Mail[];
+  billingLabelType: BillingLabelType;
+  billingLabel: string;
+  isResponsableOnBilling: boolean;
+  isCommandNumberMandatory: boolean;
+  commandNumber: string;
+  paymentDeadlineType: PaymentDeadlineType;
+  isAutomaticDunning: boolean;
+  refundType: RefundType;
+  refundIBAN: string;
+  isRefundable: boolean;
+  billingClosureType: BillingClosureType;
+  billingClosureRecipientType: BillingClosureRecipientType;
 }

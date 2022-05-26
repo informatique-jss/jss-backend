@@ -1,3 +1,4 @@
+import { PaymentType } from './../../miscellaneous/model/PaymentType';
 import { City } from "../../miscellaneous/model/City";
 import { Civility } from "../../miscellaneous/model/Civility";
 import { Country } from "../../miscellaneous/model/Country";
@@ -10,6 +11,7 @@ import { SpecialOffer } from "./SpecialOffer";
 import { TiersCategory } from "./TiersCategory";
 import { TiersDocument } from "./TiersDocument";
 import { TiersType } from "./TiersType";
+import { TiersAttachment } from './TiersAttachment';
 
 export interface Tiers {
   id: number;
@@ -41,4 +43,8 @@ export interface Tiers {
   instructions: string;
   observations: string;
   documents: TiersDocument[];
+  paymentType: PaymentType;
+  paymentIBAN: string;
+  isProvisionalPaymentMandatory: boolean;
+  tiersAttachments: TiersAttachment[];
 }

@@ -1,9 +1,7 @@
 /* tslint:disable:no-unused-variable */
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
-import { DebugElement } from '@angular/core';
-
 import { SpecialOffersDialogComponent } from './special-offers-dialog.component';
+
 
 describe('SpecialOffersDialogComponent', () => {
   let component: SpecialOffersDialogComponent;
@@ -11,9 +9,9 @@ describe('SpecialOffersDialogComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ SpecialOffersDialogComponent ]
+      declarations: [SpecialOffersDialogComponent]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

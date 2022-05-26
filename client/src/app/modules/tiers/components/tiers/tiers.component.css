@@ -1,3 +1,15 @@
 .mat-snack-bar-container {
   max-width: 800px;
 }
+
+.fat-icon {
+  transform: scale(20);
+}
+
+.div-centered {
+  margin: auto;
+  width: 50%;
+  text-align: center;
+  padding-top: 200px;
+  color: rgba(128, 128, 128, 0.438);
+}

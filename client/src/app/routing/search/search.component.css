@@ -1,0 +1,7 @@
+.mat-card-icon {
+  color: rgba(0, 0, 0, 0.54);
+}
+
+mat-card-subtitle {
+  margin-top: 0 !important;
+}

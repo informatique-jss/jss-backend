@@ -24,6 +24,7 @@ public class Mail implements Serializable {
 
 	@ManyToMany(mappedBy = "mails")
 	@JsonBackReference
+	@Column(length = 30)
 	List<Tiers> tiers;
 
 	public Integer getId() {

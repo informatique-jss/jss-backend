@@ -1,12 +1,12 @@
 <div class="sidebar-header">
-  <div id="menu">
-    <mat-icon (click)="onSidenavClose()">menu</mat-icon>
+  <div id="menu" matTooltip="Rechercher (F4)">
+    <mat-icon (click)="openSearch()">search</mat-icon>
   </div>
   <img class="navbar-brand" ui-sref='main.tiers' [src]="logoCockpit" />
 </div>
 <mat-nav-list>
   <a mat-list-item routerLink="/tiers" *ngIf="canViewTiersModule()"
-    [ngClass]="{'menu-item-active':'/tiers' == getCurrentRoute()}">
+    [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/tiers' )>=0}">
     <mat-icon>group</mat-icon> <span>Tiers/Responsables</span>
   </a>
 </mat-nav-list>

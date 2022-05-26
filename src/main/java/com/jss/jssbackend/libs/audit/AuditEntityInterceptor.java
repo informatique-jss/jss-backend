@@ -5,7 +5,9 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.hibernate.CallbackException;
+import com.jss.jssbackend.libs.search.model.IndexEntity;
+import com.jss.jssbackend.libs.search.repository.IndexEntityRepository;
+
 import org.hibernate.EmptyInterceptor;
 import org.hibernate.Session;
 import org.hibernate.type.Type;
@@ -22,37 +24,47 @@ public class AuditEntityInterceptor extends EmptyInterceptor {
     @Lazy
     AuditRepository auditRepository;
 
-    public void setSession(Session session) {
-        this.session = session;
-    }
-
     private static final Set<Class<?>> WRAPPER_TYPES = getWrapperTypes();
 
-    public boolean onFlushDirty(Object entity, Serializable id,
-            Object[] currentState, Object[] previousState,
-            String[] propertyNames, Type[] types)
-            throws CallbackException {
+    @Autowired
+    @Lazy
+    IndexEntityRepository indexEntityRepository;
 
-        for (int i = 0; i < previousState.length; i++) {
-            Object oldField = previousState[i];
-            if (oldField != null && WRAPPER_TYPES.contains(oldField.getClass())) {
-                Object newField = currentState[i];
-                if (newField != null && oldField == null
-                        || newField == null && oldField != null
-                        || (newField != null && !newField.equals(oldField))) {
-                    Audit audit = new Audit();
-                    audit.setAuthor("toto"); // TODO : change IT when AD connected
-                    audit.setDatetime(new Date());
-                    audit.setEntity(entity.getClass().getSimpleName());
-                    audit.setEntityId((Integer) id);
-                    audit.setNewValue(newField.toString());
-                    audit.setOldValue(oldField.toString());
-                    auditRepository.save(audit);
+    @Override
+    public boolean onFlushDirty(
+            Object entity,
+            Serializable id,
+            Object[] currentState,
+            Object[] previousState,
+            String[] propertyNames,
+            Type[] types) {
+        this.auditEntity(previousState, currentState, entity, id, propertyNames);
+        return super.onFlushDirty(entity, id, currentState, previousState, propertyNames, types);
+    }
+
+    private void auditEntity(Object[] previousState, Object[] currentState, Object entity,
+            Serializable id, String[] propertyNames) {
+        if (!entity.getClass().getName().equals(IndexEntity.class.getName())) {
+            for (int i = 0; i < previousState.length; i++) {
+                Object oldField = previousState[i];
+                if (oldField != null && WRAPPER_TYPES.contains(oldField.getClass())) {
+                    Object newField = currentState[i];
+                    if (newField != null && oldField == null
+                            || newField == null && oldField != null
+                            || (newField != null && !newField.equals(oldField))) {
+                        Audit audit = new Audit();
+                        audit.setAuthor("toto"); // TODO : change it when AD connected
+                        audit.setDatetime(new Date());
+                        audit.setEntity(entity.getClass().getSimpleName());
+                        audit.setEntityId((Integer) id);
+                        audit.setNewValue(newField.toString());
+                        audit.setOldValue(oldField.toString());
+                        audit.setFieldName(propertyNames[i]);
+                        auditRepository.save(audit);
+                    }
                 }
-
             }
         }
-        return false;
     }
 
     private static Set<Class<?>> getWrapperTypes() {

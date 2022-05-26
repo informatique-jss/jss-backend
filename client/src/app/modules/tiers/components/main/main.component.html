@@ -9,8 +9,8 @@
                 <mat-label>Type</mat-label>
                 <mat-select formControlName="tiersType" [(ngModel)]="tiers.tiersType" [compareWith]="compareWithId"
                   [disabled]="editMode==false">
-                  <mat-option *ngFor="let type of tiersTypes" [value]="type">
-                    {{type.label}}
+                  <mat-option *ngFor="let tiersType of tiersTypes" [value]="tiersType">
+                    {{tiersType.label}}
                   </mat-option>
                 </mat-select>
               </mat-form-field>
@@ -143,8 +143,8 @@
             <td style="vertical-align: baseline;">
               <mat-label>Langue de communication</mat-label>
               <mat-radio-group class="radio-group-column" [(ngModel)]="tiers.language" formControlName="language">
-                <mat-radio-button *ngFor="let language of languages" [value]="language"
-                  [checked]="language.id==tiers.language.id">
+                <mat-radio-button *ngFor=" let language of languages" [value]="language"
+                  [checked]=" this.tiers.language != undefined && this.tiers.language.id == language.id">
                   {{language.label}}
                 </mat-radio-button>
               </mat-radio-group>
@@ -175,25 +175,27 @@
             </td>
             <td>
               <mat-form-field class="full-width">
-                <mat-label>Code postal</mat-label>
-                <input matInput placeholder="Code postal" [(ngModel)]="tiers.postalCode"
-                  [matAutocomplete]="autoCompletePostalCode" formControlName="postalCode"
-                  autocomplete="do-not-autofill">
-                <mat-autocomplete #autoCompletePostalCode="matAutocomplete">
-                  <mat-option *ngFor="let postalCode of filteredPostalCodes" [value]="postalCode">
-                    {{postalCode}}
+                <mat-label>Ville</mat-label>
+                <input matInput placeholder="Ville" [(ngModel)]="tiers.city" [matAutocomplete]="autoCompleteCity"
+                  formControlName="city" autocomplete="do-not-autofill">
+                <mat-autocomplete #autoCompleteCity="matAutocomplete" [displayWith]="displayLabel"
+                  (optionSelected)='fillPostalCode($event.option.value)'>
+                  <mat-option *ngFor="let city of filteredCities" [value]="city">
+                    {{city.label}}
                   </mat-option>
                 </mat-autocomplete>
               </mat-form-field>
             </td>
             <td>
               <mat-form-field class="full-width">
-                <mat-label>Ville</mat-label>
-                <input matInput placeholder="Ville" [(ngModel)]="tiers.city" [matAutocomplete]="autoCompleteCity"
-                  formControlName="city" autocomplete="do-not-autofill">
-                <mat-autocomplete #autoCompleteCity="matAutocomplete" [displayWith]="displayLabel">
-                  <mat-option *ngFor="let city of filteredCities" [value]="city">
-                    {{city.label}}
+                <mat-label>Code postal</mat-label>
+                <input matInput placeholder="Code postal" [(ngModel)]="tiers.postalCode"
+                  [matAutocomplete]="autoCompletePostalCode" formControlName="postalCode"
+                  autocomplete="do-not-autofill">
+                <mat-autocomplete #autoCompletePostalCode="matAutocomplete"
+                  (optionSelected)='fillCity($event.option.value)'>
+                  <mat-option *ngFor="let postalCode of filteredPostalCodes" [value]="postalCode">
+                    {{postalCode}}
                   </mat-option>
                 </mat-autocomplete>
               </mat-form-field>

@@ -1,8 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { FormControl, FormGroupDirective, NgForm } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { Subscription } from 'rxjs';
 import { AppService } from './app.service';
+import { SEARCH_KEY_CODE } from './libs/Constants';
+import { SearchService } from './search.service';
 
 export class CustomErrorStateMatcher implements ErrorStateMatcher {
   isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
@@ -23,7 +25,8 @@ export class AppComponent {
   sidenavOpenState: boolean = true;
   sidenavOpenStateSubscription: Subscription = new Subscription;
 
-  constructor(protected appService: AppService) { }
+  constructor(protected appService: AppService,
+    protected searchService: SearchService) { }
   groups: string[] = [] as Array<string>;
 
   ngOnInit() {
@@ -33,4 +36,11 @@ export class AppComponent {
   ngOnDestroy() {
     this.sidenavOpenStateSubscription.unsubscribe();
   }
+
+  @HostListener('window:keyup', ['$event'])
+  keyEvent(event: KeyboardEvent) {
+    if (event != undefined && event != null && event.code != null && event != undefined && event.code == SEARCH_KEY_CODE)
+      this.searchService.openSearch();
+  }
+
 }

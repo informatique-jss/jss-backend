@@ -65,6 +65,7 @@ mat-form-field.mat-form-field, mat-option, .mat-cell {
 
 .mat-list-item-content {
   font-size: 12px !important;
+  padding: 0 !important;
 }
 
 .mat-list-item {
@@ -99,10 +100,25 @@ mat-form-field.mat-form-field, mat-option, .mat-cell {
   min-height: auto !important;
 }
 
+mat-radio-group {
+  padding-bottom: 16px;
+}
+
+mat-form-field.mat-form-field-should-float label {
+  font-size: 14px;
+}
+
 .fab-button {
   position: fixed !important;
   bottom: 40px !important;
   right: 40px !important;
+  z-index: 9999;
+}
+
+.second-fab-button {
+  position: fixed !important;
+  bottom: 40px !important;
+  right: 110px !important;
   z-index: 9999;
 }
 
@@ -163,7 +179,7 @@ tr.table-row:hover {
 
 .mat-header-row {
   opacity: 1 !important;
-  background: 0% 0% no-repeat padding-box padding-box #0082ad !important;
+  background: 0% 0% no-repeat padding-box padding-box #1C3D58 !important;
 }
 
 .mat-header-row>th {
@@ -172,7 +188,7 @@ tr.table-row:hover {
 }
 
 .mat-row:nth-child(odd) {
-  background-color: #d4e3e3;
+  background-color: #F7F4F0;
 }
 
 .mat-row:nth-child(even) {
@@ -180,9 +196,9 @@ tr.table-row:hover {
 }
 
 .mat-row:nth-child(odd):hover {
-  background-color: #b5cfcf;
+  background-color: #6B9CBF;
 }
 
 .mat-row:nth-child(even):hover {
-  background-color: #e6e6e6;
+  background-color: #6B9CBF;
 }

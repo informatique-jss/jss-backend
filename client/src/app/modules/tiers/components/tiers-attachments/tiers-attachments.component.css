@@ -1,0 +1,28 @@
+.mat-accordion-container {
+  padding-top: 15px
+}
+
+.mat-form-field-padding {
+  padding-top: 20px;
+}
+
+.form-div {
+  min-height: auto;
+}
+
+td {
+  padding-right: 8px;
+}
+
+.table {
+  width: 100%;
+}
+
+.row-field-container {
+  flex-direction: row;
+  display: flex;
+}
+
+.mini-fab-add {
+  margin: 5px
+}

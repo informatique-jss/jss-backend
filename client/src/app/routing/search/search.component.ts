@@ -1,0 +1,132 @@
+import { FormBuilder } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { MatDialogRef } from '@angular/material/dialog';
+import { IndexEntityService } from './index.entity.service';
+import { IndexEntity } from './IndexEntity';
+import { Router } from '@angular/router';
+import { I } from '@angular/cdk/keycodes';
+import { EntityType } from './EntityType';
+
+export const TIERS_ENTITY_TYPE: EntityType = { entityType: 'Tiers', tabName: 'Tiers', entryPoint: 'tiers' };
+
+@Component({
+  selector: 'app-search',
+  templateUrl: './search.component.html',
+  styleUrls: ['./search.component.css']
+})
+
+export class SearchComponent implements OnInit {
+
+  constructor(private searchDialogRef: MatDialogRef<SearchComponent>,
+    protected indexEntityService: IndexEntityService,
+    protected formBuilder: FormBuilder,
+    private router: Router) { }
+
+  TIERS_ENTITY_TYPE = TIERS_ENTITY_TYPE;
+  entityTypes: EntityType[] = [TIERS_ENTITY_TYPE];
+  selectedTabIndex: number = 0;
+  userSelectedModule: EntityType | null = null;
+
+  search: string = "";
+  foundEntities: IndexEntity[] | null = null;
+  tabNames: { [key: string]: string; } = {};
+
+  ngOnInit() {
+    this.generateTabLabel();
+  }
+
+  closeDialog() {
+    this.searchDialogRef.close(null);
+  }
+
+  searchForm = this.formBuilder.group({
+    search: ['']
+  });
+
+  searchEntities() {
+    if (this.search != null && this.search != undefined) {
+      if (this.search.length >= 2) {
+        this.indexEntityService.searchEntities(this.search).subscribe(response => {
+          if (response != undefined && response != null && response.length > 0) {
+            this.foundEntities = [] as Array<IndexEntity>;
+            response.forEach(foundEntity => {
+              if (foundEntity != null && foundEntity != undefined && foundEntity.text != null && foundEntity != undefined != null) {
+                foundEntity.text = JSON.parse((foundEntity.text as string));
+                this.foundEntities?.push(foundEntity);
+              }
+            })
+          }
+        })
+      } else {
+        this.foundEntities = null;
+      }
+      this.generateTabLabel();
+      this.selectTab();
+    }
+  }
+
+  getTabLabel(entityType: EntityType): string {
+    if (this.tabNames != null && this.tabNames != undefined)
+      return this.tabNames[entityType.entityType] != undefined ? this.tabNames[entityType.entityType] : "";
+    return "";
+  }
+
+  generateTabLabel() {
+    let tabName = "";
+    this.entityTypes.forEach(entityType => {
+      tabName += entityType.tabName;
+      if (this.foundEntities != null && this.foundEntities != undefined) {
+        let entityNumber = 0;
+        this.foundEntities.forEach(foundEntity => {
+          if (foundEntity.entityType == entityType.entityType)
+            entityNumber++;
+        })
+        tabName += " (" + entityNumber + ")"
+      }
+      this.tabNames[entityType.entityType] = tabName;
+    })
+  }
+
+  getEntitiesForTab(entityType: EntityType): IndexEntity[] {
+    let tabEntities = [] as Array<IndexEntity>;
+    if (this.foundEntities != null) {
+      this.foundEntities.forEach(foundEntity => {
+        if (foundEntity.entityType == entityType.entityType)
+          tabEntities.push(foundEntity);
+      })
+    }
+    return tabEntities;
+  }
+
+  openEntity(indexEntity: IndexEntity) {
+    this.entityTypes.forEach(entityType => {
+      if (indexEntity.entityType == entityType.entityType) {
+        this.router.navigateByUrl('/', { skipLocationChange: true }).then(() =>
+          this.router.navigate(['/' + entityType.entryPoint + '/', "" + indexEntity.entityId])
+        );
+      }
+      this.searchDialogRef.close();
+      return;
+    })
+  }
+
+  selectTab() {
+    // select tab : input tab if provide else first tab of first fetch entity (because it's the most relevant)
+    if (this.userSelectedModule != null) {
+      for (let i = 0; i < this.entityTypes.length; i++) {
+        const entityType = this.entityTypes[i];
+        if (entityType == this.userSelectedModule) {
+          this.selectedTabIndex = i;
+        }
+      }
+    } else if (this.foundEntities != null && this.foundEntities.length > 0) {
+      for (let i = 0; i < this.entityTypes.length; i++) {
+        const entityType = this.entityTypes[i];
+        if (entityType.entityType == this.foundEntities[0].entityType)
+          this.selectedTabIndex = i;
+      }
+    } else {
+      this.selectedTabIndex = 0;
+    }
+  }
+}

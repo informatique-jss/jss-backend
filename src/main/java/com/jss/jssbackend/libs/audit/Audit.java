@@ -27,8 +27,13 @@ public class Audit implements Serializable {
 	@Column(nullable = false)
 	private Integer entityId;
 
+	@Column(nullable = false)
+	private String fieldName;
+
+	@Column(columnDefinition = "TEXT")
 	private String oldValue;
 
+	@Column(columnDefinition = "TEXT")
 	private String newValue;
 
 	private Date datetime;
@@ -89,6 +94,14 @@ public class Audit implements Serializable {
 
 	public void setAuthor(String author) {
 		this.author = author;
+	}
+
+	public String getFieldName() {
+		return fieldName;
+	}
+
+	public void setFieldName(String fieldName) {
+		this.fieldName = fieldName;
 	}
 
 }

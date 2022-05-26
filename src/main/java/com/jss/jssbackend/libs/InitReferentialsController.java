@@ -3,30 +3,45 @@ package com.jss.jssbackend.libs;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.jss.jssbackend.libs.search.repository.IndexEntityRepository;
 import com.jss.jssbackend.modules.miscellaneous.model.Civility;
 import com.jss.jssbackend.modules.miscellaneous.model.DeliveryService;
 import com.jss.jssbackend.modules.miscellaneous.model.Language;
+import com.jss.jssbackend.modules.miscellaneous.model.PaymentType;
 import com.jss.jssbackend.modules.miscellaneous.model.VatRate;
 import com.jss.jssbackend.modules.miscellaneous.repository.CivilityRepository;
 import com.jss.jssbackend.modules.miscellaneous.repository.DeliveryServiceRepository;
 import com.jss.jssbackend.modules.miscellaneous.repository.LanguageRepository;
+import com.jss.jssbackend.modules.miscellaneous.repository.PaymentTypeRepository;
 import com.jss.jssbackend.modules.miscellaneous.repository.VatRateRepository;
 import com.jss.jssbackend.modules.profile.model.Employee;
 import com.jss.jssbackend.modules.profile.model.Team;
 import com.jss.jssbackend.modules.profile.repository.EmployeeRepository;
 import com.jss.jssbackend.modules.profile.repository.TeamRepository;
+import com.jss.jssbackend.modules.tiers.model.AttachmentType;
+import com.jss.jssbackend.modules.tiers.model.BillingClosureRecipientType;
+import com.jss.jssbackend.modules.tiers.model.BillingClosureType;
 import com.jss.jssbackend.modules.tiers.model.BillingItem;
+import com.jss.jssbackend.modules.tiers.model.BillingLabelType;
 import com.jss.jssbackend.modules.tiers.model.BillingType;
 import com.jss.jssbackend.modules.tiers.model.Mail;
+import com.jss.jssbackend.modules.tiers.model.PaymentDeadlineType;
 import com.jss.jssbackend.modules.tiers.model.Phone;
+import com.jss.jssbackend.modules.tiers.model.RefundType;
 import com.jss.jssbackend.modules.tiers.model.SpecialOffer;
 import com.jss.jssbackend.modules.tiers.model.TiersCategory;
 import com.jss.jssbackend.modules.tiers.model.TiersDocumentType;
 import com.jss.jssbackend.modules.tiers.model.TiersType;
+import com.jss.jssbackend.modules.tiers.repository.AttachmentTypeRepository;
+import com.jss.jssbackend.modules.tiers.repository.BillingClosureRecipientTypeRepository;
+import com.jss.jssbackend.modules.tiers.repository.BillingClosureTypeRepository;
 import com.jss.jssbackend.modules.tiers.repository.BillingItemRepository;
+import com.jss.jssbackend.modules.tiers.repository.BillingLabelTypeRepository;
 import com.jss.jssbackend.modules.tiers.repository.BillingTypeRepository;
 import com.jss.jssbackend.modules.tiers.repository.MailRepository;
+import com.jss.jssbackend.modules.tiers.repository.PaymentDeadlineTypeRepository;
 import com.jss.jssbackend.modules.tiers.repository.PhoneRepository;
+import com.jss.jssbackend.modules.tiers.repository.RefundTypeRepository;
 import com.jss.jssbackend.modules.tiers.repository.SpecialOfferRepository;
 import com.jss.jssbackend.modules.tiers.repository.TiersCategoryRepository;
 import com.jss.jssbackend.modules.tiers.repository.TiersDocumentRepository;
@@ -41,6 +56,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 // TODO : delete !!!
+// TODO : à ajouter dans toutes les bases :
+// ALTER TABLE index_entity ADD COLUMN ts_text tsvector GENERATED ALWAYS AS (to_tsvector('french', text)) STORED;
+// CREATE INDEX idx_ts_text ON index_entity USING GIST (ts_text);  
+//CREATE INDEX idx_text ON index_entity USING GIST (text gist_trgm_ops );  
+// CREATE EXTENSION pg_trgm;
 @RestController
 @CrossOrigin
 public class InitReferentialsController {
@@ -95,9 +115,34 @@ public class InitReferentialsController {
 	@Autowired
 	DeliveryServiceRepository deliveryServiceRepository;
 
+	@Autowired
+	PaymentTypeRepository paymentTypeRepository;
+
+	@Autowired
+	BillingLabelTypeRepository billingLabelTypeRepository;
+
+	@Autowired
+	IndexEntityRepository indexEntityRepository;
+
+	@Autowired
+	PaymentDeadlineTypeRepository paymentDeadlineTypeRepository;
+
+	@Autowired
+	RefundTypeRepository refundTypeRepository;
+
+	@Autowired
+	BillingClosureTypeRepository billingClosureTypeRepository;
+
+	@Autowired
+	BillingClosureRecipientTypeRepository billingClosureRecipientTypeRepository;
+
+	@Autowired
+	AttachmentTypeRepository attachmentTypeRepository;
+
 	@GetMapping(inputEntryPoint + "/create")
 	public void create() {
 		tiersRepository.deleteAll();
+		indexEntityRepository.deleteAll();
 
 		deliveryServiceRepository.deleteAll();
 		DeliveryService deliveryService = new DeliveryService();
@@ -277,23 +322,124 @@ public class InitReferentialsController {
 
 		tiersDocumentType = new TiersDocumentType();
 		tiersDocumentType.setCode("7");
-		tiersDocumentType.setLabel("ARRETE COMPTABLE");
+		tiersDocumentType.setLabel("ARRETES COMPTABLES");
 		tiersDocumentTypeRepository.save(tiersDocumentType);
 
 		tiersDocumentType = new TiersDocumentType();
 		tiersDocumentType.setCode("8");
-		tiersDocumentType.setLabel("ARRETE PAR AFFAIRE");
-		tiersDocumentTypeRepository.save(tiersDocumentType);
-
-		tiersDocumentType = new TiersDocumentType();
-		tiersDocumentType.setCode("9");
 		tiersDocumentType.setLabel("RECU DE PROVISION");
 		tiersDocumentTypeRepository.save(tiersDocumentType);
 
 		tiersDocumentType = new TiersDocumentType();
-		tiersDocumentType.setCode("10");
+		tiersDocumentType.setCode("9");
 		tiersDocumentType.setLabel("DIVERS");
 		tiersDocumentTypeRepository.save(tiersDocumentType);
+
+		paymentTypeRepository.deleteAll();
+		PaymentType paymentType = new PaymentType();
+		paymentType.setCode("PRELEVEMENT");
+		paymentType.setLabel("Prélèvement");
+		paymentTypeRepository.save(paymentType);
+		paymentType = new PaymentType();
+		paymentType.setCode("CHEQUES");
+		paymentType.setLabel("Chèques");
+		paymentTypeRepository.save(paymentType);
+
+		billingLabelTypeRepository.deleteAll();
+		BillingLabelType billingLabelType = new BillingLabelType();
+		billingLabelType.setCode("AFFAIRE");
+		billingLabelType.setLabel("Affaire");
+		billingLabelTypeRepository.save(billingLabelType);
+
+		billingLabelType = new BillingLabelType();
+		billingLabelType.setCode("CLIENT");
+		billingLabelType.setLabel("Client");
+		billingLabelTypeRepository.save(billingLabelType);
+
+		billingLabelType = new BillingLabelType();
+		billingLabelType.setCode("AUTRES");
+		billingLabelType.setLabel("Autres");
+		billingLabelTypeRepository.save(billingLabelType);
+
+		paymentDeadlineTypeRepository.deleteAll();
+		PaymentDeadlineType paymentDeadlineType = new PaymentDeadlineType();
+		paymentDeadlineType.setCode("IMMEDIAT");
+		paymentDeadlineType.setLabel("Immédiat");
+		paymentDeadlineTypeRepository.save(paymentDeadlineType);
+
+		paymentDeadlineType = new PaymentDeadlineType();
+		paymentDeadlineType.setCode("30");
+		paymentDeadlineType.setLabel("30");
+		paymentDeadlineTypeRepository.save(paymentDeadlineType);
+
+		paymentDeadlineType = new PaymentDeadlineType();
+		paymentDeadlineType.setCode("45");
+		paymentDeadlineType.setLabel("45");
+		paymentDeadlineTypeRepository.save(paymentDeadlineType);
+
+		paymentDeadlineType = new PaymentDeadlineType();
+		paymentDeadlineType.setCode("60");
+		paymentDeadlineType.setLabel("60");
+		paymentDeadlineTypeRepository.save(paymentDeadlineType);
+
+		refundTypeRepository.deleteAll();
+		RefundType refundType = new RefundType();
+		refundType.setCode("VIREMENT");
+		refundType.setLabel("Virement");
+		refundTypeRepository.save(refundType);
+
+		refundType = new RefundType();
+		refundType.setCode("CHEQUE");
+		refundType.setLabel("Chèque");
+		refundTypeRepository.save(refundType);
+
+		billingClosureTypeRepository.deleteAll();
+		BillingClosureType billingClosureType = new BillingClosureType();
+		billingClosureType.setCode("AFFAIRE");
+		billingClosureType.setLabel("Par affaire");
+		billingClosureTypeRepository.save(billingClosureType);
+
+		billingClosureType = new BillingClosureType();
+		billingClosureType.setCode("COMPTABLE");
+		billingClosureType.setLabel("Comptable");
+		billingClosureTypeRepository.save(billingClosureType);
+
+		billingClosureRecipientTypeRepository.deleteAll();
+		BillingClosureRecipientType billingClosureRecipientType = new BillingClosureRecipientType();
+		billingClosureRecipientType.setCode("REPONSABLE");
+		billingClosureRecipientType.setLabel("Reponsable");
+		billingClosureRecipientTypeRepository.save(billingClosureRecipientType);
+
+		billingClosureRecipientType = new BillingClosureRecipientType();
+		billingClosureRecipientType.setCode("TOUS");
+		billingClosureRecipientType.setLabel("Tous");
+		billingClosureRecipientTypeRepository.save(billingClosureRecipientType);
+
+		attachmentTypeRepository.deleteAll();
+		AttachmentType attachmentType = new AttachmentType();
+		attachmentType.setCode("1");
+		attachmentType.setLabel("Document client");
+		attachmentTypeRepository.save(attachmentType);
+
+		attachmentType = new AttachmentType();
+		attachmentType.setCode("2");
+		attachmentType.setLabel("Devis");
+		attachmentTypeRepository.save(attachmentType);
+
+		attachmentType = new AttachmentType();
+		attachmentType.setCode("3");
+		attachmentType.setLabel("Contrat");
+		attachmentTypeRepository.save(attachmentType);
+
+		attachmentType = new AttachmentType();
+		attachmentType.setCode("4");
+		attachmentType.setLabel("Commande");
+		attachmentTypeRepository.save(attachmentType);
+
+		attachmentType = new AttachmentType();
+		attachmentType.setCode("5");
+		attachmentType.setLabel("Facture");
+		attachmentTypeRepository.save(attachmentType);
 
 	}
 }

@@ -19,11 +19,13 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.jss.jssbackend.libs.search.model.IndexedField;
 import com.jss.jssbackend.modules.miscellaneous.model.City;
 import com.jss.jssbackend.modules.miscellaneous.model.Civility;
 import com.jss.jssbackend.modules.miscellaneous.model.Country;
 import com.jss.jssbackend.modules.miscellaneous.model.DeliveryService;
 import com.jss.jssbackend.modules.miscellaneous.model.Language;
+import com.jss.jssbackend.modules.miscellaneous.model.PaymentType;
 import com.jss.jssbackend.modules.profile.model.Employee;
 
 @Entity
@@ -32,29 +34,43 @@ public class Tiers implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
+	@IndexedField
 	private Integer id;
 
 	@ManyToOne
 	@JoinColumn(name = "id_tiers_type")
+	@IndexedField
 	private TiersType tiersType;
+
 	@Column(length = 60)
+	@IndexedField
 	private String denomination;
+
 	// TODO : waiting for Xcase experiment to evaluate if we get it dynamically from
 	// compatibility or keep it here
 	private Date firstBilling;
 	private Boolean isIndividual;
+
 	@JoinColumn(name = "id_civility")
+	@IndexedField
 	private Civility civility;
+
 	@Column(length = 20)
+	@IndexedField
 	private String firstname;
+
 	@Column(length = 20)
+	@IndexedField
 	private String lastname;
+
 	@ManyToOne
 	@JoinColumn(name = "id_tiers_category")
+	@IndexedField
 	private TiersCategory tiersCategory;
 
 	@ManyToOne
 	@JoinColumn(name = "id_commercial")
+	@IndexedField
 	private Employee salesEmployee;
 
 	@ManyToOne
@@ -77,12 +93,16 @@ public class Tiers implements Serializable {
 	private DeliveryService deliveryService;
 
 	@Column(length = 60, nullable = false)
+	@IndexedField
 	private String address;
+
 	@Column(length = 10)
+	@IndexedField
 	private String postalCode;
 
 	@ManyToOne
 	@JoinColumn(name = "id_city")
+	@IndexedField
 	private City city;
 
 	@ManyToOne
@@ -119,6 +139,21 @@ public class Tiers implements Serializable {
 	@OneToMany(targetEntity = TiersDocument.class, mappedBy = "tiers", cascade = CascadeType.ALL)
 	@JsonManagedReference
 	private List<TiersDocument> documents;
+
+	@ManyToOne
+	@JoinColumn(name = "id_payment_type")
+	@IndexedField
+	private PaymentType paymentType;
+
+	@Column(length = 40)
+	private String paymentIBAN;
+
+	@Column(nullable = false)
+	private Boolean isProvisionalPaymentMandatory;
+
+	@OneToMany(targetEntity = TiersAttachment.class, mappedBy = "tiers", cascade = CascadeType.ALL)
+	@JsonManagedReference
+	private List<TiersAttachment> tiersAttachments;
 
 	public Integer getId() {
 		return id;
@@ -350,6 +385,38 @@ public class Tiers implements Serializable {
 
 	public void setDocuments(List<TiersDocument> documents) {
 		this.documents = documents;
+	}
+
+	public PaymentType getPaymentType() {
+		return paymentType;
+	}
+
+	public void setPaymentType(PaymentType paymentType) {
+		this.paymentType = paymentType;
+	}
+
+	public String getPaymentIBAN() {
+		return paymentIBAN;
+	}
+
+	public void setPaymentIBAN(String paymentIBAN) {
+		this.paymentIBAN = paymentIBAN;
+	}
+
+	public Boolean getIsProvisionalPaymentMandatory() {
+		return isProvisionalPaymentMandatory;
+	}
+
+	public void setIsProvisionalPaymentMandatory(Boolean isProvisionalPaymentMandatory) {
+		this.isProvisionalPaymentMandatory = isProvisionalPaymentMandatory;
+	}
+
+	public List<TiersAttachment> getTiersAttachments() {
+		return tiersAttachments;
+	}
+
+	public void setTiersAttachments(List<TiersAttachment> tiersAttachments) {
+		this.tiersAttachments = tiersAttachments;
 	}
 
 }

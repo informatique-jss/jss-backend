@@ -1,22 +1,40 @@
-<div>
-  <mat-tab-group animationDuration="0ms" [selectedIndex]="2">
+<div [hidden]="!editMode && (tiers.id==undefined || tiers.id==null)">
+  <mat-tab-group animationDuration="0ms" [selectedIndex]="4">
     <mat-tab label="Principal">
-      <tiers-principal [tiers]="tiers" [editMode]="editMode" [eventsTiersLoaded]="eventsTiersLoaded.asObservable()">
+      <tiers-principal [tiers]="tiers" [editMode]="editMode">
       </tiers-principal>
     </mat-tab>
     <mat-tab label="Responsable(s)">Content 2</mat-tab>
     <mat-tab label="Gestion des pièces" *ngIf="isTiersTypeProspect()==false">
-      <document-management [tiers]="tiers" [editMode]="editMode" [eventsTiersLoaded]="eventsTiersLoaded.asObservable()">
+      <document-management [tiers]="tiers" [editMode]="editMode">
       </document-management>
     </mat-tab>
-    <mat-tab label="Réglement, facturation & relance">Content 3</mat-tab>
-    <mat-tab label="Documents">Content 3</mat-tab>
+    <mat-tab label="Réglement, facturation & relance">
+      <settlement-billing [tiers]="tiers" [editMode]="editMode"></settlement-billing>
+    </mat-tab>
+    <mat-tab label="Documents">
+      <tiers-attachments [tiers]="tiers" [editMode]="editMode">
+      </tiers-attachments>
+    </mat-tab>
     <mat-tab label="Suivi">Content 3</mat-tab>
   </mat-tab-group>
 </div>
-<button mat-fab color="warn" class="fab-button" *ngIf="editMode==true" (click)="saveTiers()">
+<button matTooltip="Sauvegarder" mat-fab color="warn" class="fab-button" *ngIf="editMode==true" (click)="saveTiers()">
   <mat-icon>save</mat-icon>
 </button>
-<button mat-fab color="accent" class="fab-button" *ngIf="editMode==false" (click)="editTiers()">
+<button matTooltip="Modifier le tiers" mat-fab color="accent" class="fab-button"
+  *ngIf="editMode==false && tiers.id!=undefined && tiers.id!=null" (click)="editTiers()">
   <mat-icon>edit</mat-icon>
+</button>
+<button matTooltip="Ajouter un tiers" mat-fab color="accent" class="fab-button"
+  *ngIf="editMode==false && (tiers.id==undefined || tiers.id==null)" (click)="createTiers()">
+  <mat-icon>add</mat-icon>
+</button>
+<button matTooltip="Rechercher un tiers" mat-fab color="accent" class="second-fab-button" *ngIf="editMode==false"
+  (click)="openSearch()">
+  <mat-icon>search</mat-icon>
+</button>
+<button matTooltip="Ajouter un tiers" mat-fab color="accent" class="second-fab-button"
+  *ngIf="editMode==false && tiers.id!=undefined && tiers.id!=null" (click)=" createTiers()">
+  <mat-icon>add</mat-icon>
 </button>

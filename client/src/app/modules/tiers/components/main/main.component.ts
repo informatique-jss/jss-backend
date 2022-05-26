@@ -1,18 +1,17 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { MatDialog } from '@angular/material/dialog';
-import { Observable, Subject, Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter, map, startWith, switchMap, tap } from 'rxjs/operators';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
 import { compareWithId } from 'src/app/libs/CompareHelper';
-import { SEPARATOR_KEY_CODES } from 'src/app/libs/Constants';
+import { COUNTRY_CODE_FRANCE, SEPARATOR_KEY_CODES } from 'src/app/libs/Constants';
 import { validateEmail, validateFrenchPhone, validateInternationalPhone, validateVat } from 'src/app/libs/CustomFormsValidatorsHelper';
 import { callNumber, prepareMail } from 'src/app/libs/MailHelper';
 import { City } from 'src/app/modules/miscellaneous/model/City';
 import { Country } from 'src/app/modules/miscellaneous/model/Country';
 import { DeliveryService } from 'src/app/modules/miscellaneous/model/DeliveryService';
-import { Language } from 'src/app/modules/miscellaneous/model/Language';
 import { CityService } from 'src/app/modules/miscellaneous/services/city.service';
 import { CivilityService } from 'src/app/modules/miscellaneous/services/civility.service';
 import { CountryService } from 'src/app/modules/miscellaneous/services/country.service';
@@ -23,32 +22,26 @@ import { Civility } from '../../../miscellaneous/model/Civility';
 import { LanguageService } from '../../../miscellaneous/services/language.service';
 import { Mail } from '../../model/Mail';
 import { Phone } from '../../model/Phone';
-import { Tiers } from '../../model/Tiers';
 import { TiersCategory } from '../../model/TiersCategory';
 import { TiersType } from '../../model/TiersType';
 import { SpecialOfferService } from '../../services/special-offer.service';
 import { TiersCategoryService } from '../../services/tiers.category.service';
-import { TiersService } from '../../services/tiers.service';
 import { TiersTypeService } from '../../services/tiers.type.service';
-import { SpecialOffer } from './../../model/SpecialOffer';
-import { SpecialOffersDialogComponent } from './../special-offers-dialog/special-offers-dialog.component';
+import { Language } from '../../../miscellaneous/model/Language';
+import { SpecialOffer } from '../../model/SpecialOffer';
+import { Tiers } from '../../model/Tiers';
+import { SpecialOffersDialogComponent } from '../special-offers-dialog/special-offers-dialog.component';
 
 @Component({
   selector: 'tiers-principal',
-  templateUrl: './principal.component.html',
-  styleUrls: ['./principal.component.css']
+  templateUrl: './main.component.html',
+  styleUrls: ['./main.component.css']
 })
 
 export class PrincipalComponent implements OnInit {
   matcher: CustomErrorStateMatcher = new CustomErrorStateMatcher();
-  @ViewChild('mailInput') mailInput: ElementRef<HTMLInputElement> | undefined;
-  @ViewChild('phoneInput') phoneInput: ElementRef<HTMLInputElement> | undefined;
-
   @Input() tiers: Tiers = {} as Tiers;
   @Input() editMode: boolean = false;
-
-  @Input() eventsTiersLoaded: Observable<void> | undefined;
-  private eventsTiersLoadedSubscription: Subscription | undefined;
 
   SEPARATOR_KEY_CODES = SEPARATOR_KEY_CODES;
 
@@ -91,33 +84,32 @@ export class PrincipalComponent implements OnInit {
 
   // TODO : reprendre les RG (notamment facturation / commande) lorsque les modules correspondants seront faits
 
-  ngOnDestroy() {
-    this.eventsTiersLoadedSubscription?.unsubscribe();
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes.tiers != undefined) {
+      if (this.tiers.language == undefined || this.tiers.language == null)
+        this.tiers.language = this.languages[0];
+      if (this.tiers.deliveryService == null || this.tiers.deliveryService == undefined)
+        this.tiers.deliveryService = this.deliveryServices[0];
+      if (this.tiers.country == null || this.tiers.country == undefined)
+        this.tiers.country = this.countries[0];
+      if (this.tiers.isIndividual == undefined || this.tiers.isIndividual == null)
+        this.tiers.isIndividual = false;
+      this.principalForm.markAllAsTouched();
+    }
   }
 
   ngOnInit() {
-    this.eventsTiersLoadedSubscription = this.eventsTiersLoaded?.subscribe(response => {
-      this.languageService.getLanguages().subscribe(response => {
-        this.languages = response;
-        if (this.tiers.language == undefined || this.tiers.language == null)
-          this.tiers.language = this.languages[0];
-      })
-      this.deliveryServiceService.getDeliveryServices().subscribe(response => {
-        this.deliveryServices = response;
-        this.tiers.deliveryService = this.deliveryServices[0];
-      })
-      this.countryService.getCountries().subscribe(response => {
-        this.countries = response;
-        if (this.tiers.country == null && this.countries.length > 0)
-          this.tiers.country = this.countries[0]
-      })
-
-      // Set default value
-      if (this.tiers.isIndividual == undefined || this.tiers.isIndividual == null)
-        this.tiers.isIndividual = false;
+    // Referential loading
+    this.languageService.getLanguages().subscribe(response => {
+      this.languages = response;
+    })
+    this.deliveryServiceService.getDeliveryServices().subscribe(response => {
+      this.deliveryServices = response;
+    })
+    this.countryService.getCountries().subscribe(response => {
+      this.countries = response;
     })
 
-    // Referential loading
     this.tiersTypeService.getTiersTypes().subscribe(response => {
       this.tiersTypes = response;
     });
@@ -264,9 +256,8 @@ export class PrincipalComponent implements OnInit {
   checkFieldFilledIfIsInFrance(fieldName: string): ValidationErrors | null {
     return (control: AbstractControl): ValidationErrors | null => {
       const root = control.root as FormGroup;
-
       const fieldValue = root.get(fieldName)?.value;
-      if (this.tiers.country != null && this.tiers.country.code == "FR" && (fieldValue == undefined || fieldValue == null || fieldValue.length == 0))
+      if (this.tiers.country != null && this.tiers.country.code == COUNTRY_CODE_FRANCE && (fieldValue == undefined || fieldValue == null || fieldValue.length == 0))
         return {
           notFilled: true
         };
@@ -333,6 +324,27 @@ export class PrincipalComponent implements OnInit {
     this.principalForm.get(fieldName)?.setValue(fieldValue);
   }
 
+  fillPostalCode(city: City) {
+    if (this.tiers.country == null || this.tiers.country == undefined)
+      this.tiers.country = city.country;
+
+    if (this.tiers.country.code == COUNTRY_CODE_FRANCE && city.postalCode != null)
+      this.tiers.postalCode = city.postalCode;
+  }
+
+  fillCity(postalCode: string) {
+    this.cityService.getCitiesFilteredByPostalCode(postalCode).subscribe(response => {
+      if (response != null && response != undefined && response.length == 1) {
+        let city = response[0];
+        if (this.tiers.country == null || this.tiers.country == undefined)
+          this.tiers.country = city.country;
+
+        this.tiers.city = city;
+      }
+    })
+
+  }
+
   addMail(event: MatChipInputEvent): void {
     const value = (event.value || '').trim();
     let mail: Mail = {} as Mail;
@@ -392,6 +404,7 @@ export class PrincipalComponent implements OnInit {
   compareWithId = compareWithId;
 
   getFormStatus(): boolean {
+    this.principalForm.markAllAsTouched();
     if (this.tiers.isIndividual == true) {
       this.tiers.denomination = null;
       this.tiers.intercommunityVat = null;
@@ -400,7 +413,6 @@ export class PrincipalComponent implements OnInit {
     if (this.tiers.isIndividual == false) {
       this.tiers.civility = null;
     }
-    console.log(this.principalForm);
     return this.principalForm.valid;
   }
 }

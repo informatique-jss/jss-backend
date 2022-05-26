@@ -1,3 +1,4 @@
+import { SearchService } from './../../search.service';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AppService } from 'src/app/app.service';
@@ -10,7 +11,9 @@ import { HabilitationsService } from 'src/app/habilitations.service';
 export class SidenavListComponent implements OnInit {
   logoCockpit: string = '/assets/images/jss_icon.png';
 
-  constructor(protected appService: AppService, protected router: Router, protected habilitationService: HabilitationsService) { }
+  constructor(protected appService: AppService, protected router: Router,
+    protected habilitationService: HabilitationsService,
+    protected searchService: SearchService) { }
 
   ngOnInit() {
   }
@@ -25,6 +28,10 @@ export class SidenavListComponent implements OnInit {
 
   canViewTiersModule() {
     return this.habilitationService.canViewTiersModule();
+  }
+
+  openSearch() {
+    this.searchService.openSearch();
   }
 
 }
