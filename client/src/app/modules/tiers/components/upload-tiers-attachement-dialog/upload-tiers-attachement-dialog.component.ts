@@ -5,6 +5,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MAX_SIZE_UPLOAD_FILES } from 'src/app/libs/Constants';
 import { AttachmentType } from '../../model/AttachmentType';
+import { ITiers } from '../../model/ITiers';
 import { Tiers } from '../../model/Tiers';
 import { AttachmentTypeService } from '../../services/attachment.type.service';
 import { UploadTiersAttachmentService } from '../../services/upload.tiers.attachment.service';
@@ -16,7 +17,7 @@ import { UploadTiersAttachmentService } from '../../services/upload.tiers.attach
 })
 export class UploadTiersAttachementDialogComponent implements OnInit {
 
-  tiers: Tiers = {} as Tiers;
+  tiers: ITiers = {} as ITiers;
   file: any = null;
   progress: number = 0;
   isSending = false;
@@ -78,26 +79,38 @@ export class UploadTiersAttachementDialogComponent implements OnInit {
   }
 
   uploadFile() {
-    if (this.attachmentType != null) {
-      this.isSending = true;
-      this.uploadTiersAttachmentService.uploadTiersAttachment(this.file, this.tiers, this.attachmentType, this.filename).subscribe(event => {
-        if (event.type === HttpEventType.UploadProgress && event.total != undefined) {
-          this.progress = Math.round(100 * event.loaded / event.total);
-        } else if (event instanceof HttpResponse) {
-          this.uploadTiersAttachementDialogRef.close(event.body);
-          this.isSending = false;
-        }
-      },
-        err => {
-          let sb = this.snackBar.open("Erreur lors de l'envoi du fichier", 'Fermer', {
+    if (this.attachmentType != null && this.filename != null && this.filename != "" && this.file != null) {
+      // Check if filename exists
+      this.uploadTiersAttachmentService.findAttachmentWithSameFilename(this.tiers, this.filename).subscribe(response => {
+        if (response != null && response != undefined && response.length > 0) {
+          let sb = this.snackBar.open("Nom de fichier déjà existant", 'Fermer', {
             duration: 60 * 1000
           });
           sb.onAction().subscribe(() => {
             sb.dismiss();
           });
-          this.uploadTiersAttachementDialogRef.close(null);
-          this.isSending = false;
-        });
+        } else if (this.attachmentType != null) {
+          this.isSending = true;
+          this.uploadTiersAttachmentService.uploadTiersAttachment(this.file, this.tiers, this.attachmentType, this.filename).subscribe(event => {
+            if (event.type === HttpEventType.UploadProgress && event.total != undefined) {
+              this.progress = Math.round(100 * event.loaded / event.total);
+            } else if (event instanceof HttpResponse) {
+              this.uploadTiersAttachementDialogRef.close(event.body);
+              this.isSending = false;
+            }
+          },
+            err => {
+              let sb = this.snackBar.open("Erreur lors de l'envoi du fichier", 'Fermer', {
+                duration: 60 * 1000
+              });
+              sb.onAction().subscribe(() => {
+                sb.dismiss();
+              });
+              this.uploadTiersAttachementDialogRef.close(null);
+              this.isSending = false;
+            });
+        }
+      })
     }
   }
 

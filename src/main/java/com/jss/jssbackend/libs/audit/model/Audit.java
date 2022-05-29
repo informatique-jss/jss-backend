@@ -1,4 +1,4 @@
-package com.jss.jssbackend.libs.audit;
+package com.jss.jssbackend.libs.audit.model;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -9,7 +9,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Index;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import com.jss.jssbackend.modules.profile.model.Employee;
 
 @Entity
 @Table(indexes = { @Index(name = "pk_audit", columnList = "id", unique = true),
@@ -38,7 +42,9 @@ public class Audit implements Serializable {
 
 	private Date datetime;
 
-	private String author;
+	@ManyToOne
+	@JoinColumn(name = "id_employee")
+	private Employee author;
 
 	public Integer getId() {
 		return id;
@@ -88,11 +94,11 @@ public class Audit implements Serializable {
 		this.datetime = datetime;
 	}
 
-	public String getAuthor() {
+	public Employee getAuthor() {
 		return author;
 	}
 
-	public void setAuthor(String author) {
+	public void setAuthor(Employee author) {
 		this.author = author;
 	}
 

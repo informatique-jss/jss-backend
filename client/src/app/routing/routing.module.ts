@@ -11,7 +11,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { TiersComponent } from '../modules/tiers/components/tiers/tiers.component';
 
 const routes: Routes = [
-  { path: 'tiers', component: TiersComponent },
   { path: '', redirectTo: '/tiers', pathMatch: 'full' }
 ];
 

@@ -2,7 +2,7 @@
   <div class="mat-accordion-container full-width">
     <fieldset [disabled]="editMode==false" class="fieldset-no-border">
       <mat-accordion>
-        <mat-expansion-panel expanded>
+        <mat-expansion-panel expanded *ngIf="instanceOfTiers(tiers)">
           <mat-expansion-panel-header>
             <mat-panel-title>
               Règlement
@@ -89,139 +89,10 @@
               </td>
             </tr>
           </table>
-          <table class="full-width">
-            <tr>
-              <td>
-                <h4>Destinataire de d'adressage</h4>
-                <mat-checkbox formControlName="billingRecipientTypeAffaire" class="checkbox-margin"
-                  [(ngModel)]="billingDocument.isRecipientAffaire">Affaire
-                </mat-checkbox>
-                <mat-checkbox formControlName="billingRecipientTypeClient" class="checkbox-margin"
-                  [(ngModel)]="billingDocument.isRecipientClient">Client
-                </mat-checkbox>
-              </td>
-              <td>
-                <h4>Type d'adressage</h4>
-                <mat-checkbox formControlName="billingMailingTypePaper" class="checkbox-margin"
-                  [(ngModel)]="billingDocument.isMailingPaper">Papier</mat-checkbox>
-                <button matTooltip="Modifier les adresses postales par défaut"
-                  *ngIf="billingDocument.isMailingPaper && (billingDocument.isRecipientAffaire || billingDocument.isRecipientClient)"
-                  mat-icon-button color="accent"
-                  (click)="overrideBillingAffaireAddress=true;overrideBillingClientAddress=true">
-                  <mat-icon>edit</mat-icon>
-                </button>
-                <mat-checkbox formControlName="billingMailingTypePdf" class="checkbox-margin"
-                  [(ngModel)]="billingDocument.isMailingPdf">PDF</mat-checkbox>
-                <button matTooltip="Modifier les adresses mail par défaut"
-                  *ngIf="billingDocument.isMailingPdf && (billingDocument.isRecipientAffaire || billingDocument.isRecipientClient)"
-                  mat-icon-button color="accent"
-                  (click)="overrideBillingAffaireMail=true;overrideBillingClientMail=true">
-                  <mat-icon>edit</mat-icon>
-                </button>
-              </td>
-            </tr>
-            <tr
-              *ngIf="billingDocument.isMailingPaper && billingDocument.isRecipientAffaire && overrideBillingAffaireAddress">
-              <td>
-                <mat-form-field class="full-width">
-                  <mat-label>Autres destinataires pour l'affaire</mat-label>
-                  <input matInput formControlName="billingAffaireRecipient"
-                    [(ngModel)]="billingDocument.affaireRecipient" autocomplete="do-not-autofill">
-                </mat-form-field>
-              </td>
-              <td colspan="2">
-                <mat-form-field class="full-width">
-                  <mat-label>Autres adresses pour l'affaire</mat-label>
-                  <input matInput formControlName="billingAffaireAddress" [(ngModel)]="billingDocument.affaireAddress"
-                    autocomplete="do-not-autofill">
-                </mat-form-field>
-              </td>
-              <td [hidden]="!editMode" align="end"><button mat-icon-button color="accent"
-                  (click)="overrideBillingAffaireAddress=false ; billingDocument.affaireRecipient='' ; billingDocument.affaireAddress=''">
-                  <mat-icon>close</mat-icon>
-                </button>
-              </td>
-            </tr>
-            <tr
-              *ngIf="billingDocument.isMailingPdf && billingDocument.isRecipientAffaire && overrideBillingAffaireMail">
-              <td colspan="3">
-                <mat-form-field class="full-width">
-                  <mat-label>Autres adresses mail pour l'affaire</mat-label>
-                  <mat-chip-list #chipListMails>
-                    <mat-chip *ngFor="let mail of billingDocument.mailsAffaire"
-                      (removed)="removeMailAffaire(mail,billingDocument)">
-                      {{mail.mail}}
-                      <button matChipRemove *ngIf="editMode">
-                        <mat-icon>cancel</mat-icon>
-                      </button>
-                      <mat-icon matChipRemove *ngIf="editMode==false" (click)="prepareMail(mail)">mail</mat-icon>
-                    </mat-chip>
-                    <input placeholder="Saisir un mail" #mailInput formControlName="billingMailsAffaire"
-                      [matChipInputFor]="chipListMails" [matChipInputSeparatorKeyCodes]="SEPARATOR_KEY_CODES"
-                      (matChipInputTokenEnd)="addMailAffaire($event,billingDocument,'billingMailsAffaire')">
-                    <button *ngIf="  !editMode" matSuffix mat-icon-button
-                      (click)="overrideBillingAffaireMail=false ; removeAllMailAffaire(billingDocument)">
-                      <mat-icon>close</mat-icon>
-                    </button>
-                  </mat-chip-list>
-                </mat-form-field>
-              </td>
-              <td [hidden]="  !editMode" align="end"><button mat-icon-button color="accent"
-                  (click)="overrideBillingAffaireMail=false ; removeAllMailAffaire(billingDocument)">
-                  <mat-icon>close</mat-icon>
-                </button>
-              </td>
-            </tr>
-            <tr
-              *ngIf="billingDocument.isMailingPaper && billingDocument.isRecipientClient && overrideBillingClientAddress">
-              <td>
-                <mat-form-field class="full-width">
-                  <mat-label>Autres destinataires pour le client</mat-label>
-                  <input matInput formControlName="billingClientRecipient" [(ngModel)]="billingDocument.clientRecipient"
-                    autocomplete="do-not-autofill">
-                </mat-form-field>
-              </td>
-              <td colspan="3">
-                <mat-form-field class="full-width">
-                  <mat-label>Autres adresses pour le client</mat-label>
-                  <input matInput formControlName="billingClientAddress" [(ngModel)]="billingDocument.clientAddress"
-                    autocomplete="do-not-autofill">
-                </mat-form-field>
-              </td>
-              <td [hidden]="  !editMode" align="end"><button mat-icon-button color="accent"
-                  (click)="overrideBillingClientAddress=false ; billingDocument.clientAddress='' ; billingDocument.clientRecipient=''">
-                  <mat-icon>close</mat-icon>
-                </button>
-              </td>
-            </tr>
-            <tr *ngIf="billingDocument.isMailingPdf && billingDocument.isRecipientClient && overrideBillingClientMail">
-              <td [hidden]="!overrideBillingClientMail || !billingDocument.isRecipientClient" colspan="3">
-                <mat-form-field class="full-width">
-                  <mat-label>Autres adresses mail pour le client</mat-label>
-                  <mat-chip-list #chipListMails>
-                    <mat-chip *ngFor="let mail of billingDocument.mailsClient"
-                      (removed)="removeMailClient(mail,billingDocument)">
-                      {{mail.mail}}
-                      <button matChipRemove *ngIf="editMode">
-                        <mat-icon>cancel</mat-icon>
-                      </button>
-                      <mat-icon matChipRemove *ngIf="editMode==false" (click)="prepareMail(mail)">mail</mat-icon>
-                    </mat-chip>
-                    <input placeholder="Saisir un mail" #mailInput formControlName="billingMailsClient"
-                      [matChipInputFor]="chipListMails" [matChipInputSeparatorKeyCodes]="SEPARATOR_KEY_CODES"
-                      (matChipInputTokenEnd)="addMailClient($event,billingDocument,'billingMailsClient')">
-                  </mat-chip-list>
-                </mat-form-field>
-              </td>
-              <td [hidden]="!editMode" align="end"><button mat-icon-button color="accent"
-                  (click)="overrideBillingClientMail=false ;removeAllMailClient(billingDocument)">
-                  <mat-icon>close</mat-icon>
-                </button>
-              </td>
-            </tr>
-          </table>
+          <addressing [editMode]="editMode" [document]="billingDocument "
+            [displayMailCC]="instanceOfResponsable(tiers)"></addressing>
         </mat-expansion-panel>
-        <mat-expansion-panel>
+        <mat-expansion-panel *ngIf="instanceOfTiers(tiers)">
           <mat-expansion-panel-header>
             <mat-panel-title>
               Relance
@@ -247,139 +118,9 @@
               </td>
             </tr>
           </table>
-          <table class="full-width">
-            <tr>
-              <td>
-                <h4>Destinataire de d'adressage</h4>
-                <mat-checkbox formControlName="dunningRecipientTypeAffaire" class="checkbox-margin"
-                  [(ngModel)]="dunningDocument.isRecipientAffaire">Affaire
-                </mat-checkbox>
-                <mat-checkbox formControlName="dunningRecipientTypeClient" class="checkbox-margin"
-                  [(ngModel)]="dunningDocument.isRecipientClient">Client
-                </mat-checkbox>
-              </td>
-              <td>
-                <h4>Type d'adressage</h4>
-                <mat-checkbox formControlName="dunningMailingTypePaper" class="checkbox-margin"
-                  [(ngModel)]="dunningDocument.isMailingPaper">Papier</mat-checkbox>
-                <button matTooltip="Modifier les adresses postales par défaut"
-                  *ngIf="dunningDocument.isMailingPaper && (dunningDocument.isRecipientAffaire || dunningDocument.isRecipientClient)"
-                  mat-icon-button color="accent"
-                  (click)="overrideDunningAffaireAddress=true;overrideDunningClientAddress=true">
-                  <mat-icon>edit</mat-icon>
-                </button>
-                <mat-checkbox formControlName="dunningMailingTypePdf" class="checkbox-margin"
-                  [(ngModel)]="dunningDocument.isMailingPdf">PDF</mat-checkbox>
-                <button matTooltip="Modifier les adresses mail par défaut"
-                  *ngIf="dunningDocument.isMailingPdf && (dunningDocument.isRecipientAffaire || dunningDocument.isRecipientClient)"
-                  mat-icon-button color="accent"
-                  (click)="overrideDunningAffaireMail=true;overrideDunningClientMail=true">
-                  <mat-icon>edit</mat-icon>
-                </button>
-              </td>
-            </tr>
-            <tr
-              *ngIf="dunningDocument.isMailingPaper && dunningDocument.isRecipientAffaire && overrideDunningAffaireAddress">
-              <td>
-                <mat-form-field class="full-width">
-                  <mat-label>Autres destinataires pour l'affaire</mat-label>
-                  <input matInput formControlName="dunningAffaireRecipient"
-                    [(ngModel)]="dunningDocument.affaireRecipient" autocomplete="do-not-autofill">
-                </mat-form-field>
-              </td>
-              <td colspan="2">
-                <mat-form-field class="full-width">
-                  <mat-label>Autres adresses pour l'affaire</mat-label>
-                  <input matInput formControlName="dunningAffaireAddress" [(ngModel)]="dunningDocument.affaireAddress"
-                    autocomplete="do-not-autofill">
-                </mat-form-field>
-              </td>
-              <td [hidden]="!editMode" align="end"><button mat-icon-button color="accent"
-                  (click)="overrideDunningAffaireAddress=false ; dunningDocument.affaireRecipient='' ; dunningDocument.affaireAddress=''">
-                  <mat-icon>close</mat-icon>
-                </button>
-              </td>
-            </tr>
-            <tr
-              *ngIf="dunningDocument.isMailingPdf && dunningDocument.isRecipientAffaire && overrideDunningAffaireMail">
-              <td colspan="3">
-                <mat-form-field class="full-width">
-                  <mat-label>Autres adresses mail pour l'affaire</mat-label>
-                  <mat-chip-list #chipListMails>
-                    <mat-chip *ngFor="let mail of dunningDocument.mailsAffaire"
-                      (removed)="removeMailAffaire(mail,dunningDocument)">
-                      {{mail.mail}}
-                      <button matChipRemove *ngIf="editMode">
-                        <mat-icon>cancel</mat-icon>
-                      </button>
-                      <mat-icon matChipRemove *ngIf="editMode==false" (click)="prepareMail(mail)">mail</mat-icon>
-                    </mat-chip>
-                    <input placeholder="Saisir un mail" #mailInput formControlName="dunningMailsAffaire"
-                      [matChipInputFor]="chipListMails" [matChipInputSeparatorKeyCodes]="SEPARATOR_KEY_CODES"
-                      (matChipInputTokenEnd)="addMailAffaire($event,dunningDocument,'dunningMailsAffaire')">
-                    <button *ngIf="  !editMode" matSuffix mat-icon-button
-                      (click)="overrideDunningAffaireMail=false ; removeAllMailAffaire(dunningDocument)">
-                      <mat-icon>close</mat-icon>
-                    </button>
-                  </mat-chip-list>
-                </mat-form-field>
-              </td>
-              <td [hidden]="  !editMode" align="end"><button mat-icon-button color="accent"
-                  (click)="overrideDunningAffaireMail=false ; removeAllMailAffaire(dunningDocument)">
-                  <mat-icon>close</mat-icon>
-                </button>
-              </td>
-            </tr>
-            <tr
-              *ngIf="dunningDocument.isMailingPaper && dunningDocument.isRecipientClient && overrideDunningClientAddress">
-              <td>
-                <mat-form-field class="full-width">
-                  <mat-label>Autres destinataires pour le client</mat-label>
-                  <input matInput formControlName="dunningClientRecipient" [(ngModel)]="dunningDocument.clientRecipient"
-                    autocomplete="do-not-autofill">
-                </mat-form-field>
-              </td>
-              <td colspan="3">
-                <mat-form-field class="full-width">
-                  <mat-label>Autres adresses pour le client</mat-label>
-                  <input matInput formControlName="dunningClientAddress" [(ngModel)]="dunningDocument.clientAddress"
-                    autocomplete="do-not-autofill">
-                </mat-form-field>
-              </td>
-              <td [hidden]="  !editMode" align="end"><button mat-icon-button color="accent"
-                  (click)="overrideDunningClientAddress=false ; dunningDocument.clientAddress='' ; dunningDocument.clientRecipient=''">
-                  <mat-icon>close</mat-icon>
-                </button>
-              </td>
-            </tr>
-            <tr *ngIf="dunningDocument.isMailingPdf && dunningDocument.isRecipientClient && overrideDunningClientMail">
-              <td [hidden]="!overrideDunningClientMail || !dunningDocument.isRecipientClient" colspan="3">
-                <mat-form-field class="full-width">
-                  <mat-label>Autres adresses mail pour le client</mat-label>
-                  <mat-chip-list #chipListMails>
-                    <mat-chip *ngFor="let mail of dunningDocument.mailsClient"
-                      (removed)="removeMailClient(mail,dunningDocument)">
-                      {{mail.mail}}
-                      <button matChipRemove *ngIf="editMode">
-                        <mat-icon>cancel</mat-icon>
-                      </button>
-                      <mat-icon matChipRemove *ngIf="editMode==false" (click)="prepareMail(mail)">mail</mat-icon>
-                    </mat-chip>
-                    <input placeholder="Saisir un mail" #mailInput formControlName="dunningMailsClient"
-                      [matChipInputFor]="chipListMails" [matChipInputSeparatorKeyCodes]="SEPARATOR_KEY_CODES"
-                      (matChipInputTokenEnd)="addMailClient($event,dunningDocument,'dunningMailsClient')">
-                  </mat-chip-list>
-                </mat-form-field>
-              </td>
-              <td [hidden]="!editMode" align="end"><button mat-icon-button color="accent"
-                  (click)="overrideDunningClientMail=false ;removeAllMailClient(dunningDocument)">
-                  <mat-icon>close</mat-icon>
-                </button>
-              </td>
-            </tr>
-          </table>
+          <addressing [editMode]="editMode" [document]="dunningDocument"></addressing>
         </mat-expansion-panel>
-        <mat-expansion-panel>
+        <mat-expansion-panel *ngIf="instanceOfTiers(tiers)">
           <mat-expansion-panel-header>
             <mat-panel-title>
               Remboursement
@@ -412,135 +153,8 @@
               </td>
             </tr>
           </table>
-          <table class="full-width">
-            <tr *ngIf="refundDocument.isRefundable">
-              <td>
-                <h4>Destinataire de d'adressage</h4>
-                <mat-checkbox formControlName="refundRecipientTypeAffaire" class="checkbox-margin"
-                  [(ngModel)]="refundDocument.isRecipientAffaire">Affaire
-                </mat-checkbox>
-                <mat-checkbox formControlName="refundRecipientTypeClient" class="checkbox-margin"
-                  [(ngModel)]="refundDocument.isRecipientClient">Client
-                </mat-checkbox>
-              </td>
-              <td>
-                <h4>Type d'adressage</h4>
-                <mat-checkbox formControlName="refundMailingTypePaper" class="checkbox-margin"
-                  [(ngModel)]="refundDocument.isMailingPaper">Papier</mat-checkbox>
-                <button matTooltip="Modifier les adresses postales par défaut"
-                  *ngIf="refundDocument.isMailingPaper && (refundDocument.isRecipientAffaire || refundDocument.isRecipientClient)"
-                  mat-icon-button color="accent"
-                  (click)="overrideRefundAffaireAddress=true;overrideRefundClientAddress=true">
-                  <mat-icon>edit</mat-icon>
-                </button>
-                <mat-checkbox formControlName="refundMailingTypePdf" class="checkbox-margin"
-                  [(ngModel)]="refundDocument.isMailingPdf">PDF</mat-checkbox>
-                <button matTooltip="Modifier les adresses mail par défaut"
-                  *ngIf="refundDocument.isMailingPdf && (refundDocument.isRecipientAffaire || refundDocument.isRecipientClient)"
-                  mat-icon-button color="accent" (click)="overrideRefundAffaireMail=true;overrideRefundClientMail=true">
-                  <mat-icon>edit</mat-icon>
-                </button>
-              </td>
-            </tr>
-            <tr
-              *ngIf="refundDocument.isMailingPaper && refundDocument.isRecipientAffaire && overrideRefundAffaireAddress">
-              <td>
-                <mat-form-field class="full-width">
-                  <mat-label>Autres destinataires pour l'affaire</mat-label>
-                  <input matInput formControlName="refundAffaireRecipient" [(ngModel)]="refundDocument.affaireRecipient"
-                    autocomplete="do-not-autofill">
-                </mat-form-field>
-              </td>
-              <td colspan="2">
-                <mat-form-field class="full-width">
-                  <mat-label>Autres adresses pour l'affaire</mat-label>
-                  <input matInput formControlName="refundAffaireAddress" [(ngModel)]="refundDocument.affaireAddress"
-                    autocomplete="do-not-autofill">
-                </mat-form-field>
-              </td>
-              <td [hidden]="!editMode" align="end"><button mat-icon-button color="accent"
-                  (click)="overrideRefundAffaireAddress=false ; refundDocument.affaireRecipient='' ; refundDocument.affaireAddress=''">
-                  <mat-icon>close</mat-icon>
-                </button>
-              </td>
-            </tr>
-            <tr *ngIf="refundDocument.isMailingPdf && refundDocument.isRecipientAffaire && overrideRefundAffaireMail">
-              <td colspan="3">
-                <mat-form-field class="full-width">
-                  <mat-label>Autres adresses mail pour l'affaire</mat-label>
-                  <mat-chip-list #chipListMails>
-                    <mat-chip *ngFor="let mail of refundDocument.mailsAffaire"
-                      (removed)="removeMailAffaire(mail,refundDocument)">
-                      {{mail.mail}}
-                      <button matChipRemove *ngIf="editMode">
-                        <mat-icon>cancel</mat-icon>
-                      </button>
-                      <mat-icon matChipRemove *ngIf="editMode==false" (click)="prepareMail(mail)">mail</mat-icon>
-                    </mat-chip>
-                    <input placeholder="Saisir un mail" #mailInput formControlName="refundMailsAffaire"
-                      [matChipInputFor]="chipListMails" [matChipInputSeparatorKeyCodes]="SEPARATOR_KEY_CODES"
-                      (matChipInputTokenEnd)="addMailAffaire($event,refundDocument,'refundMailsAffaire')">
-                    <button *ngIf="  !editMode" matSuffix mat-icon-button
-                      (click)="overrideRefundAffaireMail=false ; removeAllMailAffaire(refundDocument)">
-                      <mat-icon>close</mat-icon>
-                    </button>
-                  </mat-chip-list>
-                </mat-form-field>
-              </td>
-              <td [hidden]="  !editMode" align="end"><button mat-icon-button color="accent"
-                  (click)="overrideRefundAffaireMail=false ; removeAllMailAffaire(refundDocument)">
-                  <mat-icon>close</mat-icon>
-                </button>
-              </td>
-            </tr>
-            <tr
-              *ngIf="refundDocument.isMailingPaper && refundDocument.isRecipientClient && overrideRefundClientAddress">
-              <td>
-                <mat-form-field class="full-width">
-                  <mat-label>Autres destinataires pour le client</mat-label>
-                  <input matInput formControlName="refundClientRecipient" [(ngModel)]="refundDocument.clientRecipient"
-                    autocomplete="do-not-autofill">
-                </mat-form-field>
-              </td>
-              <td colspan="3">
-                <mat-form-field class="full-width">
-                  <mat-label>Autres adresses pour le client</mat-label>
-                  <input matInput formControlName="refundClientAddress" [(ngModel)]="refundDocument.clientAddress"
-                    autocomplete="do-not-autofill">
-                </mat-form-field>
-              </td>
-              <td [hidden]="  !editMode" align="end"><button mat-icon-button color="accent"
-                  (click)="overrideRefundClientAddress=false ; refundDocument.clientAddress='' ; refundDocument.clientRecipient=''">
-                  <mat-icon>close</mat-icon>
-                </button>
-              </td>
-            </tr>
-            <tr *ngIf="refundDocument.isMailingPdf && refundDocument.isRecipientClient && overrideRefundClientMail">
-              <td [hidden]="!overrideRefundClientMail || !refundDocument.isRecipientClient" colspan="3">
-                <mat-form-field class="full-width">
-                  <mat-label>Autres adresses mail pour le client</mat-label>
-                  <mat-chip-list #chipListMails>
-                    <mat-chip *ngFor="let mail of refundDocument.mailsClient"
-                      (removed)="removeMailClient(mail,refundDocument)">
-                      {{mail.mail}}
-                      <button matChipRemove *ngIf="editMode">
-                        <mat-icon>cancel</mat-icon>
-                      </button>
-                      <mat-icon matChipRemove *ngIf="editMode==false" (click)="prepareMail(mail)">mail</mat-icon>
-                    </mat-chip>
-                    <input placeholder="Saisir un mail" #mailInput formControlName="refundMailsClient"
-                      [matChipInputFor]="chipListMails" [matChipInputSeparatorKeyCodes]="SEPARATOR_KEY_CODES"
-                      (matChipInputTokenEnd)="addMailClient($event,refundDocument,'refundMailsClient')">
-                  </mat-chip-list>
-                </mat-form-field>
-              </td>
-              <td [hidden]="!editMode" align="end"><button mat-icon-button color="accent"
-                  (click)="overrideRefundClientMail=false ;removeAllMailClient(refundDocument)">
-                  <mat-icon>close</mat-icon>
-                </button>
-              </td>
-            </tr>
-          </table>
+          <addressing [editMode]="editMode" [document]="refundDocument" *ngIf="refundDocument.isRefundable">
+          </addressing>
         </mat-expansion-panel>
         <mat-expansion-panel>
           <mat-expansion-panel-header>
@@ -574,155 +188,53 @@
               </td>
             </tr>
           </table>
-          <table class="full-width">
-            <tr>
-              <td>
-                <h4>Type d'adressage</h4>
-                <mat-checkbox formControlName="billingClosureMailingTypePaper" class="checkbox-margin"
-                  [(ngModel)]="billingClosureDocument.isMailingPaper">Papier</mat-checkbox>
-                <button matTooltip="Modifier les adresses postales par défaut"
-                  *ngIf="billingClosureDocument.isMailingPaper && (billingClosureDocument.isRecipientAffaire || billingClosureDocument.isRecipientClient)"
-                  mat-icon-button color="accent" (click)="overrideBillingClosureClientAddress=true">
-                  <mat-icon>edit</mat-icon>
-                </button>
-                <mat-checkbox formControlName="billingClosureMailingTypePdf" class="checkbox-margin"
-                  [(ngModel)]="billingClosureDocument.isMailingPdf">PDF</mat-checkbox>
-                <button matTooltip="Modifier les adresses mail par défaut"
-                  *ngIf="billingClosureDocument.isMailingPdf && (billingClosureDocument.isRecipientAffaire || billingClosureDocument.isRecipientClient)"
-                  mat-icon-button color="accent" (click)="overrideBillingClosureClientMail=true">
-                  <mat-icon>edit</mat-icon>
-                </button>
-              </td>
-            </tr>
-            <tr
-              *ngIf="billingClosureDocument.isMailingPaper && billingClosureDocument.isRecipientClient && overrideBillingClosureClientAddress">
-              <td>
-                <mat-form-field class="full-width">
-                  <mat-label>Autres destinataires</mat-label>
-                  <input matInput formControlName="billingClosureClientRecipient"
-                    [(ngModel)]="billingClosureDocument.clientRecipient" autocomplete="do-not-autofill">
-                </mat-form-field>
-              </td>
-              <td colspan="2">
-                <mat-form-field class="full-width">
-                  <mat-label>Autres adresses</mat-label>
-                  <input matInput formControlName="billingClosureClientAddress"
-                    [(ngModel)]="billingClosureDocument.clientAddress" autocomplete="do-not-autofill">
-                </mat-form-field>
-              </td>
-              <td [hidden]="  !editMode" align="end"><button mat-icon-button color="accent"
-                  (click)="overrideBillingClosureClientAddress=false ; billingClosureDocument.clientAddress='' ; billingClosureDocument.clientRecipient=''">
-                  <mat-icon>close</mat-icon>
-                </button>
-              </td>
-            </tr>
-            <tr
-              *ngIf="billingClosureDocument.isMailingPdf && billingClosureDocument.isRecipientClient && overrideBillingClosureClientMail">
-              <td [hidden]="!overrideBillingClosureClientMail || !billingClosureDocument.isRecipientClient" colspan="3">
-                <mat-form-field class="full-width">
-                  <mat-label>Autres adresses mail pour le client</mat-label>
-                  <mat-chip-list #chipListMails>
-                    <mat-chip *ngFor="let mail of billingClosureDocument.mailsClient"
-                      (removed)="removeMailClient(mail,billingClosureDocument)">
-                      {{mail.mail}}
-                      <button matChipRemove *ngIf="editMode">
-                        <mat-icon>cancel</mat-icon>
-                      </button>
-                      <mat-icon matChipRemove *ngIf="editMode==false" (click)="prepareMail(mail)">mail</mat-icon>
-                    </mat-chip>
-                    <input placeholder="Saisir un mail" #mailInput formControlName="billingClosureMailsClient"
-                      [matChipInputFor]="chipListMails" [matChipInputSeparatorKeyCodes]="SEPARATOR_KEY_CODES"
-                      (matChipInputTokenEnd)="addMailClient($event,billingClosureDocument,'billingClosureMailsClient')">
-                  </mat-chip-list>
-                </mat-form-field>
-              </td>
-              <td [hidden]="!editMode" align="end"><button mat-icon-button color="accent"
-                  (click)="overrideBillingClosureClientMail=false ;removeAllMailClient(billingClosureDocument)">
-                  <mat-icon>close</mat-icon>
-                </button>
-              </td>
-            </tr>
-          </table>
+          <addressing [editMode]="editMode" [document]="billingClosureDocument" [hideConsignee]="true"
+            [displayMailCC]="instanceOfResponsable(tiers)"></addressing>
         </mat-expansion-panel>
-        <mat-expansion-panel>
+        <mat-expansion-panel *ngIf="instanceOfTiers(tiers)">
           <mat-expansion-panel-header>
             <mat-panel-title>
               Reçu de provision
             </mat-panel-title>
           </mat-expansion-panel-header>
+          <addressing [editMode]="editMode" [document]="provisionalReceiptDocument" [hideAdressing]="true"></addressing>
+        </mat-expansion-panel>
+        <mat-expansion-panel *ngIf="instanceOfResponsable(tiers)">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Divers
+            </mat-panel-title>
+          </mat-expansion-panel-header>
           <table class="full-width">
             <tr>
               <td>
-                <h4>Destinataire de d'adressage</h4>
-                <mat-checkbox formControlName="provisionalReceiptRecipientTypeAffaire" class="checkbox-margin"
-                  [(ngModel)]="provisionalReceiptDocument.isRecipientAffaire">Affaire
-                </mat-checkbox>
-                <mat-checkbox formControlName="provisionalReceiptRecipientTypeClient" class="checkbox-margin"
-                  [(ngModel)]="provisionalReceiptDocument.isRecipientClient">Client
-                </mat-checkbox>
-                <button matTooltip="Modifier les adresses mail par défaut"
-                  *ngIf="provisionalReceiptDocument.isMailingPdf &&  (provisionalReceiptDocument.isRecipientClient || provisionalReceiptDocument.isRecipientAffaire)"
-                  mat-icon-button color="accent"
-                  (click)="overrideProvisionalReceiptAffaireMail=true;overrideProvisionalReceiptClientMail=true">
-                  <mat-icon>edit</mat-icon>
-                </button>
-              </td>
-            </tr>
-            <tr
-              *ngIf="provisionalReceiptDocument.isMailingPdf && provisionalReceiptDocument.isRecipientAffaire && overrideProvisionalReceiptAffaireMail">
-              <td colspan="3">
                 <mat-form-field class="full-width">
-                  <mat-label>Autres adresses mail pour l'affaire</mat-label>
-                  <mat-chip-list #chipListMails>
-                    <mat-chip *ngFor="let mail of provisionalReceiptDocument.mailsAffaire"
-                      (removed)="removeMailAffaire(mail,provisionalReceiptDocument)">
-                      {{mail.mail}}
-                      <button matChipRemove *ngIf="editMode">
-                        <mat-icon>cancel</mat-icon>
-                      </button>
-                      <mat-icon matChipRemove *ngIf="editMode==false" (click)="prepareMail(mail)">mail</mat-icon>
-                    </mat-chip>
-                    <input placeholder="Saisir un mail" #mailInput formControlName="provisionalReceiptMailsAffaire"
-                      [matChipInputFor]="chipListMails" [matChipInputSeparatorKeyCodes]="SEPARATOR_KEY_CODES"
-                      (matChipInputTokenEnd)="addMailAffaire($event,provisionalReceiptDocument,'provisionalReceiptMailsAffaire')">
-                    <button *ngIf="  !editMode" matSuffix mat-icon-button
-                      (click)="overrideProvisionalReceiptAffaireMail=false ; removeAllMailAffaire(provisionalReceiptDocument)">
-                      <mat-icon>close</mat-icon>
-                    </button>
-                  </mat-chip-list>
+                  <mat-label>AR pour création d'une affaire</mat-label>
+                  <mat-select formControlName="mailsCreationAffaire" multiple [(ngModel)]="tiers.mailsCreationAffaire">
+                    <mat-option *ngFor="let responsable of getResponsables()" [value]=" responsable">
+                      {{responsable.firstname}}</mat-option>
+                  </mat-select>
                 </mat-form-field>
               </td>
-              <td [hidden]="  !editMode" align="end"><button mat-icon-button color="accent"
-                  (click)="overrideProvisionalReceiptAffaireMail=false ; removeAllMailAffaire(provisionalReceiptDocument)">
-                  <mat-icon>close</mat-icon>
-                </button>
-              </td>
-            </tr>
-            <tr
-              *ngIf="provisionalReceiptDocument.isMailingPdf && provisionalReceiptDocument.isRecipientClient && overrideProvisionalReceiptClientMail">
-              <td [hidden]="!overrideProvisionalReceiptClientMail || !provisionalReceiptDocument.isRecipientClient"
-                colspan="3">
+              <td>
                 <mat-form-field class="full-width">
-                  <mat-label>Autres adresses mail pour le client</mat-label>
-                  <mat-chip-list #chipListMails>
-                    <mat-chip *ngFor="let mail of provisionalReceiptDocument.mailsClient"
-                      (removed)="removeMailClient(mail,provisionalReceiptDocument)">
-                      {{mail.mail}}
-                      <button matChipRemove *ngIf="editMode">
-                        <mat-icon>cancel</mat-icon>
-                      </button>
-                      <mat-icon matChipRemove *ngIf="editMode==false" (click)="prepareMail(mail)">mail</mat-icon>
-                    </mat-chip>
-                    <input placeholder="Saisir un mail" #mailInput formControlName="provisionalReceiptMailsClient"
-                      [matChipInputFor]="chipListMails" [matChipInputSeparatorKeyCodes]="SEPARATOR_KEY_CODES"
-                      (matChipInputTokenEnd)="addMailClient($event,provisionalReceiptDocument,'provisionalReceiptMailsClient')">
-                  </mat-chip-list>
+                  <mat-label>AR d'une provision</mat-label>
+                  <mat-select formControlName="mailsProvisionningConfirmation" multiple
+                    [(ngModel)]="tiers.mailsProvisionningConfirmation">
+                    <mat-option *ngFor="let responsable of getResponsables()" [value]=" responsable">
+                      {{responsable.firstname}}</mat-option>
+                  </mat-select>
                 </mat-form-field>
               </td>
-              <td [hidden]="!editMode" align="end"><button mat-icon-button color="accent"
-                  (click)="overrideProvisionalReceiptClientMail=false ;removeAllMailClient(provisionalReceiptDocument)">
-                  <mat-icon>close</mat-icon>
-                </button>
+              <td>
+                <mat-form-field class="full-width">
+                  <mat-label>Pièce manquante pour une formalité</mat-label>
+                  <mat-select formControlName="mailsMissingItemFormality" multiple
+                    [(ngModel)]="tiers.mailsMissingItemFormality">
+                    <mat-option *ngFor="let responsable of getResponsables()" [value]=" responsable">
+                      {{responsable.firstname}}</mat-option>
+                  </mat-select>
+                </mat-form-field>
               </td>
             </tr>
           </table>

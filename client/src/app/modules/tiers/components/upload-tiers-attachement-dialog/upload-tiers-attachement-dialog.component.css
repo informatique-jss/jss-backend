@@ -44,9 +44,17 @@
   font-size: 20px;
   font-weight: 600;
   color: #38424c;
-  margin-top: 25px;
+  margin-top: 20px;
 }
 
 .send-button {
   margin-top: 20px;
+}
+
+.max-size {
+  padding-top: 20px
+}
+
+.mat-list-item-content {
+  margin-left: 0px !important;
 }

@@ -1,6 +1,7 @@
 import { COMMA, ENTER } from "@angular/cdk/keycodes";
 
 export const SEPARATOR_KEY_CODES: number[] = [ENTER, COMMA];
+export const PROSPECT_TYPE_CODE = 'PROSPECT';
 export const SEARCH_KEY_CODE: string = "F4";
 export const PUBLICATION_TIERS_DOCUMENT_TYPE_CODE = "1";
 export const CFE_TIERS_DOCUMENT_TYPE_CODE = "2";
@@ -15,3 +16,6 @@ export const COUNTRY_CODE_FRANCE = 'FR';
 export const PAYMENT_TYPE_PRELEVEMENT = "PRELEVEMENT";
 export const REFUND_TYPE_VIREMENT = "VIREMENT";
 export const MAX_SIZE_UPLOAD_FILES = 5242880;
+export const JSS_SUSCRIPTION_TYPE_CODE_PAPER = "PAPER"
+export const JSS_SUSCRIPTION_TYPE_CODE_WEB = "WEB"
+export const SUSCRIPTION_TYPE_CODE_PERIODE_12M = "12"

@@ -17,7 +17,8 @@ import com.jss.jssbackend.modules.miscellaneous.model.UploadedFile;
 
 @Entity
 @Table(indexes = { @Index(name = "pk_tiers_attachment", columnList = "id", unique = true),
-		@Index(name = "idx_attachment_tiers", columnList = "id_tiers") })
+		@Index(name = "idx_tiers_attachment", columnList = "id_tiers"),
+		@Index(name = "idx_responsable_attachment", columnList = "id_responsable") })
 public class TiersAttachment implements Serializable {
 
 	@Id
@@ -26,8 +27,13 @@ public class TiersAttachment implements Serializable {
 
 	@ManyToOne
 	@JoinColumn(name = "id_tiers")
-	@JsonBackReference
+	@JsonBackReference("tiers")
 	private Tiers tiers;
+
+	@ManyToOne
+	@JoinColumn(name = "id_responsable")
+	@JsonBackReference("responsable")
+	private Responsable responsable;
 
 	@ManyToOne
 	@JoinColumn(name = "id_attachment_type")
@@ -51,6 +57,14 @@ public class TiersAttachment implements Serializable {
 
 	public void setTiers(Tiers tiers) {
 		this.tiers = tiers;
+	}
+
+	public Responsable getResponsable() {
+		return responsable;
+	}
+
+	public void setResponsable(Responsable responsable) {
+		this.responsable = responsable;
 	}
 
 	public AttachmentType getAttachmentType() {

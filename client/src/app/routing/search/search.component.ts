@@ -8,6 +8,7 @@ import { I } from '@angular/cdk/keycodes';
 import { EntityType } from './EntityType';
 
 export const TIERS_ENTITY_TYPE: EntityType = { entityType: 'Tiers', tabName: 'Tiers', entryPoint: 'tiers' };
+export const RESPONSABLE_ENTITY_TYPE: EntityType = { entityType: 'Responsable', tabName: 'Responsable', entryPoint: 'tiers/responsable' };
 
 @Component({
   selector: 'app-search',
@@ -23,7 +24,8 @@ export class SearchComponent implements OnInit {
     private router: Router) { }
 
   TIERS_ENTITY_TYPE = TIERS_ENTITY_TYPE;
-  entityTypes: EntityType[] = [TIERS_ENTITY_TYPE];
+  RESPONSABLE_ENTITY_TYPE = RESPONSABLE_ENTITY_TYPE;
+  entityTypes: EntityType[] = [TIERS_ENTITY_TYPE, RESPONSABLE_ENTITY_TYPE];
   selectedTabIndex: number = 0;
   userSelectedModule: EntityType | null = null;
 
@@ -72,8 +74,8 @@ export class SearchComponent implements OnInit {
   }
 
   generateTabLabel() {
-    let tabName = "";
     this.entityTypes.forEach(entityType => {
+      let tabName = "";
       tabName += entityType.tabName;
       if (this.foundEntities != null && this.foundEntities != undefined) {
         let entityNumber = 0;

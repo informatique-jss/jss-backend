@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.jss.jssbackend.libs.audit.model.Audit;
+import com.jss.jssbackend.libs.audit.repository.AuditRepository;
 import com.jss.jssbackend.libs.search.model.IndexEntity;
 import com.jss.jssbackend.libs.search.repository.IndexEntityRepository;
 
@@ -49,11 +51,12 @@ public class AuditEntityInterceptor extends EmptyInterceptor {
                 Object oldField = previousState[i];
                 if (oldField != null && WRAPPER_TYPES.contains(oldField.getClass())) {
                     Object newField = currentState[i];
+                    // TODO : not saved if null value to not null value
                     if (newField != null && oldField == null
                             || newField == null && oldField != null
                             || (newField != null && !newField.equals(oldField))) {
                         Audit audit = new Audit();
-                        audit.setAuthor("toto"); // TODO : change it when AD connected
+                        audit.setAuthor(null); // TODO : change it when AD connected
                         audit.setDatetime(new Date());
                         audit.setEntity(entity.getClass().getSimpleName());
                         audit.setEntityId((Integer) id);

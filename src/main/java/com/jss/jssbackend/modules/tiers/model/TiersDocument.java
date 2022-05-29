@@ -9,14 +9,19 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
+@Table(indexes = { @Index(name = "pk_tiers_document", columnList = "id", unique = true),
+		@Index(name = "idx_tiers_document", columnList = "id_tiers"),
+		@Index(name = "idx_responsable_document", columnList = "id_responsable") })
 public class TiersDocument implements Serializable {
 
 	@Id
@@ -25,8 +30,13 @@ public class TiersDocument implements Serializable {
 
 	@ManyToOne
 	@JoinColumn(name = "id_tiers")
-	@JsonBackReference
+	@JsonBackReference("tiers")
 	private Tiers tiers;
+
+	@ManyToOne
+	@JoinColumn(name = "id_responsable")
+	@JsonBackReference("responsable")
+	private Responsable responsable;
 
 	@ManyToOne
 	@JoinColumn(name = "id_tiers_document_type")
@@ -57,9 +67,17 @@ public class TiersDocument implements Serializable {
 	@JoinTable(name = "asso_tiers_document_mail_client", joinColumns = @JoinColumn(name = "id_tiers_document"), inverseJoinColumns = @JoinColumn(name = "id_mail"))
 	private List<Mail> mailsClient;
 
+	@ManyToMany
+	@JoinTable(name = "asso_tiers_document_mail_cc_responsable_client", joinColumns = @JoinColumn(name = "id_tiers_document"), inverseJoinColumns = @JoinColumn(name = "id_responsable"))
+	private List<Mail> mailsCCResponsableClient;
+
 	@ManyToMany(cascade = CascadeType.ALL)
-	@JoinTable(name = "asso_tiers_document_mail_affaire", joinColumns = @JoinColumn(name = "id_tiers_document"), inverseJoinColumns = @JoinColumn(name = "id_mail"))
+	@JoinTable(name = "asso_tiers_document_mail_cc_responsable_client", joinColumns = @JoinColumn(name = "id_tiers_document"), inverseJoinColumns = @JoinColumn(name = "id_mail"))
 	private List<Mail> mailsAffaire;
+
+	@ManyToMany
+	@JoinTable(name = "asso_tiers_document_mail_cc_responsable_affaire", joinColumns = @JoinColumn(name = "id_tiers_document"), inverseJoinColumns = @JoinColumn(name = "id_responsable"))
+	private List<Mail> mailsCCResponsableAffaire;
 
 	private Boolean isResponsableOnBilling;
 	private Boolean isCommandNumberMandatory;

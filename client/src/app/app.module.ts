@@ -17,13 +17,14 @@ import { HeaderComponent } from './routing/header/header.component';
 import { RoutingModule } from './routing/routing.module';
 import { SidenavListComponent } from './routing/sidenav-list/sidenav-list.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
-
+import { MatSortModule } from '@angular/material/sort';
+import { MatTableModule } from '@angular/material/table';
 
 @NgModule({
   declarations: [
     AppComponent,
     SidenavListComponent,
-    HeaderComponent
+    HeaderComponent,
   ],
   imports: [
     // Core modules
@@ -44,6 +45,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatSidenavModule,
     MatSnackBarModule,
     MatTooltipModule,
+    MatSortModule,
+    MatTableModule,
     // App modules
     TiersModule
   ],

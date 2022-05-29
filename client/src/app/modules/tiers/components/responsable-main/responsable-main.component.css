@@ -1,0 +1,39 @@
+table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+td {
+  padding-right: 8px;
+}
+
+.radio-group-column {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.row-field-container {
+  flex-direction: row;
+  display: flex;
+}
+
+.mini-fab-add {
+  margin: 5px
+}
+
+.responsable-tabs {
+  margin-top: 20px;
+}
+
+.selected-mat-row {
+  background-color: #6B9CBF;
+}
+
+.selected-mat-row:hover {
+  background-color: #6B9CBF;
+}
+
+.checkbox-margin {
+  margin: 0 12px;
+}

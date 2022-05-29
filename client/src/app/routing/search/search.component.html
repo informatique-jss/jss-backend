@@ -23,7 +23,22 @@
                   <mat-card-title-group>
                     <mat-card-title>{{entity.text.denomination}} {{entity.text.firstname}} {{entity.text.lastname}}
                       ({{entity.text.id}})</mat-card-title>
-                    <mat-card-subtitle>{{entity.text.salesEmployee.firstname}} {{entity.text.salesEmployee.lastname}} -
+                    <mat-card-subtitle>{{entity.text.salesEmployee.firstname}} {{entity.text.salesEmployee.lastname}}
+                      -
+                      {{entity.text.address}} {{entity.text.postalCode}} {{entity.text.city.label}}
+                    </mat-card-subtitle>
+                    <mat-icon class="mat-card-icon">group</mat-icon>
+                  </mat-card-title-group>
+                </mat-card>
+              </mat-tab>
+              <mat-tab [label]="getTabLabel(RESPONSABLE_ENTITY_TYPE)">
+                <mat-card class="pointer" *ngFor="let entity of getEntitiesForTab(RESPONSABLE_ENTITY_TYPE)"
+                  (click)="openEntity(entity)">
+                  <mat-card-title-group>
+                    <mat-card-title>{{entity.text.firstname}} {{entity.text.lastname}}
+                      ({{entity.text.id}}, Tiers {{entity.text.tiers.id}})</mat-card-title>
+                    <mat-card-subtitle>{{entity.text.salesEmployee.firstname}} {{entity.text.salesEmployee.lastname}}
+                      -
                       {{entity.text.address}} {{entity.text.postalCode}} {{entity.text.city.label}}
                     </mat-card-subtitle>
                     <mat-icon class="mat-card-icon">group</mat-icon>

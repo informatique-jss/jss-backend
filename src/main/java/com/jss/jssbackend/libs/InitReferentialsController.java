@@ -3,16 +3,28 @@ package com.jss.jssbackend.libs;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.jss.jssbackend.libs.audit.repository.AuditRepository;
 import com.jss.jssbackend.libs.search.repository.IndexEntityRepository;
+import com.jss.jssbackend.modules.miscellaneous.model.City;
 import com.jss.jssbackend.modules.miscellaneous.model.Civility;
+import com.jss.jssbackend.modules.miscellaneous.model.Country;
 import com.jss.jssbackend.modules.miscellaneous.model.DeliveryService;
+import com.jss.jssbackend.modules.miscellaneous.model.Department;
+import com.jss.jssbackend.modules.miscellaneous.model.Gift;
 import com.jss.jssbackend.modules.miscellaneous.model.Language;
 import com.jss.jssbackend.modules.miscellaneous.model.PaymentType;
+import com.jss.jssbackend.modules.miscellaneous.model.Region;
 import com.jss.jssbackend.modules.miscellaneous.model.VatRate;
+import com.jss.jssbackend.modules.miscellaneous.repository.CityRepository;
 import com.jss.jssbackend.modules.miscellaneous.repository.CivilityRepository;
+import com.jss.jssbackend.modules.miscellaneous.repository.CountryRepository;
 import com.jss.jssbackend.modules.miscellaneous.repository.DeliveryServiceRepository;
+import com.jss.jssbackend.modules.miscellaneous.repository.DepartmentRepository;
+import com.jss.jssbackend.modules.miscellaneous.repository.GiftRepository;
 import com.jss.jssbackend.modules.miscellaneous.repository.LanguageRepository;
 import com.jss.jssbackend.modules.miscellaneous.repository.PaymentTypeRepository;
+import com.jss.jssbackend.modules.miscellaneous.repository.RegionRepository;
+import com.jss.jssbackend.modules.miscellaneous.repository.UploadedFileRepository;
 import com.jss.jssbackend.modules.miscellaneous.repository.VatRateRepository;
 import com.jss.jssbackend.modules.profile.model.Employee;
 import com.jss.jssbackend.modules.profile.model.Team;
@@ -24,13 +36,16 @@ import com.jss.jssbackend.modules.tiers.model.BillingClosureType;
 import com.jss.jssbackend.modules.tiers.model.BillingItem;
 import com.jss.jssbackend.modules.tiers.model.BillingLabelType;
 import com.jss.jssbackend.modules.tiers.model.BillingType;
+import com.jss.jssbackend.modules.tiers.model.JssSubscriptionType;
 import com.jss.jssbackend.modules.tiers.model.Mail;
 import com.jss.jssbackend.modules.tiers.model.PaymentDeadlineType;
 import com.jss.jssbackend.modules.tiers.model.Phone;
 import com.jss.jssbackend.modules.tiers.model.RefundType;
 import com.jss.jssbackend.modules.tiers.model.SpecialOffer;
+import com.jss.jssbackend.modules.tiers.model.SubscriptionPeriodType;
 import com.jss.jssbackend.modules.tiers.model.TiersCategory;
 import com.jss.jssbackend.modules.tiers.model.TiersDocumentType;
+import com.jss.jssbackend.modules.tiers.model.TiersFollowupType;
 import com.jss.jssbackend.modules.tiers.model.TiersType;
 import com.jss.jssbackend.modules.tiers.repository.AttachmentTypeRepository;
 import com.jss.jssbackend.modules.tiers.repository.BillingClosureRecipientTypeRepository;
@@ -38,14 +53,19 @@ import com.jss.jssbackend.modules.tiers.repository.BillingClosureTypeRepository;
 import com.jss.jssbackend.modules.tiers.repository.BillingItemRepository;
 import com.jss.jssbackend.modules.tiers.repository.BillingLabelTypeRepository;
 import com.jss.jssbackend.modules.tiers.repository.BillingTypeRepository;
+import com.jss.jssbackend.modules.tiers.repository.JssSubscriptionRepository;
+import com.jss.jssbackend.modules.tiers.repository.JssSubscriptionTypeRepository;
 import com.jss.jssbackend.modules.tiers.repository.MailRepository;
 import com.jss.jssbackend.modules.tiers.repository.PaymentDeadlineTypeRepository;
 import com.jss.jssbackend.modules.tiers.repository.PhoneRepository;
 import com.jss.jssbackend.modules.tiers.repository.RefundTypeRepository;
+import com.jss.jssbackend.modules.tiers.repository.ResponsableRepository;
 import com.jss.jssbackend.modules.tiers.repository.SpecialOfferRepository;
+import com.jss.jssbackend.modules.tiers.repository.SubscriptionPeriodTypeRepository;
 import com.jss.jssbackend.modules.tiers.repository.TiersCategoryRepository;
 import com.jss.jssbackend.modules.tiers.repository.TiersDocumentRepository;
 import com.jss.jssbackend.modules.tiers.repository.TiersDocumentTypeRepository;
+import com.jss.jssbackend.modules.tiers.repository.TiersFollowupTypeRepository;
 import com.jss.jssbackend.modules.tiers.repository.TiersRepository;
 import com.jss.jssbackend.modules.tiers.repository.TiersTypeRepository;
 
@@ -139,10 +159,78 @@ public class InitReferentialsController {
 	@Autowired
 	AttachmentTypeRepository attachmentTypeRepository;
 
+	@Autowired
+	AuditRepository auditRepository;
+
+	@Autowired
+	UploadedFileRepository uploadedFileRepository;
+
+	@Autowired
+	TiersFollowupTypeRepository tiersFollowupTypeRepository;
+
+	@Autowired
+	GiftRepository giftRepository;
+
+	@Autowired
+	ResponsableRepository responsableRepository;
+
+	@Autowired
+	CityRepository cityRepository;
+
+	@Autowired
+	CountryRepository countryRepository;
+
+	@Autowired
+	RegionRepository regionRepository;
+
+	@Autowired
+	DepartmentRepository departmentRepository;
+
+	@Autowired
+	JssSubscriptionTypeRepository jssSubscriptionTypeRepository;
+
+	@Autowired
+	JssSubscriptionRepository jssSubscriptionRepository;
+
+	@Autowired
+	SubscriptionPeriodTypeRepository subscriptionPeriodTypeRepository;
+
 	@GetMapping(inputEntryPoint + "/create")
 	public void create() {
 		tiersRepository.deleteAll();
 		indexEntityRepository.deleteAll();
+		auditRepository.deleteAll();
+		uploadedFileRepository.deleteAll();
+		responsableRepository.deleteAll();
+
+		cityRepository.deleteAll();
+		departmentRepository.deleteAll();
+		regionRepository.deleteAll();
+		countryRepository.deleteAll();
+
+		Country country = new Country();
+		country.setCode("FR");
+		country.setLabel("France");
+		countryRepository.save(country);
+
+		Region region = new Region();
+		region.setCode("IDF");
+		region.setLabel("Ile de france");
+		regionRepository.save(region);
+
+		Department departement = new Department();
+		departement.setCode("75");
+		departement.setLabel("Paris");
+		departmentRepository.save(departement);
+
+		City city = new City();
+		city.setCountry(country);
+		city.setDepartment(departement);
+		city.setLabel("Paris 13");
+		city.setLocality("Paris 13");
+		city.setPostalCode("75013");
+		city.setValidated(true);
+		cityRepository.save(city);
 
 		deliveryServiceRepository.deleteAll();
 		DeliveryService deliveryService = new DeliveryService();
@@ -441,5 +529,60 @@ public class InitReferentialsController {
 		attachmentType.setLabel("Facture");
 		attachmentTypeRepository.save(attachmentType);
 
+		tiersFollowupTypeRepository.deleteAll();
+		TiersFollowupType tiersFollowupType = new TiersFollowupType();
+		tiersFollowupType.setCode("VISITE");
+		tiersFollowupType.setLabel("Visite");
+		tiersFollowupTypeRepository.save(tiersFollowupType);
+
+		tiersFollowupType = new TiersFollowupType();
+		tiersFollowupType.setCode("ENVOI_CADEAU");
+		tiersFollowupType.setLabel("Envoi d'un cadeau");
+		tiersFollowupTypeRepository.save(tiersFollowupType);
+
+		tiersFollowupType = new TiersFollowupType();
+		tiersFollowupType.setCode("APPEL");
+		tiersFollowupType.setLabel("Appel");
+		tiersFollowupTypeRepository.save(tiersFollowupType);
+
+		giftRepository.deleteAll();
+		Gift gift = new Gift();
+		gift.setCode("CHAMPAGNE");
+		gift.setLabel("Champagne");
+		giftRepository.save(gift);
+
+		gift = new Gift();
+		gift.setCode("FOIE GRAS");
+		gift.setLabel("Foie gras");
+		giftRepository.save(gift);
+
+		jssSubscriptionRepository.deleteAll();
+		jssSubscriptionTypeRepository.deleteAll();
+
+		JssSubscriptionType jssSubscriptionType = new JssSubscriptionType();
+		jssSubscriptionType.setCode("WEB");
+		jssSubscriptionType.setLabel("Web");
+		jssSubscriptionTypeRepository.save(jssSubscriptionType);
+
+		jssSubscriptionType = new JssSubscriptionType();
+		jssSubscriptionType.setCode("PAPER");
+		jssSubscriptionType.setLabel("Papier");
+		jssSubscriptionTypeRepository.save(jssSubscriptionType);
+
+		subscriptionPeriodTypeRepository.deleteAll();
+		SubscriptionPeriodType subscriptionPeriodType = new SubscriptionPeriodType();
+		subscriptionPeriodType.setCode("3");
+		subscriptionPeriodType.setLabel("3 mois");
+		subscriptionPeriodTypeRepository.save(subscriptionPeriodType);
+
+		subscriptionPeriodType = new SubscriptionPeriodType();
+		subscriptionPeriodType.setCode("6");
+		subscriptionPeriodType.setLabel("6 mois");
+		subscriptionPeriodTypeRepository.save(subscriptionPeriodType);
+
+		subscriptionPeriodType = new SubscriptionPeriodType();
+		subscriptionPeriodType.setCode("12");
+		subscriptionPeriodType.setLabel("12 mois");
+		subscriptionPeriodTypeRepository.save(subscriptionPeriodType);
 	}
 }

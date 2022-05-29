@@ -83,3 +83,7 @@ mat-nav-list a:hover,
   color: #ffffff !important;
   background: #44546A !important;
 }
+
+.mat-list-item-content {
+  margin-left: 10px !important;
+}

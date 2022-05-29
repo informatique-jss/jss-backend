@@ -1,18 +1,20 @@
 import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Subject } from 'rxjs';
+import { ActivatedRoute, Router, UrlSegment } from '@angular/router';
 import { AppService } from 'src/app/app.service';
 import { isTiersTypeProspect } from 'src/app/libs/CompareHelper';
 import { TIERS_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { SearchService } from 'src/app/search.service';
+import { ITiers } from '../../model/ITiers';
+import { Responsable } from '../../model/Responsable';
 import { Tiers } from '../../model/Tiers';
 import { TiersDocument } from '../../model/TiersDocument';
 import { TiersDocumentType } from '../../model/TiersDocumentType';
 import { TiersService } from '../../services/tiers.service';
 import { DocumentManagementComponent } from '../document-management/document-management.component';
-import { PrincipalComponent } from '../main/main.component';
+import { ResponsableMainComponent } from '../responsable-main/responsable-main.component';
 import { SettlementBillingComponent } from '../settlement-billing/settlement-billing.component';
+import { PrincipalComponent } from '../tiers-main/tiers-main.component';
 
 @Component({
   selector: 'app-tiers',
@@ -26,9 +28,16 @@ export class TiersComponent implements OnInit {
   editMode: boolean = false;
   createMode: boolean = false;
 
+  TIERS_ENTITY_TYPE = TIERS_ENTITY_TYPE;
+
+  selectedTabIndex = 0;
+
+  @ViewChild('tabs', { static: false }) tabs: any;
+
   @ViewChild(PrincipalComponent) principalFormComponent: PrincipalComponent | undefined;
   @ViewChild(DocumentManagementComponent) documentManagementFormComponent: DocumentManagementComponent | undefined;
   @ViewChild(SettlementBillingComponent) documentSettlementBillingComponent: SettlementBillingComponent | undefined;
+  @ViewChild(ResponsableMainComponent) responsableMainComponent: ResponsableMainComponent | undefined;
 
   constructor(private appService: AppService,
     private tiersService: TiersService,
@@ -41,14 +50,28 @@ export class TiersComponent implements OnInit {
     this.appService.changeHeaderTitle("Tiers / Responsables");
 
     let idTiers: number = this.activatedRoute.snapshot.params.id;
+    let url: UrlSegment[] = this.activatedRoute.snapshot.url;
 
-    if (idTiers != null && idTiers != undefined) {
+    // Load by responsable
+    if (url != undefined && url != null && url[0].path == "tiers" && url[1].path == "responsable") {
+      this.tiersService.getTiersByResponsable(idTiers).subscribe(response => {
+        this.tiers = response;
+        this.tiersService.setCurrentViewedTiers(this.tiers);
+        this.appService.changeHeaderTitle(this.tiers.denomination != null ? this.tiers.denomination : "");
+        this.toggleTabs();
+        this.selectedTabIndex = 1;
+        this.responsableMainComponent?.setSelectedResponsableId(idTiers);
+      })
+      // Load by tiers
+    } else if (idTiers != null && idTiers != undefined) {
       this.tiersService.getTiers(idTiers).subscribe(response => {
         this.tiers = response;
+        this.tiersService.setCurrentViewedTiers(this.tiers);
         this.appService.changeHeaderTitle(this.tiers.denomination != null ? this.tiers.denomination : "");
+        this.toggleTabs();
       })
     } else if (this.createMode == false) {
-      // Search for Tiers
+      // Blank page
       this.appService.changeHeaderTitle("Tiers / Responsables");
     }
   }
@@ -57,7 +80,13 @@ export class TiersComponent implements OnInit {
     return isTiersTypeProspect(this.tiers);
   }
 
+  toggleTabs() {
+    if (this.tabs != undefined)
+      this.tabs.realignInkBar();
+  }
+
   saveTiers() {
+    console.log(this.tiers);
     if (this.getFormsStatus())
       this.tiersService.addOrUpdateTiers(this.tiers).subscribe(response => {
         this.tiers = response;
@@ -100,14 +129,16 @@ export class TiersComponent implements OnInit {
     this.createMode = true;
     this.editMode = true;
     this.tiers = {} as Tiers;
+    this.tiersService.setCurrentViewedTiers(this.tiers);
     this.appService.changeHeaderTitle("Nouveau Tiers / Responsable");
+    this.toggleTabs();
   }
 
   openSearch() {
     this.searchService.openSearchOnModule(TIERS_ENTITY_TYPE);
   }
 
-  static getDocument(documentCode: string, tiers: Tiers, tiersDocumentTypes: TiersDocumentType[]) {
+  static getDocument(documentCode: string, tiers: ITiers, tiersDocumentTypes: TiersDocumentType[]) {
     // Tiers not loaded
     if (tiers == null || TiersComponent.getDocumentType(documentCode, tiersDocumentTypes).id == undefined)
       return {} as TiersDocument;
@@ -147,6 +178,18 @@ export class TiersComponent implements OnInit {
       }
     }
     return {} as TiersDocumentType;
+  }
+
+  static instanceOfTiers(object: ITiers): object is Tiers {
+    if (object != null)
+      return 'denomination' in object;
+    return false;
+  }
+
+  static instanceOfResponsable(object: ITiers): object is Responsable {
+    if (object != null)
+      return 'isActive' in object;
+    return false;
   }
 
 }

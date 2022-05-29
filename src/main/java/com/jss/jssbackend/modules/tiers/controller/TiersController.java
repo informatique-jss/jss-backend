@@ -2,6 +2,7 @@ package com.jss.jssbackend.modules.tiers.controller;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -11,6 +12,7 @@ import com.jss.jssbackend.modules.miscellaneous.model.Civility;
 import com.jss.jssbackend.modules.miscellaneous.model.Country;
 import com.jss.jssbackend.modules.miscellaneous.model.DeliveryService;
 import com.jss.jssbackend.modules.miscellaneous.model.Department;
+import com.jss.jssbackend.modules.miscellaneous.model.Gift;
 import com.jss.jssbackend.modules.miscellaneous.model.Language;
 import com.jss.jssbackend.modules.miscellaneous.model.PaymentType;
 import com.jss.jssbackend.modules.miscellaneous.model.Region;
@@ -20,6 +22,7 @@ import com.jss.jssbackend.modules.miscellaneous.service.CivilityService;
 import com.jss.jssbackend.modules.miscellaneous.service.CountryService;
 import com.jss.jssbackend.modules.miscellaneous.service.DeliveryServiceService;
 import com.jss.jssbackend.modules.miscellaneous.service.DepartmentService;
+import com.jss.jssbackend.modules.miscellaneous.service.GiftService;
 import com.jss.jssbackend.modules.miscellaneous.service.LanguageService;
 import com.jss.jssbackend.modules.miscellaneous.service.PaymentTypeService;
 import com.jss.jssbackend.modules.miscellaneous.service.RegionService;
@@ -31,16 +34,22 @@ import com.jss.jssbackend.modules.tiers.model.BillingClosureType;
 import com.jss.jssbackend.modules.tiers.model.BillingItem;
 import com.jss.jssbackend.modules.tiers.model.BillingLabelType;
 import com.jss.jssbackend.modules.tiers.model.BillingType;
+import com.jss.jssbackend.modules.tiers.model.JssSubscription;
+import com.jss.jssbackend.modules.tiers.model.JssSubscriptionType;
 import com.jss.jssbackend.modules.tiers.model.Mail;
 import com.jss.jssbackend.modules.tiers.model.PaymentDeadlineType;
 import com.jss.jssbackend.modules.tiers.model.Phone;
 import com.jss.jssbackend.modules.tiers.model.RefundType;
+import com.jss.jssbackend.modules.tiers.model.Responsable;
 import com.jss.jssbackend.modules.tiers.model.SpecialOffer;
+import com.jss.jssbackend.modules.tiers.model.SubscriptionPeriodType;
 import com.jss.jssbackend.modules.tiers.model.Tiers;
 import com.jss.jssbackend.modules.tiers.model.TiersAttachment;
 import com.jss.jssbackend.modules.tiers.model.TiersCategory;
 import com.jss.jssbackend.modules.tiers.model.TiersDocument;
 import com.jss.jssbackend.modules.tiers.model.TiersDocumentType;
+import com.jss.jssbackend.modules.tiers.model.TiersFollowup;
+import com.jss.jssbackend.modules.tiers.model.TiersFollowupType;
 import com.jss.jssbackend.modules.tiers.model.TiersType;
 import com.jss.jssbackend.modules.tiers.service.AttachmentTypeService;
 import com.jss.jssbackend.modules.tiers.service.BillingClosureRecipientTypeService;
@@ -48,14 +57,19 @@ import com.jss.jssbackend.modules.tiers.service.BillingClosureTypeService;
 import com.jss.jssbackend.modules.tiers.service.BillingItemService;
 import com.jss.jssbackend.modules.tiers.service.BillingLabelTypeService;
 import com.jss.jssbackend.modules.tiers.service.BillingTypeService;
+import com.jss.jssbackend.modules.tiers.service.JssSubscriptionTypeService;
 import com.jss.jssbackend.modules.tiers.service.MailService;
 import com.jss.jssbackend.modules.tiers.service.PaymentDeadlineTypeService;
 import com.jss.jssbackend.modules.tiers.service.PhoneService;
 import com.jss.jssbackend.modules.tiers.service.RefundTypeService;
+import com.jss.jssbackend.modules.tiers.service.ResponsableService;
 import com.jss.jssbackend.modules.tiers.service.SpecialOfferService;
+import com.jss.jssbackend.modules.tiers.service.SubscriptionPeriodTypeService;
 import com.jss.jssbackend.modules.tiers.service.TiersAttachmentService;
 import com.jss.jssbackend.modules.tiers.service.TiersCategoryService;
 import com.jss.jssbackend.modules.tiers.service.TiersDocumentTypeService;
+import com.jss.jssbackend.modules.tiers.service.TiersFollowupService;
+import com.jss.jssbackend.modules.tiers.service.TiersFollowupTypeService;
 import com.jss.jssbackend.modules.tiers.service.TiersService;
 import com.jss.jssbackend.modules.tiers.service.TiersTypesService;
 
@@ -86,6 +100,9 @@ public class TiersController {
 
   @Autowired
   TiersService tiersService;
+
+  @Autowired
+  ResponsableService responsableService;
 
   @Autowired
   CivilityService civilityService;
@@ -158,6 +175,128 @@ public class TiersController {
 
   @Autowired
   TiersAttachmentService tiersAttachmentService;
+
+  @Autowired
+  TiersFollowupTypeService tiersFollowupTypeService;
+
+  @Autowired
+  GiftService giftService;
+
+  @Autowired
+  TiersFollowupService tiersFollowupService;
+
+  @Autowired
+  JssSubscriptionTypeService jssSubscriptionTypeService;
+
+  @Autowired
+  SubscriptionPeriodTypeService subscriptionPeriodTypeService;
+
+  @GetMapping(inputEntryPoint + "/subscription-period-types")
+  public ResponseEntity<List<SubscriptionPeriodType>> getSubscriptionPeriodTypes() {
+    List<SubscriptionPeriodType> subscriptionPeriodTypes = null;
+    try {
+      subscriptionPeriodTypes = subscriptionPeriodTypeService.getSubscriptionPeriodTypes();
+    } catch (HttpStatusCodeException e) {
+      logger.error("HTTP error when fetching subscriptionPeriodType", e);
+      return new ResponseEntity<List<SubscriptionPeriodType>>(HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (Exception e) {
+      logger.error("Error when fetching subscriptionPeriodType", e);
+      return new ResponseEntity<List<SubscriptionPeriodType>>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    return new ResponseEntity<List<SubscriptionPeriodType>>(subscriptionPeriodTypes, HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/jss-suscription-types")
+  public ResponseEntity<List<JssSubscriptionType>> getJssSubscriptionTypes() {
+    List<JssSubscriptionType> jssSubscriptionTypes = null;
+    try {
+      jssSubscriptionTypes = jssSubscriptionTypeService.getJssSubscriptionTypes();
+    } catch (HttpStatusCodeException e) {
+      logger.error("HTTP error when fetching jssSubscriptionType", e);
+      return new ResponseEntity<List<JssSubscriptionType>>(HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (Exception e) {
+      logger.error("Error when fetching jssSubscriptionType", e);
+      return new ResponseEntity<List<JssSubscriptionType>>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    return new ResponseEntity<List<JssSubscriptionType>>(jssSubscriptionTypes, HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/gifts")
+  public ResponseEntity<List<Gift>> getGifts() {
+    List<Gift> gifts = null;
+    try {
+      gifts = giftService.getGifts();
+    } catch (HttpStatusCodeException e) {
+      logger.error("HTTP error when fetching gift", e);
+      return new ResponseEntity<List<Gift>>(HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (Exception e) {
+      logger.error("Error when fetching gift", e);
+      return new ResponseEntity<List<Gift>>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    return new ResponseEntity<List<Gift>>(gifts, HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/tiers-followup-types")
+  public ResponseEntity<List<TiersFollowupType>> getTiersFollowupTypes() {
+    List<TiersFollowupType> tiersFollowupTypes = null;
+    try {
+      tiersFollowupTypes = tiersFollowupTypeService.getTiersFollowupTypes();
+    } catch (HttpStatusCodeException e) {
+      logger.error("HTTP error when fetching tiersFollowupType", e);
+      return new ResponseEntity<List<TiersFollowupType>>(HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (Exception e) {
+      logger.error("Error when fetching tiersFollowupType", e);
+      return new ResponseEntity<List<TiersFollowupType>>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    return new ResponseEntity<List<TiersFollowupType>>(tiersFollowupTypes, HttpStatus.OK);
+  }
+
+  @PostMapping(inputEntryPoint + "/tiers-followup")
+  public ResponseEntity<List<TiersFollowup>> addTiersFollowup(@RequestBody TiersFollowup tiersFollowup) {
+    if (tiersFollowup.getTiers() == null && tiersFollowup.getResponsable() == null)
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+    if (tiersFollowup.getTiers() != null) {
+      Tiers tiers = tiersService.getTiersById(tiersFollowup.getTiers().getId());
+      if (tiers == null)
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+      tiersFollowup.setTiers(tiers);
+    }
+
+    if (tiersFollowup.getResponsable() != null) {
+      Responsable responsable = responsableService.getResponsable(tiersFollowup.getResponsable().getId());
+      if (responsable == null)
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+      tiersFollowup.setResponsable(responsable);
+    }
+
+    if (tiersFollowup.getTiersFollowupType() == null || tiersFollowup.getTiersFollowupType().getId() == null
+        || tiersFollowupTypeService.getTiersFollowupType(tiersFollowup.getTiersFollowupType().getId()) == null)
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+    if (tiersFollowup.getSalesEmployee() == null || tiersFollowup.getSalesEmployee().getId() == null ||
+        employeeService.getEmployeeById(tiersFollowup.getSalesEmployee().getId()) == null)
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+    if (tiersFollowup.getFollowupDate() == null)
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+    if (tiersFollowup.getGift() != null
+        && (tiersFollowup.getGift().getId() == null || giftService.getGift(tiersFollowup.getGift().getId()) == null))
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+    List<TiersFollowup> tiersFollowups = null;
+    try {
+      tiersFollowups = tiersFollowupService.addTiersFollowup(tiersFollowup);
+    } catch (HttpStatusCodeException e) {
+      logger.error("HTTP error when fetching TiersFollowup", e);
+      return new ResponseEntity<List<TiersFollowup>>(HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (Exception e) {
+      logger.error("Error when fetching TiersFollowup", e);
+      return new ResponseEntity<List<TiersFollowup>>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    return new ResponseEntity<List<TiersFollowup>>(tiersFollowups, HttpStatus.OK);
+  }
 
   @GetMapping(inputEntryPoint + "/attachment-types")
   public ResponseEntity<List<AttachmentType>> getAttachmentTypes() {
@@ -552,6 +691,23 @@ public class TiersController {
     return new ResponseEntity<Tiers>(tiers, HttpStatus.OK);
   }
 
+  @GetMapping(inputEntryPoint + "/responsable")
+  public ResponseEntity<Tiers> getTiersByIdResponsable(@RequestParam Integer idResponsable) {
+    Tiers tiers = null;
+    try {
+      tiers = tiersService.getTiersByIdResponsable(idResponsable);
+      if (tiers == null)
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    } catch (HttpStatusCodeException e) {
+      logger.error("HTTP error when fetching client types", e);
+      return new ResponseEntity<Tiers>(HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (Exception e) {
+      logger.error("Error when fetching client types", e);
+      return new ResponseEntity<Tiers>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    return new ResponseEntity<Tiers>(tiers, HttpStatus.OK);
+  }
+
   @PostMapping(inputEntryPoint + "/tiers")
   public ResponseEntity<Tiers> addOrUpdateTiers(@RequestBody Tiers tiers) {
     if (tiers.getIsIndividual() == null)
@@ -570,6 +726,14 @@ public class TiersController {
         && (tiers.getCivility() == null || tiers.getCivility().getId() == null
             || civilityService.getCivility(tiers.getCivility().getId()) == null)
         || tiers.getIsIndividual() == false && tiers.getCivility() != null)
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+    if (tiers.getIsIndividual() == true
+        && (tiers.getFirstname() == null || tiers.getFirstname().equals("")))
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+    if (tiers.getIsIndividual() == true
+        && (tiers.getLastname() == null || tiers.getLastname().equals("")))
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
     if (tiers.getTiersCategory() != null && tiers.getTiersCategory().getId() != null
@@ -695,7 +859,96 @@ public class TiersController {
     if (tiers.getPaymentIBAN() != null && tiers.getPaymentIBAN().length() > 40)
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
-    try {
+    if (tiers.getResponsables() != null && tiers.getResponsables().size() > 0) {
+      for (Responsable responsable : tiers.getResponsables()) {
+
+        if ((responsable.getCivility() == null || responsable.getCivility().getId() == null
+            || civilityService.getCivility(responsable.getCivility().getId()) == null))
+          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        if ((responsable.getFirstname() == null || responsable.getFirstname().equals("")))
+          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        if ((responsable.getLastname() == null || responsable.getLastname().equals("")))
+          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        if (responsable.getTiersType() == null || responsable.getTiersType().getId() == null
+            || clientTypesService.getTiersType(responsable.getTiersType().getId()) == null)
+          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        if (responsable.getTiersCategory() != null && responsable.getTiersCategory().getId() != null
+            && tiersCategoryService.getTiersCategory(responsable.getTiersCategory().getId()) == null)
+          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        if (responsable.getSalesEmployee() == null || responsable.getSalesEmployee().getId() == null
+            || employeeService.getEmployeeById(responsable.getSalesEmployee().getId()) == null)
+          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        if (responsable.getFormalisteEmployee() != null && (responsable.getSalesEmployee().getId() == null
+            || employeeService.getEmployeeById(responsable.getFormalisteEmployee().getId()) == null))
+          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        if (responsable.getInsertionEmployee() != null && (responsable.getInsertionEmployee().getId() == null
+            || employeeService.getEmployeeById(responsable.getInsertionEmployee().getId()) == null))
+          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        if (responsable.getLanguage() == null || responsable.getLanguage().getId() == null
+            || languageService.getLanguageById(responsable.getLanguage().getId()) == null)
+          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        if (responsable.getAddress() == null || responsable.getAddress().equals("")
+            || responsable.getAddress().length() > 60)
+          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        if (responsable.getCountry() != null && responsable.getCountry().getCode().equals("FR")
+            && (responsable.getPostalCode() == null || responsable.getPostalCode().equals("")
+                || cityService.getCitiesByPostalCode(responsable.getPostalCode()).size() == 0))
+          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        if (responsable.getCity() == null || responsable.getCity().getLabel() == null
+            || responsable.getCity().getLabel().equals(""))
+          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        if (responsable.getCity().getId() != null && cityService.getCity(responsable.getCity().getId()) == null)
+          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        if (responsable.getCity().getId() == null && responsable.getCity().getLabel().length() > 30)
+          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        if (responsable.getCountry() == null || responsable.getCountry().getId() == null
+            || countryService.getCountry(responsable.getCountry().getId()) == null)
+          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        if (responsable.getFunction() != null && responsable.getFunction().length() > 20)
+          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        if (responsable.getBuilding() != null && responsable.getBuilding().length() > 20)
+          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        if (responsable.getFloor() != null && responsable.getFloor().length() > 20)
+          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        if (responsable.getJssSubscriptions() != null && responsable.getJssSubscriptions().size() > 0) {
+          for (JssSubscription subscription : responsable.getJssSubscriptions()) {
+            if (subscription.getJssSubscriptionType() == null || subscription.getJssSubscriptionType().getId() == null
+                || jssSubscriptionTypeService
+                    .getJssSubscriptionType(subscription.getJssSubscriptionType().getId()) == null)
+              return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+          }
+        }
+
+        if (responsable.getSubscriptionPeriodType() == null
+            || responsable.getSubscriptionPeriodType().getId() == null || subscriptionPeriodTypeService
+                .getSubscriptionPeriodType(responsable.getSubscriptionPeriodType().getId()) == null)
+          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+      }
+
+      // TODO : vérifiaction des CC (respo existe et bien associé au tiers courant)
+    }
+
+    try
+
+    {
       tiers = tiersService.addOrUpdateTiers(tiers);
     } catch (HttpStatusCodeException e) {
       logger.error("HTTP error when fetching client types", e);
@@ -717,9 +970,10 @@ public class TiersController {
   }
 
   @PostMapping(inputEntryPoint + "/tiers-attachment/upload")
-  public ResponseEntity<List<TiersAttachment>> uploadAttachment(@RequestParam("file") MultipartFile file,
-      @RequestParam("idTiers") Integer idTiers, @RequestParam("idAttachmentType") Integer idAttachmentType,
-      @RequestParam("filename") String filename) {
+  public ResponseEntity<List<TiersAttachment>> uploadAttachment(@RequestParam MultipartFile file,
+      @RequestParam(required = false) Integer idTiers, @RequestParam(required = false) Integer idResponsable,
+      @RequestParam Integer idAttachmentType,
+      @RequestParam String filename) {
     try {
       if (idAttachmentType == null)
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -732,12 +986,26 @@ public class TiersController {
       if (filename == null || filename.equals(""))
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
-      if (idTiers == null)
+      if (idTiers == null && idResponsable == null)
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
-      Tiers tiers = tiersService.getTiersById(idTiers);
-      List<TiersAttachment> tiersAttachments = tiersAttachmentService.addTiersAttachment(file, tiers, attachmentType,
-          filename);
+      List<TiersAttachment> tiersAttachments = new ArrayList<TiersAttachment>();
+
+      if (idTiers != null) {
+        Tiers tiers = tiersService.getTiersById(idTiers);
+        if (tiers == null)
+          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        tiersAttachments = tiersAttachmentService.addTiersAttachment(file, tiers, attachmentType,
+            filename);
+      }
+
+      if (idResponsable != null) {
+        Responsable responsable = responsableService.getResponsable(idResponsable);
+        if (responsable == null)
+          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        tiersAttachments = tiersAttachmentService.addResponsableAttachment(file, responsable, attachmentType,
+            filename);
+      }
 
       return new ResponseEntity<List<TiersAttachment>>(tiersAttachments, HttpStatus.OK);
     } catch (Exception e) {
@@ -779,5 +1047,21 @@ public class TiersController {
       return new ResponseEntity<byte[]>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
     return new ResponseEntity<byte[]>(data, headers, HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/tiers-attachment/search")
+  public ResponseEntity<List<TiersAttachment>> getAttachementsByFilenameAndTiers(@RequestParam String filename,
+      @RequestParam(required = false) Integer idTiers, @RequestParam(required = false) Integer idResponsable) {
+    List<TiersAttachment> tiersAttachments = null;
+    try {
+      tiersAttachments = tiersAttachmentService.getAttachementsByFilenameAndTiers(filename, idTiers, idResponsable);
+    } catch (HttpStatusCodeException e) {
+      logger.error("HTTP error when fetching city", e);
+      return new ResponseEntity<List<TiersAttachment>>(HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (Exception e) {
+      logger.error("Error when fetching city", e);
+      return new ResponseEntity<List<TiersAttachment>>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    return new ResponseEntity<List<TiersAttachment>>(tiersAttachments, HttpStatus.OK);
   }
 }

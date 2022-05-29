@@ -3,6 +3,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
+import { ITiers } from '../../model/ITiers';
 import { Tiers } from '../../model/Tiers';
 import { TiersAttachment } from '../../model/TiersAttachment';
 import { UploadTiersAttachmentService } from '../../services/upload.tiers.attachment.service';
@@ -16,7 +17,7 @@ import { UploadTiersAttachementDialogComponent } from '../upload-tiers-attacheme
 export class TiersAttachmentsComponent implements OnInit {
 
   matcher: CustomErrorStateMatcher = new CustomErrorStateMatcher();
-  @Input() tiers: Tiers = {} as Tiers;
+  @Input() tiers: ITiers = {} as ITiers;
   @Input() editMode: boolean = false;
   @ViewChild(MatSort) sort!: MatSort;
 
@@ -35,14 +36,14 @@ export class TiersAttachmentsComponent implements OnInit {
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.tiers != undefined && this.tiers.tiersAttachments != undefined) {
-      this.setData();
+      this.setDataTable();
     }
   }
 
   ngOnInit() {
   }
 
-  setData() {
+  setDataTable() {
     this.tiers.tiersAttachments.sort(function (a: TiersAttachment, b: TiersAttachment) {
       return new Date(b.uploadedFile.creationDate).getTime() - new Date(a.uploadedFile.creationDate).getTime();
     });
@@ -82,7 +83,7 @@ export class TiersAttachmentsComponent implements OnInit {
       console.log(response);
       if (response && response != null) {
         this.tiers.tiersAttachments = response;
-        this.setData();
+        this.setDataTable();
       }
     });
   }

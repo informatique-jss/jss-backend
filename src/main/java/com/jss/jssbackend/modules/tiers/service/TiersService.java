@@ -6,4 +6,6 @@ public interface TiersService {
     public Tiers getTiersById(Integer id);
 
     public Tiers addOrUpdateTiers(Tiers tiers);
+
+    public Tiers getTiersByIdResponsable(Integer idResponsable);
 }

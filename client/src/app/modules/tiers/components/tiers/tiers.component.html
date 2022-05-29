@@ -1,10 +1,12 @@
 <div [hidden]="!editMode && (tiers.id==undefined || tiers.id==null)">
-  <mat-tab-group animationDuration="0ms" [selectedIndex]="4">
+  <mat-tab-group animationDuration="0ms" #tabs [(selectedIndex)]="selectedTabIndex">
     <mat-tab label="Principal">
-      <tiers-principal [tiers]="tiers" [editMode]="editMode">
-      </tiers-principal>
+      <tiers-main [tiers]="tiers" [editMode]="editMode">
+      </tiers-main>
     </mat-tab>
-    <mat-tab label="Responsable(s)">Content 2</mat-tab>
+    <mat-tab label="Responsable(s)">
+      <responsable-main [tiers]="tiers" [editMode]="editMode"></responsable-main>
+    </mat-tab>
     <mat-tab label="Gestion des pièces" *ngIf="isTiersTypeProspect()==false">
       <document-management [tiers]="tiers" [editMode]="editMode">
       </document-management>
@@ -12,11 +14,16 @@
     <mat-tab label="Réglement, facturation & relance">
       <settlement-billing [tiers]="tiers" [editMode]="editMode"></settlement-billing>
     </mat-tab>
-    <mat-tab label="Documents">
+    <mat-tab label="Documents" *ngIf="tiers.id!=null && tiers.id!=undefined">
       <tiers-attachments [tiers]="tiers" [editMode]="editMode">
       </tiers-attachments>
     </mat-tab>
-    <mat-tab label="Suivi">Content 3</mat-tab>
+    <mat-tab label="Suivi" *ngIf="tiers.id!=null && tiers.id!=undefined">
+      <tiers-followup [tiers]="tiers" [editMode]="editMode"></tiers-followup>
+    </mat-tab>
+    <mat-tab label="Historique" *ngIf="tiers.id!=null && tiers.id!=undefined">
+      <history [entity]="tiers" [entityType]="TIERS_ENTITY_TYPE"></history>
+    </mat-tab>
   </mat-tab-group>
 </div>
 <button matTooltip="Sauvegarder" mat-fab color="warn" class="fab-button" *ngIf="editMode==true" (click)="saveTiers()">

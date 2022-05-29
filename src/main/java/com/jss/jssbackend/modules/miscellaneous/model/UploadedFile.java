@@ -27,7 +27,6 @@ public class UploadedFile implements Serializable {
 	@Column(columnDefinition = "TEXT")
 	private String path;
 
-	// TODO : compute checksum
 	private String checksum;
 	private Date creationDate;
 

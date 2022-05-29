@@ -48,7 +48,8 @@
             </td>
             <td *ngIf="tiers.isIndividual==true">
               <mat-radio-group class="radio-group-column" [(ngModel)]="tiers.civility" formControlName="civility">
-                <mat-radio-button *ngFor="let civility of civilities" [value]="civility">
+                <mat-radio-button *ngFor="let civility of civilities" [value]="civility"
+                  [checked]=" this.tiers.civility != undefined && this.tiers.civility.id == civility.id">
                   {{civility.label}}
                 </mat-radio-button>
               </mat-radio-group>

@@ -1,6 +1,5 @@
 package com.jss.jssbackend.modules.tiers.model;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -30,8 +29,7 @@ import com.jss.jssbackend.modules.profile.model.Employee;
 
 @Entity
 @Table(indexes = { @Index(name = "pk_client", columnList = "id", unique = true) })
-public class Tiers implements Serializable {
-
+public class Tiers { // implements ITiers {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@IndexedField
@@ -46,10 +44,50 @@ public class Tiers implements Serializable {
 	@IndexedField
 	private String denomination;
 
+	private Boolean isIndividual;
+
+	@ManyToOne
+	@JoinColumn(name = "id_tiers_category")
+	@IndexedField
+	private TiersCategory tiersCategory;
+
+	@ManyToOne
+	@JoinColumn(name = "id_delivery_service")
+	private DeliveryService deliveryService;
+
+	@Column(length = 12)
+	private String intercom;
+
+	@Column(length = 20)
+	private String intercommunityVat;
+
+	@ManyToOne
+	@JoinColumn(name = "id_special_offer")
+	private SpecialOffer specialOffer;
+
+	@Column(columnDefinition = "TEXT")
+	private String instructions;
+
+	@ManyToOne
+	@JoinColumn(name = "id_payment_type")
+	@IndexedField
+	private PaymentType paymentType;
+
+	@Column(length = 40)
+	private String paymentIBAN;
+
+	@Column(nullable = false)
+	private Boolean isProvisionalPaymentMandatory;
+
+	@OneToMany(targetEntity = Responsable.class, mappedBy = "tiers", cascade = CascadeType.ALL)
+	@JsonManagedReference
+	private List<Responsable> responsables;
+
+	// Common responsable / tiers
+
 	// TODO : waiting for Xcase experiment to evaluate if we get it dynamically from
 	// compatibility or keep it here
 	private Date firstBilling;
-	private Boolean isIndividual;
 
 	@JoinColumn(name = "id_civility")
 	@IndexedField
@@ -62,11 +100,6 @@ public class Tiers implements Serializable {
 	@Column(length = 20)
 	@IndexedField
 	private String lastname;
-
-	@ManyToOne
-	@JoinColumn(name = "id_tiers_category")
-	@IndexedField
-	private TiersCategory tiersCategory;
 
 	@ManyToOne
 	@JoinColumn(name = "id_commercial")
@@ -88,10 +121,6 @@ public class Tiers implements Serializable {
 	@JoinColumn(name = "id_language")
 	private Language language;
 
-	@ManyToOne
-	@JoinColumn(name = "id_delivery_service")
-	private DeliveryService deliveryService;
-
 	@Column(length = 60, nullable = false)
 	@IndexedField
 	private String address;
@@ -109,24 +138,11 @@ public class Tiers implements Serializable {
 	@JoinColumn(name = "id_country")
 	private Country country;
 
-	@Column(length = 12)
-	private String intercom;
-
-	@Column(length = 20)
-	private String intercommunityVat;
-
-	@ManyToOne
-	@JoinColumn(name = "id_special_offer")
-	private SpecialOffer specialOffer;
-
 	private Float rcaFormaliteRate;
 	private Float rcaInsertionRate;
 
 	@Column(columnDefinition = "TEXT")
 	private String observations;
-
-	@Column(columnDefinition = "TEXT")
-	private String instructions;
 
 	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "asso_tiers_mail", joinColumns = @JoinColumn(name = "id_tiers"), inverseJoinColumns = @JoinColumn(name = "id_mail"))
@@ -137,31 +153,16 @@ public class Tiers implements Serializable {
 	private List<Phone> phones;
 
 	@OneToMany(targetEntity = TiersDocument.class, mappedBy = "tiers", cascade = CascadeType.ALL)
-	@JsonManagedReference
+	@JsonManagedReference("tiers")
 	private List<TiersDocument> documents;
 
-	@ManyToOne
-	@JoinColumn(name = "id_payment_type")
-	@IndexedField
-	private PaymentType paymentType;
-
-	@Column(length = 40)
-	private String paymentIBAN;
-
-	@Column(nullable = false)
-	private Boolean isProvisionalPaymentMandatory;
-
 	@OneToMany(targetEntity = TiersAttachment.class, mappedBy = "tiers", cascade = CascadeType.ALL)
-	@JsonManagedReference
+	@JsonManagedReference("tiers")
 	private List<TiersAttachment> tiersAttachments;
 
-	public Integer getId() {
-		return id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
+	@OneToMany(targetEntity = TiersFollowup.class, mappedBy = "tiers", cascade = CascadeType.ALL)
+	@JsonManagedReference("tiers")
+	private List<TiersFollowup> tiersFollowups;
 
 	public TiersType getTiersType() {
 		return tiersType;
@@ -179,20 +180,108 @@ public class Tiers implements Serializable {
 		this.denomination = denomination;
 	}
 
-	public Date getFirstBilling() {
-		return firstBilling;
-	}
-
-	public void setFirstBilling(Date firstBilling) {
-		this.firstBilling = firstBilling;
-	}
-
 	public Boolean getIsIndividual() {
 		return isIndividual;
 	}
 
 	public void setIsIndividual(Boolean isIndividual) {
 		this.isIndividual = isIndividual;
+	}
+
+	public TiersCategory getTiersCategory() {
+		return tiersCategory;
+	}
+
+	public void setTiersCategory(TiersCategory tiersCategory) {
+		this.tiersCategory = tiersCategory;
+	}
+
+	public DeliveryService getDeliveryService() {
+		return deliveryService;
+	}
+
+	public void setDeliveryService(DeliveryService deliveryService) {
+		this.deliveryService = deliveryService;
+	}
+
+	public String getIntercom() {
+		return intercom;
+	}
+
+	public void setIntercom(String intercom) {
+		this.intercom = intercom;
+	}
+
+	public String getIntercommunityVat() {
+		return intercommunityVat;
+	}
+
+	public void setIntercommunityVat(String intercommunityVat) {
+		this.intercommunityVat = intercommunityVat;
+	}
+
+	public SpecialOffer getSpecialOffer() {
+		return specialOffer;
+	}
+
+	public void setSpecialOffer(SpecialOffer specialOffer) {
+		this.specialOffer = specialOffer;
+	}
+
+	public String getInstructions() {
+		return instructions;
+	}
+
+	public void setInstructions(String instructions) {
+		this.instructions = instructions;
+	}
+
+	public PaymentType getPaymentType() {
+		return paymentType;
+	}
+
+	public void setPaymentType(PaymentType paymentType) {
+		this.paymentType = paymentType;
+	}
+
+	public String getPaymentIBAN() {
+		return paymentIBAN;
+	}
+
+	public void setPaymentIBAN(String paymentIBAN) {
+		this.paymentIBAN = paymentIBAN;
+	}
+
+	public Boolean getIsProvisionalPaymentMandatory() {
+		return isProvisionalPaymentMandatory;
+	}
+
+	public void setIsProvisionalPaymentMandatory(Boolean isProvisionalPaymentMandatory) {
+		this.isProvisionalPaymentMandatory = isProvisionalPaymentMandatory;
+	}
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public List<Responsable> getResponsables() {
+		return responsables;
+	}
+
+	public void setResponsables(List<Responsable> responsables) {
+		this.responsables = responsables;
+	}
+
+	public Date getFirstBilling() {
+		return firstBilling;
+	}
+
+	public void setFirstBilling(Date firstBilling) {
+		this.firstBilling = firstBilling;
 	}
 
 	public Civility getCivility() {
@@ -217,14 +306,6 @@ public class Tiers implements Serializable {
 
 	public void setLastname(String lastname) {
 		this.lastname = lastname;
-	}
-
-	public TiersCategory getTiersCategory() {
-		return tiersCategory;
-	}
-
-	public void setTiersCategory(TiersCategory tiersCategory) {
-		this.tiersCategory = tiersCategory;
 	}
 
 	public Employee getSalesEmployee() {
@@ -267,14 +348,6 @@ public class Tiers implements Serializable {
 		this.language = language;
 	}
 
-	public DeliveryService getDeliveryService() {
-		return deliveryService;
-	}
-
-	public void setDeliveryService(DeliveryService deliveryService) {
-		this.deliveryService = deliveryService;
-	}
-
 	public String getAddress() {
 		return address;
 	}
@@ -307,30 +380,6 @@ public class Tiers implements Serializable {
 		this.country = country;
 	}
 
-	public String getIntercom() {
-		return intercom;
-	}
-
-	public void setIntercom(String intercom) {
-		this.intercom = intercom;
-	}
-
-	public String getIntercommunityVat() {
-		return intercommunityVat;
-	}
-
-	public void setIntercommunityVat(String intercommunityVat) {
-		this.intercommunityVat = intercommunityVat;
-	}
-
-	public SpecialOffer getSpecialOffer() {
-		return specialOffer;
-	}
-
-	public void setSpecialOffer(SpecialOffer specialOffer) {
-		this.specialOffer = specialOffer;
-	}
-
 	public Float getRcaFormaliteRate() {
 		return rcaFormaliteRate;
 	}
@@ -347,14 +396,6 @@ public class Tiers implements Serializable {
 		this.rcaInsertionRate = rcaInsertionRate;
 	}
 
-	public List<Mail> getMails() {
-		return mails;
-	}
-
-	public void setMails(List<Mail> mails) {
-		this.mails = mails;
-	}
-
 	public String getObservations() {
 		return observations;
 	}
@@ -363,12 +404,12 @@ public class Tiers implements Serializable {
 		this.observations = observations;
 	}
 
-	public String getInstructions() {
-		return instructions;
+	public List<Mail> getMails() {
+		return mails;
 	}
 
-	public void setInstructions(String instructions) {
-		this.instructions = instructions;
+	public void setMails(List<Mail> mails) {
+		this.mails = mails;
 	}
 
 	public List<Phone> getPhones() {
@@ -387,36 +428,20 @@ public class Tiers implements Serializable {
 		this.documents = documents;
 	}
 
-	public PaymentType getPaymentType() {
-		return paymentType;
-	}
-
-	public void setPaymentType(PaymentType paymentType) {
-		this.paymentType = paymentType;
-	}
-
-	public String getPaymentIBAN() {
-		return paymentIBAN;
-	}
-
-	public void setPaymentIBAN(String paymentIBAN) {
-		this.paymentIBAN = paymentIBAN;
-	}
-
-	public Boolean getIsProvisionalPaymentMandatory() {
-		return isProvisionalPaymentMandatory;
-	}
-
-	public void setIsProvisionalPaymentMandatory(Boolean isProvisionalPaymentMandatory) {
-		this.isProvisionalPaymentMandatory = isProvisionalPaymentMandatory;
-	}
-
 	public List<TiersAttachment> getTiersAttachments() {
 		return tiersAttachments;
 	}
 
 	public void setTiersAttachments(List<TiersAttachment> tiersAttachments) {
 		this.tiersAttachments = tiersAttachments;
+	}
+
+	public List<TiersFollowup> getTiersFollowups() {
+		return tiersFollowups;
+	}
+
+	public void setTiersFollowups(List<TiersFollowup> tiersFollowups) {
+		this.tiersFollowups = tiersFollowups;
 	}
 
 }

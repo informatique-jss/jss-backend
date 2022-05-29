@@ -30,6 +30,7 @@ public class StorageFileServiceImpl implements StorageFileService {
 
     @Override
     public Resource loadFile(String filename) throws MalformedURLException {
+        // TODO : ranger les fichiers !
         Path file = Paths.get(uploadFolder).resolve(filename);
         Resource resource = new UrlResource(file.toUri());
         if (resource.exists() || resource.isReadable()) {

@@ -1,15 +1,17 @@
-import { RefundType } from './RefundType';
+import { BillingClosureRecipientType } from './BillingClosureRecipientType';
+import { BillingClosureType } from './BillingClosureType';
 import { BillingLabelType } from "./BillingLabelType";
 import { Mail } from "./Mail";
 import { PaymentDeadlineType } from "./PaymentDeadlineType";
+import { RefundType } from './RefundType';
+import { Responsable } from './Responsable';
 import { Tiers } from "./Tiers";
 import { TiersDocumentType } from "./TiersDocumentType";
-import { BillingClosureType } from './BillingClosureType';
-import { BillingClosureRecipientType } from './BillingClosureRecipientType';
 
 export interface TiersDocument {
   id: number;
-  tiers: Tiers[];
+  tiers: Tiers;
+  responsable: Responsable;
   code: string;
   tiersDocumentType: TiersDocumentType;
   isRecipientClient: boolean;
@@ -24,6 +26,8 @@ export interface TiersDocument {
   numberMailingAffaire: number;
   numberMailingClient: number;
   mailsClient: Mail[];
+  mailsCCResponsableClient: Responsable[];
+  mailsCCResponsableAffaire: Responsable[];
   mailsAffaire: Mail[];
   billingLabelType: BillingLabelType;
   billingLabel: string;

@@ -1,0 +1,26 @@
+table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+td {
+  padding-right: 8px;
+}
+
+.button-td {
+  width: 35px
+}
+
+.add-button {
+  top: -8px;
+}
+
+
+.row-field-container {
+  flex-direction: row;
+  display: flex;
+}
+
+.mini-fab-add {
+  margin: 5px
+}

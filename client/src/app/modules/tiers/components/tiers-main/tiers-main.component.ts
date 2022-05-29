@@ -33,9 +33,9 @@ import { Tiers } from '../../model/Tiers';
 import { SpecialOffersDialogComponent } from '../special-offers-dialog/special-offers-dialog.component';
 
 @Component({
-  selector: 'tiers-principal',
-  templateUrl: './main.component.html',
-  styleUrls: ['./main.component.css']
+  selector: 'tiers-main',
+  templateUrl: './tiers-main.component.html',
+  styleUrls: ['./tiers-main.component.css']
 })
 
 export class PrincipalComponent implements OnInit {

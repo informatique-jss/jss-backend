@@ -66,6 +66,7 @@ mat-form-field.mat-form-field, mat-option, .mat-cell {
 .mat-list-item-content {
   font-size: 12px !important;
   padding: 0 !important;
+  margin-left: 13px;
 }
 
 .mat-list-item {

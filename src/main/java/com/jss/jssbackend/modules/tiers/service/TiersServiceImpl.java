@@ -6,6 +6,7 @@ import java.util.Optional;
 import com.jss.jssbackend.libs.search.service.IndexEntityService;
 import com.jss.jssbackend.modules.tiers.model.Mail;
 import com.jss.jssbackend.modules.tiers.model.Phone;
+import com.jss.jssbackend.modules.tiers.model.Responsable;
 import com.jss.jssbackend.modules.tiers.model.Tiers;
 import com.jss.jssbackend.modules.tiers.model.TiersDocument;
 import com.jss.jssbackend.modules.tiers.repository.TiersRepository;
@@ -18,6 +19,9 @@ public class TiersServiceImpl implements TiersService {
 
     @Autowired
     TiersRepository tiersRepository;
+
+    @Autowired
+    ResponsableService responsableService;
 
     @Autowired
     MailService mailService;
@@ -65,6 +69,10 @@ public class TiersServiceImpl implements TiersService {
 
         tiers = tiersRepository.save(tiers);
         indexEntityService.indexEntity(tiers, tiers.getId());
+        if (tiers.getResponsables() != null && tiers.getResponsables().size() > 0) {
+            for (Responsable responsable : tiers.getResponsables())
+                indexEntityService.indexEntity(responsable, responsable.getId());
+        }
         return tiers;
     }
 
@@ -76,5 +84,13 @@ public class TiersServiceImpl implements TiersService {
                     mail.setId(existingMails.get(0).getId());
             }
         }
+    }
+
+    @Override
+    public Tiers getTiersByIdResponsable(Integer idResponsable) {
+        Responsable responsable = responsableService.getResponsable(idResponsable);
+        if (responsable != null)
+            return this.getTiersById(responsable.getTiers().getId());
+        return null;
     }
 }

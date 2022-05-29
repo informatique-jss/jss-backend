@@ -19,7 +19,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { RouterModule, Routes } from '@angular/router';
-import { PrincipalComponent } from '../main/main.component';
+import { PrincipalComponent } from '../tiers-main/tiers-main.component';
 import { SettlementBillingComponent } from '../settlement-billing/settlement-billing.component';
 import { DocumentManagementComponent } from './../document-management/document-management.component';
 import { SpecialOffersDialogComponent } from './../special-offers-dialog/special-offers-dialog.component';
@@ -29,9 +29,15 @@ import { UploadTiersAttachementDialogComponent } from '../upload-tiers-attacheme
 import { MatListModule } from '@angular/material/list';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSortModule } from '@angular/material/sort';
+import { HistoryComponent } from 'src/app/modules/miscellaneous/components/history/history.component';
+import { TiersFollowupComponent } from '../tiers-followup/tiers-followup.component';
+import { AddressingComponent } from '../addressing/addressing.component';
+import { ResponsableMainComponent } from '../responsable-main/responsable-main.component';
 
 const routes: Routes = [
-  { path: 'tiers/:id', component: TiersComponent }
+  { path: 'tiers', component: TiersComponent },
+  { path: 'tiers/:id', component: TiersComponent },
+  { path: 'tiers/responsable/:id', component: TiersComponent }
 ];
 
 @NgModule({
@@ -67,7 +73,11 @@ const routes: Routes = [
     DocumentManagementComponent,
     SettlementBillingComponent,
     TiersAttachmentsComponent,
-    UploadTiersAttachementDialogComponent
+    UploadTiersAttachementDialogComponent,
+    HistoryComponent,
+    TiersFollowupComponent,
+    AddressingComponent,
+    ResponsableMainComponent
   ],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'fr-FR' }
