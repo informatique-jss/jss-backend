@@ -1,7 +1,8 @@
-import { JssSubscriptionType } from "./JssSubscriptionType";
-import { SubscriptionPeriodType } from "./SubscriptionPeriodType";
+import { Responsable } from "./Responsable";
 
 export interface JssSubscription {
   id: number;
-  jssSuscriptionType: JssSubscriptionType;
+  responsable: Responsable;
+  isPaperSubscription: boolean;
+  isWebSubscription: boolean;
 }

@@ -70,8 +70,18 @@ public class TiersServiceImpl implements TiersService {
         tiers = tiersRepository.save(tiers);
         indexEntityService.indexEntity(tiers, tiers.getId());
         if (tiers.getResponsables() != null && tiers.getResponsables().size() > 0) {
-            for (Responsable responsable : tiers.getResponsables())
+            for (Responsable responsable : tiers.getResponsables()) {
                 indexEntityService.indexEntity(responsable, responsable.getId());
+
+                if (responsable.getDocuments() != null && responsable.getDocuments().size() > 0) {
+                    for (TiersDocument document : responsable.getDocuments()) {
+                        if (document.getMailsAffaire() != null && document.getMailsAffaire().size() > 0)
+                            this.populateMailIds(document.getMailsAffaire());
+                        if (document.getMailsClient() != null && document.getMailsClient().size() > 0)
+                            this.populateMailIds(document.getMailsClient());
+                    }
+                }
+            }
         }
         return tiers;
     }

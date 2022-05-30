@@ -8,5 +8,5 @@ export interface Audit {
   oldValue: string;
   newValue: string;
   datetime: Date;
-  author: Employee;
+  username: string;
 }

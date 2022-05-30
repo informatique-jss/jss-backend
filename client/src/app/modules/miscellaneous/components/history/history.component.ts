@@ -57,7 +57,7 @@ export class HistoryComponent implements OnInit {
             case 'fieldName': return item.fieldName;
             case 'oldValue': return item.oldValue;
             case 'newValue': return item.newValue;
-            case 'createdBy': return item.author.firstname + item.author.lastname;
+            case 'createdBy': return item.username;
             case 'creationDate': return new Date(item.datetime).getTime() + "";
             default: return item.fieldName;
           }

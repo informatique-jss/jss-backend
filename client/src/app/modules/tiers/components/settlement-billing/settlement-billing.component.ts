@@ -1,21 +1,17 @@
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
-import { MatChipInputEvent } from '@angular/material/chips';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
 import { compareWithId } from 'src/app/libs/CompareHelper';
 import { BILLING_CLOSURE_TIERS_DOCUMENT_TYPE_CODE, BILLING_TIERS_DOCUMENT_TYPE_CODE, BILLING_TIERS_DOCUMENT_TYPE_OTHER_CODE, DUNNING_TIERS_DOCUMENT_TYPE_CODE, PAYMENT_TYPE_PRELEVEMENT, PROVISIONAL_RECEIPT_TIERS_DOCUMENT_TYPE_CODE, REFUND_TIERS_DOCUMENT_TYPE_CODE, REFUND_TYPE_VIREMENT, SEPARATOR_KEY_CODES } from 'src/app/libs/Constants';
-import { validateEmail } from 'src/app/libs/CustomFormsValidatorsHelper';
-import { prepareMail } from 'src/app/libs/MailHelper';
 import { PaymentType } from 'src/app/modules/miscellaneous/model/PaymentType';
 import { PaymentTypeService } from 'src/app/modules/miscellaneous/services/payment-type.service';
 import { BillingClosureRecipientType } from '../../model/BillingClosureRecipientType';
 import { BillingClosureType } from '../../model/BillingClosureType';
 import { BillingLabelType } from '../../model/BillingLabelType';
 import { ITiers } from '../../model/ITiers';
-import { Tiers } from '../../model/Tiers';
-import { Mail } from '../../model/Mail';
 import { PaymentDeadlineType } from '../../model/PaymentDeadlineType';
 import { RefundType } from '../../model/RefundType';
+import { Responsable } from '../../model/Responsable';
 import { TiersDocument } from '../../model/TiersDocument';
 import { TiersDocumentType } from '../../model/TiersDocumentType';
 import { BillingClosureRecipientTypeService } from '../../services/billing.closure.recipient.type.service';
@@ -23,10 +19,9 @@ import { BillingClosureTypeService } from '../../services/billing.closure.type.s
 import { BillingLabelTypeService } from '../../services/billing.label.type.service';
 import { PaymentDeadlineTypeService } from '../../services/payment.deadline.type.service';
 import { RefundTypeService } from '../../services/refund.type.service';
+import { TiersService } from '../../services/tiers.service';
 import { TiersComponent } from '../tiers/tiers.component';
 import { TiersDocumentTypeService } from './../../services/tiers.document.type.service';
-import { Responsable } from '../../model/Responsable';
-import { TiersService } from '../../services/tiers.service';
 
 @Component({
   selector: 'settlement-billing',
@@ -120,7 +115,7 @@ export class SettlementBillingComponent implements OnInit {
   ngOnChanges(changes: SimpleChanges) {
     if (changes.tiers != undefined) {
       if (TiersComponent.instanceOfTiers(this.tiers)) {
-        if ((this.tiers.paymentType == null || this.tiers.paymentType != undefined) && this.paymentTypes.length > 0) {
+        if ((this.tiers.paymentType == null || this.tiers.paymentType == undefined) && this.paymentTypes.length > 0) {
           this.paymentTypes.forEach(paymentType => {
             if (paymentType.code == PAYMENT_TYPE_PRELEVEMENT)
               if (TiersComponent.instanceOfTiers(this.tiers))
@@ -154,7 +149,7 @@ export class SettlementBillingComponent implements OnInit {
   settlementBillingForm = this.formBuilder.group({
     paymentType: [''],
     paymentIBAN: ['', [Validators.maxLength(40), this.checkFieldFilledIfPaymentIsPrelevement("paymentIBAN")]],
-    isProvisionalPaymentMandatory: ['', Validators.required],
+    isProvisionalPaymentMandatory: [''],
     billingLabelType: [''],
     billingLabel: ['', Validators.maxLength(40)],
     isResponsableOnBilling: [''],

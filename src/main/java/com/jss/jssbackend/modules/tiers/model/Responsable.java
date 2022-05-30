@@ -145,9 +145,9 @@ public class Responsable implements ITiers {
 	@Column(length = 8)
 	private String floor;
 
-	@OneToMany(targetEntity = JssSubscription.class, mappedBy = "responsable", cascade = CascadeType.ALL)
+	@ManyToOne(targetEntity = JssSubscription.class, cascade = CascadeType.ALL)
 	@JsonManagedReference("responsable")
-	private List<JssSubscription> jssSubscriptions;
+	private JssSubscription jssSubscription;
 
 	@ManyToOne
 	@JoinColumn(name = "id_subscription_period_type")
@@ -405,12 +405,12 @@ public class Responsable implements ITiers {
 		this.floor = floor;
 	}
 
-	public List<JssSubscription> getJssSubscriptions() {
-		return jssSubscriptions;
+	public JssSubscription getJssSubscription() {
+		return jssSubscription;
 	}
 
-	public void setJssSubscriptions(List<JssSubscription> jssSubscriptions) {
-		this.jssSubscriptions = jssSubscriptions;
+	public void setJssSubscription(JssSubscription jssSubscription) {
+		this.jssSubscription = jssSubscription;
 	}
 
 	public SubscriptionPeriodType getSubscriptionPeriodType() {

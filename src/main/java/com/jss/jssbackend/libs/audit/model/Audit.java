@@ -9,11 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Index;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
-import com.jss.jssbackend.modules.profile.model.Employee;
 
 @Entity
 @Table(indexes = { @Index(name = "pk_audit", columnList = "id", unique = true),
@@ -42,9 +38,7 @@ public class Audit implements Serializable {
 
 	private Date datetime;
 
-	@ManyToOne
-	@JoinColumn(name = "id_employee")
-	private Employee author;
+	private String username;
 
 	public Integer getId() {
 		return id;
@@ -94,12 +88,12 @@ public class Audit implements Serializable {
 		this.datetime = datetime;
 	}
 
-	public Employee getAuthor() {
-		return author;
+	public String getUsername() {
+		return username;
 	}
 
-	public void setAuthor(Employee author) {
-		this.author = author;
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 	public String getFieldName() {

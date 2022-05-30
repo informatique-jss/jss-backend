@@ -8,52 +8,56 @@
         <mat-icon>add</mat-icon>
       </button></span>
   </div>
-  <table mat-table matSort [dataSource]="responsableDataSource" class="table">
-    <ng-container matColumnDef="id">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>N° du responsable</th>
-      <td mat-cell *matCellDef="let element">{{element.id}}</td>
-    </ng-container>
-    <ng-container matColumnDef="name">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Nom</th>
-      <td mat-cell *matCellDef="let element">{{(element.firstname !=null ? element.firstname:"") + " " +
-        (element.lastname!=null?element.lastname:"")}}</td>
-    </ng-container>
-    <ng-container matColumnDef="address">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Adresse</th>
-      <td mat-cell *matCellDef="let element">{{element.address}}</td>
-    </ng-container>
-    <ng-container matColumnDef="city">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Ville</th>
-      <td mat-cell *matCellDef="let element">{{(element.city!=undefined ?element.city.label:"")}}</td>
-    </ng-container>
-    <ng-container matColumnDef="salesEmployee">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Commercial</th>
-      <td mat-cell *matCellDef="let element">{{(element.salesEmployee!=undefined?element.salesEmployee.firstname:"") + "
-        " +
-        (element.salesEmployee!=undefined?element.salesEmployee.lastname:"")}}</td>
-    </ng-container>
-    <ng-container matColumnDef="formalisteEmployee">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Formaliste</th>
-      <td mat-cell *matCellDef="let element">
-        {{(element.formalisteEmployee!=undefined?element.formalisteEmployee.firstname:"") + " " +
-        (element.formalisteEmployee!=undefined?element.formalisteEmployee.lastname:"")}}
-    </ng-container>
-    <ng-container matColumnDef="insertionEmployee">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Insertion</th>
-      <td mat-cell *matCellDef="let element">
-        {{(element.insertionEmployee!=undefined?element.insertionEmployee.firstname:"") + " " +
-        (element.insertionEmployee!=undefined?element.insertionEmployee.lastname:"")}}</td>
-    </ng-container>
-    <ng-container matColumnDef="actions">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Insertion</th>
-      <td mat-cell *matCellDef="let element">
-        <mat-icon *ngIf="element.id==null && editMode" (click)="deleteResponsable(element)">delete</mat-icon>
-      </td>
-    </ng-container>
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row class="pointer" [ngClass]="{'selected-mat-row':selectedResponsable==row}"
-      *matRowDef="let row; columns: displayedColumns;" (click)="selectResponsable(row.id)"></tr>
-  </table>
+  <div class="table-container-scroll">
+    <table mat-table matSort [dataSource]="responsableDataSource" class="table">
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>N° du responsable</th>
+        <td mat-cell *matCellDef="let element">{{element.id}}</td>
+      </ng-container>
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Nom</th>
+        <td mat-cell *matCellDef="let element">{{(element.firstname !=null ? element.firstname:"") + " " +
+          (element.lastname!=null?element.lastname:"")}}</td>
+      </ng-container>
+      <ng-container matColumnDef="address">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Adresse</th>
+        <td mat-cell *matCellDef="let element">{{element.address}}</td>
+      </ng-container>
+      <ng-container matColumnDef="city">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Ville</th>
+        <td mat-cell *matCellDef="let element">{{(element.city!=undefined ?element.city.label:"")}}</td>
+      </ng-container>
+      <ng-container matColumnDef="salesEmployee">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Commercial</th>
+        <td mat-cell *matCellDef="let element">{{(element.salesEmployee!=undefined?element.salesEmployee.firstname:"") +
+          "
+          " +
+          (element.salesEmployee!=undefined?element.salesEmployee.lastname:"")}}</td>
+      </ng-container>
+      <ng-container matColumnDef="formalisteEmployee">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Formaliste</th>
+        <td mat-cell *matCellDef="let element">
+          {{(element.formalisteEmployee!=undefined?element.formalisteEmployee.firstname:"") + " " +
+          (element.formalisteEmployee!=undefined?element.formalisteEmployee.lastname:"")}}
+      </ng-container>
+      <ng-container matColumnDef="insertionEmployee">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Insertion</th>
+        <td mat-cell *matCellDef="let element">
+          {{(element.insertionEmployee!=undefined?element.insertionEmployee.firstname:"") + " " +
+          (element.insertionEmployee!=undefined?element.insertionEmployee.lastname:"")}}</td>
+      </ng-container>
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Insertion</th>
+        <td mat-cell *matCellDef="let element">
+          <mat-icon *ngIf="element.id==null && editMode" color="accent" (click)="deleteResponsable(element)">delete
+          </mat-icon>
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row class="pointer" [ngClass]="{'selected-mat-row':selectedResponsable==row}"
+        *matRowDef="let row; columns: displayedColumns;" (click)="selectResponsable(row.id)"></tr>
+    </table>
+  </div>
   <div [hidden]="selectedResponsable==null" class="responsable-tabs">
     <mat-tab-group animationDuration="0ms" #tabs>
       <mat-tab label="Principal">
@@ -297,16 +301,18 @@
               </table>
               <table class="full-width">
                 <tr>
-                  <td>
+                  <td
+                    *ngIf="selectedResponsable.jssSubscription!=undefined && selectedResponsable.jssSubscription!=null">
                     <h4>Abonnement JSS</h4>
                     <mat-checkbox formControlName="jssSubscription1" class="checkbox-margin"
-                      [(ngModel)]="isSubscriptionWeb">Web
+                      [(ngModel)]="selectedResponsable.jssSubscription.isWebSubscription">Web
                     </mat-checkbox>
                     <mat-checkbox formControlName="jssSubscription2" class="checkbox-margin"
-                      [(ngModel)]="isSubscriptionPaper">Papier/Web
+                      [(ngModel)]="selectedResponsable.jssSubscription.isPaperSubscription">Papier/Web
                     </mat-checkbox>
                   </td>
-                  <td>
+                  <td
+                    *ngIf="selectedResponsable.jssSubscription.isPaperSubscription || selectedResponsable.jssSubscription.isWebSubscription">
                     <mat-form-field class="full-width">
                       <mat-label>Durée de l'abonnement</mat-label>
                       <mat-select formControlName="subscriptionPeriodType"

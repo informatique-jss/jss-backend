@@ -10,7 +10,7 @@ export interface Responsable extends ITiers {
   function: string;
   building: string;
   floor: string;
-  jssSubscription: JssSubscription[];
+  jssSubscription: JssSubscription;
   subscriptionPeriodType: SubscriptionPeriodType;
   mailsCreationAffaire: Responsable[];
   mailsProvisionningConfirmation: Responsable[];

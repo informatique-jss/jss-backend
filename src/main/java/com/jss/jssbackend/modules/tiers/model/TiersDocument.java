@@ -69,7 +69,7 @@ public class TiersDocument implements Serializable {
 
 	@ManyToMany
 	@JoinTable(name = "asso_tiers_document_mail_cc_responsable_client", joinColumns = @JoinColumn(name = "id_tiers_document"), inverseJoinColumns = @JoinColumn(name = "id_responsable"))
-	private List<Mail> mailsCCResponsableClient;
+	private List<Responsable> mailsCCResponsableClient;
 
 	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "asso_tiers_document_mail_cc_responsable_client", joinColumns = @JoinColumn(name = "id_tiers_document"), inverseJoinColumns = @JoinColumn(name = "id_mail"))
@@ -77,7 +77,7 @@ public class TiersDocument implements Serializable {
 
 	@ManyToMany
 	@JoinTable(name = "asso_tiers_document_mail_cc_responsable_affaire", joinColumns = @JoinColumn(name = "id_tiers_document"), inverseJoinColumns = @JoinColumn(name = "id_responsable"))
-	private List<Mail> mailsCCResponsableAffaire;
+	private List<Responsable> mailsCCResponsableAffaire;
 
 	private Boolean isResponsableOnBilling;
 	private Boolean isCommandNumberMandatory;
@@ -118,6 +118,30 @@ public class TiersDocument implements Serializable {
 
 	public Tiers getTiers() {
 		return tiers;
+	}
+
+	public Responsable getResponsable() {
+		return responsable;
+	}
+
+	public void setResponsable(Responsable responsable) {
+		this.responsable = responsable;
+	}
+
+	public List<Responsable> getMailsCCResponsableClient() {
+		return mailsCCResponsableClient;
+	}
+
+	public void setMailsCCResponsableClient(List<Responsable> mailsCCResponsableClient) {
+		this.mailsCCResponsableClient = mailsCCResponsableClient;
+	}
+
+	public List<Responsable> getMailsCCResponsableAffaire() {
+		return mailsCCResponsableAffaire;
+	}
+
+	public void setMailsCCResponsableAffaire(List<Responsable> mailsCCResponsableAffaire) {
+		this.mailsCCResponsableAffaire = mailsCCResponsableAffaire;
 	}
 
 	public void setTiers(Tiers tiers) {

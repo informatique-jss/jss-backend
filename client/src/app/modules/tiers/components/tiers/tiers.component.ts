@@ -53,7 +53,7 @@ export class TiersComponent implements OnInit {
     let url: UrlSegment[] = this.activatedRoute.snapshot.url;
 
     // Load by responsable
-    if (url != undefined && url != null && url[0].path == "tiers" && url[1].path == "responsable") {
+    if (url != undefined && url != null && url[0] != undefined && url[1] != undefined && url[0].path == "tiers" && url[1].path == "responsable") {
       this.tiersService.getTiersByResponsable(idTiers).subscribe(response => {
         this.tiers = response;
         this.tiersService.setCurrentViewedTiers(this.tiers);
@@ -86,7 +86,6 @@ export class TiersComponent implements OnInit {
   }
 
   saveTiers() {
-    console.log(this.tiers);
     if (this.getFormsStatus())
       this.tiersService.addOrUpdateTiers(this.tiers).subscribe(response => {
         this.tiers = response;
@@ -101,6 +100,7 @@ export class TiersComponent implements OnInit {
     let principalFormStatus = this.principalFormComponent?.getFormStatus();
     let documentManagementFormStatus = this.documentManagementFormComponent?.getFormStatus();
     let documentSettlementBillingFormStatus = this.documentSettlementBillingComponent?.getFormStatus();
+    let responsableMainComponentFormStatus = this.responsableMainComponent?.getFormStatus();
     let errorMessages: string[] = [] as Array<string>;
     if (!principalFormStatus)
       errorMessages.push("Onglet Principal");
@@ -108,6 +108,8 @@ export class TiersComponent implements OnInit {
       errorMessages.push("Onglet Gestion des pièces");
     if (!documentSettlementBillingFormStatus)
       errorMessages.push("Onglet Réglement, facturation & relance");
+    if (!responsableMainComponentFormStatus)
+      errorMessages.push("Onglet Responsable");
     if (errorMessages.length > 0) {
       let errorMessage = "Les onglets suivants ne sont pas correctement remplis. Veuillez les compléter avant de sauvegarder : " + errorMessages.join(" / ");
       let sb = this.snackBar.open(errorMessage, 'Fermer', {
@@ -129,6 +131,7 @@ export class TiersComponent implements OnInit {
     this.createMode = true;
     this.editMode = true;
     this.tiers = {} as Tiers;
+    this.tiers.responsables = [] as Array<Responsable>;
     this.tiersService.setCurrentViewedTiers(this.tiers);
     this.appService.changeHeaderTitle("Nouveau Tiers / Responsable");
     this.toggleTabs();
@@ -182,7 +185,7 @@ export class TiersComponent implements OnInit {
 
   static instanceOfTiers(object: ITiers): object is Tiers {
     if (object != null)
-      return 'denomination' in object;
+      return 'isIndividual' in object;
     return false;
   }
 

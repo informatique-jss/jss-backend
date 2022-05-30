@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import com.jss.jssbackend.libs.ActiveDirectoryHelper;
 import com.jss.jssbackend.modules.miscellaneous.model.UploadedFile;
 import com.jss.jssbackend.modules.miscellaneous.repository.UploadedFileRepository;
 
@@ -21,6 +22,9 @@ public class UploadedFileServiceImpl implements UploadedFileService {
 
     @Autowired
     UploadedFileRepository uploadedFileRepository;
+
+    @Autowired
+    ActiveDirectoryHelper activeDirectoryHelper;
 
     @Override
     public List<UploadedFile> getUploadedFiles() {
@@ -40,8 +44,7 @@ public class UploadedFileServiceImpl implements UploadedFileService {
             throws NoSuchAlgorithmException, IOException {
         UploadedFile uploadedFile = new UploadedFile();
         uploadedFile.setCreationDate(new Date());
-        // TODO : à compléter quand le branchement à l'AD sera fait
-        // uploadedFile.setCreatedBy("toto");
+        uploadedFile.setCreatedBy(activeDirectoryHelper.getCurrentUsername());
         uploadedFile.setChecksum(computeChecksumForFile(absoluteFilePath));
         uploadedFile.setFilename(filename);
         uploadedFile.setPath(absoluteFilePath);

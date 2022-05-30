@@ -6,5 +6,5 @@ export interface UploadedFile {
   path: string;
   checksum: string;
   creationDate: Date;
-  createdBy: Employee;
+  createdBy: string;
 }

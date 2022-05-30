@@ -65,7 +65,6 @@ export class UploadTiersAttachementDialogComponent implements OnInit {
   }
 
   checkFile() {
-    console.log(this.file.size);
     if (this.file != null && this.file.size > MAX_SIZE_UPLOAD_FILES) {
       this.deleteFile();
       let sb = this.snackBar.open("Taille maximale d'import limitée à 5 Mo", 'Fermer', {

@@ -34,8 +34,6 @@ import com.jss.jssbackend.modules.tiers.model.BillingClosureType;
 import com.jss.jssbackend.modules.tiers.model.BillingItem;
 import com.jss.jssbackend.modules.tiers.model.BillingLabelType;
 import com.jss.jssbackend.modules.tiers.model.BillingType;
-import com.jss.jssbackend.modules.tiers.model.JssSubscription;
-import com.jss.jssbackend.modules.tiers.model.JssSubscriptionType;
 import com.jss.jssbackend.modules.tiers.model.Mail;
 import com.jss.jssbackend.modules.tiers.model.PaymentDeadlineType;
 import com.jss.jssbackend.modules.tiers.model.Phone;
@@ -57,7 +55,6 @@ import com.jss.jssbackend.modules.tiers.service.BillingClosureTypeService;
 import com.jss.jssbackend.modules.tiers.service.BillingItemService;
 import com.jss.jssbackend.modules.tiers.service.BillingLabelTypeService;
 import com.jss.jssbackend.modules.tiers.service.BillingTypeService;
-import com.jss.jssbackend.modules.tiers.service.JssSubscriptionTypeService;
 import com.jss.jssbackend.modules.tiers.service.MailService;
 import com.jss.jssbackend.modules.tiers.service.PaymentDeadlineTypeService;
 import com.jss.jssbackend.modules.tiers.service.PhoneService;
@@ -186,9 +183,6 @@ public class TiersController {
   TiersFollowupService tiersFollowupService;
 
   @Autowired
-  JssSubscriptionTypeService jssSubscriptionTypeService;
-
-  @Autowired
   SubscriptionPeriodTypeService subscriptionPeriodTypeService;
 
   @GetMapping(inputEntryPoint + "/subscription-period-types")
@@ -204,21 +198,6 @@ public class TiersController {
       return new ResponseEntity<List<SubscriptionPeriodType>>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
     return new ResponseEntity<List<SubscriptionPeriodType>>(subscriptionPeriodTypes, HttpStatus.OK);
-  }
-
-  @GetMapping(inputEntryPoint + "/jss-suscription-types")
-  public ResponseEntity<List<JssSubscriptionType>> getJssSubscriptionTypes() {
-    List<JssSubscriptionType> jssSubscriptionTypes = null;
-    try {
-      jssSubscriptionTypes = jssSubscriptionTypeService.getJssSubscriptionTypes();
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching jssSubscriptionType", e);
-      return new ResponseEntity<List<JssSubscriptionType>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching jssSubscriptionType", e);
-      return new ResponseEntity<List<JssSubscriptionType>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<List<JssSubscriptionType>>(jssSubscriptionTypes, HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/gifts")
@@ -807,8 +786,6 @@ public class TiersController {
       }
     }
 
-    // TODO : add control for document management ( checkbox
-    // exclusivity and data)
     if (tiers.getDocuments() != null && tiers.getDocuments().size() > 0) {
       for (TiersDocument document : tiers.getDocuments()) {
         if (document.getTiersDocumentType() == null || document.getTiersDocumentType().getId() == null
@@ -928,22 +905,67 @@ public class TiersController {
         if (responsable.getFloor() != null && responsable.getFloor().length() > 20)
           return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
-        if (responsable.getJssSubscriptions() != null && responsable.getJssSubscriptions().size() > 0) {
-          for (JssSubscription subscription : responsable.getJssSubscriptions()) {
-            if (subscription.getJssSubscriptionType() == null || subscription.getJssSubscriptionType().getId() == null
-                || jssSubscriptionTypeService
-                    .getJssSubscriptionType(subscription.getJssSubscriptionType().getId()) == null)
+        if (responsable.getSubscriptionPeriodType() != null
+            && (responsable.getSubscriptionPeriodType().getId() == null || subscriptionPeriodTypeService
+                .getSubscriptionPeriodType(responsable.getSubscriptionPeriodType().getId()) == null))
+          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        if (responsable.getDocuments() != null && responsable.getDocuments().size() > 0) {
+          for (TiersDocument document : responsable.getDocuments()) {
+            if (document.getTiersDocumentType() == null || document.getTiersDocumentType().getId() == null
+                || tiersDocumentTypeService
+                    .getTiersDocumentType(document.getTiersDocumentType().getId()) == null)
+              return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            if (document.getMailsAffaire() != null && document.getMailsAffaire().size() > 0)
+              if (!this.validateMailList(document.getMailsAffaire()))
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            if (document.getMailsClient() != null && document.getMailsClient().size() > 0)
+              if (!this.validateMailList(document.getMailsClient()))
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            if (document.getMailsCCResponsableAffaire() != null && document.getMailsCCResponsableAffaire().size() > 0) {
+              for (Responsable res : document.getMailsCCResponsableAffaire()) {
+                if (res.getId() == null || responsableService.getResponsable(res.getId()) == null)
+                  return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+              }
+            }
+            if (document.getMailsCCResponsableClient() != null && document.getMailsCCResponsableClient().size() > 0) {
+              for (Responsable res : document.getMailsCCResponsableClient()) {
+                if (res.getId() == null || responsableService.getResponsable(res.getId()) == null)
+                  return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+              }
+            }
+            if (document.getAffaireAddress() != null && document.getAffaireAddress().length() > 60)
+              return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            if (document.getClientAddress() != null && document.getClientAddress().length() > 60)
+              return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            if (document.getAffaireRecipient() != null && document.getAffaireRecipient().length() > 40)
+              return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            if (document.getClientRecipient() != null && document.getClientRecipient().length() > 40)
+              return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            if (document.getBillingLabel() != null && document.getBillingLabel().length() > 40)
+              return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            if (document.getCommandNumber() != null && document.getCommandNumber().length() > 40)
+              return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            if (document.getPaymentDeadlineType() != null && (document.getPaymentDeadlineType().getId() == null
+                || paymentDeadlineTypeService
+                    .getPaymentDeadlineType(document.getPaymentDeadlineType().getId()) == null))
+              return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            if (document.getRefundType() != null && (document.getRefundType().getId() == null
+                || refundTypeService.getRefundType(document.getRefundType().getId()) == null))
+              return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            if (document.getRefundIBAN() != null && document.getRefundIBAN().length() > 40)
+              return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            if (document.getBillingClosureType() != null && (document.getBillingClosureType().getId() == null
+                || billingClosureTypeService.getBillingClosureType(document.getBillingClosureType().getId()) == null))
+              return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            if (document.getBillingClosureRecipientType() != null
+                && (document.getBillingClosureRecipientType().getId() == null
+                    || billingClosureRecipientTypeService
+                        .getBillingClosureRecipientType(document.getBillingClosureRecipientType().getId()) == null))
               return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
           }
         }
-
-        if (responsable.getSubscriptionPeriodType() == null
-            || responsable.getSubscriptionPeriodType().getId() == null || subscriptionPeriodTypeService
-                .getSubscriptionPeriodType(responsable.getSubscriptionPeriodType().getId()) == null)
-          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
       }
-
-      // TODO : vérifiaction des CC (respo existe et bien associé au tiers courant)
     }
 
     try

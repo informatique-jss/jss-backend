@@ -18,9 +18,8 @@ public class JssSubscription implements Serializable {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
 
-	@ManyToOne
-	@JoinColumn(name = "id_jss_subscription_type")
-	private JssSubscriptionType jssSubscriptionType;
+	private Boolean isPaperSubscription;
+	private Boolean isWebSubscription;
 
 	@ManyToOne
 	@JoinColumn(name = "id_responsable")
@@ -35,20 +34,28 @@ public class JssSubscription implements Serializable {
 		this.id = id;
 	}
 
-	public JssSubscriptionType getJssSubscriptionType() {
-		return jssSubscriptionType;
-	}
-
-	public void setJssSubscriptionType(JssSubscriptionType jssSubscriptionType) {
-		this.jssSubscriptionType = jssSubscriptionType;
-	}
-
 	public Responsable getResponsable() {
 		return responsable;
 	}
 
 	public void setResponsable(Responsable responsable) {
 		this.responsable = responsable;
+	}
+
+	public Boolean getIsPaperSubscription() {
+		return isPaperSubscription;
+	}
+
+	public void setIsPaperSubscription(Boolean isPaperSubscription) {
+		this.isPaperSubscription = isPaperSubscription;
+	}
+
+	public Boolean getIsWebSubscription() {
+		return isWebSubscription;
+	}
+
+	public void setIsWebSubscription(Boolean isWebSubscription) {
+		this.isWebSubscription = isWebSubscription;
 	}
 
 }

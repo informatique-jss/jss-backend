@@ -19,7 +19,6 @@ export class UploadTiersAttachmentService extends AppRestService<ITiers>{
 
   uploadTiersAttachment(file: File, tiers: ITiers, attachmentType: AttachmentType, filename: string): Observable<HttpEvent<any>> {
     let formData = new FormData();
-    console.log("dd");
     if (TiersComponent.instanceOfResponsable(tiers))
       formData.append("idResponsable", tiers.id + "");
     if (TiersComponent.instanceOfTiers(tiers))

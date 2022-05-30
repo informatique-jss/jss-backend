@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.jss.jssbackend.libs.ActiveDirectoryHelper;
 import com.jss.jssbackend.libs.audit.model.Audit;
 import com.jss.jssbackend.libs.audit.repository.AuditRepository;
 import com.jss.jssbackend.libs.search.model.IndexEntity;
@@ -32,6 +33,10 @@ public class AuditEntityInterceptor extends EmptyInterceptor {
     @Lazy
     IndexEntityRepository indexEntityRepository;
 
+    @Autowired
+    @Lazy
+    ActiveDirectoryHelper activeDirectoryHelper;
+
     @Override
     public boolean onFlushDirty(
             Object entity,
@@ -49,19 +54,21 @@ public class AuditEntityInterceptor extends EmptyInterceptor {
         if (!entity.getClass().getName().equals(IndexEntity.class.getName())) {
             for (int i = 0; i < previousState.length; i++) {
                 Object oldField = previousState[i];
-                if (oldField != null && WRAPPER_TYPES.contains(oldField.getClass())) {
-                    Object newField = currentState[i];
-                    // TODO : not saved if null value to not null value
+                Object newField = currentState[i];
+                if (oldField != null && WRAPPER_TYPES.contains(oldField.getClass())
+                        || newField != null && WRAPPER_TYPES.contains(newField.getClass())) {
                     if (newField != null && oldField == null
                             || newField == null && oldField != null
                             || (newField != null && !newField.equals(oldField))) {
                         Audit audit = new Audit();
-                        audit.setAuthor(null); // TODO : change it when AD connected
+                        audit.setUsername(activeDirectoryHelper.getCurrentUsername());
                         audit.setDatetime(new Date());
                         audit.setEntity(entity.getClass().getSimpleName());
                         audit.setEntityId((Integer) id);
-                        audit.setNewValue(newField.toString());
-                        audit.setOldValue(oldField.toString());
+                        if (newField != null)
+                            audit.setNewValue(newField.toString());
+                        if (oldField != null)
+                            audit.setOldValue(oldField.toString());
                         audit.setFieldName(propertyNames[i]);
                         auditRepository.save(audit);
                     }

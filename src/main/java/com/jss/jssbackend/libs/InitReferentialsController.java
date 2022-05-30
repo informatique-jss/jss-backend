@@ -36,7 +36,6 @@ import com.jss.jssbackend.modules.tiers.model.BillingClosureType;
 import com.jss.jssbackend.modules.tiers.model.BillingItem;
 import com.jss.jssbackend.modules.tiers.model.BillingLabelType;
 import com.jss.jssbackend.modules.tiers.model.BillingType;
-import com.jss.jssbackend.modules.tiers.model.JssSubscriptionType;
 import com.jss.jssbackend.modules.tiers.model.Mail;
 import com.jss.jssbackend.modules.tiers.model.PaymentDeadlineType;
 import com.jss.jssbackend.modules.tiers.model.Phone;
@@ -54,7 +53,6 @@ import com.jss.jssbackend.modules.tiers.repository.BillingItemRepository;
 import com.jss.jssbackend.modules.tiers.repository.BillingLabelTypeRepository;
 import com.jss.jssbackend.modules.tiers.repository.BillingTypeRepository;
 import com.jss.jssbackend.modules.tiers.repository.JssSubscriptionRepository;
-import com.jss.jssbackend.modules.tiers.repository.JssSubscriptionTypeRepository;
 import com.jss.jssbackend.modules.tiers.repository.MailRepository;
 import com.jss.jssbackend.modules.tiers.repository.PaymentDeadlineTypeRepository;
 import com.jss.jssbackend.modules.tiers.repository.PhoneRepository;
@@ -185,9 +183,6 @@ public class InitReferentialsController {
 
 	@Autowired
 	DepartmentRepository departmentRepository;
-
-	@Autowired
-	JssSubscriptionTypeRepository jssSubscriptionTypeRepository;
 
 	@Autowired
 	JssSubscriptionRepository jssSubscriptionRepository;
@@ -557,17 +552,6 @@ public class InitReferentialsController {
 		giftRepository.save(gift);
 
 		jssSubscriptionRepository.deleteAll();
-		jssSubscriptionTypeRepository.deleteAll();
-
-		JssSubscriptionType jssSubscriptionType = new JssSubscriptionType();
-		jssSubscriptionType.setCode("WEB");
-		jssSubscriptionType.setLabel("Web");
-		jssSubscriptionTypeRepository.save(jssSubscriptionType);
-
-		jssSubscriptionType = new JssSubscriptionType();
-		jssSubscriptionType.setCode("PAPER");
-		jssSubscriptionType.setLabel("Papier");
-		jssSubscriptionTypeRepository.save(jssSubscriptionType);
 
 		subscriptionPeriodTypeRepository.deleteAll();
 		SubscriptionPeriodType subscriptionPeriodType = new SubscriptionPeriodType();

@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter, map, startWith, switchMap, tap } from 'rxjs/operators';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
 import { compareWithId, isTiersTypeProspect } from 'src/app/libs/CompareHelper';
-import { COUNTRY_CODE_FRANCE, JSS_SUSCRIPTION_TYPE_CODE_PAPER, JSS_SUSCRIPTION_TYPE_CODE_WEB, SEPARATOR_KEY_CODES, SUSCRIPTION_TYPE_CODE_PERIODE_12M } from 'src/app/libs/Constants';
+import { COUNTRY_CODE_FRANCE, SEPARATOR_KEY_CODES, SUSCRIPTION_TYPE_CODE_PERIODE_12M } from 'src/app/libs/Constants';
 import { validateEmail, validateFrenchPhone, validateInternationalPhone } from 'src/app/libs/CustomFormsValidatorsHelper';
 import { callNumber, prepareMail } from 'src/app/libs/MailHelper';
 import { City } from 'src/app/modules/miscellaneous/model/City';
@@ -22,7 +22,6 @@ import { Civility } from '../../../miscellaneous/model/Civility';
 import { Language } from '../../../miscellaneous/model/Language';
 import { LanguageService } from '../../../miscellaneous/services/language.service';
 import { JssSubscription } from '../../model/JssSubscription';
-import { JssSubscriptionType } from '../../model/JssSubscriptionType';
 import { Mail } from '../../model/Mail';
 import { Phone } from '../../model/Phone';
 import { Responsable } from '../../model/Responsable';
@@ -30,11 +29,12 @@ import { SubscriptionPeriodType } from '../../model/SubscriptionPeriodType';
 import { Tiers } from '../../model/Tiers';
 import { TiersCategory } from '../../model/TiersCategory';
 import { TiersType } from '../../model/TiersType';
-import { JssSubscriptionTypeService } from '../../services/jss.subscription.type.service';
 import { SubscriptionPeriodTypeService } from '../../services/subscription.period.type.service';
 import { TiersCategoryService } from '../../services/tiers.category.service';
 import { TiersService } from '../../services/tiers.service';
 import { TiersTypeService } from '../../services/tiers.type.service';
+import { DocumentManagementComponent } from '../document-management/document-management.component';
+import { SettlementBillingComponent } from '../settlement-billing/settlement-billing.component';
 
 @Component({
   selector: 'responsable-main',
@@ -87,10 +87,11 @@ export class ResponsableMainComponent implements OnInit {
   tiersCategories: TiersCategory[] = [] as Array<TiersCategory>;
   subscriptionPeriodTypes: SubscriptionPeriodType[] = [] as Array<SubscriptionPeriodType>;
 
-  jssSubscriptionTypes: JssSubscriptionType[] = [] as Array<JssSubscriptionType>;
-
   isSubscriptionPaper: boolean = false;
   isSubscriptionWeb: boolean = false;
+
+  @ViewChild(DocumentManagementComponent) documentManagementFormComponent: DocumentManagementComponent | undefined;
+  @ViewChild(SettlementBillingComponent) documentSettlementBillingComponent: SettlementBillingComponent | undefined;
 
   constructor(private formBuilder: FormBuilder,
     private civilityService: CivilityService,
@@ -100,7 +101,6 @@ export class ResponsableMainComponent implements OnInit {
     private countryService: CountryService,
     protected tiersService: TiersService,
     protected tiersTypeService: TiersTypeService,
-    protected jssSubscriptionTypeService: JssSubscriptionTypeService,
     protected subscriptionPeriodTypeService: SubscriptionPeriodTypeService,
     protected tiersCategoryService: TiersCategoryService) { }
 
@@ -149,9 +149,6 @@ export class ResponsableMainComponent implements OnInit {
     })
     this.subscriptionPeriodTypeService.getSubscriptionPeriodTypes().subscribe(response => {
       this.subscriptionPeriodTypes = response;
-    })
-    this.jssSubscriptionTypeService.getJssSubscriptionTypes().subscribe(response => {
-      this.jssSubscriptionTypes = response;
     })
 
     // Initialize autocomplete fields
@@ -254,6 +251,7 @@ export class ResponsableMainComponent implements OnInit {
         this.selectedResponsable = responsable;
         this.tiersService.setCurrentViewedResponsable(responsable);
         this.toggleTabs();
+        this.initDefaultValues();
       }
     })
   }
@@ -291,13 +289,8 @@ export class ResponsableMainComponent implements OnInit {
     if (this.selectedResponsable != null && (this.selectedResponsable.isBouclette == null || this.selectedResponsable.isBouclette == undefined))
       this.selectedResponsable.isBouclette = false;
 
-    if (this.selectedResponsable?.jssSubscription != null && this.selectedResponsable.jssSubscription.length > 0) {
-      this.selectedResponsable.jssSubscription.forEach(subscription => {
-        if (subscription.jssSuscriptionType != null && subscription.jssSuscriptionType.code == JSS_SUSCRIPTION_TYPE_CODE_PAPER)
-          this.isSubscriptionPaper = true;
-        if (subscription.jssSuscriptionType != null && subscription.jssSuscriptionType.code == JSS_SUSCRIPTION_TYPE_CODE_WEB)
-          this.isSubscriptionWeb = true;
-      })
+    if (this.selectedResponsable != null && (this.selectedResponsable?.jssSubscription == null || this.selectedResponsable.jssSubscription == undefined)) {
+      this.selectedResponsable.jssSubscription = {} as JssSubscription;
     }
   }
 
@@ -342,6 +335,7 @@ export class ResponsableMainComponent implements OnInit {
     mails: ['', []],
     phones: ['', []],
     observations: ['', []],
+    isBouclette: ['', []],
   });
 
   checkFieldFilledIfIsInFrance(fieldName: string): ValidationErrors | null {
@@ -360,7 +354,7 @@ export class ResponsableMainComponent implements OnInit {
     return (control: AbstractControl): ValidationErrors | null => {
       const root = control.root as FormGroup;
       const fieldValue = root.get(fieldName)?.value;
-      if (this.selectedResponsable != null && this.selectedResponsable.jssSubscription != null && this.selectedResponsable.jssSubscription.length > 0 && (fieldValue == undefined || fieldValue == null || fieldValue.length == 0))
+      if (this.selectedResponsable != null && this.selectedResponsable.jssSubscription != null && (this.selectedResponsable.jssSubscription.isPaperSubscription || this.selectedResponsable.jssSubscription.isWebSubscription) && (fieldValue == undefined || fieldValue == null || fieldValue.length == 0))
         return {
           notFilled: true
         };
@@ -501,45 +495,19 @@ export class ResponsableMainComponent implements OnInit {
 
   compareWithId = compareWithId;
 
-  getSubscriptionType(subscriptionType: string): JssSubscriptionType {
-    if (this.jssSubscriptionTypes != null && this.jssSubscriptionTypes.length > 0)
-      for (let i = 0; i < this.jssSubscriptionTypes.length; i++) {
-        const jssSubscriptionType = this.jssSubscriptionTypes[i];
-        if (jssSubscriptionType.code == subscriptionType)
-          return jssSubscriptionType;
-      }
-    return {} as JssSubscriptionType;
-  }
-
   getFormStatus(): boolean {
+    let documentManagementFormStatus = this.documentManagementFormComponent?.getFormStatus();
+    let documentSettlementBillingFormStatus = this.documentSettlementBillingComponent?.getFormStatus();
     this.principalForm.markAllAsTouched();
 
-    // Generate subscription types
-    if (this.selectedResponsable != null && this.selectedResponsable?.jssSubscription == null)
-      this.selectedResponsable.jssSubscription = [] as Array<JssSubscription>;
+    if (this.selectedResponsable != null && (this.selectedResponsable.isBouclette == null || this.selectedResponsable.isBouclette == undefined))
+      this.selectedResponsable.isBouclette = false;
 
-    let foundPaper = false;
-    let foundWeb = false;
+    if (this.selectedResponsable?.jssSubscription != undefined && this.selectedResponsable.jssSubscription.isPaperSubscription)
+      this.selectedResponsable.jssSubscription.isWebSubscription = true;
 
-    if (this.selectedResponsable != null && this.selectedResponsable.jssSubscription.length > 0) {
-      this.selectedResponsable.jssSubscription.forEach(subscription => {
-        if (subscription.jssSuscriptionType != null && subscription.jssSuscriptionType.code == JSS_SUSCRIPTION_TYPE_CODE_PAPER)
-          foundPaper = true;
-        if (subscription.jssSuscriptionType != null && subscription.jssSuscriptionType.code == JSS_SUSCRIPTION_TYPE_CODE_WEB)
-          foundWeb = true;
-      })
-    }
-
-    if (!foundWeb && (this.isSubscriptionPaper || this.isSubscriptionWeb)) {
-      let subscriptionWeb = {} as JssSubscription;
-      subscriptionWeb.jssSuscriptionType = this.getSubscriptionType(JSS_SUSCRIPTION_TYPE_CODE_WEB);
-      this.selectedResponsable?.jssSubscription.push(subscriptionWeb);
-    }
-    if (!foundPaper && this.isSubscriptionPaper) {
-      let subscriptionPaper = {} as JssSubscription;
-      subscriptionPaper.jssSuscriptionType = this.getSubscriptionType(JSS_SUSCRIPTION_TYPE_CODE_PAPER);
-      this.selectedResponsable?.jssSubscription.push(subscriptionPaper);
-    }
-    return this.principalForm.valid;
+    if (documentManagementFormStatus != undefined && documentSettlementBillingFormStatus != undefined)
+      return this.selectedResponsable == null || this.principalForm.valid && documentManagementFormStatus && documentSettlementBillingFormStatus;
+    return false;
   }
 }

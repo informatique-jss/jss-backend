@@ -55,7 +55,7 @@ export class TiersAttachmentsComponent implements OnInit {
         switch (property) {
           case 'name': return item.uploadedFile.filename;
           case 'attachementType': return item.attachmentType.label;
-          case 'createdBy': return item.uploadedFile.createdBy.firstname + item.uploadedFile.createdBy.lastname;
+          case 'createdBy': return item.uploadedFile.createdBy;
           case 'creationDate': return new Date(item.uploadedFile.creationDate).getTime() + "";
           default: return item.uploadedFile.filename;
         }
@@ -80,7 +80,6 @@ export class TiersAttachmentsComponent implements OnInit {
     });
     this.uploadTiersAttachementDialogRef.componentInstance.tiers = this.tiers;
     this.uploadTiersAttachementDialogRef.afterClosed().subscribe(response => {
-      console.log(response);
       if (response && response != null) {
         this.tiers.tiersAttachments = response;
         this.setDataTable();

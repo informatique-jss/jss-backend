@@ -30,9 +30,7 @@ public class UploadedFile implements Serializable {
 	private String checksum;
 	private Date creationDate;
 
-	@ManyToOne
-	@JoinColumn(name = "created_by_employee")
-	private Employee createdBy;
+	private String createdBy;
 
 	public Integer getId() {
 		return id;
@@ -74,11 +72,11 @@ public class UploadedFile implements Serializable {
 		this.creationDate = creationDate;
 	}
 
-	public Employee getCreatedBy() {
+	public String getCreatedBy() {
 		return createdBy;
 	}
 
-	public void setCreatedBy(Employee createdBy) {
+	public void setCreatedBy(String createdBy) {
 		this.createdBy = createdBy;
 	}
 
