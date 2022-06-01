@@ -1,5 +1,6 @@
 package com.jss.jssbackend.modules.miscellaneous.service;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
@@ -20,18 +21,18 @@ public class StorageFileServiceImpl implements StorageFileService {
     private String uploadFolder;
 
     @Override
-    public String saveFile(MultipartFile file, String filename) throws IOException {
+    public String saveFile(MultipartFile file, String filename, String path) throws IOException {
         if (filename == null || filename.equals(""))
             filename = file.getOriginalFilename();
-        Files.copy(file.getInputStream(), Paths.get(uploadFolder).resolve(filename),
+        Files.createDirectories(Paths.get(uploadFolder.trim() + File.separator + path));
+        Files.copy(file.getInputStream(), Paths.get(uploadFolder.trim() + File.separator + path).resolve(filename),
                 StandardCopyOption.REPLACE_EXISTING);
-        return Paths.get(uploadFolder).resolve(filename).normalize().toAbsolutePath().toString();
+        return Paths.get(uploadFolder.trim()).resolve(filename).normalize().toAbsolutePath().toString();
     }
 
     @Override
     public Resource loadFile(String filename) throws MalformedURLException {
-        // TODO : ranger les fichiers !
-        Path file = Paths.get(uploadFolder).resolve(filename);
+        Path file = Paths.get(uploadFolder.trim()).resolve(filename);
         Resource resource = new UrlResource(file.toUri());
         if (resource.exists() || resource.isReadable()) {
             return resource;

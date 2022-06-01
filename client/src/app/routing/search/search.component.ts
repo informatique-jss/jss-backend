@@ -9,6 +9,8 @@ import { EntityType } from './EntityType';
 
 export const TIERS_ENTITY_TYPE: EntityType = { entityType: 'Tiers', tabName: 'Tiers', entryPoint: 'tiers' };
 export const RESPONSABLE_ENTITY_TYPE: EntityType = { entityType: 'Responsable', tabName: 'Responsable', entryPoint: 'tiers/responsable' };
+export const QUOTATION_ENTITY_TYPE: EntityType = { entityType: 'Quotation', tabName: 'Devis', entryPoint: 'quotation' };
+export const CUSTOMER_ORDER_ENTITY_TYPE: EntityType = { entityType: 'CustomerOrder', tabName: 'Commande', entryPoint: 'order' };
 
 @Component({
   selector: 'app-search',
@@ -25,7 +27,8 @@ export class SearchComponent implements OnInit {
 
   TIERS_ENTITY_TYPE = TIERS_ENTITY_TYPE;
   RESPONSABLE_ENTITY_TYPE = RESPONSABLE_ENTITY_TYPE;
-  entityTypes: EntityType[] = [TIERS_ENTITY_TYPE, RESPONSABLE_ENTITY_TYPE];
+  QUOTATION_ENTITY_TYPE = QUOTATION_ENTITY_TYPE;
+  entityTypes: EntityType[] = [TIERS_ENTITY_TYPE, RESPONSABLE_ENTITY_TYPE, QUOTATION_ENTITY_TYPE];
   selectedTabIndex: number = 0;
   userSelectedModule: EntityType | null = null;
 

@@ -20,7 +20,7 @@ export class CityService extends AppRestService<City>{
     return this.getList(new HttpParams().set("postalCode", postalCode), "cities/search/postal-code");
   }
 
-  getCitiesFilteredByCountryAndName(value: string, country: Country): any {
+  getCitiesFilteredByCountryAndName(value: string, country: Country) {
     if (country != undefined && country != null)
       return this.getList(new HttpParams().set("countryId", country.id).set("city", value), "cities/search/country");
     return this.getList(new HttpParams().set("city", value), "cities/search/country");

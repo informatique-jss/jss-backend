@@ -249,7 +249,7 @@
                 </button>
                 <mat-autocomplete #autoSpecialOffer="matAutocomplete" [displayWith]="displayLabel">
                   <mat-option *ngFor="let specialOffer of filteredSpecialOffers | async" [value]="specialOffer">
-                    {{specialOffer.code}}
+                    {{specialOffer.code}} - {{specialOffer.label}}
                   </mat-option>
                 </mat-autocomplete>
               </mat-form-field>

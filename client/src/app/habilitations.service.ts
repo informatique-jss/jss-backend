@@ -14,6 +14,14 @@ export class HabilitationsService {
     return true;
   }
 
+  canViewQuotationModule() {
+    return true;
+  }
+
+  canViewCustomerOrderModule() {
+    return true;
+  }
+
 }
 
 

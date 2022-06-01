@@ -20,16 +20,19 @@ import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.jss.jssbackend.libs.search.model.IndexedField;
+import com.jss.jssbackend.modules.miscellaneous.model.Attachment;
 import com.jss.jssbackend.modules.miscellaneous.model.City;
 import com.jss.jssbackend.modules.miscellaneous.model.Civility;
 import com.jss.jssbackend.modules.miscellaneous.model.Country;
+import com.jss.jssbackend.modules.miscellaneous.model.IAttachment;
 import com.jss.jssbackend.modules.miscellaneous.model.Language;
+import com.jss.jssbackend.modules.miscellaneous.model.Document;
 import com.jss.jssbackend.modules.profile.model.Employee;
 
 @Entity
 @Table(indexes = { @Index(name = "pk_responsable", columnList = "id", unique = true),
 		@Index(name = "idx_responsable_tiers", columnList = "id_tiers") })
-public class Responsable implements ITiers {
+public class Responsable implements ITiers, IAttachment {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -117,20 +120,20 @@ public class Responsable implements ITiers {
 	private String observations;
 
 	@ManyToMany(cascade = CascadeType.ALL)
-	@JoinTable(name = "asso_tiers_mail", joinColumns = @JoinColumn(name = "id_tiers"), inverseJoinColumns = @JoinColumn(name = "id_mail"))
+	@JoinTable(name = "asso_responsable_mail", joinColumns = @JoinColumn(name = "id_tiers"), inverseJoinColumns = @JoinColumn(name = "id_mail"))
 	private List<Mail> mails;
 
 	@ManyToMany(cascade = CascadeType.ALL)
-	@JoinTable(name = "asso_tiers_phone", joinColumns = @JoinColumn(name = "id_tiers"), inverseJoinColumns = @JoinColumn(name = "id_phone"))
+	@JoinTable(name = "asso_responsable_phone", joinColumns = @JoinColumn(name = "id_tiers"), inverseJoinColumns = @JoinColumn(name = "id_phone"))
 	private List<Phone> phones;
 
-	@OneToMany(targetEntity = TiersDocument.class, mappedBy = "responsable", cascade = CascadeType.ALL)
+	@OneToMany(targetEntity = Document.class, mappedBy = "responsable", cascade = CascadeType.ALL)
 	@JsonManagedReference("responsable")
-	private List<TiersDocument> documents;
+	private List<Document> documents;
 
-	@OneToMany(targetEntity = TiersAttachment.class, mappedBy = "responsable", cascade = CascadeType.ALL)
+	@OneToMany(targetEntity = Attachment.class, mappedBy = "responsable", cascade = CascadeType.ALL)
 	@JsonManagedReference("responsable")
-	private List<TiersAttachment> tiersAttachments;
+	private List<Attachment> attachments;
 
 	@OneToMany(targetEntity = TiersFollowup.class, mappedBy = "responsable", cascade = CascadeType.ALL)
 	@JsonManagedReference("responsable")
@@ -357,20 +360,20 @@ public class Responsable implements ITiers {
 		this.phones = phones;
 	}
 
-	public List<TiersDocument> getDocuments() {
+	public List<Document> getDocuments() {
 		return documents;
 	}
 
-	public void setDocuments(List<TiersDocument> documents) {
+	public void setDocuments(List<Document> documents) {
 		this.documents = documents;
 	}
 
-	public List<TiersAttachment> getTiersAttachments() {
-		return tiersAttachments;
+	public List<Attachment> getAttachments() {
+		return attachments;
 	}
 
-	public void setTiersAttachments(List<TiersAttachment> tiersAttachments) {
-		this.tiersAttachments = tiersAttachments;
+	public void setAttachments(List<Attachment> attachments) {
+		this.attachments = attachments;
 	}
 
 	public List<TiersFollowup> getTiersFollowups() {

@@ -21,10 +21,13 @@ export class TiersService extends AppRestService<Tiers>{
     return this.getById("tiers", id);
   }
 
-  getTiersByResponsable(idTiers: number) {
-    return this.get(new HttpParams().set("idResponsable", idTiers), "responsable");
+  getTiersByResponsable(idResponsable: number) {
+    return this.get(new HttpParams().set("idResponsable", idResponsable), "responsable");
   }
 
+  getIndividualTiersByKeyword(searchedValue: string) {
+    return this.getList(new HttpParams().set("searchedValue", searchedValue), "individual/search");
+  }
   addOrUpdateTiers(tiers: Tiers) {
     return this.addOrUpdate(new HttpParams(), "tiers", tiers, "Tiers enregistré", "Erreur lors de l'enregistrement du tiers");
   }

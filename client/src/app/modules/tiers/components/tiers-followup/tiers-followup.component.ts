@@ -8,6 +8,7 @@ import { CustomErrorStateMatcher } from 'src/app/app.component';
 import { compareWithId } from 'src/app/libs/CompareHelper';
 import { ICSEvent } from 'src/app/libs/ICSEvent';
 import { createEvent } from 'src/app/libs/ICSHelper';
+import { instanceOfResponsable, instanceOfTiers } from 'src/app/libs/TypeHelper';
 import { Gift } from 'src/app/modules/miscellaneous/model/Gift';
 import { GiftService } from 'src/app/modules/miscellaneous/services/gift.service';
 import { Employee } from 'src/app/modules/profile/model/Employee';
@@ -118,10 +119,10 @@ export class TiersFollowupComponent implements OnInit {
     if (this.tiers.tiersFollowups == null || this.tiers.tiersFollowups == undefined)
       this.tiers.tiersFollowups = [] as Array<TiersFollowup>;
 
-    if (TiersComponent.instanceOfTiers(this.tiers))
+    if (instanceOfTiers(this.tiers))
       this.newFollowup.tiers = this.tiers;
 
-    if (TiersComponent.instanceOfResponsable(this.tiers))
+    if (instanceOfResponsable(this.tiers))
       this.newFollowup.responsable = this.tiers;
 
     this.tiersFollowupService.addFollowup(this.newFollowup).subscribe(response => {
@@ -159,7 +160,7 @@ export class TiersFollowupComponent implements OnInit {
   createEvent() {
     let event = {} as ICSEvent;
 
-    if (TiersComponent.instanceOfTiers(this.tiers)) {
+    if (instanceOfTiers(this.tiers)) {
       event.description = "Bonjour, \n\nMerci de rappeler le tiers " + this.tiers.denomination + ".";
       event.htmlDescription = "<!DOCTYPE HTML PUBLIC -//W3C//DTD HTML 3.2//EN><html><body><p>Bonjour,</p><p>Merci de rappeler le tiers <a href=\"" + environment.frontendUrl + "tiers/" + this.tiers.id + "\">" + this.tiers.denomination + "</a></p></html></body>";
 
@@ -174,7 +175,7 @@ export class TiersFollowupComponent implements OnInit {
       createEvent([event], 'Rappel ' + this.tiers.denomination + '.ics');
     }
 
-    if (TiersComponent.instanceOfResponsable(this.tiers)) {
+    if (instanceOfResponsable(this.tiers)) {
       event.description = "Bonjour, \n\nMerci de rappeler le responsable " + this.tiers.firstname + " " + this.tiers.lastname + " (" + this.tiers.id + ").";
       event.htmlDescription = "<!DOCTYPE HTML PUBLIC -//W3C//DTD HTML 3.2//EN><html><body><p>Bonjour,</p><p>Merci de rappeler le tiers <a href=\"" + environment.frontendUrl + "tiers/responsable/" + this.tiers.id + "\">" + this.tiers.firstname + " " + this.tiers.lastname + "</a></p></html></body>";
 

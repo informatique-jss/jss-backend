@@ -1,0 +1,208 @@
+<form [formGroup]="affaireForm">
+  <div class="full-width">
+    <fieldset [disabled]="editMode==false" class="fieldset-no-border">
+      <table class="full-width">
+        <tr>
+          <td>
+            <mat-slide-toggle formControlName="isIndividual" [(ngModel)]="affaire.isIndividual"
+              (change)="affaire.civility = civilities[0]">Particulier ?
+            </mat-slide-toggle>
+          </td>
+          <td *ngIf="affaire.isIndividual==true">
+            <mat-radio-group class="radio-group-column" [(ngModel)]="affaire.civility" formControlName="civility">
+              <mat-radio-button *ngFor="let civility of civilities" [value]="civility"
+                [checked]=" this.affaire.civility != undefined && this.affaire.civility.id == civility.id">
+                {{civility.label}}
+              </mat-radio-button>
+            </mat-radio-group>
+          </td>
+          <td *ngIf="affaire.isIndividual==true">
+            <mat-form-field class="full-width">
+              <mat-label>Nom</mat-label>
+              <input matInput formControlName="lastname" [(ngModel)]="affaire.lastname" placeholder="Nom">
+            </mat-form-field>
+          </td>
+          <td *ngIf="affaire.isIndividual==true">
+            <mat-form-field class="full-width">
+              <mat-label>Prénom</mat-label>
+              <input matInput formControlName="firstname" [(ngModel)]="affaire.firstname" placeholder="Nom">
+            </mat-form-field>
+          </td>
+        </tr>
+      </table>
+      <table class="full-width" *ngIf="affaire.isIndividual==false">
+        <tr>
+          <td>
+            <mat-form-field class="full-width">
+              <mat-label>Forme juridique</mat-label>
+              <input type="text" matInput formControlName="legalForm" [matAutocomplete]="autoCompleteLegalForm"
+                [(ngModel)]="affaire.legalForm">
+              <mat-icon matSuffix (click)="affaire.legalForm=null" *ngIf="editMode && affaire.legalForm!=null">
+                close
+              </mat-icon>
+              <mat-autocomplete autoActiveFirstOption #autoCompleteLegalForm="matAutocomplete"
+                [displayWith]="displayLabel">
+                <mat-option *ngFor="let legalForm of filteredLegalForms | async" [value]="legalForm">
+                  {{legalForm.label}}
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+          </td>
+          <td *ngIf="affaire.legalForm != null && affaire.legalForm.code != UNREGISTERED_COMPANY_LEGAL_FORM_CODE">
+            <mat-form-field class="full-width">
+              <mat-label>SIREN</mat-label>
+              <input matInput placeholder="SIREN" [(ngModel)]="affaire.siren" [matAutocomplete]="autoCompleteSiren"
+                formControlName="siren" autocomplete="do-not-autofill">
+              <mat-autocomplete #autoCompleteSiren="matAutocomplete" (optionSelected)='fillSiren()'>
+                <mat-option *ngIf="filteredSiren!=undefined" [value]="filteredSiren!.uniteLegale.siren">
+                  {{filteredSiren!=undefined ?filteredSiren.uniteLegale.siren :""}}
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+          </td>
+          <td *ngIf="affaire.legalForm != null && affaire.legalForm.code != UNREGISTERED_COMPANY_LEGAL_FORM_CODE">
+            <mat-form-field class="full-width">
+              <mat-label>SIRET</mat-label>
+              <input matInput placeholder="SIRET" [(ngModel)]="affaire.siret" [matAutocomplete]="autoCompleteSiret"
+                formControlName="siret" autocomplete="do-not-autofill">
+              <mat-autocomplete #autoCompleteSiret="matAutocomplete" (optionSelected)='fillSiret()'>
+                <mat-option *ngIf="filteredSiret!=undefined" [value]="filteredSiret!.etablissement.siret">
+                  {{filteredSiret!=undefined ?filteredSiret.etablissement.siret :""}}
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+          </td>
+          <td *ngIf="affaire.legalForm != null && affaire.legalForm.code != UNREGISTERED_COMPANY_LEGAL_FORM_CODE">
+            <mat-form-field class="full-width">
+              <mat-label>RNA</mat-label>
+              <input matInput placeholder="RNA" [(ngModel)]="affaire.rna" [matAutocomplete]="autoCompleteRna"
+                formControlName="rna" autocomplete="do-not-autofill">
+              <mat-autocomplete #autoCompleteRna="matAutocomplete" (optionSelected)='fillRna()'>
+                <mat-option *ngIf="filteredRna!=undefined" [value]="filteredRna!.association.id_association">
+                  {{filteredRna!=undefined ?filteredRna.association.id_association :""}}
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+          </td>
+          <td>
+            <mat-form-field class="full-width">
+              <mat-label>Denomination</mat-label>
+              <input matInput formControlName="denomination" [(ngModel)]=" affaire.denomination"
+                placeholder="Dénomination" autocomplete="do-not-autofill">
+            </mat-form-field>
+          </td>
+        </tr>
+      </table>
+      <table class="full-width">
+        <tr>
+          <td>
+            <mat-form-field class="full-width">
+              <mat-label>Adresse</mat-label>
+              <input matInput formControlName="address" [(ngModel)]="affaire.address" placeholder="Adresse"
+                autocomplete="do-not-autofill">
+            </mat-form-field>
+          </td>
+          <td>
+            <mat-form-field class="full-width">
+              <mat-label>Ville</mat-label>
+              <input matInput placeholder="Ville" [(ngModel)]="affaire.city" [matAutocomplete]="autoCompleteCity"
+                formControlName="city" autocomplete="do-not-autofill">
+              <mat-autocomplete #autoCompleteCity="matAutocomplete" [displayWith]="displayLabel"
+                (optionSelected)='fillPostalCode($event.option.value)'>
+                <mat-option *ngFor="let city of filteredCities" [value]="city">
+                  {{city.label}}
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+          </td>
+          <td>
+            <mat-form-field class="full-width">
+              <mat-label>Code postal</mat-label>
+              <input matInput placeholder="Code postal" [(ngModel)]="affaire.postalCode"
+                [matAutocomplete]="autoCompletePostalCode" formControlName="postalCode" autocomplete="do-not-autofill">
+              <mat-autocomplete #autoCompletePostalCode="matAutocomplete"
+                (optionSelected)='fillCity($event.option.value)'>
+                <mat-option *ngFor="let postalCode of filteredPostalCodes" [value]="postalCode">
+                  {{postalCode}}
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+          </td>
+          <td>
+            <mat-form-field class="full-width">
+              <mat-label>Pays</mat-label>
+              <input matInput placeholder="Pays" [(ngModel)]="affaire.country" [matAutocomplete]="autoCompleteCountry"
+                formControlName="country" autocomplete="do-not-autofill">
+              <mat-autocomplete #autoCompleteCountry="matAutocomplete" [displayWith]="displayLabel">
+                <mat-option *ngFor="let country of filteredCountries | async" [value]="country">
+                  {{country.label}}
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+          </td>
+        </tr>
+      </table>
+      <table class="full-width">
+        <tr>
+          <td>
+            <mat-form-field class="full-width">
+              <mat-label>Mails de facturation</mat-label>
+              <mat-chip-list #chipListMails>
+                <mat-chip *ngFor="let mail of affaire.mails" (removed)="removeMail(mail)">
+                  {{mail.mail}}
+                  <button matChipRemove *ngIf="editMode">
+                    <mat-icon>cancel</mat-icon>
+                  </button>
+                  <mat-icon matChipRemove *ngIf="editMode==false" (click)="prepareMail(mail)">mail</mat-icon>
+                </mat-chip>
+                <input placeholder="Saisir un mail" #mailInput formControlName="mails" [matChipInputFor]="chipListMails"
+                  [matChipInputSeparatorKeyCodes]="SEPARATOR_KEY_CODE" (matChipInputTokenEnd)="addMail($event)">
+              </mat-chip-list>
+            </mat-form-field>
+          </td>
+          <td>
+            <mat-form-field class="full-width">
+              <mat-label>Téléphones</mat-label>
+              <mat-chip-list #chipListPhones>
+                <mat-chip *ngFor="let phone of affaire.phones" (removed)="removePhone(phone)">
+                  {{phone.phoneNumber}}
+                  <button matChipRemove *ngIf="editMode">
+                    <mat-icon>cancel</mat-icon>
+                  </button>
+                  <mat-icon matChipRemove *ngIf="editMode==false" (click)="call(phone)">phone</mat-icon>
+                </mat-chip>
+                <input placeholder="Saisir un téléphone" #phoneInput formControlName="phones"
+                  [matChipInputFor]="chipListPhones" [matChipInputSeparatorKeyCodes]="SEPARATOR_KEY_CODE"
+                  (matChipInputTokenEnd)="addPhone($event)">
+              </mat-chip-list>
+            </mat-form-field>
+          </td>
+          <td>
+            <mat-form-field class="full-width">
+              <mat-label>Référence externe</mat-label>
+              <input matInput formControlName="externalReference" [(ngModel)]=" affaire.externalReference"
+                placeholder="Référence externe" autocomplete="do-not-autofill">
+            </mat-form-field>
+          </td>
+          <td>
+            <mat-form-field class="full-width">
+              <mat-label>Capital social</mat-label>
+              <input type="number" matInput formControlName="shareCapital" [(ngModel)]=" affaire.shareCapital"
+                placeholder="Capital social" autocomplete="do-not-autofill">
+            </mat-form-field>
+          </td>
+        </tr>
+      </table>
+      <table class="full-width">
+        <tr>
+          <td>
+            <mat-form-field class="full-width">
+              <mat-label>Observations</mat-label>
+              <textarea rows="4" matInput formControlName="observations" [(ngModel)]="affaire.observations"></textarea>
+            </mat-form-field>
+          </td>
+        </tr>
+      </table>
+    </fieldset>
+  </div>
+</form>

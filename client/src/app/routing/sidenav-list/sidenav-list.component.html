@@ -9,4 +9,12 @@
     [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/tiers' )>=0}">
     <mat-icon>group</mat-icon> <span>Tiers/Responsables</span>
   </a>
+  <a mat-list-item routerLink="/quotation" *ngIf="canViewQuotationModule()"
+    [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/quotation' )>=0}">
+    <mat-icon>request_quote</mat-icon> <span>Devis</span>
+  </a>
+  <a mat-list-item routerLink="/order" *ngIf="canViewCustomerOrderModule()"
+    [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/order' )>=0}">
+    <mat-icon>shopping_cart</mat-icon> <span>Commande</span>
+  </a>
 </mat-nav-list>

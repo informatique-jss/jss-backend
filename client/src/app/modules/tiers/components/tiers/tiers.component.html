@@ -15,8 +15,8 @@
       <settlement-billing [tiers]="tiers" [editMode]="editMode"></settlement-billing>
     </mat-tab>
     <mat-tab label="Documents" *ngIf="tiers.id!=null && tiers.id!=undefined">
-      <tiers-attachments [tiers]="tiers" [editMode]="editMode">
-      </tiers-attachments>
+      <attachments [entity]="tiers" [editMode]="editMode" [entityType]="TIERS_ENTITY_TYPE.entityType">
+      </attachments>
     </mat-tab>
     <mat-tab label="Suivi" *ngIf="tiers.id!=null && tiers.id!=undefined">
       <tiers-followup [tiers]="tiers" [editMode]="editMode"></tiers-followup>

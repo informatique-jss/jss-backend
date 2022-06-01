@@ -1,0 +1,48 @@
+<div class="mat-elevation-z2 form-div">
+  <form [formGroup]="quotationManagementForm" *ngIf="quotation">
+    <div class="full-width">
+      <fieldset [disabled]="editMode==false" class="fieldset-no-border">
+        <table class="full-width">
+          <tr>
+            <td>
+              <label>Type de dossier</label>
+              <mat-radio-group class="radio-group-column" [(ngModel)]="quotation.recordType"
+                formControlName="recordType">
+                <mat-radio-button *ngFor="let recordType of recordTypes" [value]="recordType"
+                  [checked]="quotation.recordType != undefined && quotation.recordType.id!=undefined && quotation.recordType.id==recordType.id">
+                  {{recordType.label}}
+                </mat-radio-button>
+              </mat-radio-group>
+            </td>
+            <td>
+              <label>Libellé sur Devis</label>
+              <mat-radio-group class="radio-group-column" [(ngModel)]="quotation.quotationLabelType"
+                formControlName="quotationLabelType">
+                <mat-radio-button *ngFor="let quotationLabelType of quotationLabelTypes" [value]="quotationLabelType"
+                  [checked]="quotation.quotationLabelType != undefined && quotation.quotationLabelType.id!=undefined && quotation.quotationLabelType.id==quotationLabelType.id">
+                  {{quotationLabelType.label}}
+                </mat-radio-button>
+              </mat-radio-group>
+            </td>
+            <td
+              *ngIf="quotation.quotationLabelType!=undefined && quotation.quotationLabelType.code!=undefined && quotation.quotationLabelType.code==QUOTATION_TYPE_OTHER_CODE">
+              <mat-form-field class="full-width">
+                <mat-label>Autre libellé sur devis</mat-label>
+                <textarea rows="4" matInput formControlName="quotationLabel"
+                  [(ngModel)]="quotation.quotationLabel"></textarea>
+              </mat-form-field>
+            </td>
+          </tr>
+        </table>
+        <table class="full-width">
+          <tr>
+            <td>
+              <addressing [editMode]="editMode" [document]="devisDocument" [displayPaperCopy]="true"
+                [displayMailCC]="true"></addressing>
+            </td>
+          </tr>
+        </table>
+      </fieldset>
+    </div>
+  </form>
+</div>

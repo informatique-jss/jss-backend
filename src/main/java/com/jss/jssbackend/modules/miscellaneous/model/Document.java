@@ -1,0 +1,387 @@
+package com.jss.jssbackend.modules.miscellaneous.model;
+
+import java.io.Serializable;
+import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Index;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.jss.jssbackend.modules.quotation.model.CustomerOrder;
+import com.jss.jssbackend.modules.quotation.model.Quotation;
+import com.jss.jssbackend.modules.tiers.model.BillingClosureRecipientType;
+import com.jss.jssbackend.modules.tiers.model.BillingClosureType;
+import com.jss.jssbackend.modules.tiers.model.BillingLabelType;
+import com.jss.jssbackend.modules.tiers.model.Mail;
+import com.jss.jssbackend.modules.tiers.model.PaymentDeadlineType;
+import com.jss.jssbackend.modules.tiers.model.RefundType;
+import com.jss.jssbackend.modules.tiers.model.Responsable;
+import com.jss.jssbackend.modules.tiers.model.Tiers;
+
+@Entity
+@Table(indexes = { @Index(name = "pk_tiers_document", columnList = "id", unique = true),
+		@Index(name = "idx_tiers_document", columnList = "id_tiers"),
+		@Index(name = "idx_responsable_document", columnList = "id_responsable") })
+public class Document implements Serializable {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private Integer id;
+
+	@ManyToOne
+	@JoinColumn(name = "id_tiers")
+	@JsonBackReference("tiers")
+	private Tiers tiers;
+
+	@ManyToOne
+	@JoinColumn(name = "id_responsable")
+	@JsonBackReference("responsable")
+	private Responsable responsable;
+
+	@ManyToOne
+	@JoinColumn(name = "id_quotation")
+	@JsonBackReference("quotation")
+	private Quotation quotation;
+
+	@ManyToOne
+	@JoinColumn(name = "id_customer_order")
+	@JsonBackReference("customerOrder")
+	private CustomerOrder customerOrder;
+
+	@ManyToOne
+	@JoinColumn(name = "id_document_type")
+	private DocumentType documentType;
+
+	private Boolean isRecipientClient;
+	private Boolean isRecipientAffaire;
+	@Column(length = 60)
+	private String affaireAddress;
+	@Column(length = 40)
+	private String affaireRecipient;
+	@Column(length = 60)
+	private String clientAddress;
+	@Column(length = 40)
+	private String clientRecipient;
+	private Boolean isMailingPaper;
+	private Boolean isMailingPdf;
+	private Integer numberMailingAffaire;
+	private Integer numberMailingClient;
+	@Column(length = 40)
+	private String billingLabel;
+
+	@ManyToOne
+	@JoinColumn(name = "id_billing_label_type")
+	private BillingLabelType billingLabelType;
+
+	@ManyToMany(cascade = CascadeType.ALL)
+	@JoinTable(name = "asso_document_mail_client", joinColumns = @JoinColumn(name = "id_tiers_document"), inverseJoinColumns = @JoinColumn(name = "id_mail"))
+	private List<Mail> mailsClient;
+
+	@ManyToMany
+	@JoinTable(name = "asso_document_mail_cc_responsable_client", joinColumns = @JoinColumn(name = "id_tiers_document"), inverseJoinColumns = @JoinColumn(name = "id_responsable"))
+	private List<Responsable> mailsCCResponsableClient;
+
+	@ManyToMany(cascade = CascadeType.ALL)
+	@JoinTable(name = "asso_document_mail_affaire", joinColumns = @JoinColumn(name = "id_tiers_document"), inverseJoinColumns = @JoinColumn(name = "id_mail"))
+	private List<Mail> mailsAffaire;
+
+	@ManyToMany
+	@JoinTable(name = "asso_document_mail_cc_responsable_affaire", joinColumns = @JoinColumn(name = "id_tiers_document"), inverseJoinColumns = @JoinColumn(name = "id_responsable"))
+	private List<Responsable> mailsCCResponsableAffaire;
+
+	private Boolean isResponsableOnBilling;
+	private Boolean isCommandNumberMandatory;
+
+	@Column(length = 40)
+	private String commandNumber;
+
+	@ManyToOne
+	@JoinColumn(name = "id_payment_deadline_type")
+	private PaymentDeadlineType paymentDeadlineType;
+
+	private Boolean isAutomaticDunning;
+
+	@ManyToOne
+	@JoinColumn(name = "id_refund_type")
+	private RefundType refundType;
+
+	@Column(length = 40)
+	private String refundIBAN;
+
+	private Boolean isRefundable;
+
+	@ManyToOne
+	@JoinColumn(name = "id_billing_closure_type")
+	private BillingClosureType billingClosureType;
+
+	@ManyToOne
+	@JoinColumn(name = "id_billing_closure_recipient_type")
+	private BillingClosureRecipientType billingClosureRecipientType;
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public Tiers getTiers() {
+		return tiers;
+	}
+
+	public Responsable getResponsable() {
+		return responsable;
+	}
+
+	public void setResponsable(Responsable responsable) {
+		this.responsable = responsable;
+	}
+
+	public List<Responsable> getMailsCCResponsableClient() {
+		return mailsCCResponsableClient;
+	}
+
+	public void setMailsCCResponsableClient(List<Responsable> mailsCCResponsableClient) {
+		this.mailsCCResponsableClient = mailsCCResponsableClient;
+	}
+
+	public List<Responsable> getMailsCCResponsableAffaire() {
+		return mailsCCResponsableAffaire;
+	}
+
+	public void setMailsCCResponsableAffaire(List<Responsable> mailsCCResponsableAffaire) {
+		this.mailsCCResponsableAffaire = mailsCCResponsableAffaire;
+	}
+
+	public void setTiers(Tiers tiers) {
+		this.tiers = tiers;
+	}
+
+	public DocumentType getDocumentType() {
+		return documentType;
+	}
+
+	public void setDocumentType(DocumentType documentType) {
+		this.documentType = documentType;
+	}
+
+	public Boolean getIsRecipientClient() {
+		return isRecipientClient;
+	}
+
+	public void setIsRecipientClient(Boolean isRecipientClient) {
+		this.isRecipientClient = isRecipientClient;
+	}
+
+	public Boolean getIsRecipientAffaire() {
+		return isRecipientAffaire;
+	}
+
+	public void setIsRecipientAffaire(Boolean isRecipientAffaire) {
+		this.isRecipientAffaire = isRecipientAffaire;
+	}
+
+	public String getAffaireAddress() {
+		return affaireAddress;
+	}
+
+	public void setAffaireAddress(String affaireAddress) {
+		this.affaireAddress = affaireAddress;
+	}
+
+	public String getClientAddress() {
+		return clientAddress;
+	}
+
+	public void setClientAddress(String clientAddress) {
+		this.clientAddress = clientAddress;
+	}
+
+	public String getAffaireRecipient() {
+		return affaireRecipient;
+	}
+
+	public void setAffaireRecipient(String affaireRecipient) {
+		this.affaireRecipient = affaireRecipient;
+	}
+
+	public String getClientRecipient() {
+		return clientRecipient;
+	}
+
+	public void setClientRecipient(String clientRecipient) {
+		this.clientRecipient = clientRecipient;
+	}
+
+	public Boolean getIsMailingPaper() {
+		return isMailingPaper;
+	}
+
+	public void setIsMailingPaper(Boolean isMailingPaper) {
+		this.isMailingPaper = isMailingPaper;
+	}
+
+	public Boolean getIsMailingPdf() {
+		return isMailingPdf;
+	}
+
+	public void setIsMailingPdf(Boolean isMailingPdf) {
+		this.isMailingPdf = isMailingPdf;
+	}
+
+	public Integer getNumberMailingAffaire() {
+		return numberMailingAffaire;
+	}
+
+	public void setNumberMailingAffaire(Integer numberMailingAffaire) {
+		this.numberMailingAffaire = numberMailingAffaire;
+	}
+
+	public Integer getNumberMailingClient() {
+		return numberMailingClient;
+	}
+
+	public void setNumberMailingClient(Integer numberMailingClient) {
+		this.numberMailingClient = numberMailingClient;
+	}
+
+	public List<Mail> getMailsClient() {
+		return mailsClient;
+	}
+
+	public void setMailsClient(List<Mail> mailsClient) {
+		this.mailsClient = mailsClient;
+	}
+
+	public List<Mail> getMailsAffaire() {
+		return mailsAffaire;
+	}
+
+	public void setMailsAffaire(List<Mail> mailsAffaire) {
+		this.mailsAffaire = mailsAffaire;
+	}
+
+	public String getBillingLabel() {
+		return billingLabel;
+	}
+
+	public void setBillingLabel(String billingLabel) {
+		this.billingLabel = billingLabel;
+	}
+
+	public BillingLabelType getBillingLabelType() {
+		return billingLabelType;
+	}
+
+	public void setBillingLabelType(BillingLabelType billingLabelType) {
+		this.billingLabelType = billingLabelType;
+	}
+
+	public Boolean getIsResponsableOnBilling() {
+		return isResponsableOnBilling;
+	}
+
+	public void setIsResponsableOnBilling(Boolean isResponsableOnBilling) {
+		this.isResponsableOnBilling = isResponsableOnBilling;
+	}
+
+	public Boolean getIsCommandNumberMandatory() {
+		return isCommandNumberMandatory;
+	}
+
+	public void setIsCommandNumberMandatory(Boolean isCommandNumberMandatory) {
+		this.isCommandNumberMandatory = isCommandNumberMandatory;
+	}
+
+	public String getCommandNumber() {
+		return commandNumber;
+	}
+
+	public void setCommandNumber(String commandNumber) {
+		this.commandNumber = commandNumber;
+	}
+
+	public CustomerOrder getCustomerOrder() {
+		return customerOrder;
+	}
+
+	public void setCustomerOrder(CustomerOrder customerOrder) {
+		this.customerOrder = customerOrder;
+	}
+
+	public PaymentDeadlineType getPaymentDeadlineType() {
+		return paymentDeadlineType;
+	}
+
+	public void setPaymentDeadlineType(PaymentDeadlineType paymentDeadlineType) {
+		this.paymentDeadlineType = paymentDeadlineType;
+	}
+
+	public Boolean getIsAutomaticDunning() {
+		return isAutomaticDunning;
+	}
+
+	public void setIsAutomaticDunning(Boolean isAutomaticDunning) {
+		this.isAutomaticDunning = isAutomaticDunning;
+	}
+
+	public RefundType getRefundType() {
+		return refundType;
+	}
+
+	public void setRefundType(RefundType refundType) {
+		this.refundType = refundType;
+	}
+
+	public String getRefundIBAN() {
+		return refundIBAN;
+	}
+
+	public void setRefundIBAN(String refundIBAN) {
+		this.refundIBAN = refundIBAN;
+	}
+
+	public Boolean getIsRefundable() {
+		return isRefundable;
+	}
+
+	public void setIsRefundable(Boolean isRefundable) {
+		this.isRefundable = isRefundable;
+	}
+
+	public BillingClosureType getBillingClosureType() {
+		return billingClosureType;
+	}
+
+	public void setBillingClosureType(BillingClosureType billingClosureType) {
+		this.billingClosureType = billingClosureType;
+	}
+
+	public BillingClosureRecipientType getBillingClosureRecipientType() {
+		return billingClosureRecipientType;
+	}
+
+	public void setBillingClosureRecipientType(BillingClosureRecipientType billingClosureRecipientType) {
+		this.billingClosureRecipientType = billingClosureRecipientType;
+	}
+
+	public Quotation getQuotation() {
+		return quotation;
+	}
+
+	public void setQuotation(Quotation quotation) {
+		this.quotation = quotation;
+	}
+
+}

@@ -59,6 +59,13 @@ html, body {
   margin: 15px 0;
 }
 
+
+.radio-group-column {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
 mat-form-field.mat-form-field, mat-option, .mat-cell {
   font-size: 12px !important;
 }
@@ -120,6 +127,20 @@ mat-form-field.mat-form-field-should-float label {
   position: fixed !important;
   bottom: 40px !important;
   right: 110px !important;
+  z-index: 9999;
+}
+
+.third-fab-button {
+  position: fixed !important;
+  bottom: 40px !important;
+  right: 180px !important;
+  z-index: 9999;
+}
+
+.fourth-fab-button {
+  position: fixed !important;
+  bottom: 40px !important;
+  right: 250px !important;
   z-index: 9999;
 }
 

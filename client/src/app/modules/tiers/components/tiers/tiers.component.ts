@@ -5,11 +5,8 @@ import { AppService } from 'src/app/app.service';
 import { isTiersTypeProspect } from 'src/app/libs/CompareHelper';
 import { TIERS_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { SearchService } from 'src/app/search.service';
-import { ITiers } from '../../model/ITiers';
 import { Responsable } from '../../model/Responsable';
 import { Tiers } from '../../model/Tiers';
-import { TiersDocument } from '../../model/TiersDocument';
-import { TiersDocumentType } from '../../model/TiersDocumentType';
 import { TiersService } from '../../services/tiers.service';
 import { DocumentManagementComponent } from '../document-management/document-management.component';
 import { ResponsableMainComponent } from '../responsable-main/responsable-main.component';
@@ -139,60 +136,6 @@ export class TiersComponent implements OnInit {
 
   openSearch() {
     this.searchService.openSearchOnModule(TIERS_ENTITY_TYPE);
-  }
-
-  static getDocument(documentCode: string, tiers: ITiers, tiersDocumentTypes: TiersDocumentType[]) {
-    // Tiers not loaded
-    if (tiers == null || TiersComponent.getDocumentType(documentCode, tiersDocumentTypes).id == undefined)
-      return {} as TiersDocument;
-
-    // No document in Tiers
-    if (tiers.documents == null || tiers.documents == undefined) {
-      tiers.documents = [] as Array<TiersDocument>;
-      let doc = {} as TiersDocument;
-      doc.tiersDocumentType = this.getDocumentType(documentCode, tiersDocumentTypes);
-      tiers.documents.push(doc);
-      return tiers.documents[0];
-    }
-
-    // Document currently exists
-    if (tiers.documents.length > 0) {
-      for (let i = 0; i < tiers.documents.length; i++) {
-        const documentFound = tiers.documents[i];
-        if (documentFound.tiersDocumentType.code == documentCode) {
-          return documentFound;
-        }
-      }
-    }
-
-    // Document not exists, create it
-    let doc = {} as TiersDocument;
-    doc.tiersDocumentType = this.getDocumentType(documentCode, tiersDocumentTypes);
-    tiers.documents.push(doc);
-    return tiers.documents[tiers.documents.length - 1];
-  }
-
-  static getDocumentType(codeTypeDocument: string, tiersDocumentTypes: TiersDocumentType[]): TiersDocumentType {
-    if (tiersDocumentTypes.length > 0) {
-      for (let i = 0; i < tiersDocumentTypes.length; i++) {
-        const tiersDocumentType = tiersDocumentTypes[i];
-        if (tiersDocumentType.code == codeTypeDocument)
-          return tiersDocumentType;
-      }
-    }
-    return {} as TiersDocumentType;
-  }
-
-  static instanceOfTiers(object: ITiers): object is Tiers {
-    if (object != null)
-      return 'isIndividual' in object;
-    return false;
-  }
-
-  static instanceOfResponsable(object: ITiers): object is Responsable {
-    if (object != null)
-      return 'isActive' in object;
-    return false;
   }
 
 }

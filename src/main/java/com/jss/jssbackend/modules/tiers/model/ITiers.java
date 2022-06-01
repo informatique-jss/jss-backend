@@ -4,10 +4,12 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import com.jss.jssbackend.modules.miscellaneous.model.Attachment;
 import com.jss.jssbackend.modules.miscellaneous.model.City;
 import com.jss.jssbackend.modules.miscellaneous.model.Civility;
 import com.jss.jssbackend.modules.miscellaneous.model.Country;
 import com.jss.jssbackend.modules.miscellaneous.model.Language;
+import com.jss.jssbackend.modules.miscellaneous.model.Document;
 import com.jss.jssbackend.modules.profile.model.Employee;
 
 public interface ITiers extends Serializable {
@@ -52,9 +54,9 @@ public interface ITiers extends Serializable {
 
 	public List<Phone> getPhones();
 
-	public List<TiersDocument> getDocuments();
+	public List<Document> getDocuments();
 
-	public List<TiersAttachment> getTiersAttachments();
+	public List<Attachment> getAttachments();
 
 	public List<TiersFollowup> getTiersFollowups();
 

@@ -1,0 +1,41 @@
+import { BillingClosureRecipientType } from "../../tiers/model/BillingClosureRecipientType";
+import { BillingClosureType } from "../../tiers/model/BillingClosureType";
+import { BillingLabelType } from "../../tiers/model/BillingLabelType";
+import { PaymentDeadlineType } from "../../tiers/model/PaymentDeadlineType";
+import { RefundType } from "../../tiers/model/RefundType";
+import { Responsable } from "../../tiers/model/Responsable";
+import { Mail } from "./Mail";
+import { DocumentType } from "./DocumentType";
+
+export interface Document {
+  id: number;
+  code: string;
+  documentType: DocumentType;
+  isRecipientClient: boolean;
+  isRecipientAffaire: boolean;
+  affaireAddress: string;
+  clientAddress: string;
+  affaireRecipient: string;
+  clientRecipient: string;
+  mails: Mail[];
+  isMailingPaper: boolean;
+  isMailingPdf: boolean;
+  numberMailingAffaire: number;
+  numberMailingClient: number;
+  mailsClient: Mail[];
+  mailsCCResponsableClient: Responsable[];
+  mailsCCResponsableAffaire: Responsable[];
+  mailsAffaire: Mail[];
+  billingLabelType: BillingLabelType;
+  billingLabel: string;
+  isResponsableOnBilling: boolean;
+  isCommandNumberMandatory: boolean;
+  commandNumber: string;
+  paymentDeadlineType: PaymentDeadlineType;
+  isAutomaticDunning: boolean;
+  refundType: RefundType;
+  refundIBAN: string;
+  isRefundable: boolean;
+  billingClosureType: BillingClosureType;
+  billingClosureRecipientType: BillingClosureRecipientType;
+}

@@ -1,0 +1,57 @@
+<div *ngIf="quotation.id!=undefined && quotation.id!=null">
+  <!--  <h1 class="text-center">Devis {{quotation.id}} créé le {{quotation.createdDate |
+    date:'dd/MM/yyyy à HH:mm'}}<span *ngIf="instanceOfQuotation(quotation) && quotation.customerOrder!=null"> - Commande
+      {{quotation.customerOrder.id}}</span><span> - Statut
+      {{(quotation.quotationStatus!=null)?quotation.quotationStatus.label:""}}</span></h1> -->
+  <!-- TODO : to remove ? -->
+</div>
+<div [hidden]="!editMode && (quotation.id==undefined || quotation.id==null)">
+  <mat-tab-group animationDuration="0ms" #tabs selectedIndex="1">
+    <!-- TODO remove default index -->
+    <mat-tab label="Donneur d'ordre">
+      <ordering-customer [quotation]="quotation" [editMode]="editMode">
+      </ordering-customer>
+    </mat-tab>
+    <mat-tab label="Prestations">
+      <provision [quotation]="quotation" [editMode]="editMode"></provision>
+    </mat-tab>
+    <mat-tab label="Gestion du devis">
+      <quotation-management [quotation]="quotation" [editMode]="editMode"></quotation-management>
+    </mat-tab>
+    <mat-tab label="Documents" *ngIf="quotation.id!=null && quotation.id!=undefined">
+      <attachments [entity]="quotation" [editMode]="editMode" [entityType]="QUOTATION_ENTITY_TYPE.entityType">
+      </attachments>
+    </mat-tab>
+    <mat-tab label="Historique" *ngIf="quotation.id!=null && quotation.id!=undefined">
+      <history [entity]="quotation" [entityType]="QUOTATION_ENTITY_TYPE"></history>
+    </mat-tab>
+  </mat-tab-group>
+</div>
+<button matTooltip="Sauvegarder" mat-fab color="warn" class="fab-button" *ngIf="editMode==true"
+  (click)="saveQuotation()">
+  <mat-icon>save</mat-icon>
+</button>
+<button matTooltip="Modifier le devis" mat-fab color="accent" class="fab-button"
+  *ngIf="editMode==false && quotation.id!=undefined && quotation.id!=null" (click)="editQuotation()">
+  <mat-icon>edit</mat-icon>
+</button>
+<button matTooltip="Ajouter un devis" mat-fab color="accent" class="fab-button"
+  *ngIf="editMode==false && (quotation.id==undefined || quotation.id==null)" (click)="createQuotation()">
+  <mat-icon>add</mat-icon>
+</button>
+<button matTooltip="Rechercher un devis" mat-fab color="accent" class="second-fab-button" *ngIf="editMode==false"
+  (click)="openSearch()">
+  <mat-icon>search</mat-icon>
+</button>
+<button matTooltip="Envoyer le devis" mat-fab color="accent" class="third-fab-button"
+  *ngIf="editMode==false  && quotation.id!=undefined && quotation.id!=null" (click)="sendQuotation()">
+  <mat-icon>forward_to_inbox</mat-icon>
+</button>
+<button matTooltip="Valider le statut" mat-fab color="accent" class="fourth-fab-button"
+  *ngIf="editMode==false  && quotation.id!=undefined && quotation.id!=null" (click)="confirmStatus()">
+  <mat-icon>done</mat-icon>
+</button>
+<button matTooltip="Ajouter un devis" mat-fab color="accent" class="second-fab-button"
+  *ngIf="editMode==false && quotation.id!=undefined && quotation.id!=null" (click)=" createQuotation()">
+  <mat-icon>add</mat-icon>
+</button>

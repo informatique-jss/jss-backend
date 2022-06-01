@@ -25,4 +25,12 @@ public class SearchServiceImpl implements SearchService {
         return entities;
     }
 
+    @Override
+    public List<IndexEntity> searchForEntities(String search, String entityType) {
+        List<IndexEntity> entities = indexEntityRepository.searchForEntities(search, entityType, maxNumberOfResults);
+        if (entities == null || entities.size() == 0)
+            entities = indexEntityRepository.searchForSimilarEntities(search, entityType, maxNumberOfResults);
+        return entities;
+    }
+
 }

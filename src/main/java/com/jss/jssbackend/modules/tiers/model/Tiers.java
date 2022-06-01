@@ -19,17 +19,21 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.jss.jssbackend.libs.search.model.IndexedField;
+import com.jss.jssbackend.modules.miscellaneous.model.Attachment;
 import com.jss.jssbackend.modules.miscellaneous.model.City;
 import com.jss.jssbackend.modules.miscellaneous.model.Civility;
 import com.jss.jssbackend.modules.miscellaneous.model.Country;
 import com.jss.jssbackend.modules.miscellaneous.model.DeliveryService;
+import com.jss.jssbackend.modules.miscellaneous.model.IAttachment;
 import com.jss.jssbackend.modules.miscellaneous.model.Language;
 import com.jss.jssbackend.modules.miscellaneous.model.PaymentType;
+import com.jss.jssbackend.modules.miscellaneous.model.SpecialOffer;
+import com.jss.jssbackend.modules.miscellaneous.model.Document;
 import com.jss.jssbackend.modules.profile.model.Employee;
 
 @Entity
 @Table(indexes = { @Index(name = "pk_client", columnList = "id", unique = true) })
-public class Tiers { // implements ITiers {
+public class Tiers implements ITiers, IAttachment {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@IndexedField
@@ -89,6 +93,7 @@ public class Tiers { // implements ITiers {
 	// compatibility or keep it here
 	private Date firstBilling;
 
+	@ManyToOne
 	@JoinColumn(name = "id_civility")
 	@IndexedField
 	private Civility civility;
@@ -152,13 +157,13 @@ public class Tiers { // implements ITiers {
 	@JoinTable(name = "asso_tiers_phone", joinColumns = @JoinColumn(name = "id_tiers"), inverseJoinColumns = @JoinColumn(name = "id_phone"))
 	private List<Phone> phones;
 
-	@OneToMany(targetEntity = TiersDocument.class, mappedBy = "tiers", cascade = CascadeType.ALL)
+	@OneToMany(targetEntity = Document.class, mappedBy = "tiers", cascade = CascadeType.ALL)
 	@JsonManagedReference("tiers")
-	private List<TiersDocument> documents;
+	private List<Document> documents;
 
-	@OneToMany(targetEntity = TiersAttachment.class, mappedBy = "tiers", cascade = CascadeType.ALL)
+	@OneToMany(targetEntity = Attachment.class, mappedBy = "tiers", cascade = CascadeType.ALL)
 	@JsonManagedReference("tiers")
-	private List<TiersAttachment> tiersAttachments;
+	private List<Attachment> attachments;
 
 	@OneToMany(targetEntity = TiersFollowup.class, mappedBy = "tiers", cascade = CascadeType.ALL)
 	@JsonManagedReference("tiers")
@@ -420,20 +425,20 @@ public class Tiers { // implements ITiers {
 		this.phones = phones;
 	}
 
-	public List<TiersDocument> getDocuments() {
+	public List<Document> getDocuments() {
 		return documents;
 	}
 
-	public void setDocuments(List<TiersDocument> documents) {
+	public void setDocuments(List<Document> documents) {
 		this.documents = documents;
 	}
 
-	public List<TiersAttachment> getTiersAttachments() {
-		return tiersAttachments;
+	public List<Attachment> getAttachments() {
+		return attachments;
 	}
 
-	public void setTiersAttachments(List<TiersAttachment> tiersAttachments) {
-		this.tiersAttachments = tiersAttachments;
+	public void setAttachments(List<Attachment> attachments) {
+		this.attachments = attachments;
 	}
 
 	public List<TiersFollowup> getTiersFollowups() {

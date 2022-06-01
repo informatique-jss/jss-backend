@@ -8,4 +8,6 @@ public interface ResponsableService {
     public List<Responsable> getResponsables();
 
     public Responsable getResponsable(Integer id);
+
+    public List<Responsable> getResponsableByKeyword(String searchedValue);
 }

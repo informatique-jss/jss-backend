@@ -2,11 +2,13 @@ import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
 import { CFE_TIERS_DOCUMENT_TYPE_CODE, KBIS_TIERS_DOCUMENT_TYPE_CODE, PUBLICATION_TIERS_DOCUMENT_TYPE_CODE, SEPARATOR_KEY_CODES } from 'src/app/libs/Constants';
+import { DocumentTypeService } from 'src/app/modules/miscellaneous/services/document.type.service';
 import { ITiers } from '../../model/ITiers';
-import { TiersDocumentType } from '../../model/TiersDocumentType';
-import { TiersDocumentTypeService } from '../../services/tiers.document.type.service';
 import { TiersComponent } from '../tiers/tiers.component';
-import { TiersDocument } from './../../model/TiersDocument';
+import { Document } from "../../../miscellaneous/model/Document";
+import { DocumentType } from "../../../miscellaneous/model/DocumentType";
+import { instanceOfResponsable } from 'src/app/libs/TypeHelper';
+import { getDocument } from 'src/app/libs/DocumentHelper';
 
 @Component({
   selector: 'document-management',
@@ -21,22 +23,22 @@ export class DocumentManagementComponent implements OnInit {
 
   SEPARATOR_KEY_CODES = SEPARATOR_KEY_CODES;
 
-  tiersDocumentTypes: TiersDocumentType[] = [] as Array<TiersDocumentType>;
+  documentTypes: DocumentType[] = [] as Array<DocumentType>;
 
-  publicationDocument: TiersDocument = {} as TiersDocument;
-  cfeDocument: TiersDocument = {} as TiersDocument;
-  kbisDocument: TiersDocument = {} as TiersDocument;
+  publicationDocument: Document = {} as Document;
+  cfeDocument: Document = {} as Document;
+  kbisDocument: Document = {} as Document;
 
   constructor(private formBuilder: FormBuilder,
-    private tiersDocumentTypeService: TiersDocumentTypeService) { }
+    private documentTypeService: DocumentTypeService) { }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.tiers != undefined) {
-      this.tiersDocumentTypeService.getDocumentTypes().subscribe(response => {
-        this.tiersDocumentTypes = response;
-        this.publicationDocument = TiersComponent.getDocument(PUBLICATION_TIERS_DOCUMENT_TYPE_CODE, this.tiers, this.tiersDocumentTypes);
-        this.cfeDocument = TiersComponent.getDocument(CFE_TIERS_DOCUMENT_TYPE_CODE, this.tiers, this.tiersDocumentTypes);
-        this.kbisDocument = TiersComponent.getDocument(KBIS_TIERS_DOCUMENT_TYPE_CODE, this.tiers, this.tiersDocumentTypes);
+      this.documentTypeService.getDocumentTypes().subscribe(response => {
+        this.documentTypes = response;
+        this.publicationDocument = getDocument(PUBLICATION_TIERS_DOCUMENT_TYPE_CODE, this.tiers, this.documentTypes);
+        this.cfeDocument = getDocument(CFE_TIERS_DOCUMENT_TYPE_CODE, this.tiers, this.documentTypes);
+        this.kbisDocument = getDocument(KBIS_TIERS_DOCUMENT_TYPE_CODE, this.tiers, this.documentTypes);
       })
       this.documentManagementForm.markAllAsTouched();
     }
@@ -45,7 +47,7 @@ export class DocumentManagementComponent implements OnInit {
   ngOnInit() {
   }
 
-  instanceOfResponsable = TiersComponent.instanceOfResponsable;
+  instanceOfResponsable = instanceOfResponsable;
 
   documentManagementForm = this.formBuilder.group({
   });

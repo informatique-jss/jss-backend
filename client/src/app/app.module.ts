@@ -1,30 +1,34 @@
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatSortModule } from '@angular/material/sort';
+import { MatTableModule } from '@angular/material/table';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { BrowserModule } from '@angular/platform-browser';
+import { MatInputModule } from '@angular/material/input';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgProgressModule } from 'ngx-progressbar';
 import { NgProgressHttpModule } from "ngx-progressbar/http";
 import { AppComponent } from './app.component';
 import { HttpErrorInterceptor } from './httpErrorInterceptor.service';
+import { HistoryComponent } from './modules/miscellaneous/components/history/history.component';
+import { QuotationModule } from './modules/quotation/components/quotation/quotation.module';
 import { TiersModule } from './modules/tiers/components/tiers/tiers.module';
 import { HeaderComponent } from './routing/header/header.component';
 import { RoutingModule } from './routing/routing.module';
 import { SidenavListComponent } from './routing/sidenav-list/sidenav-list.component';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatSortModule } from '@angular/material/sort';
-import { MatTableModule } from '@angular/material/table';
+import { MiscellaneousModule } from './modules/miscellaneous/components/miscellaneous/miscellaneous.module';
 
 @NgModule({
   declarations: [
     AppComponent,
     SidenavListComponent,
-    HeaderComponent,
+    HeaderComponent
   ],
   imports: [
     // Core modules
@@ -47,8 +51,12 @@ import { MatTableModule } from '@angular/material/table';
     MatTooltipModule,
     MatSortModule,
     MatTableModule,
+    ReactiveFormsModule,
+    MatInputModule,
     // App modules
-    TiersModule
+    TiersModule,
+    QuotationModule,
+    MiscellaneousModule
   ],
   exports: [],
   providers: [{

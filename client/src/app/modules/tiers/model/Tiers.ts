@@ -1,10 +1,8 @@
 import { DeliveryService } from "../../miscellaneous/model/DeliveryService";
+import { SpecialOffer } from "../../miscellaneous/model/SpecialOffer";
 import { PaymentType } from './../../miscellaneous/model/PaymentType';
-import { Responsable } from "./Responsable";
-import { SpecialOffer } from "./SpecialOffer";
 import { ITiers } from './ITiers';
-import { TiersCategory } from "./TiersCategory";
-import { TiersType } from "./TiersType";
+import { Responsable } from "./Responsable";
 
 export interface Tiers extends ITiers {
   denomination: string | null;

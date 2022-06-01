@@ -9,11 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Index;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
-import com.jss.jssbackend.modules.profile.model.Employee;
 
 @Entity
 @Table(indexes = { @Index(name = "pk_uploaded_file", columnList = "id", unique = true) })

@@ -1,0 +1,224 @@
+<div class="mat-elevation-z2 form-div">
+  <form [formGroup]="orderingCustomerForm">
+    <div class="full-width">
+      <fieldset [disabled]="editMode==false" class="fieldset-no-border">
+        <table class="full-width">
+          <tr>
+            <td
+              *ngIf="quotation.responsable==null || quotation.responsable==undefined || quotation.responsable.id==undefined">
+              <mat-form-field class="full-width">
+                <mat-label>Tiers particulier</mat-label>
+                <input matInput placeholder="Tiers" [(ngModel)]="quotation.tiers" [matAutocomplete]="autoCompleteTiers"
+                  formControlName="tiers" autocomplete="do-not-autofill">
+                <button (click)="quotation.tiers=null"
+                  *ngIf="quotation.tiers!=undefined && quotation.tiers!=null && quotation.tiers.id !=undefined && editMode"
+                  matSuffix mat-icon-button>
+                  <mat-icon>close</mat-icon>
+                </button>
+                <mat-autocomplete #autoCompleteTiers="matAutocomplete" [displayWith]="displayTiers"
+                  (optionSelected)='fillTiers($event.option.value)'>
+                  <mat-option *ngFor="let tiers of filteredTiers" [value]="tiers">
+                    {{tiers.firstname}} {{tiers.lastname}} ({{tiers.id}})
+                  </mat-option>
+                </mat-autocomplete>
+              </mat-form-field>
+            </td>
+            <td *ngIf="quotation.tiers==null || quotation.tiers==undefined || quotation.tiers.id==undefined">
+              <mat-form-field class="full-width">
+                <mat-label>Responsable</mat-label>
+                <input matInput placeholder="Tiers" [(ngModel)]="quotation.responsable"
+                  [matAutocomplete]="autoCompleteResponsable" formControlName="responsable"
+                  autocomplete="do-not-autofill">
+                <button (click)="quotation.responsable=null"
+                  *ngIf="quotation.responsable!=undefined && quotation.responsable!=null && quotation.responsable.id !=undefined && editMode"
+                  matSuffix mat-icon-button>
+                  <mat-icon>close</mat-icon>
+                </button>
+                <mat-autocomplete #autoCompleteResponsable="matAutocomplete" [displayWith]="displayResponsable"
+                  (optionSelected)='fillResponsable($event.option.value)'>
+                  <mat-option *ngFor="let responsable of filteredResponsable" [value]="responsable">
+                    {{responsable.firstname}} {{responsable.lastname}} ({{responsable.id}})
+                  </mat-option>
+                </mat-autocomplete>
+              </mat-form-field>
+            </td>
+          </tr>
+        </table>
+        <div *ngIf="quotation.tiers!=null && quotation.tiers.id!=undefined">
+          <table class="full-width">
+            <tr>
+              <td>Commercial : {{quotation.tiers.salesEmployee?.firstname}} {{quotation.tiers.salesEmployee?.lastname}}
+              </td>
+            </tr>
+          </table>
+          <table class="full-width">
+            <tr>
+              <td>Adresse : {{quotation.tiers.address}} {{quotation.tiers.postalCode}} {{quotation.tiers.city.label}}
+                {{quotation.tiers.country.label}}</td>
+            </tr>
+          </table>
+          <table class="full-width">
+            <tr>
+              <td>
+                <mat-form-field class="full-width">
+                  <mat-label>Mails</mat-label>
+                  <mat-chip-list #chipListMails>
+                    <mat-chip *ngFor="let mail of quotation.tiers.mails">
+                      {{mail.mail}}
+                      <mat-icon matChipRemove (click)="prepareMail(mail)">mail</mat-icon>
+                    </mat-chip>
+                    <input #mailInput formControlName="mails" [matChipInputFor]="chipListMails" [disabled]="true">
+                  </mat-chip-list>
+                </mat-form-field>
+              </td>
+              <td>
+                <mat-form-field class="full-width">
+                  <mat-label>Téléphones</mat-label>
+                  <mat-chip-list #chipListPhones>
+                    <mat-chip *ngFor="let phone of quotation.tiers.phones">
+                      {{phone.phoneNumber}}
+                      <mat-icon matChipRemove (click)="call(phone)">phone</mat-icon>
+                    </mat-chip>
+                    <input #phoneInput formControlName="phones" [matChipInputFor]="chipListPhones" [disabled]="true">
+                  </mat-chip-list>
+                </mat-form-field>
+              </td>
+            </tr>
+          </table>
+          <table class="full-width">
+            <tr>
+              <td>Tarif special : {{(quotation.tiers.specialOffer==undefined ||
+                quotation.tiers.specialOffer==null)?"Aucun" :(quotation.tiers.specialOffer.code + " -
+                "+quotation.tiers.specialOffer.label)}} <button *ngIf="editMode==true"
+                  matTooltip="Modifier le tarif spécial par défaut" (click)="overrideSpecialOffer = true"
+                  mat-icon-button color="accent">
+                  <mat-icon>edit</mat-icon>
+                </button></td>
+            </tr>
+          </table>
+        </div>
+        <div
+          *ngIf="quotation.responsable!=null && quotation.responsable.id!=undefined && quotation.responsable.tiers!=null && quotation.responsable.tiers!=undefined">
+          <table class="full-width">
+            <tr>
+              <td>Client : {{quotation.responsable.tiers.denomination}} ({{quotation.responsable.tiers.id}}) <mat-icon
+                  matTooltip="Ouvrir le client" [routerLink]="'/tiers/'+quotation.responsable.tiers.id" class="pointer">
+                  preview
+                </mat-icon>
+              </td>
+            </tr>
+          </table>
+          <table class="full-width">
+            <tr>
+              <td>Commercial : {{quotation.responsable.salesEmployee?.firstname}}
+                {{quotation.responsable.salesEmployee?.lastname}}
+              </td>
+            </tr>
+          </table>
+          <table class="full-width">
+            <tr>
+              <td>Adresse : {{quotation.responsable.address}} {{quotation.responsable.postalCode}}
+                {{quotation.responsable.city.label}}
+                {{quotation.responsable.country.label}}</td>
+            </tr>
+          </table>
+          <table class="full-width">
+            <tr>
+              <td>
+                <mat-form-field class="full-width">
+                  <mat-label>Mails</mat-label>
+                  <mat-chip-list #chipListMails>
+                    <mat-chip *ngFor="let mail of quotation.responsable.mails">
+                      {{mail.mail}}
+                      <mat-icon matChipRemove (click)="prepareMail(mail)">mail</mat-icon>
+                    </mat-chip>
+                    <input #mailInput formControlName="mails" [matChipInputFor]="chipListMails" [disabled]="true">
+                  </mat-chip-list>
+                </mat-form-field>
+              </td>
+              <td>
+                <mat-form-field class="full-width">
+                  <mat-label>Téléphones</mat-label>
+                  <mat-chip-list #chipListPhones>
+                    <mat-chip *ngFor="let phone of quotation.responsable.phones">
+                      {{phone.phoneNumber}}
+                      <mat-icon matChipRemove (click)="call(phone)">phone</mat-icon>
+                    </mat-chip>
+                    <input #phoneInput formControlName="phones" [matChipInputFor]="chipListPhones" [disabled]="true">
+                  </mat-chip-list>
+                </mat-form-field>
+              </td>
+            </tr>
+          </table>
+          <table class="full-width">
+            <tr>
+              <td>Tarif special :
+                {{(quotation.responsable.tiers.specialOffer==undefined
+                ||quotation.responsable.tiers.specialOffer==null)?"Aucun"
+                :(quotation.responsable.tiers.specialOffer.code + " - "
+                +quotation.responsable.tiers.specialOffer.label)}}
+                <button matTooltip="Modifier le tarif spécial par défaut" *ngIf="editMode==true"
+                  (click)="overrideSpecialOffer = true" mat-icon-button color="accent">
+                  <mat-icon>edit</mat-icon>
+                </button>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <table class="full-width" [hidden]="!overrideSpecialOffer">
+          <tr>
+            <td>
+              <mat-form-field class="full-width">
+                <mat-label>Tarif spécial</mat-label>
+                <input matInput placeholder="Tarif spécial" [(ngModel)]="quotation.specialOffer"
+                  [matAutocomplete]="autoSpecialOffer" formControlName="specialOffer" autocomplete="do-not-autofill">
+                <button
+                  *ngIf="quotation.specialOffer==undefined || quotation.specialOffer==null || quotation.specialOffer.id ==undefined || quotation.specialOffer.id==null"
+                  matSuffix mat-icon-button (click)="openSpecialOffersDialog()">
+                  <mat-icon>search</mat-icon>
+                </button>
+                <button (click)="quotation.specialOffer=null"
+                  *ngIf="quotation.specialOffer!=undefined && quotation.specialOffer!=null && quotation.specialOffer.id !=undefined && quotation.specialOffer.id!=null"
+                  matSuffix mat-icon-button>
+                  <mat-icon>close</mat-icon>
+                </button>
+                <mat-autocomplete #autoSpecialOffer="matAutocomplete" [displayWith]="displayLabel">
+                  <mat-option *ngFor="let specialOffer of filteredSpecialOffers | async" [value]="specialOffer">
+                    {{specialOffer.code}} - {{specialOffer.label}}
+                  </mat-option>
+                </mat-autocomplete>
+              </mat-form-field>
+            </td>
+          </tr>
+        </table>
+        <table class="full-width">
+          <tr>
+            <td>
+              <mat-form-field class="full-width">
+                <mat-label>Observations</mat-label>
+                <textarea rows="4" matInput formControlName="obervations"
+                  [(ngModel)]="quotation.observations"></textarea>
+              </mat-form-field>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <mat-form-field class="full-width">
+                <mat-label>Description de la demande</mat-label>
+                <textarea rows="4" matInput formControlName="description"
+                  [(ngModel)]="quotation.description"></textarea>
+              </mat-form-field>
+            </td>
+          </tr>
+        </table>
+        <div>Devis créé le {{quotation.createdDate |date:'dd/MM/yyyy à HH:mm'}}</div>
+        <div *ngIf=" instanceOfQuotation(quotation) && quotation.customerOrder!=null">Commande
+          n°{{quotation.customerOrder}} <mat-icon [routerLink]="'/order/'+quotation.customerOrder.id" class="pointer">
+            preview</mat-icon>
+        </div>
+        <div *ngIf="instanceOfQuotation(quotation) && quotation.customerOrder==null">Pas de commande associée
+        </div>
+      </fieldset>
+    </div>
+  </form>
+</div>

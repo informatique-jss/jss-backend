@@ -12,6 +12,8 @@ import { validateEmail, validateFrenchPhone, validateInternationalPhone } from '
 import { callNumber, prepareMail } from 'src/app/libs/MailHelper';
 import { City } from 'src/app/modules/miscellaneous/model/City';
 import { Country } from 'src/app/modules/miscellaneous/model/Country';
+import { Mail } from 'src/app/modules/miscellaneous/model/Mail';
+import { Phone } from 'src/app/modules/miscellaneous/model/Phone';
 import { CityService } from 'src/app/modules/miscellaneous/services/city.service';
 import { CivilityService } from 'src/app/modules/miscellaneous/services/civility.service';
 import { CountryService } from 'src/app/modules/miscellaneous/services/country.service';
@@ -22,8 +24,6 @@ import { Civility } from '../../../miscellaneous/model/Civility';
 import { Language } from '../../../miscellaneous/model/Language';
 import { LanguageService } from '../../../miscellaneous/services/language.service';
 import { JssSubscription } from '../../model/JssSubscription';
-import { Mail } from '../../model/Mail';
-import { Phone } from '../../model/Phone';
 import { Responsable } from '../../model/Responsable';
 import { SubscriptionPeriodType } from '../../model/SubscriptionPeriodType';
 import { Tiers } from '../../model/Tiers';

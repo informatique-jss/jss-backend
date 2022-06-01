@@ -20,17 +20,17 @@ import { Employee } from 'src/app/modules/profile/model/Employee';
 import { EmployeeService } from 'src/app/modules/profile/services/employee.service';
 import { Civility } from '../../../miscellaneous/model/Civility';
 import { LanguageService } from '../../../miscellaneous/services/language.service';
-import { Mail } from '../../model/Mail';
-import { Phone } from '../../model/Phone';
 import { TiersCategory } from '../../model/TiersCategory';
 import { TiersType } from '../../model/TiersType';
-import { SpecialOfferService } from '../../services/special-offer.service';
+import { SpecialOfferService } from '../../../miscellaneous/services/special-offer.service';
 import { TiersCategoryService } from '../../services/tiers.category.service';
 import { TiersTypeService } from '../../services/tiers.type.service';
 import { Language } from '../../../miscellaneous/model/Language';
-import { SpecialOffer } from '../../model/SpecialOffer';
 import { Tiers } from '../../model/Tiers';
-import { SpecialOffersDialogComponent } from '../special-offers-dialog/special-offers-dialog.component';
+import { SpecialOffer } from 'src/app/modules/miscellaneous/model/SpecialOffer';
+import { SpecialOffersDialogComponent } from 'src/app/modules/miscellaneous/components/special-offers-dialog/special-offers-dialog.component';
+import { Mail } from 'src/app/modules/miscellaneous/model/Mail';
+import { Phone } from 'src/app/modules/miscellaneous/model/Phone';
 
 @Component({
   selector: 'tiers-main',
@@ -199,7 +199,7 @@ export class PrincipalComponent implements OnInit {
   principalForm = this.formBuilder.group({
     tiersType: ['', Validators.required],
     tiersId: [{ value: '', disabled: true }],
-    denomination: ['', [Validators.required, Validators.maxLength(60)]],
+    denomination: ['', [this.checkFieldFilledIfIsNotIndividual("denomination"), Validators.maxLength(60)]],
     firstBilling: [{ value: '', disabled: true }],
     civility: ['', this.checkFieldFilledIfIsIndividual("civility")],
     isIndividual: [''],
@@ -246,6 +246,20 @@ export class PrincipalComponent implements OnInit {
 
       const fieldValue = root.get(fieldName)?.value;
       if (this.tiers.isIndividual && (fieldValue == undefined || fieldValue == null || fieldValue.length == 0))
+        return {
+          notFilled: true
+        };
+      return null;
+    };
+  }
+
+  // Check if the propertiy given in parameter is filled when the tiers is an individual
+  checkFieldFilledIfIsNotIndividual(fieldName: string): ValidationErrors | null {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const root = control.root as FormGroup;
+
+      const fieldValue = root.get(fieldName)?.value;
+      if (!this.tiers.isIndividual && (fieldValue == undefined || fieldValue == null || fieldValue.length == 0))
         return {
           notFilled: true
         };

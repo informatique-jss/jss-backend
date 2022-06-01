@@ -1,0 +1,120 @@
+package com.jss.jssbackend.modules.quotation.service;
+
+import java.nio.charset.Charset;
+import java.util.Arrays;
+import java.util.Base64;
+
+import com.jss.jssbackend.libs.SSLHelper;
+import com.jss.jssbackend.modules.quotation.model.InseeToken;
+import com.jss.jssbackend.modules.quotation.model.Siren;
+import com.jss.jssbackend.modules.quotation.model.Siret;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.client.RestTemplate;
+
+@Service
+public class SireneDelegateServiceImpl implements SireneDelegateService {
+	@Value("${insee.api.sirene.key}")
+	private String sireneKey;
+
+	@Value("${insee.api.sirene.secret}")
+	private String sireneSecret;
+
+	@Value("${insee.api.entrypoint}")
+	private String inseeEntryPoint;
+
+	@Value("${insee.api.sirene.path}")
+	private String inseeSirenePath;
+
+	private String sirenUrl = "/siren";
+	private String siretUrl = "/siret";
+	private String tokenUrl = "/token";
+
+	private InseeToken getToken() {
+		SSLHelper.disableCertificateValidation();
+		HttpHeaders headers = createHeadersForToken();
+		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+		MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
+		map.add("grant_type", "client_credentials");
+
+		HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map, headers);
+
+		ResponseEntity<InseeToken> res = new RestTemplate().postForEntity(inseeEntryPoint + tokenUrl, request,
+				InseeToken.class);
+
+		if (res.getBody() != null) {
+			return res.getBody();
+		}
+		return null;
+	}
+
+	HttpHeaders createHeadersForToken() {
+		return new HttpHeaders() {
+			{
+				String auth = sireneKey + ":" + sireneSecret;
+				byte[] encodedAuth = Base64.getEncoder().encode(
+						auth.getBytes(Charset.forName("US-ASCII")));
+				String authHeader = "Basic " + new String(encodedAuth);
+				set("Authorization", authHeader);
+				setAccept(Arrays.asList(new MediaType[] { MediaType.APPLICATION_JSON }));
+				setContentType(MediaType.APPLICATION_JSON);
+			}
+		};
+	}
+
+	private HttpHeaders createHeaders() {
+		return new HttpHeaders() {
+			{
+				String authHeader = "Bearer " + getToken().getAccess_token();
+				set("Authorization", authHeader);
+				setAccept(Arrays.asList(new MediaType[] { MediaType.APPLICATION_JSON }));
+				setContentType(MediaType.APPLICATION_JSON);
+			}
+		};
+	}
+
+	@Override
+	public Siren getSiren(String siren) throws HttpStatusCodeException, Exception {
+		try {
+			SSLHelper.disableCertificateValidation();
+			ResponseEntity<Siren> res = new RestTemplate().exchange(
+					inseeEntryPoint + inseeSirenePath + sirenUrl + "/" + siren,
+					HttpMethod.GET,
+					new HttpEntity<Siren>(this.createHeaders()), Siren.class);
+			if (res.getBody() != null) {
+				return res.getBody();
+			}
+			return null;
+		} catch (Exception e) {
+			throw e;
+		}
+	}
+
+	@Override
+	public Siret getSiret(String siret) throws HttpStatusCodeException, Exception {
+		try {
+			SSLHelper.disableCertificateValidation();
+			ResponseEntity<Siret> res = new RestTemplate().exchange(
+					inseeEntryPoint + inseeSirenePath + siretUrl + "/" + siret,
+					HttpMethod.GET,
+					new HttpEntity<Siret>(this.createHeaders()), Siret.class);
+			if (res.getBody() != null) {
+				return res.getBody();
+			}
+			return null;
+		} catch (Exception e) {
+			throw e;
+		}
+	}
+
+}

@@ -1,70 +1,62 @@
 package com.jss.jssbackend.modules.tiers.controller;
 
-import java.io.File;
-import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import com.jss.jssbackend.libs.ValidationHelper;
+import com.jss.jssbackend.modules.miscellaneous.model.BillingItem;
+import com.jss.jssbackend.modules.miscellaneous.model.BillingType;
 import com.jss.jssbackend.modules.miscellaneous.model.City;
 import com.jss.jssbackend.modules.miscellaneous.model.Civility;
 import com.jss.jssbackend.modules.miscellaneous.model.Country;
 import com.jss.jssbackend.modules.miscellaneous.model.DeliveryService;
 import com.jss.jssbackend.modules.miscellaneous.model.Department;
+import com.jss.jssbackend.modules.miscellaneous.model.Document;
 import com.jss.jssbackend.modules.miscellaneous.model.Gift;
 import com.jss.jssbackend.modules.miscellaneous.model.Language;
 import com.jss.jssbackend.modules.miscellaneous.model.PaymentType;
 import com.jss.jssbackend.modules.miscellaneous.model.Region;
-import com.jss.jssbackend.modules.miscellaneous.model.VatRate;
+import com.jss.jssbackend.modules.miscellaneous.model.SpecialOffer;
+import com.jss.jssbackend.modules.miscellaneous.model.Vat;
+import com.jss.jssbackend.modules.miscellaneous.service.BillingItemService;
+import com.jss.jssbackend.modules.miscellaneous.service.BillingTypeService;
 import com.jss.jssbackend.modules.miscellaneous.service.CityService;
 import com.jss.jssbackend.modules.miscellaneous.service.CivilityService;
 import com.jss.jssbackend.modules.miscellaneous.service.CountryService;
 import com.jss.jssbackend.modules.miscellaneous.service.DeliveryServiceService;
 import com.jss.jssbackend.modules.miscellaneous.service.DepartmentService;
+import com.jss.jssbackend.modules.miscellaneous.service.DocumentTypeService;
 import com.jss.jssbackend.modules.miscellaneous.service.GiftService;
 import com.jss.jssbackend.modules.miscellaneous.service.LanguageService;
 import com.jss.jssbackend.modules.miscellaneous.service.PaymentTypeService;
 import com.jss.jssbackend.modules.miscellaneous.service.RegionService;
-import com.jss.jssbackend.modules.miscellaneous.service.VatRateService;
+import com.jss.jssbackend.modules.miscellaneous.service.SpecialOfferService;
+import com.jss.jssbackend.modules.miscellaneous.service.VatService;
 import com.jss.jssbackend.modules.profile.service.EmployeeService;
-import com.jss.jssbackend.modules.tiers.model.AttachmentType;
 import com.jss.jssbackend.modules.tiers.model.BillingClosureRecipientType;
 import com.jss.jssbackend.modules.tiers.model.BillingClosureType;
-import com.jss.jssbackend.modules.tiers.model.BillingItem;
 import com.jss.jssbackend.modules.tiers.model.BillingLabelType;
-import com.jss.jssbackend.modules.tiers.model.BillingType;
 import com.jss.jssbackend.modules.tiers.model.Mail;
 import com.jss.jssbackend.modules.tiers.model.PaymentDeadlineType;
 import com.jss.jssbackend.modules.tiers.model.Phone;
 import com.jss.jssbackend.modules.tiers.model.RefundType;
 import com.jss.jssbackend.modules.tiers.model.Responsable;
-import com.jss.jssbackend.modules.tiers.model.SpecialOffer;
 import com.jss.jssbackend.modules.tiers.model.SubscriptionPeriodType;
 import com.jss.jssbackend.modules.tiers.model.Tiers;
-import com.jss.jssbackend.modules.tiers.model.TiersAttachment;
 import com.jss.jssbackend.modules.tiers.model.TiersCategory;
-import com.jss.jssbackend.modules.tiers.model.TiersDocument;
-import com.jss.jssbackend.modules.tiers.model.TiersDocumentType;
 import com.jss.jssbackend.modules.tiers.model.TiersFollowup;
 import com.jss.jssbackend.modules.tiers.model.TiersFollowupType;
 import com.jss.jssbackend.modules.tiers.model.TiersType;
-import com.jss.jssbackend.modules.tiers.service.AttachmentTypeService;
 import com.jss.jssbackend.modules.tiers.service.BillingClosureRecipientTypeService;
 import com.jss.jssbackend.modules.tiers.service.BillingClosureTypeService;
-import com.jss.jssbackend.modules.tiers.service.BillingItemService;
 import com.jss.jssbackend.modules.tiers.service.BillingLabelTypeService;
-import com.jss.jssbackend.modules.tiers.service.BillingTypeService;
 import com.jss.jssbackend.modules.tiers.service.MailService;
 import com.jss.jssbackend.modules.tiers.service.PaymentDeadlineTypeService;
 import com.jss.jssbackend.modules.tiers.service.PhoneService;
 import com.jss.jssbackend.modules.tiers.service.RefundTypeService;
 import com.jss.jssbackend.modules.tiers.service.ResponsableService;
-import com.jss.jssbackend.modules.tiers.service.SpecialOfferService;
 import com.jss.jssbackend.modules.tiers.service.SubscriptionPeriodTypeService;
-import com.jss.jssbackend.modules.tiers.service.TiersAttachmentService;
 import com.jss.jssbackend.modules.tiers.service.TiersCategoryService;
-import com.jss.jssbackend.modules.tiers.service.TiersDocumentTypeService;
 import com.jss.jssbackend.modules.tiers.service.TiersFollowupService;
 import com.jss.jssbackend.modules.tiers.service.TiersFollowupTypeService;
 import com.jss.jssbackend.modules.tiers.service.TiersService;
@@ -74,7 +66,6 @@ import org.apache.commons.validator.routines.EmailValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -83,7 +74,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpStatusCodeException;
-import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 public class TiersController {
@@ -138,7 +128,7 @@ public class TiersController {
   BillingTypeService billingTypeService;
 
   @Autowired
-  VatRateService vatRateService;
+  VatService vatService;
 
   @Autowired
   MailService mailService;
@@ -147,7 +137,7 @@ public class TiersController {
   PhoneService phoneService;
 
   @Autowired
-  TiersDocumentTypeService tiersDocumentTypeService;
+  DocumentTypeService tiersDocumentTypeService;
 
   @Autowired
   PaymentTypeService paymentTypeService;
@@ -166,12 +156,6 @@ public class TiersController {
 
   @Autowired
   BillingClosureRecipientTypeService billingClosureRecipientTypeService;
-
-  @Autowired
-  AttachmentTypeService attachmentTypeService;
-
-  @Autowired
-  TiersAttachmentService tiersAttachmentService;
 
   @Autowired
   TiersFollowupTypeService tiersFollowupTypeService;
@@ -277,21 +261,6 @@ public class TiersController {
     return new ResponseEntity<List<TiersFollowup>>(tiersFollowups, HttpStatus.OK);
   }
 
-  @GetMapping(inputEntryPoint + "/attachment-types")
-  public ResponseEntity<List<AttachmentType>> getAttachmentTypes() {
-    List<AttachmentType> attachmentTypes = null;
-    try {
-      attachmentTypes = attachmentTypeService.getAttachmentTypes();
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching attachmentType", e);
-      return new ResponseEntity<List<AttachmentType>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching attachmentType", e);
-      return new ResponseEntity<List<AttachmentType>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<List<AttachmentType>>(attachmentTypes, HttpStatus.OK);
-  }
-
   @GetMapping(inputEntryPoint + "/billing-closure-recipient-types")
   public ResponseEntity<List<BillingClosureRecipientType>> getBillingClosureRecipientTypes() {
     List<BillingClosureRecipientType> billingClosureRecipientTypes = null;
@@ -382,21 +351,6 @@ public class TiersController {
     return new ResponseEntity<List<PaymentType>>(paymentTypes, HttpStatus.OK);
   }
 
-  @GetMapping(inputEntryPoint + "/document-types")
-  public ResponseEntity<List<TiersDocumentType>> getDocumentTypes() {
-    List<TiersDocumentType> documentTypes = null;
-    try {
-      documentTypes = tiersDocumentTypeService.getTiersDocumentTypes();
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching documentTypes", e);
-      return new ResponseEntity<List<TiersDocumentType>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching documentTypes", e);
-      return new ResponseEntity<List<TiersDocumentType>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<List<TiersDocumentType>>(documentTypes, HttpStatus.OK);
-  }
-
   @GetMapping(inputEntryPoint + "/phones/search")
   public ResponseEntity<List<Phone>> findPhones(@RequestParam String phone) {
     List<Phone> phones = null;
@@ -428,18 +382,18 @@ public class TiersController {
   }
 
   @GetMapping(inputEntryPoint + "/vat-rates")
-  public ResponseEntity<List<VatRate>> getVatRates() {
-    List<VatRate> vatRates = null;
+  public ResponseEntity<List<Vat>> getVat() {
+    List<Vat> vat = null;
     try {
-      vatRates = vatRateService.getVatRates();
+      vat = vatService.getVat();
     } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching vatRate", e);
-      return new ResponseEntity<List<VatRate>>(HttpStatus.INTERNAL_SERVER_ERROR);
+      logger.error("HTTP error when fetching vat", e);
+      return new ResponseEntity<List<Vat>>(HttpStatus.INTERNAL_SERVER_ERROR);
     } catch (Exception e) {
-      logger.error("Error when fetching vatRate", e);
-      return new ResponseEntity<List<VatRate>>(HttpStatus.INTERNAL_SERVER_ERROR);
+      logger.error("Error when fetching vat", e);
+      return new ResponseEntity<List<Vat>>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
-    return new ResponseEntity<List<VatRate>>(vatRates, HttpStatus.OK);
+    return new ResponseEntity<List<Vat>>(vat, HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/billingTypes")
@@ -670,6 +624,40 @@ public class TiersController {
     return new ResponseEntity<Tiers>(tiers, HttpStatus.OK);
   }
 
+  @GetMapping(inputEntryPoint + "/individual/search")
+  public ResponseEntity<List<Tiers>> getIndividualTiersByKeyword(@RequestParam String searchedValue) {
+    List<Tiers> tiers = null;
+    try {
+      tiers = tiersService.getIndividualTiersByKeyword(searchedValue);
+      if (tiers == null)
+        tiers = new ArrayList<Tiers>();
+    } catch (HttpStatusCodeException e) {
+      logger.error("HTTP error when fetching client types", e);
+      return new ResponseEntity<List<Tiers>>(HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (Exception e) {
+      logger.error("Error when fetching client types", e);
+      return new ResponseEntity<List<Tiers>>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    return new ResponseEntity<List<Tiers>>(tiers, HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/responsable/search")
+  public ResponseEntity<List<Responsable>> getResponsableByKeyword(@RequestParam String searchedValue) {
+    List<Responsable> responsables = null;
+    try {
+      responsables = responsableService.getResponsableByKeyword(searchedValue);
+      if (responsables == null)
+        responsables = new ArrayList<Responsable>();
+    } catch (HttpStatusCodeException e) {
+      logger.error("HTTP error when fetching client types", e);
+      return new ResponseEntity<List<Responsable>>(HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (Exception e) {
+      logger.error("Error when fetching client types", e);
+      return new ResponseEntity<List<Responsable>>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    return new ResponseEntity<List<Responsable>>(responsables, HttpStatus.OK);
+  }
+
   @GetMapping(inputEntryPoint + "/responsable")
   public ResponseEntity<Tiers> getTiersByIdResponsable(@RequestParam Integer idResponsable) {
     Tiers tiers = null;
@@ -787,10 +775,10 @@ public class TiersController {
     }
 
     if (tiers.getDocuments() != null && tiers.getDocuments().size() > 0) {
-      for (TiersDocument document : tiers.getDocuments()) {
-        if (document.getTiersDocumentType() == null || document.getTiersDocumentType().getId() == null
+      for (Document document : tiers.getDocuments()) {
+        if (document.getDocumentType() == null || document.getDocumentType().getId() == null
             || tiersDocumentTypeService
-                .getTiersDocumentType(document.getTiersDocumentType().getId()) == null)
+                .getDocumentType(document.getDocumentType().getId()) == null)
           return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         if (document.getMailsAffaire() != null && document.getMailsAffaire().size() > 0)
           if (!this.validateMailList(document.getMailsAffaire()))
@@ -911,10 +899,10 @@ public class TiersController {
           return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
         if (responsable.getDocuments() != null && responsable.getDocuments().size() > 0) {
-          for (TiersDocument document : responsable.getDocuments()) {
-            if (document.getTiersDocumentType() == null || document.getTiersDocumentType().getId() == null
+          for (Document document : responsable.getDocuments()) {
+            if (document.getDocumentType() == null || document.getDocumentType().getId() == null
                 || tiersDocumentTypeService
-                    .getTiersDocumentType(document.getTiersDocumentType().getId()) == null)
+                    .getDocumentType(document.getDocumentType().getId()) == null)
               return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             if (document.getMailsAffaire() != null && document.getMailsAffaire().size() > 0)
               if (!this.validateMailList(document.getMailsAffaire()))
@@ -991,99 +979,4 @@ public class TiersController {
     return true;
   }
 
-  @PostMapping(inputEntryPoint + "/tiers-attachment/upload")
-  public ResponseEntity<List<TiersAttachment>> uploadAttachment(@RequestParam MultipartFile file,
-      @RequestParam(required = false) Integer idTiers, @RequestParam(required = false) Integer idResponsable,
-      @RequestParam Integer idAttachmentType,
-      @RequestParam String filename) {
-    try {
-      if (idAttachmentType == null)
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-      AttachmentType attachmentType = attachmentTypeService.getAttachmentType(idAttachmentType);
-
-      if (attachmentType == null)
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-      if (filename == null || filename.equals(""))
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-      if (idTiers == null && idResponsable == null)
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-      List<TiersAttachment> tiersAttachments = new ArrayList<TiersAttachment>();
-
-      if (idTiers != null) {
-        Tiers tiers = tiersService.getTiersById(idTiers);
-        if (tiers == null)
-          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        tiersAttachments = tiersAttachmentService.addTiersAttachment(file, tiers, attachmentType,
-            filename);
-      }
-
-      if (idResponsable != null) {
-        Responsable responsable = responsableService.getResponsable(idResponsable);
-        if (responsable == null)
-          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        tiersAttachments = tiersAttachmentService.addResponsableAttachment(file, responsable, attachmentType,
-            filename);
-      }
-
-      return new ResponseEntity<List<TiersAttachment>>(tiersAttachments, HttpStatus.OK);
-    } catch (Exception e) {
-      logger.error("Could not upload the file: " + file.getOriginalFilename() + "!", e);
-      return new ResponseEntity<List<TiersAttachment>>(HttpStatus.EXPECTATION_FAILED);
-    }
-  }
-
-  @GetMapping(inputEntryPoint + "/tiers-attachment/preview")
-  public ResponseEntity<byte[]> downloadAttachment(@RequestParam("idAttachment") Integer idAttachment) {
-    byte[] data = null;
-    HttpHeaders headers = null;
-    try {
-      TiersAttachment tiersAttachment = tiersAttachmentService.getTiersAttachment(idAttachment);
-
-      if (tiersAttachment == null || tiersAttachment.getUploadedFile() == null
-          || tiersAttachment.getUploadedFile().getPath() == null)
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-      File file = new File(tiersAttachment.getUploadedFile().getPath());
-
-      if (file != null) {
-        data = Files.readAllBytes(file.toPath());
-
-        headers = new HttpHeaders();
-        headers.add("filename", tiersAttachment.getUploadedFile().getFilename());
-        headers.setAccessControlExposeHeaders(Arrays.asList("filename"));
-        headers.setContentLength(data.length);
-
-        // Compute content type
-        String mimeType = Files.probeContentType(file.toPath());
-        if (mimeType == null)
-          mimeType = "application/octet-stream";
-        headers.set("content-type", mimeType);
-
-      }
-    } catch (Exception e) {
-      logger.error("Error when fetching client types", e);
-      return new ResponseEntity<byte[]>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<byte[]>(data, headers, HttpStatus.OK);
-  }
-
-  @GetMapping(inputEntryPoint + "/tiers-attachment/search")
-  public ResponseEntity<List<TiersAttachment>> getAttachementsByFilenameAndTiers(@RequestParam String filename,
-      @RequestParam(required = false) Integer idTiers, @RequestParam(required = false) Integer idResponsable) {
-    List<TiersAttachment> tiersAttachments = null;
-    try {
-      tiersAttachments = tiersAttachmentService.getAttachementsByFilenameAndTiers(filename, idTiers, idResponsable);
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching city", e);
-      return new ResponseEntity<List<TiersAttachment>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching city", e);
-      return new ResponseEntity<List<TiersAttachment>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<List<TiersAttachment>>(tiersAttachments, HttpStatus.OK);
-  }
 }

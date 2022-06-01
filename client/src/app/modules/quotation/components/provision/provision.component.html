@@ -1,0 +1,17 @@
+<form [formGroup]="provisionForm" *ngIf="quotation">
+  <div class="mat-accordion-container full-width">
+    <fieldset [disabled]="editMode==false" class="fieldset-no-border">
+      <mat-accordion>
+        <mat-expansion-panel *ngFor="let provision of quotation.provisions">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <span *ngIf="provision.affaire!=null">Affaire {{provision.affaire.id}} - Service toto</span>
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <affaire [affaire]="provision.affaire" [editMode]="editMode"></affaire>
+          <!-- TODO component service -->
+        </mat-expansion-panel>
+      </mat-accordion>
+    </fieldset>
+  </div>
+</form>

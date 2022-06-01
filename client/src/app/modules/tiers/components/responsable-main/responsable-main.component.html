@@ -4,7 +4,7 @@
       <input matInput (keyup)="applyFilter($event.target)" placeholder="Rechercher">
     </mat-form-field>
     <span *ngIf="editMode" matTooltip=" Créer un nouveau responsable" matTooltipPosition="above"><button
-        (click)="addResponsable()" mat-mini-fab color="accent" class="mini-fab-add">
+        (click)="addResponsable()" mat-mini-fab color="warn" class="mini-fab-add">
         <mat-icon>add</mat-icon>
       </button></span>
   </div>
@@ -408,8 +408,9 @@
         <settlement-billing [tiers]="selectedResponsable!" [editMode]="editMode"></settlement-billing>
       </mat-tab>
       <mat-tab label="Documents" *ngIf="selectedResponsable?.id!=null && selectedResponsable?.id!=undefined">
-        <tiers-attachments [tiers]="selectedResponsable!" [editMode]="editMode">
-        </tiers-attachments>
+        <attachments [entity]="selectedResponsable!" [editMode]="editMode"
+          [entityType]="RESPONSABLE_ENTITY_TYPE.entityType">
+        </attachments>
       </mat-tab>
       <mat-tab label="Suivi" *ngIf="selectedResponsable?.id!=null && selectedResponsable?.id!=undefined">
         <tiers-followup [tiers]="selectedResponsable!" [editMode]="editMode"></tiers-followup>

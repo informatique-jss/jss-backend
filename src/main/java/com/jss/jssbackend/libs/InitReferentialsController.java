@@ -5,64 +5,73 @@ import java.util.List;
 
 import com.jss.jssbackend.libs.audit.repository.AuditRepository;
 import com.jss.jssbackend.libs.search.repository.IndexEntityRepository;
+import com.jss.jssbackend.modules.miscellaneous.model.AttachmentType;
+import com.jss.jssbackend.modules.miscellaneous.model.BillingItem;
+import com.jss.jssbackend.modules.miscellaneous.model.BillingType;
 import com.jss.jssbackend.modules.miscellaneous.model.City;
 import com.jss.jssbackend.modules.miscellaneous.model.Civility;
 import com.jss.jssbackend.modules.miscellaneous.model.Country;
 import com.jss.jssbackend.modules.miscellaneous.model.DeliveryService;
 import com.jss.jssbackend.modules.miscellaneous.model.Department;
+import com.jss.jssbackend.modules.miscellaneous.model.DocumentType;
 import com.jss.jssbackend.modules.miscellaneous.model.Gift;
 import com.jss.jssbackend.modules.miscellaneous.model.Language;
+import com.jss.jssbackend.modules.miscellaneous.model.LegalForm;
 import com.jss.jssbackend.modules.miscellaneous.model.PaymentType;
 import com.jss.jssbackend.modules.miscellaneous.model.Region;
-import com.jss.jssbackend.modules.miscellaneous.model.VatRate;
+import com.jss.jssbackend.modules.miscellaneous.model.SpecialOffer;
+import com.jss.jssbackend.modules.miscellaneous.model.Vat;
+import com.jss.jssbackend.modules.miscellaneous.repository.AttachmentTypeRepository;
+import com.jss.jssbackend.modules.miscellaneous.repository.BillingItemRepository;
+import com.jss.jssbackend.modules.miscellaneous.repository.BillingTypeRepository;
 import com.jss.jssbackend.modules.miscellaneous.repository.CityRepository;
 import com.jss.jssbackend.modules.miscellaneous.repository.CivilityRepository;
 import com.jss.jssbackend.modules.miscellaneous.repository.CountryRepository;
 import com.jss.jssbackend.modules.miscellaneous.repository.DeliveryServiceRepository;
 import com.jss.jssbackend.modules.miscellaneous.repository.DepartmentRepository;
+import com.jss.jssbackend.modules.miscellaneous.repository.DocumentRepository;
+import com.jss.jssbackend.modules.miscellaneous.repository.DocumentTypeRepository;
 import com.jss.jssbackend.modules.miscellaneous.repository.GiftRepository;
 import com.jss.jssbackend.modules.miscellaneous.repository.LanguageRepository;
+import com.jss.jssbackend.modules.miscellaneous.repository.LegalFormRepository;
 import com.jss.jssbackend.modules.miscellaneous.repository.PaymentTypeRepository;
 import com.jss.jssbackend.modules.miscellaneous.repository.RegionRepository;
+import com.jss.jssbackend.modules.miscellaneous.repository.SpecialOfferRepository;
 import com.jss.jssbackend.modules.miscellaneous.repository.UploadedFileRepository;
-import com.jss.jssbackend.modules.miscellaneous.repository.VatRateRepository;
+import com.jss.jssbackend.modules.miscellaneous.repository.VatRepository;
 import com.jss.jssbackend.modules.profile.model.Employee;
 import com.jss.jssbackend.modules.profile.model.Team;
 import com.jss.jssbackend.modules.profile.repository.EmployeeRepository;
 import com.jss.jssbackend.modules.profile.repository.TeamRepository;
-import com.jss.jssbackend.modules.tiers.model.AttachmentType;
+import com.jss.jssbackend.modules.quotation.model.QuotationLabelType;
+import com.jss.jssbackend.modules.quotation.model.QuotationStatus;
+import com.jss.jssbackend.modules.quotation.model.RecordType;
+import com.jss.jssbackend.modules.quotation.repository.QuotationLabelTypeRepository;
+import com.jss.jssbackend.modules.quotation.repository.QuotationRepository;
+import com.jss.jssbackend.modules.quotation.repository.QuotationStatusRepository;
+import com.jss.jssbackend.modules.quotation.repository.RecordTypeRepository;
 import com.jss.jssbackend.modules.tiers.model.BillingClosureRecipientType;
 import com.jss.jssbackend.modules.tiers.model.BillingClosureType;
-import com.jss.jssbackend.modules.tiers.model.BillingItem;
 import com.jss.jssbackend.modules.tiers.model.BillingLabelType;
-import com.jss.jssbackend.modules.tiers.model.BillingType;
 import com.jss.jssbackend.modules.tiers.model.Mail;
 import com.jss.jssbackend.modules.tiers.model.PaymentDeadlineType;
 import com.jss.jssbackend.modules.tiers.model.Phone;
 import com.jss.jssbackend.modules.tiers.model.RefundType;
-import com.jss.jssbackend.modules.tiers.model.SpecialOffer;
 import com.jss.jssbackend.modules.tiers.model.SubscriptionPeriodType;
 import com.jss.jssbackend.modules.tiers.model.TiersCategory;
-import com.jss.jssbackend.modules.tiers.model.TiersDocumentType;
 import com.jss.jssbackend.modules.tiers.model.TiersFollowupType;
 import com.jss.jssbackend.modules.tiers.model.TiersType;
-import com.jss.jssbackend.modules.tiers.repository.AttachmentTypeRepository;
 import com.jss.jssbackend.modules.tiers.repository.BillingClosureRecipientTypeRepository;
 import com.jss.jssbackend.modules.tiers.repository.BillingClosureTypeRepository;
-import com.jss.jssbackend.modules.tiers.repository.BillingItemRepository;
 import com.jss.jssbackend.modules.tiers.repository.BillingLabelTypeRepository;
-import com.jss.jssbackend.modules.tiers.repository.BillingTypeRepository;
 import com.jss.jssbackend.modules.tiers.repository.JssSubscriptionRepository;
 import com.jss.jssbackend.modules.tiers.repository.MailRepository;
 import com.jss.jssbackend.modules.tiers.repository.PaymentDeadlineTypeRepository;
 import com.jss.jssbackend.modules.tiers.repository.PhoneRepository;
 import com.jss.jssbackend.modules.tiers.repository.RefundTypeRepository;
 import com.jss.jssbackend.modules.tiers.repository.ResponsableRepository;
-import com.jss.jssbackend.modules.tiers.repository.SpecialOfferRepository;
 import com.jss.jssbackend.modules.tiers.repository.SubscriptionPeriodTypeRepository;
 import com.jss.jssbackend.modules.tiers.repository.TiersCategoryRepository;
-import com.jss.jssbackend.modules.tiers.repository.TiersDocumentRepository;
-import com.jss.jssbackend.modules.tiers.repository.TiersDocumentTypeRepository;
 import com.jss.jssbackend.modules.tiers.repository.TiersFollowupTypeRepository;
 import com.jss.jssbackend.modules.tiers.repository.TiersRepository;
 import com.jss.jssbackend.modules.tiers.repository.TiersTypeRepository;
@@ -104,7 +113,7 @@ public class InitReferentialsController {
 	LanguageRepository languageRepository;
 
 	@Autowired
-	VatRateRepository vatRateRepository;
+	VatRepository vatRepository;
 
 	@Autowired
 	BillingItemRepository billingItemRepository;
@@ -122,10 +131,10 @@ public class InitReferentialsController {
 	PhoneRepository phoneRepository;
 
 	@Autowired
-	TiersDocumentTypeRepository tiersDocumentTypeRepository;
+	DocumentTypeRepository tiersDocumentTypeRepository;
 
 	@Autowired
-	TiersDocumentRepository tiersDocumentRepository;
+	DocumentRepository tiersDocumentRepository;
 
 	@Autowired
 	TiersRepository tiersRepository;
@@ -189,6 +198,21 @@ public class InitReferentialsController {
 
 	@Autowired
 	SubscriptionPeriodTypeRepository subscriptionPeriodTypeRepository;
+
+	@Autowired
+	QuotationStatusRepository quotationStatusRepository;
+
+	@Autowired
+	QuotationRepository quotationRepository;
+
+	@Autowired
+	QuotationLabelTypeRepository quotationLabelTypeRepository;
+
+	@Autowired
+	RecordTypeRepository recordTypeRepository;
+
+	@Autowired
+	LegalFormRepository legalFormRepository;
 
 	@GetMapping(inputEntryPoint + "/create")
 	public void create() {
@@ -325,16 +349,16 @@ public class InitReferentialsController {
 		specialOfferRepository.deleteAll();
 		billingItemRepository.deleteAll();
 		billingTypeRepository.deleteAll();
-		vatRateRepository.deleteAll();
-		VatRate vatRate = new VatRate();
-		vatRate.setLabel("Non taxable");
-		vatRate.setRate(0f);
-		vatRateRepository.save(vatRate);
+		vatRepository.deleteAll();
+		Vat vat = new Vat();
+		vat.setLabel("Non taxable");
+		vat.setRate(0f);
+		vatRepository.save(vat);
 
-		vatRate = new VatRate();
-		vatRate.setLabel("20.0");
-		vatRate.setRate(20f);
-		vatRateRepository.save(vatRate);
+		vat = new Vat();
+		vat.setLabel("20.0");
+		vat.setRate(20f);
+		vatRepository.save(vat);
 
 		BillingType billingType = new BillingType();
 		billingType.setLabel("Poste 1");
@@ -346,7 +370,7 @@ public class InitReferentialsController {
 		billingItem.setBillingType(billingType);
 		billingItem.setDiscountAmount(0f);
 		billingItem.setDiscountRate(0f);
-		billingItem.setVatRate(vatRate);
+		billingItem.setVat(vat);
 		billingItemRepository.save(billingItem);
 
 		SpecialOffer specialOffer = new SpecialOffer();
@@ -373,49 +397,54 @@ public class InitReferentialsController {
 
 		tiersDocumentRepository.deleteAll();
 		tiersDocumentTypeRepository.deleteAll();
-		TiersDocumentType tiersDocumentType = new TiersDocumentType();
+		DocumentType tiersDocumentType = new DocumentType();
 		tiersDocumentType.setCode("1");
 		tiersDocumentType.setLabel("JUSTIFICATIF PARUTION");
 		tiersDocumentTypeRepository.save(tiersDocumentType);
 
-		tiersDocumentType = new TiersDocumentType();
+		tiersDocumentType = new DocumentType();
 		tiersDocumentType.setCode("2");
 		tiersDocumentType.setLabel("CFE");
 		tiersDocumentTypeRepository.save(tiersDocumentType);
 
-		tiersDocumentType = new TiersDocumentType();
+		tiersDocumentType = new DocumentType();
 		tiersDocumentType.setCode("3");
 		tiersDocumentType.setLabel("KBIS");
 		tiersDocumentTypeRepository.save(tiersDocumentType);
 
-		tiersDocumentType = new TiersDocumentType();
+		tiersDocumentType = new DocumentType();
 		tiersDocumentType.setCode("4");
 		tiersDocumentType.setLabel("FACTURE");
 		tiersDocumentTypeRepository.save(tiersDocumentType);
 
-		tiersDocumentType = new TiersDocumentType();
+		tiersDocumentType = new DocumentType();
 		tiersDocumentType.setCode("5");
 		tiersDocumentType.setLabel("RELANCE");
 		tiersDocumentTypeRepository.save(tiersDocumentType);
 
-		tiersDocumentType = new TiersDocumentType();
+		tiersDocumentType = new DocumentType();
 		tiersDocumentType.setCode("6");
 		tiersDocumentType.setLabel("REMBOURSEMENT");
 		tiersDocumentTypeRepository.save(tiersDocumentType);
 
-		tiersDocumentType = new TiersDocumentType();
+		tiersDocumentType = new DocumentType();
 		tiersDocumentType.setCode("7");
 		tiersDocumentType.setLabel("ARRETES COMPTABLES");
 		tiersDocumentTypeRepository.save(tiersDocumentType);
 
-		tiersDocumentType = new TiersDocumentType();
+		tiersDocumentType = new DocumentType();
 		tiersDocumentType.setCode("8");
 		tiersDocumentType.setLabel("RECU DE PROVISION");
 		tiersDocumentTypeRepository.save(tiersDocumentType);
 
-		tiersDocumentType = new TiersDocumentType();
+		tiersDocumentType = new DocumentType();
 		tiersDocumentType.setCode("9");
 		tiersDocumentType.setLabel("DIVERS");
+		tiersDocumentTypeRepository.save(tiersDocumentType);
+
+		tiersDocumentType = new DocumentType();
+		tiersDocumentType.setCode("10");
+		tiersDocumentType.setLabel("DEVIS");
 		tiersDocumentTypeRepository.save(tiersDocumentType);
 
 		paymentTypeRepository.deleteAll();
@@ -568,5 +597,61 @@ public class InitReferentialsController {
 		subscriptionPeriodType.setCode("12");
 		subscriptionPeriodType.setLabel("12 mois");
 		subscriptionPeriodTypeRepository.save(subscriptionPeriodType);
+
+		quotationRepository.deleteAll();
+		quotationStatusRepository.deleteAll();
+
+		QuotationStatus quotationStatus = new QuotationStatus();
+		quotationStatus.setCode("OUVERT");
+		quotationStatus.setLabel("Ouvert");
+		quotationStatusRepository.save(quotationStatus);
+
+		quotationStatus = new QuotationStatus();
+		quotationStatus.setCode("EN_COURS");
+		quotationStatus.setLabel("En cours");
+		quotationStatusRepository.save(quotationStatus);
+
+		quotationLabelTypeRepository.deleteAll();
+		QuotationLabelType quotationLabelType = new QuotationLabelType();
+		quotationLabelType.setCode("AFFAIRE");
+		quotationLabelType.setLabel("Affaire");
+		quotationLabelTypeRepository.save(quotationLabelType);
+
+		quotationLabelType = new QuotationLabelType();
+		quotationLabelType.setCode("CLIENT");
+		quotationLabelType.setLabel("Client");
+		quotationLabelTypeRepository.save(quotationLabelType);
+
+		quotationLabelType = new QuotationLabelType();
+		quotationLabelType.setCode("AUTRES");
+		quotationLabelType.setLabel("Autres");
+		quotationLabelTypeRepository.save(quotationLabelType);
+
+		recordTypeRepository.deleteAll();
+		RecordType recordType = new RecordType();
+		recordType.setCode("DEMATERIALISE");
+		recordType.setLabel("Dématérialisé");
+		recordTypeRepository.save(recordType);
+
+		recordType = new RecordType();
+		recordType.setCode("PAPIER");
+		recordType.setLabel("PAPIER");
+		recordTypeRepository.save(recordType);
+
+		legalFormRepository.deleteAll();
+		LegalForm legalForm = new LegalForm();
+		legalForm.setCode("EARL");
+		legalForm.setLabel("EARL");
+		legalFormRepository.save(legalForm);
+
+		legalForm = new LegalForm();
+		legalForm.setCode("SARL");
+		legalForm.setLabel("SARL");
+		legalFormRepository.save(legalForm);
+
+		legalForm = new LegalForm();
+		legalForm.setCode("32");
+		legalForm.setLabel("Société non immatriculée");
+		legalFormRepository.save(legalForm);
 	}
 }

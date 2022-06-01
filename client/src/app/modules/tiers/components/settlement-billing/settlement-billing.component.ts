@@ -12,8 +12,8 @@ import { ITiers } from '../../model/ITiers';
 import { PaymentDeadlineType } from '../../model/PaymentDeadlineType';
 import { RefundType } from '../../model/RefundType';
 import { Responsable } from '../../model/Responsable';
-import { TiersDocument } from '../../model/TiersDocument';
-import { TiersDocumentType } from '../../model/TiersDocumentType';
+import { Document } from "../../../miscellaneous/model/Document";
+import { DocumentType } from "../../../miscellaneous/model/DocumentType";
 import { BillingClosureRecipientTypeService } from '../../services/billing.closure.recipient.type.service';
 import { BillingClosureTypeService } from '../../services/billing.closure.type.service';
 import { BillingLabelTypeService } from '../../services/billing.label.type.service';
@@ -21,7 +21,9 @@ import { PaymentDeadlineTypeService } from '../../services/payment.deadline.type
 import { RefundTypeService } from '../../services/refund.type.service';
 import { TiersService } from '../../services/tiers.service';
 import { TiersComponent } from '../tiers/tiers.component';
-import { TiersDocumentTypeService } from './../../services/tiers.document.type.service';
+import { DocumentTypeService } from 'src/app/modules/miscellaneous/services/document.type.service';
+import { getDocument } from 'src/app/libs/DocumentHelper';
+import { instanceOfResponsable, instanceOfTiers } from 'src/app/libs/TypeHelper';
 
 @Component({
   selector: 'settlement-billing',
@@ -41,13 +43,13 @@ export class SettlementBillingComponent implements OnInit {
   REFUND_TYPE_VIREMENT = REFUND_TYPE_VIREMENT;
   SEPARATOR_KEY_CODES = SEPARATOR_KEY_CODES;
 
-  tiersDocumentTypes: TiersDocumentType[] = [] as Array<TiersDocumentType>;
+  documentTypes: DocumentType[] = [] as Array<DocumentType>;
   billingLabelTypes: BillingLabelType[] = [] as Array<BillingLabelType>;
-  billingDocument: TiersDocument = {} as TiersDocument;
-  dunningDocument: TiersDocument = {} as TiersDocument;
-  refundDocument: TiersDocument = {} as TiersDocument;
-  provisionalReceiptDocument: TiersDocument = {} as TiersDocument;
-  billingClosureDocument: TiersDocument = {} as TiersDocument;
+  billingDocument: Document = {} as Document;
+  dunningDocument: Document = {} as Document;
+  refundDocument: Document = {} as Document;
+  provisionalReceiptDocument: Document = {} as Document;
+  billingClosureDocument: Document = {} as Document;
 
   overrideBillingAffaireAddress: boolean = false;
   overrideBillingAffaireMail: boolean = false;
@@ -78,7 +80,7 @@ export class SettlementBillingComponent implements OnInit {
 
   constructor(private formBuilder: FormBuilder,
     protected paymentTypeService: PaymentTypeService,
-    protected tiersDocumentTypeService: TiersDocumentTypeService,
+    protected documentTypeService: DocumentTypeService,
     protected billingLabelTypeService: BillingLabelTypeService,
     protected paymentDeadlineTypeService: PaymentDeadlineTypeService,
     protected tiersService: TiersService,
@@ -114,11 +116,11 @@ export class SettlementBillingComponent implements OnInit {
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.tiers != undefined) {
-      if (TiersComponent.instanceOfTiers(this.tiers)) {
+      if (instanceOfTiers(this.tiers)) {
         if ((this.tiers.paymentType == null || this.tiers.paymentType == undefined) && this.paymentTypes.length > 0) {
           this.paymentTypes.forEach(paymentType => {
             if (paymentType.code == PAYMENT_TYPE_PRELEVEMENT)
-              if (TiersComponent.instanceOfTiers(this.tiers))
+              if (instanceOfTiers(this.tiers))
                 this.tiers.paymentType = paymentType;
           })
         }
@@ -127,18 +129,18 @@ export class SettlementBillingComponent implements OnInit {
           this.tiers.isProvisionalPaymentMandatory = false;
       }
 
-      this.tiersDocumentTypeService.getDocumentTypes().subscribe(response => {
-        this.tiersDocumentTypes = response;
+      this.documentTypeService.getDocumentTypes().subscribe(response => {
+        this.documentTypes = response;
 
-        this.billingDocument = TiersComponent.getDocument(BILLING_TIERS_DOCUMENT_TYPE_CODE, this.tiers, this.tiersDocumentTypes);
-        this.billingClosureDocument = TiersComponent.getDocument(BILLING_CLOSURE_TIERS_DOCUMENT_TYPE_CODE, this.tiers, this.tiersDocumentTypes);
+        this.billingDocument = getDocument(BILLING_TIERS_DOCUMENT_TYPE_CODE, this.tiers, this.documentTypes);
+        this.billingClosureDocument = getDocument(BILLING_CLOSURE_TIERS_DOCUMENT_TYPE_CODE, this.tiers, this.documentTypes);
         if (this.billingClosureDocument.isRecipientClient == null || this.billingClosureDocument.isRecipientClient == false)
           this.billingClosureDocument.isRecipientClient = true;
 
-        if (TiersComponent.instanceOfTiers(this.tiers)) {
-          this.dunningDocument = TiersComponent.getDocument(DUNNING_TIERS_DOCUMENT_TYPE_CODE, this.tiers, this.tiersDocumentTypes);
-          this.refundDocument = TiersComponent.getDocument(REFUND_TIERS_DOCUMENT_TYPE_CODE, this.tiers, this.tiersDocumentTypes);
-          this.provisionalReceiptDocument = TiersComponent.getDocument(PROVISIONAL_RECEIPT_TIERS_DOCUMENT_TYPE_CODE, this.tiers, this.tiersDocumentTypes);
+        if (instanceOfTiers(this.tiers)) {
+          this.dunningDocument = getDocument(DUNNING_TIERS_DOCUMENT_TYPE_CODE, this.tiers, this.documentTypes);
+          this.refundDocument = getDocument(REFUND_TIERS_DOCUMENT_TYPE_CODE, this.tiers, this.documentTypes);
+          this.provisionalReceiptDocument = getDocument(PROVISIONAL_RECEIPT_TIERS_DOCUMENT_TYPE_CODE, this.tiers, this.documentTypes);
         }
 
       })
@@ -167,8 +169,8 @@ export class SettlementBillingComponent implements OnInit {
     mailsMissingItemFormality: [''],
   });
 
-  instanceOfTiers = TiersComponent.instanceOfTiers;
-  instanceOfResponsable = TiersComponent.instanceOfResponsable;
+  instanceOfTiers = instanceOfTiers;
+  instanceOfResponsable = instanceOfResponsable;
 
   // Check if the propertiy given in parameter is filled when payment is PRELEVEMENT
   checkFieldFilledIfPaymentIsPrelevement(fieldName: string): ValidationErrors | null {
@@ -176,7 +178,7 @@ export class SettlementBillingComponent implements OnInit {
       const root = control.root as FormGroup;
 
       const fieldValue = root.get(fieldName)?.value;
-      if (TiersComponent.instanceOfTiers(this.tiers) && this.tiers.paymentType != undefined && this.tiers.paymentType.code != undefined && this.tiers.paymentType.code == PAYMENT_TYPE_PRELEVEMENT && (fieldValue == undefined || fieldValue == null || fieldValue.length == 0))
+      if (instanceOfTiers(this.tiers) && this.tiers.paymentType != undefined && this.tiers.paymentType.code != undefined && this.tiers.paymentType.code == PAYMENT_TYPE_PRELEVEMENT && (fieldValue == undefined || fieldValue == null || fieldValue.length == 0))
         return {
           notFilled: true
         };

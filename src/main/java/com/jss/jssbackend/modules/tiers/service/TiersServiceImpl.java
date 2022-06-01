@@ -1,14 +1,17 @@
 package com.jss.jssbackend.modules.tiers.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import com.jss.jssbackend.libs.search.model.IndexEntity;
 import com.jss.jssbackend.libs.search.service.IndexEntityService;
+import com.jss.jssbackend.libs.search.service.SearchService;
+import com.jss.jssbackend.modules.miscellaneous.model.Document;
 import com.jss.jssbackend.modules.tiers.model.Mail;
 import com.jss.jssbackend.modules.tiers.model.Phone;
 import com.jss.jssbackend.modules.tiers.model.Responsable;
 import com.jss.jssbackend.modules.tiers.model.Tiers;
-import com.jss.jssbackend.modules.tiers.model.TiersDocument;
 import com.jss.jssbackend.modules.tiers.repository.TiersRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +34,9 @@ public class TiersServiceImpl implements TiersService {
 
     @Autowired
     IndexEntityService indexEntityService;
+
+    @Autowired
+    SearchService searchService;
 
     @Override
     public Tiers getTiersById(Integer id) {
@@ -59,7 +65,7 @@ public class TiersServiceImpl implements TiersService {
 
         // If document mails already exists, get their ids
         if (tiers.getDocuments() != null && tiers.getDocuments().size() > 0) {
-            for (TiersDocument document : tiers.getDocuments()) {
+            for (Document document : tiers.getDocuments()) {
                 if (document.getMailsAffaire() != null && document.getMailsAffaire().size() > 0)
                     this.populateMailIds(document.getMailsAffaire());
                 if (document.getMailsClient() != null && document.getMailsClient().size() > 0)
@@ -74,7 +80,7 @@ public class TiersServiceImpl implements TiersService {
                 indexEntityService.indexEntity(responsable, responsable.getId());
 
                 if (responsable.getDocuments() != null && responsable.getDocuments().size() > 0) {
-                    for (TiersDocument document : responsable.getDocuments()) {
+                    for (Document document : responsable.getDocuments()) {
                         if (document.getMailsAffaire() != null && document.getMailsAffaire().size() > 0)
                             this.populateMailIds(document.getMailsAffaire());
                         if (document.getMailsClient() != null && document.getMailsClient().size() > 0)
@@ -102,5 +108,19 @@ public class TiersServiceImpl implements TiersService {
         if (responsable != null)
             return this.getTiersById(responsable.getTiers().getId());
         return null;
+    }
+
+    @Override
+    public List<Tiers> getIndividualTiersByKeyword(String searchedValue) {
+        List<Tiers> foundTiers = new ArrayList<Tiers>();
+        List<IndexEntity> tiers = searchService.searchForEntities(searchedValue, Tiers.class.getSimpleName());
+        if (tiers != null && tiers.size() > 0) {
+            for (IndexEntity t : tiers) {
+                List<Tiers> individualTiers = tiersRepository.findByIsIndividualAndIdTiers(t.getEntityId());
+                if (individualTiers != null && individualTiers.size() == 1)
+                    foundTiers.add(individualTiers.get(0));
+            }
+        }
+        return foundTiers;
     }
 }
