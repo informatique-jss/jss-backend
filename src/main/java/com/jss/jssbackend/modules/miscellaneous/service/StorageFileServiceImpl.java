@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
+import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
@@ -27,7 +28,16 @@ public class StorageFileServiceImpl implements StorageFileService {
         Files.createDirectories(Paths.get(uploadFolder.trim() + File.separator + path));
         Files.copy(file.getInputStream(), Paths.get(uploadFolder.trim() + File.separator + path).resolve(filename),
                 StandardCopyOption.REPLACE_EXISTING);
-        return Paths.get(uploadFolder.trim()).resolve(filename).normalize().toAbsolutePath().toString();
+        return Paths.get(uploadFolder.trim() + File.separator + path).resolve(filename).normalize().toAbsolutePath()
+                .toString();
+    }
+
+    @Override
+    public void deleteFile(String path) {
+        if (path != null && Files.exists(Paths.get(path), LinkOption.NOFOLLOW_LINKS)) {
+            File file = new File(path);
+            file.delete();
+        }
     }
 
     @Override

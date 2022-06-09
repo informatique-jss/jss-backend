@@ -10,4 +10,6 @@ public interface StorageFileService {
     public String saveFile(MultipartFile file, String filename, String path) throws IOException;
 
     public Resource loadFile(String filename) throws MalformedURLException;
+
+    public void deleteFile(String path);
 }

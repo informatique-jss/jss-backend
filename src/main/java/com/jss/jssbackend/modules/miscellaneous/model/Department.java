@@ -50,4 +50,12 @@ public class Department implements Serializable {
 		this.code = code;
 	}
 
+	public Region getRegion() {
+		return region;
+	}
+
+	public void setRegion(Region region) {
+		this.region = region;
+	}
+
 }

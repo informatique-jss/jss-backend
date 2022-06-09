@@ -2,8 +2,10 @@ import { Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/cor
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
+import { Dictionnary } from 'src/app/libs/Dictionnary';
 import { Audit } from 'src/app/modules/miscellaneous/model/Audit';
 import { EntityType } from 'src/app/routing/search/EntityType';
+import { HistoryAction } from '../../model/HistoryAction';
 import { AuditService } from '../../services/audit.service';
 
 @Component({
@@ -18,6 +20,9 @@ export class HistoryComponent implements OnInit {
   @Input() entity: any = {};
   @Input() entityType: EntityType = {} as EntityType;
   @ViewChild(MatSort) sort!: MatSort;
+  @Input() displayOnlyFields: string[] | null = null;
+  @Input() historyActions: HistoryAction[] = [] as Array<HistoryAction>;
+  internalHistoryActions: HistoryAction[] = [] as Array<HistoryAction>;
 
   audits: Audit[] = [] as Array<Audit>;
 
@@ -26,6 +31,8 @@ export class HistoryComponent implements OnInit {
   auditDataSource: MatTableDataSource<Audit> = new MatTableDataSource<Audit>();
 
   filterValue: string = "";
+
+  dictionnary = new Map<string, string>(Object.entries(Dictionnary));
 
   constructor(
     protected auditService: AuditService
@@ -38,11 +45,25 @@ export class HistoryComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.internalHistoryActions = this.historyActions;
+    if (this.internalHistoryActions.length > 0)
+      this.displayedColumns.push("actions");
+  }
+
+  historyActionTrigger(historyAction: HistoryAction, element: Audit) {
+    historyAction.actionClick(element);
   }
 
   setData() {
     this.auditService.getAuditForEntity(this.entity.id, this.entityType).subscribe(response => {
-      this.audits = response;
+      if (this.displayOnlyFields != null && this.displayOnlyFields != undefined && response) {
+        response.forEach(audit => {
+          if (this.displayOnlyFields!.indexOf(audit.fieldName) >= 0)
+            this.audits.push(audit);
+        })
+      } else {
+        this.audits = response;
+      }
       if (this.audits != undefined && this.audits != null && this.audits.length > 0) {
         this.audits.sort(function (a: Audit, b: Audit) {
           return new Date(b.datetime).getTime() - new Date(a.datetime).getTime();
@@ -76,5 +97,11 @@ export class HistoryComponent implements OnInit {
     filterValue = filterValueCast.value.trim();
     filterValue = filterValue.toLowerCase();
     this.auditDataSource.filter = filterValue;
+  }
+
+  getFieldLabel(fieldName: string) {
+    if (this.dictionnary.get(fieldName))
+      return this.dictionnary.get(fieldName);
+    return fieldName;
   }
 }

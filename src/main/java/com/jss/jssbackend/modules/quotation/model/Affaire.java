@@ -34,14 +34,17 @@ public class Affaire implements Serializable {
 	private Civility civility;
 
 	@Column(length = 60)
+	@IndexedField
 	private String denomination;
 
 	private Boolean isIndividual;
 
 	@Column(length = 20)
+	@IndexedField
 	private String firstname;
 
 	@Column(length = 20)
+	@IndexedField
 	private String lastname;
 
 	@ManyToOne
@@ -57,13 +60,11 @@ public class Affaire implements Serializable {
 	@Column(length = 10)
 	private String rna;
 
-	@Column(length = 10)
-	@IndexedField
+	@Column(length = 10, nullable = false)
 	private String postalCode;
 
 	@ManyToOne
 	@JoinColumn(name = "id_city")
-	@IndexedField
 	private City city;
 
 	@ManyToOne
@@ -71,7 +72,6 @@ public class Affaire implements Serializable {
 	private Country country;
 
 	@Column(length = 60, nullable = false)
-	@IndexedField
 	private String address;
 
 	@ManyToMany(cascade = CascadeType.ALL)

@@ -2,7 +2,7 @@
   <table class="full-width" *ngIf="document">
     <tr>
       <td *ngIf="hideConsignee==false">
-        <h4>Destinataire de d'adressage</h4>
+        <h4>Destinataire(s)</h4>
         <mat-checkbox formControlName="RecipientTypeAffaire" class="checkbox-margin"
           [(ngModel)]="document.isRecipientAffaire">Affaire
         </mat-checkbox>
@@ -11,8 +11,9 @@
         </mat-checkbox>
       </td>
       <td *ngIf="hideAdressing==false">
-        <h4>Type d'adressage</h4>
-        <mat-checkbox formControlName="MailingTypePaper" class="checkbox-margin" [(ngModel)]="document.isMailingPaper">
+        <h4>Type d'envoi</h4>
+        <mat-checkbox formControlName="MailingTypePaper" class="checkbox-margin" [(ngModel)]="document.isMailingPaper"
+          *ngIf="onlyMail==false">
           Papier</mat-checkbox>
         <button matTooltip="Modifier les adresses postales par défaut"
           *ngIf="document.isMailingPaper && (document.isRecipientAffaire || document.isRecipientClient)" mat-icon-button
@@ -22,19 +23,19 @@
         <mat-checkbox formControlName="MailingTypePdf" class="checkbox-margin" [(ngModel)]="document.isMailingPdf">PDF
         </mat-checkbox>
         <button matTooltip="Modifier les adresses mail par défaut"
-          *ngIf="document.isMailingPdf && (document.isRecipientAffaire || document.isRecipientClient)" mat-icon-button
-          color="accent" (click)="overrideAffaireMail=true;overrideClientMail=true">
+          *ngIf="document.isMailingPdf && (document.isRecipientAffaire || document.isRecipientClient || onlyMail)"
+          mat-icon-button color="accent" (click)="overrideAffaireMail=true;overrideClientMail=true">
           <mat-icon>edit</mat-icon>
         </button>
       </td>
-      <td *ngIf="document.isMailingPaper && document.isRecipientAffaire && displayPaperCopy">
+      <td *ngIf="document.isMailingPaper && document.isRecipientAffaire && displayPaperCopy && displayNumberMailing">
         <mat-form-field class="mat-form-field-padding">
           <mat-label>Nombre d'exemplaire Affaire</mat-label>
           <input type="number" matInput formControlName="NumberMailingAffaire"
             [(ngModel)]="document.numberMailingAffaire" autocomplete="do-not-autofill">
         </mat-form-field>
       </td>
-      <td *ngIf="document.isMailingPaper && document.isRecipientClient && displayPaperCopy">
+      <td *ngIf="document.isMailingPaper && document.isRecipientClient && displayPaperCopy && displayNumberMailing">
         <mat-form-field class="mat-form-field-padding">
           <mat-label>Nombre d'exemplaire Client</mat-label>
           <input type="number" matInput formControlName="NumberMailingClient" [(ngModel)]="document.numberMailingClient"
@@ -107,7 +108,7 @@
         </button>
       </td>
     </tr>
-    <tr *ngIf="document.isMailingPaper && document.isRecipientClient && overrideClientAddress">
+    <tr *ngIf="document.isMailingPaper && (document.isRecipientClient ) && overrideClientAddress">
       <td>
         <mat-form-field class="full-width">
           <mat-label>Autres destinataires pour le client</mat-label>
@@ -128,8 +129,8 @@
         </button>
       </td>
     </tr>
-    <tr *ngIf="document.isMailingPdf && document.isRecipientClient && overrideClientMail">
-      <td [hidden]="!overrideClientMail || !document.isRecipientClient" colspan="3">
+    <tr *ngIf="document.isMailingPdf && (document.isRecipientClient || onlyMail) && overrideClientMail">
+      <td [hidden]="!overrideClientMail " colspan="3">
         <mat-form-field class="full-width">
           <mat-label>Autres adresses mail pour le client</mat-label>
           <mat-chip-list #chipListMails>
@@ -152,7 +153,7 @@
         </button>
       </td>
     </tr>
-    <tr *ngIf="document.isMailingPdf && document.isRecipientClient && overrideClientMail && displayMailCC">
+    <tr *ngIf="document.isMailingPdf && (document.isRecipientClient ) && overrideClientMail && displayMailCC">
       <td colspan=" 3">
         <mat-form-field class="full-width">
           <mat-label>Autres destinataires mail (CC) pour le client</mat-label>

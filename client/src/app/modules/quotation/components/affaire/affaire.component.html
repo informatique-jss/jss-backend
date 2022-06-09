@@ -1,6 +1,23 @@
-<form [formGroup]="affaireForm">
+<form [formGroup]="affaireForm" *ngIf="affaire">
   <div class="full-width">
     <fieldset [disabled]="editMode==false" class="fieldset-no-border">
+      <table class="full-width">
+        <tr *ngIf="affaire.id==null">
+          <td>
+            <mat-form-field class="full-width">
+              <mat-label>Récupérer une affaire existante</mat-label>
+              <input matInput placeholder="Récupérer une affaire existante" [matAutocomplete]="autoCompleteAffaire"
+                formControlName="autoCompleteAffaire" autocomplete="do-not-autofill">
+              <mat-autocomplete #autoCompleteAffaire="matAutocomplete" [displayWith]="displayLabel"
+                (optionSelected)='fillAffaire($event.option)'>
+                <mat-option *ngFor="let affaire of filteredAffaires" [value]="affaire">
+                  {{affaire.firstname}} {{affaire.lastname}} {{affaire.denomination}}
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+          </td>
+        </tr>
+      </table>
       <table class="full-width">
         <tr>
           <td>
@@ -84,6 +101,10 @@
               </mat-autocomplete>
             </mat-form-field>
           </td>
+        </tr>
+      </table>
+      <table class="full-width">
+        <tr>
           <td>
             <mat-form-field class="full-width">
               <mat-label>Denomination</mat-label>

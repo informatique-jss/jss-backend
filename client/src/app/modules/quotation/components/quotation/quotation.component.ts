@@ -80,7 +80,7 @@ export class QuotationComponent implements OnInit {
   }
 
   getFormsStatus(): boolean {
-    // TODO : remonter les erreurs depuis le module adressing (le faire en dur car parfois facultatif)
+    // TODO : remonter les erreurs depuis le module adressing (le faire en dur car parfois facultatif) + tous les autres formulaires
     let orderingCustomerFormStatus = this.orderingCustomerComponent?.getFormStatus();
     let provisionFormStatus = this.provisionComponent?.getFormStatus();
     let errorMessages: string[] = [] as Array<string>;

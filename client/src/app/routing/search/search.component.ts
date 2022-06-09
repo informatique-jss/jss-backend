@@ -1,16 +1,18 @@
-import { FormBuilder } from '@angular/forms';
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
+import { Router } from '@angular/router';
+import { EntityType } from './EntityType';
 import { IndexEntityService } from './index.entity.service';
 import { IndexEntity } from './IndexEntity';
-import { Router } from '@angular/router';
-import { I } from '@angular/cdk/keycodes';
-import { EntityType } from './EntityType';
 
 export const TIERS_ENTITY_TYPE: EntityType = { entityType: 'Tiers', tabName: 'Tiers', entryPoint: 'tiers' };
 export const RESPONSABLE_ENTITY_TYPE: EntityType = { entityType: 'Responsable', tabName: 'Responsable', entryPoint: 'tiers/responsable' };
 export const QUOTATION_ENTITY_TYPE: EntityType = { entityType: 'Quotation', tabName: 'Devis', entryPoint: 'quotation' };
 export const CUSTOMER_ORDER_ENTITY_TYPE: EntityType = { entityType: 'CustomerOrder', tabName: 'Commande', entryPoint: 'order' };
+export const DOMICILIATION_ENTITY_TYPE: EntityType = { entityType: 'Domiciliation', tabName: 'Domiciliation', entryPoint: 'quotation/domiciliation' };
+export const SHAL_ENTITY_TYPE: EntityType = { entityType: 'Shal', tabName: 'Shal', entryPoint: 'quotation/shal' };
+export const AFFAIRE_ENTITY_TYPE: EntityType = { entityType: 'Affaire', tabName: 'Affaires', entryPoint: 'quotation/affaire' };
 
 @Component({
   selector: 'app-search',

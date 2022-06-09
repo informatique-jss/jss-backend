@@ -1,14 +1,19 @@
 package com.jss.jssbackend.modules.quotation.service;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Optional;
 
-import com.jss.jssbackend.libs.search.service.IndexEntityService;
-import com.jss.jssbackend.modules.quotation.model.Quotation;
-import com.jss.jssbackend.modules.quotation.repository.QuotationRepository;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.jss.jssbackend.libs.search.service.IndexEntityService;
+import com.jss.jssbackend.modules.quotation.model.Affaire;
+import com.jss.jssbackend.modules.quotation.model.Provision;
+import com.jss.jssbackend.modules.quotation.model.Quotation;
+import com.jss.jssbackend.modules.quotation.repository.QuotationRepository;
+import com.jss.jssbackend.modules.tiers.service.MailService;
+import com.jss.jssbackend.modules.tiers.service.PhoneService;
 
 @Service
 public class QuotationServiceImpl implements QuotationService {
@@ -18,6 +23,12 @@ public class QuotationServiceImpl implements QuotationService {
 
     @Autowired
     IndexEntityService indexEntityService;
+
+    @Autowired
+    PhoneService phoneService;
+
+    @Autowired
+    MailService mailService;
 
     @Override
     public Quotation getQuotation(Integer id) {
@@ -31,8 +42,65 @@ public class QuotationServiceImpl implements QuotationService {
     public Quotation addOrUpdateQuotation(Quotation quotation) {
         if (quotation.getId() == null)
             quotation.setCreatedDate(new Date());
+        if (quotation.getProvisions() != null && quotation.getProvisions().size() > 0) {
+            for (Provision provision : quotation.getProvisions()) {
+                Affaire affaire = provision.getAffaire();
+                if (affaire.getRna() != null)
+                    affaire.setRna(affaire.getRna().toUpperCase().replaceAll(" ", ""));
+                if (affaire.getSiren() != null)
+                    affaire.setSiren(affaire.getSiren().toUpperCase().replaceAll(" ", ""));
+                if (affaire.getSiret() != null)
+                    affaire.setSiret(affaire.getSiret().toUpperCase().replaceAll(" ", ""));
+
+                // If mails already exists, get their ids
+                if (affaire != null && affaire.getMails() != null && affaire.getMails().size() > 0)
+                    mailService.populateMailIds(affaire.getMails());
+
+                // If phones already exists, get their ids
+                if (affaire != null && affaire.getPhones() != null && affaire.getPhones().size() > 0) {
+                    phoneService.populateMPhoneIds(affaire.getPhones());
+                }
+
+                // Complete domiciliation end date
+                if (provision.getDomiciliation() != null && provision.getDomiciliation().getEndDate() == null) {
+                    Calendar c = Calendar.getInstance();
+                    c.setTime(provision.getDomiciliation().getStartDate());
+                    c.add(Calendar.YEAR, 1);
+                    provision.getDomiciliation().setEndDate(c.getTime());
+
+                    // If mails already exists, get their ids
+                    if (provision.getDomiciliation() != null && provision.getDomiciliation().getMails() != null
+                            && provision.getDomiciliation().getMails().size() > 0)
+                        mailService.populateMailIds(provision.getDomiciliation().getMails());
+
+                    // If mails already exists, get their ids
+                    if (provision.getDomiciliation() != null && provision.getDomiciliation().getActivityMails() != null
+                            && provision.getDomiciliation().getActivityMails().size() > 0)
+                        mailService.populateMailIds(provision.getDomiciliation().getActivityMails());
+
+                    // If mails already exists, get their ids
+                    if (provision.getDomiciliation() != null
+                            && provision.getDomiciliation().getLegalGardianMails() != null
+                            && provision.getDomiciliation().getLegalGardianMails().size() > 0)
+                        mailService.populateMailIds(provision.getDomiciliation().getLegalGardianMails());
+
+                    if (provision.getDomiciliation() != null
+                            && provision.getDomiciliation().getLegalGardianPhones() != null
+                            && provision.getDomiciliation().getLegalGardianPhones().size() > 0)
+                        phoneService.populateMPhoneIds(provision.getDomiciliation().getLegalGardianPhones());
+
+                }
+
+            }
+        }
         quotation = quotationRepository.save(quotation);
         indexEntityService.indexEntity(quotation, quotation.getId());
+
+        if (quotation.getProvisions() != null && quotation.getProvisions().size() > 0) {
+            for (Provision provision : quotation.getProvisions()) {
+                indexEntityService.indexEntity(provision.getAffaire(), provision.getAffaire().getId());
+            }
+        }
         return quotation;
     }
 }

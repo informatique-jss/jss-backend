@@ -8,7 +8,7 @@
     <table mat-table matSort [dataSource]="auditDataSource" class="table">
       <ng-container matColumnDef="fieldName">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Champ</th>
-        <td mat-cell *matCellDef="let element">{{element.fieldName}}</td>
+        <td mat-cell *matCellDef="let element">{{getFieldLabel(element.fieldName)}}</td>
       </ng-container>
       <ng-container matColumnDef="oldValue">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Ancienne valeur</th>
@@ -26,6 +26,15 @@
       <ng-container matColumnDef="creationDate">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Modifié le</th>
         <td mat-cell *matCellDef="let element">{{element.datetime | date:'dd/MM/yyyy à HH:mm'}}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="actions" *ngIf="internalHistoryActions.length>0">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
+        <td mat-cell *matCellDef="let element">
+          <mat-icon *ngFor="let historyAction of internalHistoryActions "
+            (click)="historyActionTrigger(historyAction,element)" color="accent"
+            [matTooltip]="historyAction.actionTooltip">preview
+          </mat-icon>
         </td>
       </ng-container>
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

@@ -6,6 +6,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter, map, startWith, switchMap, tap } from 'rxjs/operators';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
+import { AppService } from 'src/app/app.service';
 import { compareWithId, isTiersTypeProspect } from 'src/app/libs/CompareHelper';
 import { COUNTRY_CODE_FRANCE, SEPARATOR_KEY_CODES, SUSCRIPTION_TYPE_CODE_PERIODE_12M } from 'src/app/libs/Constants';
 import { validateEmail, validateFrenchPhone, validateInternationalPhone } from 'src/app/libs/CustomFormsValidatorsHelper';
@@ -99,6 +100,7 @@ export class ResponsableMainComponent implements OnInit {
     private employeeService: EmployeeService,
     private cityService: CityService,
     private countryService: CountryService,
+    private appService: AppService,
     protected tiersService: TiersService,
     protected tiersTypeService: TiersTypeService,
     protected subscriptionPeriodTypeService: SubscriptionPeriodTypeService,
@@ -221,7 +223,6 @@ export class ResponsableMainComponent implements OnInit {
       this.responsableDataSource.sort = this.sort;
       this.responsableDataSource.sortingDataAccessor = (item: Responsable, property) => {
         switch (property) {
-          // case 'name': return item.responsableType.label; // TODO
           case 'id': return item.id;
           case 'name': return item.firstname + "" + item.lastname;
           case 'address': return item.address + "";
@@ -252,6 +253,11 @@ export class ResponsableMainComponent implements OnInit {
         this.tiersService.setCurrentViewedResponsable(responsable);
         this.toggleTabs();
         this.initDefaultValues();
+        if (this.tiers.denomination != null) {
+          this.appService.changeHeaderTitle(this.tiers.denomination + " - " + (this.selectedResponsable.firstname != null ? (this.selectedResponsable.firstname + " " + this.selectedResponsable.lastname) : ""));
+        } else if (this.tiers.firstname != null) {
+          this.appService.changeHeaderTitle(this.tiers.firstname + " " + this.tiers.lastname + " - " + (this.selectedResponsable.firstname != null ? (this.selectedResponsable.firstname + " " + this.selectedResponsable.lastname) : ""));
+        }
       }
     })
   }

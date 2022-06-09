@@ -9,13 +9,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import com.jss.jssbackend.libs.ActiveDirectoryHelper;
-import com.jss.jssbackend.modules.miscellaneous.model.UploadedFile;
-import com.jss.jssbackend.modules.miscellaneous.repository.UploadedFileRepository;
-
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.jss.jssbackend.libs.ActiveDirectoryHelper;
+import com.jss.jssbackend.modules.miscellaneous.model.UploadedFile;
+import com.jss.jssbackend.modules.miscellaneous.repository.UploadedFileRepository;
 
 @Service
 public class UploadedFileServiceImpl implements UploadedFileService {
@@ -49,6 +49,13 @@ public class UploadedFileServiceImpl implements UploadedFileService {
         uploadedFile.setFilename(filename);
         uploadedFile.setPath(absoluteFilePath);
         return uploadedFile;
+    }
+
+    @Override
+    public void deleteUploadedFile(UploadedFile uploadedFile) {
+        if (uploadedFile != null) {
+            uploadedFileRepository.delete(uploadedFile);
+        }
     }
 
     private String computeChecksumForFile(String absoluteFilePath) throws NoSuchAlgorithmException, IOException {

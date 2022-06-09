@@ -25,4 +25,38 @@ public class ValidationHelper {
         Matcher m = p.matcher(phone);
         return m.matches();
     }
+
+    public static boolean validateSiren(String siren) {
+        String regex = "^(\\d{9}|\\d{3}[ ]\\d{3}[ ]\\d{3})$";
+        Pattern p = Pattern.compile(regex);
+
+        if (siren == null)
+            return false;
+
+        Matcher m = p.matcher(siren);
+        return m.matches();
+    }
+
+    public static boolean validateSiret(String siret) {
+        String regex = "^\\d{14}$";
+        Pattern p = Pattern.compile(regex);
+
+        if (siret == null)
+            return false;
+
+        Matcher m = p.matcher(siret);
+        return m.matches();
+    }
+
+    public static boolean validateRna(String rna) {
+        String regex = "^[Ww]\\d{9}$";
+        Pattern p = Pattern.compile(regex);
+
+        if (rna == null)
+            return false;
+
+        Matcher m = p.matcher(rna);
+        return m.matches();
+    }
+
 }

@@ -2,13 +2,12 @@ import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
 import { CFE_TIERS_DOCUMENT_TYPE_CODE, KBIS_TIERS_DOCUMENT_TYPE_CODE, PUBLICATION_TIERS_DOCUMENT_TYPE_CODE, SEPARATOR_KEY_CODES } from 'src/app/libs/Constants';
+import { getDocument } from 'src/app/libs/DocumentHelper';
+import { instanceOfResponsable } from 'src/app/libs/TypeHelper';
 import { DocumentTypeService } from 'src/app/modules/miscellaneous/services/document.type.service';
-import { ITiers } from '../../model/ITiers';
-import { TiersComponent } from '../tiers/tiers.component';
 import { Document } from "../../../miscellaneous/model/Document";
 import { DocumentType } from "../../../miscellaneous/model/DocumentType";
-import { instanceOfResponsable } from 'src/app/libs/TypeHelper';
-import { getDocument } from 'src/app/libs/DocumentHelper';
+import { ITiers } from '../../model/ITiers';
 
 @Component({
   selector: 'document-management',

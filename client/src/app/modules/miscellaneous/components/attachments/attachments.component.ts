@@ -27,10 +27,10 @@ export class AttachmentsComponent implements OnInit {
 
   filterValue: string = "";
 
-  uploadTiersAttachementDialogRef: MatDialogRef<UploadAttachementDialogComponent> | undefined;
+  uploadAttachementDialogRef: MatDialogRef<UploadAttachementDialogComponent> | undefined;
 
   constructor(
-    protected uploadTiersAttachementDialog: MatDialog,
+    protected uploadAttachementDialog: MatDialog,
     protected uploadAttachmentService: UploadAttachmentService
   ) { }
 
@@ -76,11 +76,11 @@ export class AttachmentsComponent implements OnInit {
   }
 
   uploadFile() {
-    this.uploadTiersAttachementDialogRef = this.uploadTiersAttachementDialog.open(UploadAttachementDialogComponent, {
+    this.uploadAttachementDialogRef = this.uploadAttachementDialog.open(UploadAttachementDialogComponent, {
     });
-    this.uploadTiersAttachementDialogRef.componentInstance.entity = this.entity;
-    this.uploadTiersAttachementDialogRef.componentInstance.entityType = this.entityType;
-    this.uploadTiersAttachementDialogRef.afterClosed().subscribe(response => {
+    this.uploadAttachementDialogRef.componentInstance.entity = this.entity;
+    this.uploadAttachementDialogRef.componentInstance.entityType = this.entityType;
+    this.uploadAttachementDialogRef.afterClosed().subscribe(response => {
       if (response && response != null) {
         this.entity.attachments = response;
         this.setDataTable();
@@ -88,12 +88,12 @@ export class AttachmentsComponent implements OnInit {
     });
   }
 
-  previewFile(tiersAttachment: Attachment) {
-    this.uploadAttachmentService.previewAttachment(tiersAttachment);
+  previewFile(attachment: Attachment) {
+    this.uploadAttachmentService.previewAttachment(attachment);
   }
 
-  downloadFile(tiersAttachment: Attachment) {
-    this.uploadAttachmentService.downloadAttachment(tiersAttachment);
+  downloadFile(attachment: Attachment) {
+    this.uploadAttachmentService.downloadAttachment(attachment);
   }
 
 }

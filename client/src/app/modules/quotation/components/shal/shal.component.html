@@ -1,0 +1,284 @@
+<form [formGroup]="shalForm" *ngIf="provision && provision.shal">
+  <mat-tab-group animationDuration="0ms" #tabs>
+    <mat-tab label="SHAL">
+      <div class="form-div">
+        <table class="full-width">
+          <tr>
+            <td>
+              <mat-form-field class="full-width">
+                <mat-label>Confrère</mat-label>
+                <input matInput placeholder="Confrère" [(ngModel)]="provision.shal.confrere"
+                  [matAutocomplete]="autoSpecialOffer" formControlName="confrere" autocomplete="do-not-autofill">
+                <button
+                  *ngIf="provision.shal.confrere==undefined || provision.shal.confrere==null || provision.shal.confrere.id ==undefined || provision.shal.confrere.id==null"
+                  matSuffix mat-icon-button (click)="openConfrereDialog()">
+                  <mat-icon>search</mat-icon>
+                </button>
+                <button (click)="provision.shal.confrere=null"
+                  *ngIf="provision.shal.confrere!=undefined && provision.shal.confrere!=null && provision.shal.confrere.id !=undefined && provision.shal.confrere.id!=null"
+                  matSuffix mat-icon-button>
+                  <mat-icon>close</mat-icon>
+                </button>
+                <mat-autocomplete #autoSpecialOffer="matAutocomplete" [displayWith]="displayConfrere">
+                  <mat-option *ngFor="let confrere of filteredConfreres | async" [value]="confrere">
+                    {{confrere.denomination}}
+                  </mat-option>
+                </mat-autocomplete>
+              </mat-form-field>
+            </td>
+            <td *ngIf="provision.shal.confrere!=null && provision.shal.confrere!=undefined">
+              <mat-form-field class="full-width">
+                <mat-label>Département</mat-label>
+                <input matInput placeholder="Département" [(ngModel)]="provision.shal.department"
+                  [matAutocomplete]="autoCompleteCountry" formControlName="department" autocomplete="do-not-autofill">
+                <mat-autocomplete #autoCompleteCountry="matAutocomplete" [displayWith]="displayLabel"
+                  (optionSelected)="updateCharacterPrice()">
+                  <mat-option *ngFor="let department of filteredDepartments | async" [value]="department">
+                    {{department.label}}
+                  </mat-option>
+                </mat-autocomplete>
+              </mat-form-field>
+            </td>
+          </tr>
+        </table>
+        <table class="full-width" *ngIf="provision.shal.confrere!=null && provision.shal.confrere!=undefined">
+          <tr>
+            <td>
+              <mat-radio-group class="radio-group-column" [(ngModel)]="provision.shal.journalType"
+                formControlName="journalType">
+                <mat-radio-button [value]="journalType" *ngFor="let journalType of provision.shal.confrere?.journalType"
+                  [checked]="this.provision.shal.journalType != undefined && this.provision.shal.journalType.id == journalType.id">
+                  {{journalType.label}}
+                </mat-radio-button>
+              </mat-radio-group>
+            </td>
+            <td>
+              <mat-form-field class="full-width">
+                <mat-label>Date de publication</mat-label>
+                <input matInput [matDatepicker]="publicationDateDatetimePicker" formControlName="publicationDate"
+                  [(ngModel)]="provision.shal.publicationDate" autocomplete="do-not-autocomplete"
+                  (dateChange)="updateCharacterPrice()">
+                <mat-datepicker-toggle matSuffix [for]="publicationDateDatetimePicker"></mat-datepicker-toggle>
+                <mat-datepicker touchUi #publicationDateDatetimePicker>
+                </mat-datepicker>
+              </mat-form-field>
+            </td>
+            <td>
+              <mat-slide-toggle formControlName="isRedactedByJss" [(ngModel)]="provision.shal.isRedactedByJss">
+                Rédigé par le JSS ?
+              </mat-slide-toggle>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </mat-tab>
+    <mat-tab label="Annonce">
+      <div class="form-div">
+        <table class="full-width">
+          <tr>
+            <td>
+              <mat-form-field class="full-width">
+                <mat-label>Texte de l'annonce</mat-label>
+                <textarea (keyup)="cleanTextarea('notice')" (keydown)="cleanTextarea('notice')"
+                  (paste)="cleanTextarea('notice')" rows="3" matInput formControlName="notice"
+                  [(ngModel)]="provision.shal.notice"></textarea>
+              </mat-form-field>
+            </td>
+          </tr>
+        </table>
+        <table class="full-width">
+          <tr>
+            <td
+              *ngIf="provision.shal.confrere!=undefined && provision.shal.department!=undefined && provision.shal.publicationDate!=undefined">
+              Prix au caractère : {{characterPrice.price}} €
+            </td>
+            <td
+              *ngIf="provision.shal.confrere!=undefined && provision.shal.department!=undefined && provision.shal.publicationDate!=undefined">
+              Nombre de caractères : {{countCharacterNumber('notice')}}
+            </td>
+          </tr>
+        </table>
+        <table class="full-width">
+          <tr>
+            <td>
+              <mat-form-field class="full-width">
+                <mat-label>Rubrique</mat-label>
+                <mat-select formControlName="noticeTypeFamily" [(ngModel)]="provision.shal.noticeTypeFamily"
+                  [compareWith]="compareWithId" [disabled]="editMode==false">
+                  <mat-option *ngFor="let noticeTypeFamily of noticeTypeFamilies" [value]="noticeTypeFamily">
+                    {{noticeTypeFamily.label}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </td>
+            <td *ngIf="provision.shal.noticeTypeFamily">
+              <mat-form-field class="full-width">
+                <mat-label>Sous-rubrique(s)</mat-label>
+                <mat-chip-list #chipListNoticeTypes>
+                  <mat-chip *ngFor="let noticeType of provision.shal.noticeTypes"
+                    (removed)="removeNoticeType(noticeType)">
+                    {{noticeType.label}}
+                    <button matChipRemove *ngIf="editMode">
+                      <mat-icon>cancel</mat-icon>
+                    </button>
+                  </mat-chip>
+                  <input placeholder="Saisir une sous-rubrique" #noticeTypesInput formControlName="noticeTypes"
+                    [matChipInputFor]="chipListNoticeTypes" [matChipInputSeparatorKeyCodes]="SEPARATOR_KEY_CODES"
+                    [matAutocomplete]="autoCompleteNoticeTypes">
+                </mat-chip-list>
+                <mat-autocomplete autoActiveFirstOption #autoCompleteNoticeTypes="matAutocomplete"
+                  [displayWith]="displayLabel" (optionSelected)="addNoticeType($event)">
+                  <mat-option *ngFor="let noticeType of filteredNoticeTypes | async" [value]="noticeType">
+                    {{noticeType.label}}
+                  </mat-option>
+                </mat-autocomplete>
+              </mat-form-field>
+            </td>
+            <table class="full-width">
+              <tr>
+                <td>
+                  <mat-slide-toggle formControlName="isLogo" [(ngModel)]="provision.shal.isLogo">
+                    Logo ?
+                  </mat-slide-toggle>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <mat-slide-toggle formControlName="isHeader" [(ngModel)]="provision.shal.isHeader">
+                    En-tête ?
+                  </mat-slide-toggle>
+                </td>
+              </tr>
+              <tr *ngIf="provision.shal.confrere && provision.shal.confrere.id==CONFRERE_BALO_ID">
+                <td>
+                  <mat-slide-toggle formControlName="isPictureBaloPackage"
+                    [(ngModel)]="provision.shal.isPictureBaloPackage">
+                    Forfait image BALO ?
+                  </mat-slide-toggle>
+                </td>
+              </tr>
+            </table>
+          </tr>
+        </table>
+        <table class="full-width">
+          <tr>
+            <td class="legalDisplayTd">
+              <mat-slide-toggle formControlName="isLegalDisplay" [(ngModel)]="provision.shal.isLegalDisplay">
+                Affichage légal ?
+              </mat-slide-toggle>
+            </td>
+            <td *ngIf="provision.shal.isLegalDisplay">
+              <table class="full-width">
+                <tr>
+                  <td>
+                    <mat-form-field class="full-width">
+                      <mat-label>Production des affiches (€)</mat-label>
+                      <input matInput formControlName="posterProductionPrice"
+                        [(ngModel)]="provision.shal.posterProductionPrice">
+                    </mat-form-field>
+                  </td>
+                  <td>
+                    <mat-form-field class="full-width">
+                      <mat-label>Prix JSS (€)</mat-label>
+                      <input matInput formControlName="posterProductionJSSPrice"
+                        [(ngModel)]="provision.shal.posterProductionJSSPrice">
+                    </mat-form-field>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <mat-form-field class="full-width">
+                      <mat-label>Pose des affiches (€)</mat-label>
+                      <input matInput formControlName="billPostingPrice" [(ngModel)]="provision.shal.billPostingPrice">
+                    </mat-form-field>
+                  </td>
+                  <td>
+                    <mat-form-field class="full-width">
+                      <mat-label>Prix JSS (€)</mat-label>
+                      <input matInput formControlName="billPostingJSSPrice"
+                        [(ngModel)]="provision.shal.billPostingJSSPrice">
+                    </mat-form-field>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <mat-form-field class="full-width">
+                      <mat-label>Constat d'huisser (€)</mat-label>
+                      <input matInput formControlName="bailiffReportPrice"
+                        [(ngModel)]="provision.shal.bailiffReportPrice">
+                    </mat-form-field>
+                  </td>
+                  <td>
+                    <mat-form-field class="full-width">
+                      <mat-label>Prix JSS (€)</mat-label>
+                      <input matInput formControlName="bailiffReportJSSPrice"
+                        [(ngModel)]="provision.shal.bailiffReportPrice">
+                    </mat-form-field>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </mat-tab>
+    <mat-tab label="Gestion des pièces">
+      <div class="form-div">
+        <mat-accordion>
+          <mat-expansion-panel expanded>
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                Justificatif de parution
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+            <addressing [editMode]="editMode" [document]="publicationDocument">
+            </addressing>
+          </mat-expansion-panel>
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                Epreuve de relecture
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-slide-toggle formControlName="isProofReadingDocument"
+              [(ngModel)]="provision.shal.isProofReadingDocument">
+              Epreuve de relecture ?
+            </mat-slide-toggle>
+            <addressing *ngIf="provision.shal.isProofReadingDocument" [displayMailCC]="true" [hideConsignee]="true"
+              [onlyMail]="true" [editMode]="editMode" [document]="proofReadingDocument">
+            </addressing>
+          </mat-expansion-panel>
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                Attestation de parution
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-slide-toggle formControlName="isPublicationCertificateDocument"
+              [(ngModel)]="provision.shal.isPublicationCertificateDocument">
+              Attestation de parution ?
+            </mat-slide-toggle>
+            <addressing *ngIf="provision.shal.isPublicationCertificateDocument" [displayMailCC]="true"
+              [hideConsignee]="true" [onlyMail]="true" [editMode]=" editMode"
+              [document]="publicationCertificateDocument">
+            </addressing>
+          </mat-expansion-panel>
+        </mat-accordion>
+      </div>
+    </mat-tab>
+    <mat-tab label="Historique de l'annonce" *ngIf="provision.id!=null && provision.id!=undefined">
+      <history [entity]="provision.shal" [entityType]="SHAL_ENTITY_TYPE" [displayOnlyFields]="['notice']"
+        [historyActions]="getHistoryActions()"></history>
+    </mat-tab>
+    <mat-tab label="Historique" *ngIf="provision.id!=null && provision.id!=undefined">
+      <history [entity]="provision.shal" [entityType]="SHAL_ENTITY_TYPE"></history>
+    </mat-tab>
+    <mat-tab label="Documents" *ngIf="provision.id!=null && provision.id!=undefined">
+      <attachments [entity]="provision.shal" [editMode]="editMode" [entityType]="SHAL_ENTITY_TYPE.entityType">
+      </attachments>
+    </mat-tab>
+    <mat-tab label="Historique" *ngIf="provision && provision.id">
+      <history [entity]="provision.shal" [entityType]="SHAL_ENTITY_TYPE"></history>
+    </mat-tab>
+  </mat-tab-group>
+</form>

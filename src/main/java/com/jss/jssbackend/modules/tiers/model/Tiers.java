@@ -24,11 +24,11 @@ import com.jss.jssbackend.modules.miscellaneous.model.City;
 import com.jss.jssbackend.modules.miscellaneous.model.Civility;
 import com.jss.jssbackend.modules.miscellaneous.model.Country;
 import com.jss.jssbackend.modules.miscellaneous.model.DeliveryService;
+import com.jss.jssbackend.modules.miscellaneous.model.Document;
 import com.jss.jssbackend.modules.miscellaneous.model.IAttachment;
 import com.jss.jssbackend.modules.miscellaneous.model.Language;
 import com.jss.jssbackend.modules.miscellaneous.model.PaymentType;
 import com.jss.jssbackend.modules.miscellaneous.model.SpecialOffer;
-import com.jss.jssbackend.modules.miscellaneous.model.Document;
 import com.jss.jssbackend.modules.profile.model.Employee;
 
 @Entity
@@ -65,6 +65,7 @@ public class Tiers implements ITiers, IAttachment {
 	@Column(length = 20)
 	private String intercommunityVat;
 
+	// TODO : passer en table d'asso avec ordonnancement manuel
 	@ManyToOne
 	@JoinColumn(name = "id_special_offer")
 	private SpecialOffer specialOffer;

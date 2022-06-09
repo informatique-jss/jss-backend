@@ -1,26 +1,12 @@
 package com.jss.jssbackend.libs;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.jss.jssbackend.libs.audit.repository.AuditRepository;
 import com.jss.jssbackend.libs.search.repository.IndexEntityRepository;
-import com.jss.jssbackend.modules.miscellaneous.model.AttachmentType;
-import com.jss.jssbackend.modules.miscellaneous.model.BillingItem;
-import com.jss.jssbackend.modules.miscellaneous.model.BillingType;
-import com.jss.jssbackend.modules.miscellaneous.model.City;
-import com.jss.jssbackend.modules.miscellaneous.model.Civility;
-import com.jss.jssbackend.modules.miscellaneous.model.Country;
-import com.jss.jssbackend.modules.miscellaneous.model.DeliveryService;
-import com.jss.jssbackend.modules.miscellaneous.model.Department;
-import com.jss.jssbackend.modules.miscellaneous.model.DocumentType;
-import com.jss.jssbackend.modules.miscellaneous.model.Gift;
-import com.jss.jssbackend.modules.miscellaneous.model.Language;
-import com.jss.jssbackend.modules.miscellaneous.model.LegalForm;
-import com.jss.jssbackend.modules.miscellaneous.model.PaymentType;
-import com.jss.jssbackend.modules.miscellaneous.model.Region;
-import com.jss.jssbackend.modules.miscellaneous.model.SpecialOffer;
-import com.jss.jssbackend.modules.miscellaneous.model.Vat;
 import com.jss.jssbackend.modules.miscellaneous.repository.AttachmentTypeRepository;
 import com.jss.jssbackend.modules.miscellaneous.repository.BillingItemRepository;
 import com.jss.jssbackend.modules.miscellaneous.repository.BillingTypeRepository;
@@ -39,28 +25,23 @@ import com.jss.jssbackend.modules.miscellaneous.repository.RegionRepository;
 import com.jss.jssbackend.modules.miscellaneous.repository.SpecialOfferRepository;
 import com.jss.jssbackend.modules.miscellaneous.repository.UploadedFileRepository;
 import com.jss.jssbackend.modules.miscellaneous.repository.VatRepository;
-import com.jss.jssbackend.modules.profile.model.Employee;
-import com.jss.jssbackend.modules.profile.model.Team;
+import com.jss.jssbackend.modules.miscellaneous.repository.WeekDayRepository;
 import com.jss.jssbackend.modules.profile.repository.EmployeeRepository;
 import com.jss.jssbackend.modules.profile.repository.TeamRepository;
-import com.jss.jssbackend.modules.quotation.model.QuotationLabelType;
-import com.jss.jssbackend.modules.quotation.model.QuotationStatus;
-import com.jss.jssbackend.modules.quotation.model.RecordType;
+import com.jss.jssbackend.modules.quotation.repository.BuildingDomiciliationRepository;
+import com.jss.jssbackend.modules.quotation.repository.CharacterPriceRepository;
+import com.jss.jssbackend.modules.quotation.repository.ConfrereRepository;
+import com.jss.jssbackend.modules.quotation.repository.DomiciliationContractTypeRepository;
+import com.jss.jssbackend.modules.quotation.repository.JournalTypeRepository;
+import com.jss.jssbackend.modules.quotation.repository.MailRedirectionTypeRepository;
+import com.jss.jssbackend.modules.quotation.repository.NoticeTypeFamilyRepository;
+import com.jss.jssbackend.modules.quotation.repository.NoticeTypeRepository;
+import com.jss.jssbackend.modules.quotation.repository.ProvisionFamilyTypeRepository;
+import com.jss.jssbackend.modules.quotation.repository.ProvisionTypeRepository;
 import com.jss.jssbackend.modules.quotation.repository.QuotationLabelTypeRepository;
 import com.jss.jssbackend.modules.quotation.repository.QuotationRepository;
 import com.jss.jssbackend.modules.quotation.repository.QuotationStatusRepository;
 import com.jss.jssbackend.modules.quotation.repository.RecordTypeRepository;
-import com.jss.jssbackend.modules.tiers.model.BillingClosureRecipientType;
-import com.jss.jssbackend.modules.tiers.model.BillingClosureType;
-import com.jss.jssbackend.modules.tiers.model.BillingLabelType;
-import com.jss.jssbackend.modules.tiers.model.Mail;
-import com.jss.jssbackend.modules.tiers.model.PaymentDeadlineType;
-import com.jss.jssbackend.modules.tiers.model.Phone;
-import com.jss.jssbackend.modules.tiers.model.RefundType;
-import com.jss.jssbackend.modules.tiers.model.SubscriptionPeriodType;
-import com.jss.jssbackend.modules.tiers.model.TiersCategory;
-import com.jss.jssbackend.modules.tiers.model.TiersFollowupType;
-import com.jss.jssbackend.modules.tiers.model.TiersType;
 import com.jss.jssbackend.modules.tiers.repository.BillingClosureRecipientTypeRepository;
 import com.jss.jssbackend.modules.tiers.repository.BillingClosureTypeRepository;
 import com.jss.jssbackend.modules.tiers.repository.BillingLabelTypeRepository;
@@ -75,12 +56,6 @@ import com.jss.jssbackend.modules.tiers.repository.TiersCategoryRepository;
 import com.jss.jssbackend.modules.tiers.repository.TiersFollowupTypeRepository;
 import com.jss.jssbackend.modules.tiers.repository.TiersRepository;
 import com.jss.jssbackend.modules.tiers.repository.TiersTypeRepository;
-
-import org.apache.commons.collections4.IterableUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 // TODO : delete !!!
 // TODO : à ajouter dans toutes les bases :
@@ -214,444 +189,727 @@ public class InitReferentialsController {
 	@Autowired
 	LegalFormRepository legalFormRepository;
 
+	@Autowired
+	ProvisionFamilyTypeRepository provisionFamilyTypeRepository;
+
+	@Autowired
+	ProvisionTypeRepository provisionTypeRepository;
+
+	@Autowired
+	DomiciliationContractTypeRepository domiciliationContractTypeRepository;
+
+	@Autowired
+	BuildingDomiciliationRepository buildingDomiciliationRepository;
+
+	@Autowired
+	MailRedirectionTypeRepository mailRedirectionTypeRepository;
+
+	@Autowired
+	WeekDayRepository weekDayRepository;
+
+	@Autowired
+	ConfrereRepository confrereRepository;
+
+	@Autowired
+	JournalTypeRepository journalTypeRepository;
+
+	@Autowired
+	CharacterPriceRepository characterPriceRepository;
+
+	@Autowired
+	NoticeTypeRepository noticeTypeRepository;
+
+	@Autowired
+	NoticeTypeFamilyRepository noticeTypeFamilyRepository;
+
 	@GetMapping(inputEntryPoint + "/create")
 	public void create() {
-		tiersRepository.deleteAll();
-		indexEntityRepository.deleteAll();
-		auditRepository.deleteAll();
-		uploadedFileRepository.deleteAll();
-		responsableRepository.deleteAll();
-
-		cityRepository.deleteAll();
-		departmentRepository.deleteAll();
-		regionRepository.deleteAll();
-		countryRepository.deleteAll();
-
-		Country country = new Country();
-		country.setCode("FR");
-		country.setLabel("France");
-		countryRepository.save(country);
-
-		Region region = new Region();
-		region.setCode("IDF");
-		region.setLabel("Ile de france");
-		regionRepository.save(region);
-
-		Department departement = new Department();
-		departement.setCode("75");
-		departement.setLabel("Paris");
-		departmentRepository.save(departement);
-
-		City city = new City();
-		city.setCountry(country);
-		city.setDepartment(departement);
-		city.setLabel("Paris 13");
-		city.setLocality("Paris 13");
-		city.setPostalCode("75013");
-		city.setValidated(true);
-		cityRepository.save(city);
-
-		deliveryServiceRepository.deleteAll();
-		DeliveryService deliveryService = new DeliveryService();
-		deliveryService.setLabel("La Poste");
-		deliveryServiceRepository.save(deliveryService);
-
-		tiersTypeRepository.deleteAll();
-		TiersType tiersType = new TiersType();
-		tiersType.setCode("CLIENT");
-		tiersType.setLabel("Client");
-		tiersTypeRepository.save(tiersType);
-
-		tiersType = new TiersType();
-		tiersType.setCode("PROSPECT");
-		tiersType.setLabel("Prospect");
-		tiersTypeRepository.save(tiersType);
-
-		civilityRepository.deleteAll();
-		Civility civility = new Civility();
-		civility.setLabel("Maître");
-		civilityRepository.save(civility);
-		civility = new Civility();
-		civility.setLabel("Monsieur");
-		civilityRepository.save(civility);
-		civility = new Civility();
-		civility.setLabel("Madame");
-		civilityRepository.save(civility);
-
-		tiersCategoryRepository.deleteAll();
-		TiersCategory tiersCategory = new TiersCategory();
-		tiersCategory.setCode("AV");
-		tiersCategory.setLabel("Avocat");
-		tiersCategoryRepository.save(tiersCategory);
-		tiersCategory = new TiersCategory();
-		tiersCategory.setCode("AW");
-		tiersCategory.setLabel("Architecte");
-		tiersCategoryRepository.save(tiersCategory);
-
-		List<Team> teams = IterableUtils.toList(teamRepository.findAll());
-		for (Team t : teams) {
-			t.setManager(null);
-			teamRepository.save(t);
-		}
-
-		employeeRepository.deleteAll();
-		teamRepository.deleteAll();
-		Team team1 = new Team();
-		team1.setCode("COMMERCIAL");
-		team1.setLabel("Commerciale");
-		team1.setMail("commercial@jss.fr");
-		teamRepository.save(team1);
-
-		Employee employee1 = new Employee();
-		employee1.setFirstname("John");
-		employee1.setLastname("Doe");
-		employee1.setTeam(team1);
-		employeeRepository.save(employee1);
-
-		team1.setManager(employee1);
-		teamRepository.save(team1);
-
-		Team team2 = new Team();
-		team2.setCode("FORMALISTE");
-		team2.setLabel("Formaliste");
-		team2.setMail("formaliste@jss.fr");
-		team2.setManager(employee1);
-		teamRepository.save(team2);
-
-		Employee employee2 = new Employee();
-		employee2.setFirstname("Johanna");
-		employee2.setLastname("Doe");
-		employee2.setTeam(team2);
-		employeeRepository.save(employee2);
-
-		Team team3 = new Team();
-		team3.setCode("INSERTIONS");
-		team3.setLabel("Insertions");
-		team3.setMail("insertion@jss.fr");
-		team3.setManager(employee1);
-		teamRepository.save(team3);
-
-		Employee employee3 = new Employee();
-		employee3.setFirstname("Emile");
-		employee3.setLastname("Doe");
-		employee3.setTeam(team3);
-		employeeRepository.save(employee3);
-
-		languageRepository.deleteAll();
-		Language language = new Language();
-		language.setLabel("Français");
-		languageRepository.save(language);
-
-		language = new Language();
-		language.setLabel("Anglais");
-		languageRepository.save(language);
-
-		specialOfferRepository.deleteAll();
-		billingItemRepository.deleteAll();
-		billingTypeRepository.deleteAll();
-		vatRepository.deleteAll();
-		Vat vat = new Vat();
-		vat.setLabel("Non taxable");
-		vat.setRate(0f);
-		vatRepository.save(vat);
-
-		vat = new Vat();
-		vat.setLabel("20.0");
-		vat.setRate(20f);
-		vatRepository.save(vat);
-
-		BillingType billingType = new BillingType();
-		billingType.setLabel("Poste 1");
-		billingType.setPreTaxPrice(10f);
-		billingType.setAccountingCode(10);
-		billingTypeRepository.save(billingType);
-
-		BillingItem billingItem = new BillingItem();
-		billingItem.setBillingType(billingType);
-		billingItem.setDiscountAmount(0f);
-		billingItem.setDiscountRate(0f);
-		billingItem.setVat(vat);
-		billingItemRepository.save(billingItem);
-
-		SpecialOffer specialOffer = new SpecialOffer();
-		specialOffer.setCode("10");
-		specialOffer.setLabel("Non taxable");
-		ArrayList<BillingItem> billingItems = new ArrayList<BillingItem>();
-		billingItems.add(billingItem);
-		specialOffer.setBillingItems(billingItems);
-		specialOfferRepository.save(specialOffer);
-
-		mailRepository.deleteAll();
-		Mail mail = new Mail();
-		mail.setMail("aa@aa.com");
-		mailRepository.save(mail);
-
-		phoneRepository.deleteAll();
-		Phone phone = new Phone();
-		phone.setPhoneNumber("0123456789");
-		phoneRepository.save(phone);
-
-		phone = new Phone();
-		phone.setPhoneNumber("+33123465789");
-		phoneRepository.save(phone);
-
-		tiersDocumentRepository.deleteAll();
-		tiersDocumentTypeRepository.deleteAll();
-		DocumentType tiersDocumentType = new DocumentType();
-		tiersDocumentType.setCode("1");
-		tiersDocumentType.setLabel("JUSTIFICATIF PARUTION");
-		tiersDocumentTypeRepository.save(tiersDocumentType);
-
-		tiersDocumentType = new DocumentType();
-		tiersDocumentType.setCode("2");
-		tiersDocumentType.setLabel("CFE");
-		tiersDocumentTypeRepository.save(tiersDocumentType);
-
-		tiersDocumentType = new DocumentType();
-		tiersDocumentType.setCode("3");
-		tiersDocumentType.setLabel("KBIS");
-		tiersDocumentTypeRepository.save(tiersDocumentType);
-
-		tiersDocumentType = new DocumentType();
-		tiersDocumentType.setCode("4");
-		tiersDocumentType.setLabel("FACTURE");
-		tiersDocumentTypeRepository.save(tiersDocumentType);
-
-		tiersDocumentType = new DocumentType();
-		tiersDocumentType.setCode("5");
-		tiersDocumentType.setLabel("RELANCE");
-		tiersDocumentTypeRepository.save(tiersDocumentType);
-
-		tiersDocumentType = new DocumentType();
-		tiersDocumentType.setCode("6");
-		tiersDocumentType.setLabel("REMBOURSEMENT");
-		tiersDocumentTypeRepository.save(tiersDocumentType);
-
-		tiersDocumentType = new DocumentType();
-		tiersDocumentType.setCode("7");
-		tiersDocumentType.setLabel("ARRETES COMPTABLES");
-		tiersDocumentTypeRepository.save(tiersDocumentType);
-
-		tiersDocumentType = new DocumentType();
-		tiersDocumentType.setCode("8");
-		tiersDocumentType.setLabel("RECU DE PROVISION");
-		tiersDocumentTypeRepository.save(tiersDocumentType);
-
-		tiersDocumentType = new DocumentType();
-		tiersDocumentType.setCode("9");
-		tiersDocumentType.setLabel("DIVERS");
-		tiersDocumentTypeRepository.save(tiersDocumentType);
-
-		tiersDocumentType = new DocumentType();
-		tiersDocumentType.setCode("10");
-		tiersDocumentType.setLabel("DEVIS");
-		tiersDocumentTypeRepository.save(tiersDocumentType);
-
-		paymentTypeRepository.deleteAll();
-		PaymentType paymentType = new PaymentType();
-		paymentType.setCode("PRELEVEMENT");
-		paymentType.setLabel("Prélèvement");
-		paymentTypeRepository.save(paymentType);
-		paymentType = new PaymentType();
-		paymentType.setCode("CHEQUES");
-		paymentType.setLabel("Chèques");
-		paymentTypeRepository.save(paymentType);
-
-		billingLabelTypeRepository.deleteAll();
-		BillingLabelType billingLabelType = new BillingLabelType();
-		billingLabelType.setCode("AFFAIRE");
-		billingLabelType.setLabel("Affaire");
-		billingLabelTypeRepository.save(billingLabelType);
-
-		billingLabelType = new BillingLabelType();
-		billingLabelType.setCode("CLIENT");
-		billingLabelType.setLabel("Client");
-		billingLabelTypeRepository.save(billingLabelType);
-
-		billingLabelType = new BillingLabelType();
-		billingLabelType.setCode("AUTRES");
-		billingLabelType.setLabel("Autres");
-		billingLabelTypeRepository.save(billingLabelType);
-
-		paymentDeadlineTypeRepository.deleteAll();
-		PaymentDeadlineType paymentDeadlineType = new PaymentDeadlineType();
-		paymentDeadlineType.setCode("IMMEDIAT");
-		paymentDeadlineType.setLabel("Immédiat");
-		paymentDeadlineTypeRepository.save(paymentDeadlineType);
-
-		paymentDeadlineType = new PaymentDeadlineType();
-		paymentDeadlineType.setCode("30");
-		paymentDeadlineType.setLabel("30");
-		paymentDeadlineTypeRepository.save(paymentDeadlineType);
-
-		paymentDeadlineType = new PaymentDeadlineType();
-		paymentDeadlineType.setCode("45");
-		paymentDeadlineType.setLabel("45");
-		paymentDeadlineTypeRepository.save(paymentDeadlineType);
-
-		paymentDeadlineType = new PaymentDeadlineType();
-		paymentDeadlineType.setCode("60");
-		paymentDeadlineType.setLabel("60");
-		paymentDeadlineTypeRepository.save(paymentDeadlineType);
-
-		refundTypeRepository.deleteAll();
-		RefundType refundType = new RefundType();
-		refundType.setCode("VIREMENT");
-		refundType.setLabel("Virement");
-		refundTypeRepository.save(refundType);
-
-		refundType = new RefundType();
-		refundType.setCode("CHEQUE");
-		refundType.setLabel("Chèque");
-		refundTypeRepository.save(refundType);
-
-		billingClosureTypeRepository.deleteAll();
-		BillingClosureType billingClosureType = new BillingClosureType();
-		billingClosureType.setCode("AFFAIRE");
-		billingClosureType.setLabel("Par affaire");
-		billingClosureTypeRepository.save(billingClosureType);
-
-		billingClosureType = new BillingClosureType();
-		billingClosureType.setCode("COMPTABLE");
-		billingClosureType.setLabel("Comptable");
-		billingClosureTypeRepository.save(billingClosureType);
-
-		billingClosureRecipientTypeRepository.deleteAll();
-		BillingClosureRecipientType billingClosureRecipientType = new BillingClosureRecipientType();
-		billingClosureRecipientType.setCode("REPONSABLE");
-		billingClosureRecipientType.setLabel("Reponsable");
-		billingClosureRecipientTypeRepository.save(billingClosureRecipientType);
-
-		billingClosureRecipientType = new BillingClosureRecipientType();
-		billingClosureRecipientType.setCode("TOUS");
-		billingClosureRecipientType.setLabel("Tous");
-		billingClosureRecipientTypeRepository.save(billingClosureRecipientType);
-
-		attachmentTypeRepository.deleteAll();
-		AttachmentType attachmentType = new AttachmentType();
-		attachmentType.setCode("1");
-		attachmentType.setLabel("Document client");
-		attachmentTypeRepository.save(attachmentType);
-
-		attachmentType = new AttachmentType();
-		attachmentType.setCode("2");
-		attachmentType.setLabel("Devis");
-		attachmentTypeRepository.save(attachmentType);
-
-		attachmentType = new AttachmentType();
-		attachmentType.setCode("3");
-		attachmentType.setLabel("Contrat");
-		attachmentTypeRepository.save(attachmentType);
-
-		attachmentType = new AttachmentType();
-		attachmentType.setCode("4");
-		attachmentType.setLabel("Commande");
-		attachmentTypeRepository.save(attachmentType);
-
-		attachmentType = new AttachmentType();
-		attachmentType.setCode("5");
-		attachmentType.setLabel("Facture");
-		attachmentTypeRepository.save(attachmentType);
-
-		tiersFollowupTypeRepository.deleteAll();
-		TiersFollowupType tiersFollowupType = new TiersFollowupType();
-		tiersFollowupType.setCode("VISITE");
-		tiersFollowupType.setLabel("Visite");
-		tiersFollowupTypeRepository.save(tiersFollowupType);
-
-		tiersFollowupType = new TiersFollowupType();
-		tiersFollowupType.setCode("ENVOI_CADEAU");
-		tiersFollowupType.setLabel("Envoi d'un cadeau");
-		tiersFollowupTypeRepository.save(tiersFollowupType);
-
-		tiersFollowupType = new TiersFollowupType();
-		tiersFollowupType.setCode("APPEL");
-		tiersFollowupType.setLabel("Appel");
-		tiersFollowupTypeRepository.save(tiersFollowupType);
-
-		giftRepository.deleteAll();
-		Gift gift = new Gift();
-		gift.setCode("CHAMPAGNE");
-		gift.setLabel("Champagne");
-		giftRepository.save(gift);
-
-		gift = new Gift();
-		gift.setCode("FOIE GRAS");
-		gift.setLabel("Foie gras");
-		giftRepository.save(gift);
-
-		jssSubscriptionRepository.deleteAll();
-
-		subscriptionPeriodTypeRepository.deleteAll();
-		SubscriptionPeriodType subscriptionPeriodType = new SubscriptionPeriodType();
-		subscriptionPeriodType.setCode("3");
-		subscriptionPeriodType.setLabel("3 mois");
-		subscriptionPeriodTypeRepository.save(subscriptionPeriodType);
-
-		subscriptionPeriodType = new SubscriptionPeriodType();
-		subscriptionPeriodType.setCode("6");
-		subscriptionPeriodType.setLabel("6 mois");
-		subscriptionPeriodTypeRepository.save(subscriptionPeriodType);
-
-		subscriptionPeriodType = new SubscriptionPeriodType();
-		subscriptionPeriodType.setCode("12");
-		subscriptionPeriodType.setLabel("12 mois");
-		subscriptionPeriodTypeRepository.save(subscriptionPeriodType);
-
-		quotationRepository.deleteAll();
-		quotationStatusRepository.deleteAll();
-
-		QuotationStatus quotationStatus = new QuotationStatus();
-		quotationStatus.setCode("OUVERT");
-		quotationStatus.setLabel("Ouvert");
-		quotationStatusRepository.save(quotationStatus);
-
-		quotationStatus = new QuotationStatus();
-		quotationStatus.setCode("EN_COURS");
-		quotationStatus.setLabel("En cours");
-		quotationStatusRepository.save(quotationStatus);
-
-		quotationLabelTypeRepository.deleteAll();
-		QuotationLabelType quotationLabelType = new QuotationLabelType();
-		quotationLabelType.setCode("AFFAIRE");
-		quotationLabelType.setLabel("Affaire");
-		quotationLabelTypeRepository.save(quotationLabelType);
-
-		quotationLabelType = new QuotationLabelType();
-		quotationLabelType.setCode("CLIENT");
-		quotationLabelType.setLabel("Client");
-		quotationLabelTypeRepository.save(quotationLabelType);
-
-		quotationLabelType = new QuotationLabelType();
-		quotationLabelType.setCode("AUTRES");
-		quotationLabelType.setLabel("Autres");
-		quotationLabelTypeRepository.save(quotationLabelType);
-
-		recordTypeRepository.deleteAll();
-		RecordType recordType = new RecordType();
-		recordType.setCode("DEMATERIALISE");
-		recordType.setLabel("Dématérialisé");
-		recordTypeRepository.save(recordType);
-
-		recordType = new RecordType();
-		recordType.setCode("PAPIER");
-		recordType.setLabel("PAPIER");
-		recordTypeRepository.save(recordType);
-
-		legalFormRepository.deleteAll();
-		LegalForm legalForm = new LegalForm();
-		legalForm.setCode("EARL");
-		legalForm.setLabel("EARL");
-		legalFormRepository.save(legalForm);
-
-		legalForm = new LegalForm();
-		legalForm.setCode("SARL");
-		legalForm.setLabel("SARL");
-		legalFormRepository.save(legalForm);
-
-		legalForm = new LegalForm();
-		legalForm.setCode("32");
-		legalForm.setLabel("Société non immatriculée");
-		legalFormRepository.save(legalForm);
+		/*
+		 * tiersRepository.deleteAll();
+		 * indexEntityRepository.deleteAll();
+		 * auditRepository.deleteAll();
+		 * uploadedFileRepository.deleteAll();
+		 * responsableRepository.deleteAll();
+		 * 
+		 * cityRepository.deleteAll();
+		 * departmentRepository.deleteAll();
+		 * regionRepository.deleteAll();
+		 * countryRepository.deleteAll();
+		 * 
+		 * Country country = new Country();
+		 * country.setCode("FR");
+		 * country.setLabel("France");
+		 * countryRepository.save(country);
+		 * 
+		 * Region region = new Region();
+		 * region.setCode("IDF");
+		 * region.setLabel("Ile de france");
+		 * regionRepository.save(region);
+		 * 
+		 * Department departement = new Department();
+		 * departement.setCode("75");
+		 * departement.setLabel("Paris");
+		 * departmentRepository.save(departement);
+		 * 
+		 * City city = new City();
+		 * city.setCountry(country);
+		 * city.setDepartment(departement);
+		 * city.setLabel("Paris 13");
+		 * city.setLocality("Paris 13");
+		 * city.setPostalCode("75013");
+		 * city.setValidated(true);
+		 * cityRepository.save(city);
+		 * 
+		 * deliveryServiceRepository.deleteAll();
+		 * DeliveryService deliveryService = new DeliveryService();
+		 * deliveryService.setLabel("La Poste");
+		 * deliveryServiceRepository.save(deliveryService);
+		 * 
+		 * tiersTypeRepository.deleteAll();
+		 * TiersType tiersType = new TiersType();
+		 * tiersType.setCode("CLIENT");
+		 * tiersType.setLabel("Client");
+		 * tiersTypeRepository.save(tiersType);
+		 * 
+		 * tiersType = new TiersType();
+		 * tiersType.setCode("PROSPECT");
+		 * tiersType.setLabel("Prospect");
+		 * tiersTypeRepository.save(tiersType);
+		 * 
+		 * civilityRepository.deleteAll();
+		 * Civility civility = new Civility();
+		 * civility.setLabel("Maître");
+		 * civilityRepository.save(civility);
+		 * civility = new Civility();
+		 * civility.setLabel("Monsieur");
+		 * civilityRepository.save(civility);
+		 * civility = new Civility();
+		 * civility.setLabel("Madame");
+		 * civilityRepository.save(civility);
+		 * 
+		 * tiersCategoryRepository.deleteAll();
+		 * TiersCategory tiersCategory = new TiersCategory();
+		 * tiersCategory.setCode("AV");
+		 * tiersCategory.setLabel("Avocat");
+		 * tiersCategoryRepository.save(tiersCategory);
+		 * tiersCategory = new TiersCategory();
+		 * tiersCategory.setCode("AW");
+		 * tiersCategory.setLabel("Architecte");
+		 * tiersCategoryRepository.save(tiersCategory);
+		 * 
+		 * List<Team> teams = IterableUtils.toList(teamRepository.findAll());
+		 * for (Team t : teams) {
+		 * t.setManager(null);
+		 * teamRepository.save(t);
+		 * }
+		 * 
+		 * employeeRepository.deleteAll();
+		 * teamRepository.deleteAll();
+		 * Team team1 = new Team();
+		 * team1.setCode("COMMERCIAL");
+		 * team1.setLabel("Commerciale");
+		 * team1.setMail("commercial@jss.fr");
+		 * teamRepository.save(team1);
+		 * 
+		 * Employee employee1 = new Employee();
+		 * employee1.setFirstname("John");
+		 * employee1.setLastname("Doe");
+		 * employee1.setTeam(team1);
+		 * employeeRepository.save(employee1);
+		 * 
+		 * team1.setManager(employee1);
+		 * teamRepository.save(team1);
+		 * 
+		 * Team team2 = new Team();
+		 * team2.setCode("FORMALISTE");
+		 * team2.setLabel("Formaliste");
+		 * team2.setMail("formaliste@jss.fr");
+		 * team2.setManager(employee1);
+		 * teamRepository.save(team2);
+		 * 
+		 * Employee employee2 = new Employee();
+		 * employee2.setFirstname("Johanna");
+		 * employee2.setLastname("Doe");
+		 * employee2.setTeam(team2);
+		 * employeeRepository.save(employee2);
+		 * 
+		 * Team team3 = new Team();
+		 * team3.setCode("INSERTIONS");
+		 * team3.setLabel("Insertions");
+		 * team3.setMail("insertion@jss.fr");
+		 * team3.setManager(employee1);
+		 * teamRepository.save(team3);
+		 * 
+		 * Employee employee3 = new Employee();
+		 * employee3.setFirstname("Emile");
+		 * employee3.setLastname("Doe");
+		 * employee3.setTeam(team3);
+		 * employeeRepository.save(employee3);
+		 * 
+		 * languageRepository.deleteAll();
+		 * Language language = new Language();
+		 * language.setLabel("Français");
+		 * languageRepository.save(language);
+		 * 
+		 * language = new Language();
+		 * language.setLabel("Anglais");
+		 * languageRepository.save(language);
+		 * 
+		 * specialOfferRepository.deleteAll();
+		 * billingItemRepository.deleteAll();
+		 * billingTypeRepository.deleteAll();
+		 * vatRepository.deleteAll();
+		 * Vat vat = new Vat();
+		 * vat.setLabel("Non taxable");
+		 * vat.setRate(0f);
+		 * vatRepository.save(vat);
+		 * 
+		 * vat = new Vat();
+		 * vat.setLabel("20.0");
+		 * vat.setRate(20f);
+		 * vatRepository.save(vat);
+		 * 
+		 * BillingType billingType = new BillingType();
+		 * billingType.setLabel("Poste 1");
+		 * billingType.setPreTaxPrice(10f);
+		 * billingType.setAccountingCode(10);
+		 * billingTypeRepository.save(billingType);
+		 * 
+		 * BillingItem billingItem = new BillingItem();
+		 * billingItem.setBillingType(billingType);
+		 * billingItem.setDiscountAmount(0f);
+		 * billingItem.setDiscountRate(0f);
+		 * billingItem.setVat(vat);
+		 * billingItemRepository.save(billingItem);
+		 * 
+		 * SpecialOffer specialOffer = new SpecialOffer();
+		 * specialOffer.setCode("10");
+		 * specialOffer.setLabel("Non taxable");
+		 * ArrayList<BillingItem> billingItems = new ArrayList<BillingItem>();
+		 * billingItems.add(billingItem);
+		 * specialOffer.setBillingItems(billingItems);
+		 * specialOfferRepository.save(specialOffer);
+		 * 
+		 * mailRepository.deleteAll();
+		 * Mail mail = new Mail();
+		 * mail.setMail("aa@aa.com");
+		 * mailRepository.save(mail);
+		 * 
+		 * phoneRepository.deleteAll();
+		 * Phone phone = new Phone();
+		 * phone.setPhoneNumber("0123456789");
+		 * phoneRepository.save(phone);
+		 * 
+		 * phone = new Phone();
+		 * phone.setPhoneNumber("+33123465789");
+		 * phoneRepository.save(phone);
+		 * 
+		 * tiersDocumentRepository.deleteAll();
+		 * tiersDocumentTypeRepository.deleteAll();
+		 * DocumentType tiersDocumentType = new DocumentType();
+		 * tiersDocumentType.setCode("1");
+		 * tiersDocumentType.setLabel("JUSTIFICATIF PARUTION");
+		 * tiersDocumentTypeRepository.save(tiersDocumentType);
+		 * 
+		 * tiersDocumentType = new DocumentType();
+		 * tiersDocumentType.setCode("2");
+		 * tiersDocumentType.setLabel("CFE");
+		 * tiersDocumentTypeRepository.save(tiersDocumentType);
+		 * 
+		 * tiersDocumentType = new DocumentType();
+		 * tiersDocumentType.setCode("3");
+		 * tiersDocumentType.setLabel("KBIS");
+		 * tiersDocumentTypeRepository.save(tiersDocumentType);
+		 * 
+		 * tiersDocumentType = new DocumentType();
+		 * tiersDocumentType.setCode("4");
+		 * tiersDocumentType.setLabel("FACTURE");
+		 * tiersDocumentTypeRepository.save(tiersDocumentType);
+		 * 
+		 * tiersDocumentType = new DocumentType();
+		 * tiersDocumentType.setCode("5");
+		 * tiersDocumentType.setLabel("RELANCE");
+		 * tiersDocumentTypeRepository.save(tiersDocumentType);
+		 * 
+		 * tiersDocumentType = new DocumentType();
+		 * tiersDocumentType.setCode("6");
+		 * tiersDocumentType.setLabel("REMBOURSEMENT");
+		 * tiersDocumentTypeRepository.save(tiersDocumentType);
+		 * 
+		 * tiersDocumentType = new DocumentType();
+		 * tiersDocumentType.setCode("7");
+		 * tiersDocumentType.setLabel("ARRETES COMPTABLES");
+		 * tiersDocumentTypeRepository.save(tiersDocumentType);
+		 * 
+		 * tiersDocumentType = new DocumentType();
+		 * tiersDocumentType.setCode("8");
+		 * tiersDocumentType.setLabel("RECU DE PROVISION");
+		 * tiersDocumentTypeRepository.save(tiersDocumentType);
+		 * 
+		 * tiersDocumentType = new DocumentType();
+		 * tiersDocumentType.setCode("9");
+		 * tiersDocumentType.setLabel("DIVERS");
+		 * tiersDocumentTypeRepository.save(tiersDocumentType);
+		 * 
+		 * tiersDocumentType = new DocumentType();
+		 * tiersDocumentType.setCode("10");
+		 * tiersDocumentType.setLabel("DEVIS");
+		 * tiersDocumentTypeRepository.save(tiersDocumentType);
+		 * 
+		 * * tiersDocumentType = new DocumentType();
+		 * tiersDocumentType.setCode("12");
+		 * tiersDocumentType.setLabel("EPREUVE DE RELECTURE");
+		 * tiersDocumentTypeRepository.save(tiersDocumentType);
+		 * 
+		 * * tiersDocumentType = new DocumentType();
+		 * tiersDocumentType.setCode("13");
+		 * tiersDocumentType.setLabel("ATTESTATION DE PURATION");
+		 * tiersDocumentTypeRepository.save(tiersDocumentType);
+		 * 
+		 * paymentTypeRepository.deleteAll();
+		 * PaymentType paymentType = new PaymentType();
+		 * paymentType.setCode("PRELEVEMENT");
+		 * paymentType.setLabel("Prélèvement");
+		 * paymentTypeRepository.save(paymentType);
+		 * paymentType = new PaymentType();
+		 * paymentType.setCode("CHEQUES");
+		 * paymentType.setLabel("Chèques");
+		 * paymentTypeRepository.save(paymentType);
+		 * 
+		 * billingLabelTypeRepository.deleteAll();
+		 * BillingLabelType billingLabelType = new BillingLabelType();
+		 * billingLabelType.setCode("AFFAIRE");
+		 * billingLabelType.setLabel("Affaire");
+		 * billingLabelTypeRepository.save(billingLabelType);
+		 * 
+		 * billingLabelType = new BillingLabelType();
+		 * billingLabelType.setCode("CLIENT");
+		 * billingLabelType.setLabel("Client");
+		 * billingLabelTypeRepository.save(billingLabelType);
+		 * 
+		 * billingLabelType = new BillingLabelType();
+		 * billingLabelType.setCode("AUTRES");
+		 * billingLabelType.setLabel("Autres");
+		 * billingLabelTypeRepository.save(billingLabelType);
+		 * 
+		 * paymentDeadlineTypeRepository.deleteAll();
+		 * PaymentDeadlineType paymentDeadlineType = new PaymentDeadlineType();
+		 * paymentDeadlineType.setCode("IMMEDIAT");
+		 * paymentDeadlineType.setLabel("Immédiat");
+		 * paymentDeadlineTypeRepository.save(paymentDeadlineType);
+		 * 
+		 * paymentDeadlineType = new PaymentDeadlineType();
+		 * paymentDeadlineType.setCode("30");
+		 * paymentDeadlineType.setLabel("30");
+		 * paymentDeadlineTypeRepository.save(paymentDeadlineType);
+		 * 
+		 * paymentDeadlineType = new PaymentDeadlineType();
+		 * paymentDeadlineType.setCode("45");
+		 * paymentDeadlineType.setLabel("45");
+		 * paymentDeadlineTypeRepository.save(paymentDeadlineType);
+		 * 
+		 * paymentDeadlineType = new PaymentDeadlineType();
+		 * paymentDeadlineType.setCode("60");
+		 * paymentDeadlineType.setLabel("60");
+		 * paymentDeadlineTypeRepository.save(paymentDeadlineType);
+		 * 
+		 * refundTypeRepository.deleteAll();
+		 * RefundType refundType = new RefundType();
+		 * refundType.setCode("VIREMENT");
+		 * refundType.setLabel("Virement");
+		 * refundTypeRepository.save(refundType);
+		 * 
+		 * refundType = new RefundType();
+		 * refundType.setCode("CHEQUE");
+		 * refundType.setLabel("Chèque");
+		 * refundTypeRepository.save(refundType);
+		 * 
+		 * billingClosureTypeRepository.deleteAll();
+		 * BillingClosureType billingClosureType = new BillingClosureType();
+		 * billingClosureType.setCode("AFFAIRE");
+		 * billingClosureType.setLabel("Par affaire");
+		 * billingClosureTypeRepository.save(billingClosureType);
+		 * 
+		 * billingClosureType = new BillingClosureType();
+		 * billingClosureType.setCode("COMPTABLE");
+		 * billingClosureType.setLabel("Comptable");
+		 * billingClosureTypeRepository.save(billingClosureType);
+		 * 
+		 * billingClosureRecipientTypeRepository.deleteAll();
+		 * BillingClosureRecipientType billingClosureRecipientType = new
+		 * BillingClosureRecipientType();
+		 * billingClosureRecipientType.setCode("REPONSABLE");
+		 * billingClosureRecipientType.setLabel("Reponsable");
+		 * billingClosureRecipientTypeRepository.save(billingClosureRecipientType);
+		 * 
+		 * billingClosureRecipientType = new BillingClosureRecipientType();
+		 * billingClosureRecipientType.setCode("TOUS");
+		 * billingClosureRecipientType.setLabel("Tous");
+		 * billingClosureRecipientTypeRepository.save(billingClosureRecipientType);
+		 * 
+		 * attachmentTypeRepository.deleteAll();
+		 * AttachmentType attachmentType = new AttachmentType();
+		 * attachmentType.setCode("1");
+		 * attachmentType.setLabel("Document client");
+		 * attachmentTypeRepository.save(attachmentType);
+		 * 
+		 * attachmentType = new AttachmentType();
+		 * attachmentType.setCode("2");
+		 * attachmentType.setLabel("Devis");
+		 * attachmentTypeRepository.save(attachmentType);
+		 * 
+		 * attachmentType = new AttachmentType();
+		 * attachmentType.setCode("3");
+		 * attachmentType.setLabel("Contrat");
+		 * attachmentTypeRepository.save(attachmentType);
+		 * 
+		 * attachmentType = new AttachmentType();
+		 * attachmentType.setCode("4");
+		 * attachmentType.setLabel("Commande");
+		 * attachmentTypeRepository.save(attachmentType);
+		 * 
+		 * attachmentType = new AttachmentType();
+		 * attachmentType.setCode("5");
+		 * attachmentType.setLabel("Facture");
+		 * attachmentTypeRepository.save(attachmentType);
+		 * 
+		 * attachmentType = new AttachmentType();
+		 * attachmentType.setCode("6");
+		 * attachmentType.setLabel("KBIS");
+		 * attachmentTypeRepository.save(attachmentType);
+		 * 
+		 * 
+		 * attachmentType = new AttachmentType();
+		 * attachmentType.setCode("7");
+		 * attachmentType.setLabel("CNI");
+		 * attachmentTypeRepository.save(attachmentType);
+		 * 
+		 * 
+		 * attachmentType = new AttachmentType();
+		 * attachmentType.setCode("8");
+		 * attachmentType.setLabel("Justificatif de domicile");
+		 * attachmentTypeRepository.save(attachmentType);
+		 * 
+		 * tiersFollowupTypeRepository.deleteAll();
+		 * TiersFollowupType tiersFollowupType = new TiersFollowupType();
+		 * tiersFollowupType.setCode("VISITE");
+		 * tiersFollowupType.setLabel("Visite");
+		 * tiersFollowupTypeRepository.save(tiersFollowupType);
+		 * 
+		 * tiersFollowupType = new TiersFollowupType();
+		 * tiersFollowupType.setCode("ENVOI_CADEAU");
+		 * tiersFollowupType.setLabel("Envoi d'un cadeau");
+		 * tiersFollowupTypeRepository.save(tiersFollowupType);
+		 * 
+		 * tiersFollowupType = new TiersFollowupType();
+		 * tiersFollowupType.setCode("APPEL");
+		 * tiersFollowupType.setLabel("Appel");
+		 * tiersFollowupTypeRepository.save(tiersFollowupType);
+		 * 
+		 * giftRepository.deleteAll();
+		 * Gift gift = new Gift();
+		 * gift.setCode("CHAMPAGNE");
+		 * gift.setLabel("Champagne");
+		 * giftRepository.save(gift);
+		 * 
+		 * gift = new Gift();
+		 * gift.setCode("FOIE GRAS");
+		 * gift.setLabel("Foie gras");
+		 * giftRepository.save(gift);
+		 * 
+		 * jssSubscriptionRepository.deleteAll();
+		 * 
+		 * subscriptionPeriodTypeRepository.deleteAll();
+		 * SubscriptionPeriodType subscriptionPeriodType = new SubscriptionPeriodType();
+		 * subscriptionPeriodType.setCode("3");
+		 * subscriptionPeriodType.setLabel("3 mois");
+		 * subscriptionPeriodTypeRepository.save(subscriptionPeriodType);
+		 * 
+		 * subscriptionPeriodType = new SubscriptionPeriodType();
+		 * subscriptionPeriodType.setCode("6");
+		 * subscriptionPeriodType.setLabel("6 mois");
+		 * subscriptionPeriodTypeRepository.save(subscriptionPeriodType);
+		 * 
+		 * subscriptionPeriodType = new SubscriptionPeriodType();
+		 * subscriptionPeriodType.setCode("12");
+		 * subscriptionPeriodType.setLabel("12 mois");
+		 * subscriptionPeriodTypeRepository.save(subscriptionPeriodType);
+		 * 
+		 * quotationRepository.deleteAll();
+		 * quotationStatusRepository.deleteAll();
+		 * 
+		 * QuotationStatus quotationStatus = new QuotationStatus();
+		 * quotationStatus.setCode("OUVERT");
+		 * quotationStatus.setLabel("Ouvert");
+		 * quotationStatusRepository.save(quotationStatus);
+		 * 
+		 * quotationStatus = new QuotationStatus();
+		 * quotationStatus.setCode("EN_COURS");
+		 * quotationStatus.setLabel("En cours");
+		 * quotationStatusRepository.save(quotationStatus);
+		 * 
+		 * quotationLabelTypeRepository.deleteAll();
+		 * QuotationLabelType quotationLabelType = new QuotationLabelType();
+		 * quotationLabelType.setCode("AFFAIRE");
+		 * quotationLabelType.setLabel("Affaire");
+		 * quotationLabelTypeRepository.save(quotationLabelType);
+		 * 
+		 * quotationLabelType = new QuotationLabelType();
+		 * quotationLabelType.setCode("CLIENT");
+		 * quotationLabelType.setLabel("Client");
+		 * quotationLabelTypeRepository.save(quotationLabelType);
+		 * 
+		 * quotationLabelType = new QuotationLabelType();
+		 * quotationLabelType.setCode("AUTRES");
+		 * quotationLabelType.setLabel("Autres");
+		 * quotationLabelTypeRepository.save(quotationLabelType);
+		 * 
+		 * recordTypeRepository.deleteAll();
+		 * RecordType recordType = new RecordType();
+		 * recordType.setCode("DEMATERIALISE");
+		 * recordType.setLabel("Dématérialisé");
+		 * recordTypeRepository.save(recordType);
+		 * 
+		 * recordType = new RecordType();
+		 * recordType.setCode("PAPIER");
+		 * recordType.setLabel("PAPIER");
+		 * recordTypeRepository.save(recordType);
+		 * 
+		 * legalFormRepository.deleteAll();
+		 * LegalForm legalForm = new LegalForm();
+		 * legalForm.setCode("EARL");
+		 * legalForm.setLabel("EARL");
+		 * legalFormRepository.save(legalForm);
+		 * 
+		 * legalForm = new LegalForm();
+		 * legalForm.setCode("SARL");
+		 * legalForm.setLabel("SARL");
+		 * legalFormRepository.save(legalForm);
+		 * 
+		 * legalForm = new LegalForm();
+		 * legalForm.setCode("32");
+		 * legalForm.setLabel("Société non immatriculée");
+		 * legalFormRepository.save(legalForm);
+		 * 
+		 * 
+		 * provisionTypeRepository.deleteAll();
+		 * provisionFamilyTypeRepository.deleteAll();
+		 * ProvisionFamilyType provisionFamilyType1 = new ProvisionFamilyType();
+		 * provisionFamilyType1.setCode("FORMALITE");
+		 * provisionFamilyType1.setLabel("Formalité");
+		 * provisionFamilyTypeRepository.save(provisionFamilyType1);
+		 * 
+		 * ProvisionFamilyType provisionFamilyType2 = new ProvisionFamilyType();
+		 * provisionFamilyType2.setCode("ANNONCE_LEGALE");
+		 * provisionFamilyType2.setLabel("Annonce légale");
+		 * provisionFamilyTypeRepository.save(provisionFamilyType2);
+		 * 
+		 * ProvisionFamilyType provisionFamilyType3 = new ProvisionFamilyType();
+		 * provisionFamilyType3.setCode("DOMICILIATION");
+		 * provisionFamilyType3.setLabel("Domiciliation");
+		 * provisionFamilyTypeRepository.save(provisionFamilyType3);
+		 * 
+		 * ProvisionFamilyType provisionFamilyType4 = new ProvisionFamilyType();
+		 * provisionFamilyType4.setCode("FORMATION");
+		 * provisionFamilyType4.setLabel("Formation");
+		 * provisionFamilyTypeRepository.save(provisionFamilyType4);
+		 * 
+		 * ProvisionFamilyType provisionFamilyType5 = new ProvisionFamilyType();
+		 * provisionFamilyType5.setCode("BODACC");
+		 * provisionFamilyType5.setLabel("BODACC");
+		 * provisionFamilyTypeRepository.save(provisionFamilyType5);
+		 * 
+		 * provisionTypeRepository.deleteAll();
+		 * ProvisionType provisionType = new ProvisionType();
+		 * provisionType.setCode("FORMALITE");
+		 * provisionType.setLabel("Formalité");
+		 * provisionType.setProvisionFamilyType(provisionFamilyType1);
+		 * provisionTypeRepository.save(provisionType);
+		 * 
+		 * provisionType = new ProvisionType();
+		 * provisionType.setCode("ANNONCE_LEGALE");
+		 * provisionType.setLabel("Annonce légale");
+		 * provisionType.setProvisionFamilyType(provisionFamilyType2);
+		 * provisionTypeRepository.save(provisionType);
+		 * 
+		 * provisionType = new ProvisionType();
+		 * provisionType.setCode("DOMICILIATION");
+		 * provisionType.setLabel("Domiciliation");
+		 * provisionType.setProvisionFamilyType(provisionFamilyType3);
+		 * provisionTypeRepository.save(provisionType);
+		 * 
+		 * provisionType = new ProvisionType();
+		 * provisionType.setCode("FORMATION");
+		 * provisionType.setLabel("Formation");
+		 * provisionType.setProvisionFamilyType(provisionFamilyType4);
+		 * provisionTypeRepository.save(provisionType);
+		 * 
+		 * provisionType = new ProvisionType();
+		 * provisionType.setCode("BODACC");
+		 * provisionType.setLabel("BODACC");
+		 * provisionType.setProvisionFamilyType(provisionFamilyType5);
+		 * provisionTypeRepository.save(provisionType);
+		 * 
+		 * domiciliationDomiciliationContractTypeRepository.deleteAll();
+		 * DomiciliationContractType domiciliationDomiciliationContractType = new
+		 * DomiciliationContractType();
+		 * domiciliationDomiciliationContractType.setCode("1");
+		 * domiciliationDomiciliationContractType.
+		 * setLabel("Adresse Commerciale, réception et conservation du courrier");
+		 * domiciliationDomiciliationContractTypeRepository.save(
+		 * domiciliationDomiciliationContractType);
+		 * 
+		 * domiciliationDomiciliationContractType = new DomiciliationContractType();
+		 * domiciliationDomiciliationContractType.setCode("2");
+		 * domiciliationDomiciliationContractType.
+		 * setLabel("Adresse Commerciale, réception et renvoi du courrier par la poste"
+		 * );
+		 * domiciliationDomiciliationContractTypeRepository.save(
+		 * domiciliationDomiciliationContractType);
+		 * 
+		 * domiciliationDomiciliationContractType = new DomiciliationContractType();
+		 * domiciliationDomiciliationContractType.setCode("3");
+		 * domiciliationDomiciliationContractType.
+		 * setLabel("Adresse Commerciale, réception et renvoi du courrier par mail"
+		 * );
+		 * domiciliationDomiciliationContractTypeRepository.save(
+		 * domiciliationDomiciliationContractType);
+		 * 
+		 * buildingDomiciliationRepository.deleteAll();
+		 * BuildingDomiciliation buildingDomiciliation = new BuildingDomiciliation();
+		 * buildingDomiciliation.setCode("JSS_RDC");
+		 * buildingDomiciliation.setLabel("8 rue St Augustin");
+		 * buildingDomiciliationRepository.save(buildingDomiciliation);
+		 * 
+		 * mailRedirectionTypeRepository.deleteAll();
+		 * MailRedirectionType mailRedirectionType = new MailRedirectionType();
+		 * mailRedirectionType.setCode("EXERCICE_ACTIVITE");
+		 * mailRedirectionType.setLabel("Exercice de l'activité");
+		 * mailRedirectionTypeRepository.save(mailRedirectionType);
+		 * 
+		 * mailRedirectionType = new MailRedirectionType();
+		 * mailRedirectionType.setCode("REPRESENTANT_LEGAL");
+		 * mailRedirectionType.setLabel("Représentant légal");
+		 * mailRedirectionTypeRepository.save(mailRedirectionType);
+		 * 
+		 * mailRedirectionType = new MailRedirectionType();
+		 * mailRedirectionType.setCode("AUTRES");
+		 * mailRedirectionType.setLabel("Autres");
+		 * mailRedirectionTypeRepository.save(mailRedirectionType);
+		 * 
+		 * weekDayRepository.deleteAll();
+		 * WeekDay day = new WeekDay();
+		 * day.setCode("LU");
+		 * day.setLabel("Lundi");
+		 * weekDayRepository.save(day);
+		 * 
+		 * day = new WeekDay();
+		 * day.setCode("MA");
+		 * day.setLabel("Mardi");
+		 * weekDayRepository.save(day);
+		 * 
+		 * day = new WeekDay();
+		 * day.setCode("ME");
+		 * day.setLabel("Mercredi");
+		 * weekDayRepository.save(day);
+		 * 
+		 * day = new WeekDay();
+		 * day.setCode("JE");
+		 * day.setLabel("Jeudi");
+		 * weekDayRepository.save(day);
+		 * 
+		 * day = new WeekDay();
+		 * day.setCode("VE");
+		 * day.setLabel("Vendredi");
+		 * weekDayRepository.save(day);
+		 * 
+		 * day = new WeekDay();
+		 * day.setCode("SA");
+		 * day.setLabel("Samedi");
+		 * weekDayRepository.save(day);
+		 * 
+		 * day = new WeekDay();
+		 * day.setCode("DI");
+		 * day.setLabel("Dimanche");
+		 * weekDayRepository.save(day);
+		 * 
+		 * journalTypeRepository.deleteAll();
+		 * JournalType journalType = new JournalType();
+		 * journalType.setCode("SPEL");
+		 * journalType.setLabel("SPEL");
+		 * journalTypeRepository.save(journalType);
+		 * 
+		 * journalType = new JournalType();
+		 * journalType.setCode("PAPIER");
+		 * journalType.setLabel("Papier");
+		 * journalTypeRepository.save(journalType);
+		 * 
+		 * List<Department> departments =
+		 * IterableUtils.toList(departmentRepository.findAll());
+		 * confrereRepository.deleteAll();
+		 * Confrere confrere = new Confrere();
+		 * confrere.setAdministrativeFees(10.0f);
+		 * confrere.setDenomination("denomination");
+		 * confrere.setDepartments(departments);
+		 * confrere.setDiscountRate(10);
+		 * confrere.setJournalType(journalType);
+		 * confrere.setLastShipmentForPublication("lastShipmentForPublication");
+		 * confrere.setNumberOfPrint(20000);
+		 * confrere.setPreference("+++");
+		 * confrere.setReinvoicing(10);
+		 * confrere.setShippingCosts(10.0f);
+		 * ArrayList<WeekDay> weekDays = new ArrayList<WeekDay>();
+		 * weekDays.add(day);
+		 * confrere.setWeekDays(weekDays);
+		 * confrereRepository.save(confrere);
+		 * 
+		 * List<Department> departments =
+		 * IterableUtils.toList(departmentRepository.findAll());
+		 * List<JournalType> journalTypes =
+		 * IterableUtils.toList(journalTypeRepository.findAll());
+		 * List<WeekDay> weekDays = IterableUtils.toList(weekDayRepository.findAll());
+		 * Confrere confrere = new Confrere();
+		 * confrere.setAdministrativeFees(10.0f);
+		 * confrere.setDenomination("JSS");
+		 * confrere.setDepartments(departments);
+		 * confrere.setDiscountRate(10);
+		 * confrere.setJournalType(journalTypes);
+		 * confrere.setLastShipmentForPublication("lastShipmentForPublication");
+		 * confrere.setNumberOfPrint(20000);
+		 * confrere.setPreference("+++");
+		 * confrere.setReinvoicing(10);
+		 * confrere.setShippingCosts(10.0f);
+		 * confrere.setWeekDays(weekDays);
+		 * confrereRepository.save(confrere);
+		 * 
+		 * List<Department> departments =
+		 * IterableUtils.toList(departmentRepository.findAll());
+		 * characterPriceRepository.deleteAll();
+		 * CharacterPrice characterPrice = new CharacterPrice();
+		 * characterPrice.setDepartments(departments);
+		 * characterPrice.setPrice(0.38f);
+		 * characterPrice.setStartDate(new Date());
+		 * characterPriceRepository.save(characterPrice);
+		 * 
+		 * noticeTypeFamilyRepository.deleteAll();
+		 * noticeTypeRepository.deleteAll();
+		 * 
+		 * NoticeTypeFamily noticeTypeFamily = new NoticeTypeFamily();
+		 * noticeTypeFamily.setCode("MOD");
+		 * noticeTypeFamily.setLabel("Modifications");
+		 * noticeTypeFamilyRepository.save(noticeTypeFamily);
+		 * 
+		 * NoticeType noticeType = new NoticeType();
+		 * noticeType.setCode("DENOM");
+		 * noticeType.setLabel("Dénomincation");
+		 * noticeType.setNoticeTypeFamily(noticeTypeFamily);
+		 * noticeTypeRepository.save(noticeType);
+		 * 
+		 * noticeType = new NoticeType();
+		 * noticeType.setCode("MOUV");
+		 * noticeType.setLabel("Mouvement sur l'activité");
+		 * noticeType.setNoticeTypeFamily(noticeTypeFamily);
+		 * noticeTypeRepository.save(noticeType);
+		 */
 	}
 }

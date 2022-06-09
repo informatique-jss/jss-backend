@@ -28,4 +28,15 @@ public class MailServiceImpl implements MailService {
             return mail.get();
         return null;
     }
+
+    @Override
+    public void populateMailIds(List<Mail> mails) {
+        for (Mail mail : mails) {
+            if (mail.getId() == null) {
+                List<Mail> existingMails = findMails(mail.getMail());
+                if (existingMails != null && existingMails.size() == 1)
+                    mail.setId(existingMails.get(0).getId());
+            }
+        }
+    }
 }

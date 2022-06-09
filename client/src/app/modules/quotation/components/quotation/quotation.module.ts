@@ -6,6 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatChipsModule } from '@angular/material/chips';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -14,18 +15,20 @@ import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatSortModule } from '@angular/material/sort';
+import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatTableModule } from '@angular/material/table';
-import { MatSortModule } from '@angular/material/sort';
 import { RouterModule, Routes } from '@angular/router';
-import { HistoryComponent } from 'src/app/modules/miscellaneous/components/history/history.component';
-import { OrderingCustomerComponent } from '../ordering-customer/ordering-customer.component';
-import { QuotationComponent } from './quotation.component';
 import { MiscellaneousModule } from 'src/app/modules/miscellaneous/components/miscellaneous/miscellaneous.module';
-import { QuotationManagementComponent } from '../quotation-management/quotation-management.component';
-import { AffaireComponent } from '../affaire/affaire.component';
 import { ProvisionComponent } from 'src/app/modules/quotation/components/provision/provision.component';
+import { AffaireComponent } from '../affaire/affaire.component';
+import { ConfrereDialogComponent } from '../confreres-dialog/confreres-dialog.component';
+import { DomiciliationComponent } from '../domiciliation/domiciliation.component';
+import { OrderingCustomerComponent } from '../ordering-customer/ordering-customer.component';
+import { QuotationManagementComponent } from '../quotation-management/quotation-management.component';
+import { ShalComponent } from '../shal/shal.component';
+import { QuotationComponent } from './quotation.component';
 
 const routes: Routes = [
   { path: 'quotation', component: QuotationComponent },
@@ -56,13 +59,17 @@ const routes: Routes = [
     MatTabsModule,
     MiscellaneousModule,
     MatTableModule,
-    MatSortModule
+    MatSortModule,
+    MatDatepickerModule
   ],
   declarations: [QuotationComponent,
     OrderingCustomerComponent,
     QuotationManagementComponent,
     AffaireComponent,
-    ProvisionComponent],
+    ProvisionComponent,
+    DomiciliationComponent,
+    ConfrereDialogComponent,
+    ShalComponent],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'fr-FR' }
   ]

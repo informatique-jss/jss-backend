@@ -14,6 +14,7 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.jss.jssbackend.modules.quotation.model.CustomerOrder;
+import com.jss.jssbackend.modules.quotation.model.Domiciliation;
 import com.jss.jssbackend.modules.quotation.model.Quotation;
 import com.jss.jssbackend.modules.tiers.model.Responsable;
 import com.jss.jssbackend.modules.tiers.model.Tiers;
@@ -21,6 +22,9 @@ import com.jss.jssbackend.modules.tiers.model.Tiers;
 @Entity
 @Table(indexes = { @Index(name = "pk_attachment", columnList = "id", unique = true),
 		@Index(name = "idx_tiers_attachment", columnList = "id_tiers"),
+		@Index(name = "idx_domiciliation_attachment", columnList = "id_domiciliation"),
+		@Index(name = "idx_customer_order_attachment", columnList = "id_customer_order"),
+		@Index(name = "idx_quotation_attachment", columnList = "id_quotation"),
 		@Index(name = "idx_responsable_attachment", columnList = "id_responsable") })
 public class Attachment implements Serializable {
 
@@ -42,6 +46,11 @@ public class Attachment implements Serializable {
 	@JoinColumn(name = "id_quotation")
 	@JsonBackReference("quotation")
 	private Quotation quotation;
+
+	@ManyToOne
+	@JoinColumn(name = "id_domiciliation")
+	@JsonBackReference("domiciliation")
+	private Domiciliation domiciliation;
 
 	@ManyToOne
 	@JoinColumn(name = "id_customer_order")
@@ -110,6 +119,14 @@ public class Attachment implements Serializable {
 
 	public void setCustomerOrder(CustomerOrder customerOrder) {
 		this.customerOrder = customerOrder;
+	}
+
+	public Domiciliation getDomiciliation() {
+		return domiciliation;
+	}
+
+	public void setDomiciliation(Domiciliation domiciliation) {
+		this.domiciliation = domiciliation;
 	}
 
 }

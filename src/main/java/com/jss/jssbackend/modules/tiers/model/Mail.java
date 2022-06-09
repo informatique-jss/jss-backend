@@ -1,16 +1,12 @@
 package com.jss.jssbackend.modules.tiers.model;
 
 import java.io.Serializable;
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-
-import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 public class Mail implements Serializable {
@@ -21,11 +17,6 @@ public class Mail implements Serializable {
 
 	@Column(nullable = false)
 	private String mail;
-
-	@ManyToMany(mappedBy = "mails")
-	@JsonBackReference
-	@Column(length = 30)
-	List<Tiers> tiers;
 
 	public Integer getId() {
 		return id;
@@ -41,14 +32,6 @@ public class Mail implements Serializable {
 
 	public void setMail(String mail) {
 		this.mail = mail;
-	}
-
-	public List<Tiers> getTiers() {
-		return tiers;
-	}
-
-	public void setTiers(List<Tiers> tiers) {
-		this.tiers = tiers;
 	}
 
 }

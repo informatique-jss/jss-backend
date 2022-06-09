@@ -8,4 +8,6 @@ public interface MailService {
     public List<Mail> findMails(String mail);
 
     public Mail getMail(Integer id);
+
+    public void populateMailIds(List<Mail> mails);
 }

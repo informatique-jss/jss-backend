@@ -13,4 +13,6 @@ public interface UploadedFileService {
 
     public UploadedFile createUploadedFile(String filename, String absoluteFilePath)
             throws NoSuchAlgorithmException, IOException;
+
+    public void deleteUploadedFile(UploadedFile uploadedFile);
 }

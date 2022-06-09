@@ -60,7 +60,7 @@
   </div>
   <div [hidden]="selectedResponsable==null" class="responsable-tabs">
     <mat-tab-group animationDuration="0ms" #tabs>
-      <mat-tab label="Principal">
+      <mat-tab label="Fiche du responsable">
         <form [formGroup]="principalForm" *ngIf="selectedResponsable!=null">
           <div class="full-width">
             <fieldset [disabled]="editMode==false" class="fieldset-no-border">
@@ -141,11 +141,8 @@
                   </td>
                   <td>
                     <mat-form-field class="full-width">
-                      <mat-label>Première facturation</mat-label>
-                      <input matInput [matDatepicker]="datePickerFirstBilling"
-                        [(ngModel)]="selectedResponsable.firstBilling" formControlName="firstBilling">
-                      <mat-datepicker-toggle matSuffix [for]="datePickerFirstBilling"></mat-datepicker-toggle>
-                      <mat-datepicker #datePickerFirstBilling></mat-datepicker>
+                      <mat-label>Fonction</mat-label>
+                      <input matInput formControlName="function" [(ngModel)]="selectedResponsable.function">
                     </mat-form-field>
                   </td>
                 </tr>
@@ -204,8 +201,11 @@
                   </td>
                   <td>
                     <mat-form-field class="full-width">
-                      <mat-label>Fonction</mat-label>
-                      <input matInput formControlName="function" [(ngModel)]="selectedResponsable.function">
+                      <mat-label>Première facturation</mat-label>
+                      <input matInput [matDatepicker]="datePickerFirstBilling"
+                        [(ngModel)]="selectedResponsable.firstBilling" formControlName="firstBilling">
+                      <mat-datepicker-toggle matSuffix [for]="datePickerFirstBilling"></mat-datepicker-toggle>
+                      <mat-datepicker #datePickerFirstBilling></mat-datepicker>
                     </mat-form-field>
                   </td>
                 </tr>
@@ -215,7 +215,7 @@
                 <tr>
                   <td>
                     <mat-form-field class="full-width">
-                      <mat-label>Destinataire courrier</mat-label>
+                      <mat-label>Destinataire(s) courrier</mat-label>
                       <textarea (keyup)="limitTextareaSize('mailRecipient',3)"
                         (keydown)="limitTextareaSize('mailRecipient',3)" (paste)="limitTextareaSize('mailRecipient',3)"
                         rows="3" matInput formControlName="mailRecipient"
@@ -305,10 +305,10 @@
                     *ngIf="selectedResponsable.jssSubscription!=undefined && selectedResponsable.jssSubscription!=null">
                     <h4>Abonnement JSS</h4>
                     <mat-checkbox formControlName="jssSubscription1" class="checkbox-margin"
-                      [(ngModel)]="selectedResponsable.jssSubscription.isWebSubscription">Web
+                      [(ngModel)]="selectedResponsable.jssSubscription.isWebSubscription">PDF
                     </mat-checkbox>
                     <mat-checkbox formControlName="jssSubscription2" class="checkbox-margin"
-                      [(ngModel)]="selectedResponsable.jssSubscription.isPaperSubscription">Papier/Web
+                      [(ngModel)]="selectedResponsable.jssSubscription.isPaperSubscription">Papier/PDF
                     </mat-checkbox>
                   </td>
                   <td

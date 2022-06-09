@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { MatChipInputEvent } from '@angular/material/chips';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter, map, startWith, switchMap, tap } from 'rxjs/operators';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
 import { COUNTRY_CODE_FRANCE, SEPARATOR_KEY_CODES, UNREGISTERED_COMPANY_LEGAL_FORM_CODE } from 'src/app/libs/Constants';
@@ -17,12 +17,13 @@ import { CityService } from 'src/app/modules/miscellaneous/services/city.service
 import { CivilityService } from 'src/app/modules/miscellaneous/services/civility.service';
 import { CountryService } from 'src/app/modules/miscellaneous/services/country.service';
 import { LegalFormService } from 'src/app/modules/miscellaneous/services/legal.form.service';
+import { IndexEntityService } from 'src/app/routing/search/index.entity.service';
+import { AFFAIRE_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { Affaire } from '../../model/Affaire';
-import { IQuotation } from '../../model/IQuotation';
-import { Provision } from '../../model/Provision';
 import { Rna } from '../../model/Rna';
 import { Siren } from '../../model/Siren';
 import { Siret } from '../../model/Siret';
+import { AffaireService } from '../../services/affaire.service';
 import { RnaService } from '../../services/rna.service';
 import { SirenService } from '../../services/siren.service';
 import { SiretService } from '../../services/siret.service';
@@ -49,6 +50,8 @@ export class AffaireComponent implements OnInit {
 
   filteredCities: City[] | undefined;
 
+  filteredAffaires: Affaire[] | undefined;
+
   countries: Country[] = [] as Array<Country>;
   filteredCountries: Observable<Country[]> | undefined;
 
@@ -62,6 +65,8 @@ export class AffaireComponent implements OnInit {
     private sirenService: SirenService,
     private siretService: SiretService,
     private rnaService: RnaService,
+    private indexEntityService: IndexEntityService,
+    private affaireService: AffaireService,
     private legalFormService: LegalFormService,
   ) { }
 
@@ -144,6 +149,32 @@ export class AffaireComponent implements OnInit {
       this.filteredCities = response as City[];
     });
 
+    this.affaireForm.get("autoCompleteAffaire")?.valueChanges.pipe(
+      filter(res => {
+        return res != undefined && res !== null && res.length >= 2
+      }),
+      distinctUntilChanged(),
+      debounceTime(300),
+      tap(() => {
+        this.filteredAffaires = [];
+      }),
+      switchMap(value => this.indexEntityService.searchEntities(value)
+      )
+    ).subscribe(response => {
+      if (response != null && response != undefined && response.length > 0) {
+        response.forEach(entity => {
+          if (entity.entityType == AFFAIRE_ENTITY_TYPE.entityType) {
+            if (this.filteredAffaires == undefined)
+              this.filteredAffaires = [] as Array<Affaire>;
+            this.affaireService.getAffaire(entity.entityId).subscribe(response => {
+              if (response != null)
+                this.filteredAffaires?.push(response);
+            })
+          }
+        })
+      }
+    });
+
     this.filteredCountries = this.affaireForm.get("country")?.valueChanges.pipe(
       startWith(''),
       map(value => this._filterCountry(value)),
@@ -177,12 +208,13 @@ export class AffaireComponent implements OnInit {
     rna: ['', [this.checkRna("rna")]],
     address: ['', [Validators.required, Validators.maxLength(20)]],
     postalCode: ['', [this.checkFieldFilledIfIsInFrance("postalCode")]],
-    city: ['', [Validators.required, Validators.maxLength(30)]],
+    city: ['', [Validators.required, Validators.maxLength(30), this.checkAutocompleteField("city")]],
     country: ['', [Validators.required, this.checkAutocompleteField("country")]],
     mails: ['', []],
     phones: ['', []],
     observations: ['', []],
     shareCapital: ['', []],
+    autoCompleteAffaire: ['', []],
     externalReference: ['', [Validators.maxLength(60)]],
   });
 
@@ -222,7 +254,6 @@ export class AffaireComponent implements OnInit {
   checkFieldFilledIfIsNotIndividualAndNotUnregistered(fieldName: string): ValidationErrors | null {
     return (control: AbstractControl): ValidationErrors | null => {
       const root = control.root as FormGroup;
-      console.log("tt");
       const fieldValue = root.get(fieldName)?.value;
       if (!this.affaire.isIndividual && this.affaire.legalForm != null && this.affaire.legalForm.code != UNREGISTERED_COMPANY_LEGAL_FORM_CODE && (fieldValue == undefined || fieldValue == null || fieldValue.length == 0))
         if (this.affaire.rna == null && this.affaire.siret == null)
@@ -316,7 +347,29 @@ export class AffaireComponent implements OnInit {
         this.affaire.city = city;
       }
     })
+  }
 
+  fillAffaire(matOption: any) {
+    let affaire: Affaire = matOption.value as Affaire;
+    this.affaire.address = affaire.address;
+    this.affaire.city = affaire.city;
+    this.affaire.civility = affaire.civility;
+    this.affaire.country = affaire.country;
+    this.affaire.externalReference = affaire.externalReference;
+    this.affaire.firstname = affaire.firstname;
+    this.affaire.id = affaire.id;
+    this.affaire.denomination = affaire.denomination;
+    this.affaire.isIndividual = affaire.isIndividual;
+    this.affaire.lastname = affaire.lastname;
+    this.affaire.legalForm = affaire.legalForm;
+    this.affaire.mails = affaire.mails;
+    this.affaire.observations = affaire.observations;
+    this.affaire.phones = affaire.phones;
+    this.affaire.postalCode = affaire.postalCode;
+    this.affaire.rna = affaire.rna;
+    this.affaire.shareCapital = affaire.shareCapital;
+    this.affaire.siren = affaire.siren;
+    this.affaire.siret = affaire.siret;
   }
 
   fillSiren() {
@@ -333,9 +386,17 @@ export class AffaireComponent implements OnInit {
       } else if (this.filteredSiren!.uniteLegale.siren != undefined && this.filteredSiren!.uniteLegale.siren != null) {
         if (this.filteredSiren.uniteLegale.periodesUniteLegale != null && this.filteredSiren.uniteLegale.periodesUniteLegale != undefined && this.filteredSiren.uniteLegale.periodesUniteLegale.length > 0) {
           this.filteredSiren.uniteLegale.periodesUniteLegale.forEach(periode => {
-            if (periode.dateFin == null)
+            if (periode.dateFin == null) {
               this.affaire.denomination = periode.denominationUniteLegale;
-            this.affaireForm.markAllAsTouched();
+              this.affaireForm.markAllAsTouched();
+              if (periode.nicSiegeUniteLegale != null && periode.nicSiegeUniteLegale != undefined)
+                this.siretService.getSiret(this.filteredSiren?.uniteLegale.siren + periode.nicSiegeUniteLegale).subscribe(response => {
+                  if (response != null) {
+                    this.filteredSiret = response;
+                    this.fillSiret();
+                  }
+                })
+            }
           });
         }
       }
@@ -346,31 +407,31 @@ export class AffaireComponent implements OnInit {
   fillSiret() {
     if (this.filteredSiret != undefined && this.filteredSiret != null) {
       this.affaire.siret = this.filteredSiret!.etablissement.siret;
-      if (this.filteredSiret.etablissement.siren != null && this.filteredSiret.etablissement.siren != undefined) {
+      if ((this.filteredSiren == null || this.filteredSiren == undefined) && this.filteredSiret.etablissement.siren != null && this.filteredSiret.etablissement.siren != undefined) {
         this.sirenService.getSiren(this.filteredSiret.etablissement.siren).subscribe(response => {
           if (response != null) {
             this.filteredSiren = response;
             this.fillSiren();
           }
         })
-        if (this.filteredSiret.etablissement.adresseEtablissement != null && this.filteredSiret.etablissement.adresseEtablissement.codePostalEtablissement != null) {
-          this.cityService.getCitiesFilteredByPostalCode(this.filteredSiret.etablissement.adresseEtablissement.codePostalEtablissement).subscribe(response => {
-            if (response != null && response.length == 1) {
-              this.affaire.postalCode = this.filteredSiret!.etablissement.adresseEtablissement.codePostalEtablissement;
-              this.fillPostalCode(response[0]);
-              this.affaireForm.markAllAsTouched();
-            } else if (this.filteredSiret!.etablissement.adresseEtablissement.libelleCommuneEtablissement) {
-              this.cityService.getCitiesFilteredByCountryAndName(this.filteredSiret!.etablissement.adresseEtablissement.libelleCommuneEtablissement, this.countries[0]).subscribe(response2 => {
-                if (response2 != null && response2.length == 1) {
-                  this.affaire.city = response2[0];
-                  this.affaire.country = response2[0].country;
-                  this.affaireForm.markAllAsTouched();
-                }
-              })
-            }
-          })
-          this.affaire.address = this.filteredSiret.etablissement.adresseEtablissement.numeroVoieEtablissement + " " + this.filteredSiret.etablissement.adresseEtablissement.typeVoieEtablissement + " " + this.filteredSiret.etablissement.adresseEtablissement.libelleVoieEtablissement;
-        }
+      }
+      if (this.filteredSiret.etablissement.adresseEtablissement != null && this.filteredSiret.etablissement.adresseEtablissement.codePostalEtablissement != null) {
+        this.cityService.getCitiesFilteredByPostalCode(this.filteredSiret.etablissement.adresseEtablissement.codePostalEtablissement).subscribe(response => {
+          if (response != null && response.length == 1) {
+            this.affaire.postalCode = this.filteredSiret!.etablissement.adresseEtablissement.codePostalEtablissement;
+            this.fillPostalCode(response[0]);
+            this.affaireForm.markAllAsTouched();
+          } else if (this.filteredSiret!.etablissement.adresseEtablissement.libelleCommuneEtablissement) {
+            this.cityService.getCitiesFilteredByCountryAndName(this.filteredSiret!.etablissement.adresseEtablissement.libelleCommuneEtablissement, this.countries[0]).subscribe(response2 => {
+              if (response2 != null && response2.length == 1) {
+                this.affaire.city = response2[0];
+                this.affaire.country = response2[0].country;
+                this.affaireForm.markAllAsTouched();
+              }
+            })
+          }
+        })
+        this.affaire.address = this.filteredSiret.etablissement.adresseEtablissement.numeroVoieEtablissement + " " + this.filteredSiret.etablissement.adresseEtablissement.typeVoieEtablissement + " " + this.filteredSiret.etablissement.adresseEtablissement.libelleVoieEtablissement;
       }
     }
     this.affaireForm.markAllAsTouched();
@@ -417,6 +478,9 @@ export class AffaireComponent implements OnInit {
     return object ? object.label : '';
   }
 
+  public displayAffaire(affaire: Affaire): string {
+    return (affaire.firstname != undefined ? affaire.firstname + " " + affaire.lastname : affaire.denomination);
+  }
 
   addMail(event: MatChipInputEvent): void {
     const value = (event.value || '').trim();

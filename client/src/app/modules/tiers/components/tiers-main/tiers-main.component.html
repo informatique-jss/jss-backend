@@ -135,7 +135,7 @@
           <tr>
             <td>
               <mat-form-field class="full-width">
-                <mat-label>Destinataire courrier</mat-label>
+                <mat-label>Destinataire(s) courrier</mat-label>
                 <textarea (keyup)="limitTextareaSize('mailRecipient',3)"
                   (keydown)="limitTextareaSize('mailRecipient',3)" (paste)="limitTextareaSize('mailRecipient',3)"
                   rows="3" matInput formControlName="mailRecipient" [(ngModel)]="tiers.mailRecipient"></textarea>

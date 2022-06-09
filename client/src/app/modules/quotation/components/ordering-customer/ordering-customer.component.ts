@@ -6,18 +6,17 @@ import { debounceTime, distinctUntilChanged, filter, map, startWith, switchMap, 
 import { CustomErrorStateMatcher } from 'src/app/app.component';
 import { SEPARATOR_KEY_CODES } from 'src/app/libs/Constants';
 import { callNumber, prepareMail } from 'src/app/libs/MailHelper';
+import { instanceOfQuotation } from 'src/app/libs/TypeHelper';
 import { SpecialOffersDialogComponent } from 'src/app/modules/miscellaneous/components/special-offers-dialog/special-offers-dialog.component';
-import { SpecialOfferService } from 'src/app/modules/miscellaneous/services/special-offer.service';
-import { IQuotation } from '../../model/IQuotation';
-import { SpecialOffer } from 'src/app/modules/miscellaneous/model/SpecialOffer';
-import { Tiers } from 'src/app/modules/tiers/model/Tiers';
-import { TiersService } from 'src/app/modules/tiers/services/tiers.service';
-import { ITiers } from 'src/app/modules/tiers/model/ITiers';
-import { Responsable } from 'src/app/modules/tiers/model/Responsable';
-import { ResponsableService } from 'src/app/modules/tiers/services/responsable.service';
 import { Mail } from 'src/app/modules/miscellaneous/model/Mail';
 import { Phone } from 'src/app/modules/miscellaneous/model/Phone';
-import { instanceOfQuotation } from 'src/app/libs/TypeHelper';
+import { SpecialOffer } from 'src/app/modules/miscellaneous/model/SpecialOffer';
+import { SpecialOfferService } from 'src/app/modules/miscellaneous/services/special-offer.service';
+import { Responsable } from 'src/app/modules/tiers/model/Responsable';
+import { Tiers } from 'src/app/modules/tiers/model/Tiers';
+import { ResponsableService } from 'src/app/modules/tiers/services/responsable.service';
+import { TiersService } from 'src/app/modules/tiers/services/tiers.service';
+import { IQuotation } from '../../model/IQuotation';
 
 @Component({
   selector: 'ordering-customer',
@@ -120,7 +119,6 @@ export class OrderingCustomerComponent implements OnInit {
   }
 
   checkAutocompleteField(fieldName: string): ValidationErrors | null {
-    console.log("toto");
     return (control: AbstractControl): ValidationErrors | null => {
       const root = control.root as FormGroup;
 
@@ -177,7 +175,6 @@ export class OrderingCustomerComponent implements OnInit {
 
   getFormStatus(): boolean {
     this.orderingCustomerForm.markAllAsTouched();
-    console.log(this.orderingCustomerForm);
     return this.orderingCustomerForm.valid;
   }
 

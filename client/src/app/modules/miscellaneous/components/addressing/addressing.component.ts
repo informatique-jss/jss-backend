@@ -4,10 +4,10 @@ import { MatChipInputEvent } from '@angular/material/chips';
 import { SEPARATOR_KEY_CODES } from 'src/app/libs/Constants';
 import { validateEmail } from 'src/app/libs/CustomFormsValidatorsHelper';
 import { prepareMail } from 'src/app/libs/MailHelper';
-import { Mail } from '../../model/Mail';
-import { Document } from '../../model/Document';
-import { TiersService } from 'src/app/modules/tiers/services/tiers.service';
 import { Responsable } from 'src/app/modules/tiers/model/Responsable';
+import { TiersService } from 'src/app/modules/tiers/services/tiers.service';
+import { Document } from '../../model/Document';
+import { Mail } from '../../model/Mail';
 
 @Component({
   selector: 'addressing',
@@ -21,6 +21,8 @@ export class AddressingComponent implements OnInit {
   @Input() hideAdressing: boolean = false;
   @Input() hideConsignee: boolean = false;
   @Input() displayMailCC: boolean = false;
+  @Input() displayNumberMailing: boolean = false;
+  @Input() onlyMail: boolean = false;
 
   overrideAffaireAddress: boolean = false;
   overrideAffaireMail: boolean = false;
@@ -61,6 +63,9 @@ export class AddressingComponent implements OnInit {
         this.overrideAffaireMailCC = true;
       if (this.document.mailsClient != null && this.document.mailsClient != undefined && this.document.mailsClient.length > 0)
         this.overrideClientMail = true;
+
+      if (this.onlyMail)
+        this.document.isMailingPdf = true;
 
     }
     this.adressingForm.markAllAsTouched();

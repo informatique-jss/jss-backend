@@ -60,7 +60,6 @@ export function validateSiret(siren: string) {
     .match(/^\d{14}$/);
 };
 export function validateRna(rna: string) {
-  console.log("tt");
   return String(rna).toUpperCase().replace(/\s/g, "")
     .match(/^[Ww]\d{9}$/);
 };

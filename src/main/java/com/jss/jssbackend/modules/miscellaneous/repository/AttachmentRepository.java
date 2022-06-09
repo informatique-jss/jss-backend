@@ -17,4 +17,7 @@ public interface AttachmentRepository extends CrudRepository<Attachment, Integer
 
     @Query(value = "select a from Attachment a where id_quotation =:idQuotation")
     List<Attachment> findByQuotationId(@Param("idQuotation") Integer idQuotation);
+
+    @Query(value = "select a from Attachment a where id_domiciliation =:idDomiciliation")
+    List<Attachment> findByDomiciliationId(@Param("idDomiciliation") Integer idDomiciliation);
 }

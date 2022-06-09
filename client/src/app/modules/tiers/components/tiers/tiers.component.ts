@@ -56,7 +56,7 @@ export class TiersComponent implements OnInit {
         this.tiersService.setCurrentViewedTiers(this.tiers);
         this.appService.changeHeaderTitle(this.tiers.denomination != null ? this.tiers.denomination : "");
         this.toggleTabs();
-        this.selectedTabIndex = 1;
+        this.selectedTabIndex = 3;
         this.responsableMainComponent?.setSelectedResponsableId(idTiers);
       })
       // Load by tiers
@@ -64,12 +64,26 @@ export class TiersComponent implements OnInit {
       this.tiersService.getTiers(idTiers).subscribe(response => {
         this.tiers = response;
         this.tiersService.setCurrentViewedTiers(this.tiers);
-        this.appService.changeHeaderTitle(this.tiers.denomination != null ? this.tiers.denomination : "");
+        this.changeHeader();
         this.toggleTabs();
       })
     } else if (this.createMode == false) {
       // Blank page
       this.appService.changeHeaderTitle("Tiers / Responsables");
+    }
+  }
+
+  changeHeader() {
+    if (this.tiers.denomination != null) {
+      this.appService.changeHeaderTitle(this.tiers.denomination);
+    } else if (this.tiers.firstname != null) {
+      this.appService.changeHeaderTitle(this.tiers.firstname + " " + this.tiers.lastname);
+    }
+  }
+  changePageHeader($event: any) {
+    if ($event.tab.textLabel != "Responsable(s)") {
+      if (this.tiers.id != null && this.tiers.id != undefined)
+        this.changeHeader();
     }
   }
 

@@ -8,8 +8,6 @@ import com.jss.jssbackend.libs.search.model.IndexEntity;
 import com.jss.jssbackend.libs.search.service.IndexEntityService;
 import com.jss.jssbackend.libs.search.service.SearchService;
 import com.jss.jssbackend.modules.miscellaneous.model.Document;
-import com.jss.jssbackend.modules.tiers.model.Mail;
-import com.jss.jssbackend.modules.tiers.model.Phone;
 import com.jss.jssbackend.modules.tiers.model.Responsable;
 import com.jss.jssbackend.modules.tiers.model.Tiers;
 import com.jss.jssbackend.modules.tiers.repository.TiersRepository;
@@ -50,26 +48,20 @@ public class TiersServiceImpl implements TiersService {
     public Tiers addOrUpdateTiers(Tiers tiers) {
         // If mails already exists, get their ids
         if (tiers != null && tiers.getMails() != null && tiers.getMails().size() > 0)
-            this.populateMailIds(tiers.getMails());
+            mailService.populateMailIds(tiers.getMails());
 
         // If phones already exists, get their ids
         if (tiers != null && tiers.getPhones() != null && tiers.getPhones().size() > 0) {
-            for (Phone phone : tiers.getPhones()) {
-                if (phone.getId() == null) {
-                    List<Phone> existingPhones = phoneService.findPhones(phone.getPhoneNumber());
-                    if (existingPhones != null && existingPhones.size() == 1)
-                        phone.setId(existingPhones.get(0).getId());
-                }
-            }
+            phoneService.populateMPhoneIds(tiers.getPhones());
         }
 
         // If document mails already exists, get their ids
         if (tiers.getDocuments() != null && tiers.getDocuments().size() > 0) {
             for (Document document : tiers.getDocuments()) {
                 if (document.getMailsAffaire() != null && document.getMailsAffaire().size() > 0)
-                    this.populateMailIds(document.getMailsAffaire());
+                    mailService.populateMailIds(document.getMailsAffaire());
                 if (document.getMailsClient() != null && document.getMailsClient().size() > 0)
-                    this.populateMailIds(document.getMailsClient());
+                    mailService.populateMailIds(document.getMailsClient());
             }
         }
 
@@ -82,24 +74,14 @@ public class TiersServiceImpl implements TiersService {
                 if (responsable.getDocuments() != null && responsable.getDocuments().size() > 0) {
                     for (Document document : responsable.getDocuments()) {
                         if (document.getMailsAffaire() != null && document.getMailsAffaire().size() > 0)
-                            this.populateMailIds(document.getMailsAffaire());
+                            mailService.populateMailIds(document.getMailsAffaire());
                         if (document.getMailsClient() != null && document.getMailsClient().size() > 0)
-                            this.populateMailIds(document.getMailsClient());
+                            mailService.populateMailIds(document.getMailsClient());
                     }
                 }
             }
         }
         return tiers;
-    }
-
-    private void populateMailIds(List<Mail> mails) {
-        for (Mail mail : mails) {
-            if (mail.getId() == null) {
-                List<Mail> existingMails = mailService.findMails(mail.getMail());
-                if (existingMails != null && existingMails.size() == 1)
-                    mail.setId(existingMails.get(0).getId());
-            }
-        }
     }
 
     @Override

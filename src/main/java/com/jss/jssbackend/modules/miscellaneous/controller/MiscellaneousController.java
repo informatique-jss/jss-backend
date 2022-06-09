@@ -5,18 +5,6 @@ import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.List;
 
-import com.jss.jssbackend.modules.miscellaneous.model.Attachment;
-import com.jss.jssbackend.modules.miscellaneous.model.AttachmentType;
-import com.jss.jssbackend.modules.miscellaneous.model.DocumentType;
-import com.jss.jssbackend.modules.miscellaneous.model.LegalForm;
-import com.jss.jssbackend.modules.miscellaneous.service.AttachmentService;
-import com.jss.jssbackend.modules.miscellaneous.service.AttachmentTypeService;
-import com.jss.jssbackend.modules.miscellaneous.service.DocumentTypeService;
-import com.jss.jssbackend.modules.miscellaneous.service.LegalFormService;
-import com.jss.jssbackend.modules.quotation.model.Quotation;
-import com.jss.jssbackend.modules.tiers.model.Responsable;
-import com.jss.jssbackend.modules.tiers.model.Tiers;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +17,21 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.jss.jssbackend.modules.miscellaneous.model.Attachment;
+import com.jss.jssbackend.modules.miscellaneous.model.AttachmentType;
+import com.jss.jssbackend.modules.miscellaneous.model.DocumentType;
+import com.jss.jssbackend.modules.miscellaneous.model.LegalForm;
+import com.jss.jssbackend.modules.miscellaneous.model.WeekDay;
+import com.jss.jssbackend.modules.miscellaneous.service.AttachmentService;
+import com.jss.jssbackend.modules.miscellaneous.service.AttachmentTypeService;
+import com.jss.jssbackend.modules.miscellaneous.service.DocumentTypeService;
+import com.jss.jssbackend.modules.miscellaneous.service.LegalFormService;
+import com.jss.jssbackend.modules.miscellaneous.service.WeekDayService;
+import com.jss.jssbackend.modules.quotation.model.Domiciliation;
+import com.jss.jssbackend.modules.quotation.model.Quotation;
+import com.jss.jssbackend.modules.tiers.model.Responsable;
+import com.jss.jssbackend.modules.tiers.model.Tiers;
 
 @RestController
 public class MiscellaneousController {
@@ -48,6 +51,24 @@ public class MiscellaneousController {
 
     @Autowired
     LegalFormService legalFormService;
+
+    @Autowired
+    WeekDayService weekDayService;
+
+    @GetMapping(inputEntryPoint + "/weekdays")
+    public ResponseEntity<List<WeekDay>> getWeekDays() {
+        List<WeekDay> weekDays = null;
+        try {
+            weekDays = weekDayService.getWeekDays();
+        } catch (HttpStatusCodeException e) {
+            logger.error("HTTP error when fetching weekDay", e);
+            return new ResponseEntity<List<WeekDay>>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            logger.error("Error when fetching weekDay", e);
+            return new ResponseEntity<List<WeekDay>>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<List<WeekDay>>(weekDays, HttpStatus.OK);
+    }
 
     @GetMapping(inputEntryPoint + "/legal-forms")
     public ResponseEntity<List<LegalForm>> getLegalForms() {
@@ -98,7 +119,7 @@ public class MiscellaneousController {
     public ResponseEntity<List<Attachment>> uploadAttachment(@RequestParam MultipartFile file,
             @RequestParam Integer idEntity, @RequestParam String entityType,
             @RequestParam Integer idAttachmentType,
-            @RequestParam String filename) {
+            @RequestParam String filename, @RequestParam Boolean replaceExistingAttachementType) {
         try {
             if (idAttachmentType == null)
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -119,11 +140,13 @@ public class MiscellaneousController {
 
             if (!entityType.equals(Tiers.class.getSimpleName())
                     && !entityType.equals(Responsable.class.getSimpleName())
-                    && !entityType.equals(Quotation.class.getSimpleName()))
+                    && !entityType.equals(Quotation.class.getSimpleName())
+                    && !entityType.equals(Domiciliation.class.getSimpleName()))
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
             return new ResponseEntity<List<Attachment>>(
-                    attachmentService.addAttachment(file, idEntity, entityType, attachmentType, filename),
+                    attachmentService.addAttachment(file, idEntity, entityType, attachmentType, filename,
+                            replaceExistingAttachementType),
                     HttpStatus.OK);
         } catch (Exception e) {
             logger.error("Could not upload the file: " + file.getOriginalFilename() + "!", e);

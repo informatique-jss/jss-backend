@@ -21,6 +21,8 @@ export class UploadAttachementDialogComponent implements OnInit {
   file: any = null;
   progress: number = 0;
   isSending = false;
+  replaceExistingAttachementType = false;
+  forcedAttachmentTypeCode: string = "";
 
   attachmentTypes: AttachmentType[] = [] as Array<AttachmentType>;
 
@@ -35,7 +37,18 @@ export class UploadAttachementDialogComponent implements OnInit {
 
   ngOnInit() {
     this.attachmentTypeService.getAttachmentTypes().subscribe(response => {
-      this.attachmentTypes = response;
+      if (this.forcedAttachmentTypeCode == "") {
+        this.attachmentTypes = response;
+      } else {
+        if (response != null && response.length > 0) {
+          response.forEach(attachmentType => {
+            if (attachmentType.code == this.forcedAttachmentTypeCode) {
+              this.attachmentTypes.push(attachmentType);
+              this.attachmentType = attachmentType;
+            }
+          })
+        }
+      }
     })
   }
 
@@ -97,7 +110,7 @@ export class UploadAttachementDialogComponent implements OnInit {
 
       if (this.attachmentType != null && !found) {
         this.isSending = true;
-        this.uploadAttachmentService.uploadTiersAttachment(this.file, this.entity, this.entityType, this.attachmentType, this.filename).subscribe(event => {
+        this.uploadAttachmentService.uploadAttachment(this.file, this.entity, this.entityType, this.attachmentType, this.filename, this.replaceExistingAttachementType).subscribe(event => {
           if (event.type === HttpEventType.UploadProgress && event.total != undefined) {
             this.progress = Math.round(100 * event.loaded / event.total);
           } else if (event instanceof HttpResponse) {

@@ -8,4 +8,6 @@ public interface PhoneService {
     public List<Phone> findPhones(String phone);
 
     public Phone getPhone(Integer id);
+
+    public void populateMPhoneIds(List<Phone> phones);
 }

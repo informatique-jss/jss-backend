@@ -1,17 +1,71 @@
-<form [formGroup]="provisionForm" *ngIf="quotation">
-  <div class="mat-accordion-container full-width">
-    <fieldset [disabled]="editMode==false" class="fieldset-no-border">
-      <mat-accordion>
-        <mat-expansion-panel *ngFor="let provision of quotation.provisions">
-          <mat-expansion-panel-header>
-            <mat-panel-title>
-              <span *ngIf="provision.affaire!=null">Affaire {{provision.affaire.id}} - Service toto</span>
-            </mat-panel-title>
-          </mat-expansion-panel-header>
-          <affaire [affaire]="provision.affaire" [editMode]="editMode"></affaire>
-          <!-- TODO component service -->
-        </mat-expansion-panel>
-      </mat-accordion>
-    </fieldset>
-  </div>
-</form>
+<div class="mat-elevation-z2 form-div">
+  <form [formGroup]="provisionForm" *ngIf="provisions">
+    <div class="mat-accordion-container full-width">
+      <div class="row-field-container">
+        <mat-form-field class="full-width">
+          <input matInput (keyup)="applyFilter($event.target)" placeholder="Rechercher">
+        </mat-form-field>
+        <button [disabled]="editMode==false" (click)="createProvision()" mat-mini-fab color="warn" class="mini-fab-add">
+          <mat-icon>add</mat-icon>
+        </button>
+      </div>
+      <fieldset [disabled]="editMode==false" class="fieldset-no-border">
+        <mat-accordion>
+          <mat-expansion-panel *ngFor="let provision of filteredProvisions; let index = index;">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <span *ngIf="provision.affaire!=null">Affaire <span *ngIf="!provision.affaire.isIndividual && provision.affaire.denomination!=null
+                   && provision.affaire.denomination!=undefined">{{provision.affaire.denomination}}</span><span *ngIf="provision.affaire.isIndividual
+                   && provision.affaire.firstname!=null
+                   && provision.affaire.firstname!=undefined  && provision.affaire.lastname!=null
+                   && provision.affaire.lastname!=undefined">{{provision.affaire.firstname}}
+                    {{provision.affaire.lastname}}</span>
+                  - Service {{(provision.provisionType!=null &&
+                  provision.provisionType!=undefined)?provision.provisionType.label:""}} </span>
+              </mat-panel-title>
+              <mat-panel-description>
+                <mat-icon *ngIf="provision.id==null || provision.id==undefined" (click)="deleteProvision(index)"
+                  class="pointer">delete</mat-icon>
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+            <affaire [affaire]="provision.affaire" [editMode]="editMode"></affaire>
+            <table class="full-width">
+              <tr>
+                <td>
+                  <mat-form-field class="full-width" *ngIf="provision.provisionType!=undefined">
+                    <mat-label>Famille de service</mat-label>
+                    <mat-select formControlName="provisionFamilyType"
+                      [(ngModel)]="provision.provisionType.provisionFamilyType" [compareWith]="compareWithId"
+                      [disabled]="editMode==false">
+                      <mat-option *ngFor="let provisionFamilyType of provisionFamilyTypes"
+                        [value]="provisionFamilyType">
+                        {{provisionFamilyType.label}}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </td>
+                <td>
+                  <mat-form-field class="full-width">
+                    <mat-label>Service</mat-label>
+                    <mat-select formControlName="provisionType" [(ngModel)]="provision.provisionType"
+                      [compareWith]="compareWithId" [disabled]="editMode==false">
+                      <mat-option *ngFor="let provisionType of provisionTypes" [value]="provisionType">
+                        {{provisionType.label}}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </td>
+              </tr>
+            </table>
+            <domiciliation [provision]="provision" [editMode]="editMode"
+              *ngIf="provision.provisionType!=null && provision.provisionType!=undefined && provision.provisionType.code==PROVISION_TYPE_DOMICILIATION_CODE">
+            </domiciliation>
+            <shal [provision]="provision" [editMode]="editMode"
+              *ngIf="provision.provisionType!=null && provision.provisionType!=undefined && provision.provisionType.code==PROVISION_TYPE_SHAL_CODE">
+            </shal>
+          </mat-expansion-panel>
+        </mat-accordion>
+      </fieldset>
+    </div>
+  </form>
+</div>

@@ -6,14 +6,13 @@
   <!-- TODO : to remove ? -->
 </div>
 <div [hidden]="!editMode && (quotation.id==undefined || quotation.id==null)">
-  <mat-tab-group animationDuration="0ms" #tabs selectedIndex="1">
-    <!-- TODO remove default index -->
+  <mat-tab-group animationDuration="0ms" #tabs>
     <mat-tab label="Donneur d'ordre">
       <ordering-customer [quotation]="quotation" [editMode]="editMode">
       </ordering-customer>
     </mat-tab>
     <mat-tab label="Prestations">
-      <provision [quotation]="quotation" [editMode]="editMode"></provision>
+      <provision [provisions]="quotation.provisions" [editMode]="editMode"></provision>
     </mat-tab>
     <mat-tab label="Gestion du devis">
       <quotation-management [quotation]="quotation" [editMode]="editMode"></quotation-management>

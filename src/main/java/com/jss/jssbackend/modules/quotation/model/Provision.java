@@ -9,8 +9,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 public class Provision implements Serializable {
@@ -19,7 +21,7 @@ public class Provision implements Serializable {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
 
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.DETACH, CascadeType.REFRESH, CascadeType.REMOVE })
 	@JoinColumn(name = "id_affaire")
 	private Affaire affaire;
 
@@ -32,6 +34,18 @@ public class Provision implements Serializable {
 	@JoinColumn(name = "id_customer_order")
 	@JsonBackReference("customerOrder")
 	private CustomerOrder customerOrder;
+
+	@ManyToOne
+	@JoinColumn(name = "id_provision_type")
+	private ProvisionType provisionType;
+
+	@OneToOne(targetEntity = Domiciliation.class, mappedBy = "provision", cascade = CascadeType.ALL)
+	@JsonManagedReference("provision")
+	private Domiciliation domiciliation;
+
+	@OneToOne(targetEntity = Shal.class, mappedBy = "provision", cascade = CascadeType.ALL)
+	@JsonManagedReference("provision")
+	private Shal shal;
 
 	public Integer getId() {
 		return id;
@@ -63,6 +77,30 @@ public class Provision implements Serializable {
 
 	public void setCustomerOrder(CustomerOrder customerOrder) {
 		this.customerOrder = customerOrder;
+	}
+
+	public ProvisionType getProvisionType() {
+		return provisionType;
+	}
+
+	public void setProvisionType(ProvisionType provisionType) {
+		this.provisionType = provisionType;
+	}
+
+	public Domiciliation getDomiciliation() {
+		return domiciliation;
+	}
+
+	public void setDomiciliation(Domiciliation domiciliation) {
+		this.domiciliation = domiciliation;
+	}
+
+	public Shal getShal() {
+		return shal;
+	}
+
+	public void setShal(Shal shal) {
+		this.shal = shal;
 	}
 
 }

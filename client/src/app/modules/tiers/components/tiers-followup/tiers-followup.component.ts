@@ -19,7 +19,6 @@ import { TiersFollowup } from '../../model/TiersFollowup';
 import { TiersFollowupType } from '../../model/TiersFollowupType';
 import { TiersFollowupService } from '../../services/tiers.followup.service';
 import { TiersFollowupTypeService } from '../../services/tiers.followup.type.service';
-import { TiersComponent } from '../tiers/tiers.component';
 
 @Component({
   selector: 'tiers-followup',
@@ -77,6 +76,8 @@ export class TiersFollowupComponent implements OnInit {
     if (changes.tiers != undefined) {
       this.followupForm.markAllAsTouched();
       this.setData();
+      // By default, select Salesman of Tiers
+      this.newFollowup.salesEmployee = this.tiers.salesEmployee;
     }
   }
 
