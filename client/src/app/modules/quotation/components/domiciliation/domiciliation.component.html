@@ -8,7 +8,7 @@
               <mat-form-field class="full-width">
                 <mat-label>Type de contrat</mat-label>
                 <mat-select formControlName="domiciliationContractType"
-                  [(ngModel)]="provision.domiciliation.domiciliationContractType" [compareWith]="compareWithId"
+                  [(ngModel)]="provision.domiciliation!.domiciliationContractType" [compareWith]="compareWithId"
                   [disabled]="editMode==false">
                   <mat-option *ngFor="let domiciliationContractType of domiciliationContractTypes"
                     [value]="domiciliationContractType">
@@ -19,10 +19,10 @@
             </td>
             <td style="vertical-align: baseline;">
               <mat-label>Langue de contrat</mat-label>
-              <mat-radio-group class="radio-group-column" [(ngModel)]="provision.domiciliation.language"
+              <mat-radio-group class="radio-group-column" [(ngModel)]="provision.domiciliation!.language"
                 formControlName="language">
                 <mat-radio-button *ngFor=" let language of languages" [value]="language"
-                  [checked]=" provision.domiciliation.language!= undefined && provision.domiciliation.language.id == language.id">
+                  [checked]=" provision.domiciliation!.language!= undefined && provision.domiciliation!.language.id == language.id">
                   {{language.label}}
                 </mat-radio-button>
               </mat-radio-group>
@@ -35,7 +35,7 @@
               <mat-form-field class="full-width">
                 <mat-label>Adresse de domiciliation</mat-label>
                 <mat-select formControlName="buildingDomiciliation"
-                  [(ngModel)]="provision.domiciliation.buildingDomiciliation" [compareWith]="compareWithId"
+                  [(ngModel)]="provision.domiciliation!.buildingDomiciliation" [compareWith]="compareWithId"
                   [disabled]="editMode==false">
                   <mat-option *ngFor="let buildingDomiciliation of buildingDomiciliations"
                     [value]="buildingDomiciliation">
@@ -46,11 +46,11 @@
             </td>
             <td style="vertical-align: baseline;">
               <mat-label>Adresse de redirection</mat-label>
-              <mat-radio-group class="radio-group-column" [(ngModel)]="provision.domiciliation.mailRedirectionType"
+              <mat-radio-group class="radio-group-column" [(ngModel)]="provision.domiciliation!.mailRedirectionType"
                 formControlName="mailRedirectionType">
                 <mat-radio-button *ngFor=" let mailRedirectionType of mailRedirectionTypes"
                   [value]="mailRedirectionType"
-                  [checked]=" provision.domiciliation.mailRedirectionType!= undefined && provision.domiciliation.mailRedirectionType.id == mailRedirectionType.id">
+                  [checked]=" provision.domiciliation!.mailRedirectionType!= undefined && provision.domiciliation!.mailRedirectionType.id == mailRedirectionType.id">
                   {{mailRedirectionType.label}}
                 </mat-radio-button>
               </mat-radio-group>
@@ -65,22 +65,22 @@
                 <textarea (keyup)="limitTextareaSize('mailRecipient',3)"
                   (keydown)="limitTextareaSize('mailRecipient',3)" (paste)="limitTextareaSize('mailRecipient',3)"
                   rows="3" matInput formControlName="mailRecipient"
-                  [(ngModel)]="provision.domiciliation.mailRecipient"></textarea>
+                  [(ngModel)]="provision.domiciliation!.mailRecipient"></textarea>
               </mat-form-field>
             </td>
             <td>
               <mat-form-field class="full-width">
                 <mat-label>Adresse</mat-label>
-                <input matInput formControlName="address" [(ngModel)]="provision.domiciliation.address"
+                <input matInput formControlName="address" [(ngModel)]="provision.domiciliation!.address"
                   placeholder="Adresse" autocomplete="do-not-autofill">
               </mat-form-field>
             </td>
             <td>
               <mat-form-field class="full-width">
                 <mat-label>Ville</mat-label>
-                <input matInput placeholder="Ville" [(ngModel)]="provision.domiciliation.city"
+                <input matInput placeholder="Ville" [(ngModel)]="provision.domiciliation!.city"
                   [matAutocomplete]="autoCompleteCity" formControlName="city" autocomplete="do-not-autofill">
-                <mat-autocomplete #autoCompleteCity="matAutocomplete" [displayWith]="displayLabel"
+                <mat-autocomplete autoActiveFirstOption #autoCompleteCity="matAutocomplete" [displayWith]="displayLabel"
                   (optionSelected)='fillPostalCode($event.option.value)'>
                   <mat-option *ngFor="let city of filteredCities" [value]="city">
                     {{city.label}}
@@ -91,10 +91,10 @@
             <td>
               <mat-form-field class="full-width">
                 <mat-label>Code postal</mat-label>
-                <input matInput placeholder="Code postal" [(ngModel)]="provision.domiciliation.postalCode"
+                <input matInput placeholder="Code postal" [(ngModel)]="provision.domiciliation!.postalCode"
                   [matAutocomplete]="autoCompletePostalCode" formControlName="postalCode"
                   autocomplete="do-not-autofill">
-                <mat-autocomplete #autoCompletePostalCode="matAutocomplete"
+                <mat-autocomplete autoActiveFirstOption #autoCompletePostalCode="matAutocomplete"
                   (optionSelected)='fillCity($event.option.value)'>
                   <mat-option *ngFor="let postalCode of filteredPostalCodes" [value]="postalCode">
                     {{postalCode}}
@@ -105,9 +105,10 @@
             <td>
               <mat-form-field class="full-width">
                 <mat-label>Pays</mat-label>
-                <input matInput placeholder="Pays" [(ngModel)]="provision.domiciliation.country"
+                <input matInput placeholder="Pays" [(ngModel)]="provision.domiciliation!.country"
                   [matAutocomplete]="autoCompleteCountry" formControlName="country" autocomplete="do-not-autofill">
-                <mat-autocomplete #autoCompleteCountry="matAutocomplete" [displayWith]="displayLabel">
+                <mat-autocomplete autoActiveFirstOption #autoCompleteCountry="matAutocomplete"
+                  [displayWith]="displayLabel">
                   <mat-option *ngFor="let country of filteredCountries | async" [value]="country">
                     {{country.label}}
                   </mat-option>
@@ -122,7 +123,7 @@
               <mat-form-field class="full-width">
                 <mat-label>Mails</mat-label>
                 <mat-chip-list #chipListMails>
-                  <mat-chip *ngFor="let mail of provision.domiciliation.mails" (removed)="removeMail(mail)">
+                  <mat-chip *ngFor="let mail of provision.domiciliation!.mails" (removed)="removeMail(mail)">
                     {{mail.mail}}
                     <button matChipRemove *ngIf="editMode">
                       <mat-icon>cancel</mat-icon>
@@ -143,14 +144,14 @@
               <mat-form-field class="full-width">
                 <mat-label>Date de début de domiciliation</mat-label>
                 <input matInput [matDatepicker]="startDateDatetimePicker" formControlName="startDate"
-                  [(ngModel)]="provision.domiciliation.startDate" autocomplete="do-not-autocomplete">
+                  [(ngModel)]="provision.domiciliation!.startDate" autocomplete="do-not-autocomplete">
                 <mat-datepicker-toggle matSuffix [for]="startDateDatetimePicker"></mat-datepicker-toggle>
                 <mat-datepicker touchUi #startDateDatetimePicker></mat-datepicker>
               </mat-form-field>
             </td>
             <td>
-              <p *ngIf="provision.domiciliation.endDate !=undefined && provision.domiciliation.endDate !=null">Date de
-                fin : {{provision.domiciliation.endDate | date:'dd/MM/yyyy'}}</p>
+              <p *ngIf="provision.domiciliation!.endDate !=undefined && provision.domiciliation!.endDate !=null">Date de
+                fin : {{provision.domiciliation!.endDate | date:'dd/MM/yyyy'}}</p>
             </td>
           </tr>
         </table>
@@ -163,7 +164,7 @@
             <mat-form-field class="full-width">
               <mat-label>Activité de la société</mat-label>
               <textarea matInput formControlName="activityDescription"
-                [(ngModel)]="provision.domiciliation.activityDescription"></textarea>
+                [(ngModel)]="provision.domiciliation!.activityDescription"></textarea>
             </mat-form-field>
           </tr>
         </table>
@@ -176,24 +177,24 @@
                   (keydown)="limitTextareaSize('activityMailRecipient',3)"
                   (paste)="limitTextareaSize('activityMailRecipient',3)" rows="3" matInput
                   formControlName="activityMailRecipient"
-                  [(ngModel)]="provision.domiciliation.activityMailRecipient"></textarea>
+                  [(ngModel)]="provision.domiciliation!.activityMailRecipient"></textarea>
               </mat-form-field>
             </td>
             <td>
               <mat-form-field class="full-width">
                 <mat-label>Adresse</mat-label>
-                <input matInput formControlName="activityAddress" [(ngModel)]="provision.domiciliation.activityAddress"
+                <input matInput formControlName="activityAddress" [(ngModel)]="provision.domiciliation!.activityAddress"
                   placeholder="Adresse" autocomplete="do-not-autofill">
               </mat-form-field>
             </td>
             <td>
               <mat-form-field class="full-width">
                 <mat-label>Ville</mat-label>
-                <input matInput placeholder="Ville" [(ngModel)]="provision.domiciliation.activityCity"
+                <input matInput placeholder="Ville" [(ngModel)]="provision.domiciliation!.activityCity"
                   [matAutocomplete]="autoCompleteActivityCity" formControlName="activityCity"
                   autocomplete="do-not-autofill">
-                <mat-autocomplete #autoCompleteActivityCity="matAutocomplete" [displayWith]="displayLabel"
-                  (optionSelected)='fillActivityPostalCode($event.option.value)'>
+                <mat-autocomplete autoActiveFirstOption #autoCompleteActivityCity="matAutocomplete"
+                  [displayWith]="displayLabel" (optionSelected)='fillActivityPostalCode($event.option.value)'>
                   <mat-option *ngFor="let city of filteredCities" [value]="city">
                     {{city.label}}
                   </mat-option>
@@ -203,10 +204,10 @@
             <td>
               <mat-form-field class="full-width">
                 <mat-label>Code postal</mat-label>
-                <input matInput placeholder="Code postal" [(ngModel)]="provision.domiciliation.activityPostalCode"
+                <input matInput placeholder="Code postal" [(ngModel)]="provision.domiciliation!.activityPostalCode"
                   [matAutocomplete]="autoCompleteActivityPostalCode" formControlName="activityPostalCode"
                   autocomplete="do-not-autofill">
-                <mat-autocomplete #autoCompleteActivityPostalCode="matAutocomplete"
+                <mat-autocomplete autoActiveFirstOption #autoCompleteActivityPostalCode="matAutocomplete"
                   (optionSelected)='fillActivityCity($event.option.value)'>
                   <mat-option *ngFor="let postalCode of filteredPostalCodes" [value]="postalCode">
                     {{postalCode}}
@@ -217,10 +218,11 @@
             <td>
               <mat-form-field class="full-width">
                 <mat-label>Pays</mat-label>
-                <input matInput placeholder="Pays" [(ngModel)]="provision.domiciliation.activityCountry"
+                <input matInput placeholder="Pays" [(ngModel)]="provision.domiciliation!.activityCountry"
                   [matAutocomplete]="autoCompleteActivityCountry" formControlName="activityCountry"
                   autocomplete="do-not-autofill">
-                <mat-autocomplete #autoCompleteActivityCountry="matAutocomplete" [displayWith]="displayLabel">
+                <mat-autocomplete autoActiveFirstOption #autoCompleteActivityCountry="matAutocomplete"
+                  [displayWith]="displayLabel">
                   <mat-option *ngFor="let country of filteredCountries | async" [value]="country">
                     {{country.label}}
                   </mat-option>
@@ -235,7 +237,7 @@
               <mat-form-field class="full-width">
                 <mat-label>Mails</mat-label>
                 <mat-chip-list #chipListActivityMails>
-                  <mat-chip *ngFor="let mail of provision.domiciliation.activityMails"
+                  <mat-chip *ngFor="let mail of provision.domiciliation!.activityMails"
                     (removed)="removeActivityMail(mail)">
                     {{mail.mail}}
                     <button matChipRemove *ngIf="editMode">
@@ -253,7 +255,7 @@
               <mat-form-field class="full-width">
                 <mat-label>Lieu de conservation des documents comptables</mat-label>
                 <textarea rows="3" matInput formControlName="accountingRecordDomiciliation"
-                  [(ngModel)]="provision.domiciliation.accountingRecordDomiciliation"></textarea>
+                  [(ngModel)]="provision.domiciliation!.accountingRecordDomiciliation"></textarea>
               </mat-form-field>
             </td>
           </tr>
@@ -265,21 +267,22 @@
         <table class="full-width">
           <tr>
             <td>
-              <mat-slide-toggle formControlName="isLegalPerson" [(ngModel)]="provision.domiciliation.isLegalPerson">
+              <mat-slide-toggle formControlName="isLegalPerson" [(ngModel)]="provision.domiciliation!.isLegalPerson">
                 Personne morale ?
               </mat-slide-toggle>
             </td>
           </tr>
         </table>
-        <table class="full-width" *ngIf="provision.domiciliation.isLegalPerson">
+        <table class="full-width" *ngIf="provision.domiciliation!.isLegalPerson">
           <tr>
             <td>
               <mat-form-field class="full-width">
                 <mat-label>Forme juridique</mat-label>
                 <input type="text" matInput formControlName="legalGardianLegalForm"
-                  [matAutocomplete]="autoCompleteLegalForm" [(ngModel)]="provision.domiciliation.legalGardianLegalForm">
-                <mat-icon matSuffix (click)="provision.domiciliation.legalGardianLegalForm=null"
-                  *ngIf="editMode && provision.domiciliation.legalGardianLegalForm!=null">
+                  [matAutocomplete]="autoCompleteLegalForm"
+                  [(ngModel)]="provision.domiciliation!.legalGardianLegalForm">
+                <mat-icon matSuffix (click)="provision.domiciliation!.legalGardianLegalForm=null"
+                  *ngIf="editMode && provision.domiciliation!.legalGardianLegalForm!=null">
                   close
                 </mat-icon>
                 <mat-autocomplete autoActiveFirstOption #autoCompleteLegalForm="matAutocomplete"
@@ -293,10 +296,11 @@
             <td>
               <mat-form-field class="full-width">
                 <mat-label>SIREN</mat-label>
-                <input matInput placeholder="SIREN" [(ngModel)]="provision.domiciliation.legalGardianSiren"
+                <input matInput placeholder="SIREN" [(ngModel)]="provision.domiciliation!.legalGardianSiren"
                   [matAutocomplete]="autoCompleteSiren" formControlName="legalGardianSiren"
                   autocomplete="do-not-autofill">
-                <mat-autocomplete #autoCompleteSiren="matAutocomplete" (optionSelected)='fillSiren()'>
+                <mat-autocomplete autoActiveFirstOption #autoCompleteSiren="matAutocomplete"
+                  (optionSelected)='fillSiren()'>
                   <mat-option *ngIf="filteredSiren!=undefined" [value]="filteredSiren!.uniteLegale.siren">
                     {{filteredSiren!=undefined ?filteredSiren.uniteLegale.siren :""}}
                   </mat-option>
@@ -307,28 +311,28 @@
               <mat-form-field class="full-width">
                 <mat-label>Denomination</mat-label>
                 <input matInput formControlName="legalGardianDenomination"
-                  [(ngModel)]=" provision.domiciliation.legalGardianDenomination" placeholder="Dénomination"
+                  [(ngModel)]=" provision.domiciliation!.legalGardianDenomination" placeholder="Dénomination"
                   autocomplete="do-not-autofill">
               </mat-form-field>
             </td>
           </tr>
         </table>
-        <table class="full-width" *ngIf="provision.domiciliation.isLegalPerson">
+        <table class="full-width" *ngIf="provision.domiciliation!.isLegalPerson">
           <tr>
             <td>
-              <single-attachment [entity]="provision.domiciliation" [entityType]="DOMICILIATION_ENTITY_TYPE.entityType"
+              <single-attachment [entity]="provision.domiciliation!" [entityType]="DOMICILIATION_ENTITY_TYPE.entityType"
                 [editMode]="editMode" [attachmentTypeCodeToDisplay]="KBIS_ATTACHMENT_TYPE_CODE">
               </single-attachment>
             </td>
           </tr>
         </table>
-        <table class=" full-width" *ngIf="!provision.domiciliation.isLegalPerson">
+        <table class=" full-width" *ngIf="!provision.domiciliation!.isLegalPerson">
           <tr>
             <td>
-              <mat-radio-group class="radio-group-column" [(ngModel)]="provision.domiciliation.legalGardianCivility"
+              <mat-radio-group class="radio-group-column" [(ngModel)]="provision.domiciliation!.legalGardianCivility"
                 formControlName="legalGardianCivility">
                 <mat-radio-button *ngFor="let civility of civilities" [value]="civility"
-                  [checked]=" provision.domiciliation.legalGardianCivility != undefined && provision.domiciliation.legalGardianCivility.id == civility.id">
+                  [checked]=" provision.domiciliation!.legalGardianCivility != undefined && provision.domiciliation!.legalGardianCivility.id == civility.id">
                   {{civility.label}}
                 </mat-radio-button>
               </mat-radio-group>
@@ -337,32 +341,32 @@
               <mat-form-field class="full-width">
                 <mat-label>Nom</mat-label>
                 <input matInput formControlName="legalGardianLastname"
-                  [(ngModel)]="provision.domiciliation.legalGardianLastname" placeholder="Nom">
+                  [(ngModel)]="provision.domiciliation!.legalGardianLastname" placeholder="Nom">
               </mat-form-field>
             </td>
             <td>
               <mat-form-field class="full-width">
                 <mat-label>Prénom</mat-label>
                 <input matInput formControlName="legalGardianFirstname"
-                  [(ngModel)]="provision.domiciliation.legalGardianFirstname" placeholder="Prénom">
+                  [(ngModel)]="provision.domiciliation!.legalGardianFirstname" placeholder="Prénom">
               </mat-form-field>
             </td>
             <td>
               <mat-form-field class="full-width">
                 <mat-label>Fonction</mat-label>
-                <input matInput formControlName="legalGardianJob" [(ngModel)]="provision.domiciliation.legalGardianJob"
+                <input matInput formControlName="legalGardianJob" [(ngModel)]="provision.domiciliation!.legalGardianJob"
                   placeholder="Fonction">
               </mat-form-field>
             </td>
           </tr>
         </table>
-        <table class="full-width" *ngIf="!provision.domiciliation.isLegalPerson">
+        <table class="full-width" *ngIf="!provision.domiciliation!.isLegalPerson">
           <tr>
             <td>
               <mat-form-field class="full-width">
                 <mat-label>Date de naissance</mat-label>
                 <input matInput [matDatepicker]="legalGardianBirthDateDatetimePicker"
-                  formControlName="legalGardianBirthdate" [(ngModel)]="provision.domiciliation.legalGardianBirthdate"
+                  formControlName="legalGardianBirthdate" [(ngModel)]="provision.domiciliation!.legalGardianBirthdate"
                   autocomplete="do-not-autocomplete">
                 <mat-datepicker-toggle matSuffix [for]="legalGardianBirthDateDatetimePicker"></mat-datepicker-toggle>
                 <mat-datepicker touchUi #legalGardianBirthDateDatetimePicker></mat-datepicker>
@@ -372,7 +376,7 @@
               <mat-form-field class="full-width">
                 <mat-label>Lieu de naissance</mat-label>
                 <input matInput formControlName="legalGardianPlaceOfBirth"
-                  [(ngModel)]="provision.domiciliation.legalGardianPlaceOfBirth" placeholder="Fonction">
+                  [(ngModel)]="provision.domiciliation!.legalGardianPlaceOfBirth" placeholder="Fonction">
               </mat-form-field>
             </td>
           </tr>
@@ -386,25 +390,25 @@
                   (keydown)="limitTextareaSize('legalGardianMailRecipient',3)"
                   (paste)="limitTextareaSize('legalGardianMailRecipient',3)" rows="3" matInput
                   formControlName="legalGardianMailRecipient"
-                  [(ngModel)]="provision.domiciliation.legalGardianMailRecipient"></textarea>
+                  [(ngModel)]="provision.domiciliation!.legalGardianMailRecipient"></textarea>
               </mat-form-field>
             </td>
             <td>
               <mat-form-field class="full-width">
                 <mat-label>Adresse</mat-label>
                 <input matInput formControlName="legalGardianAddress"
-                  [(ngModel)]="provision.domiciliation.legalGardianAddress" placeholder="Adresse"
+                  [(ngModel)]="provision.domiciliation!.legalGardianAddress" placeholder="Adresse"
                   autocomplete="do-not-autofill">
               </mat-form-field>
             </td>
             <td>
               <mat-form-field class="full-width">
                 <mat-label>Ville</mat-label>
-                <input matInput placeholder="Ville" [(ngModel)]="provision.domiciliation.legalGardianCity"
+                <input matInput placeholder="Ville" [(ngModel)]="provision.domiciliation!.legalGardianCity"
                   [matAutocomplete]="autoCompleteLegalGardianCity" formControlName="legalGardianCity"
                   autocomplete="do-not-autofill">
-                <mat-autocomplete #autoCompleteLegalGardianCity="matAutocomplete" [displayWith]="displayLabel"
-                  (optionSelected)='fillLegalGardianPostalCode($event.option.value)'>
+                <mat-autocomplete autoActiveFirstOption #autoCompleteLegalGardianCity="matAutocomplete"
+                  [displayWith]="displayLabel" (optionSelected)='fillLegalGardianPostalCode($event.option.value)'>
                   <mat-option *ngFor="let city of filteredCities" [value]="city">
                     {{city.label}}
                   </mat-option>
@@ -414,10 +418,10 @@
             <td>
               <mat-form-field class="full-width">
                 <mat-label>Code postal</mat-label>
-                <input matInput placeholder="Code postal" [(ngModel)]="provision.domiciliation.legalGardianPostalCode"
+                <input matInput placeholder="Code postal" [(ngModel)]="provision.domiciliation!.legalGardianPostalCode"
                   [matAutocomplete]="autoCompleteLegalGardianPostalCode" formControlName="legalGardianPostalCode"
                   autocomplete="do-not-autofill">
-                <mat-autocomplete #autoCompleteLegalGardianPostalCode="matAutocomplete"
+                <mat-autocomplete autoActiveFirstOption #autoCompleteLegalGardianPostalCode="matAutocomplete"
                   (optionSelected)='fillLegalGardianCity($event.option.value)'>
                   <mat-option *ngFor="let postalCode of filteredPostalCodes" [value]="postalCode">
                     {{postalCode}}
@@ -428,10 +432,11 @@
             <td>
               <mat-form-field class="full-width">
                 <mat-label>Pays</mat-label>
-                <input matInput placeholder="Pays" [(ngModel)]="provision.domiciliation.legalGardianCountry"
+                <input matInput placeholder="Pays" [(ngModel)]="provision.domiciliation!.legalGardianCountry"
                   [matAutocomplete]="autoCompleteLegalGardianCountry" formControlName="legalGardianCountry"
                   autocomplete="do-not-autofill">
-                <mat-autocomplete #autoCompleteLegalGardianCountry="matAutocomplete" [displayWith]="displayLabel">
+                <mat-autocomplete autoActiveFirstOption #autoCompleteLegalGardianCountry="matAutocomplete"
+                  [displayWith]="displayLabel">
                   <mat-option *ngFor="let country of filteredCountries | async" [value]="country">
                     {{country.label}}
                   </mat-option>
@@ -446,7 +451,7 @@
               <mat-form-field class="full-width">
                 <mat-label>Mails</mat-label>
                 <mat-chip-list #chipListLegalGardianMails>
-                  <mat-chip *ngFor="let mail of provision.domiciliation.legalGardianMails"
+                  <mat-chip *ngFor="let mail of provision.domiciliation!.legalGardianMails"
                     (removed)="removeLegalGardianMail(mail)">
                     {{mail.mail}}
                     <button matChipRemove *ngIf="editMode">
@@ -463,7 +468,7 @@
             <mat-form-field class="full-width">
               <mat-label>Téléphones</mat-label>
               <mat-chip-list #chipListLegalGardianPhones>
-                <mat-chip *ngFor="let phone of provision.domiciliation.legalGardianPhones"
+                <mat-chip *ngFor="let phone of provision.domiciliation!.legalGardianPhones"
                   (removed)="removeLegalGardianPhone(phone)">
                   {{phone.phoneNumber}}
                   <button matChipRemove *ngIf="editMode">
@@ -478,15 +483,15 @@
             </mat-form-field>
           </tr>
         </table>
-        <table class="full-width" *ngIf="!provision.domiciliation.isLegalPerson">
+        <table class="full-width" *ngIf="!provision.domiciliation!.isLegalPerson">
           <tr>
             <td>
-              <single-attachment [entity]="provision.domiciliation" [entityType]="DOMICILIATION_ENTITY_TYPE.entityType"
+              <single-attachment [entity]="provision.domiciliation!" [entityType]="DOMICILIATION_ENTITY_TYPE.entityType"
                 [editMode]="editMode" [attachmentTypeCodeToDisplay]="CNI_ATTACHMENT_TYPE_CODE">
               </single-attachment>
             </td>
             <td>
-              <single-attachment [entity]="provision.domiciliation" [entityType]="DOMICILIATION_ENTITY_TYPE.entityType"
+              <single-attachment [entity]="provision.domiciliation!" [entityType]="DOMICILIATION_ENTITY_TYPE.entityType"
                 [editMode]="editMode" [attachmentTypeCodeToDisplay]="PROOF_OF_ADDRESS_ATTACHMENT_TYPE_CODE">
               </single-attachment>
             </td>
@@ -495,12 +500,12 @@
       </div>
     </mat-tab>
     <mat-tab label="Documents" *ngIf="provision.id!=null && provision.id!=undefined">
-      <attachments [entity]="provision.domiciliation" [editMode]="editMode"
+      <attachments [entity]="provision.domiciliation!" [editMode]="editMode"
         [entityType]="DOMICILIATION_ENTITY_TYPE.entityType">
       </attachments>
     </mat-tab>
     <mat-tab label="Historique" *ngIf="provision && provision.id">
-      <history [entity]="provision.domiciliation" [entityType]="DOMICILIATION_ENTITY_TYPE"></history>
+      <history [entity]="provision.domiciliation!" [entityType]="DOMICILIATION_ENTITY_TYPE"></history>
     </mat-tab>
   </mat-tab-group>
 </form>

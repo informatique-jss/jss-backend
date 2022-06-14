@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.jss.jssbackend.modules.profile.model.Employee;
 import com.jss.jssbackend.modules.profile.model.Team;
 import com.jss.jssbackend.modules.profile.repository.EmployeeRepository;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -25,7 +25,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     private String INSERTIONS_TEAM_CODE = "INSERTIONS";
 
     @Override
-    public Employee getEmployeeById(Integer id) {
+    public Employee getEmployee(Integer id) {
         Optional<Employee> employee = employeeRepository.findById(id);
         if (!employee.isEmpty())
             return employee.get();

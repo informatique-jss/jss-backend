@@ -14,12 +14,13 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 
 import com.jss.jssbackend.modules.miscellaneous.model.Department;
+import com.jss.jssbackend.modules.miscellaneous.model.IId;
+import com.jss.jssbackend.modules.miscellaneous.model.Mail;
+import com.jss.jssbackend.modules.miscellaneous.model.Phone;
 import com.jss.jssbackend.modules.miscellaneous.model.WeekDay;
-import com.jss.jssbackend.modules.tiers.model.Mail;
-import com.jss.jssbackend.modules.tiers.model.Phone;
 
 @Entity
-public class Confrere implements Serializable {
+public class Confrere implements Serializable, IId {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

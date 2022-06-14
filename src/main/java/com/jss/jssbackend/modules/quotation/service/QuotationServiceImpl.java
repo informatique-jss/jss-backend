@@ -8,12 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.jss.jssbackend.libs.search.service.IndexEntityService;
+import com.jss.jssbackend.modules.miscellaneous.service.MailService;
+import com.jss.jssbackend.modules.miscellaneous.service.PhoneService;
 import com.jss.jssbackend.modules.quotation.model.Affaire;
 import com.jss.jssbackend.modules.quotation.model.Provision;
 import com.jss.jssbackend.modules.quotation.model.Quotation;
 import com.jss.jssbackend.modules.quotation.repository.QuotationRepository;
-import com.jss.jssbackend.modules.tiers.service.MailService;
-import com.jss.jssbackend.modules.tiers.service.PhoneService;
 
 @Service
 public class QuotationServiceImpl implements QuotationService {

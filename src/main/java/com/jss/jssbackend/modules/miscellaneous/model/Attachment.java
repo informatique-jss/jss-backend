@@ -3,6 +3,7 @@ package com.jss.jssbackend.modules.miscellaneous.model;
 import java.io.Serializable;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -26,7 +27,7 @@ import com.jss.jssbackend.modules.tiers.model.Tiers;
 		@Index(name = "idx_customer_order_attachment", columnList = "id_customer_order"),
 		@Index(name = "idx_quotation_attachment", columnList = "id_quotation"),
 		@Index(name = "idx_responsable_attachment", columnList = "id_responsable") })
-public class Attachment implements Serializable {
+public class Attachment implements Serializable, IId {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -65,6 +66,9 @@ public class Attachment implements Serializable {
 	@JoinColumn(name = "id_uploaded_file")
 	private UploadedFile uploadedFile;
 
+	@Column(nullable = false)
+	private Boolean isDisabled;
+
 	public Integer getId() {
 		return id;
 	}
@@ -95,6 +99,14 @@ public class Attachment implements Serializable {
 
 	public void setAttachmentType(AttachmentType attachmentType) {
 		this.attachmentType = attachmentType;
+	}
+
+	public Boolean getIsDisabled() {
+		return isDisabled;
+	}
+
+	public void setIsDisabled(Boolean isDisabled) {
+		this.isDisabled = isDisabled;
 	}
 
 	public UploadedFile getUploadedFile() {

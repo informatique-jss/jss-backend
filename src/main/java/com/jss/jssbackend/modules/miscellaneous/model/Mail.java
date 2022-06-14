@@ -1,4 +1,4 @@
-package com.jss.jssbackend.modules.tiers.model;
+package com.jss.jssbackend.modules.miscellaneous.model;
 
 import java.io.Serializable;
 
@@ -9,7 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-public class Mail implements Serializable {
+public class Mail implements Serializable, IId {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

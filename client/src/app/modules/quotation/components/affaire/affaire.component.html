@@ -8,8 +8,8 @@
               <mat-label>Récupérer une affaire existante</mat-label>
               <input matInput placeholder="Récupérer une affaire existante" [matAutocomplete]="autoCompleteAffaire"
                 formControlName="autoCompleteAffaire" autocomplete="do-not-autofill">
-              <mat-autocomplete #autoCompleteAffaire="matAutocomplete" [displayWith]="displayLabel"
-                (optionSelected)='fillAffaire($event.option)'>
+              <mat-autocomplete autoActiveFirstOption #autoCompleteAffaire="matAutocomplete"
+                [displayWith]="displayLabel" (optionSelected)='fillAffaire($event.option)'>
                 <mat-option *ngFor="let affaire of filteredAffaires" [value]="affaire">
                   {{affaire.firstname}} {{affaire.lastname}} {{affaire.denomination}}
                 </mat-option>
@@ -70,7 +70,8 @@
               <mat-label>SIREN</mat-label>
               <input matInput placeholder="SIREN" [(ngModel)]="affaire.siren" [matAutocomplete]="autoCompleteSiren"
                 formControlName="siren" autocomplete="do-not-autofill">
-              <mat-autocomplete #autoCompleteSiren="matAutocomplete" (optionSelected)='fillSiren()'>
+              <mat-autocomplete autoActiveFirstOption #autoCompleteSiren="matAutocomplete"
+                (optionSelected)='fillSiren()'>
                 <mat-option *ngIf="filteredSiren!=undefined" [value]="filteredSiren!.uniteLegale.siren">
                   {{filteredSiren!=undefined ?filteredSiren.uniteLegale.siren :""}}
                 </mat-option>
@@ -82,7 +83,8 @@
               <mat-label>SIRET</mat-label>
               <input matInput placeholder="SIRET" [(ngModel)]="affaire.siret" [matAutocomplete]="autoCompleteSiret"
                 formControlName="siret" autocomplete="do-not-autofill">
-              <mat-autocomplete #autoCompleteSiret="matAutocomplete" (optionSelected)='fillSiret()'>
+              <mat-autocomplete autoActiveFirstOption #autoCompleteSiret="matAutocomplete"
+                (optionSelected)='fillSiret()'>
                 <mat-option *ngIf="filteredSiret!=undefined" [value]="filteredSiret!.etablissement.siret">
                   {{filteredSiret!=undefined ?filteredSiret.etablissement.siret :""}}
                 </mat-option>
@@ -94,7 +96,7 @@
               <mat-label>RNA</mat-label>
               <input matInput placeholder="RNA" [(ngModel)]="affaire.rna" [matAutocomplete]="autoCompleteRna"
                 formControlName="rna" autocomplete="do-not-autofill">
-              <mat-autocomplete #autoCompleteRna="matAutocomplete" (optionSelected)='fillRna()'>
+              <mat-autocomplete autoActiveFirstOption #autoCompleteRna="matAutocomplete" (optionSelected)='fillRna()'>
                 <mat-option *ngIf="filteredRna!=undefined" [value]="filteredRna!.association.id_association">
                   {{filteredRna!=undefined ?filteredRna.association.id_association :""}}
                 </mat-option>
@@ -128,7 +130,7 @@
               <mat-label>Ville</mat-label>
               <input matInput placeholder="Ville" [(ngModel)]="affaire.city" [matAutocomplete]="autoCompleteCity"
                 formControlName="city" autocomplete="do-not-autofill">
-              <mat-autocomplete #autoCompleteCity="matAutocomplete" [displayWith]="displayLabel"
+              <mat-autocomplete autoActiveFirstOption #autoCompleteCity="matAutocomplete" [displayWith]="displayLabel"
                 (optionSelected)='fillPostalCode($event.option.value)'>
                 <mat-option *ngFor="let city of filteredCities" [value]="city">
                   {{city.label}}
@@ -141,7 +143,7 @@
               <mat-label>Code postal</mat-label>
               <input matInput placeholder="Code postal" [(ngModel)]="affaire.postalCode"
                 [matAutocomplete]="autoCompletePostalCode" formControlName="postalCode" autocomplete="do-not-autofill">
-              <mat-autocomplete #autoCompletePostalCode="matAutocomplete"
+              <mat-autocomplete autoActiveFirstOption #autoCompletePostalCode="matAutocomplete"
                 (optionSelected)='fillCity($event.option.value)'>
                 <mat-option *ngFor="let postalCode of filteredPostalCodes" [value]="postalCode">
                   {{postalCode}}
@@ -154,7 +156,8 @@
               <mat-label>Pays</mat-label>
               <input matInput placeholder="Pays" [(ngModel)]="affaire.country" [matAutocomplete]="autoCompleteCountry"
                 formControlName="country" autocomplete="do-not-autofill">
-              <mat-autocomplete #autoCompleteCountry="matAutocomplete" [displayWith]="displayLabel">
+              <mat-autocomplete autoActiveFirstOption #autoCompleteCountry="matAutocomplete"
+                [displayWith]="displayLabel">
                 <mat-option *ngFor="let country of filteredCountries | async" [value]="country">
                   {{country.label}}
                 </mat-option>

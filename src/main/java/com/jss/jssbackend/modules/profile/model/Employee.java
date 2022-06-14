@@ -13,10 +13,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.jss.jssbackend.modules.miscellaneous.model.IId;
 
 @Entity
 @Table(indexes = { @Index(name = "pk_employee", columnList = "id", unique = true) })
-public class Employee implements Serializable {
+public class Employee implements Serializable, IId {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

@@ -34,4 +34,9 @@ tr.mat-row {
 .table-container-scroll {
   max-height: 215px;
   overflow-y: auto;
+  padding-top: 15px;
+}
+
+.mat-accordion-container {
+  padding-top: 15px
 }

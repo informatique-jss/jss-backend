@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { SpecialOfferFlatten } from 'src/app/modules/miscellaneous/model/SpecialOfferFlatten';
-import { BillingItem } from 'src/app/modules/miscellaneous/model/BillingItem';
 import { SpecialOfferService } from 'src/app/modules/miscellaneous/services/special-offer.service';
 import { SpecialOffer } from '../../model/SpecialOffer';
 
@@ -38,7 +37,7 @@ export class SpecialOffersDialogComponent implements OnInit {
             localSpecialOffer.billingTypePreTaxPrice = billingItem.billingType.preTaxPrice;
             localSpecialOffer.discountAmount = billingItem.discountAmount;
             localSpecialOffer.discountRate = billingItem.discountRate;
-            localSpecialOffer.vat = billingItem.vat.rate;
+            localSpecialOffer.vat = (billingItem.vat) ? billingItem.vat.rate : 0;
             this.specialOffersFlatten.push(localSpecialOffer);
           });
         });

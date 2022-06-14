@@ -4,16 +4,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.jss.jssbackend.libs.search.model.IndexEntity;
 import com.jss.jssbackend.libs.search.service.IndexEntityService;
 import com.jss.jssbackend.libs.search.service.SearchService;
 import com.jss.jssbackend.modules.miscellaneous.model.Document;
+import com.jss.jssbackend.modules.miscellaneous.service.MailService;
+import com.jss.jssbackend.modules.miscellaneous.service.PhoneService;
 import com.jss.jssbackend.modules.tiers.model.Responsable;
 import com.jss.jssbackend.modules.tiers.model.Tiers;
 import com.jss.jssbackend.modules.tiers.repository.TiersRepository;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 @Service
 public class TiersServiceImpl implements TiersService {
@@ -37,7 +39,7 @@ public class TiersServiceImpl implements TiersService {
     SearchService searchService;
 
     @Override
-    public Tiers getTiersById(Integer id) {
+    public Tiers getTiers(Integer id) {
         Optional<Tiers> tiers = tiersRepository.findById(id);
         if (!tiers.isEmpty())
             return tiers.get();
@@ -88,7 +90,7 @@ public class TiersServiceImpl implements TiersService {
     public Tiers getTiersByIdResponsable(Integer idResponsable) {
         Responsable responsable = responsableService.getResponsable(idResponsable);
         if (responsable != null)
-            return this.getTiersById(responsable.getTiers().getId());
+            return this.getTiers(responsable.getTiers().getId());
         return null;
     }
 

@@ -2,9 +2,6 @@ package com.jss.jssbackend.modules.profile.controller;
 
 import java.util.List;
 
-import com.jss.jssbackend.modules.profile.model.Employee;
-import com.jss.jssbackend.modules.profile.service.EmployeeService;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +11,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpStatusCodeException;
+
+import com.jss.jssbackend.modules.profile.model.Employee;
+import com.jss.jssbackend.modules.profile.service.EmployeeService;
 
 @RestController
 public class ProfileController {
@@ -29,7 +29,7 @@ public class ProfileController {
 	public ResponseEntity<Employee> getEmployeeById(@RequestParam Integer id) {
 		Employee employee = null;
 		try {
-			employee = employeeService.getEmployeeById(id);
+			employee = employeeService.getEmployee(id);
 		} catch (HttpStatusCodeException e) {
 			logger.error("HTTP error when fetching client types", e);
 			return new ResponseEntity<Employee>(HttpStatus.INTERNAL_SERVER_ERROR);

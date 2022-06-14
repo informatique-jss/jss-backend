@@ -1,14 +1,14 @@
-package com.jss.jssbackend.modules.tiers.service;
+package com.jss.jssbackend.modules.miscellaneous.service;
 
 import java.util.List;
 import java.util.Optional;
 
-import com.jss.jssbackend.modules.tiers.model.Mail;
-import com.jss.jssbackend.modules.tiers.repository.MailRepository;
-
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.jss.jssbackend.modules.miscellaneous.model.Mail;
+import com.jss.jssbackend.modules.miscellaneous.repository.MailRepository;
 
 @Service
 public class MailServiceImpl implements MailService {

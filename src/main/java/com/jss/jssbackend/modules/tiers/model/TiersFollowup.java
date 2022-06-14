@@ -15,13 +15,14 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.jss.jssbackend.modules.miscellaneous.model.Gift;
+import com.jss.jssbackend.modules.miscellaneous.model.IId;
 import com.jss.jssbackend.modules.profile.model.Employee;
 
 @Entity
 @Table(indexes = { @Index(name = "pk_tiers_followup", columnList = "id", unique = true),
 		@Index(name = "idx_tiers_followup_tiers", columnList = "id_tiers"),
 		@Index(name = "idx_tiers_followup_responsable", columnList = "id_responsable") })
-public class TiersFollowup implements Serializable {
+public class TiersFollowup implements Serializable, IId {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

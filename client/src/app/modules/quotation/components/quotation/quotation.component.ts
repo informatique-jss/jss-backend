@@ -10,6 +10,7 @@ import { SearchService } from 'src/app/search.service';
 import { IQuotation } from '../../model/IQuotation';
 import { QuotationService } from '../../services/quotation.service';
 import { OrderingCustomerComponent } from '../ordering-customer/ordering-customer.component';
+import { QuotationManagementComponent } from '../quotation-management/quotation-management.component';
 
 @Component({
   selector: 'quotation',
@@ -30,6 +31,7 @@ export class QuotationComponent implements OnInit {
 
   @ViewChild(OrderingCustomerComponent) orderingCustomerComponent: OrderingCustomerComponent | undefined;
   @ViewChild(ProvisionComponent) provisionComponent: ProvisionComponent | undefined;
+  @ViewChild(QuotationManagementComponent) quotationManagementComponent: QuotationManagementComponent | undefined;
 
   constructor(private appService: AppService,
     private quotationService: QuotationService,
@@ -43,7 +45,6 @@ export class QuotationComponent implements OnInit {
 
     let idQuotation: number = this.activatedRoute.snapshot.params.id;
     let url: UrlSegment[] = this.activatedRoute.snapshot.url;
-
 
     // Load by order
     if (url != undefined && url != null && url[0] != undefined && url[1] != undefined && url[0].path == "order") {
@@ -80,12 +81,14 @@ export class QuotationComponent implements OnInit {
   }
 
   getFormsStatus(): boolean {
-    // TODO : remonter les erreurs depuis le module adressing (le faire en dur car parfois facultatif) + tous les autres formulaires
     let orderingCustomerFormStatus = this.orderingCustomerComponent?.getFormStatus();
+    let quotationManagementFormStatus = this.quotationManagementComponent?.getFormStatus();
     let provisionFormStatus = this.provisionComponent?.getFormStatus();
     let errorMessages: string[] = [] as Array<string>;
     if (!orderingCustomerFormStatus)
       errorMessages.push("Onglet Donneur d'ordre");
+    if (!quotationManagementFormStatus)
+      errorMessages.push("Onglet Gestion du devis");
     if (!provisionFormStatus)
       errorMessages.push("Onglet Prestations");
     if (errorMessages.length > 0) {

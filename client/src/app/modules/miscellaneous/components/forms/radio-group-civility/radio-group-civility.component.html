@@ -1,0 +1,7 @@
+<form [formGroup]="form!">
+  <mat-radio-group class="radio-group-column" [(ngModel)]="model" [formControlName]="propertyName">
+    <mat-radio-button *ngFor="let type of types" [value]="type" [checked]=" model && model.id == type.id">
+      {{type.label}}
+    </mat-radio-button>
+  </mat-radio-group>
+</form>

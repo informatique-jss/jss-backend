@@ -13,9 +13,10 @@ import javax.persistence.OneToOne;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.jss.jssbackend.modules.miscellaneous.model.IId;
 
 @Entity
-public class Provision implements Serializable {
+public class Provision implements Serializable, IId {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -38,6 +39,10 @@ public class Provision implements Serializable {
 	@ManyToOne
 	@JoinColumn(name = "id_provision_type")
 	private ProvisionType provisionType;
+
+	@ManyToOne
+	@JoinColumn(name = "id_provision_family_type")
+	private ProvisionFamilyType provisionFamilyType;
 
 	@OneToOne(targetEntity = Domiciliation.class, mappedBy = "provision", cascade = CascadeType.ALL)
 	@JsonManagedReference("provision")
@@ -65,6 +70,14 @@ public class Provision implements Serializable {
 
 	public Quotation getQuotation() {
 		return quotation;
+	}
+
+	public ProvisionFamilyType getProvisionFamilyType() {
+		return provisionFamilyType;
+	}
+
+	public void setProvisionFamilyType(ProvisionFamilyType provisionFamilyType) {
+		this.provisionFamilyType = provisionFamilyType;
 	}
 
 	public void setQuotation(Quotation quotation) {

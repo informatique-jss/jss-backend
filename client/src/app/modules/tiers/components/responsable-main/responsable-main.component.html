@@ -59,9 +59,9 @@
     </table>
   </div>
   <div [hidden]="selectedResponsable==null" class="responsable-tabs">
-    <mat-tab-group animationDuration="0ms" #tabs>
-      <mat-tab label="Fiche du responsable">
-        <form [formGroup]="principalForm" *ngIf="selectedResponsable!=null">
+    <form [formGroup]="principalForm" *ngIf="selectedResponsable!=null">
+      <mat-tab-group animationDuration="0ms" #tabs>
+        <mat-tab label="Fiche du responsable">
           <div class="full-width">
             <fieldset [disabled]="editMode==false" class="fieldset-no-border">
               <table class="full-width">
@@ -250,8 +250,8 @@
                       <mat-label>Ville</mat-label>
                       <input matInput placeholder="Ville" [(ngModel)]="selectedResponsable.city"
                         [matAutocomplete]="autoCompleteCity" formControlName="city" autocomplete="do-not-autofill">
-                      <mat-autocomplete #autoCompleteCity="matAutocomplete" [displayWith]="displayLabel"
-                        (optionSelected)='fillPostalCode($event.option.value)'>
+                      <mat-autocomplete autoActiveFirstOption #autoCompleteCity="matAutocomplete"
+                        [displayWith]="displayLabel" (optionSelected)='fillPostalCode($event.option.value)'>
                         <mat-option *ngFor="let city of filteredCities" [value]="city">
                           {{city.label}}
                         </mat-option>
@@ -264,7 +264,7 @@
                       <input matInput placeholder="Code postal" [(ngModel)]="selectedResponsable.postalCode"
                         [matAutocomplete]="autoCompletePostalCode" formControlName="postalCode"
                         autocomplete="do-not-autofill">
-                      <mat-autocomplete #autoCompletePostalCode="matAutocomplete"
+                      <mat-autocomplete autoActiveFirstOption #autoCompletePostalCode="matAutocomplete"
                         (optionSelected)='fillCity($event.option.value)'>
                         <mat-option *ngFor="let postalCode of filteredPostalCodes" [value]="postalCode">
                           {{postalCode}}
@@ -278,7 +278,8 @@
                       <input matInput placeholder="Pays" [(ngModel)]="selectedResponsable.country"
                         [matAutocomplete]="autoCompleteCountry" formControlName="country"
                         autocomplete="do-not-autofill">
-                      <mat-autocomplete #autoCompleteCountry="matAutocomplete" [displayWith]="displayLabel">
+                      <mat-autocomplete autoActiveFirstOption #autoCompleteCountry="matAutocomplete"
+                        [displayWith]="displayLabel">
                         <mat-option *ngFor="let country of filteredCountries | async" [value]="country">
                           {{country.label}}
                         </mat-option>
@@ -305,10 +306,10 @@
                     *ngIf="selectedResponsable.jssSubscription!=undefined && selectedResponsable.jssSubscription!=null">
                     <h4>Abonnement JSS</h4>
                     <mat-checkbox formControlName="jssSubscription1" class="checkbox-margin"
-                      [(ngModel)]="selectedResponsable.jssSubscription.isWebSubscription">PDF
+                      [(ngModel)]="selectedResponsable.jssSubscription.isWebSubscription">Web
                     </mat-checkbox>
                     <mat-checkbox formControlName="jssSubscription2" class="checkbox-margin"
-                      [(ngModel)]="selectedResponsable.jssSubscription.isPaperSubscription">Papier/PDF
+                      [(ngModel)]="selectedResponsable.jssSubscription.isPaperSubscription">Papier/Web
                     </mat-checkbox>
                   </td>
                   <td
@@ -398,25 +399,21 @@
               </table>
             </fieldset>
           </div>
-        </form>
-      </mat-tab>
-      <mat-tab label="Gestion des pièces" *ngIf="isResponsableTypeProspect()==false">
-        <document-management [tiers]="selectedResponsable!" [editMode]="editMode">
-        </document-management>
-      </mat-tab>
-      <mat-tab label="Facturation">
-        <settlement-billing [tiers]="selectedResponsable!" [editMode]="editMode"></settlement-billing>
-      </mat-tab>
-      <mat-tab label="Documents" *ngIf="selectedResponsable?.id!=null && selectedResponsable?.id!=undefined">
-        <attachments [entity]="selectedResponsable!" [editMode]="editMode"
-          [entityType]="RESPONSABLE_ENTITY_TYPE.entityType">
-        </attachments>
-      </mat-tab>
-      <mat-tab label="Suivi" *ngIf="selectedResponsable?.id!=null && selectedResponsable?.id!=undefined">
-        <tiers-followup [tiers]="selectedResponsable!" [editMode]="editMode"></tiers-followup>
-      </mat-tab>
-      <mat-tab label="Historique" *ngIf="selectedResponsable?.id!=null && selectedResponsable?.id!=undefined">
-        <history [entity]="selectedResponsable" [entityType]="RESPONSABLE_ENTITY_TYPE"></history>
-      </mat-tab>
-    </mat-tab-group>
+        </mat-tab>
+        <mat-tab label="Pièces et facturation">
+          <settlement-billing [tiers]="selectedResponsable!" [editMode]="editMode"></settlement-billing>
+        </mat-tab>
+        <mat-tab label="Documents" *ngIf="selectedResponsable?.id!=null && selectedResponsable?.id!=undefined">
+          <attachments [entity]="selectedResponsable!" [editMode]="editMode"
+            [entityType]="RESPONSABLE_ENTITY_TYPE.entityType">
+          </attachments>
+        </mat-tab>
+        <mat-tab label="Suivi" *ngIf="selectedResponsable?.id!=null && selectedResponsable?.id!=undefined">
+          <tiers-followup [tiers]="selectedResponsable!" [editMode]="editMode"></tiers-followup>
+        </mat-tab>
+        <mat-tab label="Historique" *ngIf="selectedResponsable?.id!=null && selectedResponsable?.id!=undefined">
+          <history [entity]="selectedResponsable" [entityType]="RESPONSABLE_ENTITY_TYPE"></history>
+        </mat-tab>
+      </mat-tab-group>
+    </form>
   </div>

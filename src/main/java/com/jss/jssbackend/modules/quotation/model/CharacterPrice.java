@@ -15,9 +15,10 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 
 import com.jss.jssbackend.modules.miscellaneous.model.Department;
+import com.jss.jssbackend.modules.miscellaneous.model.IId;
 
 @Entity
-public class CharacterPrice implements Serializable {
+public class CharacterPrice implements Serializable, IId {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

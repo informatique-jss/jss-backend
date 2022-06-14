@@ -1,0 +1,35 @@
+<table class="full-width" [formGroup]="provisionForm">
+  <tr>
+    <td>
+      <mat-form-field class="full-width">
+        <mat-label>Famille de service</mat-label>
+        <mat-select formControlName="provisionFamilyType" [(ngModel)]="provision.provisionFamilyType"
+          [compareWith]="compareWithId" [disabled]="editMode==false" (selectionChange)="changeProvisionType()">
+          <mat-option *ngFor="let provisionFamilyType of provisionFamilyTypes" [value]="provisionFamilyType">
+            {{provisionFamilyType.label}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </td>
+    <td *ngIf="provision.provisionFamilyType">
+      <mat-form-field class="full-width">
+        <mat-label>Service</mat-label>
+        <mat-select formControlName="provisionType" [(ngModel)]="provision.provisionType" [compareWith]="compareWithId"
+          [disabled]="editMode==false" (selectionChange)="changeProvisionType()">
+          <ng-container *ngFor="let provisionType of provisionTypes">
+            <mat-option [value]="provisionType"
+              *ngIf="provisionType.provisionFamilyType.id==provision.provisionFamilyType.id">
+              {{provisionType.label}}
+            </mat-option>
+          </ng-container>
+        </mat-select>
+      </mat-form-field>
+    </td>
+  </tr>
+</table>
+<domiciliation [provision]="provision" [editMode]="editMode"
+  *ngIf="provision.provisionType &&  provision.provisionType.code==PROVISION_TYPE_DOMICILIATION_CODE">
+</domiciliation>
+<shal [provision]="provision" [editMode]="editMode"
+  *ngIf="provision.provisionType && provision.provisionType.code==PROVISION_TYPE_SHAL_CODE">
+</shal>

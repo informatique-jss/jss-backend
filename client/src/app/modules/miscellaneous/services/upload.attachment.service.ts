@@ -29,6 +29,10 @@ export class UploadAttachmentService extends AppRestService<IAttachment>{
     this.previewFileGet(new HttpParams().set("idAttachment", attachment.id + ""), "attachment/download");
   }
 
+  disableAttachment(attachment: Attachment) {
+    return this.get(new HttpParams().set("idAttachment", attachment.id + ""), "attachment/disabled");
+  }
+
   downloadAttachment(attachment: Attachment) {
     this.downloadGet(new HttpParams().set("idAttachment", attachment.id + ""), "attachment/download");
   }

@@ -1,10 +1,10 @@
-package com.jss.jssbackend.modules.tiers.repository;
+package com.jss.jssbackend.modules.miscellaneous.repository;
 
 import java.util.List;
 
-import com.jss.jssbackend.modules.tiers.model.Mail;
-
 import org.springframework.data.repository.CrudRepository;
+
+import com.jss.jssbackend.modules.miscellaneous.model.Mail;
 
 public interface MailRepository extends CrudRepository<Mail, Integer> {
 

@@ -23,13 +23,14 @@ import com.jss.jssbackend.modules.miscellaneous.model.Attachment;
 import com.jss.jssbackend.modules.miscellaneous.model.City;
 import com.jss.jssbackend.modules.miscellaneous.model.Civility;
 import com.jss.jssbackend.modules.miscellaneous.model.Country;
+import com.jss.jssbackend.modules.miscellaneous.model.IId;
 import com.jss.jssbackend.modules.miscellaneous.model.Language;
 import com.jss.jssbackend.modules.miscellaneous.model.LegalForm;
-import com.jss.jssbackend.modules.tiers.model.Mail;
-import com.jss.jssbackend.modules.tiers.model.Phone;
+import com.jss.jssbackend.modules.miscellaneous.model.Mail;
+import com.jss.jssbackend.modules.miscellaneous.model.Phone;
 
 @Entity
-public class Domiciliation implements Serializable {
+public class Domiciliation implements Serializable, IId {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -115,6 +116,7 @@ public class Domiciliation implements Serializable {
 	private String accountingRecordDomiciliation;
 
 	@JsonProperty(value = "isLegalPerson")
+	@Column(nullable = false)
 	private Boolean isLegalPerson;
 
 	@ManyToOne

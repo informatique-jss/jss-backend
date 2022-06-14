@@ -8,8 +8,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import com.jss.jssbackend.modules.miscellaneous.model.IId;
+
 @Entity
-public class RecordType implements Serializable {
+public class RecordType implements Serializable, IId {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -17,7 +19,7 @@ public class RecordType implements Serializable {
 
 	@Column(nullable = false)
 	private String label;
-	
+
 	private String code;
 
 	public Integer getId() {
@@ -35,7 +37,7 @@ public class RecordType implements Serializable {
 	public void setLabel(String label) {
 		this.label = label;
 	}
-	
+
 	public String getCode() {
 		return code;
 	}

@@ -1,3 +1,4 @@
+import { DragDropModule } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -28,7 +29,6 @@ import { ResponsableMainComponent } from '../responsable-main/responsable-main.c
 import { SettlementBillingComponent } from '../settlement-billing/settlement-billing.component';
 import { TiersFollowupComponent } from '../tiers-followup/tiers-followup.component';
 import { PrincipalComponent } from '../tiers-main/tiers-main.component';
-import { DocumentManagementComponent } from './../document-management/document-management.component';
 import { TiersComponent } from './tiers.component';
 
 const routes: Routes = [
@@ -63,12 +63,12 @@ const routes: Routes = [
     MatListModule,
     MatProgressBarModule,
     MatSortModule,
-    MiscellaneousModule
+    MiscellaneousModule,
+    DragDropModule
   ],
   declarations: [TiersComponent,
     PrincipalComponent,
     SpecialOffersDialogComponent,
-    DocumentManagementComponent,
     SettlementBillingComponent,
     TiersFollowupComponent,
     ResponsableMainComponent,

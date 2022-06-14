@@ -6,3 +6,12 @@ table {
 td {
   padding-right: 8px;
 }
+
+mat-chip {
+  max-width: 200px;
+}
+
+.input-vertical {
+  width: 200px;
+  flex: 1 0 35px;
+}

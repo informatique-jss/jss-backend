@@ -1,4 +1,4 @@
-package com.jss.jssbackend.modules.tiers.model;
+package com.jss.jssbackend.modules.miscellaneous.model;
 
 import java.io.Serializable;
 import java.util.List;
@@ -11,9 +11,10 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.jss.jssbackend.modules.tiers.model.Tiers;
 
 @Entity
-public class Phone implements Serializable {
+public class Phone implements Serializable, IId {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

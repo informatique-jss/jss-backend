@@ -12,7 +12,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(indexes = { @Index(name = "pk_country", columnList = "id", unique = true) })
-public class Country implements Serializable {
+public class Country implements Serializable, IId {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

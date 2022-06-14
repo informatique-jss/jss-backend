@@ -20,7 +20,9 @@ import com.jss.jssbackend.modules.miscellaneous.repository.DocumentTypeRepositor
 import com.jss.jssbackend.modules.miscellaneous.repository.GiftRepository;
 import com.jss.jssbackend.modules.miscellaneous.repository.LanguageRepository;
 import com.jss.jssbackend.modules.miscellaneous.repository.LegalFormRepository;
+import com.jss.jssbackend.modules.miscellaneous.repository.MailRepository;
 import com.jss.jssbackend.modules.miscellaneous.repository.PaymentTypeRepository;
+import com.jss.jssbackend.modules.miscellaneous.repository.PhoneRepository;
 import com.jss.jssbackend.modules.miscellaneous.repository.RegionRepository;
 import com.jss.jssbackend.modules.miscellaneous.repository.SpecialOfferRepository;
 import com.jss.jssbackend.modules.miscellaneous.repository.UploadedFileRepository;
@@ -46,9 +48,7 @@ import com.jss.jssbackend.modules.tiers.repository.BillingClosureRecipientTypeRe
 import com.jss.jssbackend.modules.tiers.repository.BillingClosureTypeRepository;
 import com.jss.jssbackend.modules.tiers.repository.BillingLabelTypeRepository;
 import com.jss.jssbackend.modules.tiers.repository.JssSubscriptionRepository;
-import com.jss.jssbackend.modules.tiers.repository.MailRepository;
 import com.jss.jssbackend.modules.tiers.repository.PaymentDeadlineTypeRepository;
-import com.jss.jssbackend.modules.tiers.repository.PhoneRepository;
 import com.jss.jssbackend.modules.tiers.repository.RefundTypeRepository;
 import com.jss.jssbackend.modules.tiers.repository.ResponsableRepository;
 import com.jss.jssbackend.modules.tiers.repository.SubscriptionPeriodTypeRepository;

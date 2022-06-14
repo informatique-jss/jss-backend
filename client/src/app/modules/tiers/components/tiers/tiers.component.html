@@ -5,11 +5,7 @@
       <tiers-main [tiers]="tiers" [editMode]="editMode">
       </tiers-main>
     </mat-tab>
-    <mat-tab label="Gestion des pièces" *ngIf="isTiersTypeProspect()==false">
-      <document-management [tiers]="tiers" [editMode]="editMode">
-      </document-management>
-    </mat-tab>
-    <mat-tab label="Réglement, facturation & relance">
+    <mat-tab label="Pièces, réglements, facturations & relances" *ngIf="isTiersTypeProspect()==false">
       <settlement-billing [tiers]="tiers" [editMode]="editMode"></settlement-billing>
     </mat-tab>
     <mat-tab label="Responsable(s)">

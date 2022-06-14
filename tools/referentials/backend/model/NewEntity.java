@@ -6,10 +6,11 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
+import com.jss.jssbackend.modules.miscellaneous.model.IId;
 import javax.persistence.Id;
 
 @Entity
-public class NewEntity implements Serializable {
+public class NewEntity implements Serializable,IId {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

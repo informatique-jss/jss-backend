@@ -10,10 +10,11 @@ export interface Tiers extends ITiers {
   deliveryService: DeliveryService;
   intercom: string;
   intercommunityVat: string | null;
-  specialOffer: SpecialOffer | null;
+  specialOffers: SpecialOffer[] | null;
   instructions: string;
   paymentType: PaymentType;
   paymentIBAN: string;
   isProvisionalPaymentMandatory: boolean;
+  isSepaMandateReceived: boolean;
   responsables: Responsable[];
 }

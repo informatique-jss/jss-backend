@@ -1,8 +1,36 @@
 <form [formGroup]="settlementBillingForm" *ngIf="tiers">
   <div class="mat-accordion-container full-width">
     <fieldset [disabled]="editMode==false" class="fieldset-no-border">
-      <mat-accordion>
-        <mat-expansion-panel expanded *ngIf="instanceOfTiers(tiers)">
+      <mat-accordion multiple>
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Justificatif de parution
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <addressing [editMode]="editMode" [document]="publicationDocument" [displayPaperCopy]="true"
+            [displayMailCC]="instanceOfResponsable(tiers)" [displayNumberMailing]="true">
+          </addressing>
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              CFE
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <addressing [editMode]="editMode" [document]="cfeDocument" [displayMailCC]="instanceOfResponsable(tiers)">
+          </addressing>
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Kbis
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <addressing [editMode]="editMode" [document]="kbisDocument" [displayMailCC]="instanceOfResponsable(tiers)">
+          </addressing>
+        </mat-expansion-panel>
+        <mat-expansion-panel *ngIf="instanceOfTiers(tiers)" expanded>
           <mat-expansion-panel-header>
             <mat-panel-title>
               Règlement
@@ -27,6 +55,12 @@
                   <mat-label>IBAN</mat-label>
                   <input matInput formControlName="paymentIBAN" [(ngModel)]="tiers.paymentIBAN">
                 </mat-form-field>
+              </td>
+              <td
+                *ngIf="tiers !=undefined && tiers.paymentType!=undefined && tiers.paymentType.code!=undefined && tiers.paymentType.code==PAYMENT_TYPE_PRELEVEMENT">
+                <mat-slide-toggle formControlName="isSepaMandateReceived" [(ngModel)]="tiers.isSepaMandateReceived">
+                  Mandat SEPA reçu ?
+                </mat-slide-toggle>
               </td>
               <td>
                 <mat-slide-toggle formControlName="isProvisionalPaymentMandatory"
@@ -194,7 +228,7 @@
         <mat-expansion-panel *ngIf="instanceOfTiers(tiers)">
           <mat-expansion-panel-header>
             <mat-panel-title>
-              Reçu de provision
+              Reçu de provision / chèque du trésor public
             </mat-panel-title>
           </mat-expansion-panel-header>
           <addressing [editMode]="editMode" [document]="provisionalReceiptDocument" [hideAdressing]="true"></addressing>

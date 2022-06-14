@@ -19,7 +19,8 @@
                   matSuffix mat-icon-button>
                   <mat-icon>close</mat-icon>
                 </button>
-                <mat-autocomplete #autoSpecialOffer="matAutocomplete" [displayWith]="displayConfrere">
+                <mat-autocomplete autoActiveFirstOption #autoSpecialOffer="matAutocomplete"
+                  [displayWith]="displayConfrere">
                   <mat-option *ngFor="let confrere of filteredConfreres | async" [value]="confrere">
                     {{confrere.denomination}}
                   </mat-option>
@@ -31,8 +32,8 @@
                 <mat-label>Département</mat-label>
                 <input matInput placeholder="Département" [(ngModel)]="provision.shal.department"
                   [matAutocomplete]="autoCompleteCountry" formControlName="department" autocomplete="do-not-autofill">
-                <mat-autocomplete #autoCompleteCountry="matAutocomplete" [displayWith]="displayLabel"
-                  (optionSelected)="updateCharacterPrice()">
+                <mat-autocomplete autoActiveFirstOption #autoCompleteCountry="matAutocomplete"
+                  [displayWith]="displayLabel" (optionSelected)="updateCharacterPrice()">
                   <mat-option *ngFor="let department of filteredDepartments | async" [value]="department">
                     {{department.label}}
                   </mat-option>

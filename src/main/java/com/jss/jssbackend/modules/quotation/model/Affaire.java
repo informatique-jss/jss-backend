@@ -18,12 +18,13 @@ import com.jss.jssbackend.libs.search.model.IndexedField;
 import com.jss.jssbackend.modules.miscellaneous.model.City;
 import com.jss.jssbackend.modules.miscellaneous.model.Civility;
 import com.jss.jssbackend.modules.miscellaneous.model.Country;
+import com.jss.jssbackend.modules.miscellaneous.model.IId;
 import com.jss.jssbackend.modules.miscellaneous.model.LegalForm;
-import com.jss.jssbackend.modules.tiers.model.Mail;
-import com.jss.jssbackend.modules.tiers.model.Phone;
+import com.jss.jssbackend.modules.miscellaneous.model.Mail;
+import com.jss.jssbackend.modules.miscellaneous.model.Phone;
 
 @Entity
-public class Affaire implements Serializable {
+public class Affaire implements Serializable, IId {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -37,6 +38,7 @@ public class Affaire implements Serializable {
 	@IndexedField
 	private String denomination;
 
+	@Column(nullable = false)
 	private Boolean isIndividual;
 
 	@Column(length = 20)

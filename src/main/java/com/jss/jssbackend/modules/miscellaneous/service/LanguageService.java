@@ -7,5 +7,5 @@ import com.jss.jssbackend.modules.miscellaneous.model.Language;
 public interface LanguageService {
     public List<Language> getLanguages();
 
-    public Language getLanguageById(Integer id);
+    public Language getLanguage(Integer id);
 }

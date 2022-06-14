@@ -3,11 +3,12 @@ package com.jss.jssbackend.modules.quotation.model;
 import java.io.Serializable;
 import java.util.List;
 
+import com.jss.jssbackend.modules.miscellaneous.model.IId;
 import com.jss.jssbackend.modules.miscellaneous.model.SpecialOffer;
 import com.jss.jssbackend.modules.tiers.model.Responsable;
 import com.jss.jssbackend.modules.tiers.model.Tiers;
 
-public interface IQuotation extends Serializable {
+public interface IQuotation extends Serializable, IId {
 
 	public Integer getId();
 

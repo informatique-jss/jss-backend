@@ -34,6 +34,8 @@
           </mat-icon>
           <mat-icon (click)="downloadFile(element)" color="accent" matTooltip="Télécharger le fichier">download
           </mat-icon>
+          <mat-icon (click)="disableFile(element)" color="accent" matTooltip="Désactiver le fichier">block
+          </mat-icon>
         </td>
       </ng-container>
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

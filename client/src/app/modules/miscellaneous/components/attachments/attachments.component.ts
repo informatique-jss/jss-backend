@@ -6,6 +6,7 @@ import { CustomErrorStateMatcher } from 'src/app/app.component';
 import { Attachment } from '../../model/Attachment';
 import { IAttachment } from '../../model/IAttachment';
 import { UploadAttachmentService } from '../../services/upload.attachment.service';
+import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { UploadAttachementDialogComponent } from '../upload-attachement-dialog/upload-attachement-dialog.component';
 
 @Component({
@@ -31,6 +32,7 @@ export class AttachmentsComponent implements OnInit {
 
   constructor(
     protected uploadAttachementDialog: MatDialog,
+    public confirmationDialog: MatDialog,
     protected uploadAttachmentService: UploadAttachmentService
   ) { }
 
@@ -48,7 +50,7 @@ export class AttachmentsComponent implements OnInit {
       return new Date(b.uploadedFile.creationDate).getTime() - new Date(a.uploadedFile.creationDate).getTime();
     });
 
-    this.tiersAttachmentDataSource = new MatTableDataSource(this.entity.attachments);
+    this.tiersAttachmentDataSource = new MatTableDataSource(this.entity.attachments.filter(attachment => attachment.isDisabled == false));
     setTimeout(() => {
       this.tiersAttachmentDataSource.sort = this.sort;
       this.tiersAttachmentDataSource.sortingDataAccessor = (item: Attachment, property) => {
@@ -85,6 +87,26 @@ export class AttachmentsComponent implements OnInit {
         this.entity.attachments = response;
         this.setDataTable();
       }
+    });
+  }
+
+  disableFile(attachement: Attachment) {
+    const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
+      maxWidth: "400px",
+      data: {
+        title: "Désactiver le fichier",
+        content: "Êtes-vous sûr de vouloir désactiver ce fichier ?",
+        closeActionText: "Annuler",
+        validationActionText: "Confirmer"
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(dialogResult => {
+      if (dialogResult)
+        this.uploadAttachmentService.disableAttachment(attachement).subscribe(response => {
+          attachement.isDisabled = true;
+          this.setDataTable();
+        });
     });
   }
 

@@ -115,6 +115,27 @@ public class MiscellaneousController {
         return new ResponseEntity<List<AttachmentType>>(attachmentTypes, HttpStatus.OK);
     }
 
+    @GetMapping(inputEntryPoint + "/attachment/disabled")
+    public ResponseEntity<Boolean> disableDocument(@RequestParam Integer idAttachment) {
+        if (idAttachment == null)
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        Attachment attachment = attachmentService.getAttachment(idAttachment);
+        if (attachment == null)
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        try {
+            attachmentService.disableDocument(attachment);
+        } catch (HttpStatusCodeException e) {
+            logger.error("HTTP error when fetching documentTypes", e);
+            return new ResponseEntity<Boolean>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            logger.error("Error when fetching documentTypes", e);
+            return new ResponseEntity<Boolean>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+    }
+
     @PostMapping(inputEntryPoint + "/attachment/upload")
     public ResponseEntity<List<Attachment>> uploadAttachment(@RequestParam MultipartFile file,
             @RequestParam Integer idEntity, @RequestParam String entityType,

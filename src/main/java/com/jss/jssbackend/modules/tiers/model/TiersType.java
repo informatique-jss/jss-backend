@@ -8,8 +8,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import com.jss.jssbackend.modules.miscellaneous.model.IId;
+
 @Entity
-public class TiersType implements Serializable {
+public class TiersType implements Serializable, IId {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

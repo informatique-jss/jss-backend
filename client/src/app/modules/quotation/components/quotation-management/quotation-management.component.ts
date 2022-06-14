@@ -1,16 +1,16 @@
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
+import { QUOTATION_DOCUMENT_TYPE_CODE, QUOTATION_TYPE_OTHER_CODE } from 'src/app/libs/Constants';
+import { getDocument } from 'src/app/libs/DocumentHelper';
 import { DocumentTypeService } from 'src/app/modules/miscellaneous/services/document.type.service';
-import { IQuotation } from '../../model/IQuotation';
+import { TiersService } from 'src/app/modules/tiers/services/tiers.service';
 import { Document } from '../../../miscellaneous/model/Document';
 import { DocumentType } from '../../../miscellaneous/model/DocumentType';
-import { TiersService } from 'src/app/modules/tiers/services/tiers.service';
-import { getDocument } from 'src/app/libs/DocumentHelper';
-import { QUOTATION_DOCUMENT_TYPE_CODE, QUOTATION_TYPE_OTHER_CODE } from 'src/app/libs/Constants';
+import { IQuotation } from '../../model/IQuotation';
 import { QuotationLabelType } from '../../model/QuotationLabelType';
-import { QuotationLabelTypeService } from '../../services/quotation.label.type.service';
 import { RecordType } from '../../model/RecordType';
+import { QuotationLabelTypeService } from '../../services/quotation.label.type.service';
 import { RecordTypeService } from '../../services/record.type.service';
 
 @Component({
@@ -76,7 +76,11 @@ export class QuotationManagementComponent implements OnInit {
       }
       this.devisDocument = getDocument(QUOTATION_DOCUMENT_TYPE_CODE, this.quotation, this.documentTypes);
     })
+  }
 
+  getFormStatus(): boolean {
+    this.quotationManagementForm.markAllAsTouched();
+    return this.quotationManagementForm.valid;
   }
 
 }

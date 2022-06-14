@@ -7,5 +7,5 @@ import com.jss.jssbackend.modules.miscellaneous.model.DeliveryService;
 public interface DeliveryServiceService {
     public List<DeliveryService> getDeliveryServices();
 
-    public DeliveryService getDeliveryServiceById(Integer id);
+    public DeliveryService getDeliveryService(Integer id);
 }

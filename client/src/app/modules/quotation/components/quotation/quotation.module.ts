@@ -26,6 +26,7 @@ import { AffaireComponent } from '../affaire/affaire.component';
 import { ConfrereDialogComponent } from '../confreres-dialog/confreres-dialog.component';
 import { DomiciliationComponent } from '../domiciliation/domiciliation.component';
 import { OrderingCustomerComponent } from '../ordering-customer/ordering-customer.component';
+import { ProvisionItemComponent } from '../provision-item/provision-item.component';
 import { QuotationManagementComponent } from '../quotation-management/quotation-management.component';
 import { ShalComponent } from '../shal/shal.component';
 import { QuotationComponent } from './quotation.component';
@@ -69,6 +70,7 @@ const routes: Routes = [
     ProvisionComponent,
     DomiciliationComponent,
     ConfrereDialogComponent,
+    ProvisionItemComponent,
     ShalComponent],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'fr-FR' }

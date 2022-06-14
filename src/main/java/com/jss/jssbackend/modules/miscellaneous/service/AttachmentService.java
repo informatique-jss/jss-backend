@@ -20,4 +20,6 @@ public interface AttachmentService {
 
         public void deleteAttachment(Attachment attachment);
 
+        public void disableDocument(Attachment attachment);
+
 }

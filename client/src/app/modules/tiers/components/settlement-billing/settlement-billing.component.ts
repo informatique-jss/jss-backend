@@ -2,9 +2,14 @@ import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
 import { compareWithId } from 'src/app/libs/CompareHelper';
-import { BILLING_CLOSURE_TIERS_DOCUMENT_TYPE_CODE, BILLING_TIERS_DOCUMENT_TYPE_CODE, BILLING_TIERS_DOCUMENT_TYPE_OTHER_CODE, DUNNING_TIERS_DOCUMENT_TYPE_CODE, PAYMENT_TYPE_PRELEVEMENT, PROVISIONAL_RECEIPT_TIERS_DOCUMENT_TYPE_CODE, REFUND_TIERS_DOCUMENT_TYPE_CODE, REFUND_TYPE_VIREMENT, SEPARATOR_KEY_CODES } from 'src/app/libs/Constants';
+import { BILLING_CLOSURE_TIERS_DOCUMENT_TYPE_CODE, BILLING_TIERS_DOCUMENT_TYPE_CODE, BILLING_TIERS_DOCUMENT_TYPE_OTHER_CODE, CFE_TIERS_DOCUMENT_TYPE_CODE, DUNNING_TIERS_DOCUMENT_TYPE_CODE, KBIS_TIERS_DOCUMENT_TYPE_CODE, PAYMENT_TYPE_PRELEVEMENT, PROVISIONAL_RECEIPT_TIERS_DOCUMENT_TYPE_CODE, PUBLICATION_TIERS_DOCUMENT_TYPE_CODE, REFUND_TIERS_DOCUMENT_TYPE_CODE, REFUND_TYPE_VIREMENT, SEPARATOR_KEY_CODES } from 'src/app/libs/Constants';
+import { getDocument } from 'src/app/libs/DocumentHelper';
+import { instanceOfResponsable, instanceOfTiers } from 'src/app/libs/TypeHelper';
 import { PaymentType } from 'src/app/modules/miscellaneous/model/PaymentType';
+import { DocumentTypeService } from 'src/app/modules/miscellaneous/services/document.type.service';
 import { PaymentTypeService } from 'src/app/modules/miscellaneous/services/payment-type.service';
+import { Document } from "../../../miscellaneous/model/Document";
+import { DocumentType } from "../../../miscellaneous/model/DocumentType";
 import { BillingClosureRecipientType } from '../../model/BillingClosureRecipientType';
 import { BillingClosureType } from '../../model/BillingClosureType';
 import { BillingLabelType } from '../../model/BillingLabelType';
@@ -12,18 +17,12 @@ import { ITiers } from '../../model/ITiers';
 import { PaymentDeadlineType } from '../../model/PaymentDeadlineType';
 import { RefundType } from '../../model/RefundType';
 import { Responsable } from '../../model/Responsable';
-import { Document } from "../../../miscellaneous/model/Document";
-import { DocumentType } from "../../../miscellaneous/model/DocumentType";
 import { BillingClosureRecipientTypeService } from '../../services/billing.closure.recipient.type.service';
 import { BillingClosureTypeService } from '../../services/billing.closure.type.service';
 import { BillingLabelTypeService } from '../../services/billing.label.type.service';
 import { PaymentDeadlineTypeService } from '../../services/payment.deadline.type.service';
 import { RefundTypeService } from '../../services/refund.type.service';
 import { TiersService } from '../../services/tiers.service';
-import { TiersComponent } from '../tiers/tiers.component';
-import { DocumentTypeService } from 'src/app/modules/miscellaneous/services/document.type.service';
-import { getDocument } from 'src/app/libs/DocumentHelper';
-import { instanceOfResponsable, instanceOfTiers } from 'src/app/libs/TypeHelper';
 
 @Component({
   selector: 'settlement-billing',
@@ -50,6 +49,9 @@ export class SettlementBillingComponent implements OnInit {
   refundDocument: Document = {} as Document;
   provisionalReceiptDocument: Document = {} as Document;
   billingClosureDocument: Document = {} as Document;
+  publicationDocument: Document = {} as Document;
+  cfeDocument: Document = {} as Document;
+  kbisDocument: Document = {} as Document;
 
   overrideBillingAffaireAddress: boolean = false;
   overrideBillingAffaireMail: boolean = false;
@@ -118,16 +120,18 @@ export class SettlementBillingComponent implements OnInit {
     if (changes.tiers != undefined) {
       if (instanceOfTiers(this.tiers)) {
         if ((this.tiers.paymentType == null || this.tiers.paymentType == undefined) && this.paymentTypes.length > 0) {
-          this.paymentTypes.forEach(paymentType => {
+          for (const paymentType of this.paymentTypes) {
             if (paymentType.code == PAYMENT_TYPE_PRELEVEMENT)
-              if (instanceOfTiers(this.tiers))
-                this.tiers.paymentType = paymentType;
-          })
+              this.tiers.paymentType = paymentType;
+          }
         }
+        if (!this.tiers.isSepaMandateReceived)
+          this.tiers.isSepaMandateReceived = false;
 
         if (this.tiers.isProvisionalPaymentMandatory == undefined || this.tiers.isProvisionalPaymentMandatory == null)
           this.tiers.isProvisionalPaymentMandatory = false;
       }
+
 
       this.documentTypeService.getDocumentTypes().subscribe(response => {
         this.documentTypes = response;
@@ -141,6 +145,9 @@ export class SettlementBillingComponent implements OnInit {
           this.dunningDocument = getDocument(DUNNING_TIERS_DOCUMENT_TYPE_CODE, this.tiers, this.documentTypes);
           this.refundDocument = getDocument(REFUND_TIERS_DOCUMENT_TYPE_CODE, this.tiers, this.documentTypes);
           this.provisionalReceiptDocument = getDocument(PROVISIONAL_RECEIPT_TIERS_DOCUMENT_TYPE_CODE, this.tiers, this.documentTypes);
+          this.publicationDocument = getDocument(PUBLICATION_TIERS_DOCUMENT_TYPE_CODE, this.tiers, this.documentTypes);
+          this.cfeDocument = getDocument(CFE_TIERS_DOCUMENT_TYPE_CODE, this.tiers, this.documentTypes);
+          this.kbisDocument = getDocument(KBIS_TIERS_DOCUMENT_TYPE_CODE, this.tiers, this.documentTypes);
         }
 
       })
@@ -167,6 +174,7 @@ export class SettlementBillingComponent implements OnInit {
     mailsCreationAffaire: [''],
     mailsProvisionningConfirmation: [''],
     mailsMissingItemFormality: [''],
+    isSepaMandateReceived: [''],
   });
 
   instanceOfTiers = instanceOfTiers;

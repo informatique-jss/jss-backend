@@ -10,8 +10,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import com.jss.jssbackend.modules.miscellaneous.model.IId;
+
 @Entity
-public class ProvisionType implements Serializable {
+public class ProvisionType implements Serializable, IId {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

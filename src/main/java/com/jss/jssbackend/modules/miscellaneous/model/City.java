@@ -15,7 +15,7 @@ import javax.persistence.Table;
 @Entity
 @Table(indexes = { @Index(name = "pk_city", columnList = "id", unique = true),
 		@Index(name = "idx_city_country", columnList = "id_country") })
-public class City implements Serializable {
+public class City implements Serializable, IId {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

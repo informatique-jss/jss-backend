@@ -1,6 +1,7 @@
 import { Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { MatChipInputEvent } from '@angular/material/chips';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Observable } from 'rxjs';
@@ -11,6 +12,7 @@ import { compareWithId, isTiersTypeProspect } from 'src/app/libs/CompareHelper';
 import { COUNTRY_CODE_FRANCE, SEPARATOR_KEY_CODES, SUSCRIPTION_TYPE_CODE_PERIODE_12M } from 'src/app/libs/Constants';
 import { validateEmail, validateFrenchPhone, validateInternationalPhone } from 'src/app/libs/CustomFormsValidatorsHelper';
 import { callNumber, prepareMail } from 'src/app/libs/MailHelper';
+import { instanceOfResponsable } from 'src/app/libs/TypeHelper';
 import { City } from 'src/app/modules/miscellaneous/model/City';
 import { Country } from 'src/app/modules/miscellaneous/model/Country';
 import { Mail } from 'src/app/modules/miscellaneous/model/Mail';
@@ -34,7 +36,6 @@ import { SubscriptionPeriodTypeService } from '../../services/subscription.perio
 import { TiersCategoryService } from '../../services/tiers.category.service';
 import { TiersService } from '../../services/tiers.service';
 import { TiersTypeService } from '../../services/tiers.type.service';
-import { DocumentManagementComponent } from '../document-management/document-management.component';
 import { SettlementBillingComponent } from '../settlement-billing/settlement-billing.component';
 
 @Component({
@@ -91,7 +92,6 @@ export class ResponsableMainComponent implements OnInit {
   isSubscriptionPaper: boolean = false;
   isSubscriptionWeb: boolean = false;
 
-  @ViewChild(DocumentManagementComponent) documentManagementFormComponent: DocumentManagementComponent | undefined;
   @ViewChild(SettlementBillingComponent) documentSettlementBillingComponent: SettlementBillingComponent | undefined;
 
   constructor(private formBuilder: FormBuilder,
@@ -103,6 +103,7 @@ export class ResponsableMainComponent implements OnInit {
     private appService: AppService,
     protected tiersService: TiersService,
     protected tiersTypeService: TiersTypeService,
+    private snackBar: MatSnackBar,
     protected subscriptionPeriodTypeService: SubscriptionPeriodTypeService,
     protected tiersCategoryService: TiersCategoryService) { }
 
@@ -247,19 +248,25 @@ export class ResponsableMainComponent implements OnInit {
   }
 
   selectResponsable(responsableId: number) {
-    this.tiers.responsables.forEach(responsable => {
-      if (responsable.id == responsableId) {
-        this.selectedResponsable = responsable;
-        this.tiersService.setCurrentViewedResponsable(responsable);
-        this.toggleTabs();
-        this.initDefaultValues();
-        if (this.tiers.denomination != null) {
-          this.appService.changeHeaderTitle(this.tiers.denomination + " - " + (this.selectedResponsable.firstname != null ? (this.selectedResponsable.firstname + " " + this.selectedResponsable.lastname) : ""));
-        } else if (this.tiers.firstname != null) {
-          this.appService.changeHeaderTitle(this.tiers.firstname + " " + this.tiers.lastname + " - " + (this.selectedResponsable.firstname != null ? (this.selectedResponsable.firstname + " " + this.selectedResponsable.lastname) : ""));
+    if (this.selectedResponsable == null || this.getFormStatus()) {
+      this.tiers.responsables.forEach(responsable => {
+        if (responsable.id == responsableId) {
+          this.selectedResponsable = responsable;
+          this.tiersService.setCurrentViewedResponsable(responsable);
+          this.toggleTabs();
+          this.initDefaultValues();
+          if (this.tiers.denomination != null) {
+            this.appService.changeHeaderTitle(this.tiers.denomination + " - " + (this.selectedResponsable.firstname != null ? (this.selectedResponsable.firstname + " " + this.selectedResponsable.lastname) : ""));
+          } else if (this.tiers.firstname != null) {
+            this.appService.changeHeaderTitle(this.tiers.firstname + " " + this.tiers.lastname + " - " + (this.selectedResponsable.firstname != null ? (this.selectedResponsable.firstname + " " + this.selectedResponsable.lastname) : ""));
+          }
         }
-      }
-    })
+      })
+    } else {
+      let sb = this.snackBar.open("Compléter la saisie du responsable courant avant de continuer", 'Fermer', {
+        duration: 50 * 1000, panelClass: ["red-snackbar"]
+      });
+    }
   }
 
   deleteResponsable(responsableRow: any) {
@@ -277,15 +284,23 @@ export class ResponsableMainComponent implements OnInit {
   }
 
   addResponsable() {
-    this.selectedResponsable = {} as Responsable;
-    this.tiers.responsables.push(this.selectedResponsable);
-    this.tiersService.setCurrentViewedResponsable(this.selectedResponsable);
-    this.setDataTable();
-    this.toggleTabs();
-    this.initDefaultValues();
+    if (this.selectedResponsable == null || this.getFormStatus()) {
+      this.selectedResponsable = {} as Responsable;
+      this.tiers.responsables.push(this.selectedResponsable);
+      this.tiersService.setCurrentViewedResponsable(this.selectedResponsable);
+      this.setDataTable();
+      this.toggleTabs();
+      this.initDefaultValues();
+    } else {
+      let sb = this.snackBar.open("Compléter la saisie du responsable courant avant de continuer", 'Fermer', {
+        duration: 50 * 1000, panelClass: ["red-snackbar"]
+      });
+    }
   }
 
   initDefaultValues() {
+    if (this.selectedResponsable && !this.selectedResponsable.civility)
+      this.selectedResponsable.civility = this.civilities[0];
     if (this.selectedResponsable != null && (this.selectedResponsable.language == undefined || this.selectedResponsable.language == null))
       this.selectedResponsable.language = this.languages[0];
     if (this.selectedResponsable != null && (this.selectedResponsable.country == null || this.selectedResponsable.country == undefined))
@@ -296,7 +311,7 @@ export class ResponsableMainComponent implements OnInit {
       this.selectedResponsable.isBouclette = false;
 
     if (this.selectedResponsable != null && (this.selectedResponsable?.jssSubscription == null || this.selectedResponsable.jssSubscription == undefined)) {
-      this.selectedResponsable.jssSubscription = {} as JssSubscription;
+      this.selectedResponsable.jssSubscription = { isPaperSubscription: false, isWebSubscription: false } as JssSubscription;
     }
   }
 
@@ -500,20 +515,22 @@ export class ResponsableMainComponent implements OnInit {
   }
 
   compareWithId = compareWithId;
+  instanceOfResponsable = instanceOfResponsable;
 
   getFormStatus(): boolean {
-    let documentManagementFormStatus = this.documentManagementFormComponent?.getFormStatus();
-    let documentSettlementBillingFormStatus = this.documentSettlementBillingComponent?.getFormStatus();
-    this.principalForm.markAllAsTouched();
+    let status = true;
+    if (this.selectedResponsable != null) {
+      let documentSettlementBillingFormStatus = this.documentSettlementBillingComponent?.getFormStatus();
+      this.principalForm.markAllAsTouched();
 
-    if (this.selectedResponsable != null && (this.selectedResponsable.isBouclette == null || this.selectedResponsable.isBouclette == undefined))
-      this.selectedResponsable.isBouclette = false;
+      if (this.selectedResponsable != null && (this.selectedResponsable.isBouclette == null || this.selectedResponsable.isBouclette == undefined))
+        this.selectedResponsable.isBouclette = false;
 
-    if (this.selectedResponsable?.jssSubscription != undefined && this.selectedResponsable.jssSubscription.isPaperSubscription)
-      this.selectedResponsable.jssSubscription.isWebSubscription = true;
+      if (this.selectedResponsable?.jssSubscription != undefined && this.selectedResponsable.jssSubscription.isPaperSubscription)
+        this.selectedResponsable.jssSubscription.isWebSubscription = true;
 
-    if (documentManagementFormStatus != undefined && documentSettlementBillingFormStatus != undefined)
-      return this.selectedResponsable == null || this.principalForm.valid && documentManagementFormStatus && documentSettlementBillingFormStatus;
-    return false;
+      status = status && this.principalForm.valid && documentSettlementBillingFormStatus!;
+    }
+    return status;
   }
 }

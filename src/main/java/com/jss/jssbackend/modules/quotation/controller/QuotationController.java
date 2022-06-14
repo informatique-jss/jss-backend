@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.jss.jssbackend.libs.ValidationHelper;
 import com.jss.jssbackend.modules.miscellaneous.model.Department;
@@ -71,6 +72,9 @@ public class QuotationController {
   private static final String inputEntryPoint = "/quotation";
 
   private static final Logger logger = LoggerFactory.getLogger(QuotationController.class);
+
+  @Autowired
+  ValidationHelper validationHelper;
 
   @Autowired
   QuotationService quotationService;
@@ -443,209 +447,105 @@ public class QuotationController {
 
   @PostMapping(inputEntryPoint + "/quotation")
   public ResponseEntity<Quotation> addOrUpdateQuotation(@RequestBody Quotation quotation) {
+    try {
+      validationHelper.validateReferential(quotation.getSpecialOffer(), false);
+      validationHelper.validateReferential(quotation.getTiers(), false);
+      validationHelper.validateReferential(quotation.getResponsable(), false);
+      validationHelper.validateReferential(quotation.getQuotationLabelType(), true);
+      validationHelper.validateString(quotation.getQuotationLabel(), false, 40);
+      validationHelper.validateReferential(quotation.getRecordType(), true);
 
-    if (quotation.getSpecialOffer() != null && (quotation.getSpecialOffer().getId() == null
-        || quotationService.getQuotation(quotation.getSpecialOffer().getId()) == null))
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+      if (quotation.getResponsable() == null && quotation.getTiers() == null)
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
-    if (quotation.getTiers() != null
-        && (quotation.getTiers().getId() == null || tiersService.getTiersById(quotation.getTiers().getId()) == null))
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+      if (quotation.getQuotationLabel() == null && quotation.getQuotationLabelType() == null)
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
-    if (quotation.getResponsable() != null && (quotation.getResponsable().getId() == null
-        || responsableService.getResponsable(quotation.getResponsable().getId()) == null))
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-    if (quotation.getResponsable() == null && quotation.getTiers() == null)
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-    if (quotation.getQuotationLabelType() != null && (quotation.getQuotationLabelType().getId() == null
-        || quotationLabelTypeService.getQuotationLabelType(quotation.getQuotationLabelType().getId()) == null))
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-    if (quotation.getQuotationLabel() != null && quotation.getQuotationLabel().length() > 40)
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-    if (quotation.getQuotationLabel() == null && quotation.getQuotationLabelType() == null)
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-    if (quotation.getRecordType() == null || quotation.getQuotationLabelType().getId() == null
-        || quotationLabelTypeService.getQuotationLabelType(quotation.getQuotationLabelType().getId()) == null)
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-    if (quotation.getProvisions() != null && quotation.getProvisions().size() > 0) {
-      for (Provision provision : quotation.getProvisions()) {
-        if (provision.getAffaire() == null)
-          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        Affaire affaire = provision.getAffaire();
-        if (affaire.getAddress() == null || affaire.getAddress().length() > 60)
-          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        // TODO : réaliser la création de la city si absente du référentiel
-        if (affaire.getCity().getId() != null && cityService.getCity(affaire.getCity().getId()) == null)
-          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        if (affaire.getIsIndividual() && (affaire.getCivility() == null || affaire.getCivility().getId() == null
-            || civilityService.getCivility(affaire.getCity().getId()) == null))
-          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        if (affaire.getCountry() == null || affaire.getCountry().getId() == null
-            || countryService.getCountry(affaire.getCountry().getId()) == null)
-          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        if (affaire.getIsIndividual() == false && affaire.getDenomination() == null
-            || affaire.getDenomination().length() > 60)
-          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        if (affaire.getExternalReference() != null && affaire.getExternalReference().length() > 60)
-          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        if (affaire.getIsIndividual() && (affaire.getFirstname() == null || affaire.getFirstname().length() > 20))
-          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        if (affaire.getIsIndividual() && (affaire.getLastname() == null || affaire.getLastname().length() > 20))
-          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        if (affaire.getLegalForm() == null || affaire.getLegalForm().getId() == null
-            || legalFormService.getLegalForm(affaire.getLegalForm().getId()) == null)
-          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        if (affaire.getCountry() != null && affaire.getCountry().getCode().equals("FR")
-            && (affaire.getPostalCode() == null || affaire.getPostalCode().equals("")
-                || cityService.getCitiesByPostalCode(affaire.getPostalCode()).size() == 0))
-          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        if (affaire.getSiren() == null || affaire.getSiret() == null && affaire.getRna() == null)
-          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        if (affaire.getRna() != null
-            && !ValidationHelper.validateRna(affaire.getRna().toUpperCase().replaceAll(" ", "")))
-          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        if (affaire.getSiren() != null
-            && !ValidationHelper.validateSiren(affaire.getSiren().toUpperCase().replaceAll(" ", "")))
-          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        if (affaire.getSiret() != null
-            && !ValidationHelper.validateSiret(affaire.getSiret().toUpperCase().replaceAll(" ", "")))
-          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-        // Domiciliation
-        if (provision.getDomiciliation() != null) {
-          Domiciliation domiciliation = provision.getDomiciliation();
-          if (domiciliation.getDomiciliationContractType() == null
-              || domiciliation.getDomiciliationContractType().getId() == null || domiciliationContractTypeService
-                  .getDomiciliationContractType(domiciliation.getDomiciliationContractType().getId()) == null) {
+      if (quotation.getProvisions() != null && quotation.getProvisions().size() > 0) {
+        for (Provision provision : quotation.getProvisions()) {
+          if (provision.getAffaire() == null)
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+          Affaire affaire = provision.getAffaire();
+
+          validationHelper.validateString(affaire.getAddress(), true, 60);
+          validationHelper.validateReferential(affaire.getCity(), true);
+          validationHelper.validateReferential(affaire.getCountry(), true);
+          validationHelper.validateString(affaire.getExternalReference(), false, 60);
+          validationHelper.validateReferential(affaire.getLegalForm(), true);
+          if (affaire.getCountry() != null && affaire.getCountry().getCode().equals("FR"))
+            validationHelper.validateString(affaire.getPostalCode(), true, 10);
+
+          if (affaire.getIsIndividual()) {
+            validationHelper.validateReferential(affaire.getCivility(), true);
+            validationHelper.validateString(affaire.getFirstname(), true, 20);
+            validationHelper.validateString(affaire.getLastname(), true, 20);
+
+          } else {
+            validationHelper.validateString(affaire.getDenomination(), true, 60);
           }
-
-          if (domiciliation.getLanguage() == null || domiciliation.getLanguage().getId() == null
-              || languageService.getLanguageById(domiciliation.getLanguage().getId()) == null) {
+          if (affaire.getSiren() == null || affaire.getSiret() == null && affaire.getRna() == null)
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+          if (affaire.getRna() != null
+              && !validationHelper.validateRna(affaire.getRna().toUpperCase().replaceAll(" ", "")))
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+          if (affaire.getSiren() != null
+              && !validationHelper.validateSiren(affaire.getSiren().toUpperCase().replaceAll(" ", "")))
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+          if (affaire.getSiret() != null
+              && !validationHelper.validateSiret(affaire.getSiret().toUpperCase().replaceAll(" ", "")))
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+          // Domiciliation
+          if (provision.getDomiciliation() != null) {
+            Domiciliation domiciliation = provision.getDomiciliation();
+
+            validationHelper.validateReferential(domiciliation.getDomiciliationContractType(), true);
+            validationHelper.validateReferential(domiciliation.getLanguage(), true);
+            validationHelper.validateReferential(domiciliation.getBuildingDomiciliation(), true);
+            validationHelper.validateReferential(domiciliation.getMailRedirectionType(), true);
+            validationHelper.validateString(domiciliation.getAddress(), false, 60);
+            validationHelper.validateString(domiciliation.getPostalCode(), false, 10);
+            validationHelper.validateString(domiciliation.getMailRecipient(), false, 60);
+            validationHelper.validateString(domiciliation.getActivityAddress(), false, 60);
+            validationHelper.validateReferential(domiciliation.getCity(), false);
+            validationHelper.validateReferential(domiciliation.getCountry(), false);
+            validationHelper.validateString(domiciliation.getAccountingRecordDomiciliation(), true, 60);
+
+            if (domiciliation.isLegalPerson()) {
+              if ((domiciliation.getLegalGardianSiren() == null
+                  || !validationHelper.validateSiren(domiciliation.getLegalGardianSiren())))
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+              validationHelper.validateString(domiciliation.getLegalGardianDenomination(), true, 60);
+              validationHelper.validateReferential(domiciliation.getLegalGardianLegalForm(), true);
+            } else {
+              validationHelper.validateReferential(domiciliation.getLegalGardianCivility(), true);
+              validationHelper.validateString(domiciliation.getLegalGardianFirstname(), true, 20);
+              validationHelper.validateString(domiciliation.getLegalGardianLastname(), true, 20);
+              validationHelper.validateDate(domiciliation.getLegalGardianBirthdate(), true, new Date());
+              validationHelper.validateString(domiciliation.getLegalGardianPlaceOfBirth(), true, 60);
+              validationHelper.validateString(domiciliation.getLegalGardianJob(), true, 30);
+            }
+
+            validationHelper.validateString(domiciliation.getLegalGardianMailRecipient(), true, 60);
+            validationHelper.validateString(domiciliation.getLegalGardianAddress(), true, 60);
+            if (domiciliation.getCountry() != null && domiciliation.getCountry().getCode().equals("FR"))
+              validationHelper.validateString(domiciliation.getLegalGardianPostalCode(), true, 10);
+            validationHelper.validateReferential(domiciliation.getLegalGardianCity(), true);
+            validationHelper.validateReferential(domiciliation.getLegalGardianCountry(), true);
+
+            // TODO : shal vérification
           }
-
-          if (domiciliation.getBuildingDomiciliation() == null
-              || domiciliation.getBuildingDomiciliation().getId() == null || buildingDomiciliationService
-                  .getBuildingDomiciliation(domiciliation.getBuildingDomiciliation().getId()) == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-          }
-
-          if (domiciliation.getMailRedirectionType() == null || domiciliation.getMailRedirectionType().getId() == null
-              || mailRedirectionTypeService
-                  .getMailRedirectionType(domiciliation.getMailRedirectionType().getId()) == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-          }
-
-          if (domiciliation.getAddress() != null && domiciliation.getAddress().length() > 60)
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-          if (domiciliation.getPostalCode() != null && domiciliation.getPostalCode().length() > 10)
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-          if (domiciliation.getMailRecipient() != null && domiciliation.getMailRecipient().length() > 60)
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-          if (domiciliation.getActivityAddress() == null || domiciliation.getActivityAddress().length() > 60)
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-          if (domiciliation.getCity() != null && (domiciliation.getCity().getId() == null
-              || cityService.getCity(domiciliation.getCity().getId()) == null))
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-          if (domiciliation.getCountry() != null && (domiciliation.getCountry().getId() == null
-              || countryService.getCountry(domiciliation.getCountry().getId()) == null))
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-          if (domiciliation.getAccountingRecordDomiciliation() == null
-              || domiciliation.getAccountingRecordDomiciliation().length() > 60)
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-          if (domiciliation.isLegalPerson() == false &&
-              (domiciliation.getLegalGardianCivility() == null
-                  || domiciliation.getLegalGardianCivility().getId() == null
-                  ||
-                  civilityService.getCivility(domiciliation.getLegalGardianCivility().getId()) == null))
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-          if (domiciliation.isLegalPerson() == false &&
-              (domiciliation.getLegalGardianFirstname() == null
-                  || domiciliation.getLegalGardianFirstname().length() > 20))
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-          if (domiciliation.isLegalPerson() == false &&
-              (domiciliation.getLegalGardianLastname() == null
-                  || domiciliation.getLegalGardianLastname().length() > 20))
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-          if (domiciliation.isLegalPerson() == false &&
-              (domiciliation.getLegalGardianBirthdate() == null
-                  || domiciliation.getLegalGardianBirthdate().after(new Date())))
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-          if (domiciliation.isLegalPerson() == false &&
-              (domiciliation.getLegalGardianPlaceOfBirth() == null
-                  || domiciliation.getLegalGardianPlaceOfBirth().length() > 60))
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-          if (domiciliation.isLegalPerson() == false
-              && (domiciliation.getLegalGardianJob() == null ||
-                  domiciliation.getLegalGardianJob().length() > 30))
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-          if (domiciliation.isLegalPerson() && (domiciliation.getLegalGardianSiren() == null
-              || !ValidationHelper.validateSiren(domiciliation.getLegalGardianSiren())))
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-          if (domiciliation.isLegalPerson() &&
-              (domiciliation.getLegalGardianDenomination() == null
-                  || domiciliation.getLegalGardianDenomination().length() > 60))
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-          if (domiciliation.isLegalPerson() &&
-              (domiciliation.getLegalGardianLegalForm() == null
-                  || domiciliation.getLegalGardianLegalForm().getId() == null
-                  ||
-                  legalFormService.getLegalForm(domiciliation.getLegalGardianLegalForm().getId()) == null))
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-          if (domiciliation.getLegalGardianMailRecipient() == null
-              || domiciliation.getLegalGardianMailRecipient().length() > 60)
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-          if (domiciliation.getLegalGardianAddress() == null || domiciliation.getLegalGardianAddress().length() > 60)
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-          if (domiciliation.getLegalGardianPostalCode() != null
-              && domiciliation.getLegalGardianPostalCode().length() > 10)
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-          if (domiciliation.getLegalGardianCity() != null && (domiciliation.getLegalGardianCity().getId() == null
-              || cityService.getCity(domiciliation.getLegalGardianCity().getId()) == null))
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-          if (domiciliation.getLegalGardianCountry() != null && (domiciliation.getLegalGardianCountry().getId() == null
-              || countryService.getCountry(domiciliation.getLegalGardianCountry().getId()) == null))
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
       }
-    }
 
-    try
-
-    {
       quotation = quotationService.addOrUpdateQuotation(quotation);
+    } catch (ResponseStatusException e) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching client types", e);
+      logger.error("HTTP error when fetching quotation", e);
       return new ResponseEntity<Quotation>(HttpStatus.INTERNAL_SERVER_ERROR);
     } catch (Exception e) {
-      logger.error("Error when fetching client types", e);
+      logger.error("Error when fetching quotation", e);
       return new ResponseEntity<Quotation>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
     return new ResponseEntity<Quotation>(quotation, HttpStatus.OK);

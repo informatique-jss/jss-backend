@@ -115,3 +115,22 @@ $custom-typography: mat-typography-config(
   $font-family: Avenir Black
 );
 @include mat-core($custom-typography);
+
+
+.blue-snackbar {
+  background: #1C3D58 ;
+  color:white;
+}
+
+.blue-snackbar .mat-simple-snackbar-action  {
+  color: white;
+}
+
+.red-snackbar {
+  background: #c0392b ;
+  color:white;
+}
+
+.red-snackbar .mat-simple-snackbar-action  {
+  color: white;
+}

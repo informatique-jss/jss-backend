@@ -84,8 +84,8 @@ export class ShalComponent implements OnInit {
   ngOnInit() {
     this.confrereService.getConfreres().subscribe(response => {
       this.confreres = response;
-      if (this.provision.shal.confrere == null || this.provision.shal.confrere == undefined || this.provision.shal.confrere.id == undefined)
-        this.provision.shal.confrere = this.getJssConfrere();
+      if (this.provision.shal!.confrere == null || this.provision.shal!.confrere == undefined || this.provision.shal!.confrere.id == undefined)
+        this.provision.shal!.confrere = this.getJssConfrere();
     })
 
     this.noticeTypeFamilyService.getNoticeTypeFamilies().subscribe(response => {
@@ -118,31 +118,31 @@ export class ShalComponent implements OnInit {
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.provision) {
-      if (!this.provision.shal)
-        this.provision.shal = {} as Shal;
-      if (!this.provision.shal.confrere)
-        this.provision.shal.confrere = this.getJssConfrere();
-      if (!this.provision.shal.isRedactedByJss)
-        this.provision.shal.isRedactedByJss = false;
-      if (!this.provision.shal.journalType)
-        this.provision.shal.journalType = this.journalTypes[0];
-      if (!this.provision.shal.isHeader)
-        this.provision.shal.isHeader = false;
-      if (!this.provision.shal.isLogo)
-        this.provision.shal.isLogo = false;
-      if (!this.provision.shal.isPictureBaloPackage)
-        this.provision.shal.isPictureBaloPackage = false;
-      if (!this.provision.shal.isLegalDisplay)
-        this.provision.shal.isLegalDisplay = false;
-      if (!this.provision.shal.isProofReadingDocument)
-        this.provision.shal.isProofReadingDocument = false;
-      if (!this.provision.shal.isPublicationCertificateDocument)
-        this.provision.shal.isPublicationCertificateDocument = false;
+      if (!this.provision.shal!)
+        this.provision.shal! = {} as Shal;
+      if (!this.provision.shal!.confrere)
+        this.provision.shal!.confrere = this.getJssConfrere();
+      if (!this.provision.shal!.isRedactedByJss)
+        this.provision.shal!.isRedactedByJss = false;
+      if (!this.provision.shal!.journalType)
+        this.provision.shal!.journalType = this.journalTypes[0];
+      if (!this.provision.shal!.isHeader)
+        this.provision.shal!.isHeader = false;
+      if (!this.provision.shal!.isLogo)
+        this.provision.shal!.isLogo = false;
+      if (!this.provision.shal!.isPictureBaloPackage)
+        this.provision.shal!.isPictureBaloPackage = false;
+      if (!this.provision.shal!.isLegalDisplay)
+        this.provision.shal!.isLegalDisplay = false;
+      if (!this.provision.shal!.isProofReadingDocument)
+        this.provision.shal!.isProofReadingDocument = false;
+      if (!this.provision.shal!.isPublicationCertificateDocument)
+        this.provision.shal!.isPublicationCertificateDocument = false;
       this.documentTypeService.getDocumentTypes().subscribe(response => {
         this.documentTypes = response;
-        this.publicationDocument = getDocument(PUBLICATION_TIERS_DOCUMENT_TYPE_CODE, this.provision.shal, this.documentTypes);
-        this.proofReadingDocument = getDocument(PROOF_READING_DOCUMENT_TYPE_CODE, this.provision.shal, this.documentTypes);
-        this.publicationCertificateDocument = getDocument(PUBLICATION_CERTIFICATE_DOCUMENT_TYPE_CODE, this.provision.shal, this.documentTypes);
+        this.publicationDocument = getDocument(PUBLICATION_TIERS_DOCUMENT_TYPE_CODE, this.provision.shal!, this.documentTypes);
+        this.proofReadingDocument = getDocument(PROOF_READING_DOCUMENT_TYPE_CODE, this.provision.shal!, this.documentTypes);
+        this.publicationCertificateDocument = getDocument(PUBLICATION_CERTIFICATE_DOCUMENT_TYPE_CODE, this.provision.shal!, this.documentTypes);
 
       })
 
@@ -162,14 +162,13 @@ export class ShalComponent implements OnInit {
   }
 
   shalForm = this.formBuilder.group({
-    isPublishedByJss: ['', [Validators.required]],
     journalType: ['', [Validators.required]],
     department: ['', [Validators.required, this.checkAutocompleteField("department")]],
     confrere: ['', [this.checkAutocompleteField("confrere")]],
     publicationDate: ['', [Validators.required]],
     isRedactedByJss: ['', [Validators.required]],
     notice: ['', [Validators.required]],
-    noticeTypes: ['', [Validators.required, this.checkAutocompleteField("noticeTypes")]],
+    noticeTypes: [''],
     noticeTypeFamily: ['', [Validators.required]],
     isLogo: ['', [Validators.required]],
     isHeader: ['', [Validators.required]],
@@ -187,12 +186,12 @@ export class ShalComponent implements OnInit {
 
   getFormStatus(): boolean {
     this.shalForm.markAllAsTouched();
-    return this.shalForm.valid;
+    return this.shalForm.valid && this.provision.shal!.noticeTypes && this.provision.shal!.noticeTypes.length > 0;
   }
 
   updateCharacterPrice() {
-    if (this.provision.shal.department != undefined && this.provision.shal.publicationDate != undefined)
-      this.characterPriceService.getCharacterPrice(this.provision.shal.department, this.provision.shal.publicationDate).subscribe(response => {
+    if (this.provision.shal!.department != undefined && this.provision.shal!.publicationDate != undefined)
+      this.characterPriceService.getCharacterPrice(this.provision.shal!.department, this.provision.shal!.publicationDate).subscribe(response => {
         if (response != null)
           this.characterPrice = response;
       })
@@ -225,9 +224,9 @@ export class ShalComponent implements OnInit {
 
   private _filterDepartment(value: string): Department[] {
     const filterValue = (value != undefined && value.toLowerCase != undefined) ? value.toLowerCase() : "";
-    if (this.provision.shal.confrere != null && this.provision.shal.confrere != undefined
-      && this.provision.shal.confrere.departments != null && this.provision.shal.confrere.departments != undefined)
-      return this.provision.shal.confrere.departments.filter(department => department.label != undefined && department.label.toLowerCase().includes(filterValue));
+    if (this.provision.shal!.confrere != null && this.provision.shal!.confrere != undefined
+      && this.provision.shal!.confrere.departments != null && this.provision.shal!.confrere.departments != undefined)
+      return this.provision.shal!.confrere.departments.filter(department => department.label != undefined && department.label.toLowerCase().includes(filterValue));
     return [];
   }
 
@@ -238,7 +237,7 @@ export class ShalComponent implements OnInit {
 
   private _filterNoticeType(value: string): NoticeType[] {
     const filterValue = (value != undefined && value.toLowerCase != undefined) ? value.toLowerCase() : "";
-    return this.noticeTypes.filter(noticeType => noticeType.label != undefined && noticeType.label.toLowerCase().includes(filterValue) && noticeType.noticeTypeFamily.id == this.provision.shal.noticeTypeFamily.id);
+    return this.noticeTypes.filter(noticeType => noticeType.label != undefined && noticeType.label.toLowerCase().includes(filterValue) && noticeType.noticeTypeFamily.id == this.provision.shal!.noticeTypeFamily.id);
   }
 
   checkAutocompleteField(fieldName: string): ValidationErrors | null {
@@ -260,7 +259,7 @@ export class ShalComponent implements OnInit {
     });
     dialogSpecialOffer.afterClosed().subscribe(response => {
       if (response && response != null)
-        this.provision.shal.confrere = response;
+        this.provision.shal!.confrere = response;
     });
   }
 
@@ -270,7 +269,7 @@ export class ShalComponent implements OnInit {
       const root = control.root as FormGroup;
 
       const fieldValue = root.get(fieldName)?.value;
-      if (this.provision.shal && this.provision.shal.isLegalDisplay && this.checkFieldFilledIfIsOrder(fieldName) && (fieldValue == undefined || fieldValue == null || fieldValue.length == 0))
+      if (this.provision.shal! && this.provision.shal!.isLegalDisplay && this.checkFieldFilledIfIsOrder(fieldName) && (fieldValue == undefined || fieldValue == null || fieldValue.length == 0))
         return {
           notFilled: true
         };
@@ -294,23 +293,23 @@ export class ShalComponent implements OnInit {
 
 
   addNoticeType(event: MatAutocompleteSelectedEvent): void {
-    if (!this.provision.shal.noticeTypes)
-      this.provision.shal.noticeTypes = [] as Array<NoticeType>;
+    if (!this.provision.shal!.noticeTypes)
+      this.provision.shal!.noticeTypes = [] as Array<NoticeType>;
     // Do not add twice
-    if (this.provision.shal.noticeTypes.map(noticeType => noticeType.id).indexOf(event.option.value.id) >= 0)
+    if (this.provision.shal!.noticeTypes.map(noticeType => noticeType.id).indexOf(event.option.value.id) >= 0)
       return;
     if (event.option && event.option.value && event.option.value.id)
-      this.provision.shal.noticeTypes.push(event.option.value);
+      this.provision.shal!.noticeTypes.push(event.option.value);
     this.shalForm.get("noticeTypes")?.setValue(null);
     this.noticeTypesInput!.nativeElement.value = '';
   }
 
   removeNoticeType(inputNoticeType: NoticeType): void {
-    if (this.provision.shal.noticeTypes != undefined && this.provision.shal.noticeTypes != null && this.editMode)
-      for (let i = 0; i < this.provision.shal.noticeTypes.length; i++) {
-        const noticeType = this.provision.shal.noticeTypes[i];
+    if (this.provision.shal!.noticeTypes != undefined && this.provision.shal!.noticeTypes != null && this.editMode)
+      for (let i = 0; i < this.provision.shal!.noticeTypes.length; i++) {
+        const noticeType = this.provision.shal!.noticeTypes[i];
         if (noticeType.id == inputNoticeType.id) {
-          this.provision.shal.noticeTypes.splice(i, 1);
+          this.provision.shal!.noticeTypes.splice(i, 1);
           return;
         }
       }

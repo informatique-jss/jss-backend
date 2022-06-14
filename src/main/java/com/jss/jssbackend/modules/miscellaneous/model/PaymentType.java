@@ -9,7 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-public class PaymentType implements Serializable {
+public class PaymentType implements Serializable, IId {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -17,7 +17,7 @@ public class PaymentType implements Serializable {
 
 	@Column(nullable = false)
 	private String label;
-	
+
 	private String code;
 
 	public Integer getId() {
@@ -35,7 +35,7 @@ public class PaymentType implements Serializable {
 	public void setLabel(String label) {
 		this.label = label;
 	}
-	
+
 	public String getCode() {
 		return code;
 	}

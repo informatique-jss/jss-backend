@@ -1,8 +1,8 @@
-package com.jss.jssbackend.modules.tiers.service;
+package com.jss.jssbackend.modules.miscellaneous.service;
 
 import java.util.List;
 
-import com.jss.jssbackend.modules.tiers.model.Phone;
+import com.jss.jssbackend.modules.miscellaneous.model.Phone;
 
 public interface PhoneService {
     public List<Phone> findPhones(String phone);

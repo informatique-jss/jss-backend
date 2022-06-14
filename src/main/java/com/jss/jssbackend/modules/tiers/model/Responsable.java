@@ -24,9 +24,11 @@ import com.jss.jssbackend.modules.miscellaneous.model.Attachment;
 import com.jss.jssbackend.modules.miscellaneous.model.City;
 import com.jss.jssbackend.modules.miscellaneous.model.Civility;
 import com.jss.jssbackend.modules.miscellaneous.model.Country;
+import com.jss.jssbackend.modules.miscellaneous.model.Document;
 import com.jss.jssbackend.modules.miscellaneous.model.IAttachment;
 import com.jss.jssbackend.modules.miscellaneous.model.Language;
-import com.jss.jssbackend.modules.miscellaneous.model.Document;
+import com.jss.jssbackend.modules.miscellaneous.model.Mail;
+import com.jss.jssbackend.modules.miscellaneous.model.Phone;
 import com.jss.jssbackend.modules.profile.model.Employee;
 
 @Entity
@@ -45,7 +47,10 @@ public class Responsable implements ITiers, IAttachment {
 	@JsonBackReference
 	private Tiers tiers;
 
+	@Column(nullable = false)
 	private Boolean isActive;
+
+	@Column(nullable = false)
 	private Boolean isBouclette;
 
 	// Common responsable / tiers

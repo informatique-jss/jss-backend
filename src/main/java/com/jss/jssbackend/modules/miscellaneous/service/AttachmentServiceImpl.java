@@ -94,10 +94,11 @@ public class AttachmentServiceImpl implements AttachmentService {
 
         Attachment attachment = new Attachment();
         attachment.setAttachmentType(attachmentType);
+        attachment.setIsDisabled(false);
         attachment.setUploadedFile(uploadedFileService.createUploadedFile(filename, absoluteFilePath));
 
         if (entityType.equals(Tiers.class.getSimpleName())) {
-            Tiers tiers = tiersService.getTiersById(idEntity);
+            Tiers tiers = tiersService.getTiers(idEntity);
             if (tiers == null)
                 return new ArrayList<Attachment>();
             attachment.setTiers(tiers);
@@ -137,5 +138,11 @@ public class AttachmentServiceImpl implements AttachmentService {
         if (attachment != null) {
             attachmentRepository.delete(attachment);
         }
+    }
+
+    @Override
+    public void disableDocument(Attachment attachment) {
+        attachment.setIsDisabled(true);
+        attachmentRepository.save(attachment);
     }
 }

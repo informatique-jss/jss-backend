@@ -98,26 +98,26 @@ export class DomiciliationComponent implements OnInit {
     })
     this.languageService.getLanguages().subscribe(response => {
       this.languages = response;
-      if (this.provision.domiciliation != null && this.provision.domiciliation.language == undefined || this.provision.domiciliation.language == null)
-        this.provision.domiciliation.language = this.languages[0];
+      if (this.provision.domiciliation! != null && this.provision.domiciliation!.language == undefined || this.provision.domiciliation!.language == null)
+        this.provision.domiciliation!.language = this.languages[0];
     })
     this.buildingDomiciliationService.getBuildingDomiciliations().subscribe(response => {
       this.buildingDomiciliations = response;
-      if (this.provision.domiciliation != null && this.provision.domiciliation.buildingDomiciliation == undefined || this.provision.domiciliation.buildingDomiciliation == null)
-        this.provision.domiciliation.buildingDomiciliation = this.buildingDomiciliations[0];
+      if (this.provision.domiciliation! != null && this.provision.domiciliation!.buildingDomiciliation == undefined || this.provision.domiciliation!.buildingDomiciliation == null)
+        this.provision.domiciliation!.buildingDomiciliation = this.buildingDomiciliations[0];
     })
     this.mailRedirectionTypeService.getMailRedirectionTypes().subscribe(response => {
       this.mailRedirectionTypes = response;
-      if (this.provision.domiciliation != null && this.provision.domiciliation.mailRedirectionType == undefined || this.provision.domiciliation.mailRedirectionType == null)
-        this.provision.domiciliation.mailRedirectionType = this.mailRedirectionTypes[0];
+      if (this.provision.domiciliation! != null && this.provision.domiciliation!.mailRedirectionType == undefined || this.provision.domiciliation!.mailRedirectionType == null)
+        this.provision.domiciliation!.mailRedirectionType = this.mailRedirectionTypes[0];
     })
     this.legalFormService.getLegalForms().subscribe(response => {
       this.legalForms = response;
     })
     this.civilityService.getCivilities().subscribe(response => {
       this.civilities = response;
-      if (this.provision.domiciliation != null && this.provision.domiciliation.legalGardianCivility == undefined)
-        this.provision.domiciliation.legalGardianCivility = this.civilities[0];
+      if (this.provision.domiciliation! != null && this.provision.domiciliation!.legalGardianCivility == undefined)
+        this.provision.domiciliation!.legalGardianCivility = this.civilities[0];
     })
 
     this.filteredLegalForms = this.domiciliationForm.get("legalGardianLegalForm")?.valueChanges.pipe(
@@ -149,7 +149,7 @@ export class DomiciliationComponent implements OnInit {
       tap(() => {
         this.filteredCities = [];
       }),
-      switchMap(value => this.cityService.getCitiesFilteredByCountryAndName(value, this.provision.domiciliation.country)
+      switchMap(value => this.cityService.getCitiesFilteredByCountryAndName(value, this.provision.domiciliation!.country)
       )
     ).subscribe(response => {
       this.filteredCities = response as City[];
@@ -184,7 +184,7 @@ export class DomiciliationComponent implements OnInit {
       tap(() => {
         this.filteredCities = [];
       }),
-      switchMap(value => this.cityService.getCitiesFilteredByCountryAndName(value, this.provision.domiciliation.country)
+      switchMap(value => this.cityService.getCitiesFilteredByCountryAndName(value, this.provision.domiciliation!.country)
       )
     ).subscribe(response => {
       this.filteredCities = response as City[];
@@ -220,7 +220,7 @@ export class DomiciliationComponent implements OnInit {
       tap(() => {
         this.filteredCities = [];
       }),
-      switchMap(value => this.cityService.getCitiesFilteredByCountryAndName(value, this.provision.domiciliation.country)
+      switchMap(value => this.cityService.getCitiesFilteredByCountryAndName(value, this.provision.domiciliation!.country)
       )
     ).subscribe(response => {
       this.filteredCities = response as City[];
@@ -249,20 +249,20 @@ export class DomiciliationComponent implements OnInit {
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.provision != undefined) {
-      if (this.provision.domiciliation == undefined || this.provision.domiciliation == null)
-        this.provision.domiciliation = {} as Domiciliation;
-      if (this.provision.domiciliation.language == undefined || this.provision.domiciliation.language == null)
-        this.provision.domiciliation.language = this.languages[0];
-      if (this.provision.domiciliation != null && this.provision.domiciliation.mailRedirectionType == undefined || this.provision.domiciliation.mailRedirectionType == null)
-        this.provision.domiciliation.mailRedirectionType = this.mailRedirectionTypes[0];
-      if (this.provision.domiciliation != null && this.provision.domiciliation.buildingDomiciliation == undefined || this.provision.domiciliation.buildingDomiciliation == null)
-        this.provision.domiciliation.buildingDomiciliation = this.buildingDomiciliations[0];
-      if (this.provision.domiciliation != null && this.provision.domiciliation.startDate != null && this.provision.domiciliation.startDate != undefined)
-        this.provision.domiciliation.startDate = new Date(this.provision.domiciliation.startDate);
-      if (this.provision.domiciliation != null && this.provision.domiciliation.legalGardianBirthdate != null && this.provision.domiciliation.legalGardianBirthdate != undefined)
-        this.provision.domiciliation.legalGardianBirthdate = new Date(this.provision.domiciliation.legalGardianBirthdate);
-      if (this.provision.domiciliation.isLegalPerson == null || this.provision.domiciliation.isLegalPerson == undefined)
-        this.provision.domiciliation.isLegalPerson = false;
+      if (this.provision.domiciliation! == undefined || this.provision.domiciliation! == null)
+        this.provision.domiciliation! = {} as Domiciliation;
+      if (this.provision.domiciliation!.language == undefined || this.provision.domiciliation!.language == null)
+        this.provision.domiciliation!.language = this.languages[0];
+      if (this.provision.domiciliation! != null && this.provision.domiciliation!.mailRedirectionType == undefined || this.provision.domiciliation!.mailRedirectionType == null)
+        this.provision.domiciliation!.mailRedirectionType = this.mailRedirectionTypes[0];
+      if (this.provision.domiciliation! != null && this.provision.domiciliation!.buildingDomiciliation == undefined || this.provision.domiciliation!.buildingDomiciliation == null)
+        this.provision.domiciliation!.buildingDomiciliation = this.buildingDomiciliations[0];
+      if (this.provision.domiciliation! != null && this.provision.domiciliation!.startDate != null && this.provision.domiciliation!.startDate != undefined)
+        this.provision.domiciliation!.startDate = new Date(this.provision.domiciliation!.startDate);
+      if (this.provision.domiciliation! != null && this.provision.domiciliation!.legalGardianBirthdate != null && this.provision.domiciliation!.legalGardianBirthdate != undefined)
+        this.provision.domiciliation!.legalGardianBirthdate = new Date(this.provision.domiciliation!.legalGardianBirthdate);
+      if (this.provision.domiciliation!.isLegalPerson == null || this.provision.domiciliation!.isLegalPerson == undefined)
+        this.provision.domiciliation!.isLegalPerson = false;
       this.domiciliationForm.markAllAsTouched();
       this.toggleTabs();
     }
@@ -278,7 +278,7 @@ export class DomiciliationComponent implements OnInit {
     address: ['', [Validators.maxLength(20), this.checkFieldFilledIfAdressMandatory("address")]],
     postalCode: ['', [this.checkFieldFilledIfIsInFrance("postalCode"), this.checkFieldFilledIfAdressMandatory("postalCode")]],
     city: ['', [Validators.maxLength(30), this.checkFieldFilledIfAdressMandatory("city")]],
-    country: ['', [this.checkAutocompleteField("country"), this.checkFieldFilledIfAdressMandatory("country")]],
+    country: ['', [this.checkFieldFilledIfAdressMandatory("country")]],
     activityMailRecipient: ['', [Validators.maxLength(60), this.checkFieldFilledIfAdressMandatory("activityMailRecipient")]],
     activityAddress: ['', [Validators.maxLength(20), Validators.required]],
     activityPostalCode: ['', [this.checkFieldFilledIfIsInFrance("activityPostalCode"), Validators.required]],
@@ -321,7 +321,8 @@ export class DomiciliationComponent implements OnInit {
     return (control: AbstractControl): ValidationErrors | null => {
       const root = control.root as FormGroup;
       const fieldValue = root.get(fieldName)?.value;
-      if (this.mustDecribeAdresse() && (fieldValue == undefined || fieldValue == null || fieldValue.length == 0))
+      let mustDecribeAdresse = this.mustDecribeAdresse() ? true : false;
+      if (mustDecribeAdresse && (fieldValue == undefined || fieldValue == null || fieldValue.length == 0))
         return {
           notFilled: true
         };
@@ -331,9 +332,17 @@ export class DomiciliationComponent implements OnInit {
 
   checkFieldFilledIfMailMandatory(fieldName: string): ValidationErrors | null {
     return (control: AbstractControl): ValidationErrors | null => {
-      const root = control.root as FormGroup;
-      const fieldValue = root.get(fieldName)?.value;
-      if (this.mustDecribeMail() && (fieldValue == undefined || fieldValue == null || fieldValue.length == 0))
+
+      if (!this.provision.domiciliation)
+        return null;
+
+      let fieldValue = "";
+      if (fieldName == "mails")
+        fieldValue = this.provision.domiciliation!.mails.toString();
+      if (fieldName == "activityMails")
+        fieldValue = this.provision.domiciliation!.activityMails.toString();
+      let mustDecribeMail = this.mustDecribeMail() ? true : false;
+      if (mustDecribeMail && (fieldValue == undefined || fieldValue == null || fieldValue.length == 0))
         return {
           notFilled: true
         };
@@ -345,7 +354,7 @@ export class DomiciliationComponent implements OnInit {
     return (control: AbstractControl): ValidationErrors | null => {
       const root = control.root as FormGroup;
       const fieldValue = root.get(fieldName)?.value;
-      if (this.provision.domiciliation != null && this.provision.domiciliation.country != null && this.provision.domiciliation.country.code == COUNTRY_CODE_FRANCE && (fieldValue == undefined || fieldValue == null || fieldValue.length == 0))
+      if (this.provision.domiciliation! != null && this.provision.domiciliation!.country != null && this.provision.domiciliation!.country.code == COUNTRY_CODE_FRANCE && (fieldValue == undefined || fieldValue == null || fieldValue.length == 0))
         return {
           notFilled: true
         };
@@ -371,21 +380,18 @@ export class DomiciliationComponent implements OnInit {
   }
 
   mustDecribeAdresse() {
-    return this.provision.domiciliation != null && this.provision.domiciliation != undefined && this.provision.domiciliation.domiciliationContractType != null &&
+    return this.provision.domiciliation && this.provision.domiciliation.domiciliationContractType &&
       (this.provision.domiciliation.domiciliationContractType.code == DOMICILIATION_MAIL_REDIRECTION_CONTRAT_TYPE_1_CODE
         || this.provision.domiciliation.domiciliationContractType.code == DOMICILIATION_MAIL_REDIRECTION_CONTRAT_TYPE_2_CODE)
-      && this.provision.domiciliation.mailRedirectionType != null
-      && this.provision.domiciliation.mailRedirectionType.code == this.DOMICILIATION_MAIL_REDIRECTION_TYPE_OTHER_CODE;
+      && this.provision.domiciliation.mailRedirectionType && this.provision.domiciliation!.mailRedirectionType.code == this.DOMICILIATION_MAIL_REDIRECTION_TYPE_OTHER_CODE;
   }
 
   mustDecribeMail() {
-    return this.provision.domiciliation != null && this.provision.domiciliation != undefined && this.provision.domiciliation.domiciliationContractType != null &&
+    return this.provision.domiciliation && this.provision.domiciliation.domiciliationContractType &&
       (this.provision.domiciliation.domiciliationContractType.code == DOMICILIATION_EMAIL_REDIRECTION_CONTRAT_TYPE_1_CODE
         || this.provision.domiciliation.domiciliationContractType.code == DOMICILIATION_EMAIL_REDIRECTION_CONTRAT_TYPE_2_CODE)
-      && this.provision.domiciliation.mailRedirectionType != null
-      && this.provision.domiciliation.mailRedirectionType.code == this.DOMICILIATION_MAIL_REDIRECTION_TYPE_OTHER_CODE;
+      && this.provision.domiciliation.mailRedirectionType && this.provision.domiciliation!.mailRedirectionType.code == this.DOMICILIATION_MAIL_REDIRECTION_TYPE_OTHER_CODE;
   }
-
 
   private _filterCountry(value: string): Country[] {
     const filterValue = (value != undefined && value.toLowerCase != undefined) ? value.toLowerCase() : "";
@@ -393,25 +399,25 @@ export class DomiciliationComponent implements OnInit {
   }
 
   fillPostalCode(city: City) {
-    if (this.provision.domiciliation != null) {
-      if (this.provision.domiciliation.country == null || this.provision.domiciliation.country == undefined)
-        this.provision.domiciliation.country = city.country;
+    if (this.provision.domiciliation! != null) {
+      if (this.provision.domiciliation!.country == null || this.provision.domiciliation!.country == undefined)
+        this.provision.domiciliation!.country = city.country;
 
-      if (this.provision.domiciliation.country.code == COUNTRY_CODE_FRANCE && city.postalCode != null)
-        this.provision.domiciliation.postalCode = city.postalCode;
+      if (this.provision.domiciliation!.country.code == COUNTRY_CODE_FRANCE && city.postalCode != null)
+        this.provision.domiciliation!.postalCode = city.postalCode;
     }
   }
 
   fillCity(postalCode: string) {
-    if (this.provision.domiciliation != null) {
+    if (this.provision.domiciliation! != null) {
       this.cityService.getCitiesFilteredByPostalCode(postalCode).subscribe(response => {
         if (response != null && response != undefined && response.length == 1) {
           let city = response[0];
-          if (this.provision.domiciliation != null) {
-            if (this.provision.domiciliation.country == null || this.provision.domiciliation.country == undefined)
-              this.provision.domiciliation.country = city.country;
+          if (this.provision.domiciliation! != null) {
+            if (this.provision.domiciliation!.country == null || this.provision.domiciliation!.country == undefined)
+              this.provision.domiciliation!.country = city.country;
 
-            this.provision.domiciliation.city = city;
+            this.provision.domiciliation!.city = city;
           }
         }
       })
@@ -419,25 +425,25 @@ export class DomiciliationComponent implements OnInit {
   }
 
   fillActivityPostalCode(city: City) {
-    if (this.provision.domiciliation != null) {
-      if (this.provision.domiciliation.activityCountry == null || this.provision.domiciliation.activityCountry == undefined)
-        this.provision.domiciliation.activityCountry = city.country;
+    if (this.provision.domiciliation! != null) {
+      if (this.provision.domiciliation!.activityCountry == null || this.provision.domiciliation!.activityCountry == undefined)
+        this.provision.domiciliation!.activityCountry = city.country;
 
-      if (this.provision.domiciliation.activityCountry.code == COUNTRY_CODE_FRANCE && city.postalCode != null)
-        this.provision.domiciliation.activityPostalCode = city.postalCode;
+      if (this.provision.domiciliation!.activityCountry.code == COUNTRY_CODE_FRANCE && city.postalCode != null)
+        this.provision.domiciliation!.activityPostalCode = city.postalCode;
     }
   }
 
   fillActivityCity(postalCode: string) {
-    if (this.provision.domiciliation != null) {
+    if (this.provision.domiciliation! != null) {
       this.cityService.getCitiesFilteredByPostalCode(postalCode).subscribe(response => {
         if (response != null && response != undefined && response.length == 1) {
           let city = response[0];
-          if (this.provision.domiciliation != null) {
-            if (this.provision.domiciliation.activityCountry == null || this.provision.domiciliation.activityCountry == undefined)
-              this.provision.domiciliation.activityCountry = city.country;
+          if (this.provision.domiciliation! != null) {
+            if (this.provision.domiciliation!.activityCountry == null || this.provision.domiciliation!.activityCountry == undefined)
+              this.provision.domiciliation!.activityCountry = city.country;
 
-            this.provision.domiciliation.activityCity = city;
+            this.provision.domiciliation!.activityCity = city;
           }
         }
       })
@@ -445,25 +451,25 @@ export class DomiciliationComponent implements OnInit {
   }
 
   fillLegalGardianPostalCode(city: City) {
-    if (this.provision.domiciliation != null) {
-      if (this.provision.domiciliation.legalGardianCountry == null || this.provision.domiciliation.legalGardianCountry == undefined)
-        this.provision.domiciliation.legalGardianCountry = city.country;
+    if (this.provision.domiciliation! != null) {
+      if (this.provision.domiciliation!.legalGardianCountry == null || this.provision.domiciliation!.legalGardianCountry == undefined)
+        this.provision.domiciliation!.legalGardianCountry = city.country;
 
-      if (this.provision.domiciliation.legalGardianCountry.code == COUNTRY_CODE_FRANCE && city.postalCode != null)
-        this.provision.domiciliation.legalGardianPostalCode = city.postalCode;
+      if (this.provision.domiciliation!.legalGardianCountry.code == COUNTRY_CODE_FRANCE && city.postalCode != null)
+        this.provision.domiciliation!.legalGardianPostalCode = city.postalCode;
     }
   }
 
   fillLegalGardianCity(postalCode: string) {
-    if (this.provision.domiciliation != null) {
+    if (this.provision.domiciliation! != null) {
       this.cityService.getCitiesFilteredByPostalCode(postalCode).subscribe(response => {
         if (response != null && response != undefined && response.length == 1) {
           let city = response[0];
-          if (this.provision.domiciliation != null) {
-            if (this.provision.domiciliation.legalGardianCountry == null || this.provision.domiciliation.legalGardianCountry == undefined)
-              this.provision.domiciliation.legalGardianCountry = city.country;
+          if (this.provision.domiciliation! != null) {
+            if (this.provision.domiciliation!.legalGardianCountry == null || this.provision.domiciliation!.legalGardianCountry == undefined)
+              this.provision.domiciliation!.legalGardianCountry = city.country;
 
-            this.provision.domiciliation.legalGardianCity = city;
+            this.provision.domiciliation!.legalGardianCity = city;
           }
         }
       })
@@ -472,14 +478,14 @@ export class DomiciliationComponent implements OnInit {
 
 
   addMail(event: MatChipInputEvent): void {
-    if (this.provision.domiciliation != null) {
+    if (this.provision.domiciliation! != null) {
       const value = (event.value || '').trim();
       let mail: Mail = {} as Mail;
       if (value && validateEmail(value)) {
         mail.mail = value;
-        if (this.provision.domiciliation.mails == undefined || this.provision.domiciliation.mails == null)
-          this.provision.domiciliation.mails = [] as Mail[];
-        this.provision.domiciliation.mails.push(mail);
+        if (this.provision.domiciliation!.mails == undefined || this.provision.domiciliation!.mails == null)
+          this.provision.domiciliation!.mails = [] as Mail[];
+        this.provision.domiciliation!.mails.push(mail);
       }
       event.chipInput!.clear();
       this.domiciliationForm.get("mails")?.setValue(null);
@@ -487,12 +493,12 @@ export class DomiciliationComponent implements OnInit {
   }
 
   removeMail(inputMail: Mail): void {
-    if (this.provision.domiciliation != null) {
-      if (this.provision.domiciliation.mails != undefined && this.provision.domiciliation.mails != null && this.editMode)
-        for (let i = 0; i < this.provision.domiciliation.mails.length; i++) {
-          const mail = this.provision.domiciliation.mails[i];
+    if (this.provision.domiciliation! != null) {
+      if (this.provision.domiciliation!.mails != undefined && this.provision.domiciliation!.mails != null && this.editMode)
+        for (let i = 0; i < this.provision.domiciliation!.mails.length; i++) {
+          const mail = this.provision.domiciliation!.mails[i];
           if (mail.mail == inputMail.mail) {
-            this.provision.domiciliation.mails.splice(i, 1);
+            this.provision.domiciliation!.mails.splice(i, 1);
             return;
           }
         }
@@ -500,14 +506,14 @@ export class DomiciliationComponent implements OnInit {
   }
 
   addActivityMail(event: MatChipInputEvent): void {
-    if (this.provision.domiciliation != null) {
+    if (this.provision.domiciliation! != null) {
       const value = (event.value || '').trim();
       let mail: Mail = {} as Mail;
       if (value && validateEmail(value)) {
         mail.mail = value;
-        if (this.provision.domiciliation.activityMails == undefined || this.provision.domiciliation.activityMails == null)
-          this.provision.domiciliation.activityMails = [] as Mail[];
-        this.provision.domiciliation.activityMails.push(mail);
+        if (this.provision.domiciliation!.activityMails == undefined || this.provision.domiciliation!.activityMails == null)
+          this.provision.domiciliation!.activityMails = [] as Mail[];
+        this.provision.domiciliation!.activityMails.push(mail);
       }
       event.chipInput!.clear();
       this.domiciliationForm.get("activityMails")?.setValue(null);
@@ -515,12 +521,12 @@ export class DomiciliationComponent implements OnInit {
   }
 
   removeActivityMail(inputMail: Mail): void {
-    if (this.provision.domiciliation != null) {
-      if (this.provision.domiciliation.activityMails != undefined && this.provision.domiciliation.activityMails != null && this.editMode)
-        for (let i = 0; i < this.provision.domiciliation.activityMails.length; i++) {
-          const mail = this.provision.domiciliation.activityMails[i];
+    if (this.provision.domiciliation! != null) {
+      if (this.provision.domiciliation!.activityMails != undefined && this.provision.domiciliation!.activityMails != null && this.editMode)
+        for (let i = 0; i < this.provision.domiciliation!.activityMails.length; i++) {
+          const mail = this.provision.domiciliation!.activityMails[i];
           if (mail.mail == inputMail.mail) {
-            this.provision.domiciliation.activityMails.splice(i, 1);
+            this.provision.domiciliation!.activityMails.splice(i, 1);
             return;
           }
         }
@@ -529,14 +535,14 @@ export class DomiciliationComponent implements OnInit {
 
 
   addLegalGardianyMail(event: MatChipInputEvent): void {
-    if (this.provision.domiciliation != null) {
+    if (this.provision.domiciliation! != null) {
       const value = (event.value || '').trim();
       let mail: Mail = {} as Mail;
       if (value && validateEmail(value)) {
         mail.mail = value;
-        if (this.provision.domiciliation.legalGardianMails == undefined || this.provision.domiciliation.legalGardianMails == null)
-          this.provision.domiciliation.legalGardianMails = [] as Mail[];
-        this.provision.domiciliation.legalGardianMails.push(mail);
+        if (this.provision.domiciliation!.legalGardianMails == undefined || this.provision.domiciliation!.legalGardianMails == null)
+          this.provision.domiciliation!.legalGardianMails = [] as Mail[];
+        this.provision.domiciliation!.legalGardianMails.push(mail);
       }
       event.chipInput!.clear();
       this.domiciliationForm.get("legalGardianMails")?.setValue(null);
@@ -544,12 +550,12 @@ export class DomiciliationComponent implements OnInit {
   }
 
   removeLegalGardianMail(inputMail: Mail): void {
-    if (this.provision.domiciliation != null) {
-      if (this.provision.domiciliation.legalGardianMails != undefined && this.provision.domiciliation.legalGardianMails != null && this.editMode)
-        for (let i = 0; i < this.provision.domiciliation.legalGardianMails.length; i++) {
-          const mail = this.provision.domiciliation.legalGardianMails[i];
+    if (this.provision.domiciliation! != null) {
+      if (this.provision.domiciliation!.legalGardianMails != undefined && this.provision.domiciliation!.legalGardianMails != null && this.editMode)
+        for (let i = 0; i < this.provision.domiciliation!.legalGardianMails.length; i++) {
+          const mail = this.provision.domiciliation!.legalGardianMails[i];
           if (mail.mail == inputMail.mail) {
-            this.provision.domiciliation.legalGardianMails.splice(i, 1);
+            this.provision.domiciliation!.legalGardianMails.splice(i, 1);
             return;
           }
         }
@@ -577,7 +583,7 @@ export class DomiciliationComponent implements OnInit {
     return (control: AbstractControl): ValidationErrors | null => {
       const root = control.root as FormGroup;
       const fieldValue = root.get(fieldName)?.value;
-      if (this.provision.domiciliation != undefined && this.provision.domiciliation.isLegalPerson && (fieldValue == undefined || fieldValue == null || fieldValue.length == 0))
+      if (this.provision.domiciliation! != undefined && this.provision.domiciliation!.isLegalPerson && (fieldValue == undefined || fieldValue == null || fieldValue.length == 0))
         return {
           notFilled: true
         };
@@ -590,7 +596,7 @@ export class DomiciliationComponent implements OnInit {
     return (control: AbstractControl): ValidationErrors | null => {
       const root = control.root as FormGroup;
       const fieldValue = root.get(fieldName)?.value;
-      if (this.provision.domiciliation != undefined && !this.provision.domiciliation.isLegalPerson && (fieldValue == undefined || fieldValue == null || fieldValue.length == 0))
+      if (this.provision.domiciliation! != undefined && !this.provision.domiciliation!.isLegalPerson && (fieldValue == undefined || fieldValue == null || fieldValue.length == 0))
         return {
           notFilled: true
         };
@@ -603,7 +609,7 @@ export class DomiciliationComponent implements OnInit {
       const root = control.root as FormGroup;
 
       const fieldValue = root.get(fieldName)?.value;
-      if (this.provision.domiciliation != undefined && this.provision.domiciliation.isLegalPerson && (fieldValue == undefined || fieldValue == null || fieldValue.length == 0 || !validateSiren(fieldValue)))
+      if (this.provision.domiciliation! != undefined && this.provision.domiciliation!.isLegalPerson && (fieldValue == undefined || fieldValue == null || fieldValue.length == 0 || !validateSiren(fieldValue)))
         return {
           notFilled: true
         };
@@ -613,12 +619,12 @@ export class DomiciliationComponent implements OnInit {
 
   fillSiren() {
     if (this.filteredSiren != undefined && this.filteredSiren != null) {
-      this.provision.domiciliation.legalGardianSiren = this.filteredSiren!.uniteLegale.siren;
+      this.provision.domiciliation!.legalGardianSiren = this.filteredSiren!.uniteLegale.siren;
       if (this.filteredSiren!.uniteLegale.siren != undefined && this.filteredSiren!.uniteLegale.siren != null) {
         if (this.filteredSiren.uniteLegale.periodesUniteLegale != null && this.filteredSiren.uniteLegale.periodesUniteLegale != undefined && this.filteredSiren.uniteLegale.periodesUniteLegale.length > 0) {
           this.filteredSiren.uniteLegale.periodesUniteLegale.forEach(periode => {
             if (periode.dateFin == null)
-              this.provision.domiciliation.legalGardianDenomination = periode.denominationUniteLegale;
+              this.provision.domiciliation!.legalGardianDenomination = periode.denominationUniteLegale;
             this.domiciliationForm.markAllAsTouched();
           });
         }
@@ -635,20 +641,20 @@ export class DomiciliationComponent implements OnInit {
     let phone: Phone = {} as Phone;
     if (value && (validateFrenchPhone(value) || validateInternationalPhone(value))) {
       phone.phoneNumber = value;
-      if (this.provision.domiciliation.legalGardianPhones == undefined || this.provision.domiciliation.legalGardianPhones == null)
-        this.provision.domiciliation.legalGardianPhones = [] as Phone[];
-      this.provision.domiciliation.legalGardianPhones.push(phone);
+      if (this.provision.domiciliation!.legalGardianPhones == undefined || this.provision.domiciliation!.legalGardianPhones == null)
+        this.provision.domiciliation!.legalGardianPhones = [] as Phone[];
+      this.provision.domiciliation!.legalGardianPhones.push(phone);
     }
     event.chipInput!.clear();
     this.domiciliationForm.get("legalGardianPhones")?.setValue(null);
   }
 
   removeLegalGardianPhone(inputPhone: Phone): void {
-    if (this.provision.domiciliation.legalGardianPhones != undefined && this.provision.domiciliation.legalGardianPhones != null && this.editMode)
-      for (let i = 0; i < this.provision.domiciliation.legalGardianPhones.length; i++) {
-        const phone = this.provision.domiciliation.legalGardianPhones[i];
+    if (this.provision.domiciliation!.legalGardianPhones != undefined && this.provision.domiciliation!.legalGardianPhones != null && this.editMode)
+      for (let i = 0; i < this.provision.domiciliation!.legalGardianPhones.length; i++) {
+        const phone = this.provision.domiciliation!.legalGardianPhones[i];
         if (phone.phoneNumber == inputPhone.phoneNumber) {
-          this.provision.domiciliation.legalGardianPhones.splice(i, 1);
+          this.provision.domiciliation!.legalGardianPhones.splice(i, 1);
           return;
         }
       }

@@ -17,9 +17,10 @@ import javax.persistence.ManyToOne;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.jss.jssbackend.modules.miscellaneous.model.Department;
+import com.jss.jssbackend.modules.miscellaneous.model.IId;
 
 @Entity
-public class Shal implements Serializable {
+public class Shal implements Serializable, IId {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -45,6 +46,7 @@ public class Shal implements Serializable {
 	@Column(nullable = false)
 	private Date publicationDate;
 
+	@Column(nullable = false)
 	private Boolean isRedactedByJss;
 
 	@ManyToOne
@@ -58,17 +60,29 @@ public class Shal implements Serializable {
 	@Column(nullable = false, columnDefinition = "TEXT")
 	private String notice;
 
+	@Column(nullable = false)
 	private Boolean isLogo;
+
+	@Column(nullable = false)
 	private Boolean isHeader;
+
+	@Column(nullable = false)
 	private Boolean isPictureBaloPackage;
+
+	@Column(nullable = false)
 	private Boolean isLegalDisplay;
+
 	private Float posterProductionPrice;
 	private Float posterProductionJSSPrice;
 	private Float billPostingPrice;
 	private Float billPostingJSSPrice;
 	private Float bailiffReportPrice;
 	private Float bailiffReportJSSPrice;
+
+	@Column(nullable = false)
 	private Boolean isProofReadingDocument;
+
+	@Column(nullable = false)
 	private Boolean isPublicationCertificateDocument;
 
 	public Integer getId() {

@@ -27,7 +27,9 @@ import com.jss.jssbackend.modules.miscellaneous.model.DeliveryService;
 import com.jss.jssbackend.modules.miscellaneous.model.Document;
 import com.jss.jssbackend.modules.miscellaneous.model.IAttachment;
 import com.jss.jssbackend.modules.miscellaneous.model.Language;
+import com.jss.jssbackend.modules.miscellaneous.model.Mail;
 import com.jss.jssbackend.modules.miscellaneous.model.PaymentType;
+import com.jss.jssbackend.modules.miscellaneous.model.Phone;
 import com.jss.jssbackend.modules.miscellaneous.model.SpecialOffer;
 import com.jss.jssbackend.modules.profile.model.Employee;
 
@@ -48,6 +50,7 @@ public class Tiers implements ITiers, IAttachment {
 	@IndexedField
 	private String denomination;
 
+	@Column(nullable = false)
 	private Boolean isIndividual;
 
 	@ManyToOne
@@ -66,9 +69,9 @@ public class Tiers implements ITiers, IAttachment {
 	private String intercommunityVat;
 
 	// TODO : passer en table d'asso avec ordonnancement manuel
-	@ManyToOne
-	@JoinColumn(name = "id_special_offer")
-	private SpecialOffer specialOffer;
+	@ManyToMany(cascade = CascadeType.ALL)
+	@JoinTable(name = "asso_tiers_special_offer", joinColumns = @JoinColumn(name = "id_tiers"), inverseJoinColumns = @JoinColumn(name = "id_special_offer"))
+	private List<SpecialOffer> specialOffers;
 
 	@Column(columnDefinition = "TEXT")
 	private String instructions;
@@ -83,6 +86,9 @@ public class Tiers implements ITiers, IAttachment {
 
 	@Column(nullable = false)
 	private Boolean isProvisionalPaymentMandatory;
+
+	@Column(nullable = false)
+	private Boolean isSepaMandateReceived;
 
 	@OneToMany(targetEntity = Responsable.class, mappedBy = "tiers", cascade = CascadeType.ALL)
 	@JsonManagedReference
@@ -174,6 +180,14 @@ public class Tiers implements ITiers, IAttachment {
 		return tiersType;
 	}
 
+	public Boolean getIsSepaMandateReceived() {
+		return isSepaMandateReceived;
+	}
+
+	public void setIsSepaMandateReceived(Boolean isSepaMandateReceived) {
+		this.isSepaMandateReceived = isSepaMandateReceived;
+	}
+
 	public void setTiersType(TiersType tiersType) {
 		this.tiersType = tiersType;
 	}
@@ -226,12 +240,12 @@ public class Tiers implements ITiers, IAttachment {
 		this.intercommunityVat = intercommunityVat;
 	}
 
-	public SpecialOffer getSpecialOffer() {
-		return specialOffer;
+	public List<SpecialOffer> getSpecialOffers() {
+		return specialOffers;
 	}
 
-	public void setSpecialOffer(SpecialOffer specialOffer) {
-		this.specialOffer = specialOffer;
+	public void setSpecialOffers(List<SpecialOffer> specialOffers) {
+		this.specialOffers = specialOffers;
 	}
 
 	public String getInstructions() {

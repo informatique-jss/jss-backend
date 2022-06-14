@@ -9,7 +9,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-public class Civility implements Serializable {
+public class Civility implements Serializable, IId {
+	private static final long serialVersionUID = 5733998940963839522L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

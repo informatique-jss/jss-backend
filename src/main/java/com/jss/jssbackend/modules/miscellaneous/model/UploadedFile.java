@@ -13,7 +13,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(indexes = { @Index(name = "pk_uploaded_file", columnList = "id", unique = true) })
-public class UploadedFile implements Serializable {
+public class UploadedFile implements Serializable, IId {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

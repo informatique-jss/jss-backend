@@ -6,5 +6,6 @@ export interface Attachment {
   id: number;
   attachmentType: AttachmentType;
   uploadedFile: UploadedFile;
+  isDisabled: boolean;
 }
 

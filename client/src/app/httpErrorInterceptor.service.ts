@@ -26,7 +26,8 @@ export class HttpErrorInterceptor implements HttpInterceptor {
           }
           if (successfulMessage != undefined && successfulMessage != null && successfulMessage != "") {
             let sb = this.snackBar.open('👍 ' + successfulMessage, 'Fermer', {
-              duration: 5 * 1000
+              duration: 5 * 1000,
+              panelClass: ["blue-snackbar"]
             });
             sb.onAction().subscribe(() => {
               sb.dismiss();
@@ -49,7 +50,6 @@ export class HttpErrorInterceptor implements HttpInterceptor {
           console.error(`Backend returned code ${error.status}, body was: ${error.error}`);
           this.errorMessage = 'A server-side error occurred: ' + `HTTP ${error.status}, body : ${error.error}`;
         }
-        //TODO : revoir le design des snack bar dans tous le code (couleur + faire large comme ici : https://stackblitz.com/edit/angular-stacb4?file=index.html)
         if (this.errorMessage != "") {
           if (errorMessage != undefined && errorMessage != null && errorMessage != "") {
             this.errorMessage = errorMessage;
@@ -57,7 +57,7 @@ export class HttpErrorInterceptor implements HttpInterceptor {
             this.errorMessage = '😢 Dommage, une erreur est apparue : ' + this.errorMessage;
           }
           let sb = this.snackBar.open(this.errorMessage, 'Fermer', {
-            duration: 5 * 1000, panelClass: ["blue-snackbar"]
+            duration: 50 * 1000, panelClass: ["red-snackbar"]
           });
           sb.onAction().subscribe(() => {
             sb.dismiss();

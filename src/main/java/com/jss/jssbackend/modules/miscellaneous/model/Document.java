@@ -22,7 +22,6 @@ import com.jss.jssbackend.modules.quotation.model.Quotation;
 import com.jss.jssbackend.modules.tiers.model.BillingClosureRecipientType;
 import com.jss.jssbackend.modules.tiers.model.BillingClosureType;
 import com.jss.jssbackend.modules.tiers.model.BillingLabelType;
-import com.jss.jssbackend.modules.tiers.model.Mail;
 import com.jss.jssbackend.modules.tiers.model.PaymentDeadlineType;
 import com.jss.jssbackend.modules.tiers.model.RefundType;
 import com.jss.jssbackend.modules.tiers.model.Responsable;
@@ -32,7 +31,7 @@ import com.jss.jssbackend.modules.tiers.model.Tiers;
 @Table(indexes = { @Index(name = "pk_tiers_document", columnList = "id", unique = true),
 		@Index(name = "idx_tiers_document", columnList = "id_tiers"),
 		@Index(name = "idx_responsable_document", columnList = "id_responsable") })
-public class Document implements Serializable {
+public class Document implements Serializable, IId {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -62,7 +61,9 @@ public class Document implements Serializable {
 	@JoinColumn(name = "id_document_type")
 	private DocumentType documentType;
 
+	@Column(nullable = false)
 	private Boolean isRecipientClient;
+	@Column(nullable = false)
 	private Boolean isRecipientAffaire;
 	@Column(length = 60)
 	private String affaireAddress;
@@ -72,7 +73,9 @@ public class Document implements Serializable {
 	private String clientAddress;
 	@Column(length = 40)
 	private String clientRecipient;
+	@Column(nullable = false)
 	private Boolean isMailingPaper;
+	@Column(nullable = false)
 	private Boolean isMailingPdf;
 	private Integer numberMailingAffaire;
 	private Integer numberMailingClient;

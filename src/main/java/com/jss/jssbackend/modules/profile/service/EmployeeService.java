@@ -5,7 +5,7 @@ import java.util.List;
 import com.jss.jssbackend.modules.profile.model.Employee;
 
 public interface EmployeeService {
-    public Employee getEmployeeById(Integer id);
+    public Employee getEmployee(Integer id);
 
     public List<Employee> getSalesEmployees();
 

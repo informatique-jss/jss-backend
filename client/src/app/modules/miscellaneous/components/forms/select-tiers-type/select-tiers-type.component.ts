@@ -1,0 +1,26 @@
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { FormBuilder } from '@angular/forms';
+import { TiersType } from 'src/app/modules/tiers/model/TiersType';
+import { TiersTypeService } from 'src/app/modules/tiers/services/tiers.type.service';
+import { GenericSelectComponent } from '../generic-select/generic-select.component';
+
+@Component({
+  selector: 'select-tiers-type',
+  templateUrl: './select-tiers-type.component.html',
+  styleUrls: ['./select-tiers-type.component.css']
+})
+export class SelectTiersTypeComponent extends GenericSelectComponent<TiersType> implements OnInit {
+
+  types: TiersType[] = [] as Array<TiersType>;
+
+  constructor(private changeDetectorRef: ChangeDetectorRef,
+    private formBuild: FormBuilder, private tiersTypeService: TiersTypeService) {
+    super(changeDetectorRef, formBuild);
+  }
+
+  initTypes(): void {
+    this.tiersTypeService.getTiersTypes().subscribe(response => {
+      this.types = response;
+    })
+  }
+}

@@ -3,21 +3,21 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 
-import { DocumentManagementComponent } from './document-management.component';
+import { RadioGroupCivilityComponent } from './radio-group-civility.component';
 
-describe('DocumentManagementComponent', () => {
-  let component: DocumentManagementComponent;
-  let fixture: ComponentFixture<DocumentManagementComponent>;
+describe('RadioGroupCivilityComponent', () => {
+  let component: RadioGroupCivilityComponent;
+  let fixture: ComponentFixture<RadioGroupCivilityComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ DocumentManagementComponent ]
+      declarations: [ RadioGroupCivilityComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(DocumentManagementComponent);
+    fixture = TestBed.createComponent(RadioGroupCivilityComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

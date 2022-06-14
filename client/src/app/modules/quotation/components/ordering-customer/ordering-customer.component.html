@@ -15,8 +15,8 @@
                   matSuffix mat-icon-button>
                   <mat-icon>close</mat-icon>
                 </button>
-                <mat-autocomplete #autoCompleteTiers="matAutocomplete" [displayWith]="displayTiers"
-                  (optionSelected)='fillTiers($event.option.value)'>
+                <mat-autocomplete autoActiveFirstOption #autoCompleteTiers="matAutocomplete"
+                  [displayWith]="displayTiers" (optionSelected)='fillTiers($event.option.value)'>
                   <mat-option *ngFor="let tiers of filteredTiers" [value]="tiers">
                     {{tiers.firstname}} {{tiers.lastname}} ({{tiers.id}})
                   </mat-option>
@@ -34,8 +34,8 @@
                   matSuffix mat-icon-button>
                   <mat-icon>close</mat-icon>
                 </button>
-                <mat-autocomplete #autoCompleteResponsable="matAutocomplete" [displayWith]="displayResponsable"
-                  (optionSelected)='fillResponsable($event.option.value)'>
+                <mat-autocomplete autoActiveFirstOption #autoCompleteResponsable="matAutocomplete"
+                  [displayWith]="displayResponsable" (optionSelected)='fillResponsable($event.option.value)'>
                   <mat-option *ngFor="let responsable of filteredResponsable" [value]="responsable">
                     {{responsable.firstname}} {{responsable.lastname}} ({{responsable.id}})
                   </mat-option>
@@ -87,13 +87,17 @@
           </table>
           <table class="full-width">
             <tr>
-              <td>Tarif special : {{(quotation.tiers.specialOffer==undefined ||
-                quotation.tiers.specialOffer==null)?"Aucun" :(quotation.tiers.specialOffer.code + " -
-                "+quotation.tiers.specialOffer.label)}} <button *ngIf="editMode==true"
-                  matTooltip="Modifier le tarif spécial par défaut" (click)="overrideSpecialOffer = true"
-                  mat-icon-button color="accent">
+              <td>Tarif special :
+                <ul>
+                  <li *ngFor="let specialOffer of quotation.tiers.specialOffers">
+                    {{specialOffer? (specialOffer.code + " - " +specialOffer.label):"Aucun"}}
+                  </li>
+                </ul>
+                <button *ngIf="editMode==true" matTooltip="Modifier le tarif spécial par défaut"
+                  (click)="overrideSpecialOffer = true" mat-icon-button color="accent">
                   <mat-icon>edit</mat-icon>
-                </button></td>
+                </button>
+              </td>
             </tr>
           </table>
         </div>
@@ -153,11 +157,12 @@
           <table class="full-width">
             <tr>
               <td>Tarif special :
-                {{(quotation.responsable.tiers.specialOffer==undefined
-                ||quotation.responsable.tiers.specialOffer==null)?"Aucun"
-                :(quotation.responsable.tiers.specialOffer.code + " - "
-                +quotation.responsable.tiers.specialOffer.label)}}
-                <button matTooltip="Modifier le tarif spécial par défaut" *ngIf="editMode==true"
+                <ul>
+                  <li *ngFor="let specialOffer of quotation.responsable.tiers.specialOffers">
+                    {{specialOffer? (specialOffer.code + " - " +specialOffer.label):"Aucun"}}
+                  </li>
+                </ul>
+                <button *ngIf="editMode==true" matTooltip="Modifier le tarif spécial par défaut"
                   (click)="overrideSpecialOffer = true" mat-icon-button color="accent">
                   <mat-icon>edit</mat-icon>
                 </button>
@@ -182,7 +187,8 @@
                   matSuffix mat-icon-button>
                   <mat-icon>close</mat-icon>
                 </button>
-                <mat-autocomplete #autoSpecialOffer="matAutocomplete" [displayWith]="displayLabel">
+                <mat-autocomplete autoActiveFirstOption #autoSpecialOffer="matAutocomplete"
+                  [displayWith]="displayLabel">
                   <mat-option *ngFor="let specialOffer of filteredSpecialOffers | async" [value]="specialOffer">
                     {{specialOffer.code}} - {{specialOffer.label}}
                   </mat-option>

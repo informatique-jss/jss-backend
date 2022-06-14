@@ -3,6 +3,19 @@ package com.jss.jssbackend.modules.tiers.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.server.ResponseStatusException;
+
 import com.jss.jssbackend.libs.ValidationHelper;
 import com.jss.jssbackend.modules.miscellaneous.model.BillingItem;
 import com.jss.jssbackend.modules.miscellaneous.model.BillingType;
@@ -14,7 +27,9 @@ import com.jss.jssbackend.modules.miscellaneous.model.Department;
 import com.jss.jssbackend.modules.miscellaneous.model.Document;
 import com.jss.jssbackend.modules.miscellaneous.model.Gift;
 import com.jss.jssbackend.modules.miscellaneous.model.Language;
+import com.jss.jssbackend.modules.miscellaneous.model.Mail;
 import com.jss.jssbackend.modules.miscellaneous.model.PaymentType;
+import com.jss.jssbackend.modules.miscellaneous.model.Phone;
 import com.jss.jssbackend.modules.miscellaneous.model.Region;
 import com.jss.jssbackend.modules.miscellaneous.model.SpecialOffer;
 import com.jss.jssbackend.modules.miscellaneous.model.Vat;
@@ -28,7 +43,9 @@ import com.jss.jssbackend.modules.miscellaneous.service.DepartmentService;
 import com.jss.jssbackend.modules.miscellaneous.service.DocumentTypeService;
 import com.jss.jssbackend.modules.miscellaneous.service.GiftService;
 import com.jss.jssbackend.modules.miscellaneous.service.LanguageService;
+import com.jss.jssbackend.modules.miscellaneous.service.MailService;
 import com.jss.jssbackend.modules.miscellaneous.service.PaymentTypeService;
+import com.jss.jssbackend.modules.miscellaneous.service.PhoneService;
 import com.jss.jssbackend.modules.miscellaneous.service.RegionService;
 import com.jss.jssbackend.modules.miscellaneous.service.SpecialOfferService;
 import com.jss.jssbackend.modules.miscellaneous.service.VatService;
@@ -36,9 +53,7 @@ import com.jss.jssbackend.modules.profile.service.EmployeeService;
 import com.jss.jssbackend.modules.tiers.model.BillingClosureRecipientType;
 import com.jss.jssbackend.modules.tiers.model.BillingClosureType;
 import com.jss.jssbackend.modules.tiers.model.BillingLabelType;
-import com.jss.jssbackend.modules.tiers.model.Mail;
 import com.jss.jssbackend.modules.tiers.model.PaymentDeadlineType;
-import com.jss.jssbackend.modules.tiers.model.Phone;
 import com.jss.jssbackend.modules.tiers.model.RefundType;
 import com.jss.jssbackend.modules.tiers.model.Responsable;
 import com.jss.jssbackend.modules.tiers.model.SubscriptionPeriodType;
@@ -50,9 +65,7 @@ import com.jss.jssbackend.modules.tiers.model.TiersType;
 import com.jss.jssbackend.modules.tiers.service.BillingClosureRecipientTypeService;
 import com.jss.jssbackend.modules.tiers.service.BillingClosureTypeService;
 import com.jss.jssbackend.modules.tiers.service.BillingLabelTypeService;
-import com.jss.jssbackend.modules.tiers.service.MailService;
 import com.jss.jssbackend.modules.tiers.service.PaymentDeadlineTypeService;
-import com.jss.jssbackend.modules.tiers.service.PhoneService;
 import com.jss.jssbackend.modules.tiers.service.RefundTypeService;
 import com.jss.jssbackend.modules.tiers.service.ResponsableService;
 import com.jss.jssbackend.modules.tiers.service.SubscriptionPeriodTypeService;
@@ -60,20 +73,7 @@ import com.jss.jssbackend.modules.tiers.service.TiersCategoryService;
 import com.jss.jssbackend.modules.tiers.service.TiersFollowupService;
 import com.jss.jssbackend.modules.tiers.service.TiersFollowupTypeService;
 import com.jss.jssbackend.modules.tiers.service.TiersService;
-import com.jss.jssbackend.modules.tiers.service.TiersTypesService;
-
-import org.apache.commons.validator.routines.EmailValidator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.HttpStatusCodeException;
+import com.jss.jssbackend.modules.tiers.service.TiersTypeService;
 
 @RestController
 public class TiersController {
@@ -83,7 +83,10 @@ public class TiersController {
   private static final Logger logger = LoggerFactory.getLogger(TiersController.class);
 
   @Autowired
-  TiersTypesService clientTypesService;
+  ValidationHelper validationHelper;
+
+  @Autowired
+  TiersTypeService clientTypesService;
 
   @Autowired
   TiersService tiersService;
@@ -220,7 +223,7 @@ public class TiersController {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
     if (tiersFollowup.getTiers() != null) {
-      Tiers tiers = tiersService.getTiersById(tiersFollowup.getTiers().getId());
+      Tiers tiers = tiersService.getTiers(tiersFollowup.getTiers().getId());
       if (tiers == null)
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
       tiersFollowup.setTiers(tiers);
@@ -238,7 +241,7 @@ public class TiersController {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
     if (tiersFollowup.getSalesEmployee() == null || tiersFollowup.getSalesEmployee().getId() == null ||
-        employeeService.getEmployeeById(tiersFollowup.getSalesEmployee().getId()) == null)
+        employeeService.getEmployee(tiersFollowup.getSalesEmployee().getId()) == null)
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
     if (tiersFollowup.getFollowupDate() == null)
@@ -611,7 +614,7 @@ public class TiersController {
   public ResponseEntity<Tiers> getTiersById(@RequestParam Integer id) {
     Tiers tiers = null;
     try {
-      tiers = tiersService.getTiersById(id);
+      tiers = tiersService.getTiers(id);
       if (tiers == null)
         tiers = new Tiers();
     } catch (HttpStatusCodeException e) {
@@ -677,289 +680,152 @@ public class TiersController {
 
   @PostMapping(inputEntryPoint + "/tiers")
   public ResponseEntity<Tiers> addOrUpdateTiers(@RequestBody Tiers tiers) {
-    if (tiers.getIsIndividual() == null)
-      tiers.setIsIndividual(false);
+    try {
 
-    if (tiers.getTiersType() == null || tiers.getTiersType().getId() == null
-        || clientTypesService.getTiersType(tiers.getTiersType().getId()) == null)
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+      validationHelper.validateReferential(tiers.getTiersType(), true);
 
-    if (tiers.getIsIndividual() == true && tiers.getDenomination() != null && !tiers.getDenomination().equals("")
-        || tiers.getIsIndividual() == false
-            && (tiers.getDenomination() == null || tiers.getDenomination().length() > 60))
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-    if (tiers.getIsIndividual() == true
-        && (tiers.getCivility() == null || tiers.getCivility().getId() == null
-            || civilityService.getCivility(tiers.getCivility().getId()) == null)
-        || tiers.getIsIndividual() == false && tiers.getCivility() != null)
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-    if (tiers.getIsIndividual() == true
-        && (tiers.getFirstname() == null || tiers.getFirstname().equals("")))
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-    if (tiers.getIsIndividual() == true
-        && (tiers.getLastname() == null || tiers.getLastname().equals("")))
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-    if (tiers.getTiersCategory() != null && tiers.getTiersCategory().getId() != null
-        && tiersCategoryService.getTiersCategory(tiers.getTiersCategory().getId()) == null)
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-    if (tiers.getSalesEmployee() == null || tiers.getSalesEmployee().getId() == null
-        || employeeService.getEmployeeById(tiers.getSalesEmployee().getId()) == null)
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-    if (tiers.getFormalisteEmployee() != null && (tiers.getSalesEmployee().getId() == null
-        || employeeService.getEmployeeById(tiers.getFormalisteEmployee().getId()) == null))
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-    if (tiers.getInsertionEmployee() != null && (tiers.getInsertionEmployee().getId() == null
-        || employeeService.getEmployeeById(tiers.getInsertionEmployee().getId()) == null))
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-    if (tiers.getLanguage() == null || tiers.getLanguage().getId() == null
-        || languageService.getLanguageById(tiers.getLanguage().getId()) == null)
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-    if (tiers.getDeliveryService() == null || tiers.getDeliveryService().getId() == null
-        || deliveryServiceService.getDeliveryServiceById(tiers.getDeliveryService().getId()) == null)
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-    if (tiers.getAddress() == null || tiers.getAddress().equals("") || tiers.getAddress().length() > 60)
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-    if (tiers.getCountry() != null && tiers.getCountry().getCode().equals("FR")
-        && (tiers.getPostalCode() == null || tiers.getPostalCode().equals("")
-            || cityService.getCitiesByPostalCode(tiers.getPostalCode()).size() == 0))
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-    if (tiers.getCity() == null || tiers.getCity().getLabel() == null || tiers.getCity().getLabel().equals(""))
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-    if (tiers.getCity().getId() != null && cityService.getCity(tiers.getCity().getId()) == null)
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-    if (tiers.getCity().getId() == null && tiers.getCity().getLabel().length() > 30)
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    // TODO : crééer la ville en base si pas d'ID renseigné
-
-    if (tiers.getCountry() == null || tiers.getCountry().getId() == null
-        || countryService.getCountry(tiers.getCountry().getId()) == null)
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-    if (tiers.getIntercom() != null && tiers.getIntercom().length() > 12)
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-    if (tiers.getIsIndividual() == false
-        && (tiers.getIntercommunityVat() == null || tiers.getIntercommunityVat().equals("")
+      if (tiers.getIsIndividual()) {
+        validationHelper.validateReferential(tiers.getCivility(), true);
+        validationHelper.validateString(tiers.getFirstname(), true, 20);
+        validationHelper.validateString(tiers.getLastname(), true, 20);
+      } else {
+        validationHelper.validateString(tiers.getDenomination(), true, 60);
+        if ((tiers.getIntercommunityVat() == null || tiers.getIntercommunityVat().equals("")
             || tiers.getIntercommunityVat().length() > 20))
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-    if (tiers.getSpecialOffer() != null && (tiers.getSpecialOffer().getId() == null
-        || specialOfferService.getSpecialOffer(tiers.getSpecialOffer().getId()) == null))
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-    if (tiers.getMails() != null && tiers.getMails().size() > 0) {
-      if (!this.validateMailList(tiers.getMails()))
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    }
-
-    if (tiers.getPhones() != null && tiers.getPhones().size() > 0) {
-      for (Phone phone : tiers.getPhones()) {
-        if (!ValidationHelper.validateFrenchPhone(phone.getPhoneNumber())
-            || !ValidationHelper.validateInternationalPhone(phone.getPhoneNumber()))
           return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
       }
-    }
 
-    if (tiers.getDocuments() != null && tiers.getDocuments().size() > 0) {
-      for (Document document : tiers.getDocuments()) {
-        if (document.getDocumentType() == null || document.getDocumentType().getId() == null
-            || tiersDocumentTypeService
-                .getDocumentType(document.getDocumentType().getId()) == null)
-          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        if (document.getMailsAffaire() != null && document.getMailsAffaire().size() > 0)
-          if (!this.validateMailList(document.getMailsAffaire()))
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        if (document.getMailsClient() != null && document.getMailsClient().size() > 0)
-          if (!this.validateMailList(document.getMailsClient()))
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        if (document.getAffaireAddress() != null && document.getAffaireAddress().length() > 60)
-          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        if (document.getClientAddress() != null && document.getClientAddress().length() > 60)
-          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        if (document.getAffaireRecipient() != null && document.getAffaireRecipient().length() > 40)
-          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        if (document.getClientRecipient() != null && document.getClientRecipient().length() > 40)
-          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        if (document.getBillingLabel() != null && document.getBillingLabel().length() > 40)
-          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        if (document.getCommandNumber() != null && document.getCommandNumber().length() > 40)
-          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        if (document.getPaymentDeadlineType() != null && (document.getPaymentDeadlineType().getId() == null
-            || paymentDeadlineTypeService.getPaymentDeadlineType(document.getPaymentDeadlineType().getId()) == null))
-          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        if (document.getRefundType() != null && (document.getRefundType().getId() == null
-            || refundTypeService.getRefundType(document.getRefundType().getId()) == null))
-          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        if (document.getRefundIBAN() != null && document.getRefundIBAN().length() > 40)
-          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        if (document.getBillingClosureType() != null && (document.getBillingClosureType().getId() == null
-            || billingClosureTypeService.getBillingClosureType(document.getBillingClosureType().getId()) == null))
-          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        if (document.getBillingClosureRecipientType() != null
-            && (document.getBillingClosureRecipientType().getId() == null
-                || billingClosureRecipientTypeService
-                    .getBillingClosureRecipientType(document.getBillingClosureRecipientType().getId()) == null))
+      validationHelper.validateReferential(tiers.getTiersCategory(), false);
+      validationHelper.validateReferential(tiers.getSalesEmployee(), true);
+      validationHelper.validateReferential(tiers.getFormalisteEmployee(), false);
+      validationHelper.validateReferential(tiers.getInsertionEmployee(), false);
+      validationHelper.validateReferential(tiers.getLanguage(), true);
+      validationHelper.validateReferential(tiers.getDeliveryService(), true);
+
+      validationHelper.validateString(tiers.getAddress(), true, 60);
+      validationHelper.validateReferential(tiers.getCountry(), true);
+      if (tiers.getCountry() != null && tiers.getCountry().getCode().equals("FR"))
+        validationHelper.validateString(tiers.getPostalCode(), true, 10);
+      validationHelper.validateReferential(tiers.getCity(), true);
+
+      validationHelper.validateString(tiers.getIntercom(), false, 12);
+      if (tiers.getSpecialOffers() != null) {
+        for (SpecialOffer specialOffer : tiers.getSpecialOffers()) {
+          validationHelper.validateReferential(specialOffer, false);
+        }
+      }
+
+      if (tiers.getMails() != null && tiers.getMails().size() > 0) {
+        if (!validationHelper.validateMailList(tiers.getMails()))
           return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
       }
-    }
 
-    if (tiers.getPaymentType() == null || tiers.getPaymentType().getId() == null
-        || paymentTypeService.getPaymentType(tiers.getPaymentType().getId()) == null)
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+      if (tiers.getPhones() != null && tiers.getPhones().size() > 0) {
+        for (Phone phone : tiers.getPhones()) {
+          if (!validationHelper.validateFrenchPhone(phone.getPhoneNumber())
+              || !validationHelper.validateInternationalPhone(phone.getPhoneNumber()))
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+      }
 
-    if (tiers.getPaymentIBAN() != null && tiers.getPaymentIBAN().length() > 40)
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+      if (tiers.getDocuments() != null && tiers.getDocuments().size() > 0) {
+        for (Document document : tiers.getDocuments()) {
 
-    if (tiers.getResponsables() != null && tiers.getResponsables().size() > 0) {
-      for (Responsable responsable : tiers.getResponsables()) {
+          validationHelper.validateReferential(document.getDocumentType(), true);
 
-        if ((responsable.getCivility() == null || responsable.getCivility().getId() == null
-            || civilityService.getCivility(responsable.getCivility().getId()) == null))
-          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-        if ((responsable.getFirstname() == null || responsable.getFirstname().equals("")))
-          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-        if ((responsable.getLastname() == null || responsable.getLastname().equals("")))
-          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-        if (responsable.getTiersType() == null || responsable.getTiersType().getId() == null
-            || clientTypesService.getTiersType(responsable.getTiersType().getId()) == null)
-          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-        if (responsable.getTiersCategory() != null && responsable.getTiersCategory().getId() != null
-            && tiersCategoryService.getTiersCategory(responsable.getTiersCategory().getId()) == null)
-          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-        if (responsable.getSalesEmployee() == null || responsable.getSalesEmployee().getId() == null
-            || employeeService.getEmployeeById(responsable.getSalesEmployee().getId()) == null)
-          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-        if (responsable.getFormalisteEmployee() != null && (responsable.getSalesEmployee().getId() == null
-            || employeeService.getEmployeeById(responsable.getFormalisteEmployee().getId()) == null))
-          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-        if (responsable.getInsertionEmployee() != null && (responsable.getInsertionEmployee().getId() == null
-            || employeeService.getEmployeeById(responsable.getInsertionEmployee().getId()) == null))
-          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-        if (responsable.getLanguage() == null || responsable.getLanguage().getId() == null
-            || languageService.getLanguageById(responsable.getLanguage().getId()) == null)
-          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-        if (responsable.getAddress() == null || responsable.getAddress().equals("")
-            || responsable.getAddress().length() > 60)
-          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-        if (responsable.getCountry() != null && responsable.getCountry().getCode().equals("FR")
-            && (responsable.getPostalCode() == null || responsable.getPostalCode().equals("")
-                || cityService.getCitiesByPostalCode(responsable.getPostalCode()).size() == 0))
-          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-        if (responsable.getCity() == null || responsable.getCity().getLabel() == null
-            || responsable.getCity().getLabel().equals(""))
-          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-        if (responsable.getCity().getId() != null && cityService.getCity(responsable.getCity().getId()) == null)
-          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-        if (responsable.getCity().getId() == null && responsable.getCity().getLabel().length() > 30)
-          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-        if (responsable.getCountry() == null || responsable.getCountry().getId() == null
-            || countryService.getCountry(responsable.getCountry().getId()) == null)
-          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-        if (responsable.getFunction() != null && responsable.getFunction().length() > 20)
-          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-        if (responsable.getBuilding() != null && responsable.getBuilding().length() > 20)
-          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-        if (responsable.getFloor() != null && responsable.getFloor().length() > 20)
-          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-        if (responsable.getSubscriptionPeriodType() != null
-            && (responsable.getSubscriptionPeriodType().getId() == null || subscriptionPeriodTypeService
-                .getSubscriptionPeriodType(responsable.getSubscriptionPeriodType().getId()) == null))
-          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-        if (responsable.getDocuments() != null && responsable.getDocuments().size() > 0) {
-          for (Document document : responsable.getDocuments()) {
-            if (document.getDocumentType() == null || document.getDocumentType().getId() == null
-                || tiersDocumentTypeService
-                    .getDocumentType(document.getDocumentType().getId()) == null)
+          if (document.getMailsAffaire() != null && !validationHelper.validateMailList(document.getMailsAffaire()))
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+          if (document.getMailsClient() != null && document.getMailsClient() != null
+              && document.getMailsClient().size() > 0)
+            if (!validationHelper.validateMailList(document.getMailsClient()))
               return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-            if (document.getMailsAffaire() != null && document.getMailsAffaire().size() > 0)
-              if (!this.validateMailList(document.getMailsAffaire()))
+
+          validationHelper.validateString(document.getAffaireAddress(), false, 60);
+          validationHelper.validateString(document.getClientAddress(), false, 60);
+          validationHelper.validateString(document.getAffaireRecipient(), false, 40);
+          validationHelper.validateString(document.getClientRecipient(), false, 40);
+          validationHelper.validateString(document.getBillingLabel(), false, 40);
+          validationHelper.validateString(document.getCommandNumber(), false, 40);
+          validationHelper.validateReferential(document.getPaymentDeadlineType(), false);
+          validationHelper.validateReferential(document.getRefundType(), false);
+          validationHelper.validateString(document.getRefundIBAN(), false, 40);
+          validationHelper.validateReferential(document.getBillingClosureType(), false);
+          validationHelper.validateReferential(document.getBillingClosureRecipientType(), false);
+        }
+      }
+
+      validationHelper.validateReferential(tiers.getPaymentType(), true);
+      validationHelper.validateString(tiers.getPaymentIBAN(), false, 40);
+
+      if (tiers.getResponsables() != null && tiers.getResponsables().size() > 0) {
+        for (Responsable responsable : tiers.getResponsables()) {
+
+          validationHelper.validateReferential(responsable.getCivility(), true);
+          validationHelper.validateString(responsable.getFirstname(), true, 20);
+          validationHelper.validateString(responsable.getLastname(), true, 20);
+          validationHelper.validateReferential(responsable.getTiersType(), true);
+          validationHelper.validateReferential(responsable.getTiersCategory(), false);
+          validationHelper.validateReferential(responsable.getSalesEmployee(), true);
+          validationHelper.validateReferential(responsable.getFormalisteEmployee(), false);
+          validationHelper.validateReferential(responsable.getInsertionEmployee(), false);
+          validationHelper.validateReferential(responsable.getLanguage(), true);
+          validationHelper.validateString(responsable.getAddress(), true, 60);
+          validationHelper.validateReferential(responsable.getCountry(), true);
+          validationHelper.validateReferential(responsable.getCity(), true);
+          if (responsable.getCountry() != null && responsable.getCountry().getCode().equals("FR"))
+            validationHelper.validateString(responsable.getPostalCode(), true, 10);
+          validationHelper.validateString(responsable.getFunction(), false, 20);
+          validationHelper.validateString(responsable.getBuilding(), false, 20);
+          validationHelper.validateString(responsable.getFloor(), false, 20);
+
+          validationHelper.validateReferential(responsable.getSubscriptionPeriodType(), false);
+
+          if (responsable.getDocuments() != null && responsable.getDocuments().size() > 0) {
+            for (Document document : responsable.getDocuments()) {
+              validationHelper.validateReferential(document.getDocumentType(), true);
+
+              if (document.getMailsAffaire() != null && !validationHelper.validateMailList(document.getMailsAffaire()))
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-            if (document.getMailsClient() != null && document.getMailsClient().size() > 0)
-              if (!this.validateMailList(document.getMailsClient()))
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-            if (document.getMailsCCResponsableAffaire() != null && document.getMailsCCResponsableAffaire().size() > 0) {
-              for (Responsable res : document.getMailsCCResponsableAffaire()) {
-                if (res.getId() == null || responsableService.getResponsable(res.getId()) == null)
+              if (document.getMailsClient() != null && document.getMailsClient() != null
+                  && document.getMailsClient().size() > 0)
+                if (!validationHelper.validateMailList(document.getMailsClient()))
                   return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+              if (document.getMailsCCResponsableAffaire() != null
+                  && document.getMailsCCResponsableAffaire().size() > 0) {
+                for (Responsable res : document.getMailsCCResponsableAffaire()) {
+                  if (res.getId() == null || responsableService.getResponsable(res.getId()) == null)
+                    return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+                }
               }
-            }
-            if (document.getMailsCCResponsableClient() != null && document.getMailsCCResponsableClient().size() > 0) {
-              for (Responsable res : document.getMailsCCResponsableClient()) {
-                if (res.getId() == null || responsableService.getResponsable(res.getId()) == null)
-                  return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+              if (document.getMailsCCResponsableClient() != null && document.getMailsCCResponsableClient().size() > 0) {
+                for (Responsable res : document.getMailsCCResponsableClient()) {
+                  if (res.getId() == null || responsableService.getResponsable(res.getId()) == null)
+                    return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+                }
               }
+
+              validationHelper.validateString(document.getAffaireAddress(), false, 60);
+              validationHelper.validateString(document.getClientAddress(), false, 60);
+              validationHelper.validateString(document.getAffaireRecipient(), false, 40);
+              validationHelper.validateString(document.getClientRecipient(), false, 40);
+              validationHelper.validateString(document.getBillingLabel(), false, 40);
+              validationHelper.validateString(document.getCommandNumber(), false, 40);
+              validationHelper.validateReferential(document.getPaymentDeadlineType(), false);
+              validationHelper.validateReferential(document.getRefundType(), false);
+              validationHelper.validateString(document.getRefundIBAN(), false, 40);
+              validationHelper.validateReferential(document.getBillingClosureType(), false);
+              validationHelper.validateReferential(document.getBillingClosureRecipientType(), false);
+
             }
-            if (document.getAffaireAddress() != null && document.getAffaireAddress().length() > 60)
-              return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-            if (document.getClientAddress() != null && document.getClientAddress().length() > 60)
-              return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-            if (document.getAffaireRecipient() != null && document.getAffaireRecipient().length() > 40)
-              return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-            if (document.getClientRecipient() != null && document.getClientRecipient().length() > 40)
-              return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-            if (document.getBillingLabel() != null && document.getBillingLabel().length() > 40)
-              return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-            if (document.getCommandNumber() != null && document.getCommandNumber().length() > 40)
-              return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-            if (document.getPaymentDeadlineType() != null && (document.getPaymentDeadlineType().getId() == null
-                || paymentDeadlineTypeService
-                    .getPaymentDeadlineType(document.getPaymentDeadlineType().getId()) == null))
-              return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-            if (document.getRefundType() != null && (document.getRefundType().getId() == null
-                || refundTypeService.getRefundType(document.getRefundType().getId()) == null))
-              return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-            if (document.getRefundIBAN() != null && document.getRefundIBAN().length() > 40)
-              return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-            if (document.getBillingClosureType() != null && (document.getBillingClosureType().getId() == null
-                || billingClosureTypeService.getBillingClosureType(document.getBillingClosureType().getId()) == null))
-              return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-            if (document.getBillingClosureRecipientType() != null
-                && (document.getBillingClosureRecipientType().getId() == null
-                    || billingClosureRecipientTypeService
-                        .getBillingClosureRecipientType(document.getBillingClosureRecipientType().getId()) == null))
-              return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
           }
         }
       }
-    }
 
-    try
-
-    {
       tiers = tiersService.addOrUpdateTiers(tiers);
+    } catch (
+
+    ResponseStatusException e) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     } catch (HttpStatusCodeException e) {
       logger.error("HTTP error when fetching client types", e);
       return new ResponseEntity<Tiers>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -968,15 +834,6 @@ public class TiersController {
       return new ResponseEntity<Tiers>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
     return new ResponseEntity<Tiers>(tiers, HttpStatus.OK);
-  }
-
-  private boolean validateMailList(List<Mail> mails) {
-    EmailValidator emailvalidator = EmailValidator.getInstance();
-    for (Mail mail : mails) {
-      if (mail.getMail() == null || mail.getMail().length() > 30 || !emailvalidator.isValid(mail.getMail()))
-        return false;
-    }
-    return true;
   }
 
 }

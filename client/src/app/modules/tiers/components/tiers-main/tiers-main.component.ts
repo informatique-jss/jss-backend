@@ -1,17 +1,23 @@
-import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
+import { moveItemInArray } from '@angular/cdk/drag-drop';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { MatDialog } from '@angular/material/dialog';
-import { Observable, Subscription } from 'rxjs';
+import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter, map, startWith, switchMap, tap } from 'rxjs/operators';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
-import { compareWithId } from 'src/app/libs/CompareHelper';
+import { compareWithId, isTiersTypeProspect } from 'src/app/libs/CompareHelper';
 import { COUNTRY_CODE_FRANCE, SEPARATOR_KEY_CODES } from 'src/app/libs/Constants';
 import { validateEmail, validateFrenchPhone, validateInternationalPhone, validateVat } from 'src/app/libs/CustomFormsValidatorsHelper';
 import { callNumber, prepareMail } from 'src/app/libs/MailHelper';
+import { SpecialOffersDialogComponent } from 'src/app/modules/miscellaneous/components/special-offers-dialog/special-offers-dialog.component';
 import { City } from 'src/app/modules/miscellaneous/model/City';
 import { Country } from 'src/app/modules/miscellaneous/model/Country';
 import { DeliveryService } from 'src/app/modules/miscellaneous/model/DeliveryService';
+import { Mail } from 'src/app/modules/miscellaneous/model/Mail';
+import { Phone } from 'src/app/modules/miscellaneous/model/Phone';
+import { SpecialOffer } from 'src/app/modules/miscellaneous/model/SpecialOffer';
 import { CityService } from 'src/app/modules/miscellaneous/services/city.service';
 import { CivilityService } from 'src/app/modules/miscellaneous/services/civility.service';
 import { CountryService } from 'src/app/modules/miscellaneous/services/country.service';
@@ -19,33 +25,28 @@ import { DeliveryServiceService } from 'src/app/modules/miscellaneous/services/d
 import { Employee } from 'src/app/modules/profile/model/Employee';
 import { EmployeeService } from 'src/app/modules/profile/services/employee.service';
 import { Civility } from '../../../miscellaneous/model/Civility';
-import { LanguageService } from '../../../miscellaneous/services/language.service';
-import { TiersCategory } from '../../model/TiersCategory';
-import { TiersType } from '../../model/TiersType';
-import { SpecialOfferService } from '../../../miscellaneous/services/special-offer.service';
-import { TiersCategoryService } from '../../services/tiers.category.service';
-import { TiersTypeService } from '../../services/tiers.type.service';
 import { Language } from '../../../miscellaneous/model/Language';
+import { LanguageService } from '../../../miscellaneous/services/language.service';
+import { SpecialOfferService } from '../../../miscellaneous/services/special-offer.service';
 import { Tiers } from '../../model/Tiers';
-import { SpecialOffer } from 'src/app/modules/miscellaneous/model/SpecialOffer';
-import { SpecialOffersDialogComponent } from 'src/app/modules/miscellaneous/components/special-offers-dialog/special-offers-dialog.component';
-import { Mail } from 'src/app/modules/miscellaneous/model/Mail';
-import { Phone } from 'src/app/modules/miscellaneous/model/Phone';
+import { TiersCategory } from '../../model/TiersCategory';
+import { TiersCategoryService } from '../../services/tiers.category.service';
 
 @Component({
   selector: 'tiers-main',
   templateUrl: './tiers-main.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: ['./tiers-main.component.css']
 })
 
-export class PrincipalComponent implements OnInit {
+export class PrincipalComponent implements OnInit, AfterViewInit {
   matcher: CustomErrorStateMatcher = new CustomErrorStateMatcher();
   @Input() tiers: Tiers = {} as Tiers;
   @Input() editMode: boolean = false;
+  @ViewChild('specialOfferInput') specialOfferInput: ElementRef<HTMLInputElement> | undefined;
 
   SEPARATOR_KEY_CODES = SEPARATOR_KEY_CODES;
 
-  tiersTypes: TiersType[] = [] as Array<TiersType>;
   tiersCategories: TiersCategory[] = [] as Array<TiersCategory>;
   civilities: Civility[] = [] as Array<Civility>;
   languages: Language[] = [] as Array<Language>;
@@ -62,8 +63,6 @@ export class PrincipalComponent implements OnInit {
 
   filteredPostalCodes: String[] | undefined;
 
-  filteredCities: City[] | undefined;
-
   countries: Country[] = [] as Array<Country>;
   filteredCountries: Observable<Country[]> | undefined;
 
@@ -71,29 +70,29 @@ export class PrincipalComponent implements OnInit {
   filteredSpecialOffers: Observable<SpecialOffer[]> | undefined;
 
   constructor(private formBuilder: FormBuilder,
-    private tiersTypeService: TiersTypeService,
     private tiersCategoryService: TiersCategoryService,
     private civilityService: CivilityService,
     private languageService: LanguageService,
     private deliveryServiceService: DeliveryServiceService,
     private employeeService: EmployeeService,
     private cityService: CityService,
+    private cd: ChangeDetectorRef,
     private countryService: CountryService,
-    private sepcialOfferService: SpecialOfferService,
+    private specialOfferService: SpecialOfferService,
     public specialOfferDialog: MatDialog) { }
 
   // TODO : reprendre les RG (notamment facturation / commande) lorsque les modules correspondants seront faits
 
+  ngAfterViewInit(): void {
+    this.cd.detectChanges();
+  }
+
   ngOnChanges(changes: SimpleChanges) {
     if (changes.tiers != undefined) {
-      if (this.tiers.language == undefined || this.tiers.language == null)
-        this.tiers.language = this.languages[0];
       if (this.tiers.deliveryService == null || this.tiers.deliveryService == undefined)
         this.tiers.deliveryService = this.deliveryServices[0];
       if (this.tiers.country == null || this.tiers.country == undefined)
         this.tiers.country = this.countries[0];
-      if (this.tiers.isIndividual == undefined || this.tiers.isIndividual == null)
-        this.tiers.isIndividual = false;
       this.principalForm.markAllAsTouched();
     }
   }
@@ -109,10 +108,6 @@ export class PrincipalComponent implements OnInit {
     this.countryService.getCountries().subscribe(response => {
       this.countries = response;
     })
-
-    this.tiersTypeService.getTiersTypes().subscribe(response => {
-      this.tiersTypes = response;
-    });
     this.civilityService.getCivilities().subscribe(response => {
       this.civilities = response;
     })
@@ -131,7 +126,7 @@ export class PrincipalComponent implements OnInit {
     this.employeeService.getInsetionEmployees().subscribe(response => {
       this.insertionEmployees = response;
     })
-    this.sepcialOfferService.getSpecialOffers().subscribe(response => {
+    this.specialOfferService.getSpecialOffers().subscribe(response => {
       this.specialOffers = response;
     })
 
@@ -152,7 +147,7 @@ export class PrincipalComponent implements OnInit {
       map(value => this._filterEmployee(this.insertionEmployees, value)),
     );
 
-    this.filteredSpecialOffers = this.principalForm.get("specialOffer")?.valueChanges.pipe(
+    this.filteredSpecialOffers = this.principalForm.get("specialOffers")?.valueChanges.pipe(
       startWith(''),
       map(value => (typeof value === 'string') ? this._filterByCode(this.specialOffers, value) : [])
     );
@@ -172,21 +167,6 @@ export class PrincipalComponent implements OnInit {
       this.filteredPostalCodes = [...new Set(response.map(city => city.postalCode))];
     });
 
-    this.principalForm.get("city")?.valueChanges.pipe(
-      filter(res => {
-        return res != undefined && res !== null && res.length >= 2
-      }),
-      distinctUntilChanged(),
-      debounceTime(300),
-      tap(() => {
-        this.filteredCities = [];
-      }),
-      switchMap(value => this.cityService.getCitiesFilteredByCountryAndName(value, this.tiers.country)
-      )
-    ).subscribe(response => {
-      this.filteredCities = response as City[];
-    });
-
     this.filteredCountries = this.principalForm.get("country")?.valueChanges.pipe(
       startWith(''),
       map(value => this._filterCountry(value)),
@@ -197,14 +177,6 @@ export class PrincipalComponent implements OnInit {
   }
 
   principalForm = this.formBuilder.group({
-    tiersType: ['', Validators.required],
-    tiersId: [{ value: '', disabled: true }],
-    denomination: ['', [this.checkFieldFilledIfIsNotIndividual("denomination"), Validators.maxLength(60)]],
-    firstBilling: [{ value: '', disabled: true }],
-    civility: ['', this.checkFieldFilledIfIsIndividual("civility")],
-    isIndividual: [''],
-    firstname: ['', [this.checkFieldFilledIfIsIndividual("firstname"), Validators.maxLength(20)]],
-    lastname: ['', [this.checkFieldFilledIfIsIndividual("lastname"), Validators.maxLength(20)]],
     tiersCategory: [''],
     salesEmployee: ['', [Validators.required, this.checkAutocompleteField("salesEmployee")]],
     formalisteEmployee: ['', [this.checkAutocompleteField("formalisteEmployee")]],
@@ -214,11 +186,10 @@ export class PrincipalComponent implements OnInit {
     deliveryService: ['', Validators.required],
     address: ['', [Validators.required, Validators.maxLength(20)]],
     postalCode: ['', [this.checkFieldFilledIfIsInFrance("postalCode")]],
-    city: ['', [Validators.required, Validators.maxLength(30)]],
     country: ['', [Validators.required, this.checkAutocompleteField("country")]],
     intercom: ['', [Validators.maxLength(12)]],
     intercommunityVat: ['', [this.checkVAT("intercommunityVat")]],
-    specialOffer: ['', [this.checkAutocompleteField("specialOffer")]],
+    specialOffers: ['',],
     rcaFormaliteRate: ['', []],
     rcaInsertionRate: ['', []],
     mails: ['', []],
@@ -234,13 +205,20 @@ export class PrincipalComponent implements OnInit {
       width: '90%'
     });
     dialogSpecialOffer.afterClosed().subscribe(response => {
-      if (response && response != null)
-        this.tiers.specialOffer = response;
+      if (!this.tiers.specialOffers)
+        this.tiers.specialOffers = [] as Array<SpecialOffer>;
+      if (response && response != null) {
+        if (this.tiers.specialOffers.map(specialOffer => specialOffer.id).indexOf(response.id) < 0)
+          this.tiers.specialOffers.push(response);
+      }
     });
   }
 
   // Check if the propertiy given in parameter is filled when the tiers is an individual
   checkFieldFilledIfIsIndividual(fieldName: string): ValidationErrors | null {
+    return (control: AbstractControl): ValidationErrors | null => {
+      return null;
+    };
     return (control: AbstractControl): ValidationErrors | null => {
       const root = control.root as FormGroup;
 
@@ -255,6 +233,9 @@ export class PrincipalComponent implements OnInit {
 
   // Check if the propertiy given in parameter is filled when the tiers is an individual
   checkFieldFilledIfIsNotIndividual(fieldName: string): ValidationErrors | null {
+    return (control: AbstractControl): ValidationErrors | null => {
+      return null;
+    };
     return (control: AbstractControl): ValidationErrors | null => {
       const root = control.root as FormGroup;
 
@@ -281,10 +262,13 @@ export class PrincipalComponent implements OnInit {
 
   checkVAT(fieldName: string): ValidationErrors | null {
     return (control: AbstractControl): ValidationErrors | null => {
+      return null;
+    };
+    return (control: AbstractControl): ValidationErrors | null => {
       const root = control.root as FormGroup;
 
       const fieldValue = root.get(fieldName)?.value;
-      if (!this.tiers.isIndividual && (fieldValue == undefined || fieldValue == null || fieldValue.length == 0 || !validateVat(fieldValue)))
+      if (!this.tiers.isIndividual && !isTiersTypeProspect(this.tiers) && (fieldValue == undefined || fieldValue == null || fieldValue.length == 0 || !validateVat(fieldValue)))
         return {
           notFilled: true
         };
@@ -417,16 +401,39 @@ export class PrincipalComponent implements OnInit {
 
   compareWithId = compareWithId;
 
-  getFormStatus(): boolean {
-    this.principalForm.markAllAsTouched();
-    if (this.tiers.isIndividual == true) {
-      this.tiers.denomination = null;
-      this.tiers.intercommunityVat = null;
-    }
 
-    if (this.tiers.isIndividual == false) {
-      this.tiers.civility = null;
-    }
+  addSpecialOffer(event: MatAutocompleteSelectedEvent): void {
+    if (!this.tiers.specialOffers)
+      this.tiers.specialOffers = [] as Array<SpecialOffer>;
+    // Do not add twice
+    if (this.tiers.specialOffers.map(specialOffer => specialOffer.id).indexOf(event.option.value.id) >= 0)
+      return;
+    if (event.option && event.option.value && event.option.value.id)
+      this.tiers.specialOffers.push(event.option.value);
+    this.principalForm.get("specialOffers")?.setValue(null);
+    this.specialOfferInput!.nativeElement.value = '';
+  }
+
+  removeSpecialOffer(inputSpecialOffer: SpecialOffer): void {
+    if (this.tiers.specialOffers && this.editMode)
+      for (let i = 0; i < this.tiers.specialOffers.length; i++) {
+        const specialOffer = this.tiers.specialOffers[i];
+        if (specialOffer.id == inputSpecialOffer.id) {
+          this.tiers.specialOffers.splice(i, 1);
+          return;
+        }
+      }
+  }
+
+  getFormStatus(): boolean {
+    console.log(this.principalForm);
+    this.principalForm.markAllAsTouched();
+
     return this.principalForm.valid;
+  }
+
+  changeSpecialOfferOrder(event: any) {
+    if (this.editMode)
+      moveItemInArray(this.tiers.specialOffers!, event.previousIndex, event.currentIndex);
   }
 }

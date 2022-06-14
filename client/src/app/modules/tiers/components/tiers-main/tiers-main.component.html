@@ -1,41 +1,45 @@
-<div class="mat-elevation-z2 form-div">
+<div class="mat-elevation-z2 form-div" *ngIf="tiers">
   <form [formGroup]="principalForm">
     <div class="full-width">
       <fieldset [disabled]="editMode==false" class="fieldset-no-border">
         <table class="full-width">
           <tr>
             <td>
-              <mat-form-field class="full-width">
-                <mat-label>Type</mat-label>
-                <mat-select formControlName="tiersType" [(ngModel)]="tiers.tiersType" [compareWith]="compareWithId"
-                  [disabled]="editMode==false">
-                  <mat-option *ngFor="let tiersType of tiersTypes" [value]="tiersType">
-                    {{tiersType.label}}
-                  </mat-option>
-                </mat-select>
-              </mat-form-field>
+              <select-tiers-type [(model)]="tiers.tiersType" label="Type" [isDisabled]="!editMode"
+                [form]="principalForm" propertyName="tiersType" [isMandatory]="true"></select-tiers-type>
             </td>
             <td>
-              <mat-form-field class="full-width">
-                <mat-label>N° client/prospect</mat-label>
-                <input matInput formControlName="tiersId" [(ngModel)]="tiers.id" placeholder="N° client/prospect">
-              </mat-form-field>
+              <generic-input [(model)]="tiers.id" label="N° client/prospect" [form]="principalForm"
+                propertyName="tiersId" [isDisabled]="true"></generic-input>
             </td>
-            <td [hidden]="tiers.isIndividual">
-              <mat-form-field class="full-width">
-                <mat-label>Denomination</mat-label>
-                <input matInput formControlName="denomination" [(ngModel)]="tiers.denomination"
-                  placeholder="Dénomination">
-              </mat-form-field>
+            <td *ngIf="tiers.isIndividual==false">
+              <generic-input [(model)]="tiers.denomination" label="Dénomination" [form]="principalForm"
+                propertyName="denomination" [isMandatory]="true" [conditionnalRequired]="!tiers.isIndividual">
+              </generic-input>
             </td>
             <td>
-              <mat-form-field class="full-width">
-                <mat-label>Première facturation</mat-label>
-                <input matInput [matDatepicker]="datePickerFirstBilling" [(ngModel)]="tiers.firstBilling"
-                  formControlName="firstBilling">
-                <mat-datepicker-toggle matSuffix [for]="datePickerFirstBilling"></mat-datepicker-toggle>
-                <mat-datepicker #datePickerFirstBilling></mat-datepicker>
-              </mat-form-field>
+              <generic-datepicker [(model)]="tiers.firstBilling" label="Première facturation" [form]="principalForm"
+                propertyName="firstBilling" [isDisabled]="true"></generic-datepicker>
+            </td>
+          </tr>
+        </table>
+        <table class="full-width">
+          <tr>
+            <td>
+              <generic-toggle [(model)]="tiers.isIndividual" label="Particulier ?" [form]="principalForm"
+                propertyName="isIndividual"></generic-toggle>
+            </td>
+            <td [hidden]="tiers.isIndividual==false">
+              <radio-group-civility [(model)]="tiers.civility" [form]="principalForm" propertyName="civility">
+              </radio-group-civility>
+            </td>
+            <td *ngIf="tiers.isIndividual==true">
+              <generic-input [(model)]="tiers.lastname" label="Nom" [form]="principalForm" propertyName="lastname"
+                [isMandatory]="true" [conditionnalRequired]="tiers.isIndividual" [maxLength]="20"></generic-input>
+            </td>
+            <td *ngIf="tiers.isIndividual==true">
+              <generic-input [(model)]="tiers.firstname" label="Prénom" [form]="principalForm" propertyName="firstname"
+                [isMandatory]="true" [conditionnalRequired]="tiers.isIndividual" [maxLength]="20"></generic-input>
             </td>
           </tr>
         </table>
@@ -43,44 +47,8 @@
         <table class="full-width">
           <tr>
             <td>
-              <mat-slide-toggle formControlName="isIndividual" [(ngModel)]="tiers.isIndividual">Particulier ?
-              </mat-slide-toggle>
-            </td>
-            <td *ngIf="tiers.isIndividual==true">
-              <mat-radio-group class="radio-group-column" [(ngModel)]="tiers.civility" formControlName="civility">
-                <mat-radio-button *ngFor="let civility of civilities" [value]="civility"
-                  [checked]=" this.tiers.civility != undefined && this.tiers.civility.id == civility.id">
-                  {{civility.label}}
-                </mat-radio-button>
-              </mat-radio-group>
-            </td>
-            <td *ngIf="tiers.isIndividual==true">
-              <mat-form-field class="full-width">
-                <mat-label>Nom</mat-label>
-                <input matInput formControlName="lastname" [(ngModel)]="tiers.lastname" placeholder="Nom">
-              </mat-form-field>
-            </td>
-            <td *ngIf="tiers.isIndividual==true">
-              <mat-form-field class="full-width">
-                <mat-label>Prénom</mat-label>
-                <input matInput formControlName="firstname" [(ngModel)]="tiers.firstname" placeholder="Nom">
-              </mat-form-field>
-            </td>
-          </tr>
-        </table>
-
-        <table class="full-width">
-          <tr>
-            <td>
-              <mat-form-field class="full-width">
-                <mat-label>Catégorie</mat-label>
-                <mat-select formControlName="tiersCategory" [(ngModel)]="tiers.tiersCategory"
-                  [compareWith]="compareWithId" [disabled]="editMode==false">
-                  <mat-option *ngFor="let tiersCategory of tiersCategories" [value]="tiersCategory">
-                    {{tiersCategory.label}}
-                  </mat-option>
-                </mat-select>
-              </mat-form-field>
+              <select-tiers-category [(model)]="tiers.tiersCategory" label="Catégorie" [form]="principalForm"
+                propertyName="tiersCategory" [isDisabled]="!editMode"></select-tiers-category>
             </td>
             <td>
               <mat-form-field class="full-width">
@@ -175,17 +143,9 @@
               </mat-form-field>
             </td>
             <td>
-              <mat-form-field class="full-width">
-                <mat-label>Ville</mat-label>
-                <input matInput placeholder="Ville" [(ngModel)]="tiers.city" [matAutocomplete]="autoCompleteCity"
-                  formControlName="city" autocomplete="do-not-autofill">
-                <mat-autocomplete #autoCompleteCity="matAutocomplete" [displayWith]="displayLabel"
-                  (optionSelected)='fillPostalCode($event.option.value)'>
-                  <mat-option *ngFor="let city of filteredCities" [value]="city">
-                    {{city.label}}
-                  </mat-option>
-                </mat-autocomplete>
-              </mat-form-field>
+              <autocomplete-city [(model)]="tiers.city" [modelCountry]="tiers.country" [form]="principalForm"
+                propertyName="city" [isMandatory]="true" (onOptionSelected)="fillPostalCode($event)">
+              </autocomplete-city>
             </td>
             <td>
               <mat-form-field class="full-width">
@@ -193,7 +153,7 @@
                 <input matInput placeholder="Code postal" [(ngModel)]="tiers.postalCode"
                   [matAutocomplete]="autoCompletePostalCode" formControlName="postalCode"
                   autocomplete="do-not-autofill">
-                <mat-autocomplete #autoCompletePostalCode="matAutocomplete"
+                <mat-autocomplete autoActiveFirstOption #autoCompletePostalCode="matAutocomplete"
                   (optionSelected)='fillCity($event.option.value)'>
                   <mat-option *ngFor="let postalCode of filteredPostalCodes" [value]="postalCode">
                     {{postalCode}}
@@ -206,7 +166,8 @@
                 <mat-label>Pays</mat-label>
                 <input matInput placeholder="Pays" [(ngModel)]="tiers.country" [matAutocomplete]="autoCompleteCountry"
                   formControlName="country" autocomplete="do-not-autofill">
-                <mat-autocomplete #autoCompleteCountry="matAutocomplete" [displayWith]="displayLabel">
+                <mat-autocomplete autoActiveFirstOption #autoCompleteCountry="matAutocomplete"
+                  [displayWith]="displayLabel">
                   <mat-option *ngFor="let country of filteredCountries | async" [value]="country">
                     {{country.label}}
                   </mat-option>
@@ -234,22 +195,28 @@
             </td>
             <td>
               <mat-form-field class="full-width">
-                <mat-label>Tarif spécial</mat-label>
-                <input matInput placeholder="Tarif spécial" [(ngModel)]="tiers.specialOffer"
-                  [matAutocomplete]="autoSpecialOffer" formControlName="specialOffer" autocomplete="do-not-autofill">
-                <button
-                  *ngIf="tiers.specialOffer==undefined || tiers.specialOffer==null || tiers.specialOffer.id ==undefined || tiers.specialOffer.id==null"
-                  matSuffix mat-icon-button (click)="openSpecialOffersDialog()">
-                  <mat-icon>search</mat-icon>
-                </button>
-                <button (click)="tiers.specialOffer=null"
-                  *ngIf="tiers.specialOffer!=undefined && tiers.specialOffer!=null && tiers.specialOffer.id !=undefined && tiers.specialOffer.id!=null"
-                  matSuffix mat-icon-button>
-                  <mat-icon>close</mat-icon>
-                </button>
-                <mat-autocomplete #autoSpecialOffer="matAutocomplete" [displayWith]="displayLabel">
+                <mat-label>Tarifs spéciaux</mat-label>
+                <mat-chip-list class="mat-chip-list-stacked" #chipListSpecialOffers cdkDropList
+                  cdkDropListOrientation="vertical" (cdkDropListDropped)="changeSpecialOfferOrder($event)">
+                  <mat-chip *ngFor="let specialOffer of tiers.specialOffers" cdkDrag
+                    (removed)="removeSpecialOffer(specialOffer)">
+                    {{specialOffer.label}}
+                    <button matChipRemove *ngIf="editMode">
+                      <mat-icon>cancel</mat-icon>
+                    </button>
+                  </mat-chip>
+                  <input class="input-vertical" matInput placeholder="Saisir une offre spéciale" #specialOfferInput
+                    formControlName="specialOffers" [matChipInputFor]="chipListSpecialOffers"
+                    [matChipInputSeparatorKeyCodes]="SEPARATOR_KEY_CODES" [matAutocomplete]="autoCompleteSpecialOffers">
+                  <button *ngIf="editMode" matSuffix mat-icon-button (click)="openSpecialOffersDialog()">
+                    <mat-icon>search</mat-icon>
+                  </button>
+                </mat-chip-list>
+                <mat-hint>Glisser/déposer pour ordonner</mat-hint>
+                <mat-autocomplete autoActiveFirstOption #autoCompleteSpecialOffers="matAutocomplete"
+                  [displayWith]="displayLabel" (optionSelected)="addSpecialOffer($event)">
                   <mat-option *ngFor="let specialOffer of filteredSpecialOffers | async" [value]="specialOffer">
-                    {{specialOffer.code}} - {{specialOffer.label}}
+                    {{specialOffer.label}}
                   </mat-option>
                 </mat-autocomplete>
               </mat-form-field>

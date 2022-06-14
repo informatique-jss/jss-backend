@@ -8,7 +8,6 @@ import { SearchService } from 'src/app/search.service';
 import { Responsable } from '../../model/Responsable';
 import { Tiers } from '../../model/Tiers';
 import { TiersService } from '../../services/tiers.service';
-import { DocumentManagementComponent } from '../document-management/document-management.component';
 import { ResponsableMainComponent } from '../responsable-main/responsable-main.component';
 import { SettlementBillingComponent } from '../settlement-billing/settlement-billing.component';
 import { PrincipalComponent } from '../tiers-main/tiers-main.component';
@@ -32,7 +31,6 @@ export class TiersComponent implements OnInit {
   @ViewChild('tabs', { static: false }) tabs: any;
 
   @ViewChild(PrincipalComponent) principalFormComponent: PrincipalComponent | undefined;
-  @ViewChild(DocumentManagementComponent) documentManagementFormComponent: DocumentManagementComponent | undefined;
   @ViewChild(SettlementBillingComponent) documentSettlementBillingComponent: SettlementBillingComponent | undefined;
   @ViewChild(ResponsableMainComponent) responsableMainComponent: ResponsableMainComponent | undefined;
 
@@ -109,15 +107,12 @@ export class TiersComponent implements OnInit {
 
   getFormsStatus(): boolean {
     let principalFormStatus = this.principalFormComponent?.getFormStatus();
-    let documentManagementFormStatus = this.documentManagementFormComponent?.getFormStatus();
     let documentSettlementBillingFormStatus = this.documentSettlementBillingComponent?.getFormStatus();
     let responsableMainComponentFormStatus = this.responsableMainComponent?.getFormStatus();
     let errorMessages: string[] = [] as Array<string>;
     if (!principalFormStatus)
-      errorMessages.push("Onglet Principal");
-    if (!documentManagementFormStatus)
-      errorMessages.push("Onglet Gestion des pièces");
-    if (!documentSettlementBillingFormStatus)
+      errorMessages.push("Onglet Fiche du tiers");
+    if (!this.isTiersTypeProspect() && !documentSettlementBillingFormStatus)
       errorMessages.push("Onglet Réglement, facturation & relance");
     if (!responsableMainComponentFormStatus)
       errorMessages.push("Onglet Responsable");
