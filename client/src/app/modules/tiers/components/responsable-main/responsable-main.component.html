@@ -80,31 +80,22 @@
               <table class="full-width">
                 <tr>
                   <td>
-                    <mat-radio-group class="radio-group-column" [(ngModel)]="selectedResponsable.civility"
-                      formControlName="civility">
-                      <mat-radio-button *ngFor="let civility of civilities" [value]="civility"
-                        [checked]=" this.selectedResponsable.civility != undefined && this.selectedResponsable.civility.id == civility.id">
-                        {{civility.label}}
-                      </mat-radio-button>
-                    </mat-radio-group>
+                    <radio-group-civility [(model)]="selectedResponsable.civility" [form]="principalForm"
+                      propertyName="civility" label="Civilité"></radio-group-civility>
                   </td>
                   <td>
-                    <mat-form-field class="full-width">
-                      <mat-label>Nom</mat-label>
-                      <input matInput formControlName="lastname" [(ngModel)]="selectedResponsable.lastname"
-                        placeholder="Nom">
-                    </mat-form-field>
+                    <generic-input [(model)]="selectedResponsable.lastname" label="Nom" [form]="principalForm"
+                      propertyName="lastname" [isMandatory]="true" [isDisabled]="!editMode" [maxLength]="20">
+                    </generic-input>
                   </td>
                   <td>
-                    <mat-form-field class="full-width">
-                      <mat-label>Prénom</mat-label>
-                      <input matInput formControlName="firstname" [(ngModel)]="selectedResponsable.firstname"
-                        placeholder="Nom">
-                    </mat-form-field>
+                    <generic-input [(model)]="selectedResponsable.firstname" label="Prénom" [form]="principalForm"
+                      propertyName="firstname" [isMandatory]="true" [isDisabled]="!editMode" [maxLength]="20">
+                    </generic-input>
                   </td>
                   <td>
-                    <mat-slide-toggle formControlName="isActive" [(ngModel)]="selectedResponsable.isActive">Actif ?
-                    </mat-slide-toggle>
+                    <generic-toggle [(model)]="selectedResponsable.isActive" label="Actif ?" [form]="principalForm"
+                      propertyName="isActive"></generic-toggle>
                   </td>
                 </tr>
               </table>
@@ -112,38 +103,21 @@
               <table class="full-width">
                 <tr>
                   <td>
-                    <mat-form-field class="full-width">
-                      <mat-label>N° client</mat-label>
-                      <input matInput formControlName="idTiers" [(ngModel)]="tiers.id">
-                    </mat-form-field>
+                    <generic-input [(model)]="tiers.id" label="N° de client" [form]="principalForm"
+                      propertyName="idTiers" [isDisabled]="true"></generic-input>
                   </td>
                   <td>
-                    <mat-form-field class="full-width">
-                      <mat-label>Type</mat-label>
-                      <mat-select formControlName="tiersType" [(ngModel)]="selectedResponsable.tiersType"
-                        [compareWith]="compareWithId" [disabled]="editMode==false">
-                        <mat-option *ngFor="let tiersType of tiersTypes" [value]="tiersType">
-                          {{tiersType.label}}
-                        </mat-option>
-                      </mat-select>
-                    </mat-form-field>
+                    <select-tiers-type [(model)]="selectedResponsable.tiersType" label="Type" [form]="principalForm"
+                      propertyName="tiersType" [isMandatory]="true" [isDisabled]="!editMode"></select-tiers-type>
                   </td>
                   <td>
-                    <mat-form-field class="full-width">
-                      <mat-label>Catégorie</mat-label>
-                      <mat-select formControlName="tiersCategory" [(ngModel)]="selectedResponsable.tiersCategory"
-                        [compareWith]="compareWithId" [disabled]="editMode==false">
-                        <mat-option *ngFor="let tiersCategory of tiersCategories" [value]="tiersCategory">
-                          {{tiersCategory.label}}
-                        </mat-option>
-                      </mat-select>
-                    </mat-form-field>
+                    <select-tiers-category [(model)]="selectedResponsable.tiersCategory" label="Catégorie"
+                      [form]="principalForm" propertyName="tiersCategory" [isDisabled]="!editMode">
+                    </select-tiers-category>
                   </td>
                   <td>
-                    <mat-form-field class="full-width">
-                      <mat-label>Fonction</mat-label>
-                      <input matInput formControlName="function" [(ngModel)]="selectedResponsable.function">
-                    </mat-form-field>
+                    <generic-input [(model)]="selectedResponsable.function" label="Fonction" [form]="principalForm"
+                      propertyName="function" [maxLength]="20"></generic-input>
                   </td>
                 </tr>
               </table>
@@ -151,62 +125,22 @@
               <table class="full-width">
                 <tr>
                   <td>
-                    <mat-form-field class="full-width">
-                      <mat-label>Commercial</mat-label>
-                      <input type="text" matInput formControlName="salesEmployee"
-                        [matAutocomplete]="autoCompleteSalesEmployee" [(ngModel)]="selectedResponsable.salesEmployee">
-                      <mat-icon matSuffix (click)="selectedResponsable.salesEmployee=null"
-                        *ngIf="editMode && selectedResponsable.salesEmployee!=null">
-                        close
-                      </mat-icon>
-                      <mat-autocomplete autoActiveFirstOption #autoCompleteSalesEmployee="matAutocomplete"
-                        [displayWith]="displayEmployee">
-                        <mat-option *ngFor="let employee of filteredSalesEmployees | async" [value]="employee">
-                          {{employee.firstname}} {{employee.lastname}}
-                        </mat-option>
-                      </mat-autocomplete>
-                    </mat-form-field>
+                    <autocomplete-sales-employee [(model)]="selectedResponsable.salesEmployee" [form]="principalForm"
+                      propertyName="salesEmployee" [isMandatory]="true" [isDisabled]="!editMode">
+                    </autocomplete-sales-employee>
                   </td>
                   <td>
-                    <mat-form-field class="full-width">
-                      <mat-label>Formaliste</mat-label>
-                      <input type="text" matInput formControlName="formalisteEmployee"
-                        [matAutocomplete]="autoCompleteFormalisteEmployee"
-                        [(ngModel)]="selectedResponsable.formalisteEmployee">
-                      <mat-icon matSuffix (click)="selectedResponsable.formalisteEmployee=null"
-                        *ngIf="editMode && selectedResponsable.formalisteEmployee!=null">close</mat-icon>
-                      <mat-autocomplete autoActiveFirstOption #autoCompleteFormalisteEmployee="matAutocomplete"
-                        [displayWith]="displayEmployee">
-                        <mat-option *ngFor="let employee of filteredFormalisteEmployees | async" [value]="employee">
-                          {{employee.firstname}} {{employee.lastname}}
-                        </mat-option>
-                      </mat-autocomplete>
-                    </mat-form-field>
+                    <autocomplete-formaliste-employee [(model)]="selectedResponsable.formalisteEmployee"
+                      [form]="principalForm" propertyName="formalisteEmployee" [isDisabled]="!editMode">
+                    </autocomplete-formaliste-employee>
+                  <td>
+                    <autocomplete-insertion-employee [(model)]="selectedResponsable.insertionEmployee"
+                      [form]="principalForm" propertyName="insertionEmployee" [isDisabled]="!editMode">
+                    </autocomplete-insertion-employee>
                   </td>
                   <td>
-                    <mat-form-field class="full-width">
-                      <mat-label>Insertion</mat-label>
-                      <input type="text" matInput formControlName="insertionEmployee"
-                        [matAutocomplete]="autoCompleteInsertionEmployee"
-                        [(ngModel)]="selectedResponsable.insertionEmployee">
-                      <mat-icon matSuffix (click)="selectedResponsable.insertionEmployee=null"
-                        *ngIf="editMode && selectedResponsable.insertionEmployee!=null">close</mat-icon>
-                      <mat-autocomplete autoActiveFirstOption #autoCompleteInsertionEmployee="matAutocomplete"
-                        [displayWith]="displayEmployee">
-                        <mat-option *ngFor="let employee of filteredInsertionEmployees | async" [value]="employee">
-                          {{employee.firstname}} {{employee.lastname}}
-                        </mat-option>
-                      </mat-autocomplete>
-                    </mat-form-field>
-                  </td>
-                  <td>
-                    <mat-form-field class="full-width">
-                      <mat-label>Première facturation</mat-label>
-                      <input matInput [matDatepicker]="datePickerFirstBilling"
-                        [(ngModel)]="selectedResponsable.firstBilling" formControlName="firstBilling">
-                      <mat-datepicker-toggle matSuffix [for]="datePickerFirstBilling"></mat-datepicker-toggle>
-                      <mat-datepicker #datePickerFirstBilling></mat-datepicker>
-                    </mat-form-field>
+                    <generic-datepicker [(model)]="selectedResponsable.firstBilling" label="Première facturation"
+                      [form]="principalForm" propertyName="firstBilling" [isDisabled]="true"></generic-datepicker>
                   </td>
                 </tr>
               </table>
@@ -214,23 +148,13 @@
               <table class="full-width">
                 <tr>
                   <td>
-                    <mat-form-field class="full-width">
-                      <mat-label>Destinataire(s) courrier</mat-label>
-                      <textarea (keyup)="limitTextareaSize('mailRecipient',3)"
-                        (keydown)="limitTextareaSize('mailRecipient',3)" (paste)="limitTextareaSize('mailRecipient',3)"
-                        rows="3" matInput formControlName="mailRecipient"
-                        [(ngModel)]="selectedResponsable.mailRecipient"></textarea>
-                    </mat-form-field>
+                    <generic-textarea [(model)]="selectedResponsable.mailRecipient" label="Destinataire(s) courrier"
+                      [form]="principalForm" propertyName="mailRecipient" [isDisabled]="!editMode"
+                      (filterInput)="limitTextareaSize(3)"></generic-textarea>
                   </td>
                   <td style="vertical-align: baseline;">
-                    <mat-label>Langue de communication</mat-label>
-                    <mat-radio-group class="radio-group-column" [(ngModel)]="selectedResponsable.language"
-                      formControlName="language">
-                      <mat-radio-button *ngFor=" let language of languages" [value]="language"
-                        [checked]=" this.selectedResponsable.language != undefined && this.selectedResponsable.language.id == language.id">
-                        {{language.label}}
-                      </mat-radio-button>
-                    </mat-radio-group>
+                    <radio-group-language [(model)]="selectedResponsable.language" [form]="principalForm"
+                      propertyName="language" label="Langue de communication"></radio-group-language>
                   </td>
                 </tr>
               </table>
@@ -239,65 +163,29 @@
               <table class="full-width">
                 <tr>
                   <td>
-                    <mat-form-field class="full-width">
-                      <mat-label>Adresse</mat-label>
-                      <input matInput formControlName="address" [(ngModel)]="selectedResponsable.address"
-                        placeholder="Adresse" autocomplete="do-not-autofill">
-                    </mat-form-field>
+                    <generic-input [(model)]="selectedResponsable.address" label="Adresse" [form]="principalForm"
+                      propertyName="address" [isMandatory]="true" [maxLength]="20"></generic-input>
                   </td>
                   <td>
-                    <mat-form-field class="full-width">
-                      <mat-label>Ville</mat-label>
-                      <input matInput placeholder="Ville" [(ngModel)]="selectedResponsable.city"
-                        [matAutocomplete]="autoCompleteCity" formControlName="city" autocomplete="do-not-autofill">
-                      <mat-autocomplete autoActiveFirstOption #autoCompleteCity="matAutocomplete"
-                        [displayWith]="displayLabel" (optionSelected)='fillPostalCode($event.option.value)'>
-                        <mat-option *ngFor="let city of filteredCities" [value]="city">
-                          {{city.label}}
-                        </mat-option>
-                      </mat-autocomplete>
-                    </mat-form-field>
+                    <autocomplete-city [(model)]="selectedResponsable.city" [modelCountry]="selectedResponsable.country"
+                      [form]="principalForm" propertyName="city" [isMandatory]="true"
+                      (onOptionSelected)="fillPostalCode($event)">
+                    </autocomplete-city>
                   </td>
                   <td>
-                    <mat-form-field class="full-width">
-                      <mat-label>Code postal</mat-label>
-                      <input matInput placeholder="Code postal" [(ngModel)]="selectedResponsable.postalCode"
-                        [matAutocomplete]="autoCompletePostalCode" formControlName="postalCode"
-                        autocomplete="do-not-autofill">
-                      <mat-autocomplete autoActiveFirstOption #autoCompletePostalCode="matAutocomplete"
-                        (optionSelected)='fillCity($event.option.value)'>
-                        <mat-option *ngFor="let postalCode of filteredPostalCodes" [value]="postalCode">
-                          {{postalCode}}
-                        </mat-option>
-                      </mat-autocomplete>
-                    </mat-form-field>
+                    <autocomplete-postal-code [(model)]="selectedResponsable.postalCode" [form]="principalForm"
+                      propertyName="postalCode" [isMandatory]="true"
+                      [conditionnalRequired]="selectedResponsable.country != null && selectedResponsable.country.code == COUNTRY_CODE_FRANCE"
+                      (onOptionSelected)="fillCity($event)"></autocomplete-postal-code>
                   </td>
                   <td>
-                    <mat-form-field class="full-width">
-                      <mat-label>Pays</mat-label>
-                      <input matInput placeholder="Pays" [(ngModel)]="selectedResponsable.country"
-                        [matAutocomplete]="autoCompleteCountry" formControlName="country"
-                        autocomplete="do-not-autofill">
-                      <mat-autocomplete autoActiveFirstOption #autoCompleteCountry="matAutocomplete"
-                        [displayWith]="displayLabel">
-                        <mat-option *ngFor="let country of filteredCountries | async" [value]="country">
-                          {{country.label}}
-                        </mat-option>
-                      </mat-autocomplete>
-                    </mat-form-field>
+                    <autocomplete-country [(model)]="selectedResponsable.country" [form]="principalForm"
+                      propertyName="country" [isMandatory]="true"></autocomplete-country>
                   </td>
-                  <td>
-                    <mat-form-field class="full-width">
-                      <mat-label>Bâtiment</mat-label>
-                      <input matInput formControlName="building" [(ngModel)]="selectedResponsable.building">
-                    </mat-form-field>
-                  </td>
-                  <td>
-                    <mat-form-field class="full-width">
-                      <mat-label>Etage</mat-label>
-                      <input matInput formControlName="floor" [(ngModel)]="selectedResponsable.floor">
-                    </mat-form-field>
-                  </td>
+                  <generic-input [(model)]="selectedResponsable.building" label="Bâtiment" [form]="principalForm"
+                    propertyName="building" [maxLength]="20"></generic-input>
+                  <generic-input [(model)]="selectedResponsable.floor" label="Etége" [form]="principalForm"
+                    propertyName="floor" [maxLength]="8"></generic-input>
                 </tr>
               </table>
               <table class="full-width">
@@ -314,87 +202,45 @@
                   </td>
                   <td
                     *ngIf="selectedResponsable.jssSubscription.isPaperSubscription || selectedResponsable.jssSubscription.isWebSubscription">
-                    <mat-form-field class="full-width">
-                      <mat-label>Durée de l'abonnement</mat-label>
-                      <mat-select formControlName="subscriptionPeriodType"
-                        [(ngModel)]="selectedResponsable.subscriptionPeriodType" [compareWith]="compareWithId"
-                        [disabled]="editMode==false">
-                        <mat-option *ngFor="let subscriptionPeriodType of subscriptionPeriodTypes"
-                          [value]="subscriptionPeriodType">
-                          {{subscriptionPeriodType.label}}
-                        </mat-option>
-                      </mat-select>
-                    </mat-form-field>
+                    <select-subscription-period [(model)]="selectedResponsable.subscriptionPeriodType"
+                      label="Durée de l'abonnement" [form]="principalForm" propertyName="subscriptionPeriodType"
+                      [isDisabled]="!editMode" [isMandatory]="true"
+                      [conditionnalRequired]="this.selectedResponsable != null && this.selectedResponsable.jssSubscription != null && (this.selectedResponsable.jssSubscription.isPaperSubscription || this.selectedResponsable.jssSubscription.isWebSubscription)">
+                    </select-subscription-period>
                   </td>
                   <td
                     *ngIf="selectedResponsable.subscriptionPeriodType!=null && selectedResponsable.subscriptionPeriodType.code==SUSCRIPTION_TYPE_CODE_PERIODE_12M">
-                    <mat-slide-toggle formControlName="isBouclette" [(ngModel)]="selectedResponsable.isBouclette">
-                      Bouclette ?
-                    </mat-slide-toggle>
+                    <generic-toggle [(model)]="selectedResponsable.isBouclette" label="Bouclette ?"
+                      [form]="principalForm" propertyName="isBouclette"></generic-toggle>
                   </td>
                   <td>
-                    <mat-form-field class="full-width">
-                      <mat-label>Taux RCA Formalité</mat-label>
-                      <input matInput formControlName="rcaFormaliteRate" [(ngModel)]="tiers.rcaFormaliteRate"
-                        type="number" placeholder="Taux RCA Formalité">
-                    </mat-form-field>
+                    <generic-input [(model)]="tiers.rcaFormaliteRate" label="Taux RCA Formalité" [form]="principalForm"
+                      propertyName="rcaFormaliteRate" type="number"></generic-input>
                   </td>
                   <td>
-                    <mat-form-field class="full-width">
-                      <mat-label>Taux RCA Insertion</mat-label>
-                      <input matInput formControlName="rcaInsertionRate" [(ngModel)]="tiers.rcaInsertionRate"
-                        type="number" placeholder="Taux RCA Insertion">
-                    </mat-form-field>
+                    <generic-input [(model)]="tiers.rcaInsertionRate" label="Taux RCA Insertion" [form]="principalForm"
+                      propertyName="rcaInsertionRate" type="number"></generic-input>
                   </td>
                 </tr>
               </table>
               <table class="full-width">
                 <tr>
                   <td>
-                    <mat-form-field class="full-width">
-                      <mat-label>Mails</mat-label>
-                      <mat-chip-list #chipListMails>
-                        <mat-chip *ngFor="let mail of selectedResponsable.mails" (removed)="removeMail(mail)">
-                          {{mail.mail}}
-                          <button matChipRemove *ngIf="editMode">
-                            <mat-icon>cancel</mat-icon>
-                          </button>
-                          <mat-icon matChipRemove *ngIf="editMode==false" (click)="prepareMail(mail)">mail</mat-icon>
-                        </mat-chip>
-                        <input placeholder="Saisir un mail" #mailInput formControlName="mails"
-                          [matChipInputFor]="chipListMails" [matChipInputSeparatorKeyCodes]="SEPARATOR_KEY_CODES"
-                          (matChipInputTokenEnd)="addMail($event)">
-                      </mat-chip-list>
-                    </mat-form-field>
+                    <chips-mail label="Mails" [(model)]="selectedResponsable.mails" [form]="principalForm"
+                      propertyName="mails" [isDisabled]="!editMode"></chips-mail>
                   </td>
                   <td>
-                    <mat-form-field class="full-width">
-                      <mat-label>Téléphones</mat-label>
-                      <mat-chip-list #chipListPhones>
-                        <mat-chip *ngFor="let phone of selectedResponsable.phones" (removed)="removePhone(phone)">
-                          {{phone.phoneNumber}}
-                          <button matChipRemove *ngIf="editMode">
-                            <mat-icon>cancel</mat-icon>
-                          </button>
-                          <mat-icon matChipRemove *ngIf="editMode==false" (click)="call(phone)">phone</mat-icon>
-                        </mat-chip>
-                        <input placeholder="Saisir un téléphone" #phoneInput formControlName="phones"
-                          [matChipInputFor]="chipListPhones" [matChipInputSeparatorKeyCodes]="SEPARATOR_KEY_CODES"
-                          (matChipInputTokenEnd)="addPhone($event)">
-                      </mat-chip-list>
-                    </mat-form-field>
+                    <chips-phone label="Téléphones" [(model)]="selectedResponsable.phones" [form]="principalForm"
+                      propertyName="phones" [isDisabled]="!editMode"></chips-phone>
                   </td>
                 </tr>
               </table>
               <table class="full-width">
                 <tr>
-                  <td>
-                    <mat-form-field class="full-width">
-                      <mat-label>Observations / Informations complémentaires</mat-label>
-                      <textarea rows="4" matInput formControlName="observations"
-                        [(ngModel)]="selectedResponsable.observations"></textarea>
-                    </mat-form-field>
-                  </td>
+                  <generic-textarea [(model)]="selectedResponsable.observations"
+                    label="Observations / Informations complémentaires" [form]="principalForm"
+                    propertyName="observations" [isDisabled]="!editMode" [numberOfLines]="4">
+                  </generic-textarea>
                 </tr>
               </table>
             </fieldset>

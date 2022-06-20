@@ -1,13 +1,10 @@
 package com.jss.jssbackend.modules.quotation.service;
 
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
-
-import com.jss.jssbackend.libs.SSLHelper;
-import com.jss.jssbackend.modules.quotation.model.InseeToken;
-import com.jss.jssbackend.modules.quotation.model.Siren;
-import com.jss.jssbackend.modules.quotation.model.Siret;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -20,6 +17,11 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
+
+import com.jss.jssbackend.libs.SSLHelper;
+import com.jss.jssbackend.modules.quotation.model.InseeToken;
+import com.jss.jssbackend.modules.quotation.model.Siren;
+import com.jss.jssbackend.modules.quotation.model.Siret;
 
 @Service
 public class SireneDelegateServiceImpl implements SireneDelegateService {
@@ -84,7 +86,7 @@ public class SireneDelegateServiceImpl implements SireneDelegateService {
 	}
 
 	@Override
-	public Siren getSiren(String siren) throws HttpStatusCodeException, Exception {
+	public List<Siren> getSiren(String siren) throws HttpStatusCodeException, Exception {
 		try {
 			SSLHelper.disableCertificateValidation();
 			ResponseEntity<Siren> res = new RestTemplate().exchange(
@@ -92,7 +94,9 @@ public class SireneDelegateServiceImpl implements SireneDelegateService {
 					HttpMethod.GET,
 					new HttpEntity<Siren>(this.createHeaders()), Siren.class);
 			if (res.getBody() != null) {
-				return res.getBody();
+				ArrayList<Siren> out = new ArrayList<Siren>();
+				out.add(res.getBody());
+				return out;
 			}
 			return null;
 		} catch (Exception e) {
@@ -101,7 +105,7 @@ public class SireneDelegateServiceImpl implements SireneDelegateService {
 	}
 
 	@Override
-	public Siret getSiret(String siret) throws HttpStatusCodeException, Exception {
+	public List<Siret> getSiret(String siret) throws HttpStatusCodeException, Exception {
 		try {
 			SSLHelper.disableCertificateValidation();
 			ResponseEntity<Siret> res = new RestTemplate().exchange(
@@ -109,7 +113,9 @@ public class SireneDelegateServiceImpl implements SireneDelegateService {
 					HttpMethod.GET,
 					new HttpEntity<Siret>(this.createHeaders()), Siret.class);
 			if (res.getBody() != null) {
-				return res.getBody();
+				ArrayList<Siret> out = new ArrayList<Siret>();
+				out.add(res.getBody());
+				return out;
 			}
 			return null;
 		} catch (Exception e) {

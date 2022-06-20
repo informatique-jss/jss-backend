@@ -12,7 +12,7 @@ export interface Affaire {
   lastname: string;
   denomination: string;
   isIndividual: boolean;
-  legalForm: LegalForm | null;
+  legalForm: LegalForm | undefined;
   siren: string;
   siret: string;
   rna: string;

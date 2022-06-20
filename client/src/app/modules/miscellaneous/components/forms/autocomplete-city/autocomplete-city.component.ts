@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { City } from '../../../model/City';
@@ -12,7 +12,7 @@ import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-au
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: ['./autocomplete-city.component.css']
 })
-export class AutocompleteCityComponent extends GenericAutocompleteComponent<City> implements OnInit {
+export class AutocompleteCityComponent extends GenericAutocompleteComponent<City, City> implements OnInit {
 
   /**
    * The model of country property.
@@ -21,8 +21,8 @@ export class AutocompleteCityComponent extends GenericAutocompleteComponent<City
   @Input() modelCountry: Country | undefined;
 
 
-  constructor(private formBuild: FormBuilder, private cityService: CityService) {
-    super(formBuild)
+  constructor(private formBuild: FormBuilder, private cityService: CityService, private changeDetectorRef: ChangeDetectorRef) {
+    super(formBuild, changeDetectorRef)
   }
 
   searchEntities(value: string): Observable<City[]> {

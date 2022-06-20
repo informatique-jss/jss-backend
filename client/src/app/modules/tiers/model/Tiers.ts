@@ -10,7 +10,7 @@ export interface Tiers extends ITiers {
   deliveryService: DeliveryService;
   intercom: string;
   intercommunityVat: string | null;
-  specialOffers: SpecialOffer[] | null;
+  specialOffers: SpecialOffer[];
   instructions: string;
   paymentType: PaymentType;
   paymentIBAN: string;

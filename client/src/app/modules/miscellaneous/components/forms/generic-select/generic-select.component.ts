@@ -46,11 +46,17 @@ export abstract class GenericSelectComponent<T> implements OnInit {
    * If false, Validators.required is not applied regardless the value of isMandatory
    * Default : true
    */
-  @Input() conditionnalRequired: boolean = true;
+  @Input() conditionnalRequired: boolean | undefined;
   /**
    * Additionnal validators to check
    */
   @Input() customValidators: ValidatorFn[] | undefined;
+  /**
+ * Triggered when value is changed by user
+ */
+  @Output() selectionChange: EventEmitter<T> = new EventEmitter();
+
+
 
   abstract types: T[];
 
@@ -59,17 +65,22 @@ export abstract class GenericSelectComponent<T> implements OnInit {
     private formBuilder: FormBuilder) { }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes.model)
+    if (changes.model && this.form != undefined) {
       this.cdr.detectChanges();
+      this.form.get(this.propertyName)?.setValue(this.model);
+      this.form.markAllAsTouched();
+    }
     if (changes.isDisabled) {
       if (this.isDisabled) {
         this.form?.get(this.propertyName)?.disable();
       } else {
         this.form?.get(this.propertyName)?.enable();
       }
+      this.cdr.detectChanges();
     }
-    if (this.form && (this.isMandatory || this.customValidators))
-      this.form.get(this.propertyName)?.updateValueAndValidity();
+    if (this.form && (this.isMandatory || this.customValidators)) {
+      this.cdr.detectChanges();
+    }
   }
 
   ngOnDestroy() {
@@ -88,7 +99,6 @@ export abstract class GenericSelectComponent<T> implements OnInit {
           validators.push(Validators.required);
         }
       }
-
       if (this.customValidators != undefined && this.customValidators != null && this.customValidators.length > 0)
         validators.push(...this.customValidators);
 
@@ -97,8 +107,12 @@ export abstract class GenericSelectComponent<T> implements OnInit {
         (newValue) => {
           this.model = newValue;
           this.modelChange.emit(this.model);
+          this.selectionChange.emit(this.model);
+          this.form!.markAllAsTouched();
+          this.cdr.detectChanges();
         }
       );
+      this.form.get(this.propertyName)?.setValue(this.model);
       this.form.markAllAsTouched();
     }
   }

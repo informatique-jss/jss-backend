@@ -37,9 +37,8 @@ export class GenericToggleComponent implements OnInit {
     private formBuilder: FormBuilder) { }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (this.model == undefined) {
-      this.model = false;
-      this.modelChange.emit(this.model);
+    if (changes.model && this.form != undefined) {
+      this.form.get(this.propertyName)?.setValue(this.model);
     }
   }
 
@@ -58,6 +57,7 @@ export class GenericToggleComponent implements OnInit {
           this.modelChange.emit(this.model);
         }
       )
+      this.form.get(this.propertyName)?.setValue(this.model);
       this.form.markAllAsTouched();
     }
   }

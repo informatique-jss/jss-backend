@@ -13,6 +13,6 @@ export class SirenService extends AppRestService<Siren>{
   }
 
   getSiren(siren: string) {
-    return this.get(new HttpParams().set("siren", siren), "siren");
+    return this.getList(new HttpParams().set("siren", siren), "siren");
   }
 }

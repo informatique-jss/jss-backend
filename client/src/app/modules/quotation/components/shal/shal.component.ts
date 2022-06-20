@@ -1,18 +1,16 @@
 import { Component, ElementRef, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatDialog } from '@angular/material/dialog';
+import { MatAccordion } from '@angular/material/expansion';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
-import { compareWithId } from 'src/app/libs/CompareHelper';
 import { CONFRERE_BALO_ID, JOURNAL_TYPE_JSS_DENOMINATION, PROOF_READING_DOCUMENT_TYPE_CODE, PUBLICATION_CERTIFICATE_DOCUMENT_TYPE_CODE, PUBLICATION_TIERS_DOCUMENT_TYPE_CODE, SEPARATOR_KEY_CODES } from 'src/app/libs/Constants';
 import { getDocument } from 'src/app/libs/DocumentHelper';
 import { downloadTextAsFile } from 'src/app/libs/DownloadHelper';
 import { convertToRtf, formatDate } from 'src/app/libs/FormatHelper';
-import { instanceOfCustomerOrder } from 'src/app/libs/TypeHelper';
 import { Audit } from 'src/app/modules/miscellaneous/model/Audit';
-import { Department } from 'src/app/modules/miscellaneous/model/Department';
 import { HistoryAction } from 'src/app/modules/miscellaneous/model/HistoryAction';
 import { DocumentTypeService } from 'src/app/modules/miscellaneous/services/document.type.service';
 import { SHAL_ENTITY_TYPE } from 'src/app/routing/search/search.component';
@@ -22,13 +20,11 @@ import { CharacterPrice } from '../../model/CharacterPrice';
 import { Confrere } from '../../model/Confrere';
 import { JournalType } from '../../model/JournalType';
 import { NoticeType } from '../../model/NoticeType';
-import { NoticeTypeFamily } from '../../model/NoticeTypeFamily';
 import { Provision } from '../../model/Provision';
 import { Shal } from '../../model/Shal';
 import { CharacterPriceService } from '../../services/character.price.service';
 import { ConfrereService } from '../../services/confrere.service';
 import { JournalTypeService } from '../../services/journal.type.service';
-import { NoticeTypeFamilyService } from '../../services/notice.type.family.service';
 import { NoticeTypeService } from '../../services/notive.type.service';
 import { ConfrereDialogComponent } from '../confreres-dialog/confreres-dialog.component';
 
@@ -45,12 +41,11 @@ export class ShalComponent implements OnInit {
 
   @ViewChild('tabs', { static: false }) tabs: any;
   @ViewChild('noticeTypesInput') noticeTypesInput: ElementRef<HTMLInputElement> | undefined;
+  @ViewChild(MatAccordion) accordion: MatAccordion | undefined;
 
   SEPARATOR_KEY_CODES = SEPARATOR_KEY_CODES;
   SHAL_ENTITY_TYPE = SHAL_ENTITY_TYPE;
   CONFRERE_BALO_ID = CONFRERE_BALO_ID;
-
-  filteredDepartments: Observable<Department[]> | undefined;
 
   journalTypes: JournalType[] = [] as Array<JournalType>;
 
@@ -59,24 +54,21 @@ export class ShalComponent implements OnInit {
 
   characterPrice: CharacterPrice = {} as CharacterPrice;
 
-  noticeTypeFamilies: NoticeTypeFamily[] = [] as Array<NoticeTypeFamily>;
-
-  noticeTypes: NoticeType[] = [] as Array<NoticeType>;
-  filteredNoticeTypes: Observable<NoticeType[]> | undefined;
-
   publicationDocument: Document = {} as Document;
   proofReadingDocument: Document = {} as Document;
   publicationCertificateDocument: Document = {} as Document;
 
   documentTypes: DocumentType[] = [] as Array<DocumentType>;
 
+  noticeTypes: NoticeType[] = [] as Array<NoticeType>;
+  filteredNoticeTypes: Observable<NoticeType[]> | undefined;
+
 
   constructor(private formBuilder: FormBuilder,
     private confrereService: ConfrereService,
     private characterPriceService: CharacterPriceService,
-    public confrereDialog: MatDialog,
     private noticeTypeService: NoticeTypeService,
-    private noticeTypeFamilyService: NoticeTypeFamilyService,
+    public confrereDialog: MatDialog,
     private documentTypeService: DocumentTypeService,
     private journalTypeService: JournalTypeService,
   ) { }
@@ -88,18 +80,14 @@ export class ShalComponent implements OnInit {
         this.provision.shal!.confrere = this.getJssConfrere();
     })
 
-    this.noticeTypeFamilyService.getNoticeTypeFamilies().subscribe(response => {
-      this.noticeTypeFamilies = response;
+    this.journalTypeService.getJournalTypes().subscribe(response => {
+      this.journalTypes = response;
     })
 
     this.noticeTypeService.getNoticeTypes().subscribe(response => {
       this.noticeTypes = response;
     })
 
-    this.filteredDepartments = this.shalForm.get("department")?.valueChanges.pipe(
-      startWith(''),
-      map(value => this._filterDepartment(value)),
-    );
 
     this.filteredConfreres = this.shalForm.get("confrere")?.valueChanges.pipe(
       startWith(''),
@@ -110,10 +98,6 @@ export class ShalComponent implements OnInit {
       startWith(''),
       map(value => this._filterNoticeType(value)),
     );
-
-    this.journalTypeService.getJournalTypes().subscribe(response => {
-      this.journalTypes = response;
-    })
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -138,6 +122,8 @@ export class ShalComponent implements OnInit {
         this.provision.shal!.isProofReadingDocument = false;
       if (!this.provision.shal!.isPublicationCertificateDocument)
         this.provision.shal!.isPublicationCertificateDocument = false;
+      if (this.provision.shal!.publicationDate)
+        this.provision.shal.publicationDate = new Date(this.provision.shal.publicationDate);
       this.documentTypeService.getDocumentTypes().subscribe(response => {
         this.documentTypes = response;
         this.publicationDocument = getDocument(PUBLICATION_TIERS_DOCUMENT_TYPE_CODE, this.provision.shal!, this.documentTypes);
@@ -151,6 +137,10 @@ export class ShalComponent implements OnInit {
     }
   }
 
+  test() {
+    this.shalForm.markAllAsTouched();
+  }
+
   getJssConfrere(): Confrere {
     if (this.confreres != undefined)
       for (let i = 0; i < this.confreres.length; i++) {
@@ -162,26 +152,12 @@ export class ShalComponent implements OnInit {
   }
 
   shalForm = this.formBuilder.group({
-    journalType: ['', [Validators.required]],
-    department: ['', [Validators.required, this.checkAutocompleteField("department")]],
-    confrere: ['', [this.checkAutocompleteField("confrere")]],
-    publicationDate: ['', [Validators.required]],
-    isRedactedByJss: ['', [Validators.required]],
-    notice: ['', [Validators.required]],
     noticeTypes: [''],
-    noticeTypeFamily: ['', [Validators.required]],
-    isLogo: ['', [Validators.required]],
-    isHeader: ['', [Validators.required]],
-    isPictureBaloPackage: ['', [Validators.required]],
-    isLegalDisplay: ['', [Validators.required]],
-    posterProductionJSSPrice: ['', [this.checkFieldFilledIfIsLegalDisplay("posterProductionJSSPrice")]],
-    posterProductionPrice: ['', [this.checkFieldFilledIfIsLegalDisplay("posterProductionPrice")]],
-    billPostingPrice: ['', [this.checkFieldFilledIfIsLegalDisplay("billPostingPrice")]],
-    billPostingJSSPrice: ['', [this.checkFieldFilledIfIsLegalDisplay("billPostingJSSPrice")]],
-    bailiffReportPrice: ['', [this.checkFieldFilledIfIsLegalDisplay("bailiffReportPrice")]],
-    bailiffReportJSSPrice: ['', [this.checkFieldFilledIfIsLegalDisplay("bailiffReportJSSPrice")]],
-    isPublicationCertificateDocument: ['', [Validators.required]],
-    isProofReadingDocument: ['', [Validators.required]],
+    confrere: [''],
+    noticeTypeFamily: ['', Validators.required],
+    isProofReadingDocument: [''],
+    isPublicationCertificateDocument: [''],
+    journalType: ['', Validators.required],
   });
 
   getFormStatus(): boolean {
@@ -197,11 +173,11 @@ export class ShalComponent implements OnInit {
       })
   }
 
-  cleanTextarea(fieldName: string) {
-    let fieldValue = this.shalForm.get(fieldName)?.value != undefined ? this.shalForm.get(fieldName)?.value : "";
+  cleanTextarea() {
+    let fieldValue = this.shalForm.get("notice")?.value != undefined ? this.shalForm.get("notice")?.value : "";
     var l = fieldValue.replace(/ +(?= )/g, '').replace(/(\r\n|\r|\n){2,}/g, '$1\n');
 
-    this.shalForm.get(fieldName)?.setValue(l);
+    this.shalForm.get("notice")?.setValue(l);
   }
 
   countCharacterNumber(fieldName: string) {
@@ -212,45 +188,6 @@ export class ShalComponent implements OnInit {
   toggleTabs() {
     if (this.tabs != undefined)
       this.tabs.realignInkBar();
-  }
-
-  public displayLabel(object: any): string {
-    return object ? object.label : '';
-  }
-
-  public displayConfrere(object: Confrere): string {
-    return object ? object.denomination : '';
-  }
-
-  private _filterDepartment(value: string): Department[] {
-    const filterValue = (value != undefined && value.toLowerCase != undefined) ? value.toLowerCase() : "";
-    if (this.provision.shal!.confrere != null && this.provision.shal!.confrere != undefined
-      && this.provision.shal!.confrere.departments != null && this.provision.shal!.confrere.departments != undefined)
-      return this.provision.shal!.confrere.departments.filter(department => department.label != undefined && department.label.toLowerCase().includes(filterValue));
-    return [];
-  }
-
-  private _filterConfrere(value: string): Confrere[] {
-    const filterValue = (value != undefined && value.toLowerCase != undefined) ? value.toLowerCase() : "";
-    return this.confreres.filter(confrere => confrere.denomination != undefined && confrere.denomination.toLowerCase().includes(filterValue));
-  }
-
-  private _filterNoticeType(value: string): NoticeType[] {
-    const filterValue = (value != undefined && value.toLowerCase != undefined) ? value.toLowerCase() : "";
-    return this.noticeTypes.filter(noticeType => noticeType.label != undefined && noticeType.label.toLowerCase().includes(filterValue) && noticeType.noticeTypeFamily.id == this.provision.shal!.noticeTypeFamily.id);
-  }
-
-  checkAutocompleteField(fieldName: string): ValidationErrors | null {
-    return (control: AbstractControl): ValidationErrors | null => {
-      const root = control.root as FormGroup;
-
-      const fieldValue = root.get(fieldName)?.value;
-      if (fieldValue != undefined && fieldValue != null && (fieldValue.id == undefined || fieldValue.id == null))
-        return {
-          notFilled: true
-        };
-      return null;
-    };
   }
 
   openConfrereDialog() {
@@ -264,33 +201,23 @@ export class ShalComponent implements OnInit {
   }
 
 
-  checkFieldFilledIfIsLegalDisplay(fieldName: string): ValidationErrors | null {
-    return (control: AbstractControl): ValidationErrors | null => {
-      const root = control.root as FormGroup;
-
-      const fieldValue = root.get(fieldName)?.value;
-      if (this.provision.shal! && this.provision.shal!.isLegalDisplay && this.checkFieldFilledIfIsOrder(fieldName) && (fieldValue == undefined || fieldValue == null || fieldValue.length == 0))
-        return {
-          notFilled: true
-        };
-      return null;
-    };
+  public displayConfrere(object: Confrere): string {
+    return object ? object.denomination : '';
   }
 
-
-  checkFieldFilledIfIsOrder(fieldName: string): ValidationErrors | null {
-    return (control: AbstractControl): ValidationErrors | null => {
-      const root = control.root as FormGroup;
-
-      const fieldValue = root.get(fieldName)?.value;
-      if (instanceOfCustomerOrder(this.provision.quotation) && (fieldValue == undefined || fieldValue == null || fieldValue.length == 0))
-        return {
-          notFilled: true
-        };
-      return null;
-    };
+  public displayLabel(object: any): string {
+    return object ? object.label : '';
   }
 
+  private _filterConfrere(value: string): Confrere[] {
+    const filterValue = (value != undefined && value.toLowerCase != undefined) ? value.toLowerCase() : "";
+    return this.confreres.filter(confrere => confrere.denomination != undefined && confrere.denomination.toLowerCase().includes(filterValue));
+  }
+
+  private _filterNoticeType(value: string): NoticeType[] {
+    const filterValue = (value != undefined && value.toLowerCase != undefined) ? value.toLowerCase() : "";
+    return this.noticeTypes.filter(noticeType => noticeType.label != undefined && noticeType.label.toLowerCase().includes(filterValue) && noticeType.noticeTypeFamily.id == this.provision.shal!.noticeTypeFamily.id);
+  }
 
   addNoticeType(event: MatAutocompleteSelectedEvent): void {
     if (!this.provision.shal!.noticeTypes)
@@ -328,5 +255,4 @@ export class ShalComponent implements OnInit {
     return historyActions;
   }
 
-  compareWithId = compareWithId;
 }

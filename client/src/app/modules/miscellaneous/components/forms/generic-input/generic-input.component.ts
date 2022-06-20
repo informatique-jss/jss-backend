@@ -58,11 +58,18 @@ export class GenericInputComponent implements OnInit {
  * No check if not devined
  */
   @Input() maxLength: number | undefined;
+  /**
+ * Type of input
+ * text if not defined
+ */
+  @Input() type: string = "text";
 
   constructor(
     private formBuilder: FormBuilder) { }
 
   ngOnChanges(changes: SimpleChanges) {
+    if (changes.model && this.form != undefined)
+      this.form.get(this.propertyName)?.setValue(this.model);
     if (changes.isDisabled) {
       if (this.isDisabled) {
         this.form?.get(this.propertyName)?.disable();
@@ -100,12 +107,11 @@ export class GenericInputComponent implements OnInit {
       this.form.addControl(this.propertyName, this.formBuilder.control({ value: '', disabled: this.isDisabled }, validators));
       this.form.get(this.propertyName)!.valueChanges.subscribe(
         (newValue) => {
-          if (newValue != undefined) {
-            this.model = newValue;
-            this.modelChange.emit(this.model);
-          }
+          this.model = newValue;
+          this.modelChange.emit(this.model);
         }
       )
+      this.form.get(this.propertyName)?.setValue(this.model);
       this.form.markAllAsTouched();
     }
   }

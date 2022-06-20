@@ -4,50 +4,20 @@
       <table class="full-width">
         <tr>
           <td>
-            <mat-form-field class="full-width">
-              <mat-label>Type</mat-label>
-              <mat-select formControlName="tiersFollowupType" [(ngModel)]="newFollowup.tiersFollowupType"
-                [compareWith]="compareWithId">
-                <mat-option *ngFor="let tiersFollowupType of tiersFollowupTypes" [value]="tiersFollowupType">
-                  {{tiersFollowupType.label}}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
+            <select-followup [(model)]="newFollowup.tiersFollowupType" label="Type" [form]="followupForm"
+              propertyName="tiersFollowupType" [isMandatory]="true" [isDisabled]="!editMode"></select-followup>
           </td>
           <td>
-            <mat-form-field class="full-width">
-              <mat-label>Par</mat-label>
-              <input type="text" matInput formControlName="salesEmployee" [matAutocomplete]="autoCompleteSalesEmployee"
-                [(ngModel)]="newFollowup.salesEmployee">
-              <mat-icon matSuffix (click)="newFollowup.salesEmployee=null" *ngIf="newFollowup.salesEmployee!=null">
-                close
-              </mat-icon>
-              <mat-autocomplete autoActiveFirstOption #autoCompleteSalesEmployee="matAutocomplete"
-                [displayWith]="displayEmployee">
-                <mat-option *ngFor="let employee of filteredSalesEmployees | async" [value]="employee">
-                  {{employee.firstname}} {{employee.lastname}}
-                </mat-option>
-              </mat-autocomplete>
-            </mat-form-field>
+            <autocomplete-sales-employee [(model)]="newFollowup.salesEmployee" [form]="followupForm"
+              propertyName="salesEmployee" [isMandatory]="true" [isDisabled]="!editMode"></autocomplete-sales-employee>
           </td>
           <td>
-            <mat-form-field class="full-width">
-              <mat-label>Cadeau</mat-label>
-              <mat-select formControlName="gift" [(ngModel)]="newFollowup.gift" [compareWith]="compareWithId">
-                <mat-option *ngFor="let gift of gifts" [value]="gift">
-                  {{gift.label}}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
+            <select-gift [(model)]="newFollowup.gift" label="Cadeau" [form]="followupForm" propertyName="gift"
+              [isDisabled]="!editMode"></select-gift>
           </td>
           <td>
-            <mat-form-field class="full-width">
-              <mat-label>Date</mat-label>
-              <input matInput [matDatepicker]="followupDatetimePicker" formControlName="followupDatetime"
-                [(ngModel)]="newFollowup.followupDate" autocomplete="do-not-autocomplete">
-              <mat-datepicker-toggle matSuffix [for]="followupDatetimePicker"></mat-datepicker-toggle>
-              <mat-datepicker touchUi #followupDatetimePicker></mat-datepicker>
-            </mat-form-field>
+            <generic-datepicker [(model)]="newFollowup.followupDate" label="Date" [form]="followupForm"
+              propertyName="followupDate" [isMandatory]="true" [isDisabled]="!editMode"></generic-datepicker>
           </td>
           <td class="button-td">
             <button (click)="addNewFollowUp()" mat-mini-fab color="warn" class="mini-fab-add add-button">
@@ -59,11 +29,8 @@
       <table>
         <tr>
           <td>
-            <mat-form-field class="full-width">
-              <mat-label>Observations</mat-label>
-              <textarea rows="2" matInput formControlName="observations"
-                [(ngModel)]="newFollowup.observations"></textarea>
-            </mat-form-field>
+            <generic-textarea [(model)]="newFollowup.observations" label="Observations" [form]="followupForm"
+              propertyName="observations" [isDisabled]="!editMode" [numberOfLines]="2"></generic-textarea>
           </td>
         </tr>
       </table>

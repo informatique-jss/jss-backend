@@ -16,7 +16,7 @@ public interface IQuotation extends Serializable, IId {
 
 	public Responsable getResponsable();
 
-	public SpecialOffer getSpecialOffer();
+	public List<SpecialOffer> getSpecialOffers();
 
 	public QuotationLabelType getQuotationLabelType();
 

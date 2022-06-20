@@ -10,6 +10,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
@@ -42,6 +44,10 @@ public class Quotation implements IQuotation {
 	@ManyToOne
 	@JoinColumn(name = "id_special_offer")
 	private SpecialOffer specialOffer;
+
+	@ManyToMany(cascade = CascadeType.ALL)
+	@JoinTable(name = "asso_quotation_special_offer", joinColumns = @JoinColumn(name = "id_quotation"), inverseJoinColumns = @JoinColumn(name = "id_special_offer"))
+	private List<SpecialOffer> specialOffers;
 
 	@ManyToOne
 	@JoinColumn(name = "id_quotation")
@@ -201,6 +207,14 @@ public class Quotation implements IQuotation {
 
 	public void setProvisions(List<Provision> provisions) {
 		this.provisions = provisions;
+	}
+
+	public List<SpecialOffer> getSpecialOffers() {
+		return specialOffers;
+	}
+
+	public void setSpecialOffers(List<SpecialOffer> specialOffers) {
+		this.specialOffers = specialOffers;
 	}
 
 }

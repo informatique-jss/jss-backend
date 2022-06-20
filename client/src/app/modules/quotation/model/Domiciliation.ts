@@ -43,7 +43,7 @@ export interface Domiciliation extends IAttachment {
   legalGardianJob: string;
   legalGardianSiren: string;
   legalGardianDenomination: string;
-  legalGardianLegalForm: LegalForm | null;
+  legalGardianLegalForm: LegalForm | undefined;
   legalGardianMailRecipient: string;
   legalGardianAddress: string;
   legalGardianPostalCode: string;

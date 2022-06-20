@@ -1,3 +1,12 @@
+<ng-template #accordionTools>
+  <mat-panel-description>
+    <mat-icon matTooltip="Ouvrir tous les onglets" (click)="accordion!.openAll();$event.stopPropagation();"
+      class="pointer">
+      unfold_more_double</mat-icon>
+    <mat-icon matTooltip="Fermer tous les autres onglets" (click)="accordion!.closeAll();" class="pointer">
+      unfold_less_double</mat-icon>
+  </mat-panel-description>
+</ng-template>
 <form [formGroup]="shalForm" *ngIf="provision && provision.shal">
   <mat-tab-group animationDuration="0ms" #tabs>
     <mat-tab label="SHAL">
@@ -28,17 +37,9 @@
               </mat-form-field>
             </td>
             <td *ngIf="provision.shal.confrere!=null && provision.shal.confrere!=undefined">
-              <mat-form-field class="full-width">
-                <mat-label>Département</mat-label>
-                <input matInput placeholder="Département" [(ngModel)]="provision.shal.department"
-                  [matAutocomplete]="autoCompleteCountry" formControlName="department" autocomplete="do-not-autofill">
-                <mat-autocomplete autoActiveFirstOption #autoCompleteCountry="matAutocomplete"
-                  [displayWith]="displayLabel" (optionSelected)="updateCharacterPrice()">
-                  <mat-option *ngFor="let department of filteredDepartments | async" [value]="department">
-                    {{department.label}}
-                  </mat-option>
-                </mat-autocomplete>
-              </mat-form-field>
+              <autocomplete-department [(model)]="provision.shal.department" [form]="shalForm" propertyName="department"
+                [isMandatory]="true" [isDisabled]="!editMode" (onOptionSelected)="updateCharacterPrice()">
+              </autocomplete-department>
             </td>
           </tr>
         </table>
@@ -54,20 +55,13 @@
               </mat-radio-group>
             </td>
             <td>
-              <mat-form-field class="full-width">
-                <mat-label>Date de publication</mat-label>
-                <input matInput [matDatepicker]="publicationDateDatetimePicker" formControlName="publicationDate"
-                  [(ngModel)]="provision.shal.publicationDate" autocomplete="do-not-autocomplete"
-                  (dateChange)="updateCharacterPrice()">
-                <mat-datepicker-toggle matSuffix [for]="publicationDateDatetimePicker"></mat-datepicker-toggle>
-                <mat-datepicker touchUi #publicationDateDatetimePicker>
-                </mat-datepicker>
-              </mat-form-field>
+              <generic-datepicker [(model)]="provision.shal.publicationDate" label="Date de publication"
+                [form]="shalForm" propertyName="publicationDate" [isMandatory]="true" [isDisabled]="!editMode"
+                (onDateChange)="updateCharacterPrice()"></generic-datepicker>
             </td>
             <td>
-              <mat-slide-toggle formControlName="isRedactedByJss" [(ngModel)]="provision.shal.isRedactedByJss">
-                Rédigé par le JSS ?
-              </mat-slide-toggle>
+              <generic-toggle [(model)]="provision.shal.isRedactedByJss" label="Rédigé par le JSS ?" [form]="shalForm"
+                propertyName="isRedactedByJss"></generic-toggle>
             </td>
           </tr>
         </table>
@@ -78,12 +72,9 @@
         <table class="full-width">
           <tr>
             <td>
-              <mat-form-field class="full-width">
-                <mat-label>Texte de l'annonce</mat-label>
-                <textarea (keyup)="cleanTextarea('notice')" (keydown)="cleanTextarea('notice')"
-                  (paste)="cleanTextarea('notice')" rows="3" matInput formControlName="notice"
-                  [(ngModel)]="provision.shal.notice"></textarea>
-              </mat-form-field>
+              <generic-textarea [(model)]="provision.shal.notice" label="Texte de l'annonce" [form]="shalForm"
+                propertyName="notice" [isMandatory]="true" [isDisabled]="!editMode" [conditionnalRequired]=""
+                [customValidators]="" (filterInput)="cleanTextarea()" [numberOfLines]="4"></generic-textarea>
             </td>
           </tr>
         </table>
@@ -97,25 +88,22 @@
               *ngIf="provision.shal.confrere!=undefined && provision.shal.department!=undefined && provision.shal.publicationDate!=undefined">
               Nombre de caractères : {{countCharacterNumber('notice')}}
             </td>
+            <td
+              *ngIf="provision.shal.confrere!=undefined && provision.shal.department!=undefined && provision.shal.publicationDate!=undefined">
+              Prix total : {{countCharacterNumber('notice')*characterPrice.price | number}} €
+            </td>
           </tr>
         </table>
         <table class="full-width">
           <tr>
             <td>
-              <mat-form-field class="full-width">
-                <mat-label>Rubrique</mat-label>
-                <mat-select formControlName="noticeTypeFamily" [(ngModel)]="provision.shal.noticeTypeFamily"
-                  [compareWith]="compareWithId" [disabled]="editMode==false">
-                  <mat-option *ngFor="let noticeTypeFamily of noticeTypeFamilies" [value]="noticeTypeFamily">
-                    {{noticeTypeFamily.label}}
-                  </mat-option>
-                </mat-select>
-              </mat-form-field>
+              <select-notice-family [(model)]="provision.shal.noticeTypeFamily" label="Rubrique" [form]="shalForm"
+                propertyName="noticeTypeFamily" [isMandatory]="true" [isDisabled]="!editMode"></select-notice-family>
             </td>
             <td *ngIf="provision.shal.noticeTypeFamily">
               <mat-form-field class="full-width">
                 <mat-label>Sous-rubrique(s)</mat-label>
-                <mat-chip-list #chipListNoticeTypes>
+                <mat-chip-list #chipListNoticeTypes formControlName="noticeTypes">
                   <mat-chip *ngFor="let noticeType of provision.shal.noticeTypes"
                     (removed)="removeNoticeType(noticeType)">
                     {{noticeType.label}}
@@ -123,7 +111,7 @@
                       <mat-icon>cancel</mat-icon>
                     </button>
                   </mat-chip>
-                  <input placeholder="Saisir une sous-rubrique" #noticeTypesInput formControlName="noticeTypes"
+                  <input placeholder="Saisir une sous-rubrique" #noticeTypesInput
                     [matChipInputFor]="chipListNoticeTypes" [matChipInputSeparatorKeyCodes]="SEPARATOR_KEY_CODES"
                     [matAutocomplete]="autoCompleteNoticeTypes">
                 </mat-chip-list>
@@ -138,24 +126,20 @@
             <table class="full-width">
               <tr>
                 <td>
-                  <mat-slide-toggle formControlName="isLogo" [(ngModel)]="provision.shal.isLogo">
-                    Logo ?
-                  </mat-slide-toggle>
+                  <generic-toggle [(model)]="provision.shal.isLogo" label="Logo ?" [form]="shalForm"
+                    propertyName="isLogo"></generic-toggle>
                 </td>
               </tr>
               <tr>
                 <td>
-                  <mat-slide-toggle formControlName="isHeader" [(ngModel)]="provision.shal.isHeader">
-                    En-tête ?
-                  </mat-slide-toggle>
+                  <generic-toggle [(model)]="provision.shal.isHeader" label="En-tête ?" [form]="shalForm"
+                    propertyName="isHeader"></generic-toggle>
                 </td>
               </tr>
               <tr *ngIf="provision.shal.confrere && provision.shal.confrere.id==CONFRERE_BALO_ID">
                 <td>
-                  <mat-slide-toggle formControlName="isPictureBaloPackage"
-                    [(ngModel)]="provision.shal.isPictureBaloPackage">
-                    Forfait image BALO ?
-                  </mat-slide-toggle>
+                  <generic-toggle [(model)]="provision.shal.isPictureBaloPackage" label="Forfait image BALO ?"
+                    [form]="shalForm" propertyName="isPictureBaloPackage"></generic-toggle>
                 </td>
               </tr>
             </table>
@@ -164,57 +148,51 @@
         <table class="full-width">
           <tr>
             <td class="legalDisplayTd">
-              <mat-slide-toggle formControlName="isLegalDisplay" [(ngModel)]="provision.shal.isLegalDisplay">
-                Affichage légal ?
-              </mat-slide-toggle>
+              <generic-toggle [(model)]="provision.shal.isLegalDisplay" label="Affichage légal ?" [form]="shalForm"
+                propertyName="isLegalDisplay"></generic-toggle>
             </td>
             <td *ngIf="provision.shal.isLegalDisplay">
               <table class="full-width">
                 <tr>
                   <td>
-                    <mat-form-field class="full-width">
-                      <mat-label>Production des affiches (€)</mat-label>
-                      <input matInput formControlName="posterProductionPrice"
-                        [(ngModel)]="provision.shal.posterProductionPrice">
-                    </mat-form-field>
+                    <generic-input [(model)]="provision.shal.posterProductionPrice" label="Production des affiches (€)"
+                      [form]="shalForm" propertyName="posterProductionPrice" [isMandatory]="true"
+                      [isDisabled]="!editMode" [conditionnalRequired]="provision.shal.isLegalDisplay" type="number">
+                    </generic-input>
                   </td>
                   <td>
-                    <mat-form-field class="full-width">
-                      <mat-label>Prix JSS (€)</mat-label>
-                      <input matInput formControlName="posterProductionJSSPrice"
-                        [(ngModel)]="provision.shal.posterProductionJSSPrice">
-                    </mat-form-field>
+                    <generic-input [(model)]="provision.shal.posterProductionJSSPrice" label="Prix JSS (€)"
+                      [form]="shalForm" propertyName="posterProductionJSSPrice" [isMandatory]="true"
+                      [isDisabled]="!editMode" [conditionnalRequired]="provision.shal.isLegalDisplay" type="number">
+                    </generic-input>
                   </td>
                 </tr>
                 <tr>
                   <td>
-                    <mat-form-field class="full-width">
-                      <mat-label>Pose des affiches (€)</mat-label>
-                      <input matInput formControlName="billPostingPrice" [(ngModel)]="provision.shal.billPostingPrice">
-                    </mat-form-field>
+                    <generic-input [(model)]="provision.shal.billPostingPrice" label="Pose des affiches (€)"
+                      [form]="shalForm" propertyName="billPostingPrice" [isMandatory]="true" [isDisabled]="!editMode"
+                      [conditionnalRequired]="provision.shal.isLegalDisplay" type="number">
+                    </generic-input>
                   </td>
                   <td>
-                    <mat-form-field class="full-width">
-                      <mat-label>Prix JSS (€)</mat-label>
-                      <input matInput formControlName="billPostingJSSPrice"
-                        [(ngModel)]="provision.shal.billPostingJSSPrice">
-                    </mat-form-field>
+                    <generic-input [(model)]="provision.shal.billPostingJSSPrice" label="Prix JSS (€)" [form]="shalForm"
+                      propertyName="billPostingJSSPrice" [isMandatory]="true" [isDisabled]="!editMode"
+                      [conditionnalRequired]="provision.shal.isLegalDisplay" type="number">
+                    </generic-input>
                   </td>
                 </tr>
                 <tr>
                   <td>
-                    <mat-form-field class="full-width">
-                      <mat-label>Constat d'huisser (€)</mat-label>
-                      <input matInput formControlName="bailiffReportPrice"
-                        [(ngModel)]="provision.shal.bailiffReportPrice">
-                    </mat-form-field>
+                    <generic-input [(model)]="provision.shal.bailiffReportPrice" label="Constat d'huisser (€)"
+                      [form]="shalForm" propertyName="bailiffReportPrice" [isMandatory]="true" [isDisabled]="!editMode"
+                      [conditionnalRequired]="provision.shal.isLegalDisplay" type="number">
+                    </generic-input>
                   </td>
                   <td>
-                    <mat-form-field class="full-width">
-                      <mat-label>Prix JSS (€)</mat-label>
-                      <input matInput formControlName="bailiffReportJSSPrice"
-                        [(ngModel)]="provision.shal.bailiffReportPrice">
-                    </mat-form-field>
+                    <generic-input [(model)]="provision.shal.bailiffReportJSSPrice" label="Prix JSS (€)"
+                      [form]="shalForm" propertyName="bailiffReportJSSPrice" [isMandatory]="true"
+                      [isDisabled]="!editMode" [conditionnalRequired]="provision.shal.isLegalDisplay" type="number">
+                    </generic-input>
                   </td>
                 </tr>
               </table>
@@ -225,12 +203,13 @@
     </mat-tab>
     <mat-tab label="Gestion des pièces">
       <div class="form-div">
-        <mat-accordion>
+        <mat-accordion multi>
           <mat-expansion-panel expanded>
             <mat-expansion-panel-header>
               <mat-panel-title>
                 Justificatif de parution
               </mat-panel-title>
+              <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
             </mat-expansion-panel-header>
             <addressing [editMode]="editMode" [document]="publicationDocument">
             </addressing>
@@ -240,6 +219,7 @@
               <mat-panel-title>
                 Epreuve de relecture
               </mat-panel-title>
+              <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
             </mat-expansion-panel-header>
             <mat-slide-toggle formControlName="isProofReadingDocument"
               [(ngModel)]="provision.shal.isProofReadingDocument">
@@ -254,6 +234,7 @@
               <mat-panel-title>
                 Attestation de parution
               </mat-panel-title>
+              <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
             </mat-expansion-panel-header>
             <mat-slide-toggle formControlName="isPublicationCertificateDocument"
               [(ngModel)]="provision.shal.isPublicationCertificateDocument">

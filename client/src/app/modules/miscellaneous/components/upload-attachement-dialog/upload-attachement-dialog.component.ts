@@ -81,7 +81,7 @@ export class UploadAttachementDialogComponent implements OnInit {
     if (this.file != null && this.file.size > MAX_SIZE_UPLOAD_FILES) {
       this.deleteFile();
       let sb = this.snackBar.open("Taille maximale d'import limitée à 5 Mo", 'Fermer', {
-        duration: 60 * 1000
+        duration: 60 * 1000, panelClass: ["red-snackbar"]
       });
       sb.onAction().subscribe(() => {
         sb.dismiss();
@@ -99,7 +99,7 @@ export class UploadAttachementDialogComponent implements OnInit {
           if (!found && attachement.uploadedFile.filename == this.filename) {
             found = true;
             let sb = this.snackBar.open("Nom de fichier déjà existant", 'Fermer', {
-              duration: 60 * 1000
+              duration: 60 * 1000, panelClass: ["red-snackbar"]
             });
             sb.onAction().subscribe(() => {
               sb.dismiss();
@@ -120,7 +120,7 @@ export class UploadAttachementDialogComponent implements OnInit {
         },
           err => {
             let sb = this.snackBar.open("Erreur lors de l'envoi du fichier", 'Fermer', {
-              duration: 60 * 1000
+              duration: 60 * 1000, panelClass: ["red-snackbar"]
             });
             sb.onAction().subscribe(() => {
               sb.dismiss();

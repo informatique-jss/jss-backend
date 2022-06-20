@@ -10,7 +10,7 @@ export interface TiersFollowup {
   responsable: Responsable;
   tiersFollowupType: TiersFollowupType;
   gift: Gift;
-  salesEmployee: Employee | null;
+  salesEmployee: Employee | undefined;
   followupDate: Date;
   observations: string;
 }

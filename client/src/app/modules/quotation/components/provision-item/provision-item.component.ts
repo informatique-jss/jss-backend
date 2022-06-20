@@ -74,6 +74,13 @@ export class ProvisionItemComponent implements OnInit {
   }
 
   changeProvisionType() {
+    if (this.provision.provisionFamilyType) {
+      for (let provisionType of this.provisionTypes) {
+        if (provisionType.label == this.provision.provisionFamilyType.label)
+          this.provision.provisionType = provisionType;
+      }
+    }
+
     // TODO : add formalité or bodacc
     if (!this.provision.provisionFamilyType || !this.provision.provisionType) {
       this.provision.shal = undefined;

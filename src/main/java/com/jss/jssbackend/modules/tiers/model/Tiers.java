@@ -68,7 +68,6 @@ public class Tiers implements ITiers, IAttachment {
 	@Column(length = 20)
 	private String intercommunityVat;
 
-	// TODO : passer en table d'asso avec ordonnancement manuel
 	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "asso_tiers_special_offer", joinColumns = @JoinColumn(name = "id_tiers"), inverseJoinColumns = @JoinColumn(name = "id_special_offer"))
 	private List<SpecialOffer> specialOffers;

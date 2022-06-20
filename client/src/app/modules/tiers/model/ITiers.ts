@@ -19,9 +19,9 @@ export interface ITiers extends IAttachment, IDocument {
   civility: Civility;
   firstname: string | null;
   lastname: string | null;
-  salesEmployee: Employee | null;
-  formalisteEmployee: Employee | null;
-  insertionEmployee: Employee | null;
+  salesEmployee: Employee | undefined;
+  formalisteEmployee: Employee | undefined;
+  insertionEmployee: Employee | undefined;
   mailRecipient: string | null;
   language: Language;
   address: string;

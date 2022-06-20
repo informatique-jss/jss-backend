@@ -1,36 +1,16 @@
-import { moveItemInArray } from '@angular/cdk/drag-drop';
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
-import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-import { MatChipInputEvent } from '@angular/material/chips';
-import { MatDialog } from '@angular/material/dialog';
-import { Observable } from 'rxjs';
-import { debounceTime, distinctUntilChanged, filter, map, startWith, switchMap, tap } from 'rxjs/operators';
+import { ChangeDetectionStrategy, Component, Input, OnInit, SimpleChanges } from '@angular/core';
+import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
-import { compareWithId, isTiersTypeProspect } from 'src/app/libs/CompareHelper';
-import { COUNTRY_CODE_FRANCE, SEPARATOR_KEY_CODES } from 'src/app/libs/Constants';
-import { validateEmail, validateFrenchPhone, validateInternationalPhone, validateVat } from 'src/app/libs/CustomFormsValidatorsHelper';
-import { callNumber, prepareMail } from 'src/app/libs/MailHelper';
-import { SpecialOffersDialogComponent } from 'src/app/modules/miscellaneous/components/special-offers-dialog/special-offers-dialog.component';
+import { isTiersTypeProspect } from 'src/app/libs/CompareHelper';
+import { COUNTRY_CODE_FRANCE } from 'src/app/libs/Constants';
+import { validateVat } from 'src/app/libs/CustomFormsValidatorsHelper';
 import { City } from 'src/app/modules/miscellaneous/model/City';
 import { Country } from 'src/app/modules/miscellaneous/model/Country';
 import { DeliveryService } from 'src/app/modules/miscellaneous/model/DeliveryService';
-import { Mail } from 'src/app/modules/miscellaneous/model/Mail';
-import { Phone } from 'src/app/modules/miscellaneous/model/Phone';
-import { SpecialOffer } from 'src/app/modules/miscellaneous/model/SpecialOffer';
 import { CityService } from 'src/app/modules/miscellaneous/services/city.service';
-import { CivilityService } from 'src/app/modules/miscellaneous/services/civility.service';
 import { CountryService } from 'src/app/modules/miscellaneous/services/country.service';
 import { DeliveryServiceService } from 'src/app/modules/miscellaneous/services/delivery.service.service';
-import { Employee } from 'src/app/modules/profile/model/Employee';
-import { EmployeeService } from 'src/app/modules/profile/services/employee.service';
-import { Civility } from '../../../miscellaneous/model/Civility';
-import { Language } from '../../../miscellaneous/model/Language';
-import { LanguageService } from '../../../miscellaneous/services/language.service';
-import { SpecialOfferService } from '../../../miscellaneous/services/special-offer.service';
 import { Tiers } from '../../model/Tiers';
-import { TiersCategory } from '../../model/TiersCategory';
-import { TiersCategoryService } from '../../services/tiers.category.service';
 
 @Component({
   selector: 'tiers-main',
@@ -39,53 +19,23 @@ import { TiersCategoryService } from '../../services/tiers.category.service';
   styleUrls: ['./tiers-main.component.css']
 })
 
-export class PrincipalComponent implements OnInit, AfterViewInit {
+export class PrincipalComponent implements OnInit {
   matcher: CustomErrorStateMatcher = new CustomErrorStateMatcher();
   @Input() tiers: Tiers = {} as Tiers;
   @Input() editMode: boolean = false;
-  @ViewChild('specialOfferInput') specialOfferInput: ElementRef<HTMLInputElement> | undefined;
 
-  SEPARATOR_KEY_CODES = SEPARATOR_KEY_CODES;
+  COUNTRY_CODE_FRANCE = COUNTRY_CODE_FRANCE;
 
-  tiersCategories: TiersCategory[] = [] as Array<TiersCategory>;
-  civilities: Civility[] = [] as Array<Civility>;
-  languages: Language[] = [] as Array<Language>;
   deliveryServices: DeliveryService[] = [] as Array<DeliveryService>;
 
-  salesEmployees: Employee[] = [] as Array<Employee>;
-  filteredSalesEmployees: Observable<Employee[]> | undefined;
-
-  formalisteEmployees: Employee[] = [] as Array<Employee>;
-  filteredFormalisteEmployees: Observable<Employee[]> | undefined;
-
-  insertionEmployees: Employee[] = [] as Array<Employee>;
-  filteredInsertionEmployees: Observable<Employee[]> | undefined;
-
-  filteredPostalCodes: String[] | undefined;
-
   countries: Country[] = [] as Array<Country>;
-  filteredCountries: Observable<Country[]> | undefined;
-
-  specialOffers: SpecialOffer[] = [] as Array<SpecialOffer>;
-  filteredSpecialOffers: Observable<SpecialOffer[]> | undefined;
 
   constructor(private formBuilder: FormBuilder,
-    private tiersCategoryService: TiersCategoryService,
-    private civilityService: CivilityService,
-    private languageService: LanguageService,
     private deliveryServiceService: DeliveryServiceService,
-    private employeeService: EmployeeService,
-    private cityService: CityService,
-    private cd: ChangeDetectorRef,
     private countryService: CountryService,
-    private specialOfferService: SpecialOfferService,
-    public specialOfferDialog: MatDialog) { }
+    private cityService: CityService) { }
 
   // TODO : reprendre les RG (notamment facturation / commande) lorsque les modules correspondants seront faits
-
-  ngAfterViewInit(): void {
-    this.cd.detectChanges();
-  }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.tiers != undefined) {
@@ -99,171 +49,28 @@ export class PrincipalComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     // Referential loading
-    this.languageService.getLanguages().subscribe(response => {
-      this.languages = response;
-    })
     this.deliveryServiceService.getDeliveryServices().subscribe(response => {
       this.deliveryServices = response;
     })
     this.countryService.getCountries().subscribe(response => {
       this.countries = response;
     })
-    this.civilityService.getCivilities().subscribe(response => {
-      this.civilities = response;
-    })
-    this.tiersCategoryService.getTiersCategories().subscribe(response => {
-      this.tiersCategories = response;
-    })
-    this.employeeService.getSalesEmployees().subscribe(response => {
-      this.salesEmployees = response;
-    })
-    this.employeeService.getFormalisteEmployees().subscribe(response => {
-      this.formalisteEmployees = response;
-    })
-    this.employeeService.getInsetionEmployees().subscribe(response => {
-      this.insertionEmployees = response;
-    })
-    this.employeeService.getInsetionEmployees().subscribe(response => {
-      this.insertionEmployees = response;
-    })
-    this.specialOfferService.getSpecialOffers().subscribe(response => {
-      this.specialOffers = response;
-    })
-
-
-    // Initialize autocomplete fields
-    this.filteredSalesEmployees = this.principalForm.get("salesEmployee")?.valueChanges.pipe(
-      startWith(''),
-      map(value => this._filterEmployee(this.salesEmployees, value)),
-    );
-
-    this.filteredFormalisteEmployees = this.principalForm.get("formalisteEmployee")?.valueChanges.pipe(
-      startWith(''),
-      map(value => this._filterEmployee(this.formalisteEmployees, value)),
-    );
-
-    this.filteredInsertionEmployees = this.principalForm.get("insertionEmployee")?.valueChanges.pipe(
-      startWith(''),
-      map(value => this._filterEmployee(this.insertionEmployees, value)),
-    );
-
-    this.filteredSpecialOffers = this.principalForm.get("specialOffers")?.valueChanges.pipe(
-      startWith(''),
-      map(value => (typeof value === 'string') ? this._filterByCode(this.specialOffers, value) : [])
-    );
-
-    this.principalForm.get("postalCode")?.valueChanges.pipe(
-      filter(res => {
-        return res != undefined && res !== null && res.length >= 2
-      }),
-      distinctUntilChanged(),
-      debounceTime(300),
-      tap(() => {
-        this.filteredPostalCodes = [];
-      }),
-      switchMap(value => this.cityService.getCitiesFilteredByPostalCode(value)
-      )
-    ).subscribe((response: City[]) => {
-      this.filteredPostalCodes = [...new Set(response.map(city => city.postalCode))];
-    });
-
-    this.filteredCountries = this.principalForm.get("country")?.valueChanges.pipe(
-      startWith(''),
-      map(value => this._filterCountry(value)),
-    );
 
     // Trigger it to show mandatory fields
     this.principalForm.markAllAsTouched();
   }
 
   principalForm = this.formBuilder.group({
+    tiersType: [''],
     tiersCategory: [''],
-    salesEmployee: ['', [Validators.required, this.checkAutocompleteField("salesEmployee")]],
-    formalisteEmployee: ['', [this.checkAutocompleteField("formalisteEmployee")]],
-    insertionEmployee: ['', [this.checkAutocompleteField("insertionEmployee")]],
-    mailRecipient: [''],
-    language: ['', Validators.required],
-    deliveryService: ['', Validators.required],
-    address: ['', [Validators.required, Validators.maxLength(20)]],
-    postalCode: ['', [this.checkFieldFilledIfIsInFrance("postalCode")]],
-    country: ['', [Validators.required, this.checkAutocompleteField("country")]],
-    intercom: ['', [Validators.maxLength(12)]],
-    intercommunityVat: ['', [this.checkVAT("intercommunityVat")]],
-    specialOffers: ['',],
-    rcaFormaliteRate: ['', []],
-    rcaInsertionRate: ['', []],
-    mails: ['', []],
-    phones: ['', []],
+    deliveryService: [''],
+    postalCode: ['',],
+    city: ['',],
     responsibleSuscribersNumber: [{ value: '', disabled: true }, []],
     webAccountNumber: [{ value: '', disabled: true }, []],
-    instructions: ['', []],
-    observations: ['', []],
   });
 
-  openSpecialOffersDialog() {
-    let dialogSpecialOffer = this.specialOfferDialog.open(SpecialOffersDialogComponent, {
-      width: '90%'
-    });
-    dialogSpecialOffer.afterClosed().subscribe(response => {
-      if (!this.tiers.specialOffers)
-        this.tiers.specialOffers = [] as Array<SpecialOffer>;
-      if (response && response != null) {
-        if (this.tiers.specialOffers.map(specialOffer => specialOffer.id).indexOf(response.id) < 0)
-          this.tiers.specialOffers.push(response);
-      }
-    });
-  }
-
-  // Check if the propertiy given in parameter is filled when the tiers is an individual
-  checkFieldFilledIfIsIndividual(fieldName: string): ValidationErrors | null {
-    return (control: AbstractControl): ValidationErrors | null => {
-      return null;
-    };
-    return (control: AbstractControl): ValidationErrors | null => {
-      const root = control.root as FormGroup;
-
-      const fieldValue = root.get(fieldName)?.value;
-      if (this.tiers.isIndividual && (fieldValue == undefined || fieldValue == null || fieldValue.length == 0))
-        return {
-          notFilled: true
-        };
-      return null;
-    };
-  }
-
-  // Check if the propertiy given in parameter is filled when the tiers is an individual
-  checkFieldFilledIfIsNotIndividual(fieldName: string): ValidationErrors | null {
-    return (control: AbstractControl): ValidationErrors | null => {
-      return null;
-    };
-    return (control: AbstractControl): ValidationErrors | null => {
-      const root = control.root as FormGroup;
-
-      const fieldValue = root.get(fieldName)?.value;
-      if (!this.tiers.isIndividual && (fieldValue == undefined || fieldValue == null || fieldValue.length == 0))
-        return {
-          notFilled: true
-        };
-      return null;
-    };
-  }
-
-  checkFieldFilledIfIsInFrance(fieldName: string): ValidationErrors | null {
-    return (control: AbstractControl): ValidationErrors | null => {
-      const root = control.root as FormGroup;
-      const fieldValue = root.get(fieldName)?.value;
-      if (this.tiers.country != null && this.tiers.country.code == COUNTRY_CODE_FRANCE && (fieldValue == undefined || fieldValue == null || fieldValue.length == 0))
-        return {
-          notFilled: true
-        };
-      return null;
-    };
-  }
-
-  checkVAT(fieldName: string): ValidationErrors | null {
-    return (control: AbstractControl): ValidationErrors | null => {
-      return null;
-    };
+  checkVAT(fieldName: string): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const root = control.root as FormGroup;
 
@@ -276,50 +83,15 @@ export class PrincipalComponent implements OnInit, AfterViewInit {
     };
   }
 
-  checkAutocompleteField(fieldName: string): ValidationErrors | null {
-    return (control: AbstractControl): ValidationErrors | null => {
-      const root = control.root as FormGroup;
-
-      const fieldValue = root.get(fieldName)?.value;
-      if (fieldValue != undefined && fieldValue != null && (fieldValue.id == undefined || fieldValue.id == null))
-        return {
-          notFilled: true
-        };
-      return null;
-    };
-  }
-
-  private _filterEmployee(employees: Employee[], value: string): Employee[] {
-    const filterValue = (value != undefined && value != null && value.toLowerCase != undefined) ? value.toLowerCase() : "";
-    return employees.filter(employee => employee.firstname != undefined && employee.lastname != undefined && employee.firstname.toLowerCase().includes(filterValue) || employee.lastname.toLowerCase().includes(filterValue));
-  }
-
-  private _filterByCode(inputList: any, value: string): any {
-    const filterValue = (value != undefined && value.toLowerCase != undefined) ? value.toLowerCase() : "";
-    return inputList.filter((input: any) => input.code != undefined && input.code.toLowerCase().includes(filterValue));
-  }
-
-  private _filterCountry(value: string): Country[] {
-    const filterValue = (value != undefined && value.toLowerCase != undefined) ? value.toLowerCase() : "";
-    return this.countries.filter(country => country.label != undefined && country.label.toLowerCase().includes(filterValue));
-  }
-
-  public displayEmployee(employee: Employee): string {
-    return employee ? employee.firstname + " " + employee.lastname : '';
-  }
-
-  public displayLabel(object: any): string {
-    return object ? object.label : '';
-  }
-
-  limitTextareaSize(fieldName: string, maxLines: number) {
-    let fieldValue = this.principalForm.get(fieldName)?.value != undefined ? this.principalForm.get(fieldName)?.value : "";
-    var l = fieldValue.replace(/\r\n/g, "\n").replace(/\r/g, "").split(/\n/g);//split lines
-    if (l.length > maxLines) {
-      fieldValue = l.slice(0, maxLines).join("\n");
+  limitTextareaSize(numberOfLine: number) {
+    if (this.tiers.mailRecipient != null) {
+      var l = this.tiers.mailRecipient.replace(/\r\n/g, "\n").replace(/\r/g, "").split(/\n/g);//split lines
+      var outValue = "";
+      if (l.length > numberOfLine) {
+        outValue = l.slice(0, numberOfLine).join("\n");
+        this.tiers.mailRecipient = outValue;
+      }
     }
-
-    this.principalForm.get(fieldName)?.setValue(fieldValue);
   }
 
   fillPostalCode(city: City) {
@@ -343,97 +115,9 @@ export class PrincipalComponent implements OnInit, AfterViewInit {
 
   }
 
-  addMail(event: MatChipInputEvent): void {
-    const value = (event.value || '').trim();
-    let mail: Mail = {} as Mail;
-    if (value && validateEmail(value)) {
-      mail.mail = value;
-      if (this.tiers.mails == undefined || this.tiers.mails == null)
-        this.tiers.mails = [] as Mail[];
-      this.tiers.mails.push(mail);
-    }
-    event.chipInput!.clear();
-    this.principalForm.get("mails")?.setValue(null);
-  }
-
-  removeMail(inputMail: Mail): void {
-    if (this.tiers.mails != undefined && this.tiers.mails != null && this.editMode)
-      for (let i = 0; i < this.tiers.mails.length; i++) {
-        const mail = this.tiers.mails[i];
-        if (mail.mail == inputMail.mail) {
-          this.tiers.mails.splice(i, 1);
-          return;
-        }
-      }
-  }
-
-  addPhone(event: MatChipInputEvent): void {
-    const value = (event.value || '').trim();
-    let phone: Phone = {} as Phone;
-    if (value && (validateFrenchPhone(value) || validateInternationalPhone(value))) {
-      phone.phoneNumber = value;
-      if (this.tiers.phones == undefined || this.tiers.phones == null)
-        this.tiers.phones = [] as Phone[];
-      this.tiers.phones.push(phone);
-    }
-    event.chipInput!.clear();
-    this.principalForm.get("phones")?.setValue(null);
-  }
-
-  removePhone(inputPhone: Phone): void {
-    if (this.tiers.phones != undefined && this.tiers.phones != null && this.editMode)
-      for (let i = 0; i < this.tiers.phones.length; i++) {
-        const phone = this.tiers.phones[i];
-        if (phone.phoneNumber == inputPhone.phoneNumber) {
-          this.tiers.phones.splice(i, 1);
-          return;
-        }
-      }
-  }
-
-  prepareMail = function (mail: Mail) {
-    prepareMail(mail.mail, null, null);
-  }
-
-  call = function (phone: Phone) {
-    callNumber(phone.phoneNumber);
-  }
-
-  compareWithId = compareWithId;
-
-
-  addSpecialOffer(event: MatAutocompleteSelectedEvent): void {
-    if (!this.tiers.specialOffers)
-      this.tiers.specialOffers = [] as Array<SpecialOffer>;
-    // Do not add twice
-    if (this.tiers.specialOffers.map(specialOffer => specialOffer.id).indexOf(event.option.value.id) >= 0)
-      return;
-    if (event.option && event.option.value && event.option.value.id)
-      this.tiers.specialOffers.push(event.option.value);
-    this.principalForm.get("specialOffers")?.setValue(null);
-    this.specialOfferInput!.nativeElement.value = '';
-  }
-
-  removeSpecialOffer(inputSpecialOffer: SpecialOffer): void {
-    if (this.tiers.specialOffers && this.editMode)
-      for (let i = 0; i < this.tiers.specialOffers.length; i++) {
-        const specialOffer = this.tiers.specialOffers[i];
-        if (specialOffer.id == inputSpecialOffer.id) {
-          this.tiers.specialOffers.splice(i, 1);
-          return;
-        }
-      }
-  }
-
   getFormStatus(): boolean {
-    console.log(this.principalForm);
     this.principalForm.markAllAsTouched();
 
     return this.principalForm.valid;
-  }
-
-  changeSpecialOfferOrder(event: any) {
-    if (this.editMode)
-      moveItemInArray(this.tiers.specialOffers!, event.previousIndex, event.currentIndex);
   }
 }

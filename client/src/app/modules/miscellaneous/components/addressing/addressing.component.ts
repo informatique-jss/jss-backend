@@ -1,9 +1,6 @@
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
-import { MatChipInputEvent } from '@angular/material/chips';
+import { FormBuilder } from '@angular/forms';
 import { SEPARATOR_KEY_CODES } from 'src/app/libs/Constants';
-import { validateEmail } from 'src/app/libs/CustomFormsValidatorsHelper';
-import { prepareMail } from 'src/app/libs/MailHelper';
 import { Responsable } from 'src/app/modules/tiers/model/Responsable';
 import { TiersService } from 'src/app/modules/tiers/services/tiers.service';
 import { Document } from '../../model/Document';
@@ -72,21 +69,7 @@ export class AddressingComponent implements OnInit {
   }
 
   adressingForm = this.formBuilder.group({
-    RecipientTypeAffaire: [''],
-    RecipientTypeClient: [''],
-    MailingTypePaper: [''],
-    MailingTypePdf: [''],
-    NumberMailingAffaire: [''],
-    NumberMailingClient: [''],
-    AffaireRecipient: ['', Validators.maxLength(40)],
-    ClientRecipient: ['', Validators.maxLength(40)],
-    ClientMails: [''],
-    AffaireAddress: ['', Validators.maxLength(60)],
-    ClientAddress: ['', Validators.maxLength(60)],
-    MailsClient: [''],
-    MailsClientCC: [''],
-    MailsAffaire: [''],
-    MailsAffaireCC: [''],
+    mailsCCResponsableAffaire: ['', []],
   });
 
   getResponsables(): Responsable[] {
@@ -104,64 +87,13 @@ export class AddressingComponent implements OnInit {
     return responsables;
   }
 
-  addMailClient(event: MatChipInputEvent, document: Document, formFieldName: string): void {
-    const value = (event.value || '').trim();
-    let mail: Mail = {} as Mail;
-    if (value && validateEmail(value)) {
-      mail.mail = value;
-      if (document.mailsClient == undefined || document.mailsClient == null)
-        document.mailsClient = [] as Mail[];
-      document.mailsClient.push(mail);
-    }
-    event.chipInput!.clear();
-    this.adressingForm.get(formFieldName)?.setValue(null);
-  }
-
-  removeMailClient(inputMail: Mail, document: Document): void {
-    if (document.mailsClient != undefined && document.mailsClient != null && this.editMode)
-      for (let i = 0; i < document.mailsClient.length; i++) {
-        const mail = document.mailsClient[i];
-        if (mail.mail == inputMail.mail) {
-          document.mailsClient.splice(i, 1);
-          return;
-        }
-      }
-  }
-
   removeAllMailClient(document: Document): void {
     document.mailsClient = [] as Array<Mail>;
   }
 
-  addMailAffaire(event: MatChipInputEvent, document: Document, formFieldName: string): void {
-    const value = (event.value || '').trim();
-    let mail: Mail = {} as Mail;
-    if (value && validateEmail(value)) {
-      mail.mail = value;
-      if (document.mailsAffaire == undefined || document.mailsAffaire == null)
-        document.mailsAffaire = [] as Mail[];
-      document.mailsAffaire.push(mail);
-    }
-    event.chipInput!.clear();
-    this.adressingForm.get(formFieldName)?.setValue(null);
-  }
-
-  removeMailAffaire(inputMail: Mail, document: Document): void {
-    if (document.mailsAffaire != undefined && document.mailsAffaire != null && this.editMode)
-      for (let i = 0; i < document.mailsAffaire.length; i++) {
-        const mail = document.mailsAffaire[i];
-        if (mail.mail == inputMail.mail) {
-          document.mailsAffaire.splice(i, 1);
-          return;
-        }
-      }
-  }
 
   removeAllMailAffaire(document: Document): void {
     document.mailsAffaire = [] as Array<Mail>;
-  }
-
-  prepareMail = function (mail: Mail) {
-    prepareMail(mail.mail, null, null);
   }
 
 }

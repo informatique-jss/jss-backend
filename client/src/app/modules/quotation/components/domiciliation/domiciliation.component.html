@@ -5,149 +5,75 @@
         <table class="full-width">
           <tr>
             <td>
-              <mat-form-field class="full-width">
-                <mat-label>Type de contrat</mat-label>
-                <mat-select formControlName="domiciliationContractType"
-                  [(ngModel)]="provision.domiciliation!.domiciliationContractType" [compareWith]="compareWithId"
-                  [disabled]="editMode==false">
-                  <mat-option *ngFor="let domiciliationContractType of domiciliationContractTypes"
-                    [value]="domiciliationContractType">
-                    {{domiciliationContractType.label}}
-                  </mat-option>
-                </mat-select>
-              </mat-form-field>
+              <select-contract-type [(model)]="provision.domiciliation!.domiciliationContractType"
+                label="Type de contrat" [form]="domiciliationForm" propertyName="domiciliationContractType"
+                [isMandatory]="true" [isDisabled]="!editMode"></select-contract-type>
             </td>
             <td style="vertical-align: baseline;">
-              <mat-label>Langue de contrat</mat-label>
-              <mat-radio-group class="radio-group-column" [(ngModel)]="provision.domiciliation!.language"
-                formControlName="language">
-                <mat-radio-button *ngFor=" let language of languages" [value]="language"
-                  [checked]=" provision.domiciliation!.language!= undefined && provision.domiciliation!.language.id == language.id">
-                  {{language.label}}
-                </mat-radio-button>
-              </mat-radio-group>
+              <radio-group-language [(model)]="provision.domiciliation!.language" [form]="domiciliationForm"
+                propertyName="language" label="Langue de contrat"></radio-group-language>
             </td>
           </tr>
         </table>
         <table class="full-width">
           <tr>
             <td>
-              <mat-form-field class="full-width">
-                <mat-label>Adresse de domiciliation</mat-label>
-                <mat-select formControlName="buildingDomiciliation"
-                  [(ngModel)]="provision.domiciliation!.buildingDomiciliation" [compareWith]="compareWithId"
-                  [disabled]="editMode==false">
-                  <mat-option *ngFor="let buildingDomiciliation of buildingDomiciliations"
-                    [value]="buildingDomiciliation">
-                    {{buildingDomiciliation.label}}
-                  </mat-option>
-                </mat-select>
-              </mat-form-field>
+              <select-building-domiciliation [(model)]="provision.domiciliation!.buildingDomiciliation"
+                label="Adresse de domiciliation" [form]="domiciliationForm" propertyName="buildingDomiciliation"
+                [isMandatory]="true"></select-building-domiciliation>
             </td>
             <td style="vertical-align: baseline;">
-              <mat-label>Adresse de redirection</mat-label>
-              <mat-radio-group class="radio-group-column" [(ngModel)]="provision.domiciliation!.mailRedirectionType"
-                formControlName="mailRedirectionType">
-                <mat-radio-button *ngFor=" let mailRedirectionType of mailRedirectionTypes"
-                  [value]="mailRedirectionType"
-                  [checked]=" provision.domiciliation!.mailRedirectionType!= undefined && provision.domiciliation!.mailRedirectionType.id == mailRedirectionType.id">
-                  {{mailRedirectionType.label}}
-                </mat-radio-button>
-              </mat-radio-group>
+              <select-mail-redirection [(model)]="provision.domiciliation!.mailRedirectionType"
+                label="Adresse de redirection" [form]="domiciliationForm" propertyName="mailRedirectionType"
+                [isMandatory]="true" [isDisabled]="!editMode"></select-mail-redirection>
             </td>
           </tr>
         </table>
         <table class="full-width" *ngIf="mustDecribeAdresse()">
           <tr>
             <td>
-              <mat-form-field class="full-width">
-                <mat-label>Destinataire(s) courrier</mat-label>
-                <textarea (keyup)="limitTextareaSize('mailRecipient',3)"
-                  (keydown)="limitTextareaSize('mailRecipient',3)" (paste)="limitTextareaSize('mailRecipient',3)"
-                  rows="3" matInput formControlName="mailRecipient"
-                  [(ngModel)]="provision.domiciliation!.mailRecipient"></textarea>
-              </mat-form-field>
+              <generic-textarea [(model)]="provision.domiciliation!.mailRecipient" label="Destinataire(s) courrier"
+                [form]="domiciliationForm" propertyName="mailRecipient" [isMandatory]="true" [isDisabled]="!editMode"
+                [conditionnalRequired]="mustDecribeAdresse()" (filterInput)="limitTextareaSize(3)"></generic-textarea>
             </td>
             <td>
-              <mat-form-field class="full-width">
-                <mat-label>Adresse</mat-label>
-                <input matInput formControlName="address" [(ngModel)]="provision.domiciliation!.address"
-                  placeholder="Adresse" autocomplete="do-not-autofill">
-              </mat-form-field>
+              <generic-input [(model)]="provision.domiciliation!.address" label="Adresse" [form]="domiciliationForm"
+                propertyName="address" [isMandatory]="true" [isDisabled]="!editMode"
+                [conditionnalRequired]="mustDecribeAdresse()" [maxLength]="20"></generic-input>
             </td>
             <td>
-              <mat-form-field class="full-width">
-                <mat-label>Ville</mat-label>
-                <input matInput placeholder="Ville" [(ngModel)]="provision.domiciliation!.city"
-                  [matAutocomplete]="autoCompleteCity" formControlName="city" autocomplete="do-not-autofill">
-                <mat-autocomplete autoActiveFirstOption #autoCompleteCity="matAutocomplete" [displayWith]="displayLabel"
-                  (optionSelected)='fillPostalCode($event.option.value)'>
-                  <mat-option *ngFor="let city of filteredCities" [value]="city">
-                    {{city.label}}
-                  </mat-option>
-                </mat-autocomplete>
-              </mat-form-field>
+              <autocomplete-city [(model)]="provision.domiciliation!.city"
+                [modelCountry]="provision.domiciliation!.country" [form]="domiciliationForm" propertyName="city"
+                [isMandatory]="true" [conditionnalRequired]="mustDecribeAdresse()"
+                (onOptionSelected)="fillPostalCode($event)"></autocomplete-city>
             </td>
             <td>
-              <mat-form-field class="full-width">
-                <mat-label>Code postal</mat-label>
-                <input matInput placeholder="Code postal" [(ngModel)]="provision.domiciliation!.postalCode"
-                  [matAutocomplete]="autoCompletePostalCode" formControlName="postalCode"
-                  autocomplete="do-not-autofill">
-                <mat-autocomplete autoActiveFirstOption #autoCompletePostalCode="matAutocomplete"
-                  (optionSelected)='fillCity($event.option.value)'>
-                  <mat-option *ngFor="let postalCode of filteredPostalCodes" [value]="postalCode">
-                    {{postalCode}}
-                  </mat-option>
-                </mat-autocomplete>
-              </mat-form-field>
+              <autocomplete-postal-code [(model)]="provision.domiciliation!.postalCode" [form]="domiciliationForm"
+                propertyName="postalCode" [isMandatory]="true" [conditionnalRequired]="mustDecribeAdresse()"
+                (onOptionSelected)="fillCity($event)"></autocomplete-postal-code>
             </td>
             <td>
-              <mat-form-field class="full-width">
-                <mat-label>Pays</mat-label>
-                <input matInput placeholder="Pays" [(ngModel)]="provision.domiciliation!.country"
-                  [matAutocomplete]="autoCompleteCountry" formControlName="country" autocomplete="do-not-autofill">
-                <mat-autocomplete autoActiveFirstOption #autoCompleteCountry="matAutocomplete"
-                  [displayWith]="displayLabel">
-                  <mat-option *ngFor="let country of filteredCountries | async" [value]="country">
-                    {{country.label}}
-                  </mat-option>
-                </mat-autocomplete>
-              </mat-form-field>
+              <autocomplete-country [(model)]="provision.domiciliation!.country" [form]="domiciliationForm"
+                propertyName="country" [isMandatory]="true" [isDisabled]="!editMode"
+                [conditionnalRequired]="mustDecribeAdresse()"></autocomplete-country>
             </td>
           </tr>
         </table>
         <table class="full-width" *ngIf="mustDecribeMail()">
           <tr>
             <td>
-              <mat-form-field class="full-width">
-                <mat-label>Mails</mat-label>
-                <mat-chip-list #chipListMails>
-                  <mat-chip *ngFor="let mail of provision.domiciliation!.mails" (removed)="removeMail(mail)">
-                    {{mail.mail}}
-                    <button matChipRemove *ngIf="editMode">
-                      <mat-icon>cancel</mat-icon>
-                    </button>
-                    <mat-icon matChipRemove *ngIf="editMode==false" (click)="prepareMail(mail)">mail</mat-icon>
-                  </mat-chip>
-                  <input placeholder="Saisir un mail" #mailInput formControlName="mails"
-                    [matChipInputFor]="chipListMails" [matChipInputSeparatorKeyCodes]="SEPARATOR_KEY_CODES"
-                    (matChipInputTokenEnd)="addMail($event)">
-                </mat-chip-list>
-              </mat-form-field>
+              <chips-mail [(model)]="provision.domiciliation!.mails" label="Mails" [form]="domiciliationForm"
+                propertyName="mails" [isDisabled]="!editMode" [isMandatory]="true"
+                [conditionnalRequired]="mustDecribeMail()"></chips-mail>
             </td>
           </tr>
         </table>
         <table class="full-width">
           <tr>
             <td>
-              <mat-form-field class="full-width">
-                <mat-label>Date de début de domiciliation</mat-label>
-                <input matInput [matDatepicker]="startDateDatetimePicker" formControlName="startDate"
-                  [(ngModel)]="provision.domiciliation!.startDate" autocomplete="do-not-autocomplete">
-                <mat-datepicker-toggle matSuffix [for]="startDateDatetimePicker"></mat-datepicker-toggle>
-                <mat-datepicker touchUi #startDateDatetimePicker></mat-datepicker>
-              </mat-form-field>
+              <generic-datepicker [(model)]="provision.domiciliation!.startDate" label="Date de début de domiciliation"
+                [form]="domiciliationForm" propertyName="startDate" [isMandatory]="true" [isDisabled]="!editMode">
+              </generic-datepicker>
             </td>
             <td>
               <p *ngIf="provision.domiciliation!.endDate !=undefined && provision.domiciliation!.endDate !=null">Date de
@@ -161,102 +87,53 @@
       <div class=" form-div">
         <table class="full-width">
           <tr>
-            <mat-form-field class="full-width">
-              <mat-label>Activité de la société</mat-label>
-              <textarea matInput formControlName="activityDescription"
-                [(ngModel)]="provision.domiciliation!.activityDescription"></textarea>
-            </mat-form-field>
+            <generic-textarea [(model)]="provision.domiciliation!.activityDescription" label="Activité de la société"
+              [form]="domiciliationForm" propertyName="activityDescription" [isMandatory]="true"
+              [isDisabled]="!editMode"></generic-textarea>
           </tr>
         </table>
         <table class="full-width">
           <tr>
             <td *ngIf="mustDecribeAdresse()">
-              <mat-form-field class="full-width">
-                <mat-label>Destinataire(s) courrier</mat-label>
-                <textarea (keyup)="limitTextareaSize('activityMailRecipient',3)"
-                  (keydown)="limitTextareaSize('activityMailRecipient',3)"
-                  (paste)="limitTextareaSize('activityMailRecipient',3)" rows="3" matInput
-                  formControlName="activityMailRecipient"
-                  [(ngModel)]="provision.domiciliation!.activityMailRecipient"></textarea>
-              </mat-form-field>
+              <generic-textarea [(model)]="provision.domiciliation!.activityMailRecipient"
+                label="Destinataire(s) courrier" [form]="domiciliationForm" propertyName="Destinataire(s) courrier"
+                [isMandatory]="true" [isDisabled]="!editMode" [conditionnalRequired]="" [customValidators]=""
+                (filterInput)="limitTextareaSizeActivityMailRecipient(3)"></generic-textarea>
             </td>
             <td>
-              <mat-form-field class="full-width">
-                <mat-label>Adresse</mat-label>
-                <input matInput formControlName="activityAddress" [(ngModel)]="provision.domiciliation!.activityAddress"
-                  placeholder="Adresse" autocomplete="do-not-autofill">
-              </mat-form-field>
+              <generic-input [(model)]="provision.domiciliation!.activityAddress" label="Adresse"
+                [form]="domiciliationForm" propertyName="activityAddress" [isMandatory]="true" [isDisabled]="!editMode"
+                [maxLength]="20"></generic-input>
             </td>
             <td>
-              <mat-form-field class="full-width">
-                <mat-label>Ville</mat-label>
-                <input matInput placeholder="Ville" [(ngModel)]="provision.domiciliation!.activityCity"
-                  [matAutocomplete]="autoCompleteActivityCity" formControlName="activityCity"
-                  autocomplete="do-not-autofill">
-                <mat-autocomplete autoActiveFirstOption #autoCompleteActivityCity="matAutocomplete"
-                  [displayWith]="displayLabel" (optionSelected)='fillActivityPostalCode($event.option.value)'>
-                  <mat-option *ngFor="let city of filteredCities" [value]="city">
-                    {{city.label}}
-                  </mat-option>
-                </mat-autocomplete>
-              </mat-form-field>
+              <autocomplete-city [(model)]="provision.domiciliation!.activityCity"
+                [modelCountry]="provision.domiciliation!.activityCountry" [form]="domiciliationForm"
+                propertyName="activityCity" [isMandatory]="true" (onOptionSelected)="fillActivityPostalCode($event)">
+              </autocomplete-city>
             </td>
             <td>
-              <mat-form-field class="full-width">
-                <mat-label>Code postal</mat-label>
-                <input matInput placeholder="Code postal" [(ngModel)]="provision.domiciliation!.activityPostalCode"
-                  [matAutocomplete]="autoCompleteActivityPostalCode" formControlName="activityPostalCode"
-                  autocomplete="do-not-autofill">
-                <mat-autocomplete autoActiveFirstOption #autoCompleteActivityPostalCode="matAutocomplete"
-                  (optionSelected)='fillActivityCity($event.option.value)'>
-                  <mat-option *ngFor="let postalCode of filteredPostalCodes" [value]="postalCode">
-                    {{postalCode}}
-                  </mat-option>
-                </mat-autocomplete>
-              </mat-form-field>
+              <autocomplete-postal-code [(model)]="provision.domiciliation!.activityPostalCode"
+                [form]="domiciliationForm" propertyName="activityPostalCode" [isMandatory]="true"
+                (onOptionSelected)="fillActivityCity($event)"></autocomplete-postal-code>
             </td>
             <td>
-              <mat-form-field class="full-width">
-                <mat-label>Pays</mat-label>
-                <input matInput placeholder="Pays" [(ngModel)]="provision.domiciliation!.activityCountry"
-                  [matAutocomplete]="autoCompleteActivityCountry" formControlName="activityCountry"
-                  autocomplete="do-not-autofill">
-                <mat-autocomplete autoActiveFirstOption #autoCompleteActivityCountry="matAutocomplete"
-                  [displayWith]="displayLabel">
-                  <mat-option *ngFor="let country of filteredCountries | async" [value]="country">
-                    {{country.label}}
-                  </mat-option>
-                </mat-autocomplete>
-              </mat-form-field>
+              <autocomplete-country [(model)]="provision.domiciliation!.activityCountry" [form]="domiciliationForm"
+                propertyName="activityCountry" [isMandatory]="true" [isDisabled]="!editMode"></autocomplete-country>
             </td>
           </tr>
         </table>
         <table class="full-width">
           <tr>
             <td *ngIf="mustDecribeMail()">
-              <mat-form-field class="full-width">
-                <mat-label>Mails</mat-label>
-                <mat-chip-list #chipListActivityMails>
-                  <mat-chip *ngFor="let mail of provision.domiciliation!.activityMails"
-                    (removed)="removeActivityMail(mail)">
-                    {{mail.mail}}
-                    <button matChipRemove *ngIf="editMode">
-                      <mat-icon>cancel</mat-icon>
-                    </button>
-                    <mat-icon matChipRemove *ngIf="editMode==false" (click)="prepareMail(mail)">mail</mat-icon>
-                  </mat-chip>
-                  <input placeholder="Saisir un mail" #mailInput formControlName="activityMails"
-                    [matChipInputFor]="chipListActivityMails" [matChipInputSeparatorKeyCodes]="SEPARATOR_KEY_CODES"
-                    (matChipInputTokenEnd)="addActivityMail($event)">
-                </mat-chip-list>
-              </mat-form-field>
+              <chips-mail [(model)]="provision.domiciliation!.activityMails" label="Mails" [form]="domiciliationForm"
+                propertyName="activityMails" [isMandatory]="true" [isDisabled]="!editMode"
+                [conditionnalRequired]="mustDecribeMail()"></chips-mail>
             </td>
             <td>
-              <mat-form-field class="full-width">
-                <mat-label>Lieu de conservation des documents comptables</mat-label>
-                <textarea rows="3" matInput formControlName="accountingRecordDomiciliation"
-                  [(ngModel)]="provision.domiciliation!.accountingRecordDomiciliation"></textarea>
-              </mat-form-field>
+              <generic-textarea [(model)]="provision.domiciliation!.accountingRecordDomiciliation"
+                label="Lieu de conservation des documents comptables" [form]="domiciliationForm"
+                propertyName="accountingRecordDomiciliation" [isMandatory]="true" [isDisabled]="!editMode">
+              </generic-textarea>
             </td>
           </tr>
         </table>
@@ -267,53 +144,30 @@
         <table class="full-width">
           <tr>
             <td>
-              <mat-slide-toggle formControlName="isLegalPerson" [(ngModel)]="provision.domiciliation!.isLegalPerson">
-                Personne morale ?
-              </mat-slide-toggle>
+              <generic-toggle [(model)]="provision.domiciliation!.isLegalPerson" label="Personne morale ?"
+                [form]="domiciliationForm" propertyName="isLegalPerson"></generic-toggle>
             </td>
           </tr>
         </table>
         <table class="full-width" *ngIf="provision.domiciliation!.isLegalPerson">
           <tr>
             <td>
-              <mat-form-field class="full-width">
-                <mat-label>Forme juridique</mat-label>
-                <input type="text" matInput formControlName="legalGardianLegalForm"
-                  [matAutocomplete]="autoCompleteLegalForm"
-                  [(ngModel)]="provision.domiciliation!.legalGardianLegalForm">
-                <mat-icon matSuffix (click)="provision.domiciliation!.legalGardianLegalForm=null"
-                  *ngIf="editMode && provision.domiciliation!.legalGardianLegalForm!=null">
-                  close
-                </mat-icon>
-                <mat-autocomplete autoActiveFirstOption #autoCompleteLegalForm="matAutocomplete"
-                  [displayWith]="displayLabel">
-                  <mat-option *ngFor="let legalForm of filteredLegalForms | async" [value]="legalForm">
-                    {{legalForm.label}}
-                  </mat-option>
-                </mat-autocomplete>
-              </mat-form-field>
+              <autocomplete-legal-form [(model)]="provision.domiciliation!.legalGardianLegalForm"
+                [form]="domiciliationForm" propertyName="legalGardianLegalForm" [isMandatory]="true"
+                [isDisabled]="!editMode" [conditionnalRequired]="provision.domiciliation!.isLegalPerson">
+              </autocomplete-legal-form>
             </td>
             <td>
-              <mat-form-field class="full-width">
-                <mat-label>SIREN</mat-label>
-                <input matInput placeholder="SIREN" [(ngModel)]="provision.domiciliation!.legalGardianSiren"
-                  [matAutocomplete]="autoCompleteSiren" formControlName="legalGardianSiren"
-                  autocomplete="do-not-autofill">
-                <mat-autocomplete autoActiveFirstOption #autoCompleteSiren="matAutocomplete"
-                  (optionSelected)='fillSiren()'>
-                  <mat-option *ngIf="filteredSiren!=undefined" [value]="filteredSiren!.uniteLegale.siren">
-                    {{filteredSiren!=undefined ?filteredSiren.uniteLegale.siren :""}}
-                  </mat-option>
-                </mat-autocomplete>
-              </mat-form-field>
+              <autocomplete-siren [(model)]="provision.domiciliation!.legalGardianSiren" [form]="domiciliationForm"
+                propertyName="legalGardianSiren" [isMandatory]="true"
+                [conditionnalRequired]="provision.domiciliation!.isLegalPerson" (onOptionSelected)="fillSiren($event)">
+              </autocomplete-siren>
             </td>
             <td>
-              <mat-form-field class="full-width">
-                <mat-label>Denomination</mat-label>
-                <input matInput formControlName="legalGardianDenomination"
-                  [(ngModel)]=" provision.domiciliation!.legalGardianDenomination" placeholder="Dénomination"
-                  autocomplete="do-not-autofill">
-              </mat-form-field>
+              <generic-input [(model)]="provision.domiciliation!.legalGardianDenomination" label="Dénomination"
+                [form]="domiciliationForm" propertyName="legalGardianDenomination" [isMandatory]="true"
+                [isDisabled]="!editMode" [conditionnalRequired]="provision.domiciliation!.isLegalPerson"
+                [maxLength]="60"></generic-input>
             </td>
           </tr>
         </table>
@@ -329,158 +183,85 @@
         <table class=" full-width" *ngIf="!provision.domiciliation!.isLegalPerson">
           <tr>
             <td>
-              <mat-radio-group class="radio-group-column" [(ngModel)]="provision.domiciliation!.legalGardianCivility"
-                formControlName="legalGardianCivility">
-                <mat-radio-button *ngFor="let civility of civilities" [value]="civility"
-                  [checked]=" provision.domiciliation!.legalGardianCivility != undefined && provision.domiciliation!.legalGardianCivility.id == civility.id">
-                  {{civility.label}}
-                </mat-radio-button>
-              </mat-radio-group>
+              <radio-group-civility [(model)]="provision.domiciliation!.legalGardianCivility" [form]="domiciliationForm"
+                propertyName="legalGardianCivility" label="Civilité"></radio-group-civility>
             </td>
             <td>
-              <mat-form-field class="full-width">
-                <mat-label>Nom</mat-label>
-                <input matInput formControlName="legalGardianLastname"
-                  [(ngModel)]="provision.domiciliation!.legalGardianLastname" placeholder="Nom">
-              </mat-form-field>
+              <generic-input [(model)]="provision.domiciliation!.legalGardianLastname" label="Nom"
+                [form]="domiciliationForm" propertyName="legalGardianLastname" [isMandatory]="true"
+                [isDisabled]="!editMode" [conditionnalRequired]="!provision.domiciliation!.isLegalPerson"
+                [maxLength]="20"></generic-input>
             </td>
             <td>
-              <mat-form-field class="full-width">
-                <mat-label>Prénom</mat-label>
-                <input matInput formControlName="legalGardianFirstname"
-                  [(ngModel)]="provision.domiciliation!.legalGardianFirstname" placeholder="Prénom">
-              </mat-form-field>
+              <generic-input [(model)]="provision.domiciliation!.legalGardianFirstname" label="Prénom"
+                [form]="domiciliationForm" propertyName="legalGardianFirstname" [isMandatory]="true"
+                [isDisabled]="!editMode" [conditionnalRequired]="!provision.domiciliation!.isLegalPerson"
+                [maxLength]="20"></generic-input>
             </td>
             <td>
-              <mat-form-field class="full-width">
-                <mat-label>Fonction</mat-label>
-                <input matInput formControlName="legalGardianJob" [(ngModel)]="provision.domiciliation!.legalGardianJob"
-                  placeholder="Fonction">
-              </mat-form-field>
+              <generic-input [(model)]="provision.domiciliation!.legalGardianJob" label="Fonction"
+                [form]="domiciliationForm" propertyName="legalGardianJob" [isMandatory]="true" [isDisabled]="!editMode"
+                [conditionnalRequired]="!provision.domiciliation!.isLegalPerson" [maxLength]="20"></generic-input>
             </td>
           </tr>
         </table>
         <table class="full-width" *ngIf="!provision.domiciliation!.isLegalPerson">
           <tr>
             <td>
-              <mat-form-field class="full-width">
-                <mat-label>Date de naissance</mat-label>
-                <input matInput [matDatepicker]="legalGardianBirthDateDatetimePicker"
-                  formControlName="legalGardianBirthdate" [(ngModel)]="provision.domiciliation!.legalGardianBirthdate"
-                  autocomplete="do-not-autocomplete">
-                <mat-datepicker-toggle matSuffix [for]="legalGardianBirthDateDatetimePicker"></mat-datepicker-toggle>
-                <mat-datepicker touchUi #legalGardianBirthDateDatetimePicker></mat-datepicker>
-              </mat-form-field>
+              <generic-datepicker [(model)]="provision.domiciliation!.legalGardianBirthdate" label="Date de naissance"
+                [form]="domiciliationForm" propertyName="legalGardianBirthdate" [isMandatory]="true"
+                [isDisabled]="!editMode" [conditionnalRequired]="!provision.domiciliation!.isLegalPerson">
+              </generic-datepicker>
             </td>
             <td>
-              <mat-form-field class="full-width">
-                <mat-label>Lieu de naissance</mat-label>
-                <input matInput formControlName="legalGardianPlaceOfBirth"
-                  [(ngModel)]="provision.domiciliation!.legalGardianPlaceOfBirth" placeholder="Fonction">
-              </mat-form-field>
+              <generic-input [(model)]="provision.domiciliation!.legalGardianPlaceOfBirth" label="Lieu de naissance"
+                [form]="domiciliationForm" propertyName="legalGardianPlaceOfBirth" [isMandatory]="true"
+                [isDisabled]="!editMode" [conditionnalRequired]="!provision.domiciliation!.isLegalPerson"
+                [maxLength]="60"></generic-input>
             </td>
           </tr>
         </table>
         <table class="full-width">
           <tr>
             <td>
-              <mat-form-field class="full-width">
-                <mat-label>Destinataire(s) courrier</mat-label>
-                <textarea (keyup)="limitTextareaSize('legalGardianMailRecipient',3)"
-                  (keydown)="limitTextareaSize('legalGardianMailRecipient',3)"
-                  (paste)="limitTextareaSize('legalGardianMailRecipient',3)" rows="3" matInput
-                  formControlName="legalGardianMailRecipient"
-                  [(ngModel)]="provision.domiciliation!.legalGardianMailRecipient"></textarea>
-              </mat-form-field>
+              <generic-textarea [(model)]="provision.domiciliation!.legalGardianMailRecipient"
+                label="Destinataire(s) courrier" [form]="domiciliationForm" propertyName="legalGardianMailRecipient"
+                [isMandatory]="true" [isDisabled]="!editMode" [conditionnalRequired]="" [customValidators]=""
+                (filterInput)="limitTextareaSizeLegalGardianMailRecipient(3)"></generic-textarea>
             </td>
             <td>
-              <mat-form-field class="full-width">
-                <mat-label>Adresse</mat-label>
-                <input matInput formControlName="legalGardianAddress"
-                  [(ngModel)]="provision.domiciliation!.legalGardianAddress" placeholder="Adresse"
-                  autocomplete="do-not-autofill">
-              </mat-form-field>
+              <generic-input [(model)]="provision.domiciliation!.legalGardianAddress" label="Adresse"
+                [form]="domiciliationForm" propertyName="legalGardianAddress" [isMandatory]="true"
+                [isDisabled]="!editMode" [maxLength]="20"></generic-input>
             </td>
             <td>
-              <mat-form-field class="full-width">
-                <mat-label>Ville</mat-label>
-                <input matInput placeholder="Ville" [(ngModel)]="provision.domiciliation!.legalGardianCity"
-                  [matAutocomplete]="autoCompleteLegalGardianCity" formControlName="legalGardianCity"
-                  autocomplete="do-not-autofill">
-                <mat-autocomplete autoActiveFirstOption #autoCompleteLegalGardianCity="matAutocomplete"
-                  [displayWith]="displayLabel" (optionSelected)='fillLegalGardianPostalCode($event.option.value)'>
-                  <mat-option *ngFor="let city of filteredCities" [value]="city">
-                    {{city.label}}
-                  </mat-option>
-                </mat-autocomplete>
-              </mat-form-field>
+              <autocomplete-city [(model)]="provision.domiciliation!.legalGardianCity"
+                [modelCountry]="provision.domiciliation!.legalGardianCountry" [form]="domiciliationForm"
+                propertyName="legalGardianCity" [isMandatory]="true"
+                (onOptionSelected)="fillLegalGardianPostalCode($event)">
+              </autocomplete-city>
             </td>
             <td>
-              <mat-form-field class="full-width">
-                <mat-label>Code postal</mat-label>
-                <input matInput placeholder="Code postal" [(ngModel)]="provision.domiciliation!.legalGardianPostalCode"
-                  [matAutocomplete]="autoCompleteLegalGardianPostalCode" formControlName="legalGardianPostalCode"
-                  autocomplete="do-not-autofill">
-                <mat-autocomplete autoActiveFirstOption #autoCompleteLegalGardianPostalCode="matAutocomplete"
-                  (optionSelected)='fillLegalGardianCity($event.option.value)'>
-                  <mat-option *ngFor="let postalCode of filteredPostalCodes" [value]="postalCode">
-                    {{postalCode}}
-                  </mat-option>
-                </mat-autocomplete>
-              </mat-form-field>
+              <autocomplete-postal-code [(model)]="provision.domiciliation!.legalGardianPostalCode"
+                [form]="domiciliationForm" propertyName="legalGardianPostalCode" [isMandatory]="true"
+                (onOptionSelected)="fillLegalGardianCity($event)"></autocomplete-postal-code>
             </td>
             <td>
-              <mat-form-field class="full-width">
-                <mat-label>Pays</mat-label>
-                <input matInput placeholder="Pays" [(ngModel)]="provision.domiciliation!.legalGardianCountry"
-                  [matAutocomplete]="autoCompleteLegalGardianCountry" formControlName="legalGardianCountry"
-                  autocomplete="do-not-autofill">
-                <mat-autocomplete autoActiveFirstOption #autoCompleteLegalGardianCountry="matAutocomplete"
-                  [displayWith]="displayLabel">
-                  <mat-option *ngFor="let country of filteredCountries | async" [value]="country">
-                    {{country.label}}
-                  </mat-option>
-                </mat-autocomplete>
-              </mat-form-field>
+              <autocomplete-country [(model)]="provision.domiciliation!.legalGardianCountry" [form]="domiciliationForm"
+                propertyName="legalGardianCountry" [isMandatory]="true" [isDisabled]="!editMode"></autocomplete-country>
             </td>
           </tr>
         </table>
         <table class="full-width">
           <tr>
             <td>
-              <mat-form-field class="full-width">
-                <mat-label>Mails</mat-label>
-                <mat-chip-list #chipListLegalGardianMails>
-                  <mat-chip *ngFor="let mail of provision.domiciliation!.legalGardianMails"
-                    (removed)="removeLegalGardianMail(mail)">
-                    {{mail.mail}}
-                    <button matChipRemove *ngIf="editMode">
-                      <mat-icon>cancel</mat-icon>
-                    </button>
-                    <mat-icon matChipRemove *ngIf="editMode==false" (click)="prepareMail(mail)">mail</mat-icon>
-                  </mat-chip>
-                  <input placeholder="Saisir un mail" #mailInput formControlName="legalGardianMails"
-                    [matChipInputFor]="chipListLegalGardianMails" [matChipInputSeparatorKeyCodes]="SEPARATOR_KEY_CODES"
-                    (matChipInputTokenEnd)="addLegalGardianyMail($event)">
-                </mat-chip-list>
-              </mat-form-field>
+              <chips-mail [(model)]="provision.domiciliation!.legalGardianMails" label="Mails"
+                [form]="domiciliationForm" propertyName="legalGardianMails" [isDisabled]="!editMode"></chips-mail>
             </td>
-            <mat-form-field class="full-width">
-              <mat-label>Téléphones</mat-label>
-              <mat-chip-list #chipListLegalGardianPhones>
-                <mat-chip *ngFor="let phone of provision.domiciliation!.legalGardianPhones"
-                  (removed)="removeLegalGardianPhone(phone)">
-                  {{phone.phoneNumber}}
-                  <button matChipRemove *ngIf="editMode">
-                    <mat-icon>cancel</mat-icon>
-                  </button>
-                  <mat-icon matChipRemove *ngIf="editMode==false" (click)="call(phone)">phone</mat-icon>
-                </mat-chip>
-                <input placeholder="Saisir un téléphone" #phoneInput formControlName="legalGardianPhones"
-                  [matChipInputFor]="chipListLegalGardianPhones" [matChipInputSeparatorKeyCodes]="SEPARATOR_KEY_CODES"
-                  (matChipInputTokenEnd)="addLegalGardianPhone($event)">
-              </mat-chip-list>
-            </mat-form-field>
+            <td>
+              <chips-phone [(model)]="provision.domiciliation!.legalGardianPhones" label="Téléphones"
+                [form]="domiciliationForm" propertyName="legalGardianPhones" [isDisabled]="!editMode"></chips-phone>
+            </td>
           </tr>
         </table>
         <table class="full-width" *ngIf="!provision.domiciliation!.isLegalPerson">

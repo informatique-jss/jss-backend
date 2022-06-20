@@ -1,0 +1,14 @@
+<mat-form-field class="full-width" [formGroup]="form!">
+  <mat-label>{{label}}</mat-label>
+  <mat-chip-list #chipList [formControlName]="propertyName">
+    <mat-chip *ngFor="let chip of model" (removed)="removeElement(chip)">
+      {{getValueFromObject(chip)}}
+      <button matChipRemove *ngIf="!isDisabled">
+        <mat-icon>cancel</mat-icon>
+      </button>
+      <mat-icon matChipRemove *ngIf="isDisabled" (click)="prepareMail(chip)">mail</mat-icon>
+    </mat-chip>
+    <input placeholder="Saisir un mail" #chipInput [matChipInputFor]="chipList"
+      [matChipInputSeparatorKeyCodes]="SEPARATOR_KEY_CODES" (matChipInputTokenEnd)="addElement($event)">
+  </mat-chip-list>
+</mat-form-field>

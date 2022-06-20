@@ -1,9 +1,11 @@
-import { Component, Input, OnInit, SimpleChanges, ViewChildren } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges, ViewChild, ViewChildren } from '@angular/core';
+import { MatAccordion } from '@angular/material/expansion';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
 import { compareWithId } from 'src/app/libs/CompareHelper';
 import { PROVISION_TYPE_DOMICILIATION_CODE, PROVISION_TYPE_SHAL_CODE } from 'src/app/libs/Constants';
 import { Affaire } from '../../model/Affaire';
 import { Provision } from '../../model/Provision';
+import { AffaireComponent } from '../affaire/affaire.component';
 import { ProvisionItemComponent } from '../provision-item/provision-item.component';
 
 @Component({
@@ -16,7 +18,8 @@ export class ProvisionComponent implements OnInit {
   @Input() provisions: Provision[] = [] as Array<Provision>;
   @Input() editMode: boolean = false;
   @ViewChildren(ProvisionItemComponent) provisionItemComponents: any;
-
+  @ViewChild(MatAccordion) accordion: MatAccordion | undefined;
+  @ViewChild(AffaireComponent) affaireComponent: AffaireComponent | undefined;
 
   filteredProvisions: Provision[] = [] as Array<Provision>;
 
@@ -109,9 +112,12 @@ export class ProvisionComponent implements OnInit {
 
   getFormStatus(): boolean {
     let status = true;
+    let affaireFormStatus = this.affaireComponent?.getFormStatus();
     this.provisionItemComponents.toArray().forEach((provisionComponent: { getFormStatus: () => any; }) => {
       status = status && provisionComponent.getFormStatus();
     });
+    if (affaireFormStatus)
+      status = status && affaireFormStatus;
     return status;
   }
 

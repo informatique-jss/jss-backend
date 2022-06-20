@@ -1,7 +1,7 @@
 package com.jss.jssbackend.modules.quotation.service;
 
-import com.jss.jssbackend.libs.SSLHelper;
-import com.jss.jssbackend.modules.quotation.model.Rna;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -11,6 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
+
+import com.jss.jssbackend.libs.SSLHelper;
+import com.jss.jssbackend.modules.quotation.model.Rna;
 
 @Service
 public class RnaDelegateServiceImpl implements RnaDelegateService {
@@ -24,7 +27,7 @@ public class RnaDelegateServiceImpl implements RnaDelegateService {
 	private String idUrl = "/id";
 
 	@Override
-	public Rna getRna(String rna) throws HttpStatusCodeException, Exception {
+	public List<Rna> getRna(String rna) throws HttpStatusCodeException, Exception {
 		try {
 			SSLHelper.disableCertificateValidation();
 			ResponseEntity<Rna> res = new RestTemplate().exchange(
@@ -32,7 +35,9 @@ public class RnaDelegateServiceImpl implements RnaDelegateService {
 					HttpMethod.GET,
 					new HttpEntity<Rna>(new HttpHeaders()), Rna.class);
 			if (res.getBody() != null) {
-				return res.getBody();
+				ArrayList<Rna> out = new ArrayList<Rna>();
+				out.add(res.getBody());
+				return out;
 			}
 			return null;
 		} catch (Exception e) {

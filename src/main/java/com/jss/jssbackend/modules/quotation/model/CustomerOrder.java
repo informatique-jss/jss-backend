@@ -10,6 +10,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
@@ -35,9 +37,9 @@ public class CustomerOrder implements IQuotation {
 	@JoinColumn(name = "id_responsable")
 	private Responsable responsable;
 
-	@ManyToOne
-	@JoinColumn(name = "id_special_offer")
-	private SpecialOffer specialOffer;
+	@ManyToMany(cascade = CascadeType.ALL)
+	@JoinTable(name = "asso_customer_order_special_offer", joinColumns = @JoinColumn(name = "id_customer_order"), inverseJoinColumns = @JoinColumn(name = "id_special_offer"))
+	private List<SpecialOffer> specialOffers;
 
 	private Date createdDate;
 
@@ -114,12 +116,12 @@ public class CustomerOrder implements IQuotation {
 		this.responsable = responsable;
 	}
 
-	public SpecialOffer getSpecialOffer() {
-		return specialOffer;
+	public List<SpecialOffer> getSpecialOffers() {
+		return specialOffers;
 	}
 
-	public void setSpecialOffer(SpecialOffer specialOffer) {
-		this.specialOffer = specialOffer;
+	public void setSpecialOffers(List<SpecialOffer> specialOffers) {
+		this.specialOffers = specialOffers;
 	}
 
 	public Date getCreatedDate() {

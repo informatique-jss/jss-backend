@@ -1,16 +1,12 @@
 import { Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { Observable } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
-import { compareWithId } from 'src/app/libs/CompareHelper';
 import { ICSEvent } from 'src/app/libs/ICSEvent';
 import { createEvent } from 'src/app/libs/ICSHelper';
 import { instanceOfResponsable, instanceOfTiers } from 'src/app/libs/TypeHelper';
 import { Gift } from 'src/app/modules/miscellaneous/model/Gift';
-import { GiftService } from 'src/app/modules/miscellaneous/services/gift.service';
 import { Employee } from 'src/app/modules/profile/model/Employee';
 import { EmployeeService } from 'src/app/modules/profile/services/employee.service';
 import { environment } from 'src/environments/environment';
@@ -30,11 +26,9 @@ export class TiersFollowupComponent implements OnInit {
   @Input() tiers: ITiers = {} as ITiers;
   @Input() editMode: boolean = false;
 
-  tiersFollowupTypes: TiersFollowupType[] = [] as Array<TiersFollowupType>;
-  newFollowup: TiersFollowup = {} as TiersFollowup;
-
-  salesEmployees: Employee[] = [] as Array<Employee>;
-  filteredSalesEmployees: Observable<Employee[]> | undefined;
+  newFollowup = {} as TiersFollowup;
+  followUpTypes = [] as Array<TiersFollowupType>;
+  salesEmployees = [] as Array<Employee>;
 
   gifts: Gift[] = [] as Array<Gift>;
 
@@ -49,27 +43,18 @@ export class TiersFollowupComponent implements OnInit {
   reminderDatetime: string = "";
 
   constructor(private formBuilder: FormBuilder,
-    protected tiersFollowupTypeService: TiersFollowupTypeService,
     protected tiersFollowupService: TiersFollowupService,
-    private employeeService: EmployeeService,
-    private giftService: GiftService) { }
+    protected tiersFollowupTypeService: TiersFollowupTypeService,
+    private employeeService: EmployeeService) { }
 
   ngOnInit() {
-    this.tiersFollowupTypeService.getTiersFollowupTypes().subscribe(response => {
-      this.tiersFollowupTypes = response;
-    })
     this.employeeService.getSalesEmployees().subscribe(response => {
       this.salesEmployees = response;
     })
-    this.giftService.getGifts().subscribe(response => {
-      this.gifts = response;
-    })
-
-    // Initialize autocomplete fields
-    this.filteredSalesEmployees = this.followupForm.get("salesEmployee")?.valueChanges.pipe(
-      startWith(''),
-      map(value => this._filterEmployee(this.salesEmployees, value)),
-    );
+    this.tiersFollowupTypeService.getTiersFollowupTypes().subscribe(response => {
+      this.followUpTypes = response;
+      this.newFollowup.tiersFollowupType = this.followUpTypes[0];
+    });
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -117,6 +102,9 @@ export class TiersFollowupComponent implements OnInit {
   }
 
   addNewFollowUp() {
+    if (this.getFormStatus() == false)
+      return;
+
     if (this.tiers.tiersFollowups == null || this.tiers.tiersFollowups == undefined)
       this.tiers.tiersFollowups = [] as Array<TiersFollowup>;
 
@@ -131,27 +119,14 @@ export class TiersFollowupComponent implements OnInit {
       this.setData();
     });
     this.newFollowup = {} as TiersFollowup;
+    this.newFollowup.tiersFollowupType = this.followUpTypes[0];
     this.setData();
   }
 
   followupForm = this.formBuilder.group({
-    tiersFollowupType: ['', Validators.required],
-    salesEmployee: ['', Validators.required],
+    tiersFollowupType: [''],
     gift: [''],
-    followupDatetime: ['', Validators.required],
-    observations: [''],
   })
-
-  private _filterEmployee(employees: Employee[], value: string): Employee[] {
-    const filterValue = (value != undefined && value != null && value.toLowerCase != undefined) ? value.toLowerCase() : "";
-    return employees.filter(employee => employee.firstname != undefined && employee.lastname != undefined && employee.firstname.toLowerCase().includes(filterValue) || employee.lastname.toLowerCase().includes(filterValue));
-  }
-
-  public displayEmployee(employee: Employee): string {
-    return employee ? employee.firstname + " " + employee.lastname : '';
-  }
-
-  compareWithId = compareWithId;
 
   getFormStatus(): boolean {
     this.followupForm.markAllAsTouched();

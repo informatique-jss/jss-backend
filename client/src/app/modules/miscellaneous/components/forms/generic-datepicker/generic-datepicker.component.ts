@@ -53,6 +53,10 @@ export class GenericDatepickerComponent implements OnInit {
    * Additionnal validators to check
    */
   @Input() customValidators: ValidatorFn[] | undefined;
+  /**
+   * Fired when a date is selected in the calendar
+   */
+  @Output() onDateChange: EventEmitter<Date> = new EventEmitter();
 
   constructor(
     private formBuilder: FormBuilder) { }
@@ -60,6 +64,16 @@ export class GenericDatepickerComponent implements OnInit {
   ngOnChanges(changes: SimpleChanges) {
     if (this.form && (this.isMandatory || this.customValidators))
       this.form.get(this.propertyName)?.updateValueAndValidity();
+    if (changes.model && this.form != undefined) {
+      this.form.get(this.propertyName)?.setValue(this.model);
+    }
+    if (changes.isDisabled) {
+      if (this.isDisabled) {
+        this.form?.get(this.propertyName)?.disable();
+      } else {
+        this.form?.get(this.propertyName)?.enable();
+      }
+    }
   }
 
   ngOnDestroy() {
@@ -88,6 +102,7 @@ export class GenericDatepickerComponent implements OnInit {
           this.modelChange.emit(this.model);
         }
       )
+      this.form.get(this.propertyName)?.setValue(this.model);
       this.form.markAllAsTouched();
     }
   }
@@ -103,5 +118,9 @@ export class GenericDatepickerComponent implements OnInit {
         };
       return null;
     };
+  }
+
+  dateChange(value: Date) {
+    this.onDateChange.emit(value);
   }
 }

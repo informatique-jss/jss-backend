@@ -1,7 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AppRestService } from 'src/app/appRest.service';
-import { Siren } from '../model/Siren';
 import { Siret } from '../model/Siret';
 
 @Injectable({
@@ -14,6 +13,6 @@ export class SiretService extends AppRestService<Siret>{
   }
 
   getSiret(siret: string) {
-    return this.get(new HttpParams().set("siret", siret), "siret");
+    return this.getList(new HttpParams().set("siret", siret), "siret");
   }
 }

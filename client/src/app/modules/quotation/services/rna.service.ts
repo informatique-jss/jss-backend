@@ -13,6 +13,6 @@ export class RnaService extends AppRestService<Rna>{
   }
 
   getRna(rna: string) {
-    return this.get(new HttpParams().set("rna", rna), "rna");
+    return this.getList(new HttpParams().set("rna", rna), "rna");
   }
 }

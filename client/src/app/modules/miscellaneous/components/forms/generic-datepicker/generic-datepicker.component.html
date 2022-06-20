@@ -1,7 +1,7 @@
 <mat-form-field class="full-width" [formGroup]="form!">
   <mat-label>{{label}}</mat-label>
-  <input matInput [matDatepicker]="datetimePicker" [formControlName]="propertyName" [(ngModel)]="model"
-    autocomplete="do-not-autocomplete">
+  <input matInput [matDatepicker]="datetimePicker" [formControlName]="propertyName" autocomplete="do-not-autocomplete"
+    (dateChange)="dateChange($event.value)">
   <mat-datepicker-toggle matSuffix [for]="datetimePicker"></mat-datepicker-toggle>
   <mat-datepicker touchUi #datetimePicker></mat-datepicker>
 </mat-form-field>

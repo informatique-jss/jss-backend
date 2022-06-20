@@ -1,5 +1,5 @@
 import { Directive, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
-import { FormBuilder, FormGroup, ValidatorFn } from '@angular/forms';
+import { FormBuilder, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
 
 @Directive()
@@ -23,6 +23,10 @@ export abstract class GenericRadioGroupComponent<T> implements OnInit {
    * Default : civility
    */
   @Input() propertyName: string = "civility";
+  /**
+ * The label to display
+ */
+  @Input() label: string = "";
 
   abstract types: T[];
 
@@ -31,6 +35,9 @@ export abstract class GenericRadioGroupComponent<T> implements OnInit {
   ngOnChanges(changes: SimpleChanges) {
     if (this.form && (!this.model) && this.types)
       this.model = this.types[0];
+    if (changes.model && this.form != undefined) {
+      this.form.get(this.propertyName)?.setValue(this.model);
+    }
   }
 
   ngOnDestroy() {
@@ -44,6 +51,8 @@ export abstract class GenericRadioGroupComponent<T> implements OnInit {
     if (this.form != undefined) {
       let validators: ValidatorFn[] = [] as Array<ValidatorFn>;
 
+      validators.push(Validators.required);
+
       this.form.addControl(this.propertyName, this.formBuilder.control('', validators));
       this.form.controls[this.propertyName].valueChanges.subscribe(
         (newValue) => {
@@ -51,6 +60,7 @@ export abstract class GenericRadioGroupComponent<T> implements OnInit {
           this.modelChange.emit(this.model);
         }
       )
+      this.form.get(this.propertyName)?.setValue(this.model);
       this.form.markAllAsTouched();
     }
   }

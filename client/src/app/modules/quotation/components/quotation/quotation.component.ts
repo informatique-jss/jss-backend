@@ -94,7 +94,7 @@ export class QuotationComponent implements OnInit {
     if (errorMessages.length > 0) {
       let errorMessage = "Les onglets suivants ne sont pas correctement remplis. Veuillez les compléter avant de sauvegarder : " + errorMessages.join(" / ");
       let sb = this.snackBar.open(errorMessage, 'Fermer', {
-        duration: 60 * 1000
+        duration: 60 * 1000, panelClass: ["red-snackbar"]
       });
       sb.onAction().subscribe(() => {
         sb.dismiss();

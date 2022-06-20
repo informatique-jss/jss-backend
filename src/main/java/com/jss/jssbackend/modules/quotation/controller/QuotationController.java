@@ -316,55 +316,55 @@ public class QuotationController {
   }
 
   @GetMapping(inputEntryPoint + "/siren")
-  public ResponseEntity<Siren> getSiren(@RequestParam String siren) {
+  public ResponseEntity<List<Siren>> getSiren(@RequestParam String siren) {
     if (siren == null || siren.equals("") || siren.replaceAll(" ", "").length() != 9)
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
-    Siren sirenFound = null;
+    List<Siren> sirenFound = null;
     try {
       sirenFound = sireneDelegateService.getSiren(siren.replaceAll(" ", ""));
     } catch (HttpStatusCodeException e) {
       return null;
     } catch (Exception e) {
       logger.error("Error when fetching siren", e);
-      return new ResponseEntity<Siren>(HttpStatus.INTERNAL_SERVER_ERROR);
+      return new ResponseEntity<List<Siren>>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
-    return new ResponseEntity<Siren>(sirenFound, HttpStatus.OK);
+    return new ResponseEntity<List<Siren>>(sirenFound, HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/siret")
-  public ResponseEntity<Siret> getSiret(@RequestParam String siret) {
+  public ResponseEntity<List<Siret>> getSiret(@RequestParam String siret) {
     if (siret == null || siret.equals("") || siret.replaceAll(" ", "").length() != 14)
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
-    Siret siretFound = null;
+    List<Siret> siretFound = null;
     try {
       siretFound = sireneDelegateService.getSiret(siret.replaceAll(" ", ""));
     } catch (HttpStatusCodeException e) {
       return null;
     } catch (Exception e) {
       logger.error("Error when fetching siret", e);
-      return new ResponseEntity<Siret>(HttpStatus.INTERNAL_SERVER_ERROR);
+      return new ResponseEntity<List<Siret>>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
-    return new ResponseEntity<Siret>(siretFound, HttpStatus.OK);
+    return new ResponseEntity<List<Siret>>(siretFound, HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/rna")
-  public ResponseEntity<Rna> getRna(@RequestParam String rna) {
+  public ResponseEntity<List<Rna>> getRna(@RequestParam String rna) {
     if (rna == null || rna.equals("")
         || rna.replaceAll(" ", "").length() != 10 && !rna.toUpperCase().subSequence(0, 1).equals("W"))
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
-    Rna rnaFound = null;
+    List<Rna> rnaFound = null;
     try {
       rnaFound = rnaDelegateService.getRna(rna.replaceAll(" ", ""));
     } catch (HttpStatusCodeException e) {
       return null;
     } catch (Exception e) {
       logger.error("Error when fetching siret", e);
-      return new ResponseEntity<Rna>(HttpStatus.INTERNAL_SERVER_ERROR);
+      return new ResponseEntity<List<Rna>>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
-    return new ResponseEntity<Rna>(rnaFound, HttpStatus.OK);
+    return new ResponseEntity<List<Rna>>(rnaFound, HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/affaire")

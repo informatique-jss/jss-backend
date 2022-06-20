@@ -84,6 +84,15 @@ mini-fab-add mat-form-field.mat-form-field, mat-option, .mat-cell {
   padding: 4px !important;
 }
 
+
+.mat-radio-group.ng-invalid.ng-touched .mat-radio-outer-circle {
+  border-color: #c0392b;
+}
+
+.mat-radio-group.ng-invalid.ng-touched .mat-radio-label-content {
+  color: #c0392b;
+}
+
 .form-div {
   min-height: 600px;
   background-color: white;

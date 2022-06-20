@@ -1,0 +1,13 @@
+<mat-form-field class="full-width" [formGroup]="form!">
+  <mat-label>Forme juridique</mat-label>
+  <input type="text" matInput [formControlName]="propertyName" [matAutocomplete]="matAutocomplete" [(ngModel)]="model">
+  <mat-icon matSuffix (click)="model=undefined" *ngIf="!isDisabled && model!=undefined">
+    close
+  </mat-icon>
+  <mat-autocomplete autoActiveFirstOption #matAutocomplete="matAutocomplete" [displayWith]="displayLabel"
+    (optionSelected)='optionSelected($event.option.value)'>
+    <mat-option *ngFor="let type of filteredTypes | async" [value]="type">
+      {{type.label}}
+    </mat-option>
+  </mat-autocomplete>
+</mat-form-field>

@@ -1,11 +1,11 @@
-import { Directive, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
+import { ChangeDetectorRef, Directive, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter, switchMap, tap } from 'rxjs/operators';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
 
 @Directive()
-export abstract class GenericAutocompleteComponent<T> implements OnInit {
+export abstract class GenericAutocompleteComponent<T, U> implements OnInit {
 
   matcher: CustomErrorStateMatcher = new CustomErrorStateMatcher();
 
@@ -13,8 +13,8 @@ export abstract class GenericAutocompleteComponent<T> implements OnInit {
    * The model of T property
    * Mandatory
    */
-  @Input() model: T | undefined;
-  @Output() modelChange: EventEmitter<T> = new EventEmitter<T>();
+  @Input() model: any | undefined;
+  @Output() modelChange: EventEmitter<any> = new EventEmitter<any>();
   /**
    * The formgroup to bind component
    * Mandatory
@@ -43,15 +43,21 @@ export abstract class GenericAutocompleteComponent<T> implements OnInit {
   @Input() customValidators: ValidatorFn[] | undefined;
   /**
    * Fired when an option is selected in the autocomplete list.
-   * Give the selected City in parameter
+   * Give the selected object in parameter
    */
   @Output() onOptionSelected: EventEmitter<T> = new EventEmitter();
 
+  expectedMinLengthInput: number = 2;
+
   filteredTypes: T[] | undefined;
 
-  constructor(private formBuilder: FormBuilder) { }
+  constructor(private formBuilder: FormBuilder, private cdr: ChangeDetectorRef) { }
 
   ngOnChanges(changes: SimpleChanges) {
+    if (changes.model && this.form != undefined) {
+      this.form.get(this.propertyName)?.setValue(this.model);
+      this.cdr.detectChanges();
+    }
     if (this.form && (this.isMandatory || this.customValidators))
       this.form.get(this.propertyName)?.updateValueAndValidity();
   }
@@ -73,36 +79,45 @@ export abstract class GenericAutocompleteComponent<T> implements OnInit {
         }
       }
 
+      // TODO  : validators not working !
       if (this.customValidators != undefined && this.customValidators != null && this.customValidators.length > 0)
         validators.push(...this.customValidators);
 
       this.form.addControl(this.propertyName, this.formBuilder.control('', validators));
       this.form.get(this.propertyName)?.valueChanges.pipe(
         filter(res => {
-          return res != undefined && res !== null && res.length >= 2
+          return res != undefined && res !== null && res.length >= this.expectedMinLengthInput
         }),
         distinctUntilChanged(),
         debounceTime(300),
         tap((value) => {
           this.filteredTypes = [];
-          this.model = value;
+          this.cdr.detectChanges();
           this.modelChange.emit(this.model);
         }),
         switchMap(value => this.searchEntities(value)
         )
       ).subscribe(response => {
-        this.filteredTypes = response as T[];
+        this.filteredTypes = this.mapResponse(response);
+        this.cdr.detectChanges();
       });
+      this.form.get(this.propertyName)?.setValue(this.model);
       this.form.markAllAsTouched();
     }
   }
 
-  abstract searchEntities(value: string): Observable<T[]>;
+  installValidators() {
+
+  }
+  abstract searchEntities(value: string): Observable<U[]>;
+
+  mapResponse(response: U[]): T[] {
+    return (response as unknown) as Array<T>;
+  }
 
   checkAutocompleteField(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const root = control.root as FormGroup;
-
       const fieldValue = root.get(this.propertyName)?.value;
       if (fieldValue != undefined && fieldValue != null && (fieldValue.id == undefined || fieldValue.id == null))
         return {
@@ -116,7 +131,6 @@ export abstract class GenericAutocompleteComponent<T> implements OnInit {
   checkFieldFilledIfIsConditionalRequired(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const root = control.root as FormGroup;
-
       const fieldValue = root.get(this.propertyName)?.value;
       if (this.conditionnalRequired && (fieldValue == undefined || fieldValue == null || fieldValue.length == 0))
         return {
@@ -132,6 +146,7 @@ export abstract class GenericAutocompleteComponent<T> implements OnInit {
 
   optionSelected(type: T): void {
     this.modelChange.emit(this.model);
+    this.cdr.detectChanges();
     this.onOptionSelected.emit(type);
   }
 }

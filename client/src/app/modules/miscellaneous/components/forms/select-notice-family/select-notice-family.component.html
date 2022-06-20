@@ -1,0 +1,10 @@
+<mat-form-field class="full-width" [formGroup]="form!">
+  <mat-label>{{label}}</mat-label>
+  <mat-select [formControlName]="propertyName"
+    [required]="isMandatory && (conditionnalRequired==undefined || conditionnalRequired)" [(ngModel)]="model"
+    [compareWith]="compareWithId">
+    <mat-option *ngFor="let type of types" [value]="type">
+      {{type.label}}
+    </mat-option>
+  </mat-select>
+</mat-form-field>

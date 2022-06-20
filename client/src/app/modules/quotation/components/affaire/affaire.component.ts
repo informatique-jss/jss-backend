@@ -1,12 +1,9 @@
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
-import { MatChipInputEvent } from '@angular/material/chips';
+import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { debounceTime, distinctUntilChanged, filter, map, startWith, switchMap, tap } from 'rxjs/operators';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
 import { COUNTRY_CODE_FRANCE, SEPARATOR_KEY_CODES, UNREGISTERED_COMPANY_LEGAL_FORM_CODE } from 'src/app/libs/Constants';
-import { validateEmail, validateFrenchPhone, validateInternationalPhone, validateRna, validateSiren, validateSiret } from 'src/app/libs/CustomFormsValidatorsHelper';
-import { callNumber, prepareMail } from 'src/app/libs/MailHelper';
+import { validateRna, validateSiren, validateSiret } from 'src/app/libs/CustomFormsValidatorsHelper';
 import { City } from 'src/app/modules/miscellaneous/model/City';
 import { Civility } from 'src/app/modules/miscellaneous/model/Civility';
 import { Country } from 'src/app/modules/miscellaneous/model/Country';
@@ -16,9 +13,7 @@ import { Phone } from 'src/app/modules/miscellaneous/model/Phone';
 import { CityService } from 'src/app/modules/miscellaneous/services/city.service';
 import { CivilityService } from 'src/app/modules/miscellaneous/services/civility.service';
 import { CountryService } from 'src/app/modules/miscellaneous/services/country.service';
-import { LegalFormService } from 'src/app/modules/miscellaneous/services/legal.form.service';
-import { IndexEntityService } from 'src/app/routing/search/index.entity.service';
-import { AFFAIRE_ENTITY_TYPE } from 'src/app/routing/search/search.component';
+import { IndexEntity } from 'src/app/routing/search/IndexEntity';
 import { Affaire } from '../../model/Affaire';
 import { Rna } from '../../model/Rna';
 import { Siren } from '../../model/Siren';
@@ -42,10 +37,6 @@ export class AffaireComponent implements OnInit {
   legalForms: LegalForm[] = [] as LegalForm[];
   filteredLegalForms: Observable<LegalForm[]> | undefined;
 
-  filteredSiren: Siren | undefined;
-  filteredSiret: Siret | undefined;
-  filteredRna: Rna | undefined;
-
   filteredPostalCodes: String[] | undefined;
 
   filteredCities: City[] | undefined;
@@ -65,130 +56,30 @@ export class AffaireComponent implements OnInit {
     private sirenService: SirenService,
     private siretService: SiretService,
     private rnaService: RnaService,
-    private indexEntityService: IndexEntityService,
     private affaireService: AffaireService,
-    private legalFormService: LegalFormService,
   ) { }
 
   ngOnInit() {
     this.civilityService.getCivilities().subscribe(response => {
       this.civilities = response;
-    })
-    this.legalFormService.getLegalForms().subscribe(response => {
-      this.legalForms = response;
+      if (!this.affaire.civility)
+        this.affaire.civility = this.civilities[0];
     })
     this.countryService.getCountries().subscribe(response => {
       this.countries = response;
       if (this.affaire != null && (this.affaire.country == null || this.affaire.country == undefined))
         this.affaire.country = this.countries[0];
     })
-
-    this.filteredLegalForms = this.affaireForm.get("legalForm")?.valueChanges.pipe(
-      startWith(''),
-      map(value => this._filterByCodeOrLabel(this.legalForms, value)),
-    );
-
-    this.affaireForm.get("siren")?.valueChanges.pipe(
-      filter(res => {
-        return res != undefined && res !== null && res.length == 9
-      }),
-      distinctUntilChanged(),
-      debounceTime(300),
-      tap(() => {
-        this.filteredSiren = undefined;
-      }),
-      switchMap(value => this.sirenService.getSiren(value)
-      )
-    ).subscribe((response: Siren) => {
-      this.filteredSiren = response;
-    });
-
-    this.affaireForm.get("siret")?.valueChanges.pipe(
-      filter(res => {
-        return res != undefined && res !== null && res.replace(/\s/g, '').length == 14
-      }),
-      distinctUntilChanged(),
-      debounceTime(300),
-      tap(() => {
-        this.filteredSiret = undefined;
-      }),
-      switchMap(value => this.siretService.getSiret(value)
-      )
-    ).subscribe((response: Siret) => {
-      this.filteredSiret = response;
-    });
-
-
-    this.affaireForm.get("postalCode")?.valueChanges.pipe(
-      filter(res => {
-        return res != undefined && res !== null && res.length >= 2
-      }),
-      distinctUntilChanged(),
-      debounceTime(300),
-      tap(() => {
-        this.filteredPostalCodes = [];
-      }),
-      switchMap(value => this.cityService.getCitiesFilteredByPostalCode(value)
-      )
-    ).subscribe((response: City[]) => {
-      this.filteredPostalCodes = [...new Set(response.map(city => city.postalCode))];
-    });
-
-    this.affaireForm.get("city")?.valueChanges.pipe(
-      filter(res => {
-        return res != undefined && res !== null && res.length >= 2
-      }),
-      distinctUntilChanged(),
-      debounceTime(300),
-      tap(() => {
-        this.filteredCities = [];
-      }),
-      switchMap(value => this.cityService.getCitiesFilteredByCountryAndName(value, this.affaire.country)
-      )
-    ).subscribe(response => {
-      this.filteredCities = response as City[];
-    });
-
-    this.affaireForm.get("autoCompleteAffaire")?.valueChanges.pipe(
-      filter(res => {
-        return res != undefined && res !== null && res.length >= 2
-      }),
-      distinctUntilChanged(),
-      debounceTime(300),
-      tap(() => {
-        this.filteredAffaires = [];
-      }),
-      switchMap(value => this.indexEntityService.searchEntities(value)
-      )
-    ).subscribe(response => {
-      if (response != null && response != undefined && response.length > 0) {
-        response.forEach(entity => {
-          if (entity.entityType == AFFAIRE_ENTITY_TYPE.entityType) {
-            if (this.filteredAffaires == undefined)
-              this.filteredAffaires = [] as Array<Affaire>;
-            this.affaireService.getAffaire(entity.entityId).subscribe(response => {
-              if (response != null)
-                this.filteredAffaires?.push(response);
-            })
-          }
-        })
-      }
-    });
-
-    this.filteredCountries = this.affaireForm.get("country")?.valueChanges.pipe(
-      startWith(''),
-      map(value => this._filterCountry(value)),
-    );
-
+    if (this.affaire && !this.affaire.isIndividual)
+      this.affaire.isIndividual = false;
   }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.affaire != undefined) {
+      if (this.affaire && !this.affaire.isIndividual)
+        this.affaire.isIndividual = false;
       if (this.affaire.isIndividual && (this.affaire.civility == null || this.affaire.civility == undefined))
         this.affaire.civility = this.civilities[0];
-
-      if (this.affaire.isIndividual == undefined)
-        this.affaire.isIndividual = false;
 
       if (this.affaire.country == null || this.affaire.country == undefined)
         this.affaire.country = this.countries[0];
@@ -197,99 +88,19 @@ export class AffaireComponent implements OnInit {
   }
 
   affaireForm = this.formBuilder.group({
-    civility: ['', this.checkFieldFilledIfIsIndividual("civility")],
-    isIndividual: [''],
-    firstname: ['', [this.checkFieldFilledIfIsIndividual("firstname"), Validators.maxLength(20)]],
-    lastname: ['', [this.checkFieldFilledIfIsIndividual("lastname"), Validators.maxLength(20)]],
-    legalForm: ['', [this.checkFieldFilledIfIsNotIndividual("legalForm")]],
-    denomination: ['', [this.checkFieldFilledIfIsNotIndividual("denomination"), Validators.maxLength(60)]],
-    siren: ['', [this.checkSiren("siren"), this.checkFieldFilledIfIsNotIndividualAndNotUnregistered("siren"),]],
-    siret: ['', [this.checkFieldFilledIfIsNotIndividualAndNotUnregistered("siret"), this.checkSiret("siret")]],
-    rna: ['', [this.checkRna("rna")]],
-    address: ['', [Validators.required, Validators.maxLength(20)]],
-    postalCode: ['', [this.checkFieldFilledIfIsInFrance("postalCode")]],
-    city: ['', [Validators.required, Validators.maxLength(30), this.checkAutocompleteField("city")]],
-    country: ['', [Validators.required, this.checkAutocompleteField("country")]],
-    mails: ['', []],
-    phones: ['', []],
-    observations: ['', []],
-    shareCapital: ['', []],
-    autoCompleteAffaire: ['', []],
-    externalReference: ['', [Validators.maxLength(60)]],
+    affaire: [''],
+    siret: [''],
+    siren: [''],
+    rna: [''],
+    city: [''],
+    postalCode: [''],
   });
 
   getFormStatus(): boolean {
     return this.affaireForm.valid;
   }
 
-  // Check if the propertiy given in parameter is filled when the affaire is an individual
-  checkFieldFilledIfIsIndividual(fieldName: string): ValidationErrors | null {
-    return (control: AbstractControl): ValidationErrors | null => {
-      const root = control.root as FormGroup;
-
-      const fieldValue = root.get(fieldName)?.value;
-      if (this.affaire.isIndividual && (fieldValue == undefined || fieldValue == null || fieldValue.length == 0))
-        return {
-          notFilled: true
-        };
-      return null;
-    };
-  }
-
-  // Check if the propertiy given in parameter is filled when the affaire is an individual
-  checkFieldFilledIfIsNotIndividual(fieldName: string): ValidationErrors | null {
-    return (control: AbstractControl): ValidationErrors | null => {
-      const root = control.root as FormGroup;
-
-      const fieldValue = root.get(fieldName)?.value;
-      if (!this.affaire.isIndividual && (fieldValue == undefined || fieldValue == null || fieldValue.length == 0))
-        return {
-          notFilled: true
-        };
-      return null;
-    };
-  }
-
-  // Check if the propertiy given in parameter is filled when the affaire is an individual
-  checkFieldFilledIfIsNotIndividualAndNotUnregistered(fieldName: string): ValidationErrors | null {
-    return (control: AbstractControl): ValidationErrors | null => {
-      const root = control.root as FormGroup;
-      const fieldValue = root.get(fieldName)?.value;
-      if (!this.affaire.isIndividual && this.affaire.legalForm != null && this.affaire.legalForm.code != UNREGISTERED_COMPANY_LEGAL_FORM_CODE && (fieldValue == undefined || fieldValue == null || fieldValue.length == 0))
-        if (this.affaire.rna == null && this.affaire.siret == null)
-          return {
-            notFilled: true
-          };
-      return null;
-    };
-  }
-
-  checkFieldFilledIfIsInFrance(fieldName: string): ValidationErrors | null {
-    return (control: AbstractControl): ValidationErrors | null => {
-      const root = control.root as FormGroup;
-      const fieldValue = root.get(fieldName)?.value;
-      if (this.affaire.country != null && this.affaire.country.code == COUNTRY_CODE_FRANCE && (fieldValue == undefined || fieldValue == null || fieldValue.length == 0))
-        return {
-          notFilled: true
-        };
-      return null;
-    };
-  }
-
-  checkAutocompleteField(fieldName: string): ValidationErrors | null {
-    return (control: AbstractControl): ValidationErrors | null => {
-      const root = control.root as FormGroup;
-
-      const fieldValue = root.get(fieldName)?.value;
-      if (fieldValue != undefined && fieldValue != null && (fieldValue.id == undefined || fieldValue.id == null))
-        return {
-          notFilled: true
-        };
-      return null;
-    };
-  }
-
-  checkSiren(fieldName: string): ValidationErrors | null {
+  checkSiren(fieldName: string): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const root = control.root as FormGroup;
 
@@ -302,7 +113,7 @@ export class AffaireComponent implements OnInit {
     };
   }
 
-  checkSiret(fieldName: string): ValidationErrors | null {
+  checkSiret(fieldName: string): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const root = control.root as FormGroup;
 
@@ -315,7 +126,7 @@ export class AffaireComponent implements OnInit {
     };
   }
 
-  checkRna(fieldName: string): ValidationErrors | null {
+  checkRna(fieldName: string): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const root = control.root as FormGroup;
 
@@ -327,7 +138,6 @@ export class AffaireComponent implements OnInit {
       return null;
     };
   }
-
 
   fillPostalCode(city: City) {
     if (this.affaire.country == null || this.affaire.country == undefined)
@@ -349,51 +159,52 @@ export class AffaireComponent implements OnInit {
     })
   }
 
-  fillAffaire(matOption: any) {
-    let affaire: Affaire = matOption.value as Affaire;
-    this.affaire.address = affaire.address;
-    this.affaire.city = affaire.city;
-    this.affaire.civility = affaire.civility;
-    this.affaire.country = affaire.country;
-    this.affaire.externalReference = affaire.externalReference;
-    this.affaire.firstname = affaire.firstname;
-    this.affaire.id = affaire.id;
-    this.affaire.denomination = affaire.denomination;
-    this.affaire.isIndividual = affaire.isIndividual;
-    this.affaire.lastname = affaire.lastname;
-    this.affaire.legalForm = affaire.legalForm;
-    this.affaire.mails = affaire.mails;
-    this.affaire.observations = affaire.observations;
-    this.affaire.phones = affaire.phones;
-    this.affaire.postalCode = affaire.postalCode;
-    this.affaire.rna = affaire.rna;
-    this.affaire.shareCapital = affaire.shareCapital;
-    this.affaire.siren = affaire.siren;
-    this.affaire.siret = affaire.siret;
+  selectedAffaire: IndexEntity = {} as IndexEntity;
+  fillAffaire(entity: IndexEntity) {
+    this.affaireService.getAffaire(entity.entityId).subscribe(affaire => {
+      if (affaire != null) {
+        this.affaire.address = affaire.address;
+        this.affaire.city = affaire.city;
+        this.affaire.civility = affaire.civility;
+        this.affaire.country = affaire.country;
+        this.affaire.externalReference = affaire.externalReference;
+        this.affaire.firstname = affaire.firstname;
+        this.affaire.id = affaire.id;
+        this.affaire.denomination = affaire.denomination;
+        this.affaire.isIndividual = affaire.isIndividual;
+        this.affaire.lastname = affaire.lastname;
+        this.affaire.legalForm = affaire.legalForm;
+        this.affaire.mails = affaire.mails;
+        this.affaire.observations = affaire.observations;
+        this.affaire.phones = affaire.phones;
+        this.affaire.postalCode = affaire.postalCode;
+        this.affaire.rna = affaire.rna;
+        this.affaire.shareCapital = affaire.shareCapital;
+        this.affaire.siren = affaire.siren;
+        this.affaire.siret = affaire.siret;
+      }
+    })
   }
 
-  fillSiren() {
-    if (this.filteredSiren != undefined && this.filteredSiren != null) {
-      this.affaire.siren = this.filteredSiren!.uniteLegale.siren;
-      if (this.filteredSiren!.uniteLegale.identifiantAssociationUniteLegale != undefined && this.filteredSiren!.uniteLegale.identifiantAssociationUniteLegale != null
-        && this.filteredSiren!.uniteLegale.identifiantAssociationUniteLegale.substring(0, 1) == "W") {
-        this.rnaService.getRna(this.filteredSiren!.uniteLegale.identifiantAssociationUniteLegale).subscribe(response => {
-          if (response != null) {
-            this.filteredRna = response;
-            this.fillRna();
+  fillSiren(siren: Siren) {
+    if (siren != undefined && siren != null) {
+      this.affaire.siren = siren!.uniteLegale.siren;
+      if (siren!.uniteLegale.identifiantAssociationUniteLegale && siren!.uniteLegale.identifiantAssociationUniteLegale.substring(0, 1) == "W") {
+        this.rnaService.getRna(siren!.uniteLegale.identifiantAssociationUniteLegale).subscribe(response => {
+          if (response != null && response.length == 1) {
+            this.fillRna(response[0]);
           }
         })
-      } else if (this.filteredSiren!.uniteLegale.siren != undefined && this.filteredSiren!.uniteLegale.siren != null) {
-        if (this.filteredSiren.uniteLegale.periodesUniteLegale != null && this.filteredSiren.uniteLegale.periodesUniteLegale != undefined && this.filteredSiren.uniteLegale.periodesUniteLegale.length > 0) {
-          this.filteredSiren.uniteLegale.periodesUniteLegale.forEach(periode => {
+      } else if (siren!.uniteLegale.siren != undefined && siren!.uniteLegale.siren != null) {
+        if (siren.uniteLegale.periodesUniteLegale != null && siren.uniteLegale.periodesUniteLegale != undefined && siren.uniteLegale.periodesUniteLegale.length > 0) {
+          siren.uniteLegale.periodesUniteLegale.forEach(periode => {
             if (periode.dateFin == null) {
               this.affaire.denomination = periode.denominationUniteLegale;
               this.affaireForm.markAllAsTouched();
               if (periode.nicSiegeUniteLegale != null && periode.nicSiegeUniteLegale != undefined)
-                this.siretService.getSiret(this.filteredSiren?.uniteLegale.siren + periode.nicSiegeUniteLegale).subscribe(response => {
-                  if (response != null) {
-                    this.filteredSiret = response;
-                    this.fillSiret();
+                this.siretService.getSiret(siren?.uniteLegale.siren + periode.nicSiegeUniteLegale).subscribe(response => {
+                  if (response != null && response.length == 1) {
+                    this.fillSiret(response[0]);
                   }
                 })
             }
@@ -404,25 +215,24 @@ export class AffaireComponent implements OnInit {
     this.affaireForm.markAllAsTouched();
   }
 
-  fillSiret() {
-    if (this.filteredSiret != undefined && this.filteredSiret != null) {
-      this.affaire.siret = this.filteredSiret!.etablissement.siret;
-      if ((this.filteredSiren == null || this.filteredSiren == undefined) && this.filteredSiret.etablissement.siren != null && this.filteredSiret.etablissement.siren != undefined) {
-        this.sirenService.getSiren(this.filteredSiret.etablissement.siren).subscribe(response => {
-          if (response != null) {
-            this.filteredSiren = response;
-            this.fillSiren();
+  fillSiret(siret: Siret) {
+    if (siret != undefined && siret != null) {
+      this.affaire.siret = siret!.etablissement.siret;
+      if ((this.affaire.siren == null || this.affaire.siren == undefined) && siret.etablissement.siren != null && siret.etablissement.siren != undefined) {
+        this.sirenService.getSiren(siret.etablissement.siren).subscribe(response => {
+          if (response != null && response.length == 1) {
+            this.fillSiren(response[0]);
           }
         })
       }
-      if (this.filteredSiret.etablissement.adresseEtablissement != null && this.filteredSiret.etablissement.adresseEtablissement.codePostalEtablissement != null) {
-        this.cityService.getCitiesFilteredByPostalCode(this.filteredSiret.etablissement.adresseEtablissement.codePostalEtablissement).subscribe(response => {
+      if (siret.etablissement.adresseEtablissement != null && siret.etablissement.adresseEtablissement.codePostalEtablissement != null) {
+        this.cityService.getCitiesFilteredByPostalCode(siret.etablissement.adresseEtablissement.codePostalEtablissement).subscribe(response => {
           if (response != null && response.length == 1) {
-            this.affaire.postalCode = this.filteredSiret!.etablissement.adresseEtablissement.codePostalEtablissement;
+            this.affaire.postalCode = siret!.etablissement.adresseEtablissement.codePostalEtablissement;
             this.fillPostalCode(response[0]);
             this.affaireForm.markAllAsTouched();
-          } else if (this.filteredSiret!.etablissement.adresseEtablissement.libelleCommuneEtablissement) {
-            this.cityService.getCitiesFilteredByCountryAndName(this.filteredSiret!.etablissement.adresseEtablissement.libelleCommuneEtablissement, this.countries[0]).subscribe(response2 => {
+          } else if (siret!.etablissement.adresseEtablissement.libelleCommuneEtablissement) {
+            this.cityService.getCitiesFilteredByCountryAndName(siret!.etablissement.adresseEtablissement.libelleCommuneEtablissement, this.countries[0]).subscribe(response2 => {
               if (response2 != null && response2.length == 1) {
                 this.affaire.city = response2[0];
                 this.affaire.country = response2[0].country;
@@ -431,27 +241,37 @@ export class AffaireComponent implements OnInit {
             })
           }
         })
-        this.affaire.address = this.filteredSiret.etablissement.adresseEtablissement.numeroVoieEtablissement + " " + this.filteredSiret.etablissement.adresseEtablissement.typeVoieEtablissement + " " + this.filteredSiret.etablissement.adresseEtablissement.libelleVoieEtablissement;
+        this.affaire.address = siret.etablissement.adresseEtablissement.numeroVoieEtablissement + " " + siret.etablissement.adresseEtablissement.typeVoieEtablissement + " " + siret.etablissement.adresseEtablissement.libelleVoieEtablissement;
       }
     }
     this.affaireForm.markAllAsTouched();
   }
 
-  fillRna() {
-    if (this.filteredRna != undefined && this.filteredRna != null) {
-      this.affaire.rna = this.filteredRna.association.id_association;
-      this.affaire.denomination = this.filteredRna.association.titre_court;
-      this.affaire.address = this.filteredRna.association.adresse_gestion_libelle_voie + "\n" + this.filteredRna.association.adresse_gestion_distribution;
-      if (this.filteredRna.association.email != null)
-        this.addMail(this.filteredRna.association.email);
-      if (this.filteredRna.association.telephone != null)
-        this.addPhone(this.filteredRna.association.telephone);
-      this.cityService.getCitiesFilteredByPostalCode(this.filteredRna.association.adresse_code_postal).subscribe(response => {
+  fillRna(rna: Rna) {
+    if (rna != undefined && rna != null) {
+      this.affaire.rna = rna.association.id_association;
+      this.affaire.denomination = rna.association.titre_court;
+      this.affaire.address = rna.association.adresse_gestion_libelle_voie + "\n" + rna.association.adresse_gestion_distribution;
+      if (rna.association.email != null) {
+        if (!this.affaire.mails)
+          this.affaire.mails = [] as Array<Mail>;
+        let newMail = {} as Mail;
+        newMail.mail = rna.association.email;
+        this.affaire.mails.push(newMail);
+      }
+      if (rna.association.telephone != null) {
+        if (!this.affaire.phones)
+          this.affaire.phones = [] as Array<Phone>;
+        let newPhone = {} as Phone;
+        newPhone.phoneNumber = rna.association.telephone;
+        this.affaire.phones.push(newPhone);
+      }
+      this.cityService.getCitiesFilteredByPostalCode(rna.association.adresse_code_postal).subscribe(response => {
         if (response != null && response.length == 1) {
-          this.affaire.postalCode = this.filteredRna!.association.adresse_code_postal;
+          this.affaire.postalCode = rna!.association.adresse_code_postal;
           this.fillPostalCode(response[0]);
         } else {
-          this.cityService.getCitiesFilteredByCountryAndName(this.filteredRna!.association.adresse_libelle_commune, this.countries[0]).subscribe(response2 => {
+          this.cityService.getCitiesFilteredByCountryAndName(rna!.association.adresse_libelle_commune, this.countries[0]).subscribe(response2 => {
             if (response2 != null && response2.length == 1) {
               this.affaire.city = response2[0];
               this.affaire.country = response2[0].country;
@@ -463,80 +283,5 @@ export class AffaireComponent implements OnInit {
     }
     this.affaireForm.markAllAsTouched();
   }
-
-  private _filterCountry(value: string): Country[] {
-    const filterValue = (value != undefined && value.toLowerCase != undefined) ? value.toLowerCase() : "";
-    return this.countries.filter(country => country.label != undefined && country.label.toLowerCase().includes(filterValue));
-  }
-
-  private _filterByCodeOrLabel(inputList: any, value: string): any {
-    const filterValue = (value != undefined && value.toLowerCase != undefined) ? value.toLowerCase() : "";
-    return inputList.filter((input: any) => input.code != undefined && input.code.toLowerCase().includes(filterValue) || input.label != undefined && input.label.toLowerCase().includes(filterValue));
-  }
-
-  public displayLabel(object: any): string {
-    return object ? object.label : '';
-  }
-
-  public displayAffaire(affaire: Affaire): string {
-    return (affaire.firstname != undefined ? affaire.firstname + " " + affaire.lastname : affaire.denomination);
-  }
-
-  addMail(event: MatChipInputEvent): void {
-    const value = (event.value || '').trim();
-    let mail: Mail = {} as Mail;
-    if (value && validateEmail(value)) {
-      mail.mail = value;
-      if (this.affaire.mails == undefined || this.affaire.mails == null)
-        this.affaire.mails = [] as Mail[];
-      this.affaire.mails.push(mail);
-    }
-    event.chipInput!.clear();
-    this.affaireForm.get("mails")?.setValue(null);
-  }
-
-  removeMail(inputMail: Mail): void {
-    if (this.affaire.mails != undefined && this.affaire.mails != null && this.editMode)
-      for (let i = 0; i < this.affaire.mails.length; i++) {
-        const mail = this.affaire.mails[i];
-        if (mail.mail == inputMail.mail) {
-          this.affaire.mails.splice(i, 1);
-          return;
-        }
-      }
-  }
-
-  addPhone(event: MatChipInputEvent): void {
-    const value = (event.value || '').trim();
-    let phone: Phone = {} as Phone;
-    if (value && (validateFrenchPhone(value) || validateInternationalPhone(value))) {
-      phone.phoneNumber = value;
-      if (this.affaire.phones == undefined || this.affaire.phones == null)
-        this.affaire.phones = [] as Phone[];
-      this.affaire.phones.push(phone);
-    }
-    event.chipInput!.clear();
-    this.affaireForm.get("phones")?.setValue(null);
-  }
-
-  removePhone(inputPhone: Phone): void {
-    if (this.affaire.phones != undefined && this.affaire.phones != null && this.editMode)
-      for (let i = 0; i < this.affaire.phones.length; i++) {
-        const phone = this.affaire.phones[i];
-        if (phone.phoneNumber == inputPhone.phoneNumber) {
-          this.affaire.phones.splice(i, 1);
-          return;
-        }
-      }
-  }
-
-  prepareMail = function (mail: Mail) {
-    prepareMail(mail.mail, null, null);
-  }
-
-  call = function (phone: Phone) {
-    callNumber(phone.phoneNumber);
-  }
-
 }
 

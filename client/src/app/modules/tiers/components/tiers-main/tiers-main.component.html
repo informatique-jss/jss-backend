@@ -6,7 +6,8 @@
           <tr>
             <td>
               <select-tiers-type [(model)]="tiers.tiersType" label="Type" [isDisabled]="!editMode"
-                [form]="principalForm" propertyName="tiersType" [isMandatory]="true"></select-tiers-type>
+                [form]="principalForm" propertyName="tiersType" [isMandatory]="true">
+              </select-tiers-type>
             </td>
             <td>
               <generic-input [(model)]="tiers.id" label="N° client/prospect" [form]="principalForm"
@@ -14,7 +15,8 @@
             </td>
             <td *ngIf="tiers.isIndividual==false">
               <generic-input [(model)]="tiers.denomination" label="Dénomination" [form]="principalForm"
-                propertyName="denomination" [isMandatory]="true" [conditionnalRequired]="!tiers.isIndividual">
+                propertyName="denomination" [isMandatory]="true" [conditionnalRequired]="!tiers.isIndividual"
+                [maxLength]="60">
               </generic-input>
             </td>
             <td>
@@ -48,99 +50,47 @@
           <tr>
             <td>
               <select-tiers-category [(model)]="tiers.tiersCategory" label="Catégorie" [form]="principalForm"
-                propertyName="tiersCategory" [isDisabled]="!editMode"></select-tiers-category>
+                [isDisabled]="!editMode" propertyName="tiersCategory"></select-tiers-category>
             </td>
             <td>
-              <mat-form-field class="full-width">
-                <mat-label>Commercial</mat-label>
-                <input type="text" matInput formControlName="salesEmployee"
-                  [matAutocomplete]="autoCompleteSalesEmployee" [(ngModel)]="tiers.salesEmployee">
-                <mat-icon matSuffix (click)="tiers.salesEmployee=null" *ngIf="editMode && tiers.salesEmployee!=null">
-                  close
-                </mat-icon>
-                <mat-autocomplete autoActiveFirstOption #autoCompleteSalesEmployee="matAutocomplete"
-                  [displayWith]="displayEmployee">
-                  <mat-option *ngFor="let employee of filteredSalesEmployees | async" [value]="employee">
-                    {{employee.firstname}} {{employee.lastname}}
-                  </mat-option>
-                </mat-autocomplete>
-              </mat-form-field>
+              <autocomplete-sales-employee [(model)]="tiers.salesEmployee" [isDisabled]="!editMode"
+                [form]="principalForm" propertyName="salesEmployee" [isMandatory]="true"></autocomplete-sales-employee>
             </td>
             <td>
-              <mat-form-field class="full-width">
-                <mat-label>Formaliste</mat-label>
-                <input type="text" matInput formControlName="formalisteEmployee"
-                  [matAutocomplete]="autoCompleteFormalisteEmployee" [(ngModel)]="tiers.formalisteEmployee">
-                <mat-icon matSuffix (click)="tiers.formalisteEmployee=null"
-                  *ngIf="editMode && tiers.formalisteEmployee!=null">close</mat-icon>
-                <mat-autocomplete autoActiveFirstOption #autoCompleteFormalisteEmployee="matAutocomplete"
-                  [displayWith]="displayEmployee">
-                  <mat-option *ngFor="let employee of filteredFormalisteEmployees | async" [value]="employee">
-                    {{employee.firstname}} {{employee.lastname}}
-                  </mat-option>
-                </mat-autocomplete>
-              </mat-form-field>
+              <autocomplete-formaliste-employee [(model)]="tiers.formalisteEmployee" [isDisabled]="!editMode"
+                [form]="principalForm" propertyName="formalisteEmployee">
+              </autocomplete-formaliste-employee>
             </td>
             <td>
-              <mat-form-field class="full-width">
-                <mat-label>Insertion</mat-label>
-                <input type="text" matInput formControlName="insertionEmployee"
-                  [matAutocomplete]="autoCompleteInsertionEmployee" [(ngModel)]="tiers.insertionEmployee">
-                <mat-icon matSuffix (click)="tiers.insertionEmployee=null"
-                  *ngIf="editMode && tiers.insertionEmployee!=null">close</mat-icon>
-                <mat-autocomplete autoActiveFirstOption #autoCompleteInsertionEmployee="matAutocomplete"
-                  [displayWith]="displayEmployee">
-                  <mat-option *ngFor="let employee of filteredInsertionEmployees | async" [value]="employee">
-                    {{employee.firstname}} {{employee.lastname}}
-                  </mat-option>
-                </mat-autocomplete>
-              </mat-form-field>
+              <autocomplete-insertion-employee [(model)]="tiers.insertionEmployee" [isDisabled]="!editMode"
+                [form]="principalForm" propertyName="insertionEmployee">
+              </autocomplete-insertion-employee>
             </td>
           </tr>
         </table>
-
         <table class="full-width">
           <tr>
             <td>
-              <mat-form-field class="full-width">
-                <mat-label>Destinataire(s) courrier</mat-label>
-                <textarea (keyup)="limitTextareaSize('mailRecipient',3)"
-                  (keydown)="limitTextareaSize('mailRecipient',3)" (paste)="limitTextareaSize('mailRecipient',3)"
-                  rows="3" matInput formControlName="mailRecipient" [(ngModel)]="tiers.mailRecipient"></textarea>
-              </mat-form-field>
+              <generic-textarea [(model)]="tiers.mailRecipient" label="Destinataires(s) courrier" [form]="principalForm"
+                propertyName="mailRecipient" (filterInput)="limitTextareaSize(3)">
+              </generic-textarea>
             </td>
             <td style="vertical-align: baseline;">
-              <mat-label>Langue de communication</mat-label>
-              <mat-radio-group class="radio-group-column" [(ngModel)]="tiers.language" formControlName="language">
-                <mat-radio-button *ngFor=" let language of languages" [value]="language"
-                  [checked]=" this.tiers.language != undefined && this.tiers.language.id == language.id">
-                  {{language.label}}
-                </mat-radio-button>
-              </mat-radio-group>
+              <radio-group-language [(model)]="tiers.language" [form]="principalForm" propertyName="language"
+                label="Langue de communication"></radio-group-language>
             </td>
             <td>
-              <mat-form-field class="full-width">
-                <mat-label>Service de livraison</mat-label>
-                <mat-select formControlName="deliveryService" [(ngModel)]="tiers.deliveryService"
-                  [compareWith]="compareWithId" [disabled]="editMode==false">
-                  <mat-option *ngFor="let deliveryService of deliveryServices" [value]="deliveryService">
-                    {{deliveryService.label}}
-                  </mat-option>
-                </mat-select>
-              </mat-form-field>
+              <select-delivery-service [(model)]="tiers.deliveryService" label="Service de livraison"
+                [form]="principalForm" propertyName="deliveryService" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-delivery-service>
             </td>
           </tr>
         </table>
-
-
         <table class="full-width">
           <tr>
             <td>
-              <mat-form-field class="full-width">
-                <mat-label>Adresse</mat-label>
-                <input matInput formControlName="address" [(ngModel)]="tiers.address" placeholder="Adresse"
-                  autocomplete="do-not-autofill">
-              </mat-form-field>
+              <generic-input [(model)]="tiers.address" label="Adresse" [form]="principalForm" propertyName="address"
+                [isMandatory]="true" [maxLength]="20"></generic-input>
             </td>
             <td>
               <autocomplete-city [(model)]="tiers.city" [modelCountry]="tiers.country" [form]="principalForm"
@@ -148,130 +98,53 @@
               </autocomplete-city>
             </td>
             <td>
-              <mat-form-field class="full-width">
-                <mat-label>Code postal</mat-label>
-                <input matInput placeholder="Code postal" [(ngModel)]="tiers.postalCode"
-                  [matAutocomplete]="autoCompletePostalCode" formControlName="postalCode"
-                  autocomplete="do-not-autofill">
-                <mat-autocomplete autoActiveFirstOption #autoCompletePostalCode="matAutocomplete"
-                  (optionSelected)='fillCity($event.option.value)'>
-                  <mat-option *ngFor="let postalCode of filteredPostalCodes" [value]="postalCode">
-                    {{postalCode}}
-                  </mat-option>
-                </mat-autocomplete>
-              </mat-form-field>
+              <autocomplete-postal-code [(model)]="tiers.postalCode" [form]="principalForm" propertyName="postalCode"
+                [isMandatory]="true"
+                [conditionnalRequired]="tiers.country != null && tiers.country.code == COUNTRY_CODE_FRANCE"
+                (onOptionSelected)="fillCity($event)"></autocomplete-postal-code>
             </td>
             <td>
-              <mat-form-field class="full-width">
-                <mat-label>Pays</mat-label>
-                <input matInput placeholder="Pays" [(ngModel)]="tiers.country" [matAutocomplete]="autoCompleteCountry"
-                  formControlName="country" autocomplete="do-not-autofill">
-                <mat-autocomplete autoActiveFirstOption #autoCompleteCountry="matAutocomplete"
-                  [displayWith]="displayLabel">
-                  <mat-option *ngFor="let country of filteredCountries | async" [value]="country">
-                    {{country.label}}
-                  </mat-option>
-                </mat-autocomplete>
-              </mat-form-field>
+              <autocomplete-country [(model)]="tiers.country" [form]="principalForm" propertyName="country"
+                [isMandatory]="true"></autocomplete-country>
             </td>
             <td>
-              <mat-form-field class="full-width">
-                <mat-label>Code porte</mat-label>
-                <input matInput formControlName="intercom" [(ngModel)]="tiers.intercom" placeholder="Code porte"
-                  autocomplete="do-not-autofill">
-              </mat-form-field>
+              <generic-input [(model)]="tiers.intercom" label="Code porte" [form]="principalForm"
+                propertyName="intercom" [maxLength]="12"></generic-input>
             </td>
           </tr>
         </table>
 
         <table class="full-width">
           <tr>
-            <td [hidden]="tiers.isIndividual">
-              <mat-form-field class="full-width">
-                <mat-label>TVA intercommunaitaire</mat-label>
-                <input matInput formControlName="intercommunityVat" [(ngModel)]="tiers.intercommunityVat"
-                  placeholder="TVA intercommunaitaire" autocomplete="do-not-autofill">
-              </mat-form-field>
+            <td *ngIf="tiers.isIndividual==false">
+              <generic-input [(model)]="tiers.intercommunityVat" label="TVA intercommunaitaire" [form]="principalForm"
+                propertyName="intercommunityVat" [isMandatory]="true" [conditionnalRequired]="tiers.isIndividual==false"
+                [customValidators]="[checkVAT('intercommunityVat')]"></generic-input>
             </td>
             <td>
-              <mat-form-field class="full-width">
-                <mat-label>Tarifs spéciaux</mat-label>
-                <mat-chip-list class="mat-chip-list-stacked" #chipListSpecialOffers cdkDropList
-                  cdkDropListOrientation="vertical" (cdkDropListDropped)="changeSpecialOfferOrder($event)">
-                  <mat-chip *ngFor="let specialOffer of tiers.specialOffers" cdkDrag
-                    (removed)="removeSpecialOffer(specialOffer)">
-                    {{specialOffer.label}}
-                    <button matChipRemove *ngIf="editMode">
-                      <mat-icon>cancel</mat-icon>
-                    </button>
-                  </mat-chip>
-                  <input class="input-vertical" matInput placeholder="Saisir une offre spéciale" #specialOfferInput
-                    formControlName="specialOffers" [matChipInputFor]="chipListSpecialOffers"
-                    [matChipInputSeparatorKeyCodes]="SEPARATOR_KEY_CODES" [matAutocomplete]="autoCompleteSpecialOffers">
-                  <button *ngIf="editMode" matSuffix mat-icon-button (click)="openSpecialOffersDialog()">
-                    <mat-icon>search</mat-icon>
-                  </button>
-                </mat-chip-list>
-                <mat-hint>Glisser/déposer pour ordonner</mat-hint>
-                <mat-autocomplete autoActiveFirstOption #autoCompleteSpecialOffers="matAutocomplete"
-                  [displayWith]="displayLabel" (optionSelected)="addSpecialOffer($event)">
-                  <mat-option *ngFor="let specialOffer of filteredSpecialOffers | async" [value]="specialOffer">
-                    {{specialOffer.label}}
-                  </mat-option>
-                </mat-autocomplete>
-              </mat-form-field>
+              <chips-special-offers [(model)]="tiers.specialOffers" [form]="principalForm" propertyName="specialOffers"
+                [isDisabled]="!editMode"></chips-special-offers>
             </td>
             <td>
-              <mat-form-field class="full-width">
-                <mat-label>Taux RCA Formalité</mat-label>
-                <input matInput formControlName="rcaFormaliteRate" [(ngModel)]="tiers.rcaFormaliteRate" type="number"
-                  placeholder="Taux RCA Formalité">
-              </mat-form-field>
+              <generic-input [(model)]="tiers.rcaFormaliteRate" label="Taux RCA Formalité" [form]="principalForm"
+                propertyName="rcaFormaliteRate" type="number"></generic-input>
             </td>
             <td>
-              <mat-form-field class="full-width">
-                <mat-label>Taux RCA Insertion</mat-label>
-                <input matInput formControlName="rcaInsertionRate" [(ngModel)]="tiers.rcaInsertionRate" type="number"
-                  placeholder="Taux RCA Insertion">
-              </mat-form-field>
+              <generic-input [(model)]="tiers.rcaInsertionRate" label="Taux RCA Insertion" [form]="principalForm"
+                propertyName="rcaInsertionRate" type="number"></generic-input>
             </td>
           </tr>
         </table>
         <table class="full-width">
           <tr>
             <td>
-              <mat-form-field class="full-width">
-                <mat-label>Mails</mat-label>
-                <mat-chip-list #chipListMails>
-                  <mat-chip *ngFor="let mail of tiers.mails" (removed)="removeMail(mail)">
-                    {{mail.mail}}
-                    <button matChipRemove *ngIf="editMode">
-                      <mat-icon>cancel</mat-icon>
-                    </button>
-                    <mat-icon matChipRemove *ngIf="editMode==false" (click)="prepareMail(mail)">mail</mat-icon>
-                  </mat-chip>
-                  <input placeholder="Saisir un mail" #mailInput formControlName="mails"
-                    [matChipInputFor]="chipListMails" [matChipInputSeparatorKeyCodes]="SEPARATOR_KEY_CODES"
-                    (matChipInputTokenEnd)="addMail($event)">
-                </mat-chip-list>
-              </mat-form-field>
+              <chips-mail [(model)]="tiers.mails" [form]="principalForm" label="Mails" propertyName="mails"
+                [isDisabled]="!editMode">
+              </chips-mail>
             </td>
             <td>
-              <mat-form-field class="full-width">
-                <mat-label>Téléphones</mat-label>
-                <mat-chip-list #chipListPhones>
-                  <mat-chip *ngFor="let phone of tiers.phones" (removed)="removePhone(phone)">
-                    {{phone.phoneNumber}}
-                    <button matChipRemove *ngIf="editMode">
-                      <mat-icon>cancel</mat-icon>
-                    </button>
-                    <mat-icon matChipRemove *ngIf="editMode==false" (click)="call(phone)">phone</mat-icon>
-                  </mat-chip>
-                  <input placeholder="Saisir un téléphone" #phoneInput formControlName="phones"
-                    [matChipInputFor]="chipListPhones" [matChipInputSeparatorKeyCodes]="SEPARATOR_KEY_CODES"
-                    (matChipInputTokenEnd)="addPhone($event)">
-                </mat-chip-list>
-              </mat-form-field>
+              <chips-phone [(model)]="tiers.phones" [form]="principalForm" propertyName="phones" label="Téléphones"
+                [isDisabled]="!editMode"></chips-phone>
             </td>
             <td *ngIf="tiers.isIndividual==false">
               <!-- TODO : fill it when reponsibles done-->
@@ -293,10 +166,8 @@
         <table class="full-width">
           <tr>
             <td>
-              <mat-form-field class="full-width">
-                <mat-label>Consignes</mat-label>
-                <textarea rows="4" matInput formControlName="instructions" [(ngModel)]="tiers.instructions"></textarea>
-              </mat-form-field>
+              <generic-textarea [(model)]="tiers.instructions" label="Consignes" [form]="principalForm"
+                propertyName="instructions" [numberOfLines]="4"></generic-textarea>
             </td>
           </tr>
         </table>
@@ -304,10 +175,8 @@
         <table class="full-width">
           <tr>
             <td>
-              <mat-form-field class="full-width">
-                <mat-label>Observations / Informations complémentaires</mat-label>
-                <textarea rows="4" matInput formControlName="observations" [(ngModel)]="tiers.observations"></textarea>
-              </mat-form-field>
+              <generic-textarea [(model)]="tiers.observations" label="Observations / Informations complémentaires"
+                [form]="principalForm" propertyName="observations" [numberOfLines]="4"></generic-textarea>
             </td>
           </tr>
         </table>
