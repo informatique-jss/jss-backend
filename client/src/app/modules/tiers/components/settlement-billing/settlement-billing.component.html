@@ -53,7 +53,8 @@
             <tr>
               <td>
                 <select-payment-types [(model)]="tiers.paymentType" label="Type" [form]="settlementBillingForm"
-                  propertyName="paymentType" [isMandatory]="true" [isDisabled]="!editMode"></select-payment-types>
+                  propertyName="paymentType" [isMandatory]="true" [isDisabled]="!editMode"
+                  [filteredPaymentTypeCodes]="[PAYMENT_TYPE_PRELEVEMENT,PAYMENT_TYPE_CHEQUES]"></select-payment-types>
               </td>
               <td
                 *ngIf="tiers !=undefined && tiers.paymentType!=undefined && tiers.paymentType.code!=undefined && tiers.paymentType.code==PAYMENT_TYPE_PRELEVEMENT">

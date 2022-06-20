@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 import { Civility } from '../../../model/Civility';
 import { CivilityService } from '../../../services/civility.service';
 import { GenericRadioGroupComponent } from '../generic-radio-group/generic-radio-group.component';
@@ -13,7 +13,7 @@ export class RadioGroupCivilityComponent extends GenericRadioGroupComponent<Civi
   types: Civility[] = [] as Array<Civility>;
 
   constructor(
-    private formBuild: FormBuilder, private civilityService: CivilityService) {
+    private formBuild: UntypedFormBuilder, private civilityService: CivilityService) {
     super(formBuild);
   }
 

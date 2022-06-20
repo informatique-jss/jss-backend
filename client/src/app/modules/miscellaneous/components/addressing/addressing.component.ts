@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 import { SEPARATOR_KEY_CODES } from 'src/app/libs/Constants';
 import { Responsable } from 'src/app/modules/tiers/model/Responsable';
 import { TiersService } from 'src/app/modules/tiers/services/tiers.service';
@@ -29,7 +29,7 @@ export class AddressingComponent implements OnInit {
 
   SEPARATOR_KEY_CODES = SEPARATOR_KEY_CODES;
 
-  constructor(private formBuilder: FormBuilder, protected tiersService: TiersService) { }
+  constructor(private formBuilder: UntypedFormBuilder, protected tiersService: TiersService) { }
 
   ngOnInit() {
   }

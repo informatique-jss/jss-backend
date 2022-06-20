@@ -1,5 +1,5 @@
 import { Directive, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
-import { FormBuilder, FormGroup, ValidatorFn, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
 
 @Directive()
@@ -17,7 +17,7 @@ export abstract class GenericRadioGroupComponent<T> implements OnInit {
    * The formgroup to bind component
    * Mandatory
    */
-  @Input() form: FormGroup | undefined;
+  @Input() form: UntypedFormGroup | undefined;
   /**
    * The name of the input
    * Default : civility
@@ -30,7 +30,7 @@ export abstract class GenericRadioGroupComponent<T> implements OnInit {
 
   abstract types: T[];
 
-  constructor(private formBuilder: FormBuilder) { }
+  constructor(private formBuilder: UntypedFormBuilder) { }
 
   ngOnChanges(changes: SimpleChanges) {
     if (this.form && (!this.model) && this.types)

@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { City } from '../../../model/City';
 import { CityService } from '../../../services/city.service';
@@ -13,7 +13,7 @@ import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-au
 })
 export class AutocompletePostalCodeComponent extends GenericAutocompleteComponent<string, City> implements OnInit {
 
-  constructor(private formBuild: FormBuilder, private cityService: CityService, private changeDetectorRef: ChangeDetectorRef) {
+  constructor(private formBuild: UntypedFormBuilder, private cityService: CityService, private changeDetectorRef: ChangeDetectorRef) {
     super(formBuild, changeDetectorRef)
   }
 

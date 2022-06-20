@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 import { TiersType } from 'src/app/modules/tiers/model/TiersType';
 import { TiersTypeService } from 'src/app/modules/tiers/services/tiers.type.service';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
@@ -14,7 +14,7 @@ export class SelectTiersTypeComponent extends GenericSelectComponent<TiersType> 
   types: TiersType[] = [] as Array<TiersType>;
 
   constructor(private changeDetectorRef: ChangeDetectorRef,
-    private formBuild: FormBuilder, private tiersTypeService: TiersTypeService) {
+    private formBuild: UntypedFormBuilder, private tiersTypeService: TiersTypeService) {
     super(changeDetectorRef, formBuild);
   }
 

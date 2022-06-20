@@ -1,6 +1,6 @@
 import { HttpEventType, HttpResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MAX_SIZE_UPLOAD_FILES } from 'src/app/libs/Constants';
@@ -30,7 +30,7 @@ export class UploadAttachementDialogComponent implements OnInit {
   filename: string = "";
 
   constructor(private uploadTiersAttachementDialogRef: MatDialogRef<UploadAttachementDialogComponent>,
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private snackBar: MatSnackBar,
     protected attachmentTypeService: AttachmentTypeService,
     private uploadAttachmentService: UploadAttachmentService) { }

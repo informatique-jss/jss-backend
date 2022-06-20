@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 import { validateEmail } from 'src/app/libs/CustomFormsValidatorsHelper';
 import { prepareMail } from 'src/app/libs/MailHelper';
 import { Mail } from '../../../model/Mail';
@@ -12,7 +12,7 @@ import { GenericChipsComponent } from '../generic-chips/generic-chips.component'
 })
 export class ChipsMailComponent extends GenericChipsComponent<Mail> implements OnInit {
 
-  constructor(private formBuild: FormBuilder) {
+  constructor(private formBuild: UntypedFormBuilder) {
     super(formBuild);
   }
 

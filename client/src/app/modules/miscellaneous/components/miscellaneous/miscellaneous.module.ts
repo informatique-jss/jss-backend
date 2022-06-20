@@ -19,11 +19,13 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { TrustHtmlPipe } from 'src/app/libs/TrustHtmlPipe';
 import { AddressingComponent } from '../addressing/addressing.component';
 import { AttachmentsComponent } from '../attachments/attachments.component';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { AutocompleteAffaireComponent } from '../forms/autocomplete-affaire/autocomplete-affaire.component';
 import { AutocompleteCityComponent } from '../forms/autocomplete-city/autocomplete-city.component';
+import { AutocompleteCompetentAuthorityComponent } from '../forms/autocomplete-competent-authority/autocomplete-competent-authority.component';
 import { AutocompleteCountryComponent } from '../forms/autocomplete-country/autocomplete-country.component';
 import { AutocompleteDepartmentComponent } from '../forms/autocomplete-department/autocomplete-department.component';
 import { AutocompleteFormalisteEmployeeComponent } from '../forms/autocomplete-formaliste-employee/autocomplete-formaliste-employee.component';
@@ -51,6 +53,8 @@ import { RadioGroupCivilityComponent } from '../forms/radio-group-civility/radio
 import { RadioGroupLanguageComponent } from '../forms/radio-group-language/radio-group-language.component';
 import { RadioGroupQuotationLabelTypeComponent } from '../forms/radio-group-quotation-label-type/radio-group-quotation-label-type.component';
 import { RadioGroupRecordTypeComponent } from '../forms/radio-group-record-type/radio-group-record-type.component';
+import { RadioGroupTransfertFundsComponent } from '../forms/radio-group-transfert-funds/radio-group-transfert-funds.component';
+import { SelectBodaccPublicationTypeComponent } from '../forms/select-bodacc-publication-type/select-bodacc-publication-type.component';
 import { SelectBuildingDomicilationComponent } from '../forms/select-building-domicilation/select-building-domicilation.component';
 import { SelectContractTypeComponent } from '../forms/select-contract-type/select-contract-type.component';
 import { SelectDeliveryServiceComponent } from '../forms/select-delivery-service/select-delivery-service.component';
@@ -143,10 +147,14 @@ import { MiscellaneousComponent } from './miscellaneous.component';
     AutocompleteResponsableComponent,
     AutocompleteTiersIndividualComponent,
     SelectNoticeFamilyComponent,
+    SelectBodaccPublicationTypeComponent,
+    AutocompleteCompetentAuthorityComponent,
+    RadioGroupTransfertFundsComponent,
     RadioGroupRecordTypeComponent,
     AutocompleteCityComponent,
     AutocompleteDepartmentComponent,
     RadioGroupQuotationLabelTypeComponent,
+    TrustHtmlPipe,
     SingleAttachmentComponent],
   exports: [
     HistoryComponent,
@@ -162,6 +170,7 @@ import { MiscellaneousComponent } from './miscellaneous.component';
     AutocompleteFormalisteEmployeeComponent,
     AutocompleteSalesEmployeeComponent,
     SelectNoticeFamilyComponent,
+    AutocompleteCompetentAuthorityComponent,
     AutocompleteSirenComponent,
     RadioGroupQuotationLabelTypeComponent,
     AutocompleteTiersIndividualComponent,
@@ -169,6 +178,7 @@ import { MiscellaneousComponent } from './miscellaneous.component';
     SelectContractTypeComponent,
     SelectBuildingDomicilationComponent,
     AutocompleteResponsableComponent,
+    RadioGroupTransfertFundsComponent,
     ChipsSpecialOffersComponent,
     AutocompleteLegalFormComponent,
     SelectMailRedirectionComponent,
@@ -190,6 +200,8 @@ import { MiscellaneousComponent } from './miscellaneous.component';
     SelectRefundTypeComponent,
     SelectDeliveryServiceComponent,
     ChipsMailComponent,
+    TrustHtmlPipe,
+    SelectBodaccPublicationTypeComponent,
     SelectPaymentDeadlineComponent,
     GenericTextareaComponent,
     AutocompletePostalCodeComponent,

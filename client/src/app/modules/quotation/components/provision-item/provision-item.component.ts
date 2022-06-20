@@ -1,9 +1,9 @@
 import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { MatExpansionPanel } from '@angular/material/expansion';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
 import { compareWithId } from 'src/app/libs/CompareHelper';
-import { PROVISION_TYPE_DOMICILIATION_CODE, PROVISION_TYPE_SHAL_CODE } from 'src/app/libs/Constants';
+import { PROVISION_TYPE_BODACC_CODE, PROVISION_TYPE_DOMICILIATION_CODE, PROVISION_TYPE_SHAL_CODE } from 'src/app/libs/Constants';
 import { Provision } from '../../model/Provision';
 import { ProvisionFamilyType } from '../../model/ProvisionFamilyType';
 import { ProvisionType } from '../../model/ProvisionType';
@@ -33,8 +33,9 @@ export class ProvisionItemComponent implements OnInit {
 
   PROVISION_TYPE_DOMICILIATION_CODE = PROVISION_TYPE_DOMICILIATION_CODE;
   PROVISION_TYPE_SHAL_CODE = PROVISION_TYPE_SHAL_CODE;
+  PROVISION_TYPE_BODACC_CODE = PROVISION_TYPE_BODACC_CODE;
 
-  constructor(private formBuilder: FormBuilder,
+  constructor(private formBuilder: UntypedFormBuilder,
     protected provisionFamilyTypeService: ProvisionFamilyTypeService,
     protected provisionTypeService: ProvisionTypeService,
   ) { }
@@ -85,6 +86,7 @@ export class ProvisionItemComponent implements OnInit {
     if (!this.provision.provisionFamilyType || !this.provision.provisionType) {
       this.provision.shal = undefined;
       this.provision.domiciliation = undefined;
+      this.provision.bodacc = undefined;
       return;
     }
 
@@ -93,6 +95,9 @@ export class ProvisionItemComponent implements OnInit {
 
     if (this.provision.provisionType.code != PROVISION_TYPE_SHAL_CODE)
       this.provision.shal = undefined;
+
+    if (this.provision.provisionType.code != PROVISION_TYPE_BODACC_CODE)
+      this.provision.bodacc = undefined;
   }
 
   compareWithId = compareWithId;

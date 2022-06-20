@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input, OnInit, SimpleChanges } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
+import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
 import { isTiersTypeProspect } from 'src/app/libs/CompareHelper';
 import { COUNTRY_CODE_FRANCE } from 'src/app/libs/Constants';
@@ -30,7 +30,7 @@ export class PrincipalComponent implements OnInit {
 
   countries: Country[] = [] as Array<Country>;
 
-  constructor(private formBuilder: FormBuilder,
+  constructor(private formBuilder: UntypedFormBuilder,
     private deliveryServiceService: DeliveryServiceService,
     private countryService: CountryService,
     private cityService: CityService) { }
@@ -72,7 +72,7 @@ export class PrincipalComponent implements OnInit {
 
   checkVAT(fieldName: string): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
-      const root = control.root as FormGroup;
+      const root = control.root as UntypedFormGroup;
 
       const fieldValue = root.get(fieldName)?.value;
       if (!this.tiers.isIndividual && !isTiersTypeProspect(this.tiers) && (fieldValue == undefined || fieldValue == null || fieldValue.length == 0 || !validateVat(fieldValue)))

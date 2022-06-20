@@ -15,7 +15,7 @@
           <tr>
             <td>
               <mat-form-field class="full-width">
-                <mat-label>Confrère</mat-label>
+                <mat-label>Support</mat-label>
                 <input matInput placeholder="Confrère" [(ngModel)]="provision.shal.confrere"
                   [matAutocomplete]="autoSpecialOffer" formControlName="confrere" autocomplete="do-not-autofill">
                 <button
@@ -56,8 +56,8 @@
             </td>
             <td>
               <generic-datepicker [(model)]="provision.shal.publicationDate" label="Date de publication"
-                [form]="shalForm" propertyName="publicationDate" [isMandatory]="true" [isDisabled]="!editMode"
-                (onDateChange)="updateCharacterPrice()"></generic-datepicker>
+                [minDate]="getCurrentDate()" [form]="shalForm" propertyName="publicationDate" [isMandatory]="true"
+                [isDisabled]="!editMode" (onDateChange)="updateCharacterPrice()"></generic-datepicker>
             </td>
             <td>
               <generic-toggle [(model)]="provision.shal.isRedactedByJss" label="Rédigé par le JSS ?" [form]="shalForm"
@@ -72,9 +72,13 @@
         <table class="full-width">
           <tr>
             <td>
-              <generic-textarea [(model)]="provision.shal.notice" label="Texte de l'annonce" [form]="shalForm"
-                propertyName="notice" [isMandatory]="true" [isDisabled]="!editMode" [conditionnalRequired]=""
-                [customValidators]="" (filterInput)="cleanTextarea()" [numberOfLines]="4"></generic-textarea>
+              <div *ngIf="!editMode">
+                <p>Annonce :</p>
+                <span [innerHTML]="provision.shal.notice | trustHtml"></span>
+                <p [innerHTML]='provision.shal.notice'></p>
+              </div>
+              <quill-editor [hidden]="!editMode" formControlName="notice" (onContentChanged)="setNoticeModel($event)">
+              </quill-editor>
             </td>
           </tr>
         </table>
@@ -128,6 +132,11 @@
                 <td>
                   <generic-toggle [(model)]="provision.shal.isLogo" label="Logo ?" [form]="shalForm"
                     propertyName="isLogo"></generic-toggle>
+                </td>
+                <td *ngIf="provision.shal.isLogo && provision.shal.id">
+                  <single-attachment [entity]="provision.shal!" [entityType]="SHAL_ENTITY_TYPE.entityType"
+                    [editMode]="editMode" [attachmentTypeCodeToDisplay]="LOGO_ATTACHMENT_TYPE_CODE">
+                  </single-attachment>
                 </td>
               </tr>
               <tr>
@@ -207,16 +216,6 @@
           <mat-expansion-panel expanded>
             <mat-expansion-panel-header>
               <mat-panel-title>
-                Justificatif de parution
-              </mat-panel-title>
-              <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
-            </mat-expansion-panel-header>
-            <addressing [editMode]="editMode" [document]="publicationDocument">
-            </addressing>
-          </mat-expansion-panel>
-          <mat-expansion-panel>
-            <mat-expansion-panel-header>
-              <mat-panel-title>
                 Epreuve de relecture
               </mat-panel-title>
               <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
@@ -227,6 +226,17 @@
             </mat-slide-toggle>
             <addressing *ngIf="provision.shal.isProofReadingDocument" [displayMailCC]="true" [hideConsignee]="true"
               [onlyMail]="true" [editMode]="editMode" [document]="proofReadingDocument">
+            </addressing>
+          </mat-expansion-panel>
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                Justificatif de parution
+              </mat-panel-title>
+              <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
+            </mat-expansion-panel-header>
+            <addressing [editMode]="editMode" [document]="publicationDocument" [displayNumberMailing]="true"
+              [displayPaperCopy]="true">
             </addressing>
           </mat-expansion-panel>
           <mat-expansion-panel>

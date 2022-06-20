@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
 import { QUOTATION_DOCUMENT_TYPE_CODE, QUOTATION_TYPE_OTHER_CODE } from 'src/app/libs/Constants';
 import { getDocument } from 'src/app/libs/DocumentHelper';
@@ -32,7 +32,7 @@ export class QuotationManagementComponent implements OnInit {
 
   devisDocument: Document = {} as Document;
 
-  constructor(private formBuilder: FormBuilder,
+  constructor(private formBuilder: UntypedFormBuilder,
     protected tiersService: TiersService,
     protected documentTypeService: DocumentTypeService,
     protected recordTypeService: RecordTypeService,

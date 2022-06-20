@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 import { TiersFollowupType } from 'src/app/modules/tiers/model/TiersFollowupType';
 import { TiersFollowupTypeService } from 'src/app/modules/tiers/services/tiers.followup.type.service';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
@@ -15,7 +15,7 @@ export class SelectFollowupComponent extends GenericSelectComponent<TiersFollowu
   types: TiersFollowupType[] = [] as Array<TiersFollowupType>;
 
   constructor(private changeDetectorRef: ChangeDetectorRef,
-    private formBuild: FormBuilder, private tiersFollowupTypeService: TiersFollowupTypeService) {
+    private formBuild: UntypedFormBuilder, private tiersFollowupTypeService: TiersFollowupTypeService) {
     super(changeDetectorRef, formBuild);
   }
 

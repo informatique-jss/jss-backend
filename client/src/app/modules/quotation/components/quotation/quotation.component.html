@@ -7,7 +7,7 @@
     <mat-tab label="Prestations">
       <provision [provisions]="quotation.provisions" [editMode]="editMode"></provision>
     </mat-tab>
-    <mat-tab label="Gestion du devis">
+    <mat-tab label="Eléments du devis">
       <quotation-management [quotation]="quotation" [editMode]="editMode"></quotation-management>
     </mat-tab>
     <mat-tab label="Documents" *ngIf="quotation.id!=null && quotation.id!=undefined">

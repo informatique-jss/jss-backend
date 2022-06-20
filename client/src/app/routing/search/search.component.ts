@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { EntityType } from './EntityType';
@@ -12,6 +12,7 @@ export const QUOTATION_ENTITY_TYPE: EntityType = { entityType: 'Quotation', tabN
 export const CUSTOMER_ORDER_ENTITY_TYPE: EntityType = { entityType: 'CustomerOrder', tabName: 'Commande', entryPoint: 'order' };
 export const DOMICILIATION_ENTITY_TYPE: EntityType = { entityType: 'Domiciliation', tabName: 'Domiciliation', entryPoint: 'quotation/domiciliation' };
 export const SHAL_ENTITY_TYPE: EntityType = { entityType: 'Shal', tabName: 'Shal', entryPoint: 'quotation/shal' };
+export const BODACC_ENTITY_TYPE: EntityType = { entityType: 'Bodacc', tabName: 'BODACC', entryPoint: 'quotation/bodacc  ' };
 export const AFFAIRE_ENTITY_TYPE: EntityType = { entityType: 'Affaire', tabName: 'Affaires', entryPoint: 'quotation/affaire' };
 
 @Component({
@@ -24,7 +25,7 @@ export class SearchComponent implements OnInit {
 
   constructor(private searchDialogRef: MatDialogRef<SearchComponent>,
     protected indexEntityService: IndexEntityService,
-    protected formBuilder: FormBuilder,
+    protected formBuilder: UntypedFormBuilder,
     private router: Router) { }
 
   TIERS_ENTITY_TYPE = TIERS_ENTITY_TYPE;

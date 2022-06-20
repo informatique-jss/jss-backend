@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 import { RefundType } from 'src/app/modules/tiers/model/RefundType';
 import { RefundTypeService } from 'src/app/modules/tiers/services/refund.type.service';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
@@ -14,7 +14,7 @@ export class SelectRefundTypeComponent extends GenericSelectComponent<RefundType
   types: RefundType[] = [] as Array<RefundType>;
 
   constructor(private changeDetectorRef: ChangeDetectorRef,
-    private formBuild: FormBuilder, private refundTypeService: RefundTypeService) {
+    private formBuild: UntypedFormBuilder, private refundTypeService: RefundTypeService) {
     super(changeDetectorRef, formBuild);
   }
 

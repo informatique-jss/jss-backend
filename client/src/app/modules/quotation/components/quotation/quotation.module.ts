@@ -20,9 +20,11 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule, Routes } from '@angular/router';
+import { QuillModule } from 'ngx-quill';
 import { MiscellaneousModule } from 'src/app/modules/miscellaneous/components/miscellaneous/miscellaneous.module';
 import { ProvisionComponent } from 'src/app/modules/quotation/components/provision/provision.component';
 import { AffaireComponent } from '../affaire/affaire.component';
+import { BodaccMainComponent } from '../bodacc-main/bodacc-main.component';
 import { ConfrereDialogComponent } from '../confreres-dialog/confreres-dialog.component';
 import { DomiciliationComponent } from '../domiciliation/domiciliation.component';
 import { OrderingCustomerComponent } from '../ordering-customer/ordering-customer.component';
@@ -41,6 +43,27 @@ const routes: Routes = [
 @NgModule({
   imports: [
     RouterModule.forRoot(routes, { onSameUrlNavigation: 'reload' }),
+    QuillModule.forRoot({
+      modules: {
+        syntax: false,
+        toolbar: {
+          container: [
+            ['bold', 'italic'],
+            [{ 'font': [] }],
+            [{ 'color': [] }],
+            [{ 'background': [] }],
+            [{ align: '' }, { align: 'center' }],
+            [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+            [{ 'size': [] }],
+            ['clean'],
+            //['link'],
+
+          ],
+        }
+      },
+      placeholder: '',
+    }),
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
@@ -70,6 +93,7 @@ const routes: Routes = [
     ProvisionComponent,
     DomiciliationComponent,
     ConfrereDialogComponent,
+    BodaccMainComponent,
     ProvisionItemComponent,
     ShalComponent],
   providers: [

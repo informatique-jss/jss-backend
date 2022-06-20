@@ -10,7 +10,7 @@
     </mat-chip>
     <input class="input-vertical" matInput placeholder="Saisir une offre spéciale" #specialOfferInput
       [matChipInputFor]="chipListSpecialOffers" [matChipInputSeparatorKeyCodes]="SEPARATOR_KEY_CODES"
-      [matAutocomplete]="autoComplete">
+      [disabled]="isDisabled" [matAutocomplete]="autoComplete">
     <button *ngIf="!isDisabled" matSuffix mat-icon-button (click)="openSpecialOffersDialog()">
       <mat-icon>search</mat-icon>
     </button>

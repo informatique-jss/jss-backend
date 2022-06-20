@@ -1,15 +1,16 @@
+declare var require: any
 import { Component, ElementRef, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatDialog } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
-import { CONFRERE_BALO_ID, JOURNAL_TYPE_JSS_DENOMINATION, PROOF_READING_DOCUMENT_TYPE_CODE, PUBLICATION_CERTIFICATE_DOCUMENT_TYPE_CODE, PUBLICATION_TIERS_DOCUMENT_TYPE_CODE, SEPARATOR_KEY_CODES } from 'src/app/libs/Constants';
+import { CONFRERE_BALO_ID, JOURNAL_TYPE_JSS_DENOMINATION, LOGO_ATTACHMENT_TYPE_CODE, PROOF_READING_DOCUMENT_TYPE_CODE, PUBLICATION_CERTIFICATE_DOCUMENT_TYPE_CODE, PUBLICATION_TIERS_DOCUMENT_TYPE_CODE, SEPARATOR_KEY_CODES } from 'src/app/libs/Constants';
 import { getDocument } from 'src/app/libs/DocumentHelper';
-import { downloadTextAsFile } from 'src/app/libs/DownloadHelper';
-import { convertToRtf, formatDate } from 'src/app/libs/FormatHelper';
+import { downloadHtmlAsRtf } from 'src/app/libs/DownloadHelper';
+import { formatDate } from 'src/app/libs/FormatHelper';
 import { Audit } from 'src/app/modules/miscellaneous/model/Audit';
 import { HistoryAction } from 'src/app/modules/miscellaneous/model/HistoryAction';
 import { DocumentTypeService } from 'src/app/modules/miscellaneous/services/document.type.service';
@@ -46,6 +47,7 @@ export class ShalComponent implements OnInit {
   SEPARATOR_KEY_CODES = SEPARATOR_KEY_CODES;
   SHAL_ENTITY_TYPE = SHAL_ENTITY_TYPE;
   CONFRERE_BALO_ID = CONFRERE_BALO_ID;
+  LOGO_ATTACHMENT_TYPE_CODE = LOGO_ATTACHMENT_TYPE_CODE;
 
   journalTypes: JournalType[] = [] as Array<JournalType>;
 
@@ -64,7 +66,7 @@ export class ShalComponent implements OnInit {
   filteredNoticeTypes: Observable<NoticeType[]> | undefined;
 
 
-  constructor(private formBuilder: FormBuilder,
+  constructor(private formBuilder: UntypedFormBuilder,
     private confrereService: ConfrereService,
     private characterPriceService: CharacterPriceService,
     private noticeTypeService: NoticeTypeService,
@@ -132,13 +134,11 @@ export class ShalComponent implements OnInit {
 
       })
 
+      this.shalForm.get('notice')?.setValue(this.provision.shal.notice);
+
       this.shalForm.markAllAsTouched();
       this.toggleTabs();
     }
-  }
-
-  test() {
-    this.shalForm.markAllAsTouched();
   }
 
   getJssConfrere(): Confrere {
@@ -153,6 +153,7 @@ export class ShalComponent implements OnInit {
 
   shalForm = this.formBuilder.group({
     noticeTypes: [''],
+    notice: ['', Validators.required],
     confrere: [''],
     noticeTypeFamily: ['', Validators.required],
     isProofReadingDocument: [''],
@@ -162,7 +163,14 @@ export class ShalComponent implements OnInit {
 
   getFormStatus(): boolean {
     this.shalForm.markAllAsTouched();
+    if (this.provision.shal)
+      this.provision.shal.notice = this.provision.shal.notice.replace(/ +(?= )/g, '').replace(/(\r\n|\r|\n){2,}/g, '$1\n');
+
     return this.shalForm.valid && this.provision.shal!.noticeTypes && this.provision.shal!.noticeTypes.length > 0;
+  }
+
+  getCurrentDate(): Date {
+    return new Date();
   }
 
   updateCharacterPrice() {
@@ -173,11 +181,9 @@ export class ShalComponent implements OnInit {
       })
   }
 
-  cleanTextarea() {
-    let fieldValue = this.shalForm.get("notice")?.value != undefined ? this.shalForm.get("notice")?.value : "";
-    var l = fieldValue.replace(/ +(?= )/g, '').replace(/(\r\n|\r|\n){2,}/g, '$1\n');
-
-    this.shalForm.get("notice")?.setValue(l);
+  setNoticeModel(event: any) {
+    if (this.provision.shal)
+      this.provision.shal.notice = event.html;
   }
 
   countCharacterNumber(fieldName: string) {
@@ -246,8 +252,25 @@ export class ShalComponent implements OnInit {
     let historyActions = [] as Array<HistoryAction>;
 
     let exportRtfAction = {} as HistoryAction;
-    exportRtfAction.actionClick = (element: Audit): void => {
-      downloadTextAsFile("Affaire " + this.provision.id + " - " + formatDate(new Date(element.datetime)) + ".rtf", convertToRtf(element.newValue));
+    exportRtfAction.actionClick = (element2: Audit): void => {
+      downloadHtmlAsRtf("Affaire " + this.provision.id + " - " + formatDate(new Date(element2.datetime)), element2.newValue);
+
+      // TODO : marche pas ... voir solution backend
+      const HtmlToRtfBrowser = require('html-to-rtf-browser');
+      var htmlToRtf = new HtmlToRtfBrowser();
+      let html = element2.newValue;
+      const rtf = htmlToRtf.convertHtmlToRtf(html)
+
+      var element = document.createElement('a');
+      element.setAttribute('href', 'application/rtf;charset=utf-8,' + encodeURIComponent(rtf));
+      element.setAttribute('download', new Date(element2.datetime) + ".rtf");
+
+      element.style.display = 'none';
+      document.body.appendChild(element);
+
+      element.click();
+
+      document.body.removeChild(element);
     }
     exportRtfAction.actionTooltip = "Télécharger en .rtf";
     exportRtfAction.actionIcon = "description";

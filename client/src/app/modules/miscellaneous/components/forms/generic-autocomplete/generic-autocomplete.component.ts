@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Directive, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter, switchMap, tap } from 'rxjs/operators';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
@@ -19,7 +19,7 @@ export abstract class GenericAutocompleteComponent<T, U> implements OnInit {
    * The formgroup to bind component
    * Mandatory
    */
-  @Input() form: FormGroup | undefined;
+  @Input() form: UntypedFormGroup | undefined;
   /**
    * The name of the input
    * autocomplete by default
@@ -51,7 +51,7 @@ export abstract class GenericAutocompleteComponent<T, U> implements OnInit {
 
   filteredTypes: T[] | undefined;
 
-  constructor(private formBuilder: FormBuilder, private cdr: ChangeDetectorRef) { }
+  constructor(private formBuilder: UntypedFormBuilder, private cdr: ChangeDetectorRef) { }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.model && this.form != undefined) {
@@ -117,7 +117,7 @@ export abstract class GenericAutocompleteComponent<T, U> implements OnInit {
 
   checkAutocompleteField(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
-      const root = control.root as FormGroup;
+      const root = control.root as UntypedFormGroup;
       const fieldValue = root.get(this.propertyName)?.value;
       if (fieldValue != undefined && fieldValue != null && (fieldValue.id == undefined || fieldValue.id == null))
         return {
@@ -130,7 +130,7 @@ export abstract class GenericAutocompleteComponent<T, U> implements OnInit {
   // Check if the propertiy given in parameter is filled when conditionnalRequired is set
   checkFieldFilledIfIsConditionalRequired(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
-      const root = control.root as FormGroup;
+      const root = control.root as UntypedFormGroup;
       const fieldValue = root.get(this.propertyName)?.value;
       if (this.conditionnalRequired && (fieldValue == undefined || fieldValue == null || fieldValue.length == 0))
         return {
@@ -145,6 +145,7 @@ export abstract class GenericAutocompleteComponent<T, U> implements OnInit {
   }
 
   optionSelected(type: T): void {
+    this.model = type;
     this.modelChange.emit(this.model);
     this.cdr.detectChanges();
     this.onOptionSelected.emit(type);

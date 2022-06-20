@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 import { Department } from '../../../model/Department';
 import { DepartmentService } from '../../../services/department.service';
 import { GenericLocalAutocompleteComponent } from '../generic-local-autocomplete/generic-local-autocomplete.component';
@@ -13,7 +13,7 @@ export class AutocompleteDepartmentComponent extends GenericLocalAutocompleteCom
 
   types: Department[] = [] as Array<Department>;
 
-  constructor(private formBuild: FormBuilder, private departmentService: DepartmentService) {
+  constructor(private formBuild: UntypedFormBuilder, private departmentService: DepartmentService) {
     super(formBuild)
   }
 

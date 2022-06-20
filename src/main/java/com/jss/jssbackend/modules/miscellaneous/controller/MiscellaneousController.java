@@ -20,16 +20,21 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.jss.jssbackend.modules.miscellaneous.model.Attachment;
 import com.jss.jssbackend.modules.miscellaneous.model.AttachmentType;
+import com.jss.jssbackend.modules.miscellaneous.model.CompetentAuthority;
+import com.jss.jssbackend.modules.miscellaneous.model.CompetentAuthorityType;
 import com.jss.jssbackend.modules.miscellaneous.model.DocumentType;
 import com.jss.jssbackend.modules.miscellaneous.model.LegalForm;
 import com.jss.jssbackend.modules.miscellaneous.model.WeekDay;
 import com.jss.jssbackend.modules.miscellaneous.service.AttachmentService;
 import com.jss.jssbackend.modules.miscellaneous.service.AttachmentTypeService;
+import com.jss.jssbackend.modules.miscellaneous.service.CompetentAuthorityService;
+import com.jss.jssbackend.modules.miscellaneous.service.CompetentAuthorityTypeService;
 import com.jss.jssbackend.modules.miscellaneous.service.DocumentTypeService;
 import com.jss.jssbackend.modules.miscellaneous.service.LegalFormService;
 import com.jss.jssbackend.modules.miscellaneous.service.WeekDayService;
 import com.jss.jssbackend.modules.quotation.model.Domiciliation;
 import com.jss.jssbackend.modules.quotation.model.Quotation;
+import com.jss.jssbackend.modules.quotation.model.Shal;
 import com.jss.jssbackend.modules.tiers.model.Responsable;
 import com.jss.jssbackend.modules.tiers.model.Tiers;
 
@@ -54,6 +59,59 @@ public class MiscellaneousController {
 
     @Autowired
     WeekDayService weekDayService;
+
+    @Autowired
+    CompetentAuthorityService competentAuthorityService;
+
+    @Autowired
+    CompetentAuthorityTypeService competentAuthorityTypeService;
+
+    @GetMapping(inputEntryPoint + "/competent-authorities/search/department")
+    public ResponseEntity<List<CompetentAuthority>> getCompetentAuthorityByDepartmentAndName(
+            @RequestParam(required = false) Integer departmentId,
+            @RequestParam String authority) {
+        List<CompetentAuthority> competentAuthorities = null;
+        try {
+            competentAuthorities = competentAuthorityService.getCompetentAuthorityByDepartment(departmentId, authority);
+        } catch (HttpStatusCodeException e) {
+            logger.error("HTTP error when fetching city", e);
+            return new ResponseEntity<List<CompetentAuthority>>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            logger.error("Error when fetching city", e);
+            return new ResponseEntity<List<CompetentAuthority>>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<List<CompetentAuthority>>(competentAuthorities, HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/competent-authority-types")
+    public ResponseEntity<List<CompetentAuthorityType>> getCompetentAuthorityTypes() {
+        List<CompetentAuthorityType> competentAuthorityTypes = null;
+        try {
+            competentAuthorityTypes = competentAuthorityTypeService.getCompetentAuthorityTypes();
+        } catch (HttpStatusCodeException e) {
+            logger.error("HTTP error when fetching competentAuthorityType", e);
+            return new ResponseEntity<List<CompetentAuthorityType>>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            logger.error("Error when fetching competentAuthorityType", e);
+            return new ResponseEntity<List<CompetentAuthorityType>>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<List<CompetentAuthorityType>>(competentAuthorityTypes, HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/competent-authorities")
+    public ResponseEntity<List<CompetentAuthority>> getCompetentAuthorities() {
+        List<CompetentAuthority> competentAuthorities = null;
+        try {
+            competentAuthorities = competentAuthorityService.getCompetentAuthorities();
+        } catch (HttpStatusCodeException e) {
+            logger.error("HTTP error when fetching competentAuthority", e);
+            return new ResponseEntity<List<CompetentAuthority>>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            logger.error("Error when fetching competentAuthority", e);
+            return new ResponseEntity<List<CompetentAuthority>>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<List<CompetentAuthority>>(competentAuthorities, HttpStatus.OK);
+    }
 
     @GetMapping(inputEntryPoint + "/weekdays")
     public ResponseEntity<List<WeekDay>> getWeekDays() {
@@ -162,6 +220,7 @@ public class MiscellaneousController {
             if (!entityType.equals(Tiers.class.getSimpleName())
                     && !entityType.equals(Responsable.class.getSimpleName())
                     && !entityType.equals(Quotation.class.getSimpleName())
+                    && !entityType.equals(Shal.class.getSimpleName())
                     && !entityType.equals(Domiciliation.class.getSimpleName()))
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 

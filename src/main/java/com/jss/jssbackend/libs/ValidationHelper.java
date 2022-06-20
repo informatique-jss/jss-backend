@@ -128,24 +128,38 @@ public class ValidationHelper {
         }
     }
 
-    public void validateString(String value, Boolean isMandatory, int maxLength) throws Exception {
+    public void validateString(String value, Boolean isMandatory, Integer maxLength) throws Exception {
         if ((value == null || value.equals("")) && isMandatory)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         if (value != null) {
-            if (value.length() > maxLength)
+            if (maxLength != null && value.length() > maxLength)
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
     }
 
-    public void validateDate(Date value, Boolean isMandatory) throws Exception {
-        validateDate(value, isMandatory, null);
+    public void validateString(String value, Boolean isMandatory) throws Exception {
+        validateString(value, isMandatory, null);
     }
 
-    public void validateDate(Date value, Boolean isMandatory, Date maxDate) throws Exception {
+    public void validateDate(Date value, Boolean isMandatory) throws Exception {
+        validateDateMax(value, isMandatory, null);
+    }
+
+    public void validateDateMax(Date value, Boolean isMandatory, Date maxDate) throws Exception {
         if ((value == null) && isMandatory)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         if (value != null) {
             if (maxDate != null && value.after(maxDate))
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    public void validateDateMin(Date value, Boolean isMandatory, Date minDate)
+            throws Exception {
+        if ((value == null) && isMandatory)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        if (value != null) {
+            if (minDate != null && value.before(minDate))
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
     }

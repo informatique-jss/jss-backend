@@ -12,6 +12,8 @@ import com.jss.jssbackend.modules.miscellaneous.repository.BillingItemRepository
 import com.jss.jssbackend.modules.miscellaneous.repository.BillingTypeRepository;
 import com.jss.jssbackend.modules.miscellaneous.repository.CityRepository;
 import com.jss.jssbackend.modules.miscellaneous.repository.CivilityRepository;
+import com.jss.jssbackend.modules.miscellaneous.repository.CompetentAuthorityRepository;
+import com.jss.jssbackend.modules.miscellaneous.repository.CompetentAuthorityTypeRepository;
 import com.jss.jssbackend.modules.miscellaneous.repository.CountryRepository;
 import com.jss.jssbackend.modules.miscellaneous.repository.DeliveryServiceRepository;
 import com.jss.jssbackend.modules.miscellaneous.repository.DepartmentRepository;
@@ -30,6 +32,7 @@ import com.jss.jssbackend.modules.miscellaneous.repository.VatRepository;
 import com.jss.jssbackend.modules.miscellaneous.repository.WeekDayRepository;
 import com.jss.jssbackend.modules.profile.repository.EmployeeRepository;
 import com.jss.jssbackend.modules.profile.repository.TeamRepository;
+import com.jss.jssbackend.modules.quotation.repository.BodaccPublicationTypeRepository;
 import com.jss.jssbackend.modules.quotation.repository.BuildingDomiciliationRepository;
 import com.jss.jssbackend.modules.quotation.repository.CharacterPriceRepository;
 import com.jss.jssbackend.modules.quotation.repository.ConfrereRepository;
@@ -44,6 +47,7 @@ import com.jss.jssbackend.modules.quotation.repository.QuotationLabelTypeReposit
 import com.jss.jssbackend.modules.quotation.repository.QuotationRepository;
 import com.jss.jssbackend.modules.quotation.repository.QuotationStatusRepository;
 import com.jss.jssbackend.modules.quotation.repository.RecordTypeRepository;
+import com.jss.jssbackend.modules.quotation.repository.TransfertFundsTypeRepository;
 import com.jss.jssbackend.modules.tiers.repository.BillingClosureRecipientTypeRepository;
 import com.jss.jssbackend.modules.tiers.repository.BillingClosureTypeRepository;
 import com.jss.jssbackend.modules.tiers.repository.BillingLabelTypeRepository;
@@ -221,6 +225,18 @@ public class InitReferentialsController {
 
 	@Autowired
 	NoticeTypeFamilyRepository noticeTypeFamilyRepository;
+
+	@Autowired
+	BodaccPublicationTypeRepository bodaccPublicationTypeRepository;
+
+	@Autowired
+	TransfertFundsTypeRepository transfertFundsTypeRepository;
+
+	@Autowired
+	CompetentAuthorityRepository competentAuthorityRepository;
+
+	@Autowired
+	CompetentAuthorityTypeRepository competentAuthorityTypeRepository;
 
 	@GetMapping(inputEntryPoint + "/create")
 	public void create() {
@@ -476,6 +492,20 @@ public class InitReferentialsController {
 		 * paymentType.setLabel("Chèques");
 		 * paymentTypeRepository.save(paymentType);
 		 * 
+		 * paymentType = new PaymentType();
+		 * paymentType.setCode("COMPTE_INPI");
+		 * paymentType.setLabel("Compte INPI");
+		 * paymentTypeRepository.save(paymentType);
+		 * paymentType = new PaymentType();
+		 * paymentType.setCode("MISE_EN_COMPTE");
+		 * paymentType.setLabel("Mise en compte");
+		 * paymentTypeRepository.save(paymentType);
+		 * paymentType = new PaymentType();
+		 * paymentType.setCode("VIREMENT");
+		 * paymentType.setLabel("Virement");
+		 * paymentTypeRepository.save(paymentType);
+		 * 
+		 * /*
 		 * billingLabelTypeRepository.deleteAll();
 		 * BillingLabelType billingLabelType = new BillingLabelType();
 		 * billingLabelType.setCode("AFFAIRE");
@@ -588,6 +618,11 @@ public class InitReferentialsController {
 		 * attachmentType = new AttachmentType();
 		 * attachmentType.setCode("8");
 		 * attachmentType.setLabel("Justificatif de domicile");
+		 * attachmentTypeRepository.save(attachmentType);
+		 * 
+		 * attachmentType = new AttachmentType();
+		 * attachmentType.setCode("9");
+		 * attachmentType.setLabel("Logo");
 		 * attachmentTypeRepository.save(attachmentType);
 		 * 
 		 * tiersFollowupTypeRepository.deleteAll();
@@ -881,6 +916,28 @@ public class InitReferentialsController {
 		 * confrere.setShippingCosts(10.0f);
 		 * confrere.setWeekDays(weekDays);
 		 * confrereRepository.save(confrere);
+		 */
+		/*
+		 * List<Department> departments =
+		 * IterableUtils.toList(departmentRepository.findAll());
+		 * List<JournalType> journalTypes =
+		 * IterableUtils.toList(journalTypeRepository.findAll());
+		 * List<WeekDay> weekDays = IterableUtils.toList(weekDayRepository.findAll());
+		 * Confrere confrere = new Confrere();
+		 * confrere.setAdministrativeFees(10.0f);
+		 * confrere.setDenomination("BALO");
+		 * confrere.setDepartments(departments);
+		 * confrere.setDiscountRate(20);
+		 * confrere.setJournalType(journalTypes);
+		 * confrere.setLastShipmentForPublication("lastShipmentForPublication2");
+		 * confrere.setNumberOfPrint(30000);
+		 * confrere.setPreference("++");
+		 * confrere.setReinvoicing(10);
+		 * confrere.setShippingCosts(10.0f);
+		 * confrere.setWeekDays(weekDays);
+		 * confrereRepository.save(confrere);
+		 */
+		/*
 		 * 
 		 * List<Department> departments =
 		 * IterableUtils.toList(departmentRepository.findAll());
@@ -910,6 +967,63 @@ public class InitReferentialsController {
 		 * noticeType.setLabel("Mouvement sur l'activité");
 		 * noticeType.setNoticeTypeFamily(noticeTypeFamily);
 		 * noticeTypeRepository.save(noticeType);
+		 */
+		/*
+		 * bodaccPublicationTypeRepository.deleteAll();
+		 * BodaccPublicationType bodaccPublicationType = new BodaccPublicationType();
+		 * bodaccPublicationType.setCode("1");
+		 * bodaccPublicationType.setLabel("Cession de fonds de commerce");
+		 * bodaccPublicationTypeRepository.save(bodaccPublicationType);
+		 * 
+		 * bodaccPublicationType = new BodaccPublicationType();
+		 * bodaccPublicationType.setCode("2");
+		 * bodaccPublicationType.setLabel("Fusion");
+		 * bodaccPublicationTypeRepository.save(bodaccPublicationType);
+		 * 
+		 * bodaccPublicationType = new BodaccPublicationType();
+		 * bodaccPublicationType.setCode("3");
+		 * bodaccPublicationType.setLabel("Scission : apport partiel d'actifs");
+		 * bodaccPublicationTypeRepository.save(bodaccPublicationType);
+		 * 
+		 * bodaccPublicationType = new BodaccPublicationType();
+		 * bodaccPublicationType.setCode("4");
+		 * bodaccPublicationType.setLabel("Envoi en possession");
+		 * bodaccPublicationTypeRepository.save(bodaccPublicationType);
+		 * 
+		 * bodaccPublicationType = new BodaccPublicationType();
+		 * bodaccPublicationType.setCode("5");
+		 * bodaccPublicationType.setLabel("Désignation du mandataire successoral");
+		 * bodaccPublicationTypeRepository.save(bodaccPublicationType);
+		 */
+		/*
+		 * transfertFundsTypeRepository.deleteAll();
+		 * TransfertFundsType transfertFundsType = new TransfertFundsType();
+		 * transfertFundsType.setCode("1");
+		 * transfertFundsType.setLabel("Acquéreur physique");
+		 * transfertFundsTypeRepository.save(transfertFundsType);
+		 * 
+		 * transfertFundsType = new TransfertFundsType();
+		 * transfertFundsType.setCode("2");
+		 * transfertFundsType.setLabel("Acquéreur moral");
+		 * transfertFundsTypeRepository.save(transfertFundsType);
+		 * 
+		 * transfertFundsType = new TransfertFundsType();
+		 * transfertFundsType.setCode("3");
+		 * transfertFundsType.setLabel("Résilisation du bail commercial");
+		 * transfertFundsTypeRepository.save(transfertFundsType);
+		 * 
+		 * competentAuthorityTypeRepository.deleteAll();
+		 * CompetentAuthorityType competentAuthorityType = new CompetentAuthorityType();
+		 * competentAuthorityType.setCode("1");
+		 * competentAuthorityType.setLabel("RCS");
+		 * competentAuthorityTypeRepository.save(competentAuthorityType);
+		 * 
+		 * competentAuthorityRepository.deleteAll();
+		 * CompetentAuthority competentAuthority = new CompetentAuthority();
+		 * competentAuthority.setCode("1");
+		 * competentAuthority.setLabel("Paris");
+		 * competentAuthority.setCompetentAuthorityType(competentAuthorityType);
+		 * competentAuthorityRepository.save(competentAuthority);
 		 */
 	}
 }

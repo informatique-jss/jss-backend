@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
@@ -42,7 +42,7 @@ export class TiersFollowupComponent implements OnInit {
 
   reminderDatetime: string = "";
 
-  constructor(private formBuilder: FormBuilder,
+  constructor(private formBuilder: UntypedFormBuilder,
     protected tiersFollowupService: TiersFollowupService,
     protected tiersFollowupTypeService: TiersFollowupTypeService,
     private employeeService: EmployeeService) { }

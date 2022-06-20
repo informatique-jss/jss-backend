@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 import { QuotationLabelType } from 'src/app/modules/quotation/model/QuotationLabelType';
 import { QuotationLabelTypeService } from 'src/app/modules/quotation/services/quotation.label.type.service';
 import { GenericRadioGroupComponent } from '../generic-radio-group/generic-radio-group.component';
@@ -13,7 +13,7 @@ export class RadioGroupQuotationLabelTypeComponent extends GenericRadioGroupComp
   types: QuotationLabelType[] = [] as Array<QuotationLabelType>;
 
   constructor(
-    private formBuild: FormBuilder, private quotationlabeltypeService: QuotationLabelTypeService) {
+    private formBuild: UntypedFormBuilder, private quotationlabeltypeService: QuotationLabelTypeService) {
     super(formBuild);
   }
 

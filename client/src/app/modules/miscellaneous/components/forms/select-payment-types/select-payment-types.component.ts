@@ -1,5 +1,5 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import { UntypedFormBuilder } from '@angular/forms';
 import { PaymentType } from '../../../model/PaymentType';
 import { PaymentTypeService } from '../../../services/payment-type.service';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
@@ -13,14 +13,39 @@ export class SelectPaymentTypesComponent extends GenericSelectComponent<PaymentT
 
   types: PaymentType[] = [] as Array<PaymentType>;
 
+  /**
+ * Limit the list of payment type code displayed
+ */
+  @Input() filteredPaymentTypeCodes: string[] | undefined;
+  /**
+ * Limit the list of payment type code displayed
+ */
+  @Input() filteredPaymentType: PaymentType[] | undefined;
+
   constructor(private changeDetectorRef: ChangeDetectorRef,
-    private formBuild: FormBuilder, private paymentTypeService: PaymentTypeService) {
+    private formBuild: UntypedFormBuilder, private paymentTypeService: PaymentTypeService) {
     super(changeDetectorRef, formBuild);
   }
 
   initTypes(): void {
     this.paymentTypeService.getPaymentTypes().subscribe(response => {
-      this.types = response;
+      if (!this.filteredPaymentTypeCodes && !this.filteredPaymentType) {
+        this.types = response;
+      } else {
+        if (this.filteredPaymentTypeCodes) {
+          for (let paymentType of response) {
+            for (let filter of this.filteredPaymentTypeCodes)
+              if (filter == paymentType.code)
+                this.types.push(paymentType);
+          }
+        } else if (this.filteredPaymentType) {
+          for (let paymentType of response) {
+            for (let filter of this.filteredPaymentType)
+              if (filter.code == paymentType.code)
+                this.types.push(paymentType);
+          }
+        }
+      }
     })
   }
 }

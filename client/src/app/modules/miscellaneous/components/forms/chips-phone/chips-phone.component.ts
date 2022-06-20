@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 import { validateFrenchPhone, validateInternationalPhone } from 'src/app/libs/CustomFormsValidatorsHelper';
 import { callNumber } from 'src/app/libs/MailHelper';
 import { Phone } from '../../../model/Phone';
@@ -12,7 +12,7 @@ import { GenericChipsComponent } from '../generic-chips/generic-chips.component'
 })
 export class ChipsPhoneComponent extends GenericChipsComponent<Phone> implements OnInit {
 
-  constructor(private formBuild: FormBuilder) {
+  constructor(private formBuild: UntypedFormBuilder) {
     super(formBuild);
   }
 

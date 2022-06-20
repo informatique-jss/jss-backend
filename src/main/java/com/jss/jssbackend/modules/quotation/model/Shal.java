@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -13,8 +14,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.jss.jssbackend.modules.miscellaneous.model.Attachment;
 import com.jss.jssbackend.modules.miscellaneous.model.Department;
 import com.jss.jssbackend.modules.miscellaneous.model.IId;
 
@@ -84,6 +88,10 @@ public class Shal implements Serializable, IId {
 	@Column(nullable = false)
 	private Boolean isPublicationCertificateDocument;
 
+	@OneToMany(targetEntity = Attachment.class, mappedBy = "shal", cascade = CascadeType.ALL)
+	@JsonManagedReference("shal")
+	private List<Attachment> attachments;
+
 	public Integer getId() {
 		return id;
 	}
@@ -130,6 +138,14 @@ public class Shal implements Serializable, IId {
 
 	public void setPosterProductionPrice(Float posterProductionPrice) {
 		this.posterProductionPrice = posterProductionPrice;
+	}
+
+	public List<Attachment> getAttachments() {
+		return attachments;
+	}
+
+	public void setAttachments(List<Attachment> attachments) {
+		this.attachments = attachments;
 	}
 
 	public Float getPosterProductionJSSPrice() {

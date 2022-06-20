@@ -1,4 +1,4 @@
-import { AbstractControl, FormGroup, ValidationErrors, ValidatorFn } from "@angular/forms";
+import { AbstractControl, UntypedFormGroup, ValidationErrors, ValidatorFn } from "@angular/forms";
 
 export function forbiddenQueryValidator(forbiddenWord: String): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
@@ -8,7 +8,7 @@ export function forbiddenQueryValidator(forbiddenWord: String): ValidatorFn {
 
 export function checkBothFieldAreTheSame(firstFieldName: string, secondFieldName: string): ValidationErrors | null {
   return (control: AbstractControl): ValidationErrors | null => {
-    const root = control.root as FormGroup;
+    const root = control.root as UntypedFormGroup;
 
     const firstFieldValue = root.get(firstFieldName)?.value;
     const secondFieldValue = root.get(secondFieldName)?.value;

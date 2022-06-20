@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { Rna } from 'src/app/modules/quotation/model/Rna';
 import { RnaService } from 'src/app/modules/quotation/services/rna.service';
@@ -12,7 +12,7 @@ import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-au
 })
 export class AutocompleteRnaComponent extends GenericAutocompleteComponent<Rna, Rna> implements OnInit {
 
-  constructor(private formBuild: FormBuilder,
+  constructor(private formBuild: UntypedFormBuilder,
     private rnaService: RnaService, private changeDetectorRef: ChangeDetectorRef) {
     super(formBuild, changeDetectorRef)
   }

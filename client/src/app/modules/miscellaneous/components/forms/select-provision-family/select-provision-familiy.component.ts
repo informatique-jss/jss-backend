@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 import { ProvisionFamilyType } from 'src/app/modules/quotation/model/ProvisionFamilyType';
 import { ProvisionFamilyTypeService } from 'src/app/modules/quotation/services/provision.family.type.service';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
@@ -14,7 +14,7 @@ export class SelectProvisionFamilyComponent extends GenericSelectComponent<Provi
   types: ProvisionFamilyType[] = [] as Array<ProvisionFamilyType>;
 
   constructor(private changeDetectorRef: ChangeDetectorRef,
-    private formBuild: FormBuilder, private provisionFamilyTypeService: ProvisionFamilyTypeService) {
+    private formBuild: UntypedFormBuilder, private provisionFamilyTypeService: ProvisionFamilyTypeService) {
     super(changeDetectorRef, formBuild);
   }
 

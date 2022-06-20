@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { City } from '../../../model/City';
 import { Country } from '../../../model/Country';
@@ -21,7 +21,7 @@ export class AutocompleteCityComponent extends GenericAutocompleteComponent<City
   @Input() modelCountry: Country | undefined;
 
 
-  constructor(private formBuild: FormBuilder, private cityService: CityService, private changeDetectorRef: ChangeDetectorRef) {
+  constructor(private formBuild: UntypedFormBuilder, private cityService: CityService, private changeDetectorRef: ChangeDetectorRef) {
     super(formBuild, changeDetectorRef)
   }
 

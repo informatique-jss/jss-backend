@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
 import { instanceOfQuotation } from 'src/app/libs/TypeHelper';
@@ -21,7 +21,7 @@ export class OrderingCustomerComponent implements OnInit {
 
   overrideSpecialOffer: boolean = false;
 
-  constructor(private formBuilder: FormBuilder,
+  constructor(private formBuilder: UntypedFormBuilder,
     private tiersService: TiersService,
     public specialOfferDialog: MatDialog) { }
 

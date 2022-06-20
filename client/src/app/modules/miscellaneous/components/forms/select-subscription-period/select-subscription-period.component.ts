@@ -1,6 +1,6 @@
 
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 import { SubscriptionPeriodType } from 'src/app/modules/tiers/model/SubscriptionPeriodType';
 import { SubscriptionPeriodTypeService } from 'src/app/modules/tiers/services/subscription.period.type.service';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
@@ -15,7 +15,7 @@ export class SelectSubscriptionPeriodComponent extends GenericSelectComponent<Su
   types: SubscriptionPeriodType[] = [] as Array<SubscriptionPeriodType>;
 
   constructor(private changeDetectorRef: ChangeDetectorRef,
-    private formBuild: FormBuilder, private subscriptionPeriodTypeService: SubscriptionPeriodTypeService) {
+    private formBuild: UntypedFormBuilder, private subscriptionPeriodTypeService: SubscriptionPeriodTypeService) {
     super(changeDetectorRef, formBuild);
   }
 

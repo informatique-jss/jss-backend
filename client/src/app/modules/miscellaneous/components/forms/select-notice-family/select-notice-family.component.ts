@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 import { NoticeTypeFamily } from 'src/app/modules/quotation/model/NoticeTypeFamily';
 import { NoticeTypeFamilyService } from 'src/app/modules/quotation/services/notice.type.family.service';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
@@ -14,7 +14,7 @@ export class SelectNoticeFamilyComponent extends GenericSelectComponent<NoticeTy
   types: NoticeTypeFamily[] = [] as Array<NoticeTypeFamily>;
 
   constructor(private changeDetectorRef: ChangeDetectorRef,
-    private formBuild: FormBuilder, private noticeTypeFamilyService: NoticeTypeFamilyService) {
+    private formBuild: UntypedFormBuilder, private noticeTypeFamilyService: NoticeTypeFamilyService) {
     super(changeDetectorRef, formBuild);
   }
 

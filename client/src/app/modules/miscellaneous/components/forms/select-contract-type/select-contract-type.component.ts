@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 import { DomiciliationContractType } from 'src/app/modules/quotation/model/DomiciliationContractType';
 import { DomiciliationContractTypeService } from 'src/app/modules/quotation/services/domiciliation.contract.type.service';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
@@ -14,7 +14,7 @@ export class SelectContractTypeComponent extends GenericSelectComponent<Domicili
   types: DomiciliationContractType[] = [] as Array<DomiciliationContractType>;
 
   constructor(private changeDetectorRef: ChangeDetectorRef,
-    private formBuild: FormBuilder, private domiciliationContractTypeService: DomiciliationContractTypeService) {
+    private formBuild: UntypedFormBuilder, private domiciliationContractTypeService: DomiciliationContractTypeService) {
     super(changeDetectorRef, formBuild);
   }
 

@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, Input, OnInit, SimpleChanges } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 import { Responsable } from 'src/app/modules/tiers/model/Responsable';
 import { GenericMultipleSelectComponent } from '../generic-select/generic-multiple-select.component';
 
@@ -18,7 +18,7 @@ export class SelectResponsableComponent extends GenericMultipleSelectComponent<R
   @Input() responsableList: Responsable[] | undefined;
 
   constructor(private changeDetectorRef: ChangeDetectorRef,
-    private formBuild: FormBuilder) {
+    private formBuild: UntypedFormBuilder) {
     super(changeDetectorRef, formBuild);
   }
 

@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
 
 @Component({
@@ -26,7 +26,7 @@ export class GenericDatepickerComponent implements OnInit {
    * The formgroup to bind component
    * Mandatory
    */
-  @Input() form: FormGroup | undefined;
+  @Input() form: UntypedFormGroup | undefined;
   /**
    * The name of the input
    * Default : datepicker
@@ -54,12 +54,16 @@ export class GenericDatepickerComponent implements OnInit {
    */
   @Input() customValidators: ValidatorFn[] | undefined;
   /**
+   * Define a min date selection for user
+   */
+  @Input() minDate: Date | undefined;
+  /**
    * Fired when a date is selected in the calendar
    */
   @Output() onDateChange: EventEmitter<Date> = new EventEmitter();
 
   constructor(
-    private formBuilder: FormBuilder) { }
+    private formBuilder: UntypedFormBuilder) { }
 
   ngOnChanges(changes: SimpleChanges) {
     if (this.form && (this.isMandatory || this.customValidators))
@@ -110,7 +114,7 @@ export class GenericDatepickerComponent implements OnInit {
   // Check if the propertiy given in parameter is filled when conditionnalRequired is set
   checkFieldFilledIfIsConditionalRequired(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
-      const root = control.root as FormGroup;
+      const root = control.root as UntypedFormGroup;
       const fieldValue = root.get(this.propertyName)?.value;
       if (this.conditionnalRequired && (fieldValue == undefined || fieldValue == null || fieldValue.length == 0))
         return {

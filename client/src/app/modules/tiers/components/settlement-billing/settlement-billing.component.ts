@@ -1,8 +1,8 @@
 import { Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { MatAccordion } from '@angular/material/expansion';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
-import { BILLING_CLOSURE_TIERS_DOCUMENT_TYPE_CODE, BILLING_TIERS_DOCUMENT_TYPE_CODE, BILLING_TIERS_DOCUMENT_TYPE_OTHER_CODE, CFE_TIERS_DOCUMENT_TYPE_CODE, DUNNING_TIERS_DOCUMENT_TYPE_CODE, KBIS_TIERS_DOCUMENT_TYPE_CODE, PAYMENT_TYPE_PRELEVEMENT, PROVISIONAL_RECEIPT_TIERS_DOCUMENT_TYPE_CODE, PUBLICATION_TIERS_DOCUMENT_TYPE_CODE, REFUND_TIERS_DOCUMENT_TYPE_CODE, REFUND_TYPE_VIREMENT } from 'src/app/libs/Constants';
+import { BILLING_CLOSURE_TIERS_DOCUMENT_TYPE_CODE, BILLING_TIERS_DOCUMENT_TYPE_CODE, BILLING_TIERS_DOCUMENT_TYPE_OTHER_CODE, CFE_TIERS_DOCUMENT_TYPE_CODE, DUNNING_TIERS_DOCUMENT_TYPE_CODE, KBIS_TIERS_DOCUMENT_TYPE_CODE, PAYMENT_TYPE_CHEQUES, PAYMENT_TYPE_PRELEVEMENT, PROVISIONAL_RECEIPT_TIERS_DOCUMENT_TYPE_CODE, PUBLICATION_TIERS_DOCUMENT_TYPE_CODE, REFUND_TIERS_DOCUMENT_TYPE_CODE, REFUND_TYPE_VIREMENT } from 'src/app/libs/Constants';
 import { getDocument } from 'src/app/libs/DocumentHelper';
 import { instanceOfResponsable, instanceOfTiers } from 'src/app/libs/TypeHelper';
 import { PaymentType } from 'src/app/modules/miscellaneous/model/PaymentType';
@@ -26,6 +26,8 @@ export class SettlementBillingComponent implements OnInit {
   @ViewChild(MatAccordion) accordion: MatAccordion | undefined;
   paymentTypes: PaymentType[] = [] as Array<PaymentType>;
   PAYMENT_TYPE_PRELEVEMENT = PAYMENT_TYPE_PRELEVEMENT;
+  PAYMENT_TYPE_CHEQUES = PAYMENT_TYPE_CHEQUES;
+
   REFUND_TYPE_VIREMENT = REFUND_TYPE_VIREMENT;
   BILLING_TIERS_DOCUMENT_TYPE_OTHER_CODE = BILLING_TIERS_DOCUMENT_TYPE_OTHER_CODE;
 
@@ -39,7 +41,7 @@ export class SettlementBillingComponent implements OnInit {
   cfeDocument: Document = {} as Document;
   kbisDocument: Document = {} as Document;
 
-  constructor(private formBuilder: FormBuilder,
+  constructor(private formBuilder: UntypedFormBuilder,
     protected paymentTypeService: PaymentTypeService,
     protected documentTypeService: DocumentTypeService,
     protected tiersService: TiersService,

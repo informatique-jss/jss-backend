@@ -105,5 +105,7 @@
       }
     }
   },
-  "defaultProject": "cockpit"
+  "cli": {
+    "analytics": false
+  }
 }

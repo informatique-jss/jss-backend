@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 import { MailRedirectionType } from 'src/app/modules/quotation/model/MailRedirectionType';
 import { MailRedirectionTypeService } from 'src/app/modules/quotation/services/mail.redirection.type.service';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
@@ -14,7 +14,7 @@ export class SelectMailRedirectionComponent extends GenericSelectComponent<MailR
   types: MailRedirectionType[] = [] as Array<MailRedirectionType>;
 
   constructor(private changeDetectorRef: ChangeDetectorRef,
-    private formBuild: FormBuilder, private mailRedirectionTypeService: MailRedirectionTypeService) {
+    private formBuild: UntypedFormBuilder, private mailRedirectionTypeService: MailRedirectionTypeService) {
     super(changeDetectorRef, formBuild);
   }
 

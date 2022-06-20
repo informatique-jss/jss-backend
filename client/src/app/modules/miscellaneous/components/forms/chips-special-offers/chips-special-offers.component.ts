@@ -1,6 +1,6 @@
 import { moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, ValidatorFn, Validators } from '@angular/forms';
+import { UntypedFormBuilder, ValidatorFn, Validators } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
@@ -21,7 +21,7 @@ export class ChipsSpecialOffersComponent extends GenericChipsComponent<SpecialOf
   filteredSpecialOffers: Observable<SpecialOffer[]> | undefined;
   @ViewChild('specialOfferInput') specialOfferInput: ElementRef<HTMLInputElement> | undefined;
 
-  constructor(private formBuild: FormBuilder,
+  constructor(private formBuild: UntypedFormBuilder,
     public specialOfferDialog: MatDialog,
     private specialOfferService: SpecialOfferService) {
     super(formBuild);

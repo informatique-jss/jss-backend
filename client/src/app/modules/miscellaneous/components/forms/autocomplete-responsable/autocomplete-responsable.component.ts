@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { Responsable } from 'src/app/modules/tiers/model/Responsable';
 import { ResponsableService } from 'src/app/modules/tiers/services/responsable.service';
@@ -12,7 +12,7 @@ import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-au
 })
 export class AutocompleteResponsableComponent extends GenericAutocompleteComponent<Responsable, Responsable> implements OnInit {
 
-  constructor(private formBuild: FormBuilder,
+  constructor(private formBuild: UntypedFormBuilder,
     private responsableService: ResponsableService, private changeDetectorRef: ChangeDetectorRef) {
     super(formBuild, changeDetectorRef)
   }

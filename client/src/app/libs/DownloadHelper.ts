@@ -10,3 +10,7 @@ export function downloadTextAsFile(filename: string, text: string) {
 
   document.body.removeChild(element);
 }
+
+export function downloadHtmlAsRtf(filename: string, html: string) {
+
+}

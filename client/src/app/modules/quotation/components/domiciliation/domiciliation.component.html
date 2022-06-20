@@ -173,7 +173,7 @@
         </table>
         <table class="full-width" *ngIf="provision.domiciliation!.isLegalPerson">
           <tr>
-            <td>
+            <td *ngIf="provision.domiciliation && provision.domiciliation.id">
               <single-attachment [entity]="provision.domiciliation!" [entityType]="DOMICILIATION_ENTITY_TYPE.entityType"
                 [editMode]="editMode" [attachmentTypeCodeToDisplay]="KBIS_ATTACHMENT_TYPE_CODE">
               </single-attachment>
@@ -266,12 +266,12 @@
         </table>
         <table class="full-width" *ngIf="!provision.domiciliation!.isLegalPerson">
           <tr>
-            <td>
+            <td *ngIf="provision.domiciliation && provision.domiciliation.id">
               <single-attachment [entity]="provision.domiciliation!" [entityType]="DOMICILIATION_ENTITY_TYPE.entityType"
                 [editMode]="editMode" [attachmentTypeCodeToDisplay]="CNI_ATTACHMENT_TYPE_CODE">
               </single-attachment>
             </td>
-            <td>
+            <td *ngIf="provision.domiciliation && provision.domiciliation.id">
               <single-attachment [entity]="provision.domiciliation!" [entityType]="DOMICILIATION_ENTITY_TYPE.entityType"
                 [editMode]="editMode" [attachmentTypeCodeToDisplay]="PROOF_OF_ADDRESS_ATTACHMENT_TYPE_CODE">
               </single-attachment>

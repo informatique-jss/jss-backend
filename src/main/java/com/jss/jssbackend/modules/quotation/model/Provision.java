@@ -52,6 +52,10 @@ public class Provision implements Serializable, IId {
 	@JsonManagedReference("provision")
 	private Shal shal;
 
+	@OneToOne(targetEntity = Bodacc.class, mappedBy = "provision", cascade = CascadeType.ALL)
+	@JsonManagedReference("provision")
+	private Bodacc bodacc;
+
 	public Integer getId() {
 		return id;
 	}

@@ -1,4 +1,5 @@
 import { Affaire } from "./Affaire";
+import { Bodacc } from "./Bodacc";
 import { CustomerOrder } from "./CustomerOrder";
 import { Domiciliation } from "./Domiciliation";
 import { ProvisionFamilyType } from "./ProvisionFamilyType";
@@ -13,6 +14,7 @@ export interface Provision {
   customerOrder: CustomerOrder;
   domiciliation: Domiciliation | undefined;
   shal: Shal | undefined;
+  bodacc: Bodacc | undefined;
   provisionFamilyType: ProvisionFamilyType;
   provisionType: ProvisionType;
 }

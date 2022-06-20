@@ -17,8 +17,10 @@ import com.jss.jssbackend.modules.miscellaneous.model.AttachmentType;
 import com.jss.jssbackend.modules.miscellaneous.repository.AttachmentRepository;
 import com.jss.jssbackend.modules.quotation.model.Domiciliation;
 import com.jss.jssbackend.modules.quotation.model.Quotation;
+import com.jss.jssbackend.modules.quotation.model.Shal;
 import com.jss.jssbackend.modules.quotation.service.DomiciliationService;
 import com.jss.jssbackend.modules.quotation.service.QuotationService;
+import com.jss.jssbackend.modules.quotation.service.ShalService;
 import com.jss.jssbackend.modules.tiers.model.Responsable;
 import com.jss.jssbackend.modules.tiers.model.Tiers;
 import com.jss.jssbackend.modules.tiers.service.ResponsableService;
@@ -47,6 +49,9 @@ public class AttachmentServiceImpl implements AttachmentService {
 
     @Autowired
     DomiciliationService domiciliationService;
+
+    @Autowired
+    ShalService shalService;
 
     @Override
     public List<Attachment> getAttachments() {
@@ -79,6 +84,8 @@ public class AttachmentServiceImpl implements AttachmentService {
                 attachments = attachmentRepository.findByQuotationId(idEntity);
             } else if (entityType.equals(Domiciliation.class.getSimpleName())) {
                 attachments = attachmentRepository.findByDomiciliationId(idEntity);
+            } else if (entityType.equals(Shal.class.getSimpleName())) {
+                attachments = attachmentRepository.findByShalId(idEntity);
             }
 
             if (attachments != null && attachments.size() > 0) {
@@ -117,6 +124,11 @@ public class AttachmentServiceImpl implements AttachmentService {
             if (domiciliation == null)
                 return new ArrayList<Attachment>();
             attachment.setDomiciliation(domiciliation);
+        } else if (entityType.equals(Shal.class.getSimpleName())) {
+            Shal shal = shalService.getShal(idEntity);
+            if (shal == null)
+                return new ArrayList<Attachment>();
+            attachment.setShal(shal);
         }
         attachmentRepository.save(attachment);
 
@@ -128,6 +140,8 @@ public class AttachmentServiceImpl implements AttachmentService {
             attachments = attachmentRepository.findByQuotationId(idEntity);
         } else if (entityType.equals(Domiciliation.class.getSimpleName())) {
             attachments = attachmentRepository.findByDomiciliationId(idEntity);
+        } else if (entityType.equals(Shal.class.getSimpleName())) {
+            attachments = attachmentRepository.findByShalId(idEntity);
         }
 
         return attachments;

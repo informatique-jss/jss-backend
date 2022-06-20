@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { Siren } from 'src/app/modules/quotation/model/Siren';
 import { SirenService } from 'src/app/modules/quotation/services/siren.service';
@@ -12,7 +12,7 @@ import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-au
 })
 export class AutocompleteSirenComponent extends GenericAutocompleteComponent<Siren, Siren> implements OnInit {
 
-  constructor(private formBuild: FormBuilder,
+  constructor(private formBuild: UntypedFormBuilder,
     private sirenService: SirenService, private changeDetectorRef: ChangeDetectorRef) {
     super(formBuild, changeDetectorRef)
   }

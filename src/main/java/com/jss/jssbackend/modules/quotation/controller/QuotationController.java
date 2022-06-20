@@ -27,6 +27,7 @@ import com.jss.jssbackend.modules.miscellaneous.service.LanguageService;
 import com.jss.jssbackend.modules.miscellaneous.service.LegalFormService;
 import com.jss.jssbackend.modules.miscellaneous.service.SpecialOfferService;
 import com.jss.jssbackend.modules.quotation.model.Affaire;
+import com.jss.jssbackend.modules.quotation.model.BodaccPublicationType;
 import com.jss.jssbackend.modules.quotation.model.BuildingDomiciliation;
 import com.jss.jssbackend.modules.quotation.model.CharacterPrice;
 import com.jss.jssbackend.modules.quotation.model.Confrere;
@@ -44,9 +45,12 @@ import com.jss.jssbackend.modules.quotation.model.QuotationLabelType;
 import com.jss.jssbackend.modules.quotation.model.QuotationStatus;
 import com.jss.jssbackend.modules.quotation.model.RecordType;
 import com.jss.jssbackend.modules.quotation.model.Rna;
+import com.jss.jssbackend.modules.quotation.model.Shal;
 import com.jss.jssbackend.modules.quotation.model.Siren;
 import com.jss.jssbackend.modules.quotation.model.Siret;
+import com.jss.jssbackend.modules.quotation.model.TransfertFundsType;
 import com.jss.jssbackend.modules.quotation.service.AffaireService;
+import com.jss.jssbackend.modules.quotation.service.BodaccPublicationTypeService;
 import com.jss.jssbackend.modules.quotation.service.BuildingDomiciliationService;
 import com.jss.jssbackend.modules.quotation.service.CharacterPriceService;
 import com.jss.jssbackend.modules.quotation.service.ConfrereService;
@@ -63,6 +67,7 @@ import com.jss.jssbackend.modules.quotation.service.QuotationStatusService;
 import com.jss.jssbackend.modules.quotation.service.RecordTypeService;
 import com.jss.jssbackend.modules.quotation.service.RnaDelegateService;
 import com.jss.jssbackend.modules.quotation.service.SireneDelegateService;
+import com.jss.jssbackend.modules.quotation.service.TransfertFundsTypeService;
 import com.jss.jssbackend.modules.tiers.service.ResponsableService;
 import com.jss.jssbackend.modules.tiers.service.TiersService;
 
@@ -156,6 +161,42 @@ public class QuotationController {
 
   @Autowired
   NoticeTypeFamilyService noticeTypeFamilyService;
+
+  @Autowired
+  BodaccPublicationTypeService bodaccPublicationTypeService;
+
+  @Autowired
+  TransfertFundsTypeService transfertFundsTypeService;
+
+  @GetMapping(inputEntryPoint + "/transfert-fund-types")
+  public ResponseEntity<List<TransfertFundsType>> getTransfertFundsTypes() {
+    List<TransfertFundsType> transfertFundsTypes = null;
+    try {
+      transfertFundsTypes = transfertFundsTypeService.getTransfertFundsTypes();
+    } catch (HttpStatusCodeException e) {
+      logger.error("HTTP error when fetching transfertFundsType", e);
+      return new ResponseEntity<List<TransfertFundsType>>(HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (Exception e) {
+      logger.error("Error when fetching transfertFundsType", e);
+      return new ResponseEntity<List<TransfertFundsType>>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    return new ResponseEntity<List<TransfertFundsType>>(transfertFundsTypes, HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/bodacc-publication-types")
+  public ResponseEntity<List<BodaccPublicationType>> getBodaccPublicationTypes() {
+    List<BodaccPublicationType> bodaccPublicationTypes = null;
+    try {
+      bodaccPublicationTypes = bodaccPublicationTypeService.getBodaccPublicationTypes();
+    } catch (HttpStatusCodeException e) {
+      logger.error("HTTP error when fetching bodaccPublicationType", e);
+      return new ResponseEntity<List<BodaccPublicationType>>(HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (Exception e) {
+      logger.error("Error when fetching bodaccPublicationType", e);
+      return new ResponseEntity<List<BodaccPublicationType>>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    return new ResponseEntity<List<BodaccPublicationType>>(bodaccPublicationTypes, HttpStatus.OK);
+  }
 
   @GetMapping(inputEntryPoint + "/notice-type-families")
   public ResponseEntity<List<NoticeTypeFamily>> getNoticeTypeFamilies() {
@@ -521,7 +562,7 @@ public class QuotationController {
               validationHelper.validateReferential(domiciliation.getLegalGardianCivility(), true);
               validationHelper.validateString(domiciliation.getLegalGardianFirstname(), true, 20);
               validationHelper.validateString(domiciliation.getLegalGardianLastname(), true, 20);
-              validationHelper.validateDate(domiciliation.getLegalGardianBirthdate(), true, new Date());
+              validationHelper.validateDateMax(domiciliation.getLegalGardianBirthdate(), true, new Date());
               validationHelper.validateString(domiciliation.getLegalGardianPlaceOfBirth(), true, 60);
               validationHelper.validateString(domiciliation.getLegalGardianJob(), true, 30);
             }
@@ -533,7 +574,20 @@ public class QuotationController {
             validationHelper.validateReferential(domiciliation.getLegalGardianCity(), true);
             validationHelper.validateReferential(domiciliation.getLegalGardianCountry(), true);
 
-            // TODO : shal vérification
+          }
+          if (provision.getShal() != null) {
+            Shal shal = provision.getShal();
+            validationHelper.validateDateMin(shal.getPublicationDate(), true, new Date());
+            validationHelper.validateReferential(shal.getDepartment(), true);
+            validationHelper.validateReferential(shal.getConfrere(), true);
+            validationHelper.validateReferential(shal.getJournalType(), true);
+            validationHelper.validateReferential(shal.getNoticeTypeFamily(), true);
+            if (shal.getNoticeTypes() == null || shal.getNoticeTypes().size() == 0)
+              throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            for (NoticeType noticeType : shal.getNoticeTypes()) {
+              validationHelper.validateReferential(noticeType, true);
+            }
+            validationHelper.validateString(shal.getNotice(), true);
           }
         }
       }

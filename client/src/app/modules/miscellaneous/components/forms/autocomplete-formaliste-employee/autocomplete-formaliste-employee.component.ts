@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 import { Employee } from 'src/app/modules/profile/model/Employee';
 import { EmployeeService } from 'src/app/modules/profile/services/employee.service';
 import { GenericLocalAutocompleteComponent } from '../generic-local-autocomplete/generic-local-autocomplete.component';
@@ -13,7 +13,7 @@ export class AutocompleteFormalisteEmployeeComponent extends GenericLocalAutocom
 
   types: Employee[] = [] as Array<Employee>;
 
-  constructor(private formBuild: FormBuilder, private employeeService: EmployeeService) {
+  constructor(private formBuild: UntypedFormBuilder, private employeeService: EmployeeService) {
     super(formBuild)
   }
 

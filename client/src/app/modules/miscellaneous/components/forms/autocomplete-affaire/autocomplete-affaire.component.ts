@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { Affaire } from 'src/app/modules/quotation/model/Affaire';
 import { AffaireService } from 'src/app/modules/quotation/services/affaire.service';
@@ -15,7 +15,7 @@ import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-au
 })
 export class AutocompleteAffaireComponent extends GenericAutocompleteComponent<IndexEntity, IndexEntity> implements OnInit {
 
-  constructor(private formBuild: FormBuilder, private indexEntityService: IndexEntityService,
+  constructor(private formBuild: UntypedFormBuilder, private indexEntityService: IndexEntityService,
     private affaireService: AffaireService, private changeDetectorRef: ChangeDetectorRef) {
     super(formBuild, changeDetectorRef)
   }

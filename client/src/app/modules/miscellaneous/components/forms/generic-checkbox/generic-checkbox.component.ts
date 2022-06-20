@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
-import { FormBuilder, FormGroup, ValidatorFn } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, ValidatorFn } from '@angular/forms';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
 
 @Component({
@@ -26,7 +26,7 @@ export class GenericCheckboxComponent implements OnInit {
    * The formgroup to bind component
    * Mandatory
    */
-  @Input() form: FormGroup | undefined;
+  @Input() form: UntypedFormGroup | undefined;
   /**
    * The name of the input
    * Default : checkbox
@@ -39,7 +39,7 @@ export class GenericCheckboxComponent implements OnInit {
   @Input() isDisabled: boolean = false;
 
   constructor(
-    private formBuilder: FormBuilder) { }
+    private formBuilder: UntypedFormBuilder) { }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.model && this.form != undefined)

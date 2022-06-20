@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, ValidationErrors } from '@angular/forms';
+import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors } from '@angular/forms';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
 import { CNI_ATTACHMENT_TYPE_CODE, COUNTRY_CODE_FRANCE, DOMICILIATION_EMAIL_REDIRECTION_CONTRAT_TYPE_1_CODE, DOMICILIATION_EMAIL_REDIRECTION_CONTRAT_TYPE_2_CODE, DOMICILIATION_MAIL_REDIRECTION_CONTRAT_TYPE_1_CODE, DOMICILIATION_MAIL_REDIRECTION_CONTRAT_TYPE_2_CODE, DOMICILIATION_MAIL_REDIRECTION_TYPE_OTHER_CODE, KBIS_ATTACHMENT_TYPE_CODE, PROOF_OF_ADDRESS_ATTACHMENT_TYPE_CODE } from 'src/app/libs/Constants';
 import { validateSiren } from 'src/app/libs/CustomFormsValidatorsHelper';
@@ -52,7 +52,7 @@ export class DomiciliationComponent implements OnInit {
   DOMICILIATION_MAIL_REDIRECTION_TYPE_OTHER_CODE = DOMICILIATION_MAIL_REDIRECTION_TYPE_OTHER_CODE;
 
 
-  constructor(private formBuilder: FormBuilder,
+  constructor(private formBuilder: UntypedFormBuilder,
     protected domiciliationContractTypeService: DomiciliationContractTypeService,
     protected languageService: LanguageService,
     private buildingDomiciliationService: BuildingDomiciliationService,
@@ -262,7 +262,7 @@ export class DomiciliationComponent implements OnInit {
 
   checkSiren(fieldName: string): ValidationErrors | null {
     return (control: AbstractControl): ValidationErrors | null => {
-      const root = control.root as FormGroup;
+      const root = control.root as UntypedFormGroup;
 
       const fieldValue = root.get(fieldName)?.value;
       if (this.provision.domiciliation! != undefined && this.provision.domiciliation!.isLegalPerson && (fieldValue == undefined || fieldValue == null || fieldValue.length == 0 || !validateSiren(fieldValue)))

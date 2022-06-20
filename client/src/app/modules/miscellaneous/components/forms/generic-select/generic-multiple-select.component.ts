@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Directive, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
 import { compareWithId } from 'src/app/libs/CompareHelper';
 
@@ -23,7 +23,7 @@ export abstract class GenericMultipleSelectComponent<T> implements OnInit {
    * The formgroup to bind component
    * Mandatory
    */
-  @Input() form: FormGroup | undefined;
+  @Input() form: UntypedFormGroup | undefined;
   /**
    * The name of the input
    * Default : T
@@ -56,7 +56,7 @@ export abstract class GenericMultipleSelectComponent<T> implements OnInit {
 
   constructor(
     private cdr: ChangeDetectorRef,
-    private formBuilder: FormBuilder) { }
+    private formBuilder: UntypedFormBuilder) { }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.model && this.form != undefined) {
@@ -109,7 +109,7 @@ export abstract class GenericMultipleSelectComponent<T> implements OnInit {
   // Check if the propertiy given in parameter is filled when conditionnalRequired is set
   checkFieldFilledIfIsConditionalRequired(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
-      const root = control.root as FormGroup;
+      const root = control.root as UntypedFormGroup;
 
       const fieldValue = root.get(this.propertyName)?.value;
       if (this.conditionnalRequired && (fieldValue == undefined || fieldValue == null || fieldValue.length == 0))

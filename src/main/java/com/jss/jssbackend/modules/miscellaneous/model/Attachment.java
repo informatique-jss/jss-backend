@@ -17,6 +17,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.jss.jssbackend.modules.quotation.model.CustomerOrder;
 import com.jss.jssbackend.modules.quotation.model.Domiciliation;
 import com.jss.jssbackend.modules.quotation.model.Quotation;
+import com.jss.jssbackend.modules.quotation.model.Shal;
 import com.jss.jssbackend.modules.tiers.model.Responsable;
 import com.jss.jssbackend.modules.tiers.model.Tiers;
 
@@ -52,6 +53,11 @@ public class Attachment implements Serializable, IId {
 	@JoinColumn(name = "id_domiciliation")
 	@JsonBackReference("domiciliation")
 	private Domiciliation domiciliation;
+
+	@ManyToOne
+	@JoinColumn(name = "id_shal")
+	@JsonBackReference("shal")
+	private Shal shal;
 
 	@ManyToOne
 	@JoinColumn(name = "id_customer_order")
@@ -91,6 +97,14 @@ public class Attachment implements Serializable, IId {
 
 	public void setResponsable(Responsable responsable) {
 		this.responsable = responsable;
+	}
+
+	public Shal getShal() {
+		return shal;
+	}
+
+	public void setShal(Shal shal) {
+		this.shal = shal;
 	}
 
 	public AttachmentType getAttachmentType() {

@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
+import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
 import { COUNTRY_CODE_FRANCE, SEPARATOR_KEY_CODES, UNREGISTERED_COMPANY_LEGAL_FORM_CODE } from 'src/app/libs/Constants';
@@ -49,7 +49,7 @@ export class AffaireComponent implements OnInit {
   UNREGISTERED_COMPANY_LEGAL_FORM_CODE = UNREGISTERED_COMPANY_LEGAL_FORM_CODE;
   SEPARATOR_KEY_CODE = SEPARATOR_KEY_CODES;
 
-  constructor(private formBuilder: FormBuilder,
+  constructor(private formBuilder: UntypedFormBuilder,
     private civilityService: CivilityService,
     private cityService: CityService,
     private countryService: CountryService,
@@ -102,7 +102,7 @@ export class AffaireComponent implements OnInit {
 
   checkSiren(fieldName: string): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
-      const root = control.root as FormGroup;
+      const root = control.root as UntypedFormGroup;
 
       const fieldValue = root.get(fieldName)?.value;
       if (!this.affaire.isIndividual && (fieldValue == undefined || fieldValue == null || fieldValue.length == 0 || !validateSiren(fieldValue)))
@@ -115,7 +115,7 @@ export class AffaireComponent implements OnInit {
 
   checkSiret(fieldName: string): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
-      const root = control.root as FormGroup;
+      const root = control.root as UntypedFormGroup;
 
       const fieldValue = root.get(fieldName)?.value;
       if (!this.affaire.isIndividual && (fieldValue != undefined && fieldValue != null && fieldValue.length > 0 && !validateSiret(fieldValue)))
@@ -128,7 +128,7 @@ export class AffaireComponent implements OnInit {
 
   checkRna(fieldName: string): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
-      const root = control.root as FormGroup;
+      const root = control.root as UntypedFormGroup;
 
       const fieldValue = root.get(fieldName)?.value;
       if (!this.affaire.isIndividual && fieldValue != undefined && fieldValue != null && fieldValue.length > 0 && !validateRna(fieldValue))

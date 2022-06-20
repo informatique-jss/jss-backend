@@ -1,5 +1,5 @@
 import { Directive, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
@@ -19,7 +19,7 @@ export abstract class GenericLocalAutocompleteComponent<T> implements OnInit {
    * The formgroup to bind component
    * Mandatory
    */
-  @Input() form: FormGroup | undefined;
+  @Input() form: UntypedFormGroup | undefined;
   /**
    * The name of the input
    * local-autocomplete by default
@@ -56,7 +56,7 @@ export abstract class GenericLocalAutocompleteComponent<T> implements OnInit {
   abstract types: T[];
   filteredTypes: Observable<T[]> | undefined;
 
-  constructor(private formBuilder: FormBuilder) { }
+  constructor(private formBuilder: UntypedFormBuilder) { }
 
   ngOnChanges(changes: SimpleChanges) {
     if (this.form && (this.isMandatory || this.customValidators))
@@ -97,7 +97,7 @@ export abstract class GenericLocalAutocompleteComponent<T> implements OnInit {
 
   checkAutocompleteField(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
-      const root = control.root as FormGroup;
+      const root = control.root as UntypedFormGroup;
 
       const fieldValue = root.get(this.propertyName)?.value;
       if (fieldValue != undefined && fieldValue != null && (fieldValue.id == undefined || fieldValue.id == null))
@@ -111,7 +111,7 @@ export abstract class GenericLocalAutocompleteComponent<T> implements OnInit {
   // Check if the propertiy given in parameter is filled when conditionnalRequired is set
   checkFieldFilledIfIsConditionalRequired(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
-      const root = control.root as FormGroup;
+      const root = control.root as UntypedFormGroup;
 
       const fieldValue = root.get(this.propertyName)?.value;
       if (this.conditionnalRequired && (fieldValue == undefined || fieldValue == null || fieldValue.length == 0))

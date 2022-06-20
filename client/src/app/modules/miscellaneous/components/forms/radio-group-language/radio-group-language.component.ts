@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 import { Language } from '../../../model/Language';
 import { LanguageService } from '../../../services/language.service';
 import { GenericRadioGroupComponent } from '../generic-radio-group/generic-radio-group.component';
@@ -13,7 +13,7 @@ export class RadioGroupLanguageComponent extends GenericRadioGroupComponent<Lang
   types: Language[] = [] as Array<Language>;
 
   constructor(
-    private formBuild: FormBuilder, private languageService: LanguageService) {
+    private formBuild: UntypedFormBuilder, private languageService: LanguageService) {
     super(formBuild);
   }
 
