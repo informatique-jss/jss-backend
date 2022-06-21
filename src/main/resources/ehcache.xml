@@ -20,9 +20,5 @@
             <offheap unit="MB">5</offheap>
         </resources>
     </cache-template>
-    <!--cache alias="groupEnvironnementMstr" uses-template="default">
-        <key-type>java.lang.String</key-type>
-        <value-type>com.jss.jssbackend.modules.authentification.model.mstr.MstrGroup</value-type>
-    </cache-->
     <persistence directory="spring-boot-ehcache/cache"/>
 </config>

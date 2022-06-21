@@ -1,5 +1,5 @@
 import { Component, HostListener } from '@angular/core';
-import { UntypedFormControl, FormGroupDirective, NgForm } from '@angular/forms';
+import { FormGroupDirective, NgForm, UntypedFormControl } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { Subscription } from 'rxjs';
 import { AppService } from './app.service';
@@ -20,7 +20,7 @@ export class CustomErrorStateMatcher implements ErrorStateMatcher {
 })
 
 export class AppComponent {
-  title: string = 'JSS Backend';
+  title: string = 'OSIRIS';
 
   sidenavOpenState: boolean = true;
   sidenavOpenStateSubscription: Subscription = new Subscription;

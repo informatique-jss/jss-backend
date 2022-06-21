@@ -1,0 +1,11 @@
+package com.jss.osiris.modules.tiers.service;
+
+import java.util.List;
+
+import com.jss.osiris.modules.tiers.model.BillingLabelType;
+
+public interface BillingLabelTypeService {
+    public List<BillingLabelType> getBillingLabelTypes();
+
+    public BillingLabelType getBillingLabelType(Integer id);
+}
