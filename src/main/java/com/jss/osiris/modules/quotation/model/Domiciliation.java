@@ -280,6 +280,14 @@ public class Domiciliation implements Serializable, IId {
 		this.isLegalPerson = isLegalPerson;
 	}
 
+	public Boolean getIsLegalPerson() {
+		return isLegalPerson;
+	}
+
+	public void setIsLegalPerson(Boolean isLegalPerson) {
+		this.isLegalPerson = isLegalPerson;
+	}
+
 	public Civility getLegalGardianCivility() {
 		return legalGardianCivility;
 	}

@@ -116,6 +116,14 @@ public class Affaire implements Serializable, IId {
 		this.isIndividual = isIndividual;
 	}
 
+	public Civility getCivility() {
+		return civility;
+	}
+
+	public void setCivility(Civility civility) {
+		this.civility = civility;
+	}
+
 	public String getFirstname() {
 		return firstname;
 	}
@@ -130,14 +138,6 @@ public class Affaire implements Serializable, IId {
 
 	public void setLastname(String lastname) {
 		this.lastname = lastname;
-	}
-
-	public Civility getCivility() {
-		return civility;
-	}
-
-	public void setCivility(Civility civility) {
-		this.civility = civility;
 	}
 
 	public LegalForm getLegalForm() {

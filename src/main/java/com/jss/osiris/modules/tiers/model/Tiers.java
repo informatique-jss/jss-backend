@@ -36,7 +36,6 @@ import com.jss.osiris.modules.profile.model.Employee;
 @Entity
 @Table(indexes = { @Index(name = "pk_client", columnList = "id", unique = true) })
 public class Tiers implements ITiers, IAttachment {
-	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

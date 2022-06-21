@@ -35,8 +35,6 @@ import com.jss.osiris.modules.profile.model.Employee;
 @Table(indexes = { @Index(name = "pk_responsable", columnList = "id", unique = true),
 		@Index(name = "idx_responsable_tiers", columnList = "id_tiers") })
 public class Responsable implements ITiers, IAttachment {
-	private static final long serialVersionUID = 1L;
-
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@IndexedField
@@ -203,6 +201,14 @@ public class Responsable implements ITiers, IAttachment {
 		this.tiersCategory = tiersCategory;
 	}
 
+	public Civility getCivility() {
+		return civility;
+	}
+
+	public void setCivility(Civility civility) {
+		this.civility = civility;
+	}
+
 	public void setIsActive(Boolean isActive) {
 		this.isActive = isActive;
 	}
@@ -229,14 +235,6 @@ public class Responsable implements ITiers, IAttachment {
 
 	public void setFirstBilling(Date firstBilling) {
 		this.firstBilling = firstBilling;
-	}
-
-	public Civility getCivility() {
-		return civility;
-	}
-
-	public void setCivility(Civility civility) {
-		this.civility = civility;
 	}
 
 	public String getFirstname() {
