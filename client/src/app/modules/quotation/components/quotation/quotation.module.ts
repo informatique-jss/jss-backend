@@ -25,6 +25,7 @@ import { MiscellaneousModule } from 'src/app/modules/miscellaneous/components/mi
 import { ProvisionComponent } from 'src/app/modules/quotation/components/provision/provision.component';
 import { AffaireComponent } from '../affaire/affaire.component';
 import { BodaccMainComponent } from '../bodacc-main/bodacc-main.component';
+import { BodaccSaleComponent } from '../bodacc-sale/bodacc-sale.component';
 import { ConfrereDialogComponent } from '../confreres-dialog/confreres-dialog.component';
 import { DomiciliationComponent } from '../domiciliation/domiciliation.component';
 import { OrderingCustomerComponent } from '../ordering-customer/ordering-customer.component';
@@ -95,6 +96,7 @@ const routes: Routes = [
     ConfrereDialogComponent,
     BodaccMainComponent,
     ProvisionItemComponent,
+    BodaccSaleComponent,
     ShalComponent],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'fr-FR' }

@@ -20,7 +20,7 @@ export class CompetentAuthorityService extends AppRestService<CompetentAuthority
   getCompetentAuthorityByDepartmentAndName(value: string, department: Department | undefined) {
     if (department != undefined && department != null)
       return this.getList(new HttpParams().set("departmentId", department.id).set("authority", value), "competent-authorities/search/department");
-    return this.getList(new HttpParams().set("city", value), "competent-authorities/search/department");
+    return this.getList(new HttpParams().set("authority", value), "competent-authorities/search/department");
 
   }
 

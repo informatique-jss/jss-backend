@@ -19,7 +19,7 @@ repositories {
         } 
 }
  
-
+ 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web:2.6.4'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa:2.6.4' 
@@ -33,7 +33,7 @@ dependencies {
     runtimeOnly 'org.springframework.boot:spring-boot-devtools:2.6.4'
 }
  
-group = 'com.jss'
+group = 'com.jss.osiris'
 version = '1.0'
-description = 'jss-backend'
+description = 'Outil Sympa, Interactif, Révolutionnairement Intuitif et Simple'
 sourceCompatibility = '1.8'
