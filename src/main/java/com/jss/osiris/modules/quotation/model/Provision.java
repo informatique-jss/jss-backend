@@ -22,19 +22,10 @@ public class Provision implements Serializable, IId {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
 
-	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.DETACH, CascadeType.REFRESH, CascadeType.REMOVE })
+	@ManyToOne
 	@JoinColumn(name = "id_affaire")
+	@JsonBackReference("affaire")
 	private Affaire affaire;
-
-	@ManyToOne
-	@JoinColumn(name = "id_quotation")
-	@JsonBackReference("quotation")
-	private Quotation quotation;
-
-	@ManyToOne
-	@JoinColumn(name = "id_customer_order")
-	@JsonBackReference("customerOrder")
-	private CustomerOrder customerOrder;
 
 	@ManyToOne
 	@JoinColumn(name = "id_provision_type")
@@ -72,8 +63,12 @@ public class Provision implements Serializable, IId {
 		this.affaire = affaire;
 	}
 
-	public Quotation getQuotation() {
-		return quotation;
+	public ProvisionType getProvisionType() {
+		return provisionType;
+	}
+
+	public void setProvisionType(ProvisionType provisionType) {
+		this.provisionType = provisionType;
 	}
 
 	public ProvisionFamilyType getProvisionFamilyType() {
@@ -82,26 +77,6 @@ public class Provision implements Serializable, IId {
 
 	public void setProvisionFamilyType(ProvisionFamilyType provisionFamilyType) {
 		this.provisionFamilyType = provisionFamilyType;
-	}
-
-	public void setQuotation(Quotation quotation) {
-		this.quotation = quotation;
-	}
-
-	public CustomerOrder getCustomerOrder() {
-		return customerOrder;
-	}
-
-	public void setCustomerOrder(CustomerOrder customerOrder) {
-		this.customerOrder = customerOrder;
-	}
-
-	public ProvisionType getProvisionType() {
-		return provisionType;
-	}
-
-	public void setProvisionType(ProvisionType provisionType) {
-		this.provisionType = provisionType;
 	}
 
 	public Domiciliation getDomiciliation() {
@@ -118,6 +93,14 @@ public class Provision implements Serializable, IId {
 
 	public void setShal(Shal shal) {
 		this.shal = shal;
+	}
+
+	public Bodacc getBodacc() {
+		return bodacc;
+	}
+
+	public void setBodacc(Bodacc bodacc) {
+		this.bodacc = bodacc;
 	}
 
 }

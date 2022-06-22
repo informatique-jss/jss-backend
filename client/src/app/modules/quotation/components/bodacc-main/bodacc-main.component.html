@@ -1,32 +1,32 @@
-<form [formGroup]="bodaccForm" *ngIf="provision && provision.bodacc">
+<form [formGroup]="bodaccForm" *ngIf="bodacc">
   <mat-tab-group animationDuration="0ms" #tabs>
     <mat-tab label="BODACC">
       <div class=" form-div">
         <table class="full-width">
-          <tr *ngIf="provision.bodacc.id">
+          <tr *ngIf="bodacc.id">
             <td>
-              <generic-input [(model)]="provision.bodacc.id" label="Numéro de BODACC" [form]="bodaccForm"
-                propertyName="id" [isMandatory]="true" [isDisabled]="true"></generic-input>
+              <generic-input [(model)]="bodacc.id" label="Numéro de BODACC" [form]="bodaccForm" propertyName="id"
+                [isMandatory]="true" [isDisabled]="true"></generic-input>
             </td>
           </tr>
           <tr>
             <td>
-              <select-bodacc-publication-type [(model)]="provision.bodacc.bodaccPublicationType"
-                label="Type de parution" [form]="bodaccForm" propertyName="bodaccPublicationType" [isMandatory]="true"
-                [isDisabled]="!editMode" (selectionChange)="changePublicationType()"></select-bodacc-publication-type>
+              <select-bodacc-publication-type [(model)]="bodacc.bodaccPublicationType" label="Type de parution"
+                [form]="bodaccForm" propertyName="bodaccPublicationType" [isMandatory]="true" [isDisabled]="!editMode"
+                (selectionChange)="changePublicationType()"></select-bodacc-publication-type>
             </td>
             <td
-              *ngIf="provision.bodacc.bodaccPublicationType && provision.bodacc.bodaccPublicationType.code==BODACC_PUBLICATION_TYPE_SALE_OF_BUSINESS">
-              <radio-group-transfert-funds [(model)]="provision.bodacc.transfertFundsType" [form]="bodaccForm"
+              *ngIf="bodacc.bodaccPublicationType && bodacc.bodaccPublicationType.code==BODACC_PUBLICATION_TYPE_SALE_OF_BUSINESS">
+              <radio-group-transfert-funds [(model)]="bodacc.transfertFundsType" [form]="bodaccForm"
                 propertyName="transfertFundsType" label="Type de cession de fonds"></radio-group-transfert-funds>
             </td>
             <td
-              *ngIf="provision.bodacc.bodaccPublicationType && (provision.bodacc.bodaccPublicationType.code ==BODACC_PUBLICATION_TYPE_SPLIT || provision.bodacc.bodaccPublicationType.code ==BODACC_PUBLICATION_TYPE_MERGING)">
-              <generic-toggle [(model)]="provision.bodacc.isDoublePublication" label="Double parution ?"
-                [form]="bodaccForm" propertyName="isDoublePublication"></generic-toggle>
+              *ngIf="bodacc.bodaccPublicationType && (bodacc.bodaccPublicationType.code ==BODACC_PUBLICATION_TYPE_SPLIT || bodacc.bodaccPublicationType.code ==BODACC_PUBLICATION_TYPE_MERGING)">
+              <generic-toggle [(model)]="bodacc.isDoublePublication" label="Double parution ?" [form]="bodaccForm"
+                propertyName="isDoublePublication"></generic-toggle>
             </td>
             <td
-              *ngIf="provision.bodacc.bodaccPublicationType && (provision.bodacc.bodaccPublicationType.code ==BODACC_PUBLICATION_TYPE_POSSESSION_DISPATCH || provision.bodacc.bodaccPublicationType.code ==BODACC_PUBLICATION_TYPE_ESTATE_REPRESENTATIVE_DESIGNATION)">
+              *ngIf="bodacc.bodaccPublicationType && (bodacc.bodaccPublicationType.code ==BODACC_PUBLICATION_TYPE_POSSESSION_DISPATCH || bodacc.bodaccPublicationType.code ==BODACC_PUBLICATION_TYPE_ESTATE_REPRESENTATIVE_DESIGNATION)">
               <a href="https://declar-successions.journal-officiel.gouv.fr/successions/index.html" target="_blank">Lien
                 vers la plateforme BODACC.fr</a>
             </td>
@@ -35,35 +35,35 @@
         <table class="full-width">
           <tr>
             <td>
-              <autocomplete-department [(model)]="provision.bodacc.department" [form]="bodaccForm"
-                propertyName="department" [isMandatory]="true" [isDisabled]="!editMode"></autocomplete-department>
+              <autocomplete-department [(model)]="bodacc.department" [form]="bodaccForm" propertyName="department"
+                [isMandatory]="true" [isDisabled]="!editMode"></autocomplete-department>
             </td>
             <td>
-              <autocomplete-competent-authority [(model)]="provision.bodacc.competentAuthority"
-                [modelDepartment]="provision.bodacc.department" [form]="bodaccForm" propertyName="competentAuthority"
+              <autocomplete-competent-authority [(model)]="bodacc.competentAuthority"
+                [modelDepartment]="bodacc.department" [form]="bodaccForm" propertyName="competentAuthority"
                 [isMandatory]="true" label="Greffe - RCS"
                 [filteredCompetentAuthorityTypeCode]="COMPETENT_AUTHORITY_TYPE_RCS_CODE">
               </autocomplete-competent-authority>
             </td>
-            <td *ngIf="provision.bodacc.competentAuthority">
-              <select-payment-types [(model)]="provision.bodacc.paymentType" label="Paiement" [form]="bodaccForm"
+            <td *ngIf="bodacc.competentAuthority">
+              <select-payment-types [(model)]="bodacc.paymentType" label="Paiement" [form]="bodaccForm"
                 propertyName="paymentType" [isMandatory]="true" [isDisabled]="!editMode"
-                [filteredPaymentType]="provision.bodacc.competentAuthority.paymentTypes"></select-payment-types>
+                [filteredPaymentType]="bodacc.competentAuthority.paymentTypes"></select-payment-types>
             </td>
           </tr>
         </table>
-        <table class="full-width" *ngIf="provision.bodacc.competentAuthority">
+        <table class="full-width" *ngIf="bodacc.competentAuthority">
           <tr>
             <td>
-              <chips-mail [(model)]="provision.bodacc.competentAuthority.mails" label="Mails" [form]="bodaccForm"
+              <chips-mail [(model)]="bodacc.competentAuthority.mails" label="Mails" [form]="bodaccForm"
                 propertyName="mails" [isMandatory]="false" [isDisabled]="true"></chips-mail>
             </td>
             <td>
-              <chips-phone [(model)]="provision.bodacc.competentAuthority.phones" label="Téléphones" [form]="bodaccForm"
+              <chips-phone [(model)]="bodacc.competentAuthority.phones" label="Téléphones" [form]="bodaccForm"
                 propertyName="phones" [isMandatory]="false" [isDisabled]="true"></chips-phone>
             </td>
-            <td *ngIf="provision.bodacc.paymentType && PAYMENT_TYPE_VIREMENT==provision.bodacc.paymentType.code">
-              <generic-input [(model)]="provision.bodacc.competentAuthority.iban" label="IBAN" [form]="bodaccForm"
+            <td *ngIf="bodacc.paymentType && PAYMENT_TYPE_VIREMENT==bodacc.paymentType.code">
+              <generic-input [(model)]="bodacc.competentAuthority.iban" label="IBAN" [form]="bodaccForm"
                 propertyName="iban" [isMandatory]="true" [isDisabled]="true"></generic-input>
             </td>
           </tr>
@@ -71,20 +71,20 @@
       </div>
     </mat-tab>
     <mat-tab label="Imprimé"
-      *ngIf="provision.bodacc.bodaccPublicationType && (provision.bodacc.bodaccPublicationType.code==BODACC_PUBLICATION_TYPE_SPLIT || provision.bodacc.bodaccPublicationType.code==BODACC_PUBLICATION_TYPE_MERGING || provision.bodacc.bodaccPublicationType.code==BODACC_PUBLICATION_TYPE_SALE_OF_BUSINESS)">
-      <bodacc-sale [bodaccSale]="provision.bodacc.bodaccSale" [editMode]="editMode"
-        [transfertFundsType]="provision.bodacc.transfertFundsType" [affaire]="provision.affaire"
-        *ngIf="provision.bodacc.bodaccPublicationType && provision.bodacc.transfertFundsType && provision.bodacc.bodaccPublicationType.code==BODACC_PUBLICATION_TYPE_SALE_OF_BUSINESS">
+      *ngIf="bodacc.bodaccPublicationType && (bodacc.bodaccPublicationType.code==BODACC_PUBLICATION_TYPE_SPLIT || bodacc.bodaccPublicationType.code==BODACC_PUBLICATION_TYPE_MERGING || bodacc.bodaccPublicationType.code==BODACC_PUBLICATION_TYPE_SALE_OF_BUSINESS)">
+      <bodacc-sale [bodaccSale]="bodacc.bodaccSale" [editMode]="editMode"
+        [transfertFundsType]="bodacc.transfertFundsType" [affaire]="affaire"
+        *ngIf="bodacc.bodaccPublicationType && bodacc.transfertFundsType && bodacc.bodaccPublicationType.code==BODACC_PUBLICATION_TYPE_SALE_OF_BUSINESS">
       </bodacc-sale>
-      <bodacc-fusion [bodaccFusion]="provision.bodacc.bodaccFusion" [editMode]="editMode"
-        *ngIf="provision.bodacc.bodaccPublicationType &&  provision.bodacc.bodaccPublicationType.code==BODACC_PUBLICATION_TYPE_MERGING">
+      <bodacc-fusion [bodaccFusion]="bodacc.bodaccFusion" [editMode]="editMode"
+        *ngIf="bodacc.bodaccPublicationType &&  bodacc.bodaccPublicationType.code==BODACC_PUBLICATION_TYPE_MERGING">
       </bodacc-fusion>
-      <bodacc-split [bodaccSplit]="provision.bodacc.bodaccSplit" [editMode]="editMode"
-        *ngIf="provision.bodacc.bodaccPublicationType &&  provision.bodacc.bodaccPublicationType.code==BODACC_PUBLICATION_TYPE_SPLIT">
+      <bodacc-split [bodaccSplit]="bodacc.bodaccSplit" [editMode]="editMode"
+        *ngIf="bodacc.bodaccPublicationType &&  bodacc.bodaccPublicationType.code==BODACC_PUBLICATION_TYPE_SPLIT">
       </bodacc-split>
     </mat-tab>
     <mat-tab label="Documents">
-      <attachments [entity]="provision.bodacc" [editMode]="editMode" [entityType]="BODACC_ENTITY_TYPE.entityType">
+      <attachments [entity]="bodacc" [editMode]="editMode" [entityType]="BODACC_ENTITY_TYPE.entityType">
       </attachments>
     </mat-tab>
   </mat-tab-group>

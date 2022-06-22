@@ -14,7 +14,6 @@ import { BuildingDomiciliation } from '../../model/BuildingDomiciliation';
 import { Domiciliation } from '../../model/Domiciliation';
 import { DomiciliationContractType } from '../../model/DomiciliationContractType';
 import { MailRedirectionType } from '../../model/MailRedirectionType';
-import { Provision } from '../../model/Provision';
 import { Siren } from '../../model/Siren';
 import { BuildingDomiciliationService } from '../../services/building.domiciliation.service';
 import { DomiciliationContractTypeService } from '../../services/domiciliation.contract.type.service';
@@ -28,7 +27,7 @@ import { MailRedirectionTypeService } from '../../services/mail.redirection.type
 export class DomiciliationComponent implements OnInit {
 
   matcher: CustomErrorStateMatcher = new CustomErrorStateMatcher();
-  @Input() provision: Provision = {} as Provision;
+  @Input() domiciliation: Domiciliation = {} as Domiciliation;
   @Input() editMode: boolean = false;
 
   @ViewChild('tabs', { static: false }) tabs: any;
@@ -64,51 +63,54 @@ export class DomiciliationComponent implements OnInit {
   ngOnInit() {
     this.languageService.getLanguages().subscribe(response => {
       this.languages = response;
-      if (this.provision.domiciliation! != null && this.provision.domiciliation!.language == undefined || this.provision.domiciliation!.language == null)
-        this.provision.domiciliation!.language = this.languages[0];
+      if (this.domiciliation! != null && this.domiciliation!.language == undefined || this.domiciliation!.language == null)
+        this.domiciliation!.language = this.languages[0];
     })
     this.buildingDomiciliationService.getBuildingDomiciliations().subscribe(response => {
       this.buildingDomiciliations = response;
-      if (this.provision.domiciliation! != null && this.provision.domiciliation!.buildingDomiciliation == undefined || this.provision.domiciliation!.buildingDomiciliation == null)
-        this.provision.domiciliation!.buildingDomiciliation = this.buildingDomiciliations[0];
+      if (this.domiciliation! != null && this.domiciliation!.buildingDomiciliation == undefined || this.domiciliation!.buildingDomiciliation == null)
+        this.domiciliation!.buildingDomiciliation = this.buildingDomiciliations[0];
     })
     this.domiciliationContractTypeService.getContractTypes().subscribe(response => {
       this.contractTypes = response;
-      if (this.provision && this.provision.domiciliation && (this.provision.domiciliation.domiciliationContractType == null || this.provision.domiciliation.domiciliationContractType == undefined))
-        this.provision.domiciliation.domiciliationContractType = this.contractTypes[0];
+      if (this.domiciliation && (this.domiciliation.domiciliationContractType == null || this.domiciliation.domiciliationContractType == undefined))
+        this.domiciliation.domiciliationContractType = this.contractTypes[0];
     })
     this.mailRedirectionTypeService.getMailRedirectionTypes().subscribe(response => {
       this.mailRedirectionTypes = response;
-      if (this.provision.domiciliation! != null && this.provision.domiciliation!.mailRedirectionType == undefined || this.provision.domiciliation!.mailRedirectionType == null)
-        this.provision.domiciliation!.mailRedirectionType = this.mailRedirectionTypes[0];
+      if (this.domiciliation! != null && this.domiciliation!.mailRedirectionType == undefined || this.domiciliation!.mailRedirectionType == null)
+        this.domiciliation!.mailRedirectionType = this.mailRedirectionTypes[0];
     })
     this.civilityService.getCivilities().subscribe(response => {
       this.civilities = response;
-      if (this.provision.domiciliation! != null && this.provision.domiciliation!.legalGardianCivility == undefined)
-        this.provision.domiciliation!.legalGardianCivility = this.civilities[0];
+      if (this.domiciliation! != null && this.domiciliation!.legalGardianCivility == undefined)
+        this.domiciliation!.legalGardianCivility = this.civilities[0];
     })
+  }
 
-
+  getCurrentDate(): Date {
+    return new Date();
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes.provision != undefined) {
-      if (this.provision.domiciliation! == undefined || this.provision.domiciliation! == null)
-        this.provision.domiciliation! = {} as Domiciliation;
-      if (this.provision.domiciliation!.language == undefined || this.provision.domiciliation!.language == null)
-        this.provision.domiciliation!.language = this.languages[0];
-      if (this.provision.domiciliation! != null && this.provision.domiciliation!.mailRedirectionType == undefined || this.provision.domiciliation!.mailRedirectionType == null)
-        this.provision.domiciliation!.mailRedirectionType = this.mailRedirectionTypes[0];
-      if (this.provision.domiciliation! != null && this.provision.domiciliation!.buildingDomiciliation == undefined || this.provision.domiciliation!.buildingDomiciliation == null)
-        this.provision.domiciliation!.buildingDomiciliation = this.buildingDomiciliations[0];
-      if (this.provision.domiciliation! != null && this.provision.domiciliation!.startDate != null && this.provision.domiciliation!.startDate != undefined)
-        this.provision.domiciliation!.startDate = new Date(this.provision.domiciliation!.startDate);
-      if (this.provision.domiciliation! != null && this.provision.domiciliation!.legalGardianBirthdate != null && this.provision.domiciliation!.legalGardianBirthdate != undefined)
-        this.provision.domiciliation!.legalGardianBirthdate = new Date(this.provision.domiciliation!.legalGardianBirthdate);
-      if (this.provision.domiciliation!.isLegalPerson == null || this.provision.domiciliation!.isLegalPerson == undefined)
-        this.provision.domiciliation!.isLegalPerson = false;
-      if (this.provision && this.provision.domiciliation && (this.provision.domiciliation.domiciliationContractType == null || this.provision.domiciliation.domiciliationContractType == undefined))
-        this.provision.domiciliation.domiciliationContractType = this.contractTypes[0];
+    if (changes.domiciliation != undefined) {
+      console.log(this.domiciliation);
+      if (this.domiciliation! == undefined || this.domiciliation! == null)
+        this.domiciliation! = {} as Domiciliation;
+      if (this.domiciliation!.language == undefined || this.domiciliation!.language == null)
+        this.domiciliation!.language = this.languages[0];
+      if (this.domiciliation! != null && this.domiciliation!.mailRedirectionType == undefined || this.domiciliation!.mailRedirectionType == null)
+        this.domiciliation!.mailRedirectionType = this.mailRedirectionTypes[0];
+      if (this.domiciliation! != null && this.domiciliation!.buildingDomiciliation == undefined || this.domiciliation!.buildingDomiciliation == null)
+        this.domiciliation!.buildingDomiciliation = this.buildingDomiciliations[0];
+      if (this.domiciliation! != null && this.domiciliation!.startDate != null && this.domiciliation!.startDate != undefined)
+        this.domiciliation!.startDate = new Date(this.domiciliation!.startDate);
+      if (this.domiciliation! != null && this.domiciliation!.legalGardianBirthdate != null && this.domiciliation!.legalGardianBirthdate != undefined)
+        this.domiciliation!.legalGardianBirthdate = new Date(this.domiciliation!.legalGardianBirthdate);
+      if (this.domiciliation!.isLegalPerson == null || this.domiciliation!.isLegalPerson == undefined)
+        this.domiciliation!.isLegalPerson = false;
+      if (this.domiciliation && (this.domiciliation.domiciliationContractType == null || this.domiciliation.domiciliationContractType == undefined))
+        this.domiciliation.domiciliationContractType = this.contractTypes[0];
       this.domiciliationForm.markAllAsTouched();
       this.toggleTabs();
     }
@@ -136,39 +138,39 @@ export class DomiciliationComponent implements OnInit {
   }
 
   mustDecribeAdresse(): boolean {
-    return this.provision.domiciliation != null && this.provision.domiciliation.domiciliationContractType &&
-      (this.provision.domiciliation.domiciliationContractType.code == DOMICILIATION_MAIL_REDIRECTION_CONTRAT_TYPE_1_CODE
-        || this.provision.domiciliation.domiciliationContractType.code == DOMICILIATION_MAIL_REDIRECTION_CONTRAT_TYPE_2_CODE)
-      && this.provision.domiciliation.mailRedirectionType && this.provision.domiciliation.mailRedirectionType.code == this.DOMICILIATION_MAIL_REDIRECTION_TYPE_OTHER_CODE;
+    return this.domiciliation != null && this.domiciliation.domiciliationContractType &&
+      (this.domiciliation.domiciliationContractType.code == DOMICILIATION_MAIL_REDIRECTION_CONTRAT_TYPE_1_CODE
+        || this.domiciliation.domiciliationContractType.code == DOMICILIATION_MAIL_REDIRECTION_CONTRAT_TYPE_2_CODE)
+      && this.domiciliation.mailRedirectionType && this.domiciliation.mailRedirectionType.code == this.DOMICILIATION_MAIL_REDIRECTION_TYPE_OTHER_CODE;
   }
 
   mustDecribeMail() {
-    return this.provision.domiciliation != null && this.provision.domiciliation.domiciliationContractType &&
-      (this.provision.domiciliation.domiciliationContractType.code == DOMICILIATION_EMAIL_REDIRECTION_CONTRAT_TYPE_1_CODE
-        || this.provision.domiciliation.domiciliationContractType.code == DOMICILIATION_EMAIL_REDIRECTION_CONTRAT_TYPE_2_CODE)
-      && this.provision.domiciliation.mailRedirectionType && this.provision.domiciliation!.mailRedirectionType.code == this.DOMICILIATION_MAIL_REDIRECTION_TYPE_OTHER_CODE;
+    return this.domiciliation != null && this.domiciliation.domiciliationContractType &&
+      (this.domiciliation.domiciliationContractType.code == DOMICILIATION_EMAIL_REDIRECTION_CONTRAT_TYPE_1_CODE
+        || this.domiciliation.domiciliationContractType.code == DOMICILIATION_EMAIL_REDIRECTION_CONTRAT_TYPE_2_CODE)
+      && this.domiciliation.mailRedirectionType && this.domiciliation!.mailRedirectionType.code == this.DOMICILIATION_MAIL_REDIRECTION_TYPE_OTHER_CODE;
   }
 
   fillPostalCode(city: City) {
-    if (this.provision.domiciliation! != null) {
-      if (this.provision.domiciliation!.country == null || this.provision.domiciliation!.country == undefined)
-        this.provision.domiciliation!.country = city.country;
+    if (this.domiciliation! != null) {
+      if (this.domiciliation!.country == null || this.domiciliation!.country == undefined)
+        this.domiciliation!.country = city.country;
 
-      if (this.provision.domiciliation!.country.code == COUNTRY_CODE_FRANCE && city.postalCode != null)
-        this.provision.domiciliation!.postalCode = city.postalCode;
+      if (this.domiciliation!.country.code == COUNTRY_CODE_FRANCE && city.postalCode != null)
+        this.domiciliation!.postalCode = city.postalCode;
     }
   }
 
   fillCity(postalCode: string) {
-    if (this.provision.domiciliation! != null) {
+    if (this.domiciliation! != null) {
       this.cityService.getCitiesFilteredByPostalCode(postalCode).subscribe(response => {
         if (response != null && response != undefined && response.length == 1) {
           let city = response[0];
-          if (this.provision.domiciliation! != null) {
-            if (this.provision.domiciliation!.country == null || this.provision.domiciliation!.country == undefined)
-              this.provision.domiciliation!.country = city.country;
+          if (this.domiciliation! != null) {
+            if (this.domiciliation!.country == null || this.domiciliation!.country == undefined)
+              this.domiciliation!.country = city.country;
 
-            this.provision.domiciliation!.city = city;
+            this.domiciliation!.city = city;
           }
         }
       })
@@ -176,25 +178,25 @@ export class DomiciliationComponent implements OnInit {
   }
 
   fillActivityPostalCode(city: City) {
-    if (this.provision.domiciliation! != null) {
-      if (this.provision.domiciliation!.activityCountry == null || this.provision.domiciliation!.activityCountry == undefined)
-        this.provision.domiciliation!.activityCountry = city.country;
+    if (this.domiciliation! != null) {
+      if (this.domiciliation!.activityCountry == null || this.domiciliation!.activityCountry == undefined)
+        this.domiciliation!.activityCountry = city.country;
 
-      if (this.provision.domiciliation!.activityCountry.code == COUNTRY_CODE_FRANCE && city.postalCode != null)
-        this.provision.domiciliation!.activityPostalCode = city.postalCode;
+      if (this.domiciliation!.activityCountry.code == COUNTRY_CODE_FRANCE && city.postalCode != null)
+        this.domiciliation!.activityPostalCode = city.postalCode;
     }
   }
 
   fillActivityCity(postalCode: string) {
-    if (this.provision.domiciliation! != null) {
+    if (this.domiciliation! != null) {
       this.cityService.getCitiesFilteredByPostalCode(postalCode).subscribe(response => {
         if (response != null && response != undefined && response.length == 1) {
           let city = response[0];
-          if (this.provision.domiciliation! != null) {
-            if (this.provision.domiciliation!.activityCountry == null || this.provision.domiciliation!.activityCountry == undefined)
-              this.provision.domiciliation!.activityCountry = city.country;
+          if (this.domiciliation! != null) {
+            if (this.domiciliation!.activityCountry == null || this.domiciliation!.activityCountry == undefined)
+              this.domiciliation!.activityCountry = city.country;
 
-            this.provision.domiciliation!.activityCity = city;
+            this.domiciliation!.activityCity = city;
           }
         }
       })
@@ -202,25 +204,25 @@ export class DomiciliationComponent implements OnInit {
   }
 
   fillLegalGardianPostalCode(city: City) {
-    if (this.provision.domiciliation! != null) {
-      if (this.provision.domiciliation!.legalGardianCountry == null || this.provision.domiciliation!.legalGardianCountry == undefined)
-        this.provision.domiciliation!.legalGardianCountry = city.country;
+    if (this.domiciliation! != null) {
+      if (this.domiciliation!.legalGardianCountry == null || this.domiciliation!.legalGardianCountry == undefined)
+        this.domiciliation!.legalGardianCountry = city.country;
 
-      if (this.provision.domiciliation!.legalGardianCountry.code == COUNTRY_CODE_FRANCE && city.postalCode != null)
-        this.provision.domiciliation!.legalGardianPostalCode = city.postalCode;
+      if (this.domiciliation!.legalGardianCountry.code == COUNTRY_CODE_FRANCE && city.postalCode != null)
+        this.domiciliation!.legalGardianPostalCode = city.postalCode;
     }
   }
 
   fillLegalGardianCity(postalCode: string) {
-    if (this.provision.domiciliation! != null) {
+    if (this.domiciliation! != null) {
       this.cityService.getCitiesFilteredByPostalCode(postalCode).subscribe(response => {
         if (response != null && response != undefined && response.length == 1) {
           let city = response[0];
-          if (this.provision.domiciliation! != null) {
-            if (this.provision.domiciliation!.legalGardianCountry == null || this.provision.domiciliation!.legalGardianCountry == undefined)
-              this.provision.domiciliation!.legalGardianCountry = city.country;
+          if (this.domiciliation! != null) {
+            if (this.domiciliation!.legalGardianCountry == null || this.domiciliation!.legalGardianCountry == undefined)
+              this.domiciliation!.legalGardianCountry = city.country;
 
-            this.provision.domiciliation!.legalGardianCity = city;
+            this.domiciliation!.legalGardianCity = city;
           }
         }
       })
@@ -228,34 +230,34 @@ export class DomiciliationComponent implements OnInit {
   }
 
   limitTextareaSize(numberOfLine: number) {
-    if (this.provision.domiciliation?.mailRecipient != null) {
-      var l = this.provision.domiciliation?.mailRecipient.replace(/\r\n/g, "\n").replace(/\r/g, "").split(/\n/g);//split lines
+    if (this.domiciliation?.mailRecipient != null) {
+      var l = this.domiciliation?.mailRecipient.replace(/\r\n/g, "\n").replace(/\r/g, "").split(/\n/g);//split lines
       var outValue = "";
       if (l.length > numberOfLine) {
         outValue = l.slice(0, numberOfLine).join("\n");
-        this.provision.domiciliation.mailRecipient = outValue;
+        this.domiciliation.mailRecipient = outValue;
       }
     }
   }
 
   limitTextareaSizeActivityMailRecipient(numberOfLine: number) {
-    if (this.provision.domiciliation?.activityMailRecipient != null) {
-      var l = this.provision.domiciliation?.activityMailRecipient.replace(/\r\n/g, "\n").replace(/\r/g, "").split(/\n/g);//split lines
+    if (this.domiciliation?.activityMailRecipient != null) {
+      var l = this.domiciliation?.activityMailRecipient.replace(/\r\n/g, "\n").replace(/\r/g, "").split(/\n/g);//split lines
       var outValue = "";
       if (l.length > numberOfLine) {
         outValue = l.slice(0, numberOfLine).join("\n");
-        this.provision.domiciliation.activityMailRecipient = outValue;
+        this.domiciliation.activityMailRecipient = outValue;
       }
     }
   }
 
   limitTextareaSizeLegalGardianMailRecipient(numberOfLine: number) {
-    if (this.provision.domiciliation?.legalGardianMailRecipient != null) {
-      var l = this.provision.domiciliation?.legalGardianMailRecipient.replace(/\r\n/g, "\n").replace(/\r/g, "").split(/\n/g);//split lines
+    if (this.domiciliation?.legalGardianMailRecipient != null) {
+      var l = this.domiciliation?.legalGardianMailRecipient.replace(/\r\n/g, "\n").replace(/\r/g, "").split(/\n/g);//split lines
       var outValue = "";
       if (l.length > numberOfLine) {
         outValue = l.slice(0, numberOfLine).join("\n");
-        this.provision.domiciliation.legalGardianMailRecipient = outValue;
+        this.domiciliation.legalGardianMailRecipient = outValue;
       }
     }
   }
@@ -265,7 +267,7 @@ export class DomiciliationComponent implements OnInit {
       const root = control.root as UntypedFormGroup;
 
       const fieldValue = root.get(fieldName)?.value;
-      if (this.provision.domiciliation! != undefined && this.provision.domiciliation!.isLegalPerson && (fieldValue == undefined || fieldValue == null || fieldValue.length == 0 || !validateSiren(fieldValue)))
+      if (this.domiciliation! != undefined && this.domiciliation!.isLegalPerson && (fieldValue == undefined || fieldValue == null || fieldValue.length == 0 || !validateSiren(fieldValue)))
         return {
           notFilled: true
         };
@@ -275,12 +277,12 @@ export class DomiciliationComponent implements OnInit {
 
   fillSiren(siren: Siren) {
     if (siren != undefined && siren != null) {
-      this.provision.domiciliation!.legalGardianSiren = siren!.uniteLegale.siren;
+      this.domiciliation!.legalGardianSiren = siren!.uniteLegale.siren;
       if (siren!.uniteLegale.siren != undefined && siren!.uniteLegale.siren != null) {
         if (siren.uniteLegale.periodesUniteLegale != null && siren.uniteLegale.periodesUniteLegale != undefined && siren.uniteLegale.periodesUniteLegale.length > 0) {
           siren.uniteLegale.periodesUniteLegale.forEach(periode => {
             if (periode.dateFin == null)
-              this.provision.domiciliation!.legalGardianDenomination = periode.denominationUniteLegale;
+              this.domiciliation!.legalGardianDenomination = periode.denominationUniteLegale;
             this.domiciliationForm.markAllAsTouched();
           });
         }

@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -452,7 +451,7 @@ public class QuotationController {
   @GetMapping(inputEntryPoint + "/affaire")
   public ResponseEntity<Affaire> getRna(@RequestParam Integer id) {
     Affaire affaireFound = null;
-    if (id == null || id.equals(""))
+    if (id == null)
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     try {
       affaireFound = affaireService.getAffaire(id);
@@ -527,12 +526,6 @@ public class QuotationController {
     return new ResponseEntity<Quotation>(quotation, HttpStatus.OK);
   }
 
-  @ExceptionHandler(Exception.class)
-  public void errorHandler(Exception e) {
-    System.out.println("toto");
-    e.printStackTrace();
-  }
-
   @PostMapping(inputEntryPoint + "/quotation")
   public ResponseEntity<Quotation> addOrUpdateQuotation(@RequestBody Quotation quotation) {
     try {
@@ -549,44 +542,46 @@ public class QuotationController {
       if (quotation.getQuotationLabel() == null && quotation.getQuotationLabelType() == null)
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
-      if (quotation.getProvisions() != null && quotation.getProvisions().size() > 0) {
-        for (Provision provision : quotation.getProvisions()) {
-          if (provision.getAffaire() == null)
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-          Affaire affaire = provision.getAffaire();
+      if (quotation.getAffaires() == null || quotation.getAffaires().size() == 0)
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
-          validationHelper.validateString(affaire.getAddress(), true, 60);
-          validationHelper.validateReferential(affaire.getCity(), true);
-          validationHelper.validateReferential(affaire.getCountry(), true);
-          validationHelper.validateString(affaire.getExternalReference(), false, 60);
-          validationHelper.validateReferential(affaire.getLegalForm(), true);
-          if (affaire.getCountry() != null && affaire.getCountry().getCode().equals("FR"))
-            validationHelper.validateString(affaire.getPostalCode(), true, 10);
+      for (Affaire affaire : quotation.getAffaires()) {
+        if (affaire.getProvisions() == null || affaire.getProvisions().size() == 0)
+          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
-          if (affaire.getIsIndividual()) {
-            validationHelper.validateReferential(affaire.getCivility(), true);
-            validationHelper.validateString(affaire.getFirstname(), true, 20);
-            validationHelper.validateString(affaire.getLastname(), true, 20);
+        validationHelper.validateString(affaire.getAddress(), true, 60);
+        validationHelper.validateReferential(affaire.getCity(), true);
+        validationHelper.validateReferential(affaire.getCountry(), true);
+        validationHelper.validateString(affaire.getExternalReference(), false, 60);
+        validationHelper.validateReferential(affaire.getLegalForm(), true);
+        if (affaire.getCountry() != null && affaire.getCountry().getCode().equals("FR"))
+          validationHelper.validateString(affaire.getPostalCode(), true, 10);
 
-          } else {
-            validationHelper.validateString(affaire.getDenomination(), true, 60);
-          }
-          if (affaire.getSiren() == null || affaire.getSiret() == null && affaire.getRna() == null)
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-          if (affaire.getRna() != null
-              && !validationHelper.validateRna(affaire.getRna().toUpperCase().replaceAll(" ", "")))
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-          if (affaire.getSiren() != null
-              && !validationHelper.validateSiren(affaire.getSiren().toUpperCase().replaceAll(" ", "")))
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-          if (affaire.getSiret() != null
-              && !validationHelper.validateSiret(affaire.getSiret().toUpperCase().replaceAll(" ", "")))
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        if (affaire.getIsIndividual()) {
+          validationHelper.validateReferential(affaire.getCivility(), true);
+          validationHelper.validateString(affaire.getFirstname(), true, 20);
+          validationHelper.validateString(affaire.getLastname(), true, 20);
+
+        } else {
+          validationHelper.validateString(affaire.getDenomination(), true, 60);
+        }
+        if (affaire.getSiren() == null || affaire.getSiret() == null && affaire.getRna() == null)
+          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        if (affaire.getRna() != null
+            && !validationHelper.validateRna(affaire.getRna().toUpperCase().replaceAll(" ", "")))
+          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        if (affaire.getSiren() != null
+            && !validationHelper.validateSiren(affaire.getSiren().toUpperCase().replaceAll(" ", "")))
+          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        if (affaire.getSiret() != null
+            && !validationHelper.validateSiret(affaire.getSiret().toUpperCase().replaceAll(" ", "")))
+          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        for (Provision provision : affaire.getProvisions()) {
 
           // Domiciliation
           if (provision.getDomiciliation() != null) {
             Domiciliation domiciliation = provision.getDomiciliation();
-
             validationHelper.validateReferential(domiciliation.getDomiciliationContractType(), true);
             validationHelper.validateReferential(domiciliation.getLanguage(), true);
             validationHelper.validateReferential(domiciliation.getBuildingDomiciliation(), true);
@@ -622,6 +617,7 @@ public class QuotationController {
             validationHelper.validateReferential(domiciliation.getLegalGardianCountry(), true);
 
           }
+          // Shal
           if (provision.getShal() != null) {
             Shal shal = provision.getShal();
             validationHelper.validateDateMin(shal.getPublicationDate(), true, new Date());
@@ -636,11 +632,15 @@ public class QuotationController {
             }
             validationHelper.validateString(shal.getNotice(), true);
           }
+
+          // TODO : BODACC
         }
       }
 
       quotation = quotationService.addOrUpdateQuotation(quotation);
-    } catch (ResponseStatusException e) {
+    } catch (
+
+    ResponseStatusException e) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     } catch (HttpStatusCodeException e) {
       logger.error("HTTP error when fetching quotation", e);

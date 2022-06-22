@@ -1,16 +1,16 @@
-<form [formGroup]="domiciliationForm" *ngIf="provision">
+<form [formGroup]="domiciliationForm" *ngIf="domiciliation">
   <mat-tab-group animationDuration="0ms" #tabs>
     <mat-tab label="Domiciliation">
       <div class=" form-div">
         <table class="full-width">
           <tr>
             <td>
-              <select-contract-type [(model)]="provision.domiciliation!.domiciliationContractType"
-                label="Type de contrat" [form]="domiciliationForm" propertyName="domiciliationContractType"
-                [isMandatory]="true" [isDisabled]="!editMode"></select-contract-type>
+              <select-contract-type [(model)]="domiciliation.domiciliationContractType" label="Type de contrat"
+                [form]="domiciliationForm" propertyName="domiciliationContractType" [isMandatory]="true"
+                [isDisabled]="!editMode"></select-contract-type>
             </td>
             <td style="vertical-align: baseline;">
-              <radio-group-language [(model)]="provision.domiciliation!.language" [form]="domiciliationForm"
+              <radio-group-language [(model)]="domiciliation.language" [form]="domiciliationForm"
                 propertyName="language" label="Langue de contrat"></radio-group-language>
             </td>
           </tr>
@@ -18,66 +18,65 @@
         <table class="full-width">
           <tr>
             <td>
-              <select-building-domiciliation [(model)]="provision.domiciliation!.buildingDomiciliation"
+              <select-building-domiciliation [(model)]="domiciliation.buildingDomiciliation"
                 label="Adresse de domiciliation" [form]="domiciliationForm" propertyName="buildingDomiciliation"
                 [isMandatory]="true"></select-building-domiciliation>
             </td>
             <td style="vertical-align: baseline;">
-              <select-mail-redirection [(model)]="provision.domiciliation!.mailRedirectionType"
-                label="Adresse de redirection" [form]="domiciliationForm" propertyName="mailRedirectionType"
-                [isMandatory]="true" [isDisabled]="!editMode"></select-mail-redirection>
+              <select-mail-redirection [(model)]="domiciliation.mailRedirectionType" label="Adresse de redirection"
+                [form]="domiciliationForm" propertyName="mailRedirectionType" [isMandatory]="true"
+                [isDisabled]="!editMode"></select-mail-redirection>
             </td>
           </tr>
         </table>
         <table class="full-width" *ngIf="mustDecribeAdresse()">
           <tr>
             <td>
-              <generic-textarea [(model)]="provision.domiciliation!.mailRecipient" label="Destinataire(s) courrier"
+              <generic-textarea [(model)]="domiciliation.mailRecipient" label="Destinataire(s) courrier"
                 [form]="domiciliationForm" propertyName="mailRecipient" [isMandatory]="true" [isDisabled]="!editMode"
                 [conditionnalRequired]="mustDecribeAdresse()" (filterInput)="limitTextareaSize(3)"></generic-textarea>
             </td>
             <td>
-              <generic-input [(model)]="provision.domiciliation!.address" label="Adresse" [form]="domiciliationForm"
+              <generic-input [(model)]="domiciliation.address" label="Adresse" [form]="domiciliationForm"
                 propertyName="address" [isMandatory]="true" [isDisabled]="!editMode"
                 [conditionnalRequired]="mustDecribeAdresse()" [maxLength]="20"></generic-input>
             </td>
             <td>
-              <autocomplete-city [(model)]="provision.domiciliation!.city"
-                [modelCountry]="provision.domiciliation!.country" [form]="domiciliationForm" propertyName="city"
-                [isMandatory]="true" [conditionnalRequired]="mustDecribeAdresse()"
-                (onOptionSelected)="fillPostalCode($event)"></autocomplete-city>
+              <autocomplete-city [(model)]="domiciliation.city" [modelCountry]="domiciliation.country"
+                [form]="domiciliationForm" propertyName="city" [isMandatory]="true"
+                [conditionnalRequired]="mustDecribeAdresse()" (onOptionSelected)="fillPostalCode($event)">
+              </autocomplete-city>
             </td>
             <td>
-              <autocomplete-postal-code [(model)]="provision.domiciliation!.postalCode" [form]="domiciliationForm"
+              <autocomplete-postal-code [(model)]="domiciliation.postalCode" [form]="domiciliationForm"
                 propertyName="postalCode" [isMandatory]="true" [conditionnalRequired]="mustDecribeAdresse()"
                 (onOptionSelected)="fillCity($event)"></autocomplete-postal-code>
             </td>
             <td>
-              <autocomplete-country [(model)]="provision.domiciliation!.country" [form]="domiciliationForm"
-                propertyName="country" [isMandatory]="true" [isDisabled]="!editMode"
-                [conditionnalRequired]="mustDecribeAdresse()"></autocomplete-country>
+              <autocomplete-country [(model)]="domiciliation.country" [form]="domiciliationForm" propertyName="country"
+                [isMandatory]="true" [isDisabled]="!editMode" [conditionnalRequired]="mustDecribeAdresse()">
+              </autocomplete-country>
             </td>
           </tr>
         </table>
         <table class="full-width" *ngIf="mustDecribeMail()">
           <tr>
             <td>
-              <chips-mail [(model)]="provision.domiciliation!.mails" label="Mails" [form]="domiciliationForm"
-                propertyName="mails" [isDisabled]="!editMode" [isMandatory]="true"
-                [conditionnalRequired]="mustDecribeMail()"></chips-mail>
+              <chips-mail [(model)]="domiciliation.mails" label="Mails" [form]="domiciliationForm" propertyName="mails"
+                [isDisabled]="!editMode" [isMandatory]="true" [conditionnalRequired]="mustDecribeMail()"></chips-mail>
             </td>
           </tr>
         </table>
         <table class="full-width">
           <tr>
             <td>
-              <generic-datepicker [(model)]="provision.domiciliation!.startDate" label="Date de début de domiciliation"
+              <generic-datepicker [(model)]="domiciliation.startDate" label="Date de début de domiciliation"
                 [form]="domiciliationForm" propertyName="startDate" [isMandatory]="true" [isDisabled]="!editMode">
               </generic-datepicker>
             </td>
             <td>
-              <p *ngIf="provision.domiciliation!.endDate !=undefined && provision.domiciliation!.endDate !=null">Date de
-                fin : {{provision.domiciliation!.endDate | date:'dd/MM/yyyy'}}</p>
+              <p *ngIf="domiciliation.endDate !=undefined && domiciliation.endDate !=null">Date de
+                fin : {{domiciliation.endDate | date:'dd/MM/yyyy'}}</p>
             </td>
           </tr>
         </table>
@@ -87,7 +86,7 @@
       <div class=" form-div">
         <table class="full-width">
           <tr>
-            <generic-textarea [(model)]="provision.domiciliation!.activityDescription" label="Activité de la société"
+            <generic-textarea [(model)]="domiciliation.activityDescription" label="Activité de la société"
               [form]="domiciliationForm" propertyName="activityDescription" [isMandatory]="true"
               [isDisabled]="!editMode"></generic-textarea>
           </tr>
@@ -95,29 +94,29 @@
         <table class="full-width">
           <tr>
             <td *ngIf="mustDecribeAdresse()">
-              <generic-textarea [(model)]="provision.domiciliation!.activityMailRecipient"
-                label="Destinataire(s) courrier" [form]="domiciliationForm" propertyName="Destinataire(s) courrier"
-                [isMandatory]="true" [isDisabled]="!editMode" [conditionnalRequired]="" [customValidators]=""
+              <generic-textarea [(model)]="domiciliation.activityMailRecipient" label="Destinataire(s) courrier"
+                [form]="domiciliationForm" propertyName="Destinataire(s) courrier" [isMandatory]="true"
+                [isDisabled]="!editMode" [conditionnalRequired]="" [customValidators]=""
                 (filterInput)="limitTextareaSizeActivityMailRecipient(3)"></generic-textarea>
             </td>
             <td>
-              <generic-input [(model)]="provision.domiciliation!.activityAddress" label="Adresse"
-                [form]="domiciliationForm" propertyName="activityAddress" [isMandatory]="true" [isDisabled]="!editMode"
-                [maxLength]="20"></generic-input>
+              <generic-input [(model)]="domiciliation.activityAddress" label="Adresse" [form]="domiciliationForm"
+                propertyName="activityAddress" [isMandatory]="true" [isDisabled]="!editMode" [maxLength]="20">
+              </generic-input>
             </td>
             <td>
-              <autocomplete-city [(model)]="provision.domiciliation!.activityCity"
-                [modelCountry]="provision.domiciliation!.activityCountry" [form]="domiciliationForm"
-                propertyName="activityCity" [isMandatory]="true" (onOptionSelected)="fillActivityPostalCode($event)">
+              <autocomplete-city [(model)]="domiciliation.activityCity" [modelCountry]="domiciliation.activityCountry"
+                [form]="domiciliationForm" propertyName="activityCity" [isMandatory]="true"
+                (onOptionSelected)="fillActivityPostalCode($event)">
               </autocomplete-city>
             </td>
             <td>
-              <autocomplete-postal-code [(model)]="provision.domiciliation!.activityPostalCode"
-                [form]="domiciliationForm" propertyName="activityPostalCode" [isMandatory]="true"
-                (onOptionSelected)="fillActivityCity($event)"></autocomplete-postal-code>
+              <autocomplete-postal-code [(model)]="domiciliation.activityPostalCode" [form]="domiciliationForm"
+                propertyName="activityPostalCode" [isMandatory]="true" (onOptionSelected)="fillActivityCity($event)">
+              </autocomplete-postal-code>
             </td>
             <td>
-              <autocomplete-country [(model)]="provision.domiciliation!.activityCountry" [form]="domiciliationForm"
+              <autocomplete-country [(model)]="domiciliation.activityCountry" [form]="domiciliationForm"
                 propertyName="activityCountry" [isMandatory]="true" [isDisabled]="!editMode"></autocomplete-country>
             </td>
           </tr>
@@ -125,12 +124,12 @@
         <table class="full-width">
           <tr>
             <td *ngIf="mustDecribeMail()">
-              <chips-mail [(model)]="provision.domiciliation!.activityMails" label="Mails" [form]="domiciliationForm"
+              <chips-mail [(model)]="domiciliation.activityMails" label="Mails" [form]="domiciliationForm"
                 propertyName="activityMails" [isMandatory]="true" [isDisabled]="!editMode"
                 [conditionnalRequired]="mustDecribeMail()"></chips-mail>
             </td>
             <td>
-              <generic-textarea [(model)]="provision.domiciliation!.accountingRecordDomiciliation"
+              <generic-textarea [(model)]="domiciliation.accountingRecordDomiciliation"
                 label="Lieu de conservation des documents comptables" [form]="domiciliationForm"
                 propertyName="accountingRecordDomiciliation" [isMandatory]="true" [isDisabled]="!editMode">
               </generic-textarea>
@@ -144,110 +143,109 @@
         <table class="full-width">
           <tr>
             <td>
-              <generic-toggle [(model)]="provision.domiciliation!.isLegalPerson" label="Personne morale ?"
+              <generic-toggle [(model)]="domiciliation.isLegalPerson" label="Personne morale ?"
                 [form]="domiciliationForm" propertyName="isLegalPerson"></generic-toggle>
             </td>
           </tr>
         </table>
-        <table class="full-width" *ngIf="provision.domiciliation!.isLegalPerson">
+        <table class="full-width" *ngIf="domiciliation.isLegalPerson">
           <tr>
             <td>
-              <autocomplete-legal-form [(model)]="provision.domiciliation!.legalGardianLegalForm"
-                [form]="domiciliationForm" propertyName="legalGardianLegalForm" [isMandatory]="true"
-                [isDisabled]="!editMode" [conditionnalRequired]="provision.domiciliation!.isLegalPerson">
+              <autocomplete-legal-form [(model)]="domiciliation.legalGardianLegalForm" [form]="domiciliationForm"
+                propertyName="legalGardianLegalForm" [isMandatory]="true" [isDisabled]="!editMode"
+                [conditionnalRequired]="domiciliation.isLegalPerson">
               </autocomplete-legal-form>
             </td>
             <td>
-              <autocomplete-siren [(model)]="provision.domiciliation!.legalGardianSiren" [form]="domiciliationForm"
+              <autocomplete-siren [(model)]="domiciliation.legalGardianSiren" [form]="domiciliationForm"
                 propertyName="legalGardianSiren" [isMandatory]="true"
-                [conditionnalRequired]="provision.domiciliation!.isLegalPerson" (onOptionSelected)="fillSiren($event)">
+                [conditionnalRequired]="domiciliation.isLegalPerson" (onOptionSelected)="fillSiren($event)">
               </autocomplete-siren>
             </td>
             <td>
-              <generic-input [(model)]="provision.domiciliation!.legalGardianDenomination" label="Dénomination"
+              <generic-input [(model)]="domiciliation.legalGardianDenomination" label="Dénomination"
                 [form]="domiciliationForm" propertyName="legalGardianDenomination" [isMandatory]="true"
-                [isDisabled]="!editMode" [conditionnalRequired]="provision.domiciliation!.isLegalPerson"
-                [maxLength]="60"></generic-input>
+                [isDisabled]="!editMode" [conditionnalRequired]="domiciliation.isLegalPerson" [maxLength]="60">
+              </generic-input>
             </td>
           </tr>
         </table>
-        <table class="full-width" *ngIf="provision.domiciliation!.isLegalPerson">
+        <table class="full-width" *ngIf="domiciliation.isLegalPerson">
           <tr>
-            <td *ngIf="provision.domiciliation && provision.domiciliation.id">
-              <single-attachment [entity]="provision.domiciliation!" [entityType]="DOMICILIATION_ENTITY_TYPE.entityType"
+            <td *ngIf="domiciliation && domiciliation.id">
+              <single-attachment [entity]="domiciliation" [entityType]="DOMICILIATION_ENTITY_TYPE.entityType"
                 [editMode]="editMode" [attachmentTypeCodeToDisplay]="KBIS_ATTACHMENT_TYPE_CODE">
               </single-attachment>
             </td>
           </tr>
         </table>
-        <table class=" full-width" *ngIf="!provision.domiciliation!.isLegalPerson">
+        <table class=" full-width" *ngIf="!domiciliation.isLegalPerson">
           <tr>
             <td>
-              <radio-group-civility [(model)]="provision.domiciliation!.legalGardianCivility" [form]="domiciliationForm"
+              <radio-group-civility [(model)]="domiciliation.legalGardianCivility" [form]="domiciliationForm"
                 propertyName="legalGardianCivility" label="Civilité"></radio-group-civility>
             </td>
             <td>
-              <generic-input [(model)]="provision.domiciliation!.legalGardianLastname" label="Nom"
-                [form]="domiciliationForm" propertyName="legalGardianLastname" [isMandatory]="true"
-                [isDisabled]="!editMode" [conditionnalRequired]="!provision.domiciliation!.isLegalPerson"
-                [maxLength]="20"></generic-input>
+              <generic-input [(model)]="domiciliation.legalGardianLastname" label="Nom" [form]="domiciliationForm"
+                propertyName="legalGardianLastname" [isMandatory]="true" [isDisabled]="!editMode"
+                [conditionnalRequired]="!domiciliation.isLegalPerson" [maxLength]="20"></generic-input>
             </td>
             <td>
-              <generic-input [(model)]="provision.domiciliation!.legalGardianFirstname" label="Prénom"
-                [form]="domiciliationForm" propertyName="legalGardianFirstname" [isMandatory]="true"
-                [isDisabled]="!editMode" [conditionnalRequired]="!provision.domiciliation!.isLegalPerson"
-                [maxLength]="20"></generic-input>
+              <generic-input [(model)]="domiciliation.legalGardianFirstname" label="Prénom" [form]="domiciliationForm"
+                propertyName="legalGardianFirstname" [isMandatory]="true" [isDisabled]="!editMode"
+                [conditionnalRequired]="!domiciliation.isLegalPerson" [maxLength]="20"></generic-input>
             </td>
             <td>
-              <generic-input [(model)]="provision.domiciliation!.legalGardianJob" label="Fonction"
-                [form]="domiciliationForm" propertyName="legalGardianJob" [isMandatory]="true" [isDisabled]="!editMode"
-                [conditionnalRequired]="!provision.domiciliation!.isLegalPerson" [maxLength]="20"></generic-input>
+              <generic-input [(model)]="domiciliation.legalGardianJob" label="Fonction" [form]="domiciliationForm"
+                propertyName="legalGardianJob" [isMandatory]="true" [isDisabled]="!editMode"
+                [conditionnalRequired]="!domiciliation.isLegalPerson" [maxLength]="20"></generic-input>
             </td>
           </tr>
         </table>
-        <table class="full-width" *ngIf="!provision.domiciliation!.isLegalPerson">
+        <table class="full-width" *ngIf="!domiciliation.isLegalPerson">
           <tr>
             <td>
-              <generic-datepicker [(model)]="provision.domiciliation!.legalGardianBirthdate" label="Date de naissance"
+              <generic-datepicker [(model)]="domiciliation.legalGardianBirthdate" label="Date de naissance"
                 [form]="domiciliationForm" propertyName="legalGardianBirthdate" [isMandatory]="true"
-                [isDisabled]="!editMode" [conditionnalRequired]="!provision.domiciliation!.isLegalPerson">
+                [isDisabled]="!editMode" [conditionnalRequired]="!domiciliation.isLegalPerson"
+                [maxDate]="getCurrentDate()">
               </generic-datepicker>
             </td>
             <td>
-              <generic-input [(model)]="provision.domiciliation!.legalGardianPlaceOfBirth" label="Lieu de naissance"
+              <generic-input [(model)]="domiciliation.legalGardianPlaceOfBirth" label="Lieu de naissance"
                 [form]="domiciliationForm" propertyName="legalGardianPlaceOfBirth" [isMandatory]="true"
-                [isDisabled]="!editMode" [conditionnalRequired]="!provision.domiciliation!.isLegalPerson"
-                [maxLength]="60"></generic-input>
+                [isDisabled]="!editMode" [conditionnalRequired]="!domiciliation.isLegalPerson" [maxLength]="60">
+              </generic-input>
             </td>
           </tr>
         </table>
         <table class="full-width">
           <tr>
             <td>
-              <generic-textarea [(model)]="provision.domiciliation!.legalGardianMailRecipient"
-                label="Destinataire(s) courrier" [form]="domiciliationForm" propertyName="legalGardianMailRecipient"
-                [isMandatory]="true" [isDisabled]="!editMode" [conditionnalRequired]="" [customValidators]=""
+              <generic-textarea [(model)]="domiciliation.legalGardianMailRecipient" label="Destinataire(s) courrier"
+                [form]="domiciliationForm" propertyName="legalGardianMailRecipient" [isMandatory]="true"
+                [isDisabled]="!editMode" [conditionnalRequired]="" [customValidators]=""
                 (filterInput)="limitTextareaSizeLegalGardianMailRecipient(3)"></generic-textarea>
             </td>
             <td>
-              <generic-input [(model)]="provision.domiciliation!.legalGardianAddress" label="Adresse"
-                [form]="domiciliationForm" propertyName="legalGardianAddress" [isMandatory]="true"
-                [isDisabled]="!editMode" [maxLength]="20"></generic-input>
+              <generic-input [(model)]="domiciliation.legalGardianAddress" label="Adresse" [form]="domiciliationForm"
+                propertyName="legalGardianAddress" [isMandatory]="true" [isDisabled]="!editMode" [maxLength]="20">
+              </generic-input>
             </td>
             <td>
-              <autocomplete-city [(model)]="provision.domiciliation!.legalGardianCity"
-                [modelCountry]="provision.domiciliation!.legalGardianCountry" [form]="domiciliationForm"
+              <autocomplete-city [(model)]="domiciliation.legalGardianCity"
+                [modelCountry]="domiciliation.legalGardianCountry" [form]="domiciliationForm"
                 propertyName="legalGardianCity" [isMandatory]="true"
                 (onOptionSelected)="fillLegalGardianPostalCode($event)">
               </autocomplete-city>
             </td>
             <td>
-              <autocomplete-postal-code [(model)]="provision.domiciliation!.legalGardianPostalCode"
-                [form]="domiciliationForm" propertyName="legalGardianPostalCode" [isMandatory]="true"
+              <autocomplete-postal-code [(model)]="domiciliation.legalGardianPostalCode" [form]="domiciliationForm"
+                propertyName="legalGardianPostalCode" [isMandatory]="true"
                 (onOptionSelected)="fillLegalGardianCity($event)"></autocomplete-postal-code>
             </td>
             <td>
-              <autocomplete-country [(model)]="provision.domiciliation!.legalGardianCountry" [form]="domiciliationForm"
+              <autocomplete-country [(model)]="domiciliation.legalGardianCountry" [form]="domiciliationForm"
                 propertyName="legalGardianCountry" [isMandatory]="true" [isDisabled]="!editMode"></autocomplete-country>
             </td>
           </tr>
@@ -255,24 +253,24 @@
         <table class="full-width">
           <tr>
             <td>
-              <chips-mail [(model)]="provision.domiciliation!.legalGardianMails" label="Mails"
-                [form]="domiciliationForm" propertyName="legalGardianMails" [isDisabled]="!editMode"></chips-mail>
+              <chips-mail [(model)]="domiciliation.legalGardianMails" label="Mails" [form]="domiciliationForm"
+                propertyName="legalGardianMails" [isDisabled]="!editMode"></chips-mail>
             </td>
             <td>
-              <chips-phone [(model)]="provision.domiciliation!.legalGardianPhones" label="Téléphones"
-                [form]="domiciliationForm" propertyName="legalGardianPhones" [isDisabled]="!editMode"></chips-phone>
+              <chips-phone [(model)]="domiciliation.legalGardianPhones" label="Téléphones" [form]="domiciliationForm"
+                propertyName="legalGardianPhones" [isDisabled]="!editMode"></chips-phone>
             </td>
           </tr>
         </table>
-        <table class="full-width" *ngIf="!provision.domiciliation!.isLegalPerson">
+        <table class="full-width" *ngIf="!domiciliation.isLegalPerson">
           <tr>
-            <td *ngIf="provision.domiciliation && provision.domiciliation.id">
-              <single-attachment [entity]="provision.domiciliation!" [entityType]="DOMICILIATION_ENTITY_TYPE.entityType"
+            <td *ngIf="domiciliation && domiciliation.id">
+              <single-attachment [entity]="domiciliation" [entityType]="DOMICILIATION_ENTITY_TYPE.entityType"
                 [editMode]="editMode" [attachmentTypeCodeToDisplay]="CNI_ATTACHMENT_TYPE_CODE">
               </single-attachment>
             </td>
-            <td *ngIf="provision.domiciliation && provision.domiciliation.id">
-              <single-attachment [entity]="provision.domiciliation!" [entityType]="DOMICILIATION_ENTITY_TYPE.entityType"
+            <td *ngIf="domiciliation && domiciliation.id">
+              <single-attachment [entity]="domiciliation" [entityType]="DOMICILIATION_ENTITY_TYPE.entityType"
                 [editMode]="editMode" [attachmentTypeCodeToDisplay]="PROOF_OF_ADDRESS_ATTACHMENT_TYPE_CODE">
               </single-attachment>
             </td>
@@ -280,13 +278,12 @@
         </table>
       </div>
     </mat-tab>
-    <mat-tab label="Documents" *ngIf="provision.id!=null && provision.id!=undefined">
-      <attachments [entity]="provision.domiciliation!" [editMode]="editMode"
-        [entityType]="DOMICILIATION_ENTITY_TYPE.entityType">
+    <mat-tab label="Documents" *ngIf="domiciliation.id!=null && domiciliation.id!=undefined">
+      <attachments [entity]="domiciliation" [editMode]="editMode" [entityType]="DOMICILIATION_ENTITY_TYPE.entityType">
       </attachments>
     </mat-tab>
-    <mat-tab label="Historique" *ngIf="provision && provision.id">
-      <history [entity]="provision.domiciliation!" [entityType]="DOMICILIATION_ENTITY_TYPE"></history>
+    <mat-tab label="Historique" *ngIf="domiciliation && domiciliation.id">
+      <history [entity]="domiciliation" [entityType]="DOMICILIATION_ENTITY_TYPE"></history>
     </mat-tab>
   </mat-tab-group>
 </form>

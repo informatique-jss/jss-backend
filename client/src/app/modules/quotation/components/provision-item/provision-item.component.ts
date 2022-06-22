@@ -1,12 +1,16 @@
-import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { MatExpansionPanel } from '@angular/material/expansion';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
 import { compareWithId } from 'src/app/libs/CompareHelper';
 import { PROVISION_TYPE_BODACC_CODE, PROVISION_TYPE_DOMICILIATION_CODE, PROVISION_TYPE_SHAL_CODE } from 'src/app/libs/Constants';
+import { Affaire } from '../../model/Affaire';
+import { Bodacc } from '../../model/Bodacc';
+import { Domiciliation } from '../../model/Domiciliation';
 import { Provision } from '../../model/Provision';
 import { ProvisionFamilyType } from '../../model/ProvisionFamilyType';
 import { ProvisionType } from '../../model/ProvisionType';
+import { Shal } from '../../model/Shal';
 import { ProvisionFamilyTypeService } from '../../services/provision.family.type.service';
 import { ProvisionTypeService } from '../../services/provision.type.service';
 import { BodaccMainComponent } from '../bodacc-main/bodacc-main.component';
@@ -24,8 +28,8 @@ export class ProvisionItemComponent implements OnInit {
 
   matcher: CustomErrorStateMatcher = new CustomErrorStateMatcher();
   @Input() provision: Provision = {} as Provision;
+  @Input() affaire: Affaire = {} as Affaire;
   @Input() editMode: boolean = false;
-  @Output() deleteEvent = new EventEmitter();
   @ViewChild(DomiciliationComponent) domiciliationComponent: DomiciliationComponent | undefined;
   @ViewChild(ShalComponent) shalComponent: ShalComponent | undefined;
   @ViewChild(ShalComponent) bodaccComponent: BodaccMainComponent | undefined;
@@ -52,8 +56,9 @@ export class ProvisionItemComponent implements OnInit {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes.provisions != undefined) {
-      this.provisionForm.markAllAsTouched();
+    if (changes.provision != undefined) {
+      console.log(this.provision);
+      this.provisionItemForm.markAllAsTouched();
     }
   }
 
@@ -67,17 +72,13 @@ export class ProvisionItemComponent implements OnInit {
 
     if (this.bodaccComponent)
       status = status && this.bodaccComponent.getFormStatus();
-    return status && this.provisionForm.valid;
+    return status && this.provisionItemForm.valid;
   }
 
-  provisionForm = this.formBuilder.group({
+  provisionItemForm = this.formBuilder.group({
     provisionType: ['', [Validators.required]],
     provisionFamilyType: ['', [Validators.required]],
   });
-
-  deleteProvision(provision: Provision) {
-    this.deleteEvent.emit(provision);
-  }
 
   changeProvisionType() {
     if (this.provision.provisionFamilyType) {
@@ -95,14 +96,23 @@ export class ProvisionItemComponent implements OnInit {
       return;
     }
 
-    if (this.provision.provisionType.code != PROVISION_TYPE_DOMICILIATION_CODE)
+    if (this.provision.provisionType.code != PROVISION_TYPE_DOMICILIATION_CODE) {
       this.provision.domiciliation = undefined;
+    } else {
+      this.provision.domiciliation = {} as Domiciliation;
+    }
 
-    if (this.provision.provisionType.code != PROVISION_TYPE_SHAL_CODE)
+    if (this.provision.provisionType.code != PROVISION_TYPE_SHAL_CODE) {
       this.provision.shal = undefined;
+    } else {
+      this.provision.shal = {} as Shal;
+    }
 
-    if (this.provision.provisionType.code != PROVISION_TYPE_BODACC_CODE)
+    if (this.provision.provisionType.code != PROVISION_TYPE_BODACC_CODE) {
       this.provision.bodacc = undefined;
+    } else {
+      this.provision.bodacc = {} as Bodacc;
+    }
   }
 
   compareWithId = compareWithId;

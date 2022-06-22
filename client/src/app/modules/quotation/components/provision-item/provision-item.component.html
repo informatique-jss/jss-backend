@@ -1,23 +1,26 @@
-<table class="full-width" [formGroup]="provisionForm">
+<table class="full-width" [formGroup]="provisionItemForm">
   <tr>
     <td>
       <select-provision-family (selectionChange)="changeProvisionType()" [(model)]="provision.provisionFamilyType"
-        label="Famille de service" [form]="provisionForm" propertyName="provisionFamilyType" [isMandatory]="true"
-        [isDisabled]="!editMode"></select-provision-family>
+        label="Famille de service" [form]="provisionItemForm" propertyName="provisionFamilyType" [isMandatory]="true"
+        [isDisabled]="!editMode">
+      </select-provision-family>
     </td>
     <td *ngIf="provision.provisionFamilyType">
       <select-provision-type (selectionChange)="changeProvisionType()" [(model)]="provision.provisionType"
-        label="Service" [form]="provisionForm" propertyName="provisionType" [isMandatory]="true"
+        label="Service" [form]="provisionItemForm" propertyName="provisionType" [isMandatory]="true"
         [isDisabled]="!editMode"></select-provision-type>
     </td>
   </tr>
 </table>
-<domiciliation [provision]="provision" [editMode]="editMode"
-  *ngIf="provision.provisionType &&  provision.provisionType.code==PROVISION_TYPE_DOMICILIATION_CODE">
+<domiciliation [domiciliation]="provision.domiciliation" [editMode]="editMode"
+  *ngIf="provision.domiciliation && provision.provisionType &&  provision.provisionType.code==PROVISION_TYPE_DOMICILIATION_CODE">
 </domiciliation>
-<shal [provision]="provision" [editMode]="editMode"
-  *ngIf="provision.provisionType && provision.provisionType.code==PROVISION_TYPE_SHAL_CODE">
+<span *ngIf="provision.domiciliation">tooooooooooooooooooooooo {{provision.domiciliation.address}}</span>
+<shal [shal]="provision.shal" [editMode]="editMode"
+  *ngIf="provision.shal && provision.provisionType && provision.provisionType.code==PROVISION_TYPE_SHAL_CODE"
+  [affaire]="affaire">
 </shal>
-<bodacc-main [provision]="provision" [editMode]="editMode"
-  *ngIf="provision.provisionType && provision.provisionType.code==PROVISION_TYPE_BODACC_CODE">
+<bodacc-main [bodacc]="provision.bodacc" [affaire]="affaire" [editMode]="editMode"
+  *ngIf="provision.bodacc && provision.provisionType && provision.provisionType.code==PROVISION_TYPE_BODACC_CODE">
 </bodacc-main>

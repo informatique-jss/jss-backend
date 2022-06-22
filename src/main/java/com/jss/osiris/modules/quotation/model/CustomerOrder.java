@@ -72,9 +72,9 @@ public class CustomerOrder implements IQuotation {
 	@JoinColumn(name = "id_record_type")
 	private RecordType recordType;
 
-	@OneToMany(targetEntity = Provision.class, mappedBy = "customerOrder", cascade = CascadeType.ALL)
+	@OneToMany(targetEntity = Affaire.class, mappedBy = "quotation", cascade = CascadeType.ALL)
 	@JsonManagedReference("customerOrder")
-	private List<Provision> provisions;
+	private List<Affaire> affaires;
 
 	public List<Attachment> getAttachments() {
 		return attachments;
@@ -180,12 +180,12 @@ public class CustomerOrder implements IQuotation {
 		this.recordType = recordType;
 	}
 
-	public List<Provision> getProvisions() {
-		return provisions;
+	public List<Affaire> getAffaires() {
+		return affaires;
 	}
 
-	public void setProvisions(List<Provision> provisions) {
-		this.provisions = provisions;
+	public void setAffaires(List<Affaire> affaires) {
+		this.affaires = affaires;
 	}
 
 }

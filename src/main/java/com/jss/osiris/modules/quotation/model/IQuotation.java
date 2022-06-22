@@ -24,6 +24,6 @@ public interface IQuotation extends Serializable, IId {
 
 	public RecordType getRecordType();
 
-	public List<Provision> getProvisions();
+	public List<Affaire> getAffaires();
 
 }

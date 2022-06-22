@@ -7,7 +7,7 @@
       unfold_less_double</mat-icon>
   </mat-panel-description>
 </ng-template>
-<form [formGroup]="shalForm" *ngIf="provision && provision.shal">
+<form [formGroup]="shalForm" *ngIf=" shal">
   <mat-tab-group animationDuration="0ms" #tabs>
     <mat-tab label="SHAL">
       <div class="form-div">
@@ -16,15 +16,15 @@
             <td>
               <mat-form-field class="full-width">
                 <mat-label>Support</mat-label>
-                <input matInput placeholder="Confrère" [(ngModel)]="provision.shal.confrere"
-                  [matAutocomplete]="autoSpecialOffer" formControlName="confrere" autocomplete="do-not-autofill">
+                <input matInput placeholder="Confrère" [(ngModel)]="shal.confrere" [matAutocomplete]="autoSpecialOffer"
+                  formControlName="confrere" autocomplete="do-not-autofill">
                 <button
-                  *ngIf="provision.shal.confrere==undefined || provision.shal.confrere==null || provision.shal.confrere.id ==undefined || provision.shal.confrere.id==null"
+                  *ngIf="shal.confrere==undefined || shal.confrere==null || shal.confrere.id ==undefined || shal.confrere.id==null"
                   matSuffix mat-icon-button (click)="openConfrereDialog()">
                   <mat-icon>search</mat-icon>
                 </button>
-                <button (click)="provision.shal.confrere=null"
-                  *ngIf="provision.shal.confrere!=undefined && provision.shal.confrere!=null && provision.shal.confrere.id !=undefined && provision.shal.confrere.id!=null"
+                <button (click)="shal.confrere=null"
+                  *ngIf="shal.confrere!=undefined && shal.confrere!=null && shal.confrere.id !=undefined && shal.confrere.id!=null"
                   matSuffix mat-icon-button>
                   <mat-icon>close</mat-icon>
                 </button>
@@ -36,31 +36,30 @@
                 </mat-autocomplete>
               </mat-form-field>
             </td>
-            <td *ngIf="provision.shal.confrere!=null && provision.shal.confrere!=undefined">
-              <autocomplete-department [(model)]="provision.shal.department" [form]="shalForm" propertyName="department"
+            <td *ngIf="shal.confrere!=null && shal.confrere!=undefined">
+              <autocomplete-department [(model)]="shal.department" [form]="shalForm" propertyName="department"
                 [isMandatory]="true" [isDisabled]="!editMode" (onOptionSelected)="updateCharacterPrice()">
               </autocomplete-department>
             </td>
           </tr>
         </table>
-        <table class="full-width" *ngIf="provision.shal.confrere!=null && provision.shal.confrere!=undefined">
+        <table class="full-width" *ngIf="shal.confrere!=null && shal.confrere!=undefined">
           <tr>
             <td>
-              <mat-radio-group class="radio-group-column" [(ngModel)]="provision.shal.journalType"
-                formControlName="journalType">
-                <mat-radio-button [value]="journalType" *ngFor="let journalType of provision.shal.confrere?.journalType"
-                  [checked]="this.provision.shal.journalType != undefined && this.provision.shal.journalType.id == journalType.id">
+              <mat-radio-group class="radio-group-column" [(ngModel)]="shal.journalType" formControlName="journalType">
+                <mat-radio-button [value]="journalType" *ngFor="let journalType of shal.confrere?.journalType"
+                  [checked]="this.shal.journalType != undefined && this.shal.journalType.id == journalType.id">
                   {{journalType.label}}
                 </mat-radio-button>
               </mat-radio-group>
             </td>
             <td>
-              <generic-datepicker [(model)]="provision.shal.publicationDate" label="Date de publication"
+              <generic-datepicker [(model)]="shal.publicationDate" label="Date de publication"
                 [minDate]="getCurrentDate()" [form]="shalForm" propertyName="publicationDate" [isMandatory]="true"
                 [isDisabled]="!editMode" (onDateChange)="updateCharacterPrice()"></generic-datepicker>
             </td>
             <td>
-              <generic-toggle [(model)]="provision.shal.isRedactedByJss" label="Rédigé par le JSS ?" [form]="shalForm"
+              <generic-toggle [(model)]="shal.isRedactedByJss" label="Rédigé par le JSS ?" [form]="shalForm"
                 propertyName="isRedactedByJss"></generic-toggle>
             </td>
           </tr>
@@ -74,8 +73,8 @@
             <td>
               <div *ngIf="!editMode">
                 <p>Annonce :</p>
-                <span [innerHTML]="provision.shal.notice | trustHtml"></span>
-                <p [innerHTML]='provision.shal.notice'></p>
+                <span [innerHTML]="shal.notice | trustHtml"></span>
+                <p [innerHTML]='shal.notice'></p>
               </div>
               <quill-editor [hidden]="!editMode" formControlName="notice" (onContentChanged)="setNoticeModel($event)">
               </quill-editor>
@@ -84,16 +83,13 @@
         </table>
         <table class="full-width">
           <tr>
-            <td
-              *ngIf="provision.shal.confrere!=undefined && provision.shal.department!=undefined && provision.shal.publicationDate!=undefined">
+            <td *ngIf="shal.confrere!=undefined && shal.department!=undefined && shal.publicationDate!=undefined">
               Prix au caractère : {{characterPrice.price}} €
             </td>
-            <td
-              *ngIf="provision.shal.confrere!=undefined && provision.shal.department!=undefined && provision.shal.publicationDate!=undefined">
+            <td *ngIf="shal.confrere!=undefined && shal.department!=undefined && shal.publicationDate!=undefined">
               Nombre de caractères : {{countCharacterNumber('notice')}}
             </td>
-            <td
-              *ngIf="provision.shal.confrere!=undefined && provision.shal.department!=undefined && provision.shal.publicationDate!=undefined">
+            <td *ngIf="shal.confrere!=undefined && shal.department!=undefined && shal.publicationDate!=undefined">
               Prix total : {{countCharacterNumber('notice')*characterPrice.price | number}} €
             </td>
           </tr>
@@ -101,15 +97,14 @@
         <table class="full-width">
           <tr>
             <td>
-              <select-notice-family [(model)]="provision.shal.noticeTypeFamily" label="Rubrique" [form]="shalForm"
+              <select-notice-family [(model)]="shal.noticeTypeFamily" label="Rubrique" [form]="shalForm"
                 propertyName="noticeTypeFamily" [isMandatory]="true" [isDisabled]="!editMode"></select-notice-family>
             </td>
-            <td *ngIf="provision.shal.noticeTypeFamily">
+            <td *ngIf="shal.noticeTypeFamily">
               <mat-form-field class="full-width">
                 <mat-label>Sous-rubrique(s)</mat-label>
                 <mat-chip-list #chipListNoticeTypes formControlName="noticeTypes">
-                  <mat-chip *ngFor="let noticeType of provision.shal.noticeTypes"
-                    (removed)="removeNoticeType(noticeType)">
+                  <mat-chip *ngFor="let noticeType of shal.noticeTypes" (removed)="removeNoticeType(noticeType)">
                     {{noticeType.label}}
                     <button matChipRemove *ngIf="editMode">
                       <mat-icon>cancel</mat-icon>
@@ -130,25 +125,25 @@
             <table class="full-width">
               <tr>
                 <td>
-                  <generic-toggle [(model)]="provision.shal.isLogo" label="Logo ?" [form]="shalForm"
-                    propertyName="isLogo"></generic-toggle>
+                  <generic-toggle [(model)]="shal.isLogo" label="Logo ?" [form]="shalForm" propertyName="isLogo">
+                  </generic-toggle>
                 </td>
-                <td *ngIf="provision.shal.isLogo && provision.shal.id">
-                  <single-attachment [entity]="provision.shal!" [entityType]="SHAL_ENTITY_TYPE.entityType"
-                    [editMode]="editMode" [attachmentTypeCodeToDisplay]="LOGO_ATTACHMENT_TYPE_CODE">
+                <td *ngIf="shal.isLogo && shal.id">
+                  <single-attachment [entity]="shal!" [entityType]="SHAL_ENTITY_TYPE.entityType" [editMode]="editMode"
+                    [attachmentTypeCodeToDisplay]="LOGO_ATTACHMENT_TYPE_CODE">
                   </single-attachment>
                 </td>
               </tr>
               <tr>
                 <td>
-                  <generic-toggle [(model)]="provision.shal.isHeader" label="En-tête ?" [form]="shalForm"
-                    propertyName="isHeader"></generic-toggle>
+                  <generic-toggle [(model)]="shal.isHeader" label="En-tête ?" [form]="shalForm" propertyName="isHeader">
+                  </generic-toggle>
                 </td>
               </tr>
-              <tr *ngIf="provision.shal.confrere && provision.shal.confrere.id==CONFRERE_BALO_ID">
+              <tr *ngIf="shal.confrere && shal.confrere.id==CONFRERE_BALO_ID">
                 <td>
-                  <generic-toggle [(model)]="provision.shal.isPictureBaloPackage" label="Forfait image BALO ?"
-                    [form]="shalForm" propertyName="isPictureBaloPackage"></generic-toggle>
+                  <generic-toggle [(model)]="shal.isPictureBaloPackage" label="Forfait image BALO ?" [form]="shalForm"
+                    propertyName="isPictureBaloPackage"></generic-toggle>
                 </td>
               </tr>
             </table>
@@ -157,50 +152,50 @@
         <table class="full-width">
           <tr>
             <td class="legalDisplayTd">
-              <generic-toggle [(model)]="provision.shal.isLegalDisplay" label="Affichage légal ?" [form]="shalForm"
+              <generic-toggle [(model)]="shal.isLegalDisplay" label="Affichage légal ?" [form]="shalForm"
                 propertyName="isLegalDisplay"></generic-toggle>
             </td>
-            <td *ngIf="provision.shal.isLegalDisplay">
+            <td *ngIf="shal.isLegalDisplay">
               <table class="full-width">
                 <tr>
                   <td>
-                    <generic-input [(model)]="provision.shal.posterProductionPrice" label="Production des affiches (€)"
+                    <generic-input [(model)]="shal.posterProductionPrice" label="Production des affiches (€)"
                       [form]="shalForm" propertyName="posterProductionPrice" [isMandatory]="true"
-                      [isDisabled]="!editMode" [conditionnalRequired]="provision.shal.isLegalDisplay" type="number">
+                      [isDisabled]="!editMode" [conditionnalRequired]="shal.isLegalDisplay" type="number">
                     </generic-input>
                   </td>
                   <td>
-                    <generic-input [(model)]="provision.shal.posterProductionJSSPrice" label="Prix JSS (€)"
-                      [form]="shalForm" propertyName="posterProductionJSSPrice" [isMandatory]="true"
-                      [isDisabled]="!editMode" [conditionnalRequired]="provision.shal.isLegalDisplay" type="number">
+                    <generic-input [(model)]="shal.posterProductionJSSPrice" label="Prix JSS (€)" [form]="shalForm"
+                      propertyName="posterProductionJSSPrice" [isMandatory]="true" [isDisabled]="!editMode"
+                      [conditionnalRequired]="shal.isLegalDisplay" type="number">
                     </generic-input>
                   </td>
                 </tr>
                 <tr>
                   <td>
-                    <generic-input [(model)]="provision.shal.billPostingPrice" label="Pose des affiches (€)"
-                      [form]="shalForm" propertyName="billPostingPrice" [isMandatory]="true" [isDisabled]="!editMode"
-                      [conditionnalRequired]="provision.shal.isLegalDisplay" type="number">
+                    <generic-input [(model)]="shal.billPostingPrice" label="Pose des affiches (€)" [form]="shalForm"
+                      propertyName="billPostingPrice" [isMandatory]="true" [isDisabled]="!editMode"
+                      [conditionnalRequired]="shal.isLegalDisplay" type="number">
                     </generic-input>
                   </td>
                   <td>
-                    <generic-input [(model)]="provision.shal.billPostingJSSPrice" label="Prix JSS (€)" [form]="shalForm"
+                    <generic-input [(model)]="shal.billPostingJSSPrice" label="Prix JSS (€)" [form]="shalForm"
                       propertyName="billPostingJSSPrice" [isMandatory]="true" [isDisabled]="!editMode"
-                      [conditionnalRequired]="provision.shal.isLegalDisplay" type="number">
+                      [conditionnalRequired]="shal.isLegalDisplay" type="number">
                     </generic-input>
                   </td>
                 </tr>
                 <tr>
                   <td>
-                    <generic-input [(model)]="provision.shal.bailiffReportPrice" label="Constat d'huisser (€)"
-                      [form]="shalForm" propertyName="bailiffReportPrice" [isMandatory]="true" [isDisabled]="!editMode"
-                      [conditionnalRequired]="provision.shal.isLegalDisplay" type="number">
+                    <generic-input [(model)]="shal.bailiffReportPrice" label="Constat d'huisser (€)" [form]="shalForm"
+                      propertyName="bailiffReportPrice" [isMandatory]="true" [isDisabled]="!editMode"
+                      [conditionnalRequired]="shal.isLegalDisplay" type="number">
                     </generic-input>
                   </td>
                   <td>
-                    <generic-input [(model)]="provision.shal.bailiffReportJSSPrice" label="Prix JSS (€)"
-                      [form]="shalForm" propertyName="bailiffReportJSSPrice" [isMandatory]="true"
-                      [isDisabled]="!editMode" [conditionnalRequired]="provision.shal.isLegalDisplay" type="number">
+                    <generic-input [(model)]="shal.bailiffReportJSSPrice" label="Prix JSS (€)" [form]="shalForm"
+                      propertyName="bailiffReportJSSPrice" [isMandatory]="true" [isDisabled]="!editMode"
+                      [conditionnalRequired]="shal.isLegalDisplay" type="number">
                     </generic-input>
                   </td>
                 </tr>
@@ -220,11 +215,10 @@
               </mat-panel-title>
               <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
             </mat-expansion-panel-header>
-            <mat-slide-toggle formControlName="isProofReadingDocument"
-              [(ngModel)]="provision.shal.isProofReadingDocument">
+            <mat-slide-toggle formControlName="isProofReadingDocument" [(ngModel)]="shal.isProofReadingDocument">
               Epreuve de relecture ?
             </mat-slide-toggle>
-            <addressing *ngIf="provision.shal.isProofReadingDocument" [displayMailCC]="true" [hideConsignee]="true"
+            <addressing *ngIf="shal.isProofReadingDocument" [displayMailCC]="true" [hideConsignee]="true"
               [onlyMail]="true" [editMode]="editMode" [document]="proofReadingDocument">
             </addressing>
           </mat-expansion-panel>
@@ -247,30 +241,29 @@
               <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
             </mat-expansion-panel-header>
             <mat-slide-toggle formControlName="isPublicationCertificateDocument"
-              [(ngModel)]="provision.shal.isPublicationCertificateDocument">
+              [(ngModel)]="shal.isPublicationCertificateDocument">
               Attestation de parution ?
             </mat-slide-toggle>
-            <addressing *ngIf="provision.shal.isPublicationCertificateDocument" [displayMailCC]="true"
-              [hideConsignee]="true" [onlyMail]="true" [editMode]=" editMode"
-              [document]="publicationCertificateDocument">
+            <addressing *ngIf="shal.isPublicationCertificateDocument" [displayMailCC]="true" [hideConsignee]="true"
+              [onlyMail]="true" [editMode]=" editMode" [document]="publicationCertificateDocument">
             </addressing>
           </mat-expansion-panel>
         </mat-accordion>
       </div>
     </mat-tab>
-    <mat-tab label="Historique de l'annonce" *ngIf="provision.id!=null && provision.id!=undefined">
-      <history [entity]="provision.shal" [entityType]="SHAL_ENTITY_TYPE" [displayOnlyFields]="['notice']"
+    <mat-tab label="Historique de l'annonce" *ngIf="shal.id!=null && shal.id!=undefined">
+      <history [entity]="shal" [entityType]="SHAL_ENTITY_TYPE" [displayOnlyFields]="['notice']"
         [historyActions]="getHistoryActions()"></history>
     </mat-tab>
-    <mat-tab label="Historique" *ngIf="provision.id!=null && provision.id!=undefined">
-      <history [entity]="provision.shal" [entityType]="SHAL_ENTITY_TYPE"></history>
+    <mat-tab label="Historique" *ngIf="shal.id!=null && shal.id!=undefined">
+      <history [entity]="shal" [entityType]="SHAL_ENTITY_TYPE"></history>
     </mat-tab>
-    <mat-tab label="Documents" *ngIf="provision.id!=null && provision.id!=undefined">
-      <attachments [entity]="provision.shal" [editMode]="editMode" [entityType]="SHAL_ENTITY_TYPE.entityType">
+    <mat-tab label="Documents" *ngIf="shal.id!=null && shal.id!=undefined">
+      <attachments [entity]="shal" [editMode]="editMode" [entityType]="SHAL_ENTITY_TYPE.entityType">
       </attachments>
     </mat-tab>
-    <mat-tab label="Historique" *ngIf="provision && provision.id">
-      <history [entity]="provision.shal" [entityType]="SHAL_ENTITY_TYPE"></history>
+    <mat-tab label="Historique" *ngIf="shal && shal.id">
+      <history [entity]="shal" [entityType]="SHAL_ENTITY_TYPE"></history>
     </mat-tab>
   </mat-tab-group>
 </form>

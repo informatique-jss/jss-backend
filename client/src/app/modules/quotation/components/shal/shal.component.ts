@@ -17,11 +17,11 @@ import { DocumentTypeService } from 'src/app/modules/miscellaneous/services/docu
 import { SHAL_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { Document } from "../../../miscellaneous/model/Document";
 import { DocumentType } from "../../../miscellaneous/model/DocumentType";
+import { Affaire } from '../../model/Affaire';
 import { CharacterPrice } from '../../model/CharacterPrice';
 import { Confrere } from '../../model/Confrere';
 import { JournalType } from '../../model/JournalType';
 import { NoticeType } from '../../model/NoticeType';
-import { Provision } from '../../model/Provision';
 import { Shal } from '../../model/Shal';
 import { CharacterPriceService } from '../../services/character.price.service';
 import { ConfrereService } from '../../services/confrere.service';
@@ -37,7 +37,8 @@ import { ConfrereDialogComponent } from '../confreres-dialog/confreres-dialog.co
 export class ShalComponent implements OnInit {
 
   matcher: CustomErrorStateMatcher = new CustomErrorStateMatcher();
-  @Input() provision: Provision = {} as Provision;
+  @Input() shal: Shal = {} as Shal;
+  @Input() affaire: Affaire = {} as Affaire;
   @Input() editMode: boolean = false;
 
   @ViewChild('tabs', { static: false }) tabs: any;
@@ -78,8 +79,8 @@ export class ShalComponent implements OnInit {
   ngOnInit() {
     this.confrereService.getConfreres().subscribe(response => {
       this.confreres = response;
-      if (this.provision.shal!.confrere == null || this.provision.shal!.confrere == undefined || this.provision.shal!.confrere.id == undefined)
-        this.provision.shal!.confrere = this.getJssConfrere();
+      if (this.shal!.confrere == null || this.shal!.confrere == undefined || this.shal!.confrere.id == undefined)
+        this.shal!.confrere = this.getJssConfrere();
     })
 
     this.journalTypeService.getJournalTypes().subscribe(response => {
@@ -103,38 +104,38 @@ export class ShalComponent implements OnInit {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes.provision) {
-      if (!this.provision.shal!)
-        this.provision.shal! = {} as Shal;
-      if (!this.provision.shal!.confrere)
-        this.provision.shal!.confrere = this.getJssConfrere();
-      if (!this.provision.shal!.isRedactedByJss)
-        this.provision.shal!.isRedactedByJss = false;
-      if (!this.provision.shal!.journalType)
-        this.provision.shal!.journalType = this.journalTypes[0];
-      if (!this.provision.shal!.isHeader)
-        this.provision.shal!.isHeader = false;
-      if (!this.provision.shal!.isLogo)
-        this.provision.shal!.isLogo = false;
-      if (!this.provision.shal!.isPictureBaloPackage)
-        this.provision.shal!.isPictureBaloPackage = false;
-      if (!this.provision.shal!.isLegalDisplay)
-        this.provision.shal!.isLegalDisplay = false;
-      if (!this.provision.shal!.isProofReadingDocument)
-        this.provision.shal!.isProofReadingDocument = false;
-      if (!this.provision.shal!.isPublicationCertificateDocument)
-        this.provision.shal!.isPublicationCertificateDocument = false;
-      if (this.provision.shal!.publicationDate)
-        this.provision.shal.publicationDate = new Date(this.provision.shal.publicationDate);
+    if (changes.shal) {
+      if (!this.shal!)
+        this.shal! = {} as Shal;
+      if (!this.shal!.confrere)
+        this.shal!.confrere = this.getJssConfrere();
+      if (!this.shal!.isRedactedByJss)
+        this.shal!.isRedactedByJss = false;
+      if (!this.shal!.journalType)
+        this.shal!.journalType = this.journalTypes[0];
+      if (!this.shal!.isHeader)
+        this.shal!.isHeader = false;
+      if (!this.shal!.isLogo)
+        this.shal!.isLogo = false;
+      if (!this.shal!.isPictureBaloPackage)
+        this.shal!.isPictureBaloPackage = false;
+      if (!this.shal!.isLegalDisplay)
+        this.shal!.isLegalDisplay = false;
+      if (!this.shal!.isProofReadingDocument)
+        this.shal!.isProofReadingDocument = false;
+      if (!this.shal!.isPublicationCertificateDocument)
+        this.shal!.isPublicationCertificateDocument = false;
+      if (this.shal!.publicationDate)
+        this.shal.publicationDate = new Date(this.shal.publicationDate);
       this.documentTypeService.getDocumentTypes().subscribe(response => {
         this.documentTypes = response;
-        this.publicationDocument = getDocument(PUBLICATION_TIERS_DOCUMENT_TYPE_CODE, this.provision.shal!, this.documentTypes);
-        this.proofReadingDocument = getDocument(PROOF_READING_DOCUMENT_TYPE_CODE, this.provision.shal!, this.documentTypes);
-        this.publicationCertificateDocument = getDocument(PUBLICATION_CERTIFICATE_DOCUMENT_TYPE_CODE, this.provision.shal!, this.documentTypes);
+        this.publicationDocument = getDocument(PUBLICATION_TIERS_DOCUMENT_TYPE_CODE, this.shal!, this.documentTypes);
+        this.proofReadingDocument = getDocument(PROOF_READING_DOCUMENT_TYPE_CODE, this.shal!, this.documentTypes);
+        this.publicationCertificateDocument = getDocument(PUBLICATION_CERTIFICATE_DOCUMENT_TYPE_CODE, this.shal!, this.documentTypes);
 
       })
 
-      this.shalForm.get('notice')?.setValue(this.provision.shal.notice);
+      this.shalForm.get('notice')?.setValue(this.shal.notice);
 
       this.shalForm.markAllAsTouched();
       this.toggleTabs();
@@ -163,10 +164,10 @@ export class ShalComponent implements OnInit {
 
   getFormStatus(): boolean {
     this.shalForm.markAllAsTouched();
-    if (this.provision.shal)
-      this.provision.shal.notice = this.provision.shal.notice.replace(/ +(?= )/g, '').replace(/(\r\n|\r|\n){2,}/g, '$1\n');
+    if (this.shal)
+      this.shal.notice = this.shal.notice.replace(/ +(?= )/g, '').replace(/(\r\n|\r|\n){2,}/g, '$1\n');
 
-    return this.shalForm.valid && this.provision.shal!.noticeTypes && this.provision.shal!.noticeTypes.length > 0;
+    return this.shalForm.valid && this.shal!.noticeTypes && this.shal!.noticeTypes.length > 0;
   }
 
   getCurrentDate(): Date {
@@ -174,16 +175,16 @@ export class ShalComponent implements OnInit {
   }
 
   updateCharacterPrice() {
-    if (this.provision.shal!.department != undefined && this.provision.shal!.publicationDate != undefined)
-      this.characterPriceService.getCharacterPrice(this.provision.shal!.department, this.provision.shal!.publicationDate).subscribe(response => {
+    if (this.shal!.department != undefined && this.shal!.publicationDate != undefined)
+      this.characterPriceService.getCharacterPrice(this.shal!.department, this.shal!.publicationDate).subscribe(response => {
         if (response != null)
           this.characterPrice = response;
       })
   }
 
   setNoticeModel(event: any) {
-    if (this.provision.shal)
-      this.provision.shal.notice = event.html;
+    if (this.shal)
+      this.shal.notice = event.html;
   }
 
   countCharacterNumber(fieldName: string) {
@@ -202,7 +203,7 @@ export class ShalComponent implements OnInit {
     });
     dialogSpecialOffer.afterClosed().subscribe(response => {
       if (response && response != null)
-        this.provision.shal!.confrere = response;
+        this.shal!.confrere = response;
     });
   }
 
@@ -222,27 +223,27 @@ export class ShalComponent implements OnInit {
 
   private _filterNoticeType(value: string): NoticeType[] {
     const filterValue = (value != undefined && value.toLowerCase != undefined) ? value.toLowerCase() : "";
-    return this.noticeTypes.filter(noticeType => noticeType.label != undefined && noticeType.label.toLowerCase().includes(filterValue) && noticeType.noticeTypeFamily.id == this.provision.shal!.noticeTypeFamily.id);
+    return this.noticeTypes.filter(noticeType => noticeType.label != undefined && noticeType.label.toLowerCase().includes(filterValue) && noticeType.noticeTypeFamily.id == this.shal!.noticeTypeFamily.id);
   }
 
   addNoticeType(event: MatAutocompleteSelectedEvent): void {
-    if (!this.provision.shal!.noticeTypes)
-      this.provision.shal!.noticeTypes = [] as Array<NoticeType>;
+    if (!this.shal!.noticeTypes)
+      this.shal!.noticeTypes = [] as Array<NoticeType>;
     // Do not add twice
-    if (this.provision.shal!.noticeTypes.map(noticeType => noticeType.id).indexOf(event.option.value.id) >= 0)
+    if (this.shal!.noticeTypes.map(noticeType => noticeType.id).indexOf(event.option.value.id) >= 0)
       return;
     if (event.option && event.option.value && event.option.value.id)
-      this.provision.shal!.noticeTypes.push(event.option.value);
+      this.shal!.noticeTypes.push(event.option.value);
     this.shalForm.get("noticeTypes")?.setValue(null);
     this.noticeTypesInput!.nativeElement.value = '';
   }
 
   removeNoticeType(inputNoticeType: NoticeType): void {
-    if (this.provision.shal!.noticeTypes != undefined && this.provision.shal!.noticeTypes != null && this.editMode)
-      for (let i = 0; i < this.provision.shal!.noticeTypes.length; i++) {
-        const noticeType = this.provision.shal!.noticeTypes[i];
+    if (this.shal!.noticeTypes != undefined && this.shal!.noticeTypes != null && this.editMode)
+      for (let i = 0; i < this.shal!.noticeTypes.length; i++) {
+        const noticeType = this.shal!.noticeTypes[i];
         if (noticeType.id == inputNoticeType.id) {
-          this.provision.shal!.noticeTypes.splice(i, 1);
+          this.shal!.noticeTypes.splice(i, 1);
           return;
         }
       }
@@ -253,7 +254,7 @@ export class ShalComponent implements OnInit {
 
     let exportRtfAction = {} as HistoryAction;
     exportRtfAction.actionClick = (element2: Audit): void => {
-      downloadHtmlAsRtf("Affaire " + this.provision.id + " - " + formatDate(new Date(element2.datetime)), element2.newValue);
+      downloadHtmlAsRtf("Affaire " + this.affaire.id + " - " + formatDate(new Date(element2.datetime)), element2.newValue);
 
       // TODO : marche pas ... voir solution backend
       const HtmlToRtfBrowser = require('html-to-rtf-browser');
