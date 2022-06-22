@@ -1,4 +1,4 @@
-package com.jss.jssbackend.modules.targetPackage.model;
+package com.jss.osiris.modules.targetPackage.model;
 
 import java.io.Serializable;
 
@@ -6,7 +6,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
-import com.jss.jssbackend.modules.miscellaneous.model.IId;
+import com.jss.osiris.modules.miscellaneous.model.IId;
 import javax.persistence.Id;
 
 @Entity

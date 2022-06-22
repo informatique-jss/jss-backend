@@ -32,11 +32,13 @@ import com.jss.osiris.modules.miscellaneous.repository.VatRepository;
 import com.jss.osiris.modules.miscellaneous.repository.WeekDayRepository;
 import com.jss.osiris.modules.profile.repository.EmployeeRepository;
 import com.jss.osiris.modules.profile.repository.TeamRepository;
+import com.jss.osiris.modules.quotation.repository.ActTypeRepository;
 import com.jss.osiris.modules.quotation.repository.BodaccPublicationTypeRepository;
 import com.jss.osiris.modules.quotation.repository.BuildingDomiciliationRepository;
 import com.jss.osiris.modules.quotation.repository.CharacterPriceRepository;
 import com.jss.osiris.modules.quotation.repository.ConfrereRepository;
 import com.jss.osiris.modules.quotation.repository.DomiciliationContractTypeRepository;
+import com.jss.osiris.modules.quotation.repository.FundTypeRepository;
 import com.jss.osiris.modules.quotation.repository.JournalTypeRepository;
 import com.jss.osiris.modules.quotation.repository.MailRedirectionTypeRepository;
 import com.jss.osiris.modules.quotation.repository.NoticeTypeFamilyRepository;
@@ -237,6 +239,12 @@ public class InitReferentialsController {
 
 	@Autowired
 	CompetentAuthorityTypeRepository competentAuthorityTypeRepository;
+
+	@Autowired
+	FundTypeRepository fundTypeRepository;
+
+	@Autowired
+	ActTypeRepository actTypeRepository;
 
 	@GetMapping(inputEntryPoint + "/create")
 	public void create() {
@@ -1018,12 +1026,56 @@ public class InitReferentialsController {
 		 * competentAuthorityType.setLabel("RCS");
 		 * competentAuthorityTypeRepository.save(competentAuthorityType);
 		 * 
+		 */
+		/*
+		 * CompetentAuthorityType competentAuthorityType = new CompetentAuthorityType();
+		 * competentAuthorityType.setCode("2");
+		 * competentAuthorityType.setLabel("CFP - Centre des finances publiques");
+		 * competentAuthorityTypeRepository.save(competentAuthorityType);
+		 */
+		/*
+		 * CompetentAuthorityType competentAuthorityType = new CompetentAuthorityType();
+		 * competentAuthorityType.setCode("3");
+		 * competentAuthorityType.setLabel("RCS - Registre du Commerce et des Sociétés"
+		 * );
+		 * competentAuthorityTypeRepository.save(competentAuthorityType);
+		 */
+
+		/*
 		 * competentAuthorityRepository.deleteAll();
 		 * CompetentAuthority competentAuthority = new CompetentAuthority();
 		 * competentAuthority.setCode("1");
 		 * competentAuthority.setLabel("Paris");
 		 * competentAuthority.setCompetentAuthorityType(competentAuthorityType);
 		 * competentAuthorityRepository.save(competentAuthority);
+		 */
+
+		/*
+		 * fundTypeRepository.deleteAll();
+		 * FundType fundType = new FundType();
+		 * fundType.setCode("1");
+		 * fundType.setLabel("Principal");
+		 * fundTypeRepository.save(fundType);
+		 * fundType = new FundType();
+		 * fundType.setCode("2");
+		 * fundType.setLabel("Secondaire");
+		 * fundTypeRepository.save(fundType);
+		 * fundType = new FundType();
+		 * fundType.setCode("3");
+		 * fundType.setLabel("Complémentaire");
+		 * fundTypeRepository.save(fundType);
+		 */
+
+		/*
+		 * actTypeRepository.deleteAll();
+		 * ActType actType = new ActType();
+		 * actType.setCode("1");
+		 * actType.setLabel("Sous seing privé");
+		 * actTypeRepository.save(actType);
+		 * actType = new ActType();
+		 * actType.setCode("2");
+		 * actType.setLabel("Forme authentique");
+		 * actTypeRepository.save(actType);
 		 */
 	}
 }

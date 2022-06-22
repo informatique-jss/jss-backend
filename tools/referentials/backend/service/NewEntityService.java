@@ -1,8 +1,8 @@
-package com.jss.jssbackend.modules.targetPackage.service;
+package com.jss.osiris.modules.targetPackage.service;
 
 import java.util.List;
 
-import com.jss.jssbackend.modules.targetPackage.model.NewEntity;
+import com.jss.osiris.modules.targetPackage.model.NewEntity;
 
 public interface NewEntityService {
     public List<NewEntity> getNewEntities();

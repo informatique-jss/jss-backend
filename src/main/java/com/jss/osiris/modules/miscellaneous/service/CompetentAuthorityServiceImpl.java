@@ -41,7 +41,7 @@ public class CompetentAuthorityServiceImpl implements CompetentAuthorityService 
         if (departmentId != null && authorities != null && authorities.size() > 0) {
             for (CompetentAuthority a : authorities) {
                 for (Department d : a.getDepartments()) {
-                    if (d.getId().equals(departmentId))
+                    if (d.getId().equals(departmentId) && outAuthorities.indexOf(a) < 0)
                         outAuthorities.add(a);
                 }
             }
@@ -49,5 +49,10 @@ public class CompetentAuthorityServiceImpl implements CompetentAuthorityService 
             outAuthorities = authorities;
         }
         return outAuthorities;
+    }
+
+    @Override
+    public List<CompetentAuthority> getCompetentAuthorityByCity(Integer cityId) {
+        return competentAuthorityRepository.findByCity_Id(cityId);
     }
 }

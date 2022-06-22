@@ -15,9 +15,11 @@ import org.springframework.web.multipart.MultipartFile;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.AttachmentType;
 import com.jss.osiris.modules.miscellaneous.repository.AttachmentRepository;
+import com.jss.osiris.modules.quotation.model.Bodacc;
 import com.jss.osiris.modules.quotation.model.Domiciliation;
 import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.quotation.model.Shal;
+import com.jss.osiris.modules.quotation.service.BodaccService;
 import com.jss.osiris.modules.quotation.service.DomiciliationService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.quotation.service.ShalService;
@@ -53,6 +55,9 @@ public class AttachmentServiceImpl implements AttachmentService {
     @Autowired
     ShalService shalService;
 
+    @Autowired
+    BodaccService bodaccService;
+
     @Override
     public List<Attachment> getAttachments() {
         return IterableUtils.toList(attachmentRepository.findAll());
@@ -73,7 +78,7 @@ public class AttachmentServiceImpl implements AttachmentService {
         String absoluteFilePath = storageFileService.saveFile(file, filename,
                 entityType + File.separator + idEntity);
 
-        List<Attachment> attachments = new ArrayList<Attachment>();
+        List<Attachment> attachments = getAttachmentForEntityType(entityType, idEntity);
 
         if (replaceExistingAttachementType) {
             if (entityType.equals(Tiers.class.getSimpleName())) {
@@ -86,6 +91,8 @@ public class AttachmentServiceImpl implements AttachmentService {
                 attachments = attachmentRepository.findByDomiciliationId(idEntity);
             } else if (entityType.equals(Shal.class.getSimpleName())) {
                 attachments = attachmentRepository.findByShalId(idEntity);
+            } else if (entityType.equals(Bodacc.class.getSimpleName())) {
+                attachments = attachmentRepository.findByBodaccId(idEntity);
             }
 
             if (attachments != null && attachments.size() > 0) {
@@ -129,22 +136,15 @@ public class AttachmentServiceImpl implements AttachmentService {
             if (shal == null)
                 return new ArrayList<Attachment>();
             attachment.setShal(shal);
+        } else if (entityType.equals(Bodacc.class.getSimpleName())) {
+            Bodacc bodacc = bodaccService.getBodacc(idEntity);
+            if (bodacc == null)
+                return new ArrayList<Attachment>();
+            attachment.setBodacc(bodacc);
         }
         attachmentRepository.save(attachment);
 
-        if (entityType.equals(Tiers.class.getSimpleName())) {
-            attachments = attachmentRepository.findByTiersId(idEntity);
-        } else if (entityType.equals(Responsable.class.getSimpleName())) {
-            attachments = attachmentRepository.findByResponsableId(idEntity);
-        } else if (entityType.equals(Quotation.class.getSimpleName())) {
-            attachments = attachmentRepository.findByQuotationId(idEntity);
-        } else if (entityType.equals(Domiciliation.class.getSimpleName())) {
-            attachments = attachmentRepository.findByDomiciliationId(idEntity);
-        } else if (entityType.equals(Shal.class.getSimpleName())) {
-            attachments = attachmentRepository.findByShalId(idEntity);
-        }
-
-        return attachments;
+        return getAttachmentForEntityType(entityType, idEntity);
     }
 
     @Override
@@ -158,5 +158,23 @@ public class AttachmentServiceImpl implements AttachmentService {
     public void disableDocument(Attachment attachment) {
         attachment.setIsDisabled(true);
         attachmentRepository.save(attachment);
+    }
+
+    private List<Attachment> getAttachmentForEntityType(String entityType, Integer idEntity) {
+        List<Attachment> attachments = new ArrayList<Attachment>();
+        if (entityType.equals(Tiers.class.getSimpleName())) {
+            attachments = attachmentRepository.findByTiersId(idEntity);
+        } else if (entityType.equals(Responsable.class.getSimpleName())) {
+            attachments = attachmentRepository.findByResponsableId(idEntity);
+        } else if (entityType.equals(Quotation.class.getSimpleName())) {
+            attachments = attachmentRepository.findByQuotationId(idEntity);
+        } else if (entityType.equals(Domiciliation.class.getSimpleName())) {
+            attachments = attachmentRepository.findByDomiciliationId(idEntity);
+        } else if (entityType.equals(Shal.class.getSimpleName())) {
+            attachments = attachmentRepository.findByShalId(idEntity);
+        } else if (entityType.equals(Bodacc.class.getSimpleName())) {
+            attachments = attachmentRepository.findByBodaccId(idEntity);
+        }
+        return attachments;
     }
 }

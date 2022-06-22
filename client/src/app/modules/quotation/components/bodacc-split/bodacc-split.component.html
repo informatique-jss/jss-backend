@@ -1,0 +1,161 @@
+<ng-template #accordionTools>
+  <mat-panel-description>
+    <mat-icon matTooltip="Ouvrir tous les onglets" (click)="accordion!.openAll();$event.stopPropagation();"
+      class="pointer">
+      unfold_more_double</mat-icon>
+    <mat-icon matTooltip="Fermer tous les autres onglets" (click)="accordion!.closeAll();" class="pointer">
+      unfold_less_double</mat-icon>
+  </mat-panel-description>
+</ng-template>
+
+<form [formGroup]="bodaccSplitForm" *ngIf="bodaccSplit">
+  <div class="mat-accordion-container full-width">
+    <fieldset [disabled]="editMode==false" class="fieldset-no-border">
+      <mat-accordion multi>
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Société bénéficiare
+            </mat-panel-title>
+            <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
+          </mat-expansion-panel-header>
+          <table class="full-width">
+            <tr>
+              <td>
+                <generic-input [(model)]="bodaccSplit.beneficiaryCompanyDenomination" label="Dénomination"
+                  [form]="bodaccSplitForm" propertyName="beneficiaryCompanyDenomination" [isMandatory]="true"
+                  [isDisabled]="!editMode" [maxLength]="60"></generic-input>
+              </td>
+              <td>
+                <autocomplete-siren [(model)]="bodaccSplit.beneficiaryCompanySiren" [form]="bodaccSplitForm"
+                  propertyName="beneficiaryCompanySiren" [isMandatory]="true"
+                  (onOptionSelected)="fillSirenBeneficiaryCompany($event)">
+                </autocomplete-siren>
+              </td>
+              <td>
+                <generic-input [(model)]="bodaccSplit.beneficiaryCompanyAddress" label="Adresse"
+                  [form]="bodaccSplitForm" propertyName="beneficiaryCompanyAddress" [isMandatory]="true"
+                  [isDisabled]="!editMode" [maxLength]="100">
+                </generic-input>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <autocomplete-legal-form [(model)]="bodaccSplit.beneficiaryCompanyLegalForm" [form]="bodaccSplitForm"
+                  propertyName="beneficiaryCompanyLegalForm" [isMandatory]="true" [isDisabled]="!editMode">
+                </autocomplete-legal-form>
+              </td>
+              <td>
+                <generic-input [(model)]="bodaccSplit.beneficiaryCompanyShareCapital" label="Capital social"
+                  [form]="bodaccSplitForm" propertyName="beneficiaryCompanyShareCapital" [isMandatory]="true"
+                  [isDisabled]="!editMode" type="number"></generic-input>
+              </td>
+              <td>
+                <generic-datepicker [(model)]="bodaccSplit.beneficiaryCompanyRcsDeclarationDate"
+                  label="Date de dépôt au RCS" [form]="bodaccSplitForm"
+                  propertyName="beneficiaryCompanyRcsDeclarationDate" [isMandatory]="true" [isDisabled]="!editMode">
+                </generic-datepicker>
+              </td>
+              <td>
+                <autocomplete-competent-authority [(model)]="bodaccSplit.beneficiaryCompanyRcsCompetentAuthority"
+                  [form]="bodaccSplitForm" propertyName="beneficiaryCompanyRcsCompetentAuthority" [isMandatory]="true"
+                  label="Immatriculé au RCS" [filteredCompetentAuthorityTypeCode]="COMPETENT_AUTHORITY_TYPE_RCS_CODE">
+                </autocomplete-competent-authority>
+              </td>
+            </tr>
+          </table>
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Société scindée
+            </mat-panel-title>
+            <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
+          </mat-expansion-panel-header>
+          <table class="full-width">
+            <tr>
+              <td>
+                <generic-input [(model)]="bodaccSplit.splitCompanyDenomination" label="Dénomination"
+                  [form]="bodaccSplitForm" propertyName="splitCompanyDenomination" [isMandatory]="true"
+                  [isDisabled]="!editMode" [maxLength]="60"></generic-input>
+              </td>
+              <td>
+                <autocomplete-siren [(model)]="bodaccSplit.splitCompanySiren" [form]="bodaccSplitForm"
+                  propertyName="splitCompanySiren" [isMandatory]="true"
+                  (onOptionSelected)="fillSirenSplitCompany($event)">
+                </autocomplete-siren>
+              </td>
+              <td>
+                <generic-input [(model)]="bodaccSplit.splitCompanyAddress" label="Adresse" [form]="bodaccSplitForm"
+                  propertyName="splitCompanyAddress" [isMandatory]="true" [isDisabled]="!editMode" [maxLength]="100">
+                </generic-input>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <autocomplete-legal-form [(model)]="bodaccSplit.splitCompanyLegalForm" [form]="bodaccSplitForm"
+                  propertyName="splitCompanyLegalForm" [isMandatory]="true" [isDisabled]="!editMode">
+                </autocomplete-legal-form>
+              </td>
+              <td>
+                <generic-input [(model)]="bodaccSplit.splitCompanyShareCapital" label="Capital social"
+                  [form]="bodaccSplitForm" propertyName="splitCompanyShareCapital" [isMandatory]="true"
+                  [isDisabled]="!editMode" type="number"></generic-input>
+              </td>
+              <td>
+                <generic-datepicker [(model)]="bodaccSplit.splitCompanyRcsDeclarationDate" label="Date de dépôt au RCS"
+                  [form]="bodaccSplitForm" propertyName="splitCompanyRcsDeclarationDate" [isMandatory]="true"
+                  [isDisabled]="!editMode">
+                </generic-datepicker>
+              </td>
+              <td>
+                <autocomplete-competent-authority [(model)]="bodaccSplit.splitCompanyRcsCompetentAuthority"
+                  [form]="bodaccSplitForm" propertyName="splitCompanyRcsCompetentAuthority" [isMandatory]="true"
+                  label="Immatriculé au RCS" [filteredCompetentAuthorityTypeCode]="COMPETENT_AUTHORITY_TYPE_RCS_CODE">
+                </autocomplete-competent-authority>
+              </td>
+            </tr>
+          </table>
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Scission
+            </mat-panel-title>
+            <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
+          </mat-expansion-panel-header>
+          <table class="full-width">
+            <tr>
+              <td>
+                <generic-input [(model)]="bodaccSplit.assets" label="Actif" [form]="bodaccSplitForm"
+                  propertyName="assets" [isMandatory]="true" [isDisabled]="!editMode" type="number"></generic-input>
+              </td>
+              <td>
+                <generic-input [(model)]="bodaccSplit.liabilities" label="Passif" [form]="bodaccSplitForm"
+                  propertyName="liabilities" [isMandatory]="true" [isDisabled]="!editMode" type="number">
+                </generic-input>
+              </td>
+              <td>
+                <generic-input [(model)]="bodaccSplit.splitBonus" label="Prime de scission" [form]="bodaccSplitForm"
+                  propertyName="splitBonus" [isMandatory]="true" [isDisabled]="!editMode" type="number">
+                </generic-input>
+              </td>
+              <td>
+                <generic-datepicker [(model)]="bodaccSplit.splitProjectDate" label="Date du projet de scission"
+                  [form]="bodaccSplitForm" propertyName="splitProjectDate" [isMandatory]="true"
+                  [isDisabled]="!editMode"></generic-datepicker>
+              </td>
+            </tr>
+          </table>
+          <table class="full-width">
+            <tr>
+              <generic-textarea [(model)]="bodaccSplit.exchangeRatioReport" label="Rapport d'échange"
+                [form]="bodaccSplitForm" propertyName="exchangeRatioReport" [isMandatory]="true"
+                [isDisabled]="!editMode" [numberOfLines]="4"></generic-textarea>
+            </tr>
+          </table>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </fieldset>
+  </div>
+</form>

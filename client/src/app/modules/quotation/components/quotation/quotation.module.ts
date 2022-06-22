@@ -24,8 +24,10 @@ import { QuillModule } from 'ngx-quill';
 import { MiscellaneousModule } from 'src/app/modules/miscellaneous/components/miscellaneous/miscellaneous.module';
 import { ProvisionComponent } from 'src/app/modules/quotation/components/provision/provision.component';
 import { AffaireComponent } from '../affaire/affaire.component';
+import { BodaccFusionComponent } from '../bodacc-fusion/bodacc-fusion.component';
 import { BodaccMainComponent } from '../bodacc-main/bodacc-main.component';
 import { BodaccSaleComponent } from '../bodacc-sale/bodacc-sale.component';
+import { BodaccSplitComponent } from '../bodacc-split/bodacc-split.component';
 import { ConfrereDialogComponent } from '../confreres-dialog/confreres-dialog.component';
 import { DomiciliationComponent } from '../domiciliation/domiciliation.component';
 import { OrderingCustomerComponent } from '../ordering-customer/ordering-customer.component';
@@ -97,6 +99,8 @@ const routes: Routes = [
     BodaccMainComponent,
     ProvisionItemComponent,
     BodaccSaleComponent,
+    BodaccFusionComponent,
+    BodaccSplitComponent,
     ShalComponent],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'fr-FR' }

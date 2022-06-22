@@ -14,6 +14,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.jss.osiris.modules.quotation.model.Bodacc;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.Domiciliation;
 import com.jss.osiris.modules.quotation.model.Quotation;
@@ -60,6 +61,11 @@ public class Attachment implements Serializable, IId {
 	private Shal shal;
 
 	@ManyToOne
+	@JoinColumn(name = "id_bodacc")
+	@JsonBackReference("bodacc")
+	private Bodacc bodacc;
+
+	@ManyToOne
 	@JoinColumn(name = "id_customer_order")
 	@JsonBackReference("customerOrder")
 	private CustomerOrder customerOrder;
@@ -81,6 +87,14 @@ public class Attachment implements Serializable, IId {
 
 	public void setId(Integer id) {
 		this.id = id;
+	}
+
+	public Bodacc getBodacc() {
+		return bodacc;
+	}
+
+	public void setBodacc(Bodacc bodacc) {
+		this.bodacc = bodacc;
 	}
 
 	public Tiers getTiers() {

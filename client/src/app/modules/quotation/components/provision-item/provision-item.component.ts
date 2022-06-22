@@ -9,6 +9,7 @@ import { ProvisionFamilyType } from '../../model/ProvisionFamilyType';
 import { ProvisionType } from '../../model/ProvisionType';
 import { ProvisionFamilyTypeService } from '../../services/provision.family.type.service';
 import { ProvisionTypeService } from '../../services/provision.type.service';
+import { BodaccMainComponent } from '../bodacc-main/bodacc-main.component';
 import { DomiciliationComponent } from '../domiciliation/domiciliation.component';
 import { ShalComponent } from '../shal/shal.component';
 
@@ -27,6 +28,7 @@ export class ProvisionItemComponent implements OnInit {
   @Output() deleteEvent = new EventEmitter();
   @ViewChild(DomiciliationComponent) domiciliationComponent: DomiciliationComponent | undefined;
   @ViewChild(ShalComponent) shalComponent: ShalComponent | undefined;
+  @ViewChild(ShalComponent) bodaccComponent: BodaccMainComponent | undefined;
 
   provisionFamilyTypes: ProvisionFamilyType[] = [] as Array<ProvisionFamilyType>;
   provisionTypes: ProvisionType[] = [] as Array<ProvisionType>;
@@ -62,6 +64,9 @@ export class ProvisionItemComponent implements OnInit {
 
     if (this.shalComponent)
       status = status && this.shalComponent.getFormStatus();
+
+    if (this.bodaccComponent)
+      status = status && this.bodaccComponent.getFormStatus();
     return status && this.provisionForm.valid;
   }
 

@@ -1,0 +1,159 @@
+<ng-template #accordionTools>
+  <mat-panel-description>
+    <mat-icon matTooltip="Ouvrir tous les onglets" (click)="accordion!.openAll();$event.stopPropagation();"
+      class="pointer">
+      unfold_more_double</mat-icon>
+    <mat-icon matTooltip="Fermer tous les autres onglets" (click)="accordion!.closeAll();" class="pointer">
+      unfold_less_double</mat-icon>
+  </mat-panel-description>
+</ng-template>
+
+<form [formGroup]="bodaccFusionForm" *ngIf="bodaccFusion">
+  <div class="mat-accordion-container full-width">
+    <fieldset [disabled]="editMode==false" class="fieldset-no-border">
+      <mat-accordion multi>
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Société absorbante
+            </mat-panel-title>
+            <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
+          </mat-expansion-panel-header>
+          <table class="full-width">
+            <tr>
+              <td>
+                <generic-input [(model)]="bodaccFusion.mergingCompanyDenomination" label="Dénomination"
+                  [form]="bodaccFusionForm" propertyName="mergingCompanyDenomination" [isMandatory]="true"
+                  [isDisabled]="!editMode" [maxLength]="60"></generic-input>
+              </td>
+              <td>
+                <autocomplete-siren [(model)]="bodaccFusion.mergingCompanySiren" [form]="bodaccFusionForm"
+                  propertyName="mergingCompanySiren" [isMandatory]="true"
+                  (onOptionSelected)="fillSirenMergingCompany($event)">
+                </autocomplete-siren>
+              </td>
+              <td>
+                <generic-input [(model)]="bodaccFusion.mergingCompanyAddress" label="Adresse" [form]="bodaccFusionForm"
+                  propertyName="mergingCompanyAddress" [isMandatory]="true" [isDisabled]="!editMode" [maxLength]="100">
+                </generic-input>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <autocomplete-legal-form [(model)]="bodaccFusion.mergingCompanyLegalForm" [form]="bodaccFusionForm"
+                  propertyName="mergingCompanyLegalForm" [isMandatory]="true" [isDisabled]="!editMode">
+                </autocomplete-legal-form>
+              </td>
+              <td>
+                <generic-input [(model)]="bodaccFusion.mergingCompanyShareCapital" label="Capital social"
+                  [form]="bodaccFusionForm" propertyName="mergingCompanyShareCapital" [isMandatory]="true"
+                  [isDisabled]="!editMode" type="number"></generic-input>
+              </td>
+              <td>
+                <generic-datepicker [(model)]="bodaccFusion.mergingCompanyRcsDeclarationDate"
+                  label="Date de dépôt au RCS" [form]="bodaccFusionForm" propertyName="mergingCompanyRcsDeclarationDate"
+                  [isMandatory]="true" [isDisabled]="!editMode"></generic-datepicker>
+              </td>
+              <td>
+                <autocomplete-competent-authority [(model)]="bodaccFusion.mergingCompanyRcsCompetentAuthority"
+                  [form]="bodaccFusionForm" propertyName="mergingCompanyRcsCompetentAuthority" [isMandatory]="true"
+                  label="Immatriculé au RCS" [filteredCompetentAuthorityTypeCode]="COMPETENT_AUTHORITY_TYPE_RCS_CODE">
+                </autocomplete-competent-authority>
+              </td>
+            </tr>
+          </table>
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Société absorbée
+            </mat-panel-title>
+            <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
+          </mat-expansion-panel-header>
+          <table class="full-width">
+            <tr>
+              <td>
+                <generic-input [(model)]="bodaccFusion.absorbedCompanyDenomination" label="Dénomination"
+                  [form]="bodaccFusionForm" propertyName="absorbedCompanyDenomination" [isMandatory]="true"
+                  [isDisabled]="!editMode" [maxLength]="60"></generic-input>
+              </td>
+              <td>
+                <autocomplete-siren [(model)]="bodaccFusion.absorbedCompanySiren" [form]="bodaccFusionForm"
+                  propertyName="absorbedCompanySiren" [isMandatory]="true"
+                  (onOptionSelected)="fillSirenAbsorbedCompany($event)">
+                </autocomplete-siren>
+              </td>
+              <td>
+                <generic-input [(model)]="bodaccFusion.absorbedCompanyAddress" label="Adresse" [form]="bodaccFusionForm"
+                  propertyName="absorbedCompanyAddress" [isMandatory]="true" [isDisabled]="!editMode" [maxLength]="100">
+                </generic-input>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <autocomplete-legal-form [(model)]="bodaccFusion.absorbedCompanyLegalForm" [form]="bodaccFusionForm"
+                  propertyName="absorbedCompanyLegalForm" [isMandatory]="true" [isDisabled]="!editMode">
+                </autocomplete-legal-form>
+              </td>
+              <td>
+                <generic-input [(model)]="bodaccFusion.absorbedCompanyShareCapital" label="Capital social"
+                  [form]="bodaccFusionForm" propertyName="absorbedCompanyShareCapital" [isMandatory]="true"
+                  [isDisabled]="!editMode" type="number"></generic-input>
+              </td>
+              <td>
+                <generic-datepicker [(model)]="bodaccFusion.absorbedCompanyRcsDeclarationDate"
+                  label="Date de dépôt au RCS" [form]="bodaccFusionForm"
+                  propertyName="absorbedCompanyRcsDeclarationDate" [isMandatory]="true" [isDisabled]="!editMode">
+                </generic-datepicker>
+              </td>
+              <td>
+                <autocomplete-competent-authority [(model)]="bodaccFusion.absorbedCompanyRcsCompetentAuthority"
+                  [form]="bodaccFusionForm" propertyName="absorbedCompanyRcsCompetentAuthority" [isMandatory]="true"
+                  label="Immatriculé au RCS" [filteredCompetentAuthorityTypeCode]="COMPETENT_AUTHORITY_TYPE_RCS_CODE">
+                </autocomplete-competent-authority>
+              </td>
+            </tr>
+          </table>
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Fusion
+            </mat-panel-title>
+            <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
+          </mat-expansion-panel-header>
+          <table class="full-width">
+            <tr>
+              <td>
+                <generic-input [(model)]="bodaccFusion.assets" label="Actif" [form]="bodaccFusionForm"
+                  propertyName="assets" [isMandatory]="true" [isDisabled]="!editMode" type="number"></generic-input>
+              </td>
+              <td>
+                <generic-input [(model)]="bodaccFusion.liabilities" label="Passif" [form]="bodaccFusionForm"
+                  propertyName="liabilities" [isMandatory]="true" [isDisabled]="!editMode" type="number">
+                </generic-input>
+              </td>
+              <td>
+                <generic-input [(model)]="bodaccFusion.mergerBonus" label="Prime de fusion" [form]="bodaccFusionForm"
+                  propertyName="mergerBonus" [isMandatory]="true" [isDisabled]="!editMode" type="number">
+                </generic-input>
+              </td>
+              <td>
+                <generic-datepicker [(model)]="bodaccFusion.mergingProjectDate" label="Date du projet de fusion"
+                  [form]="bodaccFusionForm" propertyName="mergingProjectDate" [isMandatory]="true"
+                  [isDisabled]="!editMode"></generic-datepicker>
+              </td>
+            </tr>
+          </table>
+          <table class="full-width">
+            <tr>
+              <generic-textarea [(model)]="bodaccFusion.exchangeRatioReport" label="Rapport d'échange"
+                [form]="bodaccFusionForm" propertyName="exchangeRatioReport" [isMandatory]="true"
+                [isDisabled]="!editMode" [numberOfLines]="4"></generic-textarea>
+            </tr>
+          </table>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </fieldset>
+  </div>
+</form>

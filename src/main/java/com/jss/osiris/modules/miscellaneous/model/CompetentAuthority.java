@@ -49,6 +49,10 @@ public class CompetentAuthority implements Serializable, IId {
 	@Column(length = 40)
 	private String iban;
 
+	@ManyToMany(cascade = CascadeType.ALL)
+	@JoinTable(name = "asso_competent_authority_city", joinColumns = @JoinColumn(name = "id_competent_authority"), inverseJoinColumns = @JoinColumn(name = "id_city"))
+	private List<City> city;
+
 	public Integer getId() {
 		return id;
 	}
@@ -71,6 +75,14 @@ public class CompetentAuthority implements Serializable, IId {
 
 	public void setPaymentTypes(List<PaymentType> paymentTypes) {
 		this.paymentTypes = paymentTypes;
+	}
+
+	public List<City> getCity() {
+		return city;
+	}
+
+	public void setCity(List<City> city) {
+		this.city = city;
 	}
 
 	public String getIban() {

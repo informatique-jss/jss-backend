@@ -1,0 +1,19 @@
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { AppRestService } from 'src/app/appRest.service';
+import { FundType } from '../../quotation/model/FundType';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class FundTypeService extends AppRestService<FundType>{
+
+  constructor(http: HttpClient) {
+    super(http, "quotation");
+  }
+
+  getFundTypes() {
+    return this.getList(new HttpParams(), "fund-types");
+  }
+
+}

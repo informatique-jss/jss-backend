@@ -1,3 +1,4 @@
+import { City } from "./City";
 import { CompetentAuthorityType } from "./CompetentAuthorityType";
 import { Department } from "./Department";
 import { Mail } from "./Mail";
@@ -14,4 +15,5 @@ export interface CompetentAuthority {
   phones: Phone[];
   mails: Mail[];
   iban: string;
+  city: City;
 }

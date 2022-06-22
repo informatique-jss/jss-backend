@@ -10,4 +10,5 @@ public interface CompetentAuthorityRepository extends CrudRepository<CompetentAu
 
     List<CompetentAuthority> findByLabelContainingIgnoreCase(String label);
 
+    List<CompetentAuthority> findByCity_Id(Integer cityId);
 }

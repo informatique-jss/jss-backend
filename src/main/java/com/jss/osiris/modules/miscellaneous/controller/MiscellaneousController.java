@@ -32,6 +32,7 @@ import com.jss.osiris.modules.miscellaneous.service.CompetentAuthorityTypeServic
 import com.jss.osiris.modules.miscellaneous.service.DocumentTypeService;
 import com.jss.osiris.modules.miscellaneous.service.LegalFormService;
 import com.jss.osiris.modules.miscellaneous.service.WeekDayService;
+import com.jss.osiris.modules.quotation.model.Bodacc;
 import com.jss.osiris.modules.quotation.model.Domiciliation;
 import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.quotation.model.Shal;
@@ -73,6 +74,24 @@ public class MiscellaneousController {
         List<CompetentAuthority> competentAuthorities = null;
         try {
             competentAuthorities = competentAuthorityService.getCompetentAuthorityByDepartment(departmentId, authority);
+        } catch (HttpStatusCodeException e) {
+            logger.error("HTTP error when fetching city", e);
+            return new ResponseEntity<List<CompetentAuthority>>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            logger.error("Error when fetching city", e);
+            return new ResponseEntity<List<CompetentAuthority>>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<List<CompetentAuthority>>(competentAuthorities, HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/competent-authorities/search/city")
+    public ResponseEntity<List<CompetentAuthority>> getCompetentAuthorityByCity(Integer cityId) {
+        if (cityId == null)
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        List<CompetentAuthority> competentAuthorities = null;
+        try {
+            competentAuthorities = competentAuthorityService.getCompetentAuthorityByCity(cityId);
         } catch (HttpStatusCodeException e) {
             logger.error("HTTP error when fetching city", e);
             return new ResponseEntity<List<CompetentAuthority>>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -221,7 +240,8 @@ public class MiscellaneousController {
                     && !entityType.equals(Responsable.class.getSimpleName())
                     && !entityType.equals(Quotation.class.getSimpleName())
                     && !entityType.equals(Shal.class.getSimpleName())
-                    && !entityType.equals(Domiciliation.class.getSimpleName()))
+                    && !entityType.equals(Domiciliation.class.getSimpleName())
+                    && !entityType.equals(Bodacc.class.getSimpleName()))
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
             return new ResponseEntity<List<Attachment>>(

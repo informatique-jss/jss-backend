@@ -46,6 +46,7 @@ import { GenericDatepickerComponent } from '../forms/generic-datepicker/generic-
 import { GenericInputComponent } from '../forms/generic-input/generic-input.component';
 import { GenericTextareaComponent } from '../forms/generic-textarea/generic-textarea.component';
 import { GenericToggleComponent } from '../forms/generic-toggle/generic-toggle.component';
+import { RadioGroupActTypeComponent } from '../forms/radio-group-act-type/radio-group-act-type.component';
 import { RadioGroupBillingClosureRecipientComponent } from '../forms/radio-group-billing-closure-recipient/radio-group-billing-closure-recipient.component';
 import { RadioGroupBillingClosureComponent } from '../forms/radio-group-billing-closure/radio-group-billing-closure.component';
 import { RadioGroupBillingLabelComponent } from '../forms/radio-group-billing-label/radio-group-billing-label.component';
@@ -59,6 +60,7 @@ import { SelectBuildingDomicilationComponent } from '../forms/select-building-do
 import { SelectContractTypeComponent } from '../forms/select-contract-type/select-contract-type.component';
 import { SelectDeliveryServiceComponent } from '../forms/select-delivery-service/select-delivery-service.component';
 import { SelectFollowupComponent } from '../forms/select-followup/select-followup.component';
+import { SelectFundTypeComponent } from '../forms/select-fund-type/select-fund-type.component';
 import { SelectGiftComponent } from '../forms/select-gift/select-gift.component';
 import { SelectMailRedirectionComponent } from '../forms/select-mail-redirection/select-mail-redirection.component';
 import { SelectNoticeFamilyComponent } from '../forms/select-notice-family/select-notice-family.component';
@@ -150,8 +152,10 @@ import { MiscellaneousComponent } from './miscellaneous.component';
     SelectBodaccPublicationTypeComponent,
     AutocompleteCompetentAuthorityComponent,
     RadioGroupTransfertFundsComponent,
+    RadioGroupActTypeComponent,
     RadioGroupRecordTypeComponent,
     AutocompleteCityComponent,
+    SelectFundTypeComponent,
     AutocompleteDepartmentComponent,
     RadioGroupQuotationLabelTypeComponent,
     TrustHtmlPipe,
@@ -180,9 +184,11 @@ import { MiscellaneousComponent } from './miscellaneous.component';
     AutocompleteResponsableComponent,
     RadioGroupTransfertFundsComponent,
     ChipsSpecialOffersComponent,
+    RadioGroupActTypeComponent,
     AutocompleteLegalFormComponent,
     SelectMailRedirectionComponent,
     RadioGroupBillingClosureComponent,
+    SelectFundTypeComponent,
     SelectProvisionTypeComponent,
     GenericCheckboxComponent,
     AutocompleteAffaireComponent,

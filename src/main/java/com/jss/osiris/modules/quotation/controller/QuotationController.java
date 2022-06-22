@@ -27,6 +27,7 @@ import com.jss.osiris.modules.miscellaneous.service.DepartmentService;
 import com.jss.osiris.modules.miscellaneous.service.LanguageService;
 import com.jss.osiris.modules.miscellaneous.service.LegalFormService;
 import com.jss.osiris.modules.miscellaneous.service.SpecialOfferService;
+import com.jss.osiris.modules.quotation.model.ActType;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.BodaccPublicationType;
 import com.jss.osiris.modules.quotation.model.BuildingDomiciliation;
@@ -34,6 +35,7 @@ import com.jss.osiris.modules.quotation.model.CharacterPrice;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.Domiciliation;
 import com.jss.osiris.modules.quotation.model.DomiciliationContractType;
+import com.jss.osiris.modules.quotation.model.FundType;
 import com.jss.osiris.modules.quotation.model.JournalType;
 import com.jss.osiris.modules.quotation.model.MailRedirectionType;
 import com.jss.osiris.modules.quotation.model.NoticeType;
@@ -50,12 +52,14 @@ import com.jss.osiris.modules.quotation.model.Shal;
 import com.jss.osiris.modules.quotation.model.Siren;
 import com.jss.osiris.modules.quotation.model.Siret;
 import com.jss.osiris.modules.quotation.model.TransfertFundsType;
+import com.jss.osiris.modules.quotation.service.ActTypeService;
 import com.jss.osiris.modules.quotation.service.AffaireService;
 import com.jss.osiris.modules.quotation.service.BodaccPublicationTypeService;
 import com.jss.osiris.modules.quotation.service.BuildingDomiciliationService;
 import com.jss.osiris.modules.quotation.service.CharacterPriceService;
 import com.jss.osiris.modules.quotation.service.ConfrereService;
 import com.jss.osiris.modules.quotation.service.DomiciliationContractTypeService;
+import com.jss.osiris.modules.quotation.service.FundTypeService;
 import com.jss.osiris.modules.quotation.service.JournalTypeService;
 import com.jss.osiris.modules.quotation.service.MailRedirectionTypeService;
 import com.jss.osiris.modules.quotation.service.NoticeTypeFamilyService;
@@ -168,6 +172,42 @@ public class QuotationController {
 
   @Autowired
   TransfertFundsTypeService transfertFundsTypeService;
+
+  @Autowired
+  FundTypeService fundTypeService;
+
+  @Autowired
+  ActTypeService actTypeService;
+
+  @GetMapping(inputEntryPoint + "/act-types")
+  public ResponseEntity<List<ActType>> getActTypes() {
+    List<ActType> actTypes = null;
+    try {
+      actTypes = actTypeService.getActTypes();
+    } catch (HttpStatusCodeException e) {
+      logger.error("HTTP error when fetching actType", e);
+      return new ResponseEntity<List<ActType>>(HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (Exception e) {
+      logger.error("Error when fetching actType", e);
+      return new ResponseEntity<List<ActType>>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    return new ResponseEntity<List<ActType>>(actTypes, HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/fund-types")
+  public ResponseEntity<List<FundType>> getFundTypes() {
+    List<FundType> fundTypes = null;
+    try {
+      fundTypes = fundTypeService.getFundTypes();
+    } catch (HttpStatusCodeException e) {
+      logger.error("HTTP error when fetching fundType", e);
+      return new ResponseEntity<List<FundType>>(HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (Exception e) {
+      logger.error("Error when fetching fundType", e);
+      return new ResponseEntity<List<FundType>>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    return new ResponseEntity<List<FundType>>(fundTypes, HttpStatus.OK);
+  }
 
   @GetMapping(inputEntryPoint + "/transfert-fund-types")
   public ResponseEntity<List<TransfertFundsType>> getTransfertFundsTypes() {
