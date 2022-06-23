@@ -17,32 +17,40 @@
       <div class="mat-elevation-z2 form-div">
         <div class="row-field-container">
           <mat-form-field class="full-width">
-            <input matInput (keyup)="applyFilter($event.target)" placeholder="Rechercher une affaire">
+            <input matInput (keyup)="applyFilter($event.target)" placeholder="Rechercher une prestation">
           </mat-form-field>
-          <button [disabled]="editMode==false" (click)="createAffaire()" mat-mini-fab color="warn" class="mini-fab-add">
+          <button *ngIf="editMode" (click)="createProvision()" mat-mini-fab color="warn"
+            matTooltip="Ajouter une prestation" class="mini-fab-add">
             <mat-icon>add</mat-icon>
           </button>
         </div>
         <mat-accordion multi>
-          <mat-expansion-panel *ngFor="let affaire of filteredAffaires; let index = index;">
+          <mat-expansion-panel *ngFor="let provision of filteredProvisions; let index = index;">
             <mat-expansion-panel-header>
               <mat-panel-title>
-                <span *ngIf="affaire">Affaire <span *ngIf="!affaire.isIndividual && affaire.denomination!=null
-                 && affaire.denomination!=undefined">{{affaire.denomination}}</span><span *ngIf="affaire.isIndividual
-                 && affaire.firstname!=null
-                 && affaire.firstname!=undefined  && affaire.lastname!=null
-                 && affaire.lastname!=undefined">{{affaire.firstname}}
-                    {{affaire.lastname}}</span>
+                <span *ngIf="provision.affaire">Affaire <span *ngIf="!provision.affaire.isIndividual && provision.affaire.denomination!=null
+                 && provision.affaire.denomination!=undefined">{{provision.affaire.denomination}}</span><span *ngIf="provision.affaire.isIndividual
+                 && provision.affaire.firstname!=null
+                 && provision.affaire.firstname!=undefined  && provision.affaire.lastname!=null
+                 && provision.affaire.lastname!=undefined">{{provision.affaire.firstname}}
+                    {{provision.affaire.lastname}}</span><span
+                    *ngIf="provision.provisionFamilyType && provision.provisionType"> - Service
+                    {{provision.provisionFamilyType.label}}/{{provision.provisionType.label}}</span>
                 </span>
               </mat-panel-title>
               <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
               <mat-panel-description>
-                <mat-icon *ngIf="affaire.id==null || affaire.id==undefined" (click)="deleteAffaire(index)"
-                  class="pointer">
+                <mat-icon *ngIf="editMode" (click)="deleteProvision(index)" class="pointer">
                   delete</mat-icon>
               </mat-panel-description>
             </mat-expansion-panel-header>
-            <affaire [affaire]="affaire" [editMode]="editMode"></affaire>
+            <affaire [(affaire)]="provision.affaire" [editMode]="editMode"></affaire>
+            <provision-item *ngIf="provision.affaire && provision.affaire.id" [editMode]="editMode"
+              [provision]="provision" [affaire]="provision.affaire">
+            </provision-item>
+            <button *ngIf="editMode && provision.affaire && provision.affaire.id"
+              (click)="createProvisionForAffaire(provision.affaire)" mat-raised-button color="accent">Ajouter une
+              prestation pour cette affaire</button>
           </mat-expansion-panel>
         </mat-accordion>
       </div>

@@ -1,8 +1,10 @@
 import { Affaire } from "./Affaire";
 import { Bodacc } from "./Bodacc";
+import { CustomerOrder } from "./CustomerOrder";
 import { Domiciliation } from "./Domiciliation";
 import { ProvisionFamilyType } from "./ProvisionFamilyType";
 import { ProvisionType } from "./ProvisionType";
+import { Quotation } from "./Quotation";
 import { Shal } from "./Shal";
 
 export interface Provision {
@@ -13,4 +15,6 @@ export interface Provision {
   bodacc: Bodacc | undefined;
   provisionFamilyType: ProvisionFamilyType;
   provisionType: ProvisionType;
+  quotation: Quotation;
+  customerOrder: CustomerOrder;
 }

@@ -9,9 +9,10 @@ import { QUOTATION_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { SearchService } from 'src/app/search.service';
 import { Affaire } from '../../model/Affaire';
 import { IQuotation } from '../../model/IQuotation';
+import { Provision } from '../../model/Provision';
 import { QuotationService } from '../../services/quotation.service';
-import { AffaireComponent } from '../affaire/affaire.component';
 import { OrderingCustomerComponent } from '../ordering-customer/ordering-customer.component';
+import { ProvisionItemComponent } from '../provision-item/provision-item.component';
 import { QuotationManagementComponent } from '../quotation-management/quotation-management.component';
 
 @Component({
@@ -32,10 +33,10 @@ export class QuotationComponent implements OnInit {
   @ViewChild('tabs', { static: false }) tabs: any;
   @ViewChild(OrderingCustomerComponent) orderingCustomerComponent: OrderingCustomerComponent | undefined;
   @ViewChild(QuotationManagementComponent) quotationManagementComponent: QuotationManagementComponent | undefined;
-  @ViewChildren(AffaireComponent) affaireComponents: any;
+  @ViewChildren(ProvisionItemComponent) provisionItemComponents: any;
   @ViewChild(MatAccordion) accordion: MatAccordion | undefined;
 
-  filteredAffaires: Affaire[] = [] as Array<Affaire>;
+  filteredProvisions: Provision[] = [] as Array<Provision>;
 
   constructor(private appService: AppService,
     private quotationService: QuotationService,
@@ -61,8 +62,8 @@ export class QuotationComponent implements OnInit {
         this.appService.changeHeaderTitle("Devis " + this.quotation.id + " - " +
           (this.quotation.quotationStatus != null ? this.quotation.quotationStatus.label : ""));
         this.toggleTabs();
-        this.sortAffaires();
-        this.filteredAffaires = this.quotation.affaires;
+        this.sortProvisions();
+        this.filteredProvisions = this.quotation.provisions;
       })
     } else if (this.createMode == false) {
       // Blank page
@@ -90,9 +91,9 @@ export class QuotationComponent implements OnInit {
     let orderingCustomerFormStatus = this.orderingCustomerComponent?.getFormStatus();
     let quotationManagementFormStatus = this.quotationManagementComponent?.getFormStatus();
 
-    let affaireStatus = true;
-    this.affaireComponents.toArray().forEach((affaireComponent: { getFormStatus: () => any; }) => {
-      affaireStatus = affaireStatus && affaireComponent.getFormStatus();
+    let provisionStatus = true;
+    this.provisionItemComponents.toArray().forEach((provisionComponent: { getFormStatus: () => any; }) => {
+      provisionStatus = provisionStatus && provisionComponent.getFormStatus();
     });
 
     let errorMessages: string[] = [] as Array<string>;
@@ -100,7 +101,7 @@ export class QuotationComponent implements OnInit {
       errorMessages.push("Onglet Donneur d'ordre");
     if (!quotationManagementFormStatus)
       errorMessages.push("Onglet Gestion du devis");
-    if (!affaireStatus)
+    if (!provisionStatus)
       errorMessages.push("Onglet Prestations");
     if (errorMessages.length > 0) {
       let errorMessage = "Les onglets suivants ne sont pas correctement remplis. Veuillez les compléter avant de sauvegarder : " + errorMessages.join(" / ");
@@ -134,67 +135,83 @@ export class QuotationComponent implements OnInit {
 
   applyFilter(filterValue: any) {
     if (filterValue == null || filterValue == undefined || filterValue.length == 0) {
-      this.filteredAffaires = this.quotation.affaires;
+      this.filteredProvisions = this.quotation.provisions;
       return;
     }
-    this.filteredAffaires = [] as Array<Affaire>;
-    if (this.quotation && this.quotation.affaires) {
-      this.quotation.affaires.forEach(affaire => {
-        const dataStr = JSON.stringify(affaire).toLowerCase();
+    this.filteredProvisions = [] as Array<Provision>;
+    if (this.quotation && this.quotation.provisions) {
+      this.quotation.provisions.forEach(provision => {
+        const dataStr = JSON.stringify(provision).toLowerCase();
         if (dataStr.indexOf(filterValue.value.toLowerCase()) >= 0)
-          this.filteredAffaires.push(affaire);
+          this.filteredProvisions.push(provision);
       })
     }
   }
 
-  createAffaire() {
-    if (this.quotation && !this.quotation.affaires)
-      this.quotation.affaires = [] as Array<Affaire>;
-    let affaire = {} as Affaire;
-    this.quotation.affaires.push(affaire);
-    this.sortAffaires();
+  createProvision(): Provision {
+    if (this.quotation && !this.quotation.provisions)
+      this.quotation.provisions = [] as Array<Provision>;
+    let provision = {} as Provision;
+    provision.affaire = {} as Affaire;
+    this.quotation.provisions.push(provision);
+    this.sortProvisions();
+    this.applyFilter(null);
+    return provision;
+  }
+
+  createProvisionForAffaire(affaire: Affaire) {
+    let provision: Provision = this.createProvision();
+    provision.affaire = affaire;
+    this.sortProvisions();
     this.applyFilter(null);
   }
 
-  deleteAffaire(index: number) {
-    if (this.filteredAffaires && this.quotation && this.quotation.affaires) {
-      for (let i = 0; i < this.quotation.affaires.length; i++) {
-        const affaire = this.quotation.affaires[i];
-        if (this.sameAffaire(affaire, this.filteredAffaires[index]))
-          this.quotation.affaires.splice(i, 1);
+  deleteProvision(index: number) {
+    if (this.filteredProvisions && this.quotation && this.quotation.provisions) {
+      for (let i = 0; i < this.quotation.provisions.length; i++) {
+        const provision = this.quotation.provisions[i];
+        if (this.sameProvision(provision, this.filteredProvisions[index]))
+          this.quotation.provisions.splice(i, 1);
       }
     }
     this.applyFilter(null);
   }
 
-  sameAffaire(p1: Affaire, p2: Affaire): boolean {
+  sameProvision(p1: Provision, p2: Provision): boolean {
     return JSON.stringify(p1).toLowerCase() == JSON.stringify(p2).toLowerCase();
   }
 
-  sortAffaires() {
-    if (this.quotation && this.quotation.affaires)
-      this.quotation.affaires.sort((a: Affaire, b: Affaire) => {
-        if (a == null && b != null)
+  sortProvisions() {
+    if (this.quotation && this.quotation.provisions)
+      this.quotation.provisions.sort((a: Provision, b: Provision) => {
+        if (!a && b)
           return -1;
-        if (b != null && b == null)
+        if (a && !b)
           return 1;
-        if (a.id == null && b.id != null)
-          return -1;
-        if (b.id != null && b.id == null)
-          return 1;
-        if (a == null && b == null)
+        if (!a && !b)
           return 0;
+        if (!a.id && b.id)
+          return -1;
+        if (a.id && !b.id)
+          return 1;
+        if (!a.affaire && b.affaire)
+          return -1;
+        if (a.affaire && !b.affaire)
+          return 1;
+        if (!a.affaire && !b.affaire)
+          return 0;
+
         let nameA = "";
         let nameB = "";
-        if (a.isIndividual) {
-          nameA = (a.firstname != null ? a.firstname : "") + (a.lastname != null ? a.lastname : "");
+        if (a.affaire.isIndividual) {
+          nameA = (a.affaire.firstname != null ? a.affaire.firstname : "") + (a.affaire.lastname != null ? a.affaire.lastname : "");
         } else {
-          nameA = a.denomination;
+          nameA = a.affaire.denomination;
         }
-        if (b.isIndividual) {
-          nameB = (b.firstname != null ? b.firstname : "") + (b.lastname != null ? b.lastname : "");
+        if (b.affaire.isIndividual) {
+          nameB = (b.affaire.firstname != null ? b.affaire.firstname : "") + (b.affaire.lastname != null ? b.affaire.lastname : "");
         } else {
-          nameB = b.denomination;
+          nameB = b.affaire.denomination;
         }
         return nameA.localeCompare(nameB);
       })

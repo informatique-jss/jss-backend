@@ -1,4 +1,8 @@
 .mini-fab {
-  top: 10px;
+  top: -10px;
   left: 10px;
+}
+
+.mini-fab-td {
+  width: 40px;
 }

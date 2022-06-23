@@ -16,28 +16,24 @@
             <td>
               <mat-form-field class="full-width">
                 <mat-label>Support</mat-label>
-                <<<<<<< HEAD <input matInput placeholder="Support" [(ngModel)]="shal.confrere"
-                  [matAutocomplete]="autoSpecialOffer" formControlName="confrere" autocomplete="do-not-autofill">
-                  =======
-                  <input matInput placeholder="Confrère" [(ngModel)]="shal.confrere"
-                    [matAutocomplete]="autoSpecialOffer" formControlName="confrere" autocomplete="do-not-autofill">
-                  >>>>>>> feature/multiprovision
-                  <button
-                    *ngIf="shal.confrere==undefined || shal.confrere==null || shal.confrere.id ==undefined || shal.confrere.id==null"
-                    matSuffix mat-icon-button (click)="openConfrereDialog()">
-                    <mat-icon>search</mat-icon>
-                  </button>
-                  <button (click)="shal.confrere=null"
-                    *ngIf="shal.confrere!=undefined && shal.confrere!=null && shal.confrere.id !=undefined && shal.confrere.id!=null"
-                    matSuffix mat-icon-button>
-                    <mat-icon>close</mat-icon>
-                  </button>
-                  <mat-autocomplete autoActiveFirstOption #autoSpecialOffer="matAutocomplete"
-                    [displayWith]="displayConfrere">
-                    <mat-option *ngFor="let confrere of filteredConfreres | async" [value]="confrere">
-                      {{confrere.denomination}}
-                    </mat-option>
-                  </mat-autocomplete>
+                <input matInput placeholder="Support" [(ngModel)]="shal.confrere" [matAutocomplete]="autoSpecialOffer"
+                  formControlName="confrere" autocomplete="do-not-autofill">
+                <button
+                  *ngIf="shal.confrere==undefined || shal.confrere==null || shal.confrere.id ==undefined || shal.confrere.id==null"
+                  matSuffix mat-icon-button (click)="openConfrereDialog()">
+                  <mat-icon>search</mat-icon>
+                </button>
+                <button (click)="shal.confrere=null"
+                  *ngIf="shal.confrere!=undefined && shal.confrere!=null && shal.confrere.id !=undefined && shal.confrere.id!=null"
+                  matSuffix mat-icon-button>
+                  <mat-icon>close</mat-icon>
+                </button>
+                <mat-autocomplete autoActiveFirstOption #autoSpecialOffer="matAutocomplete"
+                  [displayWith]="displayConfrere">
+                  <mat-option *ngFor="let confrere of filteredConfreres | async" [value]="confrere">
+                    {{confrere.denomination}}
+                  </mat-option>
+                </mat-autocomplete>
               </mat-form-field>
             </td>
             <td *ngIf="shal.confrere!=null && shal.confrere!=undefined">
@@ -132,14 +128,14 @@
             <td *ngIf="shal.noticeTypeFamily">
               <mat-form-field class="full-width">
                 <mat-label>Sous-rubrique(s)</mat-label>
-                <mat-chip-list #chipListNoticeTypes formControlName="noticeTypes">
+                <mat-chip-list #chipListNoticeTypes>
                   <mat-chip *ngFor="let noticeType of shal.noticeTypes" (removed)="removeNoticeType(noticeType)">
                     {{noticeType.label}}
                     <button matChipRemove *ngIf="editMode">
                       <mat-icon>cancel</mat-icon>
                     </button>
                   </mat-chip>
-                  <input placeholder="Saisir une sous-rubrique" #noticeTypesInput
+                  <input placeholder="Saisir une sous-rubrique" #noticeTypesInput formControlName="noticeTypes"
                     [matChipInputFor]="chipListNoticeTypes" [matChipInputSeparatorKeyCodes]="SEPARATOR_KEY_CODES"
                     [matAutocomplete]="autoCompleteNoticeTypes">
                 </mat-chip-list>
@@ -150,6 +146,7 @@
                   </mat-option>
                 </mat-autocomplete>
               </mat-form-field>
+
             </td>
           </tr>
         </table>

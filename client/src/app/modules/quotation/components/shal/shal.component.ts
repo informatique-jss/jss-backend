@@ -274,6 +274,7 @@ export class ShalComponent implements OnInit {
   }
 
   private _filterNoticeType(value: string): NoticeType[] {
+    console.log("toto");
     const filterValue = (value != undefined && value.toLowerCase != undefined) ? value.toLowerCase() : "";
     return this.noticeTypes.filter(noticeType => noticeType.label != undefined && noticeType.label.toLowerCase().includes(filterValue) && noticeType.noticeTypeFamily.id == this.shal!.noticeTypeFamily.id);
   }

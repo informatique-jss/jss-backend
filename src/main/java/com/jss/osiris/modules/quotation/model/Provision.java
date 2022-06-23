@@ -23,9 +23,9 @@ public class Provision implements Serializable, IId {
 	private Integer id;
 
 	@ManyToOne
-	@JoinColumn(name = "id_affaire")
-	@JsonBackReference("affaire")
-	private Affaire affaire;
+	@JoinColumn(name = "id_quotation")
+	@JsonBackReference("quotation")
+	private Quotation quotation;
 
 	@ManyToOne
 	@JoinColumn(name = "id_provision_type")
@@ -35,15 +35,19 @@ public class Provision implements Serializable, IId {
 	@JoinColumn(name = "id_provision_family_type")
 	private ProvisionFamilyType provisionFamilyType;
 
-	@OneToOne(targetEntity = Domiciliation.class, mappedBy = "provision", cascade = CascadeType.ALL)
+	@OneToOne
+	@JoinColumn(name = "id_affaire")
+	private Affaire affaire;
+
+	@OneToOne(targetEntity = Domiciliation.class, mappedBy = "provision", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonManagedReference("provision")
 	private Domiciliation domiciliation;
 
-	@OneToOne(targetEntity = Shal.class, mappedBy = "provision", cascade = CascadeType.ALL)
+	@OneToOne(targetEntity = Shal.class, mappedBy = "provision", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonManagedReference("provision")
 	private Shal shal;
 
-	@OneToOne(targetEntity = Bodacc.class, mappedBy = "provision", cascade = CascadeType.ALL)
+	@OneToOne(targetEntity = Bodacc.class, mappedBy = "provision", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonManagedReference("provision")
 	private Bodacc bodacc;
 
@@ -55,12 +59,20 @@ public class Provision implements Serializable, IId {
 		this.id = id;
 	}
 
+	public Quotation getQuotation() {
+		return quotation;
+	}
+
 	public Affaire getAffaire() {
 		return affaire;
 	}
 
 	public void setAffaire(Affaire affaire) {
 		this.affaire = affaire;
+	}
+
+	public void setQuotation(Quotation quotation) {
+		this.quotation = quotation;
 	}
 
 	public ProvisionType getProvisionType() {

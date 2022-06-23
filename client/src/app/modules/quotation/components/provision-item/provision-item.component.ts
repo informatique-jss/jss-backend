@@ -98,19 +98,19 @@ export class ProvisionItemComponent implements OnInit {
 
     if (this.provision.provisionType.code != PROVISION_TYPE_DOMICILIATION_CODE) {
       this.provision.domiciliation = undefined;
-    } else {
+    } else if (!this.provision.domiciliation) {
       this.provision.domiciliation = {} as Domiciliation;
     }
 
     if (this.provision.provisionType.code != PROVISION_TYPE_SHAL_CODE) {
       this.provision.shal = undefined;
-    } else {
+    } else if (!this.provision.shal) {
       this.provision.shal = {} as Shal;
     }
 
     if (this.provision.provisionType.code != PROVISION_TYPE_BODACC_CODE) {
       this.provision.bodacc = undefined;
-    } else {
+    } else if (!this.provision.bodacc) {
       this.provision.bodacc = {} as Bodacc;
     }
   }

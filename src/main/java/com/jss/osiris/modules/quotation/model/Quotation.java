@@ -49,10 +49,6 @@ public class Quotation implements IQuotation {
 	@JoinTable(name = "asso_quotation_special_offer", joinColumns = @JoinColumn(name = "id_quotation"), inverseJoinColumns = @JoinColumn(name = "id_special_offer"))
 	private List<SpecialOffer> specialOffers;
 
-	@ManyToOne
-	@JoinColumn(name = "id_quotation")
-	private CustomerOrder customerOrder;
-
 	@IndexedField
 	private Date createdDate;
 
@@ -85,10 +81,9 @@ public class Quotation implements IQuotation {
 	@JoinColumn(name = "id_record_type")
 	private RecordType recordType;
 
-	@OneToMany(targetEntity = Affaire.class, mappedBy = "quotation", cascade = { CascadeType.MERGE,
-			CascadeType.REMOVE })
+	@OneToMany(targetEntity = Provision.class, mappedBy = "quotation", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonManagedReference("quotation")
-	private List<Affaire> affaires;
+	private List<Provision> provisions;
 
 	public Integer getId() {
 		return id;
@@ -110,6 +105,14 @@ public class Quotation implements IQuotation {
 		return responsable;
 	}
 
+	public List<Provision> getProvisions() {
+		return provisions;
+	}
+
+	public void setProvisions(List<Provision> provisions) {
+		this.provisions = provisions;
+	}
+
 	public void setResponsable(Responsable responsable) {
 		this.responsable = responsable;
 	}
@@ -120,14 +123,6 @@ public class Quotation implements IQuotation {
 
 	public void setSpecialOffer(SpecialOffer specialOffer) {
 		this.specialOffer = specialOffer;
-	}
-
-	public CustomerOrder getCustomerOrder() {
-		return customerOrder;
-	}
-
-	public void setCustomerOrder(CustomerOrder customerOrder) {
-		this.customerOrder = customerOrder;
 	}
 
 	public Date getCreatedDate() {
@@ -180,14 +175,6 @@ public class Quotation implements IQuotation {
 
 	public QuotationLabelType getQuotationLabelType() {
 		return quotationLabelType;
-	}
-
-	public List<Affaire> getAffaires() {
-		return affaires;
-	}
-
-	public void setAffaires(List<Affaire> affaires) {
-		this.affaires = affaires;
 	}
 
 	public void setQuotationLabelType(QuotationLabelType quotationLabelType) {

@@ -22,6 +22,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule, Routes } from '@angular/router';
 import { QuillModule } from 'ngx-quill';
 import { MiscellaneousModule } from 'src/app/modules/miscellaneous/components/miscellaneous/miscellaneous.module';
+import { AddAffaireDialogComponent } from '../add-affaire-dialog/add-affaire-dialog.component';
 import { AffaireComponent } from '../affaire/affaire.component';
 import { BodaccFusionComponent } from '../bodacc-fusion/bodacc-fusion.component';
 import { BodaccMainComponent } from '../bodacc-main/bodacc-main.component';
@@ -95,6 +96,7 @@ const routes: Routes = [
     DomiciliationComponent,
     ConfrereDialogComponent,
     BodaccMainComponent,
+    AddAffaireDialogComponent,
     ProvisionItemComponent,
     BodaccSaleComponent,
     BodaccFusionComponent,

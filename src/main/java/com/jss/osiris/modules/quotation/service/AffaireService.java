@@ -8,4 +8,6 @@ public interface AffaireService {
     public List<Affaire> getAffaires();
 
     public Affaire getAffaire(Integer id);
+
+    public Affaire addOrUpdateAffaire(Affaire affaire);
 }

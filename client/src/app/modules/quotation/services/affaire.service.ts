@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AppRestService } from 'src/app/appRest.service';
 import { Affaire } from '../../quotation/model/Affaire';
@@ -14,5 +14,9 @@ export class AffaireService extends AppRestService<Affaire>{
 
   getAffaire(affaireId: number) {
     return this.getById("affaire", affaireId);
+  }
+
+  addOrUpdateAffaire(affaire: Affaire) {
+    return this.addOrUpdate(new HttpParams(), "affaire", affaire, "Affaire créée", "Erreur lors de l'enregistrement de l'affaire");
   }
 }

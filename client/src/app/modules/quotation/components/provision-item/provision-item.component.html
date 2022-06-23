@@ -16,7 +16,6 @@
 <domiciliation [domiciliation]="provision.domiciliation" [editMode]="editMode"
   *ngIf="provision.domiciliation && provision.provisionType &&  provision.provisionType.code==PROVISION_TYPE_DOMICILIATION_CODE">
 </domiciliation>
-<span *ngIf="provision.domiciliation">tooooooooooooooooooooooo {{provision.domiciliation.address}}</span>
 <shal [shal]="provision.shal" [editMode]="editMode"
   *ngIf="provision.shal && provision.provisionType && provision.provisionType.code==PROVISION_TYPE_SHAL_CODE"
   [affaire]="affaire">

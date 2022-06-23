@@ -16,6 +16,9 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
@@ -57,7 +60,8 @@ public class Shal implements Serializable, IId {
 	private NoticeTypeFamily noticeTypeFamily;
 
 	@ManyToMany
-	@JoinTable(name = "asso_shal_notice_type", joinColumns = @JoinColumn(name = "id_shal"), inverseJoinColumns = @JoinColumn(name = "id_notice_type"))
+	@OnDelete(action = OnDeleteAction.CASCADE)
+	@JoinTable(name = "asso_shal_notice_type", joinColumns = @JoinColumn(name = "id_shal"), inverseJoinColumns = @JoinColumn(name = "id_notice_type")) //, foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, foreignKeyDefinition = "CONSTRAINT fk6598t57m6tm81ivpr74lfy9qa FOREIGN KEY (id_shal)  REFERENCES public.shal (id) ON  DELETE CASCADE"))
 	private List<NoticeType> noticeTypes;
 
 	@Column(nullable = false, columnDefinition = "TEXT")
@@ -66,7 +70,7 @@ public class Shal implements Serializable, IId {
 	@Column(nullable = false, columnDefinition = "TEXT")
 	private String noticeHeader;
 
-	@Column(nullable = false)
+	@Column(nullable = false) 
 	private Boolean isLogo;
 
 	@Column(nullable = false)

@@ -3,7 +3,7 @@ import { IDocument } from "../../miscellaneous/model/IDocument";
 import { SpecialOffer } from "../../miscellaneous/model/SpecialOffer";
 import { Responsable } from "../../tiers/model/Responsable";
 import { Tiers } from "../../tiers/model/Tiers";
-import { Affaire } from "./Affaire";
+import { Provision } from "./Provision";
 import { QuotationLabelType } from "./QuotationLabelType";
 import { QuotationStatus } from "./QuotationStatus";
 import { RecordType } from "./RecordType";
@@ -20,5 +20,5 @@ export interface IQuotation extends IAttachment, IDocument {
   quotationLabelType: QuotationLabelType;
   quotationLabel: string;
   recordType: RecordType;
-  affaires: Affaire[];
+  provisions: Provision[];
 }
