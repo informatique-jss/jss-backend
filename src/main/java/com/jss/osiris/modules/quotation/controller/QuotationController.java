@@ -636,6 +636,8 @@ public class QuotationController {
             }
             validationHelper.validateString(shal.getNotice(), true);
           }
+
+          // TODO : bodacc
         }
       }
 

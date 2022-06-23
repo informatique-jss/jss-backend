@@ -25,16 +25,6 @@
         <mat-expansion-panel>
           <mat-expansion-panel-header>
             <mat-panel-title>
-              CFE
-            </mat-panel-title>
-            <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
-          </mat-expansion-panel-header>
-          <addressing [editMode]="editMode" [document]="cfeDocument" [displayMailCC]="instanceOfResponsable(tiers)">
-          </addressing>
-        </mat-expansion-panel>
-        <mat-expansion-panel>
-          <mat-expansion-panel-header>
-            <mat-panel-title>
               Kbis
             </mat-panel-title>
             <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
@@ -42,38 +32,15 @@
           <addressing [editMode]="editMode" [document]="kbisDocument" [displayMailCC]="instanceOfResponsable(tiers)">
           </addressing>
         </mat-expansion-panel>
-        <mat-expansion-panel *ngIf="instanceOfTiers(tiers)" expanded>
+        <mat-expansion-panel>
           <mat-expansion-panel-header>
             <mat-panel-title>
-              Règlement
+              CFE
             </mat-panel-title>
             <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
           </mat-expansion-panel-header>
-          <table class="full-width">
-            <tr>
-              <td>
-                <select-payment-types [(model)]="tiers.paymentType" label="Type" [form]="settlementBillingForm"
-                  propertyName="paymentType" [isMandatory]="true" [isDisabled]="!editMode"
-                  [filteredPaymentTypeCodes]="[PAYMENT_TYPE_PRELEVEMENT,PAYMENT_TYPE_CHEQUES]"></select-payment-types>
-              </td>
-              <td
-                *ngIf="tiers !=undefined && tiers.paymentType!=undefined && tiers.paymentType.code!=undefined && tiers.paymentType.code==PAYMENT_TYPE_PRELEVEMENT">
-                <generic-input [(model)]="tiers.paymentIBAN" label="IBAN" [form]="settlementBillingForm"
-                  propertyName="paymentIBAN" [isMandatory]="true" [isDisabled]="!editMode"
-                  [conditionnalRequired]="instanceOfTiers(this.tiers) && this.tiers.paymentType != undefined && this.tiers.paymentType.code != undefined && this.tiers.paymentType.code == PAYMENT_TYPE_PRELEVEMENT "
-                  [maxLength]="40"></generic-input>
-              </td>
-              <td
-                *ngIf="tiers !=undefined && tiers.paymentType!=undefined && tiers.paymentType.code!=undefined && tiers.paymentType.code==PAYMENT_TYPE_PRELEVEMENT">
-                <generic-toggle [(model)]="tiers.isSepaMandateReceived" label="Mandat SEPA reçu ?"
-                  [form]="settlementBillingForm" propertyName="isSepaMandateReceived"></generic-toggle>
-              </td>
-              <td>
-                <generic-toggle [(model)]="tiers.isProvisionalPaymentMandatory" label="Provision obligatoire ?"
-                  [form]="settlementBillingForm" propertyName="isProvisionalPaymentMandatory"></generic-toggle>
-              </td>
-            </tr>
-          </table>
+          <addressing [editMode]="editMode" [document]="cfeDocument" [displayMailCC]="instanceOfResponsable(tiers)">
+          </addressing>
         </mat-expansion-panel>
         <mat-expansion-panel>
           <mat-expansion-panel-header>
@@ -123,24 +90,41 @@
         <mat-expansion-panel *ngIf="instanceOfTiers(tiers)">
           <mat-expansion-panel-header>
             <mat-panel-title>
-              Relance
+              Règlement
             </mat-panel-title>
             <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
           </mat-expansion-panel-header>
           <table class="full-width">
             <tr>
               <td>
-                <generic-toggle [(model)]="billingDocument.isAutomaticDunning" label="Relance automatique ?"
-                  [form]="settlementBillingForm" propertyName="isAutomaticDunning"></generic-toggle>
+                <select-payment-types [(model)]="tiers.paymentType" label="Type" [form]="settlementBillingForm"
+                  propertyName="paymentType" [isMandatory]="true" [isDisabled]="!editMode"
+                  [filteredPaymentTypeCodes]="[PAYMENT_TYPE_PRELEVEMENT,PAYMENT_TYPE_OTHERS]"></select-payment-types>
+              </td>
+              <td
+                *ngIf="tiers !=undefined && tiers.paymentType!=undefined && tiers.paymentType.code!=undefined && tiers.paymentType.code==PAYMENT_TYPE_PRELEVEMENT">
+                <generic-input [(model)]="tiers.paymentIBAN" label="IBAN" [form]="settlementBillingForm"
+                  propertyName="paymentIBAN" [isMandatory]="true" [isDisabled]="!editMode"
+                  [conditionnalRequired]="instanceOfTiers(this.tiers) && this.tiers.paymentType != undefined && this.tiers.paymentType.code != undefined && this.tiers.paymentType.code == PAYMENT_TYPE_PRELEVEMENT "
+                  [maxLength]="40"></generic-input>
               </td>
               <td>
-                <select-payment-deadline [(model)]="dunningDocument.paymentDeadlineType" label="Echéance de relance"
-                  [form]="settlementBillingForm" propertyName="paymentDeadlineType" [isDisabled]="!editMode">
-                </select-payment-deadline>
+                <generic-input [(model)]="tiers.paymentBIC" label="BIC" [form]="settlementBillingForm"
+                  propertyName="paymentBIC" [isMandatory]="true" [isDisabled]="!editMode"
+                  [conditionnalRequired]="instanceOfTiers(this.tiers) && this.tiers.paymentType != undefined && this.tiers.paymentType.code != undefined && this.tiers.paymentType.code == PAYMENT_TYPE_PRELEVEMENT "
+                  [maxLength]="8"></generic-input>
+              </td>
+              <td
+                *ngIf="tiers !=undefined && tiers.paymentType!=undefined && tiers.paymentType.code!=undefined && tiers.paymentType.code==PAYMENT_TYPE_PRELEVEMENT">
+                <generic-toggle [(model)]="tiers.isSepaMandateReceived" label="Mandat SEPA reçu ?"
+                  [form]="settlementBillingForm" propertyName="isSepaMandateReceived"></generic-toggle>
+              </td>
+              <td>
+                <generic-toggle [(model)]="tiers.isProvisionalPaymentMandatory" label="Provision obligatoire ?"
+                  [form]="settlementBillingForm" propertyName="isProvisionalPaymentMandatory"></generic-toggle>
               </td>
             </tr>
           </table>
-          <addressing [editMode]="editMode" [document]="dunningDocument"></addressing>
         </mat-expansion-panel>
         <mat-expansion-panel *ngIf="instanceOfTiers(tiers)">
           <mat-expansion-panel-header>
@@ -170,6 +154,28 @@
           </table>
           <addressing [editMode]="editMode" [document]="refundDocument" *ngIf="refundDocument.isRefundable">
           </addressing>
+        </mat-expansion-panel>
+        <mat-expansion-panel *ngIf="instanceOfTiers(tiers)">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Relance
+            </mat-panel-title>
+            <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
+          </mat-expansion-panel-header>
+          <table class="full-width">
+            <tr>
+              <td>
+                <generic-toggle [(model)]="billingDocument.isAutomaticDunning" label="Relance automatique ?"
+                  [form]="settlementBillingForm" propertyName="isAutomaticDunning"></generic-toggle>
+              </td>
+              <td>
+                <select-payment-deadline [(model)]="dunningDocument.paymentDeadlineType" label="Echéance de relance"
+                  [form]="settlementBillingForm" propertyName="paymentDeadlineType" [isDisabled]="!editMode">
+                </select-payment-deadline>
+              </td>
+            </tr>
+          </table>
+          <addressing [editMode]="editMode" [document]="dunningDocument"></addressing>
         </mat-expansion-panel>
         <mat-expansion-panel>
           <mat-expansion-panel-header>

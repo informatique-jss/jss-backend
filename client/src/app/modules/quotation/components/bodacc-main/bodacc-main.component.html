@@ -21,50 +21,9 @@
                 propertyName="transfertFundsType" label="Type de cession de fonds"></radio-group-transfert-funds>
             </td>
             <td
-              *ngIf="provision.bodacc.bodaccPublicationType && (provision.bodacc.bodaccPublicationType.code ==BODACC_PUBLICATION_TYPE_SPLIT || provision.bodacc.bodaccPublicationType.code ==BODACC_PUBLICATION_TYPE_MERGING)">
-              <generic-toggle [(model)]="provision.bodacc.isDoublePublication" label="Double parution ?"
-                [form]="bodaccForm" propertyName="isDoublePublication"></generic-toggle>
-            </td>
-            <td
               *ngIf="provision.bodacc.bodaccPublicationType && (provision.bodacc.bodaccPublicationType.code ==BODACC_PUBLICATION_TYPE_POSSESSION_DISPATCH || provision.bodacc.bodaccPublicationType.code ==BODACC_PUBLICATION_TYPE_ESTATE_REPRESENTATIVE_DESIGNATION)">
               <a href="https://declar-successions.journal-officiel.gouv.fr/successions/index.html" target="_blank">Lien
                 vers la plateforme BODACC.fr</a>
-            </td>
-          </tr>
-        </table>
-        <table class="full-width">
-          <tr>
-            <td>
-              <autocomplete-department [(model)]="provision.bodacc.department" [form]="bodaccForm"
-                propertyName="department" [isMandatory]="true" [isDisabled]="!editMode"></autocomplete-department>
-            </td>
-            <td>
-              <autocomplete-competent-authority [(model)]="provision.bodacc.competentAuthority"
-                [modelDepartment]="provision.bodacc.department" [form]="bodaccForm" propertyName="competentAuthority"
-                [isMandatory]="true" label="Greffe - RCS"
-                [filteredCompetentAuthorityTypeCode]="COMPETENT_AUTHORITY_TYPE_RCS_CODE">
-              </autocomplete-competent-authority>
-            </td>
-            <td *ngIf="provision.bodacc.competentAuthority">
-              <select-payment-types [(model)]="provision.bodacc.paymentType" label="Paiement" [form]="bodaccForm"
-                propertyName="paymentType" [isMandatory]="true" [isDisabled]="!editMode"
-                [filteredPaymentType]="provision.bodacc.competentAuthority.paymentTypes"></select-payment-types>
-            </td>
-          </tr>
-        </table>
-        <table class="full-width" *ngIf="provision.bodacc.competentAuthority">
-          <tr>
-            <td>
-              <chips-mail [(model)]="provision.bodacc.competentAuthority.mails" label="Mails" [form]="bodaccForm"
-                propertyName="mails" [isMandatory]="false" [isDisabled]="true"></chips-mail>
-            </td>
-            <td>
-              <chips-phone [(model)]="provision.bodacc.competentAuthority.phones" label="Téléphones" [form]="bodaccForm"
-                propertyName="phones" [isMandatory]="false" [isDisabled]="true"></chips-phone>
-            </td>
-            <td *ngIf="provision.bodacc.paymentType && PAYMENT_TYPE_VIREMENT==provision.bodacc.paymentType.code">
-              <generic-input [(model)]="provision.bodacc.competentAuthority.iban" label="IBAN" [form]="bodaccForm"
-                propertyName="iban" [isMandatory]="true" [isDisabled]="true"></generic-input>
             </td>
           </tr>
         </table>

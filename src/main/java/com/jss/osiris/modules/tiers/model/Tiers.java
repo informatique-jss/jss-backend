@@ -84,6 +84,9 @@ public class Tiers implements ITiers, IAttachment {
 	@Column(length = 40)
 	private String paymentIBAN;
 
+	@Column(length = 40)
+	private String paymentBIC;
+
 	@Column(nullable = false)
 	private Boolean isProvisionalPaymentMandatory;
 
@@ -270,6 +273,14 @@ public class Tiers implements ITiers, IAttachment {
 
 	public void setPaymentIBAN(String paymentIBAN) {
 		this.paymentIBAN = paymentIBAN;
+	}
+
+	public String getPaymentBIC() {
+		return paymentBIC;
+	}
+
+	public void setPaymentBIC(String paymentBIC) {
+		this.paymentBIC = paymentBIC;
 	}
 
 	public Boolean getIsProvisionalPaymentMandatory() {

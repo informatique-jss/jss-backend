@@ -16,7 +16,7 @@
             <td>
               <mat-form-field class="full-width">
                 <mat-label>Support</mat-label>
-                <input matInput placeholder="Confrère" [(ngModel)]="provision.shal.confrere"
+                <input matInput placeholder="Support" [(ngModel)]="provision.shal.confrere"
                   [matAutocomplete]="autoSpecialOffer" formControlName="confrere" autocomplete="do-not-autofill">
                 <button
                   *ngIf="provision.shal.confrere==undefined || provision.shal.confrere==null || provision.shal.confrere.id ==undefined || provision.shal.confrere.id==null"
@@ -47,7 +47,7 @@
           <tr>
             <td>
               <mat-radio-group class="radio-group-column" [(ngModel)]="provision.shal.journalType"
-                formControlName="journalType">
+                formControlName="journalType" (change)="updateHeaderFree()">
                 <mat-radio-button [value]="journalType" *ngFor="let journalType of provision.shal.confrere?.journalType"
                   [checked]="this.provision.shal.journalType != undefined && this.provision.shal.journalType.id == journalType.id">
                   {{journalType.label}}
@@ -72,8 +72,32 @@
         <table class="full-width">
           <tr>
             <td>
+              <generic-toggle [(model)]="provision.shal.isHeader" label="En-tête ?" [form]="shalForm"
+                propertyName="isHeader"></generic-toggle>
+            </td>
+            <td>
+              <generic-toggle *ngIf="provision.shal.isHeader" [(model)]="provision.shal.isHeaderFree"
+                label="En-tête gratuit ?" [form]="shalForm" propertyName="isHeader"></generic-toggle>
+            </td>
+          </tr>
+        </table>
+        <table class="full-width">
+          <tr *ngIf="provision.shal.isHeader">
+            <td>
+              <p>En-tête :</p>
               <div *ngIf="!editMode">
-                <p>Annonce :</p>
+                <span [innerHTML]="provision.shal.noticeHeader | trustHtml"></span>
+                <p [innerHTML]='provision.shal.noticeHeader'></p>
+              </div>
+              <quill-editor [hidden]="!editMode" formControlName="noticeHeader"
+                (onContentChanged)="setNoticeHeaderModel($event)">
+              </quill-editor>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <p>Annonce :</p>
+              <div *ngIf="!editMode">
                 <span [innerHTML]="provision.shal.notice | trustHtml"></span>
                 <p [innerHTML]='provision.shal.notice'></p>
               </div>
@@ -90,11 +114,11 @@
             </td>
             <td
               *ngIf="provision.shal.confrere!=undefined && provision.shal.department!=undefined && provision.shal.publicationDate!=undefined">
-              Nombre de caractères : {{countCharacterNumber('notice')}}
+              Nombre de caractères : {{countCharacterNumber()}}
             </td>
             <td
               *ngIf="provision.shal.confrere!=undefined && provision.shal.department!=undefined && provision.shal.publicationDate!=undefined">
-              Prix total : {{countCharacterNumber('notice')*characterPrice.price | number}} €
+              Prix total : {{countCharacterNumber()*characterPrice.price | number}} €
             </td>
           </tr>
         </table>
@@ -127,31 +151,33 @@
                 </mat-autocomplete>
               </mat-form-field>
             </td>
-            <table class="full-width">
-              <tr>
-                <td>
-                  <generic-toggle [(model)]="provision.shal.isLogo" label="Logo ?" [form]="shalForm"
-                    propertyName="isLogo"></generic-toggle>
-                </td>
-                <td *ngIf="provision.shal.isLogo && provision.shal.id">
-                  <single-attachment [entity]="provision.shal!" [entityType]="SHAL_ENTITY_TYPE.entityType"
-                    [editMode]="editMode" [attachmentTypeCodeToDisplay]="LOGO_ATTACHMENT_TYPE_CODE">
-                  </single-attachment>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <generic-toggle [(model)]="provision.shal.isHeader" label="En-tête ?" [form]="shalForm"
-                    propertyName="isHeader"></generic-toggle>
-                </td>
-              </tr>
-              <tr *ngIf="provision.shal.confrere && provision.shal.confrere.id==CONFRERE_BALO_ID">
-                <td>
-                  <generic-toggle [(model)]="provision.shal.isPictureBaloPackage" label="Forfait image BALO ?"
-                    [form]="shalForm" propertyName="isPictureBaloPackage"></generic-toggle>
-                </td>
-              </tr>
-            </table>
+          </tr>
+        </table>
+        <table class="full-width">
+          <tr>
+            <td>
+              <table class="full-width">
+                <tr>
+                  <td>
+                    <generic-toggle [(model)]="provision.shal.isLogo" label="Logo ?" [form]="shalForm"
+                      propertyName="isLogo"></generic-toggle>
+                  </td>
+                  <td *ngIf="provision.shal.isLogo && provision.shal.id">
+                    <single-attachment [entity]="provision.shal!" [entityType]="SHAL_ENTITY_TYPE.entityType"
+                      [editMode]="editMode" [attachmentTypeCodeToDisplay]="LOGO_ATTACHMENT_TYPE_CODE"
+                      (onUploadedFile)="updateAttachments($event)">
+                    </single-attachment>
+                  </td>
+                  <td *ngIf="provision.shal.isLogo && provision.shal.id && logoUrl "><img width="150px"
+                      [src]="logoUrl" /></td>
+                </tr>
+                <tr *ngIf="provision.shal.confrere && provision.shal.confrere.id==CONFRERE_BALO_ID">
+                  <td>
+                    <generic-toggle [(model)]="provision.shal.isPictureBaloPackage" label="Forfait image BALO ?"
+                      [form]="shalForm" propertyName="isPictureBaloPackage"></generic-toggle>
+                  </td>
+                </tr>
+              </table>
           </tr>
         </table>
         <table class="full-width">

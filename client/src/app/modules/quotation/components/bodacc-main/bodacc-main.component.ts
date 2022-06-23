@@ -49,9 +49,6 @@ export class BodaccMainComponent implements OnInit {
       if (this.provision.bodacc! == undefined || this.provision.bodacc! == null)
         this.provision.bodacc! = {} as Bodacc;
 
-      if (!this.provision.bodacc.isDoublePublication)
-        this.provision.bodacc.isDoublePublication = false;
-
       this.bodaccForm.markAllAsTouched();
       this.toggleTabs();
     }

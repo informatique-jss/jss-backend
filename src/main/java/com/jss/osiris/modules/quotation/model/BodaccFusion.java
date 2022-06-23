@@ -76,7 +76,7 @@ public class BodaccFusion implements Serializable, IId {
 	private Integer mergerBonus;
 
 	@Column(columnDefinition = "TEXT", nullable = false)
-	private Date exchangeRatioReport;
+	private String exchangeRatioReport;
 
 	@Column(nullable = false)
 	private Date mergingProjectDate;
@@ -225,11 +225,11 @@ public class BodaccFusion implements Serializable, IId {
 		this.mergerBonus = mergerBonus;
 	}
 
-	public Date getExchangeRatioReport() {
+	public String getExchangeRatioReport() {
 		return exchangeRatioReport;
 	}
 
-	public void setExchangeRatioReport(Date exchangeRatioReport) {
+	public void setExchangeRatioReport(String exchangeRatioReport) {
 		this.exchangeRatioReport = exchangeRatioReport;
 	}
 

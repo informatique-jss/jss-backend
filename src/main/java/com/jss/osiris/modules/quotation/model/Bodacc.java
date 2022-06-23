@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -17,8 +16,6 @@ import javax.persistence.OneToOne;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
-import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
-import com.jss.osiris.modules.miscellaneous.model.Department;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.miscellaneous.model.PaymentType;
 
@@ -46,17 +43,6 @@ public class Bodacc implements Serializable, IId {
 	@JoinColumn(name = "id_transfert_funds_type")
 	private TransfertFundsType transfertFundsType;
 
-	@Column(nullable = false)
-	private Boolean isDoublePublication;
-
-	@ManyToOne
-	@JoinColumn(name = "id_department")
-	private Department department;
-
-	@ManyToOne
-	@JoinColumn(name = "id_competent_authority")
-	private CompetentAuthority competentAuthority;
-
 	@OneToOne(targetEntity = BodaccSale.class, cascade = CascadeType.ALL)
 	private BodaccSale bodaccSale;
 
@@ -71,28 +57,12 @@ public class Bodacc implements Serializable, IId {
 		return id;
 	}
 
-	public Department getDepartment() {
-		return department;
-	}
-
-	public CompetentAuthority getCompetentAuthority() {
-		return competentAuthority;
-	}
-
 	public BodaccFusion getBodaccFusion() {
 		return bodaccFusion;
 	}
 
 	public void setBodaccFusion(BodaccFusion bodaccFusion) {
 		this.bodaccFusion = bodaccFusion;
-	}
-
-	public void setCompetentAuthority(CompetentAuthority competentAuthority) {
-		this.competentAuthority = competentAuthority;
-	}
-
-	public void setDepartment(Department department) {
-		this.department = department;
 	}
 
 	public List<Attachment> getAttachments() {
@@ -113,14 +83,6 @@ public class Bodacc implements Serializable, IId {
 
 	public void setId(Integer id) {
 		this.id = id;
-	}
-
-	public Boolean getIsDoublePublication() {
-		return isDoublePublication;
-	}
-
-	public void setIsDoublePublication(Boolean isDoublePublication) {
-		this.isDoublePublication = isDoublePublication;
 	}
 
 	public Provision getProvision() {

@@ -1,7 +1,7 @@
-import { environment } from './../environments/environment';
 import { HttpClient, HttpContext, HttpContextToken, HttpEvent, HttpParams } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
+import { environment } from './../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -97,9 +97,17 @@ export abstract class AppRestService<T> {
         let dataType = response.type;
         let binaryData = [];
         binaryData.push(response.body);
-        window.open(window.URL.createObjectURL(new Blob(binaryData, { type: response.headers.get("content-type") })), '_blank');
+        let url = window.URL.createObjectURL(new Blob(binaryData, { type: response.headers.get("content-type") }));
+        window.open(url, '_blank');
+        return of(url);
       }
     )
+  }
+
+  previewFileUrl(params: HttpParams, api: string, successfulMessage: string = "", errorMessage: string = ""): any {
+    let context: HttpContext = new HttpContext();
+    context.set(this.successfulToken, successfulMessage).set(this.errorToken, errorMessage);
+    return this._http.get(AppRestService.serverUrl + this.entryPoint + "/" + api, { params, responseType: 'blob' as 'arraybuffer', observe: 'response', context });
   }
 
   uploadPost(api: string, file: File, formData: FormData, successfulMessage: string = "", errorMessage: string = ""): Observable<HttpEvent<any>> {

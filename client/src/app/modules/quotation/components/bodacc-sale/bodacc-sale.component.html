@@ -15,7 +15,7 @@
         <mat-expansion-panel *ngIf="transfertFundsType.code!=BODACC_SALE_TRANSFERT_FUND_TYPE_BAIL">
           <mat-expansion-panel-header>
             <mat-panel-title>
-              Entreprise cédée
+              Fonds cédée
             </mat-panel-title>
             <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
           </mat-expansion-panel-header>
@@ -27,7 +27,7 @@
                   [maxLength]="100"></generic-input>
               </td>
               <td>
-                <select-fund-type [(model)]="bodaccSale.fundType" label="Nature du fond" [form]="bodaccSaleForm"
+                <select-fund-type [(model)]="bodaccSale.fundType" label="Nature du fonds" [form]="bodaccSaleForm"
                   propertyName="fundType" [isMandatory]="true" [isDisabled]="!editMode">
                 </select-fund-type>
               </td>
@@ -44,7 +44,7 @@
         <mat-expansion-panel *ngIf="transfertFundsType.code!=BODACC_SALE_TRANSFERT_FUND_TYPE_BAIL">
           <mat-expansion-panel-header>
             <mat-panel-title>
-              Propriétaire
+              Propriétaire / cédant
             </mat-panel-title>
             <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
           </mat-expansion-panel-header>
@@ -52,17 +52,17 @@
             <tr>
               <td>
                 <generic-input [(model)]="bodaccSale.ownerFirstname" label="Prénom" [form]="bodaccSaleForm"
-                  propertyName="ownerFirstname" [isMandatory]="true" [isDisabled]="!editMode" [maxLength]="30">
+                  propertyName="ownerFirstname" [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="30">
                 </generic-input>
               </td>
               <td>
                 <generic-input [(model)]="bodaccSale.ownerLastname" label="Nom" [form]="bodaccSaleForm"
-                  propertyName="ownerLastname" [isMandatory]="true" [isDisabled]="!editMode" [maxLength]="30">
+                  propertyName="ownerLastname" [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="30">
                 </generic-input>
               </td>
               <td>
                 <generic-input [(model)]="bodaccSale.ownerDenomination" label="Dénomination" [form]="bodaccSaleForm"
-                  propertyName="ownerDenomination" [isMandatory]="true" [isDisabled]="!editMode" [maxLength]="30">
+                  propertyName="ownerDenomination" [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="30">
                 </generic-input>
               </td>
             </tr>
@@ -85,7 +85,7 @@
         <mat-expansion-panel *ngIf="transfertFundsType.code==BODACC_SALE_TRANSFERT_FUND_TYPE_PHYSIQUE">
           <mat-expansion-panel-header>
             <mat-panel-title>
-              Acquéreur
+              Acquéreur / cessionnaire
             </mat-panel-title>
             <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
           </mat-expansion-panel-header>
@@ -108,18 +108,13 @@
                   propertyName="purchaserSiren" [isMandatory]="false" (onOptionSelected)="fillSirenPurchaser($event)">
                 </autocomplete-siren>
               </td>
-              <td>
-                <generic-datepicker [(model)]="bodaccSale.purchaserActivityStartDate"
-                  label="Date de début de l'activité" [form]="bodaccSaleForm" propertyName="purchaserActivityStartDate"
-                  [isMandatory]="true" [isDisabled]="!editMode"></generic-datepicker>
-              </td>
             </tr>
           </table>
         </mat-expansion-panel>
         <mat-expansion-panel *ngIf="transfertFundsType.code==BODACC_SALE_TRANSFERT_FUND_TYPE_MORAL">
           <mat-expansion-panel-header>
             <mat-panel-title>
-              Acquéreur
+              Personne
             </mat-panel-title>
             <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
           </mat-expansion-panel-header>
@@ -140,11 +135,6 @@
                   propertyName="purchaserLegalForm" [isMandatory]="true" [isDisabled]="!editMode">
                 </autocomplete-legal-form>
               </td>
-              <td>
-                <generic-datepicker [(model)]="bodaccSale.purchaserActivityStartDate"
-                  label="Date de début de l'activité" [form]="bodaccSaleForm" propertyName="purchaserActivityStartDate"
-                  [isMandatory]="true" [isDisabled]="!editMode"></generic-datepicker>
-              </td>
             </tr>
           </table>
           <table class="full-width">
@@ -156,7 +146,7 @@
               </td>
               <td>
                 <generic-input [(model)]="bodaccSale.purchaserBusinessName" label="Nom commercial"
-                  [form]="bodaccSaleForm" propertyName="purchaserBusinessName" [isMandatory]="true"
+                  [form]="bodaccSaleForm" propertyName="purchaserBusinessName" [isMandatory]="false"
                   [isDisabled]="!editMode" [maxLength]="60">
                 </generic-input>
               </td>
@@ -176,7 +166,7 @@
         <mat-expansion-panel *ngIf="transfertFundsType.code==BODACC_SALE_TRANSFERT_FUND_TYPE_BAIL">
           <mat-expansion-panel-header>
             <mat-panel-title>
-              Propriétaire
+              Propriétaire / cédant
             </mat-panel-title>
             <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
           </mat-expansion-panel-header>
@@ -199,8 +189,8 @@
                   [conditionnalRequired]="bodaccSale.isOwnerIndividual" [maxLength]="30"></generic-input>
               </td>
               <td>
-                <generic-input [(model)]="bodaccSale.ownerAddress" label="Adresse du siège social"
-                  [form]="bodaccSaleForm" propertyName="ownerAddress" [isMandatory]="true" [isDisabled]="!editMode"
+                <generic-input [(model)]="bodaccSale.ownerAddress" label="Adresse" [form]="bodaccSaleForm"
+                  propertyName="ownerAddress" [isMandatory]="true" [isDisabled]="!editMode"
                   [conditionnalRequired]="bodaccSale.isOwnerIndividual" [maxLength]="100"></generic-input>
               </td>
             </tr>
@@ -228,7 +218,7 @@
               </td>
               <td>
                 <generic-input [(model)]="bodaccSale.ownerBusinessName" label="Nom commercial" [form]="bodaccSaleForm"
-                  propertyName="ownerBusinessName" [isMandatory]="true" [isDisabled]="!editMode" [maxLength]="60">
+                  propertyName="ownerBusinessName" [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="60">
                 </generic-input>
               </td>
               <td>
@@ -242,14 +232,14 @@
         <mat-expansion-panel *ngIf="transfertFundsType.code==BODACC_SALE_TRANSFERT_FUND_TYPE_BAIL">
           <mat-expansion-panel-header>
             <mat-panel-title>
-              Résilisation
+              Résiliation
             </mat-panel-title>
             <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
           </mat-expansion-panel-header>
           <table class="full-width">
             <tr>
               <td>
-                <generic-datepicker [(model)]="bodaccSale.leaseResilisationDate" label="Date de résilisation"
+                <generic-datepicker [(model)]="bodaccSale.leaseResilisationDate" label="Date de résiliation"
                   [form]="bodaccSaleForm" propertyName="leaseResilisationDate" [isMandatory]="true"
                   [isDisabled]="!editMode"></generic-datepicker>
               </td>
@@ -292,8 +282,8 @@
                   [conditionnalRequired]="bodaccSale.isTenantIndividual" [maxLength]="30"></generic-input>
               </td>
               <td>
-                <generic-input [(model)]="bodaccSale.tenantAddress" label="Adresse du siège social"
-                  [form]="bodaccSaleForm" propertyName="tenantAddress" [isMandatory]="true" [isDisabled]="!editMode"
+                <generic-input [(model)]="bodaccSale.tenantAddress" label="Adresse" [form]="bodaccSaleForm"
+                  propertyName="tenantAddress" [isMandatory]="true" [isDisabled]="!editMode"
                   [conditionnalRequired]="bodaccSale.isTenantIndividual" [maxLength]="100"></generic-input>
               </td>
             </tr>
@@ -322,7 +312,7 @@
               </td>
               <td>
                 <generic-input [(model)]="bodaccSale.tenantBusinessName" label="Nom commercial" [form]="bodaccSaleForm"
-                  propertyName="tenantBusinessName" [isMandatory]="true" [isDisabled]="!editMode" [maxLength]="60">
+                  propertyName="tenantBusinessName" [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="60">
                 </generic-input>
               </td>
               <td>
@@ -336,7 +326,7 @@
         <mat-expansion-panel>
           <mat-expansion-panel-header>
             <mat-panel-title>
-              Acte de vente du fond et informations fiscales
+              Acte de vente du fonds et informations fiscales
             </mat-panel-title>
             <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
           </mat-expansion-panel-header>
@@ -347,12 +337,21 @@
                   propertyName="deedDate" [isMandatory]="true" [isDisabled]="!editMode"></generic-datepicker>
               </td>
               <td>
+                <generic-datepicker [(model)]="bodaccSale.purchaserActivityStartDate"
+                  label="Date de début de l'activité" [form]="bodaccSaleForm" propertyName="purchaserActivityStartDate"
+                  [isMandatory]="true" [isDisabled]="!editMode"></generic-datepicker>
+              </td>
+            </tr>
+          </table>
+          <table class="full-width">
+            <tr>
+              <td>
                 <generic-input [(model)]="bodaccSale.salePrice" label="Prix de cession" [form]="bodaccSaleForm"
                   propertyName="salePrice" [isMandatory]="true" [isDisabled]="!editMode" type="number"></generic-input>
               </td>
               <td>
                 <radio-group-act-type [(model)]="bodaccSale.actType" [form]="bodaccSaleForm" propertyName="actType"
-                  label="Type de l'act"></radio-group-act-type>
+                  label="Type de l'acte"></radio-group-act-type>
               </td>
               <td *ngIf="bodaccSale.actType && bodaccSale.actType.code==BODACC_SALE_ACT_TYPE_AUTHENTIC_CODE">
                 <generic-input [(model)]="bodaccSale.writor" label="Rédacteur" [form]="bodaccSaleForm"
@@ -382,6 +381,7 @@
               <td>
                 <generic-input [(model)]="bodaccSale.registrationReferences" label="Référence de l'enregistrement"
                   [form]="bodaccSaleForm" propertyName="registrationReferences" [isMandatory]="true"
+                  [conditionnalRequired]="bodaccSale.actType && bodaccSale.actType.code==BODACC_SALE_ACT_TYPE_SEING_CODE"
                   [isDisabled]="!editMode" [maxLength]="50"></generic-input>
               </td>
             </tr>
@@ -403,7 +403,7 @@
               </td>
               <td>
                 <generic-input [(model)]="bodaccSale.mailObjectionAddress" label="Adresse pour la correspondance"
-                  [form]="bodaccSaleForm" propertyName="mailObjectionAddress" [isMandatory]="true"
+                  [form]="bodaccSaleForm" propertyName="mailObjectionAddress" [isMandatory]="false"
                   [isDisabled]="!editMode" [maxLength]="100"></generic-input>
               </td>
             </tr>

@@ -76,7 +76,7 @@ public class BodaccSplit implements Serializable, IId {
 	private Integer splitBonus;
 
 	@Column(columnDefinition = "TEXT", nullable = false)
-	private Date exchangeRatioReport;
+	private String exchangeRatioReport;
 
 	@Column(nullable = false)
 	private Date splitProjectDate;
@@ -225,11 +225,11 @@ public class BodaccSplit implements Serializable, IId {
 		this.splitBonus = splitBonus;
 	}
 
-	public Date getExchangeRatioReport() {
+	public String getExchangeRatioReport() {
 		return exchangeRatioReport;
 	}
 
-	public void setExchangeRatioReport(Date exchangeRatioReport) {
+	public void setExchangeRatioReport(String exchangeRatioReport) {
 		this.exchangeRatioReport = exchangeRatioReport;
 	}
 

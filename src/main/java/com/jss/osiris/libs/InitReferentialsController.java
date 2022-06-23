@@ -512,8 +512,15 @@ public class InitReferentialsController {
 		 * paymentType.setCode("VIREMENT");
 		 * paymentType.setLabel("Virement");
 		 * paymentTypeRepository.save(paymentType);
-		 * 
-		 * /*
+		 */
+
+		/*
+		 * PaymentType paymentType = new PaymentType();
+		 * paymentType.setCode("AUTRES");
+		 * paymentType.setLabel("Autres");
+		 * paymentTypeRepository.save(paymentType);
+		 */
+		/*
 		 * billingLabelTypeRepository.deleteAll();
 		 * BillingLabelType billingLabelType = new BillingLabelType();
 		 * billingLabelType.setCode("AFFAIRE");

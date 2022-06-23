@@ -4,16 +4,19 @@ import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatDialog } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
-import { CONFRERE_BALO_ID, JOURNAL_TYPE_JSS_DENOMINATION, LOGO_ATTACHMENT_TYPE_CODE, PROOF_READING_DOCUMENT_TYPE_CODE, PUBLICATION_CERTIFICATE_DOCUMENT_TYPE_CODE, PUBLICATION_TIERS_DOCUMENT_TYPE_CODE, SEPARATOR_KEY_CODES } from 'src/app/libs/Constants';
+import { CONFRERE_BALO_ID, JOURNAL_TYPE_JSS_DENOMINATION, JOURNAL_TYPE_SPEL_CODE, LOGO_ATTACHMENT_TYPE_CODE, PROOF_READING_DOCUMENT_TYPE_CODE, PUBLICATION_CERTIFICATE_DOCUMENT_TYPE_CODE, PUBLICATION_TIERS_DOCUMENT_TYPE_CODE, SEPARATOR_KEY_CODES } from 'src/app/libs/Constants';
 import { getDocument } from 'src/app/libs/DocumentHelper';
 import { downloadHtmlAsRtf } from 'src/app/libs/DownloadHelper';
 import { formatDate } from 'src/app/libs/FormatHelper';
+import { Attachment } from 'src/app/modules/miscellaneous/model/Attachment';
 import { Audit } from 'src/app/modules/miscellaneous/model/Audit';
 import { HistoryAction } from 'src/app/modules/miscellaneous/model/HistoryAction';
 import { DocumentTypeService } from 'src/app/modules/miscellaneous/services/document.type.service';
+import { UploadAttachmentService } from 'src/app/modules/miscellaneous/services/upload.attachment.service';
 import { SHAL_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { Document } from "../../../miscellaneous/model/Document";
 import { DocumentType } from "../../../miscellaneous/model/DocumentType";
@@ -48,6 +51,7 @@ export class ShalComponent implements OnInit {
   SHAL_ENTITY_TYPE = SHAL_ENTITY_TYPE;
   CONFRERE_BALO_ID = CONFRERE_BALO_ID;
   LOGO_ATTACHMENT_TYPE_CODE = LOGO_ATTACHMENT_TYPE_CODE;
+  JOURNAL_TYPE_SPEL_CODE = JOURNAL_TYPE_SPEL_CODE;
 
   journalTypes: JournalType[] = [] as Array<JournalType>;
 
@@ -65,6 +69,7 @@ export class ShalComponent implements OnInit {
   noticeTypes: NoticeType[] = [] as Array<NoticeType>;
   filteredNoticeTypes: Observable<NoticeType[]> | undefined;
 
+  logoUrl: SafeUrl | undefined;
 
   constructor(private formBuilder: UntypedFormBuilder,
     private confrereService: ConfrereService,
@@ -73,6 +78,8 @@ export class ShalComponent implements OnInit {
     public confrereDialog: MatDialog,
     private documentTypeService: DocumentTypeService,
     private journalTypeService: JournalTypeService,
+    private uploadAttachmentService: UploadAttachmentService,
+    private sanitizer: DomSanitizer
   ) { }
 
   ngOnInit() {
@@ -114,6 +121,8 @@ export class ShalComponent implements OnInit {
         this.provision.shal!.journalType = this.journalTypes[0];
       if (!this.provision.shal!.isHeader)
         this.provision.shal!.isHeader = false;
+      if (!this.provision.shal!.isHeaderFree)
+        this.provision.shal!.isHeaderFree = false;
       if (!this.provision.shal!.isLogo)
         this.provision.shal!.isLogo = false;
       if (!this.provision.shal!.isPictureBaloPackage)
@@ -131,7 +140,7 @@ export class ShalComponent implements OnInit {
         this.publicationDocument = getDocument(PUBLICATION_TIERS_DOCUMENT_TYPE_CODE, this.provision.shal!, this.documentTypes);
         this.proofReadingDocument = getDocument(PROOF_READING_DOCUMENT_TYPE_CODE, this.provision.shal!, this.documentTypes);
         this.publicationCertificateDocument = getDocument(PUBLICATION_CERTIFICATE_DOCUMENT_TYPE_CODE, this.provision.shal!, this.documentTypes);
-
+        this.setLogoUrl();
       })
 
       this.shalForm.get('notice')?.setValue(this.provision.shal.notice);
@@ -154,6 +163,7 @@ export class ShalComponent implements OnInit {
   shalForm = this.formBuilder.group({
     noticeTypes: [''],
     notice: ['', Validators.required],
+    noticeHeader: [''],
     confrere: [''],
     noticeTypeFamily: ['', Validators.required],
     isProofReadingDocument: [''],
@@ -186,14 +196,56 @@ export class ShalComponent implements OnInit {
       this.provision.shal.notice = event.html;
   }
 
-  countCharacterNumber(fieldName: string) {
-    let fieldValue = this.shalForm.get(fieldName)?.value != undefined ? this.shalForm.get(fieldName)?.value : "";
-    return fieldValue.replace(/ +(?= )/g, '').replace(/(\r\n|\r|\n){2,}/g, ' ').trim().length;
+  setNoticeHeaderModel(event: any) {
+    if (this.provision.shal)
+      this.provision.shal.noticeHeader = event.html;
+  }
+
+  countCharacterNumber() {
+    let noticeValue = this.shalForm.get('notice')?.value != undefined ? this.shalForm.get('notice')?.value : "";
+    // Ignore HTML tags
+    noticeValue = new DOMParser().parseFromString(noticeValue, "text/html").documentElement.textContent;
+
+    let headerValue = this.shalForm.get('noticeHeader')?.value != undefined ? this.shalForm.get('noticeHeader')?.value : "";
+    // Ignore HTML tags
+    headerValue = new DOMParser().parseFromString(headerValue, "text/html").documentElement.textContent;
+
+    let nbr = noticeValue.replace(/ +(?= )/g, '').replace(/(\r\n|\r|\n){2,}/g, ' ').trim().length;
+    if (!this.provision.shal?.isHeaderFree)
+      nbr += headerValue.replace(/ +(?= )/g, '').replace(/(\r\n|\r|\n){2,}/g, ' ').trim().length;
+
+    return nbr;
   }
 
   toggleTabs() {
     if (this.tabs != undefined)
       this.tabs.realignInkBar();
+  }
+
+  updateAttachments(attachments: Attachment[]) {
+    if (attachments && this.provision.shal) {
+      this.provision.shal.attachments = attachments;
+      this.setLogoUrl();
+    }
+  }
+
+  setLogoUrl() {
+    if (this.provision.shal && this.provision.shal.attachments != null && this.provision.shal.attachments) {
+      this.provision.shal.attachments.forEach(attachment => {
+        if (attachment.attachmentType.code == LOGO_ATTACHMENT_TYPE_CODE)
+          this.uploadAttachmentService.previewAttachmentUrl(attachment).subscribe((response: any) => {
+            let binaryData = [];
+            binaryData.push(response.body);
+            let url = window.URL.createObjectURL(new Blob(binaryData, { type: response.headers.get("content-type") }));
+            this.logoUrl = this.sanitizer.bypassSecurityTrustUrl(url);
+          })
+      })
+    }
+  }
+
+  updateHeaderFree() {
+    if (this.provision.shal && this.provision.shal.journalType && this.provision.shal.journalType.code == JOURNAL_TYPE_SPEL_CODE)
+      this.provision.shal.isHeaderFree = true;
   }
 
   openConfrereDialog() {

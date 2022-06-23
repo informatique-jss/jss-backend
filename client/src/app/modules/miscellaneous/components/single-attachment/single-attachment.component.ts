@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Attachment } from '../../model/Attachment';
 import { AttachmentType } from '../../model/AttachmentType';
@@ -18,6 +18,11 @@ export class SingleAttachmentComponent implements OnInit {
   @Input() entityType: string = "";
   @Input() editMode: boolean = false;
   @Input() attachmentTypeCodeToDisplay: string = "";
+  /**
+   * Fired when an upload is realized.
+   * Give the current attachements of the entity in parameter
+   */
+  @Output() onUploadedFile: EventEmitter<Attachment[]> = new EventEmitter();
 
   uploadAttachementDialogRef: MatDialogRef<UploadAttachementDialogComponent> | undefined;
 
@@ -69,6 +74,7 @@ export class SingleAttachmentComponent implements OnInit {
       if (response && response != null) {
         this.entity.attachments = response;
         this.setCurrentAttachment();
+        this.onUploadedFile.emit(response);
       }
     });
   }

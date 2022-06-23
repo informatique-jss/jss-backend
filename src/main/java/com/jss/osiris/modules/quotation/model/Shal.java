@@ -63,11 +63,17 @@ public class Shal implements Serializable, IId {
 	@Column(nullable = false, columnDefinition = "TEXT")
 	private String notice;
 
+	@Column(nullable = false, columnDefinition = "TEXT")
+	private String noticeHeader;
+
 	@Column(nullable = false)
 	private Boolean isLogo;
 
 	@Column(nullable = false)
 	private Boolean isHeader;
+
+	@Column(nullable = false)
+	private Boolean isHeaderFree;
 
 	@Column(nullable = false)
 	private Boolean isPictureBaloPackage;
@@ -104,8 +110,24 @@ public class Shal implements Serializable, IId {
 		return isProofReadingDocument;
 	}
 
+	public String getNoticeHeader() {
+		return noticeHeader;
+	}
+
+	public void setNoticeHeader(String noticeHeader) {
+		this.noticeHeader = noticeHeader;
+	}
+
 	public void setIsProofReadingDocument(Boolean isProofReadingDocument) {
 		this.isProofReadingDocument = isProofReadingDocument;
+	}
+
+	public Boolean getIsHeaderFree() {
+		return isHeaderFree;
+	}
+
+	public void setIsHeaderFree(Boolean isHeaderFree) {
+		this.isHeaderFree = isHeaderFree;
 	}
 
 	public Boolean getIsPublicationCertificateDocument() {

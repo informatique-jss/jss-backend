@@ -2,7 +2,7 @@ import { Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/cor
 import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors } from '@angular/forms';
 import { MatAccordion } from '@angular/material/expansion';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
-import { BODACC_SALE_ACT_TYPE_AUTHENTIC_CODE, BODACC_SALE_TRANSFERT_FUND_TYPE_BAIL, BODACC_SALE_TRANSFERT_FUND_TYPE_MORAL, BODACC_SALE_TRANSFERT_FUND_TYPE_PHYSIQUE, COMPETENT_AUTHORITY_TYPE_CFP_CODE } from 'src/app/libs/Constants';
+import { BODACC_SALE_ACT_TYPE_AUTHENTIC_CODE, BODACC_SALE_ACT_TYPE_SEING_CODE, BODACC_SALE_TRANSFERT_FUND_TYPE_BAIL, BODACC_SALE_TRANSFERT_FUND_TYPE_MORAL, BODACC_SALE_TRANSFERT_FUND_TYPE_PHYSIQUE, COMPETENT_AUTHORITY_TYPE_CFP_CODE } from 'src/app/libs/Constants';
 import { validateSiren } from 'src/app/libs/CustomFormsValidatorsHelper';
 import { CompetentAuthority } from 'src/app/modules/miscellaneous/model/CompetentAuthority';
 import { CompetentAuthorityService } from 'src/app/modules/miscellaneous/services/competent-authority.service';
@@ -30,6 +30,7 @@ export class BodaccSaleComponent implements OnInit {
   BODACC_SALE_TRANSFERT_FUND_TYPE_BAIL = BODACC_SALE_TRANSFERT_FUND_TYPE_BAIL;
   BODACC_SALE_ACT_TYPE_AUTHENTIC_CODE = BODACC_SALE_ACT_TYPE_AUTHENTIC_CODE;
   COMPETENT_AUTHORITY_TYPE_CFP_CODE = COMPETENT_AUTHORITY_TYPE_CFP_CODE;
+  BODACC_SALE_ACT_TYPE_SEING_CODE = BODACC_SALE_ACT_TYPE_SEING_CODE;
 
   constructor(private formBuilder: UntypedFormBuilder,
     private competentAuthoritiesService: CompetentAuthorityService,

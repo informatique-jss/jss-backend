@@ -14,10 +14,12 @@ export interface Shal extends IAttachment, IDocument {
   publicationDate: Date;
   isRedactedByJss: boolean;
   notice: string;
+  noticeHeader: string;
   noticeTypes: NoticeType[];
   noticeTypeFamily: NoticeTypeFamily;
   isLogo: boolean;
   isHeader: boolean;
+  isHeaderFree: boolean;
   isPictureBaloPackage: boolean;
   isLegalDisplay: boolean;
   posterProductionPrice: number;

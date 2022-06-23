@@ -33,13 +33,13 @@ public class BodaccSale implements Serializable, IId {
 	@Column(columnDefinition = "TEXT", nullable = false)
 	private String divestedBusinessActivities;
 
-	@Column(length = 30, nullable = false)
+	@Column(length = 30)
 	private String ownerFirstname;
 
-	@Column(length = 30, nullable = false)
+	@Column(length = 30)
 	private String ownerLastname;
 
-	@Column(length = 60, nullable = false)
+	@Column(length = 60)
 	private String ownerDenomination;
 
 	@Column(length = 9, nullable = false)
@@ -104,7 +104,7 @@ public class BodaccSale implements Serializable, IId {
 	@JoinColumn(name = "id_registration_authority")
 	private CompetentAuthority registrationAuthority;
 
-	@Column(length = 50, nullable = false)
+	@Column(length = 50)
 	private String registrationReferences;
 
 	@ManyToOne
@@ -121,7 +121,7 @@ public class BodaccSale implements Serializable, IId {
 	@JsonProperty(value = "validityObjectionAddress")
 	private String validityObjectionAddress;
 
-	@Column(length = 100, nullable = false)
+	@Column(length = 100)
 	@JsonProperty(value = "mailObjectionAddress")
 	private String mailObjectionAddress;
 

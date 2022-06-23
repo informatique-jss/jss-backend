@@ -40,6 +40,11 @@ export class GenericToggleComponent implements OnInit {
     if (changes.model && this.form != undefined) {
       this.form.get(this.propertyName)?.setValue(this.model);
     }
+    if (changes.model && this.model == undefined) {
+      this.model = false;
+      this.modelChange.emit(this.model);
+    }
+
   }
 
   ngOnDestroy() {
