@@ -1,14 +1,16 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewChildren } from '@angular/core';
+import { MatAccordion } from '@angular/material/expansion';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router, UrlSegment } from '@angular/router';
 import { AppService } from 'src/app/app.service';
 import { QUOTATION_DOCUMENT_TYPE_CODE } from 'src/app/libs/Constants';
 import { instanceOfCustomerOrder, instanceOfQuotation } from 'src/app/libs/TypeHelper';
-import { ProvisionComponent } from 'src/app/modules/quotation/components/provision/provision.component';
 import { QUOTATION_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { SearchService } from 'src/app/search.service';
+import { Affaire } from '../../model/Affaire';
 import { IQuotation } from '../../model/IQuotation';
 import { QuotationService } from '../../services/quotation.service';
+import { AffaireComponent } from '../affaire/affaire.component';
 import { OrderingCustomerComponent } from '../ordering-customer/ordering-customer.component';
 import { QuotationManagementComponent } from '../quotation-management/quotation-management.component';
 
@@ -28,10 +30,12 @@ export class QuotationComponent implements OnInit {
   selectedTabIndex = 0;
 
   @ViewChild('tabs', { static: false }) tabs: any;
-
   @ViewChild(OrderingCustomerComponent) orderingCustomerComponent: OrderingCustomerComponent | undefined;
-  @ViewChild(ProvisionComponent) provisionComponent: ProvisionComponent | undefined;
   @ViewChild(QuotationManagementComponent) quotationManagementComponent: QuotationManagementComponent | undefined;
+  @ViewChildren(AffaireComponent) affaireComponents: any;
+  @ViewChild(MatAccordion) accordion: MatAccordion | undefined;
+
+  filteredAffaires: Affaire[] = [] as Array<Affaire>;
 
   constructor(private appService: AppService,
     private quotationService: QuotationService,
@@ -57,6 +61,8 @@ export class QuotationComponent implements OnInit {
         this.appService.changeHeaderTitle("Devis " + this.quotation.id + " - " +
           (this.quotation.quotationStatus != null ? this.quotation.quotationStatus.label : ""));
         this.toggleTabs();
+        this.sortAffaires();
+        this.filteredAffaires = this.quotation.affaires;
       })
     } else if (this.createMode == false) {
       // Blank page
@@ -83,13 +89,18 @@ export class QuotationComponent implements OnInit {
   getFormsStatus(): boolean {
     let orderingCustomerFormStatus = this.orderingCustomerComponent?.getFormStatus();
     let quotationManagementFormStatus = this.quotationManagementComponent?.getFormStatus();
-    let provisionFormStatus = this.provisionComponent?.getFormStatus();
+
+    let affaireStatus = true;
+    this.affaireComponents.toArray().forEach((affaireComponent: { getFormStatus: () => any; }) => {
+      affaireStatus = affaireStatus && affaireComponent.getFormStatus();
+    });
+
     let errorMessages: string[] = [] as Array<string>;
     if (!orderingCustomerFormStatus)
       errorMessages.push("Onglet Donneur d'ordre");
     if (!quotationManagementFormStatus)
       errorMessages.push("Onglet Gestion du devis");
-    if (!provisionFormStatus)
+    if (!affaireStatus)
       errorMessages.push("Onglet Prestations");
     if (errorMessages.length > 0) {
       let errorMessage = "Les onglets suivants ne sont pas correctement remplis. Veuillez les compléter avant de sauvegarder : " + errorMessages.join(" / ");
@@ -118,6 +129,75 @@ export class QuotationComponent implements OnInit {
 
   openSearch() {
     this.searchService.openSearchOnModule(QUOTATION_ENTITY_TYPE);
+  }
+
+
+  applyFilter(filterValue: any) {
+    if (filterValue == null || filterValue == undefined || filterValue.length == 0) {
+      this.filteredAffaires = this.quotation.affaires;
+      return;
+    }
+    this.filteredAffaires = [] as Array<Affaire>;
+    if (this.quotation && this.quotation.affaires) {
+      this.quotation.affaires.forEach(affaire => {
+        const dataStr = JSON.stringify(affaire).toLowerCase();
+        if (dataStr.indexOf(filterValue.value.toLowerCase()) >= 0)
+          this.filteredAffaires.push(affaire);
+      })
+    }
+  }
+
+  createAffaire() {
+    if (this.quotation && !this.quotation.affaires)
+      this.quotation.affaires = [] as Array<Affaire>;
+    let affaire = {} as Affaire;
+    this.quotation.affaires.push(affaire);
+    this.sortAffaires();
+    this.applyFilter(null);
+  }
+
+  deleteAffaire(index: number) {
+    if (this.filteredAffaires && this.quotation && this.quotation.affaires) {
+      for (let i = 0; i < this.quotation.affaires.length; i++) {
+        const affaire = this.quotation.affaires[i];
+        if (this.sameAffaire(affaire, this.filteredAffaires[index]))
+          this.quotation.affaires.splice(i, 1);
+      }
+    }
+    this.applyFilter(null);
+  }
+
+  sameAffaire(p1: Affaire, p2: Affaire): boolean {
+    return JSON.stringify(p1).toLowerCase() == JSON.stringify(p2).toLowerCase();
+  }
+
+  sortAffaires() {
+    if (this.quotation && this.quotation.affaires)
+      this.quotation.affaires.sort((a: Affaire, b: Affaire) => {
+        if (a == null && b != null)
+          return -1;
+        if (b != null && b == null)
+          return 1;
+        if (a.id == null && b.id != null)
+          return -1;
+        if (b.id != null && b.id == null)
+          return 1;
+        if (a == null && b == null)
+          return 0;
+        let nameA = "";
+        let nameB = "";
+        if (a.isIndividual) {
+          nameA = (a.firstname != null ? a.firstname : "") + (a.lastname != null ? a.lastname : "");
+        } else {
+          nameA = a.denomination;
+        }
+        if (b.isIndividual) {
+          nameB = (b.firstname != null ? b.firstname : "") + (b.lastname != null ? b.lastname : "");
+        } else {
+          nameB = b.denomination;
+        }
+        return nameA.localeCompare(nameB);
+      })
   }
 
   sendQuotation() {

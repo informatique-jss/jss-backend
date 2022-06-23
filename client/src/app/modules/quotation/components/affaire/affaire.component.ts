@@ -2,7 +2,7 @@ import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
-import { COUNTRY_CODE_FRANCE, SEPARATOR_KEY_CODES, UNREGISTERED_COMPANY_LEGAL_FORM_CODE } from 'src/app/libs/Constants';
+import { COUNTRY_CODE_FRANCE, UNREGISTERED_COMPANY_LEGAL_FORM_CODE } from 'src/app/libs/Constants';
 import { validateRna, validateSiren, validateSiret } from 'src/app/libs/CustomFormsValidatorsHelper';
 import { City } from 'src/app/modules/miscellaneous/model/City';
 import { Civility } from 'src/app/modules/miscellaneous/model/Civility';
@@ -15,6 +15,7 @@ import { CivilityService } from 'src/app/modules/miscellaneous/services/civility
 import { CountryService } from 'src/app/modules/miscellaneous/services/country.service';
 import { IndexEntity } from 'src/app/routing/search/IndexEntity';
 import { Affaire } from '../../model/Affaire';
+import { Provision } from '../../model/Provision';
 import { Rna } from '../../model/Rna';
 import { Siren } from '../../model/Siren';
 import { Siret } from '../../model/Siret';
@@ -47,7 +48,6 @@ export class AffaireComponent implements OnInit {
   filteredCountries: Observable<Country[]> | undefined;
 
   UNREGISTERED_COMPANY_LEGAL_FORM_CODE = UNREGISTERED_COMPANY_LEGAL_FORM_CODE;
-  SEPARATOR_KEY_CODE = SEPARATOR_KEY_CODES;
 
   constructor(private formBuilder: UntypedFormBuilder,
     private civilityService: CivilityService,
@@ -85,6 +85,17 @@ export class AffaireComponent implements OnInit {
         this.affaire.country = this.countries[0];
       this.affaireForm.markAllAsTouched();
     }
+  }
+
+  createProvision() {
+    if (this.affaire && !this.affaire.provisions)
+      this.affaire.provisions = [] as Array<Provision>;
+    let provision = {} as Provision;
+    this.affaire.provisions.push(provision);
+  }
+
+  deleteProvision(index: number) {
+    this.affaire.provisions.splice(index, 1);
   }
 
   affaireForm = this.formBuilder.group({

@@ -1,27 +1,27 @@
-<form [formGroup]="bodaccForm" *ngIf="provision && provision.bodacc">
+<form [formGroup]="bodaccForm" *ngIf="bodacc">
   <mat-tab-group animationDuration="0ms" #tabs>
     <mat-tab label="BODACC">
       <div class=" form-div">
         <table class="full-width">
-          <tr *ngIf="provision.bodacc.id">
+          <tr *ngIf="bodacc.id">
             <td>
-              <generic-input [(model)]="provision.bodacc.id" label="Numéro de BODACC" [form]="bodaccForm"
-                propertyName="id" [isMandatory]="true" [isDisabled]="true"></generic-input>
+              <generic-input [(model)]="bodacc.id" label="Numéro de BODACC" [form]="bodaccForm" propertyName="id"
+                [isMandatory]="true" [isDisabled]="true"></generic-input>
             </td>
           </tr>
           <tr>
             <td>
-              <select-bodacc-publication-type [(model)]="provision.bodacc.bodaccPublicationType"
-                label="Type de parution" [form]="bodaccForm" propertyName="bodaccPublicationType" [isMandatory]="true"
-                [isDisabled]="!editMode" (selectionChange)="changePublicationType()"></select-bodacc-publication-type>
+              <select-bodacc-publication-type [(model)]="bodacc.bodaccPublicationType" label="Type de parution"
+                [form]="bodaccForm" propertyName="bodaccPublicationType" [isMandatory]="true" [isDisabled]="!editMode"
+                (selectionChange)="changePublicationType()"></select-bodacc-publication-type>
             </td>
             <td
-              *ngIf="provision.bodacc.bodaccPublicationType && provision.bodacc.bodaccPublicationType.code==BODACC_PUBLICATION_TYPE_SALE_OF_BUSINESS">
-              <radio-group-transfert-funds [(model)]="provision.bodacc.transfertFundsType" [form]="bodaccForm"
+              *ngIf="bodacc.bodaccPublicationType && bodacc.bodaccPublicationType.code==BODACC_PUBLICATION_TYPE_SALE_OF_BUSINESS">
+              <radio-group-transfert-funds [(model)]="bodacc.transfertFundsType" [form]="bodaccForm"
                 propertyName="transfertFundsType" label="Type de cession de fonds"></radio-group-transfert-funds>
             </td>
             <td
-              *ngIf="provision.bodacc.bodaccPublicationType && (provision.bodacc.bodaccPublicationType.code ==BODACC_PUBLICATION_TYPE_POSSESSION_DISPATCH || provision.bodacc.bodaccPublicationType.code ==BODACC_PUBLICATION_TYPE_ESTATE_REPRESENTATIVE_DESIGNATION)">
+              *ngIf="bodacc.bodaccPublicationType && (bodacc.bodaccPublicationType.code ==BODACC_PUBLICATION_TYPE_POSSESSION_DISPATCH || bodacc.bodaccPublicationType.code ==BODACC_PUBLICATION_TYPE_ESTATE_REPRESENTATIVE_DESIGNATION)">
               <a href="https://declar-successions.journal-officiel.gouv.fr/successions/index.html" target="_blank">Lien
                 vers la plateforme BODACC.fr</a>
             </td>
@@ -30,20 +30,20 @@
       </div>
     </mat-tab>
     <mat-tab label="Imprimé"
-      *ngIf="provision.bodacc.bodaccPublicationType && (provision.bodacc.bodaccPublicationType.code==BODACC_PUBLICATION_TYPE_SPLIT || provision.bodacc.bodaccPublicationType.code==BODACC_PUBLICATION_TYPE_MERGING || provision.bodacc.bodaccPublicationType.code==BODACC_PUBLICATION_TYPE_SALE_OF_BUSINESS)">
-      <bodacc-sale [bodaccSale]="provision.bodacc.bodaccSale" [editMode]="editMode"
-        [transfertFundsType]="provision.bodacc.transfertFundsType" [affaire]="provision.affaire"
-        *ngIf="provision.bodacc.bodaccPublicationType && provision.bodacc.transfertFundsType && provision.bodacc.bodaccPublicationType.code==BODACC_PUBLICATION_TYPE_SALE_OF_BUSINESS">
+      *ngIf="bodacc.bodaccPublicationType && (bodacc.bodaccPublicationType.code==BODACC_PUBLICATION_TYPE_SPLIT || bodacc.bodaccPublicationType.code==BODACC_PUBLICATION_TYPE_MERGING || bodacc.bodaccPublicationType.code==BODACC_PUBLICATION_TYPE_SALE_OF_BUSINESS)">
+      <bodacc-sale [bodaccSale]="bodacc.bodaccSale" [editMode]="editMode"
+        [transfertFundsType]="bodacc.transfertFundsType" [affaire]="affaire"
+        *ngIf="bodacc.bodaccPublicationType && bodacc.transfertFundsType && bodacc.bodaccPublicationType.code==BODACC_PUBLICATION_TYPE_SALE_OF_BUSINESS">
       </bodacc-sale>
-      <bodacc-fusion [bodaccFusion]="provision.bodacc.bodaccFusion" [editMode]="editMode"
-        *ngIf="provision.bodacc.bodaccPublicationType &&  provision.bodacc.bodaccPublicationType.code==BODACC_PUBLICATION_TYPE_MERGING">
+      <bodacc-fusion [bodaccFusion]="bodacc.bodaccFusion" [editMode]="editMode"
+        *ngIf="bodacc.bodaccPublicationType &&  bodacc.bodaccPublicationType.code==BODACC_PUBLICATION_TYPE_MERGING">
       </bodacc-fusion>
-      <bodacc-split [bodaccSplit]="provision.bodacc.bodaccSplit" [editMode]="editMode"
-        *ngIf="provision.bodacc.bodaccPublicationType &&  provision.bodacc.bodaccPublicationType.code==BODACC_PUBLICATION_TYPE_SPLIT">
+      <bodacc-split [bodaccSplit]="bodacc.bodaccSplit" [editMode]="editMode"
+        *ngIf="bodacc.bodaccPublicationType &&  bodacc.bodaccPublicationType.code==BODACC_PUBLICATION_TYPE_SPLIT">
       </bodacc-split>
     </mat-tab>
     <mat-tab label="Documents">
-      <attachments [entity]="provision.bodacc" [editMode]="editMode" [entityType]="BODACC_ENTITY_TYPE.entityType">
+      <attachments [entity]="bodacc" [editMode]="editMode" [entityType]="BODACC_ENTITY_TYPE.entityType">
       </attachments>
     </mat-tab>
   </mat-tab-group>

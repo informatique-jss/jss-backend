@@ -12,7 +12,7 @@
     <div class="mat-accordion-container full-width">
       <div class="row-field-container">
         <mat-form-field class="full-width">
-          <input matInput (keyup)="applyFilter($event.target)" placeholder="Rechercher">
+          <input matInput (keyup)="applyFilter($event.target)" placeholder="Rechercher une affaire">
         </mat-form-field>
         <button [disabled]="editMode==false" (click)="createProvision()" mat-mini-fab color="warn" class="mini-fab-add">
           <mat-icon>add</mat-icon>

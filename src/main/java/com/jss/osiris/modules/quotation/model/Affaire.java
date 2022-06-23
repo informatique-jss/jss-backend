@@ -13,7 +13,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.miscellaneous.model.City;
 import com.jss.osiris.modules.miscellaneous.model.Civility;
@@ -29,6 +32,20 @@ public class Affaire implements Serializable, IId {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
+
+	@OneToMany(targetEntity = Provision.class, mappedBy = "affaire", cascade = CascadeType.ALL)
+	@JsonManagedReference("affaire")
+	private List<Provision> provisions;
+
+	@ManyToOne
+	@JoinColumn(name = "id_quotation")
+	@JsonBackReference("quotation")
+	private Quotation quotation;
+
+	@ManyToOne
+	@JoinColumn(name = "id_customer_order")
+	@JsonBackReference("customerOrder")
+	private CustomerOrder customerOrder;
 
 	@ManyToOne
 	@JoinColumn(name = "id_civility")
@@ -102,6 +119,14 @@ public class Affaire implements Serializable, IId {
 
 	public String getDenomination() {
 		return denomination;
+	}
+
+	public List<Provision> getProvisions() {
+		return provisions;
+	}
+
+	public void setProvisions(List<Provision> provisions) {
+		this.provisions = provisions;
 	}
 
 	public void setDenomination(String denomination) {

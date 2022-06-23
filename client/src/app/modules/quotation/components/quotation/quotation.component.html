@@ -1,3 +1,12 @@
+<ng-template #accordionTools>
+  <mat-panel-description>
+    <mat-icon matTooltip="Ouvrir tous les onglets" (click)="accordion!.openAll();$event.stopPropagation();"
+      class="pointer">
+      unfold_more_double</mat-icon>
+    <mat-icon matTooltip="Fermer tous les autres onglets" (click)="accordion!.closeAll();" class="pointer">
+      unfold_less_double</mat-icon>
+  </mat-panel-description>
+</ng-template>
 <div [hidden]="!editMode && (quotation.id==undefined || quotation.id==null)">
   <mat-tab-group animationDuration="0ms" #tabs>
     <mat-tab label="Donneur d'ordre">
@@ -5,7 +14,38 @@
       </ordering-customer>
     </mat-tab>
     <mat-tab label="Prestations">
-      <provision [provisions]="quotation.provisions" [editMode]="editMode"></provision>
+      <div class="mat-elevation-z2 form-div">
+        <div class="row-field-container">
+          <mat-form-field class="full-width">
+            <input matInput (keyup)="applyFilter($event.target)" placeholder="Rechercher une affaire">
+          </mat-form-field>
+          <button [disabled]="editMode==false" (click)="createAffaire()" mat-mini-fab color="warn" class="mini-fab-add">
+            <mat-icon>add</mat-icon>
+          </button>
+        </div>
+        <mat-accordion multi>
+          <mat-expansion-panel *ngFor="let affaire of filteredAffaires; let index = index;">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <span *ngIf="affaire">Affaire <span *ngIf="!affaire.isIndividual && affaire.denomination!=null
+                 && affaire.denomination!=undefined">{{affaire.denomination}}</span><span *ngIf="affaire.isIndividual
+                 && affaire.firstname!=null
+                 && affaire.firstname!=undefined  && affaire.lastname!=null
+                 && affaire.lastname!=undefined">{{affaire.firstname}}
+                    {{affaire.lastname}}</span>
+                </span>
+              </mat-panel-title>
+              <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
+              <mat-panel-description>
+                <mat-icon *ngIf="affaire.id==null || affaire.id==undefined" (click)="deleteAffaire(index)"
+                  class="pointer">
+                  delete</mat-icon>
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+            <affaire [affaire]="affaire" [editMode]="editMode"></affaire>
+          </mat-expansion-panel>
+        </mat-accordion>
+      </div>
     </mat-tab>
     <mat-tab label="Eléments du devis">
       <quotation-management [quotation]="quotation" [editMode]="editMode"></quotation-management>

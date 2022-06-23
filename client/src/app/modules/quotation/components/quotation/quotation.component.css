@@ -1,3 +1,16 @@
 .text-center {
   text-align: center;
 }
+
+table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+td {
+  padding-right: 8px;
+}
+
+.mini-fab-add {
+  margin: 5px
+}

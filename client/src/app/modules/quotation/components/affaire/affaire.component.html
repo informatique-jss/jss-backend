@@ -113,6 +113,21 @@
           </td>
         </tr>
       </table>
+      <table class="full-width">
+        <tr *ngFor="let provision of affaire.provisions ; let index = index">
+          <td>
+            <provision-item [editMode]="editMode" [provision]="provision" [affaire]="affaire">
+            </provision-item>
+          </td>
+          <td style="vertical-align: top;">
+            <button *ngIf="editMode" (click)="deleteProvision(index)" mat-mini-fab color="warn" class="mini-fab">
+              <mat-icon>remove</mat-icon>
+            </button>
+          </td>
+        </tr>
+      </table>
+      <button *ngIf="editMode" (click)="createProvision()" mat-raised-button color="accent">Ajouter une
+        prestation</button>
     </fieldset>
   </div>
 </form>

@@ -58,6 +58,10 @@ export class GenericDatepickerComponent implements OnInit {
    */
   @Input() minDate: Date | undefined;
   /**
+   * Define a min date selection for user
+   */
+  @Input() maxDate: Date | undefined;
+  /**
    * Fired when a date is selected in the calendar
    */
   @Output() onDateChange: EventEmitter<Date> = new EventEmitter();

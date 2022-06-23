@@ -85,9 +85,10 @@ public class Quotation implements IQuotation {
 	@JoinColumn(name = "id_record_type")
 	private RecordType recordType;
 
-	@OneToMany(targetEntity = Provision.class, mappedBy = "quotation", cascade = CascadeType.ALL)
+	@OneToMany(targetEntity = Affaire.class, mappedBy = "quotation", cascade = { CascadeType.MERGE,
+			CascadeType.REMOVE })
 	@JsonManagedReference("quotation")
-	private List<Provision> provisions;
+	private List<Affaire> affaires;
 
 	public Integer getId() {
 		return id;
@@ -181,6 +182,14 @@ public class Quotation implements IQuotation {
 		return quotationLabelType;
 	}
 
+	public List<Affaire> getAffaires() {
+		return affaires;
+	}
+
+	public void setAffaires(List<Affaire> affaires) {
+		this.affaires = affaires;
+	}
+
 	public void setQuotationLabelType(QuotationLabelType quotationLabelType) {
 		this.quotationLabelType = quotationLabelType;
 	}
@@ -199,14 +208,6 @@ public class Quotation implements IQuotation {
 
 	public void setRecordType(RecordType recordType) {
 		this.recordType = recordType;
-	}
-
-	public List<Provision> getProvisions() {
-		return provisions;
-	}
-
-	public void setProvisions(List<Provision> provisions) {
-		this.provisions = provisions;
 	}
 
 	public List<SpecialOffer> getSpecialOffers() {

@@ -94,7 +94,7 @@ mini-fab-add mat-form-field.mat-form-field, mat-option, .mat-cell {
 }
 
 .form-div {
-  min-height: 600px;
+  min-height: 200px;
   background-color: white;
   margin-top: 15px;
   padding: 10px;
