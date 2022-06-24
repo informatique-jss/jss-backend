@@ -18,6 +18,7 @@ import { HistoryAction } from 'src/app/modules/miscellaneous/model/HistoryAction
 import { DocumentTypeService } from 'src/app/modules/miscellaneous/services/document.type.service';
 import { UploadAttachmentService } from 'src/app/modules/miscellaneous/services/upload.attachment.service';
 import { SHAL_ENTITY_TYPE } from 'src/app/routing/search/search.component';
+import { ConfrereDialogComponent } from '../../../miscellaneous/components/confreres-dialog/confreres-dialog.component';
 import { Document } from "../../../miscellaneous/model/Document";
 import { DocumentType } from "../../../miscellaneous/model/DocumentType";
 import { Affaire } from '../../model/Affaire';
@@ -30,7 +31,6 @@ import { CharacterPriceService } from '../../services/character.price.service';
 import { ConfrereService } from '../../services/confrere.service';
 import { JournalTypeService } from '../../services/journal.type.service';
 import { NoticeTypeService } from '../../services/notive.type.service';
-import { ConfrereDialogComponent } from '../confreres-dialog/confreres-dialog.component';
 
 @Component({
   selector: 'shal',
@@ -136,6 +136,7 @@ export class ShalComponent implements OnInit {
         this.shal!.isPublicationCertificateDocument = false;
       if (this.shal!.publicationDate)
         this.shal.publicationDate = new Date(this.shal.publicationDate);
+
       this.documentTypeService.getDocumentTypes().subscribe(response => {
         this.documentTypes = response;
         this.publicationDocument = getDocument(PUBLICATION_TIERS_DOCUMENT_TYPE_CODE, this.shal!, this.documentTypes);
@@ -145,6 +146,7 @@ export class ShalComponent implements OnInit {
       })
 
       this.shalForm.get('notice')?.setValue(this.shal.notice);
+      this.shalForm.get('noticeHeader')?.setValue(this.shal.noticeHeader);
 
       this.shalForm.markAllAsTouched();
       this.toggleTabs();
@@ -250,10 +252,10 @@ export class ShalComponent implements OnInit {
   }
 
   openConfrereDialog() {
-    let dialogSpecialOffer = this.confrereDialog.open(ConfrereDialogComponent, {
+    let dialogConfrere = this.confrereDialog.open(ConfrereDialogComponent, {
       width: '90%'
     });
-    dialogSpecialOffer.afterClosed().subscribe(response => {
+    dialogConfrere.afterClosed().subscribe(response => {
       if (response && response != null)
         this.shal!.confrere = response;
     });
@@ -307,29 +309,16 @@ export class ShalComponent implements OnInit {
 
     let exportRtfAction = {} as HistoryAction;
     exportRtfAction.actionClick = (element2: Audit): void => {
-      downloadHtmlAsRtf("Affaire " + this.affaire.id + " - " + formatDate(new Date(element2.datetime)), element2.newValue);
-
-      // TODO : marche pas ... voir solution backend
-      const HtmlToRtfBrowser = require('html-to-rtf-browser');
-      var htmlToRtf = new HtmlToRtfBrowser();
-      let html = element2.newValue;
-      const rtf = htmlToRtf.convertHtmlToRtf(html)
-
-      var element = document.createElement('a');
-      element.setAttribute('href', 'application/rtf;charset=utf-8,' + encodeURIComponent(rtf));
-      element.setAttribute('download', new Date(element2.datetime) + ".rtf");
-
-      element.style.display = 'none';
-      document.body.appendChild(element);
-
-      element.click();
-
-      document.body.removeChild(element);
+      downloadHtmlAsRtf("Affaire " + this.affaire.id + " - " + formatDate(new Date(element2.datetime)) + ".rtf", element2.newValue);
     }
     exportRtfAction.actionTooltip = "Télécharger en .rtf";
     exportRtfAction.actionIcon = "description";
     historyActions.push(exportRtfAction);
     return historyActions;
+  }
+
+  exportAsRtf() {
+    downloadHtmlAsRtf("Affaire " + this.affaire.id + " - " + formatDate(new Date()) + ".rtf", ((this.shal.noticeHeader) ? this.shal.noticeHeader + "<br>" : "") + this.shal.notice);
   }
 
 }

@@ -1,5 +1,6 @@
 import { DeliveryService } from "../../miscellaneous/model/DeliveryService";
 import { SpecialOffer } from "../../miscellaneous/model/SpecialOffer";
+import { Confrere } from "../../quotation/model/Confrere";
 import { PaymentType } from './../../miscellaneous/model/PaymentType';
 import { ITiers } from './ITiers';
 import { Responsable } from "./Responsable";
@@ -18,4 +19,5 @@ export interface Tiers extends ITiers {
   isProvisionalPaymentMandatory: boolean;
   isSepaMandateReceived: boolean;
   responsables: Responsable[];
+  competitors: Confrere[];
 }

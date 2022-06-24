@@ -87,7 +87,6 @@
               <p>En-tête :</p>
               <div *ngIf="!editMode">
                 <span [innerHTML]="shal.noticeHeader | trustHtml"></span>
-                <p [innerHTML]='shal.noticeHeader'></p>
               </div>
               <quill-editor [hidden]="!editMode" formControlName="noticeHeader"
                 (onContentChanged)="setNoticeHeaderModel($event)">
@@ -99,7 +98,6 @@
               <p>Annonce :</p>
               <div *ngIf="!editMode">
                 <span [innerHTML]="shal.notice | trustHtml"></span>
-                <p [innerHTML]='shal.notice'></p>
               </div>
               <quill-editor [hidden]="!editMode" formControlName="notice" (onContentChanged)="setNoticeModel($event)">
               </quill-editor>
@@ -116,6 +114,11 @@
             </td>
             <td *ngIf="shal.confrere!=undefined && shal.department!=undefined && shal.publicationDate!=undefined">
               Prix total : {{countCharacterNumber()*characterPrice.price | number}} €
+            </td>
+            <td>
+              <mat-icon (click)='exportAsRtf()' class="pointer" color="accent" matTooltip="Télécharger en .rtf">
+                description
+              </mat-icon>
             </td>
           </tr>
         </table>
@@ -281,9 +284,6 @@
     <mat-tab label="Historique de l'annonce" *ngIf="shal.id!=null && shal.id!=undefined">
       <history [entity]="shal" [entityType]="SHAL_ENTITY_TYPE" [displayOnlyFields]="['notice']"
         [historyActions]="getHistoryActions()"></history>
-    </mat-tab>
-    <mat-tab label="Historique" *ngIf="shal.id!=null && shal.id!=undefined">
-      <history [entity]="shal" [entityType]="SHAL_ENTITY_TYPE"></history>
     </mat-tab>
     <mat-tab label="Documents" *ngIf="shal.id!=null && shal.id!=undefined">
       <attachments [entity]="shal" [editMode]="editMode" [entityType]="SHAL_ENTITY_TYPE.entityType">

@@ -19,48 +19,64 @@
             </mat-panel-title>
             <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
           </mat-expansion-panel-header>
-          <table class="full-width">
+          <table class="full-width" *ngFor="let beneficiary of bodaccSplit.bodaccSplitBeneficiaries;let i = index ">
             <tr>
               <td>
-                <generic-input [(model)]="bodaccSplit.beneficiaryCompanyDenomination" label="Dénomination"
-                  [form]="bodaccSplitForm" propertyName="beneficiaryCompanyDenomination" [isMandatory]="true"
+                <generic-input [(model)]="beneficiary.beneficiaryCompanyDenomination" label="Dénomination"
+                  [form]="bodaccSplitForm" [propertyName]="'beneficiaryCompanyDenomination'+i" [isMandatory]="true"
                   [isDisabled]="!editMode" [maxLength]="60"></generic-input>
               </td>
               <td>
-                <autocomplete-siren [(model)]="bodaccSplit.beneficiaryCompanySiren" [form]="bodaccSplitForm"
-                  propertyName="beneficiaryCompanySiren" [isMandatory]="true"
-                  (onOptionSelected)="fillSirenBeneficiaryCompany($event)">
+                <autocomplete-siren [(model)]="beneficiary.beneficiaryCompanySiren" [form]="bodaccSplitForm"
+                  [propertyName]="'beneficiaryCompanySiren'+i" [isMandatory]="true"
+                  (onOptionSelected)="fillSirenBeneficiaryCompany($event,beneficiary)">
                 </autocomplete-siren>
               </td>
               <td>
-                <generic-input [(model)]="bodaccSplit.beneficiaryCompanyAddress" label="Adresse"
-                  [form]="bodaccSplitForm" propertyName="beneficiaryCompanyAddress" [isMandatory]="true"
+                <generic-input [(model)]="beneficiary.beneficiaryCompanyAddress" label="Adresse"
+                  [form]="bodaccSplitForm" [propertyName]="'beneficiaryCompanyAddress'+i" [isMandatory]="true"
                   [isDisabled]="!editMode" [maxLength]="100">
                 </generic-input>
+              </td>
+              <td class="mini-fab-td"> <button *ngIf="editMode" mat-mini-fab color="warn"
+                  matTooltip="Supprimer la société bénéficiaire" class="mini-fab"
+                  (click)="deleteBeneficiary(beneficiary)">
+                  <mat-icon>delete</mat-icon>
+                </button>
               </td>
             </tr>
             <tr>
               <td>
-                <autocomplete-legal-form [(model)]="bodaccSplit.beneficiaryCompanyLegalForm" [form]="bodaccSplitForm"
-                  propertyName="beneficiaryCompanyLegalForm" [isMandatory]="true" [isDisabled]="!editMode">
+                <autocomplete-legal-form [(model)]="beneficiary.beneficiaryCompanyLegalForm" [form]="bodaccSplitForm"
+                  [propertyName]="'beneficiaryCompanyLegalForm'+i" [isMandatory]="true" [isDisabled]="!editMode">
                 </autocomplete-legal-form>
               </td>
               <td>
-                <generic-input [(model)]="bodaccSplit.beneficiaryCompanyShareCapital" label="Capital social"
-                  [form]="bodaccSplitForm" propertyName="beneficiaryCompanyShareCapital" [isMandatory]="true"
+                <generic-input [(model)]="beneficiary.beneficiaryCompanyShareCapital" label="Capital social"
+                  [form]="bodaccSplitForm" [propertyName]="'beneficiaryCompanyShareCapital'+i" [isMandatory]="true"
                   [isDisabled]="!editMode" type="number"></generic-input>
               </td>
               <td>
-                <generic-datepicker [(model)]="bodaccSplit.beneficiaryCompanyRcsDeclarationDate"
+                <generic-datepicker [(model)]="beneficiary.beneficiaryCompanyRcsDeclarationDate"
                   label="Date de dépôt au RCS" [form]="bodaccSplitForm"
-                  propertyName="beneficiaryCompanyRcsDeclarationDate" [isMandatory]="true" [isDisabled]="!editMode">
+                  [propertyName]="'beneficiaryCompanyRcsDeclarationDate'+i" [isMandatory]="true"
+                  [isDisabled]="!editMode">
                 </generic-datepicker>
               </td>
               <td>
-                <autocomplete-competent-authority [(model)]="bodaccSplit.beneficiaryCompanyRcsCompetentAuthority"
-                  [form]="bodaccSplitForm" propertyName="beneficiaryCompanyRcsCompetentAuthority" [isMandatory]="true"
-                  label="Immatriculé au RCS" [filteredCompetentAuthorityTypeCode]="COMPETENT_AUTHORITY_TYPE_RCS_CODE">
+                <autocomplete-competent-authority [(model)]="beneficiary.beneficiaryCompanyRcsCompetentAuthority"
+                  [form]="bodaccSplitForm" [propertyName]="'beneficiaryCompanyRcsCompetentAuthority'+i"
+                  [isMandatory]="true" label="Immatriculé au RCS"
+                  [filteredCompetentAuthorityTypeCode]="COMPETENT_AUTHORITY_TYPE_RCS_CODE">
                 </autocomplete-competent-authority>
+              </td>
+            </tr>
+          </table>
+          <table class="full-width">
+            <tr>
+              <td colspan="4">
+                <button *ngIf="editMode && bodaccSplit.bodaccSplitBeneficiaries" (click)="createBeneficiary()"
+                  mat-raised-button color="accent">Ajouter une société bénéficiaire</button>
               </td>
             </tr>
           </table>
@@ -72,47 +88,62 @@
             </mat-panel-title>
             <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
           </mat-expansion-panel-header>
-          <table class="full-width">
+          <table class="full-width" *ngFor="let splitCompany of bodaccSplit.bodaccSplitCompanies; let i = index ">
             <tr>
               <td>
-                <generic-input [(model)]="bodaccSplit.splitCompanyDenomination" label="Dénomination"
-                  [form]="bodaccSplitForm" propertyName="splitCompanyDenomination" [isMandatory]="true"
+                <generic-input [(model)]="splitCompany.splitCompanyDenomination" label="Dénomination"
+                  [form]="bodaccSplitForm" [propertyName]="'splitCompanyDenomination'+i" [isMandatory]="true"
                   [isDisabled]="!editMode" [maxLength]="60"></generic-input>
               </td>
               <td>
-                <autocomplete-siren [(model)]="bodaccSplit.splitCompanySiren" [form]="bodaccSplitForm"
-                  propertyName="splitCompanySiren" [isMandatory]="true"
-                  (onOptionSelected)="fillSirenSplitCompany($event)">
+                <autocomplete-siren [(model)]="splitCompany.splitCompanySiren" [form]="bodaccSplitForm"
+                  [propertyName]="'splitCompanySiren'+i" [isMandatory]="true"
+                  (onOptionSelected)="fillSirenSplitCompany($event, splitCompany)">
                 </autocomplete-siren>
               </td>
               <td>
-                <generic-input [(model)]="bodaccSplit.splitCompanyAddress" label="Adresse" [form]="bodaccSplitForm"
-                  propertyName="splitCompanyAddress" [isMandatory]="true" [isDisabled]="!editMode" [maxLength]="100">
+                <generic-input [(model)]="splitCompany.splitCompanyAddress" label="Adresse" [form]="bodaccSplitForm"
+                  [propertyName]="'splitCompanyAddress'+i" [isMandatory]="true" [isDisabled]="!editMode"
+                  [maxLength]="100">
                 </generic-input>
+              </td>
+              <td class="mini-fab-td"> <button *ngIf="editMode" mat-mini-fab color="warn"
+                  matTooltip="Supprimer la société bénéficiaire" class="mini-fab"
+                  (click)="deleteSplitCompany(splitCompany)">
+                  <mat-icon>delete</mat-icon>
+                </button>
               </td>
             </tr>
             <tr>
               <td>
-                <autocomplete-legal-form [(model)]="bodaccSplit.splitCompanyLegalForm" [form]="bodaccSplitForm"
-                  propertyName="splitCompanyLegalForm" [isMandatory]="true" [isDisabled]="!editMode">
+                <autocomplete-legal-form [(model)]="splitCompany.splitCompanyLegalForm" [form]="bodaccSplitForm"
+                  [propertyName]="'splitCompanyLegalForm'+i" [isMandatory]="true" [isDisabled]="!editMode">
                 </autocomplete-legal-form>
               </td>
               <td>
-                <generic-input [(model)]="bodaccSplit.splitCompanyShareCapital" label="Capital social"
-                  [form]="bodaccSplitForm" propertyName="splitCompanyShareCapital" [isMandatory]="true"
+                <generic-input [(model)]="splitCompany.splitCompanyShareCapital" label="Capital social"
+                  [form]="bodaccSplitForm" [propertyName]="'splitCompanyShareCapital'+i" [isMandatory]="true"
                   [isDisabled]="!editMode" type="number"></generic-input>
               </td>
               <td>
-                <generic-datepicker [(model)]="bodaccSplit.splitCompanyRcsDeclarationDate" label="Date de dépôt au RCS"
-                  [form]="bodaccSplitForm" propertyName="splitCompanyRcsDeclarationDate" [isMandatory]="true"
+                <generic-datepicker [(model)]="splitCompany.splitCompanyRcsDeclarationDate" label="Date de dépôt au RCS"
+                  [form]="bodaccSplitForm" [propertyName]="'splitCompanyRcsDeclarationDate'+i" [isMandatory]="true"
                   [isDisabled]="!editMode">
                 </generic-datepicker>
               </td>
               <td>
-                <autocomplete-competent-authority [(model)]="bodaccSplit.splitCompanyRcsCompetentAuthority"
-                  [form]="bodaccSplitForm" propertyName="splitCompanyRcsCompetentAuthority" [isMandatory]="true"
+                <autocomplete-competent-authority [(model)]="splitCompany.splitCompanyRcsCompetentAuthority"
+                  [form]="bodaccSplitForm" [propertyName]="'splitCompanyRcsCompetentAuthority'+i" [isMandatory]="true"
                   label="Immatriculé au RCS" [filteredCompetentAuthorityTypeCode]="COMPETENT_AUTHORITY_TYPE_RCS_CODE">
                 </autocomplete-competent-authority>
+              </td>
+            </tr>
+          </table>
+          <table class="full-width">
+            <tr>
+              <td colspan="4">
+                <button *ngIf="editMode && bodaccSplit.bodaccSplitCompanies" (click)="createSplitCompany()"
+                  mat-raised-button color="accent">Ajouter une société scindée</button>
               </td>
             </tr>
           </table>

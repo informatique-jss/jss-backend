@@ -1,22 +1,10 @@
-import { CompetentAuthority } from "../../miscellaneous/model/CompetentAuthority";
-import { LegalForm } from "../../miscellaneous/model/LegalForm";
+import { BodaccFusionAbsorbedCompany } from "./BodaccFusionAbsorbedCompany";
+import { BodaccFusionMergingCompany } from "./BodaccFusionMergingCompany";
 
 export interface BodaccFusion {
   id: number;
-  mergingCompanyDenomination: string;
-  mergingCompanySiren: string;
-  mergingCompanyShareCapital: number;
-  mergingCompanyLegalForm: LegalForm;
-  mergingCompanyAddress: string;
-  mergingCompanyRcsDeclarationDate: Date;
-  mergingCompanyRcsCompetentAuthority: CompetentAuthority;
-  absorbedCompanyDenomination: string;
-  absorbedCompanySiren: string;
-  absorbedCompanyShareCapital: number;
-  absorbedCompanyLegalForm: LegalForm;
-  absorbedCompanyAddress: string;
-  absorbedCompanyRcsDeclarationDate: Date;
-  absorbedCompanyRcsCompetentAuthority: CompetentAuthority;
+  bodaccFusionMergingCompanies: BodaccFusionMergingCompany[];
+  bodaccFusionAbsorbedCompanies: BodaccFusionAbsorbedCompany[];
   assets: number;
   liabilities: number;
   mergerBonus: number;

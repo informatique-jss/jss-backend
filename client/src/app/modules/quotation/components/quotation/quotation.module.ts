@@ -28,7 +28,6 @@ import { BodaccFusionComponent } from '../bodacc-fusion/bodacc-fusion.component'
 import { BodaccMainComponent } from '../bodacc-main/bodacc-main.component';
 import { BodaccSaleComponent } from '../bodacc-sale/bodacc-sale.component';
 import { BodaccSplitComponent } from '../bodacc-split/bodacc-split.component';
-import { ConfrereDialogComponent } from '../confreres-dialog/confreres-dialog.component';
 import { DomiciliationComponent } from '../domiciliation/domiciliation.component';
 import { OrderingCustomerComponent } from '../ordering-customer/ordering-customer.component';
 import { ProvisionItemComponent } from '../provision-item/provision-item.component';
@@ -94,7 +93,6 @@ const routes: Routes = [
     QuotationManagementComponent,
     AffaireComponent,
     DomiciliationComponent,
-    ConfrereDialogComponent,
     BodaccMainComponent,
     AddAffaireDialogComponent,
     ProvisionItemComponent,

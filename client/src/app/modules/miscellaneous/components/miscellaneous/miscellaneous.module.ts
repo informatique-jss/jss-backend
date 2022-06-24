@@ -23,6 +23,7 @@ import { TrustHtmlPipe } from 'src/app/libs/TrustHtmlPipe';
 import { AddressingComponent } from '../addressing/addressing.component';
 import { AttachmentsComponent } from '../attachments/attachments.component';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
+import { ConfrereDialogComponent } from '../confreres-dialog/confreres-dialog.component';
 import { AutocompleteAffaireComponent } from '../forms/autocomplete-affaire/autocomplete-affaire.component';
 import { AutocompleteCityComponent } from '../forms/autocomplete-city/autocomplete-city.component';
 import { AutocompleteCompetentAuthorityComponent } from '../forms/autocomplete-competent-authority/autocomplete-competent-authority.component';
@@ -38,6 +39,7 @@ import { AutocompleteSalesEmployeeComponent } from '../forms/autocomplete-sales-
 import { AutocompleteSirenComponent } from '../forms/autocomplete-siren/autocomplete-siren.component';
 import { AutocompleteSiretComponent } from '../forms/autocomplete-siret/autocomplete-siret.component';
 import { AutocompleteTiersIndividualComponent } from '../forms/autocomplete-tiers-individual/autocomplete-tiers-individual.component';
+import { ChipsConfrereComponent } from '../forms/chips-confrere/chips-confrere.component';
 import { ChipsMailComponent } from '../forms/chips-mail/chips-mail.component';
 import { ChipsPhoneComponent } from '../forms/chips-phone/chips-phone.component';
 import { ChipsSpecialOffersComponent } from '../forms/chips-special-offers/chips-special-offers.component';
@@ -142,6 +144,7 @@ import { MiscellaneousComponent } from './miscellaneous.component';
     SelectContractTypeComponent,
     AutocompleteLegalFormComponent,
     AutocompleteSiretComponent,
+    ConfrereDialogComponent,
     SelectSubscriptionPeriodComponent,
     SelectProvisionFamilyComponent,
     AutocompleteRnaComponent,
@@ -157,6 +160,7 @@ import { MiscellaneousComponent } from './miscellaneous.component';
     AutocompleteCityComponent,
     SelectFundTypeComponent,
     AutocompleteDepartmentComponent,
+    ChipsConfrereComponent,
     RadioGroupQuotationLabelTypeComponent,
     TrustHtmlPipe,
     SingleAttachmentComponent],
@@ -177,6 +181,7 @@ import { MiscellaneousComponent } from './miscellaneous.component';
     AutocompleteCompetentAuthorityComponent,
     AutocompleteSirenComponent,
     RadioGroupQuotationLabelTypeComponent,
+    ConfrereDialogComponent,
     AutocompleteTiersIndividualComponent,
     RadioGroupLanguageComponent,
     SelectContractTypeComponent,
@@ -186,6 +191,7 @@ import { MiscellaneousComponent } from './miscellaneous.component';
     ChipsSpecialOffersComponent,
     RadioGroupActTypeComponent,
     AutocompleteLegalFormComponent,
+    ChipsConfrereComponent,
     SelectMailRedirectionComponent,
     RadioGroupBillingClosureComponent,
     SelectFundTypeComponent,

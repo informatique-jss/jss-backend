@@ -112,6 +112,10 @@ public class Document implements Serializable, IId {
 	@JoinColumn(name = "id_payment_deadline_type")
 	private PaymentDeadlineType paymentDeadlineType;
 
+	@ManyToOne
+	@JoinColumn(name = "id_payment_deadline_reminder_type")
+	private PaymentDeadlineType reminderPaymentDeadlineType;
+
 	private Boolean isAutomaticDunning;
 
 	@ManyToOne
@@ -157,6 +161,14 @@ public class Document implements Serializable, IId {
 
 	public void setMailsCCResponsableClient(List<Responsable> mailsCCResponsableClient) {
 		this.mailsCCResponsableClient = mailsCCResponsableClient;
+	}
+
+	public PaymentDeadlineType getReminderPaymentDeadlineType() {
+		return reminderPaymentDeadlineType;
+	}
+
+	public void setReminderPaymentDeadlineType(PaymentDeadlineType reminderPaymentDeadlineType) {
+		this.reminderPaymentDeadlineType = reminderPaymentDeadlineType;
 	}
 
 	public List<Responsable> getMailsCCResponsableAffaire() {

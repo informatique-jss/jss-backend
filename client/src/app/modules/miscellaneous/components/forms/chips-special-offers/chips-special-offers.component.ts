@@ -5,7 +5,6 @@ import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
-import { validateEmail } from 'src/app/libs/CustomFormsValidatorsHelper';
 import { SpecialOffer } from '../../../model/SpecialOffer';
 import { SpecialOfferService } from '../../../services/special-offer.service';
 import { SpecialOffersDialogComponent } from '../../special-offers-dialog/special-offers-dialog.component';
@@ -57,10 +56,7 @@ export class ChipsSpecialOffersComponent extends GenericChipsComponent<SpecialOf
 
 
   validateInput(value: string): boolean {
-    let a = validateEmail(value);
-    if (a != null && a.length > 0)
-      return true;
-    return false;
+    return true;
   }
 
   openSpecialOffersDialog() {

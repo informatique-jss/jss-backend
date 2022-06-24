@@ -28,7 +28,15 @@ import com.jss.osiris.modules.miscellaneous.service.LegalFormService;
 import com.jss.osiris.modules.miscellaneous.service.SpecialOfferService;
 import com.jss.osiris.modules.quotation.model.ActType;
 import com.jss.osiris.modules.quotation.model.Affaire;
+import com.jss.osiris.modules.quotation.model.Bodacc;
+import com.jss.osiris.modules.quotation.model.BodaccFusion;
+import com.jss.osiris.modules.quotation.model.BodaccFusionAbsorbedCompany;
+import com.jss.osiris.modules.quotation.model.BodaccFusionMergingCompany;
 import com.jss.osiris.modules.quotation.model.BodaccPublicationType;
+import com.jss.osiris.modules.quotation.model.BodaccSale;
+import com.jss.osiris.modules.quotation.model.BodaccSplit;
+import com.jss.osiris.modules.quotation.model.BodaccSplitBeneficiary;
+import com.jss.osiris.modules.quotation.model.BodaccSplitCompany;
 import com.jss.osiris.modules.quotation.model.BuildingDomiciliation;
 import com.jss.osiris.modules.quotation.model.CharacterPrice;
 import com.jss.osiris.modules.quotation.model.Confrere;
@@ -632,7 +640,130 @@ public class QuotationController {
           validationHelper.validateString(shal.getNotice(), true);
         }
 
-        // TODO : bodacc
+        if (provision.getBodacc() != null) {
+          Bodacc bodacc = provision.getBodacc();
+          validationHelper.validateReferential(bodacc.getPaymentType(), false);
+          validationHelper.validateReferential(bodacc.getBodaccPublicationType(), true);
+          validationHelper.validateReferential(bodacc.getTransfertFundsType(), false);
+
+          if (bodacc.getBodaccSale() != null) {
+            BodaccSale bodaccSale = bodacc.getBodaccSale();
+
+            validationHelper.validateString(bodaccSale.getDivestedBusinessAddress(), false, 100);
+            validationHelper.validateReferential(bodaccSale.getFundType(), true);
+            validationHelper.validateString(bodaccSale.getOwnerFirstname(), false, 30);
+            validationHelper.validateString(bodaccSale.getOwnerLastname(), false, 30);
+            validationHelper.validateString(bodaccSale.getOwnerDenomination(), false, 60);
+            validationHelper.validateString(bodaccSale.getOwnerSiren(), false, 9);
+            validationHelper.validateSiren(bodaccSale.getOwnerSiren());
+            validationHelper.validateString(bodaccSale.getOwnerAddress(), true, 100);
+            validationHelper.validateString(bodaccSale.getOwnerAbbreviation(), false, 20);
+            validationHelper.validateString(bodaccSale.getOwnerBusinessName(), false, 60);
+            validationHelper.validateReferential(bodaccSale.getOwnerLegalForm(), false);
+
+            validationHelper.validateString(bodaccSale.getPurchaserFirstname(), false, 30);
+            validationHelper.validateString(bodaccSale.getPurchaserLastname(), false, 30);
+            validationHelper.validateString(bodaccSale.getPurchaserDenomination(), false, 60);
+            validationHelper.validateString(bodaccSale.getPurchaserSiren(), false, 9);
+            validationHelper.validateSiren(bodaccSale.getPurchaserSiren());
+            validationHelper.validateString(bodaccSale.getPurchaserBusinessName(), false, 60);
+            validationHelper.validateString(bodaccSale.getPurchaserAbbreviation(), false, 20);
+            validationHelper.validateReferential(bodaccSale.getPurchaserLegalForm(), false);
+            validationHelper.validateDate(bodaccSale.getPurchaserActivityStartDate(), true);
+
+            validationHelper.validateDate(bodaccSale.getDeedDate(), true);
+            validationHelper.validateDate(bodaccSale.getRegistrationDate(), true);
+            validationHelper.validateReferential(bodaccSale.getRegistrationAuthority(), true);
+            validationHelper.validateString(bodaccSale.getRegistrationReferences(), false, 50);
+            validationHelper.validateReferential(bodaccSale.getActType(), true);
+            validationHelper.validateString(bodaccSale.getWritor(), false, 60);
+            validationHelper.validateString(bodaccSale.getWritorAddress(), false, 100);
+            validationHelper.validateString(bodaccSale.getValidityObjectionAddress(), true, 100);
+            validationHelper.validateString(bodaccSale.getMailObjectionAddress(), false, 100);
+            validationHelper.validateDate(bodaccSale.getLeaseResilisationDate(), true);
+            validationHelper.validateString(bodaccSale.getLeaseAddress(), false, 100);
+
+            validationHelper.validateString(bodaccSale.getTenantFirstname(), false, 30);
+            validationHelper.validateString(bodaccSale.getTenantLastname(), false, 30);
+            validationHelper.validateString(bodaccSale.getTenantAddress(), true, 100);
+            validationHelper.validateString(bodaccSale.getTenantDenomination(), false, 60);
+            validationHelper.validateString(bodaccSale.getTenantSiren(), false, 9);
+            validationHelper.validateSiren(bodaccSale.getTenantSiren());
+            validationHelper.validateString(bodaccSale.getTenantBusinessName(), false, 60);
+            validationHelper.validateString(bodaccSale.getTenantAbbreviation(), false, 20);
+            validationHelper.validateReferential(bodaccSale.getTenantLegalForm(), false);
+
+          }
+
+          if (bodacc.getBodaccFusion() != null) {
+            BodaccFusion bodaccFusion = bodacc.getBodaccFusion();
+
+            if (bodaccFusion.getBodaccFusionAbsorbedCompanies() == null
+                || bodaccFusion.getBodaccFusionAbsorbedCompanies().size() == 0)
+              return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+            for (BodaccFusionAbsorbedCompany bodaccFusionAbsorbedCompany : bodaccFusion
+                .getBodaccFusionAbsorbedCompanies()) {
+              validationHelper.validateString(bodaccFusionAbsorbedCompany.getAbsorbedCompanyDenomination(), true, 60);
+              validationHelper.validateString(bodaccFusionAbsorbedCompany.getAbsorbedCompanySiren(), true, 9);
+              validationHelper.validateRna(bodaccFusionAbsorbedCompany.getAbsorbedCompanySiren());
+              validationHelper.validateString(bodaccFusionAbsorbedCompany.getAbsorbedCompanyAddress(), true, 100);
+              validationHelper.validateReferential(bodaccFusionAbsorbedCompany.getAbsorbedCompanyLegalForm(), false);
+              validationHelper.validateDate(bodaccFusionAbsorbedCompany.getAbsorbedCompanyRcsDeclarationDate(), true);
+              validationHelper
+                  .validateReferential(bodaccFusionAbsorbedCompany.getAbsorbedCompanyRcsCompetentAuthority(), true);
+            }
+
+            if (bodaccFusion.getBodaccFusionMergingCompanies() == null
+                || bodaccFusion.getBodaccFusionMergingCompanies().size() == 0)
+              return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+            for (BodaccFusionMergingCompany bodaccFusionMergingCompany : bodaccFusion
+                .getBodaccFusionMergingCompanies()) {
+              validationHelper.validateString(bodaccFusionMergingCompany.getMergingCompanyDenomination(), true, 60);
+              validationHelper.validateString(bodaccFusionMergingCompany.getMergingCompanySiren(), true, 9);
+              validationHelper.validateRna(bodaccFusionMergingCompany.getMergingCompanySiren());
+              validationHelper.validateString(bodaccFusionMergingCompany.getMergingCompanyAddress(), true, 100);
+              validationHelper.validateReferential(bodaccFusionMergingCompany.getMergingCompanyLegalForm(), false);
+              validationHelper.validateDate(bodaccFusionMergingCompany.getMergingCompanyRcsDeclarationDate(), true);
+              validationHelper.validateReferential(bodaccFusionMergingCompany.getMergingCompanyRcsCompetentAuthority(),
+                  true);
+            }
+          }
+
+          if (bodacc.getBodaccSplit() != null) {
+            BodaccSplit bodaccSplit = bodacc.getBodaccSplit();
+
+            if (bodaccSplit.getBodaccSplitBeneficiaries() == null
+                || bodaccSplit.getBodaccSplitBeneficiaries().size() == 0)
+              return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+            for (BodaccSplitBeneficiary bodaccSplitBeneficiary : bodaccSplit.getBodaccSplitBeneficiaries()) {
+              validationHelper.validateString(bodaccSplitBeneficiary.getBeneficiaryCompanyDenomination(), true, 60);
+              validationHelper.validateString(bodaccSplitBeneficiary.getBeneficiaryCompanySiren(), true, 9);
+              validationHelper.validateRna(bodaccSplitBeneficiary.getBeneficiaryCompanySiren());
+              validationHelper.validateString(bodaccSplitBeneficiary.getBeneficiaryCompanyAddress(), true, 100);
+              validationHelper.validateReferential(bodaccSplitBeneficiary.getBeneficiaryCompanyLegalForm(), false);
+              validationHelper.validateDate(bodaccSplitBeneficiary.getBeneficiaryCompanyRcsDeclarationDate(), true);
+              validationHelper.validateReferential(bodaccSplitBeneficiary.getBeneficiaryCompanyRcsCompetentAuthority(),
+                  true);
+            }
+
+            if (bodaccSplit.getBodaccSplitCompanies() == null || bodaccSplit.getBodaccSplitCompanies().size() == 0)
+              return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            for (BodaccSplitCompany bodaccSplitCompany : bodaccSplit.getBodaccSplitCompanies()) {
+              validationHelper.validateString(bodaccSplitCompany.getSplitCompanyDenomination(), true, 60);
+              validationHelper.validateString(bodaccSplitCompany.getSplitCompanySiren(), true, 9);
+              validationHelper.validateRna(bodaccSplitCompany.getSplitCompanySiren());
+              validationHelper.validateString(bodaccSplitCompany.getSplitCompanyAddress(), true, 100);
+              validationHelper.validateReferential(bodaccSplitCompany.getSplitCompanyLegalForm(), false);
+              validationHelper.validateDate(bodaccSplitCompany.getSplitCompanyRcsDeclarationDate(), true);
+              validationHelper.validateReferential(bodaccSplitCompany.getSplitCompanyRcsCompetentAuthority(), true);
+            }
+          }
+
+          validationHelper.validateDateMin(bodacc.getDateOfPublication(), false, new Date());
+        }
       }
 
       quotation = quotationService.addOrUpdateQuotation(quotation);

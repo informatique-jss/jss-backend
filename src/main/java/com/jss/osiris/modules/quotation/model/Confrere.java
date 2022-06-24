@@ -29,7 +29,7 @@ public class Confrere implements Serializable, IId {
 	@Column(length = 40)
 	private String denomination;
 
-	@ManyToMany(cascade = CascadeType.ALL)
+	@ManyToMany
 	@JoinTable(name = "asso_confrere_department", joinColumns = @JoinColumn(name = "id_confrere"), inverseJoinColumns = @JoinColumn(name = "id_department"))
 	private List<Department> departments;
 
@@ -45,11 +45,11 @@ public class Confrere implements Serializable, IId {
 
 	private Integer reinvoicing;
 
-	@ManyToMany(cascade = CascadeType.ALL)
+	@ManyToMany
 	@JoinTable(name = "asso_confrere_publication_day", joinColumns = @JoinColumn(name = "id_confrere"), inverseJoinColumns = @JoinColumn(name = "id_weekday"))
 	private List<WeekDay> weekDays;
 
-	@ManyToMany(cascade = CascadeType.ALL)
+	@ManyToMany
 	@JoinTable(name = "asso_confrere_journal_type", joinColumns = @JoinColumn(name = "id_confrere"), inverseJoinColumns = @JoinColumn(name = "id_journal_type"))
 	private List<JournalType> journalType;
 

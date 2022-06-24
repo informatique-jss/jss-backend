@@ -166,6 +166,14 @@
         <table class="full-width">
           <tr>
             <td>
+              <chips-confrere [(model)]="tiers.competitors" [form]="principalForm" propertyName="competitors"
+                [isMandatory]="false" [isDisabled]="!editMode" label="Concurrents"></chips-confrere>
+            </td>
+          </tr>
+        </table>
+        <table class="full-width">
+          <tr>
+            <td>
               <generic-textarea [(model)]="tiers.instructions" label="Consignes" [form]="principalForm"
                 propertyName="instructions" [numberOfLines]="4"></generic-textarea>
             </td>

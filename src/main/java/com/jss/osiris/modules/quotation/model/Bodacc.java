@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.quotation.model;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -49,9 +50,14 @@ public class Bodacc implements Serializable, IId {
 	@OneToOne(targetEntity = BodaccFusion.class, cascade = CascadeType.ALL)
 	private BodaccFusion bodaccFusion;
 
+	@OneToOne(targetEntity = BodaccSplit.class, cascade = CascadeType.ALL)
+	private BodaccSplit bodaccSplit;
+
 	@OneToMany(targetEntity = Attachment.class, mappedBy = "bodacc", cascade = CascadeType.ALL)
 	@JsonManagedReference("bodacc")
 	private List<Attachment> attachments;
+
+	private Date dateOfPublication;
 
 	public Integer getId() {
 		return id;
@@ -59,6 +65,22 @@ public class Bodacc implements Serializable, IId {
 
 	public BodaccFusion getBodaccFusion() {
 		return bodaccFusion;
+	}
+
+	public Date getDateOfPublication() {
+		return dateOfPublication;
+	}
+
+	public BodaccSplit getBodaccSplit() {
+		return bodaccSplit;
+	}
+
+	public void setBodaccSplit(BodaccSplit bodaccSplit) {
+		this.bodaccSplit = bodaccSplit;
+	}
+
+	public void setDateOfPublication(Date dateOfPublication) {
+		this.dateOfPublication = dateOfPublication;
 	}
 
 	public void setBodaccFusion(BodaccFusion bodaccFusion) {

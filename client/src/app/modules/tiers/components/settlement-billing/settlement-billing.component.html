@@ -108,7 +108,8 @@
                   [conditionnalRequired]="instanceOfTiers(this.tiers) && this.tiers.paymentType != undefined && this.tiers.paymentType.code != undefined && this.tiers.paymentType.code == PAYMENT_TYPE_PRELEVEMENT "
                   [maxLength]="40"></generic-input>
               </td>
-              <td>
+              <td
+                *ngIf="tiers !=undefined && tiers.paymentType!=undefined && tiers.paymentType.code!=undefined && tiers.paymentType.code==PAYMENT_TYPE_PRELEVEMENT">
                 <generic-input [(model)]="tiers.paymentBIC" label="BIC" [form]="settlementBillingForm"
                   propertyName="paymentBIC" [isMandatory]="true" [isDisabled]="!editMode"
                   [conditionnalRequired]="instanceOfTiers(this.tiers) && this.tiers.paymentType != undefined && this.tiers.paymentType.code != undefined && this.tiers.paymentType.code == PAYMENT_TYPE_PRELEVEMENT "
@@ -119,9 +120,16 @@
                 <generic-toggle [(model)]="tiers.isSepaMandateReceived" label="Mandat SEPA reçu ?"
                   [form]="settlementBillingForm" propertyName="isSepaMandateReceived"></generic-toggle>
               </td>
+            </tr>
+            <tr>
               <td>
                 <generic-toggle [(model)]="tiers.isProvisionalPaymentMandatory" label="Provision obligatoire ?"
                   [form]="settlementBillingForm" propertyName="isProvisionalPaymentMandatory"></generic-toggle>
+              </td>
+              <td>
+                <select-payment-deadline [(model)]="dunningDocument.paymentDeadlineType" label="Délai de paiement"
+                  [form]="settlementBillingForm" propertyName="paymentDeadlineType" [isDisabled]="!editMode">
+                </select-payment-deadline>
               </td>
             </tr>
           </table>
@@ -169,8 +177,9 @@
                   [form]="settlementBillingForm" propertyName="isAutomaticDunning"></generic-toggle>
               </td>
               <td>
-                <select-payment-deadline [(model)]="dunningDocument.paymentDeadlineType" label="Echéance de relance"
-                  [form]="settlementBillingForm" propertyName="paymentDeadlineType" [isDisabled]="!editMode">
+                <select-payment-deadline [(model)]="dunningDocument.reminderPaymentDeadlineType"
+                  label="Echéance de relance" [form]="settlementBillingForm" propertyName="reminderPaymentDeadlineType"
+                  [isDisabled]="!editMode">
                 </select-payment-deadline>
               </td>
             </tr>
@@ -198,8 +207,15 @@
               </td>
             </tr>
           </table>
-          <addressing [editMode]="editMode" [document]="billingClosureDocument" [hideConsignee]="true"
-            [displayMailCC]="instanceOfResponsable(tiers)"></addressing>
+          <table class="full-width">
+            <tr>
+              <td>
+                <addressing [editMode]="editMode" [document]="billingClosureDocument" [hideConsignee]="true"
+                  [hideOverriding]="!billingClosureDocument.billingClosureRecipientType || !billingClosureDocument.billingClosureRecipientType.code || billingClosureDocument.billingClosureRecipientType.code !=BILLING_CLOSURE_RECIPIENT_OTHERS_CODE"
+                  [displayMailCC]="instanceOfResponsable(tiers)"></addressing>
+              </td>
+            </tr>
+          </table>
         </mat-expansion-panel>
         <mat-expansion-panel *ngIf="instanceOfTiers(tiers)">
           <mat-expansion-panel-header>

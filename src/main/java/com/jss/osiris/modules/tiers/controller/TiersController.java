@@ -751,6 +751,16 @@ public class TiersController {
           validationHelper.validateString(document.getRefundIBAN(), false, 40);
           validationHelper.validateReferential(document.getBillingClosureType(), false);
           validationHelper.validateReferential(document.getBillingClosureRecipientType(), false);
+
+          if (document.getIsMailingPaper() == null)
+            document.setIsMailingPaper(false);
+          if (document.getIsMailingPdf() == null)
+            document.setIsMailingPdf(false);
+          if (document.getIsRecipientAffaire() == null)
+            document.setIsRecipientAffaire(false);
+          if (document.getIsRecipientClient() == null)
+            document.setIsRecipientClient(false);
+
         }
       }
 

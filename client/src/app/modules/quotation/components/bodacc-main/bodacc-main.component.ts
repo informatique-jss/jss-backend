@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
-import { BODACC_PUBLICATION_TYPE_ESTATE_REPRESENTATIVE_DESIGNATION, BODACC_PUBLICATION_TYPE_MERGING, BODACC_PUBLICATION_TYPE_POSSESSION_DISPATCH, BODACC_PUBLICATION_TYPE_SALE_OF_BUSINESS, BODACC_PUBLICATION_TYPE_SPLIT, COMPETENT_AUTHORITY_TYPE_RCS_CODE, PAYMENT_TYPE_VIREMENT } from 'src/app/libs/Constants';
+import { BODACC_PUBLICATION_TYPE_ESTATE_REPRESENTATIVE_DESIGNATION, BODACC_PUBLICATION_TYPE_MERGING, BODACC_PUBLICATION_TYPE_PARTIAL_SPLIT, BODACC_PUBLICATION_TYPE_POSSESSION_DISPATCH, BODACC_PUBLICATION_TYPE_SALE_OF_BUSINESS, BODACC_PUBLICATION_TYPE_SPLIT, COMPETENT_AUTHORITY_TYPE_RCS_CODE, PAYMENT_TYPE_VIREMENT } from 'src/app/libs/Constants';
 import { BODACC_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { Affaire } from '../../model/Affaire';
 import { Bodacc } from '../../model/Bodacc';
@@ -32,6 +32,7 @@ export class BodaccMainComponent implements OnInit {
   BODACC_ENTITY_TYPE = BODACC_ENTITY_TYPE;
   BODACC_PUBLICATION_TYPE_SALE_OF_BUSINESS = BODACC_PUBLICATION_TYPE_SALE_OF_BUSINESS;
   BODACC_PUBLICATION_TYPE_SPLIT = BODACC_PUBLICATION_TYPE_SPLIT;
+  BODACC_PUBLICATION_TYPE_PARTIAL_SPLIT = BODACC_PUBLICATION_TYPE_PARTIAL_SPLIT;
   BODACC_PUBLICATION_TYPE_MERGING = BODACC_PUBLICATION_TYPE_MERGING;
   BODACC_PUBLICATION_TYPE_POSSESSION_DISPATCH = BODACC_PUBLICATION_TYPE_POSSESSION_DISPATCH;
   BODACC_PUBLICATION_TYPE_ESTATE_REPRESENTATIVE_DESIGNATION = BODACC_PUBLICATION_TYPE_ESTATE_REPRESENTATIVE_DESIGNATION;
@@ -49,6 +50,8 @@ export class BodaccMainComponent implements OnInit {
     if (changes.bodacc != undefined) {
       if (this.bodacc! == undefined || this.bodacc! == null)
         this.bodacc! = {} as Bodacc;
+      if (this.bodacc.dateOfPublication)
+        this.bodacc.dateOfPublication = new Date(this.bodacc.dateOfPublication);
 
       this.bodaccForm.markAllAsTouched();
       this.toggleTabs();

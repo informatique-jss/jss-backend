@@ -4,6 +4,8 @@ import { MatAccordion } from '@angular/material/expansion';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
 import { COMPETENT_AUTHORITY_TYPE_RCS_CODE } from 'src/app/libs/Constants';
 import { BodaccSplit } from '../../model/BodaccSplit';
+import { BodaccSplitBeneficiary } from '../../model/BodaccSplitBeneficiary';
+import { BodaccSplitCompany } from '../../model/BodaccSplitCompany';
 import { Siren } from '../../model/Siren';
 
 @Component({
@@ -29,8 +31,14 @@ export class BodaccSplitComponent implements OnInit {
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.bodaccSplit != undefined) {
-      if (this.bodaccSplit.beneficiaryCompanyRcsDeclarationDate)
-        this.bodaccSplit.beneficiaryCompanyRcsDeclarationDate = new Date(this.bodaccSplit.beneficiaryCompanyRcsDeclarationDate);
+      if (!this.bodaccSplit.bodaccSplitBeneficiaries)
+        this.createBeneficiary();
+      if (!this.bodaccSplit.bodaccSplitCompanies)
+        this.createSplitCompany();
+      for (let beneficiary of this.bodaccSplit.bodaccSplitBeneficiaries) {
+        if (beneficiary.beneficiaryCompanyRcsDeclarationDate)
+          beneficiary.beneficiaryCompanyRcsDeclarationDate = new Date(beneficiary.beneficiaryCompanyRcsDeclarationDate);
+      }
       if (this.bodaccSplit.splitProjectDate)
         this.bodaccSplit.splitProjectDate = new Date(this.bodaccSplit.splitProjectDate);
     }
@@ -44,19 +52,49 @@ export class BodaccSplitComponent implements OnInit {
     splitCompanyRcsCompetentAuthority: ['', []],
   });
 
+
+
   getFormStatus(): boolean {
     this.bodaccSplitForm.markAllAsTouched();
-    return this.bodaccSplitForm.valid;
+    return this.bodaccSplitForm.valid && this.bodaccSplit.bodaccSplitBeneficiaries.length > 0 && this.bodaccSplit.bodaccSplitCompanies.length > 0;
   }
 
-  fillSirenBeneficiaryCompany(siren: Siren) {
+  createBeneficiary() {
+    if (!this.bodaccSplit.bodaccSplitBeneficiaries)
+      this.bodaccSplit.bodaccSplitBeneficiaries = [] as Array<BodaccSplitBeneficiary>;
+    this.bodaccSplit.bodaccSplitBeneficiaries.push({} as BodaccSplitBeneficiary);
+  }
+
+  deleteBeneficiary(beneficiaryCompany: BodaccSplitBeneficiary) {
+    for (let i = 0; i < this.bodaccSplit.bodaccSplitBeneficiaries.length; i++) {
+      const beneficiary = this.bodaccSplit.bodaccSplitBeneficiaries[i];
+      if (JSON.stringify(beneficiary).toLowerCase() == JSON.stringify(beneficiaryCompany).toLowerCase())
+        this.bodaccSplit.bodaccSplitBeneficiaries.splice(i, 1);
+    }
+  }
+
+  createSplitCompany() {
+    if (!this.bodaccSplit.bodaccSplitCompanies)
+      this.bodaccSplit.bodaccSplitCompanies = [] as Array<BodaccSplitCompany>;
+    this.bodaccSplit.bodaccSplitCompanies.push({} as BodaccSplitCompany);
+  }
+
+  deleteSplitCompany(bodaccSplitCompany: BodaccSplitCompany) {
+    for (let i = 0; i < this.bodaccSplit.bodaccSplitCompanies.length; i++) {
+      const splitCompany = this.bodaccSplit.bodaccSplitCompanies[i];
+      if (JSON.stringify(splitCompany).toLowerCase() == JSON.stringify(bodaccSplitCompany).toLowerCase())
+        this.bodaccSplit.bodaccSplitCompanies.splice(i, 1);
+    }
+  }
+
+  fillSirenBeneficiaryCompany(siren: Siren, beneficiaryCompagny: BodaccSplitBeneficiary) {
     if (siren != undefined && siren != null) {
-      this.bodaccSplit.beneficiaryCompanySiren = siren!.uniteLegale.siren;
+      beneficiaryCompagny.beneficiaryCompanySiren = siren!.uniteLegale.siren;
       if (siren!.uniteLegale.siren != undefined && siren!.uniteLegale.siren != null) {
         if (siren.uniteLegale.periodesUniteLegale != null && siren.uniteLegale.periodesUniteLegale != undefined && siren.uniteLegale.periodesUniteLegale.length > 0) {
           siren.uniteLegale.periodesUniteLegale.forEach(periode => {
             if (periode.dateFin == null)
-              this.bodaccSplit.beneficiaryCompanyDenomination = periode.denominationUniteLegale;
+              beneficiaryCompagny.beneficiaryCompanyDenomination = periode.denominationUniteLegale;
             this.bodaccSplitForm.markAllAsTouched();
           });
         }
@@ -64,14 +102,14 @@ export class BodaccSplitComponent implements OnInit {
     }
   }
 
-  fillSirenSplitCompany(siren: Siren) {
+  fillSirenSplitCompany(siren: Siren, bodaccSplitCompany: BodaccSplitCompany) {
     if (siren != undefined && siren != null) {
-      this.bodaccSplit.splitCompanySiren = siren!.uniteLegale.siren;
+      bodaccSplitCompany.splitCompanySiren = siren!.uniteLegale.siren;
       if (siren!.uniteLegale.siren != undefined && siren!.uniteLegale.siren != null) {
         if (siren.uniteLegale.periodesUniteLegale != null && siren.uniteLegale.periodesUniteLegale != undefined && siren.uniteLegale.periodesUniteLegale.length > 0) {
           siren.uniteLegale.periodesUniteLegale.forEach(periode => {
             if (periode.dateFin == null)
-              this.bodaccSplit.splitCompanyDenomination = periode.denominationUniteLegale;
+              bodaccSplitCompany.splitCompanyDenomination = periode.denominationUniteLegale;
             this.bodaccSplitForm.markAllAsTouched();
           });
         }

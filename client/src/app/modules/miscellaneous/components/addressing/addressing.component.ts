@@ -20,6 +20,7 @@ export class AddressingComponent implements OnInit {
   @Input() displayMailCC: boolean = false;
   @Input() displayNumberMailing: boolean = false;
   @Input() onlyMail: boolean = false;
+  @Input() hideOverriding: boolean = false;
 
   overrideAffaireAddress: boolean = false;
   overrideAffaireMail: boolean = false;

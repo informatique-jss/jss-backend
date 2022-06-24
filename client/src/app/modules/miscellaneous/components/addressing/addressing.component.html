@@ -13,14 +13,14 @@
         <generic-checkbox [(model)]="document.isMailingPaper" label="Papier" [form]="adressingForm"
           *ngIf="onlyMail==false" propertyName="isMailingPaper"></generic-checkbox>
         <button matTooltip="Modifier les adresses postales par défaut"
-          *ngIf="document.isMailingPaper && (document.isRecipientAffaire || document.isRecipientClient)" mat-icon-button
-          color="accent" (click)="overrideAffaireAddress=true;overrideClientAddress=true">
+          *ngIf="document.isMailingPaper && (document.isRecipientAffaire || document.isRecipientClient) && !hideOverriding"
+          mat-icon-button color="accent" (click)="overrideAffaireAddress=true;overrideClientAddress=true">
           <mat-icon>edit</mat-icon>
         </button>
         <generic-checkbox [(model)]="document.isMailingPdf" label="PDF" [form]="adressingForm" *ngIf="onlyMail==false"
           propertyName="isMailingPdf"></generic-checkbox>
         <button matTooltip="Modifier les adresses mail par défaut"
-          *ngIf="document.isMailingPdf && (document.isRecipientAffaire || document.isRecipientClient || onlyMail)"
+          *ngIf="document.isMailingPdf && (document.isRecipientAffaire || document.isRecipientClient || onlyMail) && !hideOverriding"
           mat-icon-button color="accent" (click)="overrideAffaireMail=true;overrideClientMail=true">
           <mat-icon>edit</mat-icon>
         </button>

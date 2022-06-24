@@ -33,7 +33,7 @@
         <td mat-cell *matCellDef="let element">
           <mat-icon *ngFor="let historyAction of internalHistoryActions "
             (click)="historyActionTrigger(historyAction,element)" color="accent"
-            [matTooltip]="historyAction.actionTooltip">preview
+            [matTooltip]="historyAction.actionTooltip">{{historyAction.actionIcon}}
           </mat-icon>
         </td>
       </ng-container>

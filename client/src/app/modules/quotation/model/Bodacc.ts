@@ -14,4 +14,5 @@ export interface Bodacc extends IAttachment {
   bodaccSale: BodaccSale;
   bodaccFusion: BodaccFusion;
   bodaccSplit: BodaccSplit;
+  dateOfPublication: Date;
 }

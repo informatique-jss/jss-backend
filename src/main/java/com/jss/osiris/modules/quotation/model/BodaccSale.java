@@ -111,13 +111,13 @@ public class BodaccSale implements Serializable, IId {
 	@JoinColumn(name = "id_act_type")
 	private ActType actType;
 
-	@Column(length = 60, nullable = false)
+	@Column(length = 60)
 	private String writor;
 
 	@Column(length = 100)
 	private String writorAddress;
 
-	@Column(length = 100)
+	@Column(length = 100, nullable = false)
 	@JsonProperty(value = "validityObjectionAddress")
 	private String validityObjectionAddress;
 

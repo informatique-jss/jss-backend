@@ -579,7 +579,14 @@ public class InitReferentialsController {
 		 * billingClosureType.setCode("COMPTABLE");
 		 * billingClosureType.setLabel("Comptable");
 		 * billingClosureTypeRepository.save(billingClosureType);
-		 * 
+		 */
+		/*
+		 * BillingClosureType billingClosureType = new BillingClosureType();
+		 * billingClosureType.setCode("MENSUEL");
+		 * billingClosureType.setLabel("Mensuel");
+		 * billingClosureTypeRepository.save(billingClosureType);
+		 */
+		/*
 		 * billingClosureRecipientTypeRepository.deleteAll();
 		 * BillingClosureRecipientType billingClosureRecipientType = new
 		 * BillingClosureRecipientType();
@@ -591,7 +598,17 @@ public class InitReferentialsController {
 		 * billingClosureRecipientType.setCode("TOUS");
 		 * billingClosureRecipientType.setLabel("Tous");
 		 * billingClosureRecipientTypeRepository.save(billingClosureRecipientType);
-		 * 
+		 */
+
+		/*
+		 * BillingClosureRecipientType billingClosureRecipientType = new
+		 * BillingClosureRecipientType();
+		 * billingClosureRecipientType.setCode("OTHERS");
+		 * billingClosureRecipientType.setLabel("Autres");
+		 * billingClosureRecipientTypeRepository.save(billingClosureRecipientType);
+		 */
+
+		/*
 		 * attachmentTypeRepository.deleteAll();
 		 * AttachmentType attachmentType = new AttachmentType();
 		 * attachmentType.setCode("1");
@@ -997,9 +1014,17 @@ public class InitReferentialsController {
 		 * 
 		 * bodaccPublicationType = new BodaccPublicationType();
 		 * bodaccPublicationType.setCode("3");
-		 * bodaccPublicationType.setLabel("Scission : apport partiel d'actifs");
+		 * bodaccPublicationType.setLabel("Scission");
 		 * bodaccPublicationTypeRepository.save(bodaccPublicationType);
-		 * 
+		 */
+		/*
+		 * BodaccPublicationType bodaccPublicationType = new BodaccPublicationType();
+		 * bodaccPublicationType.setCode("6");
+		 * bodaccPublicationType.setLabel("Apport partiel d'actifs");
+		 * bodaccPublicationTypeRepository.save(bodaccPublicationType);
+		 */
+
+		/*
 		 * bodaccPublicationType = new BodaccPublicationType();
 		 * bodaccPublicationType.setCode("4");
 		 * bodaccPublicationType.setLabel("Envoi en possession");

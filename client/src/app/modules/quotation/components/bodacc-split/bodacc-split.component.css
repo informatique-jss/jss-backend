@@ -6,3 +6,12 @@ table {
 td {
   padding-right: 8px;
 }
+
+.mini-fab {
+  top: -10px;
+  left: 10px;
+}
+
+.mini-fab-td {
+  text-align: end;
+}

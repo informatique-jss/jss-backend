@@ -4,8 +4,8 @@ import { BillingLabelType } from "../../tiers/model/BillingLabelType";
 import { PaymentDeadlineType } from "../../tiers/model/PaymentDeadlineType";
 import { RefundType } from "../../tiers/model/RefundType";
 import { Responsable } from "../../tiers/model/Responsable";
-import { Mail } from "./Mail";
 import { DocumentType } from "./DocumentType";
+import { Mail } from "./Mail";
 
 export interface Document {
   id: number;
@@ -32,6 +32,7 @@ export interface Document {
   isCommandNumberMandatory: boolean;
   commandNumber: string;
   paymentDeadlineType: PaymentDeadlineType;
+  reminderPaymentDeadlineType: PaymentDeadlineType;
   isAutomaticDunning: boolean;
   refundType: RefundType;
   refundIBAN: string;

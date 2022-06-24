@@ -1,0 +1,23 @@
+<mat-form-field class="full-width" [formGroup]="form!">
+  <mat-label>{{label}}</mat-label>
+  <mat-chip-list #chipListConfrere>
+    <mat-chip *ngFor="let confrere of model" (removed)="removeElement(confrere)">
+      {{confrere.denomination}}
+      <button matChipRemove *ngIf="!isDisabled">
+        <mat-icon>cancel</mat-icon>
+      </button>
+    </mat-chip>
+    <input matInput placeholder="Choisir un confrère" [formControlName]="propertyName" #confrereInput
+      [matChipInputFor]="chipListConfrere" [matChipInputSeparatorKeyCodes]="SEPARATOR_KEY_CODES" [disabled]="isDisabled"
+      [matAutocomplete]="autoComplete">
+    <button *ngIf="!isDisabled" matSuffix mat-icon-button (click)="openConfrereDialog()">
+      <mat-icon>search</mat-icon>
+    </button>
+  </mat-chip-list>
+  <mat-autocomplete autoActiveFirstOption #autoComplete="matAutocomplete" [displayWith]="displayLabel"
+    (optionSelected)="addConfrere($event)">
+    <mat-option *ngFor="let confrere of filteredConfreres | async" [value]="confrere">
+      {{confrere.denomination}}
+    </mat-option>
+  </mat-autocomplete>
+</mat-form-field>
