@@ -16,4 +16,8 @@ export class ActTypeService extends AppRestService<ActType>{
     return this.getList(new HttpParams(), "act-types");
   }
 
+  addOrUpdateActType(actType: ActType) {
+    return this.addOrUpdate(new HttpParams(), "act-type", actType, "Enregistré", "Erreur lors de l'enregistrement");
+  }
+
 }

@@ -27,10 +27,12 @@ import { Confrere } from '../../model/Confrere';
 import { JournalType } from '../../model/JournalType';
 import { NoticeType } from '../../model/NoticeType';
 import { Shal } from '../../model/Shal';
+import { ShalNoticeTemplate } from '../../model/ShalNoticeTemplate';
 import { CharacterPriceService } from '../../services/character.price.service';
 import { ConfrereService } from '../../services/confrere.service';
 import { JournalTypeService } from '../../services/journal.type.service';
 import { NoticeTypeService } from '../../services/notive.type.service';
+import { ShalNoticeTemplateService } from '../../services/shal-notice-template.service';
 
 @Component({
   selector: 'shal',
@@ -46,6 +48,7 @@ export class ShalComponent implements OnInit {
 
   @ViewChild('tabs', { static: false }) tabs: any;
   @ViewChild('noticeTypesInput') noticeTypesInput: ElementRef<HTMLInputElement> | undefined;
+  @ViewChild('noticeTemplateInput') noticeTemplateInput: ElementRef<HTMLInputElement> | undefined;
   @ViewChild(MatAccordion) accordion: MatAccordion | undefined;
 
   SEPARATOR_KEY_CODES = SEPARATOR_KEY_CODES;
@@ -70,6 +73,10 @@ export class ShalComponent implements OnInit {
   noticeTypes: NoticeType[] = [] as Array<NoticeType>;
   filteredNoticeTypes: Observable<NoticeType[]> | undefined;
 
+  noticeTemplates: ShalNoticeTemplate[] = [] as Array<ShalNoticeTemplate>;
+  filteredNoticeTemplates: Observable<ShalNoticeTemplate[]> | undefined;
+  selectedNoticeTemplates: ShalNoticeTemplate[] = [] as Array<ShalNoticeTemplate>;
+
   logoUrl: SafeUrl | undefined;
 
   constructor(private formBuilder: UntypedFormBuilder,
@@ -80,6 +87,7 @@ export class ShalComponent implements OnInit {
     private documentTypeService: DocumentTypeService,
     private journalTypeService: JournalTypeService,
     private uploadAttachmentService: UploadAttachmentService,
+    private shalNoticeTemplateService: ShalNoticeTemplateService,
     private sanitizer: DomSanitizer
   ) { }
 
@@ -98,6 +106,9 @@ export class ShalComponent implements OnInit {
       this.noticeTypes = response;
     })
 
+    this.shalNoticeTemplateService.getShalNoticeTemplates().subscribe(response => {
+      this.noticeTemplates = response;
+    })
 
     this.filteredConfreres = this.shalForm.get("confrere")?.valueChanges.pipe(
       startWith(''),
@@ -107,6 +118,11 @@ export class ShalComponent implements OnInit {
     this.filteredNoticeTypes = this.shalForm.get("noticeTypes")?.valueChanges.pipe(
       startWith(''),
       map(value => this._filterNoticeType(value)),
+    );
+
+    this.filteredNoticeTemplates = this.shalForm.get("noticeTemplates")?.valueChanges.pipe(
+      startWith(''),
+      map(value => this._filterByLabel(value)),
     );
   }
 
@@ -165,6 +181,7 @@ export class ShalComponent implements OnInit {
 
   shalForm = this.formBuilder.group({
     noticeTypes: [''],
+    noticeTemplates: [''],
     notice: ['', Validators.required],
     noticeHeader: [''],
     confrere: [''],
@@ -192,6 +209,16 @@ export class ShalComponent implements OnInit {
         if (response != null)
           this.characterPrice = response;
       })
+  }
+
+  applyNoticeTemplate() {
+    if (this.selectedNoticeTemplates) {
+      this.shal.notice = "";
+      for (let template of this.selectedNoticeTemplates) {
+        this.shal.notice += template.text + "<br>";
+      }
+      this.shalForm.get('notice')?.setValue(this.shal.notice);
+    }
   }
 
   setNoticeModel(event: any) {
@@ -276,9 +303,13 @@ export class ShalComponent implements OnInit {
   }
 
   private _filterNoticeType(value: string): NoticeType[] {
-    console.log("toto");
     const filterValue = (value != undefined && value.toLowerCase != undefined) ? value.toLowerCase() : "";
     return this.noticeTypes.filter(noticeType => noticeType.label != undefined && noticeType.label.toLowerCase().includes(filterValue) && noticeType.noticeTypeFamily.id == this.shal!.noticeTypeFamily.id);
+  }
+
+  private _filterByLabel(value: string): ShalNoticeTemplate[] {
+    const filterValue = (value != undefined && value.toLowerCase != undefined) ? value.toLowerCase() : "";
+    return this.noticeTemplates.filter(noticeTemplate => noticeTemplate.label != undefined && noticeTemplate.label.toLowerCase().includes(filterValue));
   }
 
   addNoticeType(event: MatAutocompleteSelectedEvent): void {
@@ -291,6 +322,30 @@ export class ShalComponent implements OnInit {
       this.shal!.noticeTypes.push(event.option.value);
     this.shalForm.get("noticeTypes")?.setValue(null);
     this.noticeTypesInput!.nativeElement.value = '';
+  }
+
+  addNoticeTemplate(event: MatAutocompleteSelectedEvent): void {
+    if (!this.selectedNoticeTemplates)
+      this.selectedNoticeTemplates = [] as Array<ShalNoticeTemplate>;
+    // Do not add twice
+    if (this.selectedNoticeTemplates.map(noticeTemplate => noticeTemplate.id).indexOf(event.option.value.id) >= 0)
+      return;
+    if (event.option && event.option.value && event.option.value.id)
+      this.selectedNoticeTemplates.push(event.option.value);
+    this.applyNoticeTemplate();
+    this.shalForm.get("noticeTemplates")?.setValue(null);
+    this.noticeTemplateInput!.nativeElement.value = '';
+  }
+
+  removeNoticeTemplate(inputNoticeTemplate: ShalNoticeTemplate): void {
+    if (this.selectedNoticeTemplates && this.editMode)
+      for (let i = 0; i < this.selectedNoticeTemplates.length; i++) {
+        const noticeTemplate = this.selectedNoticeTemplates[i];
+        if (noticeTemplate.id == inputNoticeTemplate.id) {
+          this.selectedNoticeTemplates.splice(i, 1);
+        }
+      }
+    this.applyNoticeTemplate();
   }
 
   removeNoticeType(inputNoticeType: NoticeType): void {

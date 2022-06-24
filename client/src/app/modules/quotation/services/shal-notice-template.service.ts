@@ -1,18 +1,19 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AppRestService } from 'src/app/appRest.service';
-import { NoticeType } from '../../quotation/model/NoticeType';
+import { ShalNoticeTemplate } from '../../quotation/model/ShalNoticeTemplate';
 
 @Injectable({
   providedIn: 'root'
 })
-export class NoticeTypeService extends AppRestService<NoticeType>{
+export class ShalNoticeTemplateService extends AppRestService<ShalNoticeTemplate>{
 
   constructor(http: HttpClient) {
     super(http, "quotation");
   }
 
-  getNoticeTypes() {
-    return this.getList(new HttpParams(), "notice-types");
+  getShalNoticeTemplates() {
+    return this.getList(new HttpParams(), "shal-notice-templates");
   }
+
 }

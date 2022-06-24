@@ -81,6 +81,10 @@ export class GenericTextareaComponent implements OnInit {
     if (changes.model && this.form != undefined) {
       this.form.get(this.propertyName)?.setValue(this.model);
     }
+    if (changes.model && this.form != undefined) {
+      this.form.get(this.propertyName)?.setValue(this.model);
+      this.form.markAllAsTouched();
+    }
   }
 
   ngOnDestroy() {

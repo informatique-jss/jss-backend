@@ -9,6 +9,7 @@ import { QUOTATION_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { SearchService } from 'src/app/search.service';
 import { Affaire } from '../../model/Affaire';
 import { IQuotation } from '../../model/IQuotation';
+import { NoticeTypeFamily } from '../../model/NoticeTypeFamily';
 import { Provision } from '../../model/Provision';
 import { QuotationService } from '../../services/quotation.service';
 import { OrderingCustomerComponent } from '../ordering-customer/ordering-customer.component';
@@ -46,6 +47,8 @@ export class QuotationComponent implements OnInit {
     private router: Router) { }
 
   ngOnInit() {
+    let a = {} as NoticeTypeFamily;
+    console.log(Object.getPrototypeOf(a));
     this.appService.changeHeaderTitle("Devis");
 
     let idQuotation: number = this.activatedRoute.snapshot.params.id;

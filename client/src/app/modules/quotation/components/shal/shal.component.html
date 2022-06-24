@@ -82,6 +82,31 @@
           </tr>
         </table>
         <table class="full-width">
+          <tr>
+            <td>
+              <mat-form-field class="full-width">
+                <mat-label>Utiliser des modèles d'annonces</mat-label>
+                <mat-chip-list #chipListNoticeTemplates>
+                  <mat-chip *ngFor="let noticeTemplate of selectedNoticeTemplates"
+                    (removed)="removeNoticeTemplate(noticeTemplate)">
+                    {{noticeTemplate.label}}
+                    <button matChipRemove *ngIf="editMode">
+                      <mat-icon>cancel</mat-icon>
+                    </button>
+                  </mat-chip>
+                  <input placeholder="Saisir un modèle d'annonce" #noticeTemplateInput formControlName="noticeTemplates"
+                    [matChipInputFor]="chipListNoticeTemplates" [matChipInputSeparatorKeyCodes]="SEPARATOR_KEY_CODES"
+                    [matAutocomplete]="autoCompleteNoticeTemplates">
+                </mat-chip-list>
+                <mat-autocomplete autoActiveFirstOption #autoCompleteNoticeTemplates="matAutocomplete"
+                  [displayWith]="displayLabel" (optionSelected)="addNoticeTemplate($event)">
+                  <mat-option *ngFor="let noticeTemplate of filteredNoticeTemplates | async" [value]="noticeTemplate">
+                    {{noticeTemplate.label}}
+                  </mat-option>
+                </mat-autocomplete>
+              </mat-form-field>
+            </td>
+          </tr>
           <tr *ngIf="shal.isHeader">
             <td>
               <p>En-tête :</p>

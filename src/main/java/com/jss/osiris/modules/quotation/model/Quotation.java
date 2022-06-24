@@ -19,6 +19,8 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.Document;
+import com.jss.osiris.modules.miscellaneous.model.Mail;
+import com.jss.osiris.modules.miscellaneous.model.Phone;
 import com.jss.osiris.modules.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
@@ -85,6 +87,14 @@ public class Quotation implements IQuotation {
 	@JsonManagedReference("quotation")
 	private List<Provision> provisions;
 
+	@ManyToMany(cascade = CascadeType.ALL)
+	@JoinTable(name = "asso_quotation_mail", joinColumns = @JoinColumn(name = "id_quotation"), inverseJoinColumns = @JoinColumn(name = "id_mail"))
+	private List<Mail> mails;
+
+	@ManyToMany(cascade = CascadeType.ALL)
+	@JoinTable(name = "asso_quotation_phone", joinColumns = @JoinColumn(name = "id_quotation"), inverseJoinColumns = @JoinColumn(name = "id_phone"))
+	private List<Phone> phones;
+
 	public Integer getId() {
 		return id;
 	}
@@ -95,6 +105,22 @@ public class Quotation implements IQuotation {
 
 	public Tiers getTiers() {
 		return tiers;
+	}
+
+	public List<Mail> getMails() {
+		return mails;
+	}
+
+	public void setMails(List<Mail> mails) {
+		this.mails = mails;
+	}
+
+	public List<Phone> getPhones() {
+		return phones;
+	}
+
+	public void setPhones(List<Phone> phones) {
+		this.phones = phones;
 	}
 
 	public void setTiers(Tiers tiers) {

@@ -18,6 +18,8 @@ import javax.persistence.OneToMany;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.Document;
+import com.jss.osiris.modules.miscellaneous.model.Mail;
+import com.jss.osiris.modules.miscellaneous.model.Phone;
 import com.jss.osiris.modules.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
@@ -72,6 +74,14 @@ public class CustomerOrder implements IQuotation {
 	@JoinColumn(name = "id_record_type")
 	private RecordType recordType;
 
+	@ManyToMany(cascade = CascadeType.ALL)
+	@JoinTable(name = "asso_customer_order_mail", joinColumns = @JoinColumn(name = "id_quotation"), inverseJoinColumns = @JoinColumn(name = "id_mail"))
+	private List<Mail> mails;
+
+	@ManyToMany(cascade = CascadeType.ALL)
+	@JoinTable(name = "asso_customer_order_phone", joinColumns = @JoinColumn(name = "id_quotation"), inverseJoinColumns = @JoinColumn(name = "id_phone"))
+	private List<Phone> phones;
+
 	public List<Attachment> getAttachments() {
 		return attachments;
 	}
@@ -90,6 +100,22 @@ public class CustomerOrder implements IQuotation {
 
 	public Integer getId() {
 		return id;
+	}
+
+	public List<Mail> getMails() {
+		return mails;
+	}
+
+	public void setMails(List<Mail> mails) {
+		this.mails = mails;
+	}
+
+	public List<Phone> getPhones() {
+		return phones;
+	}
+
+	public void setPhones(List<Phone> phones) {
+		this.phones = phones;
 	}
 
 	public void setId(Integer id) {

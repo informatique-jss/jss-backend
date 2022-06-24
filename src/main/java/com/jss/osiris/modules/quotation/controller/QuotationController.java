@@ -56,6 +56,7 @@ import com.jss.osiris.modules.quotation.model.QuotationStatus;
 import com.jss.osiris.modules.quotation.model.RecordType;
 import com.jss.osiris.modules.quotation.model.Rna;
 import com.jss.osiris.modules.quotation.model.Shal;
+import com.jss.osiris.modules.quotation.model.ShalNoticeTemplate;
 import com.jss.osiris.modules.quotation.model.Siren;
 import com.jss.osiris.modules.quotation.model.Siret;
 import com.jss.osiris.modules.quotation.model.TransfertFundsType;
@@ -78,6 +79,7 @@ import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.quotation.service.QuotationStatusService;
 import com.jss.osiris.modules.quotation.service.RecordTypeService;
 import com.jss.osiris.modules.quotation.service.RnaDelegateService;
+import com.jss.osiris.modules.quotation.service.ShalNoticeTemplateService;
 import com.jss.osiris.modules.quotation.service.SireneDelegateService;
 import com.jss.osiris.modules.quotation.service.TransfertFundsTypeService;
 import com.jss.osiris.modules.tiers.service.ResponsableService;
@@ -186,6 +188,24 @@ public class QuotationController {
   @Autowired
   ActTypeService actTypeService;
 
+  @Autowired
+  ShalNoticeTemplateService shalNoticeTemplateService;
+
+  @GetMapping(inputEntryPoint + "/shal-notice-templates")
+  public ResponseEntity<List<ShalNoticeTemplate>> getShalNoticeTemplates() {
+    List<ShalNoticeTemplate> shalNoticeTemplates = null;
+    try {
+      shalNoticeTemplates = shalNoticeTemplateService.getShalNoticeTemplates();
+    } catch (HttpStatusCodeException e) {
+      logger.error("HTTP error when fetching shalNoticeTemplate", e);
+      return new ResponseEntity<List<ShalNoticeTemplate>>(HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (Exception e) {
+      logger.error("Error when fetching shalNoticeTemplate", e);
+      return new ResponseEntity<List<ShalNoticeTemplate>>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    return new ResponseEntity<List<ShalNoticeTemplate>>(shalNoticeTemplates, HttpStatus.OK);
+  }
+
   @GetMapping(inputEntryPoint + "/act-types")
   public ResponseEntity<List<ActType>> getActTypes() {
     List<ActType> actTypes = null;
@@ -199,6 +219,30 @@ public class QuotationController {
       return new ResponseEntity<List<ActType>>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
     return new ResponseEntity<List<ActType>>(actTypes, HttpStatus.OK);
+  }
+
+  @PostMapping(inputEntryPoint + "/act-type")
+  public ResponseEntity<ActType> addOrUpdateActType(@RequestBody ActType actType) {
+    ActType outActType;
+    try {
+      if (actType.getId() != null)
+        validationHelper.validateReferential(actType, true);
+      validationHelper.validateString(actType.getCode(), true);
+      validationHelper.validateString(actType.getLabel(), true);
+
+      outActType = actTypeService.addOrUpdateActType(actType);
+    } catch (
+
+    ResponseStatusException e) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    } catch (HttpStatusCodeException e) {
+      logger.error("HTTP error when fetching quotation", e);
+      return new ResponseEntity<ActType>(HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (Exception e) {
+      logger.error("Error when fetching quotation", e);
+      return new ResponseEntity<ActType>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    return new ResponseEntity<ActType>(outActType, HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/fund-types")

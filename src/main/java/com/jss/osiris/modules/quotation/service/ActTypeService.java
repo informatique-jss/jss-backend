@@ -8,4 +8,6 @@ public interface ActTypeService {
     public List<ActType> getActTypes();
 
     public ActType getActType(Integer id);
+
+    public ActType addOrUpdateActType(ActType actType);
 }

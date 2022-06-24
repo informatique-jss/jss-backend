@@ -1,4 +1,4 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 @Injectable({
@@ -19,6 +19,10 @@ export class HabilitationsService {
   }
 
   canViewCustomerOrderModule() {
+    return true;
+  }
+
+  canViewAdministrationModule() {
     return true;
   }
 

@@ -1,0 +1,36 @@
+<div>
+  <mat-tab-group animationDuration="0ms">
+    <mat-tab label="Référentiels">
+      <div class="mat-elevation-z2 form-div">
+        <table class="full-width">
+          <tr>
+            <td>
+              <mat-form-field class="full-width">
+                <mat-label>Référentiel</mat-label>
+                <mat-select [(ngModel)]="selectedReferential" (selectionChange)="changeReferential()">
+                  <mat-option *ngFor="let referential of referentials" [value]="referential">
+                    {{referential}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </td>
+          </tr>
+        </table>
+        <referential-act-type *ngIf="selectedReferential==ACT_TYPE_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"></referential-act-type>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</div>
+<button matTooltip="Sauvegarder" mat-fab color="warn" class="fab-button" *ngIf="editMode" (click)="saveEntity()">
+  <mat-icon>save</mat-icon>
+</button>
+<button matTooltip="Modifier l'élément" mat-fab color="accent" class="second-fab-button"
+  *ngIf="selectedEntity && !editMode" (click)="editEntity()">
+  <mat-icon>edit</mat-icon>
+</button>
+<button matTooltip="Ajouter un élément" mat-fab color="accent" class="fab-button"
+  *ngIf="selectedReferential && !editMode" (click)="createEntity()">
+  <mat-icon>add</mat-icon>
+</button>

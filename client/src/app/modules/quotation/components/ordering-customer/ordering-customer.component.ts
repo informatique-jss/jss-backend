@@ -45,6 +45,8 @@ export class OrderingCustomerComponent implements OnInit {
     this.quotation.tiers = tiers;
     this.quotation.responsable = null;
     this.quotation.observations = this.quotation.tiers.observations;
+    this.quotation.mails = this.quotation.tiers.mails;
+    this.quotation.phones = this.quotation.tiers.phones;
   }
 
   fillResponsable(responsable: Responsable) {
@@ -56,6 +58,8 @@ export class OrderingCustomerComponent implements OnInit {
       }
     })
     this.quotation.tiers = null;
+    this.quotation.mails = this.quotation.responsable.mails;
+    this.quotation.phones = this.quotation.responsable.phones;
   }
 
   getFormStatus(): boolean {

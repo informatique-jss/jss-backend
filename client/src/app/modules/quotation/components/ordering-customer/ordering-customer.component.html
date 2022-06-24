@@ -31,12 +31,12 @@
           <table class="full-width">
             <tr>
               <td>
-                <chips-mail [(model)]="quotation.tiers.mails" label="Mails" [form]="orderingCustomerForm"
-                  propertyName="mails" [isDisabled]="true"></chips-mail>
+                <chips-mail [(model)]="quotation.mails" label="Mails" [form]="orderingCustomerForm" propertyName="mails"
+                  [isDisabled]="!editMode"></chips-mail>
               </td>
               <td>
-                <chips-phone [(model)]="quotation.tiers.phones" label="Téléphones" [form]="orderingCustomerForm"
-                  propertyName="phones" [isDisabled]="true"></chips-phone>
+                <chips-phone [(model)]="quotation.phones" label="Téléphones" [form]="orderingCustomerForm"
+                  propertyName="phones" [isDisabled]="!editMode"></chips-phone>
               </td>
             </tr>
           </table>
@@ -85,12 +85,12 @@
             <tr>
               <td>
               <td>
-                <chips-mail [(model)]="quotation.responsable.mails" label="Mails" [form]="orderingCustomerForm"
-                  propertyName="mails" [isDisabled]="true"></chips-mail>
+                <chips-mail [(model)]="quotation.mails" label="Mails" [form]="orderingCustomerForm" propertyName="mails"
+                  [isDisabled]="!editMode"></chips-mail>
               </td>
               <td>
-                <chips-phone [(model)]="quotation.responsable.phones" label="Téléphones" [form]="orderingCustomerForm"
-                  propertyName="phones" [isDisabled]="true"></chips-phone>
+                <chips-phone [(model)]="quotation.phones" label="Téléphones" [form]="orderingCustomerForm"
+                  propertyName="phones" [isDisabled]="!editMode"></chips-phone>
               </td>
             </tr>
           </table>

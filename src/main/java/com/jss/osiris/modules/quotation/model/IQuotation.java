@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.List;
 
 import com.jss.osiris.modules.miscellaneous.model.IId;
+import com.jss.osiris.modules.miscellaneous.model.Mail;
+import com.jss.osiris.modules.miscellaneous.model.Phone;
 import com.jss.osiris.modules.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
@@ -24,4 +26,7 @@ public interface IQuotation extends Serializable, IId {
 
 	public RecordType getRecordType();
 
+	public List<Mail> getMails();
+
+	public List<Phone> getPhones();
 }

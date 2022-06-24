@@ -51,6 +51,10 @@ export abstract class GenericMultipleSelectComponent<T> implements OnInit {
    * Additionnal validators to check
    */
   @Input() customValidators: ValidatorFn[] | undefined;
+  /**
+* Triggered when value is changed by user
+*/
+  @Output() selectionChange: EventEmitter<T[]> = new EventEmitter();
 
   abstract types: T[];
 
@@ -99,6 +103,7 @@ export abstract class GenericMultipleSelectComponent<T> implements OnInit {
         (newValue) => {
           this.model = newValue;
           this.modelChange.emit(this.model);
+          this.selectionChange.emit(this.model);
         }
       );
       this.form.get(this.propertyName)?.setValue(this.model);
