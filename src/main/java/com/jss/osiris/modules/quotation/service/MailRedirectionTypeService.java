@@ -8,4 +8,6 @@ public interface MailRedirectionTypeService {
     public List<MailRedirectionType> getMailRedirectionTypes();
 
     public MailRedirectionType getMailRedirectionType(Integer id);
+
+    public MailRedirectionType addOrUpdateMailRedirectionType(MailRedirectionType mailRedirectionType);
 }

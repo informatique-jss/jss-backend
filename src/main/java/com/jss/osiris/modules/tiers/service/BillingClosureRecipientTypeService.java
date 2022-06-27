@@ -8,4 +8,7 @@ public interface BillingClosureRecipientTypeService {
     public List<BillingClosureRecipientType> getBillingClosureRecipientTypes();
 
     public BillingClosureRecipientType getBillingClosureRecipientType(Integer id);
+
+    public BillingClosureRecipientType addOrUpdateTransfertFundsType(
+            BillingClosureRecipientType billingClosureRecipientType);
 }

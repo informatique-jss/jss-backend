@@ -16,4 +16,7 @@ export class NoticeTypeFamilyService extends AppRestService<NoticeTypeFamily>{
     return this.getList(new HttpParams(), "notice-type-families");
   }
 
+  addOrUpdateNoticeTypeFamily(noticeTypeFamily: NoticeTypeFamily) {
+    return this.addOrUpdate(new HttpParams(), "notice-type-family", noticeTypeFamily, "Enregistré", "Erreur lors de l'enregistrement");
+  }
 }

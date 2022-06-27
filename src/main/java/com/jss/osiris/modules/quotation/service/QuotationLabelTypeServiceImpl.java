@@ -28,4 +28,9 @@ public class QuotationLabelTypeServiceImpl implements QuotationLabelTypeService 
             return quotationLabelType.get();
         return null;
     }
+
+    @Override
+    public QuotationLabelType addOrUpdateQuotationLabelType(QuotationLabelType quotationLabelType) {
+        return quotationLabelTypeRepository.save(quotationLabelType);
+    }
 }

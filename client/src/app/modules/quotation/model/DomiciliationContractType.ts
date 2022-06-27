@@ -1,5 +1,4 @@
-export interface DomiciliationContractType {
-  id: number;
-  code: string;
-  label: string;
+import { IReferential } from "../../administration/model/IReferential";
+
+export interface DomiciliationContractType extends IReferential {
 }

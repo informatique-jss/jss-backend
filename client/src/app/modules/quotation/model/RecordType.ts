@@ -1,5 +1,4 @@
-export interface RecordType {
-  id: number;
-  code: string;
-  label: string;
+import { IReferential } from "../../administration/model/IReferential";
+
+export interface RecordType extends IReferential {
 }

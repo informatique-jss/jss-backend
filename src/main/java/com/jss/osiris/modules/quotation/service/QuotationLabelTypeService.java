@@ -8,4 +8,6 @@ public interface QuotationLabelTypeService {
     public List<QuotationLabelType> getQuotationLabelTypes();
 
     public QuotationLabelType getQuotationLabelType(Integer id);
+
+    public QuotationLabelType addOrUpdateQuotationLabelType(QuotationLabelType quotationLabelType);
 }

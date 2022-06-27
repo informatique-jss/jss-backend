@@ -16,4 +16,7 @@ export class BuildingDomiciliationService extends AppRestService<BuildingDomicil
     return this.getList(new HttpParams(), "building-domiciliations");
   }
 
+  addOrUpdateBuildingDomiciliation(buildingDomiciliation: BuildingDomiciliation) {
+    return this.addOrUpdate(new HttpParams(), "building-domiciliation", buildingDomiciliation, "Enregistré", "Erreur lors de l'enregistrement");
+  }
 }

@@ -16,4 +16,8 @@ export class BodaccPublicationTypeService extends AppRestService<BodaccPublicati
     return this.getList(new HttpParams(), "bodacc-publication-types");
   }
 
+  addOrUpdateBodaccPublicationType(bodaccPublicationType: BodaccPublicationType) {
+    return this.addOrUpdate(new HttpParams(), "bodacc-publication-type", bodaccPublicationType, "Enregistré", "Erreur lors de l'enregistrement");
+  }
+
 }

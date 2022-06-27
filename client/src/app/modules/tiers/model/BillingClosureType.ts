@@ -1,5 +1,4 @@
-export interface BillingClosureType {
-  id: number;
-  code: string;
-  label: string;
+import { IReferential } from "../../administration/model/IReferential";
+
+export interface BillingClosureType extends IReferential {
 }

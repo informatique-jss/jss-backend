@@ -16,4 +16,7 @@ export class TransfertFundsTypeService extends AppRestService<TransfertFundsType
     return this.getList(new HttpParams(), "transfert-fund-types");
   }
 
+  addOrUpdateTransfertFundsType(transfertFundsType: TransfertFundsType) {
+    return this.addOrUpdate(new HttpParams(), "transfert-fund-type", transfertFundsType, "Enregistré", "Erreur lors de l'enregistrement");
+  }
 }

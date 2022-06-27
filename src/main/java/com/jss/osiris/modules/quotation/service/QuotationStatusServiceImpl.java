@@ -28,4 +28,9 @@ public class QuotationStatusServiceImpl implements QuotationStatusService {
             return quotationStatus.get();
         return null;
     }
+
+    @Override
+    public QuotationStatus addOrUpdateQuotationStatus(QuotationStatus quotationStatus) {
+        return quotationStatusRepository.save(quotationStatus);
+    }
 }

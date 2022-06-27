@@ -29,4 +29,10 @@ public class BillingClosureRecipientTypeServiceImpl implements BillingClosureRec
             return billingClosurRecipientType.get();
         return null;
     }
+
+    @Override
+    public BillingClosureRecipientType addOrUpdateTransfertFundsType(
+            BillingClosureRecipientType billingClosureRecipientType) {
+        return billingClosurRecipientTypeRepository.save(billingClosureRecipientType);
+    }
 }

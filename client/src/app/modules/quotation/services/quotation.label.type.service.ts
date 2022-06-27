@@ -13,7 +13,11 @@ export class QuotationLabelTypeService extends AppRestService<QuotationLabelType
   }
 
   getQuotationLabelTypes() {
-    return this.getList(new HttpParams(), "quotation-label-ypes");
+    return this.getList(new HttpParams(), "quotation-label-types");
+  }
+
+  addOrUpdateQuotationLabelType(quotationLabelType: QuotationLabelType) {
+    return this.addOrUpdate(new HttpParams(), "quotation-label-type", quotationLabelType, "Enregistré", "Erreur lors de l'enregistrement");
   }
 
 }

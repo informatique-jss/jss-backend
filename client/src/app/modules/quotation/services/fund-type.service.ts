@@ -16,4 +16,7 @@ export class FundTypeService extends AppRestService<FundType>{
     return this.getList(new HttpParams(), "fund-types");
   }
 
+  addOrUpdateFundType(fundType: FundType) {
+    return this.addOrUpdate(new HttpParams(), "fund-type", fundType, "Enregistré", "Erreur lors de l'enregistrement");
+  }
 }

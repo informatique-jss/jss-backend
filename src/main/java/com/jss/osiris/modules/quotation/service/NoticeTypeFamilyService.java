@@ -8,4 +8,7 @@ public interface NoticeTypeFamilyService {
     public List<NoticeTypeFamily> getNoticeTypeFamilies();
 
     public NoticeTypeFamily getNoticeTypeFamily(Integer id);
+
+    public NoticeTypeFamily addOrUpdateNoticeTypeFamily(NoticeTypeFamily noticeTypeFamily);
+
 }

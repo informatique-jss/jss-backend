@@ -20,6 +20,20 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule, Routes } from '@angular/router';
 import { MiscellaneousModule } from 'src/app/modules/miscellaneous/components/miscellaneous/miscellaneous.module';
 import { ReferentialActTypeComponent } from '../referentials/referential-act-type/referential-act-type.component';
+import { ReferentialBillingClosureRecipientTypeComponent } from '../referentials/referential-billing-closure-recipient-type/referential-billing-closure-recipient-type.component';
+import { ReferentialBillingClosureTypeComponent } from '../referentials/referential-billing-closure-type/referential-billing-closure-type.component';
+import { ReferentialBodaccPublicationTypeComponent } from '../referentials/referential-bodacc-publication-type/referential-bodacc-publication-type.component';
+import { ReferentialBuildingDomiciliationComponent } from '../referentials/referential-building-domiciliation/referential-building-domiciliation.componentt';
+import { ReferentialDomiciliationContractTypeComponent } from '../referentials/referential-domiciliation-contract-type/referential-domiciliation-contract-type.componentt';
+import { ReferentialFundTypeComponent } from '../referentials/referential-fund-type/referential-fund-type.component';
+import { ReferentialJournalTypeComponent } from '../referentials/referential-journal-type/referential-journal-type.component';
+import { ReferentialMailRedirectionTypeComponent } from '../referentials/referential-mail-redirection-type/referential-mail-redirection-type.component';
+import { ReferentialNoticeTypeFamilyComponent } from '../referentials/referential-notice-type-family/referential-notice-type-family.component';
+import { ReferentialQuotationLabelTypeComponent } from '../referentials/referential-quotation-label-type/referential-notice-type-family.component';
+import { ReferentialQuotationStatusComponent } from '../referentials/referential-quotation-status/referential-quotation-status.component';
+import { ReferentialTransfertFundsTypeComponent } from '../referentials/referential-transfert-fund-type/referential-transfert-fund-type.component';
+import { ReferentialProvisionFamilyTypeComponent } from '../referentials/referentiel-provision-familiy-type/referential-provision-family-type.component';
+import { ReferentialRecordTypeComponent } from '../referentials/referentiel-record-type/referential-record-type.component';
 import { AdministrationComponent } from './administration.component';
 
 const routes: Routes = [
@@ -52,6 +66,20 @@ const routes: Routes = [
   ],
   declarations: [AdministrationComponent,
     ReferentialActTypeComponent,
+    ReferentialBodaccPublicationTypeComponent,
+    ReferentialBuildingDomiciliationComponent,
+    ReferentialDomiciliationContractTypeComponent,
+    ReferentialFundTypeComponent,
+    ReferentialJournalTypeComponent,
+    ReferentialMailRedirectionTypeComponent,
+    ReferentialNoticeTypeFamilyComponent,
+    ReferentialProvisionFamilyTypeComponent,
+    ReferentialQuotationLabelTypeComponent,
+    ReferentialQuotationStatusComponent,
+    ReferentialRecordTypeComponent,
+    ReferentialTransfertFundsTypeComponent,
+    ReferentialBillingClosureRecipientTypeComponent,
+    ReferentialBillingClosureTypeComponent,
   ],
 })
 export class AdministrationModule { }

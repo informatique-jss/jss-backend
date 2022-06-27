@@ -28,4 +28,10 @@ public class BuildingDomiciliationServiceImpl implements BuildingDomiciliationSe
             return buildingDomiciliation.get();
         return null;
     }
+
+    @Override
+    public BuildingDomiciliation addOrUpdateBuildingDomiciliation(BuildingDomiciliation buildingDomiciliation) {
+        return buildingDomiciliationRepository.save(buildingDomiciliation);
+    }
+
 }

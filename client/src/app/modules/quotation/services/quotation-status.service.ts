@@ -16,4 +16,8 @@ export class QuotationStatusService extends AppRestService<QuotationStatus>{
     return this.getList(new HttpParams(), "quotation-status");
   }
 
+  addOrUpdateQuotationStatus(quotationStatus: QuotationStatus) {
+    return this.addOrUpdate(new HttpParams(), "quotation-status", quotationStatus, "Enregistré", "Erreur lors de l'enregistrement");
+  }
+
 }

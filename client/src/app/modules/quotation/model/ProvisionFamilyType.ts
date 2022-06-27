@@ -1,8 +1,4 @@
-import { ProvisionType } from "./ProvisionType";
+import { IReferential } from "../../administration/model/IReferential";
 
-export interface ProvisionFamilyType {
-  id: number;
-  code: string;
-  label: string;
-  provisionTypes: ProvisionType[];
+export interface ProvisionFamilyType extends IReferential {
 }

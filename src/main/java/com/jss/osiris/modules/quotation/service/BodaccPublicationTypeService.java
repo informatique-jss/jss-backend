@@ -8,4 +8,6 @@ public interface BodaccPublicationTypeService {
     public List<BodaccPublicationType> getBodaccPublicationTypes();
 
     public BodaccPublicationType getBodaccPublicationType(Integer id);
+
+    public BodaccPublicationType addOrUpdateBodaccPublicationType(BodaccPublicationType bodaccPublicationType);
 }

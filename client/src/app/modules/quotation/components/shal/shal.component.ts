@@ -31,7 +31,7 @@ import { ShalNoticeTemplate } from '../../model/ShalNoticeTemplate';
 import { CharacterPriceService } from '../../services/character.price.service';
 import { ConfrereService } from '../../services/confrere.service';
 import { JournalTypeService } from '../../services/journal.type.service';
-import { NoticeTypeService } from '../../services/notive.type.service';
+import { NoticeTypeService } from '../../services/notice.type.service';
 import { ShalNoticeTemplateService } from '../../services/shal-notice-template.service';
 
 @Component({

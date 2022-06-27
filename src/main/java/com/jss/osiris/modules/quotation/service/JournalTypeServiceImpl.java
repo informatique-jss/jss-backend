@@ -28,4 +28,9 @@ public class JournalTypeServiceImpl implements JournalTypeService {
             return journalType.get();
         return null;
     }
+
+    @Override
+    public JournalType addOrUpdateJournalType(JournalType journalType) {
+        return journalTypeRepository.save(journalType);
+    }
 }

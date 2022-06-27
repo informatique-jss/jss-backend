@@ -1,5 +1,4 @@
-export interface FundType {
-  id: number;
-  code: string;
-  label: string;
+import { IReferential } from "../../administration/model/IReferential";
+
+export interface FundType extends IReferential {
 }

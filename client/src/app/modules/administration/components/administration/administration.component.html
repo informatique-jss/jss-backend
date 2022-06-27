@@ -19,6 +19,61 @@
         <referential-act-type *ngIf="selectedReferential==ACT_TYPE_REFERENTIAL"
           (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
           [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"></referential-act-type>
+        <referential-bodacc-publication-type *ngIf="selectedReferential==BODACC_PUBLICATION_TYPE_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+        </referential-bodacc-publication-type>
+        <referential-building-domiciliation *ngIf="selectedReferential==BUILDING_DOMICILIATION_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+        </referential-building-domiciliation>
+        <referential-domiciliation-contract-type *ngIf="selectedReferential==DOMICIALIATION_CONTRACT_TYPE_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+        </referential-domiciliation-contract-type>
+        <referential-fund-type *ngIf="selectedReferential==FUND_TYPE_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"></referential-fund-type>
+        <referential-journal-type *ngIf="selectedReferential==JOURNAL_TYPE_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"></referential-journal-type>
+        <referential-mail-redirection-type *ngIf="selectedReferential==MAIL_REDIRECTION_TYPE_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+        </referential-mail-redirection-type>
+        <referential-notice-type-family *ngIf="selectedReferential==NOTICE_TYPE_FAMILY_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+        </referential-notice-type-family>
+        <referential-provision-family-type *ngIf="selectedReferential==PROVISION_FAMILY_TYPE_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+        </referential-provision-family-type>
+        <referential-quotation-label-type *ngIf="selectedReferential==QUOTATION_LABEL_TYPE_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+        </referential-quotation-label-type>
+        <referential-quotation-status *ngIf="selectedReferential==QUOTATION_STATUS_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+        </referential-quotation-status>
+        <referential-record-type *ngIf="selectedReferential==RECORD_TYPE_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+        </referential-record-type>
+        <referential-transfert-fund-type *ngIf="selectedReferential==TRANSFERT_FUNDS_TYPE_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+        </referential-transfert-fund-type>
+        <referential-billing-closure-recipient-type
+          *ngIf="selectedReferential==BILLING_CLOSURE_RECIPIENT_TYPE_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+        </referential-billing-closure-recipient-type>
+        <referential-billing-closure-type *ngIf="selectedReferential==BILLING_CLOSURE_TYPE_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+        </referential-billing-closure-type>
       </div>
     </mat-tab>
   </mat-tab-group>

@@ -29,4 +29,10 @@ public class DomiciliationContractTypeServiceImpl implements DomiciliationContra
             return domiciliationContractType.get();
         return null;
     }
+
+    @Override
+    public DomiciliationContractType addOrUpdateDomiciliationContractType(
+            DomiciliationContractType domiciliationContractType) {
+        return domiciliationContractTypeRepository.save(domiciliationContractType);
+    }
 }

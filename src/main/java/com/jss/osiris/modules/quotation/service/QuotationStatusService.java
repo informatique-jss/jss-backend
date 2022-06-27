@@ -8,4 +8,6 @@ public interface QuotationStatusService {
     public List<QuotationStatus> getQuotationStatus();
 
     public QuotationStatus getQuotationStatus(Integer id);
+
+    public QuotationStatus addOrUpdateQuotationStatus(QuotationStatus quotationStatus);
 }

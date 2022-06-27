@@ -8,4 +8,6 @@ public interface FundTypeService {
     public List<FundType> getFundTypes();
 
     public FundType getFundType(Integer id);
+
+    public FundType addOrUpdateFundType(FundType fundType);
 }

@@ -28,4 +28,9 @@ public class BillingClosureTypeServiceImpl implements BillingClosureTypeService 
             return billingClosureType.get();
         return null;
     }
+
+    @Override
+    public BillingClosureType addOrUpdateBillingClosureType(BillingClosureType billingClosureType) {
+        return billingClosureTypeRepository.save(billingClosureType);
+    }
 }

@@ -28,4 +28,9 @@ public class ProvisionFamilyTypeServiceImpl implements ProvisionFamilyTypeServic
             return provisionFamilyType.get();
         return null;
     }
+
+    @Override
+    public ProvisionFamilyType addOrUpdateProvisionFamilyType(ProvisionFamilyType provisionFamilyType) {
+        return provisionFamilyTypeRepository.save(provisionFamilyType);
+    }
 }

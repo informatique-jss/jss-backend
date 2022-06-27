@@ -16,4 +16,7 @@ export class JournalTypeService extends AppRestService<JournalType>{
     return this.getList(new HttpParams(), "journal-types");
   }
 
+  addOrUpdateJournalType(journalType: JournalType) {
+    return this.addOrUpdate(new HttpParams(), "journal-type", journalType, "Enregistré", "Erreur lors de l'enregistrement");
+  }
 }

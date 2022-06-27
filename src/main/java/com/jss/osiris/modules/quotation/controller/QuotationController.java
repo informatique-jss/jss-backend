@@ -260,6 +260,32 @@ public class QuotationController {
     return new ResponseEntity<List<FundType>>(fundTypes, HttpStatus.OK);
   }
 
+  @PostMapping(inputEntryPoint + "/fund-type")
+  public ResponseEntity<FundType> addOrUpdateFundType(
+      @RequestBody FundType fundType) {
+    FundType outFundType;
+    try {
+      if (fundType.getId() != null)
+        validationHelper.validateReferential(fundType, true);
+      validationHelper.validateString(fundType.getCode(), true);
+      validationHelper.validateString(fundType.getLabel(), true);
+
+      outFundType = fundTypeService
+          .addOrUpdateFundType(fundType);
+    } catch (
+
+    ResponseStatusException e) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    } catch (HttpStatusCodeException e) {
+      logger.error("HTTP error when fetching quotation", e);
+      return new ResponseEntity<FundType>(HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (Exception e) {
+      logger.error("Error when fetching quotation", e);
+      return new ResponseEntity<FundType>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    return new ResponseEntity<FundType>(outFundType, HttpStatus.OK);
+  }
+
   @GetMapping(inputEntryPoint + "/transfert-fund-types")
   public ResponseEntity<List<TransfertFundsType>> getTransfertFundsTypes() {
     List<TransfertFundsType> transfertFundsTypes = null;
@@ -273,6 +299,32 @@ public class QuotationController {
       return new ResponseEntity<List<TransfertFundsType>>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
     return new ResponseEntity<List<TransfertFundsType>>(transfertFundsTypes, HttpStatus.OK);
+  }
+
+  @PostMapping(inputEntryPoint + "/transfert-fund-type")
+  public ResponseEntity<TransfertFundsType> addOrUpdateTransfertFundsType(
+      @RequestBody TransfertFundsType transfertFundsType) {
+    TransfertFundsType outTransfertFundsType;
+    try {
+      if (transfertFundsType.getId() != null)
+        validationHelper.validateReferential(transfertFundsType, true);
+      validationHelper.validateString(transfertFundsType.getCode(), true);
+      validationHelper.validateString(transfertFundsType.getLabel(), true);
+
+      outTransfertFundsType = transfertFundsTypeService
+          .addOrUpdateTransfertFundsType(transfertFundsType);
+    } catch (
+
+    ResponseStatusException e) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    } catch (HttpStatusCodeException e) {
+      logger.error("HTTP error when fetching quotation", e);
+      return new ResponseEntity<TransfertFundsType>(HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (Exception e) {
+      logger.error("Error when fetching quotation", e);
+      return new ResponseEntity<TransfertFundsType>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    return new ResponseEntity<TransfertFundsType>(outTransfertFundsType, HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/bodacc-publication-types")
@@ -290,6 +342,31 @@ public class QuotationController {
     return new ResponseEntity<List<BodaccPublicationType>>(bodaccPublicationTypes, HttpStatus.OK);
   }
 
+  @PostMapping(inputEntryPoint + "/bodacc-publication-type")
+  public ResponseEntity<BodaccPublicationType> addOrUpdateActType(
+      @RequestBody BodaccPublicationType bodaccPublicationType) {
+    BodaccPublicationType outBodaccPublicationType;
+    try {
+      if (bodaccPublicationType.getId() != null)
+        validationHelper.validateReferential(bodaccPublicationType, true);
+      validationHelper.validateString(bodaccPublicationType.getCode(), true);
+      validationHelper.validateString(bodaccPublicationType.getLabel(), true);
+
+      outBodaccPublicationType = bodaccPublicationTypeService.addOrUpdateBodaccPublicationType(bodaccPublicationType);
+    } catch (
+
+    ResponseStatusException e) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    } catch (HttpStatusCodeException e) {
+      logger.error("HTTP error when fetching quotation", e);
+      return new ResponseEntity<BodaccPublicationType>(HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (Exception e) {
+      logger.error("Error when fetching quotation", e);
+      return new ResponseEntity<BodaccPublicationType>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    return new ResponseEntity<BodaccPublicationType>(outBodaccPublicationType, HttpStatus.OK);
+  }
+
   @GetMapping(inputEntryPoint + "/notice-type-families")
   public ResponseEntity<List<NoticeTypeFamily>> getNoticeTypeFamilies() {
     List<NoticeTypeFamily> noticeTypeFamilies = null;
@@ -303,6 +380,31 @@ public class QuotationController {
       return new ResponseEntity<List<NoticeTypeFamily>>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
     return new ResponseEntity<List<NoticeTypeFamily>>(noticeTypeFamilies, HttpStatus.OK);
+  }
+
+  @PostMapping(inputEntryPoint + "/notice-type-family")
+  public ResponseEntity<NoticeTypeFamily> addOrUpdateNoticeTypeFamily(
+      @RequestBody NoticeTypeFamily noticeTypeFamily) {
+    NoticeTypeFamily outNoticeTypeFamily;
+    try {
+      if (noticeTypeFamily.getId() != null)
+        validationHelper.validateReferential(noticeTypeFamily, true);
+      validationHelper.validateString(noticeTypeFamily.getCode(), true);
+      validationHelper.validateString(noticeTypeFamily.getLabel(), true);
+
+      outNoticeTypeFamily = noticeTypeFamilyService.addOrUpdateNoticeTypeFamily(noticeTypeFamily);
+    } catch (
+
+    ResponseStatusException e) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    } catch (HttpStatusCodeException e) {
+      logger.error("HTTP error when fetching quotation", e);
+      return new ResponseEntity<NoticeTypeFamily>(HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (Exception e) {
+      logger.error("Error when fetching quotation", e);
+      return new ResponseEntity<NoticeTypeFamily>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    return new ResponseEntity<NoticeTypeFamily>(outNoticeTypeFamily, HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/notice-types")
@@ -334,10 +436,10 @@ public class QuotationController {
     try {
       characterPrice = characterPriceService.getCharacterPrice(department, date);
     } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching journalType", e);
+      logger.error("HTTP error when fetching character price", e);
       return new ResponseEntity<CharacterPrice>(HttpStatus.INTERNAL_SERVER_ERROR);
     } catch (Exception e) {
-      logger.error("Error when fetching journalType", e);
+      logger.error("Error when fetching character price", e);
       return new ResponseEntity<CharacterPrice>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
     return new ResponseEntity<CharacterPrice>(characterPrice, HttpStatus.OK);
@@ -356,6 +458,31 @@ public class QuotationController {
       return new ResponseEntity<List<JournalType>>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
     return new ResponseEntity<List<JournalType>>(journalTypes, HttpStatus.OK);
+  }
+
+  @PostMapping(inputEntryPoint + "/journal-type")
+  public ResponseEntity<JournalType> addOrUpdateJournalType(
+      @RequestBody JournalType journalType) {
+    JournalType outJournalType;
+    try {
+      if (journalType.getId() != null)
+        validationHelper.validateReferential(journalType, true);
+      validationHelper.validateString(journalType.getCode(), true);
+      validationHelper.validateString(journalType.getLabel(), true);
+
+      outJournalType = journalTypeService.addOrUpdateJournalType(journalType);
+    } catch (
+
+    ResponseStatusException e) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    } catch (HttpStatusCodeException e) {
+      logger.error("HTTP error when fetching quotation", e);
+      return new ResponseEntity<JournalType>(HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (Exception e) {
+      logger.error("Error when fetching quotation", e);
+      return new ResponseEntity<JournalType>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    return new ResponseEntity<JournalType>(outJournalType, HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/confreres")
@@ -388,6 +515,31 @@ public class QuotationController {
     return new ResponseEntity<List<MailRedirectionType>>(mailRedirectionTypes, HttpStatus.OK);
   }
 
+  @PostMapping(inputEntryPoint + "/mail-redirection-type")
+  public ResponseEntity<MailRedirectionType> addOrUpdateMailRedirectionType(
+      @RequestBody MailRedirectionType mailRedirectionType) {
+    MailRedirectionType outMailRedirectionType;
+    try {
+      if (mailRedirectionType.getId() != null)
+        validationHelper.validateReferential(mailRedirectionType, true);
+      validationHelper.validateString(mailRedirectionType.getCode(), true);
+      validationHelper.validateString(mailRedirectionType.getLabel(), true);
+
+      outMailRedirectionType = mailRedirectionTypeService.addOrUpdateMailRedirectionType(mailRedirectionType);
+    } catch (
+
+    ResponseStatusException e) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    } catch (HttpStatusCodeException e) {
+      logger.error("HTTP error when fetching quotation", e);
+      return new ResponseEntity<MailRedirectionType>(HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (Exception e) {
+      logger.error("Error when fetching quotation", e);
+      return new ResponseEntity<MailRedirectionType>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    return new ResponseEntity<MailRedirectionType>(outMailRedirectionType, HttpStatus.OK);
+  }
+
   @GetMapping(inputEntryPoint + "/building-domiciliations")
   public ResponseEntity<List<BuildingDomiciliation>> getBuildingDomiciliations() {
     List<BuildingDomiciliation> buildingDomiciliations = null;
@@ -403,6 +555,31 @@ public class QuotationController {
     return new ResponseEntity<List<BuildingDomiciliation>>(buildingDomiciliations, HttpStatus.OK);
   }
 
+  @PostMapping(inputEntryPoint + "/building-domiciliation")
+  public ResponseEntity<BuildingDomiciliation> addOrUpdateBuildingDomiciliation(
+      @RequestBody BuildingDomiciliation buildingDomiciliation) {
+    BuildingDomiciliation outBuildingDomiciliation;
+    try {
+      if (buildingDomiciliation.getId() != null)
+        validationHelper.validateReferential(buildingDomiciliation, true);
+      validationHelper.validateString(buildingDomiciliation.getCode(), true);
+      validationHelper.validateString(buildingDomiciliation.getLabel(), true);
+
+      outBuildingDomiciliation = buildingDomiciliationService.addOrUpdateBuildingDomiciliation(buildingDomiciliation);
+    } catch (
+
+    ResponseStatusException e) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    } catch (HttpStatusCodeException e) {
+      logger.error("HTTP error when fetching quotation", e);
+      return new ResponseEntity<BuildingDomiciliation>(HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (Exception e) {
+      logger.error("Error when fetching quotation", e);
+      return new ResponseEntity<BuildingDomiciliation>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    return new ResponseEntity<BuildingDomiciliation>(outBuildingDomiciliation, HttpStatus.OK);
+  }
+
   @GetMapping(inputEntryPoint + "/domiciliation-contract-types")
   public ResponseEntity<List<DomiciliationContractType>> getContractTypes() {
     List<DomiciliationContractType> domiciliationContractTypes = null;
@@ -416,6 +593,32 @@ public class QuotationController {
       return new ResponseEntity<List<DomiciliationContractType>>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
     return new ResponseEntity<List<DomiciliationContractType>>(domiciliationContractTypes, HttpStatus.OK);
+  }
+
+  @PostMapping(inputEntryPoint + "/domiciliation-contract-type")
+  public ResponseEntity<DomiciliationContractType> addOrUpdateDomiciliationContractType(
+      @RequestBody DomiciliationContractType domiciliationContractType) {
+    DomiciliationContractType outDomiciliationContractType;
+    try {
+      if (domiciliationContractType.getId() != null)
+        validationHelper.validateReferential(domiciliationContractType, true);
+      validationHelper.validateString(domiciliationContractType.getCode(), true);
+      validationHelper.validateString(domiciliationContractType.getLabel(), true);
+
+      outDomiciliationContractType = domiciliationContractTypeService
+          .addOrUpdateDomiciliationContractType(domiciliationContractType);
+    } catch (
+
+    ResponseStatusException e) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    } catch (HttpStatusCodeException e) {
+      logger.error("HTTP error when fetching quotation", e);
+      return new ResponseEntity<DomiciliationContractType>(HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (Exception e) {
+      logger.error("Error when fetching quotation", e);
+      return new ResponseEntity<DomiciliationContractType>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    return new ResponseEntity<DomiciliationContractType>(outDomiciliationContractType, HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/provision-types")
@@ -446,6 +649,31 @@ public class QuotationController {
       return new ResponseEntity<List<ProvisionFamilyType>>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
     return new ResponseEntity<List<ProvisionFamilyType>>(provisionFamilyTypes, HttpStatus.OK);
+  }
+
+  @PostMapping(inputEntryPoint + "/provision-family-type")
+  public ResponseEntity<ProvisionFamilyType> addOrUpdateProvisionFamilyType(
+      @RequestBody ProvisionFamilyType provisionFamilyType) {
+    ProvisionFamilyType outProvisionFamilyType;
+    try {
+      if (provisionFamilyType.getId() != null)
+        validationHelper.validateReferential(provisionFamilyType, true);
+      validationHelper.validateString(provisionFamilyType.getCode(), true);
+      validationHelper.validateString(provisionFamilyType.getLabel(), true);
+
+      outProvisionFamilyType = provisionFamilyTypeService.addOrUpdateProvisionFamilyType(provisionFamilyType);
+    } catch (
+
+    ResponseStatusException e) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    } catch (HttpStatusCodeException e) {
+      logger.error("HTTP error when fetching quotation", e);
+      return new ResponseEntity<ProvisionFamilyType>(HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (Exception e) {
+      logger.error("Error when fetching quotation", e);
+      return new ResponseEntity<ProvisionFamilyType>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    return new ResponseEntity<ProvisionFamilyType>(outProvisionFamilyType, HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/siren")
@@ -531,7 +759,32 @@ public class QuotationController {
     return new ResponseEntity<List<RecordType>>(recordTypes, HttpStatus.OK);
   }
 
-  @GetMapping(inputEntryPoint + "/quotation-label-ypes")
+  @PostMapping(inputEntryPoint + "/record-type")
+  public ResponseEntity<RecordType> addOrUpdateRecordType(
+      @RequestBody RecordType recordType) {
+    RecordType outRecordType;
+    try {
+      if (recordType.getId() != null)
+        validationHelper.validateReferential(recordType, true);
+      validationHelper.validateString(recordType.getCode(), true);
+      validationHelper.validateString(recordType.getLabel(), true);
+
+      outRecordType = recordTypeService.addOrUpdateRecordType(recordType);
+    } catch (
+
+    ResponseStatusException e) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    } catch (HttpStatusCodeException e) {
+      logger.error("HTTP error when fetching quotation", e);
+      return new ResponseEntity<RecordType>(HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (Exception e) {
+      logger.error("Error when fetching quotation", e);
+      return new ResponseEntity<RecordType>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    return new ResponseEntity<RecordType>(outRecordType, HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/quotation-label-types")
   public ResponseEntity<List<QuotationLabelType>> getQuotationLabelTypes() {
     List<QuotationLabelType> quotationLabelTypes = null;
     try {
@@ -544,6 +797,31 @@ public class QuotationController {
       return new ResponseEntity<List<QuotationLabelType>>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
     return new ResponseEntity<List<QuotationLabelType>>(quotationLabelTypes, HttpStatus.OK);
+  }
+
+  @PostMapping(inputEntryPoint + "/quotation-label-type")
+  public ResponseEntity<QuotationLabelType> addOrUpdateQuotationLabelType(
+      @RequestBody QuotationLabelType quotationLabelType) {
+    QuotationLabelType outQuotationLabelType;
+    try {
+      if (quotationLabelType.getId() != null)
+        validationHelper.validateReferential(quotationLabelType, true);
+      validationHelper.validateString(quotationLabelType.getCode(), true);
+      validationHelper.validateString(quotationLabelType.getLabel(), true);
+
+      outQuotationLabelType = quotationLabelTypeService.addOrUpdateQuotationLabelType(quotationLabelType);
+    } catch (
+
+    ResponseStatusException e) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    } catch (HttpStatusCodeException e) {
+      logger.error("HTTP error when fetching quotation", e);
+      return new ResponseEntity<QuotationLabelType>(HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (Exception e) {
+      logger.error("Error when fetching quotation", e);
+      return new ResponseEntity<QuotationLabelType>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    return new ResponseEntity<QuotationLabelType>(outQuotationLabelType, HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/quotation-status")
@@ -559,6 +837,31 @@ public class QuotationController {
       return new ResponseEntity<List<QuotationStatus>>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
     return new ResponseEntity<List<QuotationStatus>>(quotationStatus, HttpStatus.OK);
+  }
+
+  @PostMapping(inputEntryPoint + "/quotation-status")
+  public ResponseEntity<QuotationStatus> addOrUpdateQuotationStatus(
+      @RequestBody QuotationStatus quotationStatus) {
+    QuotationStatus outQuotationStatus;
+    try {
+      if (quotationStatus.getId() != null)
+        validationHelper.validateReferential(quotationStatus, true);
+      validationHelper.validateString(quotationStatus.getCode(), true);
+      validationHelper.validateString(quotationStatus.getLabel(), true);
+
+      outQuotationStatus = quotationStatusService.addOrUpdateQuotationStatus(quotationStatus);
+    } catch (
+
+    ResponseStatusException e) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    } catch (HttpStatusCodeException e) {
+      logger.error("HTTP error when fetching quotation", e);
+      return new ResponseEntity<QuotationStatus>(HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (Exception e) {
+      logger.error("Error when fetching quotation", e);
+      return new ResponseEntity<QuotationStatus>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    return new ResponseEntity<QuotationStatus>(outQuotationStatus, HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/quotation")

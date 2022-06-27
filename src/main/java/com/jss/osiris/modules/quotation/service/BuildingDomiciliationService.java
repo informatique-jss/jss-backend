@@ -8,4 +8,7 @@ public interface BuildingDomiciliationService {
     public List<BuildingDomiciliation> getBuildingDomiciliations();
 
     public BuildingDomiciliation getBuildingDomiciliation(Integer id);
+
+    public BuildingDomiciliation addOrUpdateBuildingDomiciliation(BuildingDomiciliation buildingDomiciliation);
+
 }

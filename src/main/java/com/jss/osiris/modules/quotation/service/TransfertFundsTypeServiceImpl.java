@@ -28,4 +28,9 @@ public class TransfertFundsTypeServiceImpl implements TransfertFundsTypeService 
             return transfertFundsType.get();
         return null;
     }
+
+    @Override
+    public TransfertFundsType addOrUpdateTransfertFundsType(TransfertFundsType transfertFundsType) {
+        return transfertFundsTypeRepository.save(transfertFundsType);
+    }
 }

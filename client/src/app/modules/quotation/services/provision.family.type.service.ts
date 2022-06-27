@@ -16,4 +16,9 @@ export class ProvisionFamilyTypeService extends AppRestService<ProvisionFamilyTy
     return this.getList(new HttpParams(), "provision-family-types");
   }
 
+
+  addOrUpdateProvisionFamilyType(provisionFamilyType: ProvisionFamilyType) {
+    return this.addOrUpdate(new HttpParams(), "provision-family-types", provisionFamilyType, "Enregistré", "Erreur lors de l'enregistrement");
+  }
+
 }

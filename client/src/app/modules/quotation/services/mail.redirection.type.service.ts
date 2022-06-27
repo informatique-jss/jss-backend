@@ -16,4 +16,7 @@ export class MailRedirectionTypeService extends AppRestService<MailRedirectionTy
     return this.getList(new HttpParams(), "mail-redirection-types");
   }
 
+  addOrUpdateMailRedirectionType(mailRedirectionType: MailRedirectionType) {
+    return this.addOrUpdate(new HttpParams(), "mail-redirection-type", mailRedirectionType, "Enregistré", "Erreur lors de l'enregistrement");
+  }
 }

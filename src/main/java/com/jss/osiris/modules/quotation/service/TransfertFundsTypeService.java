@@ -8,4 +8,6 @@ public interface TransfertFundsTypeService {
     public List<TransfertFundsType> getTransfertFundsTypes();
 
     public TransfertFundsType getTransfertFundsType(Integer id);
+
+    public TransfertFundsType addOrUpdateTransfertFundsType(TransfertFundsType transfertFundsType);
 }

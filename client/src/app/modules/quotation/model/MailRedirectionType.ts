@@ -1,5 +1,4 @@
-export interface MailRedirectionType {
-  id: number;
-  code: string;
-  label: string;
+import { IReferential } from "../../administration/model/IReferential";
+
+export interface MailRedirectionType extends IReferential {
 }

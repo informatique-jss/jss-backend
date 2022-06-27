@@ -16,4 +16,8 @@ export class RecordTypeService extends AppRestService<RecordType>{
     return this.getList(new HttpParams(), "record-types");
   }
 
+  addOrUpdateRecordType(recordType: RecordType) {
+    return this.addOrUpdate(new HttpParams(), "record-type", recordType, "Enregistré", "Erreur lors de l'enregistrement");
+  }
+
 }

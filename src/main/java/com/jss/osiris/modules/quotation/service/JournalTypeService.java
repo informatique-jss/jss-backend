@@ -8,4 +8,6 @@ public interface JournalTypeService {
     public List<JournalType> getJournalTypes();
 
     public JournalType getJournalType(Integer id);
+
+    public JournalType addOrUpdateJournalType(JournalType journalType);
 }

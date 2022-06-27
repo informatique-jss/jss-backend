@@ -1,5 +1,4 @@
-export interface BillingLabelType {
-  id: number;
-  code: string;
-  label: string;
+import { IReferential } from "../../administration/model/IReferential";
+
+export interface BillingLabelType extends IReferential {
 }

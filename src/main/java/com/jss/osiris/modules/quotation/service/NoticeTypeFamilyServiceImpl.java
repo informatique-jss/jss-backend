@@ -28,4 +28,9 @@ public class NoticeTypeFamilyServiceImpl implements NoticeTypeFamilyService {
             return noticeTypeFamily.get();
         return null;
     }
+
+    @Override
+    public NoticeTypeFamily addOrUpdateNoticeTypeFamily(NoticeTypeFamily noticeTypeFamily) {
+        return noticeTypeFamilyRepository.save(noticeTypeFamily);
+    }
 }

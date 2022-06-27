@@ -8,4 +8,7 @@ public interface DomiciliationContractTypeService {
     public List<DomiciliationContractType> getDomiciliationContractTypes();
 
     public DomiciliationContractType getDomiciliationContractType(Integer id);
+
+    public DomiciliationContractType addOrUpdateDomiciliationContractType(
+            DomiciliationContractType domiciliationContractType);
 }

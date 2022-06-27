@@ -1,5 +1,4 @@
-export interface NoticeTypeFamily {
-  id: number;
-  code: string;
-  label: string;
+import { IReferential } from "../../administration/model/IReferential";
+
+export interface NoticeTypeFamily extends IReferential {
 }

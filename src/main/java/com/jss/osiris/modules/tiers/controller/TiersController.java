@@ -279,6 +279,32 @@ public class TiersController {
     return new ResponseEntity<List<BillingClosureRecipientType>>(billingClosureRecipientTypes, HttpStatus.OK);
   }
 
+  @PostMapping(inputEntryPoint + "/billing-closure-recipient-type")
+  public ResponseEntity<BillingClosureRecipientType> addOrUpdateBillingClosureRecipientType(
+      @RequestBody BillingClosureRecipientType billingClosureRecipientType) {
+    BillingClosureRecipientType outBillingClosureRecipientType;
+    try {
+      if (billingClosureRecipientType.getId() != null)
+        validationHelper.validateReferential(billingClosureRecipientType, true);
+      validationHelper.validateString(billingClosureRecipientType.getCode(), true);
+      validationHelper.validateString(billingClosureRecipientType.getLabel(), true);
+
+      outBillingClosureRecipientType = billingClosureRecipientTypeService
+          .addOrUpdateTransfertFundsType(billingClosureRecipientType);
+    } catch (
+
+    ResponseStatusException e) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    } catch (HttpStatusCodeException e) {
+      logger.error("HTTP error when fetching quotation", e);
+      return new ResponseEntity<BillingClosureRecipientType>(HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (Exception e) {
+      logger.error("Error when fetching quotation", e);
+      return new ResponseEntity<BillingClosureRecipientType>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    return new ResponseEntity<BillingClosureRecipientType>(outBillingClosureRecipientType, HttpStatus.OK);
+  }
+
   @GetMapping(inputEntryPoint + "/billing-closure-types")
   public ResponseEntity<List<BillingClosureType>> getBillingClosureTypes() {
     List<BillingClosureType> billingClosureTypes = null;
@@ -292,6 +318,32 @@ public class TiersController {
       return new ResponseEntity<List<BillingClosureType>>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
     return new ResponseEntity<List<BillingClosureType>>(billingClosureTypes, HttpStatus.OK);
+  }
+
+  @PostMapping(inputEntryPoint + "/billing-closure-type")
+  public ResponseEntity<BillingClosureType> addOrUpdateBillingClosureType(
+      @RequestBody BillingClosureType billingClosureType) {
+    BillingClosureType outBillingClosureType;
+    try {
+      if (billingClosureType.getId() != null)
+        validationHelper.validateReferential(billingClosureType, true);
+      validationHelper.validateString(billingClosureType.getCode(), true);
+      validationHelper.validateString(billingClosureType.getLabel(), true);
+
+      outBillingClosureType = billingClosureTypeService
+          .addOrUpdateBillingClosureType(billingClosureType);
+    } catch (
+
+    ResponseStatusException e) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    } catch (HttpStatusCodeException e) {
+      logger.error("HTTP error when fetching quotation", e);
+      return new ResponseEntity<BillingClosureType>(HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (Exception e) {
+      logger.error("Error when fetching quotation", e);
+      return new ResponseEntity<BillingClosureType>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    return new ResponseEntity<BillingClosureType>(outBillingClosureType, HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/refund-types")

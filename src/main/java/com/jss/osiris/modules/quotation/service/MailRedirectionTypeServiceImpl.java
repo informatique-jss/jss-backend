@@ -28,4 +28,9 @@ public class MailRedirectionTypeServiceImpl implements MailRedirectionTypeServic
             return mailRedirectionType.get();
         return null;
     }
+
+    @Override
+    public MailRedirectionType addOrUpdateMailRedirectionType(MailRedirectionType mailRedirectionType) {
+        return mailRedirectionTypeRepository.save(mailRedirectionType);
+    }
 }

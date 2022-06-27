@@ -28,4 +28,9 @@ public class BodaccPublicationTypeServiceImpl implements BodaccPublicationTypeSe
             return bodaccPublicationType.get();
         return null;
     }
+
+    @Override
+    public BodaccPublicationType addOrUpdateBodaccPublicationType(BodaccPublicationType bodaccPublicationType) {
+        return bodaccPublicationTypeRepository.save(bodaccPublicationType);
+    }
 }

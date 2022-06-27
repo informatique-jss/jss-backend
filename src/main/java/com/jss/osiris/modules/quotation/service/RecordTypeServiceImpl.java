@@ -28,4 +28,9 @@ public class RecordTypeServiceImpl implements RecordTypeService {
             return recordType.get();
         return null;
     }
+
+    @Override
+    public RecordType addOrUpdateRecordType(RecordType recordType) {
+        return recordTypeRepository.save(recordType);
+    }
 }
