@@ -1,5 +1,4 @@
-export interface CompetentAuthorityType {
-  id: number;
-  code: string;
-  label: string;
+import { IReferential } from "../../administration/model/IReferential";
+
+export interface CompetentAuthorityType extends IReferential {
 }

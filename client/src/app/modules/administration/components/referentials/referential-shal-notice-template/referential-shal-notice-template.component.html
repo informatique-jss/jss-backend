@@ -1,0 +1,60 @@
+<div>
+  <div>
+    <mat-form-field class="full-width">
+      <input matInput (keyup)="applyFilter($event.target)" placeholder="Rechercher">
+    </mat-form-field>
+  </div>
+  <div class="table-container-scroll">
+    <table mat-table matSort [dataSource]="entityDataSource" class="table">
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Identifiant technique</th>
+        <td mat-cell *matCellDef="let element">{{element.id}}</td>
+      </ng-container>
+      <ng-container matColumnDef="code">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Codification</th>
+        <td mat-cell *matCellDef="let element">{{(getElementCode(element)? getElementCode(element):"")}}</td>
+      </ng-container>
+      <ng-container matColumnDef="label">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Nom fonctionnal</th>
+        <td mat-cell *matCellDef="let element">{{(getElementLabel(element)? getElementLabel(element):"")}}</td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row class="pointer" [ngClass]="{'selected-mat-row':selectedEntity && selectedEntity.id==row.id}"
+        *matRowDef="let row; columns: displayedColumns;" (click)="selectEntity(row)"></tr>
+    </table>
+  </div>
+</div>
+<div class="mat-elevation-z2 form-div" *ngIf="selectedEntity ">
+  <form [formGroup]="entityForm">
+    <div class="full-width">
+      <fieldset [disabled]="editMode==false" class="fieldset-no-border">
+        <table class="full-width">
+          <tr *ngIf="selectedEntity.id">
+            <td>
+              <generic-input [(model)]="selectedEntity.id" label="Identifiant technique" [form]="entityForm"
+                propertyName="id" [isMandatory]="true" [isDisabled]="true"></generic-input>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <generic-input [(model)]="selectedEntity.code" label="Codification" [form]="entityForm"
+                propertyName="code" [isMandatory]="true" [isDisabled]="!editMode"></generic-input>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <generic-input [(model)]="selectedEntity.label" label="Nom fonctionnel" [form]="entityForm"
+                propertyName="label" [isMandatory]="true" [isDisabled]="!editMode"></generic-input>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <generic-textarea [(model)]="selectedEntity.text" label="Texte du modèle" [form]="entityForm"
+                propertyName="text" [isMandatory]="true" [isDisabled]="!editMode"></generic-textarea>
+            </td>
+          </tr>
+        </table>
+      </fieldset>
+    </div>
+  </form>
+</div>

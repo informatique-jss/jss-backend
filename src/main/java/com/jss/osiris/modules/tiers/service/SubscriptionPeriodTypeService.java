@@ -8,4 +8,6 @@ public interface SubscriptionPeriodTypeService {
     public List<SubscriptionPeriodType> getSubscriptionPeriodTypes();
 
     public SubscriptionPeriodType getSubscriptionPeriodType(Integer id);
+	
+	 public SubscriptionPeriodType addOrUpdateSubscriptionPeriodType(SubscriptionPeriodType subscriptionPeriodType);
 }

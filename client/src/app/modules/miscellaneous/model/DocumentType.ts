@@ -1,6 +1,4 @@
+import { IReferential } from "../../administration/model/IReferential";
 
-export interface DocumentType {
-  id: number;
-  label: string;
-  code: string;
+export interface DocumentType extends IReferential {
 }

@@ -1,5 +1,4 @@
-export interface RefundType {
-  id: number;
-  code: string;
-  label: string;
+import { IReferential } from "../../administration/model/IReferential";
+
+export interface RefundType extends IReferential {
 }

@@ -12,7 +12,11 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 
+import com.jss.osiris.modules.accounting.model.AccountingAccount;
+import com.jss.osiris.modules.miscellaneous.model.City;
+import com.jss.osiris.modules.miscellaneous.model.Country;
 import com.jss.osiris.modules.miscellaneous.model.Department;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.miscellaneous.model.Mail;
@@ -26,8 +30,10 @@ public class Confrere implements Serializable, IId {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
 
+	private String code;
+
 	@Column(length = 40)
-	private String denomination;
+	private String label;
 
 	@ManyToMany
 	@JoinTable(name = "asso_confrere_department", joinColumns = @JoinColumn(name = "id_confrere"), inverseJoinColumns = @JoinColumn(name = "id_department"))
@@ -65,12 +71,60 @@ public class Confrere implements Serializable, IId {
 
 	private Integer numberOfPrint;
 
+	@ManyToOne
+	@JoinColumn(name = "id_accounting_account_provider")
+	private AccountingAccount accountingAccountProvider;
+
+	@ManyToOne
+	@JoinColumn(name = "id_accounting_account_customer")
+	private AccountingAccount accountingAccountCustomer;
+
+	@Column(length = 60)
+	private String mailRecipient;
+
+	@Column(length = 60)
+	private String address;
+
+	@Column(length = 10)
+	private String postalCode;
+
+	@ManyToOne
+	@JoinColumn(name = "id_city")
+	private City city;
+
+	@ManyToOne
+	@JoinColumn(name = "id_country")
+	private Country country;
+
+	@Column(length = 40, nullable = false)
+	private String iban;
+
+	@ManyToOne
+	@JoinColumn(name = "id_regie")
+	private Regie regie;
+
 	public Integer getId() {
 		return id;
 	}
 
 	public List<JournalType> getJournalType() {
 		return journalType;
+	}
+
+	public String getIban() {
+		return iban;
+	}
+
+	public void setIban(String iban) {
+		this.iban = iban;
+	}
+
+	public Regie getRegie() {
+		return regie;
+	}
+
+	public void setRegie(Regie regie) {
+		this.regie = regie;
 	}
 
 	public void setJournalType(List<JournalType> journalType) {
@@ -81,12 +135,76 @@ public class Confrere implements Serializable, IId {
 		this.id = id;
 	}
 
-	public String getDenomination() {
-		return denomination;
+	public String getCode() {
+		return code;
 	}
 
-	public void setDenomination(String denomination) {
-		this.denomination = denomination;
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public AccountingAccount getAccountingAccountProvider() {
+		return accountingAccountProvider;
+	}
+
+	public void setAccountingAccountProvider(AccountingAccount accountingAccountProvider) {
+		this.accountingAccountProvider = accountingAccountProvider;
+	}
+
+	public AccountingAccount getAccountingAccountCustomer() {
+		return accountingAccountCustomer;
+	}
+
+	public void setAccountingAccountCustomer(AccountingAccount accountingAccountCustomer) {
+		this.accountingAccountCustomer = accountingAccountCustomer;
+	}
+
+	public String getMailRecipient() {
+		return mailRecipient;
+	}
+
+	public void setMailRecipient(String mailRecipient) {
+		this.mailRecipient = mailRecipient;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public String getPostalCode() {
+		return postalCode;
+	}
+
+	public void setPostalCode(String postalCode) {
+		this.postalCode = postalCode;
+	}
+
+	public City getCity() {
+		return city;
+	}
+
+	public void setCity(City city) {
+		this.city = city;
+	}
+
+	public Country getCountry() {
+		return country;
+	}
+
+	public void setCountry(Country country) {
+		this.country = country;
+	}
+
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
 	}
 
 	public List<Department> getDepartments() {

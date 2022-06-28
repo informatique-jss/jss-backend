@@ -16,6 +16,11 @@ export abstract class GenericLocalAutocompleteComponent<T> implements OnInit {
   @Input() model: T | undefined;
   @Output() modelChange: EventEmitter<T> = new EventEmitter<T>();
   /**
+ * The label to display
+ * Mandatory
+ */
+  @Input() label: string = "";
+  /**
    * The formgroup to bind component
    * Mandatory
    */

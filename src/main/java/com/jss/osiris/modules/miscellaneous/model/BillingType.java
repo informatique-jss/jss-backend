@@ -18,6 +18,8 @@ public class BillingType implements Serializable, IId {
 	@Column(nullable = false)
 	private String label;
 
+	private String code;
+
 	private Integer accountingCode;
 
 	private Float preTaxPrice;
@@ -32,6 +34,14 @@ public class BillingType implements Serializable, IId {
 
 	public String getLabel() {
 		return label;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
 	}
 
 	public void setLabel(String label) {

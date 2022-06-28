@@ -1,0 +1,11 @@
+<mat-form-field class="full-width" [formGroup]="form!">
+  <mat-label>{{label}}</mat-label>
+  <input matInput [placeholder]="label" [matAutocomplete]="autoCompleteAccountingAccount"
+    [formControlName]="propertyName" autocomplete="do-not-autofill">
+  <mat-autocomplete autoActiveFirstOption #autoCompleteAccountingAccount="matAutocomplete" [displayWith]="displayLabel"
+    (optionSelected)='optionSelected($event.option.value)'>
+    <mat-option *ngFor="let accountingAccount of filteredTypes" [value]="accountingAccount">
+      {{accountingAccount.label}}
+    </mat-option>
+  </mat-autocomplete>
+</mat-form-field>

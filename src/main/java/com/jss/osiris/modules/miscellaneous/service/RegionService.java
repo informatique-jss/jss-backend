@@ -8,4 +8,6 @@ public interface RegionService {
     public List<Region> getRegions();
 
     public Region getRegion(Integer id);
+	
+	 public Region addOrUpdateRegion(Region region);
 }

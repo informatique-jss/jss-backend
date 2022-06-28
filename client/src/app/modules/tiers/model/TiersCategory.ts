@@ -1,5 +1,4 @@
-export interface TiersCategory {
-  id: number;
-  label: string;
-  code: string;
+import { IReferential } from "../../administration/model/IReferential";
+
+export interface TiersCategory extends IReferential {
 }

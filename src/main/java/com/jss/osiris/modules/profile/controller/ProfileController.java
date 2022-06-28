@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.profile.controller;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -8,12 +9,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.server.ResponseStatusException;
 
+import com.jss.osiris.libs.ValidationHelper;
 import com.jss.osiris.modules.profile.model.Employee;
+import com.jss.osiris.modules.profile.model.Team;
 import com.jss.osiris.modules.profile.service.EmployeeService;
+import com.jss.osiris.modules.profile.service.TeamService;
 
 @RestController
 public class ProfileController {
@@ -24,6 +31,54 @@ public class ProfileController {
 
 	@Autowired
 	EmployeeService employeeService;
+
+	@Autowired
+	ValidationHelper validationHelper;
+
+	@Autowired
+	TeamService teamService;
+
+	@GetMapping(inputEntryPoint + "/teams")
+	public ResponseEntity<List<Team>> getTeams() {
+		List<Team> teams = null;
+		try {
+			teams = teamService.getTeams();
+		} catch (HttpStatusCodeException e) {
+			logger.error("HTTP error when fetching team", e);
+			return new ResponseEntity<List<Team>>(HttpStatus.INTERNAL_SERVER_ERROR);
+		} catch (Exception e) {
+			logger.error("Error when fetching team", e);
+			return new ResponseEntity<List<Team>>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		return new ResponseEntity<List<Team>>(teams, HttpStatus.OK);
+	}
+
+	@PostMapping(inputEntryPoint + "/team")
+	public ResponseEntity<Team> addOrUpdateTeam(
+			@RequestBody Team teams) {
+		Team outTeam;
+		try {
+			if (teams.getId() != null)
+				validationHelper.validateReferential(teams, true);
+			validationHelper.validateString(teams.getCode(), true);
+			validationHelper.validateString(teams.getLabel(), true);
+			validationHelper.validateReferential(teams.getManager(), false);
+
+			outTeam = teamService
+					.addOrUpdateTeam(teams);
+		} catch (
+
+		ResponseStatusException e) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		} catch (HttpStatusCodeException e) {
+			logger.error("HTTP error when fetching team", e);
+			return new ResponseEntity<Team>(HttpStatus.INTERNAL_SERVER_ERROR);
+		} catch (Exception e) {
+			logger.error("Error when fetching team", e);
+			return new ResponseEntity<Team>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		return new ResponseEntity<Team>(outTeam, HttpStatus.OK);
+	}
 
 	@GetMapping(inputEntryPoint + "/employee")
 	public ResponseEntity<Employee> getEmployeeById(@RequestParam Integer id) {
@@ -45,6 +100,21 @@ public class ProfileController {
 		List<Employee> salesEmployees = null;
 		try {
 			salesEmployees = employeeService.getSalesEmployees();
+		} catch (HttpStatusCodeException e) {
+			logger.error("HTTP error when fetching client types", e);
+			return new ResponseEntity<List<Employee>>(HttpStatus.INTERNAL_SERVER_ERROR);
+		} catch (Exception e) {
+			logger.error("Error when fetching client types", e);
+			return new ResponseEntity<List<Employee>>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		return new ResponseEntity<List<Employee>>(salesEmployees, HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/employee/all")
+	public ResponseEntity<List<Employee>> getEmployees() {
+		List<Employee> salesEmployees = null;
+		try {
+			salesEmployees = employeeService.getEmployees();
 		} catch (HttpStatusCodeException e) {
 			logger.error("HTTP error when fetching client types", e);
 			return new ResponseEntity<List<Employee>>(HttpStatus.INTERNAL_SERVER_ERROR);

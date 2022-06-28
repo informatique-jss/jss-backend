@@ -15,5 +15,9 @@ export class RefundTypeService extends AppRestService<RefundType>{
   getRefundTypes() {
     return this.getList(new HttpParams(), "refund-types");
   }
+  
+   addOrUpdateRefundType(refundType: RefundType) {
+    return this.addOrUpdate(new HttpParams(), "refund-type", refundType, "Enregistré", "Erreur lors de l'enregistrement");
+  }
 
 }

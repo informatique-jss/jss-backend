@@ -1,4 +1,4 @@
-export interface Civility {
-  id: number;
-  label: string;
+import { IReferential } from "../../administration/model/IReferential";
+
+export interface Civility extends IReferential {
 }

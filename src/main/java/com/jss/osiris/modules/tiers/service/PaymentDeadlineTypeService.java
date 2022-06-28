@@ -8,4 +8,6 @@ public interface PaymentDeadlineTypeService {
     public List<PaymentDeadlineType> getPaymentDeadlineTypes();
 
     public PaymentDeadlineType getPaymentDeadlineType(Integer id);
+	
+	 public PaymentDeadlineType addOrUpdatePaymentDeadlineType(PaymentDeadlineType paymentDeadlineType);
 }

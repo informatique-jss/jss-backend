@@ -3,12 +3,12 @@ package com.jss.osiris.modules.tiers.service;
 import java.util.List;
 import java.util.Optional;
 
+import com.jss.osiris.modules.tiers.model.TiersType;
+import com.jss.osiris.modules.tiers.repository.TiersTypeRepository;
+
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import com.jss.osiris.modules.tiers.model.TiersType;
-import com.jss.osiris.modules.tiers.repository.TiersTypeRepository;
 
 @Service
 public class TiersTypeServiceImpl implements TiersTypeService {
@@ -27,5 +27,11 @@ public class TiersTypeServiceImpl implements TiersTypeService {
         if (!tiersType.isEmpty())
             return tiersType.get();
         return null;
+    }
+	
+	 @Override
+    public TiersType addOrUpdateTiersType(
+            TiersType tiersType) {
+        return tiersTypeRepository.save(tiersType);
     }
 }

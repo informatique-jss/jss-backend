@@ -1,5 +1,4 @@
-export interface SubscriptionPeriodType {
-  id: number;
-  code: string;
-  label: string;
+import { IReferential } from "../../administration/model/IReferential";
+
+export interface SubscriptionPeriodType extends IReferential {
 }

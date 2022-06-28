@@ -79,7 +79,7 @@ export class ChipsConfrereComponent extends GenericChipsComponent<Confrere> impl
   }
 
   getValueFromObject(object: Confrere): string {
-    return object.denomination;
+    return object.label;
   }
 
   private _filterByName(inputList: any, value: string): any {

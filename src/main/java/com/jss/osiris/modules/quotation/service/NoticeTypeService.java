@@ -8,4 +8,6 @@ public interface NoticeTypeService {
     public List<NoticeType> getNoticeTypes();
 
     public NoticeType getNoticeType(Integer id);
+	
+	 public NoticeType addOrUpdateNoticeType(NoticeType noticeType);
 }

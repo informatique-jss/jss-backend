@@ -8,4 +8,6 @@ public interface WeekDayService {
     public List<WeekDay> getWeekDays();
 
     public WeekDay getWeekDay(Integer id);
+	
+	 public WeekDay addOrUpdateWeekDay(WeekDay weekDay);
 }

@@ -16,6 +16,7 @@ import { NgProgressModule } from 'ngx-progressbar';
 import { NgProgressHttpModule } from "ngx-progressbar/http";
 import { AppComponent } from './app.component';
 import { HttpErrorInterceptor } from './httpErrorInterceptor.service';
+import { AccountingModule } from './modules/accounting/components/accounting.module';
 import { AdministrationModule } from './modules/administration/components/administration/administration.module';
 import { MiscellaneousModule } from './modules/miscellaneous/components/miscellaneous/miscellaneous.module';
 import { QuotationModule } from './modules/quotation/components/quotation/quotation.module';
@@ -58,6 +59,7 @@ import { SidenavListComponent } from './routing/sidenav-list/sidenav-list.compon
     QuotationModule,
     MiscellaneousModule,
     AdministrationModule,
+    AccountingModule,
   ],
   exports: [],
   providers: [{

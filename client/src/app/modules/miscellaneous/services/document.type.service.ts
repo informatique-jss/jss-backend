@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AppRestService } from 'src/app/appRest.service';
-import { DocumentType } from "../../miscellaneous/model/DocumentType";
+import { DocumentType } from '../../miscellaneous/model/DocumentType';
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +14,10 @@ export class DocumentTypeService extends AppRestService<DocumentType>{
 
   getDocumentTypes() {
     return this.getList(new HttpParams(), "document-types");
+  }
+  
+   addOrUpdateDocumentType(documentType: DocumentType) {
+    return this.addOrUpdate(new HttpParams(), "document-type", documentType, "Enregistré", "Erreur lors de l'enregistrement");
   }
 
 }

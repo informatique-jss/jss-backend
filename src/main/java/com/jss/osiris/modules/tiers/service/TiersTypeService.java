@@ -8,4 +8,6 @@ public interface TiersTypeService {
     public List<TiersType> getTiersTypes();
 
     public TiersType getTiersType(Integer id);
+	
+	 public TiersType addOrUpdateTiersType(TiersType tiersType);
 }

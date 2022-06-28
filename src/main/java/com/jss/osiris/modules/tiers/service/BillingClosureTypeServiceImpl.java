@@ -3,12 +3,12 @@ package com.jss.osiris.modules.tiers.service;
 import java.util.List;
 import java.util.Optional;
 
+import com.jss.osiris.modules.tiers.model.BillingClosureType;
+import com.jss.osiris.modules.tiers.repository.BillingClosureTypeRepository;
+
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import com.jss.osiris.modules.tiers.model.BillingClosureType;
-import com.jss.osiris.modules.tiers.repository.BillingClosureTypeRepository;
 
 @Service
 public class BillingClosureTypeServiceImpl implements BillingClosureTypeService {
@@ -28,9 +28,10 @@ public class BillingClosureTypeServiceImpl implements BillingClosureTypeService 
             return billingClosureType.get();
         return null;
     }
-
-    @Override
-    public BillingClosureType addOrUpdateBillingClosureType(BillingClosureType billingClosureType) {
+	
+	 @Override
+    public BillingClosureType addOrUpdateBillingClosureType(
+            BillingClosureType billingClosureType) {
         return billingClosureTypeRepository.save(billingClosureType);
     }
 }

@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { SpecialOfferFlatten } from 'src/app/modules/miscellaneous/model/SpecialOfferFlatten';
-import { SpecialOfferService } from 'src/app/modules/miscellaneous/services/special-offer.service';
 import { SpecialOffer } from '../../model/SpecialOffer';
+import { SpecialOfferService } from '../../services/special.offer.service';
 
 @Component({
   selector: 'app-special-offers-dialog',

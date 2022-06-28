@@ -12,4 +12,6 @@ public interface EmployeeService {
     public List<Employee> getFormalisteEmployees();
 
     public List<Employee> getInsertionEmployees();
+
+    public List<Employee> getEmployees();
 }

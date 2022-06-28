@@ -15,5 +15,9 @@ export class ConfrereService extends AppRestService<Confrere>{
   getConfreres() {
     return this.getList(new HttpParams(), "confreres");
   }
+  
+   addOrUpdateConfrere(confrere: Confrere) {
+    return this.addOrUpdate(new HttpParams(), "confrere", confrere, "Enregistré", "Erreur lors de l'enregistrement");
+  }
 
 }

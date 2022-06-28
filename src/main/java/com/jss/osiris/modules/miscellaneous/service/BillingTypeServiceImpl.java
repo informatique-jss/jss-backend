@@ -3,12 +3,12 @@ package com.jss.osiris.modules.miscellaneous.service;
 import java.util.List;
 import java.util.Optional;
 
+import com.jss.osiris.modules.miscellaneous.model.BillingType;
+import com.jss.osiris.modules.miscellaneous.repository.BillingTypeRepository;
+
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import com.jss.osiris.modules.miscellaneous.model.BillingType;
-import com.jss.osiris.modules.miscellaneous.repository.BillingTypeRepository;
 
 @Service
 public class BillingTypeServiceImpl implements BillingTypeService {
@@ -27,5 +27,11 @@ public class BillingTypeServiceImpl implements BillingTypeService {
         if (!billingType.isEmpty())
             return billingType.get();
         return null;
+    }
+	
+	 @Override
+    public BillingType addOrUpdateBillingType(
+            BillingType billingType) {
+        return billingTypeRepository.save(billingType);
     }
 }

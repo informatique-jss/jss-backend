@@ -3,12 +3,12 @@ package com.jss.osiris.modules.quotation.service;
 import java.util.List;
 import java.util.Optional;
 
+import com.jss.osiris.modules.quotation.model.ProvisionType;
+import com.jss.osiris.modules.quotation.repository.ProvisionTypeRepository;
+
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import com.jss.osiris.modules.quotation.model.ProvisionType;
-import com.jss.osiris.modules.quotation.repository.ProvisionTypeRepository;
 
 @Service
 public class ProvisionTypeServiceImpl implements ProvisionTypeService {
@@ -27,5 +27,11 @@ public class ProvisionTypeServiceImpl implements ProvisionTypeService {
         if (!provisionType.isEmpty())
             return provisionType.get();
         return null;
+    }
+	
+	 @Override
+    public ProvisionType addOrUpdateProvisionType(
+            ProvisionType provisionType) {
+        return provisionTypeRepository.save(provisionType);
     }
 }

@@ -8,4 +8,6 @@ public interface DeliveryServiceService {
     public List<DeliveryService> getDeliveryServices();
 
     public DeliveryService getDeliveryService(Integer id);
+	
+	 public DeliveryService addOrUpdateDeliveryService(DeliveryService deliveryService);
 }

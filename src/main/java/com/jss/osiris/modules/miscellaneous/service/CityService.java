@@ -9,6 +9,8 @@ public interface CityService {
 
     public City getCity(Integer id);
 
+    public City addOrUpdateCity(City city);
+
     public List<City> getCitiesByPostalCode(String postalCode);
 
     public List<City> getCitiesByCountry(Integer countryId, String city);

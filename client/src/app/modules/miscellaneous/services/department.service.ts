@@ -9,11 +9,15 @@ import { Department } from '../../miscellaneous/model/Department';
 export class DepartmentService extends AppRestService<Department>{
 
   constructor(http: HttpClient) {
-    super(http, "tiers");
+    super(http, "miscellaneous");
   }
 
   getDepartments() {
     return this.getList(new HttpParams(), "departments");
+  }
+  
+   addOrUpdateDepartment(department: Department) {
+    return this.addOrUpdate(new HttpParams(), "department", department, "Enregistré", "Erreur lors de l'enregistrement");
   }
 
 }

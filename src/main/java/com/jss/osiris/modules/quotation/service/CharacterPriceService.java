@@ -9,7 +9,7 @@ import com.jss.osiris.modules.quotation.model.CharacterPrice;
 public interface CharacterPriceService {
     public List<CharacterPrice> getCharacterPrices();
 
-    public CharacterPrice getCharacterPrice(Integer id);
-
     public CharacterPrice getCharacterPrice(Department department, Date date);
+
+    public CharacterPrice addOrUpdateCharacterPrice(CharacterPrice characterPrice);
 }

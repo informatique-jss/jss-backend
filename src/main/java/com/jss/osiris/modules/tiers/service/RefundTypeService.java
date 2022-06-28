@@ -8,4 +8,6 @@ public interface RefundTypeService {
     public List<RefundType> getRefundTypes();
 
     public RefundType getRefundType(Integer id);
+	
+	 public RefundType addOrUpdateRefundType(RefundType refundType);
 }

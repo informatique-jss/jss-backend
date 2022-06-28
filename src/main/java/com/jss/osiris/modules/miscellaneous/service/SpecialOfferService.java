@@ -8,4 +8,6 @@ public interface SpecialOfferService {
     public List<SpecialOffer> getSpecialOffers();
 
     public SpecialOffer getSpecialOffer(Integer id);
+	
+	 public SpecialOffer addOrUpdateSpecialOffer(SpecialOffer specialOffer);
 }

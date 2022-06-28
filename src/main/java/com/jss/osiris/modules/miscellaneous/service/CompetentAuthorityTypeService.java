@@ -8,4 +8,6 @@ public interface CompetentAuthorityTypeService {
     public List<CompetentAuthorityType> getCompetentAuthorityTypes();
 
     public CompetentAuthorityType getCompetentAuthorityType(Integer id);
+	
+	 public CompetentAuthorityType addOrUpdateCompetentAuthorityType(CompetentAuthorityType competentAuthorityType);
 }

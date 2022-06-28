@@ -9,11 +9,15 @@ import { Civility } from '../../miscellaneous/model/Civility';
 export class CivilityService extends AppRestService<Civility>{
 
   constructor(http: HttpClient) {
-    super(http, "tiers");
+    super(http, "miscellaneous");
   }
 
   getCivilities() {
     return this.getList(new HttpParams(), "civilities");
+  }
+  
+   addOrUpdateCivility(civility: Civility) {
+    return this.addOrUpdate(new HttpParams(), "civility", civility, "Enregistré", "Erreur lors de l'enregistrement");
   }
 
 }

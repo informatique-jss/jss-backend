@@ -7,6 +7,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
+import com.jss.osiris.modules.accounting.model.AccountingAccount;
 
 @Entity
 public class Gift implements Serializable, IId {
@@ -20,12 +24,34 @@ public class Gift implements Serializable, IId {
 
 	private String code;
 
+	private Integer stock;
+
+	@ManyToOne
+	@JoinColumn(name = "id_accounting_account")
+	private AccountingAccount accountingAccount;
+
 	public Integer getId() {
 		return id;
 	}
 
 	public void setId(Integer id) {
 		this.id = id;
+	}
+
+	public Integer getStock() {
+		return stock;
+	}
+
+	public void setStock(Integer stock) {
+		this.stock = stock;
+	}
+
+	public AccountingAccount getAccountingAccount() {
+		return accountingAccount;
+	}
+
+	public void setAccountingAccount(AccountingAccount accountingAccount) {
+		this.accountingAccount = accountingAccount;
 	}
 
 	public String getLabel() {

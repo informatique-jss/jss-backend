@@ -17,38 +17,14 @@ import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.jss.osiris.libs.ValidationHelper;
-import com.jss.osiris.modules.miscellaneous.model.BillingItem;
-import com.jss.osiris.modules.miscellaneous.model.BillingType;
-import com.jss.osiris.modules.miscellaneous.model.City;
-import com.jss.osiris.modules.miscellaneous.model.Civility;
-import com.jss.osiris.modules.miscellaneous.model.Country;
-import com.jss.osiris.modules.miscellaneous.model.DeliveryService;
-import com.jss.osiris.modules.miscellaneous.model.Department;
 import com.jss.osiris.modules.miscellaneous.model.Document;
-import com.jss.osiris.modules.miscellaneous.model.Gift;
-import com.jss.osiris.modules.miscellaneous.model.Language;
 import com.jss.osiris.modules.miscellaneous.model.Mail;
-import com.jss.osiris.modules.miscellaneous.model.PaymentType;
 import com.jss.osiris.modules.miscellaneous.model.Phone;
-import com.jss.osiris.modules.miscellaneous.model.Region;
 import com.jss.osiris.modules.miscellaneous.model.SpecialOffer;
-import com.jss.osiris.modules.miscellaneous.model.Vat;
-import com.jss.osiris.modules.miscellaneous.service.BillingItemService;
-import com.jss.osiris.modules.miscellaneous.service.BillingTypeService;
-import com.jss.osiris.modules.miscellaneous.service.CityService;
-import com.jss.osiris.modules.miscellaneous.service.CivilityService;
 import com.jss.osiris.modules.miscellaneous.service.CountryService;
-import com.jss.osiris.modules.miscellaneous.service.DeliveryServiceService;
-import com.jss.osiris.modules.miscellaneous.service.DepartmentService;
 import com.jss.osiris.modules.miscellaneous.service.DocumentTypeService;
-import com.jss.osiris.modules.miscellaneous.service.GiftService;
-import com.jss.osiris.modules.miscellaneous.service.LanguageService;
 import com.jss.osiris.modules.miscellaneous.service.MailService;
-import com.jss.osiris.modules.miscellaneous.service.PaymentTypeService;
 import com.jss.osiris.modules.miscellaneous.service.PhoneService;
-import com.jss.osiris.modules.miscellaneous.service.RegionService;
-import com.jss.osiris.modules.miscellaneous.service.SpecialOfferService;
-import com.jss.osiris.modules.miscellaneous.service.VatService;
 import com.jss.osiris.modules.profile.service.EmployeeService;
 import com.jss.osiris.modules.tiers.model.BillingClosureRecipientType;
 import com.jss.osiris.modules.tiers.model.BillingClosureType;
@@ -86,7 +62,7 @@ public class TiersController {
   ValidationHelper validationHelper;
 
   @Autowired
-  TiersTypeService clientTypesService;
+  TiersTypeService tiersTypeService;
 
   @Autowired
   TiersService tiersService;
@@ -95,43 +71,13 @@ public class TiersController {
   ResponsableService responsableService;
 
   @Autowired
-  CivilityService civilityService;
-
-  @Autowired
-  DeliveryServiceService deliveryServiceService;
-
-  @Autowired
   TiersCategoryService tiersCategoryService;
-
-  @Autowired
-  LanguageService languageService;
 
   @Autowired
   EmployeeService employeeService;
 
   @Autowired
   CountryService countryService;
-
-  @Autowired
-  CityService cityService;
-
-  @Autowired
-  DepartmentService departmentService;
-
-  @Autowired
-  RegionService regionService;
-
-  @Autowired
-  SpecialOfferService specialOfferService;
-
-  @Autowired
-  BillingItemService billingItemService;
-
-  @Autowired
-  BillingTypeService billingTypeService;
-
-  @Autowired
-  VatService vatService;
 
   @Autowired
   MailService mailService;
@@ -141,9 +87,6 @@ public class TiersController {
 
   @Autowired
   DocumentTypeService tiersDocumentTypeService;
-
-  @Autowired
-  PaymentTypeService paymentTypeService;
 
   @Autowired
   BillingLabelTypeService billingLabelTypeService;
@@ -162,9 +105,6 @@ public class TiersController {
 
   @Autowired
   TiersFollowupTypeService tiersFollowupTypeService;
-
-  @Autowired
-  GiftService giftService;
 
   @Autowired
   TiersFollowupService tiersFollowupService;
@@ -187,19 +127,30 @@ public class TiersController {
     return new ResponseEntity<List<SubscriptionPeriodType>>(subscriptionPeriodTypes, HttpStatus.OK);
   }
 
-  @GetMapping(inputEntryPoint + "/gifts")
-  public ResponseEntity<List<Gift>> getGifts() {
-    List<Gift> gifts = null;
+  @PostMapping(inputEntryPoint + "/subscription-period-type")
+  public ResponseEntity<SubscriptionPeriodType> addOrUpdateSubscriptionPeriodType(
+      @RequestBody SubscriptionPeriodType subscriptionPeriodTypes) {
+    SubscriptionPeriodType outSubscriptionPeriodType;
     try {
-      gifts = giftService.getGifts();
+      if (subscriptionPeriodTypes.getId() != null)
+        validationHelper.validateReferential(subscriptionPeriodTypes, true);
+      validationHelper.validateString(subscriptionPeriodTypes.getCode(), true);
+      validationHelper.validateString(subscriptionPeriodTypes.getLabel(), true);
+
+      outSubscriptionPeriodType = subscriptionPeriodTypeService
+          .addOrUpdateSubscriptionPeriodType(subscriptionPeriodTypes);
+    } catch (
+
+    ResponseStatusException e) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching gift", e);
-      return new ResponseEntity<List<Gift>>(HttpStatus.INTERNAL_SERVER_ERROR);
+      logger.error("HTTP error when fetching subscriptionPeriodType", e);
+      return new ResponseEntity<SubscriptionPeriodType>(HttpStatus.INTERNAL_SERVER_ERROR);
     } catch (Exception e) {
-      logger.error("Error when fetching gift", e);
-      return new ResponseEntity<List<Gift>>(HttpStatus.INTERNAL_SERVER_ERROR);
+      logger.error("Error when fetching subscriptionPeriodType", e);
+      return new ResponseEntity<SubscriptionPeriodType>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
-    return new ResponseEntity<List<Gift>>(gifts, HttpStatus.OK);
+    return new ResponseEntity<SubscriptionPeriodType>(outSubscriptionPeriodType, HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/tiers-followup-types")
@@ -215,6 +166,32 @@ public class TiersController {
       return new ResponseEntity<List<TiersFollowupType>>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
     return new ResponseEntity<List<TiersFollowupType>>(tiersFollowupTypes, HttpStatus.OK);
+  }
+
+  @PostMapping(inputEntryPoint + "/tiers-followup-type")
+  public ResponseEntity<TiersFollowupType> addOrUpdateTiersFollowupType(
+      @RequestBody TiersFollowupType tiersFollowupTypes) {
+    TiersFollowupType outTiersFollowupType;
+    try {
+      if (tiersFollowupTypes.getId() != null)
+        validationHelper.validateReferential(tiersFollowupTypes, true);
+      validationHelper.validateString(tiersFollowupTypes.getCode(), true);
+      validationHelper.validateString(tiersFollowupTypes.getLabel(), true);
+
+      outTiersFollowupType = tiersFollowupTypeService
+          .addOrUpdateTiersFollowupType(tiersFollowupTypes);
+    } catch (
+
+    ResponseStatusException e) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    } catch (HttpStatusCodeException e) {
+      logger.error("HTTP error when fetching tiersFollowupType", e);
+      return new ResponseEntity<TiersFollowupType>(HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (Exception e) {
+      logger.error("Error when fetching tiersFollowupType", e);
+      return new ResponseEntity<TiersFollowupType>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    return new ResponseEntity<TiersFollowupType>(outTiersFollowupType, HttpStatus.OK);
   }
 
   @PostMapping(inputEntryPoint + "/tiers-followup")
@@ -247,12 +224,9 @@ public class TiersController {
     if (tiersFollowup.getFollowupDate() == null)
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
-    if (tiersFollowup.getGift() != null
-        && (tiersFollowup.getGift().getId() == null || giftService.getGift(tiersFollowup.getGift().getId()) == null))
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
     List<TiersFollowup> tiersFollowups = null;
     try {
+      validationHelper.validateReferential(tiersFollowup.getGift(), false);
       tiersFollowups = tiersFollowupService.addTiersFollowup(tiersFollowup);
     } catch (HttpStatusCodeException e) {
       logger.error("HTTP error when fetching TiersFollowup", e);
@@ -322,25 +296,25 @@ public class TiersController {
 
   @PostMapping(inputEntryPoint + "/billing-closure-type")
   public ResponseEntity<BillingClosureType> addOrUpdateBillingClosureType(
-      @RequestBody BillingClosureType billingClosureType) {
+      @RequestBody BillingClosureType billingClosureTypes) {
     BillingClosureType outBillingClosureType;
     try {
-      if (billingClosureType.getId() != null)
-        validationHelper.validateReferential(billingClosureType, true);
-      validationHelper.validateString(billingClosureType.getCode(), true);
-      validationHelper.validateString(billingClosureType.getLabel(), true);
+      if (billingClosureTypes.getId() != null)
+        validationHelper.validateReferential(billingClosureTypes, true);
+      validationHelper.validateString(billingClosureTypes.getCode(), true);
+      validationHelper.validateString(billingClosureTypes.getLabel(), true);
 
       outBillingClosureType = billingClosureTypeService
-          .addOrUpdateBillingClosureType(billingClosureType);
+          .addOrUpdateBillingClosureType(billingClosureTypes);
     } catch (
 
     ResponseStatusException e) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching quotation", e);
+      logger.error("HTTP error when fetching billing closure type", e);
       return new ResponseEntity<BillingClosureType>(HttpStatus.INTERNAL_SERVER_ERROR);
     } catch (Exception e) {
-      logger.error("Error when fetching quotation", e);
+      logger.error("Error when fetching billing closure type", e);
       return new ResponseEntity<BillingClosureType>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
     return new ResponseEntity<BillingClosureType>(outBillingClosureType, HttpStatus.OK);
@@ -361,6 +335,32 @@ public class TiersController {
     return new ResponseEntity<List<RefundType>>(refundTypes, HttpStatus.OK);
   }
 
+  @PostMapping(inputEntryPoint + "/refund-type")
+  public ResponseEntity<RefundType> addOrUpdateRefundType(
+      @RequestBody RefundType refundTypes) {
+    RefundType outRefundType;
+    try {
+      if (refundTypes.getId() != null)
+        validationHelper.validateReferential(refundTypes, true);
+      validationHelper.validateString(refundTypes.getCode(), true);
+      validationHelper.validateString(refundTypes.getLabel(), true);
+
+      outRefundType = refundTypeService
+          .addOrUpdateRefundType(refundTypes);
+    } catch (
+
+    ResponseStatusException e) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    } catch (HttpStatusCodeException e) {
+      logger.error("HTTP error when fetching refundType", e);
+      return new ResponseEntity<RefundType>(HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (Exception e) {
+      logger.error("Error when fetching refundType", e);
+      return new ResponseEntity<RefundType>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    return new ResponseEntity<RefundType>(outRefundType, HttpStatus.OK);
+  }
+
   @GetMapping(inputEntryPoint + "/payment-deadline-types")
   public ResponseEntity<List<PaymentDeadlineType>> getPaymentDeadlineTypes() {
     List<PaymentDeadlineType> paymentDeadlineTypes = null;
@@ -374,6 +374,32 @@ public class TiersController {
       return new ResponseEntity<List<PaymentDeadlineType>>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
     return new ResponseEntity<List<PaymentDeadlineType>>(paymentDeadlineTypes, HttpStatus.OK);
+  }
+
+  @PostMapping(inputEntryPoint + "/payment-deadline-type")
+  public ResponseEntity<PaymentDeadlineType> addOrUpdatePaymentDeadlineType(
+      @RequestBody PaymentDeadlineType paymentDeadlineTypes) {
+    PaymentDeadlineType outPaymentDeadlineType;
+    try {
+      if (paymentDeadlineTypes.getId() != null)
+        validationHelper.validateReferential(paymentDeadlineTypes, true);
+      validationHelper.validateString(paymentDeadlineTypes.getCode(), true);
+      validationHelper.validateString(paymentDeadlineTypes.getLabel(), true);
+
+      outPaymentDeadlineType = paymentDeadlineTypeService
+          .addOrUpdatePaymentDeadlineType(paymentDeadlineTypes);
+    } catch (
+
+    ResponseStatusException e) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    } catch (HttpStatusCodeException e) {
+      logger.error("HTTP error when fetching paymentDeadlineType", e);
+      return new ResponseEntity<PaymentDeadlineType>(HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (Exception e) {
+      logger.error("Error when fetching paymentDeadlineType", e);
+      return new ResponseEntity<PaymentDeadlineType>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    return new ResponseEntity<PaymentDeadlineType>(outPaymentDeadlineType, HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/billing-label-types")
@@ -391,19 +417,30 @@ public class TiersController {
     return new ResponseEntity<List<BillingLabelType>>(billingLabels, HttpStatus.OK);
   }
 
-  @GetMapping(inputEntryPoint + "/payment-types")
-  public ResponseEntity<List<PaymentType>> getPaymentTypes() {
-    List<PaymentType> paymentTypes = null;
+  @PostMapping(inputEntryPoint + "/billing-label-type")
+  public ResponseEntity<BillingLabelType> addOrUpdateBillingLabelType(
+      @RequestBody BillingLabelType billingLabelTypes) {
+    BillingLabelType outBillingLabelType;
     try {
-      paymentTypes = paymentTypeService.getPaymentTypes();
+      if (billingLabelTypes.getId() != null)
+        validationHelper.validateReferential(billingLabelTypes, true);
+      validationHelper.validateString(billingLabelTypes.getCode(), true);
+      validationHelper.validateString(billingLabelTypes.getLabel(), true);
+
+      outBillingLabelType = billingLabelTypeService
+          .addOrUpdateBillingLabelType(billingLabelTypes);
+    } catch (
+
+    ResponseStatusException e) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching paymentType", e);
-      return new ResponseEntity<List<PaymentType>>(HttpStatus.INTERNAL_SERVER_ERROR);
+      logger.error("HTTP error when fetching billingLabelType", e);
+      return new ResponseEntity<BillingLabelType>(HttpStatus.INTERNAL_SERVER_ERROR);
     } catch (Exception e) {
-      logger.error("Error when fetching paymentType", e);
-      return new ResponseEntity<List<PaymentType>>(HttpStatus.INTERNAL_SERVER_ERROR);
+      logger.error("Error when fetching billingLabelType", e);
+      return new ResponseEntity<BillingLabelType>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
-    return new ResponseEntity<List<PaymentType>>(paymentTypes, HttpStatus.OK);
+    return new ResponseEntity<BillingLabelType>(outBillingLabelType, HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/phones/search")
@@ -436,162 +473,11 @@ public class TiersController {
     return new ResponseEntity<List<Mail>>(mails, HttpStatus.OK);
   }
 
-  @GetMapping(inputEntryPoint + "/vat-rates")
-  public ResponseEntity<List<Vat>> getVat() {
-    List<Vat> vat = null;
-    try {
-      vat = vatService.getVat();
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching vat", e);
-      return new ResponseEntity<List<Vat>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching vat", e);
-      return new ResponseEntity<List<Vat>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<List<Vat>>(vat, HttpStatus.OK);
-  }
-
-  @GetMapping(inputEntryPoint + "/billingTypes")
-  public ResponseEntity<List<BillingType>> getBillingTypes() {
-    List<BillingType> billingTypes = null;
-    try {
-      billingTypes = billingTypeService.getBillingTypes();
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching billingType", e);
-      return new ResponseEntity<List<BillingType>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching billingType", e);
-      return new ResponseEntity<List<BillingType>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<List<BillingType>>(billingTypes, HttpStatus.OK);
-  }
-
-  @GetMapping(inputEntryPoint + "/billing-items")
-  public ResponseEntity<List<BillingItem>> getBillingItems() {
-    List<BillingItem> billingItems = null;
-    try {
-      billingItems = billingItemService.getBillingItems();
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching billingItem", e);
-      return new ResponseEntity<List<BillingItem>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching billingItem", e);
-      return new ResponseEntity<List<BillingItem>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<List<BillingItem>>(billingItems, HttpStatus.OK);
-  }
-
-  @GetMapping(inputEntryPoint + "/special-offers")
-  public ResponseEntity<List<SpecialOffer>> getSpecialOffers() {
-    List<SpecialOffer> specialOffers = null;
-    try {
-      specialOffers = specialOfferService.getSpecialOffers();
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching specialOffer", e);
-      return new ResponseEntity<List<SpecialOffer>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching specialOffer", e);
-      return new ResponseEntity<List<SpecialOffer>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<List<SpecialOffer>>(specialOffers, HttpStatus.OK);
-  }
-
-  @GetMapping(inputEntryPoint + "/regions")
-  public ResponseEntity<List<Region>> getRegions() {
-    List<Region> regions = null;
-    try {
-      regions = regionService.getRegions();
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching region", e);
-      return new ResponseEntity<List<Region>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching region", e);
-      return new ResponseEntity<List<Region>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<List<Region>>(regions, HttpStatus.OK);
-  }
-
-  @GetMapping(inputEntryPoint + "/departments")
-  public ResponseEntity<List<Department>> getDepartments() {
-    List<Department> departments = null;
-    try {
-      departments = departmentService.getDepartments();
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching department", e);
-      return new ResponseEntity<List<Department>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching department", e);
-      return new ResponseEntity<List<Department>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<List<Department>>(departments, HttpStatus.OK);
-  }
-
-  @GetMapping(inputEntryPoint + "/cities")
-  public ResponseEntity<List<City>> getCities() {
-    List<City> cities = null;
-    try {
-      cities = cityService.getCities();
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching city", e);
-      return new ResponseEntity<List<City>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching city", e);
-      return new ResponseEntity<List<City>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<List<City>>(cities, HttpStatus.OK);
-  }
-
-  @GetMapping(inputEntryPoint + "/cities/search/postal-code")
-  public ResponseEntity<List<City>> getCitiesByPostalCode(@RequestParam String postalCode) {
-    List<City> cities = null;
-    try {
-      cities = cityService.getCitiesByPostalCode(postalCode);
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching city", e);
-      return new ResponseEntity<List<City>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching city", e);
-      return new ResponseEntity<List<City>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<List<City>>(cities, HttpStatus.OK);
-  }
-
-  @GetMapping(inputEntryPoint + "/cities/search/country")
-  public ResponseEntity<List<City>> getCitiesByCountry(@RequestParam(required = false) Integer countryId,
-      @RequestParam String city) {
-    List<City> cities = null;
-    try {
-      cities = cityService.getCitiesByCountry(countryId, city);
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching city", e);
-      return new ResponseEntity<List<City>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching city", e);
-      return new ResponseEntity<List<City>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<List<City>>(cities, HttpStatus.OK);
-  }
-
-  @GetMapping(inputEntryPoint + "/countries")
-  public ResponseEntity<List<Country>> getCountries() {
-    List<Country> countries = null;
-    try {
-      countries = countryService.getCountries();
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching country", e);
-      return new ResponseEntity<List<Country>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching country", e);
-      return new ResponseEntity<List<Country>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<List<Country>>(countries, HttpStatus.OK);
-  }
-
-  @GetMapping(inputEntryPoint + "/types")
+  @GetMapping(inputEntryPoint + "/tiers-types")
   public ResponseEntity<List<TiersType>> getClientTypes() {
     List<TiersType> clientTypes = null;
     try {
-      clientTypes = clientTypesService.getTiersTypes();
+      clientTypes = tiersTypeService.getTiersTypes();
     } catch (HttpStatusCodeException e) {
       logger.error("HTTP error when fetching client types", e);
       return new ResponseEntity<List<TiersType>>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -602,52 +488,33 @@ public class TiersController {
     return new ResponseEntity<List<TiersType>>(clientTypes, HttpStatus.OK);
   }
 
-  @GetMapping(inputEntryPoint + "/languages")
-  public ResponseEntity<List<Language>> getLanguages() {
-    List<Language> languages = null;
+  @PostMapping(inputEntryPoint + "/tiers-type")
+  public ResponseEntity<TiersType> addOrUpdateTiersType(
+      @RequestBody TiersType tiersTypes) {
+    TiersType outTiersType;
     try {
-      languages = languageService.getLanguages();
+      if (tiersTypes.getId() != null)
+        validationHelper.validateReferential(tiersTypes, true);
+      validationHelper.validateString(tiersTypes.getCode(), true);
+      validationHelper.validateString(tiersTypes.getLabel(), true);
+
+      outTiersType = tiersTypeService
+          .addOrUpdateTiersType(tiersTypes);
+    } catch (
+
+    ResponseStatusException e) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching client types", e);
-      return new ResponseEntity<List<Language>>(HttpStatus.INTERNAL_SERVER_ERROR);
+      logger.error("HTTP error when fetching tiersType", e);
+      return new ResponseEntity<TiersType>(HttpStatus.INTERNAL_SERVER_ERROR);
     } catch (Exception e) {
-      logger.error("Error when fetching client types", e);
-      return new ResponseEntity<List<Language>>(HttpStatus.INTERNAL_SERVER_ERROR);
+      logger.error("Error when fetching tiersType", e);
+      return new ResponseEntity<TiersType>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
-    return new ResponseEntity<List<Language>>(languages, HttpStatus.OK);
+    return new ResponseEntity<TiersType>(outTiersType, HttpStatus.OK);
   }
 
-  @GetMapping(inputEntryPoint + "/civilities")
-  public ResponseEntity<List<Civility>> getCivilities() {
-    List<Civility> civilities = null;
-    try {
-      civilities = civilityService.getCivilities();
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching client types", e);
-      return new ResponseEntity<List<Civility>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching client types", e);
-      return new ResponseEntity<List<Civility>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<List<Civility>>(civilities, HttpStatus.OK);
-  }
-
-  @GetMapping(inputEntryPoint + "/delivery-services")
-  public ResponseEntity<List<DeliveryService>> getDeliveryServices() {
-    List<DeliveryService> deliveryServices = null;
-    try {
-      deliveryServices = deliveryServiceService.getDeliveryServices();
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching client types", e);
-      return new ResponseEntity<List<DeliveryService>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching client types", e);
-      return new ResponseEntity<List<DeliveryService>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<List<DeliveryService>>(deliveryServices, HttpStatus.OK);
-  }
-
-  @GetMapping(inputEntryPoint + "/categories")
+  @GetMapping(inputEntryPoint + "/tiers-categories")
   public ResponseEntity<List<TiersCategory>> getCategories() {
     List<TiersCategory> civilities = null;
     try {
@@ -660,6 +527,32 @@ public class TiersController {
       return new ResponseEntity<List<TiersCategory>>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
     return new ResponseEntity<List<TiersCategory>>(civilities, HttpStatus.OK);
+  }
+
+  @PostMapping(inputEntryPoint + "/tiers-category")
+  public ResponseEntity<TiersCategory> addOrUpdateTiersCategory(
+      @RequestBody TiersCategory tiersCategories) {
+    TiersCategory outTiersCategory;
+    try {
+      if (tiersCategories.getId() != null)
+        validationHelper.validateReferential(tiersCategories, true);
+      validationHelper.validateString(tiersCategories.getCode(), true);
+      validationHelper.validateString(tiersCategories.getLabel(), true);
+
+      outTiersCategory = tiersCategoryService
+          .addOrUpdateTiersCategory(tiersCategories);
+    } catch (
+
+    ResponseStatusException e) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    } catch (HttpStatusCodeException e) {
+      logger.error("HTTP error when fetching tiersCategory", e);
+      return new ResponseEntity<TiersCategory>(HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (Exception e) {
+      logger.error("Error when fetching tiersCategory", e);
+      return new ResponseEntity<TiersCategory>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    return new ResponseEntity<TiersCategory>(outTiersCategory, HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/tiers")

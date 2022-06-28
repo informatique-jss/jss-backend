@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 import { CompetentAuthority } from '../../../model/CompetentAuthority';
 import { CompetentAuthorityType } from '../../../model/CompetentAuthorityType';
 import { Department } from '../../../model/Department';
-import { CompetentAuthorityService } from '../../../services/competent-authority.service';
+import { CompetentAuthorityService } from '../../../services/competent.authority.service';
 import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-autocomplete.component';
 
 @Component({

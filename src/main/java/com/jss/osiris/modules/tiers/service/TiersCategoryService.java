@@ -8,4 +8,6 @@ public interface TiersCategoryService {
     public List<TiersCategory> getTiersCategories();
 
     public TiersCategory getTiersCategory(Integer id);
+	
+	 public TiersCategory addOrUpdateTiersCategory(TiersCategory tiersCategory);
 }

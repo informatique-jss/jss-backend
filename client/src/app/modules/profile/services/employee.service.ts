@@ -1,6 +1,6 @@
-import { Observable } from 'rxjs';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { AppRestService } from 'src/app/appRest.service';
 import { Employee } from '../model/Employee';
 
@@ -19,6 +19,10 @@ export class EmployeeService extends AppRestService<Employee>{
 
   getSalesEmployees(): Observable<Employee[]> {
     return this.getList(new HttpParams(), "employee/sales");
+  }
+
+  getEmployees(): Observable<Employee[]> {
+    return this.getList(new HttpParams(), "employee/all");
   }
 
   getFormalisteEmployees(): Observable<Employee[]> {

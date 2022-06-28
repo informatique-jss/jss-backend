@@ -8,4 +8,6 @@ public interface ShalNoticeTemplateService {
     public List<ShalNoticeTemplate> getShalNoticeTemplates();
 
     public ShalNoticeTemplate getShalNoticeTemplate(Integer id);
+	
+	 public ShalNoticeTemplate addOrUpdateShalNoticeTemplate(ShalNoticeTemplate shalNoticeTemplate);
 }

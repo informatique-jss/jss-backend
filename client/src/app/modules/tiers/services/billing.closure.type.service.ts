@@ -15,4 +15,9 @@ export class BillingClosureTypeService extends AppRestService<BillingClosureType
   getBillingClosureTypes() {
     return this.getList(new HttpParams(), "billing-closure-types");
   }
+
+  addOrUpdateBillingClosureType(billingClosureType: BillingClosureType) {
+    return this.addOrUpdate(new HttpParams(), "billing-closure-type", billingClosureType, "Enregistré", "Erreur lors de l'enregistrement");
+  }
+
 }

@@ -28,4 +28,10 @@ public class ShalNoticeTemplateServiceImpl implements ShalNoticeTemplateService 
             return shalNoticeTemplate.get();
         return null;
     }
+	
+	 @Override
+    public ShalNoticeTemplate addOrUpdateShalNoticeTemplate(
+            ShalNoticeTemplate shalNoticeTemplate) {
+        return shalNoticeTemplateRepository.save(shalNoticeTemplate);
+    }
 }

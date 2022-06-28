@@ -21,4 +21,8 @@ export class CharacterPriceService extends AppRestService<CharacterPrice>{
     return this.get(new HttpParams().set("departmentId", department.id).set("date", date.toISOString()), "character-price");
   }
 
+  addOrUpdateCharacterPrice(characterPrice: CharacterPrice) {
+    return this.addOrUpdate(new HttpParams(), "character-price", characterPrice, "Enregistré", "Erreur lors de l'enregistrement");
+  }
+
 }

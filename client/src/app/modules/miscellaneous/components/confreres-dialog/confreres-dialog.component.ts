@@ -32,7 +32,7 @@ export class ConfrereDialogComponent implements OnInit {
         response.forEach(confrere => {
           let localConfrere = {} as ConfrereFlatten;
           localConfrere.id = confrere.id;
-          localConfrere.denomination = confrere.denomination;
+          localConfrere.denomination = confrere.label;
           localConfrere.departments = confrere.departments.map(e => e.code).join(", ");
           localConfrere.discountRate = confrere.discountRate;
           localConfrere.weekDays = confrere.weekDays.map(e => e.label).join(", ");

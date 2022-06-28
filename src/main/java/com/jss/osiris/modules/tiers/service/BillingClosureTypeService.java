@@ -8,6 +8,6 @@ public interface BillingClosureTypeService {
     public List<BillingClosureType> getBillingClosureTypes();
 
     public BillingClosureType getBillingClosureType(Integer id);
-
-    public BillingClosureType addOrUpdateBillingClosureType(BillingClosureType billingClosureType);
+	
+	 public BillingClosureType addOrUpdateBillingClosureType(BillingClosureType billingClosureType);
 }

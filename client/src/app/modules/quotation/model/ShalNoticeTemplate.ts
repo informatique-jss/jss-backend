@@ -1,6 +1,5 @@
-export interface ShalNoticeTemplate {
-  id: number;
-  code: string;
-  label: string;
+import { IReferential } from "../../administration/model/IReferential";
+
+export interface ShalNoticeTemplate extends IReferential {
   text: string;
 }

@@ -1,5 +1,4 @@
-export interface Country {
-  id: number;
-  code: string;
-  label: string;
+import { IReferential } from "../../administration/model/IReferential";
+
+export interface Country extends IReferential {
 }

@@ -28,4 +28,10 @@ public class CountryServiceImpl implements CountryService {
             return country.get();
         return null;
     }
+
+    @Override
+    public Country addOrUpdateCountry(
+            Country country) {
+        return countryRepository.save(country);
+    }
 }

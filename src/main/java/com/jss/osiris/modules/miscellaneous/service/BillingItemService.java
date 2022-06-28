@@ -8,4 +8,6 @@ public interface BillingItemService {
     public List<BillingItem> getBillingItems();
 
     public BillingItem getBillingItem(Integer id);
+	
+	 public BillingItem addOrUpdateBillingItem(BillingItem billingItem);
 }

@@ -6,7 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { SpecialOffer } from '../../../model/SpecialOffer';
-import { SpecialOfferService } from '../../../services/special-offer.service';
+import { SpecialOfferService } from '../../../services/special.offer.service';
 import { SpecialOffersDialogComponent } from '../../special-offers-dialog/special-offers-dialog.component';
 import { GenericChipsComponent } from '../generic-chips/generic-chips.component';
 

@@ -15,5 +15,9 @@ export class SubscriptionPeriodTypeService extends AppRestService<SubscriptionPe
   getSubscriptionPeriodTypes() {
     return this.getList(new HttpParams(), "subscription-period-types");
   }
+  
+   addOrUpdateSubscriptionPeriodType(subscriptionPeriodType: SubscriptionPeriodType) {
+    return this.addOrUpdate(new HttpParams(), "subscription-period-type", subscriptionPeriodType, "Enregistré", "Erreur lors de l'enregistrement");
+  }
 
 }

@@ -24,7 +24,11 @@ public class City implements Serializable, IId {
 	@Column(nullable = false)
 	private String label;
 
+	private String code;
+
+	@Column(length = 6)
 	private String postalCode;
+	@Column(length = 60)
 	private String locality;
 
 	@ManyToOne
@@ -34,7 +38,6 @@ public class City implements Serializable, IId {
 	@ManyToOne
 	@JoinColumn(name = "id_country")
 	private Country country;
-	private boolean isValidated;
 
 	public Integer getId() {
 		return id;
@@ -42,6 +45,14 @@ public class City implements Serializable, IId {
 
 	public void setId(Integer id) {
 		this.id = id;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
 	}
 
 	public String getLabel() {
@@ -82,14 +93,6 @@ public class City implements Serializable, IId {
 
 	public void setCountry(Country country) {
 		this.country = country;
-	}
-
-	public boolean isValidated() {
-		return isValidated;
-	}
-
-	public void setValidated(boolean isValidated) {
-		this.isValidated = isValidated;
 	}
 
 }

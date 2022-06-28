@@ -2,7 +2,7 @@
   <mat-label>{{label}}</mat-label>
   <mat-chip-list #chipListConfrere>
     <mat-chip *ngFor="let confrere of model" (removed)="removeElement(confrere)">
-      {{confrere.denomination}}
+      {{confrere.label}}
       <button matChipRemove *ngIf="!isDisabled">
         <mat-icon>cancel</mat-icon>
       </button>
@@ -17,7 +17,7 @@
   <mat-autocomplete autoActiveFirstOption #autoComplete="matAutocomplete" [displayWith]="displayLabel"
     (optionSelected)="addConfrere($event)">
     <mat-option *ngFor="let confrere of filteredConfreres | async" [value]="confrere">
-      {{confrere.denomination}}
+      {{confrere.label}}
     </mat-option>
   </mat-autocomplete>
 </mat-form-field>

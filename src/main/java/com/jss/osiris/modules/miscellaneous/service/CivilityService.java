@@ -8,4 +8,6 @@ public interface CivilityService {
     public List<Civility> getCivilities();
 
     public Civility getCivility(Integer id);
+	
+	 public Civility addOrUpdateCivility(Civility civility);
 }

@@ -8,4 +8,6 @@ public interface TiersFollowupTypeService {
     public List<TiersFollowupType> getTiersFollowupTypes();
 
     public TiersFollowupType getTiersFollowupType(Integer id);
+	
+	 public TiersFollowupType addOrUpdateTiersFollowupType(TiersFollowupType tiersFollowupType);
 }

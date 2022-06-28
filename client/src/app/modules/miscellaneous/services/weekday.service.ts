@@ -15,5 +15,9 @@ export class WeekDayService extends AppRestService<WeekDay>{
   getWeekDays() {
     return this.getList(new HttpParams(), "weekdays");
   }
+  
+   addOrUpdateWeekDay(weekDay: WeekDay) {
+    return this.addOrUpdate(new HttpParams(), "weekday", weekDay, "Enregistré", "Erreur lors de l'enregistrement");
+  }
 
 }

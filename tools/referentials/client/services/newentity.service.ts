@@ -15,5 +15,9 @@ export class NewEntityService extends AppRestService<NewEntity>{
   getNewEntities() {
     return this.getList(new HttpParams(), "entryPointName");
   }
+  
+   addOrUpdateNewEntity(newEntity: NewEntity) {
+    return this.addOrUpdate(new HttpParams(), "entryPointNameSingular", newEntity, "Enregistré", "Erreur lors de l'enregistrement");
+  }
 
 }

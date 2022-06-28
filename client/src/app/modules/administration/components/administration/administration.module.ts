@@ -19,19 +19,54 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule, Routes } from '@angular/router';
 import { MiscellaneousModule } from 'src/app/modules/miscellaneous/components/miscellaneous/miscellaneous.module';
+import { ReferentialAccountingAccountClassComponent } from '../referentials/referential-accounting-account-class/referential-accounting-account-class.component';
+import { ReferentialAccountingAccountComponent } from '../referentials/referential-accounting-account/referential-accounting-account.component';
 import { ReferentialActTypeComponent } from '../referentials/referential-act-type/referential-act-type.component';
+import { ReferentialAttachmentTypeComponent } from '../referentials/referential-attachment-type/referential-attachment-type.component';
 import { ReferentialBillingClosureRecipientTypeComponent } from '../referentials/referential-billing-closure-recipient-type/referential-billing-closure-recipient-type.component';
 import { ReferentialBillingClosureTypeComponent } from '../referentials/referential-billing-closure-type/referential-billing-closure-type.component';
+import { ReferentialBillingItemComponent } from '../referentials/referential-billing-item/referential-billing-item.component';
+import { ReferentialBillingLabelTypeComponent } from '../referentials/referential-billing-label-type/referential-billing-label-type.component';
+import { ReferentialBillingTypeComponent } from '../referentials/referential-billing-type/referential-billing-type.component';
 import { ReferentialBodaccPublicationTypeComponent } from '../referentials/referential-bodacc-publication-type/referential-bodacc-publication-type.component';
 import { ReferentialBuildingDomiciliationComponent } from '../referentials/referential-building-domiciliation/referential-building-domiciliation.componentt';
+import { ReferentialCharacterPriceComponent } from '../referentials/referential-character-price/referential-character-price.component';
+import { ReferentialCityComponent } from '../referentials/referential-city/referential-city.component';
+import { ReferentialCivilityComponent } from '../referentials/referential-civility/referential-civility.component';
+import { ReferentialCompetentAuthorityTypeComponent } from '../referentials/referential-competent-authority-type/referential-competent-authority-type.component';
+import { ReferentialCompetentAuthorityComponent } from '../referentials/referential-competent-authority/referential-competent-authority.component';
+import { ReferentialConfrereComponent } from '../referentials/referential-confrere/referential-confrere.component';
+import { ReferentialCountryComponent } from '../referentials/referential-country/referential-country.component';
+import { ReferentialDeliveryServiceComponent } from '../referentials/referential-delivery-service/referential-delivery-service.component';
+import { ReferentialDepartmentComponent } from '../referentials/referential-department/referential-department.component';
+import { ReferentialDocumentTypeComponent } from '../referentials/referential-document-type/referential-document-type.component';
 import { ReferentialDomiciliationContractTypeComponent } from '../referentials/referential-domiciliation-contract-type/referential-domiciliation-contract-type.componentt';
 import { ReferentialFundTypeComponent } from '../referentials/referential-fund-type/referential-fund-type.component';
+import { ReferentialGiftComponent } from '../referentials/referential-gift/referential-gift.component';
 import { ReferentialJournalTypeComponent } from '../referentials/referential-journal-type/referential-journal-type.component';
+import { ReferentialLanguageComponent } from '../referentials/referential-language/referential-language.component';
+import { ReferentialLegalFormComponent } from '../referentials/referential-legal-form/referential-legal-form.component';
 import { ReferentialMailRedirectionTypeComponent } from '../referentials/referential-mail-redirection-type/referential-mail-redirection-type.component';
 import { ReferentialNoticeTypeFamilyComponent } from '../referentials/referential-notice-type-family/referential-notice-type-family.component';
+import { ReferentialNoticeTypeComponent } from '../referentials/referential-notice-type/referential-notice-type.component';
+import { ReferentialPaymentDeadlineTypeComponent } from '../referentials/referential-payment-deadline-type/referential-payment-deadline-type.component';
+import { ReferentialPaymentTypeComponent } from '../referentials/referential-payment-type/referential-payment-type.component';
+import { ReferentialProvisionTypeComponent } from '../referentials/referential-provision-type/referential-provision-type.component';
 import { ReferentialQuotationLabelTypeComponent } from '../referentials/referential-quotation-label-type/referential-notice-type-family.component';
 import { ReferentialQuotationStatusComponent } from '../referentials/referential-quotation-status/referential-quotation-status.component';
+import { ReferentialRefundTypeComponent } from '../referentials/referential-refund-type/referential-refund-type.component';
+import { ReferentialRegieComponent } from '../referentials/referential-regie/referential-regie.component';
+import { ReferentialRegionComponent } from '../referentials/referential-region/referential-region.component';
+import { ReferentialShalNoticeTemplateComponent } from '../referentials/referential-shal-notice-template/referential-shal-notice-template.component';
+import { ReferentialSpecialOfferComponent } from '../referentials/referential-special-offer/referential-special-offer.component';
+import { ReferentialSubscriptionPeriodTypeComponent } from '../referentials/referential-subscription-period-type/referential-subscription-period-type.component';
+import { ReferentialTeamComponent } from '../referentials/referential-team/referential-team.component';
+import { ReferentialTiersCategoryComponent } from '../referentials/referential-tiers-category/referential-tiers-category.component';
+import { ReferentialTiersFollowupTypeComponent } from '../referentials/referential-tiers-followup-type/referential-tiers-followup-type.component';
+import { ReferentialTiersTypeComponent } from '../referentials/referential-tiers-type/referential-tiers-type.component';
 import { ReferentialTransfertFundsTypeComponent } from '../referentials/referential-transfert-fund-type/referential-transfert-fund-type.component';
+import { ReferentialVatComponent } from '../referentials/referential-vat/referential-vat.component';
+import { ReferentialWeekDayComponent } from '../referentials/referential-weekday/referential-weekday.component';
 import { ReferentialProvisionFamilyTypeComponent } from '../referentials/referentiel-provision-familiy-type/referential-provision-family-type.component';
 import { ReferentialRecordTypeComponent } from '../referentials/referentiel-record-type/referential-record-type.component';
 import { AdministrationComponent } from './administration.component';
@@ -80,6 +115,41 @@ const routes: Routes = [
     ReferentialTransfertFundsTypeComponent,
     ReferentialBillingClosureRecipientTypeComponent,
     ReferentialBillingClosureTypeComponent,
+    ReferentialBillingLabelTypeComponent,
+    ReferentialPaymentDeadlineTypeComponent,
+    ReferentialRefundTypeComponent,
+    ReferentialSubscriptionPeriodTypeComponent,
+    ReferentialTiersCategoryComponent,
+    ReferentialTiersFollowupTypeComponent,
+    ReferentialTiersTypeComponent,
+    ReferentialAttachmentTypeComponent,
+    ReferentialCivilityComponent,
+    ReferentialCompetentAuthorityTypeComponent,
+    ReferentialCountryComponent,
+    ReferentialDeliveryServiceComponent,
+    ReferentialDocumentTypeComponent,
+    ReferentialLanguageComponent,
+    ReferentialGiftComponent,
+    ReferentialLegalFormComponent,
+    ReferentialPaymentTypeComponent,
+    ReferentialAccountingAccountClassComponent,
+    ReferentialAccountingAccountComponent,
+    ReferentialRegionComponent,
+    ReferentialVatComponent,
+    ReferentialWeekDayComponent,
+    ReferentialCharacterPriceComponent,
+    ReferentialNoticeTypeComponent,
+    ReferentialProvisionTypeComponent,
+    ReferentialSpecialOfferComponent,
+    ReferentialCompetentAuthorityComponent,
+    ReferentialCityComponent,
+    ReferentialShalNoticeTemplateComponent,
+    ReferentialTeamComponent,
+    ReferentialRegieComponent,
+    ReferentialConfrereComponent,
+    ReferentialBillingItemComponent,
+    ReferentialDepartmentComponent,
+    ReferentialBillingTypeComponent,
   ],
 })
 export class AdministrationModule { }

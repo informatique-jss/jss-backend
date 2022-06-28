@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { ActType } from 'src/app/modules/quotation/model/ActType';
 import { BillingClosureType } from 'src/app/modules/tiers/model/BillingClosureType';
 import { BillingClosureTypeService } from 'src/app/modules/tiers/services/billing.closure.type.service';
 import { GenericReferentialComponent } from '../generic-referential/generic-referential-component';
@@ -17,10 +16,10 @@ export class ReferentialBillingClosureTypeComponent extends GenericReferentialCo
     super(formBuilder2);
   }
 
-  getAddOrUpdateObservable(): Observable<ActType> {
+  getAddOrUpdateObservable(): Observable<BillingClosureType> {
     return this.billingClosureTypeService.addOrUpdateBillingClosureType(this.selectedEntity!);
   }
-  getGetObservable(): Observable<ActType[]> {
+  getGetObservable(): Observable<BillingClosureType[]> {
     return this.billingClosureTypeService.getBillingClosureTypes();
   }
 }

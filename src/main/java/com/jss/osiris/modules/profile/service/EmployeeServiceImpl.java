@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -54,5 +55,10 @@ public class EmployeeServiceImpl implements EmployeeService {
         if (team != null)
             return employeeRepository.findAllEmployeesByTeam(team);
         return new ArrayList<Employee>();
+    }
+
+    @Override
+    public List<Employee> getEmployees() {
+        return IterableUtils.toList(employeeRepository.findAll());
     }
 }

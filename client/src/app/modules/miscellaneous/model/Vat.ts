@@ -1,5 +1,5 @@
-export interface Vat {
-  id: number;
-  code: string;
+import { IReferential } from "../../administration/model/IReferential";
+
+export interface Vat extends IReferential {
   rate: number;
 }

@@ -1,4 +1,4 @@
-export interface DeliveryService {
-  id: number;
-  label: string;
+import { IReferential } from "../../administration/model/IReferential";
+
+export interface DeliveryService extends IReferential {
 }

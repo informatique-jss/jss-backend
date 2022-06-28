@@ -5,7 +5,7 @@ import { CustomErrorStateMatcher } from 'src/app/app.component';
 import { BODACC_SALE_ACT_TYPE_AUTHENTIC_CODE, BODACC_SALE_ACT_TYPE_SEING_CODE, BODACC_SALE_TRANSFERT_FUND_TYPE_BAIL, BODACC_SALE_TRANSFERT_FUND_TYPE_MORAL, BODACC_SALE_TRANSFERT_FUND_TYPE_PHYSIQUE, COMPETENT_AUTHORITY_TYPE_CFP_CODE } from 'src/app/libs/Constants';
 import { validateSiren } from 'src/app/libs/CustomFormsValidatorsHelper';
 import { CompetentAuthority } from 'src/app/modules/miscellaneous/model/CompetentAuthority';
-import { CompetentAuthorityService } from 'src/app/modules/miscellaneous/services/competent-authority.service';
+import { CompetentAuthorityService } from 'src/app/modules/miscellaneous/services/competent.authority.service';
 import { Affaire } from '../../model/Affaire';
 import { BodaccSale } from '../../model/BodaccSale';
 import { Siren } from '../../model/Siren';

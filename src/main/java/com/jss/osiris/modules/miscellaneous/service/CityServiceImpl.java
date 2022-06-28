@@ -34,6 +34,12 @@ public class CityServiceImpl implements CityService {
     }
 
     @Override
+    public City addOrUpdateCity(
+            City city) {
+        return cityRepository.save(city);
+    }
+
+    @Override
     public List<City> getCitiesByPostalCode(String postalCode) {
         return IterableUtils.toList(cityRepository.findByPostalCodeContaining(postalCode));
     }
@@ -47,5 +53,4 @@ public class CityServiceImpl implements CityService {
         }
         return cityRepository.findByLabelContainingIgnoreCase(city);
     }
-
 }

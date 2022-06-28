@@ -20,6 +20,8 @@ public class Civility implements Serializable, IId {
     @Column(nullable = false)
     private String label;
 
+    private String code;
+
     public Integer getId() {
         return id;
     }
@@ -34,6 +36,14 @@ public class Civility implements Serializable, IId {
 
     public void setLabel(String label) {
         this.label = label;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 
 }

@@ -3,12 +3,12 @@ package com.jss.osiris.modules.quotation.service;
 import java.util.List;
 import java.util.Optional;
 
+import com.jss.osiris.modules.quotation.model.NoticeType;
+import com.jss.osiris.modules.quotation.repository.NoticeTypeRepository;
+
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import com.jss.osiris.modules.quotation.model.NoticeType;
-import com.jss.osiris.modules.quotation.repository.NoticeTypeRepository;
 
 @Service
 public class NoticeTypeServiceImpl implements NoticeTypeService {
@@ -27,5 +27,11 @@ public class NoticeTypeServiceImpl implements NoticeTypeService {
         if (!noticeType.isEmpty())
             return noticeType.get();
         return null;
+    }
+	
+	 @Override
+    public NoticeType addOrUpdateNoticeType(
+            NoticeType noticeType) {
+        return noticeTypeRepository.save(noticeType);
     }
 }

@@ -15,5 +15,9 @@ export class LegalFormService extends AppRestService<LegalForm>{
   getLegalForms() {
     return this.getList(new HttpParams(), "legal-forms");
   }
+  
+   addOrUpdateLegalForm(legalForm: LegalForm) {
+    return this.addOrUpdate(new HttpParams(), "legal-form", legalForm, "Enregistré", "Erreur lors de l'enregistrement");
+  }
 
 }

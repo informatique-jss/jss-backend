@@ -8,4 +8,6 @@ public interface CountryService {
     public List<Country> getCountries();
 
     public Country getCountry(Integer id);
+	
+	 public Country addOrUpdateCountry(Country country);
 }

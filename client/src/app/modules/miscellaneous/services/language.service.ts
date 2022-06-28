@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AppRestService } from 'src/app/appRest.service';
-import { Language } from '../model/Language';
+import { Language } from '../../miscellaneous/model/Language';
 
 @Injectable({
   providedIn: 'root'
@@ -9,11 +9,15 @@ import { Language } from '../model/Language';
 export class LanguageService extends AppRestService<Language>{
 
   constructor(http: HttpClient) {
-    super(http, "tiers");
+    super(http, "miscellaneous");
   }
 
   getLanguages() {
     return this.getList(new HttpParams(), "languages");
+  }
+  
+   addOrUpdateLanguage(language: Language) {
+    return this.addOrUpdate(new HttpParams(), "language", language, "Enregistré", "Erreur lors de l'enregistrement");
   }
 
 }

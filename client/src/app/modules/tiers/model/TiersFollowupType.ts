@@ -1,5 +1,4 @@
-export interface TiersFollowupType {
-  id: number;
-  code: string;
-  label: string;
+import { IReferential } from "../../administration/model/IReferential";
+
+export interface TiersFollowupType extends IReferential {
 }

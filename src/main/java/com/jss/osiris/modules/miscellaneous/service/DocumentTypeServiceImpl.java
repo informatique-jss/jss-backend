@@ -3,12 +3,12 @@ package com.jss.osiris.modules.miscellaneous.service;
 import java.util.List;
 import java.util.Optional;
 
+import com.jss.osiris.modules.miscellaneous.model.DocumentType;
+import com.jss.osiris.modules.miscellaneous.repository.DocumentTypeRepository;
+
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import com.jss.osiris.modules.miscellaneous.model.DocumentType;
-import com.jss.osiris.modules.miscellaneous.repository.DocumentTypeRepository;
 
 @Service
 public class DocumentTypeServiceImpl implements DocumentTypeService {
@@ -27,5 +27,11 @@ public class DocumentTypeServiceImpl implements DocumentTypeService {
         if (!documentType.isEmpty())
             return documentType.get();
         return null;
+    }
+	
+	 @Override
+    public DocumentType addOrUpdateDocumentType(
+            DocumentType documentType) {
+        return documentTypeRepository.save(documentType);
     }
 }

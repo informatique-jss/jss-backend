@@ -5,13 +5,16 @@
         <table class="full-width">
           <tr>
             <td>
-              <mat-form-field class="full-width">
+              <mat-form-field class="full-width" [formGroup]="referentialForm">
                 <mat-label>Référentiel</mat-label>
-                <mat-select [(ngModel)]="selectedReferential" (selectionChange)="changeReferential()">
-                  <mat-option *ngFor="let referential of referentials" [value]="referential">
+                <input type="text" [(ngModel)]="selectedReferential" matInput formControlName="entity"
+                  [matAutocomplete]="matAutocomplete">
+                <mat-autocomplete autoActiveFirstOption #matAutocomplete="matAutocomplete"
+                  (optionSelected)='changeReferential()'>
+                  <mat-option *ngFor="let referential of filteredReferentials | async" [value]="referential">
                     {{referential}}
                   </mat-option>
-                </mat-select>
+                </mat-autocomplete>
               </mat-form-field>
             </td>
           </tr>
@@ -74,6 +77,146 @@
           (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
           [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
         </referential-billing-closure-type>
+        <referential-billing-label-type *ngIf="selectedReferential==BILLING_LABEL_TYPE_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+        </referential-billing-label-type>
+        <referential-payment-deadline-type *ngIf="selectedReferential==PAYMENT_DEALINE_TYPE_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+        </referential-payment-deadline-type>
+        <referential-refund-type *ngIf="selectedReferential==REFUND_TYPE_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+        </referential-refund-type>
+        <referential-subscription-period-type *ngIf="selectedReferential==SUBSCRIPTION_PERIOD_TYPE_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+        </referential-subscription-period-type>
+        <referential-tiers-category *ngIf="selectedReferential==TIERS_CATEGORY_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+        </referential-tiers-category>
+        <referential-tiers-type *ngIf="selectedReferential==TIERS_TYPE_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+        </referential-tiers-type>
+        <referential-tiers-followup-type *ngIf="selectedReferential==TIERS_FOLLOWUP_TYPE_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+        </referential-tiers-followup-type>
+        <referential-attachment-type *ngIf="selectedReferential==ATTACHMENT_TYPE_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+        </referential-attachment-type>
+        <referential-civility *ngIf="selectedReferential==CIVILITY_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+        </referential-civility>
+        <referential-competent-authority-type *ngIf="selectedReferential==COMPETENT_AUTHORITY_TYPE_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+        </referential-competent-authority-type>
+        <referential-country *ngIf="selectedReferential==COUNTRY_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+        </referential-country>
+        <referential-delivery-service *ngIf="selectedReferential==DELIVERY_SERVICE_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+        </referential-delivery-service>
+        <referential-document-type *ngIf="selectedReferential==DOCUMENT_TYPE_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+        </referential-document-type>
+        <referential-language *ngIf="selectedReferential==LANGUAGE_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+        </referential-language>
+        <referential-legal-form *ngIf="selectedReferential==LEGAL_FORM_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+        </referential-legal-form>
+        <referential-payment-type *ngIf="selectedReferential==PAYMENT_TYPE_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+        </referential-payment-type>
+        <referential-region *ngIf="selectedReferential==REGIONS_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+        </referential-region>
+        <referential-vat *ngIf="selectedReferential==VAT_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+        </referential-vat>
+        <referential-weekday *ngIf="selectedReferential==WEEK_DAY_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+        </referential-weekday>
+        <referential-character-price *ngIf="selectedReferential==CHARACTER_PRICE_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+        </referential-character-price>
+        <referential-notice-type *ngIf="selectedReferential==NOTICE_TYPE"
+          (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+        </referential-notice-type>
+        <referential-provision-type *ngIf="selectedReferential==PROVISION_TYPE_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+        </referential-provision-type>
+        <referential-shal-notice-template *ngIf="selectedReferential==SHAL_NOTICE_TEMPLATE_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+        </referential-shal-notice-template>
+        <referential-billing-item *ngIf="selectedReferential==BILLING_ITEM_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+        </referential-billing-item>
+        <referential-billing-type *ngIf="selectedReferential==BILLING_TYPE_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+        </referential-billing-type>
+        <referential-city *ngIf="selectedReferential==CITY_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+        </referential-city>
+        <referential-department *ngIf="selectedReferential==DEPARTMENT_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+        </referential-department>
+        <referential-gift *ngIf="selectedReferential==GIFT_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+        </referential-gift>
+        <referential-special-offer *ngIf="selectedReferential==SPECIAL_OFFER_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+        </referential-special-offer>
+        <referential-competent-authority *ngIf="selectedReferential==COMPETENT_AUTHORITY_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+        </referential-competent-authority>
+        <referential-accounting-account-class *ngIf="selectedReferential==ACCOUNTING_ACCOUNT_CLASS_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+        </referential-accounting-account-class>
+        <referential-accounting-account *ngIf="selectedReferential==ACCOUNTING_ACCOUNT_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+        </referential-accounting-account>
+        <referential-team *ngIf="selectedReferential==TEAM_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+        </referential-team>
+        <referential-regie *ngIf="selectedReferential==REGIE_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+        </referential-regie>
+        <referential-confrere *ngIf="selectedReferential==CONFRERE_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+        </referential-confrere>
       </div>
     </mat-tab>
   </mat-tab-group>

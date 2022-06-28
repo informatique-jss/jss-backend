@@ -1,5 +1,4 @@
-export interface PaymentDeadlineType {
-  id: number;
-  code: string;
-  label: string;
+import { IReferential } from "../../administration/model/IReferential";
+
+export interface PaymentDeadlineType extends IReferential {
 }

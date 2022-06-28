@@ -7,7 +7,11 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
+import com.jss.osiris.modules.miscellaneous.model.City;
+import com.jss.osiris.modules.miscellaneous.model.Country;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 
 @Entity
@@ -21,6 +25,20 @@ public class BuildingDomiciliation implements Serializable, IId {
 	private String label;
 
 	private String code;
+
+	@Column(length = 60, nullable = false)
+	private String address;
+
+	@Column(length = 10)
+	private String postalCode;
+
+	@ManyToOne
+	@JoinColumn(name = "id_city")
+	private City city;
+
+	@ManyToOne
+	@JoinColumn(name = "id_country")
+	private Country country;
 
 	public Integer getId() {
 		return id;
@@ -44,6 +62,38 @@ public class BuildingDomiciliation implements Serializable, IId {
 
 	public void setCode(String code) {
 		this.code = code;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public String getPostalCode() {
+		return postalCode;
+	}
+
+	public void setPostalCode(String postalCode) {
+		this.postalCode = postalCode;
+	}
+
+	public City getCity() {
+		return city;
+	}
+
+	public void setCity(City city) {
+		this.city = city;
+	}
+
+	public Country getCountry() {
+		return country;
+	}
+
+	public void setCountry(Country country) {
+		this.country = country;
 	}
 
 }

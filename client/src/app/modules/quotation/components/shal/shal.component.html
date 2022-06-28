@@ -31,7 +31,7 @@
                 <mat-autocomplete autoActiveFirstOption #autoSpecialOffer="matAutocomplete"
                   [displayWith]="displayConfrere">
                   <mat-option *ngFor="let confrere of filteredConfreres | async" [value]="confrere">
-                    {{confrere.denomination}}
+                    {{confrere.label}}
                   </mat-option>
                 </mat-autocomplete>
               </mat-form-field>

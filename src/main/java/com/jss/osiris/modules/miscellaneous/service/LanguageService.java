@@ -8,4 +8,6 @@ public interface LanguageService {
     public List<Language> getLanguages();
 
     public Language getLanguage(Integer id);
+	
+	 public Language addOrUpdateLanguage(Language language);
 }

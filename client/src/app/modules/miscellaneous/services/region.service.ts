@@ -9,11 +9,15 @@ import { Region } from '../../miscellaneous/model/Region';
 export class RegionService extends AppRestService<Region>{
 
   constructor(http: HttpClient) {
-    super(http, "Tiers");
+    super(http, "miscellaneous");
   }
 
   getRegions() {
     return this.getList(new HttpParams(), "regions");
+  }
+  
+   addOrUpdateRegion(region: Region) {
+    return this.addOrUpdate(new HttpParams(), "region", region, "Enregistré", "Erreur lors de l'enregistrement");
   }
 
 }

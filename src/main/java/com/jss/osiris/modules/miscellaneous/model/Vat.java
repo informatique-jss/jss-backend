@@ -18,6 +18,8 @@ public class Vat implements Serializable, IId {
 	@Column(nullable = false)
 	private String label;
 
+	private String code;
+
 	private Float rate;
 
 	public Integer getId() {
@@ -42,6 +44,14 @@ public class Vat implements Serializable, IId {
 
 	public void setRate(Float rate) {
 		this.rate = rate;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
 	}
 
 }

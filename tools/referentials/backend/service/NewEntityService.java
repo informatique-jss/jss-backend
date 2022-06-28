@@ -8,4 +8,6 @@ public interface NewEntityService {
     public List<NewEntity> getNewEntities();
 
     public NewEntity getNewEntity(Integer id);
+	
+	 public NewEntity addOrUpdateNewEntity(NewEntity newEntity);
 }

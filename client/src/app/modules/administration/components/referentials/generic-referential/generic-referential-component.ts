@@ -25,6 +25,27 @@ export abstract class GenericReferentialComponent<T extends IReferential> implem
     private formBuilder: FormBuilder) { }
 
   entityForm = this.formBuilder.group({
+    departments: [''],
+    noticeTypeFamily: [''],
+    provisionFamilyType: [''],
+    billingType: [''],
+    department: [''],
+    country: [''],
+    billingItems: [''],
+    vat: [''],
+    accountingAccountClass: [''],
+    competentAuthorityType: [''],
+    postalCode: [''],
+    regions: [''],
+    manager: [''],
+    accountingAccountProvider: [''],
+    accountingAccount: [''],
+    accountingAccountCustomer: [''],
+    city: [''],
+    journalTypes: [''],
+    weekDays: [''],
+    preference: [''],
+    regie: [''],
   });
 
   ngOnInit() {
@@ -70,6 +91,7 @@ export abstract class GenericReferentialComponent<T extends IReferential> implem
   setDataTable() {
     this.getGetObservable().subscribe(response => {
       this.entities = response;
+      this.mapEntities();
       this.entityDataSource = new MatTableDataSource(this.entities);
       setTimeout(() => {
         this.entityDataSource.sort = this.sort;
@@ -88,6 +110,10 @@ export abstract class GenericReferentialComponent<T extends IReferential> implem
         }
       });
     })
+  }
+
+  mapEntities() {
+    return;
   }
 
   applyFilter(filterValue: any) {

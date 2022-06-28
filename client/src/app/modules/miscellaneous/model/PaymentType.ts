@@ -1,5 +1,4 @@
-export interface PaymentType {
-  id: number;
-  code: string;
-  label: string;
+import { IReferential } from "../../administration/model/IReferential";
+
+export interface PaymentType extends IReferential {
 }

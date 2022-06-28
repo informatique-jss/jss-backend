@@ -9,6 +9,8 @@ public interface CompetentAuthorityService {
 
     public CompetentAuthority getCompetentAuthority(Integer id);
 
+    public CompetentAuthority addOrUpdateCompetentAuthority(CompetentAuthority competentAuthority);
+
     public List<CompetentAuthority> getCompetentAuthorityByDepartment(Integer departmentId, String authority);
 
     public List<CompetentAuthority> getCompetentAuthorityByCity(Integer cityId);

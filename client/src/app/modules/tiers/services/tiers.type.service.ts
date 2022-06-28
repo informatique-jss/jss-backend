@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AppRestService } from 'src/app/appRest.service';
-import { TiersType } from '../model/TiersType';
+import { TiersType } from '../../tiers/model/TiersType';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +13,11 @@ export class TiersTypeService extends AppRestService<TiersType>{
   }
 
   getTiersTypes() {
-    return this.getList(new HttpParams(), "types");
+    return this.getList(new HttpParams(), "tiers-types");
+  }
+  
+   addOrUpdateTiersType(tiersType: TiersType) {
+    return this.addOrUpdate(new HttpParams(), "tiers-type", tiersType, "Enregistré", "Erreur lors de l'enregistrement");
   }
 
 }

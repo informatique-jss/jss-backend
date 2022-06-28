@@ -1,8 +1,6 @@
+import { IReferential } from "../../administration/model/IReferential";
 import { BillingItem } from "./BillingItem";
 
-export interface SpecialOffer {
-  id: number;
-  code: string;
-  label: string;
+export interface SpecialOffer extends IReferential {
   billingItems: BillingItem[];
 }

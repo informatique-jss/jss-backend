@@ -19,7 +19,10 @@ public class CompetentAuthorityServiceImpl implements CompetentAuthorityService 
     CompetentAuthorityRepository competentAuthorityRepository;
 
     @Autowired
-    DepartmentService departmentService;
+    PhoneService phoneService;
+
+    @Autowired
+    MailService mailService;
 
     @Override
     public List<CompetentAuthority> getCompetentAuthorities() {
@@ -32,6 +35,22 @@ public class CompetentAuthorityServiceImpl implements CompetentAuthorityService 
         if (!competentAuthority.isEmpty())
             return competentAuthority.get();
         return null;
+    }
+
+    @Override
+    public CompetentAuthority addOrUpdateCompetentAuthority(
+            CompetentAuthority competentAuthority) {
+        // If mails already exists, get their ids
+        if (competentAuthority != null && competentAuthority.getMails() != null
+                && competentAuthority.getMails().size() > 0)
+            mailService.populateMailIds(competentAuthority.getMails());
+
+        // If phones already exists, get their ids
+        if (competentAuthority != null && competentAuthority.getPhones() != null
+                && competentAuthority.getPhones().size() > 0) {
+            phoneService.populateMPhoneIds(competentAuthority.getPhones());
+        }
+        return competentAuthorityRepository.save(competentAuthority);
     }
 
     @Override

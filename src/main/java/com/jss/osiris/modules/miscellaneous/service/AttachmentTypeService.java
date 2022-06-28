@@ -8,4 +8,6 @@ public interface AttachmentTypeService {
     public List<AttachmentType> getAttachmentTypes();
 
     public AttachmentType getAttachmentType(Integer id);
+	
+	 public AttachmentType addOrUpdateAttachmentType(AttachmentType attachmentType);
 }

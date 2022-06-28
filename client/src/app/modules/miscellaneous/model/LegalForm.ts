@@ -1,5 +1,4 @@
-export interface LegalForm {
-  id: number;
-  code: string;
-  label: string;
+import { IReferential } from "../../administration/model/IReferential";
+
+export interface LegalForm extends IReferential {
 }

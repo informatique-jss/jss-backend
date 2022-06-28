@@ -3,6 +3,7 @@ package com.jss.osiris.modules.miscellaneous.model;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -28,7 +29,7 @@ public class BillingItem implements Serializable, IId {
 	@JoinColumn(name = "id_billing_type")
 	BillingType billingType;
 
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "id_vat")
 	Vat vat;
 

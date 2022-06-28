@@ -28,4 +28,10 @@ public class NewEntityServiceImpl implements NewEntityService {
             return newEntity.get();
         return null;
     }
+	
+	 @Override
+    public NewEntity addOrUpdateNewEntity(
+            NewEntity newEntity) {
+        return newEntityRepository.save(newEntity);
+    }
 }

@@ -1,5 +1,4 @@
-export interface Region {
-  id: number;
-  code: string;
-  label: string;
+import { IReferential } from "../../administration/model/IReferential";
+
+export interface Region extends IReferential {
 }

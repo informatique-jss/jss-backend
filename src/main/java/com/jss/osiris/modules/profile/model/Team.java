@@ -1,17 +1,22 @@
 package com.jss.osiris.modules.profile.model;
 
 import java.io.Serializable;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.jss.osiris.modules.miscellaneous.model.IId;
+import com.jss.osiris.modules.miscellaneous.model.Mail;
 
 @Entity
 public class Team implements Serializable, IId {
@@ -30,8 +35,9 @@ public class Team implements Serializable, IId {
 	@JsonBackReference
 	private Employee manager;
 
-	@Column(length = 30)
-	private String mail;
+	@ManyToMany(cascade = CascadeType.ALL)
+	@JoinTable(name = "asso_team_mail", joinColumns = @JoinColumn(name = "id_team"), inverseJoinColumns = @JoinColumn(name = "id_mail"))
+	private List<Mail> mails;
 
 	public Integer getId() {
 		return id;
@@ -65,12 +71,12 @@ public class Team implements Serializable, IId {
 		this.manager = manager;
 	}
 
-	public String getMail() {
-		return mail;
+	public List<Mail> getMails() {
+		return mails;
 	}
 
-	public void setMail(String mail) {
-		this.mail = mail;
+	public void setMails(List<Mail> mails) {
+		this.mails = mails;
 	}
 
 }

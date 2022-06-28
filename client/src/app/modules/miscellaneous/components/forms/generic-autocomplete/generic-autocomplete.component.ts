@@ -16,6 +16,11 @@ export abstract class GenericAutocompleteComponent<T, U> implements OnInit {
   @Input() model: any | undefined;
   @Output() modelChange: EventEmitter<any> = new EventEmitter<any>();
   /**
+ * The label to display
+ * Mandatory
+ */
+  @Input() label: string = "";
+  /**
    * The formgroup to bind component
    * Mandatory
    */

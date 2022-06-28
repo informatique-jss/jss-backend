@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AppRestService } from 'src/app/appRest.service';
-import { Vat } from '../model/Vat';
+import { Vat } from '../../miscellaneous/model/Vat';
 
 @Injectable({
   providedIn: 'root'
@@ -12,8 +12,12 @@ export class VatService extends AppRestService<Vat>{
     super(http, "miscellaneous");
   }
 
-  getVat() {
-    return this.getList(new HttpParams(), "vat-rates");
+  getVats() {
+    return this.getList(new HttpParams(), "vats");
+  }
+  
+   addOrUpdateVat(vat: Vat) {
+    return this.addOrUpdate(new HttpParams(), "vat", vat, "Enregistré", "Erreur lors de l'enregistrement");
   }
 
 }

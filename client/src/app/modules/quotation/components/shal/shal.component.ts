@@ -32,7 +32,7 @@ import { CharacterPriceService } from '../../services/character.price.service';
 import { ConfrereService } from '../../services/confrere.service';
 import { JournalTypeService } from '../../services/journal.type.service';
 import { NoticeTypeService } from '../../services/notice.type.service';
-import { ShalNoticeTemplateService } from '../../services/shal-notice-template.service';
+import { ShalNoticeTemplateService } from '../../services/shal.notice.template.service';
 
 @Component({
   selector: 'shal',
@@ -173,7 +173,7 @@ export class ShalComponent implements OnInit {
     if (this.confreres != undefined)
       for (let i = 0; i < this.confreres.length; i++) {
         const confrere = this.confreres[i];
-        if (confrere.denomination == JOURNAL_TYPE_JSS_DENOMINATION)
+        if (confrere.label == JOURNAL_TYPE_JSS_DENOMINATION)
           return confrere;
       }
     return {} as Confrere;
@@ -290,7 +290,7 @@ export class ShalComponent implements OnInit {
 
 
   public displayConfrere(object: Confrere): string {
-    return object ? object.denomination : '';
+    return object ? object.label : '';
   }
 
   public displayLabel(object: any): string {
@@ -299,7 +299,7 @@ export class ShalComponent implements OnInit {
 
   private _filterConfrere(value: string): Confrere[] {
     const filterValue = (value != undefined && value.toLowerCase != undefined) ? value.toLowerCase() : "";
-    return this.confreres.filter(confrere => confrere.denomination != undefined && confrere.denomination.toLowerCase().includes(filterValue));
+    return this.confreres.filter(confrere => confrere.label != undefined && confrere.label.toLowerCase().includes(filterValue));
   }
 
   private _filterNoticeType(value: string): NoticeType[] {

@@ -1,4 +1,4 @@
-export interface Language {
-  id: number;
-  label: string;
+import { IReferential } from "../../administration/model/IReferential";
+
+export interface Language extends IReferential {
 }

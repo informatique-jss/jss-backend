@@ -15,5 +15,9 @@ export class TiersFollowupTypeService extends AppRestService<TiersFollowupType>{
   getTiersFollowupTypes() {
     return this.getList(new HttpParams(), "tiers-followup-types");
   }
+  
+   addOrUpdateTiersFollowupType(tiersFollowupType: TiersFollowupType) {
+    return this.addOrUpdate(new HttpParams(), "tiers-followup-type", tiersFollowupType, "Enregistré", "Erreur lors de l'enregistrement");
+  }
 
 }

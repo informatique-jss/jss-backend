@@ -8,4 +8,6 @@ public interface PaymentTypeService {
     public List<PaymentType> getPaymentTypes();
 
     public PaymentType getPaymentType(Integer id);
+	
+	 public PaymentType addOrUpdatePaymentType(PaymentType paymentType);
 }

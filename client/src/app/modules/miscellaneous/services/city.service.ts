@@ -8,12 +8,17 @@ import { Country } from '../model/Country';
   providedIn: 'root'
 })
 export class CityService extends AppRestService<City>{
+
   constructor(http: HttpClient) {
-    super(http, "tiers");
+    super(http, "miscellaneous");
   }
 
   getCities() {
     return this.getList(new HttpParams(), "cities");
+  }
+
+  addOrUpdateCity(city: City) {
+    return this.addOrUpdate(new HttpParams(), "city", city, "Enregistré", "Erreur lors de l'enregistrement");
   }
 
   getCitiesFilteredByPostalCode(postalCode: string) {
@@ -25,4 +30,5 @@ export class CityService extends AppRestService<City>{
       return this.getList(new HttpParams().set("countryId", country.id).set("city", value), "cities/search/country");
     return this.getList(new HttpParams().set("city", value), "cities/search/country");
   }
+
 }

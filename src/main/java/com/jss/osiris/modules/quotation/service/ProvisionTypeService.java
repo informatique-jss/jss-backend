@@ -8,4 +8,6 @@ public interface ProvisionTypeService {
     public List<ProvisionType> getProvisionTypes();
 
     public ProvisionType getProvisionType(Integer id);
+	
+	 public ProvisionType addOrUpdateProvisionType(ProvisionType provisionType);
 }

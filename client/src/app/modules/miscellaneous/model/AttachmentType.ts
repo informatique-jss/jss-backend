@@ -1,5 +1,4 @@
-export interface AttachmentType {
-  id: number;
-  code: string;
-  label: string;
+import { IReferential } from "../../administration/model/IReferential";
+
+export interface AttachmentType extends IReferential {
 }

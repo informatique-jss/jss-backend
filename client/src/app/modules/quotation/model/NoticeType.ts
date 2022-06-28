@@ -1,8 +1,6 @@
+import { IReferential } from "../../administration/model/IReferential";
 import { NoticeTypeFamily } from "./NoticeTypeFamily";
 
-export interface NoticeType {
-  id: number;
-  code: string;
-  label: string;
+export interface NoticeType extends IReferential {
   noticeTypeFamily: NoticeTypeFamily;
 }

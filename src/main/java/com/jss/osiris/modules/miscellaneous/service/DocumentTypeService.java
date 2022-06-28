@@ -8,4 +8,6 @@ public interface DocumentTypeService {
     public List<DocumentType> getDocumentTypes();
 
     public DocumentType getDocumentType(Integer id);
+	
+	 public DocumentType addOrUpdateDocumentType(DocumentType documentType);
 }
