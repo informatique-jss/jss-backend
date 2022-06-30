@@ -25,38 +25,7 @@ export abstract class GenericReferentialComponent<T extends IReferential> implem
     private formBuilder: FormBuilder) { }
 
   entityForm = this.formBuilder.group({
-    departments: [''],
-    noticeTypeFamily: [''],
-    provisionFamilyType: [''],
-    billingType: [''],
-    department: [''],
-    country: [''],
-    billingItems: [''],
-    vat: [''],
-    accountingAccountClass: [''],
-    competentAuthorityType: [''],
-    postalCode: [''],
-    regions: [''],
-    manager: [''],
-    accountingAccountProvider: [''],
-    accountingAccount: [''],
-    accountingAccountCustomer: [''],
-    city: [''],
-    journalTypes: [''],
-    weekDays: [''],
-    preference: [''],
-    regie: [''],
-    billingType0: [''],
-    billingType1: [''],
-    billingType2: [''],
-    billingType3: [''],
-    billingType4: [''],
-    billingType5: [''],
-    billingType6: [''],
-    billingType7: [''],
-    billingType8: [''],
-    billingType9: [''],
-    billingType10: [''],
+
   });
 
   ngOnInit() {

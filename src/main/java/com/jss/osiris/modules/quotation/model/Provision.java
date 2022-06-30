@@ -3,6 +3,7 @@ package com.jss.osiris.modules.quotation.model;
 import java.io.Serializable;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -28,6 +29,11 @@ public class Provision implements Serializable, IId {
 	private Quotation quotation;
 
 	@ManyToOne
+	@JoinColumn(name = "id_customer_order")
+	@JsonBackReference("customerOrder")
+	private CustomerOrder customerOrder;
+
+	@ManyToOne
 	@JoinColumn(name = "id_provision_type")
 	private ProvisionType provisionType;
 
@@ -51,6 +57,9 @@ public class Provision implements Serializable, IId {
 	@JsonManagedReference("provision")
 	private Bodacc bodacc;
 
+	@Column(nullable = false)
+	private Boolean isValidated;
+
 	public Integer getId() {
 		return id;
 	}
@@ -69,6 +78,14 @@ public class Provision implements Serializable, IId {
 
 	public void setAffaire(Affaire affaire) {
 		this.affaire = affaire;
+	}
+
+	public CustomerOrder getCustomerOrder() {
+		return customerOrder;
+	}
+
+	public void setCustomerOrder(CustomerOrder customerOrder) {
+		this.customerOrder = customerOrder;
 	}
 
 	public void setQuotation(Quotation quotation) {
@@ -113,6 +130,14 @@ public class Provision implements Serializable, IId {
 
 	public void setBodacc(Bodacc bodacc) {
 		this.bodacc = bodacc;
+	}
+
+	public Boolean getIsValidated() {
+		return isValidated;
+	}
+
+	public void setIsValidated(Boolean isValidated) {
+		this.isValidated = isValidated;
 	}
 
 }

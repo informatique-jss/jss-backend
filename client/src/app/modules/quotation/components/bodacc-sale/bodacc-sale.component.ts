@@ -20,6 +20,8 @@ export class BodaccSaleComponent implements OnInit {
 
   matcher: CustomErrorStateMatcher = new CustomErrorStateMatcher();
   @Input() bodaccSale: BodaccSale = {} as BodaccSale;
+  @Input() instanceOfCustomerOrder: boolean = false;
+  @Input() isStatusOpen: boolean = true;
   @Input() editMode: boolean = false;
   @Input() transfertFundsType: TransfertFundsType = {} as TransfertFundsType;
   @ViewChild(MatAccordion) accordion: MatAccordion | undefined;
@@ -80,11 +82,6 @@ export class BodaccSaleComponent implements OnInit {
   }
 
   bodaccSaleForm = this.formBuilder.group({
-    fundType: ['', []],
-    ownerSiren: ['', []],
-    tenantSiren: ['', []],
-    purchaserSiren: ['', []],
-    registrationAuthority: ['', []],
   });
 
   getFormStatus(): boolean {

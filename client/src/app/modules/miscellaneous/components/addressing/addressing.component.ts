@@ -70,7 +70,6 @@ export class AddressingComponent implements OnInit {
   }
 
   adressingForm = this.formBuilder.group({
-    mailsCCResponsableAffaire: ['', []],
   });
 
   getResponsables(): Responsable[] {

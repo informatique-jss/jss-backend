@@ -82,22 +82,20 @@ public class Domiciliation implements Serializable, IId {
 	@Column(length = 60)
 	private String mailRecipient;
 
-	@Column(nullable = false)
 	private Date startDate;
 
-	@Column(nullable = false)
 	private Date endDate;
 
-	@Column(columnDefinition = "TEXT", nullable = false)
+	@Column(columnDefinition = "TEXT")
 	private String activityDescription;
 
 	@Column(length = 60)
 	private String activityMailRecipient;
 
-	@Column(length = 60, nullable = false)
+	@Column(length = 60)
 	private String activityAddress;
 
-	@Column(length = 10, nullable = false)
+	@Column(length = 10)
 	private String activityPostalCode;
 
 	@ManyToOne
@@ -112,7 +110,7 @@ public class Domiciliation implements Serializable, IId {
 	@JoinTable(name = "asso_domiciliation_activity_mail", joinColumns = @JoinColumn(name = "id_domiciliation"), inverseJoinColumns = @JoinColumn(name = "id_mail"))
 	private List<Mail> activityMails;
 
-	@Column(length = 60, nullable = false)
+	@Column(length = 60)
 	private String accountingRecordDomiciliation;
 
 	@JsonProperty(value = "isLegalPerson")

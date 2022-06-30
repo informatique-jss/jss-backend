@@ -45,6 +45,8 @@ export class ShalComponent implements OnInit {
   @Input() shal: Shal = {} as Shal;
   @Input() affaire: Affaire = {} as Affaire;
   @Input() editMode: boolean = false;
+  @Input() instanceOfCustomerOrder: boolean = false;
+  @Input() isStatusOpen: boolean = true;
 
   @ViewChild('tabs', { static: false }) tabs: any;
   @ViewChild('noticeTypesInput') noticeTypesInput: ElementRef<HTMLInputElement> | undefined;
@@ -185,10 +187,7 @@ export class ShalComponent implements OnInit {
     notice: ['', Validators.required],
     noticeHeader: [''],
     confrere: [''],
-    noticeTypeFamily: ['', Validators.required],
-    isProofReadingDocument: [''],
-    isPublicationCertificateDocument: [''],
-    journalType: ['', Validators.required],
+    journalType: [''],
   });
 
   getFormStatus(): boolean {

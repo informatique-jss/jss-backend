@@ -46,7 +46,8 @@
             </mat-expansion-panel-header>
             <affaire [(affaire)]="provision.affaire" [editMode]="editMode"></affaire>
             <provision-item *ngIf="provision.affaire && provision.affaire.id" [editMode]="editMode"
-              [provision]="provision" [affaire]="provision.affaire">
+              [provision]="provision" [affaire]="provision.affaire" [instanceOfCustomerOrder]="instanceOfCustomerOrder"
+              [isStatusOpen]="isStatusOpen">
             </provision-item>
             <button *ngIf="editMode && provision.affaire && provision.affaire.id"
               (click)="createProvisionForAffaire(provision.affaire)" mat-raised-button color="accent">Ajouter une
@@ -71,27 +72,70 @@
   (click)="saveQuotation()">
   <mat-icon>save</mat-icon>
 </button>
-<button matTooltip="Modifier le devis" mat-fab color="accent" class="fab-button"
-  *ngIf="editMode==false && quotation.id!=undefined && quotation.id!=null" (click)="editQuotation()">
+<button [matTooltip]="instanceOfCustomerOrder?'Modifier la commande' : 'Modifier le devis'" mat-fab color="accent"
+  class="fab-button" *ngIf="editMode==false && quotation.id!=undefined && quotation.id!=null" (click)="editQuotation()">
   <mat-icon>edit</mat-icon>
 </button>
-<button matTooltip="Ajouter un devis" mat-fab color="accent" class="fab-button"
-  *ngIf="editMode==false && (quotation.id==undefined || quotation.id==null)" (click)="createQuotation()">
+<button [matTooltip]="instanceOfCustomerOrder?'Ajouter une commande' : 'Ajouter un devis'" mat-fab color="accent"
+  class="fab-button" *ngIf="editMode==false && (quotation.id==undefined || quotation.id==null)"
+  (click)="createQuotation()">
   <mat-icon>add</mat-icon>
 </button>
-<button matTooltip="Rechercher un devis" mat-fab color="accent" class="second-fab-button" *ngIf="editMode==false"
-  (click)="openSearch()">
+<button [matTooltip]="instanceOfCustomerOrder?'Rechercher une commande' : 'Rechercher un devis'" mat-fab color="accent"
+  class="second-fab-button" *ngIf="editMode==false" (click)="openSearch()">
   <mat-icon>search</mat-icon>
 </button>
-<button matTooltip="Envoyer le devis" mat-fab color="accent" class="third-fab-button"
-  *ngIf="editMode==false  && quotation.id!=undefined && quotation.id!=null" (click)="sendQuotation()">
+<button [matTooltip]="instanceOfCustomerOrder?'Envoyer la commande' : 'Envoyer le devis'" mat-fab color="accent"
+  class="third-fab-button" *ngIf="editMode==false  && quotation.id!=undefined && quotation.id!=null"
+  (click)="sendQuotation()">
   <mat-icon>forward_to_inbox</mat-icon>
 </button>
-<button matTooltip="Valider le statut" mat-fab color="accent" class="fourth-fab-button"
-  *ngIf="editMode==false  && quotation.id!=undefined && quotation.id!=null" (click)="confirmStatus()">
-  <mat-icon>done</mat-icon>
-</button>
-<button matTooltip="Ajouter un devis" mat-fab color="accent" class="second-fab-button"
-  *ngIf="editMode==false && quotation.id!=undefined && quotation.id!=null" (click)=" createQuotation()">
+<button [matTooltip]="instanceOfCustomerOrder?'Ajouter une commande' : 'Ajouter un devis'" mat-fab color="accent"
+  class="second-fab-button" *ngIf="editMode==false && quotation.id!=undefined && quotation.id!=null"
+  (click)=" createQuotation()">
   <mat-icon>add</mat-icon>
+</button>
+<button matTooltip="Changer de statut" mat-fab color="accent" class="fourth-fab-button"
+  *ngIf="editMode==false  && quotation.id!=undefined && quotation.id!=null && quotation.status"
+  [matMenuTriggerFor]="menu">
+  <mat-icon>done</mat-icon>
+  <mat-menu #menu="matMenu" style="min-height: 0px;padding: 0;" xPosition="before">
+    <button mat-menu-item
+      *ngIf="quotation.status.code==QUOTATION_STATUS_TO_VERIFY || quotation.status.code==QUOTATION_STATUS_REFUSED_BY_CUSTOMER|| quotation.status.code==QUOTATION_STATUS_CANCELLED|| quotation.status.code==QUOTATION_STATUS_ABANDONED"
+      (click)="changeStatus(QUOTATION_STATUS_OPEN)">
+      <mat-icon>auto_awesome</mat-icon><span>Repasser à ouvert</span>
+    </button>
+    <button mat-menu-item *ngIf="quotation.status.code==QUOTATION_STATUS_OPEN"
+      (click)="changeStatus(QUOTATION_STATUS_TO_VERIFY)">
+      <mat-icon>search</mat-icon><span>Faire vérifier</span>
+    </button>
+    <button mat-menu-item *ngIf="quotation.status.code==QUOTATION_STATUS_TO_VERIFY"
+      (click)="changeStatus(QUOTATION_STATUS_VALIDATED_BY_JSS)">
+      <mat-icon>task_alt</mat-icon><span>Valider par le JSS</span>
+    </button>
+    <button mat-menu-item *ngIf="quotation.status.code==QUOTATION_STATUS_VALIDATED_BY_JSS"
+      (click)="changeStatus(QUOTATION_STATUS_SENT_TO_CUSTOMER)">
+      <mat-icon>outgoing_mail</mat-icon><span>Envoyer au client</span>
+    </button>
+    <button mat-menu-item *ngIf="quotation.status.code==QUOTATION_STATUS_SENT_TO_CUSTOMER"
+      (click)="changeStatus(QUOTATION_STATUS_VALIDATED_BY_CUSTOMER)">
+      <mat-icon>approval</mat-icon><span>Indiquer validé par le client</span>
+    </button>
+    <button mat-menu-item *ngIf="quotation.status.code==QUOTATION_STATUS_VALIDATED_BY_CUSTOMER"
+      (click)="changeStatus(QUOTATION_STATUS_SENT_TO_CUSTOMER)">
+      <mat-icon>shopping_cart</mat-icon><span>Passer en commande</span>
+    </button>
+    <button mat-menu-item *ngIf="quotation.status.code==QUOTATION_STATUS_SENT_TO_CUSTOMER"
+      (click)="changeStatus(QUOTATION_STATUS_REFUSED_BY_CUSTOMER)">
+      <mat-icon>remove_shopping_cart</mat-icon><span>Indiquer refusé par le client</span>
+    </button>
+    <button mat-menu-item (click)="changeStatus(QUOTATION_STATUS_ABANDONED)"
+      *ngIf="quotation.status.code!=QUOTATION_STATUS_ABANDONED">
+      <mat-icon>block</mat-icon><span>Abandonner</span>
+    </button>
+    <button mat-menu-item *ngIf="quotation.status.code==QUOTATION_STATUS_REFUSED_BY_CUSTOMER"
+      (click)="changeStatus(QUOTATION_STATUS_CANCELLED)">
+      <mat-icon>delete</mat-icon><span>Annuler</span>
+    </button>
+  </mat-menu>
 </button>

@@ -38,7 +38,8 @@
             </td>
             <td *ngIf="shal.confrere!=null && shal.confrere!=undefined">
               <autocomplete-department [(model)]="shal.department" [form]="shalForm" propertyName="department"
-                [isMandatory]="true" [isDisabled]="!editMode" (onOptionSelected)="updateCharacterPrice()">
+                [isMandatory]="true" [isDisabled]="!editMode" (onOptionSelected)="updateCharacterPrice()"
+                [conditionnalRequired]=" !isStatusOpen">
               </autocomplete-department>
             </td>
           </tr>
@@ -57,7 +58,8 @@
             <td>
               <generic-datepicker [(model)]="shal.publicationDate" label="Date de publication"
                 [minDate]="getCurrentDate()" [form]="shalForm" propertyName="publicationDate" [isMandatory]="true"
-                [isDisabled]="!editMode" (onDateChange)="updateCharacterPrice()"></generic-datepicker>
+                [conditionnalRequired]=" !isStatusOpen" [isDisabled]="!editMode"
+                (onDateChange)="updateCharacterPrice()"></generic-datepicker>
             </td>
             <td>
               <generic-toggle [(model)]="shal.isRedactedByJss" label="Rédigé par le JSS ?" [form]="shalForm"
@@ -151,7 +153,9 @@
           <tr>
             <td>
               <select-notice-family [(model)]="shal.noticeTypeFamily" label="Rubrique" [form]="shalForm"
-                propertyName="noticeTypeFamily" [isMandatory]="true" [isDisabled]="!editMode"></select-notice-family>
+                propertyName="noticeTypeFamily" [isMandatory]="true"
+                [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode">
+              </select-notice-family>
             </td>
             <td *ngIf="shal.noticeTypeFamily">
               <mat-form-field class="full-width">
@@ -216,13 +220,16 @@
                   <td>
                     <generic-input [(model)]="shal.posterProductionPrice" label="Production des affiches (€)"
                       [form]="shalForm" propertyName="posterProductionPrice" [isMandatory]="true"
-                      [isDisabled]="!editMode" [conditionnalRequired]="shal.isLegalDisplay" type="number">
+                      [isDisabled]="!editMode"
+                      [conditionnalRequired]="shal.isLegalDisplay && instanceOfCustomerOrder && !isStatusOpen"
+                      type="number">
                     </generic-input>
                   </td>
                   <td>
                     <generic-input [(model)]="shal.posterProductionJSSPrice" label="Prix JSS (€)" [form]="shalForm"
                       propertyName="posterProductionJSSPrice" [isMandatory]="true" [isDisabled]="!editMode"
-                      [conditionnalRequired]="shal.isLegalDisplay" type="number">
+                      [conditionnalRequired]="shal.isLegalDisplay && instanceOfCustomerOrder && !isStatusOpen"
+                      type="number">
                     </generic-input>
                   </td>
                 </tr>
@@ -230,13 +237,15 @@
                   <td>
                     <generic-input [(model)]="shal.billPostingPrice" label="Pose des affiches (€)" [form]="shalForm"
                       propertyName="billPostingPrice" [isMandatory]="true" [isDisabled]="!editMode"
-                      [conditionnalRequired]="shal.isLegalDisplay" type="number">
+                      [conditionnalRequired]="shal.isLegalDisplay && instanceOfCustomerOrder && !isStatusOpen"
+                      type="number">
                     </generic-input>
                   </td>
                   <td>
                     <generic-input [(model)]="shal.billPostingJSSPrice" label="Prix JSS (€)" [form]="shalForm"
                       propertyName="billPostingJSSPrice" [isMandatory]="true" [isDisabled]="!editMode"
-                      [conditionnalRequired]="shal.isLegalDisplay" type="number">
+                      [conditionnalRequired]="shal.isLegalDisplay && instanceOfCustomerOrder && !isStatusOpen"
+                      type="number">
                     </generic-input>
                   </td>
                 </tr>
@@ -244,13 +253,15 @@
                   <td>
                     <generic-input [(model)]="shal.bailiffReportPrice" label="Constat d'huisser (€)" [form]="shalForm"
                       propertyName="bailiffReportPrice" [isMandatory]="true" [isDisabled]="!editMode"
-                      [conditionnalRequired]="shal.isLegalDisplay" type="number">
+                      [conditionnalRequired]="shal.isLegalDisplay && instanceOfCustomerOrder && !isStatusOpen"
+                      type="number">
                     </generic-input>
                   </td>
                   <td>
                     <generic-input [(model)]="shal.bailiffReportJSSPrice" label="Prix JSS (€)" [form]="shalForm"
                       propertyName="bailiffReportJSSPrice" [isMandatory]="true" [isDisabled]="!editMode"
-                      [conditionnalRequired]="shal.isLegalDisplay" type="number">
+                      [conditionnalRequired]="shal.isLegalDisplay && instanceOfCustomerOrder && !isStatusOpen"
+                      type="number">
                     </generic-input>
                   </td>
                 </tr>
@@ -270,9 +281,8 @@
               </mat-panel-title>
               <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
             </mat-expansion-panel-header>
-            <mat-slide-toggle formControlName="isProofReadingDocument" [(ngModel)]="shal.isProofReadingDocument">
-              Epreuve de relecture ?
-            </mat-slide-toggle>
+            <generic-toggle [(model)]="shal.isProofReadingDocument" label="Epreuve de relecture ?" [form]="shalForm"
+              propertyName="isProofReadingDocument"></generic-toggle>
             <addressing *ngIf="shal.isProofReadingDocument" [displayMailCC]="true" [hideConsignee]="true"
               [onlyMail]="true" [editMode]="editMode" [document]="proofReadingDocument">
             </addressing>
@@ -295,10 +305,8 @@
               </mat-panel-title>
               <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
             </mat-expansion-panel-header>
-            <mat-slide-toggle formControlName="isPublicationCertificateDocument"
-              [(ngModel)]="shal.isPublicationCertificateDocument">
-              Attestation de parution ?
-            </mat-slide-toggle>
+            <generic-toggle [(model)]="shal.isPublicationCertificateDocument" label="Attestation de parution ?"
+              [form]="shalForm" propertyName="isPublicationCertificateDocument"></generic-toggle>
             <addressing *ngIf="shal.isPublicationCertificateDocument" [displayMailCC]="true" [hideConsignee]="true"
               [onlyMail]="true" [editMode]=" editMode" [document]="publicationCertificateDocument">
             </addressing>

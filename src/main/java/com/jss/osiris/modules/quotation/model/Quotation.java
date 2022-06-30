@@ -43,10 +43,6 @@ public class Quotation implements IQuotation {
 	@IndexedField
 	private Responsable responsable;
 
-	@ManyToOne
-	@JoinColumn(name = "id_special_offer")
-	private SpecialOffer specialOffer;
-
 	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "asso_quotation_special_offer", joinColumns = @JoinColumn(name = "id_quotation"), inverseJoinColumns = @JoinColumn(name = "id_special_offer"))
 	private List<SpecialOffer> specialOffers;
@@ -56,7 +52,7 @@ public class Quotation implements IQuotation {
 
 	@ManyToOne
 	@JoinColumn(name = "id_quotation_status")
-	private QuotationStatus quotationStatus;
+	private QuotationStatus status;
 
 	@Column(columnDefinition = "TEXT")
 	private String observations;
@@ -74,10 +70,10 @@ public class Quotation implements IQuotation {
 
 	@ManyToOne
 	@JoinColumn(name = "id_quotation_label_type")
-	private QuotationLabelType quotationLabelType;
+	private QuotationLabelType labelType;
 
 	@Column(length = 40)
-	private String quotationLabel;
+	private String label;
 
 	@ManyToOne
 	@JoinColumn(name = "id_record_type")
@@ -107,22 +103,6 @@ public class Quotation implements IQuotation {
 		return tiers;
 	}
 
-	public List<Mail> getMails() {
-		return mails;
-	}
-
-	public void setMails(List<Mail> mails) {
-		this.mails = mails;
-	}
-
-	public List<Phone> getPhones() {
-		return phones;
-	}
-
-	public void setPhones(List<Phone> phones) {
-		this.phones = phones;
-	}
-
 	public void setTiers(Tiers tiers) {
 		this.tiers = tiers;
 	}
@@ -131,24 +111,16 @@ public class Quotation implements IQuotation {
 		return responsable;
 	}
 
-	public List<Provision> getProvisions() {
-		return provisions;
-	}
-
-	public void setProvisions(List<Provision> provisions) {
-		this.provisions = provisions;
-	}
-
 	public void setResponsable(Responsable responsable) {
 		this.responsable = responsable;
 	}
 
-	public SpecialOffer getSpecialOffer() {
-		return specialOffer;
+	public List<SpecialOffer> getSpecialOffers() {
+		return specialOffers;
 	}
 
-	public void setSpecialOffer(SpecialOffer specialOffer) {
-		this.specialOffer = specialOffer;
+	public void setSpecialOffers(List<SpecialOffer> specialOffers) {
+		this.specialOffers = specialOffers;
 	}
 
 	public Date getCreatedDate() {
@@ -159,12 +131,12 @@ public class Quotation implements IQuotation {
 		this.createdDate = createdDate;
 	}
 
-	public QuotationStatus getQuotationStatus() {
-		return quotationStatus;
+	public QuotationStatus getStatus() {
+		return status;
 	}
 
-	public void setQuotationStatus(QuotationStatus quotationStatus) {
-		this.quotationStatus = quotationStatus;
+	public void setStatus(QuotationStatus status) {
+		this.status = status;
 	}
 
 	public String getObservations() {
@@ -199,20 +171,20 @@ public class Quotation implements IQuotation {
 		this.documents = documents;
 	}
 
-	public QuotationLabelType getQuotationLabelType() {
-		return quotationLabelType;
+	public QuotationLabelType getLabelType() {
+		return labelType;
 	}
 
-	public void setQuotationLabelType(QuotationLabelType quotationLabelType) {
-		this.quotationLabelType = quotationLabelType;
+	public void setLabelType(QuotationLabelType labelType) {
+		this.labelType = labelType;
 	}
 
-	public String getQuotationLabel() {
-		return quotationLabel;
+	public String getLabel() {
+		return label;
 	}
 
-	public void setQuotationLabel(String quotationLabel) {
-		this.quotationLabel = quotationLabel;
+	public void setLabel(String label) {
+		this.label = label;
 	}
 
 	public RecordType getRecordType() {
@@ -223,12 +195,28 @@ public class Quotation implements IQuotation {
 		this.recordType = recordType;
 	}
 
-	public List<SpecialOffer> getSpecialOffers() {
-		return specialOffers;
+	public List<Provision> getProvisions() {
+		return provisions;
 	}
 
-	public void setSpecialOffers(List<SpecialOffer> specialOffers) {
-		this.specialOffers = specialOffers;
+	public void setProvisions(List<Provision> provisions) {
+		this.provisions = provisions;
+	}
+
+	public List<Mail> getMails() {
+		return mails;
+	}
+
+	public void setMails(List<Mail> mails) {
+		this.mails = mails;
+	}
+
+	public List<Phone> getPhones() {
+		return phones;
+	}
+
+	public void setPhones(List<Phone> phones) {
+		this.phones = phones;
 	}
 
 }

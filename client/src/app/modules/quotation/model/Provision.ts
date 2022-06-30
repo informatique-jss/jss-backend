@@ -17,4 +17,5 @@ export interface Provision {
   provisionType: ProvisionType;
   quotation: Quotation;
   customerOrder: CustomerOrder;
+  isValidated: boolean;
 }

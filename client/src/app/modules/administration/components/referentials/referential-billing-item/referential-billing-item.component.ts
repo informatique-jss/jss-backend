@@ -39,19 +39,6 @@ export class ReferentialBillingItemComponent implements OnInit {
   ) { }
 
   entityForm = this.formBuilder.group({
-    accountingAccountCharge: [''],
-    billingType: [''],
-    vat_0: [''],
-    vat_1: [''],
-    vat_2: [''],
-    vat_3: [''],
-    vat_4: [''],
-    vat_5: [''],
-    vat_6: [''],
-    vat_7: [''],
-    vat_8: [''],
-    vat_9: [''],
-    vat_10: [''],
   });
 
   ngOnInit() {

@@ -7,7 +7,7 @@ import { getDocument } from 'src/app/libs/DocumentHelper';
 import { instanceOfResponsable, instanceOfTiers } from 'src/app/libs/TypeHelper';
 import { PaymentType } from 'src/app/modules/miscellaneous/model/PaymentType';
 import { DocumentTypeService } from 'src/app/modules/miscellaneous/services/document.type.service';
-import { PaymentTypeService } from 'src/app/modules/miscellaneous/services/payment-type.service';
+import { PaymentTypeService } from 'src/app/modules/miscellaneous/services/payment.type.service';
 import { Document } from "../../../miscellaneous/model/Document";
 import { DocumentType } from "../../../miscellaneous/model/DocumentType";
 import { ITiers } from '../../model/ITiers';
@@ -95,9 +95,6 @@ export class SettlementBillingComponent implements OnInit {
   Validators = Validators;
 
   settlementBillingForm = this.formBuilder.group({
-    paymentType: [''],
-    paymentDeadlineType: [''],
-    billingClosureRecipientType: [''],
   });
 
   instanceOfTiers = instanceOfTiers;

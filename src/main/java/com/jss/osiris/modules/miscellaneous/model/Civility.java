@@ -20,6 +20,7 @@ public class Civility implements Serializable, IId {
     @Column(nullable = false)
     private String label;
 
+    @Column(nullable = false, length = 20)
     private String code;
 
     public Integer getId() {

@@ -37,14 +37,14 @@
           </tr>
           <tr>
             <td>
-              <generic-input [(model)]="selectedEntity.code" label="Codification" [form]="entityForm"
+              <generic-input [(model)]="selectedEntity.code" label="Codification" [maxLength]="20" [form]="entityForm"
                 propertyName="code" [isMandatory]="true" [isDisabled]="!editMode"></generic-input>
             </td>
           </tr>
           <tr>
             <td>
-              <generic-input [(model)]="selectedEntity.label" label="Nom fonctionnel" [form]="entityForm"
-                propertyName="label" [isMandatory]="true" [isDisabled]="!editMode"></generic-input>
+              <generic-input [(model)]="selectedEntity.label" label="Nom fonctionnel" [maxLength]="100"
+                [form]="entityForm" propertyName="label" [isMandatory]="true" [isDisabled]="!editMode"></generic-input>
             </td>
           </tr>
         </table>

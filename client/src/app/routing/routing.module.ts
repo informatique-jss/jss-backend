@@ -1,14 +1,14 @@
-import { SearchComponent } from './search/search.component';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatTabsModule } from '@angular/material/tabs';
-import { MatIconModule } from '@angular/material/icon';
-import { MatCardModule } from '@angular/material/card';
-import { MatButtonModule } from '@angular/material/button';
-import { TiersComponent } from '../modules/tiers/components/tiers/tiers.component';
+import { RouterModule, Routes } from '@angular/router';
+import { SearchComponent } from './search/search.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/tiers', pathMatch: 'full' }
@@ -24,6 +24,7 @@ const routes: Routes = [
     MatInputModule,
     MatTabsModule,
     MatIconModule,
+    MatDialogModule,
     MatCardModule,
     MatButtonModule
   ],

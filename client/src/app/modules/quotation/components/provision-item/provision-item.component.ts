@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
-import { UntypedFormBuilder, Validators } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 import { MatExpansionPanel } from '@angular/material/expansion';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
 import { compareWithId } from 'src/app/libs/CompareHelper';
@@ -30,6 +30,8 @@ export class ProvisionItemComponent implements OnInit {
   @Input() provision: Provision = {} as Provision;
   @Input() affaire: Affaire = {} as Affaire;
   @Input() editMode: boolean = false;
+  @Input() instanceOfCustomerOrder: boolean = false;
+  @Input() isStatusOpen: boolean = true;
   @ViewChild(DomiciliationComponent) domiciliationComponent: DomiciliationComponent | undefined;
   @ViewChild(ShalComponent) shalComponent: ShalComponent | undefined;
   @ViewChild(ShalComponent) bodaccComponent: BodaccMainComponent | undefined;
@@ -57,7 +59,8 @@ export class ProvisionItemComponent implements OnInit {
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.provision != undefined) {
-      console.log(this.provision);
+      if (!this.provision.isValidated)
+        this.provision.isValidated = false;
       this.provisionItemForm.markAllAsTouched();
     }
   }
@@ -76,8 +79,6 @@ export class ProvisionItemComponent implements OnInit {
   }
 
   provisionItemForm = this.formBuilder.group({
-    provisionType: ['', [Validators.required]],
-    provisionFamilyType: ['', [Validators.required]],
   });
 
   changeProvisionType() {
@@ -88,7 +89,6 @@ export class ProvisionItemComponent implements OnInit {
       }
     }
 
-    // TODO : add formalité or bodacc
     if (!this.provision.provisionFamilyType || !this.provision.provisionType) {
       this.provision.shal = undefined;
       this.provision.domiciliation = undefined;

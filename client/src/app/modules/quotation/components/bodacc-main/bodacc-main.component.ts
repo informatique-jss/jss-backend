@@ -23,6 +23,8 @@ export class BodaccMainComponent implements OnInit {
   @Input() bodacc: Bodacc = {} as Bodacc;
   @Input() affaire: Affaire = {} as Affaire;
   @Input() editMode: boolean = false;
+  @Input() instanceOfCustomerOrder: boolean = false;
+  @Input() isStatusOpen: boolean = true;
   @ViewChild(BodaccSaleComponent) bodaccSaleComponent: BodaccSaleComponent | undefined;
   @ViewChild(BodaccFusionComponent) bodaccFusionComponent: BodaccFusionComponent | undefined;
   @ViewChild(BodaccSplitComponent) bodaccSplitComponent: BodaccSplitComponent | undefined;
@@ -76,9 +78,6 @@ export class BodaccMainComponent implements OnInit {
   }
 
   bodaccForm = this.formBuilder.group({
-    bodaccPublicationType: ['', []],
-    competentAuthority: ['', []],
-    paymentType: ['', []],
   });
 
   getFormStatus(): boolean {

@@ -134,8 +134,8 @@ public class TiersController {
     try {
       if (subscriptionPeriodTypes.getId() != null)
         validationHelper.validateReferential(subscriptionPeriodTypes, true);
-      validationHelper.validateString(subscriptionPeriodTypes.getCode(), true);
-      validationHelper.validateString(subscriptionPeriodTypes.getLabel(), true);
+      validationHelper.validateString(subscriptionPeriodTypes.getCode(), true, 20);
+      validationHelper.validateString(subscriptionPeriodTypes.getLabel(), true, 100);
 
       outSubscriptionPeriodType = subscriptionPeriodTypeService
           .addOrUpdateSubscriptionPeriodType(subscriptionPeriodTypes);
@@ -175,8 +175,8 @@ public class TiersController {
     try {
       if (tiersFollowupTypes.getId() != null)
         validationHelper.validateReferential(tiersFollowupTypes, true);
-      validationHelper.validateString(tiersFollowupTypes.getCode(), true);
-      validationHelper.validateString(tiersFollowupTypes.getLabel(), true);
+      validationHelper.validateString(tiersFollowupTypes.getCode(), true, 20);
+      validationHelper.validateString(tiersFollowupTypes.getLabel(), true, 100);
 
       outTiersFollowupType = tiersFollowupTypeService
           .addOrUpdateTiersFollowupType(tiersFollowupTypes);
@@ -260,8 +260,8 @@ public class TiersController {
     try {
       if (billingClosureRecipientType.getId() != null)
         validationHelper.validateReferential(billingClosureRecipientType, true);
-      validationHelper.validateString(billingClosureRecipientType.getCode(), true);
-      validationHelper.validateString(billingClosureRecipientType.getLabel(), true);
+      validationHelper.validateString(billingClosureRecipientType.getCode(), true, 20);
+      validationHelper.validateString(billingClosureRecipientType.getLabel(), true, 100);
 
       outBillingClosureRecipientType = billingClosureRecipientTypeService
           .addOrUpdateTransfertFundsType(billingClosureRecipientType);
@@ -301,8 +301,8 @@ public class TiersController {
     try {
       if (billingClosureTypes.getId() != null)
         validationHelper.validateReferential(billingClosureTypes, true);
-      validationHelper.validateString(billingClosureTypes.getCode(), true);
-      validationHelper.validateString(billingClosureTypes.getLabel(), true);
+      validationHelper.validateString(billingClosureTypes.getCode(), true, 20);
+      validationHelper.validateString(billingClosureTypes.getLabel(), true, 100);
 
       outBillingClosureType = billingClosureTypeService
           .addOrUpdateBillingClosureType(billingClosureTypes);
@@ -342,8 +342,8 @@ public class TiersController {
     try {
       if (refundTypes.getId() != null)
         validationHelper.validateReferential(refundTypes, true);
-      validationHelper.validateString(refundTypes.getCode(), true);
-      validationHelper.validateString(refundTypes.getLabel(), true);
+      validationHelper.validateString(refundTypes.getCode(), true, 20);
+      validationHelper.validateString(refundTypes.getLabel(), true, 100);
 
       outRefundType = refundTypeService
           .addOrUpdateRefundType(refundTypes);
@@ -383,8 +383,8 @@ public class TiersController {
     try {
       if (paymentDeadlineTypes.getId() != null)
         validationHelper.validateReferential(paymentDeadlineTypes, true);
-      validationHelper.validateString(paymentDeadlineTypes.getCode(), true);
-      validationHelper.validateString(paymentDeadlineTypes.getLabel(), true);
+      validationHelper.validateString(paymentDeadlineTypes.getCode(), true, 20);
+      validationHelper.validateString(paymentDeadlineTypes.getLabel(), true, 100);
 
       outPaymentDeadlineType = paymentDeadlineTypeService
           .addOrUpdatePaymentDeadlineType(paymentDeadlineTypes);
@@ -424,8 +424,8 @@ public class TiersController {
     try {
       if (billingLabelTypes.getId() != null)
         validationHelper.validateReferential(billingLabelTypes, true);
-      validationHelper.validateString(billingLabelTypes.getCode(), true);
-      validationHelper.validateString(billingLabelTypes.getLabel(), true);
+      validationHelper.validateString(billingLabelTypes.getCode(), true, 20);
+      validationHelper.validateString(billingLabelTypes.getLabel(), true, 100);
 
       outBillingLabelType = billingLabelTypeService
           .addOrUpdateBillingLabelType(billingLabelTypes);
@@ -495,8 +495,8 @@ public class TiersController {
     try {
       if (tiersTypes.getId() != null)
         validationHelper.validateReferential(tiersTypes, true);
-      validationHelper.validateString(tiersTypes.getCode(), true);
-      validationHelper.validateString(tiersTypes.getLabel(), true);
+      validationHelper.validateString(tiersTypes.getCode(), true, 20);
+      validationHelper.validateString(tiersTypes.getLabel(), true, 100);
 
       outTiersType = tiersTypeService
           .addOrUpdateTiersType(tiersTypes);
@@ -536,8 +536,8 @@ public class TiersController {
     try {
       if (tiersCategories.getId() != null)
         validationHelper.validateReferential(tiersCategories, true);
-      validationHelper.validateString(tiersCategories.getCode(), true);
-      validationHelper.validateString(tiersCategories.getLabel(), true);
+      validationHelper.validateString(tiersCategories.getCode(), true, 20);
+      validationHelper.validateString(tiersCategories.getLabel(), true, 100);
 
       outTiersCategory = tiersCategoryService
           .addOrUpdateTiersCategory(tiersCategories);

@@ -23,11 +23,10 @@ public class CompetentAuthority implements Serializable, IId {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
 
-	// TODO : reprendre les label + code, mettre des limites de taille et faire les
-	// vérifs front / back
-	@Column(nullable = false)
+	@Column(nullable = false, length = 100)
 	private String label;
 
+	@Column(nullable = false, length = 20)
 	private String code;
 
 	@ManyToOne

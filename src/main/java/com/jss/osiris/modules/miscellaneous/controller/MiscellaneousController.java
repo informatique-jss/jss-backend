@@ -162,8 +162,8 @@ public class MiscellaneousController {
         try {
             if (gifts.getId() != null)
                 validationHelper.validateReferential(gifts, true);
-            validationHelper.validateString(gifts.getCode(), true);
-            validationHelper.validateString(gifts.getLabel(), true);
+            validationHelper.validateString(gifts.getCode(), true, 20);
+            validationHelper.validateString(gifts.getLabel(), true, 100);
             validationHelper.validateReferential(gifts.getAccountingAccount(), true);
 
             outGift = giftService
@@ -204,8 +204,8 @@ public class MiscellaneousController {
         try {
             if (specialOffers.getId() != null)
                 validationHelper.validateReferential(specialOffers, true);
-            validationHelper.validateString(specialOffers.getCode(), true);
-            validationHelper.validateString(specialOffers.getLabel(), true);
+            validationHelper.validateString(specialOffers.getCode(), true, 20);
+            validationHelper.validateString(specialOffers.getLabel(), true, 100);
 
             if (specialOffers.getAssoSpecialOfferBillingTypes() != null
                     || specialOffers.getAssoSpecialOfferBillingTypes().size() == 0)
@@ -252,8 +252,8 @@ public class MiscellaneousController {
         try {
             if (departments.getId() != null)
                 validationHelper.validateReferential(departments, true);
-            validationHelper.validateString(departments.getCode(), true);
-            validationHelper.validateString(departments.getLabel(), true);
+            validationHelper.validateString(departments.getCode(), true, 20);
+            validationHelper.validateString(departments.getLabel(), true, 100);
 
             outDepartment = departmentService
                     .addOrUpdateDepartment(departments);
@@ -293,8 +293,8 @@ public class MiscellaneousController {
         try {
             if (cities.getId() != null)
                 validationHelper.validateReferential(cities, true);
-            validationHelper.validateString(cities.getCode(), true);
-            validationHelper.validateString(cities.getLabel(), true);
+            validationHelper.validateString(cities.getCode(), true, 20);
+            validationHelper.validateString(cities.getLabel(), true, 100);
             validationHelper.validateString(cities.getPostalCode(), false, 6);
             validationHelper.validateString(cities.getLocality(), true, 60);
             validationHelper.validateReferential(cities.getDepartment(), false);
@@ -369,8 +369,8 @@ public class MiscellaneousController {
         try {
             if (billingTypes.getId() != null)
                 validationHelper.validateReferential(billingTypes, true);
-            validationHelper.validateString(billingTypes.getCode(), true);
-            validationHelper.validateString(billingTypes.getLabel(), true);
+            validationHelper.validateString(billingTypes.getCode(), true, 20);
+            validationHelper.validateString(billingTypes.getLabel(), true, 100);
 
             outBillingType = billingTypeService
                     .addOrUpdateBillingType(billingTypes);
@@ -420,8 +420,8 @@ public class MiscellaneousController {
             for (AccountingAccount accountingAccount : billingItems.getAccountingAccounts()) {
                 if (accountingAccount.getId() != null)
                     validationHelper.validateReferential(accountingAccount, true);
-                validationHelper.validateString(accountingAccount.getCode(), true);
-                validationHelper.validateString(accountingAccount.getLabel(), true);
+                validationHelper.validateString(accountingAccount.getCode(), true, 20);
+                validationHelper.validateString(accountingAccount.getLabel(), true, 100);
                 validationHelper.validateString(accountingAccount.getAccountingAccountNumber(), true, 20);
                 validationHelper.validateReferential(accountingAccount.getVat(), true);
                 validationHelper.validateReferential(accountingAccount.getAccountingAccountClass(), true);
@@ -464,8 +464,8 @@ public class MiscellaneousController {
         try {
             if (vats.getId() != null)
                 validationHelper.validateReferential(vats, true);
-            validationHelper.validateString(vats.getCode(), true);
-            validationHelper.validateString(vats.getLabel(), true);
+            validationHelper.validateString(vats.getCode(), true, 20);
+            validationHelper.validateString(vats.getLabel(), true, 100);
 
             outVat = vatService
                     .addOrUpdateVat(vats);
@@ -505,8 +505,8 @@ public class MiscellaneousController {
         try {
             if (regions.getId() != null)
                 validationHelper.validateReferential(regions, true);
-            validationHelper.validateString(regions.getCode(), true);
-            validationHelper.validateString(regions.getLabel(), true);
+            validationHelper.validateString(regions.getCode(), true, 20);
+            validationHelper.validateString(regions.getLabel(), true, 100);
 
             outRegion = regionService
                     .addOrUpdateRegion(regions);
@@ -546,8 +546,8 @@ public class MiscellaneousController {
         try {
             if (paymentTypes.getId() != null)
                 validationHelper.validateReferential(paymentTypes, true);
-            validationHelper.validateString(paymentTypes.getCode(), true);
-            validationHelper.validateString(paymentTypes.getLabel(), true);
+            validationHelper.validateString(paymentTypes.getCode(), true, 20);
+            validationHelper.validateString(paymentTypes.getLabel(), true, 100);
 
             outPaymentType = paymentTypeService
                     .addOrUpdatePaymentType(paymentTypes);
@@ -587,8 +587,8 @@ public class MiscellaneousController {
         try {
             if (languages.getId() != null)
                 validationHelper.validateReferential(languages, true);
-            validationHelper.validateString(languages.getCode(), true);
-            validationHelper.validateString(languages.getLabel(), true);
+            validationHelper.validateString(languages.getCode(), true, 20);
+            validationHelper.validateString(languages.getLabel(), true, 100);
 
             outLanguage = languageService
                     .addOrUpdateLanguage(languages);
@@ -628,8 +628,8 @@ public class MiscellaneousController {
         try {
             if (deliveryServices.getId() != null)
                 validationHelper.validateReferential(deliveryServices, true);
-            validationHelper.validateString(deliveryServices.getCode(), true);
-            validationHelper.validateString(deliveryServices.getLabel(), true);
+            validationHelper.validateString(deliveryServices.getCode(), true, 20);
+            validationHelper.validateString(deliveryServices.getLabel(), true, 100);
 
             outDeliveryService = deliveryServiceService
                     .addOrUpdateDeliveryService(deliveryServices);
@@ -669,8 +669,8 @@ public class MiscellaneousController {
         try {
             if (countries.getId() != null)
                 validationHelper.validateReferential(countries, true);
-            validationHelper.validateString(countries.getCode(), true);
-            validationHelper.validateString(countries.getLabel(), true);
+            validationHelper.validateString(countries.getCode(), true, 20);
+            validationHelper.validateString(countries.getLabel(), true, 100);
 
             outCountry = countryService
                     .addOrUpdateCountry(countries);
@@ -710,8 +710,8 @@ public class MiscellaneousController {
         try {
             if (civilities.getId() != null)
                 validationHelper.validateReferential(civilities, true);
-            validationHelper.validateString(civilities.getCode(), true);
-            validationHelper.validateString(civilities.getLabel(), true);
+            validationHelper.validateString(civilities.getCode(), true, 20);
+            validationHelper.validateString(civilities.getLabel(), true, 100);
 
             outCivility = civilityService
                     .addOrUpdateCivility(civilities);
@@ -786,8 +786,8 @@ public class MiscellaneousController {
         try {
             if (competentAuthorityTypes.getId() != null)
                 validationHelper.validateReferential(competentAuthorityTypes, true);
-            validationHelper.validateString(competentAuthorityTypes.getCode(), true);
-            validationHelper.validateString(competentAuthorityTypes.getLabel(), true);
+            validationHelper.validateString(competentAuthorityTypes.getCode(), true, 20);
+            validationHelper.validateString(competentAuthorityTypes.getLabel(), true, 100);
 
             outCompetentAuthorityType = competentAuthorityTypeService
                     .addOrUpdateCompetentAuthorityType(competentAuthorityTypes);
@@ -827,8 +827,8 @@ public class MiscellaneousController {
         try {
             if (competentAuthorities.getId() != null)
                 validationHelper.validateReferential(competentAuthorities, true);
-            validationHelper.validateString(competentAuthorities.getCode(), true);
-            validationHelper.validateString(competentAuthorities.getLabel(), true);
+            validationHelper.validateString(competentAuthorities.getCode(), true, 20);
+            validationHelper.validateString(competentAuthorities.getLabel(), true, 100);
             validationHelper.validateReferential(competentAuthorities.getCompetentAuthorityType(), true);
             if (competentAuthorities.getCities() == null && competentAuthorities.getDepartments() == null
                     && competentAuthorities.getRegions() == null)
@@ -895,8 +895,8 @@ public class MiscellaneousController {
         try {
             if (weekDays.getId() != null)
                 validationHelper.validateReferential(weekDays, true);
-            validationHelper.validateString(weekDays.getCode(), true);
-            validationHelper.validateString(weekDays.getLabel(), true);
+            validationHelper.validateString(weekDays.getCode(), true, 20);
+            validationHelper.validateString(weekDays.getLabel(), true, 100);
 
             outWeekDay = weekDayService
                     .addOrUpdateWeekDay(weekDays);
@@ -936,8 +936,8 @@ public class MiscellaneousController {
         try {
             if (legalForms.getId() != null)
                 validationHelper.validateReferential(legalForms, true);
-            validationHelper.validateString(legalForms.getCode(), true);
-            validationHelper.validateString(legalForms.getLabel(), true);
+            validationHelper.validateString(legalForms.getCode(), true, 20);
+            validationHelper.validateString(legalForms.getLabel(), true, 100);
 
             outLegalForm = legalFormService
                     .addOrUpdateLegalForm(legalForms);
@@ -977,8 +977,8 @@ public class MiscellaneousController {
         try {
             if (documentTypes.getId() != null)
                 validationHelper.validateReferential(documentTypes, true);
-            validationHelper.validateString(documentTypes.getCode(), true);
-            validationHelper.validateString(documentTypes.getLabel(), true);
+            validationHelper.validateString(documentTypes.getCode(), true, 20);
+            validationHelper.validateString(documentTypes.getLabel(), true, 100);
 
             outDocumentType = documentTypeService
                     .addOrUpdateDocumentType(documentTypes);
@@ -1018,8 +1018,8 @@ public class MiscellaneousController {
         try {
             if (attachmentTypes.getId() != null)
                 validationHelper.validateReferential(attachmentTypes, true);
-            validationHelper.validateString(attachmentTypes.getCode(), true);
-            validationHelper.validateString(attachmentTypes.getLabel(), true);
+            validationHelper.validateString(attachmentTypes.getCode(), true, 20);
+            validationHelper.validateString(attachmentTypes.getLabel(), true, 100);
 
             outAttachmentType = attachmentTypeService
                     .addOrUpdateAttachmentType(attachmentTypes);

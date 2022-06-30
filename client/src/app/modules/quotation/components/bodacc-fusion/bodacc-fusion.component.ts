@@ -17,6 +17,8 @@ export class BodaccFusionComponent implements OnInit {
 
   matcher: CustomErrorStateMatcher = new CustomErrorStateMatcher();
   @Input() bodaccFusion: BodaccFusion = {} as BodaccFusion;
+  @Input() instanceOfCustomerOrder: boolean = false;
+  @Input() isStatusOpen: boolean = true;
   @Input() editMode: boolean = false;
   @ViewChild(MatAccordion) accordion: MatAccordion | undefined;
 
@@ -46,10 +48,6 @@ export class BodaccFusionComponent implements OnInit {
   }
 
   bodaccFusionForm = this.formBuilder.group({
-    mergingCompanySiren: ['', []],
-    mergingCompanyRcsCompetentAuthority: ['', []],
-    absorbedCompanySiren: ['', []],
-    absorbedCompanyRcsCompetentAuthority: ['', []],
   });
 
   getFormStatus(): boolean {

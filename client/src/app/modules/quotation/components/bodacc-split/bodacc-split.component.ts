@@ -17,6 +17,8 @@ export class BodaccSplitComponent implements OnInit {
 
   matcher: CustomErrorStateMatcher = new CustomErrorStateMatcher();
   @Input() bodaccSplit: BodaccSplit = {} as BodaccSplit;
+  @Input() instanceOfCustomerOrder: boolean = false;
+  @Input() isStatusOpen: boolean = true;
   @Input() editMode: boolean = false;
   @ViewChild(MatAccordion) accordion: MatAccordion | undefined;
 
@@ -46,10 +48,6 @@ export class BodaccSplitComponent implements OnInit {
   }
 
   bodaccSplitForm = this.formBuilder.group({
-    beneficiaryCompanySiren: ['', []],
-    beneficiaryCompanyRcsCompetentAuthority: ['', []],
-    splitCompanySiren: ['', []],
-    splitCompanyRcsCompetentAuthority: ['', []],
   });
 
 

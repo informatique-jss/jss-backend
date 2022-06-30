@@ -22,9 +22,10 @@ public class AccountingAccount implements Serializable, IId {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
 
-	@Column(nullable = false)
+	@Column(nullable = false, length = 100)
 	private String label;
 
+	@Column(nullable = false, length = 20)
 	private String code;
 
 	@Column(length = 20)

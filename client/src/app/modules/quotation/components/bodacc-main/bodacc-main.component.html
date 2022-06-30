@@ -12,7 +12,8 @@
           <tr>
             <td>
               <select-bodacc-publication-type [(model)]="bodacc.bodaccPublicationType" label="Type de parution"
-                [form]="bodaccForm" propertyName="bodaccPublicationType" [isMandatory]="true" [isDisabled]="!editMode"
+                [form]="bodaccForm" propertyName="bodaccPublicationType" [isMandatory]="true"
+                [conditionnalRequired]=" !isStatusOpen" [isDisabled]="!editMode"
                 (selectionChange)="changePublicationType()"></select-bodacc-publication-type>
             </td>
             <td
@@ -31,7 +32,8 @@
           <tr>
             <td>
               <generic-datepicker [(model)]="bodacc.dateOfPublication" label="Date de parution" [form]="bodaccForm"
-                propertyName="dateOfPublication" [isMandatory]="false" [isDisabled]="!editMode"></generic-datepicker>
+                propertyName="dateOfPublication" [isMandatory]="false" [isDisabled]="!editMode"
+                [conditionnalRequired]=" !isStatusOpen"></generic-datepicker>
             </td>
           </tr>
         </table>
@@ -40,13 +42,16 @@
     <mat-tab label="Imprimé"
       *ngIf="bodacc.bodaccPublicationType && (bodacc.bodaccPublicationType.code==BODACC_PUBLICATION_TYPE_PARTIAL_SPLIT ||bodacc.bodaccPublicationType.code==BODACC_PUBLICATION_TYPE_SPLIT || bodacc.bodaccPublicationType.code==BODACC_PUBLICATION_TYPE_MERGING || bodacc.bodaccPublicationType.code==BODACC_PUBLICATION_TYPE_SALE_OF_BUSINESS)">
       <bodacc-sale [bodaccSale]="bodacc.bodaccSale" [editMode]="editMode"
-        [transfertFundsType]="bodacc.transfertFundsType" [affaire]="affaire"
+        [instanceOfCustomerOrder]="instanceOfCustomerOrder" [transfertFundsType]="bodacc.transfertFundsType"
+        [affaire]="affaire" [isStatusOpen]="isStatusOpen"
         *ngIf="bodacc.bodaccPublicationType && bodacc.transfertFundsType && bodacc.bodaccPublicationType.code==BODACC_PUBLICATION_TYPE_SALE_OF_BUSINESS">
       </bodacc-sale>
       <bodacc-fusion [bodaccFusion]="bodacc.bodaccFusion" [editMode]="editMode"
+        [instanceOfCustomerOrder]="instanceOfCustomerOrder" [isStatusOpen]="isStatusOpen"
         *ngIf="bodacc.bodaccPublicationType &&  bodacc.bodaccPublicationType.code==BODACC_PUBLICATION_TYPE_MERGING">
       </bodacc-fusion>
       <bodacc-split [bodaccSplit]="bodacc.bodaccSplit" [editMode]="editMode"
+        [instanceOfCustomerOrder]="instanceOfCustomerOrder" [isStatusOpen]="isStatusOpen"
         *ngIf="bodacc.bodaccPublicationType &&  bodacc.bodaccPublicationType.code==BODACC_PUBLICATION_TYPE_SPLIT">
       </bodacc-split>
     </mat-tab>

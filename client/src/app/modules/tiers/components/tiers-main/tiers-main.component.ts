@@ -61,13 +61,8 @@ export class PrincipalComponent implements OnInit {
   }
 
   principalForm = this.formBuilder.group({
-    tiersType: [''],
-    tiersCategory: [''],
-    deliveryService: [''],
-    postalCode: ['',],
-    city: ['',],
-    responsibleSuscribersNumber: [{ value: '', disabled: true }, []],
-    webAccountNumber: [{ value: '', disabled: true }, []],
+    responsibleSuscribersNumber: [''],
+    webAccountNumber: [''],
   });
 
   checkVAT(fieldName: string): ValidatorFn {

@@ -13,13 +13,23 @@ import com.jss.osiris.modules.miscellaneous.model.IId;
 @Entity
 public class QuotationStatus implements Serializable, IId {
 
+	public static String OPEN = "OPEN";
+	public static String TO_VERIFY = "TO_VERIFY";
+	public static String VALIDATED_BY_JSS = "VALIDATED_BY_JSS";
+	public static String SENT_TO_CUSTOMER = "SENT_TO_CUSTOMER";
+	public static String VALIDATED_BY_CUSTOMER = "VALIDATED_BY_CUSTOMER";
+	public static String REFUSED_BY_CUSTOMER = "REFUSED_BY_CUSTOMER";
+	public static String ABANDONED = "ABANDONED";
+	public static String CANCELLED = "CANCELLED";
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
 
-	@Column(nullable = false)
+	@Column(nullable = false, length = 100)
 	private String label;
 
+	@Column(nullable = false, length = 20)
 	private String code;
 
 	public Integer getId() {

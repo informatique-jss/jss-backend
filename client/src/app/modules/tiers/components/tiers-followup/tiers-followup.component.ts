@@ -124,8 +124,6 @@ export class TiersFollowupComponent implements OnInit {
   }
 
   followupForm = this.formBuilder.group({
-    tiersFollowupType: [''],
-    gift: [''],
   })
 
   getFormStatus(): boolean {

@@ -59,6 +59,9 @@ export abstract class GenericAutocompleteComponent<T, U> implements OnInit {
   constructor(private formBuilder: UntypedFormBuilder, private cdr: ChangeDetectorRef) { }
 
   ngOnChanges(changes: SimpleChanges) {
+    if (this.form && !this.form.get(this.propertyName))
+      this.ngOnInit();
+
     if (changes.model && this.form != undefined) {
       this.form.get(this.propertyName)?.setValue(this.model);
       this.cdr.detectChanges();
@@ -74,6 +77,7 @@ export abstract class GenericAutocompleteComponent<T, U> implements OnInit {
 
   ngOnInit() {
     if (this.form != undefined) {
+      this.form.addControl(this.propertyName, this.formBuilder.control(''));
       let validators: ValidatorFn[] = [] as Array<ValidatorFn>;
       validators.push(this.checkAutocompleteField());
       if (this.isMandatory) {

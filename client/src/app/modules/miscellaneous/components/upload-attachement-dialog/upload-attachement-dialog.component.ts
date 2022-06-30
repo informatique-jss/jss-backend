@@ -2,7 +2,7 @@ import { HttpEventType, HttpResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { AppService } from 'src/app/app.service';
 import { MAX_SIZE_UPLOAD_FILES } from 'src/app/libs/Constants';
 import { AttachmentType } from '../../model/AttachmentType';
 import { IAttachment } from '../../model/IAttachment';
@@ -31,8 +31,8 @@ export class UploadAttachementDialogComponent implements OnInit {
 
   constructor(private uploadTiersAttachementDialogRef: MatDialogRef<UploadAttachementDialogComponent>,
     private formBuilder: UntypedFormBuilder,
-    private snackBar: MatSnackBar,
     protected attachmentTypeService: AttachmentTypeService,
+    private appService: AppService,
     private uploadAttachmentService: UploadAttachmentService) { }
 
   ngOnInit() {
@@ -80,14 +80,8 @@ export class UploadAttachementDialogComponent implements OnInit {
   checkFile() {
     if (this.file != null && this.file.size > MAX_SIZE_UPLOAD_FILES) {
       this.deleteFile();
-      let sb = this.snackBar.open("Taille maximale d'import limitée à 5 Mo", 'Fermer', {
-        duration: 60 * 1000, panelClass: ["red-snackbar"]
-      });
-      sb.onAction().subscribe(() => {
-        sb.dismiss();
-      });
+      this.appService.displaySnackBar("Taille maximale d'import limitée à 5 Mo", true, 60);
     }
-
   }
 
   uploadFile() {
@@ -98,12 +92,7 @@ export class UploadAttachementDialogComponent implements OnInit {
         this.entity.attachments.forEach(attachement => {
           if (!found && attachement.uploadedFile.filename == this.filename) {
             found = true;
-            let sb = this.snackBar.open("Nom de fichier déjà existant", 'Fermer', {
-              duration: 60 * 1000, panelClass: ["red-snackbar"]
-            });
-            sb.onAction().subscribe(() => {
-              sb.dismiss();
-            });
+            this.appService.displaySnackBar("Nom de fichier déjà existant", true, 60);
           }
         })
       }
@@ -119,12 +108,7 @@ export class UploadAttachementDialogComponent implements OnInit {
           }
         },
           err => {
-            let sb = this.snackBar.open("Erreur lors de l'envoi du fichier", 'Fermer', {
-              duration: 60 * 1000, panelClass: ["red-snackbar"]
-            });
-            sb.onAction().subscribe(() => {
-              sb.dismiss();
-            });
+            this.appService.displaySnackBar("Erreur lors de l'envoi du fichier", true, 60);
             this.uploadTiersAttachementDialogRef.close(null);
             this.isSending = false;
           });

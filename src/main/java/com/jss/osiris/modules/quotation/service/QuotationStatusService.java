@@ -10,4 +10,6 @@ public interface QuotationStatusService {
     public QuotationStatus getQuotationStatus(Integer id);
 
     public QuotationStatus addOrUpdateQuotationStatus(QuotationStatus quotationStatus);
+
+    public QuotationStatus getQuotationStatusByCode(String code);
 }

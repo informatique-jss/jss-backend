@@ -1,5 +1,4 @@
 import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router, UrlSegment } from '@angular/router';
 import { AppService } from 'src/app/app.service';
 import { isTiersTypeProspect } from 'src/app/libs/CompareHelper';
@@ -36,7 +35,6 @@ export class TiersComponent implements OnInit {
 
   constructor(private appService: AppService,
     private tiersService: TiersService,
-    private snackBar: MatSnackBar,
     private activatedRoute: ActivatedRoute,
     protected searchService: SearchService,
     private router: Router) { }
@@ -54,7 +52,7 @@ export class TiersComponent implements OnInit {
         this.tiersService.setCurrentViewedTiers(this.tiers);
         this.appService.changeHeaderTitle(this.tiers.denomination != null ? this.tiers.denomination : "");
         this.toggleTabs();
-        this.selectedTabIndex = 3;
+        this.selectedTabIndex = 2;
         this.responsableMainComponent?.setSelectedResponsableId(idTiers);
       })
       // Load by tiers
@@ -118,12 +116,7 @@ export class TiersComponent implements OnInit {
       errorMessages.push("Onglet Responsable");
     if (errorMessages.length > 0) {
       let errorMessage = "Les onglets suivants ne sont pas correctement remplis. Veuillez les compléter avant de sauvegarder : " + errorMessages.join(" / ");
-      let sb = this.snackBar.open(errorMessage, 'Fermer', {
-        duration: 60 * 1000, panelClass: ["red-snackbar"]
-      });
-      sb.onAction().subscribe(() => {
-        sb.dismiss();
-      });
+      this.appService.displaySnackBar(errorMessage, true, 60);
       return false;
     }
     return true;

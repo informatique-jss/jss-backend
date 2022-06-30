@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { PaymentType } from '../../../model/PaymentType';
-import { PaymentTypeService } from '../../../services/payment-type.service';
+import { PaymentTypeService } from '../../../services/payment.type.service';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
 
 @Component({

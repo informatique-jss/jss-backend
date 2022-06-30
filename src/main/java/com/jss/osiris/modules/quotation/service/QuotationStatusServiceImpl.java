@@ -33,4 +33,9 @@ public class QuotationStatusServiceImpl implements QuotationStatusService {
     public QuotationStatus addOrUpdateQuotationStatus(QuotationStatus quotationStatus) {
         return quotationStatusRepository.save(quotationStatus);
     }
+
+    @Override
+    public QuotationStatus getQuotationStatusByCode(String code) {
+        return quotationStatusRepository.findByCode(code);
+    }
 }

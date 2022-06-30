@@ -19,7 +19,8 @@ export class SearchService {
   openSearchOnModule(module: EntityType | null) {
     if (this.searchDialogRef == undefined || this.searchDialogRef?.getState() != 0) {
       this.searchDialogRef = this.searchDialog.open(SearchComponent, {
-        width: '100%'
+        width: '100%',
+        height: '90%'
       });
       if (module != null)
         this.searchDialogRef.componentInstance.userSelectedModule = module;

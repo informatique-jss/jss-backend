@@ -1,8 +1,11 @@
 package com.jss.osiris.modules.quotation.model;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
+import com.jss.osiris.modules.miscellaneous.model.Attachment;
+import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.miscellaneous.model.Mail;
 import com.jss.osiris.modules.miscellaneous.model.Phone;
@@ -14,19 +17,66 @@ public interface IQuotation extends Serializable, IId {
 
 	public Integer getId();
 
+	public void setId(Integer id);
+
 	public Tiers getTiers();
+
+	public void setTiers(Tiers tiers);
 
 	public Responsable getResponsable();
 
+	public void setResponsable(Responsable responsable);
+
 	public List<SpecialOffer> getSpecialOffers();
 
-	public QuotationLabelType getQuotationLabelType();
+	public void setSpecialOffers(List<SpecialOffer> specialOffers);
 
-	public String getQuotationLabel();
+	public Date getCreatedDate();
+
+	public void setCreatedDate(Date createdDate);
+
+	public QuotationStatus getStatus();
+
+	public void setStatus(QuotationStatus status);
+
+	public String getObservations();
+
+	public void setObservations(String observations);
+
+	public String getDescription();
+
+	public void setDescription(String description);
+
+	public List<Attachment> getAttachments();
+
+	public void setAttachments(List<Attachment> attachments);
+
+	public List<Document> getDocuments();
+
+	public void setDocuments(List<Document> documents);
+
+	public QuotationLabelType getLabelType();
+
+	public void setLabelType(QuotationLabelType labelType);
+
+	public String getLabel();
+
+	public void setLabel(String label);
 
 	public RecordType getRecordType();
 
+	public void setRecordType(RecordType recordType);
+
+	public List<Provision> getProvisions();
+
+	public void setProvisions(List<Provision> provisions);
+
 	public List<Mail> getMails();
 
+	public void setMails(List<Mail> mails);
+
 	public List<Phone> getPhones();
+
+	public void setPhones(List<Phone> phones);
+
 }

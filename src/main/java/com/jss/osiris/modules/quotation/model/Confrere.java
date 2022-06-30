@@ -30,6 +30,7 @@ public class Confrere implements Serializable, IId {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
 
+	@Column(nullable = false, length = 20)
 	private String code;
 
 	@Column(length = 40)

@@ -714,13 +714,43 @@ public class InitReferentialsController {
 		 * quotationStatusRepository.deleteAll();
 		 * 
 		 * QuotationStatus quotationStatus = new QuotationStatus();
-		 * quotationStatus.setCode("OUVERT");
+		 * quotationStatus.setCode("OPEN");
 		 * quotationStatus.setLabel("Ouvert");
 		 * quotationStatusRepository.save(quotationStatus);
 		 * 
 		 * quotationStatus = new QuotationStatus();
-		 * quotationStatus.setCode("EN_COURS");
-		 * quotationStatus.setLabel("En cours");
+		 * quotationStatus.setCode("TO_VERIFY");
+		 * quotationStatus.setLabel("A vérifier");
+		 * quotationStatusRepository.save(quotationStatus);
+		 * 
+		 * quotationStatus = new QuotationStatus();
+		 * quotationStatus.setCode("VALIDATED_BY_JSS");
+		 * quotationStatus.setLabel("Validé par JSS");
+		 * quotationStatusRepository.save(quotationStatus);
+		 * 
+		 * quotationStatus = new QuotationStatus();
+		 * quotationStatus.setCode("SENT_TO_CUSTOMER");
+		 * quotationStatus.setLabel("Envoyé au client");
+		 * quotationStatusRepository.save(quotationStatus);
+		 * 
+		 * quotationStatus = new QuotationStatus();
+		 * quotationStatus.setCode("VALIDATED_BY_CUSTOMER");
+		 * quotationStatus.setLabel("Validé par le client");
+		 * quotationStatusRepository.save(quotationStatus);
+		 * 
+		 * quotationStatus = new QuotationStatus();
+		 * quotationStatus.setCode("REFUSED_BY_CUSTOMER");
+		 * quotationStatus.setLabel("Refusé par le client");
+		 * 
+		 * quotationStatusRepository.save(quotationStatus);
+		 * quotationStatus = new QuotationStatus();
+		 * quotationStatus.setCode("ABANDONED");
+		 * quotationStatus.setLabel("Abandonné");
+		 * 
+		 * quotationStatusRepository.save(quotationStatus);
+		 * quotationStatus = new QuotationStatus();
+		 * quotationStatus.setCode("CANCELLED");
+		 * quotationStatus.setLabel("Annulé");
 		 * quotationStatusRepository.save(quotationStatus);
 		 * 
 		 * quotationLabelTypeRepository.deleteAll();

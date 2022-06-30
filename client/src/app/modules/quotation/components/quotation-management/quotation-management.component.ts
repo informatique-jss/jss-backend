@@ -60,8 +60,6 @@ export class QuotationManagementComponent implements OnInit {
   }
 
   quotationManagementForm = this.formBuilder.group({
-    quotationLabelType: ['', []],
-    recordType: ['', []],
   });
 
   setDocument() {

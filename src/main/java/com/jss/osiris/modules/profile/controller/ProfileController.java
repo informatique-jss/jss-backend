@@ -59,8 +59,8 @@ public class ProfileController {
 		try {
 			if (teams.getId() != null)
 				validationHelper.validateReferential(teams, true);
-			validationHelper.validateString(teams.getCode(), true);
-			validationHelper.validateString(teams.getLabel(), true);
+			validationHelper.validateString(teams.getCode(), true, 20);
+			validationHelper.validateString(teams.getLabel(), true, 100);
 			validationHelper.validateReferential(teams.getManager(), false);
 
 			outTeam = teamService

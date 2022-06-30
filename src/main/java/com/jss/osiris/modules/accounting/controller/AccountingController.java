@@ -59,8 +59,8 @@ public class AccountingController {
         try {
             if (accountingAccountClasses.getId() != null)
                 validationHelper.validateReferential(accountingAccountClasses, true);
-            validationHelper.validateString(accountingAccountClasses.getCode(), true);
-            validationHelper.validateString(accountingAccountClasses.getLabel(), true);
+            validationHelper.validateString(accountingAccountClasses.getCode(), true, 20);
+            validationHelper.validateString(accountingAccountClasses.getLabel(), true, 100);
 
             outAccountingAccountClass = accountingAccountClassService
                     .addOrUpdateAccountingAccountClass(accountingAccountClasses);
@@ -100,8 +100,8 @@ public class AccountingController {
         try {
             if (accountingAccounts.getId() != null)
                 validationHelper.validateReferential(accountingAccounts, true);
-            validationHelper.validateString(accountingAccounts.getCode(), true);
-            validationHelper.validateString(accountingAccounts.getLabel(), true);
+            validationHelper.validateString(accountingAccounts.getCode(), true, 20);
+            validationHelper.validateString(accountingAccounts.getLabel(), true, 100);
             validationHelper.validateString(accountingAccounts.getAccountingAccountNumber(), true, 20);
             validationHelper.validateReferential(accountingAccounts.getVat(), false);
             validationHelper.validateReferential(accountingAccounts.getAccountingAccountClass(), true);

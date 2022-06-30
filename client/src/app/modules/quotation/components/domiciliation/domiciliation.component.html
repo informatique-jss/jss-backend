@@ -7,7 +7,7 @@
             <td>
               <select-contract-type [(model)]="domiciliation.domiciliationContractType" label="Type de contrat"
                 [form]="domiciliationForm" propertyName="domiciliationContractType" [isMandatory]="true"
-                [isDisabled]="!editMode"></select-contract-type>
+                [conditionnalRequired]=" !isStatusOpen" [isDisabled]="!editMode"></select-contract-type>
             </td>
             <td style="vertical-align: baseline;">
               <radio-group-language [(model)]="domiciliation.language" [form]="domiciliationForm"
@@ -20,12 +20,12 @@
             <td>
               <select-building-domiciliation [(model)]="domiciliation.buildingDomiciliation"
                 label="Adresse de domiciliation" [form]="domiciliationForm" propertyName="buildingDomiciliation"
-                [isMandatory]="true"></select-building-domiciliation>
+                [conditionnalRequired]=" !isStatusOpen" [isMandatory]="true"></select-building-domiciliation>
             </td>
             <td style="vertical-align: baseline;">
               <select-mail-redirection [(model)]="domiciliation.mailRedirectionType" label="Adresse de redirection"
-                [form]="domiciliationForm" propertyName="mailRedirectionType" [isMandatory]="true"
-                [isDisabled]="!editMode"></select-mail-redirection>
+                [conditionnalRequired]=" !isStatusOpen" [form]="domiciliationForm" propertyName="mailRedirectionType"
+                [isMandatory]="true" [isDisabled]="!editMode"></select-mail-redirection>
             </td>
           </tr>
         </table>
@@ -34,27 +34,31 @@
             <td>
               <generic-textarea [(model)]="domiciliation.mailRecipient" label="Destinataire(s) courrier"
                 [form]="domiciliationForm" propertyName="mailRecipient" [isMandatory]="true" [isDisabled]="!editMode"
-                [conditionnalRequired]="mustDecribeAdresse()" (filterInput)="limitTextareaSize(3)"></generic-textarea>
+                [conditionnalRequired]="mustDecribeAdresse() && !isStatusOpen" (filterInput)="limitTextareaSize(3)">
+              </generic-textarea>
             </td>
             <td>
               <generic-input [(model)]="domiciliation.address" label="Adresse" [form]="domiciliationForm"
                 propertyName="address" [isMandatory]="true" [isDisabled]="!editMode"
-                [conditionnalRequired]="mustDecribeAdresse()" [maxLength]="20"></generic-input>
+                [conditionnalRequired]="mustDecribeAdresse() && !isStatusOpen" [maxLength]="20"></generic-input>
             </td>
             <td>
               <autocomplete-city [(model)]="domiciliation.city" [modelCountry]="domiciliation.country"
                 [form]="domiciliationForm" propertyName="city" [isMandatory]="true"
-                [conditionnalRequired]="mustDecribeAdresse()" (onOptionSelected)="fillPostalCode($event)">
+                [conditionnalRequired]="mustDecribeAdresse() && !isStatusOpen"
+                (onOptionSelected)="fillPostalCode($event)">
               </autocomplete-city>
             </td>
             <td>
               <autocomplete-postal-code [(model)]="domiciliation.postalCode" [form]="domiciliationForm"
-                propertyName="postalCode" [isMandatory]="true" [conditionnalRequired]="mustDecribeAdresse()"
-                (onOptionSelected)="fillCity($event)"></autocomplete-postal-code>
+                propertyName="postalCode" [isMandatory]="true"
+                [conditionnalRequired]="mustDecribeAdresse() && !isStatusOpen" (onOptionSelected)="fillCity($event)">
+              </autocomplete-postal-code>
             </td>
             <td>
               <autocomplete-country [(model)]="domiciliation.country" [form]="domiciliationForm" propertyName="country"
-                [isMandatory]="true" [isDisabled]="!editMode" [conditionnalRequired]="mustDecribeAdresse()">
+                [isMandatory]="true" [isDisabled]="!editMode"
+                [conditionnalRequired]="mustDecribeAdresse() && !isStatusOpen">
               </autocomplete-country>
             </td>
           </tr>
@@ -63,7 +67,8 @@
           <tr>
             <td>
               <chips-mail [(model)]="domiciliation.mails" label="Mails" [form]="domiciliationForm" propertyName="mails"
-                [isDisabled]="!editMode" [isMandatory]="true" [conditionnalRequired]="mustDecribeMail()"></chips-mail>
+                [isDisabled]="!editMode" [isMandatory]="true"
+                [conditionnalRequired]="mustDecribeMail() && !isStatusOpen"></chips-mail>
             </td>
           </tr>
         </table>
@@ -71,7 +76,8 @@
           <tr>
             <td>
               <generic-datepicker [(model)]="domiciliation.startDate" label="Date de début de domiciliation"
-                [form]="domiciliationForm" propertyName="startDate" [isMandatory]="true" [isDisabled]="!editMode">
+                [form]="domiciliationForm" propertyName="startDate" [isMandatory]="true"
+                [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode">
               </generic-datepicker>
             </td>
             <td>
@@ -88,7 +94,8 @@
           <tr>
             <generic-textarea [(model)]="domiciliation.activityDescription" label="Activité de la société"
               [form]="domiciliationForm" propertyName="activityDescription" [isMandatory]="true"
-              [isDisabled]="!editMode"></generic-textarea>
+              [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode">
+            </generic-textarea>
           </tr>
         </table>
         <table class="full-width">
@@ -96,28 +103,35 @@
             <td *ngIf="mustDecribeAdresse()">
               <generic-textarea [(model)]="domiciliation.activityMailRecipient" label="Destinataire(s) courrier"
                 [form]="domiciliationForm" propertyName="Destinataire(s) courrier" [isMandatory]="true"
-                [isDisabled]="!editMode" [conditionnalRequired]="" [customValidators]=""
+                [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode"
                 (filterInput)="limitTextareaSizeActivityMailRecipient(3)"></generic-textarea>
             </td>
             <td>
               <generic-input [(model)]="domiciliation.activityAddress" label="Adresse" [form]="domiciliationForm"
-                propertyName="activityAddress" [isMandatory]="true" [isDisabled]="!editMode" [maxLength]="20">
+                propertyName="activityAddress" [isMandatory]="true"
+                [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode"
+                [maxLength]="20">
               </generic-input>
             </td>
             <td>
               <autocomplete-city [(model)]="domiciliation.activityCity" [modelCountry]="domiciliation.activityCountry"
                 [form]="domiciliationForm" propertyName="activityCity" [isMandatory]="true"
+                [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen"
                 (onOptionSelected)="fillActivityPostalCode($event)">
               </autocomplete-city>
             </td>
             <td>
               <autocomplete-postal-code [(model)]="domiciliation.activityPostalCode" [form]="domiciliationForm"
-                propertyName="activityPostalCode" [isMandatory]="true" (onOptionSelected)="fillActivityCity($event)">
+                propertyName="activityPostalCode" [isMandatory]="true"
+                [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen"
+                (onOptionSelected)="fillActivityCity($event)">
               </autocomplete-postal-code>
             </td>
             <td>
               <autocomplete-country [(model)]="domiciliation.activityCountry" [form]="domiciliationForm"
-                propertyName="activityCountry" [isMandatory]="true" [isDisabled]="!editMode"></autocomplete-country>
+                propertyName="activityCountry" [isMandatory]="true"
+                [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode">
+              </autocomplete-country>
             </td>
           </tr>
         </table>
@@ -126,12 +140,13 @@
             <td *ngIf="mustDecribeMail()">
               <chips-mail [(model)]="domiciliation.activityMails" label="Mails" [form]="domiciliationForm"
                 propertyName="activityMails" [isMandatory]="true" [isDisabled]="!editMode"
-                [conditionnalRequired]="mustDecribeMail()"></chips-mail>
+                [conditionnalRequired]="instanceOfCustomerOrder && mustDecribeMail() && !isStatusOpen"></chips-mail>
             </td>
             <td>
               <generic-textarea [(model)]="domiciliation.accountingRecordDomiciliation"
                 label="Lieu de conservation des documents comptables" [form]="domiciliationForm"
-                propertyName="accountingRecordDomiciliation" [isMandatory]="true" [isDisabled]="!editMode">
+                propertyName="accountingRecordDomiciliation" [isMandatory]="true"
+                [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode">
               </generic-textarea>
             </td>
           </tr>
@@ -153,19 +168,22 @@
             <td>
               <autocomplete-legal-form [(model)]="domiciliation.legalGardianLegalForm" [form]="domiciliationForm"
                 propertyName="legalGardianLegalForm" [isMandatory]="true" [isDisabled]="!editMode"
-                [conditionnalRequired]="domiciliation.isLegalPerson">
+                [conditionnalRequired]="domiciliation.isLegalPerson && instanceOfCustomerOrder && !isStatusOpen">
               </autocomplete-legal-form>
             </td>
             <td>
               <autocomplete-siren [(model)]="domiciliation.legalGardianSiren" [form]="domiciliationForm"
                 propertyName="legalGardianSiren" [isMandatory]="true"
-                [conditionnalRequired]="domiciliation.isLegalPerson" (onOptionSelected)="fillSiren($event)">
+                [conditionnalRequired]="domiciliation.isLegalPerson && instanceOfCustomerOrder && !isStatusOpen"
+                (onOptionSelected)="fillSiren($event)">
               </autocomplete-siren>
             </td>
             <td>
               <generic-input [(model)]="domiciliation.legalGardianDenomination" label="Dénomination"
                 [form]="domiciliationForm" propertyName="legalGardianDenomination" [isMandatory]="true"
-                [isDisabled]="!editMode" [conditionnalRequired]="domiciliation.isLegalPerson" [maxLength]="60">
+                [isDisabled]="!editMode"
+                [conditionnalRequired]="domiciliation.isLegalPerson && instanceOfCustomerOrder && !isStatusOpen"
+                [maxLength]="60">
               </generic-input>
             </td>
           </tr>
@@ -188,17 +206,23 @@
             <td>
               <generic-input [(model)]="domiciliation.legalGardianLastname" label="Nom" [form]="domiciliationForm"
                 propertyName="legalGardianLastname" [isMandatory]="true" [isDisabled]="!editMode"
-                [conditionnalRequired]="!domiciliation.isLegalPerson" [maxLength]="20"></generic-input>
+                [conditionnalRequired]="!domiciliation.isLegalPerson && instanceOfCustomerOrder && !isStatusOpen"
+                [maxLength]="20">
+              </generic-input>
             </td>
             <td>
               <generic-input [(model)]="domiciliation.legalGardianFirstname" label="Prénom" [form]="domiciliationForm"
                 propertyName="legalGardianFirstname" [isMandatory]="true" [isDisabled]="!editMode"
-                [conditionnalRequired]="!domiciliation.isLegalPerson" [maxLength]="20"></generic-input>
+                [conditionnalRequired]="!domiciliation.isLegalPerson && instanceOfCustomerOrder && !isStatusOpen"
+                [maxLength]="20">
+              </generic-input>
             </td>
             <td>
               <generic-input [(model)]="domiciliation.legalGardianJob" label="Fonction" [form]="domiciliationForm"
                 propertyName="legalGardianJob" [isMandatory]="true" [isDisabled]="!editMode"
-                [conditionnalRequired]="!domiciliation.isLegalPerson" [maxLength]="20"></generic-input>
+                [conditionnalRequired]="!domiciliation.isLegalPerson && instanceOfCustomerOrder && !isStatusOpen"
+                [maxLength]="20">
+              </generic-input>
             </td>
           </tr>
         </table>
@@ -207,14 +231,17 @@
             <td>
               <generic-datepicker [(model)]="domiciliation.legalGardianBirthdate" label="Date de naissance"
                 [form]="domiciliationForm" propertyName="legalGardianBirthdate" [isMandatory]="true"
-                [isDisabled]="!editMode" [conditionnalRequired]="!domiciliation.isLegalPerson"
+                [isDisabled]="!editMode"
+                [conditionnalRequired]="!domiciliation.isLegalPerson && instanceOfCustomerOrder && !isStatusOpen"
                 [maxDate]="getCurrentDate()">
               </generic-datepicker>
             </td>
             <td>
               <generic-input [(model)]="domiciliation.legalGardianPlaceOfBirth" label="Lieu de naissance"
                 [form]="domiciliationForm" propertyName="legalGardianPlaceOfBirth" [isMandatory]="true"
-                [isDisabled]="!editMode" [conditionnalRequired]="!domiciliation.isLegalPerson" [maxLength]="60">
+                [isDisabled]="!editMode"
+                [conditionnalRequired]="!domiciliation.isLegalPerson && instanceOfCustomerOrder && !isStatusOpen"
+                [maxLength]="60">
               </generic-input>
             </td>
           </tr>
@@ -224,29 +251,36 @@
             <td>
               <generic-textarea [(model)]="domiciliation.legalGardianMailRecipient" label="Destinataire(s) courrier"
                 [form]="domiciliationForm" propertyName="legalGardianMailRecipient" [isMandatory]="true"
-                [isDisabled]="!editMode" [conditionnalRequired]="" [customValidators]=""
+                [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode"
                 (filterInput)="limitTextareaSizeLegalGardianMailRecipient(3)"></generic-textarea>
             </td>
             <td>
               <generic-input [(model)]="domiciliation.legalGardianAddress" label="Adresse" [form]="domiciliationForm"
-                propertyName="legalGardianAddress" [isMandatory]="true" [isDisabled]="!editMode" [maxLength]="20">
+                propertyName="legalGardianAddress" [isMandatory]="true"
+                [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode"
+                [maxLength]="20">
               </generic-input>
             </td>
             <td>
               <autocomplete-city [(model)]="domiciliation.legalGardianCity"
                 [modelCountry]="domiciliation.legalGardianCountry" [form]="domiciliationForm"
                 propertyName="legalGardianCity" [isMandatory]="true"
+                [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen"
                 (onOptionSelected)="fillLegalGardianPostalCode($event)">
               </autocomplete-city>
             </td>
             <td>
               <autocomplete-postal-code [(model)]="domiciliation.legalGardianPostalCode" [form]="domiciliationForm"
                 propertyName="legalGardianPostalCode" [isMandatory]="true"
-                (onOptionSelected)="fillLegalGardianCity($event)"></autocomplete-postal-code>
+                [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen"
+                (onOptionSelected)="fillLegalGardianCity($event)">
+              </autocomplete-postal-code>
             </td>
             <td>
               <autocomplete-country [(model)]="domiciliation.legalGardianCountry" [form]="domiciliationForm"
-                propertyName="legalGardianCountry" [isMandatory]="true" [isDisabled]="!editMode"></autocomplete-country>
+                propertyName="legalGardianCountry" [isMandatory]="true"
+                [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode">
+              </autocomplete-country>
             </td>
           </tr>
         </table>

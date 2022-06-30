@@ -23,6 +23,9 @@ export class SelectResponsableComponent extends GenericMultipleSelectComponent<R
   }
 
   ngOnChanges(changes: SimpleChanges) {
+    if (this.form)
+      this.form.addControl(this.propertyName, this.formBuild.control({ value: '' }));
+
     if (changes.model && this.form != undefined) {
       if (this.responsableList != undefined)
         this.types = this.responsableList;

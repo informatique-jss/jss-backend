@@ -24,18 +24,22 @@
               <td>
                 <generic-input [(model)]="beneficiary.beneficiaryCompanyDenomination" label="Dénomination"
                   [form]="bodaccSplitForm" [propertyName]="'beneficiaryCompanyDenomination'+i" [isMandatory]="true"
-                  [isDisabled]="!editMode" [maxLength]="60"></generic-input>
+                  [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode"
+                  [maxLength]="60">
+                </generic-input>
               </td>
               <td>
                 <autocomplete-siren [(model)]="beneficiary.beneficiaryCompanySiren" [form]="bodaccSplitForm"
                   [propertyName]="'beneficiaryCompanySiren'+i" [isMandatory]="true"
+                  [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen"
                   (onOptionSelected)="fillSirenBeneficiaryCompany($event,beneficiary)">
                 </autocomplete-siren>
               </td>
               <td>
                 <generic-input [(model)]="beneficiary.beneficiaryCompanyAddress" label="Adresse"
                   [form]="bodaccSplitForm" [propertyName]="'beneficiaryCompanyAddress'+i" [isMandatory]="true"
-                  [isDisabled]="!editMode" [maxLength]="100">
+                  [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode"
+                  [maxLength]="100">
                 </generic-input>
               </td>
               <td class="mini-fab-td"> <button *ngIf="editMode" mat-mini-fab color="warn"
@@ -48,25 +52,28 @@
             <tr>
               <td>
                 <autocomplete-legal-form [(model)]="beneficiary.beneficiaryCompanyLegalForm" [form]="bodaccSplitForm"
-                  [propertyName]="'beneficiaryCompanyLegalForm'+i" [isMandatory]="true" [isDisabled]="!editMode">
+                  [propertyName]="'beneficiaryCompanyLegalForm'+i" [isMandatory]="true"
+                  [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode">
                 </autocomplete-legal-form>
               </td>
               <td>
                 <generic-input [(model)]="beneficiary.beneficiaryCompanyShareCapital" label="Capital social"
                   [form]="bodaccSplitForm" [propertyName]="'beneficiaryCompanyShareCapital'+i" [isMandatory]="true"
-                  [isDisabled]="!editMode" type="number"></generic-input>
+                  [conditionnalRequired]="instanceOfCustomerOrder" [isDisabled]="!editMode" type="number">
+                </generic-input>
               </td>
               <td>
                 <generic-datepicker [(model)]="beneficiary.beneficiaryCompanyRcsDeclarationDate"
                   label="Date de dépôt au RCS" [form]="bodaccSplitForm"
                   [propertyName]="'beneficiaryCompanyRcsDeclarationDate'+i" [isMandatory]="true"
-                  [isDisabled]="!editMode">
+                  [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode">
                 </generic-datepicker>
               </td>
               <td>
                 <autocomplete-competent-authority [(model)]="beneficiary.beneficiaryCompanyRcsCompetentAuthority"
                   [form]="bodaccSplitForm" [propertyName]="'beneficiaryCompanyRcsCompetentAuthority'+i"
                   [isMandatory]="true" label="Immatriculé au RCS"
+                  [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen"
                   [filteredCompetentAuthorityTypeCode]="COMPETENT_AUTHORITY_TYPE_RCS_CODE">
                 </autocomplete-competent-authority>
               </td>
@@ -93,18 +100,21 @@
               <td>
                 <generic-input [(model)]="splitCompany.splitCompanyDenomination" label="Dénomination"
                   [form]="bodaccSplitForm" [propertyName]="'splitCompanyDenomination'+i" [isMandatory]="true"
-                  [isDisabled]="!editMode" [maxLength]="60"></generic-input>
+                  [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode"
+                  [maxLength]="60">
+                </generic-input>
               </td>
               <td>
                 <autocomplete-siren [(model)]="splitCompany.splitCompanySiren" [form]="bodaccSplitForm"
                   [propertyName]="'splitCompanySiren'+i" [isMandatory]="true"
+                  [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen"
                   (onOptionSelected)="fillSirenSplitCompany($event, splitCompany)">
                 </autocomplete-siren>
               </td>
               <td>
                 <generic-input [(model)]="splitCompany.splitCompanyAddress" label="Adresse" [form]="bodaccSplitForm"
                   [propertyName]="'splitCompanyAddress'+i" [isMandatory]="true" [isDisabled]="!editMode"
-                  [maxLength]="100">
+                  [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [maxLength]="100">
                 </generic-input>
               </td>
               <td class="mini-fab-td"> <button *ngIf="editMode" mat-mini-fab color="warn"
@@ -117,24 +127,28 @@
             <tr>
               <td>
                 <autocomplete-legal-form [(model)]="splitCompany.splitCompanyLegalForm" [form]="bodaccSplitForm"
-                  [propertyName]="'splitCompanyLegalForm'+i" [isMandatory]="true" [isDisabled]="!editMode">
+                  [propertyName]="'splitCompanyLegalForm'+i" [isMandatory]="true"
+                  [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode">
                 </autocomplete-legal-form>
               </td>
               <td>
                 <generic-input [(model)]="splitCompany.splitCompanyShareCapital" label="Capital social"
                   [form]="bodaccSplitForm" [propertyName]="'splitCompanyShareCapital'+i" [isMandatory]="true"
-                  [isDisabled]="!editMode" type="number"></generic-input>
+                  [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode"
+                  type="number">
+                </generic-input>
               </td>
               <td>
                 <generic-datepicker [(model)]="splitCompany.splitCompanyRcsDeclarationDate" label="Date de dépôt au RCS"
                   [form]="bodaccSplitForm" [propertyName]="'splitCompanyRcsDeclarationDate'+i" [isMandatory]="true"
-                  [isDisabled]="!editMode">
+                  [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode">
                 </generic-datepicker>
               </td>
               <td>
                 <autocomplete-competent-authority [(model)]="splitCompany.splitCompanyRcsCompetentAuthority"
                   [form]="bodaccSplitForm" [propertyName]="'splitCompanyRcsCompetentAuthority'+i" [isMandatory]="true"
-                  label="Immatriculé au RCS" [filteredCompetentAuthorityTypeCode]="COMPETENT_AUTHORITY_TYPE_RCS_CODE">
+                  [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" label="Immatriculé au RCS"
+                  [filteredCompetentAuthorityTypeCode]="COMPETENT_AUTHORITY_TYPE_RCS_CODE">
                 </autocomplete-competent-authority>
               </td>
             </tr>
@@ -159,22 +173,29 @@
             <tr>
               <td>
                 <generic-input [(model)]="bodaccSplit.assets" label="Actif" [form]="bodaccSplitForm"
-                  propertyName="assets" [isMandatory]="true" [isDisabled]="!editMode" type="number"></generic-input>
+                  propertyName="assets" [isMandatory]="true"
+                  [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode"
+                  type="number"></generic-input>
               </td>
               <td>
                 <generic-input [(model)]="bodaccSplit.liabilities" label="Passif" [form]="bodaccSplitForm"
-                  propertyName="liabilities" [isMandatory]="true" [isDisabled]="!editMode" type="number">
+                  propertyName="liabilities" [isMandatory]="true"
+                  [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode"
+                  type="number">
                 </generic-input>
               </td>
               <td>
                 <generic-input [(model)]="bodaccSplit.splitBonus" label="Prime de scission" [form]="bodaccSplitForm"
-                  propertyName="splitBonus" [isMandatory]="true" [isDisabled]="!editMode" type="number">
+                  propertyName="splitBonus" [isMandatory]="true"
+                  [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode"
+                  type="number">
                 </generic-input>
               </td>
               <td>
                 <generic-datepicker [(model)]="bodaccSplit.splitProjectDate" label="Date du projet de scission"
                   [form]="bodaccSplitForm" propertyName="splitProjectDate" [isMandatory]="true"
-                  [isDisabled]="!editMode"></generic-datepicker>
+                  [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode">
+                </generic-datepicker>
               </td>
             </tr>
           </table>
@@ -182,7 +203,9 @@
             <tr>
               <generic-textarea [(model)]="bodaccSplit.exchangeRatioReport" label="Rapport d'échange"
                 [form]="bodaccSplitForm" propertyName="exchangeRatioReport" [isMandatory]="true"
-                [isDisabled]="!editMode" [numberOfLines]="4"></generic-textarea>
+                [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode"
+                [numberOfLines]="4">
+              </generic-textarea>
             </tr>
           </table>
         </mat-expansion-panel>

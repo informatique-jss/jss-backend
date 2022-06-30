@@ -37,8 +37,6 @@ export class OrderingCustomerComponent implements OnInit {
   }
 
   orderingCustomerForm = this.formBuilder.group({
-    responsable: ['', []],
-    tiers: ['', []],
   });
 
   fillTiers(tiers: Tiers) {
@@ -64,7 +62,7 @@ export class OrderingCustomerComponent implements OnInit {
 
   getFormStatus(): boolean {
     this.orderingCustomerForm.markAllAsTouched();
-    return this.orderingCustomerForm.valid;
+    return this.orderingCustomerForm.valid && (this.quotation.responsable != undefined || this.quotation.tiers != undefined);
   }
 
   instanceOfQuotation = instanceOfQuotation;

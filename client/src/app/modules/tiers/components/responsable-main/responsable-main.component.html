@@ -67,11 +67,8 @@
               <table class="full-width">
                 <tr>
                   <td>
-                    <mat-form-field class="full-width">
-                      <mat-label>N° responsable</mat-label>
-                      <input matInput formControlName="responsableId" [(ngModel)]="selectedResponsable.id"
-                        placeholder="N° client/prospect">
-                    </mat-form-field>
+                    <generic-input [(model)]="selectedResponsable.id" label="N° client/prospect" [form]="principalForm"
+                      propertyName="id" [isDisabled]="true"></generic-input>
                   </td>
                 </tr>
               </table>

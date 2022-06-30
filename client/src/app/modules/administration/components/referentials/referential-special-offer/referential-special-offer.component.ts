@@ -37,17 +37,6 @@ export class ReferentialSpecialOfferComponent implements OnInit {
   ) { }
 
   entityForm = this.formBuilder.group({
-    billingType0: [''],
-    billingType1: [''],
-    billingType2: [''],
-    billingType3: [''],
-    billingType4: [''],
-    billingType5: [''],
-    billingType6: [''],
-    billingType7: [''],
-    billingType8: [''],
-    billingType9: [''],
-    billingType10: [''],
   });
 
   ngOnInit() {

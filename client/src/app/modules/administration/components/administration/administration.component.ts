@@ -21,16 +21,16 @@ export class AdministrationComponent implements OnInit {
   saveEvent: Subject<void> = new Subject<void>();
   addEvent: Subject<void> = new Subject<void>();
 
-  ACT_TYPE_REFERENTIAL = "Devis - BODACC - Type d'actes";
-  BODACC_PUBLICATION_TYPE_REFERENTIAL = "Devis - BODACC - Type de publication";
-  BUILDING_DOMICILIATION_REFERENTIAL = "Devis - Domiciliation - Adresse de domiciliation";
-  DOMICIALIATION_CONTRACT_TYPE_REFERENTIAL = "Devis - Domiciliation - Type de contrat";
-  FUND_TYPE_REFERENTIAL = "Devis - BODACC - Type de fonds";
-  JOURNAL_TYPE_REFERENTIAL = "Devis - SHAL - Type de journal";
-  MAIL_REDIRECTION_TYPE_REFERENTIAL = "Devis - Domiciliation - Type de redirection courrier";
-  NOTICE_TYPE_FAMILY_REFERENTIAL = "Devis - SHAL - Sous-rubrique de l'annonce";
-  NOTICE_TYPE = "Devis - SHAL - Rubrique de l'annonce";
-  PROVISION_FAMILY_TYPE_REFERENTIAL = "Devis - Famille de prestation";
+  ACT_TYPE_REFERENTIAL = "Devis - BODACC - type d'actes";
+  BODACC_PUBLICATION_TYPE_REFERENTIAL = "Devis - BODACC - type de publication";
+  BUILDING_DOMICILIATION_REFERENTIAL = "Devis - Domiciliation - adresse de domiciliation";
+  DOMICIALIATION_CONTRACT_TYPE_REFERENTIAL = "Devis - Domiciliation - type de contrat";
+  FUND_TYPE_REFERENTIAL = "Devis - BODACC - type de fonds";
+  JOURNAL_TYPE_REFERENTIAL = "Devis - SHAL - type de journal";
+  MAIL_REDIRECTION_TYPE_REFERENTIAL = "Devis - Domiciliation - type de redirection courrier";
+  NOTICE_TYPE_FAMILY_REFERENTIAL = "Devis - SHAL - sous-rubrique de l'annonce";
+  NOTICE_TYPE = "Devis - SHAL - rubrique de l'annonce";
+  PROVISION_FAMILY_TYPE_REFERENTIAL = "Devis - famille de prestation";
   PROVISION_TYPE_REFERENTIAL = "Devis - type de prestation";
   QUOTATION_LABEL_TYPE_REFERENTIAL = "Devis - type de libellé sur devis";
   QUOTATION_STATUS_REFERENTIAL = "Devis - statuts du devis";
@@ -69,8 +69,8 @@ export class AdministrationComponent implements OnInit {
   ACCOUNTING_ACCOUNT_CLASS_REFERENTIAL = "Comptabilité - classe de compte comptable";
   ACCOUNTING_ACCOUNT_REFERENTIAL = "Comptabilité - compte comptable";
   TEAM_REFERENTIAL = "Divers - équipe";
-  REGIE_REFERENTIAL = "Devis - SHAL - Régie";
-  CONFRERE_REFERENTIAL = "Devis - SHAL - Confrère";
+  REGIE_REFERENTIAL = "Devis - SHAL - régie";
+  CONFRERE_REFERENTIAL = "Devis - SHAL - confrère";
 
   constructor(private appService: AppService,
     private formBuilder: FormBuilder,

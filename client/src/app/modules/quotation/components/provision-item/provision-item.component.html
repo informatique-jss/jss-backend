@@ -13,13 +13,24 @@
     </td>
   </tr>
 </table>
-<domiciliation [domiciliation]="provision.domiciliation" [editMode]="editMode"
+<domiciliation [domiciliation]="provision.domiciliation" [editMode]="editMode" [isStatusOpen]="isStatusOpen"
+  [instanceOfCustomerOrder]="instanceOfCustomerOrder"
   *ngIf="provision.domiciliation && provision.provisionType &&  provision.provisionType.code==PROVISION_TYPE_DOMICILIATION_CODE">
 </domiciliation>
-<shal [shal]="provision.shal" [editMode]="editMode"
+<shal [shal]="provision.shal" [editMode]="editMode" [instanceOfCustomerOrder]="instanceOfCustomerOrder"
+  [isStatusOpen]="isStatusOpen"
   *ngIf="provision.shal && provision.provisionType && provision.provisionType.code==PROVISION_TYPE_SHAL_CODE"
   [affaire]="affaire">
 </shal>
-<bodacc-main [bodacc]="provision.bodacc" [affaire]="affaire" [editMode]="editMode"
+<bodacc-main [bodacc]="provision.bodacc" [affaire]="affaire" [editMode]="editMode" [isStatusOpen]="isStatusOpen"
+  [instanceOfCustomerOrder]="instanceOfCustomerOrder"
   *ngIf="provision.bodacc && provision.provisionType && provision.provisionType.code==PROVISION_TYPE_BODACC_CODE">
 </bodacc-main>
+<table class="full-width" [formGroup]="provisionItemForm">
+  <tr>
+    <td>
+      <generic-toggle [(model)]="provision.isValidated" label="Prestation validée ?" [form]="provisionItemForm"
+        propertyName="isValidated"></generic-toggle>
+    </td>
+  </tr>
+</table>

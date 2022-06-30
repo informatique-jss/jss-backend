@@ -65,6 +65,9 @@ export abstract class GenericSelectComponent<T> implements OnInit {
     private formBuilder: UntypedFormBuilder) { }
 
   ngOnChanges(changes: SimpleChanges) {
+    if (this.form && !this.form.get(this.propertyName))
+      this.ngOnInit();
+
     if (changes.model && this.form != undefined) {
       this.cdr.detectChanges();
       this.form.get(this.propertyName)?.setValue(this.model);
@@ -91,6 +94,8 @@ export abstract class GenericSelectComponent<T> implements OnInit {
   ngOnInit() {
     this.initTypes();
     if (this.form != undefined) {
+      this.form.addControl(this.propertyName, this.formBuilder.control(''));
+
       let validators: ValidatorFn[] = [] as Array<ValidatorFn>;
       if (this.isMandatory) {
         if (this.conditionnalRequired != undefined) {

@@ -1,16 +1,17 @@
 import { Component, OnInit, ViewChild, ViewChildren } from '@angular/core';
 import { MatAccordion } from '@angular/material/expansion';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router, UrlSegment } from '@angular/router';
 import { AppService } from 'src/app/app.service';
-import { QUOTATION_DOCUMENT_TYPE_CODE } from 'src/app/libs/Constants';
-import { instanceOfCustomerOrder, instanceOfQuotation } from 'src/app/libs/TypeHelper';
-import { QUOTATION_ENTITY_TYPE } from 'src/app/routing/search/search.component';
+import { QUOTATION_DOCUMENT_TYPE_CODE, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_CANCELLED, QUOTATION_STATUS_OPEN, QUOTATION_STATUS_REFUSED_BY_CUSTOMER, QUOTATION_STATUS_SENT_TO_CUSTOMER, QUOTATION_STATUS_TO_VERIFY, QUOTATION_STATUS_VALIDATED_BY_CUSTOMER, QUOTATION_STATUS_VALIDATED_BY_JSS } from 'src/app/libs/Constants';
+import { CUSTOMER_ORDER_ENTITY_TYPE, QUOTATION_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { SearchService } from 'src/app/search.service';
 import { Affaire } from '../../model/Affaire';
 import { IQuotation } from '../../model/IQuotation';
 import { NoticeTypeFamily } from '../../model/NoticeTypeFamily';
 import { Provision } from '../../model/Provision';
+import { QuotationStatus } from '../../model/QuotationStatus';
+import { CustomerOrderService } from '../../services/customer.order.service';
+import { QuotationStatusService } from '../../services/quotation-status.service';
 import { QuotationService } from '../../services/quotation.service';
 import { OrderingCustomerComponent } from '../ordering-customer/ordering-customer.component';
 import { ProvisionItemComponent } from '../provision-item/provision-item.component';
@@ -25,9 +26,19 @@ export class QuotationComponent implements OnInit {
   quotation: IQuotation = {} as IQuotation;
   editMode: boolean = false;
   createMode: boolean = false;
+  quotationStatus: QuotationStatus[] = [] as Array<QuotationStatus>;
 
   QUOTATION_ENTITY_TYPE = QUOTATION_ENTITY_TYPE;
   QUOTATION_DOCUMENT_TYPE_CODE = QUOTATION_DOCUMENT_TYPE_CODE;
+
+  QUOTATION_STATUS_OPEN = QUOTATION_STATUS_OPEN;
+  QUOTATION_STATUS_TO_VERIFY = QUOTATION_STATUS_TO_VERIFY;
+  QUOTATION_STATUS_VALIDATED_BY_JSS = QUOTATION_STATUS_VALIDATED_BY_JSS;
+  QUOTATION_STATUS_SENT_TO_CUSTOMER = QUOTATION_STATUS_SENT_TO_CUSTOMER;
+  QUOTATION_STATUS_VALIDATED_BY_CUSTOMER = QUOTATION_STATUS_VALIDATED_BY_CUSTOMER;
+  QUOTATION_STATUS_REFUSED_BY_CUSTOMER = QUOTATION_STATUS_REFUSED_BY_CUSTOMER;
+  QUOTATION_STATUS_ABANDONED = QUOTATION_STATUS_ABANDONED;
+  QUOTATION_STATUS_CANCELLED = QUOTATION_STATUS_CANCELLED;
 
   selectedTabIndex = 0;
 
@@ -37,41 +48,60 @@ export class QuotationComponent implements OnInit {
   @ViewChildren(ProvisionItemComponent) provisionItemComponents: any;
   @ViewChild(MatAccordion) accordion: MatAccordion | undefined;
 
+  instanceOfCustomerOrder: boolean = false;
+  isStatusOpen: boolean = true;
+
   filteredProvisions: Provision[] = [] as Array<Provision>;
 
   constructor(private appService: AppService,
     private quotationService: QuotationService,
-    private snackBar: MatSnackBar,
+    private customerOrderService: CustomerOrderService,
+    private quotationStatusService: QuotationStatusService,
     private activatedRoute: ActivatedRoute,
     protected searchService: SearchService,
     private router: Router) { }
 
   ngOnInit() {
     let a = {} as NoticeTypeFamily;
-    console.log(Object.getPrototypeOf(a));
-    this.appService.changeHeaderTitle("Devis");
 
     let idQuotation: number = this.activatedRoute.snapshot.params.id;
     let url: UrlSegment[] = this.activatedRoute.snapshot.url;
 
     // Load by order
-    if (url != undefined && url != null && url[0] != undefined && url[1] != undefined && url[0].path == "order") {
-      //TODO : load by order
-      this.appService.changeHeaderTitle("Commande " + this.quotation.id);
+    if (url != undefined && url != null && url[0] != undefined && url[0].path == "order") {
+      this.appService.changeHeaderTitle("Commande");
+      this.instanceOfCustomerOrder = true;
+      if (idQuotation != null && idQuotation != undefined) {
+        this.customerOrderService.getCustomerOrder(idQuotation).subscribe(response => {
+          this.quotation = response;
+          this.appService.changeHeaderTitle("Commande " + this.quotation.id + " - " +
+            (this.quotation.status != null ? this.quotation.status.label : ""));
+          this.toggleTabs();
+          this.sortProvisions();
+          this.setOpenStatus();
+          this.filteredProvisions = this.quotation.provisions;
+        })
+      }
       // Load by quotation
     } else if (idQuotation != null && idQuotation != undefined) {
+      this.appService.changeHeaderTitle("Devis");
       this.quotationService.getQuotation(idQuotation).subscribe(response => {
         this.quotation = response;
         this.appService.changeHeaderTitle("Devis " + this.quotation.id + " - " +
-          (this.quotation.quotationStatus != null ? this.quotation.quotationStatus.label : ""));
+          (this.quotation.status != null ? this.quotation.status.label : ""));
         this.toggleTabs();
         this.sortProvisions();
+        this.setOpenStatus();
         this.filteredProvisions = this.quotation.provisions;
       })
     } else if (this.createMode == false) {
       // Blank page
       this.appService.changeHeaderTitle("Devis");
     }
+
+    this.quotationStatusService.getQuotationStatus().subscribe(response => {
+      this.quotationStatus = response;
+    })
   }
 
   toggleTabs() {
@@ -79,15 +109,34 @@ export class QuotationComponent implements OnInit {
       this.tabs.realignInkBar();
   }
 
-  saveQuotation() {
-    if (this.getFormsStatus())
-      this.quotationService.addOrUpdateQuotation(this.quotation).subscribe(response => {
-        this.quotation = response;
-        this.editMode = false;
-        this.router.navigateByUrl('/', { skipLocationChange: true }).then(() =>
-          this.router.navigate(['/quotation/', "" + this.quotation.id])
-        );
-      })
+  setOpenStatus() {
+    if (this.quotation && this.quotation.status)
+      this.isStatusOpen = this.quotation.status.code == QUOTATION_STATUS_OPEN;
+    this.isStatusOpen = false;
+  }
+
+  saveQuotation(): boolean {
+    if (this.getFormsStatus()) {
+      if (!this.instanceOfCustomerOrder) {
+        this.quotationService.addOrUpdateQuotation(this.quotation).subscribe(response => {
+          this.quotation = response;
+          this.editMode = false;
+          this.router.navigateByUrl('/', { skipLocationChange: true }).then(() =>
+            this.router.navigate(['/quotation/', "" + this.quotation.id])
+          );
+        })
+      } else {
+        this.customerOrderService.addOrUpdateCustomerOrder(this.quotation).subscribe(response => {
+          this.quotation = response;
+          this.editMode = false;
+          this.router.navigateByUrl('/', { skipLocationChange: true }).then(() =>
+            this.router.navigate(['/order/', "" + this.quotation.id])
+          );
+        })
+      }
+      return true;
+    }
+    return false;
   }
 
   getFormsStatus(): boolean {
@@ -108,12 +157,7 @@ export class QuotationComponent implements OnInit {
       errorMessages.push("Onglet Prestations");
     if (errorMessages.length > 0) {
       let errorMessage = "Les onglets suivants ne sont pas correctement remplis. Veuillez les compléter avant de sauvegarder : " + errorMessages.join(" / ");
-      let sb = this.snackBar.open(errorMessage, 'Fermer', {
-        duration: 60 * 1000, panelClass: ["red-snackbar"]
-      });
-      sb.onAction().subscribe(() => {
-        sb.dismiss();
-      });
+      this.appService.displaySnackBar(errorMessage, true, 60);
       return false;
     }
     return true;
@@ -127,12 +171,12 @@ export class QuotationComponent implements OnInit {
     this.createMode = true;
     this.editMode = true;
     this.quotation = {} as IQuotation;
-    this.appService.changeHeaderTitle("Nouveau devis");
+    this.appService.changeHeaderTitle(this.instanceOfCustomerOrder ? "Nouvelle commande" : "Nouveau devis");
     this.toggleTabs();
   }
 
   openSearch() {
-    this.searchService.openSearchOnModule(QUOTATION_ENTITY_TYPE);
+    this.searchService.openSearchOnModule(this.instanceOfCustomerOrder ? CUSTOMER_ORDER_ENTITY_TYPE : QUOTATION_ENTITY_TYPE);
   }
 
 
@@ -224,11 +268,17 @@ export class QuotationComponent implements OnInit {
     //TODO
   }
 
-  confirmStatus() {
-    //TODO
+  changeStatus(status: string) {
+    let targetStatus = this.quotationStatus.filter(s => s.code == status);
+    if (targetStatus.length != 1)
+      this.appService.displaySnackBar("Statut non trouvé ...", true, 60);
+
+    this.quotation.status = targetStatus[0];
+    this.editQuotation();
+    if (!this.saveQuotation())
+      this.ngOnInit();
+    this.editMode = false;
   }
 
-  instanceOfQuotation = instanceOfQuotation;
-  instanceOfCustomerOrder = instanceOfCustomerOrder;
 
 }

@@ -28,6 +28,8 @@ export class DomiciliationComponent implements OnInit {
 
   matcher: CustomErrorStateMatcher = new CustomErrorStateMatcher();
   @Input() domiciliation: Domiciliation = {} as Domiciliation;
+  @Input() instanceOfCustomerOrder: boolean = false;
+  @Input() isStatusOpen: boolean = true;
   @Input() editMode: boolean = false;
 
   @ViewChild('tabs', { static: false }) tabs: any;
@@ -117,14 +119,6 @@ export class DomiciliationComponent implements OnInit {
   }
 
   domiciliationForm = this.formBuilder.group({
-    domiciliationContractType: ['', []],
-    buildingDomiciliation: ['', []],
-    mailRedirectionType: ['', []],
-    activityCity: ['', []],
-    activityPostalCode: ['', []],
-    legalGardianCity: ['', []],
-    legalGardianSiren: ['', []],
-    legalGardianPostalCode: ['', []],
   });
 
   getFormStatus(): boolean {
@@ -289,4 +283,5 @@ export class DomiciliationComponent implements OnInit {
       }
     }
   }
+
 }

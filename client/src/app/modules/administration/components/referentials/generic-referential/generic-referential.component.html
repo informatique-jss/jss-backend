@@ -38,13 +38,13 @@
           <tr>
             <td>
               <generic-input [(model)]="selectedEntity.code" label="Codification" [form]="entityForm"
-                propertyName="code" [isMandatory]="true" [isDisabled]="!editMode"></generic-input>
+                propertyName="code" [isMandatory]="true" [isDisabled]="!editMode" [maxLength]="20"></generic-input>
             </td>
           </tr>
           <tr>
             <td>
               <generic-input [(model)]="selectedEntity.label" label="Nom fonctionnel" [form]="entityForm"
-                propertyName="label" [isMandatory]="true" [isDisabled]="!editMode"></generic-input>
+                propertyName="label" [isMandatory]="true" [isDisabled]="!editMode" [maxLength]="100"></generic-input>
             </td>
           </tr>
         </table>

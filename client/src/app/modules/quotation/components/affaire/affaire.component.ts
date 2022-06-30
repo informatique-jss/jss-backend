@@ -30,12 +30,6 @@ export class AffaireComponent implements OnInit {
   }
 
   affaireForm = this.formBuilder.group({
-    affaire: [''],
-    siret: [''],
-    siren: [''],
-    rna: [''],
-    city: [''],
-    postalCode: [''],
   });
 
   openAddOfferDialog() {

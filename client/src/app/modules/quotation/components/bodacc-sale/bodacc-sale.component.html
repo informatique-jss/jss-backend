@@ -23,12 +23,15 @@
             <tr>
               <td>
                 <generic-input [(model)]="bodaccSale.divestedBusinessAddress" label="Adresse" [form]="bodaccSaleForm"
-                  propertyName="divestedBusinessAddress" [isMandatory]="true" [isDisabled]="!editMode"
-                  [maxLength]="100"></generic-input>
+                  propertyName="divestedBusinessAddress" [isMandatory]="true"
+                  [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode"
+                  [maxLength]="100">
+                </generic-input>
               </td>
               <td>
                 <select-fund-type [(model)]="bodaccSale.fundType" label="Nature du fonds" [form]="bodaccSaleForm"
-                  propertyName="fundType" [isMandatory]="true" [isDisabled]="!editMode">
+                  propertyName="fundType" [isMandatory]="true"
+                  [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode">
                 </select-fund-type>
               </td>
             </tr>
@@ -36,7 +39,8 @@
               <td>
                 <generic-textarea [(model)]="bodaccSale.divestedBusinessActivities" label="Activitées exercées"
                   [form]="bodaccSaleForm" propertyName="divestedBusinessActivities" [isMandatory]="true"
-                  [isDisabled]="!editMode"></generic-textarea>
+                  [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode">
+                </generic-textarea>
               </td>
             </tr>
           </table>
@@ -52,17 +56,23 @@
             <tr>
               <td>
                 <generic-input [(model)]="bodaccSale.ownerFirstname" label="Prénom" [form]="bodaccSaleForm"
-                  propertyName="ownerFirstname" [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="30">
+                  propertyName="ownerFirstname" [isMandatory]="false"
+                  [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode"
+                  [maxLength]="30">
                 </generic-input>
               </td>
               <td>
                 <generic-input [(model)]="bodaccSale.ownerLastname" label="Nom" [form]="bodaccSaleForm"
-                  propertyName="ownerLastname" [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="30">
+                  propertyName="ownerLastname" [isMandatory]="false"
+                  [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode"
+                  [maxLength]="30">
                 </generic-input>
               </td>
               <td>
                 <generic-input [(model)]="bodaccSale.ownerDenomination" label="Dénomination" [form]="bodaccSaleForm"
-                  propertyName="ownerDenomination" [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="30">
+                  propertyName="ownerDenomination" [isMandatory]="false"
+                  [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode"
+                  [maxLength]="30">
                 </generic-input>
               </td>
             </tr>
@@ -71,12 +81,15 @@
             <tr>
               <td>
                 <generic-input [(model)]="bodaccSale.ownerAddress" label="Adresse" [form]="bodaccSaleForm"
-                  propertyName="ownerAddress" [isMandatory]="true" [isDisabled]="!editMode" [maxLength]="100">
+                  propertyName="ownerAddress" [isMandatory]="true"
+                  [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode"
+                  [maxLength]="100">
                 </generic-input>
               </td>
               <td>
                 <autocomplete-siren [(model)]="bodaccSale.ownerSiren" [form]="bodaccSaleForm" propertyName="ownerSiren"
-                  [isMandatory]="true" (onOptionSelected)="fillSirenOwner($event)">
+                  [isMandatory]="true" [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen"
+                  (onOptionSelected)="fillSirenOwner($event)">
                 </autocomplete-siren>
               </td>
             </tr>
@@ -93,12 +106,16 @@
             <tr>
               <td>
                 <generic-input [(model)]="bodaccSale.purchaserFirstname" label="Prénom" [form]="bodaccSaleForm"
-                  propertyName="purchaserFirstname" [isMandatory]="true" [isDisabled]="!editMode" [maxLength]="30">
+                  propertyName="purchaserFirstname" [isMandatory]="true"
+                  [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode"
+                  [maxLength]="30">
                 </generic-input>
               </td>
               <td>
                 <generic-input [(model)]="bodaccSale.purchaserLastname" label="Nom" [form]="bodaccSaleForm"
-                  propertyName="purchaserLastname" [isMandatory]="true" [isDisabled]="!editMode" [maxLength]="30">
+                  propertyName="purchaserLastname" [isMandatory]="true"
+                  [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode"
+                  [maxLength]="30">
                 </generic-input>
               </td>
             </tr>
@@ -122,7 +139,9 @@
             <tr>
               <td>
                 <generic-input [(model)]="bodaccSale.purchaserDenomination" label="Dénomination" [form]="bodaccSaleForm"
-                  propertyName="purchaserDenomination" [isMandatory]="true" [isDisabled]="!editMode" [maxLength]="60">
+                  propertyName="purchaserDenomination" [isMandatory]="true"
+                  [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode"
+                  [maxLength]="60">
                 </generic-input>
               </td>
               <td>
@@ -132,7 +151,8 @@
               </td>
               <td>
                 <autocomplete-legal-form [(model)]="bodaccSale.purchaserLegalForm" [form]="bodaccSaleForm"
-                  propertyName="purchaserLegalForm" [isMandatory]="true" [isDisabled]="!editMode">
+                  propertyName="purchaserLegalForm" [isMandatory]="true"
+                  [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode">
                 </autocomplete-legal-form>
               </td>
             </tr>
@@ -141,7 +161,9 @@
             <tr>
               <td>
                 <generic-input [(model)]="bodaccSale.purchaserAbbreviation" label="Sigle" [form]="bodaccSaleForm"
-                  propertyName="purchaserAbbreviation" [isMandatory]="true" [isDisabled]="!editMode" [maxLength]="20">
+                  propertyName="purchaserAbbreviation" [isMandatory]="true"
+                  [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode"
+                  [maxLength]="20">
                 </generic-input>
               </td>
               <td>
@@ -153,12 +175,16 @@
               <td>
                 <generic-input [(model)]="bodaccSale.purchaserShareCapital" label="Capital social"
                   [form]="bodaccSaleForm" propertyName="purchaserShareCapital" [isMandatory]="true"
-                  [isDisabled]="!editMode" type="number"></generic-input>
+                  [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode"
+                  type="number">
+                </generic-input>
               </td>
               <td>
                 <generic-input [(model)]="bodaccSale.purchaserMinimumCapital" label="Capital minimum"
                   [form]="bodaccSaleForm" propertyName="purchaserMinimumCapital" [isMandatory]="true"
-                  [isDisabled]="!editMode" type="number"></generic-input>
+                  [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode"
+                  type="number">
+                </generic-input>
               </td>
             </tr>
           </table>
@@ -181,39 +207,52 @@
               <td>
                 <generic-input [(model)]="bodaccSale.ownerFirstname" label="Prénom" [form]="bodaccSaleForm"
                   propertyName="ownerFirstname" [isMandatory]="true" [isDisabled]="!editMode"
-                  [conditionnalRequired]="bodaccSale.isOwnerIndividual" [maxLength]="30"></generic-input>
+                  [conditionnalRequired]="bodaccSale.isOwnerIndividual && instanceOfCustomerOrder && !isStatusOpen"
+                  [maxLength]="30">
+                </generic-input>
               </td>
               <td>
                 <generic-input [(model)]="bodaccSale.ownerLastname" label="Nom" [form]="bodaccSaleForm"
                   propertyName="ownerLastname" [isMandatory]="true" [isDisabled]="!editMode"
-                  [conditionnalRequired]="bodaccSale.isOwnerIndividual" [maxLength]="30"></generic-input>
+                  [conditionnalRequired]="bodaccSale.isOwnerIndividual && instanceOfCustomerOrder && !isStatusOpen"
+                  [maxLength]="30">
+                </generic-input>
               </td>
               <td>
                 <generic-input [(model)]="bodaccSale.ownerAddress" label="Adresse" [form]="bodaccSaleForm"
                   propertyName="ownerAddress" [isMandatory]="true" [isDisabled]="!editMode"
-                  [conditionnalRequired]="bodaccSale.isOwnerIndividual" [maxLength]="100"></generic-input>
+                  [conditionnalRequired]="bodaccSale.isOwnerIndividual && instanceOfCustomerOrder && !isStatusOpen"
+                  [maxLength]="100">
+                </generic-input>
               </td>
             </tr>
             <tr *ngIf="!bodaccSale.isOwnerIndividual">
               <td>
                 <autocomplete-siren [(model)]="bodaccSale.ownerSiren" [form]="bodaccSaleForm" propertyName="ownerSiren"
-                  [isMandatory]="true" (onOptionSelected)="fillSirenOwner($event)">
+                  [isMandatory]="true" [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen"
+                  (onOptionSelected)="fillSirenOwner($event)">
                 </autocomplete-siren>
               </td>
               <td>
                 <autocomplete-legal-form [(model)]="bodaccSale.ownerLegalForm" [form]="bodaccSaleForm"
-                  propertyName="ownerLegalForm" [isMandatory]="true" [isDisabled]="!editMode"></autocomplete-legal-form>
+                  propertyName="ownerLegalForm" [isMandatory]="true"
+                  [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode">
+                </autocomplete-legal-form>
               </td>
               <td>
                 <generic-input [(model)]="bodaccSale.ownerAddress" label="Adresse du siège social"
-                  [form]="bodaccSaleForm" propertyName="ownerAddress" [isMandatory]="true" [isDisabled]="!editMode"
-                  [maxLength]="100"></generic-input>
+                  [form]="bodaccSaleForm" propertyName="ownerAddress" [isMandatory]="true"
+                  [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode"
+                  [maxLength]="100">
+                </generic-input>
               </td>
             </tr>
             <tr *ngIf="!bodaccSale.isOwnerIndividual">
               <td>
                 <generic-input [(model)]="bodaccSale.ownerAbbreviation" label="Sigle" [form]="bodaccSaleForm"
-                  propertyName="ownerAbbreviation" [isMandatory]="true" [isDisabled]="!editMode" [maxLength]="20">
+                  propertyName="ownerAbbreviation" [isMandatory]="true"
+                  [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode"
+                  [maxLength]="20">
                 </generic-input>
               </td>
               <td>
@@ -223,7 +262,9 @@
               </td>
               <td>
                 <generic-input [(model)]="bodaccSale.ownerShareCapital" label="Capital social" [form]="bodaccSaleForm"
-                  propertyName="ownerShareCapital" [isMandatory]="true" [isDisabled]="!editMode" type="number">
+                  propertyName="ownerShareCapital" [isMandatory]="true"
+                  [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode"
+                  type="number">
                 </generic-input>
               </td>
             </tr>
@@ -241,17 +282,22 @@
               <td>
                 <generic-datepicker [(model)]="bodaccSale.leaseResilisationDate" label="Date de résiliation"
                   [form]="bodaccSaleForm" propertyName="leaseResilisationDate" [isMandatory]="true"
-                  [isDisabled]="!editMode"></generic-datepicker>
+                  [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode">
+                </generic-datepicker>
               </td>
               <td>
                 <generic-input [(model)]="bodaccSale.leaseResilisationFee" label="Moyennant une indemnité de"
                   [form]="bodaccSaleForm" propertyName="leaseResilisationFee" [isMandatory]="true"
-                  [isDisabled]="!editMode" type="number"></generic-input>
+                  [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode"
+                  type="number">
+                </generic-input>
               </td>
               <td>
                 <generic-input [(model)]="bodaccSale.leaseAddress" label="Adresse des locaux dont le bail est résilié"
-                  [form]="bodaccSaleForm" propertyName="leaseAddress" [isMandatory]="true" [isDisabled]="!editMode"
-                  [maxLength]="100"></generic-input>
+                  [form]="bodaccSaleForm" propertyName="leaseAddress" [isMandatory]="true"
+                  [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode"
+                  [maxLength]="100">
+                </generic-input>
               </td>
             </tr>
           </table>
@@ -274,40 +320,53 @@
               <td>
                 <generic-input [(model)]="bodaccSale.tenantFirstname" label="Prénom" [form]="bodaccSaleForm"
                   propertyName="tenantFirstname" [isMandatory]="true" [isDisabled]="!editMode"
-                  [conditionnalRequired]="bodaccSale.isTenantIndividual" [maxLength]="30"></generic-input>
+                  [conditionnalRequired]="bodaccSale.isTenantIndividual && instanceOfCustomerOrder && !isStatusOpen"
+                  [maxLength]="30">
+                </generic-input>
               </td>
               <td>
                 <generic-input [(model)]="bodaccSale.tenantLastname" label="Nom" [form]="bodaccSaleForm"
                   propertyName="tenantLastname" [isMandatory]="true" [isDisabled]="!editMode"
-                  [conditionnalRequired]="bodaccSale.isTenantIndividual" [maxLength]="30"></generic-input>
+                  [conditionnalRequired]="bodaccSale.isTenantIndividual && instanceOfCustomerOrder && !isStatusOpen"
+                  [maxLength]="30">
+                </generic-input>
               </td>
               <td>
                 <generic-input [(model)]="bodaccSale.tenantAddress" label="Adresse" [form]="bodaccSaleForm"
                   propertyName="tenantAddress" [isMandatory]="true" [isDisabled]="!editMode"
-                  [conditionnalRequired]="bodaccSale.isTenantIndividual" [maxLength]="100"></generic-input>
+                  [conditionnalRequired]="bodaccSale.isTenantIndividual && instanceOfCustomerOrder && !isStatusOpen"
+                  [maxLength]="100">
+                </generic-input>
               </td>
             </tr>
             <tr *ngIf="!bodaccSale.isTenantIndividual">
               <td>
                 <autocomplete-siren [(model)]="bodaccSale.tenantSiren" [form]="bodaccSaleForm"
-                  propertyName="tenantSiren" [isMandatory]="true" (onOptionSelected)="fillSirenTenant($event)">
+                  propertyName="tenantSiren" [isMandatory]="true"
+                  [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen"
+                  (onOptionSelected)="fillSirenTenant($event)">
                 </autocomplete-siren>
               </td>
               <td>
                 <autocomplete-legal-form [(model)]="bodaccSale.tenantLegalForm" [form]="bodaccSaleForm"
-                  propertyName="tenantLegalForm" [isMandatory]="true" [isDisabled]="!editMode">
+                  propertyName="tenantLegalForm" [isMandatory]="true"
+                  [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode">
                 </autocomplete-legal-form>
               </td>
               <td>
                 <generic-input [(model)]="bodaccSale.tenantAddress" label="Adresse du siège social"
-                  [form]="bodaccSaleForm" propertyName="tenantAddress" [isMandatory]="true" [isDisabled]="!editMode"
-                  [maxLength]="100"></generic-input>
+                  [form]="bodaccSaleForm" propertyName="tenantAddress" [isMandatory]="true"
+                  [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode"
+                  [maxLength]="100">
+                </generic-input>
               </td>
             </tr>
             <tr *ngIf="!bodaccSale.isTenantIndividual">
               <td>
                 <generic-input [(model)]="bodaccSale.tenantAbbreviation" label="Sigle" [form]="bodaccSaleForm"
-                  propertyName="tenantAbbreviation" [isMandatory]="true" [isDisabled]="!editMode" [maxLength]="20">
+                  propertyName="tenantAbbreviation" [isMandatory]="true"
+                  [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode"
+                  [maxLength]="20">
                 </generic-input>
               </td>
               <td>
@@ -317,7 +376,9 @@
               </td>
               <td>
                 <generic-input [(model)]="bodaccSale.tenantShareCapital" label="Capital social" [form]="bodaccSaleForm"
-                  propertyName="tenantShareCapital" [isMandatory]="true" [isDisabled]="!editMode" type="number">
+                  propertyName="tenantShareCapital" [isMandatory]="true"
+                  [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode"
+                  type="number">
                 </generic-input>
               </td>
             </tr>
@@ -334,12 +395,16 @@
             <tr>
               <td>
                 <generic-datepicker [(model)]="bodaccSale.deedDate" label="Date de l'acte" [form]="bodaccSaleForm"
-                  propertyName="deedDate" [isMandatory]="true" [isDisabled]="!editMode"></generic-datepicker>
+                  propertyName="deedDate" [isMandatory]="true"
+                  [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode">
+                </generic-datepicker>
               </td>
               <td>
                 <generic-datepicker [(model)]="bodaccSale.purchaserActivityStartDate"
                   label="Date de début de l'activité" [form]="bodaccSaleForm" propertyName="purchaserActivityStartDate"
-                  [isMandatory]="true" [isDisabled]="!editMode"></generic-datepicker>
+                  [isMandatory]="true" [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen"
+                  [isDisabled]="!editMode">
+                </generic-datepicker>
               </td>
             </tr>
           </table>
@@ -347,7 +412,9 @@
             <tr>
               <td>
                 <generic-input [(model)]="bodaccSale.salePrice" label="Prix de cession" [form]="bodaccSaleForm"
-                  propertyName="salePrice" [isMandatory]="true" [isDisabled]="!editMode" type="number"></generic-input>
+                  propertyName="salePrice" [isMandatory]="true"
+                  [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode"
+                  type="number"></generic-input>
               </td>
               <td>
                 <radio-group-act-type [(model)]="bodaccSale.actType" [form]="bodaccSaleForm" propertyName="actType"
@@ -356,32 +423,34 @@
               <td *ngIf="bodaccSale.actType && bodaccSale.actType.code==BODACC_SALE_ACT_TYPE_AUTHENTIC_CODE">
                 <generic-input [(model)]="bodaccSale.writor" label="Rédacteur" [form]="bodaccSaleForm"
                   propertyName="writor" [isMandatory]="true" [isDisabled]="!editMode"
-                  [conditionnalRequired]="bodaccSale.actType.code==BODACC_SALE_ACT_TYPE_AUTHENTIC_CODE"
+                  [conditionnalRequired]="bodaccSale.actType.code==BODACC_SALE_ACT_TYPE_AUTHENTIC_CODE && instanceOfCustomerOrder && !isStatusOpen"
                   [maxLength]="60"></generic-input>
               </td>
               <td *ngIf="bodaccSale.actType && bodaccSale.actType.code==BODACC_SALE_ACT_TYPE_AUTHENTIC_CODE">
                 <generic-input [(model)]="bodaccSale.writorAddress" label="Adresse du rédacteur" [form]="bodaccSaleForm"
                   propertyName="writorAddress" [isMandatory]="true" [isDisabled]="!editMode"
-                  [conditionnalRequired]="bodaccSale.actType.code==BODACC_SALE_ACT_TYPE_AUTHENTIC_CODE"
+                  [conditionnalRequired]="bodaccSale.actType.code==BODACC_SALE_ACT_TYPE_AUTHENTIC_CODE && instanceOfCustomerOrder && !isStatusOpen"
                   [maxLength]="100"></generic-input>
               </td>
             </tr>
             <tr>
               <td>
                 <generic-datepicker [(model)]="bodaccSale.registrationDate" label="Date de l'enregistrement"
-                  [form]="bodaccSaleForm" propertyName="registrationDate" [isMandatory]="true" [isDisabled]="!editMode">
+                  [form]="bodaccSaleForm" propertyName="registrationDate" [isMandatory]="true"
+                  [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode">
                 </generic-datepicker>
               </td>
               <td>
                 <autocomplete-competent-authority [(model)]="bodaccSale.registrationAuthority" [form]="bodaccSaleForm"
-                  propertyName="registrationAuthority" [isMandatory]="true" label="Bureau de l'enregistrement"
+                  propertyName="registrationAuthority" [isMandatory]="true"
+                  [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" label="Bureau de l'enregistrement"
                   [filteredCompetentAuthorityTypeCode]="COMPETENT_AUTHORITY_TYPE_CFP_CODE">
                 </autocomplete-competent-authority>
               </td>
               <td>
                 <generic-input [(model)]="bodaccSale.registrationReferences" label="Référence de l'enregistrement"
                   [form]="bodaccSaleForm" propertyName="registrationReferences" [isMandatory]="true"
-                  [conditionnalRequired]="bodaccSale.actType && bodaccSale.actType.code==BODACC_SALE_ACT_TYPE_SEING_CODE"
+                  [conditionnalRequired]="bodaccSale.actType && bodaccSale.actType.code==BODACC_SALE_ACT_TYPE_SEING_CODE && instanceOfCustomerOrder && !isStatusOpen"
                   [isDisabled]="!editMode" [maxLength]="50"></generic-input>
               </td>
             </tr>
@@ -399,7 +468,9 @@
               <td>
                 <generic-input [(model)]="bodaccSale.validityObjectionAddress" label="Adresse pour la validité"
                   [form]="bodaccSaleForm" propertyName="validityObjectionAddress" [isMandatory]="true"
-                  [isDisabled]="!editMode" [maxLength]="100"></generic-input>
+                  [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode"
+                  [maxLength]="100">
+                </generic-input>
               </td>
               <td>
                 <generic-input [(model)]="bodaccSale.mailObjectionAddress" label="Adresse pour la correspondance"

@@ -63,6 +63,9 @@ export abstract class GenericMultipleSelectComponent<T> implements OnInit {
     private formBuilder: UntypedFormBuilder) { }
 
   ngOnChanges(changes: SimpleChanges) {
+    if (this.form)
+      this.form.addControl(this.propertyName, this.formBuilder.control({ value: '' }));
+
     if (changes.model && this.form != undefined) {
       this.form.get(this.propertyName)?.setValue(this.model);
       this.cdr.detectChanges();
@@ -84,6 +87,8 @@ export abstract class GenericMultipleSelectComponent<T> implements OnInit {
   }
 
   ngOnInit() {
+    if (this.form)
+      this.form.addControl(this.propertyName, this.formBuilder.control({ value: '' }));
     this.initTypes();
     if (this.form != undefined) {
       let validators: ValidatorFn[] = [] as Array<ValidatorFn>;

@@ -1,6 +1,5 @@
 import { Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
@@ -67,7 +66,6 @@ export class ResponsableMainComponent implements OnInit {
     private appService: AppService,
     protected tiersService: TiersService,
     protected tiersTypeService: TiersTypeService,
-    private snackBar: MatSnackBar,
     protected subscriptionPeriodTypeService: SubscriptionPeriodTypeService,
     protected tiersCategoryService: TiersCategoryService) { }
 
@@ -144,9 +142,7 @@ export class ResponsableMainComponent implements OnInit {
         }
       })
     } else {
-      let sb = this.snackBar.open("Compléter la saisie du responsable courant avant de continuer", 'Fermer', {
-        duration: 50 * 1000, panelClass: ["red-snackbar"]
-      });
+      this.appService.displaySnackBar("Compléter la saisie du responsable courant avant de continuer", true, 60);
     }
   }
 
@@ -173,9 +169,7 @@ export class ResponsableMainComponent implements OnInit {
       this.toggleTabs();
       this.initDefaultValues();
     } else {
-      let sb = this.snackBar.open("Compléter la saisie du responsable courant avant de continuer", 'Fermer', {
-        duration: 50 * 1000, panelClass: ["red-snackbar"]
-      });
+      this.appService.displaySnackBar("Compléter la saisie du responsable courant avant de continuer", true, 60);
     }
   }
 
@@ -200,17 +194,9 @@ export class ResponsableMainComponent implements OnInit {
   }
 
   principalForm = this.formBuilder.group({
-    responsableId: [''],
-    subscriptionPeriodType: [''],
-    tiersType: [''],
-    tiersCategory: [''],
-    postalCode: ['',],
-    city: ['',],
-    jssSubscription1: ['',],
-    jssSubscription2: ['',],
-    mailsCreationAffaire: ['',],
-    mailsProvisionningConfirmation: ['',],
-    mailsMissingItemFormality: ['',],
+    jssSubscription1: [''],
+    jssSubscription2: [''],
+
   });
 
   limitTextareaSize(numberOfLine: number) {

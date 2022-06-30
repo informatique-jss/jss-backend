@@ -3,14 +3,14 @@ import {
   HttpRequest
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { EMPTY, Observable } from 'rxjs';
 import { catchError, retry, tap } from 'rxjs/operators';
+import { AppService } from './app.service';
 
 @Injectable()
 export class HttpErrorInterceptor implements HttpInterceptor {
 
-  constructor(private snackBar: MatSnackBar) { }
+  constructor(private appService: AppService) { }
 
   errorMessage: string = "";
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -25,13 +25,7 @@ export class HttpErrorInterceptor implements HttpInterceptor {
             break;
           }
           if (successfulMessage != undefined && successfulMessage != null && successfulMessage != "") {
-            let sb = this.snackBar.open('👍 ' + successfulMessage, 'Fermer', {
-              duration: 5 * 1000,
-              panelClass: ["blue-snackbar"]
-            });
-            sb.onAction().subscribe(() => {
-              sb.dismiss();
-            });
+            this.appService.displaySnackBar('👍 ' + successfulMessage, false, 5);
           }
         }
       }),
@@ -56,12 +50,7 @@ export class HttpErrorInterceptor implements HttpInterceptor {
           } else {
             this.errorMessage = '😢 Dommage, une erreur est apparue : ' + this.errorMessage;
           }
-          let sb = this.snackBar.open(this.errorMessage, 'Fermer', {
-            duration: 50 * 1000, panelClass: ["red-snackbar"]
-          });
-          sb.onAction().subscribe(() => {
-            sb.dismiss();
-          });
+          this.appService.displaySnackBar(errorMessage, false, 50);
         }
 
         return EMPTY;

@@ -16,6 +16,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.model.Mail;
@@ -29,25 +30,29 @@ public class CustomerOrder implements IQuotation {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
+	@IndexedField
 	private Integer id;
 
 	@ManyToOne
 	@JoinColumn(name = "id_tiers")
+	@IndexedField
 	private Tiers tiers;
 
 	@ManyToOne
 	@JoinColumn(name = "id_responsable")
+	@IndexedField
 	private Responsable responsable;
 
 	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "asso_customer_order_special_offer", joinColumns = @JoinColumn(name = "id_customer_order"), inverseJoinColumns = @JoinColumn(name = "id_special_offer"))
 	private List<SpecialOffer> specialOffers;
 
+	@IndexedField
 	private Date createdDate;
 
 	@ManyToOne
-	@JoinColumn(name = "id_quotation_status")
-	private QuotationStatus quotationStatus;
+	@JoinColumn(name = "id_status")
+	private QuotationStatus status;
 
 	@Column(columnDefinition = "TEXT")
 	private String observations;
@@ -64,58 +69,30 @@ public class CustomerOrder implements IQuotation {
 	private List<Document> documents;
 
 	@ManyToOne
-	@JoinColumn(name = "id_quotation_label_type")
-	private QuotationLabelType quotationLabelType;
+	@JoinColumn(name = "id_label_type")
+	private QuotationLabelType labelType;
 
 	@Column(length = 40)
-	private String quotationLabel;
+	private String label;
 
 	@ManyToOne
 	@JoinColumn(name = "id_record_type")
 	private RecordType recordType;
 
+	@OneToMany(targetEntity = Provision.class, mappedBy = "customerOrder", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonManagedReference("customerOrder")
+	private List<Provision> provisions;
+
 	@ManyToMany(cascade = CascadeType.ALL)
-	@JoinTable(name = "asso_customer_order_mail", joinColumns = @JoinColumn(name = "id_quotation"), inverseJoinColumns = @JoinColumn(name = "id_mail"))
+	@JoinTable(name = "asso_customer_order_mail", joinColumns = @JoinColumn(name = "id_customer_order"), inverseJoinColumns = @JoinColumn(name = "id_mail"))
 	private List<Mail> mails;
 
 	@ManyToMany(cascade = CascadeType.ALL)
-	@JoinTable(name = "asso_customer_order_phone", joinColumns = @JoinColumn(name = "id_quotation"), inverseJoinColumns = @JoinColumn(name = "id_phone"))
+	@JoinTable(name = "asso_customer_order_phone", joinColumns = @JoinColumn(name = "id_customer_order"), inverseJoinColumns = @JoinColumn(name = "id_phone"))
 	private List<Phone> phones;
-
-	public List<Attachment> getAttachments() {
-		return attachments;
-	}
-
-	public void setAttachments(List<Attachment> attachments) {
-		this.attachments = attachments;
-	}
-
-	public List<Document> getDocuments() {
-		return documents;
-	}
-
-	public void setDocuments(List<Document> documents) {
-		this.documents = documents;
-	}
 
 	public Integer getId() {
 		return id;
-	}
-
-	public List<Mail> getMails() {
-		return mails;
-	}
-
-	public void setMails(List<Mail> mails) {
-		this.mails = mails;
-	}
-
-	public List<Phone> getPhones() {
-		return phones;
-	}
-
-	public void setPhones(List<Phone> phones) {
-		this.phones = phones;
 	}
 
 	public void setId(Integer id) {
@@ -154,12 +131,12 @@ public class CustomerOrder implements IQuotation {
 		this.createdDate = createdDate;
 	}
 
-	public QuotationStatus getQuotationStatus() {
-		return quotationStatus;
+	public QuotationStatus getStatus() {
+		return status;
 	}
 
-	public void setQuotationStatus(QuotationStatus quotationStatus) {
-		this.quotationStatus = quotationStatus;
+	public void setStatus(QuotationStatus status) {
+		this.status = status;
 	}
 
 	public String getObservations() {
@@ -178,20 +155,36 @@ public class CustomerOrder implements IQuotation {
 		this.description = description;
 	}
 
-	public QuotationLabelType getQuotationLabelType() {
-		return quotationLabelType;
+	public List<Attachment> getAttachments() {
+		return attachments;
 	}
 
-	public void setQuotationLabelType(QuotationLabelType quotationLabelType) {
-		this.quotationLabelType = quotationLabelType;
+	public void setAttachments(List<Attachment> attachments) {
+		this.attachments = attachments;
 	}
 
-	public String getQuotationLabel() {
-		return quotationLabel;
+	public List<Document> getDocuments() {
+		return documents;
 	}
 
-	public void setQuotationLabel(String quotationLabel) {
-		this.quotationLabel = quotationLabel;
+	public void setDocuments(List<Document> documents) {
+		this.documents = documents;
+	}
+
+	public QuotationLabelType getLabelType() {
+		return labelType;
+	}
+
+	public void setLabelType(QuotationLabelType labelType) {
+		this.labelType = labelType;
+	}
+
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
 	}
 
 	public RecordType getRecordType() {
@@ -200,6 +193,30 @@ public class CustomerOrder implements IQuotation {
 
 	public void setRecordType(RecordType recordType) {
 		this.recordType = recordType;
+	}
+
+	public List<Provision> getProvisions() {
+		return provisions;
+	}
+
+	public void setProvisions(List<Provision> provisions) {
+		this.provisions = provisions;
+	}
+
+	public List<Mail> getMails() {
+		return mails;
+	}
+
+	public void setMails(List<Mail> mails) {
+		this.mails = mails;
+	}
+
+	public List<Phone> getPhones() {
+		return phones;
+	}
+
+	public void setPhones(List<Phone> phones) {
+		this.phones = phones;
 	}
 
 }

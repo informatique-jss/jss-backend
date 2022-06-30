@@ -20,6 +20,8 @@ import org.springframework.web.server.ResponseStatusException;
 import com.jss.osiris.libs.ValidationHelper;
 import com.jss.osiris.modules.miscellaneous.model.BillingType;
 import com.jss.osiris.modules.miscellaneous.model.Department;
+import com.jss.osiris.modules.miscellaneous.model.SpecialOffer;
+import com.jss.osiris.modules.miscellaneous.model.WeekDay;
 import com.jss.osiris.modules.miscellaneous.service.CityService;
 import com.jss.osiris.modules.miscellaneous.service.CivilityService;
 import com.jss.osiris.modules.miscellaneous.service.CountryService;
@@ -41,9 +43,11 @@ import com.jss.osiris.modules.quotation.model.BodaccSplitCompany;
 import com.jss.osiris.modules.quotation.model.BuildingDomiciliation;
 import com.jss.osiris.modules.quotation.model.CharacterPrice;
 import com.jss.osiris.modules.quotation.model.Confrere;
+import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.Domiciliation;
 import com.jss.osiris.modules.quotation.model.DomiciliationContractType;
 import com.jss.osiris.modules.quotation.model.FundType;
+import com.jss.osiris.modules.quotation.model.IQuotation;
 import com.jss.osiris.modules.quotation.model.JournalType;
 import com.jss.osiris.modules.quotation.model.MailRedirectionType;
 import com.jss.osiris.modules.quotation.model.NoticeType;
@@ -68,6 +72,7 @@ import com.jss.osiris.modules.quotation.service.BodaccPublicationTypeService;
 import com.jss.osiris.modules.quotation.service.BuildingDomiciliationService;
 import com.jss.osiris.modules.quotation.service.CharacterPriceService;
 import com.jss.osiris.modules.quotation.service.ConfrereService;
+import com.jss.osiris.modules.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.quotation.service.DomiciliationContractTypeService;
 import com.jss.osiris.modules.quotation.service.FundTypeService;
 import com.jss.osiris.modules.quotation.service.JournalTypeService;
@@ -197,6 +202,9 @@ public class QuotationController {
   @Autowired
   RegieService regieService;
 
+  @Autowired
+  CustomerOrderService customerOrderService;
+
   @GetMapping(inputEntryPoint + "/regies")
   public ResponseEntity<List<Regie>> getRegies() {
     List<Regie> regies = null;
@@ -219,8 +227,8 @@ public class QuotationController {
     try {
       if (regies.getId() != null)
         validationHelper.validateReferential(regies, true);
-      validationHelper.validateString(regies.getCode(), true);
-      validationHelper.validateString(regies.getLabel(), true);
+      validationHelper.validateString(regies.getCode(), true, 20);
+      validationHelper.validateString(regies.getLabel(), true, 100);
 
       validationHelper.validateString(regies.getIban(), true, 40);
       validationHelper.validateString(regies.getMailRecipient(), false, 60);
@@ -269,8 +277,8 @@ public class QuotationController {
     try {
       if (shalNoticeTemplates.getId() != null)
         validationHelper.validateReferential(shalNoticeTemplates, true);
-      validationHelper.validateString(shalNoticeTemplates.getCode(), true);
-      validationHelper.validateString(shalNoticeTemplates.getLabel(), true);
+      validationHelper.validateString(shalNoticeTemplates.getCode(), true, 20);
+      validationHelper.validateString(shalNoticeTemplates.getLabel(), true, 100);
 
       outShalNoticeTemplate = shalNoticeTemplateService
           .addOrUpdateShalNoticeTemplate(shalNoticeTemplates);
@@ -309,8 +317,8 @@ public class QuotationController {
     try {
       if (actType.getId() != null)
         validationHelper.validateReferential(actType, true);
-      validationHelper.validateString(actType.getCode(), true);
-      validationHelper.validateString(actType.getLabel(), true);
+      validationHelper.validateString(actType.getCode(), true, 20);
+      validationHelper.validateString(actType.getLabel(), true, 100);
 
       outActType = actTypeService.addOrUpdateActType(actType);
     } catch (
@@ -349,8 +357,8 @@ public class QuotationController {
     try {
       if (fundType.getId() != null)
         validationHelper.validateReferential(fundType, true);
-      validationHelper.validateString(fundType.getCode(), true);
-      validationHelper.validateString(fundType.getLabel(), true);
+      validationHelper.validateString(fundType.getCode(), true, 20);
+      validationHelper.validateString(fundType.getLabel(), true, 100);
 
       outFundType = fundTypeService
           .addOrUpdateFundType(fundType);
@@ -390,8 +398,8 @@ public class QuotationController {
     try {
       if (transfertFundsType.getId() != null)
         validationHelper.validateReferential(transfertFundsType, true);
-      validationHelper.validateString(transfertFundsType.getCode(), true);
-      validationHelper.validateString(transfertFundsType.getLabel(), true);
+      validationHelper.validateString(transfertFundsType.getCode(), true, 20);
+      validationHelper.validateString(transfertFundsType.getLabel(), true, 100);
 
       outTransfertFundsType = transfertFundsTypeService
           .addOrUpdateTransfertFundsType(transfertFundsType);
@@ -431,8 +439,8 @@ public class QuotationController {
     try {
       if (bodaccPublicationType.getId() != null)
         validationHelper.validateReferential(bodaccPublicationType, true);
-      validationHelper.validateString(bodaccPublicationType.getCode(), true);
-      validationHelper.validateString(bodaccPublicationType.getLabel(), true);
+      validationHelper.validateString(bodaccPublicationType.getCode(), true, 20);
+      validationHelper.validateString(bodaccPublicationType.getLabel(), true, 100);
 
       outBodaccPublicationType = bodaccPublicationTypeService.addOrUpdateBodaccPublicationType(bodaccPublicationType);
     } catch (
@@ -471,8 +479,8 @@ public class QuotationController {
     try {
       if (noticeTypeFamily.getId() != null)
         validationHelper.validateReferential(noticeTypeFamily, true);
-      validationHelper.validateString(noticeTypeFamily.getCode(), true);
-      validationHelper.validateString(noticeTypeFamily.getLabel(), true);
+      validationHelper.validateString(noticeTypeFamily.getCode(), true, 20);
+      validationHelper.validateString(noticeTypeFamily.getLabel(), true, 100);
 
       outNoticeTypeFamily = noticeTypeFamilyService.addOrUpdateNoticeTypeFamily(noticeTypeFamily);
     } catch (
@@ -511,8 +519,8 @@ public class QuotationController {
     try {
       if (noticeTypes.getId() != null)
         validationHelper.validateReferential(noticeTypes, true);
-      validationHelper.validateString(noticeTypes.getCode(), true);
-      validationHelper.validateString(noticeTypes.getLabel(), true);
+      validationHelper.validateString(noticeTypes.getCode(), true, 20);
+      validationHelper.validateString(noticeTypes.getLabel(), true, 100);
 
       outNoticeType = noticeTypeService
           .addOrUpdateNoticeType(noticeTypes);
@@ -621,8 +629,8 @@ public class QuotationController {
     try {
       if (journalType.getId() != null)
         validationHelper.validateReferential(journalType, true);
-      validationHelper.validateString(journalType.getCode(), true);
-      validationHelper.validateString(journalType.getLabel(), true);
+      validationHelper.validateString(journalType.getCode(), true, 20);
+      validationHelper.validateString(journalType.getLabel(), true, 100);
 
       outJournalType = journalTypeService.addOrUpdateJournalType(journalType);
     } catch (
@@ -656,16 +664,40 @@ public class QuotationController {
 
   @PostMapping(inputEntryPoint + "/confrere")
   public ResponseEntity<Confrere> addOrUpdateConfrere(
-      @RequestBody Confrere confreres) {
+      @RequestBody Confrere confrere) {
     Confrere outConfrere;
     try {
-      if (confreres.getId() != null)
-        validationHelper.validateReferential(confreres, true);
-      validationHelper.validateString(confreres.getCode(), true);
-      validationHelper.validateString(confreres.getLabel(), true);
-      // TODO
+      if (confrere.getId() != null)
+        validationHelper.validateReferential(confrere, true);
+      validationHelper.validateString(confrere.getCode(), true, 20);
+      validationHelper.validateString(confrere.getLabel(), true, 100);
+
+      if (confrere.getDepartments() != null && confrere.getDepartments().size() > 0)
+        for (Department department : confrere.getDepartments())
+          validationHelper.validateReferential(department, false);
+
+      if (confrere.getWeekDays() != null && confrere.getWeekDays().size() > 0)
+        for (WeekDay weekDay : confrere.getWeekDays())
+          validationHelper.validateReferential(weekDay, false);
+
+      if (confrere.getJournalType() != null && confrere.getJournalType().size() > 0)
+        for (JournalType journalType : confrere.getJournalType())
+          validationHelper.validateReferential(journalType, false);
+
+      validationHelper.validateString(confrere.getLastShipmentForPublication(), false, 60);
+      validationHelper.validateString(confrere.getPreference(), false, 20);
+      validationHelper.validateReferential(confrere.getAccountingAccountCustomer(), false);
+      validationHelper.validateReferential(confrere.getAccountingAccountProvider(), false);
+      validationHelper.validateString(confrere.getMailRecipient(), false, 60);
+      validationHelper.validateString(confrere.getAddress(), false, 60);
+      validationHelper.validateString(confrere.getPostalCode(), false, 10);
+      validationHelper.validateReferential(confrere.getCity(), false);
+      validationHelper.validateReferential(confrere.getCountry(), false);
+      validationHelper.validateString(confrere.getIban(), true, 40);
+      validationHelper.validateReferential(confrere.getRegie(), false);
+
       outConfrere = confrereService
-          .addOrUpdateConfrere(confreres);
+          .addOrUpdateConfrere(confrere);
     } catch (
 
     ResponseStatusException e) {
@@ -702,8 +734,8 @@ public class QuotationController {
     try {
       if (mailRedirectionType.getId() != null)
         validationHelper.validateReferential(mailRedirectionType, true);
-      validationHelper.validateString(mailRedirectionType.getCode(), true);
-      validationHelper.validateString(mailRedirectionType.getLabel(), true);
+      validationHelper.validateString(mailRedirectionType.getCode(), true, 20);
+      validationHelper.validateString(mailRedirectionType.getLabel(), true, 100);
 
       outMailRedirectionType = mailRedirectionTypeService.addOrUpdateMailRedirectionType(mailRedirectionType);
     } catch (
@@ -742,8 +774,8 @@ public class QuotationController {
     try {
       if (buildingDomiciliation.getId() != null)
         validationHelper.validateReferential(buildingDomiciliation, true);
-      validationHelper.validateString(buildingDomiciliation.getCode(), true);
-      validationHelper.validateString(buildingDomiciliation.getLabel(), true);
+      validationHelper.validateString(buildingDomiciliation.getCode(), true, 20);
+      validationHelper.validateString(buildingDomiciliation.getLabel(), true, 100);
       validationHelper.validateString(buildingDomiciliation.getAddress(), false, 60);
       validationHelper.validateString(buildingDomiciliation.getPostalCode(), false, 10);
       validationHelper.validateReferential(buildingDomiciliation.getCity(), false);
@@ -786,8 +818,8 @@ public class QuotationController {
     try {
       if (domiciliationContractType.getId() != null)
         validationHelper.validateReferential(domiciliationContractType, true);
-      validationHelper.validateString(domiciliationContractType.getCode(), true);
-      validationHelper.validateString(domiciliationContractType.getLabel(), true);
+      validationHelper.validateString(domiciliationContractType.getCode(), true, 20);
+      validationHelper.validateString(domiciliationContractType.getLabel(), true, 100);
 
       outDomiciliationContractType = domiciliationContractTypeService
           .addOrUpdateDomiciliationContractType(domiciliationContractType);
@@ -827,8 +859,8 @@ public class QuotationController {
     try {
       if (provisionTypes.getId() != null)
         validationHelper.validateReferential(provisionTypes, true);
-      validationHelper.validateString(provisionTypes.getCode(), true);
-      validationHelper.validateString(provisionTypes.getLabel(), true);
+      validationHelper.validateString(provisionTypes.getCode(), true, 20);
+      validationHelper.validateString(provisionTypes.getLabel(), true, 100);
 
       if (provisionTypes.getBillingTypes() != null && provisionTypes.getBillingTypes().size() > 0)
         for (BillingType billingType : provisionTypes.getBillingTypes())
@@ -872,8 +904,8 @@ public class QuotationController {
     try {
       if (provisionFamilyType.getId() != null)
         validationHelper.validateReferential(provisionFamilyType, true);
-      validationHelper.validateString(provisionFamilyType.getCode(), true);
-      validationHelper.validateString(provisionFamilyType.getLabel(), true);
+      validationHelper.validateString(provisionFamilyType.getCode(), true, 20);
+      validationHelper.validateString(provisionFamilyType.getLabel(), true, 100);
 
       outProvisionFamilyType = provisionFamilyTypeService.addOrUpdateProvisionFamilyType(provisionFamilyType);
     } catch (
@@ -980,8 +1012,8 @@ public class QuotationController {
     try {
       if (recordType.getId() != null)
         validationHelper.validateReferential(recordType, true);
-      validationHelper.validateString(recordType.getCode(), true);
-      validationHelper.validateString(recordType.getLabel(), true);
+      validationHelper.validateString(recordType.getCode(), true, 20);
+      validationHelper.validateString(recordType.getLabel(), true, 100);
 
       outRecordType = recordTypeService.addOrUpdateRecordType(recordType);
     } catch (
@@ -1020,8 +1052,8 @@ public class QuotationController {
     try {
       if (quotationLabelType.getId() != null)
         validationHelper.validateReferential(quotationLabelType, true);
-      validationHelper.validateString(quotationLabelType.getCode(), true);
-      validationHelper.validateString(quotationLabelType.getLabel(), true);
+      validationHelper.validateString(quotationLabelType.getCode(), true, 20);
+      validationHelper.validateString(quotationLabelType.getLabel(), true, 100);
 
       outQuotationLabelType = quotationLabelTypeService.addOrUpdateQuotationLabelType(quotationLabelType);
     } catch (
@@ -1060,8 +1092,8 @@ public class QuotationController {
     try {
       if (quotationStatus.getId() != null)
         validationHelper.validateReferential(quotationStatus, true);
-      validationHelper.validateString(quotationStatus.getCode(), true);
-      validationHelper.validateString(quotationStatus.getLabel(), true);
+      validationHelper.validateString(quotationStatus.getCode(), true, 20);
+      validationHelper.validateString(quotationStatus.getLabel(), true, 100);
 
       outQuotationStatus = quotationStatusService.addOrUpdateQuotationStatus(quotationStatus);
     } catch (
@@ -1095,238 +1127,37 @@ public class QuotationController {
     return new ResponseEntity<Quotation>(quotation, HttpStatus.OK);
   }
 
+  @GetMapping(inputEntryPoint + "/customer-order")
+  public ResponseEntity<CustomerOrder> getCustomerOrder(@RequestParam Integer id) {
+    CustomerOrder customerOrder = null;
+    try {
+      customerOrder = customerOrderService.getCustomerOrder(id);
+      if (customerOrder == null)
+        customerOrder = new CustomerOrder();
+    } catch (HttpStatusCodeException e) {
+      logger.error("HTTP error when fetching  customer-order", e);
+      return new ResponseEntity<CustomerOrder>(HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (Exception e) {
+      logger.error("Error when fetching customer-order", e);
+      return new ResponseEntity<CustomerOrder>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    return new ResponseEntity<CustomerOrder>(customerOrder, HttpStatus.OK);
+  }
+
   @PostMapping(inputEntryPoint + "/quotation")
   public ResponseEntity<Quotation> addOrUpdateQuotation(@RequestBody Quotation quotation) {
     try {
-      validationHelper.validateReferential(quotation.getSpecialOffer(), false);
-      validationHelper.validateReferential(quotation.getTiers(), false);
-      validationHelper.validateReferential(quotation.getResponsable(), false);
-      validationHelper.validateReferential(quotation.getQuotationLabelType(), true);
-      validationHelper.validateString(quotation.getQuotationLabel(), false, 40);
-      validationHelper.validateReferential(quotation.getRecordType(), true);
+      validateQuotationAndCustomerOrder(quotation);
 
-      if (quotation.getResponsable() == null && quotation.getTiers() == null)
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-      if (quotation.getQuotationLabel() == null && quotation.getQuotationLabelType() == null)
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-      if (quotation.getProvisions() == null || quotation.getProvisions().size() == 0)
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-      for (Provision provision : quotation.getProvisions()) {
-        if (provision.getAffaire() == null)
-          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-        Affaire affaire = provision.getAffaire();
-
-        validationHelper.validateString(affaire.getAddress(), true, 60);
-        validationHelper.validateReferential(affaire.getCity(), true);
-        validationHelper.validateReferential(affaire.getCountry(), true);
-        validationHelper.validateString(affaire.getExternalReference(), false, 60);
-        if (affaire.getCountry() != null && affaire.getCountry().getCode().equals("FR"))
-          validationHelper.validateString(affaire.getPostalCode(), true, 10);
-
-        if (affaire.getIsIndividual()) {
-          validationHelper.validateReferential(affaire.getCivility(), true);
-          validationHelper.validateString(affaire.getFirstname(), true, 20);
-          validationHelper.validateString(affaire.getLastname(), true, 20);
-
-        } else {
-          validationHelper.validateString(affaire.getDenomination(), true, 60);
-          if (affaire.getSiren() == null || affaire.getSiret() == null && affaire.getRna() == null)
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-          if (affaire.getRna() != null
-              && !validationHelper.validateRna(affaire.getRna().toUpperCase().replaceAll(" ", "")))
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-          if (affaire.getSiren() != null
-              && !validationHelper.validateSiren(affaire.getSiren().toUpperCase().replaceAll(" ", "")))
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-          if (affaire.getSiret() != null
-              && !validationHelper.validateSiret(affaire.getSiret().toUpperCase().replaceAll(" ", "")))
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+      QuotationStatus quotationStatus = quotationStatusService.getQuotationStatusByCode(QuotationStatus.OPEN);
+      if (quotationStatus == null)
+        if (quotation.getStatus() == null) {
+          logger.error("OPEN Quotation status not found");
+          return new ResponseEntity<Quotation>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        // Domiciliation
-        if (provision.getDomiciliation() != null) {
-          Domiciliation domiciliation = provision.getDomiciliation();
-          validationHelper.validateReferential(domiciliation.getDomiciliationContractType(), true);
-          validationHelper.validateReferential(domiciliation.getLanguage(), true);
-          validationHelper.validateReferential(domiciliation.getBuildingDomiciliation(), true);
-          validationHelper.validateReferential(domiciliation.getMailRedirectionType(), true);
-          validationHelper.validateString(domiciliation.getAddress(), false, 60);
-          validationHelper.validateString(domiciliation.getPostalCode(), false, 10);
-          validationHelper.validateString(domiciliation.getMailRecipient(), false, 60);
-          validationHelper.validateString(domiciliation.getActivityAddress(), false, 60);
-          validationHelper.validateReferential(domiciliation.getCity(), false);
-          validationHelper.validateReferential(domiciliation.getCountry(), false);
-          validationHelper.validateString(domiciliation.getAccountingRecordDomiciliation(), true, 60);
-
-          if (domiciliation.isLegalPerson()) {
-            if ((domiciliation.getLegalGardianSiren() == null
-                || !validationHelper.validateSiren(domiciliation.getLegalGardianSiren())))
-              return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-            validationHelper.validateString(domiciliation.getLegalGardianDenomination(), true, 60);
-            validationHelper.validateReferential(domiciliation.getLegalGardianLegalForm(), true);
-          } else {
-            validationHelper.validateReferential(domiciliation.getLegalGardianCivility(), true);
-            validationHelper.validateString(domiciliation.getLegalGardianFirstname(), true, 20);
-            validationHelper.validateString(domiciliation.getLegalGardianLastname(), true, 20);
-            validationHelper.validateDateMax(domiciliation.getLegalGardianBirthdate(), true, new Date());
-            validationHelper.validateString(domiciliation.getLegalGardianPlaceOfBirth(), true, 60);
-            validationHelper.validateString(domiciliation.getLegalGardianJob(), true, 30);
-          }
-
-          validationHelper.validateString(domiciliation.getLegalGardianMailRecipient(), true, 60);
-          validationHelper.validateString(domiciliation.getLegalGardianAddress(), true, 60);
-          if (domiciliation.getCountry() != null && domiciliation.getCountry().getCode().equals("FR"))
-            validationHelper.validateString(domiciliation.getLegalGardianPostalCode(), true, 10);
-          validationHelper.validateReferential(domiciliation.getLegalGardianCity(), true);
-          validationHelper.validateReferential(domiciliation.getLegalGardianCountry(), true);
-
-        }
-        // Shal
-        if (provision.getShal() != null) {
-          Shal shal = provision.getShal();
-          validationHelper.validateDateMin(shal.getPublicationDate(), true, new Date());
-          validationHelper.validateReferential(shal.getDepartment(), true);
-          validationHelper.validateReferential(shal.getConfrere(), true);
-          validationHelper.validateReferential(shal.getJournalType(), true);
-          validationHelper.validateReferential(shal.getNoticeTypeFamily(), true);
-          if (shal.getNoticeTypes() == null || shal.getNoticeTypes().size() == 0)
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-          for (NoticeType noticeType : shal.getNoticeTypes()) {
-            validationHelper.validateReferential(noticeType, true);
-          }
-          validationHelper.validateString(shal.getNotice(), true);
-        }
-
-        if (provision.getBodacc() != null) {
-          Bodacc bodacc = provision.getBodacc();
-          validationHelper.validateReferential(bodacc.getPaymentType(), false);
-          validationHelper.validateReferential(bodacc.getBodaccPublicationType(), true);
-          validationHelper.validateReferential(bodacc.getTransfertFundsType(), false);
-
-          if (bodacc.getBodaccSale() != null) {
-            BodaccSale bodaccSale = bodacc.getBodaccSale();
-
-            validationHelper.validateString(bodaccSale.getDivestedBusinessAddress(), false, 100);
-            validationHelper.validateReferential(bodaccSale.getFundType(), true);
-            validationHelper.validateString(bodaccSale.getOwnerFirstname(), false, 30);
-            validationHelper.validateString(bodaccSale.getOwnerLastname(), false, 30);
-            validationHelper.validateString(bodaccSale.getOwnerDenomination(), false, 60);
-            validationHelper.validateString(bodaccSale.getOwnerSiren(), false, 9);
-            validationHelper.validateSiren(bodaccSale.getOwnerSiren());
-            validationHelper.validateString(bodaccSale.getOwnerAddress(), true, 100);
-            validationHelper.validateString(bodaccSale.getOwnerAbbreviation(), false, 20);
-            validationHelper.validateString(bodaccSale.getOwnerBusinessName(), false, 60);
-            validationHelper.validateReferential(bodaccSale.getOwnerLegalForm(), false);
-
-            validationHelper.validateString(bodaccSale.getPurchaserFirstname(), false, 30);
-            validationHelper.validateString(bodaccSale.getPurchaserLastname(), false, 30);
-            validationHelper.validateString(bodaccSale.getPurchaserDenomination(), false, 60);
-            validationHelper.validateString(bodaccSale.getPurchaserSiren(), false, 9);
-            validationHelper.validateSiren(bodaccSale.getPurchaserSiren());
-            validationHelper.validateString(bodaccSale.getPurchaserBusinessName(), false, 60);
-            validationHelper.validateString(bodaccSale.getPurchaserAbbreviation(), false, 20);
-            validationHelper.validateReferential(bodaccSale.getPurchaserLegalForm(), false);
-            validationHelper.validateDate(bodaccSale.getPurchaserActivityStartDate(), true);
-
-            validationHelper.validateDate(bodaccSale.getDeedDate(), true);
-            validationHelper.validateDate(bodaccSale.getRegistrationDate(), true);
-            validationHelper.validateReferential(bodaccSale.getRegistrationAuthority(), true);
-            validationHelper.validateString(bodaccSale.getRegistrationReferences(), false, 50);
-            validationHelper.validateReferential(bodaccSale.getActType(), true);
-            validationHelper.validateString(bodaccSale.getWritor(), false, 60);
-            validationHelper.validateString(bodaccSale.getWritorAddress(), false, 100);
-            validationHelper.validateString(bodaccSale.getValidityObjectionAddress(), true, 100);
-            validationHelper.validateString(bodaccSale.getMailObjectionAddress(), false, 100);
-            validationHelper.validateDate(bodaccSale.getLeaseResilisationDate(), true);
-            validationHelper.validateString(bodaccSale.getLeaseAddress(), false, 100);
-
-            validationHelper.validateString(bodaccSale.getTenantFirstname(), false, 30);
-            validationHelper.validateString(bodaccSale.getTenantLastname(), false, 30);
-            validationHelper.validateString(bodaccSale.getTenantAddress(), true, 100);
-            validationHelper.validateString(bodaccSale.getTenantDenomination(), false, 60);
-            validationHelper.validateString(bodaccSale.getTenantSiren(), false, 9);
-            validationHelper.validateSiren(bodaccSale.getTenantSiren());
-            validationHelper.validateString(bodaccSale.getTenantBusinessName(), false, 60);
-            validationHelper.validateString(bodaccSale.getTenantAbbreviation(), false, 20);
-            validationHelper.validateReferential(bodaccSale.getTenantLegalForm(), false);
-
-          }
-
-          if (bodacc.getBodaccFusion() != null) {
-            BodaccFusion bodaccFusion = bodacc.getBodaccFusion();
-
-            if (bodaccFusion.getBodaccFusionAbsorbedCompanies() == null
-                || bodaccFusion.getBodaccFusionAbsorbedCompanies().size() == 0)
-              return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-            for (BodaccFusionAbsorbedCompany bodaccFusionAbsorbedCompany : bodaccFusion
-                .getBodaccFusionAbsorbedCompanies()) {
-              validationHelper.validateString(bodaccFusionAbsorbedCompany.getAbsorbedCompanyDenomination(), true, 60);
-              validationHelper.validateString(bodaccFusionAbsorbedCompany.getAbsorbedCompanySiren(), true, 9);
-              validationHelper.validateRna(bodaccFusionAbsorbedCompany.getAbsorbedCompanySiren());
-              validationHelper.validateString(bodaccFusionAbsorbedCompany.getAbsorbedCompanyAddress(), true, 100);
-              validationHelper.validateReferential(bodaccFusionAbsorbedCompany.getAbsorbedCompanyLegalForm(), false);
-              validationHelper.validateDate(bodaccFusionAbsorbedCompany.getAbsorbedCompanyRcsDeclarationDate(), true);
-              validationHelper
-                  .validateReferential(bodaccFusionAbsorbedCompany.getAbsorbedCompanyRcsCompetentAuthority(), true);
-            }
-
-            if (bodaccFusion.getBodaccFusionMergingCompanies() == null
-                || bodaccFusion.getBodaccFusionMergingCompanies().size() == 0)
-              return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-            for (BodaccFusionMergingCompany bodaccFusionMergingCompany : bodaccFusion
-                .getBodaccFusionMergingCompanies()) {
-              validationHelper.validateString(bodaccFusionMergingCompany.getMergingCompanyDenomination(), true, 60);
-              validationHelper.validateString(bodaccFusionMergingCompany.getMergingCompanySiren(), true, 9);
-              validationHelper.validateRna(bodaccFusionMergingCompany.getMergingCompanySiren());
-              validationHelper.validateString(bodaccFusionMergingCompany.getMergingCompanyAddress(), true, 100);
-              validationHelper.validateReferential(bodaccFusionMergingCompany.getMergingCompanyLegalForm(), false);
-              validationHelper.validateDate(bodaccFusionMergingCompany.getMergingCompanyRcsDeclarationDate(), true);
-              validationHelper.validateReferential(bodaccFusionMergingCompany.getMergingCompanyRcsCompetentAuthority(),
-                  true);
-            }
-          }
-
-          if (bodacc.getBodaccSplit() != null) {
-            BodaccSplit bodaccSplit = bodacc.getBodaccSplit();
-
-            if (bodaccSplit.getBodaccSplitBeneficiaries() == null
-                || bodaccSplit.getBodaccSplitBeneficiaries().size() == 0)
-              return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-            for (BodaccSplitBeneficiary bodaccSplitBeneficiary : bodaccSplit.getBodaccSplitBeneficiaries()) {
-              validationHelper.validateString(bodaccSplitBeneficiary.getBeneficiaryCompanyDenomination(), true, 60);
-              validationHelper.validateString(bodaccSplitBeneficiary.getBeneficiaryCompanySiren(), true, 9);
-              validationHelper.validateRna(bodaccSplitBeneficiary.getBeneficiaryCompanySiren());
-              validationHelper.validateString(bodaccSplitBeneficiary.getBeneficiaryCompanyAddress(), true, 100);
-              validationHelper.validateReferential(bodaccSplitBeneficiary.getBeneficiaryCompanyLegalForm(), false);
-              validationHelper.validateDate(bodaccSplitBeneficiary.getBeneficiaryCompanyRcsDeclarationDate(), true);
-              validationHelper.validateReferential(bodaccSplitBeneficiary.getBeneficiaryCompanyRcsCompetentAuthority(),
-                  true);
-            }
-
-            if (bodaccSplit.getBodaccSplitCompanies() == null || bodaccSplit.getBodaccSplitCompanies().size() == 0)
-              return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-            for (BodaccSplitCompany bodaccSplitCompany : bodaccSplit.getBodaccSplitCompanies()) {
-              validationHelper.validateString(bodaccSplitCompany.getSplitCompanyDenomination(), true, 60);
-              validationHelper.validateString(bodaccSplitCompany.getSplitCompanySiren(), true, 9);
-              validationHelper.validateRna(bodaccSplitCompany.getSplitCompanySiren());
-              validationHelper.validateString(bodaccSplitCompany.getSplitCompanyAddress(), true, 100);
-              validationHelper.validateReferential(bodaccSplitCompany.getSplitCompanyLegalForm(), false);
-              validationHelper.validateDate(bodaccSplitCompany.getSplitCompanyRcsDeclarationDate(), true);
-              validationHelper.validateReferential(bodaccSplitCompany.getSplitCompanyRcsCompetentAuthority(), true);
-            }
-          }
-
-          validationHelper.validateDateMin(bodacc.getDateOfPublication(), false, new Date());
-        }
-      }
-
+      if (quotation.getStatus() == null)
+        quotation.setStatus(quotationStatus);
       quotation = quotationService.addOrUpdateQuotation(quotation);
     } catch (
 
@@ -1340,6 +1171,283 @@ public class QuotationController {
       return new ResponseEntity<Quotation>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
     return new ResponseEntity<Quotation>(quotation, HttpStatus.OK);
+  }
+
+  @PostMapping(inputEntryPoint + "/customer-order")
+  public ResponseEntity<CustomerOrder> addOrUpdateCustomerOrder(@RequestBody CustomerOrder customerOrder) {
+    try {
+      validateQuotationAndCustomerOrder(customerOrder);
+      QuotationStatus quotationStatus = quotationStatusService.getQuotationStatusByCode(QuotationStatus.OPEN);
+      if (quotationStatus == null)
+        if (customerOrder.getStatus() == null) {
+          logger.error("OPEN Quotation status not found");
+          return new ResponseEntity<CustomerOrder>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+      if (customerOrder.getStatus() == null)
+        customerOrder.setStatus(quotationStatus);
+      customerOrder = customerOrderService.addOrUpdateCustomerOrder(customerOrder);
+    } catch (
+
+    ResponseStatusException e) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    } catch (HttpStatusCodeException e) {
+      logger.error("HTTP error when fetching CustomerOrder", e);
+      return new ResponseEntity<CustomerOrder>(HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (Exception e) {
+      logger.error("Error when fetching CustomerOrder", e);
+      return new ResponseEntity<CustomerOrder>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    return new ResponseEntity<CustomerOrder>(customerOrder, HttpStatus.OK);
+  }
+
+  private void validateQuotationAndCustomerOrder(IQuotation quotation) throws Exception {
+    boolean isOpen = quotation.getStatus() != null && quotation.getStatus().getCode().equals(QuotationStatus.OPEN);
+    boolean isCustomerOrder = quotation instanceof CustomerOrder && !isOpen;
+    if (quotation.getSpecialOffers() != null && quotation.getSpecialOffers().size() > 0)
+      for (SpecialOffer specialOffer : quotation.getSpecialOffers())
+        validationHelper.validateReferential(specialOffer, false);
+    validationHelper.validateReferential(quotation.getTiers(), false);
+    validationHelper.validateReferential(quotation.getResponsable(), false);
+    validationHelper.validateReferential(quotation.getLabelType(), true);
+    validationHelper.validateString(quotation.getLabel(), false, 40);
+    validationHelper.validateReferential(quotation.getRecordType(), true);
+
+    if (quotation.getResponsable() == null && quotation.getTiers() == null)
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+
+    if (quotation.getLabel() == null && quotation.getLabelType() == null)
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+
+    if (quotation.getProvisions() == null || quotation.getProvisions().size() == 0)
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+
+    for (Provision provision : quotation.getProvisions()) {
+      if (provision.getAffaire() == null && !isOpen)
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+
+      Affaire affaire = provision.getAffaire();
+
+      validationHelper.validateString(affaire.getAddress(), true, 60);
+      validationHelper.validateReferential(affaire.getCity(), true);
+      validationHelper.validateReferential(affaire.getCountry(), true);
+      validationHelper.validateString(affaire.getExternalReference(), false, 60);
+      if (affaire.getCountry() != null && affaire.getCountry().getCode().equals("FR"))
+        validationHelper.validateString(affaire.getPostalCode(), true, 10);
+
+      if (affaire.getIsIndividual()) {
+        validationHelper.validateReferential(affaire.getCivility(), true);
+        validationHelper.validateString(affaire.getFirstname(), true, 20);
+        validationHelper.validateString(affaire.getLastname(), true, 20);
+
+      } else {
+        validationHelper.validateString(affaire.getDenomination(), true, 60);
+        if (affaire.getSiren() == null || affaire.getSiret() == null && affaire.getRna() == null)
+          throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        if (affaire.getRna() != null
+            && !validationHelper.validateRna(affaire.getRna().toUpperCase().replaceAll(" ", "")))
+          throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        if (affaire.getSiren() != null
+            && !validationHelper.validateSiren(affaire.getSiren().toUpperCase().replaceAll(" ", "")))
+          throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        if (affaire.getSiret() != null
+            && !validationHelper.validateSiret(affaire.getSiret().toUpperCase().replaceAll(" ", "")))
+          throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+      }
+
+      // Domiciliation
+      if (provision.getDomiciliation() != null) {
+        Domiciliation domiciliation = provision.getDomiciliation();
+        validationHelper.validateReferential(domiciliation.getDomiciliationContractType(), !isOpen);
+        validationHelper.validateReferential(domiciliation.getLanguage(), !isOpen);
+        validationHelper.validateReferential(domiciliation.getBuildingDomiciliation(), !isOpen);
+        validationHelper.validateReferential(domiciliation.getMailRedirectionType(), !isOpen);
+
+        validationHelper.validateString(domiciliation.getAddress(), false, 60);
+        validationHelper.validateString(domiciliation.getPostalCode(), false, 10);
+        validationHelper.validateString(domiciliation.getMailRecipient(), false, 60);
+        validationHelper.validateString(domiciliation.getActivityAddress(), false, 60);
+        validationHelper.validateReferential(domiciliation.getCity(), false);
+        validationHelper.validateReferential(domiciliation.getCountry(), false);
+        validationHelper.validateString(domiciliation.getAccountingRecordDomiciliation(), isCustomerOrder, 60);
+
+        if (domiciliation.isLegalPerson()) {
+          if ((domiciliation.getLegalGardianSiren() == null
+              || !validationHelper.validateSiren(domiciliation.getLegalGardianSiren())))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+          validationHelper.validateString(domiciliation.getLegalGardianDenomination(), isCustomerOrder, 60);
+          validationHelper.validateReferential(domiciliation.getLegalGardianLegalForm(), isCustomerOrder);
+        } else {
+          validationHelper.validateReferential(domiciliation.getLegalGardianCivility(), isCustomerOrder);
+          validationHelper.validateString(domiciliation.getLegalGardianFirstname(), isCustomerOrder, 20);
+          validationHelper.validateString(domiciliation.getLegalGardianLastname(), isCustomerOrder, 20);
+          validationHelper.validateDateMax(domiciliation.getLegalGardianBirthdate(), isCustomerOrder, new Date());
+          validationHelper.validateString(domiciliation.getLegalGardianPlaceOfBirth(), isCustomerOrder, 60);
+          validationHelper.validateString(domiciliation.getLegalGardianJob(), isCustomerOrder, 30);
+        }
+
+        validationHelper.validateString(domiciliation.getLegalGardianMailRecipient(), isCustomerOrder, 60);
+        validationHelper.validateString(domiciliation.getLegalGardianAddress(), isCustomerOrder, 60);
+        if (domiciliation.getCountry() != null && domiciliation.getCountry().getCode().equals("FR"))
+          validationHelper.validateString(domiciliation.getLegalGardianPostalCode(), isCustomerOrder, 10);
+        validationHelper.validateReferential(domiciliation.getLegalGardianCity(), isCustomerOrder);
+        validationHelper.validateReferential(domiciliation.getLegalGardianCountry(), isCustomerOrder);
+
+      }
+      // Shal
+      if (provision.getShal() != null) {
+        Shal shal = provision.getShal();
+        validationHelper.validateDateMin(shal.getPublicationDate(), !isOpen, new Date());
+        validationHelper.validateReferential(shal.getDepartment(), !isOpen);
+        validationHelper.validateReferential(shal.getConfrere(), isCustomerOrder);
+        validationHelper.validateReferential(shal.getJournalType(), !isOpen);
+        validationHelper.validateReferential(shal.getNoticeTypeFamily(), isCustomerOrder);
+        if (isCustomerOrder && (shal.getNoticeTypes() == null || shal.getNoticeTypes().size() == 0))
+          throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+
+        if (shal.getNoticeTypes() != null)
+          for (NoticeType noticeType : shal.getNoticeTypes()) {
+            validationHelper.validateReferential(noticeType, isCustomerOrder);
+          }
+        validationHelper.validateString(shal.getNotice(), !isOpen);
+      }
+
+      if (provision.getBodacc() != null) {
+        Bodacc bodacc = provision.getBodacc();
+        validationHelper.validateReferential(bodacc.getPaymentType(), false);
+        validationHelper.validateReferential(bodacc.getBodaccPublicationType(), !isOpen);
+        validationHelper.validateReferential(bodacc.getTransfertFundsType(), false);
+
+        if (bodacc.getBodaccSale() != null) {
+          BodaccSale bodaccSale = bodacc.getBodaccSale();
+
+          validationHelper.validateString(bodaccSale.getDivestedBusinessAddress(), false, 100);
+          validationHelper.validateReferential(bodaccSale.getFundType(), isCustomerOrder);
+          validationHelper.validateString(bodaccSale.getOwnerFirstname(), false, 30);
+          validationHelper.validateString(bodaccSale.getOwnerLastname(), false, 30);
+          validationHelper.validateString(bodaccSale.getOwnerDenomination(), false, 60);
+          validationHelper.validateString(bodaccSale.getOwnerSiren(), false, 9);
+          validationHelper.validateSiren(bodaccSale.getOwnerSiren());
+          validationHelper.validateString(bodaccSale.getOwnerAddress(), isCustomerOrder, 100);
+          validationHelper.validateString(bodaccSale.getOwnerAbbreviation(), false, 20);
+          validationHelper.validateString(bodaccSale.getOwnerBusinessName(), false, 60);
+          validationHelper.validateReferential(bodaccSale.getOwnerLegalForm(), false);
+
+          validationHelper.validateString(bodaccSale.getPurchaserFirstname(), false, 30);
+          validationHelper.validateString(bodaccSale.getPurchaserLastname(), false, 30);
+          validationHelper.validateString(bodaccSale.getPurchaserDenomination(), false, 60);
+          validationHelper.validateString(bodaccSale.getPurchaserSiren(), false, 9);
+          validationHelper.validateSiren(bodaccSale.getPurchaserSiren());
+          validationHelper.validateString(bodaccSale.getPurchaserBusinessName(), false, 60);
+          validationHelper.validateString(bodaccSale.getPurchaserAbbreviation(), false, 20);
+          validationHelper.validateReferential(bodaccSale.getPurchaserLegalForm(), false);
+          validationHelper.validateDate(bodaccSale.getPurchaserActivityStartDate(), isCustomerOrder);
+
+          validationHelper.validateDate(bodaccSale.getDeedDate(), isCustomerOrder);
+          validationHelper.validateDate(bodaccSale.getRegistrationDate(), isCustomerOrder);
+          validationHelper.validateReferential(bodaccSale.getRegistrationAuthority(), isCustomerOrder);
+          validationHelper.validateString(bodaccSale.getRegistrationReferences(), false, 50);
+          validationHelper.validateReferential(bodaccSale.getActType(), isCustomerOrder);
+          validationHelper.validateString(bodaccSale.getWritor(), false, 60);
+          validationHelper.validateString(bodaccSale.getWritorAddress(), false, 100);
+          validationHelper.validateString(bodaccSale.getValidityObjectionAddress(), isCustomerOrder, 100);
+          validationHelper.validateString(bodaccSale.getMailObjectionAddress(), false, 100);
+          validationHelper.validateDate(bodaccSale.getLeaseResilisationDate(), isCustomerOrder);
+          validationHelper.validateString(bodaccSale.getLeaseAddress(), false, 100);
+
+          validationHelper.validateString(bodaccSale.getTenantFirstname(), false, 30);
+          validationHelper.validateString(bodaccSale.getTenantLastname(), false, 30);
+          validationHelper.validateString(bodaccSale.getTenantAddress(), isCustomerOrder, 100);
+          validationHelper.validateString(bodaccSale.getTenantDenomination(), false, 60);
+          validationHelper.validateString(bodaccSale.getTenantSiren(), false, 9);
+          validationHelper.validateSiren(bodaccSale.getTenantSiren());
+          validationHelper.validateString(bodaccSale.getTenantBusinessName(), false, 60);
+          validationHelper.validateString(bodaccSale.getTenantAbbreviation(), false, 20);
+          validationHelper.validateReferential(bodaccSale.getTenantLegalForm(), false);
+
+        }
+
+        if (bodacc.getBodaccFusion() != null) {
+          BodaccFusion bodaccFusion = bodacc.getBodaccFusion();
+
+          if (bodaccFusion.getBodaccFusionAbsorbedCompanies() == null
+              || bodaccFusion.getBodaccFusionAbsorbedCompanies().size() == 0)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+
+          for (BodaccFusionAbsorbedCompany bodaccFusionAbsorbedCompany : bodaccFusion
+              .getBodaccFusionAbsorbedCompanies()) {
+            validationHelper.validateString(bodaccFusionAbsorbedCompany.getAbsorbedCompanyDenomination(),
+                isCustomerOrder, 60);
+            validationHelper.validateString(bodaccFusionAbsorbedCompany.getAbsorbedCompanySiren(), isCustomerOrder, 9);
+            validationHelper.validateRna(bodaccFusionAbsorbedCompany.getAbsorbedCompanySiren());
+            validationHelper.validateString(bodaccFusionAbsorbedCompany.getAbsorbedCompanyAddress(), isCustomerOrder,
+                100);
+            validationHelper.validateReferential(bodaccFusionAbsorbedCompany.getAbsorbedCompanyLegalForm(), false);
+            validationHelper.validateDate(bodaccFusionAbsorbedCompany.getAbsorbedCompanyRcsDeclarationDate(),
+                isCustomerOrder);
+            validationHelper
+                .validateReferential(bodaccFusionAbsorbedCompany.getAbsorbedCompanyRcsCompetentAuthority(),
+                    isCustomerOrder);
+          }
+
+          if (bodaccFusion.getBodaccFusionMergingCompanies() == null
+              || bodaccFusion.getBodaccFusionMergingCompanies().size() == 0)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+
+          for (BodaccFusionMergingCompany bodaccFusionMergingCompany : bodaccFusion
+              .getBodaccFusionMergingCompanies()) {
+            validationHelper.validateString(bodaccFusionMergingCompany.getMergingCompanyDenomination(), isCustomerOrder,
+                60);
+            validationHelper.validateString(bodaccFusionMergingCompany.getMergingCompanySiren(), isCustomerOrder, 9);
+            validationHelper.validateRna(bodaccFusionMergingCompany.getMergingCompanySiren());
+            validationHelper.validateString(bodaccFusionMergingCompany.getMergingCompanyAddress(), isCustomerOrder,
+                100);
+            validationHelper.validateReferential(bodaccFusionMergingCompany.getMergingCompanyLegalForm(), false);
+            validationHelper.validateDate(bodaccFusionMergingCompany.getMergingCompanyRcsDeclarationDate(),
+                isCustomerOrder);
+            validationHelper.validateReferential(bodaccFusionMergingCompany.getMergingCompanyRcsCompetentAuthority(),
+                isCustomerOrder);
+          }
+        }
+
+        if (bodacc.getBodaccSplit() != null) {
+          BodaccSplit bodaccSplit = bodacc.getBodaccSplit();
+
+          if (bodaccSplit.getBodaccSplitBeneficiaries() == null
+              || bodaccSplit.getBodaccSplitBeneficiaries().size() == 0)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+
+          for (BodaccSplitBeneficiary bodaccSplitBeneficiary : bodaccSplit.getBodaccSplitBeneficiaries()) {
+            validationHelper.validateString(bodaccSplitBeneficiary.getBeneficiaryCompanyDenomination(), isCustomerOrder,
+                60);
+            validationHelper.validateString(bodaccSplitBeneficiary.getBeneficiaryCompanySiren(), isCustomerOrder, 9);
+            validationHelper.validateRna(bodaccSplitBeneficiary.getBeneficiaryCompanySiren());
+            validationHelper.validateString(bodaccSplitBeneficiary.getBeneficiaryCompanyAddress(), isCustomerOrder,
+                100);
+            validationHelper.validateReferential(bodaccSplitBeneficiary.getBeneficiaryCompanyLegalForm(), false);
+            validationHelper.validateDate(bodaccSplitBeneficiary.getBeneficiaryCompanyRcsDeclarationDate(),
+                isCustomerOrder);
+            validationHelper.validateReferential(bodaccSplitBeneficiary.getBeneficiaryCompanyRcsCompetentAuthority(),
+                true);
+          }
+
+          if (bodaccSplit.getBodaccSplitCompanies() == null || bodaccSplit.getBodaccSplitCompanies().size() == 0)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+          for (BodaccSplitCompany bodaccSplitCompany : bodaccSplit.getBodaccSplitCompanies()) {
+            validationHelper.validateString(bodaccSplitCompany.getSplitCompanyDenomination(), isCustomerOrder, 60);
+            validationHelper.validateString(bodaccSplitCompany.getSplitCompanySiren(), isCustomerOrder, 9);
+            validationHelper.validateRna(bodaccSplitCompany.getSplitCompanySiren());
+            validationHelper.validateString(bodaccSplitCompany.getSplitCompanyAddress(), isCustomerOrder, 100);
+            validationHelper.validateReferential(bodaccSplitCompany.getSplitCompanyLegalForm(), false);
+            validationHelper.validateDate(bodaccSplitCompany.getSplitCompanyRcsDeclarationDate(), isCustomerOrder);
+            validationHelper.validateReferential(bodaccSplitCompany.getSplitCompanyRcsCompetentAuthority(),
+                isCustomerOrder);
+          }
+        }
+
+        validationHelper.validateDateMin(bodacc.getDateOfPublication(), false, new Date());
+      }
+    }
   }
 
   @PostMapping(inputEntryPoint + "/affaire")

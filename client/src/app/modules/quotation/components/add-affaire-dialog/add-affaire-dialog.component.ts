@@ -90,12 +90,6 @@ export class AddAffaireDialogComponent implements OnInit {
   }
 
   affaireForm = this.formBuilder.group({
-    affaire: [''],
-    siret: [''],
-    siren: [''],
-    rna: [''],
-    city: [''],
-    postalCode: [''],
   });
 
   getFormStatus(): boolean {

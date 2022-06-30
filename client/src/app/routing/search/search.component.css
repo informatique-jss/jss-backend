@@ -5,3 +5,9 @@
 mat-card-subtitle {
   margin-top: 0 !important;
 }
+
+.mat-content {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
