@@ -29,15 +29,13 @@ export class SpecialOffersDialogComponent implements OnInit {
       // Flatten object to display
       if (response && response.length > 0) {
         response.forEach(specialOffer => {
-          specialOffer.billingItems.forEach(billingItem => {
+          specialOffer.assoSpecialOfferBillingTypes.forEach(assoSpecialOfferBillingType => {
             let localSpecialOffer = {} as SpecialOfferFlatten;
             localSpecialOffer.id = specialOffer.id;
             localSpecialOffer.code = specialOffer.code + ((specialOffer.label != null && specialOffer.label != "") ? " - " : "") + specialOffer.label;
-            localSpecialOffer.billingTypeLabel = billingItem.billingType.label;
-            localSpecialOffer.billingTypePreTaxPrice = billingItem.billingType.preTaxPrice;
-            localSpecialOffer.discountAmount = billingItem.discountAmount;
-            localSpecialOffer.discountRate = billingItem.discountRate;
-            localSpecialOffer.vat = (billingItem.vat) ? billingItem.vat.rate : 0;
+            localSpecialOffer.billingTypeLabel = assoSpecialOfferBillingType.billingType.label;
+            localSpecialOffer.discountAmount = assoSpecialOfferBillingType.discountAmount;
+            localSpecialOffer.discountRate = assoSpecialOfferBillingType.discountRate;
             this.specialOffersFlatten.push(localSpecialOffer);
           });
         });

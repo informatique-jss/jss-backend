@@ -1,13 +1,12 @@
-import { IReferential } from "../../administration/model/IReferential";
+import { AccountingAccount } from "../../accounting/model/AccountingAccount";
+import { AssoSpecialOfferBillingType } from "./AssoSpecialOfferBillingType";
 import { BillingType } from "./BillingType";
-import { SpecialOffer } from "./SpecialOffer";
-import { Vat } from "./Vat";
 
-export interface BillingItem extends IReferential {
+export interface BillingItem {
   id: number;
-  discountRate: number;
-  discountAmount: number;
   billingType: BillingType;
-  vat: Vat;
-  specialOffers: SpecialOffer[];
+  preTaxPrice: number;
+  startDate: Date;
+  assoSpecialOfferBillingItem: AssoSpecialOfferBillingType[];
+  accountingAccounts: AccountingAccount[];
 }

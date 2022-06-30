@@ -1,15 +1,21 @@
 package com.jss.osiris.modules.quotation.model;
 
 import java.io.Serializable;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.jss.osiris.modules.miscellaneous.model.BillingType;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 
 @Entity
@@ -28,12 +34,25 @@ public class ProvisionType implements Serializable, IId {
 	@JoinColumn(name = "id_provision_family_type")
 	private ProvisionFamilyType provisionFamilyType;
 
+	@ManyToMany(cascade = CascadeType.ALL)
+	@JoinTable(name = "asso_provision_billing_type", joinColumns = @JoinColumn(name = "id_provision"), inverseJoinColumns = @JoinColumn(name = "id_billing_type"))
+	@JsonProperty(value = "billingTypes")
+	private List<BillingType> billingTypes;
+
 	public Integer getId() {
 		return id;
 	}
 
 	public void setId(Integer id) {
 		this.id = id;
+	}
+
+	public List<BillingType> getBillingTypes() {
+		return billingTypes;
+	}
+
+	public void setBillingTypes(List<BillingType> billingTypes) {
+		this.billingTypes = billingTypes;
 	}
 
 	public String getLabel() {

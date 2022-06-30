@@ -1,0 +1,74 @@
+package com.jss.osiris.modules.miscellaneous.model;
+
+import java.io.Serializable;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
+@Entity
+public class AssoSpecialOfferBillingType implements Serializable, IId {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private Integer id;
+
+	@ManyToOne
+	@JoinColumn(name = "id_special_offer")
+	@JsonBackReference("specialOffer")
+	private SpecialOffer specialOffer;
+
+	@ManyToOne
+	@JoinColumn(name = "id_billingType")
+	private BillingType billingType;
+
+	private Float discountRate;
+
+	private Float discountAmount;
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public SpecialOffer getSpecialOffer() {
+		return specialOffer;
+	}
+
+	public void setSpecialOffer(SpecialOffer specialOffer) {
+		this.specialOffer = specialOffer;
+	}
+
+	public BillingType getBillingType() {
+		return billingType;
+	}
+
+	public void setBillingType(BillingType billingType) {
+		this.billingType = billingType;
+	}
+
+	public Float getDiscountRate() {
+		return discountRate;
+	}
+
+	public void setDiscountRate(Float discountRate) {
+		this.discountRate = discountRate;
+	}
+
+	public Float getDiscountAmount() {
+		return discountAmount;
+	}
+
+	public void setDiscountAmount(Float discountAmount) {
+		this.discountAmount = discountAmount;
+	}
+
+}

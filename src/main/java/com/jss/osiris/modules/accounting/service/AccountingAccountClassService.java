@@ -8,6 +8,8 @@ public interface AccountingAccountClassService {
     public List<AccountingAccountClass> getAccountingAccountClasses();
 
     public AccountingAccountClass getAccountingAccountClass(Integer id);
-	
-	 public AccountingAccountClass addOrUpdateAccountingAccountClass(AccountingAccountClass accountingAccountClass);
+
+    public List<AccountingAccountClass> getAccountingAccountClassByCode(String code);
+
+    public AccountingAccountClass addOrUpdateAccountingAccountClass(AccountingAccountClass accountingAccountClass);
 }

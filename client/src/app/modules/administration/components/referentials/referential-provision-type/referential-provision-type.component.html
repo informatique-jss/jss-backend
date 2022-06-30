@@ -55,6 +55,23 @@
             </td>
           </tr>
         </table>
+        <table class="full-width" *ngIf="selectedEntity.billingTypes">
+          <tr *ngFor="let billingType of selectedEntity.billingTypes; let i = index">
+            <td>
+              <select-billing-type [(model)]="selectedEntity.billingTypes[i]" [label]="'Famille de produit '+i"
+                [form]="entityForm" [propertyName]="'billingType'+i" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-billing-type>
+            </td>
+          </tr>
+        </table>
+        <table class="full-width">
+          <tr>
+            <td>
+              <button *ngIf="editMode" (click)="addBillingType()" mat-raised-button color="accent">Ajouter une famille
+                de produit </button>
+            </td>
+          </tr>
+        </table>
       </fieldset>
     </div>
   </form>

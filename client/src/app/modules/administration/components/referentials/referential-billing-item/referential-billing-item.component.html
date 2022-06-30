@@ -1,3 +1,12 @@
+<ng-template #accordionTools>
+  <mat-panel-description>
+    <mat-icon matTooltip="Ouvrir tous les onglets" (click)="accordion!.openAll();$event.stopPropagation();"
+      class="pointer">
+      unfold_more_double</mat-icon>
+    <mat-icon matTooltip="Fermer tous les autres onglets" (click)="accordion!.closeAll();" class="pointer">
+      unfold_less_double</mat-icon>
+  </mat-panel-description>
+</ng-template>
 <div>
   <div>
     <mat-form-field class="full-width">
@@ -37,32 +46,80 @@
           </tr>
           <tr>
             <td>
-              <generic-input [(model)]="selectedEntity.discountRate" label="Taux de réduction" [form]="entityForm"
-                propertyName="discountRate" [isMandatory]="false" [isDisabled]="!editMode" type="number">
-              </generic-input>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <generic-input [(model)]="selectedEntity.discountAmount" label="Montant de la réduction"
-                [form]="entityForm" propertyName="discountAmount" [isMandatory]="false" [isDisabled]="!editMode"
-                type="number"></generic-input>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <select-billing-type [(model)]="selectedEntity.billingType" label="Poste de facturation"
+              <select-billing-type [(model)]="selectedEntity.billingType" label="Famille de poste de facturation"
                 [form]="entityForm" propertyName="billingType" [isMandatory]="true" [isDisabled]="!editMode">
               </select-billing-type>
             </td>
           </tr>
           <tr>
             <td>
-              <select-vat [(model)]="selectedEntity.vat" label="TVA" [form]="entityForm" propertyName="vat"
-                [isMandatory]="true" [isDisabled]="!editMode"></select-vat>
+              <generic-input [(model)]="selectedEntity.preTaxPrice" label="Prix HT (€)" [form]="entityForm"
+                propertyName="preTaxPrice" [isMandatory]="true" [isDisabled]="!editMode" type="number"></generic-input>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <generic-datepicker [(model)]="selectedEntity.startDate" label="Date d'application" [form]="entityForm"
+                propertyName="startDate" [isMandatory]="true" [isDisabled]="!editMode"></generic-datepicker>
             </td>
           </tr>
         </table>
+        <div class="mat-accordion-container full-width">
+          <mat-accordion multi>
+            <mat-expansion-panel>
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  Charge
+                </mat-panel-title>
+                <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
+              </mat-expansion-panel-header>
+              <table class="full-width">
+                <tr *ngIf="accountingAccountCharge">
+                  <td>
+                    <generic-input [(model)]="accountingAccountCharge.accountingAccountNumber"
+                      label="N° de compte comptable" [form]="entityForm" propertyName="accountingAccountCharge"
+                      [isMandatory]="true" [isDisabled]="!editMode" [maxLength]="20"></generic-input>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <button *ngIf="editMode && !accountingAccountCharge" (click)="addCharge()" mat-raised-button
+                      color="accent">Ajouter une charge</button>
+                  </td>
+                </tr>
+              </table>
+            </mat-expansion-panel>
+            <mat-expansion-panel>
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  Produits
+                </mat-panel-title>
+                <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
+              </mat-expansion-panel-header>
+              <table class="full-width" *ngIf="accountingAccountProducts">
+                <tr *ngFor="let accountingAccountProduct of accountingAccountProducts; let i = index">
+                  <td>
+                    <generic-input [(model)]="accountingAccountProducts[i].accountingAccountNumber"
+                      label="N° de compte comptable" [form]="entityForm" [propertyName]="'accountingAccountNumber'+i"
+                      [isMandatory]="true" [isDisabled]="!editMode" [maxLength]="20"></generic-input>
+                  </td>
+                  <td>
+                    <select-vat [(model)]="accountingAccountProducts[i].vat" label="Taux de TVA" [form]="entityForm"
+                      [propertyName]="'vat_'+i" [isMandatory]="true" [isDisabled]="!editMode"></select-vat>
+                  </td>
+                </tr>
+              </table>
+              <table class="full-width">
+                <tr>
+                  <td>
+                    <button *ngIf="editMode" (click)="addProduct()" mat-raised-button color="accent">Ajouter un
+                      produit</button>
+                  </td>
+                </tr>
+              </table>
+            </mat-expansion-panel>
+          </mat-accordion>
+        </div>
       </fieldset>
     </div>
   </form>

@@ -21,6 +21,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.jss.osiris.libs.ValidationHelper;
+import com.jss.osiris.modules.accounting.model.AccountingAccount;
+import com.jss.osiris.modules.miscellaneous.model.AssoSpecialOfferBillingType;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.AttachmentType;
 import com.jss.osiris.modules.miscellaneous.model.BillingItem;
@@ -205,6 +207,13 @@ public class MiscellaneousController {
             validationHelper.validateString(specialOffers.getCode(), true);
             validationHelper.validateString(specialOffers.getLabel(), true);
 
+            if (specialOffers.getAssoSpecialOfferBillingTypes() != null
+                    || specialOffers.getAssoSpecialOfferBillingTypes().size() == 0)
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+            for (AssoSpecialOfferBillingType asso : specialOffers.getAssoSpecialOfferBillingTypes())
+                validationHelper.validateReferential(asso.getBillingType(), true);
+
             outSpecialOffer = specialOfferService
                     .addOrUpdateSpecialOffer(specialOffers);
         } catch (
@@ -363,9 +372,6 @@ public class MiscellaneousController {
             validationHelper.validateString(billingTypes.getCode(), true);
             validationHelper.validateString(billingTypes.getLabel(), true);
 
-            if (billingTypes.getAccountingCode() == null || billingTypes.getPreTaxPrice() == null)
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
             outBillingType = billingTypeService
                     .addOrUpdateBillingType(billingTypes);
         } catch (
@@ -404,8 +410,22 @@ public class MiscellaneousController {
         try {
             if (billingItems.getId() != null)
                 validationHelper.validateReferential(billingItems, true);
-            validationHelper.validateReferential(billingItems.getVat(), true);
             validationHelper.validateReferential(billingItems.getBillingType(), true);
+
+            validationHelper.validateDate(billingItems.getStartDate(), true);
+
+            if (billingItems.getAccountingAccounts() == null || billingItems.getAccountingAccounts().size() == 0)
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+            for (AccountingAccount accountingAccount : billingItems.getAccountingAccounts()) {
+                if (accountingAccount.getId() != null)
+                    validationHelper.validateReferential(accountingAccount, true);
+                validationHelper.validateString(accountingAccount.getCode(), true);
+                validationHelper.validateString(accountingAccount.getLabel(), true);
+                validationHelper.validateString(accountingAccount.getAccountingAccountNumber(), true, 20);
+                validationHelper.validateReferential(accountingAccount.getVat(), true);
+                validationHelper.validateReferential(accountingAccount.getAccountingAccountClass(), true);
+            }
 
             outBillingItem = billingItemService.addOrUpdateBillingItem(billingItems);
         } catch (

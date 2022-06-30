@@ -1,6 +1,7 @@
 import { IReferential } from "../../administration/model/IReferential";
-import { BillingItem } from "./BillingItem";
+import { AssoSpecialOfferBillingType } from "./AssoSpecialOfferBillingType";
 
 export interface SpecialOffer extends IReferential {
-  billingItems: BillingItem[];
+  assoSpecialOfferBillingTypes: AssoSpecialOfferBillingType[];
 }
+

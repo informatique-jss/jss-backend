@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
+import { BillingType } from 'src/app/modules/miscellaneous/model/BillingType';
 import { ProvisionType } from 'src/app/modules/quotation/model/ProvisionType';
 import { ProvisionTypeService } from 'src/app/modules/quotation/services/provision.type.service';
 import { GenericReferentialComponent } from '../generic-referential/generic-referential-component';
@@ -21,5 +22,12 @@ export class ReferentialProvisionTypeComponent extends GenericReferentialCompone
   }
   getGetObservable(): Observable<ProvisionType[]> {
     return this.provisionTypeService.getProvisionTypes();
+  }
+
+  addBillingType() {
+    if (this.selectedEntity)
+      if (!this.selectedEntity.billingTypes)
+        this.selectedEntity.billingTypes = [] as Array<BillingType>;
+    this.selectedEntity?.billingTypes.push({} as BillingType);
   }
 }

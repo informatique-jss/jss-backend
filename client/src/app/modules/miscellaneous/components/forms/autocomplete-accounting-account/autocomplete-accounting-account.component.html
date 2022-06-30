@@ -5,7 +5,7 @@
   <mat-autocomplete autoActiveFirstOption #autoCompleteAccountingAccount="matAutocomplete" [displayWith]="displayLabel"
     (optionSelected)='optionSelected($event.option.value)'>
     <mat-option *ngFor="let accountingAccount of filteredTypes" [value]="accountingAccount">
-      {{accountingAccount.label}}
+      {{accountingAccount.label}} - {{accountingAccount.accountingAccountNumber}}
     </mat-option>
   </mat-autocomplete>
 </mat-form-field>

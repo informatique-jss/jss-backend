@@ -47,14 +47,38 @@
                 propertyName="label" [isMandatory]="true" [isDisabled]="!editMode"></generic-input>
             </td>
           </tr>
-          <tr>
-            <td>
-              <select-billing-items [(model)]="selectedEntity.billingItems" label="Lignes de facturation"
-                [form]="entityForm" propertyName="billingItems" [isMandatory]="true" [isDisabled]="!editMode">
-              </select-billing-items>
-            </td>
-          </tr>
         </table>
+        <div class="mat-accordion-container full-width">
+          <table class="full-width" *ngIf="assoSpecialOfferBillingItems">
+            <tr *ngFor="let assoSpecialOfferBillingItem of assoSpecialOfferBillingItems; let i = index">
+              <td>
+                <select-billing-type [(model)]="assoSpecialOfferBillingItems[i].billingType"
+                  label="Famille de poste de facturation" [form]="entityForm" [propertyName]="'billingType'+i"
+                  [isMandatory]="true" [isDisabled]="!editMode"></select-billing-type>
+              </td>
+              <td>
+                <generic-input [(model)]="assoSpecialOfferBillingItems[i].discountAmount" label="Réduction (€)"
+                  [form]="entityForm" [propertyName]="'discountAmount'+i" [isMandatory]="true" [isDisabled]="!editMode"
+                  [conditionnalRequired]="!assoSpecialOfferBillingItems[i].discountRate || assoSpecialOfferBillingItems[i].discountRate==0"
+                  type="number"></generic-input>
+              </td>
+              <td>
+                <generic-input [(model)]="assoSpecialOfferBillingItems[i].discountRate" label="Taux de réduction (%)"
+                  [form]="entityForm" [propertyName]="'discountRate'+i" [isMandatory]="true" [isDisabled]="!editMode"
+                  [conditionnalRequired]="!assoSpecialOfferBillingItems[i].discountAmount || assoSpecialOfferBillingItems[i].discountAmount==0"
+                  type="number"></generic-input>
+              </td>
+            </tr>
+          </table>
+          <table class="full-width">
+            <tr>
+              <td>
+                <button *ngIf="editMode" (click)="addAsso()" mat-raised-button color="accent">Ajouter un poste de
+                  facturation</button>
+              </td>
+            </tr>
+          </table>
+        </div>
       </fieldset>
     </div>
   </form>

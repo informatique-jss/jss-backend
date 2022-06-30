@@ -8,9 +8,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 public class SpecialOffer implements Serializable, IId {
@@ -24,9 +24,9 @@ public class SpecialOffer implements Serializable, IId {
 
 	private String code;
 
-	@ManyToMany
-	@JoinTable(name = "asso_special_offer_billing_item", joinColumns = @JoinColumn(name = "id_special_offer"), inverseJoinColumns = @JoinColumn(name = "id_billing_item"))
-	private List<BillingItem> billingItems;
+	@OneToMany(targetEntity = AssoSpecialOfferBillingType.class, mappedBy = "specialOffer")
+	@JsonManagedReference("specialOffer")
+	private List<AssoSpecialOfferBillingType> assoSpecialOfferBillingTypes;
 
 	public Integer getId() {
 		return id;
@@ -52,12 +52,12 @@ public class SpecialOffer implements Serializable, IId {
 		this.code = code;
 	}
 
-	public List<BillingItem> getBillingItems() {
-		return billingItems;
+	public List<AssoSpecialOfferBillingType> getAssoSpecialOfferBillingTypes() {
+		return assoSpecialOfferBillingTypes;
 	}
 
-	public void setBillingItems(List<BillingItem> billingItems) {
-		this.billingItems = billingItems;
+	public void setAssoSpecialOfferBillingTypes(List<AssoSpecialOfferBillingType> assoSpecialOfferBillingTypes) {
+		this.assoSpecialOfferBillingTypes = assoSpecialOfferBillingTypes;
 	}
 
 }

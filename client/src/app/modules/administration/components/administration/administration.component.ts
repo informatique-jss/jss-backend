@@ -59,8 +59,8 @@ export class AdministrationComponent implements OnInit {
   WEEK_DAY_REFERENTIAL = "Divers - jours de la semaine";
   CHARACTER_PRICE_REFERENTIAL = "Devis - SHAL - prix du caractère";
   SHAL_NOTICE_TEMPLATE_REFERENTIAL = "Devis - SHAL - modèle d'annonce";
-  BILLING_ITEM_REFERENTIAL = "Divers - ligne de facturation";
-  BILLING_TYPE_REFERENTIAL = "Divers - poste de facturation";
+  BILLING_ITEM_REFERENTIAL = "Divers - poste de facturation";
+  BILLING_TYPE_REFERENTIAL = "Divers - famille de poste de facturation";
   CITY_REFERENTIAL = "Divers - ville";
   DEPARTMENT_REFERENTIAL = "Divers - département";
   GIFT_REFERENTIAL = "Tiers - cadeau";

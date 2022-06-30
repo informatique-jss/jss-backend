@@ -3,12 +3,12 @@ package com.jss.osiris.modules.accounting.service;
 import java.util.List;
 import java.util.Optional;
 
-import com.jss.osiris.modules.accounting.model.AccountingAccountClass;
-import com.jss.osiris.modules.accounting.repository.AccountingAccountClassRepository;
-
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.jss.osiris.modules.accounting.model.AccountingAccountClass;
+import com.jss.osiris.modules.accounting.repository.AccountingAccountClassRepository;
 
 @Service
 public class AccountingAccountClassServiceImpl implements AccountingAccountClassService {
@@ -28,10 +28,15 @@ public class AccountingAccountClassServiceImpl implements AccountingAccountClass
             return accountingAccountClass.get();
         return null;
     }
-	
-	 @Override
+
+    @Override
     public AccountingAccountClass addOrUpdateAccountingAccountClass(
             AccountingAccountClass accountingAccountClass) {
         return accountingAccountClassRepository.save(accountingAccountClass);
+    }
+
+    @Override
+    public List<AccountingAccountClass> getAccountingAccountClassByCode(String code) {
+        return accountingAccountClassRepository.findByCode(code);
     }
 }

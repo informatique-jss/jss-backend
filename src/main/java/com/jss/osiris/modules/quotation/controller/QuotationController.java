@@ -18,6 +18,7 @@ import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.jss.osiris.libs.ValidationHelper;
+import com.jss.osiris.modules.miscellaneous.model.BillingType;
 import com.jss.osiris.modules.miscellaneous.model.Department;
 import com.jss.osiris.modules.miscellaneous.service.CityService;
 import com.jss.osiris.modules.miscellaneous.service.CivilityService;
@@ -828,6 +829,10 @@ public class QuotationController {
         validationHelper.validateReferential(provisionTypes, true);
       validationHelper.validateString(provisionTypes.getCode(), true);
       validationHelper.validateString(provisionTypes.getLabel(), true);
+
+      if (provisionTypes.getBillingTypes() != null && provisionTypes.getBillingTypes().size() > 0)
+        for (BillingType billingType : provisionTypes.getBillingTypes())
+          validationHelper.validateReferential(billingType, false);
 
       outProvisionType = provisionTypeService
           .addOrUpdateProvisionType(provisionTypes);

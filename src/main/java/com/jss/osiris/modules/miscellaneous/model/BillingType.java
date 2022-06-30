@@ -20,10 +20,6 @@ public class BillingType implements Serializable, IId {
 
 	private String code;
 
-	private Integer accountingCode;
-
-	private Float preTaxPrice;
-
 	public Integer getId() {
 		return id;
 	}
@@ -47,21 +43,4 @@ public class BillingType implements Serializable, IId {
 	public void setLabel(String label) {
 		this.label = label;
 	}
-
-	public Integer getAccountingCode() {
-		return accountingCode;
-	}
-
-	public void setAccountingCode(Integer accountingCode) {
-		this.accountingCode = accountingCode;
-	}
-
-	public Float getPreTaxPrice() {
-		return preTaxPrice;
-	}
-
-	public void setPreTaxPrice(Float preTaxPrice) {
-		this.preTaxPrice = preTaxPrice;
-	}
-
 }

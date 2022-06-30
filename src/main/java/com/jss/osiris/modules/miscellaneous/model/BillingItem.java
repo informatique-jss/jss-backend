@@ -1,18 +1,19 @@
 package com.jss.osiris.modules.miscellaneous.model;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.jss.osiris.modules.accounting.model.AccountingAccount;
 
 @Entity
 public class BillingItem implements Serializable, IId {
@@ -21,21 +22,17 @@ public class BillingItem implements Serializable, IId {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
 
-	private Float discountRate;
-
-	private Float discountAmount;
-
 	@ManyToOne
 	@JoinColumn(name = "id_billing_type")
 	BillingType billingType;
 
-	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "id_vat")
-	Vat vat;
+	private Float preTaxPrice;
 
-	@ManyToMany(mappedBy = "billingItems")
-	@JsonBackReference
-	private List<SpecialOffer> specialOffers;
+	private Date startDate;
+
+	@OneToMany(targetEntity = AccountingAccount.class, mappedBy = "billingItem")
+	@JsonManagedReference("accountingAccount")
+	private List<AccountingAccount> accountingAccounts;
 
 	public Integer getId() {
 		return id;
@@ -43,22 +40,6 @@ public class BillingItem implements Serializable, IId {
 
 	public void setId(Integer id) {
 		this.id = id;
-	}
-
-	public Float getDiscountRate() {
-		return discountRate;
-	}
-
-	public void setDiscountRate(Float discountRate) {
-		this.discountRate = discountRate;
-	}
-
-	public Float getDiscountAmount() {
-		return discountAmount;
-	}
-
-	public void setDiscountAmount(Float discountAmount) {
-		this.discountAmount = discountAmount;
 	}
 
 	public BillingType getBillingType() {
@@ -69,20 +50,28 @@ public class BillingItem implements Serializable, IId {
 		this.billingType = billingType;
 	}
 
-	public Vat getVat() {
-		return vat;
+	public Float getPreTaxPrice() {
+		return preTaxPrice;
 	}
 
-	public void setVat(Vat vat) {
-		this.vat = vat;
+	public void setPreTaxPrice(Float preTaxPrice) {
+		this.preTaxPrice = preTaxPrice;
 	}
 
-	public List<SpecialOffer> getSpecialOffers() {
-		return specialOffers;
+	public Date getStartDate() {
+		return startDate;
 	}
 
-	public void setSpecialOffers(List<SpecialOffer> specialOffers) {
-		this.specialOffers = specialOffers;
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+
+	public List<AccountingAccount> getAccountingAccounts() {
+		return accountingAccounts;
+	}
+
+	public void setAccountingAccounts(List<AccountingAccount> accountingAccounts) {
+		this.accountingAccounts = accountingAccounts;
 	}
 
 }

@@ -46,6 +46,17 @@ export abstract class GenericReferentialComponent<T extends IReferential> implem
     weekDays: [''],
     preference: [''],
     regie: [''],
+    billingType0: [''],
+    billingType1: [''],
+    billingType2: [''],
+    billingType3: [''],
+    billingType4: [''],
+    billingType5: [''],
+    billingType6: [''],
+    billingType7: [''],
+    billingType8: [''],
+    billingType9: [''],
+    billingType10: [''],
   });
 
   ngOnInit() {

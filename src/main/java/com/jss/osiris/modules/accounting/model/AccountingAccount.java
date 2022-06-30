@@ -10,6 +10,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.jss.osiris.modules.miscellaneous.model.BillingItem;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.miscellaneous.model.Vat;
 
@@ -35,6 +37,11 @@ public class AccountingAccount implements Serializable, IId {
 	@ManyToOne
 	@JoinColumn(name = "id_accounting_account_class")
 	private AccountingAccountClass accountingAccountClass;
+
+	@ManyToOne
+	@JoinColumn(name = "id_billing_item")
+	@JsonBackReference("accountingAccount")
+	private BillingItem billingItem;
 
 	public Integer getId() {
 		return id;

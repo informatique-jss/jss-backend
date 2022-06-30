@@ -3,7 +3,5 @@ export interface SpecialOfferFlatten {
   code: string;
   discountAmount: number;
   discountRate: number;
-  vat: number;
   billingTypeLabel: string;
-  billingTypePreTaxPrice: number;
 }
