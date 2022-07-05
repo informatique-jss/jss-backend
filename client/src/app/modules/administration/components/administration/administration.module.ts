@@ -36,6 +36,7 @@ import { ReferentialCityComponent } from '../referentials/referential-city/refer
 import { ReferentialCivilityComponent } from '../referentials/referential-civility/referential-civility.component';
 import { ReferentialCompetentAuthorityTypeComponent } from '../referentials/referential-competent-authority-type/referential-competent-authority-type.component';
 import { ReferentialCompetentAuthorityComponent } from '../referentials/referential-competent-authority/referential-competent-authority.component';
+import { ReferentialCompetitorComponent } from '../referentials/referential-competitor/referential-competitor.component';
 import { ReferentialConfrereComponent } from '../referentials/referential-confrere/referential-confrere.component';
 import { ReferentialCountryComponent } from '../referentials/referential-country/referential-country.component';
 import { ReferentialDeliveryServiceComponent } from '../referentials/referential-delivery-service/referential-delivery-service.component';
@@ -143,6 +144,7 @@ const routes: Routes = [
     ReferentialNoticeTypeComponent,
     ReferentialProvisionTypeComponent,
     ReferentialSpecialOfferComponent,
+    ReferentialCompetitorComponent,
     ReferentialCompetentAuthorityComponent,
     ReferentialCityComponent,
     ReferentialShalNoticeTemplateComponent,

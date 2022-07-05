@@ -15,6 +15,7 @@ export interface IQuotation extends IAttachment, IDocument {
   tiers: Tiers | null;
   responsable: Responsable | null;
   specialOffers: SpecialOffer[] | undefined;
+  overrideSpecialOffer: boolean;
   createdDate: Date;
   status: QuotationStatus;
   observations: string;

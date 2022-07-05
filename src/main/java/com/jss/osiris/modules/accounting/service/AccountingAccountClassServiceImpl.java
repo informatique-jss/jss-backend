@@ -5,6 +5,8 @@ import java.util.Optional;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.jss.osiris.modules.accounting.model.AccountingAccountClass;
@@ -17,6 +19,7 @@ public class AccountingAccountClassServiceImpl implements AccountingAccountClass
     AccountingAccountClassRepository accountingAccountClassRepository;
 
     @Override
+    @Cacheable(value = "accountingAccountList", key = "#root.methodName")
     public List<AccountingAccountClass> getAccountingAccountClasses() {
         return IterableUtils.toList(accountingAccountClassRepository.findAll());
     }
@@ -30,6 +33,7 @@ public class AccountingAccountClassServiceImpl implements AccountingAccountClass
     }
 
     @Override
+    @CacheEvict(value = "accountingAccountList", allEntries = true)
     public AccountingAccountClass addOrUpdateAccountingAccountClass(
             AccountingAccountClass accountingAccountClass) {
         return accountingAccountClassRepository.save(accountingAccountClass);

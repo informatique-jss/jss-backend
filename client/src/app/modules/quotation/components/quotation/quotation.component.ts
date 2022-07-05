@@ -3,6 +3,7 @@ import { MatAccordion } from '@angular/material/expansion';
 import { ActivatedRoute, Router, UrlSegment } from '@angular/router';
 import { AppService } from 'src/app/app.service';
 import { QUOTATION_DOCUMENT_TYPE_CODE, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_CANCELLED, QUOTATION_STATUS_OPEN, QUOTATION_STATUS_REFUSED_BY_CUSTOMER, QUOTATION_STATUS_SENT_TO_CUSTOMER, QUOTATION_STATUS_TO_VERIFY, QUOTATION_STATUS_VALIDATED_BY_CUSTOMER, QUOTATION_STATUS_VALIDATED_BY_JSS } from 'src/app/libs/Constants';
+import { EntityType } from 'src/app/routing/search/EntityType';
 import { CUSTOMER_ORDER_ENTITY_TYPE, QUOTATION_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { SearchService } from 'src/app/search.service';
 import { Affaire } from '../../model/Affaire';
@@ -26,9 +27,10 @@ export class QuotationComponent implements OnInit {
   quotation: IQuotation = {} as IQuotation;
   editMode: boolean = false;
   createMode: boolean = false;
-  quotationStatus: QuotationStatus[] = [] as Array<QuotationStatus>;
+  quotationStatusList: QuotationStatus[] = [] as Array<QuotationStatus>;
 
   QUOTATION_ENTITY_TYPE = QUOTATION_ENTITY_TYPE;
+  CUSTOMER_ORDER_ENTITY_TYPE = CUSTOMER_ORDER_ENTITY_TYPE;
   QUOTATION_DOCUMENT_TYPE_CODE = QUOTATION_DOCUMENT_TYPE_CODE;
 
   QUOTATION_STATUS_OPEN = QUOTATION_STATUS_OPEN;
@@ -67,6 +69,10 @@ export class QuotationComponent implements OnInit {
     let idQuotation: number = this.activatedRoute.snapshot.params.id;
     let url: UrlSegment[] = this.activatedRoute.snapshot.url;
 
+    this.quotationStatusService.getQuotationStatus().subscribe(response => {
+      this.quotationStatusList = response;
+    })
+
     // Load by order
     if (url != undefined && url != null && url[0] != undefined && url[0].path == "order") {
       this.appService.changeHeaderTitle("Commande");
@@ -98,10 +104,6 @@ export class QuotationComponent implements OnInit {
       // Blank page
       this.appService.changeHeaderTitle("Devis");
     }
-
-    this.quotationStatusService.getQuotationStatus().subscribe(response => {
-      this.quotationStatus = response;
-    })
   }
 
   toggleTabs() {
@@ -152,7 +154,7 @@ export class QuotationComponent implements OnInit {
     if (!orderingCustomerFormStatus)
       errorMessages.push("Onglet Donneur d'ordre");
     if (!quotationManagementFormStatus)
-      errorMessages.push("Onglet Gestion du devis");
+      errorMessages.push("Onglet Eléments du devis");
     if (!provisionStatus)
       errorMessages.push("Onglet Prestations");
     if (errorMessages.length > 0) {
@@ -171,14 +173,18 @@ export class QuotationComponent implements OnInit {
     this.createMode = true;
     this.editMode = true;
     this.quotation = {} as IQuotation;
+    this.setOpenStatus();
     this.appService.changeHeaderTitle(this.instanceOfCustomerOrder ? "Nouvelle commande" : "Nouveau devis");
     this.toggleTabs();
   }
 
   openSearch() {
-    this.searchService.openSearchOnModule(this.instanceOfCustomerOrder ? CUSTOMER_ORDER_ENTITY_TYPE : QUOTATION_ENTITY_TYPE);
+    this.searchService.openSearchOnModule(this.getEntityType());
   }
 
+  getEntityType(): EntityType {
+    return this.instanceOfCustomerOrder ? CUSTOMER_ORDER_ENTITY_TYPE : QUOTATION_ENTITY_TYPE;
+  }
 
   applyFilter(filterValue: any) {
     if (filterValue == null || filterValue == undefined || filterValue.length == 0) {
@@ -222,6 +228,32 @@ export class QuotationComponent implements OnInit {
       }
     }
     this.applyFilter(null);
+  }
+
+  validateProvision(index: number) {
+    if (this.editMode) {
+      if (this.filteredProvisions && this.quotation && this.quotation.provisions) {
+        for (let i = 0; i < this.quotation.provisions.length; i++) {
+          const provision = this.quotation.provisions[i];
+          if (this.sameProvision(provision, this.filteredProvisions[index]))
+            this.quotation.provisions[i].isValidated = true;
+        }
+      }
+      this.applyFilter(null);
+    }
+  }
+
+  invalidateProvision(index: number) {
+    if (this.editMode) {
+      if (this.filteredProvisions && this.quotation && this.quotation.provisions) {
+        for (let i = 0; i < this.quotation.provisions.length; i++) {
+          const provision = this.quotation.provisions[i];
+          if (this.sameProvision(provision, this.filteredProvisions[index]))
+            this.quotation.provisions[i].isValidated = false;
+        }
+      }
+      this.applyFilter(null);
+    }
   }
 
   sameProvision(p1: Provision, p2: Provision): boolean {
@@ -269,16 +301,26 @@ export class QuotationComponent implements OnInit {
   }
 
   changeStatus(status: string) {
-    let targetStatus = this.quotationStatus.filter(s => s.code == status);
-    if (targetStatus.length != 1)
-      this.appService.displaySnackBar("Statut non trouvé ...", true, 60);
-
-    this.quotation.status = targetStatus[0];
-    this.editQuotation();
-    if (!this.saveQuotation())
-      this.ngOnInit();
-    this.editMode = false;
+    let s = this.getStatusByCode(status);
+    if (s != null) {
+      this.quotation.status = s;
+      this.editQuotation();
+      if (!this.saveQuotation())
+        this.ngOnInit();
+      this.editMode = false;
+    }
   }
 
+  getStatusByCode(code: string): QuotationStatus | null {
+    if (!this.quotationStatusList)
+      return null;
+
+    let targetStatus = this.quotationStatusList.filter(s => s.code == code);
+    if (targetStatus.length != 1) {
+      this.appService.displaySnackBar("Statut non trouvé ...", true, 60);
+      return null;
+    }
+    return targetStatus[0];
+  }
 
 }

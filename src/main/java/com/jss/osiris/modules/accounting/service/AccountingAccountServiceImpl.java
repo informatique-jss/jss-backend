@@ -36,7 +36,7 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
     }
 
     @Override
-    public List<AccountingAccount> getAccountingAccountByLabel(String label) {
-        return accountingAccountRepository.findByLabelContainingIgnoreCase(label);
+    public List<AccountingAccount> getAccountingAccountByLabelOrCode(String label) {
+        return accountingAccountRepository.findByLabelOrCodeContainingIgnoreCase(label, label);
     }
 }

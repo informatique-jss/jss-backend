@@ -53,11 +53,17 @@
                 [isMandatory]="false" [isDisabled]="!editMode" type="number"></generic-input>
             </td>
           </tr>
+        </table>
+        <table class="full-width">
           <tr>
             <td>
               <autocomplete-accounting-account [(model)]="selectedEntity.accountingAccount" [form]="entityForm"
                 propertyName="accountingAccount" [isMandatory]="true" label="Compte comptable">
               </autocomplete-accounting-account>
+            </td>
+            <td>
+              <generic-input [(model)]="selectedEntity.preTaxPrice" label="Prix HT (€)" [form]="entityForm"
+                propertyName="preTaxPrice" [isMandatory]="false" [isDisabled]="!editMode" type="number"></generic-input>
             </td>
           </tr>
         </table>

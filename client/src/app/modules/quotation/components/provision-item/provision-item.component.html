@@ -26,11 +26,3 @@
   [instanceOfCustomerOrder]="instanceOfCustomerOrder"
   *ngIf="provision.bodacc && provision.provisionType && provision.provisionType.code==PROVISION_TYPE_BODACC_CODE">
 </bodacc-main>
-<table class="full-width" [formGroup]="provisionItemForm">
-  <tr>
-    <td>
-      <generic-toggle [(model)]="provision.isValidated" label="Prestation validée ?" [form]="provisionItemForm"
-        propertyName="isValidated"></generic-toggle>
-    </td>
-  </tr>
-</table>

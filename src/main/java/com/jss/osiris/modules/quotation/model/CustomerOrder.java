@@ -91,6 +91,9 @@ public class CustomerOrder implements IQuotation {
 	@JoinTable(name = "asso_customer_order_phone", joinColumns = @JoinColumn(name = "id_customer_order"), inverseJoinColumns = @JoinColumn(name = "id_phone"))
 	private List<Phone> phones;
 
+	@Column(nullable = false)
+	private Boolean overrideSpecialOffer;
+
 	public Integer getId() {
 		return id;
 	}
@@ -217,6 +220,14 @@ public class CustomerOrder implements IQuotation {
 
 	public void setPhones(List<Phone> phones) {
 		this.phones = phones;
+	}
+
+	public Boolean getOverrideSpecialOffer() {
+		return overrideSpecialOffer;
+	}
+
+	public void setOverrideSpecialOffer(Boolean overrideSpecialOffer) {
+		this.overrideSpecialOffer = overrideSpecialOffer;
 	}
 
 }

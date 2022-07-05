@@ -3,7 +3,7 @@
   <mat-select [formControlName]="propertyName"
     [required]="isMandatory && (conditionnalRequired==undefined || conditionnalRequired)" [compareWith]="compareWithId">
     <mat-option *ngFor="let type of types" [value]="type">
-      {{type.label}}
+      {{type.label}} <span *ngIf="type.preTaxPrice && type.preTaxPrice>0">({{type.preTaxPrice}} €)</span>
     </mat-option>
   </mat-select>
 </mat-form-field>

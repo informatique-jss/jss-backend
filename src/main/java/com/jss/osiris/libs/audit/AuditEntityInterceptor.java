@@ -1,6 +1,7 @@
 package com.jss.osiris.libs.audit;
 
 import java.io.Serializable;
+import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -72,9 +73,43 @@ public class AuditEntityInterceptor extends EmptyInterceptor {
                         audit.setFieldName(propertyNames[i]);
                         auditRepository.save(audit);
                     }
+                } else {
+                    String oldCode = getCodeValue(oldField);
+                    String newCode = getCodeValue(newField);
+                    if (newCode != null && oldCode == null
+                            || newCode == null && oldCode != null
+                            || (newCode != null && !newCode.equals(oldCode))) {
+                        Audit audit = new Audit();
+                        audit.setUsername(activeDirectoryHelper.getCurrentUsername());
+                        audit.setDatetime(new Date());
+                        audit.setEntity(entity.getClass().getSimpleName());
+                        audit.setEntityId((Integer) id);
+                        if (newCode != null)
+                            audit.setNewValue(newCode.toString());
+                        if (oldCode != null)
+                            audit.setOldValue(oldCode.toString());
+                        audit.setFieldName(propertyNames[i]);
+                        auditRepository.save(audit);
+                    }
                 }
             }
         }
+    }
+
+    private String getCodeValue(Object entity) {
+        if (entity != null) {
+            Method m = null;
+            try {
+                m = entity.getClass().getDeclaredMethod("getCode");
+            } catch (NoSuchMethodException e) {
+                // Not a referential
+            }
+            try {
+                return m.invoke(entity).toString();
+            } catch (Exception e) {
+            }
+        }
+        return null;
     }
 
     private static Set<Class<?>> getWrapperTypes() {

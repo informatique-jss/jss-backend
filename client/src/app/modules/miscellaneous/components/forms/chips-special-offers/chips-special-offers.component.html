@@ -11,8 +11,13 @@
     <input class="input-vertical" matInput placeholder="Saisir une offre spéciale" #specialOfferInput
       [matChipInputFor]="chipListSpecialOffers" [matChipInputSeparatorKeyCodes]="SEPARATOR_KEY_CODES"
       [disabled]="isDisabled" [matAutocomplete]="autoComplete">
-    <button *ngIf="!isDisabled" matSuffix mat-icon-button (click)="openSpecialOffersDialog()">
+    <button matTooltip="Rechercher un tarif spécial" *ngIf="!isDisabled" matSuffix mat-icon-button
+      (click)="openSpecialOffersDialog()">
       <mat-icon>search</mat-icon>
+    </button>
+    <button matTooltip="Effacer tous les tarifs spéciaux" (click)="deleteAllSpecialOffers()" *ngIf="!isDisabled"
+      matSuffix mat-icon-button>
+      <mat-icon>close</mat-icon>
     </button>
   </mat-chip-list>
   <mat-hint>Glisser/déposer pour ordonner</mat-hint>

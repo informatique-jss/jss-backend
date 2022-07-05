@@ -61,10 +61,9 @@ export class ChipsConfrereComponent extends GenericChipsComponent<Confrere> impl
 
   openConfrereDialog() {
     let dialogConfrere = this.confrereDialog.open(ConfrereDialogComponent, {
-      width: '90%'
+      width: '100%'
     });
     dialogConfrere.afterClosed().subscribe(response => {
-      console.log("rr");
       if (!this.confreres)
         this.confreres = [] as Array<Confrere>;
       if (this.model!.map(confrere => confrere.id).indexOf(response.id) < 0) {
@@ -89,7 +88,6 @@ export class ChipsConfrereComponent extends GenericChipsComponent<Confrere> impl
 
   addConfrere(event: MatAutocompleteSelectedEvent): void {
     if (this.form != undefined) {
-      console.log("rr");
       if (!this.model)
         this.model = [] as Array<Confrere>;
       // Do not add twice

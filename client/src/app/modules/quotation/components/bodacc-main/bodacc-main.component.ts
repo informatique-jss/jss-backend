@@ -3,11 +3,13 @@ import { UntypedFormBuilder } from '@angular/forms';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
 import { BODACC_PUBLICATION_TYPE_ESTATE_REPRESENTATIVE_DESIGNATION, BODACC_PUBLICATION_TYPE_MERGING, BODACC_PUBLICATION_TYPE_PARTIAL_SPLIT, BODACC_PUBLICATION_TYPE_POSSESSION_DISPATCH, BODACC_PUBLICATION_TYPE_SALE_OF_BUSINESS, BODACC_PUBLICATION_TYPE_SPLIT, COMPETENT_AUTHORITY_TYPE_RCS_CODE, PAYMENT_TYPE_VIREMENT } from 'src/app/libs/Constants';
 import { BODACC_ENTITY_TYPE } from 'src/app/routing/search/search.component';
+import { ActType } from '../../model/ActType';
 import { Affaire } from '../../model/Affaire';
 import { Bodacc } from '../../model/Bodacc';
 import { BodaccFusion } from '../../model/BodaccFusion';
 import { BodaccSale } from '../../model/BodaccSale';
 import { BodaccSplit } from '../../model/BodaccSplit';
+import { ActTypeService } from '../../services/act-type.service';
 import { BodaccFusionComponent } from '../bodacc-fusion/bodacc-fusion.component';
 import { BodaccSaleComponent } from '../bodacc-sale/bodacc-sale.component';
 import { BodaccSplitComponent } from '../bodacc-split/bodacc-split.component';
@@ -41,17 +43,24 @@ export class BodaccMainComponent implements OnInit {
   PAYMENT_TYPE_VIREMENT = PAYMENT_TYPE_VIREMENT;
   COMPETENT_AUTHORITY_TYPE_RCS_CODE = COMPETENT_AUTHORITY_TYPE_RCS_CODE;
 
+  actTypes: ActType[] = [] as Array<ActType>;
+
   constructor(private formBuilder: UntypedFormBuilder,
+    private actTypeService: ActTypeService,
   ) { }
 
   ngOnInit() {
-
+    this.actTypeService.getActTypes().subscribe(response => {
+      this.actTypes = response;
+    })
   }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.bodacc != undefined) {
-      if (this.bodacc! == undefined || this.bodacc! == null)
+      if (this.bodacc! == undefined || this.bodacc! == null) {
         this.bodacc! = {} as Bodacc;
+        this.bodacc.bodaccSale.actType = this.actTypes[0];
+      }
       if (this.bodacc.dateOfPublication)
         this.bodacc.dateOfPublication = new Date(this.bodacc.dateOfPublication);
 
@@ -63,8 +72,10 @@ export class BodaccMainComponent implements OnInit {
   changePublicationType() {
     if (this.bodacc?.bodaccPublicationType &&
       this.bodacc?.bodaccPublicationType.code == BODACC_PUBLICATION_TYPE_SALE_OF_BUSINESS
-      && !this.bodacc.bodaccSale)
+      && !this.bodacc.bodaccSale) {
       this.bodacc.bodaccSale = {} as BodaccSale;
+      this.bodacc.bodaccSale.actType = this.actTypes[0];
+    }
 
     if (this.bodacc?.bodaccPublicationType &&
       this.bodacc?.bodaccPublicationType.code == BODACC_PUBLICATION_TYPE_MERGING

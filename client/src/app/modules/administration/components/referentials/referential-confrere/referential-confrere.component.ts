@@ -20,13 +20,14 @@ export class ReferentialConfrereComponent extends GenericReferentialComponent<Co
     super(formBuilder2);
   }
 
+  grades: string[] = ["+", "++", "+++", "++++", "+++++"];
+
   getAddOrUpdateObservable(): Observable<Confrere> {
     return this.confrereService.addOrUpdateConfrere(this.selectedEntity!);
   }
   getGetObservable(): Observable<Confrere[]> {
     return this.confrereService.getConfreres();
   }
-
 
   limitTextareaSize(numberOfLine: number) {
     if (this.selectedEntity?.mailRecipient != null) {
@@ -48,7 +49,6 @@ export class ReferentialConfrereComponent extends GenericReferentialComponent<Co
     if (this.selectedEntity && !this.selectedEntity.accountingAccountProvider)
       this.selectedEntity.accountingAccountProvider = this.selectedEntity.accountingAccountCustomer;
   }
-
 
   fillPostalCode(city: City) {
     if (this.selectedEntity! != null) {
@@ -75,4 +75,5 @@ export class ReferentialConfrereComponent extends GenericReferentialComponent<Co
       })
     }
   }
+
 }

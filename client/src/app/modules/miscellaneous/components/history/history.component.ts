@@ -3,6 +3,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
 import { Dictionnary } from 'src/app/libs/Dictionnary';
+import { IReferential } from 'src/app/modules/administration/model/IReferential';
 import { Audit } from 'src/app/modules/miscellaneous/model/Audit';
 import { EntityType } from 'src/app/routing/search/EntityType';
 import { HistoryAction } from '../../model/HistoryAction';
@@ -23,6 +24,7 @@ export class HistoryComponent implements OnInit {
   @Input() displayOnlyFields: string[] | null = null;
   @Input() historyActions: HistoryAction[] = [] as Array<HistoryAction>;
   internalHistoryActions: HistoryAction[] = [] as Array<HistoryAction>;
+  @Input() parseTypeList: IReferential[] | undefined;
 
   audits: Audit[] = [] as Array<Audit>;
 
@@ -76,8 +78,8 @@ export class HistoryComponent implements OnInit {
         this.auditDataSource.sortingDataAccessor = (item: Audit, property) => {
           switch (property) {
             case 'fieldName': return item.fieldName;
-            case 'oldValue': return item.oldValue;
-            case 'newValue': return item.newValue;
+            case 'oldValue': return this.parseValues(item.oldValue);
+            case 'newValue': return this.parseValues(item.newValue);
             case 'createdBy': return item.username;
             case 'creationDate': return new Date(item.datetime).getTime() + "";
             default: return item.fieldName;
@@ -90,6 +92,15 @@ export class HistoryComponent implements OnInit {
         }
       });
     })
+  }
+
+  parseValues(value: string): string {
+    if (this.parseTypeList)
+      for (let type of this.parseTypeList)
+        if (type.code == value)
+          return type.label;
+
+    return value;
   }
 
   applyFilter(filterValue: any) {

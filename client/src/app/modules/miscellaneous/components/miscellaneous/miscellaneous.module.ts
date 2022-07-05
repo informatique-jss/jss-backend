@@ -43,6 +43,7 @@ import { AutocompleteSirenComponent } from '../forms/autocomplete-siren/autocomp
 import { AutocompleteSiretComponent } from '../forms/autocomplete-siret/autocomplete-siret.component';
 import { AutocompleteTiersIndividualComponent } from '../forms/autocomplete-tiers-individual/autocomplete-tiers-individual.component';
 import { ChipsCityComponent } from '../forms/chips-city/chips-city.component';
+import { ChipsCompetitorComponent } from '../forms/chips-competitor/chips-competitor.component';
 import { ChipsConfrereComponent } from '../forms/chips-confrere/chips-confrere.component';
 import { ChipsMailComponent } from '../forms/chips-mail/chips-mail.component';
 import { ChipsPhoneComponent } from '../forms/chips-phone/chips-phone.component';
@@ -57,6 +58,7 @@ import { RadioGroupBillingClosureRecipientComponent } from '../forms/radio-group
 import { RadioGroupBillingClosureComponent } from '../forms/radio-group-billing-closure/radio-group-billing-closure.component';
 import { RadioGroupBillingLabelComponent } from '../forms/radio-group-billing-label/radio-group-billing-label.component';
 import { RadioGroupCivilityComponent } from '../forms/radio-group-civility/radio-group-civility.component';
+import { RadioGroupJournalTypeComponent } from '../forms/radio-group-journal-type/radio-group-journal-type.component';
 import { RadioGroupLanguageComponent } from '../forms/radio-group-language/radio-group-language.component';
 import { RadioGroupQuotationLabelTypeComponent } from '../forms/radio-group-quotation-label-type/radio-group-quotation-label-type.component';
 import { RadioGroupRecordTypeComponent } from '../forms/radio-group-record-type/radio-group-record-type.component';
@@ -89,6 +91,7 @@ import { SelectSubscriptionPeriodComponent } from '../forms/select-subscription-
 import { SelectTiersCategoryComponent } from '../forms/select-tiers-category/select-tiers-category.component';
 import { SelectTiersTypeComponent } from '../forms/select-tiers-type/select-tiers-type.component';
 import { SelectVatComponent } from '../forms/select-vat/select-vat.component';
+import { GradeComponent } from '../grade/grade.component';
 import { HistoryComponent } from '../history/history.component';
 import { SingleAttachmentComponent } from '../single-attachment/single-attachment.component';
 import { UploadAttachementDialogComponent } from '../upload-attachement-dialog/upload-attachement-dialog.component';
@@ -182,13 +185,16 @@ import { MiscellaneousComponent } from './miscellaneous.component';
     AutocompleteDepartmentComponent,
     SelectAccountingAccountClassComponent,
     SelectCompetentAuthorityTypeComponent,
+    ChipsCompetitorComponent,
     SelectBillingItemsComponent,
     ChipsConfrereComponent,
+    SelectJournalTypeComponent,
     RadioGroupQuotationLabelTypeComponent,
     TrustHtmlPipe,
-    SelectJournalTypeComponent,
     AutocompleteEmployeeComponent,
+    RadioGroupJournalTypeComponent,
     SelectDayComponent,
+    GradeComponent,
     SelectRegieComponent,
     AutocompleteAccountingAccountComponent,
     SingleAttachmentComponent],
@@ -211,6 +217,7 @@ import { MiscellaneousComponent } from './miscellaneous.component';
     AutocompleteSalesEmployeeComponent,
     SelectNoticeFamilyComponent,
     AutocompleteCompetentAuthorityComponent,
+    RadioGroupJournalTypeComponent,
     SelectJournalTypeComponent,
     AutocompleteSirenComponent,
     RadioGroupQuotationLabelTypeComponent,
@@ -230,6 +237,8 @@ import { MiscellaneousComponent } from './miscellaneous.component';
     ChipsConfrereComponent,
     SelectMailRedirectionComponent,
     SelectVatComponent,
+    GradeComponent,
+    ChipsCompetitorComponent,
     RadioGroupBillingClosureComponent,
     SelectFundTypeComponent,
     SelectProvisionTypeComponent,

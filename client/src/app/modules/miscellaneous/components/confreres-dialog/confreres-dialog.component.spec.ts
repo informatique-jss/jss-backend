@@ -1,6 +1,6 @@
 /* tslint:disable:no-unused-variable */
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { SpecialOffersDialogComponent } from './special-offers-dialog.component';
+import { SpecialOffersDialogComponent } from '../special-offers-dialog/special-offers-dialog.component';
 
 
 describe('SpecialOffersDialogComponent', () => {

@@ -680,12 +680,13 @@ public class QuotationController {
         for (WeekDay weekDay : confrere.getWeekDays())
           validationHelper.validateReferential(weekDay, false);
 
-      if (confrere.getJournalType() != null && confrere.getJournalType().size() > 0)
-        for (JournalType journalType : confrere.getJournalType())
-          validationHelper.validateReferential(journalType, false);
+      validationHelper.validateReferential(confrere.getJournalType(), true);
 
       validationHelper.validateString(confrere.getLastShipmentForPublication(), false, 60);
-      validationHelper.validateString(confrere.getPreference(), false, 20);
+      validationHelper.validateString(confrere.getBoardGrade(), false, 20);
+      validationHelper.validateString(confrere.getPaperGrade(), false, 20);
+      validationHelper.validateString(confrere.getBillingGrade(), false, 20);
+      validationHelper.validateString(confrere.getPublicationCertificateDocumentGrade(), false, 20);
       validationHelper.validateReferential(confrere.getAccountingAccountCustomer(), false);
       validationHelper.validateReferential(confrere.getAccountingAccountProvider(), false);
       validationHelper.validateString(confrere.getMailRecipient(), false, 60);
@@ -693,7 +694,7 @@ public class QuotationController {
       validationHelper.validateString(confrere.getPostalCode(), false, 10);
       validationHelper.validateReferential(confrere.getCity(), false);
       validationHelper.validateReferential(confrere.getCountry(), false);
-      validationHelper.validateString(confrere.getIban(), true, 40);
+      validationHelper.validateString(confrere.getIban(), false, 40);
       validationHelper.validateReferential(confrere.getRegie(), false);
 
       outConfrere = confrereService
@@ -1300,7 +1301,6 @@ public class QuotationController {
         validationHelper.validateDateMin(shal.getPublicationDate(), !isOpen, new Date());
         validationHelper.validateReferential(shal.getDepartment(), !isOpen);
         validationHelper.validateReferential(shal.getConfrere(), isCustomerOrder);
-        validationHelper.validateReferential(shal.getJournalType(), !isOpen);
         validationHelper.validateReferential(shal.getNoticeTypeFamily(), isCustomerOrder);
         if (isCustomerOrder && (shal.getNoticeTypes() == null || shal.getNoticeTypes().size() == 0))
           throw new ResponseStatusException(HttpStatus.BAD_REQUEST);

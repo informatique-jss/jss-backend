@@ -29,7 +29,7 @@
                   <mat-icon>close</mat-icon>
                 </button>
                 <mat-autocomplete autoActiveFirstOption #autoSpecialOffer="matAutocomplete"
-                  [displayWith]="displayConfrere">
+                  (optionSelected)='updateHeaderFree()' [displayWith]="displayConfrere">
                   <mat-option *ngFor="let confrere of filteredConfreres | async" [value]="confrere">
                     {{confrere.label}}
                   </mat-option>
@@ -46,15 +46,6 @@
         </table>
         <table class="full-width" *ngIf="shal.confrere!=null && shal.confrere!=undefined">
           <tr>
-            <td>
-              <mat-radio-group class="radio-group-column" [(ngModel)]="shal.journalType" formControlName="journalType"
-                (change)="updateHeaderFree()">
-                <mat-radio-button [value]="journalType" *ngFor="let journalType of shal.confrere?.journalType"
-                  [checked]="this.shal.journalType != undefined && this.shal.journalType.id == journalType.id">
-                  {{journalType.label}}
-                </mat-radio-button>
-              </mat-radio-group>
-            </td>
             <td>
               <generic-datepicker [(model)]="shal.publicationDate" label="Date de publication"
                 [minDate]="getCurrentDate()" [form]="shalForm" propertyName="publicationDate" [isMandatory]="true"

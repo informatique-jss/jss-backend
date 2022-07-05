@@ -7,6 +7,7 @@ import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.jss.osiris.modules.miscellaneous.service.GiftService;
 import com.jss.osiris.modules.tiers.model.TiersFollowup;
 import com.jss.osiris.modules.tiers.repository.TiersFollowupRepository;
 
@@ -15,6 +16,9 @@ public class TiersFollowupServiceImpl implements TiersFollowupService {
 
     @Autowired
     TiersFollowupRepository tiersFollowupRepository;
+
+    @Autowired
+    GiftService giftService;
 
     @Override
     public List<TiersFollowup> getTiersFollowups() {
@@ -31,6 +35,8 @@ public class TiersFollowupServiceImpl implements TiersFollowupService {
 
     @Override
     public List<TiersFollowup> addTiersFollowup(TiersFollowup tiersFollowup) {
+        if (tiersFollowup.getGift() != null && tiersFollowup.getId() == null)
+            giftService.decreaseStock(tiersFollowup.getGift());
         tiersFollowupRepository.save(tiersFollowup);
         if (tiersFollowup.getTiers() != null)
             return tiersFollowupRepository.findByTiersId(tiersFollowup.getTiers().getId());

@@ -51,8 +51,12 @@
         <table class="full-width">
           <tr>
             <td>
-              <chips-mail [(model)]="selectedEntity.mails" label="Mails" [form]="entityForm" propertyName="mails"
-                [isMandatory]="false" [isDisabled]="!editMode"></chips-mail>
+              <chips-mail [(model)]="selectedEntity.mails" label="Mails (annonce)" [form]="entityForm"
+                propertyName="mails" [isMandatory]="false" [isDisabled]="!editMode"></chips-mail>
+            </td>
+            <td>
+              <chips-mail [(model)]="selectedEntity.accountingMails" label="Mails (comptabilité)" [form]="entityForm"
+                propertyName="accountingMails" [isMandatory]="false" [isDisabled]="!editMode"></chips-mail>
             </td>
             <td>
               <chips-phone [(model)]="selectedEntity.phones" label="Téléphones" [form]="entityForm"
@@ -64,19 +68,19 @@
           <tr>
             <td>
               <autocomplete-accounting-account [(model)]="selectedEntity.accountingAccountProvider" [form]="entityForm"
-                propertyName="accountingAccountProvider" [isMandatory]="false" label="Code comptable fournisseur"
+                propertyName="accountingAccountProvider" [isMandatory]="true" label="Compte comptable fournisseur"
                 (onOptionSelected)="fillAccountCustomer()">
               </autocomplete-accounting-account>
             </td>
             <td>
               <autocomplete-accounting-account [(model)]="selectedEntity.accountingAccountCustomer" [form]="entityForm"
-                propertyName="accountingAccountCustomer" [isMandatory]="false" label="Code comptable client"
+                propertyName="accountingAccountCustomer" [isMandatory]="true" label="Compte comptable client"
                 (onOptionSelected)="fillAccountProvider()">
               </autocomplete-accounting-account>
             </td>
             <td>
               <generic-input [(model)]="selectedEntity.iban" label="IBAN" [form]="entityForm" propertyName="iban"
-                [isMandatory]="true" [isDisabled]="!editMode" [maxLength]="40"></generic-input>
+                [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="40"></generic-input>
             </td>
           </tr>
         </table>
@@ -112,8 +116,8 @@
         <table class="full-width">
           <tr>
             <td>
-              <select-journal-type [(model)]="selectedEntity.journalType" label="Type de journal" [form]="entityForm"
-                propertyName="journalTypes" [isMandatory]="true" [isDisabled]="!editMode"></select-journal-type>
+              <radio-group-journal-type [(model)]="selectedEntity.journalType" [form]="entityForm"
+                propertyName="journalType" label="Type de journal"></radio-group-journal-type>
             </td>
             <td>
               <select-day [(model)]="selectedEntity.weekDays" label="Jour(s) de publication" [form]="entityForm"
@@ -162,19 +166,62 @@
               </generic-input>
             </td>
             <td>
+              <generic-input [(model)]="selectedEntity.paperPrice" label="Prix du journal" [form]="entityForm"
+                propertyName="paperPrice" [isMandatory]="false" [isDisabled]="!editMode" type="number">
+              </generic-input>
+            </td>
+            <td>
               <select-regie [(model)]="selectedEntity.regie" label="Régie associée" [form]="entityForm"
                 propertyName="regie" [isMandatory]="false" [isDisabled]="!editMode"></select-regie>
             </td>
+          </tr>
+        </table>
+        <table class="full-width">
+          <tr>
             <td>
-              <label>Préférence</label>
-              <mat-radio-group class="confrere-radio-group" [(ngModel)]="selectedEntity.preference"
-                formControlName="preference">
-                <mat-radio-button class="confrere-radio-button" value="+" selected>+</mat-radio-button>
-                <mat-radio-button class="confrere-radio-button" value="++">++</mat-radio-button>
-                <mat-radio-button class="confrere-radio-button" value="+++">+++</mat-radio-button>
-                <mat-radio-button class="confrere-radio-button" value="++++">++++</mat-radio-button>
-                <mat-radio-button class="confrere-radio-button" value="+++++">+++++</mat-radio-button>
+              <label>Préférence de la direction</label>
+              <mat-radio-group class="confrere-radio-group" [(ngModel)]="selectedEntity.boardGrade"
+                formControlName="boardGrade">
+                <mat-radio-button *ngFor="let grade of grades" class="confrere-radio-button" [value]="grade">
+                  <grade [grade]="grade"></grade>
+                </mat-radio-button>
               </mat-radio-group>
+            </td>
+            <td>
+              <label>Préférence attestation de parution</label>
+              <mat-radio-group class="confrere-radio-group"
+                [(ngModel)]="selectedEntity.publicationCertificateDocumentGrade"
+                formControlName="publicationCertificateDocumentGrade">
+                <mat-radio-button *ngFor="let grade of grades" class="confrere-radio-button" [value]="grade">
+                  <grade [grade]="grade"></grade>
+                </mat-radio-button>
+              </mat-radio-group>
+            </td>
+            <td>
+              <label>Préférence de facturation</label>
+              <mat-radio-group class="confrere-radio-group" [(ngModel)]="selectedEntity.billingGrade"
+                formControlName="billingGrade">
+                <mat-radio-button *ngFor="let grade of grades" class="confrere-radio-button" [value]="grade">
+                  <grade [grade]="grade"></grade>
+                </mat-radio-button>
+              </mat-radio-group>
+            </td>
+            <td>
+              <label>Préférence du journal</label>
+              <mat-radio-group class="confrere-radio-group" [(ngModel)]="selectedEntity.paperGrade"
+                formControlName="paperGrade">
+                <mat-radio-button *ngFor="let grade of grades" class="confrere-radio-button" [value]="grade">
+                  <grade [grade]="grade"></grade>
+                </mat-radio-button>
+              </mat-radio-group>
+            </td>
+          </tr>
+        </table>
+        <table class="full-width">
+          <tr>
+            <td>
+              <generic-textarea [(model)]="selectedEntity.observations" label="Commentaires" [form]="entityForm"
+                propertyName="observations" [isMandatory]="false" [isDisabled]="!editMode"></generic-textarea>
             </td>
           </tr>
         </table>

@@ -36,10 +36,19 @@
                     {{provision.affaire.lastname}}</span><span
                     *ngIf="provision.provisionFamilyType && provision.provisionType"> - Service
                     {{provision.provisionFamilyType.label}}/{{provision.provisionType.label}}</span>
+                  <span> - {{provision.isValidated?"Validée":"En attente de validation"}}</span>
                 </span>
               </mat-panel-title>
               <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
               <mat-panel-description>
+                <mat-icon [matTooltip]="(editMode?'Valider la prestation':'')"
+                  *ngIf="!provision.isValidated && editMode"
+                  (click)="validateProvision(index);$event.stopPropagation();" [ngClass]="{'pointer':editMode}">
+                  check_circle</mat-icon>
+                <mat-icon [matTooltip]="(editMode?'Invalider la prestation':'')"
+                  *ngIf="provision.isValidated && editMode"
+                  (click)="invalidateProvision(index);$event.stopPropagation();" [ngClass]="{'pointer':editMode}">
+                  unpublished</mat-icon>
                 <mat-icon *ngIf="editMode" (click)="deleteProvision(index)" class="pointer">
                   delete</mat-icon>
               </mat-panel-description>
@@ -60,11 +69,15 @@
       <quotation-management [quotation]="quotation" [editMode]="editMode"></quotation-management>
     </mat-tab>
     <mat-tab label="Documents" *ngIf="quotation.id!=null && quotation.id!=undefined">
-      <attachments [entity]="quotation" [editMode]="editMode" [entityType]="QUOTATION_ENTITY_TYPE.entityType">
+      <attachments [entity]="quotation" [editMode]="editMode" [entityType]="getEntityType().entityType">
       </attachments>
     </mat-tab>
+    <mat-tab label="Historique du statut" *ngIf="quotation.id!=null && quotation.id!=undefined">
+      <history [entity]="quotation" [entityType]="getEntityType()" [displayOnlyFields]="['status']"
+        [parseTypeList]="quotationStatusList"></history>
+    </mat-tab>
     <mat-tab label="Historique" *ngIf="quotation.id!=null && quotation.id!=undefined">
-      <history [entity]="quotation" [entityType]="QUOTATION_ENTITY_TYPE"></history>
+      <history [entity]="quotation" [entityType]="getEntityType()"></history>
     </mat-tab>
   </mat-tab-group>
 </div>

@@ -205,10 +205,6 @@
                   [form]="settlementBillingForm" propertyName="billingClosureRecipientType" label="Destinataire(s)">
                 </radio-group-billing-closure-recipient>
               </td>
-            </tr>
-          </table>
-          <table class="full-width">
-            <tr>
               <td>
                 <addressing [editMode]="editMode" [document]="billingClosureDocument" [hideConsignee]="true"
                   [hideOverriding]="!billingClosureDocument.billingClosureRecipientType || !billingClosureDocument.billingClosureRecipientType.code || billingClosureDocument.billingClosureRecipientType.code !=BILLING_CLOSURE_RECIPIENT_OTHERS_CODE"

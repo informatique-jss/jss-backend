@@ -86,3 +86,19 @@ echo "    return new ResponseEntity<$entityUpperCased>(HttpStatus.INTERNAL_SERVE
 echo "  }"
 echo "  return new ResponseEntity<$entityUpperCased>(out${entityUpperCased}, HttpStatus.OK);"
 echo "}"
+
+echo ""
+echo ""
+
+echo "  <cache alias=\"${entityLowerCased}List\" uses-template=\"default\"> "
+echo "         <key-type>java.lang.String</key-type> "
+echo "         <value-type>java.util.List</value-type> "
+echo "     </cache> "
+
+echo ""
+echo ""
+
+echo "  <cache alias=\"${entityLowerCased}\" uses-template=\"default\"> "
+echo "         <key-type>java.lang.Integer</key-type> "
+echo "         <value-type>com.jss.osiris.modules.targetPackage.model.NewEntity</value-type> "
+echo "     </cache> "

@@ -45,10 +45,6 @@ public class Shal implements Serializable, IId {
 	@JoinColumn(name = "id_confrere")
 	private Confrere confrere;
 
-	@ManyToOne
-	@JoinColumn(name = "id_journal_type")
-	private JournalType journalType;
-
 	@Column(nullable = false)
 	private Date publicationDate;
 
@@ -61,7 +57,7 @@ public class Shal implements Serializable, IId {
 
 	@ManyToMany
 	@OnDelete(action = OnDeleteAction.CASCADE)
-	@JoinTable(name = "asso_shal_notice_type", joinColumns = @JoinColumn(name = "id_shal"), inverseJoinColumns = @JoinColumn(name = "id_notice_type")) //, foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, foreignKeyDefinition = "CONSTRAINT fk6598t57m6tm81ivpr74lfy9qa FOREIGN KEY (id_shal)  REFERENCES public.shal (id) ON  DELETE CASCADE"))
+	@JoinTable(name = "asso_shal_notice_type", joinColumns = @JoinColumn(name = "id_shal"), inverseJoinColumns = @JoinColumn(name = "id_notice_type"))
 	private List<NoticeType> noticeTypes;
 
 	@Column(nullable = false, columnDefinition = "TEXT")
@@ -70,7 +66,7 @@ public class Shal implements Serializable, IId {
 	@Column(nullable = false, columnDefinition = "TEXT")
 	private String noticeHeader;
 
-	@Column(nullable = false) 
+	@Column(nullable = false)
 	private Boolean isLogo;
 
 	@Column(nullable = false)
@@ -292,14 +288,6 @@ public class Shal implements Serializable, IId {
 
 	public void setConfrere(Confrere confrere) {
 		this.confrere = confrere;
-	}
-
-	public JournalType getJournalType() {
-		return journalType;
-	}
-
-	public void setJournalType(JournalType journalType) {
-		this.journalType = journalType;
 	}
 
 }

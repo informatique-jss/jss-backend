@@ -22,6 +22,7 @@ export class SelectBodaccPublicationTypeComponent extends GenericSelectComponent
   initTypes(): void {
     this.bodaccPublicationTypeService.getBodaccPublicationTypes().subscribe(response => {
       this.types = response;
+      this.types.sort((a, b) => a.code.localeCompare(b.code));
     })
   }
 }

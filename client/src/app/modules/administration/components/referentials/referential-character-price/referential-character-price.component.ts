@@ -37,7 +37,6 @@ export class ReferentialCharacterPriceComponent extends GenericReferentialCompon
   mapEntities() {
     if (this.entities) {
 
-      console.log("ee");
       for (let entity of this.entities) {
         entity.startDate = new Date(entity.startDate);
       }

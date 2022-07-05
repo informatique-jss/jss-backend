@@ -136,8 +136,6 @@ export class ShalComponent implements OnInit {
         this.shal!.confrere = this.getJssConfrere();
       if (!this.shal!.isRedactedByJss)
         this.shal!.isRedactedByJss = false;
-      if (!this.shal!.journalType)
-        this.shal!.journalType = this.journalTypes[0];
       if (!this.shal!.isHeader)
         this.shal!.isHeader = false;
       if (!this.shal!.isHeaderFree)
@@ -273,17 +271,18 @@ export class ShalComponent implements OnInit {
   }
 
   updateHeaderFree() {
-    if (this.shal && this.shal.journalType && this.shal.journalType.code == JOURNAL_TYPE_SPEL_CODE)
+    if (this.shal && this.shal.confrere?.journalType && this.shal.confrere.journalType.code == JOURNAL_TYPE_SPEL_CODE)
       this.shal.isHeaderFree = true;
   }
 
   openConfrereDialog() {
     let dialogConfrere = this.confrereDialog.open(ConfrereDialogComponent, {
-      width: '90%'
+      width: '100%'
     });
     dialogConfrere.afterClosed().subscribe(response => {
       if (response && response != null)
         this.shal!.confrere = response;
+      this.updateHeaderFree();
     });
   }
 

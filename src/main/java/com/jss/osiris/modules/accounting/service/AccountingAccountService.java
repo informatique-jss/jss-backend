@@ -11,5 +11,5 @@ public interface AccountingAccountService {
 
     public AccountingAccount addOrUpdateAccountingAccount(AccountingAccount accountingAccount);
 
-    public List<AccountingAccount> getAccountingAccountByLabel(String label);
+    public List<AccountingAccount> getAccountingAccountByLabelOrCode(String label);
 }

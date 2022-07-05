@@ -39,7 +39,6 @@ export class BodaccSaleComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -75,8 +74,6 @@ export class BodaccSaleComponent implements OnInit {
           }
         })
       }
-
-
       this.bodaccSaleForm.markAllAsTouched();
     }
   }
@@ -85,6 +82,7 @@ export class BodaccSaleComponent implements OnInit {
   });
 
   getFormStatus(): boolean {
+    console.log(this.bodaccSaleForm);
     this.bodaccSaleForm.markAllAsTouched();
     return this.bodaccSaleForm.valid;
   }

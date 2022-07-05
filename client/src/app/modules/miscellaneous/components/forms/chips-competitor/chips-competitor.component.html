@@ -1,0 +1,20 @@
+<mat-form-field class="full-width" [formGroup]="form!">
+  <mat-label>{{label}}</mat-label>
+  <mat-chip-list #chipListCompetitor>
+    <mat-chip *ngFor="let competitor of model" (removed)="removeElement(competitor)">
+      {{competitor.label}}
+      <button matChipRemove *ngIf="!isDisabled">
+        <mat-icon>cancel</mat-icon>
+      </button>
+    </mat-chip>
+    <input matInput placeholder="Choisir un concurrent" [formControlName]="propertyName" #competitorInput
+      [matChipInputFor]="chipListCompetitor" [matChipInputSeparatorKeyCodes]="SEPARATOR_KEY_CODES"
+      [disabled]="isDisabled" [matAutocomplete]="autoComplete">
+  </mat-chip-list>
+  <mat-autocomplete autoActiveFirstOption #autoComplete="matAutocomplete" [displayWith]="displayLabel"
+    (optionSelected)="addCompetitor($event)">
+    <mat-option *ngFor="let competitor of filteredCompetitors | async" [value]="competitor">
+      {{competitor.label}}
+    </mat-option>
+  </mat-autocomplete>
+</mat-form-field>

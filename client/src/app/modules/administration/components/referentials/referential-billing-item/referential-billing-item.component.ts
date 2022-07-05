@@ -22,6 +22,8 @@ export class ReferentialBillingItemComponent implements OnInit {
   saveEventSubscription: Subscription | undefined;
   @Input() addEvent: Observable<void> | undefined;
   addEventSubscription: Subscription | undefined;
+  @Input() cloneEvent: Observable<void> | undefined;
+  cloneEventSubscription: Subscription | undefined;
   @Output() selectedEntityChange: EventEmitter<BillingItem> = new EventEmitter<BillingItem>();
   entities: BillingItem[] = [] as Array<BillingItem>;
   displayedColumns: string[] = ['id', 'code', 'label'];
@@ -41,17 +43,30 @@ export class ReferentialBillingItemComponent implements OnInit {
   entityForm = this.formBuilder.group({
   });
 
+  cloneEntity() {
+    this.selectedEntity = structuredClone(this.selectedEntity);
+    this.selectedEntity!.id = undefined;
+    this.entities.push(this.selectedEntity!);
+    this.setDataTable();
+  }
+
   ngOnInit() {
     this.setDataTable();
     if (this.saveEvent)
       this.saveEventSubscription = this.saveEvent.subscribe(() => this.saveEntity());
     if (this.addEvent)
       this.addEventSubscription = this.addEvent.subscribe(() => this.addEntity());
+    if (this.cloneEvent)
+      this.cloneEventSubscription = this.cloneEvent.subscribe(() => this.cloneEntity());
   }
 
   ngOnDestroy() {
     if (this.saveEventSubscription)
       this.saveEventSubscription.unsubscribe();
+    if (this.addEventSubscription)
+      this.addEventSubscription.unsubscribe();
+    if (this.cloneEventSubscription)
+      this.cloneEventSubscription.unsubscribe();
   }
 
   selectEntity(element: BillingItem) {
@@ -79,7 +94,6 @@ export class ReferentialBillingItemComponent implements OnInit {
       if (this.accountingAccountProducts)
         for (let accountingAccountProduct of this.accountingAccountProducts)
           this.selectedEntity.accountingAccounts.push(accountingAccountProduct);
-      console.log(this.selectedEntity);
       this.billingItemService.addOrUpdateBillingItem(this.selectedEntity).subscribe(response => {
         this.setDataTable();
       });
@@ -100,10 +114,10 @@ export class ReferentialBillingItemComponent implements OnInit {
         this.entityDataSource.sort = this.sort;
         this.entityDataSource.sortingDataAccessor = (item: BillingItem, property) => {
           switch (property) {
-            case 'id': return item.id;
+            case 'id': return item.id!;
             case 'code': return this.getElementCode(item);
             case 'label': return this.getElementLabel(item);
-            default: return item.id;
+            default: return this.getElementLabel(item);
           }
         };
 

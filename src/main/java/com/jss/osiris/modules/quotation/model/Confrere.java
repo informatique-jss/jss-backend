@@ -45,6 +45,10 @@ public class Confrere implements Serializable, IId {
 	private List<Mail> mails;
 
 	@ManyToMany(cascade = CascadeType.ALL)
+	@JoinTable(name = "asso_confrere_accounting_mail", joinColumns = @JoinColumn(name = "id_confrere"), inverseJoinColumns = @JoinColumn(name = "id_mail"))
+	private List<Mail> accountingMails;
+
+	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "asso_confrere_phone", joinColumns = @JoinColumn(name = "id_confrere"), inverseJoinColumns = @JoinColumn(name = "id_phone"))
 	private List<Phone> phones;
 
@@ -56,21 +60,32 @@ public class Confrere implements Serializable, IId {
 	@JoinTable(name = "asso_confrere_publication_day", joinColumns = @JoinColumn(name = "id_confrere"), inverseJoinColumns = @JoinColumn(name = "id_weekday"))
 	private List<WeekDay> weekDays;
 
-	@ManyToMany
-	@JoinTable(name = "asso_confrere_journal_type", joinColumns = @JoinColumn(name = "id_confrere"), inverseJoinColumns = @JoinColumn(name = "id_journal_type"))
-	private List<JournalType> journalType;
+	@ManyToOne
+	@JoinColumn(name = "id_journal_type")
+	private JournalType journalType;
 
 	@Column(length = 60)
 	private String lastShipmentForPublication;
 
 	@Column(length = 20)
-	private String preference;
+	private String publicationCertificateDocumentGrade;
+
+	@Column(length = 20)
+	private String billingGrade;
+
+	@Column(length = 20)
+	private String paperGrade;
+
+	@Column(length = 20)
+	private String boardGrade;
 
 	private Float shippingCosts;
 
 	private Float administrativeFees;
 
 	private Integer numberOfPrint;
+
+	private Integer paperPrice;
 
 	@ManyToOne
 	@JoinColumn(name = "id_accounting_account_provider")
@@ -97,19 +112,26 @@ public class Confrere implements Serializable, IId {
 	@JoinColumn(name = "id_country")
 	private Country country;
 
-	@Column(length = 40, nullable = false)
+	@Column(length = 40)
 	private String iban;
 
 	@ManyToOne
 	@JoinColumn(name = "id_regie")
 	private Regie regie;
 
+	@Column(columnDefinition = "TEXT")
+	private String observations;
+
 	public Integer getId() {
 		return id;
 	}
 
-	public List<JournalType> getJournalType() {
-		return journalType;
+	public List<Mail> getAccountingMails() {
+		return accountingMails;
+	}
+
+	public void setAccountingMails(List<Mail> accountingMails) {
+		this.accountingMails = accountingMails;
 	}
 
 	public String getIban() {
@@ -128,7 +150,11 @@ public class Confrere implements Serializable, IId {
 		this.regie = regie;
 	}
 
-	public void setJournalType(List<JournalType> journalType) {
+	public JournalType getJournalType() {
+		return journalType;
+	}
+
+	public void setJournalType(JournalType journalType) {
 		this.journalType = journalType;
 	}
 
@@ -264,12 +290,36 @@ public class Confrere implements Serializable, IId {
 		this.lastShipmentForPublication = lastShipmentForPublication;
 	}
 
-	public String getPreference() {
-		return preference;
+	public String getPublicationCertificateDocumentGrade() {
+		return publicationCertificateDocumentGrade;
 	}
 
-	public void setPreference(String preference) {
-		this.preference = preference;
+	public void setPublicationCertificateDocumentGrade(String publicationCertificateDocumentGrade) {
+		this.publicationCertificateDocumentGrade = publicationCertificateDocumentGrade;
+	}
+
+	public String getBillingGrade() {
+		return billingGrade;
+	}
+
+	public void setBillingGrade(String billingGrade) {
+		this.billingGrade = billingGrade;
+	}
+
+	public String getPaperGrade() {
+		return paperGrade;
+	}
+
+	public void setPaperGrade(String paperGrade) {
+		this.paperGrade = paperGrade;
+	}
+
+	public String getBoardGrade() {
+		return boardGrade;
+	}
+
+	public void setBoardGrade(String boardGrade) {
+		this.boardGrade = boardGrade;
 	}
 
 	public Float getShippingCosts() {
@@ -294,6 +344,22 @@ public class Confrere implements Serializable, IId {
 
 	public void setNumberOfPrint(Integer numberOfPrint) {
 		this.numberOfPrint = numberOfPrint;
+	}
+
+	public Integer getPaperPrice() {
+		return paperPrice;
+	}
+
+	public void setPaperPrice(Integer paperPrice) {
+		this.paperPrice = paperPrice;
+	}
+
+	public String getObservations() {
+		return observations;
+	}
+
+	public void setObservations(String observations) {
+		this.observations = observations;
 	}
 
 }

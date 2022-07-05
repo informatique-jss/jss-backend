@@ -96,7 +96,6 @@ export class DomiciliationComponent implements OnInit {
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.domiciliation != undefined) {
-      console.log(this.domiciliation);
       if (this.domiciliation! == undefined || this.domiciliation! == null)
         this.domiciliation! = {} as Domiciliation;
       if (this.domiciliation!.language == undefined || this.domiciliation!.language == null)

@@ -13,6 +13,7 @@ export interface Confrere {
   label: string;
   code: string;
   mails: Mail[];
+  accountingMails: Mail[];
   phones: Phone[];
   accountingAccountCustomer: AccountingAccount;
   mailRecipient: string;
@@ -21,16 +22,21 @@ export interface Confrere {
   postalCode: string;
   country: Country;
   iban: string;
-  journalType: JournalType[];
+  journalType: JournalType;
   reinvoicing: number;
   weekDays: WeekDay[];
   discountRate: number;
   departments: Department[];
   lastShipmentForPublication: string;
-  preference: string;
+  publicationCertificateDocumentGrade: string;
+  billingGrade: string;
+  paperGrade: string;
+  boardGrade: string;
   shippingCosts: number;
   administrativeFees: number;
   numberOfPrint: number;
+  paperPrice: number;
   accountingAccountProvider: AccountingAccount;
   regie: Regie;
+  observations: string;
 }

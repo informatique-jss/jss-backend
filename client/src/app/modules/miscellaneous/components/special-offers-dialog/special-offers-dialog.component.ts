@@ -31,7 +31,7 @@ export class SpecialOffersDialogComponent implements OnInit {
         response.forEach(specialOffer => {
           specialOffer.assoSpecialOfferBillingTypes.forEach(assoSpecialOfferBillingType => {
             let localSpecialOffer = {} as SpecialOfferFlatten;
-            localSpecialOffer.id = specialOffer.id;
+            localSpecialOffer.id = specialOffer.id!;
             localSpecialOffer.code = specialOffer.code + ((specialOffer.label != null && specialOffer.label != "") ? " - " : "") + specialOffer.label;
             localSpecialOffer.billingTypeLabel = assoSpecialOfferBillingType.billingType.label;
             localSpecialOffer.discountAmount = assoSpecialOfferBillingType.discountAmount;

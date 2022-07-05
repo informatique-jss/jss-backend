@@ -27,6 +27,8 @@ public class Gift implements Serializable, IId {
 
 	private Integer stock;
 
+	private Float preTaxPrice;
+
 	@ManyToOne
 	@JoinColumn(name = "id_accounting_account")
 	private AccountingAccount accountingAccount;
@@ -69,6 +71,14 @@ public class Gift implements Serializable, IId {
 
 	public void setCode(String code) {
 		this.code = code;
+	}
+
+	public Float getPreTaxPrice() {
+		return preTaxPrice;
+	}
+
+	public void setPreTaxPrice(Float preTaxPrice) {
+		this.preTaxPrice = preTaxPrice;
 	}
 
 }

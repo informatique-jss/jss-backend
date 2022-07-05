@@ -90,6 +90,8 @@ public class CompetentAuthority implements Serializable, IId {
 	@JoinColumn(name = "id_accounting_account_customer")
 	private AccountingAccount accountingAccountCustomer;
 
+	private Integer reinvoicing;
+
 	public Integer getId() {
 		return id;
 	}
@@ -248,6 +250,14 @@ public class CompetentAuthority implements Serializable, IId {
 
 	public void setCompetentAuthorityType(CompetentAuthorityType competentAuthorityType) {
 		this.competentAuthorityType = competentAuthorityType;
+	}
+
+	public Integer getReinvoicing() {
+		return reinvoicing;
+	}
+
+	public void setReinvoicing(Integer reinvoicing) {
+		this.reinvoicing = reinvoicing;
 	}
 
 }

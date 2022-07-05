@@ -18,7 +18,7 @@ export class CharacterPriceService extends AppRestService<CharacterPrice>{
   }
 
   getCharacterPrice(department: Department, date: Date) {
-    return this.get(new HttpParams().set("departmentId", department.id).set("date", date.toISOString()), "character-price");
+    return this.get(new HttpParams().set("departmentId", department.id!).set("date", date.toISOString()), "character-price");
   }
 
   addOrUpdateCharacterPrice(characterPrice: CharacterPrice) {

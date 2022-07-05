@@ -45,6 +45,10 @@ public class ConfrereServiceImpl implements ConfrereService {
                 && confrere.getMails().size() > 0)
             mailService.populateMailIds(confrere.getMails());
 
+        if (confrere != null && confrere.getAccountingMails() != null
+                && confrere.getAccountingMails().size() > 0)
+            mailService.populateMailIds(confrere.getAccountingMails());
+
         // If phones already exists, get their ids
         if (confrere != null && confrere.getPhones() != null
                 && confrere.getPhones().size() > 0) {

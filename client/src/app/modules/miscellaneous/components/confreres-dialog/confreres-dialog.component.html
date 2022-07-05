@@ -3,49 +3,73 @@
     <input matInput (keyup)="applyFilter($event.target)" placeholder="Rechercher">
   </mat-form-field>
 </div>
-<table mat-table [dataSource]="confreresDataSource" class="mat-elevation-z8 table">
+<table mat-table matSort [dataSource]="confreresDataSource" class="mat-elevation-z8 table">
   <ng-container matColumnDef="denomination">
-    <th mat-header-cell *matHeaderCellDef>Dénomination</th>
+    <th mat-header-cell mat-sort-header *matHeaderCellDef>Dénomination</th>
     <td mat-cell *matCellDef="let element">{{element.denomination}} </td>
   </ng-container>
+  <ng-container matColumnDef="type">
+    <th mat-header-cell mat-sort-header *matHeaderCellDef>Type</th>
+    <td mat-cell *matCellDef="let element">{{element.journalType.label}} </td>
+  </ng-container>
   <ng-container matColumnDef="departments">
-    <th mat-header-cell *matHeaderCellDef>Habilitations</th>
+    <th mat-header-cell mat-sort-header *matHeaderCellDef>Habilitations</th>
     <td mat-cell *matCellDef="let element">{{element.departments}} </td>
   </ng-container>
   <ng-container matColumnDef="discountRate">
-    <th mat-header-cell *matHeaderCellDef>Taux de remise</th>
+    <th mat-header-cell mat-sort-header *matHeaderCellDef>Taux de remise</th>
     <td mat-cell *matCellDef="let element">{{element.discountRate}} %</td>
   </ng-container>
   <ng-container matColumnDef="weekDays">
-    <th mat-header-cell *matHeaderCellDef>Jours de parution</th>
+    <th mat-header-cell mat-sort-header *matHeaderCellDef>Jours de parution</th>
     <td mat-cell *matCellDef="let element">{{element.weekDays}} </td>
   </ng-container>
   <ng-container matColumnDef="lastShipmentForPublication">
-    <th mat-header-cell *matHeaderCellDef>Dernier envoi pour parution</th>
+    <th mat-header-cell mat-sort-header *matHeaderCellDef>Dernier envoi pour parution</th>
     <td mat-cell *matCellDef="let element">{{element.lastShipmentForPublication}} </td>
   </ng-container>
-  <ng-container matColumnDef="preference">
-    <th mat-header-cell *matHeaderCellDef>Préférence</th>
-    <td mat-cell *matCellDef="let element">{{element.preference}} </td>
+  <ng-container matColumnDef="billingGrade">
+    <th mat-header-cell mat-sort-header *matHeaderCellDef>Préférence facturation</th>
+    <td mat-cell *matCellDef="let element">
+      <grade [grade]="element.billingGrade"></grade>
+    </td>
+  </ng-container>
+  <ng-container matColumnDef="paperGrade">
+    <th mat-header-cell mat-sort-header *matHeaderCellDef>Préférence journal</th>
+    <td mat-cell *matCellDef="let element">
+      <grade [grade]="element.paperGrade"></grade>
+    </td>
+  </ng-container>
+  <ng-container matColumnDef="publicationCertificateDocumentGrade">
+    <th mat-header-cell mat-sort-header *matHeaderCellDef>Préférence attestation de parution</th>
+    <td mat-cell *matCellDef="let element">
+      <grade [grade]="element.publicationCertificateDocumentGrade"></grade>
+    </td>
+  </ng-container>
+  <ng-container matColumnDef="boardGrade">
+    <th mat-header-cell mat-sort-header *matHeaderCellDef>Préférence direction</th>
+    <td mat-cell *matCellDef="let element">
+      <grade [grade]="element.boardGrade"></grade>
+    </td>
   </ng-container>
   <ng-container matColumnDef="mails">
-    <th mat-header-cell *matHeaderCellDef>Mails</th>
+    <th mat-header-cell mat-sort-header *matHeaderCellDef>Mails</th>
     <td mat-cell *matCellDef="let element">{{element.mails}} </td>
   </ng-container>
   <ng-container matColumnDef="phones">
-    <th mat-header-cell *matHeaderCellDef>Téléphones</th>
+    <th mat-header-cell mat-sort-header *matHeaderCellDef>Téléphones</th>
     <td mat-cell *matCellDef="let element">{{element.phones}} </td>
   </ng-container>
   <ng-container matColumnDef="numberOfPrint">
-    <th mat-header-cell *matHeaderCellDef>Tirage</th>
+    <th mat-header-cell mat-sort-header *matHeaderCellDef>Tirage</th>
     <td mat-cell *matCellDef="let element">{{element.numberOfPrint}} </td>
   </ng-container>
   <ng-container matColumnDef="shippingCosts">
-    <th mat-header-cell *matHeaderCellDef>Frais de port</th>
+    <th mat-header-cell mat-sort-header *matHeaderCellDef>Frais de port</th>
     <td mat-cell *matCellDef="let element">{{element.shippingCosts}} €</td>
   </ng-container>
   <ng-container matColumnDef="administrativeFees">
-    <th mat-header-cell *matHeaderCellDef>Frais administratifs</th>
+    <th mat-header-cell mat-sort-header *matHeaderCellDef>Frais administratifs</th>
     <td mat-cell *matCellDef="let element">{{element.administrativeFees}} €</td>
   </ng-container>
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

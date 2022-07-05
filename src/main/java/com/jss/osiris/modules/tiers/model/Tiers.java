@@ -32,7 +32,6 @@ import com.jss.osiris.modules.miscellaneous.model.PaymentType;
 import com.jss.osiris.modules.miscellaneous.model.Phone;
 import com.jss.osiris.modules.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.profile.model.Employee;
-import com.jss.osiris.modules.quotation.model.Confrere;
 
 @Entity
 @Table(indexes = { @Index(name = "pk_client", columnList = "id", unique = true) })
@@ -181,14 +180,14 @@ public class Tiers implements ITiers, IAttachment {
 	private List<TiersFollowup> tiersFollowups;
 
 	@ManyToMany(cascade = CascadeType.ALL)
-	@JoinTable(name = "asso_tiers_confrere", joinColumns = @JoinColumn(name = "id_tiers"), inverseJoinColumns = @JoinColumn(name = "id_confrere"))
-	private List<Confrere> competitors;
+	@JoinTable(name = "asso_tiers_competitor", joinColumns = @JoinColumn(name = "id_tiers"), inverseJoinColumns = @JoinColumn(name = "id_competitor"))
+	private List<Competitor> competitors;
 
-	public List<Confrere> getCompetitors() {
+	public List<Competitor> getCompetitors() {
 		return competitors;
 	}
 
-	public void setCompetitors(List<Confrere> competitors) {
+	public void setCompetitors(List<Competitor> competitors) {
 		this.competitors = competitors;
 	}
 

@@ -14,6 +14,8 @@ export abstract class GenericReferentialComponent<T extends IReferential> implem
   saveEventSubscription: Subscription | undefined;
   @Input() addEvent: Observable<void> | undefined;
   addEventSubscription: Subscription | undefined;
+  @Input() cloneEvent: Observable<void> | undefined;
+  cloneEventSubscription: Subscription | undefined;
   @Output() selectedEntityChange: EventEmitter<T> = new EventEmitter<T>();
   entities: T[] = [] as Array<T>;
   displayedColumns: string[] = ['id', 'code', 'label'];
@@ -22,10 +24,14 @@ export abstract class GenericReferentialComponent<T extends IReferential> implem
   entityDataSource: MatTableDataSource<T> = new MatTableDataSource<T>();
 
   constructor(
-    private formBuilder: FormBuilder) { }
+    private formBuilder: FormBuilder,
+  ) { }
 
   entityForm = this.formBuilder.group({
-
+    boardGrade: [''],
+    publicationCertificateDocumentGrade: [''],
+    billingGrade: [''],
+    paperGrade: [''],
   });
 
   ngOnInit() {
@@ -34,11 +40,17 @@ export abstract class GenericReferentialComponent<T extends IReferential> implem
       this.saveEventSubscription = this.saveEvent.subscribe(() => this.saveEntity());
     if (this.addEvent)
       this.addEventSubscription = this.addEvent.subscribe(() => this.addEntity());
+    if (this.cloneEvent)
+      this.cloneEventSubscription = this.cloneEvent.subscribe(() => this.cloneEntity());
   }
 
   ngOnDestroy() {
     if (this.saveEventSubscription)
       this.saveEventSubscription.unsubscribe();
+    if (this.addEventSubscription)
+      this.addEventSubscription.unsubscribe();
+    if (this.cloneEventSubscription)
+      this.cloneEventSubscription.unsubscribe();
   }
 
   selectEntity(element: T) {
@@ -58,14 +70,27 @@ export abstract class GenericReferentialComponent<T extends IReferential> implem
   abstract getGetObservable(): Observable<T[]>;
 
   saveEntity() {
-    if (this.selectedEntity)
-      this.getAddOrUpdateObservable().subscribe(response => {
-        this.setDataTable();
-      });
+    this.getAddOrUpdateObservable().subscribe(response => {
+      this.setDataTable();
+    });
+  }
+
+  getFormStatus() {
+    if (!this.entityForm.valid) {
+      return false;
+    }
+    return true;
   }
 
   addEntity() {
     this.selectedEntity = {} as T;
+  }
+
+  cloneEntity() {
+    this.selectedEntity = structuredClone(this.selectedEntity);
+    this.selectedEntity!.id = undefined;
+    this.entities.push(this.selectedEntity!);
+    this.setDataTable();
   }
 
   setDataTable() {
@@ -77,10 +102,10 @@ export abstract class GenericReferentialComponent<T extends IReferential> implem
         this.entityDataSource.sort = this.sort;
         this.entityDataSource.sortingDataAccessor = (item: T, property) => {
           switch (property) {
-            case 'id': return item.id;
+            case 'id': return item.id!;
             case 'code': return this.getElementCode(item);
             case 'label': return this.getElementLabel(item);
-            default: return item.id;
+            default: return this.getElementLabel(item);
           }
         };
 

@@ -3,6 +3,7 @@ import { UntypedFormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
 import { instanceOfQuotation } from 'src/app/libs/TypeHelper';
+import { SpecialOffer } from 'src/app/modules/miscellaneous/model/SpecialOffer';
 import { Responsable } from 'src/app/modules/tiers/model/Responsable';
 import { Tiers } from 'src/app/modules/tiers/model/Tiers';
 import { TiersService } from 'src/app/modules/tiers/services/tiers.service';
@@ -19,25 +20,35 @@ export class OrderingCustomerComponent implements OnInit {
   @Input() quotation: IQuotation = {} as IQuotation;
   @Input() editMode: boolean = false;
 
-  overrideSpecialOffer: boolean = false;
-
   constructor(private formBuilder: UntypedFormBuilder,
     private tiersService: TiersService,
     public specialOfferDialog: MatDialog) { }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.quotation != undefined) {
+      if (!this.quotation.overrideSpecialOffer)
+        this.quotation.overrideSpecialOffer = false;
       this.orderingCustomerForm.markAllAsTouched();
     }
   }
 
   ngOnInit() {
-    // Trigger it to show mandatory fields
     this.orderingCustomerForm.markAllAsTouched();
   }
 
   orderingCustomerForm = this.formBuilder.group({
   });
+
+  initSpecialOffers() {
+    this.quotation.overrideSpecialOffer = true;
+    this.quotation.specialOffers = [] as Array<SpecialOffer>;
+    if (this.quotation.tiers && this.quotation.tiers.specialOffers)
+      this.quotation.specialOffers.push(...this.quotation.tiers.specialOffers);
+
+    if (this.quotation.responsable && this.quotation.responsable.tiers && this.quotation.responsable.tiers.specialOffers)
+      this.quotation.specialOffers.push(...this.quotation.responsable.tiers.specialOffers);
+  }
+
 
   fillTiers(tiers: Tiers) {
     this.quotation.tiers = tiers;

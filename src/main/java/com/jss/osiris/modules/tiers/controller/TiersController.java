@@ -29,6 +29,7 @@ import com.jss.osiris.modules.profile.service.EmployeeService;
 import com.jss.osiris.modules.tiers.model.BillingClosureRecipientType;
 import com.jss.osiris.modules.tiers.model.BillingClosureType;
 import com.jss.osiris.modules.tiers.model.BillingLabelType;
+import com.jss.osiris.modules.tiers.model.Competitor;
 import com.jss.osiris.modules.tiers.model.PaymentDeadlineType;
 import com.jss.osiris.modules.tiers.model.RefundType;
 import com.jss.osiris.modules.tiers.model.Responsable;
@@ -41,6 +42,7 @@ import com.jss.osiris.modules.tiers.model.TiersType;
 import com.jss.osiris.modules.tiers.service.BillingClosureRecipientTypeService;
 import com.jss.osiris.modules.tiers.service.BillingClosureTypeService;
 import com.jss.osiris.modules.tiers.service.BillingLabelTypeService;
+import com.jss.osiris.modules.tiers.service.CompetitorService;
 import com.jss.osiris.modules.tiers.service.PaymentDeadlineTypeService;
 import com.jss.osiris.modules.tiers.service.RefundTypeService;
 import com.jss.osiris.modules.tiers.service.ResponsableService;
@@ -111,6 +113,50 @@ public class TiersController {
 
   @Autowired
   SubscriptionPeriodTypeService subscriptionPeriodTypeService;
+
+  @Autowired
+  CompetitorService competitorService;
+
+  @GetMapping(inputEntryPoint + "/competitors")
+  public ResponseEntity<List<Competitor>> getCompetitors() {
+    List<Competitor> competitors = null;
+    try {
+      competitors = competitorService.getCompetitors();
+    } catch (HttpStatusCodeException e) {
+      logger.error("HTTP error when fetching competitor", e);
+      return new ResponseEntity<List<Competitor>>(HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (Exception e) {
+      logger.error("Error when fetching competitor", e);
+      return new ResponseEntity<List<Competitor>>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    return new ResponseEntity<List<Competitor>>(competitors, HttpStatus.OK);
+  }
+
+  @PostMapping(inputEntryPoint + "/competitor")
+  public ResponseEntity<Competitor> addOrUpdateCompetitor(
+      @RequestBody Competitor competitors) {
+    Competitor outCompetitor;
+    try {
+      if (competitors.getId() != null)
+        validationHelper.validateReferential(competitors, true);
+      validationHelper.validateString(competitors.getCode(), true);
+      validationHelper.validateString(competitors.getLabel(), true);
+
+      outCompetitor = competitorService
+          .addOrUpdateCompetitor(competitors);
+    } catch (
+
+    ResponseStatusException e) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    } catch (HttpStatusCodeException e) {
+      logger.error("HTTP error when fetching competitor", e);
+      return new ResponseEntity<Competitor>(HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (Exception e) {
+      logger.error("Error when fetching competitor", e);
+      return new ResponseEntity<Competitor>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    return new ResponseEntity<Competitor>(outCompetitor, HttpStatus.OK);
+  }
 
   @GetMapping(inputEntryPoint + "/subscription-period-types")
   public ResponseEntity<List<SubscriptionPeriodType>> getSubscriptionPeriodTypes() {

@@ -20,6 +20,7 @@ export class AdministrationComponent implements OnInit {
 
   saveEvent: Subject<void> = new Subject<void>();
   addEvent: Subject<void> = new Subject<void>();
+  cloneEvent: Subject<void> = new Subject<void>();
 
   ACT_TYPE_REFERENTIAL = "Devis - BODACC - type d'actes";
   BODACC_PUBLICATION_TYPE_REFERENTIAL = "Devis - BODACC - type de publication";
@@ -71,6 +72,7 @@ export class AdministrationComponent implements OnInit {
   TEAM_REFERENTIAL = "Divers - équipe";
   REGIE_REFERENTIAL = "Devis - SHAL - régie";
   CONFRERE_REFERENTIAL = "Devis - SHAL - confrère";
+  COMPETITOR_REFERENTIAL = "Tiers - concurrent";
 
   constructor(private appService: AppService,
     private formBuilder: FormBuilder,
@@ -127,6 +129,7 @@ export class AdministrationComponent implements OnInit {
     this.referentials.push(this.TEAM_REFERENTIAL);
     this.referentials.push(this.REGIE_REFERENTIAL);
     this.referentials.push(this.CONFRERE_REFERENTIAL);
+    this.referentials.push(this.COMPETITOR_REFERENTIAL);
     this.referentials.sort((a, b) => a.localeCompare(b));
 
     this.filteredReferentials = this.referentialForm.get("entity")?.valueChanges.pipe(
@@ -140,8 +143,10 @@ export class AdministrationComponent implements OnInit {
   });
 
   saveEntity() {
-    this.saveEvent.next();
-    this.editMode = false;
+    if (this.selectedEntity) { // TODO : remonter  getFormStatus())
+      this.saveEvent.next();
+      this.editMode = false;
+    }
   }
 
   createEntity() {
@@ -150,6 +155,12 @@ export class AdministrationComponent implements OnInit {
   }
 
   editEntity() {
+    this.editMode = true;
+  }
+
+  cloneEntity() {
+    console.log("ff");
+    this.cloneEvent.next();
     this.editMode = true;
   }
 
@@ -162,3 +173,4 @@ export class AdministrationComponent implements OnInit {
     this.editMode = false;
   }
 }
+

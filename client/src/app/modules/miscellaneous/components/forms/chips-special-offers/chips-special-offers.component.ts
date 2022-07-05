@@ -107,4 +107,13 @@ export class ChipsSpecialOffersComponent extends GenericChipsComponent<SpecialOf
       this.specialOfferInput!.nativeElement.value = '';
     }
   }
+
+  deleteAllSpecialOffers() {
+    if (this.form != undefined) {
+      this.model = [] as Array<SpecialOffer>;
+      this.modelChange.emit(this.model);
+      this.form.get(this.propertyName)?.setValue(null);
+      this.specialOfferInput!.nativeElement.value = '';
+    }
+  }
 }

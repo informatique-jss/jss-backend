@@ -21,202 +21,257 @@
         </table>
         <referential-act-type *ngIf="selectedReferential==ACT_TYPE_REFERENTIAL"
           (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"></referential-act-type>
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()"></referential-act-type>
         <referential-bodacc-publication-type *ngIf="selectedReferential==BODACC_PUBLICATION_TYPE_REFERENTIAL"
           (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
         </referential-bodacc-publication-type>
         <referential-building-domiciliation *ngIf="selectedReferential==BUILDING_DOMICILIATION_REFERENTIAL"
           (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
         </referential-building-domiciliation>
         <referential-domiciliation-contract-type *ngIf="selectedReferential==DOMICIALIATION_CONTRACT_TYPE_REFERENTIAL"
           (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
         </referential-domiciliation-contract-type>
         <referential-fund-type *ngIf="selectedReferential==FUND_TYPE_REFERENTIAL"
           (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"></referential-fund-type>
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()"></referential-fund-type>
         <referential-journal-type *ngIf="selectedReferential==JOURNAL_TYPE_REFERENTIAL"
           (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"></referential-journal-type>
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()"></referential-journal-type>
         <referential-mail-redirection-type *ngIf="selectedReferential==MAIL_REDIRECTION_TYPE_REFERENTIAL"
           (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
         </referential-mail-redirection-type>
         <referential-notice-type-family *ngIf="selectedReferential==NOTICE_TYPE_FAMILY_REFERENTIAL"
           (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
         </referential-notice-type-family>
         <referential-provision-family-type *ngIf="selectedReferential==PROVISION_FAMILY_TYPE_REFERENTIAL"
           (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
         </referential-provision-family-type>
         <referential-quotation-label-type *ngIf="selectedReferential==QUOTATION_LABEL_TYPE_REFERENTIAL"
           (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
         </referential-quotation-label-type>
         <referential-quotation-status *ngIf="selectedReferential==QUOTATION_STATUS_REFERENTIAL"
           (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
         </referential-quotation-status>
         <referential-record-type *ngIf="selectedReferential==RECORD_TYPE_REFERENTIAL"
           (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
         </referential-record-type>
         <referential-transfert-fund-type *ngIf="selectedReferential==TRANSFERT_FUNDS_TYPE_REFERENTIAL"
           (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
         </referential-transfert-fund-type>
         <referential-billing-closure-recipient-type
           *ngIf="selectedReferential==BILLING_CLOSURE_RECIPIENT_TYPE_REFERENTIAL"
           (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
         </referential-billing-closure-recipient-type>
         <referential-billing-closure-type *ngIf="selectedReferential==BILLING_CLOSURE_TYPE_REFERENTIAL"
           (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
         </referential-billing-closure-type>
         <referential-billing-label-type *ngIf="selectedReferential==BILLING_LABEL_TYPE_REFERENTIAL"
           (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
         </referential-billing-label-type>
         <referential-payment-deadline-type *ngIf="selectedReferential==PAYMENT_DEALINE_TYPE_REFERENTIAL"
           (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
         </referential-payment-deadline-type>
         <referential-refund-type *ngIf="selectedReferential==REFUND_TYPE_REFERENTIAL"
           (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
         </referential-refund-type>
         <referential-subscription-period-type *ngIf="selectedReferential==SUBSCRIPTION_PERIOD_TYPE_REFERENTIAL"
           (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
         </referential-subscription-period-type>
         <referential-tiers-category *ngIf="selectedReferential==TIERS_CATEGORY_REFERENTIAL"
           (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
         </referential-tiers-category>
         <referential-tiers-type *ngIf="selectedReferential==TIERS_TYPE_REFERENTIAL"
           (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
         </referential-tiers-type>
         <referential-tiers-followup-type *ngIf="selectedReferential==TIERS_FOLLOWUP_TYPE_REFERENTIAL"
           (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
         </referential-tiers-followup-type>
         <referential-attachment-type *ngIf="selectedReferential==ATTACHMENT_TYPE_REFERENTIAL"
           (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
         </referential-attachment-type>
         <referential-civility *ngIf="selectedReferential==CIVILITY_REFERENTIAL"
           (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
         </referential-civility>
         <referential-competent-authority-type *ngIf="selectedReferential==COMPETENT_AUTHORITY_TYPE_REFERENTIAL"
           (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
         </referential-competent-authority-type>
         <referential-country *ngIf="selectedReferential==COUNTRY_REFERENTIAL"
           (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
         </referential-country>
         <referential-delivery-service *ngIf="selectedReferential==DELIVERY_SERVICE_REFERENTIAL"
           (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
         </referential-delivery-service>
         <referential-document-type *ngIf="selectedReferential==DOCUMENT_TYPE_REFERENTIAL"
           (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
         </referential-document-type>
         <referential-language *ngIf="selectedReferential==LANGUAGE_REFERENTIAL"
           (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
         </referential-language>
         <referential-legal-form *ngIf="selectedReferential==LEGAL_FORM_REFERENTIAL"
           (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
         </referential-legal-form>
         <referential-payment-type *ngIf="selectedReferential==PAYMENT_TYPE_REFERENTIAL"
           (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
         </referential-payment-type>
         <referential-region *ngIf="selectedReferential==REGIONS_REFERENTIAL"
           (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
         </referential-region>
         <referential-vat *ngIf="selectedReferential==VAT_REFERENTIAL"
           (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
         </referential-vat>
         <referential-weekday *ngIf="selectedReferential==WEEK_DAY_REFERENTIAL"
           (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
         </referential-weekday>
         <referential-character-price *ngIf="selectedReferential==CHARACTER_PRICE_REFERENTIAL"
           (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
         </referential-character-price>
         <referential-notice-type *ngIf="selectedReferential==NOTICE_TYPE"
           (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
         </referential-notice-type>
         <referential-provision-type *ngIf="selectedReferential==PROVISION_TYPE_REFERENTIAL"
           (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
         </referential-provision-type>
         <referential-shal-notice-template *ngIf="selectedReferential==SHAL_NOTICE_TEMPLATE_REFERENTIAL"
           (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
         </referential-shal-notice-template>
         <referential-billing-item *ngIf="selectedReferential==BILLING_ITEM_REFERENTIAL"
           (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
         </referential-billing-item>
         <referential-billing-type *ngIf="selectedReferential==BILLING_TYPE_REFERENTIAL"
           (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
         </referential-billing-type>
         <referential-city *ngIf="selectedReferential==CITY_REFERENTIAL"
           (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
         </referential-city>
         <referential-department *ngIf="selectedReferential==DEPARTMENT_REFERENTIAL"
           (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
         </referential-department>
         <referential-gift *ngIf="selectedReferential==GIFT_REFERENTIAL"
           (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
         </referential-gift>
         <referential-special-offer *ngIf="selectedReferential==SPECIAL_OFFER_REFERENTIAL"
           (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
         </referential-special-offer>
         <referential-competent-authority *ngIf="selectedReferential==COMPETENT_AUTHORITY_REFERENTIAL"
           (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
         </referential-competent-authority>
         <referential-accounting-account-class *ngIf="selectedReferential==ACCOUNTING_ACCOUNT_CLASS_REFERENTIAL"
           (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
         </referential-accounting-account-class>
         <referential-accounting-account *ngIf="selectedReferential==ACCOUNTING_ACCOUNT_REFERENTIAL"
           (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
         </referential-accounting-account>
         <referential-team *ngIf="selectedReferential==TEAM_REFERENTIAL"
           (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
         </referential-team>
         <referential-regie *ngIf="selectedReferential==REGIE_REFERENTIAL"
           (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
         </referential-regie>
         <referential-confrere *ngIf="selectedReferential==CONFRERE_REFERENTIAL"
           (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()">
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
         </referential-confrere>
+        <referential-competitor *ngIf="selectedReferential==COMPETITOR_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [editMode]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
+        </referential-competitor>
       </div>
     </mat-tab>
   </mat-tab-group>
@@ -227,6 +282,10 @@
 <button matTooltip="Modifier l'élément" mat-fab color="accent" class="second-fab-button"
   *ngIf="selectedEntity && !editMode" (click)="editEntity()">
   <mat-icon>edit</mat-icon>
+</button>
+<button matTooltip="Cloner l'élément" mat-fab color="accent" class="third-fab-button"
+  *ngIf="selectedEntity && !editMode" (click)="cloneEntity()">
+  <mat-icon>content_copy</mat-icon>
 </button>
 <button matTooltip="Ajouter un élément" mat-fab color="accent" class="fab-button"
   *ngIf="selectedReferential && !editMode" (click)="createEntity()">

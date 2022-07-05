@@ -1,5 +1,5 @@
 export interface IReferential {
-  id: number;
+  id: number | undefined;
   code: string;
   label: string;
 }

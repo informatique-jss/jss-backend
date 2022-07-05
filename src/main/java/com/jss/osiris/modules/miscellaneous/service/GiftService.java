@@ -8,6 +8,8 @@ public interface GiftService {
     public List<Gift> getGifts();
 
     public Gift getGift(Integer id);
-	
-	 public Gift addOrUpdateGift(Gift gift);
+
+    public Gift addOrUpdateGift(Gift gift);
+
+    public void decreaseStock(Gift gift);
 }

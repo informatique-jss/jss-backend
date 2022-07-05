@@ -125,7 +125,7 @@ public class AccountingController {
     public ResponseEntity<List<AccountingAccount>> getAccountingAccountByLabel(@RequestParam String label) {
         List<AccountingAccount> accountingAccounts = null;
         try {
-            accountingAccounts = accountingAccountService.getAccountingAccountByLabel(label);
+            accountingAccounts = accountingAccountService.getAccountingAccountByLabelOrCode(label);
         } catch (HttpStatusCodeException e) {
             logger.error("HTTP error when fetching city", e);
             return new ResponseEntity<List<AccountingAccount>>(HttpStatus.INTERNAL_SERVER_ERROR);

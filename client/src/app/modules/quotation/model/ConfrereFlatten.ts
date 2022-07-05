@@ -11,7 +11,10 @@ export interface ConfrereFlatten {
   weekDays: string;
   journalType: JournalType;
   lastShipmentForPublication: string;
-  preference: string;
+  publicationCertificateDocumentGrade: string;
+  billingGrade: string;
+  paperGrade: string;
+  boardGrade: string;
   shippingCosts: number;
   administrativeFees: number;
   numberOfPrint: number;

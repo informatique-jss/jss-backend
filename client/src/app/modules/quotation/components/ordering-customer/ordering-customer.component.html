@@ -48,8 +48,9 @@
                     {{specialOffer? (specialOffer.code + " - " +specialOffer.label):"Aucun"}}
                   </li>
                 </ul>
-                <button *ngIf="editMode==true" matTooltip="Modifier le tarif spécial par défaut"
-                  (click)="overrideSpecialOffer = true" mat-icon-button color="accent">
+                <button *ngIf="editMode==true && !quotation.overrideSpecialOffer"
+                  matTooltip="Modifier le tarif spécial par défaut" (click)="initSpecialOffers()" mat-icon-button
+                  color="accent">
                   <mat-icon>edit</mat-icon>
                 </button>
               </td>
@@ -102,19 +103,21 @@
                     {{specialOffer? (specialOffer.code + " - " +specialOffer.label):"Aucun"}}
                   </li>
                 </ul>
-                <button *ngIf="editMode==true" matTooltip="Modifier le tarif spécial par défaut"
-                  (click)="overrideSpecialOffer = true" mat-icon-button color="accent">
+                <button *ngIf="editMode==true && !quotation.overrideSpecialOffer"
+                  matTooltip="Modifier le tarif spécial par défaut" (click)="initSpecialOffers()" mat-icon-button
+                  color="accent">
                   <mat-icon>edit</mat-icon>
                 </button>
               </td>
             </tr>
           </table>
         </div>
-        <table class="full-width" [hidden]="!overrideSpecialOffer">
+        <table class="full-width" [hidden]="!quotation.overrideSpecialOffer">
           <tr>
             <td>
               <chips-special-offers [(model)]="quotation.specialOffers" [form]="orderingCustomerForm"
-                propertyName="specialOffer" [isDisabled]="!editMode" [conditionnalRequired]="overrideSpecialOffer">
+                propertyName="specialOffer" [isDisabled]="!editMode"
+                [conditionnalRequired]="quotation.overrideSpecialOffer">
               </chips-special-offers>
             </td>
           </tr>

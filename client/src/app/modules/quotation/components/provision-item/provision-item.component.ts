@@ -34,7 +34,7 @@ export class ProvisionItemComponent implements OnInit {
   @Input() isStatusOpen: boolean = true;
   @ViewChild(DomiciliationComponent) domiciliationComponent: DomiciliationComponent | undefined;
   @ViewChild(ShalComponent) shalComponent: ShalComponent | undefined;
-  @ViewChild(ShalComponent) bodaccComponent: BodaccMainComponent | undefined;
+  @ViewChild(BodaccMainComponent) bodaccComponent: BodaccMainComponent | undefined;
 
   provisionFamilyTypes: ProvisionFamilyType[] = [] as Array<ProvisionFamilyType>;
   provisionTypes: ProvisionType[] = [] as Array<ProvisionType>;
@@ -66,6 +66,7 @@ export class ProvisionItemComponent implements OnInit {
   }
 
   getFormStatus(): boolean {
+    console.log("dd");
     let status = true;
     if (this.domiciliationComponent)
       status = status && this.domiciliationComponent.getFormStatus();
