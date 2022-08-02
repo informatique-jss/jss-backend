@@ -29,7 +29,12 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-cache:2.6.4'
     implementation 'org.ehcache:ehcache:3.9.7'
     implementation 'commons-validator:commons-validator:1.7'
-
+    implementation 'com.itextpdf:itextpdf:5.5.13.3'
+    implementation 'com.itextpdf:html2pdf:4.0.2'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf:2.7.1'
+    implementation 'io.springfox:springfox-boot-starter:3.0.0'
+    implementation 'io.springfox:springfox-swagger-ui:3.0.0'
+    
     runtimeOnly 'org.springframework.boot:spring-boot-devtools:2.6.4'
 }
  
