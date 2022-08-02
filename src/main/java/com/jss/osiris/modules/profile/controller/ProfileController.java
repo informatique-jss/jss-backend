@@ -1,11 +1,6 @@
 package com.jss.osiris.modules.profile.controller;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,10 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.pdf.PdfCopyFields;
-import com.itextpdf.text.pdf.PdfReader;
-import com.itextpdf.text.pdf.PdfStamper;
 import com.jss.osiris.libs.ValidationHelper;
 import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.profile.model.Team;
@@ -45,88 +36,6 @@ public class ProfileController {
 
 	@Autowired
 	TeamService teamService;
-
-	@GetMapping("/test")
-	public void test() throws IOException, DocumentException {
-
-		String folder = "C:\\TEMP\\pdf\\";
-		File f = new File(folder);
-		String[] pathnames = f.list();
-
-		for (String path : pathnames) {
-
-			splitPage1(folder + path, path);
-			splitPage2(folder + path, path);
-
-			String[] inputs = { "C:\\TEMP\\page1.pdf" + path, "C:\\TEMP\\page2.pdf" + path };
-
-			for (int page = 2; page < 25; page++) {
-
-				PdfCopyFields pcf = null;
-				if (page <= 9)
-					pcf = new PdfCopyFields(
-							new FileOutputStream(folder + path.substring(0, path.length() - 6) + "0" + page + ".pdf"));
-				if (page > 9 && page <= 19)
-					pcf = new PdfCopyFields(
-							new FileOutputStream(folder + path.substring(0, path.length() - 6) + page + ".pdf"));
-				if (page > 19)
-					pcf = new PdfCopyFields(
-							new FileOutputStream(folder + path.substring(0, path.length() - 6) + page + ".pdf"));
-
-				PdfReader reader = new PdfReader("C:\\TEMP\\page1.pdf" + path);
-				pcf.addDocument(reader);
-
-				for (int i = 2; i <= page; i++) {
-					reader = new PdfReader("C:\\TEMP\\page2.pdf" + path);
-					Set<String> keys = new HashSet<String>(reader.getAcroFields()
-							.getFields().keySet());
-
-					for (String key : keys) {
-						try {
-							Integer.parseInt(key.substring(1, 2));
-							if (i <= 9) {
-								reader.getAcroFields().renameField(key, "0" + i + key.substring(2));
-							} else {
-								reader.getAcroFields().renameField(key, i + key.substring(2));
-							}
-						} catch (Exception e) {
-
-						}
-					}
-					pcf.addDocument(reader);
-
-				}
-
-				pcf.close();
-			}
-		}
-	}
-
-	private void splitPage1(String inputPath, String suffix) throws IOException, DocumentException {
-
-		String path;
-		PdfStamper stamper;
-		PdfReader reader = new PdfReader(inputPath);
-
-		reader.selectPages(String.valueOf(1));
-		path = "C:\\TEMP\\page1.pdf" + suffix;
-		stamper = new PdfStamper(reader, new FileOutputStream(path));
-		stamper.close();
-
-		reader.close();
-	}
-
-	private void splitPage2(String inputPath, String suffix) throws IOException, DocumentException {
-		String path;
-		PdfStamper stamper;
-		PdfReader reader = new PdfReader(inputPath);
-		reader.selectPages(String.valueOf(2));
-		path = "C:\\TEMP\\page2.pdf" + suffix;
-		stamper = new PdfStamper(reader, new FileOutputStream(path));
-		stamper.close();
-		reader.close();
-
-	}
 
 	@GetMapping(inputEntryPoint + "/teams")
 	public ResponseEntity<List<Team>> getTeams() {
