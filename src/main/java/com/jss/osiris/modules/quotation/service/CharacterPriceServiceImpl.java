@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.jss.osiris.modules.miscellaneous.model.Department;
 import com.jss.osiris.modules.quotation.model.CharacterPrice;
+import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.repository.CharacterPriceRepository;
 
 @Service
@@ -39,5 +40,35 @@ public class CharacterPriceServiceImpl implements CharacterPriceService {
     public CharacterPrice addOrUpdateCharacterPrice(
             CharacterPrice characterPrice) {
         return characterPriceRepository.save(characterPrice);
+    }
+
+    @Override
+    public int getCharacterNumber(Provision provision) {
+        if (provision.getShal() != null) {
+            int noticeNumber = 0;
+            int headerNumber = 0;
+            if (provision.getShal().getNotice() != null)
+                noticeNumber = provision.getShal().getNotice().replaceAll("\\r|\\n|\\r\\n", " ")
+                        .replaceAll("\\<.*?>", "")
+                        .length();
+            if (provision.getShal().getNoticeHeader() != null)
+                headerNumber = provision.getShal().getNoticeHeader().replaceAll("\\r|\\n|\\r\\n", " ")
+                        .replaceAll("\\<.*?>", "")
+                        .length();
+
+            return noticeNumber
+                    + ((provision.getShal().getIsHeaderFree() == null || provision.getShal().getIsHeaderFree()) ? 0
+                            : headerNumber);
+        }
+        return 0;
+    }
+
+    @Override
+    public CharacterPrice getCharacterPrice(Provision provision) {
+        if (provision.getShal() != null && provision.getShal().getDepartment() != null
+                && provision.getShal().getPublicationDate() != null)
+            return this.getCharacterPrice(provision.getShal().getDepartment(),
+                    provision.getShal().getPublicationDate());
+        return null;
     }
 }

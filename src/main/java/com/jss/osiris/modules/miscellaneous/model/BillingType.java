@@ -21,6 +21,12 @@ public class BillingType implements Serializable, IId {
 	@Column(nullable = false, length = 20)
 	private String code;
 
+	@Column(nullable = false)
+	private Boolean canOverridePrice;
+
+	@Column(nullable = false)
+	private Boolean isPriceBasedOnCharacterNumber;
+
 	public Integer getId() {
 		return id;
 	}
@@ -44,4 +50,21 @@ public class BillingType implements Serializable, IId {
 	public void setLabel(String label) {
 		this.label = label;
 	}
+
+	public Boolean getCanOverridePrice() {
+		return canOverridePrice;
+	}
+
+	public void setCanOverridePrice(Boolean canOverridePrice) {
+		this.canOverridePrice = canOverridePrice;
+	}
+
+	public Boolean getIsPriceBasedOnCharacterNumber() {
+		return isPriceBasedOnCharacterNumber;
+	}
+
+	public void setIsPriceBasedOnCharacterNumber(Boolean isPriceBasedOnCharacterNumber) {
+		this.isPriceBasedOnCharacterNumber = isPriceBasedOnCharacterNumber;
+	}
+
 }

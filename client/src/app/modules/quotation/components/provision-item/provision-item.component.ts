@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { MatExpansionPanel } from '@angular/material/expansion';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
@@ -32,6 +32,7 @@ export class ProvisionItemComponent implements OnInit {
   @Input() editMode: boolean = false;
   @Input() instanceOfCustomerOrder: boolean = false;
   @Input() isStatusOpen: boolean = true;
+  @Output() selectedProvisionTypeChange: EventEmitter<void> = new EventEmitter<void>();
   @ViewChild(DomiciliationComponent) domiciliationComponent: DomiciliationComponent | undefined;
   @ViewChild(ShalComponent) shalComponent: ShalComponent | undefined;
   @ViewChild(BodaccMainComponent) bodaccComponent: BodaccMainComponent | undefined;
@@ -66,7 +67,7 @@ export class ProvisionItemComponent implements OnInit {
   }
 
   getFormStatus(): boolean {
-    console.log("dd");
+    console.log(this.shalComponent);
     let status = true;
     if (this.domiciliationComponent)
       status = status && this.domiciliationComponent.getFormStatus();
@@ -94,6 +95,7 @@ export class ProvisionItemComponent implements OnInit {
       this.provision.shal = undefined;
       this.provision.domiciliation = undefined;
       this.provision.bodacc = undefined;
+      this.selectedProvisionTypeChange.emit();
       return;
     }
 
@@ -114,6 +116,11 @@ export class ProvisionItemComponent implements OnInit {
     } else if (!this.provision.bodacc) {
       this.provision.bodacc = {} as Bodacc;
     }
+    this.selectedProvisionTypeChange.emit();
+  }
+
+  noticeChange() {
+    this.selectedProvisionTypeChange.emit();
   }
 
   compareWithId = compareWithId;

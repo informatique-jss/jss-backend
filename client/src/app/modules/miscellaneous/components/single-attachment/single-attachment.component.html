@@ -1,6 +1,6 @@
 <div class="upload-div" *ngIf="entity && attachmentType">
-  <mat-chip color="accent">{{attachmentType.label}}</mat-chip> : <span
-    *ngIf="currentAttachment!=null">{{currentAttachment!.uploadedFile.filename}}
+  <mat-chip color="accent" [matTooltip]="currentAttachment!=null?currentAttachment!.uploadedFile.filename:''">
+    {{attachmentType.label}}</mat-chip> : <span *ngIf="currentAttachment!=null">
     <mat-icon class="pointer" (click)="previewFile(currentAttachment!)" color="accent"
       matTooltip="Prévisualiser le fichier">preview
     </mat-icon>

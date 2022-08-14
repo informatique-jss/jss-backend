@@ -7,13 +7,22 @@ import { GenericReferentialComponent } from '../generic-referential/generic-refe
 
 @Component({
   selector: 'referential-billing-type',
-  templateUrl: './../generic-referential/generic-referential.component.html',
+  templateUrl: 'referential-billing-type.component.html',
   styleUrls: ['./../generic-referential/generic-referential.component.css']
 })
 export class ReferentialBillingTypeComponent extends GenericReferentialComponent<BillingType> implements OnInit {
   constructor(private billingTypeService: BillingTypeService,
     private formBuilder2: FormBuilder) {
     super(formBuilder2);
+  }
+
+  mapEntities() {
+    for (const entity of this.entities) {
+      if (!entity.canOverridePrice)
+        entity.canOverridePrice = false;
+      if (!entity.isPriceBasedOnCharacterNumber)
+        entity.isPriceBasedOnCharacterNumber = false;
+    }
   }
 
   getAddOrUpdateObservable(): Observable<BillingType> {

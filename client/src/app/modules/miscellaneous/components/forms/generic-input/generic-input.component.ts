@@ -63,6 +63,10 @@ export class GenericInputComponent implements OnInit {
  * text if not defined
  */
   @Input() type: string = "text";
+  /**
+   * Fired when input is modified by user
+   */
+  @Output() onInputChange: EventEmitter<void> = new EventEmitter();
 
   constructor(
     private formBuilder: UntypedFormBuilder) { }
@@ -114,6 +118,10 @@ export class GenericInputComponent implements OnInit {
       this.form.get(this.propertyName)?.setValue(this.model);
       this.form.markAllAsTouched();
     }
+  }
+
+  inputChange() {
+    this.onInputChange.emit();
   }
 
   // Check if the propertiy given in parameter is filled when conditionnalRequired is set

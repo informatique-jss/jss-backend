@@ -151,6 +151,7 @@ export class AdministrationComponent implements OnInit {
 
   createEntity() {
     this.addEvent.next();
+    this.selectedEntity = {};
     this.editMode = true;
   }
 

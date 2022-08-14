@@ -1,5 +1,5 @@
 declare var require: any
-import { Component, ElementRef, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatDialog } from '@angular/material/dialog';
@@ -47,6 +47,7 @@ export class ShalComponent implements OnInit {
   @Input() editMode: boolean = false;
   @Input() instanceOfCustomerOrder: boolean = false;
   @Input() isStatusOpen: boolean = true;
+  @Output() noticeChange: EventEmitter<void> = new EventEmitter<void>();
 
   @ViewChild('tabs', { static: false }) tabs: any;
   @ViewChild('noticeTypesInput') noticeTypesInput: ElementRef<HTMLInputElement> | undefined;
@@ -221,11 +222,13 @@ export class ShalComponent implements OnInit {
   setNoticeModel(event: any) {
     if (this.shal)
       this.shal.notice = event.html;
+    this.noticeChange.emit();
   }
 
   setNoticeHeaderModel(event: any) {
     if (this.shal)
       this.shal.noticeHeader = event.html;
+    this.noticeChange.emit();
   }
 
   countCharacterNumber() {

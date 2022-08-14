@@ -94,6 +94,10 @@ public class Quotation implements IQuotation {
 	@Column(nullable = false)
 	private Boolean overrideSpecialOffer;
 
+	@OneToMany(targetEntity = InvoiceItem.class, mappedBy = "quotation", cascade = CascadeType.ALL)
+	@JsonManagedReference("quotation")
+	private List<InvoiceItem> invoiceItems;
+
 	public Integer getId() {
 		return id;
 	}
@@ -228,6 +232,14 @@ public class Quotation implements IQuotation {
 
 	public void setOverrideSpecialOffer(Boolean overrideSpecialOffer) {
 		this.overrideSpecialOffer = overrideSpecialOffer;
+	}
+
+	public List<InvoiceItem> getInvoiceItems() {
+		return invoiceItems;
+	}
+
+	public void setInvoiceItems(List<InvoiceItem> invoiceItems) {
+		this.invoiceItems = invoiceItems;
 	}
 
 }

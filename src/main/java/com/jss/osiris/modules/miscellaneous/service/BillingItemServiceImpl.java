@@ -12,6 +12,7 @@ import com.jss.osiris.modules.accounting.model.AccountingAccountClass;
 import com.jss.osiris.modules.accounting.service.AccountingAccountClassService;
 import com.jss.osiris.modules.accounting.service.AccountingAccountService;
 import com.jss.osiris.modules.miscellaneous.model.BillingItem;
+import com.jss.osiris.modules.miscellaneous.model.BillingType;
 import com.jss.osiris.modules.miscellaneous.repository.BillingItemRepository;
 
 @Service
@@ -37,6 +38,11 @@ public class BillingItemServiceImpl implements BillingItemService {
         if (!billingItem.isEmpty())
             return billingItem.get();
         return null;
+    }
+
+    @Override
+    public List<BillingItem> getBillingItemByBillingType(BillingType billingType) {
+        return billingItemRepository.findByBillingType(billingType);
     }
 
     @Override

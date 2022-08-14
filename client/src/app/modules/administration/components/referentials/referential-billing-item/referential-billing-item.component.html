@@ -80,6 +80,16 @@
                       label="N° de compte comptable" [form]="entityForm" propertyName="accountingAccountCharge"
                       [isMandatory]="true" [isDisabled]="!editMode" [maxLength]="20"></generic-input>
                   </td>
+                  <td>
+                    <generic-input [(model)]="accountingAccountCharge.code" label="Codification" [form]="entityForm"
+                      propertyName="code" [isMandatory]="true" [isDisabled]="!editMode" [conditionnalRequired]=""
+                      [customValidators]="" [maxLength]="20"></generic-input>
+                  </td>
+                  <td>
+                    <generic-input [(model)]="accountingAccountCharge.label" label="Nom fonctionnel" [form]="entityForm"
+                      propertyName="label" [isMandatory]="true" [isDisabled]="!editMode" [conditionnalRequired]=""
+                      [customValidators]="" [maxLength]="100"></generic-input>
+                  </td>
                 </tr>
                 <tr>
                   <td>
@@ -102,6 +112,16 @@
                     <generic-input [(model)]="accountingAccountProducts[i].accountingAccountNumber"
                       label="N° de compte comptable" [form]="entityForm" [propertyName]="'accountingAccountNumber'+i"
                       [isMandatory]="true" [isDisabled]="!editMode" [maxLength]="20"></generic-input>
+                  </td>
+                  <td>
+                    <generic-input [(model)]="accountingAccountProducts[i].code" label="Codification"
+                      [form]="entityForm" propertyName="code" [isMandatory]="true" [isDisabled]="!editMode"
+                      [conditionnalRequired]="" [customValidators]="" [maxLength]="20"></generic-input>
+                  </td>
+                  <td>
+                    <generic-input [(model)]="accountingAccountProducts[i].label" label="Nom fonctionnel"
+                      [form]="entityForm" propertyName="label" [isMandatory]="true" [isDisabled]="!editMode"
+                      [conditionnalRequired]="" [customValidators]="" [maxLength]="100"></generic-input>
                   </td>
                   <td>
                     <select-vat [(model)]="accountingAccountProducts[i].vat" label="Taux de TVA" [form]="entityForm"

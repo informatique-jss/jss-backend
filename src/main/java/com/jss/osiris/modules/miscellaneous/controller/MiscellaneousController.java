@@ -209,7 +209,7 @@ public class MiscellaneousController {
             validationHelper.validateString(specialOffers.getCode(), true, 20);
             validationHelper.validateString(specialOffers.getLabel(), true, 100);
 
-            if (specialOffers.getAssoSpecialOfferBillingTypes() != null
+            if (specialOffers.getAssoSpecialOfferBillingTypes() == null
                     || specialOffers.getAssoSpecialOfferBillingTypes().size() == 0)
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
@@ -431,8 +431,6 @@ public class MiscellaneousController {
                 validationHelper.validateString(accountingAccount.getCode(), true, 20);
                 validationHelper.validateString(accountingAccount.getLabel(), true, 100);
                 validationHelper.validateString(accountingAccount.getAccountingAccountNumber(), true, 20);
-                validationHelper.validateReferential(accountingAccount.getVat(), true);
-                validationHelper.validateReferential(accountingAccount.getAccountingAccountClass(), true);
             }
 
             outBillingItem = billingItemService.addOrUpdateBillingItem(billingItems);

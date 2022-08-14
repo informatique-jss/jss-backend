@@ -12,4 +12,5 @@ public interface QuotationStatusService {
     public QuotationStatus addOrUpdateQuotationStatus(QuotationStatus quotationStatus);
 
     public QuotationStatus getQuotationStatusByCode(String code);
+
 }

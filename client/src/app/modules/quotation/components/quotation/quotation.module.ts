@@ -15,6 +15,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
+import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
@@ -30,6 +31,7 @@ import { BodaccMainComponent } from '../bodacc-main/bodacc-main.component';
 import { BodaccSaleComponent } from '../bodacc-sale/bodacc-sale.component';
 import { BodaccSplitComponent } from '../bodacc-split/bodacc-split.component';
 import { DomiciliationComponent } from '../domiciliation/domiciliation.component';
+import { InvoiceManagementComponent } from '../invoice-management/invoice-management.component';
 import { OrderingCustomerComponent } from '../ordering-customer/ordering-customer.component';
 import { ProvisionItemComponent } from '../provision-item/provision-item.component';
 import { QuotationManagementComponent } from '../quotation-management/quotation-management.component';
@@ -85,6 +87,7 @@ const routes: Routes = [
     MatTooltipModule,
     MatTabsModule,
     MiscellaneousModule,
+    MatSidenavModule,
     MatTableModule,
     MatSortModule,
     MatMenuModule,
@@ -99,6 +102,7 @@ const routes: Routes = [
     AddAffaireDialogComponent,
     ProvisionItemComponent,
     BodaccSaleComponent,
+    InvoiceManagementComponent,
     BodaccFusionComponent,
     BodaccSplitComponent,
     ShalComponent],

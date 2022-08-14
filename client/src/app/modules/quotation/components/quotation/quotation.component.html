@@ -7,80 +7,179 @@
       unfold_less_double</mat-icon>
   </mat-panel-description>
 </ng-template>
-<div [hidden]="!editMode && (quotation.id==undefined || quotation.id==null)">
-  <mat-tab-group animationDuration="0ms" #tabs>
-    <mat-tab label="Donneur d'ordre">
-      <ordering-customer [quotation]="quotation" [editMode]="editMode">
-      </ordering-customer>
-    </mat-tab>
-    <mat-tab label="Prestations">
-      <div class="mat-elevation-z2 form-div">
-        <div class="row-field-container">
-          <mat-form-field class="full-width">
-            <input matInput (keyup)="applyFilter($event.target)" placeholder="Rechercher une prestation">
-          </mat-form-field>
-          <button *ngIf="editMode" (click)="createProvision()" mat-mini-fab color="warn"
-            matTooltip="Ajouter une prestation" class="mini-fab-add">
-            <mat-icon>add</mat-icon>
-          </button>
+
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav #sidenav mode="side" position="end" [fixedInViewport]="true" [fixedTopGap]="165" [fixedBottomGap]="100">
+    <div *ngIf="quotation && quotation.invoiceItems">
+      <div *ngFor="let affaire of getListOfAffaires()">
+        <td class="affaire" *ngIf="affaire.denomination">
+          {{affaire.denomination}}
+        </td>
+        <td class="affaire" *ngIf="affaire.firstname">
+          {{affaire.firstname}} - {{affaire.lastname}} -
+        </td>
+        <div *ngFor="let invoiceItem of quotation.invoiceItems;let index = index">
+          <table *ngIf="invoiceItem.provision.affaire.id == affaire.id">
+            <tr *ngIf="isFirstProvisionTypeForAffaire(invoiceItem.provision.provisionType, affaire, index)">
+              <td class="affaire">
+                {{invoiceItem.provision.provisionType.label}}
+              </td>
+            </tr>
+            <tr>
+              <td>
+                {{invoiceItem.label}}
+              </td>
+              <td class="td-price">
+                {{invoiceItem.preTaxPrice|number}} €
+              </td>
+            </tr>
+            <tr *ngIf="invoiceItem.discountAmount && invoiceItem.discountAmount>0">
+              <td>
+                Remise
+              </td>
+              <td class="td-price remise">
+                - {{invoiceItem.discountAmount|number}} €
+              </td>
+            </tr>
+            <tr>
+              <td>
+                {{invoiceItem.accountingAccount.vat.label}}
+              </td>
+              <td class="td-price">
+                {{invoiceItem.vatPrice|number}} €
+              </td>
+            </tr>
+          </table>
         </div>
-        <mat-accordion multi>
-          <mat-expansion-panel *ngFor="let provision of filteredProvisions; let index = index;">
-            <mat-expansion-panel-header>
-              <mat-panel-title>
-                <span *ngIf="provision.affaire">Affaire <span *ngIf="!provision.affaire.isIndividual && provision.affaire.denomination!=null
+      </div>
+      <table class="total-table">
+        <tr>
+          <td>
+            Prix total HT
+          </td>
+          <td class="td-price">
+            {{getPreTaxPriceTotal() |number}} €
+          </td>
+        </tr>
+        <tr *ngIf="getDiscountTotal() && getDiscountTotal()>0">
+          <td>
+            Remise totale
+          </td>
+          <td class="td-price remise">
+            - {{getDiscountTotal()|number}} €
+          </td>
+        </tr>
+        <tr>
+          <td>
+            Total HT
+          </td>
+          <td class="td-price">
+            {{getPreTaxPriceTotal()-getDiscountTotal()|number}} €
+          </td>
+        </tr>
+        <tr *ngFor="let vat of getVatTotals() ">
+          <td>
+            Total {{vat.label}}
+          </td>
+          <td class="td-price">
+            {{vat.total|number}} €
+          </td>
+        </tr>
+        <tr>
+          <td>
+            Total TTC
+          </td>
+          <td class="td-price">
+            {{getPriceTotal()|number}} €
+          </td>
+        </tr>
+      </table>
+    </div>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    <div [hidden]="!editMode && (quotation.id==undefined || quotation.id==null)">
+      <mat-tab-group animationDuration="0ms" #tabs>
+        <mat-tab label="Donneur d'ordre">
+          <ordering-customer [quotation]="quotation" [editMode]="editMode">
+          </ordering-customer>
+        </mat-tab>
+        <mat-tab label="Prestations" *ngIf="quotation.tiers || quotation.responsable">
+          <div class="mat-elevation-z2 form-div">
+            <div class="row-field-container">
+              <mat-form-field class="full-width">
+                <input matInput (keyup)="applyFilter($event.target)" placeholder="Rechercher une prestation">
+              </mat-form-field>
+              <button *ngIf="editMode" (click)="createProvision()" mat-mini-fab color="warn"
+                matTooltip="Ajouter une prestation" class="mini-fab-add">
+                <mat-icon>add</mat-icon>
+              </button>
+            </div>
+            <mat-accordion multi>
+              <mat-expansion-panel *ngFor="let provision of filteredProvisions; let index = index;">
+                <mat-expansion-panel-header>
+                  <mat-panel-title>
+                    <span *ngIf="provision.affaire">Affaire <span *ngIf="!provision.affaire.isIndividual && provision.affaire.denomination!=null
                  && provision.affaire.denomination!=undefined">{{provision.affaire.denomination}}</span><span *ngIf="provision.affaire.isIndividual
                  && provision.affaire.firstname!=null
                  && provision.affaire.firstname!=undefined  && provision.affaire.lastname!=null
                  && provision.affaire.lastname!=undefined">{{provision.affaire.firstname}}
-                    {{provision.affaire.lastname}}</span><span
-                    *ngIf="provision.provisionFamilyType && provision.provisionType"> - Service
-                    {{provision.provisionFamilyType.label}}/{{provision.provisionType.label}}</span>
-                  <span> - {{provision.isValidated?"Validée":"En attente de validation"}}</span>
-                </span>
-              </mat-panel-title>
-              <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
-              <mat-panel-description>
-                <mat-icon [matTooltip]="(editMode?'Valider la prestation':'')"
-                  *ngIf="!provision.isValidated && editMode"
-                  (click)="validateProvision(index);$event.stopPropagation();" [ngClass]="{'pointer':editMode}">
-                  check_circle</mat-icon>
-                <mat-icon [matTooltip]="(editMode?'Invalider la prestation':'')"
-                  *ngIf="provision.isValidated && editMode"
-                  (click)="invalidateProvision(index);$event.stopPropagation();" [ngClass]="{'pointer':editMode}">
-                  unpublished</mat-icon>
-                <mat-icon *ngIf="editMode" (click)="deleteProvision(index)" class="pointer">
-                  delete</mat-icon>
-              </mat-panel-description>
-            </mat-expansion-panel-header>
-            <affaire [(affaire)]="provision.affaire" [editMode]="editMode"></affaire>
-            <provision-item *ngIf="provision.affaire && provision.affaire.id" [editMode]="editMode"
-              [provision]="provision" [affaire]="provision.affaire" [instanceOfCustomerOrder]="instanceOfCustomerOrder"
-              [isStatusOpen]="isStatusOpen">
-            </provision-item>
-            <button *ngIf="editMode && provision.affaire && provision.affaire.id"
-              (click)="createProvisionForAffaire(provision.affaire)" mat-raised-button color="accent">Ajouter une
-              prestation pour cette affaire</button>
-          </mat-expansion-panel>
-        </mat-accordion>
-      </div>
-    </mat-tab>
-    <mat-tab label="Eléments du devis">
-      <quotation-management [quotation]="quotation" [editMode]="editMode"></quotation-management>
-    </mat-tab>
-    <mat-tab label="Documents" *ngIf="quotation.id!=null && quotation.id!=undefined">
-      <attachments [entity]="quotation" [editMode]="editMode" [entityType]="getEntityType().entityType">
-      </attachments>
-    </mat-tab>
-    <mat-tab label="Historique du statut" *ngIf="quotation.id!=null && quotation.id!=undefined">
-      <history [entity]="quotation" [entityType]="getEntityType()" [displayOnlyFields]="['status']"
-        [parseTypeList]="quotationStatusList"></history>
-    </mat-tab>
-    <mat-tab label="Historique" *ngIf="quotation.id!=null && quotation.id!=undefined">
-      <history [entity]="quotation" [entityType]="getEntityType()"></history>
-    </mat-tab>
-  </mat-tab-group>
-</div>
+                        {{provision.affaire.lastname}}</span><span
+                        *ngIf="provision.provisionFamilyType && provision.provisionType"> - Service
+                        {{provision.provisionFamilyType.label}}/{{provision.provisionType.label}}</span>
+                      <span> - {{provision.isValidated?"Validée":"En attente de validation"}}</span>
+                    </span>
+                  </mat-panel-title>
+                  <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
+                  <mat-panel-description>
+                    <mat-icon [matTooltip]="(editMode?'Valider la prestation':'')"
+                      *ngIf="!provision.isValidated && editMode"
+                      (click)="validateProvision(index);$event.stopPropagation();" [ngClass]="{'pointer':editMode}">
+                      check_circle</mat-icon>
+                    <mat-icon [matTooltip]="(editMode?'Invalider la prestation':'')"
+                      *ngIf="provision.isValidated && editMode"
+                      (click)="invalidateProvision(index);$event.stopPropagation();" [ngClass]="{'pointer':editMode}">
+                      unpublished</mat-icon>
+                    <mat-icon *ngIf="editMode" (click)="deleteProvision(index)" class="pointer">
+                      delete</mat-icon>
+                  </mat-panel-description>
+                </mat-expansion-panel-header>
+                <affaire [(affaire)]="provision.affaire" [editMode]="editMode"></affaire>
+                <provision-item *ngIf="provision.affaire && provision.affaire.id" [editMode]="editMode"
+                  [provision]="provision" [affaire]="provision.affaire"
+                  (selectedProvisionTypeChange)="changeSelectedProvisionType($event)"
+                  [instanceOfCustomerOrder]="instanceOfCustomerOrder" [isStatusOpen]="isStatusOpen">
+                </provision-item>
+                <button *ngIf="editMode && provision.affaire && provision.affaire.id"
+                  (click)="createProvisionForAffaire(provision.affaire)" mat-raised-button color="accent">Ajouter une
+                  prestation pour cette affaire</button>
+              </mat-expansion-panel>
+            </mat-accordion>
+          </div>
+        </mat-tab>
+        <mat-tab label="Facturation" *ngIf="quotation.invoiceItems">
+          <invoice-management [quotation]=" quotation" [editMode]="editMode"
+            (invoiceItemChange)="invoiceItemChange($event)">
+          </invoice-management>
+        </mat-tab>
+        <mat-tab label="Eléments du devis">
+          <quotation-management [quotation]="quotation" [editMode]="editMode"></quotation-management>
+        </mat-tab>
+        <mat-tab label="Documents" *ngIf="quotation.id!=null && quotation.id!=undefined">
+          <attachments [entity]="quotation" [editMode]="editMode" [entityType]="getEntityType().entityType">
+          </attachments>
+        </mat-tab>
+        <mat-tab label="Historique du statut" *ngIf="quotation.id!=null && quotation.id!=undefined">
+          <history [entity]="quotation" [entityType]="getEntityType()" [displayOnlyFields]="['status']"
+            [parseTypeList]="quotationStatusList"></history>
+        </mat-tab>
+        <mat-tab label="Historique" *ngIf="quotation.id!=null && quotation.id!=undefined">
+          <history [entity]="quotation" [entityType]="getEntityType()"></history>
+        </mat-tab>
+      </mat-tab-group>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>
 <button matTooltip="Sauvegarder" mat-fab color="warn" class="fab-button" *ngIf="editMode==true"
   (click)="saveQuotation()">
   <mat-icon>save</mat-icon>
@@ -108,6 +207,13 @@
   (click)=" createQuotation()">
   <mat-icon>add</mat-icon>
 </button>
+<button [matTooltip]='sidenav.opened?"Cacher le détail":"Voir le détail"' mat-fab color="accent"
+  [ngClass]="{'fifth-fab-button':editMode==false,'second-fab-button':editMode==true}"
+  *ngIf="(editMode==false && quotation.id!=undefined && quotation.id!=null || editMode) && quotation.invoiceItems"
+  (click)=" sidenav.toggle()">
+  <mat-icon>receipt_long</mat-icon>
+</button>
+
 <button matTooltip="Changer de statut" mat-fab color="accent" class="fourth-fab-button"
   *ngIf="editMode==false  && quotation.id!=undefined && quotation.id!=null && quotation.status"
   [matMenuTriggerFor]="menu">

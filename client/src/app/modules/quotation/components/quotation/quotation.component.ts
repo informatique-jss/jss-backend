@@ -3,20 +3,23 @@ import { MatAccordion } from '@angular/material/expansion';
 import { ActivatedRoute, Router, UrlSegment } from '@angular/router';
 import { AppService } from 'src/app/app.service';
 import { QUOTATION_DOCUMENT_TYPE_CODE, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_CANCELLED, QUOTATION_STATUS_OPEN, QUOTATION_STATUS_REFUSED_BY_CUSTOMER, QUOTATION_STATUS_SENT_TO_CUSTOMER, QUOTATION_STATUS_TO_VERIFY, QUOTATION_STATUS_VALIDATED_BY_CUSTOMER, QUOTATION_STATUS_VALIDATED_BY_JSS } from 'src/app/libs/Constants';
+import { Vat } from 'src/app/modules/miscellaneous/model/Vat';
 import { EntityType } from 'src/app/routing/search/EntityType';
 import { CUSTOMER_ORDER_ENTITY_TYPE, QUOTATION_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { SearchService } from 'src/app/search.service';
 import { Affaire } from '../../model/Affaire';
-import { IQuotation } from '../../model/IQuotation';
 import { NoticeTypeFamily } from '../../model/NoticeTypeFamily';
 import { Provision } from '../../model/Provision';
 import { QuotationStatus } from '../../model/QuotationStatus';
 import { CustomerOrderService } from '../../services/customer.order.service';
+import { InvoiceItemService } from '../../services/invoice.item.service';
 import { QuotationStatusService } from '../../services/quotation-status.service';
 import { QuotationService } from '../../services/quotation.service';
 import { OrderingCustomerComponent } from '../ordering-customer/ordering-customer.component';
 import { ProvisionItemComponent } from '../provision-item/provision-item.component';
 import { QuotationManagementComponent } from '../quotation-management/quotation-management.component';
+import { IQuotation } from './../../model/IQuotation';
+import { ProvisionType } from './../../model/ProvisionType';
 
 @Component({
   selector: 'quotation',
@@ -61,6 +64,7 @@ export class QuotationComponent implements OnInit {
     private quotationStatusService: QuotationStatusService,
     private activatedRoute: ActivatedRoute,
     protected searchService: SearchService,
+    private invoiceItemService: InvoiceItemService,
     private router: Router) { }
 
   ngOnInit() {
@@ -85,6 +89,7 @@ export class QuotationComponent implements OnInit {
           this.toggleTabs();
           this.sortProvisions();
           this.setOpenStatus();
+          this.generateInvoiceItem();
           this.filteredProvisions = this.quotation.provisions;
         })
       }
@@ -98,6 +103,7 @@ export class QuotationComponent implements OnInit {
         this.toggleTabs();
         this.sortProvisions();
         this.setOpenStatus();
+        this.generateInvoiceItem();
         this.filteredProvisions = this.quotation.provisions;
       })
     } else if (this.createMode == false) {
@@ -208,6 +214,7 @@ export class QuotationComponent implements OnInit {
     provision.affaire = {} as Affaire;
     this.quotation.provisions.push(provision);
     this.sortProvisions();
+    this.generateInvoiceItem();
     this.applyFilter(null);
     return provision;
   }
@@ -292,6 +299,10 @@ export class QuotationComponent implements OnInit {
         } else {
           nameB = b.affaire.denomination;
         }
+        if (nameA == null)
+          nameA = "";
+        if (nameB == null)
+          nameB = "";
         return nameA.localeCompare(nameB);
       })
   }
@@ -323,4 +334,115 @@ export class QuotationComponent implements OnInit {
     return targetStatus[0];
   }
 
+  changeSelectedProvisionType($event: any) {
+    this.generateInvoiceItem();
+  }
+
+  invoiceItemChange($event: any) {
+    this.generateInvoiceItem();
+  }
+
+  generateInvoiceItem() {
+    this.invoiceItemService.getInvoiceItemsForQuotation(this.quotation).subscribe(response => {
+      this.quotation.invoiceItems = response;
+    })
+  }
+
+  getListOfAffaires(): Affaire[] {
+    return QuotationComponent.computeListOfAffaires(this.quotation);
+  }
+
+  public static computeListOfAffaires(quotation: IQuotation): Affaire[] {
+    let affaires: Affaire[] = [] as Array<Affaire>;
+    let found = false;
+    if (quotation && quotation.provisions) {
+      for (let provision of quotation.provisions) {
+        if (provision.affaire)
+          for (let affaire of affaires) {
+            if (affaire.id == provision.affaire.id)
+              found = true;
+          }
+        if (!found)
+          affaires.push(provision.affaire);
+        found = false;
+      }
+    }
+    return affaires;
+  }
+
+  isFirstProvisionTypeForAffaire(provisionType: ProvisionType, affaire: Affaire, index: number): boolean {
+    return QuotationComponent.computeIsFirstProvisionTypeForAffaire(provisionType, affaire, index, this.quotation);
+  }
+
+  public static computeIsFirstProvisionTypeForAffaire(provisionType: ProvisionType, affaire: Affaire, index: number, quotation: IQuotation): boolean {
+    if (quotation && quotation.invoiceItems)
+      for (let invoiceItem of quotation.invoiceItems) {
+        if (invoiceItem.provision.provisionType.id == provisionType.id && affaire.id == invoiceItem.provision.affaire.id)
+          return quotation.invoiceItems.indexOf(invoiceItem) == index;
+      }
+    return false;
+  }
+
+  getPreTaxPriceTotal(): number {
+    return QuotationComponent.computePreTaxPriceTotal(this.quotation);
+  }
+
+  public static computePreTaxPriceTotal(quotation: IQuotation): number {
+    if (quotation && quotation.invoiceItems) {
+      return quotation.invoiceItems.reduce<number>((accumulator, obj) => {
+        obj.preTaxPrice = parseFloat(obj.preTaxPrice + "  ");
+        return accumulator + obj.preTaxPrice;
+      }, 0);
+    }
+    return 0;
+  }
+
+
+  getDiscountTotal(): number {
+    return QuotationComponent.computeDiscountTotal(this.quotation);
+  }
+
+  public static computeDiscountTotal(quotation: IQuotation): number {
+    if (quotation && quotation.invoiceItems) {
+      return quotation.invoiceItems.reduce<number>((accumulator, obj) => {
+        return accumulator + obj.discountAmount;
+      }, 0);
+    }
+    return 0;
+  }
+
+  getVatTotals(): Vat[] {
+    return QuotationComponent.computeVatTotals(this.quotation);
+  }
+
+  public static computeVatTotals(quotation: IQuotation): Vat[] {
+    let vat = [] as Array<Vat>;
+    let found = false;
+    if (quotation && quotation.invoiceItems) {
+      for (const invoiceItem of quotation.invoiceItems) {
+        for (const v of vat) {
+          if (v.id == invoiceItem.accountingAccount.vat.id) {
+            v.total += invoiceItem.vatPrice;
+            found = true;
+          }
+        }
+        if (!found) {
+          vat.push(invoiceItem.accountingAccount.vat);
+          vat[vat.length - 1].total = invoiceItem.vatPrice;
+        }
+        found = false;
+      }
+    }
+    return vat;
+  }
+
+  getPriceTotal(): number {
+    return QuotationComponent.computePriceTotal(this.quotation);
+  }
+
+  public static computePriceTotal(quotation: IQuotation): number {
+    return QuotationComponent.computePreTaxPriceTotal(quotation) - QuotationComponent.computeDiscountTotal(quotation) + QuotationComponent.computeVatTotals(quotation).reduce<number>((accumulator, obj) => {
+      return accumulator + obj.total;
+    }, 0);
+  }
 }

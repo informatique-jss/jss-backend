@@ -63,7 +63,7 @@ public class Shal implements Serializable, IId {
 	@Column(nullable = false, columnDefinition = "TEXT")
 	private String notice;
 
-	@Column(nullable = false, columnDefinition = "TEXT")
+	@Column(columnDefinition = "TEXT")
 	private String noticeHeader;
 
 	@Column(nullable = false)

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -28,6 +29,7 @@ public class BillingItem implements Serializable, IId {
 
 	private Float preTaxPrice;
 
+	@Column(nullable = false)
 	private Date startDate;
 
 	@OneToMany(targetEntity = AccountingAccount.class, mappedBy = "billingItem")

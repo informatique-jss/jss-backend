@@ -18,7 +18,7 @@
   *ngIf="provision.domiciliation && provision.provisionType &&  provision.provisionType.code==PROVISION_TYPE_DOMICILIATION_CODE">
 </domiciliation>
 <shal [shal]="provision.shal" [editMode]="editMode" [instanceOfCustomerOrder]="instanceOfCustomerOrder"
-  [isStatusOpen]="isStatusOpen"
+  [isStatusOpen]="isStatusOpen" (noticeChange)="noticeChange()"
   *ngIf="provision.shal && provision.provisionType && provision.provisionType.code==PROVISION_TYPE_SHAL_CODE"
   [affaire]="affaire">
 </shal>

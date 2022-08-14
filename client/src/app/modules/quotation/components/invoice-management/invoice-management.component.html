@@ -1,0 +1,92 @@
+<div *ngIf="quotation && quotation.invoiceItems" class="mat-elevation-z2 form-div">
+  <form [formGroup]="invoiceManagementForm">
+    <div *ngFor="let affaire of getListOfAffaires()">
+      <td class="affaire" *ngIf="affaire.denomination">
+        {{affaire.denomination}}
+      </td>
+      <td class="affaire" *ngIf="affaire.firstname">
+        {{affaire.firstname}} - {{affaire.lastname}} -
+      </td>
+      <div *ngFor="let invoiceItem of quotation.invoiceItems;let index = index">
+        <table *ngIf="invoiceItem.provision.affaire.id == affaire.id">
+          <tr *ngIf="isFirstProvisionTypeForAffaire(invoiceItem.provision.provisionType, affaire, index)">
+            <td class="affaire">
+              {{invoiceItem.provision.provisionType.label}}
+            </td>
+          </tr>
+          <tr>
+            <td>
+              {{invoiceItem.label}}
+            </td>
+            <td class="td-price" *ngIf="!editMode || invoiceItem.billingItem.billingType.canOverridePrice==false">
+              {{invoiceItem.preTaxPrice|number}} €
+            </td>
+            <td *ngIf="editMode && invoiceItem.billingItem.billingType.canOverridePrice==true">
+              <generic-input [(model)]="invoiceItem.preTaxPrice" label="" [form]="invoiceManagementForm"
+                [propertyName]='"preTaxPrice"+index' [isMandatory]="true" type="number" (onInputChange)="itemChange()">
+              </generic-input>
+            </td>
+          </tr>
+          <tr *ngIf="invoiceItem.discountAmount && invoiceItem.discountAmount>0">
+            <td>
+              Remise
+            </td>
+            <td class="td-price remise">
+              - {{invoiceItem.discountAmount|number}} €
+            </td>
+          </tr>
+          <tr>
+            <td>
+              {{invoiceItem.accountingAccount.vat.label}}
+            </td>
+            <td class="td-price">
+              {{invoiceItem.vatPrice|number}} €
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </form>
+  <table class="total-table">
+    <tr>
+      <td>
+        Prix total HT
+      </td>
+      <td class="td-price">
+        {{getPreTaxPriceTotal() |number}} €
+      </td>
+    </tr>
+    <tr *ngIf="getDiscountTotal() && getDiscountTotal()>0">
+      <td>
+        Remise totale
+      </td>
+      <td class="td-price remise">
+        - {{getDiscountTotal()|number}} €
+      </td>
+    </tr>
+    <tr>
+      <td>
+        Total HT
+      </td>
+      <td class="td-price">
+        {{getPreTaxPriceTotal()-getDiscountTotal()|number}} €
+      </td>
+    </tr>
+    <tr *ngFor="let vat of getVatTotals() ">
+      <td>
+        Total {{vat.label}}
+      </td>
+      <td class="td-price">
+        {{vat.total|number}} €
+      </td>
+    </tr>
+    <tr>
+      <td>
+        Total TTC
+      </td>
+      <td class="td-price">
+        {{getPriceTotal()|number}} €
+      </td>
+    </tr>
+  </table>
+</div>

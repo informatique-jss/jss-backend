@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.quotation.controller;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -48,6 +49,7 @@ import com.jss.osiris.modules.quotation.model.Domiciliation;
 import com.jss.osiris.modules.quotation.model.DomiciliationContractType;
 import com.jss.osiris.modules.quotation.model.FundType;
 import com.jss.osiris.modules.quotation.model.IQuotation;
+import com.jss.osiris.modules.quotation.model.InvoiceItem;
 import com.jss.osiris.modules.quotation.model.JournalType;
 import com.jss.osiris.modules.quotation.model.MailRedirectionType;
 import com.jss.osiris.modules.quotation.model.NoticeType;
@@ -1494,6 +1496,25 @@ public class QuotationController {
       return new ResponseEntity<Affaire>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
     return new ResponseEntity<Affaire>(affaire, HttpStatus.OK);
+  }
+
+  @PostMapping(inputEntryPoint + "/invoice-item/generate")
+  public ResponseEntity<List<InvoiceItem>> generateInvoiceItemForQuotation(@RequestBody Quotation quotation) {
+    List<InvoiceItem> invoiceItems = new ArrayList<InvoiceItem>();
+    try {
+      invoiceItems = quotationService.getInvoiceItemsForQuotation(quotation);
+    } catch (
+
+    ResponseStatusException e) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    } catch (HttpStatusCodeException e) {
+      logger.error("HTTP error when fetching quotation", e);
+      return new ResponseEntity<List<InvoiceItem>>(HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (Exception e) {
+      logger.error("Error when fetching quotation", e);
+      return new ResponseEntity<List<InvoiceItem>>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    return new ResponseEntity<List<InvoiceItem>>(invoiceItems, HttpStatus.OK);
   }
 
 }
