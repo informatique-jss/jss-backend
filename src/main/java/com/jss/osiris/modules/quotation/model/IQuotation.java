@@ -55,13 +55,17 @@ public interface IQuotation extends Serializable, IId {
 
 	public void setDocuments(List<Document> documents);
 
-	public QuotationLabelType getLabelType();
+	public QuotationLabelType getQuotationLabelType();
 
-	public void setLabelType(QuotationLabelType labelType);
+	public void setQuotationLabelType(QuotationLabelType quotationLabelType);
 
-	public String getLabel();
+	public Responsable getCustomLabelResponsable();
 
-	public void setLabel(String label);
+	public void setCustomLabelResponsable(Responsable customLabelResponsable);
+
+	public Tiers getCustomLabelTiers();
+
+	public void setCustomLabelTiers(Tiers customLabelTiers);
 
 	public RecordType getRecordType();
 
@@ -82,5 +86,13 @@ public interface IQuotation extends Serializable, IId {
 	public List<InvoiceItem> getInvoiceItems();
 
 	public void setInvoiceItems(List<InvoiceItem> invoiceItems);
+
+	public Boolean getIsQuotation();
+
+	public void setIsQuotation(Boolean isQuotation);
+
+	public Confrere getConfrere();
+
+	public void setConfrere(Confrere confrere);
 
 }

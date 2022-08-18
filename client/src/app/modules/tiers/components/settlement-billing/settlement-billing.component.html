@@ -55,11 +55,40 @@
                 <radio-group-billing-label [(model)]="billingDocument.billingLabelType" [form]="settlementBillingForm"
                   propertyName="billingLabelType" label="Libellé sur facture"></radio-group-billing-label>
               </td>
-              <td
-                *ngIf="billingDocument.billingLabelType!=undefined && billingDocument.billingLabelType.code!=undefined && billingDocument.billingLabelType.code==BILLING_TIERS_DOCUMENT_TYPE_OTHER_CODE">
+            </tr>
+          </table>
+          <table class="full-width"
+            *ngIf="billingDocument.billingLabelType!=undefined && billingDocument.billingLabelType.code!=undefined && billingDocument.billingLabelType.code==BILLING_TIERS_DOCUMENT_TYPE_OTHER_CODE">
+            <tr>
+              <td>
                 <generic-textarea [(model)]="billingDocument.billingLabel" label="Autre libellé sur facture"
                   [form]="settlementBillingForm" propertyName="billingLabel" [isDisabled]="!editMode"
                   [numberOfLines]="4" [customValidators]="[Validators.maxLength(40)]"></generic-textarea>
+              </td>
+              <td>
+                <generic-input [(model)]="billingDocument.billingLabelAddress" label="Adresse"
+                  [form]="settlementBillingForm" propertyName="billingLabelAddress" [isMandatory]="true"
+                  [maxLength]="20"></generic-input>
+              </td>
+              <td>
+                <autocomplete-city [(model)]="billingDocument.billingLabelCity"
+                  [modelCountry]="billingDocument.billingLabelCountry" [form]="settlementBillingForm"
+                  propertyName="billingLabelCity" [isMandatory]="true" (onOptionSelected)="fillPostalCode($event)">
+                </autocomplete-city>
+              </td>
+              <td>
+                <autocomplete-postal-code [(model)]="billingDocument.billingLabelPostalCode"
+                  [form]="settlementBillingForm" propertyName="billingLabelPostalCode" [isMandatory]="true"
+                  [conditionnalRequired]="billingDocument.billingLabelCountry != null && billingDocument.billingLabelCountry.code == COUNTRY_CODE_FRANCE"
+                  (onOptionSelected)="fillCity($event)"></autocomplete-postal-code>
+              </td>
+              <td>
+                <autocomplete-country [(model)]="billingDocument.billingLabelCountry" [form]="settlementBillingForm"
+                  propertyName="billingLabelCountry" [isMandatory]="true"></autocomplete-country>
+              </td>
+              <td>
+                <generic-toggle [(model)]="billingDocument.billingLabelIsIndividual" label="Particulier ?"
+                  [form]="settlementBillingForm" propertyName="billingLabelIsIndividual"></generic-toggle>
               </td>
             </tr>
           </table>

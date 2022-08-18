@@ -4,28 +4,37 @@
       <fieldset [disabled]="editMode==false" class="fieldset-no-border">
         <table class="full-width">
           <tr>
-            <td
-              *ngIf="quotation.responsable==null || quotation.responsable==undefined || quotation.responsable.id==undefined">
+            <td *ngIf="!quotation.responsable && !quotation.confrere">
               <autocomplete-tiers-individual [(model)]="quotation.tiers" [form]="orderingCustomerForm"
                 propertyName="tiers" (onOptionSelected)="fillTiers($event)"></autocomplete-tiers-individual>
             </td>
-            <td *ngIf="quotation.tiers==null || quotation.tiers==undefined || quotation.tiers.id==undefined">
+            <td *ngIf="!quotation.tiers && !quotation.confrere">
               <autocomplete-responsable [(model)]="quotation.responsable" [form]="orderingCustomerForm"
                 propertyName="responsable" (onOptionSelected)="fillResponsable($event)"></autocomplete-responsable>
             </td>
+            <td *ngIf="!quotation.tiers && !quotation.responsable">
+              <autocomplete-confrere label="Confrère" [(model)]="quotation.confrere" [form]="orderingCustomerForm"
+                propertyName="confrere" [isDisabled]="!editMode" (onOptionSelected)="fillConfrere($event)">
+              </autocomplete-confrere>
+            </td>
           </tr>
         </table>
-        <div *ngIf="quotation.tiers!=null && quotation.tiers.id!=undefined">
+        <div *ngIf="quotation.tiers ||quotation.confrere">
           <table class="full-width">
-            <tr>
+            <tr *ngIf="quotation.tiers ">
               <td>Commercial : {{quotation.tiers.salesEmployee?.firstname}} {{quotation.tiers.salesEmployee?.lastname}}
               </td>
             </tr>
           </table>
           <table class="full-width">
-            <tr>
+            <tr *ngIf="quotation.tiers ">
               <td>Adresse : {{quotation.tiers.address}} {{quotation.tiers.postalCode}} {{quotation.tiers.city.label}}
                 {{quotation.tiers.country.label}}</td>
+            </tr>
+            <tr *ngIf="quotation.confrere && quotation.confrere.city && quotation.confrere.city ">
+              <td>Adresse : {{quotation.confrere.address}} {{quotation.confrere.postalCode}}
+                {{quotation.confrere.city.label}}
+                {{quotation.confrere.country.label}}</td>
             </tr>
           </table>
           <table class="full-width">
@@ -43,22 +52,26 @@
           <table class="full-width">
             <tr>
               <td>Tarif special :
-                <ul>
+                <ul *ngIf="quotation.tiers ">
                   <li *ngFor="let specialOffer of quotation.tiers.specialOffers">
                     {{specialOffer? (specialOffer.code + " - " +specialOffer.label):"Aucun"}}
                   </li>
                 </ul>
+                <ul *ngIf="quotation.confrere ">
+                  <li *ngFor="let specialOffer of quotation.confrere.specialOffers">
+                    {{specialOffer? (specialOffer.code + " - " +specialOffer.label):"Aucun"}}
+                  </li>
+                </ul>
                 <button *ngIf="editMode==true && !quotation.overrideSpecialOffer"
-                  matTooltip="Modifier le tarif spécial par défaut" (click)="initSpecialOffers()" mat-icon-button
-                  color="accent">
+                  matTooltip="Modifier le tarif spécial par défaut" (click)="displayOverrideSpecialOffers()"
+                  mat-icon-button color="accent">
                   <mat-icon>edit</mat-icon>
                 </button>
               </td>
             </tr>
           </table>
         </div>
-        <div
-          *ngIf="quotation.responsable!=null && quotation.responsable.id!=undefined && quotation.responsable.tiers!=null && quotation.responsable.tiers!=undefined">
+        <div *ngIf="quotation.responsable  && quotation.responsable.tiers">
           <table class="full-width">
             <tr>
               <td>Client : {{quotation.responsable.tiers.denomination}} ({{quotation.responsable.tiers.id}}) <mat-icon
@@ -104,8 +117,8 @@
                   </li>
                 </ul>
                 <button *ngIf="editMode==true && !quotation.overrideSpecialOffer"
-                  matTooltip="Modifier le tarif spécial par défaut" (click)="initSpecialOffers()" mat-icon-button
-                  color="accent">
+                  matTooltip="Modifier le tarif spécial par défaut" (click)="displayOverrideSpecialOffers()"
+                  mat-icon-button color="accent">
                   <mat-icon>edit</mat-icon>
                 </button>
               </td>
@@ -138,12 +151,10 @@
             </td>
           </tr>
         </table>
-        <div>Devis créé le {{quotation.createdDate |date:'dd/MM/yyyy à HH:mm'}}</div>
-        <div *ngIf=" instanceOfQuotation(quotation) && quotation.customerOrder!=null">Commande
-          n°{{quotation.customerOrder}} <mat-icon [routerLink]="'/order/'+quotation.customerOrder.id" class="pointer">
-            preview</mat-icon>
+        <div *ngIf=" instanceOfQuotation(quotation)">Devis créé le {{quotation.createdDate |date:'dd/MM/yyyy à HH:mm'}}
         </div>
-        <div *ngIf="instanceOfQuotation(quotation) && quotation.customerOrder==null">Pas de commande associée
+        <div *ngIf=" instanceOfCustomerOrder(quotation)">Commande créée le {{quotation.createdDate |date:'dd/MM/yyyy à
+          HH:mm'}}
         </div>
       </fieldset>
     </div>

@@ -8,6 +8,8 @@ import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.jss.osiris.modules.accounting.model.AccountingAccountCouple;
+import com.jss.osiris.modules.accounting.service.AccountingAccountService;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.miscellaneous.model.Department;
 import com.jss.osiris.modules.miscellaneous.repository.CompetentAuthorityRepository;
@@ -24,6 +26,9 @@ public class CompetentAuthorityServiceImpl implements CompetentAuthorityService 
     @Autowired
     MailService mailService;
 
+    @Autowired
+    AccountingAccountService accountingAccountService;
+
     @Override
     public List<CompetentAuthority> getCompetentAuthorities() {
         return IterableUtils.toList(competentAuthorityRepository.findAll());
@@ -39,7 +44,7 @@ public class CompetentAuthorityServiceImpl implements CompetentAuthorityService 
 
     @Override
     public CompetentAuthority addOrUpdateCompetentAuthority(
-            CompetentAuthority competentAuthority) {
+            CompetentAuthority competentAuthority) throws Exception {
         // If mails already exists, get their ids
         if (competentAuthority != null && competentAuthority.getMails() != null
                 && competentAuthority.getMails().size() > 0)
@@ -50,6 +55,17 @@ public class CompetentAuthorityServiceImpl implements CompetentAuthorityService 
                 && competentAuthority.getPhones().size() > 0) {
             phoneService.populateMPhoneIds(competentAuthority.getPhones());
         }
+
+        // Generate accounting accounts
+        if (competentAuthority.getId() == null
+                || competentAuthority.getAccountingAccountCustomer() == null
+                        && competentAuthority.getAccountingAccountProvider() == null) {
+            AccountingAccountCouple accountingAccountCouple = accountingAccountService
+                    .generateAccountingAccountsForEntity(competentAuthority.getLabel());
+            competentAuthority.setAccountingAccountCustomer(accountingAccountCouple.getAccountingAccountCustomer());
+            competentAuthority.setAccountingAccountProvider(accountingAccountCouple.getAccountingAccountProvider());
+        }
+
         return competentAuthorityRepository.save(competentAuthority);
     }
 

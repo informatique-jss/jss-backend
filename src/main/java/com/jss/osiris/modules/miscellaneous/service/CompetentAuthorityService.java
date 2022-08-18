@@ -9,7 +9,7 @@ public interface CompetentAuthorityService {
 
     public CompetentAuthority getCompetentAuthority(Integer id);
 
-    public CompetentAuthority addOrUpdateCompetentAuthority(CompetentAuthority competentAuthority);
+    public CompetentAuthority addOrUpdateCompetentAuthority(CompetentAuthority competentAuthority) throws Exception;
 
     public List<CompetentAuthority> getCompetentAuthorityByDepartment(Integer departmentId, String authority);
 

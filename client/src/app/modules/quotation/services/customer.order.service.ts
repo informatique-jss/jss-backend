@@ -12,6 +12,10 @@ export class CustomerOrderService extends AppRestService<IQuotation>{
     super(http, "quotation");
   }
 
+  updateCustomerStatus(customerOrder: IQuotation) {
+    return this.addOrUpdate(new HttpParams(), "customer-order/status", customerOrder, "Commande enregistrée", "Erreur lors de l'enregistrement de la commande");
+  }
+
   getCustomerOrder(idCustomerOrder: number) {
     return this.getById("customer-order", idCustomerOrder);
   }

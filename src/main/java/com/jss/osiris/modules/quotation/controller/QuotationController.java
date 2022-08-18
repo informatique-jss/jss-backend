@@ -21,6 +21,7 @@ import org.springframework.web.server.ResponseStatusException;
 import com.jss.osiris.libs.ValidationHelper;
 import com.jss.osiris.modules.miscellaneous.model.BillingType;
 import com.jss.osiris.modules.miscellaneous.model.Department;
+import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.miscellaneous.model.WeekDay;
 import com.jss.osiris.modules.miscellaneous.service.CityService;
@@ -49,6 +50,7 @@ import com.jss.osiris.modules.quotation.model.Domiciliation;
 import com.jss.osiris.modules.quotation.model.DomiciliationContractType;
 import com.jss.osiris.modules.quotation.model.FundType;
 import com.jss.osiris.modules.quotation.model.IQuotation;
+import com.jss.osiris.modules.quotation.model.Invoice;
 import com.jss.osiris.modules.quotation.model.InvoiceItem;
 import com.jss.osiris.modules.quotation.model.JournalType;
 import com.jss.osiris.modules.quotation.model.MailRedirectionType;
@@ -77,6 +79,7 @@ import com.jss.osiris.modules.quotation.service.ConfrereService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.quotation.service.DomiciliationContractTypeService;
 import com.jss.osiris.modules.quotation.service.FundTypeService;
+import com.jss.osiris.modules.quotation.service.InvoiceService;
 import com.jss.osiris.modules.quotation.service.JournalTypeService;
 import com.jss.osiris.modules.quotation.service.MailRedirectionTypeService;
 import com.jss.osiris.modules.quotation.service.NoticeTypeFamilyService;
@@ -207,6 +210,34 @@ public class QuotationController {
   @Autowired
   CustomerOrderService customerOrderService;
 
+  @Autowired
+  InvoiceService invoiceService;
+
+  @PostMapping(inputEntryPoint + "/invoice")
+  public ResponseEntity<Invoice> addOrUpdateInvoice(
+      @RequestBody Invoice invoice) {
+    Invoice outInvoice;
+    try {
+      if (invoice.getId() != null)
+        validationHelper.validateReferential(invoice, true);
+      validationHelper.validateDate(invoice.getCreatedDate(), true);
+
+      outInvoice = invoiceService
+          .addOrUpdateInvoice(invoice);
+    } catch (
+
+    ResponseStatusException e) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    } catch (HttpStatusCodeException e) {
+      logger.error("HTTP error when fetching invoice", e);
+      return new ResponseEntity<Invoice>(HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (Exception e) {
+      logger.error("Error when fetching invoice", e);
+      return new ResponseEntity<Invoice>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    return new ResponseEntity<Invoice>(outInvoice, HttpStatus.OK);
+  }
+
   @GetMapping(inputEntryPoint + "/regies")
   public ResponseEntity<List<Regie>> getRegies() {
     List<Regie> regies = null;
@@ -238,8 +269,6 @@ public class QuotationController {
       validationHelper.validateString(regies.getPostalCode(), false, 10);
       validationHelper.validateReferential(regies.getCity(), false);
       validationHelper.validateReferential(regies.getCountry(), false);
-      validationHelper.validateReferential(regies.getAccountingAccountCustomer(), false);
-      validationHelper.validateReferential(regies.getAccountingAccountProvider(), false);
 
       outRegie = regieService
           .addOrUpdateRegie(regies);
@@ -689,8 +718,6 @@ public class QuotationController {
       validationHelper.validateString(confrere.getPaperGrade(), false, 20);
       validationHelper.validateString(confrere.getBillingGrade(), false, 20);
       validationHelper.validateString(confrere.getPublicationCertificateDocumentGrade(), false, 20);
-      validationHelper.validateReferential(confrere.getAccountingAccountCustomer(), false);
-      validationHelper.validateReferential(confrere.getAccountingAccountProvider(), false);
       validationHelper.validateString(confrere.getMailRecipient(), false, 60);
       validationHelper.validateString(confrere.getAddress(), false, 60);
       validationHelper.validateString(confrere.getPostalCode(), false, 10);
@@ -698,6 +725,51 @@ public class QuotationController {
       validationHelper.validateReferential(confrere.getCountry(), false);
       validationHelper.validateString(confrere.getIban(), false, 40);
       validationHelper.validateReferential(confrere.getRegie(), false);
+      validationHelper.validateReferential(confrere.getVatCollectionType(), true);
+
+      validationHelper.validateReferential(confrere.getPaymentType(), true);
+
+      if (confrere.getSpecialOffers() != null) {
+        for (SpecialOffer specialOffer : confrere.getSpecialOffers()) {
+          validationHelper.validateReferential(specialOffer, false);
+        }
+      }
+
+      if (confrere.getDocuments() != null && confrere.getDocuments().size() > 0) {
+        for (Document document : confrere.getDocuments()) {
+
+          validationHelper.validateReferential(document.getDocumentType(), true);
+
+          if (document.getMailsAffaire() != null && !validationHelper.validateMailList(document.getMailsAffaire()))
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+          if (document.getMailsClient() != null && document.getMailsClient() != null
+              && document.getMailsClient().size() > 0)
+            if (!validationHelper.validateMailList(document.getMailsClient()))
+              return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+          validationHelper.validateString(document.getAffaireAddress(), false, 60);
+          validationHelper.validateString(document.getClientAddress(), false, 60);
+          validationHelper.validateString(document.getAffaireRecipient(), false, 40);
+          validationHelper.validateString(document.getClientRecipient(), false, 40);
+          validationHelper.validateString(document.getBillingLabel(), false, 40);
+          validationHelper.validateString(document.getCommandNumber(), false, 40);
+          validationHelper.validateReferential(document.getPaymentDeadlineType(), false);
+          validationHelper.validateReferential(document.getRefundType(), false);
+          validationHelper.validateString(document.getRefundIBAN(), false, 40);
+          validationHelper.validateReferential(document.getBillingClosureType(), false);
+          validationHelper.validateReferential(document.getBillingClosureRecipientType(), false);
+
+          if (document.getIsMailingPaper() == null)
+            document.setIsMailingPaper(false);
+          if (document.getIsMailingPdf() == null)
+            document.setIsMailingPdf(false);
+          if (document.getIsRecipientAffaire() == null)
+            document.setIsRecipientAffaire(false);
+          if (document.getIsRecipientClient() == null)
+            document.setIsRecipientClient(false);
+
+        }
+      }
 
       outConfrere = confrereService
           .addOrUpdateConfrere(confrere);
@@ -1204,6 +1276,45 @@ public class QuotationController {
     return new ResponseEntity<CustomerOrder>(customerOrder, HttpStatus.OK);
   }
 
+  @PostMapping(inputEntryPoint + "/customer-order/status")
+  public ResponseEntity<CustomerOrder> addOrUpdateCustomerOrderStatus(@RequestBody CustomerOrder customerOrder) {
+    try {
+      validateQuotationAndCustomerOrder(customerOrder);
+      customerOrder = customerOrderService.addOrUpdateCustomerOrderStatus(customerOrder);
+    } catch (
+
+    ResponseStatusException e) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    } catch (HttpStatusCodeException e) {
+      logger.error("HTTP error when fetching CustomerOrder", e);
+      return new ResponseEntity<CustomerOrder>(HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (Exception e) {
+      logger.error("Error when fetching CustomerOrder", e);
+      return new ResponseEntity<CustomerOrder>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    return new ResponseEntity<CustomerOrder>(customerOrder, HttpStatus.OK);
+  }
+
+  @PostMapping(inputEntryPoint + "/quotation/status")
+  public ResponseEntity<Quotation> addOrUpdateQuotationStatus(@RequestBody Quotation quotation) {
+    try {
+      validateQuotationAndCustomerOrder(quotation);
+
+      quotation = quotationService.addOrUpdateQuotationStatus(quotation);
+    } catch (
+
+    ResponseStatusException e) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    } catch (HttpStatusCodeException e) {
+      logger.error("HTTP error when fetching quotation", e);
+      return new ResponseEntity<Quotation>(HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (Exception e) {
+      logger.error("Error when fetching quotation", e);
+      return new ResponseEntity<Quotation>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    return new ResponseEntity<Quotation>(quotation, HttpStatus.OK);
+  }
+
   private void validateQuotationAndCustomerOrder(IQuotation quotation) throws Exception {
     boolean isOpen = quotation.getStatus() != null && quotation.getStatus().getCode().equals(QuotationStatus.OPEN);
     boolean isCustomerOrder = quotation instanceof CustomerOrder && !isOpen;
@@ -1212,18 +1323,58 @@ public class QuotationController {
         validationHelper.validateReferential(specialOffer, false);
     validationHelper.validateReferential(quotation.getTiers(), false);
     validationHelper.validateReferential(quotation.getResponsable(), false);
-    validationHelper.validateReferential(quotation.getLabelType(), true);
-    validationHelper.validateString(quotation.getLabel(), false, 40);
+    validationHelper.validateReferential(quotation.getConfrere(), false);
+    validationHelper.validateReferential(quotation.getQuotationLabelType(), true);
+    validationHelper.validateReferential(quotation.getCustomLabelResponsable(), false);
+    validationHelper.validateReferential(quotation.getCustomLabelTiers(), false);
     validationHelper.validateReferential(quotation.getRecordType(), true);
 
-    if (quotation.getResponsable() == null && quotation.getTiers() == null)
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-
-    if (quotation.getLabel() == null && quotation.getLabelType() == null)
+    if (quotation.getResponsable() == null && quotation.getTiers() == null && quotation.getConfrere() == null)
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
 
     if (quotation.getProvisions() == null || quotation.getProvisions().size() == 0)
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+
+    if (quotation.getDocuments() != null && quotation.getDocuments().size() > 0) {
+      for (Document document : quotation.getDocuments()) {
+
+        validationHelper.validateReferential(document.getDocumentType(), true);
+
+        if (document.getMailsAffaire() != null && !validationHelper.validateMailList(document.getMailsAffaire()))
+          throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        if (document.getMailsClient() != null && document.getMailsClient() != null
+            && document.getMailsClient().size() > 0)
+          if (!validationHelper.validateMailList(document.getMailsClient()))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+
+        validationHelper.validateString(document.getAffaireAddress(), false, 60);
+        validationHelper.validateString(document.getClientAddress(), false, 60);
+        validationHelper.validateString(document.getAffaireRecipient(), false, 40);
+        validationHelper.validateString(document.getClientRecipient(), false, 40);
+        validationHelper.validateString(document.getBillingLabel(), false, 40);
+        validationHelper.validateString(document.getBillingLabelAddress(), false, 60);
+        validationHelper.validateString(document.getBillingLabelPostalCode(), false, 10);
+        validationHelper.validateReferential(document.getBillingLabelCity(), false);
+        validationHelper.validateReferential(document.getBillingLabelCountry(), false);
+
+        validationHelper.validateString(document.getCommandNumber(), false, 40);
+        validationHelper.validateReferential(document.getPaymentDeadlineType(), false);
+        validationHelper.validateReferential(document.getRefundType(), false);
+        validationHelper.validateString(document.getRefundIBAN(), false, 40);
+        validationHelper.validateReferential(document.getBillingClosureType(), false);
+        validationHelper.validateReferential(document.getBillingClosureRecipientType(), false);
+
+        if (document.getIsMailingPaper() == null)
+          document.setIsMailingPaper(false);
+        if (document.getIsMailingPdf() == null)
+          document.setIsMailingPdf(false);
+        if (document.getIsRecipientAffaire() == null)
+          document.setIsRecipientAffaire(false);
+        if (document.getIsRecipientClient() == null)
+          document.setIsRecipientClient(false);
+
+      }
+    }
 
     for (Provision provision : quotation.getProvisions()) {
       if (provision.getAffaire() == null && !isOpen)
@@ -1502,7 +1653,7 @@ public class QuotationController {
   public ResponseEntity<List<InvoiceItem>> generateInvoiceItemForQuotation(@RequestBody Quotation quotation) {
     List<InvoiceItem> invoiceItems = new ArrayList<InvoiceItem>();
     try {
-      invoiceItems = quotationService.getInvoiceItemsForQuotation(quotation);
+      invoiceItems = quotationService.getAndSetInvoiceItemsForQuotation(quotation);
     } catch (
 
     ResponseStatusException e) {

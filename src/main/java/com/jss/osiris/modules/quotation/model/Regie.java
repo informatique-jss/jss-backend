@@ -60,11 +60,11 @@ public class Regie implements Serializable, IId {
 	private Country country;
 
 	@ManyToMany(cascade = CascadeType.ALL)
-	@JoinTable(name = "asso_competent_authority_mail", joinColumns = @JoinColumn(name = "id_competent_authority"), inverseJoinColumns = @JoinColumn(name = "id_mail"))
+	@JoinTable(name = "asso_regie_mail", joinColumns = @JoinColumn(name = "id_regie"), inverseJoinColumns = @JoinColumn(name = "id_mail"))
 	private List<Mail> mails;
 
 	@ManyToMany(cascade = CascadeType.ALL)
-	@JoinTable(name = "asso_competent_authority_phone", joinColumns = @JoinColumn(name = "id_competent_authority"), inverseJoinColumns = @JoinColumn(name = "id_phone"))
+	@JoinTable(name = "asso_regie_phone", joinColumns = @JoinColumn(name = "id_regie"), inverseJoinColumns = @JoinColumn(name = "id_phone"))
 	private List<Phone> phones;
 
 	@Column(length = 40, nullable = false)

@@ -68,6 +68,7 @@ export class ProvisionItemComponent implements OnInit {
 
   getFormStatus(): boolean {
     console.log(this.shalComponent);
+    console.log(this.provisionItemForm);
     let status = true;
     if (this.domiciliationComponent)
       status = status && this.domiciliationComponent.getFormStatus();
@@ -77,7 +78,7 @@ export class ProvisionItemComponent implements OnInit {
 
     if (this.bodaccComponent)
       status = status && this.bodaccComponent.getFormStatus();
-    return status && this.provisionItemForm.valid;
+    return status && (this.provisionItemForm.status == "DISABLED" || this.provisionItemForm.valid);
   }
 
   provisionItemForm = this.formBuilder.group({

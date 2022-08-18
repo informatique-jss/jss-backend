@@ -20,6 +20,7 @@ public class QuotationStatus implements Serializable, IId {
 	public static String VALIDATED_BY_CUSTOMER = "VALIDATED_BY_CUSTOMER";
 	public static String REFUSED_BY_CUSTOMER = "REFUSED_BY_CUSTOMER";
 	public static String ABANDONED = "ABANDONED";
+	public static String BILLED = "BILLED";
 	public static String CANCELLED = "CANCELLED";
 
 	@Id

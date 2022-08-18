@@ -9,7 +9,9 @@ import com.jss.osiris.modules.quotation.model.Quotation;
 public interface QuotationService {
     public Quotation getQuotation(Integer id);
 
-    public Quotation addOrUpdateQuotation(Quotation quotation);
+    public Quotation addOrUpdateQuotation(Quotation quotation) throws Exception;
 
-    public List<InvoiceItem> getInvoiceItemsForQuotation(IQuotation quotation);
+    public List<InvoiceItem> getAndSetInvoiceItemsForQuotation(IQuotation quotation) throws Exception;
+
+    public Quotation addOrUpdateQuotationStatus(Quotation quotation) throws Exception;
 }

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
+import { AppService } from 'src/app/app.service';
 import { ProvisionFamilyType } from 'src/app/modules/quotation/model/ProvisionFamilyType';
 import { ProvisionFamilyTypeService } from 'src/app/modules/quotation/services/provision.family.type.service';
 import { GenericReferentialComponent } from '../generic-referential/generic-referential-component';
@@ -12,8 +13,9 @@ import { GenericReferentialComponent } from '../generic-referential/generic-refe
 })
 export class ReferentialProvisionFamilyTypeComponent extends GenericReferentialComponent<ProvisionFamilyType> implements OnInit {
   constructor(private provisionFamilyTypeService: ProvisionFamilyTypeService,
-    private formBuilder2: FormBuilder) {
-    super(formBuilder2);
+    private formBuilder2: FormBuilder,
+    private appService2: AppService,) {
+    super(formBuilder2, appService2);
   }
 
   getAddOrUpdateObservable(): Observable<ProvisionFamilyType> {

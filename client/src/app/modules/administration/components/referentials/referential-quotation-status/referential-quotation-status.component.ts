@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
+import { AppService } from 'src/app/app.service';
 import { ProvisionFamilyType } from 'src/app/modules/quotation/model/ProvisionFamilyType';
 import { QuotationStatus } from 'src/app/modules/quotation/model/QuotationStatus';
 import { QuotationStatusService } from 'src/app/modules/quotation/services/quotation-status.service';
@@ -13,8 +14,9 @@ import { GenericReferentialComponent } from '../generic-referential/generic-refe
 })
 export class ReferentialQuotationStatusComponent extends GenericReferentialComponent<QuotationStatus> implements OnInit {
   constructor(private quotationStatusService: QuotationStatusService,
-    private formBuilder2: FormBuilder) {
-    super(formBuilder2);
+    private formBuilder2: FormBuilder,
+    private appService2: AppService,) {
+    super(formBuilder2, appService2);
   }
 
   getAddOrUpdateObservable(): Observable<ProvisionFamilyType> {

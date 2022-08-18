@@ -6,7 +6,7 @@ export interface ConfrereFlatten {
   departments: string;
   mails: string;
   phones: string;
-  discountRate: number;
+  discountRate: string;
   reinvoicing: number;
   weekDays: string;
   journalType: JournalType;

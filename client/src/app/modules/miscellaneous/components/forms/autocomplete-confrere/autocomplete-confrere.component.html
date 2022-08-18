@@ -1,0 +1,19 @@
+<mat-form-field class="full-width" [formGroup]="form!">
+  <mat-label>{{label}}</mat-label>
+  <input type="text" matInput [formControlName]="propertyName" [matAutocomplete]="matAutocomplete" [(ngModel)]="model">
+  <button *ngIf="model==undefined || model==null || model.id ==undefined || model.id==null" matSuffix mat-icon-button
+    (click)="openConfrereDialog()">
+    <mat-icon>search</mat-icon>
+  </button>
+  <button (click)="clearField()"
+    *ngIf="model!=undefined && model!=null && model.id !=undefined && model.id!=null && !isDisabled " matSuffix
+    mat-icon-button>
+    <mat-icon>close</mat-icon>
+  </button>
+  <mat-autocomplete autoActiveFirstOption #matAutocomplete="matAutocomplete"
+    (optionSelected)='optionSelected($event.option.value!)' [displayWith]="displayConfrere">
+    <mat-option *ngFor="let confrere of filteredTypes | async" [value]="confrere">
+      {{confrere.label}} - {{confrere.journalType.label}}
+    </mat-option>
+  </mat-autocomplete>
+</mat-form-field>

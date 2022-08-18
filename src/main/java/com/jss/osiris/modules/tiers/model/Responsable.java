@@ -26,6 +26,7 @@ import com.jss.osiris.modules.miscellaneous.model.Civility;
 import com.jss.osiris.modules.miscellaneous.model.Country;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.model.IAttachment;
+import com.jss.osiris.modules.miscellaneous.model.IDocument;
 import com.jss.osiris.modules.miscellaneous.model.Language;
 import com.jss.osiris.modules.miscellaneous.model.Mail;
 import com.jss.osiris.modules.miscellaneous.model.Phone;
@@ -34,7 +35,7 @@ import com.jss.osiris.modules.profile.model.Employee;
 @Entity
 @Table(indexes = { @Index(name = "pk_responsable", columnList = "id", unique = true),
 		@Index(name = "idx_responsable_tiers", columnList = "id_tiers") })
-public class Responsable implements ITiers, IAttachment {
+public class Responsable implements ITiers, IAttachment, IDocument {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@IndexedField
@@ -451,6 +452,11 @@ public class Responsable implements ITiers, IAttachment {
 
 	public void setMailsMissingItemFormality(List<Mail> mailsMissingItemFormality) {
 		this.mailsMissingItemFormality = mailsMissingItemFormality;
+	}
+
+	@Override
+	public Boolean getIsIndividual() {
+		return true;
 	}
 
 }

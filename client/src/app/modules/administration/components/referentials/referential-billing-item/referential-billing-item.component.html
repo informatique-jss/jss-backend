@@ -78,7 +78,13 @@
                   <td>
                     <generic-input [(model)]="accountingAccountCharge.accountingAccountNumber"
                       label="N° de compte comptable" [form]="entityForm" propertyName="accountingAccountCharge"
-                      [isMandatory]="true" [isDisabled]="!editMode" [maxLength]="20"></generic-input>
+                      [isMandatory]="true" [isDisabled]="!editMode" [maxLength]="3"></generic-input>
+                  </td>
+                  <td>
+                    <generic-input [(model)]="accountingAccountCharge.accountingAccountSubNumber"
+                      label="N° de sous-compte comptable" [form]="entityForm"
+                      propertyName="accountingAccountSubNumCharge" [isMandatory]="true" [isDisabled]="!editMode"
+                      [maxLength]="20"></generic-input>
                   </td>
                   <td>
                     <generic-input [(model)]="accountingAccountCharge.code" label="Codification" [form]="entityForm"
@@ -106,34 +112,28 @@
                 </mat-panel-title>
                 <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
               </mat-expansion-panel-header>
-              <table class="full-width" *ngIf="accountingAccountProducts">
-                <tr *ngFor="let accountingAccountProduct of accountingAccountProducts; let i = index">
-                  <td>
-                    <generic-input [(model)]="accountingAccountProducts[i].accountingAccountNumber"
-                      label="N° de compte comptable" [form]="entityForm" [propertyName]="'accountingAccountNumber'+i"
-                      [isMandatory]="true" [isDisabled]="!editMode" [maxLength]="20"></generic-input>
-                  </td>
-                  <td>
-                    <generic-input [(model)]="accountingAccountProducts[i].code" label="Codification"
-                      [form]="entityForm" propertyName="code" [isMandatory]="true" [isDisabled]="!editMode"
-                      [conditionnalRequired]="" [customValidators]="" [maxLength]="20"></generic-input>
-                  </td>
-                  <td>
-                    <generic-input [(model)]="accountingAccountProducts[i].label" label="Nom fonctionnel"
-                      [form]="entityForm" propertyName="label" [isMandatory]="true" [isDisabled]="!editMode"
-                      [conditionnalRequired]="" [customValidators]="" [maxLength]="100"></generic-input>
-                  </td>
-                  <td>
-                    <select-vat [(model)]="accountingAccountProducts[i].vat" label="Taux de TVA" [form]="entityForm"
-                      [propertyName]="'vat_'+i" [isMandatory]="true" [isDisabled]="!editMode"></select-vat>
-                  </td>
-                </tr>
-              </table>
               <table class="full-width">
-                <tr>
+                <tr *ngIf="accountingAccountProduct">
                   <td>
-                    <button *ngIf="editMode" (click)="addProduct()" mat-raised-button color="accent">Ajouter un
-                      produit</button>
+                    <generic-input [(model)]="accountingAccountProduct.accountingAccountNumber"
+                      label="N° de compte comptable" [form]="entityForm" propertyName="accountingAccountProduct"
+                      [isMandatory]="true" [isDisabled]="!editMode" [maxLength]="3"></generic-input>
+                  </td>
+                  <td>
+                    <generic-input [(model)]="accountingAccountProduct.accountingAccountSubNumber"
+                      label="N° de sous-compte comptable" [form]="entityForm"
+                      propertyName="accountingAccountSubNumProduct" [isMandatory]="true" [isDisabled]="!editMode"
+                      [maxLength]="20"></generic-input>
+                  </td>
+                  <td>
+                    <generic-input [(model)]="accountingAccountProduct.code" label="Codification" [form]="entityForm"
+                      propertyName="codeProduct" [isMandatory]="true" [isDisabled]="!editMode" [conditionnalRequired]=""
+                      [customValidators]="" [maxLength]="20"></generic-input>
+                  </td>
+                  <td>
+                    <generic-input [(model)]="accountingAccountProduct.label" label="Nom fonctionnel"
+                      [form]="entityForm" propertyName="labelProduct" [isMandatory]="true" [isDisabled]="!editMode"
+                      [conditionnalRequired]="" [customValidators]="" [maxLength]="100"></generic-input>
                   </td>
                 </tr>
               </table>

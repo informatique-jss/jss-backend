@@ -1,8 +1,9 @@
 import { Component, OnInit, ViewChild, ViewChildren } from '@angular/core';
 import { MatAccordion } from '@angular/material/expansion';
 import { ActivatedRoute, Router, UrlSegment } from '@angular/router';
+import { Subject } from 'rxjs';
 import { AppService } from 'src/app/app.service';
-import { QUOTATION_DOCUMENT_TYPE_CODE, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_CANCELLED, QUOTATION_STATUS_OPEN, QUOTATION_STATUS_REFUSED_BY_CUSTOMER, QUOTATION_STATUS_SENT_TO_CUSTOMER, QUOTATION_STATUS_TO_VERIFY, QUOTATION_STATUS_VALIDATED_BY_CUSTOMER, QUOTATION_STATUS_VALIDATED_BY_JSS } from 'src/app/libs/Constants';
+import { QUOTATION_DOCUMENT_TYPE_CODE, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_BILLED, QUOTATION_STATUS_CANCELLED, QUOTATION_STATUS_OPEN, QUOTATION_STATUS_REFUSED_BY_CUSTOMER, QUOTATION_STATUS_SENT_TO_CUSTOMER, QUOTATION_STATUS_TO_VERIFY, QUOTATION_STATUS_VALIDATED_BY_CUSTOMER, QUOTATION_STATUS_VALIDATED_BY_JSS } from 'src/app/libs/Constants';
 import { Vat } from 'src/app/modules/miscellaneous/model/Vat';
 import { EntityType } from 'src/app/routing/search/EntityType';
 import { CUSTOMER_ORDER_ENTITY_TYPE, QUOTATION_ENTITY_TYPE } from 'src/app/routing/search/search.component';
@@ -42,6 +43,7 @@ export class QuotationComponent implements OnInit {
   QUOTATION_STATUS_SENT_TO_CUSTOMER = QUOTATION_STATUS_SENT_TO_CUSTOMER;
   QUOTATION_STATUS_VALIDATED_BY_CUSTOMER = QUOTATION_STATUS_VALIDATED_BY_CUSTOMER;
   QUOTATION_STATUS_REFUSED_BY_CUSTOMER = QUOTATION_STATUS_REFUSED_BY_CUSTOMER;
+  QUOTATION_STATUS_BILLED = QUOTATION_STATUS_BILLED;
   QUOTATION_STATUS_ABANDONED = QUOTATION_STATUS_ABANDONED;
   QUOTATION_STATUS_CANCELLED = QUOTATION_STATUS_CANCELLED;
 
@@ -57,6 +59,8 @@ export class QuotationComponent implements OnInit {
   isStatusOpen: boolean = true;
 
   filteredProvisions: Provision[] = [] as Array<Provision>;
+
+  updateDocumentsEvent: Subject<void> = new Subject<void>();
 
   constructor(private appService: AppService,
     private quotationService: QuotationService,
@@ -89,7 +93,6 @@ export class QuotationComponent implements OnInit {
           this.toggleTabs();
           this.sortProvisions();
           this.setOpenStatus();
-          this.generateInvoiceItem();
           this.filteredProvisions = this.quotation.provisions;
         })
       }
@@ -103,7 +106,6 @@ export class QuotationComponent implements OnInit {
         this.toggleTabs();
         this.sortProvisions();
         this.setOpenStatus();
-        this.generateInvoiceItem();
         this.filteredProvisions = this.quotation.provisions;
       })
     } else if (this.createMode == false) {
@@ -121,6 +123,10 @@ export class QuotationComponent implements OnInit {
     if (this.quotation && this.quotation.status)
       this.isStatusOpen = this.quotation.status.code == QUOTATION_STATUS_OPEN;
     this.isStatusOpen = false;
+  }
+
+  updateDocuments() {
+    this.updateDocumentsEvent.next();
   }
 
   saveQuotation(): boolean {
@@ -314,10 +320,28 @@ export class QuotationComponent implements OnInit {
   changeStatus(status: string) {
     let s = this.getStatusByCode(status);
     if (s != null) {
-      this.quotation.status = s;
       this.editQuotation();
-      if (!this.saveQuotation())
+      if (!this.getFormsStatus()) {
         this.ngOnInit();
+      } else {
+        this.quotation.status = s;
+        if (!this.instanceOfCustomerOrder) {
+          this.quotationService.updateQuotationStatus(this.quotation).subscribe(response => {
+            this.quotation = response;
+            this.router.navigateByUrl('/', { skipLocationChange: true }).then(() =>
+              this.router.navigate(['/quotation/', "" + this.quotation.id])
+            );
+          })
+        } else {
+          this.customerOrderService.updateCustomerStatus(this.quotation).subscribe(response => {
+            this.quotation = response;
+            this.router.navigateByUrl('/', { skipLocationChange: true }).then(() =>
+              this.router.navigate(['/order/', "" + this.quotation.id])
+            );
+          })
+        }
+      }
+
       this.editMode = false;
     }
   }
@@ -420,15 +444,17 @@ export class QuotationComponent implements OnInit {
     let found = false;
     if (quotation && quotation.invoiceItems) {
       for (const invoiceItem of quotation.invoiceItems) {
-        for (const v of vat) {
-          if (v.id == invoiceItem.accountingAccount.vat.id) {
-            v.total += invoiceItem.vatPrice;
-            found = true;
+        if (invoiceItem.accountingAccount && invoiceItem.vat) {
+          for (const v of vat) {
+            if (v.id == invoiceItem.vat.id) {
+              v.total += invoiceItem.vatPrice;
+              found = true;
+            }
           }
-        }
-        if (!found) {
-          vat.push(invoiceItem.accountingAccount.vat);
-          vat[vat.length - 1].total = invoiceItem.vatPrice;
+          if (!found) {
+            vat.push(invoiceItem.vat);
+            vat[vat.length - 1].total = invoiceItem.vatPrice;
+          }
         }
         found = false;
       }

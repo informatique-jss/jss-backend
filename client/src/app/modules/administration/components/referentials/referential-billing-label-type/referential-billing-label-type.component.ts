@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
+import { AppService } from 'src/app/app.service';
 import { BillingLabelType } from 'src/app/modules/tiers/model/BillingLabelType';
 import { BillingLabelTypeService } from 'src/app/modules/tiers/services/billing.label.type.service';
 import { GenericReferentialComponent } from '../generic-referential/generic-referential-component';
@@ -12,8 +13,9 @@ import { GenericReferentialComponent } from '../generic-referential/generic-refe
 })
 export class ReferentialBillingLabelTypeComponent extends GenericReferentialComponent<BillingLabelType> implements OnInit {
   constructor(private billingLabelTypeService: BillingLabelTypeService,
-    private formBuilder2: FormBuilder) {
-    super(formBuilder2);
+    private formBuilder2: FormBuilder,
+    private appService2: AppService,) {
+    super(formBuilder2, appService2);
   }
 
   getAddOrUpdateObservable(): Observable<BillingLabelType> {

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
+import { AppService } from 'src/app/app.service';
 import { NewEntity } from 'src/app/modules/targetPackage/model/NewEntity';
 import { NewEntityService } from 'src/app/modules/targetPackage/services/serviceName.service';
 import { GenericReferentialComponent } from '../generic-referential/generic-referential-component';
@@ -12,8 +13,9 @@ import { GenericReferentialComponent } from '../generic-referential/generic-refe
 })
 export class ReferentialNewEntityComponent extends GenericReferentialComponent<NewEntity> implements OnInit {
   constructor(private newEntityService: NewEntityService,
-    private formBuilder2: FormBuilder) {
-    super(formBuilder2);
+    private formBuilder2: FormBuilder,
+    private appService2: AppService,) {
+    super(formBuilder2, appService2);
   }
 
   getAddOrUpdateObservable(): Observable<NewEntity> {

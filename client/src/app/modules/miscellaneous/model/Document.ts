@@ -4,6 +4,8 @@ import { BillingLabelType } from "../../tiers/model/BillingLabelType";
 import { PaymentDeadlineType } from "../../tiers/model/PaymentDeadlineType";
 import { RefundType } from "../../tiers/model/RefundType";
 import { Responsable } from "../../tiers/model/Responsable";
+import { City } from "./City";
+import { Country } from "./Country";
 import { DocumentType } from "./DocumentType";
 import { Mail } from "./Mail";
 
@@ -28,6 +30,11 @@ export interface Document {
   mailsAffaire: Mail[];
   billingLabelType: BillingLabelType;
   billingLabel: string;
+  billingLabelAddress: string;
+  billingLabelPostalCode: string;
+  billingLabelCity: City;
+  billingLabelCountry: Country;
+  billingLabelIsIndividual: boolean;
   isResponsableOnBilling: boolean;
   isCommandNumberMandatory: boolean;
   commandNumber: string;

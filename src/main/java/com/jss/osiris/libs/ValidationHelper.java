@@ -137,6 +137,16 @@ public class ValidationHelper {
         }
     }
 
+    public void validateInteger(Integer value, Boolean isMandatory) throws Exception {
+        if ((value == null) && isMandatory)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+    }
+
+    public void validateFloat(Float value, Boolean isMandatory) throws Exception {
+        if ((value == null) && isMandatory)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+    }
+
     public void validateString(String value, Boolean isMandatory) throws Exception {
         validateString(value, isMandatory, null);
     }

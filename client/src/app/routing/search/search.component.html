@@ -74,7 +74,7 @@
               </mat-tab>
               <mat-tab [label]="getTabLabel(CUSTOMER_ORDER_ENTITY_TYPE)">
                 <mat-dialog-content class="mat-content">
-                  <mat-card class="pointer" *ngFor="let entity of getEntitiesForTab(QUOTATION_ENTITY_TYPE)"
+                  <mat-card class="pointer" *ngFor="let entity of getEntitiesForTab(CUSTOMER_ORDER_ENTITY_TYPE)"
                     (click)="openEntity(entity)">
                     <mat-card-title-group>
                       <mat-card-title>{{entity.text.id}}</mat-card-title>

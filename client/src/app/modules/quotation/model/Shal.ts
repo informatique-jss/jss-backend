@@ -8,7 +8,7 @@ import { NoticeTypeFamily } from "./NoticeTypeFamily";
 export interface Shal extends IAttachment, IDocument {
   id: number;
   department: Department;
-  confrere: Confrere | null;
+  confrere: Confrere | undefined;
   publicationDate: Date;
   isRedactedByJss: boolean;
   notice: string;

@@ -18,8 +18,14 @@ import org.springframework.web.server.ResponseStatusException;
 import com.jss.osiris.libs.ValidationHelper;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.model.AccountingAccountClass;
+import com.jss.osiris.modules.accounting.model.AccountingJournal;
+import com.jss.osiris.modules.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.accounting.service.AccountingAccountClassService;
 import com.jss.osiris.modules.accounting.service.AccountingAccountService;
+import com.jss.osiris.modules.accounting.service.AccountingJournalService;
+import com.jss.osiris.modules.accounting.service.AccountingRecordService;
+
+import springfox.documentation.annotations.ApiIgnore;
 
 @RestController
 public class AccountingController {
@@ -36,6 +42,99 @@ public class AccountingController {
 
     @Autowired
     AccountingAccountClassService accountingAccountClassService;
+
+    @Autowired
+    AccountingRecordService accountingRecordService;
+
+    @Autowired
+    AccountingJournalService accountingJournalService;
+
+    @GetMapping(inputEntryPoint + "/accounting-journals")
+    @ApiIgnore
+    public ResponseEntity<List<AccountingJournal>> getAccountingJournals() {
+        List<AccountingJournal> accountingJournals = null;
+        try {
+            accountingJournals = accountingJournalService.getAccountingJournals();
+        } catch (HttpStatusCodeException e) {
+            logger.error("HTTP error when fetching accountingJournal", e);
+            return new ResponseEntity<List<AccountingJournal>>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            logger.error("Error when fetching accountingJournal", e);
+            return new ResponseEntity<List<AccountingJournal>>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<List<AccountingJournal>>(accountingJournals, HttpStatus.OK);
+    }
+
+    @PostMapping(inputEntryPoint + "/accounting-journal")
+    @ApiIgnore
+    public ResponseEntity<AccountingJournal> addOrUpdateAccountingJournal(
+            @RequestBody AccountingJournal accountingJournals) {
+        AccountingJournal outAccountingJournal;
+        try {
+            if (accountingJournals.getId() != null)
+                validationHelper.validateReferential(accountingJournals, true);
+            validationHelper.validateString(accountingJournals.getCode(), true);
+            validationHelper.validateString(accountingJournals.getLabel(), true);
+
+            outAccountingJournal = accountingJournalService
+                    .addOrUpdateAccountingJournal(accountingJournals);
+        } catch (
+
+        ResponseStatusException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (HttpStatusCodeException e) {
+            logger.error("HTTP error when fetching accountingJournal", e);
+            return new ResponseEntity<AccountingJournal>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            logger.error("Error when fetching accountingJournal", e);
+            return new ResponseEntity<AccountingJournal>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<AccountingJournal>(outAccountingJournal, HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/accounting-records")
+    @ApiIgnore
+    public ResponseEntity<List<AccountingRecord>> getAccountingRecords() {
+        List<AccountingRecord> accountingRecords = null;
+        try {
+            accountingRecords = accountingRecordService.getAccountingRecords();
+        } catch (HttpStatusCodeException e) {
+            logger.error("HTTP error when fetching accountingRecord", e);
+            return new ResponseEntity<List<AccountingRecord>>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            logger.error("Error when fetching accountingRecord", e);
+            return new ResponseEntity<List<AccountingRecord>>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<List<AccountingRecord>>(accountingRecords, HttpStatus.OK);
+    }
+
+    @PostMapping(inputEntryPoint + "/accounting-record")
+    @ApiIgnore
+    public ResponseEntity<AccountingRecord> addOrUpdateAccountingRecord(
+            @RequestBody AccountingRecord accountingRecords) {
+        AccountingRecord outAccountingRecord;
+        try {
+            if (accountingRecords.getId() != null)
+                validationHelper.validateReferential(accountingRecords, true);
+            validationHelper.validateString(accountingRecords.getLabel(), true);
+
+            // TODO : complete validators
+
+            outAccountingRecord = accountingRecordService
+                    .addOrUpdateAccountingRecord(accountingRecords);
+        } catch (
+
+        ResponseStatusException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (HttpStatusCodeException e) {
+            logger.error("HTTP error when fetching accountingRecord", e);
+            return new ResponseEntity<AccountingRecord>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            logger.error("Error when fetching accountingRecord", e);
+            return new ResponseEntity<AccountingRecord>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<AccountingRecord>(outAccountingRecord, HttpStatus.OK);
+    }
 
     @GetMapping(inputEntryPoint + "/accounting-account-classes")
     public ResponseEntity<List<AccountingAccountClass>> getAccountingAccountClasses() {
@@ -100,11 +199,9 @@ public class AccountingController {
         try {
             if (accountingAccounts.getId() != null)
                 validationHelper.validateReferential(accountingAccounts, true);
-            validationHelper.validateString(accountingAccounts.getCode(), true, 20);
             validationHelper.validateString(accountingAccounts.getLabel(), true, 100);
-            validationHelper.validateString(accountingAccounts.getAccountingAccountNumber(), true, 20);
-            validationHelper.validateReferential(accountingAccounts.getVat(), false);
-            validationHelper.validateReferential(accountingAccounts.getAccountingAccountClass(), true);
+            validationHelper.validateString(accountingAccounts.getAccountingAccountNumber(), true, 3);
+            validationHelper.validateInteger(accountingAccounts.getAccountingAccountSubNumber(), false);
             outAccountingAccount = accountingAccountService
                     .addOrUpdateAccountingAccount(accountingAccounts);
         } catch (

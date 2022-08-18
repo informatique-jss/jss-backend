@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
+import { AppService } from 'src/app/app.service';
 import { Team } from 'src/app/modules/profile/model/Team';
 import { TeamService } from 'src/app/modules/profile/services/team.service';
 import { GenericReferentialComponent } from '../generic-referential/generic-referential-component';
@@ -12,8 +13,9 @@ import { GenericReferentialComponent } from '../generic-referential/generic-refe
 })
 export class ReferentialTeamComponent extends GenericReferentialComponent<Team> implements OnInit {
   constructor(private teamService: TeamService,
-    private formBuilder2: FormBuilder) {
-    super(formBuilder2);
+    private formBuilder2: FormBuilder,
+    private appService2: AppService,) {
+    super(formBuilder2, appService2);
   }
 
   getAddOrUpdateObservable(): Observable<Team> {

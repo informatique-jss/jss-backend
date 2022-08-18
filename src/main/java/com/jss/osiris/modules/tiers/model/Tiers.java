@@ -19,6 +19,7 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.jss.osiris.libs.search.model.IndexedField;
+import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.City;
 import com.jss.osiris.modules.miscellaneous.model.Civility;
@@ -26,6 +27,7 @@ import com.jss.osiris.modules.miscellaneous.model.Country;
 import com.jss.osiris.modules.miscellaneous.model.DeliveryService;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.model.IAttachment;
+import com.jss.osiris.modules.miscellaneous.model.IDocument;
 import com.jss.osiris.modules.miscellaneous.model.Language;
 import com.jss.osiris.modules.miscellaneous.model.Mail;
 import com.jss.osiris.modules.miscellaneous.model.PaymentType;
@@ -35,7 +37,7 @@ import com.jss.osiris.modules.profile.model.Employee;
 
 @Entity
 @Table(indexes = { @Index(name = "pk_client", columnList = "id", unique = true) })
-public class Tiers implements ITiers, IAttachment {
+public class Tiers implements ITiers, IAttachment, IDocument {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -182,6 +184,14 @@ public class Tiers implements ITiers, IAttachment {
 	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "asso_tiers_competitor", joinColumns = @JoinColumn(name = "id_tiers"), inverseJoinColumns = @JoinColumn(name = "id_competitor"))
 	private List<Competitor> competitors;
+
+	@ManyToOne
+	@JoinColumn(name = "id_accounting_account_provider")
+	private AccountingAccount accountingAccountProvider;
+
+	@ManyToOne
+	@JoinColumn(name = "id_accounting_account_customer")
+	private AccountingAccount accountingAccountCustomer;
 
 	public List<Competitor> getCompetitors() {
 		return competitors;
@@ -485,6 +495,22 @@ public class Tiers implements ITiers, IAttachment {
 
 	public void setTiersFollowups(List<TiersFollowup> tiersFollowups) {
 		this.tiersFollowups = tiersFollowups;
+	}
+
+	public AccountingAccount getAccountingAccountProvider() {
+		return accountingAccountProvider;
+	}
+
+	public void setAccountingAccountProvider(AccountingAccount accountingAccountProvider) {
+		this.accountingAccountProvider = accountingAccountProvider;
+	}
+
+	public AccountingAccount getAccountingAccountCustomer() {
+		return accountingAccountCustomer;
+	}
+
+	public void setAccountingAccountCustomer(AccountingAccount accountingAccountCustomer) {
+		this.accountingAccountCustomer = accountingAccountCustomer;
 	}
 
 }

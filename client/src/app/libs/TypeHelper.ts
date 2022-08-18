@@ -18,13 +18,9 @@ export function instanceOfResponsable(object: any): object is Responsable {
 
 
 export function instanceOfQuotation(object: IQuotation): object is Quotation {
-  if (object != null)
-    return 'customerOrder' in object;
-  return false;
+  return object.isQuotation;
 }
 
 export function instanceOfCustomerOrder(object: IQuotation): object is CustomerOrder {
-  if (object != null)
-    return !('customerOrder' in object);
-  return false;
+  return !object.isQuotation;
 }

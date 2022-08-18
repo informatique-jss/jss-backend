@@ -39,9 +39,11 @@ import com.jss.osiris.modules.miscellaneous.model.Gift;
 import com.jss.osiris.modules.miscellaneous.model.Language;
 import com.jss.osiris.modules.miscellaneous.model.LegalForm;
 import com.jss.osiris.modules.miscellaneous.model.PaymentType;
+import com.jss.osiris.modules.miscellaneous.model.Provider;
 import com.jss.osiris.modules.miscellaneous.model.Region;
 import com.jss.osiris.modules.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.miscellaneous.model.Vat;
+import com.jss.osiris.modules.miscellaneous.model.VatCollectionType;
 import com.jss.osiris.modules.miscellaneous.model.WeekDay;
 import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.miscellaneous.service.AttachmentTypeService;
@@ -59,8 +61,10 @@ import com.jss.osiris.modules.miscellaneous.service.GiftService;
 import com.jss.osiris.modules.miscellaneous.service.LanguageService;
 import com.jss.osiris.modules.miscellaneous.service.LegalFormService;
 import com.jss.osiris.modules.miscellaneous.service.PaymentTypeService;
+import com.jss.osiris.modules.miscellaneous.service.ProviderService;
 import com.jss.osiris.modules.miscellaneous.service.RegionService;
 import com.jss.osiris.modules.miscellaneous.service.SpecialOfferService;
+import com.jss.osiris.modules.miscellaneous.service.VatCollectionTypeService;
 import com.jss.osiris.modules.miscellaneous.service.VatService;
 import com.jss.osiris.modules.miscellaneous.service.WeekDayService;
 import com.jss.osiris.modules.quotation.model.Bodacc;
@@ -141,6 +145,95 @@ public class MiscellaneousController {
 
     @Autowired
     GiftService giftService;
+
+    @Autowired
+    VatCollectionTypeService vatCollectionTypeService;
+
+    @Autowired
+    ProviderService providerService;
+
+    @GetMapping(inputEntryPoint + "/providers")
+    public ResponseEntity<List<Provider>> getProviders() {
+        List<Provider> providers = null;
+        try {
+            providers = providerService.getProviders();
+        } catch (HttpStatusCodeException e) {
+            logger.error("HTTP error when fetching provider", e);
+            return new ResponseEntity<List<Provider>>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            logger.error("Error when fetching provider", e);
+            return new ResponseEntity<List<Provider>>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<List<Provider>>(providers, HttpStatus.OK);
+    }
+
+    @PostMapping(inputEntryPoint + "/provider")
+    public ResponseEntity<Provider> addOrUpdateProvider(
+            @RequestBody Provider provider) {
+        Provider outProvider;
+        try {
+            if (provider.getId() != null)
+                validationHelper.validateReferential(provider, true);
+            validationHelper.validateString(provider.getLabel(), true);
+            validationHelper.validateString(provider.getBic(), false, 40);
+            validationHelper.validateString(provider.getIban(), false, 40);
+
+            outProvider = providerService
+                    .addOrUpdateProvider(provider);
+        } catch (
+
+        ResponseStatusException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (HttpStatusCodeException e) {
+            logger.error("HTTP error when fetching provider", e);
+            return new ResponseEntity<Provider>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            logger.error("Error when fetching provider", e);
+            return new ResponseEntity<Provider>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<Provider>(outProvider, HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/vat-collection-types")
+    public ResponseEntity<List<VatCollectionType>> getVatCollectionTypes() {
+        List<VatCollectionType> vatCollectionTypes = null;
+        try {
+            vatCollectionTypes = vatCollectionTypeService.getVatCollectionTypes();
+        } catch (HttpStatusCodeException e) {
+            logger.error("HTTP error when fetching vatCollectionType", e);
+            return new ResponseEntity<List<VatCollectionType>>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            logger.error("Error when fetching vatCollectionType", e);
+            return new ResponseEntity<List<VatCollectionType>>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<List<VatCollectionType>>(vatCollectionTypes, HttpStatus.OK);
+    }
+
+    @PostMapping(inputEntryPoint + "/vat-collection-type")
+    public ResponseEntity<VatCollectionType> addOrUpdateVatCollectionType(
+            @RequestBody VatCollectionType vatCollectionTypes) {
+        VatCollectionType outVatCollectionType;
+        try {
+            if (vatCollectionTypes.getId() != null)
+                validationHelper.validateReferential(vatCollectionTypes, true);
+            validationHelper.validateString(vatCollectionTypes.getCode(), true);
+            validationHelper.validateString(vatCollectionTypes.getLabel(), true);
+
+            outVatCollectionType = vatCollectionTypeService
+                    .addOrUpdateVatCollectionType(vatCollectionTypes);
+        } catch (
+
+        ResponseStatusException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (HttpStatusCodeException e) {
+            logger.error("HTTP error when fetching vatCollectionType", e);
+            return new ResponseEntity<VatCollectionType>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            logger.error("Error when fetching vatCollectionType", e);
+            return new ResponseEntity<VatCollectionType>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<VatCollectionType>(outVatCollectionType, HttpStatus.OK);
+    }
 
     @GetMapping(inputEntryPoint + "/gifts")
     public ResponseEntity<List<Gift>> getGifts() {
@@ -425,13 +518,19 @@ public class MiscellaneousController {
             if (billingItems.getAccountingAccounts() == null || billingItems.getAccountingAccounts().size() == 0)
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
+            boolean foundProductAccount = false;
             for (AccountingAccount accountingAccount : billingItems.getAccountingAccounts()) {
                 if (accountingAccount.getId() != null)
                     validationHelper.validateReferential(accountingAccount, true);
-                validationHelper.validateString(accountingAccount.getCode(), true, 20);
                 validationHelper.validateString(accountingAccount.getLabel(), true, 100);
-                validationHelper.validateString(accountingAccount.getAccountingAccountNumber(), true, 20);
+                validationHelper.validateString(accountingAccount.getAccountingAccountNumber(), true, 3);
+                validationHelper.validateInteger(accountingAccount.getAccountingAccountSubNumber(), true);
+                if (accountingAccount.getAccountingAccountNumber().substring(0, 1).equals("7"))
+                    foundProductAccount = true;
             }
+
+            if (!foundProductAccount)
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
             outBillingItem = billingItemService.addOrUpdateBillingItem(billingItems);
         } catch (
@@ -465,16 +564,17 @@ public class MiscellaneousController {
 
     @PostMapping(inputEntryPoint + "/vat")
     public ResponseEntity<Vat> addOrUpdateVat(
-            @RequestBody Vat vats) {
+            @RequestBody Vat vat) {
         Vat outVat;
         try {
-            if (vats.getId() != null)
-                validationHelper.validateReferential(vats, true);
-            validationHelper.validateString(vats.getCode(), true, 20);
-            validationHelper.validateString(vats.getLabel(), true, 100);
+            if (vat.getId() != null)
+                validationHelper.validateReferential(vat, true);
+            validationHelper.validateString(vat.getCode(), true, 20);
+            validationHelper.validateString(vat.getLabel(), true, 100);
+            validationHelper.validateReferential(vat.getAccountingAccount(), true);
+            validationHelper.validateFloat(vat.getRate(), true);
 
-            outVat = vatService
-                    .addOrUpdateVat(vats);
+            outVat = vatService.addOrUpdateVat(vat);
         } catch (
 
         ResponseStatusException e) {
@@ -860,8 +960,6 @@ public class MiscellaneousController {
             validationHelper.validateString(competentAuthorities.getPostalCode(), false, 10);
             validationHelper.validateReferential(competentAuthorities.getCity(), false);
             validationHelper.validateReferential(competentAuthorities.getCountry(), false);
-            validationHelper.validateReferential(competentAuthorities.getAccountingAccountCustomer(), true);
-            validationHelper.validateReferential(competentAuthorities.getAccountingAccountProvider(), true);
 
             outCompetentAuthority = competentAuthorityService
                     .addOrUpdateCompetentAuthority(competentAuthorities);

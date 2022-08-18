@@ -22,6 +22,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { MiscellaneousModule } from 'src/app/modules/miscellaneous/components/miscellaneous/miscellaneous.module';
 import { ReferentialAccountingAccountClassComponent } from '../referentials/referential-accounting-account-class/referential-accounting-account-class.component';
 import { ReferentialAccountingAccountComponent } from '../referentials/referential-accounting-account/referential-accounting-account.component';
+import { ReferentialAccountingJournalComponent } from '../referentials/referential-accounting-journal/referential-accounting-journal.component';
 import { ReferentialActTypeComponent } from '../referentials/referential-act-type/referential-act-type.component';
 import { ReferentialAttachmentTypeComponent } from '../referentials/referential-attachment-type/referential-attachment-type.component';
 import { ReferentialBillingClosureRecipientTypeComponent } from '../referentials/referential-billing-closure-recipient-type/referential-billing-closure-recipient-type.component';
@@ -53,6 +54,7 @@ import { ReferentialNoticeTypeFamilyComponent } from '../referentials/referentia
 import { ReferentialNoticeTypeComponent } from '../referentials/referential-notice-type/referential-notice-type.component';
 import { ReferentialPaymentDeadlineTypeComponent } from '../referentials/referential-payment-deadline-type/referential-payment-deadline-type.component';
 import { ReferentialPaymentTypeComponent } from '../referentials/referential-payment-type/referential-payment-type.component';
+import { ReferentialProviderComponent } from '../referentials/referential-provider/referential-provider.component';
 import { ReferentialProvisionTypeComponent } from '../referentials/referential-provision-type/referential-provision-type.component';
 import { ReferentialQuotationLabelTypeComponent } from '../referentials/referential-quotation-label-type/referential-notice-type-family.component';
 import { ReferentialQuotationStatusComponent } from '../referentials/referential-quotation-status/referential-quotation-status.component';
@@ -67,6 +69,7 @@ import { ReferentialTiersCategoryComponent } from '../referentials/referential-t
 import { ReferentialTiersFollowupTypeComponent } from '../referentials/referential-tiers-followup-type/referential-tiers-followup-type.component';
 import { ReferentialTiersTypeComponent } from '../referentials/referential-tiers-type/referential-tiers-type.component';
 import { ReferentialTransfertFundsTypeComponent } from '../referentials/referential-transfert-fund-type/referential-transfert-fund-type.component';
+import { ReferentialVatCollectionTypeComponent } from '../referentials/referential-vat-collection-type/referential-vat-collection-type.component';
 import { ReferentialVatComponent } from '../referentials/referential-vat/referential-vat.component';
 import { ReferentialWeekDayComponent } from '../referentials/referential-weekday/referential-weekday.component';
 import { ReferentialProvisionFamilyTypeComponent } from '../referentials/referentiel-provision-familiy-type/referential-provision-family-type.component';
@@ -148,12 +151,15 @@ const routes: Routes = [
     ReferentialCompetentAuthorityComponent,
     ReferentialCityComponent,
     ReferentialShalNoticeTemplateComponent,
+    ReferentialVatCollectionTypeComponent,
     ReferentialTeamComponent,
     ReferentialRegieComponent,
     ReferentialConfrereComponent,
     ReferentialBillingItemComponent,
     ReferentialDepartmentComponent,
     ReferentialBillingTypeComponent,
+    ReferentialProviderComponent,
+    ReferentialAccountingJournalComponent,
   ],
 })
 export class AdministrationModule { }

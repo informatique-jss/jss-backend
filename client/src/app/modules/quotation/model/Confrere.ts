@@ -2,13 +2,17 @@ import { AccountingAccount } from "../../accounting/model/AccountingAccount";
 import { City } from "../../miscellaneous/model/City";
 import { Country } from "../../miscellaneous/model/Country";
 import { Department } from "../../miscellaneous/model/Department";
+import { IDocument } from "../../miscellaneous/model/IDocument";
 import { Mail } from "../../miscellaneous/model/Mail";
+import { PaymentType } from "../../miscellaneous/model/PaymentType";
 import { Phone } from "../../miscellaneous/model/Phone";
+import { SpecialOffer } from "../../miscellaneous/model/SpecialOffer";
+import { VatCollectionType } from "../../miscellaneous/model/VatCollectionType";
 import { WeekDay } from "../../miscellaneous/model/WeekDay";
 import { JournalType } from "./JournalType";
 import { Regie } from "./Regie";
 
-export interface Confrere {
+export interface Confrere extends IDocument {
   id: number;
   label: string;
   code: string;
@@ -16,16 +20,21 @@ export interface Confrere {
   accountingMails: Mail[];
   phones: Phone[];
   accountingAccountCustomer: AccountingAccount;
+  accountingAccountProvider: AccountingAccount;
   mailRecipient: string;
   address: string;
   city: City;
   postalCode: string;
   country: Country;
   iban: string;
+  paymentType: PaymentType;
+  paymentBIC: string;
+  isSepaMandateReceived: boolean;
+  isProvisionalPaymentMandatory: boolean;
   journalType: JournalType;
   reinvoicing: number;
   weekDays: WeekDay[];
-  discountRate: number;
+  specialOffers: SpecialOffer[];
   departments: Department[];
   lastShipmentForPublication: string;
   publicationCertificateDocumentGrade: string;
@@ -36,7 +45,7 @@ export interface Confrere {
   administrativeFees: number;
   numberOfPrint: number;
   paperPrice: number;
-  accountingAccountProvider: AccountingAccount;
   regie: Regie;
   observations: string;
+  vatCollectionType: VatCollectionType;
 }

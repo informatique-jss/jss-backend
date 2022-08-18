@@ -8,6 +8,6 @@ public interface RegieService {
     public List<Regie> getRegies();
 
     public Regie getRegie(Integer id);
-	
-	 public Regie addOrUpdateRegie(Regie regie);
+
+    public Regie addOrUpdateRegie(Regie regie) throws Exception;
 }

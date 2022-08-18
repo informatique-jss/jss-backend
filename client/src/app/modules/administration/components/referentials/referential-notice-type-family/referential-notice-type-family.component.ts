@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
+import { AppService } from 'src/app/app.service';
 import { NoticeTypeFamily } from 'src/app/modules/quotation/model/NoticeTypeFamily';
 import { NoticeTypeFamilyService } from 'src/app/modules/quotation/services/notice.type.family.service';
 import { GenericReferentialComponent } from '../generic-referential/generic-referential-component';
@@ -12,8 +13,9 @@ import { GenericReferentialComponent } from '../generic-referential/generic-refe
 })
 export class ReferentialNoticeTypeFamilyComponent extends GenericReferentialComponent<NoticeTypeFamily> implements OnInit {
   constructor(private noticeTypeFamilyService: NoticeTypeFamilyService,
-    private formBuilder2: FormBuilder) {
-    super(formBuilder2);
+    private formBuilder2: FormBuilder,
+    private appService2: AppService,) {
+    super(formBuilder2, appService2);
   }
 
   getAddOrUpdateObservable(): Observable<NoticeTypeFamily> {

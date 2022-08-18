@@ -64,6 +64,10 @@ export class GenericInputComponent implements OnInit {
  */
   @Input() type: string = "text";
   /**
+ * Hint to display
+ */
+  @Input() hint: string = "";
+  /**
    * Fired when input is modified by user
    */
   @Output() onInputChange: EventEmitter<void> = new EventEmitter();

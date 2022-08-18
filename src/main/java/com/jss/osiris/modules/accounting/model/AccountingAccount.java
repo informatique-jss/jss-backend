@@ -7,15 +7,18 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.jss.osiris.modules.miscellaneous.model.BillingItem;
 import com.jss.osiris.modules.miscellaneous.model.IId;
-import com.jss.osiris.modules.miscellaneous.model.Vat;
 
 @Entity
+@Table(indexes = {
+		@Index(name = "idx_accounting_account_number", columnList = "accountingAccountNumber,accountingAccountSubNumber", unique = true) })
 public class AccountingAccount implements Serializable, IId {
 
 	@Id
@@ -25,15 +28,10 @@ public class AccountingAccount implements Serializable, IId {
 	@Column(nullable = false, length = 100)
 	private String label;
 
-	@Column(nullable = false, length = 20)
-	private String code;
-
-	@Column(length = 20)
+	@Column(length = 3)
 	private String accountingAccountNumber;
 
-	@ManyToOne
-	@JoinColumn(name = "id_vat")
-	private Vat vat;
+	private Integer accountingAccountSubNumber;
 
 	@ManyToOne
 	@JoinColumn(name = "id_accounting_account_class")
@@ -64,14 +62,6 @@ public class AccountingAccount implements Serializable, IId {
 		this.accountingAccountNumber = accountingAccountNumber;
 	}
 
-	public Vat getVat() {
-		return vat;
-	}
-
-	public void setVat(Vat vat) {
-		this.vat = vat;
-	}
-
 	public AccountingAccountClass getAccountingAccountClass() {
 		return accountingAccountClass;
 	}
@@ -84,12 +74,20 @@ public class AccountingAccount implements Serializable, IId {
 		this.label = label;
 	}
 
-	public String getCode() {
-		return code;
+	public Integer getAccountingAccountSubNumber() {
+		return accountingAccountSubNumber;
 	}
 
-	public void setCode(String code) {
-		this.code = code;
+	public void setAccountingAccountSubNumber(Integer accountingAccountSubNumber) {
+		this.accountingAccountSubNumber = accountingAccountSubNumber;
+	}
+
+	public BillingItem getBillingItem() {
+		return billingItem;
+	}
+
+	public void setBillingItem(BillingItem billingItem) {
+		this.billingItem = billingItem;
 	}
 
 }

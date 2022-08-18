@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.ehcache.org/v3" xsi:schemaLocation="&#xD;&#xA;            http://www.ehcache.org/v3 &#xD;&#xA;            http://www.ehcache.org/schema/ehcache-core-3.7.xsd">
+    <persistence directory="spring-boot-ehcache/cache" />
     <cache-template name="default">
         <expiry>
             <ttl unit="hours">1</ttl>
@@ -9,17 +10,44 @@
             <heap unit="MB">256</heap>
         </resources>
     </cache-template>
-    <persistence directory="spring-boot-ehcache/cache"/>
-     <cache alias="vatList" uses-template="default">
+    <cache alias="vatList" uses-template="default">
         <key-type>java.lang.String</key-type>
-         <value-type>java.util.List</value-type>
+        <value-type>java.util.List</value-type>
     </cache>
-     <cache alias="vat" uses-template="default">
+    <cache alias="vat" uses-template="default">
         <key-type>java.lang.Integer</key-type>
-         <value-type>com.jss.osiris.modules.miscellaneous.model.vat</value-type>
+        <value-type>com.jss.osiris.modules.miscellaneous.model.vat</value-type>
     </cache>
-     <cache alias="accountingAccountList" uses-template="default">
+    <cache alias="accountingAccountList" uses-template="default">
         <key-type>java.lang.String</key-type>
-         <value-type>java.util.List</value-type>
+        <value-type>java.util.List</value-type>
+    </cache>
+    <cache alias="siren" uses-template="default">
+        <key-type>java.lang.String</key-type>
+        <value-type>java.util.List</value-type>
+    </cache>
+    <cache alias="siret" uses-template="default">
+        <key-type>java.lang.String</key-type>
+        <value-type>java.util.List</value-type>
+    </cache>
+    <cache alias="accountingRecordList" uses-template="default">
+        <key-type>java.lang.String</key-type>
+        <value-type>java.util.List</value-type>
+    </cache>
+    <cache alias="accountingRecord" uses-template="default">
+        <key-type>java.lang.Integer</key-type>
+        <value-type>com.jss.osiris.modules.targetPackage.model.NewEntity</value-type>
+    </cache>
+    <cache alias="invoice" uses-template="default">
+        <key-type>java.lang.Integer</key-type>
+        <value-type>com.jss.osiris.modules.quotation.model.Invoice</value-type>
+    </cache>
+    <cache alias="providerList" uses-template="default">
+        <key-type>java.lang.String</key-type>
+        <value-type>java.util.List</value-type>
+    </cache>
+    <cache alias="provider" uses-template="default">
+        <key-type>java.lang.Integer</key-type>
+        <value-type>com.jss.osiris.modules.Miscellaneous.model.Provider</value-type>
     </cache>
 </config>

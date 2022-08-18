@@ -66,16 +66,16 @@
         </table>
         <table class="full-width">
           <tr>
-            <td>
+            <td *ngIf="selectedEntity.accountingAccountProvider">
               <autocomplete-accounting-account [(model)]="selectedEntity.accountingAccountProvider" [form]="entityForm"
-                propertyName="accountingAccountProvider" [isMandatory]="false" label="Code comptable fournisseur"
-                (onOptionSelected)="fillAccountCustomer()">
+                propertyName="accountingAccountProvider" [isMandatory]="false" [isDisabled]="true"
+                label="Compte comptable fournisseur">
               </autocomplete-accounting-account>
             </td>
-            <td>
+            <td *ngIf="selectedEntity.accountingAccountCustomer">
               <autocomplete-accounting-account [(model)]="selectedEntity.accountingAccountCustomer" [form]="entityForm"
-                propertyName="accountingAccountCustomer" [isMandatory]="false" label="Code comptable client"
-                (onOptionSelected)="fillAccountProvider()">
+                propertyName="accountingAccountCustomer" [isMandatory]="false" [isDisabled]="true"
+                label="Compte comptable client">
               </autocomplete-accounting-account>
             </td>
           </tr>

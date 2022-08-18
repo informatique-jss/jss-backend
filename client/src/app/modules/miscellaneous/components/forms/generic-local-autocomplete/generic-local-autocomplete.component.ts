@@ -136,6 +136,12 @@ export abstract class GenericLocalAutocompleteComponent<T> implements OnInit {
     this.onOptionSelected.emit(type);
   }
 
+  clearField(): void {
+    this.model = undefined;
+    this.modelChange.emit(this.model);
+    this.onOptionSelected.emit(undefined);
+  }
+
   abstract initTypes(): void;
 
 }

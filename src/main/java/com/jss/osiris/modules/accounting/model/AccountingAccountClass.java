@@ -7,10 +7,14 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
+import javax.persistence.Table;
 
 import com.jss.osiris.modules.miscellaneous.model.IId;
 
 @Entity
+@Table(indexes = {
+		@Index(name = "idx_accounting_account_class", columnList = "code", unique = true) })
 public class AccountingAccountClass implements Serializable, IId {
 
 	@Id

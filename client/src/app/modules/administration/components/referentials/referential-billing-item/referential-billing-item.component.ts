@@ -4,6 +4,7 @@ import { MatAccordion } from '@angular/material/expansion';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Observable, Subscription } from 'rxjs';
+import { AppService } from 'src/app/app.service';
 import { formatDate } from 'src/app/libs/FormatHelper';
 import { AccountingAccount } from 'src/app/modules/accounting/model/AccountingAccount';
 import { BillingItem } from 'src/app/modules/miscellaneous/model/BillingItem';
@@ -18,6 +19,7 @@ export class ReferentialBillingItemComponent implements OnInit {
 
   selectedEntity: BillingItem | undefined;
   @Input() editMode: boolean = false;
+  @Output() editModeChange: EventEmitter<boolean> = new EventEmitter<boolean>();
   @Input() saveEvent: Observable<void> | undefined;
   saveEventSubscription: Subscription | undefined;
   @Input() addEvent: Observable<void> | undefined;
@@ -31,13 +33,14 @@ export class ReferentialBillingItemComponent implements OnInit {
   @ViewChild(MatAccordion) accordion: MatAccordion | undefined;
 
   accountingAccountCharge: AccountingAccount | undefined;
-  accountingAccountProducts: AccountingAccount[] | undefined;
+  accountingAccountProduct: AccountingAccount | undefined;
 
   entityDataSource: MatTableDataSource<BillingItem> = new MatTableDataSource<BillingItem>();
 
   constructor(
     private formBuilder: FormBuilder,
     private billingItemService: BillingItemService,
+    private appService: AppService,
   ) { }
 
   entityForm = this.formBuilder.group({
@@ -74,7 +77,7 @@ export class ReferentialBillingItemComponent implements OnInit {
     if (this.selectedEntity.startDate)
       this.selectedEntity.startDate = new Date(this.selectedEntity.startDate);
     this.setCharge();
-    this.setProducts();
+    this.setProduct();
     this.selectedEntityChange.emit(this.selectedEntity);
   }
 
@@ -87,23 +90,26 @@ export class ReferentialBillingItemComponent implements OnInit {
   }
 
   saveEntity() {
-    if (this.selectedEntity) {
+    if (this.selectedEntity && this.entityForm && this.entityForm.valid) {
+      this.editMode = false;
+      this.editModeChange.emit(this.editMode);
       this.selectedEntity.accountingAccounts = [] as Array<AccountingAccount>;
       if (this.accountingAccountCharge)
         this.selectedEntity.accountingAccounts.push(this.accountingAccountCharge);
-      if (this.accountingAccountProducts)
-        for (let accountingAccountProduct of this.accountingAccountProducts)
-          this.selectedEntity.accountingAccounts.push(accountingAccountProduct);
+      if (this.accountingAccountProduct)
+        this.selectedEntity.accountingAccounts.push(this.accountingAccountProduct);
       this.billingItemService.addOrUpdateBillingItem(this.selectedEntity).subscribe(response => {
         this.setDataTable();
       });
+    } else {
+      this.appService.displaySnackBar("Erreur, certains champs ne sont pas correctement renseignés !", true, 60);
     }
   }
 
   addEntity() {
     this.selectedEntity = {} as BillingItem;
     this.setCharge();
-    this.setProducts();
+    this.setProduct();
   }
 
   setDataTable() {
@@ -137,13 +143,15 @@ export class ReferentialBillingItemComponent implements OnInit {
           this.accountingAccountCharge = entity;
   }
 
-  setProducts() {
-    this.accountingAccountProducts = [] as Array<AccountingAccount>;
+  setProduct() {
+    this.accountingAccountProduct = undefined;
     if (this.selectedEntity && this.selectedEntity.accountingAccounts)
       for (let entity of this.selectedEntity.accountingAccounts)
-        if (entity && entity.accountingAccountNumber.substring(0, 3) == "706") {
-          this.accountingAccountProducts?.push(entity);
-        }
+        if (entity && entity.accountingAccountNumber.substring(0, 3) == "706")
+          this.accountingAccountProduct = entity;
+
+    if (!this.accountingAccountProduct)
+      this.addProduct();
   }
 
   addCharge() {
@@ -155,9 +163,8 @@ export class ReferentialBillingItemComponent implements OnInit {
 
   addProduct() {
     if (this.selectedEntity) {
-      if (this.accountingAccountProducts == undefined)
-        this.accountingAccountProducts = [] as Array<AccountingAccount>;
-      this.accountingAccountProducts.push({ accountingAccountNumber: "706" } as AccountingAccount);
+      if (this.accountingAccountProduct == undefined)
+        this.accountingAccountProduct = { accountingAccountNumber: "706" } as AccountingAccount;
     }
   }
 
@@ -166,5 +173,9 @@ export class ReferentialBillingItemComponent implements OnInit {
     filterValue = filterValueCast.value.trim();
     filterValue = filterValue.toLowerCase();
     this.entityDataSource.filter = filterValue;
+  }
+
+  displayLabel(object: any): string {
+    return object ? object.label : '';
   }
 }

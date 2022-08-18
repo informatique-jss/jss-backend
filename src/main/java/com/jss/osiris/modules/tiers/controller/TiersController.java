@@ -719,6 +719,8 @@ public class TiersController {
         }
       }
 
+      validationHelper.validateString(tiers.getPaymentBIC(), false);
+
       if (tiers.getDocuments() != null && tiers.getDocuments().size() > 0) {
         for (Document document : tiers.getDocuments()) {
 
@@ -736,6 +738,11 @@ public class TiersController {
           validationHelper.validateString(document.getAffaireRecipient(), false, 40);
           validationHelper.validateString(document.getClientRecipient(), false, 40);
           validationHelper.validateString(document.getBillingLabel(), false, 40);
+          validationHelper.validateString(document.getBillingLabelAddress(), false, 60);
+          validationHelper.validateString(document.getBillingLabelPostalCode(), false, 10);
+          validationHelper.validateReferential(document.getBillingLabelCity(), false);
+          validationHelper.validateReferential(document.getBillingLabelCountry(), false);
+
           validationHelper.validateString(document.getCommandNumber(), false, 40);
           validationHelper.validateReferential(document.getPaymentDeadlineType(), false);
           validationHelper.validateReferential(document.getRefundType(), false);

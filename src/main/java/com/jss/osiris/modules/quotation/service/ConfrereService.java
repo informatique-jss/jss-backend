@@ -8,6 +8,6 @@ public interface ConfrereService {
     public List<Confrere> getConfreres();
 
     public Confrere getConfrere(Integer id);
-	
-	 public Confrere addOrUpdateConfrere(Confrere confrere);
+
+    public Confrere addOrUpdateConfrere(Confrere confrere) throws Exception;
 }

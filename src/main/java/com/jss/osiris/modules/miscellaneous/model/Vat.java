@@ -8,6 +8,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import com.jss.osiris.modules.accounting.model.AccountingAccount;
+
 @Entity
 public class Vat implements Serializable, IId {
 
@@ -22,6 +24,8 @@ public class Vat implements Serializable, IId {
 	private String code;
 
 	private Float rate;
+
+	private AccountingAccount accountingAccount;
 
 	public Integer getId() {
 		return id;
@@ -53,6 +57,14 @@ public class Vat implements Serializable, IId {
 
 	public void setCode(String code) {
 		this.code = code;
+	}
+
+	public AccountingAccount getAccountingAccount() {
+		return accountingAccount;
+	}
+
+	public void setAccountingAccount(AccountingAccount accountingAccount) {
+		this.accountingAccount = accountingAccount;
 	}
 
 }

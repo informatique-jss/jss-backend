@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
+import { AppService } from 'src/app/app.service';
 import { DocumentType } from 'src/app/modules/miscellaneous/model/DocumentType';
 import { DocumentTypeService } from 'src/app/modules/miscellaneous/services/document.type.service';
 import { GenericReferentialComponent } from '../generic-referential/generic-referential-component';
@@ -12,10 +13,10 @@ import { GenericReferentialComponent } from '../generic-referential/generic-refe
 })
 export class ReferentialDocumentTypeComponent extends GenericReferentialComponent<DocumentType> implements OnInit {
   constructor(private documentTypeService: DocumentTypeService,
-    private formBuilder2: FormBuilder) {
-    super(formBuilder2);
+    private formBuilder2: FormBuilder,
+    private appService2: AppService,) {
+    super(formBuilder2, appService2);
   }
-
   getAddOrUpdateObservable(): Observable<DocumentType> {
     return this.documentTypeService.addOrUpdateDocumentType(this.selectedEntity!);
   }

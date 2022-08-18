@@ -43,6 +43,10 @@ public class Quotation implements IQuotation {
 	@IndexedField
 	private Responsable responsable;
 
+	@ManyToOne
+	@JoinColumn(name = "id_confrere")
+	private Confrere confrere;
+
 	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "asso_quotation_special_offer", joinColumns = @JoinColumn(name = "id_quotation"), inverseJoinColumns = @JoinColumn(name = "id_special_offer"))
 	private List<SpecialOffer> specialOffers;
@@ -72,8 +76,13 @@ public class Quotation implements IQuotation {
 	@JoinColumn(name = "id_quotation_label_type")
 	private QuotationLabelType labelType;
 
-	@Column(length = 40)
-	private String label;
+	@ManyToOne
+	@JoinColumn(name = "id_custom_label_responsable")
+	private Responsable customLabelResponsable;
+
+	@ManyToOne
+	@JoinColumn(name = "id_custom_label_tiers")
+	private Tiers customLabelTiers;
 
 	@ManyToOne
 	@JoinColumn(name = "id_record_type")
@@ -97,6 +106,12 @@ public class Quotation implements IQuotation {
 	@OneToMany(targetEntity = InvoiceItem.class, mappedBy = "quotation", cascade = CascadeType.ALL)
 	@JsonManagedReference("quotation")
 	private List<InvoiceItem> invoiceItems;
+
+	@Column(length = 40)
+	private String quotationLabel;
+
+	@Column(nullable = false)
+	private Boolean isQuotation;
 
 	public Integer getId() {
 		return id;
@@ -178,6 +193,14 @@ public class Quotation implements IQuotation {
 		this.documents = documents;
 	}
 
+	public QuotationLabelType getQuotationLabelType() {
+		return labelType;
+	}
+
+	public void setQuotationLabelType(QuotationLabelType labelType) {
+		this.labelType = labelType;
+	}
+
 	public QuotationLabelType getLabelType() {
 		return labelType;
 	}
@@ -186,12 +209,20 @@ public class Quotation implements IQuotation {
 		this.labelType = labelType;
 	}
 
-	public String getLabel() {
-		return label;
+	public Responsable getCustomLabelResponsable() {
+		return customLabelResponsable;
 	}
 
-	public void setLabel(String label) {
-		this.label = label;
+	public void setCustomLabelResponsable(Responsable customLabelResponsable) {
+		this.customLabelResponsable = customLabelResponsable;
+	}
+
+	public Tiers getCustomLabelTiers() {
+		return customLabelTiers;
+	}
+
+	public void setCustomLabelTiers(Tiers customLabelTiers) {
+		this.customLabelTiers = customLabelTiers;
 	}
 
 	public RecordType getRecordType() {
@@ -240,6 +271,30 @@ public class Quotation implements IQuotation {
 
 	public void setInvoiceItems(List<InvoiceItem> invoiceItems) {
 		this.invoiceItems = invoiceItems;
+	}
+
+	public String getQuotationLabel() {
+		return quotationLabel;
+	}
+
+	public void setQuotationLabel(String quotationLabel) {
+		this.quotationLabel = quotationLabel;
+	}
+
+	public Boolean getIsQuotation() {
+		return isQuotation;
+	}
+
+	public void setIsQuotation(Boolean isQuotation) {
+		this.isQuotation = isQuotation;
+	}
+
+	public Confrere getConfrere() {
+		return confrere;
+	}
+
+	public void setConfrere(Confrere confrere) {
+		this.confrere = confrere;
 	}
 
 }

@@ -3,6 +3,7 @@ import { FormBuilder } from '@angular/forms';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Observable, Subscription } from 'rxjs';
+import { AppService } from 'src/app/app.service';
 import { IReferential } from '../../../model/IReferential';
 
 @Directive()
@@ -10,6 +11,7 @@ export abstract class GenericReferentialComponent<T extends IReferential> implem
 
   selectedEntity: T | undefined;
   @Input() editMode: boolean = false;
+  @Output() editModeChange: EventEmitter<boolean> = new EventEmitter<boolean>();
   @Input() saveEvent: Observable<void> | undefined;
   saveEventSubscription: Subscription | undefined;
   @Input() addEvent: Observable<void> | undefined;
@@ -25,6 +27,7 @@ export abstract class GenericReferentialComponent<T extends IReferential> implem
 
   constructor(
     private formBuilder: FormBuilder,
+    private appService: AppService
   ) { }
 
   entityForm = this.formBuilder.group({
@@ -70,9 +73,15 @@ export abstract class GenericReferentialComponent<T extends IReferential> implem
   abstract getGetObservable(): Observable<T[]>;
 
   saveEntity() {
-    this.getAddOrUpdateObservable().subscribe(response => {
-      this.setDataTable();
-    });
+    if (this.entityForm && this.entityForm.valid) {
+      this.editMode = false;
+      this.editModeChange.emit(this.editMode);
+      this.getAddOrUpdateObservable().subscribe(response => {
+        this.setDataTable();
+      });
+    } else {
+      this.appService.displaySnackBar("Erreur, certains champs ne sont pas correctement renseignés !", true, 60);
+    }
   }
 
   getFormStatus() {

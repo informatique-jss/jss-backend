@@ -5,6 +5,7 @@ import { Phone } from "../../miscellaneous/model/Phone";
 import { SpecialOffer } from "../../miscellaneous/model/SpecialOffer";
 import { Responsable } from "../../tiers/model/Responsable";
 import { Tiers } from "../../tiers/model/Tiers";
+import { Confrere } from "./Confrere";
 import { InvoiceItem } from "./InvoiceItem";
 import { Provision } from "./Provision";
 import { QuotationLabelType } from "./QuotationLabelType";
@@ -13,8 +14,9 @@ import { RecordType } from "./RecordType";
 
 export interface IQuotation extends IAttachment, IDocument {
   id: number;
-  tiers: Tiers | null;
-  responsable: Responsable | null;
+  tiers: Tiers | undefined;
+  responsable: Responsable | undefined;
+  confrere: Confrere | undefined;
   specialOffers: SpecialOffer[] | undefined;
   overrideSpecialOffer: boolean;
   createdDate: Date;
@@ -23,9 +25,12 @@ export interface IQuotation extends IAttachment, IDocument {
   description: string;
   quotationLabelType: QuotationLabelType;
   quotationLabel: string;
+  customLabelResponsable: Responsable | undefined;
+  customLabelTiers: Tiers | undefined;
   recordType: RecordType;
   provisions: Provision[];
   mails: Mail[];
   phones: Phone[];
   invoiceItems: InvoiceItem[];
+  isQuotation: boolean;
 }

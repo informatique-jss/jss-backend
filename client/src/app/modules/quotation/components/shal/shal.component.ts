@@ -167,6 +167,7 @@ export class ShalComponent implements OnInit {
 
       this.shalForm.markAllAsTouched();
       this.toggleTabs();
+      this.updateCharacterPrice();
     }
   }
 
@@ -190,11 +191,12 @@ export class ShalComponent implements OnInit {
   });
 
   getFormStatus(): boolean {
+    console.log(this.shalForm.valid);
     this.shalForm.markAllAsTouched();
     if (this.shal)
       this.shal.notice = this.shal.notice.replace(/ +(?= )/g, '').replace(/(\r\n|\r|\n){2,}/g, '$1\n');
 
-    return this.shalForm.valid && this.shal!.noticeTypes && this.shal!.noticeTypes.length > 0;
+    return this.shalForm.valid && this.shal.noticeTypes && this.shal.noticeTypes.length > 0;
   }
 
   getCurrentDate(): Date {

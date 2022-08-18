@@ -1,4 +1,5 @@
 <mat-form-field class="full-width" [formGroup]="form!">
   <mat-label *ngIf="label && label.length>0">{{label}}</mat-label>
   <input matInput [formControlName]="propertyName" [placeholder]="label" [type]="type" (change)="inputChange()">
+  <mat-hint *ngIf="hint && hint.length>0">{{hint}}</mat-hint>
 </mat-form-field>

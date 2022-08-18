@@ -36,3 +36,11 @@ table {
   padding-top: 30px;
   font-weight: 600;
 }
+
+.validation-pending {
+  color: rgb(211, 84, 0)
+}
+
+.validated {
+  color: rgb(39, 174, 96)
+}

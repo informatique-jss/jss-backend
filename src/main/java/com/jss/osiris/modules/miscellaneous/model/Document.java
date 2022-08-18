@@ -6,6 +6,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -17,6 +18,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.tiers.model.BillingClosureRecipientType;
@@ -37,22 +39,27 @@ public class Document implements Serializable, IId {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_tiers")
 	@JsonBackReference("tiers")
 	private Tiers tiers;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_confrere")
+	@JsonBackReference("confrere")
+	private Confrere confrere;
+
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_responsable")
 	@JsonBackReference("responsable")
 	private Responsable responsable;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_quotation")
 	@JsonBackReference("quotation")
 	private Quotation quotation;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_customer_order")
 	@JsonBackReference("customerOrder")
 	private CustomerOrder customerOrder;
@@ -81,6 +88,11 @@ public class Document implements Serializable, IId {
 	private Integer numberMailingClient;
 	@Column(length = 40)
 	private String billingLabel;
+	private String billingLabelAddress;
+	private String billingLabelPostalCode;
+	private City billingLabelCity;
+	private Country billingLabelCountry;
+	private Boolean billingLabelIsIndividual;
 
 	@ManyToOne
 	@JoinColumn(name = "id_billing_label_type")
@@ -295,6 +307,38 @@ public class Document implements Serializable, IId {
 		this.billingLabel = billingLabel;
 	}
 
+	public String getBillingLabelAddress() {
+		return billingLabelAddress;
+	}
+
+	public void setBillingLabelAddress(String billingLabelAddress) {
+		this.billingLabelAddress = billingLabelAddress;
+	}
+
+	public String getBillingLabelPostalCode() {
+		return billingLabelPostalCode;
+	}
+
+	public void setBillingLabelPostalCode(String billingLabelPostalCode) {
+		this.billingLabelPostalCode = billingLabelPostalCode;
+	}
+
+	public City getBillingLabelCity() {
+		return billingLabelCity;
+	}
+
+	public void setBillingLabelCity(City billingLabelCity) {
+		this.billingLabelCity = billingLabelCity;
+	}
+
+	public Country getBillingLabelCountry() {
+		return billingLabelCountry;
+	}
+
+	public void setBillingLabelCountry(Country billingLabelCountry) {
+		this.billingLabelCountry = billingLabelCountry;
+	}
+
 	public BillingLabelType getBillingLabelType() {
 		return billingLabelType;
 	}
@@ -397,6 +441,22 @@ public class Document implements Serializable, IId {
 
 	public void setQuotation(Quotation quotation) {
 		this.quotation = quotation;
+	}
+
+	public Confrere getConfrere() {
+		return confrere;
+	}
+
+	public void setConfrere(Confrere confrere) {
+		this.confrere = confrere;
+	}
+
+	public Boolean getBillingLabelIsIndividual() {
+		return billingLabelIsIndividual;
+	}
+
+	public void setBillingLabelIsIndividual(Boolean billingLabelIsIndividual) {
+		this.billingLabelIsIndividual = billingLabelIsIndividual;
 	}
 
 }

@@ -7,6 +7,8 @@ import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.jss.osiris.modules.accounting.model.AccountingAccountCouple;
+import com.jss.osiris.modules.accounting.service.AccountingAccountService;
 import com.jss.osiris.modules.miscellaneous.service.MailService;
 import com.jss.osiris.modules.miscellaneous.service.PhoneService;
 import com.jss.osiris.modules.quotation.model.Regie;
@@ -24,6 +26,9 @@ public class RegieServiceImpl implements RegieService {
     @Autowired
     MailService mailService;
 
+    @Autowired
+    AccountingAccountService accountingAccountService;
+
     @Override
     public List<Regie> getRegies() {
         return IterableUtils.toList(regieRepository.findAll());
@@ -38,8 +43,7 @@ public class RegieServiceImpl implements RegieService {
     }
 
     @Override
-    public Regie addOrUpdateRegie(
-            Regie regie) {
+    public Regie addOrUpdateRegie(Regie regie) throws Exception {
         // If mails already exists, get their ids
         if (regie != null && regie.getMails() != null
                 && regie.getMails().size() > 0)
@@ -50,6 +54,16 @@ public class RegieServiceImpl implements RegieService {
                 && regie.getPhones().size() > 0) {
             phoneService.populateMPhoneIds(regie.getPhones());
         }
+
+        // Generate accounting accounts
+        if (regie.getId() == null
+                || regie.getAccountingAccountCustomer() == null && regie.getAccountingAccountProvider() == null) {
+            AccountingAccountCouple accountingAccountCouple = accountingAccountService
+                    .generateAccountingAccountsForEntity(regie.getLabel());
+            regie.setAccountingAccountCustomer(accountingAccountCouple.getAccountingAccountCustomer());
+            regie.setAccountingAccountProvider(accountingAccountCouple.getAccountingAccountProvider());
+        }
+
         return regieRepository.save(regie);
     }
 }

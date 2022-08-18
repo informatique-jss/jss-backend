@@ -1,3 +1,12 @@
+<ng-template #accordionTools>
+  <mat-panel-description>
+    <mat-icon matTooltip="Ouvrir tous les onglets" (click)="accordion!.openAll();$event.stopPropagation();"
+      class="pointer">
+      unfold_more_double</mat-icon>
+    <mat-icon matTooltip="Fermer tous les autres onglets" (click)="accordion!.closeAll();" class="pointer">
+      unfold_less_double</mat-icon>
+  </mat-panel-description>
+</ng-template>
 <div>
   <div>
     <mat-form-field class="full-width">
@@ -66,21 +75,30 @@
         </table>
         <table class="full-width">
           <tr>
-            <td>
+            <td *ngIf="selectedEntity.accountingAccountProvider">
               <autocomplete-accounting-account [(model)]="selectedEntity.accountingAccountProvider" [form]="entityForm"
-                propertyName="accountingAccountProvider" [isMandatory]="true" label="Compte comptable fournisseur"
-                (onOptionSelected)="fillAccountCustomer()">
+                propertyName="accountingAccountProvider" [isMandatory]="false" [isDisabled]="true"
+                label="Compte comptable fournisseur">
               </autocomplete-accounting-account>
             </td>
-            <td>
+            <td *ngIf="selectedEntity.accountingAccountCustomer">
               <autocomplete-accounting-account [(model)]="selectedEntity.accountingAccountCustomer" [form]="entityForm"
-                propertyName="accountingAccountCustomer" [isMandatory]="true" label="Compte comptable client"
-                (onOptionSelected)="fillAccountProvider()">
+                propertyName="accountingAccountCustomer" [isMandatory]="false" [isDisabled]="true"
+                label="Compte comptable client">
               </autocomplete-accounting-account>
             </td>
+          </tr>
+        </table>
+        <table class="full-width">
+          <tr>
             <td>
               <generic-input [(model)]="selectedEntity.iban" label="IBAN" [form]="entityForm" propertyName="iban"
                 [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="40"></generic-input>
+            </td>
+            <td>
+              <select-vat-collection-type [(model)]="selectedEntity.vatCollectionType"
+                label="Type d'encaissement de la TVA" [form]="entityForm" propertyName="vatCollectionType"
+                [isMandatory]="true" [isDisabled]="!editMode"></select-vat-collection-type>
             </td>
           </tr>
         </table>
@@ -142,9 +160,8 @@
                 propertyName="reinvoicing" [isMandatory]="false" [isDisabled]="!editMode" type="number"></generic-input>
             </td>
             <td>
-              <generic-input [(model)]="selectedEntity.discountRate" label="Remise (%)" [form]="entityForm"
-                propertyName="discountRate" [isMandatory]="false" [isDisabled]="!editMode" type="number">
-              </generic-input>
+              <chips-special-offers [(model)]="selectedEntity.specialOffers" [form]="entityForm"
+                propertyName="specialOffers" [isDisabled]="!editMode"></chips-special-offers>
             </td>
             <td>
               <generic-input [(model)]="selectedEntity.shippingCosts" label="Frais de port (€)" [form]="entityForm"
@@ -225,7 +242,192 @@
             </td>
           </tr>
         </table>
+        <mat-accordion multi>
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                Justificatif de parution
+              </mat-panel-title>
+              <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
+            </mat-expansion-panel-header>
+            <addressing [editMode]="editMode" [document]="publicationDocument" [displayPaperCopy]="true"
+              [displayMailCC]="true" [displayNumberMailing]="true">
+            </addressing>
+          </mat-expansion-panel>
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                Facture
+              </mat-panel-title>
+              <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
+            </mat-expansion-panel-header>
+            <table class="full-width">
+              <tr>
+                <td>
+                  <radio-group-billing-label [(model)]="billingDocument.billingLabelType" [form]="entityForm"
+                    propertyName="billingLabelType" label="Libellé sur facture"></radio-group-billing-label>
+                </td>
+              </tr>
+            </table>
+            <table class="full-width"
+              *ngIf="billingDocument.billingLabelType!=undefined && billingDocument.billingLabelType.code!=undefined && billingDocument.billingLabelType.code==BILLING_TIERS_DOCUMENT_TYPE_OTHER_CODE">
+              <tr>
+                <td>
+                  <generic-textarea [(model)]="billingDocument.billingLabel" label="Autre libellé sur facture"
+                    [form]="entityForm" propertyName="billingLabel" [isDisabled]="!editMode" [numberOfLines]="4"
+                    [customValidators]="[Validators.maxLength(40)]"></generic-textarea>
+                </td>
+                <td>
+                  <generic-input [(model)]="billingDocument.billingLabelAddress" label="Adresse" [form]="entityForm"
+                    propertyName="billingLabelAddress" [isMandatory]="true" [maxLength]="20"></generic-input>
+                </td>
+                <td>
+                  <autocomplete-city [(model)]="billingDocument.billingLabelCity"
+                    [modelCountry]="billingDocument.billingLabelCountry" [form]="entityForm"
+                    propertyName="billingLabelCity" [isMandatory]="true"
+                    (onOptionSelected)="fillPostalCodeBilling($event)">
+                  </autocomplete-city>
+                </td>
+                <td>
+                  <autocomplete-postal-code [(model)]="billingDocument.billingLabelPostalCode" [form]="entityForm"
+                    propertyName="billingLabelPostalCode" [isMandatory]="true"
+                    [conditionnalRequired]="billingDocument.billingLabelCountry != null && billingDocument.billingLabelCountry.code == COUNTRY_CODE_FRANCE"
+                    (onOptionSelected)="fillCityBilling($event)"></autocomplete-postal-code>
+                </td>
+                <td>
+                  <autocomplete-country [(model)]="billingDocument.billingLabelCountry" [form]="entityForm"
+                    propertyName="billingLabelCountry" [isMandatory]="true"></autocomplete-country>
+                </td>
+                <td>
+                  <generic-toggle [(model)]="billingDocument.billingLabelIsIndividual" label="Particulier ?"
+                    [form]="entityForm" propertyName="billingLabelIsIndividual"></generic-toggle>
+                </td>
+              </tr>
+            </table>
+            <table class="full-width">
+              <tr>
+                <td>
+                  <generic-toggle [(model)]="billingDocument.isResponsableOnBilling" label="Responsable sur facture ?"
+                    [form]="entityForm" propertyName="isResponsableOnBilling"></generic-toggle>
+                </td>
+              </tr>
+            </table>
+            <table class="full-width">
+              <tr>
+                <td>
+                  <generic-toggle [(model)]="billingDocument.isCommandNumberMandatory"
+                    label="Numéro de commande obligatoire ?" [form]="entityForm"
+                    propertyName="isCommandNumberMandatory"></generic-toggle>
+                </td>
+                <td *ngIf="billingDocument.isCommandNumberMandatory">
+                  <generic-input [(model)]="billingDocument.commandNumber" label="N° de commande annuel"
+                    [form]="entityForm" propertyName="commandNumber" [maxLength]="40"></generic-input>
+                </td>
+              </tr>
+            </table>
+            <addressing [editMode]="editMode" [document]="billingDocument " [displayMailCC]="true"></addressing>
+          </mat-expansion-panel>
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                Règlement
+              </mat-panel-title>
+              <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
+            </mat-expansion-panel-header>
+            <table class="full-width">
+              <tr>
+                <td>
+                  <select-payment-types [(model)]="selectedEntity.paymentType" label="Type" [form]="entityForm"
+                    propertyName="paymentType" [isMandatory]="true" [isDisabled]="!editMode"
+                    [filteredPaymentTypeCodes]="[PAYMENT_TYPE_PRELEVEMENT,PAYMENT_TYPE_OTHERS]"></select-payment-types>
+                </td>
+                <td
+                  *ngIf="selectedEntity !=undefined && selectedEntity.paymentType!=undefined && selectedEntity.paymentType.code!=undefined && selectedEntity.paymentType.code==PAYMENT_TYPE_PRELEVEMENT">
+                  <generic-input [(model)]="selectedEntity.iban" label="IBAN" [form]="entityForm" propertyName="iban"
+                    [isMandatory]="true" [isDisabled]="!editMode"
+                    [conditionnalRequired]="this.selectedEntity.paymentType != undefined && this.selectedEntity.paymentType.code != undefined && this.selectedEntity.paymentType.code == PAYMENT_TYPE_PRELEVEMENT "
+                    [maxLength]="40"></generic-input>
+                </td>
+                <td
+                  *ngIf="selectedEntity !=undefined && selectedEntity.paymentType!=undefined && selectedEntity.paymentType.code!=undefined && selectedEntity.paymentType.code==PAYMENT_TYPE_PRELEVEMENT">
+                  <generic-input [(model)]="selectedEntity.paymentBIC" label="BIC" [form]="entityForm"
+                    propertyName="paymentBIC" [isMandatory]="true" [isDisabled]="!editMode"
+                    [conditionnalRequired]=" this.selectedEntity.paymentType != undefined && this.selectedEntity.paymentType.code != undefined && this.selectedEntity.paymentType.code == PAYMENT_TYPE_PRELEVEMENT "
+                    [maxLength]="8"></generic-input>
+                </td>
+                <td
+                  *ngIf="selectedEntity !=undefined && selectedEntity.paymentType!=undefined && selectedEntity.paymentType.code!=undefined && selectedEntity.paymentType.code==PAYMENT_TYPE_PRELEVEMENT">
+                  <generic-toggle [(model)]="selectedEntity.isSepaMandateReceived" label="Mandat SEPA reçu ?"
+                    [form]="entityForm" propertyName="isSepaMandateReceived"></generic-toggle>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <generic-toggle [(model)]="selectedEntity.isProvisionalPaymentMandatory"
+                    label="Provision obligatoire ?" [form]="entityForm" propertyName="isProvisionalPaymentMandatory">
+                  </generic-toggle>
+                </td>
+                <td>
+                  <select-payment-deadline [(model)]="dunningDocument.paymentDeadlineType" label="Délai de paiement"
+                    [form]="entityForm" propertyName="paymentDeadlineType" [isDisabled]="!editMode">
+                  </select-payment-deadline>
+                </td>
+              </tr>
+            </table>
+          </mat-expansion-panel>
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                Remboursement
+              </mat-panel-title>
+              <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
+            </mat-expansion-panel-header>
+            <table class="full-width">
+              <tr>
+                <td>
+                  <generic-toggle [(model)]="refundDocument.isRefundable" label="Remboursement ?" [form]="entityForm"
+                    propertyName="isRefundable"></generic-toggle>
+                </td>
+                <td *ngIf="refundDocument.isRefundable">
+                  <select-refund-type [(model)]="refundDocument.refundType" label="Type de remboursement"
+                    [form]="entityForm" propertyName="refundType"></select-refund-type>
+                </td>
+                <td
+                  *ngIf="refundDocument.isRefundable && refundDocument !=undefined && refundDocument.refundType!=undefined && refundDocument.refundType.code!=undefined && refundDocument.refundType.code==REFUND_TYPE_VIREMENT">
+                  <generic-input [(model)]="refundDocument.refundIBAN" label="IBAN" [form]="entityForm"
+                    propertyName="refundIBAN" [isMandatory]="true" [isDisabled]="!editMode"
+                    [conditionnalRequired]="refundDocument.refundType != undefined && refundDocument.refundType.code != undefined && refundDocument.refundType.code == REFUND_TYPE_VIREMENT "
+                    [maxLength]="40"></generic-input>
+                </td>
+              </tr>
+            </table>
+            <addressing [editMode]="editMode" [document]="refundDocument" *ngIf="refundDocument.isRefundable">
+            </addressing>
+          </mat-expansion-panel>
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                Relance
+              </mat-panel-title>
+              <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
+            </mat-expansion-panel-header>
+            <table class="full-width">
+              <tr>
+                <td>
+                  <generic-toggle [(model)]="billingDocument.isAutomaticDunning" label="Relance automatique ?"
+                    [form]="entityForm" propertyName="isAutomaticDunning"></generic-toggle>
+                </td>
+                <td>
+                  <select-payment-deadline [(model)]="dunningDocument.reminderPaymentDeadlineType"
+                    label="Echéance de relance" [form]="entityForm" propertyName="reminderPaymentDeadlineType"
+                    [isDisabled]="!editMode">
+                  </select-payment-deadline>
+                </td>
+              </tr>
+            </table>
+            <addressing [editMode]="editMode" [document]="dunningDocument"></addressing>
+          </mat-expansion-panel>
+        </mat-accordion>
       </fieldset>
     </div>
   </form>
-</div>

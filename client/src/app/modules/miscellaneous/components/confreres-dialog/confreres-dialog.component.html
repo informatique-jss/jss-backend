@@ -18,7 +18,8 @@
   </ng-container>
   <ng-container matColumnDef="discountRate">
     <th mat-header-cell mat-sort-header *matHeaderCellDef>Taux de remise</th>
-    <td mat-cell *matCellDef="let element">{{element.discountRate}} %</td>
+    <td mat-cell *matCellDef="let element">{{(element.specialOffers &&
+      element.specialOffers.length>0)?element.specialOffers[0].label:""}}</td>
   </ng-container>
   <ng-container matColumnDef="weekDays">
     <th mat-header-cell mat-sort-header *matHeaderCellDef>Jours de parution</th>

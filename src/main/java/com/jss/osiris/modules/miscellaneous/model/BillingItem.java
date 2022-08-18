@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -32,7 +33,7 @@ public class BillingItem implements Serializable, IId {
 	@Column(nullable = false)
 	private Date startDate;
 
-	@OneToMany(targetEntity = AccountingAccount.class, mappedBy = "billingItem")
+	@OneToMany(targetEntity = AccountingAccount.class, mappedBy = "billingItem", fetch = FetchType.EAGER)
 	@JsonManagedReference("accountingAccount")
 	private List<AccountingAccount> accountingAccounts;
 

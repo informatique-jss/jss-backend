@@ -3,6 +3,7 @@ import { FormBuilder } from '@angular/forms';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
 import { Vat } from 'src/app/modules/miscellaneous/model/Vat';
 import { Affaire } from '../../model/Affaire';
+import { CustomerOrder } from '../../model/CustomerOrder';
 import { IQuotation } from '../../model/IQuotation';
 import { ProvisionType } from '../../model/ProvisionType';
 import { QuotationComponent } from '../quotation/quotation.component';
@@ -15,7 +16,9 @@ import { QuotationComponent } from '../quotation/quotation.component';
 export class InvoiceManagementComponent implements OnInit {
   matcher: CustomErrorStateMatcher = new CustomErrorStateMatcher();
   @Input() quotation: IQuotation = {} as IQuotation;
+  customerOrder: CustomerOrder | undefined;
   @Input() editMode: boolean = false;
+  @Input() instanceOfCustomerOrder: boolean = false;
   @Output() invoiceItemChange: EventEmitter<void> = new EventEmitter<void>();
 
   constructor(private formBuilder: FormBuilder,) { }
@@ -32,6 +35,12 @@ export class InvoiceManagementComponent implements OnInit {
 
   invoiceManagementForm = this.formBuilder.group({
   });
+
+  hasInvoice(): boolean {
+    if (this.quotation && this.quotation.invoiceItems && this.quotation.invoiceItems.length > 0 && this.quotation.invoiceItems[0].invoice)
+      return true;
+    return false;
+  }
 
   itemChange() {
     this.invoiceItemChange.emit();

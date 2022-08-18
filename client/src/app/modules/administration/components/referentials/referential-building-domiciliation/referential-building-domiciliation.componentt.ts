@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
+import { AppService } from 'src/app/app.service';
 import { COUNTRY_CODE_FRANCE } from 'src/app/libs/Constants';
 import { City } from 'src/app/modules/miscellaneous/model/City';
 import { CityService } from 'src/app/modules/miscellaneous/services/city.service';
@@ -16,8 +17,9 @@ import { GenericReferentialComponent } from '../generic-referential/generic-refe
 export class ReferentialBuildingDomiciliationComponent extends GenericReferentialComponent<BuildingDomiciliation> implements OnInit {
   constructor(private buildingDomiciliationService: BuildingDomiciliationService,
     private cityService: CityService,
-    private formBuilder2: FormBuilder) {
-    super(formBuilder2);
+    private formBuilder2: FormBuilder,
+    private appService2: AppService,) {
+    super(formBuilder2, appService2);
   }
 
   getAddOrUpdateObservable(): Observable<BuildingDomiciliation> {

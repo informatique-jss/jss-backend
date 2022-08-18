@@ -33,7 +33,7 @@ public class CompetentAuthority implements Serializable, IId {
 	@JoinColumn(name = "id_competent_authority_type")
 	private CompetentAuthorityType competentAuthorityType;
 
-	@ManyToMany(cascade = CascadeType.ALL)
+	@ManyToMany(cascade = CascadeType.MERGE)
 	@JoinTable(name = "asso_competent_authority_department", joinColumns = @JoinColumn(name = "id_competent_authority"), inverseJoinColumns = @JoinColumn(name = "id_department"))
 	private List<Department> departments;
 
@@ -45,7 +45,7 @@ public class CompetentAuthority implements Serializable, IId {
 	@JoinTable(name = "asso_competent_authority_phone", joinColumns = @JoinColumn(name = "id_competent_authority"), inverseJoinColumns = @JoinColumn(name = "id_phone"))
 	private List<Phone> phones;
 
-	@Column(length = 40, nullable = false)
+	@Column(length = 40)
 	private String iban;
 
 	@Column(length = 40)

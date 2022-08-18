@@ -51,6 +51,11 @@ export abstract class GenericAutocompleteComponent<T, U> implements OnInit {
    * Give the selected object in parameter
    */
   @Output() onOptionSelected: EventEmitter<T> = new EventEmitter();
+  /**
+ * Indicate if the field is disabled or not in the formgroup provided
+ * Default : false
+ */
+  @Input() isDisabled: boolean = false;
 
   expectedMinLengthInput: number = 2;
 
@@ -65,6 +70,13 @@ export abstract class GenericAutocompleteComponent<T, U> implements OnInit {
     if (changes.model && this.form != undefined) {
       this.form.get(this.propertyName)?.setValue(this.model);
       this.cdr.detectChanges();
+    }
+    if (changes.isDisabled) {
+      if (this.isDisabled) {
+        this.form?.get(this.propertyName)?.disable();
+      } else {
+        this.form?.get(this.propertyName)?.enable();
+      }
     }
     if (this.form && (this.isMandatory || this.customValidators))
       this.form.get(this.propertyName)?.updateValueAndValidity();
@@ -158,5 +170,11 @@ export abstract class GenericAutocompleteComponent<T, U> implements OnInit {
     this.modelChange.emit(this.model);
     this.cdr.detectChanges();
     this.onOptionSelected.emit(type);
+  }
+
+  clearField(): void {
+    this.model = undefined;
+    this.modelChange.emit(this.model);
+    this.onOptionSelected.emit(undefined);
   }
 }

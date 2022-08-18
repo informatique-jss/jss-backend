@@ -7,6 +7,7 @@ import java.util.Base64;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -86,6 +87,7 @@ public class SireneDelegateServiceImpl implements SireneDelegateService {
 	}
 
 	@Override
+	@Cacheable(value = "siren", key = "#siren")
 	public List<Siren> getSiren(String siren) throws HttpStatusCodeException, Exception {
 		try {
 			SSLHelper.disableCertificateValidation();
@@ -105,6 +107,7 @@ public class SireneDelegateServiceImpl implements SireneDelegateService {
 	}
 
 	@Override
+	@Cacheable(value = "siret", key = "#siret")
 	public List<Siret> getSiret(String siret) throws HttpStatusCodeException, Exception {
 		try {
 			SSLHelper.disableCertificateValidation();

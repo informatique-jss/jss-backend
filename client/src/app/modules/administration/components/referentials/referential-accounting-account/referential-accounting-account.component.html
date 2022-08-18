@@ -10,10 +10,6 @@
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Identifiant technique</th>
         <td mat-cell *matCellDef="let element">{{element.id}}</td>
       </ng-container>
-      <ng-container matColumnDef="code">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Codification</th>
-        <td mat-cell *matCellDef="let element">{{(getElementCode(element)? getElementCode(element):"")}}</td>
-      </ng-container>
       <ng-container matColumnDef="label">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Nom fonctionnal</th>
         <td mat-cell *matCellDef="let element">{{(getElementLabel(element)? getElementLabel(element):"")}}</td>
@@ -37,12 +33,6 @@
           </tr>
           <tr>
             <td>
-              <generic-input [(model)]="selectedEntity.code" label="Codification" [maxLength]="20" [form]="entityForm"
-                propertyName="code" [isMandatory]="true" [isDisabled]="!editMode"></generic-input>
-            </td>
-          </tr>
-          <tr>
-            <td>
               <generic-input [(model)]="selectedEntity.label" label="Nom fonctionnel" [maxLength]="100"
                 [form]="entityForm" propertyName="label" [isMandatory]="true" [isDisabled]="!editMode"></generic-input>
             </td>
@@ -53,20 +43,19 @@
             <td>
               <select-accounting-account-class [(model)]="selectedEntity.accountingAccountClass"
                 label="Classe du compte comptable" [form]="entityForm" propertyName="accountingAccountClass"
-                [isMandatory]="true" [isDisabled]="!editMode"></select-accounting-account-class>
+                [isMandatory]="false" [isDisabled]="true"></select-accounting-account-class>
             </td>
           </tr>
           <tr>
             <td>
               <generic-input [(model)]="selectedEntity.accountingAccountNumber" label="N° de compte comptable"
                 [form]="entityForm" propertyName="accountingAccountNumber" [isMandatory]="true" [isDisabled]="!editMode"
-                [maxLength]="20"></generic-input>
+                [maxLength]="3"></generic-input>
             </td>
-          </tr>
-          <tr>
             <td>
-              <select-vat [(model)]="selectedEntity.vat" label="TVA applicable" [form]="entityForm" propertyName="vat"
-                [isMandatory]="false" [isDisabled]="!editMode"></select-vat>
+              <generic-input [(model)]="selectedEntity.accountingAccountSubNumber" label="N° de sous-compte comptable"
+                [form]="entityForm" propertyName="accountingAccountSubNumber" [isMandatory]="true"
+                [isDisabled]="!editMode" type="number"></generic-input>
             </td>
           </tr>
         </table>

@@ -29,6 +29,7 @@ import com.jss.osiris.modules.miscellaneous.repository.PhoneRepository;
 import com.jss.osiris.modules.miscellaneous.repository.RegionRepository;
 import com.jss.osiris.modules.miscellaneous.repository.SpecialOfferRepository;
 import com.jss.osiris.modules.miscellaneous.repository.UploadedFileRepository;
+import com.jss.osiris.modules.miscellaneous.repository.VatCollectionTypeRepository;
 import com.jss.osiris.modules.miscellaneous.repository.VatRepository;
 import com.jss.osiris.modules.miscellaneous.repository.WeekDayRepository;
 import com.jss.osiris.modules.profile.repository.EmployeeRepository;
@@ -253,6 +254,9 @@ public class InitReferentialsController {
 
 	@Autowired
 	AccountingAccountClassRepository accountingAccountClassRepository;
+
+	@Autowired
+	VatCollectionTypeRepository vatCollectionTypeRepository;
 
 	@GetMapping(inputEntryPoint + "/create")
 	public void create() {
@@ -723,6 +727,12 @@ public class InitReferentialsController {
 		 * quotationStatus.setLabel("A vérifier");
 		 * quotationStatusRepository.save(quotationStatus);
 		 * 
+		 * 
+		 * quotationStatus = new QuotationStatus();
+		 * quotationStatus.setCode("BILLED");
+		 * quotationStatus.setLabel("Facturée");
+		 * quotationStatusRepository.save(quotationStatus);
+		 * 
 		 * quotationStatus = new QuotationStatus();
 		 * quotationStatus.setCode("VALIDATED_BY_JSS");
 		 * quotationStatus.setLabel("Validé par JSS");
@@ -1177,6 +1187,23 @@ public class InitReferentialsController {
 		 * accountingAccountClass.setCode("7");
 		 * accountingAccountClass.setLabel("Produits");
 		 * accountingAccountClassRepository.save(accountingAccountClass);
+		 * 
+		 * accountingAccountClass = new AccountingAccountClass();
+		 * accountingAccountClass.setCode("4");
+		 * accountingAccountClass.setLabel("Tiers");
+		 * accountingAccountClassRepository.save(accountingAccountClass);
+		 */
+
+		/*
+		 * vatCollectionTypeRepository.deleteAll();
+		 * VatCollectionType vatCollectionType = new VatCollectionType();
+		 * vatCollectionType.setCode("DEBIT");
+		 * vatCollectionType.setLabel("Au débit");
+		 * vatCollectionTypeRepository.save(vatCollectionType);
+		 * vatCollectionType = new VatCollectionType();
+		 * vatCollectionType.setCode("ENCAISSEMENT");
+		 * vatCollectionType.setLabel("A l'encaissement");
+		 * vatCollectionTypeRepository.save(vatCollectionType);
 		 */
 	}
 }

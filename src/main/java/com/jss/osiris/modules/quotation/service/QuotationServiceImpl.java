@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.jss.osiris.libs.search.service.IndexEntityService;
@@ -15,11 +16,16 @@ import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.miscellaneous.model.AssoSpecialOfferBillingType;
 import com.jss.osiris.modules.miscellaneous.model.BillingItem;
 import com.jss.osiris.modules.miscellaneous.model.BillingType;
+import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.model.SpecialOffer;
+import com.jss.osiris.modules.miscellaneous.model.Vat;
 import com.jss.osiris.modules.miscellaneous.service.BillingItemService;
+import com.jss.osiris.modules.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.miscellaneous.service.MailService;
 import com.jss.osiris.modules.miscellaneous.service.PhoneService;
 import com.jss.osiris.modules.miscellaneous.service.SpecialOfferService;
+import com.jss.osiris.modules.miscellaneous.service.VatService;
+import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.CharacterPrice;
 import com.jss.osiris.modules.quotation.model.Domiciliation;
 import com.jss.osiris.modules.quotation.model.IQuotation;
@@ -28,6 +34,7 @@ import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.ProvisionType;
 import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.quotation.repository.QuotationRepository;
+import com.jss.osiris.modules.tiers.model.ITiers;
 
 @Service
 public class QuotationServiceImpl implements QuotationService {
@@ -56,6 +63,21 @@ public class QuotationServiceImpl implements QuotationService {
     @Autowired
     CharacterPriceService characterPriceService;
 
+    @Autowired
+    VatService vatService;
+
+    @Autowired
+    DocumentService documentService;
+
+    @Value("${miscellaneous.document.billing.label.type.customer.code}")
+    private String billingLabelCustomerCode;
+
+    @Value("${miscellaneous.document.billing.label.type.affaire.code}")
+    private String billingLabelAffaireCode;
+
+    @Value("${miscellaneous.document.billing.label.type.other.code}")
+    private String billingLabelOtherCode;
+
     @Override
     public Quotation getQuotation(Integer id) {
         Optional<Quotation> quotation = quotationRepository.findById(id);
@@ -65,9 +87,11 @@ public class QuotationServiceImpl implements QuotationService {
     }
 
     @Override
-    public Quotation addOrUpdateQuotation(Quotation quotation) {
+    public Quotation addOrUpdateQuotation(Quotation quotation) throws Exception {
         if (quotation.getId() == null)
             quotation.setCreatedDate(new Date());
+
+        quotation.setIsQuotation(true);
 
         // Complete domiciliation end date
         for (Provision provision : quotation.getProvisions()) {
@@ -104,20 +128,25 @@ public class QuotationServiceImpl implements QuotationService {
             }
         }
 
+        getAndSetInvoiceItemsForQuotation(quotation);
+        if (quotation.getInvoiceItems() != null)
+            for (InvoiceItem invoiceItem : quotation.getInvoiceItems())
+                invoiceItem.setQuotation(quotation);
         quotation = quotationRepository.save(quotation);
         indexEntityService.indexEntity(quotation, quotation.getId());
         return quotation;
     }
 
     @Override
-    public List<InvoiceItem> getInvoiceItemsForQuotation(IQuotation quotation) {
+    public List<InvoiceItem> getAndSetInvoiceItemsForQuotation(IQuotation quotation) throws Exception {
         ArrayList<InvoiceItem> invoiceItems = new ArrayList<InvoiceItem>();
         if (quotation.getProvisions() != null && quotation.getProvisions().size() > 0) {
             for (Provision provision : quotation.getProvisions()) {
                 invoiceItems.addAll(getInvoiceItemsForProvision(provision, quotation));
             }
         }
-        return invoiceItems;
+        mergeInvoiceItemsForQuotation(quotation, invoiceItems);
+        return quotation.getInvoiceItems();
     }
 
     private List<SpecialOffer> getAppliableSpecialOffersForQuotation(IQuotation quotation) {
@@ -171,7 +200,7 @@ public class QuotationServiceImpl implements QuotationService {
         return null;
     }
 
-    private List<InvoiceItem> getInvoiceItemsForProvision(Provision provision, IQuotation quotation) {
+    private List<InvoiceItem> getInvoiceItemsForProvision(Provision provision, IQuotation quotation) throws Exception {
         List<InvoiceItem> invoiceItems = new ArrayList<InvoiceItem>();
         if (provision.getProvisionType() != null) {
             ProvisionType provisionType = provisionTypeService.getProvisionType(provision.getProvisionType().getId());
@@ -183,14 +212,9 @@ public class QuotationServiceImpl implements QuotationService {
 
                         if (billingItem.getAccountingAccounts() != null
                                 && billingItem.getAccountingAccounts().size() > 0) {
-                            // TODO : algo pour déterminer la TVA à appliquer et donc le compte comptable à
-                            // utiliser
-                            AccountingAccount accountingAccount = billingItem.getAccountingAccounts().get(0);
-                            if (!accountingAccount.getAccountingAccountNumber().substring(0, 1).equals("7"))
-                                accountingAccount = billingItem.getAccountingAccounts().get(1);
 
                             InvoiceItem invoiceItem = new InvoiceItem();
-                            invoiceItem.setAccountingAccount(accountingAccount);
+                            invoiceItem.setAccountingAccount(getAccountingAccountForBillingItem(billingItem));
                             invoiceItem.setBillingItem(billingItem);
 
                             invoiceItem.setLabel(billingType.getLabel());
@@ -208,25 +232,9 @@ public class QuotationServiceImpl implements QuotationService {
                             } else {
                                 invoiceItem.setPreTaxPrice(billingItem.getPreTaxPrice());
                             }
-
-                            AssoSpecialOfferBillingType assoSpecialOfferBillingType = getAppliableSpecialOfferForProvision(
-                                    billingType, quotation);
-
-                            if (assoSpecialOfferBillingType != null) {
-                                if (assoSpecialOfferBillingType.getDiscountAmount() != null
-                                        && assoSpecialOfferBillingType.getDiscountAmount() > 0)
-                                    invoiceItem.setDiscountAmount(assoSpecialOfferBillingType.getDiscountAmount());
-                                if (assoSpecialOfferBillingType.getDiscountRate() != null
-                                        && assoSpecialOfferBillingType.getDiscountRate() > 0)
-                                    invoiceItem.setDiscountAmount(
-                                            invoiceItem.getPreTaxPrice()
-                                                    * assoSpecialOfferBillingType.getDiscountRate() / 100);
-                            }
-
-                            invoiceItem.setVatPrice(accountingAccount.getVat().getRate() / 100 * (invoiceItem
-                                    .getPreTaxPrice()
-                                    - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount() : 0)));
                             invoiceItem.setProvision(provision);
+                            computeInvoiceItemsVatAndDiscount(invoiceItem, quotation);
+
                             invoiceItems.add(invoiceItem);
                         }
                     }
@@ -234,5 +242,89 @@ public class QuotationServiceImpl implements QuotationService {
             }
         }
         return invoiceItems;
+    }
+
+    private AccountingAccount getAccountingAccountForBillingItem(BillingItem billingItem) {
+        // Return product accounting account
+        for (AccountingAccount accountingAccount : billingItem.getAccountingAccounts())
+            if (accountingAccount.getAccountingAccountNumber().substring(0, 1).equals("7"))
+                return accountingAccount;
+        return null;
+    }
+
+    private void computeInvoiceItemsVatAndDiscount(InvoiceItem invoiceItem, IQuotation quotation) throws Exception {
+        AssoSpecialOfferBillingType assoSpecialOfferBillingType = getAppliableSpecialOfferForProvision(
+                invoiceItem.getBillingItem().getBillingType(), quotation);
+
+        if (assoSpecialOfferBillingType != null) {
+            if (assoSpecialOfferBillingType.getDiscountAmount() != null
+                    && assoSpecialOfferBillingType.getDiscountAmount() > 0)
+                invoiceItem.setDiscountAmount(assoSpecialOfferBillingType.getDiscountAmount());
+            if (assoSpecialOfferBillingType.getDiscountRate() != null
+                    && assoSpecialOfferBillingType.getDiscountRate() > 0)
+                invoiceItem.setDiscountAmount(
+                        invoiceItem.getPreTaxPrice()
+                                * assoSpecialOfferBillingType.getDiscountRate() / 100);
+        }
+
+        Document billingDocument = documentService.getBillingDocument(quotation.getDocuments());
+        Vat vat = null;
+
+        // Search for customer order
+        ITiers customerOrder = null;
+        if (quotation.getConfrere() != null)
+            customerOrder = quotation.getConfrere();
+        if (quotation.getResponsable() != null)
+            customerOrder = quotation.getResponsable();
+        customerOrder = quotation.getTiers();
+
+        // If document not found or document indicate to use it, take customer order as
+        // default
+        if (billingDocument == null || billingDocument.getBillingLabelType() == null
+                || billingDocument.getBillingLabelType().getCode().equals(billingLabelCustomerCode)) {
+            vat = vatService.getApplicableVat(customerOrder.getCountry(), customerOrder.getCity().getDepartment(),
+                    customerOrder.getIsIndividual());
+        } else if (billingDocument.getBillingLabelType().getCode().equals(billingLabelAffaireCode)) {
+            Affaire affaire = invoiceItem.getProvision().getAffaire();
+            vat = vatService.getApplicableVat(affaire.getCountry(), affaire.getCity().getDepartment(),
+                    affaire.getIsIndividual());
+        } else {
+            vat = vatService.getApplicableVat(billingDocument.getBillingLabelCountry(),
+                    billingDocument.getBillingLabelCity().getDepartment(),
+                    billingDocument.getBillingLabelIsIndividual());
+        }
+
+        invoiceItem.setVatPrice(vat.getRate() / 100 * (invoiceItem.getPreTaxPrice()
+                - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount() : 0)));
+
+    }
+
+    private void mergeInvoiceItemsForQuotation(IQuotation quotation, List<InvoiceItem> invoiceItemsToMerge)
+            throws Exception {
+        if (quotation != null && invoiceItemsToMerge != null && quotation.getProvisions() != null
+                && quotation.getInvoiceItems() != null) {
+            for (InvoiceItem invoiceItem : quotation.getInvoiceItems()) {
+                for (InvoiceItem invoiceItemToMerge : invoiceItemsToMerge) {
+                    if (invoiceItemToMerge.getProvision().getId() != null && invoiceItem.getProvision().getId() != null
+                            && invoiceItemToMerge.getProvision().getId().equals(invoiceItem.getProvision().getId())
+                            && invoiceItemToMerge.getBillingItem().getId()
+                                    .equals(invoiceItem.getBillingItem().getId())) {
+                        invoiceItemToMerge.setId(invoiceItem.getId());
+                        invoiceItemToMerge.setInvoice(invoiceItem.getInvoice());
+                        if (invoiceItemToMerge.getBillingItem().getBillingType().getCanOverridePrice()
+                                && invoiceItem.getPreTaxPrice() != null && invoiceItem.getPreTaxPrice() > 0) {
+                            invoiceItemToMerge.setPreTaxPrice(invoiceItem.getPreTaxPrice().floatValue());
+                            computeInvoiceItemsVatAndDiscount(invoiceItemToMerge, quotation);
+                        }
+                    }
+                }
+            }
+            quotation.setInvoiceItems(invoiceItemsToMerge);
+        }
+    }
+
+    @Override
+    public Quotation addOrUpdateQuotationStatus(Quotation quotation) throws Exception {
+        return this.addOrUpdateQuotation(quotation);
     }
 }

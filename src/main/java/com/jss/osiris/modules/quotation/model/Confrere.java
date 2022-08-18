@@ -1,6 +1,5 @@
 package com.jss.osiris.modules.quotation.model;
 
-import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -13,18 +12,28 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.miscellaneous.model.City;
 import com.jss.osiris.modules.miscellaneous.model.Country;
 import com.jss.osiris.modules.miscellaneous.model.Department;
-import com.jss.osiris.modules.miscellaneous.model.IId;
+import com.jss.osiris.modules.miscellaneous.model.Document;
+import com.jss.osiris.modules.miscellaneous.model.IDocument;
+import com.jss.osiris.modules.miscellaneous.model.Language;
 import com.jss.osiris.modules.miscellaneous.model.Mail;
+import com.jss.osiris.modules.miscellaneous.model.PaymentType;
 import com.jss.osiris.modules.miscellaneous.model.Phone;
+import com.jss.osiris.modules.miscellaneous.model.SpecialOffer;
+import com.jss.osiris.modules.miscellaneous.model.VatCollectionType;
 import com.jss.osiris.modules.miscellaneous.model.WeekDay;
+import com.jss.osiris.modules.profile.model.Employee;
+import com.jss.osiris.modules.tiers.model.ITiers;
 
 @Entity
-public class Confrere implements Serializable, IId {
+public class Confrere implements ITiers, IDocument {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -52,7 +61,9 @@ public class Confrere implements Serializable, IId {
 	@JoinTable(name = "asso_confrere_phone", joinColumns = @JoinColumn(name = "id_confrere"), inverseJoinColumns = @JoinColumn(name = "id_phone"))
 	private List<Phone> phones;
 
-	private Integer discountRate;
+	@ManyToMany(cascade = CascadeType.ALL)
+	@JoinTable(name = "asso_confrere_special_offer", joinColumns = @JoinColumn(name = "id_confrere"), inverseJoinColumns = @JoinColumn(name = "id_special_offer"))
+	private List<SpecialOffer> specialOffers;
 
 	private Integer reinvoicing;
 
@@ -122,12 +133,82 @@ public class Confrere implements Serializable, IId {
 	@Column(columnDefinition = "TEXT")
 	private String observations;
 
+	@ManyToOne
+	@JoinColumn(name = "id_vat_collection_type")
+	private VatCollectionType vatCollectionType;
+
+	@OneToMany(targetEntity = Document.class, mappedBy = "confrere", cascade = CascadeType.ALL)
+	@JsonManagedReference("confrere")
+	private List<Document> documents;
+
+	@Column(length = 40)
+	private String paymentBIC;
+
+	@Column(nullable = false)
+	private Boolean isProvisionalPaymentMandatory;
+
+	@Column(nullable = false)
+	private Boolean isSepaMandateReceived;
+
+	@ManyToOne
+	@JoinColumn(name = "id_payment_type")
+	@IndexedField
+	private PaymentType paymentType;
+
+	@ManyToOne
+	@JoinColumn(name = "id_commercial")
+	private Employee salesEmployee;
+
+	@ManyToOne
+	@JoinColumn(name = "id_formaliste")
+	private Employee formalisteEmployee;
+
+	@ManyToOne
+	@JoinColumn(name = "id_insertion")
+	private Employee insertionEmployee;
+
+	@ManyToOne
+	@JoinColumn(name = "id_language")
+	private Language language;
+
 	public Integer getId() {
 		return id;
 	}
 
 	public List<Mail> getAccountingMails() {
 		return accountingMails;
+	}
+
+	public String getPaymentBIC() {
+		return paymentBIC;
+	}
+
+	public void setPaymentBIC(String paymentBIC) {
+		this.paymentBIC = paymentBIC;
+	}
+
+	public Boolean getIsProvisionalPaymentMandatory() {
+		return isProvisionalPaymentMandatory;
+	}
+
+	public void setIsProvisionalPaymentMandatory(Boolean isProvisionalPaymentMandatory) {
+		this.isProvisionalPaymentMandatory = isProvisionalPaymentMandatory;
+	}
+
+	public Boolean getIsSepaMandateReceived() {
+		return isSepaMandateReceived;
+	}
+
+	public void setIsSepaMandateReceived(Boolean isSepaMandateReceived) {
+		this.isSepaMandateReceived = isSepaMandateReceived;
+	}
+
+	public PaymentType getPaymentType() {
+		return paymentType;
+	}
+
+	public void setPaymentType(PaymentType paymentType) {
+		this.paymentType = paymentType;
 	}
 
 	public void setAccountingMails(List<Mail> accountingMails) {
@@ -258,14 +339,6 @@ public class Confrere implements Serializable, IId {
 		this.phones = phones;
 	}
 
-	public Integer getDiscountRate() {
-		return discountRate;
-	}
-
-	public void setDiscountRate(Integer discountRate) {
-		this.discountRate = discountRate;
-	}
-
 	public Integer getReinvoicing() {
 		return reinvoicing;
 	}
@@ -360,6 +433,67 @@ public class Confrere implements Serializable, IId {
 
 	public void setObservations(String observations) {
 		this.observations = observations;
+	}
+
+	public VatCollectionType getVatCollectionType() {
+		return vatCollectionType;
+	}
+
+	public void setVatCollectionType(VatCollectionType vatCollectionType) {
+		this.vatCollectionType = vatCollectionType;
+	}
+
+	public List<Document> getDocuments() {
+		return documents;
+	}
+
+	public void setDocuments(List<Document> documents) {
+		this.documents = documents;
+	}
+
+	public List<SpecialOffer> getSpecialOffers() {
+		return specialOffers;
+	}
+
+	public void setSpecialOffers(List<SpecialOffer> specialOffers) {
+		this.specialOffers = specialOffers;
+	}
+
+	public Employee getSalesEmployee() {
+		return salesEmployee;
+	}
+
+	public void setSalesEmployee(Employee salesEmployee) {
+		this.salesEmployee = salesEmployee;
+	}
+
+	public Employee getFormalisteEmployee() {
+		return formalisteEmployee;
+	}
+
+	public void setFormalisteEmployee(Employee formalisteEmployee) {
+		this.formalisteEmployee = formalisteEmployee;
+	}
+
+	public Employee getInsertionEmployee() {
+		return insertionEmployee;
+	}
+
+	public void setInsertionEmployee(Employee insertionEmployee) {
+		this.insertionEmployee = insertionEmployee;
+	}
+
+	public Language getLanguage() {
+		return language;
+	}
+
+	public void setLanguage(Language language) {
+		this.language = language;
+	}
+
+	@Override
+	public Boolean getIsIndividual() {
+		return false;
 	}
 
 }

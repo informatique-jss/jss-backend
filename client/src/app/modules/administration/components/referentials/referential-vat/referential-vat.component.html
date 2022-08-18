@@ -53,6 +53,13 @@
                 propertyName="rate" [isMandatory]="true" [isDisabled]="!editMode" type="number"></generic-input>
             </td>
           </tr>
+          <tr>
+            <td>
+              <autocomplete-accounting-account [(model)]="selectedEntity.accountingAccount" [form]="entityForm"
+                propertyName="accountingAccount" [isMandatory]="true" label="Compte comptable">
+              </autocomplete-accounting-account>
+            </td>
+          </tr>
         </table>
       </fieldset>
     </div>

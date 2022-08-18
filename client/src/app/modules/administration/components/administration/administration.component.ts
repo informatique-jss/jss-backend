@@ -73,6 +73,9 @@ export class AdministrationComponent implements OnInit {
   REGIE_REFERENTIAL = "Devis - SHAL - régie";
   CONFRERE_REFERENTIAL = "Devis - SHAL - confrère";
   COMPETITOR_REFERENTIAL = "Tiers - concurrent";
+  VAT_COLLECTION_TYPE_REFERENTIAL = "Divers - type d'encaissement de la TVA";
+  PROVIDER_REFERENTIAL = "Divers - Fournisseur";
+  ACCOUNTING_JOURNAL_REFERENTIAL = "Comptabilité - journal comptable";
 
   constructor(private appService: AppService,
     private formBuilder: FormBuilder,
@@ -130,6 +133,9 @@ export class AdministrationComponent implements OnInit {
     this.referentials.push(this.REGIE_REFERENTIAL);
     this.referentials.push(this.CONFRERE_REFERENTIAL);
     this.referentials.push(this.COMPETITOR_REFERENTIAL);
+    this.referentials.push(this.VAT_COLLECTION_TYPE_REFERENTIAL);
+    this.referentials.push(this.PROVIDER_REFERENTIAL);
+    this.referentials.push(this.ACCOUNTING_JOURNAL_REFERENTIAL);
     this.referentials.sort((a, b) => a.localeCompare(b));
 
     this.filteredReferentials = this.referentialForm.get("entity")?.valueChanges.pipe(
@@ -143,9 +149,8 @@ export class AdministrationComponent implements OnInit {
   });
 
   saveEntity() {
-    if (this.selectedEntity) { // TODO : remonter  getFormStatus())
+    if (this.selectedEntity) {
       this.saveEvent.next();
-      this.editMode = false;
     }
   }
 
@@ -160,7 +165,6 @@ export class AdministrationComponent implements OnInit {
   }
 
   cloneEntity() {
-    console.log("ff");
     this.cloneEvent.next();
     this.editMode = true;
   }

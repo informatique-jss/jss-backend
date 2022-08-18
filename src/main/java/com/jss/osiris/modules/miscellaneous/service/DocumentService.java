@@ -8,4 +8,6 @@ public interface DocumentService {
     public List<Document> getDocuments();
 
     public Document getDocument(Integer id);
+
+    public Document getBillingDocument(List<Document> documents);
 }

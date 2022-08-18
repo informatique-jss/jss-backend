@@ -28,6 +28,7 @@ import { AutocompleteAccountingAccountComponent } from '../forms/autocomplete-ac
 import { AutocompleteAffaireComponent } from '../forms/autocomplete-affaire/autocomplete-affaire.component';
 import { AutocompleteCityComponent } from '../forms/autocomplete-city/autocomplete-city.component';
 import { AutocompleteCompetentAuthorityComponent } from '../forms/autocomplete-competent-authority/autocomplete-competent-authority.component';
+import { AutocompleteConfrereComponent } from '../forms/autocomplete-confrere/autocomplete-confrere.component';
 import { AutocompleteCountryComponent } from '../forms/autocomplete-country/autocomplete-country.component';
 import { AutocompleteDepartmentComponent } from '../forms/autocomplete-department/autocomplete-department.component';
 import { AutocompleteEmployeeComponent } from '../forms/autocomplete-employee/autocomplete-employee.component';
@@ -64,6 +65,7 @@ import { RadioGroupQuotationLabelTypeComponent } from '../forms/radio-group-quot
 import { RadioGroupRecordTypeComponent } from '../forms/radio-group-record-type/radio-group-record-type.component';
 import { RadioGroupTransfertFundsComponent } from '../forms/radio-group-transfert-funds/radio-group-transfert-funds.component';
 import { SelectAccountingAccountClassComponent } from '../forms/select-accounting-account-class/select-accounting-account-class.component';
+import { SelectAccountingJournalComponent } from '../forms/select-accounting-journal/select-accounting-journal.component';
 import { SelectBillingItemsComponent } from '../forms/select-billing-items/select-billing-items.component';
 import { SelectBillingTypeComponent } from '../forms/select-billing-type/select-billing-type.component';
 import { SelectBodaccPublicationTypeComponent } from '../forms/select-bodacc-publication-type/select-bodacc-publication-type.component';
@@ -90,6 +92,7 @@ import { SelectResponsableComponent } from '../forms/select-responsable/select-r
 import { SelectSubscriptionPeriodComponent } from '../forms/select-subscription-period/select-subscription-period.component';
 import { SelectTiersCategoryComponent } from '../forms/select-tiers-category/select-tiers-category.component';
 import { SelectTiersTypeComponent } from '../forms/select-tiers-type/select-tiers-type.component';
+import { SelectVatCollectionTypeComponent } from '../forms/select-vat-collection-type/select-vat-collection-type.component';
 import { SelectVatComponent } from '../forms/select-vat/select-vat.component';
 import { GradeComponent } from '../grade/grade.component';
 import { HistoryComponent } from '../history/history.component';
@@ -191,12 +194,15 @@ import { MiscellaneousComponent } from './miscellaneous.component';
     SelectJournalTypeComponent,
     RadioGroupQuotationLabelTypeComponent,
     TrustHtmlPipe,
+    SelectVatCollectionTypeComponent,
     AutocompleteEmployeeComponent,
+    AutocompleteConfrereComponent,
     RadioGroupJournalTypeComponent,
     SelectDayComponent,
     GradeComponent,
     SelectRegieComponent,
     AutocompleteAccountingAccountComponent,
+    SelectAccountingJournalComponent,
     SingleAttachmentComponent],
   exports: [
     HistoryComponent,
@@ -261,6 +267,7 @@ import { MiscellaneousComponent } from './miscellaneous.component';
     RadioGroupBillingClosureRecipientComponent,
     SelectPaymentTypesComponent,
     SelectRefundTypeComponent,
+    AutocompleteConfrereComponent,
     SelectDeliveryServiceComponent,
     ChipsMailComponent,
     TrustHtmlPipe,
@@ -272,8 +279,10 @@ import { MiscellaneousComponent } from './miscellaneous.component';
     RadioGroupCivilityComponent,
     AutocompleteRnaComponent,
     GenericToggleComponent,
+    SelectVatCollectionTypeComponent,
     SelectTiersTypeComponent,
     AutocompleteCityComponent,
+    SelectAccountingJournalComponent,
     SingleAttachmentComponent
   ]
 })

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
+import { AppService } from 'src/app/app.service';
 import { formatDate } from 'src/app/libs/FormatHelper';
 import { CharacterPrice } from 'src/app/modules/quotation/model/CharacterPrice';
 import { CharacterPriceService } from 'src/app/modules/quotation/services/character.price.service';
@@ -14,8 +15,9 @@ import { GenericReferentialComponent } from '../generic-referential/generic-refe
 export class ReferentialCharacterPriceComponent extends GenericReferentialComponent<CharacterPrice> implements OnInit {
 
   constructor(private characterPriceService: CharacterPriceService,
-    private formBuilder2: FormBuilder) {
-    super(formBuilder2);
+    private formBuilder2: FormBuilder,
+    private appService2: AppService,) {
+    super(formBuilder2, appService2);
   }
 
   getAddOrUpdateObservable(): Observable<CharacterPrice> {

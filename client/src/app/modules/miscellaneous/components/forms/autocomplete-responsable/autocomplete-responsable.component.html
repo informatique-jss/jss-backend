@@ -2,6 +2,9 @@
   <mat-label>Responsable</mat-label>
   <input matInput placeholder="Responsable" [matAutocomplete]="autoCompleteAffaire" [formControlName]="propertyName"
     autocomplete="do-not-autofill">
+  <mat-icon matSuffix (click)="clearField()" *ngIf="model!=undefined">
+    close
+  </mat-icon>
   <mat-autocomplete autoActiveFirstOption #autoCompleteAffaire="matAutocomplete" [displayWith]="displayResponsable"
     (optionSelected)='optionSelected($event.option.value)'>
     <mat-option *ngFor="let responsable of filteredTypes" [value]="responsable">

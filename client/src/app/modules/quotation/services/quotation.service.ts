@@ -12,6 +12,10 @@ export class QuotationService extends AppRestService<IQuotation>{
     super(http, "quotation");
   }
 
+  updateQuotationStatus(quotation: IQuotation) {
+    return this.addOrUpdate(new HttpParams(), "quotation/status", quotation, "Devis enregistré", "Erreur lors de l'enregistrement du devis");
+  }
+
   getQuotation(idQuotation: number) {
     return this.getById("quotation", idQuotation);
   }

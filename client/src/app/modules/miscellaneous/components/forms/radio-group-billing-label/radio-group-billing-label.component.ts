@@ -18,6 +18,12 @@ export class RadioGroupBillingLabelComponent extends GenericRadioGroupComponent<
   }
 
   initTypes(): void {
-    this.billinglabeltypeService.getBillingLabelTypes().subscribe(response => { this.types = response })
+    this.billinglabeltypeService.getBillingLabelTypes().subscribe(response => {
+      this.types = response;
+      if (this.model == null || this.model.id == null) {
+        this.model = this.types[0];
+        this.modelChange.emit(this.model);
+      }
+    })
   }
 }

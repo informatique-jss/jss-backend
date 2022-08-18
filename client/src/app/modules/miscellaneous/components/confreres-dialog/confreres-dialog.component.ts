@@ -42,7 +42,8 @@ export class ConfrereDialogComponent implements OnInit {
           localConfrere.denomination = confrere.label;
           localConfrere.journalType = confrere.journalType;
           localConfrere.departments = confrere.departments.map(e => e.code).join(", ");
-          localConfrere.discountRate = confrere.discountRate;
+          localConfrere.discountRate = (confrere.specialOffers &&
+            confrere.specialOffers.length > 0) ? confrere.specialOffers[0].label : "";
           localConfrere.weekDays = confrere.weekDays.map(e => e.label).join(", ");
           localConfrere.lastShipmentForPublication = confrere.lastShipmentForPublication;
           localConfrere.publicationCertificateDocumentGrade = confrere.publicationCertificateDocumentGrade;
@@ -56,6 +57,7 @@ export class ConfrereDialogComponent implements OnInit {
           localConfrere.administrativeFees = confrere.administrativeFees;
           this.confreresFlatten.push(localConfrere);
         });
+        this.confreresFlatten.sort((a, b) => a.discountRate.localeCompare(b.discountRate));
         this.confreresDataSource.data = this.confreresFlatten;
       }
     })
@@ -80,7 +82,7 @@ export class ConfrereDialogComponent implements OnInit {
           case 'numberOfPrint': return confrere.numberOfPrint;
           case 'shippingCosts': return confrere.shippingCosts;
           case 'administrativeFees': return confrere.administrativeFees;
-          default: return confrere.denomination;
+          default: return confrere.discountRate;
         }
       };
 

@@ -1,36 +1,132 @@
+<ng-template #accordionTools>
+  <mat-panel-description>
+    <mat-icon matTooltip="Ouvrir tous les onglets" (click)="accordion!.openAll();$event.stopPropagation();"
+      class="pointer">
+      unfold_more_double</mat-icon>
+    <mat-icon matTooltip="Fermer tous les autres onglets" (click)="accordion!.closeAll();" class="pointer">
+      unfold_less_double</mat-icon>
+  </mat-panel-description>
+</ng-template>
 <div class="mat-elevation-z2 form-div">
   <form [formGroup]="quotationManagementForm" *ngIf="quotation">
     <div class="full-width">
       <fieldset [disabled]="editMode==false" class="fieldset-no-border">
-        <table class="full-width">
-          <tr>
-            <td>
-              <radio-group-record-type [(model)]="quotation.recordType" [form]="quotationManagementForm"
-                propertyName="recordType" label="Type de dossier"></radio-group-record-type>
-            </td>
-            <td>
-              <radio-group-quotation-label-type [(model)]="quotation.quotationLabelType"
-                [form]="quotationManagementForm" propertyName="quotationLabelType" label="Libellé sur devis">
-              </radio-group-quotation-label-type>
-            </td>
-            <td
-              *ngIf="quotation.quotationLabelType!=undefined && quotation.quotationLabelType.code!=undefined && quotation.quotationLabelType.code==QUOTATION_TYPE_OTHER_CODE">
-              <generic-textarea [(model)]="quotation.quotationLabel" label="Autre libellé sur devis"
-                [form]="quotationManagementForm" propertyName="quotationLabel" [isMandatory]="true"
-                [isDisabled]="!editMode"
-                [conditionnalRequired]="quotation.quotationLabelType.code==QUOTATION_TYPE_OTHER_CODE">
-              </generic-textarea>
-            </td>
-          </tr>
-        </table>
-        <table class="full-width">
-          <tr>
-            <td>
-              <addressing [editMode]="editMode" [document]="devisDocument" [displayPaperCopy]="true"
-                [displayMailCC]="true"></addressing>
-            </td>
-          </tr>
-        </table>
+        <mat-accordion multi>
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                {{(instanceOfQuotation(quotation) ? 'Commande' : 'Devis')}}
+              </mat-panel-title>
+              <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
+            </mat-expansion-panel-header>
+            <table class="full-width">
+              <tr>
+                <td>
+                  <radio-group-record-type [(model)]="quotation.recordType" [form]="quotationManagementForm"
+                    propertyName="recordType" label="Type de dossier"></radio-group-record-type>
+                </td>
+                <td>
+                  <radio-group-quotation-label-type [(model)]="quotation.quotationLabelType"
+                    [form]="quotationManagementForm" propertyName="quotationLabelType"
+                    [label]="'Libellé sur '+ (instanceOfQuotation(quotation) ? 'commande' : 'devis')">
+                  </radio-group-quotation-label-type>
+                </td>
+                <td
+                  *ngIf="quotation.quotationLabelType!=undefined && quotation.quotationLabelType.code!=undefined && quotation.quotationLabelType.code==QUOTATION_TYPE_OTHER_CODE">
+                  <generic-textarea [(model)]="quotation.quotationLabel"
+                    [label]="'Autre libellé sur '+ (instanceOfQuotation(quotation) ? 'commande' : 'devis')"
+                    [form]="quotationManagementForm" propertyName="quotationLabel" [isMandatory]="true"
+                    [isDisabled]="!editMode"
+                    [conditionnalRequired]="quotation.quotationLabelType.code==QUOTATION_TYPE_OTHER_CODE">
+                  </generic-textarea>
+                </td>
+              </tr>
+            </table>
+            <table class="full-width">
+              <tr>
+                <td>
+                  <addressing [editMode]="editMode" [document]="devisDocument" [displayPaperCopy]="true"
+                    [displayMailCC]="true" [hideOverriding]="(quotation.confrere)?true:false"></addressing>
+                </td>
+              </tr>
+            </table>
+          </mat-expansion-panel>
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                Facture
+              </mat-panel-title>
+              <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
+            </mat-expansion-panel-header>
+            <table class="full-width">
+              <tr>
+                <td>
+                  <radio-group-billing-label [(model)]="billingDocument.billingLabelType"
+                    [form]="quotationManagementForm" propertyName="billingLabelType" label="Libellé sur facture">
+                  </radio-group-billing-label>
+                </td>
+              </tr>
+            </table>
+            <table class="full-width"
+              *ngIf="billingDocument.billingLabelType!=undefined && billingDocument.billingLabelType.code!=undefined && billingDocument.billingLabelType.code==BILLING_TIERS_DOCUMENT_TYPE_OTHER_CODE">
+              <tr>
+                <td>
+                  <generic-textarea [(model)]="billingDocument.billingLabel" label="Autre libellé sur facture"
+                    [form]="quotationManagementForm" propertyName="billingLabel" [isDisabled]="!editMode"
+                    [numberOfLines]="4" [customValidators]="[Validators.maxLength(40)]"></generic-textarea>
+                </td>
+                <td>
+                  <generic-input [(model)]="billingDocument.billingLabelAddress" label="Adresse"
+                    [form]="quotationManagementForm" propertyName="billingLabelAddress" [isMandatory]="true"
+                    [maxLength]="20"></generic-input>
+                </td>
+                <td>
+                  <autocomplete-city [(model)]="billingDocument.billingLabelCity"
+                    [modelCountry]="billingDocument.billingLabelCountry" [form]="quotationManagementForm"
+                    propertyName="billingLabelCity" [isMandatory]="true" (onOptionSelected)="fillPostalCode($event)">
+                  </autocomplete-city>
+                </td>
+                <td>
+                  <autocomplete-postal-code [(model)]="billingDocument.billingLabelPostalCode"
+                    [form]="quotationManagementForm" propertyName="billingLabelPostalCode" [isMandatory]="true"
+                    [conditionnalRequired]="billingDocument.billingLabelCountry != null && billingDocument.billingLabelCountry.code == COUNTRY_CODE_FRANCE"
+                    (onOptionSelected)="fillCity($event)"></autocomplete-postal-code>
+                </td>
+                <td>
+                  <autocomplete-country [(model)]="billingDocument.billingLabelCountry" [form]="quotationManagementForm"
+                    propertyName="billingLabelCountry" [isMandatory]="true"></autocomplete-country>
+                </td>
+                <td>
+                  <generic-toggle [(model)]="billingDocument.billingLabelIsIndividual" label="Particulier ?"
+                    [form]="quotationManagementForm" propertyName="billingLabelIsIndividual"></generic-toggle>
+                </td>
+              </tr>
+            </table>
+            <table class="full-width">
+              <tr>
+                <td>
+                  <generic-toggle [(model)]="billingDocument.isResponsableOnBilling" label="Responsable sur facture ?"
+                    [form]="quotationManagementForm" propertyName="isResponsableOnBilling"></generic-toggle>
+                </td>
+              </tr>
+            </table>
+            <table class="full-width">
+              <tr>
+                <td>
+                  <generic-toggle [(model)]="billingDocument.isCommandNumberMandatory"
+                    label="Numéro de commande obligatoire ?" [form]="quotationManagementForm"
+                    propertyName="isCommandNumberMandatory"></generic-toggle>
+                </td>
+                <td *ngIf="billingDocument.isCommandNumberMandatory">
+                  <generic-input [(model)]="billingDocument.commandNumber" label="N° de commande annuel"
+                    [form]="quotationManagementForm" propertyName="commandNumber" [maxLength]="40"></generic-input>
+                </td>
+              </tr>
+            </table>
+            <addressing [editMode]="editMode" [document]="billingDocument "
+              [displayMailCC]="quotation.responsable?true : false"></addressing>
+          </mat-expansion-panel>
+        </mat-accordion>
       </fieldset>
     </div>
   </form>

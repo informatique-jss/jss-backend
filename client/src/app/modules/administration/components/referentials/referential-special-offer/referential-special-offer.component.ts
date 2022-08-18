@@ -4,6 +4,7 @@ import { MatAccordion } from '@angular/material/expansion';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Observable, Subscription } from 'rxjs';
+import { AppService } from 'src/app/app.service';
 import { AssoSpecialOfferBillingType } from 'src/app/modules/miscellaneous/model/AssoSpecialOfferBillingType';
 import { SpecialOffer } from 'src/app/modules/miscellaneous/model/SpecialOffer';
 import { SpecialOfferService } from 'src/app/modules/miscellaneous/services/special.offer.service';
@@ -17,6 +18,7 @@ export class ReferentialSpecialOfferComponent implements OnInit {
 
   selectedEntity: SpecialOffer | undefined;
   @Input() editMode: boolean = false;
+  @Output() editModeChange: EventEmitter<boolean> = new EventEmitter<boolean>();
   @Input() saveEvent: Observable<void> | undefined;
   saveEventSubscription: Subscription | undefined;
   @Input() addEvent: Observable<void> | undefined;
@@ -36,6 +38,7 @@ export class ReferentialSpecialOfferComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private specialOfferService: SpecialOfferService,
+    private appService: AppService,
   ) { }
 
   entityForm = this.formBuilder.group({
@@ -82,13 +85,17 @@ export class ReferentialSpecialOfferComponent implements OnInit {
   }
 
   saveEntity() {
-    if (this.selectedEntity) {
+    if (this.selectedEntity && this.entityForm && this.entityForm.valid) {
+      this.editMode = false;
+      this.editModeChange.emit(this.editMode);
       this.selectedEntity.assoSpecialOfferBillingTypes = [] as Array<AssoSpecialOfferBillingType>;
       if (this.assoSpecialOfferBillingItems)
         this.selectedEntity.assoSpecialOfferBillingTypes.push(...this.assoSpecialOfferBillingItems);
       this.specialOfferService.addOrUpdateSpecialOffer(this.selectedEntity).subscribe(response => {
         this.setDataTable();
       });
+    } else {
+      this.appService.displaySnackBar("Erreur, certains champs ne sont pas correctement renseignés !", true, 60);
     }
   }
 

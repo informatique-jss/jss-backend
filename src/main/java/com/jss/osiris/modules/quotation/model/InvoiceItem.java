@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -14,6 +15,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.miscellaneous.model.BillingItem;
 import com.jss.osiris.modules.miscellaneous.model.IId;
+import com.jss.osiris.modules.miscellaneous.model.Vat;
 
 @Entity
 public class InvoiceItem implements Serializable, IId {
@@ -33,6 +35,10 @@ public class InvoiceItem implements Serializable, IId {
 	@JoinColumn(name = "id_accounting_account")
 	AccountingAccount accountingAccount;
 
+	@ManyToOne
+	@JoinColumn(name = "id_vat")
+	Vat vat;
+
 	private Float preTaxPrice;
 
 	private Float vatPrice;
@@ -44,7 +50,7 @@ public class InvoiceItem implements Serializable, IId {
 	@JsonBackReference("quotation")
 	private Quotation quotation;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_customer_order")
 	@JsonBackReference("customerOrder")
 	private CustomerOrder customerOrder;
@@ -52,6 +58,11 @@ public class InvoiceItem implements Serializable, IId {
 	@ManyToOne
 	@JoinColumn(name = "id_provision")
 	Provision provision;
+
+	@ManyToOne
+	@JoinColumn(name = "id_invoice")
+	@JsonBackReference("invoiceItems")
+	Invoice invoice;
 
 	public Integer getId() {
 		return id;
@@ -131,6 +142,22 @@ public class InvoiceItem implements Serializable, IId {
 
 	public void setProvision(Provision provision) {
 		this.provision = provision;
+	}
+
+	public Invoice getInvoice() {
+		return invoice;
+	}
+
+	public void setInvoice(Invoice invoice) {
+		this.invoice = invoice;
+	}
+
+	public Vat getVat() {
+		return vat;
+	}
+
+	public void setVat(Vat vat) {
+		this.vat = vat;
 	}
 
 }

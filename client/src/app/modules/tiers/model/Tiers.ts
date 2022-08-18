@@ -1,3 +1,4 @@
+import { AccountingAccount } from "../../accounting/model/AccountingAccount";
 import { DeliveryService } from "../../miscellaneous/model/DeliveryService";
 import { SpecialOffer } from "../../miscellaneous/model/SpecialOffer";
 import { PaymentType } from './../../miscellaneous/model/PaymentType';
@@ -20,4 +21,6 @@ export interface Tiers extends ITiers {
   isSepaMandateReceived: boolean;
   responsables: Responsable[];
   competitors: Competitor[];
+  accountingAccountCustomer: AccountingAccount;
+  accountingAccountProvider: AccountingAccount;
 }

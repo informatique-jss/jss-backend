@@ -100,5 +100,5 @@ echo ""
 
 echo "  <cache alias=\"${entityLowerCased}\" uses-template=\"default\"> "
 echo "         <key-type>java.lang.Integer</key-type> "
-echo "         <value-type>com.jss.osiris.modules.targetPackage.model.NewEntity</value-type> "
+echo "         <value-type>com.jss.osiris.modules.${module}.model.${entityUpperCased}</value-type> "
 echo "     </cache> "

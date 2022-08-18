@@ -33,6 +33,29 @@ export function getDocument(documentCode: string, entity: IDocument, DocumentTyp
   return entity.documents[entity.documents.length - 1];
 }
 
+export function replaceDocument(documentCode: string, entity: IDocument, DocumentTypes: DocumentType[], newDocument: Document) {
+  // Tiers not loaded
+  if (entity == null || getDocumentType(documentCode, DocumentTypes).id == undefined)
+    return;
+
+  // No document in Tiers
+  if (entity.documents == null || entity.documents == undefined) {
+    return;
+  }
+
+  // Document currently exists
+  if (entity.documents.length > 0) {
+    for (let i = 0; i < entity.documents.length; i++) {
+      let documentFound = entity.documents[i];
+      if (documentFound.documentType.code == documentCode) {
+        entity.documents[i] = newDocument;
+        return;
+      }
+    }
+  }
+  return;
+}
+
 export function getDocumentType(codeTypeDocument: string, DocumentTypes: DocumentType[]): DocumentType {
   if (DocumentTypes.length > 0) {
     for (let i = 0; i < DocumentTypes.length; i++) {

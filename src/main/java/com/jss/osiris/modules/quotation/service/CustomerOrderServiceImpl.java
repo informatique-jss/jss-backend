@@ -12,7 +12,10 @@ import com.jss.osiris.modules.miscellaneous.service.MailService;
 import com.jss.osiris.modules.miscellaneous.service.PhoneService;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.Domiciliation;
+import com.jss.osiris.modules.quotation.model.Invoice;
+import com.jss.osiris.modules.quotation.model.InvoiceItem;
 import com.jss.osiris.modules.quotation.model.Provision;
+import com.jss.osiris.modules.quotation.model.QuotationStatus;
 import com.jss.osiris.modules.quotation.repository.CustomerOrderRepository;
 
 @Service
@@ -30,6 +33,12 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Autowired
     MailService mailService;
 
+    @Autowired
+    QuotationService quotationService;
+
+    @Autowired
+    InvoiceService invoiceService;
+
     @Override
     public CustomerOrder getCustomerOrder(Integer id) {
         Optional<CustomerOrder> customerOrder = customerOrderRepository.findById(id);
@@ -39,9 +48,11 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     }
 
     @Override
-    public CustomerOrder addOrUpdateCustomerOrder(CustomerOrder customerOrder) {
+    public CustomerOrder addOrUpdateCustomerOrder(CustomerOrder customerOrder) throws Exception {
         if (customerOrder.getId() == null)
             customerOrder.setCreatedDate(new Date());
+
+        customerOrder.setIsQuotation(false);
 
         // Complete domiciliation end date
         for (Provision provision : customerOrder.getProvisions()) {
@@ -78,8 +89,47 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             }
         }
 
+        // If invoice has not been generated yet, recompute billing items
+        if (!hasAtLeastOneInvoiceItemNotNull(customerOrder)
+                || customerOrder.getInvoiceItems().get(0).getInvoice() == null) {
+            quotationService.getAndSetInvoiceItemsForQuotation(customerOrder);
+
+            if (customerOrder.getInvoiceItems() != null)
+                for (InvoiceItem invoiceItem : customerOrder.getInvoiceItems())
+                    invoiceItem.setCustomerOrder(customerOrder);
+        }
+
         customerOrder = customerOrderRepository.save(customerOrder);
         indexEntityService.indexEntity(customerOrder, customerOrder.getId());
         return customerOrder;
+    }
+
+    @Override
+    public CustomerOrder addOrUpdateCustomerOrderStatus(CustomerOrder customerOrder) throws Exception {
+        if (customerOrder.getStatus().getCode().equals(QuotationStatus.BILLED)) {
+            generateInvoice(customerOrder);
+        }
+        return this.addOrUpdateCustomerOrder(customerOrder);
+    }
+
+    private void generateInvoice(CustomerOrder customerOrder) {
+        if (!hasAtLeastOneInvoiceItemNotNull(customerOrder))
+            return;
+
+        Invoice invoice = invoiceService.createInvoice();
+        for (InvoiceItem invoiceItem : customerOrder.getInvoiceItems()) {
+            invoiceItem.setInvoice(invoice);
+        }
+    }
+
+    private boolean hasAtLeastOneInvoiceItemNotNull(CustomerOrder customerOrder) {
+        if (customerOrder.getInvoiceItems() != null && customerOrder.getInvoiceItems().size() > 0) {
+            for (InvoiceItem invoiceItem : customerOrder.getInvoiceItems()) {
+                if (invoiceItem.getPreTaxPrice() > 0) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

@@ -14,27 +14,9 @@
         <table class="full-width">
           <tr>
             <td>
-              <mat-form-field class="full-width">
-                <mat-label>Support</mat-label>
-                <input matInput placeholder="Support" [(ngModel)]="shal.confrere" [matAutocomplete]="autoSpecialOffer"
-                  formControlName="confrere" autocomplete="do-not-autofill">
-                <button
-                  *ngIf="shal.confrere==undefined || shal.confrere==null || shal.confrere.id ==undefined || shal.confrere.id==null"
-                  matSuffix mat-icon-button (click)="openConfrereDialog()">
-                  <mat-icon>search</mat-icon>
-                </button>
-                <button (click)="shal.confrere=null"
-                  *ngIf="shal.confrere!=undefined && shal.confrere!=null && shal.confrere.id !=undefined && shal.confrere.id!=null"
-                  matSuffix mat-icon-button>
-                  <mat-icon>close</mat-icon>
-                </button>
-                <mat-autocomplete autoActiveFirstOption #autoSpecialOffer="matAutocomplete"
-                  (optionSelected)='updateHeaderFree()' [displayWith]="displayConfrere">
-                  <mat-option *ngFor="let confrere of filteredConfreres | async" [value]="confrere">
-                    {{confrere.label}}
-                  </mat-option>
-                </mat-autocomplete>
-              </mat-form-field>
+              <autocomplete-confrere [(model)]="shal.confrere" [form]="shalForm" propertyName="confrere"
+                [isMandatory]="true" [isDisabled]="!editMode" (onOptionSelected)="updateHeaderFree()">
+              </autocomplete-confrere>
             </td>
             <td *ngIf="shal.confrere!=null && shal.confrere!=undefined">
               <autocomplete-department [(model)]="shal.department" [form]="shalForm" propertyName="department"

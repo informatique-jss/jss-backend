@@ -40,7 +40,7 @@ public class AccountingAccountClassServiceImpl implements AccountingAccountClass
     }
 
     @Override
-    public List<AccountingAccountClass> getAccountingAccountClassByCode(String code) {
+    public AccountingAccountClass getAccountingAccountClassByCode(String code) {
         return accountingAccountClassRepository.findByCode(code);
     }
 }

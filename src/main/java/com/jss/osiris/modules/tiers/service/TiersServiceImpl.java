@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import com.jss.osiris.libs.search.model.IndexEntity;
 import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.libs.search.service.SearchService;
+import com.jss.osiris.modules.accounting.model.AccountingAccountCouple;
+import com.jss.osiris.modules.accounting.service.AccountingAccountService;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.service.MailService;
 import com.jss.osiris.modules.miscellaneous.service.PhoneService;
@@ -38,6 +40,9 @@ public class TiersServiceImpl implements TiersService {
     @Autowired
     SearchService searchService;
 
+    @Autowired
+    AccountingAccountService accountingAccountService;
+
     @Override
     public Tiers getTiers(Integer id) {
         Optional<Tiers> tiers = tiersRepository.findById(id);
@@ -47,7 +52,7 @@ public class TiersServiceImpl implements TiersService {
     }
 
     @Override
-    public Tiers addOrUpdateTiers(Tiers tiers) {
+    public Tiers addOrUpdateTiers(Tiers tiers) throws Exception {
         // If mails already exists, get their ids
         if (tiers != null && tiers.getMails() != null && tiers.getMails().size() > 0)
             mailService.populateMailIds(tiers.getMails());
@@ -67,6 +72,21 @@ public class TiersServiceImpl implements TiersService {
             }
         }
 
+        // Generate accounting accounts
+        if (tiers.getId() == null
+                || tiers.getAccountingAccountCustomer() == null && tiers.getAccountingAccountProvider() == null) {
+            String label = "";
+            if (tiers.getIsIndividual()) {
+                label = tiers.getFirstname() + " " + tiers.getLastname();
+            } else {
+                label = tiers.getDenomination();
+            }
+            AccountingAccountCouple accountingAccountCouple = accountingAccountService
+                    .generateAccountingAccountsForEntity(label);
+            tiers.setAccountingAccountCustomer(accountingAccountCouple.getAccountingAccountCustomer());
+            tiers.setAccountingAccountProvider(accountingAccountCouple.getAccountingAccountProvider());
+        }
+
         tiers = tiersRepository.save(tiers);
         indexEntityService.indexEntity(tiers, tiers.getId());
         if (tiers.getResponsables() != null && tiers.getResponsables().size() > 0) {
@@ -83,6 +103,7 @@ public class TiersServiceImpl implements TiersService {
                 }
             }
         }
+
         return tiers;
     }
 

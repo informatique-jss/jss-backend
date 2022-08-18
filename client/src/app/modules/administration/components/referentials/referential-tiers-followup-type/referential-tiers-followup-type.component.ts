@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
+import { AppService } from 'src/app/app.service';
 import { TiersFollowupType } from 'src/app/modules/tiers/model/TiersFollowupType';
 import { TiersFollowupTypeService } from 'src/app/modules/tiers/services/tiers.followup.type.service';
 import { GenericReferentialComponent } from '../generic-referential/generic-referential-component';
@@ -12,8 +13,9 @@ import { GenericReferentialComponent } from '../generic-referential/generic-refe
 })
 export class ReferentialTiersFollowupTypeComponent extends GenericReferentialComponent<TiersFollowupType> implements OnInit {
   constructor(private tiersFollowupTypeService: TiersFollowupTypeService,
-    private formBuilder2: FormBuilder) {
-    super(formBuilder2);
+    private formBuilder2: FormBuilder,
+    private appService2: AppService,) {
+    super(formBuilder2, appService2);
   }
 
   getAddOrUpdateObservable(): Observable<TiersFollowupType> {

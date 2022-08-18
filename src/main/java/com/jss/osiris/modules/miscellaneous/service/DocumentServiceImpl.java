@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.jss.osiris.modules.miscellaneous.model.Document;
@@ -16,6 +17,9 @@ public class DocumentServiceImpl implements DocumentService {
     @Autowired
     DocumentRepository documentRepository;
 
+    @Value("${miscellaneous.document.code.billing}")
+    private String billingDocumentCode;
+
     @Override
     public List<Document> getDocuments() {
         return IterableUtils.toList(documentRepository.findAll());
@@ -26,6 +30,22 @@ public class DocumentServiceImpl implements DocumentService {
         Optional<Document> document = documentRepository.findById(id);
         if (!document.isEmpty())
             return document.get();
+        return null;
+    }
+
+    /**
+     * Return the first billing document found in a document list provided
+     * 
+     * @param documents Document list to search for
+     * @return The billing document if found, null otherwise
+     */
+    @Override
+    public Document getBillingDocument(List<Document> documents) {
+        if (documents != null && documents.size() > 0)
+            for (Document document : documents)
+                if (document.getDocumentType() != null && document.getDocumentType().getCode() != null
+                        && document.getDocumentType().getCode().equals(billingDocumentCode))
+                    return document;
         return null;
     }
 }

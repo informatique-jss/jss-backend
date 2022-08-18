@@ -1,4 +1,8 @@
 <div *ngIf="quotation && quotation.invoiceItems" class="mat-elevation-z2 form-div">
+  <h3 *ngIf="hasInvoice()">
+    Facture n°{{quotation.invoiceItems[0].invoice.id}} émise le
+    {{quotation.invoiceItems[0].invoice.createdDate|date:'dd/MM/yyyy à HH:mm'}}
+  </h3>
   <form [formGroup]="invoiceManagementForm">
     <div *ngFor="let affaire of getListOfAffaires()">
       <td class="affaire" *ngIf="affaire.denomination">
@@ -16,14 +20,20 @@
           </tr>
           <tr>
             <td>
-              {{invoiceItem.label}}
+              {{invoiceItem.label}} <mat-icon inline="true"
+                matTooltip="Veuillez enregistrer pour pouvoir modifier le prix appliqué"
+                *ngIf="editMode && invoiceItem.billingItem.billingType.canOverridePrice==true && !invoiceItem.provision.id && !hasInvoice()"
+                class="info-icon">info</mat-icon>
             </td>
-            <td class="td-price" *ngIf="!editMode || invoiceItem.billingItem.billingType.canOverridePrice==false">
+            <td class="td-price"
+              *ngIf="!editMode || invoiceItem.billingItem.billingType.canOverridePrice==false || !invoiceItem.provision.id || hasInvoice()">
               {{invoiceItem.preTaxPrice|number}} €
             </td>
-            <td *ngIf="editMode && invoiceItem.billingItem.billingType.canOverridePrice==true">
+            <td
+              *ngIf="editMode && invoiceItem.billingItem.billingType.canOverridePrice==true && invoiceItem.provision.id && !hasInvoice()">
               <generic-input [(model)]="invoiceItem.preTaxPrice" label="" [form]="invoiceManagementForm"
-                [propertyName]='"preTaxPrice"+index' [isMandatory]="true" type="number" (onInputChange)="itemChange()">
+                [propertyName]='"preTaxPrice"+index' [isMandatory]="true" type="number" (onInputChange)="itemChange()"
+                hint="Laisser vide pour recalculer le prix">
               </generic-input>
             </td>
           </tr>
@@ -35,9 +45,9 @@
               - {{invoiceItem.discountAmount|number}} €
             </td>
           </tr>
-          <tr>
+          <tr *ngIf="invoiceItem.vat">
             <td>
-              {{invoiceItem.accountingAccount.vat.label}}
+              {{invoiceItem.vat.label}}
             </td>
             <td class="td-price">
               {{invoiceItem.vatPrice|number}} €

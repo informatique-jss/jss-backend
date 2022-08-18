@@ -2,10 +2,12 @@ import { Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/cor
 import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { MatAccordion } from '@angular/material/expansion';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
-import { BILLING_CLOSURE_RECIPIENT_OTHERS_CODE, BILLING_CLOSURE_TIERS_DOCUMENT_TYPE_CODE, BILLING_TIERS_DOCUMENT_TYPE_CODE, BILLING_TIERS_DOCUMENT_TYPE_OTHER_CODE, CFE_TIERS_DOCUMENT_TYPE_CODE, DUNNING_TIERS_DOCUMENT_TYPE_CODE, KBIS_TIERS_DOCUMENT_TYPE_CODE, PAYMENT_TYPE_CHEQUES, PAYMENT_TYPE_OTHERS, PAYMENT_TYPE_PRELEVEMENT, PROVISIONAL_RECEIPT_TIERS_DOCUMENT_TYPE_CODE, PUBLICATION_TIERS_DOCUMENT_TYPE_CODE, REFUND_TIERS_DOCUMENT_TYPE_CODE, REFUND_TYPE_VIREMENT } from 'src/app/libs/Constants';
+import { BILLING_CLOSURE_RECIPIENT_OTHERS_CODE, BILLING_CLOSURE_TIERS_DOCUMENT_TYPE_CODE, BILLING_TIERS_DOCUMENT_TYPE_CODE, BILLING_TIERS_DOCUMENT_TYPE_OTHER_CODE, CFE_TIERS_DOCUMENT_TYPE_CODE, COUNTRY_CODE_FRANCE, DUNNING_TIERS_DOCUMENT_TYPE_CODE, KBIS_TIERS_DOCUMENT_TYPE_CODE, PAYMENT_TYPE_CHEQUES, PAYMENT_TYPE_OTHERS, PAYMENT_TYPE_PRELEVEMENT, PROVISIONAL_RECEIPT_TIERS_DOCUMENT_TYPE_CODE, PUBLICATION_TIERS_DOCUMENT_TYPE_CODE, REFUND_TIERS_DOCUMENT_TYPE_CODE, REFUND_TYPE_VIREMENT } from 'src/app/libs/Constants';
 import { getDocument } from 'src/app/libs/DocumentHelper';
 import { instanceOfResponsable, instanceOfTiers } from 'src/app/libs/TypeHelper';
+import { City } from 'src/app/modules/miscellaneous/model/City';
 import { PaymentType } from 'src/app/modules/miscellaneous/model/PaymentType';
+import { CityService } from 'src/app/modules/miscellaneous/services/city.service';
 import { DocumentTypeService } from 'src/app/modules/miscellaneous/services/document.type.service';
 import { PaymentTypeService } from 'src/app/modules/miscellaneous/services/payment.type.service';
 import { Document } from "../../../miscellaneous/model/Document";
@@ -33,6 +35,8 @@ export class SettlementBillingComponent implements OnInit {
   BILLING_TIERS_DOCUMENT_TYPE_OTHER_CODE = BILLING_TIERS_DOCUMENT_TYPE_OTHER_CODE;
   BILLING_CLOSURE_RECIPIENT_OTHERS_CODE = BILLING_CLOSURE_RECIPIENT_OTHERS_CODE;
 
+  COUNTRY_CODE_FRANCE = COUNTRY_CODE_FRANCE;
+
   documentTypes: DocumentType[] = [] as Array<DocumentType>;
   billingDocument: Document = {} as Document;
   dunningDocument: Document = {} as Document;
@@ -47,6 +51,7 @@ export class SettlementBillingComponent implements OnInit {
     protected paymentTypeService: PaymentTypeService,
     protected documentTypeService: DocumentTypeService,
     protected tiersService: TiersService,
+    protected cityService: CityService,
   ) { }
 
   ngOnInit() {
@@ -74,6 +79,10 @@ export class SettlementBillingComponent implements OnInit {
         this.documentTypes = response;
 
         this.billingDocument = getDocument(BILLING_TIERS_DOCUMENT_TYPE_CODE, this.tiers, this.documentTypes);
+
+        if (!this.billingDocument.billingLabelIsIndividual)
+          this.billingDocument.billingLabelIsIndividual = false;
+
         this.billingClosureDocument = getDocument(BILLING_CLOSURE_TIERS_DOCUMENT_TYPE_CODE, this.tiers, this.documentTypes);
         if (this.billingClosureDocument.isRecipientClient == null || this.billingClosureDocument.isRecipientClient == false)
           this.billingClosureDocument.isRecipientClient = true;
@@ -118,5 +127,25 @@ export class SettlementBillingComponent implements OnInit {
       }
     }
     return responsables;
+  }
+
+  fillPostalCode(city: City) {
+    if (this.billingDocument.billingLabelCountry == null || this.billingDocument.billingLabelCountry == undefined)
+      this.billingDocument.billingLabelCountry = city.country;
+
+    if (this.billingDocument.billingLabelCountry.code == COUNTRY_CODE_FRANCE && city.postalCode != null)
+      this.billingDocument.billingLabelPostalCode = city.postalCode;
+  }
+
+  fillCity(postalCode: string) {
+    this.cityService.getCitiesFilteredByPostalCode(postalCode).subscribe(response => {
+      if (response != null && response != undefined && response.length == 1) {
+        let city = response[0];
+        if (this.billingDocument.billingLabelCountry == null || this.billingDocument.billingLabelCountry == undefined)
+          this.billingDocument.billingLabelCountry = city.country;
+
+        this.billingDocument.billingLabelCity = city;
+      }
+    })
   }
 }

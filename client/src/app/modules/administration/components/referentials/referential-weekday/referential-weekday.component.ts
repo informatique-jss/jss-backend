@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
+import { AppService } from 'src/app/app.service';
 import { WeekDay } from 'src/app/modules/miscellaneous/model/WeekDay';
 import { WeekDayService } from 'src/app/modules/miscellaneous/services/weekday.service';
 import { GenericReferentialComponent } from '../generic-referential/generic-referential-component';
@@ -12,10 +13,10 @@ import { GenericReferentialComponent } from '../generic-referential/generic-refe
 })
 export class ReferentialWeekDayComponent extends GenericReferentialComponent<WeekDay> implements OnInit {
   constructor(private weekDayService: WeekDayService,
-    private formBuilder2: FormBuilder) {
-    super(formBuilder2);
+    private formBuilder2: FormBuilder,
+    private appService2: AppService,) {
+    super(formBuilder2, appService2);
   }
-
   getAddOrUpdateObservable(): Observable<WeekDay> {
     return this.weekDayService.addOrUpdateWeekDay(this.selectedEntity!);
   }
