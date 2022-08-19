@@ -1,6 +1,9 @@
 package com.jss.osiris.modules.quotation.model;
 
-import java.util.Date;
+import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.jss.osiris.libs.JacksonLocalDateTimeSerializer;
 
 public class Association {
     public int id;
@@ -49,8 +52,10 @@ public class Association {
     public Object observation;
     public String position_activite;
     public String derniere_maj;
-    public Date created_at;
-    public Date updated_at;
+    @JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
+    public LocalDateTime created_at;
+    @JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
+    public LocalDateTime updated_at;
 
     public int getId() {
         return id;
@@ -420,19 +425,19 @@ public class Association {
         this.derniere_maj = derniere_maj;
     }
 
-    public Date getCreated_at() {
+    public LocalDateTime getCreated_at() {
         return created_at;
     }
 
-    public void setCreated_at(Date created_at) {
+    public void setCreated_at(LocalDateTime created_at) {
         this.created_at = created_at;
     }
 
-    public Date getUpdated_at() {
+    public LocalDateTime getUpdated_at() {
         return updated_at;
     }
 
-    public void setUpdated_at(Date updated_at) {
+    public void setUpdated_at(LocalDateTime updated_at) {
         this.updated_at = updated_at;
     }
 

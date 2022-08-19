@@ -1,7 +1,7 @@
 package com.jss.osiris.modules.quotation.model;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -12,6 +12,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.jss.osiris.libs.JacksonLocalDateTimeSerializer;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 
 @Entity
@@ -22,7 +24,8 @@ public class Invoice implements Serializable, IId {
 	private Integer id;
 
 	@Column(nullable = false)
-	private Date createdDate;
+	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
+	private LocalDateTime createdDate;
 
 	@OneToMany(targetEntity = InvoiceItem.class, mappedBy = "invoice")
 	@JsonManagedReference("invoiceItems")
@@ -36,11 +39,11 @@ public class Invoice implements Serializable, IId {
 		this.id = id;
 	}
 
-	public Date getCreatedDate() {
+	public LocalDateTime getCreatedDate() {
 		return createdDate;
 	}
 
-	public void setCreatedDate(Date createdDate) {
+	public void setCreatedDate(LocalDateTime createdDate) {
 		this.createdDate = createdDate;
 	}
 

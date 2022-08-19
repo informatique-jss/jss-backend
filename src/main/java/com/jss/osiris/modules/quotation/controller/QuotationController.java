@@ -1,7 +1,7 @@
 package com.jss.osiris.modules.quotation.controller;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -220,7 +220,7 @@ public class QuotationController {
     try {
       if (invoice.getId() != null)
         validationHelper.validateReferential(invoice, true);
-      validationHelper.validateDate(invoice.getCreatedDate(), true);
+      validationHelper.validateDateTime(invoice.getCreatedDate(), true);
 
       outInvoice = invoiceService
           .addOrUpdateInvoice(invoice);
@@ -571,7 +571,7 @@ public class QuotationController {
 
   @GetMapping(inputEntryPoint + "/character-price")
   public ResponseEntity<CharacterPrice> getCharacterPrice(@RequestParam Integer departmentId,
-      @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") Date date) {
+      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate date) {
     CharacterPrice characterPrice = null;
     if (departmentId == null || date == null)
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -1435,7 +1435,7 @@ public class QuotationController {
           validationHelper.validateReferential(domiciliation.getLegalGardianCivility(), isCustomerOrder);
           validationHelper.validateString(domiciliation.getLegalGardianFirstname(), isCustomerOrder, 20);
           validationHelper.validateString(domiciliation.getLegalGardianLastname(), isCustomerOrder, 20);
-          validationHelper.validateDateMax(domiciliation.getLegalGardianBirthdate(), isCustomerOrder, new Date());
+          validationHelper.validateDateMax(domiciliation.getLegalGardianBirthdate(), isCustomerOrder, LocalDate.now());
           validationHelper.validateString(domiciliation.getLegalGardianPlaceOfBirth(), isCustomerOrder, 60);
           validationHelper.validateString(domiciliation.getLegalGardianJob(), isCustomerOrder, 30);
         }
@@ -1451,7 +1451,7 @@ public class QuotationController {
       // Shal
       if (provision.getShal() != null) {
         Shal shal = provision.getShal();
-        validationHelper.validateDateMin(shal.getPublicationDate(), !isOpen, new Date());
+        validationHelper.validateDateMin(shal.getPublicationDate(), !isOpen, LocalDate.now());
         validationHelper.validateReferential(shal.getDepartment(), !isOpen);
         validationHelper.validateReferential(shal.getConfrere(), isCustomerOrder);
         validationHelper.validateReferential(shal.getNoticeTypeFamily(), isCustomerOrder);
@@ -1598,7 +1598,7 @@ public class QuotationController {
           }
         }
 
-        validationHelper.validateDateMin(bodacc.getDateOfPublication(), false, new Date());
+        validationHelper.validateDateMin(bodacc.getDateOfPublication(), false, LocalDate.now());
       }
     }
   }

@@ -1,6 +1,6 @@
 package com.jss.osiris.modules.quotation.service;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 import com.jss.osiris.modules.miscellaneous.model.Department;
@@ -10,7 +10,7 @@ import com.jss.osiris.modules.quotation.model.Provision;
 public interface CharacterPriceService {
     public List<CharacterPrice> getCharacterPrices();
 
-    public CharacterPrice getCharacterPrice(Department department, Date date);
+    public CharacterPrice getCharacterPrice(Department department, LocalDate date);
 
     public CharacterPrice addOrUpdateCharacterPrice(CharacterPrice characterPrice);
 

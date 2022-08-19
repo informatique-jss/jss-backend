@@ -1,7 +1,7 @@
 package com.jss.osiris.modules.accounting.model;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,6 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.jss.osiris.libs.JacksonLocalDateTimeSerializer;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 
 @Entity
@@ -21,10 +23,13 @@ public class AccountingRecord implements Serializable, IId {
 	private Integer id;
 
 	@Column(nullable = false)
-	private Date accountingDate;
+	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
+	private LocalDateTime accountingDateTime;
 
 	@Column(nullable = false)
-	private Date operationDate;
+	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
+	private LocalDateTime operationDateTime;
+
 	private String manualAccountingDocumentNumber;
 	private String label;
 	private Float creditAmount;
@@ -46,20 +51,28 @@ public class AccountingRecord implements Serializable, IId {
 		this.id = id;
 	}
 
-	public Date getAccountingDate() {
-		return accountingDate;
+	public LocalDateTime getAccountingDateTime() {
+		return accountingDateTime;
 	}
 
-	public void setAccountingDate(Date accountingDate) {
-		this.accountingDate = accountingDate;
+	public void setAccountingDateTime(LocalDateTime accountingDateTime) {
+		this.accountingDateTime = accountingDateTime;
 	}
 
-	public Date getOperationDate() {
-		return operationDate;
+	public LocalDateTime getOperationDateTime() {
+		return operationDateTime;
 	}
 
-	public void setOperationDate(Date operationDate) {
-		this.operationDate = operationDate;
+	public void setOperationDateTime(LocalDateTime operationDateTime) {
+		this.operationDateTime = operationDateTime;
+	}
+
+	public Boolean getIsTemporary() {
+		return isTemporary;
+	}
+
+	public void setIsTemporary(Boolean isTemporary) {
+		this.isTemporary = isTemporary;
 	}
 
 	public String getManualAccountingDocumentNumber() {

@@ -1,7 +1,6 @@
 package com.jss.osiris.modules.quotation.service;
 
-import java.util.Calendar;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +49,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Override
     public CustomerOrder addOrUpdateCustomerOrder(CustomerOrder customerOrder) throws Exception {
         if (customerOrder.getId() == null)
-            customerOrder.setCreatedDate(new Date());
+            customerOrder.setCreatedDate(LocalDateTime.now());
 
         customerOrder.setIsQuotation(false);
 
@@ -59,10 +58,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             if (provision.getDomiciliation() != null) {
                 Domiciliation domiciliation = provision.getDomiciliation();
                 if (domiciliation.getEndDate() == null) {
-                    Calendar c = Calendar.getInstance();
-                    c.setTime(domiciliation.getStartDate());
-                    c.add(Calendar.YEAR, 1);
-                    domiciliation.setEndDate(c.getTime());
+                    domiciliation.setEndDate(domiciliation.getStartDate().plusYears(1));
 
                     // If mails already exists, get their ids
                     if (domiciliation != null && domiciliation.getMails() != null

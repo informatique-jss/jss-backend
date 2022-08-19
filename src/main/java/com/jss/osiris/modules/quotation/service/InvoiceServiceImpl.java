@@ -1,6 +1,6 @@
 package com.jss.osiris.modules.quotation.service;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +40,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public Invoice createInvoice() {
         Invoice invoice = new Invoice();
-        invoice.setCreatedDate(new Date());
+        invoice.setCreatedDate(LocalDateTime.now());
         invoiceRepository.save(invoice);
         return invoice;
     }

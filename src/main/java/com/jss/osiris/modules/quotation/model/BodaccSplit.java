@@ -1,7 +1,7 @@
 package com.jss.osiris.modules.quotation.model;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -12,6 +12,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.jss.osiris.libs.JacksonLocalDateSerializer;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 
 @Entity
@@ -40,7 +42,8 @@ public class BodaccSplit implements Serializable, IId {
 	private String exchangeRatioReport;
 
 	@Column(nullable = false)
-	private Date splitProjectDate;
+	@JsonSerialize(using = JacksonLocalDateSerializer.class)
+	private LocalDate splitProjectDate;
 
 	public Integer getId() {
 		return id;
@@ -98,11 +101,11 @@ public class BodaccSplit implements Serializable, IId {
 		this.exchangeRatioReport = exchangeRatioReport;
 	}
 
-	public Date getSplitProjectDate() {
+	public LocalDate getSplitProjectDate() {
 		return splitProjectDate;
 	}
 
-	public void setSplitProjectDate(Date splitProjectDate) {
+	public void setSplitProjectDate(LocalDate splitProjectDate) {
 		this.splitProjectDate = splitProjectDate;
 	}
 

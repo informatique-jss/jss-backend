@@ -1,7 +1,7 @@
 package com.jss.osiris.modules.quotation.model;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -21,6 +21,8 @@ import org.hibernate.annotations.OnDeleteAction;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.jss.osiris.libs.JacksonLocalDateSerializer;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.Department;
 import com.jss.osiris.modules.miscellaneous.model.IId;
@@ -46,7 +48,8 @@ public class Shal implements Serializable, IId {
 	private Confrere confrere;
 
 	@Column(nullable = false)
-	private Date publicationDate;
+	@JsonSerialize(using = JacksonLocalDateSerializer.class)
+	private LocalDate publicationDate;
 
 	@Column(nullable = false)
 	private Boolean isRedactedByJss;
@@ -262,11 +265,11 @@ public class Shal implements Serializable, IId {
 		return provision;
 	}
 
-	public Date getPublicationDate() {
+	public LocalDate getPublicationDate() {
 		return publicationDate;
 	}
 
-	public void setPublicationDate(Date publicationDate) {
+	public void setPublicationDate(LocalDate publicationDate) {
 		this.publicationDate = publicationDate;
 	}
 

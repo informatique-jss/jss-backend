@@ -1,7 +1,7 @@
 package com.jss.osiris.modules.quotation.model;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -20,6 +20,8 @@ import javax.persistence.OneToMany;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.jss.osiris.libs.JacksonLocalDateSerializer;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.City;
 import com.jss.osiris.modules.miscellaneous.model.Civility;
@@ -83,9 +85,11 @@ public class Domiciliation implements Serializable, IId {
 	@Column(length = 60)
 	private String mailRecipient;
 
-	private Date startDate;
+	@JsonSerialize(using = JacksonLocalDateSerializer.class)
+	private LocalDate startDate;
 
-	private Date endDate;
+	@JsonSerialize(using = JacksonLocalDateSerializer.class)
+	private LocalDate endDate;
 
 	@Column(columnDefinition = "TEXT")
 	private String activityDescription;
@@ -128,7 +132,8 @@ public class Domiciliation implements Serializable, IId {
 	@Column(length = 20)
 	private String legalGardianLastname;
 
-	private Date legalGardianBirthdate;
+	@JsonSerialize(using = JacksonLocalDateSerializer.class)
+	private LocalDate legalGardianBirthdate;
 
 	@Column(length = 60)
 	private String legalGardianPlaceOfBirth;
@@ -311,11 +316,11 @@ public class Domiciliation implements Serializable, IId {
 		this.legalGardianLastname = legalGardianLastname;
 	}
 
-	public Date getLegalGardianBirthdate() {
+	public LocalDate getLegalGardianBirthdate() {
 		return legalGardianBirthdate;
 	}
 
-	public void setLegalGardianBirthdate(Date legalGardianBirthdate) {
+	public void setLegalGardianBirthdate(LocalDate legalGardianBirthdate) {
 		this.legalGardianBirthdate = legalGardianBirthdate;
 	}
 
@@ -427,19 +432,19 @@ public class Domiciliation implements Serializable, IId {
 		this.mailRecipient = mailRecipient;
 	}
 
-	public Date getStartDate() {
+	public LocalDate getStartDate() {
 		return startDate;
 	}
 
-	public void setStartDate(Date startDate) {
+	public void setStartDate(LocalDate startDate) {
 		this.startDate = startDate;
 	}
 
-	public Date getEndDate() {
+	public LocalDate getEndDate() {
 		return endDate;
 	}
 
-	public void setEndDate(Date endDate) {
+	public void setEndDate(LocalDate endDate) {
 		this.endDate = endDate;
 	}
 

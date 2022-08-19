@@ -1,9 +1,9 @@
 package com.jss.osiris.modules.quotation.service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -89,7 +89,7 @@ public class QuotationServiceImpl implements QuotationService {
     @Override
     public Quotation addOrUpdateQuotation(Quotation quotation) throws Exception {
         if (quotation.getId() == null)
-            quotation.setCreatedDate(new Date());
+            quotation.setCreatedDate(LocalDateTime.now());
 
         quotation.setIsQuotation(true);
 
@@ -98,10 +98,7 @@ public class QuotationServiceImpl implements QuotationService {
             if (provision.getDomiciliation() != null) {
                 Domiciliation domiciliation = provision.getDomiciliation();
                 if (domiciliation.getEndDate() == null) {
-                    Calendar c = Calendar.getInstance();
-                    c.setTime(domiciliation.getStartDate());
-                    c.add(Calendar.YEAR, 1);
-                    domiciliation.setEndDate(c.getTime());
+                    domiciliation.setEndDate(domiciliation.getStartDate().plusYears(1));
 
                     // If mails already exists, get their ids
                     if (domiciliation != null && domiciliation.getMails() != null
@@ -194,7 +191,7 @@ public class QuotationServiceImpl implements QuotationService {
                 }
             });
         for (BillingItem billingItem : billingItems) {
-            if (billingItem.getStartDate().before(new Date()))
+            if (billingItem.getStartDate().isBefore(LocalDate.now()))
                 return billingItem;
         }
         return null;
@@ -294,8 +291,12 @@ public class QuotationServiceImpl implements QuotationService {
                     billingDocument.getBillingLabelIsIndividual());
         }
 
-        invoiceItem.setVatPrice(vat.getRate() / 100 * (invoiceItem.getPreTaxPrice()
-                - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount() : 0)));
+        if (vat != null) {
+            invoiceItem.setVatPrice(vat.getRate() / 100 * (invoiceItem.getPreTaxPrice()
+                    - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount() : 0)));
+        } else {
+            invoiceItem.setVatPrice(0f);
+        }
 
     }
 

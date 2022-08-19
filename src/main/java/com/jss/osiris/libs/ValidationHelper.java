@@ -1,7 +1,8 @@
 package com.jss.osiris.libs;
 
 import java.lang.reflect.Method;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -151,25 +152,48 @@ public class ValidationHelper {
         validateString(value, isMandatory, null);
     }
 
-    public void validateDate(Date value, Boolean isMandatory) throws Exception {
+    public void validateDate(LocalDate value, Boolean isMandatory) throws Exception {
         validateDateMax(value, isMandatory, null);
     }
 
-    public void validateDateMax(Date value, Boolean isMandatory, Date maxDate) throws Exception {
+    public void validateDateMax(LocalDate value, Boolean isMandatory, LocalDate maxDate) throws Exception {
         if ((value == null) && isMandatory)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         if (value != null) {
-            if (maxDate != null && value.after(maxDate))
+            if (maxDate != null && value.isAfter(maxDate))
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
     }
 
-    public void validateDateMin(Date value, Boolean isMandatory, Date minDate)
+    public void validateDateMin(LocalDate value, Boolean isMandatory, LocalDate minDate)
             throws Exception {
         if ((value == null) && isMandatory)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         if (value != null) {
-            if (minDate != null && value.before(minDate))
+            if (minDate != null && value.isBefore(minDate))
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    public void validateDateTime(LocalDateTime value, Boolean isMandatory) throws Exception {
+        validateDateTimeMax(value, isMandatory, null);
+    }
+
+    public void validateDateTimeMax(LocalDateTime value, Boolean isMandatory, LocalDateTime maxDate) throws Exception {
+        if ((value == null) && isMandatory)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        if (value != null) {
+            if (maxDate != null && value.isAfter(maxDate))
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    public void validateDateTimeMin(LocalDateTime value, Boolean isMandatory, LocalDateTime minDate)
+            throws Exception {
+        if ((value == null) && isMandatory)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        if (value != null) {
+            if (minDate != null && value.isBefore(minDate))
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
     }

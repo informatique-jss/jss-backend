@@ -1,7 +1,7 @@
 package com.jss.osiris.modules.quotation.model;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -17,6 +17,8 @@ import javax.persistence.OneToOne;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.jss.osiris.libs.JacksonLocalDateSerializer;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.miscellaneous.model.PaymentType;
@@ -58,7 +60,8 @@ public class Bodacc implements Serializable, IId {
 	@JsonManagedReference("bodacc")
 	private List<Attachment> attachments;
 
-	private Date dateOfPublication;
+	@JsonSerialize(using = JacksonLocalDateSerializer.class)
+	private LocalDate dateOfPublication;
 
 	public Integer getId() {
 		return id;
@@ -68,7 +71,7 @@ public class Bodacc implements Serializable, IId {
 		return bodaccFusion;
 	}
 
-	public Date getDateOfPublication() {
+	public LocalDate getDateOfPublication() {
 		return dateOfPublication;
 	}
 
@@ -80,7 +83,7 @@ public class Bodacc implements Serializable, IId {
 		this.bodaccSplit = bodaccSplit;
 	}
 
-	public void setDateOfPublication(Date dateOfPublication) {
+	public void setDateOfPublication(LocalDate dateOfPublication) {
 		this.dateOfPublication = dateOfPublication;
 	}
 

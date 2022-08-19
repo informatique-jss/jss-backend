@@ -1,7 +1,7 @@
 package com.jss.osiris.modules.quotation.model;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
@@ -31,9 +31,9 @@ public interface IQuotation extends Serializable, IId {
 
 	public void setSpecialOffers(List<SpecialOffer> specialOffers);
 
-	public Date getCreatedDate();
+	public LocalDateTime getCreatedDate();
 
-	public void setCreatedDate(Date createdDate);
+	public void setCreatedDate(LocalDateTime createdDate);
 
 	public QuotationStatus getStatus();
 

@@ -1,7 +1,7 @@
 package com.jss.osiris.libs.audit.model;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,6 +10,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Index;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.jss.osiris.libs.JacksonLocalDateTimeSerializer;
 
 @Entity
 @Table(indexes = { @Index(name = "pk_audit", columnList = "id", unique = true),
@@ -36,7 +39,8 @@ public class Audit implements Serializable {
 	@Column(columnDefinition = "TEXT")
 	private String newValue;
 
-	private Date datetime;
+	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
+	private LocalDateTime datetime;
 
 	private String username;
 
@@ -80,11 +84,11 @@ public class Audit implements Serializable {
 		this.newValue = newValue;
 	}
 
-	public Date getDatetime() {
+	public LocalDateTime getDatetime() {
 		return datetime;
 	}
 
-	public void setDatetime(Date datetime) {
+	public void setDatetime(LocalDateTime datetime) {
 		this.datetime = datetime;
 	}
 

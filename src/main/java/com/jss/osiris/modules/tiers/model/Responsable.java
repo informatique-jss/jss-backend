@@ -1,6 +1,6 @@
 package com.jss.osiris.modules.tiers.model;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -19,6 +19,8 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.jss.osiris.libs.JacksonLocalDateSerializer;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.City;
@@ -57,7 +59,8 @@ public class Responsable implements ITiers, IAttachment, IDocument {
 
 	// TODO : waiting for Xcase experiment to evaluate if we get it dynamically from
 	// compatibility or keep it here
-	private Date firstBilling;
+	@JsonSerialize(using = JacksonLocalDateSerializer.class)
+	private LocalDate firstBilling;
 
 	@ManyToOne
 	@JoinColumn(name = "id_tiers_type")
@@ -230,11 +233,11 @@ public class Responsable implements ITiers, IAttachment, IDocument {
 		this.id = id;
 	}
 
-	public Date getFirstBilling() {
+	public LocalDate getFirstBilling() {
 		return firstBilling;
 	}
 
-	public void setFirstBilling(Date firstBilling) {
+	public void setFirstBilling(LocalDate firstBilling) {
 		this.firstBilling = firstBilling;
 	}
 

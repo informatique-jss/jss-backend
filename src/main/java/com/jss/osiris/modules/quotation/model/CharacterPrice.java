@@ -1,7 +1,7 @@
 package com.jss.osiris.modules.quotation.model;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -14,6 +14,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.jss.osiris.libs.JacksonLocalDateSerializer;
 import com.jss.osiris.modules.miscellaneous.model.Department;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 
@@ -31,7 +33,8 @@ public class CharacterPrice implements Serializable, IId {
 	@JoinTable(name = "asso_character_price_department", joinColumns = @JoinColumn(name = "id_character_price"), inverseJoinColumns = @JoinColumn(name = "id_department"))
 	private List<Department> departments;
 
-	private Date startDate;
+	@JsonSerialize(using = JacksonLocalDateSerializer.class)
+	private LocalDate startDate;
 
 	public Integer getId() {
 		return id;
@@ -41,11 +44,11 @@ public class CharacterPrice implements Serializable, IId {
 		this.id = id;
 	}
 
-	public Date getStartDate() {
+	public LocalDate getStartDate() {
 		return startDate;
 	}
 
-	public void setStartDate(Date startDate) {
+	public void setStartDate(LocalDate startDate) {
 		this.startDate = startDate;
 	}
 

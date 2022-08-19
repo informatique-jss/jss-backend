@@ -1,7 +1,7 @@
 package com.jss.osiris.modules.tiers.model;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,6 +15,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.jss.osiris.libs.JacksonLocalDateSerializer;
 import com.jss.osiris.modules.miscellaneous.model.Gift;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.profile.model.Employee;
@@ -52,7 +54,8 @@ public class TiersFollowup implements Serializable, IId {
 	private Employee salesEmployee;
 
 	@Column(nullable = false)
-	private Date followupDate;
+	@JsonSerialize(using = JacksonLocalDateSerializer.class)
+	private LocalDate followupDate;
 
 	@Column(columnDefinition = "TEXT")
 	private String observations;
@@ -105,11 +108,11 @@ public class TiersFollowup implements Serializable, IId {
 		this.salesEmployee = salesEmployee;
 	}
 
-	public Date getFollowupDate() {
+	public LocalDate getFollowupDate() {
 		return followupDate;
 	}
 
-	public void setFollowupDate(Date followupDate) {
+	public void setFollowupDate(LocalDate followupDate) {
 		this.followupDate = followupDate;
 	}
 

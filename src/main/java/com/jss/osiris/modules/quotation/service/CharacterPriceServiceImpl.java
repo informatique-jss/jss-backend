@@ -1,6 +1,6 @@
 package com.jss.osiris.modules.quotation.service;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 import org.apache.commons.collections4.IterableUtils;
@@ -24,12 +24,12 @@ public class CharacterPriceServiceImpl implements CharacterPriceService {
     }
 
     @Override
-    public CharacterPrice getCharacterPrice(Department department, Date date) {
+    public CharacterPrice getCharacterPrice(Department department, LocalDate date) {
         List<CharacterPrice> characterPrices = IterableUtils.toList(characterPriceRepository.findAll());
         for (CharacterPrice characterPrice : characterPrices) {
             if (characterPrice.getDepartments().size() > 0)
                 for (Department d : characterPrice.getDepartments()) {
-                    if (d.getId() == department.getId() && date.after(characterPrice.getStartDate()))
+                    if (d.getId() == department.getId() && date.isAfter(characterPrice.getStartDate()))
                         return characterPrice;
                 }
         }

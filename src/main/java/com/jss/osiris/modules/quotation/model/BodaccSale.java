@@ -1,7 +1,7 @@
 package com.jss.osiris.modules.quotation.model;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,6 +12,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.jss.osiris.libs.JacksonLocalDateSerializer;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.miscellaneous.model.LegalForm;
@@ -73,7 +75,8 @@ public class BodaccSale implements Serializable, IId {
 	private String purchaserSiren;
 
 	@Column(nullable = false)
-	private Date purchaserActivityStartDate;
+	@JsonSerialize(using = JacksonLocalDateSerializer.class)
+	private LocalDate purchaserActivityStartDate;
 
 	@Column(length = 60)
 	private String purchaserDenomination;
@@ -92,13 +95,15 @@ public class BodaccSale implements Serializable, IId {
 	private Integer purchaserMinimumCapital;
 
 	@Column(nullable = false)
-	private Date deedDate;
+	@JsonSerialize(using = JacksonLocalDateSerializer.class)
+	private LocalDate deedDate;
 
 	@Column(nullable = false)
 	private Integer salePrice;
 
 	@Column(nullable = false)
-	private Date registrationDate;
+	@JsonSerialize(using = JacksonLocalDateSerializer.class)
+	private LocalDate registrationDate;
 
 	@ManyToOne
 	@JoinColumn(name = "id_registration_authority")
@@ -126,7 +131,8 @@ public class BodaccSale implements Serializable, IId {
 	private String mailObjectionAddress;
 
 	@Column(nullable = false)
-	private Date leaseResilisationDate;
+	@JsonSerialize(using = JacksonLocalDateSerializer.class)
+	private LocalDate leaseResilisationDate;
 
 	@Column(nullable = false)
 	private Integer leaseResilisationFee;
@@ -169,6 +175,74 @@ public class BodaccSale implements Serializable, IId {
 		return id;
 	}
 
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public String getDivestedBusinessAddress() {
+		return divestedBusinessAddress;
+	}
+
+	public void setDivestedBusinessAddress(String divestedBusinessAddress) {
+		this.divestedBusinessAddress = divestedBusinessAddress;
+	}
+
+	public FundType getFundType() {
+		return fundType;
+	}
+
+	public void setFundType(FundType fundType) {
+		this.fundType = fundType;
+	}
+
+	public String getDivestedBusinessActivities() {
+		return divestedBusinessActivities;
+	}
+
+	public void setDivestedBusinessActivities(String divestedBusinessActivities) {
+		this.divestedBusinessActivities = divestedBusinessActivities;
+	}
+
+	public String getOwnerFirstname() {
+		return ownerFirstname;
+	}
+
+	public void setOwnerFirstname(String ownerFirstname) {
+		this.ownerFirstname = ownerFirstname;
+	}
+
+	public String getOwnerLastname() {
+		return ownerLastname;
+	}
+
+	public void setOwnerLastname(String ownerLastname) {
+		this.ownerLastname = ownerLastname;
+	}
+
+	public String getOwnerDenomination() {
+		return ownerDenomination;
+	}
+
+	public void setOwnerDenomination(String ownerDenomination) {
+		this.ownerDenomination = ownerDenomination;
+	}
+
+	public String getOwnerSiren() {
+		return ownerSiren;
+	}
+
+	public void setOwnerSiren(String ownerSiren) {
+		this.ownerSiren = ownerSiren;
+	}
+
+	public String getOwnerAddress() {
+		return ownerAddress;
+	}
+
+	public void setOwnerAddress(String ownerAddress) {
+		this.ownerAddress = ownerAddress;
+	}
+
 	public Boolean getIsOwnerIndividual() {
 		return isOwnerIndividual;
 	}
@@ -209,11 +283,171 @@ public class BodaccSale implements Serializable, IId {
 		this.ownerLegalForm = ownerLegalForm;
 	}
 
-	public Date getLeaseResilisationDate() {
+	public String getPurchaserFirstname() {
+		return purchaserFirstname;
+	}
+
+	public void setPurchaserFirstname(String purchaserFirstname) {
+		this.purchaserFirstname = purchaserFirstname;
+	}
+
+	public String getPurchaserLastname() {
+		return purchaserLastname;
+	}
+
+	public void setPurchaserLastname(String purchaserLastname) {
+		this.purchaserLastname = purchaserLastname;
+	}
+
+	public String getPurchaserSiren() {
+		return purchaserSiren;
+	}
+
+	public void setPurchaserSiren(String purchaserSiren) {
+		this.purchaserSiren = purchaserSiren;
+	}
+
+	public LocalDate getPurchaserActivityStartDate() {
+		return purchaserActivityStartDate;
+	}
+
+	public void setPurchaserActivityStartDate(LocalDate purchaserActivityStartDate) {
+		this.purchaserActivityStartDate = purchaserActivityStartDate;
+	}
+
+	public String getPurchaserDenomination() {
+		return purchaserDenomination;
+	}
+
+	public void setPurchaserDenomination(String purchaserDenomination) {
+		this.purchaserDenomination = purchaserDenomination;
+	}
+
+	public LegalForm getPurchaserLegalForm() {
+		return purchaserLegalForm;
+	}
+
+	public void setPurchaserLegalForm(LegalForm purchaserLegalForm) {
+		this.purchaserLegalForm = purchaserLegalForm;
+	}
+
+	public String getPurchaserAbbreviation() {
+		return purchaserAbbreviation;
+	}
+
+	public void setPurchaserAbbreviation(String purchaserAbbreviation) {
+		this.purchaserAbbreviation = purchaserAbbreviation;
+	}
+
+	public String getPurchaserBusinessName() {
+		return purchaserBusinessName;
+	}
+
+	public void setPurchaserBusinessName(String purchaserBusinessName) {
+		this.purchaserBusinessName = purchaserBusinessName;
+	}
+
+	public Integer getPurchaserShareCapital() {
+		return purchaserShareCapital;
+	}
+
+	public void setPurchaserShareCapital(Integer purchaserShareCapital) {
+		this.purchaserShareCapital = purchaserShareCapital;
+	}
+
+	public Integer getPurchaserMinimumCapital() {
+		return purchaserMinimumCapital;
+	}
+
+	public void setPurchaserMinimumCapital(Integer purchaserMinimumCapital) {
+		this.purchaserMinimumCapital = purchaserMinimumCapital;
+	}
+
+	public LocalDate getDeedDate() {
+		return deedDate;
+	}
+
+	public void setDeedDate(LocalDate deedDate) {
+		this.deedDate = deedDate;
+	}
+
+	public Integer getSalePrice() {
+		return salePrice;
+	}
+
+	public void setSalePrice(Integer salePrice) {
+		this.salePrice = salePrice;
+	}
+
+	public LocalDate getRegistrationDate() {
+		return registrationDate;
+	}
+
+	public void setRegistrationDate(LocalDate registrationDate) {
+		this.registrationDate = registrationDate;
+	}
+
+	public CompetentAuthority getRegistrationAuthority() {
+		return registrationAuthority;
+	}
+
+	public void setRegistrationAuthority(CompetentAuthority registrationAuthority) {
+		this.registrationAuthority = registrationAuthority;
+	}
+
+	public String getRegistrationReferences() {
+		return registrationReferences;
+	}
+
+	public void setRegistrationReferences(String registrationReferences) {
+		this.registrationReferences = registrationReferences;
+	}
+
+	public ActType getActType() {
+		return actType;
+	}
+
+	public void setActType(ActType actType) {
+		this.actType = actType;
+	}
+
+	public String getWritor() {
+		return writor;
+	}
+
+	public void setWritor(String writor) {
+		this.writor = writor;
+	}
+
+	public String getWritorAddress() {
+		return writorAddress;
+	}
+
+	public void setWritorAddress(String writorAddress) {
+		this.writorAddress = writorAddress;
+	}
+
+	public String getValidityObjectionAddress() {
+		return validityObjectionAddress;
+	}
+
+	public void setValidityObjectionAddress(String validityObjectionAddress) {
+		this.validityObjectionAddress = validityObjectionAddress;
+	}
+
+	public String getMailObjectionAddress() {
+		return mailObjectionAddress;
+	}
+
+	public void setMailObjectionAddress(String mailObjectionAddress) {
+		this.mailObjectionAddress = mailObjectionAddress;
+	}
+
+	public LocalDate getLeaseResilisationDate() {
 		return leaseResilisationDate;
 	}
 
-	public void setLeaseResilisationDate(Date leaseResilisationDate) {
+	public void setLeaseResilisationDate(LocalDate leaseResilisationDate) {
 		this.leaseResilisationDate = leaseResilisationDate;
 	}
 
@@ -319,234 +553,6 @@ public class BodaccSale implements Serializable, IId {
 
 	public void setTenantLegalForm(LegalForm tenantLegalForm) {
 		this.tenantLegalForm = tenantLegalForm;
-	}
-
-	public String getPurchaserDenomination() {
-		return purchaserDenomination;
-	}
-
-	public void setPurchaserDenomination(String purchaserDenomination) {
-		this.purchaserDenomination = purchaserDenomination;
-	}
-
-	public LegalForm getPurchaserLegalForm() {
-		return purchaserLegalForm;
-	}
-
-	public void setPurchaserLegalForm(LegalForm purchaserLegalForm) {
-		this.purchaserLegalForm = purchaserLegalForm;
-	}
-
-	public String getPurchaserAbbreviation() {
-		return purchaserAbbreviation;
-	}
-
-	public void setPurchaserAbbreviation(String purchaserAbbreviation) {
-		this.purchaserAbbreviation = purchaserAbbreviation;
-	}
-
-	public String getPurchaserBusinessName() {
-		return purchaserBusinessName;
-	}
-
-	public void setPurchaserBusinessName(String purchaserBusinessName) {
-		this.purchaserBusinessName = purchaserBusinessName;
-	}
-
-	public Integer getPurchaserShareCapital() {
-		return purchaserShareCapital;
-	}
-
-	public void setPurchaserShareCapital(Integer purchaserShareCapital) {
-		this.purchaserShareCapital = purchaserShareCapital;
-	}
-
-	public Integer getPurchaserMinimumCapital() {
-		return purchaserMinimumCapital;
-	}
-
-	public void setPurchaserMinimumCapital(Integer purchaserMinimumCapital) {
-		this.purchaserMinimumCapital = purchaserMinimumCapital;
-	}
-
-	public String getValidityObjectionAddress() {
-		return validityObjectionAddress;
-	}
-
-	public void setValidityObjectionAddress(String validityObjectionAddress) {
-		this.validityObjectionAddress = validityObjectionAddress;
-	}
-
-	public String getMailObjectionAddress() {
-		return mailObjectionAddress;
-	}
-
-	public void setMailObjectionAddress(String mailObjectionAddress) {
-		this.mailObjectionAddress = mailObjectionAddress;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
-	public String getDivestedBusinessAddress() {
-		return divestedBusinessAddress;
-	}
-
-	public void setDivestedBusinessAddress(String divestedBusinessAddress) {
-		this.divestedBusinessAddress = divestedBusinessAddress;
-	}
-
-	public String getPurchaserFirstname() {
-		return purchaserFirstname;
-	}
-
-	public void setPurchaserFirstname(String purchaserFirstname) {
-		this.purchaserFirstname = purchaserFirstname;
-	}
-
-	public String getPurchaserLastname() {
-		return purchaserLastname;
-	}
-
-	public void setPurchaserLastname(String purchaserLastname) {
-		this.purchaserLastname = purchaserLastname;
-	}
-
-	public String getPurchaserSiren() {
-		return purchaserSiren;
-	}
-
-	public void setPurchaserSiren(String purchaserSiren) {
-		this.purchaserSiren = purchaserSiren;
-	}
-
-	public Date getPurchaserActivityStartDate() {
-		return purchaserActivityStartDate;
-	}
-
-	public void setPurchaserActivityStartDate(Date purchaserActivityStartDate) {
-		this.purchaserActivityStartDate = purchaserActivityStartDate;
-	}
-
-	public Date getDeedDate() {
-		return deedDate;
-	}
-
-	public void setDeedDate(Date deedDate) {
-		this.deedDate = deedDate;
-	}
-
-	public Integer getSalePrice() {
-		return salePrice;
-	}
-
-	public void setSalePrice(Integer salePrice) {
-		this.salePrice = salePrice;
-	}
-
-	public Date getRegistrationDate() {
-		return registrationDate;
-	}
-
-	public void setRegistrationDate(Date registrationDate) {
-		this.registrationDate = registrationDate;
-	}
-
-	public CompetentAuthority getRegistrationAuthority() {
-		return registrationAuthority;
-	}
-
-	public void setRegistrationAuthority(CompetentAuthority registrationAuthority) {
-		this.registrationAuthority = registrationAuthority;
-	}
-
-	public String getRegistrationReferences() {
-		return registrationReferences;
-	}
-
-	public void setRegistrationReferences(String registrationReferences) {
-		this.registrationReferences = registrationReferences;
-	}
-
-	public ActType getActType() {
-		return actType;
-	}
-
-	public void setActType(ActType actType) {
-		this.actType = actType;
-	}
-
-	public String getWritor() {
-		return writor;
-	}
-
-	public void setWritor(String writor) {
-		this.writor = writor;
-	}
-
-	public String getWritorAddress() {
-		return writorAddress;
-	}
-
-	public void setWritorAddress(String writorAddress) {
-		this.writorAddress = writorAddress;
-	}
-
-	public String getDivestedBusinessActivities() {
-		return divestedBusinessActivities;
-	}
-
-	public String getOwnerFirstname() {
-		return ownerFirstname;
-	}
-
-	public void setOwnerFirstname(String ownerFirstname) {
-		this.ownerFirstname = ownerFirstname;
-	}
-
-	public String getOwnerLastname() {
-		return ownerLastname;
-	}
-
-	public void setOwnerLastname(String ownerLastname) {
-		this.ownerLastname = ownerLastname;
-	}
-
-	public String getOwnerDenomination() {
-		return ownerDenomination;
-	}
-
-	public void setOwnerDenomination(String ownerDenomination) {
-		this.ownerDenomination = ownerDenomination;
-	}
-
-	public String getOwnerSiren() {
-		return ownerSiren;
-	}
-
-	public void setOwnerSiren(String ownerSiren) {
-		this.ownerSiren = ownerSiren;
-	}
-
-	public String getOwnerAddress() {
-		return ownerAddress;
-	}
-
-	public void setOwnerAddress(String ownerAddress) {
-		this.ownerAddress = ownerAddress;
-	}
-
-	public void setDivestedBusinessActivities(String divestedBusinessActivities) {
-		this.divestedBusinessActivities = divestedBusinessActivities;
-	}
-
-	public FundType getFundType() {
-		return fundType;
-	}
-
-	public void setFundType(FundType fundType) {
-		this.fundType = fundType;
 	}
 
 }

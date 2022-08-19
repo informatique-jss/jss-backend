@@ -1,7 +1,7 @@
 package com.jss.osiris.modules.miscellaneous.model;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -15,6 +15,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.jss.osiris.libs.JacksonLocalDateSerializer;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 
 @Entity
@@ -31,7 +33,8 @@ public class BillingItem implements Serializable, IId {
 	private Float preTaxPrice;
 
 	@Column(nullable = false)
-	private Date startDate;
+	@JsonSerialize(using = JacksonLocalDateSerializer.class)
+	private LocalDate startDate;
 
 	@OneToMany(targetEntity = AccountingAccount.class, mappedBy = "billingItem", fetch = FetchType.EAGER)
 	@JsonManagedReference("accountingAccount")
@@ -61,11 +64,11 @@ public class BillingItem implements Serializable, IId {
 		this.preTaxPrice = preTaxPrice;
 	}
 
-	public Date getStartDate() {
+	public LocalDate getStartDate() {
 		return startDate;
 	}
 
-	public void setStartDate(Date startDate) {
+	public void setStartDate(LocalDate startDate) {
 		this.startDate = startDate;
 	}
 

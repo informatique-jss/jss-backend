@@ -1,7 +1,7 @@
 package com.jss.osiris.modules.quotation.model;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,6 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.jss.osiris.libs.JacksonLocalDateSerializer;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.miscellaneous.model.LegalForm;
@@ -38,7 +40,8 @@ public class BodaccSplitCompany implements Serializable, IId {
 	private LegalForm splitCompanyLegalForm;
 
 	@Column(nullable = false)
-	private Date splitCompanyRcsDeclarationDate;
+	@JsonSerialize(using = JacksonLocalDateSerializer.class)
+	private LocalDate splitCompanyRcsDeclarationDate;
 
 	@ManyToOne
 	@JoinColumn(name = "id_split_company_rcs_competent_authority")
@@ -92,11 +95,11 @@ public class BodaccSplitCompany implements Serializable, IId {
 		this.splitCompanyLegalForm = splitCompanyLegalForm;
 	}
 
-	public Date getSplitCompanyRcsDeclarationDate() {
+	public LocalDate getSplitCompanyRcsDeclarationDate() {
 		return splitCompanyRcsDeclarationDate;
 	}
 
-	public void setSplitCompanyRcsDeclarationDate(Date splitCompanyRcsDeclarationDate) {
+	public void setSplitCompanyRcsDeclarationDate(LocalDate splitCompanyRcsDeclarationDate) {
 		this.splitCompanyRcsDeclarationDate = splitCompanyRcsDeclarationDate;
 	}
 

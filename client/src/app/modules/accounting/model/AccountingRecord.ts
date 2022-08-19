@@ -2,8 +2,8 @@ import { AccountingAccount } from "./AccountingAccount";
 
 export interface AccountingRecord {
   id: number;
-  accountingDate: Date;
-  operationDate: Date;
+  accountingDateTime: Date;
+  operationDateTime: Date;
   manualAccountingDocumentNumber: string;
   creditAmount: number;
   debitAmount: number;

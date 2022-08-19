@@ -2,7 +2,7 @@ package com.jss.osiris.libs.audit;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -63,7 +63,7 @@ public class AuditEntityInterceptor extends EmptyInterceptor {
                             || (newField != null && !newField.equals(oldField))) {
                         Audit audit = new Audit();
                         audit.setUsername(activeDirectoryHelper.getCurrentUsername());
-                        audit.setDatetime(new Date());
+                        audit.setDatetime(LocalDateTime.now());
                         audit.setEntity(entity.getClass().getSimpleName());
                         audit.setEntityId((Integer) id);
                         if (newField != null)
@@ -81,7 +81,7 @@ public class AuditEntityInterceptor extends EmptyInterceptor {
                             || (newCode != null && !newCode.equals(oldCode))) {
                         Audit audit = new Audit();
                         audit.setUsername(activeDirectoryHelper.getCurrentUsername());
-                        audit.setDatetime(new Date());
+                        audit.setDatetime(LocalDateTime.now());
                         audit.setEntity(entity.getClass().getSimpleName());
                         audit.setEntityId((Integer) id);
                         if (newCode != null)

@@ -1,6 +1,6 @@
 package com.jss.osiris.modules.quotation.model;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -16,6 +16,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.jss.osiris.libs.JacksonLocalDateTimeSerializer;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.Document;
@@ -52,7 +54,8 @@ public class CustomerOrder implements IQuotation {
 	private List<SpecialOffer> specialOffers;
 
 	@IndexedField
-	private Date createdDate;
+	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
+	private LocalDateTime createdDate;
 
 	@ManyToOne
 	@JoinColumn(name = "id_status")
@@ -145,11 +148,11 @@ public class CustomerOrder implements IQuotation {
 		this.specialOffers = specialOffers;
 	}
 
-	public Date getCreatedDate() {
+	public LocalDateTime getCreatedDate() {
 		return createdDate;
 	}
 
-	public void setCreatedDate(Date createdDate) {
+	public void setCreatedDate(LocalDateTime createdDate) {
 		this.createdDate = createdDate;
 	}
 

@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,7 +43,7 @@ public class UploadedFileServiceImpl implements UploadedFileService {
     public UploadedFile createUploadedFile(String filename, String absoluteFilePath)
             throws NoSuchAlgorithmException, IOException {
         UploadedFile uploadedFile = new UploadedFile();
-        uploadedFile.setCreationDate(new Date());
+        uploadedFile.setCreationDate(LocalDateTime.now());
         uploadedFile.setCreatedBy(activeDirectoryHelper.getCurrentUsername());
         uploadedFile.setChecksum(computeChecksumForFile(absoluteFilePath));
         uploadedFile.setFilename(filename);
