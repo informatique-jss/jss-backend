@@ -9,5 +9,11 @@ public interface DocumentService {
 
     public Document getDocument(Integer id);
 
+    /**
+     * Return the first billing document found in a document list provided
+     * 
+     * @param documents Document list to search for
+     * @return The billing document if found, null otherwise
+     */
     public Document getBillingDocument(List<Document> documents);
 }

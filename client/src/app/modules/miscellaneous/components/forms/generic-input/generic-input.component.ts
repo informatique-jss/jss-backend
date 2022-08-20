@@ -64,6 +64,12 @@ export class GenericInputComponent implements OnInit {
  */
   @Input() type: string = "text";
   /**
+ * Step used
+ * Use decimal for float field, 1 for integer field
+ * 1 if ot defined
+ */
+  @Input() step: string = "1";
+  /**
  * Hint to display
  */
   @Input() hint: string = "";

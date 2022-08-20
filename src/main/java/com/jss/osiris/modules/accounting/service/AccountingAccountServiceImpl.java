@@ -33,6 +33,9 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
     @Value("${accounting.account.number.provider}")
     private String providerAccountingAccountNumber;
 
+    @Value("${accounting.account.number.product}")
+    private String productAccountingAccountNumber;
+
     @Override
     public List<AccountingAccount> getAccountingAccounts() {
         return IterableUtils.toList(accountingAccountRepository.findAll());
@@ -73,15 +76,6 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
         return accountingAccountRepository.findByLabelContainingIgnoreCase(label);
     }
 
-    /**
-     * Generate provider and customer accounting accounts for an entity
-     * WARNING ! accounting accounts are persisted after operation but not
-     * associated to entity : it must be done in called method
-     * 
-     * @param label Custom label. Leave null will put account number as
-     *              label
-     * 
-     */
     @Override
     public AccountingAccountCouple generateAccountingAccountsForEntity(String label) throws Exception {
 
@@ -141,4 +135,14 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
         return accountingAccountCouple;
     }
 
+    @Override
+    public AccountingAccount getProductAccountingAccountFromAccountingAccountList(
+            List<AccountingAccount> accountingAccounts) {
+        if (accountingAccounts != null && accountingAccounts.size() > 0) {
+            for (AccountingAccount accountingAccount : accountingAccounts)
+                if (accountingAccount.getAccountingAccountNumber().equals(productAccountingAccountNumber))
+                    return accountingAccount;
+        }
+        return null;
+    }
 }

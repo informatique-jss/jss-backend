@@ -2,6 +2,7 @@ import { Affaire } from "./Affaire";
 import { Bodacc } from "./Bodacc";
 import { CustomerOrder } from "./CustomerOrder";
 import { Domiciliation } from "./Domiciliation";
+import { InvoiceItem } from "./InvoiceItem";
 import { ProvisionFamilyType } from "./ProvisionFamilyType";
 import { ProvisionType } from "./ProvisionType";
 import { Quotation } from "./Quotation";
@@ -18,4 +19,5 @@ export interface Provision {
   quotation: Quotation;
   customerOrder: CustomerOrder;
   isValidated: boolean;
+  invoiceItems: InvoiceItem[]
 }

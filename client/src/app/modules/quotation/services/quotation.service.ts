@@ -24,4 +24,7 @@ export class QuotationService extends AppRestService<IQuotation>{
     return this.addOrUpdate(new HttpParams(), "quotation", quotation, "Devis enregistré", "Erreur lors de l'enregistrement du devis");
   }
 
+  getInvoiceItemsForQuotation(quotation: IQuotation) {
+    return this.addOrUpdate(new HttpParams(), "invoice-item/generate", quotation);
+  }
 }

@@ -27,10 +27,12 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("miscellaneous.department.code.reunion");
         isOk = isOk && checkProperty("accounting.account.number.customer");
         isOk = isOk && checkProperty("accounting.account.number.provider");
+        isOk = isOk && checkProperty("accounting.account.number.product");
         isOk = isOk && checkProperty("miscellaneous.document.code.billing");
         isOk = isOk && checkProperty("miscellaneous.document.billing.label.type.customer.code");
         isOk = isOk && checkProperty("miscellaneous.document.billing.label.type.affaire.code");
         isOk = isOk && checkProperty("miscellaneous.document.billing.label.type.other.code");
+        isOk = isOk && checkProperty("accounting.journal.code.sales");
 
         if (!isOk)
             System.exit(-1);

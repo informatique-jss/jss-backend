@@ -4,7 +4,7 @@ import {
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { EMPTY, Observable } from 'rxjs';
-import { catchError, retry, tap } from 'rxjs/operators';
+import { catchError, tap } from 'rxjs/operators';
 import { AppService } from './app.service';
 
 @Injectable()
@@ -16,7 +16,6 @@ export class HttpErrorInterceptor implements HttpInterceptor {
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
 
     return next.handle(request).pipe(
-      retry(3),
       tap(data => {
         if (data.type > 0) {
           let successfulMessage = "";

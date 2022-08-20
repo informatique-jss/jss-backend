@@ -33,12 +33,6 @@ public class DocumentServiceImpl implements DocumentService {
         return null;
     }
 
-    /**
-     * Return the first billing document found in a document list provided
-     * 
-     * @param documents Document list to search for
-     * @return The billing document if found, null otherwise
-     */
     @Override
     public Document getBillingDocument(List<Document> documents) {
         if (documents != null && documents.size() > 0)

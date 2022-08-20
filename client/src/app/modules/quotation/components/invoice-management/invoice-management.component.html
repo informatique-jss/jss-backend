@@ -1,102 +1,104 @@
-<div *ngIf="quotation && quotation.invoiceItems" class="mat-elevation-z2 form-div">
-  <h3 *ngIf="hasInvoice()">
-    Facture n°{{quotation.invoiceItems[0].invoice.id}} émise le
-    {{quotation.invoiceItems[0].invoice.createdDate|date:'dd/MM/yyyy à HH:mm'}}
+<div *ngIf="quotation && quotation.id" class="mat-elevation-z2 form-div">
+  <h3 *ngIf="invoice!=undefined">
+    Facture n°{{invoice.id}} émise le
+    {{invoice.createdDate|date:'dd/MM/yyyy à HH:mm'}}
   </h3>
   <form [formGroup]="invoiceManagementForm">
-    <div *ngFor="let affaire of getListOfAffaires()">
-      <td class="affaire" *ngIf="affaire.denomination">
-        {{affaire.denomination}}
-      </td>
-      <td class="affaire" *ngIf="affaire.firstname">
-        {{affaire.firstname}} - {{affaire.lastname}} -
-      </td>
-      <div *ngFor="let invoiceItem of quotation.invoiceItems;let index = index">
-        <table *ngIf="invoiceItem.provision.affaire.id == affaire.id">
-          <tr *ngIf="isFirstProvisionTypeForAffaire(invoiceItem.provision.provisionType, affaire, index)">
-            <td class="affaire">
-              {{invoiceItem.provision.provisionType.label}}
-            </td>
-          </tr>
-          <tr>
-            <td>
-              {{invoiceItem.label}} <mat-icon inline="true"
-                matTooltip="Veuillez enregistrer pour pouvoir modifier le prix appliqué"
-                *ngIf="editMode && invoiceItem.billingItem.billingType.canOverridePrice==true && !invoiceItem.provision.id && !hasInvoice()"
-                class="info-icon">info</mat-icon>
-            </td>
-            <td class="td-price"
-              *ngIf="!editMode || invoiceItem.billingItem.billingType.canOverridePrice==false || !invoiceItem.provision.id || hasInvoice()">
-              {{invoiceItem.preTaxPrice|number}} €
-            </td>
-            <td
-              *ngIf="editMode && invoiceItem.billingItem.billingType.canOverridePrice==true && invoiceItem.provision.id && !hasInvoice()">
-              <generic-input [(model)]="invoiceItem.preTaxPrice" label="" [form]="invoiceManagementForm"
-                [propertyName]='"preTaxPrice"+index' [isMandatory]="true" type="number" (onInputChange)="itemChange()"
-                hint="Laisser vide pour recalculer le prix">
-              </generic-input>
-            </td>
-          </tr>
-          <tr *ngIf="invoiceItem.discountAmount && invoiceItem.discountAmount>0">
-            <td>
-              Remise
-            </td>
-            <td class="td-price remise">
-              - {{invoiceItem.discountAmount|number}} €
-            </td>
-          </tr>
-          <tr *ngIf="invoiceItem.vat">
-            <td>
-              {{invoiceItem.vat.label}}
-            </td>
-            <td class="td-price">
-              {{invoiceItem.vatPrice|number}} €
-            </td>
-          </tr>
-        </table>
+    <div *ngIf="quotation && quotation.provisions">
+      <div *ngFor="let provision of quotation.provisions">
+        <td class="affaire" *ngIf="provision.affaire && provision.affaire.denomination">
+          {{provision.affaire.denomination}}
+        </td>
+        <td class="affaire" *ngIf="provision.affaire && provision.affaire.firstname">
+          {{provision.affaire.firstname}} - {{provision.affaire.lastname}} -
+        </td>
+        <div *ngFor="let invoiceItem of provision.invoiceItems;let index = index">
+          <table>
+            <tr>
+              <td class="affaire">
+                {{provision.provisionType.label}}
+              </td>
+            </tr>
+            <tr>
+              <td>
+                {{invoiceItem.label}} <mat-icon inline="true"
+                  matTooltip="Veuillez enregistrer pour pouvoir modifier le prix appliqué"
+                  *ngIf="editMode && invoiceItem.billingItem.billingType.canOverridePrice==true && !invoiceItem.id && invoice.id==undefined"
+                  class="info-icon">info</mat-icon>
+              </td>
+              <td class="td-price"
+                *ngIf="!editMode || invoiceItem.billingItem.billingType.canOverridePrice==false || !invoiceItem.id || invoice.id!=undefined">
+                {{invoiceItem.preTaxPrice|number}} €
+              </td>
+              <td
+                *ngIf="editMode && invoiceItem.billingItem.billingType.canOverridePrice==true && invoiceItem.id && invoice.id==undefined">
+                <generic-input [(model)]="invoiceItem.preTaxPrice" label="" [form]="invoiceManagementForm"
+                  [propertyName]='"preTaxPrice"+index' [isMandatory]="true" type="number" step="0,01"
+                  (onInputChange)="itemChange()" hint="Laisser vide pour recalculer le prix">
+                </generic-input>
+              </td>
+            </tr>
+            <tr *ngIf="invoiceItem.discountAmount && invoiceItem.discountAmount>0">
+              <td>
+                Remise
+              </td>
+              <td class="td-price remise">
+                - {{invoiceItem.discountAmount|number}} €
+              </td>
+            </tr>
+            <tr *ngIf="invoiceItem.vat">
+              <td>
+                {{invoiceItem.vat.label}}
+              </td>
+              <td class="td-price">
+                {{invoiceItem.vatPrice|number}} €
+              </td>
+            </tr>
+          </table>
+        </div>
       </div>
+      <table class="total-table">
+        <tr>
+          <td>
+            Prix total HT
+          </td>
+          <td class="td-price">
+            {{getPreTaxPriceTotal() |number}} €
+          </td>
+        </tr>
+        <tr *ngIf="getDiscountTotal() && getDiscountTotal()>0">
+          <td>
+            Remise totale
+          </td>
+          <td class="td-price remise">
+            - {{getDiscountTotal()|number}} €
+          </td>
+        </tr>
+        <tr>
+          <td>
+            Total HT
+          </td>
+          <td class="td-price">
+            {{getPreTaxPriceTotal()-getDiscountTotal()|number}} €
+          </td>
+        </tr>
+        <tr *ngIf="getApplicableVat()!=undefined">
+          <td>
+            Total {{getApplicableVat()!.label}}
+          </td>
+          <td class="td-price">
+            {{getVatTotal()|number}} €
+          </td>
+        </tr>
+        <tr>
+          <td>
+            Total TTC
+          </td>
+          <td class="td-price">
+            {{getPriceTotal()|number}} €
+          </td>
+        </tr>
+      </table>
     </div>
   </form>
-  <table class="total-table">
-    <tr>
-      <td>
-        Prix total HT
-      </td>
-      <td class="td-price">
-        {{getPreTaxPriceTotal() |number}} €
-      </td>
-    </tr>
-    <tr *ngIf="getDiscountTotal() && getDiscountTotal()>0">
-      <td>
-        Remise totale
-      </td>
-      <td class="td-price remise">
-        - {{getDiscountTotal()|number}} €
-      </td>
-    </tr>
-    <tr>
-      <td>
-        Total HT
-      </td>
-      <td class="td-price">
-        {{getPreTaxPriceTotal()-getDiscountTotal()|number}} €
-      </td>
-    </tr>
-    <tr *ngFor="let vat of getVatTotals() ">
-      <td>
-        Total {{vat.label}}
-      </td>
-      <td class="td-price">
-        {{vat.total|number}} €
-      </td>
-    </tr>
-    <tr>
-      <td>
-        Total TTC
-      </td>
-      <td class="td-price">
-        {{getPriceTotal()|number}} €
-      </td>
-    </tr>
-  </table>
 </div>

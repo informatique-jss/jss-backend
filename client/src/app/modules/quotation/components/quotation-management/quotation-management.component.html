@@ -15,7 +15,7 @@
           <mat-expansion-panel>
             <mat-expansion-panel-header>
               <mat-panel-title>
-                {{(instanceOfQuotation(quotation) ? 'Commande' : 'Devis')}}
+                {{(!instanceOfQuotation(quotation) ? 'Commande' : 'Devis')}}
               </mat-panel-title>
               <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
             </mat-expansion-panel-header>
@@ -28,13 +28,13 @@
                 <td>
                   <radio-group-quotation-label-type [(model)]="quotation.quotationLabelType"
                     [form]="quotationManagementForm" propertyName="quotationLabelType"
-                    [label]="'Libellé sur '+ (instanceOfQuotation(quotation) ? 'commande' : 'devis')">
+                    [label]="'Libellé sur '+ (!instanceOfQuotation(quotation) ? 'commande' : 'devis')">
                   </radio-group-quotation-label-type>
                 </td>
                 <td
                   *ngIf="quotation.quotationLabelType!=undefined && quotation.quotationLabelType.code!=undefined && quotation.quotationLabelType.code==QUOTATION_TYPE_OTHER_CODE">
                   <generic-textarea [(model)]="quotation.quotationLabel"
-                    [label]="'Autre libellé sur '+ (instanceOfQuotation(quotation) ? 'commande' : 'devis')"
+                    [label]="'Autre libellé sur '+ (!instanceOfQuotation(quotation) ? 'commande' : 'devis')"
                     [form]="quotationManagementForm" propertyName="quotationLabel" [isMandatory]="true"
                     [isDisabled]="!editMode"
                     [conditionnalRequired]="quotation.quotationLabelType.code==QUOTATION_TYPE_OTHER_CODE">

@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AppRestService } from 'src/app/appRest.service';
 import { Invoice } from '../../quotation/model/Invoice';
+import { CustomerOrder } from '../model/CustomerOrder';
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +15,10 @@ export class InvoiceService extends AppRestService<Invoice>{
 
   addOrUpdateInvoice(invoice: Invoice) {
     return this.addOrUpdate(new HttpParams(), "invoice", invoice, "Enregistré", "Erreur lors de l'enregistrement");
+  }
+
+  getInvoiceForCustomerOrder(customerOrder: CustomerOrder) {
+    return this.get(new HttpParams().set("customerOrderId", customerOrder.id), "invoice/customer-order");
   }
 
 }

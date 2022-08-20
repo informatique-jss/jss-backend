@@ -83,10 +83,6 @@ public interface IQuotation extends Serializable, IId {
 
 	public void setPhones(List<Phone> phones);
 
-	public List<InvoiceItem> getInvoiceItems();
-
-	public void setInvoiceItems(List<InvoiceItem> invoiceItems);
-
 	public Boolean getIsQuotation();
 
 	public void setIsQuotation(Boolean isQuotation);

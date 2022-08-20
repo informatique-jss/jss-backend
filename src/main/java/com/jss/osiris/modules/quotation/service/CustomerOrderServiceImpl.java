@@ -1,12 +1,15 @@
 package com.jss.osiris.modules.quotation.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.search.service.IndexEntityService;
+import com.jss.osiris.modules.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.miscellaneous.service.MailService;
 import com.jss.osiris.modules.miscellaneous.service.PhoneService;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
@@ -37,6 +40,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Autowired
     InvoiceService invoiceService;
+
+    @Autowired
+    AccountingRecordService accountingRecordService;
 
     @Override
     public CustomerOrder getCustomerOrder(Integer id) {
@@ -86,13 +92,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         }
 
         // If invoice has not been generated yet, recompute billing items
-        if (!hasAtLeastOneInvoiceItemNotNull(customerOrder)
-                || customerOrder.getInvoiceItems().get(0).getInvoice() == null) {
+        if (!hasBeenBilled(customerOrder)) {
             quotationService.getAndSetInvoiceItemsForQuotation(customerOrder);
-
-            if (customerOrder.getInvoiceItems() != null)
-                for (InvoiceItem invoiceItem : customerOrder.getInvoiceItems())
-                    invoiceItem.setCustomerOrder(customerOrder);
         }
 
         customerOrder = customerOrderRepository.save(customerOrder);
@@ -100,32 +101,78 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         return customerOrder;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public CustomerOrder addOrUpdateCustomerOrderStatus(CustomerOrder customerOrder) throws Exception {
         if (customerOrder.getStatus().getCode().equals(QuotationStatus.BILLED)) {
             generateInvoice(customerOrder);
+            accountingRecordService.generateAccountingRecordsForSaleOnInvoiceGeneration(
+                    getInvoice(customerOrder));
         }
         return this.addOrUpdateCustomerOrder(customerOrder);
     }
 
-    private void generateInvoice(CustomerOrder customerOrder) {
+    private void generateInvoice(CustomerOrder customerOrder) throws Exception {
         if (!hasAtLeastOneInvoiceItemNotNull(customerOrder))
-            return;
+            throw new Exception("No invoice item found on customer order " + customerOrder.getId());
 
-        Invoice invoice = invoiceService.createInvoice();
-        for (InvoiceItem invoiceItem : customerOrder.getInvoiceItems()) {
-            invoiceItem.setInvoice(invoice);
+        // Generate blank invoice
+        Invoice invoice = invoiceService.createInvoice(quotationService.getCustomerOrderOfQuotation(customerOrder));
+        invoice.setInvoiceItems(new ArrayList<InvoiceItem>());
+        // Associate invoice to invoice item
+        for (Provision provision : customerOrder.getProvisions()) {
+            if (provision.getInvoiceItems() != null && provision.getInvoiceItems().size() > 0)
+                for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
+                    invoiceItem.setInvoice(invoice);
+                    invoice.getInvoiceItems().add(invoiceItem);
+                }
         }
+
+        invoice.setCustomerOrder(customerOrder);
+        invoiceService.addOrUpdateInvoice(invoice);
     }
 
     private boolean hasAtLeastOneInvoiceItemNotNull(CustomerOrder customerOrder) {
-        if (customerOrder.getInvoiceItems() != null && customerOrder.getInvoiceItems().size() > 0) {
-            for (InvoiceItem invoiceItem : customerOrder.getInvoiceItems()) {
-                if (invoiceItem.getPreTaxPrice() > 0) {
-                    return true;
-                }
+        if (customerOrder != null && customerOrder.getProvisions() != null && customerOrder.getProvisions().size() > 0)
+            for (Provision provision : customerOrder.getProvisions()) {
+                if (provision.getInvoiceItems() != null && provision.getInvoiceItems().size() > 0)
+                    for (InvoiceItem invoiceItem : provision.getInvoiceItems())
+                        if (invoiceItem.getPreTaxPrice() > 0) {
+                            return true;
+                        }
             }
-        }
         return false;
+    }
+
+    private boolean hasBeenBilled(CustomerOrder customerOrder) {
+        if (customerOrder == null || customerOrder.getProvisions() == null || customerOrder.getProvisions().size() == 0
+                || customerOrder.getProvisions().get(0) == null
+                || customerOrder.getProvisions().get(0).getInvoiceItems() == null
+                || customerOrder.getProvisions().get(0).getInvoiceItems().size() == 0
+                || customerOrder.getProvisions().get(0).getInvoiceItems().get(0) == null)
+            return false;
+
+        return customerOrder.getProvisions().get(0).getInvoiceItems().get(0).getInvoice() != null;
+    }
+
+    /**
+     * Assert that provided customerOrder has been billed and throw exception if no
+     * invoice is found
+     * You can check if customerOrder has been billed with hasBeenBilled method of
+     * current class
+     * 
+     * @param customerOrder
+     * @return Invoice
+     * @throws Exception
+     */
+    private Invoice getInvoice(CustomerOrder customerOrder) throws Exception {
+        if (customerOrder == null || customerOrder.getProvisions() == null || customerOrder.getProvisions().size() == 0
+                || customerOrder.getProvisions().get(0) == null
+                || customerOrder.getProvisions().get(0).getInvoiceItems() == null
+                || customerOrder.getProvisions().get(0).getInvoiceItems().size() == 0
+                || customerOrder.getProvisions().get(0).getInvoiceItems().get(0) == null)
+            throw new Exception("No invoice found");
+
+        return customerOrder.getProvisions().get(0).getInvoiceItems().get(0).getInvoice();
     }
 }

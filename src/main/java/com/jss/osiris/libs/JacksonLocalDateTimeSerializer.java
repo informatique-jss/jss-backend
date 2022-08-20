@@ -25,7 +25,6 @@ public class JacksonLocalDateTimeSerializer extends StdSerializer<LocalDateTime>
     @Override
     public void serialize(LocalDateTime value, JsonGenerator jsonGenerator,
             SerializerProvider serializerProvider) throws IOException {
-        System.out.println(value);
         jsonGenerator.writeString(formatter.format(value));
     }
 

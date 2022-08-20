@@ -20,7 +20,6 @@ import { OrderingCustomerComponent } from '../ordering-customer/ordering-custome
 import { ProvisionItemComponent } from '../provision-item/provision-item.component';
 import { QuotationManagementComponent } from '../quotation-management/quotation-management.component';
 import { IQuotation } from './../../model/IQuotation';
-import { ProvisionType } from './../../model/ProvisionType';
 
 @Component({
   selector: 'quotation',
@@ -367,44 +366,19 @@ export class QuotationComponent implements OnInit {
   }
 
   generateInvoiceItem() {
-    this.invoiceItemService.getInvoiceItemsForQuotation(this.quotation).subscribe(response => {
-      this.quotation.invoiceItems = response;
+    this.quotationService.getInvoiceItemsForQuotation(this.quotation).subscribe(response => {
+      this.mergeInvoiceItem(this.quotation, response);
     })
   }
 
-  getListOfAffaires(): Affaire[] {
-    return QuotationComponent.computeListOfAffaires(this.quotation);
-  }
-
-  public static computeListOfAffaires(quotation: IQuotation): Affaire[] {
-    let affaires: Affaire[] = [] as Array<Affaire>;
-    let found = false;
-    if (quotation && quotation.provisions) {
-      for (let provision of quotation.provisions) {
-        if (provision.affaire)
-          for (let affaire of affaires) {
-            if (affaire.id == provision.affaire.id)
-              found = true;
-          }
-        if (!found)
-          affaires.push(provision.affaire);
-        found = false;
+  mergeInvoiceItem(targetQuotation: IQuotation, incomingQuotation: IQuotation) {
+    if (incomingQuotation && targetQuotation && incomingQuotation.provisions && targetQuotation.provisions) {
+      for (let incomingProvision of incomingQuotation.provisions) {
+        for (let targetProvision of targetQuotation.provisions) {
+          targetProvision.invoiceItems = incomingProvision.invoiceItems;
+        }
       }
     }
-    return affaires;
-  }
-
-  isFirstProvisionTypeForAffaire(provisionType: ProvisionType, affaire: Affaire, index: number): boolean {
-    return QuotationComponent.computeIsFirstProvisionTypeForAffaire(provisionType, affaire, index, this.quotation);
-  }
-
-  public static computeIsFirstProvisionTypeForAffaire(provisionType: ProvisionType, affaire: Affaire, index: number, quotation: IQuotation): boolean {
-    if (quotation && quotation.invoiceItems)
-      for (let invoiceItem of quotation.invoiceItems) {
-        if (invoiceItem.provision.provisionType.id == provisionType.id && affaire.id == invoiceItem.provision.affaire.id)
-          return quotation.invoiceItems.indexOf(invoiceItem) == index;
-      }
-    return false;
   }
 
   getPreTaxPriceTotal(): number {
@@ -412,13 +386,17 @@ export class QuotationComponent implements OnInit {
   }
 
   public static computePreTaxPriceTotal(quotation: IQuotation): number {
-    if (quotation && quotation.invoiceItems) {
-      return quotation.invoiceItems.reduce<number>((accumulator, obj) => {
-        obj.preTaxPrice = parseFloat(obj.preTaxPrice + "  ");
-        return accumulator + obj.preTaxPrice;
-      }, 0);
+    let preTaxPrice = 0;
+    if (quotation && quotation.provisions) {
+      for (let provision of quotation.provisions) {
+        if (provision.invoiceItems) {
+          for (let invoiceItem of provision.invoiceItems) {
+            preTaxPrice += parseFloat(invoiceItem.preTaxPrice + "");
+          }
+        }
+      }
     }
-    return 0;
+    return preTaxPrice;
   }
 
 
@@ -427,39 +405,54 @@ export class QuotationComponent implements OnInit {
   }
 
   public static computeDiscountTotal(quotation: IQuotation): number {
-    if (quotation && quotation.invoiceItems) {
-      return quotation.invoiceItems.reduce<number>((accumulator, obj) => {
-        return accumulator + obj.discountAmount;
-      }, 0);
-    }
-    return 0;
-  }
 
-  getVatTotals(): Vat[] {
-    return QuotationComponent.computeVatTotals(this.quotation);
-  }
-
-  public static computeVatTotals(quotation: IQuotation): Vat[] {
-    let vat = [] as Array<Vat>;
-    let found = false;
-    if (quotation && quotation.invoiceItems) {
-      for (const invoiceItem of quotation.invoiceItems) {
-        if (invoiceItem.accountingAccount && invoiceItem.vat) {
-          for (const v of vat) {
-            if (v.id == invoiceItem.vat.id) {
-              v.total += invoiceItem.vatPrice;
-              found = true;
-            }
-          }
-          if (!found) {
-            vat.push(invoiceItem.vat);
-            vat[vat.length - 1].total = invoiceItem.vatPrice;
+    let discountAmount = 0;
+    if (quotation && quotation.provisions) {
+      for (let provision of quotation.provisions) {
+        if (provision.invoiceItems) {
+          for (let invoiceItem of provision.invoiceItems) {
+            discountAmount += parseFloat(invoiceItem.discountAmount + "");
           }
         }
-        found = false;
+      }
+    }
+    return discountAmount;
+  }
+
+  getVatTotal(): number {
+    return QuotationComponent.computeVatTotal(this.quotation);
+  }
+
+  public static computeVatTotal(quotation: IQuotation): number {
+    let vat = 0;
+    if (quotation && quotation.provisions) {
+      for (let provision of quotation.provisions) {
+        if (provision.invoiceItems) {
+          for (let invoiceItem of provision.invoiceItems) {
+            vat += invoiceItem.vatPrice;
+          }
+        }
       }
     }
     return vat;
+  }
+
+  getApplicableVat(): Vat | undefined {
+    return QuotationComponent.computeApplicableVat(this.quotation);
+  }
+
+  public static computeApplicableVat(quotation: IQuotation): Vat | undefined {
+    if (quotation && quotation.provisions) {
+      for (let provision of quotation.provisions) {
+        if (provision.invoiceItems) {
+          for (let invoiceItem of provision.invoiceItems) {
+            if (invoiceItem.vat)
+              return invoiceItem.vat;
+          }
+        }
+      }
+    }
+    return undefined;
   }
 
   getPriceTotal(): number {
@@ -467,8 +460,6 @@ export class QuotationComponent implements OnInit {
   }
 
   public static computePriceTotal(quotation: IQuotation): number {
-    return QuotationComponent.computePreTaxPriceTotal(quotation) - QuotationComponent.computeDiscountTotal(quotation) + QuotationComponent.computeVatTotals(quotation).reduce<number>((accumulator, obj) => {
-      return accumulator + obj.total;
-    }, 0);
+    return QuotationComponent.computePreTaxPriceTotal(quotation) - QuotationComponent.computeDiscountTotal(quotation) + QuotationComponent.computeVatTotal(quotation);
   }
 }

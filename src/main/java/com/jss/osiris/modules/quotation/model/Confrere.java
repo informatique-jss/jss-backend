@@ -21,7 +21,6 @@ import com.jss.osiris.modules.miscellaneous.model.City;
 import com.jss.osiris.modules.miscellaneous.model.Country;
 import com.jss.osiris.modules.miscellaneous.model.Department;
 import com.jss.osiris.modules.miscellaneous.model.Document;
-import com.jss.osiris.modules.miscellaneous.model.IDocument;
 import com.jss.osiris.modules.miscellaneous.model.Language;
 import com.jss.osiris.modules.miscellaneous.model.Mail;
 import com.jss.osiris.modules.miscellaneous.model.PaymentType;
@@ -33,7 +32,7 @@ import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.tiers.model.ITiers;
 
 @Entity
-public class Confrere implements ITiers, IDocument {
+public class Confrere implements ITiers {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

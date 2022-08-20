@@ -10,19 +10,19 @@
 
 <mat-sidenav-container class="sidenav-container">
   <mat-sidenav #sidenav mode="side" position="end" [fixedInViewport]="true" [fixedTopGap]="165" [fixedBottomGap]="100">
-    <div *ngIf="quotation && quotation.invoiceItems">
-      <div *ngFor="let affaire of getListOfAffaires()">
-        <td class="affaire" *ngIf="affaire.denomination">
-          {{affaire.denomination}}
+    <div *ngIf="quotation && quotation.provisions">
+      <div *ngFor="let provision of quotation.provisions">
+        <td class="affaire" *ngIf="provision.affaire && provision.affaire.denomination">
+          {{provision.affaire.denomination}}
         </td>
-        <td class="affaire" *ngIf="affaire.firstname">
-          {{affaire.firstname}} - {{affaire.lastname}} -
+        <td class="affaire" *ngIf="provision.affaire && provision.affaire.firstname">
+          {{provision.affaire.firstname}} - {{provision.affaire.lastname}} -
         </td>
-        <div *ngFor="let invoiceItem of quotation.invoiceItems;let index = index">
-          <table *ngIf="invoiceItem.provision.affaire.id == affaire.id">
-            <tr *ngIf="isFirstProvisionTypeForAffaire(invoiceItem.provision.provisionType, affaire, index)">
+        <div *ngFor="let invoiceItem of provision.invoiceItems;let index = index">
+          <table>
+            <tr>
               <td class="affaire">
-                {{invoiceItem.provision.provisionType.label}}
+                {{provision.provisionType.label}}
               </td>
             </tr>
             <tr>
@@ -77,12 +77,12 @@
             {{getPreTaxPriceTotal()-getDiscountTotal()|number}} €
           </td>
         </tr>
-        <tr *ngFor="let vat of getVatTotals() ">
+        <tr *ngIf="getApplicableVat()!=undefined">
           <td>
-            Total {{vat.label}}
+            Total {{getApplicableVat()!.label}}
           </td>
           <td class="td-price">
-            {{vat.total|number}} €
+            {{getVatTotal()|number}} €
           </td>
         </tr>
         <tr>
@@ -160,7 +160,7 @@
               </mat-accordion>
             </div>
           </mat-tab>
-          <mat-tab label="Facturation" *ngIf="quotation.invoiceItems">
+          <mat-tab label="Facturation" *ngIf="quotation && quotation.id">
             <invoice-management [quotation]=" quotation" [editMode]="editMode"
               (invoiceItemChange)="invoiceItemChange($event)" [instanceOfCustomerOrder]="instanceOfCustomerOrder">
             </invoice-management>
@@ -214,8 +214,7 @@
 </button>
 <button [matTooltip]='sidenav.opened?"Cacher le détail":"Voir le détail"' mat-fab color="accent"
   [ngClass]="{'fifth-fab-button':editMode==false,'second-fab-button':editMode==true}"
-  *ngIf="(editMode==false && quotation.id!=undefined && quotation.id!=null || editMode) && quotation.invoiceItems"
-  (click)=" sidenav.toggle()">
+  *ngIf="(editMode==false && quotation.id!=undefined && quotation.id!=null || editMode)" (click)=" sidenav.toggle()">
   <mat-icon>receipt_long</mat-icon>
 </button>
 

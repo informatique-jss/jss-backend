@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.quotation.model;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -11,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -60,6 +62,10 @@ public class Provision implements Serializable, IId {
 
 	@Column(nullable = false)
 	private Boolean isValidated;
+
+	@OneToMany(targetEntity = InvoiceItem.class, mappedBy = "provision", cascade = CascadeType.ALL)
+	@JsonManagedReference("provision")
+	private List<InvoiceItem> invoiceItems;
 
 	public Integer getId() {
 		return id;
@@ -139,6 +145,14 @@ public class Provision implements Serializable, IId {
 
 	public void setIsValidated(Boolean isValidated) {
 		this.isValidated = isValidated;
+	}
+
+	public List<InvoiceItem> getInvoiceItems() {
+		return invoiceItems;
+	}
+
+	public void setInvoiceItems(List<InvoiceItem> invoiceItems) {
+		this.invoiceItems = invoiceItems;
 	}
 
 }

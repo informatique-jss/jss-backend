@@ -22,13 +22,13 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jss.osiris.libs.JacksonLocalDateSerializer;
 import com.jss.osiris.libs.search.model.IndexedField;
+import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.City;
 import com.jss.osiris.modules.miscellaneous.model.Civility;
 import com.jss.osiris.modules.miscellaneous.model.Country;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.model.IAttachment;
-import com.jss.osiris.modules.miscellaneous.model.IDocument;
 import com.jss.osiris.modules.miscellaneous.model.Language;
 import com.jss.osiris.modules.miscellaneous.model.Mail;
 import com.jss.osiris.modules.miscellaneous.model.Phone;
@@ -37,7 +37,7 @@ import com.jss.osiris.modules.profile.model.Employee;
 @Entity
 @Table(indexes = { @Index(name = "pk_responsable", columnList = "id", unique = true),
 		@Index(name = "idx_responsable_tiers", columnList = "id_tiers") })
-public class Responsable implements ITiers, IAttachment, IDocument {
+public class Responsable implements ITiers, IAttachment {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@IndexedField
@@ -460,6 +460,20 @@ public class Responsable implements ITiers, IAttachment, IDocument {
 	@Override
 	public Boolean getIsIndividual() {
 		return true;
+	}
+
+	@Override
+	public AccountingAccount getAccountingAccountProvider() {
+		if (this.getTiers() != null)
+			return this.getTiers().getAccountingAccountProvider();
+		return null;
+	}
+
+	@Override
+	public AccountingAccount getAccountingAccountCustomer() {
+		if (this.getTiers() != null)
+			return this.getTiers().getAccountingAccountCustomer();
+		return null;
 	}
 
 }

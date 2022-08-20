@@ -1,17 +1,18 @@
 package com.jss.osiris.modules.tiers.model;
 
-import java.io.Serializable;
 import java.util.List;
 
+import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.miscellaneous.model.City;
 import com.jss.osiris.modules.miscellaneous.model.Country;
+import com.jss.osiris.modules.miscellaneous.model.IDocument;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.miscellaneous.model.Language;
 import com.jss.osiris.modules.miscellaneous.model.Mail;
 import com.jss.osiris.modules.miscellaneous.model.Phone;
 import com.jss.osiris.modules.profile.model.Employee;
 
-public interface ITiers extends Serializable, IId {
+public interface ITiers extends IId, IDocument {
 
 	public Employee getSalesEmployee();
 
@@ -38,5 +39,9 @@ public interface ITiers extends Serializable, IId {
 	public List<Phone> getPhones();
 
 	public Boolean getIsIndividual();
+
+	public AccountingAccount getAccountingAccountProvider();
+
+	public AccountingAccount getAccountingAccountCustomer();
 
 }

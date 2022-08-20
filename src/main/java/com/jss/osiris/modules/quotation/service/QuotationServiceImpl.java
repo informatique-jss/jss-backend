@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.jss.osiris.libs.search.service.IndexEntityService;
-import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.miscellaneous.model.AssoSpecialOfferBillingType;
 import com.jss.osiris.modules.miscellaneous.model.BillingItem;
 import com.jss.osiris.modules.miscellaneous.model.BillingType;
@@ -126,16 +125,13 @@ public class QuotationServiceImpl implements QuotationService {
         }
 
         getAndSetInvoiceItemsForQuotation(quotation);
-        if (quotation.getInvoiceItems() != null)
-            for (InvoiceItem invoiceItem : quotation.getInvoiceItems())
-                invoiceItem.setQuotation(quotation);
         quotation = quotationRepository.save(quotation);
         indexEntityService.indexEntity(quotation, quotation.getId());
         return quotation;
     }
 
     @Override
-    public List<InvoiceItem> getAndSetInvoiceItemsForQuotation(IQuotation quotation) throws Exception {
+    public IQuotation getAndSetInvoiceItemsForQuotation(IQuotation quotation) throws Exception {
         ArrayList<InvoiceItem> invoiceItems = new ArrayList<InvoiceItem>();
         if (quotation.getProvisions() != null && quotation.getProvisions().size() > 0) {
             for (Provision provision : quotation.getProvisions()) {
@@ -143,7 +139,7 @@ public class QuotationServiceImpl implements QuotationService {
             }
         }
         mergeInvoiceItemsForQuotation(quotation, invoiceItems);
-        return quotation.getInvoiceItems();
+        return quotation;
     }
 
     private List<SpecialOffer> getAppliableSpecialOffersForQuotation(IQuotation quotation) {
@@ -211,7 +207,6 @@ public class QuotationServiceImpl implements QuotationService {
                                 && billingItem.getAccountingAccounts().size() > 0) {
 
                             InvoiceItem invoiceItem = new InvoiceItem();
-                            invoiceItem.setAccountingAccount(getAccountingAccountForBillingItem(billingItem));
                             invoiceItem.setBillingItem(billingItem);
 
                             invoiceItem.setLabel(billingType.getLabel());
@@ -239,14 +234,6 @@ public class QuotationServiceImpl implements QuotationService {
             }
         }
         return invoiceItems;
-    }
-
-    private AccountingAccount getAccountingAccountForBillingItem(BillingItem billingItem) {
-        // Return product accounting account
-        for (AccountingAccount accountingAccount : billingItem.getAccountingAccounts())
-            if (accountingAccount.getAccountingAccountNumber().substring(0, 1).equals("7"))
-                return accountingAccount;
-        return null;
     }
 
     private void computeInvoiceItemsVatAndDiscount(InvoiceItem invoiceItem, IQuotation quotation) throws Exception {
@@ -294,6 +281,7 @@ public class QuotationServiceImpl implements QuotationService {
         if (vat != null) {
             invoiceItem.setVatPrice(vat.getRate() / 100 * (invoiceItem.getPreTaxPrice()
                     - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount() : 0)));
+            invoiceItem.setVat(vat);
         } else {
             invoiceItem.setVatPrice(0f);
         }
@@ -302,30 +290,51 @@ public class QuotationServiceImpl implements QuotationService {
 
     private void mergeInvoiceItemsForQuotation(IQuotation quotation, List<InvoiceItem> invoiceItemsToMerge)
             throws Exception {
-        if (quotation != null && invoiceItemsToMerge != null && quotation.getProvisions() != null
-                && quotation.getInvoiceItems() != null) {
-            for (InvoiceItem invoiceItem : quotation.getInvoiceItems()) {
+        if (quotation != null && invoiceItemsToMerge != null && quotation.getProvisions() != null) {
+            for (Provision provision : quotation.getProvisions()) {
+                ArrayList<InvoiceItem> finalInvoiceItems = new ArrayList<InvoiceItem>();
                 for (InvoiceItem invoiceItemToMerge : invoiceItemsToMerge) {
-                    if (invoiceItemToMerge.getProvision().getId() != null && invoiceItem.getProvision().getId() != null
-                            && invoiceItemToMerge.getProvision().getId().equals(invoiceItem.getProvision().getId())
-                            && invoiceItemToMerge.getBillingItem().getId()
-                                    .equals(invoiceItem.getBillingItem().getId())) {
-                        invoiceItemToMerge.setId(invoiceItem.getId());
-                        invoiceItemToMerge.setInvoice(invoiceItem.getInvoice());
-                        if (invoiceItemToMerge.getBillingItem().getBillingType().getCanOverridePrice()
-                                && invoiceItem.getPreTaxPrice() != null && invoiceItem.getPreTaxPrice() > 0) {
-                            invoiceItemToMerge.setPreTaxPrice(invoiceItem.getPreTaxPrice().floatValue());
-                            computeInvoiceItemsVatAndDiscount(invoiceItemToMerge, quotation);
+                    if (provision.getInvoiceItems() != null) {
+                        for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
+                            if (invoiceItemToMerge.getProvision().getId() != null
+                                    && invoiceItem.getProvision().getId() != null
+                                    && invoiceItemToMerge.getProvision().getId()
+                                            .equals(invoiceItem.getProvision().getId())) {
+                                if (invoiceItemToMerge.getBillingItem().getId()
+                                        .equals(invoiceItem.getBillingItem().getId())) {
+                                    invoiceItemToMerge.setId(invoiceItem.getId());
+                                    invoiceItemToMerge.setInvoice(invoiceItem.getInvoice());
+                                    if (invoiceItemToMerge.getBillingItem().getBillingType().getCanOverridePrice()
+                                            && invoiceItem.getPreTaxPrice() != null
+                                            && invoiceItem.getPreTaxPrice() > 0) {
+                                        invoiceItemToMerge.setPreTaxPrice(invoiceItem.getPreTaxPrice().floatValue());
+                                        computeInvoiceItemsVatAndDiscount(invoiceItemToMerge, quotation);
+                                    }
+                                }
+                            }
                         }
                     }
+                    finalInvoiceItems.add(invoiceItemToMerge);
                 }
+                provision.setInvoiceItems(finalInvoiceItems);
             }
-            quotation.setInvoiceItems(invoiceItemsToMerge);
         }
     }
 
     @Override
     public Quotation addOrUpdateQuotationStatus(Quotation quotation) throws Exception {
         return this.addOrUpdateQuotation(quotation);
+    }
+
+    @Override
+    public ITiers getCustomerOrderOfQuotation(IQuotation quotation) throws Exception {
+        if (quotation.getConfrere() != null)
+            return quotation.getConfrere();
+        if (quotation.getResponsable() != null)
+            return quotation.getResponsable();
+        if (quotation.getTiers() != null)
+            return quotation.getTiers();
+
+        throw new Exception("No customer order declared on IQuotation " + quotation.getId());
     }
 }

@@ -1,7 +1,6 @@
 package com.jss.osiris.modules.quotation.controller;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -51,7 +50,6 @@ import com.jss.osiris.modules.quotation.model.DomiciliationContractType;
 import com.jss.osiris.modules.quotation.model.FundType;
 import com.jss.osiris.modules.quotation.model.IQuotation;
 import com.jss.osiris.modules.quotation.model.Invoice;
-import com.jss.osiris.modules.quotation.model.InvoiceItem;
 import com.jss.osiris.modules.quotation.model.JournalType;
 import com.jss.osiris.modules.quotation.model.MailRedirectionType;
 import com.jss.osiris.modules.quotation.model.NoticeType;
@@ -236,6 +234,21 @@ public class QuotationController {
       return new ResponseEntity<Invoice>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
     return new ResponseEntity<Invoice>(outInvoice, HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/invoice/customer-order")
+  public ResponseEntity<Invoice> getInvoiceForCustomerOrder(@RequestParam Integer customerOrderId) {
+    Invoice invoice = null;
+    try {
+      invoice = invoiceService.getInvoiceForCustomerOrder(customerOrderId);
+    } catch (HttpStatusCodeException e) {
+      logger.error("HTTP error when fetching regie", e);
+      return new ResponseEntity<Invoice>(HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (Exception e) {
+      logger.error("Error when fetching regie", e);
+      return new ResponseEntity<Invoice>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    return new ResponseEntity<Invoice>(invoice, HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/regies")
@@ -1650,22 +1663,22 @@ public class QuotationController {
   }
 
   @PostMapping(inputEntryPoint + "/invoice-item/generate")
-  public ResponseEntity<List<InvoiceItem>> generateInvoiceItemForQuotation(@RequestBody Quotation quotation) {
-    List<InvoiceItem> invoiceItems = new ArrayList<InvoiceItem>();
+  public ResponseEntity<IQuotation> generateInvoiceItemForQuotation(@RequestBody Quotation quotation) {
+    IQuotation outQuotation = quotation;
     try {
-      invoiceItems = quotationService.getAndSetInvoiceItemsForQuotation(quotation);
+      outQuotation = quotationService.getAndSetInvoiceItemsForQuotation(quotation);
     } catch (
 
     ResponseStatusException e) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     } catch (HttpStatusCodeException e) {
       logger.error("HTTP error when fetching quotation", e);
-      return new ResponseEntity<List<InvoiceItem>>(HttpStatus.INTERNAL_SERVER_ERROR);
+      return new ResponseEntity<IQuotation>(HttpStatus.INTERNAL_SERVER_ERROR);
     } catch (Exception e) {
       logger.error("Error when fetching quotation", e);
-      return new ResponseEntity<List<InvoiceItem>>(HttpStatus.INTERNAL_SERVER_ERROR);
+      return new ResponseEntity<IQuotation>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
-    return new ResponseEntity<List<InvoiceItem>>(invoiceItems, HttpStatus.OK);
+    return new ResponseEntity<IQuotation>(outQuotation, HttpStatus.OK);
   }
 
 }

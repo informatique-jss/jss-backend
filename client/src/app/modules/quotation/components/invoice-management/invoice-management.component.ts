@@ -2,10 +2,10 @@ import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@
 import { FormBuilder } from '@angular/forms';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
 import { Vat } from 'src/app/modules/miscellaneous/model/Vat';
-import { Affaire } from '../../model/Affaire';
 import { CustomerOrder } from '../../model/CustomerOrder';
+import { Invoice } from '../../model/Invoice';
 import { IQuotation } from '../../model/IQuotation';
-import { ProvisionType } from '../../model/ProvisionType';
+import { InvoiceService } from '../../services/invoice.service';
 import { QuotationComponent } from '../quotation/quotation.component';
 
 @Component({
@@ -21,7 +21,11 @@ export class InvoiceManagementComponent implements OnInit {
   @Input() instanceOfCustomerOrder: boolean = false;
   @Output() invoiceItemChange: EventEmitter<void> = new EventEmitter<void>();
 
-  constructor(private formBuilder: FormBuilder,) { }
+
+  invoice: Invoice = {} as Invoice;
+
+  constructor(private formBuilder: FormBuilder,
+    protected invoiceService: InvoiceService,) { }
 
   ngOnInit() {
     this.invoiceManagementForm.markAllAsTouched();
@@ -30,17 +34,16 @@ export class InvoiceManagementComponent implements OnInit {
   ngOnChanges(changes: SimpleChanges) {
     if (changes.quotation != undefined) {
       this.invoiceManagementForm.markAllAsTouched();
+      if (this.quotation && this.quotation.id)
+        this.invoiceService.getInvoiceForCustomerOrder(this.quotation).subscribe(response => {
+          this.invoice = response;
+        })
     }
+
   }
 
   invoiceManagementForm = this.formBuilder.group({
   });
-
-  hasInvoice(): boolean {
-    if (this.quotation && this.quotation.invoiceItems && this.quotation.invoiceItems.length > 0 && this.quotation.invoiceItems[0].invoice)
-      return true;
-    return false;
-  }
 
   itemChange() {
     this.invoiceItemChange.emit();
@@ -59,20 +62,16 @@ export class InvoiceManagementComponent implements OnInit {
     return QuotationComponent.computeDiscountTotal(this.quotation);
   }
 
-  getVatTotals(): Vat[] {
-    return QuotationComponent.computeVatTotals(this.quotation);
+  getVatTotal(): number {
+    return QuotationComponent.computeVatTotal(this.quotation);
+  }
+
+  getApplicableVat(): Vat | undefined {
+    return QuotationComponent.computeApplicableVat(this.quotation);
   }
 
   getPriceTotal(): number {
     return QuotationComponent.computePriceTotal(this.quotation);
-  }
-
-  getListOfAffaires(): Affaire[] {
-    return QuotationComponent.computeListOfAffaires(this.quotation);
-  }
-
-  isFirstProvisionTypeForAffaire(provisionType: ProvisionType, affaire: Affaire, index: number): boolean {
-    return QuotationComponent.computeIsFirstProvisionTypeForAffaire(provisionType, affaire, index, this.quotation);
   }
 
 }

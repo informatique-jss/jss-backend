@@ -22,6 +22,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.jss.osiris.libs.ValidationHelper;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
+import com.jss.osiris.modules.accounting.service.AccountingAccountService;
 import com.jss.osiris.modules.miscellaneous.model.AssoSpecialOfferBillingType;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.AttachmentType;
@@ -151,6 +152,9 @@ public class MiscellaneousController {
 
     @Autowired
     ProviderService providerService;
+
+    @Autowired
+    AccountingAccountService accountingAccountService;
 
     @GetMapping(inputEntryPoint + "/providers")
     public ResponseEntity<List<Provider>> getProviders() {
@@ -518,18 +522,16 @@ public class MiscellaneousController {
             if (billingItems.getAccountingAccounts() == null || billingItems.getAccountingAccounts().size() == 0)
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
-            boolean foundProductAccount = false;
             for (AccountingAccount accountingAccount : billingItems.getAccountingAccounts()) {
                 if (accountingAccount.getId() != null)
                     validationHelper.validateReferential(accountingAccount, true);
                 validationHelper.validateString(accountingAccount.getLabel(), true, 100);
                 validationHelper.validateString(accountingAccount.getAccountingAccountNumber(), true, 3);
                 validationHelper.validateInteger(accountingAccount.getAccountingAccountSubNumber(), true);
-                if (accountingAccount.getAccountingAccountNumber().substring(0, 1).equals("7"))
-                    foundProductAccount = true;
             }
 
-            if (!foundProductAccount)
+            if (accountingAccountService
+                    .getProductAccountingAccountFromAccountingAccountList(billingItems.getAccountingAccounts()) == null)
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
             outBillingItem = billingItemService.addOrUpdateBillingItem(billingItems);

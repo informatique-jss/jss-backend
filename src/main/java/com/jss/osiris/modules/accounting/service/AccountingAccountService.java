@@ -16,5 +16,17 @@ public interface AccountingAccountService {
 
     public AccountingAccount getAccountingAccountByAccountingAccountNumber(String accountingAccountNumber);
 
+    /**
+     * Generate provider and customer accounting accounts for an entity
+     * WARNING ! accounting accounts are persisted after operation but not
+     * associated to entity : it must be done in called method
+     * 
+     * @param label Custom label. Leave null will put account number as
+     *              label
+     * 
+     */
     public AccountingAccountCouple generateAccountingAccountsForEntity(String label) throws Exception;
+
+    public AccountingAccount getProductAccountingAccountFromAccountingAccountList(
+            List<AccountingAccount> accountingAccounts);
 }

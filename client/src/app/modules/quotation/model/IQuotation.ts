@@ -6,7 +6,6 @@ import { SpecialOffer } from "../../miscellaneous/model/SpecialOffer";
 import { Responsable } from "../../tiers/model/Responsable";
 import { Tiers } from "../../tiers/model/Tiers";
 import { Confrere } from "./Confrere";
-import { InvoiceItem } from "./InvoiceItem";
 import { Provision } from "./Provision";
 import { QuotationLabelType } from "./QuotationLabelType";
 import { QuotationStatus } from "./QuotationStatus";
@@ -31,6 +30,5 @@ export interface IQuotation extends IAttachment, IDocument {
   provisions: Provision[];
   mails: Mail[];
   phones: Phone[];
-  invoiceItems: InvoiceItem[];
   isQuotation: boolean;
 }

@@ -8,6 +8,10 @@ public interface AccountingJournalService {
     public List<AccountingJournal> getAccountingJournals();
 
     public AccountingJournal getAccountingJournal(Integer id);
-	
-	 public AccountingJournal addOrUpdateAccountingJournal(AccountingJournal accountingJournal);
+
+    public AccountingJournal addOrUpdateAccountingJournal(AccountingJournal accountingJournal);
+
+    public AccountingJournal getAccountingJournalByCode(String code);
+
+    public AccountingJournal getSalesAccountingJournal() throws Exception;
 }

@@ -4,19 +4,24 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jss.osiris.libs.search.model.IndexEntity;
-import com.jss.osiris.libs.search.model.IndexedField;
-import com.jss.osiris.libs.search.repository.IndexEntityRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.jss.osiris.libs.JacksonLocalDateSerializer;
+import com.jss.osiris.libs.JacksonLocalDateTimeSerializer;
+import com.jss.osiris.libs.search.model.IndexEntity;
+import com.jss.osiris.libs.search.model.IndexedField;
+import com.jss.osiris.libs.search.repository.IndexEntityRepository;
 
 @Service
 public class IndexEntityServiceImpl implements IndexEntityService {
@@ -29,7 +34,12 @@ public class IndexEntityServiceImpl implements IndexEntityService {
     public void indexEntity(Object entity, Integer entityId) {
         IndexEntity indexedEntity = new IndexEntity();
         Map<String, Object> indexMap = new HashMap<String, Object>();
+
         ObjectMapper objectMapper = new ObjectMapper();
+        SimpleModule simpleModule = new SimpleModule("SimpleModule");
+        simpleModule.addSerializer(LocalDateTime.class, new JacksonLocalDateTimeSerializer());
+        simpleModule.addSerializer(LocalDate.class, new JacksonLocalDateSerializer());
+        objectMapper.registerModule(simpleModule);
 
         for (Field field : entity.getClass().getDeclaredFields()) {
             for (Annotation annotation : field.getAnnotations()) {

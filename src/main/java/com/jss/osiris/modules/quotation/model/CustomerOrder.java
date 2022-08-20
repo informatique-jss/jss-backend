@@ -71,7 +71,7 @@ public class CustomerOrder implements IQuotation {
 	@JsonManagedReference("customerOrder")
 	private List<Attachment> attachments;
 
-	@OneToMany(targetEntity = Document.class, mappedBy = "customerOrder", cascade = CascadeType.ALL)
+	@OneToMany(targetEntity = Document.class, mappedBy = "customerOrder", cascade = CascadeType.MERGE)
 	@JsonManagedReference("customerOrder")
 	private List<Document> documents;
 
@@ -105,10 +105,6 @@ public class CustomerOrder implements IQuotation {
 
 	@Column(nullable = false)
 	private Boolean overrideSpecialOffer;
-
-	@OneToMany(targetEntity = InvoiceItem.class, mappedBy = "customerOrder", cascade = CascadeType.ALL)
-	@JsonManagedReference("customerOrder")
-	private List<InvoiceItem> invoiceItems;
 
 	@Column(length = 40)
 	private String quotationLabel;
@@ -242,14 +238,6 @@ public class CustomerOrder implements IQuotation {
 
 	public void setOverrideSpecialOffer(Boolean overrideSpecialOffer) {
 		this.overrideSpecialOffer = overrideSpecialOffer;
-	}
-
-	public List<InvoiceItem> getInvoiceItems() {
-		return invoiceItems;
-	}
-
-	public void setInvoiceItems(List<InvoiceItem> invoiceItems) {
-		this.invoiceItems = invoiceItems;
 	}
 
 	public QuotationLabelType getLabelType() {

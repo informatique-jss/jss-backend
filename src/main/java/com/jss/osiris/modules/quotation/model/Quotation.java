@@ -71,7 +71,7 @@ public class Quotation implements IQuotation {
 	@JsonManagedReference("quotation")
 	private List<Attachment> attachments;
 
-	@OneToMany(targetEntity = Document.class, mappedBy = "quotation", cascade = CascadeType.ALL)
+	@OneToMany(targetEntity = Document.class, mappedBy = "quotation", cascade = CascadeType.MERGE)
 	@JsonManagedReference("quotation")
 	private List<Document> documents;
 
@@ -95,20 +95,16 @@ public class Quotation implements IQuotation {
 	@JsonManagedReference("quotation")
 	private List<Provision> provisions;
 
-	@ManyToMany(cascade = CascadeType.ALL)
+	@ManyToMany(cascade = CascadeType.MERGE)
 	@JoinTable(name = "asso_quotation_mail", joinColumns = @JoinColumn(name = "id_quotation"), inverseJoinColumns = @JoinColumn(name = "id_mail"))
 	private List<Mail> mails;
 
-	@ManyToMany(cascade = CascadeType.ALL)
+	@ManyToMany(cascade = CascadeType.MERGE)
 	@JoinTable(name = "asso_quotation_phone", joinColumns = @JoinColumn(name = "id_quotation"), inverseJoinColumns = @JoinColumn(name = "id_phone"))
 	private List<Phone> phones;
 
 	@Column(nullable = false)
 	private Boolean overrideSpecialOffer;
-
-	@OneToMany(targetEntity = InvoiceItem.class, mappedBy = "quotation", cascade = CascadeType.ALL)
-	@JsonManagedReference("quotation")
-	private List<InvoiceItem> invoiceItems;
 
 	@Column(length = 40)
 	private String quotationLabel;
@@ -266,14 +262,6 @@ public class Quotation implements IQuotation {
 
 	public void setOverrideSpecialOffer(Boolean overrideSpecialOffer) {
 		this.overrideSpecialOffer = overrideSpecialOffer;
-	}
-
-	public List<InvoiceItem> getInvoiceItems() {
-		return invoiceItems;
-	}
-
-	public void setInvoiceItems(List<InvoiceItem> invoiceItems) {
-		this.invoiceItems = invoiceItems;
 	}
 
 	public String getQuotationLabel() {
