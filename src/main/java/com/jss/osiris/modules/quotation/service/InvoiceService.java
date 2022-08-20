@@ -1,7 +1,11 @@
 package com.jss.osiris.modules.quotation.service;
 
+import java.time.LocalDate;
+
 import com.jss.osiris.modules.quotation.model.Invoice;
 import com.jss.osiris.modules.tiers.model.ITiers;
+import com.jss.osiris.modules.tiers.model.Responsable;
+import com.jss.osiris.modules.tiers.model.Tiers;
 
 public interface InvoiceService {
     public Invoice getInvoice(Integer id);
@@ -24,5 +28,9 @@ public interface InvoiceService {
     public ITiers getCustomerOrder(Invoice invoice) throws Exception;
 
     public Invoice getInvoiceForCustomerOrder(Integer customerOrderId);
+
+    public LocalDate getFirstBillingDateForTiers(Tiers tiers);
+
+    public LocalDate getFirstBillingDateForResponsable(Responsable responsable);
 
 }

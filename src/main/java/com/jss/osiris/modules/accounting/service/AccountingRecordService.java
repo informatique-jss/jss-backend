@@ -13,4 +13,6 @@ public interface AccountingRecordService {
     public AccountingRecord addOrUpdateAccountingRecord(AccountingRecord accountingRecord);
 
     public void generateAccountingRecordsForSaleOnInvoiceGeneration(Invoice invoice) throws Exception;
+
+    public void dailyAccountClosing();
 }

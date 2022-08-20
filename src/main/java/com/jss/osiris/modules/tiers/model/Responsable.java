@@ -57,8 +57,6 @@ public class Responsable implements ITiers, IAttachment {
 
 	// Common responsable / tiers
 
-	// TODO : waiting for Xcase experiment to evaluate if we get it dynamically from
-	// compatibility or keep it here
 	@JsonSerialize(using = JacksonLocalDateSerializer.class)
 	private LocalDate firstBilling;
 

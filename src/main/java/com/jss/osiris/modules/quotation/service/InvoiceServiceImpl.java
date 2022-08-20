@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.quotation.service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -134,6 +135,16 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public Invoice getInvoiceForCustomerOrder(Integer customerOrderId) {
         return invoiceRepository.findByCustomerOrderId(customerOrderId);
+    }
+
+    @Override
+    public LocalDate getFirstBillingDateForTiers(Tiers tiers) {
+        return invoiceRepository.findFirstBillingDateForTiers(tiers);
+    }
+
+    @Override
+    public LocalDate getFirstBillingDateForResponsable(Responsable responsable) {
+        return invoiceRepository.findFirstBillingDateForResponsable(responsable);
     }
 
 }

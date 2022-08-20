@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.jss.osiris.libs.search.model.IndexEntity;
 import com.jss.osiris.libs.search.service.SearchService;
+import com.jss.osiris.modules.quotation.service.InvoiceService;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.repository.ResponsableRepository;
 
@@ -22,6 +23,9 @@ public class ResponsableServiceImpl implements ResponsableService {
     @Autowired
     SearchService searchService;
 
+    @Autowired
+    InvoiceService invoiceService;
+
     @Override
     public List<Responsable> getResponsables() {
         return IterableUtils.toList(responsableRepository.findAll());
@@ -32,6 +36,11 @@ public class ResponsableServiceImpl implements ResponsableService {
         Optional<Responsable> responsable = responsableRepository.findById(id);
         if (!responsable.isEmpty())
             return responsable.get();
+        if (!responsable.isEmpty()) {
+            Responsable responsableInstance = responsable.get();
+            responsableInstance.setFirstBilling(invoiceService.getFirstBillingDateForResponsable(responsableInstance));
+            return responsableInstance;
+        }
         return null;
     }
 

@@ -32,7 +32,12 @@ public class AccountingRecord implements Serializable, IId {
 	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
 	private LocalDateTime operationDateTime;
 
+	private Integer operationId;
+
+	@Column(length = 150)
 	private String manualAccountingDocumentNumber;
+
+	@Column(nullable = false, length = 100)
 	private String label;
 	private Float creditAmount;
 	private Float debitAmount;
@@ -43,8 +48,6 @@ public class AccountingRecord implements Serializable, IId {
 
 	@Column(nullable = false)
 	private Boolean isTemporary;
-	// TODO : batch de passage à false chaque jour à minuit + qui passe accounting
-	// datetime à sysdate
 
 	@ManyToOne
 	@JoinColumn(name = "id_invoice_item")
@@ -152,6 +155,14 @@ public class AccountingRecord implements Serializable, IId {
 
 	public void setAccountingJournal(AccountingJournal accountingJournal) {
 		this.accountingJournal = accountingJournal;
+	}
+
+	public Integer getOperationId() {
+		return operationId;
+	}
+
+	public void setOperationId(Integer operationId) {
+		this.operationId = operationId;
 	}
 
 }

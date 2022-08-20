@@ -33,6 +33,7 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("miscellaneous.document.billing.label.type.affaire.code");
         isOk = isOk && checkProperty("miscellaneous.document.billing.label.type.other.code");
         isOk = isOk && checkProperty("accounting.journal.code.sales");
+        isOk = isOk && checkProperty("schedulling.account.daily.close");
 
         if (!isOk)
             System.exit(-1);

@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.accounting.service;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoField;
 import java.util.List;
 import java.util.Optional;
 
@@ -10,6 +11,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.model.AccountingJournal;
@@ -143,5 +145,38 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
         accountingRecord.setAccountingJournal(journal);
         accountingRecordRepository.save(accountingRecord);
         return accountingRecord;
+    }
+
+    @Override
+    @Transactional
+    public void dailyAccountClosing() {
+        List<AccountingJournal> journals = accountingJournalService.getAccountingJournals();
+
+        if (journals != null && journals.size() > 0) {
+            for (AccountingJournal accountingJournal : journals) {
+                List<AccountingRecord> accountingRecords = accountingRecordRepository
+                        .findByAccountingJournalAndIsTemporary(accountingJournal, true);
+
+                if (accountingRecords != null && accountingRecords.size() > 0) {
+                    Integer maxIdOperation = accountingRecordRepository
+                            .findMaxIdOperationForAccontingJournalAndMinOperationDateTime(
+                                    accountingJournal,
+                                    LocalDateTime.now().with(ChronoField.DAY_OF_YEAR, 1)
+                                            .with(ChronoField.HOUR_OF_DAY, 0)
+                                            .with(ChronoField.MINUTE_OF_DAY, 0).with(ChronoField.SECOND_OF_DAY, 0));
+
+                    if (maxIdOperation == null)
+                        maxIdOperation = 0;
+
+                    for (AccountingRecord accountingRecord : accountingRecords) {
+                        accountingRecord.setAccountingDateTime(LocalDateTime.now());
+                        accountingRecord.setOperationId(maxIdOperation);
+                        accountingRecordRepository.save(accountingRecord);
+                        accountingRecord.setIsTemporary(false);
+                        maxIdOperation++;
+                    }
+                }
+            }
+        }
     }
 }

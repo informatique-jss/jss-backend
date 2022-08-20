@@ -116,9 +116,20 @@ public class AccountingController {
         try {
             if (accountingRecords.getId() != null)
                 validationHelper.validateReferential(accountingRecords, true);
-            validationHelper.validateString(accountingRecords.getLabel(), true);
+            validationHelper.validateString(accountingRecords.getLabel(), true, 100);
+            accountingRecords.setAccountingDateTime(null);
+            accountingRecords.setOperationDateTime(null);
+            accountingRecords.setOperationId(null);
+            validationHelper.validateString(accountingRecords.getManualAccountingDocumentNumber(), false, 150);
 
-            // TODO : complete validators
+            if (accountingRecords.getCreditAmount() != null && accountingRecords.getCreditAmount() != 0
+                    && accountingRecords.getDebitAmount() != null && accountingRecords.getDebitAmount() != 0)
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+
+            validationHelper.validateReferential(accountingRecords.getAccountingAccount(), true);
+            validationHelper.validateReferential(accountingRecords.getInvoice(), false);
+            validationHelper.validateReferential(accountingRecords.getInvoice(), false);
+            validationHelper.validateReferential(accountingRecords.getAccountingJournal(), true);
 
             outAccountingRecord = accountingRecordService
                     .addOrUpdateAccountingRecord(accountingRecords);
@@ -232,4 +243,20 @@ public class AccountingController {
         }
         return new ResponseEntity<List<AccountingAccount>>(accountingAccounts, HttpStatus.OK);
     }
+
+    // TODO : to protect !
+    @GetMapping(inputEntryPoint + "/accounting/close/daily")
+    public ResponseEntity<Boolean> dailyAccountClosing() {
+        try {
+            accountingRecordService.dailyAccountClosing();
+        } catch (HttpStatusCodeException e) {
+            logger.error("HTTP error when fetching city", e);
+            return new ResponseEntity<Boolean>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            logger.error("Error when fetching city", e);
+            return new ResponseEntity<Boolean>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+    }
+
 }

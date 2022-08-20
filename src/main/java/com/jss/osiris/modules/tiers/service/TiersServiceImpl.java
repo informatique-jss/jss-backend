@@ -15,6 +15,7 @@ import com.jss.osiris.modules.accounting.service.AccountingAccountService;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.service.MailService;
 import com.jss.osiris.modules.miscellaneous.service.PhoneService;
+import com.jss.osiris.modules.quotation.service.InvoiceService;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 import com.jss.osiris.modules.tiers.repository.TiersRepository;
@@ -43,11 +44,21 @@ public class TiersServiceImpl implements TiersService {
     @Autowired
     AccountingAccountService accountingAccountService;
 
+    @Autowired
+    InvoiceService invoiceService;
+
     @Override
     public Tiers getTiers(Integer id) {
         Optional<Tiers> tiers = tiersRepository.findById(id);
-        if (!tiers.isEmpty())
-            return tiers.get();
+        if (!tiers.isEmpty()) {
+            Tiers tiersInstance = tiers.get();
+            tiersInstance.setFirstBilling(invoiceService.getFirstBillingDateForTiers(tiersInstance));
+            if (tiersInstance.getResponsables() != null) {
+                for (Responsable responsable : tiersInstance.getResponsables())
+                    responsable.setFirstBilling(invoiceService.getFirstBillingDateForResponsable(responsable));
+            }
+            return tiersInstance;
+        }
         return null;
     }
 
