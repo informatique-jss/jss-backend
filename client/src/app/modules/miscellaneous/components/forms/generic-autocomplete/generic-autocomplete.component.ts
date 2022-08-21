@@ -56,6 +56,11 @@ export abstract class GenericAutocompleteComponent<T, U> implements OnInit {
  * Default : false
  */
   @Input() isDisabled: boolean = false;
+  /**
+  * Override matFormField class
+  * Default = full-width
+  */
+  @Input() matFormFieldClass: string = "full-width";
 
   expectedMinLengthInput: number = 2;
 

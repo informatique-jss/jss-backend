@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.accounting.model;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import javax.persistence.Column;
@@ -37,6 +38,10 @@ public class AccountingRecord implements Serializable, IId {
 	@Column(length = 150)
 	private String manualAccountingDocumentNumber;
 
+	private LocalDate manualAccountingDocumentDate;
+
+	private LocalDate manualAccountingDocumentDeadline;
+
 	@Column(nullable = false, length = 100)
 	private String label;
 	private Float creditAmount;
@@ -60,6 +65,10 @@ public class AccountingRecord implements Serializable, IId {
 	@ManyToOne
 	@JoinColumn(name = "id_accounting_journal")
 	private AccountingJournal accountingJournal;
+
+	private Integer letteringNumber;
+
+	private LocalDateTime letteringDate;
 
 	public Integer getId() {
 		return id;
@@ -103,6 +112,22 @@ public class AccountingRecord implements Serializable, IId {
 
 	public String getLabel() {
 		return label;
+	}
+
+	public Integer getLetteringNumber() {
+		return letteringNumber;
+	}
+
+	public void setLetteringNumber(Integer letteringNumber) {
+		this.letteringNumber = letteringNumber;
+	}
+
+	public LocalDateTime getLetteringDate() {
+		return letteringDate;
+	}
+
+	public void setLetteringDate(LocalDateTime letteringDate) {
+		this.letteringDate = letteringDate;
 	}
 
 	public void setLabel(String label) {
@@ -163,6 +188,22 @@ public class AccountingRecord implements Serializable, IId {
 
 	public void setOperationId(Integer operationId) {
 		this.operationId = operationId;
+	}
+
+	public LocalDate getManualAccountingDocumentDate() {
+		return manualAccountingDocumentDate;
+	}
+
+	public void setManualAccountingDocumentDate(LocalDate manualAccountingDocumentDate) {
+		this.manualAccountingDocumentDate = manualAccountingDocumentDate;
+	}
+
+	public LocalDate getManualAccountingDocumentDeadline() {
+		return manualAccountingDocumentDeadline;
+	}
+
+	public void setManualAccountingDocumentDeadline(LocalDate manualAccountingDocumentDeadline) {
+		this.manualAccountingDocumentDeadline = manualAccountingDocumentDeadline;
 	}
 
 }

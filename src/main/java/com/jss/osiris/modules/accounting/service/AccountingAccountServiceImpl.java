@@ -117,8 +117,7 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
         accountingAccountProvider.setAccountingAccountNumber(providerAccountingAccountNumber);
         accountingAccountProvider.setAccountingAccountSubNumber(maxSubAccount);
         accountingAccountProvider
-                .setLabel("Fournisseur - " + (label != null ? label : "") + " - " + providerAccountingAccountNumber
-                        + maxSubAccount);
+                .setLabel("Fournisseur - " + (label != null ? label : ""));
         accountingAccountRepository.save(accountingAccountProvider);
         accountingAccountCouple.setAccountingAccountProvider(accountingAccountProvider);
 
@@ -127,8 +126,7 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
         accountingAccountCustomer.setAccountingAccountNumber(customerAccountingAccountNumber);
         accountingAccountCustomer.setAccountingAccountSubNumber(maxSubAccount);
         accountingAccountCustomer
-                .setLabel("Client - " + (label != null ? label : "") + " - " + customerAccountingAccountNumber
-                        + maxSubAccount);
+                .setLabel("Client - " + (label != null ? label : ""));
         accountingAccountRepository.save(accountingAccountCustomer);
         accountingAccountCouple.setAccountingAccountCustomer(accountingAccountCustomer);
 

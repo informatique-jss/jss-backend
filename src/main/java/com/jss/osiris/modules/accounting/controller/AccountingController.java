@@ -1,10 +1,18 @@
 package com.jss.osiris.modules.accounting.controller;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,6 +30,7 @@ import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.model.AccountingAccountClass;
 import com.jss.osiris.modules.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.accounting.model.AccountingRecord;
+import com.jss.osiris.modules.accounting.model.AccountingRecordSearch;
 import com.jss.osiris.modules.accounting.service.AccountingAccountClassService;
 import com.jss.osiris.modules.accounting.service.AccountingAccountService;
 import com.jss.osiris.modules.accounting.service.AccountingJournalService;
@@ -35,6 +44,8 @@ public class AccountingController {
     private static final String inputEntryPoint = "/accounting";
 
     private static final Logger logger = LoggerFactory.getLogger(AccountingController.class);
+
+    private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
     @Autowired
     ValidationHelper validationHelper;
@@ -120,6 +131,7 @@ public class AccountingController {
                 validationHelper.validateReferential(accountingRecords, true);
             validationHelper.validateString(accountingRecords.getLabel(), true, 100);
             accountingRecords.setAccountingDateTime(null);
+            validationHelper.validateDateTimeMax(accountingRecords.getOperationDateTime(), false, LocalDateTime.now());
             accountingRecords.setOperationDateTime(null);
             accountingRecords.setOperationId(null);
             validationHelper.validateString(accountingRecords.getManualAccountingDocumentNumber(), false, 150);
@@ -128,10 +140,13 @@ public class AccountingController {
                     && accountingRecords.getDebitAmount() != null && accountingRecords.getDebitAmount() != 0)
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
 
+            validationHelper.validateDateMax(accountingRecords.getManualAccountingDocumentDate(), false,
+                    accountingRecords.getOperationDateTime().toLocalDate());
             validationHelper.validateReferential(accountingRecords.getAccountingAccount(), true);
             validationHelper.validateReferential(accountingRecords.getInvoice(), false);
             validationHelper.validateReferential(accountingRecords.getInvoice(), false);
             validationHelper.validateReferential(accountingRecords.getAccountingJournal(), true);
+            validationHelper.validateDate(accountingRecords.getManualAccountingDocumentDeadline(), false);
 
             outAccountingRecord = accountingRecordService
                     .addOrUpdateAccountingRecord(accountingRecords);
@@ -259,6 +274,90 @@ public class AccountingController {
             return new ResponseEntity<Boolean>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+    }
+
+    @PostMapping(inputEntryPoint + "/accounting-record/search")
+    public ResponseEntity<List<AccountingRecord>> searchAccountingRecords(
+            @RequestBody AccountingRecordSearch accountingRecordSearch) {
+        List<AccountingRecord> accountingRecords;
+        try {
+            if (accountingRecordSearch == null)
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+            if (accountingRecordSearch.getAccountingAccount() == null
+                    && accountingRecordSearch.getAccountingClass() == null
+                    && accountingRecordSearch.getAccountingJournal() == null)
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+            if (accountingRecordSearch.getStartDate() == null || accountingRecordSearch.getEndDate() == null)
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+            Duration duration = Duration.between(accountingRecordSearch.getStartDate(),
+                    accountingRecordSearch.getEndDate());
+
+            if (duration.toDays() > 366)
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+            accountingRecords = accountingRecordService.searchAccountingRecords(accountingRecordSearch);
+        } catch (
+
+        ResponseStatusException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (HttpStatusCodeException e) {
+            logger.error("HTTP error when fetching accountingAccount", e);
+            return new ResponseEntity<List<AccountingRecord>>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            logger.error("Error when fetching accountingAccount", e);
+            return new ResponseEntity<List<AccountingRecord>>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<List<AccountingRecord>>(accountingRecords, HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/grand-livre")
+    public ResponseEntity<byte[]> downloadGrandLivre(@RequestParam("accountingClassId") Integer accountingClassId,
+            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
+        byte[] data = null;
+        HttpHeaders headers = null;
+
+        if (accountingClassId == null)
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        AccountingAccountClass accountingClass = accountingAccountClassService
+                .getAccountingAccountClass(accountingClassId);
+
+        if (accountingClass == null)
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        if (startDate == null || endDate == null)
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        Duration duration = Duration.between(startDate, endDate);
+
+        if (duration.toDays() > 366)
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        try {
+            File grandLivre = accountingRecordService.getGrandLivre(accountingClass, startDate, endDate);
+
+            if (grandLivre != null) {
+                data = Files.readAllBytes(grandLivre.toPath());
+
+                headers = new HttpHeaders();
+                headers.add("filename",
+                        "Grand livre - " + accountingClass.getLabel() + " - " + startDate.format(dateFormatter) + " - "
+                                + endDate.format(dateFormatter) + ".xlsx");
+                headers.setAccessControlExposeHeaders(Arrays.asList("filename"));
+                headers.setContentLength(data.length);
+                headers.set("content-type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+
+                grandLivre.delete();
+
+            }
+        } catch (Exception e) {
+            logger.error("Error when fetching client types", e);
+            return new ResponseEntity<byte[]>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<byte[]>(data, headers, HttpStatus.OK);
     }
 
 }

@@ -17,6 +17,10 @@
     [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/order' )>=0}">
     <mat-icon>shopping_cart</mat-icon> <span>Commande</span>
   </a>
+  <a mat-list-item routerLink="/accounting" *ngIf="canViewAccountingModule()"
+    [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/accounting' )>=0}">
+    <mat-icon>calculate</mat-icon> <span>Comptabilité</span>
+  </a>
   <a mat-list-item routerLink="/administration" *ngIf="canViewAdministrationModule()"
     [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/administration' )>=0}">
     <mat-icon>settings</mat-icon> <span>Administration</span>

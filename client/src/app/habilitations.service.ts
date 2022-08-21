@@ -26,6 +26,10 @@ export class HabilitationsService {
     return true;
   }
 
+  canViewAccountingModule() {
+    return true;
+  }
+
 }
 
 

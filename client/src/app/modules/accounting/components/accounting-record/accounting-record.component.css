@@ -1,0 +1,26 @@
+.row-field-container-flex-item {
+  flex: 1;
+}
+
+.add-button {
+  top: -8px;
+}
+
+.table-fixed-layout {
+  table-layout: fixed;
+}
+
+.fab-td-button {
+  width: 35px;
+}
+
+.td-label {
+  white-space: nowrap;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+::ng-deep.mat-menu-panel {
+  max-width: none !important;
+}

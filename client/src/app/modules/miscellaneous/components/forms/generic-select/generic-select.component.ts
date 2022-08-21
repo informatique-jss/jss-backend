@@ -12,7 +12,7 @@ export abstract class GenericSelectComponent<T> implements OnInit {
    * The model of T property
    * Mandatory
    */
-  @Input() model: T = {} as T;
+  @Input() model: T | undefined = {} as T;
   @Output() modelChange: EventEmitter<T> = new EventEmitter<T>();
   /**
   * The label to display
@@ -69,7 +69,6 @@ export abstract class GenericSelectComponent<T> implements OnInit {
       this.ngOnInit();
 
     if (changes.model && this.form != undefined) {
-      this.cdr.detectChanges();
       this.form.get(this.propertyName)?.setValue(this.model);
       this.form.markAllAsTouched();
     }
@@ -82,7 +81,6 @@ export abstract class GenericSelectComponent<T> implements OnInit {
       this.cdr.detectChanges();
     }
     if (this.form && (this.isMandatory || this.customValidators)) {
-      this.cdr.detectChanges();
     }
   }
 
@@ -139,4 +137,10 @@ export abstract class GenericSelectComponent<T> implements OnInit {
   abstract initTypes(): void;
 
   compareWithId = compareWithId;
+
+  clearField(): void {
+    this.model = undefined;
+    this.modelChange.emit(this.model);
+    this.selectionChange.emit(undefined);
+  }
 }

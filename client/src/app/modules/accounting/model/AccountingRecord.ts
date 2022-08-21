@@ -8,6 +8,8 @@ export interface AccountingRecord {
   accountingDateTime: Date;
   operationDateTime: Date;
   manualAccountingDocumentNumber: string;
+  manualAccountingDocumentDate: Date;
+  manualAccountingDocumentDeadline: Date;
   label: string;
   creditAmount: number;
   debitAmount: number;
@@ -17,4 +19,18 @@ export interface AccountingRecord {
   invoice: Invoice;
   accountingJournal: AccountingJournal;
   operationId: number;
+  letteringNumber: number;
+  letteringDate: Date;
+  /**
+   * only used in fronted
+   */
+  creditAccumulation: number;
+  /**
+  * only used in fronted
+  */
+  debitAccumulation: number;
+  /**
+  * only used in fronted
+  */
+  balance: number;
 }

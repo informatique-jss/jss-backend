@@ -1,0 +1,11 @@
+<mat-form-field class="full-width" [formGroup]="form!">
+  <mat-label>{{label}}</mat-label>
+  <mat-date-range-input [rangePicker]="picker">
+    <input matInput matStartDate [min]="minDate" [max]="maxDate" [formControlName]="propertyNameStart"
+      autocomplete="do-not-autocomplete" (dateChange)="dateChange($event.value)">
+    <input matInput matEndDate [min]="minDate" [max]="maxDate" [formControlName]="propertyNameEnd"
+      autocomplete="do-not-autocomplete" (dateChange)="dateChange($event.value)">
+  </mat-date-range-input>
+  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+  <mat-date-range-picker touchUi #picker></mat-date-range-picker>
+</mat-form-field>

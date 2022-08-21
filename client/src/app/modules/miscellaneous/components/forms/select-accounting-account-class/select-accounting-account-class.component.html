@@ -6,4 +6,7 @@
       {{type.label}}
     </mat-option>
   </mat-select>
+  <button *ngIf="model" mat-button matSuffix mat-icon-button (click)="clearField();$event.stopPropagation()">
+    <mat-icon>close</mat-icon>
+  </button>
 </mat-form-field>

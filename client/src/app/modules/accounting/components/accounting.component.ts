@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { AppService } from 'src/app/app.service';
 
 @Component({
   selector: 'app-accounting',
@@ -7,9 +8,11 @@ import { Component, OnInit } from '@angular/core';
 })
 export class AccountingComponent implements OnInit {
 
-  constructor() { }
+  constructor(private appService: AppService,
+  ) { }
 
   ngOnInit() {
+    this.appService.changeHeaderTitle("Comptabilité");
   }
 
 }

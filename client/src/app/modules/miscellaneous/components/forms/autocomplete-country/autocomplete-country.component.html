@@ -1,7 +1,7 @@
 <mat-form-field class="full-width" [formGroup]="form!">
   <mat-label>Pays</mat-label>
   <input type="text" matInput [formControlName]="propertyName" [matAutocomplete]="matAutocomplete" [(ngModel)]="model">
-  <mat-icon matSuffix (click)="model=undefined" *ngIf="!isDisabled && model!=undefined">
+  <mat-icon matSuffix (click)="clearField()" class="pointer" *ngIf="!isDisabled && model!=undefined">
     close
   </mat-icon>
   <mat-autocomplete autoActiveFirstOption #matAutocomplete="matAutocomplete" [displayWith]="displayLabel"

@@ -50,6 +50,7 @@ import { ChipsMailComponent } from '../forms/chips-mail/chips-mail.component';
 import { ChipsPhoneComponent } from '../forms/chips-phone/chips-phone.component';
 import { ChipsSpecialOffersComponent } from '../forms/chips-special-offers/chips-special-offers.component';
 import { GenericCheckboxComponent } from '../forms/generic-checkbox/generic-checkbox.component';
+import { GenericDateRangePickerComponent } from '../forms/generic-date-range-picker/generic-date-range-picker.component';
 import { GenericDatepickerComponent } from '../forms/generic-datepicker/generic-datepicker.component';
 import { GenericInputComponent } from '../forms/generic-input/generic-input.component';
 import { GenericTextareaComponent } from '../forms/generic-textarea/generic-textarea.component';
@@ -203,6 +204,7 @@ import { MiscellaneousComponent } from './miscellaneous.component';
     SelectRegieComponent,
     AutocompleteAccountingAccountComponent,
     SelectAccountingJournalComponent,
+    GenericDateRangePickerComponent,
     SingleAttachmentComponent],
   exports: [
     HistoryComponent,
@@ -233,6 +235,7 @@ import { MiscellaneousComponent } from './miscellaneous.component';
     AutocompleteTiersIndividualComponent,
     RadioGroupLanguageComponent,
     AutocompleteRegionComponent,
+    GenericDateRangePickerComponent,
     SelectContractTypeComponent,
     SelectBuildingDomicilationComponent,
     AutocompleteResponsableComponent,
