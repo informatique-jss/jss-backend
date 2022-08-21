@@ -13,7 +13,6 @@ export class AppService {
   private sidenavOpenState: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
   sidenavOpenStateObservable = this.sidenavOpenState.asObservable();
 
-
   constructor(
     private snackBar: MatSnackBar,
   ) { }

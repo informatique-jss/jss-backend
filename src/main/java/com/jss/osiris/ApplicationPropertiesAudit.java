@@ -34,6 +34,15 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("miscellaneous.document.billing.label.type.other.code");
         isOk = isOk && checkProperty("accounting.journal.code.sales");
         isOk = isOk && checkProperty("schedulling.account.daily.close");
+        isOk = isOk && checkProperty("ldap.dc.level.0");
+        isOk = isOk && checkProperty("ldap.dc.level.1");
+        isOk = isOk && checkProperty("ldap.ou.osiris");
+        isOk = isOk && checkProperty("ldap.group.osiris.users");
+        isOk = isOk && checkProperty("ldap.server.host");
+        isOk = isOk && checkProperty("ldap.server.port");
+        isOk = isOk && checkProperty("ldap.manager.login");
+        isOk = isOk && checkProperty("ldap.manager.password");
+        isOk = isOk && checkProperty("server.servlet.session.timeout");
 
         if (!isOk)
             System.exit(-1);

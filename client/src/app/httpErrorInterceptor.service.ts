@@ -6,14 +6,21 @@ import { Injectable } from '@angular/core';
 import { EMPTY, Observable } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { AppService } from './app.service';
+import { LoginService } from './routing/login-dialog/login.service';
 
 @Injectable()
 export class HttpErrorInterceptor implements HttpInterceptor {
 
-  constructor(private appService: AppService) { }
+  constructor(private appService: AppService,
+    private loginService: LoginService,
+  ) { }
 
   errorMessage: string = "";
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+
+    request = request.clone({
+      withCredentials: true
+    });
 
     return next.handle(request).pipe(
       tap(data => {
@@ -40,8 +47,15 @@ export class HttpErrorInterceptor implements HttpInterceptor {
         } else {
           // The backend returned an unsuccessful response code.
           // The response body may contain clues as to what went wrong,
-          console.error(`Backend returned code ${error.status}, body was: ${error.error}`);
-          this.errorMessage = 'A server-side error occurred: ' + `HTTP ${error.status}, body : ${error.error}`;
+
+          // If HTTP 403, user not logged in
+          if (error.status == 403) {
+            this.loginService.setLoggedIn(false);
+            return EMPTY;
+          } else {
+            console.error(`Backend returned code ${error.status}, body was: ${error.error}`);
+            this.errorMessage = 'A server-side error occurred: ' + `HTTP ${error.status}, body : ${error.error}`;
+          }
         }
         if (this.errorMessage != "") {
           if (errorMessage != undefined && errorMessage != null && errorMessage != "") {

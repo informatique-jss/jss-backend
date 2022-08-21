@@ -53,6 +53,12 @@ export abstract class AppRestService<T> {
     return this._http.post(AppRestService.serverUrl + this.entryPoint + "/" + api, item, { params, context }) as Observable<T>;
   }
 
+  loginUser(params: HttpParams, api: string, item: T, successfulMessage: string = "", errorMessage: string = ""): Observable<T> {
+    let context: HttpContext = new HttpContext();
+    context.set(this.successfulToken, successfulMessage).set(this.errorToken, errorMessage);
+    return this._http.post(AppRestService.serverUrl + this.entryPoint + "/" + api, item, { params, context }) as Observable<T>;
+  }
+
   downloadPost(api: string, item: T, successfulMessage: string = "", errorMessage: string = "") {
     let context: HttpContext = new HttpContext();
     context.set(this.successfulToken, successfulMessage).set(this.errorToken, errorMessage);

@@ -1,0 +1,28 @@
+<mat-card>
+  <mat-card-content>
+    <form [formGroup]="loginForm" (ngSubmit)="submitLogin()">
+      <p class="text-center"><img class="navbar-brand" ui-sref='main.tiers' [src]="logoOsiris" /></p>
+      <p>
+        <mat-form-field class="full-width">
+          <mat-label>Nom d'utilisateur</mat-label>
+          <input [(ngModel)]="user.username" matInput formControlName="username" placeholder="Nom d'utilisateur">
+          <mat-hint>Nom d'utilisateur de votre session Windows</mat-hint>
+        </mat-form-field>
+      </p>
+      <p>
+        <mat-form-field class="full-width">
+          <mat-label>Mot de passe</mat-label>
+          <input [(ngModel)]="user.password" type="password" matInput formControlName="password"
+            placeholder="Mot de passe">
+          <mat-hint>Mot de passe de votre session Windows</mat-hint>
+        </mat-form-field>
+      </p>
+      <p *ngIf="false" class="error">
+        {{ false }}
+      </p>
+      <div class="button">
+        <button mat-raised-button color="warn" type="submit">Se connecter</button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>
