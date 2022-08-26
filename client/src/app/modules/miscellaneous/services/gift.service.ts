@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { AppRestService } from 'src/app/appRest.service';
+import { AppRestService } from 'src/app/services/appRest.service';
 import { Gift } from '../../miscellaneous/model/Gift';
 
 @Injectable({
@@ -15,8 +15,8 @@ export class GiftService extends AppRestService<Gift>{
   getGifts() {
     return this.getList(new HttpParams(), "gifts");
   }
-  
-   addOrUpdateGift(gift: Gift) {
+
+  addOrUpdateGift(gift: Gift) {
     return this.addOrUpdate(new HttpParams(), "gift", gift, "Enregistré", "Erreur lors de l'enregistrement");
   }
 

@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { AppRestService } from 'src/app/appRest.service';
+import { AppRestService } from 'src/app/services/appRest.service';
 import { LegalForm } from '../../miscellaneous/model/LegalForm';
 
 @Injectable({
@@ -15,8 +15,8 @@ export class LegalFormService extends AppRestService<LegalForm>{
   getLegalForms() {
     return this.getList(new HttpParams(), "legal-forms");
   }
-  
-   addOrUpdateLegalForm(legalForm: LegalForm) {
+
+  addOrUpdateLegalForm(legalForm: LegalForm) {
     return this.addOrUpdate(new HttpParams(), "legal-form", legalForm, "Enregistré", "Erreur lors de l'enregistrement");
   }
 

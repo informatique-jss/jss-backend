@@ -1,9 +1,11 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { AppRestService } from 'src/app/appRest.service';
 import { toIsoString } from 'src/app/libs/FormatHelper';
+import { AppRestService } from 'src/app/services/appRest.service';
 import { AccountingRecord } from '../../accounting/model/AccountingRecord';
+import { AccountingAccount } from '../model/AccountingAccount';
 import { AccountingAccountClass } from '../model/AccountingAccountClass';
+import { AccountingJournal } from '../model/AccountingJournal';
 import { AccountingRecordSearch } from '../model/AccountingRecordSearch';
 
 @Injectable({
@@ -28,6 +30,14 @@ export class AccountingRecordService extends AppRestService<AccountingRecord>{
   }
 
   exportGrandLivre(accountingClass: AccountingAccountClass, startDate: Date, endDate: Date) {
-    this.downloadGet(new HttpParams().set("accountingClassId", accountingClass.id).set("startDate", toIsoString(startDate)).set("endDate", toIsoString(endDate)), "grand-livre");
+    this.downloadGet(new HttpParams().set("accountingClassId", accountingClass.id).set("startDate", toIsoString(startDate)).set("endDate", toIsoString(endDate)), "grand-livre/export");
+  }
+
+  exportJournal(accountingJournal: AccountingJournal, startDate: Date, endDate: Date) {
+    this.downloadGet(new HttpParams().set("accountingJournalId", accountingJournal.id).set("startDate", toIsoString(startDate)).set("endDate", toIsoString(endDate)), "journal/export");
+  }
+
+  exportAccountingAccount(accountingAccount: AccountingAccount, startDate: Date, endDate: Date) {
+    this.downloadGet(new HttpParams().set("accountingAccountId", accountingAccount.id!).set("startDate", toIsoString(startDate)).set("endDate", toIsoString(endDate)), "accounting-account/export");
   }
 }

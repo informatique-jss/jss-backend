@@ -130,6 +130,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
         invoice.setCustomerOrder(customerOrder);
         invoiceService.addOrUpdateInvoice(invoice);
+        invoiceService.setPriceTotal(invoice);
     }
 
     private boolean hasAtLeastOneInvoiceItemNotNull(CustomerOrder customerOrder) {

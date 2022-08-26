@@ -67,8 +67,6 @@ export class ProvisionItemComponent implements OnInit {
   }
 
   getFormStatus(): boolean {
-    console.log(this.shalComponent);
-    console.log(this.provisionItemForm);
     let status = true;
     if (this.domiciliationComponent)
       status = status && this.domiciliationComponent.getFormStatus();

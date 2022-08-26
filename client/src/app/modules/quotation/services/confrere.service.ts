@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { AppRestService } from 'src/app/appRest.service';
+import { AppRestService } from 'src/app/services/appRest.service';
 import { Confrere } from '../../quotation/model/Confrere';
 
 @Injectable({
@@ -15,8 +15,8 @@ export class ConfrereService extends AppRestService<Confrere>{
   getConfreres() {
     return this.getList(new HttpParams(), "confreres");
   }
-  
-   addOrUpdateConfrere(confrere: Confrere) {
+
+  addOrUpdateConfrere(confrere: Confrere) {
     return this.addOrUpdate(new HttpParams(), "confrere", confrere, "Enregistré", "Erreur lors de l'enregistrement");
   }
 

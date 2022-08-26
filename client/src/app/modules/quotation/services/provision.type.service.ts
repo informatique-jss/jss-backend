@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { AppRestService } from 'src/app/appRest.service';
+import { AppRestService } from 'src/app/services/appRest.service';
 import { ProvisionType } from '../../quotation/model/ProvisionType';
 
 @Injectable({
@@ -15,8 +15,8 @@ export class ProvisionTypeService extends AppRestService<ProvisionType>{
   getProvisionTypes() {
     return this.getList(new HttpParams(), "provision-types");
   }
-  
-   addOrUpdateProvisionType(provisionType: ProvisionType) {
+
+  addOrUpdateProvisionType(provisionType: ProvisionType) {
     return this.addOrUpdate(new HttpParams(), "provision-type", provisionType, "Enregistré", "Erreur lors de l'enregistrement");
   }
 

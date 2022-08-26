@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { AppRestService } from 'src/app/appRest.service';
+import { AppRestService } from 'src/app/services/appRest.service';
 import { CompetentAuthorityType } from '../../miscellaneous/model/CompetentAuthorityType';
 
 @Injectable({
@@ -15,8 +15,8 @@ export class CompetentAuthorityTypeService extends AppRestService<CompetentAutho
   getCompetentAuthorityTypes() {
     return this.getList(new HttpParams(), "competent-authority-types");
   }
-  
-   addOrUpdateCompetentAuthorityType(competentAuthorityType: CompetentAuthorityType) {
+
+  addOrUpdateCompetentAuthorityType(competentAuthorityType: CompetentAuthorityType) {
     return this.addOrUpdate(new HttpParams(), "competent-authority-type", competentAuthorityType, "Enregistré", "Erreur lors de l'enregistrement");
   }
 

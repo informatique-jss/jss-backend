@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { EntityType } from './routing/search/EntityType';
-import { SearchComponent } from './routing/search/search.component';
+import { EntityType } from '../routing/search/EntityType';
+import { SearchComponent } from '../routing/search/search.component';
 
 @Injectable({
   providedIn: 'root'

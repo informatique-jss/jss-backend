@@ -1,0 +1,83 @@
+<div class="mat-elevation-z2 form-div">
+  <div class=" full-width">
+    <table class="full-width table-fixed-layout">
+      <tr>
+        <td>
+          <generic-date-range-picker [(modelStart)]="accountingBalanceSearch.startDate"
+            [(modelEnd)]="accountingBalanceSearch.endDate" label="Plage de recherche"
+            [form]="accountingprofitAndLostForm" propertyNameStart="startDate" propertyNameEnd="endDate"
+            (onDateChange)="putEndDateSameYear()">
+          </generic-date-range-picker>
+        </td>
+        <td class="fab-td-button">
+          <button mat-mini-fab color="warn" matTooltip="Rechercher" (click)="refreshprofitAndLost()" class="add-button">
+            <mat-icon>search</mat-icon>
+          </button>
+        </td>
+      </tr>
+    </table>
+    <div *ngFor="let profitAndLostTable of profitAndLost">
+      <h1>{{profitAndLostTable.label}}</h1>
+      <table class="mat-table   profit-lost-table" *ngIf="profitAndLost">
+        <tr class="mat-header-row">
+          <th class="mat-header-cell"></th>
+          <th class="mat-header-cell">Solde N</th>
+          <th class="mat-header-cell">Solde N-1</th>
+        </tr>
+        <tr class="mat-row" *ngFor="let item of profitAndLostTable.items">
+          <td class="mat-cell">{{item.label}}</td>
+          <td class="mat-cell">{{item.soldeN}} €</td>
+          <td class="mat-cell">{{item.soldeN1}} €</td>
+        </tr>
+        <ng-container *ngFor="let subtitle of profitAndLostTable.subTitles">
+          <ng-container *ngFor="let item of subtitle.items; let index = index">
+            <tr class="mat-header-row" *ngIf="index==0 &&  subtitle.label!=''">
+              <th class="mat-header-cell" colspan="3">{{subtitle.label}}</th>
+            </tr>
+            <tr class="mat-row">
+              <td class="mat-cell">{{item.label}}</td>
+              <td class="mat-cell">{{item.soldeN}} €</td>
+              <td class="mat-cell">{{item.soldeN1}} €</td>
+            </tr>
+            <tr class="mat-header-row" *ngIf="index==subtitle.items.length-1 && subtitle.label!=''">
+              <th class="mat-header-cell">Sous-total - {{subtitle.label}}</th>
+              <th class="mat-header-cell">{{getSoldeN(subtitle)}} €</th>
+              <th class="mat-header-cell">{{getSoldeN1(subtitle)}} €</th>
+            </tr>
+          </ng-container>
+          <tr class="mat-header-row" *ngIf="!subtitle.items">
+            <th class="mat-header-cell">{{subtitle.label}}</th>
+            <th class="mat-header-cell">{{subtitle.soldeN}} €</th>
+            <th class="mat-header-cell">{{subtitle.soldeN1}} €</th>
+          </tr>
+        </ng-container>
+      </table>
+      <table class="mat-table total-table" cdkDrag [cdkDragFreeDragPosition]="currentUserPosition"
+        (cdkDragEnded)="dropTotalDiv($event)" *ngIf="profitAndLostTable.totals">
+        <tr class="mat-header-row">
+          <th class="mat-header-cell without-padding-left">
+            <mat-icon (click)="restoreDefaultTotalDivPosition()" class="pointer"
+              matTooltip="Restaurer la position initiale">location_on</mat-icon>
+          </th>
+          <th class="mat-header-cell">Solde N</th>
+          <th class="mat-header-cell">Solde N-1</th>
+        </tr>
+        <tr class="mat-row" *ngFor="let total of profitAndLostTable.totals">
+          <td class="mat-cell">{{total.label}}</td>
+          <td class="mat-cell">{{total.soldeN}} €</td>
+          <td class="mat-cell">{{total.soldeN1}} €</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>
+<button matTooltip="Exporter" mat-fab color="accent" class="fab-button" *ngIf="profitAndLost"
+  [matMenuTriggerFor]="menu">
+  <mat-icon>file_download</mat-icon>
+  <mat-menu #menu="matMenu" style="min-height: 0px;padding: 0;" xPosition="before">
+    <button mat-menu-item (click)="exportProfitAndLost()"
+      *ngIf="accountingBalanceSearch && accountingBalanceSearch.startDate && accountingBalanceSearch.endDate">Exporter
+      le compte de résultats
+    </button>
+  </mat-menu>
+</button>

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Observable, Subject } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
-import { AppService } from 'src/app/app.service';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'app-administration',

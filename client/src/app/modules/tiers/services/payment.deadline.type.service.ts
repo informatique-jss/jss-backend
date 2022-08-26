@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { AppRestService } from 'src/app/appRest.service';
+import { AppRestService } from 'src/app/services/appRest.service';
 import { PaymentDeadlineType } from '../../tiers/model/PaymentDeadlineType';
 
 @Injectable({
@@ -15,8 +15,8 @@ export class PaymentDeadlineTypeService extends AppRestService<PaymentDeadlineTy
   getPaymentDeadlineTypes() {
     return this.getList(new HttpParams(), "payment-deadline-types");
   }
-  
-   addOrUpdatePaymentDeadlineType(paymentDeadlineType: PaymentDeadlineType) {
+
+  addOrUpdatePaymentDeadlineType(paymentDeadlineType: PaymentDeadlineType) {
     return this.addOrUpdate(new HttpParams(), "payment-deadline-type", paymentDeadlineType, "Enregistré", "Erreur lors de l'enregistrement");
   }
 

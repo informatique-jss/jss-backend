@@ -82,7 +82,6 @@ export class BodaccSaleComponent implements OnInit {
   });
 
   getFormStatus(): boolean {
-    console.log(this.bodaccSaleForm);
     this.bodaccSaleForm.markAllAsTouched();
     return this.bodaccSaleForm.valid;
   }

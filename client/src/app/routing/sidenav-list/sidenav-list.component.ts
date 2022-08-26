@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AppService } from 'src/app/app.service';
-import { HabilitationsService } from 'src/app/habilitations.service';
-import { SearchService } from './../../search.service';
+import { AppService } from 'src/app/services/app.service';
+import { HabilitationsService } from 'src/app/services/habilitations.service';
+import { SearchService } from '../../services/search.service';
 @Component({
   selector: 'app-sidenav-list',
   templateUrl: './sidenav-list.component.html',

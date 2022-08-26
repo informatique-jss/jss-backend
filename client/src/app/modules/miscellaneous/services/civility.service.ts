@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { AppRestService } from 'src/app/appRest.service';
+import { AppRestService } from 'src/app/services/appRest.service';
 import { Civility } from '../../miscellaneous/model/Civility';
 
 @Injectable({
@@ -15,8 +15,8 @@ export class CivilityService extends AppRestService<Civility>{
   getCivilities() {
     return this.getList(new HttpParams(), "civilities");
   }
-  
-   addOrUpdateCivility(civility: Civility) {
+
+  addOrUpdateCivility(civility: Civility) {
     return this.addOrUpdate(new HttpParams(), "civility", civility, "Enregistré", "Erreur lors de l'enregistrement");
   }
 

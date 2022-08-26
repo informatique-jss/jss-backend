@@ -4,11 +4,11 @@ import { MatAccordion } from '@angular/material/expansion';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Observable, Subscription } from 'rxjs';
-import { AppService } from 'src/app/app.service';
 import { formatDate } from 'src/app/libs/FormatHelper';
 import { AccountingAccount } from 'src/app/modules/accounting/model/AccountingAccount';
 import { BillingItem } from 'src/app/modules/miscellaneous/model/BillingItem';
 import { BillingItemService } from 'src/app/modules/miscellaneous/services/billing.item.service';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'referential-billing-item',

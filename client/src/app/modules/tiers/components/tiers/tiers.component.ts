@@ -1,9 +1,9 @@
 import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router, UrlSegment } from '@angular/router';
-import { AppService } from 'src/app/app.service';
 import { isTiersTypeProspect } from 'src/app/libs/CompareHelper';
 import { TIERS_ENTITY_TYPE } from 'src/app/routing/search/search.component';
-import { SearchService } from 'src/app/search.service';
+import { AppService } from 'src/app/services/app.service';
+import { SearchService } from 'src/app/services/search.service';
 import { Responsable } from '../../model/Responsable';
 import { Tiers } from '../../model/Tiers';
 import { TiersService } from '../../services/tiers.service';

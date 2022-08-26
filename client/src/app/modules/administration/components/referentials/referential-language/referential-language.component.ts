@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { AppService } from 'src/app/app.service';
 import { Language } from 'src/app/modules/miscellaneous/model/Language';
 import { LanguageService } from 'src/app/modules/miscellaneous/services/language.service';
+import { AppService } from 'src/app/services/app.service';
 import { GenericReferentialComponent } from '../generic-referential/generic-referential-component';
 
 @Component({

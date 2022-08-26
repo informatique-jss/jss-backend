@@ -2,12 +2,12 @@ import { Component, OnInit, ViewChild, ViewChildren } from '@angular/core';
 import { MatAccordion } from '@angular/material/expansion';
 import { ActivatedRoute, Router, UrlSegment } from '@angular/router';
 import { Subject } from 'rxjs';
-import { AppService } from 'src/app/app.service';
-import { QUOTATION_DOCUMENT_TYPE_CODE, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_BILLED, QUOTATION_STATUS_CANCELLED, QUOTATION_STATUS_OPEN, QUOTATION_STATUS_REFUSED_BY_CUSTOMER, QUOTATION_STATUS_SENT_TO_CUSTOMER, QUOTATION_STATUS_TO_VERIFY, QUOTATION_STATUS_VALIDATED_BY_CUSTOMER, QUOTATION_STATUS_VALIDATED_BY_JSS } from 'src/app/libs/Constants';
+import { QUOTATION_DOCUMENT_TYPE_CODE, QUOTATION_LABEL_TYPE_AFFAIRE_CODE, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_BILLED, QUOTATION_STATUS_CANCELLED, QUOTATION_STATUS_OPEN, QUOTATION_STATUS_REFUSED_BY_CUSTOMER, QUOTATION_STATUS_SENT_TO_CUSTOMER, QUOTATION_STATUS_TO_VERIFY, QUOTATION_STATUS_VALIDATED_BY_CUSTOMER, QUOTATION_STATUS_VALIDATED_BY_JSS } from 'src/app/libs/Constants';
 import { Vat } from 'src/app/modules/miscellaneous/model/Vat';
 import { EntityType } from 'src/app/routing/search/EntityType';
 import { CUSTOMER_ORDER_ENTITY_TYPE, QUOTATION_ENTITY_TYPE } from 'src/app/routing/search/search.component';
-import { SearchService } from 'src/app/search.service';
+import { AppService } from 'src/app/services/app.service';
+import { SearchService } from 'src/app/services/search.service';
 import { Affaire } from '../../model/Affaire';
 import { NoticeTypeFamily } from '../../model/NoticeTypeFamily';
 import { Provision } from '../../model/Provision';
@@ -45,6 +45,7 @@ export class QuotationComponent implements OnInit {
   QUOTATION_STATUS_BILLED = QUOTATION_STATUS_BILLED;
   QUOTATION_STATUS_ABANDONED = QUOTATION_STATUS_ABANDONED;
   QUOTATION_STATUS_CANCELLED = QUOTATION_STATUS_CANCELLED;
+  QUOTATION_LABEL_TYPE_AFFAIRE_CODE = QUOTATION_LABEL_TYPE_AFFAIRE_CODE;
 
   selectedTabIndex = 0;
 
@@ -172,6 +173,12 @@ export class QuotationComponent implements OnInit {
       let errorMessage = "Les onglets suivants ne sont pas correctement remplis. Veuillez les compléter avant de sauvegarder : " + errorMessages.join(" / ");
       this.appService.displaySnackBar(errorMessage, true, 60);
       return false;
+    } else {
+      if (this.canCreateMultipleAffaire() == false) {
+        let errorMessage = "Il n'est pas possible d'avoir plusieurs affaires si le libellé d'envoi est à faire à l'affaire";
+        this.appService.displaySnackBar(errorMessage, true, 60);
+        return false;
+      }
     }
     return true;
   }
@@ -461,5 +468,19 @@ export class QuotationComponent implements OnInit {
 
   public static computePriceTotal(quotation: IQuotation): number {
     return QuotationComponent.computePreTaxPriceTotal(quotation) - QuotationComponent.computeDiscountTotal(quotation) + QuotationComponent.computeVatTotal(quotation);
+  }
+
+  // When quotation label type is AFFAIRE, only one affaire is authorized in quotation
+  canCreateMultipleAffaire(): boolean {
+    if (this.quotation && this.quotation.quotationLabelType && this.quotation.provisions && this.quotation.provisions.length > 0)
+      if (this.quotation.quotationLabelType.code == QUOTATION_LABEL_TYPE_AFFAIRE_CODE) {
+        let affaireFound = undefined;
+        for (let provision of this.quotation.provisions) {
+          if (affaireFound != undefined && affaireFound != provision.affaire.id)
+            return false;
+          affaireFound = provision.affaire.id;
+        }
+      }
+    return true;
   }
 }

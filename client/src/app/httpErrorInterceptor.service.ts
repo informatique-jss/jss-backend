@@ -5,8 +5,8 @@ import {
 import { Injectable } from '@angular/core';
 import { EMPTY, Observable } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
-import { AppService } from './app.service';
 import { LoginService } from './routing/login-dialog/login.service';
+import { AppService } from './services/app.service';
 
 @Injectable()
 export class HttpErrorInterceptor implements HttpInterceptor {

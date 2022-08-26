@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { AppRestService } from 'src/app/appRest.service';
+import { AppRestService } from 'src/app/services/appRest.service';
 import { ShalNoticeTemplate } from '../../quotation/model/ShalNoticeTemplate';
 
 @Injectable({
@@ -15,8 +15,8 @@ export class ShalNoticeTemplateService extends AppRestService<ShalNoticeTemplate
   getShalNoticeTemplates() {
     return this.getList(new HttpParams(), "shal-notice-templates");
   }
-  
-   addOrUpdateShalNoticeTemplate(shalNoticeTemplate: ShalNoticeTemplate) {
+
+  addOrUpdateShalNoticeTemplate(shalNoticeTemplate: ShalNoticeTemplate) {
     return this.addOrUpdate(new HttpParams(), "shal-notice-template", shalNoticeTemplate, "Enregistré", "Erreur lors de l'enregistrement");
   }
 

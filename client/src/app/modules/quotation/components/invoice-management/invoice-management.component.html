@@ -14,7 +14,7 @@
         </td>
         <div *ngFor="let invoiceItem of provision.invoiceItems;let index = index">
           <table>
-            <tr>
+            <tr *ngIf="provision.provisionType">
               <td class="affaire">
                 {{provision.provisionType.label}}
               </td>
@@ -23,15 +23,15 @@
               <td>
                 {{invoiceItem.label}} <mat-icon inline="true"
                   matTooltip="Veuillez enregistrer pour pouvoir modifier le prix appliqué"
-                  *ngIf="editMode && invoiceItem.billingItem.billingType.canOverridePrice==true && !invoiceItem.id && invoice.id==undefined"
+                  *ngIf="editMode && invoiceItem.billingItem.billingType.canOverridePrice==true && !invoiceItem.id && !invoice"
                   class="info-icon">info</mat-icon>
               </td>
               <td class="td-price"
-                *ngIf="!editMode || invoiceItem.billingItem.billingType.canOverridePrice==false || !invoiceItem.id || invoice.id!=undefined">
+                *ngIf="!editMode || invoiceItem.billingItem.billingType.canOverridePrice==false || !invoiceItem.id || invoice">
                 {{invoiceItem.preTaxPrice|number}} €
               </td>
               <td
-                *ngIf="editMode && invoiceItem.billingItem.billingType.canOverridePrice==true && invoiceItem.id && invoice.id==undefined">
+                *ngIf="editMode && invoiceItem.billingItem.billingType.canOverridePrice==true && invoiceItem.id && !invoice">
                 <generic-input [(model)]="invoiceItem.preTaxPrice" label="" [form]="invoiceManagementForm"
                   [propertyName]='"preTaxPrice"+index' [isMandatory]="true" type="number" step="0,01"
                   (onInputChange)="itemChange()" hint="Laisser vide pour recalculer le prix">

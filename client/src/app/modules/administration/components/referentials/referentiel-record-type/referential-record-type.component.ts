@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { AppService } from 'src/app/app.service';
 import { RecordType } from 'src/app/modules/quotation/model/RecordType';
 import { RecordTypeService } from 'src/app/modules/quotation/services/record.type.service';
+import { AppService } from 'src/app/services/app.service';
 import { GenericReferentialComponent } from '../generic-referential/generic-referential-component';
 
 @Component({

@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { AppRestService } from 'src/app/appRest.service';
+import { AppRestService } from 'src/app/services/appRest.service';
 import { WeekDay } from '../../miscellaneous/model/WeekDay';
 
 @Injectable({
@@ -15,8 +15,8 @@ export class WeekDayService extends AppRestService<WeekDay>{
   getWeekDays() {
     return this.getList(new HttpParams(), "weekdays");
   }
-  
-   addOrUpdateWeekDay(weekDay: WeekDay) {
+
+  addOrUpdateWeekDay(weekDay: WeekDay) {
     return this.addOrUpdate(new HttpParams(), "weekday", weekDay, "Enregistré", "Erreur lors de l'enregistrement");
   }
 

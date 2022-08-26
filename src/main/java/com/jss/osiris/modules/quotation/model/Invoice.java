@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.quotation.model;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -19,6 +20,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.jss.osiris.libs.JacksonLocalDateSerializer;
 import com.jss.osiris.libs.JacksonLocalDateTimeSerializer;
 import com.jss.osiris.modules.miscellaneous.model.City;
 import com.jss.osiris.modules.miscellaneous.model.Country;
@@ -37,6 +39,10 @@ public class Invoice implements Serializable, IId {
 	@Column(nullable = false)
 	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
 	private LocalDateTime createdDate;
+
+	@Column(nullable = false)
+	@JsonSerialize(using = JacksonLocalDateSerializer.class)
+	private LocalDate dueDate;
 
 	@OneToMany(targetEntity = InvoiceItem.class, mappedBy = "invoice")
 	@JsonManagedReference("invoice")
@@ -76,6 +82,8 @@ public class Invoice implements Serializable, IId {
 
 	@Column(length = 40)
 	private String commandNumber;
+
+	private Float totalPrice;
 
 	public Integer getId() {
 		return id;
@@ -211,6 +219,22 @@ public class Invoice implements Serializable, IId {
 
 	public void setCustomerOrder(CustomerOrder customerOrder) {
 		this.customerOrder = customerOrder;
+	}
+
+	public LocalDate getDueDate() {
+		return dueDate;
+	}
+
+	public void setDueDate(LocalDate dueDate) {
+		this.dueDate = dueDate;
+	}
+
+	public Float getTotalPrice() {
+		return totalPrice;
+	}
+
+	public void setTotalPrice(Float totalPrice) {
+		this.totalPrice = totalPrice;
 	}
 
 }

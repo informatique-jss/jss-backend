@@ -24,3 +24,18 @@
 ::ng-deep.mat-menu-panel {
   max-width: none !important;
 }
+
+.total-table {
+  position: fixed;
+  bottom: 10px;
+  width: 210px;
+}
+
+.without-padding-left {
+  padding-left: 0px !important;
+}
+
+.without-padding-left>mat-icon {
+  transform: scale(0.60);
+  margin-left: -45px;
+}

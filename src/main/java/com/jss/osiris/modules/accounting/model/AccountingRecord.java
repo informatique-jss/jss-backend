@@ -28,12 +28,16 @@ public class AccountingRecord implements Serializable, IId {
 
 	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
 	private LocalDateTime accountingDateTime;
+	private Integer accountingId;
 
 	@Column(nullable = false)
 	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
 	private LocalDateTime operationDateTime;
 
 	private Integer operationId;
+
+	@Column(nullable = false)
+	private Integer temporaryOperationId;
 
 	@Column(length = 150)
 	private String manualAccountingDocumentNumber;
@@ -66,9 +70,16 @@ public class AccountingRecord implements Serializable, IId {
 	@JoinColumn(name = "id_accounting_journal")
 	private AccountingJournal accountingJournal;
 
+	@OneToOne
+	@JoinColumn(name = "id_contre_passe")
+	private AccountingRecord contrePasse;
+
 	private Integer letteringNumber;
 
 	private LocalDateTime letteringDate;
+
+	@Column(nullable = false)
+	private Boolean isANouveau;
 
 	public Integer getId() {
 		return id;
@@ -204,6 +215,38 @@ public class AccountingRecord implements Serializable, IId {
 
 	public void setManualAccountingDocumentDeadline(LocalDate manualAccountingDocumentDeadline) {
 		this.manualAccountingDocumentDeadline = manualAccountingDocumentDeadline;
+	}
+
+	public AccountingRecord getContrePasse() {
+		return contrePasse;
+	}
+
+	public void setContrePasse(AccountingRecord contrePasse) {
+		this.contrePasse = contrePasse;
+	}
+
+	public Integer getTemporaryOperationId() {
+		return temporaryOperationId;
+	}
+
+	public void setTemporaryOperationId(Integer temporaryOperationId) {
+		this.temporaryOperationId = temporaryOperationId;
+	}
+
+	public Integer getAccountingId() {
+		return accountingId;
+	}
+
+	public void setAccountingId(Integer accountingId) {
+		this.accountingId = accountingId;
+	}
+
+	public Boolean getIsANouveau() {
+		return isANouveau;
+	}
+
+	public void setIsANouveau(Boolean isANouveau) {
+		this.isANouveau = isANouveau;
 	}
 
 }

@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { AppService } from 'src/app/app.service';
 import { COUNTRY_CODE_FRANCE } from 'src/app/libs/Constants';
 import { City } from 'src/app/modules/miscellaneous/model/City';
 import { CompetentAuthority } from 'src/app/modules/miscellaneous/model/CompetentAuthority';
 import { CityService } from 'src/app/modules/miscellaneous/services/city.service';
 import { CompetentAuthorityService } from 'src/app/modules/miscellaneous/services/competent.authority.service';
+import { AppService } from 'src/app/services/app.service';
 import { GenericReferentialComponent } from '../generic-referential/generic-referential-component';
 
 @Component({

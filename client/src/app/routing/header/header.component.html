@@ -7,6 +7,10 @@
         <span class="navbar-title" [ngClass]="{'menu-hidden':!sidenavOpenState}">
           <span class="pointer">
             <mat-icon (click)="goBack()"> arrow_back</mat-icon>
+            <mat-icon matTooltip="Ajouter aux notes en tant que titre" matTooltipShowDelay="1000" matSuffix
+              (click)="addToNotes()" class="pointer note-icon">
+              adjust
+            </mat-icon>
           </span> {{title}}
         </span>
       </div>

@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
+import { UserNoteService } from 'src/app/services/user.notes.service';
 
 @Component({
   selector: 'generic-input',
@@ -59,6 +60,11 @@ export class GenericInputComponent implements OnInit {
  */
   @Input() maxLength: number | undefined;
   /**
+ * Min length of input
+ * No check if not devined
+ */
+  @Input() minLength: number | undefined;
+  /**
  * Type of input
  * text if not defined
  */
@@ -79,7 +85,9 @@ export class GenericInputComponent implements OnInit {
   @Output() onInputChange: EventEmitter<void> = new EventEmitter();
 
   constructor(
-    private formBuilder: UntypedFormBuilder) { }
+    private formBuilder: UntypedFormBuilder,
+    private userNoteService: UserNoteService,
+  ) { }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.model && this.form != undefined)
@@ -115,6 +123,9 @@ export class GenericInputComponent implements OnInit {
       if (this.maxLength)
         validators.push(Validators.maxLength(this.maxLength));
 
+      if (this.minLength)
+        validators.push(Validators.minLength(this.minLength));
+
       if (this.customValidators != undefined && this.customValidators != null && this.customValidators.length > 0)
         validators.push(...this.customValidators);
 
@@ -145,5 +156,12 @@ export class GenericInputComponent implements OnInit {
         };
       return null;
     };
+  }
+
+  addToNotes(event: any) {
+    let isHeader = false;
+    if (event && event.ctrlKey)
+      isHeader = true;
+    this.userNoteService.addToNotes(this.label, this.model, undefined, isHeader);
   }
 }

@@ -1,9 +1,8 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { AppRestService } from 'src/app/appRest.service';
+import { AppRestService } from 'src/app/services/appRest.service';
 import { Responsable } from '../model/Responsable';
 import { Tiers } from '../model/Tiers';
-import { TiersType } from '../model/TiersType';
 
 @Injectable({
   providedIn: 'root'

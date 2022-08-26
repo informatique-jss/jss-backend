@@ -191,7 +191,6 @@ export class ShalComponent implements OnInit {
   });
 
   getFormStatus(): boolean {
-    console.log(this.shalForm.valid);
     this.shalForm.markAllAsTouched();
     if (this.shal)
       this.shal.notice = this.shal.notice.replace(/ +(?= )/g, '').replace(/(\r\n|\r|\n){2,}/g, '$1\n');

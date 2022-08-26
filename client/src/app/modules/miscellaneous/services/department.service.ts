@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { AppRestService } from 'src/app/appRest.service';
+import { AppRestService } from 'src/app/services/appRest.service';
 import { Department } from '../../miscellaneous/model/Department';
 
 @Injectable({
@@ -15,8 +15,8 @@ export class DepartmentService extends AppRestService<Department>{
   getDepartments() {
     return this.getList(new HttpParams(), "departments");
   }
-  
-   addOrUpdateDepartment(department: Department) {
+
+  addOrUpdateDepartment(department: Department) {
     return this.addOrUpdate(new HttpParams(), "department", department, "Enregistré", "Erreur lors de l'enregistrement");
   }
 

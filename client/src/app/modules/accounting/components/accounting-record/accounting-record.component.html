@@ -1,5 +1,5 @@
 <div class="mat-elevation-z2 form-div">
-  <div class="full-width">
+  <div class=" full-width">
     <table class="full-width table-fixed-layout">
       <tr>
         <td>
@@ -23,7 +23,7 @@
           </generic-date-range-picker>
         </td>
         <td class="fab-td-button">
-          <button mat-mini-fab color="warn" (click)="searchRecords()" class="add-button">
+          <button mat-mini-fab color="warn" matTooltip="Rechercher" (click)="searchRecords()" class="add-button">
             <mat-icon>search</mat-icon>
           </button>
         </td>
@@ -49,8 +49,9 @@
       </ng-container>
       <ng-container matColumnDef="accountingAccountNumber">
         <th mat-header-cell mat-sort-header *matHeaderCellDef>N° de compte</th>
-        <td mat-cell *matCellDef="let element">{{element.accountingAccount.accountingAccountNumber}}
-          {{element.accountingAccount.accountingAccountSubNumber}}</td>
+        <td mat-cell *matCellDef="let element">
+          {{element.accountingAccount.accountingAccountNumber}}-{{element.accountingAccount.accountingAccountSubNumber}}
+        </td>
       </ng-container>
       <ng-container matColumnDef="accountingAccountLabel">
         <th mat-header-cell mat-sort-header *matHeaderCellDef>Libellé du compte</th>
@@ -108,6 +109,26 @@
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
     </table>
+    <table mat-table [dataSource]="accumulatedDataSource" class="mat-elevation-z8 table total-table" cdkDrag
+      [cdkDragFreeDragPosition]="currentUserPosition" (cdkDragEnded)="dropTotalDiv($event)" *ngIf="accountingRecords">
+      <ng-container matColumnDef="label">
+        <th mat-header-cell *matHeaderCellDef class="without-padding-left">
+          <mat-icon (click)="restoreDefaultTotalDivPosition()" class="pointer"
+            matTooltip="Restaurer la position initiale">location_on</mat-icon>
+        </th>
+        <td mat-cell *matCellDef="let element">{{element.label}}</td>
+      </ng-container>
+      <ng-container matColumnDef="debit">
+        <th mat-header-cell *matHeaderCellDef>Débit</th>
+        <td mat-cell *matCellDef="let element">{{element.debit}} {{(element.debit?" €":"")}}</td>
+      </ng-container>
+      <ng-container matColumnDef="credit">
+        <th mat-header-cell *matHeaderCellDef>Crédit</th>
+        <td mat-cell *matCellDef="let element">{{element.credit}} €</td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumnsTotal" class="mat-header-row-small"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumnsTotal;"></tr>
+    </table>
   </div>
 </div>
 <button matTooltip="Exporter" mat-fab color="accent" class="fab-button" *ngIf="accountingRecords"
@@ -118,6 +139,15 @@
       *ngIf="accountingRecordSearch && accountingRecordSearch.accountingClass && accountingRecordSearch.startDate && accountingRecordSearch.endDate">Exporter
       le grand livre pour la classe
       {{accountingRecordSearch.accountingClass.label}}
+    </button>
+    <button mat-menu-item (click)="exportJournal()"
+      *ngIf="accountingRecordSearch && accountingRecordSearch.accountingJournal && accountingRecordSearch.startDate && accountingRecordSearch.endDate">Exporter
+      le journal {{accountingRecordSearch.accountingJournal.label}}
+    </button>
+    <button mat-menu-item (click)="exportAccountingAccount()"
+      *ngIf="accountingRecordSearch && accountingRecordSearch.accountingAccount && accountingRecordSearch.startDate && accountingRecordSearch.endDate">Exporter
+      le compte
+      {{accountingRecordSearch.accountingAccount.accountingAccountNumber}}-{{accountingRecordSearch.accountingAccount.accountingAccountSubNumber}}
     </button>
   </mat-menu>
 </button>

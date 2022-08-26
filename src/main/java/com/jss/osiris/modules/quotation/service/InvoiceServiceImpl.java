@@ -65,6 +65,10 @@ public class InvoiceServiceImpl implements InvoiceService {
         if (orderingCustomer instanceof Confrere)
             invoice.setConfrere((Confrere) orderingCustomer);
 
+        Integer nbrOfDayFromDueDate = 30;
+        if (billingDocument.getPaymentDeadlineType() != null)
+            nbrOfDayFromDueDate = billingDocument.getPaymentDeadlineType().getNumberOfDay();
+        invoice.setDueDate(LocalDate.now().plusDays(nbrOfDayFromDueDate));
         invoice.setBillingLabel(billingDocument.getBillingLabel());
         invoice.setBillingLabelAddress(billingDocument.getBillingLabelAddress());
         invoice.setBillingLabelPostalCode(billingDocument.getBillingLabelPostalCode());
@@ -116,6 +120,14 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public Float getPriceTotal(Invoice invoice) {
         return this.getPreTaxPriceTotal(invoice) - this.getDiscountTotal(invoice) + this.getVatTotal(invoice);
+    }
+
+    @Override
+    public void setPriceTotal(Invoice invoice) {
+        if (invoice != null) {
+            invoice.setTotalPrice(this.getPriceTotal(invoice));
+            this.invoiceRepository.save(invoice);
+        }
     }
 
     @Override

@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { AppRestService } from 'src/app/appRest.service';
 import { EntityType } from 'src/app/routing/search/EntityType';
+import { AppRestService } from 'src/app/services/appRest.service';
 import { Audit } from '../../miscellaneous/model/Audit';
 
 @Injectable({

@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { AppRestService } from 'src/app/appRest.service';
+import { AppRestService } from 'src/app/services/appRest.service';
 import { NoticeType } from '../../quotation/model/NoticeType';
 
 @Injectable({
@@ -15,8 +15,8 @@ export class NoticeTypeService extends AppRestService<NoticeType>{
   getNoticeTypes() {
     return this.getList(new HttpParams(), "notice-types");
   }
-  
-   addOrUpdateNoticeType(noticeType: NoticeType) {
+
+  addOrUpdateNoticeType(noticeType: NoticeType) {
     return this.addOrUpdate(new HttpParams(), "notice-type", noticeType, "Enregistré", "Erreur lors de l'enregistrement");
   }
 

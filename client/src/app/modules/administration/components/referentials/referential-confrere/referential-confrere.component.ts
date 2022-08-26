@@ -2,7 +2,6 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatAccordion } from '@angular/material/expansion';
 import { Observable } from 'rxjs';
-import { AppService } from 'src/app/app.service';
 import { BILLING_CLOSURE_RECIPIENT_OTHERS_CODE, BILLING_TIERS_DOCUMENT_TYPE_CODE, BILLING_TIERS_DOCUMENT_TYPE_OTHER_CODE, COUNTRY_CODE_FRANCE, DUNNING_TIERS_DOCUMENT_TYPE_CODE, PAYMENT_TYPE_CHEQUES, PAYMENT_TYPE_OTHERS, PAYMENT_TYPE_PRELEVEMENT, PUBLICATION_TIERS_DOCUMENT_TYPE_CODE, REFUND_TIERS_DOCUMENT_TYPE_CODE, REFUND_TYPE_VIREMENT } from 'src/app/libs/Constants';
 import { getDocument } from 'src/app/libs/DocumentHelper';
 import { City } from 'src/app/modules/miscellaneous/model/City';
@@ -12,6 +11,7 @@ import { DocumentTypeService } from 'src/app/modules/miscellaneous/services/docu
 import { PaymentTypeService } from 'src/app/modules/miscellaneous/services/payment.type.service';
 import { Confrere } from 'src/app/modules/quotation/model/Confrere';
 import { ConfrereService } from 'src/app/modules/quotation/services/confrere.service';
+import { AppService } from 'src/app/services/app.service';
 import { Document } from "../../../../miscellaneous/model/Document";
 import { DocumentType } from "../../../../miscellaneous/model/DocumentType";
 import { GenericReferentialComponent } from '../generic-referential/generic-referential-component';

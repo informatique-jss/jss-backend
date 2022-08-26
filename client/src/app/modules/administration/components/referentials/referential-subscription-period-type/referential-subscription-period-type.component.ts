@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { AppService } from 'src/app/app.service';
 import { SubscriptionPeriodType } from 'src/app/modules/tiers/model/SubscriptionPeriodType';
 import { SubscriptionPeriodTypeService } from 'src/app/modules/tiers/services/subscription.period.type.service';
+import { AppService } from 'src/app/services/app.service';
 import { GenericReferentialComponent } from '../generic-referential/generic-referential-component';
 
 @Component({

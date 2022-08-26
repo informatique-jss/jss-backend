@@ -1,0 +1,40 @@
+.row-field-container-flex-item {
+  flex: 1;
+}
+
+.add-button {
+  top: -8px;
+}
+
+.table-fixed-layout {
+  table-layout: fixed;
+}
+
+.fab-td-button {
+  width: 35px;
+}
+
+.td-label {
+  white-space: nowrap;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.flex-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+
+.flex-child {
+  padding-right: 30px;
+}
+
+.flex-child:nth-of-type(2n) {
+  padding-left: 30px;
+  border-left: solid;
+  border-color: #1C3D58;
+  border-left-width: 1px;
+}

@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { AppRestService } from 'src/app/appRest.service';
+import { AppRestService } from 'src/app/services/appRest.service';
 import { TiersFollowupType } from '../../tiers/model/TiersFollowupType';
 
 @Injectable({
@@ -15,8 +15,8 @@ export class TiersFollowupTypeService extends AppRestService<TiersFollowupType>{
   getTiersFollowupTypes() {
     return this.getList(new HttpParams(), "tiers-followup-types");
   }
-  
-   addOrUpdateTiersFollowupType(tiersFollowupType: TiersFollowupType) {
+
+  addOrUpdateTiersFollowupType(tiersFollowupType: TiersFollowupType) {
     return this.addOrUpdate(new HttpParams(), "tiers-followup-type", tiersFollowupType, "Enregistré", "Erreur lors de l'enregistrement");
   }
 

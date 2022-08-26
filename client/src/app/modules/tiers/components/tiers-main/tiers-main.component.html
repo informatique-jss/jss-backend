@@ -15,8 +15,8 @@
             </td>
             <td *ngIf="tiers.isIndividual==false">
               <generic-input [(model)]="tiers.denomination" label="Dénomination" [form]="principalForm"
-                propertyName="denomination" [isMandatory]="true" [conditionnalRequired]="!tiers.isIndividual"
-                [maxLength]="60">
+                propertyName="denomination" [isMandatory]="true" [isDisabled]="!editMode"
+                [conditionnalRequired]="!tiers.isIndividual" [maxLength]="60">
               </generic-input>
             </td>
             <td>
@@ -36,12 +36,14 @@
               </radio-group-civility>
             </td>
             <td *ngIf="tiers.isIndividual==true">
-              <generic-input [(model)]="tiers.lastname" label="Nom" [form]="principalForm" propertyName="lastname"
-                [isMandatory]="true" [conditionnalRequired]="tiers.isIndividual" [maxLength]="20"></generic-input>
+              <generic-input [(model)]="tiers.lastname" label="Nom" [isDisabled]="!editMode" [form]="principalForm"
+                propertyName="lastname" [isMandatory]="true" [conditionnalRequired]="tiers.isIndividual"
+                [maxLength]="20"></generic-input>
             </td>
             <td *ngIf="tiers.isIndividual==true">
-              <generic-input [(model)]="tiers.firstname" label="Prénom" [form]="principalForm" propertyName="firstname"
-                [isMandatory]="true" [conditionnalRequired]="tiers.isIndividual" [maxLength]="20"></generic-input>
+              <generic-input [(model)]="tiers.firstname" label="Prénom" [isDisabled]="!editMode" [form]="principalForm"
+                propertyName="firstname" [isMandatory]="true" [conditionnalRequired]="tiers.isIndividual"
+                [maxLength]="20"></generic-input>
             </td>
           </tr>
         </table>
@@ -89,8 +91,8 @@
         <table class="full-width">
           <tr>
             <td>
-              <generic-input [(model)]="tiers.address" label="Adresse" [form]="principalForm" propertyName="address"
-                [isMandatory]="true" [maxLength]="20"></generic-input>
+              <generic-input [(model)]="tiers.address" [isDisabled]="!editMode" [isDisabled]="!editMode" label="Adresse"
+                [form]="principalForm" propertyName="address" [isMandatory]="true" [maxLength]="20"></generic-input>
             </td>
             <td>
               <autocomplete-city [(model)]="tiers.city" [modelCountry]="tiers.country" [form]="principalForm"
@@ -108,8 +110,9 @@
                 [isMandatory]="true"></autocomplete-country>
             </td>
             <td>
-              <generic-input [(model)]="tiers.intercom" label="Code porte" [form]="principalForm"
-                propertyName="intercom" [maxLength]="12"></generic-input>
+              <generic-input [(model)]="tiers.intercom" label="Code porte" [isDisabled]="!editMode"
+                [isDisabled]="!editMode" [form]="principalForm" propertyName="intercom" [maxLength]="12">
+              </generic-input>
             </td>
           </tr>
         </table>
@@ -117,21 +120,22 @@
         <table class="full-width">
           <tr>
             <td *ngIf="tiers.isIndividual==false">
-              <generic-input [(model)]="tiers.intercommunityVat" label="TVA intercommunaitaire" [form]="principalForm"
-                propertyName="intercommunityVat" [isMandatory]="true" [conditionnalRequired]="tiers.isIndividual==false"
-                [customValidators]="[checkVAT('intercommunityVat')]"></generic-input>
+              <generic-input [(model)]="tiers.intercommunityVat" [isDisabled]="!editMode" label="TVA intercommunaitaire"
+                [form]="principalForm" propertyName="intercommunityVat" [isMandatory]="true"
+                [conditionnalRequired]="tiers.isIndividual==false" [customValidators]="[checkVAT('intercommunityVat')]">
+              </generic-input>
             </td>
             <td>
               <chips-special-offers [(model)]="tiers.specialOffers" [form]="principalForm" propertyName="specialOffers"
                 [isDisabled]="!editMode"></chips-special-offers>
             </td>
             <td>
-              <generic-input [(model)]="tiers.rcaFormaliteRate" label="Taux RCA Formalité" [form]="principalForm"
-                propertyName="rcaFormaliteRate" type="number"></generic-input>
+              <generic-input [(model)]="tiers.rcaFormaliteRate" [isDisabled]="!editMode" label="Taux RCA Formalité"
+                [form]="principalForm" propertyName="rcaFormaliteRate" type="number"></generic-input>
             </td>
             <td>
-              <generic-input [(model)]="tiers.rcaInsertionRate" label="Taux RCA Insertion" [form]="principalForm"
-                propertyName="rcaInsertionRate" type="number"></generic-input>
+              <generic-input [(model)]="tiers.rcaInsertionRate" [isDisabled]="!editMode" label="Taux RCA Insertion"
+                [form]="principalForm" propertyName="rcaInsertionRate" type="number"></generic-input>
             </td>
           </tr>
         </table>

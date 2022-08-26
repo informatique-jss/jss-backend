@@ -23,12 +23,22 @@ public class PaymentDeadlineType implements Serializable, IId {
 	@Column(nullable = false, length = 20)
 	private String code;
 
+	private Integer numberOfDay;
+
 	public Integer getId() {
 		return id;
 	}
 
 	public void setId(Integer id) {
 		this.id = id;
+	}
+
+	public Integer getNumberOfDay() {
+		return numberOfDay;
+	}
+
+	public void setNumberOfDay(Integer numberOfDay) {
+		this.numberOfDay = numberOfDay;
 	}
 
 	public String getLabel() {

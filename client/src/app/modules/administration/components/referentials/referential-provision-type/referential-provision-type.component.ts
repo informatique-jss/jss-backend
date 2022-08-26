@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { AppService } from 'src/app/app.service';
 import { BillingType } from 'src/app/modules/miscellaneous/model/BillingType';
 import { ProvisionType } from 'src/app/modules/quotation/model/ProvisionType';
 import { ProvisionTypeService } from 'src/app/modules/quotation/services/provision.type.service';
+import { AppService } from 'src/app/services/app.service';
 import { GenericReferentialComponent } from '../generic-referential/generic-referential-component';
 
 @Component({

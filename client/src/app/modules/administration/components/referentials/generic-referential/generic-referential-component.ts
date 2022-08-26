@@ -3,7 +3,7 @@ import { FormBuilder } from '@angular/forms';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Observable, Subscription } from 'rxjs';
-import { AppService } from 'src/app/app.service';
+import { AppService } from 'src/app/services/app.service';
 import { IReferential } from '../../../model/IReferential';
 
 @Directive()

@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { AppRestService } from 'src/app/appRest.service';
+import { AppRestService } from 'src/app/services/appRest.service';
 import { CompetentAuthority } from '../../miscellaneous/model/CompetentAuthority';
 import { City } from '../model/City';
 import { Department } from '../model/Department';

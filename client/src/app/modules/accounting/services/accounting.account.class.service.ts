@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { AppRestService } from 'src/app/appRest.service';
+import { AppRestService } from 'src/app/services/appRest.service';
 import { AccountingAccountClass } from '../../accounting/model/AccountingAccountClass';
 
 @Injectable({
@@ -15,8 +15,8 @@ export class AccountingAccountClassService extends AppRestService<AccountingAcco
   getAccountingAccountClasses() {
     return this.getList(new HttpParams(), "accounting-account-classes");
   }
-  
-   addOrUpdateAccountingAccountClass(accountingAccountClass: AccountingAccountClass) {
+
+  addOrUpdateAccountingAccountClass(accountingAccountClass: AccountingAccountClass) {
     return this.addOrUpdate(new HttpParams(), "accounting-account-class", accountingAccountClass, "Enregistré", "Erreur lors de l'enregistrement");
   }
 

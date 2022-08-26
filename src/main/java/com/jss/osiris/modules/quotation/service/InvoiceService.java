@@ -13,6 +13,11 @@ public interface InvoiceService {
     public Invoice addOrUpdateInvoice(Invoice invoice);
 
     /**
+     * Generate an invoice for a ording order
+     * Warning ! This method DOES NOT associate invoice items and DOES NOT compute
+     * total price of the invoice (do it with setPriceTotal of same service)
+     * Do not forget to do it afterward
+     * 
      * @param orderingCustomer Ordering customer of the invoice
      */
     public Invoice createInvoice(ITiers orderingCustomer) throws Exception;
@@ -24,6 +29,8 @@ public interface InvoiceService {
     public Float getVatTotal(Invoice invoice);
 
     public Float getPriceTotal(Invoice invoice);
+
+    public void setPriceTotal(Invoice invoice);
 
     public ITiers getCustomerOrder(Invoice invoice) throws Exception;
 

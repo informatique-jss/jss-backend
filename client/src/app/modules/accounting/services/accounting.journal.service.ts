@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { AppRestService } from 'src/app/appRest.service';
+import { AppRestService } from 'src/app/services/appRest.service';
 import { AccountingJournal } from '../../accounting/model/AccountingJournal';
 
 @Injectable({
@@ -15,8 +15,8 @@ export class AccountingJournalService extends AppRestService<AccountingJournal>{
   getAccountingJournals() {
     return this.getList(new HttpParams(), "accounting-journals");
   }
-  
-   addOrUpdateAccountingJournal(accountingJournal: AccountingJournal) {
+
+  addOrUpdateAccountingJournal(accountingJournal: AccountingJournal) {
     return this.addOrUpdate(new HttpParams(), "accounting-journal", accountingJournal, "Enregistré", "Erreur lors de l'enregistrement");
   }
 

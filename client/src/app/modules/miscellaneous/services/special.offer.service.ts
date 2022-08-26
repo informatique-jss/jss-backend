@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { AppRestService } from 'src/app/appRest.service';
+import { AppRestService } from 'src/app/services/appRest.service';
 import { SpecialOffer } from '../../miscellaneous/model/SpecialOffer';
 
 @Injectable({
@@ -15,8 +15,8 @@ export class SpecialOfferService extends AppRestService<SpecialOffer>{
   getSpecialOffers() {
     return this.getList(new HttpParams(), "special-offers");
   }
-  
-   addOrUpdateSpecialOffer(specialOffer: SpecialOffer) {
+
+  addOrUpdateSpecialOffer(specialOffer: SpecialOffer) {
     return this.addOrUpdate(new HttpParams(), "special-offer", specialOffer, "Enregistré", "Erreur lors de l'enregistrement");
   }
 

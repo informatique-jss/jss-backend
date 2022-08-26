@@ -20,7 +20,7 @@
         </td>
         <div *ngFor="let invoiceItem of provision.invoiceItems;let index = index">
           <table>
-            <tr>
+            <tr *ngIf="provision.provisionType">
               <td class="affaire">
                 {{provision.provisionType.label}}
               </td>

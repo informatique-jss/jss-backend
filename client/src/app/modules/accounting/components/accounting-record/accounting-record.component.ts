@@ -1,8 +1,10 @@
+import { CdkDragEnd, Point } from '@angular/cdk/drag-drop';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { AppService } from 'src/app/app.service';
+import { AppService } from 'src/app/services/app.service';
+import { UserPreferenceService } from 'src/app/services/user.preference.service';
 import { AccountingRecord } from '../../model/AccountingRecord';
 import { AccountingRecordSearch } from '../../model/AccountingRecordSearch';
 import { AccountingRecordService } from '../../services/accounting.record.service';
@@ -19,13 +21,17 @@ export class AccountingRecordComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private accountingRecordService: AccountingRecordService,
+    private userPreferenceService: UserPreferenceService,
     private appService: AppService,
   ) { }
 
   accountingRecordDataSource = new MatTableDataSource<AccountingRecord>();
+  accumulatedDataSource = new MatTableDataSource<AccountingRecord>();
   @ViewChild(MatSort) sort!: MatSort;
   accountingRecords: AccountingRecord[] | undefined;
   displayedColumns: string[] = ['operationId', 'accountingDateTime', 'operationDateTime', 'accountingJournal', 'accountingAccountNumber', 'accountingAccountLabel', 'accountingDocumentNumber', 'accountingDocumentDate', 'label', 'debitAmount', 'creditAmount', 'letteringNumber', 'letteringDate', 'debitAccumulation', 'creditAccumulation', 'balance'];
+  displayedColumnsTotal: string[] = ['label', 'debit', 'credit'];
+  currentUserPosition: Point = { x: 0, y: 0 };
 
 
   ngOnInit() {
@@ -47,7 +53,16 @@ export class AccountingRecordComponent implements OnInit {
     this.accountingRecordService.exportGrandLivre(this.accountingRecordSearch.accountingClass, this.accountingRecordSearch.startDate!, this.accountingRecordSearch.endDate!);
   }
 
+  exportJournal() {
+    this.accountingRecordService.exportJournal(this.accountingRecordSearch.accountingJournal!, this.accountingRecordSearch.startDate!, this.accountingRecordSearch.endDate!);
+  }
+
+  exportAccountingAccount() {
+    this.accountingRecordService.exportAccountingAccount(this.accountingRecordSearch.accountingAccount!, this.accountingRecordSearch.startDate!, this.accountingRecordSearch.endDate!);
+  }
+
   searchRecords() {
+    this.restoreTotalDivPosition();
     if (!this.accountingRecordSearch.startDate || !this.accountingRecordSearch.endDate) {
       this.appService.displaySnackBar("🙄 Merci de saisir une plage de recherche", false, 10);
       return;
@@ -131,7 +146,35 @@ export class AccountingRecordComponent implements OnInit {
         accountingRecord.debitAccumulation = debit;
         accountingRecord.creditAccumulation = credit;
       }
+
+      let accumulatedData = [];
+      let totalLine = {} as any;
+      totalLine.label = "Total";
+      totalLine.debit = debit;
+      totalLine.credit = credit;
+      accumulatedData.push(totalLine);
+
+      let balanceLine = {} as any;
+      balanceLine.label = "Balance";
+      balanceLine.credit = balance;
+      accumulatedData.push(balanceLine);
+
+      this.accumulatedDataSource.data = accumulatedData;
+
     }
+  }
+
+  dropTotalDiv(event: CdkDragEnd) {
+    this.userPreferenceService.setUserTotalDivPosition(event.source.getFreeDragPosition());
+  }
+
+  restoreTotalDivPosition() {
+    this.currentUserPosition = this.userPreferenceService.getUserTotalDivPosition();
+  }
+
+  restoreDefaultTotalDivPosition() {
+    this.userPreferenceService.setUserTotalDivPosition({ x: 0, y: 0 });
+    this.restoreTotalDivPosition();
   }
 
 }

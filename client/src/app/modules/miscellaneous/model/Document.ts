@@ -39,8 +39,6 @@ export interface Document {
   isCommandNumberMandatory: boolean;
   commandNumber: string;
   paymentDeadlineType: PaymentDeadlineType;
-  reminderPaymentDeadlineType: PaymentDeadlineType;
-  isAutomaticDunning: boolean;
   refundType: RefundType;
   refundIBAN: string;
   isRefundable: boolean;

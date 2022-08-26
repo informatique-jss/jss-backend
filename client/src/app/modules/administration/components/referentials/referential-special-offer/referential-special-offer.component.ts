@@ -4,10 +4,10 @@ import { MatAccordion } from '@angular/material/expansion';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Observable, Subscription } from 'rxjs';
-import { AppService } from 'src/app/app.service';
 import { AssoSpecialOfferBillingType } from 'src/app/modules/miscellaneous/model/AssoSpecialOfferBillingType';
 import { SpecialOffer } from 'src/app/modules/miscellaneous/model/SpecialOffer';
 import { SpecialOfferService } from 'src/app/modules/miscellaneous/services/special.offer.service';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'referential-special-offer',

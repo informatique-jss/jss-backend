@@ -404,29 +404,6 @@
             <addressing [editMode]="editMode" [document]="refundDocument" *ngIf="refundDocument.isRefundable">
             </addressing>
           </mat-expansion-panel>
-          <mat-expansion-panel>
-            <mat-expansion-panel-header>
-              <mat-panel-title>
-                Relance
-              </mat-panel-title>
-              <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
-            </mat-expansion-panel-header>
-            <table class="full-width">
-              <tr>
-                <td>
-                  <generic-toggle [(model)]="billingDocument.isAutomaticDunning" label="Relance automatique ?"
-                    [form]="entityForm" propertyName="isAutomaticDunning"></generic-toggle>
-                </td>
-                <td>
-                  <select-payment-deadline [(model)]="dunningDocument.reminderPaymentDeadlineType"
-                    label="Echéance de relance" [form]="entityForm" propertyName="reminderPaymentDeadlineType"
-                    [isDisabled]="!editMode">
-                  </select-payment-deadline>
-                </td>
-              </tr>
-            </table>
-            <addressing [editMode]="editMode" [document]="dunningDocument"></addressing>
-          </mat-expansion-panel>
         </mat-accordion>
       </fieldset>
     </div>

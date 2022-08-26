@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { AppService } from 'src/app/app.service';
 import { VatCollectionType } from 'src/app/modules/miscellaneous/model/VatCollectionType';
 import { VatCollectionTypeService } from 'src/app/modules/miscellaneous/services/vat.collection.type.service';
+import { AppService } from 'src/app/services/app.service';
 import { GenericReferentialComponent } from '../generic-referential/generic-referential-component';
 
 @Component({

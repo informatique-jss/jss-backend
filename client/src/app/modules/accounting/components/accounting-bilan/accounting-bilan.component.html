@@ -1,0 +1,89 @@
+<div class="mat-elevation-z2 form-div">
+  <div class=" full-width">
+    <table class="full-width table-fixed-layout">
+      <tr>
+        <td>
+          <generic-date-range-picker [(modelStart)]="accountingBalanceSearch.startDate"
+            [(modelEnd)]="accountingBalanceSearch.endDate" label="Plage de recherche" [form]="accountingBilanForm"
+            propertyNameStart="startDate" propertyNameEnd="endDate" (onDateChange)="putEndDateSameYear()">
+          </generic-date-range-picker>
+        </td>
+        <td class="fab-td-button">
+          <button mat-mini-fab color="warn" matTooltip="Rechercher" (click)="refreshBilan()" class="add-button">
+            <mat-icon>search</mat-icon>
+          </button>
+        </td>
+      </tr>
+    </table>
+    <div *ngIf="bilan" class="flex-container">
+      <div *ngFor="let bilan of bilan" class="flex-child">
+        <h1>{{bilan.label}}</h1>
+        <table class="mat-table" *ngIf="bilan">
+          <tr class="mat-header-row">
+            <th class="mat-header-cell"></th>
+            <th class="mat-header-cell" *ngIf="bilan.actifBilan">Brut N</th>
+            <th class="mat-header-cell" *ngIf="bilan.actifBilan">Brut N-1</th>
+            <th class="mat-header-cell" *ngIf="bilan.actifBilan">Amort. / prov. N</th>
+            <th class="mat-header-cell" *ngIf="bilan.actifBilan">Amort. / prov. N-1</th>
+            <th class="mat-header-cell" *ngIf="bilan.actifBilan">Net N</th>
+            <th class="mat-header-cell" *ngIf="bilan.actifBilan">Net N-1</th>
+            <th class="mat-header-cell" *ngIf="!bilan.actifBilan">Solde N</th>
+            <th class="mat-header-cell" *ngIf="!bilan.actifBilan">Solde N-1</th>
+          </tr>
+          <tr class="mat-row" *ngFor="let item of bilan.items">
+            <td class="mat-cell">{{item.label}}</td>
+            <td class="mat-cell" *ngIf="bilan.actifBilan">{{item.brutN}} €</td>
+            <td class="mat-cell" *ngIf="bilan.actifBilan">{{item.brutN1}} €</td>
+            <td class="mat-cell" *ngIf="bilan.actifBilan">{{item.amortissementN}} €</td>
+            <td class="mat-cell" *ngIf="bilan.actifBilan">{{item.amortissementN1}} €</td>
+            <td class="mat-cell">{{item.soldeN}} €</td>
+            <td class="mat-cell">{{item.soldeN1}} €</td>
+          </tr>
+          <ng-container *ngFor="let subtitle of bilan.subTitles">
+            <ng-container *ngFor="let item of subtitle.items; let index = index">
+              <tr class="mat-header-row" *ngIf="index==0 &&  subtitle.label!=''">
+                <th class="mat-header-cell" colspan="7">{{subtitle.label}}</th>
+              </tr>
+              <tr class="mat-row">
+                <td class="mat-cell">{{item.label}}</td>
+                <td class="mat-cell" *ngIf="bilan.actifBilan">{{item.brutN}} €</td>
+                <td class="mat-cell" *ngIf="bilan.actifBilan">{{item.brutN1}} €</td>
+                <td class="mat-cell" *ngIf="bilan.actifBilan">{{item.amortissementN}} €</td>
+                <td class="mat-cell" *ngIf="bilan.actifBilan">{{item.amortissementN1}} €</td>
+                <td class="mat-cell">{{item.soldeN}} €</td>
+                <td class="mat-cell">{{item.soldeN1}} €</td>
+              </tr>
+              <tr class="mat-header-row" *ngIf="index==subtitle.items.length-1 && subtitle.label!=''">
+                <th class="mat-header-cell">Sous-total - {{subtitle.label}}</th>
+                <th class="mat-header-cell" *ngIf="bilan.actifBilan">{{getBrutN(subtitle)}} €</th>
+                <th class="mat-header-cell" *ngIf="bilan.actifBilan">{{getBrutN1(subtitle)}} €</th>
+                <th class="mat-header-cell" *ngIf="bilan.actifBilan">{{getAmortissementN(subtitle)}} €</th>
+                <th class="mat-header-cell" *ngIf="bilan.actifBilan">{{getAmortissementN1(subtitle)}} €</th>
+                <th class="mat-header-cell">{{getSoldeN(subtitle)}} €</th>
+                <th class="mat-header-cell">{{getSoldeN1(subtitle)}} €</th>
+              </tr>
+            </ng-container>
+            <tr class="mat-header-row" *ngIf="!subtitle.items">
+              <th class="mat-header-cell">{{subtitle.label}}</th>
+              <th class="mat-header-cell" *ngIf="bilan.actifBilan">{{subtitle.brutN}} €</th>
+              <th class="mat-header-cell" *ngIf="bilan.actifBilan">{{subtitle.brutN1}} €</th>
+              <th class="mat-header-cell" *ngIf="bilan.actifBilan">{{subtitle.amortissementN}} €</th>
+              <th class="mat-header-cell" *ngIf="bilan.actifBilan">{{subtitle.amortissementN1}} €</th>
+              <th class="mat-header-cell">{{subtitle.soldeN}} €</th>
+              <th class="mat-header-cell">{{subtitle.soldeN1}} €</th>
+            </tr>
+          </ng-container>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<button matTooltip="Exporter" mat-fab color="accent" class="fab-button" *ngIf="bilan" [matMenuTriggerFor]="menu">
+  <mat-icon>file_download</mat-icon>
+  <mat-menu #menu="matMenu" style="min-height: 0px;padding: 0;" xPosition="before">
+    <button mat-menu-item (click)="exportBilan()"
+      *ngIf="accountingBalanceSearch && accountingBalanceSearch.startDate && accountingBalanceSearch.endDate">Exporter
+      le bilan
+    </button>
+  </mat-menu>
+</button>

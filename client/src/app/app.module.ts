@@ -1,3 +1,4 @@
+import { DragDropModule } from "@angular/cdk/drag-drop";
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -35,6 +36,7 @@ import { SidenavListComponent } from './routing/sidenav-list/sidenav-list.compon
     // Core modules
     BrowserModule,
     RoutingModule,
+    DragDropModule,
     BrowserAnimationsModule,
     HttpClientModule,
     FormsModule,

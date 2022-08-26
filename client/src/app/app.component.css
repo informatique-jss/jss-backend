@@ -16,3 +16,50 @@ main {
   padding-bottom: 30px;
   padding-top: 10px;
 }
+
+.notes-table {
+  position: fixed;
+  bottom: 10px;
+  left: 5px;
+  z-index: 999999 !important;
+}
+
+.mat-header-row>th {
+  text-align: left !important;
+  padding-left: 7px !important;
+}
+
+.small-icon {
+  transform: scale(0.60);
+  position: relative;
+  top: 2px;
+}
+
+.first-mat-icon {
+  left: -5px;
+}
+
+.second-mat-icon {
+  left: -7px;
+}
+
+.mat-header-cell-actions {
+  padding: 0 !important;
+  width: 75px
+}
+
+.note-link:hover, .note-link:visited, .note-link:link, .note-link:active {
+  text-decoration: none !important;
+  box-shadow: none !important;
+  color: white;
+  position: relative;
+  top: -5px;
+}
+
+.note-link>.small-icon {
+  top: 7px;
+}
+
+.drag-cursor {
+  cursor: grab;
+}
