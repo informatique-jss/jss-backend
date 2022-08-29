@@ -3,6 +3,7 @@ import { FormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { AccountingAccount } from 'src/app/modules/accounting/model/AccountingAccount';
 import { AccountingAccountService } from 'src/app/modules/accounting/services/accounting.account.service';
+import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { AppService } from 'src/app/services/app.service';
 import { GenericReferentialComponent } from '../generic-referential/generic-referential-component';
 
@@ -18,7 +19,10 @@ export class ReferentialAccountingAccountComponent extends GenericReferentialCom
     super(formBuilder2, appService2);
   }
 
-  displayedColumns: string[] = ['id', 'label'];
+  definedMatTableColumn() {
+    this.displayedColumns.push({ id: "id", fieldName: "id", label: "Identifiant technique" } as SortTableColumn);
+    this.displayedColumns.push({ id: "code", fieldName: "code", label: "Codification fonctionnelle", valueFonction: (element: any, elements: any[], column: SortTableColumn, columns: SortTableColumn[]) => { if (element && column) return this.getElementCode(element); return "" } } as SortTableColumn);
+  }
 
   getAddOrUpdateObservable(): Observable<AccountingAccount> {
     return this.accountingAccountService.addOrUpdateAccountingAccount(this.selectedEntity!);

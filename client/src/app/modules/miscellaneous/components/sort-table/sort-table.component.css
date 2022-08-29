@@ -1,0 +1,19 @@
+.wrapper-div {
+  position: relative;
+}
+
+.export-icon {
+  position: absolute;
+  top: 15px;
+  right: 5px;
+  color: white;
+  transform: scale(0.66);
+}
+
+.column-icon {
+  position: absolute;
+  top: 15px;
+  right: 30px;
+  color: white;
+  transform: scale(0.66);
+}

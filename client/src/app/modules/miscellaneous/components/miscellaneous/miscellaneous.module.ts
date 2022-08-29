@@ -12,6 +12,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
@@ -19,6 +20,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatTableExporterModule } from 'mat-table-exporter';
 import { TrustHtmlPipe } from 'src/app/libs/TrustHtmlPipe';
 import { AddressingComponent } from '../addressing/addressing.component';
 import { AttachmentsComponent } from '../attachments/attachments.component';
@@ -98,6 +100,7 @@ import { SelectVatComponent } from '../forms/select-vat/select-vat.component';
 import { GradeComponent } from '../grade/grade.component';
 import { HistoryComponent } from '../history/history.component';
 import { SingleAttachmentComponent } from '../single-attachment/single-attachment.component';
+import { SortTableComponent } from '../sort-table/sort-table.component';
 import { UploadAttachementDialogComponent } from '../upload-attachement-dialog/upload-attachement-dialog.component';
 import { MiscellaneousComponent } from './miscellaneous.component';
 
@@ -118,6 +121,8 @@ import { MiscellaneousComponent } from './miscellaneous.component';
     MatDatepickerModule,
     MatFormFieldModule,
     MatTooltipModule,
+    MatMenuModule,
+    MatTableExporterModule,
     MatRadioModule,
     DragDropModule,
     MatDialogModule,
@@ -204,6 +209,7 @@ import { MiscellaneousComponent } from './miscellaneous.component';
     SelectRegieComponent,
     AutocompleteAccountingAccountComponent,
     SelectAccountingJournalComponent,
+    SortTableComponent,
     GenericDateRangePickerComponent,
     SingleAttachmentComponent],
   exports: [
@@ -286,7 +292,8 @@ import { MiscellaneousComponent } from './miscellaneous.component';
     SelectTiersTypeComponent,
     AutocompleteCityComponent,
     SelectAccountingJournalComponent,
-    SingleAttachmentComponent
+    SingleAttachmentComponent,
+    SortTableComponent
   ]
 })
 export class MiscellaneousModule { }

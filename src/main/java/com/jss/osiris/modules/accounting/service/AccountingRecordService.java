@@ -48,4 +48,12 @@ public interface AccountingRecordService {
         public List<AccountingBalanceViewTitle> getBilan(LocalDateTime startDate, LocalDateTime endDate);
 
         public List<AccountingBalanceViewTitle> getProfitAndLost(LocalDateTime startDate, LocalDateTime endDate);
+
+        public List<AccountingBalance> searchAccountingBalanceGenerale(AccountingBalanceSearch accountingRecordSearch);
+
+        public File getAccountingBalanceExport(Integer accountingClassId, String accountingAccountNumber,
+                        Integer accountingAccountId, LocalDateTime startDate, LocalDateTime endDate) throws Exception;
+
+        public File getAccountingBalanceGeneraleExport(Integer accountingClassId, String accountingAccountNumber,
+                        Integer accountingAccountId, LocalDateTime startDate, LocalDateTime endDate) throws Exception;
 }

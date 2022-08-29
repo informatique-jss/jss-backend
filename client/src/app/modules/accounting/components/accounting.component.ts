@@ -14,5 +14,4 @@ export class AccountingComponent implements OnInit {
   ngOnInit() {
     this.appService.changeHeaderTitle("Comptabilité");
   }
-
 }

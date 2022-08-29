@@ -19,12 +19,15 @@ export class AccountingBalanceService extends AppRestService<AccountingBalance>{
   }
 
   exportBalance(accountingBalanceSearch: AccountingBalanceSearch) {
-    let params = new HttpParams();
-    params.set("accountingClassId", accountingBalanceSearch.accountingClass ? accountingBalanceSearch.accountingClass.id : "");
-    params.set("accountingAccountNumber", accountingBalanceSearch.accountingAccountNumber ? accountingBalanceSearch.accountingAccountNumber : "");
-    params.set("accountingAccountId", accountingBalanceSearch.accountingAccount ? accountingBalanceSearch.accountingAccount.id! : "");
-    params.set("startDate", toIsoString(accountingBalanceSearch.startDate!));
-    params.set("endDate", toIsoString(accountingBalanceSearch.endDate!));
-    this.downloadGet(params, "grand-livre/export");
+    this.downloadGet(new HttpParams().set("accountingClassId", accountingBalanceSearch.accountingClass ? accountingBalanceSearch.accountingClass.id : "").set("accountingAccountNumber", accountingBalanceSearch.accountingAccountNumber ? accountingBalanceSearch.accountingAccountNumber : "").set("accountingAccountId", accountingBalanceSearch.accountingAccount ? accountingBalanceSearch.accountingAccount.id! : "").set("startDate", toIsoString(accountingBalanceSearch.startDate!)).set("endDate", toIsoString(accountingBalanceSearch.endDate!)), "accounting-balance/export");
   }
+
+  searchAccountingBalanceGenerale(accountingBalanceSearch: AccountingBalanceSearch) {
+    return this.postList(new HttpParams(), "accounting-balance/generale/search", accountingBalanceSearch);
+  }
+
+  exportBalanceGenerale(accountingBalanceSearch: AccountingBalanceSearch) {
+    this.downloadGet(new HttpParams().set("accountingClassId", accountingBalanceSearch.accountingClass ? accountingBalanceSearch.accountingClass.id : "").set("accountingAccountNumber", accountingBalanceSearch.accountingAccountNumber ? accountingBalanceSearch.accountingAccountNumber : "").set("accountingAccountId", accountingBalanceSearch.accountingAccount ? accountingBalanceSearch.accountingAccount.id! : "").set("startDate", toIsoString(accountingBalanceSearch.startDate!)).set("endDate", toIsoString(accountingBalanceSearch.endDate!)), "accounting-balance/generale/export");
+  }
+
 }

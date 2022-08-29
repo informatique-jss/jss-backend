@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.model.AccountingAccountClass;
+import com.jss.osiris.modules.accounting.model.AccountingBalance;
 import com.jss.osiris.modules.accounting.model.AccountingBalanceViewItem;
 import com.jss.osiris.modules.accounting.model.AccountingBalanceViewTitle;
 import com.jss.osiris.modules.accounting.model.AccountingJournal;
@@ -245,6 +246,214 @@ public class AccountingExportHelper {
                                 currentSheet.autoSizeColumn(i, true);
                 }
                 File file = File.createTempFile("grand-livre", "xlsx");
+                FileOutputStream outputStream = new FileOutputStream(file);
+                wb.write(outputStream);
+                wb.close();
+                outputStream.close();
+                return file;
+        }
+
+        public File getBalance(List<AccountingBalance> balanceRecords, boolean isGenerale) throws Exception {
+
+                XSSFWorkbook wb = new XSSFWorkbook();
+
+                // Define style
+                // Title
+                XSSFCellStyle titleCellStyle = wb.createCellStyle();
+                titleCellStyle.setAlignment(HorizontalAlignment.CENTER);
+                titleCellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+                XSSFFont titleFont = wb.createFont();
+                titleFont.setBold(true);
+                XSSFColor titleColor = new XSSFColor();
+                titleColor.setARGBHex("0000FF");
+                titleFont.setColor(titleColor);
+                titleFont.setFontHeight(14);
+                titleCellStyle.setFont(titleFont);
+                titleCellStyle.setBorderBottom(BorderStyle.THIN);
+                titleCellStyle.setBorderTop(BorderStyle.THIN);
+                titleCellStyle.setBorderRight(BorderStyle.THIN);
+                titleCellStyle.setBorderLeft(BorderStyle.THIN);
+
+                // Header
+                XSSFCellStyle headerCellStyle = wb.createCellStyle();
+                headerCellStyle.setAlignment(HorizontalAlignment.CENTER);
+                headerCellStyle.setBorderBottom(BorderStyle.THIN);
+                headerCellStyle.setBorderTop(BorderStyle.THIN);
+                headerCellStyle.setBorderRight(BorderStyle.THIN);
+                headerCellStyle.setBorderLeft(BorderStyle.THIN);
+                String rgbS = "FFFF99";
+                byte[] rgbB = Hex.decodeHex(rgbS);
+                XSSFColor color = new XSSFColor(rgbB, null);
+                headerCellStyle.setFillForegroundColor(color);
+                headerCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+                // Record line
+                XSSFCellStyle recordCellStyle = wb.createCellStyle();
+                recordCellStyle.setBorderBottom(BorderStyle.THIN);
+                recordCellStyle.setBorderTop(BorderStyle.THIN);
+                recordCellStyle.setBorderRight(BorderStyle.THIN);
+                recordCellStyle.setBorderLeft(BorderStyle.THIN);
+
+                // Debit / credit cells
+                XSSFCellStyle styleCurrency = wb.createCellStyle();
+                styleCurrency.setBorderBottom(BorderStyle.THIN);
+                styleCurrency.setBorderTop(BorderStyle.THIN);
+                styleCurrency.setBorderRight(BorderStyle.THIN);
+                styleCurrency.setBorderLeft(BorderStyle.THIN);
+                styleCurrency.setDataFormat((short) 8);
+
+                // Date cells
+                XSSFCellStyle styleDate = wb.createCellStyle();
+                styleDate.setBorderBottom(BorderStyle.THIN);
+                styleDate.setBorderTop(BorderStyle.THIN);
+                styleDate.setBorderRight(BorderStyle.THIN);
+                styleDate.setBorderLeft(BorderStyle.THIN);
+                CreationHelper createHelper = wb.getCreationHelper();
+                styleDate.setDataFormat(createHelper.createDataFormat().getFormat("dd/mm/yyyy"));
+
+                XSSFSheet currentSheet = wb.createSheet("Balance" + (isGenerale ? " générale" : ""));
+
+                // Title
+                int currentLine = 0;
+
+                XSSFRow currentRow = currentSheet.createRow(currentLine++);
+                XSSFCell currentCell = currentRow.createCell(0);
+                currentCell.setCellValue("Balance" + (isGenerale ? " générale" : ""));
+
+                CellRangeAddress region = new CellRangeAddress(0, 1, 0, isGenerale ? 8 : 9);
+                cleanBeforeMergeOnValidCells(currentSheet, region, titleCellStyle);
+                currentSheet.addMergedRegion(region);
+                currentLine++;
+
+                // Header
+                currentRow = currentSheet.createRow(currentLine++);
+                int currentColumn = 0;
+
+                currentCell = currentRow.createCell(currentColumn++);
+                currentCell.setCellValue("N° de compte");
+                currentCell.setCellStyle(headerCellStyle);
+                if (!isGenerale) {
+                        currentCell = currentRow.createCell(currentColumn++);
+                        currentCell.setCellValue("Libellé du compte");
+                        currentCell.setCellStyle(headerCellStyle);
+                }
+                currentCell = currentRow.createCell(currentColumn++);
+                currentCell.setCellValue("Début");
+                currentCell.setCellStyle(headerCellStyle);
+                currentCell = currentRow.createCell(currentColumn++);
+                currentCell.setCellValue("Crédit");
+                currentCell.setCellStyle(headerCellStyle);
+                currentCell = currentRow.createCell(currentColumn++);
+                currentCell.setCellValue("Créances à échoir -30j");
+                currentCell.setCellStyle(headerCellStyle);
+                currentCell = currentRow.createCell(currentColumn++);
+                currentCell.setCellValue("Créances à échoir -60j");
+                currentCell.setCellStyle(headerCellStyle);
+                currentCell = currentRow.createCell(currentColumn++);
+                currentCell.setCellValue("Créances à échoir +60j");
+                currentCell.setCellStyle(headerCellStyle);
+                currentCell = currentRow.createCell(currentColumn++);
+                currentCell.setCellValue("Créances échues -30j");
+                currentCell.setCellStyle(headerCellStyle);
+                currentCell = currentRow.createCell(currentColumn++);
+                currentCell.setCellValue("Créances échues -60j");
+                currentCell.setCellStyle(headerCellStyle);
+                currentCell = currentRow.createCell(currentColumn++);
+                currentCell.setCellValue("Créances échues +60j");
+                currentCell.setCellStyle(headerCellStyle);
+
+                Float debit = 0f;
+                Float credit = 0f;
+                if (balanceRecords != null) {
+                        for (AccountingBalance balanceRecord : balanceRecords) {
+                                currentRow = currentSheet.createRow(currentLine++);
+                                currentColumn = 0;
+                                currentCell = currentRow.createCell(currentColumn++);
+                                currentCell.setCellValue(
+                                                balanceRecord.getAccountingAccountNumber() + (!isGenerale ? "-"
+                                                                + balanceRecord.getAccountingAccountSubNumber() : ""));
+                                currentCell.setCellStyle(styleDate);
+                                if (!isGenerale) {
+                                        currentCell = currentRow.createCell(currentColumn++);
+                                        currentCell.setCellValue(balanceRecord.getAccountingAccountLabel());
+                                        currentCell.setCellStyle(recordCellStyle);
+                                }
+                                currentCell = currentRow.createCell(currentColumn++);
+                                if (balanceRecord.getDebitAmount() != null) {
+                                        currentCell.setCellValue(balanceRecord.getDebitAmount());
+                                        debit += balanceRecord.getDebitAmount();
+                                }
+                                currentCell.setCellStyle(styleCurrency);
+                                currentCell = currentRow.createCell(currentColumn++);
+                                if (balanceRecord.getCreditAmount() != null) {
+                                        credit += balanceRecord.getCreditAmount();
+                                        currentCell.setCellValue(balanceRecord.getCreditAmount());
+                                }
+                                currentCell.setCellStyle(styleCurrency);
+                                currentCell = currentRow.createCell(currentColumn++);
+                                if (balanceRecord.getEchoir30() != null)
+                                        currentCell
+                                                        .setCellValue(balanceRecord.getEchoir30());
+                                currentCell.setCellStyle(styleCurrency);
+                                currentCell = currentRow.createCell(currentColumn++);
+                                if (balanceRecord.getEchoir60() != null)
+                                        currentCell
+                                                        .setCellValue(balanceRecord.getEchoir60());
+                                currentCell.setCellStyle(styleCurrency);
+                                currentCell = currentRow.createCell(currentColumn++);
+                                if (balanceRecord.getEchoir90() != null)
+                                        currentCell
+                                                        .setCellValue(balanceRecord.getEchoir90());
+                                currentCell.setCellStyle(styleCurrency);
+                                currentCell = currentRow.createCell(currentColumn++);
+                                if (balanceRecord.getEchu30() != null)
+                                        currentCell
+                                                        .setCellValue(balanceRecord.getEchu30());
+                                currentCell.setCellStyle(styleCurrency);
+                                currentCell = currentRow.createCell(currentColumn++);
+                                if (balanceRecord.getEchu60() != null)
+                                        currentCell
+                                                        .setCellValue(balanceRecord.getEchu60());
+                                currentCell.setCellStyle(styleCurrency);
+                                currentCell = currentRow.createCell(currentColumn++);
+                                if (balanceRecord.getEchu90() != null)
+                                        currentCell
+                                                        .setCellValue(balanceRecord.getEchu90());
+                                currentCell.setCellStyle(styleCurrency);
+                        }
+                }
+
+                // Accumulation
+                currentRow = currentSheet.createRow(currentLine++);
+                currentColumn = 1;
+                currentCell = currentRow.createCell(currentColumn++);
+                currentCell.setCellValue("Total");
+                currentCell.setCellStyle(recordCellStyle);
+                currentCell = currentRow.createCell(currentColumn++);
+                currentCell.setCellValue(debit);
+                currentCell.setCellStyle(styleCurrency);
+                currentCell = currentRow.createCell(currentColumn++);
+                currentCell.setCellValue(credit);
+                currentCell.setCellStyle(styleCurrency);
+
+                // Balance
+                currentRow = currentSheet.createRow(currentLine++);
+                currentColumn = 1;
+                currentCell = currentRow.createCell(currentColumn++);
+                currentCell.setCellValue("Solde");
+                currentCell.setCellStyle(recordCellStyle);
+                currentCell = currentRow.createCell(currentColumn++);
+                currentCell.setCellValue("");
+                currentCell.setCellStyle(styleCurrency);
+                currentCell = currentRow.createCell(currentColumn++);
+                currentCell.setCellValue(credit - debit);
+                currentCell.setCellStyle(styleCurrency);
+
+                // autosize
+                for (int i = 0; i < 11; i++)
+                        currentSheet.autoSizeColumn(i, true);
+
+                File file = File.createTempFile("balance", "xlsx");
                 FileOutputStream outputStream = new FileOutputStream(file);
                 wb.write(outputStream);
                 wb.close();

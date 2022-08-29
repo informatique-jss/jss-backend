@@ -11,13 +11,15 @@ import { AccountingBalanceSearch } from '../../model/AccountingBalanceSearch';
 import { AccountingBalanceService } from '../../services/accounting.balance.service';
 
 @Component({
-  selector: 'accounting-balance',
-  templateUrl: './accounting-balance.component.html',
-  styleUrls: ['./accounting-balance.component.css']
+  selector: 'accounting-balance-generale',
+  templateUrl: './accounting-balance-generale.component.html',
+  styleUrls: ['./accounting-balance-generale.component.css']
 })
-export class AccountingBalanceComponent implements OnInit {
+export class AccountingBalanceGeneraleComponent implements OnInit {
 
   accountingBalanceSearch: AccountingBalanceSearch = {} as AccountingBalanceSearch;
+
+  displayedColumns: SortTableColumn[] = [] as Array<SortTableColumn>;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -31,11 +33,10 @@ export class AccountingBalanceComponent implements OnInit {
   displayedColumnsTotal: string[] = ['label', 'debit', 'credit'];
   currentUserPosition: Point = { x: 0, y: 0 };
 
-  displayedColumns: SortTableColumn[] = [] as Array<SortTableColumn>;
 
   ngOnInit() {
-    this.accountingBalanceSearch.startDate = new Date(new Date().getFullYear(), 0, 1)
-    this.accountingBalanceSearch.endDate = new Date(new Date().getFullYear(), 11, 31)
+    this.accountingBalanceSearch.startDate = new Date(new Date().getFullYear(), 0, 1);
+    this.accountingBalanceSearch.endDate = new Date(new Date().getFullYear(), 11, 31);
 
     // Column init
     this.displayedColumns.push({ id: "accountingAccountNumber", fieldName: "accountingAccountNumber", label: "N° de compte", valueFonction: (element: any, elements: any[], column: SortTableColumn, columns: SortTableColumn[]) => { if (element && column) return element.accountingAccountNumber + "-" + element.accountingAccountSubNumber; return "" } } as SortTableColumn);
@@ -63,7 +64,7 @@ export class AccountingBalanceComponent implements OnInit {
   }
 
   exportBalance() {
-    this.accountingBalanceService.exportBalance(this.accountingBalanceSearch);
+    this.accountingBalanceService.exportBalanceGenerale(this.accountingBalanceSearch);
   }
 
   searchRecords() {
@@ -76,6 +77,7 @@ export class AccountingBalanceComponent implements OnInit {
       this.accountingBalances = response;
       this.computeBalanceAndDebitAndCreditAccumulation();
       this.accountingBalances.sort((a, b) => this.sortRecords(a, b));
+
     });
   }
 
@@ -90,6 +92,7 @@ export class AccountingBalanceComponent implements OnInit {
     let bNumber = b.accountingAccountNumber + b.accountingAccountSubNumber;
     return aNumber.localeCompare(bNumber);
   }
+
 
   dropTotalDiv(event: CdkDragEnd) {
     this.userPreferenceService.setUserTotalDivPosition(event.source.getFreeDragPosition());

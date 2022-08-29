@@ -1,8 +1,9 @@
 import { CdkDragEnd, Point } from '@angular/cdk/drag-drop';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { formatDateForSortTable, formatDateTimeForSortTable, formatEurosForSortTable } from 'src/app/libs/FormatHelper';
+import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { AppService } from 'src/app/services/app.service';
 import { UserPreferenceService } from 'src/app/services/user.preference.service';
 import { AccountingRecord } from '../../model/AccountingRecord';
@@ -25,19 +26,38 @@ export class AccountingRecordComponent implements OnInit {
     private appService: AppService,
   ) { }
 
-  accountingRecordDataSource = new MatTableDataSource<AccountingRecord>();
-  accumulatedDataSource = new MatTableDataSource<AccountingRecord>();
-  @ViewChild(MatSort) sort!: MatSort;
   accountingRecords: AccountingRecord[] | undefined;
-  displayedColumns: string[] = ['operationId', 'accountingDateTime', 'operationDateTime', 'accountingJournal', 'accountingAccountNumber', 'accountingAccountLabel', 'accountingDocumentNumber', 'accountingDocumentDate', 'label', 'debitAmount', 'creditAmount', 'letteringNumber', 'letteringDate', 'debitAccumulation', 'creditAccumulation', 'balance'];
   displayedColumnsTotal: string[] = ['label', 'debit', 'credit'];
+  accumulatedDataSource = new MatTableDataSource<AccountingRecord>();
   currentUserPosition: Point = { x: 0, y: 0 };
+  displayedColumns: SortTableColumn[] = [] as Array<SortTableColumn>;
 
 
   ngOnInit() {
-    this.accountingRecordSearch.startDate = new Date(new Date().getFullYear(), 0, 1)
-    this.accountingRecordSearch.endDate = new Date(new Date().getFullYear(), 11, 31)
+    this.accountingRecordSearch.startDate = new Date(new Date().getFullYear(), 0, 1);
+    this.accountingRecordSearch.endDate = new Date(new Date().getFullYear(), 11, 31);
+
+    // Column init
+    this.displayedColumns.push({ id: "operationId", fieldName: "operationId", label: "N° d'écriture" } as SortTableColumn);
+    this.displayedColumns.push({ id: "accountingDateTime", fieldName: "accountingDateTime", label: "Date d'écriture", valueFonction: this.formatDateForSortTable } as SortTableColumn);
+    this.displayedColumns.push({ id: "operationDateTime", fieldName: "operationDateTime", label: "Date d'opération", valueFonction: this.formatDateTimeForSortTable } as SortTableColumn);
+    this.displayedColumns.push({ id: "accountingJournal", fieldName: "accountingJournal", label: "Journal", valueFonction: (element: any, elements: any[], column: SortTableColumn, columns: SortTableColumn[]) => { if (element && column) return element.accountingJournal.label; return "" } } as SortTableColumn);
+    this.displayedColumns.push({ id: "accountingAccountNumber", fieldName: "accountingAccountNumber", label: "N° de compte", valueFonction: (element: any, elements: any[], column: SortTableColumn, columns: SortTableColumn[]) => { if (element && column) return element.accountingAccount.accountingAccountNumber + "-" + element.accountingAccount.accountingAccountSubNumber; return "" } } as SortTableColumn);
+    this.displayedColumns.push({ id: "accountingAccountLabel", fieldName: "accountingAccountLabel", label: "Libellé du compte", valueFonction: (element: any, elements: any[], column: SortTableColumn, columns: SortTableColumn[]) => { if (element && column) return element.accountingAccount.label; return "" } } as SortTableColumn);
+    this.displayedColumns.push({ id: "accountingDocumentNumber", fieldName: "accountingDocumentNumber", label: "N° de pièce justificative" } as SortTableColumn);
+    this.displayedColumns.push({ id: "accountingDocumentDate", fieldName: "accountingDocumentDate", label: "Date pièce justificative", valueFonction: this.formatDateForSortTable } as SortTableColumn);
+    this.displayedColumns.push({ id: "debitAmount", fieldName: "debitAmount", label: "Débit", valueFonction: this.formatEurosForSortTable } as SortTableColumn);
+    this.displayedColumns.push({ id: "creditAmount", fieldName: "creditAmount", label: "Crédit", valueFonction: this.formatEurosForSortTable } as SortTableColumn);
+    this.displayedColumns.push({ id: "letteringNumber", fieldName: "letteringNumber", label: "Lettrage" } as SortTableColumn);
+    this.displayedColumns.push({ id: "letteringDate", fieldName: "letteringDate", label: "Date de lettrage", valueFonction: this.formatDateForSortTable } as SortTableColumn);
+    this.displayedColumns.push({ id: "debitAccumulation", fieldName: "debitAccumulation", label: "Cumul débit", valueFonction: this.formatEurosForSortTable } as SortTableColumn);
+    this.displayedColumns.push({ id: "creditAccumulation", fieldName: "creditAccumulation", label: "Cumul crédit", valueFonction: this.formatEurosForSortTable } as SortTableColumn);
+    this.displayedColumns.push({ id: "balance", fieldName: "balance", label: "Solde", valueFonction: this.formatEurosForSortTable } as SortTableColumn);
   }
+
+  formatEurosForSortTable = formatEurosForSortTable;
+  formatDateForSortTable = formatDateForSortTable;
+  formatDateTimeForSortTable = formatDateTimeForSortTable;
 
   accountingRecordForm = this.formBuilder.group({
   });
@@ -51,6 +71,10 @@ export class AccountingRecordComponent implements OnInit {
 
   exportGrandLivre() {
     this.accountingRecordService.exportGrandLivre(this.accountingRecordSearch.accountingClass, this.accountingRecordSearch.startDate!, this.accountingRecordSearch.endDate!);
+  }
+
+  exportAllGrandLivre() {
+    this.accountingRecordService.exportAllGrandLivre(this.accountingRecordSearch.startDate!, this.accountingRecordSearch.endDate!);
   }
 
   exportJournal() {
@@ -75,36 +99,8 @@ export class AccountingRecordComponent implements OnInit {
       this.accountingRecords = response;
       this.accountingRecords.sort((a, b) => this.sortRecords(a, b));
       this.computeBalanceAndDebitAndCreditAccumulation();
-      this.accountingRecordDataSource.data = this.accountingRecords;
 
-      setTimeout(() => {
-        this.accountingRecordDataSource.sort = this.sort;
-        this.accountingRecordDataSource.sortingDataAccessor = (accountingRecord: AccountingRecord, property) => {
-          switch (property) {
-            case 'label': return accountingRecord.label;
-            case 'operationId': return accountingRecord.operationId;
-            case 'accountingDateTime': return accountingRecord.accountingDateTime.getTime();
-            case 'operationDateTime': return accountingRecord.operationDateTime.getTime();
-            case 'accountingAccountNumber': return accountingRecord.accountingAccount.accountingAccountNumber + accountingRecord.accountingAccount.accountingAccountSubNumber;
-            case 'accountingAccountLabel': return accountingRecord.accountingAccount.label;
-            case 'accountingDocumentNumber': return (accountingRecord.invoice ? accountingRecord.invoice.id : accountingRecord.manualAccountingDocumentNumber);
-            case 'accountingDocumentDate': return (accountingRecord.invoice ? accountingRecord.invoice.createdDate.getTime() : accountingRecord.manualAccountingDocumentDate.getTime());
-            case 'creditAmount': return accountingRecord.creditAmount;
-            case 'debitAmount': return accountingRecord.debitAmount;
-            case 'letteringNumber': return accountingRecord.letteringNumber;
-            case 'letteringDate': return accountingRecord.letteringDate.getTime();
-            case 'debitAccumulation': return accountingRecord.debitAccumulation;
-            case 'creditAccumulation': return accountingRecord.creditAccumulation;
-            default: return accountingRecord.label;
-          }
-        };
-
-        this.accountingRecordDataSource.filterPredicate = (data: any, filter) => {
-          const dataStr = JSON.stringify(data).toLowerCase();
-          return dataStr.indexOf(filter) != -1;
-        }
-      });
-    })
+    });
   }
 
   sortRecords(a: AccountingRecord, b: AccountingRecord): number {

@@ -1,12 +1,11 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatAccordion } from '@angular/material/expansion';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
 import { Observable, Subscription } from 'rxjs';
 import { formatDate } from 'src/app/libs/FormatHelper';
 import { AccountingAccount } from 'src/app/modules/accounting/model/AccountingAccount';
 import { BillingItem } from 'src/app/modules/miscellaneous/model/BillingItem';
+import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { BillingItemService } from 'src/app/modules/miscellaneous/services/billing.item.service';
 import { AppService } from 'src/app/services/app.service';
 
@@ -28,14 +27,13 @@ export class ReferentialBillingItemComponent implements OnInit {
   cloneEventSubscription: Subscription | undefined;
   @Output() selectedEntityChange: EventEmitter<BillingItem> = new EventEmitter<BillingItem>();
   entities: BillingItem[] = [] as Array<BillingItem>;
-  displayedColumns: string[] = ['id', 'code', 'label'];
-  @ViewChild(MatSort) sort!: MatSort;
+  displayedColumns: SortTableColumn[] = [];
   @ViewChild(MatAccordion) accordion: MatAccordion | undefined;
 
   accountingAccountCharge: AccountingAccount | undefined;
   accountingAccountProduct: AccountingAccount | undefined;
 
-  entityDataSource: MatTableDataSource<BillingItem> = new MatTableDataSource<BillingItem>();
+  searchText: string | undefined;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -115,24 +113,14 @@ export class ReferentialBillingItemComponent implements OnInit {
   setDataTable() {
     this.billingItemService.getBillingItems().subscribe(response => {
       this.entities = response;
-      this.entityDataSource = new MatTableDataSource(this.entities);
-      setTimeout(() => {
-        this.entityDataSource.sort = this.sort;
-        this.entityDataSource.sortingDataAccessor = (item: BillingItem, property) => {
-          switch (property) {
-            case 'id': return item.id!;
-            case 'code': return this.getElementCode(item);
-            case 'label': return this.getElementLabel(item);
-            default: return this.getElementLabel(item);
-          }
-        };
-
-        this.entityDataSource.filterPredicate = (data: any, filter) => {
-          const dataStr = JSON.stringify(data).toLowerCase();
-          return dataStr.indexOf(filter) != -1;
-        }
-      });
+      this.definedMatTableColumn();
     })
+  }
+
+  definedMatTableColumn() {
+    this.displayedColumns.push({ id: "id", fieldName: "id", label: "Identifiant technique" } as SortTableColumn);
+    this.displayedColumns.push({ id: "code", fieldName: "code", label: "Codification fonctionnelle", valueFonction: (element: any, elements: any[], column: SortTableColumn, columns: SortTableColumn[]) => { if (element && column) return this.getElementCode(element); return "" } } as SortTableColumn);
+    this.displayedColumns.push({ id: "label", fieldName: "label", label: "Libellé", valueFonction: (element: any, elements: any[], column: SortTableColumn, columns: SortTableColumn[]) => { if (element && column) return this.getElementLabel(element); return "" } } as SortTableColumn);
   }
 
   setCharge() {
@@ -171,8 +159,7 @@ export class ReferentialBillingItemComponent implements OnInit {
   applyFilter(filterValue: any) {
     let filterValueCast = (filterValue as HTMLInputElement);
     filterValue = filterValueCast.value.trim();
-    filterValue = filterValue.toLowerCase();
-    this.entityDataSource.filter = filterValue;
+    this.searchText = filterValue.toLowerCase();
   }
 
   displayLabel(object: any): string {

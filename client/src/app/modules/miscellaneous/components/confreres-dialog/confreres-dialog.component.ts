@@ -1,10 +1,9 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
 import { Confrere } from '../../../quotation/model/Confrere';
 import { ConfrereFlatten } from '../../../quotation/model/ConfrereFlatten';
 import { ConfrereService } from '../../../quotation/services/confrere.service';
+import { SortTableColumn } from '../../model/SortTableColumn';
 
 @Component({
   selector: 'confreres-dialog',
@@ -13,13 +12,14 @@ import { ConfrereService } from '../../../quotation/services/confrere.service';
 })
 export class ConfrereDialogComponent implements OnInit {
 
-  displayedColumns: string[] = ['denomination', 'type', 'departments', 'discountRate', 'weekDays', 'lastShipmentForPublication',
-    'publicationCertificateDocumentGrade', 'billingGrade', 'paperGrade', 'boardGrade', 'mails', 'phones', 'numberOfPrint', 'shippingCosts', 'administrativeFees'];
+  displayedColumns2: string[] = ['', '', '', '', '', '',
+    '', '', '', '', '', '', '', '', ''];
 
   confreresFlatten: ConfrereFlatten[] = [] as Array<ConfrereFlatten>;
   confreres: Confrere[] = [] as Array<Confrere>;
-  confreresDataSource = new MatTableDataSource<ConfrereFlatten>();
-  @ViewChild(MatSort) sort!: MatSort;
+
+  displayedColumns: SortTableColumn[] = [];
+  searchText: string | undefined;
 
   filterValue: string = "";
 
@@ -58,46 +58,31 @@ export class ConfrereDialogComponent implements OnInit {
           this.confreresFlatten.push(localConfrere);
         });
         this.confreresFlatten.sort((a, b) => a.discountRate.localeCompare(b.discountRate));
-        this.confreresDataSource.data = this.confreresFlatten;
+
+
+        this.displayedColumns.push({ id: "denomination", fieldName: "denomination", label: "Dénomination" } as SortTableColumn);
+        this.displayedColumns.push({ id: "type", fieldName: "journalType.label", label: "Type" } as SortTableColumn);
+        this.displayedColumns.push({ id: "departments", fieldName: "departments", label: "Habilitations" } as SortTableColumn);
+        this.displayedColumns.push({ id: "discountRate", fieldName: "discountRate", label: "Taux de remise", valueFonction: (element: any, elements: [], column: SortTableColumn, columns: SortTableColumn[]) => { return ((element.specialOffers && element.specialOffers.length > 0) ? element.specialOffers[0].label : "") } } as SortTableColumn);
+        this.displayedColumns.push({ id: "weekDays", fieldName: "weekDays", label: "Jours de parution" } as SortTableColumn);
+        this.displayedColumns.push({ id: "lastShipmentForPublication", fieldName: "lastShipmentForPublication", label: "Dernier envoi pour parution" } as SortTableColumn);
+        this.displayedColumns.push({ id: "publicationCertificateDocumentGrade", displayAsGrade: true, fieldName: "publicationCertificateDocumentGrade", label: "Préférence attestation de parution" } as SortTableColumn);
+        this.displayedColumns.push({ id: "billingGrade", fieldName: "billingGrade", displayAsGrade: true, label: "Préférence facturation" } as SortTableColumn);
+        this.displayedColumns.push({ id: "paperGrade", fieldName: "paperGrade", displayAsGrade: true, label: "Préférence journal" } as SortTableColumn);
+        this.displayedColumns.push({ id: "boardGrade", fieldName: "boardGrade", displayAsGrade: true, label: "Préférence direction" } as SortTableColumn);
+        this.displayedColumns.push({ id: "mails", fieldName: "mails", label: "Mails" } as SortTableColumn);
+        this.displayedColumns.push({ id: "phones", fieldName: "phones", label: "Téléphones" } as SortTableColumn);
+        this.displayedColumns.push({ id: "numberOfPrint", fieldName: "numberOfPrint", label: "Tirage" } as SortTableColumn);
+        this.displayedColumns.push({ id: "shippingCosts", fieldName: "shippingCosts", label: "Frais de port" } as SortTableColumn);
+        this.displayedColumns.push({ id: "administrativeFees", fieldName: "administrativeFees", label: "Frais administratifs" } as SortTableColumn);
       }
     })
-
-    setTimeout(() => {
-      this.confreresDataSource.sort = this.sort;
-      this.confreresDataSource.sortingDataAccessor = (confrere: ConfrereFlatten, property) => {
-        switch (property) {
-          case 'id': return confrere.id;
-          case 'denomination': return confrere.denomination;
-          case 'journalType': return confrere.journalType.label;
-          case 'departments': return confrere.departments;
-          case 'discountRate': return confrere.discountRate;
-          case 'weekDays': return confrere.weekDays;
-          case 'lastShipmentForPublication': return confrere.lastShipmentForPublication;
-          case 'publicationCertificateDocumentGrade': return confrere.publicationCertificateDocumentGrade;
-          case 'billingGrade': return confrere.billingGrade;
-          case 'paperGrade': return confrere.paperGrade;
-          case 'boardGrade': return confrere.boardGrade;
-          case 'mails': return confrere.mails;
-          case 'phones': return confrere.phones;
-          case 'numberOfPrint': return confrere.numberOfPrint;
-          case 'shippingCosts': return confrere.shippingCosts;
-          case 'administrativeFees': return confrere.administrativeFees;
-          default: return confrere.discountRate;
-        }
-      };
-
-      this.confreresDataSource.filterPredicate = (data: any, filter) => {
-        const dataStr = JSON.stringify(data).toLowerCase();
-        return dataStr.indexOf(filter) != -1;
-      }
-    });
   }
 
   applyFilter(filterValue: any) {
     let filterValueCast = (filterValue as HTMLInputElement);
     filterValue = filterValueCast.value.trim();
-    filterValue = filterValue.toLowerCase();
-    this.confreresDataSource.filter = filterValue;
+    this.searchText = filterValue.toLowerCase();
   }
 
   chooseConfrere(confrereFlatten: ConfrereFlatten) {

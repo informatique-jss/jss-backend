@@ -1,0 +1,50 @@
+.row-field-container-flex-item {
+  flex: 1;
+}
+
+.add-button {
+  top: -8px;
+}
+
+.table-fixed-layout {
+  table-layout: fixed;
+}
+
+.fab-td-button {
+  width: 35px;
+}
+
+.td-label {
+  white-space: nowrap;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+::ng-deep.mat-menu-panel {
+  max-width: none !important;
+}
+
+.total-table {
+  position: fixed;
+  bottom: 10px;
+  width: 210px;
+}
+
+.mat-header-row-total {
+  height: 30px;
+}
+
+.without-padding-left {
+  padding-left: 0px !important;
+}
+
+.without-padding-left>mat-icon {
+  transform: scale(0.60);
+  margin-left: -45px;
+}
+
+.table-bilan {
+  border-collapse: separate;
+  border-spacing: 3px;
+}

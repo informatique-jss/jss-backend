@@ -317,20 +317,22 @@ public class AccountingController {
     }
 
     @GetMapping(inputEntryPoint + "/grand-livre/export")
-    public ResponseEntity<byte[]> downloadGrandLivre(@RequestParam("accountingClassId") Integer accountingClassId,
+    public ResponseEntity<byte[]> downloadGrandLivre(
+            @RequestParam(name = "accountingClassId", required = false) Integer accountingClassId,
             @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
             @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
         byte[] data = null;
         HttpHeaders headers = null;
 
-        if (accountingClassId == null)
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        AccountingAccountClass accountingClass = null;
 
-        AccountingAccountClass accountingClass = accountingAccountClassService
-                .getAccountingAccountClass(accountingClassId);
+        if (accountingClassId != null) {
+            accountingClass = accountingAccountClassService
+                    .getAccountingAccountClass(accountingClassId);
 
-        if (accountingClass == null)
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            if (accountingClass == null)
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
 
         if (startDate == null || endDate == null)
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -347,7 +349,8 @@ public class AccountingController {
 
                 headers = new HttpHeaders();
                 headers.add("filename",
-                        "Grand livre - " + accountingClass.getLabel() + " - " + startDate.format(dateFormatter) + " - "
+                        "Grand livre - " + (accountingClass != null ? accountingClass.getLabel() + " - " : "")
+                                + startDate.format(dateFormatter) + " - "
                                 + endDate.format(dateFormatter) + ".xlsx");
                 headers.setAccessControlExposeHeaders(Arrays.asList("filename"));
                 headers.setContentLength(data.length);
@@ -494,6 +497,150 @@ public class AccountingController {
             return new ResponseEntity<List<AccountingBalance>>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<List<AccountingBalance>>(accountingBalances, HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/accounting-balance/export")
+    public ResponseEntity<byte[]> downloadAccountingBalance(
+            @RequestParam(name = "accountingClassId", required = false) Integer accountingClassId,
+            @RequestParam(name = "accountingAccountNumber", required = false) String accountingAccountNumber,
+            @RequestParam(name = "accountingAccountId", required = false) Integer accountingAccountId,
+            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
+        byte[] data = null;
+        HttpHeaders headers = null;
+
+        AccountingAccountClass accountingClass = null;
+
+        if (accountingClassId != null) {
+            accountingClass = accountingAccountClassService
+                    .getAccountingAccountClass(accountingClassId);
+
+            if (accountingClass == null)
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        if (startDate == null || endDate == null)
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        Duration duration = Duration.between(startDate, endDate);
+
+        if (duration.toDays() > 366)
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        try {
+            File grandLivre = accountingRecordService.getAccountingBalanceExport(accountingClassId,
+                    accountingAccountNumber, accountingAccountId, startDate, endDate);
+
+            if (grandLivre != null) {
+                data = Files.readAllBytes(grandLivre.toPath());
+
+                headers = new HttpHeaders();
+                headers.add("filename",
+                        "Balances - "
+                                + startDate.format(dateFormatter) + " - "
+                                + endDate.format(dateFormatter) + ".xlsx");
+                headers.setAccessControlExposeHeaders(Arrays.asList("filename"));
+                headers.setContentLength(data.length);
+                headers.set("content-type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+
+                grandLivre.delete();
+
+            }
+        } catch (Exception e) {
+            logger.error("Error when fetching client types", e);
+            return new ResponseEntity<byte[]>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<byte[]>(data, headers, HttpStatus.OK);
+    }
+
+    @PostMapping(inputEntryPoint + "/accounting-balance/generale/search")
+    public ResponseEntity<List<AccountingBalance>> searchAccountingBalanceGenerale(
+            @RequestBody AccountingBalanceSearch accountingRecordSearch) {
+        List<AccountingBalance> accountingBalances;
+        try {
+            if (accountingRecordSearch == null)
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+            if (accountingRecordSearch.getStartDate() == null || accountingRecordSearch.getEndDate() == null)
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+            Duration duration = Duration.between(accountingRecordSearch.getStartDate(),
+                    accountingRecordSearch.getEndDate());
+
+            if (duration.toDays() > 366)
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+            validationHelper.validateString(accountingRecordSearch.getAccountingAccountNumber(), false, 3);
+
+            if (accountingRecordSearch.getAccountingAccountNumber() != null
+                    && accountingRecordSearch.getAccountingAccountNumber().length() == 0)
+                accountingRecordSearch.setAccountingAccountNumber(null);
+
+            accountingBalances = accountingRecordService.searchAccountingBalanceGenerale(accountingRecordSearch);
+        } catch (
+
+        ResponseStatusException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (HttpStatusCodeException e) {
+            logger.error("HTTP error when fetching accountingAccount", e);
+            return new ResponseEntity<List<AccountingBalance>>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            logger.error("Error when fetching accountingAccount", e);
+            return new ResponseEntity<List<AccountingBalance>>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<List<AccountingBalance>>(accountingBalances, HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/accounting-balance/generale/export")
+    public ResponseEntity<byte[]> downloadAccountingBalanceGenerale(
+            @RequestParam(name = "accountingClassId", required = false) Integer accountingClassId,
+            @RequestParam(name = "accountingAccountNumber", required = false) String accountingAccountNumber,
+            @RequestParam(name = "accountingAccountId", required = false) Integer accountingAccountId,
+            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
+        byte[] data = null;
+        HttpHeaders headers = null;
+
+        AccountingAccountClass accountingClass = null;
+
+        if (accountingClassId != null) {
+            accountingClass = accountingAccountClassService
+                    .getAccountingAccountClass(accountingClassId);
+
+            if (accountingClass == null)
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        if (startDate == null || endDate == null)
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        Duration duration = Duration.between(startDate, endDate);
+
+        if (duration.toDays() > 366)
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        try {
+            File grandLivre = accountingRecordService.getAccountingBalanceGeneraleExport(accountingClassId,
+                    accountingAccountNumber, accountingAccountId, startDate, endDate);
+
+            if (grandLivre != null) {
+                data = Files.readAllBytes(grandLivre.toPath());
+
+                headers = new HttpHeaders();
+                headers.add("filename",
+                        "Balances - "
+                                + startDate.format(dateFormatter) + " - "
+                                + endDate.format(dateFormatter) + ".xlsx");
+                headers.setAccessControlExposeHeaders(Arrays.asList("filename"));
+                headers.setContentLength(data.length);
+                headers.set("content-type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+
+                grandLivre.delete();
+
+            }
+        } catch (Exception e) {
+            logger.error("Error when fetching client types", e);
+            return new ResponseEntity<byte[]>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<byte[]>(data, headers, HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/bilan")

@@ -29,86 +29,7 @@
         </td>
       </tr>
     </table>
-    <table mat-table matSort [dataSource]="accountingRecordDataSource" class="mat-elevation-z8 table full-width"
-      *ngIf="accountingRecords">
-      <ng-container matColumnDef="operationId">
-        <th mat-header-cell mat-sort-header *matHeaderCellDef>N° d'écriture</th>
-        <td mat-cell *matCellDef="let element">{{element.operationId}}</td>
-      </ng-container>
-      <ng-container matColumnDef="accountingDateTime">
-        <th mat-header-cell mat-sort-header *matHeaderCellDef>Date d'écriture</th>
-        <td mat-cell *matCellDef="let element">{{element.accountingDateTime | date:'dd/MM/yyyy'}}</td>
-      </ng-container>
-      <ng-container matColumnDef="operationDateTime">
-        <th mat-header-cell mat-sort-header *matHeaderCellDef>Date d'opération</th>
-        <td mat-cell *matCellDef="let element">{{element.operationDateTime | date:'dd/MM/yyyy à HH:mm'}}</td>
-      </ng-container>
-      <ng-container matColumnDef="accountingJournal">
-        <th mat-header-cell mat-sort-header *matHeaderCellDef>Journal</th>
-        <td mat-cell *matCellDef="let element">{{element.accountingJournal.label}}</td>
-      </ng-container>
-      <ng-container matColumnDef="accountingAccountNumber">
-        <th mat-header-cell mat-sort-header *matHeaderCellDef>N° de compte</th>
-        <td mat-cell *matCellDef="let element">
-          {{element.accountingAccount.accountingAccountNumber}}-{{element.accountingAccount.accountingAccountSubNumber}}
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="accountingAccountLabel">
-        <th mat-header-cell mat-sort-header *matHeaderCellDef>Libellé du compte</th>
-        <td mat-cell *matCellDef="let element" class="td-label" [matTooltip]="element.accountingAccount.label">
-          {{element.accountingAccount.label}}</td>
-      </ng-container>
-      <ng-container matColumnDef="accountingDocumentNumber">
-        <th mat-header-cell mat-sort-header *matHeaderCellDef>N° de pièce justificative</th>
-        <td mat-cell *matCellDef="let element">
-          {{(element.invoice?element.invoice.id:element.manualAccountingDocumentNumber)}}</td>
-      </ng-container>
-      <ng-container matColumnDef="accountingDocumentDate">
-        <th mat-header-cell mat-sort-header *matHeaderCellDef>Date pièce justificative</th>
-        <td mat-cell *matCellDef="let element">
-          {{(element.invoice?element.invoice.createdDate:element.manualAccountingDocumentDate) | date:'dd/MM/yyyy'}}
-        </td>
-        <ng-container matColumnDef="debitAmount">
-          <th mat-header-cell mat-sort-header *matHeaderCellDef>Débit</th>
-          <td mat-cell *matCellDef="let element">
-            {{element.debitAmount}}{{(element.debitAmount?" €":"")}}</td>
-        </ng-container>
-        <ng-container matColumnDef="creditAmount">
-          <th mat-header-cell mat-sort-header *matHeaderCellDef>Crédit</th>
-          <td mat-cell *matCellDef="let element">
-            {{element.creditAmount}}{{(element.creditAmount?" €":"")}}</td>
-        </ng-container>
-        <ng-container matColumnDef="letteringNumber">
-          <th mat-header-cell mat-sort-header *matHeaderCellDef>Lettrage</th>
-          <td mat-cell *matCellDef="let element">{{element.letteringNumber}}</td>
-        </ng-container>
-        <ng-container matColumnDef="letteringDate">
-          <th mat-header-cell mat-sort-header *matHeaderCellDef>Date de lettrage</th>
-          <td mat-cell *matCellDef="let element">{{element.letteringDate}}</td>
-        </ng-container>
-        <ng-container matColumnDef="debitAccumulation">
-          <th mat-header-cell mat-sort-header *matHeaderCellDef>Cumul débit</th>
-          <td mat-cell *matCellDef="let element">{{element.debitAccumulation}}{{(element.debitAccumulation?" €":"")}}
-          </td>
-        </ng-container>
-        <ng-container matColumnDef="creditAccumulation">
-          <th mat-header-cell mat-sort-header *matHeaderCellDef>Cumul crédit</th>
-          <td mat-cell *matCellDef="let element">{{element.creditAccumulation}}{{(element.creditAccumulation?" €":"")}}
-          </td>
-        </ng-container>
-        <ng-container matColumnDef="balance">
-          <th mat-header-cell mat-sort-header *matHeaderCellDef>Solde</th>
-          <td mat-cell *matCellDef="let element">{{element.balance}}{{(element.balance?" €":"")}}
-          </td>
-        </ng-container>
-      </ng-container>
-      <ng-container matColumnDef="label">
-        <th mat-header-cell mat-sort-header *matHeaderCellDef>Libellé</th>
-        <td mat-cell *matCellDef="let element" class="td-label" [matTooltip]="element.label">{{element.label}}</td>
-      </ng-container>
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-    </table>
+    <sort-table [columns]="displayedColumns" [values]="accountingRecords" tableName="Ecritures"></sort-table>
     <table mat-table [dataSource]="accumulatedDataSource" class="mat-elevation-z8 table total-table" cdkDrag
       [cdkDragFreeDragPosition]="currentUserPosition" (cdkDragEnded)="dropTotalDiv($event)" *ngIf="accountingRecords">
       <ng-container matColumnDef="label">
@@ -148,6 +69,10 @@
       *ngIf="accountingRecordSearch && accountingRecordSearch.accountingAccount && accountingRecordSearch.startDate && accountingRecordSearch.endDate">Exporter
       le compte
       {{accountingRecordSearch.accountingAccount.accountingAccountNumber}}-{{accountingRecordSearch.accountingAccount.accountingAccountSubNumber}}
+    </button>
+    <button mat-menu-item (click)="exportAllGrandLivre()"
+      *ngIf="accountingRecordSearch &&  accountingRecordSearch.startDate && accountingRecordSearch.endDate">Exporter
+      l'ensemble du grand livre
     </button>
   </mat-menu>
 </button>

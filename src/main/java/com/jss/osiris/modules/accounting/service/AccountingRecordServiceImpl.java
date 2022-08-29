@@ -263,6 +263,24 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     }
 
     @Override
+    public List<AccountingBalance> searchAccountingBalanceGenerale(AccountingBalanceSearch accountingBalanceSearch) {
+        Integer accountingAccountId = accountingBalanceSearch.getAccountingAccount() != null
+                ? accountingBalanceSearch.getAccountingAccount().getId()
+                : 0;
+        Integer accountingClassId = accountingBalanceSearch.getAccountingClass() != null
+                ? accountingBalanceSearch.getAccountingClass().getId()
+                : 0;
+        String accountNumber = accountingBalanceSearch.getAccountingAccountNumber() != null
+                ? accountingBalanceSearch.getAccountingAccountNumber()
+                : "";
+        return accountingRecordRepository.searchAccountingBalanceGenerale(
+                accountingClassId,
+                accountingAccountId, accountNumber,
+                accountingBalanceSearch.getStartDate(), accountingBalanceSearch.getEndDate());
+
+    }
+
+    @Override
     public List<AccountingBalanceViewTitle> getBilan(LocalDateTime startDate, LocalDateTime endDate) {
         List<AccountingBalanceBilan> accountingRecords = accountingRecordRepository
                 .getAccountingRecordAggregateByAccountingNumber(startDate, endDate);
@@ -330,5 +348,27 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
         outBilanPassif.add(accountingBalanceHelper.getBilanPassif(accountingRecords, accountingRecordsN1));
 
         return accountingExportHelper.getBilan(outBilanActif, outBilanPassif);
+    }
+
+    @Override
+    public File getAccountingBalanceExport(Integer accountingClassId, String accountingAccountNumber,
+            Integer accountingAccountId, LocalDateTime startDate, LocalDateTime endDate) throws Exception {
+        List<AccountingBalance> accountingBalanceRecords = accountingRecordRepository.searchAccountingBalance(
+                accountingClassId != null ? accountingClassId : 0,
+                accountingAccountId != null ? accountingAccountId : 0,
+                (accountingAccountNumber != null && !accountingAccountNumber.equals("") ? accountingAccountNumber : ""),
+                startDate, endDate);
+        return accountingExportHelper.getBalance(accountingBalanceRecords, false);
+    }
+
+    @Override
+    public File getAccountingBalanceGeneraleExport(Integer accountingClassId, String accountingAccountNumber,
+            Integer accountingAccountId, LocalDateTime startDate, LocalDateTime endDate) throws Exception {
+        List<AccountingBalance> accountingBalanceRecords = accountingRecordRepository.searchAccountingBalanceGenerale(
+                accountingClassId != null ? accountingClassId : 0,
+                accountingAccountId != null ? accountingAccountId : 0,
+                (accountingAccountNumber != null && !accountingAccountNumber.equals("") ? accountingAccountNumber : ""),
+                startDate, endDate);
+        return accountingExportHelper.getBalance(accountingBalanceRecords, true);
     }
 }

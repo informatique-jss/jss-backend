@@ -33,6 +33,10 @@ export class AccountingRecordService extends AppRestService<AccountingRecord>{
     this.downloadGet(new HttpParams().set("accountingClassId", accountingClass.id).set("startDate", toIsoString(startDate)).set("endDate", toIsoString(endDate)), "grand-livre/export");
   }
 
+  exportAllGrandLivre(startDate: Date, endDate: Date) {
+    this.downloadGet(new HttpParams().set("startDate", toIsoString(startDate)).set("endDate", toIsoString(endDate)), "grand-livre/export");
+  }
+
   exportJournal(accountingJournal: AccountingJournal, startDate: Date, endDate: Date) {
     this.downloadGet(new HttpParams().set("accountingJournalId", accountingJournal.id).set("startDate", toIsoString(startDate)).set("endDate", toIsoString(endDate)), "journal/export");
   }

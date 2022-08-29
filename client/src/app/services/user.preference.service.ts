@@ -1,6 +1,7 @@
 import { Point } from '@angular/cdk/drag-drop';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { SortTableColumn } from '../modules/miscellaneous/model/SortTableColumn';
 
 @Injectable({
   providedIn: 'root'
@@ -39,6 +40,24 @@ export class UserPreferenceService {
         return point;
     }
     return { x: 0, y: 0 };
+  }
+
+  // User column display
+  setUserDisplayColumnsForTable(columns: SortTableColumn[], tableName: string) {
+    if (columns && tableName)
+      localStorage.setItem('table-columns' + tableName, JSON.stringify(columns));
+  }
+
+  getUserDisplayColumnsForTable(tableName: string): SortTableColumn[] {
+    if (tableName) {
+      let value = localStorage.getItem('table-columns' + tableName);
+      if (value) {
+        let list = JSON.parse(value!) as SortTableColumn[];
+        if (list)
+          return list;
+      }
+    }
+    return [];
   }
 }
 
