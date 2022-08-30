@@ -14,7 +14,7 @@ import { downloadHtmlAsRtf } from 'src/app/libs/DownloadHelper';
 import { formatDate } from 'src/app/libs/FormatHelper';
 import { Attachment } from 'src/app/modules/miscellaneous/model/Attachment';
 import { Audit } from 'src/app/modules/miscellaneous/model/Audit';
-import { HistoryAction } from 'src/app/modules/miscellaneous/model/HistoryAction';
+import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { DocumentTypeService } from 'src/app/modules/miscellaneous/services/document.type.service';
 import { UploadAttachmentService } from 'src/app/modules/miscellaneous/services/upload.attachment.service';
 import { SHAL_ENTITY_TYPE } from 'src/app/routing/search/search.component';
@@ -361,15 +361,16 @@ export class ShalComponent implements OnInit {
       }
   }
 
-  getHistoryActions(): HistoryAction[] {
-    let historyActions = [] as Array<HistoryAction>;
+  getHistoryActions(): SortTableAction[] {
+    let historyActions = [] as Array<SortTableAction>;
 
-    let exportRtfAction = {} as HistoryAction;
+    let exportRtfAction = {} as SortTableAction;
     exportRtfAction.actionClick = (element2: Audit): void => {
       downloadHtmlAsRtf("Affaire " + this.affaire.id + " - " + formatDate(new Date(element2.datetime)) + ".rtf", element2.newValue);
     }
-    exportRtfAction.actionTooltip = "Télécharger en .rtf";
+    exportRtfAction.actionName = "Télécharger en .rtf";
     exportRtfAction.actionIcon = "description";
+    exportRtfAction.display = true;
     historyActions.push(exportRtfAction);
     return historyActions;
   }

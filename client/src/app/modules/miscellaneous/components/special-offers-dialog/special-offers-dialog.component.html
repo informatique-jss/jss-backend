@@ -3,38 +3,5 @@
     <input matInput (keyup)="applyFilter($event.target)" placeholder="Rechercher">
   </mat-form-field>
 </div>
-<table mat-table [dataSource]="specialOffersDataSource" class="mat-elevation-z8 table">
-  <ng-container matColumnDef="code">
-    <th mat-header-cell *matHeaderCellDef>Libellé</th>
-    <td mat-cell *matCellDef="let element">{{element.code}}
-      {{element.label}}</td>
-  </ng-container>
-  <ng-container matColumnDef="discountAmount">
-    <th mat-header-cell *matHeaderCellDef>Montant de la remise</th>
-    <td mat-cell *matCellDef="let element">{{element.discountAmount + (element.discountAmount!=null ?"€":"")}}
-      {{element.label}}</td>
-  </ng-container>
-  <ng-container matColumnDef="discountRate">
-    <th mat-header-cell *matHeaderCellDef>Taux de remise</th>
-    <td mat-cell *matCellDef="let element">{{element.discountRate + (element.discountRate!=null ?"%":"")}}
-      {{element.label}}</td>
-  </ng-container>
-  <ng-container matColumnDef="vat">
-    <th mat-header-cell *matHeaderCellDef>Taux de TVA</th>
-    <td mat-cell *matCellDef="let element">{{element.vat + (element.vat!=null ?"%":"")}}
-      {{element.label}}</td>
-  </ng-container>
-  <ng-container matColumnDef="billingTypeLabel">
-    <th mat-header-cell *matHeaderCellDef>Poste de facturation</th>
-    <td mat-cell *matCellDef="let element">{{element.billingTypeLabel}}
-      {{element.label}}</td>
-  </ng-container>
-  <ng-container matColumnDef="billingTypePreTaxPrice">
-    <th mat-header-cell *matHeaderCellDef>Prix HT du poste</th>
-    <td mat-cell *matCellDef="let element">{{element.billingTypePreTaxPrice}}
-      {{element.label}}</td>
-  </ng-container>
-
-  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row (click)="chooseSpecialOffer(row)" class="pointer" *matRowDef="let row; columns: displayedColumns;"></tr>
-</table>
+<sort-table [columns]="displayedColumns" (onRowClick)="chooseSpecialOffer($event)" [values]="specialOffersFlatten"
+  tableName="Tarifs spéciaux" [filterText]="searchText"></sort-table>

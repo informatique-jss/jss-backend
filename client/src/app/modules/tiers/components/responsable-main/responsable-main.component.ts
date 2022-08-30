@@ -1,13 +1,13 @@
 import { Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
 import { isTiersTypeProspect } from 'src/app/libs/CompareHelper';
 import { COUNTRY_CODE_FRANCE, SUSCRIPTION_TYPE_CODE_PERIODE_12M } from 'src/app/libs/Constants';
 import { instanceOfResponsable } from 'src/app/libs/TypeHelper';
 import { City } from 'src/app/modules/miscellaneous/model/City';
 import { Country } from 'src/app/modules/miscellaneous/model/Country';
+import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
+import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { CityService } from 'src/app/modules/miscellaneous/services/city.service';
 import { CountryService } from 'src/app/modules/miscellaneous/services/country.service';
 import { RESPONSABLE_ENTITY_TYPE } from 'src/app/routing/search/search.component';
@@ -33,12 +33,7 @@ export class ResponsableMainComponent implements OnInit {
   matcher: CustomErrorStateMatcher = new CustomErrorStateMatcher();
   @Input() tiers: Tiers = {} as Tiers;
   @Input() editMode: boolean = false;
-  @ViewChild(MatSort) sort!: MatSort;
   @ViewChild('tabs', { static: false }) tabs: any;
-
-  displayedColumns: string[] = ['id', 'name', 'address', 'city', 'salesEmployee', 'formalisteEmployee', 'insertionEmployee', 'actions'];
-
-  responsableDataSource: MatTableDataSource<Responsable> = new MatTableDataSource<Responsable>();
 
   RESPONSABLE_ENTITY_TYPE = RESPONSABLE_ENTITY_TYPE;
   COUNTRY_CODE_FRANCE = COUNTRY_CODE_FRANCE;
@@ -58,6 +53,10 @@ export class ResponsableMainComponent implements OnInit {
   isSubscriptionPaper: boolean = false;
   isSubscriptionWeb: boolean = false;
 
+  displayedColumns: SortTableColumn[] = [];
+  tableActions: SortTableAction[] = [] as Array<SortTableAction>;
+  searchText: string | undefined;
+
   @ViewChild(SettlementBillingComponent) documentSettlementBillingComponent: SettlementBillingComponent | undefined;
 
   constructor(private formBuilder: UntypedFormBuilder,
@@ -72,13 +71,20 @@ export class ResponsableMainComponent implements OnInit {
   // TODO : reprendre les RG (notamment facturation / commande) lorsque les modules correspondants seront faits
 
   ngOnChanges(changes: SimpleChanges) {
+    if (this.editMode) {
+      this.tableActions[0].display = true;
+    } else {
+      this.tableActions[0].display = false;
+    }
+
     if (changes.tiers != undefined && this.tiers.responsables != undefined && this.tiers.responsables != null) {
       this.principalForm.markAllAsTouched();
       this.setDataTable();
       this.initDefaultValues();
       this.toggleTabs();
+
       if (this.selectedResponsableId != null)
-        this.selectResponsable(this.selectedResponsableId);
+        this.selectResponsableById(this.selectedResponsableId);
     }
   }
 
@@ -86,6 +92,17 @@ export class ResponsableMainComponent implements OnInit {
     this.countryService.getCountries().subscribe(response => this.countries = response);
     // Trigger it to show mandatory fields
     this.principalForm.markAllAsTouched();
+
+    // Table definition
+    this.displayedColumns.push({ id: "id", fieldName: "id", label: "N° du responsable" } as SortTableColumn);
+    this.displayedColumns.push({ id: "name", fieldName: "name", label: "Nom", valueFonction: (element: any) => { return (element) ? element.firstname + " " + element.lastname : "" } } as SortTableColumn);
+    this.displayedColumns.push({ id: "address", fieldName: "address", label: "Adresse" } as SortTableColumn);
+    this.displayedColumns.push({ id: "city", fieldName: "city.label", label: "Ville" } as SortTableColumn);
+    this.displayedColumns.push({ id: "salesEmployee", fieldName: "salesEmployee", label: "Commercial", valueFonction: (element: any) => { return (element && element.salesEmployee) ? element.salesEmployee.firstname + " " + element.salesEmployee.lastname : "" } } as SortTableColumn);
+    this.displayedColumns.push({ id: "formalisteEmployee", fieldName: "formalisteEmployee", label: "Formaliste", valueFonction: (element: any) => { return (element && element.formalisteEmployee) ? element.formalisteEmployee.firstname + " " + element.formalisteEmployee.lastname : "" } } as SortTableColumn);
+    this.displayedColumns.push({ id: "insertionEmployee", fieldName: "insertionEmployee", label: "Publiciste", valueFonction: (element: any) => { return (element && element.insertionEmployee) ? element.insertionEmployee.firstname + " " + element.insertionEmployee.lastname : "" } } as SortTableColumn);
+
+    this.tableActions.push({ actionIcon: "delete", actionName: 'Supprimer le responsable', display: true, actionClick: (action: SortTableAction, element: any) => { return this.deleteResponsable(element) } } as SortTableAction);
   }
 
   toggleTabs() {
@@ -97,36 +114,14 @@ export class ResponsableMainComponent implements OnInit {
     this.tiers.responsables.sort(function (a: Responsable, b: Responsable) {
       return (a.firstname + "" + a.lastname).localeCompare(b.firstname + "" + a.lastname);
     });
-
-    this.responsableDataSource = new MatTableDataSource(this.tiers.responsables);
-    setTimeout(() => {
-      this.responsableDataSource.sort = this.sort;
-      this.responsableDataSource.sortingDataAccessor = (item: Responsable, property) => {
-        switch (property) {
-          case 'id': return item.id;
-          case 'name': return item.firstname + "" + item.lastname;
-          case 'address': return item.address + "";
-          case 'city': return item.city.label + "";
-          case 'salesEmployee': return item.salesEmployee?.firstname + "" + item.salesEmployee?.lastname;
-          case 'formalisteEmployee': return item.formalisteEmployee?.firstname + "" + item.formalisteEmployee?.lastname;
-          case 'insertionEmployee': return item.insertionEmployee?.firstname + "" + item.insertionEmployee?.lastname;
-          default: return item.firstname + "" + item.lastname;
-        }
-      };
-
-      this.responsableDataSource.filterPredicate = (data: any, filter) => {
-        const dataStr = JSON.stringify(data).toLowerCase();
-        return dataStr.indexOf(filter) != -1;
-      }
-      this.toggleTabs();
-    });
+    this.toggleTabs();
   }
 
   setSelectedResponsableId(selectedResponsableId: number) {
     this.selectedResponsableId = selectedResponsableId;
   }
 
-  selectResponsable(responsableId: number) {
+  selectResponsableById(responsableId: number) {
     if (this.selectedResponsable == null || this.getFormStatus()) {
       this.tiers.responsables.forEach(responsable => {
         if (responsable.id == responsableId) {
@@ -144,6 +139,10 @@ export class ResponsableMainComponent implements OnInit {
     } else {
       this.appService.displaySnackBar("Compléter la saisie du responsable courant avant de continuer", true, 60);
     }
+  }
+  selectResponsable(responsable: Responsable) {
+    let responsableId = responsable.id;
+    this.selectResponsableById(responsableId);
   }
 
   deleteResponsable(responsableRow: any) {
@@ -185,8 +184,7 @@ export class ResponsableMainComponent implements OnInit {
   applyFilter(filterValue: any) {
     let filterValueCast = (filterValue as HTMLInputElement);
     filterValue = filterValueCast.value.trim();
-    filterValue = filterValue.toLowerCase();
-    this.responsableDataSource.filter = filterValue;
+    this.searchText = filterValue.toLowerCase();
   }
 
   isResponsableTypeProspect(): boolean {

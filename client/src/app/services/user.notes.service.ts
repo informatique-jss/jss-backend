@@ -45,7 +45,6 @@ export class UserNoteService {
     this.userNotes.push(note);
     this.saveUserNotes();
     this.restoreUserNotes();
-    console.log(this.userNotes);
   }
 
   deleteAllNotes() {

@@ -54,7 +54,6 @@ export abstract class GenericReferentialComponent<T extends IReferential> implem
   }
 
   selectEntity(element: T) {
-    console.log(element);
     this.selectedEntity = element;
     this.selectedEntityChange.emit(this.selectedEntity);
   }

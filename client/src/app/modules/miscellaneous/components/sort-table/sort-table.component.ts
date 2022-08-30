@@ -1,7 +1,9 @@
 import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { getObjectPropertybyString } from 'src/app/libs/FormatHelper';
 import { UserPreferenceService } from 'src/app/services/user.preference.service';
+import { SortTableAction } from '../../model/SortTableAction';
 import { SortTableColumn } from '../../model/SortTableColumn';
 
 @Component({
@@ -13,8 +15,10 @@ export class SortTableComponent implements OnInit {
 
   @Input() columns: SortTableColumn[] | undefined;
   @Input() values: any[] | undefined;
+  @Input() actions: SortTableAction[] | undefined;
   @Input() filterText: string | undefined;
   @Input() tableName: string = "table";
+  @Input() idRowSelected: number | undefined;
   /**
  * Fired when row is clicked is modified by user
  */
@@ -23,9 +27,12 @@ export class SortTableComponent implements OnInit {
   dataSource = new MatTableDataSource<any>();
   @ViewChild(MatSort) sort!: MatSort;
 
+  internalActions: SortTableAction[] | undefined = [] as Array<SortTableAction>;
+
   constructor(protected userPreferenceService: UserPreferenceService) { }
 
   ngOnInit() {
+    this.internalActions = this.actions;
     if (this.values)
       this.dataSource.data = this.values;
 
@@ -61,8 +68,14 @@ export class SortTableComponent implements OnInit {
         }
   }
 
+  actionTrigger(action: SortTableAction, element: any) {
+    action.actionClick(action, element);
+    if (this.values)
+      this.dataSource.data = this.values;
+  }
+
   applyFilter() {
-    if (this.filterText != undefined && this.filterText != null) {
+    if (this.filterText && this.filterText.length > 0) {
       let filterValue = this.filterText.trim();
       filterValue = filterValue.toLowerCase();
       this.dataSource.filter = filterValue;
@@ -70,7 +83,6 @@ export class SortTableComponent implements OnInit {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    console.log(changes);
     if (changes.values != undefined && this.values)
       this.dataSource.data = this.values;
     if (changes.filterText != undefined && this.values) {
@@ -110,6 +122,8 @@ export class SortTableComponent implements OnInit {
         if (column.display)
           columnList.push(column.id);
       }
+    if (this.internalActions)
+      columnList.push('actions');
     return columnList;
   }
 
@@ -150,18 +164,5 @@ export class SortTableComponent implements OnInit {
     this.onRowClick.emit(element);
   }
 
-  getObjectPropertybyString(element: any, propertyPath: string) {
-    propertyPath = propertyPath.replace(/\[(\w+)\]/g, '.$1'); // convert indexes to properties
-    propertyPath = propertyPath.replace(/^\./, '');           // strip a leading dot
-    var a = propertyPath.split('.');
-    for (var i = 0, n = a.length; i < n; ++i) {
-      var k = a[i];
-      if (k in element) {
-        element = element[k];
-      } else {
-        return;
-      }
-    }
-    return element;
-  }
+  getObjectPropertybyString = getObjectPropertybyString;
 }

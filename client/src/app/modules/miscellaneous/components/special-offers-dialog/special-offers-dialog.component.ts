@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { MatTableDataSource } from '@angular/material/table';
+import { formatEurosForSortTable, formatPercentForSortTable } from 'src/app/libs/FormatHelper';
 import { SpecialOfferFlatten } from 'src/app/modules/miscellaneous/model/SpecialOfferFlatten';
+import { SortTableColumn } from '../../model/SortTableColumn';
 import { SpecialOffer } from '../../model/SpecialOffer';
 import { SpecialOfferService } from '../../services/special.offer.service';
 
@@ -12,13 +13,15 @@ import { SpecialOfferService } from '../../services/special.offer.service';
 })
 export class SpecialOffersDialogComponent implements OnInit {
 
-  displayedColumns: string[] = ['code', 'discountAmount', 'discountRate', 'vat', 'billingTypeLabel', 'billingTypePreTaxPrice'];
+  ddisplayedColumns: string[] = ['code', 'discountAmount', 'discountRate', 'vat', 'billingTypeLabel', 'billingTypePreTaxPrice'];
 
   specialOffersFlatten: SpecialOfferFlatten[] = [] as Array<SpecialOfferFlatten>;
   specialOffers: SpecialOffer[] = [] as Array<SpecialOffer>;
-  specialOffersDataSource = new MatTableDataSource<SpecialOfferFlatten>();
 
   filterValue: string = "";
+
+  displayedColumns: SortTableColumn[] = [];
+  searchText: string | undefined;
 
   constructor(private specialOfferService: SpecialOfferService,
     private specialOffersDialogRef: MatDialogRef<SpecialOffersDialogComponent>) { }
@@ -39,19 +42,27 @@ export class SpecialOffersDialogComponent implements OnInit {
             this.specialOffersFlatten.push(localSpecialOffer);
           });
         });
-        this.specialOffersDataSource.data = this.specialOffersFlatten;
       }
     })
+    this.displayedColumns.push({ id: "code", fieldName: "code", label: "Libellé" } as SortTableColumn);
+    this.displayedColumns.push({ id: "discountAmount", fieldName: "discountAmount", label: "Montant de la remise", valueFonction: formatEurosForSortTable } as SortTableColumn);
+    this.displayedColumns.push({ id: "discountRate", fieldName: "discountRate", label: "Taux de remise", valueFonction: formatPercentForSortTable } as SortTableColumn);
+    this.displayedColumns.push({ id: "vat", fieldName: "vat", label: "Taux de TVA", valueFonction: formatPercentForSortTable } as SortTableColumn);
+    this.displayedColumns.push({ id: "billingTypeLabel", fieldName: "billingTypeLabel", label: "Poste de facturation" } as SortTableColumn);
+    this.displayedColumns.push({ id: "billingTypePreTaxPrice", fieldName: "billingTypePreTaxPrice", label: "Prix HT du poste" } as SortTableColumn);
   }
+
+  formatEurosForSortTable = formatEurosForSortTable;
+  formatPercentForSortTable = formatPercentForSortTable;
 
   applyFilter(filterValue: any) {
     let filterValueCast = (filterValue as HTMLInputElement);
     filterValue = filterValueCast.value.trim();
-    filterValue = filterValue.toLowerCase();
-    this.specialOffersDataSource.filter = filterValue;
+    this.searchText = filterValue.toLowerCase();
   }
 
   chooseSpecialOffer(specialOfferFlatten: SpecialOfferFlatten) {
+    console.log("kk");
     let outSpecialOffer = null;
     this.specialOffers.forEach(specialOffer => {
       if (specialOffer.id == specialOfferFlatten.id)

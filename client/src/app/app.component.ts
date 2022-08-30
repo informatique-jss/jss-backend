@@ -132,7 +132,6 @@ export class AppComponent {
   }
 
   openNoteLink(note: Note, event: MouseEvent): any {
-    console.log(event);
     if (event.ctrlKey) {
       return window.open(environment.frontendUrl + "/tiers/66", '_blank')
     }

@@ -1,10 +1,10 @@
-import { Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
+import { formatDateTimeForSortTable } from 'src/app/libs/FormatHelper';
 import { Attachment } from '../../model/Attachment';
 import { IAttachment } from '../../model/IAttachment';
+import { SortTableColumn } from '../../model/SortTableColumn';
 import { UploadAttachmentService } from '../../services/upload.attachment.service';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { UploadAttachementDialogComponent } from '../upload-attachement-dialog/upload-attachement-dialog.component';
@@ -20,11 +20,9 @@ export class AttachmentsComponent implements OnInit {
   @Input() entity: IAttachment = {} as IAttachment;
   @Input() entityType: string = "";
   @Input() editMode: boolean = false;
-  @ViewChild(MatSort) sort!: MatSort;
 
-  displayedColumns: string[] = ['name', 'attachementType', 'createdBy', 'creationDate', 'action'];
-
-  tiersAttachmentDataSource: MatTableDataSource<Attachment> = new MatTableDataSource<Attachment>();
+  displayedColumns: SortTableColumn[] = [];
+  searchText: string | undefined;
 
   filterValue: string = "";
 
@@ -43,38 +41,24 @@ export class AttachmentsComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.displayedColumns.push({ id: "name", fieldName: "uploadedFile.filename", label: "Nom" } as SortTableColumn);
+    this.displayedColumns.push({ id: "attachementType", fieldName: "attachmentType.label", label: "Type de document" } as SortTableColumn);
+    this.displayedColumns.push({ id: "createdBy", fieldName: "uploadedFile.createdBy", label: "Ajouté par" } as SortTableColumn);
+    this.displayedColumns.push({ id: "creationDate", fieldName: "uploadedFile.creationDate", label: "Ajouté le", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
   }
+  formatDateTimeForSortTable = formatDateTimeForSortTable;
 
   setDataTable() {
     this.entity.attachments.sort(function (a: Attachment, b: Attachment) {
       return new Date(b.uploadedFile.creationDate).getTime() - new Date(a.uploadedFile.creationDate).getTime();
     });
 
-    this.tiersAttachmentDataSource = new MatTableDataSource(this.entity.attachments.filter(attachment => attachment.isDisabled == false));
-    setTimeout(() => {
-      this.tiersAttachmentDataSource.sort = this.sort;
-      this.tiersAttachmentDataSource.sortingDataAccessor = (item: Attachment, property) => {
-        switch (property) {
-          case 'name': return item.uploadedFile.filename;
-          case 'attachementType': return item.attachmentType.label;
-          case 'createdBy': return item.uploadedFile.createdBy;
-          case 'creationDate': return new Date(item.uploadedFile.creationDate).getTime() + "";
-          default: return item.uploadedFile.filename;
-        }
-      };
-
-      this.tiersAttachmentDataSource.filterPredicate = (data: any, filter) => {
-        const dataStr = JSON.stringify(data).toLowerCase();
-        return dataStr.indexOf(filter) != -1;
-      }
-    });
   }
 
   applyFilter(filterValue: any) {
     let filterValueCast = (filterValue as HTMLInputElement);
     filterValue = filterValueCast.value.trim();
-    filterValue = filterValue.toLowerCase();
-    this.tiersAttachmentDataSource.filter = filterValue;
+    this.searchText = filterValue.toLowerCase();
   }
 
   uploadFile() {

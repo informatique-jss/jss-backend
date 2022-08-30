@@ -17,3 +17,19 @@
   color: white;
   transform: scale(0.66);
 }
+
+.selected-mat-row {
+  background-color: #6B9CBF;
+}
+
+.selected-mat-row:hover {
+  background-color: #6B9CBF;
+}
+
+td {
+  padding-right: 8px;
+}
+
+tr.mat-row {
+  height: 20px;
+}

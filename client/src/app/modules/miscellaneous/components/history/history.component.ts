@@ -3,10 +3,12 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
 import { Dictionnary } from 'src/app/libs/Dictionnary';
+import { formatDateTimeForSortTable } from 'src/app/libs/FormatHelper';
 import { IReferential } from 'src/app/modules/administration/model/IReferential';
 import { Audit } from 'src/app/modules/miscellaneous/model/Audit';
 import { EntityType } from 'src/app/routing/search/EntityType';
-import { HistoryAction } from '../../model/HistoryAction';
+import { SortTableAction } from '../../model/SortTableAction';
+import { SortTableColumn } from '../../model/SortTableColumn';
 import { AuditService } from '../../services/audit.service';
 
 @Component({
@@ -22,19 +24,20 @@ export class HistoryComponent implements OnInit {
   @Input() entityType: EntityType = {} as EntityType;
   @ViewChild(MatSort) sort!: MatSort;
   @Input() displayOnlyFields: string[] | null = null;
-  @Input() historyActions: HistoryAction[] = [] as Array<HistoryAction>;
-  internalHistoryActions: HistoryAction[] = [] as Array<HistoryAction>;
+  @Input() historyActions: SortTableAction[] = [] as Array<SortTableAction>;
+  internalHistoryActions: SortTableAction[] = [] as Array<SortTableAction>;
   @Input() parseTypeList: IReferential[] | undefined;
 
   audits: Audit[] = [] as Array<Audit>;
 
-  displayedColumns: string[] = ['createdBy', 'creationDate', 'fieldName', 'oldValue', 'newValue'];
+  ddisplayedColumns: string[] = ['', '', '', '', ''];
 
   auditDataSource: MatTableDataSource<Audit> = new MatTableDataSource<Audit>();
 
-  filterValue: string = "";
-
   dictionnary = new Map<string, string>(Object.entries(Dictionnary));
+
+  displayedColumns: SortTableColumn[] = [];
+  searchText: string | undefined;
 
   constructor(
     protected auditService: AuditService
@@ -48,11 +51,14 @@ export class HistoryComponent implements OnInit {
 
   ngOnInit() {
     this.internalHistoryActions = this.historyActions;
-    if (this.internalHistoryActions.length > 0)
-      this.displayedColumns.push("actions");
+    this.displayedColumns.push({ id: "fieldName", fieldName: "fieldName", label: "Champ" } as SortTableColumn);
+    this.displayedColumns.push({ id: "oldValue", fieldName: "oldValue", label: "Ancienne valeur" } as SortTableColumn);
+    this.displayedColumns.push({ id: "newValue", fieldName: "newValue", label: "Nouvelle valeur" } as SortTableColumn);
+    this.displayedColumns.push({ id: "createdBy", fieldName: "username", label: "Auteur" } as SortTableColumn);
+    this.displayedColumns.push({ id: "creationDate", fieldName: "datetime", label: "Modifié le", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
   }
 
-  historyActionTrigger(historyAction: HistoryAction, element: Audit) {
+  historyActionTrigger(historyAction: SortTableAction, element: Audit) {
     historyAction.actionClick(element);
   }
 
@@ -66,6 +72,7 @@ export class HistoryComponent implements OnInit {
       } else {
         this.audits = response;
       }
+      console.log(this.audits);
       if (this.audits != undefined && this.audits != null && this.audits.length > 0) {
         this.audits.sort(function (a: Audit, b: Audit) {
           return new Date(b.datetime).getTime() - new Date(a.datetime).getTime();
@@ -106,8 +113,7 @@ export class HistoryComponent implements OnInit {
   applyFilter(filterValue: any) {
     let filterValueCast = (filterValue as HTMLInputElement);
     filterValue = filterValueCast.value.trim();
-    filterValue = filterValue.toLowerCase();
-    this.auditDataSource.filter = filterValue;
+    this.searchText = filterValue.toLowerCase();
   }
 
   getFieldLabel(fieldName: string) {

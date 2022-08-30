@@ -27,14 +27,20 @@ export function toIsoString(date: Date) {
 }
 
 export function formatEurosForSortTable(element: any, elements: any[], column: SortTableColumn, columns: SortTableColumn[]): string {
-  if (element && column && element[column.fieldName] != null)
-    return element[column.fieldName] + " €";
+  if (element && column && getObjectPropertybyString(element, column.fieldName) != null)
+    return getObjectPropertybyString(element, column.fieldName) + " €";
+  return "";
+}
+
+export function formatPercentForSortTable(element: any, elements: any[], column: SortTableColumn, columns: SortTableColumn[]): string {
+  if (element && column && getObjectPropertybyString(element, column.fieldName) != null)
+    return getObjectPropertybyString(element, column.fieldName) + " %";
   return "";
 }
 
 export function formatDateForSortTable(element: any, elements: any[], column: SortTableColumn, columns: SortTableColumn[]): string {
-  if (element && column && column.fieldName && element[column.fieldName]) {
-    let date = new Date(element[column.fieldName]);
+  if (element && column && column.fieldName && getObjectPropertybyString(element, column.fieldName)) {
+    let date = new Date(getObjectPropertybyString(element, column.fieldName));
     return [
       padTo2Digits(date.getDate()),
       padTo2Digits(date.getMonth() + 1),
@@ -45,8 +51,8 @@ export function formatDateForSortTable(element: any, elements: any[], column: So
 }
 
 export function formatDateTimeForSortTable(element: any, elements: any[], column: SortTableColumn, columns: SortTableColumn[]): string {
-  if (element && column && column.fieldName && element[column.fieldName]) {
-    let date = new Date(element[column.fieldName]);
+  if (element && column && column.fieldName && getObjectPropertybyString(element, column.fieldName)) {
+    let date = new Date(getObjectPropertybyString(element, column.fieldName));
     return [
       padTo2Digits(date.getDate()),
       padTo2Digits(date.getMonth() + 1),
@@ -59,4 +65,19 @@ export function formatDateTimeForSortTable(element: any, elements: any[], column
   }
 
   return "";
+}
+
+export function getObjectPropertybyString(element: any, propertyPath: string) {
+  propertyPath = propertyPath.replace(/\[(\w+)\]/g, '.$1'); // convert indexes to properties
+  propertyPath = propertyPath.replace(/^\./, '');           // strip a leading dot
+  var a = propertyPath.split('.');
+  for (var i = 0, n = a.length; i < n; ++i) {
+    var k = a[i];
+    if (k in element) {
+      element = element[k];
+    } else {
+      return;
+    }
+  }
+  return element;
 }
