@@ -1,8 +1,8 @@
-package com.jss.osiris.modules.quotation.repository;
-
-import com.jss.osiris.modules.quotation.model.InvoiceItem;
+package com.jss.osiris.modules.invoicing.repository;
 
 import org.springframework.data.repository.CrudRepository;
+
+import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 
 public interface InvoiceItemRepository extends CrudRepository<InvoiceItem, Integer> {
 }

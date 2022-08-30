@@ -15,5 +15,12 @@ export interface SortTableColumn {
    */
   sortFonction: any | undefined;
   display: boolean | undefined;
+  /**
+   * Display element as star
+   */
   displayAsGrade: boolean | undefined;
+  /**
+   * Indicate to use ellipsis on the column
+   */
+  isShrinkColumn: boolean | undefined;
 }

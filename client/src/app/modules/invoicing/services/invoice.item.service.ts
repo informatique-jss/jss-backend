@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AppRestService } from 'src/app/services/appRest.service';
-import { InvoiceItem } from '../model/InvoiceItem';
+import { InvoiceItem } from '../../quotation/model/InvoiceItem';
 
 @Injectable({
   providedIn: 'root'

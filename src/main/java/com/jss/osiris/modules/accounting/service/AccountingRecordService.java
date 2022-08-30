@@ -12,7 +12,7 @@ import com.jss.osiris.modules.accounting.model.AccountingBalanceViewTitle;
 import com.jss.osiris.modules.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.accounting.model.AccountingRecordSearch;
-import com.jss.osiris.modules.quotation.model.Invoice;
+import com.jss.osiris.modules.invoicing.model.Invoice;
 
 public interface AccountingRecordService {
         public List<AccountingRecord> getAccountingRecords();

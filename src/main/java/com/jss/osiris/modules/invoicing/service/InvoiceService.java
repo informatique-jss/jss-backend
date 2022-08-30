@@ -1,8 +1,10 @@
-package com.jss.osiris.modules.quotation.service;
+package com.jss.osiris.modules.invoicing.service;
 
 import java.time.LocalDate;
+import java.util.List;
 
-import com.jss.osiris.modules.quotation.model.Invoice;
+import com.jss.osiris.modules.invoicing.model.Invoice;
+import com.jss.osiris.modules.invoicing.model.InvoiceSearch;
 import com.jss.osiris.modules.tiers.model.ITiers;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
@@ -39,5 +41,7 @@ public interface InvoiceService {
     public LocalDate getFirstBillingDateForTiers(Tiers tiers);
 
     public LocalDate getFirstBillingDateForResponsable(Responsable responsable);
+
+    public List<Invoice> searchInvoices(InvoiceSearch invoiceSearch) throws Exception;
 
 }

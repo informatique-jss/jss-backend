@@ -1,11 +1,11 @@
 import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
+import { InvoiceService } from 'src/app/modules/invoicing/services/invoice.service';
 import { Vat } from 'src/app/modules/miscellaneous/model/Vat';
 import { CustomerOrder } from '../../model/CustomerOrder';
 import { Invoice } from '../../model/Invoice';
 import { IQuotation } from '../../model/IQuotation';
-import { InvoiceService } from '../../services/invoice.service';
 import { QuotationComponent } from '../quotation/quotation.component';
 
 @Component({

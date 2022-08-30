@@ -1,0 +1,26 @@
+<div class="mat-elevation-z2 form-div">
+  <div class=" full-width">
+    <table class="full-width table-fixed-layout">
+      <tr>
+        <td>
+          <select-invoice-status [(model)]="invoiceSearch.invoiceStatus" label="Statut de la facture"
+            [form]="invoiceForm" propertyName="invoiceStatus" [isMandatory]="true"
+            [defaultCodesSelected]="[INVOICING_STATUS_SENT]">
+          </select-invoice-status>
+        </td>
+        <td>
+          <generic-date-range-picker [(modelStart)]="invoiceSearch.startDate" [(modelEnd)]="invoiceSearch.endDate"
+            label="Plage de recherche" [form]="invoiceForm" propertyNameStart="startDate" propertyNameEnd="endDate"
+            (onDateChange)="putDefaultPeriod()">
+          </generic-date-range-picker>
+        </td>
+        <td class="fab-td-button">
+          <button mat-mini-fab color="warn" matTooltip="Rechercher" (click)="searchInvoices()" class="add-button">
+            <mat-icon>search</mat-icon>
+          </button>
+        </td>
+      </tr>
+    </table>
+    <sort-table [columns]="displayedColumns" [values]="invoices" tableName="Ecritures"></sort-table>
+  </div>
+</div>

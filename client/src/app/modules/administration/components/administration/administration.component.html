@@ -287,6 +287,11 @@
           [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
           [cloneEvent]="cloneEvent.asObservable()">
         </referential-accounting-journal>
+        <referential-invoice-status *ngIf="selectedReferential==INVOICE_STAUTS_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
+        </referential-invoice-status>
       </div>
     </mat-tab>
   </mat-tab-group>

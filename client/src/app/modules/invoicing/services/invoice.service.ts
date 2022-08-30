@@ -1,8 +1,9 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AppRestService } from 'src/app/services/appRest.service';
+import { CustomerOrder } from '../../quotation/model/CustomerOrder';
 import { Invoice } from '../../quotation/model/Invoice';
-import { CustomerOrder } from '../model/CustomerOrder';
+import { InvoiceSearch } from '../model/InvoiceSearch';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +11,7 @@ import { CustomerOrder } from '../model/CustomerOrder';
 export class InvoiceService extends AppRestService<Invoice>{
 
   constructor(http: HttpClient) {
-    super(http, "quotation");
+    super(http, "invoicing");
   }
 
   addOrUpdateInvoice(invoice: Invoice) {
@@ -19,6 +20,10 @@ export class InvoiceService extends AppRestService<Invoice>{
 
   getInvoiceForCustomerOrder(customerOrder: CustomerOrder) {
     return this.get(new HttpParams().set("customerOrderId", customerOrder.id), "invoice/customer-order");
+  }
+
+  getInvoicesList(invoiceSearch: InvoiceSearch) {
+    return this.postList(new HttpParams(), "invoice/search", invoiceSearch);
   }
 
 }

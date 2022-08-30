@@ -1,9 +1,10 @@
-package com.jss.osiris.modules.quotation.model;
+package com.jss.osiris.modules.invoicing.model;
 
 import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -14,6 +15,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.jss.osiris.modules.miscellaneous.model.BillingItem;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.miscellaneous.model.Vat;
+import com.jss.osiris.modules.quotation.model.Provision;
 
 @Entity
 public class InvoiceItem implements Serializable, IId {
@@ -39,7 +41,7 @@ public class InvoiceItem implements Serializable, IId {
 
 	private Float discountAmount;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_provision")
 	@JsonBackReference("provision")
 	Provision provision;

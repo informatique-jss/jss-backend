@@ -30,6 +30,10 @@ export class HabilitationsService {
     return true;
   }
 
+  canViewInvoiceModule() {
+    return true;
+  }
+
 }
 
 

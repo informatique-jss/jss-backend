@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.jss.osiris.libs.search.model.IndexEntity;
 import com.jss.osiris.libs.search.service.SearchService;
-import com.jss.osiris.modules.quotation.service.InvoiceService;
+import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.repository.ResponsableRepository;
 

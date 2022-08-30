@@ -1,7 +1,8 @@
-package com.jss.osiris.modules.quotation.service;
+package com.jss.osiris.modules.invoicing.service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,12 +11,13 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
+import com.jss.osiris.modules.invoicing.model.Invoice;
+import com.jss.osiris.modules.invoicing.model.InvoiceItem;
+import com.jss.osiris.modules.invoicing.model.InvoiceSearch;
+import com.jss.osiris.modules.invoicing.repository.InvoiceRepository;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.quotation.model.Confrere;
-import com.jss.osiris.modules.quotation.model.Invoice;
-import com.jss.osiris.modules.quotation.model.InvoiceItem;
-import com.jss.osiris.modules.quotation.repository.InvoiceRepository;
 import com.jss.osiris.modules.tiers.model.ITiers;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
@@ -157,6 +159,14 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public LocalDate getFirstBillingDateForResponsable(Responsable responsable) {
         return invoiceRepository.findFirstBillingDateForResponsable(responsable);
+    }
+
+    @Override
+    public List<Invoice> searchInvoices(InvoiceSearch invoiceSearch) throws Exception {
+        List<Invoice> invoices = invoiceRepository.findInvoice(invoiceSearch.getInvoiceStatus(),
+                invoiceSearch.getStartDate(),
+                invoiceSearch.getEndDate());
+        return invoices;
     }
 
 }

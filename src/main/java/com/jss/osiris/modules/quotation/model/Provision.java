@@ -17,6 +17,7 @@ import javax.persistence.OneToOne;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 
 @Entity

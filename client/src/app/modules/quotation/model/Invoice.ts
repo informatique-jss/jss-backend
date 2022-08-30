@@ -1,6 +1,7 @@
 import { City } from "../../miscellaneous/model/City";
 import { Country } from "../../miscellaneous/model/Country";
 import { BillingLabelType } from "../../tiers/model/BillingLabelType";
+import { CustomerOrder } from "./CustomerOrder";
 import { InvoiceItem } from "./InvoiceItem";
 
 export interface Invoice {
@@ -18,4 +19,6 @@ export interface Invoice {
   isResponsableOnBilling: boolean;
   isCommandNumberMandatory: boolean;
   commandNumber: string;
+  customerOrder: CustomerOrder;
+  totalPrice: number;
 }

@@ -226,6 +226,7 @@ tr.table-row:hover {
 .mat-header-row {
   opacity: 1 !important;
   background: 0% 0% no-repeat padding-box padding-box #1C3D58 !important;
+  height: 30px !important;
 }
 
 .mat-header-row>th {
@@ -247,8 +248,4 @@ tr.table-row:hover {
 
 .mat-row:nth-child(even):hover {
   background-color: #6B9CBF;
-}
-
-.mat-header-row-small {
-  height: 30px !important;
 }

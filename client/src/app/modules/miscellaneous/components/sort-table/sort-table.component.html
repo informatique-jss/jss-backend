@@ -2,9 +2,11 @@
   <table mat-table matTableExporter matSort [dataSource]="dataSource" class="mat-elevation-z8 table full-width"
     #exporter="matTableExporter">
     <ng-container [matColumnDef]="column.id" *ngFor="let column of columns">
-      <th mat-header-cell mat-sort-header *matHeaderCellDef>{{getColumnLabel(column)}}
+      <th mat-header-cell mat-sort-header *matHeaderCellDef>
+        {{getColumnLabel(column)}}
       </th>
-      <td mat-cell *matCellDef="let element"><span *ngIf="!column.displayAsGrade">{{getColumnValue(column,
+      <td mat-cell *matCellDef="let element" [matTooltip]="column.isShrinkColumn?getColumnValue(column,element):''"
+        [ngClass]="{'td-label':column.isShrinkColumn}"><span *ngIf="!column.displayAsGrade">{{getColumnValue(column,
           element)}}</span><span *ngIf="column.displayAsGrade">
           <grade [grade]="getColumnValue(column, element)"></grade>
         </span></td>

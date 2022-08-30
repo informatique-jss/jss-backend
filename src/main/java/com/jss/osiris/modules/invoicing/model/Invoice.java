@@ -1,4 +1,4 @@
-package com.jss.osiris.modules.quotation.model;
+package com.jss.osiris.modules.invoicing.model;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -13,6 +13,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedAttributeNode;
+import javax.persistence.NamedEntityGraph;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
@@ -25,11 +27,14 @@ import com.jss.osiris.libs.JacksonLocalDateTimeSerializer;
 import com.jss.osiris.modules.miscellaneous.model.City;
 import com.jss.osiris.modules.miscellaneous.model.Country;
 import com.jss.osiris.modules.miscellaneous.model.IId;
+import com.jss.osiris.modules.quotation.model.Confrere;
+import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.tiers.model.BillingLabelType;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
 @Entity
+@NamedEntityGraph(name = "graph.invoice.tiers", attributeNodes = @NamedAttributeNode(value = "billingLabelType"))
 public class Invoice implements Serializable, IId {
 
 	@Id
@@ -49,20 +54,22 @@ public class Invoice implements Serializable, IId {
 	private List<InvoiceItem> invoiceItems;
 
 	@OneToOne(fetch = FetchType.LAZY)
-	@JsonIgnore
 	private CustomerOrder customerOrder;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_responsable")
+	@JsonIgnore
 	private Responsable responsable;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_confrere")
+	@JsonIgnore
 	private Confrere confrere;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_tiers")
 	@JsonBackReference("tiers")
+	@JsonIgnore
 	private Tiers tiers;
 
 	@Column(length = 40)
@@ -84,6 +91,10 @@ public class Invoice implements Serializable, IId {
 	private String commandNumber;
 
 	private Float totalPrice;
+
+	@ManyToOne
+	@JoinColumn(name = "id_invoice_status")
+	private InvoiceStatus invoiceStatus;
 
 	public Integer getId() {
 		return id;
@@ -235,6 +246,14 @@ public class Invoice implements Serializable, IId {
 
 	public void setTotalPrice(Float totalPrice) {
 		this.totalPrice = totalPrice;
+	}
+
+	public InvoiceStatus getInvoiceStatus() {
+		return invoiceStatus;
+	}
+
+	public void setInvoiceStatus(InvoiceStatus invoiceStatus) {
+		this.invoiceStatus = invoiceStatus;
 	}
 
 }

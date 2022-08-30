@@ -29,7 +29,7 @@
         </td>
       </tr>
     </table>
-    <sort-table [columns]="displayedColumns" [values]="accountingBalances" tableName="Balance"></sort-table>
+    <sort-table [columns]="displayedColumns" [values]="accountingBalances" tableName="Balance Générale"></sort-table>
     <table mat-table [dataSource]="accumulatedDataSource" class="mat-elevation-z8 table total-table" cdkDrag
       [cdkDragFreeDragPosition]="currentUserPosition" (cdkDragEnded)="dropTotalDiv($event)" *ngIf="accountingBalances">
       <ng-container matColumnDef="label">
@@ -47,7 +47,7 @@
         <th mat-header-cell *matHeaderCellDef>Crédit</th>
         <td mat-cell *matCellDef="let element">{{element.credit}} €</td>
       </ng-container>
-      <tr mat-header-row *matHeaderRowDef="displayedColumnsTotal" class="mat-header-row-small"></tr>
+      <tr mat-header-row *matHeaderRowDef="displayedColumnsTotal"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumnsTotal;"></tr>
     </table>
   </div>

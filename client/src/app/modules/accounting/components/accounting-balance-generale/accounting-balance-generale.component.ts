@@ -39,8 +39,7 @@ export class AccountingBalanceGeneraleComponent implements OnInit {
     this.accountingBalanceSearch.endDate = new Date(new Date().getFullYear(), 11, 31);
 
     // Column init
-    this.displayedColumns.push({ id: "accountingAccountNumber", fieldName: "accountingAccountNumber", label: "N° de compte", valueFonction: (element: any, elements: any[], column: SortTableColumn, columns: SortTableColumn[]) => { if (element && column) return element.accountingAccountNumber + "-" + element.accountingAccountSubNumber; return "" } } as SortTableColumn);
-    this.displayedColumns.push({ id: "accountingAccountLabel", fieldName: "accountingAccountLabel", label: "Libellé du compte" } as SortTableColumn);
+    this.displayedColumns.push({ id: "accountingAccountNumber", fieldName: "accountingAccountNumber", label: "N° de compte", valueFonction: (element: any, elements: any[], column: SortTableColumn, columns: SortTableColumn[]) => { if (element && column) return element.accountingAccountNumber; return "" } } as SortTableColumn);
     this.displayedColumns.push({ id: "debitAmount", fieldName: "debitAmount", label: "Débit", valueFonction: this.formatEurosForSortTable } as SortTableColumn);
     this.displayedColumns.push({ id: "creditAmount", fieldName: "creditAmount", label: "Crédit", valueFonction: this.formatEurosForSortTable } as SortTableColumn);
     this.displayedColumns.push({ id: "echoir30", fieldName: "echoir30", label: "Créances à échoir à -30 j", valueFonction: this.formatEurosForSortTable } as SortTableColumn);
@@ -73,7 +72,7 @@ export class AccountingBalanceGeneraleComponent implements OnInit {
       this.appService.displaySnackBar("🙄 Merci de saisir une plage de recherche", false, 10);
       return;
     }
-    this.accountingBalanceService.searchAccountingBalance(this.accountingBalanceSearch).subscribe(response => {
+    this.accountingBalanceService.searchAccountingBalanceGenerale(this.accountingBalanceSearch).subscribe(response => {
       this.accountingBalances = response;
       this.computeBalanceAndDebitAndCreditAccumulation();
       this.accountingBalances.sort((a, b) => this.sortRecords(a, b));

@@ -22,7 +22,7 @@
     </main>
     <table *ngIf="userNotes && userNotes.length>0" class="mat-table notes-table " cdkDrag
       [cdkDragFreeDragPosition]="currentUserNotePosition" (cdkDragEnded)="dropNoteTable($event)">
-      <tr class="mat-header-row mat-header-row-small drag-cursor" cdkDragHandle>
+      <tr class="mat-header-row   drag-cursor" cdkDragHandle>
         <th colspan="3" class="icon-row-th mat-header-cell">
           <mat-icon (click)="restoreDefaultNoteTablePosition()" class="pointer first-mat-icon small-icon"
             matTooltip="Restaurer la position initiale" matTooltipShowDelay="1000">location_on</mat-icon>
@@ -35,7 +35,7 @@
         </th>
       </tr>
       <ng-container *ngFor="let note of userNotes;let index = index">
-        <tr class="mat-header-row mat-header-row-small" *ngIf="note.isHeader">
+        <tr class="mat-header-row" *ngIf="note.isHeader">
           <th class="mat-header-cell mat-header-cell-actions" style="padding-left: 0px !important;"
             *ngIf="displayEditNote">
             <mat-icon (click)="deleteNote(note)" class="pointer small-icon" matTooltipShowDelay="2000"
@@ -52,7 +52,7 @@
           <th class="mat-header-cell" colspan="2" *ngIf="note.link"><a [routerLink]="note.link"
               class="note-link">{{note.value}}<mat-icon class="small-icon ">link</mat-icon></a></th>
         </tr>
-        <tr class="mat-row mat-header-row-small" *ngIf="!note.isHeader">
+        <tr class="mat-row " *ngIf="!note.isHeader">
           <td class="mat-header-cell mat-header-cell-actions" *ngIf="displayEditNote">
             <mat-icon (click)="deleteNote(note)" class="pointer small-icon" matTooltipShowDelay="2000"
               matTooltip="Supprimer la note">cancel

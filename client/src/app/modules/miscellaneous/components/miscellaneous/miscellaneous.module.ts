@@ -81,6 +81,7 @@ import { SelectDepartmentsComponent } from '../forms/select-departments/select-d
 import { SelectFollowupComponent } from '../forms/select-followup/select-followup.component';
 import { SelectFundTypeComponent } from '../forms/select-fund-type/select-fund-type.component';
 import { SelectGiftComponent } from '../forms/select-gift/select-gift.component';
+import { SelectInvoiceStatusComponent } from '../forms/select-invoice-status/select-invoice-status.component';
 import { SelectJournalTypeComponent } from '../forms/select-journal-type/select-journal-type.component';
 import { SelectMailRedirectionComponent } from '../forms/select-mail-redirection/select-mail-redirection.component';
 import { SelectNoticeFamilyComponent } from '../forms/select-notice-family/select-notice-family.component';
@@ -211,6 +212,7 @@ import { MiscellaneousComponent } from './miscellaneous.component';
     SelectAccountingJournalComponent,
     SortTableComponent,
     GenericDateRangePickerComponent,
+    SelectInvoiceStatusComponent,
     SingleAttachmentComponent],
   exports: [
     HistoryComponent,
@@ -293,7 +295,8 @@ import { MiscellaneousComponent } from './miscellaneous.component';
     AutocompleteCityComponent,
     SelectAccountingJournalComponent,
     SingleAttachmentComponent,
-    SortTableComponent
+    SortTableComponent,
+    SelectInvoiceStatusComponent
   ]
 })
 export class MiscellaneousModule { }

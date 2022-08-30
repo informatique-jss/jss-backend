@@ -15,9 +15,9 @@ import javax.persistence.OneToOne;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jss.osiris.libs.JacksonLocalDateTimeSerializer;
+import com.jss.osiris.modules.invoicing.model.Invoice;
+import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.miscellaneous.model.IId;
-import com.jss.osiris.modules.quotation.model.Invoice;
-import com.jss.osiris.modules.quotation.model.InvoiceItem;
 
 @Entity
 public class AccountingRecord implements Serializable, IId {

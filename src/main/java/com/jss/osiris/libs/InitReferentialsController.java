@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.jss.osiris.libs.audit.repository.AuditRepository;
 import com.jss.osiris.libs.search.repository.IndexEntityRepository;
 import com.jss.osiris.modules.accounting.repository.AccountingAccountClassRepository;
+import com.jss.osiris.modules.invoicing.repository.InvoiceStatusRepository;
 import com.jss.osiris.modules.miscellaneous.repository.AttachmentTypeRepository;
 import com.jss.osiris.modules.miscellaneous.repository.BillingItemRepository;
 import com.jss.osiris.modules.miscellaneous.repository.BillingTypeRepository;
@@ -257,6 +258,9 @@ public class InitReferentialsController {
 
 	@Autowired
 	VatCollectionTypeRepository vatCollectionTypeRepository;
+
+	@Autowired
+	InvoiceStatusRepository invoiceStatusRepository;
 
 	@GetMapping(inputEntryPoint + "/create")
 	public void create() {
@@ -1204,6 +1208,23 @@ public class InitReferentialsController {
 		 * vatCollectionType.setCode("ENCAISSEMENT");
 		 * vatCollectionType.setLabel("A l'encaissement");
 		 * vatCollectionTypeRepository.save(vatCollectionType);
+		 * 
+		 * invoiceStatusRepository.deleteAll();
+		 * InvoiceStatus status = new InvoiceStatus();
+		 * status.setCode("SENT");
+		 * status.setLabel("Envoyée");
+		 * invoiceStatusRepository.save(status);
+		 * 
+		 * status = new InvoiceStatus();
+		 * status.setCode("PAYED");
+		 * status.setLabel("Réglée/lettrée");
+		 * invoiceStatusRepository.save(status);
+		 * 
+		 * status = new InvoiceStatus();
+		 * status.setCode("CANCELLED");
+		 * status.setLabel("Annulée");
+		 * invoiceStatusRepository.save(status);
 		 */
 	}
+
 }

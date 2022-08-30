@@ -26,11 +26,11 @@ import com.jss.osiris.modules.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.accounting.model.AccountingRecordSearch;
 import com.jss.osiris.modules.accounting.repository.AccountingRecordRepository;
+import com.jss.osiris.modules.invoicing.model.Invoice;
+import com.jss.osiris.modules.invoicing.model.InvoiceItem;
+import com.jss.osiris.modules.invoicing.service.InvoiceItemService;
+import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.miscellaneous.service.VatService;
-import com.jss.osiris.modules.quotation.model.Invoice;
-import com.jss.osiris.modules.quotation.model.InvoiceItem;
-import com.jss.osiris.modules.quotation.service.InvoiceItemService;
-import com.jss.osiris.modules.quotation.service.InvoiceService;
 import com.jss.osiris.modules.tiers.model.ITiers;
 import com.jss.osiris.modules.tiers.model.Responsable;
 

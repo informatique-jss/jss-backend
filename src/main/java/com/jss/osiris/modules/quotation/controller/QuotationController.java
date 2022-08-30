@@ -49,7 +49,6 @@ import com.jss.osiris.modules.quotation.model.Domiciliation;
 import com.jss.osiris.modules.quotation.model.DomiciliationContractType;
 import com.jss.osiris.modules.quotation.model.FundType;
 import com.jss.osiris.modules.quotation.model.IQuotation;
-import com.jss.osiris.modules.quotation.model.Invoice;
 import com.jss.osiris.modules.quotation.model.JournalType;
 import com.jss.osiris.modules.quotation.model.MailRedirectionType;
 import com.jss.osiris.modules.quotation.model.NoticeType;
@@ -77,7 +76,6 @@ import com.jss.osiris.modules.quotation.service.ConfrereService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.quotation.service.DomiciliationContractTypeService;
 import com.jss.osiris.modules.quotation.service.FundTypeService;
-import com.jss.osiris.modules.quotation.service.InvoiceService;
 import com.jss.osiris.modules.quotation.service.JournalTypeService;
 import com.jss.osiris.modules.quotation.service.MailRedirectionTypeService;
 import com.jss.osiris.modules.quotation.service.NoticeTypeFamilyService;
@@ -207,49 +205,6 @@ public class QuotationController {
 
   @Autowired
   CustomerOrderService customerOrderService;
-
-  @Autowired
-  InvoiceService invoiceService;
-
-  @PostMapping(inputEntryPoint + "/invoice")
-  public ResponseEntity<Invoice> addOrUpdateInvoice(
-      @RequestBody Invoice invoice) {
-    Invoice outInvoice;
-    try {
-      if (invoice.getId() != null)
-        validationHelper.validateReferential(invoice, true);
-      validationHelper.validateDateTime(invoice.getCreatedDate(), true);
-
-      outInvoice = invoiceService
-          .addOrUpdateInvoice(invoice);
-    } catch (
-
-    ResponseStatusException e) {
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching invoice", e);
-      return new ResponseEntity<Invoice>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching invoice", e);
-      return new ResponseEntity<Invoice>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<Invoice>(outInvoice, HttpStatus.OK);
-  }
-
-  @GetMapping(inputEntryPoint + "/invoice/customer-order")
-  public ResponseEntity<Invoice> getInvoiceForCustomerOrder(@RequestParam Integer customerOrderId) {
-    Invoice invoice = null;
-    try {
-      invoice = invoiceService.getInvoiceForCustomerOrder(customerOrderId);
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching regie", e);
-      return new ResponseEntity<Invoice>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching regie", e);
-      return new ResponseEntity<Invoice>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<Invoice>(invoice, HttpStatus.OK);
-  }
 
   @GetMapping(inputEntryPoint + "/regies")
   public ResponseEntity<List<Regie>> getRegies() {

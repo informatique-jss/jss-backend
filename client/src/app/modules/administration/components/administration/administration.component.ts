@@ -76,6 +76,7 @@ export class AdministrationComponent implements OnInit {
   VAT_COLLECTION_TYPE_REFERENTIAL = "Divers - type d'encaissement de la TVA";
   PROVIDER_REFERENTIAL = "Divers - Fournisseur";
   ACCOUNTING_JOURNAL_REFERENTIAL = "Comptabilité - journal comptable";
+  INVOICE_STAUTS_REFERENTIAL = "Facturation - statut de facture";
 
   constructor(private appService: AppService,
     private formBuilder: FormBuilder,
@@ -136,6 +137,7 @@ export class AdministrationComponent implements OnInit {
     this.referentials.push(this.VAT_COLLECTION_TYPE_REFERENTIAL);
     this.referentials.push(this.PROVIDER_REFERENTIAL);
     this.referentials.push(this.ACCOUNTING_JOURNAL_REFERENTIAL);
+    this.referentials.push(this.INVOICE_STAUTS_REFERENTIAL);
     this.referentials.sort((a, b) => a.localeCompare(b));
 
     this.filteredReferentials = this.referentialForm.get("entity")?.valueChanges.pipe(
