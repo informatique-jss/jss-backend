@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
@@ -17,6 +18,7 @@ import com.jss.osiris.modules.invoicing.model.InvoiceSearch;
 import com.jss.osiris.modules.invoicing.repository.InvoiceRepository;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.service.DocumentService;
+import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.tiers.model.ITiers;
 import com.jss.osiris.modules.tiers.model.Responsable;
@@ -30,6 +32,15 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Autowired
     DocumentService documentService;
+
+    @Value("${miscellaneous.document.billing.label.type.customer.code}")
+    private String billingLabelCustomerCode;
+
+    @Value("${miscellaneous.document.billing.label.type.affaire.code}")
+    private String billingLabelAffaireCode;
+
+    @Value("${miscellaneous.document.billing.label.type.other.code}")
+    private String billingLabelOtherCode;
 
     @Override
     @Cacheable(value = "invoice", key = "#id")
@@ -50,7 +61,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public Invoice createInvoice(ITiers orderingCustomer) throws Exception {
+    public Invoice createInvoice(ITiers orderingCustomer, Affaire affaire) throws Exception {
         Invoice invoice = new Invoice();
         invoice.setCreatedDate(LocalDateTime.now());
         Document billingDocument = documentService.getBillingDocument(orderingCustomer.getDocuments());
@@ -71,16 +82,52 @@ public class InvoiceServiceImpl implements InvoiceService {
         if (billingDocument.getPaymentDeadlineType() != null)
             nbrOfDayFromDueDate = billingDocument.getPaymentDeadlineType().getNumberOfDay();
         invoice.setDueDate(LocalDate.now().plusDays(nbrOfDayFromDueDate));
-        invoice.setBillingLabel(billingDocument.getBillingLabel());
-        invoice.setBillingLabelAddress(billingDocument.getBillingLabelAddress());
-        invoice.setBillingLabelPostalCode(billingDocument.getBillingLabelPostalCode());
-        invoice.setBillingLabelCity(billingDocument.getBillingLabelCity());
-        invoice.setBillingLabelCountry(billingDocument.getBillingLabelCountry());
-        invoice.setBillingLabelIsIndividual(billingDocument.getBillingLabelIsIndividual());
-        invoice.setBillingLabelType(billingDocument.getBillingLabelType());
-        invoice.setIsResponsableOnBilling(billingDocument.getIsResponsableOnBilling());
-        invoice.setIsCommandNumberMandatory(billingDocument.getIsCommandNumberMandatory());
-        invoice.setCommandNumber(billingDocument.getCommandNumber());
+
+        // Defined billing label
+        if (billingLabelOtherCode.equals(billingDocument.getBillingLabelType().getCode())) {
+            invoice.setBillingLabel(billingDocument.getBillingLabel());
+            invoice.setBillingLabelAddress(billingDocument.getBillingLabelAddress());
+            invoice.setBillingLabelPostalCode(billingDocument.getBillingLabelPostalCode());
+            invoice.setBillingLabelCity(billingDocument.getBillingLabelCity());
+            invoice.setBillingLabelCountry(billingDocument.getBillingLabelCountry());
+            invoice.setBillingLabelIsIndividual(billingDocument.getBillingLabelIsIndividual());
+            invoice.setBillingLabelType(billingDocument.getBillingLabelType());
+            invoice.setIsResponsableOnBilling(billingDocument.getIsResponsableOnBilling());
+            invoice.setIsCommandNumberMandatory(billingDocument.getIsCommandNumberMandatory());
+            invoice.setCommandNumber(billingDocument.getCommandNumber());
+        } else if (billingLabelAffaireCode.equals(billingDocument.getBillingLabelType().getCode())) {
+            invoice.setBillingLabel(affaire.getIsIndividual() ? affaire.getFirstname() + " " + affaire.getLastname()
+                    : affaire.getDenomination());
+            invoice.setBillingLabelAddress(affaire.getAddress());
+            invoice.setBillingLabelPostalCode(affaire.getPostalCode());
+            invoice.setBillingLabelCity(affaire.getCity());
+            invoice.setBillingLabelCountry(affaire.getCountry());
+            invoice.setBillingLabelIsIndividual(affaire.getIsIndividual());
+            invoice.setBillingLabelType(billingDocument.getBillingLabelType());
+            invoice.setIsResponsableOnBilling(billingDocument.getIsResponsableOnBilling());
+            invoice.setIsCommandNumberMandatory(billingDocument.getIsCommandNumberMandatory());
+            invoice.setCommandNumber(billingDocument.getCommandNumber());
+        } else {
+            if (invoice.getTiers() != null)
+                invoice.setBillingLabel(invoice.getTiers().getIsIndividual()
+                        ? invoice.getTiers().getFirstname() + " " + invoice.getTiers().getLastname()
+                        : invoice.getTiers().getDenomination());
+            if (invoice.getResponsable() != null)
+                invoice.setBillingLabel(
+                        invoice.getResponsable().getFirstname() + " " + invoice.getResponsable().getLastname());
+            if (invoice.getConfrere() != null)
+                invoice.setBillingLabel(invoice.getConfrere().getLabel());
+            invoice.setBillingLabelAddress(orderingCustomer.getAddress());
+            invoice.setBillingLabelPostalCode(orderingCustomer.getPostalCode());
+            invoice.setBillingLabelCity(orderingCustomer.getCity());
+            invoice.setBillingLabelCountry(orderingCustomer.getCountry());
+            invoice.setBillingLabelIsIndividual(orderingCustomer.getIsIndividual());
+            invoice.setBillingLabelType(billingDocument.getBillingLabelType());
+            invoice.setIsResponsableOnBilling(billingDocument.getIsResponsableOnBilling());
+            invoice.setIsCommandNumberMandatory(billingDocument.getIsCommandNumberMandatory());
+            invoice.setCommandNumber(billingDocument.getCommandNumber());
+        }
+        ;
 
         invoiceRepository.save(invoice);
         return invoice;

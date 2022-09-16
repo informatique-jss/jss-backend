@@ -39,6 +39,25 @@ public class InvoicingController {
     @Autowired
     InvoiceStatusService invoiceStatusService;
 
+    @GetMapping(inputEntryPoint + "/invoice")
+    public ResponseEntity<Invoice> getTiersById(@RequestParam Integer id) {
+        Invoice invoice = null;
+        if (id == null)
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        try {
+            invoice = invoiceService.getInvoice(id);
+            if (invoice == null)
+                invoice = new Invoice();
+        } catch (HttpStatusCodeException e) {
+            logger.error("HTTP error when fetching client types", e);
+            return new ResponseEntity<Invoice>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            logger.error("Error when fetching client types", e);
+            return new ResponseEntity<Invoice>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<Invoice>(invoice, HttpStatus.OK);
+    }
+
     @GetMapping(inputEntryPoint + "/invoice-status-list")
     public ResponseEntity<List<InvoiceStatus>> getInvoiceStatus() {
         List<InvoiceStatus> invoiceStatus = null;

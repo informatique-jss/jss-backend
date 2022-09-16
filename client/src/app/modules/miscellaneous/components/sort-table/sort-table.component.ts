@@ -165,4 +165,8 @@ export class SortTableComponent implements OnInit {
   }
 
   getObjectPropertybyString = getObjectPropertybyString;
+
+  getActionLink(action: SortTableAction, element: any) {
+    return action.actionLinkFunction(action, element);
+  }
 }

@@ -4,6 +4,7 @@ import { CustomErrorStateMatcher } from 'src/app/app.component';
 import { formatDateTimeForSortTable } from 'src/app/libs/FormatHelper';
 import { Attachment } from '../../model/Attachment';
 import { IAttachment } from '../../model/IAttachment';
+import { SortTableAction } from '../../model/SortTableAction';
 import { SortTableColumn } from '../../model/SortTableColumn';
 import { UploadAttachmentService } from '../../services/upload.attachment.service';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
@@ -22,6 +23,7 @@ export class AttachmentsComponent implements OnInit {
   @Input() editMode: boolean = false;
 
   displayedColumns: SortTableColumn[] = [];
+  tableActions: SortTableAction[] = [] as Array<SortTableAction>;
   searchText: string | undefined;
 
   filterValue: string = "";
@@ -41,10 +43,15 @@ export class AttachmentsComponent implements OnInit {
   }
 
   ngOnInit() {
+    console.log("tt");
     this.displayedColumns.push({ id: "name", fieldName: "uploadedFile.filename", label: "Nom" } as SortTableColumn);
     this.displayedColumns.push({ id: "attachementType", fieldName: "attachmentType.label", label: "Type de document" } as SortTableColumn);
     this.displayedColumns.push({ id: "createdBy", fieldName: "uploadedFile.createdBy", label: "Ajouté par" } as SortTableColumn);
     this.displayedColumns.push({ id: "creationDate", fieldName: "uploadedFile.creationDate", label: "Ajouté le", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
+
+    this.tableActions.push({ actionIcon: "preview", actionName: "Prévisualiser le fichier", actionClick: this.previewFile, display: true } as SortTableAction);
+    this.tableActions.push({ actionIcon: "download", actionName: "Télécharger le fichier", actionClick: this.downloadFile, display: true } as SortTableAction);
+    this.tableActions.push({ actionIcon: "block", actionName: "Désactiver le fichier", actionClick: this.disableFile, display: true } as SortTableAction);
   }
   formatDateTimeForSortTable = formatDateTimeForSortTable;
 
@@ -74,7 +81,7 @@ export class AttachmentsComponent implements OnInit {
     });
   }
 
-  disableFile(attachement: Attachment) {
+  disableFile(action: SortTableAction, attachement: Attachment) {
     const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
       maxWidth: "400px",
       data: {
@@ -94,11 +101,11 @@ export class AttachmentsComponent implements OnInit {
     });
   }
 
-  previewFile(attachment: Attachment) {
+  previewFile(action: SortTableAction, attachment: Attachment) {
     this.uploadAttachmentService.previewAttachment(attachment);
   }
 
-  downloadFile(attachment: Attachment) {
+  downloadFile(action: SortTableAction, attachment: Attachment) {
     this.uploadAttachmentService.downloadAttachment(attachment);
   }
 

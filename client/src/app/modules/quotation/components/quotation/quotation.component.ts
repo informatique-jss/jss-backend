@@ -8,7 +8,6 @@ import { EntityType } from 'src/app/routing/search/EntityType';
 import { CUSTOMER_ORDER_ENTITY_TYPE, QUOTATION_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
 import { SearchService } from 'src/app/services/search.service';
-import { InvoiceItemService } from '../../../invoicing/services/invoice.item.service';
 import { Affaire } from '../../model/Affaire';
 import { NoticeTypeFamily } from '../../model/NoticeTypeFamily';
 import { Provision } from '../../model/Provision';
@@ -68,7 +67,6 @@ export class QuotationComponent implements OnInit {
     private quotationStatusService: QuotationStatusService,
     private activatedRoute: ActivatedRoute,
     protected searchService: SearchService,
-    private invoiceItemService: InvoiceItemService,
     private router: Router) { }
 
   ngOnInit() {

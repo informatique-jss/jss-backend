@@ -20,6 +20,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { RouterModule } from '@angular/router';
 import { MatTableExporterModule } from 'mat-table-exporter';
 import { TrustHtmlPipe } from 'src/app/libs/TrustHtmlPipe';
 import { AddressingComponent } from '../addressing/addressing.component';
@@ -130,6 +131,7 @@ import { MiscellaneousComponent } from './miscellaneous.component';
     MatSlideToggleModule,
     MatCheckboxModule,
     MatAutocompleteModule,
+    RouterModule,
   ],
   declarations: [MiscellaneousComponent,
     HistoryComponent,

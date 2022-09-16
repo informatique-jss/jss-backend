@@ -26,4 +26,8 @@ export class InvoiceService extends AppRestService<Invoice>{
     return this.postList(new HttpParams(), "invoice/search", invoiceSearch);
   }
 
+  getInvoiceById(invoiceId: number) {
+    return this.getById("invoice", invoiceId);
+  }
+
 }

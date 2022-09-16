@@ -12,11 +12,13 @@ import { MatTabsModule } from "@angular/material/tabs";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { RouterModule, Routes } from "@angular/router";
 import { MiscellaneousModule } from "../../../miscellaneous/components/miscellaneous/miscellaneous.module";
+import { InvoiceDetailsComponent } from "../invoice-details/invoice-details.component";
 import { InvoiceListComponent } from "../invoice-list/invoice-list.component";
 import { InvoiceComponent } from "./invoicing.component";
 
 const routes: Routes = [
   { path: 'invoicing', component: InvoiceComponent },
+  { path: 'invoicing/:id', component: InvoiceDetailsComponent },
 ];
 
 @NgModule({
@@ -37,6 +39,7 @@ const routes: Routes = [
   ],
   declarations: [InvoiceComponent,
     InvoiceListComponent,
+    InvoiceDetailsComponent,
   ]
 })
 export class InvoicingModule { }

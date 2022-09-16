@@ -1,0 +1,93 @@
+<div class="mat-elevation-z2 form-div" *ngIf="invoice">
+  <mat-tab-group animationDuration="0ms" #tabs>
+    <mat-tab label="Détail">
+      <div class="full-width">
+        <table class="full-width">
+          <tr>
+            <td>Facture n°{{invoice.id}}</td>
+            <td>Payeur : {{invoice.billingLabel}}</td>
+          </tr>
+          <tr>
+            <td>Paris, le {{invoice.createdDate|date:'dd/MM/yyyy à HH:mm'}}</td>
+            <td>{{invoice.billingLabelAddress}}</td>
+          </tr>
+          <tr>
+            <td>Affaire(s) : {{getAffaireList(invoice)}}</td>
+            <td>{{invoice.billingLabelPostalCode}} {{invoice.billingLabelCity.label}}
+              {{invoice.billingLabelCountry.label}}</td>
+          </tr>
+        </table>
+        <table class="full-width">
+          <ng-container *ngFor="let invoiceItem of invoice.invoiceItems">
+            <tr>
+              <td>
+                {{invoiceItem.label}}
+              </td>
+              <td class="td-price">
+                {{invoiceItem.preTaxPrice|number}} €
+              </td>
+            </tr>
+            <tr *ngIf="invoiceItem.discountAmount && invoiceItem.discountAmount>0">
+              <td>
+                Remise
+              </td>
+              <td class="td-price remise">
+                - {{invoiceItem.discountAmount|number}} €
+              </td>
+            </tr>
+            <tr *ngIf="invoiceItem.vat">
+              <td>
+                {{invoiceItem.vat.label}}
+              </td>
+              <td class="td-price">
+                {{invoiceItem.vatPrice|number}} €
+              </td>
+            </tr>
+          </ng-container>
+        </table>
+        <table class="total-table">
+          <tr>
+            <td>
+              Prix total HT
+            </td>
+            <td class="td-price">
+              {{getPreTaxPriceTotal() |number}} €
+            </td>
+          </tr>
+          <tr *ngIf="getDiscountTotal() && getDiscountTotal()>0">
+            <td>
+              Remise totale
+            </td>
+            <td class="td-price remise">
+              - {{getDiscountTotal()|number}} €
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Total HT
+            </td>
+            <td class="td-price">
+              {{getPreTaxPriceTotal()-getDiscountTotal()|number}} €
+            </td>
+          </tr>
+          <tr *ngIf="getApplicableVat()!=undefined">
+            <td>
+              Total {{getApplicableVat()!.label}}
+            </td>
+            <td class="td-price">
+              {{getVatTotal()|number}} €
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Total TTC
+            </td>
+            <td class="td-price">
+              {{getPriceTotal()|number}} €
+            </td>
+          </tr>
+        </table>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</div>

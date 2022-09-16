@@ -13,13 +13,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedAttributeNode;
-import javax.persistence.NamedEntityGraph;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jss.osiris.libs.JacksonLocalDateSerializer;
@@ -34,7 +30,6 @@ import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
 @Entity
-@NamedEntityGraph(name = "graph.invoice.tiers", attributeNodes = @NamedAttributeNode(value = "billingLabelType"))
 public class Invoice implements Serializable, IId {
 
 	@Id
@@ -53,30 +48,34 @@ public class Invoice implements Serializable, IId {
 	@JsonManagedReference("invoice")
 	private List<InvoiceItem> invoiceItems;
 
-	@OneToOne(fetch = FetchType.LAZY)
+	@OneToOne(fetch = FetchType.EAGER)
 	private CustomerOrder customerOrder;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_responsable")
-	@JsonIgnore
 	private Responsable responsable;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_confrere")
-	@JsonIgnore
 	private Confrere confrere;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_tiers")
-	@JsonBackReference("tiers")
-	@JsonIgnore
 	private Tiers tiers;
 
-	@Column(length = 40)
+	@Column(length = 40, name = "billing_label")
 	private String billingLabel;
+
+	@Column(name = "billing_label_address")
 	private String billingLabelAddress;
 	private String billingLabelPostalCode;
+
+	@ManyToOne
+	@JoinColumn(name = "id_billing_label_city")
 	private City billingLabelCity;
+
+	@ManyToOne
+	@JoinColumn(name = "id_billing_label_country")
 	private Country billingLabelCountry;
 	private Boolean billingLabelIsIndividual;
 

@@ -13,8 +13,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedAttributeNode;
-import javax.persistence.NamedEntityGraph;
 import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -30,7 +28,6 @@ import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
 @Entity
-@NamedEntityGraph(name = "graph.customerOrder.tiers", attributeNodes = @NamedAttributeNode("tiers"))
 public class CustomerOrder implements IQuotation {
 
 	@Id

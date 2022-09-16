@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceSearch;
+import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.tiers.model.ITiers;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
@@ -21,8 +22,11 @@ public interface InvoiceService {
      * Do not forget to do it afterward
      * 
      * @param orderingCustomer Ordering customer of the invoice
+     * @param affaire          : affaire of the invoice, defined it only if there is
+     *                         only one affaire in the invoice (it's to define
+     *                         payer)
      */
-    public Invoice createInvoice(ITiers orderingCustomer) throws Exception;
+    public Invoice createInvoice(ITiers orderingCustomer, Affaire affaire) throws Exception;
 
     public Float getDiscountTotal(Invoice invoice);
 

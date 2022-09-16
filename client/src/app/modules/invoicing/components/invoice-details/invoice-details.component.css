@@ -1,0 +1,22 @@
+.td-price {
+  width: 30%;
+  text-align: right;
+}
+
+.remise {
+  color: red
+}
+
+.affaire {
+  font-weight: 600;
+  padding-top: 15px;
+}
+
+.total-table {
+  padding-top: 30px;
+  font-weight: 600;
+}
+
+.info-icon {
+  color: grey;
+}

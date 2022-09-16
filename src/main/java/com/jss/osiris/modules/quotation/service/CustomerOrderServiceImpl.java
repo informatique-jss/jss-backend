@@ -118,7 +118,10 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             throw new Exception("No invoice item found on customer order " + customerOrder.getId());
 
         // Generate blank invoice
-        Invoice invoice = invoiceService.createInvoice(quotationService.getCustomerOrderOfQuotation(customerOrder));
+        // TODO
+        // Invoice invoice =
+        // invoiceService.createInvoice(quotationService.getCustomerOrderOfQuotation(customerOrder));
+        Invoice invoice = new Invoice();
         invoice.setInvoiceItems(new ArrayList<InvoiceItem>());
         // Associate invoice to invoice item
         for (Provision provision : customerOrder.getProvisions()) {

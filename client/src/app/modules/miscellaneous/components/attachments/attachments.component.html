@@ -8,8 +8,8 @@
         <mat-icon>add</mat-icon>
       </button>
     </div>
-    <sort-table [columns]="displayedColumns" [values]="entity.attachments" tableName="Pièce jointes"
-      [filterText]="searchText">
+    <sort-table [columns]="displayedColumns" [actions]="tableActions" [values]="entity.attachments"
+      tableName="Pièce jointes" [filterText]="searchText">
     </sort-table>
     <!--ng-container matColumnDef="action">
         <th mat-header-cell *matHeaderCellDef></th>

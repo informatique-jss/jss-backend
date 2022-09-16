@@ -15,9 +15,13 @@
       <th mat-header-cell mat-sort-header *matHeaderCellDef></th>
       <td mat-cell *matCellDef="let element">
         <ng-container *ngFor="let action of actions">
-          <mat-icon [matTooltip]="action.actionName" *ngIf="action.display" color="accent"
-            (click)="actionTrigger(action, element)">{{action.actionIcon}}
+          <mat-icon [matTooltip]="action.actionName" *ngIf="action.display && action.actionClick" color="accent"
+            class="pointer" (click)="actionTrigger(action, element)">{{action.actionIcon}}
           </mat-icon>
+          <a [routerLink]="getActionLink(action, element)" *ngIf="action.display && action.actionLinkFunction">
+            <mat-icon [matTooltip]="action.actionName" color="accent" class="pointer">{{action.actionIcon}}
+            </mat-icon>
+          </a>
         </ng-container>
       </td>
     </ng-container>
