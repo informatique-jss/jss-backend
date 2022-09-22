@@ -90,7 +90,14 @@ public class CompetentAuthority implements Serializable, IId {
 	@JoinColumn(name = "id_accounting_account_customer")
 	private AccountingAccount accountingAccountCustomer;
 
+	@ManyToOne
+	@JoinColumn(name = "id_accounting_account_deposit")
+	private AccountingAccount accountingAccountDeposit;
+
 	private Integer reinvoicing;
+
+	@Column(length = 150)
+	private String schedulle;
 
 	public Integer getId() {
 		return id;
@@ -258,6 +265,22 @@ public class CompetentAuthority implements Serializable, IId {
 
 	public void setReinvoicing(Integer reinvoicing) {
 		this.reinvoicing = reinvoicing;
+	}
+
+	public AccountingAccount getAccountingAccountDeposit() {
+		return accountingAccountDeposit;
+	}
+
+	public void setAccountingAccountDeposit(AccountingAccount accountingAccountDeposit) {
+		this.accountingAccountDeposit = accountingAccountDeposit;
+	}
+
+	public String getSchedulle() {
+		return schedulle;
+	}
+
+	public void setSchedulle(String schedulle) {
+		this.schedulle = schedulle;
 	}
 
 }

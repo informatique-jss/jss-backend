@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.invoicing.controller;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -20,8 +21,13 @@ import com.jss.osiris.libs.ValidationHelper;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceSearch;
 import com.jss.osiris.modules.invoicing.model.InvoiceStatus;
+import com.jss.osiris.modules.invoicing.model.Payment;
+import com.jss.osiris.modules.invoicing.model.PaymentSearch;
+import com.jss.osiris.modules.invoicing.model.PaymentWay;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.invoicing.service.InvoiceStatusService;
+import com.jss.osiris.modules.invoicing.service.PaymentService;
+import com.jss.osiris.modules.invoicing.service.PaymentWayService;
 
 @RestController
 public class InvoicingController {
@@ -38,6 +44,109 @@ public class InvoicingController {
 
     @Autowired
     InvoiceStatusService invoiceStatusService;
+
+    @Autowired
+    PaymentService paymentService;
+
+    @Autowired
+    PaymentWayService paymentWayService;
+
+    @GetMapping(inputEntryPoint + "/payment-ways")
+    public ResponseEntity<List<PaymentWay>> getPaymentWays() {
+        List<PaymentWay> paymentWays = null;
+        try {
+            paymentWays = paymentWayService.getPaymentWays();
+        } catch (HttpStatusCodeException e) {
+            logger.error("HTTP error when fetching paymentWay", e);
+            return new ResponseEntity<List<PaymentWay>>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            logger.error("Error when fetching paymentWay", e);
+            return new ResponseEntity<List<PaymentWay>>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<List<PaymentWay>>(paymentWays, HttpStatus.OK);
+    }
+
+    @PostMapping(inputEntryPoint + "/payment-way")
+    public ResponseEntity<PaymentWay> addOrUpdatePaymentWay(
+            @RequestBody PaymentWay paymentWays) {
+        PaymentWay outPaymentWay;
+        try {
+            if (paymentWays.getId() != null)
+                validationHelper.validateReferential(paymentWays, true);
+            validationHelper.validateString(paymentWays.getCode(), true);
+            validationHelper.validateString(paymentWays.getLabel(), true);
+
+            outPaymentWay = paymentWayService
+                    .addOrUpdatePaymentWay(paymentWays);
+        } catch (
+
+        ResponseStatusException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (HttpStatusCodeException e) {
+            logger.error("HTTP error when fetching paymentWay", e);
+            return new ResponseEntity<PaymentWay>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            logger.error("Error when fetching paymentWay", e);
+            return new ResponseEntity<PaymentWay>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<PaymentWay>(outPaymentWay, HttpStatus.OK);
+    }
+
+    // TODO : à retirer avant la MEP, seulement pour test !
+    @PostMapping(inputEntryPoint + "/payment")
+    public ResponseEntity<Payment> addOrUpdatePayment(@RequestBody Payment payment) {
+        Payment outPayment;
+        try {
+            if (payment.getId() != null)
+                validationHelper.validateReferential(payment, true);
+            validationHelper.validateString(payment.getLabel(), true);
+            validationHelper.validateFloat(payment.getPaymentAmount(), true);
+
+            payment.setPaymentDate(LocalDateTime.now());
+            outPayment = paymentService.addOrUpdatePayment(payment);
+            paymentService.payementGrab();
+        } catch (
+
+        ResponseStatusException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (HttpStatusCodeException e) {
+            logger.error("HTTP error when fetching paymentWay", e);
+            return new ResponseEntity<Payment>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            logger.error("Error when fetching paymentWay", e);
+            return new ResponseEntity<Payment>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<Payment>(outPayment, HttpStatus.OK);
+    }
+
+    @PostMapping(inputEntryPoint + "/payemnts/search")
+    public ResponseEntity<List<Payment>> getPaymentss(@RequestBody PaymentSearch paymentSearch) {
+        List<Payment> payments;
+        if (paymentSearch == null)
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        if (paymentSearch.getStartDate() == null || paymentSearch.getEndDate() == null)
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        if (paymentSearch.getPaymentWays() == null)
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        Duration duration = Duration.between(paymentSearch.getStartDate(), paymentSearch.getEndDate());
+
+        if (duration.toDays() > 366)
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        try {
+            payments = paymentService.searchPayments(paymentSearch);
+        } catch (HttpStatusCodeException e) {
+            logger.error("HTTP error when fetching payment", e);
+            return new ResponseEntity<List<Payment>>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            logger.error("Error when fetching payment", e);
+            return new ResponseEntity<List<Payment>>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<List<Payment>>(payments, HttpStatus.OK);
+    }
 
     @GetMapping(inputEntryPoint + "/invoice")
     public ResponseEntity<Invoice> getTiersById(@RequestParam Integer id) {

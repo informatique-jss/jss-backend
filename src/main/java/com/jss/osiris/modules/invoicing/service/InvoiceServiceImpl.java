@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
@@ -12,14 +13,17 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
+import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.invoicing.model.InvoiceSearch;
+import com.jss.osiris.modules.invoicing.model.InvoiceStatus;
 import com.jss.osiris.modules.invoicing.repository.InvoiceRepository;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.Confrere;
+import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.tiers.model.ITiers;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
@@ -33,14 +37,25 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Autowired
     DocumentService documentService;
 
-    @Value("${miscellaneous.document.billing.label.type.customer.code}")
-    private String billingLabelCustomerCode;
+    @Autowired
+    InvoiceStatusService invoiceStatusService;
 
     @Value("${miscellaneous.document.billing.label.type.affaire.code}")
     private String billingLabelAffaireCode;
 
     @Value("${miscellaneous.document.billing.label.type.other.code}")
     private String billingLabelOtherCode;
+
+    @Value("${invoicing.invoice.status.send.code}")
+    private String invoiceStatusSendCode;
+
+    @Autowired
+    IndexEntityService indexEntityService;
+
+    @Override
+    public List<Invoice> getAllInvoices() {
+        return IterableUtils.toList(invoiceRepository.findAll());
+    }
 
     @Override
     @Cacheable(value = "invoice", key = "#id")
@@ -57,14 +72,16 @@ public class InvoiceServiceImpl implements InvoiceService {
     })
     public Invoice addOrUpdateInvoice(
             Invoice invoice) {
-        return invoiceRepository.save(invoice);
+        invoiceRepository.save(invoice);
+        indexEntityService.indexEntity(invoice, invoice.getId());
+        return invoice;
     }
 
     @Override
-    public Invoice createInvoice(ITiers orderingCustomer, Affaire affaire) throws Exception {
+    public Invoice createInvoice(CustomerOrder customerOrder, ITiers orderingCustomer) throws Exception {
         Invoice invoice = new Invoice();
         invoice.setCreatedDate(LocalDateTime.now());
-        Document billingDocument = documentService.getBillingDocument(orderingCustomer.getDocuments());
+        Document billingDocument = documentService.getBillingDocument(customerOrder.getDocuments());
 
         if (billingDocument == null)
             throw new Exception("Billing document not found for ordering customer provided");
@@ -96,6 +113,7 @@ public class InvoiceServiceImpl implements InvoiceService {
             invoice.setIsCommandNumberMandatory(billingDocument.getIsCommandNumberMandatory());
             invoice.setCommandNumber(billingDocument.getCommandNumber());
         } else if (billingLabelAffaireCode.equals(billingDocument.getBillingLabelType().getCode())) {
+            Affaire affaire = customerOrder.getProvisions().get(0).getAffaire();
             invoice.setBillingLabel(affaire.getIsIndividual() ? affaire.getFirstname() + " " + affaire.getLastname()
                     : affaire.getDenomination());
             invoice.setBillingLabelAddress(affaire.getAddress());
@@ -127,9 +145,14 @@ public class InvoiceServiceImpl implements InvoiceService {
             invoice.setIsCommandNumberMandatory(billingDocument.getIsCommandNumberMandatory());
             invoice.setCommandNumber(billingDocument.getCommandNumber());
         }
-        ;
 
-        invoiceRepository.save(invoice);
+        InvoiceStatus statusSent = invoiceStatusService.getInvoiceStatusByCode(invoiceStatusSendCode);
+        if (statusSent == null)
+            throw new Exception("Status Sent for invoice not found for parameter " + invoiceStatusSendCode);
+
+        invoice.setInvoiceStatus(statusSent);
+
+        this.addOrUpdateInvoice(invoice);
         return invoice;
     }
 
@@ -168,15 +191,17 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Override
     public Float getPriceTotal(Invoice invoice) {
-        return this.getPreTaxPriceTotal(invoice) - this.getDiscountTotal(invoice) + this.getVatTotal(invoice);
+        Float total = this.getPreTaxPriceTotal(invoice) - this.getDiscountTotal(invoice) + this.getVatTotal(invoice);
+        return total;
     }
 
     @Override
-    public void setPriceTotal(Invoice invoice) {
+    public Invoice setPriceTotal(Invoice invoice) {
         if (invoice != null) {
             invoice.setTotalPrice(this.getPriceTotal(invoice));
-            this.invoiceRepository.save(invoice);
+            this.addOrUpdateInvoice(invoice);
         }
+        return invoice;
     }
 
     @Override
@@ -214,6 +239,14 @@ public class InvoiceServiceImpl implements InvoiceService {
                 invoiceSearch.getStartDate(),
                 invoiceSearch.getEndDate());
         return invoices;
+    }
+
+    @Override
+    public void reindexInvoices() {
+        List<Invoice> invoices = getAllInvoices();
+        if (invoices != null)
+            for (Invoice invoice : invoices)
+                indexEntityService.indexEntity(invoice, invoice.getId());
     }
 
 }

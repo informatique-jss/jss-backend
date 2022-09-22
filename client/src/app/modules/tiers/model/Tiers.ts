@@ -23,4 +23,5 @@ export interface Tiers extends ITiers {
   competitors: Competitor[];
   accountingAccountCustomer: AccountingAccount;
   accountingAccountProvider: AccountingAccount;
+  accountingAccountDeposit: AccountingAccount;
 }

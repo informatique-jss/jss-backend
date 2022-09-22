@@ -130,6 +130,12 @@ public class AccountingController {
             @RequestBody AccountingRecord accountingRecords) {
         AccountingRecord outAccountingRecord;
         try {
+            if (accountingRecords.getIsTemporary() == null && accountingRecords.getId() != null)
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+            if (accountingRecords.getIsTemporary() == false)
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
             if (accountingRecords.getId() != null)
                 validationHelper.validateReferential(accountingRecords, true);
             validationHelper.validateString(accountingRecords.getLabel(), true, 100);

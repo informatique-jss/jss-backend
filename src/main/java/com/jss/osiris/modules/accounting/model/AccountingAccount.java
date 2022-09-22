@@ -28,7 +28,7 @@ public class AccountingAccount implements Serializable, IId {
 	@Column(nullable = false, length = 100)
 	private String label;
 
-	@Column(length = 3)
+	@Column(length = 6)
 	private String accountingAccountNumber;
 
 	private Integer accountingAccountSubNumber;

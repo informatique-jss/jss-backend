@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, ViewChildren } from '@angular/core';
 import { MatAccordion } from '@angular/material/expansion';
 import { ActivatedRoute, Router, UrlSegment } from '@angular/router';
 import { Subject } from 'rxjs';
-import { QUOTATION_DOCUMENT_TYPE_CODE, QUOTATION_LABEL_TYPE_AFFAIRE_CODE, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_BILLED, QUOTATION_STATUS_CANCELLED, QUOTATION_STATUS_OPEN, QUOTATION_STATUS_REFUSED_BY_CUSTOMER, QUOTATION_STATUS_SENT_TO_CUSTOMER, QUOTATION_STATUS_TO_VERIFY, QUOTATION_STATUS_VALIDATED_BY_CUSTOMER, QUOTATION_STATUS_VALIDATED_BY_JSS } from 'src/app/libs/Constants';
+import { QUOTATION_DOCUMENT_TYPE_CODE, QUOTATION_LABEL_TYPE_AFFAIRE_CODE, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_BEING_PROCESSED, QUOTATION_STATUS_BILLED, QUOTATION_STATUS_CANCELLED, QUOTATION_STATUS_OPEN, QUOTATION_STATUS_REFUSED_BY_CUSTOMER, QUOTATION_STATUS_SENT_TO_CUSTOMER, QUOTATION_STATUS_TO_VERIFY, QUOTATION_STATUS_VALIDATED_BY_CUSTOMER, QUOTATION_STATUS_VALIDATED_BY_JSS, QUOTATION_STATUS_WAITING_DEPOSIT } from 'src/app/libs/Constants';
 import { Vat } from 'src/app/modules/miscellaneous/model/Vat';
 import { EntityType } from 'src/app/routing/search/EntityType';
 import { CUSTOMER_ORDER_ENTITY_TYPE, QUOTATION_ENTITY_TYPE } from 'src/app/routing/search/search.component';
@@ -40,6 +40,8 @@ export class QuotationComponent implements OnInit {
   QUOTATION_STATUS_VALIDATED_BY_JSS = QUOTATION_STATUS_VALIDATED_BY_JSS;
   QUOTATION_STATUS_SENT_TO_CUSTOMER = QUOTATION_STATUS_SENT_TO_CUSTOMER;
   QUOTATION_STATUS_VALIDATED_BY_CUSTOMER = QUOTATION_STATUS_VALIDATED_BY_CUSTOMER;
+  QUOTATION_STATUS_WAITING_DEPOSIT = QUOTATION_STATUS_WAITING_DEPOSIT;
+  QUOTATION_STATUS_BEING_PROCESSED = QUOTATION_STATUS_BEING_PROCESSED;
   QUOTATION_STATUS_REFUSED_BY_CUSTOMER = QUOTATION_STATUS_REFUSED_BY_CUSTOMER;
   QUOTATION_STATUS_BILLED = QUOTATION_STATUS_BILLED;
   QUOTATION_STATUS_ABANDONED = QUOTATION_STATUS_ABANDONED;
@@ -87,7 +89,7 @@ export class QuotationComponent implements OnInit {
         this.customerOrderService.getCustomerOrder(idQuotation).subscribe(response => {
           this.quotation = response;
           this.appService.changeHeaderTitle("Commande " + this.quotation.id + " - " +
-            (this.quotation.status != null ? this.quotation.status.label : ""));
+            (this.quotation.quotationStatus != null ? this.quotation.quotationStatus.label : ""));
           this.toggleTabs();
           this.sortProvisions();
           this.setOpenStatus();
@@ -100,7 +102,7 @@ export class QuotationComponent implements OnInit {
       this.quotationService.getQuotation(idQuotation).subscribe(response => {
         this.quotation = response;
         this.appService.changeHeaderTitle("Devis " + this.quotation.id + " - " +
-          (this.quotation.status != null ? this.quotation.status.label : ""));
+          (this.quotation.quotationStatus != null ? this.quotation.quotationStatus.label : ""));
         this.toggleTabs();
         this.sortProvisions();
         this.setOpenStatus();
@@ -118,8 +120,8 @@ export class QuotationComponent implements OnInit {
   }
 
   setOpenStatus() {
-    if (this.quotation && this.quotation.status)
-      this.isStatusOpen = this.quotation.status.code == QUOTATION_STATUS_OPEN;
+    if (this.quotation && this.quotation.quotationStatus)
+      this.isStatusOpen = this.quotation.quotationStatus.code == QUOTATION_STATUS_OPEN;
     this.isStatusOpen = false;
   }
 
@@ -189,6 +191,7 @@ export class QuotationComponent implements OnInit {
     this.createMode = true;
     this.editMode = true;
     this.quotation = {} as IQuotation;
+    this.applyFilter(null);
     this.setOpenStatus();
     this.appService.changeHeaderTitle(this.instanceOfCustomerOrder ? "Nouvelle commande" : "Nouveau devis");
     this.toggleTabs();
@@ -203,12 +206,12 @@ export class QuotationComponent implements OnInit {
   }
 
   applyFilter(filterValue: any) {
-    if (filterValue == null || filterValue == undefined || filterValue.length == 0) {
-      this.filteredProvisions = this.quotation.provisions;
-      return;
-    }
     this.filteredProvisions = [] as Array<Provision>;
     if (this.quotation && this.quotation.provisions) {
+      if (filterValue == null || filterValue == undefined || filterValue.length == 0) {
+        this.filteredProvisions = this.quotation.provisions;
+        return;
+      }
       this.quotation.provisions.forEach(provision => {
         const dataStr = JSON.stringify(provision).toLowerCase();
         if (dataStr.indexOf(filterValue.value.toLowerCase()) >= 0)
@@ -321,23 +324,22 @@ export class QuotationComponent implements OnInit {
     //TODO
   }
 
-  changeStatus(status: string) {
-    let s = this.getStatusByCode(status);
+  changeStatus(targetStatusCode: string) {
+    let s = this.getStatusByCode(targetStatusCode);
     if (s != null) {
       this.editQuotation();
       if (!this.getFormsStatus()) {
         this.ngOnInit();
       } else {
-        this.quotation.status = s;
         if (!this.instanceOfCustomerOrder) {
-          this.quotationService.updateQuotationStatus(this.quotation).subscribe(response => {
+          this.quotationService.updateQuotationStatus(this.quotation, targetStatusCode).subscribe(response => {
             this.quotation = response;
             this.router.navigateByUrl('/', { skipLocationChange: true }).then(() =>
               this.router.navigate(['/quotation/', "" + this.quotation.id])
             );
           })
         } else {
-          this.customerOrderService.updateCustomerStatus(this.quotation).subscribe(response => {
+          this.customerOrderService.updateCustomerStatus(this.quotation, targetStatusCode).subscribe(response => {
             this.quotation = response;
             this.router.navigateByUrl('/', { skipLocationChange: true }).then(() =>
               this.router.navigate(['/order/', "" + this.quotation.id])

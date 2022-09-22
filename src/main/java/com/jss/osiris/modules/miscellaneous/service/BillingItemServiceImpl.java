@@ -70,17 +70,24 @@ public class BillingItemServiceImpl implements BillingItemService {
         AccountingAccountClass classProduct = accountingAccountClassService.getAccountingAccountClassByCode("7");
 
         // Retrive existing accounting account
-        if (billingItem != null && billingItem.getAccountingAccounts() != null) {
-            for (AccountingAccount accountingAccount : billingItem.getAccountingAccounts()) {
-                AccountingAccount foundAccountingAccount = accountingAccountService
-                        .getAccountingAccountByAccountingAccountNumber(accountingAccount.getAccountingAccountNumber());
-                if (foundAccountingAccount != null && foundAccountingAccount.getId() != null) {
-                    accountingAccount.setId(foundAccountingAccount.getId());
-                    accountingAccount.setAccountingAccountClass(foundAccountingAccount.getAccountingAccountClass());
-                    accountingAccount.setLabel(foundAccountingAccount.getLabel());
-                }
-            }
-        }
+        // TODO :why doing that ?!
+        /*
+         * if (billingItem != null && billingItem.getAccountingAccounts() != null) {
+         * for (AccountingAccount accountingAccount :
+         * billingItem.getAccountingAccounts()) {
+         * AccountingAccount foundAccountingAccount = accountingAccountService
+         * .getAccountingAccountByAccountingAccountNumber(accountingAccount.
+         * getAccountingAccountNumber());
+         * if (foundAccountingAccount != null && foundAccountingAccount.getId() != null)
+         * {
+         * accountingAccount.setId(foundAccountingAccount.getId());
+         * accountingAccount.setAccountingAccountClass(foundAccountingAccount.
+         * getAccountingAccountClass());
+         * accountingAccount.setLabel(foundAccountingAccount.getLabel());
+         * }
+         * }
+         * }
+         */
 
         currentBillingItem = billingItemRepository.save(billingItem);
 

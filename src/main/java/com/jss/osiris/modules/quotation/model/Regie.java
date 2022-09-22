@@ -42,6 +42,10 @@ public class Regie implements Serializable, IId {
 	@JoinColumn(name = "id_accounting_account_customer")
 	private AccountingAccount accountingAccountCustomer;
 
+	@ManyToOne
+	@JoinColumn(name = "id_accounting_account_deposit")
+	private AccountingAccount accountingAccountDeposit;
+
 	@Column(length = 60)
 	private String mailRecipient;
 
@@ -172,6 +176,14 @@ public class Regie implements Serializable, IId {
 
 	public void setCode(String code) {
 		this.code = code;
+	}
+
+	public AccountingAccount getAccountingAccountDeposit() {
+		return accountingAccountDeposit;
+	}
+
+	public void setAccountingAccountDeposit(AccountingAccount accountingAccountDeposit) {
+		this.accountingAccountDeposit = accountingAccountDeposit;
 	}
 
 }

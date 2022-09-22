@@ -27,4 +27,5 @@ export interface CompetentAuthority extends IReferential {
   accountingAccountProvider: AccountingAccount;
   accountingAccountCustomer: AccountingAccount;
   reinvoicing: number;
+  schedulle: string;
 }

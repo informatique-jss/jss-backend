@@ -13,6 +13,8 @@ import com.jss.osiris.modules.accounting.model.AccountingBalance;
 import com.jss.osiris.modules.accounting.model.AccountingBalanceBilan;
 import com.jss.osiris.modules.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.accounting.model.AccountingRecord;
+import com.jss.osiris.modules.invoicing.model.Invoice;
+import com.jss.osiris.modules.quotation.model.CustomerOrder;
 
 public interface AccountingRecordRepository extends CrudRepository<AccountingRecord, Integer> {
 
@@ -27,6 +29,10 @@ public interface AccountingRecordRepository extends CrudRepository<AccountingRec
         @Query("select max(operationId) from AccountingRecord where operationDateTime>=:minOperationDateTime")
         Integer findMaxIdOperationForMinOperationDateTime(
                         @Param("minOperationDateTime") LocalDateTime minOperationDateTime);
+
+        @Query("select max(letteringNumber) from AccountingRecord where letteringDateTime>=:minLetteringDateTime")
+        Integer findMaxLetteringNumberForMinLetteringDateTime(
+                        @Param("minLetteringDateTime") LocalDateTime minLetteringDateTime);
 
         @Query("select a from AccountingRecord a where " +
                         "(a.accountingAccount=:accountingAccount or :accountingAccount is null ) and "
@@ -118,6 +124,13 @@ public interface AccountingRecordRepository extends CrudRepository<AccountingRec
         List<AccountingBalanceBilan> getAccountingRecordAggregateByAccountingNumber(
                         @Param("startDate") LocalDateTime startDate,
                         @Param("endDate") LocalDateTime endDate);
+
+        List<AccountingRecord> findByAccountingAccountAndInvoice(AccountingAccount accountingAccountCustomer,
+                        Invoice invoice);
+
+        List<AccountingRecord> findByInvoice(Invoice invoice);
+
+        List<AccountingRecord> findByCustomerOrder(CustomerOrder customerOrder);
 }
 
 ;

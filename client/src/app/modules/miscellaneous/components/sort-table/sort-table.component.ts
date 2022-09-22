@@ -169,4 +169,8 @@ export class SortTableComponent implements OnInit {
   getActionLink(action: SortTableAction, element: any) {
     return action.actionLinkFunction(action, element);
   }
+
+  getColumnLink(column: SortTableColumn, element: any) {
+    return column.actionLinkFunction(column, element);
+  }
 }

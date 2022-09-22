@@ -8,7 +8,7 @@ import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.jss.osiris.modules.accounting.model.AccountingAccountCouple;
+import com.jss.osiris.modules.accounting.model.AccountingAccountTrouple;
 import com.jss.osiris.modules.accounting.service.AccountingAccountService;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.miscellaneous.model.Department;
@@ -59,11 +59,13 @@ public class CompetentAuthorityServiceImpl implements CompetentAuthorityService 
         // Generate accounting accounts
         if (competentAuthority.getId() == null
                 || competentAuthority.getAccountingAccountCustomer() == null
-                        && competentAuthority.getAccountingAccountProvider() == null) {
-            AccountingAccountCouple accountingAccountCouple = accountingAccountService
+                        && competentAuthority.getAccountingAccountProvider() == null
+                        && competentAuthority.getAccountingAccountDeposit() == null) {
+            AccountingAccountTrouple accountingAccountCouple = accountingAccountService
                     .generateAccountingAccountsForEntity(competentAuthority.getLabel());
             competentAuthority.setAccountingAccountCustomer(accountingAccountCouple.getAccountingAccountCustomer());
             competentAuthority.setAccountingAccountProvider(accountingAccountCouple.getAccountingAccountProvider());
+            competentAuthority.setAccountingAccountDeposit(accountingAccountCouple.getAccountingAccountDeposit());
         }
 
         return competentAuthorityRepository.save(competentAuthority);

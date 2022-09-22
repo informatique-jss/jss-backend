@@ -297,12 +297,13 @@ public class InitReferentialsController {
 		 * city.setLabel("Paris 13");
 		 * city.setLocality("Paris 13");
 		 * city.setPostalCode("75013");
-		 * city.setValidated(true);
+		 * city.setCode("75013");
 		 * cityRepository.save(city);
 		 * 
 		 * deliveryServiceRepository.deleteAll();
 		 * DeliveryService deliveryService = new DeliveryService();
 		 * deliveryService.setLabel("La Poste");
+		 * deliveryService.setCode("La Poste");
 		 * deliveryServiceRepository.save(deliveryService);
 		 * 
 		 * tiersTypeRepository.deleteAll();
@@ -319,12 +320,15 @@ public class InitReferentialsController {
 		 * civilityRepository.deleteAll();
 		 * Civility civility = new Civility();
 		 * civility.setLabel("Maître");
+		 * civility.setCode("Maître");
 		 * civilityRepository.save(civility);
 		 * civility = new Civility();
 		 * civility.setLabel("Monsieur");
+		 * civility.setCode("Monsieur");
 		 * civilityRepository.save(civility);
 		 * civility = new Civility();
 		 * civility.setLabel("Madame");
+		 * civility.setCode("Madame");
 		 * civilityRepository.save(civility);
 		 * 
 		 * tiersCategoryRepository.deleteAll();
@@ -348,7 +352,6 @@ public class InitReferentialsController {
 		 * Team team1 = new Team();
 		 * team1.setCode("COMMERCIAL");
 		 * team1.setLabel("Commerciale");
-		 * team1.setMail("commercial@jss.fr");
 		 * teamRepository.save(team1);
 		 * 
 		 * Employee employee1 = new Employee();
@@ -363,7 +366,6 @@ public class InitReferentialsController {
 		 * Team team2 = new Team();
 		 * team2.setCode("FORMALISTE");
 		 * team2.setLabel("Formaliste");
-		 * team2.setMail("formaliste@jss.fr");
 		 * team2.setManager(employee1);
 		 * teamRepository.save(team2);
 		 * 
@@ -376,7 +378,6 @@ public class InitReferentialsController {
 		 * Team team3 = new Team();
 		 * team3.setCode("INSERTIONS");
 		 * team3.setLabel("Insertions");
-		 * team3.setMail("insertion@jss.fr");
 		 * team3.setManager(employee1);
 		 * teamRepository.save(team3);
 		 * 
@@ -389,10 +390,12 @@ public class InitReferentialsController {
 		 * languageRepository.deleteAll();
 		 * Language language = new Language();
 		 * language.setLabel("Français");
+		 * language.setCode("FR");
 		 * languageRepository.save(language);
 		 * 
 		 * language = new Language();
 		 * language.setLabel("Anglais");
+		 * language.setCode("ENG");
 		 * languageRepository.save(language);
 		 * 
 		 * specialOfferRepository.deleteAll();
@@ -411,23 +414,20 @@ public class InitReferentialsController {
 		 * 
 		 * BillingType billingType = new BillingType();
 		 * billingType.setLabel("Poste 1");
-		 * billingType.setPreTaxPrice(10f);
-		 * billingType.setAccountingCode(10);
+		 * billingType.setCode("Poste 1");
+		 * billingType.setCanOverridePrice(false);
+		 * billingType.setIsPriceBasedOnCharacterNumber(false);
 		 * billingTypeRepository.save(billingType);
 		 * 
 		 * BillingItem billingItem = new BillingItem();
 		 * billingItem.setBillingType(billingType);
-		 * billingItem.setDiscountAmount(0f);
-		 * billingItem.setDiscountRate(0f);
-		 * billingItem.setVat(vat);
+		 * billingItem.setPreTaxPrice(10f);
+		 * billingItem.setStartDate(LocalDate.now());
 		 * billingItemRepository.save(billingItem);
 		 * 
 		 * SpecialOffer specialOffer = new SpecialOffer();
 		 * specialOffer.setCode("10");
 		 * specialOffer.setLabel("Non taxable");
-		 * ArrayList<BillingItem> billingItems = new ArrayList<BillingItem>();
-		 * billingItems.add(billingItem);
-		 * specialOffer.setBillingItems(billingItems);
 		 * specialOfferRepository.save(specialOffer);
 		 * 
 		 * mailRepository.deleteAll();
@@ -496,12 +496,12 @@ public class InitReferentialsController {
 		 * tiersDocumentType.setLabel("DEVIS");
 		 * tiersDocumentTypeRepository.save(tiersDocumentType);
 		 * 
-		 * * tiersDocumentType = new DocumentType();
+		 * tiersDocumentType = new DocumentType();
 		 * tiersDocumentType.setCode("12");
 		 * tiersDocumentType.setLabel("EPREUVE DE RELECTURE");
 		 * tiersDocumentTypeRepository.save(tiersDocumentType);
 		 * 
-		 * * tiersDocumentType = new DocumentType();
+		 * tiersDocumentType = new DocumentType();
 		 * tiersDocumentType.setCode("13");
 		 * tiersDocumentType.setLabel("ATTESTATION DE PURATION");
 		 * tiersDocumentTypeRepository.save(tiersDocumentType);
@@ -528,15 +528,12 @@ public class InitReferentialsController {
 		 * paymentType.setCode("VIREMENT");
 		 * paymentType.setLabel("Virement");
 		 * paymentTypeRepository.save(paymentType);
-		 */
-
-		/*
-		 * PaymentType paymentType = new PaymentType();
+		 * 
+		 * paymentType = new PaymentType();
 		 * paymentType.setCode("AUTRES");
 		 * paymentType.setLabel("Autres");
 		 * paymentTypeRepository.save(paymentType);
-		 */
-		/*
+		 * 
 		 * billingLabelTypeRepository.deleteAll();
 		 * BillingLabelType billingLabelType = new BillingLabelType();
 		 * billingLabelType.setCode("AFFAIRE");
@@ -595,14 +592,12 @@ public class InitReferentialsController {
 		 * billingClosureType.setCode("COMPTABLE");
 		 * billingClosureType.setLabel("Comptable");
 		 * billingClosureTypeRepository.save(billingClosureType);
-		 */
-		/*
-		 * BillingClosureType billingClosureType = new BillingClosureType();
+		 * 
+		 * billingClosureType = new BillingClosureType();
 		 * billingClosureType.setCode("MENSUEL");
 		 * billingClosureType.setLabel("Mensuel");
 		 * billingClosureTypeRepository.save(billingClosureType);
-		 */
-		/*
+		 * 
 		 * billingClosureRecipientTypeRepository.deleteAll();
 		 * BillingClosureRecipientType billingClosureRecipientType = new
 		 * BillingClosureRecipientType();
@@ -614,17 +609,12 @@ public class InitReferentialsController {
 		 * billingClosureRecipientType.setCode("TOUS");
 		 * billingClosureRecipientType.setLabel("Tous");
 		 * billingClosureRecipientTypeRepository.save(billingClosureRecipientType);
-		 */
-
-		/*
-		 * BillingClosureRecipientType billingClosureRecipientType = new
-		 * BillingClosureRecipientType();
+		 * 
+		 * billingClosureRecipientType = new BillingClosureRecipientType();
 		 * billingClosureRecipientType.setCode("OTHERS");
 		 * billingClosureRecipientType.setLabel("Autres");
 		 * billingClosureRecipientTypeRepository.save(billingClosureRecipientType);
-		 */
-
-		/*
+		 * 
 		 * attachmentTypeRepository.deleteAll();
 		 * AttachmentType attachmentType = new AttachmentType();
 		 * attachmentType.setCode("1");
@@ -656,12 +646,10 @@ public class InitReferentialsController {
 		 * attachmentType.setLabel("KBIS");
 		 * attachmentTypeRepository.save(attachmentType);
 		 * 
-		 * 
 		 * attachmentType = new AttachmentType();
 		 * attachmentType.setCode("7");
 		 * attachmentType.setLabel("CNI");
 		 * attachmentTypeRepository.save(attachmentType);
-		 * 
 		 * 
 		 * attachmentType = new AttachmentType();
 		 * attachmentType.setCode("8");
@@ -730,7 +718,6 @@ public class InitReferentialsController {
 		 * quotationStatus.setCode("TO_VERIFY");
 		 * quotationStatus.setLabel("A vérifier");
 		 * quotationStatusRepository.save(quotationStatus);
-		 * 
 		 * 
 		 * quotationStatus = new QuotationStatus();
 		 * quotationStatus.setCode("BILLED");
@@ -810,7 +797,6 @@ public class InitReferentialsController {
 		 * legalForm.setLabel("Société non immatriculée");
 		 * legalFormRepository.save(legalForm);
 		 * 
-		 * 
 		 * provisionTypeRepository.deleteAll();
 		 * provisionFamilyTypeRepository.deleteAll();
 		 * ProvisionFamilyType provisionFamilyType1 = new ProvisionFamilyType();
@@ -869,29 +855,28 @@ public class InitReferentialsController {
 		 * provisionType.setProvisionFamilyType(provisionFamilyType5);
 		 * provisionTypeRepository.save(provisionType);
 		 * 
-		 * domiciliationDomiciliationContractTypeRepository.deleteAll();
+		 * domiciliationContractTypeRepository.deleteAll();
 		 * DomiciliationContractType domiciliationDomiciliationContractType = new
 		 * DomiciliationContractType();
 		 * domiciliationDomiciliationContractType.setCode("1");
 		 * domiciliationDomiciliationContractType.
 		 * setLabel("Adresse Commerciale, réception et conservation du courrier");
-		 * domiciliationDomiciliationContractTypeRepository.save(
+		 * domiciliationContractTypeRepository.save(
 		 * domiciliationDomiciliationContractType);
 		 * 
 		 * domiciliationDomiciliationContractType = new DomiciliationContractType();
 		 * domiciliationDomiciliationContractType.setCode("2");
-		 * domiciliationDomiciliationContractType.
-		 * setLabel("Adresse Commerciale, réception et renvoi du courrier par la poste"
+		 * domiciliationDomiciliationContractType
+		 * .setLabel("Adresse Commerciale, réception et renvoi du courrier par la poste"
 		 * );
-		 * domiciliationDomiciliationContractTypeRepository.save(
+		 * domiciliationContractTypeRepository.save(
 		 * domiciliationDomiciliationContractType);
 		 * 
 		 * domiciliationDomiciliationContractType = new DomiciliationContractType();
 		 * domiciliationDomiciliationContractType.setCode("3");
-		 * domiciliationDomiciliationContractType.
-		 * setLabel("Adresse Commerciale, réception et renvoi du courrier par mail"
-		 * );
-		 * domiciliationDomiciliationContractTypeRepository.save(
+		 * domiciliationDomiciliationContractType
+		 * .setLabel("Adresse Commerciale, réception et renvoi du courrier par mail");
+		 * domiciliationContractTypeRepository.save(
 		 * domiciliationDomiciliationContractType);
 		 * 
 		 * buildingDomiciliationRepository.deleteAll();
@@ -968,68 +953,47 @@ public class InitReferentialsController {
 		 * confrereRepository.deleteAll();
 		 * Confrere confrere = new Confrere();
 		 * confrere.setAdministrativeFees(10.0f);
-		 * confrere.setDenomination("denomination");
 		 * confrere.setDepartments(departments);
-		 * confrere.setDiscountRate(10);
 		 * confrere.setJournalType(journalType);
 		 * confrere.setLastShipmentForPublication("lastShipmentForPublication");
 		 * confrere.setNumberOfPrint(20000);
-		 * confrere.setPreference("+++");
 		 * confrere.setReinvoicing(10);
 		 * confrere.setShippingCosts(10.0f);
-		 * ArrayList<WeekDay> weekDays = new ArrayList<WeekDay>();
+		 * List<WeekDay> weekDays = new ArrayList<WeekDay>();
 		 * weekDays.add(day);
 		 * confrere.setWeekDays(weekDays);
 		 * confrereRepository.save(confrere);
 		 * 
-		 * List<Department> departments =
-		 * IterableUtils.toList(departmentRepository.findAll());
-		 * List<JournalType> journalTypes =
-		 * IterableUtils.toList(journalTypeRepository.findAll());
-		 * List<WeekDay> weekDays = IterableUtils.toList(weekDayRepository.findAll());
-		 * Confrere confrere = new Confrere();
+		 * departments = IterableUtils.toList(departmentRepository.findAll());
+		 * weekDays = IterableUtils.toList(weekDayRepository.findAll());
+		 * confrere = new Confrere();
 		 * confrere.setAdministrativeFees(10.0f);
-		 * confrere.setDenomination("JSS");
 		 * confrere.setDepartments(departments);
-		 * confrere.setDiscountRate(10);
-		 * confrere.setJournalType(journalTypes);
 		 * confrere.setLastShipmentForPublication("lastShipmentForPublication");
 		 * confrere.setNumberOfPrint(20000);
-		 * confrere.setPreference("+++");
 		 * confrere.setReinvoicing(10);
 		 * confrere.setShippingCosts(10.0f);
 		 * confrere.setWeekDays(weekDays);
 		 * confrereRepository.save(confrere);
-		 */
-		/*
-		 * List<Department> departments =
-		 * IterableUtils.toList(departmentRepository.findAll());
-		 * List<JournalType> journalTypes =
-		 * IterableUtils.toList(journalTypeRepository.findAll());
-		 * List<WeekDay> weekDays = IterableUtils.toList(weekDayRepository.findAll());
-		 * Confrere confrere = new Confrere();
+		 * 
+		 * departments = IterableUtils.toList(departmentRepository.findAll());
+		 * weekDays = IterableUtils.toList(weekDayRepository.findAll());
+		 * confrere = new Confrere();
 		 * confrere.setAdministrativeFees(10.0f);
-		 * confrere.setDenomination("BALO");
 		 * confrere.setDepartments(departments);
-		 * confrere.setDiscountRate(20);
-		 * confrere.setJournalType(journalTypes);
 		 * confrere.setLastShipmentForPublication("lastShipmentForPublication2");
 		 * confrere.setNumberOfPrint(30000);
-		 * confrere.setPreference("++");
 		 * confrere.setReinvoicing(10);
 		 * confrere.setShippingCosts(10.0f);
 		 * confrere.setWeekDays(weekDays);
 		 * confrereRepository.save(confrere);
-		 */
-		/*
 		 * 
-		 * List<Department> departments =
-		 * IterableUtils.toList(departmentRepository.findAll());
+		 * departments = IterableUtils.toList(departmentRepository.findAll());
 		 * characterPriceRepository.deleteAll();
 		 * CharacterPrice characterPrice = new CharacterPrice();
 		 * characterPrice.setDepartments(departments);
 		 * characterPrice.setPrice(0.38f);
-		 * characterPrice.setStartDate(new Date());
+		 * characterPrice.setStartDate(LocalDate.now());
 		 * characterPriceRepository.save(characterPrice);
 		 * 
 		 * noticeTypeFamilyRepository.deleteAll();
@@ -1051,8 +1015,7 @@ public class InitReferentialsController {
 		 * noticeType.setLabel("Mouvement sur l'activité");
 		 * noticeType.setNoticeTypeFamily(noticeTypeFamily);
 		 * noticeTypeRepository.save(noticeType);
-		 */
-		/*
+		 * 
 		 * bodaccPublicationTypeRepository.deleteAll();
 		 * BodaccPublicationType bodaccPublicationType = new BodaccPublicationType();
 		 * bodaccPublicationType.setCode("1");
@@ -1068,15 +1031,12 @@ public class InitReferentialsController {
 		 * bodaccPublicationType.setCode("3");
 		 * bodaccPublicationType.setLabel("Scission");
 		 * bodaccPublicationTypeRepository.save(bodaccPublicationType);
-		 */
-		/*
-		 * BodaccPublicationType bodaccPublicationType = new BodaccPublicationType();
+		 * 
+		 * bodaccPublicationType = new BodaccPublicationType();
 		 * bodaccPublicationType.setCode("6");
 		 * bodaccPublicationType.setLabel("Apport partiel d'actifs");
 		 * bodaccPublicationTypeRepository.save(bodaccPublicationType);
-		 */
-
-		/*
+		 * 
 		 * bodaccPublicationType = new BodaccPublicationType();
 		 * bodaccPublicationType.setCode("4");
 		 * bodaccPublicationType.setLabel("Envoi en possession");
@@ -1086,8 +1046,7 @@ public class InitReferentialsController {
 		 * bodaccPublicationType.setCode("5");
 		 * bodaccPublicationType.setLabel("Désignation du mandataire successoral");
 		 * bodaccPublicationTypeRepository.save(bodaccPublicationType);
-		 */
-		/*
+		 * 
 		 * transfertFundsTypeRepository.deleteAll();
 		 * TransfertFundsType transfertFundsType = new TransfertFundsType();
 		 * transfertFundsType.setCode("1");
@@ -1110,31 +1069,24 @@ public class InitReferentialsController {
 		 * competentAuthorityType.setLabel("RCS");
 		 * competentAuthorityTypeRepository.save(competentAuthorityType);
 		 * 
-		 */
-		/*
-		 * CompetentAuthorityType competentAuthorityType = new CompetentAuthorityType();
+		 * competentAuthorityType = new CompetentAuthorityType();
 		 * competentAuthorityType.setCode("2");
 		 * competentAuthorityType.setLabel("CFP - Centre des finances publiques");
 		 * competentAuthorityTypeRepository.save(competentAuthorityType);
-		 */
-		/*
-		 * CompetentAuthorityType competentAuthorityType = new CompetentAuthorityType();
+		 * 
+		 * competentAuthorityType = new CompetentAuthorityType();
 		 * competentAuthorityType.setCode("3");
 		 * competentAuthorityType.setLabel("RCS - Registre du Commerce et des Sociétés"
 		 * );
 		 * competentAuthorityTypeRepository.save(competentAuthorityType);
-		 */
-
-		/*
+		 * 
 		 * competentAuthorityRepository.deleteAll();
 		 * CompetentAuthority competentAuthority = new CompetentAuthority();
 		 * competentAuthority.setCode("1");
 		 * competentAuthority.setLabel("Paris");
 		 * competentAuthority.setCompetentAuthorityType(competentAuthorityType);
 		 * competentAuthorityRepository.save(competentAuthority);
-		 */
-
-		/*
+		 * 
 		 * fundTypeRepository.deleteAll();
 		 * FundType fundType = new FundType();
 		 * fundType.setCode("1");
@@ -1148,9 +1100,7 @@ public class InitReferentialsController {
 		 * fundType.setCode("3");
 		 * fundType.setLabel("Complémentaire");
 		 * fundTypeRepository.save(fundType);
-		 */
-
-		/*
+		 * 
 		 * actTypeRepository.deleteAll();
 		 * ActType actType = new ActType();
 		 * actType.setCode("1");
@@ -1160,9 +1110,7 @@ public class InitReferentialsController {
 		 * actType.setCode("2");
 		 * actType.setLabel("Forme authentique");
 		 * actTypeRepository.save(actType);
-		 */
-
-		/*
+		 * 
 		 * shalNoticeTemplateRepository.deleteAll();
 		 * ShalNoticeTemplate shalNoticeTemplate = new ShalNoticeTemplate();
 		 * shalNoticeTemplate.setCode("1");
@@ -1179,8 +1127,7 @@ public class InitReferentialsController {
 		 * "Par testament du 00/00/0000 déposé au rang des minutes de Maitre (NOM PRENOM) Notaire à … (ADRESSE) suivant procès-verbal dont la copie authentique a été reçue par le Tribunal de Grande Instance de X le 00/00/0000. (Tribunal du domicile du défunt)				M. ou MME NOM- PRENOMS (le défunt) demeurant de son vivant à (adresse), né le 00/00/0000 à (Ville du lieu de naissance) et décédé le 00/00/0000 (Ville du lieu de décès), veuf ou veuve de M. ou MME NOM PRENOMS a institué un ou plusieurs légataires universels (NOMS PRENOMS et ADRESSES).<br>Les oppositions seront reçues dans le délai d’un mois à compter de 00/00/0000 (date de réception par le greffe du TGI) entre les mains du Notaire chargé du règlement de la succession (si le notaire dépositaire du testament n’est pas celui chargé de la succession, (le préciser ) <br>Pour avis<br>Maitre XXXXXX"
 		 * );
 		 * shalNoticeTemplateRepository.save(shalNoticeTemplate);
-		 */
-		/*
+		 * 
 		 * accountingAccountClassRepository.deleteAll();
 		 * AccountingAccountClass accountingAccountClass = new AccountingAccountClass();
 		 * accountingAccountClass.setCode("6");
@@ -1196,9 +1143,7 @@ public class InitReferentialsController {
 		 * accountingAccountClass.setCode("4");
 		 * accountingAccountClass.setLabel("Tiers");
 		 * accountingAccountClassRepository.save(accountingAccountClass);
-		 */
-
-		/*
+		 * 
 		 * vatCollectionTypeRepository.deleteAll();
 		 * VatCollectionType vatCollectionType = new VatCollectionType();
 		 * vatCollectionType.setCode("DEBIT");

@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.model.AccountingAccountClass;
-import com.jss.osiris.modules.accounting.model.AccountingAccountCouple;
+import com.jss.osiris.modules.accounting.model.AccountingAccountTrouple;
 import com.jss.osiris.modules.accounting.repository.AccountingAccountRepository;
 
 @Service
@@ -30,11 +30,20 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
     @Value("${accounting.account.number.customer}")
     private String customerAccountingAccountNumber;
 
+    @Value("${accounting.account.number.deposit}")
+    private String depositAccountingAccountNumber;
+
     @Value("${accounting.account.number.provider}")
     private String providerAccountingAccountNumber;
 
     @Value("${accounting.account.number.product}")
     private String productAccountingAccountNumber;
+
+    @Value("${accounting.account.number.bank}")
+    String bankAccountingAccountNumber;
+
+    @Value("${accounting.account.number.waiting}")
+    String waitingAccountingAccountNumber;
 
     @Override
     public List<AccountingAccount> getAccountingAccounts() {
@@ -50,7 +59,7 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
     }
 
     @Override
-    public AccountingAccount getAccountingAccountByAccountingAccountNumber(String accountingAccountNumber) {
+    public List<AccountingAccount> getAccountingAccountByAccountingAccountNumber(String accountingAccountNumber) {
         return accountingAccountRepository.findByAccountingAccountNumber(accountingAccountNumber);
     }
 
@@ -62,10 +71,10 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
         if (accountingAccountClass == null) {
             logger.error(
                     "Unable to find accountingAccountClass for number "
-                            + customerAccountingAccountNumber.substring(0, 1));
+                            + accountingAccount.getAccountingAccountNumber().substring(0, 1));
             throw new Exception(
                     "Unable to find accountingAccountClass for number "
-                            + customerAccountingAccountNumber.substring(0, 1));
+                            + accountingAccount.getAccountingAccountNumber().substring(0, 1));
         }
         accountingAccount.setAccountingAccountClass(accountingAccountClass);
         return accountingAccountRepository.save(accountingAccount);
@@ -77,27 +86,25 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
     }
 
     @Override
-    public AccountingAccountCouple generateAccountingAccountsForEntity(String label) throws Exception {
+    public AccountingAccountTrouple generateAccountingAccountsForEntity(String label) throws Exception {
 
-        AccountingAccountCouple accountingAccountCouple = new AccountingAccountCouple();
+        AccountingAccountTrouple accountingAccountTrouple = new AccountingAccountTrouple();
 
         Integer currentMaxSubAccountCustomer = accountingAccountRepository
                 .findMaxSubAccontNumberForAccountNumber(StringUtils.leftPad(customerAccountingAccountNumber, 3, "0"));
         Integer currentMaxSubAccountProvider = accountingAccountRepository
                 .findMaxSubAccontNumberForAccountNumber(StringUtils.leftPad(providerAccountingAccountNumber, 3, "0"));
+        Integer currentMaxSubAccountDeposit = accountingAccountRepository
+                .findMaxSubAccontNumberForAccountNumber(StringUtils.leftPad(depositAccountingAccountNumber, 3, "0"));
 
-        Integer maxSubAccount = null;
-        if (currentMaxSubAccountCustomer == null && currentMaxSubAccountProvider == null)
-            maxSubAccount = 1;
+        Integer maxSubAccount = 0;
 
-        if (currentMaxSubAccountCustomer == null && currentMaxSubAccountProvider != null) {
+        if (currentMaxSubAccountCustomer != null && currentMaxSubAccountCustomer > maxSubAccount)
+            maxSubAccount = currentMaxSubAccountCustomer;
+        if (currentMaxSubAccountProvider != null && currentMaxSubAccountProvider > maxSubAccount)
             maxSubAccount = currentMaxSubAccountProvider;
-        } else {
-            maxSubAccount = currentMaxSubAccountProvider;
-        }
-
-        if (maxSubAccount == null)
-            maxSubAccount = 0;
+        if (currentMaxSubAccountDeposit != null && currentMaxSubAccountDeposit > maxSubAccount)
+            maxSubAccount = currentMaxSubAccountDeposit;
 
         AccountingAccountClass accountingAccountClass = accountingAccountClassService
                 .getAccountingAccountClassByCode(customerAccountingAccountNumber.substring(0, 1));
@@ -119,7 +126,7 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
         accountingAccountProvider
                 .setLabel("Fournisseur - " + (label != null ? label : ""));
         accountingAccountRepository.save(accountingAccountProvider);
-        accountingAccountCouple.setAccountingAccountProvider(accountingAccountProvider);
+        accountingAccountTrouple.setAccountingAccountProvider(accountingAccountProvider);
 
         AccountingAccount accountingAccountCustomer = new AccountingAccount();
         accountingAccountCustomer.setAccountingAccountClass(accountingAccountClass);
@@ -128,9 +135,18 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
         accountingAccountCustomer
                 .setLabel("Client - " + (label != null ? label : ""));
         accountingAccountRepository.save(accountingAccountCustomer);
-        accountingAccountCouple.setAccountingAccountCustomer(accountingAccountCustomer);
+        accountingAccountTrouple.setAccountingAccountCustomer(accountingAccountCustomer);
 
-        return accountingAccountCouple;
+        AccountingAccount accountingAccountDeposit = new AccountingAccount();
+        accountingAccountDeposit.setAccountingAccountClass(accountingAccountClass);
+        accountingAccountDeposit.setAccountingAccountNumber(depositAccountingAccountNumber);
+        accountingAccountDeposit.setAccountingAccountSubNumber(maxSubAccount);
+        accountingAccountDeposit
+                .setLabel("Acompte - " + (label != null ? label : ""));
+        accountingAccountRepository.save(accountingAccountDeposit);
+        accountingAccountTrouple.setAccountingAccountDeposit(accountingAccountDeposit);
+
+        return accountingAccountTrouple;
     }
 
     @Override
@@ -142,5 +158,35 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
                     return accountingAccount;
         }
         return null;
+    }
+
+    @Override
+    public AccountingAccount getBankAccountingAccount() throws Exception {
+        List<AccountingAccount> bankAccountingAccounts = getAccountingAccountByAccountingAccountNumber(
+                bankAccountingAccountNumber);
+
+        if (bankAccountingAccounts == null || bankAccountingAccounts.size() == 0)
+            throw new Exception("Bank accounting account not found");
+
+        if (bankAccountingAccounts.size() > 1)
+            throw new Exception("Multiple Bank accounting account found for accounting account number "
+                    + bankAccountingAccountNumber);
+
+        return bankAccountingAccounts.get(0);
+    }
+
+    @Override
+    public AccountingAccount getWaitingAccountingAccount() throws Exception {
+        List<AccountingAccount> waitingAccountingAccounts = getAccountingAccountByAccountingAccountNumber(
+                waitingAccountingAccountNumber);
+
+        if (waitingAccountingAccounts == null || waitingAccountingAccounts.size() == 0)
+            throw new Exception("Wainting accounting account not found");
+
+        if (waitingAccountingAccounts.size() > 1)
+            throw new Exception("Multiple waiting accounting account found for accounting account number "
+                    + bankAccountingAccountNumber);
+
+        return waitingAccountingAccounts.get(0);
     }
 }

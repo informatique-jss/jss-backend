@@ -1,0 +1,47 @@
+<div class="mat-elevation-z2 form-div">
+  <div class=" full-width">
+    <table class="full-width table-fixed-layout">
+      <tr>
+        <td>
+          <select-payment-way [(model)]="paymentSearch.paymentWays" label="Sens du paiement" [form]="paymentForm"
+            propertyName="paymentWay" [isMandatory]="true" [defaultCodesSelected]="[PAYEMENT_WAY_INBOUND_CODE]">
+          </select-payment-way>
+        </td>
+        <td>
+          <generic-date-range-picker [(modelStart)]="paymentSearch.startDate" [(modelEnd)]="paymentSearch.endDate"
+            label="Plage de recherche" [form]="paymentForm" propertyNameStart="startDate" propertyNameEnd="endDate"
+            (onDateChange)="putDefaultPeriod()">
+          </generic-date-range-picker>
+        </td>
+        <td class="fab-td-button">
+          <button mat-mini-fab color="warn" matTooltip="Rechercher" (click)="searchPayments()" class="add-button">
+            <mat-icon>search</mat-icon>
+          </button>
+        </td>
+      </tr>
+    </table>
+    <sort-table [actions]="tableAction" [columns]="displayedColumns" [values]="payments" tableName="Ecritures">
+    </sort-table>
+    <div>
+      <h2>Ajouter un paiement (pour tests)</h2>
+      <table class="full-width table-fixed-layout">
+        <tr>
+          <td>
+            <generic-input [(model)]="currentPayment.label" label="Libellé du paiement" [form]="paymentForm2"
+              propertyName="label" [isMandatory]="true" [isDisabled]="false" [maxLength]="200"></generic-input>
+          </td>
+          <td>
+            <generic-input [(model)]="currentPayment.paymentAmount" label="Montant" [form]="paymentForm2"
+              propertyName="paymentAmount" [isMandatory]="true" [isDisabled]="false" type="number"></generic-input>
+          </td>
+          <td>
+            <button mat-mini-fab color="warn" matTooltip="Ajouter le paiement" (click)="addPayment()"
+              class="add-button">
+              <mat-icon>add</mat-icon>
+            </button>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>

@@ -76,5 +76,4 @@ public class IndexEntityServiceImpl implements IndexEntityService {
             indexEntityRepository.save(indexedEntity);
         }
     }
-
 }

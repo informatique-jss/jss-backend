@@ -30,6 +30,10 @@ public class Provider implements Serializable, IId {
 	@JoinColumn(name = "id_accounting_account_customer")
 	private AccountingAccount accountingAccountCustomer;
 
+	@ManyToOne
+	@JoinColumn(name = "id_accounting_account_deposit")
+	private AccountingAccount accountingAccountDeposit;
+
 	@Column(length = 40)
 	private String bic;
 
@@ -82,6 +86,14 @@ public class Provider implements Serializable, IId {
 
 	public void setIban(String iban) {
 		this.iban = iban;
+	}
+
+	public AccountingAccount getAccountingAccountDeposit() {
+		return accountingAccountDeposit;
+	}
+
+	public void setAccountingAccountDeposit(AccountingAccount accountingAccountDeposit) {
+		this.accountingAccountDeposit = accountingAccountDeposit;
 	}
 
 }

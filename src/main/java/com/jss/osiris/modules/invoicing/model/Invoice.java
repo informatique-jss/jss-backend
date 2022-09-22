@@ -7,7 +7,6 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -16,10 +15,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jss.osiris.libs.JacksonLocalDateSerializer;
 import com.jss.osiris.libs.JacksonLocalDateTimeSerializer;
+import com.jss.osiris.modules.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.miscellaneous.model.City;
 import com.jss.osiris.modules.miscellaneous.model.Country;
 import com.jss.osiris.modules.miscellaneous.model.IId;
@@ -30,6 +32,7 @@ import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
 @Entity
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Invoice implements Serializable, IId {
 
 	@Id
@@ -48,18 +51,18 @@ public class Invoice implements Serializable, IId {
 	@JsonManagedReference("invoice")
 	private List<InvoiceItem> invoiceItems;
 
-	@OneToOne(fetch = FetchType.EAGER)
+	@OneToOne
 	private CustomerOrder customerOrder;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name = "id_responsable")
 	private Responsable responsable;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name = "id_confrere")
 	private Confrere confrere;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name = "id_tiers")
 	private Tiers tiers;
 
@@ -91,9 +94,18 @@ public class Invoice implements Serializable, IId {
 
 	private Float totalPrice;
 
+	@OneToMany(mappedBy = "invoice")
+	private List<Payment> payments;
+
+	@OneToMany(mappedBy = "invoice")
+	private List<Deposit> deposits;
+
 	@ManyToOne
 	@JoinColumn(name = "id_invoice_status")
 	private InvoiceStatus invoiceStatus;
+
+	@OneToMany(mappedBy = "invoice")
+	private List<AccountingRecord> accountingRecords;
 
 	public Integer getId() {
 		return id;
@@ -253,6 +265,30 @@ public class Invoice implements Serializable, IId {
 
 	public void setInvoiceStatus(InvoiceStatus invoiceStatus) {
 		this.invoiceStatus = invoiceStatus;
+	}
+
+	public List<Payment> getPayments() {
+		return payments;
+	}
+
+	public void setPayments(List<Payment> payments) {
+		this.payments = payments;
+	}
+
+	public List<AccountingRecord> getAccountingRecords() {
+		return accountingRecords;
+	}
+
+	public void setAccountingRecords(List<AccountingRecord> accountingRecords) {
+		this.accountingRecords = accountingRecords;
+	}
+
+	public List<Deposit> getDeposits() {
+		return deposits;
+	}
+
+	public void setDeposits(List<Deposit> deposits) {
+		this.deposits = deposits;
 	}
 
 }

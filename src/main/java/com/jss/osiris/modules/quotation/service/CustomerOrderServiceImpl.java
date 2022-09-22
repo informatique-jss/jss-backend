@@ -9,9 +9,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.search.service.IndexEntityService;
+import com.jss.osiris.modules.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
+import com.jss.osiris.modules.invoicing.model.Deposit;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
+import com.jss.osiris.modules.invoicing.service.DepositService;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.miscellaneous.service.MailService;
 import com.jss.osiris.modules.miscellaneous.service.PhoneService;
@@ -44,6 +47,12 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Autowired
     AccountingRecordService accountingRecordService;
+
+    @Autowired
+    QuotationStatusService quotationStatusService;
+
+    @Autowired
+    DepositService depositService;
 
     @Override
     public CustomerOrder getCustomerOrder(Integer id) {
@@ -104,24 +113,43 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public CustomerOrder addOrUpdateCustomerOrderStatus(CustomerOrder customerOrder) throws Exception {
-        if (customerOrder.getStatus().getCode().equals(QuotationStatus.BILLED)) {
-            generateInvoice(customerOrder);
+    public CustomerOrder addOrUpdateCustomerOrderStatus(CustomerOrder customerOrder, String targetStatusCode)
+            throws Exception {
+        if (targetStatusCode.equals(QuotationStatus.BILLED)) {
+            Invoice invoice = generateInvoice(customerOrder);
             accountingRecordService.generateAccountingRecordsForSaleOnInvoiceGeneration(
                     getInvoice(customerOrder));
+            // If deposit already set, associate them to invoice
+            if (customerOrder.getDeposits() != null && customerOrder.getDeposits().size() > 0)
+                for (Deposit deposit : customerOrder.getDeposits()) {
+                    deposit.setInvoice(invoice);
+                    depositService.addOrUpdateDeposit(deposit);
+                    for (AccountingRecord accountingRecord : deposit.getAccountingRecords()) {
+                        accountingRecord.setInvoice(invoice);
+                        accountingRecordService.addOrUpdateAccountingRecord(accountingRecord);
+                    }
+                }
         }
+
+        if (targetStatusCode.equals(QuotationStatus.VALIDATED_BY_CUSTOMER)) {
+            // TODO : add rule to deposit
+            targetStatusCode = QuotationStatus.WAITING_DEPOSIT;
+        }
+
+        QuotationStatus quotationStatus = quotationStatusService.getQuotationStatusByCode(targetStatusCode);
+        if (quotationStatus == null)
+            throw new Exception("Quotation status not found for code " + targetStatusCode);
+        customerOrder.setQuotationStatus(quotationStatus);
         return this.addOrUpdateCustomerOrder(customerOrder);
     }
 
-    private void generateInvoice(CustomerOrder customerOrder) throws Exception {
+    private Invoice generateInvoice(CustomerOrder customerOrder) throws Exception {
         if (!hasAtLeastOneInvoiceItemNotNull(customerOrder))
             throw new Exception("No invoice item found on customer order " + customerOrder.getId());
 
         // Generate blank invoice
-        // TODO
-        // Invoice invoice =
-        // invoiceService.createInvoice(quotationService.getCustomerOrderOfQuotation(customerOrder));
-        Invoice invoice = new Invoice();
+        Invoice invoice = invoiceService.createInvoice(customerOrder,
+                quotationService.getCustomerOrderOfQuotation(customerOrder));
         invoice.setInvoiceItems(new ArrayList<InvoiceItem>());
         // Associate invoice to invoice item
         for (Provision provision : customerOrder.getProvisions()) {
@@ -134,7 +162,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
         invoice.setCustomerOrder(customerOrder);
         invoiceService.addOrUpdateInvoice(invoice);
-        invoiceService.setPriceTotal(invoice);
+        return invoiceService.setPriceTotal(invoice);
     }
 
     private boolean hasAtLeastOneInvoiceItemNotNull(CustomerOrder customerOrder) {
@@ -180,4 +208,5 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
         return customerOrder.getProvisions().get(0).getInvoiceItems().get(0).getInvoice();
     }
+
 }

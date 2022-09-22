@@ -15,7 +15,9 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jss.osiris.libs.JacksonLocalDateTimeSerializer;
 import com.jss.osiris.libs.search.model.IndexedField;
@@ -28,6 +30,7 @@ import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
 @Entity
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Quotation implements IQuotation {
 
 	@Id
@@ -59,7 +62,7 @@ public class Quotation implements IQuotation {
 
 	@ManyToOne
 	@JoinColumn(name = "id_quotation_status")
-	private QuotationStatus status;
+	private QuotationStatus quotationStatus;
 
 	@Column(columnDefinition = "TEXT")
 	private String observations;
@@ -112,6 +115,10 @@ public class Quotation implements IQuotation {
 	@Column(nullable = false)
 	private Boolean isQuotation;
 
+	@ManyToMany
+	@JoinTable(name = "asso_quotation_customer_order", joinColumns = @JoinColumn(name = "id_quotation"), inverseJoinColumns = @JoinColumn(name = "id_customer_order"))
+	private List<CustomerOrder> customerOrders;
+
 	public Integer getId() {
 		return id;
 	}
@@ -150,14 +157,6 @@ public class Quotation implements IQuotation {
 
 	public void setCreatedDate(LocalDateTime createdDate) {
 		this.createdDate = createdDate;
-	}
-
-	public QuotationStatus getStatus() {
-		return status;
-	}
-
-	public void setStatus(QuotationStatus status) {
-		this.status = status;
 	}
 
 	public String getObservations() {
@@ -286,6 +285,22 @@ public class Quotation implements IQuotation {
 
 	public void setConfrere(Confrere confrere) {
 		this.confrere = confrere;
+	}
+
+	public List<CustomerOrder> getCustomerOrders() {
+		return customerOrders;
+	}
+
+	public void setCustomerOrders(List<CustomerOrder> customerOrders) {
+		this.customerOrders = customerOrders;
+	}
+
+	public QuotationStatus getQuotationStatus() {
+		return quotationStatus;
+	}
+
+	public void setQuotationStatus(QuotationStatus quotationStatus) {
+		this.quotationStatus = quotationStatus;
 	}
 
 }

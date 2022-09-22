@@ -44,4 +44,6 @@ public interface ITiers extends IId, IDocument {
 
 	public AccountingAccount getAccountingAccountCustomer();
 
+	public AccountingAccount getAccountingAccountDeposit();
+
 }

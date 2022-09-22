@@ -937,6 +937,7 @@ public class MiscellaneousController {
                 validationHelper.validateReferential(competentAuthorities, true);
             validationHelper.validateString(competentAuthorities.getCode(), true, 20);
             validationHelper.validateString(competentAuthorities.getLabel(), true, 100);
+            validationHelper.validateString(competentAuthorities.getSchedulle(), false, 150);
             validationHelper.validateReferential(competentAuthorities.getCompetentAuthorityType(), true);
             if (competentAuthorities.getCities() == null && competentAuthorities.getDepartments() == null
                     && competentAuthorities.getRegions() == null)

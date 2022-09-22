@@ -18,6 +18,12 @@
   transform: scale(0.66);
 }
 
+.column-content-icon {
+  position: relative;
+  top: 8px;
+  transform: scale(0.66);
+}
+
 .selected-mat-row {
   background-color: #6B9CBF;
 }

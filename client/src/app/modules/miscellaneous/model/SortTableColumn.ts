@@ -23,4 +23,16 @@ export interface SortTableColumn {
    * Indicate to use ellipsis on the column
    */
   isShrinkColumn: boolean | undefined;
+  /**
+   * Link function : link function to call on link icon click
+   */
+  actionLinkFunction: any | undefined;
+  /**
+   * Link icon to display
+   */
+  actionIcon: string;
+  /**
+   * Tooltip to display on action
+   */
+  actionTooltip: string;
 }

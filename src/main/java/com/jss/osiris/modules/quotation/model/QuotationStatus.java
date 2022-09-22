@@ -22,6 +22,8 @@ public class QuotationStatus implements Serializable, IId {
 	public static String ABANDONED = "ABANDONED";
 	public static String BILLED = "BILLED";
 	public static String CANCELLED = "CANCELLED";
+	public static String WAITING_DEPOSIT = "WAITING_DEPOSIT";
+	public static String BEING_PROCESSED = "BEING_PROCESSED";
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

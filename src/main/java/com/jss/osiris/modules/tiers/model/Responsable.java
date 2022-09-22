@@ -474,4 +474,11 @@ public class Responsable implements ITiers, IAttachment {
 		return null;
 	}
 
+	@Override
+	public AccountingAccount getAccountingAccountDeposit() {
+		if (this.getTiers() != null)
+			return this.getTiers().getAccountingAccountDeposit();
+		return null;
+	}
+
 }

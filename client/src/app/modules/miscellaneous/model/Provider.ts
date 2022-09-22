@@ -6,6 +6,7 @@ export interface Provider extends IReferential {
   label: string;
   accountingAccountCustomer: AccountingAccount;
   accountingAccountProvider: AccountingAccount;
+  accountingAccountDeposit: AccountingAccount;
   iban: string;
   bic: string;
 }

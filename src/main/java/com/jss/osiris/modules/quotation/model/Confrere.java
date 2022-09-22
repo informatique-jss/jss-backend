@@ -105,6 +105,10 @@ public class Confrere implements ITiers {
 	@JoinColumn(name = "id_accounting_account_customer")
 	private AccountingAccount accountingAccountCustomer;
 
+	@ManyToOne
+	@JoinColumn(name = "id_accounting_account_deposit")
+	private AccountingAccount accountingAccountDeposit;
+
 	@Column(length = 60)
 	private String mailRecipient;
 
@@ -493,6 +497,14 @@ public class Confrere implements ITiers {
 	@Override
 	public Boolean getIsIndividual() {
 		return false;
+	}
+
+	public AccountingAccount getAccountingAccountDeposit() {
+		return accountingAccountDeposit;
+	}
+
+	public void setAccountingAccountDeposit(AccountingAccount accountingAccountDeposit) {
+		this.accountingAccountDeposit = accountingAccountDeposit;
 	}
 
 }

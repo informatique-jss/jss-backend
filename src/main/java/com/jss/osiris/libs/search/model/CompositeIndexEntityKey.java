@@ -4,8 +4,8 @@ import java.io.Serializable;
 
 public class CompositeIndexEntityKey implements Serializable {
 
-    private String entityType;
-    private Integer entityId;
+    public String entityType;
+    public Integer entityId;
 
     public String getEntityType() {
         return entityType;

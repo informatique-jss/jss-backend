@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Vat } from 'src/app/modules/miscellaneous/model/Vat';
 import { Invoice } from 'src/app/modules/quotation/model/Invoice';
 import { IQuotation } from 'src/app/modules/quotation/model/IQuotation';
+import { AppService } from 'src/app/services/app.service';
 import { InvoiceService } from '../../services/invoice.service';
 import { InvoiceListComponent } from '../invoice-list/invoice-list.component';
 
@@ -18,6 +19,7 @@ export class InvoiceDetailsComponent implements OnInit {
 
   constructor(private formBuilder: FormBuilder,
     private invoiceService: InvoiceService,
+    private appService: AppService,
     private activatedRoute: ActivatedRoute,
   ) { }
 
@@ -25,8 +27,10 @@ export class InvoiceDetailsComponent implements OnInit {
     let idInvoice: number = this.activatedRoute.snapshot.params.id;
 
     if (idInvoice) {
+      this.appService.changeHeaderTitle("Facture n°" + idInvoice);
       this.invoiceService.getInvoiceById(idInvoice).subscribe(response => {
         this.invoice = response;
+        this.appService.changeHeaderTitle("Facture n°" + idInvoice + " - " + this.invoice.billingLabel);
       })
     }
   }

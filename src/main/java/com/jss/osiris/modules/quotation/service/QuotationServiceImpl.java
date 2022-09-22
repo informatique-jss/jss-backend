@@ -32,6 +32,7 @@ import com.jss.osiris.modules.quotation.model.IQuotation;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.ProvisionType;
 import com.jss.osiris.modules.quotation.model.Quotation;
+import com.jss.osiris.modules.quotation.model.QuotationStatus;
 import com.jss.osiris.modules.quotation.repository.QuotationRepository;
 import com.jss.osiris.modules.tiers.model.ITiers;
 
@@ -67,6 +68,9 @@ public class QuotationServiceImpl implements QuotationService {
 
     @Autowired
     DocumentService documentService;
+
+    @Autowired
+    QuotationStatusService quotationStatusService;
 
     @Value("${miscellaneous.document.billing.label.type.customer.code}")
     private String billingLabelCustomerCode;
@@ -214,15 +218,16 @@ public class QuotationServiceImpl implements QuotationService {
                             if (billingType.getIsPriceBasedOnCharacterNumber()) {
                                 CharacterPrice characterPrice = characterPriceService.getCharacterPrice(provision);
                                 if (characterPrice != null) {
-                                    invoiceItem.setPreTaxPrice(characterPrice.getPrice()
-                                            * characterPriceService.getCharacterNumber(provision));
+                                    Float price = characterPrice.getPrice()
+                                            * characterPriceService.getCharacterNumber(provision);
+                                    invoiceItem.setPreTaxPrice(Math.round(price * 100f) / 100f);
                                     invoiceItem.setLabel(invoiceItem.getLabel() + " ("
                                             + characterPriceService.getCharacterNumber(provision) + " caractères)");
                                 } else {
                                     invoiceItem.setPreTaxPrice(0f);
                                 }
                             } else {
-                                invoiceItem.setPreTaxPrice(billingItem.getPreTaxPrice());
+                                invoiceItem.setPreTaxPrice(Math.round(billingItem.getPreTaxPrice() * 100f) / 100f);
                             }
                             invoiceItem.setProvision(provision);
                             computeInvoiceItemsVatAndDiscount(invoiceItem, quotation);
@@ -243,12 +248,13 @@ public class QuotationServiceImpl implements QuotationService {
         if (assoSpecialOfferBillingType != null) {
             if (assoSpecialOfferBillingType.getDiscountAmount() != null
                     && assoSpecialOfferBillingType.getDiscountAmount() > 0)
-                invoiceItem.setDiscountAmount(assoSpecialOfferBillingType.getDiscountAmount());
+                invoiceItem
+                        .setDiscountAmount(Math.round(assoSpecialOfferBillingType.getDiscountAmount() * 100f) / 100f);
             if (assoSpecialOfferBillingType.getDiscountRate() != null
                     && assoSpecialOfferBillingType.getDiscountRate() > 0)
-                invoiceItem.setDiscountAmount(
-                        invoiceItem.getPreTaxPrice()
-                                * assoSpecialOfferBillingType.getDiscountRate() / 100);
+                invoiceItem.setDiscountAmount(Math.round(
+                        invoiceItem.getPreTaxPrice() * assoSpecialOfferBillingType.getDiscountRate() / 100f * 100f)
+                        / 100f);
         }
 
         Document billingDocument = documentService.getBillingDocument(quotation.getDocuments());
@@ -279,8 +285,9 @@ public class QuotationServiceImpl implements QuotationService {
         }
 
         if (vat != null) {
-            invoiceItem.setVatPrice(vat.getRate() / 100 * (invoiceItem.getPreTaxPrice()
-                    - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount() : 0)));
+            Float vatPrice = vat.getRate() / 100 * (invoiceItem.getPreTaxPrice()
+                    - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount() : 0));
+            invoiceItem.setVatPrice(Math.round(vatPrice * 100f) / 100f);
             invoiceItem.setVat(vat);
         } else {
             invoiceItem.setVatPrice(0f);
@@ -307,7 +314,8 @@ public class QuotationServiceImpl implements QuotationService {
                                     if (invoiceItemToMerge.getBillingItem().getBillingType().getCanOverridePrice()
                                             && invoiceItem.getPreTaxPrice() != null
                                             && invoiceItem.getPreTaxPrice() > 0) {
-                                        invoiceItemToMerge.setPreTaxPrice(invoiceItem.getPreTaxPrice().floatValue());
+                                        invoiceItemToMerge.setPreTaxPrice(
+                                                Math.round(invoiceItem.getPreTaxPrice().floatValue() * 100f) / 100f);
                                         computeInvoiceItemsVatAndDiscount(invoiceItemToMerge, quotation);
                                     }
                                 }
@@ -322,7 +330,11 @@ public class QuotationServiceImpl implements QuotationService {
     }
 
     @Override
-    public Quotation addOrUpdateQuotationStatus(Quotation quotation) throws Exception {
+    public Quotation addOrUpdateQuotationStatus(Quotation quotation, String targetStatusCode) throws Exception {
+        QuotationStatus quotationStatus = quotationStatusService.getQuotationStatusByCode(targetStatusCode);
+        if (quotationStatus == null)
+            throw new Exception("Quotation status not found for code " + targetStatusCode);
+        quotation.setQuotationStatus(quotationStatus);
         return this.addOrUpdateQuotation(quotation);
     }
 

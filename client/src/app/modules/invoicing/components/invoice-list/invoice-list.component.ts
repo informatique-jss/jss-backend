@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { INVOICING_STATUS_SENT } from 'src/app/libs/Constants';
-import { formatDateTimeForSortTable, formatEurosForSortTable } from 'src/app/libs/FormatHelper';
+import { formatDateTimeForSortTable, formatEurosForSortTable, toIsoString } from 'src/app/libs/FormatHelper';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { Invoice } from 'src/app/modules/quotation/model/Invoice';
@@ -29,17 +29,19 @@ export class InvoiceListComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.appService.changeHeaderTitle("Factures");
+    this.appService.changeHeaderTitle("Factures & paiements");
     this.putDefaultPeriod();
     this.displayedColumns.push({ id: "id", fieldName: "id", label: "N° de facture" } as SortTableColumn);
-    this.displayedColumns.push({ id: "customerOrderId", fieldName: "customerOrder.id", label: "N° de commande" } as SortTableColumn);
-    this.displayedColumns.push({ id: "customerOrderName", fieldName: "customerOrder.tiers", label: "Donneur d'ordre", valueFonction: InvoiceListComponent.getCustomerOrderName } as SortTableColumn);
+    this.displayedColumns.push({ id: "status", fieldName: "invoiceStatus.label", label: "Status" } as SortTableColumn);
+    this.displayedColumns.push({ id: "customerOrderId", fieldName: "customerOrder.id", label: "N° de commande", actionLinkFunction: InvoiceListComponent.getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la commande associée" } as SortTableColumn);
+    this.displayedColumns.push({ id: "customerOrderName", fieldName: "customerOrder.tiers", label: "Donneur d'ordre", valueFonction: InvoiceListComponent.getCustomerOrderName, actionLinkFunction: InvoiceListComponent.getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la fiche du donneur d'ordre" } as SortTableColumn);
     this.displayedColumns.push({ id: "responsable", fieldName: "customerOrder.tiers", label: "Responsable", valueFonction: InvoiceListComponent.getResponsableName } as SortTableColumn);
     this.displayedColumns.push({ id: "affaires", fieldName: "customerOrder.affaire", label: "Affaire(s)", valueFonction: InvoiceListComponent.getAffaireList, isShrinkColumn: true } as SortTableColumn);
     this.displayedColumns.push({ id: "invoicePayer", fieldName: "billingLabel", label: "Payeur" } as SortTableColumn);
     this.displayedColumns.push({ id: "createdDate", fieldName: "createdDate", label: "Date d'émission", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
     this.displayedColumns.push({ id: "totalPrice", fieldName: "totalPrice", label: "Montant TTC", valueFonction: formatEurosForSortTable } as SortTableColumn);
     this.displayedColumns.push({ id: "description", fieldName: "customerOrder.description", label: "Description" } as SortTableColumn);
+    this.displayedColumns.push({ id: "payments", fieldName: "payments", label: "Paiement(s) associé(s)", valueFonction: this.getPaymentLabel } as SortTableColumn);
 
     this.tableAction.push({ actionIcon: "settings", actionName: "Voir le détail de la facture / associer", actionLinkFunction: this.getActionLink, display: true, } as SortTableAction);
   }
@@ -51,6 +53,21 @@ export class InvoiceListComponent implements OnInit {
     if (element)
       return ['/invoicing', element.id];
     return undefined;
+  }
+
+  public static getColumnLink(column: SortTableColumn, element: any) {
+    if (element && column.id == "customerOrderName") {
+      if (element.customerOrder.responsable)
+        return ['/tiers/responsable/', element.customerOrder.responsable.id];
+      if (element.customerOrder.tiers)
+        return ['/tiers/', element.customerOrder.tiers.id];
+    }
+    if (element && column.id == "customerOrderId") {
+      if (element.isQuotation)
+        return ['/quotation/', element.customerOrder.id];
+      return ['/order/', element.customerOrder.id];
+    }
+    return ['/tiers', element.customerOrder.tiers.id];
   }
 
   public static getCustomerOrderName(element: any) {
@@ -89,6 +106,12 @@ export class InvoiceListComponent implements OnInit {
     return names.join(", ");
   }
 
+  getPaymentLabel(element: any) {
+    if (element && element.payments)
+      return element.payments.map((e: { id: any; }) => e.id).join(", ");
+    return "";
+  }
+
   putDefaultPeriod() {
     if (!this.invoiceSearch.startDate || !this.invoiceSearch.endDate) {
       this.invoiceSearch.startDate = new Date();
@@ -98,8 +121,14 @@ export class InvoiceListComponent implements OnInit {
   }
 
   searchInvoices() {
-    this.invoiceService.getInvoicesList(this.invoiceSearch).subscribe(response => {
-      this.invoices = response;
-    })
+
+
+    if (this.invoiceForm.valid && this.invoiceSearch.startDate && this.invoiceSearch.endDate) {
+      this.invoiceSearch.startDate = new Date(toIsoString(this.invoiceSearch.startDate));
+      this.invoiceSearch.endDate = new Date(toIsoString(this.invoiceSearch.endDate));
+      this.invoiceService.getInvoicesList(this.invoiceSearch).subscribe(response => {
+        this.invoices = response;
+      })
+    }
   }
 }

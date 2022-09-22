@@ -1,8 +1,9 @@
 package com.jss.osiris.modules.accounting.model;
 
-public class AccountingAccountCouple {
+public class AccountingAccountTrouple {
     private AccountingAccount accountingAccountProvider;
     private AccountingAccount accountingAccountCustomer;
+    private AccountingAccount accountingAccountDeposit;
 
     public AccountingAccount getAccountingAccountProvider() {
         return accountingAccountProvider;
@@ -18,6 +19,14 @@ public class AccountingAccountCouple {
 
     public void setAccountingAccountCustomer(AccountingAccount accountingAccountCustomer) {
         this.accountingAccountCustomer = accountingAccountCustomer;
+    }
+
+    public AccountingAccount getAccountingAccountDeposit() {
+        return accountingAccountDeposit;
+    }
+
+    public void setAccountingAccountDeposit(AccountingAccount accountingAccountDeposit) {
+        this.accountingAccountDeposit = accountingAccountDeposit;
     }
 
 }

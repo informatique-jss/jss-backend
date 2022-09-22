@@ -19,7 +19,7 @@ export interface IQuotation extends IAttachment, IDocument {
   specialOffers: SpecialOffer[] | undefined;
   overrideSpecialOffer: boolean;
   createdDate: Date;
-  status: QuotationStatus;
+  quotationStatus: QuotationStatus;
   observations: string;
   description: string;
   quotationLabelType: QuotationLabelType;

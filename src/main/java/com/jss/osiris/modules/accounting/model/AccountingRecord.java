@@ -13,13 +13,19 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jss.osiris.libs.JacksonLocalDateTimeSerializer;
+import com.jss.osiris.modules.invoicing.model.Deposit;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
+import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.miscellaneous.model.IId;
+import com.jss.osiris.modules.quotation.model.CustomerOrder;
 
 @Entity
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class AccountingRecord implements Serializable, IId {
 
 	@Id
@@ -62,9 +68,21 @@ public class AccountingRecord implements Serializable, IId {
 	@JoinColumn(name = "id_invoice_item")
 	private InvoiceItem invoiceItem;
 
-	@OneToOne
+	@ManyToOne
 	@JoinColumn(name = "id_invoice")
 	private Invoice invoice;
+
+	@ManyToOne
+	@JoinColumn(name = "id_customer_order")
+	private CustomerOrder customerOrder;
+
+	@ManyToOne
+	@JoinColumn(name = "id_payment")
+	private Payment payment;
+
+	@ManyToOne
+	@JoinColumn(name = "id_deposit")
+	private Deposit deposit;
 
 	@ManyToOne
 	@JoinColumn(name = "id_accounting_journal")
@@ -76,7 +94,7 @@ public class AccountingRecord implements Serializable, IId {
 
 	private Integer letteringNumber;
 
-	private LocalDateTime letteringDate;
+	private LocalDateTime letteringDateTime;
 
 	@Column(nullable = false)
 	private Boolean isANouveau;
@@ -87,6 +105,30 @@ public class AccountingRecord implements Serializable, IId {
 
 	public void setId(Integer id) {
 		this.id = id;
+	}
+
+	public Payment getPayment() {
+		return payment;
+	}
+
+	public void setPayment(Payment payment) {
+		this.payment = payment;
+	}
+
+	public Deposit getDeposit() {
+		return deposit;
+	}
+
+	public CustomerOrder getCustomerOrder() {
+		return customerOrder;
+	}
+
+	public void setCustomerOrder(CustomerOrder customerOrder) {
+		this.customerOrder = customerOrder;
+	}
+
+	public void setDeposit(Deposit deposit) {
+		this.deposit = deposit;
 	}
 
 	public LocalDateTime getAccountingDateTime() {
@@ -131,14 +173,6 @@ public class AccountingRecord implements Serializable, IId {
 
 	public void setLetteringNumber(Integer letteringNumber) {
 		this.letteringNumber = letteringNumber;
-	}
-
-	public LocalDateTime getLetteringDate() {
-		return letteringDate;
-	}
-
-	public void setLetteringDate(LocalDateTime letteringDate) {
-		this.letteringDate = letteringDate;
 	}
 
 	public void setLabel(String label) {
@@ -247,6 +281,14 @@ public class AccountingRecord implements Serializable, IId {
 
 	public void setIsANouveau(Boolean isANouveau) {
 		this.isANouveau = isANouveau;
+	}
+
+	public LocalDateTime getLetteringDateTime() {
+		return letteringDateTime;
+	}
+
+	public void setLetteringDateTime(LocalDateTime letteringDateTime) {
+		this.letteringDateTime = letteringDateTime;
 	}
 
 }

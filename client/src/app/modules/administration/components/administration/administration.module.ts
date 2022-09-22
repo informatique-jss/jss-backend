@@ -55,6 +55,7 @@ import { ReferentialNoticeTypeFamilyComponent } from '../referentials/referentia
 import { ReferentialNoticeTypeComponent } from '../referentials/referential-notice-type/referential-notice-type.component';
 import { ReferentialPaymentDeadlineTypeComponent } from '../referentials/referential-payment-deadline-type/referential-payment-deadline-type.component';
 import { ReferentialPaymentTypeComponent } from '../referentials/referential-payment-type/referential-payment-type.component';
+import { ReferentialPaymentWayComponent } from '../referentials/referential-payment-way/referential-payment-way.component';
 import { ReferentialProviderComponent } from '../referentials/referential-provider/referential-provider.component';
 import { ReferentialProvisionTypeComponent } from '../referentials/referential-provision-type/referential-provision-type.component';
 import { ReferentialQuotationLabelTypeComponent } from '../referentials/referential-quotation-label-type/referential-notice-type-family.component';
@@ -162,6 +163,7 @@ const routes: Routes = [
     ReferentialProviderComponent,
     ReferentialAccountingJournalComponent,
     ReferentialInvoiceStatusComponent,
+    ReferentialPaymentWayComponent,
   ],
 })
 export class AdministrationModule { }

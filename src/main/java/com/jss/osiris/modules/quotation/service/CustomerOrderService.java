@@ -7,5 +7,7 @@ public interface CustomerOrderService {
 
     public CustomerOrder addOrUpdateCustomerOrder(CustomerOrder quotation) throws Exception;
 
-    public CustomerOrder addOrUpdateCustomerOrderStatus(CustomerOrder customerOrder) throws Exception;
+    public CustomerOrder addOrUpdateCustomerOrderStatus(CustomerOrder customerOrder, String targetStatusCode)
+            throws Exception;
+
 }

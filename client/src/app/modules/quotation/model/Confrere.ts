@@ -21,6 +21,7 @@ export interface Confrere extends IDocument {
   phones: Phone[];
   accountingAccountCustomer: AccountingAccount;
   accountingAccountProvider: AccountingAccount;
+  accountingAccountDeposit: AccountingAccount;
   mailRecipient: string;
   address: string;
   city: City;

@@ -7,7 +7,7 @@ import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.jss.osiris.modules.accounting.model.AccountingAccountCouple;
+import com.jss.osiris.modules.accounting.model.AccountingAccountTrouple;
 import com.jss.osiris.modules.accounting.service.AccountingAccountService;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.service.MailService;
@@ -74,11 +74,13 @@ public class ConfrereServiceImpl implements ConfrereService {
         if (confrere.getRegie() == null)
             if (confrere.getId() == null
                     || confrere.getAccountingAccountCustomer() == null
-                            && confrere.getAccountingAccountProvider() == null) {
-                AccountingAccountCouple accountingAccountCouple = accountingAccountService
+                            && confrere.getAccountingAccountProvider() == null
+                            && confrere.getAccountingAccountDeposit() == null) {
+                AccountingAccountTrouple accountingAccountCouple = accountingAccountService
                         .generateAccountingAccountsForEntity(confrere.getLabel());
                 confrere.setAccountingAccountCustomer(accountingAccountCouple.getAccountingAccountCustomer());
                 confrere.setAccountingAccountProvider(accountingAccountCouple.getAccountingAccountProvider());
+                confrere.setAccountingAccountDeposit(accountingAccountCouple.getAccountingAccountDeposit());
             }
         return confrereRepository.save(confrere);
     }

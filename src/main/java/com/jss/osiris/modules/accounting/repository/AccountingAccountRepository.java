@@ -11,8 +11,9 @@ import com.jss.osiris.modules.accounting.model.AccountingAccount;
 public interface AccountingAccountRepository extends CrudRepository<AccountingAccount, Integer> {
     List<AccountingAccount> findByLabelContainingIgnoreCase(String label);
 
-    AccountingAccount findByAccountingAccountNumber(String code);
+    List<AccountingAccount> findByAccountingAccountNumber(String code);
 
     @Query("select max(accountingAccountSubNumber) from AccountingAccount where  accountingAccountNumber=:accountNumber")
     Integer findMaxSubAccontNumberForAccountNumber(@Param("accountNumber") String accountNumber);
+
 }

@@ -33,4 +33,9 @@ public class SearchServiceImpl implements SearchService {
         return entities;
     }
 
+    @Override
+    public List<IndexEntity> searchForEntitiesById(Integer id, List<String> entityTypeToSearch) {
+        return indexEntityRepository.searchForEntitiesByIdAndEntityType(id, entityTypeToSearch);
+    }
+
 }

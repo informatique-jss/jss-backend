@@ -35,9 +35,9 @@ public interface IQuotation extends Serializable, IId {
 
 	public void setCreatedDate(LocalDateTime createdDate);
 
-	public QuotationStatus getStatus();
+	public QuotationStatus getQuotationStatus();
 
-	public void setStatus(QuotationStatus status);
+	public void setQuotationStatus(QuotationStatus status);
 
 	public String getObservations();
 

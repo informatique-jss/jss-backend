@@ -88,6 +88,7 @@ import { SelectMailRedirectionComponent } from '../forms/select-mail-redirection
 import { SelectNoticeFamilyComponent } from '../forms/select-notice-family/select-notice-family.component';
 import { SelectPaymentDeadlineComponent } from '../forms/select-payment-deadline/select-payment-deadline.component';
 import { SelectPaymentTypesComponent } from '../forms/select-payment-types/select-payment-types.component';
+import { SelectPaymentWayComponent } from '../forms/select-payment-way/select-payment-way.component';
 import { SelectProvisionFamilyComponent } from '../forms/select-provision-family/select-provision-familiy.component';
 import { SelectProvisionTypeComponent } from '../forms/select-provision-type/select-provision-type.component';
 import { SelectRefundTypeComponent } from '../forms/select-refund-type/select-refund-type.component';
@@ -215,6 +216,7 @@ import { MiscellaneousComponent } from './miscellaneous.component';
     SortTableComponent,
     GenericDateRangePickerComponent,
     SelectInvoiceStatusComponent,
+    SelectPaymentWayComponent,
     SingleAttachmentComponent],
   exports: [
     HistoryComponent,
@@ -298,7 +300,8 @@ import { MiscellaneousComponent } from './miscellaneous.component';
     SelectAccountingJournalComponent,
     SingleAttachmentComponent,
     SortTableComponent,
-    SelectInvoiceStatusComponent
+    SelectInvoiceStatusComponent,
+    SelectPaymentWayComponent,
   ]
 })
 export class MiscellaneousModule { }

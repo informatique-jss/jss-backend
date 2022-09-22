@@ -8,4 +8,6 @@ public interface SearchService {
     public List<IndexEntity> searchForEntities(String search);
 
     public List<IndexEntity> searchForEntities(String search, String entityType);
+
+    public List<IndexEntity> searchForEntitiesById(Integer id, List<String> entityTypeToSearch);
 }

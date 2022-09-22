@@ -12,7 +12,11 @@ import com.jss.osiris.modules.accounting.model.AccountingBalanceViewTitle;
 import com.jss.osiris.modules.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.accounting.model.AccountingRecordSearch;
+import com.jss.osiris.modules.invoicing.model.Deposit;
 import com.jss.osiris.modules.invoicing.model.Invoice;
+import com.jss.osiris.modules.invoicing.model.Payment;
+import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.tiers.model.ITiers;
 
 public interface AccountingRecordService {
         public List<AccountingRecord> getAccountingRecords();
@@ -56,4 +60,24 @@ public interface AccountingRecordService {
 
         public File getAccountingBalanceGeneraleExport(Integer accountingClassId, String accountingAccountNumber,
                         Integer accountingAccountId, LocalDateTime startDate, LocalDateTime endDate) throws Exception;
+
+        public void generateAccountingRecordsForSaleOnInvoicePayment(Invoice invoice, List<Payment> payments,
+                        List<Deposit> deposits, Float amountToUse) throws Exception;
+
+        public void generateAccountingRecordsForDepositAndInvoice(Deposit deposit, Invoice invoice, Payment payment)
+                        throws Exception;
+
+        public void generateAccountingRecordsForDepositAndCustomerOrder(Deposit deposit, CustomerOrder customerOrder,
+                        Payment payment)
+                        throws Exception;
+
+        public AccountingAccount getCustomerAccountingAccountForCustomerOrder(ITiers customerOrder) throws Exception;
+
+        public void generateAccountingRecordsForWaintingPayment(Payment payment) throws Exception;
+
+        public void generateBankAccountingRecordsForPayment(Payment payment) throws Exception;
+
+        public Float getRemainingAmountToPayForInvoice(Invoice invoice) throws Exception;
+
+        public Float getRemainingAmountToPayForCustomerOrder(CustomerOrder customerOrder) throws Exception;
 }

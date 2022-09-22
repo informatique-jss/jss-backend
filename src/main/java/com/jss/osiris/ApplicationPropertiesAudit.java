@@ -26,14 +26,21 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("miscellaneous.department.code.guadeloupe");
         isOk = isOk && checkProperty("miscellaneous.department.code.reunion");
         isOk = isOk && checkProperty("accounting.account.number.customer");
+        isOk = isOk && checkProperty("accounting.account.number.deposit");
         isOk = isOk && checkProperty("accounting.account.number.provider");
         isOk = isOk && checkProperty("accounting.account.number.product");
+        isOk = isOk && checkProperty("accounting.account.number.bank");
+        isOk = isOk && checkProperty("accounting.account.number.waiting");
         isOk = isOk && checkProperty("miscellaneous.document.code.billing");
         isOk = isOk && checkProperty("miscellaneous.document.billing.label.type.customer.code");
         isOk = isOk && checkProperty("miscellaneous.document.billing.label.type.affaire.code");
         isOk = isOk && checkProperty("miscellaneous.document.billing.label.type.other.code");
+        isOk = isOk && checkProperty("accounting.account.number.bank");
+        isOk = isOk && checkProperty("invoicing.invoice.status.send.code");
+        isOk = isOk && checkProperty("invoicing.invoice.status.payed.code");
         isOk = isOk && checkProperty("accounting.journal.code.sales");
         isOk = isOk && checkProperty("schedulling.account.daily.close");
+        isOk = isOk && checkProperty("schedulling.payment.grab");
         isOk = isOk && checkProperty("ldap.dc.level.0");
         isOk = isOk && checkProperty("ldap.dc.level.1");
         isOk = isOk && checkProperty("ldap.ou.osiris");
@@ -43,6 +50,8 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("ldap.manager.login");
         isOk = isOk && checkProperty("ldap.manager.password");
         isOk = isOk && checkProperty("server.servlet.session.timeout");
+        isOk = isOk && checkProperty("quotation.customer.order.status.billed.code");
+        isOk = isOk && checkProperty("quotation.customer.order.status.waiting.deposit.code");
         isOk = isOk && checkAccountingParams();
 
         if (!isOk)

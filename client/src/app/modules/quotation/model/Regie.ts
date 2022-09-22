@@ -8,6 +8,7 @@ import { Phone } from "../../miscellaneous/model/Phone";
 export interface Regie extends IReferential {
   accountingAccountProvider: AccountingAccount;
   accountingAccountCustomer: AccountingAccount;
+  accountingAccountDeposit: AccountingAccount;
   mailRecipient: string;
   address: string;
   city: City;

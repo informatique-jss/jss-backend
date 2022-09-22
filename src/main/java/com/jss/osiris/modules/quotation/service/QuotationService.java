@@ -11,7 +11,7 @@ public interface QuotationService {
 
     public IQuotation getAndSetInvoiceItemsForQuotation(IQuotation quotation) throws Exception;
 
-    public Quotation addOrUpdateQuotationStatus(Quotation quotation) throws Exception;
+    public Quotation addOrUpdateQuotationStatus(Quotation quotation, String targetStatusCode) throws Exception;
 
     public ITiers getCustomerOrderOfQuotation(IQuotation quotation) throws Exception;
 }

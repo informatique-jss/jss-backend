@@ -3,7 +3,7 @@ package com.jss.osiris.modules.accounting.service;
 import java.util.List;
 
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
-import com.jss.osiris.modules.accounting.model.AccountingAccountCouple;
+import com.jss.osiris.modules.accounting.model.AccountingAccountTrouple;
 
 public interface AccountingAccountService {
     public List<AccountingAccount> getAccountingAccounts();
@@ -14,7 +14,7 @@ public interface AccountingAccountService {
 
     public List<AccountingAccount> getAccountingAccountByLabelOrCode(String label);
 
-    public AccountingAccount getAccountingAccountByAccountingAccountNumber(String accountingAccountNumber);
+    public List<AccountingAccount> getAccountingAccountByAccountingAccountNumber(String accountingAccountNumber);
 
     /**
      * Generate provider and customer accounting accounts for an entity
@@ -25,8 +25,12 @@ public interface AccountingAccountService {
      *              label
      * 
      */
-    public AccountingAccountCouple generateAccountingAccountsForEntity(String label) throws Exception;
+    public AccountingAccountTrouple generateAccountingAccountsForEntity(String label) throws Exception;
 
     public AccountingAccount getProductAccountingAccountFromAccountingAccountList(
             List<AccountingAccount> accountingAccounts);
+
+    public AccountingAccount getBankAccountingAccount() throws Exception;
+
+    public AccountingAccount getWaitingAccountingAccount() throws Exception;
 }

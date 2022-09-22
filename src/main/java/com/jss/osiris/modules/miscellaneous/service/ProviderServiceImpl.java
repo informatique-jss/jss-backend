@@ -10,7 +10,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
-import com.jss.osiris.modules.accounting.model.AccountingAccountCouple;
+import com.jss.osiris.modules.accounting.model.AccountingAccountTrouple;
 import com.jss.osiris.modules.accounting.service.AccountingAccountService;
 import com.jss.osiris.modules.miscellaneous.model.Provider;
 import com.jss.osiris.modules.miscellaneous.repository.ProviderRepository;
@@ -47,11 +47,13 @@ public class ProviderServiceImpl implements ProviderService {
     public Provider addOrUpdateProvider(Provider provider) throws Exception {
         // Generate accounting accounts
         if (provider.getId() == null
-                || provider.getAccountingAccountCustomer() == null && provider.getAccountingAccountProvider() == null) {
-            AccountingAccountCouple accountingAccountCouple = accountingAccountService
+                || provider.getAccountingAccountCustomer() == null && provider.getAccountingAccountProvider() == null
+                        && provider.getAccountingAccountDeposit() == null) {
+            AccountingAccountTrouple accountingAccountCouple = accountingAccountService
                     .generateAccountingAccountsForEntity(provider.getLabel());
             provider.setAccountingAccountCustomer(accountingAccountCouple.getAccountingAccountCustomer());
             provider.setAccountingAccountProvider(accountingAccountCouple.getAccountingAccountProvider());
+            provider.setAccountingAccountDeposit(accountingAccountCouple.getAccountingAccountDeposit());
         }
 
         return providerRepository.save(provider);

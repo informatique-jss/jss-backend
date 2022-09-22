@@ -5,12 +5,14 @@ import java.util.List;
 
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceSearch;
-import com.jss.osiris.modules.quotation.model.Affaire;
+import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.tiers.model.ITiers;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
 public interface InvoiceService {
+    public List<Invoice> getAllInvoices();
+
     public Invoice getInvoice(Integer id);
 
     public Invoice addOrUpdateInvoice(Invoice invoice);
@@ -26,7 +28,7 @@ public interface InvoiceService {
      *                         only one affaire in the invoice (it's to define
      *                         payer)
      */
-    public Invoice createInvoice(ITiers orderingCustomer, Affaire affaire) throws Exception;
+    public Invoice createInvoice(CustomerOrder customerOrder, ITiers orderingCustomer) throws Exception;
 
     public Float getDiscountTotal(Invoice invoice);
 
@@ -36,7 +38,7 @@ public interface InvoiceService {
 
     public Float getPriceTotal(Invoice invoice);
 
-    public void setPriceTotal(Invoice invoice);
+    public Invoice setPriceTotal(Invoice invoice);
 
     public ITiers getCustomerOrder(Invoice invoice) throws Exception;
 
@@ -48,4 +50,5 @@ public interface InvoiceService {
 
     public List<Invoice> searchInvoices(InvoiceSearch invoiceSearch) throws Exception;
 
+    public void reindexInvoices();
 }

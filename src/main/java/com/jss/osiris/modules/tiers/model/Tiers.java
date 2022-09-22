@@ -193,6 +193,10 @@ public class Tiers implements ITiers, IAttachment {
 	@JoinColumn(name = "id_accounting_account_customer")
 	private AccountingAccount accountingAccountCustomer;
 
+	@ManyToOne
+	@JoinColumn(name = "id_accounting_account_deposit")
+	private AccountingAccount accountingAccountDeposit;
+
 	public List<Competitor> getCompetitors() {
 		return competitors;
 	}
@@ -511,6 +515,14 @@ public class Tiers implements ITiers, IAttachment {
 
 	public void setAccountingAccountCustomer(AccountingAccount accountingAccountCustomer) {
 		this.accountingAccountCustomer = accountingAccountCustomer;
+	}
+
+	public AccountingAccount getAccountingAccountDeposit() {
+		return accountingAccountDeposit;
+	}
+
+	public void setAccountingAccountDeposit(AccountingAccount accountingAccountDeposit) {
+		this.accountingAccountDeposit = accountingAccountDeposit;
 	}
 
 }

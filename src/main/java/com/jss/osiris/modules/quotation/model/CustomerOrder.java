@@ -15,10 +15,16 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jss.osiris.libs.JacksonLocalDateTimeSerializer;
 import com.jss.osiris.libs.search.model.IndexedField;
+import com.jss.osiris.modules.accounting.model.AccountingRecord;
+import com.jss.osiris.modules.invoicing.model.Deposit;
+import com.jss.osiris.modules.invoicing.model.Invoice;
+import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.model.Mail;
@@ -28,6 +34,7 @@ import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
 @Entity
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class CustomerOrder implements IQuotation {
 
 	@Id
@@ -59,7 +66,7 @@ public class CustomerOrder implements IQuotation {
 
 	@ManyToOne
 	@JoinColumn(name = "id_status")
-	private QuotationStatus status;
+	private QuotationStatus quotationStatus;
 
 	@Column(columnDefinition = "TEXT")
 	private String observations;
@@ -103,6 +110,9 @@ public class CustomerOrder implements IQuotation {
 	@JoinTable(name = "asso_customer_order_phone", joinColumns = @JoinColumn(name = "id_customer_order"), inverseJoinColumns = @JoinColumn(name = "id_phone"))
 	private List<Phone> phones;
 
+	@ManyToMany(mappedBy = "customerOrders")
+	private List<Quotation> quotations;
+
 	@Column(nullable = false)
 	private Boolean overrideSpecialOffer;
 
@@ -111,6 +121,18 @@ public class CustomerOrder implements IQuotation {
 
 	@Column(nullable = false)
 	private Boolean isQuotation;
+
+	@OneToMany(mappedBy = "customerOrder")
+	private List<Invoice> invoices;
+
+	@OneToMany(targetEntity = Payment.class, mappedBy = "customerOrder")
+	private List<Payment> payments;
+
+	@OneToMany(targetEntity = Deposit.class, mappedBy = "customerOrder")
+	private List<Deposit> deposits;
+
+	@OneToMany(targetEntity = AccountingRecord.class, mappedBy = "customerOrder")
+	private List<AccountingRecord> accountingRecords;
 
 	public Integer getId() {
 		return id;
@@ -122,6 +144,22 @@ public class CustomerOrder implements IQuotation {
 
 	public Tiers getTiers() {
 		return tiers;
+	}
+
+	public List<Payment> getPayments() {
+		return payments;
+	}
+
+	public void setPayments(List<Payment> payments) {
+		this.payments = payments;
+	}
+
+	public List<Deposit> getDeposits() {
+		return deposits;
+	}
+
+	public void setDeposits(List<Deposit> deposits) {
+		this.deposits = deposits;
 	}
 
 	public void setTiers(Tiers tiers) {
@@ -150,14 +188,6 @@ public class CustomerOrder implements IQuotation {
 
 	public void setCreatedDate(LocalDateTime createdDate) {
 		this.createdDate = createdDate;
-	}
-
-	public QuotationStatus getStatus() {
-		return status;
-	}
-
-	public void setStatus(QuotationStatus status) {
-		this.status = status;
 	}
 
 	public String getObservations() {
@@ -286,6 +316,38 @@ public class CustomerOrder implements IQuotation {
 
 	public void setConfrere(Confrere confrere) {
 		this.confrere = confrere;
+	}
+
+	public List<Quotation> getQuotations() {
+		return quotations;
+	}
+
+	public void setQuotations(List<Quotation> quotations) {
+		this.quotations = quotations;
+	}
+
+	public List<Invoice> getInvoices() {
+		return invoices;
+	}
+
+	public void setInvoices(List<Invoice> invoices) {
+		this.invoices = invoices;
+	}
+
+	public QuotationStatus getQuotationStatus() {
+		return quotationStatus;
+	}
+
+	public void setQuotationStatus(QuotationStatus quotationStatus) {
+		this.quotationStatus = quotationStatus;
+	}
+
+	public List<AccountingRecord> getAccountingRecords() {
+		return accountingRecords;
+	}
+
+	public void setAccountingRecords(List<AccountingRecord> accountingRecords) {
+		this.accountingRecords = accountingRecords;
 	}
 
 }

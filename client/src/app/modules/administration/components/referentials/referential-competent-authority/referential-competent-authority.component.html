@@ -94,6 +94,11 @@
               <generic-input [(model)]="selectedEntity.contact" label="Contact" [form]="entityForm"
                 propertyName="contact" [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="60"></generic-input>
             </td>
+            <td>
+              <generic-input [(model)]="selectedEntity.schedulle" label="Horaires" [form]="entityForm"
+                propertyName="schedulle" [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="150">
+              </generic-input>
+            </td>
           </tr>
         </table>
         <table class="full-width">

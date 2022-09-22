@@ -6,6 +6,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -205,6 +206,9 @@ public class QuotationController {
 
   @Autowired
   CustomerOrderService customerOrderService;
+
+  @Value("${miscellaneous.document.billing.label.type.affaire.code}")
+  private String billingLabelAffaireCode;
 
   @GetMapping(inputEntryPoint + "/regies")
   public ResponseEntity<List<Regie>> getRegies() {
@@ -1194,13 +1198,13 @@ public class QuotationController {
 
       QuotationStatus quotationStatus = quotationStatusService.getQuotationStatusByCode(QuotationStatus.OPEN);
       if (quotationStatus == null)
-        if (quotation.getStatus() == null) {
+        if (quotation.getQuotationStatus() == null) {
           logger.error("OPEN Quotation status not found");
           return new ResponseEntity<Quotation>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-      if (quotation.getStatus() == null)
-        quotation.setStatus(quotationStatus);
+      if (quotation.getQuotationStatus() == null)
+        quotation.setQuotationStatus(quotationStatus);
       quotation = quotationService.addOrUpdateQuotation(quotation);
     } catch (
 
@@ -1222,13 +1226,13 @@ public class QuotationController {
       validateQuotationAndCustomerOrder(customerOrder);
       QuotationStatus quotationStatus = quotationStatusService.getQuotationStatusByCode(QuotationStatus.OPEN);
       if (quotationStatus == null)
-        if (customerOrder.getStatus() == null) {
+        if (customerOrder.getQuotationStatus() == null) {
           logger.error("OPEN Quotation status not found");
           return new ResponseEntity<CustomerOrder>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-      if (customerOrder.getStatus() == null)
-        customerOrder.setStatus(quotationStatus);
+      if (customerOrder.getQuotationStatus() == null)
+        customerOrder.setQuotationStatus(quotationStatus);
       customerOrder = customerOrderService.addOrUpdateCustomerOrder(customerOrder);
     } catch (
 
@@ -1245,10 +1249,11 @@ public class QuotationController {
   }
 
   @PostMapping(inputEntryPoint + "/customer-order/status")
-  public ResponseEntity<CustomerOrder> addOrUpdateCustomerOrderStatus(@RequestBody CustomerOrder customerOrder) {
+  public ResponseEntity<CustomerOrder> addOrUpdateCustomerOrderStatus(@RequestBody CustomerOrder customerOrder,
+      @RequestParam String targetStatusCode) {
     try {
       validateQuotationAndCustomerOrder(customerOrder);
-      customerOrder = customerOrderService.addOrUpdateCustomerOrderStatus(customerOrder);
+      customerOrder = customerOrderService.addOrUpdateCustomerOrderStatus(customerOrder, targetStatusCode);
     } catch (
 
     ResponseStatusException e) {
@@ -1264,11 +1269,12 @@ public class QuotationController {
   }
 
   @PostMapping(inputEntryPoint + "/quotation/status")
-  public ResponseEntity<Quotation> addOrUpdateQuotationStatus(@RequestBody Quotation quotation) {
+  public ResponseEntity<Quotation> addOrUpdateQuotationStatus(@RequestBody Quotation quotation,
+      @RequestParam String targetStatusCode) {
     try {
       validateQuotationAndCustomerOrder(quotation);
 
-      quotation = quotationService.addOrUpdateQuotationStatus(quotation);
+      quotation = quotationService.addOrUpdateQuotationStatus(quotation, targetStatusCode);
     } catch (
 
     ResponseStatusException e) {
@@ -1284,7 +1290,8 @@ public class QuotationController {
   }
 
   private void validateQuotationAndCustomerOrder(IQuotation quotation) throws Exception {
-    boolean isOpen = quotation.getStatus() != null && quotation.getStatus().getCode().equals(QuotationStatus.OPEN);
+    boolean isOpen = quotation.getQuotationStatus() != null
+        && quotation.getQuotationStatus().getCode().equals(QuotationStatus.OPEN);
     boolean isCustomerOrder = quotation instanceof CustomerOrder && !isOpen;
     if (quotation.getSpecialOffers() != null && quotation.getSpecialOffers().size() > 0)
       for (SpecialOffer specialOffer : quotation.getSpecialOffers())
@@ -1344,11 +1351,19 @@ public class QuotationController {
       }
     }
 
+    int nbrOfAffaire = 0;
+    Integer lastAffaireId = null;
+
     for (Provision provision : quotation.getProvisions()) {
       if (provision.getAffaire() == null && !isOpen)
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
 
       Affaire affaire = provision.getAffaire();
+
+      if (lastAffaireId == null || lastAffaireId.equals(affaire.getId())) {
+        nbrOfAffaire++;
+        lastAffaireId = affaire.getId();
+      }
 
       validationHelper.validateString(affaire.getAddress(), true, 60);
       validationHelper.validateReferential(affaire.getCity(), true);
@@ -1569,6 +1584,9 @@ public class QuotationController {
         validationHelper.validateDateMin(bodacc.getDateOfPublication(), false, LocalDate.now());
       }
     }
+
+    if (nbrOfAffaire > 1 && quotation.getQuotationLabelType().getCode().equals(billingLabelAffaireCode))
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
   }
 
   @PostMapping(inputEntryPoint + "/affaire")
