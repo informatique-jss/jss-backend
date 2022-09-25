@@ -61,7 +61,7 @@ export class PaymentListComponent implements OnInit {
   }
 
   putDefaultPeriod() {
-    if (!this.paymentSearch.startDate || !this.paymentSearch.endDate) {
+    if (!this.paymentSearch.startDate && !this.paymentSearch.endDate) {
       this.paymentSearch.startDate = new Date();
       this.paymentSearch.endDate = new Date();
       this.paymentSearch.startDate.setDate(this.paymentSearch.endDate.getDate() - 30);

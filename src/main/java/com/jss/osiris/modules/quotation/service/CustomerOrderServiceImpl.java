@@ -2,6 +2,7 @@ package com.jss.osiris.modules.quotation.service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import com.jss.osiris.modules.miscellaneous.service.MailService;
 import com.jss.osiris.modules.miscellaneous.service.PhoneService;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.Domiciliation;
+import com.jss.osiris.modules.quotation.model.OrderingSearch;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.QuotationStatus;
 import com.jss.osiris.modules.quotation.repository.CustomerOrderRepository;
@@ -207,6 +209,16 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             throw new Exception("No invoice found");
 
         return customerOrder.getProvisions().get(0).getInvoiceItems().get(0).getInvoice();
+    }
+
+    @Override
+    public List<CustomerOrder> searchOrders(OrderingSearch orderingSearch) {
+        List<CustomerOrder> customerOrders = customerOrderRepository.findCustomerOrders(
+                orderingSearch.getSalesEmployee(),
+                orderingSearch.getQuotationStatus(),
+                orderingSearch.getStartDate(),
+                orderingSearch.getEndDate());
+        return customerOrders;
     }
 
 }

@@ -91,6 +91,7 @@ import { SelectPaymentTypesComponent } from '../forms/select-payment-types/selec
 import { SelectPaymentWayComponent } from '../forms/select-payment-way/select-payment-way.component';
 import { SelectProvisionFamilyComponent } from '../forms/select-provision-family/select-provision-familiy.component';
 import { SelectProvisionTypeComponent } from '../forms/select-provision-type/select-provision-type.component';
+import { SelectOrderingStatusComponent as SelectQuotationStatusComponent } from '../forms/select-quotation-status/select-quotation-status.component';
 import { SelectRefundTypeComponent } from '../forms/select-refund-type/select-refund-type.component';
 import { SelectRegieComponent } from '../forms/select-regie/select-regie.component';
 import { SelectRegionsComponent } from '../forms/select-regions/select-regions.component';
@@ -216,6 +217,7 @@ import { MiscellaneousComponent } from './miscellaneous.component';
     SortTableComponent,
     GenericDateRangePickerComponent,
     SelectInvoiceStatusComponent,
+    SelectQuotationStatusComponent,
     SelectPaymentWayComponent,
     SingleAttachmentComponent],
   exports: [
@@ -276,6 +278,7 @@ import { MiscellaneousComponent } from './miscellaneous.component';
     SelectTiersCategoryComponent,
     AutocompleteSiretComponent,
     SelectBillingItemsComponent,
+    SelectQuotationStatusComponent,
     RadioGroupBillingLabelComponent,
     SelectResponsableComponent,
     SelectSubscriptionPeriodComponent,

@@ -30,6 +30,7 @@ export class QuotationComponent implements OnInit {
   editMode: boolean = false;
   createMode: boolean = false;
   quotationStatusList: QuotationStatus[] = [] as Array<QuotationStatus>;
+  isQuotationUrl = false;
 
   QUOTATION_ENTITY_TYPE = QUOTATION_ENTITY_TYPE;
   CUSTOMER_ORDER_ENTITY_TYPE = CUSTOMER_ORDER_ENTITY_TYPE;
@@ -83,6 +84,7 @@ export class QuotationComponent implements OnInit {
 
     // Load by order
     if (url != undefined && url != null && url[0] != undefined && url[0].path == "order") {
+      this.isQuotationUrl = false;
       this.appService.changeHeaderTitle("Commande");
       this.instanceOfCustomerOrder = true;
       if (idQuotation != null && idQuotation != undefined) {
@@ -98,6 +100,7 @@ export class QuotationComponent implements OnInit {
       }
       // Load by quotation
     } else if (idQuotation != null && idQuotation != undefined) {
+      this.isQuotationUrl = true;
       this.appService.changeHeaderTitle("Devis");
       this.quotationService.getQuotation(idQuotation).subscribe(response => {
         this.quotation = response;
@@ -109,6 +112,7 @@ export class QuotationComponent implements OnInit {
         this.filteredProvisions = this.quotation.provisions;
       })
     } else if (this.createMode == false) {
+      this.isQuotationUrl = true;
       // Blank page
       this.appService.changeHeaderTitle("Devis");
     }
@@ -347,7 +351,6 @@ export class QuotationComponent implements OnInit {
           })
         }
       }
-
       this.editMode = false;
     }
   }

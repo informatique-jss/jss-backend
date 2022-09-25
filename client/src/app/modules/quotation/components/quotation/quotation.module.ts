@@ -33,7 +33,9 @@ import { BodaccSplitComponent } from '../bodacc-split/bodacc-split.component';
 import { DomiciliationComponent } from '../domiciliation/domiciliation.component';
 import { InvoiceManagementComponent } from '../invoice-management/invoice-management.component';
 import { OrderingCustomerComponent } from '../ordering-customer/ordering-customer.component';
+import { OrderingListComponent } from '../ordering-list/ordering-list.component';
 import { ProvisionItemComponent } from '../provision-item/provision-item.component';
+import { QuotationListComponent } from '../quotation-list/quotation-list.component';
 import { QuotationManagementComponent } from '../quotation-management/quotation-management.component';
 import { ShalComponent } from '../shal/shal.component';
 import { QuotationComponent } from './quotation.component';
@@ -105,6 +107,8 @@ const routes: Routes = [
     InvoiceManagementComponent,
     BodaccFusionComponent,
     BodaccSplitComponent,
+    QuotationListComponent,
+    OrderingListComponent,
     ShalComponent],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'fr-FR' }

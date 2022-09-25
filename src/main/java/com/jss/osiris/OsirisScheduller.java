@@ -26,8 +26,7 @@ public class OsirisScheduller {
 		accountingRecordService.dailyAccountClosing();
 	}
 
-	// @Scheduled(cron = "${schedulling.payment.grab}")
-	@Scheduled(initialDelay = 100, fixedDelay = 1000000000)
+	@Scheduled(cron = "${schedulling.payment.grab}")
 	private void paymentGrab() throws Exception {
 		logger.info("Start of payment grab");
 		paymentService.payementGrab();

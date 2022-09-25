@@ -98,6 +98,12 @@
   </mat-sidenav>
 
   <mat-sidenav-content>
+    <div *ngIf="!editMode && !quotation.id && !isQuotationUrl">
+      <ordering-list></ordering-list>
+    </div>
+    <div *ngIf="!editMode && !quotation.id && isQuotationUrl">
+      <quotation-list></quotation-list>
+    </div>
     <div [hidden]="!editMode && (quotation.id==undefined || quotation.id==null)">
       <fieldset [disabled]="editMode==false" class="fieldset-no-border">
         <mat-tab-group animationDuration="0ms" #tabs>

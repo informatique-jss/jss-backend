@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.quotation.controller;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -54,6 +55,7 @@ import com.jss.osiris.modules.quotation.model.JournalType;
 import com.jss.osiris.modules.quotation.model.MailRedirectionType;
 import com.jss.osiris.modules.quotation.model.NoticeType;
 import com.jss.osiris.modules.quotation.model.NoticeTypeFamily;
+import com.jss.osiris.modules.quotation.model.OrderingSearch;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.ProvisionFamilyType;
 import com.jss.osiris.modules.quotation.model.ProvisionType;
@@ -1218,6 +1220,76 @@ public class QuotationController {
       return new ResponseEntity<Quotation>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
     return new ResponseEntity<Quotation>(quotation, HttpStatus.OK);
+  }
+
+  @PostMapping(inputEntryPoint + "/order/search")
+  public ResponseEntity<List<CustomerOrder>> searchOrders(@RequestBody OrderingSearch orderingSearch) {
+    List<CustomerOrder> orders;
+    if (orderingSearch == null)
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+    if (orderingSearch.getStartDate() == null || orderingSearch.getEndDate() == null)
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+    Duration duration = Duration.between(orderingSearch.getStartDate(), orderingSearch.getEndDate());
+
+    if (duration.toDays() > 366)
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+    try {
+      validationHelper.validateReferential(orderingSearch.getSalesEmployee(), false);
+      if (orderingSearch.getQuotationStatus() != null)
+        for (QuotationStatus status : orderingSearch.getQuotationStatus())
+          validationHelper.validateReferential(status, false);
+    } catch (Exception e) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
+    try {
+      orders = customerOrderService.searchOrders(orderingSearch);
+    } catch (HttpStatusCodeException e) {
+      logger.error("HTTP error when fetching payment", e);
+      return new ResponseEntity<List<CustomerOrder>>(HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (Exception e) {
+      logger.error("Error when fetching payment", e);
+      return new ResponseEntity<List<CustomerOrder>>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    return new ResponseEntity<List<CustomerOrder>>(orders, HttpStatus.OK);
+  }
+
+  @PostMapping(inputEntryPoint + "/quotation/search")
+  public ResponseEntity<List<Quotation>> searchQuotations(@RequestBody OrderingSearch orderingSearch) {
+    List<Quotation> orders;
+    if (orderingSearch == null)
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+    if (orderingSearch.getStartDate() == null || orderingSearch.getEndDate() == null)
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+    Duration duration = Duration.between(orderingSearch.getStartDate(), orderingSearch.getEndDate());
+
+    if (duration.toDays() > 366)
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+    try {
+      validationHelper.validateReferential(orderingSearch.getSalesEmployee(), false);
+      if (orderingSearch.getQuotationStatus() != null)
+        for (QuotationStatus status : orderingSearch.getQuotationStatus())
+          validationHelper.validateReferential(status, false);
+    } catch (Exception e) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
+    try {
+      orders = quotationService.searchQuotations(orderingSearch);
+    } catch (HttpStatusCodeException e) {
+      logger.error("HTTP error when fetching payment", e);
+      return new ResponseEntity<List<Quotation>>(HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (Exception e) {
+      logger.error("Error when fetching payment", e);
+      return new ResponseEntity<List<Quotation>>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    return new ResponseEntity<List<Quotation>>(orders, HttpStatus.OK);
   }
 
   @PostMapping(inputEntryPoint + "/customer-order")

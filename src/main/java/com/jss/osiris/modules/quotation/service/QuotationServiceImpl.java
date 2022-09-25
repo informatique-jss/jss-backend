@@ -29,6 +29,7 @@ import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.CharacterPrice;
 import com.jss.osiris.modules.quotation.model.Domiciliation;
 import com.jss.osiris.modules.quotation.model.IQuotation;
+import com.jss.osiris.modules.quotation.model.OrderingSearch;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.ProvisionType;
 import com.jss.osiris.modules.quotation.model.Quotation;
@@ -348,5 +349,15 @@ public class QuotationServiceImpl implements QuotationService {
             return quotation.getTiers();
 
         throw new Exception("No customer order declared on IQuotation " + quotation.getId());
+    }
+
+    @Override
+    public List<Quotation> searchQuotations(OrderingSearch orderingSearch) {
+        List<Quotation> quotations = quotationRepository.findQuotations(
+                orderingSearch.getSalesEmployee(),
+                orderingSearch.getQuotationStatus(),
+                orderingSearch.getStartDate(),
+                orderingSearch.getEndDate());
+        return quotations;
     }
 }

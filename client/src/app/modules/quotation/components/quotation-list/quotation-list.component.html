@@ -1,0 +1,30 @@
+<div class="mat-elevation-z2 form-div">
+  <div class=" full-width">
+    <table class="full-width table-fixed-layout">
+      <tr>
+        <td>
+          <autocomplete-sales-employee [(model)]="orderingSearch.salesEmployee" label="Commercial"
+            [form]="orderingSearchForm" propertyName="salesEmployee" [isMandatory]="false">
+          </autocomplete-sales-employee>
+        </td>
+        <td>
+          <select-quotation-status [(model)]="orderingSearch.quotationStatus" label="Statut" [form]="orderingSearchForm"
+            propertyName="quotationStatus" [isMandatory]="false" [isDisabled]="false"></select-quotation-status>
+        </td>
+        <td>
+          <generic-date-range-picker [(modelStart)]="orderingSearch.startDate" [(modelEnd)]="orderingSearch.endDate"
+            label="Date de création" [form]="orderingSearchForm" propertyNameStart="startDate" propertyNameEnd="endDate"
+            (onDateChange)="putDefaultPeriod()">
+          </generic-date-range-picker>
+        </td>
+        <td class="fab-td-button">
+          <button mat-mini-fab color="warn" matTooltip="Rechercher" (click)="searchOrders()" class="add-button">
+            <mat-icon>search</mat-icon>
+          </button>
+        </td>
+      </tr>
+    </table>
+    <sort-table [actions]="tableAction" [columns]="displayedColumns" [values]="quotations" tableName="Devis">
+    </sort-table>
+  </div>
+</div>

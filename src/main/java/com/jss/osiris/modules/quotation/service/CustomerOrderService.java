@@ -1,6 +1,9 @@
 package com.jss.osiris.modules.quotation.service;
 
+import java.util.List;
+
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.quotation.model.OrderingSearch;
 
 public interface CustomerOrderService {
     public CustomerOrder getCustomerOrder(Integer id);
@@ -9,5 +12,7 @@ public interface CustomerOrderService {
 
     public CustomerOrder addOrUpdateCustomerOrderStatus(CustomerOrder customerOrder, String targetStatusCode)
             throws Exception;
+
+    public List<CustomerOrder> searchOrders(OrderingSearch orderingSearch);
 
 }

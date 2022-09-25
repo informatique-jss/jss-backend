@@ -113,7 +113,7 @@ export class InvoiceListComponent implements OnInit {
   }
 
   putDefaultPeriod() {
-    if (!this.invoiceSearch.startDate || !this.invoiceSearch.endDate) {
+    if (!this.invoiceSearch.startDate && !this.invoiceSearch.endDate) {
       this.invoiceSearch.startDate = new Date();
       this.invoiceSearch.endDate = new Date();
       this.invoiceSearch.startDate.setDate(this.invoiceSearch.endDate.getDate() - 30);
