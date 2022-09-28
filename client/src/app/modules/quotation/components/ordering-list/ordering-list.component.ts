@@ -1,13 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { PAYEMENT_WAY_INBOUND_CODE } from 'src/app/libs/Constants';
 import { formatDateTimeForSortTable, toIsoString } from 'src/app/libs/FormatHelper';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { AppService } from 'src/app/services/app.service';
+import { CustomerOrder } from '../../model/CustomerOrder';
 import { IQuotation } from '../../model/IQuotation';
 import { OrderingSearch } from '../../model/OrderingSearch';
 import { QuotationService } from '../../services/quotation.service';
+import { QuotationComponent } from '../quotation/quotation.component';
 
 @Component({
   selector: 'ordering-list',
@@ -21,6 +23,11 @@ export class OrderingListComponent implements OnInit {
   tableAction: SortTableAction[] = [];
   PAYEMENT_WAY_INBOUND_CODE = PAYEMENT_WAY_INBOUND_CODE;
 
+  @Output() actionBypass: EventEmitter<CustomerOrder> = new EventEmitter<CustomerOrder>();
+  @Input() overrideIconAction: string = "";
+  @Input() overrideTooltipAction: string = "";
+  @Input() defaultStatusFilter: string[] | undefined;
+
   constructor(
     private appService: AppService,
     private quotationService: QuotationService,
@@ -29,22 +36,34 @@ export class OrderingListComponent implements OnInit {
 
   ngOnInit() {
     this.putDefaultPeriod();
+    this.displayedColumns = [];
     this.displayedColumns.push({ id: "id", fieldName: "id", label: "N° de la commande" } as SortTableColumn);
     this.displayedColumns.push({ id: "customerOrderName", fieldName: "tiers", label: "Donneur d'ordre", valueFonction: this.getCustomerOrderName, actionLinkFunction: this.getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la fiche du donneur d'ordre" } as SortTableColumn);
     this.displayedColumns.push({ id: "quotationStatus", fieldName: "quotationStatus.label", label: "Statut" } as SortTableColumn);
     this.displayedColumns.push({ id: "createdDate", fieldName: "createdDate", label: "Date de création", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
+    this.displayedColumns.push({ id: "totalPrice", fieldName: "totalPrice", label: "Prix total", valueFonction: (element: any, elements: any[], column: SortTableColumn, columns: SortTableColumn[]): string => { return QuotationComponent.computePriceTotal(element) + " €"; } } as SortTableColumn);
 
-    this.tableAction.push({ actionIcon: "settings", actionName: "Voir la commande", actionLinkFunction: this.getActionLink, display: true, } as SortTableAction);
+    if (this.overrideIconAction == "") {
+      this.tableAction.push({
+        actionIcon: "settings", actionName: "Voir la commande", actionLinkFunction: (action: SortTableAction, element: any) => {
+          if (element)
+            return ['/order', element.id];
+          return undefined;
+        }, display: true,
+      } as SortTableAction);
+    } else {
+      this.tableAction.push({
+        actionIcon: this.overrideIconAction, actionName: this.overrideTooltipAction, actionClick: (action: SortTableAction, element: any) => {
+          this.actionBypass.emit(element);
+        }, display: true,
+      } as SortTableAction);
+    };
   }
 
   orderingSearchForm = this.formBuilder.group({
   });
 
-  getActionLink(action: SortTableAction, element: any) {
-    if (element)
-      return ['/order', element.id];
-    return undefined;
-  }
+
   getColumnLink(column: SortTableColumn, element: any) {
     if (element && column.id == "customerOrderName") {
       if (element.responsable)
@@ -52,7 +71,7 @@ export class OrderingListComponent implements OnInit {
       if (element.tiers)
         return ['/tiers/', element.tiers.id];
     }
-    return ['/tiers', element.tiers.id];
+    return ['/tiers'];
   }
 
   getCustomerOrderName(element: any) {

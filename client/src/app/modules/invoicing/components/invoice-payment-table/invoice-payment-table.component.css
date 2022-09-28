@@ -1,0 +1,12 @@
+.td-price {
+  width: 30%;
+  text-align: right;
+}
+
+.remise {
+  color: red
+}
+
+.total-table {
+  padding-top: 30px;
+}

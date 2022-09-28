@@ -8,8 +8,11 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 import com.jss.osiris.modules.miscellaneous.model.IId;
+import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
@@ -27,9 +30,17 @@ public class Refund implements Serializable, IId {
 
 	private LocalDateTime refundDateTime;
 
+	@ManyToOne
+	@JoinColumn(name = "id_tiers")
 	private Tiers tiers;
 
+	@ManyToOne
+	@JoinColumn(name = "id_confrere")
 	private Confrere confrere;
+
+	@ManyToOne
+	@JoinColumn(name = "id_affaire")
+	private Affaire affaire;
 
 	public Integer getId() {
 		return id;

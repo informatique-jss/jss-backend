@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Vat } from 'src/app/modules/miscellaneous/model/Vat';
+import { Affaire } from 'src/app/modules/quotation/model/Affaire';
 import { Invoice } from 'src/app/modules/quotation/model/Invoice';
 import { IQuotation } from 'src/app/modules/quotation/model/IQuotation';
 import { AppService } from 'src/app/services/app.service';
@@ -24,13 +25,21 @@ export class InvoiceDetailsComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.refreshData();
+  }
+
+  onStateChange() {
+    this.refreshData();
+  }
+
+  refreshData() {
     let idInvoice: number = this.activatedRoute.snapshot.params.id;
 
     if (idInvoice) {
       this.appService.changeHeaderTitle("Facture n°" + idInvoice);
       this.invoiceService.getInvoiceById(idInvoice).subscribe(response => {
         this.invoice = response;
-        this.appService.changeHeaderTitle("Facture n°" + idInvoice + " - " + this.invoice.billingLabel);
+        this.appService.changeHeaderTitle("Facture n°" + idInvoice + " - " + this.invoice.billingLabel + " - " + this.invoice.invoiceStatus.label);
       })
     }
   }
@@ -39,8 +48,10 @@ export class InvoiceDetailsComponent implements OnInit {
   });
 
   getCustomerOrderName = InvoiceListComponent.getCustomerOrderName;
+  getCustomerOrder = InvoiceListComponent.getCustomerOrder;
   getResponsableName = InvoiceListComponent.getResponsableName;
   getAffaireList = InvoiceListComponent.getAffaireList;
+  getAffaireListArray = InvoiceListComponent.getAffaireListArray;
 
   computePreTaxPriceTotal(quotation: IQuotation): number {
     let preTaxPrice = 0;
@@ -56,6 +67,16 @@ export class InvoiceDetailsComponent implements OnInit {
     return preTaxPrice;
   }
 
+  getFirstItemIndex(invoice: Invoice, affaire: Affaire) {
+    if (invoice && affaire) {
+      for (let i = 0; i < invoice.invoiceItems.length; i++) {
+        const invoiceItem = invoice.invoiceItems[i];
+        if (invoiceItem.provision.affaire.id == affaire.id)
+          return i;
+      }
+    }
+    return 0;
+  }
 
   getPreTaxPriceTotal(): number {
     let preTaxPrice = 0;
@@ -100,4 +121,5 @@ export class InvoiceDetailsComponent implements OnInit {
   getPriceTotal(): number {
     return this.getPreTaxPriceTotal() - this.getDiscountTotal() + this.getVatTotal();
   }
+
 }

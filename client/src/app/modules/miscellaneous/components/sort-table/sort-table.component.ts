@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { Observable, Subscription } from 'rxjs';
 import { getObjectPropertybyString } from 'src/app/libs/FormatHelper';
 import { UserPreferenceService } from 'src/app/services/user.preference.service';
 import { SortTableAction } from '../../model/SortTableAction';
@@ -24,6 +25,9 @@ export class SortTableComponent implements OnInit {
  */
   @Output() onRowClick: EventEmitter<any> = new EventEmitter();
 
+  @Input() refreshTable: Observable<void> | undefined;
+  private refreshTableSubscription: Subscription | undefined;
+
   dataSource = new MatTableDataSource<any>();
   @ViewChild(MatSort) sort!: MatSort;
 
@@ -32,6 +36,13 @@ export class SortTableComponent implements OnInit {
   constructor(protected userPreferenceService: UserPreferenceService) { }
 
   ngOnInit() {
+    if (this.refreshTable)
+      this.refreshTableSubscription = this.refreshTable.subscribe(() => {
+        if (this.values) {
+          console.log("titi");
+          this.dataSource.data = this.values;
+        }
+      });
     this.internalActions = this.actions;
     if (this.values)
       this.dataSource.data = this.values;
@@ -68,10 +79,21 @@ export class SortTableComponent implements OnInit {
         }
   }
 
+  ngOnDestroy() {
+    if (this.refreshTableSubscription)
+      this.refreshTableSubscription.unsubscribe();
+  }
+
   actionTrigger(action: SortTableAction, element: any) {
-    action.actionClick(action, element);
-    if (this.values)
-      this.dataSource.data = this.values;
+    // find in internal
+    if (this.internalActions) {
+      for (let internalAction of this.internalActions)
+        if (action == internalAction) {
+          internalAction.actionClick(action, element);
+          if (this.values)
+            this.dataSource.data = this.values;
+        }
+    }
   }
 
   applyFilter() {

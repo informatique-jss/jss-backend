@@ -1,6 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AppRestService } from 'src/app/services/appRest.service';
+import { Invoice } from '../../quotation/model/Invoice';
 import { Payment } from '../model/Payment';
 import { PaymentSearch } from '../model/PaymentSearch';
 
@@ -14,7 +15,11 @@ export class PaymentService extends AppRestService<Payment>{
   }
 
   getPayments(paymentSearch: PaymentSearch) {
-    return this.postList(new HttpParams(), "payemnts/search", paymentSearch);
+    return this.postList(new HttpParams(), "payments/search", paymentSearch);
+  }
+
+  getAdvisedPayment(invoice: Invoice) {
+    return this.getList(new HttpParams().set("invoiceId", invoice.id), "payments/advise");
   }
 
   // TODO : à retirer avant la MEP !!

@@ -64,8 +64,7 @@ public class Provision implements Serializable, IId {
 	@Column(nullable = false)
 	private Boolean isValidated;
 
-	@OneToMany(targetEntity = InvoiceItem.class, mappedBy = "provision", cascade = CascadeType.ALL)
-	@JsonManagedReference("provision")
+	@OneToMany(targetEntity = InvoiceItem.class, mappedBy = "provision", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private List<InvoiceItem> invoiceItems;
 
 	public Integer getId() {

@@ -51,6 +51,7 @@ export class HistoryComponent implements OnInit {
 
   ngOnInit() {
     this.internalHistoryActions = this.historyActions;
+    this.displayedColumns = [];
     this.displayedColumns.push({ id: "fieldName", fieldName: "fieldName", label: "Champ" } as SortTableColumn);
     this.displayedColumns.push({ id: "oldValue", fieldName: "oldValue", label: "Ancienne valeur" } as SortTableColumn);
     this.displayedColumns.push({ id: "newValue", fieldName: "newValue", label: "Nouvelle valeur" } as SortTableColumn);

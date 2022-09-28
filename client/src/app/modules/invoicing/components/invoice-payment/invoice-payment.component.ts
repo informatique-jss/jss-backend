@@ -1,0 +1,57 @@
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { INVOICING_STATUS_SENT } from 'src/app/libs/Constants';
+import { formatDateTimeForSortTable, formatEurosForSortTable } from 'src/app/libs/FormatHelper';
+import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
+import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
+import { Invoice } from 'src/app/modules/quotation/model/Invoice';
+import { Payment } from '../../model/Payment';
+import { PaymentService } from '../../services/payment.service';
+import { AssociatePaymentDialogComponent } from '../associate-payment-dialog/associate-payment-dialog.component';
+
+@Component({
+  selector: 'invoice-payment',
+  templateUrl: './invoice-payment.component.html',
+  styleUrls: ['./invoice-payment.component.css']
+})
+export class InvoicePaymentComponent implements OnInit {
+
+  advisedPayment: Payment[] = [] as Array<Payment>;
+  @Input() invoice: Invoice = {} as Invoice;
+  displayedColumns: SortTableColumn[] = [];
+  tableAction: SortTableAction[] = [];
+
+  @Output() stateChanged = new EventEmitter<void>();
+
+  INVOICING_STATUS_SENT = INVOICING_STATUS_SENT;
+
+  constructor(private paymentService: PaymentService,
+    public associatePaymentDialog: MatDialog) { }
+
+  ngOnInit() {
+    this.displayedColumns = [];
+    this.displayedColumns.push({ id: "id", fieldName: "id", label: "N° du paiement" } as SortTableColumn);
+    this.displayedColumns.push({ id: "paymentWay", fieldName: "paymentWay.label", label: "Sens" } as SortTableColumn);
+    this.displayedColumns.push({ id: "payemntDate", fieldName: "paymentDate", label: "Date", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
+    this.displayedColumns.push({ id: "payemntAmount", fieldName: "paymentAmount", label: "Montant", valueFonction: formatEurosForSortTable } as SortTableColumn);
+    this.displayedColumns.push({ id: "label", fieldName: "label", label: "Libellé" } as SortTableColumn);
+
+    this.tableAction.push({
+      actionIcon: "merge_type", actionName: "Associer le paiement", actionClick: (action: SortTableAction, element: any): void => {
+        let dialogPaymentDialogRef = this.associatePaymentDialog.open(AssociatePaymentDialogComponent, {
+          width: '100%'
+        });
+        dialogPaymentDialogRef.componentInstance.invoice = this.invoice;
+        dialogPaymentDialogRef.componentInstance.payment = element;
+        dialogPaymentDialogRef.afterClosed().subscribe(response => {
+          this.stateChanged.emit();
+        });
+      }, display: true,
+    } as SortTableAction);
+    if (this.invoice) {
+      this.paymentService.getAdvisedPayment(this.invoice).subscribe(response => {
+        this.advisedPayment = response;
+      })
+    }
+  }
+}

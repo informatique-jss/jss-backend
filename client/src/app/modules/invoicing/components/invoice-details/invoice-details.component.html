@@ -1,93 +1,119 @@
 <div class="mat-elevation-z2 form-div" *ngIf="invoice">
   <mat-tab-group animationDuration="0ms" #tabs>
     <mat-tab label="Détail">
-      <div class="full-width">
-        <table class="full-width">
+      <div class="full-width top">
+        <div class="chips-status">
+          <chips-status [status]="invoice.invoiceStatus.code" [value]="invoice.invoiceStatus.label"></chips-status>
+        </div>
+        <table class="full-width description-table">
           <tr>
-            <td>Facture n°{{invoice.id}}</td>
-            <td>Payeur : {{invoice.billingLabel}}</td>
+            <td><span class="underline">Facture n°{{invoice.id}}</span>, à Paris, le
+              {{invoice.createdDate|date:'dd/MM/yyyy à HH:mm'}}
+            </td>
           </tr>
           <tr>
-            <td>Paris, le {{invoice.createdDate|date:'dd/MM/yyyy à HH:mm'}}</td>
-            <td>{{invoice.billingLabelAddress}}</td>
+            <td><span class="underline">Affaire(s) :</span> {{getAffaireList(invoice)}}</td>
           </tr>
           <tr>
-            <td>Affaire(s) : {{getAffaireList(invoice)}}</td>
-            <td>{{invoice.billingLabelPostalCode}} {{invoice.billingLabelCity.label}}
-              {{invoice.billingLabelCountry.label}}</td>
+            <td><span class="underline">Payeur :</span> {{invoice.billingLabel}}, {{invoice.billingLabelAddress}},
+              {{invoice.billingLabelPostalCode}}
+              {{invoice.billingLabelCity.label}} {{invoice.billingLabelCountry.label}}</td>
+          </tr>
+          <tr>
+            <td><span class="underline">Donneur d'ordre :</span> {{getCustomerOrderName(invoice)}},
+              {{getCustomerOrder(invoice).address}},
+              {{getCustomerOrder(invoice).postalCode}} {{getCustomerOrder(invoice).city.label}}
+              {{getCustomerOrder(invoice).country.label}}</td>
           </tr>
         </table>
-        <table class="full-width">
-          <ng-container *ngFor="let invoiceItem of invoice.invoiceItems">
-            <tr>
-              <td>
-                {{invoiceItem.label}}
-              </td>
-              <td class="td-price">
-                {{invoiceItem.preTaxPrice|number}} €
-              </td>
-            </tr>
-            <tr *ngIf="invoiceItem.discountAmount && invoiceItem.discountAmount>0">
-              <td>
-                Remise
-              </td>
-              <td class="td-price remise">
-                - {{invoiceItem.discountAmount|number}} €
-              </td>
-            </tr>
-            <tr *ngIf="invoiceItem.vat">
-              <td>
-                {{invoiceItem.vat.label}}
-              </td>
-              <td class="td-price">
-                {{invoiceItem.vatPrice|number}} €
-              </td>
-            </tr>
-          </ng-container>
-        </table>
-        <table class="total-table">
-          <tr>
-            <td>
+        <ng-container *ngFor="let affaire of getAffaireListArray(invoice)">
+          <table class="full-width container-affaire mat-table">
+            <ng-container *ngFor="let invoiceItem of invoice.invoiceItems; let index = index">
+              <ng-container
+                *ngIf="invoiceItem.provision.affaire.id == affaire.id && getFirstItemIndex(invoice, affaire)==index">
+                <tr class="mat-header-row">
+                  <th class="mat-header-cell" colspan="2">Affaire {{affaire.denomination}}{{affaire.firstname}}
+                    {{affaire.lastname}}
+                  </th>
+                </tr>
+                <tr class="mat-row">
+                  <td class="mat-cell">
+                    {{invoiceItem.label}}
+                  </td>
+                  <td class="td-price  mat-cell">
+                    {{invoiceItem.preTaxPrice|number}} €
+                  </td>
+                </tr>
+                <tr *ngIf="invoiceItem.discountAmount && invoiceItem.discountAmount>0" class="mat-row">
+                  <td class="mat-cell">
+                    <div class="sub-row">Remise</div>
+                  </td>
+                  <td class="td-price remise mat-cell">
+                    - {{invoiceItem.discountAmount|number}} €
+                  </td>
+                </tr>
+                <tr *ngIf="invoiceItem.vat" class="mat-row">
+                  <td class="mat-cell">
+                    <div class="sub-row">{{invoiceItem.vat.label}}</div>
+                  </td>
+                  <td class="td-price mat-cell">
+                    {{invoiceItem.vatPrice|number}} €
+                  </td>
+                </tr>
+              </ng-container>
+            </ng-container>
+          </table>
+        </ng-container>
+        <table class="total-table mat-table full-width">
+          <tr class=" mat-header-row">
+            <th class="mat-header-cell" colspan="2">Total</th>
+          </tr>
+          <tr class="mat-row">
+            <td class="mat-cell">
               Prix total HT
             </td>
-            <td class="td-price">
+            <td class="td-price mat-cell">
               {{getPreTaxPriceTotal() |number}} €
             </td>
           </tr>
-          <tr *ngIf="getDiscountTotal() && getDiscountTotal()>0">
-            <td>
+          <tr class="mat-row" *ngIf="getDiscountTotal() && getDiscountTotal()>0">
+            <td class="mat-cell">
               Remise totale
             </td>
-            <td class="td-price remise">
+            <td class="td-price remise mat-cell">
               - {{getDiscountTotal()|number}} €
             </td>
           </tr>
-          <tr>
-            <td>
-              Total HT
+          <tr class="mat-row" *ngIf="getDiscountTotal() && getDiscountTotal()>0">
+            <td class="mat-cell">
+              Total HT avec remise
             </td>
-            <td class="td-price">
+            <td class="td-price mat-cell">
               {{getPreTaxPriceTotal()-getDiscountTotal()|number}} €
             </td>
           </tr>
-          <tr *ngIf="getApplicableVat()!=undefined">
-            <td>
+          <tr *ngIf="getApplicableVat()!=undefined" class="mat-row">
+            <td class="mat-cell">
               Total {{getApplicableVat()!.label}}
             </td>
-            <td class="td-price">
+            <td class="td-price mat-cell">
               {{getVatTotal()|number}} €
             </td>
           </tr>
-          <tr>
-            <td>
+          <tr class="mat-row">
+            <td class="mat-cell">
               Total TTC
             </td>
-            <td class="td-price">
+            <td class="td-price mat-cell">
               {{getPriceTotal()|number}} €
             </td>
           </tr>
         </table>
+        <invoice-payment-table [invoice]="invoice"></invoice-payment-table>
       </div>
+    </mat-tab>
+    <mat-tab label="Paiements associés">
+      <invoice-payment (stateChanged)="onStateChange()" [invoice]="invoice"></invoice-payment>
     </mat-tab>
   </mat-tab-group>
 </div>

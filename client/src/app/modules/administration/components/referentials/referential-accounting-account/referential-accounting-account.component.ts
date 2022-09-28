@@ -20,6 +20,7 @@ export class ReferentialAccountingAccountComponent extends GenericReferentialCom
   }
 
   definedMatTableColumn() {
+    this.displayedColumns = [];
     this.displayedColumns.push({ id: "id", fieldName: "id", label: "Identifiant technique" } as SortTableColumn);
     this.displayedColumns.push({ id: "code", fieldName: "code", label: "Codification fonctionnelle", valueFonction: (element: any, elements: any[], column: SortTableColumn, columns: SortTableColumn[]) => { if (element && column) return this.getElementCode(element); return "" } } as SortTableColumn);
   }

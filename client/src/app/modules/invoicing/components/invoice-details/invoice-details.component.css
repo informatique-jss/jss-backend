@@ -7,16 +7,35 @@
   color: red
 }
 
-.affaire {
-  font-weight: 600;
-  padding-top: 15px;
-}
-
 .total-table {
   padding-top: 30px;
-  font-weight: 600;
 }
 
 .info-icon {
   color: grey;
+}
+
+.container-affaire {
+  margin-top: 20px;
+}
+
+.sub-row {
+  padding-left: 20px;
+}
+
+.top {
+  padding-top: 20px;
+}
+
+.chips-status {
+  position: absolute;
+  right: 10px;
+}
+
+table.description-table td {
+  padding-top: 10px;
+}
+
+.underline {
+  text-decoration: underline;
 }

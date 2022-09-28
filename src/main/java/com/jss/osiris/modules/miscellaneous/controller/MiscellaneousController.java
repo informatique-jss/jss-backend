@@ -75,8 +75,6 @@ import com.jss.osiris.modules.quotation.model.Shal;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
-import springfox.documentation.annotations.ApiIgnore;
-
 @RestController
 public class MiscellaneousController {
 
@@ -371,7 +369,6 @@ public class MiscellaneousController {
     }
 
     @GetMapping(inputEntryPoint + "/cities")
-    @ApiIgnore
     public ResponseEntity<List<City>> getCities() {
         List<City> cities = null;
         try {
@@ -387,7 +384,6 @@ public class MiscellaneousController {
     }
 
     @PostMapping(inputEntryPoint + "/city")
-    @ApiIgnore
     public ResponseEntity<City> addOrUpdateCity(
             @RequestBody City cities) {
         City outCity;
@@ -418,7 +414,6 @@ public class MiscellaneousController {
     }
 
     @GetMapping(inputEntryPoint + "/cities/search/postal-code")
-    @ApiIgnore
     public ResponseEntity<List<City>> getCitiesByPostalCode(@RequestParam String postalCode) {
         List<City> cities = null;
         try {
@@ -434,7 +429,6 @@ public class MiscellaneousController {
     }
 
     @GetMapping(inputEntryPoint + "/cities/search/country")
-    @ApiIgnore
     public ResponseEntity<List<City>> getCitiesByCountry(@RequestParam(required = false) Integer countryId,
             @RequestParam String city) {
         List<City> cities = null;
@@ -451,7 +445,6 @@ public class MiscellaneousController {
     }
 
     @GetMapping(inputEntryPoint + "/billing-types")
-    @ApiIgnore
     public ResponseEntity<List<BillingType>> getBillingTypes() {
         List<BillingType> billingTypes = null;
         try {
@@ -467,7 +460,6 @@ public class MiscellaneousController {
     }
 
     @PostMapping(inputEntryPoint + "/billing-type")
-    @ApiIgnore
     public ResponseEntity<BillingType> addOrUpdateBillingType(
             @RequestBody BillingType billingTypes) {
         BillingType outBillingType;

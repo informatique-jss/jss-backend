@@ -36,10 +36,6 @@ td {
   padding-right: 8px;
 }
 
-tr.mat-row {
-  height: 20px;
-}
-
 .td-label {
   white-space: nowrap;
   max-width: 120px;

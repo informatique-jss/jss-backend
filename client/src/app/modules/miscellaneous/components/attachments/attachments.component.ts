@@ -43,15 +43,43 @@ export class AttachmentsComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log("tt");
+    this.displayedColumns = [];
     this.displayedColumns.push({ id: "name", fieldName: "uploadedFile.filename", label: "Nom" } as SortTableColumn);
     this.displayedColumns.push({ id: "attachementType", fieldName: "attachmentType.label", label: "Type de document" } as SortTableColumn);
     this.displayedColumns.push({ id: "createdBy", fieldName: "uploadedFile.createdBy", label: "Ajouté par" } as SortTableColumn);
     this.displayedColumns.push({ id: "creationDate", fieldName: "uploadedFile.creationDate", label: "Ajouté le", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
 
-    this.tableActions.push({ actionIcon: "preview", actionName: "Prévisualiser le fichier", actionClick: this.previewFile, display: true } as SortTableAction);
-    this.tableActions.push({ actionIcon: "download", actionName: "Télécharger le fichier", actionClick: this.downloadFile, display: true } as SortTableAction);
-    this.tableActions.push({ actionIcon: "block", actionName: "Désactiver le fichier", actionClick: this.disableFile, display: true } as SortTableAction);
+    this.tableActions.push({
+      actionIcon: "preview", actionName: "Prévisualiser le fichier", actionClick: (action: SortTableAction, element: any): void => {
+        this.uploadAttachmentService.previewAttachment(element);
+      }, display: true
+    } as SortTableAction);
+    this.tableActions.push({
+      actionIcon: "download", actionName: "Télécharger le fichier", actionClick: (action: SortTableAction, element: any): void => {
+        this.uploadAttachmentService.downloadAttachment(element);
+      }, display: true
+    } as SortTableAction);
+    this.tableActions.push({
+      actionIcon: "block", actionName: "Désactiver le fichier", actionClick: (action: SortTableAction, element: any): void => {
+        const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
+          maxWidth: "400px",
+          data: {
+            title: "Désactiver le fichier",
+            content: "Êtes-vous sûr de vouloir désactiver ce fichier ?",
+            closeActionText: "Annuler",
+            validationActionText: "Confirmer"
+          }
+        });
+
+        dialogRef.afterClosed().subscribe(dialogResult => {
+          if (dialogResult)
+            this.uploadAttachmentService.disableAttachment(element).subscribe(response => {
+              element.isDisabled = true;
+              this.setDataTable();
+            });
+        });
+      }, display: true
+    } as SortTableAction);
   }
   formatDateTimeForSortTable = formatDateTimeForSortTable;
 
@@ -59,7 +87,6 @@ export class AttachmentsComponent implements OnInit {
     this.entity.attachments.sort(function (a: Attachment, b: Attachment) {
       return new Date(b.uploadedFile.creationDate).getTime() - new Date(a.uploadedFile.creationDate).getTime();
     });
-
   }
 
   applyFilter(filterValue: any) {
@@ -80,35 +107,6 @@ export class AttachmentsComponent implements OnInit {
       }
     });
   }
-
-  disableFile(action: SortTableAction, attachement: Attachment) {
-    const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
-      maxWidth: "400px",
-      data: {
-        title: "Désactiver le fichier",
-        content: "Êtes-vous sûr de vouloir désactiver ce fichier ?",
-        closeActionText: "Annuler",
-        validationActionText: "Confirmer"
-      }
-    });
-
-    dialogRef.afterClosed().subscribe(dialogResult => {
-      if (dialogResult)
-        this.uploadAttachmentService.disableAttachment(attachement).subscribe(response => {
-          attachement.isDisabled = true;
-          this.setDataTable();
-        });
-    });
-  }
-
-  previewFile(action: SortTableAction, attachment: Attachment) {
-    this.uploadAttachmentService.previewAttachment(attachment);
-  }
-
-  downloadFile(action: SortTableAction, attachment: Attachment) {
-    this.uploadAttachmentService.downloadAttachment(attachment);
-  }
-
 }
 
 

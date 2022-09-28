@@ -25,6 +25,7 @@ import { MatTableExporterModule } from 'mat-table-exporter';
 import { TrustHtmlPipe } from 'src/app/libs/TrustHtmlPipe';
 import { AddressingComponent } from '../addressing/addressing.component';
 import { AttachmentsComponent } from '../attachments/attachments.component';
+import { ChipsStatusComponent } from '../chips-status/chips-status.component';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { ConfrereDialogComponent } from '../confreres-dialog/confreres-dialog.component';
 import { AutocompleteAccountingAccountComponent } from '../forms/autocomplete-accounting-account/autocomplete-accounting-account.component';
@@ -217,6 +218,7 @@ import { MiscellaneousComponent } from './miscellaneous.component';
     SortTableComponent,
     GenericDateRangePickerComponent,
     SelectInvoiceStatusComponent,
+    ChipsStatusComponent,
     SelectQuotationStatusComponent,
     SelectPaymentWayComponent,
     SingleAttachmentComponent],
@@ -293,6 +295,7 @@ import { MiscellaneousComponent } from './miscellaneous.component';
     SelectPaymentDeadlineComponent,
     GenericTextareaComponent,
     AutocompletePostalCodeComponent,
+    ChipsStatusComponent,
     ChipsPhoneComponent,
     RadioGroupCivilityComponent,
     AutocompleteRnaComponent,

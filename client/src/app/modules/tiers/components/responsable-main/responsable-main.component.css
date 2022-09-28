@@ -27,10 +27,6 @@ td {
   margin: 0 12px;
 }
 
-tr.mat-row {
-  height: 20px;
-}
-
 .table-container-scroll {
   max-height: 215px;
   overflow-y: auto;

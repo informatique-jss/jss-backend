@@ -9,6 +9,14 @@
           </select-invoice-status>
         </td>
         <td>
+          <generic-input [(model)]="invoiceSearch.minAmount" label="Montant minimum" [form]="invoiceForm"
+            propertyName="minAmount" [isMandatory]="false" [isDisabled]="false" type="number"></generic-input>
+        </td>
+        <td>
+          <generic-input [(model)]="invoiceSearch.maxAmount" label="Montant maximum" [form]="invoiceForm"
+            propertyName="maxAmount" [isMandatory]="false" [isDisabled]="false" type="number"></generic-input>
+        </td>
+        <td>
           <generic-date-range-picker [(modelStart)]="invoiceSearch.startDate" [(modelEnd)]="invoiceSearch.endDate"
             label="Plage de recherche" [form]="invoiceForm" propertyNameStart="startDate" propertyNameEnd="endDate"
             (onDateChange)="putDefaultPeriod()">

@@ -1,32 +1,18 @@
-import { AccountingAccount } from "../../accounting/model/AccountingAccount";
-import { City } from "../../miscellaneous/model/City";
-import { Country } from "../../miscellaneous/model/Country";
 import { Department } from "../../miscellaneous/model/Department";
 import { IDocument } from "../../miscellaneous/model/IDocument";
 import { Mail } from "../../miscellaneous/model/Mail";
 import { PaymentType } from "../../miscellaneous/model/PaymentType";
-import { Phone } from "../../miscellaneous/model/Phone";
 import { SpecialOffer } from "../../miscellaneous/model/SpecialOffer";
 import { VatCollectionType } from "../../miscellaneous/model/VatCollectionType";
 import { WeekDay } from "../../miscellaneous/model/WeekDay";
+import { ITiers } from "../../tiers/model/ITiers";
 import { JournalType } from "./JournalType";
 import { Regie } from "./Regie";
 
-export interface Confrere extends IDocument {
-  id: number;
+export interface Confrere extends IDocument, ITiers {
   label: string;
   code: string;
-  mails: Mail[];
   accountingMails: Mail[];
-  phones: Phone[];
-  accountingAccountCustomer: AccountingAccount;
-  accountingAccountProvider: AccountingAccount;
-  accountingAccountDeposit: AccountingAccount;
-  mailRecipient: string;
-  address: string;
-  city: City;
-  postalCode: string;
-  country: Country;
   iban: string;
   paymentType: PaymentType;
   paymentBIC: string;
@@ -47,6 +33,5 @@ export interface Confrere extends IDocument {
   numberOfPrint: number;
   paperPrice: number;
   regie: Regie;
-  observations: string;
   vatCollectionType: VatCollectionType;
 }

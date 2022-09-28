@@ -29,6 +29,7 @@ export class QuotationListComponent implements OnInit {
 
   ngOnInit() {
     this.putDefaultPeriod();
+    this.displayedColumns = [];
     this.displayedColumns.push({ id: "id", fieldName: "id", label: "N° de la commande" } as SortTableColumn);
     this.displayedColumns.push({ id: "customerOrderName", fieldName: "tiers", label: "Donneur d'ordre", valueFonction: this.getCustomerOrderName, actionLinkFunction: this.getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la fiche du donneur d'ordre" } as SortTableColumn);
     this.displayedColumns.push({ id: "quotationStatus", fieldName: "quotationStatus.label", label: "Statut" } as SortTableColumn);

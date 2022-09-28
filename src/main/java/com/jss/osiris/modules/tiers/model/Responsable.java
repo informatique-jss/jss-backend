@@ -61,12 +61,12 @@ public class Responsable implements ITiers, IAttachment {
 	private LocalDate firstBilling;
 
 	@ManyToOne
-	@JoinColumn(name = "id_tiers_type")
+	@JoinColumn(name = "id_responsable_type")
 	@IndexedField
 	private TiersType tiersType;
 
 	@ManyToOne
-	@JoinColumn(name = "id_tiers_category")
+	@JoinColumn(name = "id_responsable_category")
 	@IndexedField
 	private TiersCategory tiersCategory;
 

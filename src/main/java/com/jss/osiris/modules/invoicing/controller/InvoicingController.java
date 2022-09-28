@@ -119,8 +119,8 @@ public class InvoicingController {
         return new ResponseEntity<Payment>(outPayment, HttpStatus.OK);
     }
 
-    @PostMapping(inputEntryPoint + "/payemnts/search")
-    public ResponseEntity<List<Payment>> getPaymentss(@RequestBody PaymentSearch paymentSearch) {
+    @PostMapping(inputEntryPoint + "/payments/search")
+    public ResponseEntity<List<Payment>> getPayments(@RequestBody PaymentSearch paymentSearch) {
         List<Payment> payments;
         if (paymentSearch == null)
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -137,7 +137,29 @@ public class InvoicingController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
         try {
+            validationHelper.validateFloat(paymentSearch.getMinAmount(), false);
+            validationHelper.validateFloat(paymentSearch.getMaxAmount(), false);
             payments = paymentService.searchPayments(paymentSearch);
+        } catch (HttpStatusCodeException e) {
+            logger.error("HTTP error when fetching payment", e);
+            return new ResponseEntity<List<Payment>>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            logger.error("Error when fetching payment", e);
+            return new ResponseEntity<List<Payment>>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<List<Payment>>(payments, HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/payments/advise")
+    public ResponseEntity<List<Payment>> getPaymentAdvised(@RequestParam Integer invoiceId) {
+        List<Payment> payments;
+
+        try {
+            Invoice invoice = invoiceService.getInvoice(invoiceId);
+            if (invoice == null)
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+            payments = paymentService.getAdvisedPaymentForInvoice(invoice);
         } catch (HttpStatusCodeException e) {
             logger.error("HTTP error when fetching payment", e);
             return new ResponseEntity<List<Payment>>(HttpStatus.INTERNAL_SERVER_ERROR);

@@ -6,6 +6,8 @@ import java.util.List;
 public class InvoiceSearch {
     private LocalDateTime startDate;
     private LocalDateTime endDate;
+    private Float minAmount;
+    private Float maxAmount;
     private List<InvoiceStatus> invoiceStatus;
 
     public LocalDateTime getStartDate() {
@@ -30,6 +32,22 @@ public class InvoiceSearch {
 
     public void setInvoiceStatus(List<InvoiceStatus> invoiceStatus) {
         this.invoiceStatus = invoiceStatus;
+    }
+
+    public Float getMinAmount() {
+        return minAmount;
+    }
+
+    public void setMinAmount(Float minAmount) {
+        this.minAmount = minAmount;
+    }
+
+    public Float getMaxAmount() {
+        return maxAmount;
+    }
+
+    public void setMaxAmount(Float maxAmount) {
+        this.maxAmount = maxAmount;
     }
 
 }

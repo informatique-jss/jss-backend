@@ -1,3 +1,4 @@
+import { Affaire } from "../../quotation/model/Affaire";
 import { Confrere } from "../../quotation/model/Confrere";
 import { Tiers } from "../../tiers/model/Tiers";
 
@@ -8,4 +9,5 @@ export interface Refund {
   refundDateTime: Date;
   tiers: Tiers;
   confrere: Confrere;
+  affaire: Affaire;
 }

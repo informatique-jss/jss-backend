@@ -1,0 +1,13 @@
+<invoice-payment-table [invoice]="invoice"></invoice-payment-table>
+<div *ngIf="invoice.invoiceStatus.code==INVOICING_STATUS_SENT">
+  <div class="advise" *ngIf="advisedPayment && advisedPayment.length>0">
+    <p>Paiements conseillés par Osiris :</p>
+    <sort-table [actions]="tableAction" [columns]="displayedColumns" [values]="advisedPayment"
+      tableName="Paiements conseillés">
+    </sort-table>
+  </div>
+  <div class=" advise">
+    <p>Autre paiements :</p>
+    <payment-list></payment-list>
+  </div>
+</div>

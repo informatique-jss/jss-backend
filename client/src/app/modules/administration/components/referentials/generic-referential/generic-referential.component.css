@@ -19,7 +19,3 @@ td {
 .selected-mat-row:hover {
   background-color: #6B9CBF;
 }
-
-tr.mat-row {
-  height: 20px;
-}

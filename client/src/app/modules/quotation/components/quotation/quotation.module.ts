@@ -110,6 +110,9 @@ const routes: Routes = [
     QuotationListComponent,
     OrderingListComponent,
     ShalComponent],
+  exports: [
+    OrderingListComponent
+  ],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'fr-FR' }
   ]

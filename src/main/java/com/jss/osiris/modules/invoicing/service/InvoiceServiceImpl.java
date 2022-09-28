@@ -237,7 +237,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     public List<Invoice> searchInvoices(InvoiceSearch invoiceSearch) throws Exception {
         List<Invoice> invoices = invoiceRepository.findInvoice(invoiceSearch.getInvoiceStatus(),
                 invoiceSearch.getStartDate(),
-                invoiceSearch.getEndDate());
+                invoiceSearch.getEndDate(), invoiceSearch.getMinAmount(), invoiceSearch.getMaxAmount());
         return invoices;
     }
 

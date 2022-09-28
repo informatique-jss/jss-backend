@@ -98,7 +98,6 @@ mini-fab-add mat-form-field.mat-form-field, mat-option, .mat-cell {
 }
 
 .form-div {
-  min-height: 200px;
   background-color: white;
   margin-top: 15px;
   padding: 10px;
@@ -227,6 +226,10 @@ tr.table-row:hover {
   opacity: 1 !important;
   background: 0% 0% no-repeat padding-box padding-box #1C3D58 !important;
   height: 30px !important;
+}
+
+tr.mat-row {
+  height: 20px !important;
 }
 
 .mat-header-row>th {

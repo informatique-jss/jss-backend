@@ -23,7 +23,8 @@ public interface InvoiceRepository extends CrudRepository<Invoice, Integer> {
     @Query("select min(createdDate) from Invoice where  responsable=:responsable")
     LocalDate findFirstBillingDateForResponsable(@Param("responsable") Responsable responsable);
 
-    @Query("select i from Invoice i left join fetch i.tiers t left join fetch i.responsable r left join fetch i.confrere c left join fetch i.customerOrder cu   where i.invoiceStatus IN :invoiceStatus and i.createdDate>=:startDate and i.createdDate<=:endDate")
+    @Query("select i from Invoice i left join fetch i.tiers t left join fetch i.responsable r left join fetch i.confrere c left join fetch i.customerOrder cu   where i.invoiceStatus IN :invoiceStatus and i.createdDate>=:startDate and i.createdDate<=:endDate and (:minAmount is null or total_price>=CAST(CAST(:minAmount as string) as double)) and (:maxAmount is null or total_price<=CAST(CAST(:maxAmount as string) as double))")
     List<Invoice> findInvoice(@Param("invoiceStatus") List<InvoiceStatus> invoiceStatus,
-            @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
+            @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+            @Param("minAmount") Float minAmount, @Param("maxAmount") Float maxAmount);
 }

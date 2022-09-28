@@ -85,10 +85,10 @@ public class Tiers implements ITiers, IAttachment {
 	private PaymentType paymentType;
 
 	@Column(length = 40)
-	private String paymentIBAN;
+	private String paymentIban;
 
 	@Column(length = 40)
-	private String paymentBIC;
+	private String paymentBic;
 
 	@Column(nullable = false)
 	private Boolean isProvisionalPaymentMandatory;
@@ -155,8 +155,8 @@ public class Tiers implements ITiers, IAttachment {
 	@JoinColumn(name = "id_country")
 	private Country country;
 
-	private Float rcaFormaliteRate;
-	private Float rcaInsertionRate;
+	private Float rffFormaliteRate;
+	private Float rffInsertionRate;
 
 	@Column(columnDefinition = "TEXT")
 	private String observations;
@@ -294,19 +294,19 @@ public class Tiers implements ITiers, IAttachment {
 	}
 
 	public String getPaymentIBAN() {
-		return paymentIBAN;
+		return paymentIban;
 	}
 
-	public void setPaymentIBAN(String paymentIBAN) {
-		this.paymentIBAN = paymentIBAN;
+	public void setPaymentIban(String paymentIBAN) {
+		this.paymentIban = paymentIBAN;
 	}
 
 	public String getPaymentBIC() {
-		return paymentBIC;
+		return paymentBic;
 	}
 
 	public void setPaymentBIC(String paymentBIC) {
-		this.paymentBIC = paymentBIC;
+		this.paymentBic = paymentBIC;
 	}
 
 	public Boolean getIsProvisionalPaymentMandatory() {
@@ -438,19 +438,19 @@ public class Tiers implements ITiers, IAttachment {
 	}
 
 	public Float getRcaFormaliteRate() {
-		return rcaFormaliteRate;
+		return rffFormaliteRate;
 	}
 
 	public void setRcaFormaliteRate(Float rcaFormaliteRate) {
-		this.rcaFormaliteRate = rcaFormaliteRate;
+		this.rffFormaliteRate = rcaFormaliteRate;
 	}
 
 	public Float getRcaInsertionRate() {
-		return rcaInsertionRate;
+		return rffInsertionRate;
 	}
 
-	public void setRcaInsertionRate(Float rcaInsertionRate) {
-		this.rcaInsertionRate = rcaInsertionRate;
+	public void setRffInsertionRate(Float rcaInsertionRate) {
+		this.rffInsertionRate = rcaInsertionRate;
 	}
 
 	public String getObservations() {

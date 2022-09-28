@@ -46,4 +46,6 @@ public interface ITiers extends IId, IDocument {
 
 	public AccountingAccount getAccountingAccountDeposit();
 
+	public List<TiersFollowup> getTiersFollowups();
+
 }

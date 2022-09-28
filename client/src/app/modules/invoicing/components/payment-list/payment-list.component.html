@@ -8,6 +8,18 @@
           </select-payment-way>
         </td>
         <td>
+          <generic-input [(model)]="paymentSearch.minAmount" label="Montant minimum" [form]="paymentForm"
+            propertyName="minAmount" [isMandatory]="false" [isDisabled]="false" type="number"></generic-input>
+        </td>
+        <td>
+          <generic-input [(model)]="paymentSearch.maxAmount" label="Montant maximum" [form]="paymentForm"
+            propertyName="maxAmount" [isMandatory]="false" [isDisabled]="false" type="number"></generic-input>
+        </td>
+        <td>
+          <generic-input [(model)]="paymentSearch.label" label="Contenu du libellé" [form]="paymentForm"
+            propertyName="label" [isMandatory]="false" [isDisabled]="false"></generic-input>
+        </td>
+        <td>
           <generic-date-range-picker [(modelStart)]="paymentSearch.startDate" [(modelEnd)]="paymentSearch.endDate"
             label="Plage de recherche" [form]="paymentForm" propertyNameStart="startDate" propertyNameEnd="endDate"
             (onDateChange)="putDefaultPeriod()">

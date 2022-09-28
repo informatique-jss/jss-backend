@@ -59,6 +59,7 @@ export class ConfrereDialogComponent implements OnInit {
         });
         this.confreresFlatten.sort((a, b) => a.discountRate.localeCompare(b.discountRate));
 
+        this.displayedColumns = [];
 
         this.displayedColumns.push({ id: "denomination", fieldName: "denomination", label: "Dénomination" } as SortTableColumn);
         this.displayedColumns.push({ id: "type", fieldName: "journalType.label", label: "Type" } as SortTableColumn);

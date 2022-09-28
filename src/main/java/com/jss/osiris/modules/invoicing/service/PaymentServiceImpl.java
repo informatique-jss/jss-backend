@@ -96,10 +96,11 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public List<Payment> searchPayments(PaymentSearch payemntSearch) throws Exception {
-        List<Payment> invoices = paymentRepository.findPayments(payemntSearch.getPaymentWays(),
-                payemntSearch.getStartDate(),
-                payemntSearch.getEndDate());
+    public List<Payment> searchPayments(PaymentSearch paymentSearch) throws Exception {
+        List<Payment> invoices = paymentRepository.findPayments(paymentSearch.getPaymentWays(),
+                paymentSearch.getStartDate(),
+                paymentSearch.getEndDate(), paymentSearch.getMinAmount(), paymentSearch.getMaxAmount(),
+                paymentSearch.getLabel());
         return invoices;
     }
 
@@ -334,5 +335,34 @@ public class PaymentServiceImpl implements PaymentService {
                     return invoice;
         }
         return null;
+    }
+
+    @Override
+    public List<Payment> getAdvisedPaymentForInvoice(Invoice invoice) {
+        List<Payment> payments = paymentRepository.findNotAssociatedPayments();
+        List<Payment> advisedPayments = new ArrayList<Payment>();
+        if (payments != null && payments.size() > 0) {
+            Pattern p = Pattern.compile("\\d+");
+            for (Payment payment : payments) {
+                if (payment.getLabel() != null) {
+                    Matcher m = p.matcher(payment.getLabel());
+                    while (m.find()) {
+                        if (m.group().equals(invoice.getId().toString()))
+                            advisedPayments.add(payment);
+                        if (m.group().equals(invoice.getCustomerOrder().getId().toString()))
+                            advisedPayments.add(payment);
+                    }
+                }
+            }
+            // If no match by name, attempt by amount
+            Float totalRound = Math.round(invoice.getTotalPrice() * 100f) / 100f;
+            for (Payment payment : payments) {
+                Float paymentRound = Math.round(payment.getPaymentAmount() * 100f) / 100f;
+                if (paymentRound.equals(totalRound)) {
+                    advisedPayments.add(payment);
+                }
+            }
+        }
+        return advisedPayments;
     }
 }

@@ -39,6 +39,7 @@ export class AccountingBalanceGeneraleComponent implements OnInit {
     this.accountingBalanceSearch.endDate = new Date(new Date().getFullYear(), 11, 31);
 
     // Column init
+    this.displayedColumns = [];
     this.displayedColumns.push({ id: "accountingAccountNumber", fieldName: "accountingAccountNumber", label: "N° de compte", valueFonction: (element: any, elements: any[], column: SortTableColumn, columns: SortTableColumn[]) => { if (element && column) return element.accountingAccountNumber; return "" } } as SortTableColumn);
     this.displayedColumns.push({ id: "debitAmount", fieldName: "debitAmount", label: "Débit", valueFonction: this.formatEurosForSortTable } as SortTableColumn);
     this.displayedColumns.push({ id: "creditAmount", fieldName: "creditAmount", label: "Crédit", valueFonction: this.formatEurosForSortTable } as SortTableColumn);

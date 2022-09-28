@@ -30,6 +30,7 @@ import com.jss.osiris.modules.miscellaneous.model.VatCollectionType;
 import com.jss.osiris.modules.miscellaneous.model.WeekDay;
 import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.tiers.model.ITiers;
+import com.jss.osiris.modules.tiers.model.TiersFollowup;
 
 @Entity
 public class Confrere implements ITiers {
@@ -173,6 +174,10 @@ public class Confrere implements ITiers {
 	@ManyToOne
 	@JoinColumn(name = "id_language")
 	private Language language;
+
+	public List<TiersFollowup> getTiersFollowups() {
+		return null;
+	}
 
 	public Integer getId() {
 		return id;

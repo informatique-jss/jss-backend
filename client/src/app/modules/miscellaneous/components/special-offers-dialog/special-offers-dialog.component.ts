@@ -44,6 +44,7 @@ export class SpecialOffersDialogComponent implements OnInit {
         });
       }
     })
+    this.displayedColumns = [];
     this.displayedColumns.push({ id: "code", fieldName: "code", label: "Libellé" } as SortTableColumn);
     this.displayedColumns.push({ id: "discountAmount", fieldName: "discountAmount", label: "Montant de la remise", valueFonction: formatEurosForSortTable } as SortTableColumn);
     this.displayedColumns.push({ id: "discountRate", fieldName: "discountRate", label: "Taux de remise", valueFonction: formatPercentForSortTable } as SortTableColumn);

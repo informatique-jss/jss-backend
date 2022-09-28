@@ -5,6 +5,7 @@ export function padTo2Digits(num: number) {
 }
 
 export function formatDate(date: Date) {
+  date = new Date(date);
   return [
     padTo2Digits(date.getDate()),
     padTo2Digits(date.getMonth() + 1),
@@ -73,7 +74,7 @@ export function getObjectPropertybyString(element: any, propertyPath: string) {
   var a = propertyPath.split('.');
   for (var i = 0, n = a.length; i < n; ++i) {
     var k = a[i];
-    if (k in element) {
+    if (typeof element === "object" && k in element) {
       element = element[k];
     } else {
       return;

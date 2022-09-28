@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { INVOICING_STATUS_SENT } from 'src/app/libs/Constants';
 import { formatDateTimeForSortTable, formatEurosForSortTable, toIsoString } from 'src/app/libs/FormatHelper';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { Invoice } from 'src/app/modules/quotation/model/Invoice';
+import { ITiers } from 'src/app/modules/tiers/model/ITiers';
 import { AppService } from 'src/app/services/app.service';
 import { InvoiceSearch } from '../../model/InvoiceSearch';
 import { InvoiceService } from '../../services/invoice.service';
@@ -21,6 +22,10 @@ export class InvoiceListComponent implements OnInit {
   displayedColumns: SortTableColumn[] = [];
   INVOICING_STATUS_SENT = INVOICING_STATUS_SENT;
   tableAction: SortTableAction[] = [];
+  @Output() actionBypass: EventEmitter<Invoice> = new EventEmitter<Invoice>();
+  @Input() overrideIconAction: string = "";
+  @Input() overrideTooltipAction: string = "";
+  @Input() defaultStatusFilter: string[] | undefined;
 
   constructor(
     private appService: AppService,
@@ -31,6 +36,7 @@ export class InvoiceListComponent implements OnInit {
   ngOnInit() {
     this.appService.changeHeaderTitle("Factures & paiements");
     this.putDefaultPeriod();
+    this.displayedColumns = [];
     this.displayedColumns.push({ id: "id", fieldName: "id", label: "N° de facture" } as SortTableColumn);
     this.displayedColumns.push({ id: "status", fieldName: "invoiceStatus.label", label: "Status" } as SortTableColumn);
     this.displayedColumns.push({ id: "customerOrderId", fieldName: "customerOrder.id", label: "N° de commande", actionLinkFunction: InvoiceListComponent.getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la commande associée" } as SortTableColumn);
@@ -43,17 +49,25 @@ export class InvoiceListComponent implements OnInit {
     this.displayedColumns.push({ id: "description", fieldName: "customerOrder.description", label: "Description" } as SortTableColumn);
     this.displayedColumns.push({ id: "payments", fieldName: "payments", label: "Paiement(s) associé(s)", valueFonction: this.getPaymentLabel } as SortTableColumn);
 
-    this.tableAction.push({ actionIcon: "settings", actionName: "Voir le détail de la facture / associer", actionLinkFunction: this.getActionLink, display: true, } as SortTableAction);
+    if (this.overrideIconAction == "") {
+      this.tableAction.push({
+        actionIcon: "settings", actionName: "Voir le détail de la facture / associer", actionLinkFunction: (action: SortTableAction, element: any) => {
+          if (element)
+            return ['/invoicing', element.id];
+          return undefined;
+        }, display: true,
+      } as SortTableAction);
+    } else {
+      this.tableAction.push({
+        actionIcon: this.overrideIconAction, actionName: this.overrideTooltipAction, actionClick: (action: SortTableAction, element: any) => {
+          this.actionBypass.emit(element);
+        }, display: true,
+      } as SortTableAction);
+    };
   }
 
   invoiceForm = this.formBuilder.group({
   });
-
-  getActionLink(action: SortTableAction, element: any) {
-    if (element)
-      return ['/invoicing', element.id];
-    return undefined;
-  }
 
   public static getColumnLink(column: SortTableColumn, element: any) {
     if (element && column.id == "customerOrderName") {
@@ -70,15 +84,28 @@ export class InvoiceListComponent implements OnInit {
     return ['/tiers', element.customerOrder.tiers.id];
   }
 
-  public static getCustomerOrderName(element: any) {
+  public static getCustomerOrderName(element: Invoice) {
     if (element.customerOrder) {
       if (element.customerOrder.confrere)
-        return element.customerOrder.confrere.denomination
+        return element.customerOrder.confrere.label
       if (element.customerOrder.responsable)
         return element.customerOrder.responsable.firstname + " " + element.customerOrder.responsable.lastname;
       if (element.customerOrder.tiers)
         return element.customerOrder.tiers.firstname + " " + element.customerOrder.tiers.lastname;
     }
+    return "";
+  }
+
+  public static getCustomerOrder(invoice: Invoice): ITiers {
+    if (invoice.customerOrder) {
+      if (invoice.customerOrder.confrere)
+        return invoice.customerOrder.confrere;
+      if (invoice.customerOrder.responsable)
+        return invoice.customerOrder.responsable;
+      if (invoice.customerOrder.tiers)
+        return invoice.customerOrder.tiers;
+    }
+    return {} as ITiers;
   }
 
   public static getResponsableName(element: any) {
@@ -89,21 +116,43 @@ export class InvoiceListComponent implements OnInit {
     return "";
   }
 
-  public static getAffaireList(element: any) {
-    let names = [];
-    if (element.customerOrder && element.customerOrder.provisions) {
-      for (let provision of element.customerOrder.provisions) {
+  public static getAffaireListArray(invoice: any) {
+    let affaires = [];
+    if (invoice.customerOrder && invoice.customerOrder.provisions) {
+      for (let provision of invoice.customerOrder.provisions) {
         if (provision.affaire) {
-          let affaire = provision.affaire;
-          if (affaire.denomination) {
-            names.push(affaire.denomination);
-          } else {
-            names.push(affaire.firstname + " " + affaire.lastname);
-          }
+          affaires.push(provision.affaire);
         }
       }
     }
-    return names.join(", ");
+    return affaires;
+  }
+
+  public static getAffaireList(invoice: any) {
+    return InvoiceListComponent.getAffaireListArray(invoice).map(affaire => {
+      if (affaire.denomination) {
+        return affaire.denomination;
+      } else {
+        return affaire.firstname + " " + affaire.lastname;
+      }
+    }).join(", ");
+  }
+
+  public static getAmountPayed(invoice: Invoice) {
+    let payed = 0;
+    if (invoice.payments && invoice.payments.length)
+      for (let payment of invoice.payments)
+        payed += payment.paymentAmount;
+    if (invoice.deposits && invoice.deposits.length)
+      for (let deposit of invoice.deposits)
+        payed += deposit.depositAmount;
+
+    payed = Math.round(payed * 100) / 100;
+    return payed;
+  }
+
+  public static getAmountRemaining(invoice: Invoice) {
+    return invoice.totalPrice - InvoiceListComponent.getAmountPayed(invoice);
   }
 
   getPaymentLabel(element: any) {

@@ -12,12 +12,15 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.jss.osiris.modules.miscellaneous.model.BillingItem;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.miscellaneous.model.Vat;
 import com.jss.osiris.modules.quotation.model.Provision;
 
 @Entity
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class InvoiceItem implements Serializable, IId {
 
 	@Id
@@ -43,7 +46,6 @@ public class InvoiceItem implements Serializable, IId {
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_provision")
-	@JsonBackReference("provision")
 	Provision provision;
 
 	@ManyToOne

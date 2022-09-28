@@ -9,6 +9,7 @@ import { CUSTOMER_ORDER_ENTITY_TYPE, QUOTATION_ENTITY_TYPE } from 'src/app/routi
 import { AppService } from 'src/app/services/app.service';
 import { SearchService } from 'src/app/services/search.service';
 import { Affaire } from '../../model/Affaire';
+import { CustomerOrder } from '../../model/CustomerOrder';
 import { NoticeTypeFamily } from '../../model/NoticeTypeFamily';
 import { Provision } from '../../model/Provision';
 import { QuotationStatus } from '../../model/QuotationStatus';
@@ -471,6 +472,14 @@ export class QuotationComponent implements OnInit {
 
   public static computePriceTotal(quotation: IQuotation): number {
     return QuotationComponent.computePreTaxPriceTotal(quotation) - QuotationComponent.computeDiscountTotal(quotation) + QuotationComponent.computeVatTotal(quotation);
+  }
+
+  public static computePayed(quotation: CustomerOrder) {
+    let total = 0;
+    if (quotation && quotation.deposits)
+      for (let deposit of quotation.deposits)
+        total += deposit.depositAmount;
+    return total;
   }
 
   // When quotation label type is AFFAIRE, only one affaire is authorized in quotation

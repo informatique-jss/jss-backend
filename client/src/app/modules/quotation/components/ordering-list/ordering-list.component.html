@@ -9,7 +9,8 @@
         </td>
         <td>
           <select-quotation-status [(model)]="orderingSearch.quotationStatus" label="Statut" [form]="orderingSearchForm"
-            propertyName="quotationStatus" [isMandatory]="false" [isDisabled]="false"></select-quotation-status>
+            propertyName="quotationStatus" [isMandatory]="false" [isDisabled]="false"
+            [defaultCodesSelected]="defaultStatusFilter"></select-quotation-status>
         </td>
         <td>
           <generic-date-range-picker [(modelStart)]="orderingSearch.startDate" [(modelEnd)]="orderingSearch.endDate"

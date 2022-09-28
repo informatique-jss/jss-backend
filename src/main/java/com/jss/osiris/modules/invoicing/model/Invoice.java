@@ -92,6 +92,7 @@ public class Invoice implements Serializable, IId {
 	@Column(length = 40)
 	private String commandNumber;
 
+	@Column(name = "total_price")
 	private Float totalPrice;
 
 	@OneToMany(mappedBy = "invoice")

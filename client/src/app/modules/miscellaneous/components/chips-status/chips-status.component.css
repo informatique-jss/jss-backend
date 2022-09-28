@@ -1,0 +1,18 @@
+.mat-chip.mat-standard-chip.ok-status {
+  color: white;
+  background-color: #2ecc71;
+}
+
+.mat-chip.mat-standard-chip.ko-status {
+  color: white;
+  background-color: #c0392b;
+}
+
+.mat-chip.mat-standard-chip.warn-status {
+  color: white;
+  background-color: #f39c12;
+}
+
+.div-wrapper {
+  display: flex;
+}

@@ -31,6 +31,7 @@ export class PaymentListComponent implements OnInit {
 
   ngOnInit() {
     this.putDefaultPeriod();
+    this.displayedColumns = [];
     this.displayedColumns.push({ id: "id", fieldName: "id", label: "N° du paiement" } as SortTableColumn);
     this.displayedColumns.push({ id: "paymentWay", fieldName: "paymentWay.label", label: "Sens" } as SortTableColumn);
     this.displayedColumns.push({ id: "payemntDate", fieldName: "paymentDate", label: "Date", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
@@ -38,15 +39,15 @@ export class PaymentListComponent implements OnInit {
     this.displayedColumns.push({ id: "label", fieldName: "label", label: "Libellé" } as SortTableColumn);
     this.displayedColumns.push({ id: "invoice", fieldName: "invoices.id", label: "Facture(s) associée(s)", valueFonction: this.getInvoiceLabel, actionLinkFunction: this.getActionLink, actionIcon: "visibility", actionTooltip: "Voir la facture associée" } as SortTableColumn);
 
-    this.tableAction.push({ actionIcon: "settings", actionName: "Voir le détail du paiement / associer", actionClick: this.getActionClick, display: true, } as SortTableAction);
+    this.tableAction.push({
+      actionIcon: "settings", actionName: "Voir le détail du paiement / associer", actionClick: (action: SortTableAction, element: any): void => {
+
+      }, display: true,
+    } as SortTableAction);
   }
 
   paymentForm = this.formBuilder.group({
   });
-
-  getActionClick(action: SortTableAction, element: any) {
-
-  }
 
   getActionLink(action: SortTableColumn, element: any) {
     if (element && action.id == "invoice" && element.invoices && element.invoices[0] && element.invoices.length == 1)

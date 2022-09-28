@@ -94,6 +94,7 @@ export class ResponsableMainComponent implements OnInit {
     this.principalForm.markAllAsTouched();
 
     // Table definition
+    this.displayedColumns = [];
     this.displayedColumns.push({ id: "id", fieldName: "id", label: "N° du responsable" } as SortTableColumn);
     this.displayedColumns.push({ id: "name", fieldName: "name", label: "Nom", valueFonction: (element: any) => { return (element) ? element.firstname + " " + element.lastname : "" } } as SortTableColumn);
     this.displayedColumns.push({ id: "address", fieldName: "address", label: "Adresse" } as SortTableColumn);

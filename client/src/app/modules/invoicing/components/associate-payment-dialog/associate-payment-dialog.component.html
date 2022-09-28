@@ -1,0 +1,69 @@
+<h1 mat-dialog-title>Associer un paiement </h1>
+<div mat-dialog-content *ngIf="payment && invoice">
+  <sort-table [columns]="displayedColumns" [values]="associationSummaryTable" tableName="Association paiement / facture"
+    [actions]="tableAction" [refreshTable]="refreshTable.asObservable()">
+  </sort-table>
+  <div *ngIf="amountToPayCompletely()>=0" class="top">
+    <div>
+      <p>Validez-vous l'association présentée ci-dessus ?</p>
+    </div>
+  </div>
+  <div mat-dialog-actions align="end" *ngIf="amountToPayCompletely()>=0">
+    <button mat-raised-button color="accent" (click)="onClose()">Annuler</button>
+    <button mat-raised-button color="warn" (click)="onConfirm()">Ok</button>
+  </div>
+  <div class="top">
+  </div>
+
+  <div class="big-chip" *ngIf="amountToPayCompletely()<0">
+    <chips-status [value]="'Solde '+amountRemaining()+' €'"></chips-status>
+  </div>
+  <div *ngIf="amountToPayCompletely()<0">
+    <mat-vertical-stepper [linear]="false" #stepper animationDuration="500">
+      <mat-step>
+        <ng-template matStepLabel>Validation de l'association</ng-template>
+        <p>Validez-vous l'association présentée ci-dessus ?</p>
+        <div class="top">
+          <button mat-raised-button color="accent" (click)="onClose()">Annuler</button>
+          <button mat-raised-button color="warn" matStepperNext>Suivant</button>
+        </div>
+      </mat-step>
+      <mat-step>
+        <ng-template matStepLabel>Choix d'une commande / facture suplémentaire</ng-template>
+        <p>Merci de choisir ci-dessous, la commande et /ou la facture à associer avec ce solde.</p>
+        <mat-tab-group>
+          <mat-tab label="Factures">
+            <invoice-list (actionBypass)="associateInvoice($event)" [overrideIconAction]="'merge_type'"
+              [overrideTooltipAction]="'Associer cette facture au paiement'"
+              [defaultStatusFilter]="[INVOICING_STATUS_SENT]"></invoice-list>
+          </mat-tab>
+          <mat-tab label="Commandes">
+            <ordering-list (actionBypass)="associateOrder($event)" [overrideIconAction]="'merge_type'"
+              [overrideTooltipAction]="'Associer cette facture au paiement'"
+              [defaultStatusFilter]="[QUOTATION_STATUS_WAITING_DEPOSIT]"></ordering-list>
+          </mat-tab>
+        </mat-tab-group>
+        <div class="top">
+          <button mat-raised-button color="accent" matStepperPrevious>Précédent</button>
+          <button mat-raised-button color="warn" matStepperNext>Suivant</button>
+        </div>
+      </mat-step>
+      <mat-step *ngIf="amountRemaining()>0">
+        <ng-template matStepLabel>Remboursement</ng-template>
+        <p>Le solde n'est pas nul. A qui souhaitez vous effectuer le remboursement ?</p>
+        <div class="top">
+          <button mat-raised-button color="accent" matStepperPrevious>Précédent</button>
+          <button mat-raised-button color="warn" matStepperNext>Suivant</button>
+        </div>
+      </mat-step>
+      <mat-step>
+        <ng-template matStepLabel>Récapitulatif</ng-template>
+        <p>Validez-vous les associations présentées ci-dessus ?</p>
+        <div class="top">
+          <button mat-raised-button color="accent" matStepperPrevious>Précédent</button>
+          <button mat-raised-button color="warn" (click)="onConfirm()">Valider</button>
+        </div>
+      </mat-step>
+    </mat-vertical-stepper>
+  </div>
+</div>

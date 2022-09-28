@@ -40,11 +40,10 @@ dependencies {
     implementation 'com.itextpdf:itextpdf:5.5.13.3'
     implementation 'com.itextpdf:html2pdf:4.0.2'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf:2.7.1'
-    implementation 'io.springfox:springfox-boot-starter:3.0.0'
-    implementation 'io.springfox:springfox-swagger-ui:3.0.0'
     implementation 'org.apache.poi:poi-ooxml:5.2.2'
     implementation 'org.apache.poi:poi:5.2.2'
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-hibernate5:2.13.3'
+    implementation 'org.springdoc:springdoc-openapi-ui:1.6.11'
 
   
     runtimeOnly 'org.springframework.boot:spring-boot-devtools:2.6.4'

@@ -38,6 +38,7 @@ export class AccountingRecordComponent implements OnInit {
     this.accountingRecordSearch.endDate = new Date(new Date().getFullYear(), 11, 31);
 
     // Column init
+    this.displayedColumns = [];
     this.displayedColumns.push({ id: "operationId", fieldName: "operationId", label: "N° d'écriture" } as SortTableColumn);
     this.displayedColumns.push({ id: "accountingDateTime", fieldName: "accountingDateTime", label: "Date d'écriture", valueFonction: this.formatDateForSortTable } as SortTableColumn);
     this.displayedColumns.push({ id: "operationDateTime", fieldName: "operationDateTime", label: "Date d'opération", valueFonction: this.formatDateTimeForSortTable } as SortTableColumn);

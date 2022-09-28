@@ -39,8 +39,6 @@ import com.jss.osiris.modules.accounting.service.AccountingAccountService;
 import com.jss.osiris.modules.accounting.service.AccountingJournalService;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
 
-import springfox.documentation.annotations.ApiIgnore;
-
 @RestController
 public class AccountingController {
 
@@ -66,7 +64,6 @@ public class AccountingController {
     AccountingJournalService accountingJournalService;
 
     @GetMapping(inputEntryPoint + "/accounting-journals")
-    @ApiIgnore
     public ResponseEntity<List<AccountingJournal>> getAccountingJournals() {
         List<AccountingJournal> accountingJournals = null;
         try {
@@ -82,7 +79,6 @@ public class AccountingController {
     }
 
     @PostMapping(inputEntryPoint + "/accounting-journal")
-    @ApiIgnore
     public ResponseEntity<AccountingJournal> addOrUpdateAccountingJournal(
             @RequestBody AccountingJournal accountingJournals) {
         AccountingJournal outAccountingJournal;
@@ -109,7 +105,6 @@ public class AccountingController {
     }
 
     @GetMapping(inputEntryPoint + "/accounting-records")
-    @ApiIgnore
     public ResponseEntity<List<AccountingRecord>> getAccountingRecords() {
         List<AccountingRecord> accountingRecords = null;
         try {
@@ -125,7 +120,6 @@ public class AccountingController {
     }
 
     @PostMapping(inputEntryPoint + "/accounting-record")
-    @ApiIgnore
     public ResponseEntity<AccountingRecord> addOrUpdateAccountingRecord(
             @RequestBody AccountingRecord accountingRecords) {
         AccountingRecord outAccountingRecord;
