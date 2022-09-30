@@ -73,7 +73,6 @@ export class HistoryComponent implements OnInit {
       } else {
         this.audits = response;
       }
-      console.log(this.audits);
       if (this.audits != undefined && this.audits != null && this.audits.length > 0) {
         this.audits.sort(function (a: Audit, b: Audit) {
           return new Date(b.datetime).getTime() - new Date(a.datetime).getTime();

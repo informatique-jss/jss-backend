@@ -32,10 +32,18 @@
   right: 10px;
 }
 
-table.description-table td {
+.description-table {
   padding-top: 10px;
 }
 
 .underline {
   text-decoration: underline;
+}
+
+.td-info {
+  vertical-align: top;
+  width: 33%;
+  border-right: solid;
+  border-width: 1px;
+  padding: 10px;
 }

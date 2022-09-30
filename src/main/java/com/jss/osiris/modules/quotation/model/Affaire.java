@@ -92,6 +92,28 @@ public class Affaire implements Serializable, IId {
 
 	private Float shareCapital;
 
+	@Column(length = 40, name = "payment_iban")
+	private String paymentIban;
+
+	@Column(length = 40, name = "payment_bic")
+	private String paymentBic;
+
+	public String getPaymentIban() {
+		return paymentIban;
+	}
+
+	public void setPaymentIban(String paymentIban) {
+		this.paymentIban = paymentIban;
+	}
+
+	public String getPaymentBic() {
+		return paymentBic;
+	}
+
+	public void setPaymentBic(String paymentBic) {
+		this.paymentBic = paymentBic;
+	}
+
 	public Integer getId() {
 		return id;
 	}

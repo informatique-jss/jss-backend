@@ -1441,6 +1441,8 @@ public class QuotationController {
       validationHelper.validateReferential(affaire.getCity(), true);
       validationHelper.validateReferential(affaire.getCountry(), true);
       validationHelper.validateString(affaire.getExternalReference(), false, 60);
+      validationHelper.validateString(affaire.getPaymentIban(), false, 40);
+      validationHelper.validateString(affaire.getPaymentBic(), false, 40);
       if (affaire.getCountry() != null && affaire.getCountry().getCode().equals("FR"))
         validationHelper.validateString(affaire.getPostalCode(), true, 10);
 

@@ -25,4 +25,6 @@ export interface Affaire {
   externalReference: string;
   observations: string;
   shareCapital: number;
+  paymentIban: string;
+  paymentBic: string;
 }

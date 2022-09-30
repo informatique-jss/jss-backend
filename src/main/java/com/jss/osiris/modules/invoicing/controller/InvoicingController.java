@@ -7,6 +7,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,12 +23,16 @@ import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceSearch;
 import com.jss.osiris.modules.invoicing.model.InvoiceStatus;
 import com.jss.osiris.modules.invoicing.model.Payment;
+import com.jss.osiris.modules.invoicing.model.PaymentAssociate;
 import com.jss.osiris.modules.invoicing.model.PaymentSearch;
 import com.jss.osiris.modules.invoicing.model.PaymentWay;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.invoicing.service.InvoiceStatusService;
 import com.jss.osiris.modules.invoicing.service.PaymentService;
 import com.jss.osiris.modules.invoicing.service.PaymentWayService;
+import com.jss.osiris.modules.quotation.model.Affaire;
+import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.tiers.model.ITiers;
 
 @RestController
 public class InvoicingController {
@@ -50,6 +55,9 @@ public class InvoicingController {
 
     @Autowired
     PaymentWayService paymentWayService;
+
+    @Value("${invoicing.invoice.status.send.code}")
+    private String invoiceStatusSendCode;
 
     @GetMapping(inputEntryPoint + "/payment-ways")
     public ResponseEntity<List<PaymentWay>> getPaymentWays() {
@@ -148,6 +156,110 @@ public class InvoicingController {
             return new ResponseEntity<List<Payment>>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<List<Payment>>(payments, HttpStatus.OK);
+    }
+
+    @PostMapping(inputEntryPoint + "/payments/associate")
+    public ResponseEntity<Boolean> associatePaymentAndInvoiceAndCustomerOrder(
+            @RequestBody PaymentAssociate paymentAssociate) {
+
+        try {
+            if (paymentAssociate == null)
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+            paymentAssociate
+                    .setPayment((Payment) validationHelper.validateReferential(paymentAssociate.getPayment(), true));
+
+            if (paymentAssociate.getInvoices() != null) {
+                if (paymentAssociate.getInvoices().size() == 0)
+                    paymentAssociate.setInvoices(null);
+
+                for (Invoice invoice : paymentAssociate.getInvoices()) {
+                    invoice = (Invoice) validationHelper.validateReferential(invoice, true);
+                    if (paymentAssociate.getPayment().getInvoice() != null
+                            && invoice.getId().equals(paymentAssociate.getPayment().getInvoice().getId()))
+                        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+                    if (!invoice.getInvoiceStatus().getCode().equals(invoiceStatusSendCode))
+                        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+                }
+            }
+
+            if (paymentAssociate.getCustomerOrders() != null) {
+                if (paymentAssociate.getCustomerOrders().size() == 0)
+                    paymentAssociate.setCustomerOrders(null);
+
+                for (CustomerOrder customerOrder : paymentAssociate.getCustomerOrders()) {
+                    customerOrder = (CustomerOrder) validationHelper.validateReferential(customerOrder, true);
+                    if (paymentAssociate.getPayment().getCustomerOrder() != null
+                            && customerOrder.getId().equals(paymentAssociate.getPayment().getCustomerOrder().getId()))
+                        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+                }
+            }
+
+            paymentAssociate
+                    .setAffaire((Affaire) validationHelper.validateReferential(paymentAssociate.getAffaire(), false));
+
+            if (paymentAssociate.getByPassAmount() == null || paymentAssociate.getByPassAmount()
+                    .size() != (paymentAssociate.getInvoices() == null ? 0 : paymentAssociate.getInvoices().size())
+                            + (paymentAssociate.getCustomerOrders() == null ? 0
+                                    : paymentAssociate.getCustomerOrders().size()))
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+            Float totalAmount = 0f;
+            for (Float amount : paymentAssociate.getByPassAmount()) {
+                totalAmount += amount;
+            }
+            totalAmount = Math.round(totalAmount * 100f) / 100f;
+
+            // Mandatory because we need customer order to get customer accounting account
+            if (paymentAssociate.getTiersRefund() == null && paymentAssociate.getConfrereRefund() == null)
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            validationHelper.validateReferential(paymentAssociate.getTiersRefund(), false);
+            validationHelper.validateReferential(paymentAssociate.getConfrereRefund(), false);
+
+            if (paymentAssociate.getPayment().getPaymentAmount() < totalAmount)
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+            if (paymentAssociate.getPayment().getPaymentAmount() > totalAmount
+                    && paymentAssociate.getTiersRefund() == null && paymentAssociate.getAffaire() == null)
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+            ITiers commonCustomerOrder = paymentAssociate.getTiersRefund() != null ? paymentAssociate.getTiersRefund()
+                    : paymentAssociate.getConfrereRefund();
+            if (paymentAssociate.getInvoices() != null) {
+                for (Invoice invoice : paymentAssociate.getInvoices())
+                    if (!invoiceService.getCustomerOrder(invoice).getId().equals(commonCustomerOrder.getId()))
+                        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+
+            if (paymentAssociate.getCustomerOrders() != null) {
+                for (CustomerOrder customerOrder : paymentAssociate.getCustomerOrders()) {
+                    if (customerOrder.getResponsable() != null
+                            && !customerOrder.getResponsable().getTiers().getId().equals(commonCustomerOrder.getId()))
+                        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+                    if (customerOrder.getConfrere() != null
+                            && !customerOrder.getConfrere().getId().equals(commonCustomerOrder.getId()))
+                        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+                    if (!customerOrder.getTiers().getId().equals(commonCustomerOrder.getId()))
+                        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+                }
+            }
+
+            paymentService.manualMatchPaymentInvoicesAndGeneratePaymentAccountingRecords(
+                    paymentAssociate.getPayment(),
+                    paymentAssociate.getInvoices(), paymentAssociate.getCustomerOrders(),
+                    paymentAssociate.getAffaire(),
+                    commonCustomerOrder, paymentAssociate.getByPassAmount());
+        } catch (ResponseStatusException e) {
+            return new ResponseEntity<Boolean>(e.getStatus());
+        } catch (HttpStatusCodeException e) {
+            logger.error("HTTP error when fetching payment", e);
+            return new ResponseEntity<Boolean>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            logger.error("Error when fetching payment", e);
+            return new ResponseEntity<Boolean>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/payments/advise")

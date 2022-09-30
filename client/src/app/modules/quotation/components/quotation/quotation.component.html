@@ -98,10 +98,10 @@
   </mat-sidenav>
 
   <mat-sidenav-content>
-    <div *ngIf="!editMode && !quotation.id && !isQuotationUrl">
+    <div *ngIf="!editMode && !quotation.id && !isQuotationUrl && !idQuotation">
       <ordering-list></ordering-list>
     </div>
-    <div *ngIf="!editMode && !quotation.id && isQuotationUrl">
+    <div *ngIf="!editMode && !quotation.id && isQuotationUrl && !idQuotation">
       <quotation-list></quotation-list>
     </div>
     <div [hidden]="!editMode && (quotation.id==undefined || quotation.id==null)">
@@ -289,6 +289,10 @@
     <button mat-menu-item *ngIf="quotation.quotationStatus.code==QUOTATION_STATUS_VALIDATED_BY_JSS"
       (click)="changeStatus(QUOTATION_STATUS_VALIDATED_BY_CUSTOMER)">
       <mat-icon>task_alt</mat-icon><span>Indiquer validé par le client</span>
+    </button>
+    <button mat-menu-item *ngIf="quotation.quotationStatus.code==QUOTATION_STATUS_WAITING_DEPOSIT"
+      (click)="changeStatus(QUOTATION_STATUS_BEING_PROCESSED)">
+      <mat-icon>task_alt</mat-icon><span>Bypasser la demande d'accompte</span>
     </button>
     <button mat-menu-item *ngIf="quotation.quotationStatus.code==QUOTATION_STATUS_BEING_PROCESSED"
       (click)="changeStatus(QUOTATION_STATUS_BILLED)">

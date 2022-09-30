@@ -20,6 +20,10 @@
             propertyName="label" [isMandatory]="false" [isDisabled]="false"></generic-input>
         </td>
         <td>
+          <generic-toggle [(model)]="paymentSearch.isHideAssociatedPayments" label="Masquer les paiements associés"
+            [form]="paymentForm" propertyName="isHideAssociatedPayments"></generic-toggle>
+        </td>
+        <td>
           <generic-date-range-picker [(modelStart)]="paymentSearch.startDate" [(modelEnd)]="paymentSearch.endDate"
             label="Plage de recherche" [form]="paymentForm" propertyNameStart="startDate" propertyNameEnd="endDate"
             (onDateChange)="putDefaultPeriod()">

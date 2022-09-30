@@ -130,11 +130,14 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                         accountingRecord.setInvoice(invoice);
                         accountingRecordService.addOrUpdateAccountingRecord(accountingRecord);
                     }
+
+                    // TODO : changer de compte en contrepasse (attente => client) + check lettrage
                 }
         }
 
         if (targetStatusCode.equals(QuotationStatus.VALIDATED_BY_CUSTOMER)) {
-            // TODO : add rule to deposit
+            // TODO : add rule to check if deposit required + check if a deposit already
+            // exists to check if we can go further
             targetStatusCode = QuotationStatus.WAITING_DEPOSIT;
         }
 

@@ -7,7 +7,7 @@ import { Invoice } from 'src/app/modules/quotation/model/Invoice';
 import { IQuotation } from 'src/app/modules/quotation/model/IQuotation';
 import { AppService } from 'src/app/services/app.service';
 import { InvoiceService } from '../../services/invoice.service';
-import { InvoiceListComponent } from '../invoice-list/invoice-list.component';
+import { getAffaireList, getAffaireListArray, getAmountRemaining, getCustomerOrderForInvoice, getCustomerOrderNameForInvoice, getResponsableName } from '../invoice-tools';
 
 @Component({
   selector: 'app-invoice-details',
@@ -17,6 +17,7 @@ import { InvoiceListComponent } from '../invoice-list/invoice-list.component';
 export class InvoiceDetailsComponent implements OnInit {
 
   invoice: Invoice | undefined;
+  getAmountRemaining = getAmountRemaining;
 
   constructor(private formBuilder: FormBuilder,
     private invoiceService: InvoiceService,
@@ -47,11 +48,11 @@ export class InvoiceDetailsComponent implements OnInit {
   invoiceDetailForm = this.formBuilder.group({
   });
 
-  getCustomerOrderName = InvoiceListComponent.getCustomerOrderName;
-  getCustomerOrder = InvoiceListComponent.getCustomerOrder;
-  getResponsableName = InvoiceListComponent.getResponsableName;
-  getAffaireList = InvoiceListComponent.getAffaireList;
-  getAffaireListArray = InvoiceListComponent.getAffaireListArray;
+  getCustomerOrderName = getCustomerOrderNameForInvoice;
+  getCustomerOrder = getCustomerOrderForInvoice;
+  getResponsableName = getResponsableName;
+  getAffaireList = getAffaireList;
+  getAffaireListArray = getAffaireListArray;
 
   computePreTaxPriceTotal(quotation: IQuotation): number {
     let preTaxPrice = 0;

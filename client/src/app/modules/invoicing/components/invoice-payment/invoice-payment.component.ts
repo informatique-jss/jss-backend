@@ -5,6 +5,7 @@ import { formatDateTimeForSortTable, formatEurosForSortTable } from 'src/app/lib
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { Invoice } from 'src/app/modules/quotation/model/Invoice';
+import { AppService } from 'src/app/services/app.service';
 import { Payment } from '../../model/Payment';
 import { PaymentService } from '../../services/payment.service';
 import { AssociatePaymentDialogComponent } from '../associate-payment-dialog/associate-payment-dialog.component';
@@ -26,6 +27,7 @@ export class InvoicePaymentComponent implements OnInit {
   INVOICING_STATUS_SENT = INVOICING_STATUS_SENT;
 
   constructor(private paymentService: PaymentService,
+    private appService: AppService,
     public associatePaymentDialog: MatDialog) { }
 
   ngOnInit() {
@@ -38,14 +40,11 @@ export class InvoicePaymentComponent implements OnInit {
 
     this.tableAction.push({
       actionIcon: "merge_type", actionName: "Associer le paiement", actionClick: (action: SortTableAction, element: any): void => {
-        let dialogPaymentDialogRef = this.associatePaymentDialog.open(AssociatePaymentDialogComponent, {
-          width: '100%'
-        });
-        dialogPaymentDialogRef.componentInstance.invoice = this.invoice;
-        dialogPaymentDialogRef.componentInstance.payment = element;
-        dialogPaymentDialogRef.afterClosed().subscribe(response => {
-          this.stateChanged.emit();
-        });
+        if (element.invoices) {
+          this.appService.displaySnackBar("Veuillez choisir un paiement non associé à une facture", true, 15);
+          return;
+        }
+        this.openAssociationDialog(element);
       }, display: true,
     } as SortTableAction);
     if (this.invoice) {
@@ -53,5 +52,16 @@ export class InvoicePaymentComponent implements OnInit {
         this.advisedPayment = response;
       })
     }
+  }
+
+  openAssociationDialog(element: Payment) {
+    let dialogPaymentDialogRef = this.associatePaymentDialog.open(AssociatePaymentDialogComponent, {
+      width: '100%'
+    });
+    dialogPaymentDialogRef.componentInstance.invoice = this.invoice;
+    dialogPaymentDialogRef.componentInstance.payment = element;
+    dialogPaymentDialogRef.afterClosed().subscribe(response => {
+      this.stateChanged.emit();
+    });
   }
 }

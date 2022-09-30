@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { AppRestService } from 'src/app/services/appRest.service';
 import { Invoice } from '../../quotation/model/Invoice';
 import { Payment } from '../model/Payment';
+import { PaymentAssociate } from '../model/PaymentAssociate';
 import { PaymentSearch } from '../model/PaymentSearch';
 
 @Injectable({
@@ -23,7 +24,11 @@ export class PaymentService extends AppRestService<Payment>{
   }
 
   // TODO : à retirer avant la MEP !!
-  addOrUpdatePayment(payemnt: Payment) {
-    return this.addOrUpdate(new HttpParams(), "payment", payemnt, "Enregistré", "Erreur lors de l'enregistrement");
+  addOrUpdatePayment(payment: Payment) {
+    return this.addOrUpdate(new HttpParams(), "payment", payment, "Enregistré", "Erreur lors de l'enregistrement");
+  }
+
+  associatePaymentAndInvoiceAndCustomerOrder(paymentAssociate: PaymentAssociate) {
+    return this.postList(new HttpParams(), "payments/associate", paymentAssociate, "Association réalisée avec succès", "Erreur lors de l'association");
   }
 }

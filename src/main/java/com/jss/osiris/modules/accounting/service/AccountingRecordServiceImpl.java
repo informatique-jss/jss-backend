@@ -30,6 +30,7 @@ import com.jss.osiris.modules.invoicing.model.Deposit;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.invoicing.model.Payment;
+import com.jss.osiris.modules.invoicing.model.Refund;
 import com.jss.osiris.modules.invoicing.service.InvoiceItemService;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.miscellaneous.service.VatService;
@@ -174,6 +175,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
       throw new Exception("No payments nor deposits provided with invoice " + invoice.getId());
 
     AccountingAccount bankAccountingAccount = accountingAccountService.getBankAccountingAccount();
+    AccountingAccount waintingAccountingAccount = accountingAccountService.getWaitingAccountingAccount();
 
     AccountingAccount accountingAccountCustomer = getCustomerAccountingAccountForCustomerOrder(
         invoiceService.getCustomerOrder(invoice));
@@ -184,12 +186,9 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
       for (Payment payment : payments) {
         if (payment.getAccountingRecords() != null && payment.getAccountingRecords().size() > 0)
           for (AccountingRecord accountingRecord : payment.getAccountingRecords())
-            generateCounterPart(accountingRecord);
-
-        operationId = invoice.getId() + payments.get(0).getId();
-        generateNewAccountingRecord(LocalDateTime.now(), operationId, null,
-            "Réglement de la facture n°" + invoice.getId(), null, payment.getPaymentAmount(),
-            bankAccountingAccount, null, invoice, null, salesJournal, payment, null);
+            // Counter part waiting account record
+            if (accountingRecord.getAccountingAccount().getId().equals(waintingAccountingAccount.getId()))
+              generateCounterPart(accountingRecord);
       }
 
     if (deposits != null && deposits.size() > 0)
@@ -258,6 +257,23 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     generateNewAccountingRecord(LocalDateTime.now(), payment.getId(), null,
         "Mise en attente du règlement n°" + payment.getId(), payment.getPaymentAmount(), null, waitingAccountingAccount,
         null, null, null, salesJournal, payment, null);
+  }
+
+  @Override
+  public void generateAccountingRecordsForRefund(Refund refund) throws Exception {
+    AccountingJournal salesJournal = accountingJournalService.getSalesAccountingJournal();
+    AccountingAccount customerAccountingAccount = null;
+    if (refund.getConfrere() != null) {
+      customerAccountingAccount = getCustomerAccountingAccountForCustomerOrder(refund.getConfrere());
+    } else {
+      customerAccountingAccount = getCustomerAccountingAccountForCustomerOrder(refund.getTiers());
+    }
+    generateNewAccountingRecord(LocalDateTime.now(), refund.getId(), null, "Remboursement n°" + refund.getId(),
+        refund.getRefundAmount(), null, accountingAccountService.getBankAccountingAccount(), null, null, null,
+        salesJournal, null, null);
+    generateNewAccountingRecord(LocalDateTime.now(), refund.getId(), null, "Remboursement n°" + refund.getId(),
+        null, refund.getRefundAmount(), customerAccountingAccount, null, null, null,
+        salesJournal, null, null);
   }
 
   @Override
@@ -552,19 +568,28 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     return accountingExportHelper.getBalance(accountingBalanceRecords, true);
   }
 
-  private void generateCounterPart(AccountingRecord accountingRecord) {
-    Integer currentId = accountingRecord.getId();
-    accountingRecord.setId(null);
-    accountingRecord.setLabel("Contre passe de : " + accountingRecord.getLabel());
-    Float formerDebitAmount = accountingRecord.getDebitAmount();
-    accountingRecord.setDebitAmount(accountingRecord.getCreditAmount());
-    accountingRecord.setCreditAmount(formerDebitAmount);
-    addOrUpdateAccountingRecord(accountingRecord);
-
-    AccountingRecord accountingRecordOriginal = getAccountingRecord(currentId);
-    accountingRecordOriginal.setContrePasse(accountingRecord);
-
-    addOrUpdateAccountingRecord(accountingRecordOriginal);
+  private void generateCounterPart(AccountingRecord originalAccountingRecord) {
+    AccountingRecord newAccountingRecord = new AccountingRecord();
+    newAccountingRecord.setAccountingAccount(originalAccountingRecord.getAccountingAccount());
+    newAccountingRecord.setAccountingJournal(originalAccountingRecord.getAccountingJournal());
+    newAccountingRecord.setCreditAmount(originalAccountingRecord.getDebitAmount());
+    newAccountingRecord.setDebitAmount(originalAccountingRecord.getCreditAmount());
+    newAccountingRecord.setDeposit(originalAccountingRecord.getDeposit());
+    newAccountingRecord.setInvoice(originalAccountingRecord.getInvoice());
+    newAccountingRecord.setInvoiceItem(originalAccountingRecord.getInvoiceItem());
+    newAccountingRecord.setIsANouveau(false);
+    newAccountingRecord.setIsTemporary(true);
+    newAccountingRecord.setLabel("Contre passe de : " + originalAccountingRecord.getLabel());
+    newAccountingRecord.setManualAccountingDocumentDate(originalAccountingRecord.getManualAccountingDocumentDate());
+    newAccountingRecord
+        .setManualAccountingDocumentDeadline(originalAccountingRecord.getManualAccountingDocumentDeadline());
+    newAccountingRecord.setManualAccountingDocumentNumber(originalAccountingRecord.getManualAccountingDocumentNumber());
+    newAccountingRecord.setPayment(originalAccountingRecord.getPayment());
+    newAccountingRecord.setTemporaryOperationId(originalAccountingRecord.getTemporaryOperationId());
+    newAccountingRecord.setOperationDateTime(LocalDateTime.now());
+    addOrUpdateAccountingRecord(newAccountingRecord);
+    originalAccountingRecord.setContrePasse(newAccountingRecord);
+    addOrUpdateAccountingRecord(originalAccountingRecord);
   }
 
   @Override

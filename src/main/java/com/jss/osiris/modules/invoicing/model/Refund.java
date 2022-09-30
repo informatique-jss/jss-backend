@@ -42,6 +42,10 @@ public class Refund implements Serializable, IId {
 	@JoinColumn(name = "id_affaire")
 	private Affaire affaire;
 
+	@ManyToOne
+	@JoinColumn(name = "id_payment")
+	private Payment payment;
+
 	public Integer getId() {
 		return id;
 	}
@@ -88,6 +92,22 @@ public class Refund implements Serializable, IId {
 
 	public void setConfrere(Confrere confrere) {
 		this.confrere = confrere;
+	}
+
+	public Affaire getAffaire() {
+		return affaire;
+	}
+
+	public void setAffaire(Affaire affaire) {
+		this.affaire = affaire;
+	}
+
+	public Payment getPayment() {
+		return payment;
+	}
+
+	public void setPayment(Payment payment) {
+		this.payment = payment;
 	}
 
 }

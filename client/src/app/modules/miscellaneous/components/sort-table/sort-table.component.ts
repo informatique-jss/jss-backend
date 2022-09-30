@@ -39,7 +39,6 @@ export class SortTableComponent implements OnInit {
     if (this.refreshTable)
       this.refreshTableSubscription = this.refreshTable.subscribe(() => {
         if (this.values) {
-          console.log("titi");
           this.dataSource.data = this.values;
         }
       });

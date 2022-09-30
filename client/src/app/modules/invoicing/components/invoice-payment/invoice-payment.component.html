@@ -1,13 +1,15 @@
+<h3>Paiements associés :</h3>
 <invoice-payment-table [invoice]="invoice"></invoice-payment-table>
 <div *ngIf="invoice.invoiceStatus.code==INVOICING_STATUS_SENT">
   <div class="advise" *ngIf="advisedPayment && advisedPayment.length>0">
-    <p>Paiements conseillés par Osiris :</p>
+    <h3>Paiements conseillés par Osiris :</h3>
     <sort-table [actions]="tableAction" [columns]="displayedColumns" [values]="advisedPayment"
       tableName="Paiements conseillés">
     </sort-table>
   </div>
   <div class=" advise">
-    <p>Autre paiements :</p>
-    <payment-list></payment-list>
+    <h3>Autres paiements :</h3>
+    <payment-list [overrideIconAction]="'merge_type'" [overrideTooltipAction]="'Associer le paiement'"
+      (actionBypass)="openAssociationDialog($event)"></payment-list>
   </div>
 </div>

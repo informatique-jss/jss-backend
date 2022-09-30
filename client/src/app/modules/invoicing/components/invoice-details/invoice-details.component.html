@@ -5,25 +5,34 @@
         <div class="chips-status">
           <chips-status [status]="invoice.invoiceStatus.code" [value]="invoice.invoiceStatus.label"></chips-status>
         </div>
-        <table class="full-width description-table">
-          <tr>
-            <td><span class="underline">Facture n°{{invoice.id}}</span>, à Paris, le
-              {{invoice.createdDate|date:'dd/MM/yyyy à HH:mm'}}
+        <p>Emise à Paris, le {{invoice.createdDate|date:'dd/MM/yyyy à HH:mm'}}</p>
+        <p *ngIf="invoice.customerOrder">Commande n°{{invoice.customerOrder.id}} <a
+            [routerLink]="['/order',invoice.customerOrder.id]">
+            <mat-icon matTooltip="Voir la commande" color="accent" class="pointer">visibility
+            </mat-icon>
+          </a></p>
+        <table class="full-width mat-table description-table ">
+          <tr class=" mat-header-row">
+            <th class="mat-header-cell">Affaire(s)</th>
+            <th class="mat-header-cell">Payeur</th>
+            <th class="mat-header-cell">Donneur d'ordre</th>
+          </tr>
+          <tr class=" mat-row">
+            <td class="mat-cell td-info">
+              <p>{{getAffaireList(invoice)}}</p>
             </td>
-          </tr>
-          <tr>
-            <td><span class="underline">Affaire(s) :</span> {{getAffaireList(invoice)}}</td>
-          </tr>
-          <tr>
-            <td><span class="underline">Payeur :</span> {{invoice.billingLabel}}, {{invoice.billingLabelAddress}},
-              {{invoice.billingLabelPostalCode}}
-              {{invoice.billingLabelCity.label}} {{invoice.billingLabelCountry.label}}</td>
-          </tr>
-          <tr>
-            <td><span class="underline">Donneur d'ordre :</span> {{getCustomerOrderName(invoice)}},
-              {{getCustomerOrder(invoice).address}},
-              {{getCustomerOrder(invoice).postalCode}} {{getCustomerOrder(invoice).city.label}}
-              {{getCustomerOrder(invoice).country.label}}</td>
+            <td class="mat-cell td-info">
+              <p>{{invoice.billingLabel}}</p>
+              <p>{{invoice.billingLabelAddress}}</p>
+              <p>{{invoice.billingLabelPostalCode}} {{invoice.billingLabelCity.label}}
+                {{invoice.billingLabelCountry.label}}</p>
+            </td>
+            <td class="mat-cell td-info">
+              <p>{{getCustomerOrderName(invoice)}}</p>
+              <p>{{getCustomerOrder(invoice).address}}</p>
+              <p>{{getCustomerOrder(invoice).postalCode}}
+                {{getCustomerOrder(invoice).city.label}}{{getCustomerOrder(invoice).country.label}}</p>
+            </td>
           </tr>
         </table>
         <ng-container *ngFor="let affaire of getAffaireListArray(invoice)">
@@ -112,7 +121,7 @@
         <invoice-payment-table [invoice]="invoice"></invoice-payment-table>
       </div>
     </mat-tab>
-    <mat-tab label="Paiements associés">
+    <mat-tab label="Associer un paiement" *ngIf="getAmountRemaining(invoice)>0">
       <invoice-payment (stateChanged)="onStateChange()" [invoice]="invoice"></invoice-payment>
     </mat-tab>
   </mat-tab-group>

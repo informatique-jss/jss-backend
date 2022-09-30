@@ -65,6 +65,8 @@ export class QuotationComponent implements OnInit {
 
   updateDocumentsEvent: Subject<void> = new Subject<void>();
 
+  idQuotation: number | undefined;
+
   constructor(private appService: AppService,
     private quotationService: QuotationService,
     private customerOrderService: CustomerOrderService,
@@ -76,7 +78,7 @@ export class QuotationComponent implements OnInit {
   ngOnInit() {
     let a = {} as NoticeTypeFamily;
 
-    let idQuotation: number = this.activatedRoute.snapshot.params.id;
+    this.idQuotation = this.activatedRoute.snapshot.params.id;
     let url: UrlSegment[] = this.activatedRoute.snapshot.url;
 
     this.quotationStatusService.getQuotationStatus().subscribe(response => {
@@ -88,8 +90,8 @@ export class QuotationComponent implements OnInit {
       this.isQuotationUrl = false;
       this.appService.changeHeaderTitle("Commande");
       this.instanceOfCustomerOrder = true;
-      if (idQuotation != null && idQuotation != undefined) {
-        this.customerOrderService.getCustomerOrder(idQuotation).subscribe(response => {
+      if (this.idQuotation != null && this.idQuotation != undefined) {
+        this.customerOrderService.getCustomerOrder(this.idQuotation).subscribe(response => {
           this.quotation = response;
           this.appService.changeHeaderTitle("Commande " + this.quotation.id + " - " +
             (this.quotation.quotationStatus != null ? this.quotation.quotationStatus.label : ""));
@@ -100,10 +102,10 @@ export class QuotationComponent implements OnInit {
         })
       }
       // Load by quotation
-    } else if (idQuotation != null && idQuotation != undefined) {
+    } else if (this.idQuotation != null && this.idQuotation != undefined) {
       this.isQuotationUrl = true;
       this.appService.changeHeaderTitle("Devis");
-      this.quotationService.getQuotation(idQuotation).subscribe(response => {
+      this.quotationService.getQuotation(this.idQuotation).subscribe(response => {
         this.quotation = response;
         this.appService.changeHeaderTitle("Devis " + this.quotation.id + " - " +
           (this.quotation.quotationStatus != null ? this.quotation.quotationStatus.label : ""));
@@ -471,7 +473,7 @@ export class QuotationComponent implements OnInit {
   }
 
   public static computePriceTotal(quotation: IQuotation): number {
-    return QuotationComponent.computePreTaxPriceTotal(quotation) - QuotationComponent.computeDiscountTotal(quotation) + QuotationComponent.computeVatTotal(quotation);
+    return Math.round((QuotationComponent.computePreTaxPriceTotal(quotation) - QuotationComponent.computeDiscountTotal(quotation) + QuotationComponent.computeVatTotal(quotation)) * 100) / 100;
   }
 
   public static computePayed(quotation: CustomerOrder) {

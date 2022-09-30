@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { PAYEMENT_WAY_INBOUND_CODE } from 'src/app/libs/Constants';
 import { formatDateTimeForSortTable, formatEurosForSortTable, toIsoString } from 'src/app/libs/FormatHelper';
@@ -22,6 +22,12 @@ export class PaymentListComponent implements OnInit {
   tableAction: SortTableAction[] = [];
   PAYEMENT_WAY_INBOUND_CODE = PAYEMENT_WAY_INBOUND_CODE;
 
+  @Output() actionBypass: EventEmitter<Payment> = new EventEmitter<Payment>();
+  @Input() overrideIconAction: string = "";
+  @Input() overrideTooltipAction: string = "";
+  @Input() defaultStatusFilter: string[] | undefined;
+
+
   constructor(
     private appService: AppService,
     private paymentService: PaymentService,
@@ -37,13 +43,19 @@ export class PaymentListComponent implements OnInit {
     this.displayedColumns.push({ id: "payemntDate", fieldName: "paymentDate", label: "Date", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
     this.displayedColumns.push({ id: "payemntAmount", fieldName: "paymentAmount", label: "Montant", valueFonction: formatEurosForSortTable } as SortTableColumn);
     this.displayedColumns.push({ id: "label", fieldName: "label", label: "Libellé" } as SortTableColumn);
-    this.displayedColumns.push({ id: "invoice", fieldName: "invoices.id", label: "Facture(s) associée(s)", valueFonction: this.getInvoiceLabel, actionLinkFunction: this.getActionLink, actionIcon: "visibility", actionTooltip: "Voir la facture associée" } as SortTableColumn);
+    this.displayedColumns.push({ id: "invoice", fieldName: "invoices.id", label: "Facture associée", valueFonction: this.getInvoiceLabel, actionLinkFunction: this.getActionLink, actionIcon: "visibility", actionTooltip: "Voir la facture associée" } as SortTableColumn);
 
-    this.tableAction.push({
-      actionIcon: "settings", actionName: "Voir le détail du paiement / associer", actionClick: (action: SortTableAction, element: any): void => {
+    if (this.overrideIconAction == "") {
 
-      }, display: true,
-    } as SortTableAction);
+    } else {
+      this.tableAction.push({
+        actionIcon: this.overrideIconAction, actionName: this.overrideTooltipAction, actionClick: (action: SortTableAction, element: any) => {
+          this.actionBypass.emit(element);
+        }, display: true,
+      } as SortTableAction);
+    };
+
+    this.paymentSearch.isHideAssociatedPayments = true;
   }
 
   paymentForm = this.formBuilder.group({
@@ -56,8 +68,8 @@ export class PaymentListComponent implements OnInit {
   }
 
   getInvoiceLabel(element: any) {
-    if (element && element.invoices)
-      return element.invoices.map((e: { id: any; }) => e.id).join(", ");
+    if (element && element.invoice && element.invoice.id)
+      return element.invoice.id;
     return "";
   }
 

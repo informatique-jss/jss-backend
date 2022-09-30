@@ -15,6 +15,7 @@ import com.jss.osiris.modules.accounting.model.AccountingRecordSearch;
 import com.jss.osiris.modules.invoicing.model.Deposit;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.Payment;
+import com.jss.osiris.modules.invoicing.model.Refund;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.tiers.model.ITiers;
 
@@ -80,4 +81,6 @@ public interface AccountingRecordService {
         public Float getRemainingAmountToPayForInvoice(Invoice invoice) throws Exception;
 
         public Float getRemainingAmountToPayForCustomerOrder(CustomerOrder customerOrder) throws Exception;
+
+        public void generateAccountingRecordsForRefund(Refund refund) throws Exception;
 }

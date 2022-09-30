@@ -84,7 +84,7 @@ public class ValidationHelper {
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public void validateReferential(IId value, Boolean isMandatory) throws Exception {
+    public Object validateReferential(IId value, Boolean isMandatory) throws Exception {
         if (value == null && isMandatory)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         if (value != null) {
@@ -126,7 +126,9 @@ public class ValidationHelper {
             Object returnValue = m.invoke(service, value.getId());
             if (returnValue == null)
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            return returnValue;
         }
+        return null;
     }
 
     public void validateString(String value, Boolean isMandatory, Integer maxLength) throws Exception {

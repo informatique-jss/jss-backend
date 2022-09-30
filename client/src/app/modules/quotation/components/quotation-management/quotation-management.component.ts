@@ -116,8 +116,6 @@ export class QuotationManagementComponent implements OnInit {
       if (this.billingDocument.id) {
         replaceDocument(BILLING_TIERS_DOCUMENT_TYPE_CODE, this.quotation, this.documentTypes, this.billingDocument);
       }
-      console.log(this.billingDocument);
-      console.log(this.quotation);
     })
   }
 

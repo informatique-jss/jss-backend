@@ -63,7 +63,6 @@ export class SpecialOffersDialogComponent implements OnInit {
   }
 
   chooseSpecialOffer(specialOfferFlatten: SpecialOfferFlatten) {
-    console.log("kk");
     let outSpecialOffer = null;
     this.specialOffers.forEach(specialOffer => {
       if (specialOffer.id == specialOfferFlatten.id)

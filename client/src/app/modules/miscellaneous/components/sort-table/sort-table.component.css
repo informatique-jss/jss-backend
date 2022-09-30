@@ -21,7 +21,7 @@
 .column-content-icon {
   position: relative;
   top: 8px;
-  transform: scale(0.66);
+  transform: scale(1);
 }
 
 .selected-mat-row {

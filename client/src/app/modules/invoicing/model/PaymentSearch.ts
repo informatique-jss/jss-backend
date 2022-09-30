@@ -7,4 +7,5 @@ export interface PaymentSearch {
   maxAmount: number;
   label: string;
   paymentWays: PaymentWay[];
+  isHideAssociatedPayments: boolean;
 }

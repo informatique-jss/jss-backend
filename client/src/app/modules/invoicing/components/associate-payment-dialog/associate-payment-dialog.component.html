@@ -3,6 +3,24 @@
   <sort-table [columns]="displayedColumns" [values]="associationSummaryTable" tableName="Association paiement / facture"
     [actions]="tableAction" [refreshTable]="refreshTable.asObservable()">
   </sort-table>
+  <div class="mat-elevation-z2" *ngIf="amountToPayCompletely()<0 && amountRemaining()>0">
+    <table class="full-width mat-table top" *ngIf="selectedRefundTiers">
+      <tr class=" mat-header-row">
+        <th class="mat-header-cell">Paiement</th>
+        <th class="mat-header-cell">Tiers remboursé</th>
+        <th class="mat-header-cell">Montant du remboursement</th>
+      </tr>
+      <tr class=" mat-row">
+        <td class="mat-cell">{{payment.id}}</td>
+        <td class="mat-cell" *ngIf="selectedRefundTiers.rna==undefined">
+          {{getCustomerOrderNameForITiers(selectedRefundTiers)}}</td>
+        <td class="mat-cell" *ngIf="selectedRefundTiers.rna!=undefined">
+          {{(selectedRefundTiers.denomination)?selectedRefundTiers.denomination : selectedRefundTiers.firstname + "
+          "+selectedRefundTiers.lastname}}</td>
+        <td class="mat-cell">{{amountRemaining()}} €</td>
+      </tr>
+    </table>
+  </div>
   <div *ngIf="amountToPayCompletely()>=0" class="top">
     <div>
       <p>Validez-vous l'association présentée ci-dessus ?</p>
@@ -31,7 +49,7 @@
       <mat-step>
         <ng-template matStepLabel>Choix d'une commande / facture suplémentaire</ng-template>
         <p>Merci de choisir ci-dessous, la commande et /ou la facture à associer avec ce solde.</p>
-        <mat-tab-group>
+        <mat-tab-group animationDuration="0ms">
           <mat-tab label="Factures">
             <invoice-list (actionBypass)="associateInvoice($event)" [overrideIconAction]="'merge_type'"
               [overrideTooltipAction]="'Associer cette facture au paiement'"
@@ -50,7 +68,18 @@
       </mat-step>
       <mat-step *ngIf="amountRemaining()>0">
         <ng-template matStepLabel>Remboursement</ng-template>
-        <p>Le solde n'est pas nul. A qui souhaitez vous effectuer le remboursement ?</p>
+        <p>Le solde n'est pas nul. A qui souhaitez-vous rembourser la somme de {{amountRemaining()}} € ?
+        </p>
+        <form [formGroup]="refundForm">
+          <mat-radio-group class="radio-group-column" formControlName="refundTiers">
+            <mat-radio-button [value]="getRefundCustomerOrder()" checked="true">
+              Donneur d'ordre {{getCustomerOrderNameForITiers(getRefundCustomerOrder())}}
+            </mat-radio-button>
+            <mat-radio-button *ngFor="let affaire of getAllAffaireRefundable()" [value]="affaire">
+              Affaire {{affaire.denomination}}
+            </mat-radio-button>
+          </mat-radio-group>
+        </form>
         <div class="top">
           <button mat-raised-button color="accent" matStepperPrevious>Précédent</button>
           <button mat-raised-button color="warn" matStepperNext>Suivant</button>

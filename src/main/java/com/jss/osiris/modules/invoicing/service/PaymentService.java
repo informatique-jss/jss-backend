@@ -5,6 +5,9 @@ import java.util.List;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.model.PaymentSearch;
+import com.jss.osiris.modules.quotation.model.Affaire;
+import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.tiers.model.ITiers;
 
 public interface PaymentService {
     public List<Payment> getPayments();
@@ -18,5 +21,9 @@ public interface PaymentService {
     public void payementGrab() throws Exception;
 
     public List<Payment> getAdvisedPaymentForInvoice(Invoice invoice);
+
+    public void manualMatchPaymentInvoicesAndGeneratePaymentAccountingRecords(Payment payment,
+            List<Invoice> correspondingInvoices, List<CustomerOrder> correspondingCustomerOrder, Affaire affaireRefund,
+            ITiers tiersRefund, List<Float> byPassAmount) throws Exception;
 
 }

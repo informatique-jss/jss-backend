@@ -25,11 +25,13 @@ import com.jss.osiris.modules.invoicing.model.InvoiceStatus;
 import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.model.PaymentSearch;
 import com.jss.osiris.modules.invoicing.repository.PaymentRepository;
+import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.quotation.model.QuotationStatus;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
+import com.jss.osiris.modules.tiers.model.ITiers;
 
 @Service
 public class PaymentServiceImpl implements PaymentService {
@@ -57,6 +59,9 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Autowired
     DepositService depositService;
+
+    @Autowired
+    RefundService refundService;
 
     @Value("${invoicing.invoice.status.send.code}")
     private String invoiceStatusSendCode;
@@ -100,7 +105,7 @@ public class PaymentServiceImpl implements PaymentService {
         List<Payment> invoices = paymentRepository.findPayments(paymentSearch.getPaymentWays(),
                 paymentSearch.getStartDate(),
                 paymentSearch.getEndDate(), paymentSearch.getMinAmount(), paymentSearch.getMaxAmount(),
-                paymentSearch.getLabel());
+                paymentSearch.getLabel(), paymentSearch.isHideAssociatedPayments());
         return invoices;
     }
 
@@ -113,7 +118,6 @@ public class PaymentServiceImpl implements PaymentService {
 
     private void automatchPaymentsInvoicesAndGeneratePaymentAccountingRecords() throws Exception {
         List<Payment> payments = paymentRepository.findNotAssociatedPayments();
-        InvoiceStatus payedStatus = invoiceStatusService.getInvoiceStatusByCode(invoiceStatusPayedCode);
 
         for (Payment payment : payments) {
             // Get corresponding entities
@@ -146,111 +150,178 @@ public class PaymentServiceImpl implements PaymentService {
                 continue;
             // Invoices to payed found
             if (correspondingInvoices.size() > 0) {
-                Float remainingToPay = 0f;
-                Float remainingMoney = payment.getPaymentAmount();
-                for (Invoice invoice : correspondingInvoices) {
-                    remainingToPay += accountingRecordService.getRemainingAmountToPayForInvoice(invoice);
-                }
-                // If payment is not over total of remaining to pay on all invoices
-                if (remainingToPay >= payment.getPaymentAmount()) {
-                    // Payment will be used, not necessary to put it in wainting account
-                    generateWaitingAccountAccountingRecords = false;
-
-                    for (int i = 0; i < correspondingInvoices.size(); i++) {
-                        Float remainingToPayForCurrentInvoice = accountingRecordService
-                                .getRemainingAmountToPayForInvoice(correspondingInvoices.get(i));
-                        boolean isPayed = false;
-                        if (i == 0) {
-                            // associate
-                            List<Payment> invoicePayment = new ArrayList<Payment>();
-                            invoicePayment.add(payment);
-                            accountingRecordService.generateAccountingRecordsForSaleOnInvoicePayment(
-                                    correspondingInvoices.get(i), invoicePayment, null,
-                                    remainingToPayForCurrentInvoice);
-
-                            payment.setInvoice(correspondingInvoices.get(i));
-                            addOrUpdatePayment(payment);
-                            if (remainingToPayForCurrentInvoice - payment.getPaymentAmount() <= 0) {
-                                isPayed = true;
-                                remainingMoney -= remainingToPayForCurrentInvoice;
-                            } else {
-                                remainingMoney = 0f;
-                            }
-                        } else if (remainingToPay > 0 && remainingMoney > 0) {
-                            // If multiple invoice, use intermediary deposit
-                            List<Deposit> invoiceDeposits = new ArrayList<Deposit>();
-                            invoiceDeposits
-                                    .add(depositService.getNewDepositForInvoice(remainingMoney, LocalDateTime.now(),
-                                            correspondingInvoices.get(i), payment));
-                            accountingRecordService.generateAccountingRecordsForSaleOnInvoicePayment(
-                                    correspondingInvoices.get(i), null, invoiceDeposits,
-                                    Math.min(remainingToPayForCurrentInvoice, remainingMoney));
-
-                            invoiceDeposits.get(0).setInvoice(correspondingInvoices.get(0));
-                            depositService.addOrUpdateDeposit(invoiceDeposits.get(0));
-                            if (remainingToPayForCurrentInvoice - invoiceDeposits.get(0).getDepositAmount() <= 0) {
-                                isPayed = true;
-                                remainingMoney -= remainingToPayForCurrentInvoice;
-                            } else {
-                                remainingMoney = 0f;
-                            }
-                        }
-                        remainingMoney = Math.round(remainingMoney * 100f) / 100f;
-                        remainingToPay -= remainingToPayForCurrentInvoice;
-                        if (isPayed) {
-                            correspondingInvoices.get(i).setInvoiceStatus(payedStatus);
-                            invoiceService.addOrUpdateInvoice(correspondingInvoices.get(i));
-                        } else {
-                            break;
-                        }
-                    }
-                }
+                associatePayementAndInvoices(payment, correspondingInvoices, generateWaitingAccountAccountingRecords,
+                        null);
             }
 
             // Customer order wainting for deposit found
             if (correspondingCustomerOrder.size() > 0) {
-                Float remainingToPay = 0f;
-                for (CustomerOrder customerOrder : correspondingCustomerOrder) {
-                    remainingToPay += Math.round(
-                            accountingRecordService.getRemainingAmountToPayForCustomerOrder(customerOrder) * 100f)
-                            / 100f;
-                }
-                // If payment is not equal to all customer order, do nothing, a human will
-                if (remainingToPay >= payment.getPaymentAmount()) {
-                    // Payment will be used, not necessary to put it in wainting account
-                    generateWaitingAccountAccountingRecords = false;
-
-                    for (int i = 0; i < correspondingCustomerOrder.size(); i++) {
-                        if (remainingToPay > 0) {
-                            Float remainingToPayForCurrentCustomerOrder = accountingRecordService
-                                    .getRemainingAmountToPayForCustomerOrder(correspondingCustomerOrder.get(i));
-
-                            Float effectivePayment = Math.min(payment.getPaymentAmount(),
-                                    remainingToPayForCurrentCustomerOrder);
-
-                            // Generate one deposit per customer order
-                            Deposit deposit = depositService.getNewDepositForCustomerOrder(
-                                    effectivePayment, LocalDateTime.now(), correspondingCustomerOrder.get(i), payment);
-
-                            deposit.setCustomerOrder(correspondingCustomerOrder.get(i));
-                            depositService.addOrUpdateDeposit(deposit);
-
-                            remainingToPay -= effectivePayment;
-                            // Unlocked customer order
-                            if (remainingToPayForCurrentCustomerOrder - effectivePayment <= 0)
-                                customerOrderService.addOrUpdateCustomerOrderStatus(correspondingCustomerOrder.get(i),
-                                        QuotationStatus.BEING_PROCESSED);
-                        }
-                    }
-                    payment.setCustomerOrder(correspondingCustomerOrder.get(0));
-                    addOrUpdatePayment(payment);
-                }
+                associatePayementAndCustomerOrders(payment, correspondingCustomerOrder, correspondingInvoices,
+                        generateWaitingAccountAccountingRecords, null, payment.getPaymentAmount());
             }
             // If payment not used, put it in waiting account
             if (generateWaitingAccountAccountingRecords) {
                 accountingRecordService.generateAccountingRecordsForWaintingPayment(payment);
             }
         }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void manualMatchPaymentInvoicesAndGeneratePaymentAccountingRecords(Payment payment,
+            List<Invoice> correspondingInvoices,
+            List<CustomerOrder> correspondingCustomerOrder, Affaire affaireRefund, ITiers tiersRefund,
+            List<Float> byPassAmount)
+            throws Exception {
+
+        float remainingMoney = payment.getPaymentAmount();
+        // Invoices to payed found
+        if (correspondingInvoices != null && correspondingInvoices.size() > 0) {
+            remainingMoney = associatePayementAndInvoices(payment, correspondingInvoices, true, byPassAmount);
+        }
+
+        // Customer order wainting for deposit found
+        if (correspondingCustomerOrder != null && correspondingCustomerOrder.size() > 0) {
+            remainingMoney = associatePayementAndCustomerOrders(payment, correspondingCustomerOrder,
+                    correspondingInvoices, true, byPassAmount, remainingMoney);
+        }
+
+        if (remainingMoney > 0) {
+            refundService.generateRefund(tiersRefund, affaireRefund, payment, remainingMoney);
+        }
+    }
+
+    private Float associatePayementAndCustomerOrders(Payment payment, List<CustomerOrder> correspondingCustomerOrder,
+            List<Invoice> correspondingInvoice,
+            boolean generateWaitingAccountAccountingRecords, List<Float> byPassAmount, float remainingMoney)
+            throws Exception {
+        Float remainingToPay = 0f;
+        int amountIndex = 0;
+        if (correspondingInvoice != null)
+            amountIndex = correspondingInvoice.size() - 1 + 1;
+
+        for (CustomerOrder customerOrder : correspondingCustomerOrder) {
+            remainingToPay += Math.round(
+                    accountingRecordService.getRemainingAmountToPayForCustomerOrder(customerOrder) * 100f)
+                    / 100f;
+        }
+        // If payment is not equal to all customer order, do nothing, a human will
+        if (byPassAmount != null || remainingToPay >= payment.getPaymentAmount()) {
+            // Payment will be used, not necessary to put it in wainting account
+            generateWaitingAccountAccountingRecords = false;
+
+            for (int i = 0; i < correspondingCustomerOrder.size(); i++) {
+                if (remainingToPay > 0) {
+                    Float remainingToPayForCurrentCustomerOrder = accountingRecordService
+                            .getRemainingAmountToPayForCustomerOrder(correspondingCustomerOrder.get(i));
+
+                    Float effectivePayment;
+                    if (byPassAmount != null) {
+                        effectivePayment = byPassAmount.get(amountIndex);
+                        amountIndex++;
+                    } else {
+                        effectivePayment = Math.min(payment.getPaymentAmount(),
+                                remainingToPayForCurrentCustomerOrder);
+                    }
+
+                    remainingMoney -= effectivePayment;
+
+                    // Generate one deposit per customer order
+                    Deposit deposit = depositService.getNewDepositForCustomerOrder(
+                            effectivePayment, LocalDateTime.now(), correspondingCustomerOrder.get(i), payment);
+
+                    deposit.setCustomerOrder(correspondingCustomerOrder.get(i));
+                    depositService.addOrUpdateDeposit(deposit);
+
+                    remainingToPay -= effectivePayment;
+                    // Unlocked customer order
+                    if (correspondingCustomerOrder.get(i).getQuotationStatus().getCode()
+                            .equals(QuotationStatus.WAITING_DEPOSIT)
+                            && remainingToPayForCurrentCustomerOrder - effectivePayment <= 0)
+                        customerOrderService.addOrUpdateCustomerOrderStatus(correspondingCustomerOrder.get(i),
+                                QuotationStatus.BEING_PROCESSED);
+                }
+            }
+            payment.setCustomerOrder(correspondingCustomerOrder.get(0));
+            addOrUpdatePayment(payment);
+        }
+        return remainingMoney;
+    }
+
+    private Float associatePayementAndInvoices(Payment payment, List<Invoice> correspondingInvoices,
+            boolean generateWaitingAccountAccountingRecords, List<Float> byPassAmount) throws Exception {
+        InvoiceStatus payedStatus = invoiceStatusService.getInvoiceStatusByCode(invoiceStatusPayedCode);
+        Float remainingToPay = 0f;
+        int amountIndex = 0;
+        Float remainingMoney = payment.getPaymentAmount();
+        for (int i = 0; i < correspondingInvoices.size(); i++) {
+            remainingToPay += (byPassAmount != null) ? byPassAmount.get(i)
+                    : accountingRecordService.getRemainingAmountToPayForInvoice(correspondingInvoices.get(i));
+        }
+        // If payment is not over total of remaining to pay on all invoices
+        if (byPassAmount != null || remainingToPay >= remainingMoney) {
+            // Payment will be used, not necessary to put it in wainting account
+            generateWaitingAccountAccountingRecords = false;
+
+            for (int i = 0; i < correspondingInvoices.size(); i++) {
+                Float remainingToPayForCurrentInvoice = accountingRecordService
+                        .getRemainingAmountToPayForInvoice(correspondingInvoices.get(i));
+                boolean isPayed = false;
+
+                Float effectivePayment;
+                if (byPassAmount != null) {
+                    effectivePayment = byPassAmount.get(amountIndex);
+                    amountIndex++;
+                } else {
+                    effectivePayment = Math.min(remainingToPayForCurrentInvoice, remainingMoney);
+                }
+
+                if (i == 0) {
+                    // associate
+                    List<Payment> invoicePayment = new ArrayList<Payment>();
+                    invoicePayment.add(payment);
+                    accountingRecordService.generateAccountingRecordsForSaleOnInvoicePayment(
+                            correspondingInvoices.get(i), invoicePayment, null,
+                            effectivePayment);
+
+                    payment.setInvoice(correspondingInvoices.get(i));
+                    addOrUpdatePayment(payment);
+                    if ((remainingToPayForCurrentInvoice - payment.getPaymentAmount()) <= 0) {
+                        isPayed = true;
+                        remainingMoney -= remainingToPayForCurrentInvoice;
+                    } else {
+                        remainingMoney = 0f;
+                    }
+                } else if (remainingToPay > 0 && remainingMoney > 0) {
+                    // If multiple invoice, use intermediary deposit
+                    List<Deposit> invoiceDeposits = new ArrayList<Deposit>();
+                    invoiceDeposits
+                            .add(depositService.getNewDepositForInvoice(remainingMoney, LocalDateTime.now(),
+                                    correspondingInvoices.get(i), payment));
+                    accountingRecordService.generateAccountingRecordsForSaleOnInvoicePayment(
+                            correspondingInvoices.get(i), null, invoiceDeposits,
+                            effectivePayment);
+
+                    invoiceDeposits.get(0).setInvoice(correspondingInvoices.get(0));
+                    depositService.addOrUpdateDeposit(invoiceDeposits.get(0));
+                    if (remainingToPayForCurrentInvoice - invoiceDeposits.get(0).getDepositAmount() <= 0) {
+                        isPayed = true;
+                        remainingMoney -= remainingToPayForCurrentInvoice;
+                    } else {
+                        remainingMoney = 0f;
+                    }
+                }
+                remainingMoney = Math.round(remainingMoney * 100f) / 100f;
+                remainingToPay -= remainingToPayForCurrentInvoice;
+                if (isPayed) {
+                    correspondingInvoices.get(i).setInvoiceStatus(payedStatus);
+                    invoiceService.addOrUpdateInvoice(correspondingInvoices.get(i));
+                } else {
+                    break;
+                }
+            }
+        }
+        return remainingMoney;
     }
 
     private List<IndexEntity> getCorrespondingEntityForPayment(Payment payment) {
