@@ -29,7 +29,7 @@ public class VatCollectionTypeServiceImpl implements VatCollectionTypeService {
     @Cacheable(value = "vatCollectionType", key = "#id")
     public VatCollectionType getVatCollectionType(Integer id) {
         Optional<VatCollectionType> vatCollectionType = vatCollectionTypeRepository.findById(id);
-        if (!vatCollectionType.isEmpty())
+        if (vatCollectionType.isPresent())
             return vatCollectionType.get();
         return null;
     }

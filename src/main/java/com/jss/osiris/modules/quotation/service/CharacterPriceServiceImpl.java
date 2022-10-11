@@ -44,31 +44,32 @@ public class CharacterPriceServiceImpl implements CharacterPriceService {
 
     @Override
     public int getCharacterNumber(Provision provision) {
-        if (provision.getShal() != null) {
+        if (provision.getAnnouncement() != null) {
             int noticeNumber = 0;
             int headerNumber = 0;
-            if (provision.getShal().getNotice() != null)
-                noticeNumber = provision.getShal().getNotice().replaceAll("\\r|\\n|\\r\\n", " ")
+            if (provision.getAnnouncement().getNotice() != null)
+                noticeNumber = provision.getAnnouncement().getNotice().replaceAll("\\r|\\n|\\r\\n", " ")
                         .replaceAll("\\<.*?>", "")
                         .length();
-            if (provision.getShal().getNoticeHeader() != null)
-                headerNumber = provision.getShal().getNoticeHeader().replaceAll("\\r|\\n|\\r\\n", " ")
+            if (provision.getAnnouncement().getNoticeHeader() != null)
+                headerNumber = provision.getAnnouncement().getNoticeHeader().replaceAll("\\r|\\n|\\r\\n", " ")
                         .replaceAll("\\<.*?>", "")
                         .length();
 
             return noticeNumber
-                    + ((provision.getShal().getIsHeaderFree() == null || provision.getShal().getIsHeaderFree()) ? 0
-                            : headerNumber);
+                    + ((provision.getAnnouncement().getIsHeaderFree() == null
+                            || provision.getAnnouncement().getIsHeaderFree()) ? 0
+                                    : headerNumber);
         }
         return 0;
     }
 
     @Override
     public CharacterPrice getCharacterPrice(Provision provision) {
-        if (provision.getShal() != null && provision.getShal().getDepartment() != null
-                && provision.getShal().getPublicationDate() != null)
-            return this.getCharacterPrice(provision.getShal().getDepartment(),
-                    provision.getShal().getPublicationDate());
+        if (provision.getAnnouncement() != null && provision.getAnnouncement().getDepartment() != null
+                && provision.getAnnouncement().getPublicationDate() != null)
+            return this.getCharacterPrice(provision.getAnnouncement().getDepartment(),
+                    provision.getAnnouncement().getPublicationDate());
         return null;
     }
 }

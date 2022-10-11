@@ -49,19 +49,19 @@ public class Confrere implements ITiers {
 	@JoinTable(name = "asso_confrere_department", joinColumns = @JoinColumn(name = "id_confrere"), inverseJoinColumns = @JoinColumn(name = "id_department"))
 	private List<Department> departments;
 
-	@ManyToMany(cascade = CascadeType.ALL)
+	@ManyToMany(cascade = CascadeType.MERGE)
 	@JoinTable(name = "asso_confrere_mail", joinColumns = @JoinColumn(name = "id_confrere"), inverseJoinColumns = @JoinColumn(name = "id_mail"))
 	private List<Mail> mails;
 
-	@ManyToMany(cascade = CascadeType.ALL)
+	@ManyToMany(cascade = CascadeType.MERGE)
 	@JoinTable(name = "asso_confrere_accounting_mail", joinColumns = @JoinColumn(name = "id_confrere"), inverseJoinColumns = @JoinColumn(name = "id_mail"))
 	private List<Mail> accountingMails;
 
-	@ManyToMany(cascade = CascadeType.ALL)
+	@ManyToMany(cascade = CascadeType.MERGE)
 	@JoinTable(name = "asso_confrere_phone", joinColumns = @JoinColumn(name = "id_confrere"), inverseJoinColumns = @JoinColumn(name = "id_phone"))
 	private List<Phone> phones;
 
-	@ManyToMany(cascade = CascadeType.ALL)
+	@ManyToMany(cascade = CascadeType.MERGE)
 	@JoinTable(name = "asso_confrere_special_offer", joinColumns = @JoinColumn(name = "id_confrere"), inverseJoinColumns = @JoinColumn(name = "id_special_offer"))
 	private List<SpecialOffer> specialOffers;
 
@@ -96,7 +96,9 @@ public class Confrere implements ITiers {
 
 	private Integer numberOfPrint;
 
-	private Integer paperPrice;
+	private Float paperPrice;
+
+	private Integer discountRate;
 
 	@ManyToOne
 	@JoinColumn(name = "id_accounting_account_provider")
@@ -141,12 +143,12 @@ public class Confrere implements ITiers {
 	@JoinColumn(name = "id_vat_collection_type")
 	private VatCollectionType vatCollectionType;
 
-	@OneToMany(targetEntity = Document.class, mappedBy = "confrere", cascade = CascadeType.ALL)
+	@OneToMany(targetEntity = Document.class, mappedBy = "confrere", cascade = CascadeType.MERGE)
 	@JsonManagedReference("confrere")
 	private List<Document> documents;
 
 	@Column(length = 40)
-	private String paymentBIC;
+	private String paymentBic;
 
 	@Column(nullable = false)
 	private Boolean isProvisionalPaymentMandatory;
@@ -187,12 +189,12 @@ public class Confrere implements ITiers {
 		return accountingMails;
 	}
 
-	public String getPaymentBIC() {
-		return paymentBIC;
+	public String getPaymentBic() {
+		return paymentBic;
 	}
 
-	public void setPaymentBIC(String paymentBIC) {
-		this.paymentBIC = paymentBIC;
+	public void setPaymentBic(String paymentBIC) {
+		this.paymentBic = paymentBIC;
 	}
 
 	public Boolean getIsProvisionalPaymentMandatory() {
@@ -427,11 +429,11 @@ public class Confrere implements ITiers {
 		this.numberOfPrint = numberOfPrint;
 	}
 
-	public Integer getPaperPrice() {
+	public Float getPaperPrice() {
 		return paperPrice;
 	}
 
-	public void setPaperPrice(Integer paperPrice) {
+	public void setPaperPrice(Float paperPrice) {
 		this.paperPrice = paperPrice;
 	}
 
@@ -510,6 +512,14 @@ public class Confrere implements ITiers {
 
 	public void setAccountingAccountDeposit(AccountingAccount accountingAccountDeposit) {
 		this.accountingAccountDeposit = accountingAccountDeposit;
+	}
+
+	public Integer getDiscountRate() {
+		return discountRate;
+	}
+
+	public void setDiscountRate(Integer discountRate) {
+		this.discountRate = discountRate;
 	}
 
 }

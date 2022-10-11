@@ -24,7 +24,7 @@ public class MailServiceImpl implements MailService {
     @Override
     public Mail getMail(Integer id) {
         Optional<Mail> mail = mailRepository.findById(id);
-        if (!mail.isEmpty())
+        if (mail.isPresent())
             return mail.get();
         return null;
     }
@@ -34,8 +34,10 @@ public class MailServiceImpl implements MailService {
         for (Mail mail : mails) {
             if (mail.getId() == null) {
                 List<Mail> existingMails = findMails(mail.getMail());
-                if (existingMails != null && existingMails.size() == 1)
+                if (existingMails != null && existingMails.size() == 1) {
                     mail.setId(existingMails.get(0).getId());
+                }
+                mailRepository.save(mail);
             }
         }
     }

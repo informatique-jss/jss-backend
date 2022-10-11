@@ -38,13 +38,16 @@ public class ConfrereServiceImpl implements ConfrereService {
     @Override
     public Confrere getConfrere(Integer id) {
         Optional<Confrere> confrere = confrereRepository.findById(id);
-        if (!confrere.isEmpty())
+        if (confrere.isPresent())
             return confrere.get();
         return null;
     }
 
     @Override
     public Confrere addOrUpdateConfrere(Confrere confrere) throws Exception {
+        if (confrere == null)
+            throw new Exception("Confrere provided is null");
+
         // If mails already exists, get their ids
         if (confrere != null && confrere.getMails() != null
                 && confrere.getMails().size() > 0)

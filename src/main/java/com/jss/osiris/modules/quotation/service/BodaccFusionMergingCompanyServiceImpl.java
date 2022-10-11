@@ -18,7 +18,7 @@ public class BodaccFusionMergingCompanyServiceImpl implements BodaccFusionMergin
     public BodaccFusionMergingCompany getBodaccFusionMergingCompany(Integer id) {
         Optional<BodaccFusionMergingCompany> bodaccFusionMergingCompany = bodaccFusionMergingCompanyRepository
                 .findById(id);
-        if (!bodaccFusionMergingCompany.isEmpty())
+        if (bodaccFusionMergingCompany.isPresent())
             return bodaccFusionMergingCompany.get();
         return null;
     }

@@ -17,7 +17,7 @@ public class DomiciliationServiceImpl implements DomiciliationService {
     @Override
     public Domiciliation getDomiciliation(Integer id) {
         Optional<Domiciliation> domiciliation = domiciliationRepository.findById(id);
-        if (!domiciliation.isEmpty())
+        if (domiciliation.isPresent())
             return domiciliation.get();
         return null;
     }

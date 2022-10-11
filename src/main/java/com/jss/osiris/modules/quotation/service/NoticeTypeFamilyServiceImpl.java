@@ -24,7 +24,7 @@ public class NoticeTypeFamilyServiceImpl implements NoticeTypeFamilyService {
     @Override
     public NoticeTypeFamily getNoticeTypeFamily(Integer id) {
         Optional<NoticeTypeFamily> noticeTypeFamily = noticeTypeFamilyRepository.findById(id);
-        if (!noticeTypeFamily.isEmpty())
+        if (noticeTypeFamily.isPresent())
             return noticeTypeFamily.get();
         return null;
     }

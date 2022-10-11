@@ -1,14 +1,18 @@
 import { CdkDragEnd, Point } from '@angular/cdk/drag-drop';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
+import { Router } from '@angular/router';
 import { formatDateForSortTable, formatDateTimeForSortTable, formatEurosForSortTable } from 'src/app/libs/FormatHelper';
+import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { AppService } from 'src/app/services/app.service';
 import { UserPreferenceService } from 'src/app/services/user.preference.service';
 import { AccountingRecord } from '../../model/AccountingRecord';
 import { AccountingRecordSearch } from '../../model/AccountingRecordSearch';
 import { AccountingRecordService } from '../../services/accounting.record.service';
+import { DeleteAccountingRecordDialogComponent } from '../delete-accounting-record-dialog/delete-accounting-record-dialog.component';
 
 @Component({
   selector: 'accounting-record',
@@ -24,6 +28,8 @@ export class AccountingRecordComponent implements OnInit {
     private accountingRecordService: AccountingRecordService,
     private userPreferenceService: UserPreferenceService,
     private appService: AppService,
+    public deleteAccountingRecordDialog: MatDialog,
+    private router: Router,
   ) { }
 
   accountingRecords: AccountingRecord[] | undefined;
@@ -31,6 +37,7 @@ export class AccountingRecordComponent implements OnInit {
   accumulatedDataSource = new MatTableDataSource<AccountingRecord>();
   currentUserPosition: Point = { x: 0, y: 0 };
   displayedColumns: SortTableColumn[] = [] as Array<SortTableColumn>;
+  tableAction: SortTableAction[] = [] as Array<SortTableAction>;
 
 
   ngOnInit() {
@@ -49,11 +56,31 @@ export class AccountingRecordComponent implements OnInit {
     this.displayedColumns.push({ id: "accountingDocumentDate", fieldName: "accountingDocumentDate", label: "Date pièce justificative", valueFonction: this.formatDateForSortTable } as SortTableColumn);
     this.displayedColumns.push({ id: "debitAmount", fieldName: "debitAmount", label: "Débit", valueFonction: this.formatEurosForSortTable } as SortTableColumn);
     this.displayedColumns.push({ id: "creditAmount", fieldName: "creditAmount", label: "Crédit", valueFonction: this.formatEurosForSortTable } as SortTableColumn);
+    this.displayedColumns.push({ id: "label", fieldName: "label", label: "Libellé", isShrinkColumn: true } as SortTableColumn);
     this.displayedColumns.push({ id: "letteringNumber", fieldName: "letteringNumber", label: "Lettrage" } as SortTableColumn);
     this.displayedColumns.push({ id: "letteringDate", fieldName: "letteringDate", label: "Date de lettrage", valueFonction: this.formatDateForSortTable } as SortTableColumn);
     this.displayedColumns.push({ id: "debitAccumulation", fieldName: "debitAccumulation", label: "Cumul débit", valueFonction: this.formatEurosForSortTable } as SortTableColumn);
     this.displayedColumns.push({ id: "creditAccumulation", fieldName: "creditAccumulation", label: "Cumul crédit", valueFonction: this.formatEurosForSortTable } as SortTableColumn);
     this.displayedColumns.push({ id: "balance", fieldName: "balance", label: "Solde", valueFonction: this.formatEurosForSortTable } as SortTableColumn);
+
+    this.tableAction.push({
+      actionIcon: "block", actionName: "Supprimer / contre-passer l'opération", actionClick: (action: SortTableAction, element: any) => {
+        if (element) {
+          let dialogRef = this.deleteAccountingRecordDialog.open(DeleteAccountingRecordDialogComponent, {
+            width: '100%'
+          });
+          if (element.isTemporary && element.temporaryOperationId)
+            dialogRef.componentInstance.temporaryOperationId = element.temporaryOperationId;
+          else if (!element.isTemporary && element.operationId)
+            dialogRef.componentInstance.operationId = element.operationId;
+          dialogRef.afterClosed().subscribe(response => {
+            this.searchRecords();
+          })
+        }
+
+        return undefined;
+      }, display: true,
+    } as SortTableAction);
   }
 
   formatEurosForSortTable = formatEurosForSortTable;
@@ -86,6 +113,10 @@ export class AccountingRecordComponent implements OnInit {
     this.accountingRecordService.exportAccountingAccount(this.accountingRecordSearch.accountingAccount!, this.accountingRecordSearch.startDate!, this.accountingRecordSearch.endDate!);
   }
 
+  createAccountingRecords() {
+    this.router.navigate(['/accounting/add'])
+  }
+
   searchRecords() {
     this.restoreTotalDivPosition();
     if (!this.accountingRecordSearch.startDate || !this.accountingRecordSearch.endDate) {
@@ -116,8 +147,8 @@ export class AccountingRecordComponent implements OnInit {
       return (a.operationId > b.operationId) ? 1 : -1;
     } else {
       // Next by operation date
-      if (a.operationDateTime && b.operationDateTime && a.operationDateTime.getTime() != b.operationDateTime.getTime()) {
-        return (a.operationDateTime > b.operationDateTime) ? 1 : -1;
+      if (a.operationDateTime && b.operationDateTime && (new Date(a.operationDateTime)).getTime() != (new Date(b.operationDateTime)).getTime()) {
+        return (new Date(a.operationDateTime) > new Date(b.operationDateTime)) ? 1 : -1;
       } else {
         return (a.id > b.id) ? 1 : -1;
       }
@@ -139,9 +170,9 @@ export class AccountingRecordComponent implements OnInit {
           debit += accountingRecord.debitAmount;
           balance -= accountingRecord.debitAmount;
         }
-        accountingRecord.balance = balance;
-        accountingRecord.debitAccumulation = debit;
-        accountingRecord.creditAccumulation = credit;
+        accountingRecord.balance = Math.round(balance * 100) / 100;
+        accountingRecord.debitAccumulation = Math.round(debit * 100) / 100;
+        accountingRecord.creditAccumulation = Math.round(credit * 100) / 100;
       }
 
       let accumulatedData = [];

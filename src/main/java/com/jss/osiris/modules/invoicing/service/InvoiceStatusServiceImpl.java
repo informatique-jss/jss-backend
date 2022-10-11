@@ -29,7 +29,7 @@ public class InvoiceStatusServiceImpl implements InvoiceStatusService {
     @Cacheable(value = "invoiceStatus", key = "#id")
     public InvoiceStatus getInvoiceStatus(Integer id) {
         Optional<InvoiceStatus> invoiceStatus = invoiceStatusRepository.findById(id);
-        if (!invoiceStatus.isEmpty())
+        if (invoiceStatus.isPresent())
             return invoiceStatus.get();
         return null;
     }

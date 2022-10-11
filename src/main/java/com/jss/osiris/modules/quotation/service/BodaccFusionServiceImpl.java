@@ -17,7 +17,7 @@ public class BodaccFusionServiceImpl implements BodaccFusionService {
     @Override
     public BodaccFusion getBodaccFusion(Integer id) {
         Optional<BodaccFusion> bodaccFusion = bodaccFusionRepository.findById(id);
-        if (!bodaccFusion.isEmpty())
+        if (bodaccFusion.isPresent())
             return bodaccFusion.get();
         return null;
     }

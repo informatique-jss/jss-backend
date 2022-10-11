@@ -11,9 +11,10 @@ export const RESPONSABLE_ENTITY_TYPE: EntityType = { entityType: 'Responsable', 
 export const QUOTATION_ENTITY_TYPE: EntityType = { entityType: 'Quotation', tabName: 'Devis', entryPoint: 'quotation' };
 export const CUSTOMER_ORDER_ENTITY_TYPE: EntityType = { entityType: 'CustomerOrder', tabName: 'Commande', entryPoint: 'order' };
 export const DOMICILIATION_ENTITY_TYPE: EntityType = { entityType: 'Domiciliation', tabName: 'Domiciliation', entryPoint: 'quotation/domiciliation' };
-export const SHAL_ENTITY_TYPE: EntityType = { entityType: 'Shal', tabName: 'Shal', entryPoint: 'quotation/shal' };
+export const ANNOUNCEMENT_ENTITY_TYPE: EntityType = { entityType: 'Announcement', tabName: 'Announcement', entryPoint: 'quotation/announcement' };
 export const BODACC_ENTITY_TYPE: EntityType = { entityType: 'Bodacc', tabName: 'BODACC', entryPoint: 'quotation/bodacc  ' };
 export const AFFAIRE_ENTITY_TYPE: EntityType = { entityType: 'Affaire', tabName: 'Affaires', entryPoint: 'quotation/affaire' };
+export const INVOICE_ENTITY_TYPE: EntityType = { entityType: 'Invoice', tabName: 'Factures', entryPoint: 'invoicing' };
 
 @Component({
   selector: 'app-search',
@@ -32,7 +33,8 @@ export class SearchComponent implements OnInit {
   RESPONSABLE_ENTITY_TYPE = RESPONSABLE_ENTITY_TYPE;
   QUOTATION_ENTITY_TYPE = QUOTATION_ENTITY_TYPE;
   CUSTOMER_ORDER_ENTITY_TYPE = CUSTOMER_ORDER_ENTITY_TYPE;
-  entityTypes: EntityType[] = [TIERS_ENTITY_TYPE, RESPONSABLE_ENTITY_TYPE, QUOTATION_ENTITY_TYPE, CUSTOMER_ORDER_ENTITY_TYPE];
+  INVOICE_ENTITY_TYPE = INVOICE_ENTITY_TYPE;
+  entityTypes: EntityType[] = [TIERS_ENTITY_TYPE, RESPONSABLE_ENTITY_TYPE, QUOTATION_ENTITY_TYPE, CUSTOMER_ORDER_ENTITY_TYPE, INVOICE_ENTITY_TYPE];
   selectedTabIndex: number = 0;
   userSelectedModule: EntityType | null = null;
 
@@ -56,10 +58,10 @@ export class SearchComponent implements OnInit {
     if (this.search != null && this.search != undefined) {
       if (this.search.length >= 2) {
         this.indexEntityService.searchEntities(this.search).subscribe(response => {
-          if (response != undefined && response != null && response.length > 0) {
+          if (response) {
             this.foundEntities = [] as Array<IndexEntity>;
             response.forEach(foundEntity => {
-              if (foundEntity != null && foundEntity != undefined && foundEntity.text != null && foundEntity != undefined != null) {
+              if (foundEntity && foundEntity.text) {
                 foundEntity.text = JSON.parse((foundEntity.text as string));
                 this.foundEntities?.push(foundEntity);
               }

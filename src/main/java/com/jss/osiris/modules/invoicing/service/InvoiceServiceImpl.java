@@ -61,7 +61,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Cacheable(value = "invoice", key = "#id")
     public Invoice getInvoice(Integer id) {
         Optional<Invoice> invoice = invoiceRepository.findById(id);
-        if (!invoice.isEmpty())
+        if (invoice.isPresent())
             return invoice.get();
         return null;
     }

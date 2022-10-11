@@ -24,7 +24,7 @@ public class BodaccPublicationTypeServiceImpl implements BodaccPublicationTypeSe
     @Override
     public BodaccPublicationType getBodaccPublicationType(Integer id) {
         Optional<BodaccPublicationType> bodaccPublicationType = bodaccPublicationTypeRepository.findById(id);
-        if (!bodaccPublicationType.isEmpty())
+        if (bodaccPublicationType.isPresent())
             return bodaccPublicationType.get();
         return null;
     }

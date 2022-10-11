@@ -33,4 +33,10 @@ public interface AccountingAccountService {
     public AccountingAccount getBankAccountingAccount() throws Exception;
 
     public AccountingAccount getWaitingAccountingAccount() throws Exception;
+
+    public AccountingAccount generateAccountingAccountsForProduct(String label) throws Exception;
+
+    public AccountingAccount getProfitAccountingAccount() throws Exception;
+
+    public AccountingAccount getLostAccountingAccount() throws Exception;
 }

@@ -24,7 +24,7 @@ public class ActTypeServiceImpl implements ActTypeService {
     @Override
     public ActType getActType(Integer id) {
         Optional<ActType> actType = actTypeRepository.findById(id);
-        if (!actType.isEmpty())
+        if (actType.isPresent())
             return actType.get();
         return null;
     }

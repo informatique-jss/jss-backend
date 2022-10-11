@@ -5,6 +5,7 @@ import { Vat } from 'src/app/modules/miscellaneous/model/Vat';
 import { Affaire } from 'src/app/modules/quotation/model/Affaire';
 import { Invoice } from 'src/app/modules/quotation/model/Invoice';
 import { IQuotation } from 'src/app/modules/quotation/model/IQuotation';
+import { INVOICE_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
 import { InvoiceService } from '../../services/invoice.service';
 import { getAffaireList, getAffaireListArray, getAmountRemaining, getCustomerOrderForInvoice, getCustomerOrderNameForInvoice, getResponsableName } from '../invoice-tools';
@@ -18,6 +19,7 @@ export class InvoiceDetailsComponent implements OnInit {
 
   invoice: Invoice | undefined;
   getAmountRemaining = getAmountRemaining;
+  INVOICE_ENTITY_TYPE = INVOICE_ENTITY_TYPE;
 
   constructor(private formBuilder: FormBuilder,
     private invoiceService: InvoiceService,

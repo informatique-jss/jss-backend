@@ -104,10 +104,12 @@ public class AuditEntityInterceptor extends EmptyInterceptor {
             } catch (NoSuchMethodException e) {
                 // Not a referential
             }
-            try {
-                return m.invoke(entity).toString();
-            } catch (Exception e) {
-            }
+
+            if (m != null)
+                try {
+                    return m.invoke(entity).toString();
+                } catch (Exception e) {
+                }
         }
         return null;
     }

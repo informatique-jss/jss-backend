@@ -28,7 +28,7 @@ public class TiersFollowupServiceImpl implements TiersFollowupService {
     @Override
     public TiersFollowup getTiersFollowup(Integer id) {
         Optional<TiersFollowup> tiersFollowup = tiersFollowupRepository.findById(id);
-        if (!tiersFollowup.isEmpty())
+        if (tiersFollowup.isPresent())
             return tiersFollowup.get();
         return null;
     }

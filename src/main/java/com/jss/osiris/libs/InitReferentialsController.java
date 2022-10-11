@@ -34,8 +34,8 @@ import com.jss.osiris.modules.miscellaneous.repository.VatCollectionTypeReposito
 import com.jss.osiris.modules.miscellaneous.repository.VatRepository;
 import com.jss.osiris.modules.miscellaneous.repository.WeekDayRepository;
 import com.jss.osiris.modules.profile.repository.EmployeeRepository;
-import com.jss.osiris.modules.profile.repository.TeamRepository;
 import com.jss.osiris.modules.quotation.repository.ActTypeRepository;
+import com.jss.osiris.modules.quotation.repository.AnnouncementNoticeTemplateRepository;
 import com.jss.osiris.modules.quotation.repository.BodaccPublicationTypeRepository;
 import com.jss.osiris.modules.quotation.repository.BuildingDomiciliationRepository;
 import com.jss.osiris.modules.quotation.repository.CharacterPriceRepository;
@@ -52,7 +52,6 @@ import com.jss.osiris.modules.quotation.repository.QuotationLabelTypeRepository;
 import com.jss.osiris.modules.quotation.repository.QuotationRepository;
 import com.jss.osiris.modules.quotation.repository.QuotationStatusRepository;
 import com.jss.osiris.modules.quotation.repository.RecordTypeRepository;
-import com.jss.osiris.modules.quotation.repository.ShalNoticeTemplateRepository;
 import com.jss.osiris.modules.quotation.repository.TransfertFundsTypeRepository;
 import com.jss.osiris.modules.tiers.repository.BillingClosureRecipientTypeRepository;
 import com.jss.osiris.modules.tiers.repository.BillingClosureTypeRepository;
@@ -87,9 +86,6 @@ public class InitReferentialsController {
 
 	@Autowired
 	TiersCategoryRepository tiersCategoryRepository;
-
-	@Autowired
-	TeamRepository teamRepository;
 
 	@Autowired
 	EmployeeRepository employeeRepository;
@@ -251,7 +247,7 @@ public class InitReferentialsController {
 	ActTypeRepository actTypeRepository;
 
 	@Autowired
-	ShalNoticeTemplateRepository shalNoticeTemplateRepository;
+	AnnouncementNoticeTemplateRepository AnnouncementNoticeTemplateRepository;
 
 	@Autowired
 	AccountingAccountClassRepository accountingAccountClassRepository;
@@ -1111,22 +1107,23 @@ public class InitReferentialsController {
 		 * actType.setLabel("Forme authentique");
 		 * actTypeRepository.save(actType);
 		 * 
-		 * shalNoticeTemplateRepository.deleteAll();
-		 * ShalNoticeTemplate shalNoticeTemplate = new ShalNoticeTemplate();
-		 * shalNoticeTemplate.setCode("1");
-		 * shalNoticeTemplate.setLabel("Changement de nom");
-		 * shalNoticeTemplate.setText(
+		 * AnnouncementNoticeTemplateRepository.deleteAll();
+		 * AnnouncementNoticeTemplate AnnouncementNoticeTemplate = new
+		 * AnnouncementNoticeTemplate();
+		 * AnnouncementNoticeTemplate.setCode("1");
+		 * AnnouncementNoticeTemplate.setLabel("Changement de nom");
+		 * AnnouncementNoticeTemplate.setText(
 		 * "Mr/Mme/Melle Prénom Nom, né le 00/00/0000 à Ville (Département) de nationalité, activité, demeurant adresse, code postal ville, dépose une requête auprès du Garde des Sceaux à l’effet de substituer à son nom patronymique celui de « Nom souhaité »."
 		 * );
-		 * shalNoticeTemplateRepository.save(shalNoticeTemplate);
+		 * AnnouncementNoticeTemplateRepository.save(AnnouncementNoticeTemplate);
 		 * 
-		 * shalNoticeTemplate = new ShalNoticeTemplate();
-		 * shalNoticeTemplate.setCode("2");
-		 * shalNoticeTemplate.setLabel("Envoi en possession");
-		 * shalNoticeTemplate.setText(
+		 * AnnouncementNoticeTemplate = new AnnouncementNoticeTemplate();
+		 * AnnouncementNoticeTemplate.setCode("2");
+		 * AnnouncementNoticeTemplate.setLabel("Envoi en possession");
+		 * AnnouncementNoticeTemplate.setText(
 		 * "Par testament du 00/00/0000 déposé au rang des minutes de Maitre (NOM PRENOM) Notaire à … (ADRESSE) suivant procès-verbal dont la copie authentique a été reçue par le Tribunal de Grande Instance de X le 00/00/0000. (Tribunal du domicile du défunt)				M. ou MME NOM- PRENOMS (le défunt) demeurant de son vivant à (adresse), né le 00/00/0000 à (Ville du lieu de naissance) et décédé le 00/00/0000 (Ville du lieu de décès), veuf ou veuve de M. ou MME NOM PRENOMS a institué un ou plusieurs légataires universels (NOMS PRENOMS et ADRESSES).<br>Les oppositions seront reçues dans le délai d’un mois à compter de 00/00/0000 (date de réception par le greffe du TGI) entre les mains du Notaire chargé du règlement de la succession (si le notaire dépositaire du testament n’est pas celui chargé de la succession, (le préciser ) <br>Pour avis<br>Maitre XXXXXX"
 		 * );
-		 * shalNoticeTemplateRepository.save(shalNoticeTemplate);
+		 * AnnouncementNoticeTemplateRepository.save(AnnouncementNoticeTemplate);
 		 * 
 		 * accountingAccountClassRepository.deleteAll();
 		 * AccountingAccountClass accountingAccountClass = new AccountingAccountClass();

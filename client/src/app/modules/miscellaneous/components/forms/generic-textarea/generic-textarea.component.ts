@@ -78,11 +78,10 @@ export class GenericTextareaComponent implements OnInit {
     if (this.form && (this.isMandatory || this.customValidators)) {
       this.form.get(this.propertyName)?.updateValueAndValidity();
     }
-    if (changes.model && this.form != undefined) {
+    if ((changes.model) && this.form != undefined) {
+      this.model = changes.model.currentValue;
       this.form.get(this.propertyName)?.setValue(this.model);
-    }
-    if (changes.model && this.form != undefined) {
-      this.form.get(this.propertyName)?.setValue(this.model);
+      this.modelChange.emit(this.model);
       this.form.markAllAsTouched();
     }
   }

@@ -18,7 +18,7 @@ public class BodaccFusionAbsorbedCompanyServiceImpl implements BodaccFusionAbsor
     public BodaccFusionAbsorbedCompany getBodaccFusionAbsorbedCompany(Integer id) {
         Optional<BodaccFusionAbsorbedCompany> bodaccFusionAbsorbedCompany = bodaccFusionAbsorbedCompanyRepository
                 .findById(id);
-        if (!bodaccFusionAbsorbedCompany.isEmpty())
+        if (bodaccFusionAbsorbedCompany.isPresent())
             return bodaccFusionAbsorbedCompany.get();
         return null;
     }

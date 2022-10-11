@@ -24,7 +24,7 @@ public class FundTypeServiceImpl implements FundTypeService {
     @Override
     public FundType getFundType(Integer id) {
         Optional<FundType> fundType = fundTypeRepository.findById(id);
-        if (!fundType.isEmpty())
+        if (fundType.isPresent())
             return fundType.get();
         return null;
     }

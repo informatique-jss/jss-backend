@@ -16,6 +16,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -104,6 +105,81 @@ public class AccountingController {
         return new ResponseEntity<AccountingJournal>(outAccountingJournal, HttpStatus.OK);
     }
 
+    @GetMapping(inputEntryPoint + "/accounting-records/search/temporary")
+    public ResponseEntity<List<AccountingRecord>> getAccountingRecordsByTemporaryOperationId(
+            @RequestParam Integer temporaryOperationId) {
+        if (temporaryOperationId == null)
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        List<AccountingRecord> accountingRecords = null;
+        try {
+            accountingRecords = accountingRecordService
+                    .getAccountingRecordsByTemporaryOperationId(temporaryOperationId);
+        } catch (HttpStatusCodeException e) {
+            logger.error("HTTP error when fetching accountingRecord", e);
+            return new ResponseEntity<List<AccountingRecord>>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            logger.error("Error when fetching accountingRecord", e);
+            return new ResponseEntity<List<AccountingRecord>>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<List<AccountingRecord>>(accountingRecords, HttpStatus.OK);
+    }
+
+    @DeleteMapping(inputEntryPoint + "/accounting-records/delete/temporary")
+    public ResponseEntity<List<AccountingRecord>> deleteRecordsByTemporaryOperationId(
+            @RequestParam Integer temporaryOperationId) {
+        if (temporaryOperationId == null)
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        List<AccountingRecord> accountingRecords = null;
+        try {
+            accountingRecords = accountingRecordService.deleteRecordsByTemporaryOperationId(temporaryOperationId);
+        } catch (HttpStatusCodeException e) {
+            logger.error("HTTP error when fetching accountingRecord", e);
+            return new ResponseEntity<List<AccountingRecord>>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            logger.error("Error when fetching accountingRecord", e);
+            return new ResponseEntity<List<AccountingRecord>>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<List<AccountingRecord>>(accountingRecords, HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/accounting-records/search")
+    public ResponseEntity<List<AccountingRecord>> getAccountingRecordsByOperationId(@RequestParam Integer operationId) {
+        if (operationId == null)
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        List<AccountingRecord> accountingRecords = null;
+        try {
+            accountingRecords = accountingRecordService.getAccountingRecordsByOperationId(operationId);
+        } catch (HttpStatusCodeException e) {
+            logger.error("HTTP error when fetching accountingRecord", e);
+            return new ResponseEntity<List<AccountingRecord>>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            logger.error("Error when fetching accountingRecord", e);
+            return new ResponseEntity<List<AccountingRecord>>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<List<AccountingRecord>>(accountingRecords, HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/accounting-records/counter-part")
+    public ResponseEntity<List<AccountingRecord>> doCounterPartByOperationId(@RequestParam Integer operationId) {
+        if (operationId == null)
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        List<AccountingRecord> accountingRecords = null;
+        try {
+            accountingRecords = accountingRecordService.doCounterPartByOperationId(operationId);
+        } catch (HttpStatusCodeException e) {
+            logger.error("HTTP error when fetching accountingRecord", e);
+            return new ResponseEntity<List<AccountingRecord>>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            logger.error("Error when fetching accountingRecord", e);
+            return new ResponseEntity<List<AccountingRecord>>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<List<AccountingRecord>>(accountingRecords, HttpStatus.OK);
+    }
+
     @GetMapping(inputEntryPoint + "/accounting-records")
     public ResponseEntity<List<AccountingRecord>> getAccountingRecords() {
         List<AccountingRecord> accountingRecords = null;
@@ -149,7 +225,6 @@ public class AccountingController {
             validationHelper.validateReferential(accountingRecords.getInvoice(), false);
             validationHelper.validateReferential(accountingRecords.getInvoice(), false);
             validationHelper.validateReferential(accountingRecords.getAccountingJournal(), true);
-            validationHelper.validateDate(accountingRecords.getManualAccountingDocumentDeadline(), false);
 
             outAccountingRecord = accountingRecordService
                     .addOrUpdateAccountingRecord(accountingRecords);
@@ -231,7 +306,7 @@ public class AccountingController {
             if (accountingAccounts.getId() != null)
                 validationHelper.validateReferential(accountingAccounts, true);
             validationHelper.validateString(accountingAccounts.getLabel(), true, 100);
-            validationHelper.validateString(accountingAccounts.getAccountingAccountNumber(), true, 3);
+            validationHelper.validateString(accountingAccounts.getAccountingAccountNumber(), true, 6);
             validationHelper.validateInteger(accountingAccounts.getAccountingAccountSubNumber(), false);
             outAccountingAccount = accountingAccountService
                     .addOrUpdateAccountingAccount(accountingAccounts);
@@ -349,7 +424,7 @@ public class AccountingController {
 
                 headers = new HttpHeaders();
                 headers.add("filename",
-                        "Grand livre - " + (accountingClass != null ? accountingClass.getLabel() + " - " : "")
+                        "SPPS - Grand livre - " + (accountingClass != null ? accountingClass.getLabel() + " - " : "")
                                 + startDate.format(dateFormatter) + " - "
                                 + endDate.format(dateFormatter) + ".xlsx");
                 headers.setAccessControlExposeHeaders(Arrays.asList("filename"));
@@ -396,7 +471,8 @@ public class AccountingController {
 
                 headers = new HttpHeaders();
                 headers.add("filename",
-                        "Journal - " + accountingJournal.getLabel() + " - " + startDate.format(dateFormatter) + " - "
+                        "SPPS - Journal - " + accountingJournal.getLabel() + " - " + startDate.format(dateFormatter)
+                                + " - "
                                 + endDate.format(dateFormatter) + ".xlsx");
                 headers.setAccessControlExposeHeaders(Arrays.asList("filename"));
                 headers.setContentLength(data.length);
@@ -443,7 +519,7 @@ public class AccountingController {
 
                 headers = new HttpHeaders();
                 headers.add("filename",
-                        "Compte - " + accountingAccount.getAccountingAccountNumber() + "-"
+                        "SPPS - Compte - " + accountingAccount.getAccountingAccountNumber() + "-"
                                 + accountingAccount.getAccountingAccountSubNumber() + " - "
                                 + startDate.format(dateFormatter) + " - "
                                 + endDate.format(dateFormatter) + ".xlsx");
@@ -535,7 +611,7 @@ public class AccountingController {
 
                 headers = new HttpHeaders();
                 headers.add("filename",
-                        "Balances - "
+                        "SPPS - Balances - "
                                 + startDate.format(dateFormatter) + " - "
                                 + endDate.format(dateFormatter) + ".xlsx");
                 headers.setAccessControlExposeHeaders(Arrays.asList("filename"));
@@ -626,7 +702,7 @@ public class AccountingController {
 
                 headers = new HttpHeaders();
                 headers.add("filename",
-                        "Balances - "
+                        "SPPS - Balances - "
                                 + startDate.format(dateFormatter) + " - "
                                 + endDate.format(dateFormatter) + ".xlsx");
                 headers.setAccessControlExposeHeaders(Arrays.asList("filename"));
@@ -723,7 +799,7 @@ public class AccountingController {
 
                 headers = new HttpHeaders();
                 headers.add("filename",
-                        "Compte de résultats - "
+                        "SPPS - Compte de résultats - "
                                 + startDate.format(dateFormatter) + " - "
                                 + endDate.format(dateFormatter) + ".xlsx");
                 headers.setAccessControlExposeHeaders(Arrays.asList("filename"));
@@ -762,7 +838,7 @@ public class AccountingController {
 
                 headers = new HttpHeaders();
                 headers.add("filename",
-                        "Bilan - "
+                        "SPPS - Bilan - "
                                 + startDate.format(dateFormatter) + " - "
                                 + endDate.format(dateFormatter) + ".xlsx");
                 headers.setAccessControlExposeHeaders(Arrays.asList("filename"));

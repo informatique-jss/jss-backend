@@ -39,7 +39,7 @@ public class BillingItemServiceImpl implements BillingItemService {
     @Override
     public BillingItem getBillingItem(Integer id) {
         Optional<BillingItem> billingItem = billingItemRepository.findById(id);
-        if (!billingItem.isEmpty())
+        if (billingItem.isPresent())
             return billingItem.get();
         return null;
     }

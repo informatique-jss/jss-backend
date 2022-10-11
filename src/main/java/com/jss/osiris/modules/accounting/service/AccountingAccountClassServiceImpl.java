@@ -27,7 +27,7 @@ public class AccountingAccountClassServiceImpl implements AccountingAccountClass
     @Override
     public AccountingAccountClass getAccountingAccountClass(Integer id) {
         Optional<AccountingAccountClass> accountingAccountClass = accountingAccountClassRepository.findById(id);
-        if (!accountingAccountClass.isEmpty())
+        if (accountingAccountClass.isPresent())
             return accountingAccountClass.get();
         return null;
     }

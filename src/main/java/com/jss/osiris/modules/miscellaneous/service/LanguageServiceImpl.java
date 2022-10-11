@@ -3,12 +3,12 @@ package com.jss.osiris.modules.miscellaneous.service;
 import java.util.List;
 import java.util.Optional;
 
-import com.jss.osiris.modules.miscellaneous.model.Language;
-import com.jss.osiris.modules.miscellaneous.repository.LanguageRepository;
-
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.jss.osiris.modules.miscellaneous.model.Language;
+import com.jss.osiris.modules.miscellaneous.repository.LanguageRepository;
 
 @Service
 public class LanguageServiceImpl implements LanguageService {
@@ -24,12 +24,12 @@ public class LanguageServiceImpl implements LanguageService {
     @Override
     public Language getLanguage(Integer id) {
         Optional<Language> language = languageRepository.findById(id);
-        if (!language.isEmpty())
+        if (language.isPresent())
             return language.get();
         return null;
     }
-	
-	 @Override
+
+    @Override
     public Language addOrUpdateLanguage(
             Language language) {
         return languageRepository.save(language);

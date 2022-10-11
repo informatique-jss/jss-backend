@@ -9,7 +9,8 @@ import org.springframework.data.repository.query.Param;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 
 public interface AccountingAccountRepository extends CrudRepository<AccountingAccount, Integer> {
-    List<AccountingAccount> findByLabelContainingIgnoreCase(String label);
+    @Query("select a from AccountingAccount a where   upper(cast(label as string))  like '%' || cast(upper(:label) as string) || '%' or   upper(cast(accountingAccountNumber as string))  like '%' || cast(upper(:label) as string) || '%' or  upper(cast(accountingAccountSubNumber as string))   like '%' || cast(upper(:label) as string) || '%' ")
+    List<AccountingAccount> findByLabelOrCodeContainingIgnoreCase(@Param("label") String label);
 
     List<AccountingAccount> findByAccountingAccountNumber(String code);
 

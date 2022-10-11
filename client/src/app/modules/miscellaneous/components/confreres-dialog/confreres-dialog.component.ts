@@ -76,6 +76,7 @@ export class ConfrereDialogComponent implements OnInit {
         this.displayedColumns.push({ id: "numberOfPrint", fieldName: "numberOfPrint", label: "Tirage" } as SortTableColumn);
         this.displayedColumns.push({ id: "shippingCosts", fieldName: "shippingCosts", label: "Frais de port" } as SortTableColumn);
         this.displayedColumns.push({ id: "administrativeFees", fieldName: "administrativeFees", label: "Frais administratifs" } as SortTableColumn);
+        this.displayedColumns.push({ id: "discountRate", fieldName: "discountRate", label: "Remise consentie" } as SortTableColumn);
       }
     })
   }

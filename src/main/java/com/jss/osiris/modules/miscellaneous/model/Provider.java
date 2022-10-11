@@ -1,13 +1,17 @@
 package com.jss.osiris.modules.miscellaneous.model;
 
 import java.io.Serializable;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
@@ -37,8 +41,31 @@ public class Provider implements Serializable, IId {
 	@Column(length = 40)
 	private String bic;
 
+	@Column(length = 20)
+	private String jssReference;
+
 	@Column(length = 40)
 	private String iban;
+
+	@ManyToMany(cascade = CascadeType.ALL)
+	@JoinTable(name = "asso_provider_mail", joinColumns = @JoinColumn(name = "id_provider"), inverseJoinColumns = @JoinColumn(name = "id_mail"))
+	private List<Mail> mails;
+
+	@ManyToMany(cascade = CascadeType.ALL)
+	@JoinTable(name = "asso_provider_accounting_mail", joinColumns = @JoinColumn(name = "id_provider"), inverseJoinColumns = @JoinColumn(name = "id_mail"))
+	private List<Mail> accountingMails;
+
+	@ManyToMany(cascade = CascadeType.ALL)
+	@JoinTable(name = "asso_provider_phone", joinColumns = @JoinColumn(name = "id_provider"), inverseJoinColumns = @JoinColumn(name = "id_phone"))
+	private List<Phone> phones;
+
+	@ManyToOne
+	@JoinColumn(name = "id_vat_collection_type")
+	private VatCollectionType vatCollectionType;
+
+	@ManyToOne
+	@JoinColumn(name = "id_payment_type")
+	private PaymentType paymentType;
 
 	public Integer getId() {
 		return id;
@@ -94,6 +121,54 @@ public class Provider implements Serializable, IId {
 
 	public void setAccountingAccountDeposit(AccountingAccount accountingAccountDeposit) {
 		this.accountingAccountDeposit = accountingAccountDeposit;
+	}
+
+	public List<Mail> getMails() {
+		return mails;
+	}
+
+	public void setMails(List<Mail> mails) {
+		this.mails = mails;
+	}
+
+	public List<Mail> getAccountingMails() {
+		return accountingMails;
+	}
+
+	public void setAccountingMails(List<Mail> accountingMails) {
+		this.accountingMails = accountingMails;
+	}
+
+	public List<Phone> getPhones() {
+		return phones;
+	}
+
+	public void setPhones(List<Phone> phones) {
+		this.phones = phones;
+	}
+
+	public String getJssReference() {
+		return jssReference;
+	}
+
+	public void setJssReference(String jssReference) {
+		this.jssReference = jssReference;
+	}
+
+	public VatCollectionType getVatCollectionType() {
+		return vatCollectionType;
+	}
+
+	public void setVatCollectionType(VatCollectionType vatCollectionType) {
+		this.vatCollectionType = vatCollectionType;
+	}
+
+	public PaymentType getPaymentType() {
+		return paymentType;
+	}
+
+	public void setPaymentType(PaymentType paymentType) {
+		this.paymentType = paymentType;
 	}
 
 }

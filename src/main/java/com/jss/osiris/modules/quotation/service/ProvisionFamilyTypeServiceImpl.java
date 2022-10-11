@@ -3,7 +3,6 @@ package com.jss.osiris.modules.quotation.service;
 import java.util.List;
 import java.util.Optional;
 
-import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,13 +17,13 @@ public class ProvisionFamilyTypeServiceImpl implements ProvisionFamilyTypeServic
 
     @Override
     public List<ProvisionFamilyType> getProvisionFamilyTypes() {
-        return IterableUtils.toList(provisionFamilyTypeRepository.findAll());
+        return provisionFamilyTypeRepository.findAllByOrderByCode();
     }
 
     @Override
     public ProvisionFamilyType getProvisionFamilyType(Integer id) {
         Optional<ProvisionFamilyType> provisionFamilyType = provisionFamilyTypeRepository.findById(id);
-        if (!provisionFamilyType.isEmpty())
+        if (provisionFamilyType.isPresent())
             return provisionFamilyType.get();
         return null;
     }

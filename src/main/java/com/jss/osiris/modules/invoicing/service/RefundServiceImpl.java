@@ -39,7 +39,7 @@ public class RefundServiceImpl implements RefundService {
     @Cacheable(value = "refund", key = "#id")
     public Refund getRefund(Integer id) {
         Optional<Refund> refund = refundRepository.findById(id);
-        if (!refund.isEmpty())
+        if (refund.isPresent())
             return refund.get();
         return null;
     }

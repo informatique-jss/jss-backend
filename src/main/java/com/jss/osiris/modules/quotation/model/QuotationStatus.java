@@ -13,6 +13,9 @@ import com.jss.osiris.modules.miscellaneous.model.IId;
 @Entity
 public class QuotationStatus implements Serializable, IId {
 
+	/**
+	 * WARNINNG : add update in QuotationStatutsService when adding a new status
+	 */
 	public static String OPEN = "OPEN";
 	public static String TO_VERIFY = "TO_VERIFY";
 	public static String VALIDATED_BY_JSS = "VALIDATED_BY_JSS";
@@ -32,7 +35,7 @@ public class QuotationStatus implements Serializable, IId {
 	@Column(nullable = false, length = 100)
 	private String label;
 
-	@Column(nullable = false, length = 20)
+	@Column(nullable = false, length = 30)
 	private String code;
 
 	public Integer getId() {

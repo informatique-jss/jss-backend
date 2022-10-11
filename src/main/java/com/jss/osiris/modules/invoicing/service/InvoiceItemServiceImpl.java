@@ -24,7 +24,7 @@ public class InvoiceItemServiceImpl implements InvoiceItemService {
     @Override
     public InvoiceItem getInvoiceItem(Integer id) {
         Optional<InvoiceItem> invoiceItem = invoiceItemRepository.findById(id);
-        if (!invoiceItem.isEmpty())
+        if (invoiceItem.isPresent())
             return invoiceItem.get();
         return null;
     }

@@ -180,6 +180,18 @@ tr.table-row:hover {
   display: contents;
 }
 
+.ql-align-right {
+  text-align: right;
+}
+
+.ql-align-center {
+  text-align: center;
+}
+
+.ql-align-left {
+  text-align: left;
+}
+
 @font-face {
   font-family: 'Material Icons';
   font-style: normal;

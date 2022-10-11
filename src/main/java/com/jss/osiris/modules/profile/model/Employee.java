@@ -2,22 +2,23 @@ package com.jss.osiris.modules.profile.model;
 
 import java.io.Serializable;
 
+import javax.naming.NamingException;
+import javax.naming.directory.Attributes;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Index;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import org.springframework.ldap.core.AttributesMapper;
+
 import com.jss.osiris.modules.miscellaneous.model.IId;
 
 @Entity
 @Table(indexes = { @Index(name = "pk_employee", columnList = "id", unique = true) })
-public class Employee implements Serializable, IId {
+public class Employee implements Serializable, IId, AttributesMapper<Employee> {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -26,10 +27,23 @@ public class Employee implements Serializable, IId {
 	private String firstname;
 	@Column(length = 20)
 	private String lastname;
-	@ManyToOne
-	@JoinColumn(name = "id_team")
-	@JsonManagedReference
-	private Team team;
+	private String username;
+	@Column(length = 1000)
+	private String adPath;
+	private Boolean isActive;
+
+	public Employee mapFromAttributes(Attributes attrs) throws NamingException {
+		if (attrs.get("givenName") == null || attrs.get("sn") == null || attrs.get("sAMAccountName") == null
+				|| attrs.get("distinguishedName") == null)
+			return null;
+
+		Employee employee = new Employee();
+		employee.setFirstname((String) attrs.get("givenName").get());
+		employee.setLastname((String) attrs.get("sn").get());
+		employee.setUsername((String) attrs.get("sAMAccountName").get());
+		employee.setAdPath((String) attrs.get("distinguishedName").get());
+		return employee;
+	}
 
 	public Integer getId() {
 		return id;
@@ -55,12 +69,28 @@ public class Employee implements Serializable, IId {
 		this.lastname = lastname;
 	}
 
-	public Team getTeam() {
-		return team;
+	public String getUsername() {
+		return username;
 	}
 
-	public void setTeam(Team team) {
-		this.team = team;
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getAdPath() {
+		return adPath;
+	}
+
+	public void setAdPath(String adPath) {
+		this.adPath = adPath;
+	}
+
+	public Boolean getIsActive() {
+		return isActive;
+	}
+
+	public void setIsActive(Boolean isActive) {
+		this.isActive = isActive;
 	}
 
 }

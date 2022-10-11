@@ -8,7 +8,7 @@ import { GenericReferentialComponent } from '../generic-referential/generic-refe
 
 @Component({
   selector: 'referential-legal-form',
-  templateUrl: './../generic-referential/generic-referential.component.html',
+  templateUrl: './referential-legal-form.component.html',
   styleUrls: ['./../generic-referential/generic-referential.component.css']
 })
 export class ReferentialLegalFormComponent extends GenericReferentialComponent<LegalForm> implements OnInit {

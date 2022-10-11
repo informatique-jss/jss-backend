@@ -1,6 +1,5 @@
 package com.jss.osiris.libs;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -18,7 +17,9 @@ public class CacheController {
 	@GetMapping(inputEntryPoint + "/clearAll")
 	public void clearCache() {
 		for (String name : cacheManager.getCacheNames()) {
-			cacheManager.getCache(name).clear();
+			if (cacheManager.getCache(name) != null) {
+				cacheManager.getCache(name).clear();
+			}
 		}
 	}
 }

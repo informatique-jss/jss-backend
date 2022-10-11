@@ -28,7 +28,7 @@ public class CityServiceImpl implements CityService {
     @Override
     public City getCity(Integer id) {
         Optional<City> city = cityRepository.findById(id);
-        if (!city.isEmpty())
+        if (city.isPresent())
             return city.get();
         return null;
     }

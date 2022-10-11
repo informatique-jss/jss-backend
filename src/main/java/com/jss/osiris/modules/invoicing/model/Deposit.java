@@ -14,6 +14,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.jss.osiris.modules.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.miscellaneous.model.IId;
@@ -37,6 +38,7 @@ public class Deposit implements Serializable, IId {
 	private Float depositAmount;
 
 	@OneToMany(mappedBy = "deposit")
+	@JsonIgnoreProperties("deposit")
 	private List<AccountingRecord> accountingRecords;
 
 	@ManyToOne

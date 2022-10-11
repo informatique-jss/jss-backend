@@ -28,7 +28,7 @@ public class SpecialOfferServiceImpl implements SpecialOfferService {
     @Override
     public SpecialOffer getSpecialOffer(Integer id) {
         Optional<SpecialOffer> specialOffer = specialOfferRepository.findById(id);
-        if (!specialOffer.isEmpty())
+        if (specialOffer.isPresent())
             return specialOffer.get();
         return null;
     }

@@ -1,24 +1,46 @@
 package com.jss.osiris.libs;
 
+import static org.springframework.ldap.query.LdapQueryBuilder.query;
+
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.ldap.core.LdapTemplate;
+import org.springframework.ldap.core.support.LdapContextSource;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import com.jss.osiris.modules.profile.service.EmployeeService;
+import com.jss.osiris.modules.profile.model.Employee;
 
 @Service
 public class ActiveDirectoryHelper {
-    @Autowired
-    EmployeeService employeeService;
-
     @Value("${dev.mode}")
     private Boolean devMode;
+
+    @Value("${ldap.server.host}")
+    private String ldapServerHost;
+
+    @Value("${ldap.dc.level.0}")
+    private String ldapDcLevel0;
+
+    @Value("${ldap.dc.level.1}")
+    private String ldapDcLevel1;
+
+    @Value("${ldap.server.port}")
+    private String ldapServerPort;
+
+    @Value("${ldap.manager.login}")
+    private String ldapManagerLogin;
+
+    @Value("${ldap.manager.password}")
+    private String ldapManagerPassword;
+
+    @Value("${ldap.group.jss.users}")
+    private String ldapGroupJssUsers;
 
     public static final String ADMINISTRATEUR = "@activeDirectoryHelper.isUserHasGroup('ROLE_OSIRIS_ADMINISTRATEURS')";
 
@@ -62,4 +84,15 @@ public class ActiveDirectoryHelper {
         return false;
     }
 
+    public List<Employee> getActiveDirectoryEmployees() {
+        // Using Java 8 lambda expressions
+        LdapContextSource contextSource = new LdapContextSource();
+        contextSource.setUrl("ldap://" + ldapServerHost + ":" + ldapServerPort);
+        contextSource.setBase("OU=" + ldapGroupJssUsers + ",DC=" + ldapDcLevel1 + ",DC=" + ldapDcLevel0);
+        contextSource.setUserDn(ldapManagerLogin);
+        contextSource.setPassword(ldapManagerPassword);
+        contextSource.afterPropertiesSet();
+
+        return new LdapTemplate(contextSource).search(query().where("objectclass").is("user"), new Employee());
+    }
 }

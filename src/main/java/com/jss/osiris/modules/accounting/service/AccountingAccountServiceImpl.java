@@ -45,6 +45,12 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
     @Value("${accounting.account.number.waiting}")
     String waitingAccountingAccountNumber;
 
+    @Value("${accounting.account.number.profit}")
+    String profitAccountingAccountNumber;
+
+    @Value("${accounting.account.number.lost}")
+    String lostAccountingAccountNumber;
+
     @Override
     public List<AccountingAccount> getAccountingAccounts() {
         return IterableUtils.toList(accountingAccountRepository.findAll());
@@ -53,7 +59,7 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
     @Override
     public AccountingAccount getAccountingAccount(Integer id) {
         Optional<AccountingAccount> accountingAccount = accountingAccountRepository.findById(id);
-        if (!accountingAccount.isEmpty())
+        if (accountingAccount.isPresent())
             return accountingAccount.get();
         return null;
     }
@@ -82,7 +88,7 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
 
     @Override
     public List<AccountingAccount> getAccountingAccountByLabelOrCode(String label) {
-        return accountingAccountRepository.findByLabelContainingIgnoreCase(label);
+        return accountingAccountRepository.findByLabelOrCodeContainingIgnoreCase(label);
     }
 
     @Override
@@ -150,6 +156,41 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
     }
 
     @Override
+    public AccountingAccount generateAccountingAccountsForProduct(String label) throws Exception {
+
+        Integer currentMaxSubAccountProduct = accountingAccountRepository
+                .findMaxSubAccontNumberForAccountNumber(StringUtils.leftPad(productAccountingAccountNumber, 3, "0"));
+
+        Integer maxSubAccount = 0;
+
+        if (currentMaxSubAccountProduct != null && currentMaxSubAccountProduct > maxSubAccount)
+            maxSubAccount = currentMaxSubAccountProduct;
+
+        AccountingAccountClass accountingAccountClass = accountingAccountClassService
+                .getAccountingAccountClassByCode(productAccountingAccountNumber.substring(0, 1));
+        if (accountingAccountClass == null) {
+            logger.error(
+                    "Unable to find accountingAccountClass for number "
+                            + customerAccountingAccountNumber.substring(0, 1));
+            throw new Exception(
+                    "Unable to find accountingAccountClass for number "
+                            + customerAccountingAccountNumber.substring(0, 1));
+        }
+
+        maxSubAccount++;
+
+        AccountingAccount accountingAccountProvider = new AccountingAccount();
+        accountingAccountProvider.setAccountingAccountClass(accountingAccountClass);
+        accountingAccountProvider.setAccountingAccountNumber(productAccountingAccountNumber);
+        accountingAccountProvider.setAccountingAccountSubNumber(maxSubAccount);
+        accountingAccountProvider
+                .setLabel("Produit - " + (label != null ? label : ""));
+        accountingAccountRepository.save(accountingAccountProvider);
+
+        return accountingAccountProvider;
+    }
+
+    @Override
     public AccountingAccount getProductAccountingAccountFromAccountingAccountList(
             List<AccountingAccount> accountingAccounts) {
         if (accountingAccounts != null && accountingAccounts.size() > 0) {
@@ -188,5 +229,35 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
                     + bankAccountingAccountNumber);
 
         return waitingAccountingAccounts.get(0);
+    }
+
+    @Override
+    public AccountingAccount getProfitAccountingAccount() throws Exception {
+        List<AccountingAccount> profitAccountingAccounts = getAccountingAccountByAccountingAccountNumber(
+                profitAccountingAccountNumber);
+
+        if (profitAccountingAccounts == null || profitAccountingAccounts.size() == 0)
+            throw new Exception("Profit accounting account not found");
+
+        if (profitAccountingAccounts.size() > 1)
+            throw new Exception("Multiple profit accounting account found for accounting account number "
+                    + bankAccountingAccountNumber);
+
+        return profitAccountingAccounts.get(0);
+    }
+
+    @Override
+    public AccountingAccount getLostAccountingAccount() throws Exception {
+        List<AccountingAccount> profitAccountingAccounts = getAccountingAccountByAccountingAccountNumber(
+                lostAccountingAccountNumber);
+
+        if (profitAccountingAccounts == null || profitAccountingAccounts.size() == 0)
+            throw new Exception("Lost accounting account not found");
+
+        if (profitAccountingAccounts.size() > 1)
+            throw new Exception("Multiple lost accounting account found for accounting account number "
+                    + bankAccountingAccountNumber);
+
+        return profitAccountingAccounts.get(0);
     }
 }

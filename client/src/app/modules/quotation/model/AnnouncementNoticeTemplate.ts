@@ -1,5 +1,5 @@
 import { IReferential } from "../../administration/model/IReferential";
 
-export interface ShalNoticeTemplate extends IReferential {
+export interface AnnouncementNoticeTemplate extends IReferential {
   text: string;
 }

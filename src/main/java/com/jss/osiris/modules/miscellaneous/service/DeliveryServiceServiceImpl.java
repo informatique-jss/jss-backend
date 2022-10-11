@@ -3,12 +3,12 @@ package com.jss.osiris.modules.miscellaneous.service;
 import java.util.List;
 import java.util.Optional;
 
-import com.jss.osiris.modules.miscellaneous.model.DeliveryService;
-import com.jss.osiris.modules.miscellaneous.repository.DeliveryServiceRepository;
-
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.jss.osiris.modules.miscellaneous.model.DeliveryService;
+import com.jss.osiris.modules.miscellaneous.repository.DeliveryServiceRepository;
 
 @Service
 public class DeliveryServiceServiceImpl implements DeliveryServiceService {
@@ -24,12 +24,12 @@ public class DeliveryServiceServiceImpl implements DeliveryServiceService {
     @Override
     public DeliveryService getDeliveryService(Integer id) {
         Optional<DeliveryService> deliveryService = deliveryServiceRepository.findById(id);
-        if (!deliveryService.isEmpty())
+        if (deliveryService.isPresent())
             return deliveryService.get();
         return null;
     }
-	
-	 @Override
+
+    @Override
     public DeliveryService addOrUpdateDeliveryService(
             DeliveryService deliveryService) {
         return deliveryServiceRepository.save(deliveryService);

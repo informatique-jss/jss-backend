@@ -37,7 +37,7 @@ public class AccountingJournalServiceImpl implements AccountingJournalService {
     @Cacheable(value = "accountingJournal", key = "#id")
     public AccountingJournal getAccountingJournal(Integer id) {
         Optional<AccountingJournal> accountingJournal = accountingJournalRepository.findById(id);
-        if (!accountingJournal.isEmpty())
+        if (accountingJournal.isPresent())
             return accountingJournal.get();
         return null;
     }

@@ -28,7 +28,7 @@ public class DocumentServiceImpl implements DocumentService {
     @Override
     public Document getDocument(Integer id) {
         Optional<Document> document = documentRepository.findById(id);
-        if (!document.isEmpty())
+        if (document.isPresent())
             return document.get();
         return null;
     }

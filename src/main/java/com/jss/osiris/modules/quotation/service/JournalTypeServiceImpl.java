@@ -24,7 +24,7 @@ public class JournalTypeServiceImpl implements JournalTypeService {
     @Override
     public JournalType getJournalType(Integer id) {
         Optional<JournalType> journalType = journalTypeRepository.findById(id);
-        if (!journalType.isEmpty())
+        if (journalType.isPresent())
             return journalType.get();
         return null;
     }

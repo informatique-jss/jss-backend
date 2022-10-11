@@ -24,7 +24,7 @@ public class QuotationLabelTypeServiceImpl implements QuotationLabelTypeService 
     @Override
     public QuotationLabelType getQuotationLabelType(Integer id) {
         Optional<QuotationLabelType> quotationLabelType = quotationLabelTypeRepository.findById(id);
-        if (!quotationLabelType.isEmpty())
+        if (quotationLabelType.isPresent())
             return quotationLabelType.get();
         return null;
     }

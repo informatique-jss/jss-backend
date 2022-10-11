@@ -25,15 +25,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpStatusCodeException;
-import org.springframework.web.server.ResponseStatusException;
 
 import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.ValidationHelper;
 import com.jss.osiris.modules.profile.model.Employee;
-import com.jss.osiris.modules.profile.model.Team;
 import com.jss.osiris.modules.profile.model.User;
 import com.jss.osiris.modules.profile.service.EmployeeService;
-import com.jss.osiris.modules.profile.service.TeamService;
 
 @RestController
 public class ProfileController {
@@ -47,9 +44,6 @@ public class ProfileController {
 
 	@Autowired
 	ValidationHelper validationHelper;
-
-	@Autowired
-	TeamService teamService;
 
 	@Autowired
 	AuthenticationManager authenticationManager;
@@ -96,48 +90,6 @@ public class ProfileController {
 				HttpStatus.OK);
 	}
 
-	@GetMapping(inputEntryPoint + "/teams")
-	public ResponseEntity<List<Team>> getTeams() {
-		List<Team> teams = null;
-		try {
-			teams = teamService.getTeams();
-		} catch (HttpStatusCodeException e) {
-			logger.error("HTTP error when fetching team", e);
-			return new ResponseEntity<List<Team>>(HttpStatus.INTERNAL_SERVER_ERROR);
-		} catch (Exception e) {
-			logger.error("Error when fetching team", e);
-			return new ResponseEntity<List<Team>>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-		return new ResponseEntity<List<Team>>(teams, HttpStatus.OK);
-	}
-
-	@PostMapping(inputEntryPoint + "/team")
-	public ResponseEntity<Team> addOrUpdateTeam(
-			@RequestBody Team teams) {
-		Team outTeam;
-		try {
-			if (teams.getId() != null)
-				validationHelper.validateReferential(teams, true);
-			validationHelper.validateString(teams.getCode(), true, 20);
-			validationHelper.validateString(teams.getLabel(), true, 100);
-			validationHelper.validateReferential(teams.getManager(), false);
-
-			outTeam = teamService
-					.addOrUpdateTeam(teams);
-		} catch (
-
-		ResponseStatusException e) {
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		} catch (HttpStatusCodeException e) {
-			logger.error("HTTP error when fetching team", e);
-			return new ResponseEntity<Team>(HttpStatus.INTERNAL_SERVER_ERROR);
-		} catch (Exception e) {
-			logger.error("Error when fetching team", e);
-			return new ResponseEntity<Team>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-		return new ResponseEntity<Team>(outTeam, HttpStatus.OK);
-	}
-
 	@GetMapping(inputEntryPoint + "/employee")
 	public ResponseEntity<Employee> getEmployeeById(@RequestParam Integer id) {
 		Employee employee = null;
@@ -153,21 +105,6 @@ public class ProfileController {
 		return new ResponseEntity<Employee>(employee, HttpStatus.OK);
 	}
 
-	@GetMapping(inputEntryPoint + "/employee/sales")
-	public ResponseEntity<List<Employee>> getSalesEmployees() {
-		List<Employee> salesEmployees = null;
-		try {
-			salesEmployees = employeeService.getSalesEmployees();
-		} catch (HttpStatusCodeException e) {
-			logger.error("HTTP error when fetching client types", e);
-			return new ResponseEntity<List<Employee>>(HttpStatus.INTERNAL_SERVER_ERROR);
-		} catch (Exception e) {
-			logger.error("Error when fetching client types", e);
-			return new ResponseEntity<List<Employee>>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-		return new ResponseEntity<List<Employee>>(salesEmployees, HttpStatus.OK);
-	}
-
 	@GetMapping(inputEntryPoint + "/employee/all")
 	public ResponseEntity<List<Employee>> getEmployees() {
 		List<Employee> salesEmployees = null;
@@ -181,36 +118,6 @@ public class ProfileController {
 			return new ResponseEntity<List<Employee>>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		return new ResponseEntity<List<Employee>>(salesEmployees, HttpStatus.OK);
-	}
-
-	@GetMapping(inputEntryPoint + "/employee/formalistes")
-	public ResponseEntity<List<Employee>> getFormalisteEmployees() {
-		List<Employee> formalisteEmployees = null;
-		try {
-			formalisteEmployees = employeeService.getFormalisteEmployees();
-		} catch (HttpStatusCodeException e) {
-			logger.error("HTTP error when fetching client types", e);
-			return new ResponseEntity<List<Employee>>(HttpStatus.INTERNAL_SERVER_ERROR);
-		} catch (Exception e) {
-			logger.error("Error when fetching client types", e);
-			return new ResponseEntity<List<Employee>>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-		return new ResponseEntity<List<Employee>>(formalisteEmployees, HttpStatus.OK);
-	}
-
-	@GetMapping(inputEntryPoint + "/employee/insertions")
-	public ResponseEntity<List<Employee>> getInsertionEmployees() {
-		List<Employee> insertionEmployees = null;
-		try {
-			insertionEmployees = employeeService.getInsertionEmployees();
-		} catch (HttpStatusCodeException e) {
-			logger.error("HTTP error when fetching client types", e);
-			return new ResponseEntity<List<Employee>>(HttpStatus.INTERNAL_SERVER_ERROR);
-		} catch (Exception e) {
-			logger.error("Error when fetching client types", e);
-			return new ResponseEntity<List<Employee>>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-		return new ResponseEntity<List<Employee>>(insertionEmployees, HttpStatus.OK);
 	}
 
 }

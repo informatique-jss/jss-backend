@@ -31,6 +31,8 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("accounting.account.number.product");
         isOk = isOk && checkProperty("accounting.account.number.bank");
         isOk = isOk && checkProperty("accounting.account.number.waiting");
+        isOk = isOk && checkProperty("accounting.account.number.profit");
+        isOk = isOk && checkProperty("accounting.account.number.lost");
         isOk = isOk && checkProperty("miscellaneous.document.code.billing");
         isOk = isOk && checkProperty("miscellaneous.document.billing.label.type.customer.code");
         isOk = isOk && checkProperty("miscellaneous.document.billing.label.type.affaire.code");
@@ -40,11 +42,13 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("invoicing.invoice.status.payed.code");
         isOk = isOk && checkProperty("accounting.journal.code.sales");
         isOk = isOk && checkProperty("schedulling.account.daily.close");
+        isOk = isOk && checkProperty("schedulling.active.directory.user.update");
         isOk = isOk && checkProperty("schedulling.payment.grab");
         isOk = isOk && checkProperty("ldap.dc.level.0");
         isOk = isOk && checkProperty("ldap.dc.level.1");
         isOk = isOk && checkProperty("ldap.ou.osiris");
         isOk = isOk && checkProperty("ldap.group.osiris.users");
+        isOk = isOk && checkProperty("ldap.group.jss.users");
         isOk = isOk && checkProperty("ldap.server.host");
         isOk = isOk && checkProperty("ldap.server.port");
         isOk = isOk && checkProperty("ldap.manager.login");
@@ -52,6 +56,7 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("server.servlet.session.timeout");
         isOk = isOk && checkProperty("quotation.customer.order.status.billed.code");
         isOk = isOk && checkProperty("quotation.customer.order.status.waiting.deposit.code");
+        isOk = isOk && checkProperty("invoicing.payment.limit.refund.euros");
         isOk = isOk && checkAccountingParams();
 
         if (!isOk)

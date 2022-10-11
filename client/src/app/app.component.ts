@@ -131,6 +131,7 @@ export class AppComponent {
     this.displayEditNote = !this.displayEditNote;
   }
 
+  // TODO : enlever les valeurs en dur !
   openNoteLink(note: Note, event: MouseEvent): any {
     if (event.ctrlKey) {
       return window.open(environment.frontendUrl + "/tiers/66", '_blank')

@@ -13,7 +13,9 @@ export class InvoicePaymentTableComponent implements OnInit {
   @Input() invoice: Invoice = {} as Invoice;
 
   formatDate = formatDate;
-  getAmountRemaining = getAmountRemaining;
+  getAmountRemaining(invoice: Invoice): number {
+    return Math.max(getAmountRemaining(invoice), 0);
+  }
 
   constructor() { }
 

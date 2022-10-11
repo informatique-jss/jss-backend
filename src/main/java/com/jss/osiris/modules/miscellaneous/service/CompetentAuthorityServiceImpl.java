@@ -37,7 +37,7 @@ public class CompetentAuthorityServiceImpl implements CompetentAuthorityService 
     @Override
     public CompetentAuthority getCompetentAuthority(Integer id) {
         Optional<CompetentAuthority> competentAuthority = competentAuthorityRepository.findById(id);
-        if (!competentAuthority.isEmpty())
+        if (competentAuthority.isPresent())
             return competentAuthority.get();
         return null;
     }
@@ -45,10 +45,18 @@ public class CompetentAuthorityServiceImpl implements CompetentAuthorityService 
     @Override
     public CompetentAuthority addOrUpdateCompetentAuthority(
             CompetentAuthority competentAuthority) throws Exception {
+        if (competentAuthority == null)
+            throw new Exception("Competent authority provided is null");
+
         // If mails already exists, get their ids
         if (competentAuthority != null && competentAuthority.getMails() != null
                 && competentAuthority.getMails().size() > 0)
             mailService.populateMailIds(competentAuthority.getMails());
+
+        // If mails already exists, get their ids
+        if (competentAuthority != null && competentAuthority.getAccountingMails() != null
+                && competentAuthority.getAccountingMails().size() > 0)
+            mailService.populateMailIds(competentAuthority.getAccountingMails());
 
         // If phones already exists, get their ids
         if (competentAuthority != null && competentAuthority.getPhones() != null

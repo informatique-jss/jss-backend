@@ -3,8 +3,9 @@
   <sort-table [columns]="displayedColumns" [values]="associationSummaryTable" tableName="Association paiement / facture"
     [actions]="tableAction" [refreshTable]="refreshTable.asObservable()">
   </sort-table>
-  <div class="mat-elevation-z2" *ngIf="amountToPayCompletely()<0 && amountRemaining()>0">
-    <table class="full-width mat-table top" *ngIf="selectedRefundTiers">
+  <div class="mat-elevation-z2"
+    *ngIf="amountToPayCompletely()<0 && amountRemaining()>0 && amountRemaining()>INVOICING_PAYMENT_LIMIT_REFUND_EUROS">
+    <table class=" full-width mat-table top" *ngIf="selectedRefundTiers">
       <tr class=" mat-header-row">
         <th class="mat-header-cell">Paiement</th>
         <th class="mat-header-cell">Tiers remboursé</th>
@@ -66,7 +67,7 @@
           <button mat-raised-button color="warn" matStepperNext>Suivant</button>
         </div>
       </mat-step>
-      <mat-step *ngIf="amountRemaining()>0">
+      <mat-step *ngIf="amountRemaining()>0 && amountRemaining()>INVOICING_PAYMENT_LIMIT_REFUND_EUROS">
         <ng-template matStepLabel>Remboursement</ng-template>
         <p>Le solde n'est pas nul. A qui souhaitez-vous rembourser la somme de {{amountRemaining()}} € ?
         </p>
@@ -80,6 +81,20 @@
             </mat-radio-button>
           </mat-radio-group>
         </form>
+        <div class="top">
+          <button mat-raised-button color="accent" matStepperPrevious>Précédent</button>
+          <button mat-raised-button color="warn" matStepperNext>Suivant</button>
+        </div>
+      </mat-step>
+      <mat-step
+        *ngIf="amountRemaining()>0 && amountRemaining()<=INVOICING_PAYMENT_LIMIT_REFUND_EUROS || amountRemaining()<0 && amountRemaining()>=-INVOICING_PAYMENT_LIMIT_REFUND_EUROS">
+        <ng-template matStepLabel>Appoint</ng-template>
+        <p>Le solde n'est pas nul.
+        </p>
+        <p *ngIf="amountRemaining()>0 && amountRemaining()<=INVOICING_PAYMENT_LIMIT_REFUND_EUROS">La somme de
+          {{amountRemaining()}} € sera placée sur le compte de profit</p>
+        <p *ngIf=" amountRemaining()<0 && amountRemaining()>=-INVOICING_PAYMENT_LIMIT_REFUND_EUROS">La somme de
+          {{amountRemaining()}} € sera prise sur le compte de perte</p>
         <div class="top">
           <button mat-raised-button color="accent" matStepperPrevious>Précédent</button>
           <button mat-raised-button color="warn" matStepperNext>Suivant</button>

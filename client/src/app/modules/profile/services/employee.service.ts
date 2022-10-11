@@ -17,20 +17,8 @@ export class EmployeeService extends AppRestService<Employee>{
     return this.getById("employee", id);
   }
 
-  getSalesEmployees(): Observable<Employee[]> {
-    return this.getList(new HttpParams(), "employee/sales");
-  }
-
   getEmployees(): Observable<Employee[]> {
     return this.getList(new HttpParams(), "employee/all");
-  }
-
-  getFormalisteEmployees(): Observable<Employee[]> {
-    return this.getList(new HttpParams(), "employee/formalistes");
-  }
-
-  getInsetionEmployees(): Observable<Employee[]> {
-    return this.getList(new HttpParams(), "employee/insertions");
   }
 
 }

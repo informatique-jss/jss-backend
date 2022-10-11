@@ -53,9 +53,9 @@ public class Provision implements Serializable, IId {
 	@JsonManagedReference("provision")
 	private Domiciliation domiciliation;
 
-	@OneToOne(targetEntity = Shal.class, mappedBy = "provision", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToOne(targetEntity = Announcement.class, mappedBy = "provision", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonManagedReference("provision")
-	private Shal shal;
+	private Announcement announcement;
 
 	@OneToOne(targetEntity = Bodacc.class, mappedBy = "provision", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonManagedReference("provision")
@@ -123,12 +123,12 @@ public class Provision implements Serializable, IId {
 		this.domiciliation = domiciliation;
 	}
 
-	public Shal getShal() {
-		return shal;
+	public Announcement getAnnouncement() {
+		return announcement;
 	}
 
-	public void setShal(Shal shal) {
-		this.shal = shal;
+	public void setAnnouncement(Announcement announcement) {
+		this.announcement = announcement;
 	}
 
 	public Bodacc getBodacc() {

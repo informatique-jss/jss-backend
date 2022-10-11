@@ -17,6 +17,8 @@ import { MatTabsModule } from "@angular/material/tabs";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { RouterModule, Routes } from "@angular/router";
 import { MiscellaneousModule } from "../../../miscellaneous/components/miscellaneous/miscellaneous.module";
+import { AddAccountingRecordComponent } from "../add-accounting-record/add-accounting-record.component";
+import { DeleteAccountingRecordDialogComponent } from "../delete-accounting-record-dialog/delete-accounting-record-dialog.component";
 import { AccountingBalanceGeneraleComponent } from "./../accounting-balance-generale/accounting-balance-generale.component";
 import { AccountingBalanceComponent } from "./../accounting-balance/accounting-balance.component";
 import { AccountingBilanComponent } from "./../accounting-bilan/accounting-bilan.component";
@@ -26,6 +28,7 @@ import { AccountingComponent } from "./accounting.component";
 
 const routes: Routes = [
   { path: 'accounting', component: AccountingComponent },
+  { path: 'accounting/add', component: AddAccountingRecordComponent },
 ];
 
 @NgModule({
@@ -55,6 +58,8 @@ const routes: Routes = [
     AccountingBalanceComponent,
     AccountingProfitLostComponent,
     AccountingBalanceGeneraleComponent,
+    DeleteAccountingRecordDialogComponent,
+    AddAccountingRecordComponent,
   ],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'fr-FR' }

@@ -20,12 +20,12 @@ export class AutocompleteSalesEmployeeComponent extends GenericLocalAutocomplete
   filterEntities(types: Employee[], value: string): Employee[] {
     const filterValue = (value != undefined && value != null && value.toLowerCase != undefined) ? value.toLowerCase() : "";
     return types.filter(employee =>
-      employee.firstname != undefined && employee.lastname != undefined
+      employee.firstname != undefined && employee.lastname != undefined && employee.isActive == true
       && (employee.firstname.toLowerCase().includes(filterValue) || employee.lastname.toLowerCase().includes(filterValue)));
   }
 
   initTypes(): void {
-    this.employeeService.getSalesEmployees().subscribe(response => this.types = response);
+    this.employeeService.getEmployees().subscribe(response => this.types = response);
   }
 
   displayLabel(object: Employee): string {

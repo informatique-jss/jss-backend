@@ -75,6 +75,9 @@ public class PaymentServiceImpl implements PaymentService {
     @Value("${quotation.customer.order.status.waiting.deposit.code}")
     private String customerOrderStatusWaitingDepositCode;
 
+    @Value("${invoicing.payment.limit.refund.euros}")
+    private String payementLimitRefundInEuros;
+
     @Override
     @Cacheable(value = "paymentList", key = "#root.methodName")
     public List<Payment> getPayments() {
@@ -85,7 +88,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Cacheable(value = "payment", key = "#id")
     public Payment getPayment(Integer id) {
         Optional<Payment> payment = paymentRepository.findById(id);
-        if (!payment.isEmpty())
+        if (payment.isPresent())
             return payment.get();
         return null;
     }
@@ -187,7 +190,17 @@ public class PaymentServiceImpl implements PaymentService {
         }
 
         if (remainingMoney > 0) {
-            refundService.generateRefund(tiersRefund, affaireRefund, payment, remainingMoney);
+            if (Math.abs(remainingMoney) <= Float.parseFloat(payementLimitRefundInEuros)) {
+                if (correspondingInvoices != null && correspondingInvoices.size() > 0)
+                    accountingRecordService.generateAppointForPayment(payment, remainingMoney,
+                            invoiceService.getCustomerOrder(correspondingInvoices.get(0)));
+                else if (correspondingCustomerOrder != null && correspondingCustomerOrder.size() > 0)
+                    accountingRecordService.generateAppointForPayment(payment, remainingMoney,
+                            quotationService.getCustomerOrderOfQuotation(correspondingCustomerOrder.get(0)));
+
+            } else {
+                refundService.generateRefund(tiersRefund, affaireRefund, payment, remainingMoney);
+            }
         }
     }
 

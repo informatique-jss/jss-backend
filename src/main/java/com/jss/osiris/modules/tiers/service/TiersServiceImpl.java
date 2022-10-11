@@ -50,7 +50,7 @@ public class TiersServiceImpl implements TiersService {
     @Override
     public Tiers getTiers(Integer id) {
         Optional<Tiers> tiers = tiersRepository.findById(id);
-        if (!tiers.isEmpty()) {
+        if (tiers.isPresent()) {
             Tiers tiersInstance = tiers.get();
             tiersInstance.setFirstBilling(invoiceService.getFirstBillingDateForTiers(tiersInstance));
             if (tiersInstance.getResponsables() != null) {
@@ -64,6 +64,9 @@ public class TiersServiceImpl implements TiersService {
 
     @Override
     public Tiers addOrUpdateTiers(Tiers tiers) throws Exception {
+        if (tiers == null)
+            throw new Exception("Provided tiers is null");
+
         // If mails already exists, get their ids
         if (tiers != null && tiers.getMails() != null && tiers.getMails().size() > 0)
             mailService.populateMailIds(tiers.getMails());

@@ -42,6 +42,10 @@ public class CompetentAuthority implements Serializable, IId {
 	private List<Mail> mails;
 
 	@ManyToMany(cascade = CascadeType.ALL)
+	@JoinTable(name = "asso_competent_authority_accounting_mail", joinColumns = @JoinColumn(name = "id_competent_authority"), inverseJoinColumns = @JoinColumn(name = "id_mail"))
+	private List<Mail> accountingMails;
+
+	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "asso_competent_authority_phone", joinColumns = @JoinColumn(name = "id_competent_authority"), inverseJoinColumns = @JoinColumn(name = "id_phone"))
 	private List<Phone> phones;
 
@@ -281,6 +285,14 @@ public class CompetentAuthority implements Serializable, IId {
 
 	public void setSchedulle(String schedulle) {
 		this.schedulle = schedulle;
+	}
+
+	public List<Mail> getAccountingMails() {
+		return accountingMails;
+	}
+
+	public void setAccountingMails(List<Mail> accountingMails) {
+		this.accountingMails = accountingMails;
 	}
 
 }

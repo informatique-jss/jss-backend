@@ -24,7 +24,7 @@ public class TransfertFundsTypeServiceImpl implements TransfertFundsTypeService 
     @Override
     public TransfertFundsType getTransfertFundsType(Integer id) {
         Optional<TransfertFundsType> transfertFundsType = transfertFundsTypeRepository.findById(id);
-        if (!transfertFundsType.isEmpty())
+        if (transfertFundsType.isPresent())
             return transfertFundsType.get();
         return null;
     }

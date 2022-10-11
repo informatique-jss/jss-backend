@@ -3,12 +3,12 @@ package com.jss.osiris.modules.miscellaneous.service;
 import java.util.List;
 import java.util.Optional;
 
-import com.jss.osiris.modules.miscellaneous.model.AttachmentType;
-import com.jss.osiris.modules.miscellaneous.repository.AttachmentTypeRepository;
-
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.jss.osiris.modules.miscellaneous.model.AttachmentType;
+import com.jss.osiris.modules.miscellaneous.repository.AttachmentTypeRepository;
 
 @Service
 public class AttachmentTypeServiceImpl implements AttachmentTypeService {
@@ -24,12 +24,12 @@ public class AttachmentTypeServiceImpl implements AttachmentTypeService {
     @Override
     public AttachmentType getAttachmentType(Integer id) {
         Optional<AttachmentType> attachmentType = attachmentTypeRepository.findById(id);
-        if (!attachmentType.isEmpty())
+        if (attachmentType.isPresent())
             return attachmentType.get();
         return null;
     }
-	
-	 @Override
+
+    @Override
     public AttachmentType addOrUpdateAttachmentType(
             AttachmentType attachmentType) {
         return attachmentTypeRepository.save(attachmentType);

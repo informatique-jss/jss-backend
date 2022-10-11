@@ -3,12 +3,12 @@ package com.jss.osiris.modules.tiers.service;
 import java.util.List;
 import java.util.Optional;
 
-import com.jss.osiris.modules.tiers.model.Competitor;
-import com.jss.osiris.modules.tiers.repository.CompetitorRepository;
-
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.jss.osiris.modules.tiers.model.Competitor;
+import com.jss.osiris.modules.tiers.repository.CompetitorRepository;
 
 @Service
 public class CompetitorServiceImpl implements CompetitorService {
@@ -24,12 +24,12 @@ public class CompetitorServiceImpl implements CompetitorService {
     @Override
     public Competitor getCompetitor(Integer id) {
         Optional<Competitor> competitor = competitorRepository.findById(id);
-        if (!competitor.isEmpty())
+        if (competitor.isPresent())
             return competitor.get();
         return null;
     }
-	
-	 @Override
+
+    @Override
     public Competitor addOrUpdateCompetitor(
             Competitor competitor) {
         return competitorRepository.save(competitor);

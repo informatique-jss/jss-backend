@@ -37,7 +37,7 @@ public class DepositServiceImpl implements DepositService {
     @Cacheable(value = "deposit", key = "#id")
     public Deposit getDeposit(Integer id) {
         Optional<Deposit> deposit = depositRepository.findById(id);
-        if (!deposit.isEmpty())
+        if (deposit.isPresent())
             return deposit.get();
         return null;
     }

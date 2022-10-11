@@ -20,7 +20,7 @@ export class AutocompleteEmployeeComponent extends GenericLocalAutocompleteCompo
   filterEntities(types: Employee[], value: string): Employee[] {
     const filterValue = (value != undefined && value != null && value.toLowerCase != undefined) ? value.toLowerCase() : "";
     return types.filter(employee =>
-      employee.firstname != undefined && employee.lastname != undefined
+      employee.firstname != undefined && employee.lastname != undefined && employee.isActive == true
       && (employee.firstname.toLowerCase().includes(filterValue) || employee.lastname.toLowerCase().includes(filterValue)));
   }
 

@@ -17,32 +17,32 @@ import { Audit } from 'src/app/modules/miscellaneous/model/Audit';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { DocumentTypeService } from 'src/app/modules/miscellaneous/services/document.type.service';
 import { UploadAttachmentService } from 'src/app/modules/miscellaneous/services/upload.attachment.service';
-import { SHAL_ENTITY_TYPE } from 'src/app/routing/search/search.component';
+import { ANNOUNCEMENT_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { ConfrereDialogComponent } from '../../../miscellaneous/components/confreres-dialog/confreres-dialog.component';
 import { Document } from "../../../miscellaneous/model/Document";
 import { DocumentType } from "../../../miscellaneous/model/DocumentType";
 import { Affaire } from '../../model/Affaire';
+import { Announcement } from '../../model/Announcement';
+import { AnnouncementNoticeTemplate } from '../../model/AnnouncementNoticeTemplate';
 import { CharacterPrice } from '../../model/CharacterPrice';
 import { Confrere } from '../../model/Confrere';
 import { JournalType } from '../../model/JournalType';
 import { NoticeType } from '../../model/NoticeType';
-import { Shal } from '../../model/Shal';
-import { ShalNoticeTemplate } from '../../model/ShalNoticeTemplate';
+import { AnnouncementNoticeTemplateService } from '../../services/announcement.notice.template.service';
 import { CharacterPriceService } from '../../services/character.price.service';
 import { ConfrereService } from '../../services/confrere.service';
 import { JournalTypeService } from '../../services/journal.type.service';
 import { NoticeTypeService } from '../../services/notice.type.service';
-import { ShalNoticeTemplateService } from '../../services/shal.notice.template.service';
 
 @Component({
-  selector: 'shal',
-  templateUrl: './shal.component.html',
-  styleUrls: ['./shal.component.css']
+  selector: 'announcement',
+  templateUrl: './announcement.component.html',
+  styleUrls: ['./announcement.component.css']
 })
-export class ShalComponent implements OnInit {
+export class AnnouncementComponent implements OnInit {
 
   matcher: CustomErrorStateMatcher = new CustomErrorStateMatcher();
-  @Input() shal: Shal = {} as Shal;
+  @Input() announcement: Announcement = {} as Announcement;
   @Input() affaire: Affaire = {} as Affaire;
   @Input() editMode: boolean = false;
   @Input() instanceOfCustomerOrder: boolean = false;
@@ -55,7 +55,7 @@ export class ShalComponent implements OnInit {
   @ViewChild(MatAccordion) accordion: MatAccordion | undefined;
 
   SEPARATOR_KEY_CODES = SEPARATOR_KEY_CODES;
-  SHAL_ENTITY_TYPE = SHAL_ENTITY_TYPE;
+  ANNOUNCEMENT_ENTITY_TYPE = ANNOUNCEMENT_ENTITY_TYPE;
   CONFRERE_BALO_ID = CONFRERE_BALO_ID;
   LOGO_ATTACHMENT_TYPE_CODE = LOGO_ATTACHMENT_TYPE_CODE;
   JOURNAL_TYPE_SPEL_CODE = JOURNAL_TYPE_SPEL_CODE;
@@ -76,9 +76,9 @@ export class ShalComponent implements OnInit {
   noticeTypes: NoticeType[] = [] as Array<NoticeType>;
   filteredNoticeTypes: Observable<NoticeType[]> | undefined;
 
-  noticeTemplates: ShalNoticeTemplate[] = [] as Array<ShalNoticeTemplate>;
-  filteredNoticeTemplates: Observable<ShalNoticeTemplate[]> | undefined;
-  selectedNoticeTemplates: ShalNoticeTemplate[] = [] as Array<ShalNoticeTemplate>;
+  noticeTemplates: AnnouncementNoticeTemplate[] = [] as Array<AnnouncementNoticeTemplate>;
+  filteredNoticeTemplates: Observable<AnnouncementNoticeTemplate[]> | undefined;
+  selectedNoticeTemplates: AnnouncementNoticeTemplate[] = [] as Array<AnnouncementNoticeTemplate>;
 
   logoUrl: SafeUrl | undefined;
 
@@ -90,15 +90,15 @@ export class ShalComponent implements OnInit {
     private documentTypeService: DocumentTypeService,
     private journalTypeService: JournalTypeService,
     private uploadAttachmentService: UploadAttachmentService,
-    private shalNoticeTemplateService: ShalNoticeTemplateService,
+    private announcementNoticeTemplateService: AnnouncementNoticeTemplateService,
     private sanitizer: DomSanitizer
   ) { }
 
   ngOnInit() {
     this.confrereService.getConfreres().subscribe(response => {
       this.confreres = response;
-      if (this.shal!.confrere == null || this.shal!.confrere == undefined || this.shal!.confrere.id == undefined)
-        this.shal!.confrere = this.getJssConfrere();
+      if (this.announcement!.confrere == null || this.announcement!.confrere == undefined || this.announcement!.confrere.id == undefined)
+        this.announcement!.confrere = this.getJssConfrere();
     })
 
     this.journalTypeService.getJournalTypes().subscribe(response => {
@@ -109,63 +109,63 @@ export class ShalComponent implements OnInit {
       this.noticeTypes = response;
     })
 
-    this.shalNoticeTemplateService.getShalNoticeTemplates().subscribe(response => {
+    this.announcementNoticeTemplateService.getAnnouncementNoticeTemplates().subscribe(response => {
       this.noticeTemplates = response;
     })
 
-    this.filteredConfreres = this.shalForm.get("confrere")?.valueChanges.pipe(
+    this.filteredConfreres = this.announcementForm.get("confrere")?.valueChanges.pipe(
       startWith(''),
       map(value => this._filterConfrere(value)),
     );
 
-    this.filteredNoticeTypes = this.shalForm.get("noticeTypes")?.valueChanges.pipe(
+    this.filteredNoticeTypes = this.announcementForm.get("noticeTypes")?.valueChanges.pipe(
       startWith(''),
       map(value => this._filterNoticeType(value)),
     );
 
-    this.filteredNoticeTemplates = this.shalForm.get("noticeTemplates")?.valueChanges.pipe(
+    this.filteredNoticeTemplates = this.announcementForm.get("noticeTemplates")?.valueChanges.pipe(
       startWith(''),
       map(value => this._filterByLabel(value)),
     );
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes.shal) {
-      if (!this.shal!)
-        this.shal! = {} as Shal;
-      if (!this.shal!.confrere)
-        this.shal!.confrere = this.getJssConfrere();
-      if (!this.shal!.isRedactedByJss)
-        this.shal!.isRedactedByJss = false;
-      if (!this.shal!.isHeader)
-        this.shal!.isHeader = false;
-      if (!this.shal!.isHeaderFree)
-        this.shal!.isHeaderFree = false;
-      if (!this.shal!.isLogo)
-        this.shal!.isLogo = false;
-      if (!this.shal!.isPictureBaloPackage)
-        this.shal!.isPictureBaloPackage = false;
-      if (!this.shal!.isLegalDisplay)
-        this.shal!.isLegalDisplay = false;
-      if (!this.shal!.isProofReadingDocument)
-        this.shal!.isProofReadingDocument = false;
-      if (!this.shal!.isPublicationCertificateDocument)
-        this.shal!.isPublicationCertificateDocument = false;
-      if (this.shal!.publicationDate)
-        this.shal.publicationDate = new Date(this.shal.publicationDate);
+    if (changes.announcement) {
+      if (!this.announcement!)
+        this.announcement! = {} as Announcement;
+      if (!this.announcement!.confrere)
+        this.announcement!.confrere = this.getJssConfrere();
+      if (!this.announcement!.isRedactedByJss)
+        this.announcement!.isRedactedByJss = false;
+      if (!this.announcement!.isHeader)
+        this.announcement!.isHeader = false;
+      if (!this.announcement!.isHeaderFree)
+        this.announcement!.isHeaderFree = false;
+      if (!this.announcement!.isLogo)
+        this.announcement!.isLogo = false;
+      if (!this.announcement!.isPictureBaloPackage)
+        this.announcement!.isPictureBaloPackage = false;
+      if (!this.announcement!.isLegalDisplay)
+        this.announcement!.isLegalDisplay = false;
+      if (!this.announcement!.isProofReadingDocument)
+        this.announcement!.isProofReadingDocument = false;
+      if (!this.announcement!.isPublicationCertificateDocument)
+        this.announcement!.isPublicationCertificateDocument = false;
+      if (this.announcement!.publicationDate)
+        this.announcement.publicationDate = new Date(this.announcement.publicationDate);
 
       this.documentTypeService.getDocumentTypes().subscribe(response => {
         this.documentTypes = response;
-        this.publicationDocument = getDocument(PUBLICATION_TIERS_DOCUMENT_TYPE_CODE, this.shal!, this.documentTypes);
-        this.proofReadingDocument = getDocument(PROOF_READING_DOCUMENT_TYPE_CODE, this.shal!, this.documentTypes);
-        this.publicationCertificateDocument = getDocument(PUBLICATION_CERTIFICATE_DOCUMENT_TYPE_CODE, this.shal!, this.documentTypes);
+        this.publicationDocument = getDocument(PUBLICATION_TIERS_DOCUMENT_TYPE_CODE, this.announcement!, this.documentTypes);
+        this.proofReadingDocument = getDocument(PROOF_READING_DOCUMENT_TYPE_CODE, this.announcement!, this.documentTypes);
+        this.publicationCertificateDocument = getDocument(PUBLICATION_CERTIFICATE_DOCUMENT_TYPE_CODE, this.announcement!, this.documentTypes);
         this.setLogoUrl();
       })
 
-      this.shalForm.get('notice')?.setValue(this.shal.notice);
-      this.shalForm.get('noticeHeader')?.setValue(this.shal.noticeHeader);
+      this.announcementForm.get('notice')?.setValue(this.announcement.notice);
+      this.announcementForm.get('noticeHeader')?.setValue(this.announcement.noticeHeader);
 
-      this.shalForm.markAllAsTouched();
+      this.announcementForm.markAllAsTouched();
       this.toggleTabs();
       this.updateCharacterPrice();
     }
@@ -181,7 +181,7 @@ export class ShalComponent implements OnInit {
     return {} as Confrere;
   }
 
-  shalForm = this.formBuilder.group({
+  announcementForm = this.formBuilder.group({
     noticeTypes: [''],
     noticeTemplates: [''],
     notice: ['', Validators.required],
@@ -191,11 +191,11 @@ export class ShalComponent implements OnInit {
   });
 
   getFormStatus(): boolean {
-    this.shalForm.markAllAsTouched();
-    if (this.shal)
-      this.shal.notice = this.shal.notice.replace(/ +(?= )/g, '').replace(/(\r\n|\r|\n){2,}/g, '$1\n');
+    this.announcementForm.markAllAsTouched();
+    if (this.announcement)
+      this.announcement.notice = this.announcement.notice.replace(/ +(?= )/g, '').replace(/(\r\n|\r|\n){2,}/g, '$1\n');
 
-    return this.shalForm.valid && this.shal.noticeTypes && this.shal.noticeTypes.length > 0;
+    return this.announcementForm.valid && this.announcement.noticeTypes && this.announcement.noticeTypes.length > 0;
   }
 
   getCurrentDate(): Date {
@@ -203,8 +203,8 @@ export class ShalComponent implements OnInit {
   }
 
   updateCharacterPrice() {
-    if (this.shal!.department != undefined && this.shal!.publicationDate != undefined)
-      this.characterPriceService.getCharacterPrice(this.shal!.department, this.shal!.publicationDate).subscribe(response => {
+    if (this.announcement!.department != undefined && this.announcement!.publicationDate != undefined)
+      this.characterPriceService.getCharacterPrice(this.announcement!.department, this.announcement!.publicationDate).subscribe(response => {
         if (response != null)
           this.characterPrice = response;
       })
@@ -212,37 +212,37 @@ export class ShalComponent implements OnInit {
 
   applyNoticeTemplate() {
     if (this.selectedNoticeTemplates) {
-      this.shal.notice = "";
+      this.announcement.notice = "";
       for (let template of this.selectedNoticeTemplates) {
-        this.shal.notice += template.text + "<br>";
+        this.announcement.notice += template.text + "<br>";
       }
-      this.shalForm.get('notice')?.setValue(this.shal.notice);
+      this.announcementForm.get('notice')?.setValue(this.announcement.notice);
     }
   }
 
   setNoticeModel(event: any) {
-    if (this.shal)
-      this.shal.notice = event.html;
+    if (this.announcement)
+      this.announcement.notice = event.html;
     this.noticeChange.emit();
   }
 
   setNoticeHeaderModel(event: any) {
-    if (this.shal)
-      this.shal.noticeHeader = event.html;
+    if (this.announcement)
+      this.announcement.noticeHeader = event.html;
     this.noticeChange.emit();
   }
 
   countCharacterNumber() {
-    let noticeValue = this.shalForm.get('notice')?.value != undefined ? this.shalForm.get('notice')?.value : "";
+    let noticeValue = this.announcementForm.get('notice')?.value != undefined ? this.announcementForm.get('notice')?.value : "";
     // Ignore HTML tags
     noticeValue = new DOMParser().parseFromString(noticeValue, "text/html").documentElement.textContent;
 
-    let headerValue = this.shalForm.get('noticeHeader')?.value != undefined ? this.shalForm.get('noticeHeader')?.value : "";
+    let headerValue = this.announcementForm.get('noticeHeader')?.value != undefined ? this.announcementForm.get('noticeHeader')?.value : "";
     // Ignore HTML tags
     headerValue = new DOMParser().parseFromString(headerValue, "text/html").documentElement.textContent;
 
     let nbr = noticeValue.replace(/ +(?= )/g, '').replace(/(\r\n|\r|\n){2,}/g, ' ').trim().length;
-    if (!this.shal?.isHeaderFree)
+    if (!this.announcement?.isHeaderFree)
       nbr += headerValue.replace(/ +(?= )/g, '').replace(/(\r\n|\r|\n){2,}/g, ' ').trim().length;
 
     return nbr;
@@ -254,15 +254,15 @@ export class ShalComponent implements OnInit {
   }
 
   updateAttachments(attachments: Attachment[]) {
-    if (attachments && this.shal) {
-      this.shal.attachments = attachments;
+    if (attachments && this.announcement) {
+      this.announcement.attachments = attachments;
       this.setLogoUrl();
     }
   }
 
   setLogoUrl() {
-    if (this.shal && this.shal.attachments != null && this.shal.attachments) {
-      this.shal.attachments.forEach(attachment => {
+    if (this.announcement && this.announcement.attachments != null && this.announcement.attachments) {
+      this.announcement.attachments.forEach(attachment => {
         if (attachment.attachmentType.code == LOGO_ATTACHMENT_TYPE_CODE)
           this.uploadAttachmentService.previewAttachmentUrl(attachment).subscribe((response: any) => {
             let binaryData = [];
@@ -275,8 +275,8 @@ export class ShalComponent implements OnInit {
   }
 
   updateHeaderFree() {
-    if (this.shal && this.shal.confrere?.journalType && this.shal.confrere.journalType.code == JOURNAL_TYPE_SPEL_CODE)
-      this.shal.isHeaderFree = true;
+    if (this.announcement && this.announcement.confrere?.journalType && this.announcement.confrere.journalType.code == JOURNAL_TYPE_SPEL_CODE)
+      this.announcement.isHeaderFree = true;
   }
 
   openConfrereDialog() {
@@ -285,7 +285,7 @@ export class ShalComponent implements OnInit {
     });
     dialogConfrere.afterClosed().subscribe(response => {
       if (response && response != null)
-        this.shal!.confrere = response;
+        this.announcement!.confrere = response;
       this.updateHeaderFree();
     });
   }
@@ -306,40 +306,40 @@ export class ShalComponent implements OnInit {
 
   private _filterNoticeType(value: string): NoticeType[] {
     const filterValue = (value != undefined && value.toLowerCase != undefined) ? value.toLowerCase() : "";
-    return this.noticeTypes.filter(noticeType => noticeType.label != undefined && noticeType.label.toLowerCase().includes(filterValue) && noticeType.noticeTypeFamily.id == this.shal!.noticeTypeFamily.id);
+    return this.noticeTypes.filter(noticeType => noticeType.label != undefined && noticeType.label.toLowerCase().includes(filterValue) && noticeType.noticeTypeFamily.id == this.announcement!.noticeTypeFamily.id);
   }
 
-  private _filterByLabel(value: string): ShalNoticeTemplate[] {
+  private _filterByLabel(value: string): AnnouncementNoticeTemplate[] {
     const filterValue = (value != undefined && value.toLowerCase != undefined) ? value.toLowerCase() : "";
     return this.noticeTemplates.filter(noticeTemplate => noticeTemplate.label != undefined && noticeTemplate.label.toLowerCase().includes(filterValue));
   }
 
   addNoticeType(event: MatAutocompleteSelectedEvent): void {
-    if (!this.shal!.noticeTypes)
-      this.shal!.noticeTypes = [] as Array<NoticeType>;
+    if (!this.announcement!.noticeTypes)
+      this.announcement!.noticeTypes = [] as Array<NoticeType>;
     // Do not add twice
-    if (this.shal!.noticeTypes.map(noticeType => noticeType.id).indexOf(event.option.value.id) >= 0)
+    if (this.announcement!.noticeTypes.map(noticeType => noticeType.id).indexOf(event.option.value.id) >= 0)
       return;
     if (event.option && event.option.value && event.option.value.id)
-      this.shal!.noticeTypes.push(event.option.value);
-    this.shalForm.get("noticeTypes")?.setValue(null);
+      this.announcement!.noticeTypes.push(event.option.value);
+    this.announcementForm.get("noticeTypes")?.setValue(null);
     this.noticeTypesInput!.nativeElement.value = '';
   }
 
   addNoticeTemplate(event: MatAutocompleteSelectedEvent): void {
     if (!this.selectedNoticeTemplates)
-      this.selectedNoticeTemplates = [] as Array<ShalNoticeTemplate>;
+      this.selectedNoticeTemplates = [] as Array<AnnouncementNoticeTemplate>;
     // Do not add twice
     if (this.selectedNoticeTemplates.map(noticeTemplate => noticeTemplate.id).indexOf(event.option.value.id) >= 0)
       return;
     if (event.option && event.option.value && event.option.value.id)
       this.selectedNoticeTemplates.push(event.option.value);
     this.applyNoticeTemplate();
-    this.shalForm.get("noticeTemplates")?.setValue(null);
+    this.announcementForm.get("noticeTemplates")?.setValue(null);
     this.noticeTemplateInput!.nativeElement.value = '';
   }
 
-  removeNoticeTemplate(inputNoticeTemplate: ShalNoticeTemplate): void {
+  removeNoticeTemplate(inputNoticeTemplate: AnnouncementNoticeTemplate): void {
     if (this.selectedNoticeTemplates && this.editMode)
       for (let i = 0; i < this.selectedNoticeTemplates.length; i++) {
         const noticeTemplate = this.selectedNoticeTemplates[i];
@@ -351,11 +351,11 @@ export class ShalComponent implements OnInit {
   }
 
   removeNoticeType(inputNoticeType: NoticeType): void {
-    if (this.shal!.noticeTypes != undefined && this.shal!.noticeTypes != null && this.editMode)
-      for (let i = 0; i < this.shal!.noticeTypes.length; i++) {
-        const noticeType = this.shal!.noticeTypes[i];
+    if (this.announcement!.noticeTypes != undefined && this.announcement!.noticeTypes != null && this.editMode)
+      for (let i = 0; i < this.announcement!.noticeTypes.length; i++) {
+        const noticeType = this.announcement!.noticeTypes[i];
         if (noticeType.id == inputNoticeType.id) {
-          this.shal!.noticeTypes.splice(i, 1);
+          this.announcement!.noticeTypes.splice(i, 1);
           return;
         }
       }
@@ -376,7 +376,7 @@ export class ShalComponent implements OnInit {
   }
 
   exportAsRtf() {
-    downloadHtmlAsRtf("Affaire " + this.affaire.id + " - " + formatDate(new Date()) + ".rtf", ((this.shal.noticeHeader) ? this.shal.noticeHeader + "<br>" : "") + this.shal.notice);
+    downloadHtmlAsRtf("Affaire " + this.affaire.id + " - " + formatDate(new Date()) + ".rtf", ((this.announcement.noticeHeader) ? this.announcement.noticeHeader + "<br>" : "") + this.announcement.notice);
   }
 
 }

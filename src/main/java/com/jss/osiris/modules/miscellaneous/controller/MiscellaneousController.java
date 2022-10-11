@@ -68,10 +68,10 @@ import com.jss.osiris.modules.miscellaneous.service.SpecialOfferService;
 import com.jss.osiris.modules.miscellaneous.service.VatCollectionTypeService;
 import com.jss.osiris.modules.miscellaneous.service.VatService;
 import com.jss.osiris.modules.miscellaneous.service.WeekDayService;
+import com.jss.osiris.modules.quotation.model.Announcement;
 import com.jss.osiris.modules.quotation.model.Bodacc;
 import com.jss.osiris.modules.quotation.model.Domiciliation;
 import com.jss.osiris.modules.quotation.model.Quotation;
-import com.jss.osiris.modules.quotation.model.Shal;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
@@ -179,6 +179,9 @@ public class MiscellaneousController {
             validationHelper.validateString(provider.getLabel(), true);
             validationHelper.validateString(provider.getBic(), false, 40);
             validationHelper.validateString(provider.getIban(), false, 40);
+            validationHelper.validateString(provider.getJssReference(), false, 20);
+            validationHelper.validateReferential(provider.getVatCollectionType(), true);
+            validationHelper.validateReferential(provider.getPaymentType(), false);
 
             outProvider = providerService
                     .addOrUpdateProvider(provider);
@@ -261,7 +264,7 @@ public class MiscellaneousController {
                 validationHelper.validateReferential(gifts, true);
             validationHelper.validateString(gifts.getCode(), true, 20);
             validationHelper.validateString(gifts.getLabel(), true, 100);
-            validationHelper.validateReferential(gifts.getAccountingAccount(), true);
+            validationHelper.validateReferential(gifts.getAccountingAccount(), false);
 
             outGift = giftService
                     .addOrUpdateGift(gifts);
@@ -393,7 +396,6 @@ public class MiscellaneousController {
             validationHelper.validateString(cities.getCode(), true, 20);
             validationHelper.validateString(cities.getLabel(), true, 100);
             validationHelper.validateString(cities.getPostalCode(), false, 6);
-            validationHelper.validateString(cities.getLocality(), true, 60);
             validationHelper.validateReferential(cities.getDepartment(), false);
             validationHelper.validateReferential(cities.getCountry(), true);
 
@@ -1037,6 +1039,7 @@ public class MiscellaneousController {
                 validationHelper.validateReferential(legalForms, true);
             validationHelper.validateString(legalForms.getCode(), true, 20);
             validationHelper.validateString(legalForms.getLabel(), true, 100);
+            validationHelper.validateString(legalForms.getDescription(), false, 400);
 
             outLegalForm = legalFormService
                     .addOrUpdateLegalForm(legalForms);
@@ -1119,6 +1122,7 @@ public class MiscellaneousController {
                 validationHelper.validateReferential(attachmentTypes, true);
             validationHelper.validateString(attachmentTypes.getCode(), true, 20);
             validationHelper.validateString(attachmentTypes.getLabel(), true, 100);
+            validationHelper.validateString(attachmentTypes.getDescription(), false, 400);
 
             outAttachmentType = attachmentTypeService
                     .addOrUpdateAttachmentType(attachmentTypes);
@@ -1183,7 +1187,7 @@ public class MiscellaneousController {
             if (!entityType.equals(Tiers.class.getSimpleName())
                     && !entityType.equals(Responsable.class.getSimpleName())
                     && !entityType.equals(Quotation.class.getSimpleName())
-                    && !entityType.equals(Shal.class.getSimpleName())
+                    && !entityType.equals(Announcement.class.getSimpleName())
                     && !entityType.equals(Domiciliation.class.getSimpleName())
                     && !entityType.equals(Bodacc.class.getSimpleName()))
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

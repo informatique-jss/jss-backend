@@ -80,7 +80,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   @Cacheable(value = "accountingRecord", key = "#id")
   public AccountingRecord getAccountingRecord(Integer id) {
     Optional<AccountingRecord> accountingRecord = accountingRecordRepository.findById(id);
-    if (!accountingRecord.isEmpty())
+    if (accountingRecord.isPresent())
       return accountingRecord.get();
     return null;
   }
@@ -230,6 +230,29 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   }
 
   @Override
+  public void generateAppointForPayment(Payment payment, float remainingMoney, ITiers customerOrder) throws Exception {
+    AccountingAccount accountingAccountCustomer = getCustomerAccountingAccountForCustomerOrder(customerOrder);
+
+    if (remainingMoney > 0) {
+      generateNewAccountingRecord(LocalDateTime.now(), payment.getId(), null,
+          "Appoint pour le paiement n°" + payment.getId(),
+          remainingMoney, null, accountingAccountService.getProfitAccountingAccount(), null, null, null,
+          accountingJournalService.getSalesAccountingJournal(), payment, null);
+      generateNewAccountingRecord(LocalDateTime.now(), payment.getId(), null,
+          "Appoint pour le paiement n°" + payment.getId(), null, remainingMoney, accountingAccountCustomer, null,
+          null, null, accountingJournalService.getSalesAccountingJournal(), payment, null);
+    } else if (remainingMoney < 0) {
+      generateNewAccountingRecord(LocalDateTime.now(), payment.getId(), null,
+          "Appoint pour le paiement n°" + payment.getId(),
+          null, remainingMoney, accountingAccountService.getLostAccountingAccount(), null, null, null,
+          accountingJournalService.getSalesAccountingJournal(), payment, null);
+      generateNewAccountingRecord(LocalDateTime.now(), payment.getId(), null,
+          "Appoint pour le paiement n°" + payment.getId(), remainingMoney, null, accountingAccountCustomer, null,
+          null, null, accountingJournalService.getSalesAccountingJournal(), payment, null);
+    }
+  }
+
+  @Override
   public void generateAccountingRecordsForDepositAndCustomerOrder(Deposit deposit, CustomerOrder customerOrder,
       Payment payment)
       throws Exception {
@@ -316,11 +339,12 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
         maxLetteringNumber = 0;
       maxLetteringNumber++;
 
-      for (AccountingRecord accountingRecord : accountingRecords) {
-        accountingRecord.setLetteringDateTime(LocalDateTime.now());
-        accountingRecord.setLetteringNumber(maxLetteringNumber);
-        this.addOrUpdateAccountingRecord(accountingRecord);
-      }
+      if (accountingRecords != null)
+        for (AccountingRecord accountingRecord : accountingRecords) {
+          accountingRecord.setLetteringDateTime(LocalDateTime.now());
+          accountingRecord.setLetteringNumber(maxLetteringNumber);
+          this.addOrUpdateAccountingRecord(accountingRecord);
+        }
     }
 
   }
@@ -581,8 +605,6 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     newAccountingRecord.setIsTemporary(true);
     newAccountingRecord.setLabel("Contre passe de : " + originalAccountingRecord.getLabel());
     newAccountingRecord.setManualAccountingDocumentDate(originalAccountingRecord.getManualAccountingDocumentDate());
-    newAccountingRecord
-        .setManualAccountingDocumentDeadline(originalAccountingRecord.getManualAccountingDocumentDeadline());
     newAccountingRecord.setManualAccountingDocumentNumber(originalAccountingRecord.getManualAccountingDocumentNumber());
     newAccountingRecord.setPayment(originalAccountingRecord.getPayment());
     newAccountingRecord.setTemporaryOperationId(originalAccountingRecord.getTemporaryOperationId());
@@ -649,4 +671,40 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     return IterableUtils.toList(accountingRecordRepository.findByCustomerOrder(customerOrder));
   }
 
+  @Override
+  public List<AccountingRecord> getAccountingRecordsByTemporaryOperationId(Integer temporaryOperationId)
+      throws Exception {
+    if (temporaryOperationId != null)
+      return accountingRecordRepository.findByTemporaryOperationId(temporaryOperationId);
+    return null;
+  }
+
+  @Override
+  public List<AccountingRecord> deleteRecordsByTemporaryOperationId(Integer temporaryOperationId) throws Exception {
+    List<AccountingRecord> accountingRecords = getAccountingRecordsByTemporaryOperationId(temporaryOperationId);
+
+    if (accountingRecords != null) {
+      for (AccountingRecord accountingRecord : accountingRecords)
+        accountingRecordRepository.delete(accountingRecord);
+    }
+    return null;
+  }
+
+  @Override
+  public List<AccountingRecord> getAccountingRecordsByOperationId(Integer operationId) throws Exception {
+    if (operationId != null)
+      return accountingRecordRepository.findByOperationId(operationId);
+    return null;
+  }
+
+  @Override
+  public List<AccountingRecord> doCounterPartByOperationId(Integer operationId) throws Exception {
+    List<AccountingRecord> accountingRecords = getAccountingRecordsByOperationId(operationId);
+
+    if (accountingRecords != null) {
+      for (AccountingRecord accountingRecord : accountingRecords)
+        generateCounterPart(accountingRecord);
+    }
+    return null;
+  }
 }

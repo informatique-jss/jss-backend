@@ -3,19 +3,19 @@ import { UntypedFormBuilder } from '@angular/forms';
 import { MatExpansionPanel } from '@angular/material/expansion';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
 import { compareWithId } from 'src/app/libs/CompareHelper';
-import { PROVISION_TYPE_BODACC_CODE, PROVISION_TYPE_DOMICILIATION_CODE, PROVISION_TYPE_SHAL_CODE } from 'src/app/libs/Constants';
+import { PROVISION_TYPE_ANNOUNCEMENT_CODE, PROVISION_TYPE_BODACC_CODE, PROVISION_TYPE_DOMICILIATION_CODE } from 'src/app/libs/Constants';
 import { Affaire } from '../../model/Affaire';
+import { Announcement } from '../../model/Announcement';
 import { Bodacc } from '../../model/Bodacc';
 import { Domiciliation } from '../../model/Domiciliation';
 import { Provision } from '../../model/Provision';
 import { ProvisionFamilyType } from '../../model/ProvisionFamilyType';
 import { ProvisionType } from '../../model/ProvisionType';
-import { Shal } from '../../model/Shal';
 import { ProvisionFamilyTypeService } from '../../services/provision.family.type.service';
 import { ProvisionTypeService } from '../../services/provision.type.service';
+import { AnnouncementComponent } from '../announcement/announcement.component';
 import { BodaccMainComponent } from '../bodacc-main/bodacc-main.component';
 import { DomiciliationComponent } from '../domiciliation/domiciliation.component';
-import { ShalComponent } from '../shal/shal.component';
 
 
 @Component({
@@ -34,14 +34,14 @@ export class ProvisionItemComponent implements OnInit {
   @Input() isStatusOpen: boolean = true;
   @Output() selectedProvisionTypeChange: EventEmitter<void> = new EventEmitter<void>();
   @ViewChild(DomiciliationComponent) domiciliationComponent: DomiciliationComponent | undefined;
-  @ViewChild(ShalComponent) shalComponent: ShalComponent | undefined;
+  @ViewChild(AnnouncementComponent) announcementComponent: AnnouncementComponent | undefined;
   @ViewChild(BodaccMainComponent) bodaccComponent: BodaccMainComponent | undefined;
 
   provisionFamilyTypes: ProvisionFamilyType[] = [] as Array<ProvisionFamilyType>;
   provisionTypes: ProvisionType[] = [] as Array<ProvisionType>;
 
   PROVISION_TYPE_DOMICILIATION_CODE = PROVISION_TYPE_DOMICILIATION_CODE;
-  PROVISION_TYPE_SHAL_CODE = PROVISION_TYPE_SHAL_CODE;
+  PROVISION_TYPE_ANNOUNCEMENT_CODE = PROVISION_TYPE_ANNOUNCEMENT_CODE;
   PROVISION_TYPE_BODACC_CODE = PROVISION_TYPE_BODACC_CODE;
 
   constructor(private formBuilder: UntypedFormBuilder,
@@ -71,8 +71,8 @@ export class ProvisionItemComponent implements OnInit {
     if (this.domiciliationComponent)
       status = status && this.domiciliationComponent.getFormStatus();
 
-    if (this.shalComponent)
-      status = status && this.shalComponent.getFormStatus();
+    if (this.announcementComponent)
+      status = status && this.announcementComponent.getFormStatus();
 
     if (this.bodaccComponent)
       status = status && this.bodaccComponent.getFormStatus();
@@ -91,7 +91,7 @@ export class ProvisionItemComponent implements OnInit {
     }
 
     if (!this.provision.provisionFamilyType || !this.provision.provisionType) {
-      this.provision.shal = undefined;
+      this.provision.announcement = undefined;
       this.provision.domiciliation = undefined;
       this.provision.bodacc = undefined;
       this.selectedProvisionTypeChange.emit();
@@ -104,10 +104,10 @@ export class ProvisionItemComponent implements OnInit {
       this.provision.domiciliation = {} as Domiciliation;
     }
 
-    if (this.provision.provisionType.code != PROVISION_TYPE_SHAL_CODE) {
-      this.provision.shal = undefined;
-    } else if (!this.provision.shal) {
-      this.provision.shal = {} as Shal;
+    if (this.provision.provisionType.code != PROVISION_TYPE_ANNOUNCEMENT_CODE) {
+      this.provision.announcement = undefined;
+    } else if (!this.provision.announcement) {
+      this.provision.announcement = {} as Announcement;
     }
 
     if (this.provision.provisionType.code != PROVISION_TYPE_BODACC_CODE) {

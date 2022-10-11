@@ -34,9 +34,9 @@ public class ResponsableServiceImpl implements ResponsableService {
     @Override
     public Responsable getResponsable(Integer id) {
         Optional<Responsable> responsable = responsableRepository.findById(id);
-        if (!responsable.isEmpty())
+        if (responsable.isPresent())
             return responsable.get();
-        if (!responsable.isEmpty()) {
+        if (responsable.isPresent()) {
             Responsable responsableInstance = responsable.get();
             responsableInstance.setFirstBilling(invoiceService.getFirstBillingDateForResponsable(responsableInstance));
             return responsableInstance;

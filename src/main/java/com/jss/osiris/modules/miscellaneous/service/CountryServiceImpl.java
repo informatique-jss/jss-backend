@@ -24,7 +24,7 @@ public class CountryServiceImpl implements CountryService {
     @Override
     public Country getCountry(Integer id) {
         Optional<Country> country = countryRepository.findById(id);
-        if (!country.isEmpty())
+        if (country.isPresent())
             return country.get();
         return null;
     }

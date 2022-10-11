@@ -9,7 +9,7 @@ public interface GiftService {
 
     public Gift getGift(Integer id);
 
-    public Gift addOrUpdateGift(Gift gift);
+    public Gift addOrUpdateGift(Gift gift) throws Exception;
 
     public void decreaseStock(Gift gift);
 }

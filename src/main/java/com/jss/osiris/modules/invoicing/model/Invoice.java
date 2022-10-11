@@ -16,11 +16,13 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jss.osiris.libs.JacksonLocalDateSerializer;
 import com.jss.osiris.libs.JacksonLocalDateTimeSerializer;
+import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.miscellaneous.model.City;
 import com.jss.osiris.modules.miscellaneous.model.Country;
@@ -37,6 +39,7 @@ public class Invoice implements Serializable, IId {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
+	@IndexedField
 	private Integer id;
 
 	@Column(nullable = false)
@@ -106,6 +109,7 @@ public class Invoice implements Serializable, IId {
 	private InvoiceStatus invoiceStatus;
 
 	@OneToMany(mappedBy = "invoice")
+	@JsonIgnoreProperties("invoice")
 	private List<AccountingRecord> accountingRecords;
 
 	public Integer getId() {

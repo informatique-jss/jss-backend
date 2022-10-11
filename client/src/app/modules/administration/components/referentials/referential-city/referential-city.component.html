@@ -41,12 +41,6 @@
           </tr>
           <tr>
             <td>
-              <generic-input [(model)]="selectedEntity.locality" label="Localité" [form]="entityForm"
-                propertyName="locality" [isMandatory]="true" [isDisabled]="!editMode" [maxLength]="60"></generic-input>
-            </td>
-          </tr>
-          <tr>
-            <td>
               <autocomplete-department [(model)]="selectedEntity.department" [form]="entityForm"
                 propertyName="department" [isMandatory]="false" [isDisabled]="!editMode"></autocomplete-department>
             </td>

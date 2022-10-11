@@ -1200,16 +1200,20 @@ public class AccountingExportHelper {
                 if (a == null && b == null)
                         return 0;
                 // First, by operation id
-                if (a.getOperationId() != null && b.getOperationId() != null) {
+                if (a != null && b != null && a.getOperationId() != null && b.getOperationId() != null) {
                         return (a.getOperationId() > b.getOperationId()) ? 1 : -1;
                 } else {
                         // Next by operation date
-                        if (a.getOperationDateTime() != null && b.getOperationDateTime() != null) {
-                                return (a.getOperationDateTime().isAfter(b.getOperationDateTime())) ? 1 : -1;
-                        } else {
-                                return (a.getId() > b.getId()) ? 1 : -1;
+                        if (a != null && b != null) {
+                                if (a.getOperationDateTime() != null
+                                                && b.getOperationDateTime() != null) {
+                                        return (a.getOperationDateTime().isAfter(b.getOperationDateTime())) ? 1 : -1;
+                                } else {
+                                        return (a.getId() > b.getId()) ? 1 : -1;
+                                }
                         }
                 }
+                return 0;
         }
 
         private void cleanBeforeMergeOnValidCells(XSSFSheet sheet, CellRangeAddress region, XSSFCellStyle cellStyle) {

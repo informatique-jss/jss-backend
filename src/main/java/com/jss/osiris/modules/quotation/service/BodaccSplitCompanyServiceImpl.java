@@ -17,7 +17,7 @@ public class BodaccSplitCompanyServiceImpl implements BodaccSplitCompanyService 
     @Override
     public BodaccSplitCompany getBodaccSplitCompany(Integer id) {
         Optional<BodaccSplitCompany> bodaccSplitCompany = bodaccSplitCompanyRepository.findById(id);
-        if (!bodaccSplitCompany.isEmpty())
+        if (bodaccSplitCompany.isPresent())
             return bodaccSplitCompany.get();
         return null;
     }

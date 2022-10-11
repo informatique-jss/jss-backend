@@ -14,6 +14,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.modules.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
@@ -39,6 +40,7 @@ public class Payment implements Serializable, IId {
 	private PaymentWay paymentWay;
 
 	@OneToMany(mappedBy = "payment", fetch = FetchType.EAGER)
+	@JsonIgnoreProperties("payment")
 	private List<AccountingRecord> accountingRecords;
 
 	@ManyToOne

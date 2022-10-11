@@ -21,6 +21,9 @@ public class AttachmentType implements Serializable, IId {
 	@Column(nullable = false, length = 20)
 	private String code;
 
+	@Column(length = 400)
+	private String description;
+
 	public Integer getId() {
 		return id;
 	}
@@ -43,6 +46,14 @@ public class AttachmentType implements Serializable, IId {
 
 	public void setCode(String code) {
 		this.code = code;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 }

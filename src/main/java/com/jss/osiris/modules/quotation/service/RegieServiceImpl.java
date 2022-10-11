@@ -37,13 +37,16 @@ public class RegieServiceImpl implements RegieService {
     @Override
     public Regie getRegie(Integer id) {
         Optional<Regie> regie = regieRepository.findById(id);
-        if (!regie.isEmpty())
+        if (regie.isPresent())
             return regie.get();
         return null;
     }
 
     @Override
     public Regie addOrUpdateRegie(Regie regie) throws Exception {
+        if (regie == null)
+            throw new Exception("Provided regie is null");
+
         // If mails already exists, get their ids
         if (regie != null && regie.getMails() != null
                 && regie.getMails().size() > 0)

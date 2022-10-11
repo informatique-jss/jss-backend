@@ -8,7 +8,7 @@ import { GenericReferentialComponent } from '../generic-referential/generic-refe
 
 @Component({
   selector: 'referential-attachment-type',
-  templateUrl: './../generic-referential/generic-referential.component.html',
+  templateUrl: './referential-attachment-type.component.html',
   styleUrls: ['./../generic-referential/generic-referential.component.css']
 })
 export class ReferentialAttachmentTypeComponent extends GenericReferentialComponent<AttachmentType> implements OnInit {

@@ -15,11 +15,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.jss.osiris.modules.quotation.model.Announcement;
 import com.jss.osiris.modules.quotation.model.Bodacc;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.Domiciliation;
 import com.jss.osiris.modules.quotation.model.Quotation;
-import com.jss.osiris.modules.quotation.model.Shal;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
@@ -57,9 +57,9 @@ public class Attachment implements Serializable, IId {
 	private Domiciliation domiciliation;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_shal")
-	@JsonBackReference("shal")
-	private Shal shal;
+	@JoinColumn(name = "id_announcement")
+	@JsonBackReference("announcement")
+	private Announcement announcement;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_bodacc")
@@ -114,12 +114,12 @@ public class Attachment implements Serializable, IId {
 		this.responsable = responsable;
 	}
 
-	public Shal getShal() {
-		return shal;
+	public Announcement getAnnouncement() {
+		return announcement;
 	}
 
-	public void setShal(Shal shal) {
-		this.shal = shal;
+	public void setAnnouncement(Announcement announcement) {
+		this.announcement = announcement;
 	}
 
 	public AttachmentType getAttachmentType() {

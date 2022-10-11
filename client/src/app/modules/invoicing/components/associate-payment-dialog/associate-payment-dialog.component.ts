@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
-import { INVOICING_STATUS_SENT, QUOTATION_STATUS_WAITING_DEPOSIT } from 'src/app/libs/Constants';
+import { INVOICING_PAYMENT_LIMIT_REFUND_EUROS, INVOICING_STATUS_SENT, QUOTATION_STATUS_WAITING_DEPOSIT } from 'src/app/libs/Constants';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { QuotationComponent } from 'src/app/modules/quotation/components/quotation/quotation.component';
@@ -38,6 +38,7 @@ export class AssociatePaymentDialogComponent implements OnInit {
 
   QUOTATION_STATUS_WAITING_DEPOSIT = QUOTATION_STATUS_WAITING_DEPOSIT;
   INVOICING_STATUS_SENT = INVOICING_STATUS_SENT;
+  INVOICING_PAYMENT_LIMIT_REFUND_EUROS: number = INVOICING_PAYMENT_LIMIT_REFUND_EUROS;
 
   getAmountRemaining = getAmountRemaining;
 

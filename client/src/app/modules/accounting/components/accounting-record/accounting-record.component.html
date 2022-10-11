@@ -29,7 +29,8 @@
         </td>
       </tr>
     </table>
-    <sort-table [columns]="displayedColumns" [values]="accountingRecords" tableName="Ecritures"></sort-table>
+    <sort-table [columns]="displayedColumns" [values]="accountingRecords" tableName="Ecritures" [actions]="tableAction">
+    </sort-table>
     <table mat-table [dataSource]="accumulatedDataSource" class="mat-elevation-z8 table total-table" cdkDrag
       [cdkDragFreeDragPosition]="currentUserPosition" (cdkDragEnded)="dropTotalDiv($event)" *ngIf="accountingRecords">
       <ng-container matColumnDef="label">
@@ -75,4 +76,8 @@
       l'ensemble du grand livre
     </button>
   </mat-menu>
+</button>
+<button matTooltip="Ajouter des écritures comptables" mat-fab color="accent" class="fab-button"
+  (click)=" createAccountingRecords()">
+  <mat-icon>add</mat-icon>
 </button>

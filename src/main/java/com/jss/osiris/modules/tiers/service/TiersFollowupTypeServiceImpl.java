@@ -3,12 +3,12 @@ package com.jss.osiris.modules.tiers.service;
 import java.util.List;
 import java.util.Optional;
 
-import com.jss.osiris.modules.tiers.model.TiersFollowupType;
-import com.jss.osiris.modules.tiers.repository.TiersFollowupTypeRepository;
-
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.jss.osiris.modules.tiers.model.TiersFollowupType;
+import com.jss.osiris.modules.tiers.repository.TiersFollowupTypeRepository;
 
 @Service
 public class TiersFollowupTypeServiceImpl implements TiersFollowupTypeService {
@@ -24,12 +24,12 @@ public class TiersFollowupTypeServiceImpl implements TiersFollowupTypeService {
     @Override
     public TiersFollowupType getTiersFollowupType(Integer id) {
         Optional<TiersFollowupType> tiersFollowupType = tiersFollowupTypeRepository.findById(id);
-        if (!tiersFollowupType.isEmpty())
+        if (tiersFollowupType.isPresent())
             return tiersFollowupType.get();
         return null;
     }
-	
-	 @Override
+
+    @Override
     public TiersFollowupType addOrUpdateTiersFollowupType(
             TiersFollowupType tiersFollowupType) {
         return tiersFollowupTypeRepository.save(tiersFollowupType);

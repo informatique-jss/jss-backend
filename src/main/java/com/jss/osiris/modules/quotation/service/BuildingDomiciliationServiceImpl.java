@@ -24,7 +24,7 @@ public class BuildingDomiciliationServiceImpl implements BuildingDomiciliationSe
     @Override
     public BuildingDomiciliation getBuildingDomiciliation(Integer id) {
         Optional<BuildingDomiciliation> buildingDomiciliation = buildingDomiciliationRepository.findById(id);
-        if (!buildingDomiciliation.isEmpty())
+        if (buildingDomiciliation.isPresent())
             return buildingDomiciliation.get();
         return null;
     }

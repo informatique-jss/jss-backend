@@ -87,6 +87,10 @@
                 [isMandatory]="true" [isDisabled]="!editMode"></chips-mail>
             </td>
             <td>
+              <chips-mail [(model)]="selectedEntity.accountingMails" label="Mails (comptabilité)" [form]="entityForm"
+                propertyName="accountingMails" [isMandatory]="false" [isDisabled]="!editMode"></chips-mail>
+            </td>
+            <td>
               <chips-phone [(model)]="selectedEntity.phones" label="Téléphones" [form]="entityForm"
                 propertyName="phones" [isMandatory]="true" [isDisabled]="!editMode"></chips-phone>
             </td>

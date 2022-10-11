@@ -36,7 +36,7 @@ public class AffaireServiceImpl implements AffaireService {
     @Override
     public Affaire getAffaire(Integer id) {
         Optional<Affaire> affaire = affaireRepository.findById(id);
-        if (!affaire.isEmpty())
+        if (affaire.isPresent())
             return affaire.get();
         return null;
     }

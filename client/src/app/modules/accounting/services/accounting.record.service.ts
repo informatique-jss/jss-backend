@@ -12,13 +12,28 @@ import { AccountingRecordSearch } from '../model/AccountingRecordSearch';
   providedIn: 'root'
 })
 export class AccountingRecordService extends AppRestService<AccountingRecord>{
-
   constructor(http: HttpClient) {
     super(http, "accounting");
   }
 
   getAccountingRecords() {
     return this.getList(new HttpParams(), "accounting-records");
+  }
+
+  getAccountingRecordsByTemporaryOperationId(temporaryOperationId: number) {
+    return this.getList(new HttpParams().set("temporaryOperationId", temporaryOperationId), "accounting-records/search/temporary");
+  }
+
+  deleteRecordsByTemporaryOperationId(temporaryOperationId: number) {
+    return this.delete(new HttpParams().set("temporaryOperationId", temporaryOperationId), "accounting-records/delete/temporary");
+  }
+
+  getAccountingRecordsByOperationId(operationId: number) {
+    return this.getList(new HttpParams().set("operationId", operationId), "accounting-records/search");
+  }
+
+  doCounterPartByOperationId(operationId: number) {
+    return this.getList(new HttpParams().set("operationId", operationId), "accounting-records/counter-part");
   }
 
   addOrUpdateAccountingRecord(accountingRecord: AccountingRecord) {

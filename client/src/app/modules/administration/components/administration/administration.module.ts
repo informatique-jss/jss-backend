@@ -19,11 +19,13 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule, Routes } from '@angular/router';
+import { QuillModule } from 'ngx-quill';
 import { MiscellaneousModule } from 'src/app/modules/miscellaneous/components/miscellaneous/miscellaneous.module';
 import { ReferentialAccountingAccountClassComponent } from '../referentials/referential-accounting-account-class/referential-accounting-account-class.component';
 import { ReferentialAccountingAccountComponent } from '../referentials/referential-accounting-account/referential-accounting-account.component';
 import { ReferentialAccountingJournalComponent } from '../referentials/referential-accounting-journal/referential-accounting-journal.component';
 import { ReferentialActTypeComponent } from '../referentials/referential-act-type/referential-act-type.component';
+import { ReferentialAnnouncementNoticeTemplateComponent } from '../referentials/referential-announcement-notice-template/referential-announcement-notice-template.component';
 import { ReferentialAttachmentTypeComponent } from '../referentials/referential-attachment-type/referential-attachment-type.component';
 import { ReferentialBillingClosureRecipientTypeComponent } from '../referentials/referential-billing-closure-recipient-type/referential-billing-closure-recipient-type.component';
 import { ReferentialBillingClosureTypeComponent } from '../referentials/referential-billing-closure-type/referential-billing-closure-type.component';
@@ -63,10 +65,8 @@ import { ReferentialQuotationStatusComponent } from '../referentials/referential
 import { ReferentialRefundTypeComponent } from '../referentials/referential-refund-type/referential-refund-type.component';
 import { ReferentialRegieComponent } from '../referentials/referential-regie/referential-regie.component';
 import { ReferentialRegionComponent } from '../referentials/referential-region/referential-region.component';
-import { ReferentialShalNoticeTemplateComponent } from '../referentials/referential-shal-notice-template/referential-shal-notice-template.component';
 import { ReferentialSpecialOfferComponent } from '../referentials/referential-special-offer/referential-special-offer.component';
 import { ReferentialSubscriptionPeriodTypeComponent } from '../referentials/referential-subscription-period-type/referential-subscription-period-type.component';
-import { ReferentialTeamComponent } from '../referentials/referential-team/referential-team.component';
 import { ReferentialTiersCategoryComponent } from '../referentials/referential-tiers-category/referential-tiers-category.component';
 import { ReferentialTiersFollowupTypeComponent } from '../referentials/referential-tiers-followup-type/referential-tiers-followup-type.component';
 import { ReferentialTiersTypeComponent } from '../referentials/referential-tiers-type/referential-tiers-type.component';
@@ -85,6 +85,27 @@ const routes: Routes = [
 @NgModule({
   imports: [
     RouterModule.forRoot(routes, { onSameUrlNavigation: 'reload' }),
+    QuillModule.forRoot({
+      modules: {
+        syntax: false,
+        toolbar: {
+          container: [
+            ['bold', 'italic'],
+            [{ 'font': [] }],
+            [{ 'color': [] }],
+            [{ 'background': [] }],
+            [{ align: '' }, { align: 'center' }],
+            [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+            [{ 'size': [] }],
+            ['clean'],
+            //['link'],
+
+          ],
+        }
+      },
+      placeholder: '',
+    }),
     CommonModule,
     MatTabsModule,
     FormsModule,
@@ -152,9 +173,8 @@ const routes: Routes = [
     ReferentialCompetitorComponent,
     ReferentialCompetentAuthorityComponent,
     ReferentialCityComponent,
-    ReferentialShalNoticeTemplateComponent,
+    ReferentialAnnouncementNoticeTemplateComponent,
     ReferentialVatCollectionTypeComponent,
-    ReferentialTeamComponent,
     ReferentialRegieComponent,
     ReferentialConfrereComponent,
     ReferentialBillingItemComponent,

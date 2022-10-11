@@ -21,6 +21,14 @@
         <key-type>java.lang.Integer</key-type>
         <value-type>com.jss.osiris.modules.miscellaneous.model.Vat</value-type>
     </cache>
+    <cache alias="vatCollectionType" uses-template="default">
+        <key-type>java.lang.Integer</key-type>
+        <value-type>com.jss.osiris.modules.miscellaneous.model.VatCollectionType</value-type>
+    </cache>
+    <cache alias="vatCollectionTypeList" uses-template="default">
+        <key-type>java.lang.String</key-type>
+        <value-type>java.util.List</value-type>
+    </cache>
     <cache alias="accountingAccountList" uses-template="default">
         <key-type>java.lang.String</key-type>
         <value-type>java.util.List</value-type>

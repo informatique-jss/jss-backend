@@ -131,6 +131,10 @@ public interface AccountingRecordRepository extends CrudRepository<AccountingRec
         List<AccountingRecord> findByInvoice(Invoice invoice);
 
         List<AccountingRecord> findByCustomerOrder(CustomerOrder customerOrder);
+
+        List<AccountingRecord> findByTemporaryOperationId(Integer operationId);
+
+        List<AccountingRecord> findByOperationId(Integer operationId);
 }
 
 ;

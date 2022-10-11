@@ -6,3 +6,7 @@
 .remise {
   color: red
 }
+
+.middle-width {
+  min-width: 500px;
+}

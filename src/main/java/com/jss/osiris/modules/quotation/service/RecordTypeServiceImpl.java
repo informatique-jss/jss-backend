@@ -24,7 +24,7 @@ public class RecordTypeServiceImpl implements RecordTypeService {
     @Override
     public RecordType getRecordType(Integer id) {
         Optional<RecordType> recordType = recordTypeRepository.findById(id);
-        if (!recordType.isEmpty())
+        if (recordType.isPresent())
             return recordType.get();
         return null;
     }

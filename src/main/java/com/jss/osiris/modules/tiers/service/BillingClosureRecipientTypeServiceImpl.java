@@ -25,7 +25,7 @@ public class BillingClosureRecipientTypeServiceImpl implements BillingClosureRec
     public BillingClosureRecipientType getBillingClosureRecipientType(Integer id) {
         Optional<BillingClosureRecipientType> billingClosurRecipientType = billingClosurRecipientTypeRepository
                 .findById(id);
-        if (!billingClosurRecipientType.isEmpty())
+        if (billingClosurRecipientType.isPresent())
             return billingClosurRecipientType.get();
         return null;
     }

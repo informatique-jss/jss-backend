@@ -57,7 +57,7 @@ public class VatServiceImpl implements VatService {
     @Cacheable(value = "vat", key = "#id")
     public Vat getVat(Integer id) {
         Optional<Vat> vat = vatRepository.findById(id);
-        if (!vat.isEmpty())
+        if (vat.isPresent())
             return vat.get();
         return null;
     }

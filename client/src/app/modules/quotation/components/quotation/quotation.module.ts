@@ -26,6 +26,7 @@ import { QuillModule } from 'ngx-quill';
 import { MiscellaneousModule } from 'src/app/modules/miscellaneous/components/miscellaneous/miscellaneous.module';
 import { AddAffaireDialogComponent } from '../add-affaire-dialog/add-affaire-dialog.component';
 import { AffaireComponent } from '../affaire/affaire.component';
+import { AnnouncementComponent } from '../announcement/announcement.component';
 import { BodaccFusionComponent } from '../bodacc-fusion/bodacc-fusion.component';
 import { BodaccMainComponent } from '../bodacc-main/bodacc-main.component';
 import { BodaccSaleComponent } from '../bodacc-sale/bodacc-sale.component';
@@ -37,7 +38,6 @@ import { OrderingListComponent } from '../ordering-list/ordering-list.component'
 import { ProvisionItemComponent } from '../provision-item/provision-item.component';
 import { QuotationListComponent } from '../quotation-list/quotation-list.component';
 import { QuotationManagementComponent } from '../quotation-management/quotation-management.component';
-import { ShalComponent } from '../shal/shal.component';
 import { QuotationComponent } from './quotation.component';
 
 const routes: Routes = [
@@ -109,7 +109,7 @@ const routes: Routes = [
     BodaccSplitComponent,
     QuotationListComponent,
     OrderingListComponent,
-    ShalComponent],
+    AnnouncementComponent],
   exports: [
     OrderingListComponent
   ],

@@ -17,7 +17,7 @@ public class BodaccServiceImpl implements BodaccService {
     @Override
     public Bodacc getBodacc(Integer id) {
         Optional<Bodacc> bodacc = bodaccRepository.findById(id);
-        if (!bodacc.isEmpty())
+        if (bodacc.isPresent())
             return bodacc.get();
         return null;
     }

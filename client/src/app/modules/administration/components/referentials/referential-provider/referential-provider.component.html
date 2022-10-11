@@ -53,12 +53,43 @@
         <table class="full-width">
           <tr>
             <td>
+              <chips-mail [(model)]="selectedEntity.mails" label="Mails" [form]="entityForm" propertyName="mails"
+                [isMandatory]="true" [isDisabled]="!editMode"></chips-mail>
+            </td>
+            <td>
+              <chips-mail [(model)]="selectedEntity.accountingMails" label="Mails (comptabilité)" [form]="entityForm"
+                propertyName="accountingMails" [isMandatory]="false" [isDisabled]="!editMode"></chips-mail>
+            </td>
+            <td>
+              <chips-phone [(model)]="selectedEntity.phones" label="Téléphones" [form]="entityForm"
+                propertyName="phones" [isMandatory]="true" [isDisabled]="!editMode"></chips-phone>
+            </td>
+            <td>
+              <generic-input [(model)]="selectedEntity.jssReference" label="Référence client chez le fournisseur"
+                [form]="entityForm" propertyName="jssReference" [isMandatory]="false" [isDisabled]="!editMode"
+                [maxLength]="20"></generic-input>
+            </td>
+          </tr>
+        </table>
+        <table class="full-width">
+          <tr>
+            <td>
               <generic-input [(model)]="selectedEntity.iban" label="IBAN" [form]="entityForm" propertyName="iban"
                 [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="40"></generic-input>
             </td>
             <td>
               <generic-input [(model)]="selectedEntity.bic" label="BIC" [form]="entityForm" propertyName="bic"
                 [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="40"></generic-input>
+            </td>
+            <td>
+              <select-payment-types [(model)]="selectedEntity.paymentType" label="Type" [form]="entityForm"
+                propertyName="paymentType" [isMandatory]="true" [isDisabled]="!editMode"
+                [filteredPaymentTypeCodes]="[PAYMENT_TYPE_PRELEVEMENT,PAYMENT_TYPE_VIREMENT]"></select-payment-types>
+            </td>
+            <td>
+              <select-vat-collection-type [(model)]="selectedEntity.vatCollectionType"
+                label="Type d'encaissement de la TVA" [form]="entityForm" propertyName="vatCollectionType"
+                [isMandatory]="true" [isDisabled]="!editMode"></select-vat-collection-type>
             </td>
           </tr>
         </table>

@@ -15,14 +15,14 @@ import org.springframework.web.multipart.MultipartFile;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.AttachmentType;
 import com.jss.osiris.modules.miscellaneous.repository.AttachmentRepository;
+import com.jss.osiris.modules.quotation.model.Announcement;
 import com.jss.osiris.modules.quotation.model.Bodacc;
 import com.jss.osiris.modules.quotation.model.Domiciliation;
 import com.jss.osiris.modules.quotation.model.Quotation;
-import com.jss.osiris.modules.quotation.model.Shal;
+import com.jss.osiris.modules.quotation.service.AnnouncementService;
 import com.jss.osiris.modules.quotation.service.BodaccService;
 import com.jss.osiris.modules.quotation.service.DomiciliationService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
-import com.jss.osiris.modules.quotation.service.ShalService;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 import com.jss.osiris.modules.tiers.service.ResponsableService;
@@ -53,7 +53,7 @@ public class AttachmentServiceImpl implements AttachmentService {
     DomiciliationService domiciliationService;
 
     @Autowired
-    ShalService shalService;
+    AnnouncementService announcementService;
 
     @Autowired
     BodaccService bodaccService;
@@ -66,7 +66,7 @@ public class AttachmentServiceImpl implements AttachmentService {
     @Override
     public Attachment getAttachment(Integer id) {
         Optional<Attachment> tiersAttachment = attachmentRepository.findById(id);
-        if (!tiersAttachment.isEmpty())
+        if (tiersAttachment.isPresent())
             return tiersAttachment.get();
         return null;
     }
@@ -89,8 +89,8 @@ public class AttachmentServiceImpl implements AttachmentService {
                 attachments = attachmentRepository.findByQuotationId(idEntity);
             } else if (entityType.equals(Domiciliation.class.getSimpleName())) {
                 attachments = attachmentRepository.findByDomiciliationId(idEntity);
-            } else if (entityType.equals(Shal.class.getSimpleName())) {
-                attachments = attachmentRepository.findByShalId(idEntity);
+            } else if (entityType.equals(Announcement.class.getSimpleName())) {
+                attachments = attachmentRepository.findByAnnouncementId(idEntity);
             } else if (entityType.equals(Bodacc.class.getSimpleName())) {
                 attachments = attachmentRepository.findByBodaccId(idEntity);
             }
@@ -131,11 +131,11 @@ public class AttachmentServiceImpl implements AttachmentService {
             if (domiciliation == null)
                 return new ArrayList<Attachment>();
             attachment.setDomiciliation(domiciliation);
-        } else if (entityType.equals(Shal.class.getSimpleName())) {
-            Shal shal = shalService.getShal(idEntity);
-            if (shal == null)
+        } else if (entityType.equals(Announcement.class.getSimpleName())) {
+            Announcement announcement = announcementService.getAnnouncement(idEntity);
+            if (announcement == null)
                 return new ArrayList<Attachment>();
-            attachment.setShal(shal);
+            attachment.setAnnouncement(announcement);
         } else if (entityType.equals(Bodacc.class.getSimpleName())) {
             Bodacc bodacc = bodaccService.getBodacc(idEntity);
             if (bodacc == null)
@@ -170,8 +170,8 @@ public class AttachmentServiceImpl implements AttachmentService {
             attachments = attachmentRepository.findByQuotationId(idEntity);
         } else if (entityType.equals(Domiciliation.class.getSimpleName())) {
             attachments = attachmentRepository.findByDomiciliationId(idEntity);
-        } else if (entityType.equals(Shal.class.getSimpleName())) {
-            attachments = attachmentRepository.findByShalId(idEntity);
+        } else if (entityType.equals(Announcement.class.getSimpleName())) {
+            attachments = attachmentRepository.findByAnnouncementId(idEntity);
         } else if (entityType.equals(Bodacc.class.getSimpleName())) {
             attachments = attachmentRepository.findByBodaccId(idEntity);
         }

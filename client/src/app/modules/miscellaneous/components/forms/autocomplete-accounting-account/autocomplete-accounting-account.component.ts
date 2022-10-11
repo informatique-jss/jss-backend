@@ -19,4 +19,9 @@ export class AutocompleteAccountingAccountComponent extends GenericAutocompleteC
   searchEntities(value: string): Observable<AccountingAccount[]> {
     return this.accountingAccountService.getAccountingAccountByLabel(value);
   }
+
+
+  displayAccount(object: any): string {
+    return object ? object.label + " - " + object.accountingAccountNumber + "-" + object.accountingAccountSubNumber : '';
+  }
 }

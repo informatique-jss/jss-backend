@@ -28,7 +28,7 @@ import com.jss.osiris.modules.miscellaneous.model.Department;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 
 @Entity
-public class Shal implements Serializable, IId {
+public class Announcement implements Serializable, IId {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -60,7 +60,7 @@ public class Shal implements Serializable, IId {
 
 	@ManyToMany
 	@OnDelete(action = OnDeleteAction.CASCADE)
-	@JoinTable(name = "asso_shal_notice_type", joinColumns = @JoinColumn(name = "id_shal"), inverseJoinColumns = @JoinColumn(name = "id_notice_type"))
+	@JoinTable(name = "asso_announcement_notice_type", joinColumns = @JoinColumn(name = "id_announcement"), inverseJoinColumns = @JoinColumn(name = "id_notice_type"))
 	private List<NoticeType> noticeTypes;
 
 	@Column(nullable = false, columnDefinition = "TEXT")
@@ -97,8 +97,8 @@ public class Shal implements Serializable, IId {
 	@Column(nullable = false)
 	private Boolean isPublicationCertificateDocument;
 
-	@OneToMany(targetEntity = Attachment.class, mappedBy = "shal", cascade = CascadeType.ALL)
-	@JsonManagedReference("shal")
+	@OneToMany(targetEntity = Attachment.class, mappedBy = "announcement", cascade = CascadeType.ALL)
+	@JsonManagedReference("announcement")
 	private List<Attachment> attachments;
 
 	public Integer getId() {

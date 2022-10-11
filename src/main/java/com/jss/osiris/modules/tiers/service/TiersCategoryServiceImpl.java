@@ -3,12 +3,12 @@ package com.jss.osiris.modules.tiers.service;
 import java.util.List;
 import java.util.Optional;
 
-import com.jss.osiris.modules.tiers.model.TiersCategory;
-import com.jss.osiris.modules.tiers.repository.TiersCategoryRepository;
-
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.jss.osiris.modules.tiers.model.TiersCategory;
+import com.jss.osiris.modules.tiers.repository.TiersCategoryRepository;
 
 @Service
 public class TiersCategoryServiceImpl implements TiersCategoryService {
@@ -24,12 +24,12 @@ public class TiersCategoryServiceImpl implements TiersCategoryService {
     @Override
     public TiersCategory getTiersCategory(Integer id) {
         Optional<TiersCategory> tiersCategory = tiersCategoryRepository.findById(id);
-        if (!tiersCategory.isEmpty())
+        if (tiersCategory.isPresent())
             return tiersCategory.get();
         return null;
     }
-	
-	 @Override
+
+    @Override
     public TiersCategory addOrUpdateTiersCategory(
             TiersCategory tiersCategory) {
         return tiersCategoryRepository.save(tiersCategory);

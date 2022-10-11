@@ -24,6 +24,12 @@ public class ProviderServiceImpl implements ProviderService {
     @Autowired
     AccountingAccountService accountingAccountService;
 
+    @Autowired
+    MailService mailService;
+
+    @Autowired
+    PhoneService phoneService;
+
     @Override
     @Cacheable(value = "providerList", key = "#root.methodName")
     public List<Provider> getProviders() {
@@ -34,7 +40,7 @@ public class ProviderServiceImpl implements ProviderService {
     @Cacheable(value = "provider", key = "#id")
     public Provider getProvider(Integer id) {
         Optional<Provider> provider = providerRepository.findById(id);
-        if (!provider.isEmpty())
+        if (provider.isPresent())
             return provider.get();
         return null;
     }
@@ -54,6 +60,21 @@ public class ProviderServiceImpl implements ProviderService {
             provider.setAccountingAccountCustomer(accountingAccountCouple.getAccountingAccountCustomer());
             provider.setAccountingAccountProvider(accountingAccountCouple.getAccountingAccountProvider());
             provider.setAccountingAccountDeposit(accountingAccountCouple.getAccountingAccountDeposit());
+        }
+
+        // If mails already exists, get their ids
+        if (provider != null && provider.getMails() != null
+                && provider.getMails().size() > 0)
+            mailService.populateMailIds(provider.getMails());
+
+        if (provider != null && provider.getAccountingMails() != null
+                && provider.getAccountingMails().size() > 0)
+            mailService.populateMailIds(provider.getAccountingMails());
+
+        // If phones already exists, get their ids
+        if (provider != null && provider.getPhones() != null
+                && provider.getPhones().size() > 0) {
+            phoneService.populateMPhoneIds(provider.getPhones());
         }
 
         return providerRepository.save(provider);

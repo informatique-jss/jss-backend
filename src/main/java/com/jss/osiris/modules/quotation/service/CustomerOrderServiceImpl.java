@@ -59,7 +59,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Override
     public CustomerOrder getCustomerOrder(Integer id) {
         Optional<CustomerOrder> customerOrder = customerOrderRepository.findById(id);
-        if (!customerOrder.isEmpty())
+        if (customerOrder.isPresent())
             return customerOrder.get();
         return null;
     }

@@ -25,7 +25,7 @@ public class PhoneServiceImpl implements PhoneService {
     @Override
     public Phone getPhone(Integer id) {
         Optional<Phone> phone = phoneRepository.findById(id);
-        if (!phone.isEmpty())
+        if (phone.isPresent())
             return phone.get();
         return null;
     }
@@ -37,6 +37,7 @@ public class PhoneServiceImpl implements PhoneService {
                 List<Phone> existingPhones = findPhones(phone.getPhoneNumber());
                 if (existingPhones != null && existingPhones.size() == 1)
                     phone.setId(existingPhones.get(0).getId());
+                phoneRepository.save(phone);
             }
         }
     }

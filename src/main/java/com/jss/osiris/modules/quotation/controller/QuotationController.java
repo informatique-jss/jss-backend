@@ -34,6 +34,8 @@ import com.jss.osiris.modules.miscellaneous.service.LegalFormService;
 import com.jss.osiris.modules.miscellaneous.service.SpecialOfferService;
 import com.jss.osiris.modules.quotation.model.ActType;
 import com.jss.osiris.modules.quotation.model.Affaire;
+import com.jss.osiris.modules.quotation.model.Announcement;
+import com.jss.osiris.modules.quotation.model.AnnouncementNoticeTemplate;
 import com.jss.osiris.modules.quotation.model.Bodacc;
 import com.jss.osiris.modules.quotation.model.BodaccFusion;
 import com.jss.osiris.modules.quotation.model.BodaccFusionAbsorbedCompany;
@@ -65,13 +67,12 @@ import com.jss.osiris.modules.quotation.model.QuotationStatus;
 import com.jss.osiris.modules.quotation.model.RecordType;
 import com.jss.osiris.modules.quotation.model.Regie;
 import com.jss.osiris.modules.quotation.model.Rna;
-import com.jss.osiris.modules.quotation.model.Shal;
-import com.jss.osiris.modules.quotation.model.ShalNoticeTemplate;
 import com.jss.osiris.modules.quotation.model.Siren;
 import com.jss.osiris.modules.quotation.model.Siret;
 import com.jss.osiris.modules.quotation.model.TransfertFundsType;
 import com.jss.osiris.modules.quotation.service.ActTypeService;
 import com.jss.osiris.modules.quotation.service.AffaireService;
+import com.jss.osiris.modules.quotation.service.AnnouncementNoticeTemplateService;
 import com.jss.osiris.modules.quotation.service.BodaccPublicationTypeService;
 import com.jss.osiris.modules.quotation.service.BuildingDomiciliationService;
 import com.jss.osiris.modules.quotation.service.CharacterPriceService;
@@ -91,7 +92,6 @@ import com.jss.osiris.modules.quotation.service.QuotationStatusService;
 import com.jss.osiris.modules.quotation.service.RecordTypeService;
 import com.jss.osiris.modules.quotation.service.RegieService;
 import com.jss.osiris.modules.quotation.service.RnaDelegateService;
-import com.jss.osiris.modules.quotation.service.ShalNoticeTemplateService;
 import com.jss.osiris.modules.quotation.service.SireneDelegateService;
 import com.jss.osiris.modules.quotation.service.TransfertFundsTypeService;
 import com.jss.osiris.modules.tiers.service.ResponsableService;
@@ -201,7 +201,7 @@ public class QuotationController {
   ActTypeService actTypeService;
 
   @Autowired
-  ShalNoticeTemplateService shalNoticeTemplateService;
+  AnnouncementNoticeTemplateService announcementNoticeTemplateService;
 
   @Autowired
   RegieService regieService;
@@ -260,45 +260,45 @@ public class QuotationController {
     return new ResponseEntity<Regie>(outRegie, HttpStatus.OK);
   }
 
-  @GetMapping(inputEntryPoint + "/shal-notice-templates")
-  public ResponseEntity<List<ShalNoticeTemplate>> getShalNoticeTemplates() {
-    List<ShalNoticeTemplate> shalNoticeTemplates = null;
+  @GetMapping(inputEntryPoint + "/announcement-notice-templates")
+  public ResponseEntity<List<AnnouncementNoticeTemplate>> getAnnouncementNoticeTemplates() {
+    List<AnnouncementNoticeTemplate> announcementNoticeTemplates = null;
     try {
-      shalNoticeTemplates = shalNoticeTemplateService.getShalNoticeTemplates();
+      announcementNoticeTemplates = announcementNoticeTemplateService.getAnnouncementNoticeTemplates();
     } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching shalNoticeTemplate", e);
-      return new ResponseEntity<List<ShalNoticeTemplate>>(HttpStatus.INTERNAL_SERVER_ERROR);
+      logger.error("HTTP error when fetching Announcement", e);
+      return new ResponseEntity<List<AnnouncementNoticeTemplate>>(HttpStatus.INTERNAL_SERVER_ERROR);
     } catch (Exception e) {
-      logger.error("Error when fetching shalNoticeTemplate", e);
-      return new ResponseEntity<List<ShalNoticeTemplate>>(HttpStatus.INTERNAL_SERVER_ERROR);
+      logger.error("Error when fetching Announcement", e);
+      return new ResponseEntity<List<AnnouncementNoticeTemplate>>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
-    return new ResponseEntity<List<ShalNoticeTemplate>>(shalNoticeTemplates, HttpStatus.OK);
+    return new ResponseEntity<List<AnnouncementNoticeTemplate>>(announcementNoticeTemplates, HttpStatus.OK);
   }
 
-  @PostMapping(inputEntryPoint + "/shal-notice-template")
-  public ResponseEntity<ShalNoticeTemplate> addOrUpdateShalNoticeTemplate(
-      @RequestBody ShalNoticeTemplate shalNoticeTemplates) {
-    ShalNoticeTemplate outShalNoticeTemplate;
+  @PostMapping(inputEntryPoint + "/announcement-notice-template")
+  public ResponseEntity<AnnouncementNoticeTemplate> addOrUpdateAnnouncementNoticeTemplate(
+      @RequestBody AnnouncementNoticeTemplate announcementNoticeTemplates) {
+    AnnouncementNoticeTemplate outAnnouncementNoticeTemplate;
     try {
-      if (shalNoticeTemplates.getId() != null)
-        validationHelper.validateReferential(shalNoticeTemplates, true);
-      validationHelper.validateString(shalNoticeTemplates.getCode(), true, 20);
-      validationHelper.validateString(shalNoticeTemplates.getLabel(), true, 100);
+      if (announcementNoticeTemplates.getId() != null)
+        validationHelper.validateReferential(announcementNoticeTemplates, true);
+      validationHelper.validateString(announcementNoticeTemplates.getCode(), true, 20);
+      validationHelper.validateString(announcementNoticeTemplates.getLabel(), true, 100);
 
-      outShalNoticeTemplate = shalNoticeTemplateService
-          .addOrUpdateShalNoticeTemplate(shalNoticeTemplates);
+      outAnnouncementNoticeTemplate = announcementNoticeTemplateService
+          .addOrUpdateAnnouncementNoticeTemplate(announcementNoticeTemplates);
     } catch (
 
     ResponseStatusException e) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching shalNoticeTemplate", e);
-      return new ResponseEntity<ShalNoticeTemplate>(HttpStatus.INTERNAL_SERVER_ERROR);
+      logger.error("HTTP error when fetching Announcement", e);
+      return new ResponseEntity<AnnouncementNoticeTemplate>(HttpStatus.INTERNAL_SERVER_ERROR);
     } catch (Exception e) {
-      logger.error("Error when fetching shalNoticeTemplate", e);
-      return new ResponseEntity<ShalNoticeTemplate>(HttpStatus.INTERNAL_SERVER_ERROR);
+      logger.error("Error when fetching Announcement", e);
+      return new ResponseEntity<AnnouncementNoticeTemplate>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
-    return new ResponseEntity<ShalNoticeTemplate>(outShalNoticeTemplate, HttpStatus.OK);
+    return new ResponseEntity<AnnouncementNoticeTemplate>(outAnnouncementNoticeTemplate, HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/act-types")
@@ -698,8 +698,9 @@ public class QuotationController {
       validationHelper.validateReferential(confrere.getCity(), false);
       validationHelper.validateReferential(confrere.getCountry(), false);
       validationHelper.validateString(confrere.getIban(), false, 40);
+      validationHelper.validateString(confrere.getPaymentBic(), false, 40);
       validationHelper.validateReferential(confrere.getRegie(), false);
-      validationHelper.validateReferential(confrere.getVatCollectionType(), true);
+      validationHelper.validateReferential(confrere.getVatCollectionType(), false);
 
       validationHelper.validateReferential(confrere.getPaymentType(), true);
 
@@ -1505,21 +1506,21 @@ public class QuotationController {
         validationHelper.validateReferential(domiciliation.getLegalGardianCountry(), isCustomerOrder);
 
       }
-      // Shal
-      if (provision.getShal() != null) {
-        Shal shal = provision.getShal();
-        validationHelper.validateDateMin(shal.getPublicationDate(), !isOpen, LocalDate.now());
-        validationHelper.validateReferential(shal.getDepartment(), !isOpen);
-        validationHelper.validateReferential(shal.getConfrere(), isCustomerOrder);
-        validationHelper.validateReferential(shal.getNoticeTypeFamily(), isCustomerOrder);
-        if (isCustomerOrder && (shal.getNoticeTypes() == null || shal.getNoticeTypes().size() == 0))
+      // Announcement
+      if (provision.getAnnouncement() != null) {
+        Announcement announcement = provision.getAnnouncement();
+        validationHelper.validateDateMin(announcement.getPublicationDate(), !isOpen, LocalDate.now());
+        validationHelper.validateReferential(announcement.getDepartment(), !isOpen);
+        validationHelper.validateReferential(announcement.getConfrere(), isCustomerOrder);
+        validationHelper.validateReferential(announcement.getNoticeTypeFamily(), isCustomerOrder);
+        if (isCustomerOrder && (announcement.getNoticeTypes() == null || announcement.getNoticeTypes().size() == 0))
           throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
 
-        if (shal.getNoticeTypes() != null)
-          for (NoticeType noticeType : shal.getNoticeTypes()) {
+        if (announcement.getNoticeTypes() != null)
+          for (NoticeType noticeType : announcement.getNoticeTypes()) {
             validationHelper.validateReferential(noticeType, isCustomerOrder);
           }
-        validationHelper.validateString(shal.getNotice(), !isOpen);
+        validationHelper.validateString(announcement.getNotice(), !isOpen);
       }
 
       if (provision.getBodacc() != null) {

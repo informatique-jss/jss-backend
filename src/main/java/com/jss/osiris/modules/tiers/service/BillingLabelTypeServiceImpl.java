@@ -24,7 +24,7 @@ public class BillingLabelTypeServiceImpl implements BillingLabelTypeService {
     @Override
     public BillingLabelType getBillingLabelType(Integer id) {
         Optional<BillingLabelType> billingLabelType = billingLabelTypeRepository.findById(id);
-        if (!billingLabelType.isEmpty())
+        if (billingLabelType.isPresent())
             return billingLabelType.get();
         return null;
     }

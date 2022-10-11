@@ -11,7 +11,7 @@ import javax.persistence.Id;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 
 @Entity
-public class ShalNoticeTemplate implements Serializable, IId {
+public class AnnouncementNoticeTemplate implements Serializable, IId {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

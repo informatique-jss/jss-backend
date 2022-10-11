@@ -25,7 +25,7 @@ public class DomiciliationContractTypeServiceImpl implements DomiciliationContra
     public DomiciliationContractType getDomiciliationContractType(Integer id) {
         Optional<DomiciliationContractType> domiciliationContractType = domiciliationContractTypeRepository
                 .findById(id);
-        if (!domiciliationContractType.isEmpty())
+        if (domiciliationContractType.isPresent())
             return domiciliationContractType.get();
         return null;
     }

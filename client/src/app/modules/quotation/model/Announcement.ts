@@ -5,7 +5,7 @@ import { Confrere } from "./Confrere";
 import { NoticeType } from "./NoticeType";
 import { NoticeTypeFamily } from "./NoticeTypeFamily";
 
-export interface Shal extends IAttachment, IDocument {
+export interface Announcement extends IAttachment, IDocument {
   id: number;
   department: Department;
   confrere: Confrere | undefined;

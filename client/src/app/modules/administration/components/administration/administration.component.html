@@ -202,11 +202,11 @@
           [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
           [cloneEvent]="cloneEvent.asObservable()">
         </referential-provision-type>
-        <referential-shal-notice-template *ngIf="selectedReferential==SHAL_NOTICE_TEMPLATE_REFERENTIAL"
+        <referential-announcement-notice-template *ngIf="selectedReferential==ANNOUNCEMENT_NOTICE_TEMPLATE_REFERENTIAL"
           (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
           [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
           [cloneEvent]="cloneEvent.asObservable()">
-        </referential-shal-notice-template>
+        </referential-announcement-notice-template>
         <referential-billing-item *ngIf="selectedReferential==BILLING_ITEM_REFERENTIAL"
           (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
           [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
@@ -252,11 +252,6 @@
           [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
           [cloneEvent]="cloneEvent.asObservable()">
         </referential-accounting-account>
-        <referential-team *ngIf="selectedReferential==TEAM_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-team>
         <referential-regie *ngIf="selectedReferential==REGIE_REFERENTIAL"
           (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
           [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"

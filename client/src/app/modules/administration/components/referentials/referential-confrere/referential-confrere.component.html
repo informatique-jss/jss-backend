@@ -88,9 +88,10 @@
                 [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="40"></generic-input>
             </td>
             <td>
+              <!--TODO : à rendre obligatoire à la saisie-->
               <select-vat-collection-type [(model)]="selectedEntity.vatCollectionType"
                 label="Type d'encaissement de la TVA" [form]="entityForm" propertyName="vatCollectionType"
-                [isMandatory]="true" [isDisabled]="!editMode"></select-vat-collection-type>
+                [isMandatory]="false" [isDisabled]="!editMode"></select-vat-collection-type>
             </td>
           </tr>
         </table>
@@ -165,6 +166,11 @@
                 [form]="entityForm" propertyName="administrativeFees" [isMandatory]="false" [isDisabled]="!editMode"
                 type="number"></generic-input>
             </td>
+            <td>
+              <generic-input [(model)]="selectedEntity.discountRate" label="Remise consentie (%)" [form]="entityForm"
+                propertyName="discountRate" [isMandatory]="false" [isDisabled]="!editMode" type="number">
+              </generic-input>
+            </td>
           </tr>
         </table>
         <table class="full-width">
@@ -235,17 +241,6 @@
           </tr>
         </table>
         <mat-accordion multi>
-          <mat-expansion-panel>
-            <mat-expansion-panel-header>
-              <mat-panel-title>
-                Justificatif de parution
-              </mat-panel-title>
-              <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
-            </mat-expansion-panel-header>
-            <addressing [editMode]="editMode" [document]="publicationDocument" [displayPaperCopy]="true"
-              [displayMailCC]="true" [displayNumberMailing]="true">
-            </addressing>
-          </mat-expansion-panel>
           <mat-expansion-panel>
             <mat-expansion-panel-header>
               <mat-panel-title>
@@ -336,14 +331,14 @@
                 <td
                   *ngIf="selectedEntity !=undefined && selectedEntity.paymentType!=undefined && selectedEntity.paymentType.code!=undefined && selectedEntity.paymentType.code==PAYMENT_TYPE_PRELEVEMENT">
                   <generic-input [(model)]="selectedEntity.iban" label="IBAN" [form]="entityForm" propertyName="iban"
-                    [isMandatory]="true" [isDisabled]="!editMode"
+                    [isMandatory]="false" [isDisabled]="!editMode"
                     [conditionnalRequired]="this.selectedEntity.paymentType != undefined && this.selectedEntity.paymentType.code != undefined && this.selectedEntity.paymentType.code == PAYMENT_TYPE_PRELEVEMENT "
                     [maxLength]="40"></generic-input>
                 </td>
                 <td
                   *ngIf="selectedEntity !=undefined && selectedEntity.paymentType!=undefined && selectedEntity.paymentType.code!=undefined && selectedEntity.paymentType.code==PAYMENT_TYPE_PRELEVEMENT">
-                  <generic-input [(model)]="selectedEntity.paymentBIC" label="BIC" [form]="entityForm"
-                    propertyName="paymentBIC" [isMandatory]="true" [isDisabled]="!editMode"
+                  <generic-input [(model)]="selectedEntity.paymentBic" label="BIC" [form]="entityForm"
+                    propertyName="paymentBic" [isMandatory]="false" [isDisabled]="!editMode"
                     [conditionnalRequired]=" this.selectedEntity.paymentType != undefined && this.selectedEntity.paymentType.code != undefined && this.selectedEntity.paymentType.code == PAYMENT_TYPE_PRELEVEMENT "
                     [maxLength]="8"></generic-input>
                 </td>

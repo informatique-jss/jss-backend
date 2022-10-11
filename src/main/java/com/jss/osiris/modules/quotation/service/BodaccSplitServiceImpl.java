@@ -17,7 +17,7 @@ public class BodaccSplitServiceImpl implements BodaccSplitService {
     @Override
     public BodaccSplit getBodaccSplit(Integer id) {
         Optional<BodaccSplit> bodaccSplit = bodaccSplitRepository.findById(id);
-        if (!bodaccSplit.isEmpty())
+        if (bodaccSplit.isPresent())
             return bodaccSplit.get();
         return null;
     }

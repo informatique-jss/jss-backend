@@ -25,7 +25,7 @@ public class AssoSpecialOfferBillingTypeServiceImpl implements AssoSpecialOfferB
     public AssoSpecialOfferBillingType getAssoSpecialOfferBillingItem(Integer id) {
         Optional<AssoSpecialOfferBillingType> assoSpecialOfferBillingItem = assoSpecialOfferBillingTypeRepository
                 .findById(id);
-        if (!assoSpecialOfferBillingItem.isEmpty())
+        if (assoSpecialOfferBillingItem.isPresent())
             return assoSpecialOfferBillingItem.get();
         return null;
     }

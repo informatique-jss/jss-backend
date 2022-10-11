@@ -17,7 +17,7 @@ public class BodaccSplitBeneficiaryServiceImpl implements BodaccSplitBeneficiary
     @Override
     public BodaccSplitBeneficiary getBodaccSplitBeneficiary(Integer id) {
         Optional<BodaccSplitBeneficiary> bodaccSplitBeneficiary = bodaccSplitBeneficiaryRepository.findById(id);
-        if (!bodaccSplitBeneficiary.isEmpty())
+        if (bodaccSplitBeneficiary.isPresent())
             return bodaccSplitBeneficiary.get();
         return null;
     }

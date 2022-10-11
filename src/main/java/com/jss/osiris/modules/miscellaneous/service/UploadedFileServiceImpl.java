@@ -34,7 +34,7 @@ public class UploadedFileServiceImpl implements UploadedFileService {
     @Override
     public UploadedFile getUploadedFile(Integer id) {
         Optional<UploadedFile> uploadedFile = uploadedFileRepository.findById(id);
-        if (!uploadedFile.isEmpty())
+        if (uploadedFile.isPresent())
             return uploadedFile.get();
         return null;
     }

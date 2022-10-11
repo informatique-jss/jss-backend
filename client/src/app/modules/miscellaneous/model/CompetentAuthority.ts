@@ -13,6 +13,7 @@ export interface CompetentAuthority extends IReferential {
   departments: Department[];
   phones: Phone[];
   mails: Mail[];
+  accountingMails: Mail[];
   iban: string;
   jssAccount: string;
   cities: City[];

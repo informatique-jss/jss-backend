@@ -17,6 +17,8 @@ import javax.persistence.Table;
 		@Index(name = "idx_city_country", columnList = "id_country") })
 public class City implements Serializable, IId {
 
+	private static final long serialVersionUID = 8884467187549297L;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
@@ -29,8 +31,6 @@ public class City implements Serializable, IId {
 
 	@Column(length = 6)
 	private String postalCode;
-	@Column(length = 60)
-	private String locality;
 
 	@ManyToOne
 	@JoinColumn(name = "id_department")
@@ -70,14 +70,6 @@ public class City implements Serializable, IId {
 
 	public void setPostalCode(String postalCode) {
 		this.postalCode = postalCode;
-	}
-
-	public String getLocality() {
-		return locality;
-	}
-
-	public void setLocality(String locality) {
-		this.locality = locality;
 	}
 
 	public Department getDepartment() {

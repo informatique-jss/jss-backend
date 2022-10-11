@@ -3,21 +3,21 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 
-import { ShalComponent } from './shal.component';
+import { DeleteAccountingRecordDialogComponent } from './delete-accounting-record-dialog.component';
 
-describe('ShalComponent', () => {
-  let component: ShalComponent;
-  let fixture: ComponentFixture<ShalComponent>;
+describe('DeleteAccountingRecordDialogComponent', () => {
+  let component: DeleteAccountingRecordDialogComponent;
+  let fixture: ComponentFixture<DeleteAccountingRecordDialogComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ShalComponent ]
+      declarations: [ DeleteAccountingRecordDialogComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ShalComponent);
+    fixture = TestBed.createComponent(DeleteAccountingRecordDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

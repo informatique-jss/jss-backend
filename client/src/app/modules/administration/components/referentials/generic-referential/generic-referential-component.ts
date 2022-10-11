@@ -28,10 +28,6 @@ export abstract class GenericReferentialComponent<T extends IReferential> implem
   ) { }
 
   entityForm = this.formBuilder.group({
-    boardGrade: [''],
-    publicationCertificateDocumentGrade: [''],
-    billingGrade: [''],
-    paperGrade: [''],
   });
 
   ngOnInit() {

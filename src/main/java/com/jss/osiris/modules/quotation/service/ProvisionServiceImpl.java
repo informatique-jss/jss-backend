@@ -17,7 +17,7 @@ public class ProvisionServiceImpl implements ProvisionService {
     @Override
     public Provision getProvision(Integer id) {
         Optional<Provision> provision = provisionRepository.findById(id);
-        if (!provision.isEmpty())
+        if (provision.isPresent())
             return provision.get();
         return null;
     }

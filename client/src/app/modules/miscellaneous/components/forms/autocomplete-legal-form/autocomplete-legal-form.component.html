@@ -7,7 +7,7 @@
   <mat-autocomplete autoActiveFirstOption #matAutocomplete="matAutocomplete" [displayWith]="displayLabel"
     (optionSelected)='optionSelected($event.option.value)'>
     <mat-option *ngFor="let type of filteredTypes | async" [value]="type">
-      {{type.label}}
+      {{type.label}} - {{type.description}}
     </mat-option>
   </mat-autocomplete>
 </mat-form-field>

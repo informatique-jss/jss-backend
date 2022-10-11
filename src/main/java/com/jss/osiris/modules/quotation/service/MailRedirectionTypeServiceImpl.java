@@ -24,7 +24,7 @@ public class MailRedirectionTypeServiceImpl implements MailRedirectionTypeServic
     @Override
     public MailRedirectionType getMailRedirectionType(Integer id) {
         Optional<MailRedirectionType> mailRedirectionType = mailRedirectionTypeRepository.findById(id);
-        if (!mailRedirectionType.isEmpty())
+        if (mailRedirectionType.isPresent())
             return mailRedirectionType.get();
         return null;
     }

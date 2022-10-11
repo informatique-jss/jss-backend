@@ -83,4 +83,16 @@ public interface AccountingRecordService {
         public Float getRemainingAmountToPayForCustomerOrder(CustomerOrder customerOrder) throws Exception;
 
         public void generateAccountingRecordsForRefund(Refund refund) throws Exception;
+
+        public List<AccountingRecord> getAccountingRecordsByTemporaryOperationId(Integer operationId) throws Exception;
+
+        public List<AccountingRecord> deleteRecordsByTemporaryOperationId(Integer operationId) throws Exception;
+
+        public List<AccountingRecord> getAccountingRecordsByOperationId(Integer operationId) throws Exception;
+
+        public List<AccountingRecord> doCounterPartByOperationId(Integer operationId) throws Exception;
+
+        public void generateAppointForPayment(Payment payment, float remainingMoney, ITiers customerOrder)
+                        throws Exception;
+
 }

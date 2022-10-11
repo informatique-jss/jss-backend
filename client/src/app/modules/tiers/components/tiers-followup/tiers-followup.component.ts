@@ -51,7 +51,7 @@ export class TiersFollowupComponent implements OnInit {
     private employeeService: EmployeeService) { }
 
   ngOnInit() {
-    this.employeeService.getSalesEmployees().subscribe(response => {
+    this.employeeService.getEmployees().subscribe(response => {
       this.salesEmployees = response;
     })
     this.tiersFollowupTypeService.getTiersFollowupTypes().subscribe(response => {

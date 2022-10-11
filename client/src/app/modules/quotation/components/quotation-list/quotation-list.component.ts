@@ -8,6 +8,7 @@ import { AppService } from 'src/app/services/app.service';
 import { IQuotation } from '../../model/IQuotation';
 import { OrderingSearch } from '../../model/OrderingSearch';
 import { QuotationService } from '../../services/quotation.service';
+import { QuotationComponent } from '../quotation/quotation.component';
 
 @Component({
   selector: 'quotation-list',
@@ -33,6 +34,7 @@ export class QuotationListComponent implements OnInit {
     this.displayedColumns.push({ id: "id", fieldName: "id", label: "N° de la commande" } as SortTableColumn);
     this.displayedColumns.push({ id: "customerOrderName", fieldName: "tiers", label: "Donneur d'ordre", valueFonction: this.getCustomerOrderName, actionLinkFunction: this.getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la fiche du donneur d'ordre" } as SortTableColumn);
     this.displayedColumns.push({ id: "quotationStatus", fieldName: "quotationStatus.label", label: "Statut" } as SortTableColumn);
+    this.displayedColumns.push({ id: "total", fieldName: "total", label: "Montant TTC", valueFonction: this.getTotalPrice } as SortTableColumn);
     this.displayedColumns.push({ id: "createdDate", fieldName: "createdDate", label: "Date de création", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
 
     this.tableAction.push({ actionIcon: "settings", actionName: "Voir le devis", actionLinkFunction: this.getActionLink, display: true, } as SortTableAction);
@@ -40,6 +42,7 @@ export class QuotationListComponent implements OnInit {
 
   orderingSearchForm = this.formBuilder.group({
   });
+
 
   getActionLink(action: SortTableAction, element: any) {
     if (element)
@@ -54,6 +57,10 @@ export class QuotationListComponent implements OnInit {
         return ['/tiers/', element.tiers.id];
     }
     return ['/tiers', element.tiers.id];
+  }
+
+  getTotalPrice(element: any) {
+    QuotationComponent.computePriceTotal(element as IQuotation);
   }
 
   getCustomerOrderName(element: any) {

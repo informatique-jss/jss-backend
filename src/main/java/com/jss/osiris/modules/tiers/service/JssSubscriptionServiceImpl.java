@@ -17,7 +17,7 @@ public class JssSubscriptionServiceImpl implements JssSubscriptionService {
     @Override
     public JssSubscription getJssSubscription(Integer id) {
         Optional<JssSubscription> jssSubscription = jssSubscriptionRepository.findById(id);
-        if (!jssSubscription.isEmpty())
+        if (jssSubscription.isPresent())
             return jssSubscription.get();
         return null;
     }

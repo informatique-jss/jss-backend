@@ -85,7 +85,7 @@ public class QuotationServiceImpl implements QuotationService {
     @Override
     public Quotation getQuotation(Integer id) {
         Optional<Quotation> quotation = quotationRepository.findById(id);
-        if (!quotation.isEmpty())
+        if (quotation.isPresent())
             return quotation.get();
         return null;
     }
@@ -184,6 +184,9 @@ public class QuotationServiceImpl implements QuotationService {
     }
 
     private BillingItem getAppliableBillingItem(List<BillingItem> billingItems) {
+        if (billingItems == null)
+            return null;
+
         if (billingItems != null && billingItems.size() > 0)
             billingItems.sort(new Comparator<BillingItem>() {
                 @Override

@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatAccordion } from '@angular/material/expansion';
 import { Observable } from 'rxjs';
-import { BILLING_CLOSURE_RECIPIENT_OTHERS_CODE, BILLING_TIERS_DOCUMENT_TYPE_CODE, BILLING_TIERS_DOCUMENT_TYPE_OTHER_CODE, COUNTRY_CODE_FRANCE, DUNNING_TIERS_DOCUMENT_TYPE_CODE, PAYMENT_TYPE_CHEQUES, PAYMENT_TYPE_OTHERS, PAYMENT_TYPE_PRELEVEMENT, PUBLICATION_TIERS_DOCUMENT_TYPE_CODE, REFUND_TIERS_DOCUMENT_TYPE_CODE, REFUND_TYPE_VIREMENT } from 'src/app/libs/Constants';
+import { BILLING_CLOSURE_RECIPIENT_OTHERS_CODE, BILLING_TIERS_DOCUMENT_TYPE_CODE, BILLING_TIERS_DOCUMENT_TYPE_OTHER_CODE, COUNTRY_CODE_FRANCE, DUNNING_TIERS_DOCUMENT_TYPE_CODE, PAYMENT_TYPE_CHEQUES, PAYMENT_TYPE_OTHERS, PAYMENT_TYPE_PRELEVEMENT, REFUND_TIERS_DOCUMENT_TYPE_CODE, REFUND_TYPE_VIREMENT } from 'src/app/libs/Constants';
 import { getDocument } from 'src/app/libs/DocumentHelper';
 import { City } from 'src/app/modules/miscellaneous/model/City';
 import { PaymentType } from 'src/app/modules/miscellaneous/model/PaymentType';
@@ -46,7 +46,6 @@ export class ReferentialConfrereComponent extends GenericReferentialComponent<Co
   billingDocument: Document = {} as Document;
   dunningDocument: Document = {} as Document;
   refundDocument: Document = {} as Document;
-  publicationDocument: Document = {} as Document;
 
   COUNTRY_CODE_FRANCE = COUNTRY_CODE_FRANCE;
 
@@ -63,7 +62,6 @@ export class ReferentialConfrereComponent extends GenericReferentialComponent<Co
       this.billingDocument = getDocument(BILLING_TIERS_DOCUMENT_TYPE_CODE, this.selectedEntity!, this.documentTypes);
       this.dunningDocument = getDocument(DUNNING_TIERS_DOCUMENT_TYPE_CODE, this.selectedEntity!, this.documentTypes);
       this.refundDocument = getDocument(REFUND_TIERS_DOCUMENT_TYPE_CODE, this.selectedEntity!, this.documentTypes);
-      this.publicationDocument = getDocument(PUBLICATION_TIERS_DOCUMENT_TYPE_CODE, this.selectedEntity!, this.documentTypes);
 
       if (!this.billingDocument.billingLabelIsIndividual)
         this.billingDocument.billingLabelIsIndividual = false;

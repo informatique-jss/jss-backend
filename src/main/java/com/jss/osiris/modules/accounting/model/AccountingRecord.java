@@ -13,8 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jss.osiris.libs.JacksonLocalDateTimeSerializer;
 import com.jss.osiris.modules.invoicing.model.Deposit;
@@ -25,7 +24,6 @@ import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 
 @Entity
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class AccountingRecord implements Serializable, IId {
 
 	@Id
@@ -50,8 +48,6 @@ public class AccountingRecord implements Serializable, IId {
 
 	private LocalDate manualAccountingDocumentDate;
 
-	private LocalDate manualAccountingDocumentDeadline;
-
 	@Column(nullable = false, length = 100)
 	private String label;
 	private Float creditAmount;
@@ -70,6 +66,7 @@ public class AccountingRecord implements Serializable, IId {
 
 	@ManyToOne
 	@JoinColumn(name = "id_invoice")
+	@JsonIgnoreProperties("accountingRecords")
 	private Invoice invoice;
 
 	@ManyToOne
@@ -78,10 +75,12 @@ public class AccountingRecord implements Serializable, IId {
 
 	@ManyToOne
 	@JoinColumn(name = "id_payment")
+	@JsonIgnoreProperties("accountingRecords")
 	private Payment payment;
 
 	@ManyToOne
 	@JoinColumn(name = "id_deposit")
+	@JsonIgnoreProperties("accountingRecords")
 	private Deposit deposit;
 
 	@ManyToOne
@@ -241,14 +240,6 @@ public class AccountingRecord implements Serializable, IId {
 
 	public void setManualAccountingDocumentDate(LocalDate manualAccountingDocumentDate) {
 		this.manualAccountingDocumentDate = manualAccountingDocumentDate;
-	}
-
-	public LocalDate getManualAccountingDocumentDeadline() {
-		return manualAccountingDocumentDeadline;
-	}
-
-	public void setManualAccountingDocumentDeadline(LocalDate manualAccountingDocumentDeadline) {
-		this.manualAccountingDocumentDeadline = manualAccountingDocumentDeadline;
 	}
 
 	public AccountingRecord getContrePasse() {
