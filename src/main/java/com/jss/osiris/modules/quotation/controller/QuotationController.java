@@ -65,7 +65,6 @@ import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.quotation.model.QuotationLabelType;
 import com.jss.osiris.modules.quotation.model.QuotationStatus;
 import com.jss.osiris.modules.quotation.model.RecordType;
-import com.jss.osiris.modules.quotation.model.Regie;
 import com.jss.osiris.modules.quotation.model.Rna;
 import com.jss.osiris.modules.quotation.model.Siren;
 import com.jss.osiris.modules.quotation.model.Siret;
@@ -90,7 +89,6 @@ import com.jss.osiris.modules.quotation.service.QuotationLabelTypeService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.quotation.service.QuotationStatusService;
 import com.jss.osiris.modules.quotation.service.RecordTypeService;
-import com.jss.osiris.modules.quotation.service.RegieService;
 import com.jss.osiris.modules.quotation.service.RnaDelegateService;
 import com.jss.osiris.modules.quotation.service.SireneDelegateService;
 import com.jss.osiris.modules.quotation.service.TransfertFundsTypeService;
@@ -204,61 +202,10 @@ public class QuotationController {
   AnnouncementNoticeTemplateService announcementNoticeTemplateService;
 
   @Autowired
-  RegieService regieService;
-
-  @Autowired
   CustomerOrderService customerOrderService;
 
   @Value("${miscellaneous.document.billing.label.type.affaire.code}")
   private String billingLabelAffaireCode;
-
-  @GetMapping(inputEntryPoint + "/regies")
-  public ResponseEntity<List<Regie>> getRegies() {
-    List<Regie> regies = null;
-    try {
-      regies = regieService.getRegies();
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching regie", e);
-      return new ResponseEntity<List<Regie>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching regie", e);
-      return new ResponseEntity<List<Regie>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<List<Regie>>(regies, HttpStatus.OK);
-  }
-
-  @PostMapping(inputEntryPoint + "/regie")
-  public ResponseEntity<Regie> addOrUpdateRegie(
-      @RequestBody Regie regies) {
-    Regie outRegie;
-    try {
-      if (regies.getId() != null)
-        validationHelper.validateReferential(regies, true);
-      validationHelper.validateString(regies.getCode(), true, 20);
-      validationHelper.validateString(regies.getLabel(), true, 100);
-
-      validationHelper.validateString(regies.getIban(), true, 40);
-      validationHelper.validateString(regies.getMailRecipient(), false, 60);
-      validationHelper.validateString(regies.getAddress(), false, 60);
-      validationHelper.validateString(regies.getPostalCode(), false, 10);
-      validationHelper.validateReferential(regies.getCity(), false);
-      validationHelper.validateReferential(regies.getCountry(), false);
-
-      outRegie = regieService
-          .addOrUpdateRegie(regies);
-    } catch (
-
-    ResponseStatusException e) {
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching regie", e);
-      return new ResponseEntity<Regie>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching regie", e);
-      return new ResponseEntity<Regie>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<Regie>(outRegie, HttpStatus.OK);
-  }
 
   @GetMapping(inputEntryPoint + "/announcement-notice-templates")
   public ResponseEntity<List<AnnouncementNoticeTemplate>> getAnnouncementNoticeTemplates() {
@@ -284,6 +231,7 @@ public class QuotationController {
         validationHelper.validateReferential(announcementNoticeTemplates, true);
       validationHelper.validateString(announcementNoticeTemplates.getCode(), true, 20);
       validationHelper.validateString(announcementNoticeTemplates.getLabel(), true, 100);
+      validationHelper.validateReferential(announcementNoticeTemplates.getProvisionFamilyType(), false);
 
       outAnnouncementNoticeTemplate = announcementNoticeTemplateService
           .addOrUpdateAnnouncementNoticeTemplate(announcementNoticeTemplates);
@@ -699,7 +647,6 @@ public class QuotationController {
       validationHelper.validateReferential(confrere.getCountry(), false);
       validationHelper.validateString(confrere.getIban(), false, 40);
       validationHelper.validateString(confrere.getPaymentBic(), false, 40);
-      validationHelper.validateReferential(confrere.getRegie(), false);
       validationHelper.validateReferential(confrere.getVatCollectionType(), false);
 
       validationHelper.validateReferential(confrere.getPaymentType(), true);
@@ -726,7 +673,6 @@ public class QuotationController {
           validationHelper.validateString(document.getClientAddress(), false, 60);
           validationHelper.validateString(document.getAffaireRecipient(), false, 40);
           validationHelper.validateString(document.getClientRecipient(), false, 40);
-          validationHelper.validateString(document.getBillingLabel(), false, 40);
           validationHelper.validateString(document.getCommandNumber(), false, 40);
           validationHelper.validateReferential(document.getPaymentDeadlineType(), false);
           validationHelper.validateReferential(document.getRefundType(), false);
@@ -1399,11 +1345,6 @@ public class QuotationController {
         validationHelper.validateString(document.getClientAddress(), false, 60);
         validationHelper.validateString(document.getAffaireRecipient(), false, 40);
         validationHelper.validateString(document.getClientRecipient(), false, 40);
-        validationHelper.validateString(document.getBillingLabel(), false, 40);
-        validationHelper.validateString(document.getBillingLabelAddress(), false, 60);
-        validationHelper.validateString(document.getBillingLabelPostalCode(), false, 10);
-        validationHelper.validateReferential(document.getBillingLabelCity(), false);
-        validationHelper.validateReferential(document.getBillingLabelCountry(), false);
 
         validationHelper.validateString(document.getCommandNumber(), false, 40);
         validationHelper.validateReferential(document.getPaymentDeadlineType(), false);

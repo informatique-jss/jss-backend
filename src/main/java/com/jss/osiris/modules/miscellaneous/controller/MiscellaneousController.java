@@ -26,6 +26,7 @@ import com.jss.osiris.modules.accounting.service.AccountingAccountService;
 import com.jss.osiris.modules.miscellaneous.model.AssoSpecialOfferBillingType;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.AttachmentType;
+import com.jss.osiris.modules.miscellaneous.model.BillingCenter;
 import com.jss.osiris.modules.miscellaneous.model.BillingItem;
 import com.jss.osiris.modules.miscellaneous.model.BillingType;
 import com.jss.osiris.modules.miscellaneous.model.City;
@@ -48,6 +49,7 @@ import com.jss.osiris.modules.miscellaneous.model.VatCollectionType;
 import com.jss.osiris.modules.miscellaneous.model.WeekDay;
 import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.miscellaneous.service.AttachmentTypeService;
+import com.jss.osiris.modules.miscellaneous.service.BillingCenterService;
 import com.jss.osiris.modules.miscellaneous.service.BillingItemService;
 import com.jss.osiris.modules.miscellaneous.service.BillingTypeService;
 import com.jss.osiris.modules.miscellaneous.service.CityService;
@@ -153,6 +155,55 @@ public class MiscellaneousController {
 
     @Autowired
     AccountingAccountService accountingAccountService;
+
+    @Autowired
+    BillingCenterService billingCenterService;
+
+    @GetMapping(inputEntryPoint + "/billing-centers")
+    public ResponseEntity<List<BillingCenter>> getBillingCenters() {
+        List<BillingCenter> billingCenters = null;
+        try {
+            billingCenters = billingCenterService.getBillingCenters();
+        } catch (HttpStatusCodeException e) {
+            logger.error("HTTP error when fetching billingCenter", e);
+            return new ResponseEntity<List<BillingCenter>>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            logger.error("Error when fetching billingCenter", e);
+            return new ResponseEntity<List<BillingCenter>>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<List<BillingCenter>>(billingCenters, HttpStatus.OK);
+    }
+
+    @PostMapping(inputEntryPoint + "/billing-center")
+    public ResponseEntity<BillingCenter> addOrUpdateBillingCenter(
+            @RequestBody BillingCenter billingCenters) {
+        BillingCenter outBillingCenter;
+        try {
+            if (billingCenters.getId() != null)
+                validationHelper.validateReferential(billingCenters, true);
+            validationHelper.validateString(billingCenters.getCode(), true);
+            validationHelper.validateString(billingCenters.getLabel(), true);
+            validationHelper.validateReferential(billingCenters.getCountry(), true);
+            validationHelper.validateReferential(billingCenters.getCity(), true);
+            validationHelper.validateString(billingCenters.getPostalCode(), false, 6);
+            validationHelper.validateString(billingCenters.getAddress(), true, 40);
+            validationHelper.validateString(billingCenters.getIban(), true, 40);
+
+            outBillingCenter = billingCenterService
+                    .addOrUpdateBillingCenter(billingCenters);
+        } catch (
+
+        ResponseStatusException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (HttpStatusCodeException e) {
+            logger.error("HTTP error when fetching billingCenter", e);
+            return new ResponseEntity<BillingCenter>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            logger.error("Error when fetching billingCenter", e);
+            return new ResponseEntity<BillingCenter>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<BillingCenter>(outBillingCenter, HttpStatus.OK);
+    }
 
     @GetMapping(inputEntryPoint + "/providers")
     public ResponseEntity<List<Provider>> getProviders() {

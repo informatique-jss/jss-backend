@@ -17,6 +17,7 @@ import javax.persistence.OneToMany;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
+import com.jss.osiris.modules.miscellaneous.model.BillingCenter;
 import com.jss.osiris.modules.miscellaneous.model.City;
 import com.jss.osiris.modules.miscellaneous.model.Country;
 import com.jss.osiris.modules.miscellaneous.model.Department;
@@ -132,10 +133,6 @@ public class Confrere implements ITiers {
 	@Column(length = 40)
 	private String iban;
 
-	@ManyToOne
-	@JoinColumn(name = "id_regie")
-	private Regie regie;
-
 	@Column(columnDefinition = "TEXT")
 	private String observations;
 
@@ -176,6 +173,10 @@ public class Confrere implements ITiers {
 	@ManyToOne
 	@JoinColumn(name = "id_language")
 	private Language language;
+
+	@ManyToOne
+	@JoinColumn(name = "id_billing_center")
+	private BillingCenter billingCenter;
 
 	public List<TiersFollowup> getTiersFollowups() {
 		return null;
@@ -231,14 +232,6 @@ public class Confrere implements ITiers {
 
 	public void setIban(String iban) {
 		this.iban = iban;
-	}
-
-	public Regie getRegie() {
-		return regie;
-	}
-
-	public void setRegie(Regie regie) {
-		this.regie = regie;
 	}
 
 	public JournalType getJournalType() {
@@ -520,6 +513,14 @@ public class Confrere implements ITiers {
 
 	public void setDiscountRate(Integer discountRate) {
 		this.discountRate = discountRate;
+	}
+
+	public BillingCenter getBillingCenter() {
+		return billingCenter;
+	}
+
+	public void setBillingCenter(BillingCenter billingCenter) {
+		this.billingCenter = billingCenter;
 	}
 
 }

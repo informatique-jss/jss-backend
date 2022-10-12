@@ -86,13 +86,6 @@ public class Document implements Serializable, IId {
 	private Boolean isMailingPdf;
 	private Integer numberMailingAffaire;
 	private Integer numberMailingClient;
-	@Column(length = 40)
-	private String billingLabel;
-	private String billingLabelAddress;
-	private String billingLabelPostalCode;
-	private City billingLabelCity;
-	private Country billingLabelCountry;
-	private Boolean billingLabelIsIndividual;
 
 	@ManyToOne
 	@JoinColumn(name = "id_billing_label_type")
@@ -140,6 +133,10 @@ public class Document implements Serializable, IId {
 	@ManyToOne
 	@JoinColumn(name = "id_billing_closure_recipient_type")
 	private BillingClosureRecipientType billingClosureRecipientType;
+
+	@ManyToOne
+	@JoinColumn(name = "id_billing_center")
+	private BillingCenter billingCenter;
 
 	public Integer getId() {
 		return id;
@@ -285,46 +282,6 @@ public class Document implements Serializable, IId {
 		this.mailsAffaire = mailsAffaire;
 	}
 
-	public String getBillingLabel() {
-		return billingLabel;
-	}
-
-	public void setBillingLabel(String billingLabel) {
-		this.billingLabel = billingLabel;
-	}
-
-	public String getBillingLabelAddress() {
-		return billingLabelAddress;
-	}
-
-	public void setBillingLabelAddress(String billingLabelAddress) {
-		this.billingLabelAddress = billingLabelAddress;
-	}
-
-	public String getBillingLabelPostalCode() {
-		return billingLabelPostalCode;
-	}
-
-	public void setBillingLabelPostalCode(String billingLabelPostalCode) {
-		this.billingLabelPostalCode = billingLabelPostalCode;
-	}
-
-	public City getBillingLabelCity() {
-		return billingLabelCity;
-	}
-
-	public void setBillingLabelCity(City billingLabelCity) {
-		this.billingLabelCity = billingLabelCity;
-	}
-
-	public Country getBillingLabelCountry() {
-		return billingLabelCountry;
-	}
-
-	public void setBillingLabelCountry(Country billingLabelCountry) {
-		this.billingLabelCountry = billingLabelCountry;
-	}
-
 	public BillingLabelType getBillingLabelType() {
 		return billingLabelType;
 	}
@@ -429,12 +386,12 @@ public class Document implements Serializable, IId {
 		this.confrere = confrere;
 	}
 
-	public Boolean getBillingLabelIsIndividual() {
-		return billingLabelIsIndividual;
+	public BillingCenter getBillingCenter() {
+		return billingCenter;
 	}
 
-	public void setBillingLabelIsIndividual(Boolean billingLabelIsIndividual) {
-		this.billingLabelIsIndividual = billingLabelIsIndividual;
+	public void setBillingCenter(BillingCenter billingCenter) {
+		this.billingCenter = billingCenter;
 	}
 
 }

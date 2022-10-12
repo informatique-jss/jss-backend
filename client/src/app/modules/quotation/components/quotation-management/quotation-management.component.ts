@@ -3,10 +3,9 @@ import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { MatAccordion } from '@angular/material/expansion';
 import { Observable, Subscription } from 'rxjs';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
-import { BILLING_TIERS_DOCUMENT_TYPE_CODE, BILLING_TIERS_DOCUMENT_TYPE_OTHER_CODE, COUNTRY_CODE_FRANCE, QUOTATION_DOCUMENT_TYPE_CODE, QUOTATION_TYPE_OTHER_CODE } from 'src/app/libs/Constants';
+import { BILLING_TIERS_DOCUMENT_TYPE_BILLING_CENTER, BILLING_TIERS_DOCUMENT_TYPE_CODE, COUNTRY_CODE_FRANCE, QUOTATION_DOCUMENT_TYPE_CODE, QUOTATION_TYPE_OTHER_CODE } from 'src/app/libs/Constants';
 import { getDocument, replaceDocument } from 'src/app/libs/DocumentHelper';
 import { instanceOfQuotation } from 'src/app/libs/TypeHelper';
-import { City } from 'src/app/modules/miscellaneous/model/City';
 import { CityService } from 'src/app/modules/miscellaneous/services/city.service';
 import { DocumentTypeService } from 'src/app/modules/miscellaneous/services/document.type.service';
 import { Responsable } from 'src/app/modules/tiers/model/Responsable';
@@ -40,7 +39,7 @@ export class QuotationManagementComponent implements OnInit {
 
   QUOTATION_TYPE_OTHER_CODE = QUOTATION_TYPE_OTHER_CODE;
   COUNTRY_CODE_FRANCE = COUNTRY_CODE_FRANCE;
-  BILLING_TIERS_DOCUMENT_TYPE_OTHER_CODE = BILLING_TIERS_DOCUMENT_TYPE_OTHER_CODE;
+  BILLING_TIERS_DOCUMENT_TYPE_BILLING_CENTER = BILLING_TIERS_DOCUMENT_TYPE_BILLING_CENTER;
 
   devisDocument: Document = {} as Document;
   billingDocument: Document = {} as Document;
@@ -110,9 +109,6 @@ export class QuotationManagementComponent implements OnInit {
         }
       }
 
-      if (!this.billingDocument.billingLabelIsIndividual)
-        this.billingDocument.billingLabelIsIndividual = false;
-
       if (this.billingDocument.id) {
         replaceDocument(BILLING_TIERS_DOCUMENT_TYPE_CODE, this.quotation, this.documentTypes, this.billingDocument);
       }
@@ -133,26 +129,4 @@ export class QuotationManagementComponent implements OnInit {
     this.quotation.customLabelResponsable = responsable;
     this.quotation.customLabelTiers = undefined;
   }
-
-  fillPostalCode(city: City) {
-    if (this.billingDocument.billingLabelCountry == null || this.billingDocument.billingLabelCountry == undefined)
-      this.billingDocument.billingLabelCountry = city.country;
-
-    if (this.billingDocument.billingLabelCountry.code == COUNTRY_CODE_FRANCE && city.postalCode != null)
-      this.billingDocument.billingLabelPostalCode = city.postalCode;
-  }
-
-  fillCity(postalCode: string) {
-    this.cityService.getCitiesFilteredByPostalCode(postalCode).subscribe(response => {
-      if (response != null && response != undefined && response.length == 1) {
-        let city = response[0];
-        if (this.billingDocument.billingLabelCountry == null || this.billingDocument.billingLabelCountry == undefined)
-          this.billingDocument.billingLabelCountry = city.country;
-
-        this.billingDocument.billingLabelCity = city;
-      }
-    })
-  }
-
-
 }

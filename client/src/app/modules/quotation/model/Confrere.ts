@@ -7,7 +7,6 @@ import { VatCollectionType } from "../../miscellaneous/model/VatCollectionType";
 import { WeekDay } from "../../miscellaneous/model/WeekDay";
 import { ITiers } from "../../tiers/model/ITiers";
 import { JournalType } from "./JournalType";
-import { Regie } from "./Regie";
 
 export interface Confrere extends IDocument, ITiers {
   label: string;
@@ -33,6 +32,5 @@ export interface Confrere extends IDocument, ITiers {
   administrativeFees: number;
   numberOfPrint: number;
   paperPrice: number;
-  regie: Regie;
   vatCollectionType: VatCollectionType;
 }

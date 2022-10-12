@@ -43,8 +43,8 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Value("${miscellaneous.document.billing.label.type.affaire.code}")
     private String billingLabelAffaireCode;
 
-    @Value("${miscellaneous.document.billing.label.type.other.code}")
-    private String billingLabelOtherCode;
+    @Value("${miscellaneous.document.billing.label.type.billing.center.code}")
+    private String billingLabelBillingCenterCode;
 
     @Value("${invoicing.invoice.status.send.code}")
     private String invoiceStatusSendCode;
@@ -101,13 +101,13 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoice.setDueDate(LocalDate.now().plusDays(nbrOfDayFromDueDate));
 
         // Defined billing label
-        if (billingLabelOtherCode.equals(billingDocument.getBillingLabelType().getCode())) {
-            invoice.setBillingLabel(billingDocument.getBillingLabel());
-            invoice.setBillingLabelAddress(billingDocument.getBillingLabelAddress());
-            invoice.setBillingLabelPostalCode(billingDocument.getBillingLabelPostalCode());
-            invoice.setBillingLabelCity(billingDocument.getBillingLabelCity());
-            invoice.setBillingLabelCountry(billingDocument.getBillingLabelCountry());
-            invoice.setBillingLabelIsIndividual(billingDocument.getBillingLabelIsIndividual());
+        if (billingLabelBillingCenterCode.equals(billingDocument.getBillingLabelType().getCode())) {
+            invoice.setBillingLabel(billingDocument.getBillingCenter().getLabel());
+            invoice.setBillingLabelAddress(billingDocument.getBillingCenter().getAddress());
+            invoice.setBillingLabelPostalCode(billingDocument.getBillingCenter().getPostalCode());
+            invoice.setBillingLabelCity(billingDocument.getBillingCenter().getCity());
+            invoice.setBillingLabelCountry(billingDocument.getBillingCenter().getCountry());
+            invoice.setBillingLabelIsIndividual(false);
             invoice.setBillingLabelType(billingDocument.getBillingLabelType());
             invoice.setIsResponsableOnBilling(billingDocument.getIsResponsableOnBilling());
             invoice.setIsCommandNumberMandatory(billingDocument.getIsCommandNumberMandatory());

@@ -28,7 +28,7 @@ public class NewEntityServiceImpl implements NewEntityService {
 	@Cacheable(value = "newEntity", key = "#id")
     public NewEntity getNewEntity(Integer id) {
         Optional<NewEntity> newEntity = newEntityRepository.findById(id);
-        if (!newEntity.isEmpty())
+        if (newEntity.isPresent())
             return newEntity.get();
         return null;
     }

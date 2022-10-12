@@ -68,37 +68,12 @@
               </tr>
             </table>
             <table class="full-width"
-              *ngIf="billingDocument.billingLabelType!=undefined && billingDocument.billingLabelType.code!=undefined && billingDocument.billingLabelType.code==BILLING_TIERS_DOCUMENT_TYPE_OTHER_CODE">
+              *ngIf="billingDocument.billingLabelType!=undefined && billingDocument.billingLabelType.code!=undefined && billingDocument.billingLabelType.code==BILLING_TIERS_DOCUMENT_TYPE_BILLING_CENTER">
               <tr>
                 <td>
-                  <generic-textarea [(model)]="billingDocument.billingLabel" label="Autre libellé sur facture"
-                    [form]="quotationManagementForm" propertyName="billingLabel" [isDisabled]="!editMode"
-                    [numberOfLines]="4" [customValidators]="[Validators.maxLength(40)]"></generic-textarea>
-                </td>
-                <td>
-                  <generic-input [(model)]="billingDocument.billingLabelAddress" label="Adresse"
-                    [form]="quotationManagementForm" propertyName="billingLabelAddress" [isMandatory]="true"
-                    [maxLength]="20"></generic-input>
-                </td>
-                <td>
-                  <autocomplete-city [(model)]="billingDocument.billingLabelCity"
-                    [modelCountry]="billingDocument.billingLabelCountry" [form]="quotationManagementForm"
-                    propertyName="billingLabelCity" [isMandatory]="true" (onOptionSelected)="fillPostalCode($event)">
-                  </autocomplete-city>
-                </td>
-                <td>
-                  <autocomplete-postal-code [(model)]="billingDocument.billingLabelPostalCode"
-                    [form]="quotationManagementForm" propertyName="billingLabelPostalCode" [isMandatory]="true"
-                    [conditionnalRequired]="billingDocument.billingLabelCountry != null && billingDocument.billingLabelCountry.code == COUNTRY_CODE_FRANCE"
-                    (onOptionSelected)="fillCity($event)"></autocomplete-postal-code>
-                </td>
-                <td>
-                  <autocomplete-country [(model)]="billingDocument.billingLabelCountry" [form]="quotationManagementForm"
-                    propertyName="billingLabelCountry" [isMandatory]="true"></autocomplete-country>
-                </td>
-                <td>
-                  <generic-toggle [(model)]="billingDocument.billingLabelIsIndividual" label="Particulier ?"
-                    [form]="quotationManagementForm" propertyName="billingLabelIsIndividual"></generic-toggle>
+                  <autocomplete-billing-center [(model)]="billingDocument.billingCenter"
+                    [form]="quotationManagementForm" propertyName="billingCenter" [isMandatory]="true"
+                    [isDisabled]="!editMode" label="Centre de facturation"></autocomplete-billing-center>
                 </td>
               </tr>
             </table>

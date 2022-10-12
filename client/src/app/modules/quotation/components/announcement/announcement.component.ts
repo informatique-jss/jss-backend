@@ -10,10 +10,7 @@ import { map, startWith } from 'rxjs/operators';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
 import { CONFRERE_BALO_ID, JOURNAL_TYPE_JSS_DENOMINATION, JOURNAL_TYPE_SPEL_CODE, LOGO_ATTACHMENT_TYPE_CODE, PROOF_READING_DOCUMENT_TYPE_CODE, PUBLICATION_CERTIFICATE_DOCUMENT_TYPE_CODE, PUBLICATION_TIERS_DOCUMENT_TYPE_CODE, SEPARATOR_KEY_CODES } from 'src/app/libs/Constants';
 import { getDocument } from 'src/app/libs/DocumentHelper';
-import { downloadHtmlAsRtf } from 'src/app/libs/DownloadHelper';
-import { formatDate } from 'src/app/libs/FormatHelper';
 import { Attachment } from 'src/app/modules/miscellaneous/model/Attachment';
-import { Audit } from 'src/app/modules/miscellaneous/model/Audit';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { DocumentTypeService } from 'src/app/modules/miscellaneous/services/document.type.service';
 import { UploadAttachmentService } from 'src/app/modules/miscellaneous/services/upload.attachment.service';
@@ -28,6 +25,7 @@ import { CharacterPrice } from '../../model/CharacterPrice';
 import { Confrere } from '../../model/Confrere';
 import { JournalType } from '../../model/JournalType';
 import { NoticeType } from '../../model/NoticeType';
+import { Provision } from '../../model/Provision';
 import { AnnouncementNoticeTemplateService } from '../../services/announcement.notice.template.service';
 import { CharacterPriceService } from '../../services/character.price.service';
 import { ConfrereService } from '../../services/confrere.service';
@@ -44,6 +42,7 @@ export class AnnouncementComponent implements OnInit {
   matcher: CustomErrorStateMatcher = new CustomErrorStateMatcher();
   @Input() announcement: Announcement = {} as Announcement;
   @Input() affaire: Affaire = {} as Affaire;
+  @Input() provision: Provision = {} as Provision;
   @Input() editMode: boolean = false;
   @Input() instanceOfCustomerOrder: boolean = false;
   @Input() isStatusOpen: boolean = true;
@@ -125,7 +124,7 @@ export class AnnouncementComponent implements OnInit {
 
     this.filteredNoticeTemplates = this.announcementForm.get("noticeTemplates")?.valueChanges.pipe(
       startWith(''),
-      map(value => this._filterByLabel(value)),
+      map(value => this._filterNoticeTemplates(value)),
     );
   }
 
@@ -309,9 +308,9 @@ export class AnnouncementComponent implements OnInit {
     return this.noticeTypes.filter(noticeType => noticeType.label != undefined && noticeType.label.toLowerCase().includes(filterValue) && noticeType.noticeTypeFamily.id == this.announcement!.noticeTypeFamily.id);
   }
 
-  private _filterByLabel(value: string): AnnouncementNoticeTemplate[] {
+  private _filterNoticeTemplates(value: string): AnnouncementNoticeTemplate[] {
     const filterValue = (value != undefined && value.toLowerCase != undefined) ? value.toLowerCase() : "";
-    return this.noticeTemplates.filter(noticeTemplate => noticeTemplate.label != undefined && noticeTemplate.label.toLowerCase().includes(filterValue));
+    return this.noticeTemplates.filter(noticeTemplate => noticeTemplate.label != undefined && noticeTemplate.label.toLowerCase().includes(filterValue) && (!noticeTemplate.provisionFamilyType || this.provision.provisionFamilyType.code == noticeTemplate.provisionFamilyType.code));
   }
 
   addNoticeType(event: MatAutocompleteSelectedEvent): void {
@@ -364,19 +363,7 @@ export class AnnouncementComponent implements OnInit {
   getHistoryActions(): SortTableAction[] {
     let historyActions = [] as Array<SortTableAction>;
 
-    let exportRtfAction = {} as SortTableAction;
-    exportRtfAction.actionClick = (element2: Audit): void => {
-      downloadHtmlAsRtf("Affaire " + this.affaire.id + " - " + formatDate(new Date(element2.datetime)) + ".rtf", element2.newValue);
-    }
-    exportRtfAction.actionName = "Télécharger en .rtf";
-    exportRtfAction.actionIcon = "description";
-    exportRtfAction.display = true;
-    historyActions.push(exportRtfAction);
     return historyActions;
-  }
-
-  exportAsRtf() {
-    downloadHtmlAsRtf("Affaire " + this.affaire.id + " - " + formatDate(new Date()) + ".rtf", ((this.announcement.noticeHeader) ? this.announcement.noticeHeader + "<br>" : "") + this.announcement.notice);
   }
 
 }

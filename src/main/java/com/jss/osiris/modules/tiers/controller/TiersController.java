@@ -737,11 +737,6 @@ public class TiersController {
           validationHelper.validateString(document.getClientAddress(), false, 60);
           validationHelper.validateString(document.getAffaireRecipient(), false, 40);
           validationHelper.validateString(document.getClientRecipient(), false, 40);
-          validationHelper.validateString(document.getBillingLabel(), false, 40);
-          validationHelper.validateString(document.getBillingLabelAddress(), false, 60);
-          validationHelper.validateString(document.getBillingLabelPostalCode(), false, 10);
-          validationHelper.validateReferential(document.getBillingLabelCity(), false);
-          validationHelper.validateReferential(document.getBillingLabelCountry(), false);
 
           validationHelper.validateString(document.getCommandNumber(), false, 40);
           validationHelper.validateReferential(document.getPaymentDeadlineType(), false);
@@ -749,6 +744,7 @@ public class TiersController {
           validationHelper.validateString(document.getRefundIBAN(), false, 40);
           validationHelper.validateReferential(document.getBillingClosureType(), false);
           validationHelper.validateReferential(document.getBillingClosureRecipientType(), false);
+          validationHelper.validateReferential(document.getBillingCenter(), false);
 
           if (document.getIsMailingPaper() == null)
             document.setIsMailingPaper(false);
@@ -816,13 +812,13 @@ public class TiersController {
               validationHelper.validateString(document.getClientAddress(), false, 60);
               validationHelper.validateString(document.getAffaireRecipient(), false, 40);
               validationHelper.validateString(document.getClientRecipient(), false, 40);
-              validationHelper.validateString(document.getBillingLabel(), false, 40);
               validationHelper.validateString(document.getCommandNumber(), false, 40);
               validationHelper.validateReferential(document.getPaymentDeadlineType(), false);
               validationHelper.validateReferential(document.getRefundType(), false);
               validationHelper.validateString(document.getRefundIBAN(), false, 40);
               validationHelper.validateReferential(document.getBillingClosureType(), false);
               validationHelper.validateReferential(document.getBillingClosureRecipientType(), false);
+              validationHelper.validateReferential(document.getBillingCenter(), false);
 
             }
           }

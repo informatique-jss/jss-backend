@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 import com.jss.osiris.modules.miscellaneous.model.IId;
 
@@ -25,6 +27,10 @@ public class AnnouncementNoticeTemplate implements Serializable, IId {
 
 	@Column(columnDefinition = "TEXT")
 	private String text;
+
+	@ManyToOne
+	@JoinColumn(name = "id_provision_family_type")
+	private ProvisionFamilyType provisionFamilyType;
 
 	public Integer getId() {
 		return id;
@@ -56,6 +62,14 @@ public class AnnouncementNoticeTemplate implements Serializable, IId {
 
 	public void setText(String text) {
 		this.text = text;
+	}
+
+	public ProvisionFamilyType getProvisionFamilyType() {
+		return provisionFamilyType;
+	}
+
+	public void setProvisionFamilyType(ProvisionFamilyType provisionFamilyType) {
+		this.provisionFamilyType = provisionFamilyType;
 	}
 
 }

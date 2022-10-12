@@ -36,7 +36,7 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("miscellaneous.document.code.billing");
         isOk = isOk && checkProperty("miscellaneous.document.billing.label.type.customer.code");
         isOk = isOk && checkProperty("miscellaneous.document.billing.label.type.affaire.code");
-        isOk = isOk && checkProperty("miscellaneous.document.billing.label.type.other.code");
+        isOk = isOk && checkProperty("miscellaneous.document.billing.label.type.billing.center.code");
         isOk = isOk && checkProperty("accounting.account.number.bank");
         isOk = isOk && checkProperty("invoicing.invoice.status.send.code");
         isOk = isOk && checkProperty("invoicing.invoice.status.payed.code");

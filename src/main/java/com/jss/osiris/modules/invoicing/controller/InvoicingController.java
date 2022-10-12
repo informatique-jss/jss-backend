@@ -373,10 +373,10 @@ public class InvoicingController {
         try {
             invoice = invoiceService.getInvoiceForCustomerOrder(customerOrderId);
         } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching regie", e);
+            logger.error("HTTP error when fetching customer-order", e);
             return new ResponseEntity<Invoice>(HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (Exception e) {
-            logger.error("Error when fetching regie", e);
+            logger.error("Error when fetching customer-order", e);
             return new ResponseEntity<Invoice>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<Invoice>(invoice, HttpStatus.OK);

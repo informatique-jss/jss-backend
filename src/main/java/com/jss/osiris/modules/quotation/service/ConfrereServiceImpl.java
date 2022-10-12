@@ -74,7 +74,7 @@ public class ConfrereServiceImpl implements ConfrereService {
         }
 
         // Generate accounting accounts
-        if (confrere.getRegie() == null)
+        if (confrere.getBillingCenter() == null)
             if (confrere.getId() == null
                     || confrere.getAccountingAccountCustomer() == null
                             && confrere.getAccountingAccountProvider() == null

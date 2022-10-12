@@ -9,6 +9,7 @@ import { Bodacc } from '../../model/Bodacc';
 import { BodaccFusion } from '../../model/BodaccFusion';
 import { BodaccSale } from '../../model/BodaccSale';
 import { BodaccSplit } from '../../model/BodaccSplit';
+import { Provision } from '../../model/Provision';
 import { ActTypeService } from '../../services/act-type.service';
 import { BodaccFusionComponent } from '../bodacc-fusion/bodacc-fusion.component';
 import { BodaccSaleComponent } from '../bodacc-sale/bodacc-sale.component';
@@ -23,6 +24,7 @@ export class BodaccMainComponent implements OnInit {
 
   matcher: CustomErrorStateMatcher = new CustomErrorStateMatcher();
   @Input() bodacc: Bodacc = {} as Bodacc;
+  @Input() provision: Provision = {} as Provision;
   @Input() affaire: Affaire = {} as Affaire;
   @Input() editMode: boolean = false;
   @Input() instanceOfCustomerOrder: boolean = false;

@@ -3,21 +3,21 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 
-import { SelectRegieComponent } from './select-regie.component';
+import { AutocompleteBillingCenterComponent } from './autocomplete-billing-center.component';
 
-describe('SelectRegieComponent', () => {
-  let component: SelectRegieComponent;
-  let fixture: ComponentFixture<SelectRegieComponent>;
+describe('AutocompleteBillingCenterComponent', () => {
+  let component: AutocompleteBillingCenterComponent;
+  let fixture: ComponentFixture<AutocompleteBillingCenterComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ SelectRegieComponent ]
+      declarations: [ AutocompleteBillingCenterComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(SelectRegieComponent);
+    fixture = TestBed.createComponent(AutocompleteBillingCenterComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

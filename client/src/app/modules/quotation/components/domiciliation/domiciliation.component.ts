@@ -14,6 +14,7 @@ import { BuildingDomiciliation } from '../../model/BuildingDomiciliation';
 import { Domiciliation } from '../../model/Domiciliation';
 import { DomiciliationContractType } from '../../model/DomiciliationContractType';
 import { MailRedirectionType } from '../../model/MailRedirectionType';
+import { Provision } from '../../model/Provision';
 import { Siren } from '../../model/Siren';
 import { BuildingDomiciliationService } from '../../services/building.domiciliation.service';
 import { DomiciliationContractTypeService } from '../../services/domiciliation.contract.type.service';
@@ -28,6 +29,7 @@ export class DomiciliationComponent implements OnInit {
 
   matcher: CustomErrorStateMatcher = new CustomErrorStateMatcher();
   @Input() domiciliation: Domiciliation = {} as Domiciliation;
+  @Input() provision: Provision = {} as Provision;
   @Input() instanceOfCustomerOrder: boolean = false;
   @Input() isStatusOpen: boolean = true;
   @Input() editMode: boolean = false;

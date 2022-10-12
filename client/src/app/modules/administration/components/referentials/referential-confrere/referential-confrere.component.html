@@ -185,10 +185,6 @@
                 propertyName="paperPrice" [isMandatory]="false" [isDisabled]="!editMode" type="number">
               </generic-input>
             </td>
-            <td>
-              <select-regie [(model)]="selectedEntity.regie" label="Régie associée" [form]="entityForm"
-                propertyName="regie" [isMandatory]="false" [isDisabled]="!editMode"></select-regie>
-            </td>
           </tr>
         </table>
         <table class="full-width">
@@ -257,40 +253,16 @@
               </tr>
             </table>
             <table class="full-width"
-              *ngIf="billingDocument.billingLabelType!=undefined && billingDocument.billingLabelType.code!=undefined && billingDocument.billingLabelType.code==BILLING_TIERS_DOCUMENT_TYPE_OTHER_CODE">
+              *ngIf="billingDocument.billingLabelType!=undefined && billingDocument.billingLabelType.code!=undefined && billingDocument.billingLabelType.code==BILLING_TIERS_DOCUMENT_TYPE_BILLING_CENTER">
               <tr>
                 <td>
-                  <generic-textarea [(model)]="billingDocument.billingLabel" label="Autre libellé sur facture"
-                    [form]="entityForm" propertyName="billingLabel" [isDisabled]="!editMode" [numberOfLines]="4"
-                    [customValidators]="[Validators.maxLength(40)]"></generic-textarea>
-                </td>
-                <td>
-                  <generic-input [(model)]="billingDocument.billingLabelAddress" label="Adresse" [form]="entityForm"
-                    propertyName="billingLabelAddress" [isMandatory]="true" [maxLength]="20"></generic-input>
-                </td>
-                <td>
-                  <autocomplete-city [(model)]="billingDocument.billingLabelCity"
-                    [modelCountry]="billingDocument.billingLabelCountry" [form]="entityForm"
-                    propertyName="billingLabelCity" [isMandatory]="true"
-                    (onOptionSelected)="fillPostalCodeBilling($event)">
-                  </autocomplete-city>
-                </td>
-                <td>
-                  <autocomplete-postal-code [(model)]="billingDocument.billingLabelPostalCode" [form]="entityForm"
-                    propertyName="billingLabelPostalCode" [isMandatory]="true"
-                    [conditionnalRequired]="billingDocument.billingLabelCountry != null && billingDocument.billingLabelCountry.code == COUNTRY_CODE_FRANCE"
-                    (onOptionSelected)="fillCityBilling($event)"></autocomplete-postal-code>
-                </td>
-                <td>
-                  <autocomplete-country [(model)]="billingDocument.billingLabelCountry" [form]="entityForm"
-                    propertyName="billingLabelCountry" [isMandatory]="true"></autocomplete-country>
-                </td>
-                <td>
-                  <generic-toggle [(model)]="billingDocument.billingLabelIsIndividual" label="Particulier ?"
-                    [form]="entityForm" propertyName="billingLabelIsIndividual"></generic-toggle>
+                  <autocomplete-billing-center [(model)]="billingDocument.billingCenter" [form]="entityForm"
+                    propertyName="billingCenter" [isMandatory]="true" [isDisabled]="!editMode"
+                    label="Centre de facturation"></autocomplete-billing-center>
                 </td>
               </tr>
             </table>
+
             <table class="full-width">
               <tr>
                 <td>

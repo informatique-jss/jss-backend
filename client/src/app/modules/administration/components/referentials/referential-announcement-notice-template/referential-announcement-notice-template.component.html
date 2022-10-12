@@ -35,6 +35,13 @@
           </tr>
           <tr>
             <td>
+              <select-provision-family [(model)]="selectedEntity.provisionFamilyType"
+                label="Famille de prestations associée" [form]="entityForm" propertyName="provisionFamilyType"
+                [isMandatory]="false" [isDisabled]="!editMode"></select-provision-family>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <div *ngIf="!editMode">
                 <p>Texte :</p>
                 <span [innerHTML]="selectedEntity.text| trustHtml"></span>

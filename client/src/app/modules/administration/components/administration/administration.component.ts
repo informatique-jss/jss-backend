@@ -69,7 +69,6 @@ export class AdministrationComponent implements OnInit {
   COMPETENT_AUTHORITY_REFERENTIAL = "Divers - autorité compétente";
   ACCOUNTING_ACCOUNT_CLASS_REFERENTIAL = "Comptabilité - classe de compte comptable";
   ACCOUNTING_ACCOUNT_REFERENTIAL = "Comptabilité - compte comptable";
-  REGIE_REFERENTIAL = "Devis - Annonces - régie";
   CONFRERE_REFERENTIAL = "Devis - Annonces - confrère";
   COMPETITOR_REFERENTIAL = "Tiers - concurrent";
   VAT_COLLECTION_TYPE_REFERENTIAL = "Divers - type d'encaissement de la TVA";
@@ -77,6 +76,7 @@ export class AdministrationComponent implements OnInit {
   ACCOUNTING_JOURNAL_REFERENTIAL = "Comptabilité - journal comptable";
   INVOICE_STAUTS_REFERENTIAL = "Facturation - statut de facture";
   PAYMENT_WAY_REFERENTIAL = "Facturation - sens de paiement";
+  BILLING_CENTER_REFERENTIAL = "Divers - centre de facturation";
 
   constructor(private appService: AppService,
     private formBuilder: FormBuilder,
@@ -130,7 +130,6 @@ export class AdministrationComponent implements OnInit {
     this.referentials.push(this.COMPETENT_AUTHORITY_REFERENTIAL);
     this.referentials.push(this.ACCOUNTING_ACCOUNT_CLASS_REFERENTIAL);
     this.referentials.push(this.ACCOUNTING_ACCOUNT_REFERENTIAL);
-    this.referentials.push(this.REGIE_REFERENTIAL);
     this.referentials.push(this.CONFRERE_REFERENTIAL);
     this.referentials.push(this.COMPETITOR_REFERENTIAL);
     this.referentials.push(this.VAT_COLLECTION_TYPE_REFERENTIAL);
@@ -138,6 +137,7 @@ export class AdministrationComponent implements OnInit {
     this.referentials.push(this.ACCOUNTING_JOURNAL_REFERENTIAL);
     this.referentials.push(this.INVOICE_STAUTS_REFERENTIAL);
     this.referentials.push(this.PAYMENT_WAY_REFERENTIAL);
+    this.referentials.push(this.BILLING_CENTER_REFERENTIAL);
     this.referentials.sort((a, b) => a.localeCompare(b));
 
     this.filteredReferentials = this.referentialForm.get("entity")?.valueChanges.pipe(

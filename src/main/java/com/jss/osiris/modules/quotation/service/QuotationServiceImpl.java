@@ -79,9 +79,6 @@ public class QuotationServiceImpl implements QuotationService {
     @Value("${miscellaneous.document.billing.label.type.affaire.code}")
     private String billingLabelAffaireCode;
 
-    @Value("${miscellaneous.document.billing.label.type.other.code}")
-    private String billingLabelOtherCode;
-
     @Override
     public Quotation getQuotation(Integer id) {
         Optional<Quotation> quotation = quotationRepository.findById(id);
@@ -283,9 +280,12 @@ public class QuotationServiceImpl implements QuotationService {
             vat = vatService.getApplicableVat(affaire.getCountry(), affaire.getCity().getDepartment(),
                     affaire.getIsIndividual());
         } else {
-            vat = vatService.getApplicableVat(billingDocument.getBillingLabelCountry(),
-                    billingDocument.getBillingLabelCity().getDepartment(),
-                    billingDocument.getBillingLabelIsIndividual());
+
+            // TODO : get it from billing center
+
+            vat = vatService.getApplicableVat(billingDocument.getBillingCenter().getCountry(),
+                    billingDocument.getBillingCenter().getCity().getDepartment(), false);
+
         }
 
         if (vat != null) {

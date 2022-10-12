@@ -2,6 +2,7 @@ package com.jss.osiris.modules.quotation.service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,14 @@ public class CharacterPriceServiceImpl implements CharacterPriceService {
     @Override
     public List<CharacterPrice> getCharacterPrices() {
         return IterableUtils.toList(characterPriceRepository.findAll());
+    }
+
+    @Override
+    public CharacterPrice getCharacterPrice(Integer id) {
+        Optional<CharacterPrice> characterPrice = characterPriceRepository.findById(id);
+        if (characterPrice.isPresent())
+            return characterPrice.get();
+        return null;
     }
 
     @Override

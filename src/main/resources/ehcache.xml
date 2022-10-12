@@ -101,5 +101,14 @@
         <key-type>java.lang.Integer</key-type>
         <value-type>com.jss.osiris.modules.invoicing.model.Deposit</value-type>
     </cache>
+    <cache alias="billingCenterList" uses-template="default">
+        <key-type>java.lang.String</key-type>
+        <value-type>java.util.List</value-type>
+    </cache>
+    <cache alias="billingCenter" uses-template="default">
+        <key-type>java.lang.Integer</key-type>
+        <value-type>com.jss.osiris.modules.miscellaneous.model.BillingCenter</value-type>
+    </cache>
+
 
 </config>

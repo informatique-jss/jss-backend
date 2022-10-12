@@ -18,6 +18,12 @@ export class RadioGroupCivilityComponent extends GenericRadioGroupComponent<Civi
   }
 
   initTypes(): void {
-    this.civilityService.getCivilities().subscribe(response => { this.types = response })
+    this.civilityService.getCivilities().subscribe(response => {
+      this.types = response;
+      if (response && response.length > 0) {
+        this.model = response[0];
+        this.modelChange.emit(this.model);
+      }
+    })
   }
 }

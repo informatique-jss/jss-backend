@@ -14,15 +14,15 @@
   </tr>
 </table>
 <domiciliation [domiciliation]="provision.domiciliation" [editMode]="editMode" [isStatusOpen]="isStatusOpen"
-  [instanceOfCustomerOrder]="instanceOfCustomerOrder"
+  [instanceOfCustomerOrder]="instanceOfCustomerOrder" [provision]="provision"
   *ngIf="provision.domiciliation && provision.provisionType &&  provision.provisionType.code==PROVISION_TYPE_DOMICILIATION_CODE">
 </domiciliation>
-<announcement [announcement]="provision.announcement" [editMode]="editMode"
+<announcement [announcement]="provision.announcement" [editMode]="editMode" [provision]="provision"
   [instanceOfCustomerOrder]="instanceOfCustomerOrder" [isStatusOpen]="isStatusOpen" (noticeChange)="noticeChange()"
   *ngIf="provision.announcement && provision.provisionType && provision.provisionType.code==PROVISION_TYPE_ANNOUNCEMENT_CODE"
   [affaire]="affaire">
 </announcement>
 <bodacc-main [bodacc]="provision.bodacc" [affaire]="affaire" [editMode]="editMode" [isStatusOpen]="isStatusOpen"
-  [instanceOfCustomerOrder]="instanceOfCustomerOrder"
+  [instanceOfCustomerOrder]="instanceOfCustomerOrder" [provision]="provision"
   *ngIf="provision.bodacc && provision.provisionType && provision.provisionType.code==PROVISION_TYPE_BODACC_CODE">
 </bodacc-main>

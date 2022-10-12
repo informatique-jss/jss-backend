@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatAccordion } from '@angular/material/expansion';
 import { Observable } from 'rxjs';
-import { BILLING_CLOSURE_RECIPIENT_OTHERS_CODE, BILLING_TIERS_DOCUMENT_TYPE_CODE, BILLING_TIERS_DOCUMENT_TYPE_OTHER_CODE, COUNTRY_CODE_FRANCE, DUNNING_TIERS_DOCUMENT_TYPE_CODE, PAYMENT_TYPE_CHEQUES, PAYMENT_TYPE_OTHERS, PAYMENT_TYPE_PRELEVEMENT, REFUND_TIERS_DOCUMENT_TYPE_CODE, REFUND_TYPE_VIREMENT } from 'src/app/libs/Constants';
+import { BILLING_TIERS_DOCUMENT_TYPE_BILLING_CENTER, BILLING_TIERS_DOCUMENT_TYPE_CODE, COUNTRY_CODE_FRANCE, DUNNING_TIERS_DOCUMENT_TYPE_CODE, PAYMENT_TYPE_CHEQUES, PAYMENT_TYPE_OTHERS, PAYMENT_TYPE_PRELEVEMENT, REFUND_TIERS_DOCUMENT_TYPE_CODE, REFUND_TYPE_VIREMENT } from 'src/app/libs/Constants';
 import { getDocument } from 'src/app/libs/DocumentHelper';
 import { City } from 'src/app/modules/miscellaneous/model/City';
 import { PaymentType } from 'src/app/modules/miscellaneous/model/PaymentType';
@@ -39,8 +39,7 @@ export class ReferentialConfrereComponent extends GenericReferentialComponent<Co
   PAYMENT_TYPE_OTHERS = PAYMENT_TYPE_OTHERS;
 
   REFUND_TYPE_VIREMENT = REFUND_TYPE_VIREMENT;
-  BILLING_TIERS_DOCUMENT_TYPE_OTHER_CODE = BILLING_TIERS_DOCUMENT_TYPE_OTHER_CODE;
-  BILLING_CLOSURE_RECIPIENT_OTHERS_CODE = BILLING_CLOSURE_RECIPIENT_OTHERS_CODE;
+  BILLING_TIERS_DOCUMENT_TYPE_BILLING_CENTER = BILLING_TIERS_DOCUMENT_TYPE_BILLING_CENTER;
 
   documentTypes: DocumentType[] = [] as Array<DocumentType>;
   billingDocument: Document = {} as Document;
@@ -62,10 +61,6 @@ export class ReferentialConfrereComponent extends GenericReferentialComponent<Co
       this.billingDocument = getDocument(BILLING_TIERS_DOCUMENT_TYPE_CODE, this.selectedEntity!, this.documentTypes);
       this.dunningDocument = getDocument(DUNNING_TIERS_DOCUMENT_TYPE_CODE, this.selectedEntity!, this.documentTypes);
       this.refundDocument = getDocument(REFUND_TIERS_DOCUMENT_TYPE_CODE, this.selectedEntity!, this.documentTypes);
-
-      if (!this.billingDocument.billingLabelIsIndividual)
-        this.billingDocument.billingLabelIsIndividual = false;
-
       this.entityForm.markAllAsTouched();
     })
   }
@@ -120,24 +115,5 @@ export class ReferentialConfrereComponent extends GenericReferentialComponent<Co
     }
   }
 
-  fillPostalCodeBilling(city: City) {
-    if (this.billingDocument.billingLabelCountry == null || this.billingDocument.billingLabelCountry == undefined)
-      this.billingDocument.billingLabelCountry = city.country;
-
-    if (this.billingDocument.billingLabelCountry.code == COUNTRY_CODE_FRANCE && city.postalCode != null)
-      this.billingDocument.billingLabelPostalCode = city.postalCode;
-  }
-
-  fillCityBilling(postalCode: string) {
-    this.cityService.getCitiesFilteredByPostalCode(postalCode).subscribe(response => {
-      if (response != null && response != undefined && response.length == 1) {
-        let city = response[0];
-        if (this.billingDocument.billingLabelCountry == null || this.billingDocument.billingLabelCountry == undefined)
-          this.billingDocument.billingLabelCountry = city.country;
-
-        this.billingDocument.billingLabelCity = city;
-      }
-    })
-  }
 
 }

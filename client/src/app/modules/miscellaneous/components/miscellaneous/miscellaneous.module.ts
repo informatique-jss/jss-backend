@@ -30,6 +30,7 @@ import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.compone
 import { ConfrereDialogComponent } from '../confreres-dialog/confreres-dialog.component';
 import { AutocompleteAccountingAccountComponent } from '../forms/autocomplete-accounting-account/autocomplete-accounting-account.component';
 import { AutocompleteAffaireComponent } from '../forms/autocomplete-affaire/autocomplete-affaire.component';
+import { AutocompleteBillingCenterComponent } from '../forms/autocomplete-billing-center/autocomplete-billing-center.component';
 import { AutocompleteCityComponent } from '../forms/autocomplete-city/autocomplete-city.component';
 import { AutocompleteCompetentAuthorityComponent } from '../forms/autocomplete-competent-authority/autocomplete-competent-authority.component';
 import { AutocompleteConfrereComponent } from '../forms/autocomplete-confrere/autocomplete-confrere.component';
@@ -94,7 +95,6 @@ import { SelectProvisionFamilyComponent } from '../forms/select-provision-family
 import { SelectProvisionTypeComponent } from '../forms/select-provision-type/select-provision-type.component';
 import { SelectOrderingStatusComponent as SelectQuotationStatusComponent } from '../forms/select-quotation-status/select-quotation-status.component';
 import { SelectRefundTypeComponent } from '../forms/select-refund-type/select-refund-type.component';
-import { SelectRegieComponent } from '../forms/select-regie/select-regie.component';
 import { SelectRegionsComponent } from '../forms/select-regions/select-regions.component';
 import { SelectResponsableComponent } from '../forms/select-responsable/select-responsable.component';
 import { SelectSubscriptionPeriodComponent } from '../forms/select-subscription-period/select-subscription-period.component';
@@ -195,6 +195,7 @@ import { MiscellaneousComponent } from './miscellaneous.component';
     SelectVatComponent,
     SelectRegionsComponent,
     AutocompleteRegionComponent,
+    AutocompleteBillingCenterComponent,
     SelectFundTypeComponent,
     ChipsCityComponent,
     AutocompleteDepartmentComponent,
@@ -212,7 +213,6 @@ import { MiscellaneousComponent } from './miscellaneous.component';
     RadioGroupJournalTypeComponent,
     SelectDayComponent,
     GradeComponent,
-    SelectRegieComponent,
     AutocompleteAccountingAccountComponent,
     SelectAccountingJournalComponent,
     SortTableComponent,
@@ -234,7 +234,6 @@ import { MiscellaneousComponent } from './miscellaneous.component';
     SelectProvisionFamilyComponent,
     AutocompleteDepartmentComponent,
     GenericDatepickerComponent,
-    SelectRegieComponent,
     SelectAccountingAccountClassComponent,
     RadioGroupRecordTypeComponent,
     AutocompleteFormalisteEmployeeComponent,
@@ -307,6 +306,7 @@ import { MiscellaneousComponent } from './miscellaneous.component';
     SingleAttachmentComponent,
     SortTableComponent,
     SelectInvoiceStatusComponent,
+    AutocompleteBillingCenterComponent,
     SelectPaymentWayComponent,
   ]
 })

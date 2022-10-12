@@ -119,11 +119,6 @@
               *ngIf="announcement.confrere!=undefined && announcement.department!=undefined && announcement.publicationDate!=undefined">
               Prix total : {{countCharacterNumber()*characterPrice.price | number}} €
             </td>
-            <td>
-              <mat-icon (click)='exportAsRtf()' class="pointer" color="accent" matTooltip="Télécharger en .rtf">
-                description
-              </mat-icon>
-            </td>
           </tr>
         </table>
         <table class="full-width">
