@@ -12,7 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.modules.miscellaneous.model.BillingItem;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 
@@ -28,10 +28,11 @@ public class AccountingAccount implements Serializable, IId {
 	@Column(nullable = false, length = 100)
 	private String label;
 
-	@Column(length = 6)
+	@Column(length = 6, nullable = false)
 	private String accountingAccountNumber;
 
-	private Integer accountingAccountSubNumber;
+	@Column(length = 20, nullable = false)
+	private String accountingAccountSubNumber;
 
 	@ManyToOne
 	@JoinColumn(name = "id_accounting_account_class")
@@ -39,7 +40,7 @@ public class AccountingAccount implements Serializable, IId {
 
 	@ManyToOne
 	@JoinColumn(name = "id_billing_item")
-	@JsonBackReference("accountingAccount")
+	@JsonIgnoreProperties(value = { "accountingAccounts" }, allowSetters = true)
 	private BillingItem billingItem;
 
 	public Integer getId() {
@@ -74,20 +75,20 @@ public class AccountingAccount implements Serializable, IId {
 		this.label = label;
 	}
 
-	public Integer getAccountingAccountSubNumber() {
-		return accountingAccountSubNumber;
-	}
-
-	public void setAccountingAccountSubNumber(Integer accountingAccountSubNumber) {
-		this.accountingAccountSubNumber = accountingAccountSubNumber;
-	}
-
 	public BillingItem getBillingItem() {
 		return billingItem;
 	}
 
 	public void setBillingItem(BillingItem billingItem) {
 		this.billingItem = billingItem;
+	}
+
+	public String getAccountingAccountSubNumber() {
+		return accountingAccountSubNumber;
+	}
+
+	public void setAccountingAccountSubNumber(String accountingAccountSubNumber) {
+		this.accountingAccountSubNumber = accountingAccountSubNumber;
 	}
 
 }

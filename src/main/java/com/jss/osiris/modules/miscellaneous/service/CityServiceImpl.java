@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.modules.miscellaneous.model.City;
 import com.jss.osiris.modules.miscellaneous.model.Country;
@@ -34,6 +35,7 @@ public class CityServiceImpl implements CityService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public City addOrUpdateCity(
             City city) {
         return cityRepository.save(city);

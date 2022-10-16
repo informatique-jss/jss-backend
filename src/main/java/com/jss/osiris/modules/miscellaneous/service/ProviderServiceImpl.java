@@ -5,10 +5,8 @@ import java.util.Optional;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.modules.accounting.model.AccountingAccountTrouple;
 import com.jss.osiris.modules.accounting.service.AccountingAccountService;
@@ -31,13 +29,11 @@ public class ProviderServiceImpl implements ProviderService {
     PhoneService phoneService;
 
     @Override
-    @Cacheable(value = "providerList", key = "#root.methodName")
     public List<Provider> getProviders() {
         return IterableUtils.toList(providerRepository.findAll());
     }
 
     @Override
-    @Cacheable(value = "provider", key = "#id")
     public Provider getProvider(Integer id) {
         Optional<Provider> provider = providerRepository.findById(id);
         if (provider.isPresent())
@@ -46,10 +42,7 @@ public class ProviderServiceImpl implements ProviderService {
     }
 
     @Override
-    @Caching(evict = {
-            @CacheEvict(value = "providerList", allEntries = true),
-            @CacheEvict(value = "provider", key = "#provider.id")
-    })
+    @Transactional(rollbackFor = Exception.class)
     public Provider addOrUpdateProvider(Provider provider) throws Exception {
         // Generate accounting accounts
         if (provider.getId() == null

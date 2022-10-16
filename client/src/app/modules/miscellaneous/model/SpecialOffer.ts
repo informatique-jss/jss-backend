@@ -4,4 +4,3 @@ import { AssoSpecialOfferBillingType } from "./AssoSpecialOfferBillingType";
 export interface SpecialOffer extends IReferential {
   assoSpecialOfferBillingTypes: AssoSpecialOfferBillingType[];
 }
-

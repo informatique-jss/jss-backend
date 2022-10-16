@@ -3,7 +3,8 @@ import { UntypedFormBuilder } from '@angular/forms';
 import { MatExpansionPanel } from '@angular/material/expansion';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
 import { compareWithId } from 'src/app/libs/CompareHelper';
-import { PROVISION_TYPE_ANNOUNCEMENT_CODE, PROVISION_TYPE_BODACC_CODE, PROVISION_TYPE_DOMICILIATION_CODE } from 'src/app/libs/Constants';
+import { PROVISION_SCREEN_TYPE_ANNOUNCEMENT, PROVISION_SCREEN_TYPE_BODACC, PROVISION_SCREEN_TYPE_DOMICILIATION, PROVISION_SCREEN_TYPE_STANDARD } from 'src/app/libs/Constants';
+import { Employee } from 'src/app/modules/profile/model/Employee';
 import { Affaire } from '../../model/Affaire';
 import { Announcement } from '../../model/Announcement';
 import { Bodacc } from '../../model/Bodacc';
@@ -12,6 +13,7 @@ import { Provision } from '../../model/Provision';
 import { ProvisionFamilyType } from '../../model/ProvisionFamilyType';
 import { ProvisionType } from '../../model/ProvisionType';
 import { ProvisionFamilyTypeService } from '../../services/provision.family.type.service';
+import { ProvisionService } from '../../services/provision.service';
 import { ProvisionTypeService } from '../../services/provision.type.service';
 import { AnnouncementComponent } from '../announcement/announcement.component';
 import { BodaccMainComponent } from '../bodacc-main/bodacc-main.component';
@@ -40,13 +42,15 @@ export class ProvisionItemComponent implements OnInit {
   provisionFamilyTypes: ProvisionFamilyType[] = [] as Array<ProvisionFamilyType>;
   provisionTypes: ProvisionType[] = [] as Array<ProvisionType>;
 
-  PROVISION_TYPE_DOMICILIATION_CODE = PROVISION_TYPE_DOMICILIATION_CODE;
-  PROVISION_TYPE_ANNOUNCEMENT_CODE = PROVISION_TYPE_ANNOUNCEMENT_CODE;
-  PROVISION_TYPE_BODACC_CODE = PROVISION_TYPE_BODACC_CODE;
+  PROVISION_SCREEN_TYPE_BODACC = PROVISION_SCREEN_TYPE_BODACC;
+  PROVISION_SCREEN_TYPE_DOMICILIATION = PROVISION_SCREEN_TYPE_DOMICILIATION;
+  PROVISION_SCREEN_TYPE_ANNOUNCEMENT = PROVISION_SCREEN_TYPE_ANNOUNCEMENT;
+  PROVISION_SCREEN_TYPE_STANDARD = PROVISION_SCREEN_TYPE_STANDARD;
 
   constructor(private formBuilder: UntypedFormBuilder,
     protected provisionFamilyTypeService: ProvisionFamilyTypeService,
     protected provisionTypeService: ProvisionTypeService,
+    protected provisionService: ProvisionService,
   ) { }
 
   ngOnInit() {
@@ -59,11 +63,12 @@ export class ProvisionItemComponent implements OnInit {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes.provision != undefined) {
-      if (!this.provision.isValidated)
-        this.provision.isValidated = false;
-      this.provisionItemForm.markAllAsTouched();
-    }
+    this.provisionItemForm.markAllAsTouched();
+  }
+
+  updateAssignedToForProvision(employee: Employee, provision: Provision) {
+    this.provisionService.updateAssignedToForProvision(provision, employee).subscribe(response => {
+    });
   }
 
   getFormStatus(): boolean {
@@ -98,19 +103,19 @@ export class ProvisionItemComponent implements OnInit {
       return;
     }
 
-    if (this.provision.provisionType.code != PROVISION_TYPE_DOMICILIATION_CODE) {
+    if (this.provision.provisionType.provisionScreenType.code != PROVISION_SCREEN_TYPE_DOMICILIATION) {
       this.provision.domiciliation = undefined;
     } else if (!this.provision.domiciliation) {
       this.provision.domiciliation = {} as Domiciliation;
     }
 
-    if (this.provision.provisionType.code != PROVISION_TYPE_ANNOUNCEMENT_CODE) {
+    if (this.provision.provisionType.provisionScreenType.code != PROVISION_SCREEN_TYPE_ANNOUNCEMENT) {
       this.provision.announcement = undefined;
     } else if (!this.provision.announcement) {
       this.provision.announcement = {} as Announcement;
     }
 
-    if (this.provision.provisionType.code != PROVISION_TYPE_BODACC_CODE) {
+    if (this.provision.provisionType.provisionScreenType.code != PROVISION_SCREEN_TYPE_BODACC) {
       this.provision.bodacc = undefined;
     } else if (!this.provision.bodacc) {
       this.provision.bodacc = {} as Bodacc;

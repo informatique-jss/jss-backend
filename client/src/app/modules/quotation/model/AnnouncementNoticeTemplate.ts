@@ -3,5 +3,5 @@ import { ProvisionFamilyType } from "./ProvisionFamilyType";
 
 export interface AnnouncementNoticeTemplate extends IReferential {
   text: string;
-  provisionFamilyType: ProvisionFamilyType;
+  provisionFamilyTypes: ProvisionFamilyType[];
 }

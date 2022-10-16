@@ -15,10 +15,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jss.osiris.libs.JacksonLocalDateSerializer;
 import com.jss.osiris.libs.JacksonLocalDateTimeSerializer;
@@ -34,7 +31,6 @@ import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
 @Entity
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Invoice implements Serializable, IId {
 
 	@Id
@@ -51,10 +47,11 @@ public class Invoice implements Serializable, IId {
 	private LocalDate dueDate;
 
 	@OneToMany(targetEntity = InvoiceItem.class, mappedBy = "invoice")
-	@JsonManagedReference("invoice")
+	@JsonIgnoreProperties(value = { "invoice" }, allowSetters = true)
 	private List<InvoiceItem> invoiceItems;
 
 	@OneToOne
+	@JsonIgnoreProperties(value = { "invoices" }, allowSetters = true)
 	private CustomerOrder customerOrder;
 
 	@ManyToOne
@@ -99,9 +96,11 @@ public class Invoice implements Serializable, IId {
 	private Float totalPrice;
 
 	@OneToMany(mappedBy = "invoice")
+	@JsonIgnoreProperties(value = { "invoice" }, allowSetters = true)
 	private List<Payment> payments;
 
 	@OneToMany(mappedBy = "invoice")
+	@JsonIgnoreProperties(value = { "invoice" }, allowSetters = true)
 	private List<Deposit> deposits;
 
 	@ManyToOne
@@ -109,7 +108,7 @@ public class Invoice implements Serializable, IId {
 	private InvoiceStatus invoiceStatus;
 
 	@OneToMany(mappedBy = "invoice")
-	@JsonIgnoreProperties("invoice")
+	@JsonIgnoreProperties(value = { "invoice" }, allowSetters = true)
 	private List<AccountingRecord> accountingRecords;
 
 	public Integer getId() {

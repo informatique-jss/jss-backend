@@ -25,9 +25,10 @@ import { ReferentialAccountingAccountClassComponent } from '../referentials/refe
 import { ReferentialAccountingAccountComponent } from '../referentials/referential-accounting-account/referential-accounting-account.component';
 import { ReferentialAccountingJournalComponent } from '../referentials/referential-accounting-journal/referential-accounting-journal.component';
 import { ReferentialActTypeComponent } from '../referentials/referential-act-type/referential-act-type.component';
+import { AddAffaireComponent } from '../referentials/referential-affaire/add-affaire/add-affaire.component';
+import { ReferentialAffaireComponent } from '../referentials/referential-affaire/referential-affaire';
 import { ReferentialAnnouncementNoticeTemplateComponent } from '../referentials/referential-announcement-notice-template/referential-announcement-notice-template.component';
 import { ReferentialAttachmentTypeComponent } from '../referentials/referential-attachment-type/referential-attachment-type.component';
-import { ReferentialBillingCenterComponent } from '../referentials/referential-billing-center/referential-billing-center.component';
 import { ReferentialBillingClosureRecipientTypeComponent } from '../referentials/referential-billing-closure-recipient-type/referential-billing-closure-recipient-type.component';
 import { ReferentialBillingClosureTypeComponent } from '../referentials/referential-billing-closure-type/referential-billing-closure-type.component';
 import { ReferentialBillingItemComponent } from '../referentials/referential-billing-item/referential-billing-item.component';
@@ -64,6 +65,7 @@ import { ReferentialProvisionTypeComponent } from '../referentials/referential-p
 import { ReferentialQuotationLabelTypeComponent } from '../referentials/referential-quotation-label-type/referential-notice-type-family.component';
 import { ReferentialQuotationStatusComponent } from '../referentials/referential-quotation-status/referential-quotation-status.component';
 import { ReferentialRefundTypeComponent } from '../referentials/referential-refund-type/referential-refund-type.component';
+import { ReferentialRegieComponent } from '../referentials/referential-regie/referential-regie.component';
 import { ReferentialRegionComponent } from '../referentials/referential-region/referential-region.component';
 import { ReferentialSpecialOfferComponent } from '../referentials/referential-special-offer/referential-special-offer.component';
 import { ReferentialSubscriptionPeriodTypeComponent } from '../referentials/referential-subscription-period-type/referential-subscription-period-type.component';
@@ -180,10 +182,12 @@ const routes: Routes = [
     ReferentialDepartmentComponent,
     ReferentialBillingTypeComponent,
     ReferentialProviderComponent,
-    ReferentialBillingCenterComponent,
+    ReferentialRegieComponent,
     ReferentialAccountingJournalComponent,
     ReferentialInvoiceStatusComponent,
     ReferentialPaymentWayComponent,
-  ],
+    ReferentialAffaireComponent,
+    AddAffaireComponent,
+  ], exports: [AddAffaireComponent]
 })
 export class AdministrationModule { }

@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.quotation.model;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -8,7 +9,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 
 import com.jss.osiris.modules.miscellaneous.model.IId;
 
@@ -22,15 +24,15 @@ public class AnnouncementNoticeTemplate implements Serializable, IId {
 	@Column(nullable = false, length = 100)
 	private String label;
 
-	@Column(nullable = false, length = 20)
+	@Column(nullable = false, length = 40)
 	private String code;
 
 	@Column(columnDefinition = "TEXT")
 	private String text;
 
-	@ManyToOne
-	@JoinColumn(name = "id_provision_family_type")
-	private ProvisionFamilyType provisionFamilyType;
+	@ManyToMany
+	@JoinTable(name = "asso_annoucement_notice_template_provision_type", joinColumns = @JoinColumn(name = "id_announcement_notice_template"), inverseJoinColumns = @JoinColumn(name = "id_provision_family_type"))
+	private List<ProvisionFamilyType> provisionFamilyTypes;
 
 	public Integer getId() {
 		return id;
@@ -64,12 +66,12 @@ public class AnnouncementNoticeTemplate implements Serializable, IId {
 		this.text = text;
 	}
 
-	public ProvisionFamilyType getProvisionFamilyType() {
-		return provisionFamilyType;
+	public List<ProvisionFamilyType> getProvisionFamilyTypes() {
+		return provisionFamilyTypes;
 	}
 
-	public void setProvisionFamilyType(ProvisionFamilyType provisionFamilyType) {
-		this.provisionFamilyType = provisionFamilyType;
+	public void setProvisionFamilyTypes(List<ProvisionFamilyType> provisionFamilyTypes) {
+		this.provisionFamilyTypes = provisionFamilyTypes;
 	}
 
 }

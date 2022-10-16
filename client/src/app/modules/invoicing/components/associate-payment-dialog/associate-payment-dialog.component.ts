@@ -235,19 +235,13 @@ export class AssociatePaymentDialogComponent implements OnInit {
     if (this.associationSummaryTable && this.associationSummaryTable.length > 0) {
       for (let asso of this.associationSummaryTable) {
         if (asso.invoice) {
-          for (let provision of asso.invoice.customerOrder.provisions)
-            if (provision.affaire && provision.affaire.paymentIban && provision.affaire.paymentIban != "")
-              affaires.push(provision.affaire);
+          affaires.push(...asso.invoice.customerOrder.assoAffaireOrders.filter(asso => asso.affaire && asso.affaire.paymentIban != "").map(asso => asso.affaire));
         } else {
-          for (let provision of asso.customerOrder.provisions)
-            if (provision.affaire && provision.affaire.paymentIban && provision.affaire.paymentIban != "")
-              affaires.push(provision.affaire);
+          affaires.push(...asso.customerOrder.assoAffaireOrders.filter(asso => asso.affaire && asso.affaire.paymentIban != "").map(asso => asso.affaire));
         }
       }
     } else {
-      for (let provision of this.invoice!.customerOrder.provisions)
-        if (provision.affaire && provision.affaire.paymentIban && provision.affaire.paymentIban != "")
-          affaires.push(provision.affaire);
+      affaires.push(...this.invoice!.customerOrder.assoAffaireOrders.filter(asso => asso.affaire && asso.affaire.paymentIban != "").map(asso => asso.affaire));
     }
     return affaires;
   }

@@ -18,6 +18,10 @@ export class RadioGroupLanguageComponent extends GenericRadioGroupComponent<Lang
   }
 
   initTypes(): void {
-    this.languageService.getLanguages().subscribe(response => { this.types = response })
+    this.languageService.getLanguages().subscribe(response => {
+      this.types = response;
+      this.model = this.types[0];
+      this.modelChange.emit(this.model);
+    })
   }
 }

@@ -7,11 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Index;
-import javax.persistence.Table;
 
 @Entity
-@Table(indexes = { @Index(name = "pk_region", columnList = "id", unique = true) })
 public class Region implements Serializable, IId {
 
 	@Id

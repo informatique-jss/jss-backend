@@ -116,23 +116,23 @@
                 <tr>
                   <td>
                     <generic-input [(model)]="selectedResponsable.address" label="Adresse" [form]="principalForm"
-                      propertyName="address" [isMandatory]="true" [maxLength]="20"></generic-input>
-                  </td>
-                  <td>
-                    <autocomplete-city [(model)]="selectedResponsable.city" [modelCountry]="selectedResponsable.country"
-                      [form]="principalForm" propertyName="city" [isMandatory]="true"
-                      (onOptionSelected)="fillPostalCode($event)">
-                    </autocomplete-city>
+                      propertyName="address" [isMandatory]="false" [maxLength]="60"></generic-input>
                   </td>
                   <td>
                     <autocomplete-postal-code [(model)]="selectedResponsable.postalCode" [form]="principalForm"
-                      propertyName="postalCode" [isMandatory]="true"
+                      propertyName="postalCode" [isMandatory]="false"
                       [conditionnalRequired]="selectedResponsable.country != null && selectedResponsable.country.code == COUNTRY_CODE_FRANCE"
                       (onOptionSelected)="fillCity($event)"></autocomplete-postal-code>
                   </td>
                   <td>
+                    <autocomplete-city [(model)]="selectedResponsable.city" [modelCountry]="selectedResponsable.country"
+                      [form]="principalForm" propertyName="city" [isMandatory]="false"
+                      (onOptionSelected)="fillPostalCode($event)">
+                    </autocomplete-city>
+                  </td>
+                  <td>
                     <autocomplete-country [(model)]="selectedResponsable.country" [form]="principalForm"
-                      propertyName="country" [isMandatory]="true"></autocomplete-country>
+                      propertyName="country" [isMandatory]="false"></autocomplete-country>
                   </td>
                   <td>
                     <generic-input [(model)]="selectedResponsable.building" label="Bâtiment" [form]="principalForm"

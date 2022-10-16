@@ -7,9 +7,11 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
@@ -26,6 +28,7 @@ import com.jss.osiris.modules.miscellaneous.service.PhoneService;
 import com.jss.osiris.modules.miscellaneous.service.SpecialOfferService;
 import com.jss.osiris.modules.miscellaneous.service.VatService;
 import com.jss.osiris.modules.quotation.model.Affaire;
+import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.CharacterPrice;
 import com.jss.osiris.modules.quotation.model.Domiciliation;
 import com.jss.osiris.modules.quotation.model.IQuotation;
@@ -88,40 +91,55 @@ public class QuotationServiceImpl implements QuotationService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Quotation addOrUpdateQuotationFromUser(Quotation quotation) throws Exception {
+        return addOrUpdateQuotation(quotation);
+    }
+
+    @Override
     public Quotation addOrUpdateQuotation(Quotation quotation) throws Exception {
         if (quotation.getId() == null)
             quotation.setCreatedDate(LocalDateTime.now());
 
         quotation.setIsQuotation(true);
 
+        if (quotation.getDocuments() != null)
+            for (Document document : quotation.getDocuments())
+                document.setQuotation(quotation);
+
         // Complete domiciliation end date
-        for (Provision provision : quotation.getProvisions()) {
-            if (provision.getDomiciliation() != null) {
-                Domiciliation domiciliation = provision.getDomiciliation();
-                if (domiciliation.getEndDate() == null) {
-                    domiciliation.setEndDate(domiciliation.getStartDate().plusYears(1));
+        for (AssoAffaireOrder assoAffaireOrder : quotation.getAssoAffaireOrders()) {
+            assoAffaireOrder.setCustomerOrder(null);
+            assoAffaireOrder.setQuotation(quotation);
 
-                    // If mails already exists, get their ids
-                    if (domiciliation != null && domiciliation.getMails() != null
-                            && domiciliation.getMails().size() > 0)
-                        mailService.populateMailIds(domiciliation.getMails());
+            for (Provision provision : assoAffaireOrder.getProvisions()) {
+                provision.setAssoAffaireOrder(assoAffaireOrder);
+                if (provision.getDomiciliation() != null) {
+                    Domiciliation domiciliation = provision.getDomiciliation();
+                    if (domiciliation.getEndDate() == null) {
+                        domiciliation.setEndDate(domiciliation.getStartDate().plusYears(1));
 
-                    // If mails already exists, get their ids
-                    if (domiciliation != null && domiciliation.getActivityMails() != null
-                            && domiciliation.getActivityMails().size() > 0)
-                        mailService.populateMailIds(domiciliation.getActivityMails());
+                        // If mails already exists, get their ids
+                        if (domiciliation != null && domiciliation.getMails() != null
+                                && domiciliation.getMails().size() > 0)
+                            mailService.populateMailIds(domiciliation.getMails());
 
-                    // If mails already exists, get their ids
-                    if (domiciliation != null
-                            && domiciliation.getLegalGardianMails() != null
-                            && domiciliation.getLegalGardianMails().size() > 0)
-                        mailService.populateMailIds(domiciliation.getLegalGardianMails());
+                        // If mails already exists, get their ids
+                        if (domiciliation != null && domiciliation.getActivityMails() != null
+                                && domiciliation.getActivityMails().size() > 0)
+                            mailService.populateMailIds(domiciliation.getActivityMails());
 
-                    if (domiciliation != null
-                            && domiciliation.getLegalGardianPhones() != null
-                            && domiciliation.getLegalGardianPhones().size() > 0)
-                        phoneService.populateMPhoneIds(domiciliation.getLegalGardianPhones());
+                        // If mails already exists, get their ids
+                        if (domiciliation != null
+                                && domiciliation.getLegalGardianMails() != null
+                                && domiciliation.getLegalGardianMails().size() > 0)
+                            mailService.populateMailIds(domiciliation.getLegalGardianMails());
 
+                        if (domiciliation != null
+                                && domiciliation.getLegalGardianPhones() != null
+                                && domiciliation.getLegalGardianPhones().size() > 0)
+                            phoneService.populateMPhoneIds(domiciliation.getLegalGardianPhones());
+                    }
                 }
             }
         }
@@ -135,9 +153,13 @@ public class QuotationServiceImpl implements QuotationService {
     @Override
     public IQuotation getAndSetInvoiceItemsForQuotation(IQuotation quotation) throws Exception {
         ArrayList<InvoiceItem> invoiceItems = new ArrayList<InvoiceItem>();
-        if (quotation.getProvisions() != null && quotation.getProvisions().size() > 0) {
-            for (Provision provision : quotation.getProvisions()) {
-                invoiceItems.addAll(getInvoiceItemsForProvision(provision, quotation));
+        if (quotation.getAssoAffaireOrders() != null && quotation.getAssoAffaireOrders().size() > 0
+                && quotation.getAssoAffaireOrders().get(0).getProvisions() != null
+                && quotation.getAssoAffaireOrders().get(0).getProvisions().size() > 0) {
+            for (AssoAffaireOrder assoAffaireOrder : quotation.getAssoAffaireOrders()) {
+                for (Provision provision : assoAffaireOrder.getProvisions()) {
+                    invoiceItems.addAll(getInvoiceItemsForProvision(provision, quotation));
+                }
             }
         }
         mergeInvoiceItemsForQuotation(quotation, invoiceItems);
@@ -265,27 +287,31 @@ public class QuotationServiceImpl implements QuotationService {
         ITiers customerOrder = null;
         if (quotation.getConfrere() != null)
             customerOrder = quotation.getConfrere();
-        if (quotation.getResponsable() != null)
+        else if (quotation.getResponsable() != null)
             customerOrder = quotation.getResponsable();
-        customerOrder = quotation.getTiers();
+        else
+            customerOrder = quotation.getTiers();
 
         // If document not found or document indicate to use it, take customer order as
         // default
-        if (billingDocument == null || billingDocument.getBillingLabelType() == null
-                || billingDocument.getBillingLabelType().getCode().equals(billingLabelCustomerCode)) {
-            vat = vatService.getApplicableVat(customerOrder.getCountry(), customerOrder.getCity().getDepartment(),
-                    customerOrder.getIsIndividual());
-        } else if (billingDocument.getBillingLabelType().getCode().equals(billingLabelAffaireCode)) {
-            Affaire affaire = invoiceItem.getProvision().getAffaire();
-            vat = vatService.getApplicableVat(affaire.getCountry(), affaire.getCity().getDepartment(),
-                    affaire.getIsIndividual());
+        if (invoiceItem.getBillingItem() != null && invoiceItem.getBillingItem().getBillingType() != null
+                && invoiceItem.getBillingItem().getBillingType().getIsOverrideVat()) {
+            vat = invoiceItem.getBillingItem().getBillingType().getVat();
         } else {
-
-            // TODO : get it from billing center
-
-            vat = vatService.getApplicableVat(billingDocument.getBillingCenter().getCountry(),
-                    billingDocument.getBillingCenter().getCity().getDepartment(), false);
-
+            if (billingDocument == null || billingDocument.getBillingLabelType() == null
+                    || billingDocument.getBillingLabelType().getCode().equals(billingLabelCustomerCode)) {
+                vat = vatService.getGeographicalApplicableVat(customerOrder.getCountry(),
+                        customerOrder.getCity().getDepartment(),
+                        customerOrder.getIsIndividual());
+            } else if (billingDocument.getBillingLabelType().getCode().equals(billingLabelAffaireCode)) {
+                Affaire affaire = invoiceItem.getProvision().getAssoAffaireOrder().getAffaire();
+                vat = vatService.getGeographicalApplicableVat(affaire.getCountry(), affaire.getCity().getDepartment(),
+                        affaire.getIsIndividual());
+            } else {
+                vat = vatService.getGeographicalApplicableVat(billingDocument.getBillingLabelCountry(),
+                        billingDocument.getBillingLabelCity().getDepartment(),
+                        billingDocument.getBillingLabelIsIndividual());
+            }
         }
 
         if (vat != null) {
@@ -301,39 +327,48 @@ public class QuotationServiceImpl implements QuotationService {
 
     private void mergeInvoiceItemsForQuotation(IQuotation quotation, List<InvoiceItem> invoiceItemsToMerge)
             throws Exception {
-        if (quotation != null && invoiceItemsToMerge != null && quotation.getProvisions() != null) {
-            for (Provision provision : quotation.getProvisions()) {
-                ArrayList<InvoiceItem> finalInvoiceItems = new ArrayList<InvoiceItem>();
-                for (InvoiceItem invoiceItemToMerge : invoiceItemsToMerge) {
-                    if (provision.getInvoiceItems() != null) {
-                        for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
-                            if (invoiceItemToMerge.getProvision().getId() != null
-                                    && invoiceItem.getProvision().getId() != null
-                                    && invoiceItemToMerge.getProvision().getId()
-                                            .equals(invoiceItem.getProvision().getId())) {
-                                if (invoiceItemToMerge.getBillingItem().getId()
-                                        .equals(invoiceItem.getBillingItem().getId())) {
-                                    invoiceItemToMerge.setId(invoiceItem.getId());
-                                    invoiceItemToMerge.setInvoice(invoiceItem.getInvoice());
-                                    if (invoiceItemToMerge.getBillingItem().getBillingType().getCanOverridePrice()
-                                            && invoiceItem.getPreTaxPrice() != null
-                                            && invoiceItem.getPreTaxPrice() > 0) {
-                                        invoiceItemToMerge.setPreTaxPrice(
-                                                Math.round(invoiceItem.getPreTaxPrice().floatValue() * 100f) / 100f);
-                                        computeInvoiceItemsVatAndDiscount(invoiceItemToMerge, quotation);
+        if (quotation != null && invoiceItemsToMerge != null && quotation.getAssoAffaireOrders() != null
+                && quotation.getAssoAffaireOrders().size() > 0) {
+            for (AssoAffaireOrder assoAffaireOrder : quotation.getAssoAffaireOrders()) {
+                if (assoAffaireOrder.getProvisions() != null) {
+                    for (Provision provision : assoAffaireOrder.getProvisions()) {
+                        ArrayList<InvoiceItem> finalInvoiceItems = new ArrayList<InvoiceItem>();
+                        for (InvoiceItem invoiceItemToMerge : invoiceItemsToMerge) {
+                            if (provision.getInvoiceItems() != null) {
+                                for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
+                                    if (invoiceItemToMerge.getProvision().getId() != null
+                                            && provision.getId() != null
+                                            && invoiceItemToMerge.getProvision().getId()
+                                                    .equals(provision.getId())) {
+                                        if (invoiceItemToMerge.getBillingItem().getId()
+                                                .equals(invoiceItem.getBillingItem().getId())) {
+                                            invoiceItemToMerge.setId(invoiceItem.getId());
+                                            invoiceItemToMerge.setInvoice(invoiceItem.getInvoice());
+                                            if (invoiceItemToMerge.getBillingItem().getBillingType()
+                                                    .getCanOverridePrice()
+                                                    && invoiceItem.getPreTaxPrice() != null
+                                                    && invoiceItem.getPreTaxPrice() > 0) {
+                                                invoiceItemToMerge.setPreTaxPrice(
+                                                        Math.round(invoiceItem.getPreTaxPrice().floatValue() * 100f)
+                                                                / 100f);
+                                                computeInvoiceItemsVatAndDiscount(invoiceItemToMerge, quotation);
+                                            }
+                                        }
                                     }
                                 }
                             }
+                            finalInvoiceItems.add(invoiceItemToMerge);
                         }
+                        provision.setInvoiceItems(finalInvoiceItems);
                     }
-                    finalInvoiceItems.add(invoiceItemToMerge);
                 }
-                provision.setInvoiceItems(finalInvoiceItems);
             }
         }
+
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Quotation addOrUpdateQuotationStatus(Quotation quotation, String targetStatusCode) throws Exception {
         QuotationStatus quotationStatus = quotationStatusService.getQuotationStatusByCode(targetStatusCode);
         if (quotationStatus == null)
@@ -356,11 +391,18 @@ public class QuotationServiceImpl implements QuotationService {
 
     @Override
     public List<Quotation> searchQuotations(OrderingSearch orderingSearch) {
-        List<Quotation> quotations = quotationRepository.findQuotations(
+        return quotationRepository.findQuotations(
                 orderingSearch.getSalesEmployee(),
                 orderingSearch.getQuotationStatus(),
                 orderingSearch.getStartDate(),
                 orderingSearch.getEndDate());
-        return quotations;
+    }
+
+    @Override
+    public void reindexQuotation() {
+        List<Quotation> quotations = IterableUtils.toList(quotationRepository.findAll());
+        if (quotations != null)
+            for (Quotation quotation : quotations)
+                indexEntityService.indexEntity(quotation, quotation.getId());
     }
 }

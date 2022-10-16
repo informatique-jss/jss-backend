@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.modules.accounting.model.AccountingAccountTrouple;
 import com.jss.osiris.modules.accounting.service.AccountingAccountService;
@@ -44,6 +45,7 @@ public class ConfrereServiceImpl implements ConfrereService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Confrere addOrUpdateConfrere(Confrere confrere) throws Exception {
         if (confrere == null)
             throw new Exception("Confrere provided is null");
@@ -66,6 +68,7 @@ public class ConfrereServiceImpl implements ConfrereService {
         // If document mails already exists, get their ids
         if (confrere.getDocuments() != null && confrere.getDocuments().size() > 0) {
             for (Document document : confrere.getDocuments()) {
+                document.setConfrere(confrere);
                 if (document.getMailsAffaire() != null && document.getMailsAffaire().size() > 0)
                     mailService.populateMailIds(document.getMailsAffaire());
                 if (document.getMailsClient() != null && document.getMailsClient().size() > 0)
@@ -74,17 +77,16 @@ public class ConfrereServiceImpl implements ConfrereService {
         }
 
         // Generate accounting accounts
-        if (confrere.getBillingCenter() == null)
-            if (confrere.getId() == null
-                    || confrere.getAccountingAccountCustomer() == null
-                            && confrere.getAccountingAccountProvider() == null
-                            && confrere.getAccountingAccountDeposit() == null) {
-                AccountingAccountTrouple accountingAccountCouple = accountingAccountService
-                        .generateAccountingAccountsForEntity(confrere.getLabel());
-                confrere.setAccountingAccountCustomer(accountingAccountCouple.getAccountingAccountCustomer());
-                confrere.setAccountingAccountProvider(accountingAccountCouple.getAccountingAccountProvider());
-                confrere.setAccountingAccountDeposit(accountingAccountCouple.getAccountingAccountDeposit());
-            }
+        if (confrere.getId() == null
+                || confrere.getAccountingAccountCustomer() == null
+                        && confrere.getAccountingAccountProvider() == null
+                        && confrere.getAccountingAccountDeposit() == null) {
+            AccountingAccountTrouple accountingAccountCouple = accountingAccountService
+                    .generateAccountingAccountsForEntity(confrere.getLabel());
+            confrere.setAccountingAccountCustomer(accountingAccountCouple.getAccountingAccountCustomer());
+            confrere.setAccountingAccountProvider(accountingAccountCouple.getAccountingAccountProvider());
+            confrere.setAccountingAccountDeposit(accountingAccountCouple.getAccountingAccountDeposit());
+        }
         return confrereRepository.save(confrere);
     }
 }

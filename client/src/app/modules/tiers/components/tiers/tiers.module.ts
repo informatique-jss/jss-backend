@@ -13,6 +13,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule, Routes } from '@angular/router';
 import { MiscellaneousModule } from 'src/app/modules/miscellaneous/components/miscellaneous/miscellaneous.module';
 import { SpecialOffersDialogComponent } from 'src/app/modules/miscellaneous/components/special-offers-dialog/special-offers-dialog.component';
@@ -45,6 +46,7 @@ const routes: Routes = [
     MatListModule,
     MatSortModule,
     MiscellaneousModule,
+    MatTooltipModule,
     DragDropModule
   ],
   declarations: [TiersComponent,

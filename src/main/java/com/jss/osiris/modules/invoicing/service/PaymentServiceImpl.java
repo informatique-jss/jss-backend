@@ -10,9 +10,6 @@ import java.util.regex.Pattern;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -79,13 +76,11 @@ public class PaymentServiceImpl implements PaymentService {
     private String payementLimitRefundInEuros;
 
     @Override
-    @Cacheable(value = "paymentList", key = "#root.methodName")
     public List<Payment> getPayments() {
         return IterableUtils.toList(paymentRepository.findAll());
     }
 
     @Override
-    @Cacheable(value = "payment", key = "#id")
     public Payment getPayment(Integer id) {
         Optional<Payment> payment = paymentRepository.findById(id);
         if (payment.isPresent())
@@ -94,10 +89,6 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    @Caching(evict = {
-            @CacheEvict(value = "paymentList", allEntries = true),
-            @CacheEvict(value = "payment", key = "#payment.id")
-    })
     public Payment addOrUpdatePayment(
             Payment payment) {
         return paymentRepository.save(payment);

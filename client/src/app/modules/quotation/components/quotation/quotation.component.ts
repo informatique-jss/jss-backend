@@ -1,21 +1,26 @@
 import { Component, OnInit, ViewChild, ViewChildren } from '@angular/core';
+import { FormBuilder } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
 import { ActivatedRoute, Router, UrlSegment } from '@angular/router';
 import { Subject } from 'rxjs';
 import { QUOTATION_DOCUMENT_TYPE_CODE, QUOTATION_LABEL_TYPE_AFFAIRE_CODE, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_BEING_PROCESSED, QUOTATION_STATUS_BILLED, QUOTATION_STATUS_CANCELLED, QUOTATION_STATUS_OPEN, QUOTATION_STATUS_REFUSED_BY_CUSTOMER, QUOTATION_STATUS_SENT_TO_CUSTOMER, QUOTATION_STATUS_TO_VERIFY, QUOTATION_STATUS_VALIDATED_BY_CUSTOMER, QUOTATION_STATUS_VALIDATED_BY_JSS, QUOTATION_STATUS_WAITING_DEPOSIT } from 'src/app/libs/Constants';
 import { Vat } from 'src/app/modules/miscellaneous/model/Vat';
+import { Employee } from 'src/app/modules/profile/model/Employee';
 import { EntityType } from 'src/app/routing/search/EntityType';
 import { CUSTOMER_ORDER_ENTITY_TYPE, QUOTATION_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
 import { SearchService } from 'src/app/services/search.service';
-import { Affaire } from '../../model/Affaire';
+import { AssoAffaireOrder } from '../../model/AssoAffaireOrder';
 import { CustomerOrder } from '../../model/CustomerOrder';
-import { NoticeTypeFamily } from '../../model/NoticeTypeFamily';
 import { Provision } from '../../model/Provision';
 import { QuotationStatus } from '../../model/QuotationStatus';
+import { AssoAffaireOrderService } from '../../services/asso.affaire.order.service';
 import { CustomerOrderService } from '../../services/customer.order.service';
 import { QuotationStatusService } from '../../services/quotation-status.service';
 import { QuotationService } from '../../services/quotation.service';
+import { AddAffaireDialogComponent } from '../add-affaire-dialog/add-affaire-dialog.component';
+import { ChooseAssignedUserDialogComponent } from '../choose-assigned-user-dialog/choose-assigned-user-dialog.component';
 import { OrderingCustomerComponent } from '../ordering-customer/ordering-customer.component';
 import { ProvisionItemComponent } from '../provision-item/provision-item.component';
 import { QuotationManagementComponent } from '../quotation-management/quotation-management.component';
@@ -61,8 +66,6 @@ export class QuotationComponent implements OnInit {
   instanceOfCustomerOrder: boolean = false;
   isStatusOpen: boolean = true;
 
-  filteredProvisions: Provision[] = [] as Array<Provision>;
-
   updateDocumentsEvent: Subject<void> = new Subject<void>();
 
   idQuotation: number | undefined;
@@ -72,12 +75,16 @@ export class QuotationComponent implements OnInit {
     private customerOrderService: CustomerOrderService,
     private quotationStatusService: QuotationStatusService,
     private activatedRoute: ActivatedRoute,
+    public chooseUserDialog: MatDialog,
+    public addAffaireDialog: MatDialog,
+    private formBuilder: FormBuilder,
+    private assoAffaireOrderService: AssoAffaireOrderService,
     protected searchService: SearchService,
     private router: Router) { }
 
-  ngOnInit() {
-    let a = {} as NoticeTypeFamily;
+  quotationForm = this.formBuilder.group({});
 
+  ngOnInit() {
     this.idQuotation = this.activatedRoute.snapshot.params.id;
     let url: UrlSegment[] = this.activatedRoute.snapshot.url;
 
@@ -96,9 +103,8 @@ export class QuotationComponent implements OnInit {
           this.appService.changeHeaderTitle("Commande " + this.quotation.id + " - " +
             (this.quotation.quotationStatus != null ? this.quotation.quotationStatus.label : ""));
           this.toggleTabs();
-          this.sortProvisions();
           this.setOpenStatus();
-          this.filteredProvisions = this.quotation.provisions;
+          this.checkAffaireAssignation();
         })
       }
       // Load by quotation
@@ -110,9 +116,7 @@ export class QuotationComponent implements OnInit {
         this.appService.changeHeaderTitle("Devis " + this.quotation.id + " - " +
           (this.quotation.quotationStatus != null ? this.quotation.quotationStatus.label : ""));
         this.toggleTabs();
-        this.sortProvisions();
         this.setOpenStatus();
-        this.filteredProvisions = this.quotation.provisions;
       })
     } else if (this.createMode == false) {
       this.isQuotationUrl = true;
@@ -134,6 +138,43 @@ export class QuotationComponent implements OnInit {
 
   updateDocuments() {
     this.updateDocumentsEvent.next();
+  }
+
+  updateAssignedToForAffaire(employee: Employee, asso: AssoAffaireOrder) {
+    this.assoAffaireOrderService.updateAssignedToForAsso(asso, employee).subscribe(response => {
+    });
+  }
+
+  checkAffaireAssignation() {
+    let userList: Employee[] = [] as Array<Employee>;
+    if (this.quotation && this.instanceOfCustomerOrder && this.quotation.assoAffaireOrders)
+      for (let asso of this.quotation.assoAffaireOrders)
+        if (asso.affaire && asso.provisions && !asso.assignedTo) {
+          let found = false;
+          for (let provision of asso.provisions) {
+            for (let employee of userList) {
+              if (provision.assignedTo && provision.assignedTo.id == employee.id)
+                found = true;
+            }
+            if (!found)
+              userList.push(provision.assignedTo);
+          }
+          let chooseUserDialogRef = this.chooseUserDialog.open(ChooseAssignedUserDialogComponent, {
+            width: '100%'
+          });
+          chooseUserDialogRef.componentInstance.userList = userList;
+          chooseUserDialogRef.componentInstance.text = "Veuillez choisir l'utilisateur à assigner à l'affaire " + (asso.affaire.denomination ? asso.affaire.denomination : (asso.affaire.firstname + " " + asso.affaire.lastname));
+          chooseUserDialogRef.componentInstance.title = "Assigner un utilisateur";
+          chooseUserDialogRef.afterClosed().subscribe(response => {
+            if (response)
+              this.updateAssignedToForAffaire(response, asso);
+            this.customerOrderService.getCustomerOrder(this.quotation.id).subscribe(response => {
+              this.quotation = response;
+              this.checkAffaireAssignation();
+            })
+          })
+          return;
+        }
   }
 
   saveQuotation(): boolean {
@@ -198,7 +239,6 @@ export class QuotationComponent implements OnInit {
     this.createMode = true;
     this.editMode = true;
     this.quotation = {} as IQuotation;
-    this.applyFilter(null);
     this.setOpenStatus();
     this.appService.changeHeaderTitle(this.instanceOfCustomerOrder ? "Nouvelle commande" : "Nouveau devis");
     this.toggleTabs();
@@ -212,119 +252,36 @@ export class QuotationComponent implements OnInit {
     return this.instanceOfCustomerOrder ? CUSTOMER_ORDER_ENTITY_TYPE : QUOTATION_ENTITY_TYPE;
   }
 
-  applyFilter(filterValue: any) {
-    this.filteredProvisions = [] as Array<Provision>;
-    if (this.quotation && this.quotation.provisions) {
-      if (filterValue == null || filterValue == undefined || filterValue.length == 0) {
-        this.filteredProvisions = this.quotation.provisions;
-        return;
-      }
-      this.quotation.provisions.forEach(provision => {
-        const dataStr = JSON.stringify(provision).toLowerCase();
-        if (dataStr.indexOf(filterValue.value.toLowerCase()) >= 0)
-          this.filteredProvisions.push(provision);
-      })
-    }
-  }
-
-  createProvision(): Provision {
-    if (this.quotation && !this.quotation.provisions)
-      this.quotation.provisions = [] as Array<Provision>;
+  createProvision(asso: AssoAffaireOrder): Provision {
+    if (asso && !asso.provisions)
+      asso.provisions = [] as Array<Provision>;
     let provision = {} as Provision;
-    provision.affaire = {} as Affaire;
-    this.quotation.provisions.push(provision);
-    this.sortProvisions();
+    asso.provisions.push(provision);
     this.generateInvoiceItem();
-    this.applyFilter(null);
     return provision;
   }
 
-  createProvisionForAffaire(affaire: Affaire) {
-    let provision: Provision = this.createProvision();
-    provision.affaire = affaire;
-    this.sortProvisions();
-    this.applyFilter(null);
-  }
-
-  deleteProvision(index: number) {
-    if (this.filteredProvisions && this.quotation && this.quotation.provisions) {
-      for (let i = 0; i < this.quotation.provisions.length; i++) {
-        const provision = this.quotation.provisions[i];
-        if (this.sameProvision(provision, this.filteredProvisions[index]))
-          this.quotation.provisions.splice(i, 1);
+  addAffaire() {
+    this.selectedTabIndex = 1;
+    let dialogRef = this.addAffaireDialog.open(AddAffaireDialogComponent, {
+      width: '100%'
+    });
+    dialogRef.afterClosed().subscribe(response => {
+      if (response != null) {
+        let asso = {} as AssoAffaireOrder;
+        asso.affaire = response;
+        asso.provisions = [] as Array<Provision>;
+        asso.provisions.push({} as Provision);
+        if (!this.quotation.assoAffaireOrders)
+          this.quotation.assoAffaireOrders = [] as Array<AssoAffaireOrder>;
+        this.quotation.assoAffaireOrders.push(asso);
+        this.selectedTabIndex = 1;
       }
-    }
-    this.applyFilter(null);
+    })
   }
 
-  validateProvision(index: number) {
-    if (this.editMode) {
-      if (this.filteredProvisions && this.quotation && this.quotation.provisions) {
-        for (let i = 0; i < this.quotation.provisions.length; i++) {
-          const provision = this.quotation.provisions[i];
-          if (this.sameProvision(provision, this.filteredProvisions[index]))
-            this.quotation.provisions[i].isValidated = true;
-        }
-      }
-      this.applyFilter(null);
-    }
-  }
-
-  invalidateProvision(index: number) {
-    if (this.editMode) {
-      if (this.filteredProvisions && this.quotation && this.quotation.provisions) {
-        for (let i = 0; i < this.quotation.provisions.length; i++) {
-          const provision = this.quotation.provisions[i];
-          if (this.sameProvision(provision, this.filteredProvisions[index]))
-            this.quotation.provisions[i].isValidated = false;
-        }
-      }
-      this.applyFilter(null);
-    }
-  }
-
-  sameProvision(p1: Provision, p2: Provision): boolean {
-    return JSON.stringify(p1).toLowerCase() == JSON.stringify(p2).toLowerCase();
-  }
-
-  sortProvisions() {
-    if (this.quotation && this.quotation.provisions)
-      this.quotation.provisions.sort((a: Provision, b: Provision) => {
-        if (!a && b)
-          return -1;
-        if (a && !b)
-          return 1;
-        if (!a && !b)
-          return 0;
-        if (!a.id && b.id)
-          return -1;
-        if (a.id && !b.id)
-          return 1;
-        if (!a.affaire && b.affaire)
-          return -1;
-        if (a.affaire && !b.affaire)
-          return 1;
-        if (!a.affaire && !b.affaire)
-          return 0;
-
-        let nameA = "";
-        let nameB = "";
-        if (a.affaire.isIndividual) {
-          nameA = (a.affaire.firstname != null ? a.affaire.firstname : "") + (a.affaire.lastname != null ? a.affaire.lastname : "");
-        } else {
-          nameA = a.affaire.denomination;
-        }
-        if (b.affaire.isIndividual) {
-          nameB = (b.affaire.firstname != null ? b.affaire.firstname : "") + (b.affaire.lastname != null ? b.affaire.lastname : "");
-        } else {
-          nameB = b.affaire.denomination;
-        }
-        if (nameA == null)
-          nameA = "";
-        if (nameB == null)
-          nameB = "";
-        return nameA.localeCompare(nameB);
-      })
+  deleteProvision(asso: AssoAffaireOrder, provision: Provision) {
+    asso.provisions.splice(asso.provisions.indexOf(provision), 1);
   }
 
   sendQuotation() {
@@ -379,16 +336,22 @@ export class QuotationComponent implements OnInit {
   }
 
   generateInvoiceItem() {
-    this.quotationService.getInvoiceItemsForQuotation(this.quotation).subscribe(response => {
-      this.mergeInvoiceItem(this.quotation, response);
-    })
+    if (this.quotation && this.quotation.assoAffaireOrders && this.quotation.assoAffaireOrders[0] && this.quotation.assoAffaireOrders[0].provisions && this.quotation.assoAffaireOrders[0].provisions[0] && this.quotation.assoAffaireOrders[0].provisions[0].provisionType)
+      this.quotationService.getInvoiceItemsForQuotation(this.quotation).subscribe(response => {
+        this.mergeInvoiceItem(this.quotation, response);
+      })
   }
 
   mergeInvoiceItem(targetQuotation: IQuotation, incomingQuotation: IQuotation) {
-    if (incomingQuotation && targetQuotation && incomingQuotation.provisions && targetQuotation.provisions) {
-      for (let incomingProvision of incomingQuotation.provisions) {
-        for (let targetProvision of targetQuotation.provisions) {
-          targetProvision.invoiceItems = incomingProvision.invoiceItems;
+    if (incomingQuotation && targetQuotation && incomingQuotation.assoAffaireOrders && targetQuotation.assoAffaireOrders) {
+      for (let assoIncoming of incomingQuotation.assoAffaireOrders) {
+        for (let assoTarget of targetQuotation.assoAffaireOrders) {
+          if (assoIncoming.provisions && assoTarget.provisions)
+            for (let incomingProvision of assoIncoming.provisions) {
+              for (let targetProvision of assoTarget.provisions) {
+                targetProvision.invoiceItems = incomingProvision.invoiceItems;
+              }
+            }
         }
       }
     }
@@ -400,11 +363,15 @@ export class QuotationComponent implements OnInit {
 
   public static computePreTaxPriceTotal(quotation: IQuotation): number {
     let preTaxPrice = 0;
-    if (quotation && quotation.provisions) {
-      for (let provision of quotation.provisions) {
-        if (provision.invoiceItems) {
-          for (let invoiceItem of provision.invoiceItems) {
-            preTaxPrice += parseFloat(invoiceItem.preTaxPrice + "");
+    if (quotation && quotation.assoAffaireOrders) {
+      for (let asso of quotation.assoAffaireOrders) {
+        if (asso.provisions) {
+          for (let provision of asso.provisions) {
+            if (provision.invoiceItems) {
+              for (let invoiceItem of provision.invoiceItems) {
+                preTaxPrice += parseFloat(invoiceItem.preTaxPrice + "");
+              }
+            }
           }
         }
       }
@@ -420,11 +387,15 @@ export class QuotationComponent implements OnInit {
   public static computeDiscountTotal(quotation: IQuotation): number {
 
     let discountAmount = 0;
-    if (quotation && quotation.provisions) {
-      for (let provision of quotation.provisions) {
-        if (provision.invoiceItems) {
-          for (let invoiceItem of provision.invoiceItems) {
-            discountAmount += parseFloat(invoiceItem.discountAmount + "");
+    if (quotation && quotation.assoAffaireOrders) {
+      for (let asso of quotation.assoAffaireOrders) {
+        if (asso.provisions) {
+          for (let provision of asso.provisions) {
+            if (provision.invoiceItems) {
+              for (let invoiceItem of provision.invoiceItems) {
+                discountAmount += parseFloat(invoiceItem.discountAmount + "");
+              }
+            }
           }
         }
       }
@@ -438,11 +409,15 @@ export class QuotationComponent implements OnInit {
 
   public static computeVatTotal(quotation: IQuotation): number {
     let vat = 0;
-    if (quotation && quotation.provisions) {
-      for (let provision of quotation.provisions) {
-        if (provision.invoiceItems) {
-          for (let invoiceItem of provision.invoiceItems) {
-            vat += invoiceItem.vatPrice;
+    if (quotation && quotation.assoAffaireOrders) {
+      for (let asso of quotation.assoAffaireOrders) {
+        if (asso.provisions) {
+          for (let provision of asso.provisions) {
+            if (provision.invoiceItems) {
+              for (let invoiceItem of provision.invoiceItems) {
+                vat += invoiceItem.vatPrice;
+              }
+            }
           }
         }
       }
@@ -455,12 +430,16 @@ export class QuotationComponent implements OnInit {
   }
 
   public static computeApplicableVat(quotation: IQuotation): Vat | undefined {
-    if (quotation && quotation.provisions) {
-      for (let provision of quotation.provisions) {
-        if (provision.invoiceItems) {
-          for (let invoiceItem of provision.invoiceItems) {
-            if (invoiceItem.vat)
-              return invoiceItem.vat;
+    if (quotation && quotation.assoAffaireOrders) {
+      for (let asso of quotation.assoAffaireOrders) {
+        if (asso.provisions) {
+          for (let provision of asso.provisions) {
+            if (provision.invoiceItems) {
+              for (let invoiceItem of provision.invoiceItems) {
+                if (invoiceItem.vat)
+                  return invoiceItem.vat;
+              }
+            }
           }
         }
       }
@@ -486,13 +465,11 @@ export class QuotationComponent implements OnInit {
 
   // When quotation label type is AFFAIRE, only one affaire is authorized in quotation
   canCreateMultipleAffaire(): boolean {
-    if (this.quotation && this.quotation.quotationLabelType && this.quotation.provisions && this.quotation.provisions.length > 0)
-      if (this.quotation.quotationLabelType.code == QUOTATION_LABEL_TYPE_AFFAIRE_CODE) {
-        let affaireFound = undefined;
-        for (let provision of this.quotation.provisions) {
-          if (affaireFound != undefined && affaireFound != provision.affaire.id)
-            return false;
-          affaireFound = provision.affaire.id;
+    if (this.quotation && this.quotation.labelType && this.quotation.assoAffaireOrders && this.quotation.assoAffaireOrders.length > 0)
+      if (this.quotation.labelType.code == QUOTATION_LABEL_TYPE_AFFAIRE_CODE) {
+        if (this.quotation.assoAffaireOrders.length > 1) {
+          this.appService.displaySnackBar("Il est impossible de créer deux affaires sur une commande facturée à l'affaire", true, 20);
+          return false;
         }
       }
     return true;

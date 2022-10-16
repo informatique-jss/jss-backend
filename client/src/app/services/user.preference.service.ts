@@ -59,6 +59,24 @@ export class UserPreferenceService {
     }
     return [];
   }
+
+  // User search
+  setUserSearchBookmark(search: any, searchName: string) {
+    if (search && searchName)
+      localStorage.setItem('search-' + searchName, JSON.stringify(search));
+  }
+
+  getUserSearchBookmark(searchName: string): any {
+    if (searchName) {
+      let value = localStorage.getItem('search-' + searchName);
+      if (value) {
+        let list = JSON.parse(value!);
+        if (list)
+          return list;
+      }
+    }
+    return [];
+  }
 }
 
 

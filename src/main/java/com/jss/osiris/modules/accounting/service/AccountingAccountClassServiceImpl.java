@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.modules.accounting.model.AccountingAccountClass;
 import com.jss.osiris.modules.accounting.repository.AccountingAccountClassRepository;
@@ -34,6 +35,7 @@ public class AccountingAccountClassServiceImpl implements AccountingAccountClass
 
     @Override
     @CacheEvict(value = "accountingAccountList", allEntries = true)
+    @Transactional(rollbackFor = Exception.class)
     public AccountingAccountClass addOrUpdateAccountingAccountClass(
             AccountingAccountClass accountingAccountClass) {
         return accountingAccountClassRepository.save(accountingAccountClass);

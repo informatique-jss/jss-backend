@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.modules.quotation.model.JournalType;
 import com.jss.osiris.modules.quotation.repository.JournalTypeRepository;
@@ -30,6 +31,7 @@ public class JournalTypeServiceImpl implements JournalTypeService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public JournalType addOrUpdateJournalType(JournalType journalType) {
         return journalTypeRepository.save(journalType);
     }

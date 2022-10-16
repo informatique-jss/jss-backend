@@ -181,5 +181,7 @@ export abstract class GenericAutocompleteComponent<T, U> implements OnInit {
     this.model = undefined;
     this.modelChange.emit(this.model);
     this.onOptionSelected.emit(undefined);
+    if (this.form)
+      this.form.get(this.propertyName)?.setValue(null);
   }
 }

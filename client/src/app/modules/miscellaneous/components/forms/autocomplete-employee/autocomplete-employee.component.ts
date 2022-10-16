@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { Employee } from 'src/app/modules/profile/model/Employee';
 import { EmployeeService } from 'src/app/modules/profile/services/employee.service';
@@ -13,6 +13,8 @@ export class AutocompleteEmployeeComponent extends GenericLocalAutocompleteCompo
 
   types: Employee[] = [] as Array<Employee>;
 
+  @Input() defaultEmployee: Employee | undefined;
+
   constructor(private formBuild: UntypedFormBuilder, private employeeService: EmployeeService) {
     super(formBuild)
   }
@@ -25,7 +27,26 @@ export class AutocompleteEmployeeComponent extends GenericLocalAutocompleteCompo
   }
 
   initTypes(): void {
-    this.employeeService.getEmployees().subscribe(response => this.types = response);
+    this.employeeService.getEmployees().subscribe(response => {
+      this.types = response
+      this.setDefaultEmployee();
+    });
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.defaultEmployee)
+      this.setDefaultEmployee();
+  }
+
+  setDefaultEmployee() {
+    if (this.defaultEmployee) {
+      for (let type of this.types) {
+        if (type.username == this.defaultEmployee.username) {
+          this.model = type;
+        }
+      }
+      this.modelChange.emit(this.model);
+    }
   }
 
   displayLabel(object: Employee): string {

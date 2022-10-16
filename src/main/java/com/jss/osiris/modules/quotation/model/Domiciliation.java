@@ -1,13 +1,11 @@
 package com.jss.osiris.modules.quotation.model;
 
-import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -17,8 +15,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jss.osiris.libs.JacksonLocalDateSerializer;
@@ -26,6 +23,7 @@ import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.City;
 import com.jss.osiris.modules.miscellaneous.model.Civility;
 import com.jss.osiris.modules.miscellaneous.model.Country;
+import com.jss.osiris.modules.miscellaneous.model.IAttachment;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.miscellaneous.model.Language;
 import com.jss.osiris.modules.miscellaneous.model.LegalForm;
@@ -33,19 +31,14 @@ import com.jss.osiris.modules.miscellaneous.model.Mail;
 import com.jss.osiris.modules.miscellaneous.model.Phone;
 
 @Entity
-public class Domiciliation implements Serializable, IId {
+public class Domiciliation implements IId, IAttachment {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "domiciliation_sequence")
 	private Integer id;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_provision")
-	@JsonBackReference("provision")
-	private Provision provision;
-
 	@OneToMany(targetEntity = Attachment.class, mappedBy = "domiciliation", cascade = CascadeType.ALL)
-	@JsonManagedReference("domiciliation")
+	@JsonIgnoreProperties(value = { "domiciliation" }, allowSetters = true)
 	private List<Attachment> attachments;
 
 	@ManyToOne
@@ -78,7 +71,7 @@ public class Domiciliation implements Serializable, IId {
 	@JoinColumn(name = "id_country")
 	private Country country;
 
-	@ManyToMany(cascade = CascadeType.ALL)
+	@ManyToMany
 	@JoinTable(name = "asso_domiciliation_mail", joinColumns = @JoinColumn(name = "id_domiciliation"), inverseJoinColumns = @JoinColumn(name = "id_mail"))
 	private List<Mail> mails;
 
@@ -111,7 +104,7 @@ public class Domiciliation implements Serializable, IId {
 	@JoinColumn(name = "id_activity_country")
 	private Country activityCountry;
 
-	@ManyToMany(cascade = CascadeType.ALL)
+	@ManyToMany
 	@JoinTable(name = "asso_domiciliation_activity_mail", joinColumns = @JoinColumn(name = "id_domiciliation"), inverseJoinColumns = @JoinColumn(name = "id_mail"))
 	private List<Mail> activityMails;
 
@@ -168,11 +161,11 @@ public class Domiciliation implements Serializable, IId {
 	@JoinColumn(name = "id_legal_gardian_country")
 	private Country legalGardianCountry;
 
-	@ManyToMany(cascade = CascadeType.ALL)
+	@ManyToMany
 	@JoinTable(name = "asso_domiciliation_legal_guardian_mail", joinColumns = @JoinColumn(name = "id_domiciliation"), inverseJoinColumns = @JoinColumn(name = "id_mail"))
 	private List<Mail> legalGardianMails;
 
-	@ManyToMany(cascade = CascadeType.ALL)
+	@ManyToMany
 	@JoinTable(name = "asso_domiciliation_legal_guardian_phone", joinColumns = @JoinColumn(name = "id_domiciliation"), inverseJoinColumns = @JoinColumn(name = "id_phone"))
 	private List<Phone> legalGardianPhones;
 
@@ -190,14 +183,6 @@ public class Domiciliation implements Serializable, IId {
 
 	public void setAccountingRecordDomiciliation(String accountingRecordDomiciliation) {
 		this.accountingRecordDomiciliation = accountingRecordDomiciliation;
-	}
-
-	public Provision getProvision() {
-		return provision;
-	}
-
-	public void setProvision(Provision provision) {
-		this.provision = provision;
 	}
 
 	public List<Attachment> getAttachments() {

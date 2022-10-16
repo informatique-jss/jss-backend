@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.modules.quotation.model.ActType;
 import com.jss.osiris.modules.quotation.repository.ActTypeRepository;
@@ -30,6 +31,7 @@ public class ActTypeServiceImpl implements ActTypeService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public ActType addOrUpdateActType(ActType actType) {
         return actTypeRepository.save(actType);
     }

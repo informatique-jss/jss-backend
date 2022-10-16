@@ -1,7 +1,6 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { Affaire } from 'src/app/modules/quotation/model/Affaire';
 import { AffaireService } from 'src/app/modules/quotation/services/affaire.service';
 import { IndexEntityService } from 'src/app/routing/search/index.entity.service';
 import { IndexEntity } from 'src/app/routing/search/IndexEntity';
@@ -14,7 +13,7 @@ import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-au
   styleUrls: ['./autocomplete-affaire.component.css']
 })
 export class AutocompleteAffaireComponent extends GenericAutocompleteComponent<IndexEntity, IndexEntity> implements OnInit {
-
+  @ViewChild('affaireInput') affaireInput: ElementRef<HTMLInputElement> | undefined;
   constructor(private formBuild: UntypedFormBuilder, private indexEntityService: IndexEntityService,
     private affaireService: AffaireService, private changeDetectorRef: ChangeDetectorRef) {
     super(formBuild, changeDetectorRef)
@@ -36,10 +35,22 @@ export class AutocompleteAffaireComponent extends GenericAutocompleteComponent<I
 
   getAffaireLabel(entity: IndexEntity): string {
     let obj = JSON.parse((entity.text as string));
-    return (obj.firstname ? obj.firstname + " " : "") + (obj.lastname ? obj.lastname + " " : "") + (obj.denomination ? obj.denomination : "");
+    return (obj.affaire.firstname ? obj.affaire.firstname + " " : "") + (obj.affaire.lastname ? obj.affaire.lastname + " " : "") + (obj.affaire.denomination ? obj.affaire.denomination : "");
   }
 
-  public displayAffaire(affaire: Affaire): string {
-    return (affaire.firstname != undefined ? affaire.firstname + " " + affaire.lastname : affaire.denomination);
+  public displayAffaire(affaire: IndexEntity): string {
+    if (affaire == null)
+      return "";
+    let obj = JSON.parse((affaire.text as string));
+    return (obj.affaire.firstname != undefined ? obj.affaire.firstname + " " + obj.affaire.lastname : obj.affaire.denomination);
+  }
+
+  clearField(): void {
+    this.model = undefined;
+    this.modelChange.emit(this.model);
+    this.onOptionSelected.emit(undefined);
+    if (this.form)
+      this.form.get(this.propertyName)?.setValue(null);
+    this.affaireInput!.nativeElement.value = '';
   }
 }

@@ -16,7 +16,7 @@
       <tr>
         <td>
           <div>
-            <mat-tab-group animationDuration="0ms" [selectedIndex]="selectedTabIndex">
+            <mat-tab-group animationDuration="0ms">
               <mat-tab [label]="getTabLabel(TIERS_ENTITY_TYPE)">
                 <mat-dialog-content class="mat-content">
                   <mat-card class="pointer" *ngFor="let entity of getEntitiesForTab(TIERS_ENTITY_TYPE)"
@@ -27,7 +27,8 @@
                       <mat-card-subtitle>Commercial {{entity.text.salesEmployee.firstname}}
                         {{entity.text.salesEmployee.lastname}}
                         -
-                        {{entity.text.address}} {{entity.text.postalCode}} {{entity.text.city.label}}
+                        {{entity.text.address}} {{entity.text.postalCode}}
+                        {{entity.text.city?entity.text.city.label:""}}
                       </mat-card-subtitle>
                       <mat-icon class="mat-card-icon">group</mat-icon>
                     </mat-card-title-group>
@@ -39,12 +40,12 @@
                   <mat-card class="pointer" *ngFor="let entity of getEntitiesForTab(RESPONSABLE_ENTITY_TYPE)"
                     (click)="openEntity(entity)">
                     <mat-card-title-group>
-                      <mat-card-title>{{entity.text.firstname}} {{entity.text.lastname}}
-                        ({{entity.text.id}}, Tiers {{entity.text.tiers.id}})</mat-card-title>
+                      <mat-card-title>{{entity.text.firstname}} {{entity.text.lastname}} </mat-card-title>
                       <mat-card-subtitle>Commercial {{entity.text.salesEmployee.firstname}}
                         {{entity.text.salesEmployee.lastname}}
                         -
-                        {{entity.text.address}} {{entity.text.postalCode}} {{entity.text.city.label}}
+                        {{entity.text.address}} {{entity.text.postalCode}}
+                        {{entity.text.city?entity.text.city.label:""}}
                       </mat-card-subtitle>
                       <mat-icon class="mat-card-icon">group</mat-icon>
                     </mat-card-title-group>
@@ -102,6 +103,27 @@
                       <mat-card-subtitle>
                       </mat-card-subtitle>
                       <mat-icon class="mat-card-icon">point_of_sale</mat-icon>
+                    </mat-card-title-group>
+                  </mat-card>
+                </mat-dialog-content>
+              </mat-tab>
+              <mat-tab [label]="getTabLabel(AFFAIRE_ENTITY_TYPE)">
+                <mat-dialog-content class="mat-content">
+                  <mat-card class="pointer" *ngFor="let entity of getEntitiesForTab(AFFAIRE_ENTITY_TYPE)"
+                    (click)="openEntity(entity)">
+                    <mat-card-title-group>
+                      <mat-card-title>
+                        {{entity.text.affaire.denomination?entity.text.affaire.denomination:(entity.text.affaire.firstname+"
+                        "+entity.text.affaire.lastname)}}</mat-card-title>
+                      <mat-card-subtitle>
+                        <p> {{entity.text.affaire.address}} - {{entity.text.affaire.postalCode}} -
+                          {{entity.text.affaire.country.label}}{{entity.text.affaire.siren?(" - SIREN
+                          : "+entity.text.affaire.siren):""}}{{entity.text.affaire.siret?(" - SIRET
+                          : "+entity.text.affaire.siret):""}}{{entity.text.affaire.rna?(" - RNA
+                          : "+entity.text.affaire.rna):""}}</p>
+                        <p>{{getProvisionLabel(entity)}}</p>
+                      </mat-card-subtitle>
+                      <mat-icon class="mat-card-icon">work</mat-icon>
                     </mat-card-title-group>
                   </mat-card>
                 </mat-dialog-content>

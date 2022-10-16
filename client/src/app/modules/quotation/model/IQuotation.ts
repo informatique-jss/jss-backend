@@ -5,8 +5,8 @@ import { Phone } from "../../miscellaneous/model/Phone";
 import { SpecialOffer } from "../../miscellaneous/model/SpecialOffer";
 import { Responsable } from "../../tiers/model/Responsable";
 import { Tiers } from "../../tiers/model/Tiers";
+import { AssoAffaireOrder } from "./AssoAffaireOrder";
 import { Confrere } from "./Confrere";
-import { Provision } from "./Provision";
 import { QuotationLabelType } from "./QuotationLabelType";
 import { QuotationStatus } from "./QuotationStatus";
 import { RecordType } from "./RecordType";
@@ -22,13 +22,13 @@ export interface IQuotation extends IAttachment, IDocument {
   quotationStatus: QuotationStatus;
   observations: string;
   description: string;
-  quotationLabelType: QuotationLabelType;
+  labelType: QuotationLabelType;
   quotationLabel: string;
   customLabelResponsable: Responsable | undefined;
   customLabelTiers: Tiers | undefined;
   recordType: RecordType;
-  provisions: Provision[];
   mails: Mail[];
   phones: Phone[];
   isQuotation: boolean;
+  assoAffaireOrders: AssoAffaireOrder[];
 }

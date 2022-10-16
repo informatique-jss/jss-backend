@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.modules.miscellaneous.model.Language;
 import com.jss.osiris.modules.miscellaneous.repository.LanguageRepository;
@@ -30,6 +31,7 @@ public class LanguageServiceImpl implements LanguageService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Language addOrUpdateLanguage(
             Language language) {
         return languageRepository.save(language);

@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -30,7 +29,6 @@ public class IndexEntityServiceImpl implements IndexEntityService {
     IndexEntityRepository indexEntityRepository;
 
     @Override
-    @Async
     public void indexEntity(Object entity, Integer entityId) {
         IndexEntity indexedEntity = new IndexEntity();
         Map<String, Object> indexMap = new HashMap<String, Object>();
@@ -69,8 +67,8 @@ public class IndexEntityServiceImpl implements IndexEntityService {
             try {
                 indexedEntity.setText(objectMapper.writeValueAsString(indexMap));
             } catch (JsonProcessingException e) {
-                System.out.println("Indexation error during JSON generation");
-                e.printStackTrace();
+                // System.out.println("Indexation error during JSON generation");
+                // e.printStackTrace();
             }
 
             indexEntityRepository.save(indexedEntity);

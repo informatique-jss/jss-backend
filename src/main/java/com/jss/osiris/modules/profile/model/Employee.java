@@ -9,15 +9,12 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Index;
-import javax.persistence.Table;
 
 import org.springframework.ldap.core.AttributesMapper;
 
 import com.jss.osiris.modules.miscellaneous.model.IId;
 
 @Entity
-@Table(indexes = { @Index(name = "pk_employee", columnList = "id", unique = true) })
 public class Employee implements Serializable, IId, AttributesMapper<Employee> {
 
 	@Id

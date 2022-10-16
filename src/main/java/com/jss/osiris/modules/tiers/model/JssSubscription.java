@@ -4,14 +4,13 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 
 @Entity
@@ -27,9 +26,9 @@ public class JssSubscription implements Serializable, IId {
 	@Column(nullable = false)
 	private Boolean isWebSubscription;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name = "id_responsable")
-	@JsonBackReference("responsable")
+	@JsonIgnoreProperties(value = { "jssSubscription" }, allowSetters = true)
 	private Responsable responsable;
 
 	public Integer getId() {

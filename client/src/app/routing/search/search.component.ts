@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
+import { MatTabGroup } from '@angular/material/tabs';
 import { Router } from '@angular/router';
 import { EntityType } from './EntityType';
 import { IndexEntityService } from './index.entity.service';
@@ -13,7 +14,7 @@ export const CUSTOMER_ORDER_ENTITY_TYPE: EntityType = { entityType: 'CustomerOrd
 export const DOMICILIATION_ENTITY_TYPE: EntityType = { entityType: 'Domiciliation', tabName: 'Domiciliation', entryPoint: 'quotation/domiciliation' };
 export const ANNOUNCEMENT_ENTITY_TYPE: EntityType = { entityType: 'Announcement', tabName: 'Announcement', entryPoint: 'quotation/announcement' };
 export const BODACC_ENTITY_TYPE: EntityType = { entityType: 'Bodacc', tabName: 'BODACC', entryPoint: 'quotation/bodacc  ' };
-export const AFFAIRE_ENTITY_TYPE: EntityType = { entityType: 'Affaire', tabName: 'Affaires', entryPoint: 'quotation/affaire' };
+export const AFFAIRE_ENTITY_TYPE: EntityType = { entityType: 'AssoAffaireOrder', tabName: 'Affaires / Prestations', entryPoint: 'affaire' };
 export const INVOICE_ENTITY_TYPE: EntityType = { entityType: 'Invoice', tabName: 'Factures', entryPoint: 'invoicing' };
 
 @Component({
@@ -34,9 +35,10 @@ export class SearchComponent implements OnInit {
   QUOTATION_ENTITY_TYPE = QUOTATION_ENTITY_TYPE;
   CUSTOMER_ORDER_ENTITY_TYPE = CUSTOMER_ORDER_ENTITY_TYPE;
   INVOICE_ENTITY_TYPE = INVOICE_ENTITY_TYPE;
-  entityTypes: EntityType[] = [TIERS_ENTITY_TYPE, RESPONSABLE_ENTITY_TYPE, QUOTATION_ENTITY_TYPE, CUSTOMER_ORDER_ENTITY_TYPE, INVOICE_ENTITY_TYPE];
-  selectedTabIndex: number = 0;
+  AFFAIRE_ENTITY_TYPE = AFFAIRE_ENTITY_TYPE;
+  entityTypes: EntityType[] = [TIERS_ENTITY_TYPE, RESPONSABLE_ENTITY_TYPE, QUOTATION_ENTITY_TYPE, CUSTOMER_ORDER_ENTITY_TYPE, INVOICE_ENTITY_TYPE, AFFAIRE_ENTITY_TYPE];
   userSelectedModule: EntityType | null = null;
+  @ViewChild(MatTabGroup) tabGroup: MatTabGroup | undefined;
 
   search: string = "";
   foundEntities: IndexEntity[] | null = null;
@@ -54,18 +56,29 @@ export class SearchComponent implements OnInit {
     search: ['']
   });
 
+  debounce: any;
+
   searchEntities() {
+    clearTimeout(this.debounce);
+    this.debounce = setTimeout(() => {
+      this.effectiveSearchEntities();
+    }, 500);
+  }
+
+  effectiveSearchEntities() {
     if (this.search != null && this.search != undefined) {
       if (this.search.length >= 2) {
         this.indexEntityService.searchEntities(this.search).subscribe(response => {
           if (response) {
             this.foundEntities = [] as Array<IndexEntity>;
-            response.forEach(foundEntity => {
+            for (let foundEntity of response) {
               if (foundEntity && foundEntity.text) {
                 foundEntity.text = JSON.parse((foundEntity.text as string));
                 this.foundEntities?.push(foundEntity);
               }
-            })
+            }
+            this.generateTabLabel();
+            this.selectTab();
           }
         })
       } else {
@@ -126,18 +139,20 @@ export class SearchComponent implements OnInit {
     if (this.userSelectedModule != null) {
       for (let i = 0; i < this.entityTypes.length; i++) {
         const entityType = this.entityTypes[i];
-        if (entityType == this.userSelectedModule) {
-          this.selectedTabIndex = i;
+        if (entityType == this.userSelectedModule && this.tabGroup) {
+          this.tabGroup.selectedIndex = i;
         }
       }
     } else if (this.foundEntities != null && this.foundEntities.length > 0) {
       for (let i = 0; i < this.entityTypes.length; i++) {
         const entityType = this.entityTypes[i];
-        if (entityType.entityType == this.foundEntities[0].entityType)
-          this.selectedTabIndex = i;
+        if (entityType.entityType == this.foundEntities[0].entityType && this.tabGroup)
+          this.tabGroup.selectedIndex = i;
       }
-    } else {
-      this.selectedTabIndex = 0;
     }
+  }
+
+  getProvisionLabel(entity: any) {
+    return entity.text.provisions.map((provision: { provisionFamilyType: { label: string; }; provisionType: { label: string; }; }) => provision.provisionFamilyType.label + " - " + provision.provisionType.label).join(" / ");
   }
 }

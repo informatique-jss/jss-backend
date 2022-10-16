@@ -5,7 +5,8 @@
         <div class="chips-status">
           <chips-status [status]="invoice.invoiceStatus.code" [value]="invoice.invoiceStatus.label"></chips-status>
         </div>
-        <p>Emise à Paris, le {{invoice.createdDate|date:'dd/MM/yyyy à HH:mm'}}</p>
+        <p>Emise à Paris, le {{invoice.createdDate|date:'dd/MM/yyyy à HH:mm'}}<span *ngIf="getLetteringDate(invoice)">,
+            lettrée le {{getLetteringDate(invoice)|date:'dd/MM/yyyy à HH:mm'}}</span></p>
         <p *ngIf="invoice.customerOrder">Commande n°{{invoice.customerOrder.id}} <a
             [routerLink]="['/order',invoice.customerOrder.id]">
             <mat-icon matTooltip="Voir la commande" color="accent" class="pointer">visibility
@@ -36,10 +37,10 @@
           </tr>
         </table>
         <ng-container *ngFor="let affaire of getAffaireListArray(invoice)">
-          <table class="middle-width container-affaire mat-table">
+          <table class="middle-width container-affaire mat-table" *ngIf="!invoice.customerOrder">
             <ng-container *ngFor="let invoiceItem of invoice.invoiceItems; let index = index">
               <ng-container
-                *ngIf="invoiceItem.provision.affaire.id == affaire.id && getFirstItemIndex(invoice, affaire)==index">
+                *ngIf="invoiceItem.provision.assoAffaireOrder.affaire.id == affaire.id && getFirstItemIndex(invoice, affaire)==index">
                 <tr class="mat-header-row">
                   <th class="mat-header-cell" colspan="2">Affaire {{affaire.denomination}}{{affaire.firstname}}
                     {{affaire.lastname}}
@@ -73,7 +74,7 @@
             </ng-container>
           </table>
         </ng-container>
-        <table class="total-table mat-table middle-width">
+        <table class="total-table mat-table full-width">
           <tr class=" mat-header-row">
             <th class="mat-header-cell" colspan="2">Total</th>
           </tr>

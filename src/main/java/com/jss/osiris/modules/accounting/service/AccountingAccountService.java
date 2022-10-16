@@ -12,6 +12,8 @@ public interface AccountingAccountService {
 
     public AccountingAccount addOrUpdateAccountingAccount(AccountingAccount accountingAccount) throws Exception;
 
+    public AccountingAccount addOrUpdateAccountingAccountFromUser(AccountingAccount accountingAccount) throws Exception;
+
     public List<AccountingAccount> getAccountingAccountByLabelOrCode(String label);
 
     public List<AccountingAccount> getAccountingAccountByAccountingAccountNumber(String accountingAccountNumber);

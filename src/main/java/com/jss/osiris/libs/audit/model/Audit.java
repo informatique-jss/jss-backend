@@ -15,13 +15,12 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jss.osiris.libs.JacksonLocalDateTimeSerializer;
 
 @Entity
-@Table(indexes = { @Index(name = "pk_audit", columnList = "id", unique = true),
-		@Index(name = "idx_audit_entity", columnList = "entity"),
+@Table(indexes = { @Index(name = "idx_audit_entity", columnList = "entity"),
 		@Index(name = "idx_audit_entity", columnList = "entity, entityId") })
 public class Audit implements Serializable {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "audit_sequence")
 	private Integer id;
 
 	@Column(nullable = false)

@@ -21,7 +21,7 @@ import com.jss.osiris.modules.miscellaneous.model.LegalForm;
 public class BodaccSplitCompany implements Serializable, IId {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "bodacc_sequence")
 	private Integer id;
 
 	@Column(length = 60, nullable = false)

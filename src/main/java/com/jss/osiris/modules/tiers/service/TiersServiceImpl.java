@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.search.model.IndexEntity;
 import com.jss.osiris.libs.search.service.IndexEntityService;
@@ -63,6 +65,7 @@ public class TiersServiceImpl implements TiersService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Tiers addOrUpdateTiers(Tiers tiers) throws Exception {
         if (tiers == null)
             throw new Exception("Provided tiers is null");
@@ -79,6 +82,7 @@ public class TiersServiceImpl implements TiersService {
         // If document mails already exists, get their ids
         if (tiers.getDocuments() != null && tiers.getDocuments().size() > 0) {
             for (Document document : tiers.getDocuments()) {
+                document.setTiers(tiers);
                 if (document.getMailsAffaire() != null && document.getMailsAffaire().size() > 0)
                     mailService.populateMailIds(document.getMailsAffaire());
                 if (document.getMailsClient() != null && document.getMailsClient().size() > 0)
@@ -102,6 +106,14 @@ public class TiersServiceImpl implements TiersService {
             tiers.setAccountingAccountProvider(accountingAccountCouple.getAccountingAccountProvider());
             tiers.setAccountingAccountDeposit(accountingAccountCouple.getAccountingAccountDeposit());
         }
+
+        if (tiers.getResponsables() != null && tiers.getResponsables().size() > 0)
+            for (Responsable responsable : tiers.getResponsables()) {
+                responsable.setTiers(tiers);
+                if (responsable.getDocuments() != null)
+                    for (Document document : responsable.getDocuments())
+                        document.setResponsable(responsable);
+            }
 
         tiers = tiersRepository.save(tiers);
         indexEntityService.indexEntity(tiers, tiers.getId());
@@ -143,5 +155,13 @@ public class TiersServiceImpl implements TiersService {
             }
         }
         return foundTiers;
+    }
+
+    @Override
+    public void reindexTiers() {
+        List<Tiers> tiers = IterableUtils.toList(tiersRepository.findAll());
+        if (tiers != null)
+            for (Tiers tier : tiers)
+                indexEntityService.indexEntity(tier, tier.getId());
     }
 }

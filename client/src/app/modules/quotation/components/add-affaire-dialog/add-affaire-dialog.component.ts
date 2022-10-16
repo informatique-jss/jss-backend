@@ -1,4 +1,4 @@
-import { Component, OnInit, SimpleChanges } from '@angular/core';
+import { Component, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { AbstractControl, FormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
@@ -7,13 +7,13 @@ import { COUNTRY_CODE_FRANCE, UNREGISTERED_COMPANY_LEGAL_FORM_CODE } from 'src/a
 import { validateRna, validateSiren, validateSiret } from 'src/app/libs/CustomFormsValidatorsHelper';
 import { City } from 'src/app/modules/miscellaneous/model/City';
 import { Civility } from 'src/app/modules/miscellaneous/model/Civility';
-import { Country } from 'src/app/modules/miscellaneous/model/Country';
 import { LegalForm } from 'src/app/modules/miscellaneous/model/LegalForm';
 import { Mail } from 'src/app/modules/miscellaneous/model/Mail';
 import { Phone } from 'src/app/modules/miscellaneous/model/Phone';
 import { CityService } from 'src/app/modules/miscellaneous/services/city.service';
 import { CivilityService } from 'src/app/modules/miscellaneous/services/civility.service';
-import { CountryService } from 'src/app/modules/miscellaneous/services/country.service';
+import { IndexEntity } from 'src/app/routing/search/IndexEntity';
+import { AppService } from 'src/app/services/app.service';
 import { Affaire } from '../../model/Affaire';
 import { Rna } from '../../model/Rna';
 import { Siren } from '../../model/Siren';
@@ -30,9 +30,9 @@ import { SiretService } from '../../services/siret.service';
 })
 export class AddAffaireDialogComponent implements OnInit {
 
+  @ViewChild('tabs', { static: false }) tabs: any;
   matcher: CustomErrorStateMatcher = new CustomErrorStateMatcher();
   affaire: Affaire = {} as Affaire;
-  editMode: boolean = true;
 
   UNREGISTERED_COMPANY_LEGAL_FORM_CODE = UNREGISTERED_COMPANY_LEGAL_FORM_CODE;
 
@@ -46,8 +46,7 @@ export class AddAffaireDialogComponent implements OnInit {
 
   filteredAffaires: Affaire[] | undefined;
 
-  countries: Country[] = [] as Array<Country>;
-  filteredCountries: Observable<Country[]> | undefined;
+  selectedAffaire: Affaire | null = null;
 
 
   constructor(private formBuilder: FormBuilder,
@@ -55,9 +54,9 @@ export class AddAffaireDialogComponent implements OnInit {
     private sirenService: SirenService,
     private siretService: SiretService,
     private civilityService: CivilityService,
-    private countryService: CountryService,
     private rnaService: RnaService,
     private affaireService: AffaireService,
+    private appService: AppService,
     private affaireDialogRef: MatDialogRef<AddAffaireDialogComponent>
   ) { }
 
@@ -67,13 +66,9 @@ export class AddAffaireDialogComponent implements OnInit {
       if (!this.affaire.civility)
         this.affaire.civility = this.civilities[0];
     })
-    this.countryService.getCountries().subscribe(response => {
-      this.countries = response;
-      if (this.affaire != null && (this.affaire.country == null || this.affaire.country == undefined))
-        this.affaire.country = this.countries[0];
-    })
     if (this.affaire && !this.affaire.isIndividual)
       this.affaire.isIndividual = false;
+    this.tabs.realignInkBar();
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -82,11 +77,15 @@ export class AddAffaireDialogComponent implements OnInit {
         this.affaire.isIndividual = false;
       if (this.affaire.isIndividual && (this.affaire.civility == null || this.affaire.civility == undefined))
         this.affaire.civility = this.civilities[0];
-
-      if (this.affaire.country == null || this.affaire.country == undefined)
-        this.affaire.country = this.countries[0];
       this.affaireForm.markAllAsTouched();
     }
+  }
+
+  fillAffaire(entity: IndexEntity) {
+    let obj = JSON.parse((entity.text as string));
+    this.affaireService.getAffaire(obj.affaire.id).subscribe(affaire => {
+      this.selectedAffaire = affaire;
+    });
   }
 
   affaireForm = this.formBuilder.group({
@@ -97,10 +96,16 @@ export class AddAffaireDialogComponent implements OnInit {
   }
 
   saveAffaire() {
-    this.affaireService.addOrUpdateAffaire(this.affaire).subscribe(response => {
-      this.affaire = response;
-      this.affaireDialogRef.close(this.affaire);
-    })
+    if (this.selectedAffaire) {
+      this.affaireDialogRef.close(this.selectedAffaire);
+    } else if (this.getFormStatus()) {
+      this.affaireService.addOrUpdateAffaire(this.affaire).subscribe(response => {
+        this.affaire = response;
+        this.affaireDialogRef.close(this.affaire);
+      })
+    } else {
+      this.appService.displaySnackBar("L'onglet de saisie de l'affaire n'est pas correctement rempli. Veuillez le compléter avant de sauvegarder", true, 20);
+    }
   }
 
   closeDialog() {
@@ -213,7 +218,7 @@ export class AddAffaireDialogComponent implements OnInit {
             this.fillPostalCode(response[0]);
             this.affaireForm.markAllAsTouched();
           } else if (siret!.etablissement.adresseEtablissement.libelleCommuneEtablissement) {
-            this.cityService.getCitiesFilteredByCountryAndName(siret!.etablissement.adresseEtablissement.libelleCommuneEtablissement, this.countries[0]).subscribe(response2 => {
+            this.cityService.getCitiesFilteredByCountryAndName(siret!.etablissement.adresseEtablissement.libelleCommuneEtablissement, undefined).subscribe(response2 => {
               if (response2 != null && response2.length == 1) {
                 this.affaire.city = response2[0];
                 this.affaire.country = response2[0].country;
@@ -252,7 +257,7 @@ export class AddAffaireDialogComponent implements OnInit {
           this.affaire.postalCode = rna!.association.adresse_code_postal;
           this.fillPostalCode(response[0]);
         } else {
-          this.cityService.getCitiesFilteredByCountryAndName(rna!.association.adresse_libelle_commune, this.countries[0]).subscribe(response2 => {
+          this.cityService.getCitiesFilteredByCountryAndName(rna!.association.adresse_libelle_commune, undefined).subscribe(response2 => {
             if (response2 != null && response2.length == 1) {
               this.affaire.city = response2[0];
               this.affaire.country = response2[0].country;

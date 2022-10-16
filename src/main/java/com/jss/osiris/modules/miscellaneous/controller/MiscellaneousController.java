@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,13 +22,14 @@ import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.ValidationHelper;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.service.AccountingAccountService;
+import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.miscellaneous.model.AssoSpecialOfferBillingType;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.AttachmentType;
-import com.jss.osiris.modules.miscellaneous.model.BillingCenter;
 import com.jss.osiris.modules.miscellaneous.model.BillingItem;
 import com.jss.osiris.modules.miscellaneous.model.BillingType;
 import com.jss.osiris.modules.miscellaneous.model.City;
@@ -42,6 +45,7 @@ import com.jss.osiris.modules.miscellaneous.model.Language;
 import com.jss.osiris.modules.miscellaneous.model.LegalForm;
 import com.jss.osiris.modules.miscellaneous.model.PaymentType;
 import com.jss.osiris.modules.miscellaneous.model.Provider;
+import com.jss.osiris.modules.miscellaneous.model.Regie;
 import com.jss.osiris.modules.miscellaneous.model.Region;
 import com.jss.osiris.modules.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.miscellaneous.model.Vat;
@@ -49,7 +53,6 @@ import com.jss.osiris.modules.miscellaneous.model.VatCollectionType;
 import com.jss.osiris.modules.miscellaneous.model.WeekDay;
 import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.miscellaneous.service.AttachmentTypeService;
-import com.jss.osiris.modules.miscellaneous.service.BillingCenterService;
 import com.jss.osiris.modules.miscellaneous.service.BillingItemService;
 import com.jss.osiris.modules.miscellaneous.service.BillingTypeService;
 import com.jss.osiris.modules.miscellaneous.service.CityService;
@@ -65,6 +68,7 @@ import com.jss.osiris.modules.miscellaneous.service.LanguageService;
 import com.jss.osiris.modules.miscellaneous.service.LegalFormService;
 import com.jss.osiris.modules.miscellaneous.service.PaymentTypeService;
 import com.jss.osiris.modules.miscellaneous.service.ProviderService;
+import com.jss.osiris.modules.miscellaneous.service.RegieService;
 import com.jss.osiris.modules.miscellaneous.service.RegionService;
 import com.jss.osiris.modules.miscellaneous.service.SpecialOfferService;
 import com.jss.osiris.modules.miscellaneous.service.VatCollectionTypeService;
@@ -74,8 +78,13 @@ import com.jss.osiris.modules.quotation.model.Announcement;
 import com.jss.osiris.modules.quotation.model.Bodacc;
 import com.jss.osiris.modules.quotation.model.Domiciliation;
 import com.jss.osiris.modules.quotation.model.Quotation;
+import com.jss.osiris.modules.quotation.service.AssoAffaireOrderService;
+import com.jss.osiris.modules.quotation.service.CustomerOrderService;
+import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
+import com.jss.osiris.modules.tiers.service.ResponsableService;
+import com.jss.osiris.modules.tiers.service.TiersService;
 
 @RestController
 public class MiscellaneousController {
@@ -157,52 +166,70 @@ public class MiscellaneousController {
     AccountingAccountService accountingAccountService;
 
     @Autowired
-    BillingCenterService billingCenterService;
+    RegieService regieService;
 
-    @GetMapping(inputEntryPoint + "/billing-centers")
-    public ResponseEntity<List<BillingCenter>> getBillingCenters() {
-        List<BillingCenter> billingCenters = null;
+    @Autowired
+    InvoiceService invoiceService;
+
+    @Autowired
+    TiersService tiersService;
+
+    @Autowired
+    ResponsableService responsableService;
+
+    @Autowired
+    QuotationService quotationService;
+
+    @Autowired
+    CustomerOrderService customerOrderService;
+
+    @Autowired
+    AssoAffaireOrderService assoAffaireOrderService;
+
+    @GetMapping(inputEntryPoint + "/regies")
+    public ResponseEntity<List<Regie>> getRegies() {
+        List<Regie> regies = null;
         try {
-            billingCenters = billingCenterService.getBillingCenters();
+            regies = regieService.getRegies();
         } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching billingCenter", e);
-            return new ResponseEntity<List<BillingCenter>>(HttpStatus.INTERNAL_SERVER_ERROR);
+            logger.error("HTTP error when fetching regie", e);
+            return new ResponseEntity<List<Regie>>(HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (Exception e) {
-            logger.error("Error when fetching billingCenter", e);
-            return new ResponseEntity<List<BillingCenter>>(HttpStatus.INTERNAL_SERVER_ERROR);
+            logger.error("Error when fetching regie", e);
+            return new ResponseEntity<List<Regie>>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return new ResponseEntity<List<BillingCenter>>(billingCenters, HttpStatus.OK);
+        return new ResponseEntity<List<Regie>>(regies, HttpStatus.OK);
     }
 
-    @PostMapping(inputEntryPoint + "/billing-center")
-    public ResponseEntity<BillingCenter> addOrUpdateBillingCenter(
-            @RequestBody BillingCenter billingCenters) {
-        BillingCenter outBillingCenter;
+    @PostMapping(inputEntryPoint + "/regie")
+    public ResponseEntity<Regie> addOrUpdateRegie(
+            @RequestBody Regie regie) {
+        Regie outRegie;
         try {
-            if (billingCenters.getId() != null)
-                validationHelper.validateReferential(billingCenters, true);
-            validationHelper.validateString(billingCenters.getCode(), true);
-            validationHelper.validateString(billingCenters.getLabel(), true);
-            validationHelper.validateReferential(billingCenters.getCountry(), true);
-            validationHelper.validateReferential(billingCenters.getCity(), true);
-            validationHelper.validateString(billingCenters.getPostalCode(), false, 6);
-            validationHelper.validateString(billingCenters.getAddress(), true, 40);
-            validationHelper.validateString(billingCenters.getIban(), true, 40);
+            if (regie.getId() != null)
+                validationHelper.validateReferential(regie, true);
+            validationHelper.validateString(regie.getCode(), true);
+            validationHelper.validateString(regie.getLabel(), true);
+            validationHelper.validateReferential(regie.getCountry(), true);
+            validationHelper.validateReferential(regie.getCity(), true);
+            validationHelper.validateString(regie.getPostalCode(), false, 6);
+            validationHelper.validateString(regie.getAddress(), true, 60);
+            validationHelper.validateString(regie.getIban(), true, 40);
 
-            outBillingCenter = billingCenterService
-                    .addOrUpdateBillingCenter(billingCenters);
+            outRegie = regieService
+                    .addOrUpdateRegie(regie);
         } catch (
 
         ResponseStatusException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching billingCenter", e);
-            return new ResponseEntity<BillingCenter>(HttpStatus.INTERNAL_SERVER_ERROR);
+            logger.error("HTTP error when fetching regie", e);
+            return new ResponseEntity<Regie>(HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (Exception e) {
-            logger.error("Error when fetching billingCenter", e);
-            return new ResponseEntity<BillingCenter>(HttpStatus.INTERNAL_SERVER_ERROR);
+            logger.error("Error when fetching regie", e);
+            return new ResponseEntity<Regie>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return new ResponseEntity<BillingCenter>(outBillingCenter, HttpStatus.OK);
+        return new ResponseEntity<Regie>(outRegie, HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/providers")
@@ -514,16 +541,19 @@ public class MiscellaneousController {
 
     @PostMapping(inputEntryPoint + "/billing-type")
     public ResponseEntity<BillingType> addOrUpdateBillingType(
-            @RequestBody BillingType billingTypes) {
+            @RequestBody BillingType billingType) {
         BillingType outBillingType;
         try {
-            if (billingTypes.getId() != null)
-                validationHelper.validateReferential(billingTypes, true);
-            validationHelper.validateString(billingTypes.getCode(), true, 20);
-            validationHelper.validateString(billingTypes.getLabel(), true, 100);
+            if (billingType.getId() != null)
+                validationHelper.validateReferential(billingType, true);
+            validationHelper.validateString(billingType.getCode(), true, 20);
+            validationHelper.validateString(billingType.getLabel(), true, 100);
+            validationHelper.validateReferential(billingType.getVat(), billingType.getIsOverrideVat());
+            if (!billingType.getIsOverrideVat())
+                billingType.setVat(null);
 
             outBillingType = billingTypeService
-                    .addOrUpdateBillingType(billingTypes);
+                    .addOrUpdateBillingType(billingType);
         } catch (
 
         ResponseStatusException e) {
@@ -571,8 +601,8 @@ public class MiscellaneousController {
                 if (accountingAccount.getId() != null)
                     validationHelper.validateReferential(accountingAccount, true);
                 validationHelper.validateString(accountingAccount.getLabel(), true, 100);
-                validationHelper.validateString(accountingAccount.getAccountingAccountNumber(), true, 3);
-                validationHelper.validateInteger(accountingAccount.getAccountingAccountSubNumber(), true);
+                validationHelper.validateString(accountingAccount.getAccountingAccountNumber(), true, 6);
+                validationHelper.validateString(accountingAccount.getAccountingAccountSubNumber(), true, 20);
             }
 
             if (accountingAccountService
@@ -1286,5 +1316,26 @@ public class MiscellaneousController {
             return new ResponseEntity<byte[]>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<byte[]>(data, headers, HttpStatus.OK);
+    }
+
+    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+    @GetMapping(inputEntryPoint + "/index/reindex/all")
+    @Transactional
+    public ResponseEntity<Boolean> reindexAll() {
+        try {
+            invoiceService.reindexInvoices();
+            tiersService.reindexTiers();
+            responsableService.reindexResponsable();
+            quotationService.reindexQuotation();
+            customerOrderService.reindexCustomerOrder();
+            assoAffaireOrderService.reindexAffaires();
+        } catch (HttpStatusCodeException e) {
+            logger.error("HTTP error when fetching attachmentType", e);
+            return new ResponseEntity<Boolean>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            logger.error("Error when fetching attachmentType", e);
+            return new ResponseEntity<Boolean>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 }

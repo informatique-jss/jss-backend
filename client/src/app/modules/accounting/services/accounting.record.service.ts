@@ -16,6 +16,10 @@ export class AccountingRecordService extends AppRestService<AccountingRecord>{
     super(http, "accounting");
   }
 
+  saveManualOperations(accountingRecords: AccountingRecord[]) {
+    return this.postList(new HttpParams(), "accounting-records/manual/add", accountingRecords, "Opérations correctement ajoutées", "Erreur lors de l'ajout des opérations");
+  }
+
   getAccountingRecords() {
     return this.getList(new HttpParams(), "accounting-records");
   }

@@ -9,6 +9,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.modules.invoicing.model.InvoiceStatus;
 import com.jss.osiris.modules.invoicing.repository.InvoiceStatusRepository;
@@ -39,6 +40,7 @@ public class InvoiceStatusServiceImpl implements InvoiceStatusService {
             @CacheEvict(value = "invoiceStatusList", allEntries = true),
             @CacheEvict(value = "invoiceStatus", key = "#invoiceStatus.id")
     })
+    @Transactional(rollbackFor = Exception.class)
     public InvoiceStatus addOrUpdateInvoiceStatus(
             InvoiceStatus invoiceStatus) {
         return invoiceStatusRepository.save(invoiceStatus);

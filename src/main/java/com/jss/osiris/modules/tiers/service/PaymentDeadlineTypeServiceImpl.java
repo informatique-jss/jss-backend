@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.modules.tiers.model.PaymentDeadlineType;
 import com.jss.osiris.modules.tiers.repository.PaymentDeadlineTypeRepository;
@@ -30,6 +31,7 @@ public class PaymentDeadlineTypeServiceImpl implements PaymentDeadlineTypeServic
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public PaymentDeadlineType addOrUpdatePaymentDeadlineType(
             PaymentDeadlineType paymentDeadlineType) {
         return paymentDeadlineTypeRepository.save(paymentDeadlineType);

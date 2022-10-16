@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.modules.quotation.model.ProvisionFamilyType;
 import com.jss.osiris.modules.quotation.repository.ProvisionFamilyTypeRepository;
@@ -29,6 +30,7 @@ public class ProvisionFamilyTypeServiceImpl implements ProvisionFamilyTypeServic
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public ProvisionFamilyType addOrUpdateProvisionFamilyType(ProvisionFamilyType provisionFamilyType) {
         return provisionFamilyTypeRepository.save(provisionFamilyType);
     }

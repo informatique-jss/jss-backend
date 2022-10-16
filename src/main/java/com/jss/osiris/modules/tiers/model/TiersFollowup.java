@@ -5,7 +5,6 @@ import java.time.LocalDate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -14,7 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jss.osiris.libs.JacksonLocalDateSerializer;
 import com.jss.osiris.modules.miscellaneous.model.Gift;
@@ -22,23 +21,22 @@ import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.profile.model.Employee;
 
 @Entity
-@Table(indexes = { @Index(name = "pk_tiers_followup", columnList = "id", unique = true),
-		@Index(name = "idx_tiers_followup_tiers", columnList = "id_tiers"),
+@Table(indexes = { @Index(name = "idx_tiers_followup_tiers", columnList = "id_tiers"),
 		@Index(name = "idx_tiers_followup_responsable", columnList = "id_responsable") })
 public class TiersFollowup implements Serializable, IId {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "tiers_followup_sequence")
 	private Integer id;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name = "id_tiers")
-	@JsonBackReference("tiers")
+	@JsonIgnoreProperties(value = { "tiersFollowups" }, allowSetters = true)
 	private Tiers tiers;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name = "id_responsable")
-	@JsonBackReference("responsable")
+	@JsonIgnoreProperties(value = { "tiersFollowups" }, allowSetters = true)
 	private Responsable responsable;
 
 	@ManyToOne

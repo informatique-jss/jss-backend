@@ -1,4 +1,5 @@
 import { SortTableColumn } from "../../miscellaneous/model/SortTableColumn";
+import { Affaire } from "../../quotation/model/Affaire";
 import { Confrere } from "../../quotation/model/Confrere";
 import { CustomerOrder } from "../../quotation/model/CustomerOrder";
 import { Invoice } from "../../quotation/model/Invoice";
@@ -65,34 +66,24 @@ export function getCustomerOrderForCustomerOrder(customerOrder: CustomerOrder): 
   return {} as ITiers;
 }
 
+export function getAffaireList(invoice: Invoice): String {
+  if (invoice && invoice.customerOrder)
+    return invoice.customerOrder.assoAffaireOrders.map(asso => asso.affaire.denomination ? asso.affaire.denomination : (asso.affaire.firstname + ' ' + asso.affaire.lastname)).join(", ");
+  return "";
+}
+
+export function getAffaireListArray(invoice: Invoice): Affaire[] | undefined {
+  if (invoice && invoice.customerOrder)
+    return invoice.customerOrder.assoAffaireOrders.map(asso => asso.affaire);
+  return undefined;
+}
+
 export function getResponsableName(element: any) {
   if (element.customerOrder) {
     if (element.customerOrder.responsable)
       return element.customerOrder.responsable.tiers.firstname + " " + element.customerOrder.responsable.tiers.lastname;
   }
   return "";
-}
-
-export function getAffaireListArray(invoice: any) {
-  let affaires = [];
-  if (invoice.customerOrder && invoice.customerOrder.provisions) {
-    for (let provision of invoice.customerOrder.provisions) {
-      if (provision.affaire) {
-        affaires.push(provision.affaire);
-      }
-    }
-  }
-  return affaires;
-}
-
-export function getAffaireList(invoice: any) {
-  return getAffaireListArray(invoice).map(affaire => {
-    if (affaire.denomination) {
-      return affaire.denomination;
-    } else {
-      return affaire.firstname + " " + affaire.lastname;
-    }
-  }).join(", ");
 }
 
 export function getAmountPayed(invoice: Invoice) {
@@ -108,3 +99,12 @@ export function getAmountPayed(invoice: Invoice) {
   payed = Math.round(payed * 100) / 100;
   return payed;
 }
+
+export function getLetteringDate(invoice: Invoice): Date | undefined {
+  if (invoice && invoice.accountingRecords)
+    for (let accountingRecord of invoice.accountingRecords)
+      if (accountingRecord.letteringDate)
+        return accountingRecord.letteringDate;
+  return undefined;
+}
+

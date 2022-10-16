@@ -11,7 +11,8 @@ public interface VatService {
 
     public Vat getVat(Integer id);
 
-    public Vat getApplicableVat(Country country, Department departement, boolean isIndividual) throws Exception;
+    public Vat getGeographicalApplicableVat(Country country, Department departement, boolean isIndividual)
+            throws Exception;
 
     public Vat addOrUpdateVat(Vat vat);
 

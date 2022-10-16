@@ -41,25 +41,9 @@
         <key-type>java.lang.String</key-type>
         <value-type>java.util.List</value-type>
     </cache>
-    <cache alias="accountingRecordList" uses-template="default">
+    <cache alias="rna" uses-template="default">
         <key-type>java.lang.String</key-type>
         <value-type>java.util.List</value-type>
-    </cache>
-    <cache alias="accountingRecord" uses-template="default">
-        <key-type>java.lang.Integer</key-type>
-        <value-type>com.jss.osiris.modules.accounting.model.AccountingRecord</value-type>
-    </cache>
-    <cache alias="invoice" uses-template="default">
-        <key-type>java.lang.Integer</key-type>
-        <value-type>com.jss.osiris.modules.invoicing.model.Invoice</value-type>
-    </cache>
-    <cache alias="providerList" uses-template="default">
-        <key-type>java.lang.String</key-type>
-        <value-type>java.util.List</value-type>
-    </cache>
-    <cache alias="provider" uses-template="default">
-        <key-type>java.lang.Integer</key-type>
-        <value-type>com.jss.osiris.modules.miscellaneous.model.Provider</value-type>
     </cache>
     <cache alias="invoiceStatusList" uses-template="default">
         <key-type>java.lang.String</key-type>
@@ -77,14 +61,6 @@
         <key-type>java.lang.Integer</key-type>
         <value-type>com.jss.osiris.modules.accounting.model.AccountingJournal</value-type>
     </cache>
-    <cache alias="paymentList" uses-template="default">
-        <key-type>java.lang.String</key-type>
-        <value-type>java.util.List</value-type>
-    </cache>
-    <cache alias="payment" uses-template="default">
-        <key-type>java.lang.Integer</key-type>
-        <value-type>com.jss.osiris.modules.invoicing.model.Payment</value-type>
-    </cache>
     <cache alias="paymentWayList" uses-template="default">
         <key-type>java.lang.String</key-type>
         <value-type>java.util.List</value-type>
@@ -93,22 +69,24 @@
         <key-type>java.lang.Integer</key-type>
         <value-type>com.jss.osiris.modules.invoicing.model.PaymentWay</value-type>
     </cache>
-    <cache alias="depositList" uses-template="default">
+    <cache alias="provisionScreenTypeList" uses-template="default">
         <key-type>java.lang.String</key-type>
         <value-type>java.util.List</value-type>
     </cache>
-    <cache alias="deposit" uses-template="default">
-        <key-type>java.lang.Integer</key-type>
-        <value-type>com.jss.osiris.modules.invoicing.model.Deposit</value-type>
-    </cache>
-    <cache alias="billingCenterList" uses-template="default">
+    <cache alias="assignationTypeList" uses-template="default">
         <key-type>java.lang.String</key-type>
         <value-type>java.util.List</value-type>
     </cache>
-    <cache alias="billingCenter" uses-template="default">
+    <cache alias="assignationType" uses-template="default">
         <key-type>java.lang.Integer</key-type>
-        <value-type>com.jss.osiris.modules.miscellaneous.model.BillingCenter</value-type>
+        <value-type>com.jss.osiris.modules.quotation.model.AssignationType</value-type>
     </cache>
-
-
+    <cache alias="affaireStatusList" uses-template="default">
+        <key-type>java.lang.String</key-type>
+        <value-type>java.util.List</value-type>
+    </cache>
+    <cache alias="affaireStatus" uses-template="default">
+        <key-type>java.lang.Integer</key-type>
+        <value-type>com.jss.osiris.modules.quotation.model.AffaireStatus</value-type>
+    </cache>
 </config>

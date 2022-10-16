@@ -35,14 +35,14 @@
           </tr>
           <tr>
             <td>
-              <generic-input [(model)]="selectedEntity.postalCode" label="Code postal" [form]="entityForm"
-                propertyName="postalCode" [isMandatory]="false" [maxLength]="6"></generic-input>
+              <autocomplete-department [(model)]="selectedEntity.department" [form]="entityForm"
+                propertyName="department" [isMandatory]="false" [isDisabled]="!editMode"></autocomplete-department>
             </td>
           </tr>
           <tr>
             <td>
-              <autocomplete-department [(model)]="selectedEntity.department" [form]="entityForm"
-                propertyName="department" [isMandatory]="false" [isDisabled]="!editMode"></autocomplete-department>
+              <generic-input [(model)]="selectedEntity.postalCode" label="Code postal" [form]="entityForm"
+                propertyName="postalCode" [isMandatory]="false" [maxLength]="6"></generic-input>
             </td>
           </tr>
           <tr>

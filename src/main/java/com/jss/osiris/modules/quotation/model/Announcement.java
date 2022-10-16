@@ -1,10 +1,8 @@
 package com.jss.osiris.modules.quotation.model;
 
-import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,28 +14,20 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jss.osiris.libs.JacksonLocalDateSerializer;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.Department;
+import com.jss.osiris.modules.miscellaneous.model.IAttachment;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 
 @Entity
-public class Announcement implements Serializable, IId {
+public class Announcement implements IId, IAttachment {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "announcement_sequence")
 	private Integer id;
-
-	@ManyToOne
-	@JoinColumn(name = "id_provision")
-	@JsonBackReference("provision")
-	private Provision provision;
 
 	@ManyToOne
 	@JoinColumn(name = "id_department")
@@ -59,7 +49,6 @@ public class Announcement implements Serializable, IId {
 	private NoticeTypeFamily noticeTypeFamily;
 
 	@ManyToMany
-	@OnDelete(action = OnDeleteAction.CASCADE)
 	@JoinTable(name = "asso_announcement_notice_type", joinColumns = @JoinColumn(name = "id_announcement"), inverseJoinColumns = @JoinColumn(name = "id_notice_type"))
 	private List<NoticeType> noticeTypes;
 
@@ -97,8 +86,8 @@ public class Announcement implements Serializable, IId {
 	@Column(nullable = false)
 	private Boolean isPublicationCertificateDocument;
 
-	@OneToMany(targetEntity = Attachment.class, mappedBy = "announcement", cascade = CascadeType.ALL)
-	@JsonManagedReference("announcement")
+	@OneToMany(mappedBy = "announcement")
+	@JsonIgnoreProperties(value = { "announcement" }, allowSetters = true)
 	private List<Attachment> attachments;
 
 	public Integer getId() {
@@ -261,20 +250,12 @@ public class Announcement implements Serializable, IId {
 		this.isRedactedByJss = isRedactedByJss;
 	}
 
-	public Provision getProvision() {
-		return provision;
-	}
-
 	public LocalDate getPublicationDate() {
 		return publicationDate;
 	}
 
 	public void setPublicationDate(LocalDate publicationDate) {
 		this.publicationDate = publicationDate;
-	}
-
-	public void setProvision(Provision provision) {
-		this.provision = provision;
 	}
 
 	public Department getDepartment() {

@@ -76,7 +76,8 @@ export class AdministrationComponent implements OnInit {
   ACCOUNTING_JOURNAL_REFERENTIAL = "Comptabilité - journal comptable";
   INVOICE_STAUTS_REFERENTIAL = "Facturation - statut de facture";
   PAYMENT_WAY_REFERENTIAL = "Facturation - sens de paiement";
-  BILLING_CENTER_REFERENTIAL = "Divers - centre de facturation";
+  BILLING_REGIE = "Divers - régie";
+  AFFAIRE_REFERENTIAL = "Devis - affaire";
 
   constructor(private appService: AppService,
     private formBuilder: FormBuilder,
@@ -137,7 +138,8 @@ export class AdministrationComponent implements OnInit {
     this.referentials.push(this.ACCOUNTING_JOURNAL_REFERENTIAL);
     this.referentials.push(this.INVOICE_STAUTS_REFERENTIAL);
     this.referentials.push(this.PAYMENT_WAY_REFERENTIAL);
-    this.referentials.push(this.BILLING_CENTER_REFERENTIAL);
+    this.referentials.push(this.BILLING_REGIE);
+    this.referentials.push(this.AFFAIRE_REFERENTIAL);
     this.referentials.sort((a, b) => a.localeCompare(b));
 
     this.filteredReferentials = this.referentialForm.get("entity")?.valueChanges.pipe(

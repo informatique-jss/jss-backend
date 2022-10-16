@@ -41,6 +41,27 @@
             </td>
           </tr>
         </table>
+        <table class="full-width">
+          <tr>
+            <td>
+              <select-provision-screen-type [(model)]="selectedEntity.provisionScreenType" label="Type d'écran"
+                [form]="entityForm" propertyName="provisionScreenType" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-provision-screen-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-assignation-type [(model)]="selectedEntity.assignationType" label="Assignation par défaut"
+                [form]="entityForm" propertyName="assignationType" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-assignation-type>
+            </td>
+            <td>
+              <autocomplete-employee [(model)]="selectedEntity.defaultEmployee" [form]="entityForm"
+                propertyName="defaultEmployee" [isMandatory]="true" [isDisabled]="!editMode" label="Employé par défaut">
+              </autocomplete-employee>
+            </td>
+          </tr>
+        </table>
         <table class="full-width" *ngIf="selectedEntity.billingTypes">
           <tr *ngFor="let billingType of selectedEntity.billingTypes; let i = index">
             <td>

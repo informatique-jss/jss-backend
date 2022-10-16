@@ -3,7 +3,6 @@ package com.jss.osiris.modules.quotation.model;
 import java.io.Serializable;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -54,19 +53,24 @@ public class Affaire implements Serializable, IId {
 	private LegalForm legalForm;
 
 	@Column(length = 9)
+	@IndexedField
 	private String siren;
 
 	@Column(length = 14)
+	@IndexedField
 	private String siret;
 
 	@Column(length = 10)
+	@IndexedField
 	private String rna;
 
 	@Column(length = 10, nullable = false)
+	@IndexedField
 	private String postalCode;
 
 	@ManyToOne
 	@JoinColumn(name = "id_city")
+	@IndexedField
 	private City city;
 
 	@ManyToOne
@@ -74,13 +78,14 @@ public class Affaire implements Serializable, IId {
 	private Country country;
 
 	@Column(length = 60, nullable = false)
+	@IndexedField
 	private String address;
 
-	@ManyToMany(cascade = CascadeType.ALL)
+	@ManyToMany
 	@JoinTable(name = "asso_affaire_mail", joinColumns = @JoinColumn(name = "id_affaire"), inverseJoinColumns = @JoinColumn(name = "id_mail"))
 	private List<Mail> mails;
 
-	@ManyToMany(cascade = CascadeType.ALL)
+	@ManyToMany
 	@JoinTable(name = "asso_affaire_phone", joinColumns = @JoinColumn(name = "id_affaire"), inverseJoinColumns = @JoinColumn(name = "id_phone"))
 	private List<Phone> phones;
 

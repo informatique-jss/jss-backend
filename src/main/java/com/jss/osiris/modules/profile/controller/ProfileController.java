@@ -56,6 +56,11 @@ public class ProfileController {
 		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 	}
 
+	@GetMapping(inputEntryPoint + "/user")
+	public ResponseEntity<Employee> getMyUsername() {
+		return new ResponseEntity<Employee>(employeeService.getCurrentUser(), HttpStatus.OK);
+	}
+
 	@PostMapping(inputEntryPoint + "/login")
 	public ResponseEntity<Boolean> login(@RequestBody User user, HttpServletRequest request) {
 		try {

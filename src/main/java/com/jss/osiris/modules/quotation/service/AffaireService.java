@@ -10,4 +10,5 @@ public interface AffaireService {
     public Affaire getAffaire(Integer id);
 
     public Affaire addOrUpdateAffaire(Affaire affaire);
+
 }

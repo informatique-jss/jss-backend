@@ -64,6 +64,53 @@ public class AccountingController {
     @Autowired
     AccountingJournalService accountingJournalService;
 
+    @PostMapping(inputEntryPoint + "/accounting-records/manual/add")
+    public ResponseEntity<List<AccountingRecord>> addOrUpdateAccountingRecords(
+            @RequestBody List<AccountingRecord> accountingRecords) {
+        List<AccountingRecord> outAccountingRecords = null;
+        try {
+            if (accountingRecords == null || accountingRecords.size() == 0)
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+            AccountingJournal salesJournal = accountingJournalService.getSalesAccountingJournal();
+            AccountingJournal purchasesJournal = accountingJournalService.getPurchasesAccountingJournal();
+
+            for (AccountingRecord accountingRecord : accountingRecords) {
+                if (accountingRecord.getId() != null
+                        || accountingRecord.getAccountingDateTime() != null
+                        || accountingRecord.getOperationDateTime() != null
+                        || accountingRecord.getIsTemporary() != null
+                        || accountingRecord.getInvoiceItem() != null
+                        || accountingRecord.getInvoice() != null
+                        || accountingRecord.getOperationId() != null
+                        || accountingRecord.getLetteringDateTime() != null
+                        || accountingRecord.getLetteringNumber() != null)
+                    return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+                validationHelper.validateReferential(accountingRecord.getAccountingAccount(), true);
+                validationHelper.validateReferential(accountingRecord.getAccountingJournal(), true);
+                validationHelper.validateDate(accountingRecord.getManualAccountingDocumentDate(), true);
+                validationHelper.validateString(accountingRecord.getManualAccountingDocumentNumber(), true, 150);
+                validationHelper.validateString(accountingRecord.getLabel(), true, 100);
+                validationHelper.validateDate(accountingRecord.getManualAccountingDocumentDeadline(), false);
+
+                if (accountingRecord.getAccountingJournal().getId().equals(purchasesJournal.getId())
+                        || accountingRecord.getAccountingJournal().getId().equals(salesJournal.getId()))
+                    return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+            outAccountingRecords = accountingRecordService.addOrUpdateAccountingRecords(accountingRecords);
+        } catch (ResponseStatusException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (HttpStatusCodeException e) {
+            logger.error("HTTP error when fetching accountingJournal", e);
+            return new ResponseEntity<List<AccountingRecord>>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            logger.error("Error when fetching accountingJournal", e);
+            return new ResponseEntity<List<AccountingRecord>>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<List<AccountingRecord>>(outAccountingRecords, HttpStatus.OK);
+    }
+
     @GetMapping(inputEntryPoint + "/accounting-journals")
     public ResponseEntity<List<AccountingJournal>> getAccountingJournals() {
         List<AccountingJournal> accountingJournals = null;
@@ -227,7 +274,7 @@ public class AccountingController {
             validationHelper.validateReferential(accountingRecords.getAccountingJournal(), true);
 
             outAccountingRecord = accountingRecordService
-                    .addOrUpdateAccountingRecord(accountingRecords);
+                    .addOrUpdateAccountingRecordFromUser(accountingRecords);
         } catch (
 
         ResponseStatusException e) {
@@ -307,9 +354,9 @@ public class AccountingController {
                 validationHelper.validateReferential(accountingAccounts, true);
             validationHelper.validateString(accountingAccounts.getLabel(), true, 100);
             validationHelper.validateString(accountingAccounts.getAccountingAccountNumber(), true, 6);
-            validationHelper.validateInteger(accountingAccounts.getAccountingAccountSubNumber(), false);
+            validationHelper.validateString(accountingAccounts.getAccountingAccountSubNumber(), true, 20);
             outAccountingAccount = accountingAccountService
-                    .addOrUpdateAccountingAccount(accountingAccounts);
+                    .addOrUpdateAccountingAccountFromUser(accountingAccounts);
         } catch (
 
         ResponseStatusException e) {

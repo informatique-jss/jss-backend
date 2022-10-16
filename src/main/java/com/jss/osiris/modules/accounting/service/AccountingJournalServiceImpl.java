@@ -12,6 +12,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.modules.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.accounting.repository.AccountingJournalRepository;
@@ -26,6 +27,9 @@ public class AccountingJournalServiceImpl implements AccountingJournalService {
 
     @Value("${accounting.journal.code.sales}")
     String salesAccountingJournalCode;
+
+    @Value("${accounting.journal.code.purchases}")
+    String purchasesAccountingJournalCode;
 
     @Override
     @Cacheable(value = "accountingJournalList", key = "#root.methodName")
@@ -47,6 +51,7 @@ public class AccountingJournalServiceImpl implements AccountingJournalService {
             @CacheEvict(value = "accountingJournalList", allEntries = true),
             @CacheEvict(value = "accountingJournal", key = "#accountingJournal.id")
     })
+    @Transactional(rollbackFor = Exception.class)
     public AccountingJournal addOrUpdateAccountingJournal(
             AccountingJournal accountingJournal) {
         return accountingJournalRepository.save(accountingJournal);
@@ -63,5 +68,13 @@ public class AccountingJournalServiceImpl implements AccountingJournalService {
         if (salesJournal == null)
             logger.error("Unable to find accounting journal for code " + salesAccountingJournalCode);
         return salesJournal;
+    }
+
+    @Override
+    public AccountingJournal getPurchasesAccountingJournal() throws Exception {
+        AccountingJournal purchasesJournal = this.getAccountingJournalByCode(purchasesAccountingJournalCode);
+        if (purchasesJournal == null)
+            logger.error("Unable to find accounting journal for code " + purchasesAccountingJournalCode);
+        return purchasesJournal;
     }
 }

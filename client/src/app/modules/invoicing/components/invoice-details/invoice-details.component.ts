@@ -2,13 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Vat } from 'src/app/modules/miscellaneous/model/Vat';
+import { QuotationComponent } from 'src/app/modules/quotation/components/quotation/quotation.component';
 import { Affaire } from 'src/app/modules/quotation/model/Affaire';
 import { Invoice } from 'src/app/modules/quotation/model/Invoice';
 import { IQuotation } from 'src/app/modules/quotation/model/IQuotation';
 import { INVOICE_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
 import { InvoiceService } from '../../services/invoice.service';
-import { getAffaireList, getAffaireListArray, getAmountRemaining, getCustomerOrderForInvoice, getCustomerOrderNameForInvoice, getResponsableName } from '../invoice-tools';
+import { getAffaireList, getAffaireListArray, getAmountRemaining, getCustomerOrderForInvoice, getCustomerOrderNameForInvoice, getLetteringDate, getResponsableName } from '../invoice-tools';
 
 @Component({
   selector: 'app-invoice-details',
@@ -19,6 +20,8 @@ export class InvoiceDetailsComponent implements OnInit {
 
   invoice: Invoice | undefined;
   getAmountRemaining = getAmountRemaining;
+  getAffaireList = getAffaireList;
+  getAffaireListArray = getAffaireListArray;
   INVOICE_ENTITY_TYPE = INVOICE_ENTITY_TYPE;
 
   constructor(private formBuilder: FormBuilder,
@@ -53,34 +56,21 @@ export class InvoiceDetailsComponent implements OnInit {
   getCustomerOrderName = getCustomerOrderNameForInvoice;
   getCustomerOrder = getCustomerOrderForInvoice;
   getResponsableName = getResponsableName;
-  getAffaireList = getAffaireList;
-  getAffaireListArray = getAffaireListArray;
+  getLetteringDate = getLetteringDate;
 
   computePreTaxPriceTotal(quotation: IQuotation): number {
-    let preTaxPrice = 0;
-    if (quotation && quotation.provisions) {
-      for (let provision of quotation.provisions) {
-        if (provision.invoiceItems) {
-          for (let invoiceItem of provision.invoiceItems) {
-            preTaxPrice += parseFloat(invoiceItem.preTaxPrice + "");
-          }
-        }
-      }
-    }
-    return preTaxPrice;
+    return QuotationComponent.computePreTaxPriceTotal(quotation);
   }
-
   getFirstItemIndex(invoice: Invoice, affaire: Affaire) {
     if (invoice && affaire) {
       for (let i = 0; i < invoice.invoiceItems.length; i++) {
         const invoiceItem = invoice.invoiceItems[i];
-        if (invoiceItem.provision.affaire.id == affaire.id)
+        if (invoiceItem.provision.assoAffaireOrder.affaire.id == affaire.id)
           return i;
       }
     }
     return 0;
   }
-
   getPreTaxPriceTotal(): number {
     let preTaxPrice = 0;
     if (this.invoice && this.invoice.invoiceItems) {

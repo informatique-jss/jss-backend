@@ -10,4 +10,6 @@ public interface ResponsableService {
     public Responsable getResponsable(Integer id);
 
     public List<Responsable> getResponsableByKeyword(String searchedValue);
+
+    public void reindexResponsable();
 }

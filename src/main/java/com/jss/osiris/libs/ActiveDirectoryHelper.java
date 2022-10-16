@@ -50,7 +50,7 @@ public class ActiveDirectoryHelper {
                     || SecurityContextHolder.getContext().getAuthentication() == null
                     || SecurityContextHolder.getContext().getAuthentication() == null
                     || SecurityContextHolder.getContext().getAuthentication().getName() == null)
-                return "gapin";
+                return "GAPIN";
         return SecurityContextHolder.getContext().getAuthentication().getName();
     }
 

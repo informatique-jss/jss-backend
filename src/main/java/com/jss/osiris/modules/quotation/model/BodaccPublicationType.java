@@ -14,7 +14,7 @@ import com.jss.osiris.modules.miscellaneous.model.IId;
 public class BodaccPublicationType implements Serializable, IId {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "bodacc_sequence")
 	private Integer id;
 
 	@Column(nullable = false, length = 100)

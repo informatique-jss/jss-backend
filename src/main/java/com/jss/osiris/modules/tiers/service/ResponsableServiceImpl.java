@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.jss.osiris.libs.search.model.IndexEntity;
+import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.libs.search.service.SearchService;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.tiers.model.Responsable;
@@ -25,6 +26,9 @@ public class ResponsableServiceImpl implements ResponsableService {
 
     @Autowired
     InvoiceService invoiceService;
+
+    @Autowired
+    IndexEntityService indexEntityService;
 
     @Override
     public List<Responsable> getResponsables() {
@@ -55,5 +59,13 @@ public class ResponsableServiceImpl implements ResponsableService {
             }
         }
         return foundResponsables;
+    }
+
+    @Override
+    public void reindexResponsable() {
+        List<Responsable> responsables = IterableUtils.toList(responsableRepository.findAll());
+        if (responsables != null)
+            for (Responsable responsable : responsables)
+                indexEntityService.indexEntity(responsable, responsable.getId());
     }
 }

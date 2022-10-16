@@ -5,6 +5,9 @@ import { Payment } from "../../invoicing/model/Payment";
 import { City } from "../../miscellaneous/model/City";
 import { Country } from "../../miscellaneous/model/Country";
 import { BillingLabelType } from "../../tiers/model/BillingLabelType";
+import { Responsable } from "../../tiers/model/Responsable";
+import { Tiers } from "../../tiers/model/Tiers";
+import { Confrere } from "./Confrere";
 import { CustomerOrder } from "./CustomerOrder";
 import { InvoiceItem } from "./InvoiceItem";
 
@@ -29,4 +32,7 @@ export interface Invoice {
   deposits: Deposit[];
   invoiceStatus: InvoiceStatus;
   accountingRecords: AccountingRecord[];
+  tiers: Tiers | undefined;
+  responsable: Responsable | undefined;
+  confrere: Confrere | undefined;
 }

@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.modules.miscellaneous.model.LegalForm;
 import com.jss.osiris.modules.miscellaneous.repository.LegalFormRepository;
@@ -30,6 +31,7 @@ public class LegalFormServiceImpl implements LegalFormService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public LegalForm addOrUpdateLegalForm(
             LegalForm legalForm) {
         return legalFormRepository.save(legalForm);

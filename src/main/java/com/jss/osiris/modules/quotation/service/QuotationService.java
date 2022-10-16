@@ -12,6 +12,8 @@ public interface QuotationService {
 
     public Quotation addOrUpdateQuotation(Quotation quotation) throws Exception;
 
+    public Quotation addOrUpdateQuotationFromUser(Quotation quotation) throws Exception;
+
     public IQuotation getAndSetInvoiceItemsForQuotation(IQuotation quotation) throws Exception;
 
     public Quotation addOrUpdateQuotationStatus(Quotation quotation, String targetStatusCode) throws Exception;
@@ -19,4 +21,6 @@ public interface QuotationService {
     public ITiers getCustomerOrderOfQuotation(IQuotation quotation) throws Exception;
 
     public List<Quotation> searchQuotations(OrderingSearch orderingSearch);
+
+    public void reindexQuotation();
 }

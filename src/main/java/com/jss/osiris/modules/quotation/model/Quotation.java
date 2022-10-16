@@ -15,14 +15,13 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jss.osiris.libs.JacksonLocalDateTimeSerializer;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.Document;
+import com.jss.osiris.modules.miscellaneous.model.IAttachment;
 import com.jss.osiris.modules.miscellaneous.model.Mail;
 import com.jss.osiris.modules.miscellaneous.model.Phone;
 import com.jss.osiris.modules.miscellaneous.model.SpecialOffer;
@@ -30,8 +29,7 @@ import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
 @Entity
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-public class Quotation implements IQuotation {
+public class Quotation implements IQuotation, IAttachment {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -50,9 +48,10 @@ public class Quotation implements IQuotation {
 
 	@ManyToOne
 	@JoinColumn(name = "id_confrere")
+	@IndexedField
 	private Confrere confrere;
 
-	@ManyToMany(cascade = CascadeType.ALL)
+	@ManyToMany
 	@JoinTable(name = "asso_quotation_special_offer", joinColumns = @JoinColumn(name = "id_quotation"), inverseJoinColumns = @JoinColumn(name = "id_special_offer"))
 	private List<SpecialOffer> specialOffers;
 
@@ -70,12 +69,12 @@ public class Quotation implements IQuotation {
 	@Column(columnDefinition = "TEXT")
 	private String description;
 
-	@OneToMany(targetEntity = Attachment.class, mappedBy = "quotation", cascade = CascadeType.ALL)
-	@JsonManagedReference("quotation")
+	@OneToMany(mappedBy = "quotation")
+	@JsonIgnoreProperties(value = { "quotation" }, allowSetters = true)
 	private List<Attachment> attachments;
 
-	@OneToMany(targetEntity = Document.class, mappedBy = "quotation", cascade = CascadeType.MERGE)
-	@JsonManagedReference("quotation")
+	@OneToMany(targetEntity = Document.class, mappedBy = "quotation", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonIgnoreProperties(value = { "quotation" }, allowSetters = true)
 	private List<Document> documents;
 
 	@ManyToOne
@@ -94,15 +93,15 @@ public class Quotation implements IQuotation {
 	@JoinColumn(name = "id_record_type")
 	private RecordType recordType;
 
-	@OneToMany(targetEntity = Provision.class, mappedBy = "quotation", cascade = CascadeType.ALL, orphanRemoval = true)
-	@JsonManagedReference("quotation")
-	private List<Provision> provisions;
+	@OneToMany(targetEntity = AssoAffaireOrder.class, mappedBy = "customerOrder", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonIgnoreProperties(value = { "quotation" }, allowSetters = true)
+	private List<AssoAffaireOrder> assoAffaireOrders;
 
-	@ManyToMany(cascade = CascadeType.MERGE)
+	@ManyToMany
 	@JoinTable(name = "asso_quotation_mail", joinColumns = @JoinColumn(name = "id_quotation"), inverseJoinColumns = @JoinColumn(name = "id_mail"))
 	private List<Mail> mails;
 
-	@ManyToMany(cascade = CascadeType.MERGE)
+	@ManyToMany
 	@JoinTable(name = "asso_quotation_phone", joinColumns = @JoinColumn(name = "id_quotation"), inverseJoinColumns = @JoinColumn(name = "id_phone"))
 	private List<Phone> phones;
 
@@ -117,6 +116,7 @@ public class Quotation implements IQuotation {
 
 	@ManyToMany
 	@JoinTable(name = "asso_quotation_customer_order", joinColumns = @JoinColumn(name = "id_quotation"), inverseJoinColumns = @JoinColumn(name = "id_customer_order"))
+	@JsonIgnoreProperties(value = { "quotations" }, allowSetters = true)
 	private List<CustomerOrder> customerOrders;
 
 	public Integer getId() {
@@ -231,14 +231,6 @@ public class Quotation implements IQuotation {
 		this.recordType = recordType;
 	}
 
-	public List<Provision> getProvisions() {
-		return provisions;
-	}
-
-	public void setProvisions(List<Provision> provisions) {
-		this.provisions = provisions;
-	}
-
 	public List<Mail> getMails() {
 		return mails;
 	}
@@ -301,6 +293,14 @@ public class Quotation implements IQuotation {
 
 	public void setQuotationStatus(QuotationStatus quotationStatus) {
 		this.quotationStatus = quotationStatus;
+	}
+
+	public List<AssoAffaireOrder> getAssoAffaireOrders() {
+		return assoAffaireOrders;
+	}
+
+	public void setAssoAffaireOrders(List<AssoAffaireOrder> assoAffaireOrders) {
+		this.assoAffaireOrders = assoAffaireOrders;
 	}
 
 }

@@ -2,7 +2,7 @@
   <mat-label>{{label}}</mat-label>
   <input type="text" matInput [formControlName]="propertyName" [matAutocomplete]="matAutocomplete" [(ngModel)]="model"
     [placeholder]="label">
-  <mat-icon matSuffix (click)="model=undefined" *ngIf="!isDisabled && model!=undefined">
+  <mat-icon matSuffix (click)="clearField()" *ngIf="!isDisabled && model!=undefined">
     close
   </mat-icon>
   <mat-autocomplete autoActiveFirstOption #matAutocomplete="matAutocomplete" [displayWith]="displayLabel"

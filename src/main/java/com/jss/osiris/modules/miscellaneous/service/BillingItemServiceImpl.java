@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.model.AccountingAccountClass;
@@ -50,6 +51,7 @@ public class BillingItemServiceImpl implements BillingItemService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public BillingItem addOrUpdateBillingItem(
             BillingItem billingItem) throws Exception {
         return addOrUpdateBillingItem(billingItem, false);

@@ -92,18 +92,18 @@
           <tr>
             <td>
               <generic-input [(model)]="tiers.address" [isDisabled]="!editMode" [isDisabled]="!editMode" label="Adresse"
-                [form]="principalForm" propertyName="address" [isMandatory]="true" [maxLength]="20"></generic-input>
-            </td>
-            <td>
-              <autocomplete-city [(model)]="tiers.city" [modelCountry]="tiers.country" [form]="principalForm"
-                propertyName="city" [isMandatory]="true" (onOptionSelected)="fillPostalCode($event)">
-              </autocomplete-city>
+                [form]="principalForm" propertyName="address" [isMandatory]="true" [maxLength]="60"></generic-input>
             </td>
             <td>
               <autocomplete-postal-code [(model)]="tiers.postalCode" [form]="principalForm" propertyName="postalCode"
                 [isMandatory]="true"
                 [conditionnalRequired]="tiers.country != null && tiers.country.code == COUNTRY_CODE_FRANCE"
                 (onOptionSelected)="fillCity($event)"></autocomplete-postal-code>
+            </td>
+            <td>
+              <autocomplete-city [(model)]="tiers.city" [modelCountry]="tiers.country" [form]="principalForm"
+                propertyName="city" [isMandatory]="true" (onOptionSelected)="fillPostalCode($event)">
+              </autocomplete-city>
             </td>
             <td>
               <autocomplete-country [(model)]="tiers.country" [form]="principalForm" propertyName="country"
@@ -174,18 +174,14 @@
             </td>
             <td *ngIf="tiers.isIndividual==false">
               <!-- TODO : fill it when reponsibles done-->
-              <mat-form-field class="full-width">
-                <mat-label>Nombre de responsables abonnés</mat-label>
-                <input matInput formControlName="responsibleSuscribersNumber"
-                  placeholder="Nombre de responsables abonnés">
-              </mat-form-field>
+              <generic-input [(model)]="tiers.responsibleSuscribersNumber" label="Nombre de responsables abonnés"
+                [form]="principalForm" propertyName="responsibleSuscribersNumber" [isMandatory]="false"
+                [isDisabled]="true"></generic-input>
             </td>
             <td *ngIf="tiers.isIndividual==false">
               <!-- TODO : fill it when reponsibles done-->
-              <mat-form-field class="full-width">
-                <mat-label>Nombre de comptes web</mat-label>
-                <input matInput formControlName="webAccountNumber" placeholder="Nombre de comptes web">
-              </mat-form-field>
+              <generic-input [(model)]="tiers.webAccountNumber" label="Nombre de comptes web" [form]="principalForm"
+                propertyName="webAccountNumber" [isMandatory]="false" [isDisabled]="true"></generic-input>
             </td>
           </tr>
         </table>

@@ -9,6 +9,6 @@ public interface BillingClosureRecipientTypeService {
 
     public BillingClosureRecipientType getBillingClosureRecipientType(Integer id);
 
-    public BillingClosureRecipientType addOrUpdateTransfertFundsType(
+    public BillingClosureRecipientType addOrUpdateBillingClosureRecipientType(
             BillingClosureRecipientType billingClosureRecipientType);
 }

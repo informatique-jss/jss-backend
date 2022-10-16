@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.modules.tiers.model.BillingClosureRecipientType;
 import com.jss.osiris.modules.tiers.repository.BillingClosureRecipientTypeRepository;
@@ -31,7 +32,8 @@ public class BillingClosureRecipientTypeServiceImpl implements BillingClosureRec
     }
 
     @Override
-    public BillingClosureRecipientType addOrUpdateTransfertFundsType(
+    @Transactional(rollbackFor = Exception.class)
+    public BillingClosureRecipientType addOrUpdateBillingClosureRecipientType(
             BillingClosureRecipientType billingClosureRecipientType) {
         return billingClosurRecipientTypeRepository.save(billingClosureRecipientType);
     }

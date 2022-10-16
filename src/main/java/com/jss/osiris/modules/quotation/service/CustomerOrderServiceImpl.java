@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,8 +18,12 @@ import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.invoicing.service.DepositService;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
+import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.service.MailService;
 import com.jss.osiris.modules.miscellaneous.service.PhoneService;
+import com.jss.osiris.modules.profile.model.Employee;
+import com.jss.osiris.modules.quotation.model.AssignationType;
+import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.Domiciliation;
 import com.jss.osiris.modules.quotation.model.OrderingSearch;
@@ -65,6 +70,12 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
+    public CustomerOrder addOrUpdateCustomerOrderFromUser(CustomerOrder customerOrder) throws Exception {
+        return addOrUpdateCustomerOrder(customerOrder);
+    }
+
+    @Override
     public CustomerOrder addOrUpdateCustomerOrder(CustomerOrder customerOrder) throws Exception {
         if (customerOrder.getId() == null)
             customerOrder.setCreatedDate(LocalDateTime.now());
@@ -72,35 +83,90 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         customerOrder.setIsQuotation(false);
 
         // Complete domiciliation end date
-        for (Provision provision : customerOrder.getProvisions()) {
-            if (provision.getDomiciliation() != null) {
-                Domiciliation domiciliation = provision.getDomiciliation();
-                if (domiciliation.getEndDate() == null) {
-                    domiciliation.setEndDate(domiciliation.getStartDate().plusYears(1));
+        for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders()) {
+            assoAffaireOrder.setCustomerOrder(customerOrder);
+            assoAffaireOrder.setQuotation(null);
 
-                    // If mails already exists, get their ids
-                    if (domiciliation != null && domiciliation.getMails() != null
-                            && domiciliation.getMails().size() > 0)
-                        mailService.populateMailIds(domiciliation.getMails());
+            int nbrAssignation = 0;
+            Employee currentEmployee = null;
+            if (customerOrder.getDocuments() != null)
+                for (Document document : customerOrder.getDocuments())
+                    document.setCustomerOrder(customerOrder);
 
-                    // If mails already exists, get their ids
-                    if (domiciliation != null && domiciliation.getActivityMails() != null
-                            && domiciliation.getActivityMails().size() > 0)
-                        mailService.populateMailIds(domiciliation.getActivityMails());
+            for (Provision provision : assoAffaireOrder.getProvisions()) {
+                provision.setAssoAffaireOrder(assoAffaireOrder);
+                if (provision.getDomiciliation() != null) {
+                    Domiciliation domiciliation = provision.getDomiciliation();
+                    if (domiciliation.getEndDate() == null) {
+                        domiciliation.setEndDate(domiciliation.getStartDate().plusYears(1));
 
-                    // If mails already exists, get their ids
-                    if (domiciliation != null
-                            && domiciliation.getLegalGardianMails() != null
-                            && domiciliation.getLegalGardianMails().size() > 0)
-                        mailService.populateMailIds(domiciliation.getLegalGardianMails());
+                        // If mails already exists, get their ids
+                        if (domiciliation != null && domiciliation.getMails() != null
+                                && domiciliation.getMails().size() > 0)
+                            mailService.populateMailIds(domiciliation.getMails());
 
-                    if (domiciliation != null
-                            && domiciliation.getLegalGardianPhones() != null
-                            && domiciliation.getLegalGardianPhones().size() > 0)
-                        phoneService.populateMPhoneIds(domiciliation.getLegalGardianPhones());
+                        // If mails already exists, get their ids
+                        if (domiciliation != null && domiciliation.getActivityMails() != null
+                                && domiciliation.getActivityMails().size() > 0)
+                            mailService.populateMailIds(domiciliation.getActivityMails());
 
+                        // If mails already exists, get their ids
+                        if (domiciliation != null
+                                && domiciliation.getLegalGardianMails() != null
+                                && domiciliation.getLegalGardianMails().size() > 0)
+                            mailService.populateMailIds(domiciliation.getLegalGardianMails());
+
+                        if (domiciliation != null
+                                && domiciliation.getLegalGardianPhones() != null
+                                && domiciliation.getLegalGardianPhones().size() > 0)
+                            phoneService.populateMPhoneIds(domiciliation.getLegalGardianPhones());
+
+                    }
+                }
+
+                // Set proper assignation regarding provision item configuration
+                if (provision.getAssignedTo() == null) {
+                    Employee employee = provision.getProvisionType().getDefaultEmployee();
+
+                    if (provision.getProvisionType().getAssignationType() != null) {
+                        if (provision.getProvisionType().getAssignationType().getCode()
+                                .equals(AssignationType.FORMALISTE)) {
+                            if (customerOrder.getConfrere() != null
+                                    && customerOrder.getConfrere().getFormalisteEmployee() != null)
+                                employee = customerOrder.getConfrere().getFormalisteEmployee();
+                            if (customerOrder.getResponsable() != null) {
+                                if (customerOrder.getResponsable().getFormalisteEmployee() != null)
+                                    employee = customerOrder.getResponsable().getFormalisteEmployee();
+                                else if (customerOrder.getResponsable().getTiers().getFormalisteEmployee() != null)
+                                    employee = customerOrder.getResponsable().getTiers().getFormalisteEmployee();
+                            } else if (customerOrder.getTiers() != null
+                                    && customerOrder.getTiers().getFormalisteEmployee() != null)
+                                employee = customerOrder.getTiers().getFormalisteEmployee();
+                        }
+                        if (provision.getProvisionType().getAssignationType().getCode()
+                                .equals(AssignationType.PUBLICISTE)) {
+                            if (customerOrder.getConfrere() != null
+                                    && customerOrder.getConfrere().getInsertionEmployee() != null)
+                                employee = customerOrder.getConfrere().getInsertionEmployee();
+                            if (customerOrder.getResponsable() != null) {
+                                if (customerOrder.getResponsable().getInsertionEmployee() != null)
+                                    employee = customerOrder.getResponsable().getInsertionEmployee();
+                                else if (customerOrder.getResponsable().getTiers().getInsertionEmployee() != null)
+                                    employee = customerOrder.getResponsable().getTiers().getInsertionEmployee();
+                            } else if (customerOrder.getTiers() != null
+                                    && customerOrder.getTiers().getInsertionEmployee() != null)
+                                employee = customerOrder.getTiers().getInsertionEmployee();
+                        }
+                    }
+                    provision.setAssignedTo(employee);
+                    if (currentEmployee == null || !currentEmployee.getId().equals(employee.getId())) {
+                        currentEmployee = employee;
+                        nbrAssignation++;
+                    }
                 }
             }
+            if (nbrAssignation == 1)
+                assoAffaireOrder.setAssignedTo(currentEmployee);
         }
 
         // If invoice has not been generated yet, recompute billing items
@@ -110,10 +176,18 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
         customerOrder = customerOrderRepository.save(customerOrder);
         indexEntityService.indexEntity(customerOrder, customerOrder.getId());
+        for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders())
+            indexEntityService.indexEntity(assoAffaireOrder, assoAffaireOrder.getId());
         return customerOrder;
     }
 
+    @Override
     @Transactional(rollbackFor = Exception.class)
+    public CustomerOrder addOrUpdateCustomerOrderStatusFromUser(CustomerOrder customerOrder, String targetStatusCode)
+            throws Exception {
+        return addOrUpdateCustomerOrderStatus(customerOrder, targetStatusCode);
+    }
+
     @Override
     public CustomerOrder addOrUpdateCustomerOrderStatus(CustomerOrder customerOrder, String targetStatusCode)
             throws Exception {
@@ -157,12 +231,14 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 quotationService.getCustomerOrderOfQuotation(customerOrder));
         invoice.setInvoiceItems(new ArrayList<InvoiceItem>());
         // Associate invoice to invoice item
-        for (Provision provision : customerOrder.getProvisions()) {
-            if (provision.getInvoiceItems() != null && provision.getInvoiceItems().size() > 0)
-                for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
-                    invoiceItem.setInvoice(invoice);
-                    invoice.getInvoiceItems().add(invoiceItem);
-                }
+        for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders()) {
+            for (Provision provision : assoAffaireOrder.getProvisions()) {
+                if (provision.getInvoiceItems() != null && provision.getInvoiceItems().size() > 0)
+                    for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
+                        invoiceItem.setInvoice(invoice);
+                        invoice.getInvoiceItems().add(invoiceItem);
+                    }
+            }
         }
 
         invoice.setCustomerOrder(customerOrder);
@@ -171,26 +247,32 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     }
 
     private boolean hasAtLeastOneInvoiceItemNotNull(CustomerOrder customerOrder) {
-        if (customerOrder != null && customerOrder.getProvisions() != null && customerOrder.getProvisions().size() > 0)
-            for (Provision provision : customerOrder.getProvisions()) {
-                if (provision.getInvoiceItems() != null && provision.getInvoiceItems().size() > 0)
-                    for (InvoiceItem invoiceItem : provision.getInvoiceItems())
-                        if (invoiceItem.getPreTaxPrice() > 0) {
-                            return true;
-                        }
-            }
+        for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders()) {
+            if (customerOrder != null && assoAffaireOrder.getProvisions() != null
+                    && assoAffaireOrder.getProvisions().size() > 0)
+                for (Provision provision : assoAffaireOrder.getProvisions()) {
+                    if (provision.getInvoiceItems() != null && provision.getInvoiceItems().size() > 0)
+                        for (InvoiceItem invoiceItem : provision.getInvoiceItems())
+                            if (invoiceItem.getPreTaxPrice() > 0) {
+                                return true;
+                            }
+                }
+        }
         return false;
     }
 
     private boolean hasBeenBilled(CustomerOrder customerOrder) {
-        if (customerOrder == null || customerOrder.getProvisions() == null || customerOrder.getProvisions().size() == 0
-                || customerOrder.getProvisions().get(0) == null
-                || customerOrder.getProvisions().get(0).getInvoiceItems() == null
-                || customerOrder.getProvisions().get(0).getInvoiceItems().size() == 0
-                || customerOrder.getProvisions().get(0).getInvoiceItems().get(0) == null)
+        if (customerOrder == null || customerOrder.getAssoAffaireOrders() == null
+                || customerOrder.getAssoAffaireOrders().get(0).getProvisions() == null
+                || customerOrder.getAssoAffaireOrders().get(0).getProvisions().size() == 0
+                || customerOrder.getAssoAffaireOrders().get(0).getProvisions().get(0) == null
+                || customerOrder.getAssoAffaireOrders().get(0).getProvisions().get(0).getInvoiceItems() == null
+                || customerOrder.getAssoAffaireOrders().get(0).getProvisions().get(0).getInvoiceItems().size() == 0
+                || customerOrder.getAssoAffaireOrders().get(0).getProvisions().get(0).getInvoiceItems().get(0) == null)
             return false;
 
-        return customerOrder.getProvisions().get(0).getInvoiceItems().get(0).getInvoice() != null;
+        return customerOrder.getAssoAffaireOrders().get(0).getProvisions().get(0).getInvoiceItems().get(0)
+                .getInvoice() != null;
     }
 
     /**
@@ -204,14 +286,16 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
      * @throws Exception
      */
     private Invoice getInvoice(CustomerOrder customerOrder) throws Exception {
-        if (customerOrder == null || customerOrder.getProvisions() == null || customerOrder.getProvisions().size() == 0
-                || customerOrder.getProvisions().get(0) == null
-                || customerOrder.getProvisions().get(0).getInvoiceItems() == null
-                || customerOrder.getProvisions().get(0).getInvoiceItems().size() == 0
-                || customerOrder.getProvisions().get(0).getInvoiceItems().get(0) == null)
+        if (customerOrder == null || customerOrder.getAssoAffaireOrders() == null
+                || customerOrder.getAssoAffaireOrders().get(0).getProvisions() == null
+                || customerOrder.getAssoAffaireOrders().get(0).getProvisions().size() == 0
+                || customerOrder.getAssoAffaireOrders().get(0).getProvisions().get(0) == null
+                || customerOrder.getAssoAffaireOrders().get(0).getProvisions().get(0).getInvoiceItems() == null
+                || customerOrder.getAssoAffaireOrders().get(0).getProvisions().get(0).getInvoiceItems().size() == 0
+                || customerOrder.getAssoAffaireOrders().get(0).getProvisions().get(0).getInvoiceItems().get(0) == null)
             throw new Exception("No invoice found");
 
-        return customerOrder.getProvisions().get(0).getInvoiceItems().get(0).getInvoice();
+        return customerOrder.getAssoAffaireOrders().get(0).getProvisions().get(0).getInvoiceItems().get(0).getInvoice();
     }
 
     @Override
@@ -222,6 +306,14 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 orderingSearch.getStartDate(),
                 orderingSearch.getEndDate());
         return customerOrders;
+    }
+
+    @Override
+    public void reindexCustomerOrder() {
+        List<CustomerOrder> customerOrders = IterableUtils.toList(customerOrderRepository.findAll());
+        if (customerOrders != null)
+            for (CustomerOrder customerOrder : customerOrders)
+                indexEntityService.indexEntity(customerOrder, customerOrder.getId());
     }
 
 }

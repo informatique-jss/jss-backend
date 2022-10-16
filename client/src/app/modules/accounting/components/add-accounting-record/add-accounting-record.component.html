@@ -1,17 +1,25 @@
 <div class="mat-elevation-z2 form-div">
   <div class=" full-width">
-    <div *ngFor="let accountingRecord of accountingRecords">
+    <sort-table [columns]="displayedColumns" [values]="accountingRecords" tableName="Ecritures Ajout"
+      [actions]="tableAction" (onRowClick)="selectAccountingRecord($event)"
+      [refreshTable]="refreshTable.asObservable()">
+    </sort-table>
+  </div>
+  <div class=" full-width padding-top">
+    <div>
       <table class="full-width table-fixed-layout">
         <tr>
           <td>
             <select-accounting-journal [(model)]="accountingRecord.accountingJournal" label="Journal"
-              [form]="accountingRecordForm" propertyName="accountingJournal" [isMandatory]="true">
+              [form]="accountingRecordForm" propertyName="accountingJournal" [isMandatory]="true"
+              [excludedJournals]="[ACCOUNTING_JOURNAL_SALES_CODE,ACCOUNTING_JOURNAL_PURSCHASES_CODE]">
             </select-accounting-journal>
           </td>
           <td>
             <autocomplete-accounting-account [(model)]="accountingRecord.accountingAccount"
               [form]="accountingRecordForm" propertyName="accountingAccount" [isMandatory]="true"
-              label="Compte comptable"></autocomplete-accounting-account>
+              label="Compte comptable">
+            </autocomplete-accounting-account>
           </td>
         </tr>
         <tr>
@@ -23,24 +31,35 @@
           <td>
             <generic-datepicker [(model)]="accountingRecord.manualAccountingDocumentDate"
               label="Date de la pièce comptable" [form]="accountingRecordForm"
-              propertyName="manualAccountingDocumentDate" [isMandatory]="true"></generic-datepicker>
+              propertyName="manualAccountingDocumentDate" [isMandatory]="true">
+            </generic-datepicker>
           </td>
         </tr>
         <tr>
-          <generic-input [(model)]="accountingRecord.label" label="Libellé" [form]="accountingRecordForm"
-            propertyName="label" [isMandatory]="true" [maxLength]="100"></generic-input>
+          <td>
+            <generic-input [(model)]="accountingRecord.label" label="Libellé" [form]="accountingRecordForm"
+              propertyName="label" [isMandatory]="true" [maxLength]="100"></generic-input>
+          </td>
+          <td>
+            <generic-datepicker [(model)]="accountingRecord.manualAccountingDocumentDeadline"
+              label="Date limite de paiement" [form]="accountingRecordForm"
+              propertyName="manualAccountingDocumentDeadline" [isMandatory]="false">
+            </generic-datepicker>
+          </td>
         </tr>
         <tr>
           <td>
             <generic-input [(model)]="accountingRecord.debitAmount" label="Débit" [form]="accountingRecordForm"
               propertyName="debitAmount" [isMandatory]="true"
-              [conditionnalRequired]="!accountingRecord.creditAmount || accountingRecord.creditAmount==0" type="number">
+              [conditionnalRequired]="!accountingRecord.creditAmount || accountingRecord.creditAmount==0" type="number"
+              (onInputChange)="accountingRecord.creditAmount=0;computeBalanceAndDebitAndCreditAccumulation();">
             </generic-input>
           </td>
           <td>
             <generic-input [(model)]="accountingRecord.creditAmount" label="Crédit" [form]="accountingRecordForm"
               propertyName="creditAmount" [isMandatory]="true"
-              [conditionnalRequired]="!accountingRecord.debitAmount || accountingRecord.debitAmount==0" type="number">
+              [conditionnalRequired]="!accountingRecord.debitAmount || accountingRecord.debitAmount==0" type="number"
+              (onInputChange)="accountingRecord.debitAmount=0;computeBalanceAndDebitAndCreditAccumulation();">
             </generic-input>
           </td>
         </tr>
@@ -48,7 +67,10 @@
     </div>
   </div>
 </div>
-
-
-creditAmount: number;
-debitAmount: number;
+<button matTooltip="Ajouter une opération" mat-fab color="accent" class="second-fab-button"
+  (click)="addAccountingRecord()">
+  <mat-icon>add</mat-icon>
+</button>
+<button matTooltip="Enregistrer les opérations" mat-fab color="warn" class="fab-button" (click)="saveOperations()">
+  <mat-icon>save</mat-icon>
+</button>

@@ -9,6 +9,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.modules.invoicing.model.PaymentWay;
 import com.jss.osiris.modules.invoicing.repository.PaymentWayRepository;
@@ -39,6 +40,7 @@ public class PaymentWayServiceImpl implements PaymentWayService {
             @CacheEvict(value = "paymentWayList", allEntries = true),
             @CacheEvict(value = "paymentWay", key = "#paymentWay.id")
     })
+    @Transactional(rollbackFor = Exception.class)
     public PaymentWay addOrUpdatePaymentWay(
             PaymentWay paymentWay) {
         return paymentWayRepository.save(paymentWay);

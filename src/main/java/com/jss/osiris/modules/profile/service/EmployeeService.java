@@ -10,4 +10,6 @@ public interface EmployeeService {
     public List<Employee> getEmployees();
 
     public void updateUserFromActiveDirectory();
+
+    public Employee getCurrentUser();
 }

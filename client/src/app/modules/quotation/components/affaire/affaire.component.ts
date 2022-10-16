@@ -1,12 +1,13 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { UntypedFormBuilder } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
-import { CustomErrorStateMatcher } from 'src/app/app.component';
-import { UNREGISTERED_COMPANY_LEGAL_FORM_CODE } from 'src/app/libs/Constants';
-import { IndexEntity } from 'src/app/routing/search/IndexEntity';
-import { Affaire } from '../../model/Affaire';
-import { AffaireService } from '../../services/affaire.service';
-import { AddAffaireDialogComponent } from '../add-affaire-dialog/add-affaire-dialog.component';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder } from '@angular/forms';
+import { MatAccordion } from '@angular/material/expansion';
+import { ActivatedRoute, Router } from '@angular/router';
+import { QUOTATION_STATUS_OPEN } from 'src/app/libs/Constants';
+import { Employee } from 'src/app/modules/profile/model/Employee';
+import { AppService } from 'src/app/services/app.service';
+import { AssoAffaireOrder } from '../../model/AssoAffaireOrder';
+import { Provision } from '../../model/Provision';
+import { AssoAffaireOrderService } from '../../services/asso.affaire.order.service';
 
 @Component({
   selector: 'affaire',
@@ -14,41 +15,84 @@ import { AddAffaireDialogComponent } from '../add-affaire-dialog/add-affaire-dia
   styleUrls: ['./affaire.component.css']
 })
 export class AffaireComponent implements OnInit {
-  matcher: CustomErrorStateMatcher = new CustomErrorStateMatcher();
-  @Input() affaire: Affaire = {} as Affaire;
-  @Output() affaireChange: EventEmitter<any> = new EventEmitter<any>();
-  @Input() editMode: boolean = false;
 
-  UNREGISTERED_COMPANY_LEGAL_FORM_CODE = UNREGISTERED_COMPANY_LEGAL_FORM_CODE;
+  idAffaire: number | undefined;
+  asso: AssoAffaireOrder = {} as AssoAffaireOrder;
+  @ViewChild(MatAccordion) accordion: MatAccordion | undefined;
+  editMode: boolean = false;
+  isStatusOpen: boolean = false;
+  inputProvisionId: number = 0;
 
-  constructor(private formBuilder: UntypedFormBuilder,
-    public addAffaireDialog: MatDialog,
-    private affaireService: AffaireService,
+  constructor(
+    private activatedRoute: ActivatedRoute,
+    private assoAffaireOrderService: AssoAffaireOrderService,
+    private formBuilder: FormBuilder,
+    private appService: AppService,
+    private router: Router,
   ) { }
 
+  affaireForm = this.formBuilder.group({});
+
   ngOnInit() {
+    this.appService.changeHeaderTitle("Affaire");
+    this.idAffaire = this.activatedRoute.snapshot.params.id;
+    this.inputProvisionId = this.activatedRoute.snapshot.params.idProvision;
+    if (this.idAffaire)
+      this.assoAffaireOrderService.getAssoAffaireOrder(this.idAffaire).subscribe(response => {
+        this.asso = response;
+        if (this.asso.affaire)
+          this.appService.changeHeaderTitle("Affaire " + (this.asso.affaire.denomination ? this.asso.affaire.denomination : (this.asso.affaire.firstname + " " + this.asso.affaire.lastname)));
+        this.setOpenStatus();
+      })
   }
 
-  affaireForm = this.formBuilder.group({
-  });
-
-  openAddOfferDialog() {
-    let addAffaireDialog = this.addAffaireDialog.open(AddAffaireDialogComponent, {
-      width: '90%'
-    });
-    addAffaireDialog.afterClosed().subscribe(response => {
-      if (response && response != null) {
-        this.affaire = response;
-        this.affaireChange.emit(this.affaire);
-      }
+  updateAssignedToForAffaire(employee: Employee, asso: AssoAffaireOrder) {
+    this.assoAffaireOrderService.updateAssignedToForAsso(asso, employee).subscribe(response => {
     });
   }
 
-  selectedAffaire: IndexEntity = {} as IndexEntity;
-  fillAffaire(entity: IndexEntity) {
-    this.affaireService.getAffaire(entity.entityId).subscribe(affaire => {
-      this.affaire = affaire;
-      this.affaireChange.emit(this.affaire);
-    });
+  deleteProvision(asso: AssoAffaireOrder, provision: Provision) {
+    asso.provisions.splice(asso.provisions.indexOf(provision), 1);
   }
+
+  setOpenStatus() {
+    if (this.asso.customerOrder && this.asso.customerOrder.quotationStatus)
+      this.isStatusOpen = this.asso.customerOrder.quotationStatus.code == QUOTATION_STATUS_OPEN;
+    this.isStatusOpen = false;
+  }
+
+  createProvision(asso: AssoAffaireOrder): Provision {
+    if (asso && !asso.provisions)
+      asso.provisions = [] as Array<Provision>;
+    let provision = {} as Provision;
+    asso.provisions.push(provision);
+    return provision;
+  }
+
+  editAsso() {
+    this.editMode = true;
+  }
+
+  saveAsso() {
+    if (this.affaireForm.valid) {
+      this.assoAffaireOrderService.updateAsso(this.asso).subscribe(response => {
+        this.asso = response;
+        this.editMode = false;
+        this.router.navigateByUrl('/', { skipLocationChange: true }).then(() =>
+          this.router.navigate(['/affaire/', "" + this.idAffaire])
+        );
+      })
+    } else {
+      this.appService.displaySnackBar("Les onglets suivants ne sont pas correctement remplis. Veuillez les compléter avant de sauvegarder : Prestations", true, 60);
+    }
+  }
+
+  displayQuotation() {
+    this.router.navigate(['/quotation/', "" + this.asso.quotation.id])
+  }
+
+  displayCustomerOrder() {
+    this.router.navigate(['/order/', "" + this.asso.customerOrder.id])
+  }
+
 }

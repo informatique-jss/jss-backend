@@ -137,15 +137,15 @@
                 propertyName="address" [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="20"></generic-input>
             </td>
             <td>
+              <autocomplete-postal-code [(model)]="selectedEntity.postalCode" [form]="entityForm"
+                propertyName="postalCode" [isMandatory]="false" (onOptionSelected)="fillCity($event)">
+              </autocomplete-postal-code>
+            </td>
+            <td>
               <autocomplete-city [(model)]="selectedEntity.city" [modelCountry]="selectedEntity.country"
                 [form]="entityForm" propertyName="city" [isMandatory]="false"
                 (onOptionSelected)="fillPostalCode($event)">
               </autocomplete-city>
-            </td>
-            <td>
-              <autocomplete-postal-code [(model)]="selectedEntity.postalCode" [form]="entityForm"
-                propertyName="postalCode" [isMandatory]="false" (onOptionSelected)="fillCity($event)">
-              </autocomplete-postal-code>
             </td>
             <td>
               <autocomplete-country [(model)]="selectedEntity.country" [form]="entityForm" propertyName="country"

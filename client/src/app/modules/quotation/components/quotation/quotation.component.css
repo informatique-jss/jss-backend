@@ -2,6 +2,10 @@
   text-align: center;
 }
 
+.row-field-container {
+  padding-top: 15px;
+}
+
 td {
   padding-right: 8px;
 }
@@ -43,4 +47,8 @@ table {
 
 .validated {
   color: rgb(39, 174, 96)
+}
+
+.mat-accordion-container {
+  padding-top: 15px
 }

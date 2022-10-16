@@ -20,13 +20,13 @@ import com.jss.osiris.modules.miscellaneous.model.IId;
 public class BodaccSplit implements Serializable, IId {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "bodacc_sequence")
 	private Integer id;
 
-	@OneToMany(targetEntity = BodaccSplitBeneficiary.class, cascade = CascadeType.ALL)
+	@OneToMany(targetEntity = BodaccSplitBeneficiary.class, cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<BodaccSplitBeneficiary> bodaccSplitBeneficiaries;
 
-	@OneToMany(targetEntity = BodaccSplitCompany.class, cascade = CascadeType.ALL)
+	@OneToMany(targetEntity = BodaccSplitCompany.class, cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<BodaccSplitCompany> bodaccSplitCompanies;
 
 	@Column(nullable = false)

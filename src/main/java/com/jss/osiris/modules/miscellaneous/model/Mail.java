@@ -12,7 +12,7 @@ import javax.persistence.Id;
 public class Mail implements Serializable, IId {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "mail_sequence")
 	private Integer id;
 
 	@Column(nullable = false)

@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { AccountingJournal } from 'src/app/modules/accounting/model/AccountingJournal';
 import { AccountingJournalService } from 'src/app/modules/accounting/services/accounting.journal.service';
@@ -13,6 +13,8 @@ export class SelectAccountingJournalComponent extends GenericSelectComponent<Acc
 
   types: AccountingJournal[] = [] as Array<AccountingJournal>;
 
+  @Input() excludedJournals: string[] | undefined;
+
   constructor(private changeDetectorRef: ChangeDetectorRef,
     private formBuild: UntypedFormBuilder,
     private accountingJournalService: AccountingJournalService) {
@@ -21,7 +23,21 @@ export class SelectAccountingJournalComponent extends GenericSelectComponent<Acc
 
   initTypes(): void {
     this.accountingJournalService.getAccountingJournals().subscribe(response => {
-      this.types = response;
+      if (this.excludedJournals) {
+        this.types = [] as Array<AccountingJournal>;
+        for (let type of response) {
+          let excludedItem = false;
+          for (let excluded of this.excludedJournals) {
+            if (excluded == type.code)
+              excludedItem = true;
+          }
+          if (!excludedItem)
+            this.types.push(type);
+        }
+        this.modelChange.emit(this.model);
+      } else {
+        this.types = response;
+      }
     })
   }
 }

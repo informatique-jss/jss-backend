@@ -26,6 +26,8 @@ public interface AccountingRecordService {
 
         public AccountingRecord addOrUpdateAccountingRecord(AccountingRecord accountingRecord);
 
+        public AccountingRecord addOrUpdateAccountingRecordFromUser(AccountingRecord accountingRecord);
+
         public void generateAccountingRecordsForSaleOnInvoiceGeneration(Invoice invoice) throws Exception;
 
         public void dailyAccountClosing();
@@ -94,5 +96,7 @@ public interface AccountingRecordService {
 
         public void generateAppointForPayment(Payment payment, float remainingMoney, ITiers customerOrder)
                         throws Exception;
+
+        public List<AccountingRecord> addOrUpdateAccountingRecords(List<AccountingRecord> accountingRecords);
 
 }

@@ -1,140 +1,73 @@
-<form [formGroup]="affaireForm" *ngIf="affaire">
-  <div class="full-width">
-    <fieldset [disabled]="editMode==false" class="fieldset-no-border">
-      <table class="full-width">
-        <tr *ngIf="affaire.id==null">
-          <td>
-            <autocomplete-affaire [(model)]="selectedAffaire" [form]="affaireForm" propertyName="affaire"
-              (onOptionSelected)="fillAffaire($event)"></autocomplete-affaire>
-          </td>
-          <td class="mini-fab-td"> <button *ngIf="editMode" mat-mini-fab color="warn" matTooltip="Ajouter une affaire"
-              class="mini-fab" (click)="openAddOfferDialog()">
-              <mat-icon>add</mat-icon>
-            </button>
-          </td>
-        </tr>
-      </table>
-      <fieldset [disabled]="true" class="fieldset-no-border" *ngIf="affaire.id">
-        <table class="full-width">
-          <tr>
-            <td>
-              <generic-toggle [(model)]="affaire.isIndividual" label="Particulier ?" [form]="affaireForm"
-                propertyName="isIndividual"></generic-toggle>
-            </td>
-            <td *ngIf="affaire.isIndividual==true">
-              <radio-group-civility [(model)]="affaire.civility" [form]="affaireForm" propertyName="civility"
-                label="Civilité"></radio-group-civility>
-            </td>
-            <td *ngIf="affaire.isIndividual==true">
-              <generic-input [(model)]="affaire.lastname" label="Nom" [form]="affaireForm" propertyName="lastname"
-                [isMandatory]="true" [conditionnalRequired]="affaire.isIndividual" [maxLength]="20"></generic-input>
-            </td>
-            <td *ngIf="affaire.isIndividual==true">
-              <generic-input [(model)]="affaire.firstname" label="Prénom" [form]="affaireForm" propertyName="firstname"
-                [isMandatory]="true" [conditionnalRequired]="affaire.isIndividual" [maxLength]="20"></generic-input>
-            </td>
-          </tr>
-        </table>
-        <table class="full-width" *ngIf="affaire.isIndividual==false">
-          <tr>
-            <td>
-              <autocomplete-legal-form [(model)]="affaire.legalForm" [form]="affaireForm" propertyName="legalForm"
-                [isMandatory]="true" [isDisabled]="true" [conditionnalRequired]="!affaire.isIndividual">
-              </autocomplete-legal-form>
-            </td>
-            <td *ngIf="affaire.legalForm != null && affaire.legalForm.code != UNREGISTERED_COMPANY_LEGAL_FORM_CODE">
-              <autocomplete-siren [(model)]="affaire.siren" [form]="affaireForm" propertyName="siren"
-                [isMandatory]="true"
-                [conditionnalRequired]="!this.affaire.isIndividual && this.affaire.legalForm != null && this.affaire.legalForm.code != UNREGISTERED_COMPANY_LEGAL_FORM_CODE">
-              </autocomplete-siren>
-            </td>
-            <td *ngIf="affaire.legalForm != null && affaire.legalForm.code != UNREGISTERED_COMPANY_LEGAL_FORM_CODE">
-              <autocomplete-siret [(model)]="affaire.siret" [form]="affaireForm" propertyName="siret"
-                [isMandatory]="true"
-                [conditionnalRequired]="!this.affaire.isIndividual && this.affaire.legalForm != null && this.affaire.legalForm.code != UNREGISTERED_COMPANY_LEGAL_FORM_CODE">
-              </autocomplete-siret>
-            </td>
-            <td *ngIf="affaire.legalForm != null && affaire.legalForm.code != UNREGISTERED_COMPANY_LEGAL_FORM_CODE">
-              <autocomplete-rna [(model)]="affaire.rna" [form]="affaireForm" propertyName="rna" [isMandatory]="true"
-                [conditionnalRequired]="!this.affaire.isIndividual && this.affaire.legalForm != null && this.affaire.legalForm.code != UNREGISTERED_COMPANY_LEGAL_FORM_CODE">
-              </autocomplete-rna>
-            </td>
-          </tr>
-        </table>
-        <table class="full-width">
-          <tr>
-            <td>
-              <generic-input [(model)]="affaire.denomination" label="Dénomination" [form]="affaireForm"
-                propertyName="denomination" [isMandatory]="true" [isDisabled]="true"
-                [conditionnalRequired]="!this.affaire.isIndividual" [maxLength]="60"></generic-input>
-            </td>
-          </tr>
-        </table>
-        <table class="full-width">
-          <tr>
-            <td>
-              <generic-input [(model)]="affaire.address" label="Adresse" [form]="affaireForm" propertyName="address"
-                [isMandatory]="true" [isDisabled]="true" [conditionnalRequired]="!this.affaire.isIndividual"
-                [maxLength]="20"></generic-input>
-            </td>
-            <td>
-              <autocomplete-city [(model)]="affaire.city" [modelCountry]="affaire.country" [form]="affaireForm"
-                propertyName="city" [isMandatory]="true" [conditionnalRequired]="!affaire.isIndividual">
-              </autocomplete-city>
-            </td>
-            <td>
-              <autocomplete-postal-code [(model)]="affaire.postalCode" [form]="affaireForm" propertyName="postalCode"
-                [isMandatory]="true" [conditionnalRequired]="!affaire.isIndividual">
-              </autocomplete-postal-code>
-            </td>
-            <td>
-              <autocomplete-country [(model)]="affaire.country" [form]="affaireForm" propertyName="country"
-                [isMandatory]="true" [isDisabled]="true"></autocomplete-country>
-            </td>
-          </tr>
-        </table>
-        <table class="full-width">
-          <tr>
-            <td>
-              <generic-input [(model)]="affaire.paymentIban" label="IBAN" [form]="affaireForm"
-                propertyName="paymentIban" [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="40">
-              </generic-input>
-            </td>
-            <td>
-              <generic-input [(model)]="affaire.paymentBic" label="BIC" [form]="affaireForm" propertyName="paymentBic"
-                [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="40"></generic-input>
-            </td>
-          </tr>
-        </table>
-        <table class="full-width">
-          <tr>
-            <td>
-              <chips-mail [(model)]="affaire.mails" label="Mails de facturation" [form]="affaireForm"
-                propertyName="mails" [isDisabled]="true"></chips-mail>
-            </td>
-            <td>
-              <chips-phone [(model)]="affaire.phones" label="Téléphones" [form]="affaireForm" propertyName="phones"
-                [isDisabled]="true"></chips-phone>
-            </td>
-            <td>
-              <generic-input [(model)]="affaire.externalReference" label="Référence externe" [form]="affaireForm"
-                propertyName="externalReference" [isDisabled]="true" [maxLength]="60"></generic-input>
-            </td>
-            <td>
-              <generic-input [(model)]="affaire.shareCapital" label="Capital social" [form]="affaireForm"
-                propertyName="shareCapital" [isDisabled]="true" type="number"></generic-input>
-            </td>
-          </tr>
-        </table>
-        <table class="full-width">
-          <tr>
-            <td>
-              <generic-textarea [(model)]="affaire.observations" label="Observations" [form]="affaireForm"
-                propertyName="observations" [isDisabled]="true" [numberOfLines]="4"></generic-textarea>
-            </td>
-          </tr>
-        </table>
-      </fieldset>
-    </fieldset>
-  </div>
-</form>
+<ng-template #accordionTools>
+  <mat-panel-description>
+    <mat-icon matTooltip="Ouvrir tous les onglets" (click)="accordion!.openAll();$event.stopPropagation();"
+      class="pointer">
+      unfold_more_double</mat-icon>
+    <mat-icon matTooltip="Fermer tous les autres onglets" (click)="accordion!.closeAll();" class="pointer">
+      unfold_less_double</mat-icon>
+  </mat-panel-description>
+</ng-template>
+<div class="mat-accordion-container full-width" *ngIf="asso && asso.affaire">
+  <mat-accordion multi>
+    <mat-expansion-panel expanded="false">
+      <mat-expansion-panel-header>
+        <mat-panel-title>Détails de l'affaire
+          {{asso.affaire.denomination?asso.affaire.denomination:(asso.affaire.firstname + ' '
+          +asso.affaire.lastname)}} - {{asso.affaire.address}} - {{asso.affaire.postalCode}} -
+          {{asso.affaire.country.label}}
+        </mat-panel-title>
+        <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
+      </mat-expansion-panel-header>
+      <add-affaire [affaire]="asso.affaire" [editMode]="false"></add-affaire>
+      <div *ngIf="asso && asso.id ">
+        <autocomplete-employee [(model)]="asso.assignedTo" [form]="affaireForm" propertyName="assignedTo"
+          [isMandatory]="true" [isDisabled]="false" label="Affaire assignée à"
+          (onOptionSelected)="updateAssignedToForAffaire($event,asso)">
+        </autocomplete-employee>
+      </div>
+    </mat-expansion-panel>
+  </mat-accordion>
+</div>
+<div class="mat-accordion-container full-width" *ngIf="asso && asso.provisions">
+  <mat-accordion multi class="mat-accordion-container">
+    <mat-expansion-panel *ngFor="let provision of asso.provisions" [expanded]="!provision.id"
+      [expanded]="provision.id==inputProvisionId">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          {{provision.provisionType ? (provision.provisionFamilyType.label +' -
+          '+provision.provisionType.label):''}}
+        </mat-panel-title>
+        <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
+        <mat-panel-description *ngIf="editMode">
+          <mat-icon matTooltip="Supprimer la prestation" (click)="deleteProvision(asso,provision)" class="pointer">
+            delete</mat-icon>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <provision-item *ngIf="asso.affaire && asso.affaire.id" [editMode]="editMode" [provision]="provision"
+        [affaire]="asso.affaire" [instanceOfCustomerOrder]="true" [isStatusOpen]="isStatusOpen">
+      </provision-item>
+    </mat-expansion-panel>
+  </mat-accordion>
+</div>
+<div class="row-field-container">
+  <button mat-raised-button *ngIf="editMode" (click)="createProvision(asso)" color="primary" class="mini-fab-add">
+    Ajouter une prestation pour
+    {{asso.affaire.denomination?asso.affaire.denomination:(asso.affaire.firstname + '
+    '+asso.affaire.lastname)}}
+  </button>
+</div>
+<button matTooltip="Sauvegarder" mat-fab color="warn" class="fab-button" *ngIf="editMode==true" (click)="saveAsso()">
+  <mat-icon>save</mat-icon>
+</button>
+<button matTooltip="Modifier l'affaire / prestation" mat-fab color="accent" class="fab-button"
+  *ngIf="editMode==false && asso" (click)="editAsso()">
+  <mat-icon>edit</mat-icon>
+</button>
+<button matTooltip="Voir le devis" mat-fab color="accent" class="second-fab-button"
+  *ngIf="editMode==false && asso && asso.quotation" (click)="displayQuotation()">
+  <mat-icon>request_quote</mat-icon>
+</button>
+<button matTooltip="Voir la commande" mat-fab color="accent" class="second-fab-button"
+  *ngIf="editMode==false && asso && asso.customerOrder" (click)="displayCustomerOrder()">
+  <mat-icon>shopping_cart</mat-icon>
+</button>

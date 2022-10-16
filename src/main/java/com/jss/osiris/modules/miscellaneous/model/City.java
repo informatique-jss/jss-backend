@@ -13,14 +13,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(indexes = { @Index(name = "pk_city", columnList = "id", unique = true),
-		@Index(name = "idx_city_country", columnList = "id_country") })
+@Table(indexes = { @Index(name = "idx_city_country", columnList = "id_country") })
 public class City implements Serializable, IId {
 
 	private static final long serialVersionUID = 8884467187549297L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "city_sequence")
 	private Integer id;
 
 	@Column(nullable = false, length = 100)

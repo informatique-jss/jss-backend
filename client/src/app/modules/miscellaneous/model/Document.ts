@@ -4,9 +4,11 @@ import { BillingLabelType } from "../../tiers/model/BillingLabelType";
 import { PaymentDeadlineType } from "../../tiers/model/PaymentDeadlineType";
 import { RefundType } from "../../tiers/model/RefundType";
 import { Responsable } from "../../tiers/model/Responsable";
-import { BillingCenter } from "./BillingCenter";
+import { City } from "./City";
+import { Country } from "./Country";
 import { DocumentType } from "./DocumentType";
 import { Mail } from "./Mail";
+import { Regie } from "./Regie";
 
 export interface Document {
   id: number;
@@ -37,5 +39,11 @@ export interface Document {
   isRefundable: boolean;
   billingClosureType: BillingClosureType;
   billingClosureRecipientType: BillingClosureRecipientType;
-  billingCenter: BillingCenter;
+  billingLabel: string;
+  billingAddress: string;
+  billingPostalCode: string;
+  billingLabelCity: City;
+  billingLabelCountry: Country;
+  billingLabelIsIndividual: boolean;
+  regie: Regie;
 }

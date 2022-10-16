@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatAccordion } from '@angular/material/expansion';
 import { Observable } from 'rxjs';
-import { BILLING_TIERS_DOCUMENT_TYPE_BILLING_CENTER, BILLING_TIERS_DOCUMENT_TYPE_CODE, COUNTRY_CODE_FRANCE, DUNNING_TIERS_DOCUMENT_TYPE_CODE, PAYMENT_TYPE_CHEQUES, PAYMENT_TYPE_OTHERS, PAYMENT_TYPE_PRELEVEMENT, REFUND_TIERS_DOCUMENT_TYPE_CODE, REFUND_TYPE_VIREMENT } from 'src/app/libs/Constants';
+import { BILLING_TIERS_DOCUMENT_TYPE_CODE, BILLING_TIERS_DOCUMENT_TYPE_OTHER, COUNTRY_CODE_FRANCE, DUNNING_TIERS_DOCUMENT_TYPE_CODE, PAYMENT_TYPE_CHEQUES, PAYMENT_TYPE_OTHERS, PAYMENT_TYPE_PRELEVEMENT, REFUND_TIERS_DOCUMENT_TYPE_CODE, REFUND_TYPE_VIREMENT } from 'src/app/libs/Constants';
 import { getDocument } from 'src/app/libs/DocumentHelper';
 import { City } from 'src/app/modules/miscellaneous/model/City';
 import { PaymentType } from 'src/app/modules/miscellaneous/model/PaymentType';
@@ -39,7 +39,7 @@ export class ReferentialConfrereComponent extends GenericReferentialComponent<Co
   PAYMENT_TYPE_OTHERS = PAYMENT_TYPE_OTHERS;
 
   REFUND_TYPE_VIREMENT = REFUND_TYPE_VIREMENT;
-  BILLING_TIERS_DOCUMENT_TYPE_BILLING_CENTER = BILLING_TIERS_DOCUMENT_TYPE_BILLING_CENTER;
+  BILLING_TIERS_DOCUMENT_TYPE_OTHER = BILLING_TIERS_DOCUMENT_TYPE_OTHER;
 
   documentTypes: DocumentType[] = [] as Array<DocumentType>;
   billingDocument: Document = {} as Document;

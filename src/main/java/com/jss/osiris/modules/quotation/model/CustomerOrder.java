@@ -15,9 +15,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jss.osiris.libs.JacksonLocalDateTimeSerializer;
 import com.jss.osiris.libs.search.model.IndexedField;
@@ -27,6 +25,7 @@ import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.Document;
+import com.jss.osiris.modules.miscellaneous.model.IAttachment;
 import com.jss.osiris.modules.miscellaneous.model.Mail;
 import com.jss.osiris.modules.miscellaneous.model.Phone;
 import com.jss.osiris.modules.miscellaneous.model.SpecialOffer;
@@ -34,8 +33,7 @@ import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
 @Entity
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-public class CustomerOrder implements IQuotation {
+public class CustomerOrder implements IQuotation, IAttachment {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -54,9 +52,10 @@ public class CustomerOrder implements IQuotation {
 
 	@ManyToOne
 	@JoinColumn(name = "id_confrere")
+	@IndexedField
 	private Confrere confrere;
 
-	@ManyToMany(cascade = CascadeType.ALL)
+	@ManyToMany
 	@JoinTable(name = "asso_customer_order_special_offer", joinColumns = @JoinColumn(name = "id_customer_order"), inverseJoinColumns = @JoinColumn(name = "id_special_offer"))
 	private List<SpecialOffer> specialOffers;
 
@@ -74,12 +73,12 @@ public class CustomerOrder implements IQuotation {
 	@Column(columnDefinition = "TEXT")
 	private String description;
 
-	@OneToMany(targetEntity = Attachment.class, mappedBy = "customerOrder", cascade = CascadeType.ALL)
-	@JsonManagedReference("customerOrder")
+	@OneToMany(mappedBy = "customerOrder")
+	@JsonIgnoreProperties(value = { "customerOrder" }, allowSetters = true)
 	private List<Attachment> attachments;
 
-	@OneToMany(targetEntity = Document.class, mappedBy = "customerOrder", cascade = CascadeType.MERGE)
-	@JsonManagedReference("customerOrder")
+	@OneToMany(targetEntity = Document.class, mappedBy = "customerOrder", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonIgnoreProperties(value = { "customerOrder" }, allowSetters = true)
 	private List<Document> documents;
 
 	@ManyToOne
@@ -98,19 +97,20 @@ public class CustomerOrder implements IQuotation {
 	@JoinColumn(name = "id_record_type")
 	private RecordType recordType;
 
-	@OneToMany(targetEntity = Provision.class, mappedBy = "customerOrder", cascade = CascadeType.ALL, orphanRemoval = true)
-	@JsonManagedReference("customerOrder")
-	private List<Provision> provisions;
+	@OneToMany(targetEntity = AssoAffaireOrder.class, mappedBy = "customerOrder", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonIgnoreProperties(value = { "customerOrder" }, allowSetters = true)
+	private List<AssoAffaireOrder> assoAffaireOrders;
 
-	@ManyToMany(cascade = CascadeType.MERGE)
+	@ManyToMany
 	@JoinTable(name = "asso_customer_order_mail", joinColumns = @JoinColumn(name = "id_customer_order"), inverseJoinColumns = @JoinColumn(name = "id_mail"))
 	private List<Mail> mails;
 
-	@ManyToMany(cascade = CascadeType.MERGE)
+	@ManyToMany
 	@JoinTable(name = "asso_customer_order_phone", joinColumns = @JoinColumn(name = "id_customer_order"), inverseJoinColumns = @JoinColumn(name = "id_phone"))
 	private List<Phone> phones;
 
 	@ManyToMany(mappedBy = "customerOrders")
+	@JsonIgnoreProperties(value = { "customerOrders" }, allowSetters = true)
 	private List<Quotation> quotations;
 
 	@Column(nullable = false)
@@ -123,15 +123,19 @@ public class CustomerOrder implements IQuotation {
 	private Boolean isQuotation;
 
 	@OneToMany(mappedBy = "customerOrder")
+	@JsonIgnoreProperties(value = { "customerOrder" }, allowSetters = true)
 	private List<Invoice> invoices;
 
 	@OneToMany(targetEntity = Payment.class, mappedBy = "customerOrder")
+	@JsonIgnoreProperties(value = { "customerOrder" }, allowSetters = true)
 	private List<Payment> payments;
 
 	@OneToMany(targetEntity = Deposit.class, mappedBy = "customerOrder")
+	@JsonIgnoreProperties(value = { "customerOrder" }, allowSetters = true)
 	private List<Deposit> deposits;
 
 	@OneToMany(targetEntity = AccountingRecord.class, mappedBy = "customerOrder")
+	@JsonIgnoreProperties(value = { "customerOrder" }, allowSetters = true)
 	private List<AccountingRecord> accountingRecords;
 
 	public Integer getId() {
@@ -238,14 +242,6 @@ public class CustomerOrder implements IQuotation {
 		this.recordType = recordType;
 	}
 
-	public List<Provision> getProvisions() {
-		return provisions;
-	}
-
-	public void setProvisions(List<Provision> provisions) {
-		this.provisions = provisions;
-	}
-
 	public List<Mail> getMails() {
 		return mails;
 	}
@@ -348,6 +344,14 @@ public class CustomerOrder implements IQuotation {
 
 	public void setAccountingRecords(List<AccountingRecord> accountingRecords) {
 		this.accountingRecords = accountingRecords;
+	}
+
+	public List<AssoAffaireOrder> getAssoAffaireOrders() {
+		return assoAffaireOrders;
+	}
+
+	public void setAssoAffaireOrders(List<AssoAffaireOrder> assoAffaireOrders) {
+		this.assoAffaireOrders = assoAffaireOrders;
 	}
 
 }

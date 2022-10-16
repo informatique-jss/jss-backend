@@ -10,6 +10,7 @@ import java.util.Optional;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
@@ -72,6 +73,7 @@ public class AttachmentServiceImpl implements AttachmentService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public List<Attachment> addAttachment(MultipartFile file, Integer idEntity, String entityType,
             AttachmentType attachmentType,
             String filename, Boolean replaceExistingAttachementType) throws IOException, NoSuchAlgorithmException {
@@ -142,7 +144,7 @@ public class AttachmentServiceImpl implements AttachmentService {
                 return new ArrayList<Attachment>();
             attachment.setBodacc(bodacc);
         }
-        attachmentRepository.save(attachment);
+        addOrUpdateAttachment(attachment);
 
         return getAttachmentForEntityType(entityType, idEntity);
     }
@@ -154,10 +156,15 @@ public class AttachmentServiceImpl implements AttachmentService {
         }
     }
 
+    public Attachment addOrUpdateAttachment(Attachment attachment) {
+        return attachmentRepository.save(attachment);
+    }
+
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void disableDocument(Attachment attachment) {
         attachment.setIsDisabled(true);
-        attachmentRepository.save(attachment);
+        addOrUpdateAttachment(attachment);
     }
 
     private List<Attachment> getAttachmentForEntityType(String entityType, Integer idEntity) {

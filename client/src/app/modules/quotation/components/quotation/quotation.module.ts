@@ -23,14 +23,17 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule, Routes } from '@angular/router';
 import { QuillModule } from 'ngx-quill';
+import { AdministrationModule } from 'src/app/modules/administration/components/administration/administration.module';
 import { MiscellaneousModule } from 'src/app/modules/miscellaneous/components/miscellaneous/miscellaneous.module';
 import { AddAffaireDialogComponent } from '../add-affaire-dialog/add-affaire-dialog.component';
+import { AffaireListComponent } from '../affaire-list/affaire-list.component';
 import { AffaireComponent } from '../affaire/affaire.component';
 import { AnnouncementComponent } from '../announcement/announcement.component';
 import { BodaccFusionComponent } from '../bodacc-fusion/bodacc-fusion.component';
 import { BodaccMainComponent } from '../bodacc-main/bodacc-main.component';
 import { BodaccSaleComponent } from '../bodacc-sale/bodacc-sale.component';
 import { BodaccSplitComponent } from '../bodacc-split/bodacc-split.component';
+import { ChooseAssignedUserDialogComponent } from '../choose-assigned-user-dialog/choose-assigned-user-dialog.component';
 import { DomiciliationComponent } from '../domiciliation/domiciliation.component';
 import { InvoiceManagementComponent } from '../invoice-management/invoice-management.component';
 import { OrderingCustomerComponent } from '../ordering-customer/ordering-customer.component';
@@ -45,6 +48,9 @@ const routes: Routes = [
   { path: 'quotation/:id', component: QuotationComponent },
   { path: 'order', component: QuotationComponent },
   { path: 'order/:id', component: QuotationComponent },
+  { path: 'affaire', component: AffaireListComponent },
+  { path: 'affaire/:id', component: AffaireComponent },
+  { path: 'affaire/:id/:idProvision', component: AffaireComponent },
 ];
 
 @NgModule({
@@ -91,6 +97,7 @@ const routes: Routes = [
     MiscellaneousModule,
     MatSidenavModule,
     MatTableModule,
+    AdministrationModule,
     MatSortModule,
     MatMenuModule,
     MatDatepickerModule
@@ -98,7 +105,6 @@ const routes: Routes = [
   declarations: [QuotationComponent,
     OrderingCustomerComponent,
     QuotationManagementComponent,
-    AffaireComponent,
     DomiciliationComponent,
     BodaccMainComponent,
     AddAffaireDialogComponent,
@@ -108,6 +114,9 @@ const routes: Routes = [
     BodaccFusionComponent,
     BodaccSplitComponent,
     QuotationListComponent,
+    ChooseAssignedUserDialogComponent,
+    AffaireListComponent,
+    AffaireComponent,
     OrderingListComponent,
     AnnouncementComponent],
   exports: [

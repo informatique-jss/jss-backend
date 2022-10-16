@@ -14,7 +14,6 @@ import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
 public interface IQuotation extends Serializable, IId {
-
 	public Integer getId();
 
 	public void setId(Integer id);
@@ -71,9 +70,9 @@ public interface IQuotation extends Serializable, IId {
 
 	public void setRecordType(RecordType recordType);
 
-	public List<Provision> getProvisions();
+	public List<AssoAffaireOrder> getAssoAffaireOrders();
 
-	public void setProvisions(List<Provision> provisions);
+	public void setAssoAffaireOrders(List<AssoAffaireOrder> assoAffaireOrder);
 
 	public List<Mail> getMails();
 

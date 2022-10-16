@@ -10,7 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 public class SpecialOffer implements Serializable, IId {
@@ -26,7 +26,7 @@ public class SpecialOffer implements Serializable, IId {
 	private String code;
 
 	@OneToMany(targetEntity = AssoSpecialOfferBillingType.class, mappedBy = "specialOffer")
-	@JsonManagedReference("specialOffer")
+	@JsonIgnoreProperties(value = { "specialOffer" }, allowSetters = true)
 	private List<AssoSpecialOfferBillingType> assoSpecialOfferBillingTypes;
 
 	public Integer getId() {

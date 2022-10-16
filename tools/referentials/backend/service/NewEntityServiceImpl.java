@@ -11,6 +11,7 @@ import org.springframework.cache.annotation.Caching;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class NewEntityServiceImpl implements NewEntityService {
@@ -38,6 +39,7 @@ public class NewEntityServiceImpl implements NewEntityService {
             @CacheEvict(value = "newEntityList", allEntries = true),
             @CacheEvict(value = "newEntity", key = "#newEntity.id")
     })
+	@Transactional(rollbackFor = Exception.class)
     public NewEntity addOrUpdateNewEntity(
             NewEntity newEntity) {
         return newEntityRepository.save(newEntity);

@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.modules.tiers.model.TiersCategory;
 import com.jss.osiris.modules.tiers.repository.TiersCategoryRepository;
@@ -30,6 +31,7 @@ public class TiersCategoryServiceImpl implements TiersCategoryService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public TiersCategory addOrUpdateTiersCategory(
             TiersCategory tiersCategory) {
         return tiersCategoryRepository.save(tiersCategory);

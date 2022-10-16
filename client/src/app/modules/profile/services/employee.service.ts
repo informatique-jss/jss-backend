@@ -21,4 +21,8 @@ export class EmployeeService extends AppRestService<Employee>{
     return this.getList(new HttpParams(), "employee/all");
   }
 
+  getCurrentEmployee() {
+    return this.get(new HttpParams(), "user");
+  }
+
 }

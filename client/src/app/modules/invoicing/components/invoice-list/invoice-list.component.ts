@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { Router } from '@angular/router';
 import { INVOICING_STATUS_SENT } from 'src/app/libs/Constants';
 import { formatDateTimeForSortTable, formatEurosForSortTable, toIsoString } from 'src/app/libs/FormatHelper';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
@@ -31,6 +32,7 @@ export class InvoiceListComponent implements OnInit {
     private appService: AppService,
     private invoiceService: InvoiceService,
     private formBuilder: FormBuilder,
+    private router: Router,
   ) { }
 
   ngOnInit() {
@@ -91,5 +93,9 @@ export class InvoiceListComponent implements OnInit {
         this.invoices = response;
       })
     }
+  }
+
+  addInvoice() {
+    this.router.navigate(['/invoicing/add/', ""]);
   }
 }

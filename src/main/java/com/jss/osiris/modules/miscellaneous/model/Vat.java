@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 
@@ -25,6 +27,8 @@ public class Vat implements Serializable, IId {
 
 	private Float rate;
 
+	@ManyToOne
+	@JoinColumn(name = "id_accounting_account")
 	private AccountingAccount accountingAccount;
 
 	public Integer getId() {

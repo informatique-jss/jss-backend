@@ -14,10 +14,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
-import com.jss.osiris.modules.miscellaneous.model.BillingCenter;
 import com.jss.osiris.modules.miscellaneous.model.City;
 import com.jss.osiris.modules.miscellaneous.model.Country;
 import com.jss.osiris.modules.miscellaneous.model.Department;
@@ -26,6 +24,7 @@ import com.jss.osiris.modules.miscellaneous.model.Language;
 import com.jss.osiris.modules.miscellaneous.model.Mail;
 import com.jss.osiris.modules.miscellaneous.model.PaymentType;
 import com.jss.osiris.modules.miscellaneous.model.Phone;
+import com.jss.osiris.modules.miscellaneous.model.Regie;
 import com.jss.osiris.modules.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.miscellaneous.model.VatCollectionType;
 import com.jss.osiris.modules.miscellaneous.model.WeekDay;
@@ -50,19 +49,19 @@ public class Confrere implements ITiers {
 	@JoinTable(name = "asso_confrere_department", joinColumns = @JoinColumn(name = "id_confrere"), inverseJoinColumns = @JoinColumn(name = "id_department"))
 	private List<Department> departments;
 
-	@ManyToMany(cascade = CascadeType.MERGE)
+	@ManyToMany
 	@JoinTable(name = "asso_confrere_mail", joinColumns = @JoinColumn(name = "id_confrere"), inverseJoinColumns = @JoinColumn(name = "id_mail"))
 	private List<Mail> mails;
 
-	@ManyToMany(cascade = CascadeType.MERGE)
+	@ManyToMany
 	@JoinTable(name = "asso_confrere_accounting_mail", joinColumns = @JoinColumn(name = "id_confrere"), inverseJoinColumns = @JoinColumn(name = "id_mail"))
 	private List<Mail> accountingMails;
 
-	@ManyToMany(cascade = CascadeType.MERGE)
+	@ManyToMany
 	@JoinTable(name = "asso_confrere_phone", joinColumns = @JoinColumn(name = "id_confrere"), inverseJoinColumns = @JoinColumn(name = "id_phone"))
 	private List<Phone> phones;
 
-	@ManyToMany(cascade = CascadeType.MERGE)
+	@ManyToMany
 	@JoinTable(name = "asso_confrere_special_offer", joinColumns = @JoinColumn(name = "id_confrere"), inverseJoinColumns = @JoinColumn(name = "id_special_offer"))
 	private List<SpecialOffer> specialOffers;
 
@@ -140,8 +139,7 @@ public class Confrere implements ITiers {
 	@JoinColumn(name = "id_vat_collection_type")
 	private VatCollectionType vatCollectionType;
 
-	@OneToMany(targetEntity = Document.class, mappedBy = "confrere", cascade = CascadeType.MERGE)
-	@JsonManagedReference("confrere")
+	@OneToMany(mappedBy = "confrere", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Document> documents;
 
 	@Column(length = 40)
@@ -175,8 +173,8 @@ public class Confrere implements ITiers {
 	private Language language;
 
 	@ManyToOne
-	@JoinColumn(name = "id_billing_center")
-	private BillingCenter billingCenter;
+	@JoinColumn(name = "id_regie")
+	private Regie regie;
 
 	public List<TiersFollowup> getTiersFollowups() {
 		return null;
@@ -513,14 +511,6 @@ public class Confrere implements ITiers {
 
 	public void setDiscountRate(Integer discountRate) {
 		this.discountRate = discountRate;
-	}
-
-	public BillingCenter getBillingCenter() {
-		return billingCenter;
-	}
-
-	public void setBillingCenter(BillingCenter billingCenter) {
-		this.billingCenter = billingCenter;
 	}
 
 }

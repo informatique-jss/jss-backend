@@ -34,6 +34,10 @@ export class HabilitationsService {
     return true;
   }
 
+  canViewAffaireModule() {
+    return true;
+  }
+
 }
 
 

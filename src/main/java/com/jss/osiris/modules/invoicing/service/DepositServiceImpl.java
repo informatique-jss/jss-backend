@@ -6,9 +6,6 @@ import java.util.Optional;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
@@ -28,13 +25,11 @@ public class DepositServiceImpl implements DepositService {
     AccountingRecordService accountingRecordService;
 
     @Override
-    @Cacheable(value = "depositList", key = "#root.methodName")
     public List<Deposit> getDeposits() {
         return IterableUtils.toList(depositRepository.findAll());
     }
 
     @Override
-    @Cacheable(value = "deposit", key = "#id")
     public Deposit getDeposit(Integer id) {
         Optional<Deposit> deposit = depositRepository.findById(id);
         if (deposit.isPresent())
@@ -43,10 +38,6 @@ public class DepositServiceImpl implements DepositService {
     }
 
     @Override
-    @Caching(evict = {
-            @CacheEvict(value = "depositList", allEntries = true),
-            @CacheEvict(value = "deposit", key = "#deposit.id")
-    })
     public Deposit addOrUpdateDeposit(
             Deposit deposit) {
         return depositRepository.save(deposit);

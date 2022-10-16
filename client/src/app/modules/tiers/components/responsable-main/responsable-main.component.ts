@@ -3,16 +3,16 @@ import { UntypedFormBuilder } from '@angular/forms';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
 import { isTiersTypeProspect } from 'src/app/libs/CompareHelper';
 import { COUNTRY_CODE_FRANCE, SUSCRIPTION_TYPE_CODE_PERIODE_12M } from 'src/app/libs/Constants';
+import { copyObject } from 'src/app/libs/GenericHelper';
 import { instanceOfResponsable } from 'src/app/libs/TypeHelper';
 import { City } from 'src/app/modules/miscellaneous/model/City';
-import { Country } from 'src/app/modules/miscellaneous/model/Country';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { CityService } from 'src/app/modules/miscellaneous/services/city.service';
-import { CountryService } from 'src/app/modules/miscellaneous/services/country.service';
 import { RESPONSABLE_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
 import { Civility } from '../../../miscellaneous/model/Civility';
+import { Document } from "../../../miscellaneous/model/Document";
 import { Language } from '../../../miscellaneous/model/Language';
 import { JssSubscription } from '../../model/JssSubscription';
 import { Responsable } from '../../model/Responsable';
@@ -48,8 +48,6 @@ export class ResponsableMainComponent implements OnInit {
   civilities: Civility[] = [] as Array<Civility>;
   languages: Language[] = [] as Array<Language>;
 
-  countries: Country[] = [] as Array<Country>;
-
   isSubscriptionPaper: boolean = false;
   isSubscriptionWeb: boolean = false;
 
@@ -61,7 +59,6 @@ export class ResponsableMainComponent implements OnInit {
 
   constructor(private formBuilder: UntypedFormBuilder,
     private cityService: CityService,
-    private countryService: CountryService,
     private appService: AppService,
     protected tiersService: TiersService,
     protected tiersTypeService: TiersTypeService,
@@ -89,7 +86,6 @@ export class ResponsableMainComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.countryService.getCountries().subscribe(response => this.countries = response);
     // Trigger it to show mandatory fields
     this.principalForm.markAllAsTouched();
 
@@ -164,6 +160,13 @@ export class ResponsableMainComponent implements OnInit {
     if (this.selectedResponsable == null || this.getFormStatus()) {
       this.selectedResponsable = {} as Responsable;
       this.tiers.responsables.push(this.selectedResponsable);
+
+      if (this.tiers && this.tiers.documents) {
+        this.selectedResponsable.documents = [] as Array<Document>;
+        for (let document of this.tiers.documents)
+          this.selectedResponsable.documents.push(copyObject(document));
+      }
+
       this.tiersService.setCurrentViewedResponsable(this.selectedResponsable);
       this.setDataTable();
       this.toggleTabs();
@@ -174,9 +177,6 @@ export class ResponsableMainComponent implements OnInit {
   }
 
   initDefaultValues() {
-    if (this.selectedResponsable != null && (this.selectedResponsable.country == null || this.selectedResponsable.country == undefined))
-      this.selectedResponsable.country = this.countries[0];
-
     if (this.selectedResponsable != null && (this.selectedResponsable?.jssSubscription == null || this.selectedResponsable.jssSubscription == undefined)) {
       this.selectedResponsable.jssSubscription = { isPaperSubscription: false, isWebSubscription: false } as JssSubscription;
     }
@@ -252,4 +252,6 @@ export class ResponsableMainComponent implements OnInit {
     }
     return status;
   }
+
+
 }

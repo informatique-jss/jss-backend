@@ -1,7 +1,12 @@
 <mat-form-field class="full-width" [formGroup]="form!">
   <mat-label>Récupérer une affaire existante</mat-label>
-  <input matInput placeholder="Récupérer une affaire existante" [matAutocomplete]="autoCompleteAffaire"
+  <input #affaireInput matInput placeholder="Récupérer une affaire existante" [matAutocomplete]="autoCompleteAffaire"
     [formControlName]="propertyName" autocomplete="do-not-autofill">
+  <button (click)="clearField()"
+    *ngIf="model!=undefined && model!=null && model.id !=undefined && model.id!=null && !isDisabled " matSuffix
+    mat-icon-button>
+    <mat-icon>close</mat-icon>
+  </button>
   <mat-autocomplete autoActiveFirstOption #autoCompleteAffaire="matAutocomplete" [displayWith]="displayAffaire"
     (optionSelected)='optionSelected($event.option.value)'>
     <mat-option *ngFor="let affaire of filteredTypes" [value]="affaire">

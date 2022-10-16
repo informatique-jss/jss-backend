@@ -1,0 +1,26 @@
+.table-container-scroll {
+  max-height: 215px;
+  overflow-y: auto;
+}
+
+table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+td {
+  padding-right: 8px;
+}
+
+.selected-mat-row {
+  background-color: #6B9CBF;
+}
+
+.selected-mat-row:hover {
+  background-color: #6B9CBF;
+}
+
+.no-font {
+  font-family: initial !important;
+  font-size: initial !important;
+}

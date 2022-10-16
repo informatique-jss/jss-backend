@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { PAYEMENT_WAY_INBOUND_CODE } from 'src/app/libs/Constants';
 import { formatDateTimeForSortTable, toIsoString } from 'src/app/libs/FormatHelper';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
@@ -20,7 +19,6 @@ export class QuotationListComponent implements OnInit {
   quotations: IQuotation[] | undefined;
   displayedColumns: SortTableColumn[] = [];
   tableAction: SortTableAction[] = [];
-  PAYEMENT_WAY_INBOUND_CODE = PAYEMENT_WAY_INBOUND_CODE;
 
   constructor(
     private appService: AppService,

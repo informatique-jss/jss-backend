@@ -7,7 +7,7 @@
 <mat-nav-list>
   <a mat-list-item routerLink="/tiers" *ngIf="canViewTiersModule()"
     [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/tiers' )>=0}">
-    <mat-icon>group</mat-icon> <span>Tiers/Responsables</span>
+    <mat-icon>group</mat-icon> <span>Tiers / Responsables</span>
   </a>
   <a mat-list-item routerLink="/quotation" *ngIf="canViewQuotationModule()"
     [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/quotation' )>=0}">
@@ -16,6 +16,10 @@
   <a mat-list-item routerLink="/order" *ngIf="canViewCustomerOrderModule()"
     [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/order' )>=0}">
     <mat-icon>shopping_cart</mat-icon> <span>Commande</span>
+  </a>
+  <a mat-list-item routerLink="/affaire" *ngIf="canViewAffaireModule()"
+    [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/affaire' )>=0}">
+    <mat-icon>work</mat-icon> <span>Affaires / Prestations</span>
   </a>
   <a mat-list-item routerLink="/invoicing" *ngIf="canViewInvoiceModule()"
     [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/invoicing' )>=0}">

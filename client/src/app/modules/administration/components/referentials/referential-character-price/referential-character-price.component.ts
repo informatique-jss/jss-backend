@@ -29,7 +29,7 @@ export class ReferentialCharacterPriceComponent extends GenericReferentialCompon
   }
 
   getElementCode(element: CharacterPrice) {
-    return element.departments.map(departement => departement.id).join(", ");
+    return element.departments.map(departement => departement.code).join(", ");
   }
 
   getElementLabel(element: CharacterPrice) {

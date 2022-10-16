@@ -2,10 +2,8 @@ package com.jss.osiris.modules.miscellaneous.model;
 
 import java.io.Serializable;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -14,7 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.modules.quotation.model.Announcement;
 import com.jss.osiris.modules.quotation.model.Bodacc;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
@@ -24,8 +22,7 @@ import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
 @Entity
-@Table(indexes = { @Index(name = "pk_attachment", columnList = "id", unique = true),
-		@Index(name = "idx_tiers_attachment", columnList = "id_tiers"),
+@Table(indexes = { @Index(name = "idx_tiers_attachment", columnList = "id_tiers"),
 		@Index(name = "idx_domiciliation_attachment", columnList = "id_domiciliation"),
 		@Index(name = "idx_customer_order_attachment", columnList = "id_customer_order"),
 		@Index(name = "idx_quotation_attachment", columnList = "id_quotation"),
@@ -33,49 +30,49 @@ import com.jss.osiris.modules.tiers.model.Tiers;
 public class Attachment implements Serializable, IId {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "attachment_sequence")
 	private Integer id;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name = "id_tiers")
-	@JsonBackReference("tiers")
+	@JsonIgnoreProperties(value = { "attachments" }, allowSetters = true)
 	private Tiers tiers;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name = "id_responsable")
-	@JsonBackReference("responsable")
+	@JsonIgnoreProperties(value = { "attachments" }, allowSetters = true)
 	private Responsable responsable;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name = "id_quotation")
-	@JsonBackReference("quotation")
+	@JsonIgnoreProperties(value = { "attachments" }, allowSetters = true)
 	private Quotation quotation;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name = "id_domiciliation")
-	@JsonBackReference("domiciliation")
+	@JsonIgnoreProperties(value = { "attachments" }, allowSetters = true)
 	private Domiciliation domiciliation;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name = "id_announcement")
-	@JsonBackReference("announcement")
+	@JsonIgnoreProperties(value = { "attachments" }, allowSetters = true)
 	private Announcement announcement;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name = "id_bodacc")
-	@JsonBackReference("bodacc")
+	@JsonIgnoreProperties(value = { "attachments" }, allowSetters = true)
 	private Bodacc bodacc;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name = "id_customer_order")
-	@JsonBackReference("customerOrder")
+	@JsonIgnoreProperties(value = { "attachments" }, allowSetters = true)
 	private CustomerOrder customerOrder;
 
 	@ManyToOne
 	@JoinColumn(name = "id_attachment_type")
 	private AttachmentType attachmentType;
 
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne
 	@JoinColumn(name = "id_uploaded_file")
 	private UploadedFile uploadedFile;
 

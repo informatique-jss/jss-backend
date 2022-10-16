@@ -9,11 +9,9 @@ import { Phone } from "../../miscellaneous/model/Phone";
 import { BuildingDomiciliation } from "./BuildingDomiciliation";
 import { DomiciliationContractType } from "./DomiciliationContractType";
 import { MailRedirectionType } from "./MailRedirectionType";
-import { Provision } from "./Provision";
 
 export interface Domiciliation extends IAttachment {
   id: number;
-  provision: Provision;
   domiciliationContractType: DomiciliationContractType;
   language: Language;
   buildingDomiciliation: BuildingDomiciliation;

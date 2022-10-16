@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.model.AccountingAccountClass;
@@ -67,6 +68,13 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
     @Override
     public List<AccountingAccount> getAccountingAccountByAccountingAccountNumber(String accountingAccountNumber) {
         return accountingAccountRepository.findByAccountingAccountNumber(accountingAccountNumber);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public AccountingAccount addOrUpdateAccountingAccountFromUser(AccountingAccount accountingAccount)
+            throws Exception {
+        return addOrUpdateAccountingAccount(accountingAccount);
     }
 
     @Override
@@ -128,7 +136,7 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
         AccountingAccount accountingAccountProvider = new AccountingAccount();
         accountingAccountProvider.setAccountingAccountClass(accountingAccountClass);
         accountingAccountProvider.setAccountingAccountNumber(providerAccountingAccountNumber);
-        accountingAccountProvider.setAccountingAccountSubNumber(maxSubAccount);
+        accountingAccountProvider.setAccountingAccountSubNumber(maxSubAccount + "");
         accountingAccountProvider
                 .setLabel("Fournisseur - " + (label != null ? label : ""));
         accountingAccountRepository.save(accountingAccountProvider);
@@ -137,7 +145,7 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
         AccountingAccount accountingAccountCustomer = new AccountingAccount();
         accountingAccountCustomer.setAccountingAccountClass(accountingAccountClass);
         accountingAccountCustomer.setAccountingAccountNumber(customerAccountingAccountNumber);
-        accountingAccountCustomer.setAccountingAccountSubNumber(maxSubAccount);
+        accountingAccountCustomer.setAccountingAccountSubNumber(maxSubAccount + "");
         accountingAccountCustomer
                 .setLabel("Client - " + (label != null ? label : ""));
         accountingAccountRepository.save(accountingAccountCustomer);
@@ -146,7 +154,7 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
         AccountingAccount accountingAccountDeposit = new AccountingAccount();
         accountingAccountDeposit.setAccountingAccountClass(accountingAccountClass);
         accountingAccountDeposit.setAccountingAccountNumber(depositAccountingAccountNumber);
-        accountingAccountDeposit.setAccountingAccountSubNumber(maxSubAccount);
+        accountingAccountDeposit.setAccountingAccountSubNumber(maxSubAccount + "");
         accountingAccountDeposit
                 .setLabel("Acompte - " + (label != null ? label : ""));
         accountingAccountRepository.save(accountingAccountDeposit);
@@ -182,7 +190,7 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
         AccountingAccount accountingAccountProvider = new AccountingAccount();
         accountingAccountProvider.setAccountingAccountClass(accountingAccountClass);
         accountingAccountProvider.setAccountingAccountNumber(productAccountingAccountNumber);
-        accountingAccountProvider.setAccountingAccountSubNumber(maxSubAccount);
+        accountingAccountProvider.setAccountingAccountSubNumber(maxSubAccount + "");
         accountingAccountProvider
                 .setLabel("Produit - " + (label != null ? label : ""));
         accountingAccountRepository.save(accountingAccountProvider);

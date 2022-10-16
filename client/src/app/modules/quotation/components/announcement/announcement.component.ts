@@ -191,7 +191,7 @@ export class AnnouncementComponent implements OnInit {
 
   getFormStatus(): boolean {
     this.announcementForm.markAllAsTouched();
-    if (this.announcement)
+    if (this.announcement && this.announcement.notice)
       this.announcement.notice = this.announcement.notice.replace(/ +(?= )/g, '').replace(/(\r\n|\r|\n){2,}/g, '$1\n');
 
     return this.announcementForm.valid && this.announcement.noticeTypes && this.announcement.noticeTypes.length > 0;
@@ -310,7 +310,7 @@ export class AnnouncementComponent implements OnInit {
 
   private _filterNoticeTemplates(value: string): AnnouncementNoticeTemplate[] {
     const filterValue = (value != undefined && value.toLowerCase != undefined) ? value.toLowerCase() : "";
-    return this.noticeTemplates.filter(noticeTemplate => noticeTemplate.label != undefined && noticeTemplate.label.toLowerCase().includes(filterValue) && (!noticeTemplate.provisionFamilyType || this.provision.provisionFamilyType.code == noticeTemplate.provisionFamilyType.code));
+    return this.noticeTemplates.filter(noticeTemplate => noticeTemplate.label != undefined && noticeTemplate.label.toLowerCase().includes(filterValue) && (!noticeTemplate.provisionFamilyTypes || noticeTemplate.provisionFamilyTypes.map(type => type.code).indexOf(this.provision.provisionFamilyType.code) >= 0));
   }
 
   addNoticeType(event: MatAutocompleteSelectedEvent): void {

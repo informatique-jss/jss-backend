@@ -287,11 +287,16 @@
           [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
           [cloneEvent]="cloneEvent.asObservable()">
         </referential-payment-way>
-        <referential-billing-center *ngIf="selectedReferential==BILLING_CENTER_REFERENTIAL"
+        <referential-regie *ngIf="selectedReferential==BILLING_REGIE"
           (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
           [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
           [cloneEvent]="cloneEvent.asObservable()">
-        </referential-billing-center>
+        </referential-regie>
+        <referential-affaire *ngIf="selectedReferential==AFFAIRE_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
+        </referential-affaire>
       </div>
     </mat-tab>
   </mat-tab-group>

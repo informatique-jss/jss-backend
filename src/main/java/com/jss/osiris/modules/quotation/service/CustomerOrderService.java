@@ -6,13 +6,21 @@ import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.OrderingSearch;
 
 public interface CustomerOrderService {
-    public CustomerOrder getCustomerOrder(Integer id);
+        public CustomerOrder getCustomerOrder(Integer id);
 
-    public CustomerOrder addOrUpdateCustomerOrder(CustomerOrder quotation) throws Exception;
+        public CustomerOrder addOrUpdateCustomerOrder(CustomerOrder quotation) throws Exception;
 
-    public CustomerOrder addOrUpdateCustomerOrderStatus(CustomerOrder customerOrder, String targetStatusCode)
-            throws Exception;
+        public CustomerOrder addOrUpdateCustomerOrderFromUser(CustomerOrder customerOrder) throws Exception;
 
-    public List<CustomerOrder> searchOrders(OrderingSearch orderingSearch);
+        public CustomerOrder addOrUpdateCustomerOrderStatus(CustomerOrder customerOrder, String targetStatusCode)
+                        throws Exception;
+
+        public CustomerOrder addOrUpdateCustomerOrderStatusFromUser(CustomerOrder customerOrder,
+                        String targetStatusCode)
+                        throws Exception;
+
+        public List<CustomerOrder> searchOrders(OrderingSearch orderingSearch);
+
+        public void reindexCustomerOrder();
 
 }

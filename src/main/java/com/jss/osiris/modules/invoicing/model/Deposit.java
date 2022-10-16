@@ -13,15 +13,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.jss.osiris.modules.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 
 @Entity
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Deposit implements Serializable, IId {
 
 	@Id
@@ -38,15 +35,17 @@ public class Deposit implements Serializable, IId {
 	private Float depositAmount;
 
 	@OneToMany(mappedBy = "deposit")
-	@JsonIgnoreProperties("deposit")
+	@JsonIgnoreProperties(value = { "deposit" }, allowSetters = true)
 	private List<AccountingRecord> accountingRecords;
 
 	@ManyToOne
 	@JoinColumn(name = "id_invoice")
+	@JsonIgnoreProperties(value = { "deposits" }, allowSetters = true)
 	private Invoice invoice;
 
 	@ManyToOne
 	@JoinColumn(name = "id_customer_order")
+	@JsonIgnoreProperties(value = { "deposits" }, allowSetters = true)
 	private CustomerOrder customerOrder;
 
 	public Integer getId() {

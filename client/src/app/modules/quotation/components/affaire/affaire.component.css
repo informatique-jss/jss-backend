@@ -1,8 +1,7 @@
-.mini-fab {
-  top: -10px;
-  left: 10px;
+.mat-accordion-container {
+  padding-top: 15px
 }
 
-.mini-fab-td {
-  width: 40px;
+.row-field-container {
+  padding-top: 15px;
 }

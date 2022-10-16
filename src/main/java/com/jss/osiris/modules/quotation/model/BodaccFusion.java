@@ -20,13 +20,13 @@ import com.jss.osiris.modules.miscellaneous.model.IId;
 public class BodaccFusion implements Serializable, IId {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "bodacc_sequence")
 	private Integer id;
 
-	@OneToMany(targetEntity = BodaccFusionMergingCompany.class, cascade = CascadeType.ALL)
+	@OneToMany(targetEntity = BodaccFusionMergingCompany.class, cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<BodaccFusionMergingCompany> bodaccFusionMergingCompanies;
 
-	@OneToMany(targetEntity = BodaccFusionAbsorbedCompany.class, cascade = CascadeType.ALL)
+	@OneToMany(targetEntity = BodaccFusionAbsorbedCompany.class, cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<BodaccFusionAbsorbedCompany> bodaccFusionAbsorbedCompanies;
 
 	@Column(nullable = false)

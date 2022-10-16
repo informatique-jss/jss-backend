@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
+import { Subject } from 'rxjs';
 import { formatEurosForSortTable, formatPercentForSortTable } from 'src/app/libs/FormatHelper';
 import { SpecialOfferFlatten } from 'src/app/modules/miscellaneous/model/SpecialOfferFlatten';
 import { SortTableColumn } from '../../model/SortTableColumn';
@@ -19,6 +20,7 @@ export class SpecialOffersDialogComponent implements OnInit {
   specialOffers: SpecialOffer[] = [] as Array<SpecialOffer>;
 
   filterValue: string = "";
+  refreshTable: Subject<void> = new Subject<void>();
 
   displayedColumns: SortTableColumn[] = [];
   searchText: string | undefined;
@@ -27,23 +29,6 @@ export class SpecialOffersDialogComponent implements OnInit {
     private specialOffersDialogRef: MatDialogRef<SpecialOffersDialogComponent>) { }
 
   ngOnInit() {
-    this.specialOfferService.getSpecialOffers().subscribe(response => {
-      this.specialOffers = response;
-      // Flatten object to display
-      if (response && response.length > 0) {
-        response.forEach(specialOffer => {
-          specialOffer.assoSpecialOfferBillingTypes.forEach(assoSpecialOfferBillingType => {
-            let localSpecialOffer = {} as SpecialOfferFlatten;
-            localSpecialOffer.id = specialOffer.id!;
-            localSpecialOffer.code = specialOffer.code + ((specialOffer.label != null && specialOffer.label != "") ? " - " : "") + specialOffer.label;
-            localSpecialOffer.billingTypeLabel = assoSpecialOfferBillingType.billingType.label;
-            localSpecialOffer.discountAmount = assoSpecialOfferBillingType.discountAmount;
-            localSpecialOffer.discountRate = assoSpecialOfferBillingType.discountRate;
-            this.specialOffersFlatten.push(localSpecialOffer);
-          });
-        });
-      }
-    })
     this.displayedColumns = [];
     this.displayedColumns.push({ id: "code", fieldName: "code", label: "Libellé" } as SortTableColumn);
     this.displayedColumns.push({ id: "discountAmount", fieldName: "discountAmount", label: "Montant de la remise", valueFonction: formatEurosForSortTable } as SortTableColumn);
@@ -51,6 +36,27 @@ export class SpecialOffersDialogComponent implements OnInit {
     this.displayedColumns.push({ id: "vat", fieldName: "vat", label: "Taux de TVA", valueFonction: formatPercentForSortTable } as SortTableColumn);
     this.displayedColumns.push({ id: "billingTypeLabel", fieldName: "billingTypeLabel", label: "Poste de facturation" } as SortTableColumn);
     this.displayedColumns.push({ id: "billingTypePreTaxPrice", fieldName: "billingTypePreTaxPrice", label: "Prix HT du poste" } as SortTableColumn);
+
+    this.specialOfferService.getSpecialOffers().subscribe(response => {
+      this.specialOffers = response;
+      // Flatten object to display
+      if (response && response.length > 0) {
+        for (let specialOffer of response) {
+          for (let assoSpecialOfferBillingType of specialOffer.assoSpecialOfferBillingTypes) {
+            let localSpecialOffer = {} as SpecialOfferFlatten;
+            localSpecialOffer.id = specialOffer.id!;
+            localSpecialOffer.code = specialOffer.code + ((specialOffer.label != null && specialOffer.label != "") ? " - " : "") + specialOffer.label;
+            localSpecialOffer.billingTypeLabel = assoSpecialOfferBillingType.billingType.label;
+            localSpecialOffer.discountAmount = assoSpecialOfferBillingType.discountAmount;
+            localSpecialOffer.discountRate = assoSpecialOfferBillingType.discountRate;
+            this.specialOffersFlatten.push(localSpecialOffer);
+          }
+        };
+        this.refreshTable.next();
+
+      }
+    })
+
   }
 
   formatEurosForSortTable = formatEurosForSortTable;

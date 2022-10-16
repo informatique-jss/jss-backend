@@ -310,7 +310,7 @@ public class TiersController {
       validationHelper.validateString(billingClosureRecipientType.getLabel(), true, 100);
 
       outBillingClosureRecipientType = billingClosureRecipientTypeService
-          .addOrUpdateTransfertFundsType(billingClosureRecipientType);
+          .addOrUpdateBillingClosureRecipientType(billingClosureRecipientType);
     } catch (
 
     ResponseStatusException e) {
@@ -744,7 +744,11 @@ public class TiersController {
           validationHelper.validateString(document.getRefundIBAN(), false, 40);
           validationHelper.validateReferential(document.getBillingClosureType(), false);
           validationHelper.validateReferential(document.getBillingClosureRecipientType(), false);
-          validationHelper.validateReferential(document.getBillingCenter(), false);
+          validationHelper.validateReferential(document.getBillingLabelCity(), false);
+          validationHelper.validateReferential(document.getBillingLabelCountry(), false);
+          validationHelper.validateString(document.getBillingAddress(), false, 60);
+          validationHelper.validateString(document.getBillingLabel(), false, 60);
+          validationHelper.validateString(document.getBillingPostalCode(), false, 10);
 
           if (document.getIsMailingPaper() == null)
             document.setIsMailingPaper(false);
@@ -773,11 +777,10 @@ public class TiersController {
           validationHelper.validateReferential(responsable.getFormalisteEmployee(), false);
           validationHelper.validateReferential(responsable.getInsertionEmployee(), false);
           validationHelper.validateReferential(responsable.getLanguage(), true);
-          validationHelper.validateString(responsable.getAddress(), true, 60);
-          validationHelper.validateReferential(responsable.getCountry(), true);
-          validationHelper.validateReferential(responsable.getCity(), true);
-          if (responsable.getCountry() != null && responsable.getCountry().getCode().equals("FR"))
-            validationHelper.validateString(responsable.getPostalCode(), true, 10);
+          validationHelper.validateString(responsable.getAddress(), false, 60);
+          validationHelper.validateReferential(responsable.getCountry(), false);
+          validationHelper.validateReferential(responsable.getCity(), false);
+          validationHelper.validateString(responsable.getPostalCode(), false, 10);
           validationHelper.validateString(responsable.getFunction(), false, 20);
           validationHelper.validateString(responsable.getBuilding(), false, 20);
           validationHelper.validateString(responsable.getFloor(), false, 20);
@@ -818,7 +821,11 @@ public class TiersController {
               validationHelper.validateString(document.getRefundIBAN(), false, 40);
               validationHelper.validateReferential(document.getBillingClosureType(), false);
               validationHelper.validateReferential(document.getBillingClosureRecipientType(), false);
-              validationHelper.validateReferential(document.getBillingCenter(), false);
+              validationHelper.validateReferential(document.getBillingLabelCity(), false);
+              validationHelper.validateReferential(document.getBillingLabelCountry(), false);
+              validationHelper.validateString(document.getBillingAddress(), false, 60);
+              validationHelper.validateString(document.getBillingLabel(), false, 60);
+              validationHelper.validateString(document.getBillingPostalCode(), false, 10);
 
             }
           }

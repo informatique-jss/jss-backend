@@ -3,10 +3,12 @@ package com.jss.osiris.modules.quotation.service;
 import java.util.List;
 import java.util.Optional;
 
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.modules.quotation.model.QuotationStatus;
 import com.jss.osiris.modules.quotation.repository.QuotationStatusRepository;
@@ -31,6 +33,7 @@ public class QuotationStatusServiceImpl implements QuotationStatusService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public QuotationStatus addOrUpdateQuotationStatus(QuotationStatus quotationStatus) {
         return quotationStatusRepository.save(quotationStatus);
     }
@@ -40,7 +43,7 @@ public class QuotationStatusServiceImpl implements QuotationStatusService {
         return quotationStatusRepository.findByCode(code);
     }
 
-    @Scheduled(initialDelay = 1000, fixedDelay = 1000000000)
+    @PostConstruct
     public void updateStatusReferential() {
         updateStatus(QuotationStatus.OPEN, "Ouvert");
         updateStatus(QuotationStatus.TO_VERIFY, "A vérifier");

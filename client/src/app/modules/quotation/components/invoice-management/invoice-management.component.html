@@ -4,14 +4,14 @@
     {{invoice.createdDate|date:'dd/MM/yyyy à HH:mm'}}
   </h3>
   <form [formGroup]="invoiceManagementForm">
-    <div *ngIf="quotation && quotation.provisions">
-      <div *ngFor="let provision of quotation.provisions">
-        <td class="affaire" *ngIf="provision.affaire && provision.affaire.denomination">
-          {{provision.affaire.denomination}}
-        </td>
-        <td class="affaire" *ngIf="provision.affaire && provision.affaire.firstname">
-          {{provision.affaire.firstname}} - {{provision.affaire.lastname}} -
-        </td>
+    <div *ngFor="let asso of quotation.assoAffaireOrders">
+      <td class="affaire" *ngIf="asso.affaire && asso.affaire.denomination">
+        {{asso.affaire.denomination}}
+      </td>
+      <td class="affaire" *ngIf="asso.affaire && asso.affaire.firstname">
+        {{asso.affaire.firstname}} - {{asso.affaire.lastname}} -
+      </td>
+      <div *ngFor="let provision of asso.provisions">
         <div *ngFor="let invoiceItem of provision.invoiceItems;let index = index">
           <table>
             <tr *ngIf="provision.provisionType">

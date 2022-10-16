@@ -23,7 +23,7 @@
           </tr>
           <tr>
             <td>
-              <generic-input [(model)]="selectedEntity.code" label="Codification" [maxLength]="20" [form]="entityForm"
+              <generic-input [(model)]="selectedEntity.code" label="Codification" [maxLength]="40" [form]="entityForm"
                 propertyName="code" [isMandatory]="true" [isDisabled]="!editMode"></generic-input>
             </td>
           </tr>
@@ -35,16 +35,17 @@
           </tr>
           <tr>
             <td>
-              <select-provision-family [(model)]="selectedEntity.provisionFamilyType"
-                label="Famille de prestations associée" [form]="entityForm" propertyName="provisionFamilyType"
-                [isMandatory]="false" [isDisabled]="!editMode"></select-provision-family>
+              <chips-provision-family label="Familles de prestations associées"
+                [(model)]="selectedEntity.provisionFamilyTypes" [form]="entityForm" propertyName="provisionFamilyTypes"
+                [isMandatory]="false" [isDisabled]="!editMode">
+              </chips-provision-family>
             </td>
           </tr>
           <tr>
             <td>
               <div *ngIf="!editMode">
                 <p>Texte :</p>
-                <span [innerHTML]="selectedEntity.text| trustHtml"></span>
+                <span [innerHTML]="selectedEntity.text| trustHtml" class="no-font"></span>
               </div>
               <quill-editor *ngIf="editMode" formControlName="text" (onContentChanged)="setTextModel($event)">
               </quill-editor>

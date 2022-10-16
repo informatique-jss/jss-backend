@@ -27,7 +27,7 @@ import com.jss.osiris.modules.quotation.model.CustomerOrder;
 public class AccountingRecord implements Serializable, IId {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "accounting_record_sequence")
 	private Integer id;
 
 	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
@@ -48,6 +48,8 @@ public class AccountingRecord implements Serializable, IId {
 
 	private LocalDate manualAccountingDocumentDate;
 
+	private LocalDate manualAccountingDocumentDeadline;
+
 	@Column(nullable = false, length = 100)
 	private String label;
 	private Float creditAmount;
@@ -66,21 +68,23 @@ public class AccountingRecord implements Serializable, IId {
 
 	@ManyToOne
 	@JoinColumn(name = "id_invoice")
-	@JsonIgnoreProperties("accountingRecords")
+	@JsonIgnoreProperties(value = { "accountingRecords", "payments",
+			"deposits" }, allowSetters = true)
 	private Invoice invoice;
 
 	@ManyToOne
 	@JoinColumn(name = "id_customer_order")
+	@JsonIgnoreProperties(value = { "accountingRecords", "deposits", "payments" }, allowSetters = true)
 	private CustomerOrder customerOrder;
 
 	@ManyToOne
 	@JoinColumn(name = "id_payment")
-	@JsonIgnoreProperties("accountingRecords")
+	@JsonIgnoreProperties(value = { "accountingRecords", "invoice", "customerOrder" }, allowSetters = true)
 	private Payment payment;
 
 	@ManyToOne
 	@JoinColumn(name = "id_deposit")
-	@JsonIgnoreProperties("accountingRecords")
+	@JsonIgnoreProperties(value = { "accountingRecords", "customerOrder" }, allowSetters = true)
 	private Deposit deposit;
 
 	@ManyToOne
@@ -280,6 +284,14 @@ public class AccountingRecord implements Serializable, IId {
 
 	public void setLetteringDateTime(LocalDateTime letteringDateTime) {
 		this.letteringDateTime = letteringDateTime;
+	}
+
+	public LocalDate getManualAccountingDocumentDeadline() {
+		return manualAccountingDocumentDeadline;
+	}
+
+	public void setManualAccountingDocumentDeadline(LocalDate manualAccountingDocumentDeadline) {
+		this.manualAccountingDocumentDeadline = manualAccountingDocumentDeadline;
 	}
 
 }

@@ -16,6 +16,10 @@ export class AffaireService extends AppRestService<Affaire>{
     return this.getById("affaire", affaireId);
   }
 
+  getAffaires() {
+    return this.getList(new HttpParams(), "affaires");
+  }
+
   addOrUpdateAffaire(affaire: Affaire) {
     return this.addOrUpdate(new HttpParams(), "affaire", affaire, "Affaire créée", "Erreur lors de l'enregistrement de l'affaire");
   }

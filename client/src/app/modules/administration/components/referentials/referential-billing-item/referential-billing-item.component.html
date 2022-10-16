@@ -73,11 +73,6 @@
                       [maxLength]="20"></generic-input>
                   </td>
                   <td>
-                    <generic-input [(model)]="accountingAccountCharge.code" label="Codification" [form]="entityForm"
-                      propertyName="code" [isMandatory]="true" [isDisabled]="!editMode" [conditionnalRequired]=""
-                      [customValidators]="" [maxLength]="20"></generic-input>
-                  </td>
-                  <td>
                     <generic-input [(model)]="accountingAccountCharge.label" label="Nom fonctionnel" [form]="entityForm"
                       propertyName="label" [isMandatory]="true" [isDisabled]="!editMode" [conditionnalRequired]=""
                       [customValidators]="" [maxLength]="100"></generic-input>
@@ -110,11 +105,6 @@
                       label="N° de sous-compte comptable" [form]="entityForm"
                       propertyName="accountingAccountSubNumProduct" [isMandatory]="true" [isDisabled]="!editMode"
                       [maxLength]="20"></generic-input>
-                  </td>
-                  <td>
-                    <generic-input [(model)]="accountingAccountProduct.code" label="Codification" [form]="entityForm"
-                      propertyName="codeProduct" [isMandatory]="true" [isDisabled]="!editMode" [conditionnalRequired]=""
-                      [customValidators]="" [maxLength]="20"></generic-input>
                   </td>
                   <td>
                     <generic-input [(model)]="accountingAccountProduct.label" label="Nom fonctionnel"

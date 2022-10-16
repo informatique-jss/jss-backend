@@ -1,0 +1,123 @@
+<div class="mat-elevation-z2 form-div">
+  <div class=" full-width padding-top">
+    <div>
+      <table class="full-width">
+        <tr>
+          <td *ngIf="!invoice.responsable && !invoice.confrere">
+            <autocomplete-tiers-individual [(model)]="invoice.tiers" [form]="invoiceForm" propertyName="tiers"
+              (onOptionSelected)="fillTiers($event)" [isMandatory]="true"
+              [conditionnalRequired]="invoice.responsable==undefined && invoice.confrere==undefined">
+            </autocomplete-tiers-individual>
+          </td>
+          <td *ngIf="!invoice.tiers && !invoice.confrere">
+            <autocomplete-responsable [(model)]="invoice.responsable" [form]="invoiceForm" propertyName="responsable"
+              (onOptionSelected)="fillResponsable($event)" [isMandatory]="true"
+              [conditionnalRequired]="invoice.tiers==undefined && invoice.confrere==undefined">
+            </autocomplete-responsable>
+          </td>
+          <td *ngIf="!invoice.tiers && !invoice.responsable">
+            <autocomplete-confrere label="Confrère" [(model)]="invoice.confrere" [form]="invoiceForm"
+              propertyName="confrere" [isDisabled]="!editMode" (onOptionSelected)="fillConfrere($event)"
+              [isMandatory]="true" [conditionnalRequired]="invoice.responsable==undefined && invoice.tiers==undefined">
+            </autocomplete-confrere>
+          </td>
+        </tr>
+      </table>
+      <table class="full-width">
+        <tr>
+          <td>
+            <radio-group-billing-label [(model)]="invoice.billingLabelType" [form]="invoiceForm"
+              propertyName="billingLabelType" label="Libellé sur facture"></radio-group-billing-label>
+          </td>
+        </tr>
+      </table>
+      <table class="full-width"
+        *ngIf="invoice.billingLabelType!=undefined && invoice.billingLabelType.code!=undefined && invoice.billingLabelType.code==BILLING_TIERS_DOCUMENT_TYPE_OTHER">
+        <tr>
+          <td>
+            <generic-input [(model)]="invoice.billingLabel" label="Libellé" [form]="invoiceForm"
+              propertyName="billingLabel" [isMandatory]="true" [isDisabled]="!editMode"></generic-input>
+          </td>
+          <td>
+            <generic-input [(model)]="invoice.billingLabelAddress" label="Adresse" [form]="invoiceForm"
+              propertyName="billingAddress" [isMandatory]="true" [isDisabled]="!editMode"></generic-input>
+          </td>
+          <td>
+            <autocomplete-postal-code [(model)]="invoice.billingLabelPostalCode" [form]="invoiceForm"
+              propertyName="postalCode" [isMandatory]="true"
+              [conditionnalRequired]="invoice.billingLabelCountry != null && invoice.billingLabelCountry.code == COUNTRY_CODE_FRANCE"
+              (onOptionSelected)="fillCity($event)"></autocomplete-postal-code>
+          </td>
+          <td>
+            <autocomplete-city [(model)]="invoice.billingLabelCity" [modelCountry]="invoice.billingLabelCountry"
+              [form]="invoiceForm" propertyName="city" [isMandatory]="true" (onOptionSelected)="fillPostalCode($event)">
+            </autocomplete-city>
+          </td>
+          <td>
+            <autocomplete-country [(model)]="invoice.billingLabelCountry" [form]="invoiceForm" propertyName="country"
+              [isMandatory]="true"></autocomplete-country>
+          </td>
+          <td>
+            <generic-toggle [(model)]="invoice.billingLabelIsIndividual" label="Est particulier ?" [form]="invoiceForm"
+              propertyName="billingLabelIsIndividual"></generic-toggle>
+          </td>
+        </tr>
+      </table>
+      <table class="full-width">
+        <tr>
+          <td>
+            <generic-input [(model)]="invoice.commandNumber" label="N° de commande" [form]="invoiceForm"
+              propertyName="commandNumber" [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="40">
+            </generic-input>
+          </td>
+          <td>
+            <generic-datepicker [(model)]="invoice.dueDate" label="Date d'échéance" [form]="invoiceForm"
+              propertyName="dueDate" [isMandatory]="false" [isDisabled]="!editMode"></generic-datepicker>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+  <div class=" full-width padding-bottom">
+    <sort-table [columns]="displayedColumns" [values]="invoiceItems" tableName="Facture Ajout" [actions]="tableAction"
+      (onRowClick)="selectInvoiceItem($event)" [refreshTable]="refreshTable.asObservable()">
+    </sort-table>
+  </div>
+  <div>
+    <table class="full-width ">
+      <tr>
+        <td>
+          <generic-input [(model)]="invoiceItem.label" label="Libellé" [form]="invoiceForm" propertyName="label"
+            [isMandatory]="true" [isDisabled]="!editMode" [maxLength]="200"></generic-input>
+        </td>
+        <td>
+          <select-billing-items [(model)]="invoiceItem.billingItem" label="Poste de facturation" [form]="invoiceForm"
+            propertyName="billingItem" [isMandatory]="true" [isDisabled]="!editMode"></select-billing-items>
+        </td>
+      </tr>
+    </table>
+    <table class="full-width">
+      <tr>
+        <td>
+          <generic-input [(model)]="invoiceItem.preTaxPrice" label="Prix HT" [form]="invoiceForm"
+            propertyName="preTaxPrice" [isMandatory]="true" [isDisabled]="!editMode" type="number"></generic-input>
+        </td>
+        <td>
+          <select-vat [(model)]="invoiceItem.vat" label="TVA applicable" [form]="invoiceForm" propertyName="vat"
+            [isMandatory]="true" [isDisabled]="!editMode"></select-vat>
+        </td>
+        <td>
+          <generic-input [(model)]="invoiceItem.discountAmount" label="Remise totale" [form]="invoiceForm"
+            propertyName="discountAmount" [isMandatory]="false" [isDisabled]="!editMode" type="number"></generic-input>
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>
+<button matTooltip="Ajouter une ligne de facturation" mat-fab color="accent" class="second-fab-button"
+  (click)="addInvoiceItem()">
+  <mat-icon>add</mat-icon>
+</button>
+<button matTooltip="Enregistrer la facture" mat-fab color="warn" class="fab-button" (click)="saveInvoice()">
+  <mat-icon>save</mat-icon>
+</button>

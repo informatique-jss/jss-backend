@@ -40,7 +40,13 @@
             <td>
               <generic-input [(model)]="domiciliation.address" label="Adresse" [form]="domiciliationForm"
                 propertyName="address" [isMandatory]="true" [isDisabled]="!editMode"
-                [conditionnalRequired]="mustDecribeAdresse() && !isStatusOpen" [maxLength]="20"></generic-input>
+                [conditionnalRequired]="mustDecribeAdresse() && !isStatusOpen" [maxLength]="60"></generic-input>
+            </td>
+            <td>
+              <autocomplete-postal-code [(model)]="domiciliation.postalCode" [form]="domiciliationForm"
+                propertyName="postalCode" [isMandatory]="true"
+                [conditionnalRequired]="mustDecribeAdresse() && !isStatusOpen" (onOptionSelected)="fillCity($event)">
+              </autocomplete-postal-code>
             </td>
             <td>
               <autocomplete-city [(model)]="domiciliation.city" [modelCountry]="domiciliation.country"
@@ -48,12 +54,6 @@
                 [conditionnalRequired]="mustDecribeAdresse() && !isStatusOpen"
                 (onOptionSelected)="fillPostalCode($event)">
               </autocomplete-city>
-            </td>
-            <td>
-              <autocomplete-postal-code [(model)]="domiciliation.postalCode" [form]="domiciliationForm"
-                propertyName="postalCode" [isMandatory]="true"
-                [conditionnalRequired]="mustDecribeAdresse() && !isStatusOpen" (onOptionSelected)="fillCity($event)">
-              </autocomplete-postal-code>
             </td>
             <td>
               <autocomplete-country [(model)]="domiciliation.country" [form]="domiciliationForm" propertyName="country"
@@ -110,15 +110,8 @@
               <generic-input [(model)]="domiciliation.activityAddress" label="Adresse" [form]="domiciliationForm"
                 propertyName="activityAddress" [isMandatory]="true"
                 [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode"
-                [maxLength]="20">
+                [maxLength]="60">
               </generic-input>
-            </td>
-            <td>
-              <autocomplete-city [(model)]="domiciliation.activityCity" [modelCountry]="domiciliation.activityCountry"
-                [form]="domiciliationForm" propertyName="activityCity" [isMandatory]="true"
-                [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen"
-                (onOptionSelected)="fillActivityPostalCode($event)">
-              </autocomplete-city>
             </td>
             <td>
               <autocomplete-postal-code [(model)]="domiciliation.activityPostalCode" [form]="domiciliationForm"
@@ -126,6 +119,13 @@
                 [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen"
                 (onOptionSelected)="fillActivityCity($event)">
               </autocomplete-postal-code>
+            </td>
+            <td>
+              <autocomplete-city [(model)]="domiciliation.activityCity" [modelCountry]="domiciliation.activityCountry"
+                [form]="domiciliationForm" propertyName="activityCity" [isMandatory]="true"
+                [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen"
+                (onOptionSelected)="fillActivityPostalCode($event)">
+              </autocomplete-city>
             </td>
             <td>
               <autocomplete-country [(model)]="domiciliation.activityCountry" [form]="domiciliationForm"
@@ -258,8 +258,15 @@
               <generic-input [(model)]="domiciliation.legalGardianAddress" label="Adresse" [form]="domiciliationForm"
                 propertyName="legalGardianAddress" [isMandatory]="true"
                 [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode"
-                [maxLength]="20">
+                [maxLength]="60">
               </generic-input>
+            </td>
+            <td>
+              <autocomplete-postal-code [(model)]="domiciliation.legalGardianPostalCode" [form]="domiciliationForm"
+                propertyName="legalGardianPostalCode" [isMandatory]="true"
+                [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen"
+                (onOptionSelected)="fillLegalGardianCity($event)">
+              </autocomplete-postal-code>
             </td>
             <td>
               <autocomplete-city [(model)]="domiciliation.legalGardianCity"
@@ -268,13 +275,6 @@
                 [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen"
                 (onOptionSelected)="fillLegalGardianPostalCode($event)">
               </autocomplete-city>
-            </td>
-            <td>
-              <autocomplete-postal-code [(model)]="domiciliation.legalGardianPostalCode" [form]="domiciliationForm"
-                propertyName="legalGardianPostalCode" [isMandatory]="true"
-                [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen"
-                (onOptionSelected)="fillLegalGardianCity($event)">
-              </autocomplete-postal-code>
             </td>
             <td>
               <autocomplete-country [(model)]="domiciliation.legalGardianCountry" [form]="domiciliationForm"

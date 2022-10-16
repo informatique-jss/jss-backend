@@ -6,7 +6,6 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -14,7 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jss.osiris.libs.JacksonLocalDateSerializer;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
@@ -36,8 +35,8 @@ public class BillingItem implements Serializable, IId {
 	@JsonSerialize(using = JacksonLocalDateSerializer.class)
 	private LocalDate startDate;
 
-	@OneToMany(targetEntity = AccountingAccount.class, mappedBy = "billingItem", fetch = FetchType.EAGER)
-	@JsonManagedReference("accountingAccount")
+	@OneToMany(targetEntity = AccountingAccount.class, mappedBy = "billingItem")
+	@JsonIgnoreProperties(value = { "billingItem" }, allowSetters = true)
 	private List<AccountingAccount> accountingAccounts;
 
 	public Integer getId() {

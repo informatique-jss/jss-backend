@@ -45,7 +45,7 @@
             <td>
               <generic-input [(model)]="selectedEntity.accountingAccountSubNumber" label="N° de sous-compte comptable"
                 [form]="entityForm" propertyName="accountingAccountSubNumber" [isMandatory]="true"
-                [isDisabled]="!editMode" type="number"></generic-input>
+                [isDisabled]="!editMode" [maxLength]="20"></generic-input>
             </td>
           </tr>
         </table>

@@ -1,12 +1,10 @@
 package com.jss.osiris.modules.quotation.model;
 
-import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -15,25 +13,20 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jss.osiris.libs.JacksonLocalDateSerializer;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
+import com.jss.osiris.modules.miscellaneous.model.IAttachment;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.miscellaneous.model.PaymentType;
 
 @Entity
-public class Bodacc implements Serializable, IId {
+public class Bodacc implements IId, IAttachment {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "bodacc_sequence")
 	private Integer id;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_provision")
-	@JsonBackReference("provision")
-	private Provision provision;
 
 	@ManyToOne
 	@JoinColumn(name = "id_payment_type")
@@ -47,17 +40,17 @@ public class Bodacc implements Serializable, IId {
 	@JoinColumn(name = "id_transfert_funds_type")
 	private TransfertFundsType transfertFundsType;
 
-	@OneToOne(targetEntity = BodaccSale.class, cascade = CascadeType.ALL)
+	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
 	private BodaccSale bodaccSale;
 
-	@OneToOne(targetEntity = BodaccFusion.class, cascade = CascadeType.ALL)
+	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
 	private BodaccFusion bodaccFusion;
 
-	@OneToOne(targetEntity = BodaccSplit.class, cascade = CascadeType.ALL)
+	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
 	private BodaccSplit bodaccSplit;
 
-	@OneToMany(targetEntity = Attachment.class, mappedBy = "bodacc", cascade = CascadeType.ALL)
-	@JsonManagedReference("bodacc")
+	@OneToMany(mappedBy = "bodacc")
+	@JsonIgnoreProperties(value = { "bodacc" }, allowSetters = true)
 	private List<Attachment> attachments;
 
 	@JsonSerialize(using = JacksonLocalDateSerializer.class)
@@ -109,14 +102,6 @@ public class Bodacc implements Serializable, IId {
 
 	public void setId(Integer id) {
 		this.id = id;
-	}
-
-	public Provision getProvision() {
-		return provision;
-	}
-
-	public void setProvision(Provision provision) {
-		this.provision = provision;
 	}
 
 	public BodaccPublicationType getBodaccPublicationType() {

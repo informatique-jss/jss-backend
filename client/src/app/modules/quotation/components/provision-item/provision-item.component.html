@@ -12,17 +12,29 @@
         [isDisabled]="!editMode"></select-provision-type>
     </td>
   </tr>
+  <tr *ngIf="instanceOfCustomerOrder && provision && provision.id">
+    <td colspan="2">
+      <autocomplete-employee [(model)]="provision.assignedTo" [form]="provisionItemForm" propertyName="assignedTo"
+        [isMandatory]="true" [isDisabled]="false" label="Prestation assignée à"
+        (onOptionSelected)="updateAssignedToForProvision($event,provision)">
+      </autocomplete-employee>
+    </td>
+  </tr>
 </table>
 <domiciliation [domiciliation]="provision.domiciliation" [editMode]="editMode" [isStatusOpen]="isStatusOpen"
   [instanceOfCustomerOrder]="instanceOfCustomerOrder" [provision]="provision"
-  *ngIf="provision.domiciliation && provision.provisionType &&  provision.provisionType.code==PROVISION_TYPE_DOMICILIATION_CODE">
+  *ngIf="provision.domiciliation && provision.provisionType &&  provision.provisionType.provisionScreenType.code==PROVISION_SCREEN_TYPE_DOMICILIATION">
 </domiciliation>
 <announcement [announcement]="provision.announcement" [editMode]="editMode" [provision]="provision"
   [instanceOfCustomerOrder]="instanceOfCustomerOrder" [isStatusOpen]="isStatusOpen" (noticeChange)="noticeChange()"
-  *ngIf="provision.announcement && provision.provisionType && provision.provisionType.code==PROVISION_TYPE_ANNOUNCEMENT_CODE"
+  *ngIf="provision.announcement && provision.provisionType && provision.provisionType.provisionScreenType.code==PROVISION_SCREEN_TYPE_ANNOUNCEMENT">
   [affaire]="affaire">
 </announcement>
 <bodacc-main [bodacc]="provision.bodacc" [affaire]="affaire" [editMode]="editMode" [isStatusOpen]="isStatusOpen"
   [instanceOfCustomerOrder]="instanceOfCustomerOrder" [provision]="provision"
-  *ngIf="provision.bodacc && provision.provisionType && provision.provisionType.code==PROVISION_TYPE_BODACC_CODE">
+  *ngIf="provision.bodacc && provision.provisionType && provision.provisionType.provisionScreenType.code==PROVISION_SCREEN_TYPE_BODACC">
 </bodacc-main>
+<div
+  *ngIf="provision.bodacc && provision.provisionType && provision.provisionType.provisionScreenType.code==PROVISION_SCREEN_TYPE_STANDARD">
+  Ecran standard, todo ...
+</div>

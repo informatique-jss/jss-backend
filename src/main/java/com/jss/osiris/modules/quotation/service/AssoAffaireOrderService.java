@@ -1,0 +1,22 @@
+package com.jss.osiris.modules.quotation.service;
+
+import java.util.List;
+
+import com.jss.osiris.modules.profile.model.Employee;
+import com.jss.osiris.modules.quotation.model.AffaireSearch;
+import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
+
+public interface AssoAffaireOrderService {
+    public List<AssoAffaireOrder> getAssoAffaireOrders();
+
+    public AssoAffaireOrder getAssoAffaireOrder(Integer id);
+
+    public AssoAffaireOrder addOrUpdateAssoAffaireOrder(AssoAffaireOrder assoAffaireOrder);
+
+    public void updateAssignedToForAsso(AssoAffaireOrder asso, Employee employee);
+
+    public List<AssoAffaireOrder> searchForAsso(AffaireSearch affaireSearch);
+
+    public void reindexAffaires();
+
+}

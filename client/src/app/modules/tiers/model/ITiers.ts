@@ -27,5 +27,4 @@ export interface ITiers extends IAttachment, IDocument {
   accountingAccountCustomer: AccountingAccount;
   accountingAccountProvider: AccountingAccount;
   accountingAccountDeposit: AccountingAccount;
-
 }

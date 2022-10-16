@@ -6,7 +6,6 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -39,16 +38,18 @@ public class Payment implements Serializable, IId {
 	@JoinColumn(name = "id_payment_way")
 	private PaymentWay paymentWay;
 
-	@OneToMany(mappedBy = "payment", fetch = FetchType.EAGER)
-	@JsonIgnoreProperties("payment")
+	@OneToMany(mappedBy = "payment")
+	@JsonIgnoreProperties(value = { "payment" }, allowSetters = true)
 	private List<AccountingRecord> accountingRecords;
 
 	@ManyToOne
 	@JoinColumn(name = "id_invoice")
+	@JsonIgnoreProperties(value = { "payments" }, allowSetters = true)
 	private Invoice invoice;
 
 	@ManyToOne
 	@JoinColumn(name = "id_customer_order")
+	@JsonIgnoreProperties(value = { "payments" }, allowSetters = true)
 	private CustomerOrder customerOrder;
 
 	public Integer getId() {

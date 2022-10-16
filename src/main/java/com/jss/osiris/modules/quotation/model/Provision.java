@@ -4,9 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -15,57 +13,54 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.miscellaneous.model.IId;
+import com.jss.osiris.modules.profile.model.Employee;
 
 @Entity
 public class Provision implements Serializable, IId {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "provision_sequence")
 	private Integer id;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_quotation")
-	@JsonBackReference("quotation")
-	private Quotation quotation;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_customer_order")
-	@JsonBackReference("customerOrder")
-	private CustomerOrder customerOrder;
+	@ManyToOne
+	@JoinColumn(name = "id_asso_affaire_order")
+	@JsonIgnoreProperties(value = { "provisions" }, allowSetters = true)
+	private AssoAffaireOrder assoAffaireOrder;
 
 	@ManyToOne
 	@JoinColumn(name = "id_provision_type")
+	@IndexedField
 	private ProvisionType provisionType;
 
 	@ManyToOne
 	@JoinColumn(name = "id_provision_family_type")
+	@IndexedField
 	private ProvisionFamilyType provisionFamilyType;
 
-	@OneToOne
-	@JoinColumn(name = "id_affaire")
-	private Affaire affaire;
-
-	@OneToOne(targetEntity = Domiciliation.class, mappedBy = "provision", cascade = CascadeType.ALL, orphanRemoval = true)
-	@JsonManagedReference("provision")
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "id_domiciliation")
 	private Domiciliation domiciliation;
 
-	@OneToOne(targetEntity = Announcement.class, mappedBy = "provision", cascade = CascadeType.ALL, orphanRemoval = true)
-	@JsonManagedReference("provision")
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "id_announcement")
 	private Announcement announcement;
 
-	@OneToOne(targetEntity = Bodacc.class, mappedBy = "provision", cascade = CascadeType.ALL, orphanRemoval = true)
-	@JsonManagedReference("provision")
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "id_bodacc")
 	private Bodacc bodacc;
 
-	@Column(nullable = false)
-	private Boolean isValidated;
-
-	@OneToMany(targetEntity = InvoiceItem.class, mappedBy = "provision", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@OneToMany(targetEntity = InvoiceItem.class, mappedBy = "provision", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonIgnoreProperties(value = { "provision" }, allowSetters = true)
 	private List<InvoiceItem> invoiceItems;
+
+	@ManyToOne
+	@JoinColumn(name = "id_employee")
+	@IndexedField
+	private Employee assignedTo;
 
 	public Integer getId() {
 		return id;
@@ -75,28 +70,12 @@ public class Provision implements Serializable, IId {
 		this.id = id;
 	}
 
-	public Quotation getQuotation() {
-		return quotation;
+	public AssoAffaireOrder getAssoAffaireOrder() {
+		return assoAffaireOrder;
 	}
 
-	public Affaire getAffaire() {
-		return affaire;
-	}
-
-	public void setAffaire(Affaire affaire) {
-		this.affaire = affaire;
-	}
-
-	public CustomerOrder getCustomerOrder() {
-		return customerOrder;
-	}
-
-	public void setCustomerOrder(CustomerOrder customerOrder) {
-		this.customerOrder = customerOrder;
-	}
-
-	public void setQuotation(Quotation quotation) {
-		this.quotation = quotation;
+	public void setAssoAffaireOrder(AssoAffaireOrder assoAffaireOrder) {
+		this.assoAffaireOrder = assoAffaireOrder;
 	}
 
 	public ProvisionType getProvisionType() {
@@ -139,20 +118,20 @@ public class Provision implements Serializable, IId {
 		this.bodacc = bodacc;
 	}
 
-	public Boolean getIsValidated() {
-		return isValidated;
-	}
-
-	public void setIsValidated(Boolean isValidated) {
-		this.isValidated = isValidated;
-	}
-
 	public List<InvoiceItem> getInvoiceItems() {
 		return invoiceItems;
 	}
 
 	public void setInvoiceItems(List<InvoiceItem> invoiceItems) {
 		this.invoiceItems = invoiceItems;
+	}
+
+	public Employee getAssignedTo() {
+		return assignedTo;
+	}
+
+	public void setAssignedTo(Employee assignedTo) {
+		this.assignedTo = assignedTo;
 	}
 
 }

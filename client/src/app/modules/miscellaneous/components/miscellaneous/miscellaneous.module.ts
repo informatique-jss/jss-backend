@@ -30,7 +30,6 @@ import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.compone
 import { ConfrereDialogComponent } from '../confreres-dialog/confreres-dialog.component';
 import { AutocompleteAccountingAccountComponent } from '../forms/autocomplete-accounting-account/autocomplete-accounting-account.component';
 import { AutocompleteAffaireComponent } from '../forms/autocomplete-affaire/autocomplete-affaire.component';
-import { AutocompleteBillingCenterComponent } from '../forms/autocomplete-billing-center/autocomplete-billing-center.component';
 import { AutocompleteCityComponent } from '../forms/autocomplete-city/autocomplete-city.component';
 import { AutocompleteCompetentAuthorityComponent } from '../forms/autocomplete-competent-authority/autocomplete-competent-authority.component';
 import { AutocompleteConfrereComponent } from '../forms/autocomplete-confrere/autocomplete-confrere.component';
@@ -41,6 +40,7 @@ import { AutocompleteFormalisteEmployeeComponent } from '../forms/autocomplete-f
 import { AutocompleteInsertionEmployeeComponent } from '../forms/autocomplete-insertion-employee/autocomplete-insertion-employee.component';
 import { AutocompleteLegalFormComponent } from '../forms/autocomplete-legal-form/autocomplete-legal-form.component';
 import { AutocompletePostalCodeComponent } from '../forms/autocomplete-postal-code/autocomplete-postal-code.component';
+import { AutocompleteRegieComponent } from '../forms/autocomplete-regie/autocomplete-regie.component';
 import { AutocompleteRegionComponent } from '../forms/autocomplete-region/autocomplete-region.component';
 import { AutocompleteResponsableComponent } from '../forms/autocomplete-responsable/autocomplete-responsable.component';
 import { AutocompleteRnaComponent } from '../forms/autocomplete-rna/autocomplete-rna.component';
@@ -53,6 +53,7 @@ import { ChipsCompetitorComponent } from '../forms/chips-competitor/chips-compet
 import { ChipsConfrereComponent } from '../forms/chips-confrere/chips-confrere.component';
 import { ChipsMailComponent } from '../forms/chips-mail/chips-mail.component';
 import { ChipsPhoneComponent } from '../forms/chips-phone/chips-phone.component';
+import { ChipsProvisionFamilyTypeComponent } from '../forms/chips-provision-family/chips-provision-family.component';
 import { ChipsSpecialOffersComponent } from '../forms/chips-special-offers/chips-special-offers.component';
 import { GenericCheckboxComponent } from '../forms/generic-checkbox/generic-checkbox.component';
 import { GenericDateRangePickerComponent } from '../forms/generic-date-range-picker/generic-date-range-picker.component';
@@ -72,6 +73,8 @@ import { RadioGroupRecordTypeComponent } from '../forms/radio-group-record-type/
 import { RadioGroupTransfertFundsComponent } from '../forms/radio-group-transfert-funds/radio-group-transfert-funds.component';
 import { SelectAccountingAccountClassComponent } from '../forms/select-accounting-account-class/select-accounting-account-class.component';
 import { SelectAccountingJournalComponent } from '../forms/select-accounting-journal/select-accounting-journal.component';
+import { SelectAffaireStatusComponent } from '../forms/select-affaire-status/select-affaire-status.component';
+import { SelectAssignationTypeComponent } from '../forms/select-assignation-type/select-assignation-type.component';
 import { SelectBillingItemsComponent } from '../forms/select-billing-items/select-billing-items.component';
 import { SelectBillingTypeComponent } from '../forms/select-billing-type/select-billing-type.component';
 import { SelectBodaccPublicationTypeComponent } from '../forms/select-bodacc-publication-type/select-bodacc-publication-type.component';
@@ -92,6 +95,7 @@ import { SelectPaymentDeadlineComponent } from '../forms/select-payment-deadline
 import { SelectPaymentTypesComponent } from '../forms/select-payment-types/select-payment-types.component';
 import { SelectPaymentWayComponent } from '../forms/select-payment-way/select-payment-way.component';
 import { SelectProvisionFamilyComponent } from '../forms/select-provision-family/select-provision-familiy.component';
+import { SelectProvisionScreenTypeComponent } from '../forms/select-provision-screen-type/select-provision-screen-type.component';
 import { SelectProvisionTypeComponent } from '../forms/select-provision-type/select-provision-type.component';
 import { SelectOrderingStatusComponent as SelectQuotationStatusComponent } from '../forms/select-quotation-status/select-quotation-status.component';
 import { SelectRefundTypeComponent } from '../forms/select-refund-type/select-refund-type.component';
@@ -189,13 +193,14 @@ import { MiscellaneousComponent } from './miscellaneous.component';
     RadioGroupTransfertFundsComponent,
     SelectDepartmentsComponent,
     RadioGroupActTypeComponent,
+    SelectAssignationTypeComponent,
     RadioGroupRecordTypeComponent,
     AutocompleteCityComponent,
     SelectBillingTypeComponent,
     SelectVatComponent,
     SelectRegionsComponent,
     AutocompleteRegionComponent,
-    AutocompleteBillingCenterComponent,
+    AutocompleteRegieComponent,
     SelectFundTypeComponent,
     ChipsCityComponent,
     AutocompleteDepartmentComponent,
@@ -216,8 +221,11 @@ import { MiscellaneousComponent } from './miscellaneous.component';
     AutocompleteAccountingAccountComponent,
     SelectAccountingJournalComponent,
     SortTableComponent,
+    ChipsProvisionFamilyTypeComponent,
+    SelectProvisionScreenTypeComponent,
     GenericDateRangePickerComponent,
     SelectInvoiceStatusComponent,
+    SelectAffaireStatusComponent,
     ChipsStatusComponent,
     SelectQuotationStatusComponent,
     SelectPaymentWayComponent,
@@ -281,6 +289,7 @@ import { MiscellaneousComponent } from './miscellaneous.component';
     SelectBillingItemsComponent,
     SelectQuotationStatusComponent,
     RadioGroupBillingLabelComponent,
+    SelectProvisionScreenTypeComponent,
     SelectResponsableComponent,
     SelectSubscriptionPeriodComponent,
     RadioGroupBillingClosureRecipientComponent,
@@ -306,8 +315,11 @@ import { MiscellaneousComponent } from './miscellaneous.component';
     SingleAttachmentComponent,
     SortTableComponent,
     SelectInvoiceStatusComponent,
-    AutocompleteBillingCenterComponent,
+    AutocompleteRegieComponent,
+    SelectAssignationTypeComponent,
+    ChipsProvisionFamilyTypeComponent,
     SelectPaymentWayComponent,
+    SelectAffaireStatusComponent,
   ]
 })
 export class MiscellaneousModule { }

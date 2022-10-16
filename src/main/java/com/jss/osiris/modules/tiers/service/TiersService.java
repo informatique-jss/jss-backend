@@ -13,4 +13,6 @@ public interface TiersService {
 
     public List<Tiers> getIndividualTiersByKeyword(String searchedValue);
 
+    public void reindexTiers();
+
 }

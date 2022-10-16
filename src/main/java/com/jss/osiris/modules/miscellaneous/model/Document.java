@@ -3,10 +3,8 @@ package com.jss.osiris.modules.miscellaneous.model;
 import java.io.Serializable;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -17,7 +15,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.Quotation;
@@ -30,38 +28,37 @@ import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
 @Entity
-@Table(indexes = { @Index(name = "pk_tiers_document", columnList = "id", unique = true),
-		@Index(name = "idx_tiers_document", columnList = "id_tiers"),
+@Table(indexes = { @Index(name = "idx_tiers_document", columnList = "id_tiers"),
 		@Index(name = "idx_responsable_document", columnList = "id_responsable") })
 public class Document implements Serializable, IId {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "document_sequence")
 	private Integer id;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name = "id_tiers")
-	@JsonBackReference("tiers")
+	@JsonIgnoreProperties(value = { "documents" }, allowSetters = true)
 	private Tiers tiers;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name = "id_confrere")
-	@JsonBackReference("confrere")
+	@JsonIgnoreProperties(value = { "documents" }, allowSetters = true)
 	private Confrere confrere;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name = "id_responsable")
-	@JsonBackReference("responsable")
+	@JsonIgnoreProperties(value = { "documents" }, allowSetters = true)
 	private Responsable responsable;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name = "id_quotation")
-	@JsonBackReference("quotation")
+	@JsonIgnoreProperties(value = { "documents" }, allowSetters = true)
 	private Quotation quotation;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name = "id_customer_order")
-	@JsonBackReference("customerOrder")
+	@JsonIgnoreProperties(value = { "documents" }, allowSetters = true)
 	private CustomerOrder customerOrder;
 
 	@ManyToOne
@@ -91,7 +88,7 @@ public class Document implements Serializable, IId {
 	@JoinColumn(name = "id_billing_label_type")
 	private BillingLabelType billingLabelType;
 
-	@ManyToMany(cascade = CascadeType.ALL)
+	@ManyToMany
 	@JoinTable(name = "asso_document_mail_client", joinColumns = @JoinColumn(name = "id_tiers_document"), inverseJoinColumns = @JoinColumn(name = "id_mail"))
 	private List<Mail> mailsClient;
 
@@ -99,7 +96,7 @@ public class Document implements Serializable, IId {
 	@JoinTable(name = "asso_document_mail_cc_responsable_client", joinColumns = @JoinColumn(name = "id_tiers_document"), inverseJoinColumns = @JoinColumn(name = "id_responsable"))
 	private List<Responsable> mailsCCResponsableClient;
 
-	@ManyToMany(cascade = CascadeType.ALL)
+	@ManyToMany
 	@JoinTable(name = "asso_document_mail_affaire", joinColumns = @JoinColumn(name = "id_tiers_document"), inverseJoinColumns = @JoinColumn(name = "id_mail"))
 	private List<Mail> mailsAffaire;
 
@@ -134,9 +131,28 @@ public class Document implements Serializable, IId {
 	@JoinColumn(name = "id_billing_closure_recipient_type")
 	private BillingClosureRecipientType billingClosureRecipientType;
 
+	@Column(length = 60)
+	private String billingLabel;
+
+	@Column(length = 60)
+	private String billingAddress;
+
+	@Column(length = 60)
+	private String billingPostalCode;
+
 	@ManyToOne
-	@JoinColumn(name = "id_billing_center")
-	private BillingCenter billingCenter;
+	@JoinColumn(name = "id_billing_label_city")
+	private City billingLabelCity;
+
+	@ManyToOne
+	@JoinColumn(name = "id_billing_label_country")
+	private Country billingLabelCountry;
+
+	private Boolean billingLabelIsIndividual;
+
+	@ManyToOne
+	@JoinColumn(name = "id_regie")
+	private Regie regie;
 
 	public Integer getId() {
 		return id;
@@ -386,12 +402,60 @@ public class Document implements Serializable, IId {
 		this.confrere = confrere;
 	}
 
-	public BillingCenter getBillingCenter() {
-		return billingCenter;
+	public String getBillingLabel() {
+		return billingLabel;
 	}
 
-	public void setBillingCenter(BillingCenter billingCenter) {
-		this.billingCenter = billingCenter;
+	public void setBillingLabel(String billingLabel) {
+		this.billingLabel = billingLabel;
+	}
+
+	public String getBillingPostalCode() {
+		return billingPostalCode;
+	}
+
+	public void setBillingPostalCode(String billingPostalCode) {
+		this.billingPostalCode = billingPostalCode;
+	}
+
+	public City getBillingLabelCity() {
+		return billingLabelCity;
+	}
+
+	public void setBillingLabelCity(City billingLabelCity) {
+		this.billingLabelCity = billingLabelCity;
+	}
+
+	public Country getBillingLabelCountry() {
+		return billingLabelCountry;
+	}
+
+	public void setBillingLabelCountry(Country billingLabelCountry) {
+		this.billingLabelCountry = billingLabelCountry;
+	}
+
+	public Boolean getBillingLabelIsIndividual() {
+		return billingLabelIsIndividual;
+	}
+
+	public void setBillingLabelIsIndividual(Boolean billingLabelIsIndividual) {
+		this.billingLabelIsIndividual = billingLabelIsIndividual;
+	}
+
+	public String getBillingAddress() {
+		return billingAddress;
+	}
+
+	public void setBillingAddress(String billingAddress) {
+		this.billingAddress = billingAddress;
+	}
+
+	public Regie getRegie() {
+		return regie;
+	}
+
+	public void setRegie(Regie regie) {
+		this.regie = regie;
 	}
 
 }

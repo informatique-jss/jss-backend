@@ -9,15 +9,14 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jss.osiris.libs.JacksonLocalDateSerializer;
 import com.jss.osiris.libs.search.model.IndexedField;
@@ -37,7 +36,6 @@ import com.jss.osiris.modules.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.profile.model.Employee;
 
 @Entity
-@Table(indexes = { @Index(name = "pk_client", columnList = "id", unique = true) })
 public class Tiers implements ITiers, IAttachment {
 
 	@Id
@@ -72,7 +70,7 @@ public class Tiers implements ITiers, IAttachment {
 	@Column(length = 20)
 	private String intercommunityVat;
 
-	@ManyToMany(cascade = CascadeType.ALL)
+	@ManyToMany
 	@JoinTable(name = "asso_tiers_special_offer", joinColumns = @JoinColumn(name = "id_tiers"), inverseJoinColumns = @JoinColumn(name = "id_special_offer"))
 	private List<SpecialOffer> specialOffers;
 
@@ -85,9 +83,11 @@ public class Tiers implements ITiers, IAttachment {
 	private PaymentType paymentType;
 
 	@Column(length = 40)
+	@JsonProperty("paymentIban")
 	private String paymentIban;
 
 	@Column(length = 40)
+	@JsonProperty("paymentBic")
 	private String paymentBic;
 
 	@Column(nullable = false)
@@ -96,8 +96,8 @@ public class Tiers implements ITiers, IAttachment {
 	@Column(nullable = false)
 	private Boolean isSepaMandateReceived;
 
-	@OneToMany(targetEntity = Responsable.class, mappedBy = "tiers", cascade = CascadeType.ALL)
-	@JsonManagedReference("responsable")
+	@OneToMany(mappedBy = "tiers", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonIgnoreProperties(value = { "tiers" }, allowSetters = true)
 	private List<Responsable> responsables;
 
 	// Common responsable / tiers
@@ -161,27 +161,27 @@ public class Tiers implements ITiers, IAttachment {
 	@Column(columnDefinition = "TEXT")
 	private String observations;
 
-	@ManyToMany(cascade = CascadeType.ALL)
+	@ManyToMany
 	@JoinTable(name = "asso_tiers_mail", joinColumns = @JoinColumn(name = "id_tiers"), inverseJoinColumns = @JoinColumn(name = "id_mail"))
 	private List<Mail> mails;
 
-	@ManyToMany(cascade = CascadeType.ALL)
+	@ManyToMany
 	@JoinTable(name = "asso_tiers_phone", joinColumns = @JoinColumn(name = "id_tiers"), inverseJoinColumns = @JoinColumn(name = "id_phone"))
 	private List<Phone> phones;
 
-	@OneToMany(targetEntity = Document.class, mappedBy = "tiers", cascade = CascadeType.ALL)
-	@JsonManagedReference("tiers")
+	@OneToMany(mappedBy = "tiers", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonIgnoreProperties(value = { "tiers" }, allowSetters = true)
 	private List<Document> documents;
 
-	@OneToMany(targetEntity = Attachment.class, mappedBy = "tiers", cascade = CascadeType.ALL)
-	@JsonManagedReference("tiers")
+	@OneToMany(mappedBy = "tiers")
+	@JsonIgnoreProperties(value = { "tiers" }, allowSetters = true)
 	private List<Attachment> attachments;
 
-	@OneToMany(targetEntity = TiersFollowup.class, mappedBy = "tiers", cascade = CascadeType.ALL)
-	@JsonManagedReference("tiers")
+	@OneToMany(mappedBy = "tiers")
+	@JsonIgnoreProperties(value = { "tiers" }, allowSetters = true)
 	private List<TiersFollowup> tiersFollowups;
 
-	@ManyToMany(cascade = CascadeType.ALL)
+	@ManyToMany
 	@JoinTable(name = "asso_tiers_competitor", joinColumns = @JoinColumn(name = "id_tiers"), inverseJoinColumns = @JoinColumn(name = "id_competitor"))
 	private List<Competitor> competitors;
 

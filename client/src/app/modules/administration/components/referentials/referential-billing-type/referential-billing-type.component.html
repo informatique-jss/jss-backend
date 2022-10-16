@@ -46,6 +46,23 @@
             </td>
           </tr>
         </table>
+        <table class="full-width">
+          <tr>
+            <td>
+              <generic-toggle [(model)]="selectedEntity.isOverrideVat" label="Déroger à la TVA géographique ?"
+                [form]="entityForm" propertyName="isOverrideVat"></generic-toggle>
+            </td>
+            <td *ngIf="selectedEntity.isOverrideVat">
+              <select-vat [(model)]="selectedEntity.vat" label="TVA utilisée" [form]="entityForm" propertyName="vat"
+                [isMandatory]="true" [isDisabled]="!editMode" [conditionnalRequired]="selectedEntity.isOverrideVat">
+              </select-vat>
+            </td>
+            <td>
+              <generic-toggle [(model)]="selectedEntity.isOptionnal" label="Est optionnel ?" [form]="entityForm"
+                propertyName="isOptionnal"></generic-toggle>
+            </td>
+          </tr>
+        </table>
       </fieldset>
     </div>
   </form>

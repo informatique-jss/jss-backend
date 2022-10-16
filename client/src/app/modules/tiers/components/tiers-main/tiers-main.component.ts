@@ -5,10 +5,8 @@ import { isTiersTypeProspect } from 'src/app/libs/CompareHelper';
 import { COUNTRY_CODE_FRANCE } from 'src/app/libs/Constants';
 import { validateVat } from 'src/app/libs/CustomFormsValidatorsHelper';
 import { City } from 'src/app/modules/miscellaneous/model/City';
-import { Country } from 'src/app/modules/miscellaneous/model/Country';
 import { DeliveryService } from 'src/app/modules/miscellaneous/model/DeliveryService';
 import { CityService } from 'src/app/modules/miscellaneous/services/city.service';
-import { CountryService } from 'src/app/modules/miscellaneous/services/country.service';
 import { DeliveryServiceService } from 'src/app/modules/miscellaneous/services/delivery.service.service';
 import { Tiers } from '../../model/Tiers';
 
@@ -28,11 +26,8 @@ export class PrincipalComponent implements OnInit {
 
   deliveryServices: DeliveryService[] = [] as Array<DeliveryService>;
 
-  countries: Country[] = [] as Array<Country>;
-
   constructor(private formBuilder: UntypedFormBuilder,
     private deliveryServiceService: DeliveryServiceService,
-    private countryService: CountryService,
     private cityService: CityService) { }
 
   // TODO : reprendre les RG (notamment facturation / commande) lorsque les modules correspondants seront faits
@@ -41,8 +36,6 @@ export class PrincipalComponent implements OnInit {
     if (changes.tiers != undefined) {
       if (this.tiers.deliveryService == null || this.tiers.deliveryService == undefined)
         this.tiers.deliveryService = this.deliveryServices[0];
-      if (this.tiers.country == null || this.tiers.country == undefined)
-        this.tiers.country = this.countries[0];
       this.principalForm.markAllAsTouched();
     }
   }
@@ -52,17 +45,12 @@ export class PrincipalComponent implements OnInit {
     this.deliveryServiceService.getDeliveryServices().subscribe(response => {
       this.deliveryServices = response;
     })
-    this.countryService.getCountries().subscribe(response => {
-      this.countries = response;
-    })
 
     // Trigger it to show mandatory fields
     this.principalForm.markAllAsTouched();
   }
 
   principalForm = this.formBuilder.group({
-    responsibleSuscribersNumber: [''],
-    webAccountNumber: [''],
   });
 
   checkVAT(fieldName: string): ValidatorFn {

@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
+import { COUNTRY_CODE_FRANCE } from 'src/app/libs/Constants';
 import { Country } from '../../../model/Country';
 import { CountryService } from '../../../services/country.service';
 import { GenericLocalAutocompleteComponent } from '../generic-local-autocomplete/generic-local-autocomplete.component';
@@ -12,6 +13,7 @@ import { GenericLocalAutocompleteComponent } from '../generic-local-autocomplete
 export class AutocompleteCountryComponent extends GenericLocalAutocompleteComponent<Country> implements OnInit {
 
   types: Country[] = [] as Array<Country>;
+  @Input() defaultCountryCode: string = COUNTRY_CODE_FRANCE;
 
   constructor(private formBuild: UntypedFormBuilder, private countryService: CountryService) {
     super(formBuild)
@@ -24,6 +26,12 @@ export class AutocompleteCountryComponent extends GenericLocalAutocompleteCompon
   }
 
   initTypes(): void {
-    this.countryService.getCountries().subscribe(response => this.types = response);
+    this.countryService.getCountries().subscribe(response => {
+      this.types = response;
+      if (this.types)
+        for (let country of this.types)
+          if (country.code == COUNTRY_CODE_FRANCE)
+            this.model = country;
+    });
   }
 }

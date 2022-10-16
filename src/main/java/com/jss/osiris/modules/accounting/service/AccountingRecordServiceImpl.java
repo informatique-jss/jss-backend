@@ -7,12 +7,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +32,7 @@ import com.jss.osiris.modules.invoicing.model.Refund;
 import com.jss.osiris.modules.invoicing.service.InvoiceItemService;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.miscellaneous.service.VatService;
+import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.service.QuotationService;
@@ -71,13 +70,11 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   QuotationService quotationService;
 
   @Override
-  @Cacheable(value = "accountingRecordList", key = "#root.methodName")
   public List<AccountingRecord> getAccountingRecords() {
     return IterableUtils.toList(accountingRecordRepository.findAll());
   }
 
   @Override
-  @Cacheable(value = "accountingRecord", key = "#id")
   public AccountingRecord getAccountingRecord(Integer id) {
     Optional<AccountingRecord> accountingRecord = accountingRecordRepository.findById(id);
     if (accountingRecord.isPresent())
@@ -86,13 +83,30 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   }
 
   @Override
-  @Caching(evict = {
-      @CacheEvict(value = "accountingRecordList", allEntries = true),
-      @CacheEvict(value = "accountingRecord", key = "#accountingRecord.id")
-  })
+  @Transactional(rollbackFor = Exception.class)
+  public AccountingRecord addOrUpdateAccountingRecordFromUser(
+      AccountingRecord accountingRecord) {
+    return addOrUpdateAccountingRecord(accountingRecord);
+  }
+
+  @Override
   public AccountingRecord addOrUpdateAccountingRecord(
       AccountingRecord accountingRecord) {
     return accountingRecordRepository.save(accountingRecord);
+  }
+
+  @Override
+  @Transactional(rollbackFor = Exception.class)
+  public List<AccountingRecord> addOrUpdateAccountingRecords(List<AccountingRecord> accountingRecords) {
+    Integer operationId = ThreadLocalRandom.current().nextInt(1, 1000000000);
+    for (AccountingRecord accountingRecord : accountingRecords) {
+      accountingRecord.setOperationDateTime(LocalDateTime.now());
+      accountingRecord.setTemporaryOperationId(operationId);
+      accountingRecord.setIsTemporary(true);
+      accountingRecord.setIsANouveau(false);
+      addOrUpdateAccountingRecord(accountingRecord);
+    }
+    return accountingRecords;
   }
 
   public void generateAccountingRecordsForSaleOnInvoiceGeneration(Invoice invoice) throws Exception {
@@ -639,12 +653,16 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     if (customerOrder != null) {
       Float total = 0f;
       // Total of items
-      if (customerOrder.getProvisions() != null && customerOrder.getProvisions().size() > 0) {
-        for (Provision provision : customerOrder.getProvisions()) {
-          if (provision.getInvoiceItems() != null && provision.getInvoiceItems().size() > 0) {
-            for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
-              total += invoiceItem.getPreTaxPrice() + invoiceItem.getVatPrice()
-                  - invoiceItem.getDiscountAmount();
+      if (customerOrder.getAssoAffaireOrders() != null) {
+        for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders()) {
+          if (assoAffaireOrder.getProvisions() != null) {
+            for (Provision provision : assoAffaireOrder.getProvisions()) {
+              if (provision.getInvoiceItems() != null && provision.getInvoiceItems().size() > 0) {
+                for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
+                  total += invoiceItem.getPreTaxPrice() + invoiceItem.getVatPrice()
+                      - invoiceItem.getDiscountAmount();
+                }
+              }
             }
           }
         }
@@ -680,6 +698,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   }
 
   @Override
+  @Transactional(rollbackFor = Exception.class)
   public List<AccountingRecord> deleteRecordsByTemporaryOperationId(Integer temporaryOperationId) throws Exception {
     List<AccountingRecord> accountingRecords = getAccountingRecordsByTemporaryOperationId(temporaryOperationId);
 
@@ -698,6 +717,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   }
 
   @Override
+  @Transactional(rollbackFor = Exception.class)
   public List<AccountingRecord> doCounterPartByOperationId(Integer operationId) throws Exception {
     List<AccountingRecord> accountingRecords = getAccountingRecordsByOperationId(operationId);
 
@@ -707,4 +727,5 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     }
     return null;
   }
+
 }

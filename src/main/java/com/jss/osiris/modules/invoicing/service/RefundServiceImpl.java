@@ -6,9 +6,6 @@ import java.util.Optional;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
@@ -30,13 +27,11 @@ public class RefundServiceImpl implements RefundService {
     AccountingRecordService accountingRecordService;
 
     @Override
-    @Cacheable(value = "refundList", key = "#root.methodName")
     public List<Refund> getRefunds() {
         return IterableUtils.toList(refundRepository.findAll());
     }
 
     @Override
-    @Cacheable(value = "refund", key = "#id")
     public Refund getRefund(Integer id) {
         Optional<Refund> refund = refundRepository.findById(id);
         if (refund.isPresent())
@@ -45,10 +40,6 @@ public class RefundServiceImpl implements RefundService {
     }
 
     @Override
-    @Caching(evict = {
-            @CacheEvict(value = "refundList", allEntries = true),
-            @CacheEvict(value = "refund", key = "#refund.id")
-    })
     public Refund addOrUpdateRefund(
             Refund refund) {
         return refundRepository.save(refund);

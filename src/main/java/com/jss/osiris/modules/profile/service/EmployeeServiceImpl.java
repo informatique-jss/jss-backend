@@ -77,4 +77,12 @@ public class EmployeeServiceImpl implements EmployeeService {
             }
         }
     }
+
+    @Override
+    public Employee getCurrentUser() {
+        String username = activeDirectoryHelper.getCurrentUsername();
+        if (username != null)
+            return employeeRepository.findByUsername(username);
+        return null;
+    }
 }

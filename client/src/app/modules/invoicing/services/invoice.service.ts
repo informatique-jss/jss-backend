@@ -10,12 +10,12 @@ import { InvoiceSearch } from '../model/InvoiceSearch';
 })
 export class InvoiceService extends AppRestService<Invoice>{
 
-  constructor(http: HttpClient) {
-    super(http, "invoicing");
+  saveInvoice(invoice: Invoice) {
+    return this.postItem(new HttpParams(), "invoice", invoice, "Facture enregistrée", "Erreur lors de l'enregistrement de la facture");
   }
 
-  addOrUpdateInvoice(invoice: Invoice) {
-    return this.addOrUpdate(new HttpParams(), "invoice", invoice, "Enregistré", "Erreur lors de l'enregistrement");
+  constructor(http: HttpClient) {
+    super(http, "invoicing");
   }
 
   getInvoiceForCustomerOrder(customerOrder: IQuotation) {

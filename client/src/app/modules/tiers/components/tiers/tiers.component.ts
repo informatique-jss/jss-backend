@@ -111,7 +111,7 @@ export class TiersComponent implements OnInit {
     if (!principalFormStatus)
       errorMessages.push("Onglet Fiche du tiers");
     if (!this.isTiersTypeProspect() && !documentSettlementBillingFormStatus)
-      errorMessages.push("Onglet Réglement, facturation & relance");
+      errorMessages.push("Onglet Pièces, réglements, facturations & relances");
     if (!responsableMainComponentFormStatus)
       errorMessages.push("Onglet Responsable");
     if (errorMessages.length > 0) {

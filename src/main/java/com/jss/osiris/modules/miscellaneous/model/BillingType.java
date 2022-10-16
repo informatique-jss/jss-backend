@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class BillingType implements Serializable, IId {
@@ -26,6 +28,14 @@ public class BillingType implements Serializable, IId {
 
 	@Column(nullable = false)
 	private Boolean isPriceBasedOnCharacterNumber;
+
+	private Boolean isOverrideVat;
+
+	private Boolean isOptionnal;
+
+	@ManyToOne
+	@JoinColumn(name = "id_vat")
+	private Vat vat;
 
 	public Integer getId() {
 		return id;
@@ -65,6 +75,30 @@ public class BillingType implements Serializable, IId {
 
 	public void setIsPriceBasedOnCharacterNumber(Boolean isPriceBasedOnCharacterNumber) {
 		this.isPriceBasedOnCharacterNumber = isPriceBasedOnCharacterNumber;
+	}
+
+	public Boolean getIsOverrideVat() {
+		return isOverrideVat;
+	}
+
+	public void setIsOverrideVat(Boolean isOverrideVat) {
+		this.isOverrideVat = isOverrideVat;
+	}
+
+	public Vat getVat() {
+		return vat;
+	}
+
+	public void setVat(Vat vat) {
+		this.vat = vat;
+	}
+
+	public Boolean getIsOptionnal() {
+		return isOptionnal;
+	}
+
+	public void setIsOptionnal(Boolean isOptionnal) {
+		this.isOptionnal = isOptionnal;
 	}
 
 }

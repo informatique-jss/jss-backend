@@ -283,7 +283,7 @@ public class InvoicingController {
     }
 
     @GetMapping(inputEntryPoint + "/invoice")
-    public ResponseEntity<Invoice> getTiersById(@RequestParam Integer id) {
+    public ResponseEntity<Invoice> getInvoiceById(@RequestParam Integer id) {
         Invoice invoice = null;
         if (id == null)
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -340,31 +340,6 @@ public class InvoicingController {
             return new ResponseEntity<InvoiceStatus>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<InvoiceStatus>(outInvoiceStatus, HttpStatus.OK);
-    }
-
-    @PostMapping(inputEntryPoint + "/invoice")
-    public ResponseEntity<Invoice> addOrUpdateInvoice(
-            @RequestBody Invoice invoice) {
-        Invoice outInvoice;
-        try {
-            if (invoice.getId() != null)
-                validationHelper.validateReferential(invoice, true);
-            validationHelper.validateDateTime(invoice.getCreatedDate(), true);
-
-            outInvoice = invoiceService
-                    .addOrUpdateInvoice(invoice);
-        } catch (
-
-        ResponseStatusException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching invoice", e);
-            return new ResponseEntity<Invoice>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching invoice", e);
-            return new ResponseEntity<Invoice>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<Invoice>(outInvoice, HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/invoice/customer-order")

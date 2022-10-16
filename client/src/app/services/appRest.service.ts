@@ -28,6 +28,12 @@ export abstract class AppRestService<T> {
     return this._http.post(AppRestService.serverUrl + this.entryPoint + "/" + api, item, { params, context }) as Observable<T[]>;
   }
 
+  postItem(params: HttpParams, api: string, item?: any, successfulMessage: string = "", errorMessage: string = ""): Observable<T> {
+    let context: HttpContext = new HttpContext();
+    context.set(this.successfulToken, successfulMessage).set(this.errorToken, errorMessage);
+    return this._http.post(AppRestService.serverUrl + this.entryPoint + "/" + api, item, { params, context }) as Observable<T>;
+  }
+
   getById(api: string, id: number, successfulMessage: string = "", errorMessage: string = ""): Observable<T> {
     let params = new HttpParams().set('id', id);
     let context: HttpContext = new HttpContext();

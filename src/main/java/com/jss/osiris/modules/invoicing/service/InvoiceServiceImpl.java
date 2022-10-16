@@ -8,9 +8,6 @@ import java.util.Optional;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
 import com.jss.osiris.libs.search.service.IndexEntityService;
@@ -43,8 +40,8 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Value("${miscellaneous.document.billing.label.type.affaire.code}")
     private String billingLabelAffaireCode;
 
-    @Value("${miscellaneous.document.billing.label.type.billing.center.code}")
-    private String billingLabelBillingCenterCode;
+    @Value("${miscellaneous.document.billing.label.type.other.code}")
+    private String billingLabelBillingOther;
 
     @Value("${invoicing.invoice.status.send.code}")
     private String invoiceStatusSendCode;
@@ -58,7 +55,6 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    @Cacheable(value = "invoice", key = "#id")
     public Invoice getInvoice(Integer id) {
         Optional<Invoice> invoice = invoiceRepository.findById(id);
         if (invoice.isPresent())
@@ -67,9 +63,6 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    @Caching(evict = {
-            @CacheEvict(value = "invoice", key = "#invoice.id")
-    })
     public Invoice addOrUpdateInvoice(
             Invoice invoice) {
         invoiceRepository.save(invoice);
@@ -101,19 +94,34 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoice.setDueDate(LocalDate.now().plusDays(nbrOfDayFromDueDate));
 
         // Defined billing label
-        if (billingLabelBillingCenterCode.equals(billingDocument.getBillingLabelType().getCode())) {
-            invoice.setBillingLabel(billingDocument.getBillingCenter().getLabel());
-            invoice.setBillingLabelAddress(billingDocument.getBillingCenter().getAddress());
-            invoice.setBillingLabelPostalCode(billingDocument.getBillingCenter().getPostalCode());
-            invoice.setBillingLabelCity(billingDocument.getBillingCenter().getCity());
-            invoice.setBillingLabelCountry(billingDocument.getBillingCenter().getCountry());
-            invoice.setBillingLabelIsIndividual(false);
-            invoice.setBillingLabelType(billingDocument.getBillingLabelType());
-            invoice.setIsResponsableOnBilling(billingDocument.getIsResponsableOnBilling());
-            invoice.setIsCommandNumberMandatory(billingDocument.getIsCommandNumberMandatory());
-            invoice.setCommandNumber(billingDocument.getCommandNumber());
+        if (billingLabelBillingOther.equals(billingDocument.getBillingLabelType().getCode())) {
+            if (billingDocument.getRegie() != null) {
+                invoice.setBillingLabel(billingDocument.getRegie().getLabel());
+                invoice.setBillingLabelAddress(billingDocument.getRegie().getAddress());
+                invoice.setBillingLabelPostalCode(billingDocument.getRegie().getPostalCode());
+                invoice.setBillingLabelCity(billingDocument.getRegie().getCity());
+                invoice.setBillingLabelCountry(billingDocument.getRegie().getCountry());
+                invoice.setBillingLabelIsIndividual(false);
+                invoice.setBillingLabelType(billingDocument.getBillingLabelType());
+                invoice.setIsResponsableOnBilling(billingDocument.getIsResponsableOnBilling());
+                invoice.setIsCommandNumberMandatory(billingDocument.getIsCommandNumberMandatory());
+                invoice.setCommandNumber(billingDocument.getCommandNumber());
+            } else {
+                invoice.setBillingLabel(billingDocument.getBillingLabel());
+                invoice.setBillingLabelAddress(billingDocument.getBillingAddress());
+                invoice.setBillingLabelPostalCode(billingDocument.getBillingPostalCode());
+                invoice.setBillingLabelCity(billingDocument.getBillingLabelCity());
+                invoice.setBillingLabelCountry(billingDocument.getBillingLabelCountry());
+                invoice.setBillingLabelIsIndividual(billingDocument.getBillingLabelIsIndividual());
+                invoice.setBillingLabelType(billingDocument.getBillingLabelType());
+                invoice.setIsResponsableOnBilling(billingDocument.getIsResponsableOnBilling());
+                invoice.setIsCommandNumberMandatory(billingDocument.getIsCommandNumberMandatory());
+                invoice.setCommandNumber(billingDocument.getCommandNumber());
+            }
         } else if (billingLabelAffaireCode.equals(billingDocument.getBillingLabelType().getCode())) {
-            Affaire affaire = customerOrder.getProvisions().get(0).getAffaire();
+            if (customerOrder.getAssoAffaireOrders() == null || customerOrder.getAssoAffaireOrders().size() == 0)
+                throw new Exception("No affaire in the customer order " + customerOrder.getId());
+            Affaire affaire = customerOrder.getAssoAffaireOrders().get(0).getAffaire();
             invoice.setBillingLabel(affaire.getIsIndividual() ? affaire.getFirstname() + " " + affaire.getLastname()
                     : affaire.getDenomination());
             invoice.setBillingLabelAddress(affaire.getAddress());

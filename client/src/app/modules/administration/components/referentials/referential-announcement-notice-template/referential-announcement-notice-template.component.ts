@@ -9,7 +9,7 @@ import { GenericReferentialComponent } from '../generic-referential/generic-refe
 @Component({
   selector: 'referential-announcement-notice-template',
   templateUrl: 'referential-announcement-notice-template.component.html',
-  styleUrls: ['./../generic-referential/generic-referential.component.css']
+  styleUrls: ['referential-announcement-notice-template.component.css']
 })
 export class ReferentialAnnouncementNoticeTemplateComponent extends GenericReferentialComponent<AnnouncementNoticeTemplate> implements OnInit {
   constructor(private announcementNoticeTemplateService: AnnouncementNoticeTemplateService,

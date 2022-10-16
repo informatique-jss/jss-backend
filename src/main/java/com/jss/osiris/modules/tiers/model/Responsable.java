@@ -17,8 +17,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jss.osiris.libs.JacksonLocalDateSerializer;
 import com.jss.osiris.libs.search.model.IndexedField;
@@ -35,8 +34,7 @@ import com.jss.osiris.modules.miscellaneous.model.Phone;
 import com.jss.osiris.modules.profile.model.Employee;
 
 @Entity
-@Table(indexes = { @Index(name = "pk_responsable", columnList = "id", unique = true),
-		@Index(name = "idx_responsable_tiers", columnList = "id_tiers") })
+@Table(indexes = { @Index(name = "idx_responsable_tiers", columnList = "id_tiers") })
 public class Responsable implements ITiers, IAttachment {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -46,7 +44,7 @@ public class Responsable implements ITiers, IAttachment {
 	@ManyToOne
 	@JoinColumn(name = "id_tiers")
 	@IndexedField
-	@JsonBackReference("responsable")
+	@JsonIgnoreProperties(value = { "responsables" }, allowSetters = true)
 	private Tiers tiers;
 
 	@Column(nullable = false)
@@ -103,7 +101,7 @@ public class Responsable implements ITiers, IAttachment {
 	@JoinColumn(name = "id_language")
 	private Language language;
 
-	@Column(length = 60, nullable = false)
+	@Column(length = 60)
 	@IndexedField
 	private String address;
 
@@ -120,30 +118,28 @@ public class Responsable implements ITiers, IAttachment {
 	@JoinColumn(name = "id_country")
 	private Country country;
 
-	private Float rcaFormaliteRate;
-	private Float rcaInsertionRate;
+	private Float rffFormaliteRate;
+	private Float rffInsertionRate;
 
 	@Column(columnDefinition = "TEXT")
 	private String observations;
 
-	@ManyToMany(cascade = CascadeType.ALL)
+	@ManyToMany
 	@JoinTable(name = "asso_responsable_mail", joinColumns = @JoinColumn(name = "id_tiers"), inverseJoinColumns = @JoinColumn(name = "id_mail"))
 	private List<Mail> mails;
 
-	@ManyToMany(cascade = CascadeType.ALL)
+	@ManyToMany
 	@JoinTable(name = "asso_responsable_phone", joinColumns = @JoinColumn(name = "id_tiers"), inverseJoinColumns = @JoinColumn(name = "id_phone"))
 	private List<Phone> phones;
 
-	@OneToMany(targetEntity = Document.class, mappedBy = "responsable", cascade = CascadeType.ALL)
-	@JsonManagedReference("responsable")
+	@OneToMany(mappedBy = "responsable", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Document> documents;
 
-	@OneToMany(targetEntity = Attachment.class, mappedBy = "responsable", cascade = CascadeType.ALL)
-	@JsonManagedReference("responsable")
+	@OneToMany(mappedBy = "responsable")
 	private List<Attachment> attachments;
 
-	@OneToMany(targetEntity = TiersFollowup.class, mappedBy = "responsable", cascade = CascadeType.ALL)
-	@JsonManagedReference("responsable")
+	@OneToMany(mappedBy = "responsable")
+	@JsonIgnoreProperties(value = { "responsable" }, allowSetters = true)
 	private List<TiersFollowup> tiersFollowups;
 
 	@Column(length = 20)
@@ -155,8 +151,8 @@ public class Responsable implements ITiers, IAttachment {
 	@Column(length = 8)
 	private String floor;
 
-	@ManyToOne(targetEntity = JssSubscription.class, cascade = CascadeType.ALL)
-	@JsonManagedReference("responsable")
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JsonIgnoreProperties(value = { "responsable" }, allowSetters = true)
 	private JssSubscription jssSubscription;
 
 	@ManyToOne
@@ -327,22 +323,6 @@ public class Responsable implements ITiers, IAttachment {
 		this.country = country;
 	}
 
-	public Float getRcaFormaliteRate() {
-		return rcaFormaliteRate;
-	}
-
-	public void setRcaFormaliteRate(Float rcaFormaliteRate) {
-		this.rcaFormaliteRate = rcaFormaliteRate;
-	}
-
-	public Float getRcaInsertionRate() {
-		return rcaInsertionRate;
-	}
-
-	public void setRcaInsertionRate(Float rcaInsertionRate) {
-		this.rcaInsertionRate = rcaInsertionRate;
-	}
-
 	public String getObservations() {
 		return observations;
 	}
@@ -479,6 +459,22 @@ public class Responsable implements ITiers, IAttachment {
 		if (this.getTiers() != null)
 			return this.getTiers().getAccountingAccountDeposit();
 		return null;
+	}
+
+	public Float getRffFormaliteRate() {
+		return rffFormaliteRate;
+	}
+
+	public void setRffFormaliteRate(Float rffFormaliteRate) {
+		this.rffFormaliteRate = rffFormaliteRate;
+	}
+
+	public Float getRffInsertionRate() {
+		return rffInsertionRate;
+	}
+
+	public void setRffInsertionRate(Float rffInsertionRate) {
+		this.rffInsertionRate = rffInsertionRate;
 	}
 
 }

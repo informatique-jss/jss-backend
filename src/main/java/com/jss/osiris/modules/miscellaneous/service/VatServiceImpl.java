@@ -12,6 +12,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.modules.miscellaneous.model.Country;
 import com.jss.osiris.modules.miscellaneous.model.Department;
@@ -67,6 +68,7 @@ public class VatServiceImpl implements VatService {
             @CacheEvict(value = "vatList", allEntries = true),
             @CacheEvict(value = "vat", key = "#vat.id")
     })
+    @Transactional(rollbackFor = Exception.class)
     public Vat addOrUpdateVat(
             Vat vat) {
         return vatRepository.save(vat);
@@ -81,7 +83,8 @@ public class VatServiceImpl implements VatService {
      * Using https://sumup.fr/factures/essentiels-facturation/tva-dom-tom/
      */
     @Override
-    public Vat getApplicableVat(Country country, Department departement, boolean isIndividual) throws Exception {
+    public Vat getGeographicalApplicableVat(Country country, Department departement, boolean isIndividual)
+            throws Exception {
         if (country == null)
             throw new Exception("Country not provided");
 

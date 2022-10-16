@@ -9,7 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 public class AssoSpecialOfferBillingType implements Serializable, IId {
@@ -20,7 +20,7 @@ public class AssoSpecialOfferBillingType implements Serializable, IId {
 
 	@ManyToOne
 	@JoinColumn(name = "id_special_offer")
-	@JsonBackReference("specialOffer")
+	@JsonIgnoreProperties(value = { "assoSpecialOfferBillingTypes" }, allowSetters = true)
 	private SpecialOffer specialOffer;
 
 	@ManyToOne

@@ -6,8 +6,8 @@ import java.util.Optional;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.modules.miscellaneous.service.MailService;
 import com.jss.osiris.modules.miscellaneous.service.PhoneService;
 import com.jss.osiris.modules.quotation.model.Affaire;
@@ -18,9 +18,6 @@ public class AffaireServiceImpl implements AffaireService {
 
     @Autowired
     AffaireRepository affaireRepository;
-
-    @Autowired
-    IndexEntityService indexEntityService;
 
     @Autowired
     MailService mailService;
@@ -42,6 +39,7 @@ public class AffaireServiceImpl implements AffaireService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Affaire addOrUpdateAffaire(Affaire affaire) {
         if (affaire.getRna() != null)
             affaire.setRna(affaire.getRna().toUpperCase().replaceAll(" ", ""));
@@ -60,7 +58,7 @@ public class AffaireServiceImpl implements AffaireService {
         }
 
         Affaire affaireSaved = affaireRepository.save(affaire);
-        indexEntityService.indexEntity(affaireSaved, affaireSaved.getId());
         return affaireSaved;
     }
+
 }
