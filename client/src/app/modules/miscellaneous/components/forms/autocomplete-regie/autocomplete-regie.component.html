@@ -2,13 +2,17 @@
   <mat-label>{{label}}</mat-label>
   <input type="text" matInput [formControlName]="propertyName" [matAutocomplete]="matAutocomplete" [(ngModel)]="model"
     [placeholder]="label">
-  <mat-icon matSuffix (click)="clearField()" *ngIf="!isDisabled && model!=undefined">
+  <mat-icon matSuffix (click)="clearField()" *ngIf="!isDisabled && model!=undefined" class="pointer">
     close
+  </mat-icon>
+  <mat-icon matTooltip="Ajouter aux notes (maintenez CTRL appuyé pour ajouter un titre)" matTooltipShowDelay="1000"
+    matSuffix (click)="addToNotes($event)" *ngIf="isDisabled && model!=undefined" class="pointer note-icon">
+    adjust
   </mat-icon>
   <mat-autocomplete autoActiveFirstOption #matAutocomplete="matAutocomplete" [displayWith]="displayLabel"
     (optionSelected)='optionSelected($event.option.value)'>
     <mat-option *ngFor="let regie of filteredTypes | async" [value]="regie">
-      {{regie.label}}
+      {{displayLabel(regie)}}
     </mat-option>
   </mat-autocomplete>
 </mat-form-field>

@@ -36,7 +36,8 @@
           <tr>
             <td>
               <autocomplete-region [(model)]="selectedEntity.region" [form]="entityForm" propertyName="region"
-                [isMandatory]="false" [isDisabled]="!editMode"></autocomplete-region>
+                label="Région" [isDisabled]="!editMode" [isMandatory]="false" [isDisabled]="!editMode">
+              </autocomplete-region>
             </td>
           </tr>
         </table>

@@ -68,10 +68,12 @@ export class ResponsableMainComponent implements OnInit {
   // TODO : reprendre les RG (notamment facturation / commande) lorsque les modules correspondants seront faits
 
   ngOnChanges(changes: SimpleChanges) {
-    if (this.editMode) {
-      this.tableActions[0].display = true;
-    } else {
-      this.tableActions[0].display = false;
+    if (this.tableActions && this.tableActions[0]) {
+      if (this.editMode) {
+        this.tableActions[0].display = true;
+      } else {
+        this.tableActions[0].display = false;
+      }
     }
 
     if (changes.tiers != undefined && this.tiers.responsables != undefined && this.tiers.responsables != null) {

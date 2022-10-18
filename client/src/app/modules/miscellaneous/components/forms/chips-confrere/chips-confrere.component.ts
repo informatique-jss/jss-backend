@@ -6,6 +6,7 @@ import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { Confrere } from 'src/app/modules/quotation/model/Confrere';
 import { ConfrereService } from 'src/app/modules/quotation/services/confrere.service';
+import { UserNoteService } from 'src/app/services/user.notes.service';
 import { ConfrereDialogComponent } from '../../confreres-dialog/confreres-dialog.component';
 import { GenericChipsComponent } from '../generic-chips/generic-chips.component';
 
@@ -19,10 +20,8 @@ export class ChipsConfrereComponent extends GenericChipsComponent<Confrere> impl
   filteredConfreres: Observable<Confrere[]> | undefined;
   @ViewChild('confrereInput') confrereInput: ElementRef<HTMLInputElement> | undefined;
 
-  constructor(private formBuild: UntypedFormBuilder,
-    public confrereDialog: MatDialog,
-    private confrereService: ConfrereService) {
-    super(formBuild);
+  constructor(private formBuild: UntypedFormBuilder, public confrereDialog: MatDialog, private confrereService: ConfrereService, private userNoteService2: UserNoteService,) {
+    super(formBuild, userNoteService2)
   }
 
   ngOnInit() {

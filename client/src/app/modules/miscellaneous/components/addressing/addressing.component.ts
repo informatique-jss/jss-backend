@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { SEPARATOR_KEY_CODES } from 'src/app/libs/Constants';
 import { Responsable } from 'src/app/modules/tiers/model/Responsable';
@@ -13,6 +13,7 @@ import { Mail } from '../../model/Mail';
 })
 export class AddressingComponent implements OnInit {
   @Input() document: Document = {} as Document;
+  @Output() documentChange: EventEmitter<Document> = new EventEmitter<Document>();
   @Input() editMode: boolean = false;
   @Input() displayPaperCopy: boolean = false;
   @Input() hideAdressing: boolean = false;
@@ -37,29 +38,29 @@ export class AddressingComponent implements OnInit {
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.document != undefined) {
-      if (this.document.isMailingPaper == undefined || this.document.isMailingPaper == null)
+      if (!this.document.isMailingPaper)
         this.document.isMailingPaper = false;
-      if (this.document.isMailingPdf == undefined || this.document.isMailingPdf == null)
+      if (!this.document.isMailingPdf)
         this.document.isMailingPdf = false;
-      if (this.document.isRecipientAffaire == undefined || this.document.isRecipientAffaire == null)
+      if (!this.document.isRecipientAffaire)
         this.document.isRecipientAffaire = false;
-      if (this.document.isRecipientClient == undefined || this.document.isRecipientClient == null)
+      if (!this.document.isRecipientClient)
         this.document.isRecipientClient = false;
 
-      if (this.document.affaireAddress != null && this.document.affaireAddress != undefined && this.document.affaireAddress != "")
+      if (this.document.affaireAddress)
         this.overrideAffaireAddress = true;
-      if (this.document.affaireRecipient != null && this.document.affaireRecipient != undefined && this.document.affaireRecipient != "")
+      if (this.document.affaireRecipient)
         this.overrideAffaireAddress = true;
-      if (this.document.clientAddress != null && this.document.clientAddress != undefined && this.document.clientAddress != "")
+      if (this.document.clientAddress)
         this.overrideClientAddress = true;
-      if (this.document.clientRecipient != null && this.document.clientRecipient != undefined && this.document.clientRecipient != "")
+      if (this.document.clientRecipient)
         this.overrideClientAddress = true;
 
-      if (this.document.mailsAffaire != null && this.document.mailsAffaire != undefined && this.document.mailsAffaire.length > 0)
+      if (this.document.mailsAffaire)
         this.overrideAffaireMail = true;
-      if (this.document.mailsCCResponsableAffaire != null && this.document.mailsCCResponsableAffaire != undefined && this.document.mailsCCResponsableAffaire.length > 0)
+      if (this.document.mailsCCResponsableAffaire)
         this.overrideAffaireMailCC = true;
-      if (this.document.mailsClient != null && this.document.mailsClient != undefined && this.document.mailsClient.length > 0)
+      if (this.document.mailsClient)
         this.overrideClientMail = true;
 
       if (this.onlyMail)

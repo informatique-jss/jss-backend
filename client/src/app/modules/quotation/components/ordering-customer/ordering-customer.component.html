@@ -5,12 +5,14 @@
         <table class="full-width">
           <tr>
             <td *ngIf="!quotation.responsable && !quotation.confrere">
-              <autocomplete-tiers-individual [(model)]="quotation.tiers" [form]="orderingCustomerForm"
-                propertyName="tiers" (onOptionSelected)="fillTiers($event)"></autocomplete-tiers-individual>
+              <autocomplete-tiers-individual [(model)]="quotation.tiers" [form]="orderingCustomerForm" label="Tiers"
+                [isDisabled]="!editMode" propertyName="tiers" (onOptionSelected)="fillTiers($event)">
+              </autocomplete-tiers-individual>
             </td>
             <td *ngIf="!quotation.tiers && !quotation.confrere">
               <autocomplete-responsable [(model)]="quotation.responsable" [form]="orderingCustomerForm"
-                propertyName="responsable" (onOptionSelected)="fillResponsable($event)"></autocomplete-responsable>
+                label="Responsable" [isDisabled]="!editMode" propertyName="responsable"
+                (onOptionSelected)="fillResponsable($event)"></autocomplete-responsable>
             </td>
             <td *ngIf="!quotation.tiers && !quotation.responsable">
               <autocomplete-confrere label="Confrère" [(model)]="quotation.confrere" [form]="orderingCustomerForm"

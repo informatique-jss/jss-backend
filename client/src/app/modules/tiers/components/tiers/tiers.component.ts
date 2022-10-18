@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { AfterContentChecked, ChangeDetectorRef, Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router, UrlSegment } from '@angular/router';
 import { isTiersTypeProspect } from 'src/app/libs/CompareHelper';
 import { TIERS_ENTITY_TYPE } from 'src/app/routing/search/search.component';
@@ -17,7 +17,7 @@ import { PrincipalComponent } from '../tiers-main/tiers-main.component';
   styleUrls: ['./tiers.component.css'],
   encapsulation: ViewEncapsulation.None,
 })
-export class TiersComponent implements OnInit {
+export class TiersComponent implements OnInit, AfterContentChecked {
 
   tiers: Tiers = {} as Tiers;
   editMode: boolean = false;
@@ -37,6 +37,7 @@ export class TiersComponent implements OnInit {
     private tiersService: TiersService,
     private activatedRoute: ActivatedRoute,
     protected searchService: SearchService,
+    private changeDetectorRef: ChangeDetectorRef,
     private router: Router) { }
 
   ngOnInit() {
@@ -68,6 +69,11 @@ export class TiersComponent implements OnInit {
       this.appService.changeHeaderTitle("Tiers / Responsables");
     }
   }
+
+  ngAfterContentChecked(): void {
+    this.changeDetectorRef.detectChanges();
+  }
+
 
   changeHeader() {
     if (this.tiers.denomination != null) {

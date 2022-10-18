@@ -1,7 +1,8 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { FundType } from 'src/app/modules/quotation/model/FundType';
 import { FundTypeService } from 'src/app/modules/quotation/services/fund-type.service';
+import { UserNoteService } from 'src/app/services/user.notes.service';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
 
 @Component({
@@ -13,9 +14,8 @@ export class SelectFundTypeComponent extends GenericSelectComponent<FundType> im
 
   types: FundType[] = [] as Array<FundType>;
 
-  constructor(private changeDetectorRef: ChangeDetectorRef,
-    private formBuild: UntypedFormBuilder, private fundTypeService: FundTypeService) {
-    super(changeDetectorRef, formBuild);
+  constructor(private formBuild: UntypedFormBuilder, private fundTypeService: FundTypeService, private userNoteService2: UserNoteService,) {
+    super(formBuild, userNoteService2)
   }
 
   initTypes(): void {

@@ -1,7 +1,8 @@
-import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { PaymentWay } from 'src/app/modules/invoicing/model/PaymentWay';
 import { PaymentWayService } from 'src/app/modules/invoicing/services/payment.way.service';
+import { UserNoteService } from 'src/app/services/user.notes.service';
 import { GenericMultipleSelectComponent } from '../generic-select/generic-multiple-select.component';
 
 @Component({
@@ -18,10 +19,8 @@ export class SelectPaymentWayComponent extends GenericMultipleSelectComponent<Pa
  */
   @Input() defaultCodesSelected: string[] | undefined;
 
-  constructor(private changeDetectorRef: ChangeDetectorRef,
-    private paymentWayService: PaymentWayService,
-    private formBuild: UntypedFormBuilder) {
-    super(changeDetectorRef, formBuild);
+  constructor(private formBuild: UntypedFormBuilder, private paymentWayService: PaymentWayService, private userNoteService2: UserNoteService,) {
+    super(formBuild, userNoteService2)
   }
 
   initTypes(): void {

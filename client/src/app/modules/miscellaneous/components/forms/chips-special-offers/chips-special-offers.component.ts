@@ -5,6 +5,7 @@ import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
+import { UserNoteService } from 'src/app/services/user.notes.service';
 import { SpecialOffer } from '../../../model/SpecialOffer';
 import { SpecialOfferService } from '../../../services/special.offer.service';
 import { SpecialOffersDialogComponent } from '../../special-offers-dialog/special-offers-dialog.component';
@@ -20,10 +21,9 @@ export class ChipsSpecialOffersComponent extends GenericChipsComponent<SpecialOf
   filteredSpecialOffers: Observable<SpecialOffer[]> | undefined;
   @ViewChild('specialOfferInput') specialOfferInput: ElementRef<HTMLInputElement> | undefined;
 
-  constructor(private formBuild: UntypedFormBuilder,
-    public specialOfferDialog: MatDialog,
-    private specialOfferService: SpecialOfferService) {
-    super(formBuild);
+  constructor(private formBuild: UntypedFormBuilder, public specialOfferDialog: MatDialog,
+    private specialOfferService: SpecialOfferService, private userNoteService2: UserNoteService,) {
+    super(formBuild, userNoteService2)
   }
 
   ngOnInit() {

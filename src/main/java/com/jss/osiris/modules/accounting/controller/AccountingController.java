@@ -74,6 +74,7 @@ public class AccountingController {
 
             AccountingJournal salesJournal = accountingJournalService.getSalesAccountingJournal();
             AccountingJournal purchasesJournal = accountingJournalService.getPurchasesAccountingJournal();
+            AccountingJournal aNouveauJournal = accountingJournalService.getANouveauAccountingJournal();
 
             for (AccountingRecord accountingRecord : accountingRecords) {
                 if (accountingRecord.getId() != null
@@ -95,7 +96,8 @@ public class AccountingController {
                 validationHelper.validateDate(accountingRecord.getManualAccountingDocumentDeadline(), false);
 
                 if (accountingRecord.getAccountingJournal().getId().equals(purchasesJournal.getId())
-                        || accountingRecord.getAccountingJournal().getId().equals(salesJournal.getId()))
+                        || accountingRecord.getAccountingJournal().getId().equals(salesJournal.getId())
+                        || accountingRecord.getAccountingJournal().getId().equals(aNouveauJournal.getId()))
                     return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
             outAccountingRecords = accountingRecordService.addOrUpdateAccountingRecords(accountingRecords);

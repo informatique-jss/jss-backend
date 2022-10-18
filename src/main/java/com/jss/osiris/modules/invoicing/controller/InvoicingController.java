@@ -20,12 +20,14 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.jss.osiris.libs.ValidationHelper;
 import com.jss.osiris.modules.invoicing.model.Invoice;
+import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.invoicing.model.InvoiceSearch;
 import com.jss.osiris.modules.invoicing.model.InvoiceStatus;
 import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.model.PaymentAssociate;
 import com.jss.osiris.modules.invoicing.model.PaymentSearch;
 import com.jss.osiris.modules.invoicing.model.PaymentWay;
+import com.jss.osiris.modules.invoicing.service.InvoiceHelper;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.invoicing.service.InvoiceStatusService;
 import com.jss.osiris.modules.invoicing.service.PaymentService;
@@ -48,6 +50,9 @@ public class InvoicingController {
     InvoiceService invoiceService;
 
     @Autowired
+    InvoiceHelper invoiceHelper;
+
+    @Autowired
     InvoiceStatusService invoiceStatusService;
 
     @Autowired
@@ -58,6 +63,9 @@ public class InvoicingController {
 
     @Value("${invoicing.invoice.status.send.code}")
     private String invoiceStatusSendCode;
+
+    @Value("${miscellaneous.document.billing.label.type.affaire.code}")
+    private String billingLabelAffaireCode;
 
     @GetMapping(inputEntryPoint + "/payment-ways")
     public ResponseEntity<List<PaymentWay>> getPaymentWays() {
@@ -228,7 +236,7 @@ public class InvoicingController {
                     : paymentAssociate.getConfrereRefund();
             if (paymentAssociate.getInvoices() != null) {
                 for (Invoice invoice : paymentAssociate.getInvoices())
-                    if (!invoiceService.getCustomerOrder(invoice).getId().equals(commonCustomerOrder.getId()))
+                    if (!invoiceHelper.getCustomerOrder(invoice).getId().equals(commonCustomerOrder.getId()))
                         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
 
@@ -299,6 +307,87 @@ public class InvoicingController {
             return new ResponseEntity<Invoice>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<Invoice>(invoice, HttpStatus.OK);
+    }
+
+    @PostMapping(inputEntryPoint + "/invoice")
+    public ResponseEntity<Invoice> addOrUpdateInvoice(@RequestBody Invoice invoice) {
+        Invoice outInvoice;
+        try {
+            if (invoice.getId() != null)
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+            if (invoice.getCustomerOrder() != null)
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+            int doFound = 0;
+
+            if (invoice.getTiers() != null) {
+                validationHelper.validateReferential(invoice.getTiers(), true);
+                doFound++;
+            }
+
+            if (invoice.getResponsable() != null) {
+                validationHelper.validateReferential(invoice.getResponsable(), true);
+                doFound++;
+            }
+
+            if (invoice.getConfrere() != null) {
+                validationHelper.validateReferential(invoice.getConfrere(), true);
+                doFound++;
+            }
+
+            if (invoice.getProvider() != null) {
+                validationHelper.validateReferential(invoice.getProvider(), true);
+                doFound++;
+            }
+
+            if (doFound != 1)
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+            validationHelper.validateReferential(invoice.getBillingLabelType(), true);
+            validationHelper.validateString(invoice.getBillingLabelAddress(),
+                    invoice.getBillingLabelType().getCode().equals(billingLabelAffaireCode), 160);
+            validationHelper.validateString(invoice.getBillingLabel(),
+                    invoice.getBillingLabelType().getCode().equals(billingLabelAffaireCode), 40);
+            validationHelper.validateString(invoice.getBillingLabelPostalCode(),
+                    invoice.getBillingLabelType().getCode().equals(billingLabelAffaireCode), 10);
+            validationHelper.validateReferential(invoice.getBillingLabelCity(),
+                    invoice.getBillingLabelType().getCode().equals(billingLabelAffaireCode));
+            validationHelper.validateReferential(invoice.getBillingLabelCountry(),
+                    invoice.getBillingLabelType().getCode().equals(billingLabelAffaireCode));
+            validationHelper.validateString(invoice.getBillingLabelPostalCode(), false, 40);
+            validationHelper.validateReferential(invoice.getInvoiceStatus(), false);
+            validationHelper.validateDate(invoice.getDueDate(), false);
+
+            if (invoice.getInvoiceItems() == null) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            } else {
+                for (InvoiceItem invoiceItem : invoice.getInvoiceItems()) {
+                    if (invoiceItem.getId() != null)
+                        validationHelper.validateReferential(invoiceItem, true);
+                    if (invoiceItem.getDiscountAmount() == null)
+                        invoiceItem.setDiscountAmount(0f);
+                    if (invoiceItem.getPreTaxPrice() == null)
+                        invoiceItem.setPreTaxPrice(0f);
+                    if (invoiceItem.getVatPrice() == null)
+                        invoiceItem.setVatPrice(0f);
+
+                }
+            }
+
+            outInvoice = invoiceService.addOrUpdateInvoiceFromUser(invoice);
+        } catch (
+
+        ResponseStatusException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (HttpStatusCodeException e) {
+            logger.error("HTTP error when fetching invoiceStatus", e);
+            return new ResponseEntity<Invoice>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            logger.error("Error when fetching invoiceStatus", e);
+            return new ResponseEntity<Invoice>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<Invoice>(outInvoice, HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/invoice-status-list")

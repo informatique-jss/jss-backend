@@ -1,11 +1,11 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormBuilder, ValidatorFn, Validators } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-import { MatDialog } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { Competitor } from 'src/app/modules/tiers/model/Competitor';
 import { CompetitorService } from 'src/app/modules/tiers/services/competitor.service';
+import { UserNoteService } from 'src/app/services/user.notes.service';
 import { GenericChipsComponent } from '../generic-chips/generic-chips.component';
 
 @Component({
@@ -18,10 +18,8 @@ export class ChipsCompetitorComponent extends GenericChipsComponent<Competitor> 
   filteredCompetitors: Observable<Competitor[]> | undefined;
   @ViewChild('competitorInput') CompetitorInput: ElementRef<HTMLInputElement> | undefined;
 
-  constructor(private formBuild: UntypedFormBuilder,
-    public CompetitorDialog: MatDialog,
-    private CompetitorService: CompetitorService) {
-    super(formBuild);
+  constructor(private formBuild: UntypedFormBuilder, private CompetitorService: CompetitorService, private userNoteService2: UserNoteService,) {
+    super(formBuild, userNoteService2)
   }
 
   ngOnInit() {

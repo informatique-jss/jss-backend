@@ -1,7 +1,8 @@
 
 
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
+import { UserNoteService } from 'src/app/services/user.notes.service';
 import { WeekDay } from '../../../model/WeekDay';
 import { WeekDayService } from '../../../services/weekday.service';
 import { GenericMultipleSelectComponent } from '../generic-select/generic-multiple-select.component';
@@ -15,15 +16,17 @@ export class SelectDayComponent extends GenericMultipleSelectComponent<WeekDay> 
 
   types: WeekDay[] = [] as Array<WeekDay>;
 
-  constructor(private changeDetectorRef: ChangeDetectorRef,
-    private formBuild: UntypedFormBuilder,
-    private weekDayService: WeekDayService) {
-    super(changeDetectorRef, formBuild);
+  constructor(private formBuild: UntypedFormBuilder, private weekDayService: WeekDayService, private userNoteService2: UserNoteService,) {
+    super(formBuild, userNoteService2)
   }
 
   initTypes(): void {
     this.weekDayService.getWeekDays().subscribe(response => {
       this.types = response;
     })
+  }
+
+  displayLabel(object: any): string {
+    return object ? (object.code + " - " + object.label) : '';
   }
 }

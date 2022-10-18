@@ -2,4 +2,11 @@
   <mat-label>{{label}}</mat-label>
   <textarea (keyup)="onInputChange()" (keydown)="onInputChange()" (paste)="onInputChange()" [rows]="numberOfLines"
     matInput [formControlName]="propertyName" [placeholder]="label"></textarea>
+  <mat-icon matSuffix (click)="clearField()" *ngIf="!isDisabled && model!=undefined" class="pointer">
+    close
+  </mat-icon>
+  <mat-icon matTooltip="Ajouter aux notes (maintenez CTRL appuyé pour ajouter un titre)" matTooltipShowDelay="1000"
+    matSuffix (click)="addToNotes($event)" *ngIf="isDisabled && model!=undefined" class="pointer note-icon">
+    adjust
+  </mat-icon>
 </mat-form-field>

@@ -18,7 +18,7 @@
             </mat-panel-title>
             <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
           </mat-expansion-panel-header>
-          <addressing [editMode]="editMode" [document]="publicationDocument" [displayPaperCopy]="true"
+          <addressing [editMode]="editMode" [(document)]="publicationDocument" [displayPaperCopy]="true"
             [displayMailCC]="instanceOfResponsable(tiers)" [displayNumberMailing]="true">
           </addressing>
         </mat-expansion-panel>
@@ -70,19 +70,20 @@
               </td>
               <td>
                 <autocomplete-postal-code [(model)]="billingDocument.billingPostalCode" [form]="settlementBillingForm"
-                  propertyName="postalCode" [isMandatory]="true"
+                  propertyName="postalCode" [isMandatory]="true" label="Code postal" [isDisabled]="!editMode"
                   [conditionnalRequired]="billingDocument.billingLabelCountry != null && billingDocument.billingLabelCountry.code == COUNTRY_CODE_FRANCE"
                   (onOptionSelected)="fillCity($event)"></autocomplete-postal-code>
               </td>
               <td>
-                <autocomplete-city [(model)]="billingDocument.billingLabelCity"
+                <autocomplete-city [(model)]="billingDocument.billingLabelCity" [isDisabled]="!editMode" label="Ville"
                   [modelCountry]="billingDocument.billingLabelCountry" [form]="settlementBillingForm"
                   propertyName="city" [isMandatory]="true" (onOptionSelected)="fillPostalCode($event)">
                 </autocomplete-city>
               </td>
               <td>
                 <autocomplete-country [(model)]="billingDocument.billingLabelCountry" [form]="settlementBillingForm"
-                  propertyName="country" [isMandatory]="true"></autocomplete-country>
+                  label="Pays" [isDisabled]="!editMode" propertyName="country" [isMandatory]="true">
+                </autocomplete-country>
               </td>
               <td>
                 <generic-toggle [(model)]="billingDocument.billingLabelIsIndividual" label="Est particulier ?"

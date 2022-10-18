@@ -30,6 +30,7 @@ import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.compone
 import { ConfrereDialogComponent } from '../confreres-dialog/confreres-dialog.component';
 import { AutocompleteAccountingAccountComponent } from '../forms/autocomplete-accounting-account/autocomplete-accounting-account.component';
 import { AutocompleteAffaireComponent } from '../forms/autocomplete-affaire/autocomplete-affaire.component';
+import { AutocompleteBillingItemComponent } from '../forms/autocomplete-billing-item/autocomplete-billing-item.component';
 import { AutocompleteCityComponent } from '../forms/autocomplete-city/autocomplete-city.component';
 import { AutocompleteCompetentAuthorityComponent } from '../forms/autocomplete-competent-authority/autocomplete-competent-authority.component';
 import { AutocompleteConfrereComponent } from '../forms/autocomplete-confrere/autocomplete-confrere.component';
@@ -223,6 +224,7 @@ import { MiscellaneousComponent } from './miscellaneous.component';
     SortTableComponent,
     ChipsProvisionFamilyTypeComponent,
     SelectProvisionScreenTypeComponent,
+    AutocompleteBillingItemComponent,
     GenericDateRangePickerComponent,
     SelectInvoiceStatusComponent,
     SelectAffaireStatusComponent,
@@ -320,6 +322,7 @@ import { MiscellaneousComponent } from './miscellaneous.component';
     ChipsProvisionFamilyTypeComponent,
     SelectPaymentWayComponent,
     SelectAffaireStatusComponent,
+    AutocompleteBillingItemComponent,
   ]
 })
 export class MiscellaneousModule { }

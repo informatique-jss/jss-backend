@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
+import { UserNoteService } from 'src/app/services/user.notes.service';
 import { Regie } from '../../../model/Regie';
 import { RegieService } from '../../../services/regie.service';
 import { GenericLocalAutocompleteComponent } from '../generic-local-autocomplete/generic-local-autocomplete.component';
@@ -13,8 +14,8 @@ export class AutocompleteRegieComponent extends GenericLocalAutocompleteComponen
 
   types: Regie[] = [] as Array<Regie>;
 
-  constructor(private formBuild: UntypedFormBuilder, private regieService: RegieService) {
-    super(formBuild)
+  constructor(private formBuild: UntypedFormBuilder, private regieService: RegieService, private userNoteService2: UserNoteService,) {
+    super(formBuild, userNoteService2)
   }
 
   filterEntities(types: Regie[], value: string): Regie[] {
@@ -25,7 +26,4 @@ export class AutocompleteRegieComponent extends GenericLocalAutocompleteComponen
   initTypes(): void {
     this.regieService.getRegies().subscribe(response => this.types = response);
   }
-
-
-
 }

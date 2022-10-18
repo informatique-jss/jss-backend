@@ -5,6 +5,10 @@
     (click)="openConfrereDialog()">
     <mat-icon>search</mat-icon>
   </button>
+  <mat-icon matTooltip="Ajouter aux notes (maintenez CTRL appuyé pour ajouter un titre)" matTooltipShowDelay="1000"
+    matSuffix (click)="addToNotes($event)" *ngIf="isDisabled && model!=undefined" class="pointer note-icon">
+    adjust
+  </mat-icon>
   <button (click)="clearField()"
     *ngIf="model!=undefined && model!=null && model.id !=undefined && model.id!=null && !isDisabled " matSuffix
     mat-icon-button>
@@ -13,7 +17,7 @@
   <mat-autocomplete autoActiveFirstOption #matAutocomplete="matAutocomplete"
     (optionSelected)='optionSelected($event.option.value!)' [displayWith]="displayConfrere">
     <mat-option *ngFor="let confrere of filteredTypes | async" [value]="confrere">
-      {{confrere.label}} - {{confrere.journalType.label}}
+      {{displayLabel(confrere)}}
     </mat-option>
   </mat-autocomplete>
 </mat-form-field>

@@ -1,7 +1,8 @@
-import { ChangeDetectorRef, Directive, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Directive, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
 import { compareWithId } from 'src/app/libs/CompareHelper';
+import { UserNoteService } from 'src/app/services/user.notes.service';
 
 @Directive()
 export abstract class GenericMultipleSelectComponent<T> implements OnInit {
@@ -59,8 +60,8 @@ export abstract class GenericMultipleSelectComponent<T> implements OnInit {
   abstract types: T[];
 
   constructor(
-    private cdr: ChangeDetectorRef,
-    private formBuilder: UntypedFormBuilder) { }
+    private formBuilder: UntypedFormBuilder,
+    private userNoteService: UserNoteService) { }
 
   ngOnChanges(changes: SimpleChanges) {
     if (this.form)
@@ -68,7 +69,6 @@ export abstract class GenericMultipleSelectComponent<T> implements OnInit {
 
     if (changes.model && this.form != undefined) {
       this.form.get(this.propertyName)?.setValue(this.model);
-      this.cdr.detectChanges();
     }
     if (changes.isDisabled) {
       if (this.isDisabled) {
@@ -132,5 +132,22 @@ export abstract class GenericMultipleSelectComponent<T> implements OnInit {
 
   abstract initTypes(): void;
 
+  displayLabel(object: any): string {
+    return object ? object.label : '';
+  }
+
   compareWithId = compareWithId;
+
+  addToNotes(event: any) {
+    let isHeader = false;
+    if (event && event.ctrlKey)
+      isHeader = true;
+    this.userNoteService.addToNotes(this.label, this.model.map(item => this.displayLabel(this.model)).join(", "), undefined, isHeader);
+  }
+
+  clearField(): void {
+    this.model = [] as Array<T>;
+    this.modelChange.emit(this.model);
+    this.selectionChange.emit(undefined);
+  }
 }

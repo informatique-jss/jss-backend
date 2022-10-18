@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
+import { UserNoteService } from 'src/app/services/user.notes.service';
 
 
 @Component({
@@ -65,7 +66,8 @@ export class GenericTextareaComponent implements OnInit {
   @Input() numberOfLines: number = 3;
 
   constructor(
-    private formBuilder: UntypedFormBuilder) { }
+    private formBuilder: UntypedFormBuilder,
+    private userNoteService: UserNoteService) { }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.isDisabled) {
@@ -119,6 +121,13 @@ export class GenericTextareaComponent implements OnInit {
     }
   }
 
+  clearField(): void {
+    this.model = undefined;
+    this.modelChange.emit(this.model);
+    if (this.form)
+      this.form.get(this.propertyName)?.setValue(null);
+  }
+
   // Check if the propertiy given in parameter is filled when conditionnalRequired is set
   checkFieldFilledIfIsConditionalRequired(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
@@ -135,5 +144,12 @@ export class GenericTextareaComponent implements OnInit {
   onInputChange(): void {
     this.modelChange.emit(this.model);
     this.filterInput.emit();
+  }
+
+  addToNotes(event: any) {
+    let isHeader = false;
+    if (event && event.ctrlKey)
+      isHeader = true;
+    this.userNoteService.addToNotes(this.label, this.model, undefined, isHeader);
   }
 }

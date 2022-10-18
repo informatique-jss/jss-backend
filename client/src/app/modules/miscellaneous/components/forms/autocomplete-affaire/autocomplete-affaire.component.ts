@@ -1,10 +1,11 @@
-import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { AffaireService } from 'src/app/modules/quotation/services/affaire.service';
 import { IndexEntityService } from 'src/app/routing/search/index.entity.service';
 import { IndexEntity } from 'src/app/routing/search/IndexEntity';
 import { AFFAIRE_ENTITY_TYPE } from 'src/app/routing/search/search.component';
+import { UserNoteService } from 'src/app/services/user.notes.service';
 import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-autocomplete.component';
 
 @Component({
@@ -14,9 +15,10 @@ import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-au
 })
 export class AutocompleteAffaireComponent extends GenericAutocompleteComponent<IndexEntity, IndexEntity> implements OnInit {
   @ViewChild('affaireInput') affaireInput: ElementRef<HTMLInputElement> | undefined;
+
   constructor(private formBuild: UntypedFormBuilder, private indexEntityService: IndexEntityService,
-    private affaireService: AffaireService, private changeDetectorRef: ChangeDetectorRef) {
-    super(formBuild, changeDetectorRef)
+    private affaireService: AffaireService, private userNoteService2: UserNoteService,) {
+    super(formBuild, userNoteService2)
   }
 
   searchEntities(value: string): Observable<IndexEntity[]> {
@@ -33,7 +35,7 @@ export class AutocompleteAffaireComponent extends GenericAutocompleteComponent<I
     return this.filteredTypes;
   }
 
-  getAffaireLabel(entity: IndexEntity): string {
+  displayLabel(entity: IndexEntity): string {
     let obj = JSON.parse((entity.text as string));
     return (obj.affaire.firstname ? obj.affaire.firstname + " " : "") + (obj.affaire.lastname ? obj.affaire.lastname + " " : "") + (obj.affaire.denomination ? obj.affaire.denomination : "");
   }

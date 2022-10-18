@@ -513,4 +513,12 @@ public class Confrere implements ITiers {
 		this.discountRate = discountRate;
 	}
 
+	public Regie getRegie() {
+		return regie;
+	}
+
+	public void setRegie(Regie regie) {
+		this.regie = regie;
+	}
+
 }

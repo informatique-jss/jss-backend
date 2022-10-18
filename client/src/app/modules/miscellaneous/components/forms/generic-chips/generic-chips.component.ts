@@ -3,6 +3,7 @@ import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors
 import { MatChipInputEvent } from '@angular/material/chips';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
 import { SEPARATOR_KEY_CODES } from 'src/app/libs/Constants';
+import { UserNoteService } from 'src/app/services/user.notes.service';
 
 @Directive()
 export abstract class GenericChipsComponent<T> implements OnInit {
@@ -51,7 +52,8 @@ export abstract class GenericChipsComponent<T> implements OnInit {
   @Input() customValidators: ValidatorFn[] | undefined;
   @Input() label: string = "";
 
-  constructor(private formBuilder: UntypedFormBuilder) { }
+  constructor(private formBuilder: UntypedFormBuilder,
+    private userNoteService: UserNoteService) { }
 
   ngOnChanges(changes: SimpleChanges) {
     if (this.form && (this.isMandatory || this.customValidators))
@@ -131,6 +133,13 @@ export abstract class GenericChipsComponent<T> implements OnInit {
 
   displayLabel(object: any): string {
     return object ? object.label : '';
+  }
+
+  addToNotes(event: any) {
+    let isHeader = false;
+    if (event && event.ctrlKey)
+      isHeader = true;
+    this.userNoteService.addToNotes(this.label, this.displayLabel(this.model), undefined, isHeader);
   }
 
 }

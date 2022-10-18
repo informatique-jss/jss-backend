@@ -93,6 +93,7 @@ export class AdministrationComponent implements OnInit {
     this.referentials.push(this.JOURNAL_TYPE_REFERENTIAL);
     this.referentials.push(this.MAIL_REDIRECTION_TYPE_REFERENTIAL);
     this.referentials.push(this.NOTICE_TYPE_FAMILY_REFERENTIAL);
+    this.referentials.push(this.CITY_REFERENTIAL);
     this.referentials.push(this.PROVISION_FAMILY_TYPE_REFERENTIAL);
     this.referentials.push(this.PROVISION_TYPE_REFERENTIAL);
     this.referentials.push(this.QUOTATION_LABEL_TYPE_REFERENTIAL);

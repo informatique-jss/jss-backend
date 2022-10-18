@@ -1,5 +1,6 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
+import { UserNoteService } from 'src/app/services/user.notes.service';
 import { BillingItem } from '../../../model/BillingItem';
 import { BillingItemService } from '../../../services/billing.item.service';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
@@ -13,10 +14,8 @@ export class SelectBillingItemsComponent extends GenericSelectComponent<BillingI
 
   types: BillingItem[] = [] as Array<BillingItem>;
 
-  constructor(private changeDetectorRef: ChangeDetectorRef,
-    private formBuild: UntypedFormBuilder,
-    private billingItemService: BillingItemService) {
-    super(changeDetectorRef, formBuild);
+  constructor(private formBuild: UntypedFormBuilder, private billingItemService: BillingItemService, private userNoteService2: UserNoteService,) {
+    super(formBuild, userNoteService2)
   }
 
   initTypes(): void {
@@ -26,5 +25,9 @@ export class SelectBillingItemsComponent extends GenericSelectComponent<BillingI
         for (let type of this.types)
           type.startDate = new Date(type.startDate);
     })
+  }
+
+  displayLabel(object: any): string {
+    return object && object.billingType ? object.billingType.label : '';
   }
 }

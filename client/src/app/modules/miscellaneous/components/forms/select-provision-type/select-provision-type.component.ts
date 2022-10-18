@@ -1,7 +1,8 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { ProvisionType } from 'src/app/modules/quotation/model/ProvisionType';
 import { ProvisionTypeService } from 'src/app/modules/quotation/services/provision.type.service';
+import { UserNoteService } from 'src/app/services/user.notes.service';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
 
 @Component({
@@ -13,9 +14,8 @@ export class SelectProvisionTypeComponent extends GenericSelectComponent<Provisi
 
   types: ProvisionType[] = [] as Array<ProvisionType>;
 
-  constructor(private changeDetectorRef: ChangeDetectorRef,
-    private formBuild: UntypedFormBuilder, private provisionTypeService: ProvisionTypeService) {
-    super(changeDetectorRef, formBuild);
+  constructor(private formBuild: UntypedFormBuilder, private provisionTypeService: ProvisionTypeService, private userNoteService2: UserNoteService,) {
+    super(formBuild, userNoteService2)
   }
 
   initTypes(): void {

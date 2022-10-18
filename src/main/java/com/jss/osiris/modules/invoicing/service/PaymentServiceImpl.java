@@ -43,6 +43,9 @@ public class PaymentServiceImpl implements PaymentService {
     InvoiceService invoiceService;
 
     @Autowired
+    InvoiceHelper invoiceHelper;
+
+    @Autowired
     CustomerOrderService customerOrderService;
 
     @Autowired
@@ -184,7 +187,7 @@ public class PaymentServiceImpl implements PaymentService {
             if (Math.abs(remainingMoney) <= Float.parseFloat(payementLimitRefundInEuros)) {
                 if (correspondingInvoices != null && correspondingInvoices.size() > 0)
                     accountingRecordService.generateAppointForPayment(payment, remainingMoney,
-                            invoiceService.getCustomerOrder(correspondingInvoices.get(0)));
+                            invoiceHelper.getCustomerOrder(correspondingInvoices.get(0)));
                 else if (correspondingCustomerOrder != null && correspondingCustomerOrder.size() > 0)
                     accountingRecordService.generateAppointForPayment(payment, remainingMoney,
                             quotationService.getCustomerOrderOfQuotation(correspondingCustomerOrder.get(0)));
@@ -424,7 +427,8 @@ public class PaymentServiceImpl implements PaymentService {
                     while (m.find()) {
                         if (m.group().equals(invoice.getId().toString()))
                             advisedPayments.add(payment);
-                        if (m.group().equals(invoice.getCustomerOrder().getId().toString()))
+                        if (invoice.getCustomerOrder() != null
+                                && m.group().equals(invoice.getCustomerOrder().getId().toString()))
                             advisedPayments.add(payment);
                     }
                 }

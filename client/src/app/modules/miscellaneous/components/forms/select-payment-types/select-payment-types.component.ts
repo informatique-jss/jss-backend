@@ -1,6 +1,7 @@
-import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { PAYMENT_TYPE_PRELEVEMENT } from 'src/app/libs/Constants';
+import { UserNoteService } from 'src/app/services/user.notes.service';
 import { PaymentType } from '../../../model/PaymentType';
 import { PaymentTypeService } from '../../../services/payment.type.service';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
@@ -23,9 +24,8 @@ export class SelectPaymentTypesComponent extends GenericSelectComponent<PaymentT
  */
   @Input() filteredPaymentType: PaymentType[] | undefined;
 
-  constructor(private changeDetectorRef: ChangeDetectorRef,
-    private formBuild: UntypedFormBuilder, private paymentTypeService: PaymentTypeService) {
-    super(changeDetectorRef, formBuild);
+  constructor(private formBuild: UntypedFormBuilder, private paymentTypeService: PaymentTypeService, private userNoteService2: UserNoteService,) {
+    super(formBuild, userNoteService2)
   }
 
   initTypes(): void {

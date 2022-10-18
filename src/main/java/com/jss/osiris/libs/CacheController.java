@@ -15,6 +15,7 @@ public class CacheController {
 	private static final String inputEntryPoint = "/cache";
 
 	@GetMapping(inputEntryPoint + "/clearAll")
+	@SuppressWarnings({ "all" })
 	public void clearCache() {
 		for (String name : cacheManager.getCacheNames()) {
 			if (cacheManager.getCache(name) != null) {

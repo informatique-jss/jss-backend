@@ -16,4 +16,6 @@ public interface AccountingJournalService {
     public AccountingJournal getSalesAccountingJournal() throws Exception;
 
     public AccountingJournal getPurchasesAccountingJournal() throws Exception;
+
+    public AccountingJournal getANouveauAccountingJournal() throws Exception;
 }

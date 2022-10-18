@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { AfterContentChecked, ChangeDetectorRef, Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { MatAccordion } from '@angular/material/expansion';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
@@ -21,7 +21,7 @@ import { TiersService } from '../../services/tiers.service';
   templateUrl: './settlement-billing.component.html',
   styleUrls: ['./settlement-billing.component.css']
 })
-export class SettlementBillingComponent implements OnInit {
+export class SettlementBillingComponent implements OnInit, AfterContentChecked {
   matcher: CustomErrorStateMatcher = new CustomErrorStateMatcher();
   @Input() tiers: ITiers = {} as ITiers;
   @Input() editMode: boolean = false;
@@ -51,6 +51,7 @@ export class SettlementBillingComponent implements OnInit {
     protected documentTypeService: DocumentTypeService,
     protected tiersService: TiersService,
     protected cityService: CityService,
+    private changeDetectorRef: ChangeDetectorRef
   ) { }
 
   ngOnInit() {
@@ -61,6 +62,10 @@ export class SettlementBillingComponent implements OnInit {
 
     // Trigger it to show mandatory fields
     this.settlementBillingForm.markAllAsTouched();
+  }
+
+  ngAfterContentChecked(): void {
+    this.changeDetectorRef.detectChanges();
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -91,10 +96,10 @@ export class SettlementBillingComponent implements OnInit {
           this.dunningDocument = getDocument(DUNNING_TIERS_DOCUMENT_TYPE_CODE, this.tiers, this.documentTypes);
           this.refundDocument = getDocument(REFUND_TIERS_DOCUMENT_TYPE_CODE, this.tiers, this.documentTypes);
           this.provisionalReceiptDocument = getDocument(PROVISIONAL_RECEIPT_TIERS_DOCUMENT_TYPE_CODE, this.tiers, this.documentTypes);
-          this.publicationDocument = getDocument(PUBLICATION_TIERS_DOCUMENT_TYPE_CODE, this.tiers, this.documentTypes);
-          this.cfeDocument = getDocument(CFE_TIERS_DOCUMENT_TYPE_CODE, this.tiers, this.documentTypes);
-          this.kbisDocument = getDocument(KBIS_TIERS_DOCUMENT_TYPE_CODE, this.tiers, this.documentTypes);
         }
+        this.publicationDocument = getDocument(PUBLICATION_TIERS_DOCUMENT_TYPE_CODE, this.tiers, this.documentTypes);
+        this.cfeDocument = getDocument(CFE_TIERS_DOCUMENT_TYPE_CODE, this.tiers, this.documentTypes);
+        this.kbisDocument = getDocument(KBIS_TIERS_DOCUMENT_TYPE_CODE, this.tiers, this.documentTypes);
 
       })
     }

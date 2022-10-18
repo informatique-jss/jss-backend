@@ -31,6 +31,9 @@ public class AccountingJournalServiceImpl implements AccountingJournalService {
     @Value("${accounting.journal.code.purchases}")
     String purchasesAccountingJournalCode;
 
+    @Value("${accounting.journal.code.anouveau}")
+    String anouveauAccountingJournalCode;
+
     @Override
     @Cacheable(value = "accountingJournalList", key = "#root.methodName")
     public List<AccountingJournal> getAccountingJournals() {
@@ -76,5 +79,13 @@ public class AccountingJournalServiceImpl implements AccountingJournalService {
         if (purchasesJournal == null)
             logger.error("Unable to find accounting journal for code " + purchasesAccountingJournalCode);
         return purchasesJournal;
+    }
+
+    @Override
+    public AccountingJournal getANouveauAccountingJournal() throws Exception {
+        AccountingJournal aNouveauJournal = this.getAccountingJournalByCode(anouveauAccountingJournalCode);
+        if (aNouveauJournal == null)
+            logger.error("Unable to find accounting journal for code " + anouveauAccountingJournalCode);
+        return aNouveauJournal;
     }
 }

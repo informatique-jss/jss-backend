@@ -17,6 +17,7 @@ import com.jss.osiris.modules.invoicing.model.Deposit;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.invoicing.service.DepositService;
+import com.jss.osiris.modules.invoicing.service.InvoiceHelper;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.service.MailService;
@@ -51,6 +52,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Autowired
     InvoiceService invoiceService;
+
+    @Autowired
+    InvoiceHelper invoiceHelper;
 
     @Autowired
     AccountingRecordService accountingRecordService;
@@ -242,8 +246,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         }
 
         invoice.setCustomerOrder(customerOrder);
-        invoiceService.addOrUpdateInvoice(invoice);
-        return invoiceService.setPriceTotal(invoice);
+        invoiceHelper.setPriceTotal(invoice);
+        return invoiceService.addOrUpdateInvoice(invoice);
     }
 
     private boolean hasAtLeastOneInvoiceItemNotNull(CustomerOrder customerOrder) {

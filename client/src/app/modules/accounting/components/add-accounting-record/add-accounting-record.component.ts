@@ -2,7 +2,7 @@ import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Subject } from 'rxjs';
-import { ACCOUNTING_JOURNAL_PURSCHASES_CODE, ACCOUNTING_JOURNAL_SALES_CODE } from 'src/app/libs/Constants';
+import { ACCOUNTING_JOURNAL_ANOUVEAU_CODE, ACCOUNTING_JOURNAL_PURSCHASES_CODE, ACCOUNTING_JOURNAL_SALES_CODE } from 'src/app/libs/Constants';
 import { formatDateForSortTable, formatEurosForSortTable } from 'src/app/libs/FormatHelper';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
@@ -34,6 +34,7 @@ export class AddAccountingRecordComponent implements OnInit {
 
   ACCOUNTING_JOURNAL_SALES_CODE = ACCOUNTING_JOURNAL_SALES_CODE;
   ACCOUNTING_JOURNAL_PURSCHASES_CODE = ACCOUNTING_JOURNAL_PURSCHASES_CODE;
+  ACCOUNTING_JOURNAL_ANOUVEAU_CODE = ACCOUNTING_JOURNAL_ANOUVEAU_CODE;
 
   refreshTable: Subject<void> = new Subject<void>();
 

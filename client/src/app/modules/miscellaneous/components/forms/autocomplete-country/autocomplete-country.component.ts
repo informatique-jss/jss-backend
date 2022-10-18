@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { COUNTRY_CODE_FRANCE } from 'src/app/libs/Constants';
+import { UserNoteService } from 'src/app/services/user.notes.service';
 import { Country } from '../../../model/Country';
 import { CountryService } from '../../../services/country.service';
 import { GenericLocalAutocompleteComponent } from '../generic-local-autocomplete/generic-local-autocomplete.component';
@@ -15,8 +16,8 @@ export class AutocompleteCountryComponent extends GenericLocalAutocompleteCompon
   types: Country[] = [] as Array<Country>;
   @Input() defaultCountryCode: string = COUNTRY_CODE_FRANCE;
 
-  constructor(private formBuild: UntypedFormBuilder, private countryService: CountryService) {
-    super(formBuild)
+  constructor(private formBuild: UntypedFormBuilder, private countryService: CountryService, private userNoteService2: UserNoteService,) {
+    super(formBuild, userNoteService2)
   }
 
   filterEntities(types: Country[], value: string): Country[] {

@@ -29,6 +29,7 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("accounting.account.number.deposit");
         isOk = isOk && checkProperty("accounting.account.number.provider");
         isOk = isOk && checkProperty("accounting.account.number.product");
+        isOk = isOk && checkProperty("accounting.account.number.charge");
         isOk = isOk && checkProperty("accounting.account.number.bank");
         isOk = isOk && checkProperty("accounting.account.number.waiting");
         isOk = isOk && checkProperty("accounting.account.number.profit");
@@ -42,6 +43,7 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("invoicing.invoice.status.payed.code");
         isOk = isOk && checkProperty("accounting.journal.code.sales");
         isOk = isOk && checkProperty("accounting.journal.code.purchases");
+        isOk = isOk && checkProperty("accounting.journal.code.anouveau");
         isOk = isOk && checkProperty("schedulling.account.daily.close");
         isOk = isOk && checkProperty("schedulling.active.directory.user.update");
         isOk = isOk && checkProperty("schedulling.payment.grab");

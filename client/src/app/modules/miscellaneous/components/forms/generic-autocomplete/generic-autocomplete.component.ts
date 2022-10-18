@@ -1,8 +1,9 @@
-import { ChangeDetectorRef, Directive, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Directive, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter, switchMap, tap } from 'rxjs/operators';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
+import { UserNoteService } from 'src/app/services/user.notes.service';
 
 @Directive()
 export abstract class GenericAutocompleteComponent<T, U> implements OnInit {
@@ -66,7 +67,8 @@ export abstract class GenericAutocompleteComponent<T, U> implements OnInit {
 
   filteredTypes: T[] | undefined;
 
-  constructor(private formBuilder: UntypedFormBuilder, private cdr: ChangeDetectorRef) { }
+  constructor(private formBuilder: UntypedFormBuilder,
+    private userNoteService: UserNoteService) { }
 
   ngOnChanges(changes: SimpleChanges) {
     if (this.form && !this.form.get(this.propertyName))
@@ -74,7 +76,7 @@ export abstract class GenericAutocompleteComponent<T, U> implements OnInit {
 
     if (changes.model && this.form != undefined) {
       this.form.get(this.propertyName)?.setValue(this.model);
-      this.cdr.detectChanges();
+      this.modelChange.emit(this.model);
     }
     if (changes.isDisabled) {
       if (this.isDisabled) {
@@ -118,22 +120,24 @@ export abstract class GenericAutocompleteComponent<T, U> implements OnInit {
         debounceTime(300),
         tap((value) => {
           this.filteredTypes = [];
-          this.cdr.detectChanges();
           this.modelChange.emit(this.model);
         }),
         switchMap(value => this.searchEntities(value)
         )
       ).subscribe(response => {
         this.filteredTypes = this.mapResponse(response);
-        this.cdr.detectChanges();
       });
       this.form.get(this.propertyName)?.setValue(this.model);
       this.form.markAllAsTouched();
     }
   }
 
-  installValidators() {
-
+  onBlur() {
+    if (!this.checkAutocompletFieldCheck() || !this.checkFieldFilledIfIsConditionalRequiredCheck()) {
+      this.model = undefined;
+      this.modelChange.emit(this.model);
+      this.form!.get(this.propertyName)?.setValue(undefined);
+    }
   }
   abstract searchEntities(value: string): Observable<U[]>;
 
@@ -143,9 +147,7 @@ export abstract class GenericAutocompleteComponent<T, U> implements OnInit {
 
   checkAutocompleteField(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
-      const root = control.root as UntypedFormGroup;
-      const fieldValue = root.get(this.propertyName)?.value;
-      if (fieldValue != undefined && fieldValue != null && (fieldValue.id == undefined || fieldValue.id == null))
+      if (this.checkAutocompletFieldCheck())
         return {
           notFilled: true
         };
@@ -153,17 +155,31 @@ export abstract class GenericAutocompleteComponent<T, U> implements OnInit {
     };
   }
 
+  checkAutocompletFieldCheck() {
+    const fieldValue = this.form!.get(this.propertyName)?.value;
+    if (fieldValue != undefined && fieldValue != null && (fieldValue.id == undefined || fieldValue.id == null))
+      return false;
+    return true;
+  }
+
   // Check if the propertiy given in parameter is filled when conditionnalRequired is set
   checkFieldFilledIfIsConditionalRequired(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const root = control.root as UntypedFormGroup;
       const fieldValue = root.get(this.propertyName)?.value;
-      if (this.conditionnalRequired && (fieldValue == undefined || fieldValue == null || fieldValue.length == 0))
+      if (this.checkFieldFilledIfIsConditionalRequiredCheck())
         return {
           notFilled: true
         };
       return null;
     };
+  }
+
+  checkFieldFilledIfIsConditionalRequiredCheck() {
+    const fieldValue = this.form!.get(this.propertyName)?.value;
+    if (this.conditionnalRequired && (fieldValue == undefined || fieldValue == null || fieldValue.length == 0))
+      return false;
+    return true;
   }
 
   displayLabel(object: any): string {
@@ -173,7 +189,6 @@ export abstract class GenericAutocompleteComponent<T, U> implements OnInit {
   optionSelected(type: T): void {
     this.model = type;
     this.modelChange.emit(this.model);
-    this.cdr.detectChanges();
     this.onOptionSelected.emit(type);
   }
 
@@ -183,5 +198,12 @@ export abstract class GenericAutocompleteComponent<T, U> implements OnInit {
     this.onOptionSelected.emit(undefined);
     if (this.form)
       this.form.get(this.propertyName)?.setValue(null);
+  }
+
+  addToNotes(event: any) {
+    let isHeader = false;
+    if (event && event.ctrlKey)
+      isHeader = true;
+    this.userNoteService.addToNotes(this.label, this.displayLabel(this.model), undefined, isHeader);
   }
 }

@@ -57,8 +57,8 @@
                 propertyName="address" [isMandatory]="true" [maxLength]="60"></generic-input>
             </td>
             <td>
-              <autocomplete-postal-code [(model)]="selectedEntity.postalCode" [form]="entityForm"
-                propertyName="postalCode" [isMandatory]="true"
+              <autocomplete-postal-code [(model)]="selectedEntity.postalCode" [form]="entityForm" label="Code postal"
+                [isDisabled]="!editMode" propertyName="postalCode" [isMandatory]="true"
                 [conditionnalRequired]="selectedEntity.country != null && selectedEntity.country.code == COUNTRY_CODE_FRANCE"
                 (onOptionSelected)="fillCity($event)"></autocomplete-postal-code>
             </td>
@@ -70,7 +70,7 @@
             </td>
             <td>
               <autocomplete-country [(model)]="selectedEntity.country" [form]="entityForm" propertyName="country"
-                [isMandatory]="true"></autocomplete-country>
+                label="Pays" [isDisabled]="!editMode" [isMandatory]="true"></autocomplete-country>
             </td>
           </tr>
         </table>

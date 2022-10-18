@@ -78,16 +78,18 @@
                 <tr>
                   <td>
                     <autocomplete-sales-employee [(model)]="selectedResponsable.salesEmployee" [form]="principalForm"
-                      propertyName="salesEmployee" [isMandatory]="true" [isDisabled]="!editMode">
+                      label="Commercial" propertyName="salesEmployee" [isMandatory]="true" [isDisabled]="!editMode">
                     </autocomplete-sales-employee>
                   </td>
                   <td>
                     <autocomplete-formaliste-employee [(model)]="selectedResponsable.formalisteEmployee"
-                      [form]="principalForm" propertyName="formalisteEmployee" [isDisabled]="!editMode">
+                      label="Formaliste" [isDisabled]="!editMode" [form]="principalForm"
+                      propertyName="formalisteEmployee" [isDisabled]="!editMode">
                     </autocomplete-formaliste-employee>
                   <td>
                     <autocomplete-insertion-employee [(model)]="selectedResponsable.insertionEmployee"
-                      [form]="principalForm" propertyName="insertionEmployee" [isDisabled]="!editMode">
+                      label="Publiciste" [isDisabled]="!editMode" [form]="principalForm"
+                      propertyName="insertionEmployee" [isDisabled]="!editMode">
                     </autocomplete-insertion-employee>
                   </td>
                   <td>
@@ -120,19 +122,19 @@
                   </td>
                   <td>
                     <autocomplete-postal-code [(model)]="selectedResponsable.postalCode" [form]="principalForm"
-                      propertyName="postalCode" [isMandatory]="false"
+                      propertyName="postalCode" [isMandatory]="false" label="Code postal" [isDisabled]="!editMode"
                       [conditionnalRequired]="selectedResponsable.country != null && selectedResponsable.country.code == COUNTRY_CODE_FRANCE"
                       (onOptionSelected)="fillCity($event)"></autocomplete-postal-code>
                   </td>
                   <td>
                     <autocomplete-city [(model)]="selectedResponsable.city" [modelCountry]="selectedResponsable.country"
-                      [form]="principalForm" propertyName="city" [isMandatory]="false"
-                      (onOptionSelected)="fillPostalCode($event)">
+                      [form]="principalForm" propertyName="city" [isMandatory]="false" [isDisabled]="!editMode"
+                      label="Ville" (onOptionSelected)="fillPostalCode($event)">
                     </autocomplete-city>
                   </td>
                   <td>
-                    <autocomplete-country [(model)]="selectedResponsable.country" [form]="principalForm"
-                      propertyName="country" [isMandatory]="false"></autocomplete-country>
+                    <autocomplete-country [(model)]="selectedResponsable.country" [form]="principalForm" label="Pays"
+                      [isDisabled]="!editMode" propertyName="country" [isMandatory]="false"></autocomplete-country>
                   </td>
                   <td>
                     <generic-input [(model)]="selectedResponsable.building" label="Bâtiment" [form]="principalForm"

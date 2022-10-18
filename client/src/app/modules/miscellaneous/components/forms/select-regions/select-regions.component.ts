@@ -1,5 +1,6 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
+import { UserNoteService } from 'src/app/services/user.notes.service';
 import { Region } from '../../../model/Region';
 import { RegionService } from '../../../services/region.service';
 import { GenericMultipleSelectComponent } from '../generic-select/generic-multiple-select.component';
@@ -13,15 +14,17 @@ export class SelectRegionsComponent extends GenericMultipleSelectComponent<Regio
 
   types: Region[] = [] as Array<Region>;
 
-  constructor(private changeDetectorRef: ChangeDetectorRef,
-    private formBuild: UntypedFormBuilder,
-    private regionService: RegionService) {
-    super(changeDetectorRef, formBuild);
+  constructor(private formBuild: UntypedFormBuilder, private regionService: RegionService, private userNoteService2: UserNoteService,) {
+    super(formBuild, userNoteService2)
   }
 
   initTypes(): void {
     this.regionService.getRegions().subscribe(response => {
       this.types = response;
     })
+  }
+
+  displayLabel(object: any): string {
+    return object ? (object.code + " - " + object.label) : '';
   }
 }

@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -42,11 +43,11 @@ public class Invoice implements Serializable, IId {
 	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
 	private LocalDateTime createdDate;
 
-	@Column(nullable = false)
+	@Column
 	@JsonSerialize(using = JacksonLocalDateSerializer.class)
 	private LocalDate dueDate;
 
-	@OneToMany(targetEntity = InvoiceItem.class, mappedBy = "invoice")
+	@OneToMany(targetEntity = InvoiceItem.class, mappedBy = "invoice", cascade = CascadeType.ALL)
 	@JsonIgnoreProperties(value = { "invoice" }, allowSetters = true)
 	private List<InvoiceItem> invoiceItems;
 
@@ -66,11 +67,16 @@ public class Invoice implements Serializable, IId {
 	@JoinColumn(name = "id_tiers")
 	private Tiers tiers;
 
+	@ManyToOne
+	@JoinColumn(name = "id_provider")
+	private Tiers provider;
+
 	@Column(length = 40, name = "billing_label")
 	private String billingLabel;
 
-	@Column(name = "billing_label_address")
+	@Column(name = "billing_label_address", length = 160)
 	private String billingLabelAddress;
+
 	private String billingLabelPostalCode;
 
 	@ManyToOne
@@ -293,6 +299,14 @@ public class Invoice implements Serializable, IId {
 
 	public void setDeposits(List<Deposit> deposits) {
 		this.deposits = deposits;
+	}
+
+	public Tiers getProvider() {
+		return provider;
+	}
+
+	public void setProvider(Tiers provider) {
+		this.provider = provider;
 	}
 
 }

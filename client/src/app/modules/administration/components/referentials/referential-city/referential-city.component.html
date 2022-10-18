@@ -35,8 +35,9 @@
           </tr>
           <tr>
             <td>
-              <autocomplete-department [(model)]="selectedEntity.department" [form]="entityForm"
-                propertyName="department" [isMandatory]="false" [isDisabled]="!editMode"></autocomplete-department>
+              <autocomplete-department [(model)]="selectedEntity.department" [form]="entityForm" label="Département"
+                [isDisabled]="!editMode" propertyName="department" [isMandatory]="false" [isDisabled]="!editMode">
+              </autocomplete-department>
             </td>
           </tr>
           <tr>
@@ -48,7 +49,8 @@
           <tr>
             <td>
               <autocomplete-country [(model)]="selectedEntity.country" [form]="entityForm" propertyName="country"
-                [isMandatory]="true" [isDisabled]="!editMode"></autocomplete-country>
+                label="Pays" [isDisabled]="!editMode" [isMandatory]="true" [isDisabled]="!editMode">
+              </autocomplete-country>
             </td>
           </tr>
         </table>

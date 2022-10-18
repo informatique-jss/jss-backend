@@ -5,14 +5,14 @@
         <tr>
           <td *ngIf="!invoice.responsable && !invoice.confrere">
             <autocomplete-tiers-individual [(model)]="invoice.tiers" [form]="invoiceForm" propertyName="tiers"
-              (onOptionSelected)="fillTiers($event)" [isMandatory]="true"
+              (onOptionSelected)="fillTiers($event)" [isMandatory]="true" label="Tiers" [isDisabled]="!editMode"
               [conditionnalRequired]="invoice.responsable==undefined && invoice.confrere==undefined">
             </autocomplete-tiers-individual>
           </td>
           <td *ngIf="!invoice.tiers && !invoice.confrere">
             <autocomplete-responsable [(model)]="invoice.responsable" [form]="invoiceForm" propertyName="responsable"
-              (onOptionSelected)="fillResponsable($event)" [isMandatory]="true"
-              [conditionnalRequired]="invoice.tiers==undefined && invoice.confrere==undefined">
+              (onOptionSelected)="fillResponsable($event)" [isMandatory]="true" label="Responsable"
+              [isDisabled]="!editMode" [conditionnalRequired]="invoice.tiers==undefined && invoice.confrere==undefined">
             </autocomplete-responsable>
           </td>
           <td *ngIf="!invoice.tiers && !invoice.responsable">
@@ -36,26 +36,29 @@
         <tr>
           <td>
             <generic-input [(model)]="invoice.billingLabel" label="Libellé" [form]="invoiceForm"
-              propertyName="billingLabel" [isMandatory]="true" [isDisabled]="!editMode"></generic-input>
+              propertyName="billingLabel" [isMandatory]="true" [maxLength]="40" [isDisabled]="!editMode">
+            </generic-input>
           </td>
           <td>
             <generic-input [(model)]="invoice.billingLabelAddress" label="Adresse" [form]="invoiceForm"
-              propertyName="billingAddress" [isMandatory]="true" [isDisabled]="!editMode"></generic-input>
+              propertyName="billingAddress" [isMandatory]="true" [isDisabled]="!editMode" [maxLength]="160">
+            </generic-input>
           </td>
           <td>
             <autocomplete-postal-code [(model)]="invoice.billingLabelPostalCode" [form]="invoiceForm"
-              propertyName="postalCode" [isMandatory]="true"
+              label="Code postal" [isDisabled]="!editMode" propertyName="postalCode" [isMandatory]="true"
               [conditionnalRequired]="invoice.billingLabelCountry != null && invoice.billingLabelCountry.code == COUNTRY_CODE_FRANCE"
               (onOptionSelected)="fillCity($event)"></autocomplete-postal-code>
           </td>
           <td>
             <autocomplete-city [(model)]="invoice.billingLabelCity" [modelCountry]="invoice.billingLabelCountry"
-              [form]="invoiceForm" propertyName="city" [isMandatory]="true" (onOptionSelected)="fillPostalCode($event)">
+              [isDisabled]="!editMode" label="Ville" [form]="invoiceForm" propertyName="city" [isMandatory]="true"
+              (onOptionSelected)="fillPostalCode($event)">
             </autocomplete-city>
           </td>
           <td>
             <autocomplete-country [(model)]="invoice.billingLabelCountry" [form]="invoiceForm" propertyName="country"
-              [isMandatory]="true"></autocomplete-country>
+              label="Pays" [isDisabled]="!editMode" [isMandatory]="true"></autocomplete-country>
           </td>
           <td>
             <generic-toggle [(model)]="invoice.billingLabelIsIndividual" label="Est particulier ?" [form]="invoiceForm"
@@ -91,8 +94,10 @@
             [isMandatory]="true" [isDisabled]="!editMode" [maxLength]="200"></generic-input>
         </td>
         <td>
-          <select-billing-items [(model)]="invoiceItem.billingItem" label="Poste de facturation" [form]="invoiceForm"
-            propertyName="billingItem" [isMandatory]="true" [isDisabled]="!editMode"></select-billing-items>
+          <autocomplete-billing-item [(model)]="invoiceItem.billingItem" [form]="invoiceForm"
+            label="Poste de facturation" propertyName="Poste de facturation" [isMandatory]="true"
+            [isDisabled]="!editMode">
+          </autocomplete-billing-item>
         </td>
       </tr>
     </table>

@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        springBootVersion = '2.6.4'
+        springBootVersion = '2.6.4' 
     }
     repositories {
        maven { url = 'https://repo1.maven.org/maven2/' }
@@ -8,7 +8,7 @@ buildscript {
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
     }
-}
+} 
  
 
 apply plugin: 'java'
@@ -53,3 +53,4 @@ group = 'com.jss.osiris'
 version = '1.0'
 description = 'Outil Sympa, Interactif, Révolutionnairement Intuitif et Simple'
 sourceCompatibility = '1.8'
+targetCompatibility = '1.8'

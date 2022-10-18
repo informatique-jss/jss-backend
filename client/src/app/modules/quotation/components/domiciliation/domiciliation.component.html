@@ -44,20 +44,20 @@
             </td>
             <td>
               <autocomplete-postal-code [(model)]="domiciliation.postalCode" [form]="domiciliationForm"
-                propertyName="postalCode" [isMandatory]="true"
+                propertyName="postalCode" [isMandatory]="true" label="Code postal" [isDisabled]="!editMode"
                 [conditionnalRequired]="mustDecribeAdresse() && !isStatusOpen" (onOptionSelected)="fillCity($event)">
               </autocomplete-postal-code>
             </td>
             <td>
               <autocomplete-city [(model)]="domiciliation.city" [modelCountry]="domiciliation.country"
-                [form]="domiciliationForm" propertyName="city" [isMandatory]="true"
-                [conditionnalRequired]="mustDecribeAdresse() && !isStatusOpen"
+                [form]="domiciliationForm" propertyName="city" [isMandatory]="true" [isDisabled]="!editMode"
+                label="Ville" [conditionnalRequired]="mustDecribeAdresse() && !isStatusOpen"
                 (onOptionSelected)="fillPostalCode($event)">
               </autocomplete-city>
             </td>
             <td>
               <autocomplete-country [(model)]="domiciliation.country" [form]="domiciliationForm" propertyName="country"
-                [isMandatory]="true" [isDisabled]="!editMode"
+                [isMandatory]="true" [isDisabled]="!editMode" label="Pays" [isDisabled]="!editMode"
                 [conditionnalRequired]="mustDecribeAdresse() && !isStatusOpen">
               </autocomplete-country>
             </td>
@@ -115,21 +115,21 @@
             </td>
             <td>
               <autocomplete-postal-code [(model)]="domiciliation.activityPostalCode" [form]="domiciliationForm"
-                propertyName="activityPostalCode" [isMandatory]="true"
+                propertyName="activityPostalCode" [isMandatory]="true" label="Code postal" [isDisabled]="!editMode"
                 [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen"
                 (onOptionSelected)="fillActivityCity($event)">
               </autocomplete-postal-code>
             </td>
             <td>
               <autocomplete-city [(model)]="domiciliation.activityCity" [modelCountry]="domiciliation.activityCountry"
-                [form]="domiciliationForm" propertyName="activityCity" [isMandatory]="true"
-                [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen"
+                [form]="domiciliationForm" propertyName="activityCity" [isMandatory]="true" [isDisabled]="!editMode"
+                label="Ville" [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen"
                 (onOptionSelected)="fillActivityPostalCode($event)">
               </autocomplete-city>
             </td>
             <td>
               <autocomplete-country [(model)]="domiciliation.activityCountry" [form]="domiciliationForm"
-                propertyName="activityCountry" [isMandatory]="true"
+                propertyName="activityCountry" [isMandatory]="true" label="Pays" [isDisabled]="!editMode"
                 [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode">
               </autocomplete-country>
             </td>
@@ -167,13 +167,14 @@
           <tr>
             <td>
               <autocomplete-legal-form [(model)]="domiciliation.legalGardianLegalForm" [form]="domiciliationForm"
-                propertyName="legalGardianLegalForm" [isMandatory]="true" [isDisabled]="!editMode"
+                label="Forme juridique" [isDisabled]="!editMode" propertyName="legalGardianLegalForm"
+                [isMandatory]="true" [isDisabled]="!editMode"
                 [conditionnalRequired]="domiciliation.isLegalPerson && instanceOfCustomerOrder && !isStatusOpen">
               </autocomplete-legal-form>
             </td>
             <td>
               <autocomplete-siren [(model)]="domiciliation.legalGardianSiren" [form]="domiciliationForm"
-                propertyName="legalGardianSiren" [isMandatory]="true"
+                propertyName="legalGardianSiren" [isMandatory]="true" label="SIREN" [isDisabled]="!editMode"
                 [conditionnalRequired]="domiciliation.isLegalPerson && instanceOfCustomerOrder && !isStatusOpen"
                 (onOptionSelected)="fillSiren($event)">
               </autocomplete-siren>
@@ -263,7 +264,7 @@
             </td>
             <td>
               <autocomplete-postal-code [(model)]="domiciliation.legalGardianPostalCode" [form]="domiciliationForm"
-                propertyName="legalGardianPostalCode" [isMandatory]="true"
+                propertyName="legalGardianPostalCode" [isMandatory]="true" label="Code postal" [isDisabled]="!editMode"
                 [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen"
                 (onOptionSelected)="fillLegalGardianCity($event)">
               </autocomplete-postal-code>
@@ -271,14 +272,14 @@
             <td>
               <autocomplete-city [(model)]="domiciliation.legalGardianCity"
                 [modelCountry]="domiciliation.legalGardianCountry" [form]="domiciliationForm"
-                propertyName="legalGardianCity" [isMandatory]="true"
+                propertyName="legalGardianCity" [isMandatory]="true" [isDisabled]="!editMode" label="Ville"
                 [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen"
                 (onOptionSelected)="fillLegalGardianPostalCode($event)">
               </autocomplete-city>
             </td>
             <td>
               <autocomplete-country [(model)]="domiciliation.legalGardianCountry" [form]="domiciliationForm"
-                propertyName="legalGardianCountry" [isMandatory]="true"
+                propertyName="legalGardianCountry" [isMandatory]="true" label="Pays" [isDisabled]="!editMode"
                 [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode">
               </autocomplete-country>
             </td>

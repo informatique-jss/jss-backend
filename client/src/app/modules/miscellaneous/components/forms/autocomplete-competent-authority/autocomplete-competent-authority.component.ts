@@ -1,9 +1,10 @@
 
 
 
-import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
+import { UserNoteService } from 'src/app/services/user.notes.service';
 import { CompetentAuthority } from '../../../model/CompetentAuthority';
 import { CompetentAuthorityType } from '../../../model/CompetentAuthorityType';
 import { Department } from '../../../model/Department';
@@ -12,8 +13,8 @@ import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-au
 
 @Component({
   selector: 'autocomplete-competent-authority',
-  templateUrl: './autocomplete-competent-authority.component.html',
-  styleUrls: ['./autocomplete-competent-authority.component.css']
+  templateUrl: '../generic-autocomplete/generic-autocomplete.component.html',
+  styleUrls: ['../generic-autocomplete/generic-autocomplete.component.css']
 })
 export class AutocompleteCompetentAuthorityComponent extends GenericAutocompleteComponent<CompetentAuthority, CompetentAuthority> implements OnInit {
 
@@ -37,9 +38,8 @@ export class AutocompleteCompetentAuthorityComponent extends GenericAutocomplete
 */
   @Input() filteredCompetentAuthorityTypeCode: string | undefined;
 
-
-  constructor(private formBuild: UntypedFormBuilder, private competentauthorityService: CompetentAuthorityService, private changeDetectorRef: ChangeDetectorRef) {
-    super(formBuild, changeDetectorRef)
+  constructor(private formBuild: UntypedFormBuilder, private competentauthorityService: CompetentAuthorityService, private userNoteService2: UserNoteService,) {
+    super(formBuild, userNoteService2)
   }
 
   searchEntities(value: string): Observable<CompetentAuthority[]> {

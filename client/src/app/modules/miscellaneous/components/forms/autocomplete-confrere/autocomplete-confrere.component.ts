@@ -3,6 +3,7 @@ import { UntypedFormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Confrere } from 'src/app/modules/quotation/model/Confrere';
 import { ConfrereService } from 'src/app/modules/quotation/services/confrere.service';
+import { UserNoteService } from 'src/app/services/user.notes.service';
 import { ConfrereDialogComponent } from '../../confreres-dialog/confreres-dialog.component';
 import { GenericLocalAutocompleteComponent } from '../generic-local-autocomplete/generic-local-autocomplete.component';
 
@@ -21,8 +22,8 @@ export class AutocompleteConfrereComponent extends GenericLocalAutocompleteCompo
 */
   @Input() label: string = "Support";
 
-  constructor(private formBuild: UntypedFormBuilder, private confrereService: ConfrereService, public confrereDialog: MatDialog,) {
-    super(formBuild)
+  constructor(private formBuild: UntypedFormBuilder, private confrereService: ConfrereService, public confrereDialog: MatDialog, private userNoteService2: UserNoteService,) {
+    super(formBuild, userNoteService2)
   }
 
   ngOnChanges(changes: SimpleChanges) {

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { validateEmail } from 'src/app/libs/CustomFormsValidatorsHelper';
 import { prepareMail } from 'src/app/libs/MailHelper';
+import { UserNoteService } from 'src/app/services/user.notes.service';
 import { Mail } from '../../../model/Mail';
 import { GenericChipsComponent } from '../generic-chips/generic-chips.component';
 
@@ -12,8 +13,8 @@ import { GenericChipsComponent } from '../generic-chips/generic-chips.component'
 })
 export class ChipsMailComponent extends GenericChipsComponent<Mail> implements OnInit {
 
-  constructor(private formBuild: UntypedFormBuilder) {
-    super(formBuild);
+  constructor(private formBuild: UntypedFormBuilder, private userNoteService2: UserNoteService,) {
+    super(formBuild, userNoteService2)
   }
 
   validateInput(value: string): boolean {

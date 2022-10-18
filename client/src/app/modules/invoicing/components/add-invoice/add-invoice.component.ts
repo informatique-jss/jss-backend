@@ -1,6 +1,6 @@
-import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { BILLING_TIERS_DOCUMENT_TYPE_OTHER, COUNTRY_CODE_FRANCE } from 'src/app/libs/Constants';
 import { formatEurosForSortTable } from 'src/app/libs/FormatHelper';
@@ -37,7 +37,7 @@ export class AddInvoiceComponent implements OnInit {
     private invoiceService: InvoiceService,
     private tiersService: TiersService,
     private cityService: CityService,
-    private location: Location,
+    private router: Router,
   ) {
   }
 
@@ -107,7 +107,7 @@ export class AddInvoiceComponent implements OnInit {
     if (this.invoiceForm.valid && this.invoiceItems && this.invoiceItems.length > 0) {
       this.invoiceService.saveInvoice(this.invoice).subscribe(response => {
         if (response)
-          this.location.back();
+          this.router.navigate(['/invoicing/', "" + response.id])
       });
     } else {
       this.appService.displaySnackBar("Veuilliez saisir au moins une ligne de facturation valide", true, 60);

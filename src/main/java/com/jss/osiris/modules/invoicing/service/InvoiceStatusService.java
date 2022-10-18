@@ -12,4 +12,5 @@ public interface InvoiceStatusService {
     public InvoiceStatus addOrUpdateInvoiceStatus(InvoiceStatus invoiceStatus);
 
     public InvoiceStatus getInvoiceStatusByCode(String invoiceStatusPayedCode);
+
 }

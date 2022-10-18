@@ -40,6 +40,9 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
     @Value("${accounting.account.number.product}")
     private String productAccountingAccountNumber;
 
+    @Value("${accounting.account.number.charge}")
+    private String chargeAccountingAccountNumber;
+
     @Value("${accounting.account.number.bank}")
     String bankAccountingAccountNumber;
 
@@ -204,6 +207,17 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
         if (accountingAccounts != null && accountingAccounts.size() > 0) {
             for (AccountingAccount accountingAccount : accountingAccounts)
                 if (accountingAccount.getAccountingAccountNumber().equals(productAccountingAccountNumber))
+                    return accountingAccount;
+        }
+        return null;
+    }
+
+    @Override
+    public AccountingAccount getChargeAccountingAccountFromAccountingAccountList(
+            List<AccountingAccount> accountingAccounts) {
+        if (accountingAccounts != null && accountingAccounts.size() > 0) {
+            for (AccountingAccount accountingAccount : accountingAccounts)
+                if (accountingAccount.getAccountingAccountNumber().equals(chargeAccountingAccountNumber))
                     return accountingAccount;
         }
         return null;

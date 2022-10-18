@@ -29,8 +29,8 @@ import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.model.Refund;
+import com.jss.osiris.modules.invoicing.service.InvoiceHelper;
 import com.jss.osiris.modules.invoicing.service.InvoiceItemService;
-import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.miscellaneous.service.VatService;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
@@ -49,7 +49,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   InvoiceItemService invoiceItemService;
 
   @Autowired
-  InvoiceService invoiceService;
+  InvoiceHelper invoiceHelper;
 
   @Autowired
   AccountingAccountService accountingAccountService;
@@ -115,18 +115,20 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     if (invoice == null)
       throw new Exception("No invoice provided");
 
-    if (invoice.getCustomerOrder() == null)
-      throw new Exception("No customer order in invoice " + invoice.getId());
+    if (invoice.getCustomerOrder() == null && invoiceHelper.getCustomerOrder(invoice) == null)
+      throw new Exception("No customer order or ITiers in invoice " + invoice.getId());
 
-    AccountingAccount accountingAccountCustomer = getCustomerAccountingAccountForCustomerOrder(
-        invoiceService.getCustomerOrder(invoice));
+    String labelPrefix = invoice.getCustomerOrder() != null ? ("Commande n°" + invoice.getCustomerOrder().getId())
+        : ("Facture libre n°" + invoice.getId());
+
+    AccountingAccount accountingAccountCustomer = getCustomerAccountingAccountForInvoice(invoice);
 
     Float balance = 0f;
-    balance += invoiceService.getPriceTotal(invoice);
+    balance += invoiceHelper.getPriceTotal(invoice);
 
     // One write on customer account for all invoice
     generateNewAccountingRecord(LocalDateTime.now(), invoice.getId(), null,
-        "Commande n°" + invoice.getCustomerOrder().getId(), null,
+        labelPrefix, null,
         balance,
         accountingAccountCustomer, null, invoice, null, salesJournal, null, null);
 
@@ -149,7 +151,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
             + invoiceItem.getBillingItem().getId());
 
       generateNewAccountingRecord(LocalDateTime.now(), invoice.getId(), null,
-          "Commande n°" + invoice.getCustomerOrder().getId() + " - produit "
+          labelPrefix + " - produit "
               + invoiceItem.getBillingItem().getBillingType().getLabel(),
           invoiceItem.getPreTaxPrice() - invoiceItem.getDiscountAmount(), null, producAccountingAccount,
           invoiceItem, invoice, null, salesJournal, null, null);
@@ -158,10 +160,74 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
       if (invoiceItem.getVat() != null) {
         generateNewAccountingRecord(LocalDateTime.now(), invoice.getId(), null,
-            "Commande n°" + invoice.getCustomerOrder().getId() + " - TVA pour le produit "
+            labelPrefix + " - TVA pour le produit "
                 + invoiceItem.getBillingItem().getBillingType().getLabel(),
             invoiceItem.getVatPrice(), null, invoiceItem.getVat().getAccountingAccount(),
             invoiceItem, invoice, null, salesJournal, null, null);
+
+        balance -= invoiceItem.getVatPrice();
+      }
+    }
+
+    // Check balance ok
+    if (Math.round(balance * 10000f) / 10000f != 0) {
+      throw new Exception("Accounting records  are not balanced for invoice " + invoice.getId());
+    }
+  }
+
+  @Override
+  public void generateAccountingRecordsForPurshaseOnInvoiceGeneration(Invoice invoice) throws Exception {
+    AccountingJournal pushasingJournal = accountingJournalService.getPurchasesAccountingJournal();
+
+    if (invoice == null)
+      throw new Exception("No invoice provided");
+
+    if (invoice.getCustomerOrder() == null && invoiceHelper.getCustomerOrder(invoice) == null)
+      throw new Exception("No customer order or ITiers in invoice " + invoice.getId());
+
+    String labelPrefix = invoice.getCustomerOrder() != null ? ("Commande n°" + invoice.getCustomerOrder().getId())
+        : ("Facture libre n°" + invoice.getId());
+
+    AccountingAccount accountingAccountProvider = getCustomerAccountingAccountForInvoice(invoice);
+
+    Float balance = 0f;
+    balance += invoiceHelper.getPriceTotal(invoice);
+
+    // One write on customer account for all invoice
+    generateNewAccountingRecord(LocalDateTime.now(), invoice.getId(), null,
+        labelPrefix, balance, null, accountingAccountProvider, null, invoice, null, pushasingJournal, null, null);
+
+    // For each invoice item, one write on product and VAT account for each invoice
+    // item
+    for (InvoiceItem invoiceItem : invoice.getInvoiceItems()) {
+      if (invoiceItem.getBillingItem() == null)
+        throw new Exception("No billing item defined in invoice item n°" + invoiceItem.getId());
+
+      if (invoiceItem.getBillingItem().getBillingType() == null)
+        throw new Exception(
+            "No billing type defined in billing item n°" + invoiceItem.getBillingItem().getId());
+
+      AccountingAccount chargeAccountingAccount = accountingAccountService
+          .getChargeAccountingAccountFromAccountingAccountList(invoiceItem.getBillingItem().getAccountingAccounts());
+
+      if (chargeAccountingAccount == null)
+        throw new Exception("No product accounting account defined in billing item n°"
+            + invoiceItem.getBillingItem().getId());
+
+      generateNewAccountingRecord(LocalDateTime.now(), invoice.getId(), null,
+          labelPrefix + " - charge "
+              + invoiceItem.getBillingItem().getBillingType().getLabel(),
+          null, invoiceItem.getPreTaxPrice() - invoiceItem.getDiscountAmount(), chargeAccountingAccount,
+          invoiceItem, invoice, null, pushasingJournal, null, null);
+
+      balance -= invoiceItem.getPreTaxPrice() - invoiceItem.getDiscountAmount();
+
+      if (invoiceItem.getVat() != null) {
+        generateNewAccountingRecord(LocalDateTime.now(), invoice.getId(), null,
+            labelPrefix + " - TVA pour la charge "
+                + invoiceItem.getBillingItem().getBillingType().getLabel(),
+            null, invoiceItem.getVatPrice(), invoiceItem.getVat().getAccountingAccount(),
+            invoiceItem, invoice, null, pushasingJournal, null, null);
 
         balance -= invoiceItem.getVatPrice();
       }
@@ -182,17 +248,13 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     if (invoice == null)
       throw new Exception("No invoice provided");
 
-    if (invoice.getCustomerOrder() == null)
-      throw new Exception("No customer order in invoice " + invoice.getId());
-
     if ((payments == null || payments.size() == 0) && (deposits == null || deposits.size() == 0))
       throw new Exception("No payments nor deposits provided with invoice " + invoice.getId());
 
     AccountingAccount bankAccountingAccount = accountingAccountService.getBankAccountingAccount();
     AccountingAccount waintingAccountingAccount = accountingAccountService.getWaitingAccountingAccount();
 
-    AccountingAccount accountingAccountCustomer = getCustomerAccountingAccountForCustomerOrder(
-        invoiceService.getCustomerOrder(invoice));
+    AccountingAccount accountingAccountCustomer = getCustomerAccountingAccountForInvoice(invoice);
 
     Integer operationId = 0;
 
@@ -230,7 +292,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   public void generateAccountingRecordsForDepositAndInvoice(Deposit deposit, Invoice invoice, Payment payment)
       throws Exception {
     AccountingAccount depositAccountingAccount = getDepositAccountingAccountForCustomerOrder(
-        invoiceService.getCustomerOrder(invoice));
+        invoiceHelper.getCustomerOrder(invoice));
     AccountingJournal salesJournal = accountingJournalService.getSalesAccountingJournal();
 
     // If deposit is created from a payment, use the payment ID as operation ID to
@@ -245,7 +307,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
   @Override
   public void generateAppointForPayment(Payment payment, float remainingMoney, ITiers customerOrder) throws Exception {
-    AccountingAccount accountingAccountCustomer = getCustomerAccountingAccountForCustomerOrder(customerOrder);
+    AccountingAccount accountingAccountCustomer = getCustomerAccountingAccountForITiers(customerOrder);
 
     if (remainingMoney > 0) {
       generateNewAccountingRecord(LocalDateTime.now(), payment.getId(), null,
@@ -301,9 +363,9 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     AccountingJournal salesJournal = accountingJournalService.getSalesAccountingJournal();
     AccountingAccount customerAccountingAccount = null;
     if (refund.getConfrere() != null) {
-      customerAccountingAccount = getCustomerAccountingAccountForCustomerOrder(refund.getConfrere());
+      customerAccountingAccount = getCustomerAccountingAccountForITiers(refund.getConfrere());
     } else {
-      customerAccountingAccount = getCustomerAccountingAccountForCustomerOrder(refund.getTiers());
+      customerAccountingAccount = getCustomerAccountingAccountForITiers(refund.getTiers());
     }
     generateNewAccountingRecord(LocalDateTime.now(), refund.getId(), null, "Remboursement n°" + refund.getId(),
         refund.getRefundAmount(), null, accountingAccountService.getBankAccountingAccount(), null, null, null,
@@ -325,8 +387,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   }
 
   private void checkInvoiceForLettrage(Invoice invoice) throws Exception {
-    AccountingAccount accountingAccountCustomer = getCustomerAccountingAccountForCustomerOrder(
-        invoiceService.getCustomerOrder(invoice));
+    AccountingAccount accountingAccountCustomer = getCustomerAccountingAccountForInvoice(invoice);
 
     List<AccountingRecord> accountingRecords = accountingRecordRepository
         .findByAccountingAccountAndInvoice(accountingAccountCustomer, invoice);
@@ -364,19 +425,46 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   }
 
   @Override
-  public AccountingAccount getCustomerAccountingAccountForCustomerOrder(ITiers customerOrder) throws Exception {
+  public AccountingAccount getCustomerAccountingAccountForInvoice(Invoice invoice) throws Exception {
+    ITiers customerOrder = invoiceHelper.getCustomerOrder(invoice);
+    return getCustomerAccountingAccountForITiers(customerOrder);
+  }
+
+  @Override
+  public AccountingAccount getCustomerAccountingAccountForITiers(ITiers tiers) throws Exception {
     // If cusomter order is a Responsable, get accounting account of parent Tiers
-    if (customerOrder.getAccountingAccountCustomer() == null || (customerOrder instanceof Responsable
-        && ((Responsable) customerOrder).getTiers().getAccountingAccountCustomer() == null))
-      throw new Exception("No customer accounting account in ITiers " + customerOrder.getId());
+    if (tiers.getAccountingAccountCustomer() == null || (tiers instanceof Responsable
+        && ((Responsable) tiers).getTiers().getAccountingAccountCustomer() == null))
+      throw new Exception("No customer accounting account in ITiers " + tiers.getId());
 
     AccountingAccount accountingAccountCustomer = null;
-    if (customerOrder instanceof Responsable)
-      accountingAccountCustomer = ((Responsable) customerOrder).getTiers().getAccountingAccountCustomer();
+    if (tiers instanceof Responsable)
+      accountingAccountCustomer = ((Responsable) tiers).getTiers().getAccountingAccountCustomer();
     else
-      accountingAccountCustomer = customerOrder.getAccountingAccountCustomer();
+      accountingAccountCustomer = tiers.getAccountingAccountCustomer();
 
     return accountingAccountCustomer;
+  }
+
+  @Override
+  public AccountingAccount getProviderAccountingAccountForInvoice(Invoice invoice) throws Exception {
+    return getProviderAccountingAccountForITiers(invoice.getProvider());
+  }
+
+  @Override
+  public AccountingAccount getProviderAccountingAccountForITiers(ITiers tiers) throws Exception {
+    // If cusomter order is a Responsable, get accounting account of parent Tiers
+    if (tiers.getAccountingAccountProvider() == null || (tiers instanceof Responsable
+        && ((Responsable) tiers).getTiers().getAccountingAccountProvider() == null))
+      throw new Exception("No customer accounting account in ITiers " + tiers.getId());
+
+    AccountingAccount accountingAccountProvider = null;
+    if (tiers instanceof Responsable)
+      accountingAccountProvider = ((Responsable) tiers).getTiers().getAccountingAccountProvider();
+    else
+      accountingAccountProvider = tiers.getAccountingAccountProvider();
+
+    return accountingAccountProvider;
   }
 
   private AccountingAccount getDepositAccountingAccountForCustomerOrder(ITiers customerOrder) throws Exception {
@@ -636,8 +724,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
         return invoice.getTotalPrice();
 
       Float total = invoice.getTotalPrice();
-      AccountingAccount customerAccountingAccount = getCustomerAccountingAccountForCustomerOrder(
-          invoiceService.getCustomerOrder(invoice));
+      AccountingAccount customerAccountingAccount = getCustomerAccountingAccountForInvoice(invoice);
       for (AccountingRecord accountingRecord : accountingRecords) {
         if (accountingRecord.getAccountingAccount().getId().equals(customerAccountingAccount.getId())
             && accountingRecord.getCreditAmount() != null)

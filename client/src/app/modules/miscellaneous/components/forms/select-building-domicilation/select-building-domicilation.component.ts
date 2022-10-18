@@ -1,7 +1,8 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { BuildingDomiciliation } from 'src/app/modules/quotation/model/BuildingDomiciliation';
 import { BuildingDomiciliationService } from 'src/app/modules/quotation/services/building.domiciliation.service';
+import { UserNoteService } from 'src/app/services/user.notes.service';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
 
 
@@ -14,13 +15,12 @@ export class SelectBuildingDomicilationComponent extends GenericSelectComponent<
 
   types: BuildingDomiciliation[] = [] as Array<BuildingDomiciliation>;
 
-  constructor(private changeDetectorRef: ChangeDetectorRef,
-    private formBuild: UntypedFormBuilder, private BuildingDomiciliationService: BuildingDomiciliationService) {
-    super(changeDetectorRef, formBuild);
+  constructor(private formBuild: UntypedFormBuilder, private buildingDomiciliationService: BuildingDomiciliationService, private userNoteService2: UserNoteService,) {
+    super(formBuild, userNoteService2)
   }
 
   initTypes(): void {
-    this.BuildingDomiciliationService.getBuildingDomiciliations().subscribe(response => {
+    this.buildingDomiciliationService.getBuildingDomiciliations().subscribe(response => {
       this.types = response;
     })
   }

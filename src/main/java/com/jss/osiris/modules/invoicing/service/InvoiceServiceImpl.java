@@ -9,8 +9,10 @@ import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.search.service.IndexEntityService;
+import com.jss.osiris.modules.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.invoicing.model.InvoiceSearch;
@@ -40,6 +42,9 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Value("${miscellaneous.document.billing.label.type.affaire.code}")
     private String billingLabelAffaireCode;
 
+    @Value("${miscellaneous.document.billing.label.type.customer.code}")
+    private String billingLabelCustomerCode;
+
     @Value("${miscellaneous.document.billing.label.type.other.code}")
     private String billingLabelBillingOther;
 
@@ -48,6 +53,12 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Autowired
     IndexEntityService indexEntityService;
+
+    @Autowired
+    InvoiceHelper invoiceHelper;
+
+    @Autowired
+    AccountingRecordService accountingRecordService;
 
     @Override
     public List<Invoice> getAllInvoices() {
@@ -63,11 +74,70 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public Invoice addOrUpdateInvoice(
-            Invoice invoice) {
+    public Invoice addOrUpdateInvoice(Invoice invoice) {
         invoiceRepository.save(invoice);
         indexEntityService.indexEntity(invoice, invoice.getId());
         return invoice;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Invoice addOrUpdateInvoiceFromUser(Invoice invoice) throws Exception {
+        if (!hasAtLeastOneInvoiceItemNotNull(invoice))
+            throw new Exception("No invoice item found on manual invoice");
+
+        invoice.setCreatedDate(LocalDateTime.now());
+
+        for (InvoiceItem invoiceItem : invoice.getInvoiceItems()) {
+            invoiceItem.setVatPrice(invoiceItem.getVat().getRate() * invoiceItem.getPreTaxPrice() / 100);
+        }
+
+        // Defined billing label
+        if (!billingLabelBillingOther.equals(invoice.getBillingLabelType().getCode())) {
+
+            ITiers customerOrder = invoice.getTiers();
+            if (invoice.getResponsable() != null)
+                customerOrder = invoice.getResponsable();
+            if (invoice.getConfrere() != null)
+                customerOrder = invoice.getConfrere();
+            if (invoice.getProvider() != null)
+                customerOrder = invoice.getProvider();
+            Document billingDocument = documentService.getBillingDocument(customerOrder.getDocuments());
+
+            setInvoiceLabel(invoice, billingDocument, null, customerOrder);
+        }
+
+        InvoiceStatus statusSent = invoiceStatusService.getInvoiceStatusByCode(invoiceStatusSendCode);
+        if (statusSent == null)
+            throw new Exception("Status Sent for invoice not found for parameter " + invoiceStatusSendCode);
+
+        invoice.setInvoiceStatus(statusSent);
+        // Associate invoice to invoice item
+        for (InvoiceItem invoiceItem : invoice.getInvoiceItems()) {
+            invoiceItem.setInvoice(invoice);
+        }
+
+        invoiceHelper.setPriceTotal(invoice);
+
+        // Save before to have an ID on invoice
+        addOrUpdateInvoice(invoice);
+
+        if (invoice.getProvider() == null)
+            accountingRecordService.generateAccountingRecordsForSaleOnInvoiceGeneration(invoice);
+        else
+            accountingRecordService.generateAccountingRecordsForPurshaseOnInvoiceGeneration(invoice);
+
+        addOrUpdateInvoice(invoice);
+        return invoice;
+    }
+
+    private boolean hasAtLeastOneInvoiceItemNotNull(Invoice invoice) {
+        for (InvoiceItem invoiceItem : invoice.getInvoiceItems())
+            if (invoiceItem.getPreTaxPrice() > 0) {
+                return true;
+
+            }
+        return false;
     }
 
     @Override
@@ -93,6 +163,19 @@ public class InvoiceServiceImpl implements InvoiceService {
             nbrOfDayFromDueDate = billingDocument.getPaymentDeadlineType().getNumberOfDay();
         invoice.setDueDate(LocalDate.now().plusDays(nbrOfDayFromDueDate));
 
+        setInvoiceLabel(invoice, billingDocument, customerOrder, orderingCustomer);
+
+        InvoiceStatus statusSent = invoiceStatusService.getInvoiceStatusByCode(invoiceStatusSendCode);
+        if (statusSent == null)
+            throw new Exception("Status Sent for invoice not found for parameter " + invoiceStatusSendCode);
+
+        invoice.setInvoiceStatus(statusSent);
+        this.addOrUpdateInvoice(invoice);
+        return invoice;
+    }
+
+    private void setInvoiceLabel(Invoice invoice, Document billingDocument, CustomerOrder customerOrder,
+            ITiers orderingCustomer) throws Exception {
         // Defined billing label
         if (billingLabelBillingOther.equals(billingDocument.getBillingLabelType().getCode())) {
             if (billingDocument.getRegie() != null) {
@@ -118,7 +201,8 @@ public class InvoiceServiceImpl implements InvoiceService {
                 invoice.setIsCommandNumberMandatory(billingDocument.getIsCommandNumberMandatory());
                 invoice.setCommandNumber(billingDocument.getCommandNumber());
             }
-        } else if (billingLabelAffaireCode.equals(billingDocument.getBillingLabelType().getCode())) {
+        } else if (customerOrder != null
+                && billingLabelAffaireCode.equals(billingDocument.getBillingLabelType().getCode())) {
             if (customerOrder.getAssoAffaireOrders() == null || customerOrder.getAssoAffaireOrders().size() == 0)
                 throw new Exception("No affaire in the customer order " + customerOrder.getId());
             Affaire affaire = customerOrder.getAssoAffaireOrders().get(0).getAffaire();
@@ -153,77 +237,6 @@ public class InvoiceServiceImpl implements InvoiceService {
             invoice.setIsCommandNumberMandatory(billingDocument.getIsCommandNumberMandatory());
             invoice.setCommandNumber(billingDocument.getCommandNumber());
         }
-
-        InvoiceStatus statusSent = invoiceStatusService.getInvoiceStatusByCode(invoiceStatusSendCode);
-        if (statusSent == null)
-            throw new Exception("Status Sent for invoice not found for parameter " + invoiceStatusSendCode);
-
-        invoice.setInvoiceStatus(statusSent);
-
-        this.addOrUpdateInvoice(invoice);
-        return invoice;
-    }
-
-    @Override
-    public Float getDiscountTotal(Invoice invoice) {
-        Float discountTotal = 0f;
-        if (invoice != null && invoice.getInvoiceItems() != null && invoice.getInvoiceItems().size() > 0) {
-            for (InvoiceItem invoiceItem : invoice.getInvoiceItems()) {
-                discountTotal += invoiceItem.getDiscountAmount();
-            }
-        }
-        return discountTotal;
-    }
-
-    @Override
-    public Float getPreTaxPriceTotal(Invoice invoice) {
-        Float preTaxTotal = 0f;
-        if (invoice != null && invoice.getInvoiceItems() != null && invoice.getInvoiceItems().size() > 0) {
-            for (InvoiceItem invoiceItem : invoice.getInvoiceItems()) {
-                preTaxTotal += invoiceItem.getPreTaxPrice();
-            }
-        }
-        return preTaxTotal;
-    }
-
-    @Override
-    public Float getVatTotal(Invoice invoice) {
-        Float vatTotal = 0f;
-        if (invoice != null && invoice.getInvoiceItems() != null && invoice.getInvoiceItems().size() > 0) {
-            for (InvoiceItem invoiceItem : invoice.getInvoiceItems()) {
-                vatTotal += invoiceItem.getVatPrice();
-            }
-        }
-        return vatTotal;
-    }
-
-    @Override
-    public Float getPriceTotal(Invoice invoice) {
-        Float total = this.getPreTaxPriceTotal(invoice) - this.getDiscountTotal(invoice) + this.getVatTotal(invoice);
-        return total;
-    }
-
-    @Override
-    public Invoice setPriceTotal(Invoice invoice) {
-        if (invoice != null) {
-            invoice.setTotalPrice(this.getPriceTotal(invoice));
-            this.addOrUpdateInvoice(invoice);
-        }
-        return invoice;
-    }
-
-    @Override
-    public ITiers getCustomerOrder(Invoice invoice) throws Exception {
-        if (invoice.getConfrere() != null)
-            return invoice.getConfrere();
-
-        if (invoice.getResponsable() != null)
-            return invoice.getResponsable();
-
-        if (invoice.getTiers() != null)
-            return invoice.getTiers();
-
-        throw new Exception("No customer order declared on Invoice " + invoice.getId());
     }
 
     @Override

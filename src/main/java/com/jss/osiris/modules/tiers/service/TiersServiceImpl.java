@@ -123,6 +123,7 @@ public class TiersServiceImpl implements TiersService {
 
                 if (responsable.getDocuments() != null && responsable.getDocuments().size() > 0) {
                     for (Document document : responsable.getDocuments()) {
+                        document.setResponsable(responsable);
                         if (document.getMailsAffaire() != null && document.getMailsAffaire().size() > 0)
                             mailService.populateMailIds(document.getMailsAffaire());
                         if (document.getMailsClient() != null && document.getMailsClient().size() > 0)

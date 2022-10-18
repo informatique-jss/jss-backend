@@ -89,6 +89,13 @@ export class GenericDatepickerComponent implements OnInit {
       this.form.removeControl(this.propertyName);
   }
 
+  clearField(): void {
+    this.model = undefined;
+    this.modelChange.emit(this.model);
+    if (this.form)
+      this.form.get(this.propertyName)?.setValue(null);
+  }
+
   ngOnInit() {
     if (this.form != undefined) {
       let validators: ValidatorFn[] = [] as Array<ValidatorFn>;
@@ -131,4 +138,5 @@ export class GenericDatepickerComponent implements OnInit {
   dateChange(value: Date) {
     this.onDateChange.emit(value);
   }
+
 }

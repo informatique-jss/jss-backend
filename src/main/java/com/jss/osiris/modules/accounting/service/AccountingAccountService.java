@@ -32,6 +32,9 @@ public interface AccountingAccountService {
     public AccountingAccount getProductAccountingAccountFromAccountingAccountList(
             List<AccountingAccount> accountingAccounts);
 
+    public AccountingAccount getChargeAccountingAccountFromAccountingAccountList(
+            List<AccountingAccount> accountingAccounts);
+
     public AccountingAccount getBankAccountingAccount() throws Exception;
 
     public AccountingAccount getWaitingAccountingAccount() throws Exception;

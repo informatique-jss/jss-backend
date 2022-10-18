@@ -107,9 +107,9 @@
                   </mat-card>
                 </mat-dialog-content>
               </mat-tab>
-              <mat-tab [label]="getTabLabel(AFFAIRE_ENTITY_TYPE)">
+              <mat-tab [label]="getTabLabel(ASSO_AFFAIRE_ENTITY_TYPE)">
                 <mat-dialog-content class="mat-content">
-                  <mat-card class="pointer" *ngFor="let entity of getEntitiesForTab(AFFAIRE_ENTITY_TYPE)"
+                  <mat-card class="pointer" *ngFor="let entity of getEntitiesForTab(ASSO_AFFAIRE_ENTITY_TYPE)"
                     (click)="openEntity(entity)">
                     <mat-card-title-group>
                       <mat-card-title>

@@ -1,20 +1,20 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { Rna } from 'src/app/modules/quotation/model/Rna';
 import { RnaService } from 'src/app/modules/quotation/services/rna.service';
+import { UserNoteService } from 'src/app/services/user.notes.service';
 import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-autocomplete.component';
 
 @Component({
   selector: 'autocomplete-rna',
-  templateUrl: './autocomplete-rna.component.html',
-  styleUrls: ['./autocomplete-rna.component.css']
+  templateUrl: '../generic-autocomplete/generic-autocomplete.component.html',
+  styleUrls: ['../generic-autocomplete/generic-autocomplete.component.css']
 })
 export class AutocompleteRnaComponent extends GenericAutocompleteComponent<Rna, Rna> implements OnInit {
 
-  constructor(private formBuild: UntypedFormBuilder,
-    private rnaService: RnaService, private changeDetectorRef: ChangeDetectorRef) {
-    super(formBuild, changeDetectorRef)
+  constructor(private formBuild: UntypedFormBuilder, private rnaService: RnaService, private userNoteService2: UserNoteService,) {
+    super(formBuild, userNoteService2)
   }
 
   searchEntities(value: string): Observable<Rna[]> {
@@ -22,7 +22,7 @@ export class AutocompleteRnaComponent extends GenericAutocompleteComponent<Rna, 
     return this.rnaService.getRna(value);
   }
 
-  displayRna(rna: Rna): string {
+  displayLabel(rna: Rna): string {
     if (!rna)
       return "";
     if (!rna.association)

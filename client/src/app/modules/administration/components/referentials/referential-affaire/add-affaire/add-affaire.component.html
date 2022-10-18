@@ -23,23 +23,27 @@
     <tr>
       <td>
         <autocomplete-legal-form [(model)]="affaire.legalForm" [form]="affaireForm" propertyName="legalForm"
-          [isMandatory]="true" [isDisabled]="!editMode" [conditionnalRequired]="!affaire.isIndividual">
+          label="Forme juridique" [isDisabled]="!editMode" [isMandatory]="true" [isDisabled]="!editMode"
+          [conditionnalRequired]="!affaire.isIndividual">
         </autocomplete-legal-form>
       </td>
       <td *ngIf="affaire.legalForm != null && affaire.legalForm.code != UNREGISTERED_COMPANY_LEGAL_FORM_CODE">
         <autocomplete-siren [(model)]="affaire.siren" [form]="affaireForm" propertyName="siren" [isMandatory]="true"
+          label="SIREN" [isDisabled]="!editMode"
           [conditionnalRequired]="!this.affaire.isIndividual && this.affaire.legalForm != null && this.affaire.legalForm.code != UNREGISTERED_COMPANY_LEGAL_FORM_CODE"
           [customValidators]="[checkSiren('siren')]" (onOptionSelected)="fillSiren($event)">
         </autocomplete-siren>
       </td>
       <td *ngIf="affaire.legalForm != null && affaire.legalForm.code != UNREGISTERED_COMPANY_LEGAL_FORM_CODE">
         <autocomplete-siret [(model)]="affaire.siret" [form]="affaireForm" propertyName="siret" [isMandatory]="true"
+          label="SIRET" [isDisabled]="!editMode"
           [conditionnalRequired]="!this.affaire.isIndividual && this.affaire.legalForm != null && this.affaire.legalForm.code != UNREGISTERED_COMPANY_LEGAL_FORM_CODE"
           [customValidators]="[checkSiret('siret')]" (onOptionSelected)="fillSiret($event)">
         </autocomplete-siret>
       </td>
       <td *ngIf="affaire.legalForm != null && affaire.legalForm.code != UNREGISTERED_COMPANY_LEGAL_FORM_CODE">
         <autocomplete-rna [(model)]="affaire.rna" [form]="affaireForm" propertyName="rna" [isMandatory]="true"
+          label="RNA" [isDisabled]="!editMode"
           [conditionnalRequired]="!this.affaire.isIndividual && this.affaire.legalForm != null && this.affaire.legalForm.code != UNREGISTERED_COMPANY_LEGAL_FORM_CODE"
           [customValidators]="[checkRna('rna')]" (onOptionSelected)="fillRna($event)"></autocomplete-rna>
       </td>
@@ -63,17 +67,18 @@
       </td>
       <td>
         <autocomplete-postal-code [(model)]="affaire.postalCode" [form]="affaireForm" propertyName="postalCode"
-          [isMandatory]="true" [conditionnalRequired]="!affaire.isIndividual" (onOptionSelected)="fillCity($event)">
+          label="Code postal" [isDisabled]="!editMode" [isMandatory]="true"
+          [conditionnalRequired]="!affaire.isIndividual" (onOptionSelected)="fillCity($event)">
         </autocomplete-postal-code>
       </td>
       <td>
         <autocomplete-city [(model)]="affaire.city" [modelCountry]="affaire.country" [form]="affaireForm"
           propertyName="city" [isMandatory]="true" [conditionnalRequired]="!affaire.isIndividual"
-          (onOptionSelected)="fillPostalCode($event)"></autocomplete-city>
+          [isDisabled]="!editMode" label="Ville" (onOptionSelected)="fillPostalCode($event)"></autocomplete-city>
       </td>
       <td>
-        <autocomplete-country [(model)]="affaire.country" [form]="affaireForm" propertyName="country"
-          [isMandatory]="true" [isDisabled]="!editMode"></autocomplete-country>
+        <autocomplete-country [(model)]="affaire.country" [form]="affaireForm" propertyName="country" label="Pays"
+          [isDisabled]="!editMode" [isMandatory]="true" [isDisabled]="!editMode"></autocomplete-country>
       </td>
     </tr>
   </table>

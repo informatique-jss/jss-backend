@@ -1,7 +1,8 @@
-import { ChangeDetectorRef, Directive, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Directive, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
 import { compareWithId } from 'src/app/libs/CompareHelper';
+import { UserNoteService } from 'src/app/services/user.notes.service';
 
 @Directive()
 export abstract class GenericSelectComponent<T> implements OnInit {
@@ -61,8 +62,8 @@ export abstract class GenericSelectComponent<T> implements OnInit {
   abstract types: T[];
 
   constructor(
-    private cdr: ChangeDetectorRef,
-    private formBuilder: UntypedFormBuilder) { }
+    private formBuilder: UntypedFormBuilder,
+    private userNoteService: UserNoteService) { }
 
   ngOnChanges(changes: SimpleChanges) {
     if (this.form && !this.form.get(this.propertyName))
@@ -78,7 +79,6 @@ export abstract class GenericSelectComponent<T> implements OnInit {
       } else {
         this.form?.get(this.propertyName)?.enable();
       }
-      this.cdr.detectChanges();
     }
     if (this.form && (this.isMandatory || this.customValidators)) {
     }
@@ -112,7 +112,6 @@ export abstract class GenericSelectComponent<T> implements OnInit {
           this.modelChange.emit(this.model);
           this.selectionChange.emit(this.model);
           this.form!.markAllAsTouched();
-          this.cdr.detectChanges();
         }
       );
       this.form.get(this.propertyName)?.setValue(this.model);
@@ -142,5 +141,16 @@ export abstract class GenericSelectComponent<T> implements OnInit {
     this.model = undefined;
     this.modelChange.emit(this.model);
     this.selectionChange.emit(undefined);
+  }
+
+  displayLabel(object: any): string {
+    return object ? object.label : '';
+  }
+
+  addToNotes(event: any) {
+    let isHeader = false;
+    if (event && event.ctrlKey)
+      isHeader = true;
+    this.userNoteService.addToNotes(this.label, this.displayLabel(this.model), undefined, isHeader);
   }
 }

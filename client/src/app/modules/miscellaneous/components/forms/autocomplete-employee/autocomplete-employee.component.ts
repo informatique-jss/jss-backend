@@ -2,6 +2,7 @@ import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { Employee } from 'src/app/modules/profile/model/Employee';
 import { EmployeeService } from 'src/app/modules/profile/services/employee.service';
+import { UserNoteService } from 'src/app/services/user.notes.service';
 import { GenericLocalAutocompleteComponent } from '../generic-local-autocomplete/generic-local-autocomplete.component';
 
 @Component({
@@ -15,8 +16,8 @@ export class AutocompleteEmployeeComponent extends GenericLocalAutocompleteCompo
 
   @Input() defaultEmployee: Employee | undefined;
 
-  constructor(private formBuild: UntypedFormBuilder, private employeeService: EmployeeService) {
-    super(formBuild)
+  constructor(private formBuild: UntypedFormBuilder, private employeeService: EmployeeService, private userNoteService2: UserNoteService,) {
+    super(formBuild, userNoteService2)
   }
 
   filterEntities(types: Employee[], value: string): Employee[] {

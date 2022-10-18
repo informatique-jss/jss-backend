@@ -30,18 +30,6 @@ public interface InvoiceService {
      */
     public Invoice createInvoice(CustomerOrder customerOrder, ITiers orderingCustomer) throws Exception;
 
-    public Float getDiscountTotal(Invoice invoice);
-
-    public Float getPreTaxPriceTotal(Invoice invoice);
-
-    public Float getVatTotal(Invoice invoice);
-
-    public Float getPriceTotal(Invoice invoice);
-
-    public Invoice setPriceTotal(Invoice invoice);
-
-    public ITiers getCustomerOrder(Invoice invoice) throws Exception;
-
     public Invoice getInvoiceForCustomerOrder(Integer customerOrderId);
 
     public LocalDate getFirstBillingDateForTiers(Tiers tiers);
@@ -51,4 +39,6 @@ public interface InvoiceService {
     public List<Invoice> searchInvoices(InvoiceSearch invoiceSearch) throws Exception;
 
     public void reindexInvoices();
+
+    public Invoice addOrUpdateInvoiceFromUser(Invoice invoice) throws Exception;
 }

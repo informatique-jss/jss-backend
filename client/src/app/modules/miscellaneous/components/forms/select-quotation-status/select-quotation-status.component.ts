@@ -1,7 +1,8 @@
-import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { QuotationStatus } from 'src/app/modules/quotation/model/QuotationStatus';
 import { QuotationStatusService } from 'src/app/modules/quotation/services/quotation-status.service';
+import { UserNoteService } from 'src/app/services/user.notes.service';
 import { GenericMultipleSelectComponent } from '../generic-select/generic-multiple-select.component';
 
 @Component({
@@ -19,10 +20,8 @@ export class SelectOrderingStatusComponent extends GenericMultipleSelectComponen
  */
   @Input() defaultCodesSelected: string[] | undefined;
 
-  constructor(private changeDetectorRef: ChangeDetectorRef,
-    private quotationStatusService: QuotationStatusService,
-    private formBuild: UntypedFormBuilder) {
-    super(changeDetectorRef, formBuild);
+  constructor(private formBuild: UntypedFormBuilder, private quotationStatusService: QuotationStatusService, private userNoteService2: UserNoteService,) {
+    super(formBuild, userNoteService2)
   }
 
   initTypes(): void {

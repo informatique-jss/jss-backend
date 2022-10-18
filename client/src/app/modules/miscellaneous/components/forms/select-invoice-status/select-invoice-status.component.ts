@@ -1,7 +1,8 @@
-import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { InvoiceStatus } from 'src/app/modules/invoicing/model/InvoiceStatus';
 import { InvoiceStatusService } from 'src/app/modules/invoicing/services/invoice.status.service';
+import { UserNoteService } from 'src/app/services/user.notes.service';
 import { GenericMultipleSelectComponent } from '../generic-select/generic-multiple-select.component';
 
 @Component({
@@ -18,10 +19,8 @@ export class SelectInvoiceStatusComponent extends GenericMultipleSelectComponent
  */
   @Input() defaultCodesSelected: string[] | undefined;
 
-  constructor(private changeDetectorRef: ChangeDetectorRef,
-    private invoiceStatusService: InvoiceStatusService,
-    private formBuild: UntypedFormBuilder) {
-    super(changeDetectorRef, formBuild);
+  constructor(private formBuild: UntypedFormBuilder, private invoiceStatusService: InvoiceStatusService, private userNoteService2: UserNoteService,) {
+    super(formBuild, userNoteService2)
   }
 
   initTypes(): void {

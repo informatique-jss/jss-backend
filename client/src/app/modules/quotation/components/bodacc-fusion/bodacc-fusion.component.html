@@ -31,7 +31,7 @@
               </td>
               <td>
                 <autocomplete-siren [(model)]="mergedCompany.mergingCompanySiren" [form]="bodaccFusionForm"
-                  [propertyName]="'mergingCompanySiren'+i" [isMandatory]="true"
+                  [propertyName]="'mergingCompanySiren'+i" [isMandatory]="true" label="SIREN" [isDisabled]="!editMode"
                   [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen"
                   (onOptionSelected)="fillSirenMergingCompany($event,mergedCompany)">
                 </autocomplete-siren>
@@ -53,8 +53,9 @@
             <tr>
               <td>
                 <autocomplete-legal-form [(model)]="mergedCompany.mergingCompanyLegalForm" [form]="bodaccFusionForm"
-                  [propertyName]="'mergingCompanyLegalForm'+i" [isMandatory]="true"
-                  [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode">
+                  label="Forme juridique" [isDisabled]="!editMode" [propertyName]="'mergingCompanyLegalForm'+i"
+                  [isMandatory]="true" [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen"
+                  [isDisabled]="!editMode">
                 </autocomplete-legal-form>
               </td>
               <td>
@@ -108,7 +109,7 @@
               </td>
               <td>
                 <autocomplete-siren [(model)]="absorbedCompany.absorbedCompanySiren" [form]="bodaccFusionForm"
-                  [propertyName]="'absorbedCompanySiren'+i" [isMandatory]="true"
+                  [propertyName]="'absorbedCompanySiren'+i" [isMandatory]="true" label="SIREN" [isDisabled]="!editMode"
                   [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen"
                   (onOptionSelected)="fillSirenAbsorbedCompany($event,absorbedCompany)">
                 </autocomplete-siren>
@@ -130,8 +131,9 @@
             <tr>
               <td>
                 <autocomplete-legal-form [(model)]="absorbedCompany.absorbedCompanyLegalForm" [form]="bodaccFusionForm"
-                  [propertyName]="'absorbedCompanyLegalForm'+i" [isMandatory]="true"
-                  [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode">
+                  label="Forme juridique" [isDisabled]="!editMode" [propertyName]="'absorbedCompanyLegalForm'+i"
+                  [isMandatory]="true" [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen"
+                  [isDisabled]="!editMode">
                 </autocomplete-legal-form>
               </td>
               <td>

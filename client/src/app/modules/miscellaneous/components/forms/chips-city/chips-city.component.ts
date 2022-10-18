@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormBuilder, ValidatorFn, Validators } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-import { MatDialog } from '@angular/material/dialog';
 import { debounceTime, distinctUntilChanged, filter, switchMap, tap } from 'rxjs/operators';
+import { UserNoteService } from 'src/app/services/user.notes.service';
 import { City } from '../../../model/City';
 import { Country } from '../../../model/Country';
 import { CityService } from '../../../services/city.service';
@@ -25,11 +25,8 @@ export class ChipsCityComponent extends GenericChipsComponent<City> implements O
    */
   @Input() modelCountry: Country | undefined;
 
-  constructor(private formBuild: UntypedFormBuilder,
-    public cityDialog: MatDialog,
-    private cdr: ChangeDetectorRef,
-    private cityService: CityService) {
-    super(formBuild);
+  constructor(private formBuild: UntypedFormBuilder, private cityService: CityService, private userNoteService2: UserNoteService,) {
+    super(formBuild, userNoteService2)
   }
 
   ngOnInit() {
@@ -56,14 +53,12 @@ export class ChipsCityComponent extends GenericChipsComponent<City> implements O
         debounceTime(300),
         tap((value) => {
           this.filteredTypes = [];
-          this.cdr.detectChanges();
           this.modelChange.emit(this.model);
         }),
         switchMap(value => this.cityService.getCitiesFilteredByCountryAndName(value, this.modelCountry)
         )
       ).subscribe(response => {
         this.filteredTypes = response;
-        this.cdr.detectChanges();
       });
       this.form.get(this.propertyName)?.setValue(this.model);
       this.form.markAllAsTouched();

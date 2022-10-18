@@ -30,8 +30,8 @@
               </td>
               <td>
                 <autocomplete-siren [(model)]="beneficiary.beneficiaryCompanySiren" [form]="bodaccSplitForm"
-                  [propertyName]="'beneficiaryCompanySiren'+i" [isMandatory]="true"
-                  [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen"
+                  [propertyName]="'beneficiaryCompanySiren'+i" [isMandatory]="true" label="SIREN"
+                  [isDisabled]="!editMode" [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen"
                   (onOptionSelected)="fillSirenBeneficiaryCompany($event,beneficiary)">
                 </autocomplete-siren>
               </td>
@@ -52,8 +52,9 @@
             <tr>
               <td>
                 <autocomplete-legal-form [(model)]="beneficiary.beneficiaryCompanyLegalForm" [form]="bodaccSplitForm"
-                  [propertyName]="'beneficiaryCompanyLegalForm'+i" [isMandatory]="true"
-                  [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode">
+                  label="Forme juridique" [isDisabled]="!editMode" [propertyName]="'beneficiaryCompanyLegalForm'+i"
+                  [isMandatory]="true" [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen"
+                  [isDisabled]="!editMode">
                 </autocomplete-legal-form>
               </td>
               <td>
@@ -106,7 +107,7 @@
               </td>
               <td>
                 <autocomplete-siren [(model)]="splitCompany.splitCompanySiren" [form]="bodaccSplitForm"
-                  [propertyName]="'splitCompanySiren'+i" [isMandatory]="true"
+                  [propertyName]="'splitCompanySiren'+i" [isMandatory]="true" label="SIREN" [isDisabled]="!editMode"
                   [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen"
                   (onOptionSelected)="fillSirenSplitCompany($event, splitCompany)">
                 </autocomplete-siren>
@@ -127,8 +128,9 @@
             <tr>
               <td>
                 <autocomplete-legal-form [(model)]="splitCompany.splitCompanyLegalForm" [form]="bodaccSplitForm"
-                  [propertyName]="'splitCompanyLegalForm'+i" [isMandatory]="true"
-                  [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode">
+                  label="Forme juridique" [isDisabled]="!editMode" [propertyName]="'splitCompanyLegalForm'+i"
+                  [isMandatory]="true" [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen"
+                  [isDisabled]="!editMode">
                 </autocomplete-legal-form>
               </td>
               <td>

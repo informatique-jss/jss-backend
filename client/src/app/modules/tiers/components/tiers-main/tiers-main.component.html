@@ -55,17 +55,17 @@
                 [isDisabled]="!editMode" propertyName="tiersCategory"></select-tiers-category>
             </td>
             <td>
-              <autocomplete-sales-employee [(model)]="tiers.salesEmployee" [isDisabled]="!editMode"
+              <autocomplete-sales-employee [(model)]="tiers.salesEmployee" [isDisabled]="!editMode" label="Commercial"
                 [form]="principalForm" propertyName="salesEmployee" [isMandatory]="true"></autocomplete-sales-employee>
             </td>
             <td>
               <autocomplete-formaliste-employee [(model)]="tiers.formalisteEmployee" [isDisabled]="!editMode"
-                [form]="principalForm" propertyName="formalisteEmployee">
+                label="Formaliste" [isDisabled]="!editMode" [form]="principalForm" propertyName="formalisteEmployee">
               </autocomplete-formaliste-employee>
             </td>
             <td>
               <autocomplete-insertion-employee [(model)]="tiers.insertionEmployee" [isDisabled]="!editMode"
-                [form]="principalForm" propertyName="insertionEmployee">
+                label="Publiciste" [isDisabled]="!editMode" [form]="principalForm" propertyName="insertionEmployee">
               </autocomplete-insertion-employee>
             </td>
           </tr>
@@ -96,18 +96,19 @@
             </td>
             <td>
               <autocomplete-postal-code [(model)]="tiers.postalCode" [form]="principalForm" propertyName="postalCode"
-                [isMandatory]="true"
+                [isMandatory]="true" label="Code postal" [isDisabled]="!editMode"
                 [conditionnalRequired]="tiers.country != null && tiers.country.code == COUNTRY_CODE_FRANCE"
                 (onOptionSelected)="fillCity($event)"></autocomplete-postal-code>
             </td>
             <td>
               <autocomplete-city [(model)]="tiers.city" [modelCountry]="tiers.country" [form]="principalForm"
-                propertyName="city" [isMandatory]="true" (onOptionSelected)="fillPostalCode($event)">
+                propertyName="city" [isMandatory]="true" [isDisabled]="!editMode" label="Ville" [isDisabled]="!editMode"
+                label="Ville" (onOptionSelected)="fillPostalCode($event)">
               </autocomplete-city>
             </td>
             <td>
-              <autocomplete-country [(model)]="tiers.country" [form]="principalForm" propertyName="country"
-                [isMandatory]="true"></autocomplete-country>
+              <autocomplete-country [(model)]="tiers.country" [form]="principalForm" propertyName="country" label="Pays"
+                [isDisabled]="!editMode" [isMandatory]="true"></autocomplete-country>
             </td>
             <td>
               <generic-input [(model)]="tiers.intercom" label="Code porte" [isDisabled]="!editMode"

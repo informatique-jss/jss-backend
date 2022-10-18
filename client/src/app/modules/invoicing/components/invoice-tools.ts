@@ -33,6 +33,13 @@ export function getCustomerOrderNameForInvoice(element: Invoice) {
       return element.customerOrder.responsable.firstname + " " + element.customerOrder.responsable.lastname;
     if (element.customerOrder.tiers)
       return element.customerOrder.tiers.firstname + " " + element.customerOrder.tiers.lastname;
+  } else {
+    if (element.tiers)
+      return element.tiers.firstname + " " + element.tiers.lastname;
+    if (element.responsable)
+      return element.responsable.firstname + " " + element.responsable.lastname;
+    if (element.confrere)
+      return element.confrere.label
   }
   return "";
 }
@@ -50,6 +57,13 @@ export function getCustomerOrderNameForITiers(element: ITiers) {
 export function getCustomerOrderForInvoice(invoice: Invoice): ITiers {
   if (invoice.customerOrder) {
     return getCustomerOrderForCustomerOrder(invoice.customerOrder);
+  } else {
+    if (invoice.tiers)
+      return invoice.tiers;
+    if (invoice.responsable)
+      return invoice.responsable;
+    if (invoice.confrere)
+      return invoice.confrere;
   }
   return {} as ITiers;
 }

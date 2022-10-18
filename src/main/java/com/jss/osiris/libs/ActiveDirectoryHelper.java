@@ -51,7 +51,7 @@ public class ActiveDirectoryHelper {
                     || SecurityContextHolder.getContext().getAuthentication() == null
                     || SecurityContextHolder.getContext().getAuthentication().getName() == null)
                 return "GAPIN";
-        return SecurityContextHolder.getContext().getAuthentication().getName();
+        return SecurityContextHolder.getContext().getAuthentication().getName().toUpperCase();
     }
 
     public Collection<? extends GrantedAuthority> getUserRoles() {

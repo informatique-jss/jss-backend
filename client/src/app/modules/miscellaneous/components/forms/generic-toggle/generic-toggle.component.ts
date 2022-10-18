@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, ValidatorFn } from '@angular/forms';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
 
@@ -34,7 +34,7 @@ export class GenericToggleComponent implements OnInit {
 
 
   constructor(
-    private formBuilder: UntypedFormBuilder, private cdr: ChangeDetectorRef) { }
+    private formBuilder: UntypedFormBuilder) { }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.model && this.form != undefined) {
@@ -57,7 +57,6 @@ export class GenericToggleComponent implements OnInit {
           if (this.model == undefined)
             this.model = false;
           this.modelChange.emit(this.model);
-          this.cdr.detectChanges();
         }
       )
       this.form.get(this.propertyName)?.setValue(this.model);

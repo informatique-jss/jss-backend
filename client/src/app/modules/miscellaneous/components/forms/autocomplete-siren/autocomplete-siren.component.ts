@@ -1,20 +1,20 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { Siren } from 'src/app/modules/quotation/model/Siren';
 import { SirenService } from 'src/app/modules/quotation/services/siren.service';
+import { UserNoteService } from 'src/app/services/user.notes.service';
 import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-autocomplete.component';
 
 @Component({
   selector: 'autocomplete-siren',
-  templateUrl: './autocomplete-siren.component.html',
-  styleUrls: ['./autocomplete-siren.component.css']
+  templateUrl: '../generic-autocomplete/generic-autocomplete.component.html',
+  styleUrls: ['../generic-autocomplete/generic-autocomplete.component.css']
 })
 export class AutocompleteSirenComponent extends GenericAutocompleteComponent<Siren, Siren> implements OnInit {
 
-  constructor(private formBuild: UntypedFormBuilder,
-    private sirenService: SirenService, private changeDetectorRef: ChangeDetectorRef) {
-    super(formBuild, changeDetectorRef)
+  constructor(private formBuild: UntypedFormBuilder, private sirenService: SirenService, private userNoteService2: UserNoteService,) {
+    super(formBuild, userNoteService2)
   }
 
   searchEntities(value: string): Observable<Siren[]> {
@@ -22,7 +22,7 @@ export class AutocompleteSirenComponent extends GenericAutocompleteComponent<Sir
     return this.sirenService.getSiren(value);
   }
 
-  displaySiren(siren: Siren): string {
+  displayLabel(siren: Siren): string {
     if (!siren)
       return "";
     if (!siren.uniteLegale)

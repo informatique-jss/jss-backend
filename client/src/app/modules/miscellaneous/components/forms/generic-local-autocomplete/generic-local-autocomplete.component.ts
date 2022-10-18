@@ -3,6 +3,7 @@ import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
+import { UserNoteService } from 'src/app/services/user.notes.service';
 
 @Directive()
 export abstract class GenericLocalAutocompleteComponent<T> implements OnInit {
@@ -61,7 +62,8 @@ export abstract class GenericLocalAutocompleteComponent<T> implements OnInit {
   abstract types: T[];
   filteredTypes: Observable<T[]> | undefined;
 
-  constructor(private formBuilder: UntypedFormBuilder) { }
+  constructor(private formBuilder: UntypedFormBuilder,
+    private userNoteService: UserNoteService) { }
 
   ngOnChanges(changes: SimpleChanges) {
     if (this.form && (this.isMandatory || this.customValidators))
@@ -143,5 +145,12 @@ export abstract class GenericLocalAutocompleteComponent<T> implements OnInit {
   }
 
   abstract initTypes(): void;
+
+  addToNotes(event: any) {
+    let isHeader = false;
+    if (event && event.ctrlKey)
+      isHeader = true;
+    this.userNoteService.addToNotes(this.label, this.displayLabel(this.model), undefined, isHeader);
+  }
 
 }

@@ -33,10 +33,13 @@ export abstract class GenericRadioGroupComponent<T> implements OnInit {
   constructor(private formBuilder: UntypedFormBuilder) { }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (this.form && (!this.model) && this.types)
+    if (this.form && (!this.model) && this.types) {
       this.model = this.types[0];
+      this.modelChange.emit(this.model);
+    }
     if (changes.model && this.form != undefined) {
       this.form.get(this.propertyName)?.setValue(this.model);
+      this.modelChange.emit(this.model);
     }
   }
 

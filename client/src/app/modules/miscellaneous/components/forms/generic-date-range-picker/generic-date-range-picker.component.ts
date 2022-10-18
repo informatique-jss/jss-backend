@@ -165,4 +165,5 @@ export class GenericDateRangePickerComponent implements OnInit {
   dateChange(value: Date) {
     this.onDateChange.emit(value);
   }
+
 }

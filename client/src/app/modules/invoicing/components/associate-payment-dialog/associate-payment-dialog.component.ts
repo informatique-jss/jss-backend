@@ -146,7 +146,7 @@ export class AssociatePaymentDialogComponent implements OnInit {
       this.appService.displaySnackBar("Veuillez choisir une facture au statut Envoyé", true, 15);
       return;
     }
-    if (!this.isSameCustomerOrder(invoice.customerOrder)) {
+    if (!this.isSameCustomerOrder(getCustomerOrderForInvoice(invoice))) {
       this.appService.displaySnackBar("Veuillez choisir une facture du même donneur d'ordre que les autres éléments associés au paiement", true, 15);
       return;
     }
@@ -174,7 +174,7 @@ export class AssociatePaymentDialogComponent implements OnInit {
           this.appService.displaySnackBar("Cette commande est déjà associée à ce paiement", true, 15);
           return;
         }
-    if (!this.isSameCustomerOrder(order)) {
+    if (!this.isSameCustomerOrder(getCustomerOrderForCustomerOrder(order))) {
       this.appService.displaySnackBar("Veuillez choisir une commande du même donneur d'ordre que les autres éléments associés au paiement", true, 15);
       return;
     }
@@ -195,7 +195,7 @@ export class AssociatePaymentDialogComponent implements OnInit {
     });
   }
 
-  isSameCustomerOrder(newCustomerOrder: CustomerOrder): boolean {
+  isSameCustomerOrder(newCustomerOrder: ITiers): boolean {
     let currentCustomerOrder: ITiers | undefined = undefined;
     if (this.associationSummaryTable)
       for (let asso of this.associationSummaryTable) {
@@ -206,7 +206,7 @@ export class AssociatePaymentDialogComponent implements OnInit {
           customerOrder = getCustomerOrderForCustomerOrder(asso.customerOrder);
         if (currentCustomerOrder == undefined)
           currentCustomerOrder = customerOrder;
-        if (currentCustomerOrder != undefined && customerOrder != undefined && currentCustomerOrder?.id != customerOrder.id)
+        if (currentCustomerOrder != undefined && newCustomerOrder != undefined && currentCustomerOrder?.id != newCustomerOrder.id)
           return false;
       }
     return true;
@@ -234,13 +234,13 @@ export class AssociatePaymentDialogComponent implements OnInit {
     let affaires: Affaire[] = [] as Array<Affaire>;
     if (this.associationSummaryTable && this.associationSummaryTable.length > 0) {
       for (let asso of this.associationSummaryTable) {
-        if (asso.invoice) {
+        if (asso.invoice && asso.invoice.customerOrder) {
           affaires.push(...asso.invoice.customerOrder.assoAffaireOrders.filter(asso => asso.affaire && asso.affaire.paymentIban != "").map(asso => asso.affaire));
         } else {
           affaires.push(...asso.customerOrder.assoAffaireOrders.filter(asso => asso.affaire && asso.affaire.paymentIban != "").map(asso => asso.affaire));
         }
       }
-    } else {
+    } else if (this.invoice!.customerOrder) {
       affaires.push(...this.invoice!.customerOrder.assoAffaireOrders.filter(asso => asso.affaire && asso.affaire.paymentIban != "").map(asso => asso.affaire));
     }
     return affaires;

@@ -30,6 +30,8 @@ public interface AccountingRecordService {
 
         public void generateAccountingRecordsForSaleOnInvoiceGeneration(Invoice invoice) throws Exception;
 
+        public void generateAccountingRecordsForPurshaseOnInvoiceGeneration(Invoice invoice) throws Exception;
+
         public void dailyAccountClosing();
 
         public List<AccountingRecord> searchAccountingRecords(AccountingRecordSearch accountingRecordSearch);
@@ -74,7 +76,13 @@ public interface AccountingRecordService {
                         Payment payment)
                         throws Exception;
 
-        public AccountingAccount getCustomerAccountingAccountForCustomerOrder(ITiers customerOrder) throws Exception;
+        public AccountingAccount getCustomerAccountingAccountForInvoice(Invoice invoice) throws Exception;
+
+        public AccountingAccount getCustomerAccountingAccountForITiers(ITiers tiers) throws Exception;
+
+        public AccountingAccount getProviderAccountingAccountForInvoice(Invoice invoice) throws Exception;
+
+        public AccountingAccount getProviderAccountingAccountForITiers(ITiers tiers) throws Exception;
 
         public void generateAccountingRecordsForWaintingPayment(Payment payment) throws Exception;
 

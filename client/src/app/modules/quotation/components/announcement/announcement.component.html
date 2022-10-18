@@ -20,8 +20,9 @@
             </td>
             <td *ngIf="announcement.confrere!=null && announcement.confrere!=undefined">
               <autocomplete-department [(model)]="announcement.department" [form]="announcementForm"
-                propertyName="department" [isMandatory]="true" [isDisabled]="!editMode"
-                (onOptionSelected)="updateCharacterPrice()" [conditionnalRequired]=" !isStatusOpen">
+                propertyName="department" [isMandatory]="true" [isDisabled]="!editMode" label="Département"
+                [isDisabled]="!editMode" (onOptionSelected)="updateCharacterPrice()"
+                [conditionnalRequired]=" !isStatusOpen">
               </autocomplete-department>
             </td>
           </tr>
