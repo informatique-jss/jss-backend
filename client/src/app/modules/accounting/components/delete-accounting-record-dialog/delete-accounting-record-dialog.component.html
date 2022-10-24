@@ -2,6 +2,9 @@
 <div mat-dialog-content>
   <p *ngIf="temporaryOperationId">Confirmer-vous la suppression des éléments ci-dessous ? </p>
   <p *ngIf="operationId">Voulez-vous écrire les contre-passes pour les éléments ci-dessous ? </p>
+  <p *ngIf="removedLetteringInvoices().length>0">Attention, l'annulation de ces éléments causera le délettrage
+    {{removedLetteringInvoices().length==1?"de la":"des"}} facture{{removedLetteringInvoices().length==1?"":"s"}}
+    {{removedLetteringInvoices().join(", ")}}</p>
   <div class="mat-elevation-z2 form-div">
     <div class=" full-width">
       <sort-table [columns]="displayedColumns" [values]="accountingRecords" tableName="Ecritures"

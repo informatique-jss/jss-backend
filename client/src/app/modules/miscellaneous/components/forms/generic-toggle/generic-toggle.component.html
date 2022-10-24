@@ -1,4 +1,7 @@
 <form [formGroup]="form!">
   <mat-slide-toggle [formControlName]="propertyName">{{label}}
   </mat-slide-toggle>
+  <div>
+    <mat-hint *ngIf="hint">{{hint}}</mat-hint>
+  </div>
 </form>

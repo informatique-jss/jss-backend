@@ -86,10 +86,6 @@ public class Tiers implements ITiers, IAttachment {
 	@JsonProperty("paymentIban")
 	private String paymentIban;
 
-	@Column(length = 40)
-	@JsonProperty("paymentBic")
-	private String paymentBic;
-
 	@Column(nullable = false)
 	private Boolean isProvisionalPaymentMandatory;
 
@@ -299,14 +295,6 @@ public class Tiers implements ITiers, IAttachment {
 
 	public void setPaymentIban(String paymentIBAN) {
 		this.paymentIban = paymentIBAN;
-	}
-
-	public String getPaymentBIC() {
-		return paymentBic;
-	}
-
-	public void setPaymentBIC(String paymentBIC) {
-		this.paymentBic = paymentBIC;
 	}
 
 	public Boolean getIsProvisionalPaymentMandatory() {

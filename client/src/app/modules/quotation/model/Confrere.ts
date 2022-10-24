@@ -14,7 +14,6 @@ export interface Confrere extends IDocument, ITiers {
   accountingMails: Mail[];
   iban: string;
   paymentType: PaymentType;
-  paymentBic: string;
   isSepaMandateReceived: boolean;
   isProvisionalPaymentMandatory: boolean;
   journalType: JournalType;

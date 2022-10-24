@@ -46,7 +46,8 @@
           </td>
           <td>
             <autocomplete-postal-code [(model)]="invoice.billingLabelPostalCode" [form]="invoiceForm"
-              label="Code postal" [isDisabled]="!editMode" propertyName="postalCode" [isMandatory]="true"
+              [byPassAutocompletValidator]="true" label="Code postal" [isDisabled]="!editMode" propertyName="postalCode"
+              [isMandatory]="true"
               [conditionnalRequired]="invoice.billingLabelCountry != null && invoice.billingLabelCountry.code == COUNTRY_CODE_FRANCE"
               (onOptionSelected)="fillCity($event)"></autocomplete-postal-code>
           </td>

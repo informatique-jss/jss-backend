@@ -160,21 +160,6 @@
           <tr>
             <td>
               <table class="full-width">
-                <tr>
-                  <td>
-                    <generic-toggle [(model)]="announcement.isLogo" label="Logo ?" [form]="announcementForm"
-                      propertyName="isLogo">
-                    </generic-toggle>
-                  </td>
-                  <td *ngIf="announcement.isLogo && announcement.id">
-                    <single-attachment [entity]="announcement!" [entityType]="ANNOUNCEMENT_ENTITY_TYPE.entityType"
-                      [editMode]="editMode" [attachmentTypeCodeToDisplay]="LOGO_ATTACHMENT_TYPE_CODE"
-                      (onUploadedFile)="updateAttachments($event)">
-                    </single-attachment>
-                  </td>
-                  <td *ngIf="announcement.isLogo && announcement.id && logoUrl "><img width="150px" [src]="logoUrl" />
-                  </td>
-                </tr>
                 <tr *ngIf="announcement.confrere && announcement.confrere.id==CONFRERE_BALO_ID">
                   <td>
                     <generic-toggle [(model)]="announcement.isPictureBaloPackage" label="Forfait image BALO ?"
@@ -251,6 +236,10 @@
           </tr>
         </table>
       </div>
+    </mat-tab>
+    <mat-tab label="Options">
+      <provision-options [editMode]="editMode" [provision]="provision" (provisionChange)="noticeChangeFunction()">
+      </provision-options>
     </mat-tab>
     <mat-tab label="Gestion des pièces">
       <div class="form-div">

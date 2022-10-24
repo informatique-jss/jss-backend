@@ -1,9 +1,9 @@
 package com.jss.osiris.modules.quotation.model;
 
-import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -16,11 +16,13 @@ import javax.persistence.OneToOne;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
+import com.jss.osiris.modules.miscellaneous.model.Attachment;
+import com.jss.osiris.modules.miscellaneous.model.IAttachment;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.profile.model.Employee;
 
 @Entity
-public class Provision implements Serializable, IId {
+public class Provision implements IId, IAttachment {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "provision_sequence")
@@ -61,6 +63,13 @@ public class Provision implements Serializable, IId {
 	@JoinColumn(name = "id_employee")
 	@IndexedField
 	private Employee assignedTo;
+
+	@Column(nullable = false)
+	private Boolean isLogo;
+
+	@OneToMany(mappedBy = "provision")
+	@JsonIgnoreProperties(value = { "provision" }, allowSetters = true)
+	private List<Attachment> attachments;
 
 	public Integer getId() {
 		return id;
@@ -132,6 +141,22 @@ public class Provision implements Serializable, IId {
 
 	public void setAssignedTo(Employee assignedTo) {
 		this.assignedTo = assignedTo;
+	}
+
+	public Boolean getIsLogo() {
+		return isLogo;
+	}
+
+	public void setIsLogo(Boolean isLogo) {
+		this.isLogo = isLogo;
+	}
+
+	public List<Attachment> getAttachments() {
+		return attachments;
+	}
+
+	public void setAttachments(List<Attachment> attachments) {
+		this.attachments = attachments;
 	}
 
 }

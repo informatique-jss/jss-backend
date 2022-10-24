@@ -37,9 +37,6 @@ public class Provider implements Serializable, IId {
 	@JoinColumn(name = "id_accounting_account_deposit")
 	private AccountingAccount accountingAccountDeposit;
 
-	@Column(length = 40)
-	private String bic;
-
 	@Column(length = 20)
 	private String jssReference;
 
@@ -96,14 +93,6 @@ public class Provider implements Serializable, IId {
 
 	public void setAccountingAccountCustomer(AccountingAccount accountingAccountCustomer) {
 		this.accountingAccountCustomer = accountingAccountCustomer;
-	}
-
-	public String getBic() {
-		return bic;
-	}
-
-	public void setBic(String bic) {
-		this.bic = bic;
 	}
 
 	public String getIban() {

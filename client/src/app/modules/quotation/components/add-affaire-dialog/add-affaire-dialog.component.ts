@@ -68,7 +68,8 @@ export class AddAffaireDialogComponent implements OnInit {
     })
     if (this.affaire && !this.affaire.isIndividual)
       this.affaire.isIndividual = false;
-    this.tabs.realignInkBar();
+    if (this.tabs)
+      this.tabs.realignInkBar();
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -83,7 +84,7 @@ export class AddAffaireDialogComponent implements OnInit {
 
   fillAffaire(entity: IndexEntity) {
     let obj = JSON.parse((entity.text as string));
-    this.affaireService.getAffaire(obj.affaire.id).subscribe(affaire => {
+    this.affaireService.getAffaire(obj.id).subscribe(affaire => {
       this.selectedAffaire = affaire;
     });
   }

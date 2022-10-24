@@ -3,7 +3,6 @@ package com.jss.osiris.modules.miscellaneous.service;
 import java.util.List;
 import java.util.Optional;
 
-import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,8 +17,9 @@ public class PhoneServiceImpl implements PhoneService {
 
     @Override
     public List<Phone> findPhones(String phone) {
-        return IterableUtils
-                .toList(phoneRepository.findByPhoneNumberContainingIgnoreCase(phone));
+        if (phone != null)
+            return phoneRepository.findByPhoneNumberContainingIgnoreCase(phone);
+        return null;
     }
 
     @Override

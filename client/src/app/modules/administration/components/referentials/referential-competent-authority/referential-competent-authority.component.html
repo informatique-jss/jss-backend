@@ -139,7 +139,7 @@
             <td>
               <autocomplete-postal-code [(model)]="selectedEntity.postalCode" [form]="entityForm" label="Code postal"
                 [isDisabled]="!editMode" propertyName="postalCode" [isMandatory]="false"
-                (onOptionSelected)="fillCity($event)">
+                [byPassAutocompletValidator]="true" (onOptionSelected)="fillCity($event)">
               </autocomplete-postal-code>
             </td>
             <td>

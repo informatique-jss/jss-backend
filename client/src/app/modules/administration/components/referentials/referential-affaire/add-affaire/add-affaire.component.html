@@ -28,22 +28,22 @@
         </autocomplete-legal-form>
       </td>
       <td *ngIf="affaire.legalForm != null && affaire.legalForm.code != UNREGISTERED_COMPANY_LEGAL_FORM_CODE">
-        <autocomplete-siren [(model)]="affaire.siren" [form]="affaireForm" propertyName="siren" [isMandatory]="true"
-          label="SIREN" [isDisabled]="!editMode"
+        <autocomplete-siren [(model)]="affaire.siren" [form]="affaireForm" propertyName="siren" [isMandatory]="false"
+          label="SIREN" [isDisabled]="!editMode" [byPassAutocompletValidator]="true"
           [conditionnalRequired]="!this.affaire.isIndividual && this.affaire.legalForm != null && this.affaire.legalForm.code != UNREGISTERED_COMPANY_LEGAL_FORM_CODE"
           [customValidators]="[checkSiren('siren')]" (onOptionSelected)="fillSiren($event)">
         </autocomplete-siren>
       </td>
       <td *ngIf="affaire.legalForm != null && affaire.legalForm.code != UNREGISTERED_COMPANY_LEGAL_FORM_CODE">
-        <autocomplete-siret [(model)]="affaire.siret" [form]="affaireForm" propertyName="siret" [isMandatory]="true"
-          label="SIRET" [isDisabled]="!editMode"
+        <autocomplete-siret [(model)]="affaire.siret" [form]="affaireForm" propertyName="siret" [isMandatory]="false"
+          label="SIRET" [isDisabled]="!editMode" [byPassAutocompletValidator]="true"
           [conditionnalRequired]="!this.affaire.isIndividual && this.affaire.legalForm != null && this.affaire.legalForm.code != UNREGISTERED_COMPANY_LEGAL_FORM_CODE"
           [customValidators]="[checkSiret('siret')]" (onOptionSelected)="fillSiret($event)">
         </autocomplete-siret>
       </td>
       <td *ngIf="affaire.legalForm != null && affaire.legalForm.code != UNREGISTERED_COMPANY_LEGAL_FORM_CODE">
-        <autocomplete-rna [(model)]="affaire.rna" [form]="affaireForm" propertyName="rna" [isMandatory]="true"
-          label="RNA" [isDisabled]="!editMode"
+        <autocomplete-rna [(model)]="affaire.rna" [form]="affaireForm" propertyName="rna" [isMandatory]="false"
+          label="RNA" [isDisabled]="!editMode" [byPassAutocompletValidator]="true"
           [conditionnalRequired]="!this.affaire.isIndividual && this.affaire.legalForm != null && this.affaire.legalForm.code != UNREGISTERED_COMPANY_LEGAL_FORM_CODE"
           [customValidators]="[checkRna('rna')]" (onOptionSelected)="fillRna($event)"></autocomplete-rna>
       </td>
@@ -67,7 +67,7 @@
       </td>
       <td>
         <autocomplete-postal-code [(model)]="affaire.postalCode" [form]="affaireForm" propertyName="postalCode"
-          label="Code postal" [isDisabled]="!editMode" [isMandatory]="true"
+          label="Code postal" [isDisabled]="!editMode" [isMandatory]="true" [byPassAutocompletValidator]="true"
           [conditionnalRequired]="!affaire.isIndividual" (onOptionSelected)="fillCity($event)">
         </autocomplete-postal-code>
       </td>
@@ -106,10 +106,6 @@
     <tr>
       <td>
         <generic-input [(model)]="affaire.paymentIban" label="IBAN" [form]="affaireForm" propertyName="paymentIban"
-          [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="40"></generic-input>
-      </td>
-      <td>
-        <generic-input [(model)]="affaire.paymentBic" label="BIC" [form]="affaireForm" propertyName="paymentBic"
           [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="40"></generic-input>
       </td>
     </tr>

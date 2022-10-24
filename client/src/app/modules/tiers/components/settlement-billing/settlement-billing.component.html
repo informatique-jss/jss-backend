@@ -70,7 +70,8 @@
               </td>
               <td>
                 <autocomplete-postal-code [(model)]="billingDocument.billingPostalCode" [form]="settlementBillingForm"
-                  propertyName="postalCode" [isMandatory]="true" label="Code postal" [isDisabled]="!editMode"
+                  [byPassAutocompletValidator]="true" propertyName="postalCode" [isMandatory]="true" label="Code postal"
+                  [isDisabled]="!editMode"
                   [conditionnalRequired]="billingDocument.billingLabelCountry != null && billingDocument.billingLabelCountry.code == COUNTRY_CODE_FRANCE"
                   (onOptionSelected)="fillCity($event)"></autocomplete-postal-code>
               </td>
@@ -135,13 +136,6 @@
                   propertyName="paymentIban" [isMandatory]="true" [isDisabled]="!editMode"
                   [conditionnalRequired]="instanceOfTiers(this.tiers) && !instanceOfResponsable(tiers) && this.tiers.paymentType != undefined && this.tiers.paymentType.code != undefined && this.tiers.paymentType.code == PAYMENT_TYPE_PRELEVEMENT "
                   [maxLength]="40"></generic-input>
-              </td>
-              <td
-                *ngIf="tiers !=undefined && tiers.paymentType!=undefined && tiers.paymentType.code!=undefined && tiers.paymentType.code==PAYMENT_TYPE_PRELEVEMENT">
-                <generic-input [(model)]="tiers.paymentBic" label="BIC" [form]="settlementBillingForm"
-                  propertyName="paymentBic" [isMandatory]="true" [isDisabled]="!editMode"
-                  [conditionnalRequired]="instanceOfTiers(this.tiers) && !instanceOfResponsable(tiers) && this.tiers.paymentType != undefined && this.tiers.paymentType.code != undefined && this.tiers.paymentType.code == PAYMENT_TYPE_PRELEVEMENT "
-                  [maxLength]="8"></generic-input>
               </td>
               <td
                 *ngIf="tiers !=undefined && tiers.paymentType!=undefined && tiers.paymentType.code!=undefined && tiers.paymentType.code==PAYMENT_TYPE_PRELEVEMENT">

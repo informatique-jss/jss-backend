@@ -393,7 +393,8 @@ export class QuotationComponent implements OnInit {
           for (let provision of asso.provisions) {
             if (provision.invoiceItems) {
               for (let invoiceItem of provision.invoiceItems) {
-                discountAmount += parseFloat(invoiceItem.discountAmount + "");
+                if (invoiceItem.discountAmount)
+                  discountAmount += parseFloat(invoiceItem.discountAmount + "");
               }
             }
           }
@@ -415,7 +416,8 @@ export class QuotationComponent implements OnInit {
           for (let provision of asso.provisions) {
             if (provision.invoiceItems) {
               for (let invoiceItem of provision.invoiceItems) {
-                vat += invoiceItem.vatPrice;
+                if (invoiceItem.vatPrice)
+                  vat += invoiceItem.vatPrice;
               }
             }
           }

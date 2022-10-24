@@ -30,8 +30,6 @@ export class PrincipalComponent implements OnInit {
     private deliveryServiceService: DeliveryServiceService,
     private cityService: CityService) { }
 
-  // TODO : reprendre les RG (notamment facturation / commande) lorsque les modules correspondants seront faits
-
   ngOnChanges(changes: SimpleChanges) {
     if (changes.tiers != undefined) {
       if (this.tiers.deliveryService == null || this.tiers.deliveryService == undefined)

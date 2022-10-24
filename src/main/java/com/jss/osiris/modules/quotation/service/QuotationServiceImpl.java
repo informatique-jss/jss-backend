@@ -82,6 +82,9 @@ public class QuotationServiceImpl implements QuotationService {
     @Value("${miscellaneous.document.billing.label.type.affaire.code}")
     private String billingLabelAffaireCode;
 
+    @Value("${quotation.logo.billing.type.code}")
+    private String billingItemLogoCode;
+
     @Override
     public Quotation getQuotation(Integer id) {
         Optional<Quotation> quotation = quotationRepository.findById(id);
@@ -231,7 +234,9 @@ public class QuotationServiceImpl implements QuotationService {
                         BillingItem billingItem = getAppliableBillingItem(billingItems);
 
                         if (billingItem.getAccountingAccounts() != null
-                                && billingItem.getAccountingAccounts().size() > 0) {
+                                && billingItem.getAccountingAccounts().size() > 0
+                                && (!billingItem.getBillingType().getIsOptionnal()
+                                        || hasOption(billingItem, provision))) {
 
                             InvoiceItem invoiceItem = new InvoiceItem();
                             invoiceItem.setBillingItem(billingItem);
@@ -262,6 +267,13 @@ public class QuotationServiceImpl implements QuotationService {
             }
         }
         return invoiceItems;
+    }
+
+    private boolean hasOption(BillingItem billingItem, Provision provision) {
+        if (billingItem.getBillingType().getCode().equals(billingItemLogoCode) && provision.getAnnouncement() != null
+                && provision.getIsLogo() != null && provision.getIsLogo())
+            return true;
+        return false;
     }
 
     private void computeInvoiceItemsVatAndDiscount(InvoiceItem invoiceItem, IQuotation quotation) throws Exception {

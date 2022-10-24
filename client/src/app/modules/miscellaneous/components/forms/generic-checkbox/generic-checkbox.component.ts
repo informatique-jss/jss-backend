@@ -65,7 +65,6 @@ export class GenericCheckboxComponent implements OnInit {
       this.form.addControl(this.propertyName, this.formBuilder.control({ value: '', disabled: this.isDisabled }, validators));
       this.form.get(this.propertyName)!.valueChanges.subscribe(
         (newValue) => {
-          // TODO  : le changement de modèle ne remonte pas dans le doc
           this.model = newValue;
           this.modelChange.emit(this.model);
         }

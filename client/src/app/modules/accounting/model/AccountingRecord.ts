@@ -1,3 +1,6 @@
+import { Deposit } from "../../invoicing/model/Deposit";
+import { Payment } from "../../invoicing/model/Payment";
+import { CustomerOrder } from "../../quotation/model/CustomerOrder";
 import { Invoice } from "../../quotation/model/Invoice";
 import { InvoiceItem } from "../../quotation/model/InvoiceItem";
 import { AccountingAccount } from "./AccountingAccount";
@@ -20,7 +23,7 @@ export interface AccountingRecord {
   accountingJournal: AccountingJournal;
   operationId: number;
   letteringNumber: number;
-  letteringDate: Date;
+  letteringDateTime: Date;
   /**
    * only used in fronted
    */
@@ -33,4 +36,10 @@ export interface AccountingRecord {
   * only used in fronted
   */
   balance: number;
+  customerOrder: CustomerOrder;
+  payment: Payment;
+  deposit: Deposit;
+  contrePasse: AccountingRecord;
+  isANouveau: boolean;
 }
+

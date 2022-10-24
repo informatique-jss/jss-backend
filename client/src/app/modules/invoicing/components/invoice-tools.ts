@@ -117,8 +117,8 @@ export function getAmountPayed(invoice: Invoice) {
 export function getLetteringDate(invoice: Invoice): Date | undefined {
   if (invoice && invoice.accountingRecords)
     for (let accountingRecord of invoice.accountingRecords)
-      if (accountingRecord.letteringDate)
-        return accountingRecord.letteringDate;
+      if (accountingRecord.letteringDateTime)
+        return accountingRecord.letteringDateTime;
   return undefined;
 }
 

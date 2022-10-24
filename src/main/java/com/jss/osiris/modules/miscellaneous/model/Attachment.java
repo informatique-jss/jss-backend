@@ -17,6 +17,7 @@ import com.jss.osiris.modules.quotation.model.Announcement;
 import com.jss.osiris.modules.quotation.model.Bodacc;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.Domiciliation;
+import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
@@ -57,6 +58,11 @@ public class Attachment implements Serializable, IId {
 	@JoinColumn(name = "id_announcement")
 	@JsonIgnoreProperties(value = { "attachments" }, allowSetters = true)
 	private Announcement announcement;
+
+	@ManyToOne
+	@JoinColumn(name = "id_provision")
+	@JsonIgnoreProperties(value = { "attachments" }, allowSetters = true)
+	private Provision provision;
 
 	@ManyToOne
 	@JoinColumn(name = "id_bodacc")
@@ -165,6 +171,14 @@ public class Attachment implements Serializable, IId {
 
 	public void setDomiciliation(Domiciliation domiciliation) {
 		this.domiciliation = domiciliation;
+	}
+
+	public Provision getProvision() {
+		return provision;
+	}
+
+	public void setProvision(Provision provision) {
+		this.provision = provision;
 	}
 
 }

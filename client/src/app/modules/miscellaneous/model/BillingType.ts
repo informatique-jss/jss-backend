@@ -6,5 +6,5 @@ export interface BillingType extends IReferential {
   isPriceBasedOnCharacterNumber: boolean;
   isOverrideVat: boolean;
   vat: Vat;
-  isOptionnal: Vat;
+  isOptionnal: boolean;
 }

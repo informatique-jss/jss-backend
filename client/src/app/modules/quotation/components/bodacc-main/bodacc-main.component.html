@@ -41,6 +41,9 @@
         </table>
       </div>
     </mat-tab>
+    <mat-tab label="Options">
+      <provision-options [editMode]="editMode" [provision]="provision"></provision-options>
+    </mat-tab>
     <mat-tab label="Imprimé"
       *ngIf="bodacc.bodaccPublicationType && (bodacc.bodaccPublicationType.code==BODACC_PUBLICATION_TYPE_PARTIAL_SPLIT ||bodacc.bodaccPublicationType.code==BODACC_PUBLICATION_TYPE_SPLIT || bodacc.bodaccPublicationType.code==BODACC_PUBLICATION_TYPE_MERGING || bodacc.bodaccPublicationType.code==BODACC_PUBLICATION_TYPE_SALE_OF_BUSINESS)">
       <bodacc-sale [bodaccSale]="bodacc.bodaccSale" [editMode]="editMode"

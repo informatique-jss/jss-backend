@@ -27,5 +27,4 @@ export interface Affaire extends IReferential {
   observations: string;
   shareCapital: number;
   paymentIban: string;
-  paymentBic: string;
 }

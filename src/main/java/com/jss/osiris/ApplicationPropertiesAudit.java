@@ -41,6 +41,8 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("accounting.account.number.bank");
         isOk = isOk && checkProperty("invoicing.invoice.status.send.code");
         isOk = isOk && checkProperty("invoicing.invoice.status.payed.code");
+        isOk = isOk && checkProperty("invoicing.payment.way.inbound.code");
+        isOk = isOk && checkProperty("invoicing.payment.way.outbound.code");
         isOk = isOk && checkProperty("accounting.journal.code.sales");
         isOk = isOk && checkProperty("accounting.journal.code.purchases");
         isOk = isOk && checkProperty("accounting.journal.code.anouveau");
@@ -60,6 +62,7 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("quotation.customer.order.status.billed.code");
         isOk = isOk && checkProperty("quotation.customer.order.status.waiting.deposit.code");
         isOk = isOk && checkProperty("invoicing.payment.limit.refund.euros");
+        isOk = isOk && checkProperty("quotation.logo.billing.type.code");
         isOk = isOk && checkAccountingParams();
 
         if (!isOk)

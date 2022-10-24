@@ -32,7 +32,7 @@
               <td>
                 <autocomplete-siren [(model)]="mergedCompany.mergingCompanySiren" [form]="bodaccFusionForm"
                   [propertyName]="'mergingCompanySiren'+i" [isMandatory]="true" label="SIREN" [isDisabled]="!editMode"
-                  [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen"
+                  [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [byPassAutocompletValidator]="true"
                   (onOptionSelected)="fillSirenMergingCompany($event,mergedCompany)">
                 </autocomplete-siren>
               </td>
@@ -110,7 +110,7 @@
               <td>
                 <autocomplete-siren [(model)]="absorbedCompany.absorbedCompanySiren" [form]="bodaccFusionForm"
                   [propertyName]="'absorbedCompanySiren'+i" [isMandatory]="true" label="SIREN" [isDisabled]="!editMode"
-                  [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen"
+                  [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [byPassAutocompletValidator]="true"
                   (onOptionSelected)="fillSirenAbsorbedCompany($event,absorbedCompany)">
                 </autocomplete-siren>
               </td>

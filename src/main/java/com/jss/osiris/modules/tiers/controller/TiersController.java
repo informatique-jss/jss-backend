@@ -719,8 +719,6 @@ public class TiersController {
         }
       }
 
-      validationHelper.validateString(tiers.getPaymentBIC(), false);
-
       if (tiers.getDocuments() != null && tiers.getDocuments().size() > 0) {
         for (Document document : tiers.getDocuments()) {
 

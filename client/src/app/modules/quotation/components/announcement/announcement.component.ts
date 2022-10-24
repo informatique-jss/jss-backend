@@ -4,16 +4,13 @@ import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatDialog } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
-import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
 import { CONFRERE_BALO_ID, JOURNAL_TYPE_JSS_DENOMINATION, JOURNAL_TYPE_SPEL_CODE, LOGO_ATTACHMENT_TYPE_CODE, PROOF_READING_DOCUMENT_TYPE_CODE, PUBLICATION_CERTIFICATE_DOCUMENT_TYPE_CODE, PUBLICATION_TIERS_DOCUMENT_TYPE_CODE, SEPARATOR_KEY_CODES } from 'src/app/libs/Constants';
 import { getDocument } from 'src/app/libs/DocumentHelper';
-import { Attachment } from 'src/app/modules/miscellaneous/model/Attachment';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { DocumentTypeService } from 'src/app/modules/miscellaneous/services/document.type.service';
-import { UploadAttachmentService } from 'src/app/modules/miscellaneous/services/upload.attachment.service';
 import { ANNOUNCEMENT_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { ConfrereDialogComponent } from '../../../miscellaneous/components/confreres-dialog/confreres-dialog.component';
 import { Document } from "../../../miscellaneous/model/Document";
@@ -79,8 +76,6 @@ export class AnnouncementComponent implements OnInit {
   filteredNoticeTemplates: Observable<AnnouncementNoticeTemplate[]> | undefined;
   selectedNoticeTemplates: AnnouncementNoticeTemplate[] = [] as Array<AnnouncementNoticeTemplate>;
 
-  logoUrl: SafeUrl | undefined;
-
   constructor(private formBuilder: UntypedFormBuilder,
     private confrereService: ConfrereService,
     private characterPriceService: CharacterPriceService,
@@ -88,9 +83,7 @@ export class AnnouncementComponent implements OnInit {
     public confrereDialog: MatDialog,
     private documentTypeService: DocumentTypeService,
     private journalTypeService: JournalTypeService,
-    private uploadAttachmentService: UploadAttachmentService,
     private announcementNoticeTemplateService: AnnouncementNoticeTemplateService,
-    private sanitizer: DomSanitizer
   ) { }
 
   ngOnInit() {
@@ -140,8 +133,6 @@ export class AnnouncementComponent implements OnInit {
         this.announcement!.isHeader = false;
       if (!this.announcement!.isHeaderFree)
         this.announcement!.isHeaderFree = false;
-      if (!this.announcement!.isLogo)
-        this.announcement!.isLogo = false;
       if (!this.announcement!.isPictureBaloPackage)
         this.announcement!.isPictureBaloPackage = false;
       if (!this.announcement!.isLegalDisplay)
@@ -158,7 +149,6 @@ export class AnnouncementComponent implements OnInit {
         this.publicationDocument = getDocument(PUBLICATION_TIERS_DOCUMENT_TYPE_CODE, this.announcement!, this.documentTypes);
         this.proofReadingDocument = getDocument(PROOF_READING_DOCUMENT_TYPE_CODE, this.announcement!, this.documentTypes);
         this.publicationCertificateDocument = getDocument(PUBLICATION_CERTIFICATE_DOCUMENT_TYPE_CODE, this.announcement!, this.documentTypes);
-        this.setLogoUrl();
       })
 
       this.announcementForm.get('notice')?.setValue(this.announcement.notice);
@@ -222,14 +212,19 @@ export class AnnouncementComponent implements OnInit {
   setNoticeModel(event: any) {
     if (this.announcement)
       this.announcement.notice = event.html;
-    this.noticeChange.emit();
+    this.noticeChangeFunction();
   }
 
   setNoticeHeaderModel(event: any) {
     if (this.announcement)
       this.announcement.noticeHeader = event.html;
+    this.noticeChangeFunction();
+  }
+
+  noticeChangeFunction() {
     this.noticeChange.emit();
   }
+
 
   countCharacterNumber() {
     let noticeValue = this.announcementForm.get('notice')?.value != undefined ? this.announcementForm.get('notice')?.value : "";
@@ -250,27 +245,6 @@ export class AnnouncementComponent implements OnInit {
   toggleTabs() {
     if (this.tabs != undefined)
       this.tabs.realignInkBar();
-  }
-
-  updateAttachments(attachments: Attachment[]) {
-    if (attachments && this.announcement) {
-      this.announcement.attachments = attachments;
-      this.setLogoUrl();
-    }
-  }
-
-  setLogoUrl() {
-    if (this.announcement && this.announcement.attachments != null && this.announcement.attachments) {
-      this.announcement.attachments.forEach(attachment => {
-        if (attachment.attachmentType.code == LOGO_ATTACHMENT_TYPE_CODE)
-          this.uploadAttachmentService.previewAttachmentUrl(attachment).subscribe((response: any) => {
-            let binaryData = [];
-            binaryData.push(response.body);
-            let url = window.URL.createObjectURL(new Blob(binaryData, { type: response.headers.get("content-type") }));
-            this.logoUrl = this.sanitizer.bypassSecurityTrustUrl(url);
-          })
-      })
-    }
   }
 
   updateHeaderFree() {

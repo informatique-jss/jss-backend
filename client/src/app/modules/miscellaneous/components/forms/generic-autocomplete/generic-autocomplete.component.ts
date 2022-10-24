@@ -63,6 +63,8 @@ export abstract class GenericAutocompleteComponent<T, U> implements OnInit {
   */
   @Input() matFormFieldClass: string = "full-width";
 
+  @Input() byPassAutocompletValidator: boolean = false;
+
   expectedMinLengthInput: number = 2;
 
   filteredTypes: T[] | undefined;
@@ -107,7 +109,6 @@ export abstract class GenericAutocompleteComponent<T, U> implements OnInit {
         }
       }
 
-      // TODO  : validators not working !
       if (this.customValidators != undefined && this.customValidators != null && this.customValidators.length > 0)
         validators.push(...this.customValidators);
 
@@ -156,8 +157,10 @@ export abstract class GenericAutocompleteComponent<T, U> implements OnInit {
   }
 
   checkAutocompletFieldCheck() {
+    if (this.byPassAutocompletValidator)
+      return true;
     const fieldValue = this.form!.get(this.propertyName)?.value;
-    if (fieldValue != undefined && fieldValue != null && (fieldValue.id == undefined || fieldValue.id == null))
+    if (fieldValue != undefined && fieldValue != null && (typeof fieldValue !== 'object'))
       return false;
     return true;
   }

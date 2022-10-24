@@ -59,9 +59,6 @@ public class Announcement implements IId, IAttachment {
 	private String noticeHeader;
 
 	@Column(nullable = false)
-	private Boolean isLogo;
-
-	@Column(nullable = false)
 	private Boolean isHeader;
 
 	@Column(nullable = false)
@@ -134,10 +131,6 @@ public class Announcement implements IId, IAttachment {
 		this.noticeTypeFamily = noticeTypeFamily;
 	}
 
-	public Boolean getIsLogo() {
-		return isLogo;
-	}
-
 	public Boolean getIsLegalDisplay() {
 		return isLegalDisplay;
 	}
@@ -200,10 +193,6 @@ public class Announcement implements IId, IAttachment {
 
 	public void setBailiffReportJSSPrice(Float bailiffReportJSSPrice) {
 		this.bailiffReportJSSPrice = bailiffReportJSSPrice;
-	}
-
-	public void setIsLogo(Boolean isLogo) {
-		this.isLogo = isLogo;
 	}
 
 	public Boolean getIsHeader() {

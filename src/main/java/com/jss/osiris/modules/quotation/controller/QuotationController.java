@@ -877,8 +877,7 @@ public class QuotationController {
       validationHelper.validateReferential(confrere.getCity(), false);
       validationHelper.validateReferential(confrere.getCountry(), false);
       validationHelper.validateString(confrere.getIban(), false, 40);
-      validationHelper.validateString(confrere.getPaymentBic(), false, 40);
-      validationHelper.validateReferential(confrere.getVatCollectionType(), false);
+      validationHelper.validateReferential(confrere.getVatCollectionType(), true);
 
       validationHelper.validateReferential(confrere.getPaymentType(), true);
 
@@ -1156,12 +1155,10 @@ public class QuotationController {
 
   @GetMapping(inputEntryPoint + "/siren")
   public ResponseEntity<List<Siren>> getSiren(@RequestParam String siren) {
-    if (siren == null || siren.equals("") || siren.replaceAll(" ", "").length() != 9)
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
     List<Siren> sirenFound = null;
     try {
-      sirenFound = sireneDelegateService.getSiren(siren.replaceAll(" ", ""));
+      if (siren != null && !siren.equals("") && siren.replaceAll(" ", "").length() == 9)
+        sirenFound = sireneDelegateService.getSiren(siren.replaceAll(" ", ""));
     } catch (HttpStatusCodeException e) {
       return null;
     } catch (Exception e) {
@@ -1173,12 +1170,10 @@ public class QuotationController {
 
   @GetMapping(inputEntryPoint + "/siret")
   public ResponseEntity<List<Siret>> getSiret(@RequestParam String siret) {
-    if (siret == null || siret.equals("") || siret.replaceAll(" ", "").length() != 14)
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
     List<Siret> siretFound = null;
     try {
-      siretFound = sireneDelegateService.getSiret(siret.replaceAll(" ", ""));
+      if (siret != null && !siret.equals("") && siret.replaceAll(" ", "").length() == 14)
+        siretFound = sireneDelegateService.getSiret(siret.replaceAll(" ", ""));
     } catch (HttpStatusCodeException e) {
       return null;
     } catch (Exception e) {
@@ -1196,7 +1191,9 @@ public class QuotationController {
 
     List<Rna> rnaFound = null;
     try {
-      rnaFound = rnaDelegateService.getRna(rna.replaceAll(" ", ""));
+      if (rna != null && !rna.equals("") && rna.replaceAll(" ", "").length() == 14
+          && rna.toUpperCase().subSequence(0, 1).equals("W"))
+        rnaFound = rnaDelegateService.getRna(rna.replaceAll(" ", ""));
     } catch (HttpStatusCodeException e) {
       return null;
     } catch (Exception e) {
@@ -1627,7 +1624,7 @@ public class QuotationController {
           && quotation.getQuotationLabelType().getCode().equals(billingLabelAffaireCode))
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
 
-      validationHelper.validateReferential(assoAffaireOrder.getAffaire(), null);
+      validationHelper.validateReferential(assoAffaireOrder.getAffaire(), true);
 
       for (Provision provision : assoAffaireOrder.getProvisions()) {
         validateProvision(provision, isOpen, isCustomerOrder);
@@ -1852,8 +1849,6 @@ public class QuotationController {
       } else {
         validationHelper.validateReferential(affaire.getLegalForm(), true);
         validationHelper.validateString(affaire.getDenomination(), true, 60);
-        if (affaire.getSiren() == null || affaire.getSiret() == null && affaire.getRna() == null)
-          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         if (affaire.getRna() != null
             && !validationHelper.validateRna(affaire.getRna().toUpperCase().replaceAll(" ", "")))
           return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

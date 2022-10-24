@@ -126,6 +126,7 @@ public class BillingItemServiceImpl implements BillingItemService {
                 accountingAccount.setAccountingAccountClass(currentClass);
             }
             accountingAccount.setLabel(billingItem.getBillingType().getLabel());
+            accountingAccount.setBillingItem(currentBillingItem);
             accountingAccountService.addOrUpdateAccountingAccount(accountingAccount);
         }
         return this.getBillingItem(billingItem.getId());

@@ -31,6 +31,10 @@ export class GenericToggleComponent implements OnInit {
    * Default : toggle
    */
   @Input() propertyName: string = "toggle";
+  /**
+ * Hint to display
+ */
+  @Input() hint: string | undefined;
 
 
   constructor(

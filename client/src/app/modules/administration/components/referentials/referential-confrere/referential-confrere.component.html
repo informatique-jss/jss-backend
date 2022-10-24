@@ -88,10 +88,9 @@
                 [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="40"></generic-input>
             </td>
             <td>
-              <!--TODO : à rendre obligatoire à la saisie-->
               <select-vat-collection-type [(model)]="selectedEntity.vatCollectionType"
                 label="Type d'encaissement de la TVA" [form]="entityForm" propertyName="vatCollectionType"
-                [isMandatory]="false" [isDisabled]="!editMode"></select-vat-collection-type>
+                [isMandatory]="true" [isDisabled]="!editMode"></select-vat-collection-type>
             </td>
           </tr>
         </table>
@@ -109,7 +108,7 @@
             <td>
               <autocomplete-postal-code [(model)]="selectedEntity.postalCode" [form]="entityForm" label="Code postal"
                 [isDisabled]="!editMode" propertyName="postalCode" [isMandatory]="false"
-                (onOptionSelected)="fillCity($event)">
+                [byPassAutocompletValidator]="true" (onOptionSelected)="fillCity($event)">
               </autocomplete-postal-code>
             </td>
             <td>
@@ -307,13 +306,6 @@
                     [isMandatory]="false" [isDisabled]="!editMode"
                     [conditionnalRequired]="this.selectedEntity.paymentType != undefined && this.selectedEntity.paymentType.code != undefined && this.selectedEntity.paymentType.code == PAYMENT_TYPE_PRELEVEMENT "
                     [maxLength]="40"></generic-input>
-                </td>
-                <td
-                  *ngIf="selectedEntity !=undefined && selectedEntity.paymentType!=undefined && selectedEntity.paymentType.code!=undefined && selectedEntity.paymentType.code==PAYMENT_TYPE_PRELEVEMENT">
-                  <generic-input [(model)]="selectedEntity.paymentBic" label="BIC" [form]="entityForm"
-                    propertyName="paymentBic" [isMandatory]="false" [isDisabled]="!editMode"
-                    [conditionnalRequired]=" this.selectedEntity.paymentType != undefined && this.selectedEntity.paymentType.code != undefined && this.selectedEntity.paymentType.code == PAYMENT_TYPE_PRELEVEMENT "
-                    [maxLength]="8"></generic-input>
                 </td>
                 <td
                   *ngIf="selectedEntity !=undefined && selectedEntity.paymentType!=undefined && selectedEntity.paymentType.code!=undefined && selectedEntity.paymentType.code==PAYMENT_TYPE_PRELEVEMENT">

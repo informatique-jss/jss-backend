@@ -78,6 +78,12 @@ public class PaymentServiceImpl implements PaymentService {
     @Value("${invoicing.payment.limit.refund.euros}")
     private String payementLimitRefundInEuros;
 
+    @Value("${invoicing.payment.way.inbound.code}")
+    private String inboundPaymentWayCode;
+
+    @Value("${invoicing.payment.way.outbound.code}")
+    private String outboundPaymentWayCode;
+
     @Override
     public List<Payment> getPayments() {
         return IterableUtils.toList(paymentRepository.findAll());
@@ -117,48 +123,54 @@ public class PaymentServiceImpl implements PaymentService {
         List<Payment> payments = paymentRepository.findNotAssociatedPayments();
 
         for (Payment payment : payments) {
-            // Get corresponding entities
-            List<IndexEntity> correspondingEntities = getCorrespondingEntityForPayment(payment);
-            List<Invoice> correspondingInvoices = new ArrayList<Invoice>();
-            List<CustomerOrder> correspondingCustomerOrder = new ArrayList<CustomerOrder>();
+            // Match inbound payment
+            if (payment.getPaymentWay().getCode().equals(inboundPaymentWayCode)) {
+                // Get corresponding entities
+                List<IndexEntity> correspondingEntities = getCorrespondingEntityForPayment(payment);
+                List<Invoice> correspondingInvoices = new ArrayList<Invoice>();
+                List<CustomerOrder> correspondingCustomerOrder = new ArrayList<CustomerOrder>();
 
-            boolean generateWaitingAccountAccountingRecords = true;
-            if (payment.getAccountingRecords() != null && payment.getAccountingRecords().size() > 0) {
-                generateWaitingAccountAccountingRecords = false;
-            } else {
-                accountingRecordService.generateBankAccountingRecordsForPayment(payment);
-            }
-
-            // Get invoices
-            if (correspondingEntities != null && correspondingEntities.size() > 0) {
-                for (IndexEntity foundEntity : correspondingEntities) {
-                    Invoice invoice = getInvoiceForEntity(foundEntity);
-                    if (invoice != null)
-                        correspondingInvoices.add(invoice);
-                    CustomerOrder customerOrder = getCustomerOrderAtDepositStatusForEntity(foundEntity);
-                    if (customerOrder != null)
-                        correspondingCustomerOrder.add(customerOrder);
+                boolean generateWaitingAccountAccountingRecords = true;
+                if (payment.getAccountingRecords() != null && payment.getAccountingRecords().size() > 0) {
+                    generateWaitingAccountAccountingRecords = false;
+                } else {
+                    accountingRecordService.generateBankAccountingRecordsForPayment(payment);
                 }
-            }
 
-            // If invoice and pending customer orders found, do nothing => to complicated to
-            // manage automaticaly
-            if (correspondingInvoices.size() > 0 && correspondingCustomerOrder.size() > 0)
-                continue;
-            // Invoices to payed found
-            if (correspondingInvoices.size() > 0) {
-                associatePayementAndInvoices(payment, correspondingInvoices, generateWaitingAccountAccountingRecords,
-                        null);
-            }
+                // Get invoices
+                if (correspondingEntities != null && correspondingEntities.size() > 0) {
+                    for (IndexEntity foundEntity : correspondingEntities) {
+                        Invoice invoice = getInvoiceForEntity(foundEntity);
+                        if (invoice != null)
+                            correspondingInvoices.add(invoice);
+                        CustomerOrder customerOrder = getCustomerOrderAtDepositStatusForEntity(foundEntity);
+                        if (customerOrder != null)
+                            correspondingCustomerOrder.add(customerOrder);
+                    }
+                }
 
-            // Customer order wainting for deposit found
-            if (correspondingCustomerOrder.size() > 0) {
-                associatePayementAndCustomerOrders(payment, correspondingCustomerOrder, correspondingInvoices,
-                        generateWaitingAccountAccountingRecords, null, payment.getPaymentAmount());
-            }
-            // If payment not used, put it in waiting account
-            if (generateWaitingAccountAccountingRecords) {
-                accountingRecordService.generateAccountingRecordsForWaintingPayment(payment);
+                // If invoice and pending customer orders found, do nothing => to complicated to
+                // manage automaticaly
+                if (correspondingInvoices.size() > 0 && correspondingCustomerOrder.size() > 0)
+                    continue;
+                // Invoices to payed found
+                if (correspondingInvoices.size() > 0) {
+                    associatePayementAndInvoices(payment, correspondingInvoices,
+                            generateWaitingAccountAccountingRecords,
+                            null);
+                }
+
+                // Customer order wainting for deposit found
+                if (correspondingCustomerOrder.size() > 0) {
+                    associatePayementAndCustomerOrders(payment, correspondingCustomerOrder, correspondingInvoices,
+                            generateWaitingAccountAccountingRecords, null, payment.getPaymentAmount());
+                }
+                // If payment not used, put it in waiting account
+                if (generateWaitingAccountAccountingRecords) {
+                    accountingRecordService.generateAccountingRecordsForWaintingPayment(payment);
+                }
+            } else {
+                // TODO outbound payment
             }
         }
     }
@@ -172,29 +184,33 @@ public class PaymentServiceImpl implements PaymentService {
             throws Exception {
 
         float remainingMoney = payment.getPaymentAmount();
-        // Invoices to payed found
-        if (correspondingInvoices != null && correspondingInvoices.size() > 0) {
-            remainingMoney = associatePayementAndInvoices(payment, correspondingInvoices, true, byPassAmount);
-        }
-
-        // Customer order wainting for deposit found
-        if (correspondingCustomerOrder != null && correspondingCustomerOrder.size() > 0) {
-            remainingMoney = associatePayementAndCustomerOrders(payment, correspondingCustomerOrder,
-                    correspondingInvoices, true, byPassAmount, remainingMoney);
-        }
-
-        if (remainingMoney > 0) {
-            if (Math.abs(remainingMoney) <= Float.parseFloat(payementLimitRefundInEuros)) {
-                if (correspondingInvoices != null && correspondingInvoices.size() > 0)
-                    accountingRecordService.generateAppointForPayment(payment, remainingMoney,
-                            invoiceHelper.getCustomerOrder(correspondingInvoices.get(0)));
-                else if (correspondingCustomerOrder != null && correspondingCustomerOrder.size() > 0)
-                    accountingRecordService.generateAppointForPayment(payment, remainingMoney,
-                            quotationService.getCustomerOrderOfQuotation(correspondingCustomerOrder.get(0)));
-
-            } else {
-                refundService.generateRefund(tiersRefund, affaireRefund, payment, remainingMoney);
+        if (payment.getPaymentWay().getCode().equals(inboundPaymentWayCode)) {
+            // Invoices to payed found
+            if (correspondingInvoices != null && correspondingInvoices.size() > 0) {
+                remainingMoney = associatePayementAndInvoices(payment, correspondingInvoices, true, byPassAmount);
             }
+
+            // Customer order wainting for deposit found
+            if (correspondingCustomerOrder != null && correspondingCustomerOrder.size() > 0) {
+                remainingMoney = associatePayementAndCustomerOrders(payment, correspondingCustomerOrder,
+                        correspondingInvoices, true, byPassAmount, remainingMoney);
+            }
+
+            if (remainingMoney > 0) {
+                if (Math.abs(remainingMoney) <= Float.parseFloat(payementLimitRefundInEuros)) {
+                    if (correspondingInvoices != null && correspondingInvoices.size() > 0)
+                        accountingRecordService.generateAppointForPayment(payment, remainingMoney,
+                                invoiceHelper.getCustomerOrder(correspondingInvoices.get(0)));
+                    else if (correspondingCustomerOrder != null && correspondingCustomerOrder.size() > 0)
+                        accountingRecordService.generateAppointForPayment(payment, remainingMoney,
+                                quotationService.getCustomerOrderOfQuotation(correspondingCustomerOrder.get(0)));
+
+                } else {
+                    refundService.generateRefund(tiersRefund, affaireRefund, payment, remainingMoney);
+                }
+            }
+        } else {
+            // TODO : outbound payment
         }
     }
 

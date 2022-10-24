@@ -1,6 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
+import { Affaire } from 'src/app/modules/quotation/model/Affaire';
 import { AffaireService } from 'src/app/modules/quotation/services/affaire.service';
 import { IndexEntityService } from 'src/app/routing/search/index.entity.service';
 import { IndexEntity } from 'src/app/routing/search/IndexEntity';
@@ -36,15 +37,17 @@ export class AutocompleteAffaireComponent extends GenericAutocompleteComponent<I
   }
 
   displayLabel(entity: IndexEntity): string {
-    let obj = JSON.parse((entity.text as string));
-    return (obj.affaire.firstname ? obj.affaire.firstname + " " : "") + (obj.affaire.lastname ? obj.affaire.lastname + " " : "") + (obj.affaire.denomination ? obj.affaire.denomination : "");
+    if (entity && entity.text) {
+      let obj = JSON.parse((entity.text as string));
+      return (obj.firstname ? obj.firstname + " " : "") + (obj.lastname ? obj.lastname + " " : "") + (obj.denomination ? obj.denomination : "");
+    }
+    return "";
   }
 
-  public displayAffaire(affaire: IndexEntity): string {
-    if (affaire == null)
-      return "";
-    let obj = JSON.parse((affaire.text as string));
-    return (obj.affaire.firstname != undefined ? obj.affaire.firstname + " " + obj.affaire.lastname : obj.affaire.denomination);
+  displayAffaire(obj: Affaire): string {
+    if (obj)
+      return (obj.firstname ? obj.firstname + " " : "") + (obj.lastname ? obj.lastname + " " : "") + (obj.denomination ? obj.denomination : "");
+    return "";
   }
 
   clearField(): void {

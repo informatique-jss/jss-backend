@@ -115,11 +115,16 @@ public class TiersServiceImpl implements TiersService {
                         document.setResponsable(responsable);
             }
 
-        tiers = tiersRepository.save(tiers);
-        indexEntityService.indexEntity(tiers, tiers.getId());
         if (tiers.getResponsables() != null && tiers.getResponsables().size() > 0) {
             for (Responsable responsable : tiers.getResponsables()) {
-                indexEntityService.indexEntity(responsable, responsable.getId());
+                // If mails already exists, get their ids
+                if (responsable.getMails() != null && responsable.getMails().size() > 0)
+                    mailService.populateMailIds(responsable.getMails());
+
+                // If phones already exists, get their ids
+                if (responsable.getPhones() != null && responsable.getPhones().size() > 0) {
+                    phoneService.populateMPhoneIds(responsable.getPhones());
+                }
 
                 if (responsable.getDocuments() != null && responsable.getDocuments().size() > 0) {
                     for (Document document : responsable.getDocuments()) {
@@ -131,6 +136,12 @@ public class TiersServiceImpl implements TiersService {
                     }
                 }
             }
+        }
+
+        tiers = tiersRepository.save(tiers);
+        indexEntityService.indexEntity(tiers, tiers.getId());
+        for (Responsable responsable : tiers.getResponsables()) {
+            indexEntityService.indexEntity(responsable, responsable.getId());
         }
 
         return tiers;

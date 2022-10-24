@@ -58,10 +58,14 @@ export class AccountingRecordComponent implements OnInit {
     this.displayedColumns.push({ id: "creditAmount", fieldName: "creditAmount", label: "Crédit", valueFonction: this.formatEurosForSortTable } as SortTableColumn);
     this.displayedColumns.push({ id: "label", fieldName: "label", label: "Libellé", isShrinkColumn: true } as SortTableColumn);
     this.displayedColumns.push({ id: "letteringNumber", fieldName: "letteringNumber", label: "Lettrage" } as SortTableColumn);
-    this.displayedColumns.push({ id: "letteringDate", fieldName: "letteringDate", label: "Date de lettrage", valueFonction: this.formatDateForSortTable } as SortTableColumn);
+    this.displayedColumns.push({ id: "letteringDate", fieldName: "letteringDateTime", label: "Date de lettrage", valueFonction: this.formatDateForSortTable } as SortTableColumn);
     this.displayedColumns.push({ id: "debitAccumulation", fieldName: "debitAccumulation", label: "Cumul débit", valueFonction: this.formatEurosForSortTable } as SortTableColumn);
     this.displayedColumns.push({ id: "creditAccumulation", fieldName: "creditAccumulation", label: "Cumul crédit", valueFonction: this.formatEurosForSortTable } as SortTableColumn);
     this.displayedColumns.push({ id: "balance", fieldName: "balance", label: "Solde", valueFonction: this.formatEurosForSortTable } as SortTableColumn);
+    this.displayedColumns.push({ id: "invoice", fieldName: "invoice.id", label: "Facture", actionLinkFunction: ((column: SortTableColumn, element: any) => element.invoice ? ['/invoicing', element.invoice.id] : null), actionIcon: "visibility", actionTooltip: "Voir la facture associée" } as SortTableColumn);
+    this.displayedColumns.push({ id: "customerOrder", fieldName: "customerOrder.id", label: "Commande", actionLinkFunction: ((column: SortTableColumn, element: any) => element.customerOrder ? ['/order', element.customerOrder.id] : null), actionIcon: "visibility", actionTooltip: "Voir la commande associée" } as SortTableColumn);
+    this.displayedColumns.push({ id: "payment", fieldName: "payment.id", label: "Paiement", actionLinkFunction: ((column: SortTableColumn, element: any) => element.payment ? ['/payment', element.payment.id] : null), actionIcon: "visibility", actionTooltip: "Voir le paiement associé" } as SortTableColumn);
+    this.displayedColumns.push({ id: "deposit", fieldName: "deposit.id", label: "Acompte", actionLinkFunction: ((column: SortTableColumn, element: any) => element.deposit ? ['/deposit', element.deposit.id] : null), actionIcon: "visibility", actionTooltip: "Voir l'acompte associé" } as SortTableColumn);
 
     this.tableAction.push({
       actionIcon: "block", actionName: "Supprimer / contre-passer l'opération", actionClick: (action: SortTableAction, element: any) => {

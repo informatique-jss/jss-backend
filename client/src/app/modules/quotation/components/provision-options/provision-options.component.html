@@ -1,0 +1,20 @@
+<form [formGroup]="optionForm" *ngIf=" provision">
+  <div class="form-div">
+    <table class="full-width">
+      <tr *ngIf="displayOption(QUOTATION_LOGO_BILLING_TYPE_CODE)">
+        <td>
+          <generic-toggle [(model)]="provision.isLogo" label="Logo ?" [form]="optionForm" propertyName="isLogo"
+            [hint]="(provision.id)?undefined:'Veuiller enregistrer pour pouvoir ajouter le logo'">
+          </generic-toggle>
+        </td>
+        <td *ngIf="provision.isLogo && provision.id">
+          <single-attachment [entity]="provision!" [entityType]="PROVISION_ENTITY_TYPE.entityType" [editMode]="editMode"
+            [attachmentTypeCodeToDisplay]="LOGO_ATTACHMENT_TYPE_CODE" (onUploadedFile)="updateAttachments($event)">
+          </single-attachment>
+        </td>
+        <td *ngIf="provision.isLogo && provision.id && logoUrl "><img width="150px" [src]="logoUrl" />
+        </td>
+      </tr>
+    </table>
+  </div>
+</form>

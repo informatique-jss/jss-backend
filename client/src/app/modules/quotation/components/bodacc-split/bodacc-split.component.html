@@ -31,7 +31,8 @@
               <td>
                 <autocomplete-siren [(model)]="beneficiary.beneficiaryCompanySiren" [form]="bodaccSplitForm"
                   [propertyName]="'beneficiaryCompanySiren'+i" [isMandatory]="true" label="SIREN"
-                  [isDisabled]="!editMode" [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen"
+                  [byPassAutocompletValidator]="true" [isDisabled]="!editMode"
+                  [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen"
                   (onOptionSelected)="fillSirenBeneficiaryCompany($event,beneficiary)">
                 </autocomplete-siren>
               </td>
@@ -108,7 +109,7 @@
               <td>
                 <autocomplete-siren [(model)]="splitCompany.splitCompanySiren" [form]="bodaccSplitForm"
                   [propertyName]="'splitCompanySiren'+i" [isMandatory]="true" label="SIREN" [isDisabled]="!editMode"
-                  [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen"
+                  [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [byPassAutocompletValidator]="true"
                   (onOptionSelected)="fillSirenSplitCompany($event, splitCompany)">
                 </autocomplete-siren>
               </td>

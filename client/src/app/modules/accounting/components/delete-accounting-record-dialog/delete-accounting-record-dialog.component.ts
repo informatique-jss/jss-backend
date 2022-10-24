@@ -39,7 +39,8 @@ export class DeleteAccountingRecordDialogComponent implements OnInit {
     this.displayedColumns.push({ id: "debitAmount", fieldName: "debitAmount", label: "Débit", valueFonction: formatEurosForSortTable } as SortTableColumn);
     this.displayedColumns.push({ id: "creditAmount", fieldName: "creditAmount", label: "Crédit", valueFonction: formatEurosForSortTable } as SortTableColumn);
     this.displayedColumns.push({ id: "letteringNumber", fieldName: "letteringNumber", label: "Lettrage" } as SortTableColumn);
-    this.displayedColumns.push({ id: "letteringDate", fieldName: "letteringDate", label: "Date de lettrage", valueFonction: formatDateForSortTable } as SortTableColumn);
+    this.displayedColumns.push({ id: "letteringDate", fieldName: "letteringDateTime", label: "Date de lettrage", valueFonction: formatDateForSortTable } as SortTableColumn);
+    this.displayedColumns.push({ id: "invoice", fieldName: "invoice.id", label: "Facture" } as SortTableColumn);
 
     if (this.temporaryOperationId)
       this.accountingRecordService.getAccountingRecordsByTemporaryOperationId(this.temporaryOperationId).subscribe(response => {
@@ -67,5 +68,14 @@ export class DeleteAccountingRecordDialogComponent implements OnInit {
 
   onClose(): void {
     this.dialogRef.close(null);
+  }
+
+  removedLetteringInvoices(): number[] {
+    let invoiceList = [] as Array<number>;
+    if (this.accountingRecords)
+      for (let accountingRecord of this.accountingRecords)
+        if (accountingRecord.letteringDateTime && accountingRecord.invoice && invoiceList.indexOf(accountingRecord.invoice.id) < 0)
+          invoiceList.push(accountingRecord.invoice.id);
+    return invoiceList;
   }
 }

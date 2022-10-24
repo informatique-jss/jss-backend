@@ -65,8 +65,6 @@ export class ResponsableMainComponent implements OnInit {
     protected subscriptionPeriodTypeService: SubscriptionPeriodTypeService,
     protected tiersCategoryService: TiersCategoryService) { }
 
-  // TODO : reprendre les RG (notamment facturation / commande) lorsque les modules correspondants seront faits
-
   ngOnChanges(changes: SimpleChanges) {
     if (this.tableActions && this.tableActions[0]) {
       if (this.editMode) {
@@ -169,6 +167,7 @@ export class ResponsableMainComponent implements OnInit {
           this.selectedResponsable.documents.push(copyObject(document));
       }
 
+      this.selectedResponsable.isActive = true;
       this.tiersService.setCurrentViewedResponsable(this.selectedResponsable);
       this.setDataTable();
       this.toggleTabs();

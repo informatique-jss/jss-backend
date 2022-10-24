@@ -12,7 +12,6 @@ export interface Provider extends IReferential {
   accountingAccountProvider: AccountingAccount;
   accountingAccountDeposit: AccountingAccount;
   iban: string;
-  bic: string;
   accountingMails: Mail[];
   mails: Mail[];
   phones: Phone[];

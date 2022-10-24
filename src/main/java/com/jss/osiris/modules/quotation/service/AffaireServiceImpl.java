@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.modules.miscellaneous.service.MailService;
 import com.jss.osiris.modules.miscellaneous.service.PhoneService;
 import com.jss.osiris.modules.quotation.model.Affaire;
@@ -38,6 +39,9 @@ public class AffaireServiceImpl implements AffaireService {
         return null;
     }
 
+    @Autowired
+    IndexEntityService indexEntityService;
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Affaire addOrUpdateAffaire(Affaire affaire) {
@@ -58,7 +62,16 @@ public class AffaireServiceImpl implements AffaireService {
         }
 
         Affaire affaireSaved = affaireRepository.save(affaire);
+        indexEntityService.indexEntity(affaire, affaire.getId());
         return affaireSaved;
+    }
+
+    @Override
+    public void reindexAffaire() {
+        List<Affaire> affaires = IterableUtils.toList(affaireRepository.findAll());
+        if (affaires != null)
+            for (Affaire affaire : affaires)
+                indexEntityService.indexEntity(affaire, affaire.getId());
     }
 
 }

@@ -83,8 +83,8 @@
                 </td>
                 <td>
                   <autocomplete-postal-code [(model)]="billingDocument.billingPostalCode"
-                    [form]="quotationManagementForm" propertyName="postalCode" [isMandatory]="true" label="Code postal"
-                    [isDisabled]="!editMode"
+                    [byPassAutocompletValidator]="true" [form]="quotationManagementForm" propertyName="postalCode"
+                    [isMandatory]="true" label="Code postal" [isDisabled]="!editMode"
                     [conditionnalRequired]="billingDocument.billingLabelCountry != null && billingDocument.billingLabelCountry.code == COUNTRY_CODE_FRANCE"
                     (onOptionSelected)="fillCity($event)"></autocomplete-postal-code>
                 </td>

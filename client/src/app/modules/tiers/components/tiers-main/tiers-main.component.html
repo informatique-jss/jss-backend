@@ -96,7 +96,7 @@
             </td>
             <td>
               <autocomplete-postal-code [(model)]="tiers.postalCode" [form]="principalForm" propertyName="postalCode"
-                [isMandatory]="true" label="Code postal" [isDisabled]="!editMode"
+                [isMandatory]="true" label="Code postal" [isDisabled]="!editMode" [byPassAutocompletValidator]="true"
                 [conditionnalRequired]="tiers.country != null && tiers.country.code == COUNTRY_CODE_FRANCE"
                 (onOptionSelected)="fillCity($event)"></autocomplete-postal-code>
             </td>

@@ -39,6 +39,7 @@ import { InvoiceManagementComponent } from '../invoice-management/invoice-manage
 import { OrderingCustomerComponent } from '../ordering-customer/ordering-customer.component';
 import { OrderingListComponent } from '../ordering-list/ordering-list.component';
 import { ProvisionItemComponent } from '../provision-item/provision-item.component';
+import { ProvisionOptionsComponent } from '../provision-options/provision-options.component';
 import { QuotationListComponent } from '../quotation-list/quotation-list.component';
 import { QuotationManagementComponent } from '../quotation-management/quotation-management.component';
 import { QuotationComponent } from './quotation.component';
@@ -118,6 +119,7 @@ const routes: Routes = [
     AffaireListComponent,
     AffaireComponent,
     OrderingListComponent,
+    ProvisionOptionsComponent,
     AnnouncementComponent],
   exports: [
     OrderingListComponent

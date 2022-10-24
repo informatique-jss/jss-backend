@@ -29,8 +29,10 @@ public class BillingType implements Serializable, IId {
 	@Column(nullable = false)
 	private Boolean isPriceBasedOnCharacterNumber;
 
+	@Column(nullable = false)
 	private Boolean isOverrideVat;
 
+	@Column(nullable = false)
 	private Boolean isOptionnal;
 
 	@ManyToOne

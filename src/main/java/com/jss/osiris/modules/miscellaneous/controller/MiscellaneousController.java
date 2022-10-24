@@ -78,6 +78,7 @@ import com.jss.osiris.modules.quotation.model.Announcement;
 import com.jss.osiris.modules.quotation.model.Bodacc;
 import com.jss.osiris.modules.quotation.model.Domiciliation;
 import com.jss.osiris.modules.quotation.model.Quotation;
+import com.jss.osiris.modules.quotation.service.AffaireService;
 import com.jss.osiris.modules.quotation.service.AssoAffaireOrderService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
@@ -186,6 +187,9 @@ public class MiscellaneousController {
     @Autowired
     AssoAffaireOrderService assoAffaireOrderService;
 
+    @Autowired
+    AffaireService affaireService;
+
     @GetMapping(inputEntryPoint + "/regies")
     public ResponseEntity<List<Regie>> getRegies() {
         List<Regie> regies = null;
@@ -255,7 +259,6 @@ public class MiscellaneousController {
             if (provider.getId() != null)
                 validationHelper.validateReferential(provider, true);
             validationHelper.validateString(provider.getLabel(), true);
-            validationHelper.validateString(provider.getBic(), false, 40);
             validationHelper.validateString(provider.getIban(), false, 40);
             validationHelper.validateString(provider.getJssReference(), false, 20);
             validationHelper.validateReferential(provider.getVatCollectionType(), true);
@@ -1329,6 +1332,8 @@ public class MiscellaneousController {
             quotationService.reindexQuotation();
             customerOrderService.reindexCustomerOrder();
             assoAffaireOrderService.reindexAffaires();
+            affaireService.reindexAffaire();
+
         } catch (HttpStatusCodeException e) {
             logger.error("HTTP error when fetching attachmentType", e);
             return new ResponseEntity<Boolean>(HttpStatus.INTERNAL_SERVER_ERROR);

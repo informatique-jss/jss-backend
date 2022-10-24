@@ -11,4 +11,6 @@ public interface AffaireService {
 
     public Affaire addOrUpdateAffaire(Affaire affaire);
 
+    public void reindexAffaire();
+
 }

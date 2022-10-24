@@ -89,7 +89,8 @@
               <td>
                 <autocomplete-siren [(model)]="bodaccSale.ownerSiren" [form]="bodaccSaleForm" propertyName="ownerSiren"
                   [isMandatory]="true" [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" label="SIREN"
-                  [isDisabled]="!editMode" (onOptionSelected)="fillSirenOwner($event)">
+                  [byPassAutocompletValidator]="true" [isDisabled]="!editMode"
+                  (onOptionSelected)="fillSirenOwner($event)">
                 </autocomplete-siren>
               </td>
             </tr>
@@ -123,7 +124,7 @@
               <td>
                 <autocomplete-siren [(model)]="bodaccSale.purchaserSiren" [form]="bodaccSaleForm" label="SIREN"
                   [isDisabled]="!editMode" propertyName="purchaserSiren" [isMandatory]="false"
-                  (onOptionSelected)="fillSirenPurchaser($event)">
+                  [byPassAutocompletValidator]="true" (onOptionSelected)="fillSirenPurchaser($event)">
                 </autocomplete-siren>
               </td>
             </tr>
@@ -148,7 +149,7 @@
               <td>
                 <autocomplete-siren [(model)]="bodaccSale.purchaserSiren" [form]="bodaccSaleForm" label="SIREN"
                   [isDisabled]="!editMode" propertyName="purchaserSiren" [isMandatory]="false"
-                  (onOptionSelected)="fillSirenPurchaser($event)">
+                  [byPassAutocompletValidator]="true" (onOptionSelected)="fillSirenPurchaser($event)">
                 </autocomplete-siren>
               </td>
               <td>
@@ -233,7 +234,8 @@
               <td>
                 <autocomplete-siren [(model)]="bodaccSale.ownerSiren" [form]="bodaccSaleForm" propertyName="ownerSiren"
                   [isMandatory]="true" [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" label="SIREN"
-                  [isDisabled]="!editMode" (onOptionSelected)="fillSirenOwner($event)">
+                  [byPassAutocompletValidator]="true" [isDisabled]="!editMode"
+                  (onOptionSelected)="fillSirenOwner($event)">
                 </autocomplete-siren>
               </td>
               <td>
@@ -345,7 +347,7 @@
             <tr *ngIf="!bodaccSale.isTenantIndividual">
               <td>
                 <autocomplete-siren [(model)]="bodaccSale.tenantSiren" [form]="bodaccSaleForm"
-                  propertyName="tenantSiren" [isMandatory]="true"
+                  propertyName="tenantSiren" [isMandatory]="true" [byPassAutocompletValidator]="true"
                   [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" label="SIREN"
                   [isDisabled]="!editMode" (onOptionSelected)="fillSirenTenant($event)">
                 </autocomplete-siren>

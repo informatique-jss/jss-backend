@@ -142,9 +142,6 @@ public class Confrere implements ITiers {
 	@OneToMany(mappedBy = "confrere", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Document> documents;
 
-	@Column(length = 40)
-	private String paymentBic;
-
 	@Column(nullable = false)
 	private Boolean isProvisionalPaymentMandatory;
 
@@ -186,14 +183,6 @@ public class Confrere implements ITiers {
 
 	public List<Mail> getAccountingMails() {
 		return accountingMails;
-	}
-
-	public String getPaymentBic() {
-		return paymentBic;
-	}
-
-	public void setPaymentBic(String paymentBIC) {
-		this.paymentBic = paymentBIC;
 	}
 
 	public Boolean getIsProvisionalPaymentMandatory() {

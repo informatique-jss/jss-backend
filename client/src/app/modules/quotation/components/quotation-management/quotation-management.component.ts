@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { AfterContentChecked, ChangeDetectorRef, Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { MatAccordion } from '@angular/material/expansion';
 import { Observable, Subscription } from 'rxjs';
@@ -26,7 +26,7 @@ import { RecordTypeService } from '../../services/record.type.service';
   templateUrl: './quotation-management.component.html',
   styleUrls: ['./quotation-management.component.css']
 })
-export class QuotationManagementComponent implements OnInit {
+export class QuotationManagementComponent implements OnInit, AfterContentChecked {
 
   matcher: CustomErrorStateMatcher = new CustomErrorStateMatcher();
   @Input() quotation: IQuotation = {} as IQuotation;
@@ -53,6 +53,7 @@ export class QuotationManagementComponent implements OnInit {
     protected documentTypeService: DocumentTypeService,
     protected recordTypeService: RecordTypeService,
     protected cityService: CityService,
+    private changeDetectorRef: ChangeDetectorRef,
     protected quotationLabelTypeService: QuotationLabelTypeService) { }
 
   ngOnInit() {
@@ -65,6 +66,10 @@ export class QuotationManagementComponent implements OnInit {
     })
     if (this.updateDocumentsEvent)
       this.updateDocumentsSubscription = this.updateDocumentsEvent.subscribe(() => this.setDocument());
+  }
+
+  ngAfterContentChecked(): void {
+    this.changeDetectorRef.detectChanges();
   }
 
   ngOnDestroy() {

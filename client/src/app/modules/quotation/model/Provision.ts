@@ -1,3 +1,4 @@
+import { IAttachment } from "../../miscellaneous/model/IAttachment";
 import { Employee } from "../../profile/model/Employee";
 import { Announcement } from "./Announcement";
 import { AssoAffaireOrder } from "./AssoAffaireOrder";
@@ -7,7 +8,7 @@ import { InvoiceItem } from "./InvoiceItem";
 import { ProvisionFamilyType } from "./ProvisionFamilyType";
 import { ProvisionType } from "./ProvisionType";
 
-export interface Provision {
+export interface Provision extends IAttachment {
   id: number;
   domiciliation: Domiciliation | undefined;
   announcement: Announcement | undefined;
@@ -17,4 +18,5 @@ export interface Provision {
   invoiceItems: InvoiceItem[]
   assoAffaireOrder: AssoAffaireOrder;
   assignedTo: Employee;
+  isLogo: boolean;
 }
