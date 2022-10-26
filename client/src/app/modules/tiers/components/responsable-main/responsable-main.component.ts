@@ -1,14 +1,15 @@
 import { Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
-import { isTiersTypeProspect } from 'src/app/libs/CompareHelper';
-import { COUNTRY_CODE_FRANCE, SUSCRIPTION_TYPE_CODE_PERIODE_12M } from 'src/app/libs/Constants';
+import { SUSCRIPTION_TYPE_CODE_PERIODE_12M } from 'src/app/libs/Constants';
 import { copyObject } from 'src/app/libs/GenericHelper';
 import { instanceOfResponsable } from 'src/app/libs/TypeHelper';
 import { City } from 'src/app/modules/miscellaneous/model/City';
+import { Country } from 'src/app/modules/miscellaneous/model/Country';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { CityService } from 'src/app/modules/miscellaneous/services/city.service';
+import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { RESPONSABLE_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
 import { Civility } from '../../../miscellaneous/model/Civility';
@@ -36,8 +37,9 @@ export class ResponsableMainComponent implements OnInit {
   @ViewChild('tabs', { static: false }) tabs: any;
 
   RESPONSABLE_ENTITY_TYPE = RESPONSABLE_ENTITY_TYPE;
-  COUNTRY_CODE_FRANCE = COUNTRY_CODE_FRANCE;
   SUSCRIPTION_TYPE_CODE_PERIODE_12M = SUSCRIPTION_TYPE_CODE_PERIODE_12M;
+
+  franceCountry: Country = this.constantService.getCountryFrance();
 
   filterValue: string = "";
 
@@ -62,6 +64,7 @@ export class ResponsableMainComponent implements OnInit {
     private appService: AppService,
     protected tiersService: TiersService,
     protected tiersTypeService: TiersTypeService,
+    private constantService: ConstantService,
     protected subscriptionPeriodTypeService: SubscriptionPeriodTypeService,
     protected tiersCategoryService: TiersCategoryService) { }
 
@@ -190,7 +193,7 @@ export class ResponsableMainComponent implements OnInit {
   }
 
   isResponsableTypeProspect(): boolean {
-    return isTiersTypeProspect(this.tiers);
+    return this.tiers && this.tiers.tiersType && this.constantService.getTiersTypeProspect().id == this.tiers.tiersType.id;
   }
 
   principalForm = this.formBuilder.group({
@@ -215,7 +218,7 @@ export class ResponsableMainComponent implements OnInit {
       if (this.selectedResponsable.country == null || this.selectedResponsable.country == undefined)
         this.selectedResponsable.country = city.country;
 
-      if (this.selectedResponsable.country.code == COUNTRY_CODE_FRANCE && city.postalCode != null)
+      if (this.selectedResponsable.country.id == this.franceCountry.id && city.postalCode != null)
         this.selectedResponsable.postalCode = city.postalCode;
     }
   }

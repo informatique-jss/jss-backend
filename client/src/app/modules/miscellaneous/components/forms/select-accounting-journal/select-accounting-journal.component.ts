@@ -14,7 +14,7 @@ export class SelectAccountingJournalComponent extends GenericSelectComponent<Acc
 
   types: AccountingJournal[] = [] as Array<AccountingJournal>;
 
-  @Input() excludedJournals: string[] | undefined;
+  @Input() excludedJournals: AccountingJournal[] | undefined;
 
   constructor(private formBuild: UntypedFormBuilder, private accountingJournalService: AccountingJournalService, private userNoteService2: UserNoteService,) {
     super(formBuild, userNoteService2)
@@ -27,7 +27,7 @@ export class SelectAccountingJournalComponent extends GenericSelectComponent<Acc
         for (let type of response) {
           let excludedItem = false;
           for (let excluded of this.excludedJournals) {
-            if (excluded == type.code)
+            if (excluded.id == type.id)
               excludedItem = true;
           }
           if (!excludedItem)

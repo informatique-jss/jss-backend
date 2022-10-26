@@ -1,12 +1,3 @@
-<ng-template #accordionTools>
-  <mat-panel-description>
-    <mat-icon matTooltip="Ouvrir tous les onglets" (click)="accordion!.openAll();$event.stopPropagation();"
-      class="pointer">
-      unfold_more_double</mat-icon>
-    <mat-icon matTooltip="Fermer tous les autres onglets" (click)="accordion!.closeAll();" class="pointer">
-      unfold_less_double</mat-icon>
-  </mat-panel-description>
-</ng-template>
 <div>
   <div>
     <mat-form-field class="full-width">
@@ -50,72 +41,6 @@
             </td>
           </tr>
         </table>
-        <div class="mat-accordion-container full-width">
-          <mat-accordion multi>
-            <mat-expansion-panel>
-              <mat-expansion-panel-header>
-                <mat-panel-title>
-                  Charge
-                </mat-panel-title>
-                <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
-              </mat-expansion-panel-header>
-              <table class="full-width">
-                <tr *ngIf="accountingAccountCharge">
-                  <td>
-                    <generic-input [(model)]="accountingAccountCharge.accountingAccountNumber"
-                      label="N° de compte comptable" [form]="entityForm" propertyName="accountingAccountCharge"
-                      [isMandatory]="true" [isDisabled]="!editMode" [maxLength]="3"></generic-input>
-                  </td>
-                  <td>
-                    <generic-input [(model)]="accountingAccountCharge.accountingAccountSubNumber"
-                      label="N° de sous-compte comptable" [form]="entityForm"
-                      propertyName="accountingAccountSubNumCharge" [isMandatory]="true" [isDisabled]="!editMode"
-                      [maxLength]="20"></generic-input>
-                  </td>
-                  <td>
-                    <generic-input [(model)]="accountingAccountCharge.label" label="Nom fonctionnel" [form]="entityForm"
-                      propertyName="label" [isMandatory]="true" [isDisabled]="!editMode" [conditionnalRequired]=""
-                      [customValidators]="" [maxLength]="100"></generic-input>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <button *ngIf="editMode && !accountingAccountCharge" (click)="addCharge()" mat-raised-button
-                      color="accent">Ajouter une charge</button>
-                  </td>
-                </tr>
-              </table>
-            </mat-expansion-panel>
-            <mat-expansion-panel>
-              <mat-expansion-panel-header>
-                <mat-panel-title>
-                  Produits
-                </mat-panel-title>
-                <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
-              </mat-expansion-panel-header>
-              <table class="full-width">
-                <tr *ngIf="accountingAccountProduct">
-                  <td>
-                    <generic-input [(model)]="accountingAccountProduct.accountingAccountNumber"
-                      label="N° de compte comptable" [form]="entityForm" propertyName="accountingAccountProduct"
-                      [isMandatory]="true" [isDisabled]="!editMode" [maxLength]="3"></generic-input>
-                  </td>
-                  <td>
-                    <generic-input [(model)]="accountingAccountProduct.accountingAccountSubNumber"
-                      label="N° de sous-compte comptable" [form]="entityForm"
-                      propertyName="accountingAccountSubNumProduct" [isMandatory]="true" [isDisabled]="!editMode"
-                      [maxLength]="20"></generic-input>
-                  </td>
-                  <td>
-                    <generic-input [(model)]="accountingAccountProduct.label" label="Nom fonctionnel"
-                      [form]="entityForm" propertyName="labelProduct" [isMandatory]="true" [isDisabled]="!editMode"
-                      [conditionnalRequired]="" [customValidators]="" [maxLength]="100"></generic-input>
-                  </td>
-                </tr>
-              </table>
-            </mat-expansion-panel>
-          </mat-accordion>
-        </div>
       </fieldset>
     </div>
   </form>

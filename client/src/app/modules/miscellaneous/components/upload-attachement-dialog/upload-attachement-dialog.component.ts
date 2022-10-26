@@ -22,7 +22,7 @@ export class UploadAttachementDialogComponent implements OnInit {
   progress: number = 0;
   isSending = false;
   replaceExistingAttachementType = false;
-  forcedAttachmentTypeCode: string = "";
+  forcedAttachmentType: AttachmentType | undefined;
 
   attachmentTypes: AttachmentType[] = [] as Array<AttachmentType>;
 
@@ -37,12 +37,12 @@ export class UploadAttachementDialogComponent implements OnInit {
 
   ngOnInit() {
     this.attachmentTypeService.getAttachmentTypes().subscribe(response => {
-      if (this.forcedAttachmentTypeCode == "") {
+      if (this.forcedAttachmentType) {
         this.attachmentTypes = response;
       } else {
         if (response != null && response.length > 0) {
           response.forEach(attachmentType => {
-            if (attachmentType.code == this.forcedAttachmentTypeCode) {
+            if (attachmentType.id == this.forcedAttachmentType) {
               this.attachmentTypes.push(attachmentType);
               this.attachmentType = attachmentType;
             }

@@ -2,7 +2,6 @@ package com.jss.osiris.modules.miscellaneous.model;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,12 +10,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jss.osiris.libs.JacksonLocalDateSerializer;
-import com.jss.osiris.modules.accounting.model.AccountingAccount;
 
 @Entity
 public class BillingItem implements Serializable, IId {
@@ -34,10 +30,6 @@ public class BillingItem implements Serializable, IId {
 	@Column(nullable = false)
 	@JsonSerialize(using = JacksonLocalDateSerializer.class)
 	private LocalDate startDate;
-
-	@OneToMany(targetEntity = AccountingAccount.class, mappedBy = "billingItem")
-	@JsonIgnoreProperties(value = { "billingItem" }, allowSetters = true)
-	private List<AccountingAccount> accountingAccounts;
 
 	public Integer getId() {
 		return id;
@@ -70,13 +62,4 @@ public class BillingItem implements Serializable, IId {
 	public void setStartDate(LocalDate startDate) {
 		this.startDate = startDate;
 	}
-
-	public List<AccountingAccount> getAccountingAccounts() {
-		return accountingAccounts;
-	}
-
-	public void setAccountingAccounts(List<AccountingAccount> accountingAccounts) {
-		this.accountingAccounts = accountingAccounts;
-	}
-
 }

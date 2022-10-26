@@ -17,7 +17,7 @@ export class SingleAttachmentComponent implements OnInit {
   @Input() entity: IAttachment = {} as IAttachment;
   @Input() entityType: string = "";
   @Input() editMode: boolean = false;
-  @Input() attachmentTypeCodeToDisplay: string = "";
+  @Input() attachmentTypeToDisplay: AttachmentType | undefined;
   /**
    * Fired when an upload is realized.
    * Give the current attachements of the entity in parameter
@@ -36,10 +36,10 @@ export class SingleAttachmentComponent implements OnInit {
 
   ngOnInit() {
     this.attachmentTypeService.getAttachmentTypes().subscribe(response => {
-      if (this.attachmentTypeCodeToDisplay != "") {
+      if (this.attachmentTypeToDisplay) {
         if (response != null && response.length > 0) {
           response.forEach(attachmentType => {
-            if (attachmentType.code == this.attachmentTypeCodeToDisplay) {
+            if (this.attachmentTypeToDisplay && attachmentType.id == this.attachmentTypeToDisplay.id) {
               this.attachmentType = attachmentType;
             }
           })
@@ -55,9 +55,9 @@ export class SingleAttachmentComponent implements OnInit {
   }
 
   setCurrentAttachment() {
-    if (this.attachmentTypeCodeToDisplay != "" && this.entity.attachments != null && this.entity.attachments != undefined && this.entity.attachments.length > 0) {
+    if (this.attachmentTypeToDisplay && this.entity.attachments != null && this.entity.attachments != undefined && this.entity.attachments.length > 0) {
       this.entity.attachments.forEach(attachment => {
-        if (attachment.attachmentType.code == this.attachmentTypeCodeToDisplay)
+        if (this.attachmentTypeToDisplay && attachment.attachmentType.id == this.attachmentTypeToDisplay.id)
           this.currentAttachment = attachment;
       })
     }
@@ -68,7 +68,7 @@ export class SingleAttachmentComponent implements OnInit {
     });
     this.uploadAttachementDialogRef.componentInstance.entity = this.entity;
     this.uploadAttachementDialogRef.componentInstance.entityType = this.entityType;
-    this.uploadAttachementDialogRef.componentInstance.forcedAttachmentTypeCode = this.attachmentTypeCodeToDisplay;
+    this.uploadAttachementDialogRef.componentInstance.forcedAttachmentType = this.attachmentTypeToDisplay;
     this.uploadAttachementDialogRef.componentInstance.replaceExistingAttachementType = true;
     this.uploadAttachementDialogRef.afterClosed().subscribe(response => {
       if (response && response != null) {

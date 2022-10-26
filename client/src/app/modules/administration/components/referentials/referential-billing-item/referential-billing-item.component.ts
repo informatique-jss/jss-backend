@@ -1,9 +1,7 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { MatAccordion } from '@angular/material/expansion';
 import { Observable, Subscription } from 'rxjs';
 import { formatDate } from 'src/app/libs/FormatHelper';
-import { AccountingAccount } from 'src/app/modules/accounting/model/AccountingAccount';
 import { BillingItem } from 'src/app/modules/miscellaneous/model/BillingItem';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { BillingItemService } from 'src/app/modules/miscellaneous/services/billing.item.service';
@@ -28,10 +26,6 @@ export class ReferentialBillingItemComponent implements OnInit {
   @Output() selectedEntityChange: EventEmitter<BillingItem> = new EventEmitter<BillingItem>();
   entities: BillingItem[] = [] as Array<BillingItem>;
   displayedColumns: SortTableColumn[] = [];
-  @ViewChild(MatAccordion) accordion: MatAccordion | undefined;
-
-  accountingAccountCharge: AccountingAccount | undefined;
-  accountingAccountProduct: AccountingAccount | undefined;
 
   searchText: string | undefined;
 
@@ -74,8 +68,6 @@ export class ReferentialBillingItemComponent implements OnInit {
     this.selectedEntity = element;
     if (this.selectedEntity.startDate)
       this.selectedEntity.startDate = new Date(this.selectedEntity.startDate);
-    this.setCharge();
-    this.setProduct();
     this.selectedEntityChange.emit(this.selectedEntity);
   }
 
@@ -91,11 +83,6 @@ export class ReferentialBillingItemComponent implements OnInit {
     if (this.selectedEntity && this.entityForm && this.entityForm.valid) {
       this.editMode = false;
       this.editModeChange.emit(this.editMode);
-      this.selectedEntity.accountingAccounts = [] as Array<AccountingAccount>;
-      if (this.accountingAccountCharge)
-        this.selectedEntity.accountingAccounts.push(this.accountingAccountCharge);
-      if (this.accountingAccountProduct)
-        this.selectedEntity.accountingAccounts.push(this.accountingAccountProduct);
       this.billingItemService.addOrUpdateBillingItem(this.selectedEntity).subscribe(response => {
         this.setDataTable();
       });
@@ -106,8 +93,6 @@ export class ReferentialBillingItemComponent implements OnInit {
 
   addEntity() {
     this.selectedEntity = {} as BillingItem;
-    this.setCharge();
-    this.setProduct();
   }
 
   setDataTable() {
@@ -122,39 +107,6 @@ export class ReferentialBillingItemComponent implements OnInit {
     this.displayedColumns.push({ id: "id", fieldName: "id", label: "Identifiant technique" } as SortTableColumn);
     this.displayedColumns.push({ id: "code", fieldName: "code", label: "Codification fonctionnelle", valueFonction: (element: any, elements: any[], column: SortTableColumn, columns: SortTableColumn[]) => { if (element && column) return this.getElementCode(element); return "" } } as SortTableColumn);
     this.displayedColumns.push({ id: "label", fieldName: "label", label: "Libellé", valueFonction: (element: any, elements: any[], column: SortTableColumn, columns: SortTableColumn[]) => { if (element && column) return this.getElementLabel(element); return "" } } as SortTableColumn);
-  }
-
-  setCharge() {
-    this.accountingAccountCharge = undefined;
-    if (this.selectedEntity && this.selectedEntity.accountingAccounts)
-      for (let entity of this.selectedEntity.accountingAccounts)
-        if (entity && entity.accountingAccountNumber.substring(0, 3) == "606")
-          this.accountingAccountCharge = entity;
-  }
-
-  setProduct() {
-    this.accountingAccountProduct = undefined;
-    if (this.selectedEntity && this.selectedEntity.accountingAccounts)
-      for (let entity of this.selectedEntity.accountingAccounts)
-        if (entity && entity.accountingAccountNumber.substring(0, 3) == "706")
-          this.accountingAccountProduct = entity;
-
-    if (!this.accountingAccountProduct)
-      this.addProduct();
-  }
-
-  addCharge() {
-    if (this.selectedEntity) {
-      if (this.accountingAccountCharge == undefined)
-        this.accountingAccountCharge = { accountingAccountNumber: "606" } as AccountingAccount;
-    }
-  }
-
-  addProduct() {
-    if (this.selectedEntity) {
-      if (this.accountingAccountProduct == undefined)
-        this.accountingAccountProduct = { accountingAccountNumber: "706" } as AccountingAccount;
-    }
   }
 
   applyFilter(filterValue: any) {

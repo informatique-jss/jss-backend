@@ -1,0 +1,24 @@
+<div class="mat-elevation-z2 form-div" *ngIf="constant">
+  <form [formGroup]="constantForm">
+    <div class="full-width">
+      <fieldset [disabled]="editMode==false" class="fieldset-no-border">
+        <table class="full-width">
+          <tr>
+            <td>
+              <radio-group-billing-label [(model)]="constant.billingLabelTypeCodeAffaire" [form]="constantForm"
+                propertyName="billingLabelTypeCodeAffaire" label="Libellé sur facture - Affaire">
+              </radio-group-billing-label>
+            </td>
+          </tr>
+        </table>
+      </fieldset>
+    </div>
+  </form>
+</div>
+
+<button matTooltip="Sauvegarder" mat-fab color="warn" class="fab-button" *ngIf="editMode" (click)="saveConstant()">
+  <mat-icon>save</mat-icon>
+</button>
+<button matTooltip="Modifier" mat-fab color="accent" class="fab-button" *ngIf="!editMode" (click)="editConstant()">
+  <mat-icon>edit</mat-icon>
+</button>

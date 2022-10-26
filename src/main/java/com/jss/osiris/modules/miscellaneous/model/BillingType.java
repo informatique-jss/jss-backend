@@ -10,6 +10,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import com.jss.osiris.modules.accounting.model.AccountingAccount;
+
 @Entity
 public class BillingType implements Serializable, IId {
 
@@ -38,6 +40,14 @@ public class BillingType implements Serializable, IId {
 	@ManyToOne
 	@JoinColumn(name = "id_vat")
 	private Vat vat;
+
+	@ManyToOne
+	@JoinColumn(name = "id_accounting_account_product")
+	private AccountingAccount accountingAccountProduct;
+
+	@ManyToOne
+	@JoinColumn(name = "id_accounting_account_charge")
+	private AccountingAccount accountingAccountCharge;
 
 	public Integer getId() {
 		return id;
@@ -101,6 +111,22 @@ public class BillingType implements Serializable, IId {
 
 	public void setIsOptionnal(Boolean isOptionnal) {
 		this.isOptionnal = isOptionnal;
+	}
+
+	public AccountingAccount getAccountingAccountProduct() {
+		return accountingAccountProduct;
+	}
+
+	public void setAccountingAccountProduct(AccountingAccount accountingAccountProduct) {
+		this.accountingAccountProduct = accountingAccountProduct;
+	}
+
+	public AccountingAccount getAccountingAccountCharge() {
+		return accountingAccountCharge;
+	}
+
+	public void setAccountingAccountCharge(AccountingAccount accountingAccountCharge) {
+		this.accountingAccountCharge = accountingAccountCharge;
 	}
 
 }

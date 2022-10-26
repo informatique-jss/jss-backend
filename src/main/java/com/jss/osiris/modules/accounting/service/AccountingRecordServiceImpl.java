@@ -145,13 +145,12 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
         throw new Exception(
             "No billing type defined in billing item n°" + invoiceItem.getBillingItem().getId());
 
-      AccountingAccount producAccountingAccount = accountingAccountService
-          .getProductAccountingAccountFromAccountingAccountList(
-              invoiceItem.getBillingItem().getAccountingAccounts());
+      AccountingAccount producAccountingAccount = invoiceItem.getBillingItem().getBillingType()
+          .getAccountingAccountProduct();
 
       if (producAccountingAccount == null)
-        throw new Exception("No product accounting account defined in billing item n°"
-            + invoiceItem.getBillingItem().getId());
+        throw new Exception("No product accounting account defined in billing type n°"
+            + invoiceItem.getBillingItem().getBillingType().getId());
 
       generateNewAccountingRecord(LocalDateTime.now(), invoice.getId(), null,
           labelPrefix + " - produit "
@@ -210,12 +209,12 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
         throw new Exception(
             "No billing type defined in billing item n°" + invoiceItem.getBillingItem().getId());
 
-      AccountingAccount chargeAccountingAccount = accountingAccountService
-          .getChargeAccountingAccountFromAccountingAccountList(invoiceItem.getBillingItem().getAccountingAccounts());
+      AccountingAccount chargeAccountingAccount = invoiceItem.getBillingItem().getBillingType()
+          .getAccountingAccountCharge();
 
       if (chargeAccountingAccount == null)
-        throw new Exception("No product accounting account defined in billing item n°"
-            + invoiceItem.getBillingItem().getId());
+        throw new Exception("No product accounting account defined in billing type n°"
+            + invoiceItem.getBillingItem().getBillingType().getId());
 
       generateNewAccountingRecord(LocalDateTime.now(), invoice.getId(), null,
           labelPrefix + " - charge "

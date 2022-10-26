@@ -253,7 +253,7 @@
               </tr>
             </table>
             <table class="full-width"
-              *ngIf="billingDocument.billingLabelType!=undefined && billingDocument.billingLabelType.code!=undefined && billingDocument.billingLabelType.code==BILLING_TIERS_DOCUMENT_TYPE_OTHER">
+              *ngIf="billingDocument.billingLabelType!=undefined && billingDocument.billingLabelType.code!=undefined && billingDocument.billingLabelType.id==billingLabelTypeOther.id">
               <tr>
                 <td>
                   <autocomplete-regie [(model)]="billingDocument.regie" [form]="entityForm" propertyName="regie"

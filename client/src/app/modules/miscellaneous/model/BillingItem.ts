@@ -1,4 +1,3 @@
-import { AccountingAccount } from "../../accounting/model/AccountingAccount";
 import { AssoSpecialOfferBillingType } from "./AssoSpecialOfferBillingType";
 import { BillingType } from "./BillingType";
 
@@ -8,5 +7,4 @@ export interface BillingItem {
   preTaxPrice: number;
   startDate: Date;
   assoSpecialOfferBillingItem: AssoSpecialOfferBillingType[];
-  accountingAccounts: AccountingAccount[];
 }

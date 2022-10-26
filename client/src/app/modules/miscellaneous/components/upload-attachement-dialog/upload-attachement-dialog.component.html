@@ -10,7 +10,7 @@
     </div>
     <mat-form-field class="full-width" *ngIf="file!=null">
       <mat-label>Type de fichier</mat-label>
-      <mat-select [disabled]="forcedAttachmentTypeCode!=''" formControlName="attachmentType"
+      <mat-select [disabled]="forcedAttachmentType!=undefined" formControlName="attachmentType"
         [(ngModel)]="attachmentType">
         <mat-option *ngFor="let attachmentType of attachmentTypes" [value]="attachmentType">
           {{attachmentType.label}}

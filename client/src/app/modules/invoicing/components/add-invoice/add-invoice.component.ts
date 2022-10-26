@@ -2,12 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
-import { BILLING_TIERS_DOCUMENT_TYPE_OTHER, COUNTRY_CODE_FRANCE } from 'src/app/libs/Constants';
 import { formatEurosForSortTable } from 'src/app/libs/FormatHelper';
 import { City } from 'src/app/modules/miscellaneous/model/City';
+import { Country } from 'src/app/modules/miscellaneous/model/Country';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { CityService } from 'src/app/modules/miscellaneous/services/city.service';
+import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { Confrere } from 'src/app/modules/quotation/model/Confrere';
 import { Invoice } from 'src/app/modules/quotation/model/Invoice';
 import { InvoiceItem } from 'src/app/modules/quotation/model/InvoiceItem';
@@ -29,14 +30,16 @@ export class AddInvoiceComponent implements OnInit {
   invoiceItem: InvoiceItem = {} as InvoiceItem;
   isEditing: boolean = false;
   editMode = true;
-  BILLING_TIERS_DOCUMENT_TYPE_OTHER = BILLING_TIERS_DOCUMENT_TYPE_OTHER;
-  COUNTRY_CODE_FRANCE = COUNTRY_CODE_FRANCE;
+
+  countryFrance: Country = this.contantService.getCountryFrance();
+  billingLableTypeOther = this.contantService.getBillingLabelTypeOther();
 
   constructor(private formBuilder: FormBuilder,
     private appService: AppService,
     private invoiceService: InvoiceService,
     private tiersService: TiersService,
     private cityService: CityService,
+    private contantService: ConstantService,
     private router: Router,
   ) {
   }
@@ -141,7 +144,7 @@ export class AddInvoiceComponent implements OnInit {
     if (!this.invoice.billingLabelCountry)
       this.invoice.billingLabelCountry = city.country;
 
-    if (this.invoice.billingLabelCountry.code == COUNTRY_CODE_FRANCE && city.postalCode != null)
+    if (this.invoice.billingLabelCountry.id == this.countryFrance.id && city.postalCode != null)
       this.invoice.billingLabelPostalCode = city.postalCode;
   }
 

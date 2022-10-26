@@ -1,8 +1,9 @@
 import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import { LOGO_ATTACHMENT_TYPE_CODE, QUOTATION_LOGO_BILLING_TYPE_CODE } from 'src/app/libs/Constants';
 import { Attachment } from 'src/app/modules/miscellaneous/model/Attachment';
+import { BillingType } from 'src/app/modules/miscellaneous/model/BillingType';
+import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { UploadAttachmentService } from 'src/app/modules/miscellaneous/services/upload.attachment.service';
 import { PROVISION_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { Provision } from '../../model/Provision';
@@ -19,14 +20,17 @@ export class ProvisionOptionsComponent implements OnInit {
 
   @Output() provisionChange: EventEmitter<void> = new EventEmitter<void>();
 
-  QUOTATION_LOGO_BILLING_TYPE_CODE = QUOTATION_LOGO_BILLING_TYPE_CODE;
   PROVISION_ENTITY_TYPE = PROVISION_ENTITY_TYPE;
-  LOGO_ATTACHMENT_TYPE_CODE = LOGO_ATTACHMENT_TYPE_CODE;
+
+  billingTypeLogo = this.constantService.getBillingTypeLogo();
+
+  attachmentTypeLogo = this.constantService.getAttachmentTypeLogo();
 
   logoUrl: SafeUrl | undefined;
 
   constructor(private formBuilder: FormBuilder,
     private uploadAttachmentService: UploadAttachmentService,
+    private constantService: ConstantService,
     private sanitizer: DomSanitizer,
   ) { }
 
@@ -43,10 +47,10 @@ export class ProvisionOptionsComponent implements OnInit {
     }
   }
 
-  displayOption(optionCode: string): boolean {
-    if (this.provision && optionCode && this.provision.provisionType && this.provision.provisionType.billingTypes)
+  displayOption(billingType: BillingType): boolean {
+    if (this.provision && billingType && this.provision.provisionType && this.provision.provisionType.billingTypes)
       for (let billingType of this.provision.provisionType.billingTypes)
-        if (billingType.code == optionCode)
+        if (billingType.id == billingType.id)
           return true;
     return false;
   }
@@ -62,7 +66,7 @@ export class ProvisionOptionsComponent implements OnInit {
   setLogoUrl() {
     if (this.provision && this.provision.attachments != null && this.provision.attachments) {
       this.provision.attachments.forEach(attachment => {
-        if (attachment.attachmentType.code == LOGO_ATTACHMENT_TYPE_CODE)
+        if (attachment.attachmentType.id == this.attachmentTypeLogo.id)
           this.uploadAttachmentService.previewAttachmentUrl(attachment).subscribe((response: any) => {
             let binaryData = [];
             binaryData.push(response.body);

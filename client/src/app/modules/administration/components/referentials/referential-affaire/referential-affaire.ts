@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { COUNTRY_CODE_FRANCE } from 'src/app/libs/Constants';
 import { CityService } from 'src/app/modules/miscellaneous/services/city.service';
 import { Affaire } from 'src/app/modules/quotation/model/Affaire';
 import { AffaireService } from 'src/app/modules/quotation/services/affaire.service';
@@ -20,8 +19,6 @@ export class ReferentialAffaireComponent extends GenericReferentialComponent<Aff
     private cityService: CityService) {
     super(formBuilder2, appService2);
   }
-
-  COUNTRY_CODE_FRANCE = COUNTRY_CODE_FRANCE;
 
   getAddOrUpdateObservable(): Observable<Affaire> {
     return this.affaireService.addOrUpdateAffaire(this.selectedEntity!);

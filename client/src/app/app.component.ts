@@ -3,11 +3,11 @@ import { Component, HostListener } from '@angular/core';
 import { FormGroupDirective, NgForm, UntypedFormControl } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { SEARCH_KEY_CODE } from './libs/Constants';
 import { ConfirmDialogComponent } from './modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
+import { ConstantService } from './modules/miscellaneous/services/constant.service';
 import { LoginDialogComponent } from './routing/login-dialog/login-dialog.component';
 import { LoginService } from './routing/login-dialog/login.service';
 import { AppService } from './services/app.service';
@@ -50,13 +50,14 @@ export class AppComponent {
     private userNoteService: UserNoteService,
     public confirmationDialog: MatDialog,
     private userPreferenceService: UserPreferenceService,
-    private router: Router,
+    private constantService: ConstantService,
     protected searchService: SearchService) { }
   groups: string[] = [] as Array<string>;
 
   ngOnInit() {
     this.userNoteService.restoreUserNotes();
     this.restoreNoteTablePosition();
+    this.constantService.initConstant();
     this.sidenavOpenStateSubscription = this.appService.sidenavOpenStateObservable.subscribe(item => this.sidenavOpenState = item);
     this.userNotesSubscription = this.userNoteService.userNotesEventObservable.subscribe(item => this.userNotes = item)
     this.loggedStateSubscription = this.loginService.loggedStateObservable.subscribe(item => {

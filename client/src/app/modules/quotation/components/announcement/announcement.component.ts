@@ -7,14 +7,13 @@ import { MatAccordion } from '@angular/material/expansion';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
-import { CONFRERE_BALO_ID, JOURNAL_TYPE_JSS_DENOMINATION, JOURNAL_TYPE_SPEL_CODE, LOGO_ATTACHMENT_TYPE_CODE, PROOF_READING_DOCUMENT_TYPE_CODE, PUBLICATION_CERTIFICATE_DOCUMENT_TYPE_CODE, PUBLICATION_TIERS_DOCUMENT_TYPE_CODE, SEPARATOR_KEY_CODES } from 'src/app/libs/Constants';
+import { CONFRERE_BALO_ID, JOURNAL_TYPE_JSS_DENOMINATION, JOURNAL_TYPE_SPEL_CODE, SEPARATOR_KEY_CODES } from 'src/app/libs/Constants';
 import { getDocument } from 'src/app/libs/DocumentHelper';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
-import { DocumentTypeService } from 'src/app/modules/miscellaneous/services/document.type.service';
+import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { ANNOUNCEMENT_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { ConfrereDialogComponent } from '../../../miscellaneous/components/confreres-dialog/confreres-dialog.component';
 import { Document } from "../../../miscellaneous/model/Document";
-import { DocumentType } from "../../../miscellaneous/model/DocumentType";
 import { Affaire } from '../../model/Affaire';
 import { Announcement } from '../../model/Announcement';
 import { AnnouncementNoticeTemplate } from '../../model/AnnouncementNoticeTemplate';
@@ -53,7 +52,6 @@ export class AnnouncementComponent implements OnInit {
   SEPARATOR_KEY_CODES = SEPARATOR_KEY_CODES;
   ANNOUNCEMENT_ENTITY_TYPE = ANNOUNCEMENT_ENTITY_TYPE;
   CONFRERE_BALO_ID = CONFRERE_BALO_ID;
-  LOGO_ATTACHMENT_TYPE_CODE = LOGO_ATTACHMENT_TYPE_CODE;
   JOURNAL_TYPE_SPEL_CODE = JOURNAL_TYPE_SPEL_CODE;
 
   journalTypes: JournalType[] = [] as Array<JournalType>;
@@ -67,8 +65,6 @@ export class AnnouncementComponent implements OnInit {
   proofReadingDocument: Document = {} as Document;
   publicationCertificateDocument: Document = {} as Document;
 
-  documentTypes: DocumentType[] = [] as Array<DocumentType>;
-
   noticeTypes: NoticeType[] = [] as Array<NoticeType>;
   filteredNoticeTypes: Observable<NoticeType[]> | undefined;
 
@@ -79,9 +75,9 @@ export class AnnouncementComponent implements OnInit {
   constructor(private formBuilder: UntypedFormBuilder,
     private confrereService: ConfrereService,
     private characterPriceService: CharacterPriceService,
+    private constantService: ConstantService,
     private noticeTypeService: NoticeTypeService,
     public confrereDialog: MatDialog,
-    private documentTypeService: DocumentTypeService,
     private journalTypeService: JournalTypeService,
     private announcementNoticeTemplateService: AnnouncementNoticeTemplateService,
   ) { }
@@ -144,12 +140,9 @@ export class AnnouncementComponent implements OnInit {
       if (this.announcement!.publicationDate)
         this.announcement.publicationDate = new Date(this.announcement.publicationDate);
 
-      this.documentTypeService.getDocumentTypes().subscribe(response => {
-        this.documentTypes = response;
-        this.publicationDocument = getDocument(PUBLICATION_TIERS_DOCUMENT_TYPE_CODE, this.announcement!, this.documentTypes);
-        this.proofReadingDocument = getDocument(PROOF_READING_DOCUMENT_TYPE_CODE, this.announcement!, this.documentTypes);
-        this.publicationCertificateDocument = getDocument(PUBLICATION_CERTIFICATE_DOCUMENT_TYPE_CODE, this.announcement!, this.documentTypes);
-      })
+      this.publicationDocument = getDocument(this.constantService.getDocumentTypePublication(), this.announcement!);
+      this.proofReadingDocument = getDocument(this.constantService.getDocumentTypeProofReading(), this.announcement!);
+      this.publicationCertificateDocument = getDocument(this.constantService.getDocumentTypePublicationCertificate(), this.announcement!);
 
       this.announcementForm.get('notice')?.setValue(this.announcement.notice);
       this.announcementForm.get('noticeHeader')?.setValue(this.announcement.noticeHeader);

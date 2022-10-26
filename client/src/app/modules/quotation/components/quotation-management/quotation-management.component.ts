@@ -3,13 +3,14 @@ import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { MatAccordion } from '@angular/material/expansion';
 import { Observable, Subscription } from 'rxjs';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
-import { BILLING_TIERS_DOCUMENT_TYPE_CODE, BILLING_TIERS_DOCUMENT_TYPE_OTHER, COUNTRY_CODE_FRANCE, QUOTATION_DOCUMENT_TYPE_CODE, QUOTATION_TYPE_OTHER_CODE } from 'src/app/libs/Constants';
+import { QUOTATION_TYPE_OTHER_CODE } from 'src/app/libs/Constants';
 import { getDocument, replaceDocument } from 'src/app/libs/DocumentHelper';
 import { copyObject } from 'src/app/libs/GenericHelper';
 import { instanceOfQuotation } from 'src/app/libs/TypeHelper';
 import { City } from 'src/app/modules/miscellaneous/model/City';
+import { Country } from 'src/app/modules/miscellaneous/model/Country';
 import { CityService } from 'src/app/modules/miscellaneous/services/city.service';
-import { DocumentTypeService } from 'src/app/modules/miscellaneous/services/document.type.service';
+import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { Responsable } from 'src/app/modules/tiers/model/Responsable';
 import { Tiers } from 'src/app/modules/tiers/model/Tiers';
 import { TiersService } from 'src/app/modules/tiers/services/tiers.service';
@@ -40,8 +41,9 @@ export class QuotationManagementComponent implements OnInit, AfterContentChecked
   recordTypes: RecordType[] = [] as Array<RecordType>;
 
   QUOTATION_TYPE_OTHER_CODE = QUOTATION_TYPE_OTHER_CODE;
-  COUNTRY_CODE_FRANCE = COUNTRY_CODE_FRANCE;
-  BILLING_TIERS_DOCUMENT_TYPE_OTHER = BILLING_TIERS_DOCUMENT_TYPE_OTHER;
+
+  countryFrance: Country = this.constantService.getCountryFrance();
+  billingLabelTypeOther = this.constantService.getBillingLabelTypeOther();
 
   devisDocument: Document = {} as Document;
   billingDocument: Document = {} as Document;
@@ -50,8 +52,8 @@ export class QuotationManagementComponent implements OnInit, AfterContentChecked
 
   constructor(private formBuilder: UntypedFormBuilder,
     protected tiersService: TiersService,
-    protected documentTypeService: DocumentTypeService,
     protected recordTypeService: RecordTypeService,
+    private constantService: ConstantService,
     protected cityService: CityService,
     private changeDetectorRef: ChangeDetectorRef,
     protected quotationLabelTypeService: QuotationLabelTypeService) { }
@@ -94,35 +96,32 @@ export class QuotationManagementComponent implements OnInit, AfterContentChecked
   });
 
   setDocument() {
-    this.documentTypeService.getDocumentTypes().subscribe(response => {
-      this.documentTypes = response;
-      if (this.quotation.tiers != null)
-        this.tiersService.setCurrentViewedTiers(this.quotation.tiers)
-      if (this.quotation.responsable != null && this.quotation.responsable.tiers != null) {
-        this.tiersService.setCurrentViewedTiers(this.quotation.responsable.tiers)
-        this.tiersService.setCurrentViewedResponsable(this.quotation.responsable);
-      }
-      this.devisDocument = getDocument(QUOTATION_DOCUMENT_TYPE_CODE, this.quotation, this.documentTypes);
-      this.billingDocument = getDocument(BILLING_TIERS_DOCUMENT_TYPE_CODE, this.quotation, this.documentTypes);
+    if (this.quotation.tiers != null)
+      this.tiersService.setCurrentViewedTiers(this.quotation.tiers)
+    if (this.quotation.responsable != null && this.quotation.responsable.tiers != null) {
+      this.tiersService.setCurrentViewedTiers(this.quotation.responsable.tiers)
+      this.tiersService.setCurrentViewedResponsable(this.quotation.responsable);
+    }
+    this.devisDocument = getDocument(this.constantService.getDocumentTypeQuotation(), this.quotation);
+    this.billingDocument = getDocument(this.constantService.getDocumentTypeBilling(), this.quotation);
 
-      // If billing document does not exist, try to grab it from selected tiers, responsable or confrere
-      if (!this.billingDocument.id) {
-        if (this.quotation.responsable) {
-          this.billingDocument = copyObject(getDocument(BILLING_TIERS_DOCUMENT_TYPE_CODE, this.quotation.responsable, this.documentTypes));
-        } else if (this.quotation.confrere) {
-          this.billingDocument = copyObject(getDocument(BILLING_TIERS_DOCUMENT_TYPE_CODE, this.quotation.confrere, this.documentTypes));
-        } else if (this.quotation.tiers) {
-          this.billingDocument = copyObject(getDocument(BILLING_TIERS_DOCUMENT_TYPE_CODE, this.quotation.tiers, this.documentTypes));
-        }
+    // If billing document does not exist, try to grab it from selected tiers, responsable or confrere
+    if (!this.billingDocument.id) {
+      if (this.quotation.responsable) {
+        this.billingDocument = copyObject(getDocument(this.constantService.getDocumentTypeBilling(), this.quotation.responsable));
+      } else if (this.quotation.confrere) {
+        this.billingDocument = copyObject(getDocument(this.constantService.getDocumentTypeBilling(), this.quotation.confrere));
+      } else if (this.quotation.tiers) {
+        this.billingDocument = copyObject(getDocument(this.constantService.getDocumentTypeBilling(), this.quotation.tiers));
       }
+    }
 
-      if (this.billingDocument.id) {
-        replaceDocument(BILLING_TIERS_DOCUMENT_TYPE_CODE, this.quotation, this.documentTypes, this.billingDocument);
-      }
+    if (this.billingDocument.id) {
+      replaceDocument(this.constantService.getDocumentTypeBilling(), this.quotation, this.billingDocument);
+    }
 
-      if (!this.billingDocument.billingLabelIsIndividual)
-        this.billingDocument.billingLabelIsIndividual = false;
-    })
+    if (!this.billingDocument.billingLabelIsIndividual)
+      this.billingDocument.billingLabelIsIndividual = false;
   }
 
   getFormStatus(): boolean {
@@ -145,7 +144,7 @@ export class QuotationManagementComponent implements OnInit, AfterContentChecked
     if (!this.billingDocument.billingLabelCountry)
       this.billingDocument.billingLabelCountry = city.country;
 
-    if (this.billingDocument.billingLabelCountry.code == COUNTRY_CODE_FRANCE && city.postalCode != null)
+    if (this.billingDocument.billingLabelCountry.id == this.countryFrance.id && city.postalCode != null)
       this.billingDocument.billingPostalCode = city.postalCode;
   }
 

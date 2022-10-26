@@ -2,16 +2,16 @@ import { Document } from "../modules/miscellaneous/model/Document";
 import { DocumentType } from "../modules/miscellaneous/model/DocumentType";
 import { IDocument } from "../modules/miscellaneous/model/IDocument";
 
-export function getDocument(documentCode: string, entity: IDocument, DocumentTypes: DocumentType[]) {
+export function getDocument(documentType: DocumentType, entity: IDocument) {
   // Tiers not loaded
-  if (entity == null || getDocumentType(documentCode, DocumentTypes).id == undefined)
+  if (entity == null || documentType.id == undefined)
     return { isRecipientClient: false, isRecipientAffaire: false, isMailingPaper: false, isMailingPdf: false } as Document;
 
   // No document in Tiers
   if (entity.documents == null || entity.documents == undefined) {
     entity.documents = [] as Array<Document>;
     let doc = { isRecipientClient: false, isRecipientAffaire: false, isMailingPaper: false, isMailingPdf: false } as Document;
-    doc.documentType = getDocumentType(documentCode, DocumentTypes);
+    doc.documentType = documentType;
     entity.documents.push(doc);
     return entity.documents[0];
   }
@@ -20,7 +20,7 @@ export function getDocument(documentCode: string, entity: IDocument, DocumentTyp
   if (entity.documents.length > 0) {
     for (let i = 0; i < entity.documents.length; i++) {
       const documentFound = entity.documents[i];
-      if (documentFound.documentType.code == documentCode) {
+      if (documentFound.documentType.id == documentType.id) {
         return documentFound;
       }
     }
@@ -28,14 +28,14 @@ export function getDocument(documentCode: string, entity: IDocument, DocumentTyp
 
   // Document not exists, create it
   let doc = { isRecipientClient: false, isRecipientAffaire: false, isMailingPaper: false, isMailingPdf: false } as Document;
-  doc.documentType = getDocumentType(documentCode, DocumentTypes);
+  doc.documentType = documentType;
   entity.documents.push(doc);
   return entity.documents[entity.documents.length - 1];
 }
 
-export function replaceDocument(documentCode: string, entity: IDocument, DocumentTypes: DocumentType[], newDocument: Document) {
+export function replaceDocument(documentType: DocumentType, entity: IDocument, newDocument: Document) {
   // Tiers not loaded
-  if (entity == null || getDocumentType(documentCode, DocumentTypes).id == undefined)
+  if (entity == null || documentType.id == undefined)
     return;
 
   // No document in Tiers
@@ -47,7 +47,7 @@ export function replaceDocument(documentCode: string, entity: IDocument, Documen
   if (entity.documents.length > 0) {
     for (let i = 0; i < entity.documents.length; i++) {
       let documentFound = entity.documents[i];
-      if (documentFound.documentType.code == documentCode) {
+      if (documentFound.documentType.id == documentType.id) {
         entity.documents[i] = newDocument;
         return;
       }

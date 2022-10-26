@@ -1,11 +1,12 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
-import { COUNTRY_CODE_FRANCE, UNREGISTERED_COMPANY_LEGAL_FORM_CODE } from 'src/app/libs/Constants';
+import { UNREGISTERED_COMPANY_LEGAL_FORM_CODE } from 'src/app/libs/Constants';
 import { validateRna, validateSiren, validateSiret } from 'src/app/libs/CustomFormsValidatorsHelper';
 import { City } from 'src/app/modules/miscellaneous/model/City';
 import { Mail } from 'src/app/modules/miscellaneous/model/Mail';
 import { Phone } from 'src/app/modules/miscellaneous/model/Phone';
 import { CityService } from 'src/app/modules/miscellaneous/services/city.service';
+import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { Affaire } from 'src/app/modules/quotation/model/Affaire';
 import { Rna } from 'src/app/modules/quotation/model/Rna';
 import { Siren } from 'src/app/modules/quotation/model/Siren';
@@ -29,6 +30,7 @@ export class AddAffaireComponent implements OnInit {
   constructor(private formBuilder: FormBuilder,
     private cityService: CityService,
     private rnaService: RnaService,
+    private constantService: ConstantService,
     private sirenService: SirenService,
     private siretService: SiretService,
   ) { }
@@ -82,7 +84,7 @@ export class AddAffaireComponent implements OnInit {
     if (this.affaire.country == null || this.affaire.country == undefined)
       this.affaire.country = city.country;
 
-    if (this.affaire.country.code == COUNTRY_CODE_FRANCE && city.postalCode != null)
+    if (this.affaire.country.id == this.constantService.getCountryFrance().id && city.postalCode != null)
       this.affaire.postalCode = city.postalCode;
   }
 

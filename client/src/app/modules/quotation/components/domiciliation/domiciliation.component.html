@@ -199,7 +199,7 @@
           <tr>
             <td *ngIf="domiciliation && domiciliation.id">
               <single-attachment [entity]="domiciliation" [entityType]="DOMICILIATION_ENTITY_TYPE.entityType"
-                [editMode]="editMode" [attachmentTypeCodeToDisplay]="KBIS_ATTACHMENT_TYPE_CODE">
+                [editMode]="editMode" [attachmentTypeToDisplay]="attachmentTypeKbis">
               </single-attachment>
             </td>
           </tr>
@@ -308,12 +308,12 @@
           <tr>
             <td *ngIf="domiciliation && domiciliation.id">
               <single-attachment [entity]="domiciliation" [entityType]="DOMICILIATION_ENTITY_TYPE.entityType"
-                [editMode]="editMode" [attachmentTypeCodeToDisplay]="CNI_ATTACHMENT_TYPE_CODE">
+                [editMode]="editMode" [attachmentTypeToDisplay]="attachmentTypeCni">
               </single-attachment>
             </td>
             <td *ngIf="domiciliation && domiciliation.id">
               <single-attachment [entity]="domiciliation" [entityType]="DOMICILIATION_ENTITY_TYPE.entityType"
-                [editMode]="editMode" [attachmentTypeCodeToDisplay]="PROOF_OF_ADDRESS_ATTACHMENT_TYPE_CODE">
+                [editMode]="editMode" [attachmentTypeToDisplay]="attachmentProofOfAddress">
               </single-attachment>
             </td>
           </tr>

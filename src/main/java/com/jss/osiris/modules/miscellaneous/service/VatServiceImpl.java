@@ -27,17 +27,14 @@ public class VatServiceImpl implements VatService {
     @Autowired
     VatRepository vatRepository;
 
+    @Autowired
+    ConstantService constantService;
+
     @Value("${accounting.vat.code.twenty}")
     private String vatTwentyCode;
 
     @Value("${accounting.vat.code.eight}")
     private String vatEightCode;
-
-    @Value("${miscellaneous.country.code.france}")
-    private String franceCountryCode;
-
-    @Value("${miscellaneous.country.code.monaco}")
-    private String monacoCountryCode;
 
     @Value("${miscellaneous.department.code.martinique}")
     private String martiniqueDepartmentCode;
@@ -89,7 +86,8 @@ public class VatServiceImpl implements VatService {
             throw new Exception("Country not provided");
 
         // No VAT abroad (France and Monaco)
-        if (!country.getCode().equals(franceCountryCode) && !country.getCode().equals(monacoCountryCode))
+        if (!country.getId().equals(constantService.getCountryFrance().getId())
+                && !country.getId().equals(constantService.getCountryMonaco().getId()))
             return null;
 
         Vat vatTwenty = getVatByCode(vatTwentyCode);
@@ -99,7 +97,7 @@ public class VatServiceImpl implements VatService {
         }
 
         // 20% in Monaco
-        if (country.getCode().equals(monacoCountryCode))
+        if (country.getId().equals(constantService.getCountryMonaco().getId()))
             return vatTwenty;
 
         Vat vatEight = getVatByCode(vatEightCode);

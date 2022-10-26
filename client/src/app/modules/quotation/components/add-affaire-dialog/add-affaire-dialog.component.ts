@@ -3,7 +3,7 @@ import { AbstractControl, FormBuilder, UntypedFormGroup, ValidationErrors, Valid
 import { MatDialogRef } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
-import { COUNTRY_CODE_FRANCE, UNREGISTERED_COMPANY_LEGAL_FORM_CODE } from 'src/app/libs/Constants';
+import { UNREGISTERED_COMPANY_LEGAL_FORM_CODE } from 'src/app/libs/Constants';
 import { validateRna, validateSiren, validateSiret } from 'src/app/libs/CustomFormsValidatorsHelper';
 import { City } from 'src/app/modules/miscellaneous/model/City';
 import { Civility } from 'src/app/modules/miscellaneous/model/Civility';
@@ -12,6 +12,7 @@ import { Mail } from 'src/app/modules/miscellaneous/model/Mail';
 import { Phone } from 'src/app/modules/miscellaneous/model/Phone';
 import { CityService } from 'src/app/modules/miscellaneous/services/city.service';
 import { CivilityService } from 'src/app/modules/miscellaneous/services/civility.service';
+import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { IndexEntity } from 'src/app/routing/search/IndexEntity';
 import { AppService } from 'src/app/services/app.service';
 import { Affaire } from '../../model/Affaire';
@@ -55,6 +56,7 @@ export class AddAffaireDialogComponent implements OnInit {
     private siretService: SiretService,
     private civilityService: CivilityService,
     private rnaService: RnaService,
+    private constantService: ConstantService,
     private affaireService: AffaireService,
     private appService: AppService,
     private affaireDialogRef: MatDialogRef<AddAffaireDialogComponent>
@@ -157,7 +159,7 @@ export class AddAffaireDialogComponent implements OnInit {
     if (this.affaire.country == null || this.affaire.country == undefined)
       this.affaire.country = city.country;
 
-    if (this.affaire.country.code == COUNTRY_CODE_FRANCE && city.postalCode != null)
+    if (this.affaire.country.id == this.constantService.getCountryFrance().id && city.postalCode != null)
       this.affaire.postalCode = city.postalCode;
   }
 

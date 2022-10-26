@@ -13,9 +13,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
+import com.jss.osiris.modules.accounting.model.AccountingAccountBinome;
 import com.jss.osiris.modules.accounting.model.AccountingAccountClass;
 import com.jss.osiris.modules.accounting.model.AccountingAccountTrouple;
 import com.jss.osiris.modules.accounting.repository.AccountingAccountRepository;
+import com.jss.osiris.modules.miscellaneous.model.BillingType;
 
 @Service
 public class AccountingAccountServiceImpl implements AccountingAccountService {
@@ -167,6 +169,69 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
     }
 
     @Override
+    public AccountingAccountBinome generateAccountingAccountsForBillingType(BillingType billingType) throws Exception {
+
+        AccountingAccountBinome accountingAccountBinome = new AccountingAccountBinome();
+
+        Integer currentMaxSubAccountProduct = accountingAccountRepository
+                .findMaxSubAccontNumberForAccountNumber(productAccountingAccountNumber);
+
+        Integer currentMaxSubAccountCharge = accountingAccountRepository
+                .findMaxSubAccontNumberForAccountNumber(chargeAccountingAccountNumber);
+
+        Integer maxSubAccount = 0;
+
+        if (currentMaxSubAccountCharge != null && currentMaxSubAccountCharge > maxSubAccount)
+            maxSubAccount = currentMaxSubAccountCharge;
+        if (currentMaxSubAccountProduct != null && currentMaxSubAccountProduct > maxSubAccount)
+            maxSubAccount = currentMaxSubAccountProduct;
+
+        AccountingAccountClass accountingAccountClassCharge = accountingAccountClassService
+                .getAccountingAccountClassByCode(productAccountingAccountNumber.substring(0, 1));
+        if (accountingAccountClassCharge == null) {
+            logger.error(
+                    "Unable to find accountingAccountClass for number "
+                            + productAccountingAccountNumber.substring(0, 1));
+            throw new Exception(
+                    "Unable to find accountingAccountClass for number "
+                            + productAccountingAccountNumber.substring(0, 1));
+        }
+
+        AccountingAccountClass accountingAccountClassProduct = accountingAccountClassService
+                .getAccountingAccountClassByCode(chargeAccountingAccountNumber.substring(0, 1));
+        if (accountingAccountClassProduct == null) {
+            logger.error(
+                    "Unable to find accountingAccountClass for number "
+                            + chargeAccountingAccountNumber.substring(0, 1));
+            throw new Exception(
+                    "Unable to find accountingAccountClass for number "
+                            + chargeAccountingAccountNumber.substring(0, 1));
+        }
+
+        maxSubAccount++;
+
+        AccountingAccount accountingAccountProduct = new AccountingAccount();
+        accountingAccountProduct.setAccountingAccountClass(accountingAccountClassProduct);
+        accountingAccountProduct.setAccountingAccountNumber(productAccountingAccountNumber);
+        accountingAccountProduct.setAccountingAccountSubNumber(StringUtils.leftPad(maxSubAccount + "", 4, "0"));
+        accountingAccountProduct
+                .setLabel("Produit - " + (billingType.getLabel() != null ? billingType.getLabel() : ""));
+        accountingAccountRepository.save(accountingAccountProduct);
+        accountingAccountBinome.setAccountingAccountProduct(accountingAccountProduct);
+
+        AccountingAccount accountingAccounChartCharge = new AccountingAccount();
+        accountingAccounChartCharge.setAccountingAccountClass(accountingAccountClassCharge);
+        accountingAccounChartCharge.setAccountingAccountNumber(chargeAccountingAccountNumber);
+        accountingAccounChartCharge.setAccountingAccountSubNumber(StringUtils.leftPad(maxSubAccount + "", 4, "0"));
+        accountingAccounChartCharge
+                .setLabel("Charge - " + (billingType.getLabel() != null ? billingType.getLabel() : ""));
+        accountingAccountRepository.save(accountingAccounChartCharge);
+        accountingAccountBinome.setAccountingAccountCharge(accountingAccounChartCharge);
+
+        return accountingAccountBinome;
+    }
+
+    @Override
     public AccountingAccount generateAccountingAccountsForProduct(String label) throws Exception {
 
         Integer currentMaxSubAccountProduct = accountingAccountRepository
@@ -199,28 +264,6 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
         accountingAccountRepository.save(accountingAccountProvider);
 
         return accountingAccountProvider;
-    }
-
-    @Override
-    public AccountingAccount getProductAccountingAccountFromAccountingAccountList(
-            List<AccountingAccount> accountingAccounts) {
-        if (accountingAccounts != null && accountingAccounts.size() > 0) {
-            for (AccountingAccount accountingAccount : accountingAccounts)
-                if (accountingAccount.getAccountingAccountNumber().equals(productAccountingAccountNumber))
-                    return accountingAccount;
-        }
-        return null;
-    }
-
-    @Override
-    public AccountingAccount getChargeAccountingAccountFromAccountingAccountList(
-            List<AccountingAccount> accountingAccounts) {
-        if (accountingAccounts != null && accountingAccounts.size() > 0) {
-            for (AccountingAccount accountingAccount : accountingAccounts)
-                if (accountingAccount.getAccountingAccountNumber().equals(chargeAccountingAccountNumber))
-                    return accountingAccount;
-        }
-        return null;
     }
 
     @Override

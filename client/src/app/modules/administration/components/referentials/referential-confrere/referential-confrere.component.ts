@@ -2,18 +2,17 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatAccordion } from '@angular/material/expansion';
 import { Observable } from 'rxjs';
-import { BILLING_TIERS_DOCUMENT_TYPE_CODE, BILLING_TIERS_DOCUMENT_TYPE_OTHER, COUNTRY_CODE_FRANCE, DUNNING_TIERS_DOCUMENT_TYPE_CODE, PAYMENT_TYPE_CHEQUES, PAYMENT_TYPE_OTHERS, PAYMENT_TYPE_PRELEVEMENT, REFUND_TIERS_DOCUMENT_TYPE_CODE, REFUND_TYPE_VIREMENT } from 'src/app/libs/Constants';
+import { PAYMENT_TYPE_CHEQUES, PAYMENT_TYPE_OTHERS, PAYMENT_TYPE_PRELEVEMENT, REFUND_TYPE_VIREMENT } from 'src/app/libs/Constants';
 import { getDocument } from 'src/app/libs/DocumentHelper';
 import { City } from 'src/app/modules/miscellaneous/model/City';
 import { PaymentType } from 'src/app/modules/miscellaneous/model/PaymentType';
 import { CityService } from 'src/app/modules/miscellaneous/services/city.service';
-import { DocumentTypeService } from 'src/app/modules/miscellaneous/services/document.type.service';
+import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { PaymentTypeService } from 'src/app/modules/miscellaneous/services/payment.type.service';
 import { Confrere } from 'src/app/modules/quotation/model/Confrere';
 import { ConfrereService } from 'src/app/modules/quotation/services/confrere.service';
 import { AppService } from 'src/app/services/app.service';
 import { Document } from "../../../../miscellaneous/model/Document";
-import { DocumentType } from "../../../../miscellaneous/model/DocumentType";
 import { GenericReferentialComponent } from '../generic-referential/generic-referential-component';
 
 @Component({
@@ -26,8 +25,8 @@ export class ReferentialConfrereComponent extends GenericReferentialComponent<Co
     private cityService: CityService,
     private formBuilder2: FormBuilder,
     private appService2: AppService,
-    protected paymentTypeService: PaymentTypeService,
-    protected documentTypeService: DocumentTypeService,) {
+    private constantService: ConstantService,
+    protected paymentTypeService: PaymentTypeService,) {
     super(formBuilder2, appService2);
   }
 
@@ -38,15 +37,15 @@ export class ReferentialConfrereComponent extends GenericReferentialComponent<Co
   PAYMENT_TYPE_CHEQUES = PAYMENT_TYPE_CHEQUES;
   PAYMENT_TYPE_OTHERS = PAYMENT_TYPE_OTHERS;
 
-  REFUND_TYPE_VIREMENT = REFUND_TYPE_VIREMENT;
-  BILLING_TIERS_DOCUMENT_TYPE_OTHER = BILLING_TIERS_DOCUMENT_TYPE_OTHER;
+  billingLabelTypeOther = this.constantService.getBillingLabelTypeOther();
 
-  documentTypes: DocumentType[] = [] as Array<DocumentType>;
+  REFUND_TYPE_VIREMENT = REFUND_TYPE_VIREMENT;
+
   billingDocument: Document = {} as Document;
   dunningDocument: Document = {} as Document;
   refundDocument: Document = {} as Document;
 
-  COUNTRY_CODE_FRANCE = COUNTRY_CODE_FRANCE;
+  countryFrance = this.constantService.getCountryFrance();
 
   Validators = Validators;
 
@@ -55,14 +54,11 @@ export class ReferentialConfrereComponent extends GenericReferentialComponent<Co
   selectEntity(element: Confrere) {
     this.selectedEntity = element;
     this.selectedEntityChange.emit(this.selectedEntity);
-    this.documentTypeService.getDocumentTypes().subscribe(response => {
-      this.documentTypes = response;
 
-      this.billingDocument = getDocument(BILLING_TIERS_DOCUMENT_TYPE_CODE, this.selectedEntity!, this.documentTypes);
-      this.dunningDocument = getDocument(DUNNING_TIERS_DOCUMENT_TYPE_CODE, this.selectedEntity!, this.documentTypes);
-      this.refundDocument = getDocument(REFUND_TIERS_DOCUMENT_TYPE_CODE, this.selectedEntity!, this.documentTypes);
-      this.entityForm.markAllAsTouched();
-    })
+    this.billingDocument = getDocument(this.constantService.getDocumentTypeBilling(), this.selectedEntity!);
+    this.dunningDocument = getDocument(this.constantService.getDocumentTypeDunning(), this.selectedEntity!);
+    this.refundDocument = getDocument(this.constantService.getDocumentTypeRefund(), this.selectedEntity!);
+    this.entityForm.markAllAsTouched();
   }
 
   getAddOrUpdateObservable(): Observable<Confrere> {
@@ -94,7 +90,7 @@ export class ReferentialConfrereComponent extends GenericReferentialComponent<Co
       if (this.selectedEntity!.country == null || this.selectedEntity!.country == undefined)
         this.selectedEntity!.country = city.country;
 
-      if (this.selectedEntity!.country.code == COUNTRY_CODE_FRANCE && city.postalCode != null)
+      if (this.selectedEntity!.country.id == this.countryFrance.id && city.postalCode != null)
         this.selectedEntity!.postalCode = city.postalCode;
     }
   }

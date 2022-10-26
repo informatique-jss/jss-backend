@@ -1,13 +1,14 @@
 import { Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors } from '@angular/forms';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
-import { CNI_ATTACHMENT_TYPE_CODE, COUNTRY_CODE_FRANCE, DOMICILIATION_EMAIL_REDIRECTION_CONTRAT_TYPE_1_CODE, DOMICILIATION_EMAIL_REDIRECTION_CONTRAT_TYPE_2_CODE, DOMICILIATION_MAIL_REDIRECTION_CONTRAT_TYPE_1_CODE, DOMICILIATION_MAIL_REDIRECTION_CONTRAT_TYPE_2_CODE, DOMICILIATION_MAIL_REDIRECTION_TYPE_OTHER_CODE, KBIS_ATTACHMENT_TYPE_CODE, PROOF_OF_ADDRESS_ATTACHMENT_TYPE_CODE } from 'src/app/libs/Constants';
+import { DOMICILIATION_EMAIL_REDIRECTION_CONTRAT_TYPE_1_CODE, DOMICILIATION_EMAIL_REDIRECTION_CONTRAT_TYPE_2_CODE, DOMICILIATION_MAIL_REDIRECTION_CONTRAT_TYPE_1_CODE, DOMICILIATION_MAIL_REDIRECTION_CONTRAT_TYPE_2_CODE, DOMICILIATION_MAIL_REDIRECTION_TYPE_OTHER_CODE } from 'src/app/libs/Constants';
 import { validateSiren } from 'src/app/libs/CustomFormsValidatorsHelper';
 import { City } from 'src/app/modules/miscellaneous/model/City';
 import { Civility } from 'src/app/modules/miscellaneous/model/Civility';
 import { Language } from 'src/app/modules/miscellaneous/model/Language';
 import { CityService } from 'src/app/modules/miscellaneous/services/city.service';
 import { CivilityService } from 'src/app/modules/miscellaneous/services/civility.service';
+import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { LanguageService } from 'src/app/modules/miscellaneous/services/language.service';
 import { DOMICILIATION_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { BuildingDomiciliation } from '../../model/BuildingDomiciliation';
@@ -37,9 +38,9 @@ export class DomiciliationComponent implements OnInit {
   @ViewChild('tabs', { static: false }) tabs: any;
 
   DOMICILIATION_ENTITY_TYPE = DOMICILIATION_ENTITY_TYPE;
-  KBIS_ATTACHMENT_TYPE_CODE = KBIS_ATTACHMENT_TYPE_CODE;
-  CNI_ATTACHMENT_TYPE_CODE = CNI_ATTACHMENT_TYPE_CODE;
-  PROOF_OF_ADDRESS_ATTACHMENT_TYPE_CODE = PROOF_OF_ADDRESS_ATTACHMENT_TYPE_CODE;
+  attachmentTypeKbis = this.constantService.getAttachmentTypeKbis();
+  attachmentTypeCni = this.constantService.getAttachmentTypeCni();
+  attachmentProofOfAddress = this.constantService.getAttachmentTypeProofOfAddress();
 
   languages: Language[] = [] as Array<Language>;
   buildingDomiciliations: BuildingDomiciliation[] = [] as Array<BuildingDomiciliation>;
@@ -60,6 +61,7 @@ export class DomiciliationComponent implements OnInit {
     protected languageService: LanguageService,
     private buildingDomiciliationService: BuildingDomiciliationService,
     private cityService: CityService,
+    private constantService: ConstantService,
     private mailRedirectionTypeService: MailRedirectionTypeService,
     protected civilityService: CivilityService,
   ) { }
@@ -151,7 +153,7 @@ export class DomiciliationComponent implements OnInit {
       if (this.domiciliation!.country == null || this.domiciliation!.country == undefined)
         this.domiciliation!.country = city.country;
 
-      if (this.domiciliation!.country.code == COUNTRY_CODE_FRANCE && city.postalCode != null)
+      if (this.domiciliation!.country.id == this.constantService.getCountryFrance().id && city.postalCode != null)
         this.domiciliation!.postalCode = city.postalCode;
     }
   }
@@ -177,7 +179,7 @@ export class DomiciliationComponent implements OnInit {
       if (this.domiciliation!.activityCountry == null || this.domiciliation!.activityCountry == undefined)
         this.domiciliation!.activityCountry = city.country;
 
-      if (this.domiciliation!.activityCountry.code == COUNTRY_CODE_FRANCE && city.postalCode != null)
+      if (this.domiciliation!.activityCountry.id == this.constantService.getCountryFrance().id && city.postalCode != null)
         this.domiciliation!.activityPostalCode = city.postalCode;
     }
   }
@@ -203,7 +205,7 @@ export class DomiciliationComponent implements OnInit {
       if (this.domiciliation!.legalGardianCountry == null || this.domiciliation!.legalGardianCountry == undefined)
         this.domiciliation!.legalGardianCountry = city.country;
 
-      if (this.domiciliation!.legalGardianCountry.code == COUNTRY_CODE_FRANCE && city.postalCode != null)
+      if (this.domiciliation!.legalGardianCountry.id == this.constantService.getCountryFrance().id && city.postalCode != null)
         this.domiciliation!.legalGardianPostalCode = city.postalCode;
     }
   }

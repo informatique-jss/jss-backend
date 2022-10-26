@@ -63,6 +63,22 @@
             </td>
           </tr>
         </table>
+        <table class="full-width">
+          <tr>
+            <td *ngIf="selectedEntity.accountingAccountProduct">
+              <autocomplete-accounting-account [(model)]="selectedEntity.accountingAccountProduct" [form]="entityForm"
+                propertyName="accountingAccountProduct" [isMandatory]="false" [isDisabled]="true"
+                label="Compte comptable produit">
+              </autocomplete-accounting-account>
+            </td>
+            <td *ngIf="selectedEntity.accountingAccountCharge">
+              <autocomplete-accounting-account [(model)]="selectedEntity.accountingAccountCharge" [form]="entityForm"
+                propertyName="accountingAccountCharge" [isMandatory]="false" [isDisabled]="true"
+                label="Compte comptable charge">
+              </autocomplete-accounting-account>
+            </td>
+          </tr>
+        </table>
       </fieldset>
     </div>
   </form>

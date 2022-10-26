@@ -69,7 +69,7 @@
               </tr>
             </table>
             <table class="full-width"
-              *ngIf="billingDocument.billingLabelType!=undefined && billingDocument.billingLabelType.code!=undefined && billingDocument.billingLabelType.code==BILLING_TIERS_DOCUMENT_TYPE_OTHER">
+              *ngIf="billingDocument.billingLabelType!=undefined && billingDocument.billingLabelType.code!=undefined && billingDocument.billingLabelType.id==billingLabelTypeOther.id">
               <tr>
                 <td>
                   <generic-input [(model)]="billingDocument.billingLabel" label="Libellé"
@@ -85,7 +85,7 @@
                   <autocomplete-postal-code [(model)]="billingDocument.billingPostalCode"
                     [byPassAutocompletValidator]="true" [form]="quotationManagementForm" propertyName="postalCode"
                     [isMandatory]="true" label="Code postal" [isDisabled]="!editMode"
-                    [conditionnalRequired]="billingDocument.billingLabelCountry != null && billingDocument.billingLabelCountry.code == COUNTRY_CODE_FRANCE"
+                    [conditionnalRequired]="billingDocument.billingLabelCountry != null && billingDocument.billingLabelCountry.id == countryFrance.id"
                     (onOptionSelected)="fillCity($event)"></autocomplete-postal-code>
                 </td>
                 <td>

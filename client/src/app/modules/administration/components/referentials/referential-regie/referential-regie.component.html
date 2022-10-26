@@ -60,7 +60,7 @@
               <autocomplete-postal-code [(model)]="selectedEntity.postalCode" [form]="entityForm" label="Code postal"
                 [isDisabled]="!editMode" propertyName="postalCode" [isMandatory]="true"
                 [byPassAutocompletValidator]="true"
-                [conditionnalRequired]="selectedEntity.country != null && selectedEntity.country.code == COUNTRY_CODE_FRANCE"
+                [conditionnalRequired]="selectedEntity.country != null && selectedEntity.country.id == countryFrance.id"
                 (onOptionSelected)="fillCity($event)"></autocomplete-postal-code>
             </td>
             <td>

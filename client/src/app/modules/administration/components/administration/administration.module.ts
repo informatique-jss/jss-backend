@@ -21,6 +21,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule, Routes } from '@angular/router';
 import { QuillModule } from 'ngx-quill';
 import { MiscellaneousModule } from 'src/app/modules/miscellaneous/components/miscellaneous/miscellaneous.module';
+import { ConstantComponent } from '../constant/constant.component';
 import { ReferentialAccountingAccountClassComponent } from '../referentials/referential-accounting-account-class/referential-accounting-account-class.component';
 import { ReferentialAccountingAccountComponent } from '../referentials/referential-accounting-account/referential-accounting-account.component';
 import { ReferentialAccountingJournalComponent } from '../referentials/referential-accounting-journal/referential-accounting-journal.component';
@@ -180,6 +181,7 @@ const routes: Routes = [
     ReferentialConfrereComponent,
     ReferentialBillingItemComponent,
     ReferentialDepartmentComponent,
+    ConstantComponent,
     ReferentialBillingTypeComponent,
     ReferentialProviderComponent,
     ReferentialRegieComponent,

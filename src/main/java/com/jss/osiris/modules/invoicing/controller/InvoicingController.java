@@ -32,8 +32,10 @@ import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.invoicing.service.InvoiceStatusService;
 import com.jss.osiris.modules.invoicing.service.PaymentService;
 import com.jss.osiris.modules.invoicing.service.PaymentWayService;
+import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.tiers.model.BillingLabelType;
 import com.jss.osiris.modules.tiers.model.ITiers;
 
 @RestController
@@ -64,8 +66,8 @@ public class InvoicingController {
     @Value("${invoicing.invoice.status.send.code}")
     private String invoiceStatusSendCode;
 
-    @Value("${miscellaneous.document.billing.label.type.affaire.code}")
-    private String billingLabelAffaireCode;
+    @Autowired
+    ConstantService constantService;
 
     @GetMapping(inputEntryPoint + "/payment-ways")
     public ResponseEntity<List<PaymentWay>> getPaymentWays() {
@@ -344,17 +346,19 @@ public class InvoicingController {
             if (doFound != 1)
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
+            BillingLabelType billingLabelAffaire = constantService.getBillingLabelTypeCodeAffaire();
+
             validationHelper.validateReferential(invoice.getBillingLabelType(), true);
             validationHelper.validateString(invoice.getBillingLabelAddress(),
-                    invoice.getBillingLabelType().getCode().equals(billingLabelAffaireCode), 160);
+                    invoice.getBillingLabelType().getId().equals(billingLabelAffaire.getId()), 160);
             validationHelper.validateString(invoice.getBillingLabel(),
-                    invoice.getBillingLabelType().getCode().equals(billingLabelAffaireCode), 40);
+                    invoice.getBillingLabelType().getId().equals(billingLabelAffaire.getId()), 40);
             validationHelper.validateString(invoice.getBillingLabelPostalCode(),
-                    invoice.getBillingLabelType().getCode().equals(billingLabelAffaireCode), 10);
+                    invoice.getBillingLabelType().getId().equals(billingLabelAffaire.getId()), 10);
             validationHelper.validateReferential(invoice.getBillingLabelCity(),
-                    invoice.getBillingLabelType().getCode().equals(billingLabelAffaireCode));
+                    invoice.getBillingLabelType().getId().equals(billingLabelAffaire.getId()));
             validationHelper.validateReferential(invoice.getBillingLabelCountry(),
-                    invoice.getBillingLabelType().getCode().equals(billingLabelAffaireCode));
+                    invoice.getBillingLabelType().getId().equals(billingLabelAffaire.getId()));
             validationHelper.validateString(invoice.getBillingLabelPostalCode(), false, 40);
             validationHelper.validateReferential(invoice.getInvoiceStatus(), false);
             validationHelper.validateDate(invoice.getDueDate(), false);

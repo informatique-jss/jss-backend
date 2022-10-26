@@ -35,6 +35,10 @@ export class GenericToggleComponent implements OnInit {
  * Hint to display
  */
   @Input() hint: string | undefined;
+  /**
+   * Fired when input is modified by user
+   */
+  @Output() onToggleChange: EventEmitter<void> = new EventEmitter();
 
 
   constructor(
@@ -49,6 +53,11 @@ export class GenericToggleComponent implements OnInit {
   ngOnDestroy() {
     if (this.form != undefined)
       this.form.removeControl(this.propertyName);
+  }
+
+  onChange() {
+    if (this.onToggleChange)
+      this.onToggleChange.emit();
   }
 
   ngOnInit() {

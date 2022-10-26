@@ -124,7 +124,7 @@
                     <autocomplete-postal-code [(model)]="selectedResponsable.postalCode" [form]="principalForm"
                       [byPassAutocompletValidator]="true" propertyName="postalCode" [isMandatory]="false"
                       label="Code postal" [isDisabled]="!editMode"
-                      [conditionnalRequired]="selectedResponsable.country != null && selectedResponsable.country.code == COUNTRY_CODE_FRANCE"
+                      [conditionnalRequired]="selectedResponsable.country != null && selectedResponsable.country.id ==franceCountry.id "
                       (onOptionSelected)="fillCity($event)"></autocomplete-postal-code>
                   </td>
                   <td>

@@ -1,3 +1,4 @@
+import { AccountingAccount } from "../../accounting/model/AccountingAccount";
 import { IReferential } from "../../administration/model/IReferential";
 import { Vat } from "./Vat";
 
@@ -7,4 +8,6 @@ export interface BillingType extends IReferential {
   isOverrideVat: boolean;
   vat: Vat;
   isOptionnal: boolean;
+  accountingAccountProduct: AccountingAccount;
+  accountingAccountCharge: AccountingAccount;
 }

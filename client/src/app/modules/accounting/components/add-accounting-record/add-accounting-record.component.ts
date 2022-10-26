@@ -2,11 +2,12 @@ import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Subject } from 'rxjs';
-import { ACCOUNTING_JOURNAL_ANOUVEAU_CODE, ACCOUNTING_JOURNAL_PURSCHASES_CODE, ACCOUNTING_JOURNAL_SALES_CODE } from 'src/app/libs/Constants';
 import { formatDateForSortTable, formatEurosForSortTable } from 'src/app/libs/FormatHelper';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
+import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { AppService } from 'src/app/services/app.service';
+import { AccountingJournal } from '../../model/AccountingJournal';
 import { AccountingRecord } from '../../model/AccountingRecord';
 import { AccountingRecordService } from '../../services/accounting.record.service';
 
@@ -24,6 +25,7 @@ export class AddAccountingRecordComponent implements OnInit {
   constructor(private formBuilder: FormBuilder,
     private appService: AppService,
     private accountingRecordService: AccountingRecordService,
+    private constantService: ConstantService,
     private location: Location,
   ) {
   }
@@ -32,9 +34,9 @@ export class AddAccountingRecordComponent implements OnInit {
   displayedColumns: SortTableColumn[] = [] as Array<SortTableColumn>;
   tableAction: SortTableAction[] = [] as Array<SortTableAction>;
 
-  ACCOUNTING_JOURNAL_SALES_CODE = ACCOUNTING_JOURNAL_SALES_CODE;
-  ACCOUNTING_JOURNAL_PURSCHASES_CODE = ACCOUNTING_JOURNAL_PURSCHASES_CODE;
-  ACCOUNTING_JOURNAL_ANOUVEAU_CODE = ACCOUNTING_JOURNAL_ANOUVEAU_CODE;
+  accountingJournalSales: AccountingJournal = this.constantService.getAccountingJournalSales();
+  accountingJournalPurchases: AccountingJournal = this.constantService.getAccountingJournalPurchases();
+  accountingJournalANouveau: AccountingJournal = this.constantService.getAccountingJournalANouveau();
 
   refreshTable: Subject<void> = new Subject<void>();
 

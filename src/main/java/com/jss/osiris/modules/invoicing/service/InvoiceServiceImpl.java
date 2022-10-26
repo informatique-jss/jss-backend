@@ -19,6 +19,7 @@ import com.jss.osiris.modules.invoicing.model.InvoiceSearch;
 import com.jss.osiris.modules.invoicing.model.InvoiceStatus;
 import com.jss.osiris.modules.invoicing.repository.InvoiceRepository;
 import com.jss.osiris.modules.miscellaneous.model.Document;
+import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.Confrere;
@@ -39,14 +40,8 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Autowired
     InvoiceStatusService invoiceStatusService;
 
-    @Value("${miscellaneous.document.billing.label.type.affaire.code}")
-    private String billingLabelAffaireCode;
-
-    @Value("${miscellaneous.document.billing.label.type.customer.code}")
-    private String billingLabelCustomerCode;
-
-    @Value("${miscellaneous.document.billing.label.type.other.code}")
-    private String billingLabelBillingOther;
+    @Autowired
+    ConstantService constantService;
 
     @Value("${invoicing.invoice.status.send.code}")
     private String invoiceStatusSendCode;
@@ -93,7 +88,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         }
 
         // Defined billing label
-        if (!billingLabelBillingOther.equals(invoice.getBillingLabelType().getCode())) {
+        if (!constantService.getBillingLabelTypeOther().getId().equals(invoice.getBillingLabelType().getId())) {
 
             ITiers customerOrder = invoice.getTiers();
             if (invoice.getResponsable() != null)
@@ -177,7 +172,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     private void setInvoiceLabel(Invoice invoice, Document billingDocument, CustomerOrder customerOrder,
             ITiers orderingCustomer) throws Exception {
         // Defined billing label
-        if (billingLabelBillingOther.equals(billingDocument.getBillingLabelType().getCode())) {
+        if (constantService.getBillingLabelTypeOther().getId().equals(billingDocument.getBillingLabelType().getId())) {
             if (billingDocument.getRegie() != null) {
                 invoice.setBillingLabel(billingDocument.getRegie().getLabel());
                 invoice.setBillingLabelAddress(billingDocument.getRegie().getAddress());
@@ -202,7 +197,8 @@ public class InvoiceServiceImpl implements InvoiceService {
                 invoice.setCommandNumber(billingDocument.getCommandNumber());
             }
         } else if (customerOrder != null
-                && billingLabelAffaireCode.equals(billingDocument.getBillingLabelType().getCode())) {
+                && constantService.getBillingLabelTypeCodeAffaire().getId()
+                        .equals(billingDocument.getBillingLabelType().getId())) {
             if (customerOrder.getAssoAffaireOrders() == null || customerOrder.getAssoAffaireOrders().size() == 0)
                 throw new Exception("No affaire in the customer order " + customerOrder.getId());
             Affaire affaire = customerOrder.getAssoAffaireOrders().get(0).getAffaire();

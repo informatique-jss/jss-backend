@@ -7,7 +7,6 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +26,7 @@ import com.jss.osiris.modules.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.miscellaneous.model.WeekDay;
 import com.jss.osiris.modules.miscellaneous.service.CityService;
 import com.jss.osiris.modules.miscellaneous.service.CivilityService;
+import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.CountryService;
 import com.jss.osiris.modules.miscellaneous.service.DepartmentService;
 import com.jss.osiris.modules.miscellaneous.service.LanguageService;
@@ -216,8 +216,8 @@ public class QuotationController {
   @Autowired
   CustomerOrderService customerOrderService;
 
-  @Value("${miscellaneous.document.billing.label.type.affaire.code}")
-  private String billingLabelAffaireCode;
+  @Autowired
+  ConstantService constantService;
 
   @Autowired
   AssoAffaireOrderService assoAffaireOrderService;
@@ -1621,7 +1621,7 @@ public class QuotationController {
       if (assoAffaireOrder.getAffaire() == null)
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
       if (quotation.getAssoAffaireOrders().size() > 1
-          && quotation.getQuotationLabelType().getCode().equals(billingLabelAffaireCode))
+          && quotation.getQuotationLabelType().getId().equals(constantService.getBillingLabelTypeCodeAffaire().getId()))
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
 
       validationHelper.validateReferential(assoAffaireOrder.getAffaire(), true);

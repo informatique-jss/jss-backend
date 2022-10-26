@@ -8,6 +8,6 @@ public interface BillingTypeService {
     public List<BillingType> getBillingTypes();
 
     public BillingType getBillingType(Integer id);
-	
-	 public BillingType addOrUpdateBillingType(BillingType billingType);
+
+    public BillingType addOrUpdateBillingType(BillingType billingType) throws Exception;
 }

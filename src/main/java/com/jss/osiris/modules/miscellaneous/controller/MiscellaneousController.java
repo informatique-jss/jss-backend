@@ -24,7 +24,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.ValidationHelper;
-import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.service.AccountingAccountService;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.miscellaneous.model.AssoSpecialOfferBillingType;
@@ -36,6 +35,7 @@ import com.jss.osiris.modules.miscellaneous.model.City;
 import com.jss.osiris.modules.miscellaneous.model.Civility;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthorityType;
+import com.jss.osiris.modules.miscellaneous.model.Constant;
 import com.jss.osiris.modules.miscellaneous.model.Country;
 import com.jss.osiris.modules.miscellaneous.model.DeliveryService;
 import com.jss.osiris.modules.miscellaneous.model.Department;
@@ -59,6 +59,7 @@ import com.jss.osiris.modules.miscellaneous.service.CityService;
 import com.jss.osiris.modules.miscellaneous.service.CivilityService;
 import com.jss.osiris.modules.miscellaneous.service.CompetentAuthorityService;
 import com.jss.osiris.modules.miscellaneous.service.CompetentAuthorityTypeService;
+import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.CountryService;
 import com.jss.osiris.modules.miscellaneous.service.DeliveryServiceService;
 import com.jss.osiris.modules.miscellaneous.service.DepartmentService;
@@ -189,6 +190,49 @@ public class MiscellaneousController {
 
     @Autowired
     AffaireService affaireService;
+
+    @Autowired
+    ConstantService constantService;
+
+    @GetMapping(inputEntryPoint + "/constants")
+    public ResponseEntity<Constant> getConstants() {
+        Constant constants = null;
+        try {
+            constants = constantService.getConstants();
+        } catch (HttpStatusCodeException e) {
+            logger.error("HTTP error when fetching constant", e);
+            return new ResponseEntity<Constant>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            logger.error("Error when fetching constant", e);
+            return new ResponseEntity<Constant>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<Constant>(constants, HttpStatus.OK);
+    }
+
+    @PostMapping(inputEntryPoint + "/constant")
+    public ResponseEntity<Constant> addOrUpdateConstant(
+            @RequestBody Constant constant) {
+        Constant outConstant;
+        try {
+            if (constant.getId() != null)
+                validationHelper.validateReferential(constant, true);
+
+            validationHelper.validateReferential(constant.getBillingLabelTypeCodeAffaire(), true);
+            outConstant = constantService
+                    .addOrUpdateConstant(constant);
+        } catch (
+
+        ResponseStatusException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (HttpStatusCodeException e) {
+            logger.error("HTTP error when fetching constant", e);
+            return new ResponseEntity<Constant>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            logger.error("Error when fetching constant", e);
+            return new ResponseEntity<Constant>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<Constant>(outConstant, HttpStatus.OK);
+    }
 
     @GetMapping(inputEntryPoint + "/regies")
     public ResponseEntity<List<Regie>> getRegies() {
@@ -596,21 +640,6 @@ public class MiscellaneousController {
             validationHelper.validateReferential(billingItems.getBillingType(), true);
 
             validationHelper.validateDate(billingItems.getStartDate(), true);
-
-            if (billingItems.getAccountingAccounts() == null || billingItems.getAccountingAccounts().size() == 0)
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-            for (AccountingAccount accountingAccount : billingItems.getAccountingAccounts()) {
-                if (accountingAccount.getId() != null)
-                    validationHelper.validateReferential(accountingAccount, true);
-                validationHelper.validateString(accountingAccount.getLabel(), true, 100);
-                validationHelper.validateString(accountingAccount.getAccountingAccountNumber(), true, 6);
-                validationHelper.validateString(accountingAccount.getAccountingAccountSubNumber(), true, 20);
-            }
-
-            if (accountingAccountService
-                    .getProductAccountingAccountFromAccountingAccountList(billingItems.getAccountingAccounts()) == null)
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
             outBillingItem = billingItemService.addOrUpdateBillingItem(billingItems);
         } catch (

@@ -9,7 +9,6 @@ import java.util.Optional;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +21,7 @@ import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.miscellaneous.model.Vat;
 import com.jss.osiris.modules.miscellaneous.service.BillingItemService;
+import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.miscellaneous.service.MailService;
 import com.jss.osiris.modules.miscellaneous.service.PhoneService;
@@ -76,14 +76,8 @@ public class QuotationServiceImpl implements QuotationService {
     @Autowired
     QuotationStatusService quotationStatusService;
 
-    @Value("${miscellaneous.document.billing.label.type.customer.code}")
-    private String billingLabelCustomerCode;
-
-    @Value("${miscellaneous.document.billing.label.type.affaire.code}")
-    private String billingLabelAffaireCode;
-
-    @Value("${quotation.logo.billing.type.code}")
-    private String billingItemLogoCode;
+    @Autowired
+    ConstantService constantService;
 
     @Override
     public Quotation getQuotation(Integer id) {
@@ -233,8 +227,7 @@ public class QuotationServiceImpl implements QuotationService {
                     if (billingItems != null && billingItems.size() > 0) {
                         BillingItem billingItem = getAppliableBillingItem(billingItems);
 
-                        if (billingItem.getAccountingAccounts() != null
-                                && billingItem.getAccountingAccounts().size() > 0
+                        if (billingType.getAccountingAccountProduct() != null
                                 && (!billingItem.getBillingType().getIsOptionnal()
                                         || hasOption(billingItem, provision))) {
 
@@ -269,8 +262,9 @@ public class QuotationServiceImpl implements QuotationService {
         return invoiceItems;
     }
 
-    private boolean hasOption(BillingItem billingItem, Provision provision) {
-        if (billingItem.getBillingType().getCode().equals(billingItemLogoCode) && provision.getAnnouncement() != null
+    private boolean hasOption(BillingItem billingItem, Provision provision) throws Exception {
+        if (billingItem.getBillingType().getId().equals(constantService.getBillingTypeLogo().getId())
+                && provision.getAnnouncement() != null
                 && provision.getIsLogo() != null && provision.getIsLogo())
             return true;
         return false;
@@ -311,11 +305,13 @@ public class QuotationServiceImpl implements QuotationService {
             vat = invoiceItem.getBillingItem().getBillingType().getVat();
         } else {
             if (billingDocument == null || billingDocument.getBillingLabelType() == null
-                    || billingDocument.getBillingLabelType().getCode().equals(billingLabelCustomerCode)) {
+                    || billingDocument.getBillingLabelType().getId()
+                            .equals(constantService.getBillingLabelTypeCustomer().getId())) {
                 vat = vatService.getGeographicalApplicableVat(customerOrder.getCountry(),
                         customerOrder.getCity().getDepartment(),
                         customerOrder.getIsIndividual());
-            } else if (billingDocument.getBillingLabelType().getCode().equals(billingLabelAffaireCode)) {
+            } else if (billingDocument.getBillingLabelType().getId()
+                    .equals(constantService.getBillingLabelTypeCodeAffaire().getId())) {
                 Affaire affaire = invoiceItem.getProvision().getAssoAffaireOrder().getAffaire();
                 vat = vatService.getGeographicalApplicableVat(affaire.getCountry(), affaire.getCity().getDepartment(),
                         affaire.getIsIndividual());

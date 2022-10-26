@@ -1,6 +1,6 @@
 import { AfterContentChecked, ChangeDetectorRef, Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router, UrlSegment } from '@angular/router';
-import { isTiersTypeProspect } from 'src/app/libs/CompareHelper';
+import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { TIERS_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
 import { SearchService } from 'src/app/services/search.service';
@@ -37,6 +37,7 @@ export class TiersComponent implements OnInit, AfterContentChecked {
     private tiersService: TiersService,
     private activatedRoute: ActivatedRoute,
     protected searchService: SearchService,
+    private constantService: ConstantService,
     private changeDetectorRef: ChangeDetectorRef,
     private router: Router) { }
 
@@ -90,7 +91,7 @@ export class TiersComponent implements OnInit, AfterContentChecked {
   }
 
   isTiersTypeProspect(): boolean {
-    return isTiersTypeProspect(this.tiers);
+    return this.tiers && this.tiers.tiersType && this.constantService.getTiersTypeProspect().id == this.tiers.tiersType.id;
   }
 
   toggleTabs() {

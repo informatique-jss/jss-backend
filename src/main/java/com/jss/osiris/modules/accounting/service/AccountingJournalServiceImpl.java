@@ -7,7 +7,6 @@ import org.apache.commons.collections4.IterableUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
@@ -16,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.modules.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.accounting.repository.AccountingJournalRepository;
+import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 
 @Service
 public class AccountingJournalServiceImpl implements AccountingJournalService {
@@ -25,14 +25,8 @@ public class AccountingJournalServiceImpl implements AccountingJournalService {
     @Autowired
     AccountingJournalRepository accountingJournalRepository;
 
-    @Value("${accounting.journal.code.sales}")
-    String salesAccountingJournalCode;
-
-    @Value("${accounting.journal.code.purchases}")
-    String purchasesAccountingJournalCode;
-
-    @Value("${accounting.journal.code.anouveau}")
-    String anouveauAccountingJournalCode;
+    @Autowired
+    ConstantService constantService;
 
     @Override
     @Cacheable(value = "accountingJournalList", key = "#root.methodName")
@@ -67,25 +61,25 @@ public class AccountingJournalServiceImpl implements AccountingJournalService {
 
     @Override
     public AccountingJournal getSalesAccountingJournal() throws Exception {
-        AccountingJournal salesJournal = this.getAccountingJournalByCode(salesAccountingJournalCode);
+        AccountingJournal salesJournal = constantService.getAccountingJournalSales();
         if (salesJournal == null)
-            logger.error("Unable to find accounting journal for code " + salesAccountingJournalCode);
+            logger.error("Unable to find accounting journal Sales. Check constants");
         return salesJournal;
     }
 
     @Override
     public AccountingJournal getPurchasesAccountingJournal() throws Exception {
-        AccountingJournal purchasesJournal = this.getAccountingJournalByCode(purchasesAccountingJournalCode);
+        AccountingJournal purchasesJournal = constantService.getAccountingJournalPurchases();
         if (purchasesJournal == null)
-            logger.error("Unable to find accounting journal for code " + purchasesAccountingJournalCode);
+            logger.error("Unable to find accounting journal Purchases. Check constants");
         return purchasesJournal;
     }
 
     @Override
     public AccountingJournal getANouveauAccountingJournal() throws Exception {
-        AccountingJournal aNouveauJournal = this.getAccountingJournalByCode(anouveauAccountingJournalCode);
+        AccountingJournal aNouveauJournal = constantService.getAccountingJournalANouveau();
         if (aNouveauJournal == null)
-            logger.error("Unable to find accounting journal for code " + anouveauAccountingJournalCode);
+            logger.error("Unable to find accounting journal A Nouveau. Check constants");
         return aNouveauJournal;
     }
 }
