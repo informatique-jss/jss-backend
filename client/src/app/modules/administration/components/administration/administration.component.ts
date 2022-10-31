@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterContentChecked, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Observable, Subject } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
@@ -9,7 +9,7 @@ import { AppService } from 'src/app/services/app.service';
   templateUrl: './administration.component.html',
   styleUrls: ['./administration.component.css']
 })
-export class AdministrationComponent implements OnInit {
+export class AdministrationComponent implements OnInit, AfterContentChecked {
 
   selectedReferential: string = "";
   filteredReferentials: Observable<string[]> | undefined;
@@ -81,6 +81,7 @@ export class AdministrationComponent implements OnInit {
 
   constructor(private appService: AppService,
     private formBuilder: FormBuilder,
+    private changeDetectorRef: ChangeDetectorRef
   ) { }
 
   ngOnInit() {
@@ -152,6 +153,10 @@ export class AdministrationComponent implements OnInit {
   referentialForm = this.formBuilder.group({
     entity: ['', []],
   });
+
+  ngAfterContentChecked(): void {
+    this.changeDetectorRef.detectChanges();
+  }
 
   saveEntity() {
     if (this.selectedEntity) {

@@ -10,6 +10,453 @@
               </radio-group-billing-label>
             </td>
           </tr>
+          <tr>
+            <td>
+              <radio-group-billing-label [(model)]="constant.billingLabelTypeCustomer" [form]="constantForm"
+                propertyName="billingLabelTypeCustomer" label="Libellé sur facture - Client">
+              </radio-group-billing-label>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <radio-group-billing-label [(model)]="constant.billingLabelTypeOther" [form]="constantForm"
+                propertyName="billingLabelTypeOther" label="Libellé sur facture - Autres">
+              </radio-group-billing-label>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-accounting-journal [(model)]="constant.accountingJournalANouveau" [form]="constantForm"
+                propertyName="accountingJournalANouveau" label="Journal de comptabilité - A Nouveau">
+              </select-accounting-journal>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-accounting-journal [(model)]="constant.accountingJournalPurchases" [form]="constantForm"
+                propertyName="accountingJournalPurchases" label="Journal de comptabilité - Achats">
+              </select-accounting-journal>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-accounting-journal [(model)]="constant.accountingJournalSales" [form]="constantForm"
+                propertyName="accountingJournalSales" label="Journal de comptabilité - Ventes">
+              </select-accounting-journal>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-tiers-type [(model)]="constant.tiersTypeProspect" [form]="constantForm"
+                propertyName="tiersTypeProspect" label="Type de tiers - prospect">
+              </select-tiers-type>>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-document-type [(model)]="constant.documentTypePublication"
+                label="Type de document - Justificatif de parution" [form]="constantForm"
+                propertyName="documentTypePublication" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-document-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-document-type [(model)]="constant.documentTypeCfe" label="Type de document - CFE"
+                [form]="constantForm" propertyName="documentTypeCfe" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-document-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-document-type [(model)]="constant.documentTypeKbis" label="Type de document - KBIS"
+                [form]="constantForm" propertyName="documentTypeKbis" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-document-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-document-type [(model)]="constant.documentTypeBilling" label="Type de document - Facturation"
+                [form]="constantForm" propertyName="documentTypeBilling" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-document-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-document-type [(model)]="constant.documentTypeDunning" label="Type de document - Relance"
+                [form]="constantForm" propertyName="documentTypeDunning" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-document-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-document-type [(model)]="constant.documentTypeRefund" label="Type de document - Remboursement"
+                [form]="constantForm" propertyName="documentTypeRefund" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-document-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-document-type [(model)]="constant.documentTypeBillingClosure"
+                label="Type de document - Relevés de compte" [form]="constantForm"
+                propertyName="documentTypeBillingClosure" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-document-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-document-type [(model)]="constant.documentTypeProvisionnalReceipt"
+                label="Type de document - Provision" [form]="constantForm"
+                propertyName="documentTypeProvisionnalReceipt" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-document-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-document-type [(model)]="constant.documentTypeProofReading"
+                label="Type de document - Preuve de relecture" [form]="constantForm"
+                propertyName="documentTypeProofReading" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-document-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-document-type [(model)]="constant.documentTypePublicationCertificate"
+                label="Type de document - Attestation de parution" [form]="constantForm"
+                propertyName="documentTypePublicationCertificate" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-document-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-document-type [(model)]="constant.documentTypeQuotation"
+                label="Type de document - Devis / commande" [form]="constantForm" propertyName="documentTypeQuotation"
+                [isMandatory]="true" [isDisabled]="!editMode">
+              </select-document-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-attachment-type [(model)]="constant.attachmentTypeKbis" label="Type de pièce-jointe - KBIS"
+                [form]="constantForm" propertyName="attachmentTypeKbis" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-attachment-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-attachment-type [(model)]="constant.attachmentTypeCni" label="Type de pièce-jointe - CNI"
+                [form]="constantForm" propertyName="attachmentTypeCni" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-attachment-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-attachment-type [(model)]="constant.attachmentTypeLogo" label="Type de pièce-jointe - Logo"
+                [form]="constantForm" propertyName="attachmentTypeLogo" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-attachment-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-attachment-type [(model)]="constant.attachmentTypeProofOfAddress"
+                label="Type de pièce-jointe - Justificatif de domicile" [form]="constantForm"
+                propertyName="attachmentTypeProofOfAddress" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-attachment-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-country [(model)]="constant.countryFrance" [form]="constantForm" label="Pays - France"
+                propertyName="countryFrance" [isMandatory]="true" [isDisabled]="!editMode"></autocomplete-country>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-country [(model)]="constant.countryMonaco" [form]="constantForm" label="Pays - Monaco"
+                propertyName="countryMonaco" [isMandatory]="true" [isDisabled]="!editMode"></autocomplete-country>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-billing-type [(model)]="constant.billingTypeLogo" label="Type de poste de facturation - Logo"
+                [form]="constantForm" propertyName="billingTypeLogo" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-billing-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <radio-group-quotation-label-type [(model)]="constant.quotationLabelTypeOther" [form]="constantForm"
+                propertyName="quotationLabelTypeOther" label="Libellé sur devis - Autres">
+              </radio-group-quotation-label-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-payment-types [(model)]="constant.paymentTypeCheques" label="Type de paiement - chèques"
+                [form]="constantForm" propertyName="paymentTypeCheques" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-payment-types>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-payment-types [(model)]="constant.paymentTypePrelevement" label="Type de paiement - prélèvement"
+                [form]="constantForm" propertyName="paymentTypePrelevement" [isMandatory]="true"
+                [isDisabled]="!editMode"></select-payment-types>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-payment-types [(model)]="constant.paymentTypeOther" label="Type de paiement - autres"
+                [form]="constantForm" propertyName="paymentTypeOther" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-payment-types>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-payment-types [(model)]="constant.paymentTypeVirement" label="Type de paiement - virement"
+                [form]="constantForm" propertyName="paymentTypeVirement" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-payment-types>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-refund-type [(model)]="constant.refundTypeVirement" label="Type de remboursement - virement"
+                [form]="constantForm" propertyName="refundTypeVirement" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-refund-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-subscription-period [(model)]="constant.subscriptionPeriodType12M"
+                label="Période de souscription - 12 mois" [form]="constantForm" propertyName="subscriptionPeriodType12M"
+                [isMandatory]="true" [isDisabled]="!editMode"></select-subscription-period>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-legal-form [(model)]="constant.legalFormUnregistered" [form]="constantForm"
+                propertyName="Forme légale - non enregistré" [isMandatory]="true" [isDisabled]="!editMode">
+              </autocomplete-legal-form>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-journal-type-one [(model)]="constant.journalTypeSpel" label="Type de journal - SPEL"
+                [form]="constantForm" propertyName="journalTypeSpel" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-journal-type-one>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-confrere [(model)]="constant.confrereJss" [form]="constantForm" propertyName="confrereJss"
+                [isMandatory]="true" [isDisabled]="!editMode" label="Confrère - JSS"></autocomplete-confrere>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-contract-type [(model)]="constant.domiciliationContractTypeKeepMail"
+                label="Contrat de domiciliation - conservation du courrier" [form]="constantForm"
+                propertyName="domiciliationContractTypeKeepMail" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-contract-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-contract-type [(model)]="constant.domiciliationContractTypeKeepEmail"
+                label="Contrat de domiciliation - conservation des mails" [form]="constantForm"
+                propertyName="domiciliationContractTypeKeepEmail" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-contract-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-contract-type [(model)]="constant.domiciliationContractTypeRouteMail"
+                label="Contrat de domiciliation - redirection du courrier" [form]="constantForm"
+                propertyName="domiciliationContractTypeRouteMail" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-contract-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-contract-type [(model)]="constant.domiciliationContractTypeRouteEmail"
+                label="Contrat de domiciliation - redirection des mails" [form]="constantForm"
+                propertyName="domiciliationContractTypeRouteEmail" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-contract-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-mail-redirection [(model)]="constant.mailRedirectionTypeOther"
+                label="Type de redirection du courier - autres" [form]="constantForm"
+                propertyName="mailRedirectionTypeOther" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-mail-redirection>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-bodacc-publication-type [(model)]="constant.bodaccPublicationTypeEstateRepresentativeDesignation"
+                label="BODACC - Type de publication - Désignation du mandataire successoral" [form]="constantForm"
+                propertyName="bodaccPublicationTypeEstateRepresentativeDesignation" [isMandatory]="true"
+                [isDisabled]="!editMode"></select-bodacc-publication-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-bodacc-publication-type [(model)]="constant.bodaccPublicationTypeMerging"
+                label="BODACC - Type de publication - Fusion" [form]="constantForm"
+                propertyName="bodaccPublicationTypeMerging" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-bodacc-publication-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-bodacc-publication-type [(model)]="constant.bodaccPublicationTypePartialSplit"
+                label="BODACC - Type de publication - Scission partielle" [form]="constantForm"
+                propertyName="bodaccPublicationTypePartialSplit" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-bodacc-publication-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-bodacc-publication-type [(model)]="constant.bodaccPublicationTypePossessionDispatch"
+                label="BODACC - Type de publication - Envoi en possession" [form]="constantForm"
+                propertyName="bodaccPublicationTypePossessionDispatch" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-bodacc-publication-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-bodacc-publication-type [(model)]="constant.bodaccPublicationTypeSaleOfBusiness"
+                label="BODACC - Type de publication - Cession de fond de commerce" [form]="constantForm"
+                propertyName="bodaccPublicationTypeSaleOfBusiness" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-bodacc-publication-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-bodacc-publication-type [(model)]="constant.bodaccPublicationTypeSplit"
+                label="BODACC - Type de publication - Scission" [form]="constantForm"
+                propertyName="bodaccPublicationTypeSplit" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-bodacc-publication-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <radio-group-act-type [(model)]="constant.actTypeAuthentic" [form]="constantForm"
+                propertyName="actTypeAuthentic" label="Type d'acte - acte authentique"></radio-group-act-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <radio-group-act-type [(model)]="constant.actTypeSeing" [form]="constantForm" propertyName="actTypeSeing"
+                label="Type d'acte - seing privé"></radio-group-act-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-assignation-type [(model)]="constant.assignationTypeEmployee"
+                label="Assignation par défaut - employé" [form]="constantForm" propertyName="assignationTypeEmployee"
+                [isMandatory]="true" [isDisabled]="!editMode">
+              </select-assignation-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <radio-group-transfert-funds [(model)]="constant.transfertFundsTypeBail" [form]="constantForm"
+                propertyName="transfertFundsTypeBail" label="Type de transfert de fonds - bail">
+              </radio-group-transfert-funds>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <radio-group-transfert-funds [(model)]="constant.transfertFundsTypeMoral" [form]="constantForm"
+                propertyName="transfertFundsTypeMoral" label="Type de transfert de fonds - personne morale">
+              </radio-group-transfert-funds>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <radio-group-transfert-funds [(model)]="constant.transfertFundsTypePhysique" [form]="constantForm"
+                propertyName="transfertFundsTypeMoral" label="Type de transfert de fonds - personne physique">
+              </radio-group-transfert-funds>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-competent-authority-type [(model)]="constant.competentAuthorityTypeCfp"
+                label="Type d'authorité compétente - CFP" [form]="constantForm" propertyName="competentAuthorityTypeCfp"
+                [isMandatory]="true" [isDisabled]="!editMode"></select-competent-authority-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-competent-authority-type [(model)]="constant.competentAuthorityTypeRcs"
+                label="Type d'authorité compétente - TCS" [form]="constantForm" propertyName="competentAuthorityTypeRcs"
+                [isMandatory]="true" [isDisabled]="!editMode"></select-competent-authority-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-invoice-status-one [(model)]="constant.invoiceStatusPayed" label="Statut de facture - payée"
+                [form]="constantForm" propertyName="invoiceStatusPayed" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-invoice-status-one>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-invoice-status-one [(model)]="constant.invoiceStatusSend" label="Statut de facture - envoyée"
+                [form]="constantForm" propertyName="invoiceStatusSend" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-invoice-status-one>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-payment-way-one [(model)]="constant.paymentWayInbound" label="Sens de paiement - entrant"
+                [form]="constantForm" propertyName="paymentWayInbound" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-payment-way-one>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-payment-way-one [(model)]="constant.paymentWayOutboud" label="Sens de paiement - sortant"
+                [form]="constantForm" propertyName="paymentWayOutboud" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-payment-way-one>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-vat [(model)]="constant.vatTwenty" label="Taux de TVA - 20%" [form]="constantForm"
+                propertyName="vatTwenty" [isMandatory]="true" [isDisabled]="!editMode"></select-vat>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-vat [(model)]="constant.vatEight" label="Taux de TVA - 8.5%" [form]="constantForm"
+                propertyName="vatEight" [isMandatory]="true" [isDisabled]="!editMode"></select-vat>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-department [(model)]="constant.departmentGuadeloupe" label="Département - Guadeloupe"
+                [form]="constantForm" propertyName="departmentGuadeloupe" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-department>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-department [(model)]="constant.departmentMartinique" label="Département - Martinique"
+                [form]="constantForm" propertyName="departmentMartinique" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-department>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-department [(model)]="constant.departmentReunion" label="Département - Réunion"
+                [form]="constantForm" propertyName="departmentReunion" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-department>
+            </td>
+          </tr>
+
         </table>
       </fieldset>
     </div>

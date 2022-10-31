@@ -16,5 +16,4 @@ public interface VatService {
 
     public Vat addOrUpdateVat(Vat vat);
 
-    public Vat getVatByCode(String code);
 }

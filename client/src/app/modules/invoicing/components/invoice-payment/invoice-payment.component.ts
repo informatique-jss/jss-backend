@@ -1,9 +1,9 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { INVOICING_STATUS_SENT } from 'src/app/libs/Constants';
 import { formatDateTimeForSortTable, formatEurosForSortTable } from 'src/app/libs/FormatHelper';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
+import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { Invoice } from 'src/app/modules/quotation/model/Invoice';
 import { AppService } from 'src/app/services/app.service';
 import { Payment } from '../../model/Payment';
@@ -24,10 +24,11 @@ export class InvoicePaymentComponent implements OnInit {
 
   @Output() stateChanged = new EventEmitter<void>();
 
-  INVOICING_STATUS_SENT = INVOICING_STATUS_SENT;
+  invoiceStatusSend = this.constantService.getInvoiceStatusSend();
 
   constructor(private paymentService: PaymentService,
     private appService: AppService,
+    private constantService: ConstantService,
     public associatePaymentDialog: MatDialog) { }
 
   ngOnInit() {

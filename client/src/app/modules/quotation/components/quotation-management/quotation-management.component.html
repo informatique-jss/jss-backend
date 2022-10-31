@@ -32,12 +32,12 @@
                   </radio-group-quotation-label-type>
                 </td>
                 <td
-                  *ngIf="quotation.labelType!=undefined && quotation.labelType.code!=undefined && quotation.labelType.code==QUOTATION_TYPE_OTHER_CODE">
+                  *ngIf="quotation.labelType!=undefined && quotation.labelType.code!=undefined && quotation.labelType.id==quotationLabelTypeOther.id">
                   <generic-textarea [(model)]="quotation.quotationLabel"
                     [label]="'Autre libellé sur '+ (!instanceOfQuotation(quotation) ? 'commande' : 'devis')"
                     [form]="quotationManagementForm" propertyName="quotationLabel" [isMandatory]="true"
                     [isDisabled]="!editMode"
-                    [conditionnalRequired]="quotation.labelType.code==QUOTATION_TYPE_OTHER_CODE">
+                    [conditionnalRequired]="quotation.labelType.id==quotationLabelTypeOther.id">
                   </generic-textarea>
                 </td>
               </tr>

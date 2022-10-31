@@ -40,12 +40,7 @@ public class BillingItemServiceImpl implements BillingItemService {
     @Transactional(rollbackFor = Exception.class)
     public BillingItem addOrUpdateBillingItem(
             BillingItem billingItem) throws Exception {
-        return addOrUpdateBillingItem(billingItem, false);
+        return billingItemRepository.save(billingItem);
     }
 
-    @Override
-    public BillingItem addOrUpdateBillingItem(
-            BillingItem billingItem, boolean mustBeChargeOrProduct) throws Exception {
-        return this.getBillingItem(billingItem.getId());
-    }
 }

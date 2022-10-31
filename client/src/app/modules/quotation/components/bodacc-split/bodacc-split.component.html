@@ -76,7 +76,7 @@
                   [form]="bodaccSplitForm" [propertyName]="'beneficiaryCompanyRcsCompetentAuthority'+i"
                   [isMandatory]="true" label="Immatriculé au RCS"
                   [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen"
-                  [filteredCompetentAuthorityTypeCode]="COMPETENT_AUTHORITY_TYPE_RCS_CODE">
+                  [filteredCompetentAuthorityType]="competentAuthorityTypeRcs">
                 </autocomplete-competent-authority>
               </td>
             </tr>
@@ -151,7 +151,7 @@
                 <autocomplete-competent-authority [(model)]="splitCompany.splitCompanyRcsCompetentAuthority"
                   [form]="bodaccSplitForm" [propertyName]="'splitCompanyRcsCompetentAuthority'+i" [isMandatory]="true"
                   [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" label="Immatriculé au RCS"
-                  [filteredCompetentAuthorityTypeCode]="COMPETENT_AUTHORITY_TYPE_RCS_CODE">
+                  [filteredCompetentAuthorityType]="competentAuthorityTypeRcs">
                 </autocomplete-competent-authority>
               </td>
             </tr>

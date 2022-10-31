@@ -40,5 +40,4 @@ public interface InvoiceService {
 
     public void reindexInvoices();
 
-    public Invoice addOrUpdateInvoiceFromUser(Invoice invoice) throws Exception;
 }

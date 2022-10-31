@@ -2,9 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
-import { INVOICING_PAYMENT_LIMIT_REFUND_EUROS, INVOICING_STATUS_SENT, QUOTATION_STATUS_WAITING_DEPOSIT } from 'src/app/libs/Constants';
+import { INVOICING_PAYMENT_LIMIT_REFUND_EUROS, QUOTATION_STATUS_WAITING_DEPOSIT } from 'src/app/libs/Constants';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
+import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { QuotationComponent } from 'src/app/modules/quotation/components/quotation/quotation.component';
 import { Affaire } from 'src/app/modules/quotation/model/Affaire';
 import { Confrere } from 'src/app/modules/quotation/model/Confrere';
@@ -37,8 +38,9 @@ export class AssociatePaymentDialogComponent implements OnInit {
   refreshTable: Subject<void> = new Subject<void>();
 
   QUOTATION_STATUS_WAITING_DEPOSIT = QUOTATION_STATUS_WAITING_DEPOSIT;
-  INVOICING_STATUS_SENT = INVOICING_STATUS_SENT;
   INVOICING_PAYMENT_LIMIT_REFUND_EUROS: number = INVOICING_PAYMENT_LIMIT_REFUND_EUROS;
+
+  invoiceStatusSend = this.constantService.getInvoiceStatusSend();
 
   getAmountRemaining = getAmountRemaining;
 
@@ -46,6 +48,7 @@ export class AssociatePaymentDialogComponent implements OnInit {
     private appService: AppService,
     public amountDialog: MatDialog,
     private paymentService: PaymentService,
+    private constantService: ConstantService,
     private formBuilder: FormBuilder,
   ) { }
 
@@ -142,7 +145,7 @@ export class AssociatePaymentDialogComponent implements OnInit {
           this.appService.displaySnackBar("Cette facture est déjà associée à ce paiement", true, 15);
           return;
         }
-    if (invoice.invoiceStatus.code != INVOICING_STATUS_SENT) {
+    if (invoice.invoiceStatus.id != this.invoiceStatusSend.id) {
       this.appService.displaySnackBar("Veuillez choisir une facture au statut Envoyé", true, 15);
       return;
     }

@@ -39,6 +39,7 @@ import com.jss.osiris.modules.accounting.service.AccountingAccountClassService;
 import com.jss.osiris.modules.accounting.service.AccountingAccountService;
 import com.jss.osiris.modules.accounting.service.AccountingJournalService;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
+import com.jss.osiris.modules.invoicing.service.InvoiceAndAccountRecordDelegate;
 
 @RestController
 public class AccountingController {
@@ -63,6 +64,9 @@ public class AccountingController {
 
     @Autowired
     AccountingJournalService accountingJournalService;
+
+    @Autowired
+    InvoiceAndAccountRecordDelegate invoiceAndAccountRecordDelegate;
 
     @PostMapping(inputEntryPoint + "/accounting-records/manual/add")
     public ResponseEntity<List<AccountingRecord>> addOrUpdateAccountingRecords(
@@ -182,7 +186,8 @@ public class AccountingController {
 
         List<AccountingRecord> accountingRecords = null;
         try {
-            accountingRecords = accountingRecordService.deleteRecordsByTemporaryOperationId(temporaryOperationId);
+            accountingRecords = invoiceAndAccountRecordDelegate
+                    .deleteRecordsByTemporaryOperationId(temporaryOperationId);
         } catch (HttpStatusCodeException e) {
             logger.error("HTTP error when fetching accountingRecord", e);
             return new ResponseEntity<List<AccountingRecord>>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -218,7 +223,7 @@ public class AccountingController {
 
         List<AccountingRecord> accountingRecords = null;
         try {
-            accountingRecords = accountingRecordService.doCounterPartByOperationId(operationId);
+            accountingRecords = invoiceAndAccountRecordDelegate.doCounterPartByOperationId(operationId);
         } catch (HttpStatusCodeException e) {
             logger.error("HTTP error when fetching accountingRecord", e);
             return new ResponseEntity<List<AccountingRecord>>(HttpStatus.INTERNAL_SERVER_ERROR);

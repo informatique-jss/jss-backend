@@ -1,12 +1,13 @@
 import { Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
-import { BODACC_PUBLICATION_TYPE_ESTATE_REPRESENTATIVE_DESIGNATION, BODACC_PUBLICATION_TYPE_MERGING, BODACC_PUBLICATION_TYPE_PARTIAL_SPLIT, BODACC_PUBLICATION_TYPE_POSSESSION_DISPATCH, BODACC_PUBLICATION_TYPE_SALE_OF_BUSINESS, BODACC_PUBLICATION_TYPE_SPLIT, COMPETENT_AUTHORITY_TYPE_RCS_CODE, PAYMENT_TYPE_VIREMENT } from 'src/app/libs/Constants';
+import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { BODACC_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { ActType } from '../../model/ActType';
 import { Affaire } from '../../model/Affaire';
 import { Bodacc } from '../../model/Bodacc';
 import { BodaccFusion } from '../../model/BodaccFusion';
+import { BodaccPublicationType } from '../../model/BodaccPublicationType';
 import { BodaccSale } from '../../model/BodaccSale';
 import { BodaccSplit } from '../../model/BodaccSplit';
 import { Provision } from '../../model/Provision';
@@ -36,18 +37,18 @@ export class BodaccMainComponent implements OnInit {
   @ViewChild('tabs', { static: false }) tabs: any;
 
   BODACC_ENTITY_TYPE = BODACC_ENTITY_TYPE;
-  BODACC_PUBLICATION_TYPE_SALE_OF_BUSINESS = BODACC_PUBLICATION_TYPE_SALE_OF_BUSINESS;
-  BODACC_PUBLICATION_TYPE_SPLIT = BODACC_PUBLICATION_TYPE_SPLIT;
-  BODACC_PUBLICATION_TYPE_PARTIAL_SPLIT = BODACC_PUBLICATION_TYPE_PARTIAL_SPLIT;
-  BODACC_PUBLICATION_TYPE_MERGING = BODACC_PUBLICATION_TYPE_MERGING;
-  BODACC_PUBLICATION_TYPE_POSSESSION_DISPATCH = BODACC_PUBLICATION_TYPE_POSSESSION_DISPATCH;
-  BODACC_PUBLICATION_TYPE_ESTATE_REPRESENTATIVE_DESIGNATION = BODACC_PUBLICATION_TYPE_ESTATE_REPRESENTATIVE_DESIGNATION;
-  PAYMENT_TYPE_VIREMENT = PAYMENT_TYPE_VIREMENT;
-  COMPETENT_AUTHORITY_TYPE_RCS_CODE = COMPETENT_AUTHORITY_TYPE_RCS_CODE;
+
+  bodaccPublicationTypeMerging: BodaccPublicationType = this.constantService.getBodaccPublicationTypeMerging();
+  bodaccPublicationTypeSplit: BodaccPublicationType = this.constantService.getBodaccPublicationTypeSplit();
+  bodaccPublicationTypePartialSplit: BodaccPublicationType = this.constantService.getBodaccPublicationTypePartialSplit();
+  bodaccPublicationTypePossessionDispatch: BodaccPublicationType = this.constantService.getBodaccPublicationTypePossessionDispatch();
+  bodaccPublicationTypeEstateRepresentativeDesignation: BodaccPublicationType = this.constantService.getBodaccPublicationTypeEstateRepresentativeDesignation();
+  bodaccPublicationTypeSaleOfBusiness: BodaccPublicationType = this.constantService.getBodaccPublicationTypeSaleOfBusiness();
 
   actTypes: ActType[] = [] as Array<ActType>;
 
   constructor(private formBuilder: UntypedFormBuilder,
+    private constantService: ConstantService,
     private actTypeService: ActTypeService,
   ) { }
 
@@ -73,19 +74,19 @@ export class BodaccMainComponent implements OnInit {
 
   changePublicationType() {
     if (this.bodacc?.bodaccPublicationType &&
-      this.bodacc?.bodaccPublicationType.code == BODACC_PUBLICATION_TYPE_SALE_OF_BUSINESS
+      this.bodacc?.bodaccPublicationType.id == this.bodaccPublicationTypeSaleOfBusiness.id
       && !this.bodacc.bodaccSale) {
       this.bodacc.bodaccSale = {} as BodaccSale;
       this.bodacc.bodaccSale.actType = this.actTypes[0];
     }
 
     if (this.bodacc?.bodaccPublicationType &&
-      this.bodacc?.bodaccPublicationType.code == BODACC_PUBLICATION_TYPE_MERGING
+      this.bodacc?.bodaccPublicationType.id == this.bodaccPublicationTypeMerging.id
       && !this.bodacc.bodaccFusion)
       this.bodacc.bodaccFusion = {} as BodaccFusion;
 
     if (this.bodacc?.bodaccPublicationType &&
-      this.bodacc?.bodaccPublicationType.code == BODACC_PUBLICATION_TYPE_SPLIT
+      this.bodacc?.bodaccPublicationType.id == this.bodaccPublicationTypeSplit.id
       && !this.bodacc.bodaccSplit)
       this.bodacc.bodaccSplit = {} as BodaccSplit;
   }

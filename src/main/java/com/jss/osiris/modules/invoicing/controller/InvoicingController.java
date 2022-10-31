@@ -7,7 +7,6 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,6 +26,7 @@ import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.model.PaymentAssociate;
 import com.jss.osiris.modules.invoicing.model.PaymentSearch;
 import com.jss.osiris.modules.invoicing.model.PaymentWay;
+import com.jss.osiris.modules.invoicing.service.InvoiceAndAccountRecordDelegate;
 import com.jss.osiris.modules.invoicing.service.InvoiceHelper;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.invoicing.service.InvoiceStatusService;
@@ -63,8 +63,8 @@ public class InvoicingController {
     @Autowired
     PaymentWayService paymentWayService;
 
-    @Value("${invoicing.invoice.status.send.code}")
-    private String invoiceStatusSendCode;
+    @Autowired
+    InvoiceAndAccountRecordDelegate invoiceAndAccountRecordDelegate;
 
     @Autowired
     ConstantService constantService;
@@ -189,7 +189,7 @@ public class InvoicingController {
                             && invoice.getId().equals(paymentAssociate.getPayment().getInvoice().getId()))
                         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
-                    if (!invoice.getInvoiceStatus().getCode().equals(invoiceStatusSendCode))
+                    if (!invoice.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusSend().getId()))
                         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
                 }
             }
@@ -379,7 +379,7 @@ public class InvoicingController {
                 }
             }
 
-            outInvoice = invoiceService.addOrUpdateInvoiceFromUser(invoice);
+            outInvoice = invoiceAndAccountRecordDelegate.addOrUpdateInvoiceFromUser(invoice);
         } catch (
 
         ResponseStatusException e) {

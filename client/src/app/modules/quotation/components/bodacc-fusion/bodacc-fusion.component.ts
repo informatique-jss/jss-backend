@@ -2,7 +2,7 @@ import { Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/cor
 import { UntypedFormBuilder } from '@angular/forms';
 import { MatAccordion } from '@angular/material/expansion';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
-import { COMPETENT_AUTHORITY_TYPE_RCS_CODE } from 'src/app/libs/Constants';
+import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { BodaccFusion } from '../../model/BodaccFusion';
 import { BodaccFusionAbsorbedCompany } from '../../model/BodaccFusionAbsorbedCompany';
 import { BodaccFusionMergingCompany } from '../../model/BodaccFusionMergingCompany';
@@ -22,9 +22,10 @@ export class BodaccFusionComponent implements OnInit {
   @Input() editMode: boolean = false;
   @ViewChild(MatAccordion) accordion: MatAccordion | undefined;
 
-  COMPETENT_AUTHORITY_TYPE_RCS_CODE = COMPETENT_AUTHORITY_TYPE_RCS_CODE;
+  competentAuthorityTypeRcs = this.constantService.getCompetentAuthorityTypeRcs();
 
   constructor(private formBuilder: UntypedFormBuilder,
+    private constantService: ConstantService,
   ) { }
 
   ngOnInit() {

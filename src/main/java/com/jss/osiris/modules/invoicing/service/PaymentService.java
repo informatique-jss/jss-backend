@@ -26,4 +26,6 @@ public interface PaymentService {
             List<Invoice> correspondingInvoices, List<CustomerOrder> correspondingCustomerOrder, Affaire affaireRefund,
             ITiers tiersRefund, List<Float> byPassAmount) throws Exception;
 
+    public void unlinkPaymentFromInvoiceCustomerOrder(Payment payment);
+
 }

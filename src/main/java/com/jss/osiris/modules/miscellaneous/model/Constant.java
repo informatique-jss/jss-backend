@@ -10,7 +10,20 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import com.jss.osiris.modules.accounting.model.AccountingJournal;
+import com.jss.osiris.modules.invoicing.model.InvoiceStatus;
+import com.jss.osiris.modules.invoicing.model.PaymentWay;
+import com.jss.osiris.modules.quotation.model.ActType;
+import com.jss.osiris.modules.quotation.model.AssignationType;
+import com.jss.osiris.modules.quotation.model.BodaccPublicationType;
+import com.jss.osiris.modules.quotation.model.Confrere;
+import com.jss.osiris.modules.quotation.model.DomiciliationContractType;
+import com.jss.osiris.modules.quotation.model.JournalType;
+import com.jss.osiris.modules.quotation.model.MailRedirectionType;
+import com.jss.osiris.modules.quotation.model.QuotationLabelType;
+import com.jss.osiris.modules.quotation.model.TransfertFundsType;
 import com.jss.osiris.modules.tiers.model.BillingLabelType;
+import com.jss.osiris.modules.tiers.model.RefundType;
+import com.jss.osiris.modules.tiers.model.SubscriptionPeriodType;
 import com.jss.osiris.modules.tiers.model.TiersType;
 
 @Entity
@@ -94,19 +107,19 @@ public class Constant implements Serializable, IId {
 
 	@ManyToOne
 	@JoinColumn(name = "id_attachment_type_kbis")
-	private DocumentType attachmentTypeKbis;
+	private AttachmentType attachmentTypeKbis;
 
 	@ManyToOne
 	@JoinColumn(name = "id_attachment_type_cni")
-	private DocumentType attachmentTypeCni;
+	private AttachmentType attachmentTypeCni;
 
 	@ManyToOne
 	@JoinColumn(name = "id_attachment_type_logo")
-	private DocumentType attachmentTypeLogo;
+	private AttachmentType attachmentTypeLogo;
 
 	@ManyToOne
 	@JoinColumn(name = "id_attachment_type_proof_of_address")
-	private DocumentType attachmentTypeProofOfAddress;
+	private AttachmentType attachmentTypeProofOfAddress;
 
 	@ManyToOne
 	@JoinColumn(name = "id_country_france")
@@ -119,6 +132,158 @@ public class Constant implements Serializable, IId {
 	@ManyToOne
 	@JoinColumn(name = "id_billing_type_logo")
 	private BillingType billingTypeLogo;
+
+	@ManyToOne
+	@JoinColumn(name = "id_quotation_label_type_other")
+	private QuotationLabelType quotationLabelTypeOther;
+
+	@ManyToOne
+	@JoinColumn(name = "id_payment_type_prelevement")
+	private PaymentType paymentTypePrelevement;
+
+	@ManyToOne
+	@JoinColumn(name = "id_payment_type_cheques")
+	private PaymentType paymentTypeCheques;
+
+	@ManyToOne
+	@JoinColumn(name = "id_payment_type_other")
+	private PaymentType paymentTypeOther;
+
+	@ManyToOne
+	@JoinColumn(name = "id_payment_type_virement")
+	private PaymentType paymentTypeVirement;
+
+	@ManyToOne
+	@JoinColumn(name = "id_refund_type_virement")
+	private RefundType refundTypeVirement;
+
+	@ManyToOne
+	@JoinColumn(name = "id_subscription_period_type_12m")
+	private SubscriptionPeriodType subscriptionPeriodType12M;
+
+	@ManyToOne
+	@JoinColumn(name = "id_legal_form_unregistered")
+	private LegalForm legalFormUnregistered;
+
+	@ManyToOne
+	@JoinColumn(name = "id_journal_type_spel")
+	private JournalType journalTypeSpel;
+
+	@ManyToOne
+	@JoinColumn(name = "id_confrere_jss")
+	private Confrere confrereJss;
+
+	@ManyToOne
+	@JoinColumn(name = "id_domiciliation_constract_type_keep_mail")
+	private DomiciliationContractType domiciliationContractTypeKeepMail;
+
+	@ManyToOne
+	@JoinColumn(name = "id_domiciliation_constract_type_route_mail")
+	private DomiciliationContractType domiciliationContractTypeRouteMail;
+
+	@ManyToOne
+	@JoinColumn(name = "id_domiciliation_constract_type_keep_email")
+	private DomiciliationContractType domiciliationContractTypeKeepEmail;
+
+	@ManyToOne
+	@JoinColumn(name = "id_domiciliation_constract_type_route_email")
+	private DomiciliationContractType domiciliationContractTypeRouteEmail;
+
+	@ManyToOne
+	@JoinColumn(name = "id_mail_redirection_type_other")
+	private MailRedirectionType mailRedirectionTypeOther;
+
+	@ManyToOne
+	@JoinColumn(name = "id_bodacc_publication_type_merging")
+	private BodaccPublicationType bodaccPublicationTypeMerging;
+
+	@ManyToOne
+	@JoinColumn(name = "id_bodacc_publication_type_split")
+	private BodaccPublicationType bodaccPublicationTypeSplit;
+
+	@ManyToOne
+	@JoinColumn(name = "id_bodacc_publication_type_partial_split")
+	private BodaccPublicationType bodaccPublicationTypePartialSplit;
+
+	@ManyToOne
+	@JoinColumn(name = "id_bodacc_publication_type_possession_dispatch")
+	private BodaccPublicationType bodaccPublicationTypePossessionDispatch;
+
+	@ManyToOne
+	@JoinColumn(name = "id_bodacc_publication_type_estate_representative_designation")
+	private BodaccPublicationType bodaccPublicationTypeEstateRepresentativeDesignation;
+
+	@ManyToOne
+	@JoinColumn(name = "id_bodacc_publication_type_sale_of_business")
+	private BodaccPublicationType bodaccPublicationTypeSaleOfBusiness;
+
+	@ManyToOne
+	@JoinColumn(name = "id_act_type_seing")
+	private ActType actTypeSeing;
+
+	@ManyToOne
+	@JoinColumn(name = "id_act_type_authentic")
+	private ActType actTypeAuthentic;
+
+	@ManyToOne
+	@JoinColumn(name = "id_assignation_type_employee")
+	private AssignationType assignationTypeEmployee;
+
+	@ManyToOne
+	@JoinColumn(name = "id_transfert_funds_type_physique")
+	private TransfertFundsType transfertFundsTypePhysique;
+
+	@ManyToOne
+	@JoinColumn(name = "id_transfert_funds_type_moral")
+	private TransfertFundsType transfertFundsTypeMoral;
+
+	@ManyToOne
+	@JoinColumn(name = "id_transfert_funds_type_bail")
+	private TransfertFundsType transfertFundsTypeBail;
+
+	@ManyToOne
+	@JoinColumn(name = "id_competent_authority_type_rcs")
+	private CompetentAuthorityType competentAuthorityTypeRcs;
+
+	@ManyToOne
+	@JoinColumn(name = "id_competent_authority_type_cfp")
+	private CompetentAuthorityType competentAuthorityTypeCfp;
+
+	@ManyToOne
+	@JoinColumn(name = "id_invoice_status_send")
+	private InvoiceStatus invoiceStatusSend;
+
+	@ManyToOne
+	@JoinColumn(name = "id_invoice_status_payed")
+	private InvoiceStatus invoiceStatusPayed;
+
+	@ManyToOne
+	@JoinColumn(name = "id_payment_way_inbound")
+	private PaymentWay paymentWayInbound;
+
+	@ManyToOne
+	@JoinColumn(name = "id_payment_way_outbound")
+	private PaymentWay paymentWayOutboud;
+
+	@ManyToOne
+	@JoinColumn(name = "id_vat_twenty")
+	private Vat vatTwenty;
+
+	@ManyToOne
+	@JoinColumn(name = "id_vat_eight")
+	private Vat vatEight;
+
+	@ManyToOne
+	@JoinColumn(name = "id_department_martinique")
+	private Department departmentMartinique;
+
+	@ManyToOne
+	@JoinColumn(name = "id_department_guadeloupe")
+	private Department departmentGuadeloupe;
+
+	@ManyToOne
+	@JoinColumn(name = "id_department_reunion")
+	private Department departmentReunion;
 
 	public Integer getId() {
 		return id;
@@ -256,46 +421,6 @@ public class Constant implements Serializable, IId {
 		this.documentTypeQuotation = documentTypeQuotation;
 	}
 
-	public DocumentType getAttachmentTypeKbis() {
-		return attachmentTypeKbis;
-	}
-
-	public void setAttachmentTypeKbis(DocumentType attachmentTypeKbis) {
-		this.attachmentTypeKbis = attachmentTypeKbis;
-	}
-
-	public DocumentType getAttachmentTypeCni() {
-		return attachmentTypeCni;
-	}
-
-	public void setAttachmentTypeCni(DocumentType attachmentTypeCni) {
-		this.attachmentTypeCni = attachmentTypeCni;
-	}
-
-	public DocumentType getAttachmentTypeLogo() {
-		return attachmentTypeLogo;
-	}
-
-	public void setAttachmentTypeLogo(DocumentType attachmentTypeLogo) {
-		this.attachmentTypeLogo = attachmentTypeLogo;
-	}
-
-	public DocumentType getAttachmentTypeProofOfAddress() {
-		return attachmentTypeProofOfAddress;
-	}
-
-	public void setAttachmentTypeProofOfAddress(DocumentType attachmentTypeProofOfAddress) {
-		this.attachmentTypeProofOfAddress = attachmentTypeProofOfAddress;
-	}
-
-	public BillingLabelType getBillingLabelTypeOther() {
-		return billingLabelTypeOther;
-	}
-
-	public void setBillingLabelTypeOther(BillingLabelType billingLabelTypeOther) {
-		this.billingLabelTypeOther = billingLabelTypeOther;
-	}
-
 	public BillingLabelType getBillingLabelTypeCustomer() {
 		return billingLabelTypeCustomer;
 	}
@@ -326,6 +451,352 @@ public class Constant implements Serializable, IId {
 
 	public void setBillingTypeLogo(BillingType billingTypeLogo) {
 		this.billingTypeLogo = billingTypeLogo;
+	}
+
+	public BillingLabelType getBillingLabelTypeOther() {
+		return billingLabelTypeOther;
+	}
+
+	public void setBillingLabelTypeOther(BillingLabelType billingLabelTypeOther) {
+		this.billingLabelTypeOther = billingLabelTypeOther;
+	}
+
+	public AttachmentType getAttachmentTypeKbis() {
+		return attachmentTypeKbis;
+	}
+
+	public void setAttachmentTypeKbis(AttachmentType attachmentTypeKbis) {
+		this.attachmentTypeKbis = attachmentTypeKbis;
+	}
+
+	public AttachmentType getAttachmentTypeCni() {
+		return attachmentTypeCni;
+	}
+
+	public void setAttachmentTypeCni(AttachmentType attachmentTypeCni) {
+		this.attachmentTypeCni = attachmentTypeCni;
+	}
+
+	public AttachmentType getAttachmentTypeLogo() {
+		return attachmentTypeLogo;
+	}
+
+	public void setAttachmentTypeLogo(AttachmentType attachmentTypeLogo) {
+		this.attachmentTypeLogo = attachmentTypeLogo;
+	}
+
+	public AttachmentType getAttachmentTypeProofOfAddress() {
+		return attachmentTypeProofOfAddress;
+	}
+
+	public void setAttachmentTypeProofOfAddress(AttachmentType attachmentTypeProofOfAddress) {
+		this.attachmentTypeProofOfAddress = attachmentTypeProofOfAddress;
+	}
+
+	public QuotationLabelType getQuotationLabelTypeOther() {
+		return quotationLabelTypeOther;
+	}
+
+	public void setQuotationLabelTypeOther(QuotationLabelType quotationLabelTypeOther) {
+		this.quotationLabelTypeOther = quotationLabelTypeOther;
+	}
+
+	public PaymentType getPaymentTypePrelevement() {
+		return paymentTypePrelevement;
+	}
+
+	public void setPaymentTypePrelevement(PaymentType paymentTypePrelevement) {
+		this.paymentTypePrelevement = paymentTypePrelevement;
+	}
+
+	public PaymentType getPaymentTypeCheques() {
+		return paymentTypeCheques;
+	}
+
+	public void setPaymentTypeCheques(PaymentType paymentTypeCheques) {
+		this.paymentTypeCheques = paymentTypeCheques;
+	}
+
+	public PaymentType getPaymentTypeOther() {
+		return paymentTypeOther;
+	}
+
+	public void setPaymentTypeOther(PaymentType paymentTypeOther) {
+		this.paymentTypeOther = paymentTypeOther;
+	}
+
+	public PaymentType getPaymentTypeVirement() {
+		return paymentTypeVirement;
+	}
+
+	public void setPaymentTypeVirement(PaymentType paymentTypeVirement) {
+		this.paymentTypeVirement = paymentTypeVirement;
+	}
+
+	public RefundType getRefundTypeVirement() {
+		return refundTypeVirement;
+	}
+
+	public void setRefundTypeVirement(RefundType refundTypeVirement) {
+		this.refundTypeVirement = refundTypeVirement;
+	}
+
+	public SubscriptionPeriodType getSubscriptionPeriodType12M() {
+		return subscriptionPeriodType12M;
+	}
+
+	public void setSubscriptionPeriodType12M(SubscriptionPeriodType subscriptionPeriodType12M) {
+		this.subscriptionPeriodType12M = subscriptionPeriodType12M;
+	}
+
+	public LegalForm getLegalFormUnregistered() {
+		return legalFormUnregistered;
+	}
+
+	public void setLegalFormUnregistered(LegalForm legalFormUnregistered) {
+		this.legalFormUnregistered = legalFormUnregistered;
+	}
+
+	public JournalType getJournalTypeSpel() {
+		return journalTypeSpel;
+	}
+
+	public void setJournalTypeSpel(JournalType journalTypeSpel) {
+		this.journalTypeSpel = journalTypeSpel;
+	}
+
+	public Confrere getConfrereJss() {
+		return confrereJss;
+	}
+
+	public void setConfrereJss(Confrere confrereJss) {
+		this.confrereJss = confrereJss;
+	}
+
+	public DomiciliationContractType getDomiciliationContractTypeKeepMail() {
+		return domiciliationContractTypeKeepMail;
+	}
+
+	public void setDomiciliationContractTypeKeepMail(DomiciliationContractType domiciliationContractTypeKeepMail) {
+		this.domiciliationContractTypeKeepMail = domiciliationContractTypeKeepMail;
+	}
+
+	public DomiciliationContractType getDomiciliationContractTypeRouteMail() {
+		return domiciliationContractTypeRouteMail;
+	}
+
+	public void setDomiciliationContractTypeRouteMail(DomiciliationContractType domiciliationContractTypeRouteMail) {
+		this.domiciliationContractTypeRouteMail = domiciliationContractTypeRouteMail;
+	}
+
+	public DomiciliationContractType getDomiciliationContractTypeKeepEmail() {
+		return domiciliationContractTypeKeepEmail;
+	}
+
+	public void setDomiciliationContractTypeKeepEmail(DomiciliationContractType domiciliationContractTypeKeepEmail) {
+		this.domiciliationContractTypeKeepEmail = domiciliationContractTypeKeepEmail;
+	}
+
+	public DomiciliationContractType getDomiciliationContractTypeRouteEmail() {
+		return domiciliationContractTypeRouteEmail;
+	}
+
+	public void setDomiciliationContractTypeRouteEmail(DomiciliationContractType domiciliationContractTypeRouteEmail) {
+		this.domiciliationContractTypeRouteEmail = domiciliationContractTypeRouteEmail;
+	}
+
+	public MailRedirectionType getMailRedirectionTypeOther() {
+		return mailRedirectionTypeOther;
+	}
+
+	public void setMailRedirectionTypeOther(MailRedirectionType mailRedirectionTypeOther) {
+		this.mailRedirectionTypeOther = mailRedirectionTypeOther;
+	}
+
+	public BodaccPublicationType getBodaccPublicationTypeMerging() {
+		return bodaccPublicationTypeMerging;
+	}
+
+	public void setBodaccPublicationTypeMerging(BodaccPublicationType bodaccPublicationTypeMerging) {
+		this.bodaccPublicationTypeMerging = bodaccPublicationTypeMerging;
+	}
+
+	public BodaccPublicationType getBodaccPublicationTypeSplit() {
+		return bodaccPublicationTypeSplit;
+	}
+
+	public void setBodaccPublicationTypeSplit(BodaccPublicationType bodaccPublicationTypeSplit) {
+		this.bodaccPublicationTypeSplit = bodaccPublicationTypeSplit;
+	}
+
+	public BodaccPublicationType getBodaccPublicationTypePartialSplit() {
+		return bodaccPublicationTypePartialSplit;
+	}
+
+	public void setBodaccPublicationTypePartialSplit(BodaccPublicationType bodaccPublicationTypePartialSplit) {
+		this.bodaccPublicationTypePartialSplit = bodaccPublicationTypePartialSplit;
+	}
+
+	public BodaccPublicationType getBodaccPublicationTypePossessionDispatch() {
+		return bodaccPublicationTypePossessionDispatch;
+	}
+
+	public void setBodaccPublicationTypePossessionDispatch(
+			BodaccPublicationType bodaccPublicationTypePossessionDispatch) {
+		this.bodaccPublicationTypePossessionDispatch = bodaccPublicationTypePossessionDispatch;
+	}
+
+	public BodaccPublicationType getBodaccPublicationTypeEstateRepresentativeDesignation() {
+		return bodaccPublicationTypeEstateRepresentativeDesignation;
+	}
+
+	public void setBodaccPublicationTypeEstateRepresentativeDesignation(
+			BodaccPublicationType bodaccPublicationTypeEstateRepresentativeDesignation) {
+		this.bodaccPublicationTypeEstateRepresentativeDesignation = bodaccPublicationTypeEstateRepresentativeDesignation;
+	}
+
+	public BodaccPublicationType getBodaccPublicationTypeSaleOfBusiness() {
+		return bodaccPublicationTypeSaleOfBusiness;
+	}
+
+	public void setBodaccPublicationTypeSaleOfBusiness(BodaccPublicationType bodaccPublicationTypeSaleOfBusiness) {
+		this.bodaccPublicationTypeSaleOfBusiness = bodaccPublicationTypeSaleOfBusiness;
+	}
+
+	public ActType getActTypeSeing() {
+		return actTypeSeing;
+	}
+
+	public void setActTypeSeing(ActType actTypeSeing) {
+		this.actTypeSeing = actTypeSeing;
+	}
+
+	public ActType getActTypeAuthentic() {
+		return actTypeAuthentic;
+	}
+
+	public void setActTypeAuthentic(ActType actTypeAuthentic) {
+		this.actTypeAuthentic = actTypeAuthentic;
+	}
+
+	public AssignationType getAssignationTypeEmployee() {
+		return assignationTypeEmployee;
+	}
+
+	public void setAssignationTypeEmployee(AssignationType assignationTypeEmployee) {
+		this.assignationTypeEmployee = assignationTypeEmployee;
+	}
+
+	public TransfertFundsType getTransfertFundsTypePhysique() {
+		return transfertFundsTypePhysique;
+	}
+
+	public void setTransfertFundsTypePhysique(TransfertFundsType transfertFundsTypePhysique) {
+		this.transfertFundsTypePhysique = transfertFundsTypePhysique;
+	}
+
+	public TransfertFundsType getTransfertFundsTypeMoral() {
+		return transfertFundsTypeMoral;
+	}
+
+	public void setTransfertFundsTypeMoral(TransfertFundsType transfertFundsTypeMoral) {
+		this.transfertFundsTypeMoral = transfertFundsTypeMoral;
+	}
+
+	public TransfertFundsType getTransfertFundsTypeBail() {
+		return transfertFundsTypeBail;
+	}
+
+	public void setTransfertFundsTypeBail(TransfertFundsType transfertFundsTypeBail) {
+		this.transfertFundsTypeBail = transfertFundsTypeBail;
+	}
+
+	public CompetentAuthorityType getCompetentAuthorityTypeRcs() {
+		return competentAuthorityTypeRcs;
+	}
+
+	public void setCompetentAuthorityTypeRcs(CompetentAuthorityType competentAuthorityTypeRcs) {
+		this.competentAuthorityTypeRcs = competentAuthorityTypeRcs;
+	}
+
+	public CompetentAuthorityType getCompetentAuthorityTypeCfp() {
+		return competentAuthorityTypeCfp;
+	}
+
+	public void setCompetentAuthorityTypeCfp(CompetentAuthorityType competentAuthorityTypeCfp) {
+		this.competentAuthorityTypeCfp = competentAuthorityTypeCfp;
+	}
+
+	public InvoiceStatus getInvoiceStatusSend() {
+		return invoiceStatusSend;
+	}
+
+	public void setInvoiceStatusSend(InvoiceStatus invoiceStatusSend) {
+		this.invoiceStatusSend = invoiceStatusSend;
+	}
+
+	public PaymentWay getPaymentWayInbound() {
+		return paymentWayInbound;
+	}
+
+	public void setPaymentWayInbound(PaymentWay paymentWayInbound) {
+		this.paymentWayInbound = paymentWayInbound;
+	}
+
+	public InvoiceStatus getInvoiceStatusPayed() {
+		return invoiceStatusPayed;
+	}
+
+	public void setInvoiceStatusPayed(InvoiceStatus invoiceStatusPayed) {
+		this.invoiceStatusPayed = invoiceStatusPayed;
+	}
+
+	public PaymentWay getPaymentWayOutboud() {
+		return paymentWayOutboud;
+	}
+
+	public void setPaymentWayOutboud(PaymentWay paymentWayOutboud) {
+		this.paymentWayOutboud = paymentWayOutboud;
+	}
+
+	public Vat getVatTwenty() {
+		return vatTwenty;
+	}
+
+	public void setVatTwenty(Vat vatTwenty) {
+		this.vatTwenty = vatTwenty;
+	}
+
+	public Vat getVatEight() {
+		return vatEight;
+	}
+
+	public void setVatEight(Vat vatEight) {
+		this.vatEight = vatEight;
+	}
+
+	public Department getDepartmentMartinique() {
+		return departmentMartinique;
+	}
+
+	public void setDepartmentMartinique(Department departmentMartinique) {
+		this.departmentMartinique = departmentMartinique;
+	}
+
+	public Department getDepartmentGuadeloupe() {
+		return departmentGuadeloupe;
+	}
+
+	public void setDepartmentGuadeloupe(Department departmentGuadeloupe) {
+		this.departmentGuadeloupe = departmentGuadeloupe;
+	}
+
+	public Department getDepartmentReunion() {
+		return departmentReunion;
+	}
+
+	public void setDepartmentReunion(Department departmentReunion) {
+		this.departmentReunion = departmentReunion;
 	}
 
 }

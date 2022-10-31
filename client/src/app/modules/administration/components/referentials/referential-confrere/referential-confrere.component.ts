@@ -2,7 +2,6 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatAccordion } from '@angular/material/expansion';
 import { Observable } from 'rxjs';
-import { PAYMENT_TYPE_CHEQUES, PAYMENT_TYPE_OTHERS, PAYMENT_TYPE_PRELEVEMENT, REFUND_TYPE_VIREMENT } from 'src/app/libs/Constants';
 import { getDocument } from 'src/app/libs/DocumentHelper';
 import { City } from 'src/app/modules/miscellaneous/model/City';
 import { PaymentType } from 'src/app/modules/miscellaneous/model/PaymentType';
@@ -11,6 +10,7 @@ import { ConstantService } from 'src/app/modules/miscellaneous/services/constant
 import { PaymentTypeService } from 'src/app/modules/miscellaneous/services/payment.type.service';
 import { Confrere } from 'src/app/modules/quotation/model/Confrere';
 import { ConfrereService } from 'src/app/modules/quotation/services/confrere.service';
+import { RefundType } from 'src/app/modules/tiers/model/RefundType';
 import { AppService } from 'src/app/services/app.service';
 import { Document } from "../../../../miscellaneous/model/Document";
 import { GenericReferentialComponent } from '../generic-referential/generic-referential-component';
@@ -33,13 +33,15 @@ export class ReferentialConfrereComponent extends GenericReferentialComponent<Co
   grades: string[] = ["+", "++", "+++", "++++", "+++++"];
 
   paymentTypes: PaymentType[] = [] as Array<PaymentType>;
-  PAYMENT_TYPE_PRELEVEMENT = PAYMENT_TYPE_PRELEVEMENT;
-  PAYMENT_TYPE_CHEQUES = PAYMENT_TYPE_CHEQUES;
-  PAYMENT_TYPE_OTHERS = PAYMENT_TYPE_OTHERS;
+
+  paymentTypePrelevement = this.constantService.getPaymentTypePrelevement();
+  paymentTypeCheques = this.constantService.getPaymentTypeCheques();
+  paymentTypeOther = this.constantService.getPaymentTypeOther();
+
 
   billingLabelTypeOther = this.constantService.getBillingLabelTypeOther();
 
-  REFUND_TYPE_VIREMENT = REFUND_TYPE_VIREMENT;
+  refundTypeVirement: RefundType = this.constantService.getRefundTypeVirement();
 
   billingDocument: Document = {} as Document;
   dunningDocument: Document = {} as Document;

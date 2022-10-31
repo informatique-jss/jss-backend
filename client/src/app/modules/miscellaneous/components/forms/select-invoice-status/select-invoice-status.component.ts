@@ -17,7 +17,7 @@ export class SelectInvoiceStatusComponent extends GenericMultipleSelectComponent
   /**
  * List of code to autoselect at loading
  */
-  @Input() defaultCodesSelected: string[] | undefined;
+  @Input() defaultStatusSelected: InvoiceStatus[] | undefined;
 
   constructor(private formBuild: UntypedFormBuilder, private invoiceStatusService: InvoiceStatusService, private userNoteService2: UserNoteService,) {
     super(formBuild, userNoteService2)
@@ -26,11 +26,11 @@ export class SelectInvoiceStatusComponent extends GenericMultipleSelectComponent
   initTypes(): void {
     this.invoiceStatusService.getInvoiceStatus().subscribe(response => {
       this.types = response;
-      if (this.defaultCodesSelected) {
+      if (this.defaultStatusSelected) {
         this.model = [];
         for (let type of this.types) {
-          for (let defaultCode of this.defaultCodesSelected) {
-            if (type.code == defaultCode) {
+          for (let defaultStatus of this.defaultStatusSelected) {
+            if (type.id == defaultStatus.id) {
               this.model.push(type);
             }
           }

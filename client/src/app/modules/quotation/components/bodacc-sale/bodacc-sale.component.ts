@@ -2,10 +2,11 @@ import { Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/cor
 import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors } from '@angular/forms';
 import { MatAccordion } from '@angular/material/expansion';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
-import { BODACC_SALE_ACT_TYPE_AUTHENTIC_CODE, BODACC_SALE_ACT_TYPE_SEING_CODE, BODACC_SALE_TRANSFERT_FUND_TYPE_BAIL, BODACC_SALE_TRANSFERT_FUND_TYPE_MORAL, BODACC_SALE_TRANSFERT_FUND_TYPE_PHYSIQUE, COMPETENT_AUTHORITY_TYPE_CFP_CODE } from 'src/app/libs/Constants';
 import { validateSiren } from 'src/app/libs/CustomFormsValidatorsHelper';
 import { CompetentAuthority } from 'src/app/modules/miscellaneous/model/CompetentAuthority';
 import { CompetentAuthorityService } from 'src/app/modules/miscellaneous/services/competent.authority.service';
+import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
+import { ActType } from '../../model/ActType';
 import { Affaire } from '../../model/Affaire';
 import { BodaccSale } from '../../model/BodaccSale';
 import { Siren } from '../../model/Siren';
@@ -27,15 +28,18 @@ export class BodaccSaleComponent implements OnInit {
   @ViewChild(MatAccordion) accordion: MatAccordion | undefined;
   @Input() affaire: Affaire | undefined;
 
-  BODACC_SALE_TRANSFERT_FUND_TYPE_PHYSIQUE = BODACC_SALE_TRANSFERT_FUND_TYPE_PHYSIQUE;
-  BODACC_SALE_TRANSFERT_FUND_TYPE_MORAL = BODACC_SALE_TRANSFERT_FUND_TYPE_MORAL;
-  BODACC_SALE_TRANSFERT_FUND_TYPE_BAIL = BODACC_SALE_TRANSFERT_FUND_TYPE_BAIL;
-  BODACC_SALE_ACT_TYPE_AUTHENTIC_CODE = BODACC_SALE_ACT_TYPE_AUTHENTIC_CODE;
-  COMPETENT_AUTHORITY_TYPE_CFP_CODE = COMPETENT_AUTHORITY_TYPE_CFP_CODE;
-  BODACC_SALE_ACT_TYPE_SEING_CODE = BODACC_SALE_ACT_TYPE_SEING_CODE;
+  competentAuthorityTypeCfp = this.constantService.getCompetentAuthorityTypeCfp();
+
+  transfertFundsTypePhysique: TransfertFundsType = this.constantService.getTransfertFundsTypePhysique();
+  transfertFundsTypeMoral: TransfertFundsType = this.constantService.getTransfertFundsTypeMoral();
+  transfertFundsTypeBail: TransfertFundsType = this.constantService.getTransfertFundsTypeBail();
+
+  actTypeSeing: ActType = this.constantService.getActTypeSeing();
+  actTypeAuthentic: ActType = this.constantService.getActTypeAuthentic();
 
   constructor(private formBuilder: UntypedFormBuilder,
     private competentAuthoritiesService: CompetentAuthorityService,
+    private constantService: ConstantService
   ) { }
 
   ngOnInit() {
@@ -66,7 +70,7 @@ export class BodaccSaleComponent implements OnInit {
           if (response) {
             let outAuhority = [] as Array<CompetentAuthority>;
             for (let authority of response) {
-              if (authority.competentAuthorityType.code == COMPETENT_AUTHORITY_TYPE_CFP_CODE)
+              if (authority.competentAuthorityType.id == this.competentAuthorityTypeCfp.id)
                 outAuhority.push(authority)
             }
             if (outAuhority.length == 1)

@@ -96,15 +96,18 @@ public interface AccountingRecordService {
 
         public List<AccountingRecord> getAccountingRecordsByTemporaryOperationId(Integer operationId) throws Exception;
 
-        public List<AccountingRecord> deleteRecordsByTemporaryOperationId(Integer operationId) throws Exception;
-
         public List<AccountingRecord> getAccountingRecordsByOperationId(Integer operationId) throws Exception;
-
-        public List<AccountingRecord> doCounterPartByOperationId(Integer operationId) throws Exception;
 
         public void generateAppointForPayment(Payment payment, float remainingMoney, ITiers customerOrder)
                         throws Exception;
 
         public List<AccountingRecord> addOrUpdateAccountingRecords(List<AccountingRecord> accountingRecords);
+
+        public List<AccountingRecord> findByAccountingAccountAndInvoice(AccountingAccount accountingAccount,
+                        Invoice invoice);
+
+        public void generateCounterPart(AccountingRecord originalAccountingRecord);
+
+        public void deleteAccountingRecord(AccountingRecord accountingRecord);
 
 }

@@ -11,7 +11,6 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,10 +29,8 @@ import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.model.Refund;
-import com.jss.osiris.modules.invoicing.repository.InvoiceRepository;
 import com.jss.osiris.modules.invoicing.service.InvoiceHelper;
 import com.jss.osiris.modules.invoicing.service.InvoiceItemService;
-import com.jss.osiris.modules.invoicing.service.InvoiceStatusService;
 import com.jss.osiris.modules.miscellaneous.service.VatService;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
@@ -96,6 +93,11 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   public AccountingRecord addOrUpdateAccountingRecord(
       AccountingRecord accountingRecord) {
     return accountingRecordRepository.save(accountingRecord);
+  }
+
+  @Override
+  public void deleteAccountingRecord(AccountingRecord accountingRecord) {
+    accountingRecordRepository.delete(accountingRecord);
   }
 
   @Override
@@ -426,29 +428,10 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
   }
 
-  // TODO remove!
-  @Autowired
-  InvoiceRepository invoiceRepository;
-  @Autowired
-  InvoiceStatusService invoiceStatusService;
-
-  @Value("${invoicing.invoice.status.send.code}")
-  private String invoiceStatusSendCode;
-
-  private void unletterInvoice(Invoice invoice) throws Exception {
-    AccountingAccount accountingAccountCustomer = getCustomerAccountingAccountForInvoice(invoice);
-
-    List<AccountingRecord> accountingRecords = accountingRecordRepository
-        .findByAccountingAccountAndInvoice(accountingAccountCustomer, invoice);
-
-    if (accountingRecords != null)
-      for (AccountingRecord accountingRecord : accountingRecords) {
-        accountingRecord.setLetteringDateTime(null);
-        accountingRecord.setLetteringNumber(null);
-        this.addOrUpdateAccountingRecord(accountingRecord);
-      }
-    invoice.setInvoiceStatus(invoiceStatusService.getInvoiceStatusByCode(invoiceStatusSendCode));
-    invoiceRepository.save(invoice);
+  @Override
+  public List<AccountingRecord> findByAccountingAccountAndInvoice(AccountingAccount accountingAccount,
+      Invoice invoice) {
+    return accountingRecordRepository.findByAccountingAccountAndInvoice(accountingAccount, invoice);
   }
 
   @Override
@@ -721,7 +704,8 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     return accountingExportHelper.getBalance(accountingBalanceRecords, true);
   }
 
-  private void generateCounterPart(AccountingRecord originalAccountingRecord) {
+  @Override
+  public void generateCounterPart(AccountingRecord originalAccountingRecord) {
     AccountingRecord newAccountingRecord = new AccountingRecord();
     newAccountingRecord.setAccountingAccount(originalAccountingRecord.getAccountingAccount());
     newAccountingRecord.setAccountingJournal(originalAccountingRecord.getAccountingJournal());
@@ -812,65 +796,9 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   }
 
   @Override
-  @Transactional(rollbackFor = Exception.class)
-  public List<AccountingRecord> deleteRecordsByTemporaryOperationId(Integer temporaryOperationId) throws Exception {
-    List<AccountingRecord> accountingRecords = getAccountingRecordsByTemporaryOperationId(temporaryOperationId);
-
-    List<Invoice> invoicesToUnleter = new ArrayList<Invoice>();
-
-    if (accountingRecords != null) {
-      for (AccountingRecord accountingRecord : accountingRecords) {
-        accountingRecordRepository.delete(accountingRecord);
-        boolean invoiceFound = false;
-        for (Invoice invoice : invoicesToUnleter)
-          if (invoice.getId().equals(accountingRecord.getInvoice().getId()))
-            invoiceFound = true;
-        if (!invoiceFound)
-          invoicesToUnleter.add(accountingRecord.getInvoice());
-      }
-    }
-
-    // Unleter invoices
-    if (invoicesToUnleter.size() > 0)
-      for (Invoice invoice : invoicesToUnleter)
-        unletterInvoice(invoice);
-    return null;
-  }
-
-  @Override
   public List<AccountingRecord> getAccountingRecordsByOperationId(Integer operationId) throws Exception {
     if (operationId != null)
       return accountingRecordRepository.findByOperationId(operationId);
-    return null;
-  }
-
-  @Override
-  @Transactional(rollbackFor = Exception.class)
-  public List<AccountingRecord> doCounterPartByOperationId(Integer operationId) throws Exception {
-    List<AccountingRecord> accountingRecords = getAccountingRecordsByOperationId(operationId);
-
-    List<Invoice> invoicesToUnleter = new ArrayList<Invoice>();
-
-    if (accountingRecords != null) {
-      for (AccountingRecord accountingRecord : accountingRecords) {
-        generateCounterPart(accountingRecord);
-        accountingRecord.setInvoice(null);
-        // TODO : remove link between payment and invoice / customer order
-        accountingRecord.setPayment(null);
-        accountingRecord.setDeposit(null);
-        boolean invoiceFound = false;
-        for (Invoice invoice : invoicesToUnleter)
-          if (invoice.getId().equals(accountingRecord.getInvoice().getId()))
-            invoiceFound = true;
-        if (!invoiceFound)
-          invoicesToUnleter.add(accountingRecord.getInvoice());
-      }
-    }
-
-    // Unleter invoices
-    if (invoicesToUnleter.size() > 0)
-      for (Invoice invoice : invoicesToUnleter)
-        unletterInvoice(invoice);
     return null;
   }
 

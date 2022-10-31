@@ -1,13 +1,14 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
-import { INVOICING_STATUS_SENT } from 'src/app/libs/Constants';
 import { formatDateTimeForSortTable, formatEurosForSortTable, toIsoString } from 'src/app/libs/FormatHelper';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
+import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { Invoice } from 'src/app/modules/quotation/model/Invoice';
 import { AppService } from 'src/app/services/app.service';
 import { InvoiceSearch } from '../../model/InvoiceSearch';
+import { InvoiceStatus } from '../../model/InvoiceStatus';
 import { InvoiceService } from '../../services/invoice.service';
 import { getAffaireList, getColumnLink, getCustomerOrderNameForInvoice, getResponsableName } from '../invoice-tools';
 
@@ -21,21 +22,25 @@ export class InvoiceListComponent implements OnInit {
   invoiceSearch: InvoiceSearch = {} as InvoiceSearch;
   invoices: Invoice[] | undefined;
   displayedColumns: SortTableColumn[] = [];
-  INVOICING_STATUS_SENT = INVOICING_STATUS_SENT;
   tableAction: SortTableAction[] = [];
   @Output() actionBypass: EventEmitter<Invoice> = new EventEmitter<Invoice>();
   @Input() overrideIconAction: string = "";
   @Input() overrideTooltipAction: string = "";
-  @Input() defaultStatusFilter: string[] | undefined;
+  @Input() defaultStatusFilter: InvoiceStatus[] | undefined;
+
+  invoiceStatusSend = this.constantService.getInvoiceStatusSend();
 
   constructor(
     private appService: AppService,
     private invoiceService: InvoiceService,
+    private constantService: ConstantService,
     private formBuilder: FormBuilder,
     private router: Router,
   ) { }
 
   ngOnInit() {
+    if (!this.defaultStatusFilter)
+      this.defaultStatusFilter = [this.invoiceStatusSend];
     this.appService.changeHeaderTitle("Factures & paiements");
     this.putDefaultPeriod();
     this.displayedColumns = [];

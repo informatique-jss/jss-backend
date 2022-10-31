@@ -7,7 +7,7 @@ import { MatAccordion } from '@angular/material/expansion';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
-import { CONFRERE_BALO_ID, JOURNAL_TYPE_JSS_DENOMINATION, JOURNAL_TYPE_SPEL_CODE, SEPARATOR_KEY_CODES } from 'src/app/libs/Constants';
+import { SEPARATOR_KEY_CODES } from 'src/app/libs/Constants';
 import { getDocument } from 'src/app/libs/DocumentHelper';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
@@ -51,10 +51,9 @@ export class AnnouncementComponent implements OnInit {
 
   SEPARATOR_KEY_CODES = SEPARATOR_KEY_CODES;
   ANNOUNCEMENT_ENTITY_TYPE = ANNOUNCEMENT_ENTITY_TYPE;
-  CONFRERE_BALO_ID = CONFRERE_BALO_ID;
-  JOURNAL_TYPE_SPEL_CODE = JOURNAL_TYPE_SPEL_CODE;
 
   journalTypes: JournalType[] = [] as Array<JournalType>;
+  journalTypeSpel: JournalType = this.constantService.getJournalTypeSpel();
 
   confreres: Confrere[] = [] as Array<Confrere>;
   filteredConfreres: Observable<Confrere[]> | undefined;
@@ -129,8 +128,6 @@ export class AnnouncementComponent implements OnInit {
         this.announcement!.isHeader = false;
       if (!this.announcement!.isHeaderFree)
         this.announcement!.isHeaderFree = false;
-      if (!this.announcement!.isPictureBaloPackage)
-        this.announcement!.isPictureBaloPackage = false;
       if (!this.announcement!.isLegalDisplay)
         this.announcement!.isLegalDisplay = false;
       if (!this.announcement!.isProofReadingDocument)
@@ -157,7 +154,7 @@ export class AnnouncementComponent implements OnInit {
     if (this.confreres != undefined)
       for (let i = 0; i < this.confreres.length; i++) {
         const confrere = this.confreres[i];
-        if (confrere.label == JOURNAL_TYPE_JSS_DENOMINATION)
+        if (confrere.id == this.constantService.getConfrereJss().id)
           return confrere;
       }
     return {} as Confrere;
@@ -241,7 +238,7 @@ export class AnnouncementComponent implements OnInit {
   }
 
   updateHeaderFree() {
-    if (this.announcement && this.announcement.confrere?.journalType && this.announcement.confrere.journalType.code == JOURNAL_TYPE_SPEL_CODE)
+    if (this.announcement && this.announcement.confrere?.journalType && this.announcement.confrere.journalType.id == this.journalTypeSpel.id)
       this.announcement.isHeaderFree = true;
   }
 

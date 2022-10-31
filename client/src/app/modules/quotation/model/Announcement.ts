@@ -17,7 +17,6 @@ export interface Announcement extends IAttachment, IDocument {
   noticeTypeFamily: NoticeTypeFamily;
   isHeader: boolean;
   isHeaderFree: boolean;
-  isPictureBaloPackage: boolean;
   isLegalDisplay: boolean;
   posterProductionPrice: number;
   posterProductionJSSPrice: number;

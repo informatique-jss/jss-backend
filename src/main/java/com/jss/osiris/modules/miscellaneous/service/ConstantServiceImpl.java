@@ -9,12 +9,31 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.modules.accounting.model.AccountingJournal;
+import com.jss.osiris.modules.invoicing.model.InvoiceStatus;
+import com.jss.osiris.modules.invoicing.model.PaymentWay;
+import com.jss.osiris.modules.miscellaneous.model.AttachmentType;
 import com.jss.osiris.modules.miscellaneous.model.BillingType;
+import com.jss.osiris.modules.miscellaneous.model.CompetentAuthorityType;
 import com.jss.osiris.modules.miscellaneous.model.Constant;
 import com.jss.osiris.modules.miscellaneous.model.Country;
+import com.jss.osiris.modules.miscellaneous.model.Department;
 import com.jss.osiris.modules.miscellaneous.model.DocumentType;
+import com.jss.osiris.modules.miscellaneous.model.LegalForm;
+import com.jss.osiris.modules.miscellaneous.model.PaymentType;
+import com.jss.osiris.modules.miscellaneous.model.Vat;
 import com.jss.osiris.modules.miscellaneous.repository.ConstantRepository;
+import com.jss.osiris.modules.quotation.model.ActType;
+import com.jss.osiris.modules.quotation.model.AssignationType;
+import com.jss.osiris.modules.quotation.model.BodaccPublicationType;
+import com.jss.osiris.modules.quotation.model.Confrere;
+import com.jss.osiris.modules.quotation.model.DomiciliationContractType;
+import com.jss.osiris.modules.quotation.model.JournalType;
+import com.jss.osiris.modules.quotation.model.MailRedirectionType;
+import com.jss.osiris.modules.quotation.model.QuotationLabelType;
+import com.jss.osiris.modules.quotation.model.TransfertFundsType;
 import com.jss.osiris.modules.tiers.model.BillingLabelType;
+import com.jss.osiris.modules.tiers.model.RefundType;
+import com.jss.osiris.modules.tiers.model.SubscriptionPeriodType;
 import com.jss.osiris.modules.tiers.model.TiersType;
 
 @Service
@@ -137,22 +156,22 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
-    public DocumentType getAttachmentTypeKbis() throws Exception {
+    public AttachmentType getAttachmentTypeKbis() throws Exception {
         return getConstants().getAttachmentTypeKbis();
     }
 
     @Override
-    public DocumentType getAttachmentTypeCni() throws Exception {
+    public AttachmentType getAttachmentTypeCni() throws Exception {
         return getConstants().getAttachmentTypeCni();
     }
 
     @Override
-    public DocumentType getAttachmentTypeLogo() throws Exception {
+    public AttachmentType getAttachmentTypeLogo() throws Exception {
         return getConstants().getAttachmentTypeLogo();
     }
 
     @Override
-    public DocumentType getAttachmentTypeProofOfAddress() throws Exception {
+    public AttachmentType getAttachmentTypeProofOfAddress() throws Exception {
         return getConstants().getAttachmentTypeProofOfAddress();
     }
 
@@ -171,4 +190,193 @@ public class ConstantServiceImpl implements ConstantService {
         return getConstants().getBillingTypeLogo();
     }
 
+    @Override
+    public QuotationLabelType getQuotationLabelTypeOther() throws Exception {
+        return getConstants().getQuotationLabelTypeOther();
+    }
+
+    @Override
+    public PaymentType getPaymentTypeCheques() throws Exception {
+        return getConstants().getPaymentTypeCheques();
+    }
+
+    @Override
+    public PaymentType getPaymentTypeOther() throws Exception {
+        return getConstants().getPaymentTypeOther();
+    }
+
+    @Override
+    public PaymentType getPaymentTypeVirement() throws Exception {
+        return getConstants().getPaymentTypeVirement();
+    }
+
+    @Override
+    public PaymentType getPaymentTypePrelevement() throws Exception {
+        return getConstants().getPaymentTypePrelevement();
+    }
+
+    @Override
+    public RefundType getRefundTypeVirement() throws Exception {
+        return getConstants().getRefundTypeVirement();
+    }
+
+    @Override
+    public SubscriptionPeriodType getSubscriptionPeriodType12M() throws Exception {
+        return getConstants().getSubscriptionPeriodType12M();
+    }
+
+    @Override
+    public LegalForm getLegalFormUnregistered() throws Exception {
+        return getConstants().getLegalFormUnregistered();
+    }
+
+    @Override
+    public JournalType getJournalTypeSpel() throws Exception {
+        return getConstants().getJournalTypeSpel();
+    }
+
+    @Override
+    public Confrere getConfrereJss() throws Exception {
+        return getConstants().getConfrereJss();
+    }
+
+    @Override
+    public DomiciliationContractType getDomiciliationContractTypeKeepMail() throws Exception {
+        return getConstants().getDomiciliationContractTypeKeepMail();
+    }
+
+    @Override
+    public DomiciliationContractType getDomiciliationContractTypeRouteMail() throws Exception {
+        return getConstants().getDomiciliationContractTypeRouteMail();
+    }
+
+    @Override
+    public DomiciliationContractType getDomiciliationContractTypeKeepEmail() throws Exception {
+        return getConstants().getDomiciliationContractTypeKeepEmail();
+    }
+
+    @Override
+    public DomiciliationContractType getDomiciliationContractTypeRouteEmail() throws Exception {
+        return getConstants().getDomiciliationContractTypeRouteEmail();
+    }
+
+    @Override
+    public MailRedirectionType getMailRedirectionTypeOther() throws Exception {
+        return getConstants().getMailRedirectionTypeOther();
+    }
+
+    @Override
+    public BodaccPublicationType getBodaccPublicationTypeMerging() throws Exception {
+        return getConstants().getBodaccPublicationTypeMerging();
+    }
+
+    @Override
+    public BodaccPublicationType getBodaccPublicationTypeSplit() throws Exception {
+        return getConstants().getBodaccPublicationTypeSplit();
+    }
+
+    @Override
+    public BodaccPublicationType getBodaccPublicationTypePartialSplit() throws Exception {
+        return getConstants().getBodaccPublicationTypePartialSplit();
+    }
+
+    @Override
+    public BodaccPublicationType getBodaccPublicationTypePossessionDispatch() throws Exception {
+        return getConstants().getBodaccPublicationTypePossessionDispatch();
+    }
+
+    @Override
+    public BodaccPublicationType getBodaccPublicationTypeEstateRepresentativeDesignation() throws Exception {
+        return getConstants().getBodaccPublicationTypeEstateRepresentativeDesignation();
+    }
+
+    @Override
+    public BodaccPublicationType getBodaccPublicationTypeSaleOfBusiness() throws Exception {
+        return getConstants().getBodaccPublicationTypeSaleOfBusiness();
+    }
+
+    @Override
+    public ActType getActTypeSeing() throws Exception {
+        return getConstants().getActTypeSeing();
+    }
+
+    @Override
+    public ActType getActTypeAuthentic() throws Exception {
+        return getConstants().getActTypeAuthentic();
+    }
+
+    @Override
+    public AssignationType getAssignationTypeEmployee() throws Exception {
+        return getConstants().getAssignationTypeEmployee();
+    }
+
+    @Override
+    public TransfertFundsType getTransfertFundsTypePhysique() throws Exception {
+        return getConstants().getTransfertFundsTypePhysique();
+    }
+
+    @Override
+    public TransfertFundsType getTransfertFundsTypeMoral() throws Exception {
+        return getConstants().getTransfertFundsTypeMoral();
+    }
+
+    @Override
+    public TransfertFundsType getTransfertFundsTypeBail() throws Exception {
+        return getConstants().getTransfertFundsTypeBail();
+    }
+
+    @Override
+    public CompetentAuthorityType getCompetentAuthorityTypeRcs() throws Exception {
+        return getConstants().getCompetentAuthorityTypeRcs();
+    }
+
+    @Override
+    public CompetentAuthorityType getCompetentAuthorityTypeCfp() throws Exception {
+        return getConstants().getCompetentAuthorityTypeCfp();
+    }
+
+    @Override
+    public InvoiceStatus getInvoiceStatusSend() throws Exception {
+        return getConstants().getInvoiceStatusSend();
+    }
+
+    @Override
+    public InvoiceStatus getInvoiceStatusPayed() throws Exception {
+        return getConstants().getInvoiceStatusPayed();
+    }
+
+    @Override
+    public PaymentWay getPaymentWayInbound() throws Exception {
+        return getConstants().getPaymentWayInbound();
+    }
+
+    @Override
+    public PaymentWay getPaymentWayOutboud() throws Exception {
+        return getConstants().getPaymentWayOutboud();
+    }
+
+    @Override
+    public Vat getVatTwenty() throws Exception {
+        return getConstants().getVatTwenty();
+    }
+
+    @Override
+    public Vat getVatEight() throws Exception {
+        return getConstants().getVatEight();
+    }
+
+    @Override
+    public Department getDepartmentMartinique() throws Exception {
+        return getConstants().getDepartmentMartinique();
+    }
+
+    @Override
+    public Department getDepartmentGuadeloupe() throws Exception {
+        return getConstants().getDepartmentGuadeloupe();
+    }
+
+    @Override
+    public Department getDepartmentReunion() throws Exception {
+        return getConstants().getDepartmentReunion();
+    }
 }

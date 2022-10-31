@@ -2,7 +2,6 @@ import { AfterContentChecked, ChangeDetectorRef, Component, Input, OnInit, Simpl
 import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { MatAccordion } from '@angular/material/expansion';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
-import { PAYMENT_TYPE_CHEQUES, PAYMENT_TYPE_OTHERS, PAYMENT_TYPE_PRELEVEMENT, REFUND_TYPE_VIREMENT } from 'src/app/libs/Constants';
 import { getDocument } from 'src/app/libs/DocumentHelper';
 import { instanceOfResponsable, instanceOfTiers } from 'src/app/libs/TypeHelper';
 import { City } from 'src/app/modules/miscellaneous/model/City';
@@ -27,11 +26,12 @@ export class SettlementBillingComponent implements OnInit, AfterContentChecked {
   @Input() editMode: boolean = false;
   @ViewChild(MatAccordion) accordion: MatAccordion | undefined;
   paymentTypes: PaymentType[] = [] as Array<PaymentType>;
-  PAYMENT_TYPE_PRELEVEMENT = PAYMENT_TYPE_PRELEVEMENT;
-  PAYMENT_TYPE_CHEQUES = PAYMENT_TYPE_CHEQUES;
-  PAYMENT_TYPE_OTHERS = PAYMENT_TYPE_OTHERS;
 
-  REFUND_TYPE_VIREMENT = REFUND_TYPE_VIREMENT;
+  paymentTypePrelevement: PaymentType = this.constantService.getPaymentTypePrelevement();
+  paymentTypeCheques: PaymentType = this.constantService.getPaymentTypeCheques();
+  paymentTypeOther: PaymentType = this.constantService.getPaymentTypeOther();
+
+  refundTypeVirement = this.constantService.getRefundTypeVirement();
 
   billingLableTypeOther = this.constantService.getBillingLabelTypeOther();
 
@@ -45,6 +45,8 @@ export class SettlementBillingComponent implements OnInit, AfterContentChecked {
   publicationDocument: Document = {} as Document;
   cfeDocument: Document = {} as Document;
   kbisDocument: Document = {} as Document;
+
+  tiersTypeProspect = this.constantService.getTiersTypeProspect();
 
   constructor(private formBuilder: UntypedFormBuilder,
     protected paymentTypeService: PaymentTypeService,
@@ -73,7 +75,7 @@ export class SettlementBillingComponent implements OnInit, AfterContentChecked {
       if (instanceOfTiers(this.tiers)) {
         if ((this.tiers.paymentType == null || this.tiers.paymentType == undefined) && this.paymentTypes.length > 0) {
           for (const paymentType of this.paymentTypes) {
-            if (paymentType.code == PAYMENT_TYPE_PRELEVEMENT)
+            if (paymentType.id == this.paymentTypePrelevement.id)
               this.tiers.paymentType = paymentType;
           }
         }

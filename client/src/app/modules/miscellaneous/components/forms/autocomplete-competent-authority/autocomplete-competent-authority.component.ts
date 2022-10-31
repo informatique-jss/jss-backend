@@ -32,11 +32,6 @@ export class AutocompleteCompetentAuthorityComponent extends GenericAutocomplete
 * Return all result if no family is provided
 */
   @Input() filteredCompetentAuthorityType: CompetentAuthorityType | undefined;
-  /**
-* Filter results on authority type code provided
-* Return all result if no family is provided
-*/
-  @Input() filteredCompetentAuthorityTypeCode: string | undefined;
 
   constructor(private formBuild: UntypedFormBuilder, private competentauthorityService: CompetentAuthorityService, private userNoteService2: UserNoteService,) {
     super(formBuild, userNoteService2)
@@ -47,12 +42,12 @@ export class AutocompleteCompetentAuthorityComponent extends GenericAutocomplete
   }
 
   mapResponse(response: CompetentAuthority[]): CompetentAuthority[] {
-    if (!this.filteredCompetentAuthorityType && !this.filteredCompetentAuthorityTypeCode)
+    if (!this.filteredCompetentAuthorityType)
       return response;
     if (!response)
       return [] as Array<CompetentAuthority>;
     if (this.filteredCompetentAuthorityType)
-      return response.filter(authority => authority.competentAuthorityType.code == this.filteredCompetentAuthorityType?.code);
-    return response.filter(authority => authority.competentAuthorityType.code == this.filteredCompetentAuthorityTypeCode);
+      return response.filter(authority => authority.competentAuthorityType.id == this.filteredCompetentAuthorityType?.id);
+    return [] as Array<CompetentAuthority>;
   }
 }

@@ -17,7 +17,7 @@ export class SelectPaymentWayComponent extends GenericMultipleSelectComponent<Pa
   /**
  * List of code to autoselect at loading
  */
-  @Input() defaultCodesSelected: string[] | undefined;
+  @Input() defaulTypeSelected: PaymentWay[] | undefined;
 
   constructor(private formBuild: UntypedFormBuilder, private paymentWayService: PaymentWayService, private userNoteService2: UserNoteService,) {
     super(formBuild, userNoteService2)
@@ -26,11 +26,11 @@ export class SelectPaymentWayComponent extends GenericMultipleSelectComponent<Pa
   initTypes(): void {
     this.paymentWayService.getPaymentWays().subscribe(response => {
       this.types = response;
-      if (this.defaultCodesSelected) {
+      if (this.defaulTypeSelected) {
         this.model = [];
         for (let type of this.types) {
-          for (let defaultCode of this.defaultCodesSelected) {
-            if (type.code == defaultCode) {
+          for (let defaultType of this.defaulTypeSelected) {
+            if (type.id == defaultType.id) {
               this.model.push(type);
             }
           }

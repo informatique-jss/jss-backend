@@ -1,7 +1,6 @@
 import { Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors } from '@angular/forms';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
-import { DOMICILIATION_EMAIL_REDIRECTION_CONTRAT_TYPE_1_CODE, DOMICILIATION_EMAIL_REDIRECTION_CONTRAT_TYPE_2_CODE, DOMICILIATION_MAIL_REDIRECTION_CONTRAT_TYPE_1_CODE, DOMICILIATION_MAIL_REDIRECTION_CONTRAT_TYPE_2_CODE, DOMICILIATION_MAIL_REDIRECTION_TYPE_OTHER_CODE } from 'src/app/libs/Constants';
 import { validateSiren } from 'src/app/libs/CustomFormsValidatorsHelper';
 import { City } from 'src/app/modules/miscellaneous/model/City';
 import { Civility } from 'src/app/modules/miscellaneous/model/Civility';
@@ -49,11 +48,11 @@ export class DomiciliationComponent implements OnInit {
 
   civilities: Civility[] = [] as Array<Civility>;
 
-  DOMICILIATION_MAIL_REDIRECTION_CONTRAT_TYPE_1_CODE = DOMICILIATION_MAIL_REDIRECTION_CONTRAT_TYPE_1_CODE;
-  DOMICILIATION_MAIL_REDIRECTION_CONTRAT_TYPE_2_CODE = DOMICILIATION_MAIL_REDIRECTION_CONTRAT_TYPE_2_CODE;
-  DOMICILIATION_EMAIL_REDIRECTION_CONTRAT_TYPE_1_CODE = DOMICILIATION_EMAIL_REDIRECTION_CONTRAT_TYPE_1_CODE;
-  DOMICILIATION_EMAIL_REDIRECTION_CONTRAT_TYPE_2_CODE = DOMICILIATION_EMAIL_REDIRECTION_CONTRAT_TYPE_2_CODE;
-  DOMICILIATION_MAIL_REDIRECTION_TYPE_OTHER_CODE = DOMICILIATION_MAIL_REDIRECTION_TYPE_OTHER_CODE;
+  mailRedirectionTypeOther: MailRedirectionType = this.constantService.getMailRedirectionTypeOther();
+  domiciliationContractTypeKeepMail: DomiciliationContractType = this.constantService.getDomiciliationContractTypeKeepMail();
+  domiciliationContractTypeRouteMail: DomiciliationContractType = this.constantService.getDomiciliationContractTypeRouteMail();
+  domiciliationContractTypeKeepEmail: DomiciliationContractType = this.constantService.getDomiciliationContractTypeKeepEmail();
+  domiciliationContractTypeRouteEmail: DomiciliationContractType = this.constantService.getDomiciliationContractTypeRouteEmail();
 
 
   constructor(private formBuilder: UntypedFormBuilder,
@@ -136,16 +135,16 @@ export class DomiciliationComponent implements OnInit {
 
   mustDecribeAdresse(): boolean {
     return this.domiciliation != null && this.domiciliation.domiciliationContractType &&
-      (this.domiciliation.domiciliationContractType.code == DOMICILIATION_MAIL_REDIRECTION_CONTRAT_TYPE_1_CODE
-        || this.domiciliation.domiciliationContractType.code == DOMICILIATION_MAIL_REDIRECTION_CONTRAT_TYPE_2_CODE)
-      && this.domiciliation.mailRedirectionType && this.domiciliation.mailRedirectionType.code == this.DOMICILIATION_MAIL_REDIRECTION_TYPE_OTHER_CODE;
+      (this.domiciliation.domiciliationContractType.id == this.domiciliationContractTypeKeepMail.id
+        || this.domiciliation.domiciliationContractType.id == this.domiciliationContractTypeRouteMail.id)
+      && this.domiciliation.mailRedirectionType && this.domiciliation.mailRedirectionType.id == this.mailRedirectionTypeOther.id;
   }
 
   mustDecribeMail() {
     return this.domiciliation != null && this.domiciliation.domiciliationContractType &&
-      (this.domiciliation.domiciliationContractType.code == DOMICILIATION_EMAIL_REDIRECTION_CONTRAT_TYPE_1_CODE
-        || this.domiciliation.domiciliationContractType.code == DOMICILIATION_EMAIL_REDIRECTION_CONTRAT_TYPE_2_CODE)
-      && this.domiciliation.mailRedirectionType && this.domiciliation!.mailRedirectionType.code == this.DOMICILIATION_MAIL_REDIRECTION_TYPE_OTHER_CODE;
+      (this.domiciliation.domiciliationContractType.id == this.domiciliationContractTypeKeepEmail.id
+        || this.domiciliation.domiciliationContractType.id == this.domiciliationContractTypeRouteEmail.id)
+      && this.domiciliation.mailRedirectionType && this.domiciliation!.mailRedirectionType.id == this.mailRedirectionTypeOther.id;
   }
 
   fillPostalCode(city: City) {

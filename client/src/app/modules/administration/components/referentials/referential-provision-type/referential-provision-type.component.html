@@ -65,9 +65,10 @@
         <table class="full-width" *ngIf="selectedEntity.billingTypes">
           <tr *ngFor="let billingType of selectedEntity.billingTypes; let i = index">
             <td>
-              <select-billing-type [(model)]="selectedEntity.billingTypes[i]" [label]="'Famille de produit '+i"
-                [form]="entityForm" [propertyName]="'billingType'+i" [isMandatory]="true" [isDisabled]="!editMode">
-              </select-billing-type>
+              <autocomplete-billing-type [(model)]="selectedEntity.billingTypes[i]"
+                [label]="'Famille de produit '+(i+1)" [form]="entityForm" [propertyName]="'billingType'+i"
+                [isMandatory]="true" [isDisabled]="!editMode">
+              </autocomplete-billing-type>
             </td>
           </tr>
         </table>

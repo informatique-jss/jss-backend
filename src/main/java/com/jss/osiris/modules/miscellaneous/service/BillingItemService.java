@@ -12,7 +12,5 @@ public interface BillingItemService {
 
     public BillingItem addOrUpdateBillingItem(BillingItem billingItem) throws Exception;
 
-    public BillingItem addOrUpdateBillingItem(BillingItem billingItem, boolean mustBeChargeOrProduct) throws Exception;
-
     public List<BillingItem> getBillingItemByBillingType(BillingType billingType);
 }

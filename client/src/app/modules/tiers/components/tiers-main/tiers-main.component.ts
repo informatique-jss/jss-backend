@@ -9,6 +9,7 @@ import { CityService } from 'src/app/modules/miscellaneous/services/city.service
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { DeliveryServiceService } from 'src/app/modules/miscellaneous/services/delivery.service.service';
 import { Tiers } from '../../model/Tiers';
+import { TiersType } from '../../model/TiersType';
 
 @Component({
   selector: 'tiers-main',
@@ -25,6 +26,7 @@ export class PrincipalComponent implements OnInit {
   countryFrance: Country = this.constantService.getCountryFrance();
 
   deliveryServices: DeliveryService[] = [] as Array<DeliveryService>;
+  prospectTiersType: TiersType = this.constantService.getTiersTypeProspect();
 
   constructor(private formBuilder: UntypedFormBuilder,
     private deliveryServiceService: DeliveryServiceService,
@@ -39,7 +41,11 @@ export class PrincipalComponent implements OnInit {
     }
   }
 
+
   ngOnInit() {
+    this.prospectTiersType = this.constantService.getTiersTypeProspect();
+
+    console.log(this.prospectTiersType);
     // Referential loading
     this.deliveryServiceService.getDeliveryServices().subscribe(response => {
       this.deliveryServices = response;

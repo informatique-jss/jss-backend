@@ -1,6 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
-import { UNREGISTERED_COMPANY_LEGAL_FORM_CODE } from 'src/app/libs/Constants';
 import { validateRna, validateSiren, validateSiret } from 'src/app/libs/CustomFormsValidatorsHelper';
 import { City } from 'src/app/modules/miscellaneous/model/City';
 import { Mail } from 'src/app/modules/miscellaneous/model/Mail';
@@ -25,7 +24,7 @@ export class AddAffaireComponent implements OnInit {
   @Input() affaire: Affaire = {} as Affaire;
   @Input() editMode: boolean = false;
 
-  UNREGISTERED_COMPANY_LEGAL_FORM_CODE = UNREGISTERED_COMPANY_LEGAL_FORM_CODE;
+  legalFormUnregistered = this.constantService.getLegalFormUnregistered();
 
   constructor(private formBuilder: FormBuilder,
     private cityService: CityService,

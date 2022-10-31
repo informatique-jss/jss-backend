@@ -3,7 +3,6 @@ import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { MatAccordion } from '@angular/material/expansion';
 import { Observable, Subscription } from 'rxjs';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
-import { QUOTATION_TYPE_OTHER_CODE } from 'src/app/libs/Constants';
 import { getDocument, replaceDocument } from 'src/app/libs/DocumentHelper';
 import { copyObject } from 'src/app/libs/GenericHelper';
 import { instanceOfQuotation } from 'src/app/libs/TypeHelper';
@@ -40,13 +39,13 @@ export class QuotationManagementComponent implements OnInit, AfterContentChecked
   quotationLabelTypes: QuotationLabelType[] = [] as Array<QuotationLabelType>;
   recordTypes: RecordType[] = [] as Array<RecordType>;
 
-  QUOTATION_TYPE_OTHER_CODE = QUOTATION_TYPE_OTHER_CODE;
-
   countryFrance: Country = this.constantService.getCountryFrance();
   billingLabelTypeOther = this.constantService.getBillingLabelTypeOther();
 
   devisDocument: Document = {} as Document;
   billingDocument: Document = {} as Document;
+
+  quotationLabelTypeOther: QuotationLabelType = this.constantService.getQuotationLabelTypeOther();
 
   Validators = Validators;
 

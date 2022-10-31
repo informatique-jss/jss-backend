@@ -167,7 +167,7 @@
                     </select-subscription-period>
                   </td>
                   <td
-                    *ngIf="selectedResponsable.subscriptionPeriodType!=null && selectedResponsable.subscriptionPeriodType.code==SUSCRIPTION_TYPE_CODE_PERIODE_12M">
+                    *ngIf="selectedResponsable.subscriptionPeriodType!=null && selectedResponsable.subscriptionPeriodType.id==subscriptionPeriodType12M.id">
                     <generic-toggle [(model)]="selectedResponsable.isBouclette" label="Bouclette ?"
                       [form]="principalForm" propertyName="isBouclette"></generic-toggle>
                   </td>

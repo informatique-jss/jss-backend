@@ -7,7 +7,6 @@ import org.apache.commons.collections4.IterableUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
@@ -29,21 +28,6 @@ public class VatServiceImpl implements VatService {
 
     @Autowired
     ConstantService constantService;
-
-    @Value("${accounting.vat.code.twenty}")
-    private String vatTwentyCode;
-
-    @Value("${accounting.vat.code.eight}")
-    private String vatEightCode;
-
-    @Value("${miscellaneous.department.code.martinique}")
-    private String martiniqueDepartmentCode;
-
-    @Value("${miscellaneous.department.code.guadeloupe}")
-    private String guadeloupeDepartmentCode;
-
-    @Value("${miscellaneous.department.code.reunion}")
-    private String reunionDepartmentCode;
 
     @Override
     @Cacheable(value = "vatList", key = "#root.methodName")
@@ -71,11 +55,6 @@ public class VatServiceImpl implements VatService {
         return vatRepository.save(vat);
     }
 
-    @Override
-    public Vat getVatByCode(String code) {
-        return vatRepository.findByCode(code);
-    }
-
     /**
      * Using https://sumup.fr/factures/essentiels-facturation/tva-dom-tom/
      */
@@ -90,20 +69,20 @@ public class VatServiceImpl implements VatService {
                 && !country.getId().equals(constantService.getCountryMonaco().getId()))
             return null;
 
-        Vat vatTwenty = getVatByCode(vatTwentyCode);
+        Vat vatTwenty = constantService.getVatTwenty();
         if (vatTwenty == null) {
-            logger.error("VAT not found for code " + vatTwentyCode);
-            throw new Exception("VAT not found for code " + vatTwentyCode);
+            logger.error("VAT not found for code " + constantService.getVatTwenty().getCode());
+            throw new Exception("VAT not found for code " + constantService.getVatTwenty().getCode());
         }
 
         // 20% in Monaco
         if (country.getId().equals(constantService.getCountryMonaco().getId()))
             return vatTwenty;
 
-        Vat vatEight = getVatByCode(vatEightCode);
+        Vat vatEight = constantService.getVatEight();
         if (vatEight == null) {
-            logger.error("VAT not found for code " + vatEightCode);
-            throw new Exception("VAT not found for code " + vatEightCode);
+            logger.error("VAT not found for code " + constantService.getVatEight().getCode());
+            throw new Exception("VAT not found for code " + constantService.getVatEight().getCode());
         }
 
         if (departement == null)
@@ -111,9 +90,9 @@ public class VatServiceImpl implements VatService {
 
         // 8 % for individual of DOM excepted Guyane and Mayotte (0 %), 20 % for
         // professionals
-        if (departement.getCode().equals(martiniqueDepartmentCode)
-                || departement.getCode().equals(guadeloupeDepartmentCode)
-                || departement.getCode().equals(reunionDepartmentCode)) {
+        if (departement.getId().equals(constantService.getDepartmentMartinique().getId())
+                || departement.getId().equals(constantService.getDepartmentGuadeloupe().getId())
+                || departement.getId().equals(constantService.getDepartmentReunion().getId())) {
             if (isIndividual)
                 return vatEight;
             return vatTwenty;

@@ -12,7 +12,7 @@
   <div class="mat-accordion-container full-width">
     <fieldset [disabled]="editMode==false" class="fieldset-no-border">
       <mat-accordion multi *ngIf="transfertFundsType ">
-        <mat-expansion-panel *ngIf="transfertFundsType.code!=BODACC_SALE_TRANSFERT_FUND_TYPE_BAIL">
+        <mat-expansion-panel *ngIf="transfertFundsType.id!=transfertFundsTypeBail.id">
           <mat-expansion-panel-header>
             <mat-panel-title>
               Fonds cédé
@@ -45,7 +45,7 @@
             </tr>
           </table>
         </mat-expansion-panel>
-        <mat-expansion-panel *ngIf="transfertFundsType.code!=BODACC_SALE_TRANSFERT_FUND_TYPE_BAIL">
+        <mat-expansion-panel *ngIf="transfertFundsType.id!=transfertFundsTypeBail.id">
           <mat-expansion-panel-header>
             <mat-panel-title>
               Propriétaire / cédant
@@ -96,7 +96,7 @@
             </tr>
           </table>
         </mat-expansion-panel>
-        <mat-expansion-panel *ngIf="transfertFundsType.code==BODACC_SALE_TRANSFERT_FUND_TYPE_PHYSIQUE">
+        <mat-expansion-panel *ngIf="transfertFundsType.id==transfertFundsTypePhysique.id">
           <mat-expansion-panel-header>
             <mat-panel-title>
               Acquéreur / cessionnaire
@@ -130,7 +130,7 @@
             </tr>
           </table>
         </mat-expansion-panel>
-        <mat-expansion-panel *ngIf="transfertFundsType.code==BODACC_SALE_TRANSFERT_FUND_TYPE_MORAL">
+        <mat-expansion-panel *ngIf="transfertFundsType.id==transfertFundsTypeMoral.id">
           <mat-expansion-panel-header>
             <mat-panel-title>
               Personne
@@ -193,7 +193,7 @@
             </tr>
           </table>
         </mat-expansion-panel>
-        <mat-expansion-panel *ngIf="transfertFundsType.code==BODACC_SALE_TRANSFERT_FUND_TYPE_BAIL">
+        <mat-expansion-panel *ngIf="transfertFundsType.id==transfertFundsTypeBail.id">
           <mat-expansion-panel-header>
             <mat-panel-title>
               Propriétaire / cédant
@@ -275,7 +275,7 @@
             </tr>
           </table>
         </mat-expansion-panel>
-        <mat-expansion-panel *ngIf="transfertFundsType.code==BODACC_SALE_TRANSFERT_FUND_TYPE_BAIL">
+        <mat-expansion-panel *ngIf="transfertFundsType.id==transfertFundsTypeBail.id">
           <mat-expansion-panel-header>
             <mat-panel-title>
               Résiliation
@@ -307,7 +307,7 @@
             </tr>
           </table>
         </mat-expansion-panel>
-        <mat-expansion-panel *ngIf="transfertFundsType.code==BODACC_SALE_TRANSFERT_FUND_TYPE_BAIL">
+        <mat-expansion-panel *ngIf="transfertFundsType.id==transfertFundsTypeBail.id">
           <mat-expansion-panel-header>
             <mat-panel-title>
               Ancien locataire
@@ -425,16 +425,16 @@
                 <radio-group-act-type [(model)]="bodaccSale.actType" [form]="bodaccSaleForm" propertyName="actType"
                   label="Type de l'acte"></radio-group-act-type>
               </td>
-              <td *ngIf="bodaccSale.actType && bodaccSale.actType.code==BODACC_SALE_ACT_TYPE_AUTHENTIC_CODE">
+              <td *ngIf="bodaccSale.actType && bodaccSale.actType.id==actTypeAuthentic.id">
                 <generic-input [(model)]="bodaccSale.writor" label="Rédacteur" [form]="bodaccSaleForm"
                   propertyName="writor" [isMandatory]="true" [isDisabled]="!editMode"
-                  [conditionnalRequired]="bodaccSale.actType.code==BODACC_SALE_ACT_TYPE_AUTHENTIC_CODE && instanceOfCustomerOrder && !isStatusOpen"
+                  [conditionnalRequired]="bodaccSale.actType.id==actTypeAuthentic.id && instanceOfCustomerOrder && !isStatusOpen"
                   [maxLength]="60"></generic-input>
               </td>
-              <td *ngIf="bodaccSale.actType && bodaccSale.actType.code==BODACC_SALE_ACT_TYPE_AUTHENTIC_CODE">
+              <td *ngIf="bodaccSale.actType && bodaccSale.actType.id==actTypeAuthentic.id">
                 <generic-input [(model)]="bodaccSale.writorAddress" label="Adresse du rédacteur" [form]="bodaccSaleForm"
                   propertyName="writorAddress" [isMandatory]="true" [isDisabled]="!editMode"
-                  [conditionnalRequired]="bodaccSale.actType.code==BODACC_SALE_ACT_TYPE_AUTHENTIC_CODE && instanceOfCustomerOrder && !isStatusOpen"
+                  [conditionnalRequired]="bodaccSale.actType.id==actTypeAuthentic.id && instanceOfCustomerOrder && !isStatusOpen"
                   [maxLength]="100"></generic-input>
               </td>
             </tr>
@@ -449,13 +449,13 @@
                 <autocomplete-competent-authority [(model)]="bodaccSale.registrationAuthority" [form]="bodaccSaleForm"
                   propertyName="registrationAuthority" [isMandatory]="true"
                   [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" label="Bureau de l'enregistrement"
-                  [filteredCompetentAuthorityTypeCode]="COMPETENT_AUTHORITY_TYPE_CFP_CODE">
+                  [filteredCompetentAuthorityType]="competentAuthorityTypeCfp">
                 </autocomplete-competent-authority>
               </td>
               <td>
                 <generic-input [(model)]="bodaccSale.registrationReferences" label="Référence de l'enregistrement"
                   [form]="bodaccSaleForm" propertyName="registrationReferences" [isMandatory]="true"
-                  [conditionnalRequired]="bodaccSale.actType && bodaccSale.actType.code==BODACC_SALE_ACT_TYPE_SEING_CODE && instanceOfCustomerOrder && !isStatusOpen"
+                  [conditionnalRequired]="bodaccSale.actType && bodaccSale.actType.id==actTypeSeing.id && instanceOfCustomerOrder && !isStatusOpen"
                   [isDisabled]="!editMode" [maxLength]="50"></generic-input>
               </td>
             </tr>

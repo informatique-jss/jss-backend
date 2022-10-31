@@ -1,7 +1,6 @@
 import { Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
-import { SUSCRIPTION_TYPE_CODE_PERIODE_12M } from 'src/app/libs/Constants';
 import { copyObject } from 'src/app/libs/GenericHelper';
 import { instanceOfResponsable } from 'src/app/libs/TypeHelper';
 import { City } from 'src/app/modules/miscellaneous/model/City';
@@ -17,6 +16,7 @@ import { Document } from "../../../miscellaneous/model/Document";
 import { Language } from '../../../miscellaneous/model/Language';
 import { JssSubscription } from '../../model/JssSubscription';
 import { Responsable } from '../../model/Responsable';
+import { SubscriptionPeriodType } from '../../model/SubscriptionPeriodType';
 import { Tiers } from '../../model/Tiers';
 import { SubscriptionPeriodTypeService } from '../../services/subscription.period.type.service';
 import { TiersCategoryService } from '../../services/tiers.category.service';
@@ -37,7 +37,8 @@ export class ResponsableMainComponent implements OnInit {
   @ViewChild('tabs', { static: false }) tabs: any;
 
   RESPONSABLE_ENTITY_TYPE = RESPONSABLE_ENTITY_TYPE;
-  SUSCRIPTION_TYPE_CODE_PERIODE_12M = SUSCRIPTION_TYPE_CODE_PERIODE_12M;
+
+  subscriptionPeriodType12M: SubscriptionPeriodType = this.constantService.getSubscriptionPeriodType12M();
 
   franceCountry: Country = this.constantService.getCountryFrance();
 

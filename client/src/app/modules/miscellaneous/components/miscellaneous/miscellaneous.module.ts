@@ -31,6 +31,7 @@ import { ConfrereDialogComponent } from '../confreres-dialog/confreres-dialog.co
 import { AutocompleteAccountingAccountComponent } from '../forms/autocomplete-accounting-account/autocomplete-accounting-account.component';
 import { AutocompleteAffaireComponent } from '../forms/autocomplete-affaire/autocomplete-affaire.component';
 import { AutocompleteBillingItemComponent } from '../forms/autocomplete-billing-item/autocomplete-billing-item.component';
+import { AutocompleteBillingTypeComponent } from '../forms/autocomplete-billing-type/autocomplete-billing-type.component';
 import { AutocompleteCityComponent } from '../forms/autocomplete-city/autocomplete-city.component';
 import { AutocompleteCompetentAuthorityComponent } from '../forms/autocomplete-competent-authority/autocomplete-competent-authority.component';
 import { AutocompleteConfrereComponent } from '../forms/autocomplete-confrere/autocomplete-confrere.component';
@@ -76,6 +77,7 @@ import { SelectAccountingAccountClassComponent } from '../forms/select-accountin
 import { SelectAccountingJournalComponent } from '../forms/select-accounting-journal/select-accounting-journal.component';
 import { SelectAffaireStatusComponent } from '../forms/select-affaire-status/select-affaire-status.component';
 import { SelectAssignationTypeComponent } from '../forms/select-assignation-type/select-assignation-type.component';
+import { SelectAttachmentTypeComponent } from '../forms/select-attachment-type/select-attachment-type.component';
 import { SelectBillingItemsComponent } from '../forms/select-billing-items/select-billing-items.component';
 import { SelectBillingTypeComponent } from '../forms/select-billing-type/select-billing-type.component';
 import { SelectBodaccPublicationTypeComponent } from '../forms/select-bodacc-publication-type/select-bodacc-publication-type.component';
@@ -84,16 +86,21 @@ import { SelectCompetentAuthorityTypeComponent } from '../forms/select-competent
 import { SelectContractTypeComponent } from '../forms/select-contract-type/select-contract-type.component';
 import { SelectDayComponent } from '../forms/select-day/select-day.component';
 import { SelectDeliveryServiceComponent } from '../forms/select-delivery-service/select-delivery-service.component';
+import { SelectDepartmentComponent } from '../forms/select-department/select-department.component';
 import { SelectDepartmentsComponent } from '../forms/select-departments/select-departments.component';
+import { SelectDocumentTypeComponent } from '../forms/select-document-type/select-document-type.component';
 import { SelectFollowupComponent } from '../forms/select-followup/select-followup.component';
 import { SelectFundTypeComponent } from '../forms/select-fund-type/select-fund-type.component';
 import { SelectGiftComponent } from '../forms/select-gift/select-gift.component';
+import { SelectInvoiceStatusOneComponent } from '../forms/select-invoice-status-one/select-invoice-status-one.component';
 import { SelectInvoiceStatusComponent } from '../forms/select-invoice-status/select-invoice-status.component';
+import { SelectJournalTypeOneComponent } from '../forms/select-journal-type-one/select-journal-type-one.component';
 import { SelectJournalTypeComponent } from '../forms/select-journal-type/select-journal-type.component';
 import { SelectMailRedirectionComponent } from '../forms/select-mail-redirection/select-mail-redirection.component';
 import { SelectNoticeFamilyComponent } from '../forms/select-notice-family/select-notice-family.component';
 import { SelectPaymentDeadlineComponent } from '../forms/select-payment-deadline/select-payment-deadline.component';
 import { SelectPaymentTypesComponent } from '../forms/select-payment-types/select-payment-types.component';
+import { SelectPaymentWayOneComponent } from '../forms/select-payment-way-one/select-payment-way-one.component';
 import { SelectPaymentWayComponent } from '../forms/select-payment-way/select-payment-way.component';
 import { SelectProvisionFamilyComponent } from '../forms/select-provision-family/select-provision-familiy.component';
 import { SelectProvisionScreenTypeComponent } from '../forms/select-provision-screen-type/select-provision-screen-type.component';
@@ -219,18 +226,26 @@ import { MiscellaneousComponent } from './miscellaneous.component';
     RadioGroupJournalTypeComponent,
     SelectDayComponent,
     GradeComponent,
+    SelectDocumentTypeComponent,
     AutocompleteAccountingAccountComponent,
     SelectAccountingJournalComponent,
     SortTableComponent,
     ChipsProvisionFamilyTypeComponent,
     SelectProvisionScreenTypeComponent,
+    SelectAttachmentTypeComponent,
     AutocompleteBillingItemComponent,
     GenericDateRangePickerComponent,
     SelectInvoiceStatusComponent,
+    AutocompleteBillingTypeComponent,
     SelectAffaireStatusComponent,
     ChipsStatusComponent,
+    SelectJournalTypeOneComponent,
     SelectQuotationStatusComponent,
+    SelectInvoiceStatusOneComponent,
+    SelectPaymentWayOneComponent,
     SelectPaymentWayComponent,
+    SelectDepartmentsComponent,
+    SelectDepartmentComponent,
     SingleAttachmentComponent],
   exports: [
     HistoryComponent,
@@ -238,9 +253,14 @@ import { MiscellaneousComponent } from './miscellaneous.component';
     UploadAttachementDialogComponent,
     AddressingComponent,
     ChipsCityComponent,
+    SelectJournalTypeOneComponent,
+    SelectInvoiceStatusOneComponent,
+    SelectDepartmentComponent,
+    SelectPaymentWayOneComponent,
     ConfirmDialogComponent,
     SelectDayComponent,
     GenericInputComponent,
+    SelectDepartmentsComponent,
     SelectProvisionFamilyComponent,
     AutocompleteDepartmentComponent,
     GenericDatepickerComponent,
@@ -259,6 +279,7 @@ import { MiscellaneousComponent } from './miscellaneous.component';
     ConfrereDialogComponent,
     AutocompleteTiersIndividualComponent,
     RadioGroupLanguageComponent,
+    AutocompleteBillingTypeComponent,
     AutocompleteRegionComponent,
     GenericDateRangePickerComponent,
     SelectContractTypeComponent,
@@ -282,6 +303,8 @@ import { MiscellaneousComponent } from './miscellaneous.component';
     SelectRegionsComponent,
     SelectBillingTypeComponent,
     AutocompleteAffaireComponent,
+    SelectDocumentTypeComponent,
+    SelectAttachmentTypeComponent,
     AutocompleteCountryComponent,
     SelectGiftComponent,
     AutocompleteInsertionEmployeeComponent,

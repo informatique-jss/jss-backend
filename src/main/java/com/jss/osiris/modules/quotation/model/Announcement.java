@@ -65,9 +65,6 @@ public class Announcement implements IId, IAttachment {
 	private Boolean isHeaderFree;
 
 	@Column(nullable = false)
-	private Boolean isPictureBaloPackage;
-
-	@Column(nullable = false)
 	private Boolean isLegalDisplay;
 
 	private Float posterProductionPrice;
@@ -201,14 +198,6 @@ public class Announcement implements IId, IAttachment {
 
 	public void setIsHeader(Boolean isHeader) {
 		this.isHeader = isHeader;
-	}
-
-	public Boolean getIsPictureBaloPackage() {
-		return isPictureBaloPackage;
-	}
-
-	public void setIsPictureBaloPackage(Boolean isPictureBaloPackage) {
-		this.isPictureBaloPackage = isPictureBaloPackage;
 	}
 
 	public List<NoticeType> getNoticeTypes() {

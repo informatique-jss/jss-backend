@@ -22,6 +22,7 @@ import com.jss.osiris.modules.invoicing.model.InvoiceStatus;
 import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.model.PaymentSearch;
 import com.jss.osiris.modules.invoicing.repository.PaymentRepository;
+import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.Quotation;
@@ -63,26 +64,11 @@ public class PaymentServiceImpl implements PaymentService {
     @Autowired
     RefundService refundService;
 
-    @Value("${invoicing.invoice.status.send.code}")
-    private String invoiceStatusSendCode;
-
-    @Value("${invoicing.invoice.status.payed.code}")
-    private String invoiceStatusPayedCode;
-
-    @Value("${quotation.customer.order.status.billed.code}")
-    private String customerOrderStatusBilledCode;
-
-    @Value("${quotation.customer.order.status.waiting.deposit.code}")
-    private String customerOrderStatusWaitingDepositCode;
+    @Autowired
+    ConstantService constantService;
 
     @Value("${invoicing.payment.limit.refund.euros}")
     private String payementLimitRefundInEuros;
-
-    @Value("${invoicing.payment.way.inbound.code}")
-    private String inboundPaymentWayCode;
-
-    @Value("${invoicing.payment.way.outbound.code}")
-    private String outboundPaymentWayCode;
 
     @Override
     public List<Payment> getPayments() {
@@ -124,7 +110,7 @@ public class PaymentServiceImpl implements PaymentService {
 
         for (Payment payment : payments) {
             // Match inbound payment
-            if (payment.getPaymentWay().getCode().equals(inboundPaymentWayCode)) {
+            if (payment.getPaymentWay().getId().equals(constantService.getPaymentWayInbound().getId())) {
                 // Get corresponding entities
                 List<IndexEntity> correspondingEntities = getCorrespondingEntityForPayment(payment);
                 List<Invoice> correspondingInvoices = new ArrayList<Invoice>();
@@ -184,7 +170,7 @@ public class PaymentServiceImpl implements PaymentService {
             throws Exception {
 
         float remainingMoney = payment.getPaymentAmount();
-        if (payment.getPaymentWay().getCode().equals(inboundPaymentWayCode)) {
+        if (payment.getPaymentWay().getId().equals(constantService.getPaymentWayInbound().getId())) {
             // Invoices to payed found
             if (correspondingInvoices != null && correspondingInvoices.size() > 0) {
                 remainingMoney = associatePayementAndInvoices(payment, correspondingInvoices, true, byPassAmount);
@@ -273,7 +259,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     private Float associatePayementAndInvoices(Payment payment, List<Invoice> correspondingInvoices,
             boolean generateWaitingAccountAccountingRecords, List<Float> byPassAmount) throws Exception {
-        InvoiceStatus payedStatus = invoiceStatusService.getInvoiceStatusByCode(invoiceStatusPayedCode);
+        InvoiceStatus payedStatus = constantService.getInvoiceStatusPayed();
         Float remainingToPay = 0f;
         int amountIndex = 0;
         Float remainingMoney = payment.getPaymentAmount();
@@ -381,11 +367,11 @@ public class PaymentServiceImpl implements PaymentService {
         return entitiesFound;
     }
 
-    private Invoice getInvoiceForEntity(IndexEntity foundEntity) {
+    private Invoice getInvoiceForEntity(IndexEntity foundEntity) throws Exception {
         if (foundEntity != null && foundEntity.getEntityType() != null) {
             if (foundEntity.getEntityType().equals(Invoice.class.getSimpleName())) {
                 Invoice invoice = invoiceService.getInvoice(foundEntity.getEntityId());
-                if (invoice.getInvoiceStatus().getCode().equals(invoiceStatusSendCode))
+                if (invoice.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusSend().getId()))
                     return invoice;
             }
             if (foundEntity.getEntityType().equals(CustomerOrder.class.getSimpleName())) {
@@ -414,18 +400,18 @@ public class PaymentServiceImpl implements PaymentService {
         if (foundEntity != null && foundEntity.getEntityType() != null) {
             if (foundEntity.getEntityType().equals(CustomerOrder.class.getSimpleName())) {
                 CustomerOrder customerOrder = customerOrderService.getCustomerOrder(foundEntity.getEntityId());
-                if (customerOrder.getQuotationStatus().getCode().equals(customerOrderStatusWaitingDepositCode))
+                if (customerOrder.getQuotationStatus().getCode().equals(QuotationStatus.WAITING_DEPOSIT))
                     return customerOrder;
             }
         }
         return null;
     }
 
-    private Invoice getInvoiceForCustomerOrder(CustomerOrder customerOrder) {
+    private Invoice getInvoiceForCustomerOrder(CustomerOrder customerOrder) throws Exception {
         if (customerOrder.getInvoices() != null && customerOrder.getInvoices().size() > 0
-                && customerOrder.getQuotationStatus().getCode().equals(customerOrderStatusBilledCode)) {
+                && customerOrder.getQuotationStatus().getCode().equals(QuotationStatus.BILLED)) {
             for (Invoice invoice : customerOrder.getInvoices())
-                if (invoice.getInvoiceStatus().getCode().equals(invoiceStatusSendCode))
+                if (invoice.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusSend().getId()))
                     return invoice;
         }
         return null;
@@ -459,5 +445,14 @@ public class PaymentServiceImpl implements PaymentService {
             }
         }
         return advisedPayments;
+    }
+
+    @Override
+    public void unlinkPaymentFromInvoiceCustomerOrder(Payment payment) {
+        if (payment != null) {
+            payment.setCustomerOrder(null);
+            payment.setInvoice(null);
+            addOrUpdatePayment(payment);
+        }
     }
 }

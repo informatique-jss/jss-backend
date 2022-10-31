@@ -1,10 +1,9 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { PAYEMENT_WAY_INBOUND_CODE } from 'src/app/libs/Constants';
 import { formatDateTimeForSortTable, formatEurosForSortTable, toIsoString } from 'src/app/libs/FormatHelper';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
-import { AppService } from 'src/app/services/app.service';
+import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { Payment } from '../../model/Payment';
 import { PaymentSearch } from '../../model/PaymentSearch';
 import { PaymentService } from '../../services/payment.service';
@@ -20,17 +19,16 @@ export class PaymentListComponent implements OnInit {
   payments: Payment[] | undefined;
   displayedColumns: SortTableColumn[] = [];
   tableAction: SortTableAction[] = [];
-  PAYEMENT_WAY_INBOUND_CODE = PAYEMENT_WAY_INBOUND_CODE;
 
   @Output() actionBypass: EventEmitter<Payment> = new EventEmitter<Payment>();
   @Input() overrideIconAction: string = "";
   @Input() overrideTooltipAction: string = "";
   @Input() defaultStatusFilter: string[] | undefined;
-
+  paymentWayInbound = this.constantService.getPaymentWayInbound();
 
   constructor(
-    private appService: AppService,
     private paymentService: PaymentService,
+    private constantService: ConstantService,
     private paymentWayService: PaymentWayService,
     private formBuilder: FormBuilder,
   ) { }

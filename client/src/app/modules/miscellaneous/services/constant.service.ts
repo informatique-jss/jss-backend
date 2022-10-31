@@ -25,7 +25,7 @@ export class ConstantService extends AppRestService<Constant>{
   initConstant() {
     if (localStorage.getItem('constants') != null) {
       let a = localStorage.getItem('constants');
-      let constant = JSON.parse(a!) as Constant;
+      this.constant = JSON.parse(a!) as Constant;
     }
 
     this.getConstants().subscribe(response => {
@@ -134,4 +134,152 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.billingTypeLogo;
   }
 
+  getQuotationLabelTypeOther() {
+    return this.constant.quotationLabelTypeOther;
+  }
+
+  getPaymentTypeCheques() {
+    return this.constant.paymentTypeCheques;
+  }
+
+  getPaymentTypeOther() {
+    return this.constant.paymentTypeOther;
+  }
+
+  getPaymentTypeVirement() {
+    return this.constant.paymentTypeVirement;
+  }
+
+  getPaymentTypePrelevement() {
+    return this.constant.paymentTypePrelevement;
+  }
+
+  getRefundTypeVirement() {
+    return this.constant.refundTypeVirement;
+  }
+
+  getSubscriptionPeriodType12M() {
+    return this.constant.subscriptionPeriodType12M;
+  }
+
+  getLegalFormUnregistered() {
+    return this.constant.legalFormUnregistered;
+  }
+
+  getJournalTypeSpel() {
+    return this.constant.journalTypeSpel;
+  }
+
+  getConfrereJss() {
+    return this.constant.confrereJss;
+  }
+
+  getDomiciliationContractTypeKeepMail() {
+    return this.constant.domiciliationContractTypeKeepMail;
+  }
+
+  getDomiciliationContractTypeRouteMail() {
+    return this.constant.domiciliationContractTypeRouteMail;
+  }
+
+  getDomiciliationContractTypeKeepEmail() {
+    return this.constant.domiciliationContractTypeKeepEmail;
+  }
+
+  getDomiciliationContractTypeRouteEmail() {
+    return this.constant.domiciliationContractTypeRouteEmail;
+  }
+
+  getMailRedirectionTypeOther() {
+    return this.constant.mailRedirectionTypeOther;
+  }
+
+  getBodaccPublicationTypeMerging() {
+    return this.constant.bodaccPublicationTypeMerging;
+  }
+
+  getBodaccPublicationTypeSplit() {
+    return this.constant.bodaccPublicationTypeSplit;
+  }
+
+  getBodaccPublicationTypePartialSplit() {
+    return this.constant.bodaccPublicationTypePartialSplit;
+  }
+
+  getBodaccPublicationTypePossessionDispatch() {
+    return this.constant.bodaccPublicationTypePossessionDispatch;
+  }
+
+  getBodaccPublicationTypeEstateRepresentativeDesignation() {
+    return this.constant.bodaccPublicationTypeEstateRepresentativeDesignation;
+  }
+
+  getBodaccPublicationTypeSaleOfBusiness() {
+    return this.constant.bodaccPublicationTypeSaleOfBusiness;
+  }
+
+  getActTypeSeing() {
+    return this.constant.actTypeSeing;
+  }
+
+  getActTypeAuthentic() {
+    return this.constant.actTypeAuthentic;
+  }
+
+  getAssignationTypeEmployee() {
+    return this.constant.assignationTypeEmployee;
+  }
+
+  getTransfertFundsTypePhysique() {
+    return this.constant.transfertFundsTypePhysique;
+  }
+
+  getTransfertFundsTypeMoral() {
+    return this.constant.transfertFundsTypeMoral;
+  }
+
+  getTransfertFundsTypeBail() {
+    return this.constant.transfertFundsTypeBail;
+  }
+
+  getCompetentAuthorityTypeRcs() {
+    return this.constant.competentAuthorityTypeRcs;
+  }
+
+  getCompetentAuthorityTypeCfp() {
+    return this.constant.competentAuthorityTypeCfp;
+  }
+
+  getInvoiceStatusSend() {
+    return this.constant.invoiceStatusSend;
+  }
+
+  getPaymentWayInbound() {
+    return this.constant.paymentWayInbound;
+  }
+
+  getInvoiceStatusPayed() {
+    return this.constant.invoiceStatusPayed;
+  }
+
+  getVatTwenty() {
+    return this.constant.vatTwenty;
+  }
+
+  getVatEight() {
+    return this.constant.vatEight;
+  }
+
+  getDepartmentMartinique() {
+    return this.constant.departmentMartinique;
+  }
+
+  getDepartmentGuadeloupe() {
+    return this.constant.departmentGuadeloupe;
+  }
+
+  getDepartmentReunion() {
+    return this.constant.departmentReunion;
+  }
 }
+

@@ -1,6 +1,6 @@
 <h3>Paiements associés :</h3>
 <invoice-payment-table [invoice]="invoice"></invoice-payment-table>
-<div *ngIf="invoice.invoiceStatus.code==INVOICING_STATUS_SENT">
+<div *ngIf="invoice.invoiceStatus.id==invoiceStatusSend.id">
   <div class="advise" *ngIf="advisedPayment && advisedPayment.length>0">
     <h3>Paiements conseillés par Osiris :</h3>
     <sort-table [actions]="tableAction" [columns]="displayedColumns" [values]="advisedPayment"

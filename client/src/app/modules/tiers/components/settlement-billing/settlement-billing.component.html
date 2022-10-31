@@ -128,17 +128,17 @@
               <td>
                 <select-payment-types [(model)]="tiers.paymentType" label="Type" [form]="settlementBillingForm"
                   propertyName="paymentType" [isMandatory]="true" [isDisabled]="!editMode"
-                  [filteredPaymentTypeCodes]="[PAYMENT_TYPE_PRELEVEMENT,PAYMENT_TYPE_OTHERS]"></select-payment-types>
+                  [filteredPaymentType]="[paymentTypePrelevement,paymentTypeOther]"></select-payment-types>
               </td>
               <td
-                *ngIf="tiers !=undefined && tiers.paymentType!=undefined && tiers.paymentType.code!=undefined && tiers.paymentType.code==PAYMENT_TYPE_PRELEVEMENT">
+                *ngIf="tiers !=undefined && tiers.paymentType!=undefined && tiers.paymentType.code!=undefined && tiers.paymentType.id==paymentTypePrelevement.id">
                 <generic-input [(model)]="tiers.paymentIban" label="IBAN" [form]="settlementBillingForm"
                   propertyName="paymentIban" [isMandatory]="true" [isDisabled]="!editMode"
-                  [conditionnalRequired]="instanceOfTiers(this.tiers) && !instanceOfResponsable(tiers) && this.tiers.paymentType != undefined && this.tiers.paymentType.code != undefined && this.tiers.paymentType.code == PAYMENT_TYPE_PRELEVEMENT "
+                  [conditionnalRequired]="instanceOfTiers(this.tiers) && !instanceOfResponsable(tiers) && this.tiers.paymentType != undefined && this.tiers.paymentType.code != undefined && this.tiers.paymentType.id == paymentTypePrelevement.id "
                   [maxLength]="40"></generic-input>
               </td>
               <td
-                *ngIf="tiers !=undefined && tiers.paymentType!=undefined && tiers.paymentType.code!=undefined && tiers.paymentType.code==PAYMENT_TYPE_PRELEVEMENT">
+                *ngIf="tiers !=undefined && tiers.paymentType!=undefined && tiers.paymentType.code!=undefined && tiers.paymentType.id==paymentTypePrelevement.id">
                 <generic-toggle [(model)]="tiers.isSepaMandateReceived" label="Mandat SEPA reçu ?"
                   [form]="settlementBillingForm" propertyName="isSepaMandateReceived"></generic-toggle>
               </td>
@@ -174,10 +174,10 @@
                   [form]="settlementBillingForm" propertyName="refundType"></select-refund-type>
               </td>
               <td
-                *ngIf="refundDocument.isRefundable && refundDocument !=undefined && refundDocument.refundType!=undefined && refundDocument.refundType.code!=undefined && refundDocument.refundType.code==REFUND_TYPE_VIREMENT">
+                *ngIf="refundDocument.isRefundable && refundDocument !=undefined && refundDocument.refundType!=undefined && refundDocument.refundType.code!=undefined && refundDocument.refundType.id==refundTypeVirement.id">
                 <generic-input [(model)]="refundDocument.refundIBAN" label="IBAN" [form]="settlementBillingForm"
                   propertyName="refundIBAN" [isMandatory]="true" [isDisabled]="!editMode"
-                  [conditionnalRequired]="refundDocument.refundType != undefined && refundDocument.refundType.code != undefined && refundDocument.refundType.code == REFUND_TYPE_VIREMENT "
+                  [conditionnalRequired]="refundDocument.refundType != undefined && refundDocument.refundType.code != undefined && refundDocument.refundType.id == refundTypeVirement.id "
                   [maxLength]="40"></generic-input>
               </td>
             </tr>

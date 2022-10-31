@@ -18,11 +18,6 @@ public class ApplicationPropertiesAudit {
     @PostConstruct
     public void checkApplicationProperty() {
         boolean isOk = true;
-        isOk = isOk && checkProperty("accounting.vat.code.twenty");
-        isOk = isOk && checkProperty("accounting.vat.code.eight");
-        isOk = isOk && checkProperty("miscellaneous.department.code.martinique");
-        isOk = isOk && checkProperty("miscellaneous.department.code.guadeloupe");
-        isOk = isOk && checkProperty("miscellaneous.department.code.reunion");
         isOk = isOk && checkProperty("accounting.account.number.customer");
         isOk = isOk && checkProperty("accounting.account.number.deposit");
         isOk = isOk && checkProperty("accounting.account.number.provider");
@@ -32,12 +27,7 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("accounting.account.number.waiting");
         isOk = isOk && checkProperty("accounting.account.number.profit");
         isOk = isOk && checkProperty("accounting.account.number.lost");
-        isOk = isOk && checkProperty("miscellaneous.document.code.billing");
         isOk = isOk && checkProperty("accounting.account.number.bank");
-        isOk = isOk && checkProperty("invoicing.invoice.status.send.code");
-        isOk = isOk && checkProperty("invoicing.invoice.status.payed.code");
-        isOk = isOk && checkProperty("invoicing.payment.way.inbound.code");
-        isOk = isOk && checkProperty("invoicing.payment.way.outbound.code");
         isOk = isOk && checkProperty("schedulling.account.daily.close");
         isOk = isOk && checkProperty("schedulling.active.directory.user.update");
         isOk = isOk && checkProperty("schedulling.payment.grab");
@@ -51,8 +41,6 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("ldap.manager.login");
         isOk = isOk && checkProperty("ldap.manager.password");
         isOk = isOk && checkProperty("server.servlet.session.timeout");
-        isOk = isOk && checkProperty("quotation.customer.order.status.billed.code");
-        isOk = isOk && checkProperty("quotation.customer.order.status.waiting.deposit.code");
         isOk = isOk && checkProperty("invoicing.payment.limit.refund.euros");
         isOk = isOk && checkAccountingParams();
 

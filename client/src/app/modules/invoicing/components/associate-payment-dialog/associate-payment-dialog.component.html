@@ -54,7 +54,7 @@
           <mat-tab label="Factures">
             <invoice-list (actionBypass)="associateInvoice($event)" [overrideIconAction]="'merge_type'"
               [overrideTooltipAction]="'Associer cette facture au paiement'"
-              [defaultStatusFilter]="[INVOICING_STATUS_SENT]"></invoice-list>
+              [defaultStatusFilter]="[invoiceStatusSend]"></invoice-list>
           </mat-tab>
           <mat-tab label="Commandes">
             <ordering-list (actionBypass)="associateOrder($event)" [overrideIconAction]="'merge_type'"

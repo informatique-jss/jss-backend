@@ -3,7 +3,6 @@ import { AbstractControl, FormBuilder, UntypedFormGroup, ValidationErrors, Valid
 import { MatDialogRef } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
-import { UNREGISTERED_COMPANY_LEGAL_FORM_CODE } from 'src/app/libs/Constants';
 import { validateRna, validateSiren, validateSiret } from 'src/app/libs/CustomFormsValidatorsHelper';
 import { City } from 'src/app/modules/miscellaneous/model/City';
 import { Civility } from 'src/app/modules/miscellaneous/model/Civility';
@@ -35,7 +34,6 @@ export class AddAffaireDialogComponent implements OnInit {
   matcher: CustomErrorStateMatcher = new CustomErrorStateMatcher();
   affaire: Affaire = {} as Affaire;
 
-  UNREGISTERED_COMPANY_LEGAL_FORM_CODE = UNREGISTERED_COMPANY_LEGAL_FORM_CODE;
 
   civilities: Civility[] = [] as Civility[];
   legalForms: LegalForm[] = [] as LegalForm[];

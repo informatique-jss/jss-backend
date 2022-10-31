@@ -123,7 +123,8 @@
             <td *ngIf="tiers.isIndividual==false">
               <generic-input [(model)]="tiers.intercommunityVat" [isDisabled]="!editMode" label="TVA intercommunaitaire"
                 [form]="principalForm" propertyName="intercommunityVat" [isMandatory]="true"
-                [conditionnalRequired]="tiers.isIndividual==false" [customValidators]="[checkVAT('intercommunityVat')]">
+                [conditionnalRequired]="tiers.isIndividual==false && tiers.tiersType &&tiers.tiersType.id == prospectTiersType.id"
+                [customValidators]="[checkVAT('intercommunityVat')]">
               </generic-input>
             </td>
             <td>
@@ -207,7 +208,7 @@
           <tr>
             <td>
               <generic-textarea [(model)]="tiers.observations" label="Observations / Informations complémentaires"
-                [form]="principalForm" propertyName="observations" [numberOfLines]="4"></generic-textarea>
+                [form]="principalForm" propertyName="observations" [numberOfLines]="8"></generic-textarea>
             </td>
           </tr>
         </table>

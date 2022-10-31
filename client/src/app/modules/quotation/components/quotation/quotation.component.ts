@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
 import { ActivatedRoute, Router, UrlSegment } from '@angular/router';
 import { Subject } from 'rxjs';
-import { QUOTATION_DOCUMENT_TYPE_CODE, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_BEING_PROCESSED, QUOTATION_STATUS_BILLED, QUOTATION_STATUS_CANCELLED, QUOTATION_STATUS_OPEN, QUOTATION_STATUS_REFUSED_BY_CUSTOMER, QUOTATION_STATUS_SENT_TO_CUSTOMER, QUOTATION_STATUS_TO_VERIFY, QUOTATION_STATUS_VALIDATED_BY_CUSTOMER, QUOTATION_STATUS_VALIDATED_BY_JSS, QUOTATION_STATUS_WAITING_DEPOSIT } from 'src/app/libs/Constants';
+import { QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_BEING_PROCESSED, QUOTATION_STATUS_BILLED, QUOTATION_STATUS_CANCELLED, QUOTATION_STATUS_OPEN, QUOTATION_STATUS_REFUSED_BY_CUSTOMER, QUOTATION_STATUS_SENT_TO_CUSTOMER, QUOTATION_STATUS_TO_VERIFY, QUOTATION_STATUS_VALIDATED_BY_CUSTOMER, QUOTATION_STATUS_VALIDATED_BY_JSS, QUOTATION_STATUS_WAITING_DEPOSIT } from 'src/app/libs/Constants';
 import { Vat } from 'src/app/modules/miscellaneous/model/Vat';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { Employee } from 'src/app/modules/profile/model/Employee';
@@ -27,7 +27,6 @@ import { OrderingCustomerComponent } from '../ordering-customer/ordering-custome
 import { ProvisionItemComponent } from '../provision-item/provision-item.component';
 import { QuotationManagementComponent } from '../quotation-management/quotation-management.component';
 import { IQuotation } from './../../model/IQuotation';
-
 @Component({
   selector: 'quotation',
   templateUrl: './quotation.component.html',
@@ -42,7 +41,6 @@ export class QuotationComponent implements OnInit {
 
   QUOTATION_ENTITY_TYPE = QUOTATION_ENTITY_TYPE;
   CUSTOMER_ORDER_ENTITY_TYPE = CUSTOMER_ORDER_ENTITY_TYPE;
-  QUOTATION_DOCUMENT_TYPE_CODE = QUOTATION_DOCUMENT_TYPE_CODE;
 
   QUOTATION_STATUS_OPEN = QUOTATION_STATUS_OPEN;
   QUOTATION_STATUS_TO_VERIFY = QUOTATION_STATUS_TO_VERIFY;

@@ -17,12 +17,12 @@
                 (selectionChange)="changePublicationType()"></select-bodacc-publication-type>
             </td>
             <td
-              *ngIf="bodacc.bodaccPublicationType && bodacc.bodaccPublicationType.code==BODACC_PUBLICATION_TYPE_SALE_OF_BUSINESS">
+              *ngIf="bodacc.bodaccPublicationType && bodacc.bodaccPublicationType.id==bodaccPublicationTypeSaleOfBusiness.id">
               <radio-group-transfert-funds [(model)]="bodacc.transfertFundsType" [form]="bodaccForm"
                 propertyName="transfertFundsType" label="Type de cession de fonds"></radio-group-transfert-funds>
             </td>
             <td
-              *ngIf="bodacc.bodaccPublicationType && (bodacc.bodaccPublicationType.code ==BODACC_PUBLICATION_TYPE_POSSESSION_DISPATCH || bodacc.bodaccPublicationType.code ==BODACC_PUBLICATION_TYPE_ESTATE_REPRESENTATIVE_DESIGNATION)">
+              *ngIf="bodacc.bodaccPublicationType && (bodacc.bodaccPublicationType.id ==bodaccPublicationTypePossessionDispatch.id || bodacc.bodaccPublicationType.id ==bodaccPublicationTypeEstateRepresentativeDesignation.id)">
               <a href="https://declar-successions.journal-officiel.gouv.fr/successions/index.html" target="_blank">Lien
                 vers la plateforme BODACC.fr</a>
             </td>
@@ -45,19 +45,19 @@
       <provision-options [editMode]="editMode" [provision]="provision"></provision-options>
     </mat-tab>
     <mat-tab label="Imprimé"
-      *ngIf="bodacc.bodaccPublicationType && (bodacc.bodaccPublicationType.code==BODACC_PUBLICATION_TYPE_PARTIAL_SPLIT ||bodacc.bodaccPublicationType.code==BODACC_PUBLICATION_TYPE_SPLIT || bodacc.bodaccPublicationType.code==BODACC_PUBLICATION_TYPE_MERGING || bodacc.bodaccPublicationType.code==BODACC_PUBLICATION_TYPE_SALE_OF_BUSINESS)">
+      *ngIf="bodacc.bodaccPublicationType && (bodacc.bodaccPublicationType.id==bodaccPublicationTypePartialSplit.id ||bodacc.bodaccPublicationType.id==bodaccPublicationTypeSplit.id || bodacc.bodaccPublicationType.id==bodaccPublicationTypeMerging.id || bodacc.bodaccPublicationType.id==bodaccPublicationTypeSaleOfBusiness.id)">
       <bodacc-sale [bodaccSale]="bodacc.bodaccSale" [editMode]="editMode"
         [instanceOfCustomerOrder]="instanceOfCustomerOrder" [transfertFundsType]="bodacc.transfertFundsType"
         [affaire]="affaire" [isStatusOpen]="isStatusOpen"
-        *ngIf="bodacc.bodaccPublicationType && bodacc.transfertFundsType && bodacc.bodaccPublicationType.code==BODACC_PUBLICATION_TYPE_SALE_OF_BUSINESS">
+        *ngIf="bodacc.bodaccPublicationType && bodacc.transfertFundsType && bodacc.bodaccPublicationType.id==bodaccPublicationTypeSaleOfBusiness.id">
       </bodacc-sale>
       <bodacc-fusion [bodaccFusion]="bodacc.bodaccFusion" [editMode]="editMode"
         [instanceOfCustomerOrder]="instanceOfCustomerOrder" [isStatusOpen]="isStatusOpen"
-        *ngIf="bodacc.bodaccPublicationType &&  bodacc.bodaccPublicationType.code==BODACC_PUBLICATION_TYPE_MERGING">
+        *ngIf="bodacc.bodaccPublicationType &&  bodacc.bodaccPublicationType.id==bodaccPublicationTypeMerging.id">
       </bodacc-fusion>
       <bodacc-split [bodaccSplit]="bodacc.bodaccSplit" [editMode]="editMode"
         [instanceOfCustomerOrder]="instanceOfCustomerOrder" [isStatusOpen]="isStatusOpen"
-        *ngIf="bodacc.bodaccPublicationType &&  bodacc.bodaccPublicationType.code==BODACC_PUBLICATION_TYPE_SPLIT">
+        *ngIf="bodacc.bodaccPublicationType &&  bodacc.bodaccPublicationType.id==bodaccPublicationTypeSplit.id">
       </bodacc-split>
     </mat-tab>
     <mat-tab label="Documents">

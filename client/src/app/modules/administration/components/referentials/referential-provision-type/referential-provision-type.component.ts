@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { PROVISION_ASSIGNATION_TYPE_EMPLOYEE } from 'src/app/libs/Constants';
 import { BillingType } from 'src/app/modules/miscellaneous/model/BillingType';
+import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { ProvisionType } from 'src/app/modules/quotation/model/ProvisionType';
 import { ProvisionTypeService } from 'src/app/modules/quotation/services/provision.type.service';
 import { AppService } from 'src/app/services/app.service';
@@ -16,11 +16,17 @@ import { GenericReferentialComponent } from '../generic-referential/generic-refe
 export class ReferentialProvisionTypeComponent extends GenericReferentialComponent<ProvisionType> implements OnInit {
   constructor(private provisionTypeService: ProvisionTypeService,
     private formBuilder2: FormBuilder,
+    private constantService: ConstantService,
     private appService2: AppService,) {
     super(formBuilder2, appService2);
   }
 
-  PROVISION_ASSIGNATION_TYPE_EMPLOYEE = PROVISION_ASSIGNATION_TYPE_EMPLOYEE;
+  assignationTypeEmployee = this.constantService.getAssignationTypeEmployee();
+
+  mapEntities() {
+    if (this.selectedEntity)
+      this.selectedEntity.assignationType = this.assignationTypeEmployee;
+  }
 
   getAddOrUpdateObservable(): Observable<ProvisionType> {
     return this.provisionTypeService.addOrUpdateProvisionType(this.selectedEntity!);

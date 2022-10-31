@@ -257,7 +257,7 @@
               <tr>
                 <td>
                   <autocomplete-regie [(model)]="billingDocument.regie" [form]="entityForm" propertyName="regie"
-                    [isMandatory]="true" [isDisabled]="!editMode" label="Régie"></autocomplete-regie>
+                    [isMandatory]="false" [isDisabled]="!editMode" label="Régie"></autocomplete-regie>
                 </td>
               </tr>
             </table>
@@ -298,17 +298,17 @@
                 <td>
                   <select-payment-types [(model)]="selectedEntity.paymentType" label="Type" [form]="entityForm"
                     propertyName="paymentType" [isMandatory]="true" [isDisabled]="!editMode"
-                    [filteredPaymentTypeCodes]="[PAYMENT_TYPE_PRELEVEMENT,PAYMENT_TYPE_OTHERS]"></select-payment-types>
+                    [filteredPaymentType]="[paymentTypePrelevement,paymentTypeOther]"></select-payment-types>
                 </td>
                 <td
-                  *ngIf="selectedEntity !=undefined && selectedEntity.paymentType!=undefined && selectedEntity.paymentType.code!=undefined && selectedEntity.paymentType.code==PAYMENT_TYPE_PRELEVEMENT">
+                  *ngIf="selectedEntity !=undefined && selectedEntity.paymentType!=undefined && selectedEntity.paymentType.code!=undefined && selectedEntity.paymentType.id==paymentTypePrelevement.id">
                   <generic-input [(model)]="selectedEntity.iban" label="IBAN" [form]="entityForm" propertyName="iban"
                     [isMandatory]="false" [isDisabled]="!editMode"
-                    [conditionnalRequired]="this.selectedEntity.paymentType != undefined && this.selectedEntity.paymentType.code != undefined && this.selectedEntity.paymentType.code == PAYMENT_TYPE_PRELEVEMENT "
+                    [conditionnalRequired]="this.selectedEntity.paymentType != undefined && this.selectedEntity.paymentType.code != undefined && this.selectedEntity.paymentType.id == paymentTypePrelevement.id "
                     [maxLength]="40"></generic-input>
                 </td>
                 <td
-                  *ngIf="selectedEntity !=undefined && selectedEntity.paymentType!=undefined && selectedEntity.paymentType.code!=undefined && selectedEntity.paymentType.code==PAYMENT_TYPE_PRELEVEMENT">
+                  *ngIf="selectedEntity !=undefined && selectedEntity.paymentType!=undefined && selectedEntity.paymentType.code!=undefined && selectedEntity.paymentType.id==paymentTypePrelevement.id">
                   <generic-toggle [(model)]="selectedEntity.isSepaMandateReceived" label="Mandat SEPA reçu ?"
                     [form]="entityForm" propertyName="isSepaMandateReceived"></generic-toggle>
                 </td>
@@ -345,10 +345,10 @@
                     [form]="entityForm" propertyName="refundType"></select-refund-type>
                 </td>
                 <td
-                  *ngIf="refundDocument.isRefundable && refundDocument !=undefined && refundDocument.refundType!=undefined && refundDocument.refundType.code!=undefined && refundDocument.refundType.code==REFUND_TYPE_VIREMENT">
+                  *ngIf="refundDocument.isRefundable && refundDocument !=undefined && refundDocument.refundType!=undefined && refundDocument.refundType.code!=undefined && refundDocument.refundType.id==refundTypeVirement.id">
                   <generic-input [(model)]="refundDocument.refundIBAN" label="IBAN" [form]="entityForm"
                     propertyName="refundIBAN" [isMandatory]="true" [isDisabled]="!editMode"
-                    [conditionnalRequired]="refundDocument.refundType != undefined && refundDocument.refundType.code != undefined && refundDocument.refundType.code == REFUND_TYPE_VIREMENT "
+                    [conditionnalRequired]="refundDocument.refundType != undefined && refundDocument.refundType.code != undefined && refundDocument.refundType.id == refundTypeVirement.id "
                     [maxLength]="40"></generic-input>
                 </td>
               </tr>

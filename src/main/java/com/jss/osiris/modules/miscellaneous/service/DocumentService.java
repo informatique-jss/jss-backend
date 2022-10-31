@@ -15,5 +15,5 @@ public interface DocumentService {
      * @param documents Document list to search for
      * @return The billing document if found, null otherwise
      */
-    public Document getBillingDocument(List<Document> documents);
+    public Document getBillingDocument(List<Document> documents) throws Exception;
 }

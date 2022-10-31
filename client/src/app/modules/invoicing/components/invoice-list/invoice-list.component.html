@@ -5,7 +5,7 @@
         <td>
           <select-invoice-status [(model)]="invoiceSearch.invoiceStatus" label="Statut de la facture"
             [form]="invoiceForm" propertyName="invoiceStatus" [isMandatory]="true"
-            [defaultCodesSelected]="[INVOICING_STATUS_SENT]">
+            [defaultStatusSelected]="defaultStatusFilter">
           </select-invoice-status>
         </td>
         <td>

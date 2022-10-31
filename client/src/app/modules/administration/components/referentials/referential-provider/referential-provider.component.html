@@ -80,7 +80,7 @@
             <td>
               <select-payment-types [(model)]="selectedEntity.paymentType" label="Type" [form]="entityForm"
                 propertyName="paymentType" [isMandatory]="true" [isDisabled]="!editMode"
-                [filteredPaymentTypeCodes]="[PAYMENT_TYPE_PRELEVEMENT,PAYMENT_TYPE_VIREMENT]"></select-payment-types>
+                [filteredPaymentType]="[paymentTypePrelevement,paymentTypeVirement]"></select-payment-types>
             </td>
             <td>
               <select-vat-collection-type [(model)]="selectedEntity.vatCollectionType"

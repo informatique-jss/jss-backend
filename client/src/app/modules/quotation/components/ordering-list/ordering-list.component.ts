@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { PAYEMENT_WAY_INBOUND_CODE } from 'src/app/libs/Constants';
 import { formatDateTimeForSortTable, toIsoString } from 'src/app/libs/FormatHelper';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
@@ -21,7 +20,6 @@ export class OrderingListComponent implements OnInit {
   orders: IQuotation[] | undefined;
   displayedColumns: SortTableColumn[] = [];
   tableAction: SortTableAction[] = [];
-  PAYEMENT_WAY_INBOUND_CODE = PAYEMENT_WAY_INBOUND_CODE;
 
   @Output() actionBypass: EventEmitter<CustomerOrder> = new EventEmitter<CustomerOrder>();
   @Input() overrideIconAction: string = "";
