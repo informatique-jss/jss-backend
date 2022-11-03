@@ -138,10 +138,6 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.quotationLabelTypeOther;
   }
 
-  getPaymentTypeCheques() {
-    return this.constant.paymentTypeCheques;
-  }
-
   getPaymentTypeOther() {
     return this.constant.paymentTypeOther;
   }
@@ -182,12 +178,12 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.domiciliationContractTypeRouteMail;
   }
 
-  getDomiciliationContractTypeKeepEmail() {
-    return this.constant.domiciliationContractTypeKeepEmail;
-  }
-
   getDomiciliationContractTypeRouteEmail() {
     return this.constant.domiciliationContractTypeRouteEmail;
+  }
+
+  getDomiciliationContractTypeRouteEmailAndMail() {
+    return this.constant.domiciliationContractTypeRouteEmailAndMail;
   }
 
   getMailRedirectionTypeOther() {
@@ -280,6 +276,10 @@ export class ConstantService extends AppRestService<Constant>{
 
   getDepartmentReunion() {
     return this.constant.departmentReunion;
+  }
+
+  getInvoiceStatusCancelled() {
+    return this.constant.invoiceStatusCancelled;
   }
 }
 

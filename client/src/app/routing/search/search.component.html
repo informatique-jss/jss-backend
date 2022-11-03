@@ -117,7 +117,8 @@
                         "+entity.text.affaire.lastname)}}</mat-card-title>
                       <mat-card-subtitle>
                         <p> {{entity.text.affaire.address}} - {{entity.text.affaire.postalCode}} -
-                          {{entity.text.affaire.country.label}}{{entity.text.affaire.siren?(" - SIREN
+                          {{entity.text.affaire.country?entity.text.affaire.country.label:""}}{{entity.text.affaire.siren?("
+                          - SIREN
                           : "+entity.text.affaire.siren):""}}{{entity.text.affaire.siret?(" - SIRET
                           : "+entity.text.affaire.siret):""}}{{entity.text.affaire.rna?(" - RNA
                           : "+entity.text.affaire.rna):""}}</p>

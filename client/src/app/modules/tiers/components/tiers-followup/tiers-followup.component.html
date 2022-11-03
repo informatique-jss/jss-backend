@@ -5,19 +5,19 @@
         <tr>
           <td>
             <select-followup [(model)]="newFollowup.tiersFollowupType" label="Type" [form]="followupForm"
-              propertyName="tiersFollowupType" [isMandatory]="true" [isDisabled]="!editMode"></select-followup>
+              propertyName="tiersFollowupType" [isMandatory]="true" [isDisabled]="false"></select-followup>
           </td>
           <td>
             <autocomplete-sales-employee [(model)]="newFollowup.salesEmployee" [form]="followupForm" label="Commercial"
-              propertyName="salesEmployee" [isMandatory]="true" [isDisabled]="!editMode"></autocomplete-sales-employee>
+              propertyName="salesEmployee" [isMandatory]="true" [isDisabled]="false"></autocomplete-sales-employee>
           </td>
           <td>
             <select-gift [(model)]="newFollowup.gift" label="Cadeau" [form]="followupForm" propertyName="gift"
-              [isDisabled]="!editMode"></select-gift>
+              [isDisabled]="false"></select-gift>
           </td>
           <td>
             <generic-datepicker [(model)]="newFollowup.followupDate" label="Date" [form]="followupForm"
-              propertyName="followupDate" [isMandatory]="true" [isDisabled]="!editMode"></generic-datepicker>
+              propertyName="followupDate" [isMandatory]="true" [isDisabled]="false"></generic-datepicker>
           </td>
           <td class="button-td">
             <button (click)="addNewFollowUp()" mat-mini-fab color="warn" class="mini-fab-add add-button">
@@ -30,7 +30,7 @@
         <tr>
           <td>
             <generic-textarea [(model)]="newFollowup.observations" label="Observations" [form]="followupForm"
-              propertyName="observations" [isDisabled]="!editMode" [numberOfLines]="2"></generic-textarea>
+              propertyName="observations" [isDisabled]="false" [numberOfLines]="2"></generic-textarea>
           </td>
         </tr>
       </table>

@@ -49,7 +49,7 @@
             <td>
               <select-tiers-type [(model)]="constant.tiersTypeProspect" [form]="constantForm"
                 propertyName="tiersTypeProspect" label="Type de tiers - prospect">
-              </select-tiers-type>>
+              </select-tiers-type>
             </td>
           </tr>
           <tr>
@@ -192,13 +192,6 @@
           </tr>
           <tr>
             <td>
-              <select-payment-types [(model)]="constant.paymentTypeCheques" label="Type de paiement - chèques"
-                [form]="constantForm" propertyName="paymentTypeCheques" [isMandatory]="true" [isDisabled]="!editMode">
-              </select-payment-types>
-            </td>
-          </tr>
-          <tr>
-            <td>
               <select-payment-types [(model)]="constant.paymentTypePrelevement" label="Type de paiement - prélèvement"
                 [form]="constantForm" propertyName="paymentTypePrelevement" [isMandatory]="true"
                 [isDisabled]="!editMode"></select-payment-types>
@@ -235,7 +228,8 @@
           <tr>
             <td>
               <autocomplete-legal-form [(model)]="constant.legalFormUnregistered" [form]="constantForm"
-                propertyName="Forme légale - non enregistré" [isMandatory]="true" [isDisabled]="!editMode">
+                label="Forme légale - non enregistré" propertyName="legalFormUnregistered" [isMandatory]="true"
+                [isDisabled]="!editMode">
               </autocomplete-legal-form>
             </td>
           </tr>
@@ -262,25 +256,25 @@
           </tr>
           <tr>
             <td>
-              <select-contract-type [(model)]="constant.domiciliationContractTypeKeepEmail"
-                label="Contrat de domiciliation - conservation des mails" [form]="constantForm"
-                propertyName="domiciliationContractTypeKeepEmail" [isMandatory]="true" [isDisabled]="!editMode">
+              <select-contract-type [(model)]="constant.domiciliationContractTypeRouteEmail"
+                label="Contrat de domiciliation - redirection par mail" [form]="constantForm"
+                propertyName="domiciliationContractTypeRouteEmail" [isMandatory]="true" [isDisabled]="!editMode">
               </select-contract-type>
             </td>
           </tr>
           <tr>
             <td>
               <select-contract-type [(model)]="constant.domiciliationContractTypeRouteMail"
-                label="Contrat de domiciliation - redirection du courrier" [form]="constantForm"
+                label="Contrat de domiciliation - redirection postale" [form]="constantForm"
                 propertyName="domiciliationContractTypeRouteMail" [isMandatory]="true" [isDisabled]="!editMode">
               </select-contract-type>
             </td>
           </tr>
           <tr>
             <td>
-              <select-contract-type [(model)]="constant.domiciliationContractTypeRouteEmail"
-                label="Contrat de domiciliation - redirection des mails" [form]="constantForm"
-                propertyName="domiciliationContractTypeRouteEmail" [isMandatory]="true" [isDisabled]="!editMode">
+              <select-contract-type [(model)]="constant.domiciliationContractTypeRouteEmailAndMail"
+                label="Contrat de domiciliation - redirection par mail et postale" [form]="constantForm"
+                propertyName="domiciliationContractTypeRouteEmailAndMail" [isMandatory]="true" [isDisabled]="!editMode">
               </select-contract-type>
             </td>
           </tr>
@@ -377,7 +371,7 @@
           <tr>
             <td>
               <radio-group-transfert-funds [(model)]="constant.transfertFundsTypePhysique" [form]="constantForm"
-                propertyName="transfertFundsTypeMoral" label="Type de transfert de fonds - personne physique">
+                propertyName="transfertFundsTypePhysique" label="Type de transfert de fonds - personne physique">
               </radio-group-transfert-funds>
             </td>
           </tr>
@@ -391,7 +385,7 @@
           <tr>
             <td>
               <select-competent-authority-type [(model)]="constant.competentAuthorityTypeRcs"
-                label="Type d'authorité compétente - TCS" [form]="constantForm" propertyName="competentAuthorityTypeRcs"
+                label="Type d'authorité compétente - RCS" [form]="constantForm" propertyName="competentAuthorityTypeRcs"
                 [isMandatory]="true" [isDisabled]="!editMode"></select-competent-authority-type>
             </td>
           </tr>
@@ -399,6 +393,14 @@
             <td>
               <select-invoice-status-one [(model)]="constant.invoiceStatusPayed" label="Statut de facture - payée"
                 [form]="constantForm" propertyName="invoiceStatusPayed" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-invoice-status-one>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-invoice-status-one [(model)]="constant.invoiceStatusCancelled" label="Statut de facture - annulée"
+                [form]="constantForm" propertyName="invoiceStatusCancelled" [isMandatory]="true"
+                [isDisabled]="!editMode">
               </select-invoice-status-one>
             </td>
           </tr>

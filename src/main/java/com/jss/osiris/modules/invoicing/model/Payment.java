@@ -52,6 +52,9 @@ public class Payment implements Serializable, IId {
 	@JsonIgnoreProperties(value = { "payments" }, allowSetters = true)
 	private CustomerOrder customerOrder;
 
+	@Column(nullable = false)
+	private Boolean isExternallyAssociated;
+
 	public Integer getId() {
 		return id;
 	}
@@ -114,6 +117,22 @@ public class Payment implements Serializable, IId {
 
 	public void setCustomerOrder(CustomerOrder customerOrder) {
 		this.customerOrder = customerOrder;
+	}
+
+	public boolean isExternallyAssociated() {
+		return isExternallyAssociated;
+	}
+
+	public void setExternallyAssociated(boolean isExternallyAssociated) {
+		this.isExternallyAssociated = isExternallyAssociated;
+	}
+
+	public Boolean getIsExternallyAssociated() {
+		return isExternallyAssociated;
+	}
+
+	public void setIsExternallyAssociated(Boolean isExternallyAssociated) {
+		this.isExternallyAssociated = isExternallyAssociated;
 	}
 
 }

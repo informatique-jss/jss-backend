@@ -5,6 +5,7 @@ import { MatAccordion } from '@angular/material/expansion';
 import { ActivatedRoute, Router, UrlSegment } from '@angular/router';
 import { Subject } from 'rxjs';
 import { QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_BEING_PROCESSED, QUOTATION_STATUS_BILLED, QUOTATION_STATUS_CANCELLED, QUOTATION_STATUS_OPEN, QUOTATION_STATUS_REFUSED_BY_CUSTOMER, QUOTATION_STATUS_SENT_TO_CUSTOMER, QUOTATION_STATUS_TO_VERIFY, QUOTATION_STATUS_VALIDATED_BY_CUSTOMER, QUOTATION_STATUS_VALIDATED_BY_JSS, QUOTATION_STATUS_WAITING_DEPOSIT } from 'src/app/libs/Constants';
+import { instanceOfCustomerOrder } from 'src/app/libs/TypeHelper';
 import { Vat } from 'src/app/modules/miscellaneous/model/Vat';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { Employee } from 'src/app/modules/profile/model/Employee';
@@ -54,6 +55,8 @@ export class QuotationComponent implements OnInit {
   QUOTATION_STATUS_ABANDONED = QUOTATION_STATUS_ABANDONED;
   QUOTATION_STATUS_CANCELLED = QUOTATION_STATUS_CANCELLED;
   billingLabelTypeAffaire: BillingLabelType = this.constantService.getBillingLabelTypeCodeAffaire();
+
+  instanceOfCustomerOrderFn = instanceOfCustomerOrder;
 
   selectedTabIndex = 0;
 
@@ -464,6 +467,12 @@ export class QuotationComponent implements OnInit {
       for (let deposit of quotation.deposits)
         total += deposit.depositAmount;
     return total;
+  }
+
+  getRemainingToPay() {
+    if (instanceOfCustomerOrder(this.quotation))
+      return Math.round((QuotationComponent.computePriceTotal(this.quotation) - QuotationComponent.computePayed(this.quotation)) * 100) / 100;
+    return this.getPriceTotal();
   }
 
   // When quotation label type is AFFAIRE, only one affaire is authorized in quotation

@@ -59,6 +59,7 @@ const routes: Routes = [
     AssociatePaymentDialogComponent,
     AddInvoiceComponent,
     AmountDialogComponent,
+  ], exports: [
   ]
 })
 export class InvoicingModule { }

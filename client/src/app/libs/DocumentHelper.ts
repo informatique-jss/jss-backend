@@ -55,14 +55,3 @@ export function replaceDocument(documentType: DocumentType, entity: IDocument, n
   }
   return;
 }
-
-export function getDocumentType(codeTypeDocument: string, DocumentTypes: DocumentType[]): DocumentType {
-  if (DocumentTypes.length > 0) {
-    for (let i = 0; i < DocumentTypes.length; i++) {
-      const documentType = DocumentTypes[i];
-      if (documentType.code == codeTypeDocument)
-        return documentType;
-    }
-  }
-  return {} as DocumentType;
-}

@@ -51,8 +51,8 @@ export class DomiciliationComponent implements OnInit {
   mailRedirectionTypeOther: MailRedirectionType = this.constantService.getMailRedirectionTypeOther();
   domiciliationContractTypeKeepMail: DomiciliationContractType = this.constantService.getDomiciliationContractTypeKeepMail();
   domiciliationContractTypeRouteMail: DomiciliationContractType = this.constantService.getDomiciliationContractTypeRouteMail();
-  domiciliationContractTypeKeepEmail: DomiciliationContractType = this.constantService.getDomiciliationContractTypeKeepEmail();
   domiciliationContractTypeRouteEmail: DomiciliationContractType = this.constantService.getDomiciliationContractTypeRouteEmail();
+  domiciliationContractTypeRouteEmailAndMail: DomiciliationContractType = this.constantService.getDomiciliationContractTypeRouteEmailAndMail();
 
 
   constructor(private formBuilder: UntypedFormBuilder,
@@ -135,15 +135,15 @@ export class DomiciliationComponent implements OnInit {
 
   mustDecribeAdresse(): boolean {
     return this.domiciliation != null && this.domiciliation.domiciliationContractType &&
-      (this.domiciliation.domiciliationContractType.id == this.domiciliationContractTypeKeepMail.id
+      (this.domiciliation.domiciliationContractType.id == this.domiciliationContractTypeRouteEmailAndMail.id
         || this.domiciliation.domiciliationContractType.id == this.domiciliationContractTypeRouteMail.id)
       && this.domiciliation.mailRedirectionType && this.domiciliation.mailRedirectionType.id == this.mailRedirectionTypeOther.id;
   }
 
   mustDecribeMail() {
     return this.domiciliation != null && this.domiciliation.domiciliationContractType &&
-      (this.domiciliation.domiciliationContractType.id == this.domiciliationContractTypeKeepEmail.id
-        || this.domiciliation.domiciliationContractType.id == this.domiciliationContractTypeRouteEmail.id)
+      (this.domiciliation.domiciliationContractType.id == this.domiciliationContractTypeRouteEmail.id
+        || this.domiciliation.domiciliationContractType.id == this.domiciliationContractTypeRouteEmailAndMail.id)
       && this.domiciliation.mailRedirectionType && this.domiciliation!.mailRedirectionType.id == this.mailRedirectionTypeOther.id;
   }
 

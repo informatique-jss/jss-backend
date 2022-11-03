@@ -31,6 +31,8 @@ import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.model.Refund;
 import com.jss.osiris.modules.invoicing.service.InvoiceHelper;
 import com.jss.osiris.modules.invoicing.service.InvoiceItemService;
+import com.jss.osiris.modules.invoicing.service.InvoiceService;
+import com.jss.osiris.modules.invoicing.service.PaymentService;
 import com.jss.osiris.modules.miscellaneous.service.VatService;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
@@ -68,6 +70,12 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
   @Autowired
   QuotationService quotationService;
+
+  @Autowired
+  InvoiceService invoiceService;
+
+  @Autowired
+  PaymentService paymentService;
 
   @Override
   public List<AccountingRecord> getAccountingRecords() {
@@ -800,6 +808,70 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     if (operationId != null)
       return accountingRecordRepository.findByOperationId(operationId);
     return null;
+  }
+
+  @Transactional(rollbackFor = Exception.class)
+  @Override
+  public List<AccountingRecord> deleteRecordsByTemporaryOperationId(Integer temporaryOperationId) throws Exception {
+    List<AccountingRecord> accountingRecords = getAccountingRecordsByTemporaryOperationId(temporaryOperationId);
+
+    List<Invoice> invoicesToUnleter = new ArrayList<Invoice>();
+
+    if (accountingRecords != null) {
+      for (AccountingRecord accountingRecord : accountingRecords) {
+        deleteAccountingRecord(accountingRecord);
+        boolean invoiceFound = false;
+        for (Invoice invoice : invoicesToUnleter)
+          if (invoice.getId().equals(accountingRecord.getInvoice().getId()))
+            invoiceFound = true;
+        if (!invoiceFound)
+          invoicesToUnleter.add(accountingRecord.getInvoice());
+      }
+    }
+
+    // Unleter invoices
+    if (invoicesToUnleter.size() > 0)
+      for (Invoice invoice : invoicesToUnleter)
+        invoiceService.unletterInvoice(invoice);
+    return null;
+  }
+
+  @Transactional(rollbackFor = Exception.class)
+  @Override
+  public List<AccountingRecord> doCounterPartByOperationId(Integer operationId) throws Exception {
+    List<AccountingRecord> accountingRecords = getAccountingRecordsByOperationId(operationId);
+
+    List<Invoice> invoicesToUnleter = new ArrayList<Invoice>();
+
+    if (accountingRecords != null) {
+      for (AccountingRecord accountingRecord : accountingRecords) {
+        generateCounterPart(accountingRecord);
+        accountingRecord.setInvoice(null);
+        paymentService.unlinkPaymentFromInvoiceCustomerOrder(accountingRecord.getPayment());
+        accountingRecord.setPayment(null);
+        accountingRecord.setDeposit(null);
+        boolean invoiceFound = false;
+        for (Invoice invoice : invoicesToUnleter)
+          if (invoice.getId().equals(accountingRecord.getInvoice().getId()))
+            invoiceFound = true;
+        if (!invoiceFound)
+          invoicesToUnleter.add(accountingRecord.getInvoice());
+      }
+    }
+
+    // Unleter invoices
+    if (invoicesToUnleter.size() > 0)
+      for (Invoice invoice : invoicesToUnleter)
+        invoiceService.unletterInvoice(invoice);
+    return null;
+  }
+
+  @Override
+  public AccountingRecord unassociateCustomerOrderPayementAndDeposit(AccountingRecord accountingRecord) {
+    accountingRecord.setCustomerOrder(null);
+    accountingRecord.setDeposit(null);
+    accountingRecord.setPayment(null);
+    return addOrUpdateAccountingRecord(accountingRecord);
   }
 
 }

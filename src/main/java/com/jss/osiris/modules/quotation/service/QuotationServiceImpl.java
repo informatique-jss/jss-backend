@@ -350,8 +350,12 @@ public class QuotationServiceImpl implements QuotationService {
                                                     .equals(provision.getId())) {
                                         if (invoiceItemToMerge.getBillingItem().getId()
                                                 .equals(invoiceItem.getBillingItem().getId())) {
-                                            invoiceItemToMerge.setId(invoiceItem.getId());
-                                            invoiceItemToMerge.setInvoice(invoiceItem.getInvoice());
+                                            // Only if invoice is not cancelled, in that case generate new invoice item
+                                            if (!invoiceItem.getInvoice().getInvoiceStatus().getId()
+                                                    .equals(constantService.getInvoiceStatusCancelled().getId())) {
+                                                invoiceItemToMerge.setId(invoiceItem.getId());
+                                                invoiceItemToMerge.setInvoice(invoiceItem.getInvoice());
+                                            }
                                             if (invoiceItemToMerge.getBillingItem().getBillingType()
                                                     .getCanOverridePrice()
                                                     && invoiceItem.getPreTaxPrice() != null

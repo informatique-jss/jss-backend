@@ -204,7 +204,7 @@
             </fieldset>
           </div>
         </mat-tab>
-        <mat-tab label="Pièces et facturation">
+        <mat-tab label="Pièces et facturation" *ngIf="isResponsableTypeProspect()==false">
           <settlement-billing [tiers]="selectedResponsable!" [editMode]="editMode"></settlement-billing>
         </mat-tab>
         <mat-tab label="Documents" *ngIf="selectedResponsable?.id!=null && selectedResponsable?.id!=undefined">

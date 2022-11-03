@@ -172,6 +172,8 @@ export class ResponsableMainComponent implements OnInit {
       }
 
       this.selectedResponsable.isActive = true;
+      if (this.isResponsableTypeProspect())
+        this.selectedResponsable.tiersType = this.constantService.getTiersTypeProspect();
       this.tiersService.setCurrentViewedResponsable(this.selectedResponsable);
       this.setDataTable();
       this.toggleTabs();
@@ -243,6 +245,8 @@ export class ResponsableMainComponent implements OnInit {
 
   getFormStatus(): boolean {
     let status = true;
+    console.log(this.principalForm);
+    console.log(this.documentSettlementBillingComponent?.getFormStatus());
     if (this.selectedResponsable != null) {
       let documentSettlementBillingFormStatus = this.documentSettlementBillingComponent?.getFormStatus();
       this.principalForm.markAllAsTouched();
@@ -253,7 +257,7 @@ export class ResponsableMainComponent implements OnInit {
       if (this.selectedResponsable?.jssSubscription != undefined && this.selectedResponsable.jssSubscription.isPaperSubscription)
         this.selectedResponsable.jssSubscription.isWebSubscription = true;
 
-      status = status && this.principalForm.valid && documentSettlementBillingFormStatus!;
+      status = status && this.principalForm.valid && (documentSettlementBillingFormStatus! || this.isResponsableTypeProspect());
     }
     return status;
   }

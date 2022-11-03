@@ -122,8 +122,10 @@
         <invoice-payment-table [invoice]="invoice"></invoice-payment-table>
       </div>
     </mat-tab>
-    <mat-tab label="Associer un paiement" *ngIf="getAmountRemaining(invoice)>0">
-      <invoice-payment (stateChanged)="onStateChange()" [invoice]="invoice"></invoice-payment>
+    <mat-tab label="Associer un paiement"
+      *ngIf="getAmountRemaining(invoice)>0 && invoice.invoiceStatus.id==invoiceStatusSend.id">
+      <invoice-payment (stateChanged)=" onStateChange()" [invoice]="invoice">
+      </invoice-payment>
     </mat-tab>
     <mat-tab label="Historique" *ngIf="invoice.id">
       <history [entity]="invoice" [entityType]="INVOICE_ENTITY_TYPE"></history>

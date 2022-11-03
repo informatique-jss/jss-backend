@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Vat } from 'src/app/modules/miscellaneous/model/Vat';
+import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { QuotationComponent } from 'src/app/modules/quotation/components/quotation/quotation.component';
 import { Affaire } from 'src/app/modules/quotation/model/Affaire';
 import { Invoice } from 'src/app/modules/quotation/model/Invoice';
@@ -18,7 +19,7 @@ import { getAffaireList, getAffaireListArray, getAmountRemaining, getCustomerOrd
 })
 export class InvoiceDetailsComponent implements OnInit {
 
-  invoice: Invoice | undefined;
+  @Input() invoice: Invoice | undefined;
   getAmountRemaining = getAmountRemaining;
   getAffaireList = getAffaireList;
   getAffaireListArray = getAffaireListArray;
@@ -28,7 +29,10 @@ export class InvoiceDetailsComponent implements OnInit {
     private invoiceService: InvoiceService,
     private appService: AppService,
     private activatedRoute: ActivatedRoute,
+    private constantService: ConstantService,
   ) { }
+
+  invoiceStatusSend = this.constantService.getInvoiceStatusSend();
 
   ngOnInit() {
     this.refreshData();

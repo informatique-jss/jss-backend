@@ -5,9 +5,7 @@ import { Responsable } from "../modules/tiers/model/Responsable";
 import { Tiers } from "../modules/tiers/model/Tiers";
 
 export function instanceOfTiers(object: any): object is Tiers {
-  if (object != null)
-    return 'isIndividual' in object;
-  return false;
+  return !instanceOfResponsable(object);
 }
 
 export function instanceOfResponsable(object: any): object is Responsable {

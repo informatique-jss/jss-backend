@@ -35,7 +35,6 @@ export class ReferentialConfrereComponent extends GenericReferentialComponent<Co
   paymentTypes: PaymentType[] = [] as Array<PaymentType>;
 
   paymentTypePrelevement = this.constantService.getPaymentTypePrelevement();
-  paymentTypeCheques = this.constantService.getPaymentTypeCheques();
   paymentTypeOther = this.constantService.getPaymentTypeOther();
 
 

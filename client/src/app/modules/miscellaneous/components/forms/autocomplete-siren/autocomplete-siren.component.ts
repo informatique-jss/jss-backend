@@ -18,7 +18,7 @@ export class AutocompleteSirenComponent extends GenericAutocompleteComponent<Sir
   }
 
   searchEntities(value: string): Observable<Siren[]> {
-    this.expectedMinLengthInput = 14;
+    this.expectedMinLengthInput = 9;
     return this.sirenService.getSiren(value);
   }
 

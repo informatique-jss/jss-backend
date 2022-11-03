@@ -4,6 +4,7 @@ import { formatDateTimeForSortTable, formatEurosForSortTable, toIsoString } from
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
+import { AppService } from 'src/app/services/app.service';
 import { Payment } from '../../model/Payment';
 import { PaymentSearch } from '../../model/PaymentSearch';
 import { PaymentService } from '../../services/payment.service';
@@ -30,6 +31,7 @@ export class PaymentListComponent implements OnInit {
     private paymentService: PaymentService,
     private constantService: ConstantService,
     private paymentWayService: PaymentWayService,
+    private appService: AppService,
     private formBuilder: FormBuilder,
   ) { }
 
@@ -41,10 +43,31 @@ export class PaymentListComponent implements OnInit {
     this.displayedColumns.push({ id: "payemntDate", fieldName: "paymentDate", label: "Date", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
     this.displayedColumns.push({ id: "payemntAmount", fieldName: "paymentAmount", label: "Montant", valueFonction: formatEurosForSortTable } as SortTableColumn);
     this.displayedColumns.push({ id: "label", fieldName: "label", label: "Libellé" } as SortTableColumn);
+    this.displayedColumns.push({ id: "isInternallyAssociated", fieldName: "isInternallyAssociated", label: "Associé dans Osiris", valueFonction: (element: any) => { return (element.invoice || element.customerOrder) ? "Oui" : "Non" } } as SortTableColumn);
+    this.displayedColumns.push({ id: "isExternallyAssociated", fieldName: "isExternallyAssociated", label: "Associé hors Osiris", valueFonction: (element: any) => { return element.isExternallyAssociated ? "Oui" : "Non" } } as SortTableColumn);
     this.displayedColumns.push({ id: "invoice", fieldName: "invoices.id", label: "Facture associée", valueFonction: this.getInvoiceLabel, actionLinkFunction: this.getActionLink, actionIcon: "visibility", actionTooltip: "Voir la facture associée" } as SortTableColumn);
 
     if (this.overrideIconAction == "") {
-
+      this.tableAction.push({
+        actionIcon: "merge_type", actionName: "Indiquer comme associé hors Osiris", actionClick: (action: SortTableAction, element: any) => {
+          if ((!element.invoice && !element.customerOrder))
+            this.paymentService.setExternallyAssociated(element as Payment).subscribe(response => {
+              this.searchPayments();
+            });
+          else
+            this.appService.displaySnackBar("Paiement déjà associé dans Osiris", true, 20);
+        }, display: true,
+      } as SortTableAction);
+      this.tableAction.push({
+        actionIcon: "remove_done", actionName: "Indiquer comme non associé hors Osiris", actionClick: (action: SortTableAction, element: any) => {
+          if ((!element.invoice && !element.customerOrder && element.isExternallyAssociated))
+            this.paymentService.unsetExternallyAssociated(element as Payment).subscribe(response => {
+              this.searchPayments();
+            });
+          else
+            this.appService.displaySnackBar("Paiement non indiqué associé hors Osiris", true, 20);
+        }, display: true,
+      } as SortTableAction);
     } else {
       this.tableAction.push({
         actionIcon: this.overrideIconAction, actionName: this.overrideTooltipAction, actionClick: (action: SortTableAction, element: any) => {

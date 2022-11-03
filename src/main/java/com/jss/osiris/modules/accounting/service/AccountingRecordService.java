@@ -110,4 +110,11 @@ public interface AccountingRecordService {
 
         public void deleteAccountingRecord(AccountingRecord accountingRecord);
 
+        public List<AccountingRecord> doCounterPartByOperationId(Integer operationId) throws Exception;
+
+        public List<AccountingRecord> deleteRecordsByTemporaryOperationId(Integer temporaryOperationId)
+                        throws Exception;
+
+        public AccountingRecord unassociateCustomerOrderPayementAndDeposit(AccountingRecord accountingRecord);
+
 }

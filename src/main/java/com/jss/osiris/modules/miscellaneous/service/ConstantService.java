@@ -86,8 +86,6 @@ public interface ConstantService {
 
     public QuotationLabelType getQuotationLabelTypeOther() throws Exception;
 
-    public PaymentType getPaymentTypeCheques() throws Exception;
-
     public PaymentType getPaymentTypeOther() throws Exception;
 
     public PaymentType getPaymentTypeVirement() throws Exception;
@@ -108,7 +106,7 @@ public interface ConstantService {
 
     public DomiciliationContractType getDomiciliationContractTypeRouteMail() throws Exception;
 
-    public DomiciliationContractType getDomiciliationContractTypeKeepEmail() throws Exception;
+    public DomiciliationContractType getDomiciliationContractTypeRouteEmailAndMail() throws Exception;
 
     public DomiciliationContractType getDomiciliationContractTypeRouteEmail() throws Exception;
 
@@ -145,6 +143,8 @@ public interface ConstantService {
     public InvoiceStatus getInvoiceStatusSend() throws Exception;
 
     public InvoiceStatus getInvoiceStatusPayed() throws Exception;
+
+    public InvoiceStatus getInvoiceStatusCancelled() throws Exception;
 
     public PaymentWay getPaymentWayInbound() throws Exception;
 

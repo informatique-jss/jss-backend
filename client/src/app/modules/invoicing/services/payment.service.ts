@@ -10,7 +10,6 @@ import { PaymentSearch } from '../model/PaymentSearch';
   providedIn: 'root'
 })
 export class PaymentService extends AppRestService<Payment>{
-
   constructor(http: HttpClient) {
     super(http, "invoicing");
   }
@@ -30,5 +29,13 @@ export class PaymentService extends AppRestService<Payment>{
 
   associatePaymentAndInvoiceAndCustomerOrder(paymentAssociate: PaymentAssociate) {
     return this.postList(new HttpParams(), "payments/associate", paymentAssociate, "Association réalisée avec succès", "Erreur lors de l'association");
+  }
+
+  setExternallyAssociated(payment: Payment) {
+    return this.postList(new HttpParams(), "payments/associate/externally", payment);
+  }
+
+  unsetExternallyAssociated(payment: Payment) {
+    return this.postList(new HttpParams(), "payments/unassociate/externally", payment);
   }
 }

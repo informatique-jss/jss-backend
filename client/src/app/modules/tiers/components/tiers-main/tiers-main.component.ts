@@ -37,6 +37,10 @@ export class PrincipalComponent implements OnInit {
     if (changes.tiers != undefined) {
       if (this.tiers.deliveryService == null || this.tiers.deliveryService == undefined)
         this.tiers.deliveryService = this.deliveryServices[0];
+      if (!this.tiers.isProvisionalPaymentMandatory)
+        this.tiers.isProvisionalPaymentMandatory = false;
+      if (!this.tiers.isSepaMandateReceived)
+        this.tiers.isSepaMandateReceived = false;
       this.principalForm.markAllAsTouched();
     }
   }
@@ -65,7 +69,7 @@ export class PrincipalComponent implements OnInit {
   checkVAT(fieldName: string): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const root = control.root as UntypedFormGroup;
-
+      console.log("check vat");
       const fieldValue = root.get(fieldName)?.value;
       if (!this.tiers.isIndividual && !this.isTiersTypeProspect(this.tiers) && (fieldValue == undefined || fieldValue == null || fieldValue.length == 0 || !validateVat(fieldValue)))
         return {

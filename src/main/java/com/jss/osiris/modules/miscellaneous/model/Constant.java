@@ -142,10 +142,6 @@ public class Constant implements Serializable, IId {
 	private PaymentType paymentTypePrelevement;
 
 	@ManyToOne
-	@JoinColumn(name = "id_payment_type_cheques")
-	private PaymentType paymentTypeCheques;
-
-	@ManyToOne
 	@JoinColumn(name = "id_payment_type_other")
 	private PaymentType paymentTypeOther;
 
@@ -182,8 +178,8 @@ public class Constant implements Serializable, IId {
 	private DomiciliationContractType domiciliationContractTypeRouteMail;
 
 	@ManyToOne
-	@JoinColumn(name = "id_domiciliation_constract_type_keep_email")
-	private DomiciliationContractType domiciliationContractTypeKeepEmail;
+	@JoinColumn(name = "id_domiciliation_constract_type_route_email_mail")
+	private DomiciliationContractType domiciliationContractTypeRouteEmailAndMail;
 
 	@ManyToOne
 	@JoinColumn(name = "id_domiciliation_constract_type_route_email")
@@ -256,6 +252,10 @@ public class Constant implements Serializable, IId {
 	@ManyToOne
 	@JoinColumn(name = "id_invoice_status_payed")
 	private InvoiceStatus invoiceStatusPayed;
+
+	@ManyToOne
+	@JoinColumn(name = "id_invoice_status_cancelled")
+	private InvoiceStatus invoiceStatusCancelled;
 
 	@ManyToOne
 	@JoinColumn(name = "id_payment_way_inbound")
@@ -509,14 +509,6 @@ public class Constant implements Serializable, IId {
 		this.paymentTypePrelevement = paymentTypePrelevement;
 	}
 
-	public PaymentType getPaymentTypeCheques() {
-		return paymentTypeCheques;
-	}
-
-	public void setPaymentTypeCheques(PaymentType paymentTypeCheques) {
-		this.paymentTypeCheques = paymentTypeCheques;
-	}
-
 	public PaymentType getPaymentTypeOther() {
 		return paymentTypeOther;
 	}
@@ -587,14 +579,6 @@ public class Constant implements Serializable, IId {
 
 	public void setDomiciliationContractTypeRouteMail(DomiciliationContractType domiciliationContractTypeRouteMail) {
 		this.domiciliationContractTypeRouteMail = domiciliationContractTypeRouteMail;
-	}
-
-	public DomiciliationContractType getDomiciliationContractTypeKeepEmail() {
-		return domiciliationContractTypeKeepEmail;
-	}
-
-	public void setDomiciliationContractTypeKeepEmail(DomiciliationContractType domiciliationContractTypeKeepEmail) {
-		this.domiciliationContractTypeKeepEmail = domiciliationContractTypeKeepEmail;
 	}
 
 	public DomiciliationContractType getDomiciliationContractTypeRouteEmail() {
@@ -797,6 +781,23 @@ public class Constant implements Serializable, IId {
 
 	public void setDepartmentReunion(Department departmentReunion) {
 		this.departmentReunion = departmentReunion;
+	}
+
+	public InvoiceStatus getInvoiceStatusCancelled() {
+		return invoiceStatusCancelled;
+	}
+
+	public void setInvoiceStatusCancelled(InvoiceStatus invoiceStatusCancelled) {
+		this.invoiceStatusCancelled = invoiceStatusCancelled;
+	}
+
+	public DomiciliationContractType getDomiciliationContractTypeRouteEmailAndMail() {
+		return domiciliationContractTypeRouteEmailAndMail;
+	}
+
+	public void setDomiciliationContractTypeRouteEmailAndMail(
+			DomiciliationContractType domiciliationContractTypeRouteEmailAndMail) {
+		this.domiciliationContractTypeRouteEmailAndMail = domiciliationContractTypeRouteEmailAndMail;
 	}
 
 }

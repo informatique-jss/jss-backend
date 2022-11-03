@@ -28,7 +28,6 @@ export class SettlementBillingComponent implements OnInit, AfterContentChecked {
   paymentTypes: PaymentType[] = [] as Array<PaymentType>;
 
   paymentTypePrelevement: PaymentType = this.constantService.getPaymentTypePrelevement();
-  paymentTypeCheques: PaymentType = this.constantService.getPaymentTypeCheques();
   paymentTypeOther: PaymentType = this.constantService.getPaymentTypeOther();
 
   refundTypeVirement = this.constantService.getRefundTypeVirement();

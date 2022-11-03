@@ -84,7 +84,7 @@ export class AddAffaireDialogComponent implements OnInit {
 
   fillAffaire(entity: IndexEntity) {
     let obj = JSON.parse((entity.text as string));
-    this.affaireService.getAffaire(obj.id).subscribe(affaire => {
+    this.affaireService.getAffaire(entity.entityId).subscribe(affaire => {
       this.selectedAffaire = affaire;
     });
   }
@@ -216,7 +216,7 @@ export class AddAffaireDialogComponent implements OnInit {
         this.cityService.getCitiesFilteredByPostalCode(siret.etablissement.adresseEtablissement.codePostalEtablissement).subscribe(response => {
           if (response != null && response.length == 1) {
             this.affaire.postalCode = siret!.etablissement.adresseEtablissement.codePostalEtablissement;
-            this.fillPostalCode(response[0]);
+            this.fillCity(response[0].postalCode);
             this.affaireForm.markAllAsTouched();
           } else if (siret!.etablissement.adresseEtablissement.libelleCommuneEtablissement) {
             this.cityService.getCitiesFilteredByCountryAndName(siret!.etablissement.adresseEtablissement.libelleCommuneEtablissement, undefined).subscribe(response2 => {

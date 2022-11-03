@@ -455,4 +455,16 @@ public class PaymentServiceImpl implements PaymentService {
             addOrUpdatePayment(payment);
         }
     }
+
+    @Override
+    public void setExternallyAssociated(Payment payment) {
+        payment.setIsExternallyAssociated(true);
+        addOrUpdatePayment(payment);
+    }
+
+    @Override
+    public void unsetExternallyAssociated(Payment payment) {
+        payment.setIsExternallyAssociated(false);
+        addOrUpdatePayment(payment);
+    }
 }

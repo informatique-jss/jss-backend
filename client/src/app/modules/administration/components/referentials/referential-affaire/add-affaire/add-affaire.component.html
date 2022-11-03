@@ -30,21 +30,21 @@
       <td *ngIf="affaire.legalForm != null && affaire.legalForm.id != legalFormUnregistered.id">
         <autocomplete-siren [(model)]="affaire.siren" [form]="affaireForm" propertyName="siren" [isMandatory]="true"
           label="SIREN" [isDisabled]="!editMode" [byPassAutocompletValidator]="true"
-          [conditionnalRequired]="!this.affaire.isIndividual && this.affaire.legalForm != null"
+          [conditionnalRequired]="!this.affaire.isIndividual && this.affaire.legalForm != null && (!this.affaire.siret || !this.affaire.rna)"
           [customValidators]="[checkSiren('siren')]" (onOptionSelected)="fillSiren($event)">
         </autocomplete-siren>
       </td>
       <td *ngIf="affaire.legalForm != null && affaire.legalForm.id != legalFormUnregistered.id">
         <autocomplete-siret [(model)]="affaire.siret" [form]="affaireForm" propertyName="siret" [isMandatory]="true"
           label="SIRET" [isDisabled]="!editMode" [byPassAutocompletValidator]="true"
-          [conditionnalRequired]="!this.affaire.isIndividual && this.affaire.legalForm != null "
+          [conditionnalRequired]="!this.affaire.isIndividual && this.affaire.legalForm != null && (!this.affaire.siren || !this.affaire.rna)"
           [customValidators]="[checkSiret('siret')]" (onOptionSelected)="fillSiret($event)">
         </autocomplete-siret>
       </td>
       <td *ngIf="affaire.legalForm != null && affaire.legalForm.id != legalFormUnregistered.id">
         <autocomplete-rna [(model)]="affaire.rna" [form]="affaireForm" propertyName="rna" [isMandatory]="true"
           label="RNA" [isDisabled]="!editMode" [byPassAutocompletValidator]="true"
-          [conditionnalRequired]="!this.affaire.isIndividual && this.affaire.legalForm != null "
+          [conditionnalRequired]="!this.affaire.isIndividual && this.affaire.legalForm != null && (!this.affaire.siren ||!this.affaire.siret)"
           [customValidators]="[checkRna('rna')]" (onOptionSelected)="fillRna($event)"></autocomplete-rna>
       </td>
     </tr>

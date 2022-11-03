@@ -21,6 +21,7 @@ import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.model.Mail;
 import com.jss.osiris.modules.miscellaneous.model.Phone;
 import com.jss.osiris.modules.miscellaneous.model.SpecialOffer;
+import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.CountryService;
 import com.jss.osiris.modules.miscellaneous.service.DocumentTypeService;
 import com.jss.osiris.modules.miscellaneous.service.MailService;
@@ -80,6 +81,9 @@ public class TiersController {
 
   @Autowired
   CountryService countryService;
+
+  @Autowired
+  ConstantService constantService;
 
   @Autowired
   MailService mailService;
@@ -242,38 +246,20 @@ public class TiersController {
 
   @PostMapping(inputEntryPoint + "/tiers-followup")
   public ResponseEntity<List<TiersFollowup>> addTiersFollowup(@RequestBody TiersFollowup tiersFollowup) {
+    List<TiersFollowup> tiersFollowups = null;
     if (tiersFollowup.getTiers() == null && tiersFollowup.getResponsable() == null)
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-    if (tiersFollowup.getTiers() != null) {
-      Tiers tiers = tiersService.getTiers(tiersFollowup.getTiers().getId());
-      if (tiers == null)
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-      tiersFollowup.setTiers(tiers);
-    }
-
-    if (tiersFollowup.getResponsable() != null) {
-      Responsable responsable = responsableService.getResponsable(tiersFollowup.getResponsable().getId());
-      if (responsable == null)
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-      tiersFollowup.setResponsable(responsable);
-    }
-
-    if (tiersFollowup.getTiersFollowupType() == null || tiersFollowup.getTiersFollowupType().getId() == null
-        || tiersFollowupTypeService.getTiersFollowupType(tiersFollowup.getTiersFollowupType().getId()) == null)
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-    if (tiersFollowup.getSalesEmployee() == null || tiersFollowup.getSalesEmployee().getId() == null ||
-        employeeService.getEmployee(tiersFollowup.getSalesEmployee().getId()) == null)
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-    if (tiersFollowup.getFollowupDate() == null)
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-    List<TiersFollowup> tiersFollowups = null;
     try {
+      validationHelper.validateReferential(tiersFollowup.getTiers(), false);
+      validationHelper.validateReferential(tiersFollowup.getResponsable(), false);
+      validationHelper.validateReferential(tiersFollowup.getTiersFollowupType(), true);
+      validationHelper.validateReferential(tiersFollowup.getSalesEmployee(), true);
+      validationHelper.validateDate(tiersFollowup.getFollowupDate(), true);
       validationHelper.validateReferential(tiersFollowup.getGift(), false);
+
       tiersFollowups = tiersFollowupService.addTiersFollowup(tiersFollowup);
+    } catch (ResponseStatusException e) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     } catch (HttpStatusCodeException e) {
       logger.error("HTTP error when fetching TiersFollowup", e);
       return new ResponseEntity<List<TiersFollowup>>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -695,7 +681,8 @@ public class TiersController {
 
       validationHelper.validateString(tiers.getAddress(), true, 60);
       validationHelper.validateReferential(tiers.getCountry(), true);
-      if (tiers.getCountry() != null && tiers.getCountry().getCode().equals("FR"))
+      if (tiers.getCountry() != null
+          && tiers.getCountry().getCode().equals(constantService.getCountryFrance().getCode()))
         validationHelper.validateString(tiers.getPostalCode(), true, 10);
       validationHelper.validateReferential(tiers.getCity(), true);
 
@@ -760,7 +747,8 @@ public class TiersController {
         }
       }
 
-      validationHelper.validateReferential(tiers.getPaymentType(), true);
+      validationHelper.validateReferential(tiers.getPaymentType(),
+          !tiers.getTiersType().getId().equals(constantService.getTiersTypeProspect().getId()));
       validationHelper.validateString(tiers.getPaymentIBAN(), false, 40);
 
       if (tiers.getResponsables() != null && tiers.getResponsables().size() > 0) {

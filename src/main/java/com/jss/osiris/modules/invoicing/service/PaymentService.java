@@ -28,4 +28,8 @@ public interface PaymentService {
 
     public void unlinkPaymentFromInvoiceCustomerOrder(Payment payment);
 
+    public void setExternallyAssociated(Payment payment);
+
+    public void unsetExternallyAssociated(Payment payment);
+
 }

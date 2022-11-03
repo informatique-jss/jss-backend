@@ -26,7 +26,6 @@ import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.model.PaymentAssociate;
 import com.jss.osiris.modules.invoicing.model.PaymentSearch;
 import com.jss.osiris.modules.invoicing.model.PaymentWay;
-import com.jss.osiris.modules.invoicing.service.InvoiceAndAccountRecordDelegate;
 import com.jss.osiris.modules.invoicing.service.InvoiceHelper;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.invoicing.service.InvoiceStatusService;
@@ -62,9 +61,6 @@ public class InvoicingController {
 
     @Autowired
     PaymentWayService paymentWayService;
-
-    @Autowired
-    InvoiceAndAccountRecordDelegate invoiceAndAccountRecordDelegate;
 
     @Autowired
     ConstantService constantService;
@@ -272,6 +268,48 @@ public class InvoicingController {
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 
+    @PostMapping(inputEntryPoint + "/payments/associate/externally")
+    public ResponseEntity<Boolean> setExternallyAssociated(@RequestBody Payment payment) {
+        try {
+            Payment paymentOut = (Payment) validationHelper.validateReferential(payment, true);
+
+            if (paymentOut.getCustomerOrder() != null || paymentOut.getInvoice() != null)
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+            paymentService.setExternallyAssociated(payment);
+        } catch (ResponseStatusException e) {
+            return new ResponseEntity<Boolean>(e.getStatus());
+        } catch (HttpStatusCodeException e) {
+            logger.error("HTTP error when fetching payment", e);
+            return new ResponseEntity<Boolean>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            logger.error("Error when fetching payment", e);
+            return new ResponseEntity<Boolean>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+    }
+
+    @PostMapping(inputEntryPoint + "/payments/unassociate/externally")
+    public ResponseEntity<Boolean> unsetExternallyAssociated(@RequestBody Payment payment) {
+        try {
+            Payment paymentOut = (Payment) validationHelper.validateReferential(payment, true);
+
+            if (paymentOut.getCustomerOrder() != null || paymentOut.getInvoice() != null)
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+            paymentService.unsetExternallyAssociated(payment);
+        } catch (ResponseStatusException e) {
+            return new ResponseEntity<Boolean>(e.getStatus());
+        } catch (HttpStatusCodeException e) {
+            logger.error("HTTP error when fetching payment", e);
+            return new ResponseEntity<Boolean>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            logger.error("Error when fetching payment", e);
+            return new ResponseEntity<Boolean>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+    }
+
     @GetMapping(inputEntryPoint + "/payments/advise")
     public ResponseEntity<List<Payment>> getPaymentAdvised(@RequestParam Integer invoiceId) {
         List<Payment> payments;
@@ -379,7 +417,7 @@ public class InvoicingController {
                 }
             }
 
-            outInvoice = invoiceAndAccountRecordDelegate.addOrUpdateInvoiceFromUser(invoice);
+            outInvoice = invoiceService.addOrUpdateInvoiceFromUser(invoice);
         } catch (
 
         ResponseStatusException e) {

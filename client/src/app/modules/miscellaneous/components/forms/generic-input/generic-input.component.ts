@@ -142,6 +142,10 @@ export class GenericInputComponent implements OnInit {
   }
 
   inputChange() {
+    if (this.form) {
+      this.form.get(this.propertyName)?.updateValueAndValidity();
+      this.form.get(this.propertyName)?.markAllAsTouched();
+    }
     this.onInputChange.emit();
   }
 

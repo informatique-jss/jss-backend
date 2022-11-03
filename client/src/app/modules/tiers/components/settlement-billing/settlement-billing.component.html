@@ -130,15 +130,12 @@
                   propertyName="paymentType" [isMandatory]="true" [isDisabled]="!editMode"
                   [filteredPaymentType]="[paymentTypePrelevement,paymentTypeOther]"></select-payment-types>
               </td>
-              <td
-                *ngIf="tiers !=undefined && tiers.paymentType!=undefined && tiers.paymentType.code!=undefined && tiers.paymentType.id==paymentTypePrelevement.id">
+              <td *ngIf="tiers  && tiers.paymentType && tiers.paymentType.id==paymentTypePrelevement.id">
                 <generic-input [(model)]="tiers.paymentIban" label="IBAN" [form]="settlementBillingForm"
-                  propertyName="paymentIban" [isMandatory]="true" [isDisabled]="!editMode"
-                  [conditionnalRequired]="instanceOfTiers(this.tiers) && !instanceOfResponsable(tiers) && this.tiers.paymentType != undefined && this.tiers.paymentType.code != undefined && this.tiers.paymentType.id == paymentTypePrelevement.id "
-                  [maxLength]="40"></generic-input>
+                  propertyName="paymentIban" [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="40">
+                </generic-input>
               </td>
-              <td
-                *ngIf="tiers !=undefined && tiers.paymentType!=undefined && tiers.paymentType.code!=undefined && tiers.paymentType.id==paymentTypePrelevement.id">
+              <td *ngIf="tiers&& tiers.paymentType && tiers.paymentType.id==paymentTypePrelevement.id">
                 <generic-toggle [(model)]="tiers.isSepaMandateReceived" label="Mandat SEPA reçu ?"
                   [form]="settlementBillingForm" propertyName="isSepaMandateReceived"></generic-toggle>
               </td>
@@ -176,9 +173,8 @@
               <td
                 *ngIf="refundDocument.isRefundable && refundDocument !=undefined && refundDocument.refundType!=undefined && refundDocument.refundType.code!=undefined && refundDocument.refundType.id==refundTypeVirement.id">
                 <generic-input [(model)]="refundDocument.refundIBAN" label="IBAN" [form]="settlementBillingForm"
-                  propertyName="refundIBAN" [isMandatory]="true" [isDisabled]="!editMode"
-                  [conditionnalRequired]="refundDocument.refundType != undefined && refundDocument.refundType.code != undefined && refundDocument.refundType.id == refundTypeVirement.id "
-                  [maxLength]="40"></generic-input>
+                  propertyName="refundIBAN" [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="40">
+                </generic-input>
               </td>
             </tr>
           </table>

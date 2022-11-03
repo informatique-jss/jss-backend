@@ -1,10 +1,11 @@
 import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
+import { instanceOfCustomerOrder, instanceOfQuotation } from 'src/app/libs/TypeHelper';
 import { InvoiceService } from 'src/app/modules/invoicing/services/invoice.service';
 import { Vat } from 'src/app/modules/miscellaneous/model/Vat';
+import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { CustomerOrder } from '../../model/CustomerOrder';
-import { Invoice } from '../../model/Invoice';
 import { IQuotation } from '../../model/IQuotation';
 import { QuotationComponent } from '../quotation/quotation.component';
 
@@ -22,9 +23,13 @@ export class InvoiceManagementComponent implements OnInit {
   @Output() invoiceItemChange: EventEmitter<void> = new EventEmitter<void>();
 
 
-  invoice: Invoice = {} as Invoice;
+  instanceOfCustomerOrderFn = instanceOfCustomerOrder;
+  instanceOfQuotation = instanceOfQuotation;
+
+  invoiceStatusCancelled = this.constantService.getInvoiceStatusCancelled();
 
   constructor(private formBuilder: FormBuilder,
+    private constantService: ConstantService,
     protected invoiceService: InvoiceService,) { }
 
   ngOnInit() {
@@ -34,10 +39,6 @@ export class InvoiceManagementComponent implements OnInit {
   ngOnChanges(changes: SimpleChanges) {
     if (changes.quotation != undefined) {
       this.invoiceManagementForm.markAllAsTouched();
-      if (this.quotation && this.quotation.id)
-        this.invoiceService.getInvoiceForCustomerOrder(this.quotation).subscribe(response => {
-          this.invoice = response;
-        })
     }
 
   }
@@ -72,6 +73,28 @@ export class InvoiceManagementComponent implements OnInit {
 
   getPriceTotal(): number {
     return QuotationComponent.computePriceTotal(this.quotation);
+  }
+
+  getRemainingToPay() {
+    if (instanceOfCustomerOrder(this.quotation))
+      return Math.round((QuotationComponent.computePriceTotal(this.quotation) - QuotationComponent.computePayed(this.quotation)) * 100) / 100;
+    return this.getPriceTotal();
+  }
+
+  canModifyInvoice(): boolean {
+    if (instanceOfQuotation(this.quotation))
+      return true;
+    if (instanceOfCustomerOrder(this.quotation)) {
+      if ((this.quotation as CustomerOrder).invoices == undefined) {
+        return true;
+      } else {
+        for (let invoice of (this.quotation as CustomerOrder).invoices) {
+          if (invoice.invoiceStatus.id != this.invoiceStatusCancelled.id)
+            return true;
+        }
+      }
+    }
+    return false;
   }
 
 }

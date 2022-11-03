@@ -53,7 +53,6 @@ export interface Constant {
   billingTypeLogo: BillingType;
   quotationLabelTypeOther: QuotationLabelType;
   paymentTypePrelevement: PaymentType;
-  paymentTypeCheques: PaymentType;
   paymentTypeOther: PaymentType;
   paymentTypeVirement: PaymentType;
   refundTypeVirement: RefundType;
@@ -62,9 +61,9 @@ export interface Constant {
   journalTypeSpel: JournalType;
   confrereJss: Confrere;
   domiciliationContractTypeKeepMail: DomiciliationContractType;
-  domiciliationContractTypeRouteMail: DomiciliationContractType;
-  domiciliationContractTypeKeepEmail: DomiciliationContractType;
   domiciliationContractTypeRouteEmail: DomiciliationContractType;
+  domiciliationContractTypeRouteMail: DomiciliationContractType;
+  domiciliationContractTypeRouteEmailAndMail: DomiciliationContractType;
   mailRedirectionTypeOther: MailRedirectionType;
   bodaccPublicationTypeMerging: BodaccPublicationType;
   bodaccPublicationTypeSplit: BodaccPublicationType;
@@ -82,6 +81,7 @@ export interface Constant {
   competentAuthorityTypeCfp: CompetentAuthorityType;
   invoiceStatusSend: InvoiceStatus;
   invoiceStatusPayed: InvoiceStatus;
+  invoiceStatusCancelled: InvoiceStatus;
   paymentWayInbound: PaymentWay;
   paymentWayOutboud: PaymentWay;
   vatTwenty: Vat;

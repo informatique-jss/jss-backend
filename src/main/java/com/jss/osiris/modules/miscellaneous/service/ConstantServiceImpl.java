@@ -196,11 +196,6 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
-    public PaymentType getPaymentTypeCheques() throws Exception {
-        return getConstants().getPaymentTypeCheques();
-    }
-
-    @Override
     public PaymentType getPaymentTypeOther() throws Exception {
         return getConstants().getPaymentTypeOther();
     }
@@ -251,8 +246,8 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
-    public DomiciliationContractType getDomiciliationContractTypeKeepEmail() throws Exception {
-        return getConstants().getDomiciliationContractTypeKeepEmail();
+    public DomiciliationContractType getDomiciliationContractTypeRouteEmailAndMail() throws Exception {
+        return getConstants().getDomiciliationContractTypeRouteEmailAndMail();
     }
 
     @Override
@@ -343,6 +338,11 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public InvoiceStatus getInvoiceStatusPayed() throws Exception {
         return getConstants().getInvoiceStatusPayed();
+    }
+
+    @Override
+    public InvoiceStatus getInvoiceStatusCancelled() throws Exception {
+        return getConstants().getInvoiceStatusCancelled();
     }
 
     @Override

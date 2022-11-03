@@ -40,4 +40,10 @@ public interface InvoiceService {
 
     public void reindexInvoices();
 
+    public void unletterInvoice(Invoice invoice) throws Exception;
+
+    public Invoice addOrUpdateInvoiceFromUser(Invoice invoice) throws Exception;
+
+    public Invoice cancelInvoice(Invoice invoice) throws Exception;
+
 }

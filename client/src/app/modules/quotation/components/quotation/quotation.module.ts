@@ -101,7 +101,7 @@ const routes: Routes = [
     AdministrationModule,
     MatSortModule,
     MatMenuModule,
-    MatDatepickerModule
+    MatDatepickerModule,
   ],
   declarations: [QuotationComponent,
     OrderingCustomerComponent,

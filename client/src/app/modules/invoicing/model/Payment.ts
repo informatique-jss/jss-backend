@@ -12,4 +12,5 @@ export interface Payment {
   invoice: Invoice;
   accountingRecords: AccountingRecord[];
   customerOrder: CustomerOrder;
+  isExternallyAssociated: Payment;
 }

@@ -216,7 +216,7 @@ public class MiscellaneousController {
         try {
             if (constant.getId() != null)
                 validationHelper.validateReferential(constant, true);
-
+            // TODO complete
             validationHelper.validateReferential(constant.getBillingLabelTypeCodeAffaire(), true);
             outConstant = constantService
                     .addOrUpdateConstant(constant);

@@ -8,9 +8,14 @@ import java.util.Optional;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.search.service.IndexEntityService;
+import com.jss.osiris.modules.accounting.model.AccountingAccount;
+import com.jss.osiris.modules.accounting.model.AccountingRecord;
+import com.jss.osiris.modules.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.invoicing.model.Invoice;
+import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.invoicing.model.InvoiceSearch;
 import com.jss.osiris.modules.invoicing.model.InvoiceStatus;
 import com.jss.osiris.modules.invoicing.repository.InvoiceRepository;
@@ -19,6 +24,8 @@ import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.quotation.model.QuotationStatus;
+import com.jss.osiris.modules.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.tiers.model.ITiers;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
@@ -42,7 +49,13 @@ public class InvoiceServiceImpl implements InvoiceService {
     IndexEntityService indexEntityService;
 
     @Autowired
+    AccountingRecordService accountingRecordService;
+
+    @Autowired
     InvoiceHelper invoiceHelper;
+
+    @Autowired
+    CustomerOrderService customerOrderService;
 
     @Override
     public List<Invoice> getAllInvoices() {
@@ -55,6 +68,20 @@ public class InvoiceServiceImpl implements InvoiceService {
         if (invoice.isPresent())
             return invoice.get();
         return null;
+    }
+
+    @Override
+    public Invoice cancelInvoice(Invoice invoice) throws Exception {
+        unletterInvoice(invoice);
+        if (invoice.getAccountingRecords() != null)
+            for (AccountingRecord accountingRecord : invoice.getAccountingRecords()) {
+                accountingRecordService.unassociateCustomerOrderPayementAndDeposit(accountingRecord);
+                accountingRecordService.generateCounterPart(accountingRecord);
+            }
+        if (invoice.getCustomerOrder() != null)
+            customerOrderService.addOrUpdateCustomerOrderStatus(invoice.getCustomerOrder(),
+                    QuotationStatus.VALIDATED_BY_CUSTOMER);
+        return getInvoice(invoice.getId());
     }
 
     @Override
@@ -125,6 +152,82 @@ public class InvoiceServiceImpl implements InvoiceService {
         if (invoices != null)
             for (Invoice invoice : invoices)
                 indexEntityService.indexEntity(invoice, invoice.getId());
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public Invoice addOrUpdateInvoiceFromUser(Invoice invoice) throws Exception {
+        if (!hasAtLeastOneInvoiceItemNotNull(invoice))
+            throw new Exception("No invoice item found on manual invoice");
+
+        invoice.setCreatedDate(LocalDateTime.now());
+
+        for (InvoiceItem invoiceItem : invoice.getInvoiceItems()) {
+            invoiceItem.setVatPrice(invoiceItem.getVat().getRate() * invoiceItem.getPreTaxPrice() / 100);
+        }
+
+        // Defined billing label
+        if (!constantService.getBillingLabelTypeOther().getId().equals(invoice.getBillingLabelType().getId())) {
+
+            ITiers customerOrder = invoice.getTiers();
+            if (invoice.getResponsable() != null)
+                customerOrder = invoice.getResponsable();
+            if (invoice.getConfrere() != null)
+                customerOrder = invoice.getConfrere();
+            if (invoice.getProvider() != null)
+                customerOrder = invoice.getProvider();
+            Document billingDocument = documentService.getBillingDocument(customerOrder.getDocuments());
+
+            invoiceHelper.setInvoiceLabel(invoice, billingDocument, null, customerOrder);
+        }
+
+        InvoiceStatus statusSent = constantService.getInvoiceStatusSend();
+
+        invoice.setInvoiceStatus(statusSent);
+        // Associate invoice to invoice item
+        for (InvoiceItem invoiceItem : invoice.getInvoiceItems()) {
+            invoiceItem.setInvoice(invoice);
+        }
+
+        invoiceHelper.setPriceTotal(invoice);
+
+        // Save before to have an ID on invoice
+        addOrUpdateInvoice(invoice);
+
+        if (invoice.getProvider() == null)
+            accountingRecordService.generateAccountingRecordsForSaleOnInvoiceGeneration(invoice);
+        else
+            accountingRecordService.generateAccountingRecordsForPurshaseOnInvoiceGeneration(invoice);
+
+        addOrUpdateInvoice(invoice);
+        return invoice;
+    }
+
+    private boolean hasAtLeastOneInvoiceItemNotNull(Invoice invoice) {
+        for (InvoiceItem invoiceItem : invoice.getInvoiceItems())
+            if (invoiceItem.getPreTaxPrice() > 0) {
+                return true;
+
+            }
+        return false;
+    }
+
+    @Override
+    public void unletterInvoice(Invoice invoice) throws Exception {
+        AccountingAccount accountingAccountCustomer = accountingRecordService
+                .getCustomerAccountingAccountForInvoice(invoice);
+
+        List<AccountingRecord> accountingRecords = accountingRecordService
+                .findByAccountingAccountAndInvoice(accountingAccountCustomer, invoice);
+
+        if (accountingRecords != null)
+            for (AccountingRecord accountingRecord : accountingRecords) {
+                accountingRecord.setLetteringDateTime(null);
+                accountingRecord.setLetteringNumber(null);
+                accountingRecordService.addOrUpdateAccountingRecord(accountingRecord);
+            }
+        invoice.setInvoiceStatus(constantService.getInvoiceStatusSend());
+        addOrUpdateInvoice(invoice);
     }
 
 }

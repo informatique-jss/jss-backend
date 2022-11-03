@@ -301,11 +301,9 @@
                     [filteredPaymentType]="[paymentTypePrelevement,paymentTypeOther]"></select-payment-types>
                 </td>
                 <td
-                  *ngIf="selectedEntity !=undefined && selectedEntity.paymentType!=undefined && selectedEntity.paymentType.code!=undefined && selectedEntity.paymentType.id==paymentTypePrelevement.id">
+                  *ngIf="selectedEntity && selectedEntity.paymentType && selectedEntity.paymentType.id==paymentTypePrelevement.id">
                   <generic-input [(model)]="selectedEntity.iban" label="IBAN" [form]="entityForm" propertyName="iban"
-                    [isMandatory]="false" [isDisabled]="!editMode"
-                    [conditionnalRequired]="this.selectedEntity.paymentType != undefined && this.selectedEntity.paymentType.code != undefined && this.selectedEntity.paymentType.id == paymentTypePrelevement.id "
-                    [maxLength]="40"></generic-input>
+                    [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="40"></generic-input>
                 </td>
                 <td
                   *ngIf="selectedEntity !=undefined && selectedEntity.paymentType!=undefined && selectedEntity.paymentType.code!=undefined && selectedEntity.paymentType.id==paymentTypePrelevement.id">
@@ -345,11 +343,10 @@
                     [form]="entityForm" propertyName="refundType"></select-refund-type>
                 </td>
                 <td
-                  *ngIf="refundDocument.isRefundable && refundDocument !=undefined && refundDocument.refundType!=undefined && refundDocument.refundType.code!=undefined && refundDocument.refundType.id==refundTypeVirement.id">
+                  *ngIf="refundDocument && refundDocument.isRefundable && refundDocument && refundDocument.refundType.code!=undefined && refundDocument.refundType.id==refundTypeVirement.id">
                   <generic-input [(model)]="refundDocument.refundIBAN" label="IBAN" [form]="entityForm"
-                    propertyName="refundIBAN" [isMandatory]="true" [isDisabled]="!editMode"
-                    [conditionnalRequired]="refundDocument.refundType != undefined && refundDocument.refundType.code != undefined && refundDocument.refundType.id == refundTypeVirement.id "
-                    [maxLength]="40"></generic-input>
+                    propertyName="refundIBAN" [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="40">
+                  </generic-input>
                 </td>
               </tr>
             </table>

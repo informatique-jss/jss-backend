@@ -3,6 +3,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
 import { INVOICING_PAYMENT_LIMIT_REFUND_EUROS, QUOTATION_STATUS_WAITING_DEPOSIT } from 'src/app/libs/Constants';
+import { getDocument } from 'src/app/libs/DocumentHelper';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
@@ -97,9 +98,14 @@ export class AssociatePaymentDialogComponent implements OnInit {
   onConfirm(): void {
     if (this.payment) {
       let paymentAssociate = {} as PaymentAssociate;
+
+      if (this.selectedRefundTiers == null && this.amountRemaining() > 0 && this.amountRemaining() > INVOICING_PAYMENT_LIMIT_REFUND_EUROS) {
+        this.appService.displaySnackBar("Veuillez choisir un tiers à rembourser", true, 30);
+        return;
+      }
       paymentAssociate.affaireRefund = (this.selectedRefundTiers && this.selectedRefundTiers.rna != undefined) ? this.selectedRefundTiers : null;
-      paymentAssociate.tiersRefund = ((this.getRefundCustomerOrder() as any).label) ? null : this.getRefundCustomerOrder() as Tiers;
-      paymentAssociate.confrereRefund = ((this.getRefundCustomerOrder() as any).label) ? this.getRefundCustomerOrder() as Confrere : null;
+      paymentAssociate.tiersRefund = (!this.getRefundCustomerOrder() || (this.getRefundCustomerOrder() as any).label) ? null : this.getRefundCustomerOrder() as Tiers;
+      paymentAssociate.confrereRefund = ((!this.getRefundCustomerOrder() || this.getRefundCustomerOrder() as any).label) ? this.getRefundCustomerOrder() as Confrere : null;
       paymentAssociate.payment = this.payment;
 
       if (this.associationSummaryTable) {
@@ -123,10 +129,10 @@ export class AssociatePaymentDialogComponent implements OnInit {
             paymentAssociate.byPassAmount.push(asso.amountUsed);
           }
         }
+        this.paymentService.associatePaymentAndInvoiceAndCustomerOrder(paymentAssociate).subscribe(response => {
+          this.dialogRef.close(true);
+        })
       }
-      this.paymentService.associatePaymentAndInvoiceAndCustomerOrder(paymentAssociate).subscribe(response => {
-        this.dialogRef.close(true);
-      })
     }
   }
 
@@ -146,7 +152,7 @@ export class AssociatePaymentDialogComponent implements OnInit {
           return;
         }
     if (invoice.invoiceStatus.id != this.invoiceStatusSend.id) {
-      this.appService.displaySnackBar("Veuillez choisir une facture au statut Envoyé", true, 15);
+      this.appService.displaySnackBar("Veuillez choisir une facture au statut " + this.invoiceStatusSend.label, true, 15);
       return;
     }
     if (!this.isSameCustomerOrder(getCustomerOrderForInvoice(invoice))) {
@@ -216,7 +222,7 @@ export class AssociatePaymentDialogComponent implements OnInit {
   }
 
   getCustomerOrderNameForITiers = getCustomerOrderNameForITiers;
-  getRefundCustomerOrder(): ITiers {
+  getRefundCustomerOrder(): ITiers | null {
     let customerOrder: ITiers | undefined = undefined;
     if (this.associationSummaryTable && this.associationSummaryTable.length > 0) {
       if (this.associationSummaryTable[0].invoice) {
@@ -230,6 +236,10 @@ export class AssociatePaymentDialogComponent implements OnInit {
     // If responsable, return associate Tiers
     if ((customerOrder as any).tiers)
       return (customerOrder as any).tiers;
+
+    let refundDocument = getDocument(this.constantService.getDocumentTypeRefund(), customerOrder);
+    if (!refundDocument || !refundDocument.refundIBAN)
+      return null;
     return customerOrder;
   }
 

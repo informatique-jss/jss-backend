@@ -1,9 +1,14 @@
 <div *ngIf="quotation && quotation.id" class="mat-elevation-z2 form-div">
-  <h3 *ngIf="invoice!=undefined">
-    Facture n°{{invoice.id}} émise le
-    {{invoice.createdDate|date:'dd/MM/yyyy à HH:mm'}}
-  </h3>
-  <form [formGroup]="invoiceManagementForm">
+  <ng-container *ngIf="instanceOfCustomerOrderFn(quotation) &&  quotation.invoices">
+    <h3 *ngFor="let invoice of quotation.invoices">
+      Facture n°{{invoice.id}} émise le
+      {{invoice.createdDate|date:'dd/MM/yyyy à HH:mm'}}<a [routerLink]="['/invoicing',invoice.id]">
+        <mat-icon matTooltip="Voir la facture" color="accent" class="pointer">visibility
+        </mat-icon>
+      </a>
+    </h3>
+  </ng-container>
+  <form [formGroup]="invoiceManagementForm" *ngIf="canModifyInvoice()">
     <div *ngFor="let asso of quotation.assoAffaireOrders">
       <td class="affaire" *ngIf="asso.affaire && asso.affaire.denomination">
         {{asso.affaire.denomination}}
@@ -23,15 +28,15 @@
               <td>
                 {{invoiceItem.label}} <mat-icon inline="true"
                   matTooltip="Veuillez enregistrer pour pouvoir modifier le prix appliqué"
-                  *ngIf="editMode && invoiceItem.billingItem.billingType.canOverridePrice==true && !invoiceItem.id && !invoice"
+                  *ngIf="editMode && invoiceItem.billingItem.billingType.canOverridePrice==true && !invoiceItem.id && !invoiceItem.invoice"
                   class="info-icon">info</mat-icon>
               </td>
               <td class="td-price"
-                *ngIf="!editMode || invoiceItem.billingItem.billingType.canOverridePrice==false || !invoiceItem.id || invoice">
+                *ngIf="!editMode || invoiceItem.billingItem.billingType.canOverridePrice==false || !invoiceItem.id || invoiceItem.invoice">
                 {{invoiceItem.preTaxPrice|number}} €
               </td>
               <td
-                *ngIf="editMode && invoiceItem.billingItem.billingType.canOverridePrice==true && invoiceItem.id && !invoice">
+                *ngIf="editMode && invoiceItem.billingItem.billingType.canOverridePrice==true && invoiceItem.id && !invoiceItem.invoice">
                 <generic-input [(model)]="invoiceItem.preTaxPrice" label="" [form]="invoiceManagementForm"
                   [propertyName]='"preTaxPrice"+index' [isMandatory]="true" type="number" step="0,01"
                   (onInputChange)="itemChange()" hint="Laisser vide pour recalculer le prix">
@@ -98,6 +103,22 @@
             {{getPriceTotal()|number}} €
           </td>
         </tr>
+        <ng-container *ngIf="instanceOfCustomerOrderFn(quotation) && quotation.deposits">
+          <ng-container *ngFor="let deposit of quotation.deposits">
+            <tr>
+              <td>
+                Accompte n°{{deposit.id}}
+              </td>
+              <td class="td-price">
+                {{deposit.depositAmount|number}} €
+              </td>
+            </tr>
+          </ng-container>
+          <tr>
+            <td>Reste à payer</td>
+            <td class="td-price">{{getRemainingToPay()}} €</td>
+          </tr>
+        </ng-container>
       </table>
     </div>
   </form>

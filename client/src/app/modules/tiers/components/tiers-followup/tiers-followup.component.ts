@@ -73,8 +73,7 @@ export class TiersFollowupComponent implements OnInit {
     if (changes.tiers != undefined) {
       this.followupForm.markAllAsTouched();
       this.setData();
-      // By default, select Salesman of Tiers
-      this.newFollowup.salesEmployee = this.tiers.salesEmployee;
+
     }
   }
 
@@ -83,6 +82,9 @@ export class TiersFollowupComponent implements OnInit {
       this.tiers.tiersFollowups.sort(function (a: TiersFollowup, b: TiersFollowup) {
         return new Date(b.followupDate).getTime() - new Date(a.followupDate).getTime();
       });
+      // By default, select Salesman of Tiers
+      if (this.newFollowup && !this.newFollowup.salesEmployee)
+        this.newFollowup.salesEmployee = this.tiers.salesEmployee;
     }
   }
 
