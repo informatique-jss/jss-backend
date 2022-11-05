@@ -54,7 +54,7 @@ export class TiersComponent implements OnInit, AfterContentChecked {
         this.tiersService.setCurrentViewedTiers(this.tiers);
         this.appService.changeHeaderTitle(this.tiers.denomination != null ? this.tiers.denomination : "");
         this.toggleTabs();
-        this.selectedTabIndex = 1;
+        this.selectedTabIndex = (!this.tiers.tiersType || this.tiers.tiersType.id == this.constantService.getTiersTypeProspect().id) ? 1 : 2;
         this.responsableMainComponent?.setSelectedResponsableId(idTiers);
       })
       // Load by tiers

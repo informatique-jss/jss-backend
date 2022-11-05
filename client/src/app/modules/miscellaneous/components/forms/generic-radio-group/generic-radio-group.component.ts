@@ -1,70 +1,32 @@
-import { Directive, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup, ValidatorFn, Validators } from '@angular/forms';
-import { CustomErrorStateMatcher } from 'src/app/app.component';
+import { Directive, Input, OnInit, SimpleChanges } from '@angular/core';
+import { UntypedFormBuilder } from '@angular/forms';
+import { UserNoteService } from 'src/app/services/user.notes.service';
+import { GenericFormComponent } from '../generic-form.components';
 
 @Directive()
-export abstract class GenericRadioGroupComponent<T> implements OnInit {
-
-  matcher: CustomErrorStateMatcher = new CustomErrorStateMatcher();
-
-  /**
-   * The model of Civility property
-   * Mandatory
-   */
-  @Output() modelChange: EventEmitter<T> = new EventEmitter<T>();
-  @Input() model: T | undefined;
-  /**
-   * The formgroup to bind component
-   * Mandatory
-   */
-  @Input() form: UntypedFormGroup | undefined;
-  /**
-   * The name of the input
-   * Default : civility
-   */
-  @Input() propertyName: string = "civility";
-  /**
- * The label to display
- */
-  @Input() label: string = "";
+export abstract class GenericRadioGroupComponent<T> extends GenericFormComponent implements OnInit {
 
   abstract types: T[];
 
-  constructor(private formBuilder: UntypedFormBuilder) { }
+  /**
+ * Indicate if the field is required or not in the formgroup provided
+ * Default : false
+ */
+  @Input() isMandatory: boolean = true;
+
+  constructor(private formBuilder3: UntypedFormBuilder, private userNoteService3: UserNoteService) {
+    super(formBuilder3, userNoteService3)
+  }
+
+  callOnNgInit(): void {
+    this.initTypes();
+  }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (this.form && (!this.model) && this.types) {
+    super.ngOnChanges(changes);
+    if (this.types && !this.model && this.types) {
       this.model = this.types[0];
-      this.modelChange.emit(this.model);
-    }
-    if (changes.model && this.form != undefined) {
-      this.form.get(this.propertyName)?.setValue(this.model);
-      this.modelChange.emit(this.model);
-    }
-  }
-
-  ngOnDestroy() {
-    if (this.form != undefined)
-      this.form.removeControl(this.propertyName);
-  }
-
-  ngOnInit() {
-    this.initTypes();
-
-    if (this.form != undefined) {
-      let validators: ValidatorFn[] = [] as Array<ValidatorFn>;
-
-      validators.push(Validators.required);
-
-      this.form.addControl(this.propertyName, this.formBuilder.control('', validators));
-      this.form.controls[this.propertyName].valueChanges.subscribe(
-        (newValue) => {
-          this.model = newValue;
-          this.modelChange.emit(this.model);
-        }
-      )
-      this.form.get(this.propertyName)?.setValue(this.model);
-      this.form.markAllAsTouched();
+      this.modelChange.emit();
     }
   }
 

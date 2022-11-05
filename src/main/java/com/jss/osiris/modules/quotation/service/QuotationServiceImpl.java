@@ -294,7 +294,7 @@ public class QuotationServiceImpl implements QuotationService {
         if (quotation.getConfrere() != null)
             customerOrder = quotation.getConfrere();
         else if (quotation.getResponsable() != null)
-            customerOrder = quotation.getResponsable();
+            customerOrder = quotation.getResponsable().getTiers();
         else
             customerOrder = quotation.getTiers();
 
@@ -351,7 +351,8 @@ public class QuotationServiceImpl implements QuotationService {
                                         if (invoiceItemToMerge.getBillingItem().getId()
                                                 .equals(invoiceItem.getBillingItem().getId())) {
                                             // Only if invoice is not cancelled, in that case generate new invoice item
-                                            if (!invoiceItem.getInvoice().getInvoiceStatus().getId()
+                                            if (invoiceItem.getInvoice() == null || !invoiceItem.getInvoice()
+                                                    .getInvoiceStatus().getId()
                                                     .equals(constantService.getInvoiceStatusCancelled().getId())) {
                                                 invoiceItemToMerge.setId(invoiceItem.getId());
                                                 invoiceItemToMerge.setInvoice(invoiceItem.getInvoice());

@@ -1,6 +1,6 @@
 
 import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
-import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
 
 @Component({
@@ -112,20 +112,10 @@ export class GenericDateRangePickerComponent implements OnInit {
 
   ngOnInit() {
     if (this.form != undefined) {
-      let validators: ValidatorFn[] = [] as Array<ValidatorFn>;
-      if (this.isMandatory) {
-        if (this.conditionnalRequired != undefined) {
-          validators.push(this.checkFieldFilledIfIsConditionalRequired());
-        } else {
-          validators.push(Validators.required);
-        }
-      }
 
-      if (this.customValidators != undefined && this.customValidators != null && this.customValidators.length > 0)
-        validators.push(...this.customValidators);
-
-      this.form.addControl(this.propertyNameStart, this.formBuilder.control({ value: '', disabled: this.isDisabled }, validators));
-      this.form.addControl(this.propertyNameEnd, this.formBuilder.control({ value: '', disabled: this.isDisabled }, validators));
+      this.form.addControl(this.propertyNameStart, this.formBuilder.control({ value: '', disabled: this.isDisabled }));
+      this.form.addControl(this.propertyNameEnd, this.formBuilder.control({ value: '', disabled: this.isDisabled }));
+      this.form.addValidators(this.checkFieldFilledIfIsConditionalRequired());
       this.form.controls[this.propertyNameEnd].valueChanges.subscribe(
         (newValue) => {
           this.modelEnd = newValue;
@@ -144,23 +134,45 @@ export class GenericDateRangePickerComponent implements OnInit {
     }
   }
 
+
   // Check if the propertiy given in parameter is filled when conditionnalRequired is set
   checkFieldFilledIfIsConditionalRequired(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const root = control.root as UntypedFormGroup;
       const fieldValueStart = root.get(this.propertyNameStart)?.value;
       const fieldValueEnd = root.get(this.propertyNameEnd)?.value;
-      if (this.conditionnalRequired && (fieldValueStart == undefined || fieldValueStart == null || fieldValueStart.length == 0))
-        return {
-          notFilled: true
-        };
-      if (this.conditionnalRequired && (fieldValueEnd == undefined || fieldValueEnd == null || fieldValueEnd.length == 0))
-        return {
-          notFilled: true
-        };
+      if (this.form && this.form!.get(this.propertyNameStart) && this.form!.get(this.propertyNameEnd)) {
+        if (this.conditionnalRequired != undefined) {
+          if (this.conditionnalRequired && (fieldValueStart == undefined || fieldValueStart == null || fieldValueStart.length == 0)) {
+            this.form!.get(this.propertyNameStart)!.setErrors({ notFilled: this.propertyNameStart });
+            return {
+              notFilled: this.propertyNameStart
+            };
+          }
+          if (this.conditionnalRequired && (fieldValueEnd == undefined || fieldValueEnd == null || fieldValueEnd.length == 0)) {
+            this.form!.get(this.propertyNameEnd)!.setErrors({ notFilled: this.propertyNameEnd });
+            return {
+              notFilled: this.propertyNameEnd
+            };
+          }
+        } else if (this.isMandatory && (fieldValueStart == undefined || fieldValueStart == null || fieldValueStart.length == 0)) {
+          this.form!.get(this.propertyNameStart)!.setErrors({ notFilled: this.propertyNameStart });
+          return {
+            notFilled: this.propertyNameStart
+          };
+        } else if (this.isMandatory && (fieldValueEnd == undefined || fieldValueEnd == null || fieldValueEnd.length == 0)) {
+          this.form!.get(this.propertyNameEnd)!.setErrors({ notFilled: this.propertyNameEnd });
+          return {
+            notFilled: this.propertyNameEnd
+          };
+        }
+        this.form!.get(this.propertyNameStart)!.setErrors(null);
+        this.form!.get(this.propertyNameEnd)!.setErrors(null);
+      }
       return null;
     };
   }
+
 
   dateChange(value: Date) {
     this.onDateChange.emit(value);

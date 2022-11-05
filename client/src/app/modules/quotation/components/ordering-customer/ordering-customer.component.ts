@@ -108,6 +108,7 @@ export class OrderingCustomerComponent implements OnInit {
   }
 
   getFormStatus(): boolean {
+    console.log(this.orderingCustomerForm);
     this.orderingCustomerForm.markAllAsTouched();
     return this.orderingCustomerForm.valid && (this.quotation.responsable != undefined || this.quotation.tiers != undefined || this.quotation.confrere != undefined);
   }

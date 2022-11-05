@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Confrere } from 'src/app/modules/quotation/model/Confrere';
@@ -24,11 +24,6 @@ export class AutocompleteConfrereComponent extends GenericLocalAutocompleteCompo
 
   constructor(private formBuild: UntypedFormBuilder, private confrereService: ConfrereService, public confrereDialog: MatDialog, private userNoteService2: UserNoteService,) {
     super(formBuild, userNoteService2)
-  }
-
-  ngOnChanges(changes: SimpleChanges) {
-    if (this.form && (this.isMandatory || this.customValidators))
-      this.form.get(this.propertyName)?.updateValueAndValidity();
   }
 
   filterEntities(types: Confrere[], value: string): Confrere[] {

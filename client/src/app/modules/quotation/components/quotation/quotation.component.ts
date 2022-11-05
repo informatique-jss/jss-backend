@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ViewChildren } from '@angular/core';
+import { AfterContentChecked, ChangeDetectorRef, Component, OnInit, ViewChild, ViewChildren } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
@@ -33,7 +33,7 @@ import { IQuotation } from './../../model/IQuotation';
   templateUrl: './quotation.component.html',
   styleUrls: ['./quotation.component.css']
 })
-export class QuotationComponent implements OnInit {
+export class QuotationComponent implements OnInit, AfterContentChecked {
   quotation: IQuotation = {} as IQuotation;
   editMode: boolean = false;
   createMode: boolean = false;
@@ -84,9 +84,14 @@ export class QuotationComponent implements OnInit {
     private constantService: ConstantService,
     private assoAffaireOrderService: AssoAffaireOrderService,
     protected searchService: SearchService,
+    private changeDetectorRef: ChangeDetectorRef,
     private router: Router) { }
 
   quotationForm = this.formBuilder.group({});
+
+  ngAfterContentChecked(): void {
+    this.changeDetectorRef.detectChanges();
+  }
 
   ngOnInit() {
     this.idQuotation = this.activatedRoute.snapshot.params.id;

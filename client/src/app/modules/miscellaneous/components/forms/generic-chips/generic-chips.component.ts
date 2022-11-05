@@ -1,12 +1,13 @@
-import { Directive, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
-import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
+import { Directive, Input, OnInit } from '@angular/core';
+import { UntypedFormBuilder } from '@angular/forms';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
 import { SEPARATOR_KEY_CODES } from 'src/app/libs/Constants';
 import { UserNoteService } from 'src/app/services/user.notes.service';
+import { GenericFormComponent } from '../generic-form.components';
 
 @Directive()
-export abstract class GenericChipsComponent<T> implements OnInit {
+export abstract class GenericChipsComponent<T> extends GenericFormComponent implements OnInit {
 
   SEPARATOR_KEY_CODES = SEPARATOR_KEY_CODES;
 
@@ -17,84 +18,20 @@ export abstract class GenericChipsComponent<T> implements OnInit {
    * Mandatory
    */
   @Input() model: T[] | undefined;
-  @Output() modelChange: EventEmitter<T[]> = new EventEmitter<T[]>();
-  /**
-   * The formgroup to bind component
-   * Mandatory
-   */
-  @Input() form: UntypedFormGroup | undefined;
-  /**
-   * The name of the input
-   * chips by default
-   */
-  @Input() propertyName: string = "chips";
-  /**
-   * Indicate if the field is required or not in the formgroup provided
-   * Default : false
-   */
-  @Input() isMandatory: boolean = false;
-  /**
-* Indicate if the field is disabled or not in the formgroup provided
-* Must be defined everytime because disabled is not inherited from parent fieldset state
-* Default : false
-*/
-  @Input() isDisabled: boolean = false;
-  /**
-   * Add condition to check if the field is required.
-   * If true (and isMandatory is also true), Validators.required is applied
-   * If false, Validators.required is not applied regardless the value of isMandatory
-   * Default : true
-   */
-  @Input() conditionnalRequired: boolean = true;
-  /**
-   * Additionnal validators to check
-   */
-  @Input() customValidators: ValidatorFn[] | undefined;
-  @Input() label: string = "";
 
-  constructor(private formBuilder: UntypedFormBuilder,
-    private userNoteService: UserNoteService) { }
 
-  ngOnChanges(changes: SimpleChanges) {
-    if (this.form && (this.isMandatory || this.customValidators))
-      this.form.get(this.propertyName)?.updateValueAndValidity();
-  }
-
-  ngOnDestroy() {
-    if (this.form != undefined)
-      this.form.removeControl(this.propertyName);
+  constructor(private formBuilder3: UntypedFormBuilder,
+    private userNoteService3: UserNoteService) {
+    super(formBuilder3, userNoteService3);
   }
 
   ngOnInit() {
     if (this.form != undefined) {
-      let validators: ValidatorFn[] = [] as Array<ValidatorFn>;
-
-      if (this.isMandatory) {
-        if (!this.conditionnalRequired) {
-          this.conditionnalRequired = true;
-        }
-        validators.push(this.checkFieldFilledIfIsConditionalRequired());
-      }
-
-      if (this.customValidators != undefined && this.customValidators != null && this.customValidators.length > 0)
-        validators.push(...this.customValidators);
-
-      this.form.addControl(this.propertyName, this.formBuilder.control('', validators));
-      this.form.markAllAsTouched();
+      this.form.addControl(this.propertyName, this.formBuilder3.control({ value: '', disabled: this.isDisabled }));
+      this.form.addValidators(this.checkFieldFilledIfIsConditionalRequired());
+      this.callOnNgInit();
+      this.form.get(this.propertyName)?.setValue(this.model);
     }
-  }
-
-  // Check if the propertiy given in parameter is filled when conditionnalRequired is set
-  checkFieldFilledIfIsConditionalRequired(): ValidatorFn {
-    return (control: AbstractControl): ValidationErrors | null => {
-      const root = control.root as UntypedFormGroup;
-      const fieldValue = root.get(this.propertyName)?.value;
-      if (this.conditionnalRequired && (!this.model || this.model?.length == 0) && (fieldValue == undefined || fieldValue == null || fieldValue.length == 0))
-        return {
-          notFilled: true
-        };
-      return null;
-    };
   }
 
   addElement(event: MatChipInputEvent): void {
@@ -135,11 +72,5 @@ export abstract class GenericChipsComponent<T> implements OnInit {
     return object ? object.label : '';
   }
 
-  addToNotes(event: any) {
-    let isHeader = false;
-    if (event && event.ctrlKey)
-      isHeader = true;
-    this.userNoteService.addToNotes(this.label, this.displayLabel(this.model), undefined, isHeader);
-  }
 
 }

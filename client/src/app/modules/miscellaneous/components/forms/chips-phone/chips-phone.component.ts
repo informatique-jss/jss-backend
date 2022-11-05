@@ -17,6 +17,9 @@ export class ChipsPhoneComponent extends GenericChipsComponent<Phone> implements
     super(formBuild, userNoteService2)
   }
 
+  callOnNgInit(): void {
+  }
+
   validateInput(value: string): boolean {
     let a = validateFrenchPhone(value)
     let b = validateInternationalPhone(value);

@@ -49,7 +49,6 @@ export class PrincipalComponent implements OnInit {
   ngOnInit() {
     this.prospectTiersType = this.constantService.getTiersTypeProspect();
 
-    console.log(this.prospectTiersType);
     // Referential loading
     this.deliveryServiceService.getDeliveryServices().subscribe(response => {
       this.deliveryServices = response;
@@ -69,7 +68,6 @@ export class PrincipalComponent implements OnInit {
   checkVAT(fieldName: string): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const root = control.root as UntypedFormGroup;
-      console.log("check vat");
       const fieldValue = root.get(fieldName)?.value;
       if (!this.tiers.isIndividual && !this.isTiersTypeProspect(this.tiers) && (fieldValue == undefined || fieldValue == null || fieldValue.length == 0 || !validateVat(fieldValue)))
         return {
@@ -113,7 +111,6 @@ export class PrincipalComponent implements OnInit {
 
   getFormStatus(): boolean {
     this.principalForm.markAllAsTouched();
-    console.log(this.principalForm);
     return this.principalForm.valid;
   }
 }

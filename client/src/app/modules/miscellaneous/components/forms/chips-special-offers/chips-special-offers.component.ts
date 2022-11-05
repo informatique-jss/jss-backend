@@ -1,6 +1,6 @@
 import { moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { UntypedFormBuilder, ValidatorFn, Validators } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
@@ -17,6 +17,7 @@ import { GenericChipsComponent } from '../generic-chips/generic-chips.component'
   styleUrls: ['./chips-special-offers.component.css']
 })
 export class ChipsSpecialOffersComponent extends GenericChipsComponent<SpecialOffer> implements OnInit {
+
   specialOffers: SpecialOffer[] = [] as Array<SpecialOffer>;
   filteredSpecialOffers: Observable<SpecialOffer[]> | undefined;
   @ViewChild('specialOfferInput') specialOfferInput: ElementRef<HTMLInputElement> | undefined;
@@ -26,34 +27,16 @@ export class ChipsSpecialOffersComponent extends GenericChipsComponent<SpecialOf
     super(formBuild, userNoteService2)
   }
 
-  ngOnInit() {
+  callOnNgInit(): void {
     this.specialOfferService.getSpecialOffers().subscribe(response => {
       this.specialOffers = response;
     })
-    if (this.form != undefined) {
-      let validators: ValidatorFn[] = [] as Array<ValidatorFn>;
-      if (this.isMandatory) {
-        if (this.conditionnalRequired != undefined) {
-          validators.push(this.checkFieldFilledIfIsConditionalRequired());
-        } else {
-          validators.push(Validators.required);
-        }
-      }
-
-      if (this.customValidators != undefined && this.customValidators != null && this.customValidators.length > 0)
-        validators.push(...this.customValidators);
-
-      this.form.addControl(this.propertyName, this.formBuild.control('', validators));
-
+    if (this.form)
       this.filteredSpecialOffers = this.form.get(this.propertyName)?.valueChanges.pipe(
         startWith(''),
         map(value => (typeof value === 'string') ? this._filterByCode(this.specialOffers, value) : [])
       );
-
-      this.form.markAllAsTouched();
-    }
   }
-
 
   validateInput(value: string): boolean {
     return true;

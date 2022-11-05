@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { UntypedFormBuilder, ValidatorFn, Validators } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
@@ -16,6 +16,7 @@ import { GenericChipsComponent } from '../generic-chips/generic-chips.component'
   styleUrls: ['./chips-confrere.component.css']
 })
 export class ChipsConfrereComponent extends GenericChipsComponent<Confrere> implements OnInit {
+
   confreres: Confrere[] = [] as Array<Confrere>;
   filteredConfreres: Observable<Confrere[]> | undefined;
   @ViewChild('confrereInput') confrereInput: ElementRef<HTMLInputElement> | undefined;
@@ -24,32 +25,15 @@ export class ChipsConfrereComponent extends GenericChipsComponent<Confrere> impl
     super(formBuild, userNoteService2)
   }
 
-  ngOnInit() {
+  callOnNgInit(): void {
     this.confrereService.getConfreres().subscribe(response => {
       this.confreres = response;
     })
-    if (this.form != undefined) {
-      let validators: ValidatorFn[] = [] as Array<ValidatorFn>;
-      if (this.isMandatory) {
-        if (this.conditionnalRequired != undefined) {
-          validators.push(this.checkFieldFilledIfIsConditionalRequired());
-        } else {
-          validators.push(Validators.required);
-        }
-      }
-
-      if (this.customValidators != undefined && this.customValidators != null && this.customValidators.length > 0)
-        validators.push(...this.customValidators);
-
-      this.form.addControl(this.propertyName, this.formBuild.control('', validators));
-
+    if (this.form)
       this.filteredConfreres = this.form.get(this.propertyName)?.valueChanges.pipe(
         startWith(''),
         map(value => (typeof value === 'string') ? this._filterByName(this.confreres, value) : [])
       );
-
-      this.form.markAllAsTouched();
-    }
   }
 
 

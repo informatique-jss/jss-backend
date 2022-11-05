@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
-import { UntypedFormBuilder, ValidatorFn, Validators } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { debounceTime, distinctUntilChanged, filter, switchMap, tap } from 'rxjs/operators';
 import { UserNoteService } from 'src/app/services/user.notes.service';
@@ -15,6 +15,7 @@ import { GenericChipsComponent } from '../generic-chips/generic-chips.component'
   styleUrls: ['./chips-city.component.css']
 })
 export class ChipsCityComponent extends GenericChipsComponent<City> implements OnInit {
+
   citys: City[] = [] as Array<City>;
   filteredTypes: City[] | undefined;
   @ViewChild('cityInput') cityInput: ElementRef<HTMLInputElement> | undefined;
@@ -29,22 +30,8 @@ export class ChipsCityComponent extends GenericChipsComponent<City> implements O
     super(formBuild, userNoteService2)
   }
 
-  ngOnInit() {
-    if (this.form != undefined) {
-      let validators: ValidatorFn[] = [] as Array<ValidatorFn>;
-      if (this.isMandatory) {
-        if (this.conditionnalRequired != undefined) {
-          validators.push(this.checkFieldFilledIfIsConditionalRequired());
-        } else {
-          validators.push(Validators.required);
-        }
-      }
-
-      if (this.customValidators != undefined && this.customValidators != null && this.customValidators.length > 0)
-        validators.push(...this.customValidators);
-
-      this.form.addControl(this.propertyName, this.formBuild.control('', validators));
-
+  callOnNgInit(): void {
+    if (this.form)
       this.form.get(this.propertyName)?.valueChanges.pipe(
         filter(res => {
           return res != undefined && res !== null && res.length >= 2
@@ -60,9 +47,6 @@ export class ChipsCityComponent extends GenericChipsComponent<City> implements O
       ).subscribe(response => {
         this.filteredTypes = response;
       });
-      this.form.get(this.propertyName)?.setValue(this.model);
-      this.form.markAllAsTouched();
-    }
   }
 
 

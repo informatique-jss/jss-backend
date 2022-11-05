@@ -173,7 +173,6 @@ export class AnnouncementComponent implements OnInit {
     this.announcementForm.markAllAsTouched();
     if (this.announcement && this.announcement.notice)
       this.announcement.notice = this.announcement.notice.replace(/ +(?= )/g, '').replace(/(\r\n|\r|\n){2,}/g, '$1\n');
-
     return this.announcementForm.valid && this.announcement.noticeTypes && this.announcement.noticeTypes.length > 0;
   }
 

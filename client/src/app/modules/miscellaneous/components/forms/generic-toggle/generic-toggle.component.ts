@@ -1,36 +1,19 @@
 import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup, ValidatorFn } from '@angular/forms';
-import { CustomErrorStateMatcher } from 'src/app/app.component';
+import { UntypedFormBuilder } from '@angular/forms';
+import { UserNoteService } from 'src/app/services/user.notes.service';
+import { GenericFormComponent } from '../generic-form.components';
 
 @Component({
   selector: 'generic-toggle',
   templateUrl: './generic-toggle.component.html',
   styleUrls: ['./generic-toggle.component.css']
 })
-export class GenericToggleComponent implements OnInit {
-  matcher: CustomErrorStateMatcher = new CustomErrorStateMatcher();
-
+export class GenericToggleComponent extends GenericFormComponent implements OnInit {
   /**
-   * The model of input property
-   * Mandatory
+   * Indicate if the field is required or not in the formgroup provided
+   * Default : false
    */
-  @Input() model: any | undefined;
-  @Output() modelChange: EventEmitter<any> = new EventEmitter<any>();
-  /**
-   * The label to display
-   * Mandatory
-   */
-  @Input() label: string = "";
-  /**
-   * The formgroup to bind component
-   * Mandatory
-   */
-  @Input() form: UntypedFormGroup | undefined;
-  /**
-   * The name of the input
-   * Default : toggle
-   */
-  @Input() propertyName: string = "toggle";
+  @Input() isMandatory: boolean = true;
   /**
  * Hint to display
  */
@@ -42,17 +25,8 @@ export class GenericToggleComponent implements OnInit {
 
 
   constructor(
-    private formBuilder: UntypedFormBuilder) { }
-
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes.model && this.form != undefined) {
-      this.form.get(this.propertyName)?.setValue(this.model);
-    }
-  }
-
-  ngOnDestroy() {
-    if (this.form != undefined)
-      this.form.removeControl(this.propertyName);
+    private formBuilder3: UntypedFormBuilder, userNoteService3: UserNoteService) {
+    super(formBuilder3, userNoteService3);
   }
 
   onChange() {
@@ -60,20 +34,18 @@ export class GenericToggleComponent implements OnInit {
       this.onToggleChange.emit();
   }
 
-  ngOnInit() {
-    if (this.form != undefined) {
-      let validators: ValidatorFn[] = [] as Array<ValidatorFn>;
-      this.form.addControl(this.propertyName, this.formBuilder.control('', validators));
-      this.form.controls[this.propertyName].valueChanges.subscribe(
-        (newValue) => {
-          this.model = newValue;
-          if (this.model == undefined)
-            this.model = false;
-          this.modelChange.emit(this.model);
-        }
-      )
-      this.form.get(this.propertyName)?.setValue(this.model);
-      this.form.markAllAsTouched();
+  callOnNgInit(): void {
+    if (this.form && (this.model == null || this.model == undefined)) {
+      this.model = false;
+      this.modelChange.emit(this.model);
+    }
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    super.ngOnChanges(changes);
+    if (this.form && (this.model == null || this.model == undefined)) {
+      this.model = false;
+      this.modelChange.emit(this.model);
     }
   }
 }

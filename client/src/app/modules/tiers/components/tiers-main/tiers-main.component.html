@@ -35,12 +35,12 @@
               <radio-group-civility [(model)]="tiers.civility" [form]="principalForm" propertyName="civility">
               </radio-group-civility>
             </td>
-            <td *ngIf="tiers.isIndividual==true">
+            <td [hidden]="tiers.isIndividual==false">
               <generic-input [(model)]="tiers.lastname" label="Nom" [isDisabled]="!editMode" [form]="principalForm"
                 propertyName="lastname" [isMandatory]="true" [conditionnalRequired]="tiers.isIndividual"
                 [maxLength]="20"></generic-input>
             </td>
-            <td *ngIf="tiers.isIndividual==true">
+            <td [hidden]="tiers.isIndividual==false">
               <generic-input [(model)]="tiers.firstname" label="Prénom" [isDisabled]="!editMode" [form]="principalForm"
                 propertyName="firstname" [isMandatory]="true" [conditionnalRequired]="tiers.isIndividual"
                 [maxLength]="20"></generic-input>
@@ -123,7 +123,7 @@
             <td *ngIf="tiers.isIndividual==false">
               <generic-input [(model)]="tiers.intercommunityVat" [isDisabled]="!editMode" label="TVA intercommunaitaire"
                 [form]="principalForm" propertyName="intercommunityVat" [isMandatory]="true"
-                [conditionnalRequired]="tiers.isIndividual==false && tiers.tiersType &&tiers.tiersType.id != prospectTiersType.id"
+                [conditionnalRequired]="tiers.isIndividual==false && tiers.tiersType && tiers.tiersType.id != prospectTiersType.id"
                 [customValidators]="[checkVAT('intercommunityVat')]">
               </generic-input>
             </td>
@@ -168,7 +168,7 @@
             <td>
               <chips-mail [(model)]="tiers.mails" [form]="principalForm" label="Mails" propertyName="mails"
                 [isDisabled]="!editMode">
-              </chips-mail>
+              </chips-mail>{{tiers.mails?tiers.mails[0].mail:""}}
             </td>
             <td>
               <chips-phone [(model)]="tiers.phones" [form]="principalForm" propertyName="phones" label="Téléphones"

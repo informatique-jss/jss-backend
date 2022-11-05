@@ -245,8 +245,6 @@ export class ResponsableMainComponent implements OnInit {
 
   getFormStatus(): boolean {
     let status = true;
-    console.log(this.principalForm);
-    console.log(this.documentSettlementBillingComponent?.getFormStatus());
     if (this.selectedResponsable != null) {
       let documentSettlementBillingFormStatus = this.documentSettlementBillingComponent?.getFormStatus();
       this.principalForm.markAllAsTouched();

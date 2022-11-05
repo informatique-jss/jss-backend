@@ -6,16 +6,19 @@
           <tr>
             <td *ngIf="!quotation.responsable && !quotation.confrere">
               <autocomplete-tiers-individual [(model)]="quotation.tiers" [form]="orderingCustomerForm" label="Tiers"
-                [isDisabled]="!editMode" propertyName="tiers" (onOptionSelected)="fillTiers($event)">
+                [isDisabled]="!editMode" propertyName="tiers" (onOptionSelected)="fillTiers($event)"
+                [isMandatory]="true" [conditionnalRequired]="!quotation.responsable && !quotation.confrere">
               </autocomplete-tiers-individual>
             </td>
             <td *ngIf="!quotation.tiers && !quotation.confrere">
               <autocomplete-responsable [(model)]="quotation.responsable" [form]="orderingCustomerForm"
-                label="Responsable" [isDisabled]="!editMode" propertyName="responsable"
+                label="Responsable" [isDisabled]="!editMode" propertyName="responsable" [isMandatory]="true"
+                [conditionnalRequired]="!quotation.tiers && !quotation.confrere"
                 (onOptionSelected)="fillResponsable($event)"></autocomplete-responsable>
             </td>
             <td *ngIf="!quotation.tiers && !quotation.responsable">
               <autocomplete-confrere label="Confrère" [(model)]="quotation.confrere" [form]="orderingCustomerForm"
+                [isMandatory]="true" [conditionnalRequired]="!quotation.responsable && !quotation.tiers"
                 propertyName="confrere" [isDisabled]="!editMode" (onOptionSelected)="fillConfrere($event)">
               </autocomplete-confrere>
             </td>
@@ -30,8 +33,9 @@
           </table>
           <table class="full-width">
             <tr *ngIf="quotation.tiers ">
-              <td>Adresse : {{quotation.tiers.address}} {{quotation.tiers.postalCode}} {{quotation.tiers.city.label}}
-                {{quotation.tiers.country.label}}</td>
+              <td>Adresse : {{quotation.tiers.address}} {{quotation.tiers.postalCode}}
+                {{quotation.tiers.city?quotation.tiers.city.label:""}}
+                {{quotation.tiers.country?quotation.tiers.country.label:""}}</td>
             </tr>
             <tr *ngIf="quotation.confrere && quotation.confrere.city && quotation.confrere.city ">
               <td>Adresse : {{quotation.confrere.address}} {{quotation.confrere.postalCode}}

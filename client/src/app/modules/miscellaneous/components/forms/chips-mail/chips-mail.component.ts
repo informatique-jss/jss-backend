@@ -13,6 +13,7 @@ import { GenericChipsComponent } from '../generic-chips/generic-chips.component'
 })
 export class ChipsMailComponent extends GenericChipsComponent<Mail> implements OnInit {
 
+
   constructor(private formBuild: UntypedFormBuilder, private userNoteService2: UserNoteService,) {
     super(formBuild, userNoteService2)
   }
@@ -35,5 +36,8 @@ export class ChipsMailComponent extends GenericChipsComponent<Mail> implements O
 
   prepareMail = function (mail: Mail) {
     prepareMail(mail.mail, null, null);
+  }
+
+  callOnNgInit(): void {
   }
 }

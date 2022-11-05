@@ -1,13 +1,11 @@
-import { Directive, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
-import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
-import { CustomErrorStateMatcher } from 'src/app/app.component';
+import { Directive, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { UntypedFormBuilder } from '@angular/forms';
 import { compareWithId } from 'src/app/libs/CompareHelper';
 import { UserNoteService } from 'src/app/services/user.notes.service';
+import { GenericFormComponent } from '../generic-form.components';
 
 @Directive()
-export abstract class GenericMultipleSelectComponent<T> implements OnInit {
-
-  matcher: CustomErrorStateMatcher = new CustomErrorStateMatcher();
+export abstract class GenericMultipleSelectComponent<T> extends GenericFormComponent implements OnInit {
 
   /**
    * The model of T property
@@ -15,43 +13,7 @@ export abstract class GenericMultipleSelectComponent<T> implements OnInit {
    */
   @Input() model: T[] = [] as Array<T>;
   @Output() modelChange: EventEmitter<T[]> = new EventEmitter<T[]>();
-  /**
-  * The label to display
-  * Mandatory
-  */
-  @Input() label: string = "";
-  /**
-   * The formgroup to bind component
-   * Mandatory
-   */
-  @Input() form: UntypedFormGroup | undefined;
-  /**
-   * The name of the input
-   * Default : T
-   */
-  @Input() propertyName: string = "T";
-  /**
-   * Indicate if the field is required or not in the formgroup provided
-   * Default : false
-   */
-  @Input() isMandatory: boolean = false;
-  /**
-* Indicate if the field is disabled or not in the formgroup provided
-* Must be defined everytime because disabled is not inherited from parent fieldset state
-* Default : false
-*/
-  @Input() isDisabled: boolean = false;
-  /**
-   * Add condition to check if the field is required.
-   * If true (and isMandatory is also true), Validators.required is applied
-   * If false, Validators.required is not applied regardless the value of isMandatory
-   * Default : true
-   */
-  @Input() conditionnalRequired: boolean = true;
-  /**
-   * Additionnal validators to check
-   */
-  @Input() customValidators: ValidatorFn[] | undefined;
+
   /**
 * Triggered when value is changed by user
 */
@@ -60,90 +22,18 @@ export abstract class GenericMultipleSelectComponent<T> implements OnInit {
   abstract types: T[];
 
   constructor(
-    private formBuilder: UntypedFormBuilder,
-    private userNoteService: UserNoteService) { }
-
-  ngOnChanges(changes: SimpleChanges) {
-    if (this.form)
-      this.form.addControl(this.propertyName, this.formBuilder.control({ value: '' }));
-
-    if (changes.model && this.form != undefined) {
-      this.form.get(this.propertyName)?.setValue(this.model);
-    }
-    if (changes.isDisabled) {
-      if (this.isDisabled) {
-        this.form?.get(this.propertyName)?.disable();
-      } else {
-        this.form?.get(this.propertyName)?.enable();
-      }
-    }
-    if (this.form && (this.isMandatory || this.customValidators))
-      this.form.get(this.propertyName)?.updateValueAndValidity();
+    private formBuilder3: UntypedFormBuilder,
+    private userNoteService3: UserNoteService) {
+    super(formBuilder3, userNoteService3);
   }
 
-  ngOnDestroy() {
-    if (this.form != undefined)
-      this.form.removeControl(this.propertyName);
-  }
-
-  ngOnInit() {
-    if (this.form)
-      this.form.addControl(this.propertyName, this.formBuilder.control({ value: '' }));
+  callOnNgInit(): void {
     this.initTypes();
-    if (this.form != undefined) {
-      let validators: ValidatorFn[] = [] as Array<ValidatorFn>;
-      if (this.isMandatory) {
-        if (this.conditionnalRequired != undefined) {
-          validators.push(this.checkFieldFilledIfIsConditionalRequired());
-        } else {
-          validators.push(Validators.required);
-        }
-      }
-
-      if (this.customValidators != undefined && this.customValidators != null && this.customValidators.length > 0)
-        validators.push(...this.customValidators);
-
-      this.form.addControl(this.propertyName, this.formBuilder.control({ value: '', disabled: this.isDisabled }, validators));
-      this.form.get(this.propertyName)?.valueChanges.subscribe(
-        (newValue) => {
-          this.model = newValue;
-          this.modelChange.emit(this.model);
-          this.selectionChange.emit(this.model);
-        }
-      );
-      this.form.get(this.propertyName)?.setValue(this.model);
-      this.form.markAllAsTouched();
-    }
-  }
-
-  // Check if the propertiy given in parameter is filled when conditionnalRequired is set
-  checkFieldFilledIfIsConditionalRequired(): ValidatorFn {
-    return (control: AbstractControl): ValidationErrors | null => {
-      const root = control.root as UntypedFormGroup;
-
-      const fieldValue = root.get(this.propertyName)?.value;
-      if (this.conditionnalRequired && (fieldValue == undefined || fieldValue == null || fieldValue.length == 0))
-        return {
-          notFilled: true
-        };
-      return null;
-    };
   }
 
   abstract initTypes(): void;
 
-  displayLabel(object: any): string {
-    return object ? object.label : '';
-  }
-
   compareWithId = compareWithId;
-
-  addToNotes(event: any) {
-    let isHeader = false;
-    if (event && event.ctrlKey)
-      isHeader = true;
-    this.userNoteService.addToNotes(this.label, this.model.map(item => this.displayLabel(this.model)).join(", "), undefined, isHeader);
-  }
 
   clearField(): void {
     this.model = [] as Array<T>;
