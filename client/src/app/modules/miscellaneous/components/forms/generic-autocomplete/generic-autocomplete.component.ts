@@ -1,5 +1,5 @@
 import { Directive, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { UntypedFormBuilder } from '@angular/forms';
+import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter, switchMap, tap } from 'rxjs/operators';
 import { UserNoteService } from 'src/app/services/user.notes.service';
@@ -31,7 +31,13 @@ export abstract class GenericAutocompleteComponent<T, U> extends GenericFormComp
   }
 
   callOnNgInit(): void {
-    if (this.form)
+  }
+
+  ngOnInit() {
+    if (this.form != undefined) {
+      this.form.addControl(this.propertyName, this.formBuilder3.control({ value: '', disabled: this.isDisabled }));
+      this.form.addValidators(this.checkFieldFilledIfIsConditionalRequired());
+      this.form.addValidators(this.checkAutocompleteField());
       this.form.get(this.propertyName)?.valueChanges.pipe(
         filter(res => {
           return res != undefined && res !== null && res.length >= this.expectedMinLengthInput
@@ -47,6 +53,8 @@ export abstract class GenericAutocompleteComponent<T, U> extends GenericFormComp
       ).subscribe(response => {
         this.filteredTypes = this.mapResponse(response);
       });
+      this.form.get(this.propertyName)?.setValue(this.model);
+    }
   }
 
   abstract searchEntities(value: string): Observable<U[]>;
@@ -60,6 +68,30 @@ export abstract class GenericAutocompleteComponent<T, U> extends GenericFormComp
     this.modelChange.emit(this.model);
     this.onOptionSelected.emit(type);
     this.form?.updateValueAndValidity();
+  }
+
+  checkAutocompleteField(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const root = control.root as UntypedFormGroup;
+      const fieldValue = root.get(this.propertyName)?.value;
+      if (this.form && this.form!.get(this.propertyName)) {
+        if (this.conditionnalRequired != undefined) {
+          if (this.conditionnalRequired && (!fieldValue || fieldValue.id == null)) {
+            this.form!.get(this.propertyName)!.setErrors({ notFilled: this.propertyName });
+            return {
+              notFilled: this.propertyName
+            };
+          }
+        } else if (this.isMandatory && (!fieldValue || fieldValue.id == null)) {
+          this.form!.get(this.propertyName)!.setErrors({ notFilled: this.propertyName });
+          return {
+            notFilled: this.propertyName
+          };
+        }
+        this.form!.get(this.propertyName)!.setErrors(null);
+      }
+      return null;
+    };
   }
 
   clearField(): void {

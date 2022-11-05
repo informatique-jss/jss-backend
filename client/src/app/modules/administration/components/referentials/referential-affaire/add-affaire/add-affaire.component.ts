@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { AfterContentChecked, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { validateRna, validateSiren, validateSiret } from 'src/app/libs/CustomFormsValidatorsHelper';
 import { City } from 'src/app/modules/miscellaneous/model/City';
@@ -19,7 +19,7 @@ import { SiretService } from 'src/app/modules/quotation/services/siret.service';
   templateUrl: './add-affaire.component.html',
   styleUrls: ['./add-affaire.component.css']
 })
-export class AddAffaireComponent implements OnInit {
+export class AddAffaireComponent implements OnInit, AfterContentChecked {
 
   @Input() affaire: Affaire = {} as Affaire;
   @Input() editMode: boolean = false;
@@ -32,9 +32,14 @@ export class AddAffaireComponent implements OnInit {
     private constantService: ConstantService,
     private sirenService: SirenService,
     private siretService: SiretService,
+    private changeDetectorRef: ChangeDetectorRef
   ) { }
 
   ngOnInit() {
+  }
+
+  ngAfterContentChecked(): void {
+    this.changeDetectorRef.detectChanges();
   }
 
   affaireForm = this.formBuilder.group({});

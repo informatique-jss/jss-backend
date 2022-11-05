@@ -1,5 +1,5 @@
 import { Directive, EventEmitter, OnInit, Output } from '@angular/core';
-import { UntypedFormBuilder } from '@angular/forms';
+import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { UserNoteService } from 'src/app/services/user.notes.service';
@@ -8,6 +8,10 @@ import { GenericFormComponent } from '../generic-form.components';
 @Directive()
 export abstract class GenericLocalAutocompleteComponent<T> extends GenericFormComponent implements OnInit {
 
+  /**
+   * Fired when an option is selected in the autocomplete list.
+   * Give the selected City in parameter
+   */
   @Output() onOptionSelected: EventEmitter<T> = new EventEmitter();
 
   abstract types: T[];
@@ -19,19 +23,56 @@ export abstract class GenericLocalAutocompleteComponent<T> extends GenericFormCo
   }
 
   callOnNgInit(): void {
+
+  }
+
+  ngOnInit() {
     this.initTypes();
-    if (this.form)
+    if (this.form != undefined) {
+      this.form.addControl(this.propertyName, this.formBuilder3.control({ value: '', disabled: this.isDisabled }));
+      this.form.addValidators(this.checkFieldFilledIfIsConditionalRequired());
+      this.form.addValidators(this.checkAutocompleteField());
       this.filteredTypes = this.form.get(this.propertyName)?.valueChanges.pipe(
         startWith(''),
         map(value => this.filterEntities(this.types, value)),
       );
+      this.form.get(this.propertyName)?.setValue(this.model);
+    }
   }
 
   abstract filterEntities(types: T[], value: string): T[];
 
+  checkAutocompleteField(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const root = control.root as UntypedFormGroup;
+      const fieldValue = root.get(this.propertyName)?.value;
+      if (this.form && this.form!.get(this.propertyName)) {
+        if (this.conditionnalRequired != undefined) {
+          if (this.conditionnalRequired && (!fieldValue || fieldValue.id == null)) {
+            this.form!.get(this.propertyName)!.setErrors({ notFilled: this.propertyName });
+            return {
+              notFilled: this.propertyName
+            };
+          }
+        } else if (this.isMandatory && (!fieldValue || fieldValue.id == null)) {
+          this.form!.get(this.propertyName)!.setErrors({ notFilled: this.propertyName });
+          return {
+            notFilled: this.propertyName
+          };
+        }
+        this.form!.get(this.propertyName)!.setErrors(null);
+      }
+      return null;
+    };
+  }
+
+
   optionSelected(type: T): void {
     this.modelChange.emit(this.model);
     this.onOptionSelected.emit(type);
+    this.form?.updateValueAndValidity();
+    this.form?.markAllAsTouched();
+    console.log(this.propertyName);
   }
 
   clearField(): void {
@@ -41,5 +82,6 @@ export abstract class GenericLocalAutocompleteComponent<T> extends GenericFormCo
   }
 
   abstract initTypes(): void;
+
 
 }

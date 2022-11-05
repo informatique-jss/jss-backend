@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { UserNoteService } from 'src/app/services/user.notes.service';
 import { Country } from '../../../model/Country';
@@ -20,6 +20,11 @@ export class AutocompleteCountryComponent extends GenericLocalAutocompleteCompon
     private constantService: ConstantService,
     private userNoteService2: UserNoteService,) {
     super(formBuild, userNoteService2)
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    super.ngOnChanges(changes);
+    console.log(changes);
   }
 
   filterEntities(types: Country[], value: string): Country[] {
