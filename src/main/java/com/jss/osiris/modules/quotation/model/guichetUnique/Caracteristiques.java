@@ -1,0 +1,72 @@
+package com.jss.osiris.modules.quotation.model.guichetUnique;
+
+import java.io.Serializable;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+import com.jss.osiris.modules.miscellaneous.model.IId;
+
+@Entity
+public class Caracteristiques implements Serializable, IId {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Integer id;
+
+    @Column(nullable = false)
+    private Boolean ambulant;
+
+    @Column(nullable = false)
+    private Boolean domiciliataire;
+
+    @Column(nullable = false)
+    private Boolean indicateurDomicileEntrepreneur;
+
+    @Column(nullable = false)
+    private Boolean indicateurAdresseEtablissement;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Boolean getAmbulant() {
+        return ambulant;
+    }
+
+    public void setAmbulant(Boolean ambulant) {
+        this.ambulant = ambulant;
+    }
+
+    public Boolean getDomiciliataire() {
+        return domiciliataire;
+    }
+
+    public void setDomiciliataire(Boolean domiciliataire) {
+        this.domiciliataire = domiciliataire;
+    }
+
+    public Boolean getIndicateurDomicileEntrepreneur() {
+        return indicateurDomicileEntrepreneur;
+    }
+
+    public void setIndicateurDomicileEntrepreneur(Boolean indicateurDomicileEntrepreneur) {
+        this.indicateurDomicileEntrepreneur = indicateurDomicileEntrepreneur;
+    }
+
+    public Boolean getIndicateurAdresseEtablissement() {
+        return indicateurAdresseEtablissement;
+    }
+
+    public void setIndicateurAdresseEtablissement(Boolean indicateurAdresseEtablissement) {
+        this.indicateurAdresseEtablissement = indicateurAdresseEtablissement;
+    }
+
+}

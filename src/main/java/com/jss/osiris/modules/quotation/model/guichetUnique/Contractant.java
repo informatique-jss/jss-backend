@@ -1,0 +1,101 @@
+package com.jss.osiris.modules.quotation.model.guichetUnique;
+
+import java.io.Serializable;
+import java.time.LocalDate;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
+import com.jss.osiris.modules.miscellaneous.model.IId;
+
+@Entity
+public class Contractant implements Serializable, IId {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Integer id;
+
+    @ManyToOne
+    @JoinColumn(name = "id_description_personne", nullable = false)
+    DescriptionPersonne descriptionPersonne;
+
+    @ManyToOne
+    @JoinColumn(name = "id_description_entrepreneur", nullable = false)
+    DescriptionPersonne descriptionEntrepreneur;
+
+    @ManyToOne
+    @JoinColumn(name = "id_adresse_domicile", nullable = false)
+    AdresseDomicile adresseDomicile;
+
+    @ManyToOne
+    @JoinColumn(name = "id_contact", nullable = false)
+    Contact contact;
+
+    @Column(nullable = false)
+    private LocalDate dateEffet;
+
+    @Column(nullable = false)
+    private Boolean is29Or30PTriggered;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public DescriptionPersonne getDescriptionPersonne() {
+        return descriptionPersonne;
+    }
+
+    public void setDescriptionPersonne(DescriptionPersonne descriptionPersonne) {
+        this.descriptionPersonne = descriptionPersonne;
+    }
+
+    public DescriptionPersonne getDescriptionEntrepreneur() {
+        return descriptionEntrepreneur;
+    }
+
+    public void setDescriptionEntrepreneur(DescriptionPersonne descriptionEntrepreneur) {
+        this.descriptionEntrepreneur = descriptionEntrepreneur;
+    }
+
+    public LocalDate getDateEffet() {
+        return dateEffet;
+    }
+
+    public void setDateEffet(LocalDate dateEffet) {
+        this.dateEffet = dateEffet;
+    }
+
+    public Boolean getIs29Or30PTriggered() {
+        return is29Or30PTriggered;
+    }
+
+    public void setIs29Or30PTriggered(Boolean is29Or30PTriggered) {
+        this.is29Or30PTriggered = is29Or30PTriggered;
+    }
+
+    public Contact getContact() {
+        return contact;
+    }
+
+    public void setContact(Contact contact) {
+        this.contact = contact;
+    }
+
+    public AdresseDomicile getAdresseDomicile() {
+        return adresseDomicile;
+    }
+
+    public void setAdresseDomicile(AdresseDomicile adresseDomicile) {
+        this.adresseDomicile = adresseDomicile;
+    }
+
+}

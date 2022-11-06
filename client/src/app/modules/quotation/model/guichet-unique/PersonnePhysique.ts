@@ -1,0 +1,18 @@
+import { AdresseEntreprise } from "./AdresseEntreprise";
+import { AutresEtablissement } from "./AutresEtablissement";
+import { Composition } from "./Composition";
+import { DetailCessationEntreprise } from "./DetailCessationEntreprise";
+import { EtablissementPrincipal } from "./EtablissementPrincipal";
+import { Identite } from "./Identite";
+import { OptionsFiscales } from "./OptionsFiscales";
+
+export interface PersonnePhysique {
+  identite: Identite;
+  adresseEntreprise: AdresseEntreprise;
+  composition: Composition;
+  etablissementPrincipal: EtablissementPrincipal;
+  autresEtablissements: AutresEtablissement[];
+  optionsFiscales: OptionsFiscales;
+  detailCessationEntreprise: DetailCessationEntreprise;
+}
+

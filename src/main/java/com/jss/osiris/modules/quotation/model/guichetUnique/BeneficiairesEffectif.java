@@ -1,0 +1,79 @@
+package com.jss.osiris.modules.quotation.model.guichetUnique;
+
+import java.io.Serializable;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.jss.osiris.modules.miscellaneous.model.IId;
+
+@Entity
+public class BeneficiairesEffectif implements Serializable, IId {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Integer id;
+
+    @ManyToOne
+    @JoinColumn(name = "id_personne_morale")
+    @JsonIgnoreProperties(value = { "beneficiairesEffectifs" }, allowSetters = true)
+    PersonneMorale personneMorale;
+
+    @Column(nullable = false)
+    private Boolean indexPouvoir;
+
+    @ManyToOne
+    @JoinColumn(name = "id_beneficiaire", nullable = false)
+    Repreneur beneficiaire;
+
+    @ManyToOne
+    @JoinColumn(name = "id_modalite", nullable = false)
+    Modalite modalite;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Boolean getIndexPouvoir() {
+        return indexPouvoir;
+    }
+
+    public void setIndexPouvoir(Boolean indexPouvoir) {
+        this.indexPouvoir = indexPouvoir;
+    }
+
+    public Repreneur getBeneficiaire() {
+        return beneficiaire;
+    }
+
+    public void setBeneficiaire(Repreneur beneficiaire) {
+        this.beneficiaire = beneficiaire;
+    }
+
+    public Modalite getModalite() {
+        return modalite;
+    }
+
+    public void setModalite(Modalite modalite) {
+        this.modalite = modalite;
+    }
+
+    public PersonneMorale getPersonneMorale() {
+        return personneMorale;
+    }
+
+    public void setPersonneMorale(PersonneMorale personneMorale) {
+        this.personneMorale = personneMorale;
+    }
+
+}

@@ -1,0 +1,66 @@
+package com.jss.osiris.modules.quotation.model.guichetUnique;
+
+import java.io.Serializable;
+import java.time.LocalDate;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
+import com.jss.osiris.modules.miscellaneous.model.IId;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeLocataireGerantMandataire;
+
+@Entity
+public class LocationGeranceMandat implements Serializable, IId {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Integer id;
+
+    @Column(nullable = false, length = 255)
+    private String destinationLocationGeranceMandat;
+
+    @ManyToOne
+    @JoinColumn(name = "id_type_locataire_gerant_mandataire", nullable = false)
+    TypeLocataireGerantMandataire typeLocataireGerantMandataire;
+
+    @Column(nullable = false)
+    private LocalDate dateEffet;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getDestinationLocationGeranceMandat() {
+        return destinationLocationGeranceMandat;
+    }
+
+    public void setDestinationLocationGeranceMandat(String destinationLocationGeranceMandat) {
+        this.destinationLocationGeranceMandat = destinationLocationGeranceMandat;
+    }
+
+    public TypeLocataireGerantMandataire getTypeLocataireGerantMandataire() {
+        return typeLocataireGerantMandataire;
+    }
+
+    public void setTypeLocataireGerantMandataire(TypeLocataireGerantMandataire typeLocataireGerantMandataire) {
+        this.typeLocataireGerantMandataire = typeLocataireGerantMandataire;
+    }
+
+    public LocalDate getDateEffet() {
+        return dateEffet;
+    }
+
+    public void setDateEffet(LocalDate dateEffet) {
+        this.dateEffet = dateEffet;
+    }
+
+}

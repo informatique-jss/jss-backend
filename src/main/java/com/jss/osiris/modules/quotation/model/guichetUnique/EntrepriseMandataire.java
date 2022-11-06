@@ -1,0 +1,339 @@
+package com.jss.osiris.modules.quotation.model.guichetUnique;
+
+import java.io.Serializable;
+import java.time.LocalDate;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
+import com.jss.osiris.modules.miscellaneous.model.IId;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormeJuridique;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.Role;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.RoleEntreprise;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.StatutPourLaFormalite;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeRepresentant;
+
+@Entity
+public class EntrepriseMandataire implements Serializable, IId {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Integer id;
+
+    @ManyToOne
+    @JoinColumn(name = "id_role_entreprise", nullable = false)
+    RoleEntreprise roleEntreprise;
+
+    @Column(nullable = false, length = 255)
+    private String pays;
+
+    @Column(nullable = false, length = 255)
+    private String siren;
+
+    @Column(nullable = false, length = 255)
+    private String registre;
+
+    @Column(nullable = false, length = 255)
+    private String denomination;
+
+    @Column(nullable = false, length = 255)
+    private String objet;
+
+    @ManyToOne
+    @JoinColumn(name = "id_forme_juridique", nullable = false)
+    FormeJuridique formeJuridique;
+
+    @Column(nullable = false, length = 255)
+    private String formeJuridiqueEtrangere;
+
+    @Column(nullable = false)
+    private LocalDate dateEffet;
+
+    @Column(nullable = false, length = 255)
+    private String numDetenteur;
+
+    @Column(nullable = false, length = 255)
+    private String numExploitant;
+
+    @Column(nullable = false, length = 255)
+    private String numRna;
+
+    @Column(nullable = false, length = 255)
+    private String lieuRegistre;
+
+    @Column(nullable = false, length = 255)
+    private String numGreffe;
+
+    @Column(nullable = false, length = 255)
+    private String entreeSortieDesChampsDeRegistre;
+
+    @Column(nullable = false, length = 255)
+    private String autreIdentifiantEtranger;
+
+    @Column(nullable = false, length = 255)
+    private String nicSiege;
+
+    @Column(nullable = false, length = 255)
+    private String nomCommercial;
+
+    @ManyToOne
+    @JoinColumn(name = "id_type_representant", nullable = false)
+    TypeRepresentant typeRepresentant;
+
+    @ManyToOne
+    @JoinColumn(name = "id_individu_representant", nullable = false)
+    Entrepreneur individuRepresentant;
+
+    String entrepriseRepresentant;
+
+    @ManyToOne
+    @JoinColumn(name = "id_adresse_entreprise_representant", nullable = false)
+    AdresseDomicile adresseEntrepriseRepresentant;
+
+    @ManyToOne
+    @JoinColumn(name = "id_role", nullable = false)
+    Role role;
+
+    @ManyToOne
+    @JoinColumn(name = "id_statut_pour_la_formalite", nullable = false)
+    StatutPourLaFormalite statutPourLaFormalite;
+
+    @Column(nullable = false, length = 255)
+    private String codeApe;
+
+    @Column(nullable = false)
+    private Boolean indicateurAssocieUnique;
+
+    @Column(nullable = false, length = 255)
+    private String nomExploitation;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public RoleEntreprise getRoleEntreprise() {
+        return roleEntreprise;
+    }
+
+    public void setRoleEntreprise(RoleEntreprise roleEntreprise) {
+        this.roleEntreprise = roleEntreprise;
+    }
+
+    public String getPays() {
+        return pays;
+    }
+
+    public void setPays(String pays) {
+        this.pays = pays;
+    }
+
+    public String getSiren() {
+        return siren;
+    }
+
+    public void setSiren(String siren) {
+        this.siren = siren;
+    }
+
+    public String getRegistre() {
+        return registre;
+    }
+
+    public void setRegistre(String registre) {
+        this.registre = registre;
+    }
+
+    public String getDenomination() {
+        return denomination;
+    }
+
+    public void setDenomination(String denomination) {
+        this.denomination = denomination;
+    }
+
+    public String getObjet() {
+        return objet;
+    }
+
+    public void setObjet(String objet) {
+        this.objet = objet;
+    }
+
+    public FormeJuridique getFormeJuridique() {
+        return formeJuridique;
+    }
+
+    public void setFormeJuridique(FormeJuridique formeJuridique) {
+        this.formeJuridique = formeJuridique;
+    }
+
+    public String getFormeJuridiqueEtrangere() {
+        return formeJuridiqueEtrangere;
+    }
+
+    public void setFormeJuridiqueEtrangere(String formeJuridiqueEtrangere) {
+        this.formeJuridiqueEtrangere = formeJuridiqueEtrangere;
+    }
+
+    public LocalDate getDateEffet() {
+        return dateEffet;
+    }
+
+    public void setDateEffet(LocalDate dateEffet) {
+        this.dateEffet = dateEffet;
+    }
+
+    public String getNumDetenteur() {
+        return numDetenteur;
+    }
+
+    public void setNumDetenteur(String numDetenteur) {
+        this.numDetenteur = numDetenteur;
+    }
+
+    public String getNumExploitant() {
+        return numExploitant;
+    }
+
+    public void setNumExploitant(String numExploitant) {
+        this.numExploitant = numExploitant;
+    }
+
+    public String getNumRna() {
+        return numRna;
+    }
+
+    public void setNumRna(String numRna) {
+        this.numRna = numRna;
+    }
+
+    public String getLieuRegistre() {
+        return lieuRegistre;
+    }
+
+    public void setLieuRegistre(String lieuRegistre) {
+        this.lieuRegistre = lieuRegistre;
+    }
+
+    public String getNumGreffe() {
+        return numGreffe;
+    }
+
+    public void setNumGreffe(String numGreffe) {
+        this.numGreffe = numGreffe;
+    }
+
+    public String getEntreeSortieDesChampsDeRegistre() {
+        return entreeSortieDesChampsDeRegistre;
+    }
+
+    public void setEntreeSortieDesChampsDeRegistre(String entreeSortieDesChampsDeRegistre) {
+        this.entreeSortieDesChampsDeRegistre = entreeSortieDesChampsDeRegistre;
+    }
+
+    public String getAutreIdentifiantEtranger() {
+        return autreIdentifiantEtranger;
+    }
+
+    public void setAutreIdentifiantEtranger(String autreIdentifiantEtranger) {
+        this.autreIdentifiantEtranger = autreIdentifiantEtranger;
+    }
+
+    public String getNicSiege() {
+        return nicSiege;
+    }
+
+    public void setNicSiege(String nicSiege) {
+        this.nicSiege = nicSiege;
+    }
+
+    public String getNomCommercial() {
+        return nomCommercial;
+    }
+
+    public void setNomCommercial(String nomCommercial) {
+        this.nomCommercial = nomCommercial;
+    }
+
+    public TypeRepresentant getTypeRepresentant() {
+        return typeRepresentant;
+    }
+
+    public void setTypeRepresentant(TypeRepresentant typeRepresentant) {
+        this.typeRepresentant = typeRepresentant;
+    }
+
+    public Entrepreneur getIndividuRepresentant() {
+        return individuRepresentant;
+    }
+
+    public void setIndividuRepresentant(Entrepreneur individuRepresentant) {
+        this.individuRepresentant = individuRepresentant;
+    }
+
+    public AdresseDomicile getAdresseEntrepriseRepresentant() {
+        return adresseEntrepriseRepresentant;
+    }
+
+    public void setAdresseEntrepriseRepresentant(AdresseDomicile adresseEntrepriseRepresentant) {
+        this.adresseEntrepriseRepresentant = adresseEntrepriseRepresentant;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+    public StatutPourLaFormalite getStatutPourLaFormalite() {
+        return statutPourLaFormalite;
+    }
+
+    public void setStatutPourLaFormalite(StatutPourLaFormalite statutPourLaFormalite) {
+        this.statutPourLaFormalite = statutPourLaFormalite;
+    }
+
+    public String getCodeApe() {
+        return codeApe;
+    }
+
+    public void setCodeApe(String codeApe) {
+        this.codeApe = codeApe;
+    }
+
+    public Boolean getIndicateurAssocieUnique() {
+        return indicateurAssocieUnique;
+    }
+
+    public void setIndicateurAssocieUnique(Boolean indicateurAssocieUnique) {
+        this.indicateurAssocieUnique = indicateurAssocieUnique;
+    }
+
+    public String getNomExploitation() {
+        return nomExploitation;
+    }
+
+    public void setNomExploitation(String nomExploitation) {
+        this.nomExploitation = nomExploitation;
+    }
+
+    public String getEntrepriseRepresentant() {
+        return entrepriseRepresentant;
+    }
+
+    public void setEntrepriseRepresentant(String entrepriseRepresentant) {
+        this.entrepriseRepresentant = entrepriseRepresentant;
+    }
+
+}

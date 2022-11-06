@@ -1,0 +1,55 @@
+import { AdresseDomicile } from "./AdresseDomicile";
+import { Entreprise } from "./Entreprise";
+
+export interface Modalite {
+  dateEffet: Date;
+  detentionPartDirecte: boolean;
+  partsDirectesPleinePropriete: number;
+  partsDirectesNuePropriete: number;
+  detentionPartIndirecte: boolean;
+  partsIndirectesIndivision: number;
+  partsIndirectesIndivisionPleinePropriete: number;
+  partsIndirectesIndivisionNuePropriete: number;
+  partsIndirectesPersonnesMorales: number;
+  partsIndirectesPmoralesPleinePropriete: number;
+  partsIndirectesPmoralesNuePropriete: number;
+  detentionPartTotale: number;
+  detentionVoteDirecte: boolean;
+  voteDirectePleinePropriete: number;
+  voteDirecteNuePropriete: number;
+  voteDirecteUsufruit: number;
+  detentionVoteIndirecte: boolean;
+  voteIndirecteIndivision: number;
+  voteIndirecteIndivisionPleinePropriete: number;
+  voteIndirecteIndivisionNuePropriete: number;
+  voteIndirecteIndivisionUsufruit: number;
+  voteIndirectePersonnesMorales: number;
+  voteIndirectePmoralesPleinePropriete: number;
+  voteIndirectePmoralesNuePropriete: number;
+  voteIndirectePmoralesUsufruit: number;
+  vocationTitulaireDirectePleinePropriete: number;
+  vocationTitulaireDirecteNuePropriete: number;
+  vocationTitulaireIndirecteIndivision: number;
+  vocationTitulaireIndirectePleinePropriete: number;
+  vocationTitulaireIndirecteNuePropriete: number;
+  vocationTitulaireIndirectePersonnesMorales: number;
+  vocationTitulaireIndirectePmoralesPleinePropriete: number;
+  vocationTitulaireIndirectePmoralesNuePropriete: number;
+  detentionVoteTotal: number;
+  detentionPouvoirDecisionAG: boolean;
+  detentionPouvoirNommageMembresConseilAdmin: boolean;
+  detentionAutresMoyensControle: boolean;
+  beneficiaireRepresentantLegal: boolean;
+  gestionDelegueeSocieteGestion: boolean;
+  representantLegalPlacementSansGestionDelegue: boolean;
+  modalitesDeControle: boolean;
+  detention25pCapital: boolean;
+  detention25pDroitVote: boolean;
+  detentionCapitalIndirecteIndivision: boolean;
+  detentionCapitalIndirectesPersonnesMorales: boolean;
+  detentionVoteIndirecteIndivision: boolean;
+  detentionVoteIndirectePersonnesMorales: boolean;
+  societeGestion: Entreprise;
+  adresse: AdresseDomicile;
+}
+
