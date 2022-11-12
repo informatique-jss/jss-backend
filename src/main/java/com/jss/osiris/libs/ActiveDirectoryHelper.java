@@ -117,7 +117,7 @@ public class ActiveDirectoryHelper {
         if (requestedEmployee == null)
             return null;
 
-        Employee currentUser = employeeService.getCurrentUser();
+        Employee currentUser = employeeService.getCurrentEmployee();
         ArrayList<Employee> holidaymakers = new ArrayList<Employee>();
         if (requestedEmployee.getId().equals(currentUser.getId())) {
             holidaymakers.add(currentUser);

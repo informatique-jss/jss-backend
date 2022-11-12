@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AppService } from 'src/app/services/app.service';
 import { HabilitationsService } from 'src/app/services/habilitations.service';
+import { NotificationService } from '../../modules/miscellaneous/services/notification.service';
 import { SearchService } from '../../services/search.service';
 @Component({
   selector: 'app-sidenav-list',
@@ -13,9 +14,11 @@ export class SidenavListComponent implements OnInit {
 
   constructor(protected appService: AppService, protected router: Router,
     protected habilitationService: HabilitationsService,
+    private notidicationService: NotificationService,
     protected searchService: SearchService) { }
 
   ngOnInit() {
+    this.notidicationService.getNotificationsObservable().subscribe();
   }
 
   public onSidenavClose = () => {
@@ -56,6 +59,18 @@ export class SidenavListComponent implements OnInit {
 
   openSearch() {
     this.searchService.openSearch();
+  }
+
+  openNotificationDialog() {
+    this.notidicationService.openNotificationDialog();
+  }
+
+  getNotificationNumber() {
+    let notificationNumber = 0;
+    for (let notification of this.notidicationService.getNotificationsResult())
+      if (notification.isRead == false)
+        notificationNumber++;
+    return notificationNumber;
   }
 
 }

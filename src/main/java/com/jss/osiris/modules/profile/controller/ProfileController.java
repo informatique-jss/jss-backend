@@ -59,7 +59,7 @@ public class ProfileController {
 
 	@GetMapping(inputEntryPoint + "/user")
 	public ResponseEntity<Employee> getMyUsername() {
-		return new ResponseEntity<Employee>(employeeService.getCurrentUser(), HttpStatus.OK);
+		return new ResponseEntity<Employee>(employeeService.getCurrentEmployee(), HttpStatus.OK);
 	}
 
 	@PostMapping(inputEntryPoint + "/login")

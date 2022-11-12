@@ -2,8 +2,10 @@
   <div class="menu" matTooltip="Rechercher (F4)">
     <mat-icon (click)="openSearch()">search</mat-icon>
   </div>
-  <div class="menu notif" matTooltip="Rechercher (F4)">
-    <mat-icon (click)="openSearch()">search</mat-icon>
+  <div class="menu notif" matTooltip="Notifications (F8)">
+    <mat-icon (click)="openNotificationDialog()" [matBadge]="getNotificationNumber()" matBadgePosition="below after"
+      [matBadgeHidden]="getNotificationNumber()==0" matBadgeColor="warn" matBadgeSize="small">
+      notifications</mat-icon>
   </div>
   <img class="navbar-brand" ui-sref='main.tiers' [src]="logoOsiris" />
 </div>

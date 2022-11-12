@@ -2,6 +2,7 @@ import { DragDropModule } from "@angular/cdk/drag-drop";
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -60,6 +61,7 @@ import { SidenavListComponent } from './routing/sidenav-list/sidenav-list.compon
     MatTableModule,
     ReactiveFormsModule,
     MatButtonModule,
+    MatBadgeModule,
     MatInputModule,
     // App modules
     TiersModule,

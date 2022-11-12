@@ -3,7 +3,9 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -19,6 +21,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
+import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { MatTableExporterModule } from 'mat-table-exporter';
@@ -215,6 +218,7 @@ import { SelectVatCollectionTypeComponent } from '../forms/select-vat-collection
 import { SelectVatComponent } from '../forms/select-vat/select-vat.component';
 import { GradeComponent } from '../grade/grade.component';
 import { HistoryComponent } from '../history/history.component';
+import { NotificationDialogComponent } from '../notification-dialog/notification-dialog.component';
 import { SingleAttachmentComponent } from '../single-attachment/single-attachment.component';
 import { SortTableComponent } from '../sort-table/sort-table.component';
 import { UploadAttachementDialogComponent } from '../upload-attachement-dialog/upload-attachement-dialog.component';
@@ -241,7 +245,10 @@ import { MiscellaneousComponent } from './miscellaneous.component';
     MatMenuModule,
     MatTableExporterModule,
     MatRadioModule,
+    MatCardModule,
+    MatBadgeModule,
     DragDropModule,
+    MatTabsModule,
     MatDialogModule,
     MatSlideToggleModule,
     MatCheckboxModule,
@@ -350,6 +357,7 @@ import { MiscellaneousComponent } from './miscellaneous.component';
     SelectPaymentWayComponent,
     AvatarComponent,
     SelectDepartmentsComponent,
+    NotificationDialogComponent,
     SelectDepartmentComponent,
     WorkflowDialogComponent,
     ChipsEmployeeComponent,

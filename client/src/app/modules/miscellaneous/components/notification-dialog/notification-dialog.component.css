@@ -1,0 +1,40 @@
+.mat-content {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.menu {
+  width: 0px;
+  height: 0px;
+  cursor: pointer;
+  color: #44546A;
+  background-color: #f0f0f0;
+  padding: 16px;
+  border-radius: 23px;
+  margin-right: 5px;
+}
+
+.menu .mat-icon {
+  position: relative;
+  top: -10px;
+  left: -10px;
+  font-size: 20px;
+}
+
+.menu:hover {
+  background: #4d4d4d;
+  color: #ffffff;
+}
+
+.tab-icon {
+  color: #44546A;
+}
+
+.tab-icon:hover {
+  color: grey
+}
+
+.mat-badge.hide-text .mat-badge-content {
+  color: transparent;
+}

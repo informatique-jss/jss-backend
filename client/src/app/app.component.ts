@@ -5,9 +5,10 @@ import { ErrorStateMatcher } from '@angular/material/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { SEARCH_KEY_CODE } from './libs/Constants';
+import { NOTIFICATION_KEY_CODE, SEARCH_KEY_CODE } from './libs/Constants';
 import { ConfirmDialogComponent } from './modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
 import { ConstantService } from './modules/miscellaneous/services/constant.service';
+import { NotificationService } from './modules/miscellaneous/services/notification.service';
 import { LoginDialogComponent } from './routing/login-dialog/login-dialog.component';
 import { LoginService } from './routing/login-dialog/login.service';
 import { AppService } from './services/app.service';
@@ -49,6 +50,7 @@ export class AppComponent {
     private loginService: LoginService,
     private userNoteService: UserNoteService,
     public confirmationDialog: MatDialog,
+    private notificationService: NotificationService,
     private userPreferenceService: UserPreferenceService,
     private constantService: ConstantService,
     protected searchService: SearchService) { }
@@ -84,6 +86,8 @@ export class AppComponent {
   keyEvent(event: KeyboardEvent) {
     if (event != undefined && event != null && event.code != null && event != undefined && event.code == SEARCH_KEY_CODE)
       this.searchService.openSearch();
+    if (event != undefined && event != null && event.code != null && event != undefined && event.code == NOTIFICATION_KEY_CODE)
+      this.notificationService.openNotificationDialog();
   }
 
   dropNoteTable(event: CdkDragEnd) {

@@ -1,0 +1,45 @@
+<div>
+  <form [formGroup]="notificationForm">
+    <table class="full-width">
+      <tr>
+        <td>
+          <div>
+            <mat-tab-group animationDuration="0ms">
+              <mat-tab [label]="getTabLabel(QUOTATION_ENTITY_TYPE)">
+                <mat-dialog-content class="mat-content">
+                  <mat-card class="pointer" *ngFor="let entity of getEntitiesForTab(QUOTATION_ENTITY_TYPE)"
+                    (click)="openEntity(entity,QUOTATION_ENTITY_TYPE)">
+                    <mat-card-title-group>
+                      <mat-card-title matBadge="X" matBadgePosition="above before" [matBadgeHidden]="entity.isRead"
+                        matBadgeColor="warn" matBadgeSize="small" class="hide-text">{{entity.entityId}}</mat-card-title>
+                      <mat-card-subtitle><span>{{entity.id}}</span>
+                      </mat-card-subtitle>
+                      <mat-card-actions style="display: flex">
+                        <div class="menu notif" (click)="setAsRead($event,entity);$event.stopPropagation();"
+                          matTooltip="Marquer comme lu (maintenir CTRL pour l'appliquer à l'ensemble de l'onglet)">
+                          <mat-icon>
+                            drafts</mat-icon>
+                        </div>
+                        <div class="menu notif" (click)="setAsUnread($event,entity);$event.stopPropagation();"
+                          matTooltip="Marquer comme non lu (maintenir CTRL pour l'appliquer à l'ensemble de l'onglet)">
+                          <mat-icon>
+                            mail</mat-icon>
+                        </div>
+                        <div class="menu notif" (click)="delete($event,entity);$event.stopPropagation();"
+                          matTooltip="Supprimer définitivement (maintenir CTRL pour l'appliquer à l'ensemble de l'onglet)">
+                          <mat-icon>
+                            delete_forever</mat-icon>
+                        </div>
+                      </mat-card-actions>
+                    </mat-card-title-group>
+                    <mat-divider></mat-divider>
+                  </mat-card>
+                </mat-dialog-content>
+              </mat-tab>
+            </mat-tab-group>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </form>
+</div>

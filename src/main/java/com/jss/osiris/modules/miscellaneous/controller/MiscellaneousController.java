@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -43,6 +44,7 @@ import com.jss.osiris.modules.miscellaneous.model.DocumentType;
 import com.jss.osiris.modules.miscellaneous.model.Gift;
 import com.jss.osiris.modules.miscellaneous.model.Language;
 import com.jss.osiris.modules.miscellaneous.model.LegalForm;
+import com.jss.osiris.modules.miscellaneous.model.Notification;
 import com.jss.osiris.modules.miscellaneous.model.PaymentType;
 import com.jss.osiris.modules.miscellaneous.model.Provider;
 import com.jss.osiris.modules.miscellaneous.model.Regie;
@@ -67,6 +69,7 @@ import com.jss.osiris.modules.miscellaneous.service.DocumentTypeService;
 import com.jss.osiris.modules.miscellaneous.service.GiftService;
 import com.jss.osiris.modules.miscellaneous.service.LanguageService;
 import com.jss.osiris.modules.miscellaneous.service.LegalFormService;
+import com.jss.osiris.modules.miscellaneous.service.NotificationService;
 import com.jss.osiris.modules.miscellaneous.service.PaymentTypeService;
 import com.jss.osiris.modules.miscellaneous.service.ProviderService;
 import com.jss.osiris.modules.miscellaneous.service.RegieService;
@@ -75,6 +78,7 @@ import com.jss.osiris.modules.miscellaneous.service.SpecialOfferService;
 import com.jss.osiris.modules.miscellaneous.service.VatCollectionTypeService;
 import com.jss.osiris.modules.miscellaneous.service.VatService;
 import com.jss.osiris.modules.miscellaneous.service.WeekDayService;
+import com.jss.osiris.modules.profile.service.EmployeeService;
 import com.jss.osiris.modules.quotation.model.Announcement;
 import com.jss.osiris.modules.quotation.model.Bodacc;
 import com.jss.osiris.modules.quotation.model.Domiciliation;
@@ -193,6 +197,77 @@ public class MiscellaneousController {
 
     @Autowired
     ConstantService constantService;
+
+    @Autowired
+    NotificationService notificationService;
+
+    @Autowired
+    EmployeeService employeeService;
+
+    @GetMapping(inputEntryPoint + "/notifications")
+    public ResponseEntity<List<Notification>> getNotifications() {
+        List<Notification> notifications = null;
+        try {
+            notifications = notificationService.getNotificationsForCurrentEmployee();
+        } catch (HttpStatusCodeException e) {
+            logger.error("HTTP error when fetching notification", e);
+            return new ResponseEntity<List<Notification>>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            logger.error("Error when fetching notification", e);
+            return new ResponseEntity<List<Notification>>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<List<Notification>>(notifications, HttpStatus.OK);
+    }
+
+    @PostMapping(inputEntryPoint + "/notification")
+    public ResponseEntity<Notification> addOrUpdateNotification(
+            @RequestBody Notification notifications) {
+        Notification outNotification;
+        try {
+            if (notifications.getId() != null)
+                validationHelper.validateReferential(notifications, true);
+
+            outNotification = notificationService
+                    .addOrUpdateNotificationFromUser(notifications);
+        } catch (
+
+        ResponseStatusException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (HttpStatusCodeException e) {
+            logger.error("HTTP error when fetching notification", e);
+            return new ResponseEntity<Notification>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            logger.error("Error when fetching notification", e);
+            return new ResponseEntity<Notification>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<Notification>(outNotification, HttpStatus.OK);
+    }
+
+    @DeleteMapping(inputEntryPoint + "/notification")
+    public ResponseEntity<Boolean> deleteNotification(
+            @RequestParam Integer notificationId) {
+        if (notificationId == null)
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        Notification notification = notificationService.getNotification(notificationId);
+
+        if (notification == null)
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        if (!notification.getEmployee().getId().equals(employeeService.getCurrentEmployee().getId()))
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        try {
+            notificationService.deleteNotification(notification);
+        } catch (HttpStatusCodeException e) {
+            logger.error("HTTP error when fetching accountingRecord", e);
+            return new ResponseEntity<Boolean>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            logger.error("Error when fetching accountingRecord", e);
+            return new ResponseEntity<Boolean>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+    }
 
     @GetMapping(inputEntryPoint + "/constants")
     public ResponseEntity<Constant> getConstants() {
