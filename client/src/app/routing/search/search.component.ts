@@ -13,6 +13,7 @@ export const QUOTATION_ENTITY_TYPE: EntityType = { entityType: 'Quotation', tabN
 export const CUSTOMER_ORDER_ENTITY_TYPE: EntityType = { entityType: 'CustomerOrder', tabName: 'Commande', entryPoint: 'order' };
 export const DOMICILIATION_ENTITY_TYPE: EntityType = { entityType: 'Domiciliation', tabName: 'Domiciliation', entryPoint: 'quotation/domiciliation' };
 export const ANNOUNCEMENT_ENTITY_TYPE: EntityType = { entityType: 'Announcement', tabName: 'Announcement', entryPoint: 'quotation/announcement' };
+export const FORMALITE_ENTITY_TYPE: EntityType = { entityType: 'Formalite', tabName: 'Formalité', entryPoint: 'quotation/formalite' };
 export const PROVISION_ENTITY_TYPE: EntityType = { entityType: 'Provision', tabName: 'Provision', entryPoint: 'quotation/provision' };
 export const BODACC_ENTITY_TYPE: EntityType = { entityType: 'Bodacc', tabName: 'BODACC', entryPoint: 'quotation/bodacc  ' };
 export const ASSO_AFFAIRE_ENTITY_TYPE: EntityType = { entityType: 'AssoAffaireOrder', tabName: 'Affaires / Prestations', entryPoint: 'affaire' };
@@ -155,6 +156,11 @@ export class SearchComponent implements OnInit {
   }
 
   getProvisionLabel(entity: any) {
-    return entity.text.provisions.map((provision: { provisionFamilyType: { label: string; }; provisionType: { label: string; }; }) => provision.provisionFamilyType.label + " - " + provision.provisionType.label).join(" / ");
+    let out = [];
+    console.log(entity.text.provisions);
+    if (entity.text.provisions)
+      for (let provision of entity.text.provisions)
+        out.push(provision.provisionFamilyType ? provision.provisionFamilyType.label : "") + " - " + (provision.provisionType ? provision.provisionType.label : "");
+    return out.join(" / ");
   }
 }

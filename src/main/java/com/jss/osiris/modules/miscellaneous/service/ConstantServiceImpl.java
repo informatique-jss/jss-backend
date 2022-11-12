@@ -31,6 +31,9 @@ import com.jss.osiris.modules.quotation.model.JournalType;
 import com.jss.osiris.modules.quotation.model.MailRedirectionType;
 import com.jss.osiris.modules.quotation.model.QuotationLabelType;
 import com.jss.osiris.modules.quotation.model.TransfertFundsType;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormeJuridique;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeFormalite;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypePersonne;
 import com.jss.osiris.modules.tiers.model.BillingLabelType;
 import com.jss.osiris.modules.tiers.model.RefundType;
 import com.jss.osiris.modules.tiers.model.SubscriptionPeriodType;
@@ -196,8 +199,13 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
-    public PaymentType getPaymentTypeOther() throws Exception {
-        return getConstants().getPaymentTypeOther();
+    public PaymentType getPaymentTypeEspeces() throws Exception {
+        return getConstants().getPaymentTypeEspeces();
+    }
+
+    @Override
+    public PaymentType getPaymentTypeCB() throws Exception {
+        return getConstants().getPaymentTypeCB();
     }
 
     @Override
@@ -378,5 +386,45 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public Department getDepartmentReunion() throws Exception {
         return getConstants().getDepartmentReunion();
+    }
+
+    @Override
+    public TypePersonne getTypePersonnePersonnePhysique() throws Exception {
+        return getConstants().getTypePersonnePersonnePhysique();
+    }
+
+    @Override
+    public TypePersonne getTypePersonnePersonneMorale() throws Exception {
+        return getConstants().getTypePersonnePersonneMorale();
+    }
+
+    @Override
+    public TypePersonne getTypePersonneExploitation() throws Exception {
+        return getConstants().getTypePersonneExploitation();
+    }
+
+    @Override
+    public FormeJuridique getFormeJuridiqueEntrepreneurIndividuel() throws Exception {
+        return getConstants().getFormeJuridiqueEntrepreneurIndividuel();
+    }
+
+    @Override
+    public TypeFormalite getTypeFormaliteCessation() throws Exception {
+        return getConstants().getTypeFormaliteCessation();
+    }
+
+    @Override
+    public TypeFormalite getTypeFormaliteModification() throws Exception {
+        return getConstants().getTypeFormaliteModification();
+    }
+
+    @Override
+    public TypeFormalite getTypeFormaliteCreation() throws Exception {
+        return getConstants().getTypeFormaliteCreation();
+    }
+
+    @Override
+    public TypeFormalite getTypeFormaliteCorrection() throws Exception {
+        return getConstants().getTypeFormaliteCorrection();
     }
 }

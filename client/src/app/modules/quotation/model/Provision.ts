@@ -4,6 +4,7 @@ import { Announcement } from "./Announcement";
 import { AssoAffaireOrder } from "./AssoAffaireOrder";
 import { Bodacc } from "./Bodacc";
 import { Domiciliation } from "./Domiciliation";
+import { Formalite } from './guichet-unique/Formalite';
 import { InvoiceItem } from "./InvoiceItem";
 import { ProvisionFamilyType } from "./ProvisionFamilyType";
 import { ProvisionType } from "./ProvisionType";
@@ -13,6 +14,7 @@ export interface Provision extends IAttachment {
   domiciliation: Domiciliation | undefined;
   announcement: Announcement | undefined;
   bodacc: Bodacc | undefined;
+  formalite: Formalite | undefined;
   provisionFamilyType: ProvisionFamilyType;
   provisionType: ProvisionType;
   invoiceItems: InvoiceItem[]

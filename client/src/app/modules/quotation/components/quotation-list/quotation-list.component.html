@@ -3,18 +3,19 @@
     <table class="full-width table-fixed-layout">
       <tr>
         <td>
-          <autocomplete-sales-employee [(model)]="orderingSearch.salesEmployee" label="Commercial"
-            [form]="orderingSearchForm" propertyName="salesEmployee" [isMandatory]="false">
+          <autocomplete-sales-employee [(model)]="quotationSearch.salesEmployee" label="Commercial"
+            [form]="quotationSearchForm" propertyName="salesEmployee" [isMandatory]="false">
           </autocomplete-sales-employee>
         </td>
         <td>
-          <select-quotation-status [(model)]="orderingSearch.quotationStatus" label="Statut" [form]="orderingSearchForm"
-            propertyName="quotationStatus" [isMandatory]="false" [isDisabled]="false"></select-quotation-status>
+          <select-quotation-status [(model)]="quotationSearch.quotationStatus" label="Statut"
+            [form]="quotationSearchForm" propertyName="quotationStatus" [isMandatory]="false" [isDisabled]="false">
+          </select-quotation-status>
         </td>
         <td>
-          <generic-date-range-picker [(modelStart)]="orderingSearch.startDate" [(modelEnd)]="orderingSearch.endDate"
-            label="Date de création" [form]="orderingSearchForm" propertyNameStart="startDate" propertyNameEnd="endDate"
-            (onDateChange)="putDefaultPeriod()">
+          <generic-date-range-picker [(modelStart)]="quotationSearch.startDate" [(modelEnd)]="quotationSearch.endDate"
+            label="Date de création" [form]="quotationSearchForm" propertyNameStart="startDate"
+            propertyNameEnd="endDate" (onDateChange)="putDefaultPeriod()">
           </generic-date-range-picker>
         </td>
         <td class="fab-td-button">

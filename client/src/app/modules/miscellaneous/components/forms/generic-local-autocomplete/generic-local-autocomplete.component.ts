@@ -30,7 +30,7 @@ export abstract class GenericLocalAutocompleteComponent<T> extends GenericFormCo
     this.initTypes();
     if (this.form != undefined) {
       this.form.addControl(this.propertyName, this.formBuilder3.control({ value: '', disabled: this.isDisabled }));
-      this.form.addValidators(this.checkFieldFilledIfIsConditionalRequired());
+      this.form.addValidators(this.checkField());
       this.form.addValidators(this.checkAutocompleteField());
       this.filteredTypes = this.form.get(this.propertyName)?.valueChanges.pipe(
         startWith(''),
@@ -48,13 +48,13 @@ export abstract class GenericLocalAutocompleteComponent<T> extends GenericFormCo
       const fieldValue = root.get(this.propertyName)?.value;
       if (this.form && this.form!.get(this.propertyName)) {
         if (this.conditionnalRequired != undefined) {
-          if (this.conditionnalRequired && (!fieldValue || fieldValue.id == null)) {
+          if (this.conditionnalRequired && (!fieldValue || fieldValue.id == null && fieldValue.code == null)) {
             this.form!.get(this.propertyName)!.setErrors({ notFilled: this.propertyName });
             return {
               notFilled: this.propertyName
             };
           }
-        } else if (this.isMandatory && (!fieldValue || fieldValue.id == null)) {
+        } else if (this.isMandatory && (!fieldValue || fieldValue.id == null && fieldValue.code == null)) {
           this.form!.get(this.propertyName)!.setErrors({ notFilled: this.propertyName });
           return {
             notFilled: this.propertyName
@@ -68,11 +68,11 @@ export abstract class GenericLocalAutocompleteComponent<T> extends GenericFormCo
 
 
   optionSelected(type: T): void {
+    this.model = type;
     this.modelChange.emit(this.model);
     this.onOptionSelected.emit(type);
     this.form?.updateValueAndValidity();
     this.form?.markAllAsTouched();
-    console.log(this.propertyName);
   }
 
   clearField(): void {

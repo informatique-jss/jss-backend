@@ -79,7 +79,6 @@ public class Tiers implements ITiers, IAttachment {
 
 	@ManyToOne
 	@JoinColumn(name = "id_payment_type")
-	@IndexedField
 	private PaymentType paymentType;
 
 	@Column(length = 40)

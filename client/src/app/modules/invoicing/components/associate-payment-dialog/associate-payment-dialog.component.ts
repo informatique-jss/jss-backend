@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
-import { INVOICING_PAYMENT_LIMIT_REFUND_EUROS, QUOTATION_STATUS_WAITING_DEPOSIT } from 'src/app/libs/Constants';
+import { INVOICING_PAYMENT_LIMIT_REFUND_EUROS } from 'src/app/libs/Constants';
 import { getDocument } from 'src/app/libs/DocumentHelper';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
@@ -15,6 +15,7 @@ import { Invoice } from 'src/app/modules/quotation/model/Invoice';
 import { ITiers } from 'src/app/modules/tiers/model/ITiers';
 import { Tiers } from 'src/app/modules/tiers/model/Tiers';
 import { AppService } from 'src/app/services/app.service';
+import { CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT } from '../../../../libs/Constants';
 import { AssociationSummaryTable } from '../../model/AssociationSummaryTable';
 import { Payment } from '../../model/Payment';
 import { PaymentAssociate } from '../../model/PaymentAssociate';
@@ -38,7 +39,7 @@ export class AssociatePaymentDialogComponent implements OnInit {
 
   refreshTable: Subject<void> = new Subject<void>();
 
-  QUOTATION_STATUS_WAITING_DEPOSIT = QUOTATION_STATUS_WAITING_DEPOSIT;
+  CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT = CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT;
   INVOICING_PAYMENT_LIMIT_REFUND_EUROS: number = INVOICING_PAYMENT_LIMIT_REFUND_EUROS;
 
   invoiceStatusSend = this.constantService.getInvoiceStatusSend();

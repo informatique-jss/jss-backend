@@ -2,10 +2,12 @@ package com.jss.osiris.libs;
 
 import static org.springframework.ldap.query.LdapQueryBuilder.query;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.core.support.LdapContextSource;
@@ -15,6 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.jss.osiris.modules.profile.model.Employee;
+import com.jss.osiris.modules.profile.service.EmployeeService;
 
 @Service
 public class ActiveDirectoryHelper {
@@ -42,6 +45,9 @@ public class ActiveDirectoryHelper {
     @Value("${ldap.group.jss.users}")
     private String ldapGroupJssUsers;
 
+    @Autowired
+    EmployeeService employeeService;
+
     public static final String ADMINISTRATEUR = "@activeDirectoryHelper.isUserHasGroup('ROLE_OSIRIS_ADMINISTRATEURS')";
 
     public String getCurrentUsername() {
@@ -49,7 +55,9 @@ public class ActiveDirectoryHelper {
             if (SecurityContextHolder.getContext() == null
                     || SecurityContextHolder.getContext().getAuthentication() == null
                     || SecurityContextHolder.getContext().getAuthentication() == null
-                    || SecurityContextHolder.getContext().getAuthentication().getName() == null)
+                    || SecurityContextHolder.getContext().getAuthentication().getName() == null
+                    || SecurityContextHolder.getContext().getAuthentication().getName().toUpperCase()
+                            .equals("ANONYMOUSUSER"))
                 return "GAPIN";
         return SecurityContextHolder.getContext().getAuthentication().getName().toUpperCase();
     }
@@ -94,5 +102,30 @@ public class ActiveDirectoryHelper {
         contextSource.afterPropertiesSet();
 
         return new LdapTemplate(contextSource).search(query().where("objectclass").is("user"), new Employee());
+    }
+
+    /**
+     * Take a requested employee in param
+     * - if request employee is null, return null
+     * - if requested employee is myself, return myself and responsible
+     * holidaymarkers assigned to me
+     * - if requested employee is not myself, return request employee
+     * 
+     * @return list of Employee to take into account
+     */
+    public List<Employee> getMyHolidaymaker(Employee requestedEmployee) {
+        if (requestedEmployee == null)
+            return null;
+
+        Employee currentUser = employeeService.getCurrentUser();
+        ArrayList<Employee> holidaymakers = new ArrayList<Employee>();
+        if (requestedEmployee.getId().equals(currentUser.getId())) {
+            holidaymakers.add(currentUser);
+            if (currentUser.getBackups() != null)
+                holidaymakers.addAll(currentUser.getBackups());
+        } else {
+            holidaymakers.add(requestedEmployee);
+        }
+        return holidaymakers;
     }
 }

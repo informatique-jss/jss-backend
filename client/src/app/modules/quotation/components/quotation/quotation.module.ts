@@ -35,6 +35,12 @@ import { BodaccSaleComponent } from '../bodacc-sale/bodacc-sale.component';
 import { BodaccSplitComponent } from '../bodacc-split/bodacc-split.component';
 import { ChooseAssignedUserDialogComponent } from '../choose-assigned-user-dialog/choose-assigned-user-dialog.component';
 import { DomiciliationComponent } from '../domiciliation/domiciliation.component';
+import { FormaliteComponent } from '../formalite/formalite.component';
+import { ContentComponent } from '../guichet-unique/content/content.component';
+import { EntrepriseComponent } from '../guichet-unique/entreprise/entreprise.component';
+import { IdentiteComponent } from '../guichet-unique/identite/identite.component';
+import { NatureCreationComponent } from '../guichet-unique/nature-creation/nature-creation.component';
+import { PersonnePhysiqueComponent } from '../guichet-unique/personne-physique/personne-physique.component';
 import { InvoiceManagementComponent } from '../invoice-management/invoice-management.component';
 import { OrderingCustomerComponent } from '../ordering-customer/ordering-customer.component';
 import { OrderingListComponent } from '../ordering-list/ordering-list.component';
@@ -120,7 +126,15 @@ const routes: Routes = [
     AffaireComponent,
     OrderingListComponent,
     ProvisionOptionsComponent,
-    AnnouncementComponent],
+    FormaliteComponent,
+    AnnouncementComponent,
+    // Guichet unique
+    ContentComponent,
+    NatureCreationComponent,
+    PersonnePhysiqueComponent,
+    IdentiteComponent,
+    EntrepriseComponent,
+  ],
   exports: [
     OrderingListComponent
   ],

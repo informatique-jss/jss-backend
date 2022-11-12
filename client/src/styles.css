@@ -200,6 +200,17 @@ tr.table-row:hover {
   text-align: left;
 }
 
+.avatar-select {
+  margin-top: auto;
+  margin-bottom: auto;
+  margin-right: 5px;
+}
+
+.select-with-avatar {
+  display: flex;
+}
+
+
 @font-face {
   font-family: 'Material Icons';
   font-style: normal;

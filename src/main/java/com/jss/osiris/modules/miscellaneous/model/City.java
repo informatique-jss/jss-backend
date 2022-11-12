@@ -12,6 +12,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.jss.osiris.libs.search.model.IndexedField;
+
 @Entity
 @Table(indexes = { @Index(name = "idx_city_country", columnList = "id_country") })
 public class City implements Serializable, IId {
@@ -23,12 +25,14 @@ public class City implements Serializable, IId {
 	private Integer id;
 
 	@Column(nullable = false, length = 100)
+	@IndexedField
 	private String label;
 
 	@Column(nullable = false, length = 20)
 	private String code;
 
 	@Column(length = 6)
+	@IndexedField
 	private String postalCode;
 
 	@ManyToOne

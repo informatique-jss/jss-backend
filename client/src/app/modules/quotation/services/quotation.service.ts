@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { AppRestService } from 'src/app/services/appRest.service';
 import { IQuotation } from '../model/IQuotation';
 import { OrderingSearch } from '../model/OrderingSearch';
+import { QuotationSearch } from '../model/QuotationSearch';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +15,7 @@ export class QuotationService extends AppRestService<IQuotation>{
   }
 
   updateQuotationStatus(quotation: IQuotation, targetStatusCode: string) {
-    return this.addOrUpdate(new HttpParams().set("targetStatusCode", targetStatusCode), "quotation/status", quotation, "Devis enregistré", "Erreur lors de l'enregistrement du devis");
+    return this.addOrUpdate(new HttpParams().set("targetStatusCode", targetStatusCode), "quotation/status", quotation, "Statut modifié", "Erreur lors de la modification du statut");
   }
 
   getQuotation(idQuotation: number) {
@@ -25,7 +26,7 @@ export class QuotationService extends AppRestService<IQuotation>{
     return this.postList(new HttpParams(), "order/search", orderingSearch);
   }
 
-  getQuotations(orderingSearch: OrderingSearch) {
+  getQuotations(orderingSearch: QuotationSearch) {
     return this.postList(new HttpParams(), "quotation/search", orderingSearch);
   }
 

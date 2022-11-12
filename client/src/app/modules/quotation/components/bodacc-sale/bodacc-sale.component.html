@@ -423,7 +423,7 @@
               </td>
               <td>
                 <radio-group-act-type [(model)]="bodaccSale.actType" [form]="bodaccSaleForm" propertyName="actType"
-                  label="Type de l'acte"></radio-group-act-type>
+                  [isDisabled]="!editMode" label="Type de l'acte"></radio-group-act-type>
               </td>
               <td *ngIf="bodaccSale.actType && bodaccSale.actType.id==actTypeAuthentic.id">
                 <generic-input [(model)]="bodaccSale.writor" label="Rédacteur" [form]="bodaccSaleForm"

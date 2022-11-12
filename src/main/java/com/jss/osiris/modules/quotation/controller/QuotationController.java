@@ -55,6 +55,7 @@ import com.jss.osiris.modules.quotation.model.BuildingDomiciliation;
 import com.jss.osiris.modules.quotation.model.CharacterPrice;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.quotation.model.Domiciliation;
 import com.jss.osiris.modules.quotation.model.DomiciliationContractType;
 import com.jss.osiris.modules.quotation.model.FundType;
@@ -70,12 +71,16 @@ import com.jss.osiris.modules.quotation.model.ProvisionScreenType;
 import com.jss.osiris.modules.quotation.model.ProvisionType;
 import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.quotation.model.QuotationLabelType;
+import com.jss.osiris.modules.quotation.model.QuotationSearch;
 import com.jss.osiris.modules.quotation.model.QuotationStatus;
 import com.jss.osiris.modules.quotation.model.RecordType;
 import com.jss.osiris.modules.quotation.model.Rna;
 import com.jss.osiris.modules.quotation.model.Siren;
 import com.jss.osiris.modules.quotation.model.Siret;
 import com.jss.osiris.modules.quotation.model.TransfertFundsType;
+import com.jss.osiris.modules.quotation.model.guichetUnique.Content;
+import com.jss.osiris.modules.quotation.model.guichetUnique.Formalite;
+import com.jss.osiris.modules.quotation.model.guichetUnique.NatureCreation;
 import com.jss.osiris.modules.quotation.service.ActTypeService;
 import com.jss.osiris.modules.quotation.service.AffaireService;
 import com.jss.osiris.modules.quotation.service.AffaireStatusService;
@@ -87,6 +92,7 @@ import com.jss.osiris.modules.quotation.service.BuildingDomiciliationService;
 import com.jss.osiris.modules.quotation.service.CharacterPriceService;
 import com.jss.osiris.modules.quotation.service.ConfrereService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
+import com.jss.osiris.modules.quotation.service.CustomerOrderStatusService;
 import com.jss.osiris.modules.quotation.service.DomiciliationContractTypeService;
 import com.jss.osiris.modules.quotation.service.FundTypeService;
 import com.jss.osiris.modules.quotation.service.JournalTypeService;
@@ -122,6 +128,9 @@ public class QuotationController {
 
   @Autowired
   QuotationStatusService quotationStatusService;
+
+  @Autowired
+  CustomerOrderStatusService customerOrderStatusService;
 
   @Autowired
   TiersService tiersService;
@@ -369,8 +378,21 @@ public class QuotationController {
 
       IQuotation quotation = assoAffaireOrder.getCustomerOrder() != null ? assoAffaireOrder.getCustomerOrder()
           : assoAffaireOrder.getQuotation();
-      boolean isOpen = quotation.getQuotationStatus() != null
-          && quotation.getQuotationStatus().getCode().equals(QuotationStatus.OPEN);
+
+      boolean isOpen = false;
+
+      if (quotation instanceof CustomerOrder) {
+        CustomerOrder customerOrder = (CustomerOrder) quotation;
+        isOpen = customerOrder.getCustomerOrderStatus() != null
+            && customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.OPEN);
+      }
+
+      if (quotation instanceof Quotation) {
+        Quotation quotationQuotation = (Quotation) quotation;
+        isOpen = quotationQuotation.getQuotationStatus() != null
+            && quotationQuotation.getQuotationStatus().getCode().equals(QuotationStatus.OPEN);
+      }
+
       boolean isCustomerOrder = quotation instanceof CustomerOrder && !isOpen;
 
       for (Provision provision : assoAffaireOrder.getProvisions())
@@ -1328,29 +1350,19 @@ public class QuotationController {
     return new ResponseEntity<List<QuotationStatus>>(quotationStatus, HttpStatus.OK);
   }
 
-  @PostMapping(inputEntryPoint + "/quotation-status")
-  public ResponseEntity<QuotationStatus> addOrUpdateQuotationStatus(
-      @RequestBody QuotationStatus quotationStatus) {
-    QuotationStatus outQuotationStatus;
+  @GetMapping(inputEntryPoint + "/customer-order-status")
+  public ResponseEntity<List<CustomerOrderStatus>> getCustomerOrderStatus() {
+    List<CustomerOrderStatus> customerOrderStatus = null;
     try {
-      if (quotationStatus.getId() != null)
-        validationHelper.validateReferential(quotationStatus, true);
-      validationHelper.validateString(quotationStatus.getCode(), true, 20);
-      validationHelper.validateString(quotationStatus.getLabel(), true, 100);
-
-      outQuotationStatus = quotationStatusService.addOrUpdateQuotationStatus(quotationStatus);
-    } catch (
-
-    ResponseStatusException e) {
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+      customerOrderStatus = customerOrderStatusService.getCustomerOrderStatus();
     } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching quotation", e);
-      return new ResponseEntity<QuotationStatus>(HttpStatus.INTERNAL_SERVER_ERROR);
+      logger.error("HTTP error when fetching quotationStatus", e);
+      return new ResponseEntity<List<CustomerOrderStatus>>(HttpStatus.INTERNAL_SERVER_ERROR);
     } catch (Exception e) {
-      logger.error("Error when fetching quotation", e);
-      return new ResponseEntity<QuotationStatus>(HttpStatus.INTERNAL_SERVER_ERROR);
+      logger.error("Error when fetching quotationStatus", e);
+      return new ResponseEntity<List<CustomerOrderStatus>>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
-    return new ResponseEntity<QuotationStatus>(outQuotationStatus, HttpStatus.OK);
+    return new ResponseEntity<List<CustomerOrderStatus>>(customerOrderStatus, HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/quotation")
@@ -1432,8 +1444,8 @@ public class QuotationController {
 
     try {
       validationHelper.validateReferential(orderingSearch.getSalesEmployee(), false);
-      if (orderingSearch.getQuotationStatus() != null)
-        for (QuotationStatus status : orderingSearch.getQuotationStatus())
+      if (orderingSearch.getCustomerOrderStatus() != null)
+        for (CustomerOrderStatus status : orderingSearch.getCustomerOrderStatus())
           validationHelper.validateReferential(status, false);
     } catch (Exception e) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -1452,30 +1464,30 @@ public class QuotationController {
   }
 
   @PostMapping(inputEntryPoint + "/quotation/search")
-  public ResponseEntity<List<Quotation>> searchQuotations(@RequestBody OrderingSearch orderingSearch) {
+  public ResponseEntity<List<Quotation>> searchQuotations(@RequestBody QuotationSearch quotationSearch) {
     List<Quotation> orders;
-    if (orderingSearch == null)
+    if (quotationSearch == null)
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
-    if (orderingSearch.getStartDate() == null || orderingSearch.getEndDate() == null)
+    if (quotationSearch.getStartDate() == null || quotationSearch.getEndDate() == null)
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
-    Duration duration = Duration.between(orderingSearch.getStartDate(), orderingSearch.getEndDate());
+    Duration duration = Duration.between(quotationSearch.getStartDate(), quotationSearch.getEndDate());
 
     if (duration.toDays() > 366)
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
     try {
-      validationHelper.validateReferential(orderingSearch.getSalesEmployee(), false);
-      if (orderingSearch.getQuotationStatus() != null)
-        for (QuotationStatus status : orderingSearch.getQuotationStatus())
+      validationHelper.validateReferential(quotationSearch.getSalesEmployee(), false);
+      if (quotationSearch.getQuotationStatus() != null)
+        for (QuotationStatus status : quotationSearch.getQuotationStatus())
           validationHelper.validateReferential(status, false);
     } catch (Exception e) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     try {
-      orders = quotationService.searchQuotations(orderingSearch);
+      orders = quotationService.searchQuotations(quotationSearch);
     } catch (HttpStatusCodeException e) {
       logger.error("HTTP error when fetching payment", e);
       return new ResponseEntity<List<Quotation>>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -1490,15 +1502,16 @@ public class QuotationController {
   public ResponseEntity<CustomerOrder> addOrUpdateCustomerOrder(@RequestBody CustomerOrder customerOrder) {
     try {
       validateQuotationAndCustomerOrder(customerOrder);
-      QuotationStatus quotationStatus = quotationStatusService.getQuotationStatusByCode(QuotationStatus.OPEN);
-      if (quotationStatus == null)
-        if (customerOrder.getQuotationStatus() == null) {
+      CustomerOrderStatus customerOrderStatus = customerOrderStatusService
+          .getCustomerOrderStatusByCode(CustomerOrderStatus.OPEN);
+      if (customerOrderStatus == null)
+        if (customerOrder.getCustomerOrderStatus() == null) {
           logger.error("OPEN Quotation status not found");
           return new ResponseEntity<CustomerOrder>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-      if (customerOrder.getQuotationStatus() == null)
-        customerOrder.setQuotationStatus(quotationStatus);
+      if (customerOrder.getCustomerOrderStatus() == null)
+        customerOrder.setCustomerOrderStatus(customerOrderStatus);
       customerOrder = customerOrderService.addOrUpdateCustomerOrderFromUser(customerOrder);
     } catch (
 
@@ -1519,6 +1532,20 @@ public class QuotationController {
       @RequestParam String targetStatusCode) {
     try {
       validateQuotationAndCustomerOrder(customerOrder);
+      customerOrder = customerOrderService.getCustomerOrder(customerOrder.getId());
+      boolean found = true;
+      if (customerOrder.getCustomerOrderStatus() != null) {
+        if (customerOrder.getCustomerOrderStatus().getSuccessors() != null)
+          for (CustomerOrderStatus status : customerOrder.getCustomerOrderStatus().getSuccessors())
+            if (status.getCode().equals(targetStatusCode))
+              found = true;
+        if (customerOrder.getCustomerOrderStatus().getPredecessors() != null)
+          for (CustomerOrderStatus status : customerOrder.getCustomerOrderStatus().getPredecessors())
+            if (status.getCode().equals(targetStatusCode))
+              found = true;
+      }
+      if (!found)
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
       customerOrder = customerOrderService.addOrUpdateCustomerOrderStatusFromUser(customerOrder, targetStatusCode);
     } catch (
 
@@ -1539,7 +1566,20 @@ public class QuotationController {
       @RequestParam String targetStatusCode) {
     try {
       validateQuotationAndCustomerOrder(quotation);
-
+      quotation = quotationService.getQuotation(quotation.getId());
+      boolean found = true;
+      if (quotation.getQuotationStatus() != null) {
+        if (quotation.getQuotationStatus().getSuccessors() != null)
+          for (QuotationStatus status : quotation.getQuotationStatus().getSuccessors())
+            if (status.getCode().equals(targetStatusCode))
+              found = true;
+        if (quotation.getQuotationStatus().getPredecessors() != null)
+          for (QuotationStatus status : quotation.getQuotationStatus().getPredecessors())
+            if (status.getCode().equals(targetStatusCode))
+              found = true;
+      }
+      if (!found)
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
       quotation = quotationService.addOrUpdateQuotationStatus(quotation, targetStatusCode);
     } catch (
 
@@ -1556,9 +1596,20 @@ public class QuotationController {
   }
 
   private void validateQuotationAndCustomerOrder(IQuotation quotation) throws Exception {
-    boolean isOpen = quotation.getQuotationStatus() != null
-        && quotation.getQuotationStatus().getCode().equals(QuotationStatus.OPEN);
+    boolean isOpen = false;
     boolean isCustomerOrder = quotation instanceof CustomerOrder && !isOpen;
+
+    if (quotation instanceof CustomerOrder) {
+      CustomerOrder customerOrder = (CustomerOrder) quotation;
+      isOpen = customerOrder.getCustomerOrderStatus() != null
+          && customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.OPEN);
+    }
+
+    if (quotation instanceof Quotation) {
+      Quotation quotationQuotation = (Quotation) quotation;
+      isOpen = quotationQuotation.getQuotationStatus() != null
+          && quotationQuotation.getQuotationStatus().getCode().equals(QuotationStatus.OPEN);
+    }
     if (quotation.getSpecialOffers() != null && quotation.getSpecialOffers().size() > 0)
       for (SpecialOffer specialOffer : quotation.getSpecialOffers())
         validationHelper.validateReferential(specialOffer, false);
@@ -1691,6 +1742,7 @@ public class QuotationController {
       validationHelper.validateString(announcement.getNotice(), !isOpen);
     }
 
+    // BODACC
     if (provision.getBodacc() != null) {
       Bodacc bodacc = provision.getBodacc();
       validationHelper.validateReferential(bodacc.getPaymentType(), false);
@@ -1829,6 +1881,47 @@ public class QuotationController {
 
       validationHelper.validateDateMin(bodacc.getDateOfPublication(), false, LocalDate.now());
     }
+
+    // Formalite
+    if (provision.getFormalite() != null) {
+      Formalite formalite = provision.getFormalite();
+      validationHelper.validateReferential(formalite.getTypePersonne(), true);
+      validationHelper.validateString(formalite.getCompanyName(),
+          !constantService.getTypePersonnePersonnePhysique().getCode().equals(formalite.getTypePersonne().getCode()),
+          255);
+      validationHelper.validateReferential(formalite.getTypeFormalite(), true);
+      validationHelper.validateReferential(formalite.getDiffusionINSEE(),
+          constantService.getTypePersonnePersonnePhysique().getCode().equals(formalite.getTypePersonne().getCode()));
+      validationHelper.validateReferential(formalite.getFormeJuridique(),
+          constantService.getTypePersonnePersonneMorale().getCode().equals(formalite.getTypePersonne().getCode()));
+
+      if (formalite.getContent() == null)
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+
+      Content content = formalite.getContent();
+
+      validationHelper.validateReferential(content.getSuccursaleOuFiliale(),
+          constantService.getTypePersonnePersonneMorale().getCode().equals(formalite.getTypePersonne().getCode())
+              && constantService.getTypeFormaliteCreation().getCode().equals(formalite.getTypeFormalite().getCode()));
+
+      validationHelper.validateReferential(content.getFormeExerciceActivitePrincipale(), true);
+      validationHelper.validateReferential(content.getNatureCessation(),
+          formalite.getTypeFormalite().getCode().equals(constantService.getTypeFormaliteCessation().getCode()));
+      validationHelper.validateString(content.getEvenementCessation(),
+          formalite.getTypeFormalite().getCode().equals(constantService.getTypeFormaliteCessation().getCode()), 255);
+      validationHelper.validateString(content.getTvaIntraCommunautaire(),
+          content.getNatureCreation() != null && content.getNatureCreation().getSocieteEtrangere(), 20);
+
+      if (content.getNatureCreation() == null)
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+
+      NatureCreation natureCreation = content.getNatureCreation();
+
+      validationHelper.validateReferential(natureCreation.getFormeJuridique(), true);
+      validationHelper.validateReferential(natureCreation.getTypeExploitation(),
+          formalite.getTypePersonne().getCode().equals(constantService.getTypePersonneExploitation().getCode()));
+    }
+
   }
 
   @PostMapping(inputEntryPoint + "/affaire")

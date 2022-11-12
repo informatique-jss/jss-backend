@@ -2,7 +2,6 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatAccordion } from '@angular/material/expansion';
 import { ActivatedRoute, Router } from '@angular/router';
-import { QUOTATION_STATUS_OPEN } from 'src/app/libs/Constants';
 import { Employee } from 'src/app/modules/profile/model/Employee';
 import { AppService } from 'src/app/services/app.service';
 import { AssoAffaireOrder } from '../../model/AssoAffaireOrder';
@@ -42,7 +41,6 @@ export class AffaireComponent implements OnInit {
         this.asso = response;
         if (this.asso.affaire)
           this.appService.changeHeaderTitle("Affaire " + (this.asso.affaire.denomination ? this.asso.affaire.denomination : (this.asso.affaire.firstname + " " + this.asso.affaire.lastname)));
-        this.setOpenStatus();
       })
   }
 
@@ -55,11 +53,6 @@ export class AffaireComponent implements OnInit {
     asso.provisions.splice(asso.provisions.indexOf(provision), 1);
   }
 
-  setOpenStatus() {
-    if (this.asso.customerOrder && this.asso.customerOrder.quotationStatus)
-      this.isStatusOpen = this.asso.customerOrder.quotationStatus.code == QUOTATION_STATUS_OPEN;
-    this.isStatusOpen = false;
-  }
 
   createProvision(asso: AssoAffaireOrder): Provision {
     if (asso && !asso.provisions)

@@ -1,9 +1,9 @@
 import { Employee } from "../../profile/model/Employee";
-import { QuotationStatus } from "./QuotationStatus";
+import { CustomerOrderStatus } from './CustomerOrderStatus';
 
 export interface OrderingSearch {
   startDate: Date | undefined;
   endDate: Date | undefined;
   salesEmployee: Employee;
-  quotationStatus: QuotationStatus[];
+  customerOrderStatus: CustomerOrderStatus[];
 }

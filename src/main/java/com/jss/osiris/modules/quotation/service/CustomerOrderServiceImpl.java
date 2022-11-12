@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.modules.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
@@ -26,10 +27,10 @@ import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.quotation.model.AssignationType;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.quotation.model.Domiciliation;
 import com.jss.osiris.modules.quotation.model.OrderingSearch;
 import com.jss.osiris.modules.quotation.model.Provision;
-import com.jss.osiris.modules.quotation.model.QuotationStatus;
 import com.jss.osiris.modules.quotation.repository.CustomerOrderRepository;
 
 @Service
@@ -60,10 +61,13 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     AccountingRecordService accountingRecordService;
 
     @Autowired
-    QuotationStatusService quotationStatusService;
+    CustomerOrderStatusService customerOrderStatusService;
 
     @Autowired
     DepositService depositService;
+
+    @Autowired
+    ActiveDirectoryHelper activeDirectoryHelper;
 
     @Override
     public CustomerOrder getCustomerOrder(Integer id) {
@@ -126,6 +130,20 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                             phoneService.populateMPhoneIds(domiciliation.getLegalGardianPhones());
 
                     }
+                }
+
+                if (provision.getFormalite() != null) {
+                    if (provision.getFormalite().getReferenceMandataire() == null)
+                        // Play with fire ...
+                        provision.getFormalite().setReferenceMandataire(provision.getFormalite().getId());
+                    if (provision.getFormalite().getNomDossier() == null)
+                        provision.getFormalite()
+                                .setNomDossier(assoAffaireOrder.getAffaire().getDenomination() != null
+                                        ? assoAffaireOrder.getAffaire().getDenomination()
+                                        : (assoAffaireOrder.getAffaire().getFirstname() + " "
+                                                + assoAffaireOrder.getAffaire().getLastname()));
+                    if (provision.getFormalite().getSignedPlace() == null)
+                        provision.getFormalite().setSignedPlace("8 Rue Saint-Augustin, 75002 Paris");
                 }
 
                 // Set proper assignation regarding provision item configuration
@@ -195,7 +213,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Override
     public CustomerOrder addOrUpdateCustomerOrderStatus(CustomerOrder customerOrder, String targetStatusCode)
             throws Exception {
-        if (targetStatusCode.equals(QuotationStatus.BILLED)) {
+        if (targetStatusCode.equals(CustomerOrderStatus.BILLED)) {
             Invoice invoice = generateInvoice(customerOrder);
             accountingRecordService.generateAccountingRecordsForSaleOnInvoiceGeneration(
                     getInvoice(customerOrder));
@@ -213,16 +231,17 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 }
         }
 
-        if (targetStatusCode.equals(QuotationStatus.VALIDATED_BY_CUSTOMER)) {
+        if (targetStatusCode.equals(CustomerOrderStatus.VALIDATED_BY_CUSTOMER)) {
             // TODO : add rule to check if deposit required + check if a deposit already
             // exists to check if we can go further
-            targetStatusCode = QuotationStatus.WAITING_DEPOSIT;
+            targetStatusCode = CustomerOrderStatus.WAITING_DEPOSIT;
         }
 
-        QuotationStatus quotationStatus = quotationStatusService.getQuotationStatusByCode(targetStatusCode);
-        if (quotationStatus == null)
+        CustomerOrderStatus customerOrderStatus = customerOrderStatusService
+                .getCustomerOrderStatusByCode(targetStatusCode);
+        if (customerOrderStatus == null)
             throw new Exception("Quotation status not found for code " + targetStatusCode);
-        customerOrder.setQuotationStatus(quotationStatus);
+        customerOrder.setCustomerOrderStatus(customerOrderStatus);
         return this.addOrUpdateCustomerOrder(customerOrder);
     }
 
@@ -305,8 +324,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Override
     public List<CustomerOrder> searchOrders(OrderingSearch orderingSearch) {
         List<CustomerOrder> customerOrders = customerOrderRepository.findCustomerOrders(
-                orderingSearch.getSalesEmployee(),
-                orderingSearch.getQuotationStatus(),
+                activeDirectoryHelper.getMyHolidaymaker(orderingSearch.getSalesEmployee()),
+                orderingSearch.getCustomerOrderStatus(),
                 orderingSearch.getStartDate(),
                 orderingSearch.getEndDate());
         return customerOrders;

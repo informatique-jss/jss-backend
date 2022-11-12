@@ -9,10 +9,13 @@ import { NatureCessation } from "./referentials/NatureCessation";
 import { SuccursaleOuFiliale } from './referentials/SuccursaleOuFiliale';
 
 export interface Content {
-  evenementCessation: string; // TODO : libre ou référentiel associé ?
+  evenementCessation: string; // TODO : où est le référentiel associé ?
+  /*
+   fermeture d'etablissement secondaire dans le premier cas et dans le second cela peut être disparition de la personne morale ou disparition suite a fusion
+  */
   natureCessation: NatureCessation;
   succursaleOuFiliale: SuccursaleOuFiliale;
-  formeExerciceActivitePrincipale: FormeExercice;
+  formeExerciceActivitePrincipale: FormeExercice; // TODO : non trouvé sur le site ... dans quel cas l'afficher ?
   indicateurPoursuiteCessation: boolean;
   tvaIntraCommunautaire: string;
   natureCreation: NatureCreation;

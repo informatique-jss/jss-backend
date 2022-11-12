@@ -1,0 +1,28 @@
+<form [formGroup]="formaliteForm" *ngIf="formalite && formalite.content && formalite.content.natureCreation">
+  <table class="full-width" dummyTable>
+    <tr dummyTr>
+      <td dummyTd>
+        <generic-toggle [(model)]="identite.contratDAppuiDeclare" label="Présence d'un contrat d'appui ?"
+          [form]="formaliteForm" propertyName="contratDAppuiDeclare" [isDisabled]="!editMode" dummyToggle
+          dummyComponent></generic-toggle>
+      </td>
+    </tr>
+  </table>
+  //TODO : not found for property entreprise
+  //TODO : not found for property contratDAppui
+  //TODO : not found for property entrepreneur
+  //TODO : not found for property eirl
+  //TODO : not found for property insaisissabilite
+  <table class="full-width" dummyTable>
+    <tr dummyTr>
+      <td dummyTd>
+        <generic-input [(model)]="identite.nomCorrespondance"
+          label="Nom de la personne destinataire de la correspondance" [form]="formaliteForm"
+          propertyName="nomCorrespondance" [isMandatory]="true" [isDisabled]="!editMode" [conditionnalRequired]="true"
+          dummyInput dummyComponent> </generic-input>
+      </td>
+    </tr>
+  </table>
+  //TODO : not found for property adresseCorrespondance
+  //TODO : not found for property contactCorrespondance
+</form>

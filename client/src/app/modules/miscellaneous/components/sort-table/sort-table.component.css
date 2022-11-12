@@ -42,3 +42,7 @@ td {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+.avatar {
+  padding-right: 5px;
+}

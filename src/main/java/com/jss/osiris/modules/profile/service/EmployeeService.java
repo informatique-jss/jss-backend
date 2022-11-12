@@ -12,4 +12,6 @@ public interface EmployeeService {
     public void updateUserFromActiveDirectory();
 
     public Employee getCurrentUser();
+
+    public Employee addOrUpdateEmployee(Employee employee);
 }

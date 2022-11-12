@@ -23,3 +23,7 @@ export function callNumber(phoneNumber: string) {
 
   window.location.href = "tel:" + phoneNumber;
 }
+
+export function displayInTeams(mail: string) {
+  window.location.href = "im:" + mail;
+}

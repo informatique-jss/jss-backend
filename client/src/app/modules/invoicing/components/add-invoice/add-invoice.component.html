@@ -27,7 +27,8 @@
         <tr>
           <td>
             <radio-group-billing-label [(model)]="invoice.billingLabelType" [form]="invoiceForm"
-              propertyName="billingLabelType" label="Libellé sur facture"></radio-group-billing-label>
+              [isDisabled]="!editMode" propertyName="billingLabelType" label="Libellé sur facture">
+            </radio-group-billing-label>
           </td>
         </tr>
       </table>

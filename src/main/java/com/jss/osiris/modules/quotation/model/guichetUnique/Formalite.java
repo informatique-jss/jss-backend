@@ -1,15 +1,21 @@
 package com.jss.osiris.modules.quotation.model.guichetUnique;
 
-import java.io.Serializable;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.jss.osiris.modules.miscellaneous.model.Attachment;
+import com.jss.osiris.modules.miscellaneous.model.IAttachment;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.DiffusionINSEE;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormeJuridique;
@@ -17,24 +23,26 @@ import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeFor
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypePersonne;
 
 @Entity
-public class Formalite implements Serializable, IId {
+public class Formalite implements IId, IAttachment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @Column(nullable = false)
+    @OneToMany(mappedBy = "formalite")
+    @JsonIgnoreProperties(value = { "formalite" }, allowSetters = true)
+    private List<Attachment> attachments;
+
     private Integer formalityDraftId;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String companyName;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "id_content", nullable = false)
     Content content;
 
-    @Column(nullable = false, length = 255)
-    private String referenceMandataire;
+    private Integer referenceMandataire;
 
     @Column(nullable = false, length = 255)
     private String nomDossier;
@@ -46,7 +54,7 @@ public class Formalite implements Serializable, IId {
     @JoinColumn(name = "id_type_formalite", nullable = false)
     TypeFormalite typeFormalite;
 
-    @Column(nullable = false, length = 255)
+    @Column(columnDefinition = "TEXT")
     private String observationSignature;
 
     @ManyToOne
@@ -60,10 +68,8 @@ public class Formalite implements Serializable, IId {
     @JoinColumn(name = "id_type_personne", nullable = false)
     TypePersonne typePersonne;
 
-    @Column(nullable = false)
     private Boolean inscriptionOffice;
 
-    @Column(nullable = false, length = 255)
     private String inscriptionOfficePartnerCenter;
 
     @Column(nullable = false)
@@ -79,10 +85,9 @@ public class Formalite implements Serializable, IId {
     private Boolean optionME;
 
     @ManyToOne
-    @JoinColumn(name = "id_forme_juridique", nullable = false)
+    @JoinColumn(name = "id_forme_juridique")
     FormeJuridique formeJuridique;
 
-    @Column(nullable = false)
     private Integer optionJqpaNumber;
 
     @Column(nullable = false)
@@ -118,14 +123,6 @@ public class Formalite implements Serializable, IId {
 
     public void setContent(Content content) {
         this.content = content;
-    }
-
-    public String getReferenceMandataire() {
-        return referenceMandataire;
-    }
-
-    public void setReferenceMandataire(String referenceMandataire) {
-        this.referenceMandataire = referenceMandataire;
     }
 
     public String getNomDossier() {
@@ -254,6 +251,22 @@ public class Formalite implements Serializable, IId {
 
     public void setRegularisation(Boolean regularisation) {
         this.regularisation = regularisation;
+    }
+
+    public List<Attachment> getAttachments() {
+        return attachments;
+    }
+
+    public void setAttachments(List<Attachment> attachments) {
+        this.attachments = attachments;
+    }
+
+    public Integer getReferenceMandataire() {
+        return referenceMandataire;
+    }
+
+    public void setReferenceMandataire(Integer referenceMandataire) {
+        this.referenceMandataire = referenceMandataire;
     }
 
 }

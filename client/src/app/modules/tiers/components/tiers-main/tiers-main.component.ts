@@ -110,6 +110,7 @@ export class PrincipalComponent implements OnInit {
   }
 
   getFormStatus(): boolean {
+    console.log(this.principalForm);
     this.principalForm.markAllAsTouched();
     return this.principalForm.valid;
   }

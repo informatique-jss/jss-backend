@@ -9,12 +9,12 @@ import org.springframework.data.repository.query.Param;
 
 import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
-import com.jss.osiris.modules.quotation.model.QuotationStatus;
+import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 
 public interface CustomerOrderRepository extends CrudRepository<CustomerOrder, Integer> {
 
-    @Query("select i from CustomerOrder i  left join fetch i.tiers t left join fetch i.responsable r left join fetch i.confrere c  where ( i.quotationStatus in (:quotationStatus)) and i.createdDate>=:startDate and i.createdDate<=:endDate and (:salesEmployee is null or t.salesEmployee=:salesEmployee or r.salesEmployee=:salesEmployee or c.salesEmployee=:salesEmployee)")
-    List<CustomerOrder> findCustomerOrders(@Param("salesEmployee") Employee salesEmployee,
-            @Param("quotationStatus") List<QuotationStatus> quotationStatus,
+    @Query("select i from CustomerOrder i  left join fetch i.tiers t left join fetch i.responsable r left join fetch i.confrere c  where ( i.customerOrderStatus in (:customerOrderStatus)) and i.createdDate>=:startDate and i.createdDate<=:endDate and ( COALESCE(:salesEmployee) is null or t.salesEmployee in (:salesEmployee)  or r.salesEmployee in (:salesEmployee) or c.salesEmployee in (:salesEmployee))")
+    List<CustomerOrder> findCustomerOrders(@Param("salesEmployee") List<Employee> salesEmployee,
+            @Param("customerOrderStatus") List<CustomerOrderStatus> customerOrderStatus,
             @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
 }

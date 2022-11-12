@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.quotation.model.AffaireSearch;
@@ -23,6 +24,9 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
     @Autowired
     IndexEntityService indexEntityService;
+
+    @Autowired
+    ActiveDirectoryHelper activeDirectoryHelper;
 
     @Override
     public List<AssoAffaireOrder> getAssoAffaireOrders() {
@@ -58,7 +62,10 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
     @Override
     public List<AssoAffaireOrder> searchForAsso(AffaireSearch affaireSearch) {
-        return assoAffaireOrderRepository.findAsso(affaireSearch.getResponsible(), affaireSearch.getAssignedTo(),
+
+        return assoAffaireOrderRepository.findAsso(
+                activeDirectoryHelper.getMyHolidaymaker(affaireSearch.getResponsible()),
+                activeDirectoryHelper.getMyHolidaymaker(affaireSearch.getAssignedTo()),
                 affaireSearch.getAffaireStatus(), affaireSearch.getLabel());
     }
 

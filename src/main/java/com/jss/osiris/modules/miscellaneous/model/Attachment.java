@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -12,6 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.modules.quotation.model.Announcement;
 import com.jss.osiris.modules.quotation.model.Bodacc;
@@ -19,6 +21,7 @@ import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.Domiciliation;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Quotation;
+import com.jss.osiris.modules.quotation.model.guichetUnique.Formalite;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
@@ -34,42 +37,56 @@ public class Attachment implements Serializable, IId {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "attachment_sequence")
 	private Integer id;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JsonIgnore
 	@JoinColumn(name = "id_tiers")
 	@JsonIgnoreProperties(value = { "attachments" }, allowSetters = true)
 	private Tiers tiers;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JsonIgnore
+	@JoinColumn(name = "id_formalite")
+	@JsonIgnoreProperties(value = { "attachments" }, allowSetters = true)
+	private Formalite formalite;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JsonIgnore
 	@JoinColumn(name = "id_responsable")
 	@JsonIgnoreProperties(value = { "attachments" }, allowSetters = true)
 	private Responsable responsable;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JsonIgnore
 	@JoinColumn(name = "id_quotation")
 	@JsonIgnoreProperties(value = { "attachments" }, allowSetters = true)
 	private Quotation quotation;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JsonIgnore
 	@JoinColumn(name = "id_domiciliation")
 	@JsonIgnoreProperties(value = { "attachments" }, allowSetters = true)
 	private Domiciliation domiciliation;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JsonIgnore
 	@JoinColumn(name = "id_announcement")
 	@JsonIgnoreProperties(value = { "attachments" }, allowSetters = true)
 	private Announcement announcement;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JsonIgnore
 	@JoinColumn(name = "id_provision")
 	@JsonIgnoreProperties(value = { "attachments" }, allowSetters = true)
 	private Provision provision;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JsonIgnore
 	@JoinColumn(name = "id_bodacc")
 	@JsonIgnoreProperties(value = { "attachments" }, allowSetters = true)
 	private Bodacc bodacc;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JsonIgnore
 	@JoinColumn(name = "id_customer_order")
 	@JsonIgnoreProperties(value = { "attachments" }, allowSetters = true)
 	private CustomerOrder customerOrder;
@@ -179,6 +196,14 @@ public class Attachment implements Serializable, IId {
 
 	public void setProvision(Provision provision) {
 		this.provision = provision;
+	}
+
+	public Formalite getFormalite() {
+		return formalite;
+	}
+
+	public void setFormalite(Formalite formalite) {
+		this.formalite = formalite;
 	}
 
 }

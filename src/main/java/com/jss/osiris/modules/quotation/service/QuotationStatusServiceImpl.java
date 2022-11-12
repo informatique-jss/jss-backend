@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.quotation.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,27 +45,85 @@ public class QuotationStatusServiceImpl implements QuotationStatusService {
     }
 
     @PostConstruct
-    public void updateStatusReferential() {
-        updateStatus(QuotationStatus.OPEN, "Ouvert");
-        updateStatus(QuotationStatus.TO_VERIFY, "A vérifier");
-        updateStatus(QuotationStatus.VALIDATED_BY_JSS, "Validé par JSS");
-        updateStatus(QuotationStatus.SENT_TO_CUSTOMER, "Envoyé au client");
-        updateStatus(QuotationStatus.VALIDATED_BY_CUSTOMER, "Validé par le client");
-        updateStatus(QuotationStatus.REFUSED_BY_CUSTOMER, "Refusé par le client");
-        updateStatus(QuotationStatus.ABANDONED, "Abandonné");
-        updateStatus(QuotationStatus.BILLED, "Facturée");
-        updateStatus(QuotationStatus.CANCELLED, "Annulé");
-        updateStatus(QuotationStatus.WAITING_DEPOSIT, "En attente d'acompte");
-        updateStatus(QuotationStatus.BEING_PROCESSED, "En cours de traitement");
+    public void updateStatusReferential() throws Exception {
+        updateStatus(QuotationStatus.OPEN, "Ouvert", "auto_awesome");
+        updateStatus(QuotationStatus.TO_VERIFY, "A vérifier", "search");
+        updateStatus(QuotationStatus.VALIDATED_BY_JSS, "Validé par JSS", "task_alt");
+        updateStatus(QuotationStatus.SENT_TO_CUSTOMER, "Envoyé au client", "outgoing_mail");
+        updateStatus(QuotationStatus.VALIDATED_BY_CUSTOMER, "Validé par le client", "approval");
+        updateStatus(QuotationStatus.REFUSED_BY_CUSTOMER, "Refusé par le client", "remove_shopping_cart");
+        updateStatus(QuotationStatus.ABANDONED, "Abandonné", "block");
+        updateStatus(QuotationStatus.SET_AS_CUSTOMER_ORDER, "Transformé en commande", "shopping_cart");
+
+        setSuccessor(QuotationStatus.OPEN, QuotationStatus.TO_VERIFY);
+        setSuccessor(QuotationStatus.TO_VERIFY, QuotationStatus.VALIDATED_BY_JSS);
+        setSuccessor(QuotationStatus.VALIDATED_BY_JSS, QuotationStatus.SENT_TO_CUSTOMER);
+        setSuccessor(QuotationStatus.SENT_TO_CUSTOMER, QuotationStatus.VALIDATED_BY_CUSTOMER);
+        setSuccessor(QuotationStatus.SENT_TO_CUSTOMER, QuotationStatus.REFUSED_BY_CUSTOMER);
+        setSuccessor(QuotationStatus.REFUSED_BY_CUSTOMER, QuotationStatus.TO_VERIFY);
+        setSuccessor(QuotationStatus.VALIDATED_BY_CUSTOMER, QuotationStatus.SET_AS_CUSTOMER_ORDER);
+
+        setPredecessor(QuotationStatus.TO_VERIFY, QuotationStatus.OPEN);
+        setPredecessor(QuotationStatus.VALIDATED_BY_JSS, QuotationStatus.TO_VERIFY);
+        setPredecessor(QuotationStatus.SENT_TO_CUSTOMER, QuotationStatus.TO_VERIFY);
+
+        // All cancelled
+
+        setSuccessor(QuotationStatus.OPEN, QuotationStatus.ABANDONED);
+        setSuccessor(QuotationStatus.TO_VERIFY, QuotationStatus.ABANDONED);
+        setSuccessor(QuotationStatus.VALIDATED_BY_JSS, QuotationStatus.ABANDONED);
+        setSuccessor(QuotationStatus.SENT_TO_CUSTOMER, QuotationStatus.ABANDONED);
+        setSuccessor(QuotationStatus.VALIDATED_BY_CUSTOMER,
+                QuotationStatus.ABANDONED);
+        setSuccessor(QuotationStatus.REFUSED_BY_CUSTOMER, QuotationStatus.ABANDONED);
+        setSuccessor(QuotationStatus.SET_AS_CUSTOMER_ORDER, QuotationStatus.ABANDONED);
+
     }
 
-    private void updateStatus(String code, String label) {
-        if (getQuotationStatusByCode(code) == null) {
-            QuotationStatus quotationStatus = new QuotationStatus();
-            quotationStatus.setCode(code);
-            quotationStatus.setLabel(label);
-            quotationStatusRepository.save(quotationStatus);
-        }
+    protected void updateStatus(String code, String label, String icon) {
+        QuotationStatus QuotationStatus = getQuotationStatusByCode(code);
+        if (getQuotationStatusByCode(code) == null)
+            QuotationStatus = new QuotationStatus();
+        QuotationStatus.setPredecessors(null);
+        QuotationStatus.setSuccessors(null);
+        QuotationStatus.setCode(code);
+        QuotationStatus.setLabel(label);
+        QuotationStatus.setIcon(icon);
+        addOrUpdateQuotationStatus(QuotationStatus);
+    }
+
+    protected void setSuccessor(String code, String code2) throws Exception {
+        QuotationStatus sourceStatus = getQuotationStatusByCode(code);
+        QuotationStatus targetStatus = getQuotationStatusByCode(code2);
+        if (sourceStatus == null || targetStatus == null)
+            throw new Exception("Status code " + code + " or " + code2 + " do not exist");
+
+        if (sourceStatus.getSuccessors() == null)
+            sourceStatus.setSuccessors(new ArrayList<QuotationStatus>());
+
+        for (QuotationStatus status : sourceStatus.getSuccessors())
+            if (status.getCode().equals(targetStatus.getCode()))
+                return;
+
+        sourceStatus.getSuccessors().add(targetStatus);
+        addOrUpdateQuotationStatus(sourceStatus);
+    }
+
+    protected void setPredecessor(String code, String code2) throws Exception {
+        QuotationStatus sourceStatus = getQuotationStatusByCode(code);
+        QuotationStatus targetStatus = getQuotationStatusByCode(code2);
+        if (sourceStatus == null || targetStatus == null)
+            throw new Exception("Quotation status code " + code + " or " + code2 + " do not exist");
+
+        if (sourceStatus.getPredecessors() == null)
+            sourceStatus.setPredecessors(new ArrayList<QuotationStatus>());
+
+        for (QuotationStatus status : sourceStatus.getPredecessors())
+            if (status.getCode().equals(targetStatus.getCode()))
+                return;
+
+        sourceStatus.getPredecessors().add(targetStatus);
+        addOrUpdateQuotationStatus(sourceStatus);
     }
 
 }

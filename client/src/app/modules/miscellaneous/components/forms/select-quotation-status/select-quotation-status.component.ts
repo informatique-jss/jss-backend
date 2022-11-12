@@ -7,11 +7,11 @@ import { GenericMultipleSelectComponent } from '../generic-select/generic-multip
 
 @Component({
   selector: 'select-quotation-status',
-  templateUrl: './select-quotation-status.component.html',
-  styleUrls: ['./select-quotation-status.component.css']
+  templateUrl: './../generic-select/generic-multiple-select.component.html',
+  styleUrls: ['./../generic-select/generic-select.component.html']
 })
 
-export class SelectOrderingStatusComponent extends GenericMultipleSelectComponent<QuotationStatus> implements OnInit {
+export class SelectQuotationStatusComponent extends GenericMultipleSelectComponent<QuotationStatus> implements OnInit {
 
   types: QuotationStatus[] = [] as Array<QuotationStatus>;
 

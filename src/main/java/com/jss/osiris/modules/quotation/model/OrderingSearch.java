@@ -9,7 +9,7 @@ public class OrderingSearch {
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private Employee salesEmployee;
-    private List<QuotationStatus> quotationStatus;
+    private List<CustomerOrderStatus> customerOrderStatus;
 
     public LocalDateTime getStartDate() {
         return startDate;
@@ -35,12 +35,12 @@ public class OrderingSearch {
         this.salesEmployee = salesEmployee;
     }
 
-    public List<QuotationStatus> getQuotationStatus() {
-        return quotationStatus;
+    public List<CustomerOrderStatus> getCustomerOrderStatus() {
+        return customerOrderStatus;
     }
 
-    public void setQuotationStatus(List<QuotationStatus> quotationStatus) {
-        this.quotationStatus = quotationStatus;
+    public void setCustomerOrderStatus(List<CustomerOrderStatus> customerOrderStatus) {
+        this.customerOrderStatus = customerOrderStatus;
     }
 
 }

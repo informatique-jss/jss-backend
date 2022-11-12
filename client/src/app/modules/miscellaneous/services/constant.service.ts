@@ -138,8 +138,12 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.quotationLabelTypeOther;
   }
 
-  getPaymentTypeOther() {
-    return this.constant.paymentTypeOther;
+  getPaymentTypeEspeces() {
+    return this.constant.paymentTypeEspeces;
+  }
+
+  getPaymentTypeCB() {
+    return this.constant.paymentTypeCB;
   }
 
   getPaymentTypeVirement() {
@@ -281,5 +285,36 @@ export class ConstantService extends AppRestService<Constant>{
   getInvoiceStatusCancelled() {
     return this.constant.invoiceStatusCancelled;
   }
-}
 
+  getTypePersonnePersonnePhysique() {
+    return this.constant.typePersonnePersonnePhysique;
+  }
+
+  getTypePersonnePersonneMorale() {
+    return this.constant.typePersonnePersonneMorale;
+  }
+
+  getTypePersonneExploitation() {
+    return this.constant.typePersonneExploitation;
+  }
+
+  getFormeJuridiqueEntrepreneurIndividuel() {
+    return this.constant.formeJuridiqueEntrepreneurIndividuel;
+  }
+
+  getTypeFormaliteCessation() {
+    return this.constant.typeFormaliteCessation;
+  }
+
+  getTypeFormaliteModification() {
+    return this.constant.typeFormaliteModification;
+  }
+
+  getTypeFormaliteCreation() {
+    return this.constant.typeFormaliteCreation;
+  }
+
+  getTypeFormaliteCorrection() {
+    return this.constant.typeFormaliteCorrection;
+  }
+}

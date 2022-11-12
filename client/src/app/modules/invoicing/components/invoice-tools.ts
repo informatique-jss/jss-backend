@@ -11,18 +11,20 @@ export function getAmountRemaining(invoice: Invoice) {
 }
 
 export function getColumnLink(column: SortTableColumn, element: any) {
-  if (element && column.id == "customerOrderName") {
+  if (element && column.id == "customerOrderName" && element.customerOrder) {
     if (element.customerOrder.responsable)
       return ['/tiers/responsable/', element.customerOrder.responsable.id];
     if (element.customerOrder.tiers)
       return ['/tiers/', element.customerOrder.tiers.id];
   }
-  if (element && column.id == "customerOrderId") {
+  if (element && column.id == "customerOrderId" && element.customerOrder) {
     if (element.isQuotation)
       return ['/quotation/', element.customerOrder.id];
     return ['/order/', element.customerOrder.id];
   }
-  return ['/tiers', element.customerOrder.tiers.id];
+  if (element.customerOrder && element.customerOrder.tiers)
+    return ['/tiers', element.customerOrder.tiers.id];
+  return null;
 }
 
 export function getCustomerOrderNameForInvoice(element: Invoice) {

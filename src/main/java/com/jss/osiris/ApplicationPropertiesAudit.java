@@ -28,6 +28,12 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("accounting.account.number.profit");
         isOk = isOk && checkProperty("accounting.account.number.lost");
         isOk = isOk && checkProperty("accounting.account.number.bank");
+        isOk = isOk && checkProperty("mail.smtp.host");
+        isOk = isOk && checkProperty("mail.smtp.port");
+        isOk = isOk && checkProperty("mail.smtp.username");
+        isOk = isOk && checkProperty("mail.smtp.password");
+        isOk = isOk && checkProperty("mail.smtp.auth");
+        isOk = isOk && checkProperty("mail.smtp.starttls.enable");
         isOk = isOk && checkProperty("schedulling.account.daily.close");
         isOk = isOk && checkProperty("schedulling.active.directory.user.update");
         isOk = isOk && checkProperty("schedulling.payment.grab");

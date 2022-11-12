@@ -29,11 +29,11 @@ public class Content implements Serializable, IId {
     private String evenementCessation;
 
     @ManyToOne
-    @JoinColumn(name = "id_nature_cessation", nullable = false)
+    @JoinColumn(name = "id_nature_cessation")
     NatureCessation natureCessation;
 
     @ManyToOne
-    @JoinColumn(name = "id_succursale_ou_filiale", nullable = false)
+    @JoinColumn(name = "id_succursale_ou_filiale")
     SuccursaleOuFiliale succursaleOuFiliale;
 
     @ManyToOne
@@ -51,15 +51,15 @@ public class Content implements Serializable, IId {
     NatureCreation natureCreation;
 
     @ManyToOne
-    @JoinColumn(name = "id_personne_physique", nullable = false)
+    @JoinColumn(name = "id_personne_physique")
     PersonnePhysique personnePhysique;
 
     @ManyToOne
-    @JoinColumn(name = "id_personne_morale", nullable = false)
+    @JoinColumn(name = "id_personne_morale")
     PersonneMorale personneMorale;
 
     @ManyToOne
-    @JoinColumn(name = "id_exploitation", nullable = false)
+    @JoinColumn(name = "id_exploitation")
     Exploitation exploitation;
 
     @ManyToOne

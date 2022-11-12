@@ -3,6 +3,7 @@ package com.jss.osiris.libs;
 import java.lang.reflect.Method;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -17,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.jss.osiris.modules.miscellaneous.model.ICode;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.miscellaneous.model.Mail;
 
@@ -127,6 +129,66 @@ public class ValidationHelper {
             if (returnValue == null)
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
             return returnValue;
+        }
+        return null;
+    }
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public Object validateReferential(ICode value, Boolean isMandatory) throws Exception {
+        if (value == null && isMandatory)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        if (value != null) {
+            if (value.getCode() == null)
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+
+            String[] valueClassTmp = value.getClass().getName().split("\\.");
+            ArrayList<String> valueClass = new ArrayList<String>();
+
+            for (String val : valueClassTmp) {
+                if (val.equals("model"))
+                    valueClass.add("service");
+                else
+                    valueClass.add(val);
+            }
+
+            valueClass.set(valueClass.size() - 1, valueClass.get(valueClass.size() - 1) + "Service");
+
+            Class serviceClass = null;
+            try {
+                serviceClass = Class.forName(String.join(".", valueClass));
+            } catch (ClassNotFoundException e) {
+                logger.error("Class not found in ValidationHelper generic check method. Class : "
+                        + value.getClass().getName());
+                throw e;
+            }
+
+            Object service = null;
+            try {
+                service = ctx.getBean(serviceClass);
+            } catch (NoSuchBeanDefinitionException e) {
+                logger.error("Bean not found in ValidationHelper generic check method. Bean for "
+                        + serviceClass);
+                throw e;
+            }
+
+            Method m = null;
+            try {
+                m = serviceClass.getDeclaredMethod("get" + value.getClass().getSimpleName());
+            } catch (NoSuchMethodException e) {
+                logger.error("Method not found in ValidationHelper generic check method. Bean : "
+                        + serviceClass
+                        + ". Method : " + "get" + value.getClass().getSimpleName());
+                throw e;
+            }
+
+            List<ICode> returnValue = (List<ICode>) m.invoke(service);
+            if (returnValue == null)
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+
+            for (ICode entity : returnValue) {
+                if (entity.getCode().equals(value.getCode()))
+                    return entity;
+            }
         }
         return null;
     }

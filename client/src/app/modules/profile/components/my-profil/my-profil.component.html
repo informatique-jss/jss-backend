@@ -1,0 +1,46 @@
+<div class="mat-elevation-z2 form-div" *ngIf="currentEmployee">
+  <form [formGroup]="employeeForm">
+    <div class="full-width">
+      <table class="full-width">
+        <tr>
+          <td>
+            <generic-input [(model)]="currentEmployee.firstname" label="Prénom" [form]="employeeForm"
+              propertyName="firstname" [isMandatory]="true" [isDisabled]="true"></generic-input>
+          </td>
+          <td>
+            <generic-input [(model)]="currentEmployee.lastname" label="Nom" [form]="employeeForm"
+              propertyName="lastname" [isMandatory]="true" [isDisabled]="true"></generic-input>
+          </td>
+        </tr>
+      </table>
+      <table class="full-width">
+        <tr>
+          <td>
+            <generic-input [(model)]="currentEmployee.mail" label="E-mail" [form]="employeeForm" propertyName="mail"
+              [isMandatory]="true" [isDisabled]="true"></generic-input>
+          </td>
+          <td>
+            <generic-input [(model)]="currentEmployee.title" label="Fonction" [form]="employeeForm" propertyName="title"
+              [isMandatory]="true" [isDisabled]="true"></generic-input>
+          </td>
+        </tr>
+      </table>
+      <table class="full-width">
+        <tr>
+          <td>
+            <chips-employee label="Mode vacances" [(model)]="currentEmployee.backups" [form]="employeeForm"
+              propertyName="backups" [isMandatory]="false" [isDisabled]="!editMode"></chips-employee>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </form>
+</div>
+<button matTooltip="Sauvegarder" mat-fab color="warn" class="fab-button" *ngIf="editMode==true"
+  (click)="saveEmployee()">
+  <mat-icon>save</mat-icon>
+</button>
+<button matTooltip="Modifier mon profil" mat-fab color="accent" class="fab-button" *ngIf="editMode==false"
+  (click)="editEmployee()">
+  <mat-icon>edit</mat-icon>
+</button>

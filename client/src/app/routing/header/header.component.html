@@ -2,8 +2,6 @@
   <nav class="navbar ">
     <div>
       <div>
-        <div *ngIf="!sidenavOpenState" (click)="onToggleSidenav()" id="menu">
-        </div>
         <span class="navbar-title" [ngClass]="{'menu-hidden':!sidenavOpenState}">
           <span class="pointer">
             <mat-icon (click)="goBack()"> arrow_back</mat-icon>

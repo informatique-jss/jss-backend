@@ -24,6 +24,12 @@ export abstract class GenericSelectComponent<T> extends GenericFormComponent imp
 
   callOnNgInit(): void {
     this.initTypes();
+    if (this.form)
+      this.form.get(this.propertyName)?.valueChanges.subscribe(
+        (newValue) => {
+          this.selectionChange.emit(this.model);
+        }
+      );
   }
 
   abstract initTypes(): void;
@@ -35,4 +41,6 @@ export abstract class GenericSelectComponent<T> extends GenericFormComponent imp
     this.modelChange.emit(this.model);
     this.selectionChange.emit(undefined);
   }
+
+
 }

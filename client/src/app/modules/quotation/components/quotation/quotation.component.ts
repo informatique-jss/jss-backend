@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
 import { ActivatedRoute, Router, UrlSegment } from '@angular/router';
 import { Subject } from 'rxjs';
-import { QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_BEING_PROCESSED, QUOTATION_STATUS_BILLED, QUOTATION_STATUS_CANCELLED, QUOTATION_STATUS_OPEN, QUOTATION_STATUS_REFUSED_BY_CUSTOMER, QUOTATION_STATUS_SENT_TO_CUSTOMER, QUOTATION_STATUS_TO_VERIFY, QUOTATION_STATUS_VALIDATED_BY_CUSTOMER, QUOTATION_STATUS_VALIDATED_BY_JSS, QUOTATION_STATUS_WAITING_DEPOSIT } from 'src/app/libs/Constants';
+import { QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN } from 'src/app/libs/Constants';
 import { instanceOfCustomerOrder } from 'src/app/libs/TypeHelper';
 import { Vat } from 'src/app/modules/miscellaneous/model/Vat';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
@@ -14,12 +14,17 @@ import { EntityType } from 'src/app/routing/search/EntityType';
 import { CUSTOMER_ORDER_ENTITY_TYPE, QUOTATION_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
 import { SearchService } from 'src/app/services/search.service';
+import { CUSTOMER_ORDER_STATUS_ABANDONED, CUSTOMER_ORDER_STATUS_OPEN } from '../../../../libs/Constants';
+import { instanceOfQuotation } from '../../../../libs/TypeHelper';
+import { WorkflowDialogComponent } from '../../../miscellaneous/components/workflow-dialog/workflow-dialog.component';
 import { AssoAffaireOrder } from '../../model/AssoAffaireOrder';
 import { CustomerOrder } from '../../model/CustomerOrder';
+import { CustomerOrderStatus } from '../../model/CustomerOrderStatus';
 import { Provision } from '../../model/Provision';
 import { QuotationStatus } from '../../model/QuotationStatus';
 import { AssoAffaireOrderService } from '../../services/asso.affaire.order.service';
 import { CustomerOrderService } from '../../services/customer.order.service';
+import { CustomerOrderStatusService } from '../../services/customer.order.status.service';
 import { QuotationStatusService } from '../../services/quotation-status.service';
 import { QuotationService } from '../../services/quotation.service';
 import { AddAffaireDialogComponent } from '../add-affaire-dialog/add-affaire-dialog.component';
@@ -38,25 +43,16 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
   editMode: boolean = false;
   createMode: boolean = false;
   quotationStatusList: QuotationStatus[] = [] as Array<QuotationStatus>;
+  customerOrderStatusList: CustomerOrderStatus[] = [] as Array<CustomerOrderStatus>;
   isQuotationUrl = false;
 
   QUOTATION_ENTITY_TYPE = QUOTATION_ENTITY_TYPE;
   CUSTOMER_ORDER_ENTITY_TYPE = CUSTOMER_ORDER_ENTITY_TYPE;
 
-  QUOTATION_STATUS_OPEN = QUOTATION_STATUS_OPEN;
-  QUOTATION_STATUS_TO_VERIFY = QUOTATION_STATUS_TO_VERIFY;
-  QUOTATION_STATUS_VALIDATED_BY_JSS = QUOTATION_STATUS_VALIDATED_BY_JSS;
-  QUOTATION_STATUS_SENT_TO_CUSTOMER = QUOTATION_STATUS_SENT_TO_CUSTOMER;
-  QUOTATION_STATUS_VALIDATED_BY_CUSTOMER = QUOTATION_STATUS_VALIDATED_BY_CUSTOMER;
-  QUOTATION_STATUS_WAITING_DEPOSIT = QUOTATION_STATUS_WAITING_DEPOSIT;
-  QUOTATION_STATUS_BEING_PROCESSED = QUOTATION_STATUS_BEING_PROCESSED;
-  QUOTATION_STATUS_REFUSED_BY_CUSTOMER = QUOTATION_STATUS_REFUSED_BY_CUSTOMER;
-  QUOTATION_STATUS_BILLED = QUOTATION_STATUS_BILLED;
-  QUOTATION_STATUS_ABANDONED = QUOTATION_STATUS_ABANDONED;
-  QUOTATION_STATUS_CANCELLED = QUOTATION_STATUS_CANCELLED;
   billingLabelTypeAffaire: BillingLabelType = this.constantService.getBillingLabelTypeCodeAffaire();
 
   instanceOfCustomerOrderFn = instanceOfCustomerOrder;
+  instanceOfQuotationFn = instanceOfQuotation;
 
   selectedTabIndex = 0;
 
@@ -77,9 +73,12 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     private quotationService: QuotationService,
     private customerOrderService: CustomerOrderService,
     private quotationStatusService: QuotationStatusService,
+    private customerOrderStatusService: CustomerOrderStatusService,
     private activatedRoute: ActivatedRoute,
     public chooseUserDialog: MatDialog,
     public addAffaireDialog: MatDialog,
+    public quotationWorkflowDialog: MatDialog,
+    public customerOrderWorkflowDialog: MatDialog,
     private formBuilder: FormBuilder,
     private constantService: ConstantService,
     private assoAffaireOrderService: AssoAffaireOrderService,
@@ -101,6 +100,10 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
       this.quotationStatusList = response;
     })
 
+    this.customerOrderStatusService.getCustomerOrderStatus().subscribe(response => {
+      this.customerOrderStatusList = response;
+    })
+
     // Load by order
     if (url != undefined && url != null && url[0] != undefined && url[0].path == "order") {
       this.isQuotationUrl = false;
@@ -109,8 +112,9 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
       if (this.idQuotation != null && this.idQuotation != undefined) {
         this.customerOrderService.getCustomerOrder(this.idQuotation).subscribe(response => {
           this.quotation = response;
-          this.appService.changeHeaderTitle("Commande " + this.quotation.id + " - " +
-            (this.quotation.quotationStatus != null ? this.quotation.quotationStatus.label : ""));
+          if (instanceOfCustomerOrder(this.quotation))
+            this.appService.changeHeaderTitle("Commande " + this.quotation.id + " - " +
+              (this.quotation.customerOrderStatus != null ? this.quotation.customerOrderStatus.label : ""));
           this.toggleTabs();
           this.setOpenStatus();
           this.checkAffaireAssignation();
@@ -122,8 +126,9 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
       this.appService.changeHeaderTitle("Devis");
       this.quotationService.getQuotation(this.idQuotation).subscribe(response => {
         this.quotation = response;
-        this.appService.changeHeaderTitle("Devis " + this.quotation.id + " - " +
-          (this.quotation.quotationStatus != null ? this.quotation.quotationStatus.label : ""));
+        if (instanceOfQuotation(this.quotation))
+          this.appService.changeHeaderTitle("Devis " + this.quotation.id + " - " +
+            (this.quotation.quotationStatus != null ? this.quotation.quotationStatus.label : ""));
         this.toggleTabs();
         this.setOpenStatus();
       })
@@ -140,8 +145,10 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
   }
 
   setOpenStatus() {
-    if (this.quotation && this.quotation.quotationStatus)
+    if (this.quotation && instanceOfQuotation(this.quotation) && this.quotation.quotationStatus)
       this.isStatusOpen = this.quotation.quotationStatus.code == QUOTATION_STATUS_OPEN;
+    if (this.quotation && instanceOfCustomerOrder(this.quotation) && this.quotation.customerOrderStatus)
+      this.isStatusOpen = this.quotation.customerOrderStatus.code == QUOTATION_STATUS_OPEN;
     this.isStatusOpen = false;
   }
 
@@ -271,7 +278,6 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
   }
 
   addAffaire() {
-    this.selectedTabIndex = 1;
     let dialogRef = this.addAffaireDialog.open(AddAffaireDialogComponent, {
       width: '100%'
     });
@@ -289,6 +295,38 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     })
   }
 
+  displayQuotationWorkflowDialog() {
+    let dialogRef = this.quotationWorkflowDialog.open(WorkflowDialogComponent, {
+      width: '100%',
+    });
+    dialogRef.componentInstance.workflowElements = this.quotationStatusList;
+    for (let status of this.quotationStatusList) {
+      if (status.code == QUOTATION_STATUS_OPEN)
+        dialogRef.componentInstance.fixedWorkflowElement = status;
+      if (status.code == QUOTATION_STATUS_ABANDONED)
+        dialogRef.componentInstance.excludedWorkflowElement = status;
+    }
+    if (instanceOfQuotation(this.quotation))
+      dialogRef.componentInstance.activeWorkflowElement = this.quotation.quotationStatus;
+    dialogRef.componentInstance.title = "Workflow des devis";
+  }
+
+  displayCustomerOrderWorkflowDialog() {
+    let dialogRef = this.customerOrderWorkflowDialog.open(WorkflowDialogComponent, {
+      width: '100%',
+    });
+    dialogRef.componentInstance.workflowElements = this.customerOrderStatusList;
+    for (let status of this.customerOrderStatusList) {
+      if (status.code == CUSTOMER_ORDER_STATUS_OPEN)
+        dialogRef.componentInstance.fixedWorkflowElement = status;
+      if (status.code == CUSTOMER_ORDER_STATUS_ABANDONED)
+        dialogRef.componentInstance.excludedWorkflowElement = status;
+    }
+    if (instanceOfCustomerOrder(this.quotation))
+      dialogRef.componentInstance.activeWorkflowElement = this.quotation.customerOrderStatus;
+    dialogRef.componentInstance.title = "Workflow des commandes";
+  }
+
   deleteProvision(asso: AssoAffaireOrder, provision: Provision) {
     asso.provisions.splice(asso.provisions.indexOf(provision), 1);
   }
@@ -297,43 +335,26 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     //TODO
   }
 
-  changeStatus(targetStatusCode: string) {
-    let s = this.getStatusByCode(targetStatusCode);
-    if (s != null) {
-      this.editQuotation();
-      if (!this.getFormsStatus()) {
-        this.ngOnInit();
+  changeStatus(targetStatus: QuotationStatus) {
+    this.editQuotation();
+    if (this.getFormsStatus()) {
+      if (!this.instanceOfCustomerOrder) {
+        this.quotationService.updateQuotationStatus(this.quotation, targetStatus.code).subscribe(response => {
+          this.quotation = response;
+          this.router.navigateByUrl('/', { skipLocationChange: true }).then(() =>
+            this.router.navigate(['/quotation/', "" + this.quotation.id])
+          );
+        })
       } else {
-        if (!this.instanceOfCustomerOrder) {
-          this.quotationService.updateQuotationStatus(this.quotation, targetStatusCode).subscribe(response => {
-            this.quotation = response;
-            this.router.navigateByUrl('/', { skipLocationChange: true }).then(() =>
-              this.router.navigate(['/quotation/', "" + this.quotation.id])
-            );
-          })
-        } else {
-          this.customerOrderService.updateCustomerStatus(this.quotation, targetStatusCode).subscribe(response => {
-            this.quotation = response;
-            this.router.navigateByUrl('/', { skipLocationChange: true }).then(() =>
-              this.router.navigate(['/order/', "" + this.quotation.id])
-            );
-          })
-        }
+        this.customerOrderService.updateCustomerStatus(this.quotation, targetStatus.code).subscribe(response => {
+          this.quotation = response;
+          this.router.navigateByUrl('/', { skipLocationChange: true }).then(() =>
+            this.router.navigate(['/order/', "" + this.quotation.id])
+          );
+        })
       }
-      this.editMode = false;
     }
-  }
-
-  getStatusByCode(code: string): QuotationStatus | null {
-    if (!this.quotationStatusList)
-      return null;
-
-    let targetStatus = this.quotationStatusList.filter(s => s.code == code);
-    if (targetStatus.length != 1) {
-      this.appService.displaySnackBar("Statut non trouvé ...", true, 60);
-      return null;
-    }
-    return targetStatus[0];
+    this.editMode = false;
   }
 
   changeSelectedProvisionType($event: any) {
@@ -490,5 +511,10 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
         }
       }
     return true;
+  }
+
+  changeTab(event: any) {
+    if (!this.quotation.assoAffaireOrders && event && event.tab && event.tab.textLabel == "Prestations")
+      this.addAffaire();
   }
 }

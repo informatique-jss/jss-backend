@@ -33,7 +33,8 @@ public class EmployeeServiceImpl implements EmployeeService {
         return IterableUtils.toList(employeeRepository.findAll());
     }
 
-    private Employee addOrUpdateEmployee(Employee employee) {
+    @Override
+    public Employee addOrUpdateEmployee(Employee employee) {
         return employeeRepository.save(employee);
     }
 
@@ -50,6 +51,8 @@ public class EmployeeServiceImpl implements EmployeeService {
                         existingEmployee.setAdPath(employee.getAdPath());
                         existingEmployee.setFirstname(employee.getFirstname());
                         existingEmployee.setLastname(employee.getLastname());
+                        existingEmployee.setTitle(employee.getTitle());
+                        existingEmployee.setMail(employee.getMail());
                         addOrUpdateEmployee(existingEmployee);
                     } else {
                         addOrUpdateEmployee(employee);
@@ -67,12 +70,13 @@ public class EmployeeServiceImpl implements EmployeeService {
                             break;
                         }
                     }
+                    Employee existingEmployeeDb = employeeRepository.findByUsername(existingEmployee.getUsername());
                     if (!found) {
-                        existingEmployee.setIsActive(false);
+                        existingEmployeeDb.setIsActive(false);
                     } else {
-                        existingEmployee.setIsActive(true);
+                        existingEmployeeDb.setIsActive(true);
                     }
-                    addOrUpdateEmployee(existingEmployee);
+                    addOrUpdateEmployee(existingEmployeeDb);
                 }
             }
         }

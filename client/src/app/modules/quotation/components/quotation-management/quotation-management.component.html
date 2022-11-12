@@ -23,11 +23,12 @@
               <tr>
                 <td>
                   <radio-group-record-type [(model)]="quotation.recordType" [form]="quotationManagementForm"
-                    propertyName="recordType" label="Type de dossier"></radio-group-record-type>
+                    [isDisabled]="!editMode" propertyName="recordType" label="Type de dossier">
+                  </radio-group-record-type>
                 </td>
                 <td>
                   <radio-group-quotation-label-type [(model)]="quotation.labelType" [form]="quotationManagementForm"
-                    propertyName="quotationLabelType"
+                    [isDisabled]="!editMode" propertyName="quotationLabelType"
                     [label]="'Libellé sur '+ (!instanceOfQuotation(quotation) ? 'commande' : 'devis')">
                   </radio-group-quotation-label-type>
                 </td>
@@ -62,7 +63,7 @@
             <table class="full-width">
               <tr>
                 <td>
-                  <radio-group-billing-label [(model)]="billingDocument.billingLabelType"
+                  <radio-group-billing-label [(model)]="billingDocument.billingLabelType" [isDisabled]="!editMode"
                     [form]="quotationManagementForm" propertyName="billingLabelType" label="Libellé sur facture">
                   </radio-group-billing-label>
                 </td>

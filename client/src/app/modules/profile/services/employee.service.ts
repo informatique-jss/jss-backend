@@ -13,16 +13,16 @@ export class EmployeeService extends AppRestService<Employee>{
     super(http, "profile");
   }
 
-  getEmployee(id: number): Observable<Employee> {
-    return this.getById("employee", id);
-  }
-
   getEmployees(): Observable<Employee[]> {
     return this.getList(new HttpParams(), "employee/all");
   }
 
   getCurrentEmployee() {
     return this.get(new HttpParams(), "user");
+  }
+
+  addOrUpdateEmployee(employee: Employee) {
+    return this.addOrUpdate(new HttpParams(), "employee", employee, "Profil mis à jour" + ((employee.backups && employee.backups.length > 0) ? ". Bonnes vacances ! 😎" : ""), "Erreur lors de la mise à jour du profil");
   }
 
 }

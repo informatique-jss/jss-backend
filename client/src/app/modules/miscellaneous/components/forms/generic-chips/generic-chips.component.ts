@@ -28,7 +28,7 @@ export abstract class GenericChipsComponent<T> extends GenericFormComponent impl
   ngOnInit() {
     if (this.form != undefined) {
       this.form.addControl(this.propertyName, this.formBuilder3.control({ value: '', disabled: this.isDisabled }));
-      this.form.addValidators(this.checkFieldFilledIfIsConditionalRequired());
+      this.form.addValidators(this.checkField());
       this.callOnNgInit();
       this.form.get(this.propertyName)?.setValue(this.model);
     }

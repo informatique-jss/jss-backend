@@ -24,7 +24,7 @@ import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
-import com.jss.osiris.modules.quotation.model.QuotationStatus;
+import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.tiers.model.ITiers;
 import com.jss.osiris.modules.tiers.model.Responsable;
@@ -80,7 +80,7 @@ public class InvoiceServiceImpl implements InvoiceService {
             }
         if (invoice.getCustomerOrder() != null)
             customerOrderService.addOrUpdateCustomerOrderStatus(invoice.getCustomerOrder(),
-                    QuotationStatus.VALIDATED_BY_CUSTOMER);
+                    CustomerOrderStatus.VALIDATED_BY_CUSTOMER);
         return getInvoice(invoice.getId());
     }
 

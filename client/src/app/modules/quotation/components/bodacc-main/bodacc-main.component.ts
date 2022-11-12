@@ -1,6 +1,5 @@
 import { Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
-import { CustomErrorStateMatcher } from 'src/app/app.component';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { BODACC_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { ActType } from '../../model/ActType';
@@ -23,7 +22,6 @@ import { BodaccSplitComponent } from '../bodacc-split/bodacc-split.component';
 })
 export class BodaccMainComponent implements OnInit {
 
-  matcher: CustomErrorStateMatcher = new CustomErrorStateMatcher();
   @Input() bodacc: Bodacc = {} as Bodacc;
   @Input() provision: Provision = {} as Provision;
   @Input() affaire: Affaire = {} as Affaire;

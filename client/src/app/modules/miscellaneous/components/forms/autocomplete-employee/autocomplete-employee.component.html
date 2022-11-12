@@ -1,7 +1,10 @@
 <mat-form-field class="full-width" [formGroup]="form!">
   <mat-label>{{label}}</mat-label>
-  <input type="text" matInput [formControlName]="propertyName" [matAutocomplete]="matAutocomplete"
-    [placeholder]="label">
+  <div class="select-with-avatar">
+    <avatar class="avatar-select" [employee]="model" [size]="20">
+    </avatar>
+    <input type="text" matInput [formControlName]="propertyName" [matAutocomplete]="matAutocomplete">
+  </div>
   <mat-icon matSuffix (click)="clearField()" *ngIf="!isDisabled && model!=undefined" class="pointer">
     close
   </mat-icon>
@@ -12,7 +15,11 @@
   <mat-autocomplete autoActiveFirstOption #matAutocomplete="matAutocomplete" [displayWith]="displayLabel"
     (optionSelected)='optionSelected($event.option.value)'>
     <mat-option *ngFor="let employee of filteredTypes | async" [value]="employee">
-      {{displayLabel(employee)}}
+      <div class="select-with-avatar">
+        <avatar class="avatar-select" [employee]="employee" [size]="20">
+        </avatar>
+        {{displayLabel(employee)}}
+      </div>
     </mat-option>
   </mat-autocomplete>
 </mat-form-field>

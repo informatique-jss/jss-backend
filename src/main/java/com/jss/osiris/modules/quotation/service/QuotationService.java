@@ -3,8 +3,8 @@ package com.jss.osiris.modules.quotation.service;
 import java.util.List;
 
 import com.jss.osiris.modules.quotation.model.IQuotation;
-import com.jss.osiris.modules.quotation.model.OrderingSearch;
 import com.jss.osiris.modules.quotation.model.Quotation;
+import com.jss.osiris.modules.quotation.model.QuotationSearch;
 import com.jss.osiris.modules.tiers.model.ITiers;
 
 public interface QuotationService {
@@ -20,7 +20,7 @@ public interface QuotationService {
 
     public ITiers getCustomerOrderOfQuotation(IQuotation quotation) throws Exception;
 
-    public List<Quotation> searchQuotations(OrderingSearch orderingSearch);
+    public List<Quotation> searchQuotations(QuotationSearch orderingSearch);
 
     public void reindexQuotation();
 }

@@ -24,7 +24,6 @@ export class AutocompleteCountryComponent extends GenericLocalAutocompleteCompon
 
   ngOnChanges(changes: SimpleChanges): void {
     super.ngOnChanges(changes);
-    console.log(changes);
   }
 
   filterEntities(types: Country[], value: string): Country[] {

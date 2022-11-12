@@ -22,31 +22,34 @@ repositories {
   
  
 dependencies {
+    // Spring
     implementation 'org.springframework.boot:spring-boot-starter-web:2.6.4'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa:2.6.4' 
-
     implementation 'org.springframework.boot:spring-boot-starter-security:2.6.4'
     implementation 'org.springframework.ldap:spring-ldap-core:2.4.1'
     implementation 'org.springframework.security:spring-security-ldap:5.7.3'
+    implementation 'org.ehcache:ehcache:3.9.7'
+    implementation 'org.springdoc:springdoc-openapi-ui:1.6.11'
+    runtimeOnly 'org.springframework.boot:spring-boot-devtools:2.6.4'
+    implementation 'org.springframework.boot:spring-boot-starter-mail:2.7.5'
+
     
+    // Database
     implementation 'org.hibernate:hibernate-c3p0:5.6.9.Final'
 	implementation 'org.postgresql:postgresql:42.3.5' 
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-hibernate5:2.13.3'
+
+    // Type tools
 	implementation 'org.apache.commons:commons-collections4:4.4'
     implementation 'org.apache.commons:commons-lang3:3.12.0'
-    implementation 'org.springframework.boot:spring-boot-starter-cache:2.6.4'
-    implementation 'org.ehcache:ehcache:3.9.7'
-    implementation 'org.hibernate:hibernate-jcache:5.6.9.Final'
     implementation 'commons-validator:commons-validator:1.7'
+    
+    // PDF, Office & HTML generation
     implementation 'com.itextpdf:itextpdf:5.5.13.3'
     implementation 'com.itextpdf:html2pdf:4.0.2'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf:2.7.1'
     implementation 'org.apache.poi:poi-ooxml:5.2.2'
     implementation 'org.apache.poi:poi:5.2.2'
-    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-hibernate5:2.13.3'
-    implementation 'org.springdoc:springdoc-openapi-ui:1.6.11'
-
-  
-    runtimeOnly 'org.springframework.boot:spring-boot-devtools:2.6.4'
 }
  
 group = 'com.jss.osiris'

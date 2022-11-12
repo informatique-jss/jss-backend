@@ -1,5 +1,5 @@
 import { Directive, EventEmitter, Input, OnInit, Output, SimpleChanges } from "@angular/core";
-import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn } from "@angular/forms";
+import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { CustomErrorStateMatcher } from "src/app/app.component";
 import { UserNoteService } from "src/app/services/user.notes.service";
 
@@ -82,8 +82,13 @@ export abstract class GenericFormComponent implements OnInit {
 
   ngOnInit() {
     if (this.form != undefined) {
-      this.form.addControl(this.propertyName, this.formBuilder.control({ value: '', disabled: this.isDisabled }));
-      this.form.addValidators(this.checkFieldFilledIfIsConditionalRequired());
+      this.form.addControl(this.propertyName, this.formBuilder.control({ value: '', disabled: this.isDisabled, validators: this.customValidators }));
+      this.form.addValidators(this.checkField());
+      if (this.isDisabled) {
+        this.form?.get(this.propertyName)?.disable();
+      } else {
+        this.form?.get(this.propertyName)?.enable();
+      }
       this.form.get(this.propertyName)!.valueChanges.subscribe(
         (newValue) => {
           this.model = newValue;
@@ -98,7 +103,7 @@ export abstract class GenericFormComponent implements OnInit {
   abstract callOnNgInit(): void;
 
   // Check if the propertiy given in parameter is filled when conditionnalRequired is set
-  checkFieldFilledIfIsConditionalRequired(): ValidatorFn {
+  checkField(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const root = control.root as UntypedFormGroup;
       const fieldValue = root.get(this.propertyName)?.value;

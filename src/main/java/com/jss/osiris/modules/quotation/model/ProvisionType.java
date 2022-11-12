@@ -14,6 +14,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.miscellaneous.model.BillingType;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.profile.model.Employee;
@@ -26,6 +27,7 @@ public class ProvisionType implements Serializable, IId {
 	private Integer id;
 
 	@Column(nullable = false, length = 100)
+	@IndexedField
 	private String label;
 
 	@Column(nullable = false, length = 20)

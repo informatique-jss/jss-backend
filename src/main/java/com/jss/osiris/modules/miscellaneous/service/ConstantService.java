@@ -22,6 +22,9 @@ import com.jss.osiris.modules.quotation.model.JournalType;
 import com.jss.osiris.modules.quotation.model.MailRedirectionType;
 import com.jss.osiris.modules.quotation.model.QuotationLabelType;
 import com.jss.osiris.modules.quotation.model.TransfertFundsType;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormeJuridique;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeFormalite;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypePersonne;
 import com.jss.osiris.modules.tiers.model.BillingLabelType;
 import com.jss.osiris.modules.tiers.model.RefundType;
 import com.jss.osiris.modules.tiers.model.SubscriptionPeriodType;
@@ -86,9 +89,11 @@ public interface ConstantService {
 
     public QuotationLabelType getQuotationLabelTypeOther() throws Exception;
 
-    public PaymentType getPaymentTypeOther() throws Exception;
-
     public PaymentType getPaymentTypeVirement() throws Exception;
+
+    public PaymentType getPaymentTypeEspeces() throws Exception;
+
+    public PaymentType getPaymentTypeCB() throws Exception;
 
     public PaymentType getPaymentTypePrelevement() throws Exception;
 
@@ -159,5 +164,21 @@ public interface ConstantService {
     public Department getDepartmentGuadeloupe() throws Exception;
 
     public Department getDepartmentReunion() throws Exception;
+
+    public TypePersonne getTypePersonnePersonnePhysique() throws Exception;
+
+    public TypePersonne getTypePersonnePersonneMorale() throws Exception;
+
+    public TypePersonne getTypePersonneExploitation() throws Exception;
+
+    public FormeJuridique getFormeJuridiqueEntrepreneurIndividuel() throws Exception;
+
+    public TypeFormalite getTypeFormaliteCessation() throws Exception;
+
+    public TypeFormalite getTypeFormaliteModification() throws Exception;
+
+    public TypeFormalite getTypeFormaliteCreation() throws Exception;
+
+    public TypeFormalite getTypeFormaliteCorrection() throws Exception;
 
 }

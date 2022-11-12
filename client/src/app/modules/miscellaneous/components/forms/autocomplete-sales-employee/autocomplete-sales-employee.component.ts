@@ -7,8 +7,8 @@ import { GenericLocalAutocompleteComponent } from '../generic-local-autocomplete
 
 @Component({
   selector: 'autocomplete-sales-employee',
-  templateUrl: './autocomplete-sales-employee.component.html',
-  styleUrls: ['./autocomplete-sales-employee.component.css']
+  templateUrl: './../autocomplete-employee/autocomplete-employee.component.html',
+  styleUrls: ['./../autocomplete-employee/autocomplete-employee.component.css']
 })
 export class AutocompleteSalesEmployeeComponent extends GenericLocalAutocompleteComponent<Employee> implements OnInit {
 

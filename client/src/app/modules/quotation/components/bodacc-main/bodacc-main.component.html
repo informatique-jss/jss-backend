@@ -19,7 +19,8 @@
             <td
               *ngIf="bodacc.bodaccPublicationType && bodacc.bodaccPublicationType.id==bodaccPublicationTypeSaleOfBusiness.id">
               <radio-group-transfert-funds [(model)]="bodacc.transfertFundsType" [form]="bodaccForm"
-                propertyName="transfertFundsType" label="Type de cession de fonds"></radio-group-transfert-funds>
+                [isDisabled]="!editMode" propertyName="transfertFundsType" label="Type de cession de fonds">
+              </radio-group-transfert-funds>
             </td>
             <td
               *ngIf="bodacc.bodaccPublicationType && (bodacc.bodaccPublicationType.id ==bodaccPublicationTypePossessionDispatch.id || bodacc.bodaccPublicationType.id ==bodaccPublicationTypeEstateRepresentativeDesignation.id)">

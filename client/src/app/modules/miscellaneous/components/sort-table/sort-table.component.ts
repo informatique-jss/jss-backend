@@ -117,7 +117,7 @@ export class SortTableComponent implements OnInit {
     return "Not found";
   }
 
-  getColumnValue(column: SortTableColumn, element: any): string {
+  getColumnValue(column: SortTableColumn, element: any): any {
     if (column) {
       if (column.valueFonction) {
         return column.valueFonction(element, this.values, column, this.columns);

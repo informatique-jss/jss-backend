@@ -13,7 +13,7 @@ export interface Identite {
   contratDAppuiDeclare: boolean;
   contratDAppui: ContratDAppui;
   insaisissabilite: Insaisissabilite;
-  adresseCorrespondance: AdresseDomicile;
+  adresseCorrespondance: AdresseDomicile; // TODO : obligatoire ou seulement si différent de l'entreprise ? idem champs suivants
   contactCorrespondance: Contact;
   nomCorrespondance: string;
 }

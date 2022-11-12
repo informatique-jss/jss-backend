@@ -8,15 +8,19 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatTabsModule } from '@angular/material/tabs';
 import { RouterModule, Routes } from '@angular/router';
+import { MyProfilComponent } from '../modules/profile/components/my-profil/my-profil.component';
 import { LoginDialogComponent } from './login-dialog/login-dialog.component';
 import { SearchComponent } from './search/search.component';
 
 const routes: Routes = [
-  { path: '', redirectTo: '/affaire', pathMatch: 'full' }
+  { path: '', redirectTo: '/affaire', pathMatch: 'full' },
+  { path: 'my-profil', component: MyProfilComponent },
 ];
 
 @NgModule({
-  declarations: [SearchComponent, LoginDialogComponent],
+  declarations: [SearchComponent,
+    LoginDialogComponent,
+  ],
   imports: [
     RouterModule.forRoot(routes, { onSameUrlNavigation: 'reload' }),
     CommonModule,
@@ -30,7 +34,7 @@ const routes: Routes = [
     MatButtonModule
   ],
   exports: [
-    RouterModule
+    RouterModule,
   ]
 })
 export class RoutingModule { }

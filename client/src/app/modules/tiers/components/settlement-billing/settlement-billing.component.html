@@ -53,7 +53,8 @@
             <tr>
               <td>
                 <radio-group-billing-label [(model)]="billingDocument.billingLabelType" [form]="settlementBillingForm"
-                  propertyName="billingLabelType" label="Libellé sur facture"></radio-group-billing-label>
+                  [isDisabled]="!editMode" propertyName="billingLabelType" label="Libellé sur facture">
+                </radio-group-billing-label>
               </td>
             </tr>
           </table>
@@ -128,7 +129,8 @@
               <td>
                 <select-payment-types [(model)]="tiers.paymentType" label="Type" [form]="settlementBillingForm"
                   propertyName="paymentType" [isMandatory]="true" [isDisabled]="!editMode"
-                  [filteredPaymentType]="[paymentTypePrelevement,paymentTypeOther]"></select-payment-types>
+                  [filteredPaymentType]="[paymentTypePrelevement,paymentTypeVirement,paymentTypeCB, paymentTypeEspeces]">
+                </select-payment-types>
               </td>
               <td *ngIf="tiers  && tiers.paymentType && tiers.paymentType.id==paymentTypePrelevement.id">
                 <generic-input [(model)]="tiers.paymentIban" label="IBAN" [form]="settlementBillingForm"
@@ -168,7 +170,8 @@
               </td>
               <td *ngIf="refundDocument.isRefundable">
                 <select-refund-type [(model)]="refundDocument.refundType" label="Type de remboursement"
-                  [form]="settlementBillingForm" propertyName="refundType"></select-refund-type>
+                  [isDisabled]="!editMode" [form]="settlementBillingForm" propertyName="refundType">
+                </select-refund-type>
               </td>
               <td
                 *ngIf="refundDocument.isRefundable && refundDocument !=undefined && refundDocument.refundType!=undefined && refundDocument.refundType.code!=undefined && refundDocument.refundType.id==refundTypeVirement.id">
@@ -192,13 +195,15 @@
           <table class="full-width">
             <tr>
               <td>
-                <radio-group-billing-closure [(model)]="billingClosureDocument.billingClosureType"
-                  [form]="settlementBillingForm" propertyName="billingClosureType" label="Type">
+                <radio-group-billing-closure [(model)]="billingClosureDocument.billingClosureType" [isMandatory]="true"
+                  [isDisabled]="!editMode" [form]="settlementBillingForm" propertyName="billingClosureType"
+                  label="Type">
                 </radio-group-billing-closure>
               </td>
               <td>
                 <radio-group-billing-closure-recipient [(model)]="billingClosureDocument.billingClosureRecipientType"
-                  [form]="settlementBillingForm" propertyName="billingClosureRecipientType" label="Destinataire(s)">
+                  [isDisabled]="!editMode" [isMandatory]="true" [form]="settlementBillingForm"
+                  propertyName="billingClosureRecipientType" label="Destinataire(s)">
                 </radio-group-billing-closure-recipient>
               </td>
               <td>
@@ -231,17 +236,17 @@
             <tr>
               <td>
                 <select-responsable [(model)]="tiers.mailsCreationAffaire" label="AR pour création d'une affaire"
-                  [form]="settlementBillingForm" propertyName="mailsCreationAffaire"
+                  [isDisabled]="!editMode" [form]="settlementBillingForm" propertyName="mailsCreationAffaire"
                   [responsableList]="getResponsables()"></select-responsable>
               </td>
               <td>
                 <select-responsable [(model)]="tiers.mailsProvisionningConfirmation" label="AR d'une provision"
-                  [form]="settlementBillingForm" propertyName="mailsProvisionningConfirmation"
+                  [isDisabled]="!editMode" [form]="settlementBillingForm" propertyName="mailsProvisionningConfirmation"
                   [responsableList]="getResponsables()"></select-responsable>
               </td>
               <td>
                 <select-responsable [(model)]="tiers.mailsMissingItemFormality"
-                  label="Pièce manquante pour une formalité" [form]="settlementBillingForm"
+                  label="Pièce manquante pour une formalité" [form]="settlementBillingForm" [isDisabled]="!editMode"
                   propertyName="mailsMissingItemFormality" [responsableList]="getResponsables()"></select-responsable>
               </td>
             </tr>

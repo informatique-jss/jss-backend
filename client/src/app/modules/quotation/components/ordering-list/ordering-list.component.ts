@@ -3,6 +3,7 @@ import { FormBuilder } from '@angular/forms';
 import { formatDateTimeForSortTable, toIsoString } from 'src/app/libs/FormatHelper';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
+import { Employee } from 'src/app/modules/profile/model/Employee';
 import { AppService } from 'src/app/services/app.service';
 import { CustomerOrder } from '../../model/CustomerOrder';
 import { IQuotation } from '../../model/IQuotation';
@@ -39,6 +40,7 @@ export class OrderingListComponent implements OnInit {
     this.displayedColumns.push({ id: "customerOrderName", fieldName: "tiers", label: "Donneur d'ordre", valueFonction: this.getCustomerOrderName, actionLinkFunction: this.getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la fiche du donneur d'ordre" } as SortTableColumn);
     this.displayedColumns.push({ id: "quotationStatus", fieldName: "quotationStatus.label", label: "Statut" } as SortTableColumn);
     this.displayedColumns.push({ id: "createdDate", fieldName: "createdDate", label: "Date de création", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
+    this.displayedColumns.push({ id: "salesEmployee", fieldName: "salesEmployee", label: "Commercial", displayAsEmployee: true, valueFonction: this.getSalesEmployee } as SortTableColumn);
     this.displayedColumns.push({ id: "totalPrice", fieldName: "totalPrice", label: "Prix total", valueFonction: (element: any, elements: any[], column: SortTableColumn, columns: SortTableColumn[]): string => { return QuotationComponent.computePriceTotal(element) + " €"; } } as SortTableColumn);
 
     if (this.overrideIconAction == "") {
@@ -58,9 +60,23 @@ export class OrderingListComponent implements OnInit {
     };
   }
 
+
   orderingSearchForm = this.formBuilder.group({
   });
 
+  getSalesEmployee(element: any): Employee | undefined {
+    if (element) {
+      if (element.confrere && element.confrere.salesEmployee)
+        return element.confrere.salesEmployee;
+      if (element.responsable && element.responsable && element.responsable.salesEmployee)
+        return element.responsable.salesEmployee;
+      if (element.responsable && element.responsable.tiers && element.responsable.tiers.salesEmployee)
+        return element.responsable.tiers.salesEmployee;
+      if (element.tiers && element.tiers.salesEmployee)
+        return element.tiers.salesEmployee;
+    }
+    return undefined;
+  }
 
   getColumnLink(column: SortTableColumn, element: any) {
     if (element && column.id == "customerOrderName") {

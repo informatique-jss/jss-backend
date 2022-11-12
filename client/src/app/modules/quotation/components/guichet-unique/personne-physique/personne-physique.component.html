@@ -1,0 +1,11 @@
+<form [formGroup]="formaliteForm" *ngIf="formalite && formalite.content && formalite.content.natureCreation">
+  <identite [formalite]="formalite" [identite]="personnePhysique.identite" [editMode]="editMode"
+    [isStatusOpen]="isStatusOpen" [instanceOfCustomerOrder]="instanceOfCustomerOrder" [provision]="provision"
+    (provisionChange)="provisionChangeFunction()"></identite>
+  //TODO : not found for property adresseEntreprise
+  //TODO : not found for property composition
+  //TODO : not found for property etablissementPrincipal
+  //TODO : not found for property autresEtablissements
+  //TODO : not found for property optionsFiscales
+  //TODO : not found for property detailCessationEntreprise
+</form>

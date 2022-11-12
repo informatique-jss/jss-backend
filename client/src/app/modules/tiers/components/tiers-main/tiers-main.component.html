@@ -32,7 +32,8 @@
                 propertyName="isIndividual"></generic-toggle>
             </td>
             <td [hidden]="tiers.isIndividual==false">
-              <radio-group-civility [(model)]="tiers.civility" [form]="principalForm" propertyName="civility">
+              <radio-group-civility [conditionnalRequired]="tiers.isIndividual" [(model)]="tiers.civility"
+                [isDisabled]="!editMode" [form]="principalForm" propertyName="civility">
               </radio-group-civility>
             </td>
             <td [hidden]="tiers.isIndividual==false">
@@ -79,7 +80,7 @@
             </td>
             <td style="vertical-align: baseline;">
               <radio-group-language [(model)]="tiers.language" [form]="principalForm" propertyName="language"
-                label="Langue de communication"></radio-group-language>
+                [isDisabled]="!editMode" label="Langue de communication"></radio-group-language>
             </td>
             <td>
               <select-delivery-service [(model)]="tiers.deliveryService" label="Service de livraison"

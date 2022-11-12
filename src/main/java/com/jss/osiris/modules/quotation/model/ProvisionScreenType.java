@@ -16,6 +16,7 @@ public class ProvisionScreenType implements Serializable, IId {
     public static String BODACC = "BODACC";
     public static String DOMICILIATION = "DOMICILIATION";
     public static String ANNOUNCEMENT = "ANNOUNCEMENT";
+    public static String FORMALITE = "FORMALITE";
     public static String STANDARD = "STANDARD";
 
     @Id

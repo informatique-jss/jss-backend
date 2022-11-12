@@ -20,9 +20,11 @@ import com.jss.osiris.modules.quotation.model.Announcement;
 import com.jss.osiris.modules.quotation.model.Bodacc;
 import com.jss.osiris.modules.quotation.model.Domiciliation;
 import com.jss.osiris.modules.quotation.model.Quotation;
+import com.jss.osiris.modules.quotation.model.guichetUnique.Formalite;
 import com.jss.osiris.modules.quotation.service.AnnouncementService;
 import com.jss.osiris.modules.quotation.service.BodaccService;
 import com.jss.osiris.modules.quotation.service.DomiciliationService;
+import com.jss.osiris.modules.quotation.service.FormaliteService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
@@ -59,6 +61,9 @@ public class AttachmentServiceImpl implements AttachmentService {
     @Autowired
     BodaccService bodaccService;
 
+    @Autowired
+    FormaliteService formaliteService;
+
     @Override
     public List<Attachment> getAttachments() {
         return IterableUtils.toList(attachmentRepository.findAll());
@@ -93,6 +98,8 @@ public class AttachmentServiceImpl implements AttachmentService {
                 attachments = attachmentRepository.findByDomiciliationId(idEntity);
             } else if (entityType.equals(Announcement.class.getSimpleName())) {
                 attachments = attachmentRepository.findByAnnouncementId(idEntity);
+            } else if (entityType.equals(Formalite.class.getSimpleName())) {
+                attachments = attachmentRepository.findByFormaliteId(idEntity);
             } else if (entityType.equals(Bodacc.class.getSimpleName())) {
                 attachments = attachmentRepository.findByBodaccId(idEntity);
             }
@@ -138,6 +145,11 @@ public class AttachmentServiceImpl implements AttachmentService {
             if (announcement == null)
                 return new ArrayList<Attachment>();
             attachment.setAnnouncement(announcement);
+        } else if (entityType.equals(Formalite.class.getSimpleName())) {
+            Formalite formalite = formaliteService.getFormalite(idEntity);
+            if (formalite == null)
+                return new ArrayList<Attachment>();
+            attachment.setFormalite(formalite);
         } else if (entityType.equals(Bodacc.class.getSimpleName())) {
             Bodacc bodacc = bodaccService.getBodacc(idEntity);
             if (bodacc == null)

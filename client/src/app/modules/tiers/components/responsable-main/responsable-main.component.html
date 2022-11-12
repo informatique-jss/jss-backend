@@ -33,7 +33,7 @@
                 <tr>
                   <td>
                     <radio-group-civility [(model)]="selectedResponsable.civility" [form]="principalForm"
-                      propertyName="civility" label="Civilité"></radio-group-civility>
+                      [isDisabled]="!editMode" propertyName="civility" label="Civilité"></radio-group-civility>
                   </td>
                   <td>
                     <generic-input [(model)]="selectedResponsable.lastname" label="Nom" [form]="principalForm"
@@ -108,7 +108,8 @@
                   </td>
                   <td style="vertical-align: baseline;">
                     <radio-group-language [(model)]="selectedResponsable.language" [form]="principalForm"
-                      propertyName="language" label="Langue de communication"></radio-group-language>
+                      [isDisabled]="!editMode" propertyName="language" label="Langue de communication">
+                    </radio-group-language>
                   </td>
                 </tr>
               </table>

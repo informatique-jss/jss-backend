@@ -7,7 +7,7 @@
       </td>
       <td *ngIf="affaire.isIndividual==true">
         <radio-group-civility [(model)]="affaire.civility" [form]="affaireForm" propertyName="civility"
-          label="Civilité"></radio-group-civility>
+          [isDisabled]="!editMode" label="Civilité"></radio-group-civility>
       </td>
       <td *ngIf="affaire.isIndividual==true">
         <generic-input [(model)]="affaire.lastname" label="Nom" [form]="affaireForm" propertyName="lastname"

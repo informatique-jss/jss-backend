@@ -1,0 +1,30 @@
+<mat-form-field class="full-width" [formGroup]="form!">
+  <mat-label>{{label}}</mat-label>
+  <mat-chip-list #chipListEmployee>
+    <mat-chip *ngFor="let employee of model" (removed)="removeElement(employee)">
+      <avatar [employee]="employee" [size]="17"></avatar>
+      {{employee.firstname}} {{employee.lastname}}
+      <button matChipRemove *ngIf="!isDisabled">
+        <mat-icon>cancel</mat-icon>
+      </button>
+      <mat-icon matChipRemove *ngIf="isDisabled" (click)="displayInTeams(employee)">
+        chat_bubble</mat-icon>
+    </mat-chip>
+    <input matInput placeholder="Choisir un collaborateur" [formControlName]="propertyName" #employeeInput
+      [matChipInputFor]="chipListEmployee" [matChipInputSeparatorKeyCodes]="SEPARATOR_KEY_CODES" [disabled]="isDisabled"
+      [matAutocomplete]="autoComplete">
+  </mat-chip-list>
+  <mat-hint>Indiquez ici les personnes qui vous remplaceront pendant vos vacances. Elles verront alors vos objets
+    associés
+    aux leurs</mat-hint>
+  <mat-autocomplete autoActiveFirstOption #autoComplete="matAutocomplete" [displayWith]="displayLabel"
+    (optionSelected)="addEmployee($event)">
+    <mat-option *ngFor="let employee of filteredEmployees | async" [value]="employee">
+      <div class="select-with-avatar">
+        <avatar class="avatar-select" [employee]="employee" [size]="20">
+        </avatar>
+        {{employee.firstname}} {{employee.lastname}}
+      </div>
+    </mat-option>
+  </mat-autocomplete>
+</mat-form-field>

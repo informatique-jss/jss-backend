@@ -22,9 +22,11 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { MatTableExporterModule } from 'mat-table-exporter';
+import { NgxEchartsModule } from 'ngx-echarts';
 import { TrustHtmlPipe } from 'src/app/libs/TrustHtmlPipe';
 import { AddressingComponent } from '../addressing/addressing.component';
 import { AttachmentsComponent } from '../attachments/attachments.component';
+import { AvatarComponent } from '../avatar/avatar.component';
 import { ChipsStatusComponent } from '../chips-status/chips-status.component';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { ConfrereDialogComponent } from '../confreres-dialog/confreres-dialog.component';
@@ -53,6 +55,7 @@ import { AutocompleteTiersIndividualComponent } from '../forms/autocomplete-tier
 import { ChipsCityComponent } from '../forms/chips-city/chips-city.component';
 import { ChipsCompetitorComponent } from '../forms/chips-competitor/chips-competitor.component';
 import { ChipsConfrereComponent } from '../forms/chips-confrere/chips-confrere.component';
+import { ChipsEmployeeComponent } from '../forms/chips-employee/chips-employee.component';
 import { ChipsMailComponent } from '../forms/chips-mail/chips-mail.component';
 import { ChipsPhoneComponent } from '../forms/chips-phone/chips-phone.component';
 import { ChipsProvisionFamilyTypeComponent } from '../forms/chips-provision-family/chips-provision-family.component';
@@ -179,6 +182,7 @@ import { SelectBodaccPublicationTypeComponent } from '../forms/select-bodacc-pub
 import { SelectBuildingDomicilationComponent } from '../forms/select-building-domicilation/select-building-domicilation.component';
 import { SelectCompetentAuthorityTypeComponent } from '../forms/select-competent-authority-type/select-competent-authority-type.component';
 import { SelectContractTypeComponent } from '../forms/select-contract-type/select-contract-type.component';
+import { SelectCustomerOrderStatusComponent } from '../forms/select-customer-order-status/select-customer-order-status.component';
 import { SelectDayComponent } from '../forms/select-day/select-day.component';
 import { SelectDeliveryServiceComponent } from '../forms/select-delivery-service/select-delivery-service.component';
 import { SelectDepartmentComponent } from '../forms/select-department/select-department.component';
@@ -200,7 +204,7 @@ import { SelectPaymentWayComponent } from '../forms/select-payment-way/select-pa
 import { SelectProvisionFamilyComponent } from '../forms/select-provision-family/select-provision-familiy.component';
 import { SelectProvisionScreenTypeComponent } from '../forms/select-provision-screen-type/select-provision-screen-type.component';
 import { SelectProvisionTypeComponent } from '../forms/select-provision-type/select-provision-type.component';
-import { SelectOrderingStatusComponent as SelectQuotationStatusComponent } from '../forms/select-quotation-status/select-quotation-status.component';
+import { SelectQuotationStatusComponent } from '../forms/select-quotation-status/select-quotation-status.component';
 import { SelectRefundTypeComponent } from '../forms/select-refund-type/select-refund-type.component';
 import { SelectRegionsComponent } from '../forms/select-regions/select-regions.component';
 import { SelectResponsableComponent } from '../forms/select-responsable/select-responsable.component';
@@ -214,6 +218,7 @@ import { HistoryComponent } from '../history/history.component';
 import { SingleAttachmentComponent } from '../single-attachment/single-attachment.component';
 import { SortTableComponent } from '../sort-table/sort-table.component';
 import { UploadAttachementDialogComponent } from '../upload-attachement-dialog/upload-attachement-dialog.component';
+import { WorkflowDialogComponent } from '../workflow-dialog/workflow-dialog.component';
 import { MiscellaneousComponent } from './miscellaneous.component';
 
 @NgModule({
@@ -242,6 +247,9 @@ import { MiscellaneousComponent } from './miscellaneous.component';
     MatCheckboxModule,
     MatAutocompleteModule,
     RouterModule,
+    NgxEchartsModule.forRoot({
+      echarts: () => import('echarts'),
+    }),
   ],
   declarations: [MiscellaneousComponent,
     HistoryComponent,
@@ -337,10 +345,14 @@ import { MiscellaneousComponent } from './miscellaneous.component';
     SelectJournalTypeOneComponent,
     SelectQuotationStatusComponent,
     SelectInvoiceStatusOneComponent,
+    SelectCustomerOrderStatusComponent,
     SelectPaymentWayOneComponent,
     SelectPaymentWayComponent,
+    AvatarComponent,
     SelectDepartmentsComponent,
     SelectDepartmentComponent,
+    WorkflowDialogComponent,
+    ChipsEmployeeComponent,
     SingleAttachmentComponent,
     //Guichet Unique
     AutocompleteTypeDocumentComponent,
@@ -481,6 +493,7 @@ import { MiscellaneousComponent } from './miscellaneous.component';
     ChipsSpecialOffersComponent,
     RadioGroupActTypeComponent,
     AutocompleteLegalFormComponent,
+    AvatarComponent,
     ChipsConfrereComponent,
     SelectMailRedirectionComponent,
     SelectVatComponent,
@@ -517,11 +530,13 @@ import { MiscellaneousComponent } from './miscellaneous.component';
     ChipsMailComponent,
     TrustHtmlPipe,
     SelectBodaccPublicationTypeComponent,
+    ChipsEmployeeComponent,
     SelectPaymentDeadlineComponent,
     GenericTextareaComponent,
     AutocompletePostalCodeComponent,
     ChipsStatusComponent,
     ChipsPhoneComponent,
+    SelectCustomerOrderStatusComponent,
     RadioGroupCivilityComponent,
     AutocompleteRnaComponent,
     GenericToggleComponent,
@@ -538,6 +553,7 @@ import { MiscellaneousComponent } from './miscellaneous.component';
     SelectPaymentWayComponent,
     SelectAffaireStatusComponent,
     AutocompleteBillingItemComponent,
+    WorkflowDialogComponent,
     //Guichet Unique
     AutocompleteTypeDocumentComponent,
     RadioGroupMotifRejetCmaComponent,

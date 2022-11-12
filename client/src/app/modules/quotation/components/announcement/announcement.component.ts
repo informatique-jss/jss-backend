@@ -12,7 +12,6 @@ import { getDocument } from 'src/app/libs/DocumentHelper';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { ANNOUNCEMENT_ENTITY_TYPE } from 'src/app/routing/search/search.component';
-import { ConfrereDialogComponent } from '../../../miscellaneous/components/confreres-dialog/confreres-dialog.component';
 import { Document } from "../../../miscellaneous/model/Document";
 import { Affaire } from '../../model/Affaire';
 import { Announcement } from '../../model/Announcement';
@@ -24,7 +23,6 @@ import { NoticeType } from '../../model/NoticeType';
 import { Provision } from '../../model/Provision';
 import { AnnouncementNoticeTemplateService } from '../../services/announcement.notice.template.service';
 import { CharacterPriceService } from '../../services/character.price.service';
-import { ConfrereService } from '../../services/confrere.service';
 import { JournalTypeService } from '../../services/journal.type.service';
 import { NoticeTypeService } from '../../services/notice.type.service';
 
@@ -55,9 +53,6 @@ export class AnnouncementComponent implements OnInit {
   journalTypes: JournalType[] = [] as Array<JournalType>;
   journalTypeSpel: JournalType = this.constantService.getJournalTypeSpel();
 
-  confreres: Confrere[] = [] as Array<Confrere>;
-  filteredConfreres: Observable<Confrere[]> | undefined;
-
   characterPrice: CharacterPrice = {} as CharacterPrice;
 
   publicationDocument: Document = {} as Document;
@@ -72,7 +67,6 @@ export class AnnouncementComponent implements OnInit {
   selectedNoticeTemplates: AnnouncementNoticeTemplate[] = [] as Array<AnnouncementNoticeTemplate>;
 
   constructor(private formBuilder: UntypedFormBuilder,
-    private confrereService: ConfrereService,
     private characterPriceService: CharacterPriceService,
     private constantService: ConstantService,
     private noticeTypeService: NoticeTypeService,
@@ -82,11 +76,6 @@ export class AnnouncementComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.confrereService.getConfreres().subscribe(response => {
-      this.confreres = response;
-      if (this.announcement!.confrere == null || this.announcement!.confrere == undefined || this.announcement!.confrere.id == undefined)
-        this.announcement!.confrere = this.getJssConfrere();
-    })
 
     this.journalTypeService.getJournalTypes().subscribe(response => {
       this.journalTypes = response;
@@ -99,11 +88,6 @@ export class AnnouncementComponent implements OnInit {
     this.announcementNoticeTemplateService.getAnnouncementNoticeTemplates().subscribe(response => {
       this.noticeTemplates = response;
     })
-
-    this.filteredConfreres = this.announcementForm.get("confrere")?.valueChanges.pipe(
-      startWith(''),
-      map(value => this._filterConfrere(value)),
-    );
 
     this.filteredNoticeTypes = this.announcementForm.get("noticeTypes")?.valueChanges.pipe(
       startWith(''),
@@ -121,7 +105,7 @@ export class AnnouncementComponent implements OnInit {
       if (!this.announcement!)
         this.announcement! = {} as Announcement;
       if (!this.announcement!.confrere)
-        this.announcement!.confrere = this.getJssConfrere();
+        this.announcement!.confrere = this.constantService.getConfrereJss();
       if (!this.announcement!.isRedactedByJss)
         this.announcement!.isRedactedByJss = false;
       if (!this.announcement!.isHeader)
@@ -148,16 +132,6 @@ export class AnnouncementComponent implements OnInit {
       this.toggleTabs();
       this.updateCharacterPrice();
     }
-  }
-
-  getJssConfrere(): Confrere {
-    if (this.confreres != undefined)
-      for (let i = 0; i < this.confreres.length; i++) {
-        const confrere = this.confreres[i];
-        if (confrere.id == this.constantService.getConfrereJss().id)
-          return confrere;
-      }
-    return {} as Confrere;
   }
 
   announcementForm = this.formBuilder.group({
@@ -241,29 +215,12 @@ export class AnnouncementComponent implements OnInit {
       this.announcement.isHeaderFree = true;
   }
 
-  openConfrereDialog() {
-    let dialogConfrere = this.confrereDialog.open(ConfrereDialogComponent, {
-      width: '100%'
-    });
-    dialogConfrere.afterClosed().subscribe(response => {
-      if (response && response != null)
-        this.announcement!.confrere = response;
-      this.updateHeaderFree();
-    });
-  }
-
-
   public displayConfrere(object: Confrere): string {
     return object ? object.label : '';
   }
 
   public displayLabel(object: any): string {
     return object ? object.label : '';
-  }
-
-  private _filterConfrere(value: string): Confrere[] {
-    const filterValue = (value != undefined && value.toLowerCase != undefined) ? value.toLowerCase() : "";
-    return this.confreres.filter(confrere => confrere.label != undefined && confrere.label.toLowerCase().includes(filterValue));
   }
 
   private _filterNoticeType(value: string): NoticeType[] {

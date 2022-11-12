@@ -20,6 +20,10 @@ export interface SortTableColumn {
    */
   displayAsGrade: boolean | undefined;
   /**
+   * Display element as employee (value fonction must provide an Employee object !)
+   */
+  displayAsEmployee: boolean | undefined;
+  /**
    * Indicate to use ellipsis on the column
    */
   isShrinkColumn: boolean | undefined;

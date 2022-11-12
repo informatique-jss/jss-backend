@@ -9,7 +9,7 @@
     <td *ngIf="provision.provisionFamilyType">
       <select-provision-type (selectionChange)="changeProvisionType()" [(model)]="provision.provisionType"
         label="Service" [form]="provisionItemForm" propertyName="provisionType" [isMandatory]="true"
-        [isDisabled]="!editMode"></select-provision-type>
+        [isDisabled]="!editMode" [filteredProvisionFamilyType]="provision.provisionFamilyType"></select-provision-type>
     </td>
   </tr>
   <tr *ngIf="instanceOfCustomerOrder && provision && provision.id">
@@ -34,7 +34,11 @@
   [instanceOfCustomerOrder]="instanceOfCustomerOrder" [provision]="provision"
   *ngIf="provision.bodacc && provision.provisionType && provision.provisionType.provisionScreenType.code==PROVISION_SCREEN_TYPE_BODACC">
 </bodacc-main>
+<formalite [formalite]="provision.formalite" [editMode]="editMode" [isStatusOpen]="isStatusOpen"
+  [instanceOfCustomerOrder]="instanceOfCustomerOrder" [provision]="provision" (provisionChange)="noticeChange()"
+  *ngIf="provision.formalite && provision.provisionType && provision.provisionType.provisionScreenType.code==PROVISION_SCREEN_TYPE_FORMALITE">
+</formalite>
 <div
-  *ngIf="provision.bodacc && provision.provisionType && provision.provisionType.provisionScreenType.code==PROVISION_SCREEN_TYPE_STANDARD">
+  *ngIf="provision && provision.provisionType && provision.provisionType.provisionScreenType.code==PROVISION_SCREEN_TYPE_STANDARD">
   Ecran standard
 </div>

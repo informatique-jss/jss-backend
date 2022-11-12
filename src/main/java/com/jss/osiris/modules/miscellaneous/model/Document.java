@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -15,6 +16,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
@@ -36,27 +38,32 @@ public class Document implements Serializable, IId {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "document_sequence")
 	private Integer id;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JsonIgnore
 	@JoinColumn(name = "id_tiers")
 	@JsonIgnoreProperties(value = { "documents" }, allowSetters = true)
 	private Tiers tiers;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JsonIgnore
 	@JoinColumn(name = "id_confrere")
 	@JsonIgnoreProperties(value = { "documents" }, allowSetters = true)
 	private Confrere confrere;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JsonIgnore
 	@JoinColumn(name = "id_responsable")
 	@JsonIgnoreProperties(value = { "documents" }, allowSetters = true)
 	private Responsable responsable;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JsonIgnore
 	@JoinColumn(name = "id_quotation")
 	@JsonIgnoreProperties(value = { "documents" }, allowSetters = true)
 	private Quotation quotation;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JsonIgnore
 	@JoinColumn(name = "id_customer_order")
 	@JsonIgnoreProperties(value = { "documents" }, allowSetters = true)
 	private CustomerOrder customerOrder;

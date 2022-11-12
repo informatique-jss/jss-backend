@@ -1,0 +1,110 @@
+<form [formGroup]="formaliteForm" *ngIf="formalite && formalite.content && formalite.content.natureCreation">
+  <table class="full-width">
+    <tr>
+      <td>
+        <autocomplete-forme-juridique [(model)]="formalite.content.natureCreation.formeJuridique"
+          label="Forme juridique" [form]="formaliteForm" propertyName="formeJuridique" [isMandatory]="true"
+          [isDisabled]="!editMode" [conditionnalRequired]="true"></autocomplete-forme-juridique>
+      </td>
+    </tr>
+  </table>
+  <table class="full-width">
+    <tr *ngIf="formalite.typePersonne && formalite.typePersonne.code ==typePersonneExploitation.code">
+      <td>
+        <select-type-exploitation [(model)]="formalite.content.natureCreation.typeExploitation" label="typeExploitation"
+          [form]="formaliteForm" propertyName="typeExploitation" [isMandatory]="true" [isDisabled]="!editMode"
+          [conditionnalRequired]="formalite.typePersonne && formalite.typePersonne.code ==typePersonneExploitation.code">
+        </select-type-exploitation>
+      </td>
+    </tr>
+  </table>
+  <table class="full-width" dummyTable>
+    <tr dummyTr *ngIf="formalite.typePersonne.code ==typePersonnePersonnePhysique.code">
+      <td dummyTd>
+        <generic-toggle [(model)]="formalite.content.natureCreation.microEntreprise"
+          label="L'entrepreneur souhaite-t-il bénéficier du statut de micro-entrepreneur ?" [form]="formaliteForm"
+          propertyName="microEntreprise" [isDisabled]="!editMode" dummyToggle dummyComponent>
+        </generic-toggle>
+      </td>
+    </tr>
+  </table>
+  <table class="full-width" dummyTable>
+    <tr dummyTr *ngIf="formalite.typePersonne.code ==typePersonnePersonnePhysique.code">
+      <td dummyTd>
+        <generic-toggle [(model)]="formalite.content.natureCreation.eirl" label="L'entreprise est-elle une EIRL ?"
+          [form]="formaliteForm" propertyName="eirl" [isDisabled]="!editMode" dummyToggle dummyComponent>
+        </generic-toggle>
+      </td>
+    </tr>
+  </table>
+  <table class="full-width" dummyTable>
+    <tr dummyTr>
+      <td dummyTd>
+        <generic-toggle [(model)]="formalite.content.natureCreation.relieeEntrepriseAgricole"
+          label="L'entreprise est-elle reliée à une entreprise agricole ?" [form]="formaliteForm"
+          propertyName="relieeEntrepriseAgricole" [isDisabled]="!editMode" dummyToggle dummyComponent></generic-toggle>
+      </td>
+    </tr>
+  </table>
+  <table class="full-width" dummyTable>
+    <tr dummyTr>
+      <td dummyTd>
+        <generic-toggle [(model)]="formalite.content.natureCreation.entrepriseAgricole"
+          label="L'entreprise est-elle une entreprise agricole ?" [form]="formaliteForm"
+          propertyName="entrepriseAgricole" [isDisabled]="!editMode" dummyToggle dummyComponent>
+        </generic-toggle>
+      </td>
+    </tr>
+  </table>
+  <table class="full-width" dummyTable>
+    <tr dummyTr>
+      <td dummyTd>
+        <generic-toggle [(model)]="formalite.content.natureCreation.etablieEnFrance"
+          label="La société est-elle établie en France ?" [form]="formaliteForm" propertyName="etablieEnFrance"
+          [isDisabled]="!editMode" dummyToggle dummyComponent>
+        </generic-toggle>
+      </td>
+    </tr>
+  </table>
+  <table class="full-width" dummyTable>
+    <tr dummyTr>
+      <td dummyTd>
+        <generic-toggle [(model)]="formalite.content.natureCreation.salarieEnFrance"
+          label="La société a-t-elle des salariés en France ?" [form]="formaliteForm" propertyName="salarieEnFrance"
+          [isDisabled]="!editMode" dummyToggle dummyComponent>
+        </generic-toggle>
+      </td>
+    </tr>
+  </table>
+  <table class="full-width" dummyTable>
+    <tr dummyTr>
+      <td dummyTd>
+        <generic-toggle [(model)]="formalite.content.natureCreation.societeEtrangere"
+          label="Est-ce une société étrangère ?" [form]="formaliteForm" propertyName="societeEtrangere"
+          [isDisabled]="!editMode" dummyToggle dummyComponent>
+        </generic-toggle>
+      </td>
+    </tr>
+  </table>
+  // TODO : move ?
+  <table class="full-width" dummyTable>
+    <tr dummyTr *ngIf="formalite.typeFormalite.code == typeFormaliteMofication.code">
+      <td dummyTd>
+        <generic-toggle [(model)]="formalite.content.natureCreation.seulsBeneficiairesModifies"
+          label="La modification ne concerne que sur les bénéficiaires effectifs ?" [form]="formaliteForm"
+          propertyName="seulsBeneficiairesModifies" [isDisabled]="!editMode" dummyToggle dummyComponent>
+        </generic-toggle>
+      </td>
+    </tr>
+  </table>
+  <table class="full-width" dummyTable>
+    <tr dummyTr>
+      <td dummyTd>
+        <generic-datepicker [(model)]="formalite.content.natureCreation.dateDepotCreation" label="dateDepotCreation"
+          [form]="formaliteForm" propertyName="dateDepotCreation" [isMandatory]="true" [isDisabled]="true"
+          dummyDatePicket dummyComponent>
+        </generic-datepicker>
+      </td>
+    </tr>
+  </table>
+</form>

@@ -35,6 +35,7 @@ export class AutocompleteEmployeeComponent extends GenericLocalAutocompleteCompo
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    super.ngOnChanges(changes);
     if (changes.defaultEmployee)
       this.setDefaultEmployee();
   }

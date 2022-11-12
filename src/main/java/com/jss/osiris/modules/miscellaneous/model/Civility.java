@@ -8,6 +8,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import com.jss.osiris.libs.search.model.IndexedField;
+
 @Entity
 public class Civility implements Serializable, IId {
 
@@ -18,6 +20,7 @@ public class Civility implements Serializable, IId {
     private Integer id;
 
     @Column(nullable = false)
+    @IndexedField
     private String label;
 
     @Column(nullable = false, length = 20)

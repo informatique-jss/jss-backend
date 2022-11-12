@@ -20,41 +20,41 @@
   </div>
 </div>
 <div class="mat-elevation-z2 form-div" *ngIf="selectedEntity ">
-  <form [formGroup]="entityForm">
+  <form [formGroup]="entityForm2">
     <div class="full-width">
       <fieldset [disabled]="editMode==false" class="fieldset-no-border">
         <table class="full-width">
           <tr *ngIf="selectedEntity.id">
             <td>
-              <generic-input [(model)]="selectedEntity.id" label="Identifiant technique" [form]="entityForm"
+              <generic-input [(model)]="selectedEntity.id" label="Identifiant technique" [form]="entityForm2"
                 propertyName="id" [isMandatory]="true" [isDisabled]="true"></generic-input>
             </td>
           </tr>
           <tr>
             <td>
-              <generic-input [(model)]="selectedEntity.code" label="Codification" [maxLength]="20" [form]="entityForm"
+              <generic-input [(model)]="selectedEntity.code" label="Codification" [maxLength]="20" [form]="entityForm2"
                 propertyName="code" [isMandatory]="true" [isDisabled]="!editMode"></generic-input>
             </td>
           </tr>
           <tr>
             <td>
               <generic-input [(model)]="selectedEntity.label" label="Nom fonctionnel" [maxLength]="100"
-                [form]="entityForm" propertyName="label" [isMandatory]="true" [isDisabled]="!editMode"></generic-input>
+                [form]="entityForm2" propertyName="label" [isMandatory]="true" [isDisabled]="!editMode"></generic-input>
             </td>
           </tr>
         </table>
         <table class="full-width">
           <tr>
             <td>
-              <chips-mail [(model)]="selectedEntity.mails" label="Mails (annonce)" [form]="entityForm"
+              <chips-mail [(model)]="selectedEntity.mails" label="Mails (annonce)" [form]="entityForm2"
                 propertyName="mails" [isMandatory]="false" [isDisabled]="!editMode"></chips-mail>
             </td>
             <td>
-              <chips-mail [(model)]="selectedEntity.accountingMails" label="Mails (comptabilité)" [form]="entityForm"
+              <chips-mail [(model)]="selectedEntity.accountingMails" label="Mails (comptabilité)" [form]="entityForm2"
                 propertyName="accountingMails" [isMandatory]="false" [isDisabled]="!editMode"></chips-mail>
             </td>
             <td>
-              <chips-phone [(model)]="selectedEntity.phones" label="Téléphones" [form]="entityForm"
+              <chips-phone [(model)]="selectedEntity.phones" label="Téléphones" [form]="entityForm2"
                 propertyName="phones" [isMandatory]="false" [isDisabled]="!editMode"></chips-phone>
             </td>
           </tr>
@@ -62,19 +62,19 @@
         <table class="full-width">
           <tr>
             <td *ngIf="selectedEntity.accountingAccountProvider">
-              <autocomplete-accounting-account [(model)]="selectedEntity.accountingAccountProvider" [form]="entityForm"
+              <autocomplete-accounting-account [(model)]="selectedEntity.accountingAccountProvider" [form]="entityForm2"
                 propertyName="accountingAccountProvider" [isMandatory]="false" [isDisabled]="true"
                 label="Compte comptable fournisseur">
               </autocomplete-accounting-account>
             </td>
             <td *ngIf="selectedEntity.accountingAccountCustomer">
-              <autocomplete-accounting-account [(model)]="selectedEntity.accountingAccountCustomer" [form]="entityForm"
+              <autocomplete-accounting-account [(model)]="selectedEntity.accountingAccountCustomer" [form]="entityForm2"
                 propertyName="accountingAccountCustomer" [isMandatory]="false" [isDisabled]="true"
                 label="Compte comptable client">
               </autocomplete-accounting-account>
             </td>
             <td *ngIf="selectedEntity.accountingAccountDeposit">
-              <autocomplete-accounting-account [(model)]="selectedEntity.accountingAccountDeposit" [form]="entityForm"
+              <autocomplete-accounting-account [(model)]="selectedEntity.accountingAccountDeposit" [form]="entityForm2"
                 propertyName="accountingAccountDeposit" [isMandatory]="false" [isDisabled]="true"
                 label="Compte comptable d'acompte">
               </autocomplete-accounting-account>
@@ -84,12 +84,12 @@
         <table class="full-width">
           <tr>
             <td>
-              <generic-input [(model)]="selectedEntity.iban" label="IBAN" [form]="entityForm" propertyName="iban"
+              <generic-input [(model)]="selectedEntity.iban" label="IBAN" [form]="entityForm2" propertyName="iban"
                 [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="40"></generic-input>
             </td>
             <td>
               <select-vat-collection-type [(model)]="selectedEntity.vatCollectionType"
-                label="Type d'encaissement de la TVA" [form]="entityForm" propertyName="vatCollectionType"
+                label="Type d'encaissement de la TVA" [form]="entityForm2" propertyName="vatCollectionType"
                 [isMandatory]="true" [isDisabled]="!editMode"></select-vat-collection-type>
             </td>
           </tr>
@@ -98,27 +98,27 @@
           <tr>
             <td>
               <generic-textarea [(model)]="selectedEntity.mailRecipient" label="Destinataire(s) courrier"
-                [form]="entityForm" propertyName="mailRecipient" [isMandatory]="false" [isDisabled]="!editMode"
+                [form]="entityForm2" propertyName="mailRecipient" [isMandatory]="false" [isDisabled]="!editMode"
                 (filterInput)="limitTextareaSize(3)"></generic-textarea>
             </td>
             <td>
-              <generic-input [(model)]="selectedEntity.address" label="Adresse" [form]="entityForm"
+              <generic-input [(model)]="selectedEntity.address" label="Adresse" [form]="entityForm2"
                 propertyName="address" [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="60"></generic-input>
             </td>
             <td>
-              <autocomplete-postal-code [(model)]="selectedEntity.postalCode" [form]="entityForm" label="Code postal"
+              <autocomplete-postal-code [(model)]="selectedEntity.postalCode" [form]="entityForm2" label="Code postal"
                 [isDisabled]="!editMode" propertyName="postalCode" [isMandatory]="false"
                 [byPassAutocompletValidator]="true" (onOptionSelected)="fillCity($event)">
               </autocomplete-postal-code>
             </td>
             <td>
               <autocomplete-city [(model)]="selectedEntity.city" [modelCountry]="selectedEntity.country"
-                [form]="entityForm" propertyName="city" [isMandatory]="true" [isDisabled]="!editMode" label="Ville"
+                [form]="entityForm2" propertyName="city" [isMandatory]="true" [isDisabled]="!editMode" label="Ville"
                 (onOptionSelected)="fillPostalCode($event)">
               </autocomplete-city>
             </td>
             <td>
-              <autocomplete-country [(model)]="selectedEntity.country" [form]="entityForm" propertyName="country"
+              <autocomplete-country [(model)]="selectedEntity.country" [form]="entityForm2" propertyName="country"
                 label="Pays" [isDisabled]="!editMode" [isMandatory]="false" [isDisabled]="!editMode">
               </autocomplete-country>
             </td>
@@ -127,21 +127,21 @@
         <table class="full-width">
           <tr>
             <td>
-              <radio-group-journal-type [(model)]="selectedEntity.journalType" [form]="entityForm"
-                propertyName="journalType" label="Type de journal"></radio-group-journal-type>
+              <radio-group-journal-type [(model)]="selectedEntity.journalType" [form]="entityForm2"
+                [isDisabled]="!editMode" propertyName="journalType" label="Type de journal"></radio-group-journal-type>
             </td>
             <td>
-              <select-day [(model)]="selectedEntity.weekDays" label="Jour(s) de publication" [form]="entityForm"
+              <select-day [(model)]="selectedEntity.weekDays" label="Jour(s) de publication" [form]="entityForm2"
                 propertyName="weekDays" [isMandatory]="true" [isDisabled]="!editMode"></select-day>
             </td>
             <td>
               <select-departments [(model)]="selectedEntity.departments" label="Département(s) de publication"
-                [form]="entityForm" propertyName="departments" [isMandatory]="true" [isDisabled]="!editMode">
+                [form]="entityForm2" propertyName="departments" [isMandatory]="true" [isDisabled]="!editMode">
               </select-departments>
             </td>
             <td>
               <generic-input [(model)]="selectedEntity.lastShipmentForPublication" label="Dernier envoi"
-                [form]="entityForm" propertyName="lastShipmentForPublication" [isMandatory]="false"
+                [form]="entityForm2" propertyName="lastShipmentForPublication" [isMandatory]="false"
                 [isDisabled]="!editMode" [maxLength]="60"></generic-input>
             </td>
           </tr>
@@ -149,25 +149,25 @@
         <table class="full-width">
           <tr>
             <td>
-              <generic-input [(model)]="selectedEntity.reinvoicing" label="Refacturation (%)" [form]="entityForm"
+              <generic-input [(model)]="selectedEntity.reinvoicing" label="Refacturation (%)" [form]="entityForm2"
                 propertyName="reinvoicing" [isMandatory]="false" [isDisabled]="!editMode" type="number"></generic-input>
             </td>
             <td>
-              <chips-special-offers [(model)]="selectedEntity.specialOffers" [form]="entityForm"
+              <chips-special-offers [(model)]="selectedEntity.specialOffers" [form]="entityForm2"
                 propertyName="specialOffers" [isDisabled]="!editMode"></chips-special-offers>
             </td>
             <td>
-              <generic-input [(model)]="selectedEntity.shippingCosts" label="Frais de port (€)" [form]="entityForm"
+              <generic-input [(model)]="selectedEntity.shippingCosts" label="Frais de port (€)" [form]="entityForm2"
                 propertyName="shippingCosts" [isMandatory]="false" [isDisabled]="!editMode" type="number">
               </generic-input>
             </td>
             <td>
               <generic-input [(model)]="selectedEntity.administrativeFees" label="Frais administratifs (€)"
-                [form]="entityForm" propertyName="administrativeFees" [isMandatory]="false" [isDisabled]="!editMode"
+                [form]="entityForm2" propertyName="administrativeFees" [isMandatory]="false" [isDisabled]="!editMode"
                 type="number"></generic-input>
             </td>
             <td>
-              <generic-input [(model)]="selectedEntity.discountRate" label="Remise consentie (%)" [form]="entityForm"
+              <generic-input [(model)]="selectedEntity.discountRate" label="Remise consentie (%)" [form]="entityForm2"
                 propertyName="discountRate" [isMandatory]="false" [isDisabled]="!editMode" type="number">
               </generic-input>
             </td>
@@ -176,12 +176,12 @@
         <table class="full-width">
           <tr>
             <td>
-              <generic-input [(model)]="selectedEntity.numberOfPrint" label="Tirage" [form]="entityForm"
+              <generic-input [(model)]="selectedEntity.numberOfPrint" label="Tirage" [form]="entityForm2"
                 propertyName="numberOfPrint" [isMandatory]="false" [isDisabled]="!editMode" type="number">
               </generic-input>
             </td>
             <td>
-              <generic-input [(model)]="selectedEntity.paperPrice" label="Prix du journal" [form]="entityForm"
+              <generic-input [(model)]="selectedEntity.paperPrice" label="Prix du journal" [form]="entityForm2"
                 propertyName="paperPrice" [isMandatory]="false" [isDisabled]="!editMode" type="number">
               </generic-input>
             </td>
@@ -231,7 +231,7 @@
         <table class="full-width">
           <tr>
             <td>
-              <generic-textarea [(model)]="selectedEntity.observations" label="Commentaires" [form]="entityForm"
+              <generic-textarea [(model)]="selectedEntity.observations" label="Commentaires" [form]="entityForm2"
                 propertyName="observations" [isMandatory]="false" [isDisabled]="!editMode"></generic-textarea>
             </td>
           </tr>
@@ -247,8 +247,9 @@
             <table class="full-width">
               <tr>
                 <td>
-                  <radio-group-billing-label [(model)]="billingDocument.billingLabelType" [form]="entityForm"
-                    propertyName="billingLabelType" label="Libellé sur facture"></radio-group-billing-label>
+                  <radio-group-billing-label [(model)]="billingDocument.billingLabelType" [form]="entityForm2"
+                    [isDisabled]="!editMode" propertyName="billingLabelType" label="Libellé sur facture">
+                  </radio-group-billing-label>
                 </td>
               </tr>
             </table>
@@ -256,7 +257,7 @@
               *ngIf="billingDocument.billingLabelType!=undefined && billingDocument.billingLabelType.code!=undefined && billingDocument.billingLabelType.id==billingLabelTypeOther.id">
               <tr>
                 <td>
-                  <autocomplete-regie [(model)]="billingDocument.regie" [form]="entityForm" propertyName="regie"
+                  <autocomplete-regie [(model)]="billingDocument.regie" [form]="entityForm2" propertyName="regie"
                     [isMandatory]="false" [isDisabled]="!editMode" label="Régie"></autocomplete-regie>
                 </td>
               </tr>
@@ -266,7 +267,7 @@
               <tr>
                 <td>
                   <generic-toggle [(model)]="billingDocument.isResponsableOnBilling" label="Responsable sur facture ?"
-                    [form]="entityForm" propertyName="isResponsableOnBilling"></generic-toggle>
+                    [form]="entityForm2" propertyName="isResponsableOnBilling"></generic-toggle>
                 </td>
               </tr>
             </table>
@@ -274,12 +275,12 @@
               <tr>
                 <td>
                   <generic-toggle [(model)]="billingDocument.isCommandNumberMandatory"
-                    label="Numéro de commande obligatoire ?" [form]="entityForm"
+                    label="Numéro de commande obligatoire ?" [form]="entityForm2"
                     propertyName="isCommandNumberMandatory"></generic-toggle>
                 </td>
                 <td *ngIf="billingDocument.isCommandNumberMandatory">
                   <generic-input [(model)]="billingDocument.commandNumber" label="N° de commande annuel"
-                    [form]="entityForm" propertyName="commandNumber" [maxLength]="40"></generic-input>
+                    [form]="entityForm2" propertyName="commandNumber" [maxLength]="40"></generic-input>
                 </td>
               </tr>
             </table>
@@ -296,30 +297,31 @@
             <table class="full-width">
               <tr>
                 <td>
-                  <select-payment-types [(model)]="selectedEntity.paymentType" label="Type" [form]="entityForm"
+                  <select-payment-types [(model)]="selectedEntity.paymentType" label="Type" [form]="entityForm2"
                     propertyName="paymentType" [isMandatory]="true" [isDisabled]="!editMode"
-                    [filteredPaymentType]="[paymentTypePrelevement,paymentTypeOther]"></select-payment-types>
+                    [filteredPaymentType]="[paymentTypePrelevement,paymentTypeVirement,paymentTypeCB, paymentTypeEspeces]">
+                  </select-payment-types>
                 </td>
                 <td
                   *ngIf="selectedEntity && selectedEntity.paymentType && selectedEntity.paymentType.id==paymentTypePrelevement.id">
-                  <generic-input [(model)]="selectedEntity.iban" label="IBAN" [form]="entityForm" propertyName="iban"
+                  <generic-input [(model)]="selectedEntity.iban" label="IBAN" [form]="entityForm2" propertyName="iban"
                     [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="40"></generic-input>
                 </td>
                 <td
                   *ngIf="selectedEntity !=undefined && selectedEntity.paymentType!=undefined && selectedEntity.paymentType.code!=undefined && selectedEntity.paymentType.id==paymentTypePrelevement.id">
                   <generic-toggle [(model)]="selectedEntity.isSepaMandateReceived" label="Mandat SEPA reçu ?"
-                    [form]="entityForm" propertyName="isSepaMandateReceived"></generic-toggle>
+                    [form]="entityForm2" propertyName="isSepaMandateReceived"></generic-toggle>
                 </td>
               </tr>
               <tr>
                 <td>
                   <generic-toggle [(model)]="selectedEntity.isProvisionalPaymentMandatory"
-                    label="Provision obligatoire ?" [form]="entityForm" propertyName="isProvisionalPaymentMandatory">
+                    label="Provision obligatoire ?" [form]="entityForm2" propertyName="isProvisionalPaymentMandatory">
                   </generic-toggle>
                 </td>
                 <td>
                   <select-payment-deadline [(model)]="dunningDocument.paymentDeadlineType" label="Délai de paiement"
-                    [form]="entityForm" propertyName="paymentDeadlineType" [isDisabled]="!editMode">
+                    [form]="entityForm2" propertyName="paymentDeadlineType" [isDisabled]="!editMode">
                   </select-payment-deadline>
                 </td>
               </tr>
@@ -335,16 +337,16 @@
             <table class="full-width">
               <tr>
                 <td>
-                  <generic-toggle [(model)]="refundDocument.isRefundable" label="Remboursement ?" [form]="entityForm"
+                  <generic-toggle [(model)]="refundDocument.isRefundable" label="Remboursement ?" [form]="entityForm2"
                     propertyName="isRefundable"></generic-toggle>
                 </td>
                 <td *ngIf="refundDocument.isRefundable">
                   <select-refund-type [(model)]="refundDocument.refundType" label="Type de remboursement"
-                    [form]="entityForm" propertyName="refundType"></select-refund-type>
+                    [isDisabled]="!editMode" [form]="entityForm2" propertyName="refundType"></select-refund-type>
                 </td>
                 <td
                   *ngIf="refundDocument && refundDocument.isRefundable && refundDocument && refundDocument.refundType.code!=undefined && refundDocument.refundType.id==refundTypeVirement.id">
-                  <generic-input [(model)]="refundDocument.refundIBAN" label="IBAN" [form]="entityForm"
+                  <generic-input [(model)]="refundDocument.refundIBAN" label="IBAN" [form]="entityForm2"
                     propertyName="refundIBAN" [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="40">
                   </generic-input>
                 </td>

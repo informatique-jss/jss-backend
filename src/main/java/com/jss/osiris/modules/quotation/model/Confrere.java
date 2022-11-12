@@ -14,7 +14,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
-import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.miscellaneous.model.City;
 import com.jss.osiris.modules.miscellaneous.model.Country;
@@ -150,7 +149,6 @@ public class Confrere implements ITiers {
 
 	@ManyToOne
 	@JoinColumn(name = "id_payment_type")
-	@IndexedField
 	private PaymentType paymentType;
 
 	@ManyToOne

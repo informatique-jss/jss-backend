@@ -1,13 +1,22 @@
 package com.jss.osiris.modules.quotation.model;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 
 @Entity
@@ -23,10 +32,7 @@ public class QuotationStatus implements Serializable, IId {
 	public static String VALIDATED_BY_CUSTOMER = "VALIDATED_BY_CUSTOMER";
 	public static String REFUSED_BY_CUSTOMER = "REFUSED_BY_CUSTOMER";
 	public static String ABANDONED = "ABANDONED";
-	public static String BILLED = "BILLED";
-	public static String CANCELLED = "CANCELLED";
-	public static String WAITING_DEPOSIT = "WAITING_DEPOSIT";
-	public static String BEING_PROCESSED = "BEING_PROCESSED";
+	public static String SET_AS_CUSTOMER_ORDER = "SET_AS_CUSTOMER_ORDER";
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -37,6 +43,20 @@ public class QuotationStatus implements Serializable, IId {
 
 	@Column(nullable = false, length = 30)
 	private String code;
+
+	private String icon;
+
+	@ManyToMany(fetch = FetchType.EAGER)
+	@Fetch(FetchMode.SUBSELECT)
+	@JoinTable(name = "asso_quotation_status_successor", joinColumns = @JoinColumn(name = "id_quotation_status"), inverseJoinColumns = @JoinColumn(name = "id_quotation_status_successor"))
+	@JsonIgnoreProperties(value = { "predecessors", "successors" })
+	private List<QuotationStatus> successors;
+
+	@ManyToMany(fetch = FetchType.EAGER)
+	@Fetch(FetchMode.SUBSELECT)
+	@JoinTable(name = "asso_quotation_status_predecessor", joinColumns = @JoinColumn(name = "id_quotation_status"), inverseJoinColumns = @JoinColumn(name = "id_quotation_status_predecessor"))
+	@JsonIgnoreProperties(value = { "predecessors", "successors" })
+	private List<QuotationStatus> predecessors;
 
 	public Integer getId() {
 		return id;
@@ -58,8 +78,96 @@ public class QuotationStatus implements Serializable, IId {
 		return code;
 	}
 
+	public static String getOPEN() {
+		return OPEN;
+	}
+
+	public static void setOPEN(String oPEN) {
+		OPEN = oPEN;
+	}
+
+	public static String getTO_VERIFY() {
+		return TO_VERIFY;
+	}
+
+	public static void setTO_VERIFY(String tO_VERIFY) {
+		TO_VERIFY = tO_VERIFY;
+	}
+
+	public static String getVALIDATED_BY_JSS() {
+		return VALIDATED_BY_JSS;
+	}
+
+	public static void setVALIDATED_BY_JSS(String vALIDATED_BY_JSS) {
+		VALIDATED_BY_JSS = vALIDATED_BY_JSS;
+	}
+
+	public static String getSENT_TO_CUSTOMER() {
+		return SENT_TO_CUSTOMER;
+	}
+
+	public static void setSENT_TO_CUSTOMER(String sENT_TO_CUSTOMER) {
+		SENT_TO_CUSTOMER = sENT_TO_CUSTOMER;
+	}
+
+	public static String getVALIDATED_BY_CUSTOMER() {
+		return VALIDATED_BY_CUSTOMER;
+	}
+
+	public static void setVALIDATED_BY_CUSTOMER(String vALIDATED_BY_CUSTOMER) {
+		VALIDATED_BY_CUSTOMER = vALIDATED_BY_CUSTOMER;
+	}
+
+	public static String getREFUSED_BY_CUSTOMER() {
+		return REFUSED_BY_CUSTOMER;
+	}
+
+	public static void setREFUSED_BY_CUSTOMER(String rEFUSED_BY_CUSTOMER) {
+		REFUSED_BY_CUSTOMER = rEFUSED_BY_CUSTOMER;
+	}
+
+	public static String getABANDONED() {
+		return ABANDONED;
+	}
+
+	public static void setABANDONED(String aBANDONED) {
+		ABANDONED = aBANDONED;
+	}
+
+	public static String getSET_AS_CUSTOMER_ORDER() {
+		return SET_AS_CUSTOMER_ORDER;
+	}
+
+	public static void setSET_AS_CUSTOMER_ORDER(String sET_AS_CUSTOMER_ORDER) {
+		SET_AS_CUSTOMER_ORDER = sET_AS_CUSTOMER_ORDER;
+	}
+
 	public void setCode(String code) {
 		this.code = code;
+	}
+
+	public String getIcon() {
+		return icon;
+	}
+
+	public void setIcon(String icon) {
+		this.icon = icon;
+	}
+
+	public List<QuotationStatus> getSuccessors() {
+		return successors;
+	}
+
+	public void setSuccessors(List<QuotationStatus> successors) {
+		this.successors = successors;
+	}
+
+	public List<QuotationStatus> getPredecessors() {
+		return predecessors;
+	}
+
+	public void setPredecessors(List<QuotationStatus> predecessors) {
+		this.predecessors = predecessors;
 	}
 
 }

@@ -64,8 +64,8 @@ public class CustomerOrder implements IQuotation, IAttachment {
 	private LocalDateTime createdDate;
 
 	@ManyToOne
-	@JoinColumn(name = "id_status")
-	private QuotationStatus quotationStatus;
+	@JoinColumn(name = "id_customer_order_status")
+	private CustomerOrderStatus customerOrderStatus;
 
 	@Column(columnDefinition = "TEXT")
 	private String observations;
@@ -330,14 +330,6 @@ public class CustomerOrder implements IQuotation, IAttachment {
 		this.invoices = invoices;
 	}
 
-	public QuotationStatus getQuotationStatus() {
-		return quotationStatus;
-	}
-
-	public void setQuotationStatus(QuotationStatus quotationStatus) {
-		this.quotationStatus = quotationStatus;
-	}
-
 	public List<AccountingRecord> getAccountingRecords() {
 		return accountingRecords;
 	}
@@ -352,6 +344,14 @@ public class CustomerOrder implements IQuotation, IAttachment {
 
 	public void setAssoAffaireOrders(List<AssoAffaireOrder> assoAffaireOrders) {
 		this.assoAffaireOrders = assoAffaireOrders;
+	}
+
+	public CustomerOrderStatus getCustomerOrderStatus() {
+		return customerOrderStatus;
+	}
+
+	public void setCustomerOrderStatus(CustomerOrderStatus customerOrderStatus) {
+		this.customerOrderStatus = customerOrderStatus;
 	}
 
 }

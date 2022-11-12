@@ -30,6 +30,7 @@ public class ProvisionScreenTypeServiceImpl implements ProvisionScreenTypeServic
         updateScreenType(ProvisionScreenType.ANNOUNCEMENT, "Ecran annonces légales");
         updateScreenType(ProvisionScreenType.BODACC, "Ecran BODACC");
         updateScreenType(ProvisionScreenType.DOMICILIATION, "Ecran domicilation");
+        updateScreenType(ProvisionScreenType.FORMALITE, "Ecran formalité");
         updateScreenType(ProvisionScreenType.STANDARD, "Ecran standard");
     }
 

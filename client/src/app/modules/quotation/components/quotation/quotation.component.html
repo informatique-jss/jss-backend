@@ -124,7 +124,8 @@
     </div>
     <div [hidden]="!editMode && (quotation.id==undefined || quotation.id==null)">
       <fieldset [disabled]="editMode==false" class="fieldset-no-border">
-        <mat-tab-group animationDuration="0ms" #tabs [(selectedIndex)]="selectedTabIndex">
+        <mat-tab-group animationDuration="0ms" #tabs [(selectedIndex)]="selectedTabIndex"
+          (selectedTabChange)="changeTab($event)">
           <mat-tab label="Donneur d'ordre">
             <ordering-customer [quotation]="quotation" [editMode]="editMode" (updateDocuments)="updateDocuments()">
             </ordering-customer>
@@ -253,79 +254,52 @@
 </button>
 
 <button matTooltip="Changer de statut" mat-fab color="accent" class="fourth-fab-button"
-  *ngIf="editMode==false && !instanceOfCustomerOrder && quotation.id!=undefined && quotation.id!=null && quotation.quotationStatus"
+  *ngIf="editMode==false && instanceOfQuotationFn(this.quotation) &&quotation && quotation.quotationStatus && (quotation.quotationStatus.successors || quotation.quotationStatus.predecessors)"
   [matMenuTriggerFor]="menu">
   <mat-icon>done</mat-icon>
   <mat-menu #menu="matMenu" style="min-height: 0px;padding: 0;" xPosition="before">
-    <button mat-menu-item
-      *ngIf="quotation.quotationStatus.code==QUOTATION_STATUS_TO_VERIFY || quotation.quotationStatus.code==QUOTATION_STATUS_REFUSED_BY_CUSTOMER|| quotation.quotationStatus.code==QUOTATION_STATUS_CANCELLED|| quotation.quotationStatus.code==QUOTATION_STATUS_ABANDONED"
-      (click)="changeStatus(QUOTATION_STATUS_OPEN)">
-      <mat-icon>auto_awesome</mat-icon><span>Repasser à ouvert</span>
+    <button mat-menu-item (click)="displayQuotationWorkflowDialog()">
+      <span>Voir le workflow</span>
     </button>
-    <button mat-menu-item *ngIf="quotation.quotationStatus.code==QUOTATION_STATUS_OPEN"
-      (click)="changeStatus(QUOTATION_STATUS_TO_VERIFY)">
-      <mat-icon>search</mat-icon><span>Faire vérifier</span>
+    <button disabled mat-menu-item *ngIf="quotation.quotationStatus.successors">
+      <span>Passer à</span>
     </button>
-    <button mat-menu-item *ngIf="quotation.quotationStatus.code==QUOTATION_STATUS_TO_VERIFY"
-      (click)="changeStatus(QUOTATION_STATUS_VALIDATED_BY_JSS)">
-      <mat-icon>task_alt</mat-icon><span>Valider par le JSS</span>
+    <button mat-menu-item *ngFor="let status of quotation.quotationStatus.successors" (click)="changeStatus(status)">
+      <mat-icon>{{status.icon}}</mat-icon><span>{{status.label}}</span>
     </button>
-    <button mat-menu-item *ngIf="quotation.quotationStatus.code==QUOTATION_STATUS_VALIDATED_BY_JSS"
-      (click)="changeStatus(QUOTATION_STATUS_SENT_TO_CUSTOMER)">
-      <mat-icon>outgoing_mail</mat-icon><span>Envoyer au client</span>
+    <button disabled mat-menu-item
+      *ngIf="quotation.quotationStatus.predecessors && quotation.quotationStatus.predecessors.length>0">
+      <span>Revenir à</span>
     </button>
-    <button mat-menu-item *ngIf="quotation.quotationStatus.code==QUOTATION_STATUS_SENT_TO_CUSTOMER"
-      (click)="changeStatus(QUOTATION_STATUS_VALIDATED_BY_CUSTOMER)">
-      <mat-icon>approval</mat-icon><span>Indiquer validé par le client</span>
-    </button>
-    <button mat-menu-item *ngIf="quotation.quotationStatus.code==QUOTATION_STATUS_VALIDATED_BY_CUSTOMER"
-      (click)="changeStatus(QUOTATION_STATUS_SENT_TO_CUSTOMER)">
-      <mat-icon>shopping_cart</mat-icon><span>Passer en commande</span>
-    </button>
-    <button mat-menu-item *ngIf="quotation.quotationStatus.code==QUOTATION_STATUS_SENT_TO_CUSTOMER"
-      (click)="changeStatus(QUOTATION_STATUS_REFUSED_BY_CUSTOMER)">
-      <mat-icon>remove_shopping_cart</mat-icon><span>Indiquer refusé par le client</span>
-    </button>
-    <button mat-menu-item (click)="changeStatus(QUOTATION_STATUS_ABANDONED)"
-      *ngIf="quotation.quotationStatus.code!=QUOTATION_STATUS_ABANDONED">
-      <mat-icon>block</mat-icon><span>Abandonner</span>
-    </button>
-    <button mat-menu-item *ngIf="quotation.quotationStatus.code==QUOTATION_STATUS_REFUSED_BY_CUSTOMER"
-      (click)="changeStatus(QUOTATION_STATUS_CANCELLED)">
-      <mat-icon>delete</mat-icon><span>Annuler</span>
+    <button mat-menu-item *ngFor="let status of quotation.quotationStatus.predecessors" (click)="changeStatus(status)">
+      <mat-icon>{{status.icon}}</mat-icon><span>{{status.label}}</span>
     </button>
   </mat-menu>
 </button>
+
+
 <button matTooltip="Changer de statut" mat-fab color="accent" class="fourth-fab-button"
-  *ngIf="editMode==false && instanceOfCustomerOrder && quotation.id!=undefined && quotation.id!=null && quotation.quotationStatus"
+  *ngIf="editMode==false && instanceOfCustomerOrderFn(this.quotation) &&quotation && quotation.customerOrderStatus && (quotation.customerOrderStatus.successors || quotation.customerOrderStatus.predecessors)"
   [matMenuTriggerFor]="menu">
   <mat-icon>done</mat-icon>
   <mat-menu #menu="matMenu" style="min-height: 0px;padding: 0;" xPosition="before">
-    <button mat-menu-item
-      *ngIf="quotation.quotationStatus.code==QUOTATION_STATUS_TO_VERIFY || quotation.quotationStatus.code==QUOTATION_STATUS_REFUSED_BY_CUSTOMER|| quotation.quotationStatus.code==QUOTATION_STATUS_CANCELLED|| quotation.quotationStatus.code==QUOTATION_STATUS_ABANDONED"
-      (click)="changeStatus(QUOTATION_STATUS_OPEN)">
-      <mat-icon>auto_awesome</mat-icon><span>Repasser à ouvert</span>
+    <button mat-menu-item (click)="displayCustomerOrderWorkflowDialog()">
+      <span>Voir le workflow</span>
     </button>
-    <button mat-menu-item *ngIf="quotation.quotationStatus.code==QUOTATION_STATUS_OPEN"
-      (click)="changeStatus(QUOTATION_STATUS_TO_VERIFY)">
-      <mat-icon>search</mat-icon><span>Faire vérifier</span>
+    <button disabled mat-menu-item *ngIf="quotation.customerOrderStatus.successors">
+      <span>Passer à</span>
     </button>
-    <button mat-menu-item *ngIf="quotation.quotationStatus.code==QUOTATION_STATUS_TO_VERIFY"
-      (click)="changeStatus(QUOTATION_STATUS_VALIDATED_BY_JSS)">
-      <mat-icon>task_alt</mat-icon><span>Valider par le JSS</span>
+    <button mat-menu-item *ngFor="let status of quotation.customerOrderStatus.successors"
+      (click)="changeStatus(status)">
+      <mat-icon>{{status.icon}}</mat-icon><span>{{status.label}}</span>
     </button>
-    <button mat-menu-item *ngIf="quotation.quotationStatus.code==QUOTATION_STATUS_VALIDATED_BY_JSS"
-      (click)="changeStatus(QUOTATION_STATUS_VALIDATED_BY_CUSTOMER)">
-      <mat-icon>task_alt</mat-icon><span>Indiquer validé par le client</span>
+    <button disabled mat-menu-item
+      *ngIf="quotation.customerOrderStatus.predecessors && quotation.customerOrderStatus.predecessors.length>0">
+      <span>Revenir à</span>
     </button>
-    <button mat-menu-item *ngIf="quotation.quotationStatus.code==QUOTATION_STATUS_WAITING_DEPOSIT"
-      (click)="changeStatus(QUOTATION_STATUS_BEING_PROCESSED)">
-      <mat-icon>task_alt</mat-icon><span>Bypasser la demande d'accompte</span>
+    <button mat-menu-item *ngFor="let status of quotation.customerOrderStatus.predecessors"
+      (click)="changeStatus(status)">
+      <mat-icon>{{status.icon}}</mat-icon><span>{{status.label}}</span>
     </button>
-    <button mat-menu-item *ngIf="quotation.quotationStatus.code==QUOTATION_STATUS_BEING_PROCESSED"
-      (click)="changeStatus(QUOTATION_STATUS_BILLED)">
-      <mat-icon>task_alt</mat-icon><span>Emettre la facture</span>
-    </button>
-
   </mat-menu>
 </button>

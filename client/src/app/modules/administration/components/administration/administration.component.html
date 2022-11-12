@@ -66,11 +66,6 @@
           [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
           [cloneEvent]="cloneEvent.asObservable()">
         </referential-quotation-label-type>
-        <referential-quotation-status *ngIf="selectedReferential==QUOTATION_STATUS_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-quotation-status>
         <referential-record-type *ngIf="selectedReferential==RECORD_TYPE_REFERENTIAL"
           (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
           [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"

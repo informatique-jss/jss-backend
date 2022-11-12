@@ -30,12 +30,22 @@ export class ReferentialConfrereComponent extends GenericReferentialComponent<Co
     super(formBuilder2, appService2);
   }
 
+  entityForm2 = this.formBuilder2.group({
+    boardGrade: [''],
+    publicationCertificateDocumentGrade: [''],
+    billingGrade: [''],
+    paperGrade: [''],
+  });
+
+
   grades: string[] = ["+", "++", "+++", "++++", "+++++"];
 
   paymentTypes: PaymentType[] = [] as Array<PaymentType>;
 
   paymentTypePrelevement = this.constantService.getPaymentTypePrelevement();
-  paymentTypeOther = this.constantService.getPaymentTypeOther();
+  paymentTypeCB = this.constantService.getPaymentTypeCB();
+  paymentTypeVirement = this.constantService.getPaymentTypeVirement();
+  paymentTypeEspeces = this.constantService.getPaymentTypeEspeces();
 
 
   billingLabelTypeOther = this.constantService.getBillingLabelTypeOther();

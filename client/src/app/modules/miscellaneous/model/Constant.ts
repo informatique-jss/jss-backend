@@ -6,6 +6,9 @@ import { AssignationType } from "../../quotation/model/AssignationType";
 import { BodaccPublicationType } from "../../quotation/model/BodaccPublicationType";
 import { Confrere } from "../../quotation/model/Confrere";
 import { DomiciliationContractType } from "../../quotation/model/DomiciliationContractType";
+import { FormeJuridique } from '../../quotation/model/guichet-unique/referentials/FormeJuridique';
+import { TypeFormalite } from '../../quotation/model/guichet-unique/referentials/TypeFormalite';
+import { TypePersonne } from '../../quotation/model/guichet-unique/referentials/TypePersonne';
 import { JournalType } from "../../quotation/model/JournalType";
 import { MailRedirectionType } from "../../quotation/model/MailRedirectionType";
 import { QuotationLabelType } from "../../quotation/model/QuotationLabelType";
@@ -53,8 +56,9 @@ export interface Constant {
   billingTypeLogo: BillingType;
   quotationLabelTypeOther: QuotationLabelType;
   paymentTypePrelevement: PaymentType;
-  paymentTypeOther: PaymentType;
   paymentTypeVirement: PaymentType;
+  paymentTypeCB: PaymentType;
+  paymentTypeEspeces: PaymentType;
   refundTypeVirement: RefundType;
   subscriptionPeriodType12M: SubscriptionPeriodType;
   legalFormUnregistered: LegalForm;
@@ -89,4 +93,12 @@ export interface Constant {
   departmentMartinique: Department;
   departmentGuadeloupe: Department;
   departmentReunion: Department;
+  typePersonnePersonnePhysique: TypePersonne;
+  typePersonnePersonneMorale: TypePersonne;
+  typePersonneExploitation: TypePersonne;
+  formeJuridiqueEntrepreneurIndividuel: FormeJuridique;
+  typeFormaliteCessation: TypeFormalite;
+  typeFormaliteModification: TypeFormalite;
+  typeFormaliteCreation: TypeFormalite;
+  typeFormaliteCorrection: TypeFormalite;
 }

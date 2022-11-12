@@ -451,7 +451,7 @@ public class Generate {
                                                                 + className + "Service.java",
                                                 "UTF-8");
 
-                                writer.println("package com.jss.osiris.modules.quotation.service.guichetUnique;");
+                                writer.println("package com.jss.osiris.modules.quotation.service.guichetUnique.referentials;");
                                 writer.println("");
                                 writer.println("import java.util.List;");
                                 writer.println("");
@@ -470,7 +470,7 @@ public class Generate {
                                                                 + className + "ServiceImpl.java",
                                                 "UTF-8");
 
-                                writer.println("package com.jss.osiris.modules.quotation.service.guichetUnique;");
+                                writer.println("package com.jss.osiris.modules.quotation.service.guichetUnique.referentials;");
                                 writer.println("");
                                 writer.println("import java.util.List;");
                                 writer.println("");

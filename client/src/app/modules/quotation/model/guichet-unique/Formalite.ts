@@ -1,14 +1,15 @@
+import { IAttachment } from "src/app/modules/miscellaneous/model/IAttachment";
 import { Content } from "./Content";
 import { DiffusionINSEE } from "./referentials/DiffusionINSEE";
 import { FormeJuridique } from "./referentials/FormeJuridique";
 import { TypeFormalite } from "./referentials/TypeFormalite";
 import { TypePersonne } from "./referentials/TypePersonne";
 
-export interface Formalite {
+export interface Formalite extends IAttachment {
   formalityDraftId: number;
   companyName: string;
   content: Content;
-  referenceMandataire: string;
+  referenceMandataire: number;
   nomDossier: string;
   signedPlace: string;
   typeFormalite: TypeFormalite;
@@ -18,12 +19,12 @@ export interface Formalite {
   typePersonne: TypePersonne;
   inscriptionOffice: boolean;
   inscriptionOfficePartnerCenter: string;
-  hasRnippBeenCalled: boolean;
-  indicateurNouvelleEntreprise: boolean;
+  hasRnippBeenCalled: boolean; // TODO : à déplacer dans le statut de la formalité  ?
+  indicateurNouvelleEntreprise: boolean; // TODO : à déplacer dans le statut de la formalité  dans le cas où elle revient en erreur pour homonymie ?
   optionEIRL: boolean;
-  optionME: boolean;
+  optionME: boolean; // TODO : c'est quoi ?
   formeJuridique: FormeJuridique;
-  optionJqpaNumber: number;
+  optionJqpaNumber: number; // TODO : à mettre à côté de la liste des activités plutôt qu'en page principale / applicable que dans le cas d'une société ou une personne physique dépendant de la chambre des métiers en plus du greffe
   regularisation: boolean;
 }
 

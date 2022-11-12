@@ -13,5 +13,5 @@ export interface NatureCreation {
   eirl: boolean;
   indicateurEtablissementFictif: boolean;
   seulsBeneficiairesModifies: boolean;
-  dateDepotCreation: Date;
+  dateDepotCreation: Date; // TODO : à renseigner automatiquement à sysdate lors de l'envoi de la formalité de création seulement
 }

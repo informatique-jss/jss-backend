@@ -27,6 +27,8 @@ export class AutocompleteTiersIndividualComponent extends GenericAutocompleteCom
       return "";
     if (tiers.denomination)
       return tiers.denomination!;
-    return tiers.firstname + " " + tiers.lastname;
+    if (tiers.firstname)
+      return tiers.firstname + " " + tiers.lastname;
+    return "";
   }
 }

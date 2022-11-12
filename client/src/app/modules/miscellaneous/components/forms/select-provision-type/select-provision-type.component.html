@@ -2,9 +2,12 @@
   <mat-label>{{label}}</mat-label>
   <mat-select [formControlName]="propertyName"
     [required]="isMandatory && (conditionnalRequired==undefined || conditionnalRequired)" [compareWith]="compareWithId">
-    <mat-option *ngFor="let type of types" [value]="type">
-      {{displayLabel(type)}}
-    </mat-option>
+    <ng-container *ngFor="let type of types">
+      <mat-option *ngIf="!filteredProvisionFamilyType || type.provisionFamilyType.id == filteredProvisionFamilyType.id"
+        [value]="type">
+        {{displayLabel(type)}}
+      </mat-option>
+    </ng-container>
   </mat-select>
   <mat-icon matSuffix (click)="clearField();$event.stopPropagation()" *ngIf="!isDisabled && model!=undefined"
     class="pointer">

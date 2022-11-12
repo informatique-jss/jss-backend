@@ -1,4 +1,4 @@
-import { Directive, Input, OnInit, SimpleChanges } from '@angular/core';
+import { Directive, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { UserNoteService } from 'src/app/services/user.notes.service';
 import { GenericFormComponent } from '../generic-form.components';
@@ -20,14 +20,6 @@ export abstract class GenericRadioGroupComponent<T> extends GenericFormComponent
 
   callOnNgInit(): void {
     this.initTypes();
-  }
-
-  ngOnChanges(changes: SimpleChanges) {
-    super.ngOnChanges(changes);
-    if (this.types && !this.model && this.types) {
-      this.model = this.types[0];
-      this.modelChange.emit();
-    }
   }
 
   abstract initTypes(): void;

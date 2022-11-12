@@ -11,14 +11,14 @@
             </td>
             <td style="vertical-align: baseline;">
               <radio-group-language [(model)]="domiciliation.language" [form]="domiciliationForm"
-                propertyName="language" label="Langue de contrat"></radio-group-language>
+                [isDisabled]="!editMode" propertyName="language" label="Langue de contrat"></radio-group-language>
             </td>
           </tr>
         </table>
         <table class="full-width">
           <tr>
             <td>
-              <select-building-domiciliation [(model)]="domiciliation.buildingDomiciliation"
+              <select-building-domiciliation [(model)]="domiciliation.buildingDomiciliation" [isDisabled]="!editMode"
                 label="Adresse de domiciliation" [form]="domiciliationForm" propertyName="buildingDomiciliation"
                 [conditionnalRequired]=" !isStatusOpen" [isMandatory]="true"></select-building-domiciliation>
             </td>
@@ -208,7 +208,7 @@
           <tr>
             <td>
               <radio-group-civility [(model)]="domiciliation.legalGardianCivility" [form]="domiciliationForm"
-                propertyName="legalGardianCivility" label="Civilité"></radio-group-civility>
+                [isDisabled]="!editMode" propertyName="legalGardianCivility" label="Civilité"></radio-group-civility>
             </td>
             <td>
               <generic-input [(model)]="domiciliation.legalGardianLastname" label="Nom" [form]="domiciliationForm"

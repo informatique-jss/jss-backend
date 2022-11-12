@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.miscellaneous.model.AssoSpecialOfferBillingType;
@@ -32,10 +33,10 @@ import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.CharacterPrice;
 import com.jss.osiris.modules.quotation.model.Domiciliation;
 import com.jss.osiris.modules.quotation.model.IQuotation;
-import com.jss.osiris.modules.quotation.model.OrderingSearch;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.ProvisionType;
 import com.jss.osiris.modules.quotation.model.Quotation;
+import com.jss.osiris.modules.quotation.model.QuotationSearch;
 import com.jss.osiris.modules.quotation.model.QuotationStatus;
 import com.jss.osiris.modules.quotation.repository.QuotationRepository;
 import com.jss.osiris.modules.tiers.model.ITiers;
@@ -78,6 +79,9 @@ public class QuotationServiceImpl implements QuotationService {
 
     @Autowired
     ConstantService constantService;
+
+    @Autowired
+    ActiveDirectoryHelper activeDirectoryHelper;
 
     @Override
     public Quotation getQuotation(Integer id) {
@@ -137,6 +141,20 @@ public class QuotationServiceImpl implements QuotationService {
                                 && domiciliation.getLegalGardianPhones().size() > 0)
                             phoneService.populateMPhoneIds(domiciliation.getLegalGardianPhones());
                     }
+                }
+
+                if (provision.getFormalite() != null) {
+                    if (provision.getFormalite().getReferenceMandataire() == null)
+                        // Play with fire ...
+                        provision.getFormalite().setReferenceMandataire(provision.getFormalite().getId());
+                    if (provision.getFormalite().getNomDossier() == null)
+                        provision.getFormalite()
+                                .setNomDossier(assoAffaireOrder.getAffaire().getDenomination() != null
+                                        ? assoAffaireOrder.getAffaire().getDenomination()
+                                        : (assoAffaireOrder.getAffaire().getFirstname() + " "
+                                                + assoAffaireOrder.getAffaire().getLastname()));
+                    if (provision.getFormalite().getSignedPlace() == null)
+                        provision.getFormalite().setSignedPlace("8 Rue Saint-Augustin, 75002 Paris");
                 }
             }
         }
@@ -403,12 +421,12 @@ public class QuotationServiceImpl implements QuotationService {
     }
 
     @Override
-    public List<Quotation> searchQuotations(OrderingSearch orderingSearch) {
+    public List<Quotation> searchQuotations(QuotationSearch quotationSearch) {
         return quotationRepository.findQuotations(
-                orderingSearch.getSalesEmployee(),
-                orderingSearch.getQuotationStatus(),
-                orderingSearch.getStartDate(),
-                orderingSearch.getEndDate());
+                activeDirectoryHelper.getMyHolidaymaker(quotationSearch.getSalesEmployee()),
+                quotationSearch.getQuotationStatus(),
+                quotationSearch.getStartDate(),
+                quotationSearch.getEndDate());
     }
 
     @Override

@@ -6,7 +6,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +33,6 @@ public class IndexEntityServiceImpl implements IndexEntityService {
     @Override
     public void indexEntity(Object entity, Integer entityId) {
         IndexEntity indexedEntity = new IndexEntity();
-        Map<String, Object> indexMap = new HashMap<String, Object>();
 
         ObjectMapper objectMapper = new ObjectMapper();
         SimpleModule simpleModule = new SimpleModule("SimpleModule");
@@ -39,6 +40,21 @@ public class IndexEntityServiceImpl implements IndexEntityService {
         simpleModule.addSerializer(LocalDate.class, new JacksonLocalDateSerializer());
         objectMapper.registerModule(simpleModule);
 
+        indexedEntity.setEntityId(entityId);
+        indexedEntity.setEntityType(entity.getClass().getSimpleName());
+        try {
+            indexedEntity.setText(objectMapper.writeValueAsString(cleanObjectForSerialization(entity)));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        indexEntityRepository.save(indexedEntity);
+
+    }
+
+    @SuppressWarnings({ "unchecked" })
+    private Object cleanObjectForSerialization(Object entity) {
+        Map<String, Object> outObject = new HashMap<String, Object>();
         for (Field field : entity.getClass().getDeclaredFields()) {
             for (Annotation annotation : field.getAnnotations()) {
                 if (annotation.annotationType().getName().equals(IndexedField.class.getName())) {
@@ -46,7 +62,20 @@ public class IndexEntityServiceImpl implements IndexEntityService {
                     try {
                         getter = entity.getClass()
                                 .getMethod("get" + StringUtils.capitalize(field.getName()));
-                        indexMap.put(field.getName(), getter.invoke(entity));
+
+                        Object fieldResult = getter.invoke(entity);
+
+                        if (fieldResult instanceof String || fieldResult instanceof Integer
+                                || fieldResult instanceof LocalDate || fieldResult instanceof LocalDateTime) {
+                            outObject.put(field.getName(), getter.invoke(entity));
+                        } else if (fieldResult instanceof List) {
+                            ArrayList<Object> cleanOutList = new ArrayList<Object>();
+                            for (Object fieldResultObject : (List<Object>) fieldResult)
+                                cleanOutList.add(cleanObjectForSerialization(fieldResultObject));
+                            outObject.put(field.getName(), cleanOutList);
+                        } else if (fieldResult != null) {
+                            outObject.put(field.getName(), cleanObjectForSerialization(fieldResult));
+                        }
                     } catch (NoSuchMethodException e) {
                         System.out.println("Indexation : getter not found for field " + field.getName());
                         e.printStackTrace();
@@ -62,16 +91,7 @@ public class IndexEntityServiceImpl implements IndexEntityService {
                     }
                 }
             }
-            indexedEntity.setEntityId(entityId);
-            indexedEntity.setEntityType(entity.getClass().getSimpleName());
-            try {
-                indexedEntity.setText(objectMapper.writeValueAsString(indexMap));
-            } catch (JsonProcessingException e) {
-                // System.out.println("Indexation error during JSON generation");
-                // e.printStackTrace();
-            }
-
-            indexEntityRepository.save(indexedEntity);
         }
+        return outObject;
     }
 }

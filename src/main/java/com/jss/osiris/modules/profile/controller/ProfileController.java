@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.profile.controller;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -22,9 +23,9 @@ import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.ValidationHelper;
@@ -95,21 +96,6 @@ public class ProfileController {
 				HttpStatus.OK);
 	}
 
-	@GetMapping(inputEntryPoint + "/employee")
-	public ResponseEntity<Employee> getEmployeeById(@RequestParam Integer id) {
-		Employee employee = null;
-		try {
-			employee = employeeService.getEmployee(id);
-		} catch (HttpStatusCodeException e) {
-			logger.error("HTTP error when fetching client types", e);
-			return new ResponseEntity<Employee>(HttpStatus.INTERNAL_SERVER_ERROR);
-		} catch (Exception e) {
-			logger.error("Error when fetching client types", e);
-			return new ResponseEntity<Employee>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-		return new ResponseEntity<Employee>(employee, HttpStatus.OK);
-	}
-
 	@GetMapping(inputEntryPoint + "/employee/all")
 	public ResponseEntity<List<Employee>> getEmployees() {
 		List<Employee> salesEmployees = null;
@@ -123,6 +109,39 @@ public class ProfileController {
 			return new ResponseEntity<List<Employee>>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		return new ResponseEntity<List<Employee>>(salesEmployees, HttpStatus.OK);
+	}
+
+	@PostMapping(inputEntryPoint + "/employee")
+	public ResponseEntity<Employee> addOrUpdateEmployee(
+			@RequestBody Employee employee) {
+		Employee outEmployee;
+		try {
+			List<Employee> backups = new ArrayList<Employee>();
+
+			if (employee != null)
+				backups = employee.getBackups();
+
+			employee = (Employee) validationHelper.validateReferential(employee, true);
+
+			if (backups != null)
+				for (Employee backup : backups)
+					validationHelper.validateReferential(backup, true);
+
+			employee.setBackups(backups);
+
+			outEmployee = employeeService.addOrUpdateEmployee(employee);
+		} catch (
+
+		ResponseStatusException e) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		} catch (HttpStatusCodeException e) {
+			logger.error("HTTP error when fetching employee", e);
+			return new ResponseEntity<Employee>(HttpStatus.INTERNAL_SERVER_ERROR);
+		} catch (Exception e) {
+			logger.error("Error when fetching employee", e);
+			return new ResponseEntity<Employee>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		return new ResponseEntity<Employee>(outEmployee, HttpStatus.OK);
 	}
 
 }

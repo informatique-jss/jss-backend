@@ -9,8 +9,8 @@
     matSuffix (click)="addToNotes($event)" *ngIf="isDisabled && model!=undefined" class="pointer note-icon">
     adjust
   </mat-icon>
-  <mat-autocomplete autoActiveFirstOption #autoCompleteField="matAutocomplete" [displayWith]="displayLabel"
-    (optionSelected)='optionSelected($event.option.value)'>
+  <mat-autocomplete autoActiveFirstOption panelOpen="true" #autoCompleteField="matAutocomplete"
+    [displayWith]="displayLabel" (optionSelected)='optionSelected($event.option.value)'>
     <mat-option *ngFor="let type of filteredTypes" [value]="type">
       {{displayLabel(type)}}
     </mat-option>

@@ -3,12 +3,13 @@ import { UntypedFormBuilder } from '@angular/forms';
 import { MatExpansionPanel } from '@angular/material/expansion';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
 import { compareWithId } from 'src/app/libs/CompareHelper';
-import { PROVISION_SCREEN_TYPE_ANNOUNCEMENT, PROVISION_SCREEN_TYPE_BODACC, PROVISION_SCREEN_TYPE_DOMICILIATION, PROVISION_SCREEN_TYPE_STANDARD } from 'src/app/libs/Constants';
+import { PROVISION_SCREEN_TYPE_ANNOUNCEMENT, PROVISION_SCREEN_TYPE_BODACC, PROVISION_SCREEN_TYPE_DOMICILIATION, PROVISION_SCREEN_TYPE_FORMALITE, PROVISION_SCREEN_TYPE_STANDARD } from 'src/app/libs/Constants';
 import { Employee } from 'src/app/modules/profile/model/Employee';
 import { Affaire } from '../../model/Affaire';
 import { Announcement } from '../../model/Announcement';
 import { Bodacc } from '../../model/Bodacc';
 import { Domiciliation } from '../../model/Domiciliation';
+import { Formalite } from '../../model/guichet-unique/Formalite';
 import { Provision } from '../../model/Provision';
 import { ProvisionFamilyType } from '../../model/ProvisionFamilyType';
 import { ProvisionType } from '../../model/ProvisionType';
@@ -18,6 +19,7 @@ import { ProvisionTypeService } from '../../services/provision.type.service';
 import { AnnouncementComponent } from '../announcement/announcement.component';
 import { BodaccMainComponent } from '../bodacc-main/bodacc-main.component';
 import { DomiciliationComponent } from '../domiciliation/domiciliation.component';
+import { FormaliteComponent } from '../formalite/formalite.component';
 
 
 @Component({
@@ -38,6 +40,7 @@ export class ProvisionItemComponent implements OnInit {
   @ViewChild(DomiciliationComponent) domiciliationComponent: DomiciliationComponent | undefined;
   @ViewChild(AnnouncementComponent) announcementComponent: AnnouncementComponent | undefined;
   @ViewChild(BodaccMainComponent) bodaccComponent: BodaccMainComponent | undefined;
+  @ViewChild(FormaliteComponent) formaliteComponent: FormaliteComponent | undefined;
 
   provisionFamilyTypes: ProvisionFamilyType[] = [] as Array<ProvisionFamilyType>;
   provisionTypes: ProvisionType[] = [] as Array<ProvisionType>;
@@ -45,6 +48,7 @@ export class ProvisionItemComponent implements OnInit {
   PROVISION_SCREEN_TYPE_BODACC = PROVISION_SCREEN_TYPE_BODACC;
   PROVISION_SCREEN_TYPE_DOMICILIATION = PROVISION_SCREEN_TYPE_DOMICILIATION;
   PROVISION_SCREEN_TYPE_ANNOUNCEMENT = PROVISION_SCREEN_TYPE_ANNOUNCEMENT;
+  PROVISION_SCREEN_TYPE_FORMALITE = PROVISION_SCREEN_TYPE_FORMALITE;
   PROVISION_SCREEN_TYPE_STANDARD = PROVISION_SCREEN_TYPE_STANDARD;
 
   constructor(private formBuilder: UntypedFormBuilder,
@@ -81,6 +85,10 @@ export class ProvisionItemComponent implements OnInit {
 
     if (this.bodaccComponent)
       status = status && this.bodaccComponent.getFormStatus();
+
+    if (this.formaliteComponent)
+      status = status && this.formaliteComponent.getFormStatus();
+
     return status && (this.provisionItemForm.status == "DISABLED" || this.provisionItemForm.valid);
   }
 
@@ -99,6 +107,7 @@ export class ProvisionItemComponent implements OnInit {
       this.provision.announcement = undefined;
       this.provision.domiciliation = undefined;
       this.provision.bodacc = undefined;
+      this.provision.formalite = undefined;
       this.selectedProvisionTypeChange.emit();
       return;
     }
@@ -120,6 +129,13 @@ export class ProvisionItemComponent implements OnInit {
     } else if (!this.provision.bodacc) {
       this.provision.bodacc = {} as Bodacc;
     }
+
+    if (this.provision.provisionType.provisionScreenType.code != PROVISION_SCREEN_TYPE_FORMALITE) {
+      this.provision.formalite = undefined;
+    } else if (!this.provision.formalite) {
+      this.provision.formalite = {} as Formalite;
+    }
+
     this.selectedProvisionTypeChange.emit();
   }
 

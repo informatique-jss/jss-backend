@@ -1,7 +1,3 @@
-#menu {
-  cursor: pointer;
-}
-
 .navbar-brand {
   padding: 0;
   padding-right: 15px;
@@ -24,7 +20,7 @@
   width: 100%;
 }
 
-#menu {
+.menu {
   width: 0px;
   height: 0px;
   cursor: pointer;
@@ -35,16 +31,21 @@
   margin-right: 20px;
 }
 
-#menu .mat-icon {
+.menu .mat-icon {
   position: relative;
   top: -10px;
   left: -10px;
   font-size: 20px;
 }
 
-#menu:hover {
+.menu:hover {
   background: #4d4d4d;
   color: #ffffff;
+}
+
+.notif {
+  position: absolute;
+  top: 72px;
 }
 
 mat-nav-list {

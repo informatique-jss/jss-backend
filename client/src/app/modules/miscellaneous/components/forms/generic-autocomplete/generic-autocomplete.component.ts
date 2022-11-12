@@ -36,7 +36,7 @@ export abstract class GenericAutocompleteComponent<T, U> extends GenericFormComp
   ngOnInit() {
     if (this.form != undefined) {
       this.form.addControl(this.propertyName, this.formBuilder3.control({ value: '', disabled: this.isDisabled }));
-      this.form.addValidators(this.checkFieldFilledIfIsConditionalRequired());
+      this.form.addValidators(this.checkField());
       this.form.addValidators(this.checkAutocompleteField());
       this.form.get(this.propertyName)?.valueChanges.pipe(
         filter(res => {
@@ -76,13 +76,13 @@ export abstract class GenericAutocompleteComponent<T, U> extends GenericFormComp
       const fieldValue = root.get(this.propertyName)?.value;
       if (this.form && this.form!.get(this.propertyName)) {
         if (this.conditionnalRequired != undefined) {
-          if (this.conditionnalRequired && (!fieldValue || fieldValue.id == null)) {
+          if (this.conditionnalRequired && (!fieldValue || fieldValue.id == null && fieldValue.code == null)) {
             this.form!.get(this.propertyName)!.setErrors({ notFilled: this.propertyName });
             return {
               notFilled: this.propertyName
             };
           }
-        } else if (this.isMandatory && (!fieldValue || fieldValue.id == null)) {
+        } else if (this.isMandatory && (!fieldValue || fieldValue.id == null && fieldValue.code == null)) {
           this.form!.get(this.propertyName)!.setErrors({ notFilled: this.propertyName });
           return {
             notFilled: this.propertyName

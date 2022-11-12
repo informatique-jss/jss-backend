@@ -21,6 +21,9 @@ import com.jss.osiris.modules.quotation.model.JournalType;
 import com.jss.osiris.modules.quotation.model.MailRedirectionType;
 import com.jss.osiris.modules.quotation.model.QuotationLabelType;
 import com.jss.osiris.modules.quotation.model.TransfertFundsType;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormeJuridique;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeFormalite;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypePersonne;
 import com.jss.osiris.modules.tiers.model.BillingLabelType;
 import com.jss.osiris.modules.tiers.model.RefundType;
 import com.jss.osiris.modules.tiers.model.SubscriptionPeriodType;
@@ -142,12 +145,16 @@ public class Constant implements Serializable, IId {
 	private PaymentType paymentTypePrelevement;
 
 	@ManyToOne
-	@JoinColumn(name = "id_payment_type_other")
-	private PaymentType paymentTypeOther;
-
-	@ManyToOne
 	@JoinColumn(name = "id_payment_type_virement")
 	private PaymentType paymentTypeVirement;
+
+	@ManyToOne
+	@JoinColumn(name = "id_payment_type_cb")
+	private PaymentType paymentTypeCB;
+
+	@ManyToOne
+	@JoinColumn(name = "id_payment_type_especes")
+	private PaymentType paymentTypeEspeces;
 
 	@ManyToOne
 	@JoinColumn(name = "id_refund_type_virement")
@@ -284,6 +291,38 @@ public class Constant implements Serializable, IId {
 	@ManyToOne
 	@JoinColumn(name = "id_department_reunion")
 	private Department departmentReunion;
+
+	@ManyToOne
+	@JoinColumn(name = "id_type_personne_personne_physique")
+	private TypePersonne typePersonnePersonnePhysique;
+
+	@ManyToOne
+	@JoinColumn(name = "id_type_personne_personne_exploitation")
+	private TypePersonne typePersonneExploitation;
+
+	@ManyToOne
+	@JoinColumn(name = "id_type_personne_personne_morale")
+	private TypePersonne typePersonnePersonneMorale;
+
+	@ManyToOne
+	@JoinColumn(name = "id_forme_juridique_entrepreneur_individuel")
+	private FormeJuridique formeJuridiqueEntrepreneurIndividuel;
+
+	@ManyToOne
+	@JoinColumn(name = "id_type_formalite_cessation")
+	private TypeFormalite typeFormaliteCessation;
+
+	@ManyToOne
+	@JoinColumn(name = "id_type_formalite_correction")
+	private TypeFormalite typeFormaliteCorrection;
+
+	@ManyToOne
+	@JoinColumn(name = "id_type_formalite_modification")
+	private TypeFormalite typeFormaliteModification;
+
+	@ManyToOne
+	@JoinColumn(name = "id_type_formalite_creation")
+	private TypeFormalite typeFormaliteCreation;
 
 	public Integer getId() {
 		return id;
@@ -507,14 +546,6 @@ public class Constant implements Serializable, IId {
 
 	public void setPaymentTypePrelevement(PaymentType paymentTypePrelevement) {
 		this.paymentTypePrelevement = paymentTypePrelevement;
-	}
-
-	public PaymentType getPaymentTypeOther() {
-		return paymentTypeOther;
-	}
-
-	public void setPaymentTypeOther(PaymentType paymentTypeOther) {
-		this.paymentTypeOther = paymentTypeOther;
 	}
 
 	public PaymentType getPaymentTypeVirement() {
@@ -798,6 +829,86 @@ public class Constant implements Serializable, IId {
 	public void setDomiciliationContractTypeRouteEmailAndMail(
 			DomiciliationContractType domiciliationContractTypeRouteEmailAndMail) {
 		this.domiciliationContractTypeRouteEmailAndMail = domiciliationContractTypeRouteEmailAndMail;
+	}
+
+	public PaymentType getPaymentTypeCB() {
+		return paymentTypeCB;
+	}
+
+	public void setPaymentTypeCB(PaymentType paymentTypeCB) {
+		this.paymentTypeCB = paymentTypeCB;
+	}
+
+	public PaymentType getPaymentTypeEspeces() {
+		return paymentTypeEspeces;
+	}
+
+	public void setPaymentTypeEspeces(PaymentType paymentTypeEspeces) {
+		this.paymentTypeEspeces = paymentTypeEspeces;
+	}
+
+	public TypePersonne getTypePersonnePersonnePhysique() {
+		return typePersonnePersonnePhysique;
+	}
+
+	public void setTypePersonnePersonnePhysique(TypePersonne typePersonnePersonnePhysique) {
+		this.typePersonnePersonnePhysique = typePersonnePersonnePhysique;
+	}
+
+	public FormeJuridique getFormeJuridiqueEntrepreneurIndividuel() {
+		return formeJuridiqueEntrepreneurIndividuel;
+	}
+
+	public void setFormeJuridiqueEntrepreneurIndividuel(FormeJuridique formeJuridiqueEntrepreneurIndividuel) {
+		this.formeJuridiqueEntrepreneurIndividuel = formeJuridiqueEntrepreneurIndividuel;
+	}
+
+	public TypePersonne getTypePersonnePersonneMorale() {
+		return typePersonnePersonneMorale;
+	}
+
+	public void setTypePersonnePersonneMorale(TypePersonne typePersonnePersonneMorale) {
+		this.typePersonnePersonneMorale = typePersonnePersonneMorale;
+	}
+
+	public TypeFormalite getTypeFormaliteCessation() {
+		return typeFormaliteCessation;
+	}
+
+	public void setTypeFormaliteCessation(TypeFormalite typeFormaliteCessation) {
+		this.typeFormaliteCessation = typeFormaliteCessation;
+	}
+
+	public TypeFormalite getTypeFormaliteCorrection() {
+		return typeFormaliteCorrection;
+	}
+
+	public void setTypeFormaliteCorrection(TypeFormalite typeFormaliteCorrection) {
+		this.typeFormaliteCorrection = typeFormaliteCorrection;
+	}
+
+	public TypeFormalite getTypeFormaliteModification() {
+		return typeFormaliteModification;
+	}
+
+	public void setTypeFormaliteModification(TypeFormalite typeFormaliteModification) {
+		this.typeFormaliteModification = typeFormaliteModification;
+	}
+
+	public TypeFormalite getTypeFormaliteCreation() {
+		return typeFormaliteCreation;
+	}
+
+	public void setTypeFormaliteCreation(TypeFormalite typeFormaliteCreation) {
+		this.typeFormaliteCreation = typeFormaliteCreation;
+	}
+
+	public TypePersonne getTypePersonneExploitation() {
+		return typePersonneExploitation;
+	}
+
+	public void setTypePersonneExploitation(TypePersonne typePersonneExploitation) {
+		this.typePersonneExploitation = typePersonneExploitation;
 	}
 
 }

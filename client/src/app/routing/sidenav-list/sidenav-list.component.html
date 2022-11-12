@@ -1,5 +1,8 @@
 <div class="sidebar-header">
-  <div id="menu" matTooltip="Rechercher (F4)">
+  <div class="menu" matTooltip="Rechercher (F4)">
+    <mat-icon (click)="openSearch()">search</mat-icon>
+  </div>
+  <div class="menu notif" matTooltip="Rechercher (F4)">
     <mat-icon (click)="openSearch()">search</mat-icon>
   </div>
   <img class="navbar-brand" ui-sref='main.tiers' [src]="logoOsiris" />
@@ -32,5 +35,8 @@
   <a mat-list-item routerLink="/administration" *ngIf="canViewAdministrationModule()"
     [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/administration' )>=0}">
     <mat-icon>settings</mat-icon> <span>Administration</span>
+  </a>
+  <a mat-list-item routerLink="/my-profil" [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/my-profil' )>=0}">
+    <mat-icon>manage_accounts</mat-icon> <span>Mon profil</span>
   </a>
 </mat-nav-list>

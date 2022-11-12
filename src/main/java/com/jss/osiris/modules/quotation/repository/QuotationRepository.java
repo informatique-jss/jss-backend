@@ -13,8 +13,8 @@ import com.jss.osiris.modules.quotation.model.QuotationStatus;
 
 public interface QuotationRepository extends CrudRepository<Quotation, Integer> {
 
-    @Query("select i from Quotation i  left join fetch i.tiers t left join fetch i.responsable r left join fetch i.confrere c  where ( i.quotationStatus in (:quotationStatus)) and i.createdDate>=:startDate and i.createdDate<=:endDate and (:salesEmployee is null or t.salesEmployee=:salesEmployee or r.salesEmployee=:salesEmployee or c.salesEmployee=:salesEmployee)")
-    List<Quotation> findQuotations(@Param("salesEmployee") Employee salesEmployee,
+    @Query("select i from Quotation i  left join fetch i.tiers t left join fetch i.responsable r left join fetch i.confrere c  where ( i.quotationStatus in (:quotationStatus)) and i.createdDate>=:startDate and i.createdDate<=:endDate and ( COALESCE(:salesEmployee) is null or t.salesEmployee in (:salesEmployee)  or r.salesEmployee in (:salesEmployee) or c.salesEmployee in (:salesEmployee))")
+    List<Quotation> findQuotations(@Param("salesEmployee") List<Employee> salesEmployee,
             @Param("quotationStatus") List<QuotationStatus> quotationStatus,
             @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
 }

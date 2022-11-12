@@ -5,7 +5,7 @@
       <th mat-header-cell mat-sort-header *matHeaderCellDef>
         {{getColumnLabel(column)}}
       </th>
-      <ng-container *ngIf="!column.displayAsGrade">
+      <ng-container *ngIf="!column.displayAsGrade && !column.displayAsEmployee">
         <td mat-cell *matCellDef="let element" [matTooltip]="column.isShrinkColumn?getColumnValue(column,element):''"
           [ngClass]="{'td-label':column.isShrinkColumn}">
           <span>{{getColumnValue(column,
@@ -20,9 +20,18 @@
         </td>
       </ng-container>
       <ng-container *ngIf="column.displayAsGrade">
-        <td mat-cell *matCellDef="let element"><span *ngIf="column.displayAsGrade">
-            <grade [grade]="getColumnValue(column, element)"></grade>
-          </span> </td>
+        <td mat-cell *matCellDef="let element">
+          <grade [grade]="getColumnValue(column, element)"></grade>
+        </td>
+      </ng-container>
+      <ng-container>
+        <td mat-cell *matCellDef="let element">
+          <div class="select-with-avatar" *ngIf=" column.displayAsEmployee && getColumnValue(column, element)">
+            <avatar class="avatar" [size]="20" [employee]="getColumnValue(column, element)"></avatar>
+            <span>{{getColumnValue(column, element).firstname}}
+              {{getColumnValue(column, element).lastname}}</span>
+          </div>
+        </td>
       </ng-container>
     </ng-container>
     <ng-container matColumnDef="actions" *ngIf="internalActions">

@@ -2,6 +2,7 @@ import { DragDropModule } from "@angular/cdk/drag-drop";
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -21,6 +22,7 @@ import { AccountingModule } from './modules/accounting/components/accounting/acc
 import { AdministrationModule } from './modules/administration/components/administration/administration.module';
 import { InvoicingModule } from "./modules/invoicing/components/invoicing/invoicing.module";
 import { MiscellaneousModule } from './modules/miscellaneous/components/miscellaneous/miscellaneous.module';
+import { MyProfilComponent } from './modules/profile/components/my-profil/my-profil.component';
 import { QuotationModule } from './modules/quotation/components/quotation/quotation.module';
 import { TiersModule } from './modules/tiers/components/tiers/tiers.module';
 import { HeaderComponent } from './routing/header/header.component';
@@ -31,7 +33,8 @@ import { SidenavListComponent } from './routing/sidenav-list/sidenav-list.compon
   declarations: [
     AppComponent,
     SidenavListComponent,
-    HeaderComponent
+    HeaderComponent,
+    MyProfilComponent,
   ],
   imports: [
     // Core modules
@@ -56,6 +59,7 @@ import { SidenavListComponent } from './routing/sidenav-list/sidenav-list.compon
     MatSortModule,
     MatTableModule,
     ReactiveFormsModule,
+    MatButtonModule,
     MatInputModule,
     // App modules
     TiersModule,
@@ -65,7 +69,8 @@ import { SidenavListComponent } from './routing/sidenav-list/sidenav-list.compon
     AccountingModule,
     InvoicingModule,
   ],
-  exports: [],
+  exports: [
+  ],
   providers: [{
     provide: HTTP_INTERCEPTORS,
     useClass: HttpErrorInterceptor,

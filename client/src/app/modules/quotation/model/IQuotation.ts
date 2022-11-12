@@ -8,7 +8,6 @@ import { Tiers } from "../../tiers/model/Tiers";
 import { AssoAffaireOrder } from "./AssoAffaireOrder";
 import { Confrere } from "./Confrere";
 import { QuotationLabelType } from "./QuotationLabelType";
-import { QuotationStatus } from "./QuotationStatus";
 import { RecordType } from "./RecordType";
 
 export interface IQuotation extends IAttachment, IDocument {
@@ -19,7 +18,6 @@ export interface IQuotation extends IAttachment, IDocument {
   specialOffers: SpecialOffer[] | undefined;
   overrideSpecialOffer: boolean;
   createdDate: Date;
-  quotationStatus: QuotationStatus;
   observations: string;
   description: string;
   labelType: QuotationLabelType;

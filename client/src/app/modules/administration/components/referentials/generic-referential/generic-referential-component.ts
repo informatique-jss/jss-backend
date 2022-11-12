@@ -66,7 +66,7 @@ export abstract class GenericReferentialComponent<T extends IReferential> implem
   abstract getGetObservable(): Observable<T[]>;
 
   saveEntity() {
-    if (this.entityForm && this.entityForm.valid) {
+    if (this.getFormStatus()) {
       this.editMode = false;
       this.editModeChange.emit(this.editMode);
       this.getAddOrUpdateObservable().subscribe(response => {
@@ -78,7 +78,7 @@ export abstract class GenericReferentialComponent<T extends IReferential> implem
   }
 
   getFormStatus() {
-    if (!this.entityForm.valid) {
+    if (!this.entityForm || !this.entityForm.valid) {
       return false;
     }
     return true;

@@ -30,7 +30,7 @@ public class NatureCreation implements Serializable, IId {
     FormeJuridique formeJuridique;
 
     @ManyToOne
-    @JoinColumn(name = "id_type_exploitation", nullable = false)
+    @JoinColumn(name = "id_type_exploitation")
     TypeExploitation typeExploitation;
 
     @Column(nullable = false)
