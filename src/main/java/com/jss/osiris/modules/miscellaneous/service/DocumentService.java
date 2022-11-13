@@ -16,4 +16,8 @@ public interface DocumentService {
      * @return The billing document if found, null otherwise
      */
     public Document getBillingDocument(List<Document> documents) throws Exception;
+
+    public Document getQuotationDocument(List<Document> documents) throws Exception;
+
+    public Document cloneDocument(Document document);
 }

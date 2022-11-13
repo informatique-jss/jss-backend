@@ -80,7 +80,7 @@ public class InvoiceServiceImpl implements InvoiceService {
             }
         if (invoice.getCustomerOrder() != null)
             customerOrderService.addOrUpdateCustomerOrderStatus(invoice.getCustomerOrder(),
-                    CustomerOrderStatus.VALIDATED_BY_CUSTOMER);
+                    CustomerOrderStatus.TO_BILLED);
         return getInvoice(invoice.getId());
     }
 
@@ -92,7 +92,8 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public Invoice createInvoice(CustomerOrder customerOrder, ITiers orderingCustomer) throws Exception {
+    public Invoice createInvoice(CustomerOrder customerOrder, ITiers orderingCustomer)
+            throws Exception {
         Invoice invoice = new Invoice();
         invoice.setCreatedDate(LocalDateTime.now());
         Document billingDocument = documentService.getBillingDocument(customerOrder.getDocuments());

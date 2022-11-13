@@ -37,6 +37,12 @@ export class AddressingComponent implements OnInit {
   }
 
   ngOnChanges(changes: SimpleChanges) {
+    this.overrideAffaireAddress = false;
+    this.overrideAffaireMail = false;
+    this.overrideAffaireMailCC = false;
+    this.overrideClientAddress = false;
+    this.overrideClientMail = false;
+
     if (changes.document != undefined) {
       if (!this.document.isMailingPaper)
         this.document.isMailingPaper = false;
@@ -47,20 +53,22 @@ export class AddressingComponent implements OnInit {
       if (!this.document.isRecipientClient)
         this.document.isRecipientClient = false;
 
-      if (this.document.affaireAddress)
+      if (this.document.affaireAddress && this.document.affaireAddress.length > 0)
         this.overrideAffaireAddress = true;
-      if (this.document.affaireRecipient)
+      if (this.document.affaireRecipient && this.document.affaireRecipient.length > 0)
         this.overrideAffaireAddress = true;
-      if (this.document.clientAddress)
+      if (this.document.clientAddress && this.document.clientAddress.length > 0)
         this.overrideClientAddress = true;
-      if (this.document.clientRecipient)
+      if (this.document.clientRecipient && this.document.clientRecipient.length > 0)
         this.overrideClientAddress = true;
 
-      if (this.document.mailsAffaire)
+      if (this.document.mailsAffaire && this.document.mailsAffaire.length > 0)
         this.overrideAffaireMail = true;
-      if (this.document.mailsCCResponsableAffaire)
+      if (this.document.mailsCCResponsableAffaire && this.document.mailsCCResponsableAffaire.length > 0)
         this.overrideAffaireMailCC = true;
-      if (this.document.mailsClient)
+      if (this.document.mailsCCResponsableClient && this.document.mailsCCResponsableClient.length > 0)
+        this.overrideClientMail = true;
+      if (this.document.mailsClient && this.document.mailsClient.length > 0)
         this.overrideClientMail = true;
 
       if (this.onlyMail)

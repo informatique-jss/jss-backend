@@ -20,7 +20,7 @@ export interface IQuotation extends IAttachment, IDocument {
   createdDate: Date;
   observations: string;
   description: string;
-  labelType: QuotationLabelType;
+  quotationLabelType: QuotationLabelType;
   quotationLabel: string;
   customLabelResponsable: Responsable | undefined;
   customLabelTiers: Tiers | undefined;

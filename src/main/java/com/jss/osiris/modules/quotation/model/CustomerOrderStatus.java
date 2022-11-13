@@ -27,10 +27,6 @@ public class CustomerOrderStatus implements Serializable, IId {
 	 */
 	public static String OPEN = "OPEN";
 	public static String TO_VERIFY = "TO_VERIFY";
-	public static String VALIDATED_BY_JSS = "VALIDATED_BY_JSS";
-	public static String SENT_TO_CUSTOMER = "SENT_TO_CUSTOMER";
-	public static String VALIDATED_BY_CUSTOMER = "VALIDATED_BY_CUSTOMER";
-	public static String REFUSED_BY_CUSTOMER = "REFUSED_BY_CUSTOMER";
 	public static String ABANDONED = "ABANDONED";
 	public static String BILLED = "BILLED";
 	public static String WAITING_DEPOSIT = "WAITING_DEPOSIT";
@@ -107,38 +103,6 @@ public class CustomerOrderStatus implements Serializable, IId {
 
 	public static void setTO_VERIFY(String tO_VERIFY) {
 		TO_VERIFY = tO_VERIFY;
-	}
-
-	public static String getVALIDATED_BY_JSS() {
-		return VALIDATED_BY_JSS;
-	}
-
-	public static void setVALIDATED_BY_JSS(String vALIDATED_BY_JSS) {
-		VALIDATED_BY_JSS = vALIDATED_BY_JSS;
-	}
-
-	public static String getSENT_TO_CUSTOMER() {
-		return SENT_TO_CUSTOMER;
-	}
-
-	public static void setSENT_TO_CUSTOMER(String sENT_TO_CUSTOMER) {
-		SENT_TO_CUSTOMER = sENT_TO_CUSTOMER;
-	}
-
-	public static String getVALIDATED_BY_CUSTOMER() {
-		return VALIDATED_BY_CUSTOMER;
-	}
-
-	public static void setVALIDATED_BY_CUSTOMER(String vALIDATED_BY_CUSTOMER) {
-		VALIDATED_BY_CUSTOMER = vALIDATED_BY_CUSTOMER;
-	}
-
-	public static String getREFUSED_BY_CUSTOMER() {
-		return REFUSED_BY_CUSTOMER;
-	}
-
-	public static void setREFUSED_BY_CUSTOMER(String rEFUSED_BY_CUSTOMER) {
-		REFUSED_BY_CUSTOMER = rEFUSED_BY_CUSTOMER;
 	}
 
 	public static String getABANDONED() {

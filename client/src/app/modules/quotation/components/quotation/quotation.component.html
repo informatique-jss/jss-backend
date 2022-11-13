@@ -197,7 +197,8 @@
             </invoice-management>
           </mat-tab>
           <mat-tab [label]="'Eléments '+(instanceOfCustomerOrder ? 'de la commande' : 'du devis')">
-            <quotation-management [quotation]="quotation" [editMode]="editMode"
+            <quotation-management [quotation]="quotation" [editMode]="editMode" [isStatusOpen]="isStatusOpen"
+              [instanceOfCustomerOrder]="instanceOfCustomerOrder"
               [updateDocumentsEvent]="updateDocumentsEvent.asObservable()"></quotation-management>
           </mat-tab>
           <mat-tab label="Documents" *ngIf="quotation.id!=null && quotation.id!=undefined">
@@ -205,7 +206,7 @@
             </attachments>
           </mat-tab>
           <mat-tab label="Historique du statut" *ngIf="quotation.id!=null && quotation.id!=undefined">
-            <history [entity]="quotation" [entityType]="getEntityType()" [displayOnlyFields]="['status']"
+            <history [entity]="quotation" [entityType]="getEntityType()" [displayOnlyFields]="['quotationStatus']"
               [parseTypeList]="quotationStatusList"></history>
           </mat-tab>
           <mat-tab label="Historique" *ngIf="quotation.id!=null && quotation.id!=undefined">
@@ -237,23 +238,31 @@
   class="second-fab-button" *ngIf="editMode==false" (click)="openSearch()">
   <mat-icon>search</mat-icon>
 </button>
-<button [matTooltip]="instanceOfCustomerOrder?'Envoyer la commande' : 'Envoyer le devis'" mat-fab color="accent"
-  class="third-fab-button" *ngIf="editMode==false  && quotation.id!=undefined && quotation.id!=null"
-  (click)="sendQuotation()">
-  <mat-icon>forward_to_inbox</mat-icon>
-</button>
-<button [matTooltip]="instanceOfCustomerOrder?'Ajouter une commande' : 'Ajouter un devis'" mat-fab color="accent"
-  class="second-fab-button" *ngIf="editMode==false && quotation.id!=undefined && quotation.id!=null"
-  (click)=" createQuotation()">
-  <mat-icon>add</mat-icon>
-</button>
 <button [matTooltip]='sidenav.opened?"Cacher le détail":"Voir le détail"' mat-fab color="accent"
-  [ngClass]="{'fifth-fab-button':editMode==false,'second-fab-button':editMode==true}"
-  *ngIf="(editMode==false && quotation.id!=undefined && quotation.id!=null || editMode)" (click)=" sidenav.toggle()">
+  class="second-fab-button" *ngIf="(editMode==false && quotation.id!=undefined && quotation.id!=null || editMode)"
+  (click)=" sidenav.toggle()">
   <mat-icon>receipt_long</mat-icon>
 </button>
+<button matTooltip="Recevoir le mail de devis" mat-fab color="accent" class="fourth-fab-button"
+  *ngIf="editMode==false && instanceOfQuotationFn(quotation)" (click)="generateQuotationMail()">
+  <mat-icon>mail</mat-icon>
+</button>
 
-<button matTooltip="Changer de statut" mat-fab color="accent" class="fourth-fab-button"
+<button matTooltip="Recevoir un mail" mat-fab color="accent" class="fourth-fab-button mail-menu"
+  *ngIf="editMode==false && instanceOfCustomerOrderFn(quotation)" [matMenuTriggerFor]="menuMail">
+  <mat-icon>mail</mat-icon>
+  <mat-menu #menuMail="matMenu" style="min-height: 0px;padding: 0;" xPosition="before">
+    <button mat-menu-item (click)="generateWaintingDepositMail()">
+      <span>Recevoir le mail de demande d'accompte</span>
+    </button>
+    <button mat-menu-item (click)="generateInvoicetMail()">
+      <span>Recevoir le mail de facturation</span>
+    </button>
+  </mat-menu>
+</button>
+
+
+<button matTooltip="Changer de statut" mat-fab color="accent" class="third-fab-button"
   *ngIf="editMode==false && instanceOfQuotationFn(this.quotation) &&quotation && quotation.quotationStatus && (quotation.quotationStatus.successors || quotation.quotationStatus.predecessors)"
   [matMenuTriggerFor]="menu">
   <mat-icon>done</mat-icon>
@@ -278,7 +287,7 @@
 </button>
 
 
-<button matTooltip="Changer de statut" mat-fab color="accent" class="fourth-fab-button"
+<button matTooltip="Changer de statut" mat-fab color="accent" class="third-fab-button"
   *ngIf="editMode==false && instanceOfCustomerOrderFn(this.quotation) &&quotation && quotation.customerOrderStatus && (quotation.customerOrderStatus.successors || quotation.customerOrderStatus.predecessors)"
   [matMenuTriggerFor]="menu">
   <mat-icon>done</mat-icon>

@@ -35,6 +35,44 @@ import com.jss.osiris.modules.tiers.model.Tiers;
 @Entity
 public class CustomerOrder implements IQuotation, IAttachment {
 
+	public CustomerOrder() {
+	}
+
+	public CustomerOrder(Tiers tiers, Responsable responsable, Confrere confrere,
+			List<SpecialOffer> specialOffers, LocalDateTime createdDate, CustomerOrderStatus customerOrderStatus,
+			String observations, String description, List<Attachment> attachments, List<Document> documents,
+			QuotationLabelType labelType, Responsable customLabelResponsable, Tiers customLabelTiers,
+			RecordType recordType, List<AssoAffaireOrder> assoAffaireOrders, List<Mail> mails, List<Phone> phones,
+			List<Quotation> quotations, Boolean overrideSpecialOffer, String quotationLabel, Boolean isQuotation,
+			List<Invoice> invoices, List<Payment> payments, List<Deposit> deposits,
+			List<AccountingRecord> accountingRecords) {
+		this.tiers = tiers;
+		this.responsable = responsable;
+		this.confrere = confrere;
+		this.specialOffers = specialOffers;
+		this.createdDate = createdDate;
+		this.customerOrderStatus = customerOrderStatus;
+		this.observations = observations;
+		this.description = description;
+		this.attachments = attachments;
+		this.documents = documents;
+		this.labelType = labelType;
+		this.customLabelResponsable = customLabelResponsable;
+		this.customLabelTiers = customLabelTiers;
+		this.recordType = recordType;
+		this.assoAffaireOrders = assoAffaireOrders;
+		this.mails = mails;
+		this.phones = phones;
+		this.quotations = quotations;
+		this.overrideSpecialOffer = overrideSpecialOffer;
+		this.quotationLabel = quotationLabel;
+		this.isQuotation = isQuotation;
+		this.invoices = invoices;
+		this.payments = payments;
+		this.deposits = deposits;
+		this.accountingRecords = accountingRecords;
+	}
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@IndexedField

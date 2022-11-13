@@ -35,6 +35,7 @@ import com.jss.osiris.modules.profile.model.Employee;
 
 @Entity
 @Table(indexes = { @Index(name = "idx_responsable_tiers", columnList = "id_tiers") })
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Responsable implements ITiers, IAttachment {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -160,16 +161,16 @@ public class Responsable implements ITiers, IAttachment {
 	private SubscriptionPeriodType subscriptionPeriodType;
 
 	@ManyToMany
-	@JoinTable(name = "asso_tiers_document_mail_creation_affaire", joinColumns = @JoinColumn(name = "id_tiers_document"), inverseJoinColumns = @JoinColumn(name = "id_responsable"))
-	private List<Mail> mailsCreationAffaire;
+	@JoinTable(name = "asso_tiers_document_responsable_creation_affaire", joinColumns = @JoinColumn(name = "id_tiers_document"), inverseJoinColumns = @JoinColumn(name = "id_responsable"))
+	private List<Responsable> mailsCreationAffaire;
 
 	@ManyToMany
-	@JoinTable(name = "asso_tiers_document_mail_provisionning_confirmation", joinColumns = @JoinColumn(name = "id_tiers_document"), inverseJoinColumns = @JoinColumn(name = "id_responsable"))
-	private List<Mail> mailsProvisionningConfirmation;
+	@JoinTable(name = "asso_tiers_document_responsable_provisionning_confirmation", joinColumns = @JoinColumn(name = "id_tiers_document"), inverseJoinColumns = @JoinColumn(name = "id_responsable"))
+	private List<Responsable> mailsProvisionningConfirmation;
 
 	@ManyToMany
-	@JoinTable(name = "asso_tiers_document_mail_missing_formality", joinColumns = @JoinColumn(name = "id_tiers_document"), inverseJoinColumns = @JoinColumn(name = "id_responsable"))
-	private List<Mail> mailsMissingItemFormality;
+	@JoinTable(name = "asso_tiers_document_responsable_missing_formality", joinColumns = @JoinColumn(name = "id_tiers_document"), inverseJoinColumns = @JoinColumn(name = "id_responsable"))
+	private List<Responsable> mailsMissingItemFormality;
 
 	public Tiers getTiers() {
 		return tiers;
@@ -411,30 +412,6 @@ public class Responsable implements ITiers, IAttachment {
 		this.subscriptionPeriodType = subscriptionPeriodType;
 	}
 
-	public List<Mail> getMailsCreationAffaire() {
-		return mailsCreationAffaire;
-	}
-
-	public void setMailsCreationAffaire(List<Mail> mailsCreationAffaire) {
-		this.mailsCreationAffaire = mailsCreationAffaire;
-	}
-
-	public List<Mail> getMailsProvisionningConfirmation() {
-		return mailsProvisionningConfirmation;
-	}
-
-	public void setMailsProvisionningConfirmation(List<Mail> mailsProvisionningConfirmation) {
-		this.mailsProvisionningConfirmation = mailsProvisionningConfirmation;
-	}
-
-	public List<Mail> getMailsMissingItemFormality() {
-		return mailsMissingItemFormality;
-	}
-
-	public void setMailsMissingItemFormality(List<Mail> mailsMissingItemFormality) {
-		this.mailsMissingItemFormality = mailsMissingItemFormality;
-	}
-
 	@Override
 	public Boolean getIsIndividual() {
 		return true;
@@ -475,6 +452,30 @@ public class Responsable implements ITiers, IAttachment {
 
 	public void setRffInsertionRate(Float rffInsertionRate) {
 		this.rffInsertionRate = rffInsertionRate;
+	}
+
+	public List<Responsable> getMailsCreationAffaire() {
+		return mailsCreationAffaire;
+	}
+
+	public void setMailsCreationAffaire(List<Responsable> mailsCreationAffaire) {
+		this.mailsCreationAffaire = mailsCreationAffaire;
+	}
+
+	public List<Responsable> getMailsProvisionningConfirmation() {
+		return mailsProvisionningConfirmation;
+	}
+
+	public void setMailsProvisionningConfirmation(List<Responsable> mailsProvisionningConfirmation) {
+		this.mailsProvisionningConfirmation = mailsProvisionningConfirmation;
+	}
+
+	public List<Responsable> getMailsMissingItemFormality() {
+		return mailsMissingItemFormality;
+	}
+
+	public void setMailsMissingItemFormality(List<Responsable> mailsMissingItemFormality) {
+		this.mailsMissingItemFormality = mailsMissingItemFormality;
 	}
 
 }

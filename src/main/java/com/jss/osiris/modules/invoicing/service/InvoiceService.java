@@ -28,7 +28,8 @@ public interface InvoiceService {
      *                         only one affaire in the invoice (it's to define
      *                         payer)
      */
-    public Invoice createInvoice(CustomerOrder customerOrder, ITiers orderingCustomer) throws Exception;
+    public Invoice createInvoice(CustomerOrder customerOrder, ITiers orderingCustomer)
+            throws Exception;
 
     public Invoice getInvoiceForCustomerOrder(Integer customerOrderId);
 

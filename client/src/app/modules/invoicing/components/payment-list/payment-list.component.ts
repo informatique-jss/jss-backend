@@ -118,6 +118,7 @@ export class PaymentListComponent implements OnInit {
   });
   addPayment() {
     this.paymentWayService.getPaymentWays().subscribe(response => {
+      this.currentPayment.isExternallyAssociated = false;
       for (let paymentWay of response) {
         if (paymentWay.code == "INBOUND")
           this.currentPayment.paymentWay = paymentWay;

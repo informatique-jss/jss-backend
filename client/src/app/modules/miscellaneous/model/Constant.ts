@@ -1,6 +1,7 @@
 import { AccountingJournal } from "../../accounting/model/AccountingJournal";
 import { InvoiceStatus } from "../../invoicing/model/InvoiceStatus";
 import { PaymentWay } from "../../invoicing/model/PaymentWay";
+import { Employee } from '../../profile/model/Employee';
 import { ActType } from "../../quotation/model/ActType";
 import { AssignationType } from "../../quotation/model/AssignationType";
 import { BodaccPublicationType } from "../../quotation/model/BodaccPublicationType";
@@ -78,6 +79,7 @@ export interface Constant {
   actTypeSeing: ActType;
   actTypeAuthentic: ActType;
   assignationTypeEmployee: AssignationType;
+  employeeBillingResponsible: Employee;
   transfertFundsTypePhysique: TransfertFundsType;
   transfertFundsTypeMoral: TransfertFundsType;
   transfertFundsTypeBail: TransfertFundsType;

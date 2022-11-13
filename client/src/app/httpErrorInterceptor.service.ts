@@ -15,7 +15,6 @@ export class HttpErrorInterceptor implements HttpInterceptor {
     private loginService: LoginService,
   ) { }
 
-  errorMessage: string = "";
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
 
     request = request.clone({
@@ -42,8 +41,8 @@ export class HttpErrorInterceptor implements HttpInterceptor {
         }
         if (error.error instanceof Error) {
           // A client-side or network error occurred. Handle it accordingly.
-          console.error('A client-side error occurred:', error.error.message);
-          this.errorMessage = 'A client-side error occurred: ' + error.error.message;
+          console.error('A client-side error occurred:', error.message);
+          errorMessage = 'Erreur côté navigateur, vous êtes peut-être déconnecté : ' + error.message;
         } else {
           // The backend returned an unsuccessful response code.
           // The response body may contain clues as to what went wrong,
@@ -53,15 +52,15 @@ export class HttpErrorInterceptor implements HttpInterceptor {
             this.loginService.setLoggedIn(false);
             return EMPTY;
           } else {
-            console.error(`Backend returned code ${error.status}, body was: ${error.error}`);
-            this.errorMessage = 'A server-side error occurred: ' + `HTTP ${error.status}, body : ${error.error}`;
+            console.error(`Backend returned code ${error.status}, body was: ${error.message}`);
+            errorMessage = 'Erreur côté serveur : ' + `HTTP ${error.status}, body : ${error.message}`;
           }
         }
-        if (this.errorMessage != "") {
+        if (errorMessage != "") {
           if (errorMessage != undefined && errorMessage != null && errorMessage != "") {
-            this.errorMessage = errorMessage;
+            errorMessage = errorMessage;
           } else {
-            this.errorMessage = '😢 Dommage, une erreur est apparue : ' + this.errorMessage;
+            errorMessage = '😢 Dommage, une erreur est apparue : ' + errorMessage;
           }
           this.appService.displaySnackBar(errorMessage, false, 50);
         }

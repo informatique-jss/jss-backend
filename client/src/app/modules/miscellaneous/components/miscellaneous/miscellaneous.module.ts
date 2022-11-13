@@ -29,6 +29,7 @@ import { NgxEchartsModule } from 'ngx-echarts';
 import { TrustHtmlPipe } from 'src/app/libs/TrustHtmlPipe';
 import { AddressingComponent } from '../addressing/addressing.component';
 import { AttachmentsComponent } from '../attachments/attachments.component';
+import { AvatarChipComponent } from '../avatar-chip/avatar-chip.component';
 import { AvatarComponent } from '../avatar/avatar.component';
 import { ChipsStatusComponent } from '../chips-status/chips-status.component';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
@@ -356,6 +357,7 @@ import { MiscellaneousComponent } from './miscellaneous.component';
     SelectPaymentWayOneComponent,
     SelectPaymentWayComponent,
     AvatarComponent,
+    AvatarChipComponent,
     SelectDepartmentsComponent,
     NotificationDialogComponent,
     SelectDepartmentComponent,
@@ -502,6 +504,7 @@ import { MiscellaneousComponent } from './miscellaneous.component';
     RadioGroupActTypeComponent,
     AutocompleteLegalFormComponent,
     AvatarComponent,
+    AvatarChipComponent,
     ChipsConfrereComponent,
     SelectMailRedirectionComponent,
     SelectVatComponent,

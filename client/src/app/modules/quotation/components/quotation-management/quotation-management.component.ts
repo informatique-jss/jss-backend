@@ -5,7 +5,6 @@ import { Observable, Subscription } from 'rxjs';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
 import { getDocument, replaceDocument } from 'src/app/libs/DocumentHelper';
 import { copyObject } from 'src/app/libs/GenericHelper';
-import { instanceOfQuotation } from 'src/app/libs/TypeHelper';
 import { City } from 'src/app/modules/miscellaneous/model/City';
 import { Country } from 'src/app/modules/miscellaneous/model/Country';
 import { CityService } from 'src/app/modules/miscellaneous/services/city.service';
@@ -16,8 +15,10 @@ import { TiersService } from 'src/app/modules/tiers/services/tiers.service';
 import { Document } from '../../../miscellaneous/model/Document';
 import { DocumentType } from '../../../miscellaneous/model/DocumentType';
 import { IQuotation } from '../../model/IQuotation';
+import { MailComputeResult } from '../../model/MailComputeResult';
 import { QuotationLabelType } from '../../model/QuotationLabelType';
 import { RecordType } from '../../model/RecordType';
+import { MailComputeResultService } from '../../services/mail.compute.result.service';
 import { QuotationLabelTypeService } from '../../services/quotation.label.type.service';
 import { RecordTypeService } from '../../services/record.type.service';
 
@@ -31,6 +32,8 @@ export class QuotationManagementComponent implements OnInit, AfterContentChecked
   matcher: CustomErrorStateMatcher = new CustomErrorStateMatcher();
   @Input() quotation: IQuotation = {} as IQuotation;
   @Input() editMode: boolean = false;
+  @Input() isStatusOpen: boolean = false;
+  @Input() instanceOfCustomerOrder: boolean = false;
   @Input() updateDocumentsEvent: Observable<void> | undefined;
   updateDocumentsSubscription: Subscription | undefined;
   @ViewChild(MatAccordion) accordion: MatAccordion | undefined;
@@ -47,6 +50,9 @@ export class QuotationManagementComponent implements OnInit, AfterContentChecked
 
   quotationLabelTypeOther: QuotationLabelType = this.constantService.getQuotationLabelTypeOther();
 
+  quotationMailComputeResult: MailComputeResult | undefined;
+  billingMailComputeResult: MailComputeResult | undefined;
+
   Validators = Validators;
 
   constructor(private formBuilder: UntypedFormBuilder,
@@ -55,9 +61,12 @@ export class QuotationManagementComponent implements OnInit, AfterContentChecked
     private constantService: ConstantService,
     protected cityService: CityService,
     private changeDetectorRef: ChangeDetectorRef,
+    private mailComputeResultService: MailComputeResultService,
     protected quotationLabelTypeService: QuotationLabelTypeService) { }
 
   ngOnInit() {
+    this.updateQuotationMailResult();
+    this.updateBillingMailResult();
     this.quotationManagementForm.markAllAsTouched();
     this.quotationLabelTypeService.getQuotationLabelTypes().subscribe(response => {
       this.quotationLabelTypes = response;
@@ -78,14 +87,14 @@ export class QuotationManagementComponent implements OnInit, AfterContentChecked
       this.updateDocumentsSubscription.unsubscribe();
   }
 
-  instanceOfQuotation = instanceOfQuotation;
-
   ngOnChanges(changes: SimpleChanges) {
     if (changes.quotation != undefined) {
+      this.updateQuotationMailResult();
+      this.updateBillingMailResult();
       if (this.quotation.recordType == null || this.quotation.recordType == undefined)
         this.quotation.recordType = this.recordTypes[0];
-      if (this.quotation.labelType == null || this.quotation.labelType == undefined)
-        this.quotation.labelType = this.quotationLabelTypes[0];
+      if (this.quotation.quotationLabelType == null || this.quotation.quotationLabelType == undefined)
+        this.quotation.quotationLabelType = this.quotationLabelTypes[0];
       this.setDocument();
       this.quotationManagementForm.markAllAsTouched();
     }
@@ -125,6 +134,8 @@ export class QuotationManagementComponent implements OnInit, AfterContentChecked
 
   getFormStatus(): boolean {
     this.quotationManagementForm.markAllAsTouched();
+    if (!this.isStatusOpen && (!this.quotationMailComputeResult?.recipientsMailTo || this.quotationMailComputeResult?.recipientsMailTo.length == 0))
+      return false;
     return this.quotationManagementForm.valid;
   }
 
@@ -157,6 +168,19 @@ export class QuotationManagementComponent implements OnInit, AfterContentChecked
         this.billingDocument.billingLabelCity = city;
       }
     })
+  }
 
+  updateQuotationMailResult() {
+    if (this.quotation)
+      this.mailComputeResultService.getMailComputeResultForQuotation(this.quotation).subscribe(response => {
+        this.quotationMailComputeResult = response;
+      })
+  }
+
+  updateBillingMailResult() {
+    if (this.quotation)
+      this.mailComputeResultService.getMailComputeResultForBilling(this.quotation).subscribe(response => {
+        this.billingMailComputeResult = response;
+      })
   }
 }

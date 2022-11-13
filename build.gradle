@@ -46,10 +46,12 @@ dependencies {
     
     // PDF, Office & HTML generation
     implementation 'com.itextpdf:itextpdf:5.5.13.3'
-    implementation 'com.itextpdf:html2pdf:4.0.2'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf:2.7.1'
     implementation 'org.apache.poi:poi-ooxml:5.2.2'
     implementation 'org.apache.poi:poi:5.2.2'
+    implementation 'org.xhtmlrenderer:flying-saucer-core:9.1.22'
+    implementation 'org.xhtmlrenderer:flying-saucer-pdf-itext5:9.1.22'
+
 }
  
 group = 'com.jss.osiris'

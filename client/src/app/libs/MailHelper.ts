@@ -1,3 +1,4 @@
+import { Employee } from '../modules/profile/model/Employee';
 import { validateEmail, validateFrenchPhone, validateInternationalPhone } from "./CustomFormsValidatorsHelper";
 
 export function prepareMail(mailAdress: string, subject: string | null, body: string | null) {
@@ -24,6 +25,6 @@ export function callNumber(phoneNumber: string) {
   window.location.href = "tel:" + phoneNumber;
 }
 
-export function displayInTeams(mail: string) {
-  window.location.href = "im:" + mail;
+export function displayInTeams(employee: Employee) {
+  window.location.href = "im:" + employee.mail;
 }

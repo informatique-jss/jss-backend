@@ -19,6 +19,8 @@ import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.jss.osiris.libs.ValidationHelper;
+import com.jss.osiris.libs.mail.MailHelper;
+import com.jss.osiris.libs.mail.model.MailComputeResult;
 import com.jss.osiris.modules.miscellaneous.model.BillingType;
 import com.jss.osiris.modules.miscellaneous.model.Department;
 import com.jss.osiris.modules.miscellaneous.model.Document;
@@ -29,6 +31,7 @@ import com.jss.osiris.modules.miscellaneous.service.CivilityService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.CountryService;
 import com.jss.osiris.modules.miscellaneous.service.DepartmentService;
+import com.jss.osiris.modules.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.miscellaneous.service.LanguageService;
 import com.jss.osiris.modules.miscellaneous.service.LegalFormService;
 import com.jss.osiris.modules.miscellaneous.service.SpecialOfferService;
@@ -245,6 +248,106 @@ public class QuotationController {
 
   @Autowired
   AffaireStatusService affaireStatusService;
+
+  @Autowired
+  DocumentService documentService;
+
+  @Autowired
+  MailHelper mailHelper;
+
+  @PostMapping(inputEntryPoint + "/mail/quotation/compute")
+  public ResponseEntity<MailComputeResult> computeMailForQuotation(
+      @RequestBody Quotation quotation) {
+    MailComputeResult mailComputeResult;
+    try {
+      mailComputeResult = mailHelper.computeMailForQuotationDocument(quotation);
+    } catch (
+
+    ResponseStatusException e) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    } catch (HttpStatusCodeException e) {
+      logger.error("HTTP error when fetching affaireStatus", e);
+      return new ResponseEntity<MailComputeResult>(HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (Exception e) {
+      logger.error("Error when fetching affaireStatus", e);
+      return new ResponseEntity<MailComputeResult>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    return new ResponseEntity<MailComputeResult>(mailComputeResult, HttpStatus.OK);
+  }
+
+  @PostMapping(inputEntryPoint + "/mail/billing/compute")
+  public ResponseEntity<MailComputeResult> computeMailForBilling(
+      @RequestBody Quotation quotation) {
+    MailComputeResult mailComputeResult;
+    try {
+      mailComputeResult = mailHelper.computeMailForBillingDocument(quotation);
+    } catch (
+
+    ResponseStatusException e) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    } catch (HttpStatusCodeException e) {
+      logger.error("HTTP error when fetching affaireStatus", e);
+      return new ResponseEntity<MailComputeResult>(HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (Exception e) {
+      logger.error("Error when fetching affaireStatus", e);
+      return new ResponseEntity<MailComputeResult>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    return new ResponseEntity<MailComputeResult>(mailComputeResult, HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/mail/generate/quotation")
+  public ResponseEntity<Quotation> generateQuotationMail(@RequestParam Integer quotationId) {
+    Quotation quotation = quotationService.getQuotation(quotationId);
+    if (quotation == null)
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    try {
+      mailHelper.generateQuotationMail(quotation);
+    } catch (HttpStatusCodeException e) {
+      logger.error("HTTP error when fetching affaireStatus", e);
+      return new ResponseEntity<Quotation>(HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (Exception e) {
+      logger.error("Error when fetching affaireStatus", e);
+      return new ResponseEntity<Quotation>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    return new ResponseEntity<Quotation>(quotation, HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/mail/generate/waiting-deposit")
+  public ResponseEntity<CustomerOrder> generateWaintingDepositMail(@RequestParam Integer customerOrderId) {
+    CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
+    if (customerOrder == null)
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    try {
+      mailHelper.generateWaintingDepositMail(customerOrder);
+    } catch (HttpStatusCodeException e) {
+      logger.error("HTTP error when fetching affaireStatus", e);
+      return new ResponseEntity<CustomerOrder>(HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (Exception e) {
+      logger.error("Error when fetching affaireStatus", e);
+      return new ResponseEntity<CustomerOrder>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    return new ResponseEntity<CustomerOrder>(customerOrder, HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/mail/generate/invoice")
+  public ResponseEntity<CustomerOrder> generateInvoiceMail(@RequestParam Integer customerOrderId) {
+    CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
+    if (customerOrder == null)
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    try {
+      try {
+        customerOrderService.generateInvoiceMail(customerOrder);
+      } catch (Exception e) {
+      }
+    } catch (HttpStatusCodeException e) {
+      logger.error("HTTP error when fetching affaireStatus", e);
+      return new ResponseEntity<CustomerOrder>(HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (Exception e) {
+      logger.error("Error when fetching affaireStatus", e);
+      return new ResponseEntity<CustomerOrder>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    return new ResponseEntity<CustomerOrder>(new CustomerOrder(), HttpStatus.OK);
+  }
 
   @GetMapping(inputEntryPoint + "/affaire-status-list")
   public ResponseEntity<List<AffaireStatus>> getAffaireStatus() {
@@ -1671,16 +1774,23 @@ public class QuotationController {
     for (AssoAffaireOrder assoAffaireOrder : quotation.getAssoAffaireOrders()) {
       if (assoAffaireOrder.getAffaire() == null)
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-      if (quotation.getAssoAffaireOrders().size() > 1
-          && quotation.getQuotationLabelType().getId().equals(constantService.getBillingLabelTypeCodeAffaire().getId()))
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-
       validationHelper.validateReferential(assoAffaireOrder.getAffaire(), true);
-
       for (Provision provision : assoAffaireOrder.getProvisions()) {
         validateProvision(provision, isOpen, isCustomerOrder);
       }
     }
+
+    if (quotation.getAssoAffaireOrders().size() > 1) {
+      if (quotation.getQuotationLabelType().getId().equals(constantService.getBillingLabelTypeCodeAffaire().getId()))
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+      Document quotationDocument = documentService.getQuotationDocument(quotation.getDocuments());
+      if (quotationDocument != null && quotationDocument.getIsRecipientAffaire())
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+      Document billingDocument = documentService.getBillingDocument(quotation.getDocuments());
+      if (billingDocument != null && billingDocument.getIsRecipientAffaire())
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+    }
+
   }
 
   private void validateProvision(Provision provision, boolean isOpen, boolean isCustomerOrder) throws Exception {

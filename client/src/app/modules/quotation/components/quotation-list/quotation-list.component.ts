@@ -32,7 +32,7 @@ export class QuotationListComponent implements OnInit {
     this.displayedColumns = [];
     this.displayedColumns.push({ id: "id", fieldName: "id", label: "N° de la commande" } as SortTableColumn);
     this.displayedColumns.push({ id: "customerOrderName", fieldName: "tiers", label: "Donneur d'ordre", valueFonction: this.getCustomerOrderName, actionLinkFunction: this.getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la fiche du donneur d'ordre" } as SortTableColumn);
-    this.displayedColumns.push({ id: "quotationStatus", fieldName: "quotationStatus.label", label: "Statut" } as SortTableColumn);
+    this.displayedColumns.push({ id: "quotationStatus", fieldName: "customerOrderStatus.label", label: "Statut" } as SortTableColumn);
     this.displayedColumns.push({ id: "salesEmployee", fieldName: "salesEmployee", label: "Commercial", displayAsEmployee: true, valueFonction: this.getSalesEmployee } as SortTableColumn);
     this.displayedColumns.push({ id: "total", fieldName: "total", label: "Montant TTC", valueFonction: this.getTotalPrice } as SortTableColumn);
     this.displayedColumns.push({ id: "createdDate", fieldName: "createdDate", label: "Date de création", valueFonction: formatDateTimeForSortTable } as SortTableColumn);

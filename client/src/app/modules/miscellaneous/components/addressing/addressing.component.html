@@ -94,7 +94,7 @@
         </button>
       </td>
     </tr>
-    <tr *ngIf="document.isMailingPdf && (document.isRecipientClient || onlyMail) && overrideClientMail">
+    <tr *ngIf="document.isMailingPdf && (document.isRecipientClient ) && overrideClientMail">
       <td [hidden]="!overrideClientMail " colspan="3">
         <chips-mail [(model)]="document.mailsClient" [form]="adressingForm" propertyName="mailsClient"
           label="Autres adresses mail pour le client" [isDisabled]="!editMode"></chips-mail>

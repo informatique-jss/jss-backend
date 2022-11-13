@@ -78,6 +78,7 @@ import com.jss.osiris.modules.miscellaneous.service.SpecialOfferService;
 import com.jss.osiris.modules.miscellaneous.service.VatCollectionTypeService;
 import com.jss.osiris.modules.miscellaneous.service.VatService;
 import com.jss.osiris.modules.miscellaneous.service.WeekDayService;
+import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.profile.service.EmployeeService;
 import com.jss.osiris.modules.quotation.model.Announcement;
 import com.jss.osiris.modules.quotation.model.Bodacc;
@@ -204,6 +205,9 @@ public class MiscellaneousController {
     @Autowired
     EmployeeService employeeService;
 
+    @Autowired
+    ActiveDirectoryHelper activeDirectoryHelper;
+
     @GetMapping(inputEntryPoint + "/notifications")
     public ResponseEntity<List<Notification>> getNotifications() {
         List<Notification> notifications = null;
@@ -254,7 +258,15 @@ public class MiscellaneousController {
         if (notification == null)
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
-        if (!notification.getEmployee().getId().equals(employeeService.getCurrentEmployee().getId()))
+        List<Employee> backupEmployee = activeDirectoryHelper
+                .getMyHolidaymaker(employeeService.getCurrentEmployee());
+        boolean found = false;
+
+        for (Employee employee : backupEmployee)
+            if (notification.getEmployee().getId().equals(employee.getId())) {
+                found = true;
+            }
+        if (!found)
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
         try {

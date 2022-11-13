@@ -13,8 +13,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.ActiveDirectoryHelper;
+import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
+import com.jss.osiris.modules.invoicing.service.InvoiceItemService;
 import com.jss.osiris.modules.miscellaneous.model.AssoSpecialOfferBillingType;
 import com.jss.osiris.modules.miscellaneous.model.BillingItem;
 import com.jss.osiris.modules.miscellaneous.model.BillingType;
@@ -25,12 +27,14 @@ import com.jss.osiris.modules.miscellaneous.service.BillingItemService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.miscellaneous.service.MailService;
+import com.jss.osiris.modules.miscellaneous.service.NotificationService;
 import com.jss.osiris.modules.miscellaneous.service.PhoneService;
 import com.jss.osiris.modules.miscellaneous.service.SpecialOfferService;
 import com.jss.osiris.modules.miscellaneous.service.VatService;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.CharacterPrice;
+import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.Domiciliation;
 import com.jss.osiris.modules.quotation.model.IQuotation;
 import com.jss.osiris.modules.quotation.model.Provision;
@@ -83,6 +87,18 @@ public class QuotationServiceImpl implements QuotationService {
     @Autowired
     ActiveDirectoryHelper activeDirectoryHelper;
 
+    @Autowired
+    NotificationService notificationService;
+
+    @Autowired
+    MailHelper mailHelper;
+
+    @Autowired
+    InvoiceItemService invoiceItemService;
+
+    @Autowired
+    CustomerOrderService customerOrderService;
+
     @Override
     public Quotation getQuotation(Integer id) {
         Optional<Quotation> quotation = quotationRepository.findById(id);
@@ -99,9 +115,6 @@ public class QuotationServiceImpl implements QuotationService {
 
     @Override
     public Quotation addOrUpdateQuotation(Quotation quotation) throws Exception {
-        if (quotation.getId() == null)
-            quotation.setCreatedDate(LocalDateTime.now());
-
         quotation.setIsQuotation(true);
 
         if (quotation.getDocuments() != null)
@@ -110,7 +123,6 @@ public class QuotationServiceImpl implements QuotationService {
 
         // Complete domiciliation end date
         for (AssoAffaireOrder assoAffaireOrder : quotation.getAssoAffaireOrders()) {
-            assoAffaireOrder.setCustomerOrder(null);
             assoAffaireOrder.setQuotation(quotation);
 
             for (Provision provision : assoAffaireOrder.getProvisions()) {
@@ -160,8 +172,24 @@ public class QuotationServiceImpl implements QuotationService {
         }
 
         getAndSetInvoiceItemsForQuotation(quotation);
+
+        // Save invoice item
+        for (AssoAffaireOrder assoAffaireOrder : quotation.getAssoAffaireOrders()) {
+            for (Provision provision : assoAffaireOrder.getProvisions()) {
+                if (provision.getInvoiceItems() != null)
+                    for (InvoiceItem invoiceItem : provision.getInvoiceItems())
+                        invoiceItemService.addOrUpdateInvoiceItem(invoiceItem);
+            }
+        }
+
+        boolean isNewQuotation = quotation.getId() == null;
+        if (isNewQuotation)
+            quotation.setCreatedDate(LocalDateTime.now());
         quotation = quotationRepository.save(quotation);
         indexEntityService.indexEntity(quotation, quotation.getId());
+
+        if (isNewQuotation)
+            notificationService.notifyNewQuotation(quotation);
         return quotation;
     }
 
@@ -173,6 +201,7 @@ public class QuotationServiceImpl implements QuotationService {
                 && quotation.getAssoAffaireOrders().get(0).getProvisions().size() > 0) {
             for (AssoAffaireOrder assoAffaireOrder : quotation.getAssoAffaireOrders()) {
                 for (Provision provision : assoAffaireOrder.getProvisions()) {
+                    provision.setAssoAffaireOrder(assoAffaireOrder);
                     invoiceItems.addAll(getInvoiceItemsForProvision(provision, quotation));
                 }
             }
@@ -360,8 +389,9 @@ public class QuotationServiceImpl implements QuotationService {
                     for (Provision provision : assoAffaireOrder.getProvisions()) {
                         ArrayList<InvoiceItem> finalInvoiceItems = new ArrayList<InvoiceItem>();
                         for (InvoiceItem invoiceItemToMerge : invoiceItemsToMerge) {
-                            if (provision.getInvoiceItems() != null) {
+                            if (provision.getInvoiceItems() != null && provision.getInvoiceItems().size() > 0) {
                                 for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
+                                    invoiceItem.setProvision(provision);
                                     if (invoiceItemToMerge.getProvision().getId() != null
                                             && provision.getId() != null
                                             && invoiceItemToMerge.getProvision().getId()
@@ -384,11 +414,16 @@ public class QuotationServiceImpl implements QuotationService {
                                                                 / 100f);
                                                 computeInvoiceItemsVatAndDiscount(invoiceItemToMerge, quotation);
                                             }
+                                            finalInvoiceItems.add(invoiceItemToMerge);
                                         }
                                     }
                                 }
+                            } else {
+                                if (provision.getInvoiceItems() == null)
+                                    provision.setInvoiceItems(new ArrayList<InvoiceItem>());
+                                if (provision.getId().equals(invoiceItemToMerge.getProvision().getId()))
+                                    finalInvoiceItems.add(invoiceItemToMerge);
                             }
-                            finalInvoiceItems.add(invoiceItemToMerge);
                         }
                         provision.setInvoiceItems(finalInvoiceItems);
                     }
@@ -401,10 +436,32 @@ public class QuotationServiceImpl implements QuotationService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Quotation addOrUpdateQuotationStatus(Quotation quotation, String targetStatusCode) throws Exception {
-        QuotationStatus quotationStatus = quotationStatusService.getQuotationStatusByCode(targetStatusCode);
-        if (quotationStatus == null)
+        QuotationStatus targetQuotationStatus = quotationStatusService.getQuotationStatusByCode(targetStatusCode);
+        if (targetQuotationStatus == null)
             throw new Exception("Quotation status not found for code " + targetStatusCode);
-        quotation.setQuotationStatus(quotationStatus);
+        if (quotation.getQuotationStatus().getCode().equals(QuotationStatus.OPEN)
+                && targetQuotationStatus.getCode().equals(QuotationStatus.TO_VERIFY))
+            notificationService.notifyQuotationToVerify(quotation);
+        if (quotation.getQuotationStatus().getCode().equals(QuotationStatus.TO_VERIFY)
+                && targetQuotationStatus.getCode().equals(QuotationStatus.SENT_TO_CUSTOMER)) {
+            mailHelper.sendQuotationToCustomer(quotation, false);
+            notificationService.notifyQuotationSent(quotation);
+        }
+        if (quotation.getQuotationStatus().getCode().equals(QuotationStatus.SENT_TO_CUSTOMER)
+                && targetQuotationStatus.getCode().equals(QuotationStatus.VALIDATED_BY_CUSTOMER)) {
+            CustomerOrder customerOrder = customerOrderService.createNewCustomerOrderFromQuotation(quotation);
+            if (customerOrder == null)
+                throw new Exception();
+            if (quotation.getCustomerOrders() == null)
+                quotation.setCustomerOrders(new ArrayList<CustomerOrder>());
+            quotation.getCustomerOrders().add(customerOrder);
+            notificationService.notifyQuotationValidatedByCustomer(quotation);
+        }
+        if (quotation.getQuotationStatus().getCode().equals(QuotationStatus.SENT_TO_CUSTOMER)
+                && targetQuotationStatus.getCode().equals(QuotationStatus.REFUSED_BY_CUSTOMER))
+            notificationService.notifyQuotationRefusedByCustomer(quotation);
+
+        quotation.setQuotationStatus(targetQuotationStatus);
         return this.addOrUpdateQuotation(quotation);
     }
 
@@ -436,4 +493,5 @@ public class QuotationServiceImpl implements QuotationService {
             for (Quotation quotation : quotations)
                 indexEntityService.indexEntity(quotation, quotation.getId());
     }
+
 }

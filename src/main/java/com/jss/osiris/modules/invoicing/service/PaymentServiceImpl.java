@@ -23,6 +23,7 @@ import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.model.PaymentSearch;
 import com.jss.osiris.modules.invoicing.repository.PaymentRepository;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
+import com.jss.osiris.modules.miscellaneous.service.NotificationService;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
@@ -66,6 +67,9 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Autowired
     ConstantService constantService;
+
+    @Autowired
+    NotificationService notificationService;
 
     @Value("${invoicing.payment.limit.refund.euros}")
     private String payementLimitRefundInEuros;
@@ -246,9 +250,12 @@ public class PaymentServiceImpl implements PaymentService {
                     // Unlocked customer order
                     if (correspondingCustomerOrder.get(i).getCustomerOrderStatus().getCode()
                             .equals(CustomerOrderStatus.WAITING_DEPOSIT)
-                            && remainingToPayForCurrentCustomerOrder - effectivePayment <= 0)
+                            && remainingToPayForCurrentCustomerOrder - effectivePayment <= 0) {
                         customerOrderService.addOrUpdateCustomerOrderStatus(correspondingCustomerOrder.get(i),
                                 CustomerOrderStatus.BEING_PROCESSED);
+                        notificationService.notifyCustomerOrderToBeingProcessed(correspondingCustomerOrder.get(i),
+                                false);
+                    }
                 }
             }
             payment.setCustomerOrder(correspondingCustomerOrder.get(0));
@@ -400,7 +407,8 @@ public class PaymentServiceImpl implements PaymentService {
         if (foundEntity != null && foundEntity.getEntityType() != null) {
             if (foundEntity.getEntityType().equals(CustomerOrder.class.getSimpleName())) {
                 CustomerOrder customerOrder = customerOrderService.getCustomerOrder(foundEntity.getEntityId());
-                if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.WAITING_DEPOSIT))
+                if (customerOrder.getCustomerOrderStatus() != null
+                        && customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.WAITING_DEPOSIT))
                     return customerOrder;
             }
         }
@@ -409,6 +417,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     private Invoice getInvoiceForCustomerOrder(CustomerOrder customerOrder) throws Exception {
         if (customerOrder.getInvoices() != null && customerOrder.getInvoices().size() > 0
+                && customerOrder.getCustomerOrderStatus() != null
                 && customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BILLED)) {
             for (Invoice invoice : customerOrder.getInvoices())
                 if (invoice.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusSend().getId()))

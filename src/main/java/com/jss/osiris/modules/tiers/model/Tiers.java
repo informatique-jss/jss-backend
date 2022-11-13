@@ -36,6 +36,7 @@ import com.jss.osiris.modules.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.profile.model.Employee;
 
 @Entity
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Tiers implements ITiers, IAttachment {
 
 	@Id

@@ -40,7 +40,6 @@ export class InvoiceManagementComponent implements OnInit {
     if (changes.quotation != undefined) {
       this.invoiceManagementForm.markAllAsTouched();
     }
-
   }
 
   invoiceManagementForm = this.formBuilder.group({
@@ -85,7 +84,7 @@ export class InvoiceManagementComponent implements OnInit {
     if (instanceOfQuotation(this.quotation))
       return true;
     if (instanceOfCustomerOrder(this.quotation)) {
-      if ((this.quotation as CustomerOrder).invoices == undefined) {
+      if ((this.quotation as CustomerOrder).invoices == undefined || (this.quotation as CustomerOrder).invoices == null || (this.quotation as CustomerOrder).invoices.length == 0) {
         return true;
       } else {
         for (let invoice of (this.quotation as CustomerOrder).invoices) {

@@ -105,6 +105,10 @@ mini-fab-add mat-form-field.mat-form-field, mat-option, .mat-cell {
   color: #c0392b;
 }
 
+.color-warn {
+  color: #c0392b
+}
+
 .form-div {
   background-color: white;
   margin-top: 15px;

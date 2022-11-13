@@ -55,6 +55,13 @@
               </td>
             </tr>
           </table>
+          <div class="div-customer-order"
+            *ngIf="quotation && instanceOfQuotation(quotation) && quotation.customerOrders && quotation.customerOrders.length>0">
+            <p>Commandes issues de ce devis</p>
+            <sort-table [actions]="customerOrderTableActions" [columns]="customerOrderDisplayedColumns"
+              [values]="quotation.customerOrders" tableName="Liste commandes">
+            </sort-table>
+          </div>
           <table class="full-width">
             <tr>
               <td>Tarif special :

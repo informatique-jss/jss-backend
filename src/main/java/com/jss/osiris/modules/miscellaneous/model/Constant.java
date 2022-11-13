@@ -12,6 +12,7 @@ import javax.persistence.ManyToOne;
 import com.jss.osiris.modules.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.invoicing.model.InvoiceStatus;
 import com.jss.osiris.modules.invoicing.model.PaymentWay;
+import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.quotation.model.ActType;
 import com.jss.osiris.modules.quotation.model.AssignationType;
 import com.jss.osiris.modules.quotation.model.BodaccPublicationType;
@@ -231,6 +232,10 @@ public class Constant implements Serializable, IId {
 	@ManyToOne
 	@JoinColumn(name = "id_assignation_type_employee")
 	private AssignationType assignationTypeEmployee;
+
+	@ManyToOne
+	@JoinColumn(name = "id_employee_billing_responsible")
+	private Employee employeeBillingResponsible;
 
 	@ManyToOne
 	@JoinColumn(name = "id_transfert_funds_type_physique")
@@ -909,6 +914,14 @@ public class Constant implements Serializable, IId {
 
 	public void setTypePersonneExploitation(TypePersonne typePersonneExploitation) {
 		this.typePersonneExploitation = typePersonneExploitation;
+	}
+
+	public Employee getEmployeeBillingResponsible() {
+		return employeeBillingResponsible;
+	}
+
+	public void setEmployeeBillingResponsible(Employee employeeBillingResponsible) {
+		this.employeeBillingResponsible = employeeBillingResponsible;
 	}
 
 }

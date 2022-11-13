@@ -1,3 +1,23 @@
+<ng-template #cardActions let-notification='notification'>
+  <mat-card-actions style="display: flex;right: 22px;position: absolute;">
+    <div class="menu notif" (click)="setAsRead($event,notification);$event.stopPropagation();"
+      matTooltip="Marquer comme lu (maintenir CTRL pour l'appliquer à l'ensemble de l'onglet)">
+      <mat-icon>
+        drafts</mat-icon>
+    </div>
+    <div class="menu notif" (click)="setAsUnread($event,notification);$event.stopPropagation();"
+      matTooltip="Marquer comme non lu (maintenir CTRL pour l'appliquer à l'ensemble de l'onglet)">
+      <mat-icon>
+        mail</mat-icon>
+    </div>
+    <div class="menu notif" (click)="delete($event,notification);$event.stopPropagation();"
+      matTooltip="Supprimer définitivement (maintenir CTRL pour l'appliquer à l'ensemble de l'onglet)">
+      <mat-icon>
+        delete_forever</mat-icon>
+    </div>
+  </mat-card-actions>
+</ng-template>
+
 <div>
   <form [formGroup]="notificationForm">
     <table class="full-width">
@@ -7,31 +27,192 @@
             <mat-tab-group animationDuration="0ms">
               <mat-tab [label]="getTabLabel(QUOTATION_ENTITY_TYPE)">
                 <mat-dialog-content class="mat-content">
-                  <mat-card class="pointer" *ngFor="let entity of getEntitiesForTab(QUOTATION_ENTITY_TYPE)"
-                    (click)="openEntity(entity,QUOTATION_ENTITY_TYPE)">
-                    <mat-card-title-group>
-                      <mat-card-title matBadge="X" matBadgePosition="above before" [matBadgeHidden]="entity.isRead"
-                        matBadgeColor="warn" matBadgeSize="small" class="hide-text">{{entity.entityId}}</mat-card-title>
-                      <mat-card-subtitle><span>{{entity.id}}</span>
-                      </mat-card-subtitle>
-                      <mat-card-actions style="display: flex">
-                        <div class="menu notif" (click)="setAsRead($event,entity);$event.stopPropagation();"
-                          matTooltip="Marquer comme lu (maintenir CTRL pour l'appliquer à l'ensemble de l'onglet)">
-                          <mat-icon>
-                            drafts</mat-icon>
-                        </div>
-                        <div class="menu notif" (click)="setAsUnread($event,entity);$event.stopPropagation();"
-                          matTooltip="Marquer comme non lu (maintenir CTRL pour l'appliquer à l'ensemble de l'onglet)">
-                          <mat-icon>
-                            mail</mat-icon>
-                        </div>
-                        <div class="menu notif" (click)="delete($event,entity);$event.stopPropagation();"
-                          matTooltip="Supprimer définitivement (maintenir CTRL pour l'appliquer à l'ensemble de l'onglet)">
-                          <mat-icon>
-                            delete_forever</mat-icon>
-                        </div>
-                      </mat-card-actions>
-                    </mat-card-title-group>
+                  <mat-card class="pointer" *ngFor="let notification of getEntitiesForTab(QUOTATION_ENTITY_TYPE)"
+                    (click)="openEntity($event,notification,QUOTATION_ENTITY_TYPE)">
+                    <ng-container *ngIf="notification.notificationType==QUOTATION_SENT">
+                      <mat-card-title-group>
+                        <mat-card-title matBadge="X" matBadgePosition="above before"
+                          [matBadgeHidden]="notification.isRead" matBadgeColor="warn" matBadgeSize="small"
+                          class="hide-text">Devis envoyé</mat-card-title>
+                        <mat-card-subtitle><span>{{notification.createdDateTime |date:'EEEE d LLLL yyyy à
+                            HH:mm'}}</span>
+                        </mat-card-subtitle>
+                        <ng-container [ngTemplateOutlet]="cardActions"
+                          [ngTemplateOutletContext]="{notification:notification}">
+                        </ng-container>
+                      </mat-card-title-group>
+                      <mat-card-content>
+                        <avatar-chip [employee]="notification.createdBy"></avatar-chip> a envoyé un nouveau devis pour
+                        {{notification.detail1}}
+                      </mat-card-content>
+                    </ng-container>
+                    <ng-container *ngIf="notification.notificationType==QUOTATION_CREATE">
+                      <mat-card-title-group>
+                        <mat-card-title matBadge="X" matBadgePosition="above before"
+                          [matBadgeHidden]="notification.isRead" matBadgeColor="warn" matBadgeSize="small"
+                          class="hide-text">Nouveau devis</mat-card-title>
+                        <mat-card-subtitle><span>{{notification.createdDateTime |date:'EEEE d LLLL yyyy à
+                            HH:mm'}}</span>
+                        </mat-card-subtitle>
+                        <ng-container [ngTemplateOutlet]="cardActions"
+                          [ngTemplateOutletContext]="{notification:notification}">
+                        </ng-container>
+                      </mat-card-title-group>
+                      <mat-card-content>
+                        <avatar-chip [employee]="notification.createdBy"></avatar-chip> a créé un nouveau devis pour
+                        {{notification.detail1}}
+                      </mat-card-content>
+                    </ng-container>
+                    <ng-container *ngIf="notification.notificationType==QUOTATION_REFUSED_BY_CUSOMER">
+                      <mat-card-title-group>
+                        <mat-card-title matBadge="X" matBadgePosition="above before"
+                          [matBadgeHidden]="notification.isRead" matBadgeColor="warn" matBadgeSize="small"
+                          class="hide-text">Devis refusé</mat-card-title>
+                        <mat-card-subtitle><span>{{notification.createdDateTime |date:'EEEE d LLLL yyyy à
+                            HH:mm'}}</span>
+                        </mat-card-subtitle>
+                        <ng-container [ngTemplateOutlet]="cardActions"
+                          [ngTemplateOutletContext]="{notification:notification}">
+                        </ng-container>
+                      </mat-card-title-group>
+                      <mat-card-content>
+                        <avatar-chip [employee]="notification.createdBy"></avatar-chip> a indiqué qu'un devis pour
+                        {{notification.detail1}} a été refusé
+                      </mat-card-content>
+                    </ng-container>
+                    <ng-container *ngIf="notification.notificationType==QUOTATION_VALIDATED_BY_CUSOMER">
+                      <mat-card-title-group>
+                        <mat-card-title matBadge="X" matBadgePosition="above before"
+                          [matBadgeHidden]="notification.isRead" matBadgeColor="warn" matBadgeSize="small"
+                          class="hide-text">Devis validé</mat-card-title>
+                        <mat-card-subtitle><span>{{notification.createdDateTime |date:'EEEE d LLLL yyyy à
+                            HH:mm'}}</span>
+                        </mat-card-subtitle>
+                        <ng-container [ngTemplateOutlet]="cardActions"
+                          [ngTemplateOutletContext]="{notification:notification}">
+                        </ng-container>
+                      </mat-card-title-group>
+                      <mat-card-content>
+                        <avatar-chip [employee]="notification.createdBy"></avatar-chip> a indiqué qu'un devis pour
+                        {{notification.detail1}} a été validé
+                      </mat-card-content>
+                    </ng-container>
+                    <ng-container *ngIf="notification.notificationType==QUOTATION_ASSO_AFFAIRE_ORDER_VERIFY">
+                      <mat-card-title-group>
+                        <mat-card-title matBadge="X" matBadgePosition="above before"
+                          [matBadgeHidden]="notification.isRead" matBadgeColor="warn" matBadgeSize="small"
+                          class="hide-text">Devis à vérifier</mat-card-title>
+                        <mat-card-subtitle><span>{{notification.createdDateTime |date:'EEEE d LLLL yyyy à
+                            HH:mm'}}</span>
+                        </mat-card-subtitle>
+                        <ng-container [ngTemplateOutlet]="cardActions"
+                          [ngTemplateOutletContext]="{notification:notification}">
+                        </ng-container>
+                      </mat-card-title-group>
+                      <mat-card-content>
+                        <avatar-chip [employee]="notification.createdBy"></avatar-chip> vous demande de vérifier un
+                        devis pour {{notification.detail1}}
+                      </mat-card-content>
+                    </ng-container>
+                    <mat-divider></mat-divider>
+                  </mat-card>
+                </mat-dialog-content>
+              </mat-tab>
+              <mat-tab [label]="getTabLabel(CUSTOMER_ORDER_ENTITY_TYPE)">
+                <mat-dialog-content class="mat-content">
+                  <mat-card class="pointer" *ngFor="let notification of getEntitiesForTab(CUSTOMER_ORDER_ENTITY_TYPE)"
+                    (click)="openEntity($event,notification,CUSTOMER_ORDER_ENTITY_TYPE)">
+                    <ng-container *ngIf="notification.notificationType==CUSTOMER_ORDER_CREATE">
+                      <mat-card-title-group>
+                        <mat-card-title matBadge="X" matBadgePosition="above before"
+                          [matBadgeHidden]="notification.isRead" matBadgeColor="warn" matBadgeSize="small"
+                          class="hide-text">Nouvelle commande</mat-card-title>
+                        <mat-card-subtitle><span>{{notification.createdDateTime |date:'EEEE d LLLL yyyy à
+                            HH:mm'}}</span>
+                        </mat-card-subtitle>
+                        <ng-container [ngTemplateOutlet]="cardActions"
+                          [ngTemplateOutletContext]="{notification:notification}">
+                        </ng-container>
+                      </mat-card-title-group>
+                      <mat-card-content>
+                        <avatar-chip [employee]="notification.createdBy"></avatar-chip> a créé une nouvelle commande
+                        pour
+                        {{notification.detail1}}
+                      </mat-card-content>
+                    </ng-container>
+                    <ng-container *ngIf="notification.notificationType==CUSTOMER_ORDER_ASSO_AFFAIRE_ORDER_VERIFY">
+                      <mat-card-title-group>
+                        <mat-card-title matBadge="X" matBadgePosition="above before"
+                          [matBadgeHidden]="notification.isRead" matBadgeColor="warn" matBadgeSize="small"
+                          class="hide-text">Commande à vérifier</mat-card-title>
+                        <mat-card-subtitle><span>{{notification.createdDateTime |date:'EEEE d LLLL yyyy à
+                            HH:mm'}}</span>
+                        </mat-card-subtitle>
+                        <ng-container [ngTemplateOutlet]="cardActions"
+                          [ngTemplateOutletContext]="{notification:notification}">
+                        </ng-container>
+                      </mat-card-title-group>
+                      <mat-card-content>
+                        <avatar-chip [employee]="notification.createdBy"></avatar-chip> vous demande de vérifier une
+                        commande pour
+                        {{notification.detail1}}
+                      </mat-card-content>
+                    </ng-container>
+                    <ng-container *ngIf="notification.notificationType==CUSTOMER_ORDER_BEING_PROCESSED">
+                      <mat-card-title-group>
+                        <mat-card-title matBadge="X" matBadgePosition="above before"
+                          [matBadgeHidden]="notification.isRead" matBadgeColor="warn" matBadgeSize="small"
+                          class="hide-text">Commande démarrée</mat-card-title>
+                        <mat-card-subtitle><span>{{notification.createdDateTime |date:'EEEE d LLLL yyyy à
+                            HH:mm'}}</span>
+                        </mat-card-subtitle>
+                        <ng-container [ngTemplateOutlet]="cardActions"
+                          [ngTemplateOutletContext]="{notification:notification}">
+                        </ng-container>
+                      </mat-card-title-group>
+                      <mat-card-content *ngIf="notification.createdBy">
+                        Suite à un geste manuel de <avatar-chip [employee]="notification.createdBy"></avatar-chip>, la
+                        commande {{notification.entityId}} pour le compte de {{notification.detail1}} débute
+                      </mat-card-content>
+                      <mat-card-content *ngIf="!notification.createdBy">
+                        Suite à réception d'une provision suffisante, la commande {{notification.entityId}} pour le
+                        compte de {{notification.detail1}} débute
+                      </mat-card-content>
+                    </ng-container>
+                    <ng-container *ngIf="notification.notificationType==CUSTOMER_ORDER_ASSO_AFFAIRE_ORDER_TO_ASSIGN">
+                      <mat-card-title-group>
+                        <mat-card-title matBadge="X" matBadgePosition="above before"
+                          [matBadgeHidden]="notification.isRead" matBadgeColor="warn" matBadgeSize="small"
+                          class="hide-text">Commande démarrée</mat-card-title>
+                        <mat-card-subtitle><span>{{notification.createdDateTime |date:'EEEE d LLLL yyyy à
+                            HH:mm'}}</span>
+                        </mat-card-subtitle>
+                        <ng-container [ngTemplateOutlet]="cardActions"
+                          [ngTemplateOutletContext]="{notification:notification}">
+                        </ng-container>
+                      </mat-card-title-group>
+                      <mat-card-content>
+                        Suite au démarrage de la commande {{notification.entityId}} pour le compte de
+                        {{notification.detail1}}, merci d'assigner les prestations sous votre responsabilité
+                      </mat-card-content>
+                    </ng-container>
+                    <ng-container *ngIf="notification.notificationType==CUSTOMER_ORDER_TO_BE_BILLED">
+                      <mat-card-title-group>
+                        <mat-card-title matBadge="X" matBadgePosition="above before"
+                          [matBadgeHidden]="notification.isRead" matBadgeColor="warn" matBadgeSize="small"
+                          class="hide-text">Commande à facturer</mat-card-title>
+                        <mat-card-subtitle><span>{{notification.createdDateTime |date:'EEEE d LLLL yyyy à
+                            HH:mm'}}</span>
+                        </mat-card-subtitle>
+                        <ng-container [ngTemplateOutlet]="cardActions"
+                          [ngTemplateOutletContext]="{notification:notification}">
+                        </ng-container>
+                      </mat-card-title-group>
+                      <mat-card-content>
+                        La commande {{notification.entityId}} pour le compte de
+                        {{notification.detail1}} est prête à être facturée
+                      </mat-card-content>
+                    </ng-container>
                     <mat-divider></mat-divider>
                   </mat-card>
                 </mat-dialog-content>

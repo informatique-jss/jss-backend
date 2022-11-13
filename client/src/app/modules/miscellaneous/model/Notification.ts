@@ -8,4 +8,6 @@ export interface Notification {
   isRead: boolean;
   createdBy: Employee;
   createdDateTime: Date;
+  notificationType: string;
+  detail1: string;
 }

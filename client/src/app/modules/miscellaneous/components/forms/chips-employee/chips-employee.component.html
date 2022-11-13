@@ -2,7 +2,7 @@
   <mat-label>{{label}}</mat-label>
   <mat-chip-list #chipListEmployee>
     <mat-chip *ngFor="let employee of model" (removed)="removeElement(employee)">
-      <avatar [employee]="employee" [size]="17"></avatar>
+      <avatar [employee]="employee" [size]="17" class="chips-avatar"></avatar>
       {{employee.firstname}} {{employee.lastname}}
       <button matChipRemove *ngIf="!isDisabled">
         <mat-icon>cancel</mat-icon>

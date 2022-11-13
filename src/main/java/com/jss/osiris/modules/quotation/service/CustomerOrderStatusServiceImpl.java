@@ -48,41 +48,26 @@ public class CustomerOrderStatusServiceImpl implements CustomerOrderStatusServic
     public void updateStatusReferential() throws Exception {
         updateStatus(CustomerOrderStatus.OPEN, "Ouvert", "auto_awesome");
         updateStatus(CustomerOrderStatus.TO_VERIFY, "A vérifier", "search");
-        updateStatus(CustomerOrderStatus.VALIDATED_BY_JSS, "Validé par JSS", "task_alt");
-        updateStatus(CustomerOrderStatus.SENT_TO_CUSTOMER, "Envoyé au client", "outgoing_mail");
-        updateStatus(CustomerOrderStatus.VALIDATED_BY_CUSTOMER, "Validé par le client", "approval");
-        updateStatus(CustomerOrderStatus.REFUSED_BY_CUSTOMER, "Refusé par le client", "remove_shopping_cart");
-        updateStatus(CustomerOrderStatus.ABANDONED, "Abandonné", "block");
-        updateStatus(CustomerOrderStatus.BILLED, "Facturée", "task_alt");
-        updateStatus(CustomerOrderStatus.WAITING_DEPOSIT, "En attente d'acompte", "hourglass_top");
         updateStatus(CustomerOrderStatus.BEING_PROCESSED, "En cours de traitement", "groups_2");
+        updateStatus(CustomerOrderStatus.WAITING_DEPOSIT, "En attente d'acompte", "hourglass_top");
         updateStatus(CustomerOrderStatus.TO_BILLED, "A facturer", "pending");
+        updateStatus(CustomerOrderStatus.BILLED, "Facturée", "task_alt");
+        updateStatus(CustomerOrderStatus.ABANDONED, "Abandonné", "block");
 
         setSuccessor(CustomerOrderStatus.OPEN, CustomerOrderStatus.TO_VERIFY);
-        setSuccessor(CustomerOrderStatus.TO_VERIFY, CustomerOrderStatus.VALIDATED_BY_JSS);
-        setSuccessor(CustomerOrderStatus.VALIDATED_BY_JSS, CustomerOrderStatus.SENT_TO_CUSTOMER);
-        setSuccessor(CustomerOrderStatus.SENT_TO_CUSTOMER, CustomerOrderStatus.VALIDATED_BY_CUSTOMER);
-        setSuccessor(CustomerOrderStatus.SENT_TO_CUSTOMER, CustomerOrderStatus.REFUSED_BY_CUSTOMER);
-        setSuccessor(CustomerOrderStatus.REFUSED_BY_CUSTOMER, CustomerOrderStatus.TO_VERIFY);
-        setSuccessor(CustomerOrderStatus.VALIDATED_BY_CUSTOMER, CustomerOrderStatus.WAITING_DEPOSIT);
+        setSuccessor(CustomerOrderStatus.TO_VERIFY, CustomerOrderStatus.WAITING_DEPOSIT);
+        setSuccessor(CustomerOrderStatus.TO_VERIFY, CustomerOrderStatus.BEING_PROCESSED);
         setSuccessor(CustomerOrderStatus.WAITING_DEPOSIT, CustomerOrderStatus.BEING_PROCESSED);
-        setSuccessor(CustomerOrderStatus.BEING_PROCESSED, CustomerOrderStatus.TO_BILLED);
         setSuccessor(CustomerOrderStatus.TO_BILLED, CustomerOrderStatus.BILLED);
 
         setPredecessor(CustomerOrderStatus.TO_VERIFY, CustomerOrderStatus.OPEN);
-        setPredecessor(CustomerOrderStatus.VALIDATED_BY_JSS, CustomerOrderStatus.TO_VERIFY);
-        setPredecessor(CustomerOrderStatus.SENT_TO_CUSTOMER, CustomerOrderStatus.TO_VERIFY);
+        setPredecessor(CustomerOrderStatus.WAITING_DEPOSIT, CustomerOrderStatus.TO_VERIFY);
         setPredecessor(CustomerOrderStatus.TO_BILLED, CustomerOrderStatus.BEING_PROCESSED);
+        setPredecessor(CustomerOrderStatus.BILLED, CustomerOrderStatus.TO_BILLED);
 
         // All cancelled
-
         setSuccessor(CustomerOrderStatus.OPEN, CustomerOrderStatus.ABANDONED);
         setSuccessor(CustomerOrderStatus.TO_VERIFY, CustomerOrderStatus.ABANDONED);
-        setSuccessor(CustomerOrderStatus.VALIDATED_BY_JSS, CustomerOrderStatus.ABANDONED);
-        setSuccessor(CustomerOrderStatus.SENT_TO_CUSTOMER, CustomerOrderStatus.ABANDONED);
-        setSuccessor(CustomerOrderStatus.VALIDATED_BY_CUSTOMER,
-                CustomerOrderStatus.ABANDONED);
-        setSuccessor(CustomerOrderStatus.REFUSED_BY_CUSTOMER, CustomerOrderStatus.ABANDONED);
         setSuccessor(CustomerOrderStatus.WAITING_DEPOSIT, CustomerOrderStatus.ABANDONED);
         setSuccessor(CustomerOrderStatus.BEING_PROCESSED, CustomerOrderStatus.ABANDONED);
         setSuccessor(CustomerOrderStatus.TO_BILLED, CustomerOrderStatus.ABANDONED);
@@ -93,6 +78,8 @@ public class CustomerOrderStatusServiceImpl implements CustomerOrderStatusServic
         CustomerOrderStatus CustomerOrderStatus = getCustomerOrderStatusByCode(code);
         if (getCustomerOrderStatusByCode(code) == null)
             CustomerOrderStatus = new CustomerOrderStatus();
+        CustomerOrderStatus.setPredecessors(null);
+        CustomerOrderStatus.setSuccessors(null);
         CustomerOrderStatus.setCode(code);
         CustomerOrderStatus.setLabel(label);
         CustomerOrderStatus.setIcon(icon);

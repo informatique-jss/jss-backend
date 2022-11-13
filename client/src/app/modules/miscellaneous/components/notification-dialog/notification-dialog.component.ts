@@ -2,8 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { CUSTOMER_ORDER_ASSO_AFFAIRE_ORDER_TO_ASSIGN, CUSTOMER_ORDER_ASSO_AFFAIRE_ORDER_VERIFY, CUSTOMER_ORDER_BEING_PROCESSED, CUSTOMER_ORDER_CREATE, CUSTOMER_ORDER_TO_BE_BILLED, QUOTATION_ASSO_AFFAIRE_ORDER_VERIFY, QUOTATION_CREATE, QUOTATION_REFUSED_BY_CUSOMER, QUOTATION_SENT, QUOTATION_VALIDATED_BY_CUSOMER } from 'src/app/libs/Constants';
+import { displayInTeams } from 'src/app/libs/MailHelper';
 import { EntityType } from 'src/app/routing/search/EntityType';
 import { QUOTATION_ENTITY_TYPE } from 'src/app/routing/search/search.component';
+import { CUSTOMER_ORDER_ENTITY_TYPE } from '../../../../routing/search/search.component';
 import { Notification } from '../../model/Notification';
 import { NotificationService } from '../../services/notification.service';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
@@ -18,6 +21,20 @@ export class NotificationDialogComponent implements OnInit {
   tabNames: { [key: string]: string; } = {};
 
   QUOTATION_ENTITY_TYPE = QUOTATION_ENTITY_TYPE;
+  CUSTOMER_ORDER_ENTITY_TYPE = CUSTOMER_ORDER_ENTITY_TYPE;
+
+
+  QUOTATION_CREATE = QUOTATION_CREATE;
+  QUOTATION_SENT = QUOTATION_SENT;
+  QUOTATION_ASSO_AFFAIRE_ORDER_VERIFY = QUOTATION_ASSO_AFFAIRE_ORDER_VERIFY;
+  QUOTATION_REFUSED_BY_CUSOMER = QUOTATION_REFUSED_BY_CUSOMER;
+  QUOTATION_VALIDATED_BY_CUSOMER = QUOTATION_VALIDATED_BY_CUSOMER;
+
+  CUSTOMER_ORDER_CREATE = CUSTOMER_ORDER_CREATE;
+  CUSTOMER_ORDER_ASSO_AFFAIRE_ORDER_VERIFY = CUSTOMER_ORDER_ASSO_AFFAIRE_ORDER_VERIFY;
+  CUSTOMER_ORDER_BEING_PROCESSED = CUSTOMER_ORDER_BEING_PROCESSED;
+  CUSTOMER_ORDER_ASSO_AFFAIRE_ORDER_TO_ASSIGN = CUSTOMER_ORDER_ASSO_AFFAIRE_ORDER_TO_ASSIGN;
+  CUSTOMER_ORDER_TO_BE_BILLED = CUSTOMER_ORDER_TO_BE_BILLED;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -27,6 +44,8 @@ export class NotificationDialogComponent implements OnInit {
   ) { }
 
   notificationForm = this.formBuilder.group({});
+
+  displayInTeams = displayInTeams;
 
   ngOnInit() {
   }
@@ -58,15 +77,20 @@ export class NotificationDialogComponent implements OnInit {
       })
     }
     return tabEntities.sort(function (a: Notification, b: Notification) {
-      return new Date(a.createdDateTime).getTime() - new Date(b.createdDateTime).getTime();
+      return new Date(b.createdDateTime).getTime() - new Date(a.createdDateTime).getTime();
     });
   }
 
-  openEntity(notification: Notification, entityType: EntityType) {
-    this.router.navigateByUrl('/', { skipLocationChange: true }).then(() =>
-      this.router.navigate(['/' + entityType.entryPoint + '/', "" + notification.entityId])
-    );
-    this.notificationService.closeNotificationDialog();
+  openEntity(event: any, notification: Notification, entityType: EntityType) {
+    if (event && event.ctrlKey) {
+      let a = window.open(location.origin + "/" + entityType.entryPoint + '/' + notification.entityId, "_blank");
+      a?.focus();
+    } else {
+      this.router.navigateByUrl('/', { skipLocationChange: true }).then(() =>
+        this.router.navigate(['/' + entityType.entryPoint + '/', "" + notification.entityId])
+      );
+      this.notificationService.closeNotificationDialog();
+    }
     return;
   }
 
@@ -135,7 +159,7 @@ export class NotificationDialogComponent implements OnInit {
 
   deleteAll(entityType: string) {
     this.notificationService.getNotificationsResult().forEach(notification => {
-      if (notification.entityType == entityType && !notification.isRead) {
+      if (notification.entityType == entityType) {
         this.notificationService.deleteNotification(notification).subscribe(reponse => {
           this.notificationService.refreshNotifications();
         })

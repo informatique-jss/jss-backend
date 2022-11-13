@@ -18,6 +18,18 @@ import com.jss.osiris.modules.profile.model.Employee;
 @Table(indexes = { @Index(name = "employee_index", columnList = "id_employee") })
 public class Notification implements Serializable, IId {
 
+  public static String QUOTATION_CREATE = "QUOTATION_CREATE";
+  public static String QUOTATION_SENT = "QUOTATION_SENT";
+  public static String QUOTATION_VALIDATED_BY_CUSOMER = "QUOTATION_VALIDATED_BY_CUSOMER";
+  public static String QUOTATION_REFUSED_BY_CUSOMER = "QUOTATION_REFUSED_BY_CUSOMER";
+  public static String QUOTATION_ASSO_AFFAIRE_ORDER_VERIFY = "QUOTATION_ASSO_AFFAIRE_ORDER_VERIFY";
+
+  public static String CUSTOMER_ORDER_CREATE = "CUSTOMER_ORDER_CREATE";
+  public static String CUSTOMER_ORDER_ASSO_AFFAIRE_ORDER_VERIFY = "CUSTOMER_ORDER_ASSO_AFFAIRE_ORDER_VERIFY";
+  public static String CUSTOMER_ORDER_BEING_PROCESSED = "CUSTOMER_ORDER_BEING_PROCESSED";
+  public static String CUSTOMER_ORDER_ASSO_AFFAIRE_ORDER_TO_ASSIGN = "CUSTOMER_ORDER_ASSO_AFFAIRE_ORDER_TO_ASSIGN";
+  public static String CUSTOMER_ORDER_TO_BE_BILLED = "CUSTOMER_ORDER_TO_BE_BILLED";
+
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Integer id;
@@ -37,6 +49,10 @@ public class Notification implements Serializable, IId {
   private Employee createdBy;
 
   private LocalDateTime createdDateTime;
+
+  private String notificationType;
+
+  private String detail1;
 
   public Integer getId() {
     return id;
@@ -92,5 +108,29 @@ public class Notification implements Serializable, IId {
 
   public void setCreatedDateTime(LocalDateTime createdDateTime) {
     this.createdDateTime = createdDateTime;
+  }
+
+  public static String getQUOTATION_CREATE() {
+    return QUOTATION_CREATE;
+  }
+
+  public static void setQUOTATION_CREATE(String qUOTATION_CREATE) {
+    QUOTATION_CREATE = qUOTATION_CREATE;
+  }
+
+  public String getDetail1() {
+    return detail1;
+  }
+
+  public void setDetail1(String detail1) {
+    this.detail1 = detail1;
+  }
+
+  public String getNotificationType() {
+    return notificationType;
+  }
+
+  public void setNotificationType(String notificationType) {
+    this.notificationType = notificationType;
   }
 }

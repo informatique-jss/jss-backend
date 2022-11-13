@@ -60,7 +60,7 @@ public class Provision implements IId, IAttachment {
 	@JoinColumn(name = "id_formalite")
 	private Formalite formalite;
 
-	@OneToMany(targetEntity = InvoiceItem.class, mappedBy = "provision", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(targetEntity = InvoiceItem.class, mappedBy = "provision")
 	@JsonIgnoreProperties(value = { "provision" }, allowSetters = true)
 	private List<InvoiceItem> invoiceItems;
 

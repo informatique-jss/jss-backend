@@ -15,7 +15,7 @@
           <mat-expansion-panel>
             <mat-expansion-panel-header>
               <mat-panel-title>
-                {{(!instanceOfQuotation(quotation) ? 'Commande' : 'Devis')}}
+                {{(instanceOfCustomerOrder ? 'Commande' : 'Devis')}}
               </mat-panel-title>
               <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
             </mat-expansion-panel-header>
@@ -27,18 +27,18 @@
                   </radio-group-record-type>
                 </td>
                 <td>
-                  <radio-group-quotation-label-type [(model)]="quotation.labelType" [form]="quotationManagementForm"
-                    [isDisabled]="!editMode" propertyName="quotationLabelType"
-                    [label]="'Libellé sur '+ (!instanceOfQuotation(quotation) ? 'commande' : 'devis')">
+                  <radio-group-quotation-label-type [(model)]="quotation.quotationLabelType"
+                    [form]="quotationManagementForm" [isDisabled]="!editMode" propertyName="quotationLabelType"
+                    [label]="'Libellé sur '+ (instanceOfCustomerOrder ? 'commande' : 'devis')">
                   </radio-group-quotation-label-type>
                 </td>
                 <td
-                  *ngIf="quotation.labelType!=undefined && quotation.labelType.code!=undefined && quotation.labelType.id==quotationLabelTypeOther.id">
+                  *ngIf="quotation.quotationLabelType!=undefined && quotation.quotationLabelType.code!=undefined && quotation.quotationLabelType.id==quotationLabelTypeOther.id">
                   <generic-textarea [(model)]="quotation.quotationLabel"
-                    [label]="'Autre libellé sur '+ (!instanceOfQuotation(quotation) ? 'commande' : 'devis')"
+                    [label]="'Autre libellé sur '+ (instanceOfCustomerOrder ? 'commande' : 'devis')"
                     [form]="quotationManagementForm" propertyName="quotationLabel" [isMandatory]="true"
                     [isDisabled]="!editMode"
-                    [conditionnalRequired]="quotation.labelType.id==quotationLabelTypeOther.id">
+                    [conditionnalRequired]="quotation.quotationLabelType.id==quotationLabelTypeOther.id">
                   </generic-textarea>
                 </td>
               </tr>
@@ -50,6 +50,46 @@
                     [onlyMail]="true" [displayMailCC]="true" [hideOverriding]="(quotation.confrere)?true:false">
                   </addressing>
                 </td>
+              </tr>
+            </table>
+            <table class="full-width">
+              <tr *ngIf="quotationMailComputeResult">
+                <td>
+                  <div *ngIf="quotationMailComputeResult?.isSendToAffaire">
+                    <p>Les mails pour l'envoi à l'affaire sont les suivants (récupérés depuis les
+                      {{quotationMailComputeResult.mailToAffaireOrigin}}) :</p>
+                    <ul>
+                      <li *ngFor="let mail of quotationMailComputeResult.recipientsMailTo">{{mail.mail}}</li>
+                    </ul>
+                    <p
+                      *ngIf="quotationMailComputeResult.recipientsMailCc && quotationMailComputeResult.recipientsMailCc!.length>0">
+                      Les mails pour l'envoi en copie à l'affaire
+                      sont les suivants (récupérés depuis les
+                      {{quotationMailComputeResult.mailCcAffaireOrigin}}) :
+                    <ul>
+                      <li *ngFor="let mail of quotationMailComputeResult.recipientsMailCc">{{mail.mail}}</li>
+                    </ul>
+                  </div>
+
+                  <div *ngIf="quotationMailComputeResult.isSendToClient">
+                    <p>Les mails pour l'envoi au client sont les suivants (récupérés depuis les
+                      {{quotationMailComputeResult.mailToClientOrigin}}) :</p>
+                    <ul>
+                      <li *ngFor="let mail of quotationMailComputeResult.recipientsMailTo">{{mail.mail}}</li>
+                    </ul>
+                    <p
+                      *ngIf="quotationMailComputeResult.recipientsMailCc && quotationMailComputeResult.recipientsMailCc!.length>0">
+                      Les mails pour l'envoi en copie au client
+                      sont les suivants (récupérés depuis les
+                      {{quotationMailComputeResult.mailCcClientOrigin}}) :
+                    <ul>
+                      <li *ngFor="let mail of quotationMailComputeResult.recipientsMailCc">{{mail.mail}}</li>
+                    </ul>
+                  </div>
+                </td>
+              </tr>
+              <tr *ngIf=" quotationMailComputeResult && quotationMailComputeResult.recipientsMailTo.length==0">
+                <td class="color-warn">Aucun mail trouvé !</td>
               </tr>
             </table>
           </mat-expansion-panel>
@@ -64,7 +104,8 @@
               <tr>
                 <td>
                   <radio-group-billing-label [(model)]="billingDocument.billingLabelType" [isDisabled]="!editMode"
-                    [form]="quotationManagementForm" propertyName="billingLabelType" label="Libellé sur facture">
+                    [isMandatory]="true" [form]="quotationManagementForm" propertyName="billingLabelType"
+                    label="Libellé sur facture">
                   </radio-group-billing-label>
                 </td>
               </tr>
@@ -129,6 +170,46 @@
             </table>
             <addressing [editMode]="editMode" [document]="billingDocument " [onlyMail]="true"
               [displayMailCC]="quotation.responsable?true : false"></addressing>
+            <table class="full-width">
+              <tr *ngIf="billingMailComputeResult">
+                <td>
+                  <div *ngIf="billingMailComputeResult?.isSendToAffaire">
+                    <p>Les mails pour l'envoi à l'affaire sont les suivants (récupérés depuis les
+                      {{billingMailComputeResult.mailToAffaireOrigin}}) :</p>
+                    <ul>
+                      <li *ngFor="let mail of billingMailComputeResult.recipientsMailTo">{{mail.mail}}</li>
+                    </ul>
+                    <p
+                      *ngIf="billingMailComputeResult.recipientsMailCc && billingMailComputeResult.recipientsMailCc!.length>0">
+                      Les mails pour l'envoi en copie à l'affaire
+                      sont les suivants (récupérés depuis les
+                      {{billingMailComputeResult.mailCcAffaireOrigin}}) :
+                    <ul>
+                      <li *ngFor="let mail of billingMailComputeResult.recipientsMailCc">{{mail.mail}}</li>
+                    </ul>
+                  </div>
+
+                  <div *ngIf="billingMailComputeResult.isSendToClient">
+                    <p>Les mails pour l'envoi au client sont les suivants (récupérés depuis les
+                      {{billingMailComputeResult.mailToClientOrigin}}) :</p>
+                    <ul>
+                      <li *ngFor="let mail of billingMailComputeResult.recipientsMailTo">{{mail.mail}}</li>
+                    </ul>
+                    <p
+                      *ngIf="billingMailComputeResult.recipientsMailCc && billingMailComputeResult.recipientsMailCc!.length>0">
+                      Les mails pour l'envoi en copie au client
+                      sont les suivants (récupérés depuis les
+                      {{billingMailComputeResult.mailCcClientOrigin}}) :
+                    <ul>
+                      <li *ngFor="let mail of billingMailComputeResult.recipientsMailCc">{{mail.mail}}</li>
+                    </ul>
+                  </div>
+                </td>
+              </tr>
+              <tr *ngIf=" billingMailComputeResult && billingMailComputeResult.recipientsMailTo.length==0">
+                <td class="color-warn">Aucun mail trouvé !</td>
+              </tr>
+            </table>
           </mat-expansion-panel>
         </mat-accordion>
       </fieldset>

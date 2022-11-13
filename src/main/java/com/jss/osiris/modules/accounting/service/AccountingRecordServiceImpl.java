@@ -774,11 +774,10 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
         }
       }
 
-      List<AccountingRecord> accountingRecords = getAccountingRecordsForCustomerOrder(customerOrder);
-      if (accountingRecords == null || accountingRecords.size() == 0)
+      if (customerOrder.getAccountingRecords() == null || customerOrder.getAccountingRecords().size() == 0)
         return total;
 
-      for (AccountingRecord accountingRecord : accountingRecords) {
+      for (AccountingRecord accountingRecord : customerOrder.getAccountingRecords()) {
         if (accountingRecord.getCreditAmount() != null)
           total -= accountingRecord.getCreditAmount();
       }
@@ -789,10 +788,6 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
   private List<AccountingRecord> getAccountingRecordsForInvoice(Invoice invoice) {
     return IterableUtils.toList(accountingRecordRepository.findByInvoice(invoice));
-  }
-
-  private List<AccountingRecord> getAccountingRecordsForCustomerOrder(CustomerOrder customerOrder) {
-    return IterableUtils.toList(accountingRecordRepository.findByCustomerOrder(customerOrder));
   }
 
   @Override

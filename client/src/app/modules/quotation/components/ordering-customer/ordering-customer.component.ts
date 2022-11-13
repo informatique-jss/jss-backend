@@ -2,7 +2,9 @@ import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, Simp
 import { UntypedFormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
+import { formatDateTimeForSortTable } from 'src/app/libs/FormatHelper';
 import { instanceOfCustomerOrder, instanceOfQuotation } from 'src/app/libs/TypeHelper';
+import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { SpecialOffer } from 'src/app/modules/miscellaneous/model/SpecialOffer';
 import { DocumentTypeService } from 'src/app/modules/miscellaneous/services/document.type.service';
 import { Responsable } from 'src/app/modules/tiers/model/Responsable';
@@ -10,8 +12,10 @@ import { Tiers } from 'src/app/modules/tiers/model/Tiers';
 import { TiersService } from 'src/app/modules/tiers/services/tiers.service';
 import { Document } from '../../../miscellaneous/model/Document';
 import { DocumentType } from '../../../miscellaneous/model/DocumentType';
+import { SortTableAction } from '../../../miscellaneous/model/SortTableAction';
 import { Confrere } from '../../model/Confrere';
 import { IQuotation } from '../../model/IQuotation';
+import { QuotationComponent } from '../quotation/quotation.component';
 
 @Component({
   selector: 'ordering-customer',
@@ -28,6 +32,9 @@ export class OrderingCustomerComponent implements OnInit {
   documentTypes: DocumentType[] = [] as Array<DocumentType>;
   devisDocument: Document = {} as Document;
   billingDocument: Document = {} as Document;
+
+  customerOrderTableActions: SortTableAction[] = [] as Array<SortTableAction>;
+  customerOrderDisplayedColumns: SortTableColumn[] = [] as Array<SortTableColumn>;
 
   constructor(private formBuilder: UntypedFormBuilder,
     private tiersService: TiersService,
@@ -47,6 +54,21 @@ export class OrderingCustomerComponent implements OnInit {
 
   ngOnInit() {
     this.orderingCustomerForm.markAllAsTouched();
+
+    this.customerOrderDisplayedColumns = [];
+    this.customerOrderDisplayedColumns.push({ id: "id", fieldName: "id", label: "N° de la commande" } as SortTableColumn);
+    this.customerOrderDisplayedColumns.push({ id: "quotationStatus", fieldName: "customerOrderStatus.label", label: "Statut" } as SortTableColumn);
+    this.customerOrderDisplayedColumns.push({ id: "createdDate", fieldName: "createdDate", label: "Date de création", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
+    this.customerOrderDisplayedColumns.push({ id: "totalPrice", fieldName: "totalPrice", label: "Prix total", valueFonction: (element: any, elements: any[], column: SortTableColumn, columns: SortTableColumn[]): string => { return QuotationComponent.computePriceTotal(element) + " €"; } } as SortTableColumn);
+
+    this.customerOrderTableActions.push({
+      actionIcon: "preview", actionName: "Voir la commande", actionLinkFunction: (action: SortTableAction, element: any) => {
+        if (element)
+          return ['/order', element.id];
+        return undefined;
+      }, display: true,
+    } as SortTableAction);
+
   }
 
   orderingCustomerForm = this.formBuilder.group({

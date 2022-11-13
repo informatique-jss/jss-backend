@@ -34,9 +34,11 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("mail.smtp.password");
         isOk = isOk && checkProperty("mail.smtp.auth");
         isOk = isOk && checkProperty("mail.smtp.starttls.enable");
+        isOk = isOk && checkProperty("schedulling.pool.size");
         isOk = isOk && checkProperty("schedulling.account.daily.close");
         isOk = isOk && checkProperty("schedulling.active.directory.user.update");
         isOk = isOk && checkProperty("schedulling.payment.grab");
+        isOk = isOk && checkProperty("schedulling.mail.sender");
         isOk = isOk && checkProperty("ldap.dc.level.0");
         isOk = isOk && checkProperty("ldap.dc.level.1");
         isOk = isOk && checkProperty("ldap.ou.osiris");

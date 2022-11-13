@@ -14,6 +14,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.miscellaneous.model.City;
 import com.jss.osiris.modules.miscellaneous.model.Country;
@@ -32,6 +33,7 @@ import com.jss.osiris.modules.tiers.model.ITiers;
 import com.jss.osiris.modules.tiers.model.TiersFollowup;
 
 @Entity
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Confrere implements ITiers {
 
 	@Id

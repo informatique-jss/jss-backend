@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.OrderingSearch;
+import com.jss.osiris.modules.quotation.model.Quotation;
 
 public interface CustomerOrderService {
         public CustomerOrder getCustomerOrder(Integer id);
@@ -22,5 +23,9 @@ public interface CustomerOrderService {
         public List<CustomerOrder> searchOrders(OrderingSearch orderingSearch);
 
         public void reindexCustomerOrder();
+
+        public CustomerOrder createNewCustomerOrderFromQuotation(Quotation quotation) throws Exception;
+
+        public void generateInvoiceMail(CustomerOrder customerOrder) throws Exception;
 
 }

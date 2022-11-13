@@ -366,6 +366,13 @@
           </tr>
           <tr>
             <td>
+              <autocomplete-employee [(model)]="constant.employeeBillingResponsible" [form]="constantForm"
+                propertyName="employeeBillingResponsible" [isMandatory]="true" [isDisabled]="!editMode"
+                label="Employé responsable de la facturation"></autocomplete-employee>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <radio-group-transfert-funds [(model)]="constant.transfertFundsTypeBail" [form]="constantForm"
                 [isDisabled]="!editMode" propertyName="transfertFundsTypeBail"
                 label="Type de transfert de fonds - bail">

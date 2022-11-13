@@ -52,3 +52,7 @@ table {
 .mat-accordion-container {
   padding-top: 15px
 }
+
+::ng-deep.mat-menu-panel {
+  max-width: none !important;
+}

@@ -173,6 +173,18 @@ public class Document implements Serializable, IId {
 		return tiers;
 	}
 
+	public void setTiers(Tiers tiers) {
+		this.tiers = tiers;
+	}
+
+	public Confrere getConfrere() {
+		return confrere;
+	}
+
+	public void setConfrere(Confrere confrere) {
+		this.confrere = confrere;
+	}
+
 	public Responsable getResponsable() {
 		return responsable;
 	}
@@ -181,24 +193,20 @@ public class Document implements Serializable, IId {
 		this.responsable = responsable;
 	}
 
-	public List<Responsable> getMailsCCResponsableClient() {
-		return mailsCCResponsableClient;
+	public Quotation getQuotation() {
+		return quotation;
 	}
 
-	public void setMailsCCResponsableClient(List<Responsable> mailsCCResponsableClient) {
-		this.mailsCCResponsableClient = mailsCCResponsableClient;
+	public void setQuotation(Quotation quotation) {
+		this.quotation = quotation;
 	}
 
-	public List<Responsable> getMailsCCResponsableAffaire() {
-		return mailsCCResponsableAffaire;
+	public CustomerOrder getCustomerOrder() {
+		return customerOrder;
 	}
 
-	public void setMailsCCResponsableAffaire(List<Responsable> mailsCCResponsableAffaire) {
-		this.mailsCCResponsableAffaire = mailsCCResponsableAffaire;
-	}
-
-	public void setTiers(Tiers tiers) {
-		this.tiers = tiers;
+	public void setCustomerOrder(CustomerOrder customerOrder) {
+		this.customerOrder = customerOrder;
 	}
 
 	public DocumentType getDocumentType() {
@@ -233,20 +241,20 @@ public class Document implements Serializable, IId {
 		this.affaireAddress = affaireAddress;
 	}
 
-	public String getClientAddress() {
-		return clientAddress;
-	}
-
-	public void setClientAddress(String clientAddress) {
-		this.clientAddress = clientAddress;
-	}
-
 	public String getAffaireRecipient() {
 		return affaireRecipient;
 	}
 
 	public void setAffaireRecipient(String affaireRecipient) {
 		this.affaireRecipient = affaireRecipient;
+	}
+
+	public String getClientAddress() {
+		return clientAddress;
+	}
+
+	public void setClientAddress(String clientAddress) {
+		this.clientAddress = clientAddress;
 	}
 
 	public String getClientRecipient() {
@@ -289,12 +297,28 @@ public class Document implements Serializable, IId {
 		this.numberMailingClient = numberMailingClient;
 	}
 
+	public BillingLabelType getBillingLabelType() {
+		return billingLabelType;
+	}
+
+	public void setBillingLabelType(BillingLabelType billingLabelType) {
+		this.billingLabelType = billingLabelType;
+	}
+
 	public List<Mail> getMailsClient() {
 		return mailsClient;
 	}
 
 	public void setMailsClient(List<Mail> mailsClient) {
 		this.mailsClient = mailsClient;
+	}
+
+	public List<Responsable> getMailsCCResponsableClient() {
+		return mailsCCResponsableClient;
+	}
+
+	public void setMailsCCResponsableClient(List<Responsable> mailsCCResponsableClient) {
+		this.mailsCCResponsableClient = mailsCCResponsableClient;
 	}
 
 	public List<Mail> getMailsAffaire() {
@@ -305,12 +329,12 @@ public class Document implements Serializable, IId {
 		this.mailsAffaire = mailsAffaire;
 	}
 
-	public BillingLabelType getBillingLabelType() {
-		return billingLabelType;
+	public List<Responsable> getMailsCCResponsableAffaire() {
+		return mailsCCResponsableAffaire;
 	}
 
-	public void setBillingLabelType(BillingLabelType billingLabelType) {
-		this.billingLabelType = billingLabelType;
+	public void setMailsCCResponsableAffaire(List<Responsable> mailsCCResponsableAffaire) {
+		this.mailsCCResponsableAffaire = mailsCCResponsableAffaire;
 	}
 
 	public Boolean getIsResponsableOnBilling() {
@@ -335,14 +359,6 @@ public class Document implements Serializable, IId {
 
 	public void setCommandNumber(String commandNumber) {
 		this.commandNumber = commandNumber;
-	}
-
-	public CustomerOrder getCustomerOrder() {
-		return customerOrder;
-	}
-
-	public void setCustomerOrder(CustomerOrder customerOrder) {
-		this.customerOrder = customerOrder;
 	}
 
 	public PaymentDeadlineType getPaymentDeadlineType() {
@@ -393,28 +409,20 @@ public class Document implements Serializable, IId {
 		this.billingClosureRecipientType = billingClosureRecipientType;
 	}
 
-	public Quotation getQuotation() {
-		return quotation;
-	}
-
-	public void setQuotation(Quotation quotation) {
-		this.quotation = quotation;
-	}
-
-	public Confrere getConfrere() {
-		return confrere;
-	}
-
-	public void setConfrere(Confrere confrere) {
-		this.confrere = confrere;
-	}
-
 	public String getBillingLabel() {
 		return billingLabel;
 	}
 
 	public void setBillingLabel(String billingLabel) {
 		this.billingLabel = billingLabel;
+	}
+
+	public String getBillingAddress() {
+		return billingAddress;
+	}
+
+	public void setBillingAddress(String billingAddress) {
+		this.billingAddress = billingAddress;
 	}
 
 	public String getBillingPostalCode() {
@@ -447,14 +455,6 @@ public class Document implements Serializable, IId {
 
 	public void setBillingLabelIsIndividual(Boolean billingLabelIsIndividual) {
 		this.billingLabelIsIndividual = billingLabelIsIndividual;
-	}
-
-	public String getBillingAddress() {
-		return billingAddress;
-	}
-
-	public void setBillingAddress(String billingAddress) {
-		this.billingAddress = billingAddress;
 	}
 
 	public Regie getRegie() {

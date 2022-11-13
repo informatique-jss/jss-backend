@@ -27,12 +27,10 @@ public class QuotationStatus implements Serializable, IId {
 	 */
 	public static String OPEN = "OPEN";
 	public static String TO_VERIFY = "TO_VERIFY";
-	public static String VALIDATED_BY_JSS = "VALIDATED_BY_JSS";
 	public static String SENT_TO_CUSTOMER = "SENT_TO_CUSTOMER";
 	public static String VALIDATED_BY_CUSTOMER = "VALIDATED_BY_CUSTOMER";
 	public static String REFUSED_BY_CUSTOMER = "REFUSED_BY_CUSTOMER";
 	public static String ABANDONED = "ABANDONED";
-	public static String SET_AS_CUSTOMER_ORDER = "SET_AS_CUSTOMER_ORDER";
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -94,14 +92,6 @@ public class QuotationStatus implements Serializable, IId {
 		TO_VERIFY = tO_VERIFY;
 	}
 
-	public static String getVALIDATED_BY_JSS() {
-		return VALIDATED_BY_JSS;
-	}
-
-	public static void setVALIDATED_BY_JSS(String vALIDATED_BY_JSS) {
-		VALIDATED_BY_JSS = vALIDATED_BY_JSS;
-	}
-
 	public static String getSENT_TO_CUSTOMER() {
 		return SENT_TO_CUSTOMER;
 	}
@@ -132,14 +122,6 @@ public class QuotationStatus implements Serializable, IId {
 
 	public static void setABANDONED(String aBANDONED) {
 		ABANDONED = aBANDONED;
-	}
-
-	public static String getSET_AS_CUSTOMER_ORDER() {
-		return SET_AS_CUSTOMER_ORDER;
-	}
-
-	public static void setSET_AS_CUSTOMER_ORDER(String sET_AS_CUSTOMER_ORDER) {
-		SET_AS_CUSTOMER_ORDER = sET_AS_CUSTOMER_ORDER;
 	}
 
 	public void setCode(String code) {

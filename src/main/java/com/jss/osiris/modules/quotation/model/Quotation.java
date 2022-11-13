@@ -93,7 +93,7 @@ public class Quotation implements IQuotation, IAttachment {
 	@JoinColumn(name = "id_record_type")
 	private RecordType recordType;
 
-	@OneToMany(targetEntity = AssoAffaireOrder.class, mappedBy = "customerOrder", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(targetEntity = AssoAffaireOrder.class, mappedBy = "quotation", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnoreProperties(value = { "quotation" }, allowSetters = true)
 	private List<AssoAffaireOrder> assoAffaireOrders;
 

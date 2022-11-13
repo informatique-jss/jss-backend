@@ -68,6 +68,6 @@ export class ChipsEmployeeComponent extends GenericChipsComponent<Employee> impl
   }
 
   displayInTeams = function (employee: Employee) {
-    displayInTeams(employee.mail);
+    displayInTeams(employee);
   }
 }

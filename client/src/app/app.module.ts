@@ -1,6 +1,8 @@
 import { DragDropModule } from "@angular/cdk/drag-drop";
+import { registerLocaleData } from '@angular/common';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { NgModule } from '@angular/core';
+import localeFr from '@angular/common/locales/fr';
+import { LOCALE_ID, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
@@ -29,6 +31,8 @@ import { TiersModule } from './modules/tiers/components/tiers/tiers.module';
 import { HeaderComponent } from './routing/header/header.component';
 import { RoutingModule } from './routing/routing.module';
 import { SidenavListComponent } from './routing/sidenav-list/sidenav-list.component';
+
+registerLocaleData(localeFr, 'fr');
 
 @NgModule({
   declarations: [
@@ -79,6 +83,7 @@ import { SidenavListComponent } from './routing/sidenav-list/sidenav-list.compon
     multi: true
   },
   { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: 'outline' } },
+  { provide: LOCALE_ID, useValue: 'fr' }
   ],
   bootstrap: [AppComponent]
 })

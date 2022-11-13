@@ -48,35 +48,28 @@ public class QuotationStatusServiceImpl implements QuotationStatusService {
     public void updateStatusReferential() throws Exception {
         updateStatus(QuotationStatus.OPEN, "Ouvert", "auto_awesome");
         updateStatus(QuotationStatus.TO_VERIFY, "A vérifier", "search");
-        updateStatus(QuotationStatus.VALIDATED_BY_JSS, "Validé par JSS", "task_alt");
         updateStatus(QuotationStatus.SENT_TO_CUSTOMER, "Envoyé au client", "outgoing_mail");
         updateStatus(QuotationStatus.VALIDATED_BY_CUSTOMER, "Validé par le client", "approval");
         updateStatus(QuotationStatus.REFUSED_BY_CUSTOMER, "Refusé par le client", "remove_shopping_cart");
         updateStatus(QuotationStatus.ABANDONED, "Abandonné", "block");
-        updateStatus(QuotationStatus.SET_AS_CUSTOMER_ORDER, "Transformé en commande", "shopping_cart");
 
         setSuccessor(QuotationStatus.OPEN, QuotationStatus.TO_VERIFY);
-        setSuccessor(QuotationStatus.TO_VERIFY, QuotationStatus.VALIDATED_BY_JSS);
-        setSuccessor(QuotationStatus.VALIDATED_BY_JSS, QuotationStatus.SENT_TO_CUSTOMER);
+        setSuccessor(QuotationStatus.TO_VERIFY, QuotationStatus.SENT_TO_CUSTOMER);
         setSuccessor(QuotationStatus.SENT_TO_CUSTOMER, QuotationStatus.VALIDATED_BY_CUSTOMER);
         setSuccessor(QuotationStatus.SENT_TO_CUSTOMER, QuotationStatus.REFUSED_BY_CUSTOMER);
         setSuccessor(QuotationStatus.REFUSED_BY_CUSTOMER, QuotationStatus.TO_VERIFY);
-        setSuccessor(QuotationStatus.VALIDATED_BY_CUSTOMER, QuotationStatus.SET_AS_CUSTOMER_ORDER);
 
         setPredecessor(QuotationStatus.TO_VERIFY, QuotationStatus.OPEN);
-        setPredecessor(QuotationStatus.VALIDATED_BY_JSS, QuotationStatus.TO_VERIFY);
+        setPredecessor(QuotationStatus.SENT_TO_CUSTOMER, QuotationStatus.OPEN);
         setPredecessor(QuotationStatus.SENT_TO_CUSTOMER, QuotationStatus.TO_VERIFY);
 
         // All cancelled
-
         setSuccessor(QuotationStatus.OPEN, QuotationStatus.ABANDONED);
         setSuccessor(QuotationStatus.TO_VERIFY, QuotationStatus.ABANDONED);
-        setSuccessor(QuotationStatus.VALIDATED_BY_JSS, QuotationStatus.ABANDONED);
         setSuccessor(QuotationStatus.SENT_TO_CUSTOMER, QuotationStatus.ABANDONED);
-        setSuccessor(QuotationStatus.VALIDATED_BY_CUSTOMER,
-                QuotationStatus.ABANDONED);
+        setSuccessor(QuotationStatus.VALIDATED_BY_CUSTOMER, QuotationStatus.ABANDONED);
         setSuccessor(QuotationStatus.REFUSED_BY_CUSTOMER, QuotationStatus.ABANDONED);
-        setSuccessor(QuotationStatus.SET_AS_CUSTOMER_ORDER, QuotationStatus.ABANDONED);
+        setSuccessor(QuotationStatus.ABANDONED, QuotationStatus.OPEN);
 
     }
 

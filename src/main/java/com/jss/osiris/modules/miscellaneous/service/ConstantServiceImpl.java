@@ -22,6 +22,7 @@ import com.jss.osiris.modules.miscellaneous.model.LegalForm;
 import com.jss.osiris.modules.miscellaneous.model.PaymentType;
 import com.jss.osiris.modules.miscellaneous.model.Vat;
 import com.jss.osiris.modules.miscellaneous.repository.ConstantRepository;
+import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.quotation.model.ActType;
 import com.jss.osiris.modules.quotation.model.AssignationType;
 import com.jss.osiris.modules.quotation.model.BodaccPublicationType;
@@ -311,6 +312,11 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public AssignationType getAssignationTypeEmployee() throws Exception {
         return getConstants().getAssignationTypeEmployee();
+    }
+
+    @Override
+    public Employee getEmployeeBillingResponsible() throws Exception {
+        return getConstants().getEmployeeBillingResponsible();
     }
 
     @Override
