@@ -15,15 +15,19 @@ export class NotificationService extends AppRestService<Notification>{
   notifications: Observable<Notification[]> | undefined;
   notificationsResult: Notification[] = [] as Array<Notification>;
   notificationDialogRef: MatDialogRef<NotificationDialogComponent> | undefined;
+  notificationAlreadyNotified: Notification[] = [] as Array<Notification>;
+
+  displayFuture: boolean = false;
 
   constructor(http: HttpClient,
     public notificationDialog: MatDialog) {
     super(http, "miscellaneous");
     this.notifications = timer(1, NOTIFICATION_REFRESH_INTERVAL).pipe(
-      switchMap(() => this.getNotifications()),
+      switchMap(() => this.getNotifications(this.displayFuture)),
       retry(),
       tap((value) => {
         this.notificationsResult = value;
+        this.generateWindowsNotification();
       }),
       share(),
       takeUntil(this.stopPolling)
@@ -36,8 +40,8 @@ export class NotificationService extends AppRestService<Notification>{
 
   private stopPolling = new Subject();
 
-  getNotifications() {
-    return this.getList(new HttpParams(), "notifications");
+  getNotifications(displayFuture: boolean) {
+    return this.getList(new HttpParams().set("displayFuture", displayFuture), "notifications");
   }
 
   getNotificationsObservable(): Observable<Notification[]> {
@@ -48,9 +52,15 @@ export class NotificationService extends AppRestService<Notification>{
     return this.notificationsResult;
   }
 
-  refreshNotifications() {
-    this.getNotifications().subscribe(response => {
+  getIsDisplayFuture() {
+    return this.displayFuture;
+  }
+
+  refreshNotifications(displayFuture: boolean) {
+    this.displayFuture = displayFuture;
+    this.getNotifications(displayFuture).subscribe(response => {
       this.notificationsResult = response;
+      this.generateWindowsNotification();
     })
   }
 
@@ -74,5 +84,38 @@ export class NotificationService extends AppRestService<Notification>{
 
   deleteNotification(notification: Notification) {
     return this.delete(new HttpParams().set("notificationId", notification.id), "notification");
+  }
+
+  addPersonnalNotification(notification: Notification) {
+    return this.addOrUpdate(new HttpParams(), "notification/personnal", notification);
+  }
+
+  generateWindowsNotification() {
+    if (!('Notification' in window)) {
+      return;
+    }
+
+    if (this.notificationsResult) {
+      for (let notification of this.notificationsResult) {
+        if (notification.showPopup && !notification.isRead && (new Date(notification.createdDateTime)).getTime() <= (new Date()).getTime()) {
+          let found = false;
+          for (let alreadyNotificated of this.notificationAlreadyNotified)
+            if (alreadyNotificated.id == notification.id)
+              found = true;
+          if (!found) {
+            Notification.requestPermission(function (permission) {
+              var popup = new Notification(notification.summary, { body: notification.detail1, icon: 'assets/images/osiris.png', dir: 'auto' });
+              setTimeout(function () {
+                popup.close();
+              }, 10000);
+            });
+            this.notificationAlreadyNotified.push(notification);
+          }
+        }
+      }
+
+    }
+
+
   }
 }

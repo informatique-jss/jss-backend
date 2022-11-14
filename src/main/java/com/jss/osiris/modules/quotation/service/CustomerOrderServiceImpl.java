@@ -34,12 +34,9 @@ import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.MailService;
 import com.jss.osiris.modules.miscellaneous.service.NotificationService;
 import com.jss.osiris.modules.miscellaneous.service.PhoneService;
-import com.jss.osiris.modules.profile.model.Employee;
-import com.jss.osiris.modules.quotation.model.AssignationType;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
-import com.jss.osiris.modules.quotation.model.Domiciliation;
 import com.jss.osiris.modules.quotation.model.OrderingSearch;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Quotation;
@@ -93,6 +90,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Autowired
     MailHelper mailHelper;
 
+    @Autowired
+    AssoAffaireOrderService assoAffaireOrderService;
+
     @Override
     public CustomerOrder getCustomerOrder(Integer id) {
         Optional<CustomerOrder> customerOrder = customerOrderRepository.findById(id);
@@ -120,99 +120,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
         // Complete domiciliation end date
         for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders()) {
-            assoAffaireOrder.setCustomerOrder(customerOrder);
-
-            int nbrAssignation = 0;
-            Employee currentEmployee = null;
-
-            for (Provision provision : assoAffaireOrder.getProvisions()) {
-                provision.setAssoAffaireOrder(assoAffaireOrder);
-                if (provision.getDomiciliation() != null) {
-                    Domiciliation domiciliation = provision.getDomiciliation();
-                    if (domiciliation.getEndDate() == null) {
-                        domiciliation.setEndDate(domiciliation.getStartDate().plusYears(1));
-
-                        // If mails already exists, get their ids
-                        if (domiciliation != null && domiciliation.getMails() != null
-                                && domiciliation.getMails().size() > 0)
-                            mailService.populateMailIds(domiciliation.getMails());
-
-                        // If mails already exists, get their ids
-                        if (domiciliation != null && domiciliation.getActivityMails() != null
-                                && domiciliation.getActivityMails().size() > 0)
-                            mailService.populateMailIds(domiciliation.getActivityMails());
-
-                        // If mails already exists, get their ids
-                        if (domiciliation != null
-                                && domiciliation.getLegalGardianMails() != null
-                                && domiciliation.getLegalGardianMails().size() > 0)
-                            mailService.populateMailIds(domiciliation.getLegalGardianMails());
-
-                        if (domiciliation != null
-                                && domiciliation.getLegalGardianPhones() != null
-                                && domiciliation.getLegalGardianPhones().size() > 0)
-                            phoneService.populateMPhoneIds(domiciliation.getLegalGardianPhones());
-
-                    }
-                }
-
-                if (provision.getFormalite() != null) {
-                    if (provision.getFormalite().getReferenceMandataire() == null)
-                        // Play with fire ...
-                        provision.getFormalite().setReferenceMandataire(provision.getFormalite().getId());
-                    if (provision.getFormalite().getNomDossier() == null)
-                        provision.getFormalite()
-                                .setNomDossier(assoAffaireOrder.getAffaire().getDenomination() != null
-                                        ? assoAffaireOrder.getAffaire().getDenomination()
-                                        : (assoAffaireOrder.getAffaire().getFirstname() + " "
-                                                + assoAffaireOrder.getAffaire().getLastname()));
-                    if (provision.getFormalite().getSignedPlace() == null)
-                        provision.getFormalite().setSignedPlace("8 Rue Saint-Augustin, 75002 Paris");
-                }
-
-                // Set proper assignation regarding provision item configuration
-                if (provision.getAssignedTo() == null) {
-                    Employee employee = provision.getProvisionType().getDefaultEmployee();
-
-                    if (provision.getProvisionType().getAssignationType() != null) {
-                        if (provision.getProvisionType().getAssignationType().getCode()
-                                .equals(AssignationType.FORMALISTE)) {
-                            if (customerOrder.getConfrere() != null
-                                    && customerOrder.getConfrere().getFormalisteEmployee() != null)
-                                employee = customerOrder.getConfrere().getFormalisteEmployee();
-                            if (customerOrder.getResponsable() != null) {
-                                if (customerOrder.getResponsable().getFormalisteEmployee() != null)
-                                    employee = customerOrder.getResponsable().getFormalisteEmployee();
-                                else if (customerOrder.getResponsable().getTiers().getFormalisteEmployee() != null)
-                                    employee = customerOrder.getResponsable().getTiers().getFormalisteEmployee();
-                            } else if (customerOrder.getTiers() != null
-                                    && customerOrder.getTiers().getFormalisteEmployee() != null)
-                                employee = customerOrder.getTiers().getFormalisteEmployee();
-                        }
-                        if (provision.getProvisionType().getAssignationType().getCode()
-                                .equals(AssignationType.PUBLICISTE)) {
-                            if (customerOrder.getConfrere() != null
-                                    && customerOrder.getConfrere().getInsertionEmployee() != null)
-                                employee = customerOrder.getConfrere().getInsertionEmployee();
-                            if (customerOrder.getResponsable() != null) {
-                                if (customerOrder.getResponsable().getInsertionEmployee() != null)
-                                    employee = customerOrder.getResponsable().getInsertionEmployee();
-                                else if (customerOrder.getResponsable().getTiers().getInsertionEmployee() != null)
-                                    employee = customerOrder.getResponsable().getTiers().getInsertionEmployee();
-                            } else if (customerOrder.getTiers() != null
-                                    && customerOrder.getTiers().getInsertionEmployee() != null)
-                                employee = customerOrder.getTiers().getInsertionEmployee();
-                        }
-                    }
-                    provision.setAssignedTo(employee);
-                    if (currentEmployee == null || !currentEmployee.getId().equals(employee.getId())) {
-                        currentEmployee = employee;
-                        nbrAssignation++;
-                    }
-                }
-            }
-            if (nbrAssignation == 1)
-                assoAffaireOrder.setAssignedTo(currentEmployee);
+            assoAffaireOrderService.completeAssoAffaireOrder(assoAffaireOrder, customerOrder);
         }
 
         // If invoice has not been generated yet, recompute billing items
@@ -237,7 +145,36 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
         if (isNewCustomerOrder)
             notificationService.notifyNewCustomerOrderQuotation(customerOrder);
-        return customerOrder;
+
+        return checkAllProvisionEnded(customerOrder);
+    }
+
+    @Override
+    public CustomerOrder checkAllProvisionEnded(CustomerOrder customerOrderIn) throws Exception {
+        if (customerOrderIn != null
+                && customerOrderIn.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BEING_PROCESSED)) {
+            CustomerOrder customerOrder = getCustomerOrder(customerOrderIn.getId());
+            if (customerOrder != null && customerOrder.getAssoAffaireOrders() != null
+                    && customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BEING_PROCESSED))
+                for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders())
+                    if (assoAffaireOrder.getProvisions() != null)
+                        for (Provision provision : assoAffaireOrder.getProvisions()) {
+                            if (provision.getAnnouncement() != null
+                                    && !provision.getAnnouncement().getAnnouncementStatus().getIsCloseState())
+                                return customerOrderIn;
+                            if (provision.getBodacc() != null
+                                    && !provision.getBodacc().getBodaccStatus().getIsCloseState())
+                                return customerOrderIn;
+                            if (provision.getFormalite() != null
+                                    && !provision.getFormalite().getFormaliteStatus().getIsCloseState())
+                                return customerOrderIn;
+                            if (provision.getDomiciliation() != null
+                                    && !provision.getDomiciliation().getDomiciliationStatus().getIsCloseState())
+                                return customerOrderIn;
+                        }
+            return addOrUpdateCustomerOrderStatus(customerOrder, CustomerOrderStatus.TO_BILLED);
+        }
+        return customerOrderIn;
     }
 
     @Override
@@ -294,7 +231,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
                     // TODO : changer de compte en contrepasse (attente => client) + check lettrage
                 }
-            mailHelper.sendCustomerOrderInvoiceToCustomer(customerOrder, invoice, true);
+            mailHelper.sendCustomerOrderInvoiceToCustomer(customerOrder, invoiceService.getInvoice(invoice.getId()),
+                    true);
         }
 
         if (targetStatusCode.equals(CustomerOrderStatus.WAITING_DEPOSIT)) {

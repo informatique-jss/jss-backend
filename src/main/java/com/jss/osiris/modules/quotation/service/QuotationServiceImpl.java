@@ -421,7 +421,8 @@ public class QuotationServiceImpl implements QuotationService {
                             } else {
                                 if (provision.getInvoiceItems() == null)
                                     provision.setInvoiceItems(new ArrayList<InvoiceItem>());
-                                if (provision.getId().equals(invoiceItemToMerge.getProvision().getId()))
+                                if (provision.getId() != null
+                                        && provision.getId().equals(invoiceItemToMerge.getProvision().getId()))
                                     finalInvoiceItems.add(invoiceItemToMerge);
                             }
                         }

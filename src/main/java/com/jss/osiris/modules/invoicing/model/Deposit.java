@@ -40,7 +40,7 @@ public class Deposit implements Serializable, IId {
 
 	@ManyToOne
 	@JoinColumn(name = "id_invoice")
-	@JsonIgnoreProperties(value = { "deposits" }, allowSetters = true)
+	@JsonIgnoreProperties(value = { "deposits", "accountingRecords" }, allowSetters = true)
 	private Invoice invoice;
 
 	@ManyToOne

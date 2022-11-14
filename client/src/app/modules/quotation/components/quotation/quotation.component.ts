@@ -18,6 +18,7 @@ import { SearchService } from 'src/app/services/search.service';
 import { CUSTOMER_ORDER_STATUS_ABANDONED, CUSTOMER_ORDER_STATUS_OPEN } from '../../../../libs/Constants';
 import { instanceOfQuotation } from '../../../../libs/TypeHelper';
 import { WorkflowDialogComponent } from '../../../miscellaneous/components/workflow-dialog/workflow-dialog.component';
+import { Affaire } from '../../model/Affaire';
 import { AssoAffaireOrder } from '../../model/AssoAffaireOrder';
 import { CustomerOrder } from '../../model/CustomerOrder';
 import { CustomerOrderStatus } from '../../model/CustomerOrderStatus';
@@ -26,9 +27,11 @@ import { QuotationStatus } from '../../model/QuotationStatus';
 import { AssoAffaireOrderService } from '../../services/asso.affaire.order.service';
 import { CustomerOrderService } from '../../services/customer.order.service';
 import { CustomerOrderStatusService } from '../../services/customer.order.status.service';
+import { ProvisionService } from '../../services/provision.service';
 import { QuotationStatusService } from '../../services/quotation-status.service';
 import { QuotationService } from '../../services/quotation.service';
 import { AddAffaireDialogComponent } from '../add-affaire-dialog/add-affaire-dialog.component';
+import { AffaireComponent } from '../affaire/affaire.component';
 import { ChooseAssignedUserDialogComponent } from '../choose-assigned-user-dialog/choose-assigned-user-dialog.component';
 import { OrderingCustomerComponent } from '../ordering-customer/ordering-customer.component';
 import { ProvisionItemComponent } from '../provision-item/provision-item.component';
@@ -85,6 +88,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     private constantService: ConstantService,
     private assoAffaireOrderService: AssoAffaireOrderService,
     protected searchService: SearchService,
+    private provisionService: ProvisionService,
     private changeDetectorRef: ChangeDetectorRef,
     private router: Router) { }
 
@@ -147,11 +151,13 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
   }
 
   setOpenStatus() {
+    this.isStatusOpen = false;
+    if (instanceOfCustomerOrder(this.quotation) && !this.quotation.customerOrderStatus || instanceOfQuotation(this.quotation) && !this.quotation.quotationStatus)
+      this.isStatusOpen = true;
     if (this.quotation && instanceOfQuotation(this.quotation) && this.quotation.quotationStatus)
       this.isStatusOpen = this.quotation.quotationStatus.code == QUOTATION_STATUS_OPEN;
     if (this.quotation && instanceOfCustomerOrder(this.quotation) && this.quotation.customerOrderStatus)
       this.isStatusOpen = this.quotation.customerOrderStatus.code == QUOTATION_STATUS_OPEN;
-    this.isStatusOpen = false;
   }
 
   updateDocuments() {
@@ -160,6 +166,13 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
 
   updateAssignedToForAffaire(employee: Employee, asso: AssoAffaireOrder) {
     this.assoAffaireOrderService.updateAssignedToForAsso(asso, employee).subscribe(response => {
+      asso.assignedTo = employee;
+    });
+  }
+
+  updateAssignedToForProvision(employee: any, provision: Provision) {
+    this.provisionService.updateAssignedToForProvision(provision, employee).subscribe(response => {
+      provision.assignedTo = employee;
     });
   }
 
@@ -232,7 +245,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     if (!orderingCustomerFormStatus)
       errorMessages.push("Onglet Donneur d'ordre");
     if (!quotationManagementFormStatus)
-      errorMessages.push("Onglet Eléments du devis");
+      errorMessages.push("Onglet Eléments " + (this.instanceOfCustomerOrder ? "de la commande" : "du devis"));
     if (!provisionStatus)
       errorMessages.push("Onglet Prestations");
     if (errorMessages.length > 0) {
@@ -547,4 +560,15 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     this.quotationService.generateInvoicetMail(this.quotation).subscribe(response => { });
   }
 
+  displayAffaire(affaire: Affaire) {
+    this.router.navigate(['/referential/affaire/', "" + affaire.id])
+  }
+
+  displayProvision(asso: AssoAffaireOrder, provision: Provision) {
+    this.router.navigate(['/affaire/', "" + asso.id, "" + provision.id]);
+  }
+
+  getActiveWorkflowElementsForProvision(provision: Provision) {
+    return AffaireComponent.getActiveWorkflowElementsForProvision(provision);
+  }
 }

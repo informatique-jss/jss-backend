@@ -50,6 +50,10 @@ public class Domiciliation implements IId, IAttachment {
 	private Language language;
 
 	@ManyToOne
+	@JoinColumn(name = "id_domicilisation_status")
+	private DomiciliationStatus domiciliationStatus;
+
+	@ManyToOne
 	@JoinColumn(name = "id_building_domiciliation")
 	private BuildingDomiciliation buildingDomiciliation;
 
@@ -487,6 +491,14 @@ public class Domiciliation implements IId, IAttachment {
 
 	public void setActivityMails(List<Mail> activityMails) {
 		this.activityMails = activityMails;
+	}
+
+	public DomiciliationStatus getDomiciliationStatus() {
+		return domiciliationStatus;
+	}
+
+	public void setDomiciliationStatus(DomiciliationStatus domiciliationStatus) {
+		this.domiciliationStatus = domiciliationStatus;
 	}
 
 }

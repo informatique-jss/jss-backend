@@ -80,14 +80,6 @@
         <key-type>java.lang.Integer</key-type>
         <value-type>com.jss.osiris.modules.quotation.model.AssignationType</value-type>
     </cache>
-    <cache alias="affaireStatusList" uses-template="default">
-        <key-type>java.lang.String</key-type>
-        <value-type>java.util.List</value-type>
-    </cache>
-    <cache alias="affaireStatus" uses-template="default">
-        <key-type>java.lang.Integer</key-type>
-        <value-type>com.jss.osiris.modules.quotation.model.AffaireStatus</value-type>
-    </cache>
     <cache alias="typeDocumentList" uses-template="default">
         <key-type>java.lang.String</key-type>
         <value-type>java.util.List</value-type>
@@ -467,5 +459,37 @@
     <cache alias="typeVoieList" uses-template="default">
         <key-type>java.lang.String</key-type>
         <value-type>java.util.List</value-type>
+    </cache>
+    <cache alias="bodaccStatusList" uses-template="default">
+        <key-type>java.lang.String</key-type>
+        <value-type>java.util.List</value-type>
+    </cache>
+    <cache alias="bodaccStatus" uses-template="default">
+        <key-type>java.lang.Integer</key-type>
+        <value-type>com.jss.osiris.modules.quotation.model.BodaccStatus</value-type>
+    </cache>
+    <cache alias="announcementStatusList" uses-template="default">
+        <key-type>java.lang.String</key-type>
+        <value-type>java.util.List</value-type>
+    </cache>
+    <cache alias="announcementStatus" uses-template="default">
+        <key-type>java.lang.Integer</key-type>
+        <value-type>com.jss.osiris.modules.quotation.model.AnnouncementStatus</value-type>
+    </cache>
+    <cache alias="domiciliationStatusList" uses-template="default">
+        <key-type>java.lang.String</key-type>
+        <value-type>java.util.List</value-type>
+    </cache>
+    <cache alias="domiciliationStatus" uses-template="default">
+        <key-type>java.lang.Integer</key-type>
+        <value-type>com.jss.osiris.modules.quotation.model.DomiciliationStatus</value-type>
+    </cache>
+    <cache alias="formaliteStatusList" uses-template="default">
+        <key-type>java.lang.String</key-type>
+        <value-type>java.util.List</value-type>
+    </cache>
+    <cache alias="formaliteStatus" uses-template="default">
+        <key-type>java.lang.Integer</key-type>
+        <value-type>com.jss.osiris.modules.quotation.model.FormaliteStatus</value-type>
     </cache>
 </config>

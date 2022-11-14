@@ -165,15 +165,15 @@ public class CustomerOrder implements IQuotation, IAttachment {
 	private List<Invoice> invoices;
 
 	@OneToMany(targetEntity = Payment.class, mappedBy = "customerOrder")
-	@JsonIgnoreProperties(value = { "customerOrder" }, allowSetters = true)
+	@JsonIgnoreProperties(value = { "customerOrder", "accountingRecords", "invoice" }, allowSetters = true)
 	private List<Payment> payments;
 
 	@OneToMany(targetEntity = Deposit.class, mappedBy = "customerOrder")
-	@JsonIgnoreProperties(value = { "customerOrder" }, allowSetters = true)
+	@JsonIgnoreProperties(value = { "customerOrder", "accountingRecords", "invoice" }, allowSetters = true)
 	private List<Deposit> deposits;
 
 	@OneToMany(targetEntity = AccountingRecord.class, mappedBy = "customerOrder")
-	@JsonIgnoreProperties(value = { "customerOrder" }, allowSetters = true)
+	@JsonIgnoreProperties(value = { "customerOrder", "invoice", "deposit", "payment" }, allowSetters = true)
 	private List<AccountingRecord> accountingRecords;
 
 	public Integer getId() {

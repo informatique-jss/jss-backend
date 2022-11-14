@@ -9,12 +9,14 @@
         </td>
         <td>
           <autocomplete-employee [(model)]="affaireSearch.assignedTo" label="Assigné à" [form]="affaireSearchForm"
-            [isMandatory]="false" propertyName="assignedTo" [isMandatory]="false" [defaultEmployee]="currentEmployee">
+            [isMandatory]="false" propertyName="assignedTo" [isMandatory]="false"
+            [defaultEmployee]="bookmark?undefined:currentEmployee">
           </autocomplete-employee>
         </td>
         <td>
-          <select-affaire-status [(model)]="affaireSearch.affaireStatus" label="Statut" [form]="affaireSearchForm"
-            propertyName="affaireStatus" [isMandatory]="false" [isDisabled]="false"></select-affaire-status>
+          <select-provision-stauts [(model)]="affaireSearch.status" label="Statut de la prestation"
+            [form]="affaireSearchForm" propertyName="status" [isMandatory]="false" [isDisabled]="false">
+          </select-provision-stauts>
         </td>
         <td>
           <generic-input [(model)]="affaireSearch.label" label="Libellé de l'affaire" [form]="affaireSearchForm"

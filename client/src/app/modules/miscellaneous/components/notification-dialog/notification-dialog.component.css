@@ -39,3 +39,8 @@
 .mat-badge.hide-text .mat-badge-content {
   color: transparent;
 }
+
+.div-personnal-action {
+  text-align: right;
+  padding: 8px;
+}

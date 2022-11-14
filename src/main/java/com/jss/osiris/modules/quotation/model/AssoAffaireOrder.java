@@ -35,7 +35,8 @@ public class AssoAffaireOrder implements Serializable, IId {
 
 	@ManyToOne
 	@JoinColumn(name = "id_customer_order")
-	@JsonIgnoreProperties(value = { "assoAffaireOrders" }, allowSetters = true)
+	@JsonIgnoreProperties(value = { "assoAffaireOrders", "invoices", "deposits", "payments",
+			"accountingRecords" }, allowSetters = true)
 	private CustomerOrder customerOrder;
 
 	@ManyToOne
@@ -51,11 +52,6 @@ public class AssoAffaireOrder implements Serializable, IId {
 	@JsonIgnoreProperties(value = { "assoAffaireOrder" }, allowSetters = true)
 	@IndexedField
 	private List<Provision> provisions;
-
-	@ManyToOne
-	@JoinColumn(name = "id_affaire_status")
-	@IndexedField
-	private AffaireStatus affaireStatus;
 
 	public Affaire getAffaire() {
 		return affaire;
@@ -103,14 +99,6 @@ public class AssoAffaireOrder implements Serializable, IId {
 
 	public void setProvisions(List<Provision> provisions) {
 		this.provisions = provisions;
-	}
-
-	public AffaireStatus getAffaireStatus() {
-		return affaireStatus;
-	}
-
-	public void setAffaireStatus(AffaireStatus affaireStatus) {
-		this.affaireStatus = affaireStatus;
 	}
 
 }

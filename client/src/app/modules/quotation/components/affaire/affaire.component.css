@@ -5,3 +5,8 @@
 .row-field-container {
   padding-top: 15px;
 }
+
+.status-text {
+  white-space: nowrap;
+  padding-right: 10px;
+}

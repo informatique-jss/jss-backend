@@ -1,0 +1,12 @@
+<h1 mat-dialog-title>{{title}}</h1>
+<div mat-dialog-content>
+  <p>{{content}} <mat-icon class="pointer note-icon" matTooltip="Me choisir" (click)="chooseMyself()">account_circle
+    </mat-icon>
+  <p>
+    <autocomplete-employee [(model)]="employee" [form]="employeeForm" propertyName="employee" [isMandatory]="true"
+      [isDisabled]="false"></autocomplete-employee>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-raised-button color="accent" (click)="onClose()">{{closeActionText}}</button>
+  <button mat-raised-button color="warn" (click)="onConfirm()">{{validationActionText}}</button>
+</div>

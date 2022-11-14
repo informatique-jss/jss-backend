@@ -40,9 +40,9 @@ import com.jss.osiris.modules.profile.service.EmployeeService;
 import com.jss.osiris.modules.quotation.model.ActType;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.AffaireSearch;
-import com.jss.osiris.modules.quotation.model.AffaireStatus;
 import com.jss.osiris.modules.quotation.model.Announcement;
 import com.jss.osiris.modules.quotation.model.AnnouncementNoticeTemplate;
+import com.jss.osiris.modules.quotation.model.AnnouncementStatus;
 import com.jss.osiris.modules.quotation.model.AssignationType;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.Bodacc;
@@ -54,6 +54,7 @@ import com.jss.osiris.modules.quotation.model.BodaccSale;
 import com.jss.osiris.modules.quotation.model.BodaccSplit;
 import com.jss.osiris.modules.quotation.model.BodaccSplitBeneficiary;
 import com.jss.osiris.modules.quotation.model.BodaccSplitCompany;
+import com.jss.osiris.modules.quotation.model.BodaccStatus;
 import com.jss.osiris.modules.quotation.model.BuildingDomiciliation;
 import com.jss.osiris.modules.quotation.model.CharacterPrice;
 import com.jss.osiris.modules.quotation.model.Confrere;
@@ -61,6 +62,8 @@ import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.quotation.model.Domiciliation;
 import com.jss.osiris.modules.quotation.model.DomiciliationContractType;
+import com.jss.osiris.modules.quotation.model.DomiciliationStatus;
+import com.jss.osiris.modules.quotation.model.FormaliteStatus;
 import com.jss.osiris.modules.quotation.model.FundType;
 import com.jss.osiris.modules.quotation.model.IQuotation;
 import com.jss.osiris.modules.quotation.model.JournalType;
@@ -86,17 +89,20 @@ import com.jss.osiris.modules.quotation.model.guichetUnique.Formalite;
 import com.jss.osiris.modules.quotation.model.guichetUnique.NatureCreation;
 import com.jss.osiris.modules.quotation.service.ActTypeService;
 import com.jss.osiris.modules.quotation.service.AffaireService;
-import com.jss.osiris.modules.quotation.service.AffaireStatusService;
 import com.jss.osiris.modules.quotation.service.AnnouncementNoticeTemplateService;
+import com.jss.osiris.modules.quotation.service.AnnouncementStatusService;
 import com.jss.osiris.modules.quotation.service.AssignationTypeService;
 import com.jss.osiris.modules.quotation.service.AssoAffaireOrderService;
 import com.jss.osiris.modules.quotation.service.BodaccPublicationTypeService;
+import com.jss.osiris.modules.quotation.service.BodaccStatusService;
 import com.jss.osiris.modules.quotation.service.BuildingDomiciliationService;
 import com.jss.osiris.modules.quotation.service.CharacterPriceService;
 import com.jss.osiris.modules.quotation.service.ConfrereService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderStatusService;
 import com.jss.osiris.modules.quotation.service.DomiciliationContractTypeService;
+import com.jss.osiris.modules.quotation.service.DomiciliationStatusService;
+import com.jss.osiris.modules.quotation.service.FormaliteStatusService;
 import com.jss.osiris.modules.quotation.service.FundTypeService;
 import com.jss.osiris.modules.quotation.service.JournalTypeService;
 import com.jss.osiris.modules.quotation.service.MailRedirectionTypeService;
@@ -247,13 +253,82 @@ public class QuotationController {
   ProvisionService provisionService;
 
   @Autowired
-  AffaireStatusService affaireStatusService;
-
-  @Autowired
   DocumentService documentService;
 
   @Autowired
   MailHelper mailHelper;
+
+  @Autowired
+  BodaccStatusService bodaccStatusService;
+
+  @Autowired
+  AnnouncementStatusService announcementStatusService;
+
+  @Autowired
+  DomiciliationStatusService domiciliationStatusService;
+
+  @Autowired
+  FormaliteStatusService formaliteStatusService;
+
+  @GetMapping(inputEntryPoint + "/formalite-status")
+  public ResponseEntity<List<FormaliteStatus>> getFormaliteStatus() {
+    List<FormaliteStatus> formaliteStatus = null;
+    try {
+      formaliteStatus = formaliteStatusService.getFormaliteStatus();
+    } catch (HttpStatusCodeException e) {
+      logger.error("HTTP error when fetching formaliteStatus", e);
+      return new ResponseEntity<List<FormaliteStatus>>(HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (Exception e) {
+      logger.error("Error when fetching formaliteStatus", e);
+      return new ResponseEntity<List<FormaliteStatus>>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    return new ResponseEntity<List<FormaliteStatus>>(formaliteStatus, HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/domiciliation-status")
+  public ResponseEntity<List<DomiciliationStatus>> getDomiciliationStatus() {
+    List<DomiciliationStatus> domiciliationStatus = null;
+    try {
+      domiciliationStatus = domiciliationStatusService.getDomiciliationStatus();
+    } catch (HttpStatusCodeException e) {
+      logger.error("HTTP error when fetching domiciliationStatus", e);
+      return new ResponseEntity<List<DomiciliationStatus>>(HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (Exception e) {
+      logger.error("Error when fetching domiciliationStatus", e);
+      return new ResponseEntity<List<DomiciliationStatus>>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    return new ResponseEntity<List<DomiciliationStatus>>(domiciliationStatus, HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/announcement-status")
+  public ResponseEntity<List<AnnouncementStatus>> getAnnouncementStatus() {
+    List<AnnouncementStatus> announcementStatus = null;
+    try {
+      announcementStatus = announcementStatusService.getAnnouncementStatus();
+    } catch (HttpStatusCodeException e) {
+      logger.error("HTTP error when fetching announcementStatus", e);
+      return new ResponseEntity<List<AnnouncementStatus>>(HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (Exception e) {
+      logger.error("Error when fetching announcementStatus", e);
+      return new ResponseEntity<List<AnnouncementStatus>>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    return new ResponseEntity<List<AnnouncementStatus>>(announcementStatus, HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/bodacc-status")
+  public ResponseEntity<List<BodaccStatus>> getBodaccStatus() {
+    List<BodaccStatus> bodaccStatus = null;
+    try {
+      bodaccStatus = bodaccStatusService.getBodaccStatus();
+    } catch (HttpStatusCodeException e) {
+      logger.error("HTTP error when fetching bodaccStatus", e);
+      return new ResponseEntity<List<BodaccStatus>>(HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (Exception e) {
+      logger.error("Error when fetching bodaccStatus", e);
+      return new ResponseEntity<List<BodaccStatus>>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    return new ResponseEntity<List<BodaccStatus>>(bodaccStatus, HttpStatus.OK);
+  }
 
   @PostMapping(inputEntryPoint + "/mail/quotation/compute")
   public ResponseEntity<MailComputeResult> computeMailForQuotation(
@@ -266,10 +341,10 @@ public class QuotationController {
     ResponseStatusException e) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching affaireStatus", e);
+      logger.error("HTTP error when generate mail", e);
       return new ResponseEntity<MailComputeResult>(HttpStatus.INTERNAL_SERVER_ERROR);
     } catch (Exception e) {
-      logger.error("Error when fetching affaireStatus", e);
+      logger.error("Error when fetching generate mail", e);
       return new ResponseEntity<MailComputeResult>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
     return new ResponseEntity<MailComputeResult>(mailComputeResult, HttpStatus.OK);
@@ -286,10 +361,10 @@ public class QuotationController {
     ResponseStatusException e) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching affaireStatus", e);
+      logger.error("HTTP error when fetching generate mail", e);
       return new ResponseEntity<MailComputeResult>(HttpStatus.INTERNAL_SERVER_ERROR);
     } catch (Exception e) {
-      logger.error("Error when fetching affaireStatus", e);
+      logger.error("Error when fetching generate mail", e);
       return new ResponseEntity<MailComputeResult>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
     return new ResponseEntity<MailComputeResult>(mailComputeResult, HttpStatus.OK);
@@ -303,10 +378,10 @@ public class QuotationController {
     try {
       mailHelper.generateQuotationMail(quotation);
     } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching affaireStatus", e);
+      logger.error("HTTP error when fetching generate mail", e);
       return new ResponseEntity<Quotation>(HttpStatus.INTERNAL_SERVER_ERROR);
     } catch (Exception e) {
-      logger.error("Error when fetching affaireStatus", e);
+      logger.error("Error when fetching generate mail", e);
       return new ResponseEntity<Quotation>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
     return new ResponseEntity<Quotation>(quotation, HttpStatus.OK);
@@ -320,10 +395,10 @@ public class QuotationController {
     try {
       mailHelper.generateWaintingDepositMail(customerOrder);
     } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching affaireStatus", e);
+      logger.error("HTTP error when fetching generate mail", e);
       return new ResponseEntity<CustomerOrder>(HttpStatus.INTERNAL_SERVER_ERROR);
     } catch (Exception e) {
-      logger.error("Error when fetching affaireStatus", e);
+      logger.error("Error when fetching generate mail", e);
       return new ResponseEntity<CustomerOrder>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
     return new ResponseEntity<CustomerOrder>(customerOrder, HttpStatus.OK);
@@ -340,54 +415,13 @@ public class QuotationController {
       } catch (Exception e) {
       }
     } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching affaireStatus", e);
+      logger.error("HTTP error when fetching generate mail", e);
       return new ResponseEntity<CustomerOrder>(HttpStatus.INTERNAL_SERVER_ERROR);
     } catch (Exception e) {
-      logger.error("Error when fetching affaireStatus", e);
+      logger.error("Error when fetching generate mail", e);
       return new ResponseEntity<CustomerOrder>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
     return new ResponseEntity<CustomerOrder>(new CustomerOrder(), HttpStatus.OK);
-  }
-
-  @GetMapping(inputEntryPoint + "/affaire-status-list")
-  public ResponseEntity<List<AffaireStatus>> getAffaireStatus() {
-    List<AffaireStatus> affaireStatus = null;
-    try {
-      affaireStatus = affaireStatusService.getAffaireStatus();
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching affaireStatus", e);
-      return new ResponseEntity<List<AffaireStatus>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching affaireStatus", e);
-      return new ResponseEntity<List<AffaireStatus>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<List<AffaireStatus>>(affaireStatus, HttpStatus.OK);
-  }
-
-  @PostMapping(inputEntryPoint + "/affaire-status")
-  public ResponseEntity<AffaireStatus> addOrUpdateAffaireStatus(
-      @RequestBody AffaireStatus affaireStatus) {
-    AffaireStatus outAffaireStatus;
-    try {
-      if (affaireStatus.getId() != null)
-        validationHelper.validateReferential(affaireStatus, true);
-      validationHelper.validateString(affaireStatus.getCode(), true);
-      validationHelper.validateString(affaireStatus.getLabel(), true);
-
-      outAffaireStatus = affaireStatusService
-          .addOrUpdateAffaireStatus(affaireStatus);
-    } catch (
-
-    ResponseStatusException e) {
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching affaireStatus", e);
-      return new ResponseEntity<AffaireStatus>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching affaireStatus", e);
-      return new ResponseEntity<AffaireStatus>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<AffaireStatus>(outAffaireStatus, HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/provision/assignedTo")
@@ -441,8 +475,9 @@ public class QuotationController {
     List<AssoAffaireOrder> assos = null;
     try {
 
-      if (affaireSearch.getLabel() == null && affaireSearch.getAffaireStatus() == null
-          && affaireSearch.getAssignedTo() == null && affaireSearch.getResponsible() == null)
+      if (affaireSearch.getLabel() == null
+          && affaireSearch.getAssignedTo() == null && affaireSearch.getResponsible() == null
+          && affaireSearch.getStatus() == null)
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
       if (affaireSearch.getLabel() == null)
@@ -467,8 +502,6 @@ public class QuotationController {
 
       validationHelper.validateReferential(assoAffaireOrder, true);
       validationHelper.validateReferential(assoAffaireOrder.getAffaire(), true);
-      // TODO : passer à true quand status faits
-      validationHelper.validateReferential(assoAffaireOrder.getAffaireStatus(), false);
       validationHelper.validateReferential(assoAffaireOrder.getAssignedTo(), true);
       validationHelper.validateReferential(assoAffaireOrder.getCustomerOrder(), true);
       validationHelper.validateReferential(assoAffaireOrder.getCustomerOrder(),

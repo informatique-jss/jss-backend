@@ -2,6 +2,7 @@ package com.jss.osiris.modules.miscellaneous.controller;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -209,10 +210,10 @@ public class MiscellaneousController {
     ActiveDirectoryHelper activeDirectoryHelper;
 
     @GetMapping(inputEntryPoint + "/notifications")
-    public ResponseEntity<List<Notification>> getNotifications() {
+    public ResponseEntity<List<Notification>> getNotifications(@RequestParam Boolean displayFuture) {
         List<Notification> notifications = null;
         try {
-            notifications = notificationService.getNotificationsForCurrentEmployee();
+            notifications = notificationService.getNotificationsForCurrentEmployee(displayFuture);
         } catch (HttpStatusCodeException e) {
             logger.error("HTTP error when fetching notification", e);
             return new ResponseEntity<List<Notification>>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -223,19 +224,37 @@ public class MiscellaneousController {
         return new ResponseEntity<List<Notification>>(notifications, HttpStatus.OK);
     }
 
+    @PostMapping(inputEntryPoint + "/notification/personnal")
+    public ResponseEntity<Notification> addPOrUpdatePersonnalNotification(
+            @RequestBody Notification notifications) {
+        Notification outNotification;
+        try {
+            outNotification = notificationService
+                    .addOrUpdatePersonnalNotification(notifications);
+        } catch (ResponseStatusException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (HttpStatusCodeException e) {
+            logger.error("HTTP error when fetching notification", e);
+            return new ResponseEntity<Notification>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            logger.error("Error when fetching notification", e);
+            return new ResponseEntity<Notification>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<Notification>(outNotification, HttpStatus.OK);
+    }
+
     @PostMapping(inputEntryPoint + "/notification")
     public ResponseEntity<Notification> addOrUpdateNotification(
             @RequestBody Notification notifications) {
         Notification outNotification;
+        boolean isRead = notifications.getIsRead();
         try {
-            if (notifications.getId() != null)
-                validationHelper.validateReferential(notifications, true);
-
+            // You can only modify read property ;)
+            notifications = (Notification) validationHelper.validateReferential(notifications, true);
+            notifications.setIsRead(isRead);
             outNotification = notificationService
                     .addOrUpdateNotificationFromUser(notifications);
-        } catch (
-
-        ResponseStatusException e) {
+        } catch (ResponseStatusException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (HttpStatusCodeException e) {
             logger.error("HTTP error when fetching notification", e);
@@ -260,6 +279,12 @@ public class MiscellaneousController {
 
         List<Employee> backupEmployee = activeDirectoryHelper
                 .getMyHolidaymaker(employeeService.getCurrentEmployee());
+
+        if (notification.getNotificationType().equals(Notification.PERSONNAL)) {
+            backupEmployee = new ArrayList<Employee>();
+            backupEmployee.add(employeeService.getCurrentEmployee());
+        }
+
         boolean found = false;
 
         for (Employee employee : backupEmployee)
@@ -303,8 +328,82 @@ public class MiscellaneousController {
         try {
             if (constant.getId() != null)
                 validationHelper.validateReferential(constant, true);
-            // TODO complete
             validationHelper.validateReferential(constant.getBillingLabelTypeCodeAffaire(), true);
+            validationHelper.validateReferential(constant.getBillingLabelTypeCodeAffaire(), true);
+            validationHelper.validateReferential(constant.getBillingLabelTypeOther(), true);
+            validationHelper.validateReferential(constant.getBillingLabelTypeCustomer(), true);
+            validationHelper.validateReferential(constant.getAccountingJournalSales(), true);
+            validationHelper.validateReferential(constant.getAccountingJournalPurchases(), true);
+            validationHelper.validateReferential(constant.getAccountingJournalANouveau(), true);
+            validationHelper.validateReferential(constant.getTiersTypeProspect(), true);
+            validationHelper.validateReferential(constant.getDocumentTypePublication(), true);
+            validationHelper.validateReferential(constant.getDocumentTypeCfe(), true);
+            validationHelper.validateReferential(constant.getDocumentTypeKbis(), true);
+            validationHelper.validateReferential(constant.getDocumentTypeBilling(), true);
+            validationHelper.validateReferential(constant.getDocumentTypeDunning(), true);
+            validationHelper.validateReferential(constant.getDocumentTypeRefund(), true);
+            validationHelper.validateReferential(constant.getDocumentTypeBillingClosure(), true);
+            validationHelper.validateReferential(constant.getDocumentTypeProvisionnalReceipt(), true);
+            validationHelper.validateReferential(constant.getDocumentTypeProofReading(), true);
+            validationHelper.validateReferential(constant.getDocumentTypePublicationCertificate(), true);
+            validationHelper.validateReferential(constant.getDocumentTypeQuotation(), true);
+            validationHelper.validateReferential(constant.getAttachmentTypeKbis(), true);
+            validationHelper.validateReferential(constant.getAttachmentTypeCni(), true);
+            validationHelper.validateReferential(constant.getAttachmentTypeLogo(), true);
+            validationHelper.validateReferential(constant.getAttachmentTypeProofOfAddress(), true);
+            validationHelper.validateReferential(constant.getCountryFrance(), true);
+            validationHelper.validateReferential(constant.getCountryMonaco(), true);
+            validationHelper.validateReferential(constant.getBillingTypeLogo(), true);
+            validationHelper.validateReferential(constant.getQuotationLabelTypeOther(), true);
+            validationHelper.validateReferential(constant.getPaymentTypePrelevement(), true);
+            validationHelper.validateReferential(constant.getPaymentTypeVirement(), true);
+            validationHelper.validateReferential(constant.getPaymentTypeCB(), true);
+            validationHelper.validateReferential(constant.getPaymentTypeEspeces(), true);
+            validationHelper.validateReferential(constant.getRefundTypeVirement(), true);
+            validationHelper.validateReferential(constant.getSubscriptionPeriodType12M(), true);
+            validationHelper.validateReferential(constant.getLegalFormUnregistered(), true);
+            validationHelper.validateReferential(constant.getJournalTypeSpel(), true);
+            validationHelper.validateReferential(constant.getConfrereJss(), true);
+            validationHelper.validateReferential(constant.getDomiciliationContractTypeKeepMail(), true);
+            validationHelper.validateReferential(constant.getDomiciliationContractTypeRouteMail(), true);
+            validationHelper.validateReferential(constant.getDomiciliationContractTypeRouteEmailAndMail(), true);
+            validationHelper.validateReferential(constant.getDomiciliationContractTypeRouteEmail(), true);
+            validationHelper.validateReferential(constant.getMailRedirectionTypeOther(), true);
+            validationHelper.validateReferential(constant.getBodaccPublicationTypeMerging(), true);
+            validationHelper.validateReferential(constant.getBodaccPublicationTypeSplit(), true);
+            validationHelper.validateReferential(constant.getBodaccPublicationTypePartialSplit(), true);
+            validationHelper.validateReferential(constant.getBodaccPublicationTypePossessionDispatch(), true);
+            validationHelper.validateReferential(constant.getBodaccPublicationTypeEstateRepresentativeDesignation(),
+                    true);
+            validationHelper.validateReferential(constant.getBodaccPublicationTypeSaleOfBusiness(), true);
+            validationHelper.validateReferential(constant.getActTypeSeing(), true);
+            validationHelper.validateReferential(constant.getActTypeAuthentic(), true);
+            validationHelper.validateReferential(constant.getAssignationTypeEmployee(), true);
+            validationHelper.validateReferential(constant.getEmployeeBillingResponsible(), true);
+            validationHelper.validateReferential(constant.getTransfertFundsTypePhysique(), true);
+            validationHelper.validateReferential(constant.getTransfertFundsTypeMoral(), true);
+            validationHelper.validateReferential(constant.getTransfertFundsTypeBail(), true);
+            validationHelper.validateReferential(constant.getCompetentAuthorityTypeRcs(), true);
+            validationHelper.validateReferential(constant.getCompetentAuthorityTypeCfp(), true);
+            validationHelper.validateReferential(constant.getInvoiceStatusSend(), true);
+            validationHelper.validateReferential(constant.getInvoiceStatusPayed(), true);
+            validationHelper.validateReferential(constant.getInvoiceStatusCancelled(), true);
+            validationHelper.validateReferential(constant.getPaymentWayInbound(), true);
+            validationHelper.validateReferential(constant.getPaymentWayOutboud(), true);
+            validationHelper.validateReferential(constant.getVatTwenty(), true);
+            validationHelper.validateReferential(constant.getVatEight(), true);
+            validationHelper.validateReferential(constant.getDepartmentMartinique(), true);
+            validationHelper.validateReferential(constant.getDepartmentGuadeloupe(), true);
+            validationHelper.validateReferential(constant.getDepartmentReunion(), true);
+            validationHelper.validateReferential(constant.getTypePersonnePersonnePhysique(), true);
+            validationHelper.validateReferential(constant.getTypePersonneExploitation(), true);
+            validationHelper.validateReferential(constant.getTypePersonnePersonneMorale(), true);
+            validationHelper.validateReferential(constant.getFormeJuridiqueEntrepreneurIndividuel(), true);
+            validationHelper.validateReferential(constant.getTypeFormaliteCessation(), true);
+            validationHelper.validateReferential(constant.getTypeFormaliteCorrection(), true);
+            validationHelper.validateReferential(constant.getTypeFormaliteModification(), true);
+            validationHelper.validateReferential(constant.getTypeFormaliteCreation(), true);
+
             outConstant = constantService
                     .addOrUpdateConstant(constant);
         } catch (

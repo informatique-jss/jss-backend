@@ -157,6 +157,27 @@
             </td>
         </tr>
     </table>
+    <table style="border : solid; border-color: rgb(0,83,159);width: 680px;margin-top: 20px;"
+        th:if="${deposits.size()>0}">
+        <tr th:each="deposit : ${deposits}">
+            <td colspan="4" style="text-align: right">
+                Acompte
+            </td>
+            <td style="text-align: right"> - <span
+                    th:text="${#numbers.formatDecimal(deposit.depositAmount,1,2)}"></span>
+                €
+            </td>
+        </tr>
+
+        <tr>
+            <td colspan="4" style="text-align: right">
+                Restant dû
+            </td>
+            <td style="text-align: right"><span th:text="${#numbers.formatDecimal(remainingToPay,1,2)}"></span>
+                €
+            </td>
+        </tr>
+    </table>
     <p style="font-size: 12px;">Retard de paiement. Maj de 3 fois le taux d’intérêt légal (Application du CC - Article
         L441-6)<br />
         TVA acquittée sur les débits</p>

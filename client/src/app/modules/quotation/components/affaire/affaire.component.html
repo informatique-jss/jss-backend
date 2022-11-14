@@ -1,11 +1,9 @@
 <ng-template #accordionTools>
-  <mat-panel-description>
-    <mat-icon matTooltip="Ouvrir tous les onglets" (click)="accordion!.openAll();$event.stopPropagation();"
-      class="pointer">
-      unfold_more_double</mat-icon>
-    <mat-icon matTooltip="Fermer tous les autres onglets" (click)="accordion!.closeAll();" class="pointer">
-      unfold_less_double</mat-icon>
-  </mat-panel-description>
+  <mat-icon matTooltip="Ouvrir tous les onglets" (click)="accordion!.openAll();$event.stopPropagation();"
+    class="pointer">
+    unfold_more_double</mat-icon>
+  <mat-icon matTooltip="Fermer tous les autres onglets" (click)="accordion!.closeAll();" class="pointer">
+    unfold_less_double</mat-icon>
 </ng-template>
 <div class="mat-accordion-container full-width" *ngIf="asso && asso.affaire">
   <mat-accordion multi>
@@ -16,7 +14,15 @@
           +asso.affaire.lastname)}} - {{asso.affaire.address}} - {{asso.affaire.postalCode}} -
           {{asso.affaire.country.label}}
         </mat-panel-title>
-        <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
+        <mat-panel-description>
+          <avatar-chip *ngIf="asso.assignedTo" [employee]="asso.assignedTo"
+            (onChangeAssigne)="updateAssignedToForAffaire($event,asso)">
+          </avatar-chip>
+          <mat-icon matTooltip="Voir/éditer l'affaire" (click)="displayAffaire();$event.stopPropagation();"
+            class="pointer">
+            edit</mat-icon>
+          <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
+        </mat-panel-description>
       </mat-expansion-panel-header>
       <add-affaire [affaire]="asso.affaire" [editMode]="false"></add-affaire>
       <div *ngIf="asso && asso.id ">
@@ -37,14 +43,22 @@
           {{provision.provisionType ? (provision.provisionFamilyType.label +' -
           '+provision.provisionType.label):''}}
         </mat-panel-title>
-        <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
+        <mat-panel-description>
+          <span class="status-text"
+            *ngIf="getActiveWorkflowElementsForProvisionFn(provision)">{{getActiveWorkflowElementsForProvisionFn(provision).label}}</span>
+          <avatar-chip *ngIf="asso.assignedTo" [employee]="provision.assignedTo"
+            (onChangeAssigne)="updateAssignedToForProvision($event, provision)">
+          </avatar-chip>
+          <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
+        </mat-panel-description>
         <mat-panel-description *ngIf="editMode">
           <mat-icon matTooltip="Supprimer la prestation" (click)="deleteProvision(asso,provision)" class="pointer">
             delete</mat-icon>
         </mat-panel-description>
       </mat-expansion-panel-header>
-      <provision-item *ngIf="asso.affaire && asso.affaire.id" [editMode]="editMode" [provision]="provision"
-        [affaire]="asso.affaire" [instanceOfCustomerOrder]="true" [isStatusOpen]="isStatusOpen">
+      <provision-item [quotation]="asso.customerOrder?asso.customerOrder:asso.quotation"
+        *ngIf="asso.affaire && asso.affaire.id" [editMode]="editMode" [provision]="provision" [affaire]="asso.affaire"
+        [instanceOfCustomerOrder]="true" [isStatusOpen]="isStatusOpen">
       </provision-item>
     </mat-expansion-panel>
   </mat-accordion>
@@ -71,3 +85,44 @@
   *ngIf="editMode==false && asso && asso.customerOrder" (click)="displayCustomerOrder()">
   <mat-icon>shopping_cart</mat-icon>
 </button>
+
+<button matTooltip="Changer de statut" mat-fab color="accent" class="third-fab-button"
+  (click)="setCurrentProvisionWorkflow(asso.provisions[0])"
+  *ngIf="editMode==false && asso && asso.provisions && asso.provisions.length==1" [matMenuTriggerFor]="menu3">
+  <mat-icon>done</mat-icon>
+</button>
+<button matTooltip="Changer de statut" mat-fab color="accent" class="third-fab-button"
+  *ngIf="editMode==false && asso && asso.provisions && asso.provisions.length>1" [matMenuTriggerFor]="menu2">
+  <mat-icon>done</mat-icon>
+  <mat-menu #menu2="matMenu" style="min-height: 0px;padding: 0;" xPosition="before">
+    <button mat-menu-item [matMenuTriggerFor]="menu3" (mouseover)="setCurrentProvisionWorkflow(provision)"
+      *ngFor="let provision of asso.provisions">{{provision.provisionType ? (provision.provisionFamilyType.label +' -
+      '+provision.provisionType.label):''}}</button>
+  </mat-menu>
+</button>
+
+<mat-menu #menu3="matMenu" style="min-height: 0px;padding: 0;" xPosition="before">
+  <ng-container *ngIf="currentProvisionWorkflow">
+    <button mat-menu-item (click)="displayProvisionWorkflowDialog(currentProvisionWorkflow)">
+      <span>Voir le workflow</span>
+    </button>
+    <button disabled mat-menu-item
+      *ngIf="getActiveWorkflowElementsForProvisionFn(currentProvisionWorkflow).successors && getActiveWorkflowElementsForProvisionFn(currentProvisionWorkflow).successors.length>0">
+      <span>Passer à</span>
+    </button>
+    <button mat-menu-item
+      *ngFor="let status of  getActiveWorkflowElementsForProvisionFn(currentProvisionWorkflow).successors"
+      (click)="changeStatus(status,currentProvisionWorkflow)">
+      <mat-icon>{{status.icon}}</mat-icon><span>{{status.label}}</span>
+    </button>
+    <button disabled mat-menu-item
+      *ngIf="getActiveWorkflowElementsForProvisionFn(currentProvisionWorkflow).predecessors && getActiveWorkflowElementsForProvisionFn(currentProvisionWorkflow).predecessors.length>0">
+      <span>Revenir à</span>
+    </button>
+    <button mat-menu-item
+      *ngFor="let status of getActiveWorkflowElementsForProvisionFn(currentProvisionWorkflow).predecessors"
+      (click)="changeStatus(status,currentProvisionWorkflow)">
+      <mat-icon>{{status.icon}}</mat-icon><span>{{status.label}}</span>
+    </button>
+  </ng-container>
+</mat-menu>

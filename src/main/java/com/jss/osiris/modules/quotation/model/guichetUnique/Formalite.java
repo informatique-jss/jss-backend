@@ -17,6 +17,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.IAttachment;
 import com.jss.osiris.modules.miscellaneous.model.IId;
+import com.jss.osiris.modules.quotation.model.FormaliteStatus;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.DiffusionINSEE;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormeJuridique;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeFormalite;
@@ -53,6 +54,10 @@ public class Formalite implements IId, IAttachment {
     @ManyToOne
     @JoinColumn(name = "id_type_formalite", nullable = false)
     TypeFormalite typeFormalite;
+
+    @ManyToOne
+    @JoinColumn(name = "id_formalite_status")
+    private FormaliteStatus formaliteStatus;
 
     @Column(columnDefinition = "TEXT")
     private String observationSignature;
@@ -267,6 +272,14 @@ public class Formalite implements IId, IAttachment {
 
     public void setReferenceMandataire(Integer referenceMandataire) {
         this.referenceMandataire = referenceMandataire;
+    }
+
+    public FormaliteStatus getFormaliteStatus() {
+        return formaliteStatus;
+    }
+
+    public void setFormaliteStatus(FormaliteStatus formaliteStatus) {
+        this.formaliteStatus = formaliteStatus;
     }
 
 }

@@ -37,6 +37,10 @@ public class Bodacc implements IId, IAttachment {
 	private BodaccPublicationType bodaccPublicationType;
 
 	@ManyToOne
+	@JoinColumn(name = "id_bodacc_status")
+	private BodaccStatus bodaccStatus;
+
+	@ManyToOne
 	@JoinColumn(name = "id_transfert_funds_type")
 	private TransfertFundsType transfertFundsType;
 
@@ -126,6 +130,14 @@ public class Bodacc implements IId, IAttachment {
 
 	public void setBodaccSale(BodaccSale bodaccSale) {
 		this.bodaccSale = bodaccSale;
+	}
+
+	public BodaccStatus getBodaccStatus() {
+		return bodaccStatus;
+	}
+
+	public void setBodaccStatus(BodaccStatus bodaccStatus) {
+		this.bodaccStatus = bodaccStatus;
 	}
 
 }

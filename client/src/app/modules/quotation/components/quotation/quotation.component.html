@@ -144,7 +144,15 @@
                             +asso.affaire.lastname)}} - {{asso.affaire.address}} - {{asso.affaire.postalCode}} -
                             {{asso.affaire.country.label}}
                           </mat-panel-title>
-                          <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
+                          <mat-panel-description>
+                            <avatar-chip *ngIf="asso.assignedTo" [employee]="asso.assignedTo"
+                              (onChangeAssigne)="updateAssignedToForAffaire($event,asso)">
+                            </avatar-chip>
+                            <mat-icon matTooltip="Voir/éditer l'affaire"
+                              (click)="displayAffaire(asso.affaire);$event.stopPropagation();" class="pointer">
+                              edit</mat-icon>
+                            <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
+                          </mat-panel-description>
                         </mat-expansion-panel-header>
                         <add-affaire [affaire]="asso.affaire" [editMode]="false"></add-affaire>
                         <div *ngIf="asso && asso.id && instanceOfCustomerOrder">
@@ -164,15 +172,23 @@
                             {{provision.provisionType ? (provision.provisionFamilyType.label +' -
                             '+provision.provisionType.label):''}}
                           </mat-panel-title>
+                          <span class="status-text"
+                            *ngIf="getActiveWorkflowElementsForProvision(provision)">{{getActiveWorkflowElementsForProvision(provision).label}}</span>
+                          <avatar-chip *ngIf="asso.assignedTo" [employee]="provision.assignedTo"
+                            (onChangeAssigne)="updateAssignedToForProvision($event, provision)">
+                          </avatar-chip>
                           <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
-                          <mat-panel-description *ngIf="editMode">
-                            <mat-icon matTooltip="Supprimer la prestation" (click)="deleteProvision(asso,provision)"
+                          <mat-panel-description>
+                            <mat-icon matTooltip="Voir/éditer la prestation" (click)="displayProvision(asso,provision)"
                               class="pointer">
+                              work</mat-icon>
+                            <mat-icon *ngIf="editMode" matTooltip="Supprimer la prestation"
+                              (click)="deleteProvision(asso,provision)" class="pointer">
                               delete</mat-icon>
                           </mat-panel-description>
                         </mat-expansion-panel-header>
-                        <provision-item *ngIf="asso.affaire && asso.affaire.id" [editMode]="editMode"
-                          [provision]="provision" [affaire]="asso.affaire"
+                        <provision-item [quotation]="quotation" *ngIf="asso.affaire && asso.affaire.id"
+                          [editMode]="editMode" [provision]="provision" [affaire]="asso.affaire"
                           (selectedProvisionTypeChange)="changeSelectedProvisionType($event)"
                           [instanceOfCustomerOrder]="instanceOfCustomerOrder" [isStatusOpen]="isStatusOpen">
                         </provision-item>
@@ -263,7 +279,7 @@
 
 
 <button matTooltip="Changer de statut" mat-fab color="accent" class="third-fab-button"
-  *ngIf="editMode==false && instanceOfQuotationFn(this.quotation) &&quotation && quotation.quotationStatus && (quotation.quotationStatus.successors || quotation.quotationStatus.predecessors)"
+  *ngIf="editMode==false && instanceOfQuotationFn(this.quotation) &&quotation && quotation.quotationStatus "
   [matMenuTriggerFor]="menu">
   <mat-icon>done</mat-icon>
   <mat-menu #menu="matMenu" style="min-height: 0px;padding: 0;" xPosition="before">
@@ -288,7 +304,7 @@
 
 
 <button matTooltip="Changer de statut" mat-fab color="accent" class="third-fab-button"
-  *ngIf="editMode==false && instanceOfCustomerOrderFn(this.quotation) &&quotation && quotation.customerOrderStatus && (quotation.customerOrderStatus.successors || quotation.customerOrderStatus.predecessors)"
+  *ngIf="editMode==false && instanceOfCustomerOrderFn(this.quotation) &&quotation && quotation.customerOrderStatus"
   [matMenuTriggerFor]="menu">
   <mat-icon>done</mat-icon>
   <mat-menu #menu="matMenu" style="min-height: 0px;padding: 0;" xPosition="before">

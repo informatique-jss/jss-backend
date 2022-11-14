@@ -133,6 +133,7 @@ export class QuotationManagementComponent implements OnInit, AfterContentChecked
   }
 
   getFormStatus(): boolean {
+    console.log(this.quotationManagementForm);
     this.quotationManagementForm.markAllAsTouched();
     if (!this.isStatusOpen && (!this.quotationMailComputeResult?.recipientsMailTo || this.quotationMailComputeResult?.recipientsMailTo.length == 0))
       return false;

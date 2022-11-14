@@ -5,5 +5,7 @@ export interface IWorkflowElement {
   label: string;
   icon: string;
   code: string;
+  isOpenState: boolean;
+  isCloseState: boolean;
 }
 

@@ -29,7 +29,11 @@ export class AutocompleteEmployeeComponent extends GenericLocalAutocompleteCompo
 
   initTypes(): void {
     this.employeeService.getEmployees().subscribe(response => {
-      this.types = response
+      this.types = response;
+      if (this.types)
+        this.types = this.types.sort(function (a: Employee, b: Employee) {
+          return (a.firstname + a.lastname).localeCompare(b.firstname + b.lastname);
+        });
       this.setDefaultEmployee();
     });
   }

@@ -23,10 +23,12 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 import { MatTableExporterModule } from 'mat-table-exporter';
 import { NgxEchartsModule } from 'ngx-echarts';
 import { TrustHtmlPipe } from 'src/app/libs/TrustHtmlPipe';
+import { AdministrationComponent } from '../../../administration/components/administration/administration.component';
+import { AddNotificationDialogComponent } from '../add-notification-dialog/add-notification-dialog.component';
 import { AddressingComponent } from '../addressing/addressing.component';
 import { AttachmentsComponent } from '../attachments/attachments.component';
 import { AvatarChipComponent } from '../avatar-chip/avatar-chip.component';
@@ -34,6 +36,7 @@ import { AvatarComponent } from '../avatar/avatar.component';
 import { ChipsStatusComponent } from '../chips-status/chips-status.component';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { ConfrereDialogComponent } from '../confreres-dialog/confreres-dialog.component';
+import { EmployeeDialogComponent } from '../employee-dialog/employee-dialog.component';
 import { AutocompleteAccountingAccountComponent } from '../forms/autocomplete-accounting-account/autocomplete-accounting-account.component';
 import { AutocompleteAffaireComponent } from '../forms/autocomplete-affaire/autocomplete-affaire.component';
 import { AutocompleteBillingItemComponent } from '../forms/autocomplete-billing-item/autocomplete-billing-item.component';
@@ -67,6 +70,7 @@ import { ChipsSpecialOffersComponent } from '../forms/chips-special-offers/chips
 import { GenericCheckboxComponent } from '../forms/generic-checkbox/generic-checkbox.component';
 import { GenericDateRangePickerComponent } from '../forms/generic-date-range-picker/generic-date-range-picker.component';
 import { GenericDatepickerComponent } from '../forms/generic-datepicker/generic-datepicker.component';
+import { GenericDatetimePickerComponent } from '../forms/generic-datetime-picker/generic-datetime-picker.component';
 import { GenericInputComponent } from '../forms/generic-input/generic-input.component';
 import { GenericTextareaComponent } from '../forms/generic-textarea/generic-textarea.component';
 import { GenericToggleComponent } from '../forms/generic-toggle/generic-toggle.component';
@@ -177,7 +181,6 @@ import { RadioGroupRecordTypeComponent } from '../forms/radio-group-record-type/
 import { RadioGroupTransfertFundsComponent } from '../forms/radio-group-transfert-funds/radio-group-transfert-funds.component';
 import { SelectAccountingAccountClassComponent } from '../forms/select-accounting-account-class/select-accounting-account-class.component';
 import { SelectAccountingJournalComponent } from '../forms/select-accounting-journal/select-accounting-journal.component';
-import { SelectAffaireStatusComponent } from '../forms/select-affaire-status/select-affaire-status.component';
 import { SelectAssignationTypeComponent } from '../forms/select-assignation-type/select-assignation-type.component';
 import { SelectAttachmentTypeComponent } from '../forms/select-attachment-type/select-attachment-type.component';
 import { SelectBillingItemsComponent } from '../forms/select-billing-items/select-billing-items.component';
@@ -207,6 +210,7 @@ import { SelectPaymentWayOneComponent } from '../forms/select-payment-way-one/se
 import { SelectPaymentWayComponent } from '../forms/select-payment-way/select-payment-way.component';
 import { SelectProvisionFamilyComponent } from '../forms/select-provision-family/select-provision-familiy.component';
 import { SelectProvisionScreenTypeComponent } from '../forms/select-provision-screen-type/select-provision-screen-type.component';
+import { SelectProvisionStautsComponent } from '../forms/select-provision-stauts/select-provision-stauts.component';
 import { SelectProvisionTypeComponent } from '../forms/select-provision-type/select-provision-type.component';
 import { SelectQuotationStatusComponent } from '../forms/select-quotation-status/select-quotation-status.component';
 import { SelectRefundTypeComponent } from '../forms/select-refund-type/select-refund-type.component';
@@ -226,8 +230,13 @@ import { UploadAttachementDialogComponent } from '../upload-attachement-dialog/u
 import { WorkflowDialogComponent } from '../workflow-dialog/workflow-dialog.component';
 import { MiscellaneousComponent } from './miscellaneous.component';
 
+const routes: Routes = [
+  { path: 'referential/affaire/:id', component: AdministrationComponent },
+];
+
 @NgModule({
   imports: [
+    RouterModule.forRoot(routes, { onSameUrlNavigation: 'reload' }),
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
@@ -254,7 +263,6 @@ import { MiscellaneousComponent } from './miscellaneous.component';
     MatSlideToggleModule,
     MatCheckboxModule,
     MatAutocompleteModule,
-    RouterModule,
     NgxEchartsModule.forRoot({
       echarts: () => import('echarts'),
     }),
@@ -279,6 +287,7 @@ import { MiscellaneousComponent } from './miscellaneous.component';
     AutocompleteCountryComponent,
     ChipsPhoneComponent,
     SelectFollowupComponent,
+    EmployeeDialogComponent,
     RadioGroupLanguageComponent,
     ChipsMailComponent,
     GenericCheckboxComponent,
@@ -304,6 +313,7 @@ import { MiscellaneousComponent } from './miscellaneous.component';
     SelectProvisionFamilyComponent,
     AutocompleteRnaComponent,
     SelectProvisionTypeComponent,
+    SelectProvisionStautsComponent,
     AutocompleteResponsableComponent,
     AutocompleteTiersIndividualComponent,
     SelectNoticeFamilyComponent,
@@ -348,7 +358,6 @@ import { MiscellaneousComponent } from './miscellaneous.component';
     GenericDateRangePickerComponent,
     SelectInvoiceStatusComponent,
     AutocompleteBillingTypeComponent,
-    SelectAffaireStatusComponent,
     ChipsStatusComponent,
     SelectJournalTypeOneComponent,
     SelectQuotationStatusComponent,
@@ -364,6 +373,8 @@ import { MiscellaneousComponent } from './miscellaneous.component';
     WorkflowDialogComponent,
     ChipsEmployeeComponent,
     SingleAttachmentComponent,
+    AddNotificationDialogComponent,
+    GenericDatetimePickerComponent,
     //Guichet Unique
     AutocompleteTypeDocumentComponent,
     RadioGroupMotifRejetCmaComponent,
@@ -550,6 +561,7 @@ import { MiscellaneousComponent } from './miscellaneous.component';
     SelectCustomerOrderStatusComponent,
     RadioGroupCivilityComponent,
     AutocompleteRnaComponent,
+    SelectProvisionStautsComponent,
     GenericToggleComponent,
     SelectVatCollectionTypeComponent,
     SelectTiersTypeComponent,
@@ -562,7 +574,6 @@ import { MiscellaneousComponent } from './miscellaneous.component';
     SelectAssignationTypeComponent,
     ChipsProvisionFamilyTypeComponent,
     SelectPaymentWayComponent,
-    SelectAffaireStatusComponent,
     AutocompleteBillingItemComponent,
     WorkflowDialogComponent,
     //Guichet Unique
@@ -661,6 +672,7 @@ import { MiscellaneousComponent } from './miscellaneous.component';
     SelectTypePersonneContractanteComponent,
     RadioGroupTypeRepresentantComponent,
     AutocompleteTypeVoieComponent,
+    GenericDatetimePickerComponent,
   ]
 })
 export class MiscellaneousModule { }

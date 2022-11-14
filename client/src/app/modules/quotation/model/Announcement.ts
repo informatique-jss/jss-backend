@@ -1,6 +1,7 @@
 import { Department } from "../../miscellaneous/model/Department";
 import { IAttachment } from "../../miscellaneous/model/IAttachment";
 import { IDocument } from "../../miscellaneous/model/IDocument";
+import { AnnouncementStatus } from './AnnouncementStatus';
 import { Confrere } from "./Confrere";
 import { NoticeType } from "./NoticeType";
 import { NoticeTypeFamily } from "./NoticeTypeFamily";
@@ -26,4 +27,5 @@ export interface Announcement extends IAttachment, IDocument {
   bailiffReportJSSPrice: number;
   isProofReadingDocument: boolean;
   isPublicationCertificateDocument: boolean;
+  announcementStatus: AnnouncementStatus;
 }

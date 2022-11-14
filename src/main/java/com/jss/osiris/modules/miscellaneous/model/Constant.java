@@ -345,6 +345,22 @@ public class Constant implements Serializable, IId {
 		this.billingLabelTypeCodeAffaire = billingLabelTypeCodeAffaire;
 	}
 
+	public BillingLabelType getBillingLabelTypeOther() {
+		return billingLabelTypeOther;
+	}
+
+	public void setBillingLabelTypeOther(BillingLabelType billingLabelTypeOther) {
+		this.billingLabelTypeOther = billingLabelTypeOther;
+	}
+
+	public BillingLabelType getBillingLabelTypeCustomer() {
+		return billingLabelTypeCustomer;
+	}
+
+	public void setBillingLabelTypeCustomer(BillingLabelType billingLabelTypeCustomer) {
+		this.billingLabelTypeCustomer = billingLabelTypeCustomer;
+	}
+
 	public AccountingJournal getAccountingJournalSales() {
 		return accountingJournalSales;
 	}
@@ -437,8 +453,8 @@ public class Constant implements Serializable, IId {
 		return documentTypeProvisionnalReceipt;
 	}
 
-	public void setDocumentTypeProvisionnalReceipt(DocumentType documentTypeProvisionnlaReceipt) {
-		this.documentTypeProvisionnalReceipt = documentTypeProvisionnlaReceipt;
+	public void setDocumentTypeProvisionnalReceipt(DocumentType documentTypeProvisionnalReceipt) {
+		this.documentTypeProvisionnalReceipt = documentTypeProvisionnalReceipt;
 	}
 
 	public DocumentType getDocumentTypeProofReading() {
@@ -463,46 +479,6 @@ public class Constant implements Serializable, IId {
 
 	public void setDocumentTypeQuotation(DocumentType documentTypeQuotation) {
 		this.documentTypeQuotation = documentTypeQuotation;
-	}
-
-	public BillingLabelType getBillingLabelTypeCustomer() {
-		return billingLabelTypeCustomer;
-	}
-
-	public void setBillingLabelTypeCustomer(BillingLabelType billingLabelTypeCustomer) {
-		this.billingLabelTypeCustomer = billingLabelTypeCustomer;
-	}
-
-	public Country getCountryFrance() {
-		return countryFrance;
-	}
-
-	public void setCountryFrance(Country countryFrance) {
-		this.countryFrance = countryFrance;
-	}
-
-	public Country getCountryMonaco() {
-		return countryMonaco;
-	}
-
-	public void setCountryMonaco(Country countryMonaco) {
-		this.countryMonaco = countryMonaco;
-	}
-
-	public BillingType getBillingTypeLogo() {
-		return billingTypeLogo;
-	}
-
-	public void setBillingTypeLogo(BillingType billingTypeLogo) {
-		this.billingTypeLogo = billingTypeLogo;
-	}
-
-	public BillingLabelType getBillingLabelTypeOther() {
-		return billingLabelTypeOther;
-	}
-
-	public void setBillingLabelTypeOther(BillingLabelType billingLabelTypeOther) {
-		this.billingLabelTypeOther = billingLabelTypeOther;
 	}
 
 	public AttachmentType getAttachmentTypeKbis() {
@@ -537,6 +513,30 @@ public class Constant implements Serializable, IId {
 		this.attachmentTypeProofOfAddress = attachmentTypeProofOfAddress;
 	}
 
+	public Country getCountryFrance() {
+		return countryFrance;
+	}
+
+	public void setCountryFrance(Country countryFrance) {
+		this.countryFrance = countryFrance;
+	}
+
+	public Country getCountryMonaco() {
+		return countryMonaco;
+	}
+
+	public void setCountryMonaco(Country countryMonaco) {
+		this.countryMonaco = countryMonaco;
+	}
+
+	public BillingType getBillingTypeLogo() {
+		return billingTypeLogo;
+	}
+
+	public void setBillingTypeLogo(BillingType billingTypeLogo) {
+		this.billingTypeLogo = billingTypeLogo;
+	}
+
 	public QuotationLabelType getQuotationLabelTypeOther() {
 		return quotationLabelTypeOther;
 	}
@@ -559,6 +559,22 @@ public class Constant implements Serializable, IId {
 
 	public void setPaymentTypeVirement(PaymentType paymentTypeVirement) {
 		this.paymentTypeVirement = paymentTypeVirement;
+	}
+
+	public PaymentType getPaymentTypeCB() {
+		return paymentTypeCB;
+	}
+
+	public void setPaymentTypeCB(PaymentType paymentTypeCB) {
+		this.paymentTypeCB = paymentTypeCB;
+	}
+
+	public PaymentType getPaymentTypeEspeces() {
+		return paymentTypeEspeces;
+	}
+
+	public void setPaymentTypeEspeces(PaymentType paymentTypeEspeces) {
+		this.paymentTypeEspeces = paymentTypeEspeces;
 	}
 
 	public RefundType getRefundTypeVirement() {
@@ -615,6 +631,15 @@ public class Constant implements Serializable, IId {
 
 	public void setDomiciliationContractTypeRouteMail(DomiciliationContractType domiciliationContractTypeRouteMail) {
 		this.domiciliationContractTypeRouteMail = domiciliationContractTypeRouteMail;
+	}
+
+	public DomiciliationContractType getDomiciliationContractTypeRouteEmailAndMail() {
+		return domiciliationContractTypeRouteEmailAndMail;
+	}
+
+	public void setDomiciliationContractTypeRouteEmailAndMail(
+			DomiciliationContractType domiciliationContractTypeRouteEmailAndMail) {
+		this.domiciliationContractTypeRouteEmailAndMail = domiciliationContractTypeRouteEmailAndMail;
 	}
 
 	public DomiciliationContractType getDomiciliationContractTypeRouteEmail() {
@@ -707,6 +732,14 @@ public class Constant implements Serializable, IId {
 		this.assignationTypeEmployee = assignationTypeEmployee;
 	}
 
+	public Employee getEmployeeBillingResponsible() {
+		return employeeBillingResponsible;
+	}
+
+	public void setEmployeeBillingResponsible(Employee employeeBillingResponsible) {
+		this.employeeBillingResponsible = employeeBillingResponsible;
+	}
+
 	public TransfertFundsType getTransfertFundsTypePhysique() {
 		return transfertFundsTypePhysique;
 	}
@@ -755,20 +788,28 @@ public class Constant implements Serializable, IId {
 		this.invoiceStatusSend = invoiceStatusSend;
 	}
 
-	public PaymentWay getPaymentWayInbound() {
-		return paymentWayInbound;
-	}
-
-	public void setPaymentWayInbound(PaymentWay paymentWayInbound) {
-		this.paymentWayInbound = paymentWayInbound;
-	}
-
 	public InvoiceStatus getInvoiceStatusPayed() {
 		return invoiceStatusPayed;
 	}
 
 	public void setInvoiceStatusPayed(InvoiceStatus invoiceStatusPayed) {
 		this.invoiceStatusPayed = invoiceStatusPayed;
+	}
+
+	public InvoiceStatus getInvoiceStatusCancelled() {
+		return invoiceStatusCancelled;
+	}
+
+	public void setInvoiceStatusCancelled(InvoiceStatus invoiceStatusCancelled) {
+		this.invoiceStatusCancelled = invoiceStatusCancelled;
+	}
+
+	public PaymentWay getPaymentWayInbound() {
+		return paymentWayInbound;
+	}
+
+	public void setPaymentWayInbound(PaymentWay paymentWayInbound) {
+		this.paymentWayInbound = paymentWayInbound;
 	}
 
 	public PaymentWay getPaymentWayOutboud() {
@@ -819,39 +860,6 @@ public class Constant implements Serializable, IId {
 		this.departmentReunion = departmentReunion;
 	}
 
-	public InvoiceStatus getInvoiceStatusCancelled() {
-		return invoiceStatusCancelled;
-	}
-
-	public void setInvoiceStatusCancelled(InvoiceStatus invoiceStatusCancelled) {
-		this.invoiceStatusCancelled = invoiceStatusCancelled;
-	}
-
-	public DomiciliationContractType getDomiciliationContractTypeRouteEmailAndMail() {
-		return domiciliationContractTypeRouteEmailAndMail;
-	}
-
-	public void setDomiciliationContractTypeRouteEmailAndMail(
-			DomiciliationContractType domiciliationContractTypeRouteEmailAndMail) {
-		this.domiciliationContractTypeRouteEmailAndMail = domiciliationContractTypeRouteEmailAndMail;
-	}
-
-	public PaymentType getPaymentTypeCB() {
-		return paymentTypeCB;
-	}
-
-	public void setPaymentTypeCB(PaymentType paymentTypeCB) {
-		this.paymentTypeCB = paymentTypeCB;
-	}
-
-	public PaymentType getPaymentTypeEspeces() {
-		return paymentTypeEspeces;
-	}
-
-	public void setPaymentTypeEspeces(PaymentType paymentTypeEspeces) {
-		this.paymentTypeEspeces = paymentTypeEspeces;
-	}
-
 	public TypePersonne getTypePersonnePersonnePhysique() {
 		return typePersonnePersonnePhysique;
 	}
@@ -860,12 +868,12 @@ public class Constant implements Serializable, IId {
 		this.typePersonnePersonnePhysique = typePersonnePersonnePhysique;
 	}
 
-	public FormeJuridique getFormeJuridiqueEntrepreneurIndividuel() {
-		return formeJuridiqueEntrepreneurIndividuel;
+	public TypePersonne getTypePersonneExploitation() {
+		return typePersonneExploitation;
 	}
 
-	public void setFormeJuridiqueEntrepreneurIndividuel(FormeJuridique formeJuridiqueEntrepreneurIndividuel) {
-		this.formeJuridiqueEntrepreneurIndividuel = formeJuridiqueEntrepreneurIndividuel;
+	public void setTypePersonneExploitation(TypePersonne typePersonneExploitation) {
+		this.typePersonneExploitation = typePersonneExploitation;
 	}
 
 	public TypePersonne getTypePersonnePersonneMorale() {
@@ -874,6 +882,14 @@ public class Constant implements Serializable, IId {
 
 	public void setTypePersonnePersonneMorale(TypePersonne typePersonnePersonneMorale) {
 		this.typePersonnePersonneMorale = typePersonnePersonneMorale;
+	}
+
+	public FormeJuridique getFormeJuridiqueEntrepreneurIndividuel() {
+		return formeJuridiqueEntrepreneurIndividuel;
+	}
+
+	public void setFormeJuridiqueEntrepreneurIndividuel(FormeJuridique formeJuridiqueEntrepreneurIndividuel) {
+		this.formeJuridiqueEntrepreneurIndividuel = formeJuridiqueEntrepreneurIndividuel;
 	}
 
 	public TypeFormalite getTypeFormaliteCessation() {
@@ -906,22 +922,6 @@ public class Constant implements Serializable, IId {
 
 	public void setTypeFormaliteCreation(TypeFormalite typeFormaliteCreation) {
 		this.typeFormaliteCreation = typeFormaliteCreation;
-	}
-
-	public TypePersonne getTypePersonneExploitation() {
-		return typePersonneExploitation;
-	}
-
-	public void setTypePersonneExploitation(TypePersonne typePersonneExploitation) {
-		this.typePersonneExploitation = typePersonneExploitation;
-	}
-
-	public Employee getEmployeeBillingResponsible() {
-		return employeeBillingResponsible;
-	}
-
-	public void setEmployeeBillingResponsible(Employee employeeBillingResponsible) {
-		this.employeeBillingResponsible = employeeBillingResponsible;
 	}
 
 }

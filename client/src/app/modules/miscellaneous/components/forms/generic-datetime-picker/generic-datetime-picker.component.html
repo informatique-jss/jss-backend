@@ -1,0 +1,11 @@
+<mat-form-field class="full-width" [formGroup]="form!">
+  <mat-label *ngIf="label && label.length>0">{{label}}</mat-label>
+  <input matInput [formControlName]="propertyName" [placeholder]="label" type="datetime-local" (change)="dateChange()"
+    [min]="minDate" [max]="maxDate">
+  <mat-icon matTooltip="Ajouter aux notes (maintenez CTRL appuyé pour ajouter un titre)" matTooltipShowDelay="1000"
+    matSuffix (click)="addToNotes($event)" *ngIf="isDisabled && model!=undefined" class="pointer note-icon">
+    adjust
+  </mat-icon>
+  <mat-hint *ngIf="hint && hint.length>0">
+    {{hint}}</mat-hint>
+</mat-form-field>

@@ -6,9 +6,11 @@ import { CUSTOMER_ORDER_ASSO_AFFAIRE_ORDER_TO_ASSIGN, CUSTOMER_ORDER_ASSO_AFFAIR
 import { displayInTeams } from 'src/app/libs/MailHelper';
 import { EntityType } from 'src/app/routing/search/EntityType';
 import { QUOTATION_ENTITY_TYPE } from 'src/app/routing/search/search.component';
+import { PERSONNAL } from '../../../../libs/Constants';
 import { CUSTOMER_ORDER_ENTITY_TYPE } from '../../../../routing/search/search.component';
 import { Notification } from '../../model/Notification';
 import { NotificationService } from '../../services/notification.service';
+import { AddNotificationDialogComponent } from '../add-notification-dialog/add-notification-dialog.component';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 
 @Component({
@@ -24,6 +26,7 @@ export class NotificationDialogComponent implements OnInit {
   CUSTOMER_ORDER_ENTITY_TYPE = CUSTOMER_ORDER_ENTITY_TYPE;
 
 
+  PERSONNAL = PERSONNAL;
   QUOTATION_CREATE = QUOTATION_CREATE;
   QUOTATION_SENT = QUOTATION_SENT;
   QUOTATION_ASSO_AFFAIRE_ORDER_VERIFY = QUOTATION_ASSO_AFFAIRE_ORDER_VERIFY;
@@ -40,14 +43,19 @@ export class NotificationDialogComponent implements OnInit {
     private formBuilder: FormBuilder,
     private notificationService: NotificationService,
     public confirmationDialog: MatDialog,
+    public newNotificationDialog: MatDialog,
     private router: Router,
   ) { }
 
   notificationForm = this.formBuilder.group({});
 
+  displayFuture: boolean = false;
+
   displayInTeams = displayInTeams;
 
   ngOnInit() {
+    this.displayFuture = this.notificationService.getIsDisplayFuture();
+    this.notificationService.generateWindowsNotification();
   }
 
   getTabLabel(entityType: EntityType): string {
@@ -81,6 +89,27 @@ export class NotificationDialogComponent implements OnInit {
     });
   }
 
+  getEntitiesPersonnal(): Notification[] {
+    let tabEntities = [] as Array<Notification>;
+    if (this.notificationService.getNotificationsResult() != null) {
+      this.notificationService.getNotificationsResult().forEach(notification => {
+        if (notification.notificationType == PERSONNAL)
+          tabEntities.push(notification);
+      })
+    }
+    return tabEntities.sort(function (a: Notification, b: Notification) {
+      return new Date(b.createdDateTime).getTime() - new Date(a.createdDateTime).getTime();
+    });
+  }
+
+  getPersonnalNotificationNumber(isRead: boolean) {
+    let notificationNumber = 0;
+    for (let notification of this.getEntitiesPersonnal())
+      if (notification.isRead == isRead)
+        notificationNumber++;
+    return notificationNumber;
+  }
+
   openEntity(event: any, notification: Notification, entityType: EntityType) {
     if (event && event.ctrlKey) {
       let a = window.open(location.origin + "/" + entityType.entryPoint + '/' + notification.entityId, "_blank");
@@ -99,7 +128,7 @@ export class NotificationDialogComponent implements OnInit {
       return this.setAllAsRead(notification.entityType);
     notification.isRead = true;
     this.notificationService.addOrUpdateNotification(notification).subscribe(reponse => {
-      this.notificationService.refreshNotifications();
+      this.notificationService.refreshNotifications(this.displayFuture);
     })
   }
 
@@ -108,7 +137,7 @@ export class NotificationDialogComponent implements OnInit {
       return this.setAllAsUnread(notification.entityType);
     notification.isRead = false;
     this.notificationService.addOrUpdateNotification(notification).subscribe(reponse => {
-      this.notificationService.refreshNotifications();
+      this.notificationService.refreshNotifications(this.displayFuture);
     })
   }
 
@@ -129,7 +158,7 @@ export class NotificationDialogComponent implements OnInit {
         if (isAll)
           return this.deleteAll(notification.entityType);
         this.notificationService.deleteNotification(notification).subscribe(reponse => {
-          this.notificationService.refreshNotifications();
+          this.notificationService.refreshNotifications(this.displayFuture);
         })
       }
     });
@@ -140,7 +169,7 @@ export class NotificationDialogComponent implements OnInit {
       if (notification.entityType == entityType && !notification.isRead) {
         notification.isRead = true;
         this.notificationService.addOrUpdateNotification(notification).subscribe(reponse => {
-          this.notificationService.refreshNotifications();
+          this.notificationService.refreshNotifications(this.displayFuture);
         })
       }
     })
@@ -151,7 +180,7 @@ export class NotificationDialogComponent implements OnInit {
       if (notification.entityType == entityType && notification.isRead) {
         notification.isRead = false;
         this.notificationService.addOrUpdateNotification(notification).subscribe(reponse => {
-          this.notificationService.refreshNotifications();
+          this.notificationService.refreshNotifications(this.displayFuture);
         })
       }
     })
@@ -161,10 +190,44 @@ export class NotificationDialogComponent implements OnInit {
     this.notificationService.getNotificationsResult().forEach(notification => {
       if (notification.entityType == entityType) {
         this.notificationService.deleteNotification(notification).subscribe(reponse => {
-          this.notificationService.refreshNotifications();
+          this.notificationService.refreshNotifications(this.displayFuture);
         })
       }
     })
   }
 
+  addPersonnalNotification() {
+    const dialogRef = this.confirmationDialog.open(AddNotificationDialogComponent, {
+      maxWidth: "600px",
+    });
+
+    dialogRef.afterClosed().subscribe(dialogResult => {
+      if (dialogResult) {
+        this.notificationService.addPersonnalNotification(dialogResult).subscribe(response => {
+          this.notificationService.refreshNotifications(this.displayFuture);
+        })
+      }
+    });
+  }
+
+  editNotification(event: any, notification: Notification) {
+    const dialogRef = this.confirmationDialog.open(AddNotificationDialogComponent, {
+      maxWidth: "600px",
+    });
+
+    dialogRef.componentInstance.notification = notification;
+
+    dialogRef.afterClosed().subscribe(dialogResult => {
+      if (dialogResult) {
+        this.notificationService.addPersonnalNotification(dialogResult).subscribe(response => {
+          this.notificationService.refreshNotifications(this.displayFuture);
+        })
+      }
+    });
+  }
+
+  toggleDisplayFuture() {
+    this.displayFuture = !this.displayFuture;
+    this.notificationService.refreshNotifications(this.displayFuture);
+  }
 }

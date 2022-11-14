@@ -1,9 +1,9 @@
+import { IWorkflowElement } from '../../miscellaneous/model/IWorkflowElement';
 import { Employee } from "../../profile/model/Employee";
-import { AffaireStatus } from "./AffaireStatus";
 
 export interface AffaireSearch {
-  responsible: Employee;
-  assignedTo: Employee;
-  affaireStatus: AffaireStatus[];
-  label: string;
+  responsible: Employee | undefined;
+  assignedTo: Employee | undefined;
+  label: string | undefined;
+  status: IWorkflowElement[];
 }

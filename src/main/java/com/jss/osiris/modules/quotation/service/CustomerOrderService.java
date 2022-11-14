@@ -9,6 +9,8 @@ import com.jss.osiris.modules.quotation.model.Quotation;
 public interface CustomerOrderService {
         public CustomerOrder getCustomerOrder(Integer id);
 
+        public CustomerOrder checkAllProvisionEnded(CustomerOrder customerOrderIn) throws Exception;
+
         public CustomerOrder addOrUpdateCustomerOrder(CustomerOrder quotation) throws Exception;
 
         public CustomerOrder addOrUpdateCustomerOrderFromUser(CustomerOrder customerOrder) throws Exception;

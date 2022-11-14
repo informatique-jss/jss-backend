@@ -1,6 +1,6 @@
 <mat-chip matChipRemove *ngIf="employee">
-  <avatar class="chips-avatar" [employee]="employee" [size]="17"></avatar>
-  {{employee.firstname}} {{employee.lastname}}
+  <avatar class="chips-avatar pointer" [employee]="employee" [size]="17" (click)="changeEmployee()"></avatar>
+  <span (click)="changeEmployee()" class="chips-text pointer">{{employee.firstname}} {{employee.lastname}}</span>
   <mat-icon matChipRemove (click)="displayInTeams(employee);$event.stopPropagation();">
     chat_bubble</mat-icon>
 </mat-chip>

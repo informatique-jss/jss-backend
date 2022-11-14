@@ -44,7 +44,7 @@ public class Payment implements Serializable, IId {
 
 	@ManyToOne
 	@JoinColumn(name = "id_invoice")
-	@JsonIgnoreProperties(value = { "payments" }, allowSetters = true)
+	@JsonIgnoreProperties(value = { "payments", "accountingRecords" }, allowSetters = true)
 	private Invoice invoice;
 
 	@ManyToOne

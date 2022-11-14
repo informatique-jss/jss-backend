@@ -4,6 +4,7 @@ import { BodaccFusion } from "./BodaccFusion";
 import { BodaccPublicationType } from "./BodaccPublicationType";
 import { BodaccSale } from "./BodaccSale";
 import { BodaccSplit } from "./BodaccSplit";
+import { BodaccStatus } from './BodaccStatus';
 import { TransfertFundsType } from "./TransfertFundsType";
 
 export interface Bodacc extends IAttachment {
@@ -15,4 +16,5 @@ export interface Bodacc extends IAttachment {
   bodaccFusion: BodaccFusion;
   bodaccSplit: BodaccSplit;
   dateOfPublication: Date;
+  bodaccStatus: BodaccStatus;
 }

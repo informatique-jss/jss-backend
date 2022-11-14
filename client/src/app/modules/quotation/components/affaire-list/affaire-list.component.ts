@@ -9,6 +9,7 @@ import { UserPreferenceService } from 'src/app/services/user.preference.service'
 import { AffaireSearch } from '../../model/AffaireSearch';
 import { AssoAffaireOrderFlatten } from '../../model/AssoAffaireOrderFlatten';
 import { AssoAffaireOrderService } from '../../services/asso.affaire.order.service';
+import { AffaireComponent } from '../affaire/affaire.component';
 
 @Component({
   selector: 'affaire-list',
@@ -22,6 +23,7 @@ export class AffaireListComponent implements OnInit {
   tableAction: SortTableAction[] = [];
 
   currentEmployee: Employee | undefined;
+  bookmark: any;
 
   constructor(
     private appService: AppService,
@@ -35,12 +37,13 @@ export class AffaireListComponent implements OnInit {
     this.appService.changeHeaderTitle("Affaires / Prestations");
     this.displayedColumns = [];
 
-    let bookmark = this.userPreferenceService.getUserSearchBookmark("affaires") as AffaireSearch;
-    if (bookmark) {
-      this.affaireSearch.affaireStatus = bookmark.affaireStatus;
-      this.affaireSearch.assignedTo = bookmark.assignedTo;
-      this.affaireSearch.label = bookmark.label;
-      this.affaireSearch.affaireStatus = bookmark.affaireStatus;
+    this.bookmark = this.userPreferenceService.getUserSearchBookmark("affaires") as AffaireSearch;
+    if (this.bookmark) {
+      console.log(this.bookmark);
+      this.affaireSearch.assignedTo = this.bookmark.assignedTo;
+      this.affaireSearch.label = this.bookmark.label;
+      this.affaireSearch.responsible = this.bookmark.responsible;
+      this.affaireSearch.status = this.bookmark.status;
     }
     this.displayedColumns.push({ id: "affaireLabel", fieldName: "affaireLabel", label: "Affaire", valueFonction: ((element: any) => element.affaire.denomination ? element.affaire.denomination : element.affaire.firstname + " " + element.affaire.lastname) } as SortTableColumn);
     this.displayedColumns.push({ id: "affaireAddress", fieldName: "affaireAddress", label: "Adresse de l'affaire", valueFonction: ((element: any) => element.affaire.address + " - " + element.affaire.postalCode + " - " + element.affaire.city.label) } as SortTableColumn);
@@ -50,7 +53,7 @@ export class AffaireListComponent implements OnInit {
     this.displayedColumns.push({ id: "responsible", fieldName: "assignedTo", label: "Responsable de l'affaire", displayAsEmployee: true } as SortTableColumn);
     this.displayedColumns.push({ id: "assignedTo", fieldName: "provision.assignedTo", label: "Assignée à", displayAsEmployee: true } as SortTableColumn);
     this.displayedColumns.push({ id: "provisionType", fieldName: "provisionType", label: "Prestation", valueFonction: ((element: any) => element.provision.provisionFamilyType.label + " - " + element.provision.provisionType.label) } as SortTableColumn);
-    this.displayedColumns.push({ id: "status", fieldName: "affaireStatus.label", label: "Statut" } as SortTableColumn);
+    this.displayedColumns.push({ id: "status", fieldName: "affaireStatus.label", label: "Statut", valueFonction: this.getStatusLabel } as SortTableColumn);
     this.getCurrentEmployee();
 
     this.tableAction.push({
@@ -60,12 +63,16 @@ export class AffaireListComponent implements OnInit {
         return undefined;
       }, display: true,
     } as SortTableAction);
-
-    this.searchAffaires();
   }
 
   getCurrentEmployee() {
     this.employeeService.getCurrentEmployee().subscribe(response => this.currentEmployee = response);
+  }
+
+  getStatusLabel(element: any) {
+    if (element)
+      return AffaireComponent.getActiveWorkflowElementsForProvision(element.provision).label;
+    return "";
   }
 
   affaireSearchForm = this.formBuilder.group({
@@ -73,10 +80,10 @@ export class AffaireListComponent implements OnInit {
 
   searchAffaires() {
     if (this.affaireSearchForm.valid && (
-      this.affaireSearch.affaireStatus
-      || this.affaireSearch.assignedTo
+      this.affaireSearch.assignedTo
       || this.affaireSearch.label
       || this.affaireSearch.responsible
+      || this.affaireSearch.status
     )) {
       this.userPreferenceService.setUserSearchBookmark(this.affaireSearch, "affaires");
       this.assoAffaireOrderService.getAssoAffaireOrders(this.affaireSearch).subscribe(response => {
@@ -87,7 +94,6 @@ export class AffaireListComponent implements OnInit {
               for (let provision of asso.provisions) {
                 let flatAsso = {} as AssoAffaireOrderFlatten;
                 flatAsso.affaire = asso.affaire;
-                flatAsso.affaireStatus = asso.affaireStatus;
                 flatAsso.assignedTo = asso.assignedTo;
                 flatAsso.customerOrder = asso.customerOrder;
                 flatAsso.id = asso.id;

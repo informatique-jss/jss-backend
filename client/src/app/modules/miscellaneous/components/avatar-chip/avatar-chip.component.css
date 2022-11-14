@@ -1,3 +1,7 @@
 .chips-avatar {
   padding-right: 5px;
 }
+
+.chips-text {
+  white-space: nowrap;
+}

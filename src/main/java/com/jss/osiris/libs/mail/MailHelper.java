@@ -43,6 +43,7 @@ import com.itextpdf.text.DocumentException;
 import com.jss.osiris.libs.mail.model.MailComputeResult;
 import com.jss.osiris.libs.mail.model.VatMail;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
+import com.jss.osiris.modules.invoicing.model.Deposit;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.invoicing.service.InvoiceHelper;
@@ -721,7 +722,19 @@ public class MailHelper {
         ctx.setVariable("priceTotal", invoiceHelper.getPriceTotal(invoice));
         ctx.setVariable("invoice", invoice);
 
-        // TODO : add deposit display
+        // Exclude deposits generated after invoice
+        ArrayList<Deposit> deposits = new ArrayList<Deposit>();
+        Float depositTotal = 0f;
+        if (customerOrder.getDeposits() != null)
+            for (Deposit deposit : customerOrder.getDeposits())
+                if (deposit.getDepositDate().isBefore(invoice.getCreatedDate())) {
+                    deposits.add(deposit);
+                    depositTotal += deposit.getDepositAmount();
+                }
+
+        ctx.setVariable("deposits", deposits);
+        ctx.setVariable("remainingToPay",
+                Math.round((invoiceHelper.getPriceTotal(invoice) - depositTotal) * 100f) / 100f);
 
         LocalDateTime localDate = invoice.getCreatedDate();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");

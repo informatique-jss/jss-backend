@@ -56,3 +56,10 @@ table {
 ::ng-deep.mat-menu-panel {
   max-width: none !important;
 }
+
+.status-text {
+  white-space: nowrap;
+  padding-right: 10px;
+  color: rgba(0, 0, 0, 0.54);
+  padding-top: 5px;
+}

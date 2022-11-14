@@ -14,6 +14,8 @@ export class LoginService extends AppRestService<User>{
     super(http, "profile");
   }
 
+  currentUsername: string | undefined;
+
   private loggedState: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
   loggedStateObservable = this.loggedState.asObservable();
 
@@ -24,7 +26,12 @@ export class LoginService extends AppRestService<User>{
   }
 
   logUser(user: User) {
+    this.currentUsername = user.username.toUpperCase();
     return this.loginUser(new HttpParams(), "login", user);
+  }
+
+  getCurrentUserName() {
+    return this.currentUsername;
   }
 
   setUserRoleAndRefresh() {

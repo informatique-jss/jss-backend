@@ -8,6 +8,7 @@ import { Mail } from "../../miscellaneous/model/Mail";
 import { Phone } from "../../miscellaneous/model/Phone";
 import { BuildingDomiciliation } from "./BuildingDomiciliation";
 import { DomiciliationContractType } from "./DomiciliationContractType";
+import { DomiciliationStatus } from './DomiciliationStatus';
 import { MailRedirectionType } from "./MailRedirectionType";
 
 export interface Domiciliation extends IAttachment {
@@ -49,4 +50,5 @@ export interface Domiciliation extends IAttachment {
   legalGardianCountry: Country;
   legalGardianMails: Mail[];
   legalGardianPhones: Phone[];
+  domiciliationStatus: DomiciliationStatus;
 }

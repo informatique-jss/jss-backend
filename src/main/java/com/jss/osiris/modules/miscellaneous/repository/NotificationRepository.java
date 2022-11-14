@@ -11,6 +11,7 @@ import com.jss.osiris.modules.profile.model.Employee;
 
 public interface NotificationRepository extends CrudRepository<Notification, Integer> {
 
-    @Query("select n from Notification n   where    COALESCE(:employees) is null or n.employee in (:employees)")
-    List<Notification> findByEmployees(@Param("employees") List<Employee> employees);
+    @Query("select n from Notification n where n.employee in (:employees) and n.notificationType!='PERSONNAL' or n.employee=:currentEmployee and n.notificationType='PERSONNAL' and (n.createdDateTime<now() or :displayFuture=true) ")
+    List<Notification> findByEmployees(@Param("employees") List<Employee> employees,
+            @Param("currentEmployee") Employee currentEmployee, @Param("displayFuture") Boolean displayFuture);
 }

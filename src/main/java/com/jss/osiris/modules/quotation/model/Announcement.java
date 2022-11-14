@@ -37,6 +37,10 @@ public class Announcement implements IId, IAttachment {
 	@JoinColumn(name = "id_confrere")
 	private Confrere confrere;
 
+	@ManyToOne
+	@JoinColumn(name = "id_announcement_status")
+	private AnnouncementStatus announcementStatus;
+
 	@Column(nullable = false)
 	@JsonSerialize(using = JacksonLocalDateSerializer.class)
 	private LocalDate publicationDate;
@@ -250,6 +254,14 @@ public class Announcement implements IId, IAttachment {
 
 	public void setConfrere(Confrere confrere) {
 		this.confrere = confrere;
+	}
+
+	public AnnouncementStatus getAnnouncementStatus() {
+		return announcementStatus;
+	}
+
+	public void setAnnouncementStatus(AnnouncementStatus announcementStatus) {
+		this.announcementStatus = announcementStatus;
 	}
 
 }

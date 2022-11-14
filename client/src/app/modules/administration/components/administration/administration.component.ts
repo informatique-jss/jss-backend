@@ -1,5 +1,6 @@
 import { AfterContentChecked, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { ActivatedRoute, UrlSegment } from '@angular/router';
 import { Observable, Subject } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { AppService } from 'src/app/services/app.service';
@@ -81,6 +82,7 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
 
   constructor(private appService: AppService,
     private formBuilder: FormBuilder,
+    private activatedRoute: ActivatedRoute,
     private changeDetectorRef: ChangeDetectorRef
   ) { }
 
@@ -148,6 +150,11 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
       startWith(''),
       map(value => value ? this.referentials.filter(referential => referential.toUpperCase().indexOf(value?.toUpperCase().trim()) >= 0) : [] as Array<string>,
       ));
+
+    let url: UrlSegment[] = this.activatedRoute.snapshot.url;
+    if (url != undefined && url != null && url[0] != undefined &&  url[1]!=undefined && url[1].path == "affaire") {
+      this.selectedReferential = this.AFFAIRE_REFERENTIAL;
+    }
   }
 
   referentialForm = this.formBuilder.group({

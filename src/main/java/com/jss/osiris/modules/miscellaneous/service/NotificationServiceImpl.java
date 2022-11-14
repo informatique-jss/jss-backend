@@ -43,9 +43,13 @@ public class NotificationServiceImpl implements NotificationService {
     ConstantService constantService;
 
     @Override
-    public List<Notification> getNotificationsForCurrentEmployee() {
+    public List<Notification> getNotificationsForCurrentEmployee(Boolean displayFuture) {
+        Employee currentEmployee = employeeService.getCurrentEmployee();
+        if (currentEmployee == null)
+            return null;
         return notificationRepository
-                .findByEmployees(activeDirectoryHelper.getMyHolidaymaker(employeeService.getCurrentEmployee()));
+                .findByEmployees(activeDirectoryHelper.getMyHolidaymaker(currentEmployee), currentEmployee,
+                        displayFuture);
     }
 
     @Override
@@ -70,7 +74,7 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     private Notification generateNewNotification(Employee fromEmployee, Employee toEmployee, String notificationType,
-            IId entity, String detail1) {
+            IId entity, String detail1, String title, boolean showPopup) {
         Notification notification = new Notification();
         notification.setCreatedBy(fromEmployee);
         notification.setCreatedDateTime(LocalDateTime.now());
@@ -80,6 +84,8 @@ public class NotificationServiceImpl implements NotificationService {
         notification.setIsRead(false);
         notification.setNotificationType(notificationType);
         notification.setDetail1(detail1);
+        notification.setShowPopup(showPopup);
+        notification.setSummary(title);
         return addOrUpdateNotification(notification);
     }
 
@@ -121,7 +127,7 @@ public class NotificationServiceImpl implements NotificationService {
         if (!createdByMe)
             return generateNewNotification(employeeService.getCurrentEmployee(), salesEmployee,
                     notificationType,
-                    quotation, customerOrderName);
+                    quotation, customerOrderName, null, false);
 
         return null;
     }
@@ -191,7 +197,7 @@ public class NotificationServiceImpl implements NotificationService {
                 notifications.add(
                         generateNewNotification(isFromHuman ? employeeService.getCurrentEmployee() : null,
                                 salesEmployee,
-                                notificationType, customerOrder, customerOrderName));
+                                notificationType, customerOrder, customerOrderName, null, false));
         }
 
         if (notifiyBillingResponsible) {
@@ -203,7 +209,7 @@ public class NotificationServiceImpl implements NotificationService {
                 notifications.add(
                         generateNewNotification(isFromHuman ? employeeService.getCurrentEmployee() : null,
                                 salesEmployee,
-                                notificationType, customerOrder, customerOrderName));
+                                notificationType, customerOrder, customerOrderName, null, false));
         }
 
         if (notifyAffaireResponsibles)
@@ -217,7 +223,7 @@ public class NotificationServiceImpl implements NotificationService {
                         notifications.add(
                                 generateNewNotification(isFromHuman ? employeeService.getCurrentEmployee() : null,
                                         asso.getAssignedTo(),
-                                        notificationType, customerOrder, customerOrderName));
+                                        notificationType, customerOrder, customerOrderName, null, false));
                         // Do not notify twice
                         compareEmployee.add(asso.getAssignedTo());
                     }
@@ -255,5 +261,21 @@ public class NotificationServiceImpl implements NotificationService {
     public List<Notification> notifyCustomerOrderToBeingToBilled(CustomerOrder customerOrder) throws Exception {
         return genericNotificationForCustomerOrder(customerOrder, Notification.CUSTOMER_ORDER_TO_BE_BILLED,
                 false, false, true, true);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Notification addOrUpdatePersonnalNotification(Notification notification) throws Exception {
+        if (notification != null) {
+            notification.setEmployee(employeeService.getCurrentEmployee());
+            notification.setEntityId(null);
+            notification.setEntityType(null);
+            if (notification.getIsRead() == null)
+                notification.setIsRead(false);
+            notification.setCreatedBy(employeeService.getCurrentEmployee());
+            notification.setNotificationType(Notification.PERSONNAL);
+            return addOrUpdateNotification(notification);
+        }
+        return null;
     }
 }

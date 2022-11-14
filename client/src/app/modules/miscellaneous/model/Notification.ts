@@ -10,4 +10,6 @@ export interface Notification {
   createdDateTime: Date;
   notificationType: string;
   detail1: string;
+  summary: string;
+  showPopup: boolean;
 }

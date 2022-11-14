@@ -102,11 +102,11 @@ public class Invoice implements Serializable, IId {
 	private Float totalPrice;
 
 	@OneToMany(mappedBy = "invoice")
-	@JsonIgnoreProperties(value = { "invoice" }, allowSetters = true)
+	@JsonIgnoreProperties(value = { "invoice", "accountingRecords", "customerOrder" }, allowSetters = true)
 	private List<Payment> payments;
 
 	@OneToMany(mappedBy = "invoice")
-	@JsonIgnoreProperties(value = { "invoice" }, allowSetters = true)
+	@JsonIgnoreProperties(value = { "invoice", "accountingRecords", "customerOrder" }, allowSetters = true)
 	private List<Deposit> deposits;
 
 	@ManyToOne
@@ -114,7 +114,7 @@ public class Invoice implements Serializable, IId {
 	private InvoiceStatus invoiceStatus;
 
 	@OneToMany(mappedBy = "invoice")
-	@JsonIgnoreProperties(value = { "invoice" }, allowSetters = true)
+	@JsonIgnoreProperties(value = { "invoice", "customerOrder" }, allowSetters = true)
 	private List<AccountingRecord> accountingRecords;
 
 	public Integer getId() {

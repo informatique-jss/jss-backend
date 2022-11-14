@@ -1,4 +1,4 @@
-<ng-template #cardActions let-notification='notification'>
+<ng-template #cardActions let-notification='notification' let-displayEdit="displayEdit">
   <mat-card-actions style="display: flex;right: 22px;position: absolute;">
     <div class="menu notif" (click)="setAsRead($event,notification);$event.stopPropagation();"
       matTooltip="Marquer comme lu (maintenir CTRL pour l'appliquer à l'ensemble de l'onglet)">
@@ -14,6 +14,11 @@
       matTooltip="Supprimer définitivement (maintenir CTRL pour l'appliquer à l'ensemble de l'onglet)">
       <mat-icon>
         delete_forever</mat-icon>
+    </div>
+    <div *ngIf="displayEdit" class="menu notif"
+      (click)="editNotification($event,notification);$event.stopPropagation();" matTooltip="Editer la notification">
+      <mat-icon>
+        edit</mat-icon>
     </div>
   </mat-card-actions>
 </ng-template>
@@ -42,7 +47,8 @@
                         </ng-container>
                       </mat-card-title-group>
                       <mat-card-content>
-                        <avatar-chip [employee]="notification.createdBy"></avatar-chip> a envoyé un nouveau devis pour
+                        <avatar-chip [employee]="notification.createdBy" [disableEmployeeDialog]="true"></avatar-chip> a
+                        envoyé un nouveau devis pour
                         {{notification.detail1}}
                       </mat-card-content>
                     </ng-container>
@@ -59,7 +65,8 @@
                         </ng-container>
                       </mat-card-title-group>
                       <mat-card-content>
-                        <avatar-chip [employee]="notification.createdBy"></avatar-chip> a créé un nouveau devis pour
+                        <avatar-chip [employee]="notification.createdBy" [disableEmployeeDialog]="true"></avatar-chip> a
+                        créé un nouveau devis pour
                         {{notification.detail1}}
                       </mat-card-content>
                     </ng-container>
@@ -76,7 +83,8 @@
                         </ng-container>
                       </mat-card-title-group>
                       <mat-card-content>
-                        <avatar-chip [employee]="notification.createdBy"></avatar-chip> a indiqué qu'un devis pour
+                        <avatar-chip [employee]="notification.createdBy" [disableEmployeeDialog]="true"></avatar-chip> a
+                        indiqué qu'un devis pour
                         {{notification.detail1}} a été refusé
                       </mat-card-content>
                     </ng-container>
@@ -93,7 +101,8 @@
                         </ng-container>
                       </mat-card-title-group>
                       <mat-card-content>
-                        <avatar-chip [employee]="notification.createdBy"></avatar-chip> a indiqué qu'un devis pour
+                        <avatar-chip [employee]="notification.createdBy" [disableEmployeeDialog]="true"></avatar-chip> a
+                        indiqué qu'un devis pour
                         {{notification.detail1}} a été validé
                       </mat-card-content>
                     </ng-container>
@@ -110,7 +119,8 @@
                         </ng-container>
                       </mat-card-title-group>
                       <mat-card-content>
-                        <avatar-chip [employee]="notification.createdBy"></avatar-chip> vous demande de vérifier un
+                        <avatar-chip [employee]="notification.createdBy" [disableEmployeeDialog]="true"></avatar-chip>
+                        vous demande de vérifier un
                         devis pour {{notification.detail1}}
                       </mat-card-content>
                     </ng-container>
@@ -135,7 +145,8 @@
                         </ng-container>
                       </mat-card-title-group>
                       <mat-card-content>
-                        <avatar-chip [employee]="notification.createdBy"></avatar-chip> a créé une nouvelle commande
+                        <avatar-chip [employee]="notification.createdBy" [disableEmployeeDialog]="true"></avatar-chip> a
+                        créé une nouvelle commande
                         pour
                         {{notification.detail1}}
                       </mat-card-content>
@@ -153,7 +164,8 @@
                         </ng-container>
                       </mat-card-title-group>
                       <mat-card-content>
-                        <avatar-chip [employee]="notification.createdBy"></avatar-chip> vous demande de vérifier une
+                        <avatar-chip [employee]="notification.createdBy" [disableEmployeeDialog]="true"></avatar-chip>
+                        vous demande de vérifier une
                         commande pour
                         {{notification.detail1}}
                       </mat-card-content>
@@ -171,7 +183,8 @@
                         </ng-container>
                       </mat-card-title-group>
                       <mat-card-content *ngIf="notification.createdBy">
-                        Suite à un geste manuel de <avatar-chip [employee]="notification.createdBy"></avatar-chip>, la
+                        Suite à un geste manuel de <avatar-chip [employee]="notification.createdBy"
+                          [disableEmployeeDialog]="true"></avatar-chip>, la
                         commande {{notification.entityId}} pour le compte de {{notification.detail1}} débute
                       </mat-card-content>
                       <mat-card-content *ngIf="!notification.createdBy">
@@ -213,6 +226,39 @@
                         {{notification.detail1}} est prête à être facturée
                       </mat-card-content>
                     </ng-container>
+                    <mat-divider></mat-divider>
+                  </mat-card>
+                </mat-dialog-content>
+              </mat-tab>
+              <mat-tab
+                [label]="'Personnel ( '+getPersonnalNotificationNumber(false)+' / '+(getPersonnalNotificationNumber(false)+getPersonnalNotificationNumber(true))+')'">
+                <mat-dialog-content class="mat-content">
+                  <div class="div-personnal-action">
+                    <mat-icon class="pointer note-icon" matTooltip="Afficher les notifications futures"
+                      *ngIf="!displayFuture" (click)="toggleDisplayFuture()">timer
+                    </mat-icon>
+                    <mat-icon class="pointer note-icon" matTooltip="Cacher les notifications futures"
+                      *ngIf="displayFuture" (click)="toggleDisplayFuture()">timer_off
+                    </mat-icon>
+                    <mat-icon class="pointer note-icon" matTooltip="Ajouter une nouvelle notification"
+                      (click)="addPersonnalNotification()">notification_add
+                    </mat-icon>
+                  </div>
+                  <mat-card class="pointer" *ngFor="let notification of getEntitiesPersonnal()">
+                    <mat-card-title-group>
+                      <mat-card-title matBadge="X" matBadgePosition="above before"
+                        [matBadgeHidden]="notification.isRead" matBadgeColor="warn" matBadgeSize="small"
+                        class="hide-text">{{notification.summary}}</mat-card-title>
+                      <mat-card-subtitle><span>{{notification.createdDateTime |date:'EEEE d LLLL yyyy à
+                          HH:mm'}}</span>
+                      </mat-card-subtitle>
+                      <ng-container [ngTemplateOutlet]="cardActions"
+                        [ngTemplateOutletContext]="{notification:notification, displayEdit : true}">
+                      </ng-container>
+                    </mat-card-title-group>
+                    <mat-card-content>
+                      {{notification.detail1}}
+                    </mat-card-content>
                     <mat-divider></mat-divider>
                   </mat-card>
                 </mat-dialog-content>

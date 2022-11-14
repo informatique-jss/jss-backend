@@ -5,11 +5,14 @@ import { CustomErrorStateMatcher } from 'src/app/app.component';
 import { compareWithId } from 'src/app/libs/CompareHelper';
 import { PROVISION_SCREEN_TYPE_ANNOUNCEMENT, PROVISION_SCREEN_TYPE_BODACC, PROVISION_SCREEN_TYPE_DOMICILIATION, PROVISION_SCREEN_TYPE_FORMALITE, PROVISION_SCREEN_TYPE_STANDARD } from 'src/app/libs/Constants';
 import { Employee } from 'src/app/modules/profile/model/Employee';
+import { getDocument, replaceDocument } from '../../../../libs/DocumentHelper';
+import { ConstantService } from '../../../miscellaneous/services/constant.service';
 import { Affaire } from '../../model/Affaire';
 import { Announcement } from '../../model/Announcement';
 import { Bodacc } from '../../model/Bodacc';
 import { Domiciliation } from '../../model/Domiciliation';
 import { Formalite } from '../../model/guichet-unique/Formalite';
+import { IQuotation } from '../../model/IQuotation';
 import { Provision } from '../../model/Provision';
 import { ProvisionFamilyType } from '../../model/ProvisionFamilyType';
 import { ProvisionType } from '../../model/ProvisionType';
@@ -36,6 +39,7 @@ export class ProvisionItemComponent implements OnInit {
   @Input() editMode: boolean = false;
   @Input() instanceOfCustomerOrder: boolean = false;
   @Input() isStatusOpen: boolean = true;
+  @Input() quotation: IQuotation | undefined;
   @Output() selectedProvisionTypeChange: EventEmitter<void> = new EventEmitter<void>();
   @ViewChild(DomiciliationComponent) domiciliationComponent: DomiciliationComponent | undefined;
   @ViewChild(AnnouncementComponent) announcementComponent: AnnouncementComponent | undefined;
@@ -55,6 +59,7 @@ export class ProvisionItemComponent implements OnInit {
     protected provisionFamilyTypeService: ProvisionFamilyTypeService,
     protected provisionTypeService: ProvisionTypeService,
     protected provisionService: ProvisionService,
+    private constantService: ConstantService,
   ) { }
 
   ngOnInit() {
@@ -122,6 +127,14 @@ export class ProvisionItemComponent implements OnInit {
       this.provision.announcement = undefined;
     } else if (!this.provision.announcement) {
       this.provision.announcement = {} as Announcement;
+      this.provision.announcement.documents = [];
+      if (this.quotation && (this.quotation.tiers || this.quotation?.responsable)) {
+        let tiers = this.quotation.responsable ? this.quotation.responsable : this.quotation.tiers;
+        if (tiers) {
+          let publicationDocument = getDocument(this.constantService.getDocumentTypePublication(), tiers)
+          replaceDocument(this.constantService.getDocumentTypePublication(), this.provision.announcement, publicationDocument);
+        }
+      }
     }
 
     if (this.provision.provisionType.provisionScreenType.code != PROVISION_SCREEN_TYPE_BODACC) {
