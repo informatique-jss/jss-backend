@@ -58,12 +58,36 @@ public class AnnouncementStatusServiceImpl implements AnnouncementStatusService 
     public void updateStatusReferential() throws Exception {
         updateStatus(AnnouncementStatus.ANNOUNCEMENT_NEW, "Nouveau", "auto_awesome", true, false);
         updateStatus(AnnouncementStatus.ANNOUNCEMENT_TODO, "A faire", "pending", false, false);
+
+        updateStatus(AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS, "En cours", "autorenew", false, false);
+        updateStatus(AnnouncementStatus.ANNOUNCEMENT_WAITING_DOCUMENT, "En attente de documents", "hourglass_top",
+                false,
+                false);
+        updateStatus(AnnouncementStatus.ANNOUNCEMENT_ENVOYE, "Envoyé", "send", false, false);
+        updateStatus(AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE, "En attente du confrère", "supervisor_account",
+                false,
+                false);
+        updateStatus(AnnouncementStatus.ANNOUNCEMENT_WAITING_PUBLICATION, "En attente de parution", "new_releases",
+                false,
+                false);
+
         updateStatus(AnnouncementStatus.ANNOUNCEMENT_DONE, "Terminé", "check_small", false, true);
 
         setSuccessor(AnnouncementStatus.ANNOUNCEMENT_NEW, AnnouncementStatus.ANNOUNCEMENT_TODO);
-        setSuccessor(AnnouncementStatus.ANNOUNCEMENT_TODO, AnnouncementStatus.ANNOUNCEMENT_DONE);
+        setSuccessor(AnnouncementStatus.ANNOUNCEMENT_TODO, AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS);
+        setSuccessor(AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS, AnnouncementStatus.ANNOUNCEMENT_WAITING_DOCUMENT);
+        setSuccessor(AnnouncementStatus.ANNOUNCEMENT_WAITING_DOCUMENT, AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS);
+        setSuccessor(AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS, AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE);
+        setSuccessor(AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE, AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS);
+        setSuccessor(AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS, AnnouncementStatus.ANNOUNCEMENT_ENVOYE);
+        setSuccessor(AnnouncementStatus.ANNOUNCEMENT_ENVOYE, AnnouncementStatus.ANNOUNCEMENT_WAITING_PUBLICATION);
+        setSuccessor(AnnouncementStatus.ANNOUNCEMENT_WAITING_PUBLICATION, AnnouncementStatus.ANNOUNCEMENT_DONE);
+
         setPredecessor(AnnouncementStatus.ANNOUNCEMENT_TODO, AnnouncementStatus.ANNOUNCEMENT_NEW);
-        setPredecessor(AnnouncementStatus.ANNOUNCEMENT_DONE, AnnouncementStatus.ANNOUNCEMENT_TODO);
+        setPredecessor(AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS, AnnouncementStatus.ANNOUNCEMENT_TODO);
+        setPredecessor(AnnouncementStatus.ANNOUNCEMENT_ENVOYE, AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS);
+        setPredecessor(AnnouncementStatus.ANNOUNCEMENT_WAITING_PUBLICATION, AnnouncementStatus.ANNOUNCEMENT_ENVOYE);
+        setPredecessor(AnnouncementStatus.ANNOUNCEMENT_DONE, AnnouncementStatus.ANNOUNCEMENT_WAITING_PUBLICATION);
     }
 
     protected void updateStatus(String code, String label, String icon, boolean isOpenState, boolean isCloseState) {

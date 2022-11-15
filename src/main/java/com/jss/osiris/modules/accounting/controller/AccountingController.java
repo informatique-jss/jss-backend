@@ -356,7 +356,6 @@ public class AccountingController {
                 validationHelper.validateReferential(accountingAccounts, true);
             validationHelper.validateString(accountingAccounts.getLabel(), true, 100);
             validationHelper.validateString(accountingAccounts.getAccountingAccountNumber(), true, 6);
-            validationHelper.validateString(accountingAccounts.getAccountingAccountSubNumber(), true, 20);
             outAccountingAccount = accountingAccountService
                     .addOrUpdateAccountingAccountFromUser(accountingAccounts);
         } catch (

@@ -136,7 +136,10 @@ const routes: Routes = [
     EntrepriseComponent,
   ],
   exports: [
-    OrderingListComponent
+    OrderingListComponent,
+    AffaireListComponent,
+    QuotationListComponent,
+    OrderingListComponent,
   ],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'fr-FR' }

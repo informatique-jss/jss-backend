@@ -38,4 +38,6 @@ public interface NotificationService {
                         throws Exception;
 
         public Notification addOrUpdatePersonnalNotification(Notification notifications) throws Exception;
+
+        public void purgeNotification() throws Exception;
 }

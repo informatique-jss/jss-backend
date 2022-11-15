@@ -16,4 +16,11 @@ export class CustomerOrderStatusService extends AppRestService<CustomerOrderStat
     return this.getList(new HttpParams(), "customer-order-status");
   }
 
+  getCustomerStatusByCode(status: CustomerOrderStatus[], code: string) {
+    if (status)
+      for (let statu of status)
+        if (statu.code == code)
+          return statu;
+    return null;
+  }
 }

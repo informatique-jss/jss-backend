@@ -54,11 +54,14 @@ public class ActiveDirectoryHelper {
         if (devMode)
             if (SecurityContextHolder.getContext() == null
                     || SecurityContextHolder.getContext().getAuthentication() == null
-                    || SecurityContextHolder.getContext().getAuthentication() == null
                     || SecurityContextHolder.getContext().getAuthentication().getName() == null
                     || SecurityContextHolder.getContext().getAuthentication().getName().toUpperCase()
                             .equals("ANONYMOUSUSER"))
                 return "GAPIN";
+        if (SecurityContextHolder.getContext() == null
+                || SecurityContextHolder.getContext().getAuthentication() == null
+                || SecurityContextHolder.getContext().getAuthentication().getName() == null)
+            return "OSIRIS";
         return SecurityContextHolder.getContext().getAuthentication().getName().toUpperCase();
     }
 

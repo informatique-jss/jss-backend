@@ -40,7 +40,7 @@ public class CustomerOrderStatus implements Serializable, IId {
 	@Column(nullable = false, length = 100)
 	private String label;
 
-	@Column(nullable = false, length = 30)
+	@Column(nullable = false, length = 100)
 	private String code;
 
 	private String icon;

@@ -22,6 +22,7 @@
               <autocomplete-department [(model)]="announcement.department" [form]="announcementForm"
                 propertyName="department" [isMandatory]="true" [isDisabled]="!editMode" label="Département"
                 [isDisabled]="!editMode" (onOptionSelected)="updateCharacterPrice()"
+                [filterAvailableEntities]="announcement.confrere?announcement.confrere.departments:undefined"
                 [conditionnalRequired]=" !isStatusOpen">
               </autocomplete-department>
             </td>

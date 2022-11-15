@@ -260,12 +260,12 @@
   <mat-icon>receipt_long</mat-icon>
 </button>
 <button matTooltip="Recevoir le mail de devis" mat-fab color="accent" class="fourth-fab-button"
-  *ngIf="editMode==false && instanceOfQuotationFn(quotation)" (click)="generateQuotationMail()">
+  *ngIf="editMode==false && instanceOfQuotationFn(quotation) && quotation.id" (click)="generateQuotationMail()">
   <mat-icon>mail</mat-icon>
 </button>
 
 <button matTooltip="Recevoir un mail" mat-fab color="accent" class="fourth-fab-button mail-menu"
-  *ngIf="editMode==false && instanceOfCustomerOrderFn(quotation)" [matMenuTriggerFor]="menuMail">
+  *ngIf="editMode==false && instanceOfCustomerOrderFn(quotation) && quotation.id" [matMenuTriggerFor]="menuMail">
   <mat-icon>mail</mat-icon>
   <mat-menu #menuMail="matMenu" style="min-height: 0px;padding: 0;" xPosition="before">
     <button mat-menu-item (click)="generateWaintingDepositMail()">

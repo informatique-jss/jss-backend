@@ -3,6 +3,6 @@ import { AccountingAccountClass } from "./AccountingAccountClass";
 
 export interface AccountingAccount extends IReferential {
   accountingAccountNumber: string;
-  accountingAccountSubNumber: string;
+  accountingAccountSubNumber: number;
   accountingAccountClass: AccountingAccountClass;
 }

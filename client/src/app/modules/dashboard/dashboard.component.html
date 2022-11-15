@@ -1,0 +1,56 @@
+<div>
+  <div class=" full-width">
+    <div class="dashboard-box-settings">
+      <mat-icon class="pointer" [matMenuTriggerFor]="menu">settings</mat-icon>
+    </div>
+  </div>
+  <div class="dashboard-container" cdkDropListGroup [ngStyle]="{ '--box-width': boxWidth, '--box-height': boxHeight }">
+    <div cdkDropList (cdkDropListEntered)="onDropListEntered($event)" (cdkDropListDropped)="onDropListDropped()">
+    </div>
+    <div cdkDropList (cdkDropListEntered)="onDropListEntered($event)" (cdkDropListDropped)="onDropListDropped()"
+      *ngFor="let item of items">
+      <div cdkDrag class="dashboard-box">
+        <div class="dashboard-toolbar">
+          <div class="dashboard-title">{{item}}</div>
+          <div class="dashboard-box-delete">
+            <mat-icon (click)="toggleDisplay(item)">delete</mat-icon>
+          </div>
+          <div class="dashboard-box-handle" cdkDragHandle>
+            <mat-icon>zoom_out_map</mat-icon>
+          </div>
+        </div>
+        <affaire-list class="dashboard-box-component" *ngIf="item==AFFAIRE_IN_PROGRESS"
+          [affaireSearch]="affaireSearchInProgress" [isForDashboard]="true"></affaire-list>
+        <affaire-list class="dashboard-box-component" *ngIf="item==AFFAIRE_TO_DO" [affaireSearch]="affaireSearchToDo"
+          [isForDashboard]="true"></affaire-list>
+        <affaire-list class="dashboard-box-component" *ngIf="item==AFFAIRE_RESPONSIBLE_TO_DO"
+          [affaireSearch]="affaireSearchToDo" [isForDashboard]="true"></affaire-list>
+        <affaire-list class="dashboard-box-component" *ngIf="item==AFFAIRE_RESPONSIBLE_IN_PROGRESS"
+          [affaireSearch]="affaireSearchToDo" [isForDashboard]="true"></affaire-list>
+        <ordering-list class="dashboard-box-component" *ngIf="item==ORDER_OPEN" [orderingSearch]="orderingSearchOpen"
+          [isForDashboard]="true"></ordering-list>
+        <ordering-list class="dashboard-box-component" *ngIf="item==ORDER_TO_VERIFY"
+          [orderingSearch]="orderingSearchToVerify" [isForDashboard]="true"></ordering-list>
+        <ordering-list class="dashboard-box-component" *ngIf="item==ORDER_BEING_PROCESSED"
+          [orderingSearch]="orderingSearchBeingProcessed" [isForDashboard]="true"></ordering-list>
+        <ordering-list class="dashboard-box-component" *ngIf="item==ORDER_TO_BILLED"
+          [orderingSearch]="orderingSearchToBilled" [isForDashboard]="true"></ordering-list>
+        <quotation-list class="dashboard-box-component" *ngIf="item==QUOTATION_OPEN"
+          [quotationSearch]="quotationSearchOpen" [isForDashboard]="true"></quotation-list>
+        <quotation-list class="dashboard-box-component" *ngIf="item==QUOTATION_TO_VERIFY"
+          [quotationSearch]="quotationSearchToVerify" [isForDashboard]="true"></quotation-list>
+        <invoice-list class="dashboard-box-component" *ngIf="item==INVOICE_TO_ASSOCIATE"
+          [invoiceSearch]="invoiceSearchToAssociate" [isForDashboard]="true"></invoice-list>
+        <payment-list class="dashboard-box-component" *ngIf="item==PAYMENT_TO_ASSOCIATE"
+          [paymentSearch]="paymentSearchToAssociate" [isForDashboard]="true"></payment-list>
+      </div>
+    </div>
+  </div>
+</div>
+<mat-menu #menu="matMenu" style="max-width: 100%;">
+  <div mat-menu-item *ngFor="let checkbox of checkboxes">
+    <mat-checkbox [(ngModel)]="checkbox.value" (click)="toggleDisplay(checkbox.id);$event.stopPropagation()">
+      {{checkbox.id}}
+    </mat-checkbox>
+  </div>
+</mat-menu>

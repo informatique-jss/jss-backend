@@ -29,6 +29,10 @@ export class SidenavListComponent implements OnInit {
     return this.router.url;
   }
 
+  canViewDashboardModule() {
+    return this.habilitationService.canViewDashboardModule();
+  }
+
   canViewTiersModule() {
     return this.habilitationService.canViewTiersModule();
   }

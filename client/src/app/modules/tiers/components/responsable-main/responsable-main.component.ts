@@ -163,6 +163,7 @@ export class ResponsableMainComponent implements OnInit {
   addResponsable() {
     if (this.selectedResponsable == null || this.getFormStatus()) {
       this.selectedResponsable = {} as Responsable;
+      this.selectedResponsable.salesEmployee = this.tiers.salesEmployee;
       this.tiers.responsables.push(this.selectedResponsable);
 
       if (this.tiers && this.tiers.documents) {

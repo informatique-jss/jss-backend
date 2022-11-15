@@ -208,7 +208,7 @@ public class NotificationServiceImpl implements NotificationService {
             if (!createdByMe)
                 notifications.add(
                         generateNewNotification(isFromHuman ? employeeService.getCurrentEmployee() : null,
-                                salesEmployee,
+                                constantService.getEmployeeBillingResponsible(),
                                 notificationType, customerOrder, customerOrderName, null, false));
         }
 
@@ -277,5 +277,11 @@ public class NotificationServiceImpl implements NotificationService {
             return addOrUpdateNotification(notification);
         }
         return null;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void purgeNotification() throws Exception {
+        notificationRepository.deleteAll(notificationRepository.findNotificationOlderThanMonths(3));
     }
 }

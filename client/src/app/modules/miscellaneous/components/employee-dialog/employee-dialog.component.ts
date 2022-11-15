@@ -38,11 +38,8 @@ export class EmployeeDialogComponent implements OnInit {
   }
 
   chooseMyself() {
-    this.employeeService.getEmployees().subscribe(response => {
-      let currentUser = this.loginService.getCurrentUserName();
-      for (let employee of response)
-        if (employee.username == currentUser)
-          this.employee = employee;
+    this.employeeService.getCurrentEmployee().subscribe(response => {
+      this.employee = response;
     })
   }
 }

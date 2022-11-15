@@ -1,6 +1,6 @@
 <div class="mat-elevation-z2 form-div">
   <div class=" full-width">
-    <table class="full-width table-fixed-layout">
+    <table class="full-width table-fixed-layout" *ngIf="!isForDashboard && orderingSearch">
       <tr>
         <td>
           <autocomplete-sales-employee [(model)]="orderingSearch.salesEmployee" label="Commercial"

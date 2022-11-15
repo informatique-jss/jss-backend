@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.file.Files;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -19,18 +18,19 @@ import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import org.apache.poi.util.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.InputStreamSource;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ResourceUtils;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.SpringTemplateEngine;
@@ -169,7 +169,8 @@ public class MailHelper {
                 if (recipients != null)
                     for (Address address : recipients) {
                         String[] chunk = address.toString().split("@");
-                        if (chunk.length != 2 || !chunk[1].equals(mailDomainFilter))
+                        if (chunk.length != 2
+                                || !chunk[1].toLowerCase().trim().equals(mailDomainFilter.toLowerCase().trim()))
                             canSend = false;
                     }
             }
@@ -392,32 +393,32 @@ public class MailHelper {
 
         // quotation-header.png
         final InputStreamSource imageSourceQuotationHeader = new ByteArrayResource(
-                Files.readAllBytes(ResourceUtils.getFile("classpath:images/quotation-header.png").toPath()));
+                IOUtils.toByteArray(new ClassPathResource("images/quotation-header.png").getInputStream()));
         message.addInline("quotationHeaderPicture", imageSourceQuotationHeader, PNG_MIME);
 
         // jss-header.png
         final InputStreamSource imageSourceJssHeader = new ByteArrayResource(
-                Files.readAllBytes(ResourceUtils.getFile("classpath:images/jss-header.png").toPath()));
+                IOUtils.toByteArray(new ClassPathResource("images/jss-header.png").getInputStream()));
         message.addInline("jssHeaderPicture", imageSourceJssHeader, PNG_MIME);
 
         // facebook
         final InputStreamSource imageSourceFacebook = new ByteArrayResource(
-                Files.readAllBytes(ResourceUtils.getFile("classpath:images/facebook.png").toPath()));
+                IOUtils.toByteArray(new ClassPathResource("images/facebook.png").getInputStream()));
         message.addInline("facebook", imageSourceFacebook, PNG_MIME);
 
         // linkedin
         final InputStreamSource imageSourceLinkedin = new ByteArrayResource(
-                Files.readAllBytes(ResourceUtils.getFile("classpath:images/linkedin.png").toPath()));
+                IOUtils.toByteArray(new ClassPathResource("images/linkedin.png").getInputStream()));
         message.addInline("linkedin", imageSourceLinkedin, PNG_MIME);
 
         // instagram
         final InputStreamSource imageSourceInstagram = new ByteArrayResource(
-                Files.readAllBytes(ResourceUtils.getFile("classpath:images/instagram.png").toPath()));
+                IOUtils.toByteArray(new ClassPathResource("images/instagram.png").getInputStream()));
         message.addInline("instagram", imageSourceInstagram, PNG_MIME);
 
         // twitter
         final InputStreamSource imageSourceTwitter = new ByteArrayResource(
-                Files.readAllBytes(ResourceUtils.getFile("classpath:images/twitter.png").toPath()));
+                IOUtils.toByteArray(new ClassPathResource("images/twitter.png").getInputStream()));
         message.addInline("twitter", imageSourceTwitter, PNG_MIME);
 
         // Send email
@@ -561,32 +562,32 @@ public class MailHelper {
 
         // quotation-header.png
         final InputStreamSource imageSourceQuotationHeader = new ByteArrayResource(
-                Files.readAllBytes(ResourceUtils.getFile("classpath:images/waiting-deposit-header.png").toPath()));
+                IOUtils.toByteArray(new ClassPathResource("images/waiting-deposit-header.png").getInputStream()));
         message.addInline("waitingDepositHeaderPicture", imageSourceQuotationHeader, PNG_MIME);
 
         // jss-header.png
         final InputStreamSource imageSourceJssHeader = new ByteArrayResource(
-                Files.readAllBytes(ResourceUtils.getFile("classpath:images/jss-header.png").toPath()));
+                IOUtils.toByteArray(new ClassPathResource("images/jss-header.png").getInputStream()));
         message.addInline("jssHeaderPicture", imageSourceJssHeader, PNG_MIME);
 
         // facebook
         final InputStreamSource imageSourceFacebook = new ByteArrayResource(
-                Files.readAllBytes(ResourceUtils.getFile("classpath:images/facebook.png").toPath()));
+                IOUtils.toByteArray(new ClassPathResource("images/facebook.png").getInputStream()));
         message.addInline("facebook", imageSourceFacebook, PNG_MIME);
 
         // linkedin
         final InputStreamSource imageSourceLinkedin = new ByteArrayResource(
-                Files.readAllBytes(ResourceUtils.getFile("classpath:images/linkedin.png").toPath()));
+                IOUtils.toByteArray(new ClassPathResource("images/linkedin.png").getInputStream()));
         message.addInline("linkedin", imageSourceLinkedin, PNG_MIME);
 
         // instagram
         final InputStreamSource imageSourceInstagram = new ByteArrayResource(
-                Files.readAllBytes(ResourceUtils.getFile("classpath:images/instagram.png").toPath()));
+                IOUtils.toByteArray(new ClassPathResource("images/instagram.png").getInputStream()));
         message.addInline("instagram", imageSourceInstagram, PNG_MIME);
 
         // twitter
         final InputStreamSource imageSourceTwitter = new ByteArrayResource(
-                Files.readAllBytes(ResourceUtils.getFile("classpath:images/twitter.png").toPath()));
+                IOUtils.toByteArray(new ClassPathResource("images/twitter.png").getInputStream()));
         message.addInline("twitter", imageSourceTwitter, PNG_MIME);
 
         // Send email
@@ -645,32 +646,32 @@ public class MailHelper {
 
         // quotation-header.png
         final InputStreamSource imageSourceQuotationHeader = new ByteArrayResource(
-                Files.readAllBytes(ResourceUtils.getFile("classpath:images/invoice-header.png").toPath()));
+                IOUtils.toByteArray(new ClassPathResource("images/invoice-header.png").getInputStream()));
         message.addInline("invoiceHeaderPicture", imageSourceQuotationHeader, PNG_MIME);
 
         // jss-header.png
         final InputStreamSource imageSourceJssHeader = new ByteArrayResource(
-                Files.readAllBytes(ResourceUtils.getFile("classpath:images/jss-header.png").toPath()));
+                IOUtils.toByteArray(new ClassPathResource("images/jss-header.png").getInputStream()));
         message.addInline("jssHeaderPicture", imageSourceJssHeader, PNG_MIME);
 
         // facebook
         final InputStreamSource imageSourceFacebook = new ByteArrayResource(
-                Files.readAllBytes(ResourceUtils.getFile("classpath:images/facebook.png").toPath()));
+                IOUtils.toByteArray(new ClassPathResource("images/facebook.png").getInputStream()));
         message.addInline("facebook", imageSourceFacebook, PNG_MIME);
 
         // linkedin
         final InputStreamSource imageSourceLinkedin = new ByteArrayResource(
-                Files.readAllBytes(ResourceUtils.getFile("classpath:images/linkedin.png").toPath()));
+                IOUtils.toByteArray(new ClassPathResource("images/linkedin.png").getInputStream()));
         message.addInline("linkedin", imageSourceLinkedin, PNG_MIME);
 
         // instagram
         final InputStreamSource imageSourceInstagram = new ByteArrayResource(
-                Files.readAllBytes(ResourceUtils.getFile("classpath:images/instagram.png").toPath()));
+                IOUtils.toByteArray(new ClassPathResource("images/instagram.png").getInputStream()));
         message.addInline("instagram", imageSourceInstagram, PNG_MIME);
 
         // twitter
         final InputStreamSource imageSourceTwitter = new ByteArrayResource(
-                Files.readAllBytes(ResourceUtils.getFile("classpath:images/twitter.png").toPath()));
+                IOUtils.toByteArray(new ClassPathResource("images/twitter.png").getInputStream()));
         message.addInline("twitter", imageSourceTwitter, PNG_MIME);
 
         message.addAttachment("Facture n°" + ".pdf", generateInvoicePdf(customerOrder, invoice));

@@ -1,6 +1,6 @@
 <div class="mat-elevation-z2 form-div">
   <div class=" full-width">
-    <table class="full-width table-fixed-layout">
+    <table class="full-width table-fixed-layout" *ngIf="!isForDashboard && paymentSearch">
       <tr>
         <td>
           <select-payment-way [(model)]="paymentSearch.paymentWays" label="Sens du paiement" [form]="paymentForm"
@@ -38,7 +38,7 @@
     </table>
     <sort-table [actions]="tableAction" [columns]="displayedColumns" [values]="payments" tableName="Paiements">
     </sort-table>
-    <div>
+    <div *ngIf="!isForDashboard && paymentSearch">
       <h2>Ajouter un paiement (pour tests)</h2>
       <table class="full-width table-fixed-layout">
         <tr>

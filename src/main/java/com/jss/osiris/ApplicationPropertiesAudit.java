@@ -39,6 +39,7 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("schedulling.active.directory.user.update");
         isOk = isOk && checkProperty("schedulling.payment.grab");
         isOk = isOk && checkProperty("schedulling.mail.sender");
+        isOk = isOk && checkProperty("schedulling.notification.purge");
         isOk = isOk && checkProperty("ldap.dc.level.0");
         isOk = isOk && checkProperty("ldap.dc.level.1");
         isOk = isOk && checkProperty("ldap.ou.osiris");

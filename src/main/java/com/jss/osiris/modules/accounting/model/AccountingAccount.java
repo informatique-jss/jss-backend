@@ -29,8 +29,7 @@ public class AccountingAccount implements Serializable, IId {
 	@Column(length = 6, nullable = false)
 	private String accountingAccountNumber;
 
-	@Column(length = 20, nullable = false)
-	private String accountingAccountSubNumber;
+	private Integer accountingAccountSubNumber;
 
 	@ManyToOne
 	@JoinColumn(name = "id_accounting_account_class")
@@ -68,11 +67,11 @@ public class AccountingAccount implements Serializable, IId {
 		this.label = label;
 	}
 
-	public String getAccountingAccountSubNumber() {
+	public Integer getAccountingAccountSubNumber() {
 		return accountingAccountSubNumber;
 	}
 
-	public void setAccountingAccountSubNumber(String accountingAccountSubNumber) {
+	public void setAccountingAccountSubNumber(Integer accountingAccountSubNumber) {
 		this.accountingAccountSubNumber = accountingAccountSubNumber;
 	}
 

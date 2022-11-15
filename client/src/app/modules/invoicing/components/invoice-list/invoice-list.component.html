@@ -1,9 +1,9 @@
 <div class="mat-elevation-z2 form-div">
   <div class=" full-width">
-    <table class="full-width table-fixed-layout">
+    <table class="full-width table-fixed-layout" *ngIf="!isForDashboard && invoiceSearch">
       <tr>
         <td>
-          <select-invoice-status [(model)]="invoiceSearch.invoiceStatus" label="Statut de la facture"
+          <select-invoice-status [(model)]=" invoiceSearch.invoiceStatus" label="Statut de la facture"
             [form]="invoiceForm" propertyName="invoiceStatus" [isMandatory]="true"
             [defaultStatusSelected]="defaultStatusFilter">
           </select-invoice-status>
@@ -18,8 +18,7 @@
         </td>
         <td>
           <generic-date-range-picker [(modelStart)]="invoiceSearch.startDate" [(modelEnd)]="invoiceSearch.endDate"
-            label="Plage de recherche" [form]="invoiceForm" propertyNameStart="startDate" propertyNameEnd="endDate"
-            (onDateChange)="putDefaultPeriod()">
+            label="Plage de recherche" [form]="invoiceForm" propertyNameStart="startDate" propertyNameEnd="endDate">
           </generic-date-range-picker>
         </td>
         <td class="fab-td-button">

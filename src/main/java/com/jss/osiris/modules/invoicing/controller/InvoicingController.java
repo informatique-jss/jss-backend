@@ -1,6 +1,5 @@
 package com.jss.osiris.modules.invoicing.controller;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -143,11 +142,6 @@ public class InvoicingController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
         if (paymentSearch.getPaymentWays() == null)
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-        Duration duration = Duration.between(paymentSearch.getStartDate(), paymentSearch.getEndDate());
-
-        if (duration.toDays() > 366)
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
         try {
@@ -499,12 +493,6 @@ public class InvoicingController {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
             if (invoiceSearch.getStartDate() == null || invoiceSearch.getEndDate() == null)
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-            Duration duration = Duration.between(invoiceSearch.getStartDate(),
-                    invoiceSearch.getEndDate());
-
-            if (duration.toDays() > 366)
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
             invoices = invoiceService.searchInvoices(invoiceSearch);

@@ -56,18 +56,18 @@
                 [isDisabled]="!editMode" propertyName="tiersCategory"></select-tiers-category>
             </td>
             <td>
-              <autocomplete-sales-employee [(model)]="tiers.salesEmployee" [isDisabled]="!editMode" label="Commercial"
-                [form]="principalForm" propertyName="salesEmployee" [isMandatory]="true"></autocomplete-sales-employee>
+              <autocomplete-employee [(model)]="tiers.salesEmployee" [isDisabled]="!editMode" label="Commercial"
+                [form]="principalForm" propertyName="salesEmployee" [isMandatory]="true"></autocomplete-employee>
             </td>
             <td>
-              <autocomplete-formaliste-employee [(model)]="tiers.formalisteEmployee" [isDisabled]="!editMode"
-                label="Formaliste" [isDisabled]="!editMode" [form]="principalForm" propertyName="formalisteEmployee">
-              </autocomplete-formaliste-employee>
+              <autocomplete-employee [(model)]="tiers.formalisteEmployee" [isDisabled]="!editMode" label="Formaliste"
+                [isDisabled]="!editMode" [form]="principalForm" propertyName="formalisteEmployee">
+              </autocomplete-employee>
             </td>
             <td>
-              <autocomplete-insertion-employee [(model)]="tiers.insertionEmployee" [isDisabled]="!editMode"
-                label="Publiciste" [isDisabled]="!editMode" [form]="principalForm" propertyName="insertionEmployee">
-              </autocomplete-insertion-employee>
+              <autocomplete-employee [(model)]="tiers.insertionEmployee" [isDisabled]="!editMode" label="Publiciste"
+                [isDisabled]="!editMode" [form]="principalForm" propertyName="insertionEmployee">
+              </autocomplete-employee>
             </td>
           </tr>
         </table>

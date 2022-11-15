@@ -356,9 +356,7 @@ public class QuotationController {
     MailComputeResult mailComputeResult;
     try {
       mailComputeResult = mailHelper.computeMailForBillingDocument(quotation);
-    } catch (
-
-    ResponseStatusException e) {
+    } catch (ResponseStatusException e) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     } catch (HttpStatusCodeException e) {
       logger.error("HTTP error when fetching generate mail", e);
@@ -413,6 +411,7 @@ public class QuotationController {
       try {
         customerOrderService.generateInvoiceMail(customerOrder);
       } catch (Exception e) {
+        e.printStackTrace();
       }
     } catch (HttpStatusCodeException e) {
       logger.error("HTTP error when fetching generate mail", e);

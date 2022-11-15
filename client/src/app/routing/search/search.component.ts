@@ -157,7 +157,6 @@ export class SearchComponent implements OnInit {
 
   getProvisionLabel(entity: any) {
     let out = [];
-    console.log(entity.text.provisions);
     if (entity.text.provisions)
       for (let provision of entity.text.provisions)
         out.push(provision.provisionFamilyType ? provision.provisionFamilyType.label : "") + " - " + (provision.provisionType ? provision.provisionType.label : "");

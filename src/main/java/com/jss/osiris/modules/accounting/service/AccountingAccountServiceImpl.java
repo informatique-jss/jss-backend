@@ -147,7 +147,7 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
                 AccountingAccount accountingAccountProvider = new AccountingAccount();
                 accountingAccountProvider.setAccountingAccountClass(accountingAccountClass);
                 accountingAccountProvider.setAccountingAccountNumber(providerAccountingAccountNumber);
-                accountingAccountProvider.setAccountingAccountSubNumber(maxSubAccount + "");
+                accountingAccountProvider.setAccountingAccountSubNumber(maxSubAccount);
                 accountingAccountProvider
                                 .setLabel("Fournisseur - " + (label != null ? label : ""));
                 accountingAccountRepository.save(accountingAccountProvider);
@@ -156,7 +156,7 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
                 AccountingAccount accountingAccountCustomer = new AccountingAccount();
                 accountingAccountCustomer.setAccountingAccountClass(accountingAccountClass);
                 accountingAccountCustomer.setAccountingAccountNumber(customerAccountingAccountNumber);
-                accountingAccountCustomer.setAccountingAccountSubNumber(maxSubAccount + "");
+                accountingAccountCustomer.setAccountingAccountSubNumber(maxSubAccount);
                 accountingAccountCustomer
                                 .setLabel("Client - " + (label != null ? label : ""));
                 accountingAccountRepository.save(accountingAccountCustomer);
@@ -165,7 +165,7 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
                 AccountingAccount accountingAccountDeposit = new AccountingAccount();
                 accountingAccountDeposit.setAccountingAccountClass(accountingAccountClass);
                 accountingAccountDeposit.setAccountingAccountNumber(depositAccountingAccountNumber);
-                accountingAccountDeposit.setAccountingAccountSubNumber(maxSubAccount + "");
+                accountingAccountDeposit.setAccountingAccountSubNumber(maxSubAccount);
                 accountingAccountDeposit
                                 .setLabel("Acompte - " + (label != null ? label : ""));
                 accountingAccountRepository.save(accountingAccountDeposit);
@@ -220,7 +220,7 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
                 AccountingAccount accountingAccountProduct = new AccountingAccount();
                 accountingAccountProduct.setAccountingAccountClass(accountingAccountClassProduct);
                 accountingAccountProduct.setAccountingAccountNumber(productAccountingAccountNumber);
-                accountingAccountProduct.setAccountingAccountSubNumber(StringUtils.leftPad(maxSubAccount + "", 4, "0"));
+                accountingAccountProduct.setAccountingAccountSubNumber(maxSubAccount);
                 accountingAccountProduct
                                 .setLabel("Produit - "
                                                 + (billingType.getLabel() != null ? billingType.getLabel() : ""));
@@ -230,7 +230,7 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
                 AccountingAccount accountingAccounCharge = new AccountingAccount();
                 accountingAccounCharge.setAccountingAccountClass(accountingAccountClassCharge);
                 accountingAccounCharge.setAccountingAccountNumber(chargeAccountingAccountNumber);
-                accountingAccounCharge.setAccountingAccountSubNumber(StringUtils.leftPad(maxSubAccount + "", 4, "0"));
+                accountingAccounCharge.setAccountingAccountSubNumber(maxSubAccount);
                 accountingAccounCharge
                                 .setLabel("Charge - " + (billingType.getLabel() != null ? billingType.getLabel() : ""));
                 accountingAccountRepository.save(accountingAccounCharge);
@@ -267,7 +267,7 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
                 AccountingAccount accountingAccountProvider = new AccountingAccount();
                 accountingAccountProvider.setAccountingAccountClass(accountingAccountClass);
                 accountingAccountProvider.setAccountingAccountNumber(productAccountingAccountNumber);
-                accountingAccountProvider.setAccountingAccountSubNumber(maxSubAccount + "");
+                accountingAccountProvider.setAccountingAccountSubNumber(maxSubAccount);
                 accountingAccountProvider
                                 .setLabel("Produit - " + (label != null ? label : ""));
                 accountingAccountRepository.save(accountingAccountProvider);

@@ -10,6 +10,10 @@ export class HabilitationsService {
   ) {
   }
 
+  canViewDashboardModule() {
+    return true;
+  }
+
   canViewTiersModule() {
     return true;
   }

@@ -17,8 +17,11 @@ import { QuotationComponent } from '../quotation/quotation.component';
   styleUrls: ['./ordering-list.component.css']
 })
 export class OrderingListComponent implements OnInit {
-  orderingSearch: OrderingSearch = {} as OrderingSearch;
+  @Input() orderingSearch: OrderingSearch = {} as OrderingSearch;
+  @Input() isForDashboard: boolean = false;
   orders: IQuotation[] | undefined;
+  availableColumns: SortTableColumn[] = [];
+  columnToDisplayOnDashboard: string[] = ["customerOrderName", "quotationStatus", "totalPrice"];
   displayedColumns: SortTableColumn[] = [];
   tableAction: SortTableAction[] = [];
 
@@ -34,14 +37,18 @@ export class OrderingListComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    if (!this.isForDashboard)
+      this.appService.changeHeaderTitle("Commande")
     this.putDefaultPeriod();
-    this.displayedColumns = [];
-    this.displayedColumns.push({ id: "id", fieldName: "id", label: "N° de la commande" } as SortTableColumn);
-    this.displayedColumns.push({ id: "customerOrderName", fieldName: "tiers", label: "Donneur d'ordre", valueFonction: this.getCustomerOrderName, actionLinkFunction: this.getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la fiche du donneur d'ordre" } as SortTableColumn);
-    this.displayedColumns.push({ id: "quotationStatus", fieldName: "quotationStatus.label", label: "Statut" } as SortTableColumn);
-    this.displayedColumns.push({ id: "createdDate", fieldName: "createdDate", label: "Date de création", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
-    this.displayedColumns.push({ id: "salesEmployee", fieldName: "salesEmployee", label: "Commercial", displayAsEmployee: true, valueFonction: this.getSalesEmployee } as SortTableColumn);
-    this.displayedColumns.push({ id: "totalPrice", fieldName: "totalPrice", label: "Prix total", valueFonction: (element: any, elements: any[], column: SortTableColumn, columns: SortTableColumn[]): string => { return QuotationComponent.computePriceTotal(element) + " €"; } } as SortTableColumn);
+    this.availableColumns = [];
+    this.availableColumns.push({ id: "id", fieldName: "id", label: "N° de la commande" } as SortTableColumn);
+    this.availableColumns.push({ id: "customerOrderName", fieldName: "tiers", label: "Donneur d'ordre", valueFonction: this.getCustomerOrderName, actionLinkFunction: this.getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la fiche du donneur d'ordre" } as SortTableColumn);
+    this.availableColumns.push({ id: "quotationStatus", fieldName: "quotationStatus.label", label: "Statut" } as SortTableColumn);
+    this.availableColumns.push({ id: "createdDate", fieldName: "createdDate", label: "Date de création", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
+    this.availableColumns.push({ id: "salesEmployee", fieldName: "salesEmployee", label: "Commercial", displayAsEmployee: true, valueFonction: this.getSalesEmployee } as SortTableColumn);
+    this.availableColumns.push({ id: "totalPrice", fieldName: "totalPrice", label: "Prix total", valueFonction: (element: any, elements: any[], column: SortTableColumn, columns: SortTableColumn[]): string => { return QuotationComponent.computePriceTotal(element) + " €"; } } as SortTableColumn);
+
+    this.setColumns();
 
     if (this.overrideIconAction == "") {
       this.tableAction.push({
@@ -58,8 +65,21 @@ export class OrderingListComponent implements OnInit {
         }, display: true,
       } as SortTableAction);
     };
+    if (this.isForDashboard && !this.orders && this.orderingSearch)
+      this.searchOrders();
   }
 
+  setColumns() {
+    this.displayedColumns = [];
+    if (this.availableColumns && this.columnToDisplayOnDashboard && this.isForDashboard) {
+      for (let availableColumn of this.availableColumns)
+        for (let columnToDisplay of this.columnToDisplayOnDashboard)
+          if (availableColumn.id == columnToDisplay)
+            this.displayedColumns.push(availableColumn);
+    }
+    else
+      this.displayedColumns.push(...this.availableColumns);
+  }
 
   orderingSearchForm = this.formBuilder.group({
   });

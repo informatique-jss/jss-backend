@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { formatDateTimeForSortTable, toIsoString } from 'src/app/libs/FormatHelper';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
@@ -16,8 +16,11 @@ import { QuotationComponent } from '../quotation/quotation.component';
   styleUrls: ['./quotation-list.component.css']
 })
 export class QuotationListComponent implements OnInit {
-  quotationSearch: QuotationSearch = {} as QuotationSearch;
+  @Input() quotationSearch: QuotationSearch = {} as QuotationSearch;
+  @Input() isForDashboard: boolean = false;
   quotations: IQuotation[] | undefined;
+  availableColumns: SortTableColumn[] = [];
+  columnToDisplayOnDashboard: string[] = ["customerOrderName", "quotationStatus", "total"];
   displayedColumns: SortTableColumn[] = [];
   tableAction: SortTableAction[] = [];
 
@@ -29,19 +32,39 @@ export class QuotationListComponent implements OnInit {
 
   ngOnInit() {
     this.putDefaultPeriod();
-    this.displayedColumns = [];
-    this.displayedColumns.push({ id: "id", fieldName: "id", label: "N° de la commande" } as SortTableColumn);
-    this.displayedColumns.push({ id: "customerOrderName", fieldName: "tiers", label: "Donneur d'ordre", valueFonction: this.getCustomerOrderName, actionLinkFunction: this.getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la fiche du donneur d'ordre" } as SortTableColumn);
-    this.displayedColumns.push({ id: "quotationStatus", fieldName: "customerOrderStatus.label", label: "Statut" } as SortTableColumn);
-    this.displayedColumns.push({ id: "salesEmployee", fieldName: "salesEmployee", label: "Commercial", displayAsEmployee: true, valueFonction: this.getSalesEmployee } as SortTableColumn);
-    this.displayedColumns.push({ id: "total", fieldName: "total", label: "Montant TTC", valueFonction: this.getTotalPrice } as SortTableColumn);
-    this.displayedColumns.push({ id: "createdDate", fieldName: "createdDate", label: "Date de création", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
+    if (!this.isForDashboard)
+      this.appService.changeHeaderTitle("Devis");
+
+    this.availableColumns = [];
+    this.availableColumns.push({ id: "id", fieldName: "id", label: "N° de la commande" } as SortTableColumn);
+    this.availableColumns.push({ id: "customerOrderName", fieldName: "tiers", label: "Donneur d'ordre", valueFonction: this.getCustomerOrderName, actionLinkFunction: this.getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la fiche du donneur d'ordre" } as SortTableColumn);
+    this.availableColumns.push({ id: "quotationStatus", fieldName: "customerOrderStatus.label", label: "Statut" } as SortTableColumn);
+    this.availableColumns.push({ id: "salesEmployee", fieldName: "salesEmployee", label: "Commercial", displayAsEmployee: true, valueFonction: this.getSalesEmployee } as SortTableColumn);
+    this.availableColumns.push({ id: "total", fieldName: "total", label: "Montant TTC", valueFonction: this.getTotalPrice } as SortTableColumn);
+    this.availableColumns.push({ id: "createdDate", fieldName: "createdDate", label: "Date de création", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
+
+    this.setColumns();
 
     this.tableAction.push({ actionIcon: "settings", actionName: "Voir le devis", actionLinkFunction: this.getActionLink, display: true, } as SortTableAction);
+
+    if (this.isForDashboard && !this.quotations && this.quotationSearch)
+      this.searchOrders();
   }
 
   quotationSearchForm = this.formBuilder.group({
   });
+
+  setColumns() {
+    this.displayedColumns = [];
+    if (this.availableColumns && this.columnToDisplayOnDashboard && this.isForDashboard) {
+      for (let availableColumn of this.availableColumns)
+        for (let columnToDisplay of this.columnToDisplayOnDashboard)
+          if (availableColumn.id == columnToDisplay)
+            this.displayedColumns.push(availableColumn);
+    }
+    else
+      this.displayedColumns.push(...this.availableColumns);
+  }
 
   getSalesEmployee(element: any): Employee | undefined {
     if (element) {

@@ -16,4 +16,12 @@ export class QuotationStatusService extends AppRestService<QuotationStatus>{
     return this.getList(new HttpParams(), "quotation-status");
   }
 
+  getQuotationStatusByCode(status: QuotationStatus[], code: string) {
+    if (status)
+      for (let statu of status)
+        if (statu.code == code)
+          return statu;
+    return null;
+  }
+
 }

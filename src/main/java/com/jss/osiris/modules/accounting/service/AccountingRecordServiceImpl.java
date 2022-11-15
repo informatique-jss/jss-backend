@@ -165,10 +165,13 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
       generateNewAccountingRecord(LocalDateTime.now(), invoice.getId(), null,
           labelPrefix + " - produit "
               + invoiceItem.getBillingItem().getBillingType().getLabel(),
-          invoiceItem.getPreTaxPrice() - invoiceItem.getDiscountAmount(), null, producAccountingAccount,
+          invoiceItem.getPreTaxPrice()
+              - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount() : 0f),
+          null, producAccountingAccount,
           invoiceItem, invoice, null, salesJournal, null, null);
 
-      balance -= invoiceItem.getPreTaxPrice() - invoiceItem.getDiscountAmount();
+      balance -= invoiceItem.getPreTaxPrice()
+          - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount() : 0f);
 
       if (invoiceItem.getVat() != null) {
         generateNewAccountingRecord(LocalDateTime.now(), invoice.getId(), null,
@@ -229,10 +232,14 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
       generateNewAccountingRecord(LocalDateTime.now(), invoice.getId(), null,
           labelPrefix + " - charge "
               + invoiceItem.getBillingItem().getBillingType().getLabel(),
-          null, invoiceItem.getPreTaxPrice() - invoiceItem.getDiscountAmount(), chargeAccountingAccount,
+          null,
+          invoiceItem.getPreTaxPrice()
+              - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount() : 0f),
+          chargeAccountingAccount,
           invoiceItem, invoice, null, pushasingJournal, null, null);
 
-      balance -= invoiceItem.getPreTaxPrice() - invoiceItem.getDiscountAmount();
+      balance -= invoiceItem.getPreTaxPrice()
+          - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount() : 0f);
 
       if (invoiceItem.getVat() != null) {
         generateNewAccountingRecord(LocalDateTime.now(), invoice.getId(), null,
@@ -766,7 +773,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
               if (provision.getInvoiceItems() != null && provision.getInvoiceItems().size() > 0) {
                 for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
                   total += invoiceItem.getPreTaxPrice() + invoiceItem.getVatPrice()
-                      - invoiceItem.getDiscountAmount();
+                      - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount() : 0f);
                 }
               }
             }

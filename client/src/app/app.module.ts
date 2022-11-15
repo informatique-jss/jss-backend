@@ -23,6 +23,7 @@ import { AppComponent } from './app.component';
 import { HttpErrorInterceptor } from './httpErrorInterceptor.service';
 import { AccountingModule } from './modules/accounting/components/accounting/accounting.module';
 import { AdministrationModule } from './modules/administration/components/administration/administration.module';
+import { DashboardModule } from './modules/dashboard/dashboard.module';
 import { InvoicingModule } from "./modules/invoicing/components/invoicing/invoicing.module";
 import { MiscellaneousModule } from './modules/miscellaneous/components/miscellaneous/miscellaneous.module';
 import { MyProfilComponent } from './modules/profile/components/my-profil/my-profil.component';
@@ -74,6 +75,7 @@ registerLocaleData(localeFr, 'fr');
     AdministrationModule,
     AccountingModule,
     InvoicingModule,
+    DashboardModule,
   ],
   exports: [
   ],

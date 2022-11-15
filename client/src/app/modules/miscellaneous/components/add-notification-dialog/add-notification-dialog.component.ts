@@ -1,6 +1,7 @@
 import { AfterContentChecked, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
+import { AppService } from '../../../../services/app.service';
 import { Notification } from '../../model/Notification';
 
 @Component({
@@ -12,6 +13,7 @@ export class AddNotificationDialogComponent implements OnInit, AfterContentCheck
 
   constructor(public dialogRef: MatDialogRef<AddNotificationDialogComponent>,
     private changeDetectorRef: ChangeDetectorRef,
+    private appService: AppService,
     private formBuilder: FormBuilder,
   ) { }
 
@@ -27,7 +29,11 @@ export class AddNotificationDialogComponent implements OnInit, AfterContentCheck
   }
 
   onConfirm(): void {
-    this.dialogRef.close(this.notification);
+    if (this.notificationForm.valid)
+      this.dialogRef.close(this.notification);
+    else
+      this.appService.displaySnackBar("Veuillez compléter l'ensemble des champs", true, 20);
+
   }
 
   onClose(): void {

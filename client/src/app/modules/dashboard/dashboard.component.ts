@@ -1,0 +1,286 @@
+import { CdkDragEnter, CdkDropList, DragRef, moveItemInArray } from '@angular/cdk/drag-drop';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { forkJoin } from 'rxjs';
+import { CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_TO_VERIFY, QUOTATION_STATUS_OPEN, QUOTATION_STATUS_TO_VERIFY } from 'src/app/libs/Constants';
+import { AppService } from 'src/app/services/app.service';
+import { UserPreferenceService } from '../../services/user.preference.service';
+import { InvoiceSearch } from '../invoicing/model/InvoiceSearch';
+import { PaymentSearch } from '../invoicing/model/PaymentSearch';
+import { IWorkflowElement } from '../miscellaneous/model/IWorkflowElement';
+import { ConstantService } from '../miscellaneous/services/constant.service';
+import { Employee } from '../profile/model/Employee';
+import { EmployeeService } from '../profile/services/employee.service';
+import { AffaireSearch } from '../quotation/model/AffaireSearch';
+import { AnnouncementStatus } from '../quotation/model/AnnouncementStatus';
+import { BodaccStatus } from '../quotation/model/BodaccStatus';
+import { CustomerOrderStatus } from '../quotation/model/CustomerOrderStatus';
+import { DomiciliationStatus } from '../quotation/model/DomiciliationStatus';
+import { FormaliteStatus } from '../quotation/model/FormaliteStatus';
+import { OrderingSearch } from '../quotation/model/OrderingSearch';
+import { QuotationSearch } from '../quotation/model/QuotationSearch';
+import { QuotationStatus } from '../quotation/model/QuotationStatus';
+import { AnnouncementStatusService } from '../quotation/services/announcement.status.service';
+import { BodaccStatusService } from '../quotation/services/bodacc.status.service';
+import { CustomerOrderStatusService } from '../quotation/services/customer.order.status.service';
+import { DomiciliationStatusService } from '../quotation/services/domiciliation-status.service';
+import { FormaliteStatusService } from '../quotation/services/formalite.status.service';
+import { QuotationStatusService } from '../quotation/services/quotation-status.service';
+
+@Component({
+  selector: 'dashboard',
+  templateUrl: './dashboard.component.html',
+  styleUrls: ['./dashboard.component.css'],
+})
+export class DashboardComponent implements OnInit {
+  @ViewChild(CdkDropList) placeholder!: CdkDropList;
+
+  private target: CdkDropList | null = null;
+  private targetIndex!: number;
+  private source: CdkDropList | null = null;
+  private sourceIndex!: number;
+  private dragRef: DragRef | null = null;
+
+  announcementStatus: AnnouncementStatus[] = [] as Array<AnnouncementStatus>;
+  formaliteStatus: FormaliteStatus[] = [] as Array<FormaliteStatus>;
+  bodaccStatus: BodaccStatus[] = [] as Array<BodaccStatus>;
+  domiciliationStatus: DomiciliationStatus[] = [] as Array<DomiciliationStatus>;
+  statusTypes: IWorkflowElement[] = [] as Array<IWorkflowElement>;
+
+  customerOrderStatus: CustomerOrderStatus[] = [] as Array<CustomerOrderStatus>;
+  quotationStatus: QuotationStatus[] = [] as Array<QuotationStatus>;
+
+  currentEmployee: Employee | undefined;
+  items: Array<string> = [];
+  checkboxes: any = [];
+
+  AFFAIRE_IN_PROGRESS = "Mes prestations en cours";
+  AFFAIRE_TO_DO = "Mes prestations à faire";
+  AFFAIRE_RESPONSIBLE_TO_DO = "Mes prestations en responsabilité à faire";
+  AFFAIRE_RESPONSIBLE_IN_PROGRESS = "Mes prestations en responsabilité en cours";
+
+  affaireSearchInProgress: AffaireSearch = {} as AffaireSearch;
+  affaireSearchToDo: AffaireSearch = {} as AffaireSearch;
+  affaireSearchResponsibleInProgress: AffaireSearch = {} as AffaireSearch;
+  affaireSearchResponsibleToDo: AffaireSearch = {} as AffaireSearch;
+
+  ORDER_OPEN = "Mes commandes ouvertes";
+  ORDER_TO_VERIFY = "Mes commandes à vérifier";
+  ORDER_BEING_PROCESSED = "Mes commandes en cours";
+  ORDER_TO_BILLED = "Commandes en attente de facturation";
+
+  orderingSearchOpen: OrderingSearch = {} as OrderingSearch;
+  orderingSearchToVerify: OrderingSearch = {} as OrderingSearch;
+  orderingSearchBeingProcessed: OrderingSearch = {} as OrderingSearch;
+  orderingSearchToBilled: OrderingSearch = {} as OrderingSearch;
+
+  QUOTATION_OPEN = "Mes devis ouverts";
+  QUOTATION_TO_VERIFY = "Mes devis à vérifier";
+  quotationSearchOpen: QuotationSearch = {} as QuotationSearch;
+  quotationSearchToVerify: QuotationSearch = {} as QuotationSearch;
+
+  INVOICE_TO_ASSOCIATE = "Factures à associer";
+  invoiceSearchToAssociate: InvoiceSearch = {} as InvoiceSearch;
+
+  PAYMENT_TO_ASSOCIATE = "Paiements entrants à associer";
+  paymentSearchToAssociate: PaymentSearch = {} as PaymentSearch;
+
+  allItems: Array<string> = [this.PAYMENT_TO_ASSOCIATE, this.INVOICE_TO_ASSOCIATE, this.QUOTATION_TO_VERIFY, this.QUOTATION_OPEN, this.ORDER_TO_BILLED, this.ORDER_BEING_PROCESSED, this.ORDER_TO_VERIFY, this.ORDER_OPEN, this.AFFAIRE_RESPONSIBLE_IN_PROGRESS, this.AFFAIRE_RESPONSIBLE_TO_DO, this.AFFAIRE_IN_PROGRESS, this.AFFAIRE_TO_DO].sort((a, b) => a.localeCompare(b));
+
+  constructor(private appService: AppService,
+    private employeeService: EmployeeService,
+    private formaliteStatusService: FormaliteStatusService,
+    private bodaccStatusService: BodaccStatusService,
+    private domiciliationStatusService: DomiciliationStatusService,
+    private announcementStatusService: AnnouncementStatusService,
+    private userPreferenceService: UserPreferenceService,
+    private customerOrderStatusService: CustomerOrderStatusService,
+    private quotationStatusService: QuotationStatusService,
+    private constantService: ConstantService,
+  ) { }
+
+  ngOnInit() {
+    this.appService.changeHeaderTitle("Tableau de bord");
+    this.employeeService.getCurrentEmployee().subscribe(response => {
+      this.currentEmployee = response;
+
+      forkJoin([this.bodaccStatusService.getBodaccStatus(), this.domiciliationStatusService.getDomiciliationStatus(),
+      this.announcementStatusService.getAnnouncementStatus(), this.formaliteStatusService.getFormaliteStatus(),
+      this.customerOrderStatusService.getCustomerOrderStatus(),
+      this.quotationStatusService.getQuotationStatus()]).subscribe(response => {
+        this.bodaccStatus = response[0];
+        this.statusTypes.push(...response[0]);
+        this.domiciliationStatus = response[1];
+        this.statusTypes.push(...response[1]);
+        this.announcementStatus = response[2];
+        this.statusTypes.push(...response[2]);
+        this.formaliteStatus = response[3];
+        this.statusTypes.push(...response[3]);
+
+        this.customerOrderStatus = response[4];
+        this.quotationStatus = response[5];
+
+        this.affaireSearchInProgress.assignedTo = this.currentEmployee;
+        this.affaireSearchInProgress.status = this.statusTypes.filter(stauts => !stauts.isOpenState && !stauts.isCloseState);
+
+        this.affaireSearchToDo.assignedTo = this.currentEmployee;
+        this.affaireSearchToDo.status = this.statusTypes.filter(stauts => stauts.isOpenState);
+
+        this.affaireSearchResponsibleInProgress.responsible = this.currentEmployee;
+        this.affaireSearchResponsibleInProgress.status = this.statusTypes.filter(stauts => stauts.isOpenState);
+
+        this.affaireSearchResponsibleToDo.responsible = this.currentEmployee;
+        this.affaireSearchResponsibleToDo.status = this.statusTypes.filter(stauts => stauts.isOpenState);
+
+        this.orderingSearchOpen.salesEmployee = this.currentEmployee!;
+        this.orderingSearchOpen.customerOrderStatus = [this.customerOrderStatusService.getCustomerStatusByCode(this.customerOrderStatus, CUSTOMER_ORDER_STATUS_OPEN)!];
+
+        this.orderingSearchToVerify.salesEmployee = this.currentEmployee!;
+        this.orderingSearchToVerify.customerOrderStatus = [this.customerOrderStatusService.getCustomerStatusByCode(this.customerOrderStatus, CUSTOMER_ORDER_STATUS_TO_VERIFY)!];
+
+        this.orderingSearchBeingProcessed.salesEmployee = this.currentEmployee!;
+        this.orderingSearchBeingProcessed.customerOrderStatus = [this.customerOrderStatusService.getCustomerStatusByCode(this.customerOrderStatus, CUSTOMER_ORDER_STATUS_BEING_PROCESSED)!];
+
+        this.orderingSearchToBilled.customerOrderStatus = [this.customerOrderStatusService.getCustomerStatusByCode(this.customerOrderStatus, CUSTOMER_ORDER_STATUS_TO_BILLED)!];
+
+        this.quotationSearchOpen.salesEmployee = this.currentEmployee!;
+        this.quotationSearchOpen.quotationStatus = [this.quotationStatusService.getQuotationStatusByCode(this.quotationStatus, QUOTATION_STATUS_OPEN)!];
+
+        this.quotationSearchToVerify.salesEmployee = this.currentEmployee!;
+        this.quotationSearchToVerify.quotationStatus = [this.quotationStatusService.getQuotationStatusByCode(this.quotationStatus, QUOTATION_STATUS_TO_VERIFY)!];
+
+        this.invoiceSearchToAssociate.invoiceStatus = [this.constantService.getInvoiceStatusSend()];
+
+        this.paymentSearchToAssociate.isHideAssociatedPayments = true;
+        this.paymentSearchToAssociate.paymentWays = [this.constantService.getPaymentWayInbound()];
+
+        // restore bookmark
+        let bookmark = this.userPreferenceService.getUserSearchBookmark("dashboard") as Array<string>;
+        if (bookmark)
+          this.items = bookmark;
+
+        // clean items that doesn't exist anymore
+        for (let item of this.items)
+          if (this.allItems.indexOf(item) < 0)
+            this.items.splice(this.items.indexOf(item));
+
+        // init checkboxes
+        for (let allItem of this.allItems)
+          this.checkboxes.push({ id: allItem, value: false })
+
+        this.updateCheckboxes();
+      })
+    })
+  }
+
+  toggleDisplay(table: string) {
+    if (this.items.indexOf(table) >= 0)
+      this.items.splice(this.items.indexOf(table), 1);
+    else
+      this.items.push(table);
+    this.userPreferenceService.setUserSearchBookmark(this.items, "dashboard");
+    setTimeout(() => {
+      this.updateCheckboxes();
+    });
+  }
+
+  updateCheckboxes() {
+    for (let checkbox of this.checkboxes) {
+      let found = false;
+      if (this.items)
+        for (let item of this.items)
+          if (item == checkbox.id)
+            found = true;
+      checkbox.value = found;
+    }
+  }
+
+  /* Drag & drop functions */
+
+  boxWidth = '500px';
+  boxHeight = '400px';
+
+  ngAfterViewInit() {
+    const placeholderElement = this.placeholder.element.nativeElement;
+
+    placeholderElement.style.display = 'none';
+    placeholderElement.parentNode!.removeChild(placeholderElement);
+  }
+
+  onDropListDropped() {
+    if (!this.target) {
+      return;
+    }
+
+    const placeholderElement: HTMLElement =
+      this.placeholder.element.nativeElement;
+    const placeholderParentElement: HTMLElement =
+      placeholderElement.parentElement!;
+
+    placeholderElement.style.display = 'none';
+
+    placeholderParentElement.removeChild(placeholderElement);
+    placeholderParentElement.appendChild(placeholderElement);
+    placeholderParentElement.insertBefore(
+      this.source!.element.nativeElement,
+      placeholderParentElement.children[this.sourceIndex]
+    );
+
+    if (this.placeholder._dropListRef.isDragging()) {
+      this.placeholder._dropListRef.exit(this.dragRef!);
+    }
+
+    this.target = null;
+    this.source = null;
+    this.dragRef = null;
+
+    if (this.sourceIndex !== this.targetIndex) {
+      moveItemInArray(this.items, this.sourceIndex, this.targetIndex);
+    }
+  }
+
+  onDropListEntered({ item, container }: CdkDragEnter) {
+    if (container == this.placeholder) {
+      return;
+    }
+
+    const placeholderElement: HTMLElement =
+      this.placeholder.element.nativeElement;
+    const sourceElement: HTMLElement = item.dropContainer.element.nativeElement;
+    const dropElement: HTMLElement = container.element.nativeElement;
+    const dragIndex: number = Array.prototype.indexOf.call(
+      dropElement.parentElement!.children,
+      this.source ? placeholderElement : sourceElement
+    );
+    const dropIndex: number = Array.prototype.indexOf.call(
+      dropElement.parentElement!.children,
+      dropElement
+    );
+
+    if (!this.source) {
+      this.sourceIndex = dragIndex;
+      this.source = item.dropContainer;
+
+      placeholderElement.style.width = this.boxWidth + 'px';
+      placeholderElement.style.height = this.boxHeight + 40 + 'px';
+
+      sourceElement.parentElement!.removeChild(sourceElement);
+    }
+
+    this.targetIndex = dropIndex;
+    this.target = container;
+    this.dragRef = item._dragRef;
+
+    placeholderElement.style.display = '';
+
+    dropElement.parentElement!.insertBefore(
+      placeholderElement,
+      dropIndex > dragIndex ? dropElement.nextSibling : dropElement
+    );
+
+    this.placeholder._dropListRef.enter(
+      item._dragRef,
+      item.element.nativeElement.offsetLeft,
+      item.element.nativeElement.offsetTop
+    );
+  }
+}

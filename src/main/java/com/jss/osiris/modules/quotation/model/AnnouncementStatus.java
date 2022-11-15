@@ -27,7 +27,13 @@ public class AnnouncementStatus implements Serializable, IId {
 	 */
 	public static String ANNOUNCEMENT_NEW = "ANNOUNCEMENT_NEW";
 	public static String ANNOUNCEMENT_TODO = "ANNOUNCEMENT_TODO";
+	public static String ANNOUNCEMENT_IN_PROGRESS = "ANNOUNCEMENT_IN_PROGRESS";
+	public static String ANNOUNCEMENT_WAITING_DOCUMENT = "ANNOUNCEMENT_WAITING_DOCUMENT";
+	public static String ANNOUNCEMENT_ENVOYE = "ANNOUNCEMENT_ENVOYE";
+	public static String ANNOUNCEMENT_WAITING_CONFRERE = "ANNOUNCEMENT_WAITING_CONFRERE";
+	public static String ANNOUNCEMENT_WAITING_PUBLICATION = "ANNOUNCEMENT_WAITING_PUBLICATION";
 	public static String ANNOUNCEMENT_DONE = "ANNOUNCEMENT_DONE";
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
@@ -35,7 +41,7 @@ public class AnnouncementStatus implements Serializable, IId {
 	@Column(nullable = false, length = 100)
 	private String label;
 
-	@Column(nullable = false, length = 30)
+	@Column(nullable = false, length = 100)
 	private String code;
 
 	private String icon;

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.invoicing.service.PaymentService;
+import com.jss.osiris.modules.miscellaneous.service.NotificationService;
 import com.jss.osiris.modules.profile.service.EmployeeService;
 
 @Service
@@ -28,6 +29,9 @@ public class OsirisScheduller {
 
 	@Autowired
 	MailHelper mailHelper;
+
+	@Autowired
+	NotificationService notificationService;
 
 	@Value("${schedulling.pool.size}")
 	private Integer schedullingPoolSize;
@@ -63,5 +67,10 @@ public class OsirisScheduller {
 	@Scheduled(initialDelay = 500, fixedDelayString = "${schedulling.mail.sender}")
 	private void mailSender() throws Exception {
 		mailHelper.sendNextMail();
+	}
+
+	@Scheduled(cron = "${schedulling.notification.purge}")
+	private void purgeNotidication() throws Exception {
+		notificationService.purgeNotification();
 	}
 }

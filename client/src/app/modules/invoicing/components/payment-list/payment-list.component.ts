@@ -16,9 +16,12 @@ import { PaymentWayService } from '../../services/payment.way.service';
   styleUrls: ['./payment-list.component.css']
 })
 export class PaymentListComponent implements OnInit {
-  paymentSearch: PaymentSearch = {} as PaymentSearch;
+  @Input() paymentSearch: PaymentSearch = {} as PaymentSearch;
+  @Input() isForDashboard: boolean = false;
   payments: Payment[] | undefined;
+  availableColumns: SortTableColumn[] = [];
   displayedColumns: SortTableColumn[] = [];
+  columnToDisplayOnDashboard: string[] = ["affaireLabel", "provisionType", "status"];
   tableAction: SortTableAction[] = [];
 
   @Output() actionBypass: EventEmitter<Payment> = new EventEmitter<Payment>();
@@ -37,15 +40,15 @@ export class PaymentListComponent implements OnInit {
 
   ngOnInit() {
     this.putDefaultPeriod();
-    this.displayedColumns = [];
-    this.displayedColumns.push({ id: "id", fieldName: "id", label: "N° du paiement" } as SortTableColumn);
-    this.displayedColumns.push({ id: "paymentWay", fieldName: "paymentWay.label", label: "Sens" } as SortTableColumn);
-    this.displayedColumns.push({ id: "payemntDate", fieldName: "paymentDate", label: "Date", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
-    this.displayedColumns.push({ id: "payemntAmount", fieldName: "paymentAmount", label: "Montant", valueFonction: formatEurosForSortTable } as SortTableColumn);
-    this.displayedColumns.push({ id: "label", fieldName: "label", label: "Libellé" } as SortTableColumn);
-    this.displayedColumns.push({ id: "isInternallyAssociated", fieldName: "isInternallyAssociated", label: "Associé dans Osiris", valueFonction: (element: any) => { return (element.invoice || element.customerOrder) ? "Oui" : "Non" } } as SortTableColumn);
-    this.displayedColumns.push({ id: "isExternallyAssociated", fieldName: "isExternallyAssociated", label: "Associé hors Osiris", valueFonction: (element: any) => { return element.isExternallyAssociated ? "Oui" : "Non" } } as SortTableColumn);
-    this.displayedColumns.push({ id: "invoice", fieldName: "invoices.id", label: "Facture associée", valueFonction: this.getInvoiceLabel, actionLinkFunction: this.getActionLink, actionIcon: "visibility", actionTooltip: "Voir la facture associée" } as SortTableColumn);
+    this.availableColumns = [];
+    this.availableColumns.push({ id: "id", fieldName: "id", label: "N° du paiement" } as SortTableColumn);
+    this.availableColumns.push({ id: "paymentWay", fieldName: "paymentWay.label", label: "Sens" } as SortTableColumn);
+    this.availableColumns.push({ id: "payemntDate", fieldName: "paymentDate", label: "Date", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
+    this.availableColumns.push({ id: "payemntAmount", fieldName: "paymentAmount", label: "Montant", valueFonction: formatEurosForSortTable } as SortTableColumn);
+    this.availableColumns.push({ id: "label", fieldName: "label", label: "Libellé" } as SortTableColumn);
+    this.availableColumns.push({ id: "isInternallyAssociated", fieldName: "isInternallyAssociated", label: "Associé dans Osiris", valueFonction: (element: any) => { return (element.invoice || element.customerOrder) ? "Oui" : "Non" } } as SortTableColumn);
+    this.availableColumns.push({ id: "isExternallyAssociated", fieldName: "isExternallyAssociated", label: "Associé hors Osiris", valueFonction: (element: any) => { return element.isExternallyAssociated ? "Oui" : "Non" } } as SortTableColumn);
+    this.availableColumns.push({ id: "invoice", fieldName: "invoices.id", label: "Facture associée", valueFonction: this.getInvoiceLabel, actionLinkFunction: this.getActionLink, actionIcon: "visibility", actionTooltip: "Voir la facture associée" } as SortTableColumn);
 
     if (this.overrideIconAction == "") {
       this.tableAction.push({
@@ -77,10 +80,27 @@ export class PaymentListComponent implements OnInit {
     };
 
     this.paymentSearch.isHideAssociatedPayments = true;
+
+    if (this.isForDashboard && !this.payments && this.paymentSearch) {
+      this.searchPayments();
+      this.putDefaultPeriod();
+    }
   }
 
   paymentForm = this.formBuilder.group({
   });
+
+  setColumns() {
+    this.displayedColumns = [];
+    if (this.availableColumns && this.columnToDisplayOnDashboard && this.isForDashboard) {
+      for (let availableColumn of this.availableColumns)
+        for (let columnToDisplay of this.columnToDisplayOnDashboard)
+          if (availableColumn.id == columnToDisplay)
+            this.displayedColumns.push(availableColumn);
+    }
+    else
+      this.displayedColumns.push(...this.availableColumns);
+  }
 
   getActionLink(action: SortTableColumn, element: any) {
     if (element && action.id == "invoice" && element.invoices && element.invoices[0] && element.invoices.length == 1)

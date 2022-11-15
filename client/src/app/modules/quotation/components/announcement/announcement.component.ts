@@ -144,10 +144,11 @@ export class AnnouncementComponent implements OnInit {
   });
 
   getFormStatus(): boolean {
+    console.log(this.announcementForm);
     this.announcementForm.markAllAsTouched();
     if (this.announcement && this.announcement.notice)
       this.announcement.notice = this.announcement.notice.replace(/ +(?= )/g, '').replace(/(\r\n|\r|\n){2,}/g, '$1\n');
-    return this.announcementForm.valid && this.announcement.noticeTypes && this.announcement.noticeTypes.length > 0;
+    return this.announcementForm.valid && (this.isStatusOpen || !this.instanceOfCustomerOrder || this.announcement.noticeTypes && this.announcement.noticeTypes.length > 0);
   }
 
   getCurrentDate(): Date {
