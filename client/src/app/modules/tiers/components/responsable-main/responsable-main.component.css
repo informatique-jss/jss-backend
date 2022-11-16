@@ -36,3 +36,8 @@ td {
 .mat-accordion-container {
   padding-top: 15px
 }
+
+.integration-component {
+  width: 100%;
+  height: 100%;
+}

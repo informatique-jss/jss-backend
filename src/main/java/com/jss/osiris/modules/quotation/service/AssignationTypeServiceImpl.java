@@ -3,8 +3,6 @@ package com.jss.osiris.modules.quotation.service;
 import java.util.List;
 import java.util.Optional;
 
-import javax.annotation.PostConstruct;
-
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
@@ -46,7 +44,7 @@ public class AssignationTypeServiceImpl implements AssignationTypeService {
         return assignationTypeRepository.save(assignationType);
     }
 
-    @PostConstruct
+    @Override
     public void updateAssignationTypes() {
         updateAssignationType(AssignationType.FORMALISTE, "Assigner au formaliste");
         updateAssignationType(AssignationType.EMPLOYEE, "Assigné à l'employé par défaut");

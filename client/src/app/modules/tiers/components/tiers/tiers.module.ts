@@ -17,6 +17,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule, Routes } from '@angular/router';
 import { MiscellaneousModule } from 'src/app/modules/miscellaneous/components/miscellaneous/miscellaneous.module';
 import { SpecialOffersDialogComponent } from 'src/app/modules/miscellaneous/components/special-offers-dialog/special-offers-dialog.component';
+import { QuotationModule } from '../../../quotation/components/quotation/quotation.module';
 import { ResponsableMainComponent } from '../responsable-main/responsable-main.component';
 import { SettlementBillingComponent } from '../settlement-billing/settlement-billing.component';
 import { TiersFollowupComponent } from '../tiers-followup/tiers-followup.component';
@@ -47,7 +48,8 @@ const routes: Routes = [
     MatSortModule,
     MiscellaneousModule,
     MatTooltipModule,
-    DragDropModule
+    DragDropModule,
+    QuotationModule,
   ],
   declarations: [TiersComponent,
     PrincipalComponent,

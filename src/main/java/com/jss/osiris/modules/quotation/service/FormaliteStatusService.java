@@ -12,4 +12,6 @@ public interface FormaliteStatusService {
     public FormaliteStatus addOrUpdateFormaliteStatus(FormaliteStatus formaliteStatus);
 
     public FormaliteStatus getFormaliteStatusByCode(String code);
+
+    public void updateStatusReferential() throws Exception;
 }

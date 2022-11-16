@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.profile.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -88,5 +89,27 @@ public class EmployeeServiceImpl implements EmployeeService {
         if (username != null)
             return employeeRepository.findByUsername(username);
         return null;
+    }
+
+    /**
+     * Take a requested employee in param
+     * - if request employee is null, return null
+     * - if requested employee is myself, return myself and responsible
+     * holidaymarkers assigned to me
+     * - if requested employee is not myself, return request employee
+     * 
+     * @return list of Employee to take into account
+     */
+    @Override
+    public List<Employee> getMyHolidaymaker(Employee requestedEmployee) {
+        if (requestedEmployee == null)
+            return null;
+
+        Employee currentUser = getCurrentEmployee();
+        List<Employee> holidaymakers = employeeRepository.getMyHolidaymaker(currentUser.getId());
+        if (holidaymakers == null)
+            holidaymakers = new ArrayList<Employee>();
+        holidaymakers.add(currentUser);
+        return holidaymakers;
     }
 }

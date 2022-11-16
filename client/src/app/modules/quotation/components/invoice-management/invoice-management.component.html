@@ -11,13 +11,13 @@
   <form [formGroup]="invoiceManagementForm" *ngIf="canModifyInvoice()">
     <div *ngFor="let asso of quotation.assoAffaireOrders;let indexAsso = index">
       <td class="affaire" *ngIf="asso.affaire && asso.affaire.denomination">
-        {{asso.affaire.denomination}} {{asso.id}}
+        {{asso.affaire.denomination}}
       </td>
       <td class="affaire" *ngIf="asso.affaire && asso.affaire.firstname">
         {{asso.affaire.firstname}} - {{asso.affaire.lastname}} -
       </td>
-      <div *ngFor="let provision of asso.provisions">{{provision.id}}
-        <div *ngFor="let invoiceItem of provision.invoiceItems;let indexInvoiceItem = index">{{invoiceItem.id}}
+      <div *ngFor="let provision of asso.provisions">
+        <div *ngFor="let invoiceItem of provision.invoiceItems;let indexInvoiceItem = index">
           <table>
             <tr *ngIf="provision.provisionType">
               <td class="affaire">

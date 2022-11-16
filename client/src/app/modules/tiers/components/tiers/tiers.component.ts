@@ -1,6 +1,8 @@
 import { AfterContentChecked, ChangeDetectorRef, Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router, UrlSegment } from '@angular/router';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
+import { OrderingSearch } from 'src/app/modules/quotation/model/OrderingSearch';
+import { QuotationSearch } from 'src/app/modules/quotation/model/QuotationSearch';
 import { TIERS_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
 import { SearchService } from 'src/app/services/search.service';
@@ -24,6 +26,9 @@ export class TiersComponent implements OnInit, AfterContentChecked {
   createMode: boolean = false;
 
   TIERS_ENTITY_TYPE = TIERS_ENTITY_TYPE;
+
+  orderingSearch: OrderingSearch = {} as OrderingSearch;
+  quotationSearch: QuotationSearch = {} as QuotationSearch;
 
   selectedTabIndex = 0;
 
@@ -56,6 +61,9 @@ export class TiersComponent implements OnInit, AfterContentChecked {
         this.toggleTabs();
         this.selectedTabIndex = (!this.tiers.tiersType || this.tiers.tiersType.id == this.constantService.getTiersTypeProspect().id) ? 1 : 2;
         this.responsableMainComponent?.setSelectedResponsableId(idTiers);
+
+        this.orderingSearch.customerOrders = [this.tiers];
+        this.quotationSearch.customerOrders = [this.tiers];
       })
       // Load by tiers
     } else if (idTiers != null && idTiers != undefined) {
@@ -64,6 +72,9 @@ export class TiersComponent implements OnInit, AfterContentChecked {
         this.tiersService.setCurrentViewedTiers(this.tiers);
         this.changeHeader();
         this.toggleTabs();
+
+        this.orderingSearch.customerOrders = [this.tiers];
+        this.quotationSearch.customerOrders = [this.tiers];
       })
     } else if (this.createMode == false) {
       // Blank page

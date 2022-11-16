@@ -277,7 +277,7 @@ public class MiscellaneousController {
         if (notification == null)
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
-        List<Employee> backupEmployee = activeDirectoryHelper
+        List<Employee> backupEmployee = employeeService
                 .getMyHolidaymaker(employeeService.getCurrentEmployee());
 
         if (notification.getNotificationType().equals(Notification.PERSONNAL)) {

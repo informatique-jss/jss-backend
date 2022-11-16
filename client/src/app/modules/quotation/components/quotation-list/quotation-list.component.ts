@@ -3,11 +3,13 @@ import { FormBuilder } from '@angular/forms';
 import { formatDateTimeForSortTable, toIsoString } from 'src/app/libs/FormatHelper';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
+import { EmployeeService } from 'src/app/modules/profile/services/employee.service';
 import { AppService } from 'src/app/services/app.service';
 import { Employee } from '../../../profile/model/Employee';
 import { IQuotation } from '../../model/IQuotation';
 import { QuotationSearch } from '../../model/QuotationSearch';
-import { QuotationService } from '../../services/quotation.service';
+import { QuotationSearchResult } from '../../model/QuotationSearchResult';
+import { QuotationSearchResultService } from '../../services/quotation.search.result.service';
 import { QuotationComponent } from '../quotation/quotation.component';
 
 @Component({
@@ -18,37 +20,55 @@ import { QuotationComponent } from '../quotation/quotation.component';
 export class QuotationListComponent implements OnInit {
   @Input() quotationSearch: QuotationSearch = {} as QuotationSearch;
   @Input() isForDashboard: boolean = false;
-  quotations: IQuotation[] | undefined;
+  @Input() isForTiersIntegration: boolean = false;
+  quotations: QuotationSearchResult[] | undefined;
   availableColumns: SortTableColumn[] = [];
-  columnToDisplayOnDashboard: string[] = ["customerOrderName", "quotationStatus", "total"];
+  columnToDisplayOnDashboard: string[] = ["customerOrderName", "quotationStatus", "quotationDescription"];
   displayedColumns: SortTableColumn[] = [];
   tableAction: SortTableAction[] = [];
 
+  allEmployees: Employee[] | undefined;
+
   constructor(
     private appService: AppService,
-    private quotationService: QuotationService,
+    private quotationSearchResultService: QuotationSearchResultService,
+    private employeeService: EmployeeService,
     private formBuilder: FormBuilder,
   ) { }
 
   ngOnInit() {
     this.putDefaultPeriod();
-    if (!this.isForDashboard)
-      this.appService.changeHeaderTitle("Devis");
+    this.employeeService.getEmployees().subscribe(response => {
+      this.allEmployees = response;
+      if (!this.isForDashboard && !this.isForTiersIntegration)
+        this.appService.changeHeaderTitle("Devis");
 
-    this.availableColumns = [];
-    this.availableColumns.push({ id: "id", fieldName: "id", label: "N° de la commande" } as SortTableColumn);
-    this.availableColumns.push({ id: "customerOrderName", fieldName: "tiers", label: "Donneur d'ordre", valueFonction: this.getCustomerOrderName, actionLinkFunction: this.getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la fiche du donneur d'ordre" } as SortTableColumn);
-    this.availableColumns.push({ id: "quotationStatus", fieldName: "customerOrderStatus.label", label: "Statut" } as SortTableColumn);
-    this.availableColumns.push({ id: "salesEmployee", fieldName: "salesEmployee", label: "Commercial", displayAsEmployee: true, valueFonction: this.getSalesEmployee } as SortTableColumn);
-    this.availableColumns.push({ id: "total", fieldName: "total", label: "Montant TTC", valueFonction: this.getTotalPrice } as SortTableColumn);
-    this.availableColumns.push({ id: "createdDate", fieldName: "createdDate", label: "Date de création", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
 
-    this.setColumns();
+      this.availableColumns = [];
+      this.availableColumns.push({ id: "id", fieldName: "quotationId", label: "N° de la commande" } as SortTableColumn);
+      this.availableColumns.push({ id: "customerOrderName", fieldName: "customerOrderLabel", label: "Donneur d'ordre", actionLinkFunction: this.getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la fiche du donneur d'ordre" } as SortTableColumn);
+      this.availableColumns.push({ id: "quotationStatus", fieldName: "quotationStatus", label: "Statut" } as SortTableColumn);
+      this.availableColumns.push({
+        id: "salesEmployee", fieldName: "salesEmployeeId", label: "Commercial", displayAsEmployee: true, valueFonction: (element: any) => {
+          if (element && this.allEmployees) {
+            for (let employee of this.allEmployees)
+              if (employee.id == element.salesEmployeeId)
+                return employee;
+          }
+          return undefined;
+        }
+      } as SortTableColumn);
+      this.availableColumns.push({ id: "quotationDescription", fieldName: "quotationDescription", label: "Description", isShrinkColumn: true } as SortTableColumn);
+      this.availableColumns.push({ id: "createdDate", fieldName: "createdDate", label: "Date de création", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
 
-    this.tableAction.push({ actionIcon: "settings", actionName: "Voir le devis", actionLinkFunction: this.getActionLink, display: true, } as SortTableAction);
+      this.setColumns();
 
-    if (this.isForDashboard && !this.quotations && this.quotationSearch)
-      this.searchOrders();
+      this.tableAction.push({ actionIcon: "settings", actionName: "Voir le devis", actionLinkFunction: this.getActionLink, display: true, } as SortTableAction);
+
+      if ((this.isForDashboard || this.isForTiersIntegration) && !this.quotations && this.quotationSearch)
+        this.searchOrders();
+
+    });
   }
 
   quotationSearchForm = this.formBuilder.group({
@@ -67,32 +87,31 @@ export class QuotationListComponent implements OnInit {
   }
 
   getSalesEmployee(element: any): Employee | undefined {
-    if (element) {
-      if (element.confrere && element.confrere.salesEmployee)
-        return element.confrere.salesEmployee;
-      if (element.responsable && element.responsable && element.responsable.salesEmployee)
-        return element.responsable.salesEmployee;
-      if (element.responsable && element.responsable.tiers && element.responsable.tiers.salesEmployee)
-        return element.responsable.tiers.salesEmployee;
-      if (element.tiers && element.tiers.salesEmployee)
-        return element.tiers.salesEmployee;
+    if (element && this.allEmployees) {
+      for (let employee of this.allEmployees)
+        if (employee.id == element.salesEmployeeId)
+          return employee;
     }
     return undefined;
   }
 
   getActionLink(action: SortTableAction, element: any) {
     if (element)
-      return ['/quotation', element.id];
+      return ['/quotation', element.quotationId];
     return undefined;
   }
+
+
   getColumnLink(column: SortTableColumn, element: any) {
     if (element && column.id == "customerOrderName") {
-      if (element.responsable)
-        return ['/tiers/responsable/', element.responsable.id];
-      if (element.tiers)
-        return ['/tiers/', element.tiers.id];
+      if (element.responsableId)
+        return ['/tiers/responsable/', element.responsableId];
+      if (element.tiersId)
+        return ['/tiers/', element.tiersId];
+      if (element.confrereId)
+        return ['/referential/confrere/', element.confrereId];
     }
-    return ['/tiers', element.tiers.id];
+    return ['/tiers'];
   }
 
   getTotalPrice(element: any) {
@@ -123,7 +142,7 @@ export class QuotationListComponent implements OnInit {
     if (this.quotationSearchForm.valid && this.quotationSearch.startDate && this.quotationSearch.endDate) {
       this.quotationSearch.startDate = new Date(toIsoString(this.quotationSearch.startDate));
       this.quotationSearch.endDate = new Date(toIsoString(this.quotationSearch.endDate));
-      this.quotationService.getQuotations(this.quotationSearch).subscribe(response => {
+      this.quotationSearchResultService.getQuotations(this.quotationSearch).subscribe(response => {
         this.quotations = response;
       })
     }

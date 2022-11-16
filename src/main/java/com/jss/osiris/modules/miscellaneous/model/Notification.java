@@ -34,7 +34,7 @@ public class Notification implements Serializable, IId {
   public static String CUSTOMER_ORDER_TO_BE_BILLED = "CUSTOMER_ORDER_TO_BE_BILLED";
 
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "notification_sequence")
   private Integer id;
 
   @ManyToOne

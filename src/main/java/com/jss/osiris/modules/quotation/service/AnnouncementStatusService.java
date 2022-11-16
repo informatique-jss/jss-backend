@@ -12,4 +12,6 @@ public interface AnnouncementStatusService {
     public AnnouncementStatus addOrUpdateAnnouncementStatus(AnnouncementStatus announcementStatus);
 
     public AnnouncementStatus getAnnouncementStatusByCode(String code);
+
+    public void updateStatusReferential() throws Exception;
 }

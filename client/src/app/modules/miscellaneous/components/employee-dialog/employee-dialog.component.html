@@ -1,7 +1,6 @@
 <h1 mat-dialog-title>{{title}}</h1>
 <div mat-dialog-content>
-  <p>{{content}} <mat-icon class="pointer note-icon" matTooltip="Me choisir" (click)="chooseMyself()">account_circle
-    </mat-icon>
+  <p>{{content}}
   <p>
     <autocomplete-employee [(model)]="employee" [form]="employeeForm" propertyName="employee" [isMandatory]="true"
       [isDisabled]="false"></autocomplete-employee>

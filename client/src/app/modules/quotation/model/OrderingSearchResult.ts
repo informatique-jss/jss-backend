@@ -1,0 +1,13 @@
+
+export interface OrderingSearchResult {
+
+  customerOrderLabel: string;
+  customerOrderStatus: string;
+  createdDate: Date;
+  salesEmployeeId: number;
+  customerOrderDescription: string;
+  customerOrderId: number;
+  responsableId: number;
+  tiersId: number;
+  confrereId: number;
+}

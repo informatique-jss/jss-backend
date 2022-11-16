@@ -152,8 +152,11 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
       ));
 
     let url: UrlSegment[] = this.activatedRoute.snapshot.url;
-    if (url != undefined && url != null && url[0] != undefined &&  url[1]!=undefined && url[1].path == "affaire") {
+    if (url != undefined && url != null && url[0] != undefined && url[1] != undefined && url[1].path == "affaire") {
       this.selectedReferential = this.AFFAIRE_REFERENTIAL;
+    }
+    if (url != undefined && url != null && url[0] != undefined && url[1] != undefined && url[1].path == "confrere") {
+      this.selectedReferential = this.CONFRERE_REFERENTIAL;
     }
   }
 

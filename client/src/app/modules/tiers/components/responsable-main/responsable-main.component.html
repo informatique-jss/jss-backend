@@ -77,20 +77,20 @@
               <table class="full-width">
                 <tr>
                   <td>
-                    <autocomplete-sales-employee [(model)]="selectedResponsable.salesEmployee" [form]="principalForm"
+                    <autocomplete-employee [(model)]="selectedResponsable.salesEmployee" [form]="principalForm"
                       label="Commercial" propertyName="salesEmployee" [isMandatory]="true" [isDisabled]="!editMode">
-                    </autocomplete-sales-employee>
+                    </autocomplete-employee>
                   </td>
                   <td>
-                    <autocomplete-formaliste-employee [(model)]="selectedResponsable.formalisteEmployee"
-                      label="Formaliste" [isDisabled]="!editMode" [form]="principalForm"
-                      propertyName="formalisteEmployee" [isDisabled]="!editMode">
-                    </autocomplete-formaliste-employee>
+                    <autocomplete-employee [(model)]="selectedResponsable.formalisteEmployee" label="Formaliste"
+                      [isDisabled]="!editMode" [form]="principalForm" propertyName="formalisteEmployee"
+                      [isDisabled]="!editMode">
+                    </autocomplete-employee>
                   <td>
-                    <autocomplete-insertion-employee [(model)]="selectedResponsable.insertionEmployee"
-                      label="Publiciste" [isDisabled]="!editMode" [form]="principalForm"
-                      propertyName="insertionEmployee" [isDisabled]="!editMode">
-                    </autocomplete-insertion-employee>
+                    <autocomplete-employee [(model)]="selectedResponsable.insertionEmployee" label="Publiciste"
+                      [isDisabled]="!editMode" [form]="principalForm" propertyName="insertionEmployee"
+                      [isDisabled]="!editMode">
+                    </autocomplete-employee>
                   </td>
                   <td>
                     <generic-datepicker [(model)]="selectedResponsable.firstBilling" label="Première facturation"
@@ -212,6 +212,18 @@
           <attachments [entity]="selectedResponsable!" [editMode]="editMode"
             [entityType]="RESPONSABLE_ENTITY_TYPE.entityType">
           </attachments>
+        </mat-tab>
+        <mat-tab label="Devis" *ngIf="tiers.id!=null && tiers.id!=undefined">
+          <quotation-list class="integration-component"
+            *ngIf="this.quotationSearch.customerOrders && this.quotationSearch.customerOrders.length>0"
+            [quotationSearch]="quotationSearch" [isForTiersIntegration]="true">
+          </quotation-list>
+        </mat-tab>
+        <mat-tab label="Commandes" *ngIf="tiers.id!=null && tiers.id!=undefined">
+          <ordering-list class="integration-component"
+            *ngIf="this.orderingSearch.customerOrders && this.orderingSearch.customerOrders.length>0"
+            [orderingSearch]="orderingSearch" [isForTiersIntegration]="true">
+          </ordering-list>
         </mat-tab>
         <mat-tab label="Suivi" *ngIf="selectedResponsable?.id!=null && selectedResponsable?.id!=undefined">
           <tiers-followup [tiers]="selectedResponsable!" [editMode]="editMode"></tiers-followup>

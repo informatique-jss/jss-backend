@@ -1,11 +1,11 @@
 <div class="mat-elevation-z2 form-div">
   <div class="full-width">
-    <table class="full-width table-fixed-layout" *ngIf="!isForDashboard && quotationSearch">
+    <table class="full-width table-fixed-layout" *ngIf="!isForDashboard && !isForTiersIntegration && quotationSearch">
       <tr>
         <td>
-          <autocomplete-sales-employee [(model)]="quotationSearch.salesEmployee" label="Commercial"
+          <autocomplete-employee [(model)]="quotationSearch.salesEmployee" label="Commercial"
             [form]="quotationSearchForm" propertyName="salesEmployee" [isMandatory]="false">
-          </autocomplete-sales-employee>
+          </autocomplete-employee>
         </td>
         <td>
           <select-quotation-status [(model)]="quotationSearch.quotationStatus" label="Statut"

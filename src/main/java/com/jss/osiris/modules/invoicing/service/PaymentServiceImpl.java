@@ -21,6 +21,8 @@ import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceStatus;
 import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.model.PaymentSearch;
+import com.jss.osiris.modules.invoicing.model.PaymentSearchResult;
+import com.jss.osiris.modules.invoicing.model.PaymentWay;
 import com.jss.osiris.modules.invoicing.repository.PaymentRepository;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.NotificationService;
@@ -94,12 +96,19 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public List<Payment> searchPayments(PaymentSearch paymentSearch) throws Exception {
-        List<Payment> invoices = paymentRepository.findPayments(paymentSearch.getPaymentWays(),
+    public List<PaymentSearchResult> searchPayments(PaymentSearch paymentSearch) throws Exception {
+        ArrayList<Integer> paymentWayId = new ArrayList<Integer>();
+        if (paymentSearch.getPaymentWays() != null) {
+            for (PaymentWay paymentWay : paymentSearch.getPaymentWays())
+                paymentWayId.add(paymentWay.getId());
+        } else {
+            paymentWayId.add(0);
+        }
+
+        return paymentRepository.findPayments(paymentWayId,
                 paymentSearch.getStartDate(),
                 paymentSearch.getEndDate(), paymentSearch.getMinAmount(), paymentSearch.getMaxAmount(),
                 paymentSearch.getLabel(), paymentSearch.isHideAssociatedPayments());
-        return invoices;
     }
 
     @Override

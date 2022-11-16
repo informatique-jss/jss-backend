@@ -2,6 +2,7 @@ package com.jss.osiris.modules.quotation.controller;
 
 import java.time.Duration;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -45,6 +46,7 @@ import com.jss.osiris.modules.quotation.model.AnnouncementNoticeTemplate;
 import com.jss.osiris.modules.quotation.model.AnnouncementStatus;
 import com.jss.osiris.modules.quotation.model.AssignationType;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
+import com.jss.osiris.modules.quotation.model.AssoAffaireOrderSearchResult;
 import com.jss.osiris.modules.quotation.model.Bodacc;
 import com.jss.osiris.modules.quotation.model.BodaccFusion;
 import com.jss.osiris.modules.quotation.model.BodaccFusionAbsorbedCompany;
@@ -71,6 +73,7 @@ import com.jss.osiris.modules.quotation.model.MailRedirectionType;
 import com.jss.osiris.modules.quotation.model.NoticeType;
 import com.jss.osiris.modules.quotation.model.NoticeTypeFamily;
 import com.jss.osiris.modules.quotation.model.OrderingSearch;
+import com.jss.osiris.modules.quotation.model.OrderingSearchResult;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.ProvisionFamilyType;
 import com.jss.osiris.modules.quotation.model.ProvisionScreenType;
@@ -78,6 +81,7 @@ import com.jss.osiris.modules.quotation.model.ProvisionType;
 import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.quotation.model.QuotationLabelType;
 import com.jss.osiris.modules.quotation.model.QuotationSearch;
+import com.jss.osiris.modules.quotation.model.QuotationSearchResult;
 import com.jss.osiris.modules.quotation.model.QuotationStatus;
 import com.jss.osiris.modules.quotation.model.RecordType;
 import com.jss.osiris.modules.quotation.model.Rna;
@@ -373,7 +377,11 @@ public class QuotationController {
     Quotation quotation = quotationService.getQuotation(quotationId);
     if (quotation == null)
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
     try {
+      MailComputeResult mailComputeResult = mailHelper.computeMailForQuotationDocument(quotation);
+      if (mailComputeResult.getRecipientsMailTo() == null || mailComputeResult.getRecipientsMailTo().size() == 0)
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
       mailHelper.generateQuotationMail(quotation);
     } catch (HttpStatusCodeException e) {
       logger.error("HTTP error when fetching generate mail", e);
@@ -391,6 +399,9 @@ public class QuotationController {
     if (customerOrder == null)
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     try {
+      MailComputeResult mailComputeResult = mailHelper.computeMailForBillingDocument(customerOrder);
+      if (mailComputeResult.getRecipientsMailTo() == null || mailComputeResult.getRecipientsMailTo().size() == 0)
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
       mailHelper.generateWaintingDepositMail(customerOrder);
     } catch (HttpStatusCodeException e) {
       logger.error("HTTP error when fetching generate mail", e);
@@ -409,6 +420,9 @@ public class QuotationController {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     try {
       try {
+        MailComputeResult mailComputeResult = mailHelper.computeMailForBillingDocument(customerOrder);
+        if (mailComputeResult.getRecipientsMailTo() == null || mailComputeResult.getRecipientsMailTo().size() == 0)
+          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         customerOrderService.generateInvoiceMail(customerOrder);
       } catch (Exception e) {
         e.printStackTrace();
@@ -470,8 +484,9 @@ public class QuotationController {
   }
 
   @PostMapping(inputEntryPoint + "/asso/affaire/order/search")
-  public ResponseEntity<List<AssoAffaireOrder>> searchForAsso(@RequestBody AffaireSearch affaireSearch) {
-    List<AssoAffaireOrder> assos = null;
+  public ResponseEntity<ArrayList<AssoAffaireOrderSearchResult>> searchForAsso(
+      @RequestBody AffaireSearch affaireSearch) {
+    ArrayList<AssoAffaireOrderSearchResult> assos = null;
     try {
 
       if (affaireSearch.getLabel() == null
@@ -486,12 +501,12 @@ public class QuotationController {
       assos = assoAffaireOrderService.searchForAsso(affaireSearch);
     } catch (HttpStatusCodeException e) {
       logger.error("HTTP error when fetching assignationType", e);
-      return new ResponseEntity<List<AssoAffaireOrder>>(HttpStatus.INTERNAL_SERVER_ERROR);
+      return new ResponseEntity<ArrayList<AssoAffaireOrderSearchResult>>(HttpStatus.INTERNAL_SERVER_ERROR);
     } catch (Exception e) {
       logger.error("Error when fetching assignationType", e);
-      return new ResponseEntity<List<AssoAffaireOrder>>(HttpStatus.INTERNAL_SERVER_ERROR);
+      return new ResponseEntity<ArrayList<AssoAffaireOrderSearchResult>>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
-    return new ResponseEntity<List<AssoAffaireOrder>>(assos, HttpStatus.OK);
+    return new ResponseEntity<ArrayList<AssoAffaireOrderSearchResult>>(assos, HttpStatus.OK);
   }
 
   @PostMapping(inputEntryPoint + "/asso/affaire/order/update")
@@ -1564,8 +1579,8 @@ public class QuotationController {
   }
 
   @PostMapping(inputEntryPoint + "/order/search")
-  public ResponseEntity<List<CustomerOrder>> searchOrders(@RequestBody OrderingSearch orderingSearch) {
-    List<CustomerOrder> orders;
+  public ResponseEntity<List<OrderingSearchResult>> searchOrders(@RequestBody OrderingSearch orderingSearch) {
+    List<OrderingSearchResult> orders;
     if (orderingSearch == null)
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
@@ -1590,17 +1605,17 @@ public class QuotationController {
       orders = customerOrderService.searchOrders(orderingSearch);
     } catch (HttpStatusCodeException e) {
       logger.error("HTTP error when fetching payment", e);
-      return new ResponseEntity<List<CustomerOrder>>(HttpStatus.INTERNAL_SERVER_ERROR);
+      return new ResponseEntity<List<OrderingSearchResult>>(HttpStatus.INTERNAL_SERVER_ERROR);
     } catch (Exception e) {
       logger.error("Error when fetching payment", e);
-      return new ResponseEntity<List<CustomerOrder>>(HttpStatus.INTERNAL_SERVER_ERROR);
+      return new ResponseEntity<List<OrderingSearchResult>>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
-    return new ResponseEntity<List<CustomerOrder>>(orders, HttpStatus.OK);
+    return new ResponseEntity<List<OrderingSearchResult>>(orders, HttpStatus.OK);
   }
 
   @PostMapping(inputEntryPoint + "/quotation/search")
-  public ResponseEntity<List<Quotation>> searchQuotations(@RequestBody QuotationSearch quotationSearch) {
-    List<Quotation> orders;
+  public ResponseEntity<List<QuotationSearchResult>> searchQuotations(@RequestBody QuotationSearch quotationSearch) {
+    List<QuotationSearchResult> orders;
     if (quotationSearch == null)
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
@@ -1625,12 +1640,12 @@ public class QuotationController {
       orders = quotationService.searchQuotations(quotationSearch);
     } catch (HttpStatusCodeException e) {
       logger.error("HTTP error when fetching payment", e);
-      return new ResponseEntity<List<Quotation>>(HttpStatus.INTERNAL_SERVER_ERROR);
+      return new ResponseEntity<List<QuotationSearchResult>>(HttpStatus.INTERNAL_SERVER_ERROR);
     } catch (Exception e) {
       logger.error("Error when fetching payment", e);
-      return new ResponseEntity<List<Quotation>>(HttpStatus.INTERNAL_SERVER_ERROR);
+      return new ResponseEntity<List<QuotationSearchResult>>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
-    return new ResponseEntity<List<Quotation>>(orders, HttpStatus.OK);
+    return new ResponseEntity<List<QuotationSearchResult>>(orders, HttpStatus.OK);
   }
 
   @PostMapping(inputEntryPoint + "/customer-order")
@@ -1736,14 +1751,14 @@ public class QuotationController {
 
     if (quotation instanceof CustomerOrder) {
       CustomerOrder customerOrder = (CustomerOrder) quotation;
-      isOpen = customerOrder.getCustomerOrderStatus() != null
-          && customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.OPEN);
+      isOpen = customerOrder.getCustomerOrderStatus() == null ||
+          customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.OPEN);
     }
 
     if (quotation instanceof Quotation) {
       Quotation quotationQuotation = (Quotation) quotation;
-      isOpen = quotationQuotation.getQuotationStatus() != null
-          && quotationQuotation.getQuotationStatus().getCode().equals(QuotationStatus.OPEN);
+      isOpen = quotationQuotation.getQuotationStatus() == null ||
+          quotationQuotation.getQuotationStatus().getCode().equals(QuotationStatus.OPEN);
     }
     if (quotation.getSpecialOffers() != null && quotation.getSpecialOffers().size() > 0)
       for (SpecialOffer specialOffer : quotation.getSpecialOffers())

@@ -14,4 +14,6 @@ public interface EmployeeService {
     public Employee getCurrentEmployee();
 
     public Employee addOrUpdateEmployee(Employee employee);
+
+    public List<Employee> getMyHolidaymaker(Employee requestedEmployee);
 }

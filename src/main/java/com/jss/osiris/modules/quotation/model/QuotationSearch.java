@@ -4,12 +4,14 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.jss.osiris.modules.profile.model.Employee;
+import com.jss.osiris.modules.tiers.model.Tiers;
 
 public class QuotationSearch {
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private Employee salesEmployee;
     private List<QuotationStatus> quotationStatus;
+    private List<Tiers> customerOrders;
 
     public LocalDateTime getStartDate() {
         return startDate;
@@ -41,6 +43,14 @@ public class QuotationSearch {
 
     public void setQuotationStatus(List<QuotationStatus> quotationStatus) {
         this.quotationStatus = quotationStatus;
+    }
+
+    public List<Tiers> getCustomerOrders() {
+        return customerOrders;
+    }
+
+    public void setCustomerOrders(List<Tiers> customerOrders) {
+        this.customerOrders = customerOrders;
     }
 
 }

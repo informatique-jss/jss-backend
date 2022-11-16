@@ -1,9 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
-import { LoginService } from '../../../../routing/login-dialog/login.service';
 import { Employee } from '../../../profile/model/Employee';
-import { EmployeeService } from '../../../profile/services/employee.service';
 
 @Component({
   selector: 'app-employee-dialog',
@@ -20,8 +18,6 @@ export class EmployeeDialogComponent implements OnInit {
 
   constructor(public dialogRef: MatDialogRef<EmployeeDialogComponent>,
     private formBuilder: FormBuilder,
-    private loginService: LoginService,
-    private employeeService: EmployeeService
   ) { }
 
   employeeForm = this.formBuilder.group({});
@@ -37,9 +33,5 @@ export class EmployeeDialogComponent implements OnInit {
     this.dialogRef.close(null);
   }
 
-  chooseMyself() {
-    this.employeeService.getCurrentEmployee().subscribe(response => {
-      this.employee = response;
-    })
-  }
+
 }

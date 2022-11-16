@@ -1,0 +1,23 @@
+package com.jss.osiris.modules.quotation.model;
+
+import java.time.LocalDateTime;
+
+public interface OrderingSearchResult {
+    public String getCustomerOrderLabel();
+
+    public String getCustomerOrderStatus();
+
+    public LocalDateTime getCreatedDate();
+
+    public Integer getSalesEmployeeId();
+
+    public String getCustomerOrderDescription();
+
+    public Integer getCustomerOrderId();
+
+    public Integer getResponsableId();
+
+    public Integer getTiersId();
+
+    public Integer getConfrereId();
+}

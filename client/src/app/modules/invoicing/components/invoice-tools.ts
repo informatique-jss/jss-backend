@@ -11,11 +11,13 @@ export function getAmountRemaining(invoice: Invoice) {
 }
 
 export function getColumnLink(column: SortTableColumn, element: any) {
-  if (element && column.id == "customerOrderName" && element.customerOrder) {
-    if (element.customerOrder.responsable)
-      return ['/tiers/responsable/', element.customerOrder.responsable.id];
-    if (element.customerOrder.tiers)
-      return ['/tiers/', element.customerOrder.tiers.id];
+  if (element && column.id == "customerOrderName") {
+    if (element.confrereId)
+      return ['/referential/confrere/', element.confrereId];
+    if (element.responsableId)
+      return ['/tiers/responsable/', element.responsableId];
+    if (element.tiersId)
+      return ['/tiers/', element.tiersId];
   }
   if (element && column.id == "customerOrderId" && element.customerOrder) {
     if (element.isQuotation)
@@ -82,7 +84,7 @@ export function getCustomerOrderForCustomerOrder(customerOrder: CustomerOrder): 
   return {} as ITiers;
 }
 
-export function getAffaireList(invoice: Invoice): String {
+export function getAffaireList(invoice: Invoice): string {
   if (invoice && invoice.customerOrder)
     return invoice.customerOrder.assoAffaireOrders.map(asso => asso.affaire.denomination ? asso.affaire.denomination : (asso.affaire.firstname + ' ' + asso.affaire.lastname)).join(", ");
   return "";

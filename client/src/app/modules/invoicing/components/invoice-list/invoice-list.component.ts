@@ -8,9 +8,10 @@ import { ConstantService } from 'src/app/modules/miscellaneous/services/constant
 import { Invoice } from 'src/app/modules/quotation/model/Invoice';
 import { AppService } from 'src/app/services/app.service';
 import { InvoiceSearch } from '../../model/InvoiceSearch';
+import { InvoiceSearchResult } from '../../model/InvoiceSearchResult';
 import { InvoiceStatus } from '../../model/InvoiceStatus';
-import { InvoiceService } from '../../services/invoice.service';
-import { getAffaireList, getColumnLink, getCustomerOrderNameForInvoice, getResponsableName } from '../invoice-tools';
+import { InvoiceSearchResultService } from '../../services/invoice.search.result.service';
+import { getColumnLink } from '../invoice-tools';
 
 @Component({
   selector: 'invoice-list',
@@ -21,7 +22,7 @@ export class InvoiceListComponent implements OnInit {
 
   @Input() invoiceSearch: InvoiceSearch = {} as InvoiceSearch;
   @Input() isForDashboard: boolean = false;
-  invoices: Invoice[] | undefined;
+  invoices: InvoiceSearchResult[] | undefined;
   availableColumns: SortTableColumn[] = [];
   columnToDisplayOnDashboard: string[] = ["description", "affaires", "invoicePayer", "totalPrice"];
   displayedColumns: SortTableColumn[] = [];
@@ -35,7 +36,7 @@ export class InvoiceListComponent implements OnInit {
 
   constructor(
     private appService: AppService,
-    private invoiceService: InvoiceService,
+    private invoiceSearchResultService: InvoiceSearchResultService,
     private constantService: ConstantService,
     private formBuilder: FormBuilder,
     private router: Router,
@@ -48,17 +49,17 @@ export class InvoiceListComponent implements OnInit {
       this.appService.changeHeaderTitle("Factures & paiements");
     this.putDefaultPeriod();
     this.availableColumns = [];
-    this.availableColumns.push({ id: "id", fieldName: "id", label: "N° de facture" } as SortTableColumn);
-    this.availableColumns.push({ id: "status", fieldName: "invoiceStatus.label", label: "Status" } as SortTableColumn);
-    this.availableColumns.push({ id: "customerOrderId", fieldName: "customerOrder.id", label: "N° de commande", actionLinkFunction: getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la commande associée" } as SortTableColumn);
-    this.availableColumns.push({ id: "customerOrderName", fieldName: "customerOrder.tiers", label: "Donneur d'ordre", valueFonction: getCustomerOrderNameForInvoice, actionLinkFunction: getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la fiche du donneur d'ordre" } as SortTableColumn);
-    this.availableColumns.push({ id: "responsable", fieldName: "customerOrder.tiers", label: "Responsable", valueFonction: getResponsableName } as SortTableColumn);
-    this.availableColumns.push({ id: "affaires", fieldName: "customerOrder.affaire", label: "Affaire(s)", valueFonction: getAffaireList, isShrinkColumn: true } as SortTableColumn);
+    this.availableColumns.push({ id: "id", fieldName: "invoiceId", label: "N° de facture" } as SortTableColumn);
+    this.availableColumns.push({ id: "status", fieldName: "invoiceStatus", label: "Status" } as SortTableColumn);
+    this.availableColumns.push({ id: "customerOrderId", fieldName: "customerOrderId", label: "N° de commande", actionLinkFunction: getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la commande associée" } as SortTableColumn);
+    this.availableColumns.push({ id: "customerOrderName", fieldName: "customerOrderLabel", label: "Donneur d'ordre", actionLinkFunction: getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la fiche du donneur d'ordre" } as SortTableColumn);
+    this.availableColumns.push({ id: "responsable", fieldName: "responsableLabel", label: "Responsable" } as SortTableColumn);
+    this.availableColumns.push({ id: "affaires", fieldName: "affaireLabel", label: "Affaire(s)", isShrinkColumn: true } as SortTableColumn);
     this.availableColumns.push({ id: "invoicePayer", fieldName: "billingLabel", label: "Payeur" } as SortTableColumn);
     this.availableColumns.push({ id: "createdDate", fieldName: "createdDate", label: "Date d'émission", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
     this.availableColumns.push({ id: "totalPrice", fieldName: "totalPrice", label: "Montant TTC", valueFonction: formatEurosForSortTable } as SortTableColumn);
-    this.availableColumns.push({ id: "description", fieldName: "customerOrder.description", label: "Description" } as SortTableColumn);
-    this.availableColumns.push({ id: "payments", fieldName: "payments", label: "Paiement(s) associé(s)", valueFonction: this.getPaymentLabel } as SortTableColumn);
+    this.availableColumns.push({ id: "description", fieldName: "customerOrderDescription", label: "Description" } as SortTableColumn);
+    this.availableColumns.push({ id: "payments", fieldName: "paymentId", label: "Paiement(s) associé(s)" } as SortTableColumn);
 
     this.setColumns();
 
@@ -66,7 +67,7 @@ export class InvoiceListComponent implements OnInit {
       this.tableAction.push({
         actionIcon: "settings", actionName: "Voir le détail de la facture / associer", actionLinkFunction: (action: SortTableAction, element: any) => {
           if (element)
-            return ['/invoicing', element.id];
+            return ['/invoicing', element.invoiceId];
           return undefined;
         }, display: true,
       } as SortTableAction);
@@ -100,12 +101,6 @@ export class InvoiceListComponent implements OnInit {
       this.displayedColumns.push(...this.availableColumns);
   }
 
-  getPaymentLabel(element: any) {
-    if (element && element.payments)
-      return element.payments.map((e: { id: any; }) => e.id).join(", ");
-    return "";
-  }
-
   putDefaultPeriod() {
     if (!this.invoiceSearch.startDate && !this.invoiceSearch.endDate) {
       this.invoiceSearch.startDate = new Date();
@@ -116,7 +111,7 @@ export class InvoiceListComponent implements OnInit {
 
   searchInvoices() {
     if (this.invoiceForm.valid && this.invoiceSearch.startDate && this.invoiceSearch.endDate) {
-      this.invoiceService.getInvoicesList(this.invoiceSearch).subscribe(response => {
+      this.invoiceSearchResultService.getInvoicesList(this.invoiceSearch).subscribe(response => {
         this.invoices = response;
       })
     }

@@ -15,6 +15,16 @@
       <attachments [entity]="tiers" [editMode]="editMode" [entityType]="TIERS_ENTITY_TYPE.entityType">
       </attachments>
     </mat-tab>
+    <mat-tab label="Devis" *ngIf="tiers.id!=null && tiers.id!=undefined">
+      <quotation-list class="integration-component" *ngIf="this.quotationSearch.customerOrders"
+        [quotationSearch]="quotationSearch" [isForTiersIntegration]="true">
+      </quotation-list>
+    </mat-tab>
+    <mat-tab label="Commandes" *ngIf="tiers.id!=null && tiers.id!=undefined">
+      <ordering-list class="integration-component" *ngIf="this.orderingSearch.customerOrders"
+        [orderingSearch]="orderingSearch" [isForTiersIntegration]="true">
+      </ordering-list>
+    </mat-tab>
     <mat-tab label="Suivi" *ngIf="tiers.id!=null && tiers.id!=undefined">
       <tiers-followup [tiers]="tiers" [editMode]="editMode"></tiers-followup>
     </mat-tab>

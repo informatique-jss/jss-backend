@@ -5,6 +5,7 @@ import java.util.List;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.model.PaymentSearch;
+import com.jss.osiris.modules.invoicing.model.PaymentSearchResult;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.tiers.model.ITiers;
@@ -16,7 +17,7 @@ public interface PaymentService {
 
     public Payment addOrUpdatePayment(Payment payment);
 
-    public List<Payment> searchPayments(PaymentSearch payemntSearch) throws Exception;
+    public List<PaymentSearchResult> searchPayments(PaymentSearch payemntSearch) throws Exception;
 
     public void payementGrab() throws Exception;
 

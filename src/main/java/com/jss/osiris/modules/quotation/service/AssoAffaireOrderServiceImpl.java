@@ -9,15 +9,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.modules.miscellaneous.service.MailService;
 import com.jss.osiris.modules.miscellaneous.service.PhoneService;
 import com.jss.osiris.modules.profile.model.Employee;
+import com.jss.osiris.modules.profile.service.EmployeeService;
 import com.jss.osiris.modules.quotation.model.AffaireSearch;
 import com.jss.osiris.modules.quotation.model.AnnouncementStatus;
 import com.jss.osiris.modules.quotation.model.AssignationType;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
+import com.jss.osiris.modules.quotation.model.AssoAffaireOrderSearchResult;
 import com.jss.osiris.modules.quotation.model.BodaccStatus;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.Domiciliation;
@@ -37,7 +38,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
     IndexEntityService indexEntityService;
 
     @Autowired
-    ActiveDirectoryHelper activeDirectoryHelper;
+    EmployeeService employeeService;
 
     @Autowired
     FormaliteStatusService formaliteStatusService;
@@ -92,20 +93,6 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
     public void updateAssignedToForAsso(AssoAffaireOrder asso, Employee employee) {
         asso.setAssignedTo(employee);
         assoAffaireOrderRepository.save(asso);
-    }
-
-    @Override
-    public List<AssoAffaireOrder> searchForAsso(AffaireSearch affaireSearch) {
-        ArrayList<Integer> statusId = null;
-        if (affaireSearch.getStatus() != null) {
-            statusId = new ArrayList<Integer>();
-            for (IWorkflowElement status : affaireSearch.getStatus())
-                statusId.add(status.getId());
-        }
-        return assoAffaireOrderRepository.findAsso(
-                activeDirectoryHelper.getMyHolidaymaker(affaireSearch.getResponsible()),
-                activeDirectoryHelper.getMyHolidaymaker(affaireSearch.getAssignedTo()), affaireSearch.getLabel(),
-                statusId);
     }
 
     @Override
@@ -235,5 +222,35 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
             assoAffaireOrder.setAssignedTo(currentEmployee);
 
         return assoAffaireOrder;
+    }
+
+    @Override
+    public ArrayList<AssoAffaireOrderSearchResult> searchForAsso(AffaireSearch affaireSearch) {
+        ArrayList<Integer> statusId = null;
+        ArrayList<Integer> assignedId = null;
+        ArrayList<Integer> responsibleId = null;
+
+        if (affaireSearch.getStatus() != null) {
+            statusId = new ArrayList<Integer>();
+            for (IWorkflowElement status : affaireSearch.getStatus())
+                statusId.add(status.getId());
+        }
+
+        if (affaireSearch.getAssignedTo() != null) {
+            assignedId = new ArrayList<Integer>();
+            assignedId.add(affaireSearch.getAssignedTo().getId());
+        }
+
+        if (affaireSearch.getResponsible() != null) {
+            responsibleId = new ArrayList<Integer>();
+            responsibleId.add(affaireSearch.getResponsible().getId());
+        }
+
+        if (affaireSearch.getLabel() == null)
+            affaireSearch.setLabel("");
+
+        return assoAffaireOrderRepository.findAsso(new ArrayList<Integer>(),
+                new ArrayList<Integer>(), affaireSearch.getLabel(),
+                statusId);
     }
 }

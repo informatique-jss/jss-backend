@@ -1,11 +1,11 @@
 <div class="mat-elevation-z2 form-div">
   <div class=" full-width">
-    <table class="full-width table-fixed-layout" *ngIf="!isForDashboard && orderingSearch">
+    <table class="full-width table-fixed-layout" *ngIf="!isForDashboard && !isForTiersIntegration && orderingSearch">
       <tr>
         <td>
-          <autocomplete-sales-employee [(model)]="orderingSearch.salesEmployee" label="Commercial"
-            [form]="orderingSearchForm" propertyName="salesEmployee" [isMandatory]="false">
-          </autocomplete-sales-employee>
+          <autocomplete-employee [(model)]="orderingSearch.salesEmployee" label="Commercial" [form]="orderingSearchForm"
+            propertyName="salesEmployee" [isMandatory]="false">
+          </autocomplete-employee>
         </td>
         <td>
           <select-customer-order-status [(model)]="orderingSearch.customerOrderStatus" label="Statut"

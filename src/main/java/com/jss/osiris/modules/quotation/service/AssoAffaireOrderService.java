@@ -1,10 +1,12 @@
 package com.jss.osiris.modules.quotation.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.quotation.model.AffaireSearch;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
+import com.jss.osiris.modules.quotation.model.AssoAffaireOrderSearchResult;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 
 public interface AssoAffaireOrderService {
@@ -16,7 +18,7 @@ public interface AssoAffaireOrderService {
 
     public void updateAssignedToForAsso(AssoAffaireOrder asso, Employee employee);
 
-    public List<AssoAffaireOrder> searchForAsso(AffaireSearch affaireSearch);
+    public ArrayList<AssoAffaireOrderSearchResult> searchForAsso(AffaireSearch affaireSearch);
 
     public void reindexAffaires();
 

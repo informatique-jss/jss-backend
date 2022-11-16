@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
@@ -31,6 +30,8 @@ import com.jss.osiris.modules.miscellaneous.service.NotificationService;
 import com.jss.osiris.modules.miscellaneous.service.PhoneService;
 import com.jss.osiris.modules.miscellaneous.service.SpecialOfferService;
 import com.jss.osiris.modules.miscellaneous.service.VatService;
+import com.jss.osiris.modules.profile.model.Employee;
+import com.jss.osiris.modules.profile.service.EmployeeService;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.CharacterPrice;
@@ -41,6 +42,7 @@ import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.ProvisionType;
 import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.quotation.model.QuotationSearch;
+import com.jss.osiris.modules.quotation.model.QuotationSearchResult;
 import com.jss.osiris.modules.quotation.model.QuotationStatus;
 import com.jss.osiris.modules.quotation.repository.QuotationRepository;
 import com.jss.osiris.modules.tiers.model.ITiers;
@@ -85,7 +87,7 @@ public class QuotationServiceImpl implements QuotationService {
     ConstantService constantService;
 
     @Autowired
-    ActiveDirectoryHelper activeDirectoryHelper;
+    EmployeeService employeeService;
 
     @Autowired
     NotificationService notificationService;
@@ -419,8 +421,10 @@ public class QuotationServiceImpl implements QuotationService {
                                     }
                                 }
                             } else {
-                                if (provision.getInvoiceItems() == null)
-                                    provision.setInvoiceItems(new ArrayList<InvoiceItem>());
+                                if (provision.getInvoiceItems() == null) {
+                                    provision.setInvoiceItems(invoiceItemsToMerge);
+                                    return;
+                                }
                                 if (provision.getId() != null
                                         && provision.getId().equals(invoiceItemToMerge.getProvision().getId()))
                                     finalInvoiceItems.add(invoiceItemToMerge);
@@ -479,12 +483,36 @@ public class QuotationServiceImpl implements QuotationService {
     }
 
     @Override
-    public List<Quotation> searchQuotations(QuotationSearch quotationSearch) {
+    public List<QuotationSearchResult> searchQuotations(QuotationSearch quotationSearch) {
+        ArrayList<Integer> statusId = new ArrayList<Integer>();
+        if (quotationSearch.getQuotationStatus() != null) {
+            for (QuotationStatus customerOrderStatus : quotationSearch.getQuotationStatus())
+                statusId.add(customerOrderStatus.getId());
+        } else {
+            statusId.add(0);
+        }
+
+        ArrayList<Integer> salesEmployeeId = new ArrayList<Integer>();
+        if (quotationSearch.getSalesEmployee() != null) {
+            for (Employee employee : employeeService.getMyHolidaymaker(quotationSearch.getSalesEmployee()))
+                salesEmployeeId.add(employee.getId());
+        } else {
+            salesEmployeeId.add(0);
+        }
+
+        ArrayList<Integer> customerOrderId = new ArrayList<Integer>();
+        if (quotationSearch.getCustomerOrders() != null) {
+            for (ITiers tiers : quotationSearch.getCustomerOrders())
+                customerOrderId.add(tiers.getId());
+        } else {
+            customerOrderId.add(0);
+        }
+
         return quotationRepository.findQuotations(
-                activeDirectoryHelper.getMyHolidaymaker(quotationSearch.getSalesEmployee()),
-                quotationSearch.getQuotationStatus(),
+                salesEmployeeId,
+                statusId,
                 quotationSearch.getStartDate(),
-                quotationSearch.getEndDate());
+                quotationSearch.getEndDate(), customerOrderId);
     }
 
     @Override

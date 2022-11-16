@@ -179,7 +179,8 @@
                           </avatar-chip>
                           <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
                           <mat-panel-description>
-                            <mat-icon matTooltip="Voir/éditer la prestation" (click)="displayProvision(asso,provision)"
+                            <mat-icon *ngIf="instanceOfCustomerOrderFn(quotation)"
+                              matTooltip="Voir/éditer la prestation" (click)="displayProvision(asso,provision)"
                               class="pointer">
                               work</mat-icon>
                             <mat-icon *ngIf="editMode" matTooltip="Supprimer la prestation"

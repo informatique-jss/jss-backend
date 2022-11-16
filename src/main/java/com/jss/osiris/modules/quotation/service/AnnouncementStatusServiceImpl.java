@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import javax.annotation.PostConstruct;
-
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
@@ -54,7 +52,7 @@ public class AnnouncementStatusServiceImpl implements AnnouncementStatusService 
         return announcementStatusRepository.findByCode(code);
     }
 
-    @PostConstruct
+    @Override
     public void updateStatusReferential() throws Exception {
         updateStatus(AnnouncementStatus.ANNOUNCEMENT_NEW, "Nouveau", "auto_awesome", true, false);
         updateStatus(AnnouncementStatus.ANNOUNCEMENT_TODO, "A faire", "pending", false, false);

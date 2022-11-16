@@ -8,6 +8,8 @@ public interface AssignationTypeService {
     public List<AssignationType> getAssignationTypes();
 
     public AssignationType getAssignationType(Integer id);
-	
-	 public AssignationType addOrUpdateAssignationType(AssignationType assignationType);
+
+    public AssignationType addOrUpdateAssignationType(AssignationType assignationType);
+
+    public void updateAssignationTypes();
 }

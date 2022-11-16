@@ -8,8 +8,8 @@
               propertyName="tiersFollowupType" [isMandatory]="true" [isDisabled]="false"></select-followup>
           </td>
           <td>
-            <autocomplete-sales-employee [(model)]="newFollowup.salesEmployee" [form]="followupForm" label="Commercial"
-              propertyName="salesEmployee" [isMandatory]="true" [isDisabled]="false"></autocomplete-sales-employee>
+            <autocomplete-employee [(model)]="newFollowup.salesEmployee" [form]="followupForm" label="Commercial"
+              propertyName="salesEmployee" [isMandatory]="true" [isDisabled]="false"></autocomplete-employee>
           </td>
           <td>
             <select-gift [(model)]="newFollowup.gift" label="Cadeau" [form]="followupForm" propertyName="gift"

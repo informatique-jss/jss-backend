@@ -14,6 +14,14 @@ import com.jss.osiris.modules.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.invoicing.service.PaymentService;
 import com.jss.osiris.modules.miscellaneous.service.NotificationService;
 import com.jss.osiris.modules.profile.service.EmployeeService;
+import com.jss.osiris.modules.quotation.service.AnnouncementStatusService;
+import com.jss.osiris.modules.quotation.service.AssignationTypeService;
+import com.jss.osiris.modules.quotation.service.BodaccStatusService;
+import com.jss.osiris.modules.quotation.service.CustomerOrderStatusService;
+import com.jss.osiris.modules.quotation.service.DomiciliationStatusService;
+import com.jss.osiris.modules.quotation.service.FormaliteStatusService;
+import com.jss.osiris.modules.quotation.service.ProvisionScreenTypeService;
+import com.jss.osiris.modules.quotation.service.QuotationStatusService;
 
 @Service
 public class OsirisScheduller {
@@ -35,6 +43,30 @@ public class OsirisScheduller {
 
 	@Value("${schedulling.pool.size}")
 	private Integer schedullingPoolSize;
+
+	@Autowired
+	QuotationStatusService quotationStatusService;
+
+	@Autowired
+	CustomerOrderStatusService customerOrderStatusService;
+
+	@Autowired
+	AnnouncementStatusService announcementStatusService;
+
+	@Autowired
+	FormaliteStatusService formaliteStatusService;
+
+	@Autowired
+	DomiciliationStatusService domiciliationStatusService;
+
+	@Autowired
+	BodaccStatusService bodaccStatusService;
+
+	@Autowired
+	AssignationTypeService assignationTypeService;
+
+	@Autowired
+	ProvisionScreenTypeService provisionScreenTypeService;
 
 	private static final Logger logger = LoggerFactory.getLogger(OsirisScheduller.class);
 
@@ -72,5 +104,17 @@ public class OsirisScheduller {
 	@Scheduled(cron = "${schedulling.notification.purge}")
 	private void purgeNotidication() throws Exception {
 		notificationService.purgeNotification();
+	}
+
+	// @Scheduled(initialDelay = 1000, fixedDelay = 1000000000)
+	private void updateAllStatusEntityReferentials() throws Exception {
+		quotationStatusService.updateStatusReferential();
+		customerOrderStatusService.updateStatusReferential();
+		announcementStatusService.updateStatusReferential();
+		formaliteStatusService.updateStatusReferential();
+		domiciliationStatusService.updateStatusReferential();
+		bodaccStatusService.updateStatusReferential();
+		assignationTypeService.updateAssignationTypes();
+		provisionScreenTypeService.updateScreenTypes();
 	}
 }

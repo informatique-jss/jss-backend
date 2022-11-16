@@ -2,6 +2,7 @@ package com.jss.osiris.modules.invoicing.service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,6 +18,7 @@ import com.jss.osiris.modules.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.invoicing.model.InvoiceSearch;
+import com.jss.osiris.modules.invoicing.model.InvoiceSearchResult;
 import com.jss.osiris.modules.invoicing.model.InvoiceStatus;
 import com.jss.osiris.modules.invoicing.repository.InvoiceRepository;
 import com.jss.osiris.modules.miscellaneous.model.Document;
@@ -140,11 +142,17 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public List<Invoice> searchInvoices(InvoiceSearch invoiceSearch) throws Exception {
-        List<Invoice> invoices = invoiceRepository.findInvoice(invoiceSearch.getInvoiceStatus(),
+    public List<InvoiceSearchResult> searchInvoices(InvoiceSearch invoiceSearch) throws Exception {
+        ArrayList<Integer> statusId = null;
+        if (invoiceSearch.getInvoiceStatus() != null) {
+            statusId = new ArrayList<Integer>();
+            for (InvoiceStatus invoiceStatus : invoiceSearch.getInvoiceStatus())
+                statusId.add(invoiceStatus.getId());
+        }
+
+        return invoiceRepository.findInvoice(statusId,
                 invoiceSearch.getStartDate(),
                 invoiceSearch.getEndDate(), invoiceSearch.getMinAmount(), invoiceSearch.getMaxAmount());
-        return invoices;
     }
 
     @Override

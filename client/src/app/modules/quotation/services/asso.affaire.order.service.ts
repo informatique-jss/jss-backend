@@ -4,7 +4,6 @@ import { Observable } from 'rxjs';
 import { AppRestService } from 'src/app/services/appRest.service';
 import { Employee } from '../../profile/model/Employee';
 import { AssoAffaireOrder } from '../../quotation/model/AssoAffaireOrder';
-import { AffaireSearch } from '../model/AffaireSearch';
 
 @Injectable({
   providedIn: 'root'
@@ -17,10 +16,6 @@ export class AssoAffaireOrderService extends AppRestService<AssoAffaireOrder>{
 
   updateAssignedToForAsso(asso: AssoAffaireOrder, employee: Employee) {
     return this.getList(new HttpParams().set("assoId", asso.id).set("employeeId", employee.id), "asso/affaire/order/assignedTo");
-  }
-
-  getAssoAffaireOrders(affaireSearch: AffaireSearch) {
-    return this.postList(new HttpParams(), "asso/affaire/order/search", affaireSearch);
   }
 
   getAssoAffaireOrder(idAssoAffaireOrder: number) {

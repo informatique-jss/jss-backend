@@ -13,4 +13,6 @@ public interface QuotationStatusService {
 
     public QuotationStatus getQuotationStatusByCode(String code);
 
+    public void updateStatusReferential() throws Exception;
+
 }

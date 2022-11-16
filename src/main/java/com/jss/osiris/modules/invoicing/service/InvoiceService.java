@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceSearch;
+import com.jss.osiris.modules.invoicing.model.InvoiceSearchResult;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.tiers.model.ITiers;
 import com.jss.osiris.modules.tiers.model.Responsable;
@@ -37,7 +38,7 @@ public interface InvoiceService {
 
     public LocalDate getFirstBillingDateForResponsable(Responsable responsable);
 
-    public List<Invoice> searchInvoices(InvoiceSearch invoiceSearch) throws Exception;
+    public List<InvoiceSearchResult> searchInvoices(InvoiceSearch invoiceSearch) throws Exception;
 
     public void reindexInvoices();
 

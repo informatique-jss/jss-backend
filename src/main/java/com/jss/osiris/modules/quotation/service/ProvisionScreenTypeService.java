@@ -9,4 +9,6 @@ public interface ProvisionScreenTypeService {
 
     public ProvisionScreenType getProvisionScreenType(Integer id);
 
+    public void updateScreenTypes();
+
 }

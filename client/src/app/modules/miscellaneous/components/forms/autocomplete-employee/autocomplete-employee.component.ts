@@ -1,5 +1,6 @@
-import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
+import { MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { Employee } from 'src/app/modules/profile/model/Employee';
 import { EmployeeService } from 'src/app/modules/profile/services/employee.service';
 import { UserNoteService } from 'src/app/services/user.notes.service';
@@ -15,6 +16,7 @@ export class AutocompleteEmployeeComponent extends GenericLocalAutocompleteCompo
   types: Employee[] = [] as Array<Employee>;
 
   @Input() defaultEmployee: Employee | undefined;
+  @ViewChild(MatAutocompleteTrigger) autocomplete!: MatAutocompleteTrigger;
 
   constructor(private formBuild: UntypedFormBuilder, private employeeService: EmployeeService, private userNoteService2: UserNoteService,) {
     super(formBuild, userNoteService2)
@@ -57,6 +59,14 @@ export class AutocompleteEmployeeComponent extends GenericLocalAutocompleteCompo
 
   displayLabel(object: Employee): string {
     return object ? object.firstname + " " + object.lastname : '';
+  }
+
+  chooseMyself() {
+    this.employeeService.getCurrentEmployee().subscribe(response => {
+      this.autocomplete.closePanel();
+      this.model = response;
+      this.modelChange.emit(this.model);
+    })
   }
 
 }

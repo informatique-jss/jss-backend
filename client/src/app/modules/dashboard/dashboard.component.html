@@ -13,10 +13,10 @@
         <div class="dashboard-toolbar">
           <div class="dashboard-title">{{item}}</div>
           <div class="dashboard-box-delete">
-            <mat-icon (click)="toggleDisplay(item)">delete</mat-icon>
+            <mat-icon matTooltip="Masquer le widget" (click)="toggleDisplay(item)">delete</mat-icon>
           </div>
           <div class="dashboard-box-handle" cdkDragHandle>
-            <mat-icon>zoom_out_map</mat-icon>
+            <mat-icon matTooltip="Déplacer le widget">zoom_out_map</mat-icon>
           </div>
         </div>
         <affaire-list class="dashboard-box-component" *ngIf="item==AFFAIRE_IN_PROGRESS"

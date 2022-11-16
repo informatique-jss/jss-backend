@@ -3,13 +3,13 @@ import { FormBuilder } from '@angular/forms';
 import { formatDateTimeForSortTable, toIsoString } from 'src/app/libs/FormatHelper';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
-import { Employee } from 'src/app/modules/profile/model/Employee';
 import { AppService } from 'src/app/services/app.service';
+import { Employee } from '../../../profile/model/Employee';
+import { EmployeeService } from '../../../profile/services/employee.service';
 import { CustomerOrder } from '../../model/CustomerOrder';
-import { IQuotation } from '../../model/IQuotation';
 import { OrderingSearch } from '../../model/OrderingSearch';
-import { QuotationService } from '../../services/quotation.service';
-import { QuotationComponent } from '../quotation/quotation.component';
+import { OrderingSearchResult } from '../../model/OrderingSearchResult';
+import { OrderingSearchResultService } from '../../services/ordering.search.result.service';
 
 @Component({
   selector: 'ordering-list',
@@ -19,9 +19,10 @@ import { QuotationComponent } from '../quotation/quotation.component';
 export class OrderingListComponent implements OnInit {
   @Input() orderingSearch: OrderingSearch = {} as OrderingSearch;
   @Input() isForDashboard: boolean = false;
-  orders: IQuotation[] | undefined;
+  @Input() isForTiersIntegration: boolean = false;
+  orders: OrderingSearchResult[] | undefined;
   availableColumns: SortTableColumn[] = [];
-  columnToDisplayOnDashboard: string[] = ["customerOrderName", "quotationStatus", "totalPrice"];
+  columnToDisplayOnDashboard: string[] = ["customerOrderLabel", "customerOrderStatus", "customerOrderDescription"];
   displayedColumns: SortTableColumn[] = [];
   tableAction: SortTableAction[] = [];
 
@@ -30,43 +31,59 @@ export class OrderingListComponent implements OnInit {
   @Input() overrideTooltipAction: string = "";
   @Input() defaultStatusFilter: string[] | undefined;
 
+  allEmployees: Employee[] | undefined;
+
   constructor(
     private appService: AppService,
-    private quotationService: QuotationService,
+    private orderingSearchResultService: OrderingSearchResultService,
+    private employeeService: EmployeeService,
     private formBuilder: FormBuilder,
   ) { }
 
   ngOnInit() {
-    if (!this.isForDashboard)
-      this.appService.changeHeaderTitle("Commande")
     this.putDefaultPeriod();
-    this.availableColumns = [];
-    this.availableColumns.push({ id: "id", fieldName: "id", label: "N° de la commande" } as SortTableColumn);
-    this.availableColumns.push({ id: "customerOrderName", fieldName: "tiers", label: "Donneur d'ordre", valueFonction: this.getCustomerOrderName, actionLinkFunction: this.getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la fiche du donneur d'ordre" } as SortTableColumn);
-    this.availableColumns.push({ id: "quotationStatus", fieldName: "quotationStatus.label", label: "Statut" } as SortTableColumn);
-    this.availableColumns.push({ id: "createdDate", fieldName: "createdDate", label: "Date de création", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
-    this.availableColumns.push({ id: "salesEmployee", fieldName: "salesEmployee", label: "Commercial", displayAsEmployee: true, valueFonction: this.getSalesEmployee } as SortTableColumn);
-    this.availableColumns.push({ id: "totalPrice", fieldName: "totalPrice", label: "Prix total", valueFonction: (element: any, elements: any[], column: SortTableColumn, columns: SortTableColumn[]): string => { return QuotationComponent.computePriceTotal(element) + " €"; } } as SortTableColumn);
+    this.employeeService.getEmployees().subscribe(response => {
+      this.allEmployees = response;
 
-    this.setColumns();
-
-    if (this.overrideIconAction == "") {
-      this.tableAction.push({
-        actionIcon: "settings", actionName: "Voir la commande", actionLinkFunction: (action: SortTableAction, element: any) => {
-          if (element)
-            return ['/order', element.id];
+      if (!this.isForDashboard && !this.isForTiersIntegration)
+        this.appService.changeHeaderTitle("Commande")
+      this.availableColumns = [];
+      this.availableColumns.push({ id: "id", fieldName: "customerOrderId", label: "N° de la commande" } as SortTableColumn);
+      this.availableColumns.push({ id: "customerOrderLabel", fieldName: "customerOrderLabel", label: "Donneur d'ordre", actionLinkFunction: this.getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la fiche du donneur d'ordre" } as SortTableColumn);
+      this.availableColumns.push({ id: "customerOrderStatus", fieldName: "customerOrderStatus", label: "Statut" } as SortTableColumn);
+      this.availableColumns.push({ id: "createdDate", fieldName: "createdDate", label: "Date de création", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
+      this.availableColumns.push({
+        id: "salesEmployee", fieldName: "salesEmployeeId", label: "Commercial", displayAsEmployee: true, valueFonction: (element: any) => {
+          if (element && this.allEmployees) {
+            for (let employee of this.allEmployees)
+              if (employee.id == element.salesEmployeeId)
+                return employee;
+          }
           return undefined;
-        }, display: true,
-      } as SortTableAction);
-    } else {
-      this.tableAction.push({
-        actionIcon: this.overrideIconAction, actionName: this.overrideTooltipAction, actionClick: (action: SortTableAction, element: any) => {
-          this.actionBypass.emit(element);
-        }, display: true,
-      } as SortTableAction);
-    };
-    if (this.isForDashboard && !this.orders && this.orderingSearch)
-      this.searchOrders();
+        }
+      } as SortTableColumn);
+      this.availableColumns.push({ id: "customerOrderDescription", fieldName: "customerOrderDescription", label: "Description", isShrinkColumn: true } as SortTableColumn);
+
+      this.setColumns();
+
+      if (this.overrideIconAction == "") {
+        this.tableAction.push({
+          actionIcon: "settings", actionName: "Voir la commande", actionLinkFunction: (action: SortTableAction, element: any) => {
+            if (element)
+              return ['/order', element.customerOrderId];
+            return undefined;
+          }, display: true,
+        } as SortTableAction);
+      } else {
+        this.tableAction.push({
+          actionIcon: this.overrideIconAction, actionName: this.overrideTooltipAction, actionClick: (action: SortTableAction, element: any) => {
+            this.actionBypass.emit(element);
+          }, display: true,
+        } as SortTableAction);
+      };
+      if ((this.isForDashboard || this.isForTiersIntegration) && !this.orders && this.orderingSearch)
+        this.searchOrders();
+    });
   }
 
   setColumns() {
@@ -85,25 +102,22 @@ export class OrderingListComponent implements OnInit {
   });
 
   getSalesEmployee(element: any): Employee | undefined {
-    if (element) {
-      if (element.confrere && element.confrere.salesEmployee)
-        return element.confrere.salesEmployee;
-      if (element.responsable && element.responsable && element.responsable.salesEmployee)
-        return element.responsable.salesEmployee;
-      if (element.responsable && element.responsable.tiers && element.responsable.tiers.salesEmployee)
-        return element.responsable.tiers.salesEmployee;
-      if (element.tiers && element.tiers.salesEmployee)
-        return element.tiers.salesEmployee;
+    if (element && this.allEmployees) {
+      for (let employee of this.allEmployees)
+        if (employee.id == element.salesEmployeeId)
+          return employee;
     }
     return undefined;
   }
 
   getColumnLink(column: SortTableColumn, element: any) {
-    if (element && column.id == "customerOrderName") {
-      if (element.responsable)
-        return ['/tiers/responsable/', element.responsable.id];
-      if (element.tiers)
-        return ['/tiers/', element.tiers.id];
+    if (element && column.id == "customerOrderLabel") {
+      if (element.responsableId)
+        return ['/tiers/responsable/', element.responsableId];
+      if (element.tiersId)
+        return ['/tiers/', element.tiersId];
+      if (element.confrereId)
+        return ['/referential/confrere/', element.confrereId];
     }
     return ['/tiers'];
   }
@@ -132,7 +146,7 @@ export class OrderingListComponent implements OnInit {
     if (this.orderingSearchForm.valid && this.orderingSearch.startDate && this.orderingSearch.endDate) {
       this.orderingSearch.startDate = new Date(toIsoString(this.orderingSearch.startDate));
       this.orderingSearch.endDate = new Date(toIsoString(this.orderingSearch.endDate));
-      this.quotationService.getOrders(this.orderingSearch).subscribe(response => {
+      this.orderingSearchResultService.getOrders(this.orderingSearch).subscribe(response => {
         this.orders = response;
       })
     }

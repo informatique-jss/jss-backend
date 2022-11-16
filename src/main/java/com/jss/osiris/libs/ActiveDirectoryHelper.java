@@ -2,7 +2,6 @@ package com.jss.osiris.libs;
 
 import static org.springframework.ldap.query.LdapQueryBuilder.query;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -105,30 +104,5 @@ public class ActiveDirectoryHelper {
         contextSource.afterPropertiesSet();
 
         return new LdapTemplate(contextSource).search(query().where("objectclass").is("user"), new Employee());
-    }
-
-    /**
-     * Take a requested employee in param
-     * - if request employee is null, return null
-     * - if requested employee is myself, return myself and responsible
-     * holidaymarkers assigned to me
-     * - if requested employee is not myself, return request employee
-     * 
-     * @return list of Employee to take into account
-     */
-    public List<Employee> getMyHolidaymaker(Employee requestedEmployee) {
-        if (requestedEmployee == null)
-            return null;
-
-        Employee currentUser = employeeService.getCurrentEmployee();
-        ArrayList<Employee> holidaymakers = new ArrayList<Employee>();
-        if (requestedEmployee.getId().equals(currentUser.getId())) {
-            holidaymakers.add(currentUser);
-            if (currentUser.getBackups() != null)
-                holidaymakers.addAll(currentUser.getBackups());
-        } else {
-            holidaymakers.add(requestedEmployee);
-        }
-        return holidaymakers;
     }
 }

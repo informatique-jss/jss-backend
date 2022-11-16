@@ -1,4 +1,5 @@
 import { Employee } from "../../profile/model/Employee";
+import { ITiers } from '../../tiers/model/ITiers';
 import { CustomerOrderStatus } from './CustomerOrderStatus';
 
 export interface OrderingSearch {
@@ -6,4 +7,5 @@ export interface OrderingSearch {
   endDate: Date | undefined;
   salesEmployee: Employee;
   customerOrderStatus: CustomerOrderStatus[];
+  customerOrders: ITiers[];
 }

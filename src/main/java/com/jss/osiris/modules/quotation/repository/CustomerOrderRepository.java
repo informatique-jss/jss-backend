@@ -7,14 +7,35 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
-import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
-import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
+import com.jss.osiris.modules.quotation.model.OrderingSearchResult;
 
 public interface CustomerOrderRepository extends CrudRepository<CustomerOrder, Integer> {
 
-    @Query("select i from CustomerOrder i  left join fetch i.tiers t left join fetch i.responsable r left join fetch i.confrere c  where ( i.customerOrderStatus in (:customerOrderStatus)) and i.createdDate>=:startDate and i.createdDate<=:endDate and ( COALESCE(:salesEmployee) is null or t.salesEmployee in (:salesEmployee)  or r.salesEmployee in (:salesEmployee) or c.salesEmployee in (:salesEmployee))")
-    List<CustomerOrder> findCustomerOrders(@Param("salesEmployee") List<Employee> salesEmployee,
-            @Param("customerOrderStatus") List<CustomerOrderStatus> customerOrderStatus,
-            @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
+        @Query(nativeQuery = true, value = "select "
+                        + " case when cf.id is not null then cf.label"
+                        + " when r.id is not null then  r.firstname || ' '||r.lastname "
+                        + " else case when t.denomination is not null and t.denomination!='' then t.denomination else t.firstname || ' '||t.lastname end end as customerOrderLabel,"
+                        + " cos.label as customerOrderStatus,"
+                        + " co.created_date as createdDate,"
+                        + " coalesce(cf.id_commercial,r.id_commercial,t.id_commercial,t2.id_commercial) as salesEmployeeId,"
+                        + " co.id as customerOrderId,"
+                        + " r.id as responsableId,"
+                        + " t.id as tiersId,"
+                        + " cf.id as confrereId,"
+                        + " co.description as customerOrderDescription"
+                        + " from customer_order co"
+                        + " join customer_order_status cos on cos.id = co.id_customer_order_status"
+                        + " left join confrere cf on cf.id = co.id_confrere"
+                        + " left join responsable r on r.id = co.id_responsable"
+                        + " left join tiers t on t.id = co.id_tiers"
+                        + " left join tiers t2 on t2.id = r.id_tiers"
+                        + " where ( COALESCE(:customerOrderStatus) =0 or co.id_customer_order_status in (:customerOrderStatus)) "
+                        + " and co.created_date>=:startDate and co.created_date<=:endDate "
+                        + " and ( COALESCE(:salesEmployee) =0 or cf.id_commercial in (:salesEmployee) or r.id_commercial in (:salesEmployee) or t.id_commercial in (:salesEmployee) or t.id_commercial is null and t2.id_commercial in (:salesEmployee))"
+                        + " and ( COALESCE(:customerOrder)=0 or cf.id in (:customerOrder) or r.id in (:customerOrder) or t.id in (:customerOrder))")
+        List<OrderingSearchResult> findCustomerOrders(@Param("salesEmployee") List<Integer> salesEmployee,
+                        @Param("customerOrderStatus") List<Integer> customerOrderStatus,
+                        @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                        @Param("customerOrder") List<Integer> customerOrder);
 }

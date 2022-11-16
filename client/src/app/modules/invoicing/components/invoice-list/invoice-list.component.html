@@ -32,6 +32,7 @@
     </sort-table>
   </div>
 </div>
-<button matTooltip="Ajouter une facture libre" mat-fab color="accent" class="fab-button" (click)="addInvoice()">
+<button *ngIf="!isForDashboard " matTooltip="Ajouter une facture libre" mat-fab color="accent" class="fab-button"
+  (click)="addInvoice()">
   <mat-icon>add</mat-icon>
 </button>

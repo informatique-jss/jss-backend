@@ -20,10 +20,12 @@ import com.jss.osiris.libs.ValidationHelper;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.invoicing.model.InvoiceSearch;
+import com.jss.osiris.modules.invoicing.model.InvoiceSearchResult;
 import com.jss.osiris.modules.invoicing.model.InvoiceStatus;
 import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.model.PaymentAssociate;
 import com.jss.osiris.modules.invoicing.model.PaymentSearch;
+import com.jss.osiris.modules.invoicing.model.PaymentSearchResult;
 import com.jss.osiris.modules.invoicing.model.PaymentWay;
 import com.jss.osiris.modules.invoicing.service.InvoiceHelper;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
@@ -133,8 +135,8 @@ public class InvoicingController {
     }
 
     @PostMapping(inputEntryPoint + "/payments/search")
-    public ResponseEntity<List<Payment>> getPayments(@RequestBody PaymentSearch paymentSearch) {
-        List<Payment> payments;
+    public ResponseEntity<List<PaymentSearchResult>> getPayments(@RequestBody PaymentSearch paymentSearch) {
+        List<PaymentSearchResult> payments;
         if (paymentSearch == null)
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
@@ -150,12 +152,12 @@ public class InvoicingController {
             payments = paymentService.searchPayments(paymentSearch);
         } catch (HttpStatusCodeException e) {
             logger.error("HTTP error when fetching payment", e);
-            return new ResponseEntity<List<Payment>>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<List<PaymentSearchResult>>(HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (Exception e) {
             logger.error("Error when fetching payment", e);
-            return new ResponseEntity<List<Payment>>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<List<PaymentSearchResult>>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return new ResponseEntity<List<Payment>>(payments, HttpStatus.OK);
+        return new ResponseEntity<List<PaymentSearchResult>>(payments, HttpStatus.OK);
     }
 
     @PostMapping(inputEntryPoint + "/payments/associate")
@@ -270,7 +272,7 @@ public class InvoicingController {
             if (paymentOut.getCustomerOrder() != null || paymentOut.getInvoice() != null)
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
-            paymentService.setExternallyAssociated(payment);
+            paymentService.setExternallyAssociated(paymentOut);
         } catch (ResponseStatusException e) {
             return new ResponseEntity<Boolean>(e.getStatus());
         } catch (HttpStatusCodeException e) {
@@ -291,7 +293,7 @@ public class InvoicingController {
             if (paymentOut.getCustomerOrder() != null || paymentOut.getInvoice() != null)
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
-            paymentService.unsetExternallyAssociated(payment);
+            paymentService.unsetExternallyAssociated(paymentOut);
         } catch (ResponseStatusException e) {
             return new ResponseEntity<Boolean>(e.getStatus());
         } catch (HttpStatusCodeException e) {
@@ -483,8 +485,8 @@ public class InvoicingController {
     }
 
     @PostMapping(inputEntryPoint + "/invoice/search")
-    public ResponseEntity<List<Invoice>> searchInvoices(@RequestBody InvoiceSearch invoiceSearch) {
-        List<Invoice> invoices;
+    public ResponseEntity<List<InvoiceSearchResult>> searchInvoices(@RequestBody InvoiceSearch invoiceSearch) {
+        List<InvoiceSearchResult> invoices;
         try {
             if (invoiceSearch == null)
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -502,12 +504,12 @@ public class InvoicingController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (HttpStatusCodeException e) {
             logger.error("HTTP error when fetching accountingAccount", e);
-            return new ResponseEntity<List<Invoice>>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<List<InvoiceSearchResult>>(HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (Exception e) {
             logger.error("Error when fetching accountingAccount", e);
-            return new ResponseEntity<List<Invoice>>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<List<InvoiceSearchResult>>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return new ResponseEntity<List<Invoice>>(invoices, HttpStatus.OK);
+        return new ResponseEntity<List<InvoiceSearchResult>>(invoices, HttpStatus.OK);
     }
 
 }

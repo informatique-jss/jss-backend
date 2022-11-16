@@ -47,15 +47,12 @@ import { AutocompleteConfrereComponent } from '../forms/autocomplete-confrere/au
 import { AutocompleteCountryComponent } from '../forms/autocomplete-country/autocomplete-country.component';
 import { AutocompleteDepartmentComponent } from '../forms/autocomplete-department/autocomplete-department.component';
 import { AutocompleteEmployeeComponent } from '../forms/autocomplete-employee/autocomplete-employee.component';
-import { AutocompleteFormalisteEmployeeComponent } from '../forms/autocomplete-formaliste-employee/autocomplete-formaliste-employee.component';
-import { AutocompleteInsertionEmployeeComponent } from '../forms/autocomplete-insertion-employee/autocomplete-insertion-employee.component';
 import { AutocompleteLegalFormComponent } from '../forms/autocomplete-legal-form/autocomplete-legal-form.component';
 import { AutocompletePostalCodeComponent } from '../forms/autocomplete-postal-code/autocomplete-postal-code.component';
 import { AutocompleteRegieComponent } from '../forms/autocomplete-regie/autocomplete-regie.component';
 import { AutocompleteRegionComponent } from '../forms/autocomplete-region/autocomplete-region.component';
 import { AutocompleteResponsableComponent } from '../forms/autocomplete-responsable/autocomplete-responsable.component';
 import { AutocompleteRnaComponent } from '../forms/autocomplete-rna/autocomplete-rna.component';
-import { AutocompleteSalesEmployeeComponent } from '../forms/autocomplete-sales-employee/autocomplete-sales-employee.component';
 import { AutocompleteSirenComponent } from '../forms/autocomplete-siren/autocomplete-siren.component';
 import { AutocompleteSiretComponent } from '../forms/autocomplete-siret/autocomplete-siret.component';
 import { AutocompleteTiersIndividualComponent } from '../forms/autocomplete-tiers-individual/autocomplete-tiers-individual.component';
@@ -232,6 +229,7 @@ import { MiscellaneousComponent } from './miscellaneous.component';
 
 const routes: Routes = [
   { path: 'referential/affaire/:id', component: AdministrationComponent },
+  { path: 'referential/confrere/:id', component: AdministrationComponent },
 ];
 
 @NgModule({
@@ -276,8 +274,6 @@ const routes: Routes = [
     SelectTiersTypeComponent,
     GenericDatepickerComponent,
     GenericInputComponent,
-    AutocompleteSalesEmployeeComponent,
-    AutocompleteFormalisteEmployeeComponent,
     GenericToggleComponent,
     AutocompletePostalCodeComponent,
     RadioGroupCivilityComponent,
@@ -291,7 +287,6 @@ const routes: Routes = [
     RadioGroupLanguageComponent,
     ChipsMailComponent,
     GenericCheckboxComponent,
-    AutocompleteInsertionEmployeeComponent,
     RadioGroupBillingLabelComponent,
     RadioGroupBillingClosureRecipientComponent,
     SelectRefundTypeComponent,
@@ -491,8 +486,6 @@ const routes: Routes = [
     GenericDatepickerComponent,
     SelectAccountingAccountClassComponent,
     RadioGroupRecordTypeComponent,
-    AutocompleteFormalisteEmployeeComponent,
-    AutocompleteSalesEmployeeComponent,
     SelectNoticeFamilyComponent,
     AutocompleteCompetentAuthorityComponent,
     RadioGroupJournalTypeComponent,
@@ -534,7 +527,6 @@ const routes: Routes = [
     SelectAttachmentTypeComponent,
     AutocompleteCountryComponent,
     SelectGiftComponent,
-    AutocompleteInsertionEmployeeComponent,
     SelectFollowupComponent,
     SelectTiersCategoryComponent,
     AutocompleteSiretComponent,

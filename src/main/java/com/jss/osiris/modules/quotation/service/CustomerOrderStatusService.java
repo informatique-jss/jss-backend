@@ -13,4 +13,6 @@ public interface CustomerOrderStatusService {
 
     public CustomerOrderStatus getCustomerOrderStatusByCode(String code);
 
+    public void updateStatusReferential() throws Exception;
+
 }

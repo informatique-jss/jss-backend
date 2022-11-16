@@ -3,8 +3,6 @@ package com.jss.osiris.modules.quotation.service;
 import java.util.List;
 import java.util.Optional;
 
-import javax.annotation.PostConstruct;
-
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -25,7 +23,7 @@ public class ProvisionScreenTypeServiceImpl implements ProvisionScreenTypeServic
         return IterableUtils.toList(provisionScreenTypeRepository.findAll());
     }
 
-    @PostConstruct
+    @Autowired
     public void updateScreenTypes() {
         updateScreenType(ProvisionScreenType.ANNOUNCEMENT, "Ecran annonces légales");
         updateScreenType(ProvisionScreenType.BODACC, "Ecran BODACC");

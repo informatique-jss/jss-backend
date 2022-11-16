@@ -27,7 +27,7 @@ export class AvatarChipComponent implements OnInit {
   changeEmployee() {
     if (!this.disableEmployeeDialog) {
       let changeEmployeeDialogRef = this.employeeDialog.open(EmployeeDialogComponent, {
-        width: '100%'
+        width: '50%'
       });
       changeEmployeeDialogRef.componentInstance.employee = this.employee;
       changeEmployeeDialogRef.componentInstance.content = "Modifier l'affectation";

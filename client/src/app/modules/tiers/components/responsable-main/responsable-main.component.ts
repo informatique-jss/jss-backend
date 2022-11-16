@@ -9,6 +9,8 @@ import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAc
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { CityService } from 'src/app/modules/miscellaneous/services/city.service';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
+import { OrderingSearch } from 'src/app/modules/quotation/model/OrderingSearch';
+import { QuotationSearch } from 'src/app/modules/quotation/model/QuotationSearch';
 import { RESPONSABLE_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
 import { Civility } from '../../../miscellaneous/model/Civility';
@@ -53,6 +55,9 @@ export class ResponsableMainComponent implements OnInit {
 
   isSubscriptionPaper: boolean = false;
   isSubscriptionWeb: boolean = false;
+
+  orderingSearch: OrderingSearch = {} as OrderingSearch;
+  quotationSearch: QuotationSearch = {} as QuotationSearch;
 
   displayedColumns: SortTableColumn[] = [];
   tableActions: SortTableAction[] = [] as Array<SortTableAction>;
@@ -144,6 +149,14 @@ export class ResponsableMainComponent implements OnInit {
   selectResponsable(responsable: Responsable) {
     let responsableId = responsable.id;
     this.selectResponsableById(responsableId);
+
+    this.orderingSearch.customerOrders = [];
+    this.quotationSearch.customerOrders = [];
+
+    setTimeout(() =>
+      this.orderingSearch.customerOrders = [responsable], 0);
+    setTimeout(() =>
+      this.quotationSearch.customerOrders = [responsable], 0);
   }
 
   deleteResponsable(responsableRow: any) {

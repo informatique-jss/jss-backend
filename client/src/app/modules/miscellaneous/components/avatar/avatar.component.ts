@@ -26,7 +26,7 @@ export class AvatarComponent implements OnInit {
   computeInitials() {
     this.initials = "";
     if (this.employee) {
-      let fullName = (this.employee.firstname.toLocaleLowerCase().replace("de", "") + " " + this.employee.lastname.toLocaleLowerCase().replace("de", "")).split(' ');
+      let fullName = (this.employee.firstname.toLocaleLowerCase().replace(" de ", "") + " " + this.employee.lastname.toLocaleLowerCase().replace(" de ", "")).split(' ');
       this.initials = (fullName.shift()!.charAt(0) + fullName.pop()!.charAt(0)).toUpperCase();
     }
   }

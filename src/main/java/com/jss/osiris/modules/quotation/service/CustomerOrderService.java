@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.OrderingSearch;
+import com.jss.osiris.modules.quotation.model.OrderingSearchResult;
 import com.jss.osiris.modules.quotation.model.Quotation;
 
 public interface CustomerOrderService {
@@ -22,7 +23,7 @@ public interface CustomerOrderService {
                         String targetStatusCode)
                         throws Exception;
 
-        public List<CustomerOrder> searchOrders(OrderingSearch orderingSearch);
+        public List<OrderingSearchResult> searchOrders(OrderingSearch orderingSearch);
 
         public void reindexCustomerOrder();
 

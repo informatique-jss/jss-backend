@@ -12,4 +12,6 @@ public interface BodaccStatusService {
     public BodaccStatus addOrUpdateBodaccStatus(BodaccStatus bodaccStatus);
 
     public BodaccStatus getBodaccStatusByCode(String code);
+
+    public void updateStatusReferential() throws Exception;
 }

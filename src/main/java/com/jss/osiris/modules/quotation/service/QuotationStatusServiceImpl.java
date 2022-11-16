@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import javax.annotation.PostConstruct;
-
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -44,7 +42,7 @@ public class QuotationStatusServiceImpl implements QuotationStatusService {
         return quotationStatusRepository.findByCode(code);
     }
 
-    @PostConstruct
+    @Override
     public void updateStatusReferential() throws Exception {
         updateStatus(QuotationStatus.OPEN, "Ouvert", "auto_awesome");
         updateStatus(QuotationStatus.TO_VERIFY, "A vérifier", "search");

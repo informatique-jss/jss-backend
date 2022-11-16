@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatAccordion } from '@angular/material/expansion';
+import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { getDocument } from 'src/app/libs/DocumentHelper';
 import { City } from 'src/app/modules/miscellaneous/model/City';
@@ -25,9 +26,19 @@ export class ReferentialConfrereComponent extends GenericReferentialComponent<Co
     private cityService: CityService,
     private formBuilder2: FormBuilder,
     private appService2: AppService,
+    private activatedRoute: ActivatedRoute,
     private constantService: ConstantService,
     protected paymentTypeService: PaymentTypeService,) {
     super(formBuilder2, appService2);
+  }
+
+  selectedConfrereId: number | undefined;
+
+  ngOnInit(): void {
+    super.ngOnInit();
+    let idAffaire = this.activatedRoute.snapshot.params.id;
+    if (idAffaire)
+      this.selectedConfrereId = idAffaire;
   }
 
   entityForm2 = this.formBuilder2.group({
@@ -93,7 +104,12 @@ export class ReferentialConfrereComponent extends GenericReferentialComponent<Co
   mapEntities(): void {
     this.paymentTypeService.getPaymentTypes().subscribe(response => {
       this.paymentTypes = response;
-    })
+    });
+    if (this.selectedConfrereId && this.entities)
+      for (let confrere of this.entities)
+        if (confrere.id == this.selectedConfrereId)
+          this.selectEntity(confrere);
+
   }
 
   fillPostalCode(city: City) {

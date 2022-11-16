@@ -47,7 +47,7 @@ public class CharacterPriceServiceImpl implements CharacterPriceService {
             for (CharacterPrice characterPrice : characterPrices) {
                 if (characterPrice.getDepartments().size() > 0)
                     for (Department d : characterPrice.getDepartments()) {
-                        if (d.getId() == department.getId() && date.isAfter(characterPrice.getStartDate()))
+                        if (d.getId().equals(department.getId()) && date.isAfter(characterPrice.getStartDate()))
                             return characterPrice;
                     }
             }

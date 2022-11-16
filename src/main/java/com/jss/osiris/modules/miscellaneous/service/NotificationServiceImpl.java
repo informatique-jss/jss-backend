@@ -48,7 +48,7 @@ public class NotificationServiceImpl implements NotificationService {
         if (currentEmployee == null)
             return null;
         return notificationRepository
-                .findByEmployees(activeDirectoryHelper.getMyHolidaymaker(currentEmployee), currentEmployee,
+                .findByEmployees(employeeService.getMyHolidaymaker(currentEmployee), currentEmployee,
                         displayFuture);
     }
 
@@ -105,7 +105,7 @@ public class NotificationServiceImpl implements NotificationService {
             salesEmployee = ((Responsable) customerOrder).getTiers().getSalesEmployee();
 
         boolean createdByMe = false;
-        List<Employee> compareEmployee = activeDirectoryHelper.getMyHolidaymaker(employeeService.getCurrentEmployee());
+        List<Employee> compareEmployee = employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee());
 
         for (Employee employee : compareEmployee)
             if (employee.getId().equals(salesEmployee.getId()))
@@ -171,7 +171,7 @@ public class NotificationServiceImpl implements NotificationService {
             salesEmployee = ((Responsable) customerOrderTiers).getTiers().getSalesEmployee();
 
         boolean createdByMe = false;
-        List<Employee> compareEmployee = activeDirectoryHelper.getMyHolidaymaker(employeeService.getCurrentEmployee());
+        List<Employee> compareEmployee = employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee());
 
         String customerOrderName = "";
         if (customerOrderTiers instanceof Responsable)

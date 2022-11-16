@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.JacksonLocalDateDeserializer;
 import com.jss.osiris.libs.JacksonLocalDateSerializer;
 import com.jss.osiris.libs.JacksonLocalDateTimeDeserializer;
@@ -34,13 +33,17 @@ import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.MailService;
 import com.jss.osiris.modules.miscellaneous.service.NotificationService;
 import com.jss.osiris.modules.miscellaneous.service.PhoneService;
+import com.jss.osiris.modules.profile.model.Employee;
+import com.jss.osiris.modules.profile.service.EmployeeService;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.quotation.model.OrderingSearch;
+import com.jss.osiris.modules.quotation.model.OrderingSearchResult;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.quotation.repository.CustomerOrderRepository;
+import com.jss.osiris.modules.tiers.model.ITiers;
 
 @Service
 public class CustomerOrderServiceImpl implements CustomerOrderService {
@@ -76,7 +79,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     DepositService depositService;
 
     @Autowired
-    ActiveDirectoryHelper activeDirectoryHelper;
+    EmployeeService employeeService;
 
     @Autowired
     InvoiceItemService invoiceItemService;
@@ -326,12 +329,36 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     }
 
     @Override
-    public List<CustomerOrder> searchOrders(OrderingSearch orderingSearch) {
-        List<CustomerOrder> customerOrders = customerOrderRepository.findCustomerOrders(
-                activeDirectoryHelper.getMyHolidaymaker(orderingSearch.getSalesEmployee()),
-                orderingSearch.getCustomerOrderStatus(),
+    public List<OrderingSearchResult> searchOrders(OrderingSearch orderingSearch) {
+        ArrayList<Integer> statusId = new ArrayList<Integer>();
+        if (orderingSearch.getCustomerOrderStatus() != null) {
+            for (CustomerOrderStatus customerOrderStatus : orderingSearch.getCustomerOrderStatus())
+                statusId.add(customerOrderStatus.getId());
+        } else {
+            statusId.add(0);
+        }
+
+        ArrayList<Integer> salesEmployeeId = new ArrayList<Integer>();
+        if (orderingSearch.getSalesEmployee() != null) {
+            for (Employee employee : employeeService.getMyHolidaymaker(orderingSearch.getSalesEmployee()))
+                salesEmployeeId.add(employee.getId());
+        } else {
+            salesEmployeeId.add(0);
+        }
+
+        ArrayList<Integer> customerOrderId = new ArrayList<Integer>();
+        if (orderingSearch.getCustomerOrders() != null) {
+            for (ITiers tiers : orderingSearch.getCustomerOrders())
+                customerOrderId.add(tiers.getId());
+        } else {
+            customerOrderId.add(0);
+        }
+
+        List<OrderingSearchResult> customerOrders = customerOrderRepository.findCustomerOrders(
+                salesEmployeeId,
+                statusId,
                 orderingSearch.getStartDate(),
-                orderingSearch.getEndDate());
+                orderingSearch.getEndDate(), customerOrderId);
         return customerOrders;
     }
 
