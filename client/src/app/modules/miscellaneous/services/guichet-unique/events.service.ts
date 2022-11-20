@@ -13,7 +13,7 @@ export class EventsService extends AppRestService<Events>{
   }
 
   getEvents() {
-    return this.getList(new HttpParams(), 'events');
+    return this.getListCached(new HttpParams(), 'events');
   }
 
-}                        
+}

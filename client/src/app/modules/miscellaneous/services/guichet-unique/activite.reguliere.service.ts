@@ -13,7 +13,7 @@ export class ActiviteReguliereService extends AppRestService<ActiviteReguliere>{
   }
 
   getActiviteReguliere() {
-    return this.getList(new HttpParams(), 'activite-reguliere');
+    return this.getListCached(new HttpParams(), 'activite-reguliere');
   }
 
-}                        
+}

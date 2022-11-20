@@ -13,10 +13,11 @@ export class InvoiceStatusService extends AppRestService<InvoiceStatus>{
   }
 
   getInvoiceStatus() {
-    return this.getList(new HttpParams(), "invoice-status-list");
+    return this.getListCached(new HttpParams(), "invoice-status-list");
   }
 
   addOrUpdateInvoiceStatus(invoiceStatus: InvoiceStatus) {
+    this.clearListCache(new HttpParams(), "invoice-status-list");
     return this.addOrUpdate(new HttpParams(), "invoice-status", invoiceStatus, "Enregistré", "Erreur lors de l'enregistrement");
   }
 

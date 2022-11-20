@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,6 +43,7 @@ import com.jss.osiris.modules.quotation.model.OrderingSearch;
 import com.jss.osiris.modules.quotation.model.OrderingSearchResult;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Quotation;
+import com.jss.osiris.modules.quotation.model.centralPay.CentralPayPaymentRequest;
 import com.jss.osiris.modules.quotation.repository.CustomerOrderRepository;
 import com.jss.osiris.modules.tiers.model.ITiers;
 
@@ -95,6 +97,15 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Autowired
     AssoAffaireOrderService assoAffaireOrderService;
+
+    @Autowired
+    CentralPayDelegateService centralPayDelegateService;
+
+    @Value("${payment.cb.redirect.deposit.entry.point}")
+    private String paymentCbRedirectDeposit;
+
+    @Value("${payment.cb.redirect.invoice.entry.point}")
+    private String paymentCbRedirectInvoice;
 
     @Override
     public CustomerOrder getCustomerOrder(Integer id) {
@@ -250,6 +261,21 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             throw new Exception("Quotation status not found for code " + targetStatusCode);
         customerOrder.setCustomerOrderStatus(customerOrderStatus);
         return this.addOrUpdateCustomerOrder(customerOrder);
+    }
+
+    @Override
+    public CustomerOrder unlockCustomerOrderFromDeposit(CustomerOrder customerOrder, Float effectivePayment)
+            throws Exception {
+        Float remainingToPay = accountingRecordService
+                .getRemainingAmountToPayForCustomerOrder(customerOrder);
+
+        if (customerOrder.getCustomerOrderStatus().getCode()
+                .equals(CustomerOrderStatus.WAITING_DEPOSIT)
+                && remainingToPay - effectivePayment <= 0) {
+            addOrUpdateCustomerOrderStatus(customerOrder, CustomerOrderStatus.BEING_PROCESSED);
+            notificationService.notifyCustomerOrderToBeingProcessed(customerOrder, false);
+        }
+        return customerOrder;
     }
 
     private Invoice generateInvoice(CustomerOrder customerOrder) throws Exception {
@@ -429,6 +455,102 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         mailHelper.sendCustomerOrderInvoiceToCustomer(customerOrder, invoice, true);
         if (invoice != null)
             throw new Exception();
+    }
+
+    private String getCardPaymentLinkForPayment(CustomerOrder customerOrder, String mail, String subject,
+            String redirectEntrypoint)
+            throws Exception {
+        if (customerOrder.getCentralPayPaymentRequestId() != null) {
+            CentralPayPaymentRequest centralPayPaymentRequest = centralPayDelegateService
+                    .getPaymentRequest(customerOrder.getCentralPayPaymentRequestId());
+
+            if (centralPayPaymentRequest != null) {
+                if (centralPayPaymentRequest.getPaymentRequestStatus().equals(CentralPayPaymentRequest.ACTIVE))
+                    centralPayDelegateService.cancelPaymentRequest(customerOrder.getCentralPayPaymentRequestId());
+
+                if (centralPayPaymentRequest.getPaymentRequestStatus().equals(CentralPayPaymentRequest.CLOSED)
+                        && centralPayPaymentRequest.getPaymentStatus().equals(CentralPayPaymentRequest.PAID)
+                        && customerOrder.getCustomerOrderStatus().getCode()
+                                .equals(CustomerOrderStatus.BILLED)) {
+                    unlockCustomerOrderFromDeposit(customerOrder, centralPayPaymentRequest.getTotalAmount() / 100f);
+                    return "ok";
+                }
+            }
+        }
+
+        Float remainingToPay = accountingRecordService.getRemainingAmountToPayForCustomerOrder(customerOrder);
+        if (customerOrder.getCentralPayPendingPaymentAmount() != null)
+            remainingToPay += customerOrder.getCentralPayPendingPaymentAmount();
+
+        if (remainingToPay > 0) {
+            CentralPayPaymentRequest paymentRequest = centralPayDelegateService.generatePayPaymentRequest(
+                    accountingRecordService.getRemainingAmountToPayForCustomerOrder(customerOrder), mail,
+                    customerOrder.getId() + "", subject);
+
+            customerOrder.setCentralPayPaymentRequestId(paymentRequest.getPaymentRequestId());
+            addOrUpdateCustomerOrder(customerOrder);
+
+            return paymentRequest.getBreakdowns().get(0).getEndpoint()
+                    + "?urlRedirect=" + redirectEntrypoint + "?customerOrderId=" + customerOrder.getId() + "&delay=0";
+        }
+        return "ok";
+    }
+
+    @Override
+    public String getCardPaymentLinkForPaymentDeposit(CustomerOrder customerOrder, String mail, String subject)
+            throws Exception {
+        return getCardPaymentLinkForPayment(customerOrder, mail, subject, paymentCbRedirectDeposit);
+    }
+
+    @Override
+    public Boolean validateCardPaymentLinkForDeposit(CustomerOrder customerOrder) throws Exception {
+        if (customerOrder.getCentralPayPaymentRequestId() != null) {
+            CentralPayPaymentRequest centralPayPaymentRequest = centralPayDelegateService
+                    .getPaymentRequest(customerOrder.getCentralPayPaymentRequestId());
+
+            if (centralPayPaymentRequest != null) {
+                if (centralPayPaymentRequest.getPaymentRequestStatus().equals(CentralPayPaymentRequest.CLOSED)
+                        && centralPayPaymentRequest.getPaymentStatus().equals(CentralPayPaymentRequest.PAID)) {
+
+                    if (customerOrder.getCustomerOrderStatus().getCode()
+                            .equals(CustomerOrderStatus.WAITING_DEPOSIT)) {
+                        unlockCustomerOrderFromDeposit(customerOrder, centralPayPaymentRequest.getTotalAmount() / 100f);
+                        customerOrder
+                                .setCentralPayPendingPaymentAmount(customerOrder.getCentralPayPendingPaymentAmount()
+                                        + centralPayPaymentRequest.getTotalAmount() / 100f);
+                        addOrUpdateCustomerOrder(customerOrder);
+                    }
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public String getCardPaymentLinkForPaymentInvoice(CustomerOrder customerOrder, String mail, String subject)
+            throws Exception {
+        return getCardPaymentLinkForPayment(customerOrder, mail, subject, paymentCbRedirectInvoice);
+    }
+
+    @Override
+    public Boolean validateCardPaymentLinkForInvoice(CustomerOrder customerOrder) throws Exception {
+        if (customerOrder.getCentralPayPaymentRequestId() != null) {
+            CentralPayPaymentRequest centralPayPaymentRequest = centralPayDelegateService
+                    .getPaymentRequest(customerOrder.getCentralPayPaymentRequestId());
+
+            if (centralPayPaymentRequest != null) {
+                if (centralPayPaymentRequest.getPaymentRequestStatus().equals(CentralPayPaymentRequest.CLOSED)
+                        && centralPayPaymentRequest.getPaymentStatus().equals(CentralPayPaymentRequest.PAID)) {
+                    // Do nothing, wainting for bank credit to letter invoice
+                    customerOrder.setCentralPayPendingPaymentAmount(customerOrder.getCentralPayPendingPaymentAmount()
+                            + centralPayPaymentRequest.getTotalAmount() / 100f);
+                    addOrUpdateCustomerOrder(customerOrder);
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
 }

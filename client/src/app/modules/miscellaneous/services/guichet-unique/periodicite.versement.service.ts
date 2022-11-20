@@ -13,7 +13,7 @@ export class PeriodiciteVersementService extends AppRestService<PeriodiciteVerse
   }
 
   getPeriodiciteVersement() {
-    return this.getList(new HttpParams(), 'periodicite-versement');
+    return this.getListCached(new HttpParams(), 'periodicite-versement');
   }
 
-}                        
+}

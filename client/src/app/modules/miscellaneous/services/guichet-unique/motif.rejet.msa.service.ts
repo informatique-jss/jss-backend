@@ -13,7 +13,7 @@ export class MotifRejetMsaService extends AppRestService<MotifRejetMsa>{
   }
 
   getMotifRejetMsa() {
-    return this.getList(new HttpParams(), 'motif-rejet-msa');
+    return this.getListCached(new HttpParams(), 'motif-rejet-msa');
   }
 
-}                        
+}

@@ -13,10 +13,11 @@ export class TransfertFundsTypeService extends AppRestService<TransfertFundsType
   }
 
   getTransfertFundsTypes() {
-    return this.getList(new HttpParams(), "transfert-fund-types");
+    return this.getListCached(new HttpParams(), "transfert-fund-types");
   }
 
   addOrUpdateTransfertFundsType(transfertFundsType: TransfertFundsType) {
+    this.clearListCache(new HttpParams(), "transfert-fund-types");
     return this.addOrUpdate(new HttpParams(), "transfert-fund-type", transfertFundsType, "Enregistré", "Erreur lors de l'enregistrement");
   }
 }

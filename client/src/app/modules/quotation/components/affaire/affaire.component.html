@@ -18,8 +18,8 @@
           <avatar-chip *ngIf="asso.assignedTo" [employee]="asso.assignedTo"
             (onChangeAssigne)="updateAssignedToForAffaire($event,asso)">
           </avatar-chip>
-          <mat-icon matTooltip="Voir/éditer l'affaire" (click)="displayAffaire();$event.stopPropagation();"
-            class="pointer">
+          <mat-icon matTooltip="Voir/éditer l'affaire" (click)="displayAffaire($event);$event.stopPropagation();"
+            (auxclick)="displayAffaire($event);$event.stopPropagation();" class="pointer">
             edit</mat-icon>
           <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
         </mat-panel-description>
@@ -78,11 +78,13 @@
   <mat-icon>edit</mat-icon>
 </button>
 <button matTooltip="Voir le devis" mat-fab color="accent" class="second-fab-button"
-  *ngIf="editMode==false && asso && asso.quotation" (click)="displayQuotation()">
+  *ngIf="editMode==false && asso && asso.quotation" (click)="displayQuotation($event)"
+  (auxclick)="displayQuotation($event)">
   <mat-icon>request_quote</mat-icon>
 </button>
 <button matTooltip="Voir la commande" mat-fab color="accent" class="second-fab-button"
-  *ngIf="editMode==false && asso && asso.customerOrder" (click)="displayCustomerOrder()">
+  *ngIf="editMode==false && asso && asso.customerOrder" (click)="displayCustomerOrder($event)"
+  (auxclick)="displayCustomerOrder($event)">
   <mat-icon>shopping_cart</mat-icon>
 </button>
 

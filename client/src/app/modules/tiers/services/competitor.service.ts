@@ -13,10 +13,11 @@ export class CompetitorService extends AppRestService<Competitor>{
   }
 
   getCompetitors() {
-    return this.getList(new HttpParams(), "competitors");
+    return this.getListCached(new HttpParams(), "competitors");
   }
 
   addOrUpdateCompetitor(competitor: Competitor) {
+    this.clearListCache(new HttpParams(), "competitors");
     return this.addOrUpdate(new HttpParams(), "competitor", competitor, "Enregistré", "Erreur lors de l'enregistrement");
   }
 

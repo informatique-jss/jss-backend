@@ -13,10 +13,11 @@ export class RegieService extends AppRestService<Regie>{
   }
 
   getRegies() {
-    return this.getList(new HttpParams(), "regies");
+    return this.getListCached(new HttpParams(), "regies");
   }
 
   addOrUpdateRegie(regie: Regie) {
+    this.clearListCache(new HttpParams(), "regies");
     return this.addOrUpdate(new HttpParams(), "regie", regie, "Enregistré", "Erreur lors de l'enregistrement");
   }
 

@@ -13,7 +13,7 @@ export class QuotationStatusService extends AppRestService<QuotationStatus>{
   }
 
   getQuotationStatus() {
-    return this.getList(new HttpParams(), "quotation-status");
+    return this.getListCached(new HttpParams(), "quotation-status");
   }
 
   getQuotationStatusByCode(status: QuotationStatus[], code: string) {

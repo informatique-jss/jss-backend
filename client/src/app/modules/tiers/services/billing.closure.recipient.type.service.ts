@@ -13,10 +13,11 @@ export class BillingClosureRecipientTypeService extends AppRestService<BillingCl
   }
 
   getBillingClosureRecipientTypes() {
-    return this.getList(new HttpParams(), "billing-closure-recipient-types");
+    return this.getListCached(new HttpParams(), "billing-closure-recipient-types");
   }
 
   addOrUpdateBillingClosureRecipientType(billingClosureRecipientType: BillingClosureRecipientType) {
+    this.clearListCache(new HttpParams(), "billing-closure-recipient-types");
     return this.addOrUpdate(new HttpParams(), "billing-closure-recipient-type", billingClosureRecipientType, "Enregistré", "Erreur lors de l'enregistrement");
   }
 }

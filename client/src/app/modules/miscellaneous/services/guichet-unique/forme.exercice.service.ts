@@ -13,7 +13,7 @@ export class FormeExerciceService extends AppRestService<FormeExercice>{
   }
 
   getFormeExercice() {
-    return this.getList(new HttpParams(), 'forme-exercice');
+    return this.getListCached(new HttpParams(), 'forme-exercice');
   }
 
-}                        
+}

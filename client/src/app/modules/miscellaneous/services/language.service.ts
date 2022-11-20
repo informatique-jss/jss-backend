@@ -13,10 +13,11 @@ export class LanguageService extends AppRestService<Language>{
   }
 
   getLanguages() {
-    return this.getList(new HttpParams(), "languages");
+    return this.getListCached(new HttpParams(), "languages");
   }
 
   addOrUpdateLanguage(language: Language) {
+    this.clearListCache(new HttpParams(), "languages");
     return this.addOrUpdate(new HttpParams(), "language", language, "Enregistré", "Erreur lors de l'enregistrement");
   }
 

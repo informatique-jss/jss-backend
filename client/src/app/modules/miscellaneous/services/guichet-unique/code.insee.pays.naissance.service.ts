@@ -13,7 +13,7 @@ export class CodeInseePaysNaissanceService extends AppRestService<CodeInseePaysN
   }
 
   getCodeInseePaysNaissance() {
-    return this.getList(new HttpParams(), 'code-insee-pays-naissance');
+    return this.getListCached(new HttpParams(), 'code-insee-pays-naissance');
   }
 
-}                        
+}

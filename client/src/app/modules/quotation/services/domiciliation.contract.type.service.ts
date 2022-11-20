@@ -13,10 +13,11 @@ export class DomiciliationContractTypeService extends AppRestService<Domiciliati
   }
 
   getContractTypes() {
-    return this.getList(new HttpParams(), "domiciliation-contract-types");
+    return this.getListCached(new HttpParams(), "domiciliation-contract-types");
   }
 
   addOrUpdateDomiciliationContractType(domiciliationContractType: DomiciliationContractType) {
+    this.clearListCache(new HttpParams(), "domiciliation-contract-types");
     return this.addOrUpdate(new HttpParams(), "domiciliation-contract-type", domiciliationContractType, "Enregistré", "Erreur lors de l'enregistrement");
   }
 

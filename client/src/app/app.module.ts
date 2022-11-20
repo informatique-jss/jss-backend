@@ -63,6 +63,7 @@ registerLocaleData(localeFr, 'fr');
     MatSnackBarModule,
     MatTooltipModule,
     MatSortModule,
+    MatTooltipModule,
     MatTableModule,
     ReactiveFormsModule,
     MatButtonModule,

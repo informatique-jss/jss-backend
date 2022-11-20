@@ -13,7 +13,7 @@ export class FormeSocialeService extends AppRestService<FormeSociale>{
   }
 
   getFormeSociale() {
-    return this.getList(new HttpParams(), 'forme-sociale');
+    return this.getListCached(new HttpParams(), 'forme-sociale');
   }
 
-}                        
+}

@@ -13,7 +13,7 @@ export class MineurLienParenteService extends AppRestService<MineurLienParente>{
   }
 
   getMineurLienParente() {
-    return this.getList(new HttpParams(), 'mineur-lien-parente');
+    return this.getListCached(new HttpParams(), 'mineur-lien-parente');
   }
 
-}                        
+}

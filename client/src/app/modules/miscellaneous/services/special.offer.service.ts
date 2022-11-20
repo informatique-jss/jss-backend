@@ -13,10 +13,11 @@ export class SpecialOfferService extends AppRestService<SpecialOffer>{
   }
 
   getSpecialOffers() {
-    return this.getList(new HttpParams(), "special-offers");
+    return this.getListCached(new HttpParams(), "special-offers");
   }
 
   addOrUpdateSpecialOffer(specialOffer: SpecialOffer) {
+    this.clearListCache(new HttpParams(), "special-offers");
     return this.addOrUpdate(new HttpParams(), "special-offer", specialOffer, "Enregistré", "Erreur lors de l'enregistrement");
   }
 

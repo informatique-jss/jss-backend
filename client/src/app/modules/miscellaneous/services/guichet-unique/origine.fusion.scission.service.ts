@@ -13,7 +13,7 @@ export class OrigineFusionScissionService extends AppRestService<OrigineFusionSc
   }
 
   getOrigineFusionScission() {
-    return this.getList(new HttpParams(), 'origine-fusion-scission');
+    return this.getListCached(new HttpParams(), 'origine-fusion-scission');
   }
 
-}                        
+}

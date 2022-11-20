@@ -14,10 +14,11 @@ export class CityService extends AppRestService<City>{
   }
 
   getCities() {
-    return this.getList(new HttpParams(), "cities");
+    return this.getListCached(new HttpParams(), "cities");
   }
 
   addOrUpdateCity(city: City) {
+    this.clearListCache(new HttpParams(), "cities");
     return this.addOrUpdate(new HttpParams(), "city", city, "Enregistré", "Erreur lors de l'enregistrement");
   }
 

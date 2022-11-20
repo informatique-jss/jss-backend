@@ -145,11 +145,13 @@
                             {{asso.affaire.country.label}}
                           </mat-panel-title>
                           <mat-panel-description>
-                            <avatar-chip *ngIf="asso.assignedTo" [employee]="asso.assignedTo"
+                            <avatar-chip *ngIf="asso.assignedTo && asso.id" [employee]="asso.assignedTo"
                               (onChangeAssigne)="updateAssignedToForAffaire($event,asso)">
                             </avatar-chip>
                             <mat-icon matTooltip="Voir/éditer l'affaire"
-                              (click)="displayAffaire(asso.affaire);$event.stopPropagation();" class="pointer">
+                              (click)="displayAffaire($event, asso.affaire);$event.stopPropagation();"
+                              (auxclick)="displayAffaire($event, asso.affaire);$event.stopPropagation();"
+                              class="pointer">
                               edit</mat-icon>
                             <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
                           </mat-panel-description>
@@ -179,9 +181,9 @@
                           </avatar-chip>
                           <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
                           <mat-panel-description>
-                            <mat-icon *ngIf="instanceOfCustomerOrderFn(quotation)"
-                              matTooltip="Voir/éditer la prestation" (click)="displayProvision(asso,provision)"
-                              class="pointer">
+                            <mat-icon *ngIf="instanceOfCustomerOrderFn(quotation) && quotation.id && !editMode"
+                              matTooltip="Voir/éditer la prestation" (click)="displayProvision($event, asso,provision)"
+                              (auxclick)="displayProvision($event, asso,provision)" class="pointer">
                               work</mat-icon>
                             <mat-icon *ngIf="editMode" matTooltip="Supprimer la prestation"
                               (click)="deleteProvision(asso,provision)" class="pointer">

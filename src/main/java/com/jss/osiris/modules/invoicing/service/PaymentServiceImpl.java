@@ -256,15 +256,10 @@ public class PaymentServiceImpl implements PaymentService {
                     depositService.addOrUpdateDeposit(deposit);
 
                     remainingToPay -= effectivePayment;
-                    // Unlocked customer order
-                    if (correspondingCustomerOrder.get(i).getCustomerOrderStatus().getCode()
-                            .equals(CustomerOrderStatus.WAITING_DEPOSIT)
-                            && remainingToPayForCurrentCustomerOrder - effectivePayment <= 0) {
-                        customerOrderService.addOrUpdateCustomerOrderStatus(correspondingCustomerOrder.get(i),
-                                CustomerOrderStatus.BEING_PROCESSED);
-                        notificationService.notifyCustomerOrderToBeingProcessed(correspondingCustomerOrder.get(i),
-                                false);
-                    }
+
+                    // Try unlocked customer order
+                    customerOrderService.unlockCustomerOrderFromDeposit(correspondingCustomerOrder.get(i),
+                            effectivePayment);
                 }
             }
             payment.setCustomerOrder(correspondingCustomerOrder.get(0));

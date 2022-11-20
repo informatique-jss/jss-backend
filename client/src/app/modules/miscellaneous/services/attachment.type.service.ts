@@ -13,10 +13,11 @@ export class AttachmentTypeService extends AppRestService<AttachmentType>{
   }
 
   getAttachmentTypes() {
-    return this.getList(new HttpParams(), "attachment-types");
+    return this.getListCached(new HttpParams(), "attachment-types");
   }
 
   addOrUpdateAttachmentType(attachmentType: AttachmentType) {
+    this.clearListCache(new HttpParams(), "attachment-types");
     return this.addOrUpdate(new HttpParams(), "attachment-type", attachmentType, "Enregistré", "Erreur lors de l'enregistrement");
   }
 

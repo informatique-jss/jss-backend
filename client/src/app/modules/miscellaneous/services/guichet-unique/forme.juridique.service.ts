@@ -13,7 +13,7 @@ export class FormeJuridiqueService extends AppRestService<FormeJuridique>{
   }
 
   getFormeJuridique() {
-    return this.getList(new HttpParams(), 'forme-juridique');
+    return this.getListCached(new HttpParams(), 'forme-juridique');
   }
 
-}                        
+}

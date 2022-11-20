@@ -13,7 +13,7 @@ export class StatutFormaliteService extends AppRestService<StatutFormalite>{
   }
 
   getStatutFormalite() {
-    return this.getList(new HttpParams(), 'statut-formalite');
+    return this.getListCached(new HttpParams(), 'statut-formalite');
   }
 
-}                        
+}

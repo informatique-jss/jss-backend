@@ -13,7 +13,7 @@ export class RoleConjointService extends AppRestService<RoleConjoint>{
   }
 
   getRoleConjoint() {
-    return this.getList(new HttpParams(), 'role-conjoint');
+    return this.getListCached(new HttpParams(), 'role-conjoint');
   }
 
-}                        
+}

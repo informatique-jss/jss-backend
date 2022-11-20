@@ -13,7 +13,7 @@ export class NatureGeranceService extends AppRestService<NatureGerance>{
   }
 
   getNatureGerance() {
-    return this.getList(new HttpParams(), 'nature-gerance');
+    return this.getListCached(new HttpParams(), 'nature-gerance');
   }
 
-}                        
+}

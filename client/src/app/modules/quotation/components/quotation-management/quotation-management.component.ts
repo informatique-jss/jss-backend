@@ -172,14 +172,14 @@ export class QuotationManagementComponent implements OnInit, AfterContentChecked
   }
 
   updateQuotationMailResult() {
-    if (this.quotation)
+    if (this.quotation && this.quotation.id)
       this.mailComputeResultService.getMailComputeResultForQuotation(this.quotation).subscribe(response => {
         this.quotationMailComputeResult = response;
       })
   }
 
   updateBillingMailResult() {
-    if (this.quotation)
+    if (this.quotation && this.quotation.id)
       this.mailComputeResultService.getMailComputeResultForBilling(this.quotation).subscribe(response => {
         this.billingMailComputeResult = response;
       })

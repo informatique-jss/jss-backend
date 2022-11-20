@@ -13,7 +13,7 @@ export class FormeExerciceActivitePrincipalService extends AppRestService<FormeE
   }
 
   getFormeExerciceActivitePrincipal() {
-    return this.getList(new HttpParams(), 'forme-exercice-activite-principal');
+    return this.getListCached(new HttpParams(), 'forme-exercice-activite-principal');
   }
 
-}                        
+}

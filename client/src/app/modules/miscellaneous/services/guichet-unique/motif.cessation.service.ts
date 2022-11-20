@@ -13,7 +13,7 @@ export class MotifCessationService extends AppRestService<MotifCessation>{
   }
 
   getMotifCessation() {
-    return this.getList(new HttpParams(), 'motif-cessation');
+    return this.getListCached(new HttpParams(), 'motif-cessation');
   }
 
-}                        
+}

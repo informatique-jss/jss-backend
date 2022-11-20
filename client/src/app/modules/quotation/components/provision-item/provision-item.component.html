@@ -36,7 +36,7 @@
 </bodacc-main>
 <formalite [formalite]="provision.formalite" [editMode]="editMode" [isStatusOpen]="isStatusOpen"
   [instanceOfCustomerOrder]="instanceOfCustomerOrder" [provision]="provision" (provisionChange)="noticeChange()"
-  *ngIf="provision.formalite && provision.provisionType && provision.provisionType.provisionScreenType.code==PROVISION_SCREEN_TYPE_FORMALITE">
+  *ngIf="provision.formalite && provision.provisionType && provision.provisionType.provisionScreenType.code==PROVISION_SCREEN_TYPE_FORMALITE && false">
 </formalite>
 <div
   *ngIf="provision && provision.provisionType && provision.provisionType.provisionScreenType.code==PROVISION_SCREEN_TYPE_STANDARD">

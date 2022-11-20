@@ -119,4 +119,9 @@ export class InvoiceDetailsComponent implements OnInit {
     return this.getPreTaxPriceTotal() - this.getDiscountTotal() + this.getVatTotal();
   }
 
+
+  openRoute(event: any, link: string) {
+    this.appService.openRoute(event, link, null);
+  }
+
 }

@@ -13,7 +13,7 @@ export class RoleContratService extends AppRestService<RoleContrat>{
   }
 
   getRoleContrat() {
-    return this.getList(new HttpParams(), 'role-contrat');
+    return this.getListCached(new HttpParams(), 'role-contrat');
   }
 
-}                        
+}

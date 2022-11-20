@@ -13,7 +13,7 @@ export class NatureCessationService extends AppRestService<NatureCessation>{
   }
 
   getNatureCessation() {
-    return this.getList(new HttpParams(), 'nature-cessation');
+    return this.getListCached(new HttpParams(), 'nature-cessation');
   }
 
-}                        
+}

@@ -13,7 +13,7 @@ export class ModeExerciceService extends AppRestService<ModeExercice>{
   }
 
   getModeExercice() {
-    return this.getList(new HttpParams(), 'mode-exercice');
+    return this.getListCached(new HttpParams(), 'mode-exercice');
   }
 
-}                        
+}

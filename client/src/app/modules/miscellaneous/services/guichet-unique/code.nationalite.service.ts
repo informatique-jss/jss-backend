@@ -13,7 +13,7 @@ export class CodeNationaliteService extends AppRestService<CodeNationalite>{
   }
 
   getCodeNationalite() {
-    return this.getList(new HttpParams(), 'code-nationalite');
+    return this.getListCached(new HttpParams(), 'code-nationalite');
   }
 
-}                        
+}

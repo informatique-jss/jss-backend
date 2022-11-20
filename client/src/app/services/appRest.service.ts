@@ -10,11 +10,44 @@ export abstract class AppRestService<T> {
 
   public static serverUrl: string = environment.backendUrl;
 
+  cache: any;
+
   constructor(protected _http: HttpClient, @Inject(String) protected entryPoint: string) {
   }
 
   successfulToken: HttpContextToken<string> = new HttpContextToken<string>(() => "");
   errorToken: HttpContextToken<string> = new HttpContextToken<string>(() => "");
+
+  /**
+   * Use it carrefully ! Cache is clientside and is cleared only at each website refresh.
+   * Do not cache entity that are updated by many people.
+   * Do not forget to call clear cache (with same params as getListCached) when you update the entity
+   * @param params
+   * @param api
+   * @param successfulMessage
+   * @param errorMessage
+   * @returns
+   */
+  getListCached(params: HttpParams, api: string, successfulMessage: string = "", errorMessage: string = ""): Observable<T[]> {
+    let context: HttpContext = new HttpContext();
+    if (this.getFromCache(params, api))
+      return new Observable<T[]>(observer => {
+        observer.next(this.getFromCache(params, api)!);
+        observer.complete;
+      })
+    else
+      return new Observable<T[]>(observer => {
+        this.getList(params, api, successfulMessage, errorMessage).subscribe(response => {
+          this.setCache(params, api, response);
+          observer.next(this.getFromCache(params, api)!);
+          observer.complete;
+        });
+      })
+  }
+
+  clearListCache(params: HttpParams, api: string) {
+    this.setCache(params, api, undefined);
+  }
 
   getList(params: HttpParams, api: string, successfulMessage: string = "", errorMessage: string = ""): Observable<T[]> {
     let context: HttpContext = new HttpContext();
@@ -129,4 +162,29 @@ export abstract class AppRestService<T> {
 
     return this._http.post(AppRestService.serverUrl + this.entryPoint + "/" + api, formData, { reportProgress: true, observe: "events", context }) as Observable<HttpEvent<any>>;
   }
+
+  getFromCache(params: HttpParams, api: string): T[] | null {
+    if (this.cache && this.cache[api] && this.cache[api][this.serializeParams(params)])
+      return this.cache[api][this.serializeParams(params)];
+    return null;
+  }
+
+  setCache(params: HttpParams, api: string, response: T[] | undefined) {
+    if (!this.cache)
+      this.cache = [];
+
+    if (!this.cache[api])
+      this.cache[api] = [];
+
+    this.cache[api][this.serializeParams(params)] = response;
+  }
+
+  serializeParams(params: HttpParams): string {
+    let stringParams = "";
+    if (params)
+      for (let paramKey of params.keys())
+        stringParams += paramKey + params.get(paramKey);
+    return stringParams;
+  }
+
 }

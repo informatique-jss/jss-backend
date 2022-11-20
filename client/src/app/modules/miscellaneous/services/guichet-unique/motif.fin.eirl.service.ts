@@ -13,7 +13,7 @@ export class MotifFinEirlService extends AppRestService<MotifFinEirl>{
   }
 
   getMotifFinEirl() {
-    return this.getList(new HttpParams(), 'motif-fin-eirl');
+    return this.getListCached(new HttpParams(), 'motif-fin-eirl');
   }
 
-}                        
+}

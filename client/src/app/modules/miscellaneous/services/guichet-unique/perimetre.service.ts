@@ -13,7 +13,7 @@ export class PerimetreService extends AppRestService<Perimetre>{
   }
 
   getPerimetre() {
-    return this.getList(new HttpParams(), 'perimetre');
+    return this.getListCached(new HttpParams(), 'perimetre');
   }
 
-}                        
+}

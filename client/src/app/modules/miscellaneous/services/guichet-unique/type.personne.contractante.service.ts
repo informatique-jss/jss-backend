@@ -13,7 +13,7 @@ export class TypePersonneContractanteService extends AppRestService<TypePersonne
   }
 
   getTypePersonneContractante() {
-    return this.getList(new HttpParams(), 'type-personne-contractante');
+    return this.getListCached(new HttpParams(), 'type-personne-contractante');
   }
 
-}                        
+}

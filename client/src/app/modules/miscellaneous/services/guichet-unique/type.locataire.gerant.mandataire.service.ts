@@ -13,7 +13,7 @@ export class TypeLocataireGerantMandataireService extends AppRestService<TypeLoc
   }
 
   getTypeLocataireGerantMandataire() {
-    return this.getList(new HttpParams(), 'type-locataire-gerant-mandataire');
+    return this.getListCached(new HttpParams(), 'type-locataire-gerant-mandataire');
   }
 
-}                        
+}

@@ -13,7 +13,7 @@ export class BodaccStatusService extends AppRestService<BodaccStatus>{
   }
 
   getBodaccStatus() {
-    return this.getList(new HttpParams(), "bodacc-status");
+    return this.getListCached(new HttpParams(), "bodacc-status");
   }
 
 }

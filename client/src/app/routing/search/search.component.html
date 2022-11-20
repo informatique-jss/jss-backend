@@ -20,7 +20,7 @@
               <mat-tab [label]="getTabLabel(TIERS_ENTITY_TYPE)">
                 <mat-dialog-content class="mat-content">
                   <mat-card class="pointer" *ngFor="let entity of getEntitiesForTab(TIERS_ENTITY_TYPE)"
-                    (click)="openEntity(entity)">
+                    (click)="openEntity($event, entity)" (auxclick)="openEntity($event, entity)">
                     <mat-card-title-group>
                       <mat-card-title>{{entity.text.denomination}} {{entity.text.firstname}} {{entity.text.lastname}}
                         ({{entity.text.id}})</mat-card-title>
@@ -39,7 +39,7 @@
               <mat-tab [label]="getTabLabel(RESPONSABLE_ENTITY_TYPE)">
                 <mat-dialog-content class="mat-content">
                   <mat-card class="pointer" *ngFor="let entity of getEntitiesForTab(RESPONSABLE_ENTITY_TYPE)"
-                    (click)="openEntity(entity)">
+                    (click)="openEntity($event, entity)" (auxclick)="openEntity($event, entity)">
                     <mat-card-title-group>
                       <mat-card-title>{{entity.text.firstname}} {{entity.text.lastname}} </mat-card-title>
                       <mat-card-subtitle>Commercial {{entity.text.salesEmployee.firstname}}
@@ -58,7 +58,7 @@
               <mat-tab [label]="getTabLabel(QUOTATION_ENTITY_TYPE)">
                 <mat-dialog-content class="mat-content">
                   <mat-card class="pointer" *ngFor="let entity of getEntitiesForTab(QUOTATION_ENTITY_TYPE)"
-                    (click)="openEntity(entity)">
+                    (click)="openEntity($event, entity)" (auxclick)="openEntity($event, entity)">
                     <mat-card-title-group>
                       <mat-card-title>{{entity.text.id}}</mat-card-title>
                       <mat-card-subtitle><span *ngIf="entity.text.tiers!=null">Pour {{entity.text.tiers.firstname}}
@@ -80,7 +80,7 @@
               <mat-tab [label]="getTabLabel(CUSTOMER_ORDER_ENTITY_TYPE)">
                 <mat-dialog-content class="mat-content">
                   <mat-card class="pointer" *ngFor="let entity of getEntitiesForTab(CUSTOMER_ORDER_ENTITY_TYPE)"
-                    (click)="openEntity(entity)">
+                    (click)="openEntity($event, entity)" (auxclick)="openEntity($event, entity)">
                     <mat-card-title-group>
                       <mat-card-title>{{entity.text.id}}</mat-card-title>
                       <mat-card-subtitle><span *ngIf="entity.text.tiers!=null">Pour {{entity.text.tiers.firstname}}
@@ -102,7 +102,7 @@
               <mat-tab [label]="getTabLabel(INVOICE_ENTITY_TYPE)">
                 <mat-dialog-content class="mat-content">
                   <mat-card class="pointer" *ngFor="let entity of getEntitiesForTab(INVOICE_ENTITY_TYPE)"
-                    (click)="openEntity(entity)">
+                    (click)="openEntity($event, entity)" (auxclick)="openEntity($event, entity)">
                     <mat-card-title-group>
                       <mat-card-title>{{entity.text.id}}</mat-card-title>
                       <mat-card-subtitle>
@@ -116,7 +116,7 @@
               <mat-tab [label]="getTabLabel(ASSO_AFFAIRE_ENTITY_TYPE)">
                 <mat-dialog-content class="mat-content">
                   <mat-card class="pointer" *ngFor="let entity of getEntitiesForTab(ASSO_AFFAIRE_ENTITY_TYPE)"
-                    (click)="openEntity(entity)">
+                    (click)="openEntity($event, entity)" (auxclick)="openEntity($event, entity)">
                     <mat-card-title-group>
                       <mat-card-title>
                         {{entity.text.affaire.denomination?entity.text.affaire.denomination:(entity.text.affaire.firstname+"

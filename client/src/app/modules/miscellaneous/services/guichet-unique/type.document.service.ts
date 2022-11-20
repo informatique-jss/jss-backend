@@ -13,7 +13,7 @@ export class TypeDocumentService extends AppRestService<TypeDocument>{
   }
 
   getTypeDocument() {
-    return this.getList(new HttpParams(), 'type-document');
+    return this.getListCached(new HttpParams(), 'type-document');
   }
 
-}                        
+}

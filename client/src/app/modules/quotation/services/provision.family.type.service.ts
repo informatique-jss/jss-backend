@@ -13,11 +13,12 @@ export class ProvisionFamilyTypeService extends AppRestService<ProvisionFamilyTy
   }
 
   getProvisionFamilyTypes() {
-    return this.getList(new HttpParams(), "provision-family-types");
+    return this.getListCached(new HttpParams(), "provision-family-types");
   }
 
 
   addOrUpdateProvisionFamilyType(provisionFamilyType: ProvisionFamilyType) {
+    this.clearListCache(new HttpParams(), "provision-family-types");
     return this.addOrUpdate(new HttpParams(), "provision-family-type", provisionFamilyType, "Enregistré", "Erreur lors de l'enregistrement");
   }
 

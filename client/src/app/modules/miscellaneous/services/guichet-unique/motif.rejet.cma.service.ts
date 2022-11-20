@@ -13,7 +13,7 @@ export class MotifRejetCmaService extends AppRestService<MotifRejetCma>{
   }
 
   getMotifRejetCma() {
-    return this.getList(new HttpParams(), 'motif-rejet-cma');
+    return this.getListCached(new HttpParams(), 'motif-rejet-cma');
   }
 
-}                        
+}

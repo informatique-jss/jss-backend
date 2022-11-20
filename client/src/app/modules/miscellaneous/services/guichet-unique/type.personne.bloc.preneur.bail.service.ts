@@ -13,7 +13,7 @@ export class TypePersonneBlocPreneurBailService extends AppRestService<TypePerso
   }
 
   getTypePersonneBlocPreneurBail() {
-    return this.getList(new HttpParams(), 'type-personne-bloc-preneur-bail');
+    return this.getListCached(new HttpParams(), 'type-personne-bloc-preneur-bail');
   }
 
-}                        
+}

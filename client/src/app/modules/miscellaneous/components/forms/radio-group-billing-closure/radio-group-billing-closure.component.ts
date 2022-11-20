@@ -7,8 +7,8 @@ import { GenericRadioGroupComponent } from '../generic-radio-group/generic-radio
 
 @Component({
   selector: 'radio-group-billing-closure',
-  templateUrl: './radio-group-billing-closure.component.html',
-  styleUrls: ['./radio-group-billing-closure.component.css']
+  templateUrl: '../generic-radio-group/generic-radio-group-code.component.html',
+  styleUrls: ['../generic-radio-group/generic-radio-group.component.css']
 })
 export class RadioGroupBillingClosureComponent extends GenericRadioGroupComponent<BillingClosureType> implements OnInit {
   types: BillingClosureType[] = [] as Array<BillingClosureType>;

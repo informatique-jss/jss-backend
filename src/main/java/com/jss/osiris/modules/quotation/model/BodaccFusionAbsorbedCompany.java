@@ -24,13 +24,13 @@ public class BodaccFusionAbsorbedCompany implements Serializable, IId {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "bodacc_sequence")
 	private Integer id;
 
-	@Column(length = 60, nullable = false)
+	@Column(length = 60)
 	private String absorbedCompanyDenomination;
 
-	@Column(length = 9, nullable = false)
+	@Column(length = 9)
 	private String absorbedCompanySiren;
 
-	@Column(length = 100, nullable = false)
+	@Column(length = 100)
 	private String absorbedCompanyAddress;
 
 	private Integer absorbedCompanyShareCapital;
@@ -39,7 +39,6 @@ public class BodaccFusionAbsorbedCompany implements Serializable, IId {
 	@JoinColumn(name = "id_legal_form_absorbed_company")
 	private LegalForm absorbedCompanyLegalForm;
 
-	@Column(nullable = false)
 	@JsonSerialize(using = JacksonLocalDateSerializer.class)
 	private LocalDate absorbedCompanyRcsDeclarationDate;
 

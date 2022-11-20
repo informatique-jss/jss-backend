@@ -13,6 +13,6 @@ export class DomiciliationStatusService extends AppRestService<DomiciliationStat
   }
 
   getDomiciliationStatus() {
-    return this.getList(new HttpParams(), "domiciliation-status");
+    return this.getListCached(new HttpParams(), "domiciliation-status");
   }
 }

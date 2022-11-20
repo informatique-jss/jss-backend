@@ -13,7 +13,7 @@ export class TypeDePersonneService extends AppRestService<TypeDePersonne>{
   }
 
   getTypeDePersonne() {
-    return this.getList(new HttpParams(), 'type-de-personne');
+    return this.getListCached(new HttpParams(), 'type-de-personne');
   }
 
-}                        
+}

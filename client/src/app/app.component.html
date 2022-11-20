@@ -49,8 +49,10 @@
             </mat-icon>
           </th>
           <th class="mat-header-cell" colspan="2" *ngIf="!note.link">{{note.value}}</th>
-          <th class="mat-header-cell" colspan="2" *ngIf="note.link"><a [routerLink]="note.link"
-              class="note-link">{{note.value}}<mat-icon class="small-icon ">link</mat-icon></a></th>
+          <th class="mat-header-cell note-link pointer" colspan="2" *ngIf="note.link"
+            (click)="openRoute($event, note.link)" (auxclick)="openRoute($event, note.link)">
+            {{note.value}}<mat-icon class="small-icon ">link</mat-icon>
+          </th>
         </tr>
         <tr class="mat-row " *ngIf="!note.isHeader">
           <td class="mat-header-cell mat-header-cell-actions" *ngIf="displayEditNote">

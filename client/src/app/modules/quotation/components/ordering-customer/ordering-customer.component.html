@@ -26,6 +26,18 @@
         </table>
         <div *ngIf="quotation.tiers ||quotation.confrere">
           <table class="full-width">
+            <tr>
+              <td *ngIf="quotation.tiers">Client : {{quotation.tiers.denomination?quotation.tiers.denomination :
+                (quotation.tiers.firstname+"
+                "+quotation.tiers.lastname)}} ({{quotation.tiers.id}}) <mat-icon matTooltip="Ouvrir le client"
+                  (click)="openRoute($event,'/tiers/'+quotation.tiers.id)"
+                  (auxclick)="openRoute($event,'/tiers/'+quotation.tiers.id)" class="pointer">
+                  preview
+                </mat-icon>
+              </td>
+            </tr>
+          </table>
+          <table class="full-width">
             <tr *ngIf="quotation.tiers ">
               <td>Commercial : {{quotation.tiers.salesEmployee?.firstname}} {{quotation.tiers.salesEmployee?.lastname}}
               </td>
@@ -87,8 +99,11 @@
         <div *ngIf="quotation.responsable  && quotation.responsable.tiers">
           <table class="full-width">
             <tr>
-              <td>Client : {{quotation.responsable.tiers.denomination}} ({{quotation.responsable.tiers.id}}) <mat-icon
-                  matTooltip="Ouvrir le client" [routerLink]="'/tiers/'+quotation.responsable.tiers.id" class="pointer">
+              <td>Client : {{quotation.responsable.tiers.denomination?quotation.responsable.tiers.denomination :
+                (quotation.responsable.tiers.firstname+"
+                "+quotation.responsable.tiers.lastname)}} ({{quotation.responsable.tiers.id}}) <mat-icon
+                  matTooltip="Ouvrir le client" (click)="openRoute($event,'/tiers/'+quotation.responsable.tiers.id)"
+                  (auxclick)="openRoute($event,'/tiers/'+quotation.responsable.tiers.id)" class="pointer">
                   preview
                 </mat-icon>
               </td>

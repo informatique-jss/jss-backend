@@ -25,14 +25,14 @@ public class BodaccSale implements Serializable, IId {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "bodacc_sequence")
 	private Integer id;
 
-	@Column(length = 100, nullable = false)
+	@Column(length = 100)
 	private String divestedBusinessAddress;
 
 	@ManyToOne
 	@JoinColumn(name = "id_fund_type")
 	private FundType fundType;
 
-	@Column(columnDefinition = "TEXT", nullable = false)
+	@Column(columnDefinition = "TEXT")
 	private String divestedBusinessActivities;
 
 	@Column(length = 30)
@@ -44,10 +44,10 @@ public class BodaccSale implements Serializable, IId {
 	@Column(length = 60)
 	private String ownerDenomination;
 
-	@Column(length = 9, nullable = false)
+	@Column(length = 9)
 	private String ownerSiren;
 
-	@Column(length = 100, nullable = false)
+	@Column(length = 100)
 	private String ownerAddress;
 
 	@Column(nullable = false)
@@ -74,7 +74,6 @@ public class BodaccSale implements Serializable, IId {
 	@Column(length = 9)
 	private String purchaserSiren;
 
-	@Column(nullable = false)
 	@JsonSerialize(using = JacksonLocalDateSerializer.class)
 	private LocalDate purchaserActivityStartDate;
 
@@ -94,14 +93,11 @@ public class BodaccSale implements Serializable, IId {
 	private Integer purchaserShareCapital;
 	private Integer purchaserMinimumCapital;
 
-	@Column(nullable = false)
 	@JsonSerialize(using = JacksonLocalDateSerializer.class)
 	private LocalDate deedDate;
 
-	@Column(nullable = false)
 	private Integer salePrice;
 
-	@Column(nullable = false)
 	@JsonSerialize(using = JacksonLocalDateSerializer.class)
 	private LocalDate registrationDate;
 
@@ -122,7 +118,7 @@ public class BodaccSale implements Serializable, IId {
 	@Column(length = 100)
 	private String writorAddress;
 
-	@Column(length = 100, nullable = false)
+	@Column(length = 100)
 	@JsonProperty(value = "validityObjectionAddress")
 	private String validityObjectionAddress;
 
@@ -130,29 +126,27 @@ public class BodaccSale implements Serializable, IId {
 	@JsonProperty(value = "mailObjectionAddress")
 	private String mailObjectionAddress;
 
-	@Column(nullable = false)
 	@JsonSerialize(using = JacksonLocalDateSerializer.class)
 	private LocalDate leaseResilisationDate;
 
-	@Column(nullable = false)
 	private Integer leaseResilisationFee;
 
 	@Column(length = 100)
 	private String leaseAddress;
 
-	@Column(length = 30, nullable = false)
+	@Column(length = 30)
 	private String tenantFirstname;
 
-	@Column(length = 30, nullable = false)
+	@Column(length = 30)
 	private String tenantLastname;
 
-	@Column(length = 60, nullable = false)
+	@Column(length = 60)
 	private String tenantDenomination;
 
-	@Column(length = 9, nullable = false)
+	@Column(length = 9)
 	private String tenantSiren;
 
-	@Column(length = 100, nullable = false)
+	@Column(length = 100)
 	private String tenantAddress;
 
 	@Column(nullable = false)

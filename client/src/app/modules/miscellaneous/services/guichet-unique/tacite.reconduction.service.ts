@@ -13,7 +13,7 @@ export class TaciteReconductionService extends AppRestService<TaciteReconduction
   }
 
   getTaciteReconduction() {
-    return this.getList(new HttpParams(), 'tacite-reconduction');
+    return this.getListCached(new HttpParams(), 'tacite-reconduction');
   }
 
-}                        
+}

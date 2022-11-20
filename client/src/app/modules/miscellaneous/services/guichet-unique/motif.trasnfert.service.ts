@@ -13,7 +13,7 @@ export class MotifTrasnfertService extends AppRestService<MotifTrasnfert>{
   }
 
   getMotifTrasnfert() {
-    return this.getList(new HttpParams(), 'motif-trasnfert');
+    return this.getListCached(new HttpParams(), 'motif-trasnfert');
   }
 
-}                        
+}

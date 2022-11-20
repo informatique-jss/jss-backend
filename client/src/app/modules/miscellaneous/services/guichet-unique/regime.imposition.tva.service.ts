@@ -13,7 +13,7 @@ export class RegimeImpositionTVAService extends AppRestService<RegimeImpositionT
   }
 
   getRegimeImpositionTVA() {
-    return this.getList(new HttpParams(), 'regime-imposition-tva');
+    return this.getListCached(new HttpParams(), 'regime-imposition-tva');
   }
 
-}                        
+}

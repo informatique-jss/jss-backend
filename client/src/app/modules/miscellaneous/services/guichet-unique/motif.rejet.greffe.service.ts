@@ -13,7 +13,7 @@ export class MotifRejetGreffeService extends AppRestService<MotifRejetGreffe>{
   }
 
   getMotifRejetGreffe() {
-    return this.getList(new HttpParams(), 'motif-rejet-greffe');
+    return this.getListCached(new HttpParams(), 'motif-rejet-greffe');
   }
 
-}                        
+}

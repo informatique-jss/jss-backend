@@ -24,13 +24,13 @@ public class BodaccSplitCompany implements Serializable, IId {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "bodacc_sequence")
 	private Integer id;
 
-	@Column(length = 60, nullable = false)
+	@Column(length = 60)
 	private String splitCompanyDenomination;
 
-	@Column(length = 9, nullable = false)
+	@Column(length = 9)
 	private String splitCompanySiren;
 
-	@Column(length = 100, nullable = false)
+	@Column(length = 100)
 	private String splitCompanyAddress;
 
 	private Integer splitCompanyShareCapital;
@@ -39,7 +39,6 @@ public class BodaccSplitCompany implements Serializable, IId {
 	@JoinColumn(name = "id_legal_form_split_company")
 	private LegalForm splitCompanyLegalForm;
 
-	@Column(nullable = false)
 	@JsonSerialize(using = JacksonLocalDateSerializer.class)
 	private LocalDate splitCompanyRcsDeclarationDate;
 

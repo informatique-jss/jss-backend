@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { AfterContentChecked, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { formatDateTimeForSortTable, formatEurosForSortTable, toIsoString } from 'src/app/libs/FormatHelper';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
@@ -17,7 +17,7 @@ import { PaymentWayService } from '../../services/payment.way.service';
   templateUrl: './payment-list.component.html',
   styleUrls: ['./payment-list.component.css']
 })
-export class PaymentListComponent implements OnInit {
+export class PaymentListComponent implements OnInit, AfterContentChecked {
   @Input() paymentSearch: PaymentSearch = {} as PaymentSearch;
   @Input() isForDashboard: boolean = false;
   payments: PaymentSearchResult[] | undefined;
@@ -37,9 +37,14 @@ export class PaymentListComponent implements OnInit {
     private paymentService: PaymentService,
     private constantService: ConstantService,
     private paymentWayService: PaymentWayService,
+    private changeDetectorRef: ChangeDetectorRef,
     private appService: AppService,
     private formBuilder: FormBuilder,
   ) { }
+
+  ngAfterContentChecked(): void {
+    this.changeDetectorRef.detectChanges();
+  }
 
   ngOnInit() {
     this.putDefaultPeriod();

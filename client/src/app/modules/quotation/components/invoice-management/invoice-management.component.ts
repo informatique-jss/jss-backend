@@ -5,6 +5,7 @@ import { instanceOfCustomerOrder, instanceOfQuotation } from 'src/app/libs/TypeH
 import { InvoiceService } from 'src/app/modules/invoicing/services/invoice.service';
 import { Vat } from 'src/app/modules/miscellaneous/model/Vat';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
+import { AppService } from '../../../../services/app.service';
 import { CustomerOrder } from '../../model/CustomerOrder';
 import { IQuotation } from '../../model/IQuotation';
 import { QuotationComponent } from '../quotation/quotation.component';
@@ -30,6 +31,7 @@ export class InvoiceManagementComponent implements OnInit {
 
   constructor(private formBuilder: FormBuilder,
     private constantService: ConstantService,
+    private appService: AppService,
     protected invoiceService: InvoiceService,) { }
 
   ngOnInit() {
@@ -94,6 +96,10 @@ export class InvoiceManagementComponent implements OnInit {
       }
     }
     return false;
+  }
+
+  openRoute(event: any, link: string) {
+    this.appService.openRoute(event, link, null);
   }
 
 }

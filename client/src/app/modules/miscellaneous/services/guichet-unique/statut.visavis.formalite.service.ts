@@ -13,7 +13,7 @@ export class StatutVisAVisFormaliteService extends AppRestService<StatutVisAVisF
   }
 
   getStatutVisAVisFormalite() {
-    return this.getList(new HttpParams(), 'statut-visavis-formalite');
+    return this.getListCached(new HttpParams(), 'statut-visavis-formalite');
   }
 
-}                        
+}

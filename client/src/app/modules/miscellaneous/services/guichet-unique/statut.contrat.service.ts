@@ -13,7 +13,7 @@ export class StatutContratService extends AppRestService<StatutContrat>{
   }
 
   getStatutContrat() {
-    return this.getList(new HttpParams(), 'statut-contrat');
+    return this.getListCached(new HttpParams(), 'statut-contrat');
   }
 
-}                        
+}

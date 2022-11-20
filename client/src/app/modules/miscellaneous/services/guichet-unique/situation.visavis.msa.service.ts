@@ -13,7 +13,7 @@ export class SituationVisAVisMsaService extends AppRestService<SituationVisAVisM
   }
 
   getSituationVisAVisMsa() {
-    return this.getList(new HttpParams(), 'situation-visavis-msa');
+    return this.getListCached(new HttpParams(), 'situation-visavis-msa');
   }
 
-}                        
+}

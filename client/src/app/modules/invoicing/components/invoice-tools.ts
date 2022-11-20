@@ -13,11 +13,11 @@ export function getAmountRemaining(invoice: Invoice) {
 export function getColumnLink(column: SortTableColumn, element: any) {
   if (element && column.id == "customerOrderName") {
     if (element.confrereId)
-      return ['/referential/confrere/', element.confrereId];
+      return ['/referential/confrere', element.confrereId];
     if (element.responsableId)
-      return ['/tiers/responsable/', element.responsableId];
+      return ['/tiers/responsable', element.responsableId];
     if (element.tiersId)
-      return ['/tiers/', element.tiersId];
+      return ['/tiers', element.tiersId];
   }
   if (element && column.id == "customerOrderId" && element.customerOrder) {
     if (element.isQuotation)

@@ -80,7 +80,8 @@
             </td>
             <td style="vertical-align: baseline;">
               <radio-group-language [(model)]="tiers.language" [form]="principalForm" propertyName="language"
-                [isDisabled]="!editMode" label="Langue de communication"></radio-group-language>
+                [setFirstOptionDefaultChoice]="true" [isDisabled]="!editMode" label="Langue de communication">
+              </radio-group-language>
             </td>
             <td>
               <select-delivery-service [(model)]="tiers.deliveryService" label="Service de livraison"

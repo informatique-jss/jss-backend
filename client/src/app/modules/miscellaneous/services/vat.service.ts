@@ -13,10 +13,11 @@ export class VatService extends AppRestService<Vat>{
   }
 
   getVats() {
-    return this.getList(new HttpParams(), "vats");
+    return this.getListCached(new HttpParams(), "vats");
   }
 
   addOrUpdateVat(vat: Vat) {
+    this.clearListCache(new HttpParams(), "vats");
     return this.addOrUpdate(new HttpParams(), "vat", vat, "Enregistré", "Erreur lors de l'enregistrement");
   }
 

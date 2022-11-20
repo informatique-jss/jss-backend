@@ -13,7 +13,7 @@ export class NatureVoletSocialService extends AppRestService<NatureVoletSocial>{
   }
 
   getNatureVoletSocial() {
-    return this.getList(new HttpParams(), 'nature-volet-social');
+    return this.getListCached(new HttpParams(), 'nature-volet-social');
   }
 
-}                        
+}

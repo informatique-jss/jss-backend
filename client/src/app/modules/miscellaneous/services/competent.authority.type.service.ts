@@ -13,10 +13,11 @@ export class CompetentAuthorityTypeService extends AppRestService<CompetentAutho
   }
 
   getCompetentAuthorityTypes() {
-    return this.getList(new HttpParams(), "competent-authority-types");
+    return this.getListCached(new HttpParams(), "competent-authority-types");
   }
 
   addOrUpdateCompetentAuthorityType(competentAuthorityType: CompetentAuthorityType) {
+    this.clearListCache(new HttpParams(), "competent-authority-types");
     return this.addOrUpdate(new HttpParams(), "competent-authority-type", competentAuthorityType, "Enregistré", "Erreur lors de l'enregistrement");
   }
 

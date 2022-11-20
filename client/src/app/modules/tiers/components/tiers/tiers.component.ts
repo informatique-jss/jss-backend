@@ -1,5 +1,5 @@
 import { AfterContentChecked, ChangeDetectorRef, Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { ActivatedRoute, Router, UrlSegment } from '@angular/router';
+import { ActivatedRoute, UrlSegment } from '@angular/router';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { OrderingSearch } from 'src/app/modules/quotation/model/OrderingSearch';
 import { QuotationSearch } from 'src/app/modules/quotation/model/QuotationSearch';
@@ -43,8 +43,7 @@ export class TiersComponent implements OnInit, AfterContentChecked {
     private activatedRoute: ActivatedRoute,
     protected searchService: SearchService,
     private constantService: ConstantService,
-    private changeDetectorRef: ChangeDetectorRef,
-    private router: Router) { }
+    private changeDetectorRef: ChangeDetectorRef) { }
 
   ngOnInit() {
     this.appService.changeHeaderTitle("Tiers / Responsables");
@@ -115,9 +114,7 @@ export class TiersComponent implements OnInit, AfterContentChecked {
       this.tiersService.addOrUpdateTiers(this.tiers).subscribe(response => {
         this.tiers = response;
         this.editMode = false;
-        this.router.navigateByUrl('/', { skipLocationChange: true }).then(() =>
-          this.router.navigate(['/tiers/', "" + this.tiers.id])
-        );
+        this.appService.openRoute(null, '/tiers/' + this.tiers.id, null);
       })
   }
 

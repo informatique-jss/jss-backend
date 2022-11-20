@@ -13,10 +13,11 @@ export class AnnouncementNoticeTemplateService extends AppRestService<Announceme
   }
 
   getAnnouncementNoticeTemplates() {
-    return this.getList(new HttpParams(), "announcement-notice-templates");
+    return this.getListCached(new HttpParams(), "announcement-notice-templates");
   }
 
   addOrUpdateAnnouncementNoticeTemplate(announcementNoticeTemplate: AnnouncementNoticeTemplate) {
+    this.clearListCache(new HttpParams(), "announcement-notice-templates");
     return this.addOrUpdate(new HttpParams(), "announcement-notice-template", announcementNoticeTemplate, "Enregistré", "Erreur lors de l'enregistrement");
   }
 

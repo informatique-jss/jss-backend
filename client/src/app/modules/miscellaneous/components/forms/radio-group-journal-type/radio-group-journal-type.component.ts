@@ -8,8 +8,8 @@ import { GenericRadioGroupComponent } from '../generic-radio-group/generic-radio
 
 @Component({
   selector: 'radio-group-journal-type',
-  templateUrl: './radio-group-journal-type.component.html',
-  styleUrls: ['./radio-group-journal-type.component.css']
+  templateUrl: '../generic-radio-group/generic-radio-group-code.component.html',
+  styleUrls: ['../generic-radio-group/generic-radio-group.component.css']
 })
 export class RadioGroupJournalTypeComponent extends GenericRadioGroupComponent<JournalType> implements OnInit {
   types: JournalType[] = [] as Array<JournalType>;

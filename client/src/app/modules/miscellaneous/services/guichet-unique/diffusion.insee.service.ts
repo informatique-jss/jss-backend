@@ -13,7 +13,7 @@ export class DiffusionINSEEService extends AppRestService<DiffusionINSEE>{
   }
 
   getDiffusionINSEE() {
-    return this.getList(new HttpParams(), 'diffusion-insee');
+    return this.getListCached(new HttpParams(), 'diffusion-insee');
   }
 
-}                        
+}

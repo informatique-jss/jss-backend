@@ -460,6 +460,22 @@
         <key-type>java.lang.String</key-type>
         <value-type>java.util.List</value-type>
     </cache>
+    <cache alias="customerOrderStatusList" uses-template="default">
+        <key-type>java.lang.String</key-type>
+        <value-type>java.util.List</value-type>
+    </cache>
+    <cache alias="customerOrderStatus" uses-template="default">
+        <key-type>java.lang.Integer</key-type>
+        <value-type>com.jss.osiris.modules.quotation.model.CustomerOrderStatus</value-type>
+    </cache>
+    <cache alias="quotationStatusList" uses-template="default">
+        <key-type>java.lang.String</key-type>
+        <value-type>java.util.List</value-type>
+    </cache>
+    <cache alias="quotationStatus" uses-template="default">
+        <key-type>java.lang.Integer</key-type>
+        <value-type>com.jss.osiris.modules.quotation.model.QuotationStatus</value-type>
+    </cache>
     <cache alias="bodaccStatusList" uses-template="default">
         <key-type>java.lang.String</key-type>
         <value-type>java.util.List</value-type>

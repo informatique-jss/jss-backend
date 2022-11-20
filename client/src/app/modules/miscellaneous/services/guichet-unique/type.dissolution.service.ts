@@ -13,7 +13,7 @@ export class TypeDissolutionService extends AppRestService<TypeDissolution>{
   }
 
   getTypeDissolution() {
-    return this.getList(new HttpParams(), 'type-dissolution');
+    return this.getListCached(new HttpParams(), 'type-dissolution');
   }
 
-}                        
+}

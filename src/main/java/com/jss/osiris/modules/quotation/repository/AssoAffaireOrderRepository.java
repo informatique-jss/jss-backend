@@ -37,7 +37,7 @@ public interface AssoAffaireOrderRepository extends CrudRepository<AssoAffaireOr
                         " left join employee e2 on e2.id = p.id_employee" +
                         " left join provision_type pt on pt.id = p.id_provision_type" +
                         " left join provision_family_type pf on pf.id = pt.id_provision_family_type" +
-                        " left join announcement an on a.id = p.id_announcement " +
+                        " left join announcement an on an.id = p.id_announcement " +
                         " left join announcement_status ans on an.id_announcement_status = ans.id" +
                         " left join formalite fo on fo.id = p.id_formalite" +
                         " left join formalite_status fs on fs.id = fo.id_formalite_status" +

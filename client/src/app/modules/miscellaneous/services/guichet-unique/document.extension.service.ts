@@ -13,7 +13,7 @@ export class DocumentExtensionService extends AppRestService<DocumentExtension>{
   }
 
   getDocumentExtension() {
-    return this.getList(new HttpParams(), 'document-extension');
+    return this.getListCached(new HttpParams(), 'document-extension');
   }
 
-}                        
+}

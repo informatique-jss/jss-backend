@@ -13,10 +13,11 @@ export class ProvisionScreenTypeService extends AppRestService<ProvisionScreenTy
   }
 
   getProvisionScreenTypes() {
-    return this.getList(new HttpParams(), "provision-screen-types");
+    return this.getListCached(new HttpParams(), "provision-screen-types");
   }
-  
-   addOrUpdateProvisionScreenType(provisionScreenType: ProvisionScreenType) {
+
+  addOrUpdateProvisionScreenType(provisionScreenType: ProvisionScreenType) {
+    this.clearListCache(new HttpParams(), "provision-screen-types");
     return this.addOrUpdate(new HttpParams(), "provision-screen-type", provisionScreenType, "Enregistré", "Erreur lors de l'enregistrement");
   }
 

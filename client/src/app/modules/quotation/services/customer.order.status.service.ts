@@ -13,7 +13,7 @@ export class CustomerOrderStatusService extends AppRestService<CustomerOrderStat
   }
 
   getCustomerOrderStatus() {
-    return this.getList(new HttpParams(), "customer-order-status");
+    return this.getListCached(new HttpParams(), "customer-order-status");
   }
 
   getCustomerStatusByCode(status: CustomerOrderStatus[], code: string) {

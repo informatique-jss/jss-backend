@@ -13,7 +13,7 @@ export class MineurNationaliteService extends AppRestService<MineurNationalite>{
   }
 
   getMineurNationalite() {
-    return this.getList(new HttpParams(), 'mineur-nationalite');
+    return this.getListCached(new HttpParams(), 'mineur-nationalite');
   }
 
-}                        
+}

@@ -3,5 +3,7 @@
     <input matInput (keyup)="applyFilter($event.target)" placeholder="Rechercher">
   </mat-form-field>
 </div>
-<sort-table [columns]="displayedColumns" (onRowClick)="chooseConfrere($event)" [values]="confreres"
-  tableName="Confrères" [filterText]="searchText"></sort-table>
+<mat-dialog-content class="mat-content">
+  <sort-table [columns]="displayedColumns" (onRowClick)="chooseConfrere($event)" [values]="confreres"
+    tableName="Confrères" [filterText]="searchText"></sort-table>
+</mat-dialog-content>

@@ -13,10 +13,11 @@ export class PaymentTypeService extends AppRestService<PaymentType>{
   }
 
   getPaymentTypes() {
-    return this.getList(new HttpParams(), "payment-types");
+    return this.getListCached(new HttpParams(), "payment-types");
   }
 
   addOrUpdatePaymentType(paymentType: PaymentType) {
+    this.clearListCache(new HttpParams(), "payment-types");
     return this.addOrUpdate(new HttpParams(), "payment-type", paymentType, "Enregistré", "Erreur lors de l'enregistrement");
   }
 

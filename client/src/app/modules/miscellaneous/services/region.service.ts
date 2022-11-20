@@ -13,10 +13,11 @@ export class RegionService extends AppRestService<Region>{
   }
 
   getRegions() {
-    return this.getList(new HttpParams(), "regions");
+    return this.getListCached(new HttpParams(), "regions");
   }
 
   addOrUpdateRegion(region: Region) {
+    this.clearListCache(new HttpParams(), "regions");
     return this.addOrUpdate(new HttpParams(), "region", region, "Enregistré", "Erreur lors de l'enregistrement");
   }
 

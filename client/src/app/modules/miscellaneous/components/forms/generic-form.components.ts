@@ -131,10 +131,14 @@ export abstract class GenericFormComponent implements OnInit {
     let isHeader = false;
     if (event && event.ctrlKey)
       isHeader = true;
-    this.userNoteService.addToNotes(this.label, this.model, undefined, isHeader);
+    this.userNoteService.addToNotes(this.label, this.displayLabel(this.model), undefined, isHeader);
   }
 
   displayLabel(object: any): string {
-    return object ? object.label : '';
+    if (object && object.label)
+      return object.label;
+    if (typeof object === "string")
+      return object;
+    return "";
   }
 }

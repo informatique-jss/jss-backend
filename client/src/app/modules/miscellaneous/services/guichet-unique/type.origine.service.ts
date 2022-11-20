@@ -13,7 +13,7 @@ export class TypeOrigineService extends AppRestService<TypeOrigine>{
   }
 
   getTypeOrigine() {
-    return this.getList(new HttpParams(), 'type-origine');
+    return this.getListCached(new HttpParams(), 'type-origine');
   }
 
-}                        
+}

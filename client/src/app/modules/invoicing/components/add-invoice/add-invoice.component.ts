@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { formatEurosForSortTable } from 'src/app/libs/FormatHelper';
 import { City } from 'src/app/modules/miscellaneous/model/City';
@@ -40,7 +39,6 @@ export class AddInvoiceComponent implements OnInit {
     private tiersService: TiersService,
     private cityService: CityService,
     private contantService: ConstantService,
-    private router: Router,
   ) {
   }
 
@@ -110,7 +108,7 @@ export class AddInvoiceComponent implements OnInit {
     if (this.invoiceForm.valid && this.invoiceItems && this.invoiceItems.length > 0) {
       this.invoiceService.saveInvoice(this.invoice).subscribe(response => {
         if (response)
-          this.router.navigate(['/invoicing/', "" + response.id])
+          this.appService.openRoute(null, '/invoicing/' + response.id, null);
       });
     } else {
       this.appService.displaySnackBar("Veuilliez saisir au moins une ligne de facturation valide", true, 60);

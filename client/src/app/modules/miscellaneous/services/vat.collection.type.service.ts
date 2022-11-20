@@ -13,10 +13,11 @@ export class VatCollectionTypeService extends AppRestService<VatCollectionType>{
   }
 
   getVatCollectionTypes() {
-    return this.getList(new HttpParams(), "vat-collection-types");
+    return this.getListCached(new HttpParams(), "vat-collection-types");
   }
 
   addOrUpdateVatCollectionType(vatCollectionType: VatCollectionType) {
+    this.clearListCache(new HttpParams(), "vat-collection-types");
     return this.addOrUpdate(new HttpParams(), "vat-collection-type", vatCollectionType, "Enregistré", "Erreur lors de l'enregistrement");
   }
 

@@ -13,7 +13,7 @@ export class ModalitesDeControleService extends AppRestService<ModalitesDeContro
   }
 
   getModalitesDeControle() {
-    return this.getList(new HttpParams(), 'modalites-de-controle');
+    return this.getListCached(new HttpParams(), 'modalites-de-controle');
   }
 
-}                        
+}

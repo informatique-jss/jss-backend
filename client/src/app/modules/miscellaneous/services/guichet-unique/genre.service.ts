@@ -13,7 +13,7 @@ export class GenreService extends AppRestService<Genre>{
   }
 
   getGenre() {
-    return this.getList(new HttpParams(), 'genre');
+    return this.getListCached(new HttpParams(), 'genre');
   }
 
-}                        
+}

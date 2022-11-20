@@ -13,10 +13,11 @@ export class TiersTypeService extends AppRestService<TiersType>{
   }
 
   getTiersTypes() {
-    return this.getList(new HttpParams(), "tiers-types");
+    return this.getListCached(new HttpParams(), "tiers-types");
   }
 
   addOrUpdateTiersType(tiersType: TiersType) {
+    this.clearListCache(new HttpParams(), "tiers-types");
     return this.addOrUpdate(new HttpParams(), "tiers-type", tiersType, "Enregistré", "Erreur lors de l'enregistrement");
   }
 

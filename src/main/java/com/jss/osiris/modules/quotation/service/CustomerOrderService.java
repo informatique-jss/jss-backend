@@ -31,4 +31,17 @@ public interface CustomerOrderService {
 
         public void generateInvoiceMail(CustomerOrder customerOrder) throws Exception;
 
+        public CustomerOrder unlockCustomerOrderFromDeposit(CustomerOrder customerOrder, Float effectivePayment)
+                        throws Exception;
+
+        public String getCardPaymentLinkForPaymentDeposit(CustomerOrder customerOrder, String mail, String subject)
+                        throws Exception;
+
+        public Boolean validateCardPaymentLinkForDeposit(CustomerOrder customerOrder) throws Exception;
+
+        public String getCardPaymentLinkForPaymentInvoice(CustomerOrder customerOrder, String mail, String subject)
+                        throws Exception;
+
+        public Boolean validateCardPaymentLinkForInvoice(CustomerOrder customerOrder) throws Exception;
+
 }

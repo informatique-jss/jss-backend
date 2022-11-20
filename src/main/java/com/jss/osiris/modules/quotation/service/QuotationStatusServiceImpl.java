@@ -6,6 +6,9 @@ import java.util.Optional;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,11 +22,13 @@ public class QuotationStatusServiceImpl implements QuotationStatusService {
     QuotationStatusRepository quotationStatusRepository;
 
     @Override
+    @Cacheable(value = "quotationStatusList", key = "#root.methodName")
     public List<QuotationStatus> getQuotationStatus() {
         return IterableUtils.toList(quotationStatusRepository.findAll());
     }
 
     @Override
+    @Cacheable(value = "quotationStatus", key = "#id")
     public QuotationStatus getQuotationStatus(Integer id) {
         Optional<QuotationStatus> quotationStatus = quotationStatusRepository.findById(id);
         if (quotationStatus.isPresent())
@@ -32,6 +37,10 @@ public class QuotationStatusServiceImpl implements QuotationStatusService {
     }
 
     @Override
+    @Caching(evict = {
+            @CacheEvict(value = "quotationStatusList", allEntries = true),
+            @CacheEvict(value = "quotationStatus", key = "#bodaccStatus.id")
+    })
     @Transactional(rollbackFor = Exception.class)
     public QuotationStatus addOrUpdateQuotationStatus(QuotationStatus quotationStatus) {
         return quotationStatusRepository.save(quotationStatus);

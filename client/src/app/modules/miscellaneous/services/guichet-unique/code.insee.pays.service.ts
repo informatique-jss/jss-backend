@@ -13,7 +13,7 @@ export class CodeInseePaysService extends AppRestService<CodeInseePays>{
   }
 
   getCodeInseePays() {
-    return this.getList(new HttpParams(), 'code-insee-pays');
+    return this.getListCached(new HttpParams(), 'code-insee-pays');
   }
 
-}                        
+}

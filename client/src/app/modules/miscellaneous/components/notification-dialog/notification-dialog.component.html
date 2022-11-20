@@ -33,7 +33,8 @@
               <mat-tab [label]="getTabLabel(QUOTATION_ENTITY_TYPE)">
                 <mat-dialog-content class="mat-content">
                   <mat-card class="pointer" *ngFor="let notification of getEntitiesForTab(QUOTATION_ENTITY_TYPE)"
-                    (click)="openEntity($event,notification,QUOTATION_ENTITY_TYPE)">
+                    (click)="openEntity($event,notification,QUOTATION_ENTITY_TYPE)"
+                    (auxclick)="openEntity($event,notification,QUOTATION_ENTITY_TYPE)">
                     <ng-container *ngIf="notification.notificationType==QUOTATION_SENT">
                       <mat-card-title-group>
                         <mat-card-title matBadge="X" matBadgePosition="above before"
@@ -131,7 +132,8 @@
               <mat-tab [label]="getTabLabel(CUSTOMER_ORDER_ENTITY_TYPE)">
                 <mat-dialog-content class="mat-content">
                   <mat-card class="pointer" *ngFor="let notification of getEntitiesForTab(CUSTOMER_ORDER_ENTITY_TYPE)"
-                    (click)="openEntity($event,notification,CUSTOMER_ORDER_ENTITY_TYPE)">
+                    (click)="openEntity($event,notification,CUSTOMER_ORDER_ENTITY_TYPE)"
+                    (auxclick)="openEntity($event,notification,CUSTOMER_ORDER_ENTITY_TYPE)">
                     <ng-container *ngIf="notification.notificationType==CUSTOMER_ORDER_CREATE">
                       <mat-card-title-group>
                         <mat-card-title matBadge="X" matBadgePosition="above before"

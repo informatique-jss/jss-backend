@@ -13,7 +13,7 @@ export class StatutExerciceActiviteSimultanService extends AppRestService<Statut
   }
 
   getStatutExerciceActiviteSimultan() {
-    return this.getList(new HttpParams(), 'statut-exercice-activite-simultan');
+    return this.getListCached(new HttpParams(), 'statut-exercice-activite-simultan');
   }
 
-}                        
+}

@@ -13,10 +13,11 @@ export class RefundTypeService extends AppRestService<RefundType>{
   }
 
   getRefundTypes() {
-    return this.getList(new HttpParams(), "refund-types");
+    return this.getListCached(new HttpParams(), "refund-types");
   }
 
   addOrUpdateRefundType(refundType: RefundType) {
+    this.clearListCache(new HttpParams(), "refund-types");
     return this.addOrUpdate(new HttpParams(), "refund-type", refundType, "Enregistré", "Erreur lors de l'enregistrement");
   }
 

@@ -24,13 +24,13 @@ public class BodaccFusionMergingCompany implements Serializable, IId {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "bodacc_sequence")
 	private Integer id;
 
-	@Column(length = 60, nullable = false)
+	@Column(length = 60)
 	private String mergingCompanyDenomination;
 
-	@Column(length = 9, nullable = false)
+	@Column(length = 9)
 	private String mergingCompanySiren;
 
-	@Column(length = 100, nullable = false)
+	@Column(length = 100)
 	private String mergingCompanyAddress;
 
 	private Integer mergingCompanyShareCapital;
@@ -39,7 +39,6 @@ public class BodaccFusionMergingCompany implements Serializable, IId {
 	@JoinColumn(name = "id_legal_form_merging_company")
 	private LegalForm mergingCompanyLegalForm;
 
-	@Column(nullable = false)
 	@JsonSerialize(using = JacksonLocalDateSerializer.class)
 	private LocalDate mergingCompanyRcsDeclarationDate;
 

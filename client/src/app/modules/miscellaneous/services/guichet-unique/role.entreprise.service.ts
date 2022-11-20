@@ -13,7 +13,7 @@ export class RoleEntrepriseService extends AppRestService<RoleEntreprise>{
   }
 
   getRoleEntreprise() {
-    return this.getList(new HttpParams(), 'role-entreprise');
+    return this.getListCached(new HttpParams(), 'role-entreprise');
   }
 
-}                        
+}

@@ -13,7 +13,7 @@ export class SuccursaleOuFilialeService extends AppRestService<SuccursaleOuFilia
   }
 
   getSuccursaleOuFiliale() {
-    return this.getList(new HttpParams(), 'succursale-ou-filiale');
+    return this.getListCached(new HttpParams(), 'succursale-ou-filiale');
   }
 
-}                        
+}

@@ -53,5 +53,7 @@ export function replaceDocument(documentType: DocumentType, entity: IDocument, n
       }
     }
   }
-  return;
+
+  // Document not exists
+  return entity.documents.push(newDocument);
 }

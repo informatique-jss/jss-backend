@@ -13,10 +13,11 @@ export class FundTypeService extends AppRestService<FundType>{
   }
 
   getFundTypes() {
-    return this.getList(new HttpParams(), "fund-types");
+    return this.getListCached(new HttpParams(), "fund-types");
   }
 
   addOrUpdateFundType(fundType: FundType) {
+    this.clearListCache(new HttpParams(), "fund-types");
     return this.addOrUpdate(new HttpParams(), "fund-type", fundType, "Enregistré", "Erreur lors de l'enregistrement");
   }
 }

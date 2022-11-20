@@ -13,10 +13,11 @@ export class CivilityService extends AppRestService<Civility>{
   }
 
   getCivilities() {
-    return this.getList(new HttpParams(), "civilities");
+    return this.getListCached(new HttpParams(), "civilities");
   }
 
   addOrUpdateCivility(civility: Civility) {
+    this.clearListCache(new HttpParams(), "civilities");
     return this.addOrUpdate(new HttpParams(), "civility", civility, "Enregistré", "Erreur lors de l'enregistrement");
   }
 

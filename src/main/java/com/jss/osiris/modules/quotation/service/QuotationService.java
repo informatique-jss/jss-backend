@@ -24,4 +24,5 @@ public interface QuotationService {
     public List<QuotationSearchResult> searchQuotations(QuotationSearch orderingSearch);
 
     public void reindexQuotation();
+
 }

@@ -13,7 +13,7 @@ export class StatusService extends AppRestService<Status>{
   }
 
   getStatus() {
-    return this.getList(new HttpParams(), 'status');
+    return this.getListCached(new HttpParams(), 'status');
   }
 
-}                        
+}

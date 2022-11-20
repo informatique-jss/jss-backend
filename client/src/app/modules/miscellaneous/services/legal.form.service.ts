@@ -13,10 +13,11 @@ export class LegalFormService extends AppRestService<LegalForm>{
   }
 
   getLegalForms() {
-    return this.getList(new HttpParams(), "legal-forms");
+    return this.getListCached(new HttpParams(), "legal-forms");
   }
 
   addOrUpdateLegalForm(legalForm: LegalForm) {
+    this.clearListCache(new HttpParams(), "legal-forms");
     return this.addOrUpdate(new HttpParams(), "legal-form", legalForm, "Enregistré", "Erreur lors de l'enregistrement");
   }
 

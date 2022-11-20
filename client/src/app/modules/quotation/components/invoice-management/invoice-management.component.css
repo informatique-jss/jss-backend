@@ -24,3 +24,11 @@ table {
 .info-icon {
   color: grey;
 }
+
+.invoice-title {
+  display: flex;
+}
+
+.invoice-chip {
+  margin-left: 10px;
+}

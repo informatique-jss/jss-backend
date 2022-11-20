@@ -13,7 +13,7 @@ export class StatutPraticienService extends AppRestService<StatutPraticien>{
   }
 
   getStatutPraticien() {
-    return this.getList(new HttpParams(), 'statut-praticien');
+    return this.getListCached(new HttpParams(), 'statut-praticien');
   }
 
-}                        
+}

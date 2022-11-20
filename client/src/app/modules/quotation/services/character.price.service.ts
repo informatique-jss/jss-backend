@@ -14,7 +14,7 @@ export class CharacterPriceService extends AppRestService<CharacterPrice>{
   }
 
   getCharacterPrices() {
-    return this.getList(new HttpParams(), "character-prices");
+    return this.getListCached(new HttpParams(), "character-prices");
   }
 
   getCharacterPrice(department: Department, date: Date) {
@@ -22,6 +22,7 @@ export class CharacterPriceService extends AppRestService<CharacterPrice>{
   }
 
   addOrUpdateCharacterPrice(characterPrice: CharacterPrice) {
+    this.clearListCache(new HttpParams(), "character-prices");
     return this.addOrUpdate(new HttpParams(), "character-price", characterPrice, "Enregistré", "Erreur lors de l'enregistrement");
   }
 

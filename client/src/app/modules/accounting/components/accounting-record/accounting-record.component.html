@@ -78,6 +78,6 @@
   </mat-menu>
 </button>
 <button matTooltip="Ajouter des écritures comptables" mat-fab color="accent" class="fab-button"
-  (click)=" createAccountingRecords()">
+  (click)=" createAccountingRecords($event)" (auxclick)=" createAccountingRecords($event)">
   <mat-icon>add</mat-icon>
 </button>

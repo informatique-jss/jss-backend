@@ -13,10 +13,11 @@ export class BillingTypeService extends AppRestService<BillingType>{
   }
 
   getBillingTypes() {
-    return this.getList(new HttpParams(), "billing-types");
+    return this.getListCached(new HttpParams(), "billing-types");
   }
 
   addOrUpdateBillingType(billingType: BillingType) {
+    this.clearListCache(new HttpParams(), "billing-types");
     return this.addOrUpdate(new HttpParams(), "billing-type", billingType, "Enregistré", "Erreur lors de l'enregistrement");
   }
 

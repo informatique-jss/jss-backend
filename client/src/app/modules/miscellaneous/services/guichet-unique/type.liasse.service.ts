@@ -13,7 +13,7 @@ export class TypeLiasseService extends AppRestService<TypeLiasse>{
   }
 
   getTypeLiasse() {
-    return this.getList(new HttpParams(), 'type-liasse');
+    return this.getListCached(new HttpParams(), 'type-liasse');
   }
 
-}                        
+}

@@ -13,10 +13,11 @@ export class NoticeTypeService extends AppRestService<NoticeType>{
   }
 
   getNoticeTypes() {
-    return this.getList(new HttpParams(), "notice-types");
+    return this.getListCached(new HttpParams(), "notice-types");
   }
 
   addOrUpdateNoticeType(noticeType: NoticeType) {
+    this.clearListCache(new HttpParams(), "notice-types");
     return this.addOrUpdate(new HttpParams(), "notice-type", noticeType, "Enregistré", "Erreur lors de l'enregistrement");
   }
 

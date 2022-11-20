@@ -13,7 +13,7 @@ export class DeviseCapitalService extends AppRestService<DeviseCapital>{
   }
 
   getDeviseCapital() {
-    return this.getList(new HttpParams(), 'devise-capital');
+    return this.getListCached(new HttpParams(), 'devise-capital');
   }
 
-}                        
+}

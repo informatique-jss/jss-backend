@@ -29,19 +29,15 @@ public class BodaccSplit implements Serializable, IId {
 	@OneToMany(targetEntity = BodaccSplitCompany.class, cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<BodaccSplitCompany> bodaccSplitCompanies;
 
-	@Column(nullable = false)
 	private Integer assets;
 
-	@Column(nullable = false)
 	private Integer liabilities;
 
-	@Column(nullable = false)
 	private Integer splitBonus;
 
-	@Column(columnDefinition = "TEXT", nullable = false)
+	@Column(columnDefinition = "TEXT")
 	private String exchangeRatioReport;
 
-	@Column(nullable = false)
 	@JsonSerialize(using = JacksonLocalDateSerializer.class)
 	private LocalDate splitProjectDate;
 

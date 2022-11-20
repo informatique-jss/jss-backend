@@ -13,10 +13,11 @@ export class DepartmentService extends AppRestService<Department>{
   }
 
   getDepartments() {
-    return this.getList(new HttpParams(), "departments");
+    return this.getListCached(new HttpParams(), "departments");
   }
 
   addOrUpdateDepartment(department: Department) {
+    this.clearListCache(new HttpParams(), "departments");
     return this.addOrUpdate(new HttpParams(), "department", department, "Enregistré", "Erreur lors de l'enregistrement");
   }
 

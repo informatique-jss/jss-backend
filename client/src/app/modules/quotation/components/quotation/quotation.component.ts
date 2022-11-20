@@ -2,7 +2,7 @@ import { AfterContentChecked, ChangeDetectorRef, Component, OnInit, ViewChild, V
 import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
-import { ActivatedRoute, Router, UrlSegment } from '@angular/router';
+import { ActivatedRoute, UrlSegment } from '@angular/router';
 import { Subject } from 'rxjs';
 import { QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN, VALIDATED_BY_CUSTOMER } from 'src/app/libs/Constants';
 import { getDocument } from 'src/app/libs/DocumentHelper';
@@ -89,8 +89,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     private assoAffaireOrderService: AssoAffaireOrderService,
     protected searchService: SearchService,
     private provisionService: ProvisionService,
-    private changeDetectorRef: ChangeDetectorRef,
-    private router: Router) { }
+    private changeDetectorRef: ChangeDetectorRef) { }
 
   quotationForm = this.formBuilder.group({});
 
@@ -214,17 +213,13 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
         this.quotationService.addOrUpdateQuotation(this.quotation).subscribe(response => {
           this.quotation = response;
           this.editMode = false;
-          this.router.navigateByUrl('/', { skipLocationChange: true }).then(() =>
-            this.router.navigate(['/quotation/', "" + this.quotation.id])
-          );
+          this.appService.openRoute(null, '/quotation/' + this.quotation.id, null);
         })
       } else {
         this.customerOrderService.addOrUpdateCustomerOrder(this.quotation).subscribe(response => {
           this.quotation = response;
           this.editMode = false;
-          this.router.navigateByUrl('/', { skipLocationChange: true }).then(() =>
-            this.router.navigate(['/order/', "" + this.quotation.id])
-          );
+          this.appService.openRoute(null, '/order/' + this.quotation.id, null);
         })
       }
       return true;
@@ -357,16 +352,12 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
         if (!this.instanceOfCustomerOrder) {
           this.quotationService.updateQuotationStatus(this.quotation, targetStatus.code).subscribe(response => {
             this.quotation = response;
-            this.router.navigateByUrl('/', { skipLocationChange: true }).then(() =>
-              this.router.navigate(['/quotation/', "" + this.quotation.id])
-            );
+            this.appService.openRoute(null, '/quotation/' + this.quotation.id, null);
           })
         } else {
           this.customerOrderService.updateCustomerStatus(this.quotation, targetStatus.code).subscribe(response => {
             this.quotation = response;
-            this.router.navigateByUrl('/', { skipLocationChange: true }).then(() =>
-              this.router.navigate(['/order/', "" + this.quotation.id])
-            );
+            this.appService.openRoute(null, '/order/' + this.quotation.id, null);
           })
         }
       }
@@ -560,12 +551,12 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     this.quotationService.generateInvoicetMail(this.quotation).subscribe(response => { });
   }
 
-  displayAffaire(affaire: Affaire) {
-    this.router.navigate(['/referential/affaire/', "" + affaire.id])
+  displayAffaire(event: any, affaire: Affaire) {
+    this.appService.openRoute(event, '/referential/affaire/' + affaire.id, null);
   }
 
-  displayProvision(asso: AssoAffaireOrder, provision: Provision) {
-    this.router.navigate(['/affaire/', "" + asso.id, "" + provision.id]);
+  displayProvision(event: any, asso: AssoAffaireOrder, provision: Provision) {
+    this.appService.openRoute(event, '/affaire/' + asso.id + "/" + provision.id, null);
   }
 
   getActiveWorkflowElementsForProvision(provision: Provision) {

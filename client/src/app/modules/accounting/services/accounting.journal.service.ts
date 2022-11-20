@@ -13,10 +13,11 @@ export class AccountingJournalService extends AppRestService<AccountingJournal>{
   }
 
   getAccountingJournals() {
-    return this.getList(new HttpParams(), "accounting-journals");
+    return this.getListCached(new HttpParams(), "accounting-journals");
   }
 
   addOrUpdateAccountingJournal(accountingJournal: AccountingJournal) {
+    this.clearListCache(new HttpParams(), "accounting-journals");
     return this.addOrUpdate(new HttpParams(), "accounting-journal", accountingJournal, "Enregistré", "Erreur lors de l'enregistrement");
   }
 

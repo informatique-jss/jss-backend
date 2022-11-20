@@ -112,8 +112,9 @@
                                             <tr>
                                                 <td class="column column-1" width="100%"
                                                     style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; vertical-align: top; padding-top: 5px; padding-bottom: 5px; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px;">
-                                                    <table class="image_block block-1" width="100%" border="0"
-                                                        cellpadding="0" cellspacing="0" role="presentation"
+                                                    <table th:if="${jssHeaderPicture!=null}" class="image_block block-1"
+                                                        width="100%" border="0" cellpadding="0" cellspacing="0"
+                                                        role="presentation"
                                                         style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
                                                         <tr>
                                                             <td class="pad"
@@ -129,21 +130,22 @@
                                                         </tr>
                                                     </table>
                                                     <table class="heading_block block-2" width="100%" border="0"
-                                                        cellpadding="0" cellspacing="0" role="presentation"
+                                                        th:if="${title!=null}" cellpadding="0" cellspacing="0"
+                                                        role="presentation"
                                                         style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
                                                         <tr>
                                                             <td class="pad"
                                                                 style="padding-left:10px;padding-right:10px;text-align:center;width:100%;">
                                                                 <h1
                                                                     style="margin: 0; color: #233d56; direction: ltr; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 46px; font-weight: 400; letter-spacing: normal; line-height: 120%; text-align: center; margin-top: 0; margin-bottom: 0;">
-                                                                    <strong>Votre commande est en attente de
-                                                                        provision</strong>
+                                                                    <strong><span th:text="${title}"></span></strong>
                                                                 </h1>
                                                             </td>
                                                         </tr>
                                                     </table>
                                                     <table class="text_block block-3" width="100%" border="0"
-                                                        cellpadding="0" cellspacing="0" role="presentation"
+                                                        th:if="${subtitle!=null}" cellpadding="0" cellspacing="0"
+                                                        role="presentation"
                                                         style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;">
                                                         <tr>
                                                             <td class="pad"
@@ -153,10 +155,8 @@
                                                                         style="font-size: 14px; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; mso-line-height-alt: 16.8px; color: #233d56; line-height: 1.2;">
                                                                         <p
                                                                             style="margin: 0; font-size: 14px; text-align: center; mso-line-height-alt: 16.8px;">
-                                                                            <span style="font-size:18px;">
-                                                                                <!--Il n'attend
-                                                                                plus que votre validation.-->
-                                                                            </span>
+                                                                            <span style="font-size:18px;"
+                                                                                th:text="${subtitle}"></span>
                                                                         </p>
                                                                     </div>
                                                                 </div>
@@ -165,14 +165,14 @@
                                                     </table>
                                                     <table class="image_block block-5" width="100%" border="0"
                                                         cellpadding="0" cellspacing="0" role="presentation"
+                                                        th:if="${headerPicture!=null}"
                                                         style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
                                                         <tr>
                                                             <td class="pad"
                                                                 style="width:100%;padding-right:0px;padding-left:0px;padding-top:60px;">
                                                                 <div class="alignment" align="center"
                                                                     style="line-height:10px"><img class="big"
-                                                                        src="sample.png"
-                                                                        th:src="|cid:${waitingDepositHeaderPicture}|"
+                                                                        src="sample.png" th:src="|cid:${headerPicture}|"
                                                                         style="display: block; height: auto; border: 0; width: 605px; max-width: 100%;"
                                                                         width="605" alt="Image of three burgers"
                                                                         title="Image of three burgers"></div>
@@ -181,7 +181,8 @@
                                                     </table>
                                                     <table class="button_block block-7" width="100%" border="0"
                                                         cellpadding="0" cellspacing="0" role="presentation"
-                                                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                                                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;"
+                                                        th:if="${label!=null}">
                                                         <tr>
                                                             <td class="pad" style="text-align:center;padding-top:60px;">
                                                                 <div class="alignment" align="center">
@@ -191,9 +192,8 @@
                                                                         <span
                                                                             style="padding-left:20px;padding-right:20px;font-size:22px;display:inline-block;letter-spacing:normal;"><span
                                                                                 dir="ltr"
-                                                                                style="word-break: break-word; line-height: 44px;">Commande
-                                                                                n°<span
-                                                                                    th:text="${customerOrderId}"></span></span></span>
+                                                                                style="word-break: break-word; line-height: 44px;"
+                                                                                th:text="${label}"></span></span>
                                                                     </div>
                                                                     <!--[if mso]></center></v:textbox></v:roundrect><![endif]-->
                                                                 </div>
@@ -201,7 +201,8 @@
                                                         </tr>
                                                     </table>
                                                     <table class="text_block block-9" width="100%" border="0"
-                                                        cellpadding="0" cellspacing="0" role="presentation"
+                                                        th:if="${labelSubtitle!=null}" cellpadding="0" cellspacing="0"
+                                                        role="presentation"
                                                         style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;">
                                                         <tr>
                                                             <td class="pad"
@@ -211,8 +212,8 @@
                                                                         style="font-size: 14px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; mso-line-height-alt: 16.8px; color: #233d56; line-height: 1.2;">
                                                                         <p
                                                                             style="margin: 0; font-size: 14px; text-align: center; mso-line-height-alt: 16.8px;">
-                                                                            <strong><span style="font-size:24px;">
-                                                                                    <!--Title here-->
+                                                                            <strong><span style="font-size:24px;"
+                                                                                    th:text="${labelSubtitle}">
                                                                                 </span></strong>
                                                                         </p>
                                                                     </div>
@@ -222,52 +223,195 @@
                                                     </table>
                                                     <table class="text_block block-10" width="100%" border="0"
                                                         cellpadding="10" cellspacing="0" role="presentation"
-                                                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;">
+                                                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;margin-top:20px;">
                                                         <tr>
                                                             <td class="pad">
                                                                 <div style="font-family: Arial, sans-serif">
                                                                     <div class
                                                                         style="font-size: 14px; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; mso-line-height-alt: 16.8px; color: #233d56; line-height: 1.2;">
-                                                                        <p
+                                                                        <p th:if="${explaination!=null}"
                                                                             style="margin: 0; font-size: 16px; text-align: center; mso-line-height-alt: 19.2px;">
-                                                                            <span style="font-size:16px;">Votre commande
-                                                                                est en attente de provision. Effectuez
-                                                                                dès maintenant un virement de
-                                                                                <strong><span
-                                                                                        th:text="${#numbers.formatDecimal(preTaxPriceTotal,1,2)}">
-                                                                                    </span> €</strong> sur le
-                                                                                compte ci-dessous pour la débloquer.
-                                                                            </span>
+                                                                            <span style="font-size:16px;"
+                                                                                th:text="${explaination}"></span>
+                                                                        <ul th:if="${explainationElements!=null}">
+                                                                            <li
+                                                                                th:each="explainationElement : ${explainationElements}">
+                                                                                <span
+                                                                                    th:text="${explainationElement}"></span>
+                                                                            </li>
+                                                                        </ul>
+                                                                        </p>
+                                                                        <p th:if="${explaination2!=null}"
+                                                                            style="margin-top:20px; font-size: 16px; text-align: center; mso-line-height-alt: 19.2px;">
+                                                                            <span style="font-size:16px;"
+                                                                                th:text="${explaination2}"></span>
+                                                                        </p>
+                                                                        <p th:if="${explainationWarning!=null}"
+                                                                            style="margin-top:20px; font-size: 16px; text-align: center; mso-line-height-alt: 19.2px;color :#c0392b">
+                                                                            <strong><span style="font-size:16px;"><span
+                                                                                        th:text="${explainationWarning}"></span>
+                                                                                </span></strong>
+                                                                        </p>
+                                                                        <p th:if="${cbExplanation!=null}"
+                                                                            style="margin-top:20px; font-size: 16px; text-align: center; mso-line-height-alt: 19.2px;">
+                                                                            <span style="font-size:16px;"
+                                                                                th:text="${cbExplanation}"></span><a
+                                                                                th:href="${cbLink}"
+                                                                                target="_blank">ici</a>.
+                                                                        </p>
+                                                                        <table class="image_block block-5" width="100%"
+                                                                            border="0" cellpadding="0" cellspacing="0"
+                                                                            role="presentation" th:if="${cbLink!=null}"
+                                                                            style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                                                                            <tr>
+                                                                                <td class="pad"
+                                                                                    style="width:100%;padding-right:0px;padding-left:0px;padding-top:0px;">
+                                                                                    <div class="alignment"
+                                                                                        align="center"
+                                                                                        style="line-height:10px"><img
+                                                                                            src="sample.png"
+                                                                                            th:src="|cid:${qrCodePicture}|"
+                                                                                            style="display: block; height: auto; border: 0;  "
+                                                                                            alt="Image of three burgers"
+                                                                                            title="Image of three burgers">
+                                                                                    </div>
+                                                                                </td>
+                                                                            </tr>
+                                                                        </table>
+                                                                        <table th:if="${assos!=null}"
+                                                                            style="font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;   color: #233d56; width:100%">
+                                                                            <th:block th:each="asso : ${assos}">
+                                                                                <tr style="padding-top: 20px;">
+                                                                                    <td colspan="4">
+                                                                                        Société <span
+                                                                                            th:text="${asso.affaire.denomination}"></span><span
+                                                                                            th:text="${asso.affaire.firstname}"></span>
+                                                                                        <span
+                                                                                            th:text="${asso.affaire.lastname}"></span></span>
+                                                                                    </td>
+                                                                                    <td></td>
+                                                                                </tr>
+                                                                                <th:block
+                                                                                    th:each="provision : ${asso.provisions}">
+                                                                                    <tr>
+                                                                                        <td colspan="4">
+                                                                                            <span
+                                                                                                th:text="${provision.provisionType.label}"></span>
+                                                                                        </td>
+                                                                                        <td></td>
+                                                                                    </tr>
+                                                                                    <th:block
+                                                                                        th:each="invoiceItem : ${provision.invoiceItems}">
+                                                                                        <tr>
+                                                                                            <td colspan="4">
+                                                                                                <span
+                                                                                                    th:text="${invoiceItem.label}"></span>
+                                                                                            </td>
+                                                                                            <td
+                                                                                                style="text-align: right">
+                                                                                                <span
+                                                                                                    th:text="${#numbers.formatDecimal(invoiceItem.preTaxPrice,1,2)}"></span>
+                                                                                                €
+                                                                                            </td>
+                                                                                        </tr>
+                                                                                        <tr
+                                                                                            th:if="${invoiceItem.discountAmount!=null}">
+                                                                                            <td colspan="4">
+                                                                                                <span>Remise</span>
+                                                                                            </td>
+                                                                                            <td
+                                                                                                style="text-align: right">
+                                                                                                - <span
+                                                                                                    th:text="${#numbers.formatDecimal(invoiceItem.discountAmount,1,2)}"></span>
+                                                                                                €</td>
+                                                                                        </tr>
+                                                                                        <!--tr
+                                                                                            th:if="${invoiceItem.vat!=null}">
+                                                                                            <td colspan="4">
+                                                                                                <span
+                                                                                                    th:text="${invoiceItem.vat.label}"></span>
+                                                                                            </td>
+                                                                                            <td
+                                                                                                style="text-align: right">
+                                                                                                <span
+                                                                                                    th:text="${#numbers.formatDecimal(invoiceItem.vatPrice,1,2)}"></span>
+                                                                                                €
+                                                                                            </td>
+                                                                                        </tr-->
+                                                                                    </th:block>
+                                                                                </th:block>
+                                                                            </th:block>
+                                                                        </table>
+                                                                        <p style="margin-top: 10px;">&nbsp;</p>
+                                                                        <table th:if="${assos!=null}"
+                                                                            style="font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;   color: #233d56; width:100%">
+                                                                            <tr th:if="${preTaxPriceTotal!=null}">
+                                                                                <td colspan="4"
+                                                                                    style="text-align: right">
+                                                                                    Prix total HT
+                                                                                </td>
+                                                                                <td style="text-align: right"><span
+                                                                                        th:text="${#numbers.formatDecimal(preTaxPriceTotal,1,2)}"></span>
+                                                                                    €
+                                                                                </td>
+                                                                            </tr>
 
-                                                                        <p
-                                                                            style="margin: 0; font-size: 16px; text-align: center; mso-line-height-alt: 19.2px;">
-                                                                            <span style="font-size:16px;">IBAN FR76 XXXX
-                                                                                XXXX XXXX XXXX</span>
-                                                                        </p>
-                                                                        <p
-                                                                            style="margin: 0; font-size: 16px; text-align: center; mso-line-height-alt: 19.2px;">
-                                                                            <span style="font-size:16px;">BIC
-                                                                                BOURSFRPP</span>
-                                                                        </p>
-                                                                        <p
-                                                                            style="margin: 0;padding-top:10px; font-size: 16px; text-align: center; mso-line-height-alt: 19.2px;color :#c0392b">
-                                                                            <strong><span
-                                                                                    style="font-size:16px;">Référence à
-                                                                                    indiquer abolument dans le libellé
-                                                                                    de
-                                                                                    votre virement : </span><span
-                                                                                    th:text="${customerOrderId}"></span></strong>
-                                                                        </p>
+                                                                            <tr th:if="${discountTotal!=null}">
+                                                                                <td colspan="4"
+                                                                                    style="text-align: right">
+                                                                                    Remise totale
+                                                                                </td>
+                                                                                <td style="text-align: right"> - <span
+                                                                                        th:text="${#numbers.formatDecimal(discountTotal,1,2)}"></span>
+                                                                                    €
+                                                                                </td>
+                                                                            </tr>
+
+                                                                            <tr
+                                                                                th:if="${preTaxPriceTotalWithDicount!=null}">
+                                                                                <td colspan="4"
+                                                                                    style="text-align: right">
+                                                                                    Total HT
+                                                                                </td>
+                                                                                <td style="text-align: right"><span
+                                                                                        th:text="${#numbers.formatDecimal(preTaxPriceTotalWithDicount,1,2)}"></span>
+                                                                                    €
+                                                                                </td>
+                                                                            </tr>
+
+                                                                            <tr th:if="${vats!=null}"
+                                                                                th:each="vat : ${vats}"
+                                                                                style="text-align: right">
+                                                                                <td colspan="4"><span
+                                                                                        th:text="${vat.label}"></span><span>
+                                                                                        sur la base de </span><span
+                                                                                        th:text="${#numbers.formatDecimal(vat.base,1,2)}"></span>
+                                                                                    €
+                                                                                </td>
+                                                                                <td style="text-align: right"><span
+                                                                                        th:text="${#numbers.formatDecimal(vat.total,1,2)}"></span>
+                                                                                    €
+                                                                                </td>
+                                                                            </tr>
+
+                                                                            <tr th:if="${priceTotal!=null}">
+                                                                                <td colspan="4"
+                                                                                    style="text-align: right">
+                                                                                    Prix TTC
+                                                                                </td>
+                                                                                <td style="text-align: right"><span
+                                                                                        th:text="${#numbers.formatDecimal(priceTotal,1,2)}"></span>
+                                                                                    €
+                                                                                </td>
+                                                                            </tr>
+                                                                        </table>
                                                                         <p
                                                                             style="margin: 0; font-size: 16px; text-align: center; mso-line-height-alt: 16.8px;">
                                                                             &nbsp;</p>
-                                                                        <p
+                                                                        <p th:if="${totalSubtitle!=null}"
                                                                             style="margin: 0; font-size: 16px; text-align: center; mso-line-height-alt: 19.2px;">
-                                                                            <span style="font-size:14px;">
-                                                                                <!--Ce devis est
-                                                                                valable jusqu'au <span
-                                                                                    th:text="${quotationDueDate}"></span>-->
-                                                                            </span>
+                                                                            <span style="font-size:14px;"><span
+                                                                                    th:text="${totalSubtitle}"></span></span>
                                                                         </p>
                                                                     </div>
                                                                 </div>
@@ -275,15 +419,16 @@
                                                         </tr>
                                                     </table>
                                                     <table class="heading_block block-11" width="100%" border="0"
-                                                        cellpadding="0" cellspacing="0" role="presentation"
+                                                        th:if="${greetings!=null}" cellpadding="0" cellspacing="0"
+                                                        role="presentation"
                                                         style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
                                                         <tr>
                                                             <td class="pad"
                                                                 style="padding-top:15px;text-align:center;width:100%;">
                                                                 <h1
                                                                     style="margin: 0; color: #c4ae8b; direction: ltr; font-family: Helvetica Neue, Helvetica, Arial, sans-serif; font-size: 24px; font-weight: 400; letter-spacing: normal; line-height: 120%; text-align: center; margin-top: 0; margin-bottom: 0;">
-                                                                    <span style="color: #c4ae8b;"><strong>Bonne journée
-                                                                            !</strong></span>
+                                                                    <span style="color: #c4ae8b;"><strong><span
+                                                                                th:text="${greetings}"></span></strong></span>
                                                                 </h1>
                                                             </td>
                                                         </tr>
@@ -341,7 +486,7 @@
                                                                         cellpadding="0" cellspacing="0"
                                                                         role="presentation"
                                                                         style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; display: inline-block;">
-                                                                        <tr>
+                                                                        <tr th:if="${jssHeaderPicture!=null}">
                                                                             <td style="padding:0 5px 0 5px;"><a
                                                                                     href="https://www.linkedin.com/company/journal-sp-cial-des-soci-t-s---jss?originalSubdomain=fr"
                                                                                     target="_blank"><img

@@ -13,7 +13,7 @@ export class DestinationService extends AppRestService<Destination>{
   }
 
   getDestination() {
-    return this.getList(new HttpParams(), 'destination');
+    return this.getListCached(new HttpParams(), 'destination');
   }
 
-}                        
+}

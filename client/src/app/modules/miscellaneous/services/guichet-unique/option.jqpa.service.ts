@@ -13,7 +13,7 @@ export class OptionJQPAService extends AppRestService<OptionJQPA>{
   }
 
   getOptionJQPA() {
-    return this.getList(new HttpParams(), 'option-jqpa');
+    return this.getListCached(new HttpParams(), 'option-jqpa');
   }
 
-}                        
+}

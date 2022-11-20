@@ -1,11 +1,14 @@
 <div *ngIf="quotation && quotation.id" class="mat-elevation-z2 form-div">
   <ng-container *ngIf="instanceOfCustomerOrderFn(quotation) &&  quotation.invoices">
-    <h3 *ngFor="let invoice of quotation.invoices">
+    <h3 class="invoice-title" *ngFor="let invoice of quotation.invoices">
       Facture n°{{invoice.id}} émise le
-      {{invoice.createdDate|date:'dd/MM/yyyy à HH:mm'}}<a [routerLink]="['/invoicing',invoice.id]">
-        <mat-icon matTooltip="Voir la facture" color="accent" class="pointer">visibility
-        </mat-icon>
-      </a>
+      {{invoice.createdDate|date:'dd/MM/yyyy à HH:mm'}}
+      <chips-status class="invoice-chip" [status]="invoice.invoiceStatus.code" [value]="invoice.invoiceStatus.label">
+      </chips-status>
+      <mat-icon (click)="openRoute($event,'/invoicing/'+invoice.id)"
+        (auxclick)="openRoute($event,'/invoicing/'+invoice.id)" matTooltip="Voir la facture" color="accent"
+        class="pointer invoice-chip">visibility
+      </mat-icon>
     </h3>
   </ng-container>
   <form [formGroup]="invoiceManagementForm" *ngIf="canModifyInvoice()">

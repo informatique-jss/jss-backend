@@ -13,10 +13,11 @@ export class BuildingDomiciliationService extends AppRestService<BuildingDomicil
   }
 
   getBuildingDomiciliations() {
-    return this.getList(new HttpParams(), "building-domiciliations");
+    return this.getListCached(new HttpParams(), "building-domiciliations");
   }
 
   addOrUpdateBuildingDomiciliation(buildingDomiciliation: BuildingDomiciliation) {
+    this.clearListCache(new HttpParams(), "building-domiciliations");
     return this.addOrUpdate(new HttpParams(), "building-domiciliation", buildingDomiciliation, "Enregistré", "Erreur lors de l'enregistrement");
   }
 }

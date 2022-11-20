@@ -13,7 +13,7 @@ export class CodeRolePersonneQualifieeService extends AppRestService<CodeRolePer
   }
 
   getCodeRolePersonneQualifiee() {
-    return this.getList(new HttpParams(), 'code-role-personne-qualifiee');
+    return this.getListCached(new HttpParams(), 'code-role-personne-qualifiee');
   }
 
-}                        
+}

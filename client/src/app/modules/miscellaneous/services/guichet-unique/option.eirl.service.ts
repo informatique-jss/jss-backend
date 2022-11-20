@@ -13,7 +13,7 @@ export class OptionEirlService extends AppRestService<OptionEirl>{
   }
 
   getOptionEirl() {
-    return this.getList(new HttpParams(), 'option-eirl');
+    return this.getListCached(new HttpParams(), 'option-eirl');
   }
 
-}                        
+}

@@ -13,7 +13,7 @@ export class StatutPourLaFormaliteBlocReService extends AppRestService<StatutPou
   }
 
   getStatutPourLaFormaliteBlocRe() {
-    return this.getList(new HttpParams(), 'statut-pour-la-formalite-bloc-re');
+    return this.getListCached(new HttpParams(), 'statut-pour-la-formalite-bloc-re');
   }
 
-}                        
+}

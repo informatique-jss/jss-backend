@@ -29,16 +29,13 @@ public class BodaccFusion implements Serializable, IId {
 	@OneToMany(targetEntity = BodaccFusionAbsorbedCompany.class, cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<BodaccFusionAbsorbedCompany> bodaccFusionAbsorbedCompanies;
 
-	@Column(nullable = false)
 	private Integer assets;
 
-	@Column(nullable = false)
 	private Integer liabilities;
 
-	@Column(nullable = false)
 	private Integer mergerBonus;
 
-	@Column(columnDefinition = "TEXT", nullable = false)
+	@Column(columnDefinition = "TEXT")
 	private String exchangeRatioReport;
 
 	@Column(nullable = false)

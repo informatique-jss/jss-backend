@@ -1,6 +1,5 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { AfterContentChecked, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { Router } from '@angular/router';
 import { formatDateTimeForSortTable, formatEurosForSortTable } from 'src/app/libs/FormatHelper';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
@@ -18,7 +17,7 @@ import { getColumnLink } from '../invoice-tools';
   templateUrl: './invoice-list.component.html',
   styleUrls: ['./invoice-list.component.css']
 })
-export class InvoiceListComponent implements OnInit {
+export class InvoiceListComponent implements OnInit, AfterContentChecked {
 
   @Input() invoiceSearch: InvoiceSearch = {} as InvoiceSearch;
   @Input() isForDashboard: boolean = false;
@@ -38,9 +37,13 @@ export class InvoiceListComponent implements OnInit {
     private appService: AppService,
     private invoiceSearchResultService: InvoiceSearchResultService,
     private constantService: ConstantService,
+    private changeDetectorRef: ChangeDetectorRef,
     private formBuilder: FormBuilder,
-    private router: Router,
   ) { }
+
+  ngAfterContentChecked(): void {
+    this.changeDetectorRef.detectChanges();
+  }
 
   ngOnInit() {
     if (!this.defaultStatusFilter && !this.isForDashboard)
@@ -117,7 +120,7 @@ export class InvoiceListComponent implements OnInit {
     }
   }
 
-  addInvoice() {
-    this.router.navigate(['/invoicing/add/', ""]);
+  addInvoice(event: any) {
+    this.appService.openRoute(event, '/invoicing/add/', null);
   }
 }

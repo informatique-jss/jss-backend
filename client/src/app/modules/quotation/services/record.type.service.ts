@@ -13,10 +13,11 @@ export class RecordTypeService extends AppRestService<RecordType>{
   }
 
   getRecordTypes() {
-    return this.getList(new HttpParams(), "record-types");
+    return this.getListCached(new HttpParams(), "record-types");
   }
 
   addOrUpdateRecordType(recordType: RecordType) {
+    this.clearListCache(new HttpParams(), "record-types");
     return this.addOrUpdate(new HttpParams(), "record-type", recordType, "Enregistré", "Erreur lors de l'enregistrement");
   }
 

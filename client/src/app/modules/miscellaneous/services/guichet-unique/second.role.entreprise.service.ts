@@ -13,7 +13,7 @@ export class SecondRoleEntrepriseService extends AppRestService<SecondRoleEntrep
   }
 
   getSecondRoleEntreprise() {
-    return this.getList(new HttpParams(), 'second-role-entreprise');
+    return this.getListCached(new HttpParams(), 'second-role-entreprise');
   }
 
-}                        
+}

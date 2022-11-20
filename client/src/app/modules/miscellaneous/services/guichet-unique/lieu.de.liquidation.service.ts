@@ -13,7 +13,7 @@ export class LieuDeLiquidationService extends AppRestService<LieuDeLiquidation>{
   }
 
   getLieuDeLiquidation() {
-    return this.getList(new HttpParams(), 'lieu-de-liquidation');
+    return this.getListCached(new HttpParams(), 'lieu-de-liquidation');
   }
 
-}                        
+}

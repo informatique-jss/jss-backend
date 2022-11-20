@@ -13,10 +13,11 @@ export class PaymentDeadlineTypeService extends AppRestService<PaymentDeadlineTy
   }
 
   getPaymentDeadlineTypes() {
-    return this.getList(new HttpParams(), "payment-deadline-types");
+    return this.getListCached(new HttpParams(), "payment-deadline-types");
   }
 
   addOrUpdatePaymentDeadlineType(paymentDeadlineType: PaymentDeadlineType) {
+    this.clearListCache(new HttpParams(), "payment-deadline-types");
     return this.addOrUpdate(new HttpParams(), "payment-deadline-type", paymentDeadlineType, "Enregistré", "Erreur lors de l'enregistrement");
   }
 

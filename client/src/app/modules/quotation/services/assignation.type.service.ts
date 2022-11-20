@@ -13,6 +13,6 @@ export class AssignationTypeService extends AppRestService<AssignationType>{
   }
 
   getAssignationTypes() {
-    return this.getList(new HttpParams(), "assignation-types");
+    return this.getListCached(new HttpParams(), "assignation-types");
   }
 }

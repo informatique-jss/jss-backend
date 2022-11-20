@@ -13,7 +13,7 @@ export class SituationMatrimonialeService extends AppRestService<SituationMatrim
   }
 
   getSituationMatrimoniale() {
-    return this.getList(new HttpParams(), 'situation-matrimoniale');
+    return this.getListCached(new HttpParams(), 'situation-matrimoniale');
   }
 
-}                        
+}

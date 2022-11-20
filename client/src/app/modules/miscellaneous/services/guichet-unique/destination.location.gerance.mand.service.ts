@@ -13,7 +13,7 @@ export class DestinationLocationGeranceMandService extends AppRestService<Destin
   }
 
   getDestinationLocationGeranceMand() {
-    return this.getList(new HttpParams(), 'destination-location-gerance-mand');
+    return this.getListCached(new HttpParams(), 'destination-location-gerance-mand');
   }
 
-}                        
+}

@@ -13,10 +13,11 @@ export class AccountingAccountClassService extends AppRestService<AccountingAcco
   }
 
   getAccountingAccountClasses() {
-    return this.getList(new HttpParams(), "accounting-account-classes");
+    return this.getListCached(new HttpParams(), "accounting-account-classes");
   }
 
   addOrUpdateAccountingAccountClass(accountingAccountClass: AccountingAccountClass) {
+    this.clearListCache(new HttpParams(), "accounting-account-classes");
     return this.addOrUpdate(new HttpParams(), "accounting-account-class", accountingAccountClass, "Enregistré", "Erreur lors de l'enregistrement");
   }
 

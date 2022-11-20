@@ -13,7 +13,7 @@ export class PrecisionActiviteService extends AppRestService<PrecisionActivite>{
   }
 
   getPrecisionActivite() {
-    return this.getList(new HttpParams(), 'precision-activite');
+    return this.getListCached(new HttpParams(), 'precision-activite');
   }
 
-}                        
+}

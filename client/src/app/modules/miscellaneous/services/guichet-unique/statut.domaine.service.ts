@@ -13,7 +13,7 @@ export class StatutDomaineService extends AppRestService<StatutDomaine>{
   }
 
   getStatutDomaine() {
-    return this.getList(new HttpParams(), 'statut-domaine');
+    return this.getListCached(new HttpParams(), 'statut-domaine');
   }
 
-}                        
+}

@@ -7,8 +7,8 @@ import { GenericRadioGroupComponent } from '../generic-radio-group/generic-radio
 
 @Component({
   selector: 'radio-group-language',
-  templateUrl: './radio-group-language.component.html',
-  styleUrls: ['./radio-group-language.component.css']
+  templateUrl: '../generic-radio-group/generic-radio-group-code.component.html',
+  styleUrls: ['../generic-radio-group/generic-radio-group.component.css']
 })
 export class RadioGroupLanguageComponent extends GenericRadioGroupComponent<Language> implements OnInit {
   types: Language[] = [] as Array<Language>;
@@ -21,10 +21,6 @@ export class RadioGroupLanguageComponent extends GenericRadioGroupComponent<Lang
   initTypes(): void {
     this.languageService.getLanguages().subscribe(response => {
       this.types = response;
-      if (this.model == null || this.model.id == null) {
-        this.model = this.types[0];
-        this.modelChange.emit(this.model);
-      }
     })
   }
 }

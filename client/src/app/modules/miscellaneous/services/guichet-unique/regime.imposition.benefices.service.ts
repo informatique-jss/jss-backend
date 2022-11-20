@@ -13,7 +13,7 @@ export class RegimeImpositionBeneficesService extends AppRestService<RegimeImpos
   }
 
   getRegimeImpositionBenefices() {
-    return this.getList(new HttpParams(), 'regime-imposition-benefices');
+    return this.getListCached(new HttpParams(), 'regime-imposition-benefices');
   }
 
-}                        
+}

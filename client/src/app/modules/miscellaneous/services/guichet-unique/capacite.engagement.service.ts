@@ -13,7 +13,7 @@ export class CapaciteEngagementService extends AppRestService<CapaciteEngagement
   }
 
   getCapaciteEngagement() {
-    return this.getList(new HttpParams(), 'capacite-engagement');
+    return this.getListCached(new HttpParams(), 'capacite-engagement');
   }
 
-}                        
+}

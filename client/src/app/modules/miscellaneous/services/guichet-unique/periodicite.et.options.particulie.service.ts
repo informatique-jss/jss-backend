@@ -13,7 +13,7 @@ export class PeriodiciteEtOptionsParticulieService extends AppRestService<Period
   }
 
   getPeriodiciteEtOptionsParticulie() {
-    return this.getList(new HttpParams(), 'periodicite-et-options-particulie');
+    return this.getListCached(new HttpParams(), 'periodicite-et-options-particulie');
   }
 
-}                        
+}

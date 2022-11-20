@@ -13,7 +13,7 @@ export class CodePaysService extends AppRestService<CodePays>{
   }
 
   getCodePays() {
-    return this.getList(new HttpParams(), 'code-pays');
+    return this.getListCached(new HttpParams(), 'code-pays');
   }
 
-}                        
+}

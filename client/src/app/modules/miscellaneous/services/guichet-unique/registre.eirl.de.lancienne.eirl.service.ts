@@ -13,7 +13,7 @@ export class RegistreEirlDeLancienneEirlService extends AppRestService<RegistreE
   }
 
   getRegistreEirlDeLancienneEirl() {
-    return this.getList(new HttpParams(), 'registre-eirl-de-lancienne-eirl');
+    return this.getListCached(new HttpParams(), 'registre-eirl-de-lancienne-eirl');
   }
 
-}                        
+}

@@ -13,7 +13,7 @@ export class RegistreEirlService extends AppRestService<RegistreEirl>{
   }
 
   getRegistreEirl() {
-    return this.getList(new HttpParams(), 'registre-eirl');
+    return this.getListCached(new HttpParams(), 'registre-eirl');
   }
 
-}                        
+}

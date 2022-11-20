@@ -24,13 +24,13 @@ public class BodaccSplitBeneficiary implements Serializable, IId {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "bodacc_sequence")
 	private Integer id;
 
-	@Column(length = 60, nullable = false)
+	@Column(length = 60)
 	private String beneficiaryCompanyDenomination;
 
-	@Column(length = 9, nullable = false)
+	@Column(length = 9)
 	private String beneficiaryCompanySiren;
 
-	@Column(length = 100, nullable = false)
+	@Column(length = 100)
 	private String beneficiaryCompanyAddress;
 
 	private Integer beneficiaryCompanyShareCapital;
@@ -39,7 +39,6 @@ public class BodaccSplitBeneficiary implements Serializable, IId {
 	@JoinColumn(name = "id_legal_form_beneficiary_company")
 	private LegalForm beneficiaryCompanyLegalForm;
 
-	@Column(nullable = false)
 	@JsonSerialize(using = JacksonLocalDateSerializer.class)
 	private LocalDate beneficiaryCompanyRcsDeclarationDate;
 

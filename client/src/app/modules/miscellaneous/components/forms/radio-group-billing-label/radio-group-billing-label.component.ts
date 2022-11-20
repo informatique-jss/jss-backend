@@ -7,8 +7,8 @@ import { GenericRadioGroupComponent } from '../generic-radio-group/generic-radio
 
 @Component({
   selector: 'radio-group-billing-label',
-  templateUrl: './radio-group-billing-label.component.html',
-  styleUrls: ['./radio-group-billing-label.component.css']
+  templateUrl: '../generic-radio-group/generic-radio-group-code.component.html',
+  styleUrls: ['../generic-radio-group/generic-radio-group.component.css']
 })
 export class RadioGroupBillingLabelComponent extends GenericRadioGroupComponent<BillingLabelType> implements OnInit {
   types: BillingLabelType[] = [] as Array<BillingLabelType>;
@@ -21,10 +21,6 @@ export class RadioGroupBillingLabelComponent extends GenericRadioGroupComponent<
   initTypes(): void {
     this.billinglabeltypeService.getBillingLabelTypes().subscribe(response => {
       this.types = response;
-      if (this.model == null || this.model.id == null) {
-        this.model = this.types[0];
-        this.modelChange.emit(this.model);
-      }
     })
   }
 }

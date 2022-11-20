@@ -13,7 +13,7 @@ export class QualiteNonSedentaireService extends AppRestService<QualiteNonSedent
   }
 
   getQualiteNonSedentaire() {
-    return this.getList(new HttpParams(), 'qualite-non-sedentaire');
+    return this.getListCached(new HttpParams(), 'qualite-non-sedentaire');
   }
 
-}                        
+}

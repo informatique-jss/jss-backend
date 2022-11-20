@@ -9,6 +9,7 @@ ssh -t osiris@app-rec2.osiris.jss.fr 'sudo  /usr/bin/systemctl start osiris.serv
 
 cd client
 ng build --configuration recette
+ssh -t osiris@rec.osiris.jss.fr 'rm /appli/osiris/*;exit'
 scp -r dist/osiris/* osiris@rec.osiris.jss.fr:/appli/osiris/.
 ssh -t osiris@rec.osiris.jss.fr 'chown osiris:appli /appli/osiris/*;exit'
  

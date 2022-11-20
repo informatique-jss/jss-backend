@@ -13,10 +13,11 @@ export class ProvisionTypeService extends AppRestService<ProvisionType>{
   }
 
   getProvisionTypes() {
-    return this.getList(new HttpParams(), "provision-types");
+    return this.getListCached(new HttpParams(), "provision-types");
   }
 
   addOrUpdateProvisionType(provisionType: ProvisionType) {
+    this.clearListCache(new HttpParams(), "provision-types");
     return this.addOrUpdate(new HttpParams(), "provision-type", provisionType, "Enregistré", "Erreur lors de l'enregistrement");
   }
 

@@ -13,7 +13,7 @@ export class TutelleCuratelleService extends AppRestService<TutelleCuratelle>{
   }
 
   getTutelleCuratelle() {
-    return this.getList(new HttpParams(), 'tutelle-curatelle');
+    return this.getListCached(new HttpParams(), 'tutelle-curatelle');
   }
 
-}                        
+}

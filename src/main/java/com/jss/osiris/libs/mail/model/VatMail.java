@@ -1,9 +1,25 @@
 package com.jss.osiris.libs.mail.model;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
+@Entity
 public class VatMail {
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "customer_mail_sequence")
+    private Integer id;
+
     String label;
     Float total;
     Float base;
+
+    @ManyToOne
+    @JoinColumn(name = "id_customer_mail")
+    CustomerMail customerMail;
 
     public String getLabel() {
         return label;
@@ -27,6 +43,22 @@ public class VatMail {
 
     public void setBase(Float base) {
         this.base = base;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public CustomerMail getCustomerMail() {
+        return customerMail;
+    }
+
+    public void setCustomerMail(CustomerMail customerMail) {
+        this.customerMail = customerMail;
     }
 
 }

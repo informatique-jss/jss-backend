@@ -13,10 +13,11 @@ export class WeekDayService extends AppRestService<WeekDay>{
   }
 
   getWeekDays() {
-    return this.getList(new HttpParams(), "weekdays");
+    return this.getListCached(new HttpParams(), "weekdays");
   }
 
   addOrUpdateWeekDay(weekDay: WeekDay) {
+    this.clearListCache(new HttpParams(), "weekdays");
     return this.addOrUpdate(new HttpParams(), "weekday", weekDay, "Enregistré", "Erreur lors de l'enregistrement");
   }
 

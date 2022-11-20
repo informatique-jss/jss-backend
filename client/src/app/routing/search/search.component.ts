@@ -3,6 +3,7 @@ import { UntypedFormBuilder } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MatTabGroup } from '@angular/material/tabs';
 import { Router } from '@angular/router';
+import { AppService } from '../../services/app.service';
 import { EntityType } from './EntityType';
 import { IndexEntityService } from './index.entity.service';
 import { IndexEntity } from './IndexEntity';
@@ -30,6 +31,7 @@ export class SearchComponent implements OnInit {
 
   constructor(private searchDialogRef: MatDialogRef<SearchComponent>,
     protected indexEntityService: IndexEntityService,
+    private appService: AppService,
     protected formBuilder: UntypedFormBuilder,
     private router: Router) { }
 
@@ -125,14 +127,11 @@ export class SearchComponent implements OnInit {
     return tabEntities;
   }
 
-  openEntity(indexEntity: IndexEntity) {
+  openEntity(event: any, indexEntity: IndexEntity) {
     this.entityTypes.forEach(entityType => {
       if (indexEntity.entityType == entityType.entityType) {
-        this.router.navigateByUrl('/', { skipLocationChange: true }).then(() =>
-          this.router.navigate(['/' + entityType.entryPoint + '/', "" + indexEntity.entityId])
-        );
+        this.appService.openRoute(event, '/' + entityType.entryPoint + '/' + indexEntity.entityId, this.searchDialogRef.close());
       }
-      this.searchDialogRef.close();
       return;
     })
   }

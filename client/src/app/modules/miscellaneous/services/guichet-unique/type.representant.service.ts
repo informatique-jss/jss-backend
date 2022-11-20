@@ -13,7 +13,7 @@ export class TypeRepresentantService extends AppRestService<TypeRepresentant>{
   }
 
   getTypeRepresentant() {
-    return this.getList(new HttpParams(), 'type-representant');
+    return this.getListCached(new HttpParams(), 'type-representant');
   }
 
-}                        
+}

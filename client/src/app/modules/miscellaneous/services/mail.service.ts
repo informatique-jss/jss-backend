@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AppRestService } from 'src/app/services/appRest.service';
-import { Mail } from '../../tiers/model/Mail';
+import { Mail } from '../model/Mail';
 
 @Injectable({
   providedIn: 'root'

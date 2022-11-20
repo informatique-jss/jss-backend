@@ -7,8 +7,8 @@ import { GenericRadioGroupComponent } from '../generic-radio-group/generic-radio
 
 @Component({
   selector: 'radio-group-civility',
-  templateUrl: './radio-group-civility.component.html',
-  styleUrls: ['./radio-group-civility.component.css']
+  templateUrl: '../generic-radio-group/generic-radio-group-code.component.html',
+  styleUrls: ['../generic-radio-group/generic-radio-group.component.css']
 })
 export class RadioGroupCivilityComponent extends GenericRadioGroupComponent<Civility> implements OnInit {
   types: Civility[] = [] as Array<Civility>;
@@ -21,10 +21,6 @@ export class RadioGroupCivilityComponent extends GenericRadioGroupComponent<Civi
   initTypes(): void {
     this.civilityService.getCivilities().subscribe(response => {
       this.types = response;
-      if (response && response.length > 0) {
-        this.model = response[0];
-        this.modelChange.emit(this.model);
-      }
     })
   }
 }

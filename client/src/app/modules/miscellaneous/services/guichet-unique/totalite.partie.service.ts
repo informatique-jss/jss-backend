@@ -13,7 +13,7 @@ export class TotalitePartieService extends AppRestService<TotalitePartie>{
   }
 
   getTotalitePartie() {
-    return this.getList(new HttpParams(), 'totalite-partie');
+    return this.getListCached(new HttpParams(), 'totalite-partie');
   }
 
-}                        
+}

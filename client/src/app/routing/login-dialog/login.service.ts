@@ -1,8 +1,8 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
 import { AppRestService } from 'src/app/services/appRest.service';
+import { AppService } from '../../services/app.service';
 import { User } from './User';
 
 @Injectable({
@@ -10,7 +10,7 @@ import { User } from './User';
 })
 export class LoginService extends AppRestService<User>{
 
-  constructor(http: HttpClient, private router: Router) {
+  constructor(http: HttpClient, private appService: AppService) {
     super(http, "profile");
   }
 
@@ -42,9 +42,7 @@ export class LoginService extends AppRestService<User>{
       }
       localStorage.setItem('roles', JSON.stringify(roles));
       window.location.reload();
-      this.router.navigateByUrl('/', { skipLocationChange: true }).then(() =>
-        this.router.navigate(['/tiers/', ""])
-      );
+      this.appService.openRoute(null, '/', null);
     })
   }
 

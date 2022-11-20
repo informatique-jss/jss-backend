@@ -13,7 +13,7 @@ export class TypeDeStatutsService extends AppRestService<TypeDeStatuts>{
   }
 
   getTypeDeStatuts() {
-    return this.getList(new HttpParams(), 'type-de-statuts');
+    return this.getListCached(new HttpParams(), 'type-de-statuts');
   }
 
-}                        
+}

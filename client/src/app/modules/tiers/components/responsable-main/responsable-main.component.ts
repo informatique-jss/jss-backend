@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { AfterContentChecked, ChangeDetectorRef, Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
 import { copyObject } from 'src/app/libs/GenericHelper';
@@ -32,7 +32,7 @@ import { SettlementBillingComponent } from '../settlement-billing/settlement-bil
   styleUrls: ['./responsable-main.component.css']
 })
 
-export class ResponsableMainComponent implements OnInit {
+export class ResponsableMainComponent implements OnInit, AfterContentChecked {
   matcher: CustomErrorStateMatcher = new CustomErrorStateMatcher();
   @Input() tiers: Tiers = {} as Tiers;
   @Input() editMode: boolean = false;
@@ -72,7 +72,12 @@ export class ResponsableMainComponent implements OnInit {
     protected tiersTypeService: TiersTypeService,
     private constantService: ConstantService,
     protected subscriptionPeriodTypeService: SubscriptionPeriodTypeService,
+    private changeDetectorRef: ChangeDetectorRef,
     protected tiersCategoryService: TiersCategoryService) { }
+
+  ngAfterContentChecked(): void {
+    this.changeDetectorRef.detectChanges();
+  }
 
   ngOnChanges(changes: SimpleChanges) {
     if (this.tableActions && this.tableActions[0]) {

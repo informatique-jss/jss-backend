@@ -10,6 +10,7 @@ import { DocumentTypeService } from 'src/app/modules/miscellaneous/services/docu
 import { Responsable } from 'src/app/modules/tiers/model/Responsable';
 import { Tiers } from 'src/app/modules/tiers/model/Tiers';
 import { TiersService } from 'src/app/modules/tiers/services/tiers.service';
+import { AppService } from '../../../../services/app.service';
 import { Document } from '../../../miscellaneous/model/Document';
 import { DocumentType } from '../../../miscellaneous/model/DocumentType';
 import { SortTableAction } from '../../../miscellaneous/model/SortTableAction';
@@ -38,6 +39,7 @@ export class OrderingCustomerComponent implements OnInit {
 
   constructor(private formBuilder: UntypedFormBuilder,
     private tiersService: TiersService,
+    private appService: AppService,
     protected cd: ChangeDetectorRef,
     protected documentTypeService: DocumentTypeService,
     public specialOfferDialog: MatDialog) { }
@@ -142,4 +144,7 @@ export class OrderingCustomerComponent implements OnInit {
     this.updateDocuments.emit();
   }
 
+  openRoute(event: any, link: string) {
+    this.appService.openRoute(event, link, null);
+  }
 }

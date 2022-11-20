@@ -13,7 +13,7 @@ export class TypeVoieService extends AppRestService<TypeVoie>{
   }
 
   getTypeVoie() {
-    return this.getList(new HttpParams(), 'type-voie');
+    return this.getListCached(new HttpParams(), 'type-voie');
   }
 
-}                        
+}

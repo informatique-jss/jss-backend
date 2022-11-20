@@ -176,6 +176,11 @@ public class CustomerOrder implements IQuotation, IAttachment {
 	@JsonIgnoreProperties(value = { "customerOrder", "invoice", "deposit", "payment" }, allowSetters = true)
 	private List<AccountingRecord> accountingRecords;
 
+	private String centralPayPaymentRequestId;
+
+	// TODO : put it at 0 when payment is grabbed and matched
+	private Float centralPayPendingPaymentAmount;
+
 	public Integer getId() {
 		return id;
 	}
@@ -390,6 +395,22 @@ public class CustomerOrder implements IQuotation, IAttachment {
 
 	public void setCustomerOrderStatus(CustomerOrderStatus customerOrderStatus) {
 		this.customerOrderStatus = customerOrderStatus;
+	}
+
+	public String getCentralPayPaymentRequestId() {
+		return centralPayPaymentRequestId;
+	}
+
+	public void setCentralPayPaymentRequestId(String centralPayPaymentRequestId) {
+		this.centralPayPaymentRequestId = centralPayPaymentRequestId;
+	}
+
+	public Float getCentralPayPendingPaymentAmount() {
+		return centralPayPendingPaymentAmount;
+	}
+
+	public void setCentralPayPendingPaymentAmount(Float centralPayPendingPaymentAmount) {
+		this.centralPayPendingPaymentAmount = centralPayPendingPaymentAmount;
 	}
 
 }

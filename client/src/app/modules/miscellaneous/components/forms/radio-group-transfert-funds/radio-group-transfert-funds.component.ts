@@ -7,8 +7,8 @@ import { GenericRadioGroupComponent } from '../generic-radio-group/generic-radio
 
 @Component({
   selector: 'radio-group-transfert-funds',
-  templateUrl: './radio-group-transfert-funds.component.html',
-  styleUrls: ['./radio-group-transfert-funds.component.css']
+  templateUrl: '../generic-radio-group/generic-radio-group-code.component.html',
+  styleUrls: ['../generic-radio-group/generic-radio-group.component.css']
 })
 export class RadioGroupTransfertFundsComponent extends GenericRadioGroupComponent<TransfertFundsType> implements OnInit {
   types: TransfertFundsType[] = [] as Array<TransfertFundsType>;

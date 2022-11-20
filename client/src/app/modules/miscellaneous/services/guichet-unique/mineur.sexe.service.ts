@@ -13,7 +13,7 @@ export class MineurSexeService extends AppRestService<MineurSexe>{
   }
 
   getMineurSexe() {
-    return this.getList(new HttpParams(), 'mineur-sexe');
+    return this.getListCached(new HttpParams(), 'mineur-sexe');
   }
 
-}                        
+}

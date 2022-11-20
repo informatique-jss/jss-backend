@@ -48,6 +48,11 @@
   top: 72px;
 }
 
+.bug-report {
+  position: absolute;
+  top: 0px;
+}
+
 mat-nav-list {
   padding-top: 22px;
 }

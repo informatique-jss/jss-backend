@@ -4,6 +4,8 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Observable, Subscription } from 'rxjs';
 import { getObjectPropertybyString } from 'src/app/libs/FormatHelper';
 import { UserPreferenceService } from 'src/app/services/user.preference.service';
+import { AppService } from '../../../../services/app.service';
+import { Employee } from '../../../profile/model/Employee';
 import { SortTableAction } from '../../model/SortTableAction';
 import { SortTableColumn } from '../../model/SortTableColumn';
 
@@ -33,7 +35,10 @@ export class SortTableComponent implements OnInit {
 
   internalActions: SortTableAction[] | undefined = [] as Array<SortTableAction>;
 
-  constructor(protected userPreferenceService: UserPreferenceService) { }
+  constructor(protected userPreferenceService: UserPreferenceService,
+    private appService: AppService
+
+  ) { }
 
   ngOnInit() {
     if (this.refreshTable)
@@ -45,26 +50,6 @@ export class SortTableComponent implements OnInit {
     this.internalActions = this.actions;
     if (this.values)
       this.dataSource.data = this.values;
-
-    setTimeout(() => {
-      this.dataSource.sort = this.sort;
-      this.dataSource.sortingDataAccessor = (item: any, property) => {
-        if (this.columns) {
-          for (let column of this.columns) {
-            if (column.id && column.id == property) {
-              if (column.sortFonction)
-                return column.sortFonction(item, this.values, column, this.columns);
-              return this.getColumnValue(column, item);
-            }
-          }
-        }
-      };
-
-      this.dataSource.filterPredicate = (data: any, filter) => {
-        const dataStr = JSON.stringify(data).toLowerCase();
-        return dataStr.indexOf(filter) != -1;
-      }
-    });
 
     // Restore displayed columns
     let prefColumns = this.userPreferenceService.getUserDisplayColumnsForTable(this.tableName);
@@ -104,11 +89,40 @@ export class SortTableComponent implements OnInit {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes.values != undefined && this.values)
+    if (changes.values != undefined && this.values) {
       this.dataSource.data = this.values;
+      this.setSorter();
+    }
     if (changes.filterText != undefined && this.values) {
       this.applyFilter();
     }
+  }
+
+  setSorter() {
+    let a = {} as Employee;
+    setTimeout(() => {
+      this.dataSource.sort = this.sort;
+      this.dataSource.sortingDataAccessor = (item: any, property) => {
+        if (this.columns) {
+          for (let column of this.columns) {
+            if (column.id && column.id == property) {
+              if (column.sortFonction)
+                return column.sortFonction(item, this.values, column, this.columns);
+              // Handle employees
+              let columnValue = this.getColumnValue(column, item);
+              if (columnValue && columnValue instanceof Object && columnValue.firstname && columnValue.lastname)
+                return columnValue.firstname + columnValue.lastname;
+              return columnValue;
+            }
+          }
+        }
+      };
+
+      this.dataSource.filterPredicate = (data: any, filter) => {
+        const dataStr = JSON.stringify(data).toLowerCase();
+        return dataStr.indexOf(filter) != -1;
+      }
+    });
   }
 
   getColumnLabel(column: SortTableColumn): string {
@@ -188,10 +202,21 @@ export class SortTableComponent implements OnInit {
   getObjectPropertybyString = getObjectPropertybyString;
 
   getActionLink(action: SortTableAction, element: any) {
-    return action.actionLinkFunction(action, element);
+    if (action.actionLinkFunction)
+      return action.actionLinkFunction(action, element);
   }
 
   getColumnLink(column: SortTableColumn, element: any) {
-    return column.actionLinkFunction(column, element);
+    if (column.actionLinkFunction)
+      return column.actionLinkFunction(column, element);
   }
+
+  openColumnLink(event: any, column: SortTableColumn, element: any,) {
+    this.appService.openRoute(event, this.getColumnLink(column, element).join("/"), null);
+  }
+
+  openActionLink(event: any, action: SortTableAction, element: any,) {
+    this.appService.openRoute(event, this.getActionLink(action, element).join("/"), null);
+  }
+
 }

@@ -3,7 +3,6 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
-import { Router } from '@angular/router';
 import { formatDateForSortTable, formatDateTimeForSortTable, formatEurosForSortTable } from 'src/app/libs/FormatHelper';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
@@ -29,7 +28,6 @@ export class AccountingRecordComponent implements OnInit {
     private userPreferenceService: UserPreferenceService,
     private appService: AppService,
     public deleteAccountingRecordDialog: MatDialog,
-    private router: Router,
   ) { }
 
   accountingRecords: AccountingRecord[] | undefined;
@@ -117,8 +115,8 @@ export class AccountingRecordComponent implements OnInit {
     this.accountingRecordService.exportAccountingAccount(this.accountingRecordSearch.accountingAccount!, this.accountingRecordSearch.startDate!, this.accountingRecordSearch.endDate!);
   }
 
-  createAccountingRecords() {
-    this.router.navigate(['/accounting/add'])
+  createAccountingRecords(event: any) {
+    this.appService.openRoute(event, '/accounting/add', null);
   }
 
   searchRecords() {

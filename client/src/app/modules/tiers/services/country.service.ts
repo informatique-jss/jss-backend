@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AppRestService } from 'src/app/services/appRest.service';
-import { Country } from '../../tiers/model/Country';
+import { Country } from '../../miscellaneous/model/Country';
 
 @Injectable({
   providedIn: 'root'
@@ -13,10 +13,11 @@ export class CountryService extends AppRestService<Country>{
   }
 
   getCountries() {
-    return this.getList(new HttpParams(), "countries");
+    return this.getListCached(new HttpParams(), "countries");
   }
 
   addOrUpdateCountry(country: Country) {
+    this.clearListCache(new HttpParams(), "countries");
     return this.addOrUpdate(new HttpParams(), "country", country, "Enregistré", "Erreur lors de l'enregistrement");
   }
 

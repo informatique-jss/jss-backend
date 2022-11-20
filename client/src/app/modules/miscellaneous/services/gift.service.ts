@@ -13,10 +13,11 @@ export class GiftService extends AppRestService<Gift>{
   }
 
   getGifts() {
-    return this.getList(new HttpParams(), "gifts");
+    return this.getListCached(new HttpParams(), "gifts");
   }
 
   addOrUpdateGift(gift: Gift) {
+    this.clearListCache(new HttpParams(), "gifts");
     return this.addOrUpdate(new HttpParams(), "gift", gift, "Enregistré", "Erreur lors de l'enregistrement");
   }
 

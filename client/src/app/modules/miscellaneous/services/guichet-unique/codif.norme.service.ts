@@ -13,7 +13,7 @@ export class CodifNormeService extends AppRestService<CodifNorme>{
   }
 
   getCodifNorme() {
-    return this.getList(new HttpParams(), 'codif-norme');
+    return this.getListCached(new HttpParams(), 'codif-norme');
   }
 
-}                        
+}

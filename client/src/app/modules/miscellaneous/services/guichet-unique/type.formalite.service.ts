@@ -13,7 +13,7 @@ export class TypeFormaliteService extends AppRestService<TypeFormalite>{
   }
 
   getTypeFormalite() {
-    return this.getList(new HttpParams(), 'type-formalite');
+    return this.getListCached(new HttpParams(), 'type-formalite');
   }
 
-}                        
+}

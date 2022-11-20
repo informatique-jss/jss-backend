@@ -48,14 +48,6 @@ main {
   width: 75px
 }
 
-.note-link:hover, .note-link:visited, .note-link:link, .note-link:active {
-  text-decoration: none !important;
-  box-shadow: none !important;
-  color: white;
-  position: relative;
-  top: -5px;
-}
-
 .note-link>.small-icon {
   top: 7px;
 }

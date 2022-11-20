@@ -13,10 +13,11 @@ export class ActTypeService extends AppRestService<ActType>{
   }
 
   getActTypes() {
-    return this.getList(new HttpParams(), "act-types");
+    return this.getListCached(new HttpParams(), "act-types");
   }
 
   addOrUpdateActType(actType: ActType) {
+    this.clearListCache(new HttpParams(), "act-types");
     return this.addOrUpdate(new HttpParams(), "act-type", actType, "Enregistré", "Erreur lors de l'enregistrement");
   }
 

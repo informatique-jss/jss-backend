@@ -2,7 +2,7 @@ import { AfterContentChecked, ChangeDetectorRef, Component, OnInit, ViewChild } 
 import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN } from 'src/app/libs/Constants';
 import { WorkflowDialogComponent } from 'src/app/modules/miscellaneous/components/workflow-dialog/workflow-dialog.component';
 import { AppService } from 'src/app/services/app.service';
@@ -53,7 +53,6 @@ export class AffaireComponent implements OnInit, AfterContentChecked {
     private bodaccStatusService: BodaccStatusService,
     private domiciliationStatusService: DomiciliationStatusService,
     private announcementStatusService: AnnouncementStatusService,
-    private router: Router,
   ) { }
 
   affaireForm = this.formBuilder.group({});
@@ -117,25 +116,23 @@ export class AffaireComponent implements OnInit, AfterContentChecked {
       this.assoAffaireOrderService.updateAsso(this.asso).subscribe(response => {
         this.asso = response;
         this.editMode = false;
-        this.router.navigateByUrl('/', { skipLocationChange: true }).then(() =>
-          this.router.navigate(['/affaire/', "" + this.idAffaire])
-        );
+        this.appService.openRoute(null, '/affaire/' + this.idAffaire, null);
       })
     } else {
       this.appService.displaySnackBar("Les onglets suivants ne sont pas correctement remplis. Veuillez les compléter avant de sauvegarder : Prestations", true, 60);
     }
   }
 
-  displayQuotation() {
-    this.router.navigate(['/quotation/', "" + this.asso.quotation.id])
+  displayQuotation(event: any) {
+    this.appService.openRoute(event, '/quotation/' + this.asso.quotation.id, null);
   }
 
-  displayCustomerOrder() {
-    this.router.navigate(['/order/', "" + this.asso.customerOrder.id])
+  displayCustomerOrder(event: any) {
+    this.appService.openRoute(event, '/order/' + this.asso.customerOrder.id, null);
   }
 
-  displayAffaire() {
-    this.router.navigate(['/referential/affaire/', "" + this.asso.affaire.id])
+  displayAffaire(event: any) {
+    this.appService.openRoute(event, '/referential/affaire/' + this.asso.affaire.id, null);
   }
 
   displayProvisionWorkflowDialog(provision: Provision) {

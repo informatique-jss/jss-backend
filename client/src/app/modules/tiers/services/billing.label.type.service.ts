@@ -13,10 +13,11 @@ export class BillingLabelTypeService extends AppRestService<BillingLabelType>{
   }
 
   getBillingLabelTypes() {
-    return this.getList(new HttpParams(), "billing-label-types");
+    return this.getListCached(new HttpParams(), "billing-label-types");
   }
 
   addOrUpdateBillingLabelType(billingLabelType: BillingLabelType) {
+    this.clearListCache(new HttpParams(), "billing-label-types");
     return this.addOrUpdate(new HttpParams(), "billing-label-type", billingLabelType, "Enregistré", "Erreur lors de l'enregistrement");
   }
 

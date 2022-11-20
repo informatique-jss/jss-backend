@@ -13,7 +13,7 @@ export class AnnouncementStatusService extends AppRestService<AnnouncementStatus
   }
 
   getAnnouncementStatus() {
-    return this.getList(new HttpParams(), "announcement-status");
+    return this.getListCached(new HttpParams(), "announcement-status");
   }
 
 }

@@ -13,10 +13,11 @@ export class TiersCategoryService extends AppRestService<TiersCategory>{
   }
 
   getTiersCategories() {
-    return this.getList(new HttpParams(), "tiers-categories");
+    return this.getListCached(new HttpParams(), "tiers-categories");
   }
 
   addOrUpdateTiersCategory(tiersCategory: TiersCategory) {
+    this.clearListCache(new HttpParams(), "tiers-categories");
     return this.addOrUpdate(new HttpParams(), "tiers-category", tiersCategory, "Enregistré", "Erreur lors de l'enregistrement");
   }
 

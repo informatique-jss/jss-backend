@@ -13,10 +13,11 @@ export class PaymentWayService extends AppRestService<PaymentWay>{
   }
 
   getPaymentWays() {
-    return this.getList(new HttpParams(), "payment-ways");
+    return this.getListCached(new HttpParams(), "payment-ways");
   }
 
   addOrUpdatePaymentWay(paymentWay: PaymentWay) {
+    this.clearListCache(new HttpParams(), "payment-ways");
     return this.addOrUpdate(new HttpParams(), "payment-way", paymentWay, "Enregistré", "Erreur lors de l'enregistrement");
   }
 

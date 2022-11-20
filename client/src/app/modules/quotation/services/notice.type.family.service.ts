@@ -13,10 +13,11 @@ export class NoticeTypeFamilyService extends AppRestService<NoticeTypeFamily>{
   }
 
   getNoticeTypeFamilies() {
-    return this.getList(new HttpParams(), "notice-type-families");
+    return this.getListCached(new HttpParams(), "notice-type-families");
   }
 
   addOrUpdateNoticeTypeFamily(noticeTypeFamily: NoticeTypeFamily) {
+    this.clearListCache(new HttpParams(), "notice-type-families");
     return this.addOrUpdate(new HttpParams(), "notice-type-family", noticeTypeFamily, "Enregistré", "Erreur lors de l'enregistrement");
   }
 }

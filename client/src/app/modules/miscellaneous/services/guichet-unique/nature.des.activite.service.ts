@@ -13,7 +13,7 @@ export class NatureDesActiviteService extends AppRestService<NatureDesActivite>{
   }
 
   getNatureDesActivite() {
-    return this.getList(new HttpParams(), 'nature-des-activite');
+    return this.getListCached(new HttpParams(), 'nature-des-activite');
   }
 
-}                        
+}

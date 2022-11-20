@@ -13,10 +13,11 @@ export class JournalTypeService extends AppRestService<JournalType>{
   }
 
   getJournalTypes() {
-    return this.getList(new HttpParams(), "journal-types");
+    return this.getListCached(new HttpParams(), "journal-types");
   }
 
   addOrUpdateJournalType(journalType: JournalType) {
+    this.clearListCache(new HttpParams(), "journal-types");
     return this.addOrUpdate(new HttpParams(), "journal-type", journalType, "Enregistré", "Erreur lors de l'enregistrement");
   }
 }

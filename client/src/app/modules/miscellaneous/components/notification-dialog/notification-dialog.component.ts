@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
 import { CUSTOMER_ORDER_ASSO_AFFAIRE_ORDER_TO_ASSIGN, CUSTOMER_ORDER_ASSO_AFFAIRE_ORDER_VERIFY, CUSTOMER_ORDER_BEING_PROCESSED, CUSTOMER_ORDER_CREATE, CUSTOMER_ORDER_TO_BE_BILLED, QUOTATION_ASSO_AFFAIRE_ORDER_VERIFY, QUOTATION_CREATE, QUOTATION_REFUSED_BY_CUSOMER, QUOTATION_SENT, QUOTATION_VALIDATED_BY_CUSOMER } from 'src/app/libs/Constants';
 import { displayInTeams } from 'src/app/libs/MailHelper';
 import { EntityType } from 'src/app/routing/search/EntityType';
 import { QUOTATION_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { PERSONNAL } from '../../../../libs/Constants';
 import { CUSTOMER_ORDER_ENTITY_TYPE } from '../../../../routing/search/search.component';
+import { AppService } from '../../../../services/app.service';
 import { Notification } from '../../model/Notification';
 import { NotificationService } from '../../services/notification.service';
 import { AddNotificationDialogComponent } from '../add-notification-dialog/add-notification-dialog.component';
@@ -43,8 +43,8 @@ export class NotificationDialogComponent implements OnInit {
     private formBuilder: FormBuilder,
     private notificationService: NotificationService,
     public confirmationDialog: MatDialog,
+    private appService: AppService,
     public newNotificationDialog: MatDialog,
-    private router: Router,
   ) { }
 
   notificationForm = this.formBuilder.group({});
@@ -111,16 +111,7 @@ export class NotificationDialogComponent implements OnInit {
   }
 
   openEntity(event: any, notification: Notification, entityType: EntityType) {
-    if (event && event.ctrlKey) {
-      let a = window.open(location.origin + "/" + entityType.entryPoint + '/' + notification.entityId, "_blank");
-      a?.focus();
-    } else {
-      this.router.navigateByUrl('/', { skipLocationChange: true }).then(() =>
-        this.router.navigate(['/' + entityType.entryPoint + '/', "" + notification.entityId])
-      );
-      this.notificationService.closeNotificationDialog();
-    }
-    return;
+    this.appService.openRoute(event, "/" + entityType.entryPoint + '/' + notification.entityId, () => { this.notificationService.closeNotificationDialog(); });
   }
 
   setAsRead(event: any, notification: Notification) {

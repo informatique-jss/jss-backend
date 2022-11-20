@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
@@ -15,6 +16,7 @@ export class AppService {
 
   constructor(
     private snackBar: MatSnackBar,
+    private router: Router
   ) { }
 
   changeHeaderTitle(title: string) {
@@ -32,6 +34,26 @@ export class AppService {
     sb.onAction().subscribe(() => {
       sb.dismiss();
     });
+  }
+
+  /**
+   * Open given route taking account of user action to do it (simple click, ctrl + click, middle click)
+   * @param event : click event given by angular
+   * @param route  : route to open
+   * @param sameWindowEndFonction : function to execute at the end of open with simple click
+   * @returns
+   */
+  openRoute(event: any, route: string, sameWindowEndFonction: any) {
+    if (event && (event.ctrlKey || event.button && event.button == "1")) {
+      window.open(location.origin + route, "_blank");
+    } else {
+      this.router.navigateByUrl('/', { skipLocationChange: true }).then(() =>
+        this.router.navigate(['/' + route])
+      );
+      if (sameWindowEndFonction)
+        sameWindowEndFonction();
+    }
+    return;
   }
 
 }

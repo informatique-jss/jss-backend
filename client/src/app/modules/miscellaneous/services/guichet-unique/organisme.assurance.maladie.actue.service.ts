@@ -13,7 +13,7 @@ export class OrganismeAssuranceMaladieActueService extends AppRestService<Organi
   }
 
   getOrganismeAssuranceMaladieActue() {
-    return this.getList(new HttpParams(), 'organisme-assurance-maladie-actue');
+    return this.getListCached(new HttpParams(), 'organisme-assurance-maladie-actue');
   }
 
-}                        
+}

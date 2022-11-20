@@ -10,12 +10,12 @@
           [ngClass]="{'td-label':column.isShrinkColumn}">
           <span>{{getColumnValue(column,
             element)}}
-            <a [routerLink]="getColumnLink(column, element)"
-              *ngIf="column.actionLinkFunction && getColumnLink(column, element)" target="_blank">
-              <mat-icon [matTooltip]="column.actionTooltip" color="accent" class="pointer column-content-icon">
-                {{column.actionIcon}}
-              </mat-icon>
-            </a>
+            <mat-icon [matTooltip]="column.actionTooltip" color="accent" class="pointer column-content-icon"
+              (click)="openColumnLink($event, column, element)" (auxclick)="openColumnLink($event, column, element)"
+              *ngIf=" column.actionLinkFunction && getColumnLink(column,
+              element)">
+              {{column.actionIcon}}
+            </mat-icon>
           </span>
         </td>
       </ng-container>
@@ -41,11 +41,11 @@
           <mat-icon [matTooltip]="action.actionName" *ngIf="action.display && action.actionClick" color="accent"
             class="pointer  column-content-icon" (click)="actionTrigger(action, element)">{{action.actionIcon}}
           </mat-icon>
-          <a [routerLink]="getActionLink(action, element)" *ngIf="action.display &&  action.actionLinkFunction">
-            <mat-icon [matTooltip]="action.actionName" color="accent" class="pointer column-content-icon">
-              {{action.actionIcon}}
-            </mat-icon>
-          </a>
+          <mat-icon [matTooltip]="action.actionName" *ngIf="action.display &&  getActionLink(action, element)"
+            (click)="openActionLink($event, action, element)" (auxclick)="openActionLink($event, action, element)"
+            color="accent" class="pointer column-content-icon">
+            {{action.actionIcon}}
+          </mat-icon>
         </ng-container>
       </td>
     </ng-container>

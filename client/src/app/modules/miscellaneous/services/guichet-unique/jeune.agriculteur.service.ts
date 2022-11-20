@@ -13,7 +13,7 @@ export class JeuneAgriculteurService extends AppRestService<JeuneAgriculteur>{
   }
 
   getJeuneAgriculteur() {
-    return this.getList(new HttpParams(), 'jeune-agriculteur');
+    return this.getListCached(new HttpParams(), 'jeune-agriculteur');
   }
 
-}                        
+}

@@ -13,10 +13,11 @@ export class ConfrereService extends AppRestService<Confrere>{
   }
 
   getConfreres() {
-    return this.getList(new HttpParams(), "confreres");
+    return this.getListCached(new HttpParams(), "confreres");
   }
 
   addOrUpdateConfrere(confrere: Confrere) {
+    this.clearListCache(new HttpParams(), "confreres");
     return this.addOrUpdate(new HttpParams(), "confrere", confrere, "Enregistré", "Erreur lors de l'enregistrement");
   }
 

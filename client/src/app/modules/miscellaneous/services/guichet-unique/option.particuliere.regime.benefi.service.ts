@@ -13,7 +13,7 @@ export class OptionParticuliereRegimeBenefiService extends AppRestService<Option
   }
 
   getOptionParticuliereRegimeBenefi() {
-    return this.getList(new HttpParams(), 'option-particuliere-regime-benefi');
+    return this.getListCached(new HttpParams(), 'option-particuliere-regime-benefi');
   }
 
-}                        
+}

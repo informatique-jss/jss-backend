@@ -51,6 +51,13 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("ldap.manager.password");
         isOk = isOk && checkProperty("server.servlet.session.timeout");
         isOk = isOk && checkProperty("invoicing.payment.limit.refund.euros");
+        isOk = isOk && checkProperty("payment.cb.entry.point");
+        isOk = isOk && checkProperty("payment.cb.redirect.deposit.entry.point");
+        isOk = isOk && checkProperty("payment.cb.redirect.invoice.entry.point");
+        isOk = isOk && checkProperty("central.pay.entrypoint");
+        isOk = isOk && checkProperty("central.pay.api.key");
+        isOk = isOk && checkProperty("central.pay.api.password");
+
         isOk = isOk && checkAccountingParams();
 
         if (!isOk)

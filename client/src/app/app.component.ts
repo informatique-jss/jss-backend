@@ -136,4 +136,8 @@ export class AppComponent {
     this.displayEditNote = !this.displayEditNote;
   }
 
+  openRoute(event: any, link: string) {
+    this.appService.openRoute(event, link, null);
+  }
+
 }

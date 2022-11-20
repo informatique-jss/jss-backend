@@ -13,10 +13,11 @@ export class DocumentTypeService extends AppRestService<DocumentType>{
   }
 
   getDocumentTypes() {
-    return this.getList(new HttpParams(), "document-types");
+    return this.getListCached(new HttpParams(), "document-types");
   }
 
   addOrUpdateDocumentType(documentType: DocumentType) {
+    this.clearListCache(new HttpParams(), "document-types");
     return this.addOrUpdate(new HttpParams(), "document-type", documentType, "Enregistré", "Erreur lors de l'enregistrement");
   }
 

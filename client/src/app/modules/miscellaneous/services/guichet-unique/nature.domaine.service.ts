@@ -13,7 +13,7 @@ export class NatureDomaineService extends AppRestService<NatureDomaine>{
   }
 
   getNatureDomaine() {
-    return this.getList(new HttpParams(), 'nature-domaine');
+    return this.getListCached(new HttpParams(), 'nature-domaine');
   }
 
-}                        
+}

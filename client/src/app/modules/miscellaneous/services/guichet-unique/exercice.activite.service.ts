@@ -13,7 +13,7 @@ export class ExerciceActiviteService extends AppRestService<ExerciceActivite>{
   }
 
   getExerciceActivite() {
-    return this.getList(new HttpParams(), 'exercice-activite');
+    return this.getListCached(new HttpParams(), 'exercice-activite');
   }
 
-}                        
+}

@@ -13,7 +13,7 @@ export class MotifDisparitionService extends AppRestService<MotifDisparition>{
   }
 
   getMotifDisparition() {
-    return this.getList(new HttpParams(), 'motif-disparition');
+    return this.getListCached(new HttpParams(), 'motif-disparition');
   }
 
-}                        
+}

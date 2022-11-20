@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.quotation.controller;
 
+import java.net.URI;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -9,11 +10,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpStatusCodeException;
@@ -88,6 +93,7 @@ import com.jss.osiris.modules.quotation.model.Rna;
 import com.jss.osiris.modules.quotation.model.Siren;
 import com.jss.osiris.modules.quotation.model.Siret;
 import com.jss.osiris.modules.quotation.model.TransfertFundsType;
+import com.jss.osiris.modules.quotation.model.centralPay.CentralPayPaymentShortRequest;
 import com.jss.osiris.modules.quotation.model.guichetUnique.Content;
 import com.jss.osiris.modules.quotation.model.guichetUnique.Formalite;
 import com.jss.osiris.modules.quotation.model.guichetUnique.NatureCreation;
@@ -2144,4 +2150,137 @@ public class QuotationController {
     return new ResponseEntity<IQuotation>(outQuotation, HttpStatus.OK);
   }
 
+  // Payment deposit
+
+  @GetMapping(inputEntryPoint + "/payment/cb/order/deposit")
+  public ResponseEntity<String> getCardPaymentLinkForPaymentDeposit(@RequestParam Integer customerOrderId,
+      @RequestParam String mail)
+      throws Exception {
+    try {
+      CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
+      if (customerOrder == null)
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+      String link = customerOrderService.getCardPaymentLinkForPaymentDeposit(customerOrder, mail,
+          "Paiement de l'acompte pour la commande n°" + customerOrderId);
+      if (link.startsWith("http")) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setLocation(URI.create(link));
+        return new ResponseEntity<>(headers, HttpStatus.MOVED_PERMANENTLY);
+      } else {
+        return new ResponseEntity<String>(
+            mailHelper.generateGenericHtmlConfirmation("Paiement validé", null, "Commande n°" + customerOrderId,
+                "Votre acompte pour la commande n°" + customerOrderId
+                    + " a bien été pris en compte. Nous débutons immédiatement le traitement de cette dernière.",
+                null, "Bonne journée !"),
+            HttpStatus.OK);
+      }
+    } catch (Exception e) {
+      logger.error("Error when fetching quotation", e);
+      return new ResponseEntity<String>(
+          mailHelper.generateGenericHtmlConfirmation("Erreur !", null, "Commande n°" + customerOrderId,
+              "Nous sommes désolé, mais une erreur est survenue lors de votre paiement.",
+              "Veuillez réessayer en utilisant le lien présent dans le mail de notification.", "Bonne journée !"),
+          HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @RequestMapping(path = inputEntryPoint
+      + "/payment/cb/order/deposit/validate", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+  public ResponseEntity<String> validateCardPaymentLinkForDeposit(CentralPayPaymentShortRequest paramMap,
+      @RequestParam Integer customerOrderId) throws Exception {
+
+    try {
+      CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
+      if (customerOrder == null)
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+      Boolean status = customerOrderService.validateCardPaymentLinkForDeposit(customerOrder);
+
+      if (status) {
+        return new ResponseEntity<String>(
+            mailHelper.generateGenericHtmlConfirmation("Paiement validé", null, "Commande n°" + customerOrderId,
+                "Votre acompte pour la commande n°" + customerOrderId
+                    + " a bien été pris en compte. Nous débutons immédiatement le traitement de cette dernière.",
+                null, "Bonne journée !"),
+            HttpStatus.OK);
+      } else {
+        throw new Exception();
+      }
+    } catch (Exception e) {
+      logger.error("Error when fetching quotation", e);
+      return new ResponseEntity<String>(
+          mailHelper.generateGenericHtmlConfirmation("Erreur !", null, "Commande n°" + customerOrderId,
+              "Nous sommes désolé, mais une erreur est survenue lors de votre paiement.",
+              "Veuillez réessayer en utilisant le lien présent dans le mail de notification.", "Bonne journée !"),
+          HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  // Payment invoice
+
+  @GetMapping(inputEntryPoint + "/payment/cb/order/invoice")
+  public ResponseEntity<String> getCardPaymentLinkForPaymentInvoice(@RequestParam Integer customerOrderId,
+      @RequestParam String mail)
+      throws Exception {
+    try {
+      CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
+      if (customerOrder == null)
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+      String link = customerOrderService.getCardPaymentLinkForPaymentInvoice(customerOrder, mail,
+          "Paiement de la facture pour la commande n°" + customerOrderId);
+      if (link.startsWith("http")) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setLocation(URI.create(link));
+        return new ResponseEntity<>(headers, HttpStatus.MOVED_PERMANENTLY);
+      } else {
+        return new ResponseEntity<String>(
+            mailHelper.generateGenericHtmlConfirmation("Paiement validé", null, "Commande n°" + customerOrderId,
+                "Votre réglement pour la commande n°" + customerOrderId
+                    + " a bien été pris en compte. Nous vous remercions pour votre confiance.",
+                null, "Bonne journée !"),
+            HttpStatus.OK);
+      }
+    } catch (Exception e) {
+      logger.error("Error when fetching quotation", e);
+      return new ResponseEntity<String>(
+          mailHelper.generateGenericHtmlConfirmation("Erreur !", null, "Commande n°" + customerOrderId,
+              "Nous sommes désolé, mais une erreur est survenue lors de votre paiement.",
+              "Veuillez réessayer en utilisant le lien présent dans le mail de notification.", "Bonne journée !"),
+          HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @RequestMapping(path = inputEntryPoint
+      + "/payment/cb/order/invoice/validate", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+  public ResponseEntity<String> validateCardPaymentLinkForInvoice(CentralPayPaymentShortRequest paramMap,
+      @RequestParam Integer customerOrderId) throws Exception {
+
+    try {
+      CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
+      if (customerOrder == null)
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+      Boolean status = customerOrderService.validateCardPaymentLinkForInvoice(customerOrder);
+
+      if (status) {
+        return new ResponseEntity<String>(
+            mailHelper.generateGenericHtmlConfirmation("Paiement validé", null, "Commande n°" + customerOrderId,
+                "Votre réglement pour la commande n°" + customerOrderId
+                    + " a bien été pris en compte. Nous vous remercions pour votre confiance.",
+                null, "Bonne journée !"),
+            HttpStatus.OK);
+      } else {
+        throw new Exception();
+      }
+    } catch (Exception e) {
+      logger.error("Error when fetching quotation", e);
+      return new ResponseEntity<String>(
+          mailHelper.generateGenericHtmlConfirmation("Erreur !", null, "Commande n°" + customerOrderId,
+              "Nous sommes désolé, mais une erreur est survenue lors de votre paiement.",
+              "Veuillez réessayer en utilisant le lien présent dans le mail de notification.", "Bonne journée !"),
+          HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
 }

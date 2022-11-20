@@ -13,7 +13,7 @@ export class ConditionVersementTVAService extends AppRestService<ConditionVersem
   }
 
   getConditionVersementTVA() {
-    return this.getList(new HttpParams(), 'condition-versement-tva');
+    return this.getListCached(new HttpParams(), 'condition-versement-tva');
   }
 
-}                        
+}
