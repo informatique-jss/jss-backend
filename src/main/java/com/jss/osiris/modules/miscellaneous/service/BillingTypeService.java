@@ -2,6 +2,7 @@ package com.jss.osiris.modules.miscellaneous.service;
 
 import java.util.List;
 
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.miscellaneous.model.BillingType;
 
 public interface BillingTypeService {
@@ -9,5 +10,5 @@ public interface BillingTypeService {
 
     public BillingType getBillingType(Integer id);
 
-    public BillingType addOrUpdateBillingType(BillingType billingType) throws Exception;
+    public BillingType addOrUpdateBillingType(BillingType billingType) throws OsirisException;
 }

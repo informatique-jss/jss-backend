@@ -2,6 +2,7 @@ package com.jss.osiris.modules.miscellaneous.service;
 
 import java.util.List;
 
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 
 public interface CompetentAuthorityService {
@@ -9,7 +10,8 @@ public interface CompetentAuthorityService {
 
     public CompetentAuthority getCompetentAuthority(Integer id);
 
-    public CompetentAuthority addOrUpdateCompetentAuthority(CompetentAuthority competentAuthority) throws Exception;
+    public CompetentAuthority addOrUpdateCompetentAuthority(CompetentAuthority competentAuthority)
+            throws OsirisException;
 
     public List<CompetentAuthority> getCompetentAuthorityByDepartment(Integer departmentId, String authority);
 

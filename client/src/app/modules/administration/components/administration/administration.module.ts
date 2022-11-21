@@ -22,6 +22,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { QuillModule } from 'ngx-quill';
 import { MiscellaneousModule } from 'src/app/modules/miscellaneous/components/miscellaneous/miscellaneous.module';
 import { ConstantComponent } from '../constant/constant.component';
+import { LogComponent } from '../log/log.component';
 import { ReferentialAccountingAccountClassComponent } from '../referentials/referential-accounting-account-class/referential-accounting-account-class.component';
 import { ReferentialAccountingAccountComponent } from '../referentials/referential-accounting-account/referential-accounting-account.component';
 import { ReferentialAccountingJournalComponent } from '../referentials/referential-accounting-journal/referential-accounting-journal.component';
@@ -78,10 +79,12 @@ import { ReferentialVatComponent } from '../referentials/referential-vat/referen
 import { ReferentialWeekDayComponent } from '../referentials/referential-weekday/referential-weekday.component';
 import { ReferentialProvisionFamilyTypeComponent } from '../referentials/referentiel-provision-familiy-type/referential-provision-family-type.component';
 import { ReferentialRecordTypeComponent } from '../referentials/referentiel-record-type/referential-record-type.component';
+import { ViewLogComponent } from '../view-log/view-log.component';
 import { AdministrationComponent } from './administration.component';
 
 const routes: Routes = [
   { path: 'administration', component: AdministrationComponent },
+  { path: 'administration/log/:id', component: ViewLogComponent },
 ];
 
 @NgModule({
@@ -188,6 +191,8 @@ const routes: Routes = [
     ReferentialPaymentWayComponent,
     ReferentialAffaireComponent,
     AddAffaireComponent,
-  ], exports: [AddAffaireComponent]
+    LogComponent,
+    ViewLogComponent,
+  ], exports: [AddAffaireComponent, LogComponent]
 })
 export class AdministrationModule { }

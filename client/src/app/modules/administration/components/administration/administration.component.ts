@@ -4,6 +4,7 @@ import { ActivatedRoute, UrlSegment } from '@angular/router';
 import { Observable, Subject } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { AppService } from 'src/app/services/app.service';
+import { HabilitationsService } from '../../../../services/habilitations.service';
 
 @Component({
   selector: 'app-administration',
@@ -83,6 +84,7 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
   constructor(private appService: AppService,
     private formBuilder: FormBuilder,
     private activatedRoute: ActivatedRoute,
+    private habilitationService: HabilitationsService,
     private changeDetectorRef: ChangeDetectorRef
   ) { }
 
@@ -196,6 +198,10 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
   changeReferential() {
     this.selectedEntity = undefined;
     this.editMode = false;
+  }
+
+  canViewLogdModule() {
+    return this.habilitationService.canViewLogModule();
   }
 }
 

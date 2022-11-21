@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.search.model.IndexEntity;
 import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.libs.search.service.SearchService;
@@ -66,9 +67,9 @@ public class TiersServiceImpl implements TiersService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Tiers addOrUpdateTiers(Tiers tiers) throws Exception {
+    public Tiers addOrUpdateTiers(Tiers tiers) throws OsirisException {
         if (tiers == null)
-            throw new Exception("Provided tiers is null");
+            throw new OsirisException("Provided tiers is null");
 
         // If mails already exists, get their ids
         if (tiers != null && tiers.getMails() != null && tiers.getMails().size() > 0)

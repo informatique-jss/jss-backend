@@ -9,6 +9,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.accounting.model.AccountingAccountBinome;
 import com.jss.osiris.modules.accounting.service.AccountingAccountService;
 import com.jss.osiris.modules.miscellaneous.model.BillingType;
@@ -38,7 +39,7 @@ public class BillingTypeServiceImpl implements BillingTypeService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public BillingType addOrUpdateBillingType(BillingType billingType) throws Exception {
+    public BillingType addOrUpdateBillingType(BillingType billingType) throws OsirisException {
         if (billingType.getId() == null
                 || billingType.getAccountingAccountCharge() == null
                         && billingType.getAccountingAccountProduct() == null) {
@@ -52,7 +53,7 @@ public class BillingTypeServiceImpl implements BillingTypeService {
 
     // TOOD : delete !
     @Scheduled(initialDelay = 1000, fixedDelay = 1000000)
-    public void upgradeBillingType() throws Exception {
+    public void upgradeBillingType() throws OsirisException {
         List<BillingType> billingTypes = getBillingTypes();
         if (billingTypes != null)
             for (BillingType billingType : billingTypes)

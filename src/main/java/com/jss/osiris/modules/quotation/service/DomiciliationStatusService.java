@@ -13,5 +13,5 @@ public interface DomiciliationStatusService {
 
     public DomiciliationStatus getDomiciliationStatusByCode(String code);
 
-    public void updateStatusReferential() throws Exception;
+    public void updateStatusReferential();
 }

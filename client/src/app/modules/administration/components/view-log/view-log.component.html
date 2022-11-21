@@ -1,0 +1,44 @@
+<div class="mat-elevation-z2 form-div">
+  <div class=" full-width padding-top">
+    <div>
+      <table class="full-width">
+        <tr>
+          <td>
+            <generic-input [(model)]="log.className" label="Classe" [form]="logForm" propertyName="className"
+              [isMandatory]="true" [isDisabled]="true"></generic-input>
+          </td>
+          <td>
+            <generic-input [(model)]="log.methodName" label="Méthode" [form]="logForm" propertyName="methodName"
+              [isMandatory]="true" [isDisabled]="true"></generic-input>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <autocomplete-employee [(model)]="log.currentUser" [form]="logForm" propertyName="currentUser"
+              [isMandatory]="true"></autocomplete-employee>
+          </td>
+          <td>
+            <generic-datetime-picker [(model)]="logDateTime" label="Date" [form]="logForm"
+              propertyName="createdDateTime" [isMandatory]="true" [isDisabled]="true"></generic-datetime-picker>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <generic-input [(model)]="log.logType" label="Type de log" [form]="logForm" propertyName="logType"
+              [isMandatory]="true" [isDisabled]="true"></generic-input>
+          </td>
+          <td>
+            <generic-toggle [(model)]="log.isRead" label="Vu ?" [form]="logForm" propertyName="isRead"></generic-toggle>
+          </td>
+        </tr>
+      </table>
+      <table class="full-width">
+        <tr>
+          <td>
+            <generic-textarea [(model)]="log.stackTrace" label="Stacktrace" [form]="logForm" propertyName="stackTrace"
+              [isMandatory]="true" [isDisabled]="true" [numberOfLines]="30"></generic-textarea>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>

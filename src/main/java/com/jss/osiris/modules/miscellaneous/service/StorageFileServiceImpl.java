@@ -15,6 +15,8 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.jss.osiris.libs.exception.OsirisException;
+
 @Service
 public class StorageFileServiceImpl implements StorageFileService {
 
@@ -22,12 +24,20 @@ public class StorageFileServiceImpl implements StorageFileService {
     private String uploadFolder;
 
     @Override
-    public String saveFile(MultipartFile file, String filename, String path) throws IOException {
+    public String saveFile(MultipartFile file, String filename, String path) throws OsirisException {
         if (filename == null || filename.equals(""))
             filename = file.getOriginalFilename();
-        Files.createDirectories(Paths.get(uploadFolder.trim() + File.separator + path));
-        Files.copy(file.getInputStream(), Paths.get(uploadFolder.trim() + File.separator + path).resolve(filename),
-                StandardCopyOption.REPLACE_EXISTING);
+        try {
+            Files.createDirectories(Paths.get(uploadFolder.trim() + File.separator + path));
+        } catch (IOException e) {
+            throw new OsirisException("Impossible to create folder");
+        }
+        try {
+            Files.copy(file.getInputStream(), Paths.get(uploadFolder.trim() + File.separator + path).resolve(filename),
+                    StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            throw new OsirisException("Impossible to create file");
+        }
         return Paths.get(uploadFolder.trim() + File.separator + path).resolve(filename).normalize().toAbsolutePath()
                 .toString();
     }
@@ -41,9 +51,14 @@ public class StorageFileServiceImpl implements StorageFileService {
     }
 
     @Override
-    public Resource loadFile(String filename) throws MalformedURLException {
+    public Resource loadFile(String filename) throws OsirisException {
         Path file = Paths.get(uploadFolder.trim()).resolve(filename);
-        Resource resource = new UrlResource(file.toUri());
+        Resource resource;
+        try {
+            resource = new UrlResource(file.toUri());
+        } catch (MalformedURLException e) {
+            throw new OsirisException("URI File not found");
+        }
         if (resource.exists() || resource.isReadable()) {
             return resource;
         } else {

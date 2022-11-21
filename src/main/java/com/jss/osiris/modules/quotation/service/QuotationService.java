@@ -2,6 +2,7 @@ package com.jss.osiris.modules.quotation.service;
 
 import java.util.List;
 
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.quotation.model.IQuotation;
 import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.quotation.model.QuotationSearch;
@@ -11,15 +12,15 @@ import com.jss.osiris.modules.tiers.model.ITiers;
 public interface QuotationService {
     public Quotation getQuotation(Integer id);
 
-    public Quotation addOrUpdateQuotation(Quotation quotation) throws Exception;
+    public Quotation addOrUpdateQuotation(Quotation quotation) throws OsirisException;
 
-    public Quotation addOrUpdateQuotationFromUser(Quotation quotation) throws Exception;
+    public Quotation addOrUpdateQuotationFromUser(Quotation quotation) throws OsirisException;
 
-    public IQuotation getAndSetInvoiceItemsForQuotation(IQuotation quotation) throws Exception;
+    public IQuotation getAndSetInvoiceItemsForQuotation(IQuotation quotation) throws OsirisException;
 
-    public Quotation addOrUpdateQuotationStatus(Quotation quotation, String targetStatusCode) throws Exception;
+    public Quotation addOrUpdateQuotationStatus(Quotation quotation, String targetStatusCode) throws OsirisException;
 
-    public ITiers getCustomerOrderOfQuotation(IQuotation quotation) throws Exception;
+    public ITiers getCustomerOrderOfQuotation(IQuotation quotation) throws OsirisException;
 
     public List<QuotationSearchResult> searchQuotations(QuotationSearch orderingSearch);
 

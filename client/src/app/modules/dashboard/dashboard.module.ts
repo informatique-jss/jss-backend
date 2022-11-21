@@ -11,6 +11,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule, Routes } from '@angular/router';
+import { AdministrationModule } from '../administration/components/administration/administration.module';
 import { InvoicingModule } from '../invoicing/components/invoicing/invoicing.module';
 import { MiscellaneousModule } from '../miscellaneous/components/miscellaneous/miscellaneous.module';
 import { QuotationModule } from '../quotation/components/quotation/quotation.module';
@@ -38,6 +39,7 @@ const routes: Routes = [
     MatCheckboxModule,
     InvoicingModule,
     QuotationModule,
+    AdministrationModule,
   ],
   declarations: [
     DashboardComponent,

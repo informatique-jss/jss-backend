@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.invoicing.model.InvoiceStatus;
 import com.jss.osiris.modules.invoicing.model.PaymentWay;
@@ -47,10 +48,10 @@ public class ConstantServiceImpl implements ConstantService {
     ConstantRepository constantRepository;
 
     @Override
-    public Constant getConstants() throws Exception {
+    public Constant getConstants() throws OsirisException {
         List<Constant> constants = IterableUtils.toList(constantRepository.findAll());
         if (constants == null || constants.size() != 1)
-            throw new Exception("Constants not defined or multiple");
+            throw new OsirisException("Constants not defined or multiple");
         return constants.get(0);
     }
 
@@ -70,367 +71,367 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
-    public BillingLabelType getBillingLabelTypeCodeAffaire() throws Exception {
+    public BillingLabelType getBillingLabelTypeCodeAffaire() throws OsirisException {
         return getConstants().getBillingLabelTypeCodeAffaire();
     }
 
     @Override
-    public BillingLabelType getBillingLabelTypeOther() throws Exception {
+    public BillingLabelType getBillingLabelTypeOther() throws OsirisException {
         return getConstants().getBillingLabelTypeOther();
     }
 
     @Override
-    public BillingLabelType getBillingLabelTypeCustomer() throws Exception {
+    public BillingLabelType getBillingLabelTypeCustomer() throws OsirisException {
         return getConstants().getBillingLabelTypeCustomer();
     }
 
     @Override
-    public AccountingJournal getAccountingJournalSales() throws Exception {
+    public AccountingJournal getAccountingJournalSales() throws OsirisException {
         return getConstants().getAccountingJournalSales();
     }
 
     @Override
-    public AccountingJournal getAccountingJournalPurchases() throws Exception {
+    public AccountingJournal getAccountingJournalPurchases() throws OsirisException {
         return getConstants().getAccountingJournalPurchases();
     }
 
     @Override
-    public AccountingJournal getAccountingJournalANouveau() throws Exception {
+    public AccountingJournal getAccountingJournalANouveau() throws OsirisException {
         return getConstants().getAccountingJournalANouveau();
     }
 
     @Override
-    public TiersType getTiersTypeProspect() throws Exception {
+    public TiersType getTiersTypeProspect() throws OsirisException {
         return getConstants().getTiersTypeProspect();
     }
 
     @Override
-    public DocumentType getDocumentTypePublication() throws Exception {
+    public DocumentType getDocumentTypePublication() throws OsirisException {
         return getConstants().getDocumentTypePublication();
     }
 
     @Override
-    public DocumentType getDocumentTypeCfe() throws Exception {
+    public DocumentType getDocumentTypeCfe() throws OsirisException {
         return getConstants().getDocumentTypeCfe();
     }
 
     @Override
-    public DocumentType getDocumentTypeKbis() throws Exception {
+    public DocumentType getDocumentTypeKbis() throws OsirisException {
         return getConstants().getDocumentTypeKbis();
     }
 
     @Override
-    public DocumentType getDocumentTypeBilling() throws Exception {
+    public DocumentType getDocumentTypeBilling() throws OsirisException {
         return getConstants().getDocumentTypeBilling();
     }
 
     @Override
-    public DocumentType getDocumentTypeDunning() throws Exception {
+    public DocumentType getDocumentTypeDunning() throws OsirisException {
         return getConstants().getDocumentTypeDunning();
     }
 
     @Override
-    public DocumentType getDocumentTypeRefund() throws Exception {
+    public DocumentType getDocumentTypeRefund() throws OsirisException {
         return getConstants().getDocumentTypeRefund();
     }
 
     @Override
-    public DocumentType getDocumentTypeBillingClosure() throws Exception {
+    public DocumentType getDocumentTypeBillingClosure() throws OsirisException {
         return getConstants().getDocumentTypeBillingClosure();
     }
 
     @Override
-    public DocumentType getDocumentTypeProvisionnalReceipt() throws Exception {
+    public DocumentType getDocumentTypeProvisionnalReceipt() throws OsirisException {
         return getConstants().getDocumentTypeProvisionnalReceipt();
     }
 
     @Override
-    public DocumentType getDocumentTypeProofReading() throws Exception {
+    public DocumentType getDocumentTypeProofReading() throws OsirisException {
         return getConstants().getDocumentTypeProofReading();
     }
 
     @Override
-    public DocumentType getDocumentTypePublicationCertificate() throws Exception {
+    public DocumentType getDocumentTypePublicationCertificate() throws OsirisException {
         return getConstants().getDocumentTypePublicationCertificate();
     }
 
     @Override
-    public DocumentType getDocumentTypeQuotation() throws Exception {
+    public DocumentType getDocumentTypeQuotation() throws OsirisException {
         return getConstants().getDocumentTypeQuotation();
     }
 
     @Override
-    public AttachmentType getAttachmentTypeKbis() throws Exception {
+    public AttachmentType getAttachmentTypeKbis() throws OsirisException {
         return getConstants().getAttachmentTypeKbis();
     }
 
     @Override
-    public AttachmentType getAttachmentTypeCni() throws Exception {
+    public AttachmentType getAttachmentTypeCni() throws OsirisException {
         return getConstants().getAttachmentTypeCni();
     }
 
     @Override
-    public AttachmentType getAttachmentTypeLogo() throws Exception {
+    public AttachmentType getAttachmentTypeLogo() throws OsirisException {
         return getConstants().getAttachmentTypeLogo();
     }
 
     @Override
-    public AttachmentType getAttachmentTypeProofOfAddress() throws Exception {
+    public AttachmentType getAttachmentTypeProofOfAddress() throws OsirisException {
         return getConstants().getAttachmentTypeProofOfAddress();
     }
 
     @Override
-    public Country getCountryFrance() throws Exception {
+    public Country getCountryFrance() throws OsirisException {
         return getConstants().getCountryFrance();
     }
 
     @Override
-    public Country getCountryMonaco() throws Exception {
+    public Country getCountryMonaco() throws OsirisException {
         return getConstants().getCountryMonaco();
     }
 
     @Override
-    public BillingType getBillingTypeLogo() throws Exception {
+    public BillingType getBillingTypeLogo() throws OsirisException {
         return getConstants().getBillingTypeLogo();
     }
 
     @Override
-    public QuotationLabelType getQuotationLabelTypeOther() throws Exception {
+    public QuotationLabelType getQuotationLabelTypeOther() throws OsirisException {
         return getConstants().getQuotationLabelTypeOther();
     }
 
     @Override
-    public PaymentType getPaymentTypeEspeces() throws Exception {
+    public PaymentType getPaymentTypeEspeces() throws OsirisException {
         return getConstants().getPaymentTypeEspeces();
     }
 
     @Override
-    public PaymentType getPaymentTypeCB() throws Exception {
+    public PaymentType getPaymentTypeCB() throws OsirisException {
         return getConstants().getPaymentTypeCB();
     }
 
     @Override
-    public PaymentType getPaymentTypeVirement() throws Exception {
+    public PaymentType getPaymentTypeVirement() throws OsirisException {
         return getConstants().getPaymentTypeVirement();
     }
 
     @Override
-    public PaymentType getPaymentTypePrelevement() throws Exception {
+    public PaymentType getPaymentTypePrelevement() throws OsirisException {
         return getConstants().getPaymentTypePrelevement();
     }
 
     @Override
-    public RefundType getRefundTypeVirement() throws Exception {
+    public RefundType getRefundTypeVirement() throws OsirisException {
         return getConstants().getRefundTypeVirement();
     }
 
     @Override
-    public SubscriptionPeriodType getSubscriptionPeriodType12M() throws Exception {
+    public SubscriptionPeriodType getSubscriptionPeriodType12M() throws OsirisException {
         return getConstants().getSubscriptionPeriodType12M();
     }
 
     @Override
-    public LegalForm getLegalFormUnregistered() throws Exception {
+    public LegalForm getLegalFormUnregistered() throws OsirisException {
         return getConstants().getLegalFormUnregistered();
     }
 
     @Override
-    public JournalType getJournalTypeSpel() throws Exception {
+    public JournalType getJournalTypeSpel() throws OsirisException {
         return getConstants().getJournalTypeSpel();
     }
 
     @Override
-    public Confrere getConfrereJss() throws Exception {
+    public Confrere getConfrereJss() throws OsirisException {
         return getConstants().getConfrereJss();
     }
 
     @Override
-    public DomiciliationContractType getDomiciliationContractTypeKeepMail() throws Exception {
+    public DomiciliationContractType getDomiciliationContractTypeKeepMail() throws OsirisException {
         return getConstants().getDomiciliationContractTypeKeepMail();
     }
 
     @Override
-    public DomiciliationContractType getDomiciliationContractTypeRouteMail() throws Exception {
+    public DomiciliationContractType getDomiciliationContractTypeRouteMail() throws OsirisException {
         return getConstants().getDomiciliationContractTypeRouteMail();
     }
 
     @Override
-    public DomiciliationContractType getDomiciliationContractTypeRouteEmailAndMail() throws Exception {
+    public DomiciliationContractType getDomiciliationContractTypeRouteEmailAndMail() throws OsirisException {
         return getConstants().getDomiciliationContractTypeRouteEmailAndMail();
     }
 
     @Override
-    public DomiciliationContractType getDomiciliationContractTypeRouteEmail() throws Exception {
+    public DomiciliationContractType getDomiciliationContractTypeRouteEmail() throws OsirisException {
         return getConstants().getDomiciliationContractTypeRouteEmail();
     }
 
     @Override
-    public MailRedirectionType getMailRedirectionTypeOther() throws Exception {
+    public MailRedirectionType getMailRedirectionTypeOther() throws OsirisException {
         return getConstants().getMailRedirectionTypeOther();
     }
 
     @Override
-    public BodaccPublicationType getBodaccPublicationTypeMerging() throws Exception {
+    public BodaccPublicationType getBodaccPublicationTypeMerging() throws OsirisException {
         return getConstants().getBodaccPublicationTypeMerging();
     }
 
     @Override
-    public BodaccPublicationType getBodaccPublicationTypeSplit() throws Exception {
+    public BodaccPublicationType getBodaccPublicationTypeSplit() throws OsirisException {
         return getConstants().getBodaccPublicationTypeSplit();
     }
 
     @Override
-    public BodaccPublicationType getBodaccPublicationTypePartialSplit() throws Exception {
+    public BodaccPublicationType getBodaccPublicationTypePartialSplit() throws OsirisException {
         return getConstants().getBodaccPublicationTypePartialSplit();
     }
 
     @Override
-    public BodaccPublicationType getBodaccPublicationTypePossessionDispatch() throws Exception {
+    public BodaccPublicationType getBodaccPublicationTypePossessionDispatch() throws OsirisException {
         return getConstants().getBodaccPublicationTypePossessionDispatch();
     }
 
     @Override
-    public BodaccPublicationType getBodaccPublicationTypeEstateRepresentativeDesignation() throws Exception {
+    public BodaccPublicationType getBodaccPublicationTypeEstateRepresentativeDesignation() throws OsirisException {
         return getConstants().getBodaccPublicationTypeEstateRepresentativeDesignation();
     }
 
     @Override
-    public BodaccPublicationType getBodaccPublicationTypeSaleOfBusiness() throws Exception {
+    public BodaccPublicationType getBodaccPublicationTypeSaleOfBusiness() throws OsirisException {
         return getConstants().getBodaccPublicationTypeSaleOfBusiness();
     }
 
     @Override
-    public ActType getActTypeSeing() throws Exception {
+    public ActType getActTypeSeing() throws OsirisException {
         return getConstants().getActTypeSeing();
     }
 
     @Override
-    public ActType getActTypeAuthentic() throws Exception {
+    public ActType getActTypeAuthentic() throws OsirisException {
         return getConstants().getActTypeAuthentic();
     }
 
     @Override
-    public AssignationType getAssignationTypeEmployee() throws Exception {
+    public AssignationType getAssignationTypeEmployee() throws OsirisException {
         return getConstants().getAssignationTypeEmployee();
     }
 
     @Override
-    public Employee getEmployeeBillingResponsible() throws Exception {
+    public Employee getEmployeeBillingResponsible() throws OsirisException {
         return getConstants().getEmployeeBillingResponsible();
     }
 
     @Override
-    public TransfertFundsType getTransfertFundsTypePhysique() throws Exception {
+    public TransfertFundsType getTransfertFundsTypePhysique() throws OsirisException {
         return getConstants().getTransfertFundsTypePhysique();
     }
 
     @Override
-    public TransfertFundsType getTransfertFundsTypeMoral() throws Exception {
+    public TransfertFundsType getTransfertFundsTypeMoral() throws OsirisException {
         return getConstants().getTransfertFundsTypeMoral();
     }
 
     @Override
-    public TransfertFundsType getTransfertFundsTypeBail() throws Exception {
+    public TransfertFundsType getTransfertFundsTypeBail() throws OsirisException {
         return getConstants().getTransfertFundsTypeBail();
     }
 
     @Override
-    public CompetentAuthorityType getCompetentAuthorityTypeRcs() throws Exception {
+    public CompetentAuthorityType getCompetentAuthorityTypeRcs() throws OsirisException {
         return getConstants().getCompetentAuthorityTypeRcs();
     }
 
     @Override
-    public CompetentAuthorityType getCompetentAuthorityTypeCfp() throws Exception {
+    public CompetentAuthorityType getCompetentAuthorityTypeCfp() throws OsirisException {
         return getConstants().getCompetentAuthorityTypeCfp();
     }
 
     @Override
-    public InvoiceStatus getInvoiceStatusSend() throws Exception {
+    public InvoiceStatus getInvoiceStatusSend() throws OsirisException {
         return getConstants().getInvoiceStatusSend();
     }
 
     @Override
-    public InvoiceStatus getInvoiceStatusPayed() throws Exception {
+    public InvoiceStatus getInvoiceStatusPayed() throws OsirisException {
         return getConstants().getInvoiceStatusPayed();
     }
 
     @Override
-    public InvoiceStatus getInvoiceStatusCancelled() throws Exception {
+    public InvoiceStatus getInvoiceStatusCancelled() throws OsirisException {
         return getConstants().getInvoiceStatusCancelled();
     }
 
     @Override
-    public PaymentWay getPaymentWayInbound() throws Exception {
+    public PaymentWay getPaymentWayInbound() throws OsirisException {
         return getConstants().getPaymentWayInbound();
     }
 
     @Override
-    public PaymentWay getPaymentWayOutboud() throws Exception {
+    public PaymentWay getPaymentWayOutboud() throws OsirisException {
         return getConstants().getPaymentWayOutboud();
     }
 
     @Override
-    public Vat getVatTwenty() throws Exception {
+    public Vat getVatTwenty() throws OsirisException {
         return getConstants().getVatTwenty();
     }
 
     @Override
-    public Vat getVatEight() throws Exception {
+    public Vat getVatEight() throws OsirisException {
         return getConstants().getVatEight();
     }
 
     @Override
-    public Department getDepartmentMartinique() throws Exception {
+    public Department getDepartmentMartinique() throws OsirisException {
         return getConstants().getDepartmentMartinique();
     }
 
     @Override
-    public Department getDepartmentGuadeloupe() throws Exception {
+    public Department getDepartmentGuadeloupe() throws OsirisException {
         return getConstants().getDepartmentGuadeloupe();
     }
 
     @Override
-    public Department getDepartmentReunion() throws Exception {
+    public Department getDepartmentReunion() throws OsirisException {
         return getConstants().getDepartmentReunion();
     }
 
     @Override
-    public TypePersonne getTypePersonnePersonnePhysique() throws Exception {
+    public TypePersonne getTypePersonnePersonnePhysique() throws OsirisException {
         return getConstants().getTypePersonnePersonnePhysique();
     }
 
     @Override
-    public TypePersonne getTypePersonnePersonneMorale() throws Exception {
+    public TypePersonne getTypePersonnePersonneMorale() throws OsirisException {
         return getConstants().getTypePersonnePersonneMorale();
     }
 
     @Override
-    public TypePersonne getTypePersonneExploitation() throws Exception {
+    public TypePersonne getTypePersonneExploitation() throws OsirisException {
         return getConstants().getTypePersonneExploitation();
     }
 
     @Override
-    public FormeJuridique getFormeJuridiqueEntrepreneurIndividuel() throws Exception {
+    public FormeJuridique getFormeJuridiqueEntrepreneurIndividuel() throws OsirisException {
         return getConstants().getFormeJuridiqueEntrepreneurIndividuel();
     }
 
     @Override
-    public TypeFormalite getTypeFormaliteCessation() throws Exception {
+    public TypeFormalite getTypeFormaliteCessation() throws OsirisException {
         return getConstants().getTypeFormaliteCessation();
     }
 
     @Override
-    public TypeFormalite getTypeFormaliteModification() throws Exception {
+    public TypeFormalite getTypeFormaliteModification() throws OsirisException {
         return getConstants().getTypeFormaliteModification();
     }
 
     @Override
-    public TypeFormalite getTypeFormaliteCreation() throws Exception {
+    public TypeFormalite getTypeFormaliteCreation() throws OsirisException {
         return getConstants().getTypeFormaliteCreation();
     }
 
     @Override
-    public TypeFormalite getTypeFormaliteCorrection() throws Exception {
+    public TypeFormalite getTypeFormaliteCorrection() throws OsirisException {
         return getConstants().getTypeFormaliteCorrection();
     }
 }

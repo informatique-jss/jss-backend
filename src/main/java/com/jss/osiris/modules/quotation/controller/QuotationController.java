@@ -6,8 +6,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
@@ -21,10 +19,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.HttpStatusCodeException;
-import org.springframework.web.server.ResponseStatusException;
 
 import com.jss.osiris.libs.ValidationHelper;
+import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.libs.mail.model.MailComputeResult;
 import com.jss.osiris.modules.miscellaneous.model.BillingType;
@@ -136,8 +134,6 @@ import com.jss.osiris.modules.tiers.service.TiersService;
 public class QuotationController {
 
   private static final String inputEntryPoint = "/quotation";
-
-  private static final Logger logger = LoggerFactory.getLogger(QuotationController.class);
 
   @Autowired
   ValidationHelper validationHelper;
@@ -282,1476 +278,776 @@ public class QuotationController {
 
   @GetMapping(inputEntryPoint + "/formalite-status")
   public ResponseEntity<List<FormaliteStatus>> getFormaliteStatus() {
-    List<FormaliteStatus> formaliteStatus = null;
-    try {
-      formaliteStatus = formaliteStatusService.getFormaliteStatus();
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching formaliteStatus", e);
-      return new ResponseEntity<List<FormaliteStatus>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching formaliteStatus", e);
-      return new ResponseEntity<List<FormaliteStatus>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<List<FormaliteStatus>>(formaliteStatus, HttpStatus.OK);
+    return new ResponseEntity<List<FormaliteStatus>>(formaliteStatusService.getFormaliteStatus(), HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/domiciliation-status")
   public ResponseEntity<List<DomiciliationStatus>> getDomiciliationStatus() {
-    List<DomiciliationStatus> domiciliationStatus = null;
-    try {
-      domiciliationStatus = domiciliationStatusService.getDomiciliationStatus();
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching domiciliationStatus", e);
-      return new ResponseEntity<List<DomiciliationStatus>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching domiciliationStatus", e);
-      return new ResponseEntity<List<DomiciliationStatus>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<List<DomiciliationStatus>>(domiciliationStatus, HttpStatus.OK);
+    return new ResponseEntity<List<DomiciliationStatus>>(domiciliationStatusService.getDomiciliationStatus(),
+        HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/announcement-status")
   public ResponseEntity<List<AnnouncementStatus>> getAnnouncementStatus() {
-    List<AnnouncementStatus> announcementStatus = null;
-    try {
-      announcementStatus = announcementStatusService.getAnnouncementStatus();
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching announcementStatus", e);
-      return new ResponseEntity<List<AnnouncementStatus>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching announcementStatus", e);
-      return new ResponseEntity<List<AnnouncementStatus>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<List<AnnouncementStatus>>(announcementStatus, HttpStatus.OK);
+    return new ResponseEntity<List<AnnouncementStatus>>(announcementStatusService.getAnnouncementStatus(),
+        HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/bodacc-status")
   public ResponseEntity<List<BodaccStatus>> getBodaccStatus() {
-    List<BodaccStatus> bodaccStatus = null;
-    try {
-      bodaccStatus = bodaccStatusService.getBodaccStatus();
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching bodaccStatus", e);
-      return new ResponseEntity<List<BodaccStatus>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching bodaccStatus", e);
-      return new ResponseEntity<List<BodaccStatus>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<List<BodaccStatus>>(bodaccStatus, HttpStatus.OK);
+    return new ResponseEntity<List<BodaccStatus>>(bodaccStatusService.getBodaccStatus(), HttpStatus.OK);
   }
 
   @PostMapping(inputEntryPoint + "/mail/quotation/compute")
   public ResponseEntity<MailComputeResult> computeMailForQuotation(
-      @RequestBody Quotation quotation) {
-    MailComputeResult mailComputeResult;
-    try {
-      mailComputeResult = mailHelper.computeMailForQuotationDocument(quotation);
-    } catch (
-
-    ResponseStatusException e) {
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when generate mail", e);
-      return new ResponseEntity<MailComputeResult>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching generate mail", e);
-      return new ResponseEntity<MailComputeResult>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<MailComputeResult>(mailComputeResult, HttpStatus.OK);
+      @RequestBody Quotation quotation) throws OsirisException {
+    return new ResponseEntity<MailComputeResult>(mailHelper.computeMailForQuotationDocument(quotation), HttpStatus.OK);
   }
 
   @PostMapping(inputEntryPoint + "/mail/billing/compute")
   public ResponseEntity<MailComputeResult> computeMailForBilling(
-      @RequestBody Quotation quotation) {
-    MailComputeResult mailComputeResult;
-    try {
-      mailComputeResult = mailHelper.computeMailForBillingDocument(quotation);
-    } catch (ResponseStatusException e) {
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching generate mail", e);
-      return new ResponseEntity<MailComputeResult>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching generate mail", e);
-      return new ResponseEntity<MailComputeResult>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<MailComputeResult>(mailComputeResult, HttpStatus.OK);
+      @RequestBody Quotation quotation) throws OsirisException {
+    return new ResponseEntity<MailComputeResult>(mailHelper.computeMailForBillingDocument(quotation), HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/mail/generate/quotation")
-  public ResponseEntity<Quotation> generateQuotationMail(@RequestParam Integer quotationId) {
+  public ResponseEntity<Quotation> generateQuotationMail(@RequestParam Integer quotationId)
+      throws OsirisException, OsirisValidationException {
     Quotation quotation = quotationService.getQuotation(quotationId);
     if (quotation == null)
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+      throw new OsirisValidationException("quotation");
 
-    try {
-      MailComputeResult mailComputeResult = mailHelper.computeMailForQuotationDocument(quotation);
-      if (mailComputeResult.getRecipientsMailTo() == null || mailComputeResult.getRecipientsMailTo().size() == 0)
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-      mailHelper.generateQuotationMail(quotation);
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching generate mail", e);
-      return new ResponseEntity<Quotation>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching generate mail", e);
-      return new ResponseEntity<Quotation>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    MailComputeResult mailComputeResult = mailHelper.computeMailForQuotationDocument(quotation);
+    if (mailComputeResult.getRecipientsMailTo() == null || mailComputeResult.getRecipientsMailTo().size() == 0)
+      throw new OsirisValidationException("MailTo");
+
+    mailHelper.generateQuotationMail(quotation);
     return new ResponseEntity<Quotation>(quotation, HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/mail/generate/waiting-deposit")
-  public ResponseEntity<CustomerOrder> generateWaintingDepositMail(@RequestParam Integer customerOrderId) {
+  public ResponseEntity<CustomerOrder> generateWaintingDepositMail(@RequestParam Integer customerOrderId)
+      throws OsirisValidationException, OsirisException {
     CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
     if (customerOrder == null)
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    try {
-      MailComputeResult mailComputeResult = mailHelper.computeMailForBillingDocument(customerOrder);
-      if (mailComputeResult.getRecipientsMailTo() == null || mailComputeResult.getRecipientsMailTo().size() == 0)
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-      mailHelper.generateWaintingDepositMail(customerOrder);
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching generate mail", e);
-      return new ResponseEntity<CustomerOrder>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching generate mail", e);
-      return new ResponseEntity<CustomerOrder>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+      throw new OsirisValidationException("customerOrder");
+
+    MailComputeResult mailComputeResult = mailHelper.computeMailForBillingDocument(customerOrder);
+    if (mailComputeResult.getRecipientsMailTo() == null || mailComputeResult.getRecipientsMailTo().size() == 0)
+      throw new OsirisValidationException("MailTo");
+
+    mailHelper.generateWaintingDepositMail(customerOrder);
     return new ResponseEntity<CustomerOrder>(customerOrder, HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/mail/generate/invoice")
-  public ResponseEntity<CustomerOrder> generateInvoiceMail(@RequestParam Integer customerOrderId) {
+  public ResponseEntity<CustomerOrder> generateInvoiceMail(@RequestParam Integer customerOrderId)
+      throws OsirisValidationException {
     CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
     if (customerOrder == null)
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+      throw new OsirisValidationException("customerOrder");
     try {
-      try {
-        MailComputeResult mailComputeResult = mailHelper.computeMailForBillingDocument(customerOrder);
-        if (mailComputeResult.getRecipientsMailTo() == null || mailComputeResult.getRecipientsMailTo().size() == 0)
-          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        customerOrderService.generateInvoiceMail(customerOrder);
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching generate mail", e);
-      return new ResponseEntity<CustomerOrder>(HttpStatus.INTERNAL_SERVER_ERROR);
+      MailComputeResult mailComputeResult = mailHelper.computeMailForBillingDocument(customerOrder);
+      if (mailComputeResult.getRecipientsMailTo() == null || mailComputeResult.getRecipientsMailTo().size() == 0)
+        throw new OsirisValidationException("MailTo");
+      customerOrderService.generateInvoiceMail(customerOrder);
     } catch (Exception e) {
-      logger.error("Error when fetching generate mail", e);
-      return new ResponseEntity<CustomerOrder>(HttpStatus.INTERNAL_SERVER_ERROR);
+      e.printStackTrace();
     }
     return new ResponseEntity<CustomerOrder>(new CustomerOrder(), HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/provision/assignedTo")
   public ResponseEntity<Boolean> updateAssignedToForProvision(@RequestParam Integer provisionId,
-      @RequestParam Integer employeeId) {
-    try {
-      Provision provision = provisionService.getProvision(provisionId);
-      if (provision == null)
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+      @RequestParam Integer employeeId) throws OsirisValidationException {
+    Provision provision = provisionService.getProvision(provisionId);
+    if (provision == null)
+      throw new OsirisValidationException("provision");
 
-      Employee employee = employeeService.getEmployee(employeeId);
-      if (employee == null)
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    Employee employee = employeeService.getEmployee(employeeId);
+    if (employee == null)
+      throw new OsirisValidationException("employee");
 
-      provisionService.updateAssignedToForProvision(provision, employee);
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching assignationType", e);
-      return new ResponseEntity<Boolean>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching assignationType", e);
-      return new ResponseEntity<Boolean>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    provisionService.updateAssignedToForProvision(provision, employee);
     return new ResponseEntity<Boolean>(true, HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/asso/affaire/order/assignedTo")
   public ResponseEntity<Boolean> updateAssignedToForAsso(@RequestParam Integer assoId,
-      @RequestParam Integer employeeId) {
-    try {
-      AssoAffaireOrder asso = assoAffaireOrderService.getAssoAffaireOrder(assoId);
-      if (asso == null)
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+      @RequestParam Integer employeeId) throws OsirisValidationException {
+    AssoAffaireOrder asso = assoAffaireOrderService.getAssoAffaireOrder(assoId);
+    if (asso == null)
+      throw new OsirisValidationException("asso");
 
-      Employee employee = employeeService.getEmployee(employeeId);
-      if (employee == null)
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    Employee employee = employeeService.getEmployee(employeeId);
+    if (employee == null)
+      throw new OsirisValidationException("employee");
 
-      assoAffaireOrderService.updateAssignedToForAsso(asso, employee);
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching assignationType", e);
-      return new ResponseEntity<Boolean>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching assignationType", e);
-      return new ResponseEntity<Boolean>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    assoAffaireOrderService.updateAssignedToForAsso(asso, employee);
     return new ResponseEntity<Boolean>(true, HttpStatus.OK);
   }
 
   @PostMapping(inputEntryPoint + "/asso/affaire/order/search")
   public ResponseEntity<ArrayList<AssoAffaireOrderSearchResult>> searchForAsso(
-      @RequestBody AffaireSearch affaireSearch) {
-    ArrayList<AssoAffaireOrderSearchResult> assos = null;
-    try {
+      @RequestBody AffaireSearch affaireSearch) throws OsirisValidationException {
 
-      if (affaireSearch.getLabel() == null
-          && affaireSearch.getAssignedTo() == null && affaireSearch.getResponsible() == null
-          && affaireSearch.getStatus() == null)
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    if (affaireSearch.getLabel() == null
+        && affaireSearch.getAssignedTo() == null && affaireSearch.getResponsible() == null
+        && affaireSearch.getStatus() == null)
+      throw new OsirisValidationException("Label or AssignedTo or Responsible or Status");
 
-      if (affaireSearch.getLabel() == null)
-        affaireSearch.setLabel("");
+    if (affaireSearch.getLabel() == null)
+      affaireSearch.setLabel("");
 
-      affaireSearch.setLabel(affaireSearch.getLabel().trim());
-      assos = assoAffaireOrderService.searchForAsso(affaireSearch);
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching assignationType", e);
-      return new ResponseEntity<ArrayList<AssoAffaireOrderSearchResult>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching assignationType", e);
-      return new ResponseEntity<ArrayList<AssoAffaireOrderSearchResult>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<ArrayList<AssoAffaireOrderSearchResult>>(assos, HttpStatus.OK);
+    affaireSearch.setLabel(affaireSearch.getLabel().trim());
+
+    return new ResponseEntity<ArrayList<AssoAffaireOrderSearchResult>>(
+        assoAffaireOrderService.searchForAsso(affaireSearch), HttpStatus.OK);
   }
 
   @PostMapping(inputEntryPoint + "/asso/affaire/order/update")
-  public ResponseEntity<AssoAffaireOrder> addOrUpdateAssoAffaireOrder(@RequestBody AssoAffaireOrder assoAffaireOrder) {
-    AssoAffaireOrder asso = null;
-    try {
+  public ResponseEntity<AssoAffaireOrder> addOrUpdateAssoAffaireOrder(@RequestBody AssoAffaireOrder assoAffaireOrder)
+      throws OsirisValidationException, OsirisException {
+    validationHelper.validateReferential(assoAffaireOrder, true, "assoAffaireOrder");
+    validationHelper.validateReferential(assoAffaireOrder.getAffaire(), true, "Affaire");
+    validationHelper.validateReferential(assoAffaireOrder.getAssignedTo(), true, "AssignedTo");
+    validationHelper.validateReferential(assoAffaireOrder.getCustomerOrder(), true, "CustomerOrder");
+    validationHelper.validateReferential(assoAffaireOrder.getCustomerOrder(), assoAffaireOrder.getQuotation() == null,
+        "CustomerOrder");
+    validationHelper.validateReferential(assoAffaireOrder.getQuotation(), assoAffaireOrder.getCustomerOrder() == null,
+        "Quotation");
 
-      validationHelper.validateReferential(assoAffaireOrder, true);
-      validationHelper.validateReferential(assoAffaireOrder.getAffaire(), true);
-      validationHelper.validateReferential(assoAffaireOrder.getAssignedTo(), true);
-      validationHelper.validateReferential(assoAffaireOrder.getCustomerOrder(), true);
-      validationHelper.validateReferential(assoAffaireOrder.getCustomerOrder(),
-          assoAffaireOrder.getQuotation() == null);
-      validationHelper.validateReferential(assoAffaireOrder.getQuotation(),
-          assoAffaireOrder.getCustomerOrder() == null);
+    if (assoAffaireOrder.getProvisions() == null)
+      throw new OsirisValidationException("Provisions");
 
-      if (assoAffaireOrder.getProvisions() == null)
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    IQuotation quotation = assoAffaireOrder.getCustomerOrder() != null ? assoAffaireOrder.getCustomerOrder()
+        : assoAffaireOrder.getQuotation();
 
-      IQuotation quotation = assoAffaireOrder.getCustomerOrder() != null ? assoAffaireOrder.getCustomerOrder()
-          : assoAffaireOrder.getQuotation();
+    boolean isOpen = false;
 
-      boolean isOpen = false;
-
-      if (quotation instanceof CustomerOrder) {
-        CustomerOrder customerOrder = (CustomerOrder) quotation;
-        isOpen = customerOrder.getCustomerOrderStatus() != null
-            && customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.OPEN);
-      }
-
-      if (quotation instanceof Quotation) {
-        Quotation quotationQuotation = (Quotation) quotation;
-        isOpen = quotationQuotation.getQuotationStatus() != null
-            && quotationQuotation.getQuotationStatus().getCode().equals(QuotationStatus.OPEN);
-      }
-
-      boolean isCustomerOrder = quotation instanceof CustomerOrder && !isOpen;
-
-      for (Provision provision : assoAffaireOrder.getProvisions())
-        validateProvision(provision, isOpen, isCustomerOrder);
-
-      asso = assoAffaireOrderService.addOrUpdateAssoAffaireOrder(assoAffaireOrder);
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching assignationType", e);
-      return new ResponseEntity<AssoAffaireOrder>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching assignationType", e);
-      return new ResponseEntity<AssoAffaireOrder>(HttpStatus.INTERNAL_SERVER_ERROR);
+    if (quotation instanceof CustomerOrder) {
+      CustomerOrder customerOrder = (CustomerOrder) quotation;
+      isOpen = customerOrder.getCustomerOrderStatus() != null
+          && customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.OPEN);
     }
-    return new ResponseEntity<AssoAffaireOrder>(asso, HttpStatus.OK);
+
+    if (quotation instanceof Quotation) {
+      Quotation quotationQuotation = (Quotation) quotation;
+      isOpen = quotationQuotation.getQuotationStatus() != null
+          && quotationQuotation.getQuotationStatus().getCode().equals(QuotationStatus.OPEN);
+    }
+
+    boolean isCustomerOrder = quotation instanceof CustomerOrder && !isOpen;
+
+    for (Provision provision : assoAffaireOrder.getProvisions())
+      validateProvision(provision, isOpen, isCustomerOrder);
+
+    return new ResponseEntity<AssoAffaireOrder>(assoAffaireOrderService.addOrUpdateAssoAffaireOrder(assoAffaireOrder),
+        HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/asso/affaire/order")
-  public ResponseEntity<AssoAffaireOrder> getAsso(@RequestParam Integer id) {
-    AssoAffaireOrder asso = null;
-    try {
+  public ResponseEntity<AssoAffaireOrder> getAsso(@RequestParam Integer id) throws OsirisValidationException {
+    if (id == null)
+      throw new OsirisValidationException("Id");
 
-      if (id == null)
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-      asso = assoAffaireOrderService.getAssoAffaireOrder(id);
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching assignationType", e);
-      return new ResponseEntity<AssoAffaireOrder>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching assignationType", e);
-      return new ResponseEntity<AssoAffaireOrder>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<AssoAffaireOrder>(asso, HttpStatus.OK);
+    return new ResponseEntity<AssoAffaireOrder>(assoAffaireOrderService.getAssoAffaireOrder(id), HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/assignation-types")
   public ResponseEntity<List<AssignationType>> getAssignationTypes() {
-    List<AssignationType> assignationTypes = null;
-    try {
-      assignationTypes = assignationTypeService.getAssignationTypes();
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching assignationType", e);
-      return new ResponseEntity<List<AssignationType>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching assignationType", e);
-      return new ResponseEntity<List<AssignationType>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<List<AssignationType>>(assignationTypes, HttpStatus.OK);
+    return new ResponseEntity<List<AssignationType>>(assignationTypeService.getAssignationTypes(), HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/provision-screen-types")
   public ResponseEntity<List<ProvisionScreenType>> getProvisionScreenTypes() {
-    List<ProvisionScreenType> provisionScreenTypes = null;
-    try {
-      provisionScreenTypes = provisionScreenTypeService.getProvisionScreenTypes();
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching Announcement", e);
-      return new ResponseEntity<List<ProvisionScreenType>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching Announcement", e);
-      return new ResponseEntity<List<ProvisionScreenType>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<List<ProvisionScreenType>>(provisionScreenTypes, HttpStatus.OK);
+    return new ResponseEntity<List<ProvisionScreenType>>(provisionScreenTypeService.getProvisionScreenTypes(),
+        HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/announcement-notice-templates")
   public ResponseEntity<List<AnnouncementNoticeTemplate>> getAnnouncementNoticeTemplates() {
-    List<AnnouncementNoticeTemplate> announcementNoticeTemplates = null;
-    try {
-      announcementNoticeTemplates = announcementNoticeTemplateService.getAnnouncementNoticeTemplates();
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching Announcement", e);
-      return new ResponseEntity<List<AnnouncementNoticeTemplate>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching Announcement", e);
-      return new ResponseEntity<List<AnnouncementNoticeTemplate>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<List<AnnouncementNoticeTemplate>>(announcementNoticeTemplates, HttpStatus.OK);
+    return new ResponseEntity<List<AnnouncementNoticeTemplate>>(
+        announcementNoticeTemplateService.getAnnouncementNoticeTemplates(), HttpStatus.OK);
   }
 
   @PostMapping(inputEntryPoint + "/announcement-notice-template")
   public ResponseEntity<AnnouncementNoticeTemplate> addOrUpdateAnnouncementNoticeTemplate(
-      @RequestBody AnnouncementNoticeTemplate announcementNoticeTemplates) {
-    AnnouncementNoticeTemplate outAnnouncementNoticeTemplate;
-    try {
-      if (announcementNoticeTemplates.getId() != null)
-        validationHelper.validateReferential(announcementNoticeTemplates, true);
-      validationHelper.validateString(announcementNoticeTemplates.getCode(), true, 40);
-      validationHelper.validateString(announcementNoticeTemplates.getLabel(), true, 100);
-      if (announcementNoticeTemplates.getProvisionFamilyTypes() != null)
-        for (ProvisionFamilyType provisionFamilyType : announcementNoticeTemplates.getProvisionFamilyTypes())
-          validationHelper.validateReferential(provisionFamilyType, false);
+      @RequestBody AnnouncementNoticeTemplate announcementNoticeTemplates)
+      throws OsirisValidationException, OsirisException {
+    if (announcementNoticeTemplates.getId() != null)
+      validationHelper.validateReferential(announcementNoticeTemplates, true, "announcementNoticeTemplates");
+    validationHelper.validateString(announcementNoticeTemplates.getCode(), true, 40, "code");
+    validationHelper.validateString(announcementNoticeTemplates.getLabel(), true, 100, "label");
+    if (announcementNoticeTemplates.getProvisionFamilyTypes() != null)
+      for (ProvisionFamilyType provisionFamilyType : announcementNoticeTemplates.getProvisionFamilyTypes())
+        validationHelper.validateReferential(provisionFamilyType, false, "provisionFamilyType");
 
-      outAnnouncementNoticeTemplate = announcementNoticeTemplateService
-          .addOrUpdateAnnouncementNoticeTemplate(announcementNoticeTemplates);
-    } catch (
-
-    ResponseStatusException e) {
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching Announcement", e);
-      return new ResponseEntity<AnnouncementNoticeTemplate>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching Announcement", e);
-      return new ResponseEntity<AnnouncementNoticeTemplate>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<AnnouncementNoticeTemplate>(outAnnouncementNoticeTemplate, HttpStatus.OK);
+    return new ResponseEntity<AnnouncementNoticeTemplate>(
+        announcementNoticeTemplateService.addOrUpdateAnnouncementNoticeTemplate(announcementNoticeTemplates),
+        HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/act-types")
   public ResponseEntity<List<ActType>> getActTypes() {
-    List<ActType> actTypes = null;
-    try {
-      actTypes = actTypeService.getActTypes();
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching actType", e);
-      return new ResponseEntity<List<ActType>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching actType", e);
-      return new ResponseEntity<List<ActType>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<List<ActType>>(actTypes, HttpStatus.OK);
+    return new ResponseEntity<List<ActType>>(actTypeService.getActTypes(), HttpStatus.OK);
   }
 
   @PostMapping(inputEntryPoint + "/act-type")
-  public ResponseEntity<ActType> addOrUpdateActType(@RequestBody ActType actType) {
-    ActType outActType;
-    try {
-      if (actType.getId() != null)
-        validationHelper.validateReferential(actType, true);
-      validationHelper.validateString(actType.getCode(), true, 20);
-      validationHelper.validateString(actType.getLabel(), true, 100);
+  public ResponseEntity<ActType> addOrUpdateActType(@RequestBody ActType actType)
+      throws OsirisValidationException, OsirisException {
+    if (actType.getId() != null)
+      validationHelper.validateReferential(actType, true, "actType");
+    validationHelper.validateString(actType.getCode(), true, 20, "code");
+    validationHelper.validateString(actType.getLabel(), true, 100, "label");
 
-      outActType = actTypeService.addOrUpdateActType(actType);
-    } catch (
-
-    ResponseStatusException e) {
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching quotation", e);
-      return new ResponseEntity<ActType>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching quotation", e);
-      return new ResponseEntity<ActType>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<ActType>(outActType, HttpStatus.OK);
+    return new ResponseEntity<ActType>(actTypeService.addOrUpdateActType(actType), HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/fund-types")
   public ResponseEntity<List<FundType>> getFundTypes() {
-    List<FundType> fundTypes = null;
-    try {
-      fundTypes = fundTypeService.getFundTypes();
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching fundType", e);
-      return new ResponseEntity<List<FundType>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching fundType", e);
-      return new ResponseEntity<List<FundType>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<List<FundType>>(fundTypes, HttpStatus.OK);
+    return new ResponseEntity<List<FundType>>(fundTypeService.getFundTypes(), HttpStatus.OK);
   }
 
   @PostMapping(inputEntryPoint + "/fund-type")
   public ResponseEntity<FundType> addOrUpdateFundType(
-      @RequestBody FundType fundType) {
-    FundType outFundType;
-    try {
-      if (fundType.getId() != null)
-        validationHelper.validateReferential(fundType, true);
-      validationHelper.validateString(fundType.getCode(), true, 20);
-      validationHelper.validateString(fundType.getLabel(), true, 100);
+      @RequestBody FundType fundType) throws OsirisValidationException, OsirisException {
+    if (fundType.getId() != null)
+      validationHelper.validateReferential(fundType, true, "fundType");
+    validationHelper.validateString(fundType.getCode(), true, 20, "code");
+    validationHelper.validateString(fundType.getLabel(), true, 100, "label");
 
-      outFundType = fundTypeService
-          .addOrUpdateFundType(fundType);
-    } catch (
-
-    ResponseStatusException e) {
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching quotation", e);
-      return new ResponseEntity<FundType>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching quotation", e);
-      return new ResponseEntity<FundType>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<FundType>(outFundType, HttpStatus.OK);
+    return new ResponseEntity<FundType>(fundTypeService.addOrUpdateFundType(fundType), HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/transfert-fund-types")
   public ResponseEntity<List<TransfertFundsType>> getTransfertFundsTypes() {
-    List<TransfertFundsType> transfertFundsTypes = null;
-    try {
-      transfertFundsTypes = transfertFundsTypeService.getTransfertFundsTypes();
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching transfertFundsType", e);
-      return new ResponseEntity<List<TransfertFundsType>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching transfertFundsType", e);
-      return new ResponseEntity<List<TransfertFundsType>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<List<TransfertFundsType>>(transfertFundsTypes, HttpStatus.OK);
+    return new ResponseEntity<List<TransfertFundsType>>(transfertFundsTypeService.getTransfertFundsTypes(),
+        HttpStatus.OK);
   }
 
   @PostMapping(inputEntryPoint + "/transfert-fund-type")
   public ResponseEntity<TransfertFundsType> addOrUpdateTransfertFundsType(
-      @RequestBody TransfertFundsType transfertFundsType) {
-    TransfertFundsType outTransfertFundsType;
-    try {
-      if (transfertFundsType.getId() != null)
-        validationHelper.validateReferential(transfertFundsType, true);
-      validationHelper.validateString(transfertFundsType.getCode(), true, 20);
-      validationHelper.validateString(transfertFundsType.getLabel(), true, 100);
+      @RequestBody TransfertFundsType transfertFundsType) throws OsirisValidationException, OsirisException {
+    if (transfertFundsType.getId() != null)
+      validationHelper.validateReferential(transfertFundsType, true, "transfertFundsType");
+    validationHelper.validateString(transfertFundsType.getCode(), true, 20, "code");
+    validationHelper.validateString(transfertFundsType.getLabel(), true, 100, "label");
 
-      outTransfertFundsType = transfertFundsTypeService
-          .addOrUpdateTransfertFundsType(transfertFundsType);
-    } catch (
-
-    ResponseStatusException e) {
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching quotation", e);
-      return new ResponseEntity<TransfertFundsType>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching quotation", e);
-      return new ResponseEntity<TransfertFundsType>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<TransfertFundsType>(outTransfertFundsType, HttpStatus.OK);
+    return new ResponseEntity<TransfertFundsType>(
+        transfertFundsTypeService.addOrUpdateTransfertFundsType(transfertFundsType), HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/bodacc-publication-types")
   public ResponseEntity<List<BodaccPublicationType>> getBodaccPublicationTypes() {
-    List<BodaccPublicationType> bodaccPublicationTypes = null;
-    try {
-      bodaccPublicationTypes = bodaccPublicationTypeService.getBodaccPublicationTypes();
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching bodaccPublicationType", e);
-      return new ResponseEntity<List<BodaccPublicationType>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching bodaccPublicationType", e);
-      return new ResponseEntity<List<BodaccPublicationType>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<List<BodaccPublicationType>>(bodaccPublicationTypes, HttpStatus.OK);
+    return new ResponseEntity<List<BodaccPublicationType>>(bodaccPublicationTypeService.getBodaccPublicationTypes(),
+        HttpStatus.OK);
   }
 
   @PostMapping(inputEntryPoint + "/bodacc-publication-type")
   public ResponseEntity<BodaccPublicationType> addOrUpdateActType(
-      @RequestBody BodaccPublicationType bodaccPublicationType) {
-    BodaccPublicationType outBodaccPublicationType;
-    try {
-      if (bodaccPublicationType.getId() != null)
-        validationHelper.validateReferential(bodaccPublicationType, true);
-      validationHelper.validateString(bodaccPublicationType.getCode(), true, 20);
-      validationHelper.validateString(bodaccPublicationType.getLabel(), true, 100);
+      @RequestBody BodaccPublicationType bodaccPublicationType) throws OsirisValidationException, OsirisException {
+    if (bodaccPublicationType.getId() != null)
+      validationHelper.validateReferential(bodaccPublicationType, true, "bodaccPublicationType");
+    validationHelper.validateString(bodaccPublicationType.getCode(), true, 20, "code");
+    validationHelper.validateString(bodaccPublicationType.getLabel(), true, 100, "label");
 
-      outBodaccPublicationType = bodaccPublicationTypeService.addOrUpdateBodaccPublicationType(bodaccPublicationType);
-    } catch (
-
-    ResponseStatusException e) {
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching quotation", e);
-      return new ResponseEntity<BodaccPublicationType>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching quotation", e);
-      return new ResponseEntity<BodaccPublicationType>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<BodaccPublicationType>(outBodaccPublicationType, HttpStatus.OK);
+    return new ResponseEntity<BodaccPublicationType>(
+        bodaccPublicationTypeService.addOrUpdateBodaccPublicationType(bodaccPublicationType), HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/notice-type-families")
   public ResponseEntity<List<NoticeTypeFamily>> getNoticeTypeFamilies() {
-    List<NoticeTypeFamily> noticeTypeFamilies = null;
-    try {
-      noticeTypeFamilies = noticeTypeFamilyService.getNoticeTypeFamilies();
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching noticeTypeFamily", e);
-      return new ResponseEntity<List<NoticeTypeFamily>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching noticeTypeFamily", e);
-      return new ResponseEntity<List<NoticeTypeFamily>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<List<NoticeTypeFamily>>(noticeTypeFamilies, HttpStatus.OK);
+    return new ResponseEntity<List<NoticeTypeFamily>>(noticeTypeFamilyService.getNoticeTypeFamilies(), HttpStatus.OK);
   }
 
   @PostMapping(inputEntryPoint + "/notice-type-family")
   public ResponseEntity<NoticeTypeFamily> addOrUpdateNoticeTypeFamily(
-      @RequestBody NoticeTypeFamily noticeTypeFamily) {
-    NoticeTypeFamily outNoticeTypeFamily;
-    try {
-      if (noticeTypeFamily.getId() != null)
-        validationHelper.validateReferential(noticeTypeFamily, true);
-      validationHelper.validateString(noticeTypeFamily.getCode(), true, 20);
-      validationHelper.validateString(noticeTypeFamily.getLabel(), true, 100);
+      @RequestBody NoticeTypeFamily noticeTypeFamily) throws OsirisValidationException, OsirisException {
+    if (noticeTypeFamily.getId() != null)
+      validationHelper.validateReferential(noticeTypeFamily, true, "noticeTypeFamily");
+    validationHelper.validateString(noticeTypeFamily.getCode(), true, 20, "code");
+    validationHelper.validateString(noticeTypeFamily.getLabel(), true, 100, "label");
 
-      outNoticeTypeFamily = noticeTypeFamilyService.addOrUpdateNoticeTypeFamily(noticeTypeFamily);
-    } catch (
-
-    ResponseStatusException e) {
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching quotation", e);
-      return new ResponseEntity<NoticeTypeFamily>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching quotation", e);
-      return new ResponseEntity<NoticeTypeFamily>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<NoticeTypeFamily>(outNoticeTypeFamily, HttpStatus.OK);
+    return new ResponseEntity<NoticeTypeFamily>(noticeTypeFamilyService.addOrUpdateNoticeTypeFamily(noticeTypeFamily),
+        HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/notice-types")
   public ResponseEntity<List<NoticeType>> getNoticeTypes() {
-    List<NoticeType> noticeTypes = null;
-    try {
-      noticeTypes = noticeTypeService.getNoticeTypes();
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching noticeType", e);
-      return new ResponseEntity<List<NoticeType>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching noticeType", e);
-      return new ResponseEntity<List<NoticeType>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<List<NoticeType>>(noticeTypes, HttpStatus.OK);
+    return new ResponseEntity<List<NoticeType>>(noticeTypeService.getNoticeTypes(), HttpStatus.OK);
   }
 
   @PostMapping(inputEntryPoint + "/notice-type")
   public ResponseEntity<NoticeType> addOrUpdateNoticeType(
-      @RequestBody NoticeType noticeTypes) {
-    NoticeType outNoticeType;
-    try {
-      if (noticeTypes.getId() != null)
-        validationHelper.validateReferential(noticeTypes, true);
-      validationHelper.validateString(noticeTypes.getCode(), true, 20);
-      validationHelper.validateString(noticeTypes.getLabel(), true, 100);
+      @RequestBody NoticeType noticeTypes) throws OsirisValidationException, OsirisException {
+    if (noticeTypes.getId() != null)
+      validationHelper.validateReferential(noticeTypes, true, "noticeTypes");
+    validationHelper.validateString(noticeTypes.getCode(), true, 20, "code");
+    validationHelper.validateString(noticeTypes.getLabel(), true, 100, "label");
 
-      outNoticeType = noticeTypeService
-          .addOrUpdateNoticeType(noticeTypes);
-    } catch (
-
-    ResponseStatusException e) {
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching noticeType", e);
-      return new ResponseEntity<NoticeType>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching noticeType", e);
-      return new ResponseEntity<NoticeType>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<NoticeType>(outNoticeType, HttpStatus.OK);
+    return new ResponseEntity<NoticeType>(noticeTypeService.addOrUpdateNoticeType(noticeTypes), HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/character-price")
   public ResponseEntity<CharacterPrice> getCharacterPrice(@RequestParam Integer departmentId,
-      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate date) {
-    CharacterPrice characterPrice = null;
+      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate date)
+      throws OsirisValidationException {
     if (departmentId == null || date == null)
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+      throw new OsirisValidationException("DepartmentId or date");
 
     Department department = departmentService.getDepartment(departmentId);
-
     if (department == null)
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    try {
-      characterPrice = characterPriceService.getCharacterPrice(department, date);
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching character price", e);
-      return new ResponseEntity<CharacterPrice>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching character price", e);
-      return new ResponseEntity<CharacterPrice>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<CharacterPrice>(characterPrice, HttpStatus.OK);
+      throw new OsirisValidationException("department");
+
+    return new ResponseEntity<CharacterPrice>(characterPriceService.getCharacterPrice(department, date), HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/character-prices")
   public ResponseEntity<List<CharacterPrice>> getCharacterPrices() {
-    List<CharacterPrice> characterPrices = null;
-    try {
-      characterPrices = characterPriceService.getCharacterPrices();
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching characterPrice", e);
-      return new ResponseEntity<List<CharacterPrice>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching characterPrice", e);
-      return new ResponseEntity<List<CharacterPrice>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<List<CharacterPrice>>(characterPrices, HttpStatus.OK);
+    return new ResponseEntity<List<CharacterPrice>>(characterPriceService.getCharacterPrices(), HttpStatus.OK);
   }
 
   @PostMapping(inputEntryPoint + "/character-price")
   public ResponseEntity<CharacterPrice> addOrUpdateCharacterPrice(
-      @RequestBody CharacterPrice characterPrices) {
-    CharacterPrice outCharacterPrice;
-    try {
-      if (characterPrices.getId() != null)
-        validationHelper.validateReferential(characterPrices, true);
-      if (characterPrices.getDepartments() == null || characterPrices.getDepartments().size() == 0)
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+      @RequestBody CharacterPrice characterPrices) throws OsirisValidationException, OsirisException {
+    if (characterPrices.getId() != null)
+      validationHelper.validateReferential(characterPrices, true, "characterPrices");
+    if (characterPrices.getDepartments() == null || characterPrices.getDepartments().size() == 0)
+      throw new OsirisValidationException("Departments");
 
-      for (Department department : characterPrices.getDepartments())
-        validationHelper.validateReferential(department, true);
+    for (Department department : characterPrices.getDepartments())
+      validationHelper.validateReferential(department, true, "department");
 
-      validationHelper.validateDate(characterPrices.getStartDate(), true);
+    validationHelper.validateDate(characterPrices.getStartDate(), true, "characterPrices");
 
-      outCharacterPrice = characterPriceService
-          .addOrUpdateCharacterPrice(characterPrices);
-    } catch (
-
-    ResponseStatusException e) {
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching characterPrice", e);
-      return new ResponseEntity<CharacterPrice>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching characterPrice", e);
-      return new ResponseEntity<CharacterPrice>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<CharacterPrice>(outCharacterPrice, HttpStatus.OK);
+    return new ResponseEntity<CharacterPrice>(characterPriceService.addOrUpdateCharacterPrice(characterPrices),
+        HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/journal-types")
   public ResponseEntity<List<JournalType>> getJournalTypes() {
-    List<JournalType> journalTypes = null;
-    try {
-      journalTypes = journalTypeService.getJournalTypes();
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching journalType", e);
-      return new ResponseEntity<List<JournalType>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching journalType", e);
-      return new ResponseEntity<List<JournalType>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<List<JournalType>>(journalTypes, HttpStatus.OK);
+    return new ResponseEntity<List<JournalType>>(journalTypeService.getJournalTypes(), HttpStatus.OK);
   }
 
   @PostMapping(inputEntryPoint + "/journal-type")
   public ResponseEntity<JournalType> addOrUpdateJournalType(
-      @RequestBody JournalType journalType) {
-    JournalType outJournalType;
-    try {
-      if (journalType.getId() != null)
-        validationHelper.validateReferential(journalType, true);
-      validationHelper.validateString(journalType.getCode(), true, 20);
-      validationHelper.validateString(journalType.getLabel(), true, 100);
+      @RequestBody JournalType journalType) throws OsirisValidationException, OsirisException {
+    if (journalType.getId() != null)
+      validationHelper.validateReferential(journalType, true, "journalType");
+    validationHelper.validateString(journalType.getCode(), true, 20, "code");
+    validationHelper.validateString(journalType.getLabel(), true, 100, "label");
 
-      outJournalType = journalTypeService.addOrUpdateJournalType(journalType);
-    } catch (
-
-    ResponseStatusException e) {
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching quotation", e);
-      return new ResponseEntity<JournalType>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching quotation", e);
-      return new ResponseEntity<JournalType>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<JournalType>(outJournalType, HttpStatus.OK);
+    return new ResponseEntity<JournalType>(journalTypeService.addOrUpdateJournalType(journalType), HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/confreres")
   public ResponseEntity<List<Confrere>> getConfreres() {
-    List<Confrere> confreres = null;
-    try {
-      confreres = confrereService.getConfreres();
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching confrere", e);
-      return new ResponseEntity<List<Confrere>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching confrere", e);
-      return new ResponseEntity<List<Confrere>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<List<Confrere>>(confreres, HttpStatus.OK);
+    return new ResponseEntity<List<Confrere>>(confrereService.getConfreres(), HttpStatus.OK);
   }
 
   @PostMapping(inputEntryPoint + "/confrere")
   public ResponseEntity<Confrere> addOrUpdateConfrere(
-      @RequestBody Confrere confrere) {
-    Confrere outConfrere;
-    try {
-      if (confrere.getId() != null)
-        validationHelper.validateReferential(confrere, true);
-      validationHelper.validateString(confrere.getCode(), true, 20);
-      validationHelper.validateString(confrere.getLabel(), true, 100);
+      @RequestBody Confrere confrere) throws OsirisValidationException, OsirisException {
+    if (confrere.getId() != null)
+      validationHelper.validateReferential(confrere, true, "confrere");
+    validationHelper.validateString(confrere.getCode(), true, 20, "code");
+    validationHelper.validateString(confrere.getLabel(), true, 100, "label");
 
-      if (confrere.getDepartments() != null && confrere.getDepartments().size() > 0)
-        for (Department department : confrere.getDepartments())
-          validationHelper.validateReferential(department, false);
+    if (confrere.getDepartments() != null && confrere.getDepartments().size() > 0)
+      for (Department department : confrere.getDepartments())
+        validationHelper.validateReferential(department, false, "department");
 
-      if (confrere.getWeekDays() != null && confrere.getWeekDays().size() > 0)
-        for (WeekDay weekDay : confrere.getWeekDays())
-          validationHelper.validateReferential(weekDay, false);
+    if (confrere.getWeekDays() != null && confrere.getWeekDays().size() > 0)
+      for (WeekDay weekDay : confrere.getWeekDays())
+        validationHelper.validateReferential(weekDay, false, "weekDay");
 
-      validationHelper.validateReferential(confrere.getJournalType(), true);
+    validationHelper.validateReferential(confrere.getJournalType(), true, "JournalType");
+    validationHelper.validateString(confrere.getLastShipmentForPublication(), false, 60, "LastShipmentForPublication");
+    validationHelper.validateString(confrere.getBoardGrade(), false, 20, "BoardGrade");
+    validationHelper.validateString(confrere.getPaperGrade(), false, 20, "PaperGrade");
+    validationHelper.validateString(confrere.getBillingGrade(), false, 20, "BillingGrade");
+    validationHelper.validateString(confrere.getPublicationCertificateDocumentGrade(), false, 20,
+        "PublicationCertificateDocumentGrade");
+    validationHelper.validateString(confrere.getMailRecipient(), false, 60, "MailRecipient");
+    validationHelper.validateString(confrere.getAddress(), false, 60, "Address");
+    validationHelper.validateString(confrere.getPostalCode(), false, 10, "PostalCode");
+    validationHelper.validateReferential(confrere.getCity(), false, "City");
+    validationHelper.validateReferential(confrere.getCountry(), false, "Country");
+    validationHelper.validateString(confrere.getIban(), false, 40, "Iban");
+    validationHelper.validateReferential(confrere.getVatCollectionType(), true, "VatCollectionType");
+    validationHelper.validateReferential(confrere.getPaymentType(), true, "PaymentType");
 
-      validationHelper.validateString(confrere.getLastShipmentForPublication(), false, 60);
-      validationHelper.validateString(confrere.getBoardGrade(), false, 20);
-      validationHelper.validateString(confrere.getPaperGrade(), false, 20);
-      validationHelper.validateString(confrere.getBillingGrade(), false, 20);
-      validationHelper.validateString(confrere.getPublicationCertificateDocumentGrade(), false, 20);
-      validationHelper.validateString(confrere.getMailRecipient(), false, 60);
-      validationHelper.validateString(confrere.getAddress(), false, 60);
-      validationHelper.validateString(confrere.getPostalCode(), false, 10);
-      validationHelper.validateReferential(confrere.getCity(), false);
-      validationHelper.validateReferential(confrere.getCountry(), false);
-      validationHelper.validateString(confrere.getIban(), false, 40);
-      validationHelper.validateReferential(confrere.getVatCollectionType(), true);
-
-      validationHelper.validateReferential(confrere.getPaymentType(), true);
-
-      if (confrere.getSpecialOffers() != null) {
-        for (SpecialOffer specialOffer : confrere.getSpecialOffers()) {
-          validationHelper.validateReferential(specialOffer, false);
-        }
+    if (confrere.getSpecialOffers() != null) {
+      for (SpecialOffer specialOffer : confrere.getSpecialOffers()) {
+        validationHelper.validateReferential(specialOffer, false, "specialOffer");
       }
-
-      if (confrere.getDocuments() != null && confrere.getDocuments().size() > 0) {
-        for (Document document : confrere.getDocuments()) {
-
-          validationHelper.validateReferential(document.getDocumentType(), true);
-
-          if (document.getMailsAffaire() != null && !validationHelper.validateMailList(document.getMailsAffaire()))
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-          if (document.getMailsClient() != null && document.getMailsClient() != null
-              && document.getMailsClient().size() > 0)
-            if (!validationHelper.validateMailList(document.getMailsClient()))
-              return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-          validationHelper.validateString(document.getAffaireAddress(), false, 60);
-          validationHelper.validateString(document.getClientAddress(), false, 60);
-          validationHelper.validateString(document.getAffaireRecipient(), false, 40);
-          validationHelper.validateString(document.getClientRecipient(), false, 40);
-          validationHelper.validateString(document.getCommandNumber(), false, 40);
-          validationHelper.validateReferential(document.getPaymentDeadlineType(), false);
-          validationHelper.validateReferential(document.getRefundType(), false);
-          validationHelper.validateString(document.getRefundIBAN(), false, 40);
-          validationHelper.validateReferential(document.getBillingClosureType(), false);
-          validationHelper.validateReferential(document.getBillingClosureRecipientType(), false);
-          validationHelper.validateReferential(document.getRegie(), false);
-
-          if (document.getIsMailingPaper() == null)
-            document.setIsMailingPaper(false);
-          if (document.getIsMailingPdf() == null)
-            document.setIsMailingPdf(false);
-          if (document.getIsRecipientAffaire() == null)
-            document.setIsRecipientAffaire(false);
-          if (document.getIsRecipientClient() == null)
-            document.setIsRecipientClient(false);
-
-        }
-      }
-
-      outConfrere = confrereService
-          .addOrUpdateConfrere(confrere);
-    } catch (
-
-    ResponseStatusException e) {
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching confrere", e);
-      return new ResponseEntity<Confrere>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching confrere", e);
-      return new ResponseEntity<Confrere>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
-    return new ResponseEntity<Confrere>(outConfrere, HttpStatus.OK);
+
+    if (confrere.getDocuments() != null && confrere.getDocuments().size() > 0) {
+      for (Document document : confrere.getDocuments()) {
+
+        validationHelper.validateReferential(document.getDocumentType(), true, "DocumentType");
+
+        if (document.getMailsAffaire() != null && !validationHelper.validateMailList(document.getMailsAffaire()))
+          throw new OsirisValidationException("MailsAffaire");
+        if (document.getMailsClient() != null && document.getMailsClient() != null
+            && document.getMailsClient().size() > 0)
+          if (!validationHelper.validateMailList(document.getMailsClient()))
+            throw new OsirisValidationException("MailsClient");
+
+        validationHelper.validateString(document.getAffaireAddress(), false, 60, "AffaireAddress");
+        validationHelper.validateString(document.getClientAddress(), false, 60, "ClientAddress");
+        validationHelper.validateString(document.getAffaireRecipient(), false, 40, "AffaireRecipient");
+        validationHelper.validateString(document.getClientRecipient(), false, 40, "ClientRecipient");
+        validationHelper.validateString(document.getCommandNumber(), false, 40, "CommandNumber");
+        validationHelper.validateReferential(document.getPaymentDeadlineType(), false, "PaymentDeadlineType");
+        validationHelper.validateReferential(document.getRefundType(), false, "RefundType");
+        validationHelper.validateString(document.getRefundIBAN(), false, 40, "RefundIBAN");
+        validationHelper.validateReferential(document.getBillingClosureType(), false, "BillingClosureType");
+        validationHelper.validateReferential(document.getBillingClosureRecipientType(), false,
+            "BillingClosureRecipientType");
+        validationHelper.validateReferential(document.getRegie(), false, "Regie");
+
+        if (document.getIsMailingPaper() == null)
+          document.setIsMailingPaper(false);
+        if (document.getIsMailingPdf() == null)
+          document.setIsMailingPdf(false);
+        if (document.getIsRecipientAffaire() == null)
+          document.setIsRecipientAffaire(false);
+        if (document.getIsRecipientClient() == null)
+          document.setIsRecipientClient(false);
+
+      }
+    }
+
+    return new ResponseEntity<Confrere>(confrereService.addOrUpdateConfrere(confrere), HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/mail-redirection-types")
   public ResponseEntity<List<MailRedirectionType>> getMailRedirectionTypes() {
-    List<MailRedirectionType> mailRedirectionTypes = null;
-    try {
-      mailRedirectionTypes = mailRedirectionTypeService.getMailRedirectionTypes();
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching mailRedirectionType", e);
-      return new ResponseEntity<List<MailRedirectionType>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching mailRedirectionType", e);
-      return new ResponseEntity<List<MailRedirectionType>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<List<MailRedirectionType>>(mailRedirectionTypes, HttpStatus.OK);
+    return new ResponseEntity<List<MailRedirectionType>>(mailRedirectionTypeService.getMailRedirectionTypes(),
+        HttpStatus.OK);
   }
 
   @PostMapping(inputEntryPoint + "/mail-redirection-type")
   public ResponseEntity<MailRedirectionType> addOrUpdateMailRedirectionType(
-      @RequestBody MailRedirectionType mailRedirectionType) {
-    MailRedirectionType outMailRedirectionType;
-    try {
-      if (mailRedirectionType.getId() != null)
-        validationHelper.validateReferential(mailRedirectionType, true);
-      validationHelper.validateString(mailRedirectionType.getCode(), true, 20);
-      validationHelper.validateString(mailRedirectionType.getLabel(), true, 100);
+      @RequestBody MailRedirectionType mailRedirectionType) throws OsirisValidationException, OsirisException {
+    if (mailRedirectionType.getId() != null)
+      validationHelper.validateReferential(mailRedirectionType, true, "mailRedirectionType");
+    validationHelper.validateString(mailRedirectionType.getCode(), true, 20, "code");
+    validationHelper.validateString(mailRedirectionType.getLabel(), true, 100, "label");
 
-      outMailRedirectionType = mailRedirectionTypeService.addOrUpdateMailRedirectionType(mailRedirectionType);
-    } catch (
-
-    ResponseStatusException e) {
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching quotation", e);
-      return new ResponseEntity<MailRedirectionType>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching quotation", e);
-      return new ResponseEntity<MailRedirectionType>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<MailRedirectionType>(outMailRedirectionType, HttpStatus.OK);
+    return new ResponseEntity<MailRedirectionType>(
+        mailRedirectionTypeService.addOrUpdateMailRedirectionType(mailRedirectionType), HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/building-domiciliations")
   public ResponseEntity<List<BuildingDomiciliation>> getBuildingDomiciliations() {
-    List<BuildingDomiciliation> buildingDomiciliations = null;
-    try {
-      buildingDomiciliations = buildingDomiciliationService.getBuildingDomiciliations();
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching buildingDomiciliation", e);
-      return new ResponseEntity<List<BuildingDomiciliation>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching buildingDomiciliation", e);
-      return new ResponseEntity<List<BuildingDomiciliation>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<List<BuildingDomiciliation>>(buildingDomiciliations, HttpStatus.OK);
+    return new ResponseEntity<List<BuildingDomiciliation>>(buildingDomiciliationService.getBuildingDomiciliations(),
+        HttpStatus.OK);
   }
 
   @PostMapping(inputEntryPoint + "/building-domiciliation")
   public ResponseEntity<BuildingDomiciliation> addOrUpdateBuildingDomiciliation(
-      @RequestBody BuildingDomiciliation buildingDomiciliation) {
-    BuildingDomiciliation outBuildingDomiciliation;
-    try {
-      if (buildingDomiciliation.getId() != null)
-        validationHelper.validateReferential(buildingDomiciliation, true);
-      validationHelper.validateString(buildingDomiciliation.getCode(), true, 20);
-      validationHelper.validateString(buildingDomiciliation.getLabel(), true, 100);
-      validationHelper.validateString(buildingDomiciliation.getAddress(), false, 60);
-      validationHelper.validateString(buildingDomiciliation.getPostalCode(), false, 10);
-      validationHelper.validateReferential(buildingDomiciliation.getCity(), false);
-      validationHelper.validateReferential(buildingDomiciliation.getCountry(), false);
+      @RequestBody BuildingDomiciliation buildingDomiciliation) throws OsirisValidationException, OsirisException {
+    if (buildingDomiciliation.getId() != null)
+      validationHelper.validateReferential(buildingDomiciliation, true, "buildingDomiciliation");
+    validationHelper.validateString(buildingDomiciliation.getCode(), true, 20, "Code");
+    validationHelper.validateString(buildingDomiciliation.getLabel(), true, 100, "Label");
+    validationHelper.validateString(buildingDomiciliation.getAddress(), false, 60, "Address");
+    validationHelper.validateString(buildingDomiciliation.getPostalCode(), false, 10, "PostalCode");
+    validationHelper.validateReferential(buildingDomiciliation.getCity(), false, "City");
+    validationHelper.validateReferential(buildingDomiciliation.getCountry(), false, "Country");
 
-      outBuildingDomiciliation = buildingDomiciliationService.addOrUpdateBuildingDomiciliation(buildingDomiciliation);
-    } catch (
-
-    ResponseStatusException e) {
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching quotation", e);
-      return new ResponseEntity<BuildingDomiciliation>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching quotation", e);
-      return new ResponseEntity<BuildingDomiciliation>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<BuildingDomiciliation>(outBuildingDomiciliation, HttpStatus.OK);
+    return new ResponseEntity<BuildingDomiciliation>(
+        buildingDomiciliationService.addOrUpdateBuildingDomiciliation(buildingDomiciliation), HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/domiciliation-contract-types")
   public ResponseEntity<List<DomiciliationContractType>> getContractTypes() {
-    List<DomiciliationContractType> domiciliationContractTypes = null;
-    try {
-      domiciliationContractTypes = contractTypeService.getDomiciliationContractTypes();
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching contractType", e);
-      return new ResponseEntity<List<DomiciliationContractType>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching contractType", e);
-      return new ResponseEntity<List<DomiciliationContractType>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<List<DomiciliationContractType>>(domiciliationContractTypes, HttpStatus.OK);
+    return new ResponseEntity<List<DomiciliationContractType>>(contractTypeService.getDomiciliationContractTypes(),
+        HttpStatus.OK);
   }
 
   @PostMapping(inputEntryPoint + "/domiciliation-contract-type")
   public ResponseEntity<DomiciliationContractType> addOrUpdateDomiciliationContractType(
-      @RequestBody DomiciliationContractType domiciliationContractType) {
-    DomiciliationContractType outDomiciliationContractType;
-    try {
-      if (domiciliationContractType.getId() != null)
-        validationHelper.validateReferential(domiciliationContractType, true);
-      validationHelper.validateString(domiciliationContractType.getCode(), true, 20);
-      validationHelper.validateString(domiciliationContractType.getLabel(), true, 100);
+      @RequestBody DomiciliationContractType domiciliationContractType)
+      throws OsirisValidationException, OsirisException {
+    if (domiciliationContractType.getId() != null)
+      validationHelper.validateReferential(domiciliationContractType, true, "domiciliationContractType");
+    validationHelper.validateString(domiciliationContractType.getCode(), true, 20, "code");
+    validationHelper.validateString(domiciliationContractType.getLabel(), true, 100, "label");
 
-      outDomiciliationContractType = domiciliationContractTypeService
-          .addOrUpdateDomiciliationContractType(domiciliationContractType);
-    } catch (
-
-    ResponseStatusException e) {
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching quotation", e);
-      return new ResponseEntity<DomiciliationContractType>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching quotation", e);
-      return new ResponseEntity<DomiciliationContractType>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<DomiciliationContractType>(outDomiciliationContractType, HttpStatus.OK);
+    return new ResponseEntity<DomiciliationContractType>(
+        domiciliationContractTypeService.addOrUpdateDomiciliationContractType(domiciliationContractType),
+        HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/provision-types")
   public ResponseEntity<List<ProvisionType>> getProvisionTypes() {
-    List<ProvisionType> provisionTypes = null;
-    try {
-      provisionTypes = provisionTypeService.getProvisionTypes();
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching provisionType", e);
-      return new ResponseEntity<List<ProvisionType>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching provisionType", e);
-      return new ResponseEntity<List<ProvisionType>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<List<ProvisionType>>(provisionTypes, HttpStatus.OK);
+    return new ResponseEntity<List<ProvisionType>>(provisionTypeService.getProvisionTypes(), HttpStatus.OK);
   }
 
   @PostMapping(inputEntryPoint + "/provision-type")
   public ResponseEntity<ProvisionType> addOrUpdateProvisionType(
-      @RequestBody ProvisionType provisionType) {
-    ProvisionType outProvisionType;
-    try {
-      if (provisionType.getId() != null)
-        validationHelper.validateReferential(provisionType, true);
-      validationHelper.validateString(provisionType.getCode(), true, 20);
-      validationHelper.validateString(provisionType.getLabel(), true, 100);
-      validationHelper.validateReferential(provisionType.getProvisionScreenType(), true);
-      validationHelper.validateReferential(provisionType.getAssignationType(), true);
-      provisionType.getAssignationType().getCode().equals(AssignationType.EMPLOYEE);
-      validationHelper.validateReferential(provisionType.getDefaultEmployee(), true);
+      @RequestBody ProvisionType provisionType) throws OsirisValidationException, OsirisException {
+    if (provisionType.getId() != null)
+      validationHelper.validateReferential(provisionType, true, "provisionType");
+    validationHelper.validateString(provisionType.getCode(), true, 20, "Code");
+    validationHelper.validateString(provisionType.getLabel(), true, 100, "Label");
+    validationHelper.validateReferential(provisionType.getProvisionScreenType(), true, "ProvisionScreenType");
+    validationHelper.validateReferential(provisionType.getAssignationType(), true, "AssignationType");
+    if (provisionType.getAssignationType().getCode().equals(AssignationType.EMPLOYEE))
+      ;
+    validationHelper.validateReferential(provisionType.getDefaultEmployee(), true, "DefaultEmployee");
 
-      if (provisionType.getBillingTypes() != null && provisionType.getBillingTypes().size() > 0)
-        for (BillingType billingType : provisionType.getBillingTypes())
-          validationHelper.validateReferential(billingType, false);
+    if (provisionType.getBillingTypes() != null && provisionType.getBillingTypes().size() > 0)
+      for (BillingType billingType : provisionType.getBillingTypes())
+        validationHelper.validateReferential(billingType, false, "billingType");
 
-      outProvisionType = provisionTypeService
-          .addOrUpdateProvisionType(provisionType);
-    } catch (
-
-    ResponseStatusException e) {
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching provisionType", e);
-      return new ResponseEntity<ProvisionType>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching provisionType", e);
-      return new ResponseEntity<ProvisionType>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<ProvisionType>(outProvisionType, HttpStatus.OK);
+    return new ResponseEntity<ProvisionType>(provisionTypeService.addOrUpdateProvisionType(provisionType),
+        HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/provision-family-types")
   public ResponseEntity<List<ProvisionFamilyType>> getProvisionFamilyTypes() {
-    List<ProvisionFamilyType> provisionFamilyTypes = null;
-    try {
-      provisionFamilyTypes = provisionFamilyTypeService.getProvisionFamilyTypes();
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching provisionFamilyType", e);
-      return new ResponseEntity<List<ProvisionFamilyType>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching provisionFamilyType", e);
-      return new ResponseEntity<List<ProvisionFamilyType>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<List<ProvisionFamilyType>>(provisionFamilyTypes, HttpStatus.OK);
+    return new ResponseEntity<List<ProvisionFamilyType>>(provisionFamilyTypeService.getProvisionFamilyTypes(),
+        HttpStatus.OK);
   }
 
   @PostMapping(inputEntryPoint + "/provision-family-type")
   public ResponseEntity<ProvisionFamilyType> addOrUpdateProvisionFamilyType(
-      @RequestBody ProvisionFamilyType provisionFamilyType) {
-    ProvisionFamilyType outProvisionFamilyType;
-    try {
-      if (provisionFamilyType.getId() != null)
-        validationHelper.validateReferential(provisionFamilyType, true);
-      validationHelper.validateString(provisionFamilyType.getCode(), true, 20);
-      validationHelper.validateString(provisionFamilyType.getLabel(), true, 100);
+      @RequestBody ProvisionFamilyType provisionFamilyType) throws OsirisValidationException, OsirisException {
+    if (provisionFamilyType.getId() != null)
+      validationHelper.validateReferential(provisionFamilyType, true, "provisionFamilyType");
+    validationHelper.validateString(provisionFamilyType.getCode(), true, 20, "code");
+    validationHelper.validateString(provisionFamilyType.getLabel(), true, 100, "label");
 
-      outProvisionFamilyType = provisionFamilyTypeService.addOrUpdateProvisionFamilyType(provisionFamilyType);
-    } catch (
-
-    ResponseStatusException e) {
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching quotation", e);
-      return new ResponseEntity<ProvisionFamilyType>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching quotation", e);
-      return new ResponseEntity<ProvisionFamilyType>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<ProvisionFamilyType>(outProvisionFamilyType, HttpStatus.OK);
+    return new ResponseEntity<ProvisionFamilyType>(
+        provisionFamilyTypeService.addOrUpdateProvisionFamilyType(provisionFamilyType), HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/siren")
   public ResponseEntity<List<Siren>> getSiren(@RequestParam String siren) {
-    List<Siren> sirenFound = null;
-    try {
-      if (siren != null && !siren.equals("") && siren.replaceAll(" ", "").length() == 9)
-        sirenFound = sireneDelegateService.getSiren(siren.replaceAll(" ", ""));
-    } catch (HttpStatusCodeException e) {
-      return null;
-    } catch (Exception e) {
-      logger.error("Error when fetching siren", e);
-      return new ResponseEntity<List<Siren>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<List<Siren>>(sirenFound, HttpStatus.OK);
+    if (siren != null && !siren.equals("") && siren.replaceAll(" ", "").length() == 9)
+      return new ResponseEntity<List<Siren>>(sireneDelegateService.getSiren(siren.replaceAll(" ", "")), HttpStatus.OK);
+    return new ResponseEntity<List<Siren>>(HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/siret")
   public ResponseEntity<List<Siret>> getSiret(@RequestParam String siret) {
-    List<Siret> siretFound = null;
-    try {
-      if (siret != null && !siret.equals("") && siret.replaceAll(" ", "").length() == 14)
-        siretFound = sireneDelegateService.getSiret(siret.replaceAll(" ", ""));
-    } catch (HttpStatusCodeException e) {
-      return null;
-    } catch (Exception e) {
-      logger.error("Error when fetching siret", e);
-      return new ResponseEntity<List<Siret>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<List<Siret>>(siretFound, HttpStatus.OK);
+    if (siret != null && !siret.equals("") && siret.replaceAll(" ", "").length() == 14)
+      return new ResponseEntity<List<Siret>>(sireneDelegateService.getSiret(siret.replaceAll(" ", "")), HttpStatus.OK);
+    return new ResponseEntity<List<Siret>>(HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/rna")
-  public ResponseEntity<List<Rna>> getRna(@RequestParam String rna) {
+  public ResponseEntity<List<Rna>> getRna(@RequestParam String rna) throws OsirisValidationException {
     if (rna == null || rna.equals("")
         || rna.replaceAll(" ", "").length() != 10 && !rna.toUpperCase().subSequence(0, 1).equals("W"))
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+      throw new OsirisValidationException("rna");
 
-    List<Rna> rnaFound = null;
-    try {
-      if (rna != null && !rna.equals("") && rna.replaceAll(" ", "").length() == 14
-          && rna.toUpperCase().subSequence(0, 1).equals("W"))
-        rnaFound = rnaDelegateService.getRna(rna.replaceAll(" ", ""));
-    } catch (HttpStatusCodeException e) {
-      return null;
-    } catch (Exception e) {
-      logger.error("Error when fetching siret", e);
-      return new ResponseEntity<List<Rna>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<List<Rna>>(rnaFound, HttpStatus.OK);
+    if (rna != null && !rna.equals("") && rna.replaceAll(" ", "").length() == 14
+        && rna.toUpperCase().subSequence(0, 1).equals("W"))
+      return new ResponseEntity<List<Rna>>(rnaDelegateService.getRna(rna.replaceAll(" ", "")), HttpStatus.OK);
+    return new ResponseEntity<List<Rna>>(HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/affaire")
-  public ResponseEntity<Affaire> getAffaire(@RequestParam Integer id) {
-    Affaire affaireFound = null;
+  public ResponseEntity<Affaire> getAffaire(@RequestParam Integer id) throws OsirisValidationException {
     if (id == null)
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    try {
-      affaireFound = affaireService.getAffaire(id);
-    } catch (HttpStatusCodeException e) {
-      return null;
-    } catch (Exception e) {
-      logger.error("Error when fetching siret", e);
-      return new ResponseEntity<Affaire>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<Affaire>(affaireFound, HttpStatus.OK);
+      throw new OsirisValidationException("id");
+
+    return new ResponseEntity<Affaire>(affaireService.getAffaire(id), HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/affaires")
   public ResponseEntity<List<Affaire>> getAffaires() {
-    List<Affaire> affairesFound = null;
-    try {
-      affairesFound = affaireService.getAffaires();
-    } catch (HttpStatusCodeException e) {
-      return null;
-    } catch (Exception e) {
-      logger.error("Error when fetching siret", e);
-      return new ResponseEntity<List<Affaire>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<List<Affaire>>(affairesFound, HttpStatus.OK);
+    return new ResponseEntity<List<Affaire>>(affaireService.getAffaires(), HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/record-types")
   public ResponseEntity<List<RecordType>> getRecordTypes() {
-    List<RecordType> recordTypes = null;
-    try {
-      recordTypes = recordTypeService.getRecordTypes();
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching recordType", e);
-      return new ResponseEntity<List<RecordType>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching recordType", e);
-      return new ResponseEntity<List<RecordType>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<List<RecordType>>(recordTypes, HttpStatus.OK);
+    return new ResponseEntity<List<RecordType>>(recordTypeService.getRecordTypes(), HttpStatus.OK);
   }
 
   @PostMapping(inputEntryPoint + "/record-type")
   public ResponseEntity<RecordType> addOrUpdateRecordType(
-      @RequestBody RecordType recordType) {
-    RecordType outRecordType;
-    try {
-      if (recordType.getId() != null)
-        validationHelper.validateReferential(recordType, true);
-      validationHelper.validateString(recordType.getCode(), true, 20);
-      validationHelper.validateString(recordType.getLabel(), true, 100);
+      @RequestBody RecordType recordType) throws OsirisValidationException, OsirisException {
+    if (recordType.getId() != null)
+      validationHelper.validateReferential(recordType, true, "recordType");
+    validationHelper.validateString(recordType.getCode(), true, 20, "code");
+    validationHelper.validateString(recordType.getLabel(), true, 100, "label");
 
-      outRecordType = recordTypeService.addOrUpdateRecordType(recordType);
-    } catch (
-
-    ResponseStatusException e) {
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching quotation", e);
-      return new ResponseEntity<RecordType>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching quotation", e);
-      return new ResponseEntity<RecordType>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<RecordType>(outRecordType, HttpStatus.OK);
+    return new ResponseEntity<RecordType>(recordTypeService.addOrUpdateRecordType(recordType), HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/quotation-label-types")
   public ResponseEntity<List<QuotationLabelType>> getQuotationLabelTypes() {
-    List<QuotationLabelType> quotationLabelTypes = null;
-    try {
-      quotationLabelTypes = quotationLabelTypeService.getQuotationLabelTypes();
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching quotationLabelType", e);
-      return new ResponseEntity<List<QuotationLabelType>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching quotationLabelType", e);
-      return new ResponseEntity<List<QuotationLabelType>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<List<QuotationLabelType>>(quotationLabelTypes, HttpStatus.OK);
+    return new ResponseEntity<List<QuotationLabelType>>(quotationLabelTypeService.getQuotationLabelTypes(),
+        HttpStatus.OK);
   }
 
   @PostMapping(inputEntryPoint + "/quotation-label-type")
   public ResponseEntity<QuotationLabelType> addOrUpdateQuotationLabelType(
-      @RequestBody QuotationLabelType quotationLabelType) {
-    QuotationLabelType outQuotationLabelType;
-    try {
-      if (quotationLabelType.getId() != null)
-        validationHelper.validateReferential(quotationLabelType, true);
-      validationHelper.validateString(quotationLabelType.getCode(), true, 20);
-      validationHelper.validateString(quotationLabelType.getLabel(), true, 100);
+      @RequestBody QuotationLabelType quotationLabelType) throws OsirisValidationException, OsirisException {
+    if (quotationLabelType.getId() != null)
+      validationHelper.validateReferential(quotationLabelType, true, "quotationLabelType");
+    validationHelper.validateString(quotationLabelType.getCode(), true, 20, "code");
+    validationHelper.validateString(quotationLabelType.getLabel(), true, 100, "label");
 
-      outQuotationLabelType = quotationLabelTypeService.addOrUpdateQuotationLabelType(quotationLabelType);
-    } catch (
-
-    ResponseStatusException e) {
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching quotation", e);
-      return new ResponseEntity<QuotationLabelType>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching quotation", e);
-      return new ResponseEntity<QuotationLabelType>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<QuotationLabelType>(outQuotationLabelType, HttpStatus.OK);
+    return new ResponseEntity<QuotationLabelType>(
+        quotationLabelTypeService.addOrUpdateQuotationLabelType(quotationLabelType), HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/quotation-status")
   public ResponseEntity<List<QuotationStatus>> getQuotationStatus() {
-    List<QuotationStatus> quotationStatus = null;
-    try {
-      quotationStatus = quotationStatusService.getQuotationStatus();
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching quotationStatus", e);
-      return new ResponseEntity<List<QuotationStatus>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching quotationStatus", e);
-      return new ResponseEntity<List<QuotationStatus>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<List<QuotationStatus>>(quotationStatus, HttpStatus.OK);
+    return new ResponseEntity<List<QuotationStatus>>(quotationStatusService.getQuotationStatus(), HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/customer-order-status")
   public ResponseEntity<List<CustomerOrderStatus>> getCustomerOrderStatus() {
-    List<CustomerOrderStatus> customerOrderStatus = null;
-    try {
-      customerOrderStatus = customerOrderStatusService.getCustomerOrderStatus();
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching quotationStatus", e);
-      return new ResponseEntity<List<CustomerOrderStatus>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching quotationStatus", e);
-      return new ResponseEntity<List<CustomerOrderStatus>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<List<CustomerOrderStatus>>(customerOrderStatus, HttpStatus.OK);
+    return new ResponseEntity<List<CustomerOrderStatus>>(customerOrderStatusService.getCustomerOrderStatus(),
+        HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/quotation")
   public ResponseEntity<Quotation> getQuotation(@RequestParam Integer id) {
-    Quotation quotation = null;
-    try {
-      quotation = quotationService.getQuotation(id);
-      if (quotation == null)
-        quotation = new Quotation();
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching client types", e);
-      return new ResponseEntity<Quotation>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching client types", e);
-      return new ResponseEntity<Quotation>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<Quotation>(quotation, HttpStatus.OK);
+    return new ResponseEntity<Quotation>(quotationService.getQuotation(id), HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/customer-order")
   public ResponseEntity<CustomerOrder> getCustomerOrder(@RequestParam Integer id) {
-    CustomerOrder customerOrder = null;
-    try {
-      customerOrder = customerOrderService.getCustomerOrder(id);
-      if (customerOrder == null)
-        customerOrder = new CustomerOrder();
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching  customer-order", e);
-      return new ResponseEntity<CustomerOrder>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching customer-order", e);
-      return new ResponseEntity<CustomerOrder>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<CustomerOrder>(customerOrder, HttpStatus.OK);
+    return new ResponseEntity<CustomerOrder>(customerOrderService.getCustomerOrder(id), HttpStatus.OK);
   }
 
   @PostMapping(inputEntryPoint + "/quotation")
-  public ResponseEntity<Quotation> addOrUpdateQuotation(@RequestBody Quotation quotation) {
-    try {
-      validateQuotationAndCustomerOrder(quotation);
+  public ResponseEntity<Quotation> addOrUpdateQuotation(@RequestBody Quotation quotation)
+      throws OsirisValidationException, OsirisException {
+    validateQuotationAndCustomerOrder(quotation);
 
-      QuotationStatus quotationStatus = quotationStatusService.getQuotationStatusByCode(QuotationStatus.OPEN);
-      if (quotationStatus == null)
-        if (quotation.getQuotationStatus() == null) {
-          logger.error("OPEN Quotation status not found");
-          return new ResponseEntity<Quotation>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
+    QuotationStatus openQuotationStatus = quotationStatusService.getQuotationStatusByCode(QuotationStatus.OPEN);
+    if (openQuotationStatus == null)
       if (quotation.getQuotationStatus() == null)
-        quotation.setQuotationStatus(quotationStatus);
-      quotation = quotationService.addOrUpdateQuotationFromUser(quotation);
-    } catch (
+        throw new OsirisException("OPEN Quotation status not found");
 
-    ResponseStatusException e) {
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching quotation", e);
-      return new ResponseEntity<Quotation>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching quotation", e);
-      return new ResponseEntity<Quotation>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<Quotation>(quotation, HttpStatus.OK);
+    if (quotation.getQuotationStatus() == null)
+      quotation.setQuotationStatus(openQuotationStatus);
+    return new ResponseEntity<Quotation>(quotationService.addOrUpdateQuotationFromUser(quotation), HttpStatus.OK);
   }
 
   @PostMapping(inputEntryPoint + "/order/search")
-  public ResponseEntity<List<OrderingSearchResult>> searchOrders(@RequestBody OrderingSearch orderingSearch) {
-    List<OrderingSearchResult> orders;
+  public ResponseEntity<List<OrderingSearchResult>> searchOrders(@RequestBody OrderingSearch orderingSearch)
+      throws OsirisValidationException, OsirisException {
     if (orderingSearch == null)
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+      throw new OsirisValidationException("orderingSearch");
 
     if (orderingSearch.getStartDate() == null || orderingSearch.getEndDate() == null)
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+      throw new OsirisValidationException("StartDate or EndDate");
 
     Duration duration = Duration.between(orderingSearch.getStartDate(), orderingSearch.getEndDate());
 
     if (duration.toDays() > 366)
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+      throw new OsirisValidationException("Duration");
 
-    try {
-      validationHelper.validateReferential(orderingSearch.getSalesEmployee(), false);
-      if (orderingSearch.getCustomerOrderStatus() != null)
-        for (CustomerOrderStatus status : orderingSearch.getCustomerOrderStatus())
-          validationHelper.validateReferential(status, false);
-    } catch (Exception e) {
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    }
+    validationHelper.validateReferential(orderingSearch.getSalesEmployee(), false, "SalesEmployee");
+    if (orderingSearch.getCustomerOrderStatus() != null)
+      for (CustomerOrderStatus status : orderingSearch.getCustomerOrderStatus())
+        validationHelper.validateReferential(status, false, "status");
 
-    try {
-      orders = customerOrderService.searchOrders(orderingSearch);
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching payment", e);
-      return new ResponseEntity<List<OrderingSearchResult>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching payment", e);
-      return new ResponseEntity<List<OrderingSearchResult>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<List<OrderingSearchResult>>(orders, HttpStatus.OK);
+    return new ResponseEntity<List<OrderingSearchResult>>(customerOrderService.searchOrders(orderingSearch),
+        HttpStatus.OK);
   }
 
   @PostMapping(inputEntryPoint + "/quotation/search")
-  public ResponseEntity<List<QuotationSearchResult>> searchQuotations(@RequestBody QuotationSearch quotationSearch) {
-    List<QuotationSearchResult> orders;
+  public ResponseEntity<List<QuotationSearchResult>> searchQuotations(@RequestBody QuotationSearch quotationSearch)
+      throws OsirisValidationException, OsirisException {
     if (quotationSearch == null)
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+      throw new OsirisValidationException("quotationSearch");
 
     if (quotationSearch.getStartDate() == null || quotationSearch.getEndDate() == null)
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+      throw new OsirisValidationException("StartDate or EndDate");
 
     Duration duration = Duration.between(quotationSearch.getStartDate(), quotationSearch.getEndDate());
 
     if (duration.toDays() > 366)
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+      throw new OsirisValidationException("Duration");
 
-    try {
-      validationHelper.validateReferential(quotationSearch.getSalesEmployee(), false);
-      if (quotationSearch.getQuotationStatus() != null)
-        for (QuotationStatus status : quotationSearch.getQuotationStatus())
-          validationHelper.validateReferential(status, false);
-    } catch (Exception e) {
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    }
+    validationHelper.validateReferential(quotationSearch.getSalesEmployee(), false, "SalesEmployee");
+    if (quotationSearch.getQuotationStatus() != null)
+      for (QuotationStatus status : quotationSearch.getQuotationStatus())
+        validationHelper.validateReferential(status, false, "status");
 
-    try {
-      orders = quotationService.searchQuotations(quotationSearch);
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching payment", e);
-      return new ResponseEntity<List<QuotationSearchResult>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching payment", e);
-      return new ResponseEntity<List<QuotationSearchResult>>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<List<QuotationSearchResult>>(orders, HttpStatus.OK);
+    return new ResponseEntity<List<QuotationSearchResult>>(quotationService.searchQuotations(quotationSearch),
+        HttpStatus.OK);
   }
 
   @PostMapping(inputEntryPoint + "/customer-order")
-  public ResponseEntity<CustomerOrder> addOrUpdateCustomerOrder(@RequestBody CustomerOrder customerOrder) {
-    try {
-      validateQuotationAndCustomerOrder(customerOrder);
-      CustomerOrderStatus customerOrderStatus = customerOrderStatusService
-          .getCustomerOrderStatusByCode(CustomerOrderStatus.OPEN);
-      if (customerOrderStatus == null)
-        if (customerOrder.getCustomerOrderStatus() == null) {
-          logger.error("OPEN Quotation status not found");
-          return new ResponseEntity<CustomerOrder>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
+  public ResponseEntity<CustomerOrder> addOrUpdateCustomerOrder(@RequestBody CustomerOrder customerOrder)
+      throws OsirisException, OsirisValidationException {
+    validateQuotationAndCustomerOrder(customerOrder);
+    CustomerOrderStatus customerOrderStatus = customerOrderStatusService
+        .getCustomerOrderStatusByCode(CustomerOrderStatus.OPEN);
+    if (customerOrderStatus == null)
       if (customerOrder.getCustomerOrderStatus() == null)
-        customerOrder.setCustomerOrderStatus(customerOrderStatus);
-      customerOrder = customerOrderService.addOrUpdateCustomerOrderFromUser(customerOrder);
-    } catch (
+        throw new OsirisException("OPEN Customer Order status not found");
 
-    ResponseStatusException e) {
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching CustomerOrder", e);
-      return new ResponseEntity<CustomerOrder>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching CustomerOrder", e);
-      return new ResponseEntity<CustomerOrder>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<CustomerOrder>(customerOrder, HttpStatus.OK);
+    if (customerOrder.getCustomerOrderStatus() == null)
+      customerOrder.setCustomerOrderStatus(customerOrderStatus);
+
+    return new ResponseEntity<CustomerOrder>(customerOrderService.addOrUpdateCustomerOrderFromUser(customerOrder),
+        HttpStatus.OK);
   }
 
   @PostMapping(inputEntryPoint + "/customer-order/status")
   public ResponseEntity<CustomerOrder> addOrUpdateCustomerOrderStatus(@RequestBody CustomerOrder customerOrder,
-      @RequestParam String targetStatusCode) {
-    try {
-      validateQuotationAndCustomerOrder(customerOrder);
-      customerOrder = customerOrderService.getCustomerOrder(customerOrder.getId());
-      boolean found = true;
-      if (customerOrder.getCustomerOrderStatus() != null) {
-        if (customerOrder.getCustomerOrderStatus().getSuccessors() != null)
-          for (CustomerOrderStatus status : customerOrder.getCustomerOrderStatus().getSuccessors())
-            if (status.getCode().equals(targetStatusCode))
-              found = true;
-        if (customerOrder.getCustomerOrderStatus().getPredecessors() != null)
-          for (CustomerOrderStatus status : customerOrder.getCustomerOrderStatus().getPredecessors())
-            if (status.getCode().equals(targetStatusCode))
-              found = true;
-      }
-      if (!found)
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-      customerOrder = customerOrderService.addOrUpdateCustomerOrderStatusFromUser(customerOrder, targetStatusCode);
-    } catch (
-
-    ResponseStatusException e) {
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching CustomerOrder", e);
-      return new ResponseEntity<CustomerOrder>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching CustomerOrder", e);
-      return new ResponseEntity<CustomerOrder>(HttpStatus.INTERNAL_SERVER_ERROR);
+      @RequestParam String targetStatusCode) throws OsirisValidationException, OsirisException {
+    validateQuotationAndCustomerOrder(customerOrder);
+    customerOrder = customerOrderService.getCustomerOrder(customerOrder.getId());
+    boolean found = true;
+    if (customerOrder.getCustomerOrderStatus() != null) {
+      if (customerOrder.getCustomerOrderStatus().getSuccessors() != null)
+        for (CustomerOrderStatus status : customerOrder.getCustomerOrderStatus().getSuccessors())
+          if (status.getCode().equals(targetStatusCode))
+            found = true;
+      if (customerOrder.getCustomerOrderStatus().getPredecessors() != null)
+        for (CustomerOrderStatus status : customerOrder.getCustomerOrderStatus().getPredecessors())
+          if (status.getCode().equals(targetStatusCode))
+            found = true;
     }
-    return new ResponseEntity<CustomerOrder>(customerOrder, HttpStatus.OK);
+    if (!found)
+      throw new OsirisValidationException("Transition forbidden");
+
+    return new ResponseEntity<CustomerOrder>(
+        customerOrderService.addOrUpdateCustomerOrderStatusFromUser(customerOrder, targetStatusCode), HttpStatus.OK);
   }
 
   @PostMapping(inputEntryPoint + "/quotation/status")
   public ResponseEntity<Quotation> addOrUpdateQuotationStatus(@RequestBody Quotation quotation,
-      @RequestParam String targetStatusCode) {
-    try {
-      validateQuotationAndCustomerOrder(quotation);
-      quotation = quotationService.getQuotation(quotation.getId());
-      boolean found = true;
-      if (quotation.getQuotationStatus() != null) {
-        if (quotation.getQuotationStatus().getSuccessors() != null)
-          for (QuotationStatus status : quotation.getQuotationStatus().getSuccessors())
-            if (status.getCode().equals(targetStatusCode))
-              found = true;
-        if (quotation.getQuotationStatus().getPredecessors() != null)
-          for (QuotationStatus status : quotation.getQuotationStatus().getPredecessors())
-            if (status.getCode().equals(targetStatusCode))
-              found = true;
-      }
-      if (!found)
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-      quotation = quotationService.addOrUpdateQuotationStatus(quotation, targetStatusCode);
-    } catch (
-
-    ResponseStatusException e) {
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching quotation", e);
-      return new ResponseEntity<Quotation>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching quotation", e);
-      return new ResponseEntity<Quotation>(HttpStatus.INTERNAL_SERVER_ERROR);
+      @RequestParam String targetStatusCode) throws OsirisValidationException, OsirisException {
+    validateQuotationAndCustomerOrder(quotation);
+    quotation = quotationService.getQuotation(quotation.getId());
+    boolean found = true;
+    if (quotation.getQuotationStatus() != null) {
+      if (quotation.getQuotationStatus().getSuccessors() != null)
+        for (QuotationStatus status : quotation.getQuotationStatus().getSuccessors())
+          if (status.getCode().equals(targetStatusCode))
+            found = true;
+      if (quotation.getQuotationStatus().getPredecessors() != null)
+        for (QuotationStatus status : quotation.getQuotationStatus().getPredecessors())
+          if (status.getCode().equals(targetStatusCode))
+            found = true;
     }
-    return new ResponseEntity<Quotation>(quotation, HttpStatus.OK);
+    if (!found)
+      throw new OsirisValidationException("Transition forbidden");
+
+    return new ResponseEntity<Quotation>(quotationService.addOrUpdateQuotationStatus(quotation, targetStatusCode),
+        HttpStatus.OK);
   }
 
-  private void validateQuotationAndCustomerOrder(IQuotation quotation) throws Exception {
+  private void validateQuotationAndCustomerOrder(IQuotation quotation)
+      throws OsirisValidationException, OsirisException {
     boolean isOpen = false;
     boolean isCustomerOrder = quotation instanceof CustomerOrder && !isOpen;
 
@@ -1768,49 +1064,49 @@ public class QuotationController {
     }
     if (quotation.getSpecialOffers() != null && quotation.getSpecialOffers().size() > 0)
       for (SpecialOffer specialOffer : quotation.getSpecialOffers())
-        validationHelper.validateReferential(specialOffer, false);
-    validationHelper.validateReferential(quotation.getTiers(), false);
-    validationHelper.validateReferential(quotation.getResponsable(), false);
-    validationHelper.validateReferential(quotation.getConfrere(), false);
-    validationHelper.validateReferential(quotation.getQuotationLabelType(), true);
-    validationHelper.validateReferential(quotation.getCustomLabelResponsable(), false);
-    validationHelper.validateReferential(quotation.getCustomLabelTiers(), false);
-    validationHelper.validateReferential(quotation.getRecordType(), true);
+        validationHelper.validateReferential(specialOffer, false, "specialOffer");
+    validationHelper.validateReferential(quotation.getTiers(), false, "Tiers");
+    validationHelper.validateReferential(quotation.getResponsable(), false, "Responsable");
+    validationHelper.validateReferential(quotation.getConfrere(), false, "Confrere");
+    validationHelper.validateReferential(quotation.getQuotationLabelType(), true, "QuotationLabelType");
+    validationHelper.validateReferential(quotation.getCustomLabelResponsable(), false, "CustomLabelResponsable");
+    validationHelper.validateReferential(quotation.getCustomLabelTiers(), false, "CustomLabelTiers");
+    validationHelper.validateReferential(quotation.getRecordType(), true, "RecordType");
 
     if (quotation.getResponsable() == null && quotation.getTiers() == null && quotation.getConfrere() == null)
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+      throw new OsirisValidationException("No customer order");
 
     if (quotation.getAssoAffaireOrders() == null || quotation.getAssoAffaireOrders().size() == 0)
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+      throw new OsirisValidationException("No affaire");
 
     if (quotation.getAssoAffaireOrders().get(0).getAffaire() == null
         || quotation.getAssoAffaireOrders().get(0).getProvisions() == null
         || quotation.getAssoAffaireOrders().get(0).getProvisions().size() == 0)
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+      throw new OsirisValidationException("No provision");
 
     if (quotation.getDocuments() != null && quotation.getDocuments().size() > 0) {
       for (Document document : quotation.getDocuments()) {
 
-        validationHelper.validateReferential(document.getDocumentType(), true);
+        validationHelper.validateReferential(document.getDocumentType(), true, "DocumentType");
 
         if (document.getMailsAffaire() != null && !validationHelper.validateMailList(document.getMailsAffaire()))
-          throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+          throw new OsirisValidationException("MailsAffaire");
         if (document.getMailsClient() != null && document.getMailsClient() != null
             && document.getMailsClient().size() > 0)
           if (!validationHelper.validateMailList(document.getMailsClient()))
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            throw new OsirisValidationException("MailsClient");
 
-        validationHelper.validateString(document.getAffaireAddress(), false, 60);
-        validationHelper.validateString(document.getClientAddress(), false, 60);
-        validationHelper.validateString(document.getAffaireRecipient(), false, 40);
-        validationHelper.validateString(document.getClientRecipient(), false, 40);
-
-        validationHelper.validateString(document.getCommandNumber(), false, 40);
-        validationHelper.validateReferential(document.getPaymentDeadlineType(), false);
-        validationHelper.validateReferential(document.getRefundType(), false);
-        validationHelper.validateString(document.getRefundIBAN(), false, 40);
-        validationHelper.validateReferential(document.getBillingClosureType(), false);
-        validationHelper.validateReferential(document.getBillingClosureRecipientType(), false);
+        validationHelper.validateString(document.getAffaireAddress(), false, 60, "AffaireAddress");
+        validationHelper.validateString(document.getClientAddress(), false, 60, "ClientAddress");
+        validationHelper.validateString(document.getAffaireRecipient(), false, 40, "AffaireRecipient");
+        validationHelper.validateString(document.getClientRecipient(), false, 40, "ClientRecipient");
+        validationHelper.validateString(document.getCommandNumber(), false, 40, "CommandNumber");
+        validationHelper.validateReferential(document.getPaymentDeadlineType(), false, "PaymentDeadlineType");
+        validationHelper.validateReferential(document.getRefundType(), false, "RefundType");
+        validationHelper.validateString(document.getRefundIBAN(), false, 40, "RefundIBAN");
+        validationHelper.validateReferential(document.getBillingClosureType(), false, "BillingClosureType");
+        validationHelper.validateReferential(document.getBillingClosureRecipientType(), false,
+            "BillingClosureRecipientType");
 
         if (document.getIsMailingPaper() == null)
           document.setIsMailingPaper(false);
@@ -1826,8 +1122,8 @@ public class QuotationController {
 
     for (AssoAffaireOrder assoAffaireOrder : quotation.getAssoAffaireOrders()) {
       if (assoAffaireOrder.getAffaire() == null)
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-      validationHelper.validateReferential(assoAffaireOrder.getAffaire(), true);
+        throw new OsirisValidationException("Affaire");
+      validationHelper.validateReferential(assoAffaireOrder.getAffaire(), true, "Affaire");
       for (Provision provision : assoAffaireOrder.getProvisions()) {
         validateProvision(provision, isOpen, isCustomerOrder);
       }
@@ -1835,129 +1131,141 @@ public class QuotationController {
 
     if (quotation.getAssoAffaireOrders().size() > 1) {
       if (quotation.getQuotationLabelType().getId().equals(constantService.getBillingLabelTypeCodeAffaire().getId()))
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        throw new OsirisValidationException("To many affaire");
       Document quotationDocument = documentService.getQuotationDocument(quotation.getDocuments());
       if (quotationDocument != null && quotationDocument.getIsRecipientAffaire())
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        throw new OsirisValidationException("To many affaire");
       Document billingDocument = documentService.getBillingDocument(quotation.getDocuments());
       if (billingDocument != null && billingDocument.getIsRecipientAffaire())
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        throw new OsirisValidationException("To many affaire");
     }
 
   }
 
-  private void validateProvision(Provision provision, boolean isOpen, boolean isCustomerOrder) throws Exception {
+  private void validateProvision(Provision provision, boolean isOpen, boolean isCustomerOrder)
+      throws OsirisValidationException, OsirisException {
 
     // Domiciliation
     if (provision.getDomiciliation() != null) {
       Domiciliation domiciliation = provision.getDomiciliation();
-      validationHelper.validateReferential(domiciliation.getDomiciliationContractType(), !isOpen);
-      validationHelper.validateReferential(domiciliation.getLanguage(), !isOpen);
-      validationHelper.validateReferential(domiciliation.getBuildingDomiciliation(), !isOpen);
-      validationHelper.validateReferential(domiciliation.getMailRedirectionType(), !isOpen);
-
-      validationHelper.validateString(domiciliation.getAddress(), false, 60);
-      validationHelper.validateString(domiciliation.getPostalCode(), false, 10);
-      validationHelper.validateString(domiciliation.getMailRecipient(), false, 60);
-      validationHelper.validateString(domiciliation.getActivityAddress(), false, 60);
-      validationHelper.validateReferential(domiciliation.getCity(), false);
-      validationHelper.validateReferential(domiciliation.getCountry(), false);
-      validationHelper.validateString(domiciliation.getAccountingRecordDomiciliation(), isCustomerOrder, 60);
+      validationHelper.validateReferential(domiciliation.getDomiciliationContractType(), !isOpen,
+          "DomiciliationContractType");
+      validationHelper.validateReferential(domiciliation.getLanguage(), !isOpen, "Language");
+      validationHelper.validateReferential(domiciliation.getBuildingDomiciliation(), !isOpen, "BuildingDomiciliation");
+      validationHelper.validateReferential(domiciliation.getMailRedirectionType(), !isOpen, "MailRedirectionType");
+      validationHelper.validateString(domiciliation.getAddress(), false, 60, "Address");
+      validationHelper.validateString(domiciliation.getPostalCode(), false, 10, "PostalCode");
+      validationHelper.validateString(domiciliation.getMailRecipient(), false, 60, "MailRecipient");
+      validationHelper.validateString(domiciliation.getActivityAddress(), false, 60, "ActivityAddress");
+      validationHelper.validateReferential(domiciliation.getCity(), false, "City");
+      validationHelper.validateReferential(domiciliation.getCountry(), false, "Country");
+      validationHelper.validateString(domiciliation.getAccountingRecordDomiciliation(), isCustomerOrder, 60,
+          "AccountingRecordDomiciliation");
 
       if (domiciliation.isLegalPerson()) {
         if ((domiciliation.getLegalGardianSiren() == null
             || !validationHelper.validateSiren(domiciliation.getLegalGardianSiren())))
-          throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        validationHelper.validateString(domiciliation.getLegalGardianDenomination(), isCustomerOrder, 60);
-        validationHelper.validateReferential(domiciliation.getLegalGardianLegalForm(), isCustomerOrder);
+          throw new OsirisValidationException("LegalGardianSiren");
+        validationHelper.validateString(domiciliation.getLegalGardianDenomination(), isCustomerOrder, 60,
+            "LegalGardianDenomination");
+        validationHelper.validateReferential(domiciliation.getLegalGardianLegalForm(), isCustomerOrder,
+            "LegalGardianLegalForm");
       } else {
-        validationHelper.validateReferential(domiciliation.getLegalGardianCivility(), isCustomerOrder);
-        validationHelper.validateString(domiciliation.getLegalGardianFirstname(), isCustomerOrder, 20);
-        validationHelper.validateString(domiciliation.getLegalGardianLastname(), isCustomerOrder, 20);
-        validationHelper.validateDateMax(domiciliation.getLegalGardianBirthdate(), isCustomerOrder,
-            LocalDate.now());
-        validationHelper.validateString(domiciliation.getLegalGardianPlaceOfBirth(), isCustomerOrder, 60);
-        validationHelper.validateString(domiciliation.getLegalGardianJob(), isCustomerOrder, 30);
+        validationHelper.validateReferential(domiciliation.getLegalGardianCivility(), isCustomerOrder,
+            "LegalGardianCivility");
+        validationHelper.validateString(domiciliation.getLegalGardianFirstname(), isCustomerOrder, 20,
+            "LegalGardianFirstname");
+        validationHelper.validateString(domiciliation.getLegalGardianLastname(), isCustomerOrder, 20,
+            "LegalGardianLastname");
+        validationHelper.validateDateMax(domiciliation.getLegalGardianBirthdate(), isCustomerOrder, LocalDate.now(),
+            "LegalGardianBirthdate");
+        validationHelper.validateString(domiciliation.getLegalGardianPlaceOfBirth(), isCustomerOrder, 60,
+            "LegalGardianPlaceOfBirth");
+        validationHelper.validateString(domiciliation.getLegalGardianJob(), isCustomerOrder, 30, "LegalGardianJob");
       }
 
-      validationHelper.validateString(domiciliation.getLegalGardianMailRecipient(), isCustomerOrder, 60);
-      validationHelper.validateString(domiciliation.getLegalGardianAddress(), isCustomerOrder, 60);
+      validationHelper.validateString(domiciliation.getLegalGardianMailRecipient(), isCustomerOrder, 60,
+          "LegalGardianMailRecipient");
+      validationHelper.validateString(domiciliation.getLegalGardianAddress(), isCustomerOrder, 60,
+          "LegalGardianAddress");
       if (domiciliation.getCountry() != null && domiciliation.getCountry().getCode().equals("FR"))
-        validationHelper.validateString(domiciliation.getLegalGardianPostalCode(), isCustomerOrder, 10);
-      validationHelper.validateReferential(domiciliation.getLegalGardianCity(), isCustomerOrder);
-      validationHelper.validateReferential(domiciliation.getLegalGardianCountry(), isCustomerOrder);
+        validationHelper.validateString(domiciliation.getLegalGardianPostalCode(), isCustomerOrder, 10,
+            "LegalGardianPostalCode");
+      validationHelper.validateReferential(domiciliation.getLegalGardianCity(), isCustomerOrder, "LegalGardianCity");
+      validationHelper.validateReferential(domiciliation.getLegalGardianCountry(), isCustomerOrder,
+          "LegalGardianCountry");
 
     }
     // Announcement
     if (provision.getAnnouncement() != null) {
       Announcement announcement = provision.getAnnouncement();
-      validationHelper.validateDateMin(announcement.getPublicationDate(), !isOpen, LocalDate.now());
-      validationHelper.validateReferential(announcement.getDepartment(), !isOpen);
-      validationHelper.validateReferential(announcement.getConfrere(), isCustomerOrder);
-      validationHelper.validateReferential(announcement.getNoticeTypeFamily(), isCustomerOrder);
+      validationHelper.validateDateMin(announcement.getPublicationDate(), !isOpen, LocalDate.now(), "PublicationDate");
+      validationHelper.validateReferential(announcement.getDepartment(), !isOpen, "Department");
+      validationHelper.validateReferential(announcement.getConfrere(), isCustomerOrder, "Confrere");
+      validationHelper.validateReferential(announcement.getNoticeTypeFamily(), isCustomerOrder, "NoticeTypeFamily");
       if (isCustomerOrder && (announcement.getNoticeTypes() == null || announcement.getNoticeTypes().size() == 0))
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        throw new OsirisValidationException("NoticeTypes");
 
       if (announcement.getNoticeTypes() != null)
         for (NoticeType noticeType : announcement.getNoticeTypes()) {
-          validationHelper.validateReferential(noticeType, isCustomerOrder);
+          validationHelper.validateReferential(noticeType, isCustomerOrder, "noticeType");
         }
-      validationHelper.validateString(announcement.getNotice(), !isOpen);
+      validationHelper.validateString(announcement.getNotice(), !isOpen, "Notice");
     }
 
     // BODACC
     if (provision.getBodacc() != null) {
       Bodacc bodacc = provision.getBodacc();
-      validationHelper.validateReferential(bodacc.getPaymentType(), false);
-      validationHelper.validateReferential(bodacc.getBodaccPublicationType(), !isOpen);
-      validationHelper.validateReferential(bodacc.getTransfertFundsType(), false);
+      validationHelper.validateReferential(bodacc.getPaymentType(), false, "PaymentType");
+      validationHelper.validateReferential(bodacc.getBodaccPublicationType(), !isOpen, "BodaccPublicationType");
+      validationHelper.validateReferential(bodacc.getTransfertFundsType(), false, "TransfertFundsType");
 
       if (bodacc.getBodaccSale() != null) {
         BodaccSale bodaccSale = bodacc.getBodaccSale();
 
-        validationHelper.validateString(bodaccSale.getDivestedBusinessAddress(), false, 100);
-        validationHelper.validateReferential(bodaccSale.getFundType(), isCustomerOrder);
-        validationHelper.validateString(bodaccSale.getOwnerFirstname(), false, 30);
-        validationHelper.validateString(bodaccSale.getOwnerLastname(), false, 30);
-        validationHelper.validateString(bodaccSale.getOwnerDenomination(), false, 60);
-        validationHelper.validateString(bodaccSale.getOwnerSiren(), false, 9);
+        validationHelper.validateString(bodaccSale.getDivestedBusinessAddress(), false, 100, "DivestedBusinessAddress");
+        validationHelper.validateReferential(bodaccSale.getFundType(), isCustomerOrder, "FundType");
+        validationHelper.validateString(bodaccSale.getOwnerFirstname(), false, 30, "OwnerFirstname");
+        validationHelper.validateString(bodaccSale.getOwnerLastname(), false, 30, "OwnerLastname");
+        validationHelper.validateString(bodaccSale.getOwnerDenomination(), false, 60, "OwnerDenomination");
+        validationHelper.validateString(bodaccSale.getOwnerSiren(), false, 9, "OwnerSiren");
         validationHelper.validateSiren(bodaccSale.getOwnerSiren());
-        validationHelper.validateString(bodaccSale.getOwnerAddress(), isCustomerOrder, 100);
-        validationHelper.validateString(bodaccSale.getOwnerAbbreviation(), false, 20);
-        validationHelper.validateString(bodaccSale.getOwnerBusinessName(), false, 60);
-        validationHelper.validateReferential(bodaccSale.getOwnerLegalForm(), false);
-
-        validationHelper.validateString(bodaccSale.getPurchaserFirstname(), false, 30);
-        validationHelper.validateString(bodaccSale.getPurchaserLastname(), false, 30);
-        validationHelper.validateString(bodaccSale.getPurchaserDenomination(), false, 60);
-        validationHelper.validateString(bodaccSale.getPurchaserSiren(), false, 9);
+        validationHelper.validateString(bodaccSale.getOwnerAddress(), isCustomerOrder, 100, "OwnerAddress");
+        validationHelper.validateString(bodaccSale.getOwnerAbbreviation(), false, 20, "OwnerAbbreviation");
+        validationHelper.validateString(bodaccSale.getOwnerBusinessName(), false, 60, "OwnerBusinessName");
+        validationHelper.validateReferential(bodaccSale.getOwnerLegalForm(), false, "OwnerLegalForm");
+        validationHelper.validateString(bodaccSale.getPurchaserFirstname(), false, 30, "PurchaserFirstname");
+        validationHelper.validateString(bodaccSale.getPurchaserLastname(), false, 30, "PurchaserLastname");
+        validationHelper.validateString(bodaccSale.getPurchaserDenomination(), false, 60, "PurchaserDenomination");
+        validationHelper.validateString(bodaccSale.getPurchaserSiren(), false, 9, "PurchaserSiren");
         validationHelper.validateSiren(bodaccSale.getPurchaserSiren());
-        validationHelper.validateString(bodaccSale.getPurchaserBusinessName(), false, 60);
-        validationHelper.validateString(bodaccSale.getPurchaserAbbreviation(), false, 20);
-        validationHelper.validateReferential(bodaccSale.getPurchaserLegalForm(), false);
-        validationHelper.validateDate(bodaccSale.getPurchaserActivityStartDate(), isCustomerOrder);
-
-        validationHelper.validateDate(bodaccSale.getDeedDate(), isCustomerOrder);
-        validationHelper.validateDate(bodaccSale.getRegistrationDate(), isCustomerOrder);
-        validationHelper.validateReferential(bodaccSale.getRegistrationAuthority(), isCustomerOrder);
-        validationHelper.validateString(bodaccSale.getRegistrationReferences(), false, 50);
-        validationHelper.validateReferential(bodaccSale.getActType(), isCustomerOrder);
-        validationHelper.validateString(bodaccSale.getWritor(), false, 60);
-        validationHelper.validateString(bodaccSale.getWritorAddress(), false, 100);
-        validationHelper.validateString(bodaccSale.getValidityObjectionAddress(), isCustomerOrder, 100);
-        validationHelper.validateString(bodaccSale.getMailObjectionAddress(), false, 100);
-        validationHelper.validateDate(bodaccSale.getLeaseResilisationDate(), isCustomerOrder);
-        validationHelper.validateString(bodaccSale.getLeaseAddress(), false, 100);
-
-        validationHelper.validateString(bodaccSale.getTenantFirstname(), false, 30);
-        validationHelper.validateString(bodaccSale.getTenantLastname(), false, 30);
-        validationHelper.validateString(bodaccSale.getTenantAddress(), isCustomerOrder, 100);
-        validationHelper.validateString(bodaccSale.getTenantDenomination(), false, 60);
-        validationHelper.validateString(bodaccSale.getTenantSiren(), false, 9);
+        validationHelper.validateString(bodaccSale.getPurchaserBusinessName(), false, 60, "PurchaserBusinessName");
+        validationHelper.validateString(bodaccSale.getPurchaserAbbreviation(), false, 20, "PurchaserAbbreviation");
+        validationHelper.validateReferential(bodaccSale.getPurchaserLegalForm(), false, "PurchaserLegalForm");
+        validationHelper.validateDate(bodaccSale.getPurchaserActivityStartDate(), isCustomerOrder,
+            "PurchaserActivityStartDate");
+        validationHelper.validateDate(bodaccSale.getDeedDate(), isCustomerOrder, "DeedDate");
+        validationHelper.validateDate(bodaccSale.getRegistrationDate(), isCustomerOrder, "RegistrationDate");
+        validationHelper.validateReferential(bodaccSale.getRegistrationAuthority(), isCustomerOrder,
+            "RegistrationAuthority");
+        validationHelper.validateString(bodaccSale.getRegistrationReferences(), false, 50, "RegistrationReferences");
+        validationHelper.validateReferential(bodaccSale.getActType(), isCustomerOrder, "ActType");
+        validationHelper.validateString(bodaccSale.getWritor(), false, 60, "Writor");
+        validationHelper.validateString(bodaccSale.getWritorAddress(), false, 100, "WritorAddress");
+        validationHelper.validateString(bodaccSale.getValidityObjectionAddress(), isCustomerOrder, 100,
+            "ValidityObjectionAddress");
+        validationHelper.validateString(bodaccSale.getMailObjectionAddress(), false, 100, "MailObjectionAddress");
+        validationHelper.validateDate(bodaccSale.getLeaseResilisationDate(), isCustomerOrder, "LeaseResilisationDate");
+        validationHelper.validateString(bodaccSale.getLeaseAddress(), false, 100, "LeaseAddress");
+        validationHelper.validateString(bodaccSale.getTenantFirstname(), false, 30, "TenantFirstname");
+        validationHelper.validateString(bodaccSale.getTenantLastname(), false, 30, "TenantLastname");
+        validationHelper.validateString(bodaccSale.getTenantAddress(), isCustomerOrder, 100, "TenantAddress");
+        validationHelper.validateString(bodaccSale.getTenantDenomination(), false, 60, "TenantDenomination");
+        validationHelper.validateString(bodaccSale.getTenantSiren(), false, 9, "TenantSiren");
         validationHelper.validateSiren(bodaccSale.getTenantSiren());
-        validationHelper.validateString(bodaccSale.getTenantBusinessName(), false, 60);
-        validationHelper.validateString(bodaccSale.getTenantAbbreviation(), false, 20);
-        validationHelper.validateReferential(bodaccSale.getTenantLegalForm(), false);
+        validationHelper.validateString(bodaccSale.getTenantBusinessName(), false, 60, "TenantBusinessName");
+        validationHelper.validateString(bodaccSale.getTenantAbbreviation(), false, 20, "TenantAbbreviation");
+        validationHelper.validateReferential(bodaccSale.getTenantLegalForm(), false, "TenantLegalForm");
 
       }
 
@@ -1966,43 +1274,44 @@ public class QuotationController {
 
         if (bodaccFusion.getBodaccFusionAbsorbedCompanies() == null
             || bodaccFusion.getBodaccFusionAbsorbedCompanies().size() == 0)
-          throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+          throw new OsirisValidationException("BodaccFusionAbsorbedCompanies");
 
         for (BodaccFusionAbsorbedCompany bodaccFusionAbsorbedCompany : bodaccFusion
             .getBodaccFusionAbsorbedCompanies()) {
-          validationHelper.validateString(bodaccFusionAbsorbedCompany.getAbsorbedCompanyDenomination(),
-              isCustomerOrder, 60);
-          validationHelper.validateString(bodaccFusionAbsorbedCompany.getAbsorbedCompanySiren(), isCustomerOrder,
-              9);
-          validationHelper.validateRna(bodaccFusionAbsorbedCompany.getAbsorbedCompanySiren());
-          validationHelper.validateString(bodaccFusionAbsorbedCompany.getAbsorbedCompanyAddress(), isCustomerOrder,
-              100);
-          validationHelper.validateReferential(bodaccFusionAbsorbedCompany.getAbsorbedCompanyLegalForm(), false);
+          validationHelper.validateString(bodaccFusionAbsorbedCompany.getAbsorbedCompanyDenomination(), isCustomerOrder,
+              60, "AbsorbedCompanyDenomination");
+          validationHelper.validateString(bodaccFusionAbsorbedCompany.getAbsorbedCompanySiren(), isCustomerOrder, 9,
+              "AbsorbedCompanySiren");
+          validationHelper.validateSiren(bodaccFusionAbsorbedCompany.getAbsorbedCompanySiren());
+          validationHelper.validateString(bodaccFusionAbsorbedCompany.getAbsorbedCompanyAddress(), isCustomerOrder, 100,
+              "AbsorbedCompanyAddress");
+          validationHelper.validateReferential(bodaccFusionAbsorbedCompany.getAbsorbedCompanyLegalForm(), false,
+              "AbsorbedCompanyLegalForm");
           validationHelper.validateDate(bodaccFusionAbsorbedCompany.getAbsorbedCompanyRcsDeclarationDate(),
-              isCustomerOrder);
-          validationHelper
-              .validateReferential(bodaccFusionAbsorbedCompany.getAbsorbedCompanyRcsCompetentAuthority(),
-                  isCustomerOrder);
+              isCustomerOrder, "AbsorbedCompanyRcsDeclarationDate");
+          validationHelper.validateReferential(bodaccFusionAbsorbedCompany.getAbsorbedCompanyRcsCompetentAuthority(),
+              isCustomerOrder, "AbsorbedCompanyRcsCompetentAuthority");
         }
 
         if (bodaccFusion.getBodaccFusionMergingCompanies() == null
             || bodaccFusion.getBodaccFusionMergingCompanies().size() == 0)
-          throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+          throw new OsirisValidationException("BodaccFusionMergingCompanies");
 
         for (BodaccFusionMergingCompany bodaccFusionMergingCompany : bodaccFusion
             .getBodaccFusionMergingCompanies()) {
-          validationHelper.validateString(bodaccFusionMergingCompany.getMergingCompanyDenomination(),
-              isCustomerOrder,
-              60);
-          validationHelper.validateString(bodaccFusionMergingCompany.getMergingCompanySiren(), isCustomerOrder, 9);
-          validationHelper.validateRna(bodaccFusionMergingCompany.getMergingCompanySiren());
-          validationHelper.validateString(bodaccFusionMergingCompany.getMergingCompanyAddress(), isCustomerOrder,
-              100);
-          validationHelper.validateReferential(bodaccFusionMergingCompany.getMergingCompanyLegalForm(), false);
+          validationHelper.validateString(bodaccFusionMergingCompany.getMergingCompanyDenomination(), isCustomerOrder,
+              60, "MergingCompanyDenomination");
+          validationHelper.validateString(bodaccFusionMergingCompany.getMergingCompanySiren(), isCustomerOrder, 9,
+              "MergingCompanySiren");
+          validationHelper.validateSiren(bodaccFusionMergingCompany.getMergingCompanySiren());
+          validationHelper.validateString(bodaccFusionMergingCompany.getMergingCompanyAddress(), isCustomerOrder, 100,
+              "MergingCompanyAddress");
+          validationHelper.validateReferential(bodaccFusionMergingCompany.getMergingCompanyLegalForm(), false,
+              "MergingCompanyLegalForm");
           validationHelper.validateDate(bodaccFusionMergingCompany.getMergingCompanyRcsDeclarationDate(),
-              isCustomerOrder);
+              isCustomerOrder, "MergingCompanyRcsDeclarationDate");
           validationHelper.validateReferential(bodaccFusionMergingCompany.getMergingCompanyRcsCompetentAuthority(),
-              isCustomerOrder);
+              isCustomerOrder, "MergingCompanyRcsCompetentAuthority");
         }
       }
 
@@ -2011,155 +1320,141 @@ public class QuotationController {
 
         if (bodaccSplit.getBodaccSplitBeneficiaries() == null
             || bodaccSplit.getBodaccSplitBeneficiaries().size() == 0)
-          throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+          throw new OsirisValidationException("BodaccSplitBeneficiaries");
 
         for (BodaccSplitBeneficiary bodaccSplitBeneficiary : bodaccSplit.getBodaccSplitBeneficiaries()) {
-          validationHelper.validateString(bodaccSplitBeneficiary.getBeneficiaryCompanyDenomination(),
-              isCustomerOrder,
-              60);
-          validationHelper.validateString(bodaccSplitBeneficiary.getBeneficiaryCompanySiren(), isCustomerOrder, 9);
-          validationHelper.validateRna(bodaccSplitBeneficiary.getBeneficiaryCompanySiren());
-          validationHelper.validateString(bodaccSplitBeneficiary.getBeneficiaryCompanyAddress(), isCustomerOrder,
-              100);
-          validationHelper.validateReferential(bodaccSplitBeneficiary.getBeneficiaryCompanyLegalForm(), false);
+          validationHelper.validateString(bodaccSplitBeneficiary.getBeneficiaryCompanyDenomination(), isCustomerOrder,
+              60, "BeneficiaryCompanyDenomination");
+          validationHelper.validateString(bodaccSplitBeneficiary.getBeneficiaryCompanySiren(), isCustomerOrder, 9,
+              "BeneficiaryCompanySiren");
+          validationHelper.validateSiren(bodaccSplitBeneficiary.getBeneficiaryCompanySiren());
+          validationHelper.validateString(bodaccSplitBeneficiary.getBeneficiaryCompanyAddress(), isCustomerOrder, 100,
+              "BeneficiaryCompanyAddress");
+          validationHelper.validateReferential(bodaccSplitBeneficiary.getBeneficiaryCompanyLegalForm(), false,
+              "BeneficiaryCompanyLegalForm");
           validationHelper.validateDate(bodaccSplitBeneficiary.getBeneficiaryCompanyRcsDeclarationDate(),
-              isCustomerOrder);
+              isCustomerOrder, "BeneficiaryCompanyRcsDeclarationDate");
           validationHelper.validateReferential(bodaccSplitBeneficiary.getBeneficiaryCompanyRcsCompetentAuthority(),
-              true);
+              true, "BeneficiaryCompanyRcsCompetentAuthority");
         }
 
         if (bodaccSplit.getBodaccSplitCompanies() == null || bodaccSplit.getBodaccSplitCompanies().size() == 0)
-          throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+          throw new OsirisValidationException("BodaccSplitCompanies");
         for (BodaccSplitCompany bodaccSplitCompany : bodaccSplit.getBodaccSplitCompanies()) {
-          validationHelper.validateString(bodaccSplitCompany.getSplitCompanyDenomination(), isCustomerOrder, 60);
-          validationHelper.validateString(bodaccSplitCompany.getSplitCompanySiren(), isCustomerOrder, 9);
-          validationHelper.validateRna(bodaccSplitCompany.getSplitCompanySiren());
-          validationHelper.validateString(bodaccSplitCompany.getSplitCompanyAddress(), isCustomerOrder, 100);
-          validationHelper.validateReferential(bodaccSplitCompany.getSplitCompanyLegalForm(), false);
-          validationHelper.validateDate(bodaccSplitCompany.getSplitCompanyRcsDeclarationDate(), isCustomerOrder);
+          validationHelper.validateString(bodaccSplitCompany.getSplitCompanyDenomination(), isCustomerOrder, 60,
+              "SplitCompanyDenomination");
+          validationHelper.validateString(bodaccSplitCompany.getSplitCompanySiren(), isCustomerOrder, 9,
+              "SplitCompanySiren");
+          validationHelper.validateSiren(bodaccSplitCompany.getSplitCompanySiren());
+          validationHelper.validateString(bodaccSplitCompany.getSplitCompanyAddress(), isCustomerOrder, 100,
+              "SplitCompanyAddress");
+          validationHelper.validateReferential(bodaccSplitCompany.getSplitCompanyLegalForm(), false,
+              "SplitCompanyLegalForm");
+          validationHelper.validateDate(bodaccSplitCompany.getSplitCompanyRcsDeclarationDate(), isCustomerOrder,
+              "SplitCompanyRcsDeclarationDate");
           validationHelper.validateReferential(bodaccSplitCompany.getSplitCompanyRcsCompetentAuthority(),
-              isCustomerOrder);
+              isCustomerOrder, "SplitCompanyRcsCompetentAuthority");
         }
       }
 
-      validationHelper.validateDateMin(bodacc.getDateOfPublication(), false, LocalDate.now());
+      validationHelper.validateDateMin(bodacc.getDateOfPublication(), false, LocalDate.now(), "DateOfPublication");
     }
 
     // Formalite
     if (provision.getFormalite() != null) {
       Formalite formalite = provision.getFormalite();
-      validationHelper.validateReferential(formalite.getTypePersonne(), true);
+      validationHelper.validateReferential(formalite.getTypePersonne(), true, "TypePersonne");
       validationHelper.validateString(formalite.getCompanyName(),
           !constantService.getTypePersonnePersonnePhysique().getCode().equals(formalite.getTypePersonne().getCode()),
-          255);
-      validationHelper.validateReferential(formalite.getTypeFormalite(), true);
+          255, "CompanyName");
+      validationHelper.validateReferential(formalite.getTypeFormalite(), true, "TypeFormalite");
       validationHelper.validateReferential(formalite.getDiffusionINSEE(),
-          constantService.getTypePersonnePersonnePhysique().getCode().equals(formalite.getTypePersonne().getCode()));
+          constantService.getTypePersonnePersonnePhysique().getCode().equals(formalite.getTypePersonne().getCode()),
+          "DiffusionINSEE");
       validationHelper.validateReferential(formalite.getFormeJuridique(),
-          constantService.getTypePersonnePersonneMorale().getCode().equals(formalite.getTypePersonne().getCode()));
+          constantService.getTypePersonnePersonneMorale().getCode().equals(formalite.getTypePersonne().getCode()),
+          "FormeJuridique");
 
       if (formalite.getContent() == null)
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        throw new OsirisValidationException("Content");
 
       Content content = formalite.getContent();
 
       validationHelper.validateReferential(content.getSuccursaleOuFiliale(),
           constantService.getTypePersonnePersonneMorale().getCode().equals(formalite.getTypePersonne().getCode())
-              && constantService.getTypeFormaliteCreation().getCode().equals(formalite.getTypeFormalite().getCode()));
-
-      validationHelper.validateReferential(content.getFormeExerciceActivitePrincipale(), true);
+              && constantService.getTypeFormaliteCreation().getCode().equals(formalite.getTypeFormalite().getCode()),
+          "SuccursaleOuFiliale");
+      validationHelper.validateReferential(content.getFormeExerciceActivitePrincipale(), true,
+          "FormeExerciceActivitePrincipale");
       validationHelper.validateReferential(content.getNatureCessation(),
-          formalite.getTypeFormalite().getCode().equals(constantService.getTypeFormaliteCessation().getCode()));
+          formalite.getTypeFormalite().getCode().equals(constantService.getTypeFormaliteCessation().getCode()),
+          "NatureCessation");
       validationHelper.validateString(content.getEvenementCessation(),
-          formalite.getTypeFormalite().getCode().equals(constantService.getTypeFormaliteCessation().getCode()), 255);
+          formalite.getTypeFormalite().getCode().equals(constantService.getTypeFormaliteCessation().getCode()), 255,
+          "EvenementCessation");
       validationHelper.validateString(content.getTvaIntraCommunautaire(),
-          content.getNatureCreation() != null && content.getNatureCreation().getSocieteEtrangere(), 20);
+          content.getNatureCreation() != null && content.getNatureCreation().getSocieteEtrangere(), 20,
+          "TvaIntraCommunautaire");
 
       if (content.getNatureCreation() == null)
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        throw new OsirisValidationException("NatureCreation");
 
       NatureCreation natureCreation = content.getNatureCreation();
 
-      validationHelper.validateReferential(natureCreation.getFormeJuridique(), true);
+      validationHelper.validateReferential(natureCreation.getFormeJuridique(), true, "FormeJuridique");
       validationHelper.validateReferential(natureCreation.getTypeExploitation(),
-          formalite.getTypePersonne().getCode().equals(constantService.getTypePersonneExploitation().getCode()));
+          formalite.getTypePersonne().getCode().equals(constantService.getTypePersonneExploitation().getCode()),
+          "TypeExploitation");
     }
 
   }
 
   @PostMapping(inputEntryPoint + "/affaire")
-  public ResponseEntity<Affaire> addOrUpdateAffaire(@RequestBody Affaire affaire) {
-    try {
-      validationHelper.validateString(affaire.getAddress(), true, 60);
-      validationHelper.validateReferential(affaire.getCity(), true);
-      validationHelper.validateReferential(affaire.getCountry(), true);
-      validationHelper.validateString(affaire.getExternalReference(), false, 60);
-      if (affaire.getCountry() != null && affaire.getCountry().getCode().equals("FR"))
-        validationHelper.validateString(affaire.getPostalCode(), true, 10);
+  public ResponseEntity<Affaire> addOrUpdateAffaire(@RequestBody Affaire affaire)
+      throws OsirisValidationException, OsirisException {
+    validationHelper.validateString(affaire.getAddress(), true, 60, "Address");
+    validationHelper.validateReferential(affaire.getCity(), true, "City");
+    validationHelper.validateReferential(affaire.getCountry(), true, "Country");
+    validationHelper.validateString(affaire.getExternalReference(), false, 60, "ExternalReference");
+    if (affaire.getCountry() != null && affaire.getCountry().getCode().equals("FR"))
+      validationHelper.validateString(affaire.getPostalCode(), true, 10, "PostalCode");
 
-      if (affaire.getIsIndividual()) {
-        validationHelper.validateReferential(affaire.getCivility(), true);
-        validationHelper.validateString(affaire.getFirstname(), true, 20);
-        validationHelper.validateString(affaire.getLastname(), true, 20);
+    if (affaire.getIsIndividual()) {
+      validationHelper.validateReferential(affaire.getCivility(), true, "Civility");
+      validationHelper.validateString(affaire.getFirstname(), true, 20, "Firstname");
+      validationHelper.validateString(affaire.getLastname(), true, 20, "Lastname");
 
-      } else {
-        validationHelper.validateReferential(affaire.getLegalForm(), true);
-        validationHelper.validateString(affaire.getDenomination(), true, 60);
-        if (affaire.getRna() != null
-            && !validationHelper.validateRna(affaire.getRna().toUpperCase().replaceAll(" ", "")))
-          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        if (affaire.getSiren() != null
-            && !validationHelper.validateSiren(affaire.getSiren().toUpperCase().replaceAll(" ", "")))
-          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        if (affaire.getSiret() != null
-            && !validationHelper.validateSiret(affaire.getSiret().toUpperCase().replaceAll(" ", "")))
-          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-      }
-
-      affaire = affaireService.addOrUpdateAffaire(affaire);
-    } catch (
-
-    ResponseStatusException e) {
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching quotation", e);
-      return new ResponseEntity<Affaire>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching quotation", e);
-      return new ResponseEntity<Affaire>(HttpStatus.INTERNAL_SERVER_ERROR);
+    } else {
+      validationHelper.validateReferential(affaire.getLegalForm(), true, "LegalForm");
+      validationHelper.validateString(affaire.getDenomination(), true, 60, "Denomination");
+      if (affaire.getRna() != null
+          && !validationHelper.validateRna(affaire.getRna().toUpperCase().replaceAll(" ", "")))
+        throw new OsirisValidationException("RNA");
+      if (affaire.getSiren() != null
+          && !validationHelper.validateSiren(affaire.getSiren().toUpperCase().replaceAll(" ", "")))
+        throw new OsirisValidationException("SIREN");
+      if (affaire.getSiret() != null
+          && !validationHelper.validateSiret(affaire.getSiret().toUpperCase().replaceAll(" ", "")))
+        throw new OsirisValidationException("SIRET");
     }
-    return new ResponseEntity<Affaire>(affaire, HttpStatus.OK);
+    return new ResponseEntity<Affaire>(affaireService.addOrUpdateAffaire(affaire), HttpStatus.OK);
   }
 
   @PostMapping(inputEntryPoint + "/invoice-item/generate")
-  public ResponseEntity<IQuotation> generateInvoiceItemForQuotation(@RequestBody Quotation quotation) {
-    IQuotation outQuotation = quotation;
-    try {
-      outQuotation = quotationService.getAndSetInvoiceItemsForQuotation(quotation);
-    } catch (
-
-    ResponseStatusException e) {
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    } catch (HttpStatusCodeException e) {
-      logger.error("HTTP error when fetching quotation", e);
-      return new ResponseEntity<IQuotation>(HttpStatus.INTERNAL_SERVER_ERROR);
-    } catch (Exception e) {
-      logger.error("Error when fetching quotation", e);
-      return new ResponseEntity<IQuotation>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return new ResponseEntity<IQuotation>(outQuotation, HttpStatus.OK);
+  public ResponseEntity<IQuotation> generateInvoiceItemForQuotation(@RequestBody Quotation quotation)
+      throws OsirisException {
+    return new ResponseEntity<IQuotation>(quotationService.getAndSetInvoiceItemsForQuotation(quotation), HttpStatus.OK);
   }
 
   // Payment deposit
 
   @GetMapping(inputEntryPoint + "/payment/cb/order/deposit")
   public ResponseEntity<String> getCardPaymentLinkForPaymentDeposit(@RequestParam Integer customerOrderId,
-      @RequestParam String mail)
-      throws Exception {
+      @RequestParam String mail) {
     try {
       CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
       if (customerOrder == null)
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        throw new OsirisValidationException("customerOrder");
 
       String link = customerOrderService.getCardPaymentLinkForPaymentDeposit(customerOrder, mail,
           "Paiement de l'acompte pour la commande n°" + customerOrderId);
@@ -2176,7 +1471,6 @@ public class QuotationController {
             HttpStatus.OK);
       }
     } catch (Exception e) {
-      logger.error("Error when fetching quotation", e);
       return new ResponseEntity<String>(
           mailHelper.generateGenericHtmlConfirmation("Erreur !", null, "Commande n°" + customerOrderId,
               "Nous sommes désolé, mais une erreur est survenue lors de votre paiement.",
@@ -2188,12 +1482,12 @@ public class QuotationController {
   @RequestMapping(path = inputEntryPoint
       + "/payment/cb/order/deposit/validate", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
   public ResponseEntity<String> validateCardPaymentLinkForDeposit(CentralPayPaymentShortRequest paramMap,
-      @RequestParam Integer customerOrderId) throws Exception {
+      @RequestParam Integer customerOrderId) {
 
     try {
       CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
       if (customerOrder == null)
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        throw new OsirisValidationException("customerOrder");
 
       Boolean status = customerOrderService.validateCardPaymentLinkForDeposit(customerOrder);
 
@@ -2208,7 +1502,6 @@ public class QuotationController {
         throw new Exception();
       }
     } catch (Exception e) {
-      logger.error("Error when fetching quotation", e);
       return new ResponseEntity<String>(
           mailHelper.generateGenericHtmlConfirmation("Erreur !", null, "Commande n°" + customerOrderId,
               "Nous sommes désolé, mais une erreur est survenue lors de votre paiement.",
@@ -2221,12 +1514,11 @@ public class QuotationController {
 
   @GetMapping(inputEntryPoint + "/payment/cb/order/invoice")
   public ResponseEntity<String> getCardPaymentLinkForPaymentInvoice(@RequestParam Integer customerOrderId,
-      @RequestParam String mail)
-      throws Exception {
+      @RequestParam String mail) {
     try {
       CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
       if (customerOrder == null)
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        throw new OsirisValidationException("customerOrder");
 
       String link = customerOrderService.getCardPaymentLinkForPaymentInvoice(customerOrder, mail,
           "Paiement de la facture pour la commande n°" + customerOrderId);
@@ -2243,7 +1535,6 @@ public class QuotationController {
             HttpStatus.OK);
       }
     } catch (Exception e) {
-      logger.error("Error when fetching quotation", e);
       return new ResponseEntity<String>(
           mailHelper.generateGenericHtmlConfirmation("Erreur !", null, "Commande n°" + customerOrderId,
               "Nous sommes désolé, mais une erreur est survenue lors de votre paiement.",
@@ -2255,12 +1546,12 @@ public class QuotationController {
   @RequestMapping(path = inputEntryPoint
       + "/payment/cb/order/invoice/validate", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
   public ResponseEntity<String> validateCardPaymentLinkForInvoice(CentralPayPaymentShortRequest paramMap,
-      @RequestParam Integer customerOrderId) throws Exception {
+      @RequestParam Integer customerOrderId) {
 
     try {
       CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
       if (customerOrder == null)
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        throw new OsirisValidationException("customerOrder");
 
       Boolean status = customerOrderService.validateCardPaymentLinkForInvoice(customerOrder);
 
@@ -2275,7 +1566,6 @@ public class QuotationController {
         throw new Exception();
       }
     } catch (Exception e) {
-      logger.error("Error when fetching quotation", e);
       return new ResponseEntity<String>(
           mailHelper.generateGenericHtmlConfirmation("Erreur !", null, "Commande n°" + customerOrderId,
               "Nous sommes désolé, mais une erreur est survenue lors de votre paiement.",

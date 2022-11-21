@@ -3,6 +3,7 @@ package com.jss.osiris.modules.quotation.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.quotation.model.AffaireSearch;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
@@ -14,7 +15,8 @@ public interface AssoAffaireOrderService {
 
     public AssoAffaireOrder getAssoAffaireOrder(Integer id);
 
-    public AssoAffaireOrder addOrUpdateAssoAffaireOrder(AssoAffaireOrder assoAffaireOrder) throws Exception;
+    public AssoAffaireOrder addOrUpdateAssoAffaireOrder(AssoAffaireOrder assoAffaireOrder)
+            throws OsirisException;
 
     public void updateAssignedToForAsso(AssoAffaireOrder asso, Employee employee);
 
@@ -22,7 +24,6 @@ public interface AssoAffaireOrderService {
 
     public void reindexAffaires();
 
-    public AssoAffaireOrder completeAssoAffaireOrder(AssoAffaireOrder assoAffaireOrder, CustomerOrder customerOrder)
-            throws Exception;
+    public AssoAffaireOrder completeAssoAffaireOrder(AssoAffaireOrder assoAffaireOrder, CustomerOrder customerOrder);
 
 }

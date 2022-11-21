@@ -2,6 +2,7 @@ package com.jss.osiris.modules.miscellaneous.service;
 
 import java.util.List;
 
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.miscellaneous.model.Gift;
 
 public interface GiftService {
@@ -9,7 +10,7 @@ public interface GiftService {
 
     public Gift getGift(Integer id);
 
-    public Gift addOrUpdateGift(Gift gift) throws Exception;
+    public Gift addOrUpdateGift(Gift gift) throws OsirisException;
 
     public void decreaseStock(Gift gift);
 }

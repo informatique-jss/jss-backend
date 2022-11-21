@@ -4,11 +4,10 @@ import com.jss.osiris.modules.quotation.model.centralPay.CentralPayPaymentReques
 
 public interface CentralPayDelegateService {
 
-    public CentralPayPaymentRequest cancelPaymentRequest(String centralPayPaymentRequestId) throws Exception;
+    public CentralPayPaymentRequest cancelPaymentRequest(String centralPayPaymentRequestId);
 
     public CentralPayPaymentRequest generatePayPaymentRequest(Float amount, String mail, String entityId,
-            String subject)
-            throws Exception;
+            String subject);
 
-    public CentralPayPaymentRequest getPaymentRequest(String centralPayPaymentRequestId) throws Exception;
+    public CentralPayPaymentRequest getPaymentRequest(String centralPayPaymentRequestId);
 }

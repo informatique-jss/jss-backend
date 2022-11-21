@@ -1,13 +1,12 @@
 package com.jss.osiris.modules.miscellaneous.controller;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -20,12 +19,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
 
 import com.jss.osiris.libs.ActiveDirectoryHelper;
+import com.jss.osiris.libs.GlobalExceptionHandler;
 import com.jss.osiris.libs.ValidationHelper;
+import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.exception.OsirisLog;
+import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.accounting.service.AccountingAccountService;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.miscellaneous.model.AssoSpecialOfferBillingType;
@@ -99,8 +100,6 @@ public class MiscellaneousController {
 
     private static final String inputEntryPoint = "/miscellaneous";
 
-    private static final Logger logger = LoggerFactory.getLogger(MiscellaneousController.class);
-
     @Autowired
     AttachmentTypeService attachmentTypeService;
 
@@ -112,6 +111,9 @@ public class MiscellaneousController {
 
     @Autowired
     LegalFormService legalFormService;
+
+    @Autowired
+    GlobalExceptionHandler globalExceptionHandler;
 
     @Autowired
     WeekDayService weekDayService;
@@ -211,71 +213,38 @@ public class MiscellaneousController {
 
     @GetMapping(inputEntryPoint + "/notifications")
     public ResponseEntity<List<Notification>> getNotifications(@RequestParam Boolean displayFuture) {
-        List<Notification> notifications = null;
-        try {
-            notifications = notificationService.getNotificationsForCurrentEmployee(displayFuture);
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching notification", e);
-            return new ResponseEntity<List<Notification>>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching notification", e);
-            return new ResponseEntity<List<Notification>>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<List<Notification>>(notifications, HttpStatus.OK);
+        return new ResponseEntity<List<Notification>>(
+                notificationService.getNotificationsForCurrentEmployee(displayFuture), HttpStatus.OK);
     }
 
     @PostMapping(inputEntryPoint + "/notification/personnal")
     public ResponseEntity<Notification> addPOrUpdatePersonnalNotification(
             @RequestBody Notification notifications) {
-        Notification outNotification;
-        try {
-            outNotification = notificationService
-                    .addOrUpdatePersonnalNotification(notifications);
-        } catch (ResponseStatusException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching notification", e);
-            return new ResponseEntity<Notification>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching notification", e);
-            return new ResponseEntity<Notification>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<Notification>(outNotification, HttpStatus.OK);
+        return new ResponseEntity<Notification>(notificationService
+                .addOrUpdatePersonnalNotification(notifications), HttpStatus.OK);
     }
 
     @PostMapping(inputEntryPoint + "/notification")
     public ResponseEntity<Notification> addOrUpdateNotification(
-            @RequestBody Notification notifications) {
-        Notification outNotification;
+            @RequestBody Notification notifications) throws OsirisValidationException, OsirisException {
         boolean isRead = notifications.getIsRead();
-        try {
-            // You can only modify read property ;)
-            notifications = (Notification) validationHelper.validateReferential(notifications, true);
-            notifications.setIsRead(isRead);
-            outNotification = notificationService
-                    .addOrUpdateNotificationFromUser(notifications);
-        } catch (ResponseStatusException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching notification", e);
-            return new ResponseEntity<Notification>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching notification", e);
-            return new ResponseEntity<Notification>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<Notification>(outNotification, HttpStatus.OK);
+        // You can only modify read property ;)
+        notifications = (Notification) validationHelper.validateReferential(notifications, true, "notifications");
+        notifications.setIsRead(isRead);
+        return new ResponseEntity<Notification>(notificationService
+                .addOrUpdateNotificationFromUser(notifications), HttpStatus.OK);
     }
 
     @DeleteMapping(inputEntryPoint + "/notification")
     public ResponseEntity<Boolean> deleteNotification(
-            @RequestParam Integer notificationId) {
+            @RequestParam Integer notificationId) throws OsirisValidationException {
         if (notificationId == null)
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            throw new OsirisValidationException("notificationId");
 
         Notification notification = notificationService.getNotification(notificationId);
 
         if (notification == null)
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            throw new OsirisValidationException("notification");
 
         List<Employee> backupEmployee = employeeService
                 .getMyHolidaymaker(employeeService.getCurrentEmployee());
@@ -292,1171 +261,594 @@ public class MiscellaneousController {
                 found = true;
             }
         if (!found)
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            throw new OsirisValidationException("employee");
 
-        try {
-            notificationService.deleteNotification(notification);
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching accountingRecord", e);
-            return new ResponseEntity<Boolean>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching accountingRecord", e);
-            return new ResponseEntity<Boolean>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        notificationService.deleteNotification(notification);
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/constants")
-    public ResponseEntity<Constant> getConstants() {
-        Constant constants = null;
-        try {
-            constants = constantService.getConstants();
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching constant", e);
-            return new ResponseEntity<Constant>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching constant", e);
-            return new ResponseEntity<Constant>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<Constant>(constants, HttpStatus.OK);
+    public ResponseEntity<Constant> getConstants() throws OsirisException {
+        return new ResponseEntity<Constant>(constantService.getConstants(), HttpStatus.OK);
     }
 
     @PostMapping(inputEntryPoint + "/constant")
     public ResponseEntity<Constant> addOrUpdateConstant(
-            @RequestBody Constant constant) {
-        Constant outConstant;
-        try {
-            if (constant.getId() != null)
-                validationHelper.validateReferential(constant, true);
-            validationHelper.validateReferential(constant.getBillingLabelTypeCodeAffaire(), true);
-            validationHelper.validateReferential(constant.getBillingLabelTypeCodeAffaire(), true);
-            validationHelper.validateReferential(constant.getBillingLabelTypeOther(), true);
-            validationHelper.validateReferential(constant.getBillingLabelTypeCustomer(), true);
-            validationHelper.validateReferential(constant.getAccountingJournalSales(), true);
-            validationHelper.validateReferential(constant.getAccountingJournalPurchases(), true);
-            validationHelper.validateReferential(constant.getAccountingJournalANouveau(), true);
-            validationHelper.validateReferential(constant.getTiersTypeProspect(), true);
-            validationHelper.validateReferential(constant.getDocumentTypePublication(), true);
-            validationHelper.validateReferential(constant.getDocumentTypeCfe(), true);
-            validationHelper.validateReferential(constant.getDocumentTypeKbis(), true);
-            validationHelper.validateReferential(constant.getDocumentTypeBilling(), true);
-            validationHelper.validateReferential(constant.getDocumentTypeDunning(), true);
-            validationHelper.validateReferential(constant.getDocumentTypeRefund(), true);
-            validationHelper.validateReferential(constant.getDocumentTypeBillingClosure(), true);
-            validationHelper.validateReferential(constant.getDocumentTypeProvisionnalReceipt(), true);
-            validationHelper.validateReferential(constant.getDocumentTypeProofReading(), true);
-            validationHelper.validateReferential(constant.getDocumentTypePublicationCertificate(), true);
-            validationHelper.validateReferential(constant.getDocumentTypeQuotation(), true);
-            validationHelper.validateReferential(constant.getAttachmentTypeKbis(), true);
-            validationHelper.validateReferential(constant.getAttachmentTypeCni(), true);
-            validationHelper.validateReferential(constant.getAttachmentTypeLogo(), true);
-            validationHelper.validateReferential(constant.getAttachmentTypeProofOfAddress(), true);
-            validationHelper.validateReferential(constant.getCountryFrance(), true);
-            validationHelper.validateReferential(constant.getCountryMonaco(), true);
-            validationHelper.validateReferential(constant.getBillingTypeLogo(), true);
-            validationHelper.validateReferential(constant.getQuotationLabelTypeOther(), true);
-            validationHelper.validateReferential(constant.getPaymentTypePrelevement(), true);
-            validationHelper.validateReferential(constant.getPaymentTypeVirement(), true);
-            validationHelper.validateReferential(constant.getPaymentTypeCB(), true);
-            validationHelper.validateReferential(constant.getPaymentTypeEspeces(), true);
-            validationHelper.validateReferential(constant.getRefundTypeVirement(), true);
-            validationHelper.validateReferential(constant.getSubscriptionPeriodType12M(), true);
-            validationHelper.validateReferential(constant.getLegalFormUnregistered(), true);
-            validationHelper.validateReferential(constant.getJournalTypeSpel(), true);
-            validationHelper.validateReferential(constant.getConfrereJss(), true);
-            validationHelper.validateReferential(constant.getDomiciliationContractTypeKeepMail(), true);
-            validationHelper.validateReferential(constant.getDomiciliationContractTypeRouteMail(), true);
-            validationHelper.validateReferential(constant.getDomiciliationContractTypeRouteEmailAndMail(), true);
-            validationHelper.validateReferential(constant.getDomiciliationContractTypeRouteEmail(), true);
-            validationHelper.validateReferential(constant.getMailRedirectionTypeOther(), true);
-            validationHelper.validateReferential(constant.getBodaccPublicationTypeMerging(), true);
-            validationHelper.validateReferential(constant.getBodaccPublicationTypeSplit(), true);
-            validationHelper.validateReferential(constant.getBodaccPublicationTypePartialSplit(), true);
-            validationHelper.validateReferential(constant.getBodaccPublicationTypePossessionDispatch(), true);
-            validationHelper.validateReferential(constant.getBodaccPublicationTypeEstateRepresentativeDesignation(),
-                    true);
-            validationHelper.validateReferential(constant.getBodaccPublicationTypeSaleOfBusiness(), true);
-            validationHelper.validateReferential(constant.getActTypeSeing(), true);
-            validationHelper.validateReferential(constant.getActTypeAuthentic(), true);
-            validationHelper.validateReferential(constant.getAssignationTypeEmployee(), true);
-            validationHelper.validateReferential(constant.getEmployeeBillingResponsible(), true);
-            validationHelper.validateReferential(constant.getTransfertFundsTypePhysique(), true);
-            validationHelper.validateReferential(constant.getTransfertFundsTypeMoral(), true);
-            validationHelper.validateReferential(constant.getTransfertFundsTypeBail(), true);
-            validationHelper.validateReferential(constant.getCompetentAuthorityTypeRcs(), true);
-            validationHelper.validateReferential(constant.getCompetentAuthorityTypeCfp(), true);
-            validationHelper.validateReferential(constant.getInvoiceStatusSend(), true);
-            validationHelper.validateReferential(constant.getInvoiceStatusPayed(), true);
-            validationHelper.validateReferential(constant.getInvoiceStatusCancelled(), true);
-            validationHelper.validateReferential(constant.getPaymentWayInbound(), true);
-            validationHelper.validateReferential(constant.getPaymentWayOutboud(), true);
-            validationHelper.validateReferential(constant.getVatTwenty(), true);
-            validationHelper.validateReferential(constant.getVatEight(), true);
-            validationHelper.validateReferential(constant.getDepartmentMartinique(), true);
-            validationHelper.validateReferential(constant.getDepartmentGuadeloupe(), true);
-            validationHelper.validateReferential(constant.getDepartmentReunion(), true);
-            validationHelper.validateReferential(constant.getTypePersonnePersonnePhysique(), true);
-            validationHelper.validateReferential(constant.getTypePersonneExploitation(), true);
-            validationHelper.validateReferential(constant.getTypePersonnePersonneMorale(), true);
-            validationHelper.validateReferential(constant.getFormeJuridiqueEntrepreneurIndividuel(), true);
-            validationHelper.validateReferential(constant.getTypeFormaliteCessation(), true);
-            validationHelper.validateReferential(constant.getTypeFormaliteCorrection(), true);
-            validationHelper.validateReferential(constant.getTypeFormaliteModification(), true);
-            validationHelper.validateReferential(constant.getTypeFormaliteCreation(), true);
+            @RequestBody Constant constant) throws OsirisException, OsirisValidationException {
+        if (constant.getId() != null)
+            validationHelper.validateReferential(constant, true, "constant");
+        validationHelper.validateReferential(constant.getBillingLabelTypeCodeAffaire(), true,
+                "BillingLabelTypeCodeAffaire");
+        validationHelper.validateReferential(constant.getBillingLabelTypeCodeAffaire(), true,
+                "BillingLabelTypeCodeAffaire");
+        validationHelper.validateReferential(constant.getBillingLabelTypeOther(), true, "BillingLabelTypeOther");
+        validationHelper.validateReferential(constant.getBillingLabelTypeCustomer(), true,
+                "BillingLabelTypeCustomer");
+        validationHelper.validateReferential(constant.getAccountingJournalSales(), true, "AccountingJournalSales");
+        validationHelper.validateReferential(constant.getAccountingJournalPurchases(), true,
+                "AccountingJournalPurchases");
+        validationHelper.validateReferential(constant.getAccountingJournalANouveau(), true,
+                "AccountingJournalANouveau");
+        validationHelper.validateReferential(constant.getTiersTypeProspect(), true, "TiersTypeProspect");
+        validationHelper.validateReferential(constant.getDocumentTypePublication(), true,
+                "DocumentTypePublication");
+        validationHelper.validateReferential(constant.getDocumentTypeCfe(), true, "DocumentTypeCfe");
+        validationHelper.validateReferential(constant.getDocumentTypeKbis(), true, "DocumentTypeKbis");
+        validationHelper.validateReferential(constant.getDocumentTypeBilling(), true, "DocumentTypeBilling");
+        validationHelper.validateReferential(constant.getDocumentTypeDunning(), true, "DocumentTypeDunning");
+        validationHelper.validateReferential(constant.getDocumentTypeRefund(), true, "DocumentTypeRefund");
+        validationHelper.validateReferential(constant.getDocumentTypeBillingClosure(), true,
+                "DocumentTypeBillingClosure");
+        validationHelper.validateReferential(constant.getDocumentTypeProvisionnalReceipt(), true,
+                "DocumentTypeProvisionnalReceipt");
+        validationHelper.validateReferential(constant.getDocumentTypeProofReading(), true,
+                "DocumentTypeProofReading");
+        validationHelper.validateReferential(constant.getDocumentTypePublicationCertificate(), true,
+                "DocumentTypePublicationCertificate");
+        validationHelper.validateReferential(constant.getDocumentTypeQuotation(), true, "DocumentTypeQuotation");
+        validationHelper.validateReferential(constant.getAttachmentTypeKbis(), true, "AttachmentTypeKbis");
+        validationHelper.validateReferential(constant.getAttachmentTypeCni(), true, "AttachmentTypeCni");
+        validationHelper.validateReferential(constant.getAttachmentTypeLogo(), true, "AttachmentTypeLogo");
+        validationHelper.validateReferential(constant.getAttachmentTypeProofOfAddress(), true,
+                "AttachmentTypeProofOfAddress");
+        validationHelper.validateReferential(constant.getCountryFrance(), true, "CountryFrance");
+        validationHelper.validateReferential(constant.getCountryMonaco(), true, "CountryMonaco");
+        validationHelper.validateReferential(constant.getBillingTypeLogo(), true, "BillingTypeLogo");
+        validationHelper.validateReferential(constant.getQuotationLabelTypeOther(), true,
+                "QuotationLabelTypeOther");
+        validationHelper.validateReferential(constant.getPaymentTypePrelevement(), true, "PaymentTypePrelevement");
+        validationHelper.validateReferential(constant.getPaymentTypeVirement(), true, "PaymentTypeVirement");
+        validationHelper.validateReferential(constant.getPaymentTypeCB(), true, "PaymentTypeCB");
+        validationHelper.validateReferential(constant.getPaymentTypeEspeces(), true, "PaymentTypeEspeces");
+        validationHelper.validateReferential(constant.getRefundTypeVirement(), true, "RefundTypeVirement");
+        validationHelper.validateReferential(constant.getSubscriptionPeriodType12M(), true,
+                "SubscriptionPeriodType12M");
+        validationHelper.validateReferential(constant.getLegalFormUnregistered(), true, "LegalFormUnregistered");
+        validationHelper.validateReferential(constant.getJournalTypeSpel(), true, "JournalTypeSpel");
+        validationHelper.validateReferential(constant.getConfrereJss(), true, "ConfrereJss");
+        validationHelper.validateReferential(constant.getDomiciliationContractTypeKeepMail(), true,
+                "DomiciliationContractTypeKeepMail");
+        validationHelper.validateReferential(constant.getDomiciliationContractTypeRouteMail(), true,
+                "DomiciliationContractTypeRouteMail");
+        validationHelper.validateReferential(constant.getDomiciliationContractTypeRouteEmailAndMail(), true,
+                "DomiciliationContractTypeRouteEmailAndMail");
+        validationHelper.validateReferential(constant.getDomiciliationContractTypeRouteEmail(), true,
+                "DomiciliationContractTypeRouteEmail");
+        validationHelper.validateReferential(constant.getMailRedirectionTypeOther(), true,
+                "MailRedirectionTypeOther");
+        validationHelper.validateReferential(constant.getBodaccPublicationTypeMerging(), true,
+                "BodaccPublicationTypeMerging");
+        validationHelper.validateReferential(constant.getBodaccPublicationTypeSplit(), true,
+                "BodaccPublicationTypeSplit");
+        validationHelper.validateReferential(constant.getBodaccPublicationTypePartialSplit(), true,
+                "BodaccPublicationTypePartialSplit");
+        validationHelper.validateReferential(constant.getBodaccPublicationTypePossessionDispatch(), true,
+                "BodaccPublicationTypePossessionDispatch");
+        validationHelper.validateReferential(constant.getBodaccPublicationTypeEstateRepresentativeDesignation(),
+                true, "BodaccPublicationTypeEstateRepresentativeDesignation");
+        validationHelper.validateReferential(constant.getBodaccPublicationTypeSaleOfBusiness(), true,
+                "BodaccPublicationTypeSaleOfBusiness");
+        validationHelper.validateReferential(constant.getActTypeSeing(), true, "ActTypeSeing");
+        validationHelper.validateReferential(constant.getActTypeAuthentic(), true, "ActTypeAuthentic");
+        validationHelper.validateReferential(constant.getAssignationTypeEmployee(), true,
+                "AssignationTypeEmployee");
+        validationHelper.validateReferential(constant.getEmployeeBillingResponsible(), true,
+                "EmployeeBillingResponsible");
+        validationHelper.validateReferential(constant.getTransfertFundsTypePhysique(), true,
+                "TransfertFundsTypePhysique");
+        validationHelper.validateReferential(constant.getTransfertFundsTypeMoral(), true,
+                "TransfertFundsTypeMoral");
+        validationHelper.validateReferential(constant.getTransfertFundsTypeBail(), true, "TransfertFundsTypeBail");
+        validationHelper.validateReferential(constant.getCompetentAuthorityTypeRcs(), true,
+                "CompetentAuthorityTypeRcs");
+        validationHelper.validateReferential(constant.getCompetentAuthorityTypeCfp(), true,
+                "CompetentAuthorityTypeCfp");
+        validationHelper.validateReferential(constant.getInvoiceStatusSend(), true, "InvoiceStatusSend");
+        validationHelper.validateReferential(constant.getInvoiceStatusPayed(), true, "InvoiceStatusPayed");
+        validationHelper.validateReferential(constant.getInvoiceStatusCancelled(), true, "InvoiceStatusCancelled");
+        validationHelper.validateReferential(constant.getPaymentWayInbound(), true, "PaymentWayInbound");
+        validationHelper.validateReferential(constant.getPaymentWayOutboud(), true, "PaymentWayOutboud");
+        validationHelper.validateReferential(constant.getVatTwenty(), true, "VatTwenty");
+        validationHelper.validateReferential(constant.getVatEight(), true, "VatEight");
+        validationHelper.validateReferential(constant.getDepartmentMartinique(), true, "DepartmentMartinique");
+        validationHelper.validateReferential(constant.getDepartmentGuadeloupe(), true, "DepartmentGuadeloupe");
+        validationHelper.validateReferential(constant.getDepartmentReunion(), true, "DepartmentReunion");
+        validationHelper.validateReferential(constant.getTypePersonnePersonnePhysique(), true,
+                "TypePersonnePersonnePhysique");
+        validationHelper.validateReferential(constant.getTypePersonneExploitation(), true,
+                "TypePersonneExploitation");
+        validationHelper.validateReferential(constant.getTypePersonnePersonneMorale(), true,
+                "TypePersonnePersonneMorale");
+        validationHelper.validateReferential(constant.getFormeJuridiqueEntrepreneurIndividuel(), true,
+                "FormeJuridiqueEntrepreneurIndividuel");
+        validationHelper.validateReferential(constant.getTypeFormaliteCessation(), true, "TypeFormaliteCessation");
+        validationHelper.validateReferential(constant.getTypeFormaliteCorrection(), true,
+                "TypeFormaliteCorrection");
+        validationHelper.validateReferential(constant.getTypeFormaliteModification(), true,
+                "TypeFormaliteModification");
+        validationHelper.validateReferential(constant.getTypeFormaliteCreation(), true, "TypeFormaliteCreation");
 
-            outConstant = constantService
-                    .addOrUpdateConstant(constant);
-        } catch (
-
-        ResponseStatusException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching constant", e);
-            return new ResponseEntity<Constant>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching constant", e);
-            return new ResponseEntity<Constant>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<Constant>(outConstant, HttpStatus.OK);
+        return new ResponseEntity<Constant>(constantService.addOrUpdateConstant(constant), HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/regies")
     public ResponseEntity<List<Regie>> getRegies() {
-        List<Regie> regies = null;
-        try {
-            regies = regieService.getRegies();
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching regie", e);
-            return new ResponseEntity<List<Regie>>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching regie", e);
-            return new ResponseEntity<List<Regie>>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<List<Regie>>(regies, HttpStatus.OK);
+        return new ResponseEntity<List<Regie>>(regieService.getRegies(), HttpStatus.OK);
     }
 
     @PostMapping(inputEntryPoint + "/regie")
     public ResponseEntity<Regie> addOrUpdateRegie(
-            @RequestBody Regie regie) {
-        Regie outRegie;
-        try {
-            if (regie.getId() != null)
-                validationHelper.validateReferential(regie, true);
-            validationHelper.validateString(regie.getCode(), true);
-            validationHelper.validateString(regie.getLabel(), true);
-            validationHelper.validateReferential(regie.getCountry(), true);
-            validationHelper.validateReferential(regie.getCity(), true);
-            validationHelper.validateString(regie.getPostalCode(), false, 6);
-            validationHelper.validateString(regie.getAddress(), true, 60);
-            validationHelper.validateString(regie.getIban(), true, 40);
+            @RequestBody Regie regie) throws OsirisValidationException, OsirisException {
+        if (regie.getId() != null)
+            validationHelper.validateReferential(regie, true, "regie");
+        validationHelper.validateString(regie.getCode(), true, "Code");
+        validationHelper.validateString(regie.getLabel(), true, "Label");
+        validationHelper.validateReferential(regie.getCountry(), true, "Country");
+        validationHelper.validateReferential(regie.getCity(), true, "City");
+        validationHelper.validateString(regie.getPostalCode(), false, 6, "PostalCode");
+        validationHelper.validateString(regie.getAddress(), true, 60, "Address");
+        validationHelper.validateString(regie.getIban(), true, 40, "Iban");
 
-            outRegie = regieService
-                    .addOrUpdateRegie(regie);
-        } catch (
-
-        ResponseStatusException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching regie", e);
-            return new ResponseEntity<Regie>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching regie", e);
-            return new ResponseEntity<Regie>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<Regie>(outRegie, HttpStatus.OK);
+        return new ResponseEntity<Regie>(regieService.addOrUpdateRegie(regie), HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/providers")
     public ResponseEntity<List<Provider>> getProviders() {
-        List<Provider> providers = null;
-        try {
-            providers = providerService.getProviders();
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching provider", e);
-            return new ResponseEntity<List<Provider>>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching provider", e);
-            return new ResponseEntity<List<Provider>>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<List<Provider>>(providers, HttpStatus.OK);
+        return new ResponseEntity<List<Provider>>(providerService.getProviders(), HttpStatus.OK);
     }
 
     @PostMapping(inputEntryPoint + "/provider")
     public ResponseEntity<Provider> addOrUpdateProvider(
-            @RequestBody Provider provider) {
-        Provider outProvider;
-        try {
-            if (provider.getId() != null)
-                validationHelper.validateReferential(provider, true);
-            validationHelper.validateString(provider.getLabel(), true);
-            validationHelper.validateString(provider.getIban(), false, 40);
-            validationHelper.validateString(provider.getJssReference(), false, 20);
-            validationHelper.validateReferential(provider.getVatCollectionType(), true);
-            validationHelper.validateReferential(provider.getPaymentType(), false);
+            @RequestBody Provider provider) throws OsirisValidationException, OsirisException {
+        if (provider.getId() != null)
+            validationHelper.validateReferential(provider, true, "provider");
+        validationHelper.validateString(provider.getLabel(), true, "Label");
+        validationHelper.validateString(provider.getIban(), false, 40, "Iban");
+        validationHelper.validateString(provider.getJssReference(), false, 20, "JssReference");
+        validationHelper.validateReferential(provider.getVatCollectionType(), true, "VatCollectionType");
+        validationHelper.validateReferential(provider.getPaymentType(), false, "PaymentType");
 
-            outProvider = providerService
-                    .addOrUpdateProvider(provider);
-        } catch (
-
-        ResponseStatusException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching provider", e);
-            return new ResponseEntity<Provider>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching provider", e);
-            return new ResponseEntity<Provider>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<Provider>(outProvider, HttpStatus.OK);
+        return new ResponseEntity<Provider>(providerService.addOrUpdateProvider(provider), HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/vat-collection-types")
     public ResponseEntity<List<VatCollectionType>> getVatCollectionTypes() {
-        List<VatCollectionType> vatCollectionTypes = null;
-        try {
-            vatCollectionTypes = vatCollectionTypeService.getVatCollectionTypes();
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching vatCollectionType", e);
-            return new ResponseEntity<List<VatCollectionType>>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching vatCollectionType", e);
-            return new ResponseEntity<List<VatCollectionType>>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<List<VatCollectionType>>(vatCollectionTypes, HttpStatus.OK);
+        return new ResponseEntity<List<VatCollectionType>>(vatCollectionTypeService.getVatCollectionTypes(),
+                HttpStatus.OK);
     }
 
     @PostMapping(inputEntryPoint + "/vat-collection-type")
     public ResponseEntity<VatCollectionType> addOrUpdateVatCollectionType(
-            @RequestBody VatCollectionType vatCollectionTypes) {
-        VatCollectionType outVatCollectionType;
-        try {
-            if (vatCollectionTypes.getId() != null)
-                validationHelper.validateReferential(vatCollectionTypes, true);
-            validationHelper.validateString(vatCollectionTypes.getCode(), true);
-            validationHelper.validateString(vatCollectionTypes.getLabel(), true);
+            @RequestBody VatCollectionType vatCollectionTypes) throws OsirisValidationException, OsirisException {
+        if (vatCollectionTypes.getId() != null)
+            validationHelper.validateReferential(vatCollectionTypes, true, "vatCollectionTypes");
+        validationHelper.validateString(vatCollectionTypes.getCode(), true, "code");
+        validationHelper.validateString(vatCollectionTypes.getLabel(), true, "label");
 
-            outVatCollectionType = vatCollectionTypeService
-                    .addOrUpdateVatCollectionType(vatCollectionTypes);
-        } catch (
-
-        ResponseStatusException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching vatCollectionType", e);
-            return new ResponseEntity<VatCollectionType>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching vatCollectionType", e);
-            return new ResponseEntity<VatCollectionType>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<VatCollectionType>(outVatCollectionType, HttpStatus.OK);
+        return new ResponseEntity<VatCollectionType>(
+                vatCollectionTypeService.addOrUpdateVatCollectionType(vatCollectionTypes), HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/gifts")
     public ResponseEntity<List<Gift>> getGifts() {
-        List<Gift> gifts = null;
-        try {
-            gifts = giftService.getGifts();
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching gift", e);
-            return new ResponseEntity<List<Gift>>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching gift", e);
-            return new ResponseEntity<List<Gift>>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<List<Gift>>(gifts, HttpStatus.OK);
+        return new ResponseEntity<List<Gift>>(giftService.getGifts(), HttpStatus.OK);
     }
 
     @PostMapping(inputEntryPoint + "/gift")
     public ResponseEntity<Gift> addOrUpdateGift(
-            @RequestBody Gift gifts) {
-        Gift outGift;
-        try {
-            if (gifts.getId() != null)
-                validationHelper.validateReferential(gifts, true);
-            validationHelper.validateString(gifts.getCode(), true, 20);
-            validationHelper.validateString(gifts.getLabel(), true, 100);
-            validationHelper.validateReferential(gifts.getAccountingAccount(), false);
+            @RequestBody Gift gifts) throws OsirisValidationException, OsirisException {
+        if (gifts.getId() != null)
+            validationHelper.validateReferential(gifts, true, "gifts");
+        validationHelper.validateString(gifts.getCode(), true, 20, "code");
+        validationHelper.validateString(gifts.getLabel(), true, 100, "label");
+        validationHelper.validateReferential(gifts.getAccountingAccount(), false, "AccountingAccount");
 
-            outGift = giftService
-                    .addOrUpdateGift(gifts);
-        } catch (
-
-        ResponseStatusException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching gift", e);
-            return new ResponseEntity<Gift>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching gift", e);
-            return new ResponseEntity<Gift>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<Gift>(outGift, HttpStatus.OK);
+        return new ResponseEntity<Gift>(giftService.addOrUpdateGift(gifts), HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/special-offers")
     public ResponseEntity<List<SpecialOffer>> getSpecialOffers() {
-        List<SpecialOffer> specialOffers = null;
-        try {
-            specialOffers = specialOfferService.getSpecialOffers();
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching specialOffer", e);
-            return new ResponseEntity<List<SpecialOffer>>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching specialOffer", e);
-            return new ResponseEntity<List<SpecialOffer>>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<List<SpecialOffer>>(specialOffers, HttpStatus.OK);
+        return new ResponseEntity<List<SpecialOffer>>(specialOfferService.getSpecialOffers(), HttpStatus.OK);
     }
 
     @PostMapping(inputEntryPoint + "/special-offer")
     public ResponseEntity<SpecialOffer> addOrUpdateSpecialOffer(
-            @RequestBody SpecialOffer specialOffers) {
-        SpecialOffer outSpecialOffer;
-        try {
-            if (specialOffers.getId() != null)
-                validationHelper.validateReferential(specialOffers, true);
-            validationHelper.validateString(specialOffers.getCode(), true, 20);
-            validationHelper.validateString(specialOffers.getLabel(), true, 100);
+            @RequestBody SpecialOffer specialOffers) throws OsirisValidationException, OsirisException {
+        if (specialOffers.getId() != null)
+            validationHelper.validateReferential(specialOffers, true, "specialOffers");
+        validationHelper.validateString(specialOffers.getCode(), true, 20, "code");
+        validationHelper.validateString(specialOffers.getLabel(), true, 100, "label");
 
-            if (specialOffers.getAssoSpecialOfferBillingTypes() == null
-                    || specialOffers.getAssoSpecialOfferBillingTypes().size() == 0)
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        if (specialOffers.getAssoSpecialOfferBillingTypes() == null
+                || specialOffers.getAssoSpecialOfferBillingTypes().size() == 0)
+            throw new OsirisValidationException("AssoSpecialOfferBillingTypes");
 
-            for (AssoSpecialOfferBillingType asso : specialOffers.getAssoSpecialOfferBillingTypes())
-                validationHelper.validateReferential(asso.getBillingType(), true);
+        for (AssoSpecialOfferBillingType asso : specialOffers.getAssoSpecialOfferBillingTypes())
+            validationHelper.validateReferential(asso.getBillingType(), true, "BillingType");
 
-            outSpecialOffer = specialOfferService
-                    .addOrUpdateSpecialOffer(specialOffers);
-        } catch (
-
-        ResponseStatusException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching specialOffer", e);
-            return new ResponseEntity<SpecialOffer>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching specialOffer", e);
-            return new ResponseEntity<SpecialOffer>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<SpecialOffer>(outSpecialOffer, HttpStatus.OK);
+        return new ResponseEntity<SpecialOffer>(specialOfferService.addOrUpdateSpecialOffer(specialOffers),
+                HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/departments")
     public ResponseEntity<List<Department>> getDepartments() {
-        List<Department> departments = null;
-        try {
-            departments = departmentService.getDepartments();
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching department", e);
-            return new ResponseEntity<List<Department>>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching department", e);
-            return new ResponseEntity<List<Department>>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<List<Department>>(departments, HttpStatus.OK);
+        return new ResponseEntity<List<Department>>(departmentService.getDepartments(), HttpStatus.OK);
     }
 
     @PostMapping(inputEntryPoint + "/department")
     public ResponseEntity<Department> addOrUpdateDepartment(
-            @RequestBody Department departments) {
-        Department outDepartment;
-        try {
-            if (departments.getId() != null)
-                validationHelper.validateReferential(departments, true);
-            validationHelper.validateString(departments.getCode(), true, 20);
-            validationHelper.validateString(departments.getLabel(), true, 100);
+            @RequestBody Department departments) throws OsirisValidationException, OsirisException {
+        if (departments.getId() != null)
+            validationHelper.validateReferential(departments, true, "departments");
+        validationHelper.validateString(departments.getCode(), true, 20, "code");
+        validationHelper.validateString(departments.getLabel(), true, 100, "label");
 
-            outDepartment = departmentService
-                    .addOrUpdateDepartment(departments);
-        } catch (
-
-        ResponseStatusException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching department", e);
-            return new ResponseEntity<Department>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching department", e);
-            return new ResponseEntity<Department>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<Department>(outDepartment, HttpStatus.OK);
+        return new ResponseEntity<Department>(departmentService.addOrUpdateDepartment(departments), HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/cities")
     public ResponseEntity<List<City>> getCities() {
-        List<City> cities = null;
-        try {
-            cities = cityService.getCities();
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching city", e);
-            return new ResponseEntity<List<City>>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching city", e);
-            return new ResponseEntity<List<City>>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<List<City>>(cities, HttpStatus.OK);
+        return new ResponseEntity<List<City>>(cityService.getCities(), HttpStatus.OK);
     }
 
     @PostMapping(inputEntryPoint + "/city")
     public ResponseEntity<City> addOrUpdateCity(
-            @RequestBody City cities) {
-        City outCity;
-        try {
-            if (cities.getId() != null)
-                validationHelper.validateReferential(cities, true);
-            validationHelper.validateString(cities.getCode(), true, 20);
-            validationHelper.validateString(cities.getLabel(), true, 100);
-            validationHelper.validateString(cities.getPostalCode(), false, 6);
-            validationHelper.validateReferential(cities.getDepartment(), false);
-            validationHelper.validateReferential(cities.getCountry(), true);
+            @RequestBody City cities) throws OsirisValidationException, OsirisException {
+        if (cities.getId() != null)
+            validationHelper.validateReferential(cities, true, "cities");
+        validationHelper.validateString(cities.getCode(), true, 20, "Code");
+        validationHelper.validateString(cities.getLabel(), true, 100, "Label");
+        validationHelper.validateString(cities.getPostalCode(), false, 6, "PostalCode");
+        validationHelper.validateReferential(cities.getDepartment(), false, "Department");
+        validationHelper.validateReferential(cities.getCountry(), true, "Country");
 
-            outCity = cityService
-                    .addOrUpdateCity(cities);
-        } catch (
-
-        ResponseStatusException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching city", e);
-            return new ResponseEntity<City>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching city", e);
-            return new ResponseEntity<City>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<City>(outCity, HttpStatus.OK);
+        return new ResponseEntity<City>(cityService.addOrUpdateCity(cities), HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/cities/search/postal-code")
     public ResponseEntity<List<City>> getCitiesByPostalCode(@RequestParam String postalCode) {
-        List<City> cities = null;
-        try {
-            cities = cityService.getCitiesByPostalCode(postalCode);
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching city", e);
-            return new ResponseEntity<List<City>>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching city", e);
-            return new ResponseEntity<List<City>>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<List<City>>(cities, HttpStatus.OK);
+        return new ResponseEntity<List<City>>(cityService.getCitiesByPostalCode(postalCode), HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/cities/search/country")
     public ResponseEntity<List<City>> getCitiesByCountry(@RequestParam(required = false) Integer countryId,
             @RequestParam String city) {
-        List<City> cities = null;
-        try {
-            cities = cityService.getCitiesByCountry(countryId, city);
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching city", e);
-            return new ResponseEntity<List<City>>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching city", e);
-            return new ResponseEntity<List<City>>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<List<City>>(cities, HttpStatus.OK);
+        return new ResponseEntity<List<City>>(cityService.getCitiesByCountry(countryId, city), HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/billing-types")
     public ResponseEntity<List<BillingType>> getBillingTypes() {
-        List<BillingType> billingTypes = null;
-        try {
-            billingTypes = billingTypeService.getBillingTypes();
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching billingType", e);
-            return new ResponseEntity<List<BillingType>>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching billingType", e);
-            return new ResponseEntity<List<BillingType>>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<List<BillingType>>(billingTypes, HttpStatus.OK);
+        return new ResponseEntity<List<BillingType>>(billingTypeService.getBillingTypes(), HttpStatus.OK);
     }
 
     @PostMapping(inputEntryPoint + "/billing-type")
     public ResponseEntity<BillingType> addOrUpdateBillingType(
-            @RequestBody BillingType billingType) {
-        BillingType outBillingType;
-        try {
-            if (billingType.getId() != null)
-                validationHelper.validateReferential(billingType, true);
-            validationHelper.validateString(billingType.getCode(), true, 20);
-            validationHelper.validateString(billingType.getLabel(), true, 100);
-            validationHelper.validateReferential(billingType.getVat(), billingType.getIsOverrideVat());
-            if (!billingType.getIsOverrideVat())
-                billingType.setVat(null);
+            @RequestBody BillingType billingType) throws OsirisValidationException, OsirisException {
+        if (billingType.getId() != null)
+            validationHelper.validateReferential(billingType, true, "billingType");
+        validationHelper.validateString(billingType.getCode(), true, 20, "code");
+        validationHelper.validateString(billingType.getLabel(), true, 100, "label");
+        validationHelper.validateReferential(billingType.getVat(), billingType.getIsOverrideVat(), "Vat");
+        if (!billingType.getIsOverrideVat())
+            billingType.setVat(null);
 
-            outBillingType = billingTypeService
-                    .addOrUpdateBillingType(billingType);
-        } catch (
-
-        ResponseStatusException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching billingType", e);
-            return new ResponseEntity<BillingType>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching billingType", e);
-            return new ResponseEntity<BillingType>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<BillingType>(outBillingType, HttpStatus.OK);
+        return new ResponseEntity<BillingType>(billingTypeService.addOrUpdateBillingType(billingType), HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/billing-items")
     public ResponseEntity<List<BillingItem>> getBillingItems() {
-        List<BillingItem> billingItems = null;
-        try {
-            billingItems = billingItemService.getBillingItems();
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching billingItem", e);
-            return new ResponseEntity<List<BillingItem>>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching billingItem", e);
-            return new ResponseEntity<List<BillingItem>>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<List<BillingItem>>(billingItems, HttpStatus.OK);
+        return new ResponseEntity<List<BillingItem>>(billingItemService.getBillingItems(), HttpStatus.OK);
     }
 
     @PostMapping(inputEntryPoint + "/billing-item")
     public ResponseEntity<BillingItem> addOrUpdateBillingItem(
-            @RequestBody BillingItem billingItems) {
-        BillingItem outBillingItem = null;
-        try {
-            if (billingItems.getId() != null)
-                validationHelper.validateReferential(billingItems, true);
-            validationHelper.validateReferential(billingItems.getBillingType(), true);
+            @RequestBody BillingItem billingItems) throws OsirisValidationException, OsirisException {
+        if (billingItems.getId() != null)
+            validationHelper.validateReferential(billingItems, true, "billingItems");
+        validationHelper.validateReferential(billingItems.getBillingType(), true, "BillingType");
 
-            validationHelper.validateDate(billingItems.getStartDate(), true);
+        validationHelper.validateDate(billingItems.getStartDate(), true, "StartDate");
 
-            outBillingItem = billingItemService.addOrUpdateBillingItem(billingItems);
-        } catch (
-
-        ResponseStatusException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching billingItem", e);
-            return new ResponseEntity<BillingItem>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching billingItem", e);
-            return new ResponseEntity<BillingItem>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<BillingItem>(outBillingItem, HttpStatus.OK);
+        return new ResponseEntity<BillingItem>(billingItemService.addOrUpdateBillingItem(billingItems), HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/vats")
     public ResponseEntity<List<Vat>> getVats() {
-        List<Vat> vats = null;
-        try {
-            vats = vatService.getVats();
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching vat", e);
-            return new ResponseEntity<List<Vat>>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching vat", e);
-            return new ResponseEntity<List<Vat>>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<List<Vat>>(vats, HttpStatus.OK);
+        return new ResponseEntity<List<Vat>>(vatService.getVats(), HttpStatus.OK);
     }
 
     @PostMapping(inputEntryPoint + "/vat")
     public ResponseEntity<Vat> addOrUpdateVat(
-            @RequestBody Vat vat) {
-        Vat outVat;
-        try {
-            if (vat.getId() != null)
-                validationHelper.validateReferential(vat, true);
-            validationHelper.validateString(vat.getCode(), true, 20);
-            validationHelper.validateString(vat.getLabel(), true, 100);
-            validationHelper.validateReferential(vat.getAccountingAccount(), true);
-            validationHelper.validateFloat(vat.getRate(), true);
+            @RequestBody Vat vat) throws OsirisValidationException, OsirisException {
+        if (vat.getId() != null)
+            validationHelper.validateReferential(vat, true, "vat");
+        validationHelper.validateReferential(vat.getAccountingAccount(), true, "AccountingAccount");
+        validationHelper.validateString(vat.getCode(), true, 20, "Code");
+        validationHelper.validateString(vat.getLabel(), true, 100, "Label");
+        validationHelper.validateFloat(vat.getRate(), true, "Rate");
 
-            outVat = vatService.addOrUpdateVat(vat);
-        } catch (
-
-        ResponseStatusException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching vat", e);
-            return new ResponseEntity<Vat>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching vat", e);
-            return new ResponseEntity<Vat>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<Vat>(outVat, HttpStatus.OK);
+        return new ResponseEntity<Vat>(vatService.addOrUpdateVat(vat), HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/regions")
     public ResponseEntity<List<Region>> getRegions() {
-        List<Region> regions = null;
-        try {
-            regions = regionService.getRegions();
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching region", e);
-            return new ResponseEntity<List<Region>>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching region", e);
-            return new ResponseEntity<List<Region>>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<List<Region>>(regions, HttpStatus.OK);
+        return new ResponseEntity<List<Region>>(regionService.getRegions(), HttpStatus.OK);
     }
 
     @PostMapping(inputEntryPoint + "/region")
     public ResponseEntity<Region> addOrUpdateRegion(
-            @RequestBody Region regions) {
-        Region outRegion;
-        try {
-            if (regions.getId() != null)
-                validationHelper.validateReferential(regions, true);
-            validationHelper.validateString(regions.getCode(), true, 20);
-            validationHelper.validateString(regions.getLabel(), true, 100);
+            @RequestBody Region regions) throws OsirisValidationException, OsirisException {
+        if (regions.getId() != null)
+            validationHelper.validateReferential(regions, true, "regions");
+        validationHelper.validateString(regions.getCode(), true, 20, "code");
+        validationHelper.validateString(regions.getLabel(), true, 100, "label");
 
-            outRegion = regionService
-                    .addOrUpdateRegion(regions);
-        } catch (
-
-        ResponseStatusException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching region", e);
-            return new ResponseEntity<Region>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching region", e);
-            return new ResponseEntity<Region>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<Region>(outRegion, HttpStatus.OK);
+        return new ResponseEntity<Region>(regionService.addOrUpdateRegion(regions), HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/payment-types")
     public ResponseEntity<List<PaymentType>> getPaymentTypes() {
-        List<PaymentType> paymentTypes = null;
-        try {
-            paymentTypes = paymentTypeService.getPaymentTypes();
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching paymentType", e);
-            return new ResponseEntity<List<PaymentType>>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching paymentType", e);
-            return new ResponseEntity<List<PaymentType>>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<List<PaymentType>>(paymentTypes, HttpStatus.OK);
+        return new ResponseEntity<List<PaymentType>>(paymentTypeService.getPaymentTypes(), HttpStatus.OK);
     }
 
     @PostMapping(inputEntryPoint + "/payment-type")
     public ResponseEntity<PaymentType> addOrUpdatePaymentType(
-            @RequestBody PaymentType paymentTypes) {
-        PaymentType outPaymentType;
-        try {
-            if (paymentTypes.getId() != null)
-                validationHelper.validateReferential(paymentTypes, true);
-            validationHelper.validateString(paymentTypes.getCode(), true, 20);
-            validationHelper.validateString(paymentTypes.getLabel(), true, 100);
+            @RequestBody PaymentType paymentTypes) throws OsirisValidationException, OsirisException {
+        if (paymentTypes.getId() != null)
+            validationHelper.validateReferential(paymentTypes, true, "paymentTypes");
+        validationHelper.validateString(paymentTypes.getCode(), true, 20, "code");
+        validationHelper.validateString(paymentTypes.getLabel(), true, 100, "label");
 
-            outPaymentType = paymentTypeService
-                    .addOrUpdatePaymentType(paymentTypes);
-        } catch (
-
-        ResponseStatusException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching paymentType", e);
-            return new ResponseEntity<PaymentType>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching paymentType", e);
-            return new ResponseEntity<PaymentType>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<PaymentType>(outPaymentType, HttpStatus.OK);
+        return new ResponseEntity<PaymentType>(paymentTypeService.addOrUpdatePaymentType(paymentTypes), HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/languages")
     public ResponseEntity<List<Language>> getLanguages() {
-        List<Language> languages = null;
-        try {
-            languages = languageService.getLanguages();
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching language", e);
-            return new ResponseEntity<List<Language>>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching language", e);
-            return new ResponseEntity<List<Language>>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<List<Language>>(languages, HttpStatus.OK);
+        return new ResponseEntity<List<Language>>(languageService.getLanguages(), HttpStatus.OK);
     }
 
     @PostMapping(inputEntryPoint + "/language")
     public ResponseEntity<Language> addOrUpdateLanguage(
-            @RequestBody Language languages) {
-        Language outLanguage;
-        try {
-            if (languages.getId() != null)
-                validationHelper.validateReferential(languages, true);
-            validationHelper.validateString(languages.getCode(), true, 20);
-            validationHelper.validateString(languages.getLabel(), true, 100);
+            @RequestBody Language languages) throws OsirisValidationException, OsirisException {
+        if (languages.getId() != null)
+            validationHelper.validateReferential(languages, true, "languages");
+        validationHelper.validateString(languages.getCode(), true, 20, "code");
+        validationHelper.validateString(languages.getLabel(), true, 100, "label");
 
-            outLanguage = languageService
-                    .addOrUpdateLanguage(languages);
-        } catch (
-
-        ResponseStatusException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching language", e);
-            return new ResponseEntity<Language>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching language", e);
-            return new ResponseEntity<Language>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<Language>(outLanguage, HttpStatus.OK);
+        return new ResponseEntity<Language>(languageService.addOrUpdateLanguage(languages), HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/delivery-services")
     public ResponseEntity<List<DeliveryService>> getDeliveryServices() {
-        List<DeliveryService> deliveryServices = null;
-        try {
-            deliveryServices = deliveryServiceService.getDeliveryServices();
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching deliveryService", e);
-            return new ResponseEntity<List<DeliveryService>>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching deliveryService", e);
-            return new ResponseEntity<List<DeliveryService>>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<List<DeliveryService>>(deliveryServices, HttpStatus.OK);
+        return new ResponseEntity<List<DeliveryService>>(deliveryServiceService.getDeliveryServices(), HttpStatus.OK);
     }
 
     @PostMapping(inputEntryPoint + "/delivery-service")
     public ResponseEntity<DeliveryService> addOrUpdateDeliveryService(
-            @RequestBody DeliveryService deliveryServices) {
-        DeliveryService outDeliveryService;
-        try {
-            if (deliveryServices.getId() != null)
-                validationHelper.validateReferential(deliveryServices, true);
-            validationHelper.validateString(deliveryServices.getCode(), true, 20);
-            validationHelper.validateString(deliveryServices.getLabel(), true, 100);
+            @RequestBody DeliveryService deliveryServices) throws OsirisValidationException, OsirisException {
+        if (deliveryServices.getId() != null)
+            validationHelper.validateReferential(deliveryServices, true, "deliveryServices");
+        validationHelper.validateString(deliveryServices.getCode(), true, 20, "code");
+        validationHelper.validateString(deliveryServices.getLabel(), true, 100, "label");
 
-            outDeliveryService = deliveryServiceService
-                    .addOrUpdateDeliveryService(deliveryServices);
-        } catch (
-
-        ResponseStatusException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching deliveryService", e);
-            return new ResponseEntity<DeliveryService>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching deliveryService", e);
-            return new ResponseEntity<DeliveryService>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<DeliveryService>(outDeliveryService, HttpStatus.OK);
+        return new ResponseEntity<DeliveryService>(deliveryServiceService.addOrUpdateDeliveryService(deliveryServices),
+                HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/countries")
     public ResponseEntity<List<Country>> getCountries() {
-        List<Country> countries = null;
-        try {
-            countries = countryService.getCountries();
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching country", e);
-            return new ResponseEntity<List<Country>>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching country", e);
-            return new ResponseEntity<List<Country>>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<List<Country>>(countries, HttpStatus.OK);
+        return new ResponseEntity<List<Country>>(countryService.getCountries(), HttpStatus.OK);
     }
 
     @PostMapping(inputEntryPoint + "/country")
     public ResponseEntity<Country> addOrUpdateCountry(
-            @RequestBody Country countries) {
-        Country outCountry;
-        try {
-            if (countries.getId() != null)
-                validationHelper.validateReferential(countries, true);
-            validationHelper.validateString(countries.getCode(), true, 20);
-            validationHelper.validateString(countries.getLabel(), true, 100);
+            @RequestBody Country countries) throws OsirisValidationException, OsirisException {
+        if (countries.getId() != null)
+            validationHelper.validateReferential(countries, true, "countries");
+        validationHelper.validateString(countries.getCode(), true, 20, "code");
+        validationHelper.validateString(countries.getLabel(), true, 100, "label");
 
-            outCountry = countryService
-                    .addOrUpdateCountry(countries);
-        } catch (
-
-        ResponseStatusException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching country", e);
-            return new ResponseEntity<Country>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching country", e);
-            return new ResponseEntity<Country>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<Country>(outCountry, HttpStatus.OK);
+        return new ResponseEntity<Country>(countryService.addOrUpdateCountry(countries), HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/civilities")
     public ResponseEntity<List<Civility>> getCivilities() {
-        List<Civility> civilities = null;
-        try {
-            civilities = civilityService.getCivilities();
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching civility", e);
-            return new ResponseEntity<List<Civility>>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching civility", e);
-            return new ResponseEntity<List<Civility>>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<List<Civility>>(civilities, HttpStatus.OK);
+        return new ResponseEntity<List<Civility>>(civilityService.getCivilities(), HttpStatus.OK);
     }
 
     @PostMapping(inputEntryPoint + "/civility")
     public ResponseEntity<Civility> addOrUpdateCivility(
-            @RequestBody Civility civilities) {
-        Civility outCivility;
-        try {
-            if (civilities.getId() != null)
-                validationHelper.validateReferential(civilities, true);
-            validationHelper.validateString(civilities.getCode(), true, 20);
-            validationHelper.validateString(civilities.getLabel(), true, 100);
+            @RequestBody Civility civilities) throws OsirisValidationException, OsirisException {
+        if (civilities.getId() != null)
+            validationHelper.validateReferential(civilities, true, "civilities");
+        validationHelper.validateString(civilities.getCode(), true, 20, "code");
+        validationHelper.validateString(civilities.getLabel(), true, 100, "label");
 
-            outCivility = civilityService
-                    .addOrUpdateCivility(civilities);
-        } catch (
-
-        ResponseStatusException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching civility", e);
-            return new ResponseEntity<Civility>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching civility", e);
-            return new ResponseEntity<Civility>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<Civility>(outCivility, HttpStatus.OK);
+        return new ResponseEntity<Civility>(civilityService.addOrUpdateCivility(civilities), HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/competent-authorities/search/department")
     public ResponseEntity<List<CompetentAuthority>> getCompetentAuthorityByDepartmentAndName(
             @RequestParam(required = false) Integer departmentId,
             @RequestParam String authority) {
-        List<CompetentAuthority> competentAuthorities = null;
-        try {
-            competentAuthorities = competentAuthorityService.getCompetentAuthorityByDepartment(departmentId, authority);
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching city", e);
-            return new ResponseEntity<List<CompetentAuthority>>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching city", e);
-            return new ResponseEntity<List<CompetentAuthority>>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<List<CompetentAuthority>>(competentAuthorities, HttpStatus.OK);
+        return new ResponseEntity<List<CompetentAuthority>>(
+                competentAuthorityService.getCompetentAuthorityByDepartment(departmentId, authority), HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/competent-authorities/search/city")
-    public ResponseEntity<List<CompetentAuthority>> getCompetentAuthorityByCity(Integer cityId) {
+    public ResponseEntity<List<CompetentAuthority>> getCompetentAuthorityByCity(Integer cityId)
+            throws OsirisValidationException {
         if (cityId == null)
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-        List<CompetentAuthority> competentAuthorities = null;
-        try {
-            competentAuthorities = competentAuthorityService.getCompetentAuthorityByCity(cityId);
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching city", e);
-            return new ResponseEntity<List<CompetentAuthority>>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching city", e);
-            return new ResponseEntity<List<CompetentAuthority>>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<List<CompetentAuthority>>(competentAuthorities, HttpStatus.OK);
+            throw new OsirisValidationException("cityId");
+        return new ResponseEntity<List<CompetentAuthority>>(
+                competentAuthorityService.getCompetentAuthorityByCity(cityId), HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/competent-authority-types")
     public ResponseEntity<List<CompetentAuthorityType>> getCompetentAuthorityTypes() {
-        List<CompetentAuthorityType> competentAuthorityTypes = null;
-        try {
-            competentAuthorityTypes = competentAuthorityTypeService.getCompetentAuthorityTypes();
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching competentAuthorityType", e);
-            return new ResponseEntity<List<CompetentAuthorityType>>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching competentAuthorityType", e);
-            return new ResponseEntity<List<CompetentAuthorityType>>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<List<CompetentAuthorityType>>(competentAuthorityTypes, HttpStatus.OK);
+        return new ResponseEntity<List<CompetentAuthorityType>>(
+                competentAuthorityTypeService.getCompetentAuthorityTypes(), HttpStatus.OK);
     }
 
     @PostMapping(inputEntryPoint + "/competent-authority-type")
     public ResponseEntity<CompetentAuthorityType> addOrUpdateCompetentAuthorityType(
-            @RequestBody CompetentAuthorityType competentAuthorityTypes) {
-        CompetentAuthorityType outCompetentAuthorityType;
-        try {
-            if (competentAuthorityTypes.getId() != null)
-                validationHelper.validateReferential(competentAuthorityTypes, true);
-            validationHelper.validateString(competentAuthorityTypes.getCode(), true, 20);
-            validationHelper.validateString(competentAuthorityTypes.getLabel(), true, 100);
+            @RequestBody CompetentAuthorityType competentAuthorityTypes)
+            throws OsirisValidationException, OsirisException {
+        if (competentAuthorityTypes.getId() != null)
+            validationHelper.validateReferential(competentAuthorityTypes, true, "competentAuthorityTypes");
+        validationHelper.validateString(competentAuthorityTypes.getCode(), true, 20, "code");
+        validationHelper.validateString(competentAuthorityTypes.getLabel(), true, 100, "label");
 
-            outCompetentAuthorityType = competentAuthorityTypeService
-                    .addOrUpdateCompetentAuthorityType(competentAuthorityTypes);
-        } catch (
-
-        ResponseStatusException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching competentAuthorityType", e);
-            return new ResponseEntity<CompetentAuthorityType>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching competentAuthorityType", e);
-            return new ResponseEntity<CompetentAuthorityType>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<CompetentAuthorityType>(outCompetentAuthorityType, HttpStatus.OK);
+        return new ResponseEntity<CompetentAuthorityType>(
+                competentAuthorityTypeService.addOrUpdateCompetentAuthorityType(competentAuthorityTypes),
+                HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/competent-authorities")
     public ResponseEntity<List<CompetentAuthority>> getCompetentAuthorities() {
-        List<CompetentAuthority> competentAuthorities = null;
-        try {
-            competentAuthorities = competentAuthorityService.getCompetentAuthorities();
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching competentAuthority", e);
-            return new ResponseEntity<List<CompetentAuthority>>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching competentAuthority", e);
-            return new ResponseEntity<List<CompetentAuthority>>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<List<CompetentAuthority>>(competentAuthorities, HttpStatus.OK);
+        return new ResponseEntity<List<CompetentAuthority>>(competentAuthorityService.getCompetentAuthorities(),
+                HttpStatus.OK);
     }
 
     @PostMapping(inputEntryPoint + "/competent-authority")
     public ResponseEntity<CompetentAuthority> addOrUpdateCompetentAuthority(
-            @RequestBody CompetentAuthority competentAuthorities) {
-        CompetentAuthority outCompetentAuthority;
-        try {
-            if (competentAuthorities.getId() != null)
-                validationHelper.validateReferential(competentAuthorities, true);
-            validationHelper.validateString(competentAuthorities.getCode(), true, 20);
-            validationHelper.validateString(competentAuthorities.getLabel(), true, 100);
-            validationHelper.validateString(competentAuthorities.getSchedulle(), false, 150);
-            validationHelper.validateReferential(competentAuthorities.getCompetentAuthorityType(), true);
-            if (competentAuthorities.getCities() == null && competentAuthorities.getDepartments() == null
-                    && competentAuthorities.getRegions() == null)
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            @RequestBody CompetentAuthority competentAuthorities) throws OsirisValidationException, OsirisException {
+        if (competentAuthorities.getId() != null)
+            validationHelper.validateReferential(competentAuthorities, true, "competentAuthorities");
+        validationHelper.validateString(competentAuthorities.getCode(), true, 20, "code");
+        validationHelper.validateString(competentAuthorities.getLabel(), true, 100, "label");
+        validationHelper.validateString(competentAuthorities.getSchedulle(), false, 150, "Schedulle");
+        validationHelper.validateReferential(competentAuthorities.getCompetentAuthorityType(), true,
+                "CompetentAuthorityType");
+        if (competentAuthorities.getCities() == null && competentAuthorities.getDepartments() == null
+                && competentAuthorities.getRegions() == null)
+            throw new OsirisValidationException("Cities or Departments or Regions");
 
-            if (competentAuthorities.getCities() != null)
-                for (City city : competentAuthorities.getCities())
-                    validationHelper.validateReferential(city, false);
+        if (competentAuthorities.getCities() != null)
+            for (City city : competentAuthorities.getCities())
+                validationHelper.validateReferential(city, false, "city");
 
-            if (competentAuthorities.getRegions() != null)
-                for (Region region : competentAuthorities.getRegions())
-                    validationHelper.validateReferential(region, false);
+        if (competentAuthorities.getRegions() != null)
+            for (Region region : competentAuthorities.getRegions())
+                validationHelper.validateReferential(region, false, "region");
 
-            if (competentAuthorities.getDepartments() != null)
-                for (Department department : competentAuthorities.getDepartments())
-                    validationHelper.validateReferential(department, false);
+        if (competentAuthorities.getDepartments() != null)
+            for (Department department : competentAuthorities.getDepartments())
+                validationHelper.validateReferential(department, false, "department");
 
-            validationHelper.validateString(competentAuthorities.getIban(), competentAuthorities.getHasAccount(), 40);
-            validationHelper.validateString(competentAuthorities.getJssAccount(), false, 40);
-            validationHelper.validateString(competentAuthorities.getContact(), false, 40);
-            validationHelper.validateString(competentAuthorities.getMailRecipient(), false, 60);
-            validationHelper.validateString(competentAuthorities.getAddress(), false, 60);
-            validationHelper.validateString(competentAuthorities.getPostalCode(), false, 10);
-            validationHelper.validateReferential(competentAuthorities.getCity(), false);
-            validationHelper.validateReferential(competentAuthorities.getCountry(), false);
+        validationHelper.validateString(competentAuthorities.getIban(), competentAuthorities.getHasAccount(), 40,
+                "Iban");
+        validationHelper.validateString(competentAuthorities.getJssAccount(), false, 40, "JssAccount");
+        validationHelper.validateString(competentAuthorities.getContact(), false, 40, "Contact");
+        validationHelper.validateString(competentAuthorities.getMailRecipient(), false, 60, "MailRecipient");
+        validationHelper.validateString(competentAuthorities.getAddress(), false, 60, "Address");
+        validationHelper.validateString(competentAuthorities.getPostalCode(), false, 10, "PostalCode");
+        validationHelper.validateReferential(competentAuthorities.getCity(), false, "City");
+        validationHelper.validateReferential(competentAuthorities.getCountry(), false, "Country");
 
-            outCompetentAuthority = competentAuthorityService
-                    .addOrUpdateCompetentAuthority(competentAuthorities);
-        } catch (
-
-        ResponseStatusException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching competentAuthority", e);
-            return new ResponseEntity<CompetentAuthority>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching competentAuthority", e);
-            return new ResponseEntity<CompetentAuthority>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<CompetentAuthority>(outCompetentAuthority, HttpStatus.OK);
+        return new ResponseEntity<CompetentAuthority>(
+                competentAuthorityService.addOrUpdateCompetentAuthority(competentAuthorities), HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/weekdays")
     public ResponseEntity<List<WeekDay>> getWeekDays() {
-        List<WeekDay> weekDays = null;
-        try {
-            weekDays = weekDayService.getWeekDays();
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching weekDay", e);
-            return new ResponseEntity<List<WeekDay>>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching weekDay", e);
-            return new ResponseEntity<List<WeekDay>>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<List<WeekDay>>(weekDays, HttpStatus.OK);
+        return new ResponseEntity<List<WeekDay>>(weekDayService.getWeekDays(), HttpStatus.OK);
     }
 
     @PostMapping(inputEntryPoint + "/weekday")
     public ResponseEntity<WeekDay> addOrUpdateWeekDay(
-            @RequestBody WeekDay weekDays) {
-        WeekDay outWeekDay;
-        try {
-            if (weekDays.getId() != null)
-                validationHelper.validateReferential(weekDays, true);
-            validationHelper.validateString(weekDays.getCode(), true, 20);
-            validationHelper.validateString(weekDays.getLabel(), true, 100);
+            @RequestBody WeekDay weekDays) throws OsirisException, OsirisValidationException {
+        if (weekDays.getId() != null)
+            validationHelper.validateReferential(weekDays, true, "weekDays");
+        validationHelper.validateString(weekDays.getCode(), true, 20, "code");
+        validationHelper.validateString(weekDays.getLabel(), true, 100, "label");
 
-            outWeekDay = weekDayService
-                    .addOrUpdateWeekDay(weekDays);
-        } catch (
-
-        ResponseStatusException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching weekDay", e);
-            return new ResponseEntity<WeekDay>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching weekDay", e);
-            return new ResponseEntity<WeekDay>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<WeekDay>(outWeekDay, HttpStatus.OK);
+        return new ResponseEntity<WeekDay>(weekDayService.addOrUpdateWeekDay(weekDays), HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/legal-forms")
     public ResponseEntity<List<LegalForm>> getLegalForms() {
-        List<LegalForm> legalForms = null;
-        try {
-            legalForms = legalFormService.getLegalForms();
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching legalForm", e);
-            return new ResponseEntity<List<LegalForm>>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching legalForm", e);
-            return new ResponseEntity<List<LegalForm>>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<List<LegalForm>>(legalForms, HttpStatus.OK);
+        return new ResponseEntity<List<LegalForm>>(legalFormService.getLegalForms(), HttpStatus.OK);
     }
 
     @PostMapping(inputEntryPoint + "/legal-form")
     public ResponseEntity<LegalForm> addOrUpdateLegalForm(
-            @RequestBody LegalForm legalForms) {
-        LegalForm outLegalForm;
-        try {
-            if (legalForms.getId() != null)
-                validationHelper.validateReferential(legalForms, true);
-            validationHelper.validateString(legalForms.getCode(), true, 20);
-            validationHelper.validateString(legalForms.getLabel(), true, 100);
-            validationHelper.validateString(legalForms.getDescription(), false, 400);
+            @RequestBody LegalForm legalForms) throws OsirisValidationException, OsirisException {
+        if (legalForms.getId() != null)
+            validationHelper.validateReferential(legalForms, true, "legalForms");
+        validationHelper.validateString(legalForms.getCode(), true, 20, "code");
+        validationHelper.validateString(legalForms.getLabel(), true, 100, "label");
+        validationHelper.validateString(legalForms.getDescription(), false, 400, "description");
 
-            outLegalForm = legalFormService
-                    .addOrUpdateLegalForm(legalForms);
-        } catch (
-
-        ResponseStatusException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching legalForm", e);
-            return new ResponseEntity<LegalForm>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching legalForm", e);
-            return new ResponseEntity<LegalForm>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<LegalForm>(outLegalForm, HttpStatus.OK);
+        return new ResponseEntity<LegalForm>(legalFormService.addOrUpdateLegalForm(legalForms), HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/document-types")
     public ResponseEntity<List<DocumentType>> getDocumentTypes() {
-        List<DocumentType> documentTypes = null;
-        try {
-            documentTypes = documentTypeService.getDocumentTypes();
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching documentTypes", e);
-            return new ResponseEntity<List<DocumentType>>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching documentTypes", e);
-            return new ResponseEntity<List<DocumentType>>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<List<DocumentType>>(documentTypes, HttpStatus.OK);
+        return new ResponseEntity<List<DocumentType>>(documentTypeService.getDocumentTypes(), HttpStatus.OK);
     }
 
     @PostMapping(inputEntryPoint + "/document-type")
     public ResponseEntity<DocumentType> addOrUpdateDocumentType(
-            @RequestBody DocumentType documentTypes) {
-        DocumentType outDocumentType;
-        try {
-            if (documentTypes.getId() != null)
-                validationHelper.validateReferential(documentTypes, true);
-            validationHelper.validateString(documentTypes.getCode(), true, 20);
-            validationHelper.validateString(documentTypes.getLabel(), true, 100);
+            @RequestBody DocumentType documentTypes) throws OsirisValidationException, OsirisException {
+        if (documentTypes.getId() != null)
+            validationHelper.validateReferential(documentTypes, true, "documentTypes");
+        validationHelper.validateString(documentTypes.getCode(), true, 20, "code");
+        validationHelper.validateString(documentTypes.getLabel(), true, 100, "label");
 
-            outDocumentType = documentTypeService
-                    .addOrUpdateDocumentType(documentTypes);
-        } catch (
-
-        ResponseStatusException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching documentType", e);
-            return new ResponseEntity<DocumentType>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching documentType", e);
-            return new ResponseEntity<DocumentType>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<DocumentType>(outDocumentType, HttpStatus.OK);
+        return new ResponseEntity<DocumentType>(documentTypeService.addOrUpdateDocumentType(documentTypes),
+                HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/attachment-types")
     public ResponseEntity<List<AttachmentType>> getAttachmentTypes() {
-        List<AttachmentType> attachmentTypes = null;
-        try {
-            attachmentTypes = attachmentTypeService.getAttachmentTypes();
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching attachmentType", e);
-            return new ResponseEntity<List<AttachmentType>>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching attachmentType", e);
-            return new ResponseEntity<List<AttachmentType>>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<List<AttachmentType>>(attachmentTypes, HttpStatus.OK);
+        return new ResponseEntity<List<AttachmentType>>(attachmentTypeService.getAttachmentTypes(), HttpStatus.OK);
     }
 
     @PostMapping(inputEntryPoint + "/attachment-type")
     public ResponseEntity<AttachmentType> addOrUpdateAttachmentType(
-            @RequestBody AttachmentType attachmentTypes) {
-        AttachmentType outAttachmentType;
-        try {
-            if (attachmentTypes.getId() != null)
-                validationHelper.validateReferential(attachmentTypes, true);
-            validationHelper.validateString(attachmentTypes.getCode(), true, 20);
-            validationHelper.validateString(attachmentTypes.getLabel(), true, 100);
-            validationHelper.validateString(attachmentTypes.getDescription(), false, 400);
+            @RequestBody AttachmentType attachmentTypes) throws OsirisValidationException, OsirisException {
+        if (attachmentTypes.getId() != null)
+            validationHelper.validateReferential(attachmentTypes, true, "attachmentTypes");
+        validationHelper.validateString(attachmentTypes.getCode(), true, 20, "code");
+        validationHelper.validateString(attachmentTypes.getLabel(), true, 100, "label");
+        validationHelper.validateString(attachmentTypes.getDescription(), false, 400, "description");
 
-            outAttachmentType = attachmentTypeService
-                    .addOrUpdateAttachmentType(attachmentTypes);
-        } catch (
-
-        ResponseStatusException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching attachmentType", e);
-            return new ResponseEntity<AttachmentType>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching attachmentType", e);
-            return new ResponseEntity<AttachmentType>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<AttachmentType>(outAttachmentType, HttpStatus.OK);
+        return new ResponseEntity<AttachmentType>(attachmentTypeService.addOrUpdateAttachmentType(attachmentTypes),
+                HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/attachment/disabled")
-    public ResponseEntity<Boolean> disableDocument(@RequestParam Integer idAttachment) {
+    public ResponseEntity<Boolean> disableDocument(@RequestParam Integer idAttachment)
+            throws OsirisValidationException {
         if (idAttachment == null)
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            throw new OsirisValidationException("idAttachment");
 
         Attachment attachment = attachmentService.getAttachment(idAttachment);
         if (attachment == null)
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            throw new OsirisValidationException("attachment");
 
-        try {
-            attachmentService.disableDocument(attachment);
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching documentTypes", e);
-            return new ResponseEntity<Boolean>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching documentTypes", e);
-            return new ResponseEntity<Boolean>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        attachmentService.disableDocument(attachment);
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 
@@ -1464,74 +856,74 @@ public class MiscellaneousController {
     public ResponseEntity<List<Attachment>> uploadAttachment(@RequestParam MultipartFile file,
             @RequestParam Integer idEntity, @RequestParam String entityType,
             @RequestParam Integer idAttachmentType,
-            @RequestParam String filename, @RequestParam Boolean replaceExistingAttachementType) {
-        try {
-            if (idAttachmentType == null)
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            @RequestParam String filename, @RequestParam Boolean replaceExistingAttachementType)
+            throws OsirisValidationException, OsirisException {
+        if (idAttachmentType == null)
+            throw new OsirisValidationException("idAttachmentType");
 
-            AttachmentType attachmentType = attachmentTypeService.getAttachmentType(idAttachmentType);
+        AttachmentType attachmentType = attachmentTypeService.getAttachmentType(idAttachmentType);
 
-            if (attachmentType == null)
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        if (attachmentType == null)
+            throw new OsirisValidationException("attachmentType");
 
-            if (filename == null || filename.equals(""))
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        if (filename == null || filename.equals(""))
+            throw new OsirisValidationException("filename");
 
-            if (idEntity == null)
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        if (idEntity == null)
+            throw new OsirisValidationException("idEntity");
 
-            if (entityType == null)
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        if (entityType == null)
+            throw new OsirisValidationException("entityType");
 
-            if (!entityType.equals(Tiers.class.getSimpleName())
-                    && !entityType.equals(Responsable.class.getSimpleName())
-                    && !entityType.equals(Quotation.class.getSimpleName())
-                    && !entityType.equals(Announcement.class.getSimpleName())
-                    && !entityType.equals(Domiciliation.class.getSimpleName())
-                    && !entityType.equals(Bodacc.class.getSimpleName()))
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        if (!entityType.equals(Tiers.class.getSimpleName())
+                && !entityType.equals(Responsable.class.getSimpleName())
+                && !entityType.equals(Quotation.class.getSimpleName())
+                && !entityType.equals(Announcement.class.getSimpleName())
+                && !entityType.equals(Domiciliation.class.getSimpleName())
+                && !entityType.equals(Bodacc.class.getSimpleName()))
+            throw new OsirisValidationException("entityType");
 
-            return new ResponseEntity<List<Attachment>>(
-                    attachmentService.addAttachment(file, idEntity, entityType, attachmentType, filename,
-                            replaceExistingAttachementType),
-                    HttpStatus.OK);
-        } catch (Exception e) {
-            logger.error("Could not upload the file: " + file.getOriginalFilename() + "!", e);
-            return new ResponseEntity<List<Attachment>>(HttpStatus.EXPECTATION_FAILED);
-        }
+        return new ResponseEntity<List<Attachment>>(
+                attachmentService.addAttachment(file, idEntity, entityType, attachmentType, filename,
+                        replaceExistingAttachementType),
+                HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/attachment/download")
-    public ResponseEntity<byte[]> downloadAttachment(@RequestParam("idAttachment") Integer idAttachment) {
+    public ResponseEntity<byte[]> downloadAttachment(@RequestParam("idAttachment") Integer idAttachment)
+            throws OsirisValidationException, OsirisException {
         byte[] data = null;
         HttpHeaders headers = null;
-        try {
-            Attachment tiersAttachment = attachmentService.getAttachment(idAttachment);
+        Attachment tiersAttachment = attachmentService.getAttachment(idAttachment);
 
-            if (tiersAttachment == null || tiersAttachment.getUploadedFile() == null
-                    || tiersAttachment.getUploadedFile().getPath() == null)
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        if (tiersAttachment == null || tiersAttachment.getUploadedFile() == null
+                || tiersAttachment.getUploadedFile().getPath() == null)
+            throw new OsirisValidationException("tiersAttachment or UploadedFile or Path");
 
-            File file = new File(tiersAttachment.getUploadedFile().getPath());
+        File file = new File(tiersAttachment.getUploadedFile().getPath());
 
-            if (file != null) {
+        if (file != null) {
+            try {
                 data = Files.readAllBytes(file.toPath());
-
-                headers = new HttpHeaders();
-                headers.add("filename", tiersAttachment.getUploadedFile().getFilename());
-                headers.setAccessControlExposeHeaders(Arrays.asList("filename"));
-                headers.setContentLength(data.length);
-
-                // Compute content type
-                String mimeType = Files.probeContentType(file.toPath());
-                if (mimeType == null)
-                    mimeType = "application/octet-stream";
-                headers.set("content-type", mimeType);
-
+            } catch (IOException e) {
+                throw new OsirisException("Unable to read file " + file.getAbsolutePath());
             }
-        } catch (Exception e) {
-            logger.error("Error when fetching client types", e);
-            return new ResponseEntity<byte[]>(HttpStatus.INTERNAL_SERVER_ERROR);
+
+            headers = new HttpHeaders();
+            headers.add("filename", tiersAttachment.getUploadedFile().getFilename());
+            headers.setAccessControlExposeHeaders(Arrays.asList("filename"));
+            headers.setContentLength(data.length);
+
+            // Compute content type
+            String mimeType = null;
+            try {
+                mimeType = Files.probeContentType(file.toPath());
+            } catch (IOException e) {
+                throw new OsirisException("Unable to read file " + file.getAbsolutePath());
+            }
+            if (mimeType == null)
+                mimeType = "application/octet-stream";
+            headers.set("content-type", mimeType);
         }
         return new ResponseEntity<byte[]>(data, headers, HttpStatus.OK);
     }
@@ -1540,22 +932,32 @@ public class MiscellaneousController {
     @GetMapping(inputEntryPoint + "/index/reindex/all")
     @Transactional
     public ResponseEntity<Boolean> reindexAll() {
-        try {
-            invoiceService.reindexInvoices();
-            tiersService.reindexTiers();
-            responsableService.reindexResponsable();
-            quotationService.reindexQuotation();
-            customerOrderService.reindexCustomerOrder();
-            assoAffaireOrderService.reindexAffaires();
-            affaireService.reindexAffaire();
+        invoiceService.reindexInvoices();
+        tiersService.reindexTiers();
+        responsableService.reindexResponsable();
+        quotationService.reindexQuotation();
+        customerOrderService.reindexCustomerOrder();
+        assoAffaireOrderService.reindexAffaires();
+        affaireService.reindexAffaire();
 
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching attachmentType", e);
-            return new ResponseEntity<Boolean>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching attachmentType", e);
-            return new ResponseEntity<Boolean>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+    }
+
+    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+    @GetMapping(inputEntryPoint + "/logs")
+    public ResponseEntity<List<OsirisLog>> getLogs(@RequestParam boolean hideRead) {
+        return new ResponseEntity<List<OsirisLog>>(globalExceptionHandler.getLogs(hideRead), HttpStatus.OK);
+    }
+
+    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+    @GetMapping(inputEntryPoint + "/log")
+    public ResponseEntity<OsirisLog> getLog(@RequestParam Integer id) {
+        return new ResponseEntity<OsirisLog>(globalExceptionHandler.getLog(id), HttpStatus.OK);
+    }
+
+    @PostMapping(inputEntryPoint + "/logs")
+    public ResponseEntity<OsirisLog> addOrUpdateLogs(@RequestBody OsirisLog osirisLog)
+            throws OsirisValidationException, OsirisException {
+        return new ResponseEntity<OsirisLog>(globalExceptionHandler.addOrUpdateLog(osirisLog), HttpStatus.OK);
     }
 }

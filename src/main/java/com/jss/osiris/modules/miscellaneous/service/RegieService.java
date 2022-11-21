@@ -9,5 +9,5 @@ public interface RegieService {
 
     public Regie getRegie(Integer id);
 
-    public Regie addOrUpdateRegie(Regie regie) throws Exception;
+    public Regie addOrUpdateRegie(Regie regie);
 }

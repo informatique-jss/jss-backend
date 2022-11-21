@@ -10,7 +10,7 @@ public interface BillingItemService {
 
     public BillingItem getBillingItem(Integer id);
 
-    public BillingItem addOrUpdateBillingItem(BillingItem billingItem) throws Exception;
+    public BillingItem addOrUpdateBillingItem(BillingItem billingItem);
 
     public List<BillingItem> getBillingItemByBillingType(BillingType billingType);
 }

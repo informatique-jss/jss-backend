@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
@@ -111,12 +112,12 @@ public class QuotationServiceImpl implements QuotationService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Quotation addOrUpdateQuotationFromUser(Quotation quotation) throws Exception {
+    public Quotation addOrUpdateQuotationFromUser(Quotation quotation) throws OsirisException {
         return addOrUpdateQuotation(quotation);
     }
 
     @Override
-    public Quotation addOrUpdateQuotation(Quotation quotation) throws Exception {
+    public Quotation addOrUpdateQuotation(Quotation quotation) throws OsirisException {
         quotation.setIsQuotation(true);
 
         if (quotation.getDocuments() != null)
@@ -196,7 +197,7 @@ public class QuotationServiceImpl implements QuotationService {
     }
 
     @Override
-    public IQuotation getAndSetInvoiceItemsForQuotation(IQuotation quotation) throws Exception {
+    public IQuotation getAndSetInvoiceItemsForQuotation(IQuotation quotation) throws OsirisException {
         ArrayList<InvoiceItem> invoiceItems = new ArrayList<InvoiceItem>();
         if (quotation.getAssoAffaireOrders() != null && quotation.getAssoAffaireOrders().size() > 0
                 && quotation.getAssoAffaireOrders().get(0).getProvisions() != null
@@ -266,7 +267,8 @@ public class QuotationServiceImpl implements QuotationService {
         return null;
     }
 
-    private List<InvoiceItem> getInvoiceItemsForProvision(Provision provision, IQuotation quotation) throws Exception {
+    private List<InvoiceItem> getInvoiceItemsForProvision(Provision provision, IQuotation quotation)
+            throws OsirisException {
         List<InvoiceItem> invoiceItems = new ArrayList<InvoiceItem>();
         if (provision.getProvisionType() != null) {
             ProvisionType provisionType = provisionTypeService.getProvisionType(provision.getProvisionType().getId());
@@ -311,7 +313,7 @@ public class QuotationServiceImpl implements QuotationService {
         return invoiceItems;
     }
 
-    private boolean hasOption(BillingItem billingItem, Provision provision) throws Exception {
+    private boolean hasOption(BillingItem billingItem, Provision provision) throws OsirisException {
         if (billingItem.getBillingType().getId().equals(constantService.getBillingTypeLogo().getId())
                 && provision.getAnnouncement() != null
                 && provision.getIsLogo() != null && provision.getIsLogo())
@@ -319,7 +321,8 @@ public class QuotationServiceImpl implements QuotationService {
         return false;
     }
 
-    private void computeInvoiceItemsVatAndDiscount(InvoiceItem invoiceItem, IQuotation quotation) throws Exception {
+    private void computeInvoiceItemsVatAndDiscount(InvoiceItem invoiceItem, IQuotation quotation)
+            throws OsirisException {
         AssoSpecialOfferBillingType assoSpecialOfferBillingType = getAppliableSpecialOfferForProvision(
                 invoiceItem.getBillingItem().getBillingType(), quotation);
 
@@ -383,7 +386,7 @@ public class QuotationServiceImpl implements QuotationService {
     }
 
     private void mergeInvoiceItemsForQuotation(IQuotation quotation, List<InvoiceItem> invoiceItemsToMerge)
-            throws Exception {
+            throws OsirisException {
         if (quotation != null && invoiceItemsToMerge != null && quotation.getAssoAffaireOrders() != null
                 && quotation.getAssoAffaireOrders().size() > 0) {
             for (AssoAffaireOrder assoAffaireOrder : quotation.getAssoAffaireOrders()) {
@@ -440,10 +443,11 @@ public class QuotationServiceImpl implements QuotationService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Quotation addOrUpdateQuotationStatus(Quotation quotation, String targetStatusCode) throws Exception {
+    public Quotation addOrUpdateQuotationStatus(Quotation quotation, String targetStatusCode)
+            throws OsirisException {
         QuotationStatus targetQuotationStatus = quotationStatusService.getQuotationStatusByCode(targetStatusCode);
         if (targetQuotationStatus == null)
-            throw new Exception("Quotation status not found for code " + targetStatusCode);
+            throw new OsirisException("Quotation status not found for code " + targetStatusCode);
         if (quotation.getQuotationStatus().getCode().equals(QuotationStatus.OPEN)
                 && targetQuotationStatus.getCode().equals(QuotationStatus.TO_VERIFY))
             notificationService.notifyQuotationToVerify(quotation);
@@ -456,7 +460,7 @@ public class QuotationServiceImpl implements QuotationService {
                 && targetQuotationStatus.getCode().equals(QuotationStatus.VALIDATED_BY_CUSTOMER)) {
             CustomerOrder customerOrder = customerOrderService.createNewCustomerOrderFromQuotation(quotation);
             if (customerOrder == null)
-                throw new Exception();
+                throw new OsirisException("Erreur when createing customer order from quotation " + quotation.getId());
             if (quotation.getCustomerOrders() == null)
                 quotation.setCustomerOrders(new ArrayList<CustomerOrder>());
             quotation.getCustomerOrders().add(customerOrder);
@@ -471,7 +475,7 @@ public class QuotationServiceImpl implements QuotationService {
     }
 
     @Override
-    public ITiers getCustomerOrderOfQuotation(IQuotation quotation) throws Exception {
+    public ITiers getCustomerOrderOfQuotation(IQuotation quotation) throws OsirisException {
         if (quotation.getConfrere() != null)
             return quotation.getConfrere();
         if (quotation.getResponsable() != null)
@@ -479,7 +483,7 @@ public class QuotationServiceImpl implements QuotationService {
         if (quotation.getTiers() != null)
             return quotation.getTiers();
 
-        throw new Exception("No customer order declared on IQuotation " + quotation.getId());
+        throw new OsirisException("No customer order declared on IQuotation " + quotation.getId());
     }
 
     @Override

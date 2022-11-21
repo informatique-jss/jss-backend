@@ -7,6 +7,7 @@ import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.repository.DocumentRepository;
 
@@ -33,7 +34,7 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
-    public Document getBillingDocument(List<Document> documents) throws Exception {
+    public Document getBillingDocument(List<Document> documents) throws OsirisException {
         if (documents != null && documents.size() > 0)
             for (Document document : documents)
                 if (document.getDocumentType() != null && document.getDocumentType().getCode() != null
@@ -43,7 +44,7 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
-    public Document getQuotationDocument(List<Document> documents) throws Exception {
+    public Document getQuotationDocument(List<Document> documents) throws OsirisException {
         if (documents != null && documents.size() > 0)
             for (Document document : documents)
                 if (document.getDocumentType() != null && document.getDocumentType().getCode() != null

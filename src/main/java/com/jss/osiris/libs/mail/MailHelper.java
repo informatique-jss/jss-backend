@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -13,6 +14,7 @@ import java.util.Properties;
 
 import javax.mail.Address;
 import javax.mail.Message;
+import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
@@ -39,6 +41,7 @@ import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import com.itextpdf.text.DocumentException;
 import com.jss.osiris.libs.QrCodeHelper;
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.mail.model.CustomerMail;
 import com.jss.osiris.libs.mail.model.CustomerMailAssoAffaireOrder;
 import com.jss.osiris.libs.mail.model.MailComputeResult;
@@ -127,7 +130,7 @@ public class MailHelper {
     @Autowired
     QrCodeHelper qrCodeHelper;
 
-    private JavaMailSender getMailSender() throws IOException {
+    private JavaMailSender getMailSender() throws OsirisException {
         if (javaMailSender != null)
             return javaMailSender;
 
@@ -138,8 +141,12 @@ public class MailHelper {
         mailSender.setUsername(mailUsername);
         mailSender.setPassword(mailPassword);
         final Properties javaMailProperties = new Properties();
-        javaMailProperties
-                .load(this.applicationContext.getResource("classpath:application.properties").getInputStream());
+        try {
+            javaMailProperties
+                    .load(this.applicationContext.getResource("classpath:application.properties").getInputStream());
+        } catch (IOException e) {
+            throw new OsirisException("Unable to find application.properties in classpath");
+        }
         mailSender.setJavaMailProperties(javaMailProperties);
 
         javaMailSender = mailSender;
@@ -174,7 +181,7 @@ public class MailHelper {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void sendNextMail() throws Exception {
+    public void sendNextMail() throws OsirisException {
         List<CustomerMail> mails = customerMailRepository.findAllByOrderByCreatedDateTimeAsc();
 
         if (mails != null && mails.size() > 0) {
@@ -185,19 +192,28 @@ public class MailHelper {
         }
     }
 
-    private void prepareAndSendMail(CustomerMail mail) throws Exception {
+    private void prepareAndSendMail(CustomerMail mail) throws OsirisException {
         boolean canSend = true;
         MimeMessage message = generateGenericMail(mail);
 
         if (mailDomainFilter != null && !mailDomainFilter.equals("")) {
-            Address[] recipients = message.getRecipients(Message.RecipientType.TO);
+            Address[] recipients;
+            try {
+                recipients = message.getRecipients(Message.RecipientType.TO);
+            } catch (MessagingException e) {
+                throw new OsirisException("Unable to find recipients To for mail " + mail.getId());
+            }
             if (recipients != null)
                 for (Address address : recipients) {
                     String[] chunk = address.toString().split("@");
                     if (chunk.length != 2 || !chunk[1].equals(mailDomainFilter))
                         canSend = false;
                 }
-            recipients = message.getRecipients(Message.RecipientType.CC);
+            try {
+                recipients = message.getRecipients(Message.RecipientType.CC);
+            } catch (MessagingException e) {
+                throw new OsirisException("Unable to find recipients Cc for mail " + mail.getId());
+            }
             if (recipients != null)
                 for (Address address : recipients) {
                     String[] chunk = address.toString().split("@");
@@ -211,7 +227,7 @@ public class MailHelper {
             getMailSender().send(message);
     }
 
-    private MimeMessage generateGenericMail(CustomerMail mail) throws Exception {
+    private MimeMessage generateGenericMail(CustomerMail mail) throws OsirisException {
         // Prepare the evaluation context
         final Context ctx = new Context();
         ctx.setVariable("instagram", "instagram");
@@ -255,84 +271,101 @@ public class MailHelper {
         // Prepare message using a Spring helper
         MimeMessage mimeMessage;
         mimeMessage = getMailSender().createMimeMessage();
-        final MimeMessageHelper message = new MimeMessageHelper(mimeMessage, true, "UTF-8");
 
-        message.setFrom(new InternetAddress("no-reply@jss.fr", "Journal Spécial des Sociétés"));
+        try {
+            final MimeMessageHelper message = new MimeMessageHelper(mimeMessage, true, "UTF-8");
 
-        if (mail.getReplyTo() != null)
-            message.setReplyTo(
-                    new InternetAddress(mail.getReplyTo().getMail(),
-                            mail.getReplyTo().getFirstname() + " " + mail.getReplyTo().getLastname()));
+            try {
+                message.setFrom(new InternetAddress("no-reply@jss.fr", "Journal Spécial des Sociétés"));
+            } catch (UnsupportedEncodingException e) {
+                throw new OsirisException("Wrong From mail for customer mail " + mail.getId());
+            }
 
-        if (mail.getSendToMe() != null && mail.getSendToMe())
-            message.setTo(employeeService.getCurrentEmployee().getMail());
-        else {
-            if (mail.getMailComputeResult().getRecipientsMailTo() == null
-                    || mail.getMailComputeResult().getRecipientsMailTo().size() == 0)
-                throw new Exception("No recipient found");
+            if (mail.getReplyTo() != null)
+                try {
+                    message.setReplyTo(
+                            new InternetAddress(mail.getReplyTo().getMail(),
+                                    mail.getReplyTo().getFirstname() + " " + mail.getReplyTo().getLastname()));
+                } catch (UnsupportedEncodingException e) {
+                    throw new OsirisException("Wrong To mail for customer mail " + mail.getId());
+                }
 
-            for (Mail mailTo : mail.getMailComputeResult().getRecipientsMailTo())
-                message.setTo(mailTo.getMail());
+            if (mail.getSendToMe() != null && mail.getSendToMe())
+                message.setTo(employeeService.getCurrentEmployee().getMail());
+            else {
+                if (mail.getMailComputeResult().getRecipientsMailTo() == null
+                        || mail.getMailComputeResult().getRecipientsMailTo().size() == 0)
+                    throw new OsirisException("No recipient found");
 
-            if (mail.getMailComputeResult().getRecipientsMailCc() != null
-                    && mail.getMailComputeResult().getRecipientsMailTo().size() > 0)
-                for (Mail mailCc : mail.getMailComputeResult().getRecipientsMailCc())
-                    message.setCc(mailCc.getMail());
-        }
+                for (Mail mailTo : mail.getMailComputeResult().getRecipientsMailTo())
+                    message.setTo(mailTo.getMail());
 
-        message.setSubject(mail.getSubject());
+                if (mail.getMailComputeResult().getRecipientsMailCc() != null
+                        && mail.getMailComputeResult().getRecipientsMailTo().size() > 0)
+                    for (Mail mailCc : mail.getMailComputeResult().getRecipientsMailCc())
+                        message.setCc(mailCc.getMail());
+            }
 
-        // Create the HTML body using Thymeleaf
-        final String htmlContent = emailTemplateEngine().process("model", ctx);
-        message.setText(htmlContent, true);
+            message.setSubject(mail.getSubject());
 
-        // header picture
-        final InputStreamSource imageSourceQuotationHeader = new ByteArrayResource(
-                IOUtils.toByteArray(new ClassPathResource(mail.getHeaderPicture()).getInputStream()));
-        message.addInline("headerPicture", imageSourceQuotationHeader, PNG_MIME);
+            // Create the HTML body using Thymeleaf
+            final String htmlContent = emailTemplateEngine().process("model", ctx);
+            message.setText(htmlContent, true);
 
-        // QR Code
-        if (mail.getCbLink() != null) {
-            final InputStreamSource imageSourceQrCode = new ByteArrayResource(
-                    qrCodeHelper.getQrCode(mail.getCbLink(), 150));
-            message.addInline("qrCodePicture", imageSourceQrCode, PNG_MIME);
-        }
+            // header picture
+            try {
+                InputStreamSource imageSourceQuotationHeader = new ByteArrayResource(
+                        IOUtils.toByteArray(new ClassPathResource(mail.getHeaderPicture()).getInputStream()));
+                message.addInline("headerPicture", imageSourceQuotationHeader, PNG_MIME);
 
-        // jss-header.png
-        final InputStreamSource imageSourceJssHeader = new ByteArrayResource(
-                IOUtils.toByteArray(new ClassPathResource("images/jss-header.png").getInputStream()));
-        message.addInline("jssHeaderPicture", imageSourceJssHeader, PNG_MIME);
+                // QR Code
+                if (mail.getCbLink() != null) {
+                    final InputStreamSource imageSourceQrCode = new ByteArrayResource(
+                            qrCodeHelper.getQrCode(mail.getCbLink(), 150));
+                    message.addInline("qrCodePicture", imageSourceQrCode, PNG_MIME);
+                }
 
-        // facebook
-        final InputStreamSource imageSourceFacebook = new ByteArrayResource(
-                IOUtils.toByteArray(new ClassPathResource("images/facebook.png").getInputStream()));
-        message.addInline("facebook", imageSourceFacebook, PNG_MIME);
+                // jss-header.png
+                final InputStreamSource imageSourceJssHeader = new ByteArrayResource(
+                        IOUtils.toByteArray(new ClassPathResource("images/jss-header.png").getInputStream()));
+                message.addInline("jssHeaderPicture", imageSourceJssHeader, PNG_MIME);
 
-        // linkedin
-        final InputStreamSource imageSourceLinkedin = new ByteArrayResource(
-                IOUtils.toByteArray(new ClassPathResource("images/linkedin.png").getInputStream()));
-        message.addInline("linkedin", imageSourceLinkedin, PNG_MIME);
+                // facebook
+                final InputStreamSource imageSourceFacebook = new ByteArrayResource(
+                        IOUtils.toByteArray(new ClassPathResource("images/facebook.png").getInputStream()));
+                message.addInline("facebook", imageSourceFacebook, PNG_MIME);
 
-        // instagram
-        final InputStreamSource imageSourceInstagram = new ByteArrayResource(
-                IOUtils.toByteArray(new ClassPathResource("images/instagram.png").getInputStream()));
-        message.addInline("instagram", imageSourceInstagram, PNG_MIME);
+                // linkedin
+                final InputStreamSource imageSourceLinkedin = new ByteArrayResource(
+                        IOUtils.toByteArray(new ClassPathResource("images/linkedin.png").getInputStream()));
+                message.addInline("linkedin", imageSourceLinkedin, PNG_MIME);
 
-        // twitter
-        final InputStreamSource imageSourceTwitter = new ByteArrayResource(
-                IOUtils.toByteArray(new ClassPathResource("images/twitter.png").getInputStream()));
-        message.addInline("twitter", imageSourceTwitter, PNG_MIME);
+                // instagram
+                final InputStreamSource imageSourceInstagram = new ByteArrayResource(
+                        IOUtils.toByteArray(new ClassPathResource("images/instagram.png").getInputStream()));
+                message.addInline("instagram", imageSourceInstagram, PNG_MIME);
 
-        if (mail.getCustomerOrder() != null && mail.getSendInvoiceAttachment()) {
-            message.addAttachment("Facture n°" + ".pdf",
-                    generateInvoicePdf(mail.getCustomerOrder(), mail.getInvoice()));
+                // twitter
+                final InputStreamSource imageSourceTwitter = new ByteArrayResource(
+                        IOUtils.toByteArray(new ClassPathResource("images/twitter.png").getInputStream()));
+                message.addInline("twitter", imageSourceTwitter, PNG_MIME);
+            } catch (IOException e) {
+                throw new OsirisException("Unable to find some pictures for customer mail " + mail.getId());
+            }
+
+            if (mail.getCustomerOrder() != null && mail.getSendInvoiceAttachment()) {
+                message.addAttachment("Facture n°" + ".pdf",
+                        generateInvoicePdf(mail.getCustomerOrder(), mail.getInvoice()));
+            }
+        } catch (MessagingException e) {
+
         }
 
         return mimeMessage;
     }
 
     public String generateGenericHtmlConfirmation(String title, String subtitle, String label, String explaination,
-            String explainationWarning, String greetings) throws Exception {
+            String explainationWarning, String greetings) {
         // Prepare the evaluation context
         final Context ctx = new Context();
         ctx.setVariable("title", title);
@@ -347,7 +380,7 @@ public class MailHelper {
         return emailTemplateEngine().process("model", ctx);
     }
 
-    public MailComputeResult computeMailForQuotationDocument(IQuotation quotation) throws Exception {
+    public MailComputeResult computeMailForQuotationDocument(IQuotation quotation) throws OsirisException {
         // Compute recipients
         MailComputeResult mailComputeResult = new MailComputeResult();
         mailComputeResult.setRecipientsMailTo(new ArrayList<Mail>());
@@ -441,7 +474,7 @@ public class MailHelper {
         return mailComputeResult;
     }
 
-    public MailComputeResult computeMailForBillingDocument(IQuotation quotation) throws Exception {
+    public MailComputeResult computeMailForBillingDocument(IQuotation quotation) throws OsirisException {
         // Compute recipients
         MailComputeResult mailComputeResult = new MailComputeResult();
         mailComputeResult.setRecipientsMailTo(new ArrayList<Mail>());
@@ -584,11 +617,11 @@ public class MailHelper {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void generateQuotationMail(Quotation quotation) throws Exception {
+    public void generateQuotationMail(Quotation quotation) throws OsirisException {
         sendQuotationToCustomer(quotation, true);
     }
 
-    public void sendQuotationToCustomer(Quotation quotation, boolean sendToMe) throws Exception {
+    public void sendQuotationToCustomer(Quotation quotation, boolean sendToMe) throws OsirisException {
         CustomerMail mail = new CustomerMail();
         mail.setHeaderPicture("images/quotation-header.png");
         mail.setTitle("Votre nouveau devis est prêt !");
@@ -643,12 +676,12 @@ public class MailHelper {
         addMailToQueue(mail);
     }
 
-    public void generateWaintingDepositMail(CustomerOrder customerOrder) throws Exception {
+    public void generateWaintingDepositMail(CustomerOrder customerOrder) throws OsirisException {
         sendCustomerOrderDepositWaitingToCustomer(customerOrder, true);
     }
 
     public void sendCustomerOrderDepositWaitingToCustomer(CustomerOrder customerOrder, boolean sendToMe)
-            throws Exception {
+            throws OsirisException {
 
         CustomerMail mail = new CustomerMail();
         computeQuotationPrice(mail, customerOrder);
@@ -685,7 +718,7 @@ public class MailHelper {
     }
 
     public void sendCustomerOrderInvoiceToCustomer(CustomerOrder customerOrder, Invoice invoice, boolean sendToMe)
-            throws Exception {
+            throws OsirisException {
 
         CustomerMail mail = new CustomerMail();
         mail.setHeaderPicture("images/invoice-header.png");
@@ -731,7 +764,7 @@ public class MailHelper {
             addMailToQueue(mail);
     }
 
-    public File generateInvoicePdf(CustomerOrder customerOrder, Invoice invoice) throws DocumentException, IOException {
+    public File generateInvoicePdf(CustomerOrder customerOrder, Invoice invoice) throws OsirisException {
         final Context ctx = new Context();
 
         ctx.setVariable("preTaxPriceTotal", invoiceHelper.getPreTaxPriceTotal(invoice));
@@ -795,14 +828,23 @@ public class MailHelper {
         // Create the HTML body using Thymeleaf
         final String htmlContent = emailTemplateEngine().process("invoice-page", ctx);
 
-        File tempFile = File.createTempFile("invoice", "pdf");
-        OutputStream outputStream = new FileOutputStream(tempFile);
+        File tempFile;
+        OutputStream outputStream;
+        try {
+            tempFile = File.createTempFile("invoice", "pdf");
+            outputStream = new FileOutputStream(tempFile);
+        } catch (IOException e) {
+            throw new OsirisException("Unable to create temp file");
+        }
         ITextRenderer renderer = new ITextRenderer();
         renderer.setDocumentFromString(htmlContent);
         renderer.layout();
-        renderer.createPDF(outputStream);
-        outputStream.close();
-
+        try {
+            renderer.createPDF(outputStream);
+            outputStream.close();
+        } catch (DocumentException | IOException e) {
+            throw new OsirisException("Unable to create PDF file for invoice " + invoice.getId());
+        }
         return tempFile;
     }
 

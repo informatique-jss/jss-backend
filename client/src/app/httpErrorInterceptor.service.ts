@@ -51,6 +51,10 @@ export class HttpErrorInterceptor implements HttpInterceptor {
           if (error.status == 403) {
             this.loginService.setLoggedIn(false);
             return EMPTY;
+          } else if (error.status == 400) {
+            errorMessage = 'Erreur de validation sur ' + error.headers.get("incorrectField");
+          } else if (error.status == 500) {
+            errorMessage = 'Erreur côté serveur. \nMerci de contacter l\'administrateur ou bien de déclarer un bug à l\'aide du bouton en haut à gauche et de founir l\'indication technique suivante : ' + error.headers.get("error");
           } else {
             console.error(`Backend returned code ${error.status}, body was: ${error.message}`);
             errorMessage = 'Erreur côté serveur : ' + `HTTP ${error.status}, body : ${error.message}`;
@@ -62,7 +66,7 @@ export class HttpErrorInterceptor implements HttpInterceptor {
           } else {
             errorMessage = '😢 Dommage, une erreur est apparue : ' + errorMessage;
           }
-          this.appService.displaySnackBar(errorMessage, false, 50);
+          this.appService.displaySnackBar(errorMessage, true, 30);
         }
 
         return EMPTY;

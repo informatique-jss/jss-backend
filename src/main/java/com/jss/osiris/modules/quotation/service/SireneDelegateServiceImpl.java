@@ -16,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
 import com.jss.osiris.libs.SSLHelper;
@@ -88,7 +87,7 @@ public class SireneDelegateServiceImpl implements SireneDelegateService {
 
 	@Override
 	@Cacheable(value = "siren", key = "#siren")
-	public List<Siren> getSiren(String siren) throws HttpStatusCodeException, Exception {
+	public List<Siren> getSiren(String siren) {
 		try {
 			SSLHelper.disableCertificateValidation();
 			ResponseEntity<Siren> res = new RestTemplate().exchange(
@@ -108,7 +107,7 @@ public class SireneDelegateServiceImpl implements SireneDelegateService {
 
 	@Override
 	@Cacheable(value = "siret", key = "#siret")
-	public List<Siret> getSiret(String siret) throws HttpStatusCodeException, Exception {
+	public List<Siret> getSiret(String siret) {
 		try {
 			SSLHelper.disableCertificateValidation();
 			ResponseEntity<Siret> res = new RestTemplate().exchange(

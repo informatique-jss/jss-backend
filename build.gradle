@@ -52,6 +52,9 @@ dependencies {
     implementation 'org.xhtmlrenderer:flying-saucer-core:9.1.22'
     implementation 'org.xhtmlrenderer:flying-saucer-pdf-itext5:9.1.22'
 
+    // QR code generation
+    implementation 'com.google.zxing:core:3.5.1'
+    implementation 'com.google.zxing:javase:3.5.1'
 }
  
 group = 'com.jss.osiris'

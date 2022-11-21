@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.jss.osiris.libs.ActiveDirectoryHelper;
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.miscellaneous.model.UploadedFile;
 import com.jss.osiris.modules.miscellaneous.repository.UploadedFileRepository;
 
@@ -40,8 +41,7 @@ public class UploadedFileServiceImpl implements UploadedFileService {
     }
 
     @Override
-    public UploadedFile createUploadedFile(String filename, String absoluteFilePath)
-            throws NoSuchAlgorithmException, IOException {
+    public UploadedFile createUploadedFile(String filename, String absoluteFilePath) throws OsirisException {
         UploadedFile uploadedFile = new UploadedFile();
         uploadedFile.setCreationDate(LocalDateTime.now());
         uploadedFile.setCreatedBy(activeDirectoryHelper.getCurrentUsername());
@@ -58,14 +58,23 @@ public class UploadedFileServiceImpl implements UploadedFileService {
         }
     }
 
-    private String computeChecksumForFile(String absoluteFilePath) throws NoSuchAlgorithmException, IOException {
-        MessageDigest md = MessageDigest.getInstance("MD5");
-        try (InputStream fis = new FileInputStream(absoluteFilePath)) {
+    private String computeChecksumForFile(String absoluteFilePath) throws OsirisException {
+        MessageDigest md;
+        try {
+            md = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException e) {
+            throw new OsirisException("Impossible to find MDR5 algorithm");
+        }
+        try {
+            InputStream fis = new FileInputStream(absoluteFilePath);
             byte[] buffer = new byte[1024];
             int nread;
             while ((nread = fis.read(buffer)) != -1) {
                 md.update(buffer, 0, nread);
             }
+            fis.close();
+        } catch (IOException e) {
+            throw new OsirisException("Impossible to find file to compute");
         }
 
         // bytes to hex

@@ -5,6 +5,8 @@ import { AppRestService } from 'src/app/services/appRest.service';
 import { AppService } from '../../services/app.service';
 import { User } from './User';
 
+export const ADMINISTRATEURS: string = 'ROLE_OSIRIS_ADMINISTRATEURS';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -18,8 +20,6 @@ export class LoginService extends AppRestService<User>{
 
   private loggedState: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
   loggedStateObservable = this.loggedState.asObservable();
-
-  public ADMINISTRATEURS: string = 'ROLE_OSIRIS_ADMINISTRATEURS';
 
   setLoggedIn(loggedIn: boolean) {
     this.loggedState.next(loggedIn);
@@ -62,7 +62,7 @@ export class LoginService extends AppRestService<User>{
       if (roles) {
         for (let role of roles) {
           for (let searchRole of searchRoles) {
-            if (role == searchRole || role == this.ADMINISTRATEURS)
+            if (role == searchRole || role == ADMINISTRATEURS)
               return true;
           }
         }

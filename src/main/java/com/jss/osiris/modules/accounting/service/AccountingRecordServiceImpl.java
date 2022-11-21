@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.model.AccountingAccountClass;
 import com.jss.osiris.modules.accounting.model.AccountingBalance;
@@ -122,14 +123,14 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     return accountingRecords;
   }
 
-  public void generateAccountingRecordsForSaleOnInvoiceGeneration(Invoice invoice) throws Exception {
+  public void generateAccountingRecordsForSaleOnInvoiceGeneration(Invoice invoice) throws OsirisException {
     AccountingJournal salesJournal = accountingJournalService.getSalesAccountingJournal();
 
     if (invoice == null)
-      throw new Exception("No invoice provided");
+      throw new OsirisException("No invoice provided");
 
     if (invoice.getCustomerOrder() == null && invoiceHelper.getCustomerOrder(invoice) == null)
-      throw new Exception("No customer order or ITiers in invoice " + invoice.getId());
+      throw new OsirisException("No customer order or ITiers in invoice " + invoice.getId());
 
     String labelPrefix = invoice.getCustomerOrder() != null ? ("Commande n°" + invoice.getCustomerOrder().getId())
         : ("Facture libre n°" + invoice.getId());
@@ -149,17 +150,17 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     // item
     for (InvoiceItem invoiceItem : invoice.getInvoiceItems()) {
       if (invoiceItem.getBillingItem() == null)
-        throw new Exception("No billing item defined in invoice item n°" + invoiceItem.getId());
+        throw new OsirisException("No billing item defined in invoice item n°" + invoiceItem.getId());
 
       if (invoiceItem.getBillingItem().getBillingType() == null)
-        throw new Exception(
+        throw new OsirisException(
             "No billing type defined in billing item n°" + invoiceItem.getBillingItem().getId());
 
       AccountingAccount producAccountingAccount = invoiceItem.getBillingItem().getBillingType()
           .getAccountingAccountProduct();
 
       if (producAccountingAccount == null)
-        throw new Exception("No product accounting account defined in billing type n°"
+        throw new OsirisException("No product accounting account defined in billing type n°"
             + invoiceItem.getBillingItem().getBillingType().getId());
 
       generateNewAccountingRecord(LocalDateTime.now(), invoice.getId(), null,
@@ -186,19 +187,19 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
     // Check balance ok
     if (Math.round(balance * 10000f) / 10000f != 0) {
-      throw new Exception("Accounting records  are not balanced for invoice " + invoice.getId());
+      throw new OsirisException("Accounting records  are not balanced for invoice " + invoice.getId());
     }
   }
 
   @Override
-  public void generateAccountingRecordsForPurshaseOnInvoiceGeneration(Invoice invoice) throws Exception {
+  public void generateAccountingRecordsForPurshaseOnInvoiceGeneration(Invoice invoice) throws OsirisException {
     AccountingJournal pushasingJournal = accountingJournalService.getPurchasesAccountingJournal();
 
     if (invoice == null)
-      throw new Exception("No invoice provided");
+      throw new OsirisException("No invoice provided");
 
     if (invoice.getCustomerOrder() == null && invoiceHelper.getCustomerOrder(invoice) == null)
-      throw new Exception("No customer order or ITiers in invoice " + invoice.getId());
+      throw new OsirisException("No customer order or ITiers in invoice " + invoice.getId());
 
     String labelPrefix = invoice.getCustomerOrder() != null ? ("Commande n°" + invoice.getCustomerOrder().getId())
         : ("Facture libre n°" + invoice.getId());
@@ -216,17 +217,17 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     // item
     for (InvoiceItem invoiceItem : invoice.getInvoiceItems()) {
       if (invoiceItem.getBillingItem() == null)
-        throw new Exception("No billing item defined in invoice item n°" + invoiceItem.getId());
+        throw new OsirisException("No billing item defined in invoice item n°" + invoiceItem.getId());
 
       if (invoiceItem.getBillingItem().getBillingType() == null)
-        throw new Exception(
+        throw new OsirisException(
             "No billing type defined in billing item n°" + invoiceItem.getBillingItem().getId());
 
       AccountingAccount chargeAccountingAccount = invoiceItem.getBillingItem().getBillingType()
           .getAccountingAccountCharge();
 
       if (chargeAccountingAccount == null)
-        throw new Exception("No product accounting account defined in billing type n°"
+        throw new OsirisException("No product accounting account defined in billing type n°"
             + invoiceItem.getBillingItem().getBillingType().getId());
 
       generateNewAccountingRecord(LocalDateTime.now(), invoice.getId(), null,
@@ -254,21 +255,20 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
     // Check balance ok
     if (Math.round(balance * 10000f) / 10000f != 0) {
-      throw new Exception("Accounting records  are not balanced for invoice " + invoice.getId());
+      throw new OsirisException("Accounting records  are not balanced for invoice " + invoice.getId());
     }
   }
 
   @Override
   public void generateAccountingRecordsForSaleOnInvoicePayment(Invoice invoice, List<Payment> payments,
-      List<Deposit> deposits, Float amountToUse)
-      throws Exception {
+      List<Deposit> deposits, Float amountToUse) throws OsirisException {
     AccountingJournal salesJournal = accountingJournalService.getSalesAccountingJournal();
 
     if (invoice == null)
-      throw new Exception("No invoice provided");
+      throw new OsirisException("No invoice provided");
 
     if ((payments == null || payments.size() == 0) && (deposits == null || deposits.size() == 0))
-      throw new Exception("No payments nor deposits provided with invoice " + invoice.getId());
+      throw new OsirisException("No payments nor deposits provided with invoice " + invoice.getId());
 
     AccountingAccount bankAccountingAccount = accountingAccountService.getBankAccountingAccount();
     AccountingAccount waintingAccountingAccount = accountingAccountService.getWaitingAccountingAccount();
@@ -309,7 +309,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
   @Override
   public void generateAccountingRecordsForDepositAndInvoice(Deposit deposit, Invoice invoice, Payment payment)
-      throws Exception {
+      throws OsirisException {
     AccountingAccount depositAccountingAccount = getDepositAccountingAccountForCustomerOrder(
         invoiceHelper.getCustomerOrder(invoice));
     AccountingJournal salesJournal = accountingJournalService.getSalesAccountingJournal();
@@ -325,7 +325,8 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   }
 
   @Override
-  public void generateAppointForPayment(Payment payment, float remainingMoney, ITiers customerOrder) throws Exception {
+  public void generateAppointForPayment(Payment payment, float remainingMoney, ITiers customerOrder)
+      throws OsirisException {
     AccountingAccount accountingAccountCustomer = getCustomerAccountingAccountForITiers(customerOrder);
 
     if (remainingMoney > 0) {
@@ -349,8 +350,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
   @Override
   public void generateAccountingRecordsForDepositAndCustomerOrder(Deposit deposit, CustomerOrder customerOrder,
-      Payment payment)
-      throws Exception {
+      Payment payment) throws OsirisException {
 
     AccountingAccount depositAccountingAccount = getDepositAccountingAccountForCustomerOrder(
         quotationService.getCustomerOrderOfQuotation(customerOrder));
@@ -369,7 +369,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   }
 
   @Override
-  public void generateAccountingRecordsForWaintingPayment(Payment payment) throws Exception {
+  public void generateAccountingRecordsForWaintingPayment(Payment payment) throws OsirisException {
     AccountingAccount waitingAccountingAccount = accountingAccountService.getWaitingAccountingAccount();
     AccountingJournal salesJournal = accountingJournalService.getSalesAccountingJournal();
     generateNewAccountingRecord(LocalDateTime.now(), payment.getId(), null,
@@ -378,7 +378,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   }
 
   @Override
-  public void generateAccountingRecordsForRefund(Refund refund) throws Exception {
+  public void generateAccountingRecordsForRefund(Refund refund) throws OsirisException {
     AccountingJournal salesJournal = accountingJournalService.getSalesAccountingJournal();
     AccountingAccount customerAccountingAccount = null;
     if (refund.getConfrere() != null) {
@@ -395,7 +395,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   }
 
   @Override
-  public void generateBankAccountingRecordsForPayment(Payment payment) throws Exception {
+  public void generateBankAccountingRecordsForPayment(Payment payment) throws OsirisException {
     AccountingJournal salesJournal = accountingJournalService.getSalesAccountingJournal();
 
     generateNewAccountingRecord(LocalDateTime.now(), payment.getId(), null,
@@ -405,7 +405,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
   }
 
-  private void checkInvoiceForLettrage(Invoice invoice) throws Exception {
+  private void checkInvoiceForLettrage(Invoice invoice) throws OsirisException {
     AccountingAccount accountingAccountCustomer = getCustomerAccountingAccountForInvoice(invoice);
 
     List<AccountingRecord> accountingRecords = accountingRecordRepository
@@ -450,17 +450,17 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   }
 
   @Override
-  public AccountingAccount getCustomerAccountingAccountForInvoice(Invoice invoice) throws Exception {
+  public AccountingAccount getCustomerAccountingAccountForInvoice(Invoice invoice) throws OsirisException {
     ITiers customerOrder = invoiceHelper.getCustomerOrder(invoice);
     return getCustomerAccountingAccountForITiers(customerOrder);
   }
 
   @Override
-  public AccountingAccount getCustomerAccountingAccountForITiers(ITiers tiers) throws Exception {
+  public AccountingAccount getCustomerAccountingAccountForITiers(ITiers tiers) throws OsirisException {
     // If cusomter order is a Responsable, get accounting account of parent Tiers
     if (tiers.getAccountingAccountCustomer() == null || (tiers instanceof Responsable
         && ((Responsable) tiers).getTiers().getAccountingAccountCustomer() == null))
-      throw new Exception("No customer accounting account in ITiers " + tiers.getId());
+      throw new OsirisException("No customer accounting account in ITiers " + tiers.getId());
 
     AccountingAccount accountingAccountCustomer = null;
     if (tiers instanceof Responsable)
@@ -472,16 +472,16 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   }
 
   @Override
-  public AccountingAccount getProviderAccountingAccountForInvoice(Invoice invoice) throws Exception {
+  public AccountingAccount getProviderAccountingAccountForInvoice(Invoice invoice) throws OsirisException {
     return getProviderAccountingAccountForITiers(invoice.getProvider());
   }
 
   @Override
-  public AccountingAccount getProviderAccountingAccountForITiers(ITiers tiers) throws Exception {
+  public AccountingAccount getProviderAccountingAccountForITiers(ITiers tiers) throws OsirisException {
     // If cusomter order is a Responsable, get accounting account of parent Tiers
     if (tiers.getAccountingAccountProvider() == null || (tiers instanceof Responsable
         && ((Responsable) tiers).getTiers().getAccountingAccountProvider() == null))
-      throw new Exception("No customer accounting account in ITiers " + tiers.getId());
+      throw new OsirisException("No customer accounting account in ITiers " + tiers.getId());
 
     AccountingAccount accountingAccountProvider = null;
     if (tiers instanceof Responsable)
@@ -492,11 +492,11 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     return accountingAccountProvider;
   }
 
-  private AccountingAccount getDepositAccountingAccountForCustomerOrder(ITiers customerOrder) throws Exception {
+  private AccountingAccount getDepositAccountingAccountForCustomerOrder(ITiers customerOrder) throws OsirisException {
     // If cusomter order is a Responsable, get accounting account of parent Tiers
     if (customerOrder.getAccountingAccountCustomer() == null || (customerOrder instanceof Responsable
         && ((Responsable) customerOrder).getTiers().getAccountingAccountCustomer() == null))
-      throw new Exception("No customer accounting account in ITiers " + customerOrder.getId());
+      throw new OsirisException("No customer accounting account in ITiers " + customerOrder.getId());
 
     AccountingAccount accountingAccountDeposit = null;
     if (customerOrder instanceof Responsable)
@@ -656,30 +656,29 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
   @Override
   public File getGrandLivreExport(AccountingAccountClass accountingClass, LocalDateTime startDate,
-      LocalDateTime endDate)
-      throws Exception {
+      LocalDateTime endDate) throws OsirisException {
     return accountingExportHelper.getGrandLivre(accountingClass, startDate, endDate);
   }
 
   @Override
   public File getJournalExport(AccountingJournal accountingJournal, LocalDateTime startDate, LocalDateTime endDate)
-      throws Exception {
+      throws OsirisException {
     return accountingExportHelper.getJournal(accountingJournal, startDate, endDate);
   }
 
   @Override
   public File getAccountingAccountExport(AccountingAccount accountingAccount, LocalDateTime startDate,
-      LocalDateTime endDate) throws Exception {
+      LocalDateTime endDate) throws OsirisException {
     return accountingExportHelper.getAccountingAccount(accountingAccount, startDate, endDate);
   }
 
   @Override
-  public File getProfitLostExport(LocalDateTime startDate, LocalDateTime endDate) throws Exception {
+  public File getProfitLostExport(LocalDateTime startDate, LocalDateTime endDate) throws OsirisException {
     return accountingExportHelper.getProfitAndLost(this.getProfitAndLost(startDate, endDate));
   }
 
   @Override
-  public File getBilanExport(LocalDateTime startDate, LocalDateTime endDate) throws Exception {
+  public File getBilanExport(LocalDateTime startDate, LocalDateTime endDate) throws OsirisException {
     List<AccountingBalanceBilan> accountingRecords = accountingRecordRepository
         .getAccountingRecordAggregateByAccountingNumber(startDate, endDate);
 
@@ -699,7 +698,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
   @Override
   public File getAccountingBalanceExport(Integer accountingClassId, String accountingAccountNumber,
-      Integer accountingAccountId, LocalDateTime startDate, LocalDateTime endDate) throws Exception {
+      Integer accountingAccountId, LocalDateTime startDate, LocalDateTime endDate) throws OsirisException {
     List<AccountingBalance> accountingBalanceRecords = accountingRecordRepository.searchAccountingBalance(
         accountingClassId != null ? accountingClassId : 0,
         accountingAccountId != null ? accountingAccountId : 0,
@@ -710,7 +709,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
   @Override
   public File getAccountingBalanceGeneraleExport(Integer accountingClassId, String accountingAccountNumber,
-      Integer accountingAccountId, LocalDateTime startDate, LocalDateTime endDate) throws Exception {
+      Integer accountingAccountId, LocalDateTime startDate, LocalDateTime endDate) throws OsirisException {
     List<AccountingBalance> accountingBalanceRecords = accountingRecordRepository.searchAccountingBalanceGenerale(
         accountingClassId != null ? accountingClassId : 0,
         accountingAccountId != null ? accountingAccountId : 0,
@@ -743,7 +742,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   }
 
   @Override
-  public Float getRemainingAmountToPayForInvoice(Invoice invoice) throws Exception {
+  public Float getRemainingAmountToPayForInvoice(Invoice invoice) throws OsirisException {
     if (invoice != null) {
       List<AccountingRecord> accountingRecords = getAccountingRecordsForInvoice(invoice);
       if (accountingRecords == null || accountingRecords.size() == 0)
@@ -762,7 +761,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   }
 
   @Override
-  public Float getRemainingAmountToPayForCustomerOrder(CustomerOrder customerOrder) throws Exception {
+  public Float getRemainingAmountToPayForCustomerOrder(CustomerOrder customerOrder) {
     if (customerOrder != null) {
       Float total = 0f;
       // Total of items
@@ -798,15 +797,14 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   }
 
   @Override
-  public List<AccountingRecord> getAccountingRecordsByTemporaryOperationId(Integer temporaryOperationId)
-      throws Exception {
+  public List<AccountingRecord> getAccountingRecordsByTemporaryOperationId(Integer temporaryOperationId) {
     if (temporaryOperationId != null)
       return accountingRecordRepository.findByTemporaryOperationId(temporaryOperationId);
     return null;
   }
 
   @Override
-  public List<AccountingRecord> getAccountingRecordsByOperationId(Integer operationId) throws Exception {
+  public List<AccountingRecord> getAccountingRecordsByOperationId(Integer operationId) {
     if (operationId != null)
       return accountingRecordRepository.findByOperationId(operationId);
     return null;
@@ -814,7 +812,8 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
   @Transactional(rollbackFor = Exception.class)
   @Override
-  public List<AccountingRecord> deleteRecordsByTemporaryOperationId(Integer temporaryOperationId) throws Exception {
+  public List<AccountingRecord> deleteRecordsByTemporaryOperationId(Integer temporaryOperationId)
+      throws OsirisException {
     List<AccountingRecord> accountingRecords = getAccountingRecordsByTemporaryOperationId(temporaryOperationId);
 
     List<Invoice> invoicesToUnleter = new ArrayList<Invoice>();
@@ -840,7 +839,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
   @Transactional(rollbackFor = Exception.class)
   @Override
-  public List<AccountingRecord> doCounterPartByOperationId(Integer operationId) throws Exception {
+  public List<AccountingRecord> doCounterPartByOperationId(Integer operationId) throws OsirisException {
     List<AccountingRecord> accountingRecords = getAccountingRecordsByOperationId(operationId);
 
     List<Invoice> invoicesToUnleter = new ArrayList<Invoice>();

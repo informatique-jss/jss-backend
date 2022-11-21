@@ -2,6 +2,7 @@ package com.jss.osiris.modules.quotation.service;
 
 import java.util.List;
 
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.OrderingSearch;
 import com.jss.osiris.modules.quotation.model.OrderingSearchResult;
@@ -10,38 +11,38 @@ import com.jss.osiris.modules.quotation.model.Quotation;
 public interface CustomerOrderService {
         public CustomerOrder getCustomerOrder(Integer id);
 
-        public CustomerOrder checkAllProvisionEnded(CustomerOrder customerOrderIn) throws Exception;
+        public CustomerOrder checkAllProvisionEnded(CustomerOrder customerOrderIn) throws OsirisException;
 
-        public CustomerOrder addOrUpdateCustomerOrder(CustomerOrder quotation) throws Exception;
+        public CustomerOrder addOrUpdateCustomerOrder(CustomerOrder quotation) throws OsirisException;
 
-        public CustomerOrder addOrUpdateCustomerOrderFromUser(CustomerOrder customerOrder) throws Exception;
+        public CustomerOrder addOrUpdateCustomerOrderFromUser(CustomerOrder customerOrder) throws OsirisException;
 
         public CustomerOrder addOrUpdateCustomerOrderStatus(CustomerOrder customerOrder, String targetStatusCode)
-                        throws Exception;
+                        throws OsirisException;
 
         public CustomerOrder addOrUpdateCustomerOrderStatusFromUser(CustomerOrder customerOrder,
-                        String targetStatusCode)
-                        throws Exception;
+                        String targetStatusCode) throws OsirisException;
 
         public List<OrderingSearchResult> searchOrders(OrderingSearch orderingSearch);
 
         public void reindexCustomerOrder();
 
-        public CustomerOrder createNewCustomerOrderFromQuotation(Quotation quotation) throws Exception;
+        public CustomerOrder createNewCustomerOrderFromQuotation(Quotation quotation)
+                        throws OsirisException;
 
-        public void generateInvoiceMail(CustomerOrder customerOrder) throws Exception;
+        public void generateInvoiceMail(CustomerOrder customerOrder) throws OsirisException, Exception;
 
         public CustomerOrder unlockCustomerOrderFromDeposit(CustomerOrder customerOrder, Float effectivePayment)
-                        throws Exception;
+                        throws OsirisException;
 
         public String getCardPaymentLinkForPaymentDeposit(CustomerOrder customerOrder, String mail, String subject)
-                        throws Exception;
+                        throws OsirisException;
 
-        public Boolean validateCardPaymentLinkForDeposit(CustomerOrder customerOrder) throws Exception;
+        public Boolean validateCardPaymentLinkForDeposit(CustomerOrder customerOrder) throws OsirisException;
 
         public String getCardPaymentLinkForPaymentInvoice(CustomerOrder customerOrder, String mail, String subject)
-                        throws Exception;
+                        throws OsirisException;
 
-        public Boolean validateCardPaymentLinkForInvoice(CustomerOrder customerOrder) throws Exception;
+        public Boolean validateCardPaymentLinkForInvoice(CustomerOrder customerOrder) throws OsirisException;
 
 }

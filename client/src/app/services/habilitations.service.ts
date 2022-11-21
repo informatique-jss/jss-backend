@@ -1,12 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { ADMINISTRATEURS, LoginService } from '../routing/login-dialog/login.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class HabilitationsService {
-
-  constructor(http: HttpClient
+  constructor(http: HttpClient,
+    private loginService: LoginService,
   ) {
   }
 
@@ -40,6 +41,10 @@ export class HabilitationsService {
 
   canViewAffaireModule() {
     return true;
+  }
+
+  canViewLogModule() {
+    return this.loginService.hasGroup([ADMINISTRATEURS]);
   }
 
 }

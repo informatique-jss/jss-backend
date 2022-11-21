@@ -50,7 +50,7 @@ public class CentralPayDelegateServiceImpl implements CentralPayDelegateService 
     }
 
     @Override
-    public CentralPayPaymentRequest getPaymentRequest(String centralPayPaymentRequestId) throws Exception {
+    public CentralPayPaymentRequest getPaymentRequest(String centralPayPaymentRequestId) {
         SSLHelper.disableCertificateValidation();
         HttpHeaders headers = createHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
@@ -67,7 +67,7 @@ public class CentralPayDelegateServiceImpl implements CentralPayDelegateService 
     }
 
     @Override
-    public CentralPayPaymentRequest cancelPaymentRequest(String centralPayPaymentRequestId) throws Exception {
+    public CentralPayPaymentRequest cancelPaymentRequest(String centralPayPaymentRequestId) {
         SSLHelper.disableCertificateValidation();
         HttpHeaders headers = createHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
@@ -88,8 +88,7 @@ public class CentralPayDelegateServiceImpl implements CentralPayDelegateService 
 
     @Override
     public CentralPayPaymentRequest generatePayPaymentRequest(Float amount, String mail, String entityId,
-            String subject)
-            throws Exception {
+            String subject) {
         SSLHelper.disableCertificateValidation();
         HttpHeaders headers = createHeaders();
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);

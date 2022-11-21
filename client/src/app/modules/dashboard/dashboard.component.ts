@@ -1,8 +1,9 @@
 import { CdkDragEnter, CdkDropList, DragRef, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { forkJoin } from 'rxjs';
+import { combineLatest, map } from 'rxjs';
 import { CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_TO_VERIFY, QUOTATION_STATUS_OPEN, QUOTATION_STATUS_TO_VERIFY } from 'src/app/libs/Constants';
 import { AppService } from 'src/app/services/app.service';
+import { HabilitationsService } from '../../services/habilitations.service';
 import { UserPreferenceService } from '../../services/user.preference.service';
 import { InvoiceSearch } from '../invoicing/model/InvoiceSearch';
 import { PaymentSearch } from '../invoicing/model/PaymentSearch';
@@ -84,6 +85,8 @@ export class DashboardComponent implements OnInit {
   PAYMENT_TO_ASSOCIATE = "Paiements entrants à associer";
   paymentSearchToAssociate: PaymentSearch = {} as PaymentSearch;
 
+  LOG_TO_REVIEW = "Logs à revoir";
+
   allItems: Array<string> = [this.PAYMENT_TO_ASSOCIATE, this.INVOICE_TO_ASSOCIATE, this.QUOTATION_TO_VERIFY, this.QUOTATION_OPEN, this.ORDER_TO_BILLED, this.ORDER_BEING_PROCESSED, this.ORDER_TO_VERIFY, this.ORDER_OPEN, this.AFFAIRE_RESPONSIBLE_IN_PROGRESS, this.AFFAIRE_RESPONSIBLE_TO_DO, this.AFFAIRE_IN_PROGRESS, this.AFFAIRE_TO_DO].sort((a, b) => a.localeCompare(b));
 
   constructor(private appService: AppService,
@@ -96,6 +99,7 @@ export class DashboardComponent implements OnInit {
     private customerOrderStatusService: CustomerOrderStatusService,
     private quotationStatusService: QuotationStatusService,
     private constantService: ConstantService,
+    private habilitationsService: HabilitationsService,
   ) { }
 
   ngOnInit() {
@@ -103,21 +107,27 @@ export class DashboardComponent implements OnInit {
     this.employeeService.getCurrentEmployee().subscribe(response => {
       this.currentEmployee = response;
 
-      forkJoin([this.bodaccStatusService.getBodaccStatus(), this.domiciliationStatusService.getDomiciliationStatus(),
-      this.announcementStatusService.getAnnouncementStatus(), this.formaliteStatusService.getFormaliteStatus(),
-      this.customerOrderStatusService.getCustomerOrderStatus(),
-      this.quotationStatusService.getQuotationStatus()]).subscribe(response => {
-        this.bodaccStatus = response[0];
-        this.statusTypes.push(...response[0]);
-        this.domiciliationStatus = response[1];
-        this.statusTypes.push(...response[1]);
-        this.announcementStatus = response[2];
-        this.statusTypes.push(...response[2]);
-        this.formaliteStatus = response[3];
-        this.statusTypes.push(...response[3]);
+      combineLatest([
+        this.bodaccStatusService.getBodaccStatus(),
+        this.domiciliationStatusService.getDomiciliationStatus(),
+        this.announcementStatusService.getAnnouncementStatus(),
+        this.formaliteStatusService.getFormaliteStatus(),
+        this.customerOrderStatusService.getCustomerOrderStatus(),
+        this.quotationStatusService.getQuotationStatus()
+      ]).pipe(
+        map(([bodaccStatus, domiciliationStatus, announcementStatus, formaliteStatus, customerOrderStatus, quotationStatus]) => ({ bodaccStatus, domiciliationStatus, announcementStatus, formaliteStatus, customerOrderStatus, quotationStatus })),
+      ).subscribe(response => {
+        this.bodaccStatus = response.bodaccStatus;
+        this.statusTypes.push(...response.bodaccStatus);
+        this.domiciliationStatus = response.domiciliationStatus;
+        this.statusTypes.push(...response.domiciliationStatus);
+        this.announcementStatus = response.announcementStatus;
+        this.statusTypes.push(...response.announcementStatus);
+        this.formaliteStatus = response.formaliteStatus;
+        this.statusTypes.push(...response.formaliteStatus);
+        this.customerOrderStatus = response.customerOrderStatus;
+        this.quotationStatus = response.quotationStatus;
 
-        this.customerOrderStatus = response[4];
-        this.quotationStatus = response[5];
 
         this.affaireSearchInProgress.assignedTo = this.currentEmployee;
         this.affaireSearchInProgress.status = this.statusTypes.filter(stauts => !stauts.isOpenState && !stauts.isCloseState);
@@ -153,6 +163,9 @@ export class DashboardComponent implements OnInit {
         this.paymentSearchToAssociate.isHideAssociatedPayments = true;
         this.paymentSearchToAssociate.paymentWays = [this.constantService.getPaymentWayInbound()];
 
+        if (this.canViewLogModule())
+          this.allItems.push(this.LOG_TO_REVIEW);
+
         // restore bookmark
         let bookmark = this.userPreferenceService.getUserSearchBookmark("dashboard") as Array<string>;
         if (bookmark)
@@ -168,7 +181,9 @@ export class DashboardComponent implements OnInit {
           this.checkboxes.push({ id: allItem, value: false })
 
         this.updateCheckboxes();
-      })
+
+      });
+
     })
   }
 
@@ -181,6 +196,10 @@ export class DashboardComponent implements OnInit {
     setTimeout(() => {
       this.updateCheckboxes();
     });
+  }
+
+  canViewLogModule(): boolean {
+    return this.habilitationsService.canViewLogModule();
   }
 
   updateCheckboxes() {

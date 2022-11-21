@@ -10,7 +10,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
 import com.jss.osiris.libs.SSLHelper;
@@ -29,7 +28,7 @@ public class RnaDelegateServiceImpl implements RnaDelegateService {
 
 	@Override
 	@Cacheable(value = "rna", key = "#rna")
-	public List<Rna> getRna(String rna) throws HttpStatusCodeException, Exception {
+	public List<Rna> getRna(String rna) {
 		try {
 			SSLHelper.disableCertificateValidation();
 			ResponseEntity<Rna> res = new RestTemplate().exchange(

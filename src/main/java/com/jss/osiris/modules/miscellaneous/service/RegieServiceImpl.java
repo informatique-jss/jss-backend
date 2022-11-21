@@ -42,7 +42,7 @@ public class RegieServiceImpl implements RegieService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Regie addOrUpdateRegie(Regie regie) throws Exception {
+    public Regie addOrUpdateRegie(Regie regie) {
         // If mails already exists, get their ids
         if (regie != null && regie.getMails() != null && regie.getMails().size() > 0)
             mailService.populateMailIds(regie.getMails());

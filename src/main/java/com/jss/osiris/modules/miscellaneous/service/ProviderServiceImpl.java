@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.accounting.model.AccountingAccountTrouple;
 import com.jss.osiris.modules.accounting.service.AccountingAccountService;
 import com.jss.osiris.modules.miscellaneous.model.Provider;
@@ -43,7 +44,7 @@ public class ProviderServiceImpl implements ProviderService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Provider addOrUpdateProvider(Provider provider) throws Exception {
+    public Provider addOrUpdateProvider(Provider provider) throws OsirisException {
         // Generate accounting accounts
         if (provider.getId() == null
                 || provider.getAccountingAccountCustomer() == null && provider.getAccountingAccountProvider() == null

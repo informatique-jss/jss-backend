@@ -5,13 +5,12 @@ import java.util.Optional;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.model.AccountingAccountBinome;
 import com.jss.osiris.modules.accounting.model.AccountingAccountClass;
@@ -21,8 +20,6 @@ import com.jss.osiris.modules.miscellaneous.model.BillingType;
 
 @Service
 public class AccountingAccountServiceImpl implements AccountingAccountService {
-
-        private static final Logger logger = LoggerFactory.getLogger(AccountingAccountServiceImpl.class);
 
         @Autowired
         AccountingAccountRepository accountingAccountRepository;
@@ -78,22 +75,18 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
         @Override
         @Transactional(rollbackFor = Exception.class)
         public AccountingAccount addOrUpdateAccountingAccountFromUser(AccountingAccount accountingAccount)
-                        throws Exception {
+                        throws OsirisException {
                 return addOrUpdateAccountingAccount(accountingAccount);
         }
 
         @Override
         public AccountingAccount addOrUpdateAccountingAccount(
-                        AccountingAccount accountingAccount) throws Exception {
+                        AccountingAccount accountingAccount) throws OsirisException {
                 AccountingAccountClass accountingAccountClass = accountingAccountClassService
                                 .getAccountingAccountClassByCode(
                                                 accountingAccount.getAccountingAccountNumber().substring(0, 1));
                 if (accountingAccountClass == null) {
-                        logger.error(
-                                        "Unable to find accountingAccountClass for number "
-                                                        + accountingAccount.getAccountingAccountNumber().substring(0,
-                                                                        1));
-                        throw new Exception(
+                        throw new OsirisException(
                                         "Unable to find accountingAccountClass for number "
                                                         + accountingAccount.getAccountingAccountNumber().substring(0,
                                                                         1));
@@ -108,7 +101,7 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
         }
 
         @Override
-        public AccountingAccountTrouple generateAccountingAccountsForEntity(String label) throws Exception {
+        public AccountingAccountTrouple generateAccountingAccountsForEntity(String label) throws OsirisException {
 
                 AccountingAccountTrouple accountingAccountTrouple = new AccountingAccountTrouple();
 
@@ -134,10 +127,7 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
                 AccountingAccountClass accountingAccountClass = accountingAccountClassService
                                 .getAccountingAccountClassByCode(customerAccountingAccountNumber.substring(0, 1));
                 if (accountingAccountClass == null) {
-                        logger.error(
-                                        "Unable to find accountingAccountClass for number "
-                                                        + customerAccountingAccountNumber.substring(0, 1));
-                        throw new Exception(
+                        throw new OsirisException(
                                         "Unable to find accountingAccountClass for number "
                                                         + customerAccountingAccountNumber.substring(0, 1));
                 }
@@ -176,7 +166,7 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
 
         @Override
         public AccountingAccountBinome generateAccountingAccountsForBillingType(BillingType billingType)
-                        throws Exception {
+                        throws OsirisException {
 
                 AccountingAccountBinome accountingAccountBinome = new AccountingAccountBinome();
 
@@ -196,10 +186,7 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
                 AccountingAccountClass accountingAccountClassCharge = accountingAccountClassService
                                 .getAccountingAccountClassByCode(productAccountingAccountNumber.substring(0, 1));
                 if (accountingAccountClassCharge == null) {
-                        logger.error(
-                                        "Unable to find accountingAccountClass for number "
-                                                        + productAccountingAccountNumber.substring(0, 1));
-                        throw new Exception(
+                        throw new OsirisException(
                                         "Unable to find accountingAccountClass for number "
                                                         + productAccountingAccountNumber.substring(0, 1));
                 }
@@ -207,10 +194,7 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
                 AccountingAccountClass accountingAccountClassProduct = accountingAccountClassService
                                 .getAccountingAccountClassByCode(chargeAccountingAccountNumber.substring(0, 1));
                 if (accountingAccountClassProduct == null) {
-                        logger.error(
-                                        "Unable to find accountingAccountClass for number "
-                                                        + chargeAccountingAccountNumber.substring(0, 1));
-                        throw new Exception(
+                        throw new OsirisException(
                                         "Unable to find accountingAccountClass for number "
                                                         + chargeAccountingAccountNumber.substring(0, 1));
                 }
@@ -240,7 +224,7 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
         }
 
         @Override
-        public AccountingAccount generateAccountingAccountsForProduct(String label) throws Exception {
+        public AccountingAccount generateAccountingAccountsForProduct(String label) throws OsirisException {
 
                 Integer currentMaxSubAccountProduct = accountingAccountRepository
                                 .findMaxSubAccontNumberForAccountNumber(
@@ -254,10 +238,7 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
                 AccountingAccountClass accountingAccountClass = accountingAccountClassService
                                 .getAccountingAccountClassByCode(productAccountingAccountNumber.substring(0, 1));
                 if (accountingAccountClass == null) {
-                        logger.error(
-                                        "Unable to find accountingAccountClass for number "
-                                                        + customerAccountingAccountNumber.substring(0, 1));
-                        throw new Exception(
+                        throw new OsirisException(
                                         "Unable to find accountingAccountClass for number "
                                                         + customerAccountingAccountNumber.substring(0, 1));
                 }
@@ -276,61 +257,65 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
         }
 
         @Override
-        public AccountingAccount getBankAccountingAccount() throws Exception {
+        public AccountingAccount getBankAccountingAccount() throws OsirisException {
                 List<AccountingAccount> bankAccountingAccounts = getAccountingAccountByAccountingAccountNumber(
                                 bankAccountingAccountNumber);
 
                 if (bankAccountingAccounts == null || bankAccountingAccounts.size() == 0)
-                        throw new Exception("Bank accounting account not found");
+                        throw new OsirisException("Bank accounting account not found");
 
                 if (bankAccountingAccounts.size() > 1)
-                        throw new Exception("Multiple Bank accounting account found for accounting account number "
-                                        + bankAccountingAccountNumber);
+                        throw new OsirisException(
+                                        "Multiple Bank accounting account found for accounting account number "
+                                                        + bankAccountingAccountNumber);
 
                 return bankAccountingAccounts.get(0);
         }
 
         @Override
-        public AccountingAccount getWaitingAccountingAccount() throws Exception {
+        public AccountingAccount getWaitingAccountingAccount() throws OsirisException {
                 List<AccountingAccount> waitingAccountingAccounts = getAccountingAccountByAccountingAccountNumber(
                                 waitingAccountingAccountNumber);
 
                 if (waitingAccountingAccounts == null || waitingAccountingAccounts.size() == 0)
-                        throw new Exception("Wainting accounting account not found");
+                        throw new OsirisException("Wainting accounting account not found");
 
                 if (waitingAccountingAccounts.size() > 1)
-                        throw new Exception("Multiple waiting accounting account found for accounting account number "
-                                        + bankAccountingAccountNumber);
+                        throw new OsirisException(
+                                        "Multiple waiting accounting account found for accounting account number "
+                                                        + bankAccountingAccountNumber);
 
                 return waitingAccountingAccounts.get(0);
         }
 
         @Override
-        public AccountingAccount getProfitAccountingAccount() throws Exception {
+        public AccountingAccount getProfitAccountingAccount() throws OsirisException {
                 List<AccountingAccount> profitAccountingAccounts = getAccountingAccountByAccountingAccountNumber(
                                 profitAccountingAccountNumber);
 
                 if (profitAccountingAccounts == null || profitAccountingAccounts.size() == 0)
-                        throw new Exception("Profit accounting account not found");
+                        throw new OsirisException("Profit accounting account not found");
 
                 if (profitAccountingAccounts.size() > 1)
-                        throw new Exception("Multiple profit accounting account found for accounting account number "
-                                        + bankAccountingAccountNumber);
+                        throw new OsirisException(
+                                        "Multiple profit accounting account found for accounting account number "
+                                                        + bankAccountingAccountNumber);
 
                 return profitAccountingAccounts.get(0);
         }
 
         @Override
-        public AccountingAccount getLostAccountingAccount() throws Exception {
+        public AccountingAccount getLostAccountingAccount() throws OsirisException {
                 List<AccountingAccount> profitAccountingAccounts = getAccountingAccountByAccountingAccountNumber(
                                 lostAccountingAccountNumber);
 
                 if (profitAccountingAccounts == null || profitAccountingAccounts.size() == 0)
-                        throw new Exception("Lost accounting account not found");
+                        throw new OsirisException("Lost accounting account not found");
 
                 if (profitAccountingAccounts.size() > 1)
-                        throw new Exception("Multiple lost accounting account found for accounting account number "
-                                        + bankAccountingAccountNumber);
+                        throw new OsirisException(
+                                        "Multiple lost accounting account found for accounting account number "
+                                                        + bankAccountingAccountNumber);
 
                 return profitAccountingAccounts.get(0);
         }

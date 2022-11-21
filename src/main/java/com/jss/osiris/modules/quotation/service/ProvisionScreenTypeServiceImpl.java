@@ -23,7 +23,7 @@ public class ProvisionScreenTypeServiceImpl implements ProvisionScreenTypeServic
         return IterableUtils.toList(provisionScreenTypeRepository.findAll());
     }
 
-    @Autowired
+    @Override
     public void updateScreenTypes() {
         updateScreenType(ProvisionScreenType.ANNOUNCEMENT, "Ecran annonces légales");
         updateScreenType(ProvisionScreenType.BODACC, "Ecran BODACC");

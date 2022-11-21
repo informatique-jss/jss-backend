@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.collections4.IterableUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -13,14 +11,13 @@ import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.accounting.repository.AccountingJournalRepository;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 
 @Service
 public class AccountingJournalServiceImpl implements AccountingJournalService {
-
-    private static final Logger logger = LoggerFactory.getLogger(AccountingJournalServiceImpl.class);
 
     @Autowired
     AccountingJournalRepository accountingJournalRepository;
@@ -60,26 +57,26 @@ public class AccountingJournalServiceImpl implements AccountingJournalService {
     }
 
     @Override
-    public AccountingJournal getSalesAccountingJournal() throws Exception {
+    public AccountingJournal getSalesAccountingJournal() throws OsirisException {
         AccountingJournal salesJournal = constantService.getAccountingJournalSales();
         if (salesJournal == null)
-            logger.error("Unable to find accounting journal Sales. Check constants");
+            throw new OsirisException("Unable to find accounting journal Sales. Check constants");
         return salesJournal;
     }
 
     @Override
-    public AccountingJournal getPurchasesAccountingJournal() throws Exception {
+    public AccountingJournal getPurchasesAccountingJournal() throws OsirisException {
         AccountingJournal purchasesJournal = constantService.getAccountingJournalPurchases();
         if (purchasesJournal == null)
-            logger.error("Unable to find accounting journal Purchases. Check constants");
+            throw new OsirisException("Unable to find accounting journal Purchases. Check constants");
         return purchasesJournal;
     }
 
     @Override
-    public AccountingJournal getANouveauAccountingJournal() throws Exception {
+    public AccountingJournal getANouveauAccountingJournal() throws OsirisException {
         AccountingJournal aNouveauJournal = constantService.getAccountingJournalANouveau();
         if (aNouveauJournal == null)
-            logger.error("Unable to find accounting journal A Nouveau. Check constants");
+            throw new OsirisException("Unable to find accounting journal A Nouveau. Check constants");
         return aNouveauJournal;
     }
 }

@@ -1,5 +1,6 @@
 package com.jss.osiris.libs;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -9,23 +10,19 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.validator.routines.EmailValidator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
+import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.miscellaneous.model.ICode;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.miscellaneous.model.Mail;
 
 @Service
 public class ValidationHelper {
-
-    private static final Logger logger = LoggerFactory.getLogger(ValidationHelper.class);
 
     @Autowired
     ApplicationContext ctx;
@@ -86,12 +83,17 @@ public class ValidationHelper {
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public Object validateReferential(IId value, Boolean isMandatory) throws Exception {
+    public Object validateReferential(IId value, Boolean isMandatory, String className)
+            throws OsirisValidationException, OsirisException {
+        if (className == null || className.equals(""))
+            throw new OsirisValidationException("no class name defined !");
+        if (className.startsWith("get"))
+            className = className.substring((3));
         if (value == null && isMandatory)
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            throw new OsirisValidationException(className);
         if (value != null) {
             if (value.getId() == null)
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+                throw new OsirisValidationException(className);
 
             String[] valueClass = value.getClass().getName().split("\\.");
             valueClass[valueClass.length - 2] = "service";
@@ -101,45 +103,55 @@ public class ValidationHelper {
             try {
                 serviceClass = Class.forName(String.join(".", valueClass));
             } catch (ClassNotFoundException e) {
-                logger.error("Class not found in ValidationHelper generic check method. Class : "
+                throw new OsirisException("Class not found in ValidationHelper generic check method. Class : "
                         + value.getClass().getName());
-                throw e;
             }
 
             Object service = null;
             try {
                 service = ctx.getBean(serviceClass);
             } catch (NoSuchBeanDefinitionException e) {
-                logger.error("Bean not found in ValidationHelper generic check method. Bean for "
+                throw new OsirisException("Bean not found in ValidationHelper generic check method. Bean for "
                         + serviceClass);
-                throw e;
             }
 
             Method m = null;
             try {
                 m = serviceClass.getDeclaredMethod("get" + value.getClass().getSimpleName(), Integer.class);
             } catch (NoSuchMethodException e) {
-                logger.error("Method not found in ValidationHelper generic check method. Bean : "
+                throw new OsirisException("Method not found in ValidationHelper generic check method. Bean : "
                         + serviceClass
                         + ". Method : " + "get" + value.getClass().getSimpleName());
-                throw e;
             }
 
-            Object returnValue = m.invoke(service, value.getId());
+            Object returnValue;
+            try {
+                returnValue = m.invoke(service, value.getId());
+            } catch (IllegalAccessException e) {
+                throw new OsirisException("Illegal access to methode in ValidationHelper generic check method. Bean : "
+                        + serviceClass
+                        + ". Method : " + "get" + value.getClass().getSimpleName());
+            } catch (InvocationTargetException e) {
+                throw new OsirisException(
+                        "Invocation target error to methode in ValidationHelper generic check method. Bean : "
+                                + serviceClass
+                                + ". Method : " + "get" + value.getClass().getSimpleName());
+            }
             if (returnValue == null)
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+                throw new OsirisValidationException(className);
             return returnValue;
         }
         return null;
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public Object validateReferential(ICode value, Boolean isMandatory) throws Exception {
+    public Object validateReferential(ICode value, Boolean isMandatory, String className)
+            throws OsirisValidationException, OsirisException {
         if (value == null && isMandatory)
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            throw new OsirisValidationException(className);
         if (value != null) {
             if (value.getCode() == null)
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+                throw new OsirisValidationException(className);
 
             String[] valueClassTmp = value.getClass().getName().split("\\.");
             ArrayList<String> valueClass = new ArrayList<String>();
@@ -157,33 +169,43 @@ public class ValidationHelper {
             try {
                 serviceClass = Class.forName(String.join(".", valueClass));
             } catch (ClassNotFoundException e) {
-                logger.error("Class not found in ValidationHelper generic check method. Class : "
+                throw new OsirisException("Class not found in ValidationHelper generic check method. Class : "
                         + value.getClass().getName());
-                throw e;
             }
 
             Object service = null;
             try {
                 service = ctx.getBean(serviceClass);
             } catch (NoSuchBeanDefinitionException e) {
-                logger.error("Bean not found in ValidationHelper generic check method. Bean for "
+                throw new OsirisException("Bean not found in ValidationHelper generic check method. Bean for "
                         + serviceClass);
-                throw e;
             }
 
             Method m = null;
             try {
                 m = serviceClass.getDeclaredMethod("get" + value.getClass().getSimpleName());
             } catch (NoSuchMethodException e) {
-                logger.error("Method not found in ValidationHelper generic check method. Bean : "
+                throw new OsirisException("Method not found in ValidationHelper generic check method. Bean : "
                         + serviceClass
                         + ". Method : " + "get" + value.getClass().getSimpleName());
-                throw e;
             }
 
-            List<ICode> returnValue = (List<ICode>) m.invoke(service);
+            List<ICode> returnValue = null;
+            try {
+                returnValue = (List<ICode>) m.invoke(service);
+            } catch (IllegalAccessException e) {
+                throw new OsirisException("Illegal access to methode in ValidationHelper generic check method. Bean : "
+                        + serviceClass
+                        + ". Method : " + "get" + value.getClass().getSimpleName());
+            } catch (InvocationTargetException e) {
+                throw new OsirisException(
+                        "Invocation target error to methode in ValidationHelper generic check method. Bean : "
+                                + serviceClass
+                                + ". Method : " + "get" + value.getClass().getSimpleName());
+            }
+
             if (returnValue == null)
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+                throw new OsirisValidationException(className);
 
             for (ICode entity : returnValue) {
                 if (entity.getCode().equals(value.getCode()))
@@ -193,72 +215,76 @@ public class ValidationHelper {
         return null;
     }
 
-    public void validateString(String value, Boolean isMandatory, Integer maxLength) throws Exception {
+    public void validateString(String value, Boolean isMandatory, Integer maxLength, String fieldName)
+            throws OsirisValidationException {
         if ((value == null || value.equals("")) && isMandatory)
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            throw new OsirisValidationException(fieldName);
         if (value != null) {
             if (maxLength != null && value.length() > maxLength)
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+                throw new OsirisValidationException(fieldName);
         }
     }
 
-    public void validateInteger(Integer value, Boolean isMandatory) throws Exception {
+    public void validateInteger(Integer value, Boolean isMandatory, String fieldName) throws OsirisValidationException {
         if ((value == null) && isMandatory)
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            throw new OsirisValidationException(fieldName);
     }
 
-    public void validateFloat(Float value, Boolean isMandatory) throws Exception {
+    public void validateFloat(Float value, Boolean isMandatory, String fieldName) throws OsirisValidationException {
         if ((value == null) && isMandatory)
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            throw new OsirisValidationException(fieldName);
     }
 
-    public void validateString(String value, Boolean isMandatory) throws Exception {
-        validateString(value, isMandatory, null);
+    public void validateString(String value, Boolean isMandatory, String fieldName) throws OsirisValidationException {
+        validateString(value, isMandatory, null, fieldName);
     }
 
-    public void validateDate(LocalDate value, Boolean isMandatory) throws Exception {
-        validateDateMax(value, isMandatory, null);
+    public void validateDate(LocalDate value, Boolean isMandatory, String fieldName) throws OsirisValidationException {
+        validateDateMax(value, isMandatory, null, fieldName);
     }
 
-    public void validateDateMax(LocalDate value, Boolean isMandatory, LocalDate maxDate) throws Exception {
+    public void validateDateMax(LocalDate value, Boolean isMandatory, LocalDate maxDate, String fieldName)
+            throws OsirisValidationException {
         if ((value == null) && isMandatory)
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            throw new OsirisValidationException(fieldName);
         if (value != null) {
             if (maxDate != null && value.isAfter(maxDate))
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+                throw new OsirisValidationException(fieldName);
         }
     }
 
-    public void validateDateMin(LocalDate value, Boolean isMandatory, LocalDate minDate)
-            throws Exception {
+    public void validateDateMin(LocalDate value, Boolean isMandatory, LocalDate minDate, String fieldName)
+            throws OsirisValidationException {
         if ((value == null) && isMandatory)
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            throw new OsirisValidationException(fieldName);
         if (value != null) {
             if (minDate != null && value.isBefore(minDate))
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+                throw new OsirisValidationException(fieldName);
         }
     }
 
-    public void validateDateTime(LocalDateTime value, Boolean isMandatory) throws Exception {
-        validateDateTimeMax(value, isMandatory, null);
+    public void validateDateTime(LocalDateTime value, Boolean isMandatory, String fieldName)
+            throws OsirisValidationException {
+        validateDateTimeMax(value, isMandatory, null, fieldName);
     }
 
-    public void validateDateTimeMax(LocalDateTime value, Boolean isMandatory, LocalDateTime maxDate) throws Exception {
+    public void validateDateTimeMax(LocalDateTime value, Boolean isMandatory, LocalDateTime maxDate, String fieldName)
+            throws OsirisValidationException {
         if ((value == null) && isMandatory)
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            throw new OsirisValidationException(fieldName);
         if (value != null) {
             if (maxDate != null && value.isAfter(maxDate))
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+                throw new OsirisValidationException(fieldName);
         }
     }
 
-    public void validateDateTimeMin(LocalDateTime value, Boolean isMandatory, LocalDateTime minDate)
-            throws Exception {
+    public void validateDateTimeMin(LocalDateTime value, Boolean isMandatory, LocalDateTime minDate, String fieldName)
+            throws OsirisValidationException {
         if ((value == null) && isMandatory)
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            throw new OsirisValidationException(fieldName);
         if (value != null) {
             if (minDate != null && value.isBefore(minDate))
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+                throw new OsirisValidationException(fieldName);
         }
     }
 
@@ -270,4 +296,5 @@ public class ValidationHelper {
         }
         return true;
     }
+
 }

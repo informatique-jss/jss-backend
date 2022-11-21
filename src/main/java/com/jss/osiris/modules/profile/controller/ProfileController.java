@@ -7,12 +7,9 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -24,11 +21,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.HttpStatusCodeException;
-import org.springframework.web.server.ResponseStatusException;
 
 import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.ValidationHelper;
+import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.profile.model.User;
 import com.jss.osiris.modules.profile.service.EmployeeService;
@@ -37,8 +34,6 @@ import com.jss.osiris.modules.profile.service.EmployeeService;
 public class ProfileController {
 
 	private static final String inputEntryPoint = "/profile";
-
-	private static final Logger logger = LoggerFactory.getLogger(ProfileController.class);
 
 	@Autowired
 	EmployeeService employeeService;
@@ -89,7 +84,6 @@ public class ProfileController {
 		}
 	}
 
-	@PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
 	@GetMapping(inputEntryPoint + "/login/roles")
 	public ResponseEntity<Collection<? extends GrantedAuthority>> getUserRoles() {
 		return new ResponseEntity<Collection<? extends GrantedAuthority>>(activeDirectoryHelper.getUserRoles(),
@@ -98,50 +92,26 @@ public class ProfileController {
 
 	@GetMapping(inputEntryPoint + "/employee/all")
 	public ResponseEntity<List<Employee>> getEmployees() {
-		List<Employee> salesEmployees = null;
-		try {
-			salesEmployees = employeeService.getEmployees();
-		} catch (HttpStatusCodeException e) {
-			logger.error("HTTP error when fetching client types", e);
-			return new ResponseEntity<List<Employee>>(HttpStatus.INTERNAL_SERVER_ERROR);
-		} catch (Exception e) {
-			logger.error("Error when fetching client types", e);
-			return new ResponseEntity<List<Employee>>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-		return new ResponseEntity<List<Employee>>(salesEmployees, HttpStatus.OK);
+		return new ResponseEntity<List<Employee>>(employeeService.getEmployees(), HttpStatus.OK);
 	}
 
 	@PostMapping(inputEntryPoint + "/employee")
 	public ResponseEntity<Employee> addOrUpdateEmployee(
-			@RequestBody Employee employee) {
-		Employee outEmployee;
-		try {
-			List<Employee> backups = new ArrayList<Employee>();
+			@RequestBody Employee employee) throws OsirisValidationException, OsirisException {
+		List<Employee> backups = new ArrayList<Employee>();
 
-			if (employee != null)
-				backups = employee.getBackups();
+		if (employee != null)
+			backups = employee.getBackups();
 
-			employee = (Employee) validationHelper.validateReferential(employee, true);
+		employee = (Employee) validationHelper.validateReferential(employee, true, "employee");
 
-			if (backups != null)
-				for (Employee backup : backups)
-					validationHelper.validateReferential(backup, true);
+		if (backups != null)
+			for (Employee backup : backups)
+				validationHelper.validateReferential(backup, true, "backup");
 
-			employee.setBackups(backups);
+		employee.setBackups(backups);
 
-			outEmployee = employeeService.addOrUpdateEmployee(employee);
-		} catch (
-
-		ResponseStatusException e) {
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		} catch (HttpStatusCodeException e) {
-			logger.error("HTTP error when fetching employee", e);
-			return new ResponseEntity<Employee>(HttpStatus.INTERNAL_SERVER_ERROR);
-		} catch (Exception e) {
-			logger.error("Error when fetching employee", e);
-			return new ResponseEntity<Employee>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-		return new ResponseEntity<Employee>(outEmployee, HttpStatus.OK);
+		return new ResponseEntity<Employee>(employeeService.addOrUpdateEmployee(employee), HttpStatus.OK);
 	}
 
 }

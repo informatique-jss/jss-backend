@@ -1,0 +1,19 @@
+<div class="mat-elevation-z2 form-div">
+  <div class="full-width">
+    <table class="full-width table-fixed-layout" *ngIf="!isForDashboard">
+      <tr>
+        <td>
+          <generic-toggle [(model)]="hideRead" label="Cacher les lus ?" [form]="logForm" propertyName="hideRead">
+          </generic-toggle>
+        </td>
+        <td class="fab-td-button">
+          <button mat-mini-fab color="warn" matTooltip="Rechercher" (click)="searchLogs()" class="add-button">
+            <mat-icon>search</mat-icon>
+          </button>
+        </td>
+      </tr>
+    </table>
+    <sort-table [actions]="tableAction" [columns]="displayedColumns" [values]="logs" tableName="Devis">
+    </sort-table>
+  </div>
+</div>

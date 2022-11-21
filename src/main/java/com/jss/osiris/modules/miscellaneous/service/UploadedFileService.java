@@ -1,9 +1,8 @@
 package com.jss.osiris.modules.miscellaneous.service;
 
-import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.miscellaneous.model.UploadedFile;
 
 public interface UploadedFileService {
@@ -11,8 +10,7 @@ public interface UploadedFileService {
 
     public UploadedFile getUploadedFile(Integer id);
 
-    public UploadedFile createUploadedFile(String filename, String absoluteFilePath)
-            throws NoSuchAlgorithmException, IOException;
+    public UploadedFile createUploadedFile(String filename, String absoluteFilePath) throws OsirisException;
 
     public void deleteUploadedFile(UploadedFile uploadedFile);
 }

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.ActiveDirectoryHelper;
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.miscellaneous.model.Notification;
 import com.jss.osiris.modules.miscellaneous.repository.NotificationRepository;
@@ -96,7 +97,7 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     private Notification genericNotificationForQuotation(Quotation quotation, String notificationType)
-            throws Exception {
+            throws OsirisException {
         ITiers customerOrder = quotationService.getCustomerOrderOfQuotation(quotation);
         Employee salesEmployee = customerOrder.getSalesEmployee();
 
@@ -133,34 +134,33 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public Notification notifyNewQuotation(Quotation quotation) throws Exception {
+    public Notification notifyNewQuotation(Quotation quotation) throws OsirisException {
         return genericNotificationForQuotation(quotation, Notification.QUOTATION_CREATE);
     }
 
     @Override
-    public Notification notifyQuotationToVerify(Quotation quotation) throws Exception {
+    public Notification notifyQuotationToVerify(Quotation quotation) throws OsirisException {
         return genericNotificationForQuotation(quotation, Notification.QUOTATION_ASSO_AFFAIRE_ORDER_VERIFY);
     }
 
     @Override
-    public Notification notifyQuotationSent(Quotation quotation) throws Exception {
+    public Notification notifyQuotationSent(Quotation quotation) throws OsirisException {
         return genericNotificationForQuotation(quotation, Notification.QUOTATION_SENT);
     }
 
     @Override
-    public Notification notifyQuotationValidatedByCustomer(Quotation quotation) throws Exception {
+    public Notification notifyQuotationValidatedByCustomer(Quotation quotation) throws OsirisException {
         return genericNotificationForQuotation(quotation, Notification.QUOTATION_VALIDATED_BY_CUSOMER);
     }
 
     @Override
-    public Notification notifyQuotationRefusedByCustomer(Quotation quotation) throws Exception {
+    public Notification notifyQuotationRefusedByCustomer(Quotation quotation) throws OsirisException {
         return genericNotificationForQuotation(quotation, Notification.QUOTATION_REFUSED_BY_CUSOMER);
     }
 
     private List<Notification> genericNotificationForCustomerOrder(CustomerOrder customerOrder, String notificationType,
             boolean notifyAffaireResponsibles, boolean notifySalesEmployee, boolean notifiyBillingResponsible,
-            boolean isFromHuman)
-            throws Exception {
+            boolean isFromHuman) throws OsirisException {
         ITiers customerOrderTiers = quotationService.getCustomerOrderOfQuotation(customerOrder);
         Employee salesEmployee = customerOrderTiers.getSalesEmployee();
 
@@ -233,21 +233,21 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public List<Notification> notifyNewCustomerOrderQuotation(CustomerOrder customerOrder) throws Exception {
+    public List<Notification> notifyNewCustomerOrderQuotation(CustomerOrder customerOrder) throws OsirisException {
         return genericNotificationForCustomerOrder(customerOrder, Notification.CUSTOMER_ORDER_CREATE, false, true,
                 false,
                 true);
     }
 
     @Override
-    public List<Notification> notifyCustomerOrderToVerify(CustomerOrder customerOrder) throws Exception {
+    public List<Notification> notifyCustomerOrderToVerify(CustomerOrder customerOrder) throws OsirisException {
         return genericNotificationForCustomerOrder(customerOrder, Notification.CUSTOMER_ORDER_ASSO_AFFAIRE_ORDER_VERIFY,
                 true, true, false, true);
     }
 
     @Override
     public List<Notification> notifyCustomerOrderToBeingProcessed(CustomerOrder customerOrder, boolean isFromHuman)
-            throws Exception {
+            throws OsirisException {
         ArrayList<Notification> notifications = new ArrayList<Notification>();
         notifications.addAll(
                 genericNotificationForCustomerOrder(customerOrder, Notification.CUSTOMER_ORDER_BEING_PROCESSED, false,
@@ -258,14 +258,14 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public List<Notification> notifyCustomerOrderToBeingToBilled(CustomerOrder customerOrder) throws Exception {
+    public List<Notification> notifyCustomerOrderToBeingToBilled(CustomerOrder customerOrder) throws OsirisException {
         return genericNotificationForCustomerOrder(customerOrder, Notification.CUSTOMER_ORDER_TO_BE_BILLED,
                 false, false, true, true);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Notification addOrUpdatePersonnalNotification(Notification notification) throws Exception {
+    public Notification addOrUpdatePersonnalNotification(Notification notification) {
         if (notification != null) {
             notification.setEmployee(employeeService.getCurrentEmployee());
             notification.setEntityId(null);
@@ -281,7 +281,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void purgeNotification() throws Exception {
+    public void purgeNotification() {
         notificationRepository.deleteAll(notificationRepository.findNotificationOlderThanMonths(3));
     }
 }

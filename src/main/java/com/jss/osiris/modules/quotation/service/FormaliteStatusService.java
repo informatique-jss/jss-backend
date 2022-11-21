@@ -13,5 +13,5 @@ public interface FormaliteStatusService {
 
     public FormaliteStatus getFormaliteStatusByCode(String code);
 
-    public void updateStatusReferential() throws Exception;
+    public void updateStatusReferential();
 }

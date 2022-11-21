@@ -12,6 +12,7 @@ import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.quotation.repository.CustomerOrderStatusRepository;
 
@@ -52,7 +53,7 @@ public class CustomerOrderStatusServiceImpl implements CustomerOrderStatusServic
     }
 
     @Override
-    public void updateStatusReferential() throws Exception {
+    public void updateStatusReferential() throws OsirisException {
         updateStatus(CustomerOrderStatus.OPEN, "Ouvert", "auto_awesome");
         updateStatus(CustomerOrderStatus.TO_VERIFY, "A vérifier", "search");
         updateStatus(CustomerOrderStatus.BEING_PROCESSED, "En cours de traitement", "groups_2");
@@ -93,11 +94,11 @@ public class CustomerOrderStatusServiceImpl implements CustomerOrderStatusServic
         addOrUpdateCustomerOrderStatus(CustomerOrderStatus);
     }
 
-    protected void setSuccessor(String code, String code2) throws Exception {
+    protected void setSuccessor(String code, String code2) throws OsirisException {
         CustomerOrderStatus sourceStatus = getCustomerOrderStatusByCode(code);
         CustomerOrderStatus targetStatus = getCustomerOrderStatusByCode(code2);
         if (sourceStatus == null || targetStatus == null)
-            throw new Exception("Status code " + code + " or " + code2 + " do not exist");
+            throw new OsirisException("Status code " + code + " or " + code2 + " do not exist");
 
         if (sourceStatus.getSuccessors() == null)
             sourceStatus.setSuccessors(new ArrayList<CustomerOrderStatus>());
@@ -110,11 +111,11 @@ public class CustomerOrderStatusServiceImpl implements CustomerOrderStatusServic
         addOrUpdateCustomerOrderStatus(sourceStatus);
     }
 
-    protected void setPredecessor(String code, String code2) throws Exception {
+    protected void setPredecessor(String code, String code2) throws OsirisException {
         CustomerOrderStatus sourceStatus = getCustomerOrderStatusByCode(code);
         CustomerOrderStatus targetStatus = getCustomerOrderStatusByCode(code2);
         if (sourceStatus == null || targetStatus == null)
-            throw new Exception("Quotation status code " + code + " or " + code2 + " do not exist");
+            throw new OsirisException("Quotation status code " + code + " or " + code2 + " do not exist");
 
         if (sourceStatus.getPredecessors() == null)
             sourceStatus.setPredecessors(new ArrayList<CustomerOrderStatus>());

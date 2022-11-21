@@ -2,6 +2,7 @@ package com.jss.osiris.modules.accounting.service;
 
 import java.util.List;
 
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.accounting.model.AccountingJournal;
 
 public interface AccountingJournalService {
@@ -13,9 +14,9 @@ public interface AccountingJournalService {
 
     public AccountingJournal getAccountingJournalByCode(String code);
 
-    public AccountingJournal getSalesAccountingJournal() throws Exception;
+    public AccountingJournal getSalesAccountingJournal() throws OsirisException;
 
-    public AccountingJournal getPurchasesAccountingJournal() throws Exception;
+    public AccountingJournal getPurchasesAccountingJournal() throws OsirisException;
 
-    public AccountingJournal getANouveauAccountingJournal() throws Exception;
+    public AccountingJournal getANouveauAccountingJournal() throws OsirisException;
 }

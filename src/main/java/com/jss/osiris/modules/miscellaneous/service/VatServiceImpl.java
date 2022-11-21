@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.collections4.IterableUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -13,6 +11,7 @@ import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.miscellaneous.model.Country;
 import com.jss.osiris.modules.miscellaneous.model.Department;
 import com.jss.osiris.modules.miscellaneous.model.Vat;
@@ -20,8 +19,6 @@ import com.jss.osiris.modules.miscellaneous.repository.VatRepository;
 
 @Service
 public class VatServiceImpl implements VatService {
-
-    private static final Logger logger = LoggerFactory.getLogger(VatServiceImpl.class);
 
     @Autowired
     VatRepository vatRepository;
@@ -57,12 +54,14 @@ public class VatServiceImpl implements VatService {
 
     /**
      * Using https://sumup.fr/factures/essentiels-facturation/tva-dom-tom/
+     * 
+     * @throws OsirisException
      */
     @Override
     public Vat getGeographicalApplicableVat(Country country, Department departement, boolean isIndividual)
-            throws Exception {
+            throws OsirisException {
         if (country == null)
-            throw new Exception("Country not provided");
+            throw new OsirisException("Country not provided");
 
         // No VAT abroad (France and Monaco)
         if (!country.getId().equals(constantService.getCountryFrance().getId())
@@ -71,8 +70,7 @@ public class VatServiceImpl implements VatService {
 
         Vat vatTwenty = constantService.getVatTwenty();
         if (vatTwenty == null) {
-            logger.error("VAT not found for code " + constantService.getVatTwenty().getCode());
-            throw new Exception("VAT not found for code " + constantService.getVatTwenty().getCode());
+            throw new OsirisException("VAT not found for code " + constantService.getVatTwenty().getCode());
         }
 
         // 20% in Monaco
@@ -81,12 +79,11 @@ public class VatServiceImpl implements VatService {
 
         Vat vatEight = constantService.getVatEight();
         if (vatEight == null) {
-            logger.error("VAT not found for code " + constantService.getVatEight().getCode());
-            throw new Exception("VAT not found for code " + constantService.getVatEight().getCode());
+            throw new OsirisException("VAT not found for code " + constantService.getVatEight().getCode());
         }
 
         if (departement == null)
-            throw new Exception("Department not provided");
+            throw new OsirisException("Department not provided");
 
         // 8 % for individual of DOM excepted Guyane and Mayotte (0 %), 20 % for
         // professionals

@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.model.AccountingRecord;
@@ -73,7 +74,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public Invoice cancelInvoice(Invoice invoice) throws Exception {
+    public Invoice cancelInvoice(Invoice invoice) throws OsirisException {
         unletterInvoice(invoice);
         if (invoice.getAccountingRecords() != null)
             for (AccountingRecord accountingRecord : invoice.getAccountingRecords()) {
@@ -94,14 +95,13 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public Invoice createInvoice(CustomerOrder customerOrder, ITiers orderingCustomer)
-            throws Exception {
+    public Invoice createInvoice(CustomerOrder customerOrder, ITiers orderingCustomer) throws OsirisException {
         Invoice invoice = new Invoice();
         invoice.setCreatedDate(LocalDateTime.now());
         Document billingDocument = documentService.getBillingDocument(customerOrder.getDocuments());
 
         if (billingDocument == null)
-            throw new Exception("Billing document not found for ordering customer provided");
+            throw new OsirisException("Billing document not found for ordering customer provided");
 
         if (orderingCustomer instanceof Tiers)
             invoice.setTiers((Tiers) orderingCustomer);
@@ -142,7 +142,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public List<InvoiceSearchResult> searchInvoices(InvoiceSearch invoiceSearch) throws Exception {
+    public List<InvoiceSearchResult> searchInvoices(InvoiceSearch invoiceSearch) {
         ArrayList<Integer> statusId = null;
         if (invoiceSearch.getInvoiceStatus() != null) {
             statusId = new ArrayList<Integer>();
@@ -165,9 +165,9 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public Invoice addOrUpdateInvoiceFromUser(Invoice invoice) throws Exception {
+    public Invoice addOrUpdateInvoiceFromUser(Invoice invoice) throws OsirisException {
         if (!hasAtLeastOneInvoiceItemNotNull(invoice))
-            throw new Exception("No invoice item found on manual invoice");
+            throw new OsirisException("No invoice item found on manual invoice");
 
         invoice.setCreatedDate(LocalDateTime.now());
 
@@ -222,7 +222,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public void unletterInvoice(Invoice invoice) throws Exception {
+    public void unletterInvoice(Invoice invoice) throws OsirisException {
         AccountingAccount accountingAccountCustomer = accountingRecordService
                 .getCustomerAccountingAccountForInvoice(invoice);
 

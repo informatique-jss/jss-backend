@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.miscellaneous.service;
 
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.invoicing.model.InvoiceStatus;
 import com.jss.osiris.modules.invoicing.model.PaymentWay;
@@ -32,156 +33,156 @@ import com.jss.osiris.modules.tiers.model.SubscriptionPeriodType;
 import com.jss.osiris.modules.tiers.model.TiersType;
 
 public interface ConstantService {
-    public Constant getConstants() throws Exception;
+    public Constant getConstants() throws OsirisException;
 
-    public Constant getConstant(Integer id);
+    public Constant getConstant(Integer id) throws OsirisException;
 
-    public Constant addOrUpdateConstant(Constant constant);
+    public Constant addOrUpdateConstant(Constant constant) throws OsirisException;
 
-    public BillingLabelType getBillingLabelTypeCodeAffaire() throws Exception;
+    public BillingLabelType getBillingLabelTypeCodeAffaire() throws OsirisException;
 
-    public BillingLabelType getBillingLabelTypeOther() throws Exception;
+    public BillingLabelType getBillingLabelTypeOther() throws OsirisException;
 
-    public BillingLabelType getBillingLabelTypeCustomer() throws Exception;
+    public BillingLabelType getBillingLabelTypeCustomer() throws OsirisException;
 
-    public AccountingJournal getAccountingJournalSales() throws Exception;
+    public AccountingJournal getAccountingJournalSales() throws OsirisException;
 
-    public AccountingJournal getAccountingJournalPurchases() throws Exception;
+    public AccountingJournal getAccountingJournalPurchases() throws OsirisException;
 
-    public AccountingJournal getAccountingJournalANouveau() throws Exception;
+    public AccountingJournal getAccountingJournalANouveau() throws OsirisException;
 
-    public TiersType getTiersTypeProspect() throws Exception;
+    public TiersType getTiersTypeProspect() throws OsirisException;
 
-    public DocumentType getDocumentTypePublication() throws Exception;
+    public DocumentType getDocumentTypePublication() throws OsirisException;
 
-    public DocumentType getDocumentTypeCfe() throws Exception;
+    public DocumentType getDocumentTypeCfe() throws OsirisException;
 
-    public DocumentType getDocumentTypeKbis() throws Exception;
+    public DocumentType getDocumentTypeKbis() throws OsirisException;
 
-    public DocumentType getDocumentTypeBilling() throws Exception;
+    public DocumentType getDocumentTypeBilling() throws OsirisException;
 
-    public DocumentType getDocumentTypeDunning() throws Exception;
+    public DocumentType getDocumentTypeDunning() throws OsirisException;
 
-    public DocumentType getDocumentTypeRefund() throws Exception;
+    public DocumentType getDocumentTypeRefund() throws OsirisException;
 
-    public DocumentType getDocumentTypeBillingClosure() throws Exception;
+    public DocumentType getDocumentTypeBillingClosure() throws OsirisException;
 
-    public DocumentType getDocumentTypeProvisionnalReceipt() throws Exception;
+    public DocumentType getDocumentTypeProvisionnalReceipt() throws OsirisException;
 
-    public DocumentType getDocumentTypeProofReading() throws Exception;
+    public DocumentType getDocumentTypeProofReading() throws OsirisException;
 
-    public DocumentType getDocumentTypePublicationCertificate() throws Exception;
+    public DocumentType getDocumentTypePublicationCertificate() throws OsirisException;
 
-    public DocumentType getDocumentTypeQuotation() throws Exception;
+    public DocumentType getDocumentTypeQuotation() throws OsirisException;
 
-    public AttachmentType getAttachmentTypeKbis() throws Exception;
+    public AttachmentType getAttachmentTypeKbis() throws OsirisException;
 
-    public AttachmentType getAttachmentTypeCni() throws Exception;
+    public AttachmentType getAttachmentTypeCni() throws OsirisException;
 
-    public AttachmentType getAttachmentTypeLogo() throws Exception;
+    public AttachmentType getAttachmentTypeLogo() throws OsirisException;
 
-    public AttachmentType getAttachmentTypeProofOfAddress() throws Exception;
+    public AttachmentType getAttachmentTypeProofOfAddress() throws OsirisException;
 
-    public Country getCountryFrance() throws Exception;
+    public Country getCountryFrance() throws OsirisException;
 
-    public Country getCountryMonaco() throws Exception;
+    public Country getCountryMonaco() throws OsirisException;
 
-    public BillingType getBillingTypeLogo() throws Exception;
+    public BillingType getBillingTypeLogo() throws OsirisException;
 
-    public QuotationLabelType getQuotationLabelTypeOther() throws Exception;
+    public QuotationLabelType getQuotationLabelTypeOther() throws OsirisException;
 
-    public PaymentType getPaymentTypeVirement() throws Exception;
+    public PaymentType getPaymentTypeVirement() throws OsirisException;
 
-    public PaymentType getPaymentTypeEspeces() throws Exception;
+    public PaymentType getPaymentTypeEspeces() throws OsirisException;
 
-    public PaymentType getPaymentTypeCB() throws Exception;
+    public PaymentType getPaymentTypeCB() throws OsirisException;
 
-    public PaymentType getPaymentTypePrelevement() throws Exception;
+    public PaymentType getPaymentTypePrelevement() throws OsirisException;
 
-    public RefundType getRefundTypeVirement() throws Exception;
+    public RefundType getRefundTypeVirement() throws OsirisException;
 
-    public SubscriptionPeriodType getSubscriptionPeriodType12M() throws Exception;
+    public SubscriptionPeriodType getSubscriptionPeriodType12M() throws OsirisException;
 
-    public LegalForm getLegalFormUnregistered() throws Exception;
+    public LegalForm getLegalFormUnregistered() throws OsirisException;
 
-    public JournalType getJournalTypeSpel() throws Exception;
+    public JournalType getJournalTypeSpel() throws OsirisException;
 
-    public Confrere getConfrereJss() throws Exception;
+    public Confrere getConfrereJss() throws OsirisException;
 
-    public DomiciliationContractType getDomiciliationContractTypeKeepMail() throws Exception;
+    public DomiciliationContractType getDomiciliationContractTypeKeepMail() throws OsirisException;
 
-    public DomiciliationContractType getDomiciliationContractTypeRouteMail() throws Exception;
+    public DomiciliationContractType getDomiciliationContractTypeRouteMail() throws OsirisException;
 
-    public DomiciliationContractType getDomiciliationContractTypeRouteEmailAndMail() throws Exception;
+    public DomiciliationContractType getDomiciliationContractTypeRouteEmailAndMail() throws OsirisException;
 
-    public DomiciliationContractType getDomiciliationContractTypeRouteEmail() throws Exception;
+    public DomiciliationContractType getDomiciliationContractTypeRouteEmail() throws OsirisException;
 
-    public MailRedirectionType getMailRedirectionTypeOther() throws Exception;
+    public MailRedirectionType getMailRedirectionTypeOther() throws OsirisException;
 
-    public BodaccPublicationType getBodaccPublicationTypeMerging() throws Exception;
+    public BodaccPublicationType getBodaccPublicationTypeMerging() throws OsirisException;
 
-    public BodaccPublicationType getBodaccPublicationTypeSplit() throws Exception;
+    public BodaccPublicationType getBodaccPublicationTypeSplit() throws OsirisException;
 
-    public BodaccPublicationType getBodaccPublicationTypePartialSplit() throws Exception;
+    public BodaccPublicationType getBodaccPublicationTypePartialSplit() throws OsirisException;
 
-    public BodaccPublicationType getBodaccPublicationTypePossessionDispatch() throws Exception;
+    public BodaccPublicationType getBodaccPublicationTypePossessionDispatch() throws OsirisException;
 
-    public BodaccPublicationType getBodaccPublicationTypeEstateRepresentativeDesignation() throws Exception;
+    public BodaccPublicationType getBodaccPublicationTypeEstateRepresentativeDesignation() throws OsirisException;
 
-    public BodaccPublicationType getBodaccPublicationTypeSaleOfBusiness() throws Exception;
+    public BodaccPublicationType getBodaccPublicationTypeSaleOfBusiness() throws OsirisException;
 
-    public ActType getActTypeSeing() throws Exception;
+    public ActType getActTypeSeing() throws OsirisException;
 
-    public ActType getActTypeAuthentic() throws Exception;
+    public ActType getActTypeAuthentic() throws OsirisException;
 
-    public AssignationType getAssignationTypeEmployee() throws Exception;
+    public AssignationType getAssignationTypeEmployee() throws OsirisException;
 
-    public Employee getEmployeeBillingResponsible() throws Exception;
+    public Employee getEmployeeBillingResponsible() throws OsirisException;
 
-    public TransfertFundsType getTransfertFundsTypePhysique() throws Exception;
+    public TransfertFundsType getTransfertFundsTypePhysique() throws OsirisException;
 
-    public TransfertFundsType getTransfertFundsTypeMoral() throws Exception;
+    public TransfertFundsType getTransfertFundsTypeMoral() throws OsirisException;
 
-    public TransfertFundsType getTransfertFundsTypeBail() throws Exception;
+    public TransfertFundsType getTransfertFundsTypeBail() throws OsirisException;
 
-    public CompetentAuthorityType getCompetentAuthorityTypeRcs() throws Exception;
+    public CompetentAuthorityType getCompetentAuthorityTypeRcs() throws OsirisException;
 
-    public CompetentAuthorityType getCompetentAuthorityTypeCfp() throws Exception;
+    public CompetentAuthorityType getCompetentAuthorityTypeCfp() throws OsirisException;
 
-    public InvoiceStatus getInvoiceStatusSend() throws Exception;
+    public InvoiceStatus getInvoiceStatusSend() throws OsirisException;
 
-    public InvoiceStatus getInvoiceStatusPayed() throws Exception;
+    public InvoiceStatus getInvoiceStatusPayed() throws OsirisException;
 
-    public InvoiceStatus getInvoiceStatusCancelled() throws Exception;
+    public InvoiceStatus getInvoiceStatusCancelled() throws OsirisException;
 
-    public PaymentWay getPaymentWayInbound() throws Exception;
+    public PaymentWay getPaymentWayInbound() throws OsirisException;
 
-    public PaymentWay getPaymentWayOutboud() throws Exception;
+    public PaymentWay getPaymentWayOutboud() throws OsirisException;
 
-    public Vat getVatTwenty() throws Exception;
+    public Vat getVatTwenty() throws OsirisException;
 
-    public Vat getVatEight() throws Exception;
+    public Vat getVatEight() throws OsirisException;
 
-    public Department getDepartmentMartinique() throws Exception;
+    public Department getDepartmentMartinique() throws OsirisException;
 
-    public Department getDepartmentGuadeloupe() throws Exception;
+    public Department getDepartmentGuadeloupe() throws OsirisException;
 
-    public Department getDepartmentReunion() throws Exception;
+    public Department getDepartmentReunion() throws OsirisException;
 
-    public TypePersonne getTypePersonnePersonnePhysique() throws Exception;
+    public TypePersonne getTypePersonnePersonnePhysique() throws OsirisException;
 
-    public TypePersonne getTypePersonnePersonneMorale() throws Exception;
+    public TypePersonne getTypePersonnePersonneMorale() throws OsirisException;
 
-    public TypePersonne getTypePersonneExploitation() throws Exception;
+    public TypePersonne getTypePersonneExploitation() throws OsirisException;
 
-    public FormeJuridique getFormeJuridiqueEntrepreneurIndividuel() throws Exception;
+    public FormeJuridique getFormeJuridiqueEntrepreneurIndividuel() throws OsirisException;
 
-    public TypeFormalite getTypeFormaliteCessation() throws Exception;
+    public TypeFormalite getTypeFormaliteCessation() throws OsirisException;
 
-    public TypeFormalite getTypeFormaliteModification() throws Exception;
+    public TypeFormalite getTypeFormaliteModification() throws OsirisException;
 
-    public TypeFormalite getTypeFormaliteCreation() throws Exception;
+    public TypeFormalite getTypeFormaliteCreation() throws OsirisException;
 
-    public TypeFormalite getTypeFormaliteCorrection() throws Exception;
+    public TypeFormalite getTypeFormaliteCorrection() throws OsirisException;
 
 }

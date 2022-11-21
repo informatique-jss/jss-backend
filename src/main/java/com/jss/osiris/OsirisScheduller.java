@@ -9,6 +9,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Service;
 
+import com.jss.osiris.libs.GlobalExceptionHandler;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.invoicing.service.PaymentService;
@@ -26,6 +27,8 @@ import com.jss.osiris.modules.quotation.service.QuotationStatusService;
 @Service
 public class OsirisScheduller {
 
+	private static final Logger logger = LoggerFactory.getLogger(OsirisScheduller.class);
+
 	@Autowired
 	AccountingRecordService accountingRecordService;
 
@@ -40,6 +43,9 @@ public class OsirisScheduller {
 
 	@Autowired
 	NotificationService notificationService;
+
+	@Autowired
+	GlobalExceptionHandler globalExceptionHandler;
 
 	@Value("${schedulling.pool.size}")
 	private Integer schedullingPoolSize;
@@ -67,8 +73,6 @@ public class OsirisScheduller {
 
 	@Autowired
 	ProvisionScreenTypeService provisionScreenTypeService;
-
-	private static final Logger logger = LoggerFactory.getLogger(OsirisScheduller.class);
 
 	@Bean
 	public ThreadPoolTaskScheduler taskExecutor() {
@@ -104,6 +108,11 @@ public class OsirisScheduller {
 	@Scheduled(cron = "${schedulling.notification.purge}")
 	private void purgeNotidication() throws Exception {
 		notificationService.purgeNotification();
+	}
+
+	@Scheduled(cron = "${schedulling.log.osiris.purge}")
+	private void purgeOsirisLog() throws Exception {
+		globalExceptionHandler.purgeOsirisLog();
 	}
 
 	// @Scheduled(initialDelay = 1000, fixedDelay = 1000000000)

@@ -3,6 +3,7 @@ package com.jss.osiris.modules.invoicing.service;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.invoicing.model.Deposit;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.Payment;
@@ -16,10 +17,8 @@ public interface DepositService {
         public Deposit addOrUpdateDeposit(Deposit deposit);
 
         public Deposit getNewDepositForInvoice(Float depositAmount, LocalDateTime depositDatetime, Invoice invoice,
-                        Payment payment)
-                        throws Exception;
+                        Payment payment) throws OsirisException;
 
         public Deposit getNewDepositForCustomerOrder(Float depositAmount, LocalDateTime depositDatetime,
-                        CustomerOrder customerOrder, Payment payment)
-                        throws Exception;
+                        CustomerOrder customerOrder, Payment payment) throws OsirisException;
 }

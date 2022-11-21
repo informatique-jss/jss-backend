@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.modules.miscellaneous.service.MailService;
 import com.jss.osiris.modules.miscellaneous.service.PhoneService;
@@ -77,7 +78,8 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public AssoAffaireOrder addOrUpdateAssoAffaireOrder(
-            AssoAffaireOrder assoAffaireOrder) throws Exception {
+            AssoAffaireOrder assoAffaireOrder)
+            throws OsirisException {
         for (Provision provision : assoAffaireOrder.getProvisions()) {
             provision.setAssoAffaireOrder(assoAffaireOrder);
         }
@@ -104,8 +106,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
     }
 
     @Override
-    public AssoAffaireOrder completeAssoAffaireOrder(AssoAffaireOrder assoAffaireOrder, CustomerOrder customerOrder)
-            throws Exception {
+    public AssoAffaireOrder completeAssoAffaireOrder(AssoAffaireOrder assoAffaireOrder, CustomerOrder customerOrder) {
         // Complete domiciliation end date
         assoAffaireOrder.setCustomerOrder(customerOrder);
 

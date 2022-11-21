@@ -2,21 +2,19 @@ package com.jss.osiris;
 
 import javax.annotation.PostConstruct;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
+import com.jss.osiris.libs.exception.OsirisException;
+
 @Service
 public class ApplicationPropertiesAudit {
-    private static final Logger logger = LoggerFactory.getLogger(ApplicationPropertiesAudit.class);
-
     @Autowired
     private Environment env;
 
     @PostConstruct
-    public void checkApplicationProperty() {
+    public void checkApplicationProperty() throws OsirisException {
         boolean isOk = true;
         isOk = isOk && checkProperty("accounting.account.number.customer");
         isOk = isOk && checkProperty("accounting.account.number.deposit");
@@ -64,17 +62,15 @@ public class ApplicationPropertiesAudit {
             System.exit(-1);
     }
 
-    private boolean checkProperty(String propertyName) {
+    private boolean checkProperty(String propertyName) throws OsirisException {
         String property = env.getProperty(propertyName);
         if (property == null) {
-            logger.error(
-                    "Unable to find " + propertyName + " property in app properties");
-            return false;
+            throw new OsirisException("Unable to find " + propertyName + " property in app properties");
         }
         return true;
     }
 
-    private boolean checkAccountingParams() {
+    private boolean checkAccountingParams() throws OsirisException {
         boolean isOk = true;
         isOk = isOk && checkProperty("brut.capital.souscrit.non.appele");
         isOk = isOk && checkProperty("brut.immobilisations.incorporelles.frais.etablissement");

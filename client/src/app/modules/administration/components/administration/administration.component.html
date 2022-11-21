@@ -297,6 +297,9 @@
     <mat-tab label="Constantes">
       <constant></constant>
     </mat-tab>
+    <mat-tab label="Logs" *ngIf="canViewLogdModule()">
+      <log></log>
+    </mat-tab>
   </mat-tab-group>
 </div>
 <button matTooltip="Sauvegarder" mat-fab color="warn" class="fab-button" *ngIf="editMode" (click)="saveEntity()">

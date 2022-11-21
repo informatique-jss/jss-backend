@@ -2,6 +2,7 @@ package com.jss.osiris.modules.accounting.service;
 
 import java.util.List;
 
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.model.AccountingAccountBinome;
 import com.jss.osiris.modules.accounting.model.AccountingAccountTrouple;
@@ -12,10 +13,11 @@ public interface AccountingAccountService {
 
         public AccountingAccount getAccountingAccount(Integer id);
 
-        public AccountingAccount addOrUpdateAccountingAccount(AccountingAccount accountingAccount) throws Exception;
+        public AccountingAccount addOrUpdateAccountingAccount(AccountingAccount accountingAccount)
+                        throws OsirisException;
 
         public AccountingAccount addOrUpdateAccountingAccountFromUser(AccountingAccount accountingAccount)
-                        throws Exception;
+                        throws OsirisException;
 
         public List<AccountingAccount> getAccountingAccountByLabelOrCode(String label);
 
@@ -28,20 +30,21 @@ public interface AccountingAccountService {
          * 
          * @param label Custom label. Leave null will put account number as
          *              label
+         * @throws OsirisException
          * 
          */
-        public AccountingAccountTrouple generateAccountingAccountsForEntity(String label) throws Exception;
+        public AccountingAccountTrouple generateAccountingAccountsForEntity(String label) throws OsirisException;
 
         public AccountingAccountBinome generateAccountingAccountsForBillingType(BillingType billingType)
-                        throws Exception;
+                        throws OsirisException;
 
-        public AccountingAccount getBankAccountingAccount() throws Exception;
+        public AccountingAccount getBankAccountingAccount() throws OsirisException;
 
-        public AccountingAccount getWaitingAccountingAccount() throws Exception;
+        public AccountingAccount getWaitingAccountingAccount() throws OsirisException;
 
-        public AccountingAccount generateAccountingAccountsForProduct(String label) throws Exception;
+        public AccountingAccount generateAccountingAccountsForProduct(String label) throws OsirisException;
 
-        public AccountingAccount getProfitAccountingAccount() throws Exception;
+        public AccountingAccount getProfitAccountingAccount() throws OsirisException;
 
-        public AccountingAccount getLostAccountingAccount() throws Exception;
+        public AccountingAccount getLostAccountingAccount() throws OsirisException;
 }

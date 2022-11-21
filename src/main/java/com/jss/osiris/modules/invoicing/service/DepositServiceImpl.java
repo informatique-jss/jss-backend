@@ -8,6 +8,7 @@ import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.invoicing.model.Deposit;
 import com.jss.osiris.modules.invoicing.model.Invoice;
@@ -45,8 +46,7 @@ public class DepositServiceImpl implements DepositService {
 
     @Override
     public Deposit getNewDepositForInvoice(Float depositAmount, LocalDateTime depositDatetime, Invoice invoice,
-            Payment payment)
-            throws Exception {
+            Payment payment) throws OsirisException {
         Deposit deposit = new Deposit();
         deposit.setDepositAmount(depositAmount);
         deposit.setDepositDate(depositDatetime);
@@ -58,8 +58,7 @@ public class DepositServiceImpl implements DepositService {
 
     @Override
     public Deposit getNewDepositForCustomerOrder(Float depositAmount, LocalDateTime depositDatetime,
-            CustomerOrder customerOrder, Payment payment)
-            throws Exception {
+            CustomerOrder customerOrder, Payment payment) throws OsirisException {
         Deposit deposit = new Deposit();
         deposit.setDepositAmount(depositAmount);
         deposit.setDepositDate(depositDatetime);

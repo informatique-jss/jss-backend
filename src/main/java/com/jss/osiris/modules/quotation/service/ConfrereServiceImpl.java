@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.accounting.model.AccountingAccountTrouple;
 import com.jss.osiris.modules.accounting.service.AccountingAccountService;
 import com.jss.osiris.modules.miscellaneous.model.Document;
@@ -46,9 +47,9 @@ public class ConfrereServiceImpl implements ConfrereService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Confrere addOrUpdateConfrere(Confrere confrere) throws Exception {
+    public Confrere addOrUpdateConfrere(Confrere confrere) throws OsirisException {
         if (confrere == null)
-            throw new Exception("Confrere provided is null");
+            throw new OsirisException("Confrere provided is null");
 
         // If mails already exists, get their ids
         if (confrere != null && confrere.getMails() != null

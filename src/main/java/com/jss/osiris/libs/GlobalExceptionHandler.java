@@ -1,0 +1,115 @@
+package com.jss.osiris.libs;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import org.apache.commons.collections4.IterableUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
+import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.exception.OsirisLog;
+import com.jss.osiris.libs.exception.OsirisLogRepository;
+import com.jss.osiris.libs.exception.OsirisValidationException;
+import com.jss.osiris.modules.profile.model.Employee;
+import com.jss.osiris.modules.profile.service.EmployeeService;
+
+@ControllerAdvice
+public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+
+    @Autowired
+    OsirisLogRepository osirisLogRepository;
+
+    @Autowired
+    EmployeeService employeeService;
+
+    @ExceptionHandler({ OsirisValidationException.class, OsirisException.class, Exception.class })
+    public ResponseEntity<Object> handleExceptionOsiris(Exception ex, WebRequest request) {
+        if (ex instanceof OsirisValidationException) {
+            return validationOsirisValidationException((OsirisValidationException) ex, request);
+        } else if (ex instanceof OsirisException) {
+            return validationOsirisException((OsirisException) ex, request);
+        } else {
+            return validationOtherException(ex, request);
+        }
+    }
+
+    private ResponseEntity<Object> validationOsirisValidationException(OsirisValidationException exception,
+            WebRequest request) {
+        List<String> customHeaders = new ArrayList<String>();
+        customHeaders.add("incorrectField");
+        HttpHeaders header = new HttpHeaders();
+        header.setAccessControlExposeHeaders(customHeaders);
+        header.set("incorrectField", exception.getMessage());
+        return ResponseEntity.badRequest().headers(header).build();
+    }
+
+    private ResponseEntity<Object> validationOsirisException(OsirisException exception,
+            WebRequest request) {
+        persistLog(exception, OsirisLog.OSRIS_LOG);
+        List<String> customHeaders = new ArrayList<String>();
+        customHeaders.add("error");
+        HttpHeaders header = new HttpHeaders();
+        header.setAccessControlExposeHeaders(customHeaders);
+        header.set("error", exception.getMessage());
+        return ResponseEntity.internalServerError().headers(header).build();
+    }
+
+    private ResponseEntity<Object> validationOtherException(Exception exception,
+            WebRequest request) {
+        persistLog(exception, OsirisLog.UNHANDLED_LOG);
+        List<String> customHeaders = new ArrayList<String>();
+        customHeaders.add("error");
+        HttpHeaders header = new HttpHeaders();
+        header.setAccessControlExposeHeaders(customHeaders);
+        header.set("error", exception.getMessage());
+        return ResponseEntity.internalServerError().headers(header).build();
+    }
+
+    private void persistLog(Exception exception, String logType) {
+        OsirisLog osirisLog = new OsirisLog();
+        osirisLog.setClassName(exception.getStackTrace()[0].getFileName().replace(".java", ""));
+        osirisLog.setMethodName(exception.getStackTrace()[0].getMethodName());
+        osirisLog.setStackTrace(ExceptionUtils.getStackTrace(exception));
+        osirisLog.setIsRead(false);
+        osirisLog.setLogType(logType);
+
+        Employee employee = employeeService.getCurrentEmployee();
+        if (employee != null)
+            osirisLog.setCurrentUser(employee);
+
+        osirisLog.setCreatedDateTime(LocalDateTime.now());
+        osirisLogRepository.save(osirisLog);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void purgeOsirisLog() {
+        osirisLogRepository.deleteAll(osirisLogRepository.findLogsOlderThanMonths(3));
+    }
+
+    public List<OsirisLog> getLogs(boolean hideRead) {
+        return IterableUtils.toList(osirisLogRepository.findLogs(hideRead));
+    }
+
+    public OsirisLog getLog(Integer id) {
+        Optional<OsirisLog> log = osirisLogRepository.findById(id);
+        if (log.isPresent())
+            return log.get();
+        return null;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public OsirisLog addOrUpdateLog(OsirisLog log) {
+        return osirisLogRepository.save(log);
+    }
+
+}

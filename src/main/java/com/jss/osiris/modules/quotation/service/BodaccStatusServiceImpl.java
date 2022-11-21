@@ -12,6 +12,7 @@ import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.quotation.model.BodaccStatus;
 import com.jss.osiris.modules.quotation.repository.BodaccStatusRepository;
 
@@ -53,7 +54,7 @@ public class BodaccStatusServiceImpl implements BodaccStatusService {
     }
 
     @Override
-    public void updateStatusReferential() throws Exception {
+    public void updateStatusReferential() {
         updateStatus(BodaccStatus.BODACC_NEW, "Nouveau", "auto_awesome", true, false);
     }
 
@@ -71,11 +72,11 @@ public class BodaccStatusServiceImpl implements BodaccStatusService {
         addOrUpdateBodaccStatus(bodaccStatus);
     }
 
-    protected void setSuccessor(String code, String code2) throws Exception {
+    protected void setSuccessor(String code, String code2) throws OsirisException {
         BodaccStatus sourceStatus = getBodaccStatusByCode(code);
         BodaccStatus targetStatus = getBodaccStatusByCode(code2);
         if (sourceStatus == null || targetStatus == null)
-            throw new Exception("Status code " + code + " or " + code2 + " do not exist");
+            throw new OsirisException("Status code " + code + " or " + code2 + " do not exist");
 
         if (sourceStatus.getSuccessors() == null)
             sourceStatus.setSuccessors(new ArrayList<BodaccStatus>());
@@ -88,11 +89,11 @@ public class BodaccStatusServiceImpl implements BodaccStatusService {
         addOrUpdateBodaccStatus(sourceStatus);
     }
 
-    protected void setPredecessor(String code, String code2) throws Exception {
+    protected void setPredecessor(String code, String code2) throws OsirisException {
         BodaccStatus sourceStatus = getBodaccStatusByCode(code);
         BodaccStatus targetStatus = getBodaccStatusByCode(code2);
         if (sourceStatus == null || targetStatus == null)
-            throw new Exception("Bodacc status code " + code + " or " + code2 + " do not exist");
+            throw new OsirisException("Bodacc status code " + code + " or " + code2 + " do not exist");
 
         if (sourceStatus.getPredecessors() == null)
             sourceStatus.setPredecessors(new ArrayList<BodaccStatus>());

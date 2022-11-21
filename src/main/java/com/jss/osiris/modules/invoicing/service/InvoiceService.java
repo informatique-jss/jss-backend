@@ -3,6 +3,7 @@ package com.jss.osiris.modules.invoicing.service;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceSearch;
 import com.jss.osiris.modules.invoicing.model.InvoiceSearchResult;
@@ -28,9 +29,9 @@ public interface InvoiceService {
      * @param affaire          : affaire of the invoice, defined it only if there is
      *                         only one affaire in the invoice (it's to define
      *                         payer)
+     * @throws OsirisException
      */
-    public Invoice createInvoice(CustomerOrder customerOrder, ITiers orderingCustomer)
-            throws Exception;
+    public Invoice createInvoice(CustomerOrder customerOrder, ITiers orderingCustomer) throws OsirisException;
 
     public Invoice getInvoiceForCustomerOrder(Integer customerOrderId);
 
@@ -38,14 +39,14 @@ public interface InvoiceService {
 
     public LocalDate getFirstBillingDateForResponsable(Responsable responsable);
 
-    public List<InvoiceSearchResult> searchInvoices(InvoiceSearch invoiceSearch) throws Exception;
+    public List<InvoiceSearchResult> searchInvoices(InvoiceSearch invoiceSearch);
 
     public void reindexInvoices();
 
-    public void unletterInvoice(Invoice invoice) throws Exception;
+    public void unletterInvoice(Invoice invoice) throws OsirisException;
 
-    public Invoice addOrUpdateInvoiceFromUser(Invoice invoice) throws Exception;
+    public Invoice addOrUpdateInvoiceFromUser(Invoice invoice) throws OsirisException;
 
-    public Invoice cancelInvoice(Invoice invoice) throws Exception;
+    public Invoice cancelInvoice(Invoice invoice) throws OsirisException;
 
 }

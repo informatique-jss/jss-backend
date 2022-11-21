@@ -12,6 +12,7 @@ import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.quotation.model.AnnouncementStatus;
 import com.jss.osiris.modules.quotation.repository.AnnouncementStatusRepository;
 
@@ -53,7 +54,7 @@ public class AnnouncementStatusServiceImpl implements AnnouncementStatusService 
     }
 
     @Override
-    public void updateStatusReferential() throws Exception {
+    public void updateStatusReferential() throws OsirisException {
         updateStatus(AnnouncementStatus.ANNOUNCEMENT_NEW, "Nouveau", "auto_awesome", true, false);
         updateStatus(AnnouncementStatus.ANNOUNCEMENT_TODO, "A faire", "pending", false, false);
 
@@ -102,11 +103,11 @@ public class AnnouncementStatusServiceImpl implements AnnouncementStatusService 
         addOrUpdateAnnouncementStatus(announcementStatus);
     }
 
-    protected void setSuccessor(String code, String code2) throws Exception {
+    protected void setSuccessor(String code, String code2) throws OsirisException {
         AnnouncementStatus sourceStatus = getAnnouncementStatusByCode(code);
         AnnouncementStatus targetStatus = getAnnouncementStatusByCode(code2);
         if (sourceStatus == null || targetStatus == null)
-            throw new Exception("Status code " + code + " or " + code2 + " do not exist");
+            throw new OsirisException("Status code " + code + " or " + code2 + " do not exist");
 
         if (sourceStatus.getSuccessors() == null)
             sourceStatus.setSuccessors(new ArrayList<AnnouncementStatus>());
@@ -119,11 +120,11 @@ public class AnnouncementStatusServiceImpl implements AnnouncementStatusService 
         addOrUpdateAnnouncementStatus(sourceStatus);
     }
 
-    protected void setPredecessor(String code, String code2) throws Exception {
+    protected void setPredecessor(String code, String code2) throws OsirisException {
         AnnouncementStatus sourceStatus = getAnnouncementStatusByCode(code);
         AnnouncementStatus targetStatus = getAnnouncementStatusByCode(code2);
         if (sourceStatus == null || targetStatus == null)
-            throw new Exception("Announcement status code " + code + " or " + code2 + " do not exist");
+            throw new OsirisException("Announcement status code " + code + " or " + code2 + " do not exist");
 
         if (sourceStatus.getPredecessors() == null)
             sourceStatus.setPredecessors(new ArrayList<AnnouncementStatus>());

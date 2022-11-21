@@ -57,6 +57,7 @@ public class Employee implements Serializable, IId, AttributesMapper<Employee> {
 
 		Employee employee = new Employee();
 		employee.setFirstname((String) attrs.get("givenName").get());
+
 		employee.setLastname((String) attrs.get("sn").get());
 		employee.setUsername((String) attrs.get("sAMAccountName").get());
 		employee.setAdPath((String) attrs.get("distinguishedName").get());

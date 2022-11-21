@@ -1,22 +1,26 @@
 package com.jss.osiris.modules.invoicing.controller;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import javax.mail.MessagingException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.MailException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.HttpStatusCodeException;
-import org.springframework.web.server.ResponseStatusException;
 
+import com.google.zxing.WriterException;
+import com.itextpdf.text.DocumentException;
 import com.jss.osiris.libs.ValidationHelper;
+import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.invoicing.model.InvoiceSearch;
@@ -43,8 +47,6 @@ public class InvoicingController {
 
     private static final String inputEntryPoint = "/invoicing";
 
-    private static final Logger logger = LoggerFactory.getLogger(InvoicingController.class);
-
     @Autowired
     ValidationHelper validationHelper;
 
@@ -68,448 +70,304 @@ public class InvoicingController {
 
     @GetMapping(inputEntryPoint + "/payment-ways")
     public ResponseEntity<List<PaymentWay>> getPaymentWays() {
-        List<PaymentWay> paymentWays = null;
-        try {
-            paymentWays = paymentWayService.getPaymentWays();
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching paymentWay", e);
-            return new ResponseEntity<List<PaymentWay>>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching paymentWay", e);
-            return new ResponseEntity<List<PaymentWay>>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<List<PaymentWay>>(paymentWays, HttpStatus.OK);
+        return new ResponseEntity<List<PaymentWay>>(paymentWayService.getPaymentWays(), HttpStatus.OK);
     }
 
     @PostMapping(inputEntryPoint + "/payment-way")
     public ResponseEntity<PaymentWay> addOrUpdatePaymentWay(
-            @RequestBody PaymentWay paymentWays) {
-        PaymentWay outPaymentWay;
-        try {
-            if (paymentWays.getId() != null)
-                validationHelper.validateReferential(paymentWays, true);
-            validationHelper.validateString(paymentWays.getCode(), true);
-            validationHelper.validateString(paymentWays.getLabel(), true);
+            @RequestBody PaymentWay paymentWays) throws OsirisValidationException, OsirisException {
+        if (paymentWays.getId() != null)
+            validationHelper.validateReferential(paymentWays, true, "paymentWays");
+        validationHelper.validateString(paymentWays.getCode(), true, "code");
+        validationHelper.validateString(paymentWays.getLabel(), true, "label");
 
-            outPaymentWay = paymentWayService
-                    .addOrUpdatePaymentWay(paymentWays);
-        } catch (
-
-        ResponseStatusException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching paymentWay", e);
-            return new ResponseEntity<PaymentWay>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching paymentWay", e);
-            return new ResponseEntity<PaymentWay>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<PaymentWay>(outPaymentWay, HttpStatus.OK);
+        return new ResponseEntity<PaymentWay>(paymentWayService.addOrUpdatePaymentWay(paymentWays), HttpStatus.OK);
     }
 
     // TODO : à retirer avant la MEP, seulement pour test !
     @PostMapping(inputEntryPoint + "/payment")
-    public ResponseEntity<Payment> addOrUpdatePayment(@RequestBody Payment payment) {
+    public ResponseEntity<Payment> addOrUpdatePayment(@RequestBody Payment payment)
+            throws OsirisValidationException, OsirisException {
         Payment outPayment;
-        try {
-            if (payment.getId() != null)
-                validationHelper.validateReferential(payment, true);
-            validationHelper.validateString(payment.getLabel(), true);
-            validationHelper.validateFloat(payment.getPaymentAmount(), true);
+        if (payment.getId() != null)
+            validationHelper.validateReferential(payment, true, "payment");
+        validationHelper.validateString(payment.getLabel(), true, "label");
+        validationHelper.validateFloat(payment.getPaymentAmount(), true, "code");
 
-            payment.setPaymentDate(LocalDateTime.now());
-            outPayment = paymentService.addOrUpdatePayment(payment);
-            paymentService.payementGrab();
-        } catch (
+        payment.setPaymentDate(LocalDateTime.now());
+        outPayment = paymentService.addOrUpdatePayment(payment);
+        paymentService.payementGrab();
 
-        ResponseStatusException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching paymentWay", e);
-            return new ResponseEntity<Payment>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching paymentWay", e);
-            return new ResponseEntity<Payment>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
         return new ResponseEntity<Payment>(outPayment, HttpStatus.OK);
     }
 
     @PostMapping(inputEntryPoint + "/payments/search")
-    public ResponseEntity<List<PaymentSearchResult>> getPayments(@RequestBody PaymentSearch paymentSearch) {
-        List<PaymentSearchResult> payments;
+    public ResponseEntity<List<PaymentSearchResult>> getPayments(@RequestBody PaymentSearch paymentSearch)
+            throws OsirisValidationException {
         if (paymentSearch == null)
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            throw new OsirisValidationException("paymentSearch");
 
         if (paymentSearch.getStartDate() == null || paymentSearch.getEndDate() == null)
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            throw new OsirisValidationException("StartDate or EndDate");
 
         if (paymentSearch.getPaymentWays() == null)
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            throw new OsirisValidationException("paymentWays");
 
-        try {
-            validationHelper.validateFloat(paymentSearch.getMinAmount(), false);
-            validationHelper.validateFloat(paymentSearch.getMaxAmount(), false);
-            payments = paymentService.searchPayments(paymentSearch);
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching payment", e);
-            return new ResponseEntity<List<PaymentSearchResult>>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching payment", e);
-            return new ResponseEntity<List<PaymentSearchResult>>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<List<PaymentSearchResult>>(payments, HttpStatus.OK);
+        return new ResponseEntity<List<PaymentSearchResult>>(paymentService.searchPayments(paymentSearch),
+                HttpStatus.OK);
     }
 
     @PostMapping(inputEntryPoint + "/payments/associate")
     public ResponseEntity<Boolean> associatePaymentAndInvoiceAndCustomerOrder(
-            @RequestBody PaymentAssociate paymentAssociate) {
+            @RequestBody PaymentAssociate paymentAssociate) throws OsirisValidationException, OsirisException,
+            MailException, MessagingException, IOException, WriterException, DocumentException {
 
-        try {
-            if (paymentAssociate == null)
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        if (paymentAssociate == null)
+            throw new OsirisValidationException("paymentAssociate");
 
-            paymentAssociate
-                    .setPayment((Payment) validationHelper.validateReferential(paymentAssociate.getPayment(), true));
+        paymentAssociate
+                .setPayment(
+                        (Payment) validationHelper.validateReferential(paymentAssociate.getPayment(), true, "Payment"));
 
-            if (paymentAssociate.getInvoices() != null) {
-                if (paymentAssociate.getInvoices().size() == 0)
-                    paymentAssociate.setInvoices(null);
+        if (paymentAssociate.getInvoices() != null) {
+            if (paymentAssociate.getInvoices().size() == 0)
+                paymentAssociate.setInvoices(null);
 
-                for (Invoice invoice : paymentAssociate.getInvoices()) {
-                    invoice = (Invoice) validationHelper.validateReferential(invoice, true);
-                    if (paymentAssociate.getPayment().getInvoice() != null
-                            && invoice.getId().equals(paymentAssociate.getPayment().getInvoice().getId()))
-                        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            for (Invoice invoice : paymentAssociate.getInvoices()) {
+                invoice = (Invoice) validationHelper.validateReferential(invoice, true, "invoice");
+                if (paymentAssociate.getPayment().getInvoice() != null
+                        && invoice.getId().equals(paymentAssociate.getPayment().getInvoice().getId()))
+                    throw new OsirisValidationException("payment already associate");
 
-                    if (!invoice.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusSend().getId()))
-                        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-                }
+                if (!invoice.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusSend().getId()))
+                    throw new OsirisValidationException("invoice not send");
             }
-
-            if (paymentAssociate.getCustomerOrders() != null) {
-                if (paymentAssociate.getCustomerOrders().size() == 0)
-                    paymentAssociate.setCustomerOrders(null);
-
-                for (CustomerOrder customerOrder : paymentAssociate.getCustomerOrders()) {
-                    customerOrder = (CustomerOrder) validationHelper.validateReferential(customerOrder, true);
-                    if (paymentAssociate.getPayment().getCustomerOrder() != null
-                            && customerOrder.getId().equals(paymentAssociate.getPayment().getCustomerOrder().getId()))
-                        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-                }
-            }
-
-            paymentAssociate
-                    .setAffaire((Affaire) validationHelper.validateReferential(paymentAssociate.getAffaire(), false));
-
-            if (paymentAssociate.getByPassAmount() == null || paymentAssociate.getByPassAmount()
-                    .size() != (paymentAssociate.getInvoices() == null ? 0 : paymentAssociate.getInvoices().size())
-                            + (paymentAssociate.getCustomerOrders() == null ? 0
-                                    : paymentAssociate.getCustomerOrders().size()))
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-            Float totalAmount = 0f;
-            for (Float amount : paymentAssociate.getByPassAmount()) {
-                totalAmount += amount;
-            }
-            totalAmount = Math.round(totalAmount * 100f) / 100f;
-
-            // Mandatory because we need customer order to get customer accounting account
-            if (paymentAssociate.getTiersRefund() == null && paymentAssociate.getConfrereRefund() == null)
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-            validationHelper.validateReferential(paymentAssociate.getTiersRefund(), false);
-            validationHelper.validateReferential(paymentAssociate.getConfrereRefund(), false);
-
-            if (paymentAssociate.getPayment().getPaymentAmount() < totalAmount)
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-            if (paymentAssociate.getPayment().getPaymentAmount() > totalAmount
-                    && paymentAssociate.getTiersRefund() == null && paymentAssociate.getAffaire() == null)
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-            ITiers commonCustomerOrder = paymentAssociate.getTiersRefund() != null ? paymentAssociate.getTiersRefund()
-                    : paymentAssociate.getConfrereRefund();
-            if (paymentAssociate.getInvoices() != null) {
-                for (Invoice invoice : paymentAssociate.getInvoices())
-                    if (!invoiceHelper.getCustomerOrder(invoice).getId().equals(commonCustomerOrder.getId()))
-                        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-            }
-
-            if (paymentAssociate.getCustomerOrders() != null) {
-                for (CustomerOrder customerOrder : paymentAssociate.getCustomerOrders()) {
-                    if (customerOrder.getResponsable() != null
-                            && !customerOrder.getResponsable().getTiers().getId().equals(commonCustomerOrder.getId()))
-                        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-                    if (customerOrder.getConfrere() != null
-                            && !customerOrder.getConfrere().getId().equals(commonCustomerOrder.getId()))
-                        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-                    if (!customerOrder.getTiers().getId().equals(commonCustomerOrder.getId()))
-                        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-                }
-            }
-
-            paymentService.manualMatchPaymentInvoicesAndGeneratePaymentAccountingRecords(
-                    paymentAssociate.getPayment(),
-                    paymentAssociate.getInvoices(), paymentAssociate.getCustomerOrders(),
-                    paymentAssociate.getAffaire(),
-                    commonCustomerOrder, paymentAssociate.getByPassAmount());
-        } catch (ResponseStatusException e) {
-            return new ResponseEntity<Boolean>(e.getStatus());
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching payment", e);
-            return new ResponseEntity<Boolean>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching payment", e);
-            return new ResponseEntity<Boolean>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+
+        if (paymentAssociate.getCustomerOrders() != null) {
+            if (paymentAssociate.getCustomerOrders().size() == 0)
+                paymentAssociate.setCustomerOrders(null);
+
+            for (CustomerOrder customerOrder : paymentAssociate.getCustomerOrders()) {
+                customerOrder = (CustomerOrder) validationHelper.validateReferential(customerOrder, true,
+                        "customerOrder");
+                if (paymentAssociate.getPayment().getCustomerOrder() != null
+                        && customerOrder.getId().equals(paymentAssociate.getPayment().getCustomerOrder().getId()))
+                    throw new OsirisValidationException("payment already associate");
+            }
+        }
+
+        paymentAssociate
+                .setAffaire((Affaire) validationHelper.validateReferential(paymentAssociate.getAffaire(), false,
+                        "Affaire"));
+
+        if (paymentAssociate.getByPassAmount() == null || paymentAssociate.getByPassAmount()
+                .size() != (paymentAssociate.getInvoices() == null ? 0 : paymentAssociate.getInvoices().size())
+                        + (paymentAssociate.getCustomerOrders() == null ? 0
+                                : paymentAssociate.getCustomerOrders().size()))
+            throw new OsirisValidationException("wrong associate number");
+
+        Float totalAmount = 0f;
+        for (Float amount : paymentAssociate.getByPassAmount()) {
+            totalAmount += amount;
+        }
+        totalAmount = Math.round(totalAmount * 100f) / 100f;
+
+        // Mandatory because we need customer order to get customer accounting account
+        if (paymentAssociate.getTiersRefund() == null && paymentAssociate.getConfrereRefund() == null)
+            throw new OsirisValidationException("TiersRefund or ConfrereRefund");
+        validationHelper.validateReferential(paymentAssociate.getTiersRefund(), false, "TiersRefund");
+        validationHelper.validateReferential(paymentAssociate.getConfrereRefund(), false, "ConfrereRefund");
+
+        if (paymentAssociate.getPayment().getPaymentAmount() < totalAmount)
+            throw new OsirisValidationException("not all payment used");
+
+        if (paymentAssociate.getPayment().getPaymentAmount() > totalAmount
+                && paymentAssociate.getTiersRefund() == null && paymentAssociate.getAffaire() == null)
+            throw new OsirisValidationException("no refund tiers set");
+
+        ITiers commonCustomerOrder = paymentAssociate.getTiersRefund() != null ? paymentAssociate.getTiersRefund()
+                : paymentAssociate.getConfrereRefund();
+        if (paymentAssociate.getInvoices() != null) {
+            for (Invoice invoice : paymentAssociate.getInvoices())
+                if (!invoiceHelper.getCustomerOrder(invoice).getId().equals(commonCustomerOrder.getId()))
+                    throw new OsirisValidationException("not same customer order chosed");
+        }
+
+        if (paymentAssociate.getCustomerOrders() != null) {
+            for (CustomerOrder customerOrder : paymentAssociate.getCustomerOrders()) {
+                if (customerOrder.getResponsable() != null
+                        && !customerOrder.getResponsable().getTiers().getId().equals(commonCustomerOrder.getId()))
+                    throw new OsirisValidationException("not same customer order chosed");
+                if (customerOrder.getConfrere() != null
+                        && !customerOrder.getConfrere().getId().equals(commonCustomerOrder.getId()))
+                    throw new OsirisValidationException("not same customer order chosed");
+                if (!customerOrder.getTiers().getId().equals(commonCustomerOrder.getId()))
+                    throw new OsirisValidationException("not same customer order chosed");
+            }
+        }
+
+        paymentService.manualMatchPaymentInvoicesAndGeneratePaymentAccountingRecords(
+                paymentAssociate.getPayment(),
+                paymentAssociate.getInvoices(), paymentAssociate.getCustomerOrders(),
+                paymentAssociate.getAffaire(),
+                commonCustomerOrder, paymentAssociate.getByPassAmount());
+
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 
     @PostMapping(inputEntryPoint + "/payments/associate/externally")
-    public ResponseEntity<Boolean> setExternallyAssociated(@RequestBody Payment payment) {
-        try {
-            Payment paymentOut = (Payment) validationHelper.validateReferential(payment, true);
+    public ResponseEntity<Boolean> setExternallyAssociated(@RequestBody Payment payment)
+            throws OsirisValidationException, OsirisException {
+        Payment paymentOut = (Payment) validationHelper.validateReferential(payment, true, "payment");
 
-            if (paymentOut.getCustomerOrder() != null || paymentOut.getInvoice() != null)
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        if (paymentOut.getCustomerOrder() != null || paymentOut.getInvoice() != null)
+            throw new OsirisValidationException("CustomerOrder or Invoice");
 
-            paymentService.setExternallyAssociated(paymentOut);
-        } catch (ResponseStatusException e) {
-            return new ResponseEntity<Boolean>(e.getStatus());
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching payment", e);
-            return new ResponseEntity<Boolean>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching payment", e);
-            return new ResponseEntity<Boolean>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        paymentService.setExternallyAssociated(paymentOut);
+
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 
     @PostMapping(inputEntryPoint + "/payments/unassociate/externally")
-    public ResponseEntity<Boolean> unsetExternallyAssociated(@RequestBody Payment payment) {
-        try {
-            Payment paymentOut = (Payment) validationHelper.validateReferential(payment, true);
+    public ResponseEntity<Boolean> unsetExternallyAssociated(@RequestBody Payment payment)
+            throws OsirisValidationException, OsirisException {
+        Payment paymentOut = (Payment) validationHelper.validateReferential(payment, true, "payment");
 
-            if (paymentOut.getCustomerOrder() != null || paymentOut.getInvoice() != null)
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        if (paymentOut.getCustomerOrder() != null || paymentOut.getInvoice() != null)
+            throw new OsirisValidationException("CustomerOrder or Invoice");
 
-            paymentService.unsetExternallyAssociated(paymentOut);
-        } catch (ResponseStatusException e) {
-            return new ResponseEntity<Boolean>(e.getStatus());
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching payment", e);
-            return new ResponseEntity<Boolean>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching payment", e);
-            return new ResponseEntity<Boolean>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        paymentService.unsetExternallyAssociated(paymentOut);
+
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/payments/advise")
-    public ResponseEntity<List<Payment>> getPaymentAdvised(@RequestParam Integer invoiceId) {
-        List<Payment> payments;
+    public ResponseEntity<List<Payment>> getPaymentAdvised(@RequestParam Integer invoiceId)
+            throws OsirisValidationException {
+        Invoice invoice = invoiceService.getInvoice(invoiceId);
+        if (invoice == null)
+            throw new OsirisValidationException("Invoice");
 
-        try {
-            Invoice invoice = invoiceService.getInvoice(invoiceId);
-            if (invoice == null)
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-            payments = paymentService.getAdvisedPaymentForInvoice(invoice);
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching payment", e);
-            return new ResponseEntity<List<Payment>>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching payment", e);
-            return new ResponseEntity<List<Payment>>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<List<Payment>>(payments, HttpStatus.OK);
+        return new ResponseEntity<List<Payment>>(paymentService.getAdvisedPaymentForInvoice(invoice), HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/invoice")
-    public ResponseEntity<Invoice> getInvoiceById(@RequestParam Integer id) {
-        Invoice invoice = null;
+    public ResponseEntity<Invoice> getInvoiceById(@RequestParam Integer id) throws OsirisValidationException {
         if (id == null)
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        try {
-            invoice = invoiceService.getInvoice(id);
-            if (invoice == null)
-                invoice = new Invoice();
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching client types", e);
-            return new ResponseEntity<Invoice>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching client types", e);
-            return new ResponseEntity<Invoice>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<Invoice>(invoice, HttpStatus.OK);
+            throw new OsirisValidationException("Id");
+
+        return new ResponseEntity<Invoice>(invoiceService.getInvoice(id), HttpStatus.OK);
     }
 
     @PostMapping(inputEntryPoint + "/invoice")
-    public ResponseEntity<Invoice> addOrUpdateInvoice(@RequestBody Invoice invoice) {
-        Invoice outInvoice;
-        try {
-            if (invoice.getId() != null)
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    public ResponseEntity<Invoice> addOrUpdateInvoice(@RequestBody Invoice invoice)
+            throws OsirisValidationException, OsirisException {
+        if (invoice.getId() != null)
+            throw new OsirisValidationException("Id");
 
-            if (invoice.getCustomerOrder() != null)
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        if (invoice.getCustomerOrder() != null)
+            throw new OsirisValidationException("CustomerOrder");
 
-            int doFound = 0;
+        int doFound = 0;
 
-            if (invoice.getTiers() != null) {
-                validationHelper.validateReferential(invoice.getTiers(), true);
-                doFound++;
-            }
-
-            if (invoice.getResponsable() != null) {
-                validationHelper.validateReferential(invoice.getResponsable(), true);
-                doFound++;
-            }
-
-            if (invoice.getConfrere() != null) {
-                validationHelper.validateReferential(invoice.getConfrere(), true);
-                doFound++;
-            }
-
-            if (invoice.getProvider() != null) {
-                validationHelper.validateReferential(invoice.getProvider(), true);
-                doFound++;
-            }
-
-            if (doFound != 1)
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-            BillingLabelType billingLabelAffaire = constantService.getBillingLabelTypeCodeAffaire();
-
-            validationHelper.validateReferential(invoice.getBillingLabelType(), true);
-            validationHelper.validateString(invoice.getBillingLabelAddress(),
-                    invoice.getBillingLabelType().getId().equals(billingLabelAffaire.getId()), 160);
-            validationHelper.validateString(invoice.getBillingLabel(),
-                    invoice.getBillingLabelType().getId().equals(billingLabelAffaire.getId()), 40);
-            validationHelper.validateString(invoice.getBillingLabelPostalCode(),
-                    invoice.getBillingLabelType().getId().equals(billingLabelAffaire.getId()), 10);
-            validationHelper.validateReferential(invoice.getBillingLabelCity(),
-                    invoice.getBillingLabelType().getId().equals(billingLabelAffaire.getId()));
-            validationHelper.validateReferential(invoice.getBillingLabelCountry(),
-                    invoice.getBillingLabelType().getId().equals(billingLabelAffaire.getId()));
-            validationHelper.validateString(invoice.getBillingLabelPostalCode(), false, 40);
-            validationHelper.validateReferential(invoice.getInvoiceStatus(), false);
-            validationHelper.validateDate(invoice.getDueDate(), false);
-
-            if (invoice.getInvoiceItems() == null) {
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-            } else {
-                for (InvoiceItem invoiceItem : invoice.getInvoiceItems()) {
-                    if (invoiceItem.getId() != null)
-                        validationHelper.validateReferential(invoiceItem, true);
-                    if (invoiceItem.getDiscountAmount() == null)
-                        invoiceItem.setDiscountAmount(0f);
-                    if (invoiceItem.getPreTaxPrice() == null)
-                        invoiceItem.setPreTaxPrice(0f);
-                    if (invoiceItem.getVatPrice() == null)
-                        invoiceItem.setVatPrice(0f);
-
-                }
-            }
-
-            outInvoice = invoiceService.addOrUpdateInvoiceFromUser(invoice);
-        } catch (
-
-        ResponseStatusException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching invoiceStatus", e);
-            return new ResponseEntity<Invoice>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching invoiceStatus", e);
-            return new ResponseEntity<Invoice>(HttpStatus.INTERNAL_SERVER_ERROR);
+        if (invoice.getTiers() != null) {
+            validationHelper.validateReferential(invoice.getTiers(), true, "Tiers");
+            doFound++;
         }
-        return new ResponseEntity<Invoice>(outInvoice, HttpStatus.OK);
+
+        if (invoice.getResponsable() != null) {
+            validationHelper.validateReferential(invoice.getResponsable(), true, "Responsable");
+            doFound++;
+        }
+
+        if (invoice.getConfrere() != null) {
+            validationHelper.validateReferential(invoice.getConfrere(), true, "Confrere");
+            doFound++;
+        }
+
+        if (invoice.getProvider() != null) {
+            validationHelper.validateReferential(invoice.getProvider(), true, "Provider");
+            doFound++;
+        }
+
+        if (doFound != 1)
+            throw new OsirisValidationException("Too many customer order");
+
+        BillingLabelType billingLabelAffaire = constantService.getBillingLabelTypeCodeAffaire();
+
+        validationHelper.validateReferential(invoice.getBillingLabelType(), true, "BillingLabelType");
+        validationHelper.validateString(invoice.getBillingLabelAddress(),
+                invoice.getBillingLabelType().getId().equals(billingLabelAffaire.getId()), 160,
+                "BillingLabelAddress");
+        validationHelper.validateString(invoice.getBillingLabel(),
+                invoice.getBillingLabelType().getId().equals(billingLabelAffaire.getId()), 40, "BillingLabel");
+        validationHelper.validateString(invoice.getBillingLabelPostalCode(),
+                invoice.getBillingLabelType().getId().equals(billingLabelAffaire.getId()), 10,
+                "BillingLabelPostalCode");
+        validationHelper.validateReferential(invoice.getBillingLabelCity(),
+                invoice.getBillingLabelType().getId().equals(billingLabelAffaire.getId()), "BillingLabelCity");
+        validationHelper.validateReferential(invoice.getBillingLabelCountry(),
+                invoice.getBillingLabelType().getId().equals(billingLabelAffaire.getId()), "BillingLabelCountry");
+        validationHelper.validateString(invoice.getBillingLabelPostalCode(), false, 40, "BillingLabelPostalCode");
+        validationHelper.validateReferential(invoice.getInvoiceStatus(), false, "InvoiceStatus");
+        validationHelper.validateDate(invoice.getDueDate(), false, "DueDate");
+
+        if (invoice.getInvoiceItems() == null) {
+            throw new OsirisValidationException("InvoiceItems");
+        } else {
+            for (InvoiceItem invoiceItem : invoice.getInvoiceItems()) {
+                if (invoiceItem.getId() != null)
+                    validationHelper.validateReferential(invoiceItem, true, "invoiceItem");
+                if (invoiceItem.getDiscountAmount() == null)
+                    invoiceItem.setDiscountAmount(0f);
+                if (invoiceItem.getPreTaxPrice() == null)
+                    invoiceItem.setPreTaxPrice(0f);
+                if (invoiceItem.getVatPrice() == null)
+                    invoiceItem.setVatPrice(0f);
+
+            }
+        }
+
+        return new ResponseEntity<Invoice>(invoiceService.addOrUpdateInvoiceFromUser(invoice), HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/invoice-status-list")
     public ResponseEntity<List<InvoiceStatus>> getInvoiceStatus() {
-        List<InvoiceStatus> invoiceStatus = null;
-        try {
-            invoiceStatus = invoiceStatusService.getInvoiceStatus();
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching invoiceStatus", e);
-            return new ResponseEntity<List<InvoiceStatus>>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching invoiceStatus", e);
-            return new ResponseEntity<List<InvoiceStatus>>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<List<InvoiceStatus>>(invoiceStatus, HttpStatus.OK);
+        return new ResponseEntity<List<InvoiceStatus>>(invoiceStatusService.getInvoiceStatus(), HttpStatus.OK);
     }
 
     @PostMapping(inputEntryPoint + "/invoice-status")
     public ResponseEntity<InvoiceStatus> addOrUpdateInvoiceStatus(
-            @RequestBody InvoiceStatus invoiceStatus) {
-        InvoiceStatus outInvoiceStatus;
-        try {
-            if (invoiceStatus.getId() != null)
-                validationHelper.validateReferential(invoiceStatus, true);
-            validationHelper.validateString(invoiceStatus.getCode(), true);
-            validationHelper.validateString(invoiceStatus.getLabel(), true);
+            @RequestBody InvoiceStatus invoiceStatus) throws OsirisValidationException, OsirisException {
+        if (invoiceStatus.getId() != null)
+            validationHelper.validateReferential(invoiceStatus, true, "invoiceStatus");
+        validationHelper.validateString(invoiceStatus.getCode(), true, "code");
+        validationHelper.validateString(invoiceStatus.getLabel(), true, "label");
 
-            outInvoiceStatus = invoiceStatusService
-                    .addOrUpdateInvoiceStatus(invoiceStatus);
-        } catch (
-
-        ResponseStatusException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching invoiceStatus", e);
-            return new ResponseEntity<InvoiceStatus>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching invoiceStatus", e);
-            return new ResponseEntity<InvoiceStatus>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<InvoiceStatus>(outInvoiceStatus, HttpStatus.OK);
+        return new ResponseEntity<InvoiceStatus>(invoiceStatusService.addOrUpdateInvoiceStatus(invoiceStatus),
+                HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/invoice/customer-order")
     public ResponseEntity<Invoice> getInvoiceForCustomerOrder(@RequestParam Integer customerOrderId) {
-        Invoice invoice = null;
-        try {
-            invoice = invoiceService.getInvoiceForCustomerOrder(customerOrderId);
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching customer-order", e);
-            return new ResponseEntity<Invoice>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching customer-order", e);
-            return new ResponseEntity<Invoice>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<Invoice>(invoice, HttpStatus.OK);
+        return new ResponseEntity<Invoice>(invoiceService.getInvoiceForCustomerOrder(customerOrderId), HttpStatus.OK);
     }
 
     @PostMapping(inputEntryPoint + "/invoice/search")
-    public ResponseEntity<List<InvoiceSearchResult>> searchInvoices(@RequestBody InvoiceSearch invoiceSearch) {
-        List<InvoiceSearchResult> invoices;
-        try {
-            if (invoiceSearch == null)
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    public ResponseEntity<List<InvoiceSearchResult>> searchInvoices(@RequestBody InvoiceSearch invoiceSearch)
+            throws OsirisValidationException {
+        if (invoiceSearch == null)
+            throw new OsirisValidationException("invoiceSearch");
 
-            if (invoiceSearch.getInvoiceStatus() == null)
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        if (invoiceSearch.getInvoiceStatus() == null)
+            throw new OsirisValidationException("InvoiceStatus");
 
-            if (invoiceSearch.getStartDate() == null || invoiceSearch.getEndDate() == null)
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        if (invoiceSearch.getStartDate() == null || invoiceSearch.getEndDate() == null)
+            throw new OsirisValidationException("StartDate or EndDate");
 
-            invoices = invoiceService.searchInvoices(invoiceSearch);
-        } catch (
-
-        ResponseStatusException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (HttpStatusCodeException e) {
-            logger.error("HTTP error when fetching accountingAccount", e);
-            return new ResponseEntity<List<InvoiceSearchResult>>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error when fetching accountingAccount", e);
-            return new ResponseEntity<List<InvoiceSearchResult>>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<List<InvoiceSearchResult>>(invoices, HttpStatus.OK);
+        return new ResponseEntity<List<InvoiceSearchResult>>(invoiceService.searchInvoices(invoiceSearch),
+                HttpStatus.OK);
     }
 
 }

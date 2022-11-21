@@ -2,6 +2,7 @@ package com.jss.osiris.modules.miscellaneous.service;
 
 import java.util.List;
 
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 
 public interface DocumentService {
@@ -14,10 +15,11 @@ public interface DocumentService {
      * 
      * @param documents Document list to search for
      * @return The billing document if found, null otherwise
+     * @throws OsirisException
      */
-    public Document getBillingDocument(List<Document> documents) throws Exception;
+    public Document getBillingDocument(List<Document> documents) throws OsirisException;
 
-    public Document getQuotationDocument(List<Document> documents) throws Exception;
+    public Document getQuotationDocument(List<Document> documents) throws OsirisException;
 
     public Document cloneDocument(Document document);
 }

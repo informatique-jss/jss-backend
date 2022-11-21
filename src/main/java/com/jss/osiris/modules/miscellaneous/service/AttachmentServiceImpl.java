@@ -1,8 +1,6 @@
 package com.jss.osiris.modules.miscellaneous.service;
 
 import java.io.File;
-import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -13,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.AttachmentType;
 import com.jss.osiris.modules.miscellaneous.repository.AttachmentRepository;
@@ -81,7 +80,7 @@ public class AttachmentServiceImpl implements AttachmentService {
     @Transactional(rollbackFor = Exception.class)
     public List<Attachment> addAttachment(MultipartFile file, Integer idEntity, String entityType,
             AttachmentType attachmentType,
-            String filename, Boolean replaceExistingAttachementType) throws IOException, NoSuchAlgorithmException {
+            String filename, Boolean replaceExistingAttachementType) throws OsirisException {
         String absoluteFilePath = storageFileService.saveFile(file, filename,
                 entityType + File.separator + idEntity);
 

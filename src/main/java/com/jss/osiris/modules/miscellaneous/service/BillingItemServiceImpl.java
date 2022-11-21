@@ -39,7 +39,7 @@ public class BillingItemServiceImpl implements BillingItemService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public BillingItem addOrUpdateBillingItem(
-            BillingItem billingItem) throws Exception {
+            BillingItem billingItem) {
         return billingItemRepository.save(billingItem);
     }
 

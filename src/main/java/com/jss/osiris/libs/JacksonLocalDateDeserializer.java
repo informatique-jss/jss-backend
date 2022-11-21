@@ -5,7 +5,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
@@ -25,7 +24,7 @@ public class JacksonLocalDateDeserializer extends StdDeserializer<LocalDate> {
     }
 
     @Override
-    public LocalDate deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JacksonException {
+    public LocalDate deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
         String date = p.getText();
         return LocalDate.parse(date, formatter);
     }

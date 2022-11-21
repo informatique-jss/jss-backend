@@ -3,6 +3,7 @@ package com.jss.osiris.modules.invoicing.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.miscellaneous.model.Document;
@@ -17,7 +18,7 @@ public class InvoiceHelper {
     @Autowired
     ConstantService constantService;
 
-    public ITiers getCustomerOrder(Invoice invoice) throws Exception {
+    public ITiers getCustomerOrder(Invoice invoice) throws OsirisException {
         if (invoice.getConfrere() != null)
             return invoice.getConfrere();
 
@@ -27,7 +28,7 @@ public class InvoiceHelper {
         if (invoice.getTiers() != null)
             return invoice.getTiers();
 
-        throw new Exception("No customer order declared on Invoice " + invoice.getId());
+        throw new OsirisException("No customer order declared on Invoice " + invoice.getId());
     }
 
     public Invoice setPriceTotal(Invoice invoice) {
@@ -75,7 +76,7 @@ public class InvoiceHelper {
     }
 
     public void setInvoiceLabel(Invoice invoice, Document billingDocument, CustomerOrder customerOrder,
-            ITiers orderingCustomer) throws Exception {
+            ITiers orderingCustomer) throws OsirisException {
         // Defined billing label
         if (constantService.getBillingLabelTypeOther().getId().equals(billingDocument.getBillingLabelType().getId())) {
             if (billingDocument.getRegie() != null) {
@@ -105,7 +106,7 @@ public class InvoiceHelper {
                 && constantService.getBillingLabelTypeCodeAffaire().getId()
                         .equals(billingDocument.getBillingLabelType().getId())) {
             if (customerOrder.getAssoAffaireOrders() == null || customerOrder.getAssoAffaireOrders().size() == 0)
-                throw new Exception("No affaire in the customer order " + customerOrder.getId());
+                throw new OsirisException("No affaire in the customer order " + customerOrder.getId());
             Affaire affaire = customerOrder.getAssoAffaireOrders().get(0).getAffaire();
             invoice.setBillingLabel(affaire.getIsIndividual() ? affaire.getFirstname() + " " + affaire.getLastname()
                     : affaire.getDenomination());

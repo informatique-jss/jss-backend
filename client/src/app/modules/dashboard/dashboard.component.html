@@ -43,6 +43,8 @@
           [invoiceSearch]="invoiceSearchToAssociate" [isForDashboard]="true"></invoice-list>
         <payment-list class="dashboard-box-component" *ngIf="item==PAYMENT_TO_ASSOCIATE"
           [paymentSearch]="paymentSearchToAssociate" [isForDashboard]="true"></payment-list>
+        <log class="dashboard-box-component" *ngIf="item==LOG_TO_REVIEW && canViewLogModule()" [isForDashboard]="true">
+        </log>
       </div>
     </div>
   </div>

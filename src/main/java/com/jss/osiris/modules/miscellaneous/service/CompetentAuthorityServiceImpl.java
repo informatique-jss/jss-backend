@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.accounting.model.AccountingAccountTrouple;
 import com.jss.osiris.modules.accounting.service.AccountingAccountService;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
@@ -46,9 +47,9 @@ public class CompetentAuthorityServiceImpl implements CompetentAuthorityService 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public CompetentAuthority addOrUpdateCompetentAuthority(
-            CompetentAuthority competentAuthority) throws Exception {
+            CompetentAuthority competentAuthority) throws OsirisException {
         if (competentAuthority == null)
-            throw new Exception("Competent authority provided is null");
+            throw new OsirisException("Competent authority provided is null");
 
         // If mails already exists, get their ids
         if (competentAuthority != null && competentAuthority.getMails() != null

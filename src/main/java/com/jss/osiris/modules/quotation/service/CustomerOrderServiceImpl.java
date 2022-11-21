@@ -12,12 +12,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.jss.osiris.libs.JacksonLocalDateDeserializer;
 import com.jss.osiris.libs.JacksonLocalDateSerializer;
 import com.jss.osiris.libs.JacksonLocalDateTimeDeserializer;
 import com.jss.osiris.libs.JacksonLocalDateTimeSerializer;
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.modules.accounting.model.AccountingRecord;
@@ -117,12 +119,14 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public CustomerOrder addOrUpdateCustomerOrderFromUser(CustomerOrder customerOrder) throws Exception {
+    public CustomerOrder addOrUpdateCustomerOrderFromUser(CustomerOrder customerOrder)
+            throws OsirisException {
         return addOrUpdateCustomerOrder(customerOrder);
     }
 
     @Override
-    public CustomerOrder addOrUpdateCustomerOrder(CustomerOrder customerOrder) throws Exception {
+    public CustomerOrder addOrUpdateCustomerOrder(CustomerOrder customerOrder)
+            throws OsirisException {
         if (customerOrder.getId() == null)
             customerOrder.setCreatedDate(LocalDateTime.now());
 
@@ -164,7 +168,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     }
 
     @Override
-    public CustomerOrder checkAllProvisionEnded(CustomerOrder customerOrderIn) throws Exception {
+    public CustomerOrder checkAllProvisionEnded(CustomerOrder customerOrderIn)
+            throws OsirisException {
         if (customerOrderIn != null
                 && customerOrderIn.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BEING_PROCESSED)) {
             CustomerOrder customerOrder = getCustomerOrder(customerOrderIn.getId());
@@ -194,17 +199,17 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public CustomerOrder addOrUpdateCustomerOrderStatusFromUser(CustomerOrder customerOrder, String targetStatusCode)
-            throws Exception {
+            throws OsirisException {
         return addOrUpdateCustomerOrderStatus(customerOrder, targetStatusCode);
     }
 
     @Override
     public CustomerOrder addOrUpdateCustomerOrderStatus(CustomerOrder customerOrder, String targetStatusCode)
-            throws Exception {
+            throws OsirisException {
         CustomerOrderStatus targetCustomerStatus = customerOrderStatusService
                 .getCustomerOrderStatusByCode(targetStatusCode);
         if (targetCustomerStatus == null)
-            throw new Exception("Customer order status not found for code " + targetStatusCode);
+            throw new OsirisException("Customer order status not found for code " + targetStatusCode);
         if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.OPEN)
                 && targetCustomerStatus.getCode().equals(CustomerOrderStatus.TO_VERIFY))
             notificationService.notifyCustomerOrderToVerify(customerOrder);
@@ -258,14 +263,14 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         CustomerOrderStatus customerOrderStatus = customerOrderStatusService
                 .getCustomerOrderStatusByCode(targetStatusCode);
         if (customerOrderStatus == null)
-            throw new Exception("Quotation status not found for code " + targetStatusCode);
+            throw new OsirisException("Quotation status not found for code " + targetStatusCode);
         customerOrder.setCustomerOrderStatus(customerOrderStatus);
         return this.addOrUpdateCustomerOrder(customerOrder);
     }
 
     @Override
     public CustomerOrder unlockCustomerOrderFromDeposit(CustomerOrder customerOrder, Float effectivePayment)
-            throws Exception {
+            throws OsirisException {
         Float remainingToPay = accountingRecordService
                 .getRemainingAmountToPayForCustomerOrder(customerOrder);
 
@@ -278,9 +283,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         return customerOrder;
     }
 
-    private Invoice generateInvoice(CustomerOrder customerOrder) throws Exception {
+    private Invoice generateInvoice(CustomerOrder customerOrder) throws OsirisException {
         if (!hasAtLeastOneInvoiceItemNotNull(customerOrder))
-            throw new Exception("No invoice item found on customer order " + customerOrder.getId());
+            throw new OsirisException("No invoice item found on customer order " + customerOrder.getId());
 
         // Generate blank invoice
         Invoice invoice = invoiceService.createInvoice(customerOrder,
@@ -339,9 +344,10 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
      * 
      * @param customerOrder
      * @return Invoice
-     * @throws Exception
+     * @throws OsirisException
+     * @
      */
-    private Invoice getInvoice(CustomerOrder customerOrder) throws Exception {
+    private Invoice getInvoice(CustomerOrder customerOrder) throws OsirisException {
         if (customerOrder == null || customerOrder.getAssoAffaireOrders() == null
                 || customerOrder.getAssoAffaireOrders().get(0).getProvisions() == null
                 || customerOrder.getAssoAffaireOrders().get(0).getProvisions().size() == 0
@@ -349,7 +355,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 || customerOrder.getAssoAffaireOrders().get(0).getProvisions().get(0).getInvoiceItems() == null
                 || customerOrder.getAssoAffaireOrders().get(0).getProvisions().get(0).getInvoiceItems().size() == 0
                 || customerOrder.getAssoAffaireOrders().get(0).getProvisions().get(0).getInvoiceItems().get(0) == null)
-            throw new Exception("No invoice found");
+            throw new OsirisException("No invoice found");
 
         return customerOrder.getAssoAffaireOrders().get(0).getProvisions().get(0).getInvoiceItems().get(0).getInvoice();
     }
@@ -397,7 +403,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     }
 
     @Override
-    public CustomerOrder createNewCustomerOrderFromQuotation(Quotation quotation) throws Exception {
+    public CustomerOrder createNewCustomerOrderFromQuotation(Quotation quotation)
+            throws OsirisException {
         CustomerOrderStatus statusOpen = customerOrderStatusService
                 .getCustomerOrderStatusByCode(CustomerOrderStatus.OPEN);
         CustomerOrder customerOrder = new CustomerOrder(quotation.getTiers(), quotation.getResponsable(),
@@ -415,9 +422,21 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         simpleModule.addDeserializer(LocalDateTime.class, new JacksonLocalDateTimeDeserializer());
         simpleModule.addDeserializer(LocalDate.class, new JacksonLocalDateDeserializer());
         objectMapper.registerModule(simpleModule);
-        String customerOrderString = objectMapper.writeValueAsString(customerOrder);
+        String customerOrderString;
+        try {
+            customerOrderString = objectMapper.writeValueAsString(customerOrder);
+        } catch (JsonProcessingException e) {
+            throw new OsirisException(
+                    "Error when cloning quotation to customer order for quotation " + quotation.getId());
+        }
 
-        CustomerOrder customerOrder2 = objectMapper.readValue(customerOrderString, CustomerOrder.class);
+        CustomerOrder customerOrder2;
+        try {
+            customerOrder2 = objectMapper.readValue(customerOrderString, CustomerOrder.class);
+        } catch (JsonProcessingException e) {
+            throw new OsirisException(
+                    "Error when reading clone of quotation for quotation " + quotation.getId());
+        }
 
         if (customerOrder2.getDocuments() != null)
             for (Document document : customerOrder2.getDocuments())
@@ -450,7 +469,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void generateInvoiceMail(CustomerOrder customerOrder) throws Exception {
+    public void generateInvoiceMail(CustomerOrder customerOrder)
+            throws Exception {
         Invoice invoice = generateInvoice(customerOrder);
         mailHelper.sendCustomerOrderInvoiceToCustomer(customerOrder, invoice, true);
         if (invoice != null)
@@ -459,7 +479,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     private String getCardPaymentLinkForPayment(CustomerOrder customerOrder, String mail, String subject,
             String redirectEntrypoint)
-            throws Exception {
+            throws OsirisException {
         if (customerOrder.getCentralPayPaymentRequestId() != null) {
             CentralPayPaymentRequest centralPayPaymentRequest = centralPayDelegateService
                     .getPaymentRequest(customerOrder.getCentralPayPaymentRequestId());
@@ -498,12 +518,13 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Override
     public String getCardPaymentLinkForPaymentDeposit(CustomerOrder customerOrder, String mail, String subject)
-            throws Exception {
+            throws OsirisException {
         return getCardPaymentLinkForPayment(customerOrder, mail, subject, paymentCbRedirectDeposit);
     }
 
     @Override
-    public Boolean validateCardPaymentLinkForDeposit(CustomerOrder customerOrder) throws Exception {
+    public Boolean validateCardPaymentLinkForDeposit(CustomerOrder customerOrder)
+            throws OsirisException {
         if (customerOrder.getCentralPayPaymentRequestId() != null) {
             CentralPayPaymentRequest centralPayPaymentRequest = centralPayDelegateService
                     .getPaymentRequest(customerOrder.getCentralPayPaymentRequestId());
@@ -529,12 +550,13 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Override
     public String getCardPaymentLinkForPaymentInvoice(CustomerOrder customerOrder, String mail, String subject)
-            throws Exception {
+            throws OsirisException {
         return getCardPaymentLinkForPayment(customerOrder, mail, subject, paymentCbRedirectInvoice);
     }
 
     @Override
-    public Boolean validateCardPaymentLinkForInvoice(CustomerOrder customerOrder) throws Exception {
+    public Boolean validateCardPaymentLinkForInvoice(CustomerOrder customerOrder)
+            throws OsirisException {
         if (customerOrder.getCentralPayPaymentRequestId() != null) {
             CentralPayPaymentRequest centralPayPaymentRequest = centralPayDelegateService
                     .getPaymentRequest(customerOrder.getCentralPayPaymentRequestId());

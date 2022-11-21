@@ -2,6 +2,7 @@ package com.jss.osiris.modules.miscellaneous.service;
 
 import java.util.List;
 
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.miscellaneous.model.Notification;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.Quotation;
@@ -17,27 +18,27 @@ public interface NotificationService {
 
         public void deleteNotification(Notification notification);
 
-        public Notification notifyNewQuotation(Quotation quotation) throws Exception;
+        public Notification notifyNewQuotation(Quotation quotation) throws OsirisException;
 
-        public Notification notifyQuotationToVerify(Quotation quotation) throws Exception;
+        public Notification notifyQuotationToVerify(Quotation quotation) throws OsirisException;
 
-        public Notification notifyQuotationSent(Quotation quotation) throws Exception;
+        public Notification notifyQuotationSent(Quotation quotation) throws OsirisException;
 
-        public Notification notifyQuotationValidatedByCustomer(Quotation quotation) throws Exception;
+        public Notification notifyQuotationValidatedByCustomer(Quotation quotation) throws OsirisException;
 
-        public Notification notifyQuotationRefusedByCustomer(Quotation quotation) throws Exception;
+        public Notification notifyQuotationRefusedByCustomer(Quotation quotation) throws OsirisException;
 
-        public List<Notification> notifyNewCustomerOrderQuotation(CustomerOrder customerOrder) throws Exception;
+        public List<Notification> notifyNewCustomerOrderQuotation(CustomerOrder customerOrder) throws OsirisException;
 
-        public List<Notification> notifyCustomerOrderToVerify(CustomerOrder customerOrder) throws Exception;
+        public List<Notification> notifyCustomerOrderToVerify(CustomerOrder customerOrder) throws OsirisException;
 
         public List<Notification> notifyCustomerOrderToBeingProcessed(CustomerOrder customerOrder, boolean isFromHuman)
-                        throws Exception;
+                        throws OsirisException;
 
         public List<Notification> notifyCustomerOrderToBeingToBilled(CustomerOrder customerOrder)
-                        throws Exception;
+                        throws OsirisException;
 
-        public Notification addOrUpdatePersonnalNotification(Notification notifications) throws Exception;
+        public Notification addOrUpdatePersonnalNotification(Notification notifications);
 
-        public void purgeNotification() throws Exception;
+        public void purgeNotification();
 }

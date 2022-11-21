@@ -8,6 +8,7 @@ import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.model.Refund;
@@ -47,7 +48,7 @@ public class RefundServiceImpl implements RefundService {
 
     @Override
     public void generateRefund(ITiers tiersRefund, Affaire affaireRefund, Payment payment, Float amount)
-            throws Exception {
+            throws OsirisException {
         Refund refund = new Refund();
         if (tiersRefund instanceof Confrere)
             refund.setConfrere((Confrere) tiersRefund);

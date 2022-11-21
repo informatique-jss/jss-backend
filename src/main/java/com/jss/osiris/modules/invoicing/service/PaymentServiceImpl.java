@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.search.model.IndexEntity;
 import com.jss.osiris.libs.search.service.SearchService;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
@@ -96,7 +97,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public List<PaymentSearchResult> searchPayments(PaymentSearch paymentSearch) throws Exception {
+    public List<PaymentSearchResult> searchPayments(PaymentSearch paymentSearch) {
         ArrayList<Integer> paymentWayId = new ArrayList<Integer>();
         if (paymentSearch.getPaymentWays() != null) {
             for (PaymentWay paymentWay : paymentSearch.getPaymentWays())
@@ -113,12 +114,14 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void payementGrab() throws Exception {
+    public void payementGrab()
+            throws OsirisException {
         // TODO : plug bank API
         automatchPaymentsInvoicesAndGeneratePaymentAccountingRecords();
     }
 
-    private void automatchPaymentsInvoicesAndGeneratePaymentAccountingRecords() throws Exception {
+    private void automatchPaymentsInvoicesAndGeneratePaymentAccountingRecords()
+            throws OsirisException {
         List<Payment> payments = paymentRepository.findNotAssociatedPayments();
 
         for (Payment payment : payments) {
@@ -180,7 +183,7 @@ public class PaymentServiceImpl implements PaymentService {
             List<Invoice> correspondingInvoices,
             List<CustomerOrder> correspondingCustomerOrder, Affaire affaireRefund, ITiers tiersRefund,
             List<Float> byPassAmount)
-            throws Exception {
+            throws OsirisException {
 
         float remainingMoney = payment.getPaymentAmount();
         if (payment.getPaymentWay().getId().equals(constantService.getPaymentWayInbound().getId())) {
@@ -216,7 +219,7 @@ public class PaymentServiceImpl implements PaymentService {
     private Float associatePayementAndCustomerOrders(Payment payment, List<CustomerOrder> correspondingCustomerOrder,
             List<Invoice> correspondingInvoice,
             boolean generateWaitingAccountAccountingRecords, List<Float> byPassAmount, float remainingMoney)
-            throws Exception {
+            throws OsirisException {
         Float remainingToPay = 0f;
         int amountIndex = 0;
         if (correspondingInvoice != null)
@@ -269,7 +272,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     private Float associatePayementAndInvoices(Payment payment, List<Invoice> correspondingInvoices,
-            boolean generateWaitingAccountAccountingRecords, List<Float> byPassAmount) throws Exception {
+            boolean generateWaitingAccountAccountingRecords, List<Float> byPassAmount) throws OsirisException {
         InvoiceStatus payedStatus = constantService.getInvoiceStatusPayed();
         Float remainingToPay = 0f;
         int amountIndex = 0;
@@ -378,7 +381,7 @@ public class PaymentServiceImpl implements PaymentService {
         return entitiesFound;
     }
 
-    private Invoice getInvoiceForEntity(IndexEntity foundEntity) throws Exception {
+    private Invoice getInvoiceForEntity(IndexEntity foundEntity) throws OsirisException {
         if (foundEntity != null && foundEntity.getEntityType() != null) {
             if (foundEntity.getEntityType().equals(Invoice.class.getSimpleName())) {
                 Invoice invoice = invoiceService.getInvoice(foundEntity.getEntityId());
@@ -419,7 +422,7 @@ public class PaymentServiceImpl implements PaymentService {
         return null;
     }
 
-    private Invoice getInvoiceForCustomerOrder(CustomerOrder customerOrder) throws Exception {
+    private Invoice getInvoiceForCustomerOrder(CustomerOrder customerOrder) throws OsirisException {
         if (customerOrder.getInvoices() != null && customerOrder.getInvoices().size() > 0
                 && customerOrder.getCustomerOrderStatus() != null
                 && customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BILLED)) {

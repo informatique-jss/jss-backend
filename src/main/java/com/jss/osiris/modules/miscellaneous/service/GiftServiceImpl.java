@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.service.AccountingAccountService;
 import com.jss.osiris.modules.miscellaneous.model.Gift;
@@ -37,7 +38,7 @@ public class GiftServiceImpl implements GiftService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Gift addOrUpdateGift(Gift gift) throws Exception {
+    public Gift addOrUpdateGift(Gift gift) throws OsirisException {
         giftRepository.save(gift);
         AccountingAccount accountingAccount = accountingAccountService
                 .generateAccountingAccountsForProduct("Cadeau - " + gift.getLabel());

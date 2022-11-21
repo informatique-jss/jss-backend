@@ -11,6 +11,7 @@ import com.google.zxing.client.j2se.MatrixToImageConfig;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
+import com.jss.osiris.libs.exception.OsirisException;
 
 @Service
 public class QrCodeHelper {
@@ -23,20 +24,28 @@ public class QrCodeHelper {
      * @param data
      * @param size
      * @return
-     * @throws WriterException
-     * @throws IOException
+     * @throws OsirisException
      */
-    public byte[] getQrCode(String data, Integer size) throws WriterException, IOException {
+    public byte[] getQrCode(String data, Integer size) throws OsirisException {
         // encode
-        BitMatrix bitMatrix = new QRCodeWriter().encode(data, BarcodeFormat.QR_CODE, size, size);
+        BitMatrix bitMatrix;
+        try {
+            bitMatrix = new QRCodeWriter().encode(data, BarcodeFormat.QR_CODE, size, size);
+        } catch (WriterException e) {
+            throw new OsirisException("Unable to generate QR Code for value " + data);
+        }
 
         String imageFormat = "png";
 
         // write in a file
         ByteArrayOutputStream fileOutputStream = new ByteArrayOutputStream();
         MatrixToImageConfig conf = new MatrixToImageConfig(0xff000000, 0xfffefef8);
-        MatrixToImageWriter.writeToStream(bitMatrix, imageFormat, fileOutputStream, conf);
-        fileOutputStream.close();
+        try {
+            MatrixToImageWriter.writeToStream(bitMatrix, imageFormat, fileOutputStream, conf);
+            fileOutputStream.close();
+        } catch (IOException e) {
+            throw new OsirisException("Unable to write QR Code in memory for value " + data);
+        }
 
         return fileOutputStream.toByteArray();
     }

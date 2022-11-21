@@ -2,6 +2,7 @@ package com.jss.osiris.modules.quotation.service;
 
 import java.util.List;
 
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.quotation.model.QuotationStatus;
 
 public interface QuotationStatusService {
@@ -13,6 +14,6 @@ public interface QuotationStatusService {
 
     public QuotationStatus getQuotationStatusByCode(String code);
 
-    public void updateStatusReferential() throws Exception;
+    public void updateStatusReferential() throws OsirisException;
 
 }

@@ -4,6 +4,7 @@ import java.io.File;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.model.AccountingAccountClass;
 import com.jss.osiris.modules.accounting.model.AccountingBalance;
@@ -28,9 +29,9 @@ public interface AccountingRecordService {
 
         public AccountingRecord addOrUpdateAccountingRecordFromUser(AccountingRecord accountingRecord);
 
-        public void generateAccountingRecordsForSaleOnInvoiceGeneration(Invoice invoice) throws Exception;
+        public void generateAccountingRecordsForSaleOnInvoiceGeneration(Invoice invoice) throws OsirisException;
 
-        public void generateAccountingRecordsForPurshaseOnInvoiceGeneration(Invoice invoice) throws Exception;
+        public void generateAccountingRecordsForPurshaseOnInvoiceGeneration(Invoice invoice) throws OsirisException;
 
         public void dailyAccountClosing();
 
@@ -39,20 +40,17 @@ public interface AccountingRecordService {
         public List<AccountingBalance> searchAccountingBalance(AccountingBalanceSearch accountingBalanceSearch);
 
         public File getGrandLivreExport(AccountingAccountClass accountingClass, LocalDateTime startDate,
-                        LocalDateTime endDate)
-                        throws Exception;
+                        LocalDateTime endDate) throws OsirisException;
 
         public File getJournalExport(AccountingJournal accountingJournal, LocalDateTime startDate,
-                        LocalDateTime endDate)
-                        throws Exception;
+                        LocalDateTime endDate) throws OsirisException;
 
         public File getAccountingAccountExport(AccountingAccount accountingAccount, LocalDateTime startDate,
-                        LocalDateTime endDate)
-                        throws Exception;
+                        LocalDateTime endDate) throws OsirisException;
 
-        public File getProfitLostExport(LocalDateTime startDate, LocalDateTime endDate) throws Exception;
+        public File getProfitLostExport(LocalDateTime startDate, LocalDateTime endDate) throws OsirisException;
 
-        public File getBilanExport(LocalDateTime startDate, LocalDateTime endDate) throws Exception;
+        public File getBilanExport(LocalDateTime startDate, LocalDateTime endDate) throws OsirisException;
 
         public List<AccountingBalanceViewTitle> getBilan(LocalDateTime startDate, LocalDateTime endDate);
 
@@ -61,45 +59,46 @@ public interface AccountingRecordService {
         public List<AccountingBalance> searchAccountingBalanceGenerale(AccountingBalanceSearch accountingRecordSearch);
 
         public File getAccountingBalanceExport(Integer accountingClassId, String accountingAccountNumber,
-                        Integer accountingAccountId, LocalDateTime startDate, LocalDateTime endDate) throws Exception;
+                        Integer accountingAccountId, LocalDateTime startDate, LocalDateTime endDate)
+                        throws OsirisException;
 
         public File getAccountingBalanceGeneraleExport(Integer accountingClassId, String accountingAccountNumber,
-                        Integer accountingAccountId, LocalDateTime startDate, LocalDateTime endDate) throws Exception;
+                        Integer accountingAccountId, LocalDateTime startDate, LocalDateTime endDate)
+                        throws OsirisException;
 
         public void generateAccountingRecordsForSaleOnInvoicePayment(Invoice invoice, List<Payment> payments,
-                        List<Deposit> deposits, Float amountToUse) throws Exception;
+                        List<Deposit> deposits, Float amountToUse) throws OsirisException;
 
         public void generateAccountingRecordsForDepositAndInvoice(Deposit deposit, Invoice invoice, Payment payment)
-                        throws Exception;
+                        throws OsirisException;
 
         public void generateAccountingRecordsForDepositAndCustomerOrder(Deposit deposit, CustomerOrder customerOrder,
-                        Payment payment)
-                        throws Exception;
+                        Payment payment) throws OsirisException;
 
-        public AccountingAccount getCustomerAccountingAccountForInvoice(Invoice invoice) throws Exception;
+        public AccountingAccount getCustomerAccountingAccountForInvoice(Invoice invoice) throws OsirisException;
 
-        public AccountingAccount getCustomerAccountingAccountForITiers(ITiers tiers) throws Exception;
+        public AccountingAccount getCustomerAccountingAccountForITiers(ITiers tiers) throws OsirisException;
 
-        public AccountingAccount getProviderAccountingAccountForInvoice(Invoice invoice) throws Exception;
+        public AccountingAccount getProviderAccountingAccountForInvoice(Invoice invoice) throws OsirisException;
 
-        public AccountingAccount getProviderAccountingAccountForITiers(ITiers tiers) throws Exception;
+        public AccountingAccount getProviderAccountingAccountForITiers(ITiers tiers) throws OsirisException;
 
-        public void generateAccountingRecordsForWaintingPayment(Payment payment) throws Exception;
+        public void generateAccountingRecordsForWaintingPayment(Payment payment) throws OsirisException;
 
-        public void generateBankAccountingRecordsForPayment(Payment payment) throws Exception;
+        public void generateBankAccountingRecordsForPayment(Payment payment) throws OsirisException;
 
-        public Float getRemainingAmountToPayForInvoice(Invoice invoice) throws Exception;
+        public Float getRemainingAmountToPayForInvoice(Invoice invoice) throws OsirisException;
 
-        public Float getRemainingAmountToPayForCustomerOrder(CustomerOrder customerOrder) throws Exception;
+        public Float getRemainingAmountToPayForCustomerOrder(CustomerOrder customerOrder);
 
-        public void generateAccountingRecordsForRefund(Refund refund) throws Exception;
+        public void generateAccountingRecordsForRefund(Refund refund) throws OsirisException;
 
-        public List<AccountingRecord> getAccountingRecordsByTemporaryOperationId(Integer operationId) throws Exception;
+        public List<AccountingRecord> getAccountingRecordsByTemporaryOperationId(Integer operationId);
 
-        public List<AccountingRecord> getAccountingRecordsByOperationId(Integer operationId) throws Exception;
+        public List<AccountingRecord> getAccountingRecordsByOperationId(Integer operationId);
 
         public void generateAppointForPayment(Payment payment, float remainingMoney, ITiers customerOrder)
-                        throws Exception;
+                        throws OsirisException;
 
         public List<AccountingRecord> addOrUpdateAccountingRecords(List<AccountingRecord> accountingRecords);
 
@@ -110,10 +109,10 @@ public interface AccountingRecordService {
 
         public void deleteAccountingRecord(AccountingRecord accountingRecord);
 
-        public List<AccountingRecord> doCounterPartByOperationId(Integer operationId) throws Exception;
+        public List<AccountingRecord> doCounterPartByOperationId(Integer operationId) throws OsirisException;
 
         public List<AccountingRecord> deleteRecordsByTemporaryOperationId(Integer temporaryOperationId)
-                        throws Exception;
+                        throws OsirisException;
 
         public AccountingRecord unassociateCustomerOrderPayementAndDeposit(AccountingRecord accountingRecord);
 
