@@ -11,17 +11,6 @@
     <sort-table [columns]="displayedColumns" [actions]="tableActions" [values]="entity.attachments"
       tableName="Pièce jointes" [filterText]="searchText">
     </sort-table>
-    <!--ng-container matColumnDef="action">
-        <th mat-header-cell *matHeaderCellDef></th>
-        <td mat-cell *matCellDef="let element">
-          <mat-icon (click)="previewFile(element)" color="accent" matTooltip="Prévisualiser le fichier">preview
-          </mat-icon>
-          <mat-icon (click)="downloadFile(element)" color="accent" matTooltip="Télécharger le fichier">download
-          </mat-icon>
-          <mat-icon (click)="disableFile(element)" color="accent" matTooltip="Désactiver le fichier">block
-          </mat-icon>
-        </td>
-      </ng-container-->
   </div>
 </div>
 <div class="mat-elevation-z2 form-div" *ngIf="entity && (entity.id==undefined || entity.id==null)">

@@ -5,6 +5,7 @@ import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAc
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { EmployeeService } from 'src/app/modules/profile/services/employee.service';
 import { AppService } from 'src/app/services/app.service';
+import { UserPreferenceService } from '../../../../services/user.preference.service';
 import { Employee } from '../../../profile/model/Employee';
 import { IQuotation } from '../../model/IQuotation';
 import { QuotationSearch } from '../../model/QuotationSearch';
@@ -26,6 +27,7 @@ export class QuotationListComponent implements OnInit {
   columnToDisplayOnDashboard: string[] = ["customerOrderName", "quotationStatus", "quotationDescription"];
   displayedColumns: SortTableColumn[] = [];
   tableAction: SortTableAction[] = [];
+  bookmark: QuotationSearch | undefined;
 
   allEmployees: Employee[] | undefined;
 
@@ -33,12 +35,23 @@ export class QuotationListComponent implements OnInit {
     private appService: AppService,
     private quotationSearchResultService: QuotationSearchResultService,
     private employeeService: EmployeeService,
+    private userPreferenceService: UserPreferenceService,
     private formBuilder: FormBuilder,
   ) { }
 
   ngOnInit() {
     this.putDefaultPeriod();
     this.employeeService.getEmployees().subscribe(response => {
+      this.bookmark = this.userPreferenceService.getUserSearchBookmark("quotations") as QuotationSearch;
+
+      if (this.bookmark && !this.isForDashboard) {
+        this.quotationSearch = {} as QuotationSearch;
+        this.quotationSearch.endDate = new Date(this.bookmark.endDate as any);
+        this.quotationSearch.startDate = new Date(this.bookmark.startDate as any);
+        this.quotationSearch.salesEmployee = this.bookmark.salesEmployee;
+        this.quotationSearch.quotationStatus = this.bookmark.quotationStatus;
+      }
+
       this.allEmployees = response;
       if (!this.isForDashboard && !this.isForTiersIntegration)
         this.appService.changeHeaderTitle("Devis");
@@ -47,6 +60,7 @@ export class QuotationListComponent implements OnInit {
       this.availableColumns = [];
       this.availableColumns.push({ id: "id", fieldName: "quotationId", label: "N° de la commande" } as SortTableColumn);
       this.availableColumns.push({ id: "customerOrderName", fieldName: "customerOrderLabel", label: "Donneur d'ordre", actionLinkFunction: this.getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la fiche du donneur d'ordre" } as SortTableColumn);
+      this.availableColumns.push({ id: "affaireLabel", fieldName: "affaireLabel", label: "Affaire(s)", isShrinkColumn: true } as SortTableColumn);
       this.availableColumns.push({ id: "quotationStatus", fieldName: "quotationStatus", label: "Statut" } as SortTableColumn);
       this.availableColumns.push({
         id: "salesEmployee", fieldName: "salesEmployeeId", label: "Commercial", displayAsEmployee: true, valueFonction: (element: any) => {
@@ -63,7 +77,7 @@ export class QuotationListComponent implements OnInit {
 
       this.setColumns();
 
-      this.tableAction.push({ actionIcon: "settings", actionName: "Voir le devis", actionLinkFunction: this.getActionLink, display: true, } as SortTableAction);
+      this.tableAction.push({ actionIcon: "request_quote", actionName: "Voir le devis", actionLinkFunction: this.getActionLink, display: true, } as SortTableAction);
 
       if ((this.isForDashboard || this.isForTiersIntegration) && !this.quotations && this.quotationSearch)
         this.searchOrders();
@@ -140,6 +154,8 @@ export class QuotationListComponent implements OnInit {
 
   searchOrders() {
     if (this.quotationSearchForm.valid && this.quotationSearch.startDate && this.quotationSearch.endDate) {
+      if (!this.isForDashboard)
+        this.userPreferenceService.setUserSearchBookmark(this.quotationSearch, "quotations");
       this.quotationSearch.startDate = new Date(toIsoString(this.quotationSearch.startDate));
       this.quotationSearch.endDate = new Date(toIsoString(this.quotationSearch.endDate));
       this.quotationSearchResultService.getQuotations(this.quotationSearch).subscribe(response => {

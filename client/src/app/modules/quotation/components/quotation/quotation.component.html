@@ -79,14 +79,16 @@
             {{getPreTaxPriceTotal()-getDiscountTotal()|number}} €
           </td>
         </tr>
-        <tr *ngIf="getApplicableVat()!=undefined">
-          <td>
-            Total {{getApplicableVat()!.label}}
-          </td>
-          <td class="td-price">
-            {{getVatTotal()|number}} €
-          </td>
-        </tr>
+        <ng-container *ngIf="getApplicableVat().length>0">
+          <tr *ngFor="let vat of getApplicableVat()">
+            <td>
+              Total {{vat.label}}
+            </td>
+            <td class="td-price">
+              {{vat.total|number}} €
+            </td>
+          </tr>
+        </ng-container>
         <tr>
           <td>
             Total TTC
@@ -123,13 +125,13 @@
       <quotation-list></quotation-list>
     </div>
     <div [hidden]="!editMode && (quotation.id==undefined || quotation.id==null)">
-      <fieldset [disabled]="editMode==false" class="fieldset-no-border">
-        <mat-tab-group animationDuration="0ms" #tabs [(selectedIndex)]="selectedTabIndex"
-          (selectedTabChange)="changeTab($event)">
-          <mat-tab label="Donneur d'ordre">
-            <ordering-customer [quotation]="quotation" [editMode]="editMode" (updateDocuments)="updateDocuments()">
-            </ordering-customer>
-          </mat-tab>
+      <mat-tab-group animationDuration="0ms" #tabs [(selectedIndex)]="selectedTabIndex"
+        (selectedTabChange)="changeTab($event)">
+        <mat-tab label="Donneur d'ordre">
+          <ordering-customer [quotation]="quotation" [editMode]="editMode" (updateDocuments)="updateDocuments()">
+          </ordering-customer>
+        </mat-tab>
+        <fieldset [disabled]="editMode==false" class="fieldset-no-border">
           <mat-tab label="Prestations" *ngIf="(quotation.tiers || quotation.responsable || quotation.confrere)  ">
             <div class="mat-elevation-z2 form-div" *ngIf="quotation.assoAffaireOrders">
               <mat-tab-group animationDuration="0ms" #tabs>
@@ -142,7 +144,7 @@
                           <mat-panel-title>Détails de l'affaire
                             {{asso.affaire.denomination?asso.affaire.denomination:(asso.affaire.firstname + ' '
                             +asso.affaire.lastname)}} - {{asso.affaire.address}} - {{asso.affaire.postalCode}} -
-                            {{asso.affaire.country.label}}
+                            {{asso.affaire.city.label}}
                           </mat-panel-title>
                           <mat-panel-description>
                             <avatar-chip *ngIf="asso.assignedTo && asso.id" [employee]="asso.assignedTo"
@@ -175,7 +177,7 @@
                             '+provision.provisionType.label):''}}
                           </mat-panel-title>
                           <span class="status-text"
-                            *ngIf="getActiveWorkflowElementsForProvision(provision)">{{getActiveWorkflowElementsForProvision(provision).label}}</span>
+                            *ngIf="instanceOfCustomerOrderFn(quotation) && getActiveWorkflowElementsForProvision(provision)">{{getActiveWorkflowElementsForProvision(provision).label}}</span>
                           <avatar-chip *ngIf="asso.assignedTo" [employee]="provision.assignedTo"
                             (onChangeAssigne)="updateAssignedToForProvision($event, provision)">
                           </avatar-chip>
@@ -210,29 +212,29 @@
               </mat-tab-group>
             </div>
           </mat-tab>
-          <mat-tab label="Facturation" *ngIf="quotation && quotation.id">
-            <invoice-management [quotation]=" quotation" [editMode]="editMode"
-              (invoiceItemChange)="invoiceItemChange($event)" [instanceOfCustomerOrder]="instanceOfCustomerOrder">
-            </invoice-management>
-          </mat-tab>
-          <mat-tab [label]="'Eléments '+(instanceOfCustomerOrder ? 'de la commande' : 'du devis')">
-            <quotation-management [quotation]="quotation" [editMode]="editMode" [isStatusOpen]="isStatusOpen"
-              [instanceOfCustomerOrder]="instanceOfCustomerOrder"
-              [updateDocumentsEvent]="updateDocumentsEvent.asObservable()"></quotation-management>
-          </mat-tab>
-          <mat-tab label="Documents" *ngIf="quotation.id!=null && quotation.id!=undefined">
-            <attachments [entity]="quotation" [editMode]="editMode" [entityType]="getEntityType().entityType">
-            </attachments>
-          </mat-tab>
-          <mat-tab label="Historique du statut" *ngIf="quotation.id!=null && quotation.id!=undefined">
-            <history [entity]="quotation" [entityType]="getEntityType()" [displayOnlyFields]="['quotationStatus']"
-              [parseTypeList]="quotationStatusList"></history>
-          </mat-tab>
-          <mat-tab label="Historique" *ngIf="quotation.id!=null && quotation.id!=undefined">
-            <history [entity]="quotation" [entityType]="getEntityType()"></history>
-          </mat-tab>
-        </mat-tab-group>
-      </fieldset>
+        </fieldset>
+        <mat-tab label="Facturation" *ngIf="quotation && quotation.id">
+          <invoice-management [quotation]=" quotation" [editMode]="editMode"
+            (invoiceItemChange)="invoiceItemChange($event)" [instanceOfCustomerOrder]="instanceOfCustomerOrder">
+          </invoice-management>
+        </mat-tab>
+        <mat-tab [label]="'Eléments '+(instanceOfCustomerOrder ? 'de la commande' : 'du devis')">
+          <quotation-management [quotation]="quotation" [editMode]="editMode" [isStatusOpen]="isStatusOpen"
+            [instanceOfCustomerOrder]="instanceOfCustomerOrder"
+            [updateDocumentsEvent]="updateDocumentsEvent.asObservable()"></quotation-management>
+        </mat-tab>
+        <mat-tab label="Documents" *ngIf="quotation.id!=null && quotation.id!=undefined">
+          <attachments [entity]="quotation" [editMode]="editMode" [entityType]="getEntityType().entityType">
+          </attachments>
+        </mat-tab>
+        <mat-tab label="Historique du statut" *ngIf="quotation.id!=null && quotation.id!=undefined">
+          <history [entity]="quotation" [entityType]="getEntityType()" [displayOnlyFields]="['quotationStatus']"
+            [parseTypeList]="quotationStatusList"></history>
+        </mat-tab>
+        <mat-tab label="Historique" *ngIf="quotation.id!=null && quotation.id!=undefined">
+          <history [entity]="quotation" [entityType]="getEntityType()"></history>
+        </mat-tab>
+      </mat-tab-group>
     </div>
   </mat-sidenav-content>
 </mat-sidenav-container>

@@ -26,6 +26,5 @@ export interface Announcement extends IAttachment, IDocument {
   bailiffReportPrice: number;
   bailiffReportJSSPrice: number;
   isProofReadingDocument: boolean;
-  isPublicationCertificateDocument: boolean;
   announcementStatus: AnnouncementStatus;
 }

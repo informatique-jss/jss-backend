@@ -1,5 +1,6 @@
-import { Directive, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Directive, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
+import { MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter, switchMap, tap } from 'rxjs/operators';
 import { UserNoteService } from 'src/app/services/user.notes.service';
@@ -24,6 +25,10 @@ export abstract class GenericAutocompleteComponent<T, U> extends GenericFormComp
   expectedMinLengthInput: number = 2;
 
   filteredTypes: T[] | undefined;
+
+  doNotOpenTwice: boolean = false;
+
+  @ViewChild(MatAutocompleteTrigger) trigger: MatAutocompleteTrigger | undefined;
 
   constructor(private formBuilder3: UntypedFormBuilder,
     private userNoteService3: UserNoteService) {
@@ -52,6 +57,8 @@ export abstract class GenericAutocompleteComponent<T, U> extends GenericFormComp
         )
       ).subscribe(response => {
         this.filteredTypes = this.mapResponse(response);
+        if (!this.isDisabled && !this.doNotOpenTwice)
+          this.trigger?.openPanel();
       });
       this.form.get(this.propertyName)?.setValue(this.model);
     }
@@ -65,6 +72,7 @@ export abstract class GenericAutocompleteComponent<T, U> extends GenericFormComp
 
   optionSelected(type: T): void {
     this.model = type;
+    this.doNotOpenTwice = true;
     this.modelChange.emit(this.model);
     this.onOptionSelected.emit(type);
     this.form?.updateValueAndValidity();
@@ -96,6 +104,7 @@ export abstract class GenericAutocompleteComponent<T, U> extends GenericFormComp
 
   clearField(): void {
     this.model = undefined;
+    this.doNotOpenTwice = false;
     this.modelChange.emit(this.model);
     this.onOptionSelected.emit(undefined);
     if (this.form) {

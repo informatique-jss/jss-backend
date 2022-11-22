@@ -4,6 +4,7 @@ import { formatDateTimeForSortTable, toIsoString } from 'src/app/libs/FormatHelp
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { AppService } from 'src/app/services/app.service';
+import { UserPreferenceService } from '../../../../services/user.preference.service';
 import { Employee } from '../../../profile/model/Employee';
 import { EmployeeService } from '../../../profile/services/employee.service';
 import { CustomerOrder } from '../../model/CustomerOrder';
@@ -25,6 +26,7 @@ export class OrderingListComponent implements OnInit {
   columnToDisplayOnDashboard: string[] = ["customerOrderLabel", "customerOrderStatus", "customerOrderDescription"];
   displayedColumns: SortTableColumn[] = [];
   tableAction: SortTableAction[] = [];
+  bookmark: OrderingSearch | undefined;
 
   @Output() actionBypass: EventEmitter<CustomerOrder> = new EventEmitter<CustomerOrder>();
   @Input() overrideIconAction: string = "";
@@ -37,12 +39,24 @@ export class OrderingListComponent implements OnInit {
     private appService: AppService,
     private orderingSearchResultService: OrderingSearchResultService,
     private employeeService: EmployeeService,
+    private userPreferenceService: UserPreferenceService,
     private formBuilder: FormBuilder,
   ) { }
 
   ngOnInit() {
     this.putDefaultPeriod();
     this.employeeService.getEmployees().subscribe(response => {
+
+      this.bookmark = this.userPreferenceService.getUserSearchBookmark("customerOrders") as OrderingSearch;
+
+      if (this.bookmark && !this.isForDashboard) {
+        this.orderingSearch = {} as OrderingSearch;
+        this.orderingSearch.endDate = new Date(this.bookmark.endDate as any);
+        this.orderingSearch.startDate = new Date(this.bookmark.startDate as any);
+        this.orderingSearch.salesEmployee = this.bookmark.salesEmployee;
+        this.orderingSearch.customerOrderStatus = this.bookmark.customerOrderStatus;
+      }
+
       this.allEmployees = response;
 
       if (!this.isForDashboard && !this.isForTiersIntegration)
@@ -50,6 +64,7 @@ export class OrderingListComponent implements OnInit {
       this.availableColumns = [];
       this.availableColumns.push({ id: "id", fieldName: "customerOrderId", label: "N° de la commande" } as SortTableColumn);
       this.availableColumns.push({ id: "customerOrderLabel", fieldName: "customerOrderLabel", label: "Donneur d'ordre", actionLinkFunction: this.getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la fiche du donneur d'ordre" } as SortTableColumn);
+      this.availableColumns.push({ id: "affaireLabel", fieldName: "affaireLabel", label: "Affaire(s)", isShrinkColumn: true } as SortTableColumn);
       this.availableColumns.push({ id: "customerOrderStatus", fieldName: "customerOrderStatus", label: "Statut" } as SortTableColumn);
       this.availableColumns.push({ id: "createdDate", fieldName: "createdDate", label: "Date de création", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
       this.availableColumns.push({
@@ -68,7 +83,7 @@ export class OrderingListComponent implements OnInit {
 
       if (this.overrideIconAction == "") {
         this.tableAction.push({
-          actionIcon: "settings", actionName: "Voir la commande", actionLinkFunction: (action: SortTableAction, element: any) => {
+          actionIcon: "shopping_cart", actionName: "Voir la commande", actionLinkFunction: (action: SortTableAction, element: any) => {
             if (element)
               return ['/order', element.customerOrderId];
             return undefined;
@@ -144,6 +159,8 @@ export class OrderingListComponent implements OnInit {
 
   searchOrders() {
     if (this.orderingSearchForm.valid && this.orderingSearch.startDate && this.orderingSearch.endDate) {
+      if (!this.isForDashboard)
+        this.userPreferenceService.setUserSearchBookmark(this.orderingSearch, "customerOrders");
       this.orderingSearch.startDate = new Date(toIsoString(this.orderingSearch.startDate));
       this.orderingSearch.endDate = new Date(toIsoString(this.orderingSearch.endDate));
       this.orderingSearchResultService.getOrders(this.orderingSearch).subscribe(response => {

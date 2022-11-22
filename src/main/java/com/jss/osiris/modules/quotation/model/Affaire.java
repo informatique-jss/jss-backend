@@ -18,7 +18,6 @@ import com.jss.osiris.modules.miscellaneous.model.City;
 import com.jss.osiris.modules.miscellaneous.model.Civility;
 import com.jss.osiris.modules.miscellaneous.model.Country;
 import com.jss.osiris.modules.miscellaneous.model.IId;
-import com.jss.osiris.modules.miscellaneous.model.LegalForm;
 import com.jss.osiris.modules.miscellaneous.model.Mail;
 import com.jss.osiris.modules.miscellaneous.model.Phone;
 
@@ -48,10 +47,6 @@ public class Affaire implements Serializable, IId {
 	@Column(length = 20)
 	@IndexedField
 	private String lastname;
-
-	@ManyToOne
-	@JoinColumn(name = "id_legal_form")
-	private LegalForm legalForm;
 
 	@Column(length = 9)
 	@IndexedField
@@ -100,6 +95,8 @@ public class Affaire implements Serializable, IId {
 
 	@Column(length = 40, name = "payment_iban")
 	private String paymentIban;
+
+	private Boolean isUnregistered;
 
 	public String getPaymentIban() {
 		return paymentIban;
@@ -155,14 +152,6 @@ public class Affaire implements Serializable, IId {
 
 	public void setLastname(String lastname) {
 		this.lastname = lastname;
-	}
-
-	public LegalForm getLegalForm() {
-		return legalForm;
-	}
-
-	public void setLegalForm(LegalForm legalForm) {
-		this.legalForm = legalForm;
 	}
 
 	public String getSiren() {
@@ -259,6 +248,14 @@ public class Affaire implements Serializable, IId {
 
 	public void setShareCapital(Float shareCapital) {
 		this.shareCapital = shareCapital;
+	}
+
+	public Boolean getIsUnregistered() {
+		return isUnregistered;
+	}
+
+	public void setIsUnregistered(Boolean isUnregistered) {
+		this.isUnregistered = isUnregistered;
 	}
 
 }

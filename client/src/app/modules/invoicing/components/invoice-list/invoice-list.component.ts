@@ -68,7 +68,7 @@ export class InvoiceListComponent implements OnInit, AfterContentChecked {
 
     if (this.overrideIconAction == "") {
       this.tableAction.push({
-        actionIcon: "settings", actionName: "Voir le détail de la facture / associer", actionLinkFunction: (action: SortTableAction, element: any) => {
+        actionIcon: "point_of_sale", actionName: "Voir le détail de la facture / associer", actionLinkFunction: (action: SortTableAction, element: any) => {
           if (element)
             return ['/invoicing', element.invoiceId];
           return undefined;

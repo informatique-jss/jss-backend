@@ -10,6 +10,7 @@ export interface QuotationSearchResult {
   responsableId: number;
   tiersId: number;
   confrereId: number;
+  affaireLabel: string;
 }
 
 

@@ -51,6 +51,8 @@ export class HttpErrorInterceptor implements HttpInterceptor {
           if (error.status == 403) {
             this.loginService.setLoggedIn(false);
             return EMPTY;
+          } else if (error.status == 0) {
+            // Server unavailable or user not connected to network => ignore error
           } else if (error.status == 400) {
             errorMessage = 'Erreur de validation sur ' + error.headers.get("incorrectField");
           } else if (error.status == 500) {

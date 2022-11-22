@@ -37,6 +37,7 @@ export class LogComponent implements OnInit {
     this.availableColumns.push({ id: "createdDateTime", fieldName: "createdDateTime", label: "Date", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
     this.availableColumns.push({ id: "className", fieldName: "className", label: "Classe" } as SortTableColumn);
     this.availableColumns.push({ id: "methodName", fieldName: "methodName", label: "Méthode" } as SortTableColumn);
+    this.availableColumns.push({ id: "message", fieldName: "message", label: "Message", isShrinkColumn: true } as SortTableColumn);
     this.availableColumns.push({ id: "isRead", fieldName: "isRead", label: "Vu ?", valueFonction: (element: any) => { return element.isRead ? "Oui" : "Non" } } as SortTableColumn);
 
     this.setColumns();

@@ -115,13 +115,7 @@ export class QuotationManagementComponent implements OnInit, AfterContentChecked
 
     // If billing document does not exist, try to grab it from selected tiers, responsable or confrere
     if (!this.billingDocument.id) {
-      if (this.quotation.responsable) {
-        this.billingDocument = copyObject(getDocument(this.constantService.getDocumentTypeBilling(), this.quotation.responsable));
-      } else if (this.quotation.confrere) {
-        this.billingDocument = copyObject(getDocument(this.constantService.getDocumentTypeBilling(), this.quotation.confrere));
-      } else if (this.quotation.tiers) {
-        this.billingDocument = copyObject(getDocument(this.constantService.getDocumentTypeBilling(), this.quotation.tiers));
-      }
+      this.refreshBillingDocument();
     }
 
     if (this.billingDocument.id) {
@@ -130,6 +124,16 @@ export class QuotationManagementComponent implements OnInit, AfterContentChecked
 
     if (!this.billingDocument.billingLabelIsIndividual)
       this.billingDocument.billingLabelIsIndividual = false;
+  }
+
+  refreshBillingDocument() {
+    if (this.quotation.responsable) {
+      this.billingDocument = copyObject(getDocument(this.constantService.getDocumentTypeBilling(), this.quotation.responsable));
+    } else if (this.quotation.confrere) {
+      this.billingDocument = copyObject(getDocument(this.constantService.getDocumentTypeBilling(), this.quotation.confrere));
+    } else if (this.quotation.tiers) {
+      this.billingDocument = copyObject(getDocument(this.constantService.getDocumentTypeBilling(), this.quotation.tiers));
+    }
   }
 
   getFormStatus(): boolean {

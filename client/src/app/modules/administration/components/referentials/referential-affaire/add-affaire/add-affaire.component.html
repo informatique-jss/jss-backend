@@ -22,29 +22,27 @@
   <table class="full-width" *ngIf="affaire.isIndividual==false">
     <tr>
       <td>
-        <autocomplete-legal-form [(model)]="affaire.legalForm" [form]="affaireForm" propertyName="legalForm"
-          label="Forme juridique" [isDisabled]="!editMode" [isMandatory]="true" [isDisabled]="!editMode"
-          [conditionnalRequired]="!affaire.isIndividual">
-        </autocomplete-legal-form>
+        <generic-toggle [(model)]="affaire.isUnregistered" label="Société non enregistrée ?" [form]="affaireForm"
+          propertyName="isUnregistered"></generic-toggle>
       </td>
-      <td *ngIf="affaire.legalForm != null && affaire.legalForm.id != legalFormUnregistered.id">
+      <td *ngIf="!affaire.isUnregistered">
         <autocomplete-siren [(model)]="affaire.siren" [form]="affaireForm" propertyName="siren" [isMandatory]="true"
           label="SIREN" [isDisabled]="!editMode" [byPassAutocompletValidator]="true"
-          [conditionnalRequired]="!this.affaire.isIndividual && this.affaire.legalForm != null && (!this.affaire.siret || !this.affaire.rna)"
+          [conditionnalRequired]="!this.affaire.isIndividual && !affaire.isUnregistered && !this.affaire.siret && !this.affaire.rna"
           [customValidators]="[checkSiren('siren')]" (onOptionSelected)="fillSiren($event)">
         </autocomplete-siren>
       </td>
-      <td *ngIf="affaire.legalForm != null && affaire.legalForm.id != legalFormUnregistered.id">
+      <td *ngIf="!affaire.isUnregistered">
         <autocomplete-siret [(model)]="affaire.siret" [form]="affaireForm" propertyName="siret" [isMandatory]="true"
           label="SIRET" [isDisabled]="!editMode" [byPassAutocompletValidator]="true"
-          [conditionnalRequired]="!this.affaire.isIndividual && this.affaire.legalForm != null && (!this.affaire.siren || !this.affaire.rna)"
+          [conditionnalRequired]="!this.affaire.isIndividual && !affaire.isUnregistered && !this.affaire.siren && !this.affaire.rna"
           [customValidators]="[checkSiret('siret')]" (onOptionSelected)="fillSiret($event)">
         </autocomplete-siret>
       </td>
-      <td *ngIf="affaire.legalForm != null && affaire.legalForm.id != legalFormUnregistered.id">
+      <td *ngIf="!affaire.isUnregistered">
         <autocomplete-rna [(model)]="affaire.rna" [form]="affaireForm" propertyName="rna" [isMandatory]="true"
           label="RNA" [isDisabled]="!editMode" [byPassAutocompletValidator]="true"
-          [conditionnalRequired]="!this.affaire.isIndividual && this.affaire.legalForm != null && (!this.affaire.siren ||!this.affaire.siret)"
+          [conditionnalRequired]="!this.affaire.isIndividual && !affaire.isUnregistered && !this.affaire.siren && !this.affaire.siret"
           [customValidators]="[checkRna('rna')]" (onOptionSelected)="fillRna($event)"></autocomplete-rna>
       </td>
     </tr>

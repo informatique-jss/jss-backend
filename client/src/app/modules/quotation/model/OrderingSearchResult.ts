@@ -10,4 +10,5 @@ export interface OrderingSearchResult {
   responsableId: number;
   tiersId: number;
   confrereId: number;
+  affaireLabel: string;
 }

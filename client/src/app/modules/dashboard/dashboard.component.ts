@@ -1,7 +1,7 @@
 import { CdkDragEnter, CdkDropList, DragRef, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { combineLatest, map } from 'rxjs';
-import { CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_TO_VERIFY, QUOTATION_STATUS_OPEN, QUOTATION_STATUS_TO_VERIFY } from 'src/app/libs/Constants';
+import { CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_TO_VERIFY, QUOTATION_STATUS_OPEN, QUOTATION_STATUS_REFUSED_BY_CUSTOMER, QUOTATION_STATUS_TO_VERIFY } from 'src/app/libs/Constants';
 import { AppService } from 'src/app/services/app.service';
 import { HabilitationsService } from '../../services/habilitations.service';
 import { UserPreferenceService } from '../../services/user.preference.service';
@@ -76,8 +76,10 @@ export class DashboardComponent implements OnInit {
 
   QUOTATION_OPEN = "Mes devis ouverts";
   QUOTATION_TO_VERIFY = "Mes devis à vérifier";
+  QUOTATION_REFUSED = "Mes devis refusés";
   quotationSearchOpen: QuotationSearch = {} as QuotationSearch;
   quotationSearchToVerify: QuotationSearch = {} as QuotationSearch;
+  quotationSearchRefused: QuotationSearch = {} as QuotationSearch;
 
   INVOICE_TO_ASSOCIATE = "Factures à associer";
   invoiceSearchToAssociate: InvoiceSearch = {} as InvoiceSearch;
@@ -87,7 +89,7 @@ export class DashboardComponent implements OnInit {
 
   LOG_TO_REVIEW = "Logs à revoir";
 
-  allItems: Array<string> = [this.PAYMENT_TO_ASSOCIATE, this.INVOICE_TO_ASSOCIATE, this.QUOTATION_TO_VERIFY, this.QUOTATION_OPEN, this.ORDER_TO_BILLED, this.ORDER_BEING_PROCESSED, this.ORDER_TO_VERIFY, this.ORDER_OPEN, this.AFFAIRE_RESPONSIBLE_IN_PROGRESS, this.AFFAIRE_RESPONSIBLE_TO_DO, this.AFFAIRE_IN_PROGRESS, this.AFFAIRE_TO_DO].sort((a, b) => a.localeCompare(b));
+  allItems: Array<string> = [this.QUOTATION_REFUSED, this.PAYMENT_TO_ASSOCIATE, this.INVOICE_TO_ASSOCIATE, this.QUOTATION_TO_VERIFY, this.QUOTATION_OPEN, this.ORDER_TO_BILLED, this.ORDER_BEING_PROCESSED, this.ORDER_TO_VERIFY, this.ORDER_OPEN, this.AFFAIRE_RESPONSIBLE_IN_PROGRESS, this.AFFAIRE_RESPONSIBLE_TO_DO, this.AFFAIRE_IN_PROGRESS, this.AFFAIRE_TO_DO].sort((a, b) => a.localeCompare(b));
 
   constructor(private appService: AppService,
     private employeeService: EmployeeService,
@@ -157,6 +159,9 @@ export class DashboardComponent implements OnInit {
 
         this.quotationSearchToVerify.salesEmployee = this.currentEmployee!;
         this.quotationSearchToVerify.quotationStatus = [this.quotationStatusService.getQuotationStatusByCode(this.quotationStatus, QUOTATION_STATUS_TO_VERIFY)!];
+
+        this.quotationSearchRefused.salesEmployee = this.currentEmployee!;
+        this.quotationSearchRefused.quotationStatus = [this.quotationStatusService.getQuotationStatusByCode(this.quotationStatus, QUOTATION_STATUS_REFUSED_BY_CUSTOMER)!];
 
         this.invoiceSearchToAssociate.invoiceStatus = [this.constantService.getInvoiceStatusSend()];
 

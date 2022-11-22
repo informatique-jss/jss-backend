@@ -48,6 +48,7 @@ public class UploadedFileServiceImpl implements UploadedFileService {
         uploadedFile.setChecksum(computeChecksumForFile(absoluteFilePath));
         uploadedFile.setFilename(filename);
         uploadedFile.setPath(absoluteFilePath);
+        uploadedFileRepository.save(uploadedFile);
         return uploadedFile;
     }
 

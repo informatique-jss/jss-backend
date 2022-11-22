@@ -133,11 +133,15 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         customerOrder.setIsQuotation(false);
 
         if (customerOrder.getDocuments() != null)
-            for (Document document : customerOrder.getDocuments())
+            for (Document document : customerOrder.getDocuments()) {
+                mailService.populateMailIds(document.getMailsAffaire());
+                mailService.populateMailIds(document.getMailsClient());
                 document.setCustomerOrder(customerOrder);
+            }
 
-        // Complete domiciliation end date
+        // Complete provisions
         for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders()) {
+            assoAffaireOrder.setCustomerOrder(customerOrder);
             assoAffaireOrderService.completeAssoAffaireOrder(assoAffaireOrder, customerOrder);
         }
 
@@ -363,7 +367,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Override
     public List<OrderingSearchResult> searchOrders(OrderingSearch orderingSearch) {
         ArrayList<Integer> statusId = new ArrayList<Integer>();
-        if (orderingSearch.getCustomerOrderStatus() != null) {
+        if (orderingSearch.getCustomerOrderStatus() != null && orderingSearch.getCustomerOrderStatus().size() > 0) {
             for (CustomerOrderStatus customerOrderStatus : orderingSearch.getCustomerOrderStatus())
                 statusId.add(customerOrderStatus.getId());
         } else {
@@ -379,7 +383,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         }
 
         ArrayList<Integer> customerOrderId = new ArrayList<Integer>();
-        if (orderingSearch.getCustomerOrders() != null) {
+        if (orderingSearch.getCustomerOrders() != null && orderingSearch.getCustomerOrders().size() > 0) {
             for (ITiers tiers : orderingSearch.getCustomerOrders())
                 customerOrderId.add(tiers.getId());
         } else {
@@ -509,7 +513,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
             customerOrder.setCentralPayPaymentRequestId(paymentRequest.getPaymentRequestId());
             addOrUpdateCustomerOrder(customerOrder);
-
             return paymentRequest.getBreakdowns().get(0).getEndpoint()
                     + "?urlRedirect=" + redirectEntrypoint + "?customerOrderId=" + customerOrder.getId() + "&delay=0";
         }

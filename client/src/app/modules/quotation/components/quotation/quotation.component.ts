@@ -7,7 +7,6 @@ import { Subject } from 'rxjs';
 import { QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN, VALIDATED_BY_CUSTOMER } from 'src/app/libs/Constants';
 import { getDocument } from 'src/app/libs/DocumentHelper';
 import { instanceOfCustomerOrder } from 'src/app/libs/TypeHelper';
-import { Vat } from 'src/app/modules/miscellaneous/model/Vat';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { Employee } from 'src/app/modules/profile/model/Employee';
 import { BillingLabelType } from 'src/app/modules/tiers/model/BillingLabelType';
@@ -24,6 +23,7 @@ import { CustomerOrder } from '../../model/CustomerOrder';
 import { CustomerOrderStatus } from '../../model/CustomerOrderStatus';
 import { Provision } from '../../model/Provision';
 import { QuotationStatus } from '../../model/QuotationStatus';
+import { VatBase } from '../../model/VatBase';
 import { AssoAffaireOrderService } from '../../services/asso.affaire.order.service';
 import { CustomerOrderService } from '../../services/customer.order.service';
 import { CustomerOrderStatusService } from '../../services/customer.order.status.service';
@@ -389,7 +389,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
               for (let targetProvision of assoTarget.provisions) {
                 if (incomingProvision.id && targetProvision.id && incomingProvision.id == targetProvision.id)
                   targetProvision.invoiceItems = incomingProvision.invoiceItems;
-                else if (incomingProvision.provisionType.id == targetProvision.provisionType.id)
+                else if (incomingProvision.provisionType && targetProvision.provisionType && incomingProvision.provisionType.id == targetProvision.provisionType.id)
                   targetProvision.invoiceItems = incomingProvision.invoiceItems;
               }
             }
@@ -468,26 +468,38 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     return vat;
   }
 
-  getApplicableVat(): Vat | undefined {
+  getApplicableVat(): VatBase[] {
     return QuotationComponent.computeApplicableVat(this.quotation);
   }
 
-  public static computeApplicableVat(quotation: IQuotation): Vat | undefined {
+  public static computeApplicableVat(quotation: IQuotation): VatBase[] {
+    let vatBases: VatBase[] = [];
     if (quotation && quotation.assoAffaireOrders) {
       for (let asso of quotation.assoAffaireOrders) {
         if (asso.provisions) {
           for (let provision of asso.provisions) {
             if (provision.invoiceItems) {
               for (let invoiceItem of provision.invoiceItems) {
-                if (invoiceItem.vat)
-                  return invoiceItem.vat;
+                if (invoiceItem.vat && invoiceItem.vatPrice && invoiceItem.vatPrice > 0) {
+                  let vatFound = false;
+                  for (let vatBase of vatBases) {
+                    if (vatBase.label == invoiceItem.vat.label) {
+                      vatFound = true;
+                      vatBase.base += invoiceItem.preTaxPrice - (invoiceItem.discountAmount ? invoiceItem.discountAmount : 0);
+                      vatBase.total += invoiceItem.vatPrice;
+                    }
+                  }
+                  if (!vatFound) {
+                    vatBases.push({ label: invoiceItem.vat.label, base: (invoiceItem.preTaxPrice - (invoiceItem.discountAmount ? invoiceItem.discountAmount : 0)), total: invoiceItem.vatPrice });
+                  }
+                }
               }
             }
           }
         }
       }
     }
-    return undefined;
+    return vatBases;
   }
 
   getPriceTotal(): number {

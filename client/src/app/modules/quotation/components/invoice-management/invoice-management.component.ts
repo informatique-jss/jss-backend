@@ -3,11 +3,11 @@ import { FormBuilder } from '@angular/forms';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
 import { instanceOfCustomerOrder, instanceOfQuotation } from 'src/app/libs/TypeHelper';
 import { InvoiceService } from 'src/app/modules/invoicing/services/invoice.service';
-import { Vat } from 'src/app/modules/miscellaneous/model/Vat';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { AppService } from '../../../../services/app.service';
 import { CustomerOrder } from '../../model/CustomerOrder';
 import { IQuotation } from '../../model/IQuotation';
+import { VatBase } from '../../model/VatBase';
 import { QuotationComponent } from '../quotation/quotation.component';
 
 @Component({
@@ -68,7 +68,7 @@ export class InvoiceManagementComponent implements OnInit {
     return QuotationComponent.computeVatTotal(this.quotation);
   }
 
-  getApplicableVat(): Vat | undefined {
+  getApplicableVat(): VatBase[] {
     return QuotationComponent.computeApplicableVat(this.quotation);
   }
 

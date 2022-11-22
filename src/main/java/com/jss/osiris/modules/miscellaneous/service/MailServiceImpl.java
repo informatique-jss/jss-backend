@@ -32,14 +32,15 @@ public class MailServiceImpl implements MailService {
 
     @Override
     public void populateMailIds(List<Mail> mails) {
-        for (Mail mail : mails) {
-            if (mail.getId() == null) {
-                List<Mail> existingMails = findMails(mail.getMail());
-                if (existingMails != null && existingMails.size() == 1) {
-                    mail.setId(existingMails.get(0).getId());
+        if (mails != null)
+            for (Mail mail : mails) {
+                if (mail.getId() == null) {
+                    List<Mail> existingMails = findMails(mail.getMail());
+                    if (existingMails != null && existingMails.size() == 1) {
+                        mail.setId(existingMails.get(0).getId());
+                    }
+                    mailRepository.save(mail);
                 }
-                mailRepository.save(mail);
             }
-        }
     }
 }

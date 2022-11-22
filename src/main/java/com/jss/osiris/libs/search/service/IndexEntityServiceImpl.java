@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.jss.osiris.libs.JacksonLocalDateSerializer;
 import com.jss.osiris.libs.JacksonLocalDateTimeSerializer;
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.search.model.IndexEntity;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.libs.search.repository.IndexEntityRepository;
@@ -77,17 +78,13 @@ public class IndexEntityServiceImpl implements IndexEntityService {
                             outObject.put(field.getName(), cleanObjectForSerialization(fieldResult));
                         }
                     } catch (NoSuchMethodException e) {
-                        System.out.println("Indexation : getter not found for field " + field.getName());
-                        e.printStackTrace();
+                        new OsirisException("Indexation : getter not found for field " + field.getName());
                     } catch (SecurityException e) {
-                        System.out.println("Indexation error");
-                        e.printStackTrace();
+                        new OsirisException("Indexation error");
                     } catch (IllegalAccessException e) {
-                        System.out.println("Indexation error");
-                        e.printStackTrace();
+                        new OsirisException("Indexation error");
                     } catch (InvocationTargetException e) {
-                        System.out.println("Indexation error");
-                        e.printStackTrace();
+                        new OsirisException("Indexation error");
                     }
                 }
             }

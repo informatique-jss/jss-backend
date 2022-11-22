@@ -27,7 +27,7 @@ export class AffaireListComponent implements OnInit {
 
   currentEmployee: Employee | undefined;
   allEmployees: Employee[] = [] as Array<Employee>;
-  bookmark: any;
+  bookmark: AffaireSearch | undefined;
 
   constructor(
     private appService: AppService,
@@ -46,8 +46,8 @@ export class AffaireListComponent implements OnInit {
       this.bookmark = this.userPreferenceService.getUserSearchBookmark("affaires") as AffaireSearch;
       if (!this.isForDashboard) {
         this.appService.changeHeaderTitle("Affaires / Prestations");
-        this.affaireSearch = {} as AffaireSearch;
-        if (this.bookmark) {
+        if (this.bookmark && !this.isForDashboard) {
+          this.affaireSearch = {} as AffaireSearch;
           this.affaireSearch.assignedTo = this.bookmark.assignedTo;
           this.affaireSearch.label = this.bookmark.label;
           this.affaireSearch.responsible = this.bookmark.responsible;
@@ -85,7 +85,7 @@ export class AffaireListComponent implements OnInit {
       this.setColumns();
 
       this.tableAction.push({
-        actionIcon: "visibility", actionName: "Voir l'affaire / prestation", actionLinkFunction: (action: SortTableAction, element: any) => {
+        actionIcon: "work", actionName: "Voir l'affaire / prestation", actionLinkFunction: (action: SortTableAction, element: any) => {
           if (element)
             return ['/affaire', element.assoId, element.provisionId];
           return undefined;

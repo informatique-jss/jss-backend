@@ -8,7 +8,7 @@ import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.quotation.model.AffaireSearch;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrderSearchResult;
-import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.quotation.model.IQuotation;
 
 public interface AssoAffaireOrderService {
     public List<AssoAffaireOrder> getAssoAffaireOrders();
@@ -24,6 +24,6 @@ public interface AssoAffaireOrderService {
 
     public void reindexAffaires();
 
-    public AssoAffaireOrder completeAssoAffaireOrder(AssoAffaireOrder assoAffaireOrder, CustomerOrder customerOrder);
+    public AssoAffaireOrder completeAssoAffaireOrder(AssoAffaireOrder assoAffaireOrder, IQuotation customerOrder);
 
 }

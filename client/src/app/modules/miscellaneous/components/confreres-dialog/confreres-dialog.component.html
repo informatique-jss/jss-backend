@@ -5,5 +5,5 @@
 </div>
 <mat-dialog-content class="mat-content">
   <sort-table [columns]="displayedColumns" (onRowClick)="chooseConfrere($event)" [values]="confreres"
-    tableName="Confrères" [filterText]="searchText"></sort-table>
+    tableName="Confrères" [filterText]="searchText" [filterPredicate]="filterPredicate"></sort-table>
 </mat-dialog-content>

@@ -32,13 +32,14 @@ public class PhoneServiceImpl implements PhoneService {
 
     @Override
     public void populateMPhoneIds(List<Phone> phones) {
-        for (Phone phone : phones) {
-            if (phone.getId() == null) {
-                List<Phone> existingPhones = findPhones(phone.getPhoneNumber());
-                if (existingPhones != null && existingPhones.size() == 1)
-                    phone.setId(existingPhones.get(0).getId());
-                phoneRepository.save(phone);
+        if (phones != null)
+            for (Phone phone : phones) {
+                if (phone.getId() == null) {
+                    List<Phone> existingPhones = findPhones(phone.getPhoneNumber());
+                    if (existingPhones != null && existingPhones.size() == 1)
+                        phone.setId(existingPhones.get(0).getId());
+                    phoneRepository.save(phone);
+                }
             }
-        }
     }
 }

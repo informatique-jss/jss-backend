@@ -35,6 +35,12 @@
       <table class="full-width">
         <tr>
           <td>
+            <generic-input [(model)]="log.message" label="Message" [form]="logForm" propertyName="message"
+              [isMandatory]="true" [isDisabled]="true"></generic-input>
+          </td>
+        </tr>
+        <tr>
+          <td>
             <generic-textarea [(model)]="log.stackTrace" label="Stacktrace" [form]="logForm" propertyName="stackTrace"
               [isMandatory]="true" [isDisabled]="true" [numberOfLines]="30"></generic-textarea>
           </td>

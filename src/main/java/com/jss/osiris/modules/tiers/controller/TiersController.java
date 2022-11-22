@@ -346,8 +346,9 @@ public class TiersController {
       validationHelper.validateString(tiers.getLastname(), true, 20, "Lastname");
     } else {
       validationHelper.validateString(tiers.getDenomination(), true, 60, "Denomination");
-      if ((tiers.getIntercommunityVat() == null || tiers.getIntercommunityVat().equals("")
-          || tiers.getIntercommunityVat().length() > 20))
+      if (!tiers.getTiersType().getCode().equals(constantService.getTiersTypeProspect().getCode())
+          && (tiers.getIntercommunityVat() == null || tiers.getIntercommunityVat().equals("")
+              || tiers.getIntercommunityVat().length() > 20))
         throw new OsirisValidationException("IntercommunityVat");
     }
 

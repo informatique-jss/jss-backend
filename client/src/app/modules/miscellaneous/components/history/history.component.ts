@@ -66,10 +66,10 @@ export class HistoryComponent implements OnInit {
   setData() {
     this.auditService.getAuditForEntity(this.entity.id, this.entityType).subscribe(response => {
       if (this.displayOnlyFields != null && this.displayOnlyFields != undefined && response) {
-        response.forEach(audit => {
+        for (let audit of response) {
           if (this.displayOnlyFields!.indexOf(audit.fieldName) >= 0)
             this.audits.push(audit);
-        })
+        }
       } else {
         this.audits = response;
       }
@@ -79,8 +79,10 @@ export class HistoryComponent implements OnInit {
         });
       }
 
-      this.auditDataSource = new MatTableDataSource(this.audits);
       setTimeout(() => {
+        this.auditDataSource = new MatTableDataSource(this.audits);
+        console.log(this.audits.length);
+        console.log(this.entityType.entityType);
         this.auditDataSource.sort = this.sort;
         this.auditDataSource.sortingDataAccessor = (item: Audit, property) => {
           switch (property) {

@@ -11,118 +11,122 @@
       </mat-icon>
     </h3>
   </ng-container>
-  <form [formGroup]="invoiceManagementForm" *ngIf="canModifyInvoice()">
-    <div *ngFor="let asso of quotation.assoAffaireOrders;let indexAsso = index">
-      <td class="affaire" *ngIf="asso.affaire && asso.affaire.denomination">
-        {{asso.affaire.denomination}}
-      </td>
-      <td class="affaire" *ngIf="asso.affaire && asso.affaire.firstname">
-        {{asso.affaire.firstname}} - {{asso.affaire.lastname}} -
-      </td>
-      <div *ngFor="let provision of asso.provisions">
-        <div *ngFor="let invoiceItem of provision.invoiceItems;let indexInvoiceItem = index">
-          <table>
-            <tr *ngIf="provision.provisionType">
-              <td class="affaire">
-                {{provision.provisionType.label}}
-              </td>
-            </tr>
-            <tr>
-              <td>
-                {{invoiceItem.label}} <mat-icon inline="true"
-                  matTooltip="Veuillez enregistrer pour pouvoir modifier le prix appliqué"
-                  *ngIf="editMode && invoiceItem.billingItem.billingType.canOverridePrice==true && !invoiceItem.id && !invoiceItem.invoice"
-                  class="info-icon">info</mat-icon>
-              </td>
-              <td class="td-price"
-                *ngIf="!editMode || invoiceItem.billingItem.billingType.canOverridePrice==false || !invoiceItem.id || invoiceItem.invoice">
-                {{invoiceItem.preTaxPrice|number}} €
-              </td>
-              <td
-                *ngIf="editMode && invoiceItem.billingItem.billingType.canOverridePrice==true && invoiceItem.id && !invoiceItem.invoice">
-                <generic-input [(model)]="invoiceItem.preTaxPrice" label="" [form]="invoiceManagementForm"
-                  [propertyName]='"preTaxPrice"+indexInvoiceItem+indexAsso' [isMandatory]="true" type="number"
-                  step="0,01" (onInputChange)="itemChange()" hint="Laisser vide pour recalculer le prix">
-                </generic-input>
-              </td>
-            </tr>
-            <tr *ngIf="invoiceItem.discountAmount && invoiceItem.discountAmount>0">
-              <td>
-                Remise
-              </td>
-              <td class="td-price remise">
-                - {{invoiceItem.discountAmount|number}} €
-              </td>
-            </tr>
-            <tr *ngIf="invoiceItem.vat">
-              <td>
-                {{invoiceItem.vat.label}}
-              </td>
-              <td class="td-price">
-                {{invoiceItem.vatPrice|number}} €
-              </td>
-            </tr>
-          </table>
+  <fieldset [disabled]="editMode==false" class="fieldset-no-border">
+    <form [formGroup]="invoiceManagementForm" *ngIf="canModifyInvoice()">
+      <div *ngFor="let asso of quotation.assoAffaireOrders;let indexAsso = index">
+        <td class="affaire" *ngIf="asso.affaire && asso.affaire.denomination">
+          {{asso.affaire.denomination}}
+        </td>
+        <td class="affaire" *ngIf="asso.affaire && asso.affaire.firstname">
+          {{asso.affaire.firstname}} - {{asso.affaire.lastname}} -
+        </td>
+        <div *ngFor="let provision of asso.provisions">
+          <div *ngFor="let invoiceItem of provision.invoiceItems;let indexInvoiceItem = index">
+            <table>
+              <tr *ngIf="provision.provisionType">
+                <td class="affaire">
+                  {{provision.provisionType.label}}
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  {{invoiceItem.label}} <mat-icon inline="true"
+                    matTooltip="Veuillez enregistrer pour pouvoir modifier le prix appliqué"
+                    *ngIf="editMode && invoiceItem.billingItem.billingType.canOverridePrice==true && !invoiceItem.id && !invoiceItem.invoice"
+                    class="info-icon">info</mat-icon>
+                </td>
+                <td class="td-price"
+                  *ngIf="!editMode || invoiceItem.billingItem.billingType.canOverridePrice==false || !invoiceItem.id || invoiceItem.invoice">
+                  {{invoiceItem.preTaxPrice|number}} €
+                </td>
+                <td
+                  *ngIf="editMode && invoiceItem.billingItem.billingType.canOverridePrice==true && invoiceItem.id && !invoiceItem.invoice">
+                  <generic-input [(model)]="invoiceItem.preTaxPrice" label="" [form]="invoiceManagementForm"
+                    [propertyName]='"preTaxPrice"+indexInvoiceItem+indexAsso' [isMandatory]="true" type="number"
+                    step="0,01" (onInputChange)="itemChange()" hint="Laisser vide pour recalculer le prix">
+                  </generic-input>
+                </td>
+              </tr>
+              <tr *ngIf="invoiceItem.discountAmount && invoiceItem.discountAmount>0">
+                <td>
+                  Remise
+                </td>
+                <td class="td-price remise">
+                  - {{invoiceItem.discountAmount|number}} €
+                </td>
+              </tr>
+              <tr *ngIf="invoiceItem.vat">
+                <td>
+                  {{invoiceItem.vat.label}}
+                </td>
+                <td class="td-price">
+                  {{invoiceItem.vatPrice|number}} €
+                </td>
+              </tr>
+            </table>
+          </div>
         </div>
       </div>
-    </div>
-    <table class="total-table">
-      <tr>
-        <td>
-          Prix total HT
-        </td>
-        <td class="td-price">
-          {{getPreTaxPriceTotal() |number}} €
-        </td>
-      </tr>
-      <tr *ngIf="getDiscountTotal() && getDiscountTotal()>0">
-        <td>
-          Remise totale
-        </td>
-        <td class="td-price remise">
-          - {{getDiscountTotal()|number}} €
-        </td>
-      </tr>
-      <tr>
-        <td>
-          Total HT
-        </td>
-        <td class="td-price">
-          {{getPreTaxPriceTotal()-getDiscountTotal()|number}} €
-        </td>
-      </tr>
-      <tr *ngIf="getApplicableVat()!=undefined">
-        <td>
-          Total {{getApplicableVat()!.label}}
-        </td>
-        <td class="td-price">
-          {{getVatTotal()|number}} €
-        </td>
-      </tr>
-      <tr>
-        <td>
-          Total TTC
-        </td>
-        <td class="td-price">
-          {{getPriceTotal()|number}} €
-        </td>
-      </tr>
-      <ng-container *ngIf="instanceOfCustomerOrderFn(quotation) && quotation.deposits">
-        <ng-container *ngFor="let deposit of quotation.deposits">
-          <tr>
+      <table class="total-table">
+        <tr>
+          <td>
+            Prix total HT
+          </td>
+          <td class="td-price">
+            {{getPreTaxPriceTotal() |number}} €
+          </td>
+        </tr>
+        <tr *ngIf="getDiscountTotal() && getDiscountTotal()>0">
+          <td>
+            Remise totale
+          </td>
+          <td class="td-price remise">
+            - {{getDiscountTotal()|number}} €
+          </td>
+        </tr>
+        <tr>
+          <td>
+            Total HT
+          </td>
+          <td class="td-price">
+            {{getPreTaxPriceTotal()-getDiscountTotal()|number}} €
+          </td>
+        </tr>
+        <ng-container *ngIf="getApplicableVat().length>0">
+          <tr *ngFor="let vat of getApplicableVat()">
             <td>
-              Accompte n°{{deposit.id}}
+              Total {{vat.label}}
             </td>
             <td class="td-price">
-              {{deposit.depositAmount|number}} €
+              {{vat.total|number}} €
             </td>
           </tr>
         </ng-container>
         <tr>
-          <td>Reste à payer</td>
-          <td class="td-price">{{getRemainingToPay()}} €</td>
+          <td>
+            Total TTC
+          </td>
+          <td class="td-price">
+            {{getPriceTotal()|number}} €
+          </td>
         </tr>
-      </ng-container>
-    </table>
-  </form>
+        <ng-container *ngIf="instanceOfCustomerOrderFn(quotation) && quotation.deposits">
+          <ng-container *ngFor="let deposit of quotation.deposits">
+            <tr>
+              <td>
+                Accompte n°{{deposit.id}}
+              </td>
+              <td class="td-price">
+                {{deposit.depositAmount|number}} €
+              </td>
+            </tr>
+          </ng-container>
+          <tr>
+            <td>Reste à payer</td>
+            <td class="td-price">{{getRemainingToPay()}} €</td>
+          </tr>
+        </ng-container>
+      </table>
+    </form>
+  </fieldset>
 </div>

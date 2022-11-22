@@ -74,7 +74,7 @@ export class WorkflowDialogComponent implements OnInit {
             layout: 'force',
             zoom: 0.7,
             force: {
-              repulsion: 7000
+              repulsion: 10000
             },
             symbolSize: 100,
             draggable: true,

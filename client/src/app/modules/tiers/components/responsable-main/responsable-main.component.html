@@ -47,7 +47,7 @@
                   </td>
                   <td>
                     <generic-toggle [(model)]="selectedResponsable.isActive" label="Actif ?" [form]="principalForm"
-                      propertyName="isActive"></generic-toggle>
+                      [isDisabled]="!editMode" propertyName="isActive"></generic-toggle>
                   </td>
                 </tr>
               </table>

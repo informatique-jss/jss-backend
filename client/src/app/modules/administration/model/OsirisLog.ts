@@ -4,6 +4,7 @@ export interface OsirisLog {
   id: number;
   className: string;
   methodName: string;
+  message: string;
   stackTrace: string;
   currentUser: Employee;
   createdDateTime: Date;

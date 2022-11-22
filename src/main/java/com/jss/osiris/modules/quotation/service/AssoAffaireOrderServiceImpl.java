@@ -25,6 +25,7 @@ import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.Domiciliation;
 import com.jss.osiris.modules.quotation.model.DomiciliationStatus;
 import com.jss.osiris.modules.quotation.model.FormaliteStatus;
+import com.jss.osiris.modules.quotation.model.IQuotation;
 import com.jss.osiris.modules.quotation.model.IWorkflowElement;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.repository.AssoAffaireOrderRepository;
@@ -84,6 +85,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
             provision.setAssoAffaireOrder(assoAffaireOrder);
         }
         assoAffaireOrder = completeAssoAffaireOrder(assoAffaireOrder, assoAffaireOrder.getCustomerOrder());
+        assoAffaireOrder.setCustomerOrder(assoAffaireOrder.getCustomerOrder());
         AssoAffaireOrder affaireSaved = assoAffaireOrderRepository.save(assoAffaireOrder);
         indexEntityService.indexEntity(affaireSaved, affaireSaved.getId());
         customerOrderService.checkAllProvisionEnded(assoAffaireOrder.getCustomerOrder());
@@ -106,10 +108,8 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
     }
 
     @Override
-    public AssoAffaireOrder completeAssoAffaireOrder(AssoAffaireOrder assoAffaireOrder, CustomerOrder customerOrder) {
+    public AssoAffaireOrder completeAssoAffaireOrder(AssoAffaireOrder assoAffaireOrder, IQuotation customerOrder) {
         // Complete domiciliation end date
-        assoAffaireOrder.setCustomerOrder(customerOrder);
-
         int nbrAssignation = 0;
         Employee currentEmployee = null;
 
@@ -179,7 +179,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
             }
 
             // Set proper assignation regarding provision item configuration
-            if (provision.getAssignedTo() == null) {
+            if (provision.getAssignedTo() == null && customerOrder instanceof CustomerOrder) {
                 Employee employee = provision.getProvisionType().getDefaultEmployee();
 
                 if (provision.getProvisionType().getAssignationType() != null) {

@@ -1049,7 +1049,6 @@ public class QuotationController {
   private void validateQuotationAndCustomerOrder(IQuotation quotation)
       throws OsirisValidationException, OsirisException {
     boolean isOpen = false;
-    boolean isCustomerOrder = quotation instanceof CustomerOrder && !isOpen;
 
     if (quotation instanceof CustomerOrder) {
       CustomerOrder customerOrder = (CustomerOrder) quotation;
@@ -1062,6 +1061,9 @@ public class QuotationController {
       isOpen = quotationQuotation.getQuotationStatus() == null ||
           quotationQuotation.getQuotationStatus().getCode().equals(QuotationStatus.OPEN);
     }
+
+    boolean isCustomerOrder = quotation instanceof CustomerOrder && !isOpen;
+
     if (quotation.getSpecialOffers() != null && quotation.getSpecialOffers().size() > 0)
       for (SpecialOffer specialOffer : quotation.getSpecialOffers())
         validationHelper.validateReferential(specialOffer, false, "specialOffer");
@@ -1425,7 +1427,6 @@ public class QuotationController {
       validationHelper.validateString(affaire.getLastname(), true, 20, "Lastname");
 
     } else {
-      validationHelper.validateReferential(affaire.getLegalForm(), true, "LegalForm");
       validationHelper.validateString(affaire.getDenomination(), true, 60, "Denomination");
       if (affaire.getRna() != null
           && !validationHelper.validateRna(affaire.getRna().toUpperCase().replaceAll(" ", "")))

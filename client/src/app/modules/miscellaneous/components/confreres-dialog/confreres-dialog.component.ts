@@ -42,7 +42,7 @@ export class ConfrereDialogComponent implements OnInit {
       this.displayedColumns.push({ id: "denomination", fieldName: "label", label: "Dénomination" } as SortTableColumn);
       this.displayedColumns.push({ id: "type", fieldName: "journalType.label", label: "Type" } as SortTableColumn);
       this.displayedColumns.push({ id: "departments", fieldName: "departments", label: "Habilitations", valueFonction: (element: any, elements: [], column: SortTableColumn, columns: SortTableColumn[]) => { return ((element.departments) ? element.departments.map((e: { code: any; }) => e.code).join(", ") : "") } } as SortTableColumn);
-      this.displayedColumns.push({ id: "discountRate", fieldName: "discountRate", label: "Taux de remise", valueFonction: (element: any, elements: [], column: SortTableColumn, columns: SortTableColumn[]) => { return ((element.specialOffers && element.specialOffers.length > 0) ? element.specialOffers[0].label : "") } } as SortTableColumn);
+      this.displayedColumns.push({ id: "discountRate", fieldName: "discountRate", label: "Taux de remise (%)" } as SortTableColumn);
       this.displayedColumns.push({ id: "weekDays", fieldName: "weekDays", label: "Jours de parution", valueFonction: (element: any, elements: [], column: SortTableColumn, columns: SortTableColumn[]) => { return ((element.departments) ? element.weekDays.map((e: { label: any; }) => e.label).join(", ") : "") } } as SortTableColumn);
       this.displayedColumns.push({ id: "lastShipmentForPublication", fieldName: "lastShipmentForPublication", label: "Dernier envoi pour parution" } as SortTableColumn);
       this.displayedColumns.push({ id: "publicationCertificateDocumentGrade", displayAsGrade: true, fieldName: "publicationCertificateDocumentGrade", label: "Préférence attestation de parution" } as SortTableColumn);
@@ -56,6 +56,15 @@ export class ConfrereDialogComponent implements OnInit {
       this.displayedColumns.push({ id: "administrativeFees", fieldName: "administrativeFees", label: "Frais administratifs" } as SortTableColumn);
 
     })
+  }
+
+  filterPredicate(record: any, filter: any) {
+    if (filter == "")
+      return true;
+    let search: string = record.departments.map((e: { code: any; }) => e.code).join(", ");
+    search += record.label;
+    search += record.weekDays.map((e: { label: any; }) => e.label).join(", ");
+    return search.toLowerCase().indexOf(filter.toLowerCase()) >= 0;
   }
 
   applyFilter(filterValue: any) {

@@ -1,4 +1,4 @@
-import { AfterContentChecked, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import { AfterContentChecked, ChangeDetectorRef, Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { AbstractControl, FormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { validateRna, validateSiren, validateSiret } from 'src/app/libs/CustomFormsValidatorsHelper';
 import { City } from 'src/app/modules/miscellaneous/model/City';
@@ -36,6 +36,12 @@ export class AddAffaireComponent implements OnInit, AfterContentChecked {
   ) { }
 
   ngOnInit() {
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes && changes.affaire && !this.affaire.isUnregistered) {
+      this.affaire.isUnregistered = false;
+    }
   }
 
   ngAfterContentChecked(): void {

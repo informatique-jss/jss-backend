@@ -127,7 +127,7 @@
           <tr>
             <td>
               <select-notice-family [(model)]="announcement.noticeTypeFamily" label="Rubrique" [form]="announcementForm"
-                propertyName="noticeTypeFamily" [isMandatory]="true"
+                propertyName="noticeTypeFamily" [isMandatory]="true" (selectionChange)="clearNoticeTypeField()"
                 [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode">
               </select-notice-family>
             </td>
@@ -153,7 +153,6 @@
                   </mat-option>
                 </mat-autocomplete>
               </mat-form-field>
-
             </td>
           </tr>
         </table>
@@ -263,10 +262,7 @@
               </mat-panel-title>
               <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
             </mat-expansion-panel-header>
-            <generic-toggle [(model)]="announcement.isPublicationCertificateDocument" label="Attestation de parution ?"
-              [form]="announcementForm" propertyName="isPublicationCertificateDocument"></generic-toggle>
-            <addressing *ngIf="announcement.isPublicationCertificateDocument" [displayMailCC]="true"
-              [hideConsignee]="true" [onlyMail]="true" [editMode]=" editMode"
+            <addressing [displayMailCC]="false" [onlyMail]="true" [editMode]=" editMode"
               [document]="publicationCertificateDocument">
             </addressing>
           </mat-expansion-panel>

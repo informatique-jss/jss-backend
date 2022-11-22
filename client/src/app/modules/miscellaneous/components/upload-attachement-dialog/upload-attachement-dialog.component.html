@@ -8,19 +8,11 @@
       <label for="fileDropRef">Recherchez sur votre ordinateur</label>
       <p class="max-size">(5 Mo max.)</p>
     </div>
-    <mat-form-field class="full-width" *ngIf="file!=null">
-      <mat-label>Type de fichier</mat-label>
-      <mat-select [disabled]="forcedAttachmentType!=undefined" formControlName="attachmentType"
-        [(ngModel)]="attachmentType">
-        <mat-option *ngFor="let attachmentType of attachmentTypes" [value]="attachmentType">
-          {{attachmentType.label}}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-    <mat-form-field class="full-width" *ngIf="file!=null">
-      <mat-label>Nom du fichier</mat-label>
-      <input matInput formControlName="filename" [(ngModel)]="filename">
-    </mat-form-field>
+    <select-attachment-type *ngIf="file!=null" [(model)]="attachmentType" label="Type de fichier"
+      [form]="attachmentForm" propertyName="attachmentType" [isMandatory]="true"
+      [isDisabled]="forcedAttachmentType!=undefined"></select-attachment-type>
+    <generic-input *ngIf="file!=null" [(model)]="filename" label="Nom du fichier" [form]="attachmentForm"
+      propertyName="filename" [isMandatory]="true" [isDisabled]="false" [maxLength]="250"></generic-input>
     <div *ngIf="file!=null">
       <mat-list>
         <mat-list-item>

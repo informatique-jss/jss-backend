@@ -37,7 +37,6 @@ import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.CharacterPrice;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
-import com.jss.osiris.modules.quotation.model.Domiciliation;
 import com.jss.osiris.modules.quotation.model.IQuotation;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.ProvisionType;
@@ -102,6 +101,9 @@ public class QuotationServiceImpl implements QuotationService {
     @Autowired
     CustomerOrderService customerOrderService;
 
+    @Autowired
+    AssoAffaireOrderService assoAffaireOrderService;
+
     @Override
     public Quotation getQuotation(Integer id) {
         Optional<Quotation> quotation = quotationRepository.findById(id);
@@ -121,57 +123,16 @@ public class QuotationServiceImpl implements QuotationService {
         quotation.setIsQuotation(true);
 
         if (quotation.getDocuments() != null)
-            for (Document document : quotation.getDocuments())
+            for (Document document : quotation.getDocuments()) {
                 document.setQuotation(quotation);
+                mailService.populateMailIds(document.getMailsAffaire());
+                mailService.populateMailIds(document.getMailsClient());
+            }
 
-        // Complete domiciliation end date
+        // Complete provisions
         for (AssoAffaireOrder assoAffaireOrder : quotation.getAssoAffaireOrders()) {
             assoAffaireOrder.setQuotation(quotation);
-
-            for (Provision provision : assoAffaireOrder.getProvisions()) {
-                provision.setAssoAffaireOrder(assoAffaireOrder);
-                if (provision.getDomiciliation() != null) {
-                    Domiciliation domiciliation = provision.getDomiciliation();
-                    if (domiciliation.getEndDate() == null) {
-                        domiciliation.setEndDate(domiciliation.getStartDate().plusYears(1));
-
-                        // If mails already exists, get their ids
-                        if (domiciliation != null && domiciliation.getMails() != null
-                                && domiciliation.getMails().size() > 0)
-                            mailService.populateMailIds(domiciliation.getMails());
-
-                        // If mails already exists, get their ids
-                        if (domiciliation != null && domiciliation.getActivityMails() != null
-                                && domiciliation.getActivityMails().size() > 0)
-                            mailService.populateMailIds(domiciliation.getActivityMails());
-
-                        // If mails already exists, get their ids
-                        if (domiciliation != null
-                                && domiciliation.getLegalGardianMails() != null
-                                && domiciliation.getLegalGardianMails().size() > 0)
-                            mailService.populateMailIds(domiciliation.getLegalGardianMails());
-
-                        if (domiciliation != null
-                                && domiciliation.getLegalGardianPhones() != null
-                                && domiciliation.getLegalGardianPhones().size() > 0)
-                            phoneService.populateMPhoneIds(domiciliation.getLegalGardianPhones());
-                    }
-                }
-
-                if (provision.getFormalite() != null) {
-                    if (provision.getFormalite().getReferenceMandataire() == null)
-                        // Play with fire ...
-                        provision.getFormalite().setReferenceMandataire(provision.getFormalite().getId());
-                    if (provision.getFormalite().getNomDossier() == null)
-                        provision.getFormalite()
-                                .setNomDossier(assoAffaireOrder.getAffaire().getDenomination() != null
-                                        ? assoAffaireOrder.getAffaire().getDenomination()
-                                        : (assoAffaireOrder.getAffaire().getFirstname() + " "
-                                                + assoAffaireOrder.getAffaire().getLastname()));
-                    if (provision.getFormalite().getSignedPlace() == null)
-                        provision.getFormalite().setSignedPlace("8 Rue Saint-Augustin, 75002 Paris");
-                }
-            }
+            assoAffaireOrderService.completeAssoAffaireOrder(assoAffaireOrder, quotation);
         }
 
         getAndSetInvoiceItemsForQuotation(quotation);
@@ -489,7 +450,7 @@ public class QuotationServiceImpl implements QuotationService {
     @Override
     public List<QuotationSearchResult> searchQuotations(QuotationSearch quotationSearch) {
         ArrayList<Integer> statusId = new ArrayList<Integer>();
-        if (quotationSearch.getQuotationStatus() != null) {
+        if (quotationSearch.getQuotationStatus() != null && quotationSearch.getQuotationStatus().size() > 0) {
             for (QuotationStatus customerOrderStatus : quotationSearch.getQuotationStatus())
                 statusId.add(customerOrderStatus.getId());
         } else {
@@ -505,7 +466,7 @@ public class QuotationServiceImpl implements QuotationService {
         }
 
         ArrayList<Integer> customerOrderId = new ArrayList<Integer>();
-        if (quotationSearch.getCustomerOrders() != null) {
+        if (quotationSearch.getCustomerOrders() != null && quotationSearch.getCustomerOrders().size() > 0) {
             for (ITiers tiers : quotationSearch.getCustomerOrders())
                 customerOrderId.add(tiers.getId());
         } else {

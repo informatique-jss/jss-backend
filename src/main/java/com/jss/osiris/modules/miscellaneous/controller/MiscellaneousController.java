@@ -84,8 +84,11 @@ import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.profile.service.EmployeeService;
 import com.jss.osiris.modules.quotation.model.Announcement;
 import com.jss.osiris.modules.quotation.model.Bodacc;
+import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.Domiciliation;
+import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Quotation;
+import com.jss.osiris.modules.quotation.model.guichetUnique.Formalite;
 import com.jss.osiris.modules.quotation.service.AffaireService;
 import com.jss.osiris.modules.quotation.service.AssoAffaireOrderService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
@@ -880,6 +883,9 @@ public class MiscellaneousController {
                 && !entityType.equals(Quotation.class.getSimpleName())
                 && !entityType.equals(Announcement.class.getSimpleName())
                 && !entityType.equals(Domiciliation.class.getSimpleName())
+                && !entityType.equals(CustomerOrder.class.getSimpleName())
+                && !entityType.equals(Provision.class.getSimpleName())
+                && !entityType.equals(Formalite.class.getSimpleName())
                 && !entityType.equals(Bodacc.class.getSimpleName()))
             throw new OsirisValidationException("entityType");
 

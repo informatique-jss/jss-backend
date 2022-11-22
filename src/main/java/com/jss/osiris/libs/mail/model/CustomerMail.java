@@ -91,6 +91,10 @@ public class CustomerMail {
     @JoinColumn(name = "id_employee_reply_to")
     private Employee replyTo;
 
+    @ManyToOne
+    @JoinColumn(name = "id_employee_send_to_me")
+    private Employee sendToMeEmployee;
+
     @Column(length = 2000)
     private String subject;
 
@@ -321,6 +325,14 @@ public class CustomerMail {
 
     public void setCbLink(String cbLink) {
         this.cbLink = cbLink;
+    }
+
+    public Employee getSendToMeEmployee() {
+        return sendToMeEmployee;
+    }
+
+    public void setSendToMeEmployee(Employee sendToMeEmployee) {
+        this.sendToMeEmployee = sendToMeEmployee;
     }
 
 }

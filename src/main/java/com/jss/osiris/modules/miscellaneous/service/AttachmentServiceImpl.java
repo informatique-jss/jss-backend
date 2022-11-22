@@ -17,13 +17,17 @@ import com.jss.osiris.modules.miscellaneous.model.AttachmentType;
 import com.jss.osiris.modules.miscellaneous.repository.AttachmentRepository;
 import com.jss.osiris.modules.quotation.model.Announcement;
 import com.jss.osiris.modules.quotation.model.Bodacc;
+import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.Domiciliation;
+import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.quotation.model.guichetUnique.Formalite;
 import com.jss.osiris.modules.quotation.service.AnnouncementService;
 import com.jss.osiris.modules.quotation.service.BodaccService;
+import com.jss.osiris.modules.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.quotation.service.DomiciliationService;
 import com.jss.osiris.modules.quotation.service.FormaliteService;
+import com.jss.osiris.modules.quotation.service.ProvisionService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
@@ -63,6 +67,12 @@ public class AttachmentServiceImpl implements AttachmentService {
     @Autowired
     FormaliteService formaliteService;
 
+    @Autowired
+    ProvisionService provisionService;
+
+    @Autowired
+    CustomerOrderService customerOrderService;
+
     @Override
     public List<Attachment> getAttachments() {
         return IterableUtils.toList(attachmentRepository.findAll());
@@ -87,21 +97,7 @@ public class AttachmentServiceImpl implements AttachmentService {
         List<Attachment> attachments = getAttachmentForEntityType(entityType, idEntity);
 
         if (replaceExistingAttachementType) {
-            if (entityType.equals(Tiers.class.getSimpleName())) {
-                attachments = attachmentRepository.findByTiersId(idEntity);
-            } else if (entityType.equals(Responsable.class.getSimpleName())) {
-                attachments = attachmentRepository.findByResponsableId(idEntity);
-            } else if (entityType.equals(Quotation.class.getSimpleName())) {
-                attachments = attachmentRepository.findByQuotationId(idEntity);
-            } else if (entityType.equals(Domiciliation.class.getSimpleName())) {
-                attachments = attachmentRepository.findByDomiciliationId(idEntity);
-            } else if (entityType.equals(Announcement.class.getSimpleName())) {
-                attachments = attachmentRepository.findByAnnouncementId(idEntity);
-            } else if (entityType.equals(Formalite.class.getSimpleName())) {
-                attachments = attachmentRepository.findByFormaliteId(idEntity);
-            } else if (entityType.equals(Bodacc.class.getSimpleName())) {
-                attachments = attachmentRepository.findByBodaccId(idEntity);
-            }
+            attachments = getAttachmentForEntityType(entityType, idEntity);
 
             if (attachments != null && attachments.size() > 0) {
                 for (Attachment attachment : attachments) {
@@ -154,6 +150,16 @@ public class AttachmentServiceImpl implements AttachmentService {
             if (bodacc == null)
                 return new ArrayList<Attachment>();
             attachment.setBodacc(bodacc);
+        } else if (entityType.equals(Provision.class.getSimpleName())) {
+            Provision provision = provisionService.getProvision(idEntity);
+            if (provision == null)
+                return new ArrayList<Attachment>();
+            attachment.setProvision(provision);
+        } else if (entityType.equals(CustomerOrder.class.getSimpleName())) {
+            CustomerOrder customerOrder = customerOrderService.getCustomerOrder(idEntity);
+            if (customerOrder == null)
+                return new ArrayList<Attachment>();
+            attachment.setCustomerOrder(customerOrder);
         }
         addOrUpdateAttachment(attachment);
 
@@ -192,6 +198,10 @@ public class AttachmentServiceImpl implements AttachmentService {
             attachments = attachmentRepository.findByAnnouncementId(idEntity);
         } else if (entityType.equals(Bodacc.class.getSimpleName())) {
             attachments = attachmentRepository.findByBodaccId(idEntity);
+        } else if (entityType.equals(Provision.class.getSimpleName())) {
+            attachments = attachmentRepository.findByProvisionId(idEntity);
+        } else if (entityType.equals(CustomerOrder.class.getSimpleName())) {
+            attachments = attachmentRepository.findByCustomerOrderId(idEntity);
         }
         return attachments;
     }

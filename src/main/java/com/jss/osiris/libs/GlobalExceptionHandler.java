@@ -8,6 +8,7 @@ import java.util.Optional;
 import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +32,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Autowired
     EmployeeService employeeService;
+
+    @Value("${dev.mode}")
+    private Boolean devMode;
 
     @ExceptionHandler({ OsirisValidationException.class, OsirisException.class, Exception.class })
     public ResponseEntity<Object> handleExceptionOsiris(Exception ex, WebRequest request) {
@@ -76,19 +80,29 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     private void persistLog(Exception exception, String logType) {
-        OsirisLog osirisLog = new OsirisLog();
-        osirisLog.setClassName(exception.getStackTrace()[0].getFileName().replace(".java", ""));
-        osirisLog.setMethodName(exception.getStackTrace()[0].getMethodName());
-        osirisLog.setStackTrace(ExceptionUtils.getStackTrace(exception));
-        osirisLog.setIsRead(false);
-        osirisLog.setLogType(logType);
+        try {
+            if (devMode) {
+                exception.printStackTrace();
+                return;
+            }
+            OsirisLog osirisLog = new OsirisLog();
+            osirisLog.setClassName(exception.getStackTrace()[0].getFileName().replace(".java", ""));
+            osirisLog.setMethodName(exception.getStackTrace()[0].getMethodName());
+            osirisLog.setStackTrace(ExceptionUtils.getStackTrace(exception));
+            osirisLog.setMessage(exception.getMessage());
+            osirisLog.setIsRead(false);
+            osirisLog.setLogType(logType);
 
-        Employee employee = employeeService.getCurrentEmployee();
-        if (employee != null)
-            osirisLog.setCurrentUser(employee);
+            Employee employee = employeeService.getCurrentEmployee();
+            if (employee != null)
+                osirisLog.setCurrentUser(employee);
 
-        osirisLog.setCreatedDateTime(LocalDateTime.now());
-        osirisLogRepository.save(osirisLog);
+            osirisLog.setCreatedDateTime(LocalDateTime.now());
+            osirisLogRepository.save(osirisLog);
+        } catch (Exception e) {
+            // Avoid to catch log with Handler here : that will cause infinite recursion ...
+            e.printStackTrace();
+        }
     }
 
     @Transactional(rollbackFor = Exception.class)

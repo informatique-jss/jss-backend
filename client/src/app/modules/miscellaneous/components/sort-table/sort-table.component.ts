@@ -22,6 +22,7 @@ export class SortTableComponent implements OnInit {
   @Input() filterText: string | undefined;
   @Input() tableName: string = "table";
   @Input() idRowSelected: number | undefined;
+  @Input() filterPredicate: any;
   /**
  * Fired when row is clicked is modified by user
  */
@@ -119,8 +120,12 @@ export class SortTableComponent implements OnInit {
       };
 
       this.dataSource.filterPredicate = (data: any, filter) => {
-        const dataStr = JSON.stringify(data).toLowerCase();
-        return dataStr.indexOf(filter) != -1;
+        if (!this.filterPredicate) {
+          const dataStr = JSON.stringify(data).toLowerCase();
+          return dataStr.indexOf(filter) != -1;
+        } else {
+          return this.filterPredicate(data, filter);
+        }
       }
     });
   }

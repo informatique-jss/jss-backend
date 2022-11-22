@@ -116,8 +116,6 @@ export class AnnouncementComponent implements OnInit {
         this.announcement!.isLegalDisplay = false;
       if (!this.announcement!.isProofReadingDocument)
         this.announcement!.isProofReadingDocument = false;
-      if (!this.announcement!.isPublicationCertificateDocument)
-        this.announcement!.isPublicationCertificateDocument = false;
       if (this.announcement!.publicationDate)
         this.announcement.publicationDate = new Date(this.announcement.publicationDate);
 
@@ -279,6 +277,16 @@ export class AnnouncementComponent implements OnInit {
           return;
         }
       }
+  }
+
+  clearNoticeTypeField() {
+    if (this.announcement!.noticeTypes != undefined && this.announcement!.noticeTypes != null && this.editMode) {
+      this.announcement!.noticeTypes = [] as Array<NoticeType>;
+      this.filteredNoticeTypes = this.announcementForm.get("noticeTypes")?.valueChanges.pipe(
+        startWith(''),
+        map(value => this._filterNoticeType(value)),
+      );
+    }
   }
 
   getHistoryActions(): SortTableAction[] {

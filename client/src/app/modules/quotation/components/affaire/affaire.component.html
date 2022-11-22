@@ -12,7 +12,7 @@
         <mat-panel-title>Détails de l'affaire
           {{asso.affaire.denomination?asso.affaire.denomination:(asso.affaire.firstname + ' '
           +asso.affaire.lastname)}} - {{asso.affaire.address}} - {{asso.affaire.postalCode}} -
-          {{asso.affaire.country.label}}
+          {{asso.affaire.city.label}}
         </mat-panel-title>
         <mat-panel-description>
           <avatar-chip *ngIf="asso.assignedTo" [employee]="asso.assignedTo"

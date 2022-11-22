@@ -31,6 +31,9 @@ public class OsirisLog implements Serializable, IId {
     private String methodName;
 
     @Column(columnDefinition = "TEXT")
+    private String message;
+
+    @Column(columnDefinition = "TEXT")
     private String stackTrace;
 
     @ManyToOne
@@ -121,6 +124,14 @@ public class OsirisLog implements Serializable, IId {
 
     public void setIsRead(Boolean isRead) {
         this.isRead = isRead;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 
 }

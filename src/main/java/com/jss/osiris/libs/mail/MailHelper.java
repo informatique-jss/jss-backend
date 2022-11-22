@@ -177,6 +177,7 @@ public class MailHelper {
         if (mail.getSendInvoiceAttachment() == null)
             mail.setSendInvoiceAttachment(false);
         mail.setCreatedDateTime(LocalDateTime.now());
+        mail.setSendToMeEmployee(employeeService.getCurrentEmployee());
         customerMailRepository.save(mail);
     }
 
@@ -291,7 +292,7 @@ public class MailHelper {
                 }
 
             if (mail.getSendToMe() != null && mail.getSendToMe())
-                message.setTo(employeeService.getCurrentEmployee().getMail());
+                message.setTo(mail.getSendToMeEmployee().getMail());
             else {
                 if (mail.getMailComputeResult().getRecipientsMailTo() == null
                         || mail.getMailComputeResult().getRecipientsMailTo().size() == 0)
@@ -740,8 +741,14 @@ public class MailHelper {
 
             mail.setCbExplanation(
                     "Vous avez aussi la possibilité de payer par carte bancaire en flashant le QR Code ci-dessous ou en cliquant ");
-            mail.setCbLink(paymentCbEntryPoint + "/order/invoice?customerOrderId=" + customerOrder.getId() + "&mail="
-                    + mailComputeResult.getRecipientsMailTo().get(0).getMail());
+            if (!sendToMe)
+                mail.setCbLink(
+                        paymentCbEntryPoint + "/order/invoice?customerOrderId=" + customerOrder.getId() + "&mail="
+                                + mailComputeResult.getRecipientsMailTo().get(0).getMail());
+            else
+                mail.setCbLink(
+                        paymentCbEntryPoint + "/order/invoice?customerOrderId=" + customerOrder.getId() + "&mail="
+                                + employeeService.getCurrentEmployee().getMail());
         } else
             mail.setExplaination("Vous trouverez ci-jointe votre facture pour votre commande.");
 
@@ -750,6 +757,9 @@ public class MailHelper {
         ITiers customerOrderTiers = quotationService.getCustomerOrderOfQuotation(customerOrder);
         mail.setReplyTo(customerOrderTiers.getSalesEmployee());
         mail.setSendToMe(sendToMe);
+        if (sendToMe) {
+            mail.setSendToMeEmployee(employeeService.getCurrentEmployee());
+        }
         mail.setMailComputeResult(computeMailForQuotationDocument(customerOrder));
 
         mail.setSubject("Votre facture pour votre commande n°" + customerOrder.getId());
@@ -786,10 +796,12 @@ public class MailHelper {
                         vatFound = true;
                         if (vatMail.getTotal() == null) {
                             vatMail.setTotal(invoiceItem.getVatPrice());
-                            vatMail.setBase(invoiceItem.getPreTaxPrice());
+                            vatMail.setBase(invoiceItem.getPreTaxPrice()
+                                    - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount() : 0f));
                         } else {
                             vatMail.setTotal(vatMail.getTotal() + invoiceItem.getVatPrice());
-                            vatMail.setBase(vatMail.getBase() + invoiceItem.getPreTaxPrice());
+                            vatMail.setBase(vatMail.getBase() + invoiceItem.getPreTaxPrice()
+                                    - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount() : 0f));
                         }
                     }
                 }

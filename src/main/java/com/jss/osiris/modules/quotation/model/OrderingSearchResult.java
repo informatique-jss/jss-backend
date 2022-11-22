@@ -20,4 +20,6 @@ public interface OrderingSearchResult {
     public Integer getTiersId();
 
     public Integer getConfrereId();
+
+    public String getAffaireLabel();
 }

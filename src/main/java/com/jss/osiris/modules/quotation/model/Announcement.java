@@ -81,9 +81,6 @@ public class Announcement implements IId, IAttachment {
 	@Column(nullable = false)
 	private Boolean isProofReadingDocument;
 
-	@Column(nullable = false)
-	private Boolean isPublicationCertificateDocument;
-
 	@OneToMany(mappedBy = "announcement")
 	@JsonIgnoreProperties(value = { "announcement" }, allowSetters = true)
 	private List<Attachment> attachments;
@@ -118,14 +115,6 @@ public class Announcement implements IId, IAttachment {
 
 	public void setIsHeaderFree(Boolean isHeaderFree) {
 		this.isHeaderFree = isHeaderFree;
-	}
-
-	public Boolean getIsPublicationCertificateDocument() {
-		return isPublicationCertificateDocument;
-	}
-
-	public void setIsPublicationCertificateDocument(Boolean isPublicationCertificateDocument) {
-		this.isPublicationCertificateDocument = isPublicationCertificateDocument;
 	}
 
 	public void setNoticeTypeFamily(NoticeTypeFamily noticeTypeFamily) {
