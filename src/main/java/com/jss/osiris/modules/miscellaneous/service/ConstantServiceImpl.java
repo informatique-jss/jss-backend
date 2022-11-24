@@ -321,6 +321,11 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public Employee getEmployeeSalesDirector() throws OsirisException {
+        return getConstants().getEmployeeSalesDirector();
+    }
+
+    @Override
     public TransfertFundsType getTransfertFundsTypePhysique() throws OsirisException {
         return getConstants().getTransfertFundsTypePhysique();
     }

@@ -80,6 +80,7 @@ export interface Constant {
   actTypeAuthentic: ActType;
   assignationTypeEmployee: AssignationType;
   employeeBillingResponsible: Employee;
+  employeeSalesDirector: Employee;
   transfertFundsTypePhysique: TransfertFundsType;
   transfertFundsTypeMoral: TransfertFundsType;
   transfertFundsTypeBail: TransfertFundsType;

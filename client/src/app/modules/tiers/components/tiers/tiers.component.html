@@ -5,7 +5,7 @@
       <tiers-main [tiers]="tiers" [editMode]="editMode">
       </tiers-main>
     </mat-tab>
-    <mat-tab label="Pièces, réglements, facturations & relances" *ngIf="isTiersTypeProspect()==false">
+    <mat-tab label="Pièces, réglements, facturations & relances">
       <settlement-billing [tiers]="tiers" [editMode]="editMode"></settlement-billing>
     </mat-tab>
     <mat-tab label="Responsable(s)">

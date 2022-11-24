@@ -329,6 +329,10 @@ public class Constant implements Serializable, IId {
 	@JoinColumn(name = "id_type_formalite_creation")
 	private TypeFormalite typeFormaliteCreation;
 
+	@ManyToOne
+	@JoinColumn(name = "id_employee_sales_director")
+	private Employee employeeSalesDirector;
+
 	public Integer getId() {
 		return id;
 	}
@@ -922,6 +926,14 @@ public class Constant implements Serializable, IId {
 
 	public void setTypeFormaliteCreation(TypeFormalite typeFormaliteCreation) {
 		this.typeFormaliteCreation = typeFormaliteCreation;
+	}
+
+	public Employee getEmployeeSalesDirector() {
+		return employeeSalesDirector;
+	}
+
+	public void setEmployeeSalesDirector(Employee employeeSalesDirector) {
+		this.employeeSalesDirector = employeeSalesDirector;
 	}
 
 }

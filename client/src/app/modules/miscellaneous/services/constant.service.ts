@@ -234,6 +234,10 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.employeeBillingResponsible;
   }
 
+  getEmployeeSalesDirector() {
+    return this.constant.employeeSalesDirector;
+  }
+
   getTransfertFundsTypePhysique() {
     return this.constant.transfertFundsTypePhysique;
   }

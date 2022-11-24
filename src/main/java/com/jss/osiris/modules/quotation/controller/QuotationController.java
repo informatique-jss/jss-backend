@@ -127,6 +127,8 @@ import com.jss.osiris.modules.quotation.service.RecordTypeService;
 import com.jss.osiris.modules.quotation.service.RnaDelegateService;
 import com.jss.osiris.modules.quotation.service.SireneDelegateService;
 import com.jss.osiris.modules.quotation.service.TransfertFundsTypeService;
+import com.jss.osiris.modules.tiers.model.Responsable;
+import com.jss.osiris.modules.tiers.model.Tiers;
 import com.jss.osiris.modules.tiers.service.ResponsableService;
 import com.jss.osiris.modules.tiers.service.TiersService;
 
@@ -983,7 +985,7 @@ public class QuotationController {
         HttpStatus.OK);
   }
 
-  @PostMapping(inputEntryPoint + "/customer-order")
+  @PostMapping(inputEntryPoint + "  rder")
   public ResponseEntity<CustomerOrder> addOrUpdateCustomerOrder(@RequestBody CustomerOrder customerOrder)
       throws OsirisException, OsirisValidationException {
     validateQuotationAndCustomerOrder(customerOrder);
@@ -1067,9 +1069,15 @@ public class QuotationController {
     if (quotation.getSpecialOffers() != null && quotation.getSpecialOffers().size() > 0)
       for (SpecialOffer specialOffer : quotation.getSpecialOffers())
         validationHelper.validateReferential(specialOffer, false, "specialOffer");
-    validationHelper.validateReferential(quotation.getTiers(), false, "Tiers");
-    validationHelper.validateReferential(quotation.getResponsable(), false, "Responsable");
-    validationHelper.validateReferential(quotation.getConfrere(), false, "Confrere");
+    quotation.setTiers((Tiers) validationHelper.validateReferential(quotation.getTiers(), false, "Tiers"));
+    quotation.setResponsable(
+        (Responsable) validationHelper.validateReferential(quotation.getResponsable(), false, "Responsable"));
+
+    if (quotation.getTiers() != null && quotation.getConfrere() == null && quotation.getResponsable() == null
+        && quotation.getTiers().getIsIndividual() == false)
+      throw new OsirisValidationException("Tiers must be individual !");
+
+    quotation.setConfrere((Confrere) validationHelper.validateReferential(quotation.getConfrere(), false, "Confrere"));
     validationHelper.validateReferential(quotation.getQuotationLabelType(), true, "QuotationLabelType");
     validationHelper.validateReferential(quotation.getCustomLabelResponsable(), false, "CustomLabelResponsable");
     validationHelper.validateReferential(quotation.getCustomLabelTiers(), false, "CustomLabelTiers");
@@ -1418,7 +1426,7 @@ public class QuotationController {
     validationHelper.validateReferential(affaire.getCity(), true, "City");
     validationHelper.validateReferential(affaire.getCountry(), true, "Country");
     validationHelper.validateString(affaire.getExternalReference(), false, 60, "ExternalReference");
-    if (affaire.getCountry() != null && affaire.getCountry().getCode().equals("FR"))
+    if (affaire.getCountry() != null && affaire.getCountry().getId().equals(constantService.getCountryFrance().getId()))
       validationHelper.validateString(affaire.getPostalCode(), true, 10, "PostalCode");
 
     if (affaire.getIsIndividual()) {

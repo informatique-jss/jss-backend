@@ -346,9 +346,7 @@ public class TiersController {
       validationHelper.validateString(tiers.getLastname(), true, 20, "Lastname");
     } else {
       validationHelper.validateString(tiers.getDenomination(), true, 60, "Denomination");
-      if (!tiers.getTiersType().getCode().equals(constantService.getTiersTypeProspect().getCode())
-          && (tiers.getIntercommunityVat() == null || tiers.getIntercommunityVat().equals("")
-              || tiers.getIntercommunityVat().length() > 20))
+      if (tiers.getIntercommunityVat() != null && tiers.getIntercommunityVat().length() > 20)
         throw new OsirisValidationException("IntercommunityVat");
     }
 
@@ -362,7 +360,7 @@ public class TiersController {
     validationHelper.validateString(tiers.getAddress(), true, 60, "Address");
     validationHelper.validateReferential(tiers.getCountry(), true, "Country");
     if (tiers.getCountry() != null
-        && tiers.getCountry().getCode().equals(constantService.getCountryFrance().getCode()))
+        && tiers.getCountry().getId().equals(constantService.getCountryFrance().getId()))
       validationHelper.validateString(tiers.getPostalCode(), true, 10, "PostalCode");
     validationHelper.validateReferential(tiers.getCity(), true, "City");
 

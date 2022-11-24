@@ -139,6 +139,8 @@ public interface ConstantService {
 
     public Employee getEmployeeBillingResponsible() throws OsirisException;
 
+    public Employee getEmployeeSalesDirector() throws OsirisException;
+
     public TransfertFundsType getTransfertFundsTypePhysique() throws OsirisException;
 
     public TransfertFundsType getTransfertFundsTypeMoral() throws OsirisException;

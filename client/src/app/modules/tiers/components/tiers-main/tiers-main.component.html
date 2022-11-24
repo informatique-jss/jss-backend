@@ -124,8 +124,7 @@
           <tr>
             <td *ngIf="tiers.isIndividual==false">
               <generic-input [(model)]="tiers.intercommunityVat" [isDisabled]="!editMode" label="TVA intercommunaitaire"
-                [form]="principalForm" propertyName="intercommunityVat" [isMandatory]="true"
-                [conditionnalRequired]="tiers.isIndividual==false && tiers.tiersType && tiers.tiersType.id != prospectTiersType.id"
+                [form]="principalForm" propertyName="intercommunityVat" [isMandatory]="false" [conditionnalRequired]=""
                 [customValidators]="[checkVAT('intercommunityVat')]">
               </generic-input>
             </td>

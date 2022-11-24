@@ -373,6 +373,13 @@
           </tr>
           <tr>
             <td>
+              <autocomplete-employee [(model)]="constant.employeeSalesDirector" [form]="constantForm"
+                propertyName="employeeSalesDirector" [isMandatory]="true" [isDisabled]="!editMode"
+                label="Employé Directeur Commercial"></autocomplete-employee>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <radio-group-transfert-funds [(model)]="constant.transfertFundsTypeBail" [form]="constantForm"
                 [isDisabled]="!editMode" propertyName="transfertFundsTypeBail"
                 label="Type de transfert de fonds - bail">

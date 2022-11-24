@@ -141,9 +141,10 @@ public class TiersServiceImpl implements TiersService {
 
         tiers = tiersRepository.save(tiers);
         indexEntityService.indexEntity(tiers, tiers.getId());
-        for (Responsable responsable : tiers.getResponsables()) {
-            indexEntityService.indexEntity(responsable, responsable.getId());
-        }
+        if (tiers.getResponsables() != null)
+            for (Responsable responsable : tiers.getResponsables()) {
+                indexEntityService.indexEntity(responsable, responsable.getId());
+            }
 
         return tiers;
     }
