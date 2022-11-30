@@ -10,6 +10,12 @@ import com.jss.osiris.modules.miscellaneous.model.ICode;
 
 @Entity
 public class DeviseCapital implements Serializable, ICode {
+    public DeviseCapital(String code) {
+        this.code = code;
+    }
+
+    public DeviseCapital() {
+    }
 
     @Id
     private String code;

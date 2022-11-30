@@ -10,6 +10,12 @@ import com.jss.osiris.modules.miscellaneous.model.ICode;
 
 @Entity
 public class TypeLocataireGerantMandataire implements Serializable, ICode {
+    public TypeLocataireGerantMandataire(String code) {
+        this.code = code;
+    }
+
+    public TypeLocataireGerantMandataire() {
+    }
 
     @Id
     private String code;

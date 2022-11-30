@@ -9,11 +9,13 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -26,13 +28,12 @@ import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.model.IAttachment;
-import com.jss.osiris.modules.miscellaneous.model.Mail;
-import com.jss.osiris.modules.miscellaneous.model.Phone;
 import com.jss.osiris.modules.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
 @Entity
+@Table(indexes = { @Index(name = "idx_customer_order_status", columnList = "id_customer_order_status") })
 public class CustomerOrder implements IQuotation, IAttachment {
 
 	public CustomerOrder() {
@@ -42,7 +43,7 @@ public class CustomerOrder implements IQuotation, IAttachment {
 			List<SpecialOffer> specialOffers, LocalDateTime createdDate, CustomerOrderStatus customerOrderStatus,
 			String observations, String description, List<Attachment> attachments, List<Document> documents,
 			QuotationLabelType labelType, Responsable customLabelResponsable, Tiers customLabelTiers,
-			RecordType recordType, List<AssoAffaireOrder> assoAffaireOrders, List<Mail> mails, List<Phone> phones,
+			RecordType recordType, List<AssoAffaireOrder> assoAffaireOrders,
 			List<Quotation> quotations, Boolean overrideSpecialOffer, String quotationLabel, Boolean isQuotation,
 			List<Invoice> invoices, List<Payment> payments, List<Deposit> deposits,
 			List<AccountingRecord> accountingRecords) {
@@ -61,8 +62,6 @@ public class CustomerOrder implements IQuotation, IAttachment {
 		this.customLabelTiers = customLabelTiers;
 		this.recordType = recordType;
 		this.assoAffaireOrders = assoAffaireOrders;
-		this.mails = mails;
-		this.phones = phones;
 		this.quotations = quotations;
 		this.overrideSpecialOffer = overrideSpecialOffer;
 		this.quotationLabel = quotationLabel;
@@ -105,6 +104,8 @@ public class CustomerOrder implements IQuotation, IAttachment {
 	@JoinColumn(name = "id_customer_order_status")
 	private CustomerOrderStatus customerOrderStatus;
 
+	private LocalDateTime lastStatusUpdate;
+
 	@Column(columnDefinition = "TEXT")
 	private String observations;
 
@@ -139,14 +140,6 @@ public class CustomerOrder implements IQuotation, IAttachment {
 	@JsonIgnoreProperties(value = { "customerOrder" }, allowSetters = true)
 	private List<AssoAffaireOrder> assoAffaireOrders;
 
-	@ManyToMany
-	@JoinTable(name = "asso_customer_order_mail", joinColumns = @JoinColumn(name = "id_customer_order"), inverseJoinColumns = @JoinColumn(name = "id_mail"))
-	private List<Mail> mails;
-
-	@ManyToMany
-	@JoinTable(name = "asso_customer_order_phone", joinColumns = @JoinColumn(name = "id_customer_order"), inverseJoinColumns = @JoinColumn(name = "id_phone"))
-	private List<Phone> phones;
-
 	@ManyToMany(mappedBy = "customerOrders")
 	@JsonIgnoreProperties(value = { "customerOrders" }, allowSetters = true)
 	private List<Quotation> quotations;
@@ -177,6 +170,12 @@ public class CustomerOrder implements IQuotation, IAttachment {
 	private List<AccountingRecord> accountingRecords;
 
 	private String centralPayPaymentRequestId;
+
+	private Boolean isCreatedFromWebSite;
+
+	private LocalDateTime firstReminderDateTime;
+	private LocalDateTime secondReminderDateTime;
+	private LocalDateTime thirdReminderDateTime;
 
 	// TODO : put it at 0 when payment is grabbed and matched
 	private Float centralPayPendingPaymentAmount;
@@ -283,22 +282,6 @@ public class CustomerOrder implements IQuotation, IAttachment {
 
 	public void setRecordType(RecordType recordType) {
 		this.recordType = recordType;
-	}
-
-	public List<Mail> getMails() {
-		return mails;
-	}
-
-	public void setMails(List<Mail> mails) {
-		this.mails = mails;
-	}
-
-	public List<Phone> getPhones() {
-		return phones;
-	}
-
-	public void setPhones(List<Phone> phones) {
-		this.phones = phones;
 	}
 
 	public Boolean getOverrideSpecialOffer() {
@@ -411,6 +394,46 @@ public class CustomerOrder implements IQuotation, IAttachment {
 
 	public void setCentralPayPendingPaymentAmount(Float centralPayPendingPaymentAmount) {
 		this.centralPayPendingPaymentAmount = centralPayPendingPaymentAmount;
+	}
+
+	public LocalDateTime getLastStatusUpdate() {
+		return lastStatusUpdate;
+	}
+
+	public void setLastStatusUpdate(LocalDateTime lastStatusUpdate) {
+		this.lastStatusUpdate = lastStatusUpdate;
+	}
+
+	public Boolean getIsCreatedFromWebSite() {
+		return isCreatedFromWebSite;
+	}
+
+	public void setIsCreatedFromWebSite(Boolean isCreatedFromWebSite) {
+		this.isCreatedFromWebSite = isCreatedFromWebSite;
+	}
+
+	public LocalDateTime getFirstReminderDateTime() {
+		return firstReminderDateTime;
+	}
+
+	public void setFirstReminderDateTime(LocalDateTime firstReminderDateTime) {
+		this.firstReminderDateTime = firstReminderDateTime;
+	}
+
+	public LocalDateTime getSecondReminderDateTime() {
+		return secondReminderDateTime;
+	}
+
+	public void setSecondReminderDateTime(LocalDateTime secondReminderDateTime) {
+		this.secondReminderDateTime = secondReminderDateTime;
+	}
+
+	public LocalDateTime getThirdReminderDateTime() {
+		return thirdReminderDateTime;
+	}
+
+	public void setThirdReminderDateTime(LocalDateTime thirdReminderDateTime) {
+		this.thirdReminderDateTime = thirdReminderDateTime;
 	}
 
 }

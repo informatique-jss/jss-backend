@@ -10,6 +10,12 @@ import com.jss.osiris.modules.miscellaneous.model.ICode;
 
 @Entity
 public class DiffusionINSEE implements Serializable, ICode {
+    public DiffusionINSEE(String code) {
+        this.code = code;
+    }
+
+    public DiffusionINSEE() {
+    }
 
     @Id
     private String code;

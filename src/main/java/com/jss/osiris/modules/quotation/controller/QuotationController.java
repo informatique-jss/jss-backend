@@ -20,8 +20,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.jss.osiris.libs.GlobalExceptionHandler;
 import com.jss.osiris.libs.ValidationHelper;
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.exception.OsirisLog;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.libs.mail.model.MailComputeResult;
@@ -278,6 +280,9 @@ public class QuotationController {
   @Autowired
   FormaliteStatusService formaliteStatusService;
 
+  @Autowired
+  GlobalExceptionHandler globalExceptionHandler;
+
   @GetMapping(inputEntryPoint + "/formalite-status")
   public ResponseEntity<List<FormaliteStatus>> getFormaliteStatus() {
     return new ResponseEntity<List<FormaliteStatus>>(formaliteStatusService.getFormaliteStatus(), HttpStatus.OK);
@@ -327,8 +332,9 @@ public class QuotationController {
     return new ResponseEntity<Quotation>(quotation, HttpStatus.OK);
   }
 
-  @GetMapping(inputEntryPoint + "/mail/generate/waiting-deposit")
-  public ResponseEntity<CustomerOrder> generateWaintingDepositMail(@RequestParam Integer customerOrderId)
+  @GetMapping(inputEntryPoint + "/mail/generate/customer-order-confirmation")
+  public ResponseEntity<CustomerOrder> generateCustomerOrderCreationConfirmationToCustomer(
+      @RequestParam Integer customerOrderId)
       throws OsirisValidationException, OsirisException {
     CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
     if (customerOrder == null)
@@ -338,7 +344,23 @@ public class QuotationController {
     if (mailComputeResult.getRecipientsMailTo() == null || mailComputeResult.getRecipientsMailTo().size() == 0)
       throw new OsirisValidationException("MailTo");
 
-    mailHelper.generateWaintingDepositMail(customerOrder);
+    mailHelper.generateCustomerOrderCreationConfirmationToCustomer(customerOrder);
+    return new ResponseEntity<CustomerOrder>(customerOrder, HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/mail/generate/customer-order-deposit-confirmation")
+  public ResponseEntity<CustomerOrder> generateCustomerOrderDepositConfirmationToCustomer(
+      @RequestParam Integer customerOrderId)
+      throws OsirisValidationException, OsirisException {
+    CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
+    if (customerOrder == null)
+      throw new OsirisValidationException("customerOrder");
+
+    MailComputeResult mailComputeResult = mailHelper.computeMailForBillingDocument(customerOrder);
+    if (mailComputeResult.getRecipientsMailTo() == null || mailComputeResult.getRecipientsMailTo().size() == 0)
+      throw new OsirisValidationException("MailTo");
+
+    mailHelper.generateCustomerOrderDepositConfirmationToCustomer(customerOrder);
     return new ResponseEntity<CustomerOrder>(customerOrder, HttpStatus.OK);
   }
 
@@ -353,8 +375,8 @@ public class QuotationController {
       if (mailComputeResult.getRecipientsMailTo() == null || mailComputeResult.getRecipientsMailTo().size() == 0)
         throw new OsirisValidationException("MailTo");
       customerOrderService.generateInvoiceMail(customerOrder);
-    } catch (Exception e) {
-      e.printStackTrace();
+    } catch (OsirisException e) {
+      globalExceptionHandler.persistLog(e, OsirisLog.UNHANDLED_LOG);
     }
     return new ResponseEntity<CustomerOrder>(new CustomerOrder(), HttpStatus.OK);
   }
@@ -985,7 +1007,7 @@ public class QuotationController {
         HttpStatus.OK);
   }
 
-  @PostMapping(inputEntryPoint + "  rder")
+  @PostMapping(inputEntryPoint + "/customer-order")
   public ResponseEntity<CustomerOrder> addOrUpdateCustomerOrder(@RequestBody CustomerOrder customerOrder)
       throws OsirisException, OsirisValidationException {
     validateQuotationAndCustomerOrder(customerOrder);
@@ -1051,6 +1073,9 @@ public class QuotationController {
   private void validateQuotationAndCustomerOrder(IQuotation quotation)
       throws OsirisValidationException, OsirisException {
     boolean isOpen = false;
+
+    if (quotation.getIsCreatedFromWebSite() == null)
+      quotation.setIsCreatedFromWebSite(false);
 
     if (quotation instanceof CustomerOrder) {
       CustomerOrder customerOrder = (CustomerOrder) quotation;
@@ -1209,7 +1234,8 @@ public class QuotationController {
     // Announcement
     if (provision.getAnnouncement() != null) {
       Announcement announcement = provision.getAnnouncement();
-      validationHelper.validateDateMin(announcement.getPublicationDate(), !isOpen, LocalDate.now(), "PublicationDate");
+      validationHelper.validateDateMin(announcement.getPublicationDate(), !isOpen, LocalDate.now().minusDays(1),
+          "PublicationDate");
       validationHelper.validateReferential(announcement.getDepartment(), !isOpen, "Department");
       validationHelper.validateReferential(announcement.getConfrere(), isCustomerOrder, "Confrere");
       validationHelper.validateReferential(announcement.getNoticeTypeFamily(), isCustomerOrder, "NoticeTypeFamily");
@@ -1265,7 +1291,10 @@ public class QuotationController {
         validationHelper.validateString(bodaccSale.getValidityObjectionAddress(), isCustomerOrder, 100,
             "ValidityObjectionAddress");
         validationHelper.validateString(bodaccSale.getMailObjectionAddress(), false, 100, "MailObjectionAddress");
-        validationHelper.validateDate(bodaccSale.getLeaseResilisationDate(), isCustomerOrder, "LeaseResilisationDate");
+        validationHelper.validateDate(bodaccSale.getLeaseResilisationDate(),
+            isCustomerOrder
+                && constantService.getTransfertFundsTypeBail().getId().equals(bodacc.getTransfertFundsType().getId()),
+            "LeaseResilisationDate");
         validationHelper.validateString(bodaccSale.getLeaseAddress(), false, 100, "LeaseAddress");
         validationHelper.validateString(bodaccSale.getTenantFirstname(), false, 30, "TenantFirstname");
         validationHelper.validateString(bodaccSale.getTenantLastname(), false, 30, "TenantLastname");
@@ -1457,15 +1486,79 @@ public class QuotationController {
 
   // Payment deposit
 
+  @GetMapping(inputEntryPoint + "/payment/cb/quotation/deposit")
+  public ResponseEntity<String> getCardPaymentLinkForQuotationDeposit(@RequestParam Integer quotationId,
+      @RequestParam String mail) {
+    try {
+      Quotation quotation = quotationService.getQuotation(quotationId);
+      if (quotation == null)
+        throw new OsirisValidationException("quotation");
+
+      String link = quotationService.getCardPaymentLinkForQuotationDeposit(quotation, mail,
+          "Paiement de l'acompte pour le devis n°" + quotationId);
+      if (link.startsWith("http")) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setLocation(URI.create(link));
+        return new ResponseEntity<>(headers, HttpStatus.MOVED_PERMANENTLY);
+      } else {
+        return new ResponseEntity<String>(
+            mailHelper.generateGenericHtmlConfirmation("Paiement validé", null, "Devis n°" + quotationId,
+                "Votre acompte pour le devis n°" + quotationId
+                    + " a bien été pris en compte. Nous débutons immédiatement le traitement de ce dernier.",
+                null, "Bonne journée !"),
+            HttpStatus.OK);
+      }
+    } catch (Exception e) {
+      globalExceptionHandler.persistLog(e, OsirisLog.UNHANDLED_LOG);
+      return new ResponseEntity<String>(
+          mailHelper.generateGenericHtmlConfirmation("Erreur !", null, "Devis n°" + quotationId,
+              "Nous sommes désolé, mais une erreur est survenue lors de votre paiement.",
+              "Veuillez réessayer en utilisant le lien présent dans le mail de notification.", "Bonne journée !"),
+          HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @RequestMapping(path = inputEntryPoint
+      + "/payment/cb/quotation/deposit/validate", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+  public ResponseEntity<String> validateCardPaymentLinkForQuotationDeposit(CentralPayPaymentShortRequest paramMap,
+      @RequestParam Integer quotationId) {
+
+    try {
+      Quotation quotation = quotationService.getQuotation(quotationId);
+      if (quotation == null)
+        throw new OsirisValidationException("quotation");
+
+      Boolean status = quotationService.validateCardPaymentLinkForQuotationDeposit(quotation);
+
+      if (status) {
+        return new ResponseEntity<String>(
+            mailHelper.generateGenericHtmlConfirmation("Paiement validé", null, "Devis n°" + quotationId,
+                "Votre acompte pour le devis n°" + quotationId
+                    + " a bien été pris en compte. Nous débutons immédiatement le traitement de ce dernier.",
+                null, "Bonne journée !"),
+            HttpStatus.OK);
+      } else {
+        throw new Exception();
+      }
+    } catch (Exception e) {
+      globalExceptionHandler.persistLog(e, OsirisLog.UNHANDLED_LOG);
+      return new ResponseEntity<String>(
+          mailHelper.generateGenericHtmlConfirmation("Erreur !", null, "Devis n°" + quotationId,
+              "Nous sommes désolé, mais une erreur est survenue lors de votre paiement.",
+              "Veuillez réessayer en utilisant le lien présent dans le mail de notification.", "Bonne journée !"),
+          HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
   @GetMapping(inputEntryPoint + "/payment/cb/order/deposit")
-  public ResponseEntity<String> getCardPaymentLinkForPaymentDeposit(@RequestParam Integer customerOrderId,
+  public ResponseEntity<String> getCardPaymentLinkForCustomerOrderDeposit(@RequestParam Integer customerOrderId,
       @RequestParam String mail) {
     try {
       CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
       if (customerOrder == null)
         throw new OsirisValidationException("customerOrder");
 
-      String link = customerOrderService.getCardPaymentLinkForPaymentDeposit(customerOrder, mail,
+      String link = customerOrderService.getCardPaymentLinkForCustomerOrderDeposit(customerOrder, mail,
           "Paiement de l'acompte pour la commande n°" + customerOrderId);
       if (link.startsWith("http")) {
         HttpHeaders headers = new HttpHeaders();
@@ -1480,6 +1573,7 @@ public class QuotationController {
             HttpStatus.OK);
       }
     } catch (Exception e) {
+      globalExceptionHandler.persistLog(e, OsirisLog.UNHANDLED_LOG);
       return new ResponseEntity<String>(
           mailHelper.generateGenericHtmlConfirmation("Erreur !", null, "Commande n°" + customerOrderId,
               "Nous sommes désolé, mais une erreur est survenue lors de votre paiement.",
@@ -1490,7 +1584,7 @@ public class QuotationController {
 
   @RequestMapping(path = inputEntryPoint
       + "/payment/cb/order/deposit/validate", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-  public ResponseEntity<String> validateCardPaymentLinkForDeposit(CentralPayPaymentShortRequest paramMap,
+  public ResponseEntity<String> validateCardPaymentLinkForCustomerOrderDeposit(CentralPayPaymentShortRequest paramMap,
       @RequestParam Integer customerOrderId) {
 
     try {
@@ -1498,7 +1592,7 @@ public class QuotationController {
       if (customerOrder == null)
         throw new OsirisValidationException("customerOrder");
 
-      Boolean status = customerOrderService.validateCardPaymentLinkForDeposit(customerOrder);
+      Boolean status = customerOrderService.validateCardPaymentLinkForCustomerOrderDeposit(customerOrder);
 
       if (status) {
         return new ResponseEntity<String>(
@@ -1511,6 +1605,7 @@ public class QuotationController {
         throw new Exception();
       }
     } catch (Exception e) {
+      globalExceptionHandler.persistLog(e, OsirisLog.UNHANDLED_LOG);
       return new ResponseEntity<String>(
           mailHelper.generateGenericHtmlConfirmation("Erreur !", null, "Commande n°" + customerOrderId,
               "Nous sommes désolé, mais une erreur est survenue lors de votre paiement.",
@@ -1544,6 +1639,7 @@ public class QuotationController {
             HttpStatus.OK);
       }
     } catch (Exception e) {
+      globalExceptionHandler.persistLog(e, OsirisLog.UNHANDLED_LOG);
       return new ResponseEntity<String>(
           mailHelper.generateGenericHtmlConfirmation("Erreur !", null, "Commande n°" + customerOrderId,
               "Nous sommes désolé, mais une erreur est survenue lors de votre paiement.",
@@ -1575,6 +1671,7 @@ public class QuotationController {
         throw new Exception();
       }
     } catch (Exception e) {
+      globalExceptionHandler.persistLog(e, OsirisLog.UNHANDLED_LOG);
       return new ResponseEntity<String>(
           mailHelper.generateGenericHtmlConfirmation("Erreur !", null, "Commande n°" + customerOrderId,
               "Nous sommes désolé, mais une erreur est survenue lors de votre paiement.",

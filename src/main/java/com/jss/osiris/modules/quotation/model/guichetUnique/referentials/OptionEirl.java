@@ -10,6 +10,12 @@ import com.jss.osiris.modules.miscellaneous.model.ICode;
 
 @Entity
 public class OptionEirl implements Serializable, ICode {
+    public OptionEirl(String code) {
+        this.code = code;
+    }
+
+    public OptionEirl() {
+    }
 
     @Id
     private String code;

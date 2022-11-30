@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.miscellaneous.model.Notification;
 import com.jss.osiris.modules.miscellaneous.repository.NotificationRepository;
@@ -283,5 +284,20 @@ public class NotificationServiceImpl implements NotificationService {
     @Transactional(rollbackFor = Exception.class)
     public void purgeNotification() {
         notificationRepository.deleteAll(notificationRepository.findNotificationOlderThanMonths(3));
+    }
+
+    @Override
+    public List<Notification> notifyInvoiceToReminder(Invoice invoice) throws OsirisException {
+        return genericNotificationForInvoice(invoice, Notification.INVOICE_REMINDER_PAYMENT, true);
+    }
+
+    private List<Notification> genericNotificationForInvoice(Invoice invoice, String notificationType,
+            boolean notifiyInvoiceReminderResponsible) throws OsirisException {
+        ArrayList<Notification> notifications = new ArrayList<Notification>();
+
+        notifications.add(generateNewNotification(null, constantService.getEmployeeInvoiceReminderResponsible(),
+                notificationType, invoice, null, null, false));
+
+        return notifications;
     }
 }

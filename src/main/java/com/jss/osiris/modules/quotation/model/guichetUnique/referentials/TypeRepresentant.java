@@ -10,6 +10,12 @@ import com.jss.osiris.modules.miscellaneous.model.ICode;
 
 @Entity
 public class TypeRepresentant implements Serializable, ICode {
+    public TypeRepresentant(String code) {
+        this.code = code;
+    }
+
+    public TypeRepresentant() {
+    }
 
     @Id
     private String code;

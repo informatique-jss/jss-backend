@@ -8,6 +8,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.quotation.model.OrderingSearchResult;
 
 public interface CustomerOrderRepository extends CrudRepository<CustomerOrder, Integer> {
@@ -43,4 +44,8 @@ public interface CustomerOrderRepository extends CrudRepository<CustomerOrder, I
                         @Param("customerOrderStatus") List<Integer> customerOrderStatus,
                         @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                         @Param("customerOrder") List<Integer> customerOrder);
+
+        @Query(value = "select n from CustomerOrder n where customerOrderStatus=:customerOrderStatus and thirdReminderDateTime is null ")
+        List<CustomerOrder> findCustomerOrderForReminder(
+                        @Param("customerOrderStatus") CustomerOrderStatus customerOrderStatus);
 }

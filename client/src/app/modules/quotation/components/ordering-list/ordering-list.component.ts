@@ -44,18 +44,19 @@ export class OrderingListComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.putDefaultPeriod();
     this.employeeService.getEmployees().subscribe(response => {
 
       this.bookmark = this.userPreferenceService.getUserSearchBookmark("customerOrders") as OrderingSearch;
 
-      if (this.bookmark && !this.isForDashboard) {
+      if (this.bookmark && !this.isForDashboard && !this.isForTiersIntegration) {
         this.orderingSearch = {} as OrderingSearch;
         this.orderingSearch.endDate = new Date(this.bookmark.endDate as any);
         this.orderingSearch.startDate = new Date(this.bookmark.startDate as any);
         this.orderingSearch.salesEmployee = this.bookmark.salesEmployee;
         this.orderingSearch.customerOrderStatus = this.bookmark.customerOrderStatus;
       }
+
+      this.putDefaultPeriod();
 
       this.allEmployees = response;
 

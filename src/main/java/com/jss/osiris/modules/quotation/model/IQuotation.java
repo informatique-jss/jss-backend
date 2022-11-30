@@ -7,8 +7,6 @@ import java.util.List;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.model.IId;
-import com.jss.osiris.modules.miscellaneous.model.Mail;
-import com.jss.osiris.modules.miscellaneous.model.Phone;
 import com.jss.osiris.modules.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
@@ -70,14 +68,6 @@ public interface IQuotation extends Serializable, IId {
 
 	public void setAssoAffaireOrders(List<AssoAffaireOrder> assoAffaireOrder);
 
-	public List<Mail> getMails();
-
-	public void setMails(List<Mail> mails);
-
-	public List<Phone> getPhones();
-
-	public void setPhones(List<Phone> phones);
-
 	public Boolean getIsQuotation();
 
 	public void setIsQuotation(Boolean isQuotation);
@@ -85,5 +75,9 @@ public interface IQuotation extends Serializable, IId {
 	public Confrere getConfrere();
 
 	public void setConfrere(Confrere confrere);
+
+	public Boolean getIsCreatedFromWebSite();
+
+	public void setIsCreatedFromWebSite(Boolean createdFromWebSite);
 
 }

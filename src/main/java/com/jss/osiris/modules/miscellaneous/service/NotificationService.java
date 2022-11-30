@@ -3,6 +3,7 @@ package com.jss.osiris.modules.miscellaneous.service;
 import java.util.List;
 
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.miscellaneous.model.Notification;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.Quotation;
@@ -41,4 +42,6 @@ public interface NotificationService {
         public Notification addOrUpdatePersonnalNotification(Notification notifications);
 
         public void purgeNotification();
+
+        public List<Notification> notifyInvoiceToReminder(Invoice invoice) throws OsirisException;
 }

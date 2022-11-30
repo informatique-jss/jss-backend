@@ -10,6 +10,12 @@ import com.jss.osiris.modules.miscellaneous.model.ICode;
 
 @Entity
 public class TypeDocument implements Serializable, ICode {
+    public TypeDocument(String code) {
+        this.code = code;
+    }
+
+    public TypeDocument() {
+    }
 
     @Id
     private String code;

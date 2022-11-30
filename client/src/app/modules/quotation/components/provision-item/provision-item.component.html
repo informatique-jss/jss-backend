@@ -22,16 +22,16 @@
   </tr>
 </table>
 <domiciliation [domiciliation]="provision.domiciliation" [editMode]="editMode" [isStatusOpen]="isStatusOpen"
-  [instanceOfCustomerOrder]="instanceOfCustomerOrder" [provision]="provision"
+  [instanceOfCustomerOrder]="instanceOfCustomerOrder" [provision]="provision" (provisionChange)="noticeChange()"
   *ngIf="provision.domiciliation && provision.provisionType &&  provision.provisionType.provisionScreenType.code==PROVISION_SCREEN_TYPE_DOMICILIATION">
 </domiciliation>
 <announcement [announcement]="provision.announcement" [editMode]="editMode" [provision]="provision"
-  [instanceOfCustomerOrder]="instanceOfCustomerOrder" [isStatusOpen]="isStatusOpen" (noticeChange)="noticeChange()"
+  [instanceOfCustomerOrder]="instanceOfCustomerOrder" [isStatusOpen]="isStatusOpen" (provisionChange)="noticeChange()"
   *ngIf="provision.announcement && provision.provisionType && provision.provisionType.provisionScreenType.code==PROVISION_SCREEN_TYPE_ANNOUNCEMENT">
   [affaire]="affaire">
 </announcement>
 <bodacc-main [bodacc]="provision.bodacc" [affaire]="affaire" [editMode]="editMode" [isStatusOpen]="isStatusOpen"
-  [instanceOfCustomerOrder]="instanceOfCustomerOrder" [provision]="provision"
+  [instanceOfCustomerOrder]="instanceOfCustomerOrder" [provision]="provision" (provisionChange)="noticeChange()"
   *ngIf="provision.bodacc && provision.provisionType && provision.provisionType.provisionScreenType.code==PROVISION_SCREEN_TYPE_BODACC">
 </bodacc-main>
 <formalite [formalite]="provision.formalite" [editMode]="editMode" [isStatusOpen]="isStatusOpen"

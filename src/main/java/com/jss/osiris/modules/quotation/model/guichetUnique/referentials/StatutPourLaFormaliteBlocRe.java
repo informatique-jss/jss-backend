@@ -10,6 +10,12 @@ import com.jss.osiris.modules.miscellaneous.model.ICode;
 
 @Entity
 public class StatutPourLaFormaliteBlocRe implements Serializable, ICode {
+    public StatutPourLaFormaliteBlocRe(String code) {
+        this.code = code;
+    }
+
+    public StatutPourLaFormaliteBlocRe() {
+    }
 
     @Id
     private String code;

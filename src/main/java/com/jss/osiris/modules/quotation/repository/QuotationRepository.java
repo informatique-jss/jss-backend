@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 
 import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.quotation.model.QuotationSearchResult;
+import com.jss.osiris.modules.quotation.model.QuotationStatus;
 
 public interface QuotationRepository extends CrudRepository<Quotation, Integer> {
 
@@ -43,4 +44,7 @@ public interface QuotationRepository extends CrudRepository<Quotation, Integer> 
                         @Param("customerOrderStatus") List<Integer> customerOrderStatus,
                         @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                         @Param("customerOrder") List<Integer> customerOrder);
+
+        @Query(value = "select n from Quotation n where quotationStatus=:quotationStatus and thirdReminderDateTime is null ")
+        List<Quotation> findQuotationForReminder(@Param("quotationStatus") QuotationStatus quotationStatus);
 }

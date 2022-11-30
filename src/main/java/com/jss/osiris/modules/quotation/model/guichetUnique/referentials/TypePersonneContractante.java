@@ -10,6 +10,12 @@ import com.jss.osiris.modules.miscellaneous.model.ICode;
 
 @Entity
 public class TypePersonneContractante implements Serializable, ICode {
+    public TypePersonneContractante(String code) {
+        this.code = code;
+    }
+
+    public TypePersonneContractante() {
+    }
 
     @Id
     private String code;

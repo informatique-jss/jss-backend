@@ -181,6 +181,26 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public AttachmentType getAttachmentTypeInvoice() throws OsirisException {
+        return getConstants().getAttachmentTypeInvoice();
+    }
+
+    @Override
+    public AttachmentType getAttachmentTypeKbisUpdated() throws OsirisException {
+        return getConstants().getAttachmentTypeKbisUpdated();
+    }
+
+    @Override
+    public AttachmentType getAttachmentTypePublicationFlag() throws OsirisException {
+        return getConstants().getAttachmentTypePublicationFlag();
+    }
+
+    @Override
+    public AttachmentType getAttachmentTypePublicationReceipt() throws OsirisException {
+        return getConstants().getAttachmentTypePublicationReceipt();
+    }
+
+    @Override
     public Country getCountryFrance() throws OsirisException {
         return getConstants().getCountryFrance();
     }
@@ -193,6 +213,136 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public BillingType getBillingTypeLogo() throws OsirisException {
         return getConstants().getBillingTypeLogo();
+    }
+
+    @Override
+    public BillingType getBillingTypeRedactedByJss() throws OsirisException {
+        return getConstants().getBillingTypeRedactedByJss();
+    }
+
+    @Override
+    public BillingType getBillingTypeBaloPackage() throws OsirisException {
+        return getConstants().getBillingTypeBaloPackage();
+    }
+
+    @Override
+    public BillingType getBillingTypePublicationPaper() throws OsirisException {
+        return getConstants().getBillingTypePublicationPaper();
+    }
+
+    @Override
+    public BillingType getBillingTypePublicationReceipt() throws OsirisException {
+        return getConstants().getBillingTypePublicationReceipt();
+    }
+
+    @Override
+    public BillingType getBillingTypePublicationFlag() throws OsirisException {
+        return getConstants().getBillingTypePublicationFlag();
+    }
+
+    @Override
+    public BillingType getBillingTypeBodaccFollowup() throws OsirisException {
+        return getConstants().getBillingTypeBodaccFollowup();
+    }
+
+    @Override
+    public BillingType getBillingTypeBodaccFollowupAndRedaction() throws OsirisException {
+        return getConstants().getBillingTypeBodaccFollowupAndRedaction();
+    }
+
+    @Override
+    public BillingType getBillingTypeNantissementDeposit() throws OsirisException {
+        return getConstants().getBillingTypeNantissementDeposit();
+    }
+
+    @Override
+    public BillingType getBillingTypeSocialShareNantissementRedaction() throws OsirisException {
+        return getConstants().getBillingTypeSocialShareNantissementRedaction();
+    }
+
+    @Override
+    public BillingType getBillingTypeBusinnessNantissementRedaction() throws OsirisException {
+        return getConstants().getBillingTypeBusinnessNantissementRedaction();
+    }
+
+    @Override
+    public BillingType getBillingTypeSellerPrivilegeRedaction() throws OsirisException {
+        return getConstants().getBillingTypeSellerPrivilegeRedaction();
+    }
+
+    @Override
+    public BillingType getBillingTypeTreatmentMultipleModiciation() throws OsirisException {
+        return getConstants().getBillingTypeTreatmentMultipleModiciation();
+    }
+
+    @Override
+    public BillingType getBillingTypeVacationMultipleModification() throws OsirisException {
+        return getConstants().getBillingTypeVacationMultipleModification();
+    }
+
+    @Override
+    public BillingType getBillingTypeRegisterPurchase() throws OsirisException {
+        return getConstants().getBillingTypeRegisterPurchase();
+    }
+
+    @Override
+    public BillingType getBillingTypeRegisterInitials() throws OsirisException {
+        return getConstants().getBillingTypeRegisterInitials();
+    }
+
+    @Override
+    public BillingType getBillingTypeRegisterShippingCosts() throws OsirisException {
+        return getConstants().getBillingTypeRegisterShippingCosts();
+    }
+
+    @Override
+    public BillingType getBillingTypeDisbursement() throws OsirisException {
+        return getConstants().getBillingTypeDisbursement();
+    }
+
+    @Override
+    public BillingType getBillingTypeFeasibilityStudy() throws OsirisException {
+        return getConstants().getBillingTypeFeasibilityStudy();
+    }
+
+    @Override
+    public BillingType getBillingTypeChronopostFees() throws OsirisException {
+        return getConstants().getBillingTypeChronopostFees();
+    }
+
+    @Override
+    public BillingType getBillingTypeBankCheque() throws OsirisException {
+        return getConstants().getBillingTypeBankCheque();
+    }
+
+    @Override
+    public BillingType getBillingTypeComplexeFile() throws OsirisException {
+        return getConstants().getBillingTypeComplexeFile();
+    }
+
+    @Override
+    public BillingType getBillingTypeDocumentScanning() throws OsirisException {
+        return getConstants().getBillingTypeDocumentScanning();
+    }
+
+    @Override
+    public BillingType getBillingTypeEmergency() throws OsirisException {
+        return getConstants().getBillingTypeEmergency();
+    }
+
+    @Override
+    public String getStringNantissementDepositFormeJuridiqueCode() throws OsirisException {
+        return getConstants().getStringNantissementDepositFormeJuridiqueCode();
+    }
+
+    @Override
+    public String getStrinSocialShareNantissementRedactionFormeJuridiqueCode() throws OsirisException {
+        return getConstants().getStringNantissementDepositFormeJuridiqueCode();
+    }
+
+    @Override
+    public String getStringBusinnessNantissementRedactionFormeJuridiqueCode() throws OsirisException {
+        return getConstants().getStringNantissementDepositFormeJuridiqueCode();
     }
 
     @Override
@@ -238,6 +388,11 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public JournalType getJournalTypeSpel() throws OsirisException {
         return getConstants().getJournalTypeSpel();
+    }
+
+    @Override
+    public JournalType getJournalTypePaper() throws OsirisException {
+        return getConstants().getJournalTypePaper();
     }
 
     @Override
@@ -323,6 +478,11 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public Employee getEmployeeSalesDirector() throws OsirisException {
         return getConstants().getEmployeeSalesDirector();
+    }
+
+    @Override
+    public Employee getEmployeeInvoiceReminderResponsible() throws OsirisException {
+        return getConstants().getEmployeeInvoiceReminderResponsible();
     }
 
     @Override
@@ -438,5 +598,15 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public TypeFormalite getTypeFormaliteCorrection() throws OsirisException {
         return getConstants().getTypeFormaliteCorrection();
+    }
+
+    @Override
+    public String getStringAccountingSharedMaiblox() throws OsirisException {
+        return getConstants().getAccountingSharedMaiblox();
+    }
+
+    @Override
+    public String getStringSalesSharedMailbox() throws OsirisException {
+        return getConstants().getSalesSharedMailbox();
     }
 }

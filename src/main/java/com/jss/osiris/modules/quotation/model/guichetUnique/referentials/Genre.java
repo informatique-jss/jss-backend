@@ -10,6 +10,12 @@ import com.jss.osiris.modules.miscellaneous.model.ICode;
 
 @Entity
 public class Genre implements Serializable, ICode {
+    public Genre(String code) {
+        this.code = code;
+    }
+
+    public Genre() {
+    }
 
     @Id
     private String code;

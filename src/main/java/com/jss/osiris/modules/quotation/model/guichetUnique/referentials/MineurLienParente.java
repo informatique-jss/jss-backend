@@ -10,6 +10,12 @@ import com.jss.osiris.modules.miscellaneous.model.ICode;
 
 @Entity
 public class MineurLienParente implements Serializable, ICode {
+    public MineurLienParente(String code) {
+        this.code = code;
+    }
+
+    public MineurLienParente() {
+    }
 
     @Id
     private String code;

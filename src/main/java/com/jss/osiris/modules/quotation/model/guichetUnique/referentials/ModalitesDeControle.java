@@ -10,6 +10,12 @@ import com.jss.osiris.modules.miscellaneous.model.ICode;
 
 @Entity
 public class ModalitesDeControle implements Serializable, ICode {
+    public ModalitesDeControle(String code) {
+        this.code = code;
+    }
+
+    public ModalitesDeControle() {
+    }
 
     @Id
     private String code;

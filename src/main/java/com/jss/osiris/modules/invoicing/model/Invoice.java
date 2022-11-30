@@ -11,10 +11,12 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -32,6 +34,7 @@ import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
 @Entity
+@Table(indexes = { @Index(name = "idx_invoice_status", columnList = "id_invoice_status") })
 public class Invoice implements Serializable, IId {
 
 	@Id
@@ -116,6 +119,10 @@ public class Invoice implements Serializable, IId {
 	@OneToMany(mappedBy = "invoice")
 	@JsonIgnoreProperties(value = { "invoice", "customerOrder" }, allowSetters = true)
 	private List<AccountingRecord> accountingRecords;
+
+	private LocalDateTime firstReminderDateTime;
+	private LocalDateTime secondReminderDateTime;
+	private LocalDateTime thirdReminderDateTime;
 
 	public Integer getId() {
 		return id;
@@ -307,6 +314,30 @@ public class Invoice implements Serializable, IId {
 
 	public void setProvider(Tiers provider) {
 		this.provider = provider;
+	}
+
+	public LocalDateTime getFirstReminderDateTime() {
+		return firstReminderDateTime;
+	}
+
+	public void setFirstReminderDateTime(LocalDateTime firstReminderDateTime) {
+		this.firstReminderDateTime = firstReminderDateTime;
+	}
+
+	public LocalDateTime getSecondReminderDateTime() {
+		return secondReminderDateTime;
+	}
+
+	public void setSecondReminderDateTime(LocalDateTime secondReminderDateTime) {
+		this.secondReminderDateTime = secondReminderDateTime;
+	}
+
+	public LocalDateTime getThirdReminderDateTime() {
+		return thirdReminderDateTime;
+	}
+
+	public void setThirdReminderDateTime(LocalDateTime thirdReminderDateTime) {
+		this.thirdReminderDateTime = thirdReminderDateTime;
 	}
 
 }

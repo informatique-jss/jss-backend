@@ -10,6 +10,12 @@ import com.jss.osiris.modules.miscellaneous.model.ICode;
 
 @Entity
 public class TaciteReconduction implements Serializable, ICode {
+    public TaciteReconduction(String code) {
+        this.code = code;
+    }
+
+    public TaciteReconduction() {
+    }
 
     @Id
     private String code;

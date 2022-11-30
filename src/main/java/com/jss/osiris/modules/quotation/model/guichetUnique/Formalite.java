@@ -24,6 +24,7 @@ import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeFor
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypePersonne;
 
 @Entity
+@JsonIgnoreProperties
 public class Formalite implements IId, IAttachment {
 
     @Id
@@ -43,7 +44,7 @@ public class Formalite implements IId, IAttachment {
     @JoinColumn(name = "id_content", nullable = false)
     Content content;
 
-    private Integer referenceMandataire;
+    private String referenceMandataire;
 
     @Column(nullable = false, length = 255)
     private String nomDossier;
@@ -266,20 +267,20 @@ public class Formalite implements IId, IAttachment {
         this.attachments = attachments;
     }
 
-    public Integer getReferenceMandataire() {
-        return referenceMandataire;
-    }
-
-    public void setReferenceMandataire(Integer referenceMandataire) {
-        this.referenceMandataire = referenceMandataire;
-    }
-
     public FormaliteStatus getFormaliteStatus() {
         return formaliteStatus;
     }
 
     public void setFormaliteStatus(FormaliteStatus formaliteStatus) {
         this.formaliteStatus = formaliteStatus;
+    }
+
+    public String getReferenceMandataire() {
+        return referenceMandataire;
+    }
+
+    public void setReferenceMandataire(String referenceMandataire) {
+        this.referenceMandataire = referenceMandataire;
     }
 
 }

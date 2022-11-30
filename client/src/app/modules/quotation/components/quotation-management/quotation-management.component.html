@@ -23,11 +23,6 @@
               <table class="full-width">
                 <tr>
                   <td>
-                    <radio-group-record-type [(model)]="quotation.recordType" [form]="quotationManagementForm"
-                      [isDisabled]="!editMode" propertyName="recordType" label="Type de dossier">
-                    </radio-group-record-type>
-                  </td>
-                  <td>
                     <radio-group-quotation-label-type [(model)]="quotation.quotationLabelType"
                       [form]="quotationManagementForm" [isDisabled]="!editMode" propertyName="quotationLabelType"
                       [label]="'Libellé sur '+ (instanceOfCustomerOrder ? 'commande' : 'devis')">
@@ -100,8 +95,7 @@
                   Facture
                 </mat-panel-title>
                 <mat-panel-description>
-                  <mat-icon matTooltip="Raffraichir depuis le tiers / responsable"
-                    (click)="refreshBillingDocument();$event.stopPropagation();" class="pointer">refresh</mat-icon>
+                  <mat-icon matTooltip="Raffraichir depuis le tiers / responsable" class="pointer">refresh</mat-icon>
                   <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
                 </mat-panel-description>
               </mat-expansion-panel-header>
@@ -211,6 +205,30 @@
                         <li *ngFor="let mail of billingMailComputeResult.recipientsMailCc">{{mail.mail}}</li>
                       </ul>
                     </div>
+                  </td>
+                </tr>
+                <tr *ngIf=" billingMailComputeResult && billingMailComputeResult.recipientsMailTo.length==0">
+                  <td class="color-warn">Aucun mail trouvé !</td>
+                </tr>
+              </table>
+
+              <table class="full-width">
+                <tr *ngIf="invoiceLabelResult">
+                  <td>
+                    <p>Le libellé de la facture est le suivant (récupéré depuis {{invoiceLabelResult.labelOrigin}}) :
+                    </p>
+                    <p [ngClass]="{'color-warn':!invoiceLabelResult.billingLabel}">
+                      {{invoiceLabelResult.billingLabel?invoiceLabelResult.billingLabel:"Libellé inconnu"}}</p>
+                    <p [ngClass]="{'color-warn':!invoiceLabelResult.billingLabelAddress}">
+                      {{invoiceLabelResult.billingLabelAddress?invoiceLabelResult.billingLabelAddress:"Adresse"}}</p>
+                    <p
+                      [ngClass]="{'color-warn':!invoiceLabelResult.billingLabelPostalCode || !invoiceLabelResult.billingLabelCity || !invoiceLabelResult.billingLabelCountry}">
+                      {{invoiceLabelResult.billingLabelPostalCode?invoiceLabelResult.billingLabelPostalCode:"Code
+                      postal inconnu"}}
+                      {{invoiceLabelResult.billingLabelCity?invoiceLabelResult.billingLabelCity.label:"Ville inconnue"}}
+                      {{invoiceLabelResult.billingLabelCountry?invoiceLabelResult.billingLabelCountry.label:"Pays
+                      inconnu"}}
+                    </p>
                   </td>
                 </tr>
                 <tr *ngIf=" billingMailComputeResult && billingMailComputeResult.recipientsMailTo.length==0">

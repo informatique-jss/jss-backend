@@ -21,4 +21,30 @@ export interface Provision extends IAttachment {
   assoAffaireOrder: AssoAffaireOrder;
   assignedTo: Employee;
   isLogo: boolean;
+  isRedactedByJss: boolean;
+  isBaloPackage: boolean;
+  isPublicationReceipt: boolean;
+  isPublicationPaper: boolean;
+  publicationPaperAffaireNumber: number;
+  publicationPaperClientNumber: number;
+  isPublicationFlag: boolean;
+  isBodaccFollowup: boolean;
+  isBodaccFollowupAndRedaction: boolean;
+  isNantissementDeposit: boolean;
+  isSocialShareNantissementRedaction: boolean;
+  isBusinnessNantissementRedaction: boolean;
+  isSellerPrivilegeRedaction: boolean;
+  isTreatmentMultipleModiciation: boolean;
+  isVacationMultipleModification: boolean;
+  isRegisterPurchase: boolean;
+  isRegisterInitials: boolean;
+  isRegisterShippingCosts: boolean;
+  isDisbursement: boolean;
+  isFeasibilityStudy: boolean;
+  isChronopostFees: boolean;
+  isBankCheque: boolean;
+  isComplexeFile: boolean;
+  isDocumentScanning: boolean;
+  isEmergency: boolean;
+
 }

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { BODACC_ENTITY_TYPE } from 'src/app/routing/search/search.component';
@@ -28,6 +28,7 @@ export class BodaccMainComponent implements OnInit {
   @Input() editMode: boolean = false;
   @Input() instanceOfCustomerOrder: boolean = false;
   @Input() isStatusOpen: boolean = true;
+  @Output() provisionChange: EventEmitter<void> = new EventEmitter<void>();
   @ViewChild(BodaccSaleComponent) bodaccSaleComponent: BodaccSaleComponent | undefined;
   @ViewChild(BodaccFusionComponent) bodaccFusionComponent: BodaccFusionComponent | undefined;
   @ViewChild(BodaccSplitComponent) bodaccSplitComponent: BodaccSplitComponent | undefined;
@@ -111,6 +112,10 @@ export class BodaccMainComponent implements OnInit {
   toggleTabs() {
     if (this.tabs != undefined)
       this.tabs.realignInkBar();
+  }
+
+  provisionChangeFunction() {
+    this.provisionChange.emit();
   }
 
 }

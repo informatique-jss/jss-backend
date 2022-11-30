@@ -72,6 +72,78 @@ public class Provision implements IId, IAttachment {
 	@Column(nullable = false)
 	private Boolean isLogo;
 
+	@Column(nullable = false)
+	private Boolean isRedactedByJss;
+
+	@Column(nullable = false)
+	private Boolean isBaloPackage;
+
+	@Column(nullable = false)
+	private Boolean isPublicationPaper;
+
+	private Integer publicationPaperAffaireNumber;
+	private Integer publicationPaperClientNumber;
+
+	@Column(nullable = false)
+	private Boolean isPublicationReceipt;
+
+	@Column(nullable = false)
+	private Boolean isPublicationFlag;
+
+	@Column(nullable = false)
+	private Boolean isBodaccFollowup;
+
+	@Column(nullable = false)
+	private Boolean isBodaccFollowupAndRedaction;
+
+	@Column(nullable = false)
+	private Boolean isNantissementDeposit;
+
+	@Column(nullable = false)
+	private Boolean isSocialShareNantissementRedaction;
+
+	@Column(nullable = false)
+	private Boolean isBusinnessNantissementRedaction;
+
+	@Column(nullable = false)
+	private Boolean isSellerPrivilegeRedaction;
+
+	@Column(nullable = false)
+	private Boolean isTreatmentMultipleModiciation;
+
+	@Column(nullable = false)
+	private Boolean isVacationMultipleModification;
+
+	@Column(nullable = false)
+	private Boolean isRegisterPurchase;
+
+	@Column(nullable = false)
+	private Boolean isRegisterInitials;
+
+	@Column(nullable = false)
+	private Boolean isRegisterShippingCosts;
+
+	@Column(nullable = false)
+	private Boolean isDisbursement;
+
+	@Column(nullable = false)
+	private Boolean isFeasibilityStudy;
+
+	@Column(nullable = false)
+	private Boolean isChronopostFees;
+
+	@Column(nullable = false)
+	private Boolean isBankCheque;
+
+	@Column(nullable = false)
+	private Boolean isComplexeFile;
+
+	@Column(nullable = false)
+	private Boolean isDocumentScanning;
+
+	@Column(nullable = false)
+	private Boolean isEmergency;
+
 	@OneToMany(mappedBy = "provision")
 	@JsonIgnoreProperties(value = { "provision" }, allowSetters = true)
 	private List<Attachment> attachments;
@@ -170,6 +242,206 @@ public class Provision implements IId, IAttachment {
 
 	public void setFormalite(Formalite formalite) {
 		this.formalite = formalite;
+	}
+
+	public Boolean getIsRedactedByJss() {
+		return isRedactedByJss;
+	}
+
+	public void setIsRedactedByJss(Boolean isRedactedByJss) {
+		this.isRedactedByJss = isRedactedByJss;
+	}
+
+	public Boolean getIsBaloPackage() {
+		return isBaloPackage;
+	}
+
+	public void setIsBaloPackage(Boolean isBaloPackage) {
+		this.isBaloPackage = isBaloPackage;
+	}
+
+	public Boolean getIsPublicationReceipt() {
+		return isPublicationReceipt;
+	}
+
+	public void setIsPublicationReceipt(Boolean isPublicationReceipt) {
+		this.isPublicationReceipt = isPublicationReceipt;
+	}
+
+	public Boolean getIsPublicationFlag() {
+		return isPublicationFlag;
+	}
+
+	public void setIsPublicationFlag(Boolean isPublicationFlag) {
+		this.isPublicationFlag = isPublicationFlag;
+	}
+
+	public Boolean getIsBodaccFollowup() {
+		return isBodaccFollowup;
+	}
+
+	public void setIsBodaccFollowup(Boolean isBodaccFollowup) {
+		this.isBodaccFollowup = isBodaccFollowup;
+	}
+
+	public Boolean getIsBodaccFollowupAndRedaction() {
+		return isBodaccFollowupAndRedaction;
+	}
+
+	public void setIsBodaccFollowupAndRedaction(Boolean isBodaccFollowupAndRedaction) {
+		this.isBodaccFollowupAndRedaction = isBodaccFollowupAndRedaction;
+	}
+
+	public Boolean getIsNantissementDeposit() {
+		return isNantissementDeposit;
+	}
+
+	public void setIsNantissementDeposit(Boolean isNantissementDeposit) {
+		this.isNantissementDeposit = isNantissementDeposit;
+	}
+
+	public Boolean getIsSocialShareNantissementRedaction() {
+		return isSocialShareNantissementRedaction;
+	}
+
+	public void setIsSocialShareNantissementRedaction(Boolean isSocialShareNantissementRedaction) {
+		this.isSocialShareNantissementRedaction = isSocialShareNantissementRedaction;
+	}
+
+	public Boolean getIsBusinnessNantissementRedaction() {
+		return isBusinnessNantissementRedaction;
+	}
+
+	public void setIsBusinnessNantissementRedaction(Boolean isBusinnessNantissementRedaction) {
+		this.isBusinnessNantissementRedaction = isBusinnessNantissementRedaction;
+	}
+
+	public Boolean getIsSellerPrivilegeRedaction() {
+		return isSellerPrivilegeRedaction;
+	}
+
+	public void setIsSellerPrivilegeRedaction(Boolean isSellerPrivilegeRedaction) {
+		this.isSellerPrivilegeRedaction = isSellerPrivilegeRedaction;
+	}
+
+	public Boolean getIsTreatmentMultipleModiciation() {
+		return isTreatmentMultipleModiciation;
+	}
+
+	public void setIsTreatmentMultipleModiciation(Boolean isTreatmentMultipleModiciation) {
+		this.isTreatmentMultipleModiciation = isTreatmentMultipleModiciation;
+	}
+
+	public Boolean getIsVacationMultipleModification() {
+		return isVacationMultipleModification;
+	}
+
+	public void setIsVacationMultipleModification(Boolean isVacationMultipleModification) {
+		this.isVacationMultipleModification = isVacationMultipleModification;
+	}
+
+	public Boolean getIsRegisterPurchase() {
+		return isRegisterPurchase;
+	}
+
+	public void setIsRegisterPurchase(Boolean isRegisterPurchase) {
+		this.isRegisterPurchase = isRegisterPurchase;
+	}
+
+	public Boolean getIsRegisterInitials() {
+		return isRegisterInitials;
+	}
+
+	public void setIsRegisterInitials(Boolean isRegisterInitials) {
+		this.isRegisterInitials = isRegisterInitials;
+	}
+
+	public Boolean getIsRegisterShippingCosts() {
+		return isRegisterShippingCosts;
+	}
+
+	public void setIsRegisterShippingCosts(Boolean isRegisterShippingCosts) {
+		this.isRegisterShippingCosts = isRegisterShippingCosts;
+	}
+
+	public Boolean getIsDisbursement() {
+		return isDisbursement;
+	}
+
+	public void setIsDisbursement(Boolean isDisbursement) {
+		this.isDisbursement = isDisbursement;
+	}
+
+	public Boolean getIsFeasibilityStudy() {
+		return isFeasibilityStudy;
+	}
+
+	public void setIsFeasibilityStudy(Boolean isFeasibilityStudy) {
+		this.isFeasibilityStudy = isFeasibilityStudy;
+	}
+
+	public Boolean getIsChronopostFees() {
+		return isChronopostFees;
+	}
+
+	public void setIsChronopostFees(Boolean isChronopostFees) {
+		this.isChronopostFees = isChronopostFees;
+	}
+
+	public Boolean getIsBankCheque() {
+		return isBankCheque;
+	}
+
+	public void setIsBankCheque(Boolean isBankCheque) {
+		this.isBankCheque = isBankCheque;
+	}
+
+	public Boolean getIsComplexeFile() {
+		return isComplexeFile;
+	}
+
+	public void setIsComplexeFile(Boolean isComplexeFile) {
+		this.isComplexeFile = isComplexeFile;
+	}
+
+	public Boolean getIsDocumentScanning() {
+		return isDocumentScanning;
+	}
+
+	public void setIsDocumentScanning(Boolean isDocumentScanning) {
+		this.isDocumentScanning = isDocumentScanning;
+	}
+
+	public Boolean getIsEmergency() {
+		return isEmergency;
+	}
+
+	public void setIsEmergency(Boolean isEmergency) {
+		this.isEmergency = isEmergency;
+	}
+
+	public Boolean getIsPublicationPaper() {
+		return isPublicationPaper;
+	}
+
+	public void setIsPublicationPaper(Boolean isPublicationPaper) {
+		this.isPublicationPaper = isPublicationPaper;
+	}
+
+	public Integer getPublicationPaperAffaireNumber() {
+		return publicationPaperAffaireNumber;
+	}
+
+	public void setPublicationPaperAffaireNumber(Integer publicationPaperAffaireNumber) {
+		this.publicationPaperAffaireNumber = publicationPaperAffaireNumber;
+	}
+
+	public Integer getPublicationPaperClientNumber() {
+		return publicationPaperClientNumber;
+	}
+
+	public void setPublicationPaperClientNumber(Integer publicationPaperClientNumber) {
+		this.publicationPaperClientNumber = publicationPaperClientNumber;
 	}
 
 }

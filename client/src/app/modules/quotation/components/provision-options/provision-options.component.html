@@ -1,21 +1,198 @@
-<form [formGroup]="optionForm" *ngIf=" provision">
-  <div class="form-div">
-    <table class="full-width">
-      <tr *ngIf="displayOption(billingTypeLogo)">
-        <td>
-          <generic-toggle [(model)]="provision.isLogo" label="Logo ?" [form]="optionForm" propertyName="isLogo"
-            (onToggleChange)="provisionChangeFunction()"
-            [hint]="(provision.id)?undefined:'Veuiller enregistrer pour pouvoir ajouter le logo'">
-          </generic-toggle>
-        </td>
-        <td *ngIf="provision.isLogo && provision.id">
-          <single-attachment [entity]="provision!" [entityType]="PROVISION_ENTITY_TYPE.entityType" [editMode]="editMode"
-            [attachmentTypeToDisplay]="attachmentTypeLogo" (onUploadedFile)="updateAttachments($event)">
-          </single-attachment>
-        </td>
-        <td *ngIf="provision.isLogo && provision.id && logoUrl "><img width="150px" [src]="logoUrl" />
-        </td>
-      </tr>
-    </table>
-  </div>
-</form>
+<fieldset [disabled]="editMode==false" class="fieldset-no-border">
+  <form [formGroup]="optionForm" *ngIf=" provision">
+    <div class="form-div">
+      <table class="full-width">
+        <tr *ngIf="displayOption(billingTypeLogo)">
+          <td>
+            <generic-toggle [(model)]="provision.isLogo" label="Logo ?" [form]="optionForm" propertyName="isLogo"
+              (onToggleChange)="provisionChangeFunction()"
+              [hint]="(provision.id)?undefined:'Veuiller enregistrer pour pouvoir ajouter le logo'">
+            </generic-toggle>
+          </td>
+          <td *ngIf="provision.isLogo && provision.id">
+            <single-attachment [entity]="provision!" [entityType]="PROVISION_ENTITY_TYPE.entityType"
+              [editMode]="editMode" [attachmentTypeToDisplay]="attachmentTypeLogo"
+              (onUploadedFile)="updateAttachments($event)">
+            </single-attachment>
+          </td>
+          <td *ngIf="provision.isLogo && provision.id && logoUrl "><img width="150px" [src]="logoUrl" />
+          </td>
+        </tr>
+        <tr *ngIf="displayOption(billingTypeRedactedByJss)">
+          <td>
+            <generic-toggle [(model)]="provision.isRedactedByJss" label="Rédigé par le JSS ?" [form]="optionForm"
+              (onToggleChange)="provisionChangeFunction()" propertyName="isRedactedByJss"></generic-toggle>
+          </td>
+        </tr>
+        <tr *ngIf="displayOption(billingTypeBaloPackage)">
+          <td>
+            <generic-toggle [(model)]="provision.isBaloPackage" label="Forfait Image BALO ?" [form]="optionForm"
+              (onToggleChange)="provisionChangeFunction()" propertyName="isBaloPackage"></generic-toggle>
+          </td>
+        </tr>
+        <tr *ngIf="displayOption(billingTypePublicationReceipt) && provision.announcement && provision.announcement.confrere
+         && provision.announcement.confrere.journalType.id==journalTypePaper.id">
+          <td>
+            <generic-toggle [(model)]="provision.isPublicationReceipt" label="Justificatif de parution ?"
+              (onToggleChange)="provisionChangeFunction()" [form]="optionForm" propertyName="isPublicationReceipt">
+            </generic-toggle>
+          </td>
+        </tr>
+        <tr *ngIf="displayOption(billingTypePublicationReceipt) && provision.announcement && provision.announcement.confrere
+         && provision.announcement.confrere.journalType.id==journalTypePaper.id">
+          <td>
+            <generic-toggle [(model)]="provision.isPublicationPaper" label="Envoi de journaux papier ?"
+              [form]="optionForm" (onToggleChange)="fillPublicationPaperNumber();provisionChangeFunction()"
+              propertyName="isPublicationPaper">
+            </generic-toggle>
+          </td>
+          <td *ngIf="provision.isPublicationPaper">
+            <generic-input [(model)]="provision.publicationPaperClientNumber" label="Nombre d'exemplaires Client"
+              [form]="optionForm" propertyName="publicationPaperClientNumber" [isMandatory]="true"
+              (onInputChange)="provisionChangeFunction()" [isDisabled]="!editMode" type="number"></generic-input>
+          </td>
+          <td *ngIf="provision.isPublicationPaper">
+            <generic-input [(model)]="provision.publicationPaperAffaireNumber" label="Nombre d'exemplaires Affaire"
+              [form]="optionForm" propertyName="publicationPaperAffaireNumber" [isMandatory]="true"
+              (onInputChange)="provisionChangeFunction()" [isDisabled]="!editMode" type="number"></generic-input>
+          </td>
+        </tr>
+        <tr *ngIf="displayOption(billingTypePublicationFlag)  && provision.announcement && provision.announcement.confrere
+      && provision.announcement.confrere.journalType.id==journalTypeSpel.id">
+          <td>
+            <generic-toggle [(model)]="provision.isPublicationFlag" label="Témoin de Parution ?" [form]="optionForm"
+              (onToggleChange)="provisionChangeFunction()" propertyName="isPublicationFlag"></generic-toggle>
+          </td>
+        </tr>
+        <tr *ngIf="displayOption(billingTypeBodaccFollowup)">
+          <td>
+            <generic-toggle [(model)]="provision.isBodaccFollowup" label="Suivi BODACC ?" [form]="optionForm"
+              (onToggleChange)="toggleIsBodaccFollowup();provisionChangeFunction()" propertyName="isBodaccFollowup">
+            </generic-toggle>
+          </td>
+        </tr>
+        <tr *ngIf="displayOption(billingTypeBodaccFollowupAndRedaction)">
+          <td>
+            <generic-toggle [(model)]="provision.isBodaccFollowupAndRedaction"
+              (onToggleChange)="toggleIsBodaccRedaction();provisionChangeFunction()"
+              label="Rédaction, Publication & Suivi BODACC ?" [form]="optionForm"
+              propertyName="isBodaccFollowupAndRedaction"></generic-toggle>
+          </td>
+        </tr>
+        <tr *ngIf="displayOption(billingTypeNantissementDeposit) && canDisplayNantissementDeposit()">
+          <td>
+            <generic-toggle [(model)]="provision.isNantissementDeposit" label="Dépôt de Nantissement ?"
+              (onToggleChange)="provisionChangeFunction()" [form]="optionForm" propertyName="isNantissementDeposit">
+            </generic-toggle>
+          </td>
+        </tr>
+        <tr *ngIf="displayOption(billingTypeSocialShareNantissementRedaction)  && canDisplayNantissementSocialShare()">
+          <td>
+            <generic-toggle [(model)]="provision.isSocialShareNantissementRedaction"
+              (onToggleChange)="provisionChangeFunction()"
+              label="Rédaction de Bordereaux de nantissement de parts sociales ?" [form]="optionForm"
+              propertyName="isSocialShareNantissementRedaction"></generic-toggle>
+          </td>
+        </tr>
+        <tr *ngIf="displayOption(billingTypeBusinnessNantissementRedaction)  && canDisplayNantissementBusiness()">
+          <td>
+            <generic-toggle [(model)]="provision.isBusinnessNantissementRedaction"
+              label="Rédaction de Bordereaux de nantissement de fonds de commerce ?" [form]="optionForm"
+              (onToggleChange)="changeNantissementDeposit(provision.isSellerPrivilegeRedaction);provisionChangeFunction()"
+              propertyName="isBusinnessNantissementRedaction"></generic-toggle>
+          </td>
+        </tr>
+        <tr *ngIf="displayOption(billingTypeSellerPrivilegeRedaction) && canDisplayNantissementBusiness()">
+          <td>
+            <generic-toggle [(model)]="provision.isSellerPrivilegeRedaction"
+              label="Rédaction de Bordereaux de privilège vendeur ?" [form]="optionForm"
+              (onToggleChange)="changeNantissementDeposit(provision.isSellerPrivilegeRedaction);provisionChangeFunction()"
+              propertyName="isSellerPrivilegeRedaction"></generic-toggle>
+          </td>
+        </tr>
+        <tr *ngIf="displayOption(billingTypeTreatmentMultipleModiciation)">
+          <td>
+            <generic-toggle [(model)]="provision.isTreatmentMultipleModiciation"
+              label="Traitement - Modification Multiple ?" [form]="optionForm"
+              (onToggleChange)="toggleIsMultipleTreatment();provisionChangeFunction()"
+              propertyName="isTreatmentMultipleModiciation">
+            </generic-toggle>
+          </td>
+        </tr>
+        <tr *ngIf="displayOption(billingTypeVacationMultipleModification)">
+          <td>
+            <generic-toggle [(model)]="provision.isVacationMultipleModification"
+              label="Vacation - Modification Multiple ?" [form]="optionForm"
+              (onToggleChange)="toggleIsMultipleVacation();provisionChangeFunction()"
+              propertyName="isVacationMultipleModification">
+            </generic-toggle>
+          </td>
+        </tr>
+        <tr *ngIf="displayOption(billingTypeRegisterPurchase)">
+          <td>
+            <generic-toggle [(model)]="provision.isRegisterPurchase" label="Achat de Registre ?" [form]="optionForm"
+              (onToggleChange)="provisionChangeFunction()" propertyName="isRegisterPurchase"></generic-toggle>
+          </td>
+        </tr>
+        <tr *ngIf="displayOption(billingTypeRegisterInitials)">
+          <td>
+            <generic-toggle [(model)]="provision.isRegisterInitials" label="Paraphe de Registre ?" [form]="optionForm"
+              (onToggleChange)="provisionChangeFunction()" propertyName="isRegisterInitials"></generic-toggle>
+          </td>
+        </tr>
+        <tr *ngIf="displayOption(billingTypeRegisterShippingCosts)">
+          <td>
+            <generic-toggle [(model)]="provision.isRegisterShippingCosts" label="Frais de Port de Registre ?"
+              (onToggleChange)="provisionChangeFunction()" [form]="optionForm" propertyName="isRegisterShippingCosts">
+            </generic-toggle>
+          </td>
+        </tr>
+        <tr *ngIf="displayOption(billingTypeDisbursement)">
+          <td>
+            <generic-toggle [(model)]="provision.isDisbursement" label="Débours ?" [form]="optionForm"
+              (onToggleChange)="provisionChangeFunction()" propertyName="isDisbursement"></generic-toggle>
+          </td>
+        </tr>
+        <tr *ngIf="displayOption(billingTypeFeasibilityStudy)">
+          <td>
+            <generic-toggle [(model)]="provision.isFeasibilityStudy" label="Etude de faisabilité ?" [form]="optionForm"
+              (onToggleChange)="provisionChangeFunction()" propertyName="isFeasibilityStudy"></generic-toggle>
+          </td>
+        </tr>
+        <tr *ngIf="displayOption(billingTypeChronopostFees)">
+          <td>
+            <generic-toggle [(model)]="provision.isChronopostFees" label="Frais de Chronopost ?" [form]="optionForm"
+              (onToggleChange)="provisionChangeFunction()" propertyName="isChronopostFees"></generic-toggle>
+          </td>
+        </tr>
+        <tr *ngIf="displayOption(billingTypeBankCheque)">
+          <td>
+            <generic-toggle [(model)]="provision.isBankCheque" label="Chèque de Banque / Virement ?" [form]="optionForm"
+              (onToggleChange)="provisionChangeFunction()" propertyName="isBankCheque">
+            </generic-toggle>
+          </td>
+        </tr>
+        <tr *ngIf="displayOption(billingTypeComplexeFile)">
+          <td>
+            <generic-toggle [(model)]="provision.isComplexeFile" label="Analyse Dossier Complexe ?" [form]="optionForm"
+              (onToggleChange)="provisionChangeFunction()" propertyName="isComplexeFile"></generic-toggle>
+          </td>
+        </tr>
+        <tr *ngIf="displayOption(billingTypeDocumentScanning)">
+          <td>
+            <generic-toggle [(model)]="provision.isDocumentScanning" label="Numérisation de Document ?"
+              (onToggleChange)="provisionChangeFunction()" [form]="optionForm" propertyName="isDocumentScanning">
+            </generic-toggle>
+          </td>
+        </tr>
+        <tr *ngIf="displayOption(billingTypeEmergency)">
+          <td>
+            <generic-toggle [(model)]="provision.isEmergency" label="Urgence ?" [form]="optionForm"
+              (onToggleChange)="provisionChangeFunction()" propertyName="isEmergency">
+            </generic-toggle>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </form>
+</fieldset>

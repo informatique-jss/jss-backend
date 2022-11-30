@@ -27,6 +27,7 @@ public class QuotationStatus implements Serializable, IId {
 	 */
 	public static String OPEN = "OPEN";
 	public static String TO_VERIFY = "TO_VERIFY";
+	public static String QUOTATION_WAITING_CONFRERE = "QUOTATION_WAITING_CONFRERE";
 	public static String SENT_TO_CUSTOMER = "SENT_TO_CUSTOMER";
 	public static String VALIDATED_BY_CUSTOMER = "VALIDATED_BY_CUSTOMER";
 	public static String REFUSED_BY_CUSTOMER = "REFUSED_BY_CUSTOMER";

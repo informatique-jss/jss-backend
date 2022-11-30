@@ -11,20 +11,12 @@ export interface Announcement extends IAttachment, IDocument {
   department: Department;
   confrere: Confrere | undefined;
   publicationDate: Date;
-  isRedactedByJss: boolean;
   notice: string;
   noticeHeader: string;
   noticeTypes: NoticeType[];
   noticeTypeFamily: NoticeTypeFamily;
   isHeader: boolean;
   isHeaderFree: boolean;
-  isLegalDisplay: boolean;
-  posterProductionPrice: number;
-  posterProductionJSSPrice: number;
-  billPostingPrice: number;
-  billPostingJSSPrice: number;
-  bailiffReportPrice: number;
-  bailiffReportJSSPrice: number;
   isProofReadingDocument: boolean;
   announcementStatus: AnnouncementStatus;
 }

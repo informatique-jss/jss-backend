@@ -10,6 +10,12 @@ import com.jss.osiris.modules.miscellaneous.model.ICode;
 
 @Entity
 public class DestinationLocationGeranceMand implements Serializable, ICode {
+    public DestinationLocationGeranceMand(String code) {
+        this.code = code;
+    }
+
+    public DestinationLocationGeranceMand() {
+    }
 
     @Id
     private String code;

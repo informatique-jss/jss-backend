@@ -10,6 +10,12 @@ import com.jss.osiris.modules.miscellaneous.model.ICode;
 
 @Entity
 public class QualiteDeNonSedentarite implements Serializable, ICode {
+    public QualiteDeNonSedentarite(String code) {
+        this.code = code;
+    }
+
+    public QualiteDeNonSedentarite() {
+    }
 
     @Id
     private String code;

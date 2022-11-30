@@ -145,6 +145,7 @@ export class TiersComponent implements OnInit, AfterContentChecked {
     this.createMode = true;
     this.editMode = true;
     this.tiers = {} as Tiers;
+    this.tiers.isProvisionalPaymentMandatory = true;
     this.tiers.responsables = [] as Array<Responsable>;
     this.tiersService.setCurrentViewedTiers(this.tiers);
     this.appService.changeHeaderTitle("Nouveau Tiers / Responsable");

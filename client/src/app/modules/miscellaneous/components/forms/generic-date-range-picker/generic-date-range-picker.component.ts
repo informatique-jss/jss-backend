@@ -178,4 +178,15 @@ export class GenericDateRangePickerComponent implements OnInit {
     this.onDateChange.emit(value);
   }
 
+  setToday() {
+    this.modelStart = new Date();
+    this.modelEnd = new Date();
+    if (this.form) {
+      this.form.get(this.propertyNameEnd)?.setValue(this.modelEnd);
+      this.form.get(this.propertyNameStart)?.setValue(this.modelStart);
+    }
+    this.modelEndChange.emit(this.modelEnd);
+    this.modelStartChange.emit(this.modelStart);
+  }
+
 }

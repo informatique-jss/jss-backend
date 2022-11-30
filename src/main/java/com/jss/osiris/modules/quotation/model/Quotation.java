@@ -9,11 +9,13 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -22,13 +24,12 @@ import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.model.IAttachment;
-import com.jss.osiris.modules.miscellaneous.model.Mail;
-import com.jss.osiris.modules.miscellaneous.model.Phone;
 import com.jss.osiris.modules.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
 @Entity
+@Table(indexes = { @Index(name = "idx_quotation_status", columnList = "id_quotation_status") })
 public class Quotation implements IQuotation, IAttachment {
 
 	@Id
@@ -62,6 +63,8 @@ public class Quotation implements IQuotation, IAttachment {
 	@ManyToOne
 	@JoinColumn(name = "id_quotation_status")
 	private QuotationStatus quotationStatus;
+
+	private LocalDateTime lastStatusUpdate;
 
 	@Column(columnDefinition = "TEXT")
 	private String observations;
@@ -97,14 +100,6 @@ public class Quotation implements IQuotation, IAttachment {
 	@JsonIgnoreProperties(value = { "quotation" }, allowSetters = true)
 	private List<AssoAffaireOrder> assoAffaireOrders;
 
-	@ManyToMany
-	@JoinTable(name = "asso_quotation_mail", joinColumns = @JoinColumn(name = "id_quotation"), inverseJoinColumns = @JoinColumn(name = "id_mail"))
-	private List<Mail> mails;
-
-	@ManyToMany
-	@JoinTable(name = "asso_quotation_phone", joinColumns = @JoinColumn(name = "id_quotation"), inverseJoinColumns = @JoinColumn(name = "id_phone"))
-	private List<Phone> phones;
-
 	@Column(nullable = false)
 	private Boolean overrideSpecialOffer;
 
@@ -118,6 +113,14 @@ public class Quotation implements IQuotation, IAttachment {
 	@JoinTable(name = "asso_quotation_customer_order", joinColumns = @JoinColumn(name = "id_quotation"), inverseJoinColumns = @JoinColumn(name = "id_customer_order"))
 	@JsonIgnoreProperties(value = { "quotations" }, allowSetters = true)
 	private List<CustomerOrder> customerOrders;
+
+	private Boolean isCreatedFromWebSite;
+
+	private String centralPayPaymentRequestId;
+
+	private LocalDateTime firstReminderDateTime;
+	private LocalDateTime secondReminderDateTime;
+	private LocalDateTime thirdReminderDateTime;
 
 	public Integer getId() {
 		return id;
@@ -231,22 +234,6 @@ public class Quotation implements IQuotation, IAttachment {
 		this.recordType = recordType;
 	}
 
-	public List<Mail> getMails() {
-		return mails;
-	}
-
-	public void setMails(List<Mail> mails) {
-		this.mails = mails;
-	}
-
-	public List<Phone> getPhones() {
-		return phones;
-	}
-
-	public void setPhones(List<Phone> phones) {
-		this.phones = phones;
-	}
-
 	public Boolean getOverrideSpecialOffer() {
 		return overrideSpecialOffer;
 	}
@@ -301,6 +288,54 @@ public class Quotation implements IQuotation, IAttachment {
 
 	public void setAssoAffaireOrders(List<AssoAffaireOrder> assoAffaireOrders) {
 		this.assoAffaireOrders = assoAffaireOrders;
+	}
+
+	public LocalDateTime getLastStatusUpdate() {
+		return lastStatusUpdate;
+	}
+
+	public void setLastStatusUpdate(LocalDateTime lastStatusUpdate) {
+		this.lastStatusUpdate = lastStatusUpdate;
+	}
+
+	public Boolean getIsCreatedFromWebSite() {
+		return isCreatedFromWebSite;
+	}
+
+	public void setIsCreatedFromWebSite(Boolean isCreatedFromWebSite) {
+		this.isCreatedFromWebSite = isCreatedFromWebSite;
+	}
+
+	public String getCentralPayPaymentRequestId() {
+		return centralPayPaymentRequestId;
+	}
+
+	public void setCentralPayPaymentRequestId(String centralPayPaymentRequestId) {
+		this.centralPayPaymentRequestId = centralPayPaymentRequestId;
+	}
+
+	public LocalDateTime getFirstReminderDateTime() {
+		return firstReminderDateTime;
+	}
+
+	public void setFirstReminderDateTime(LocalDateTime firstReminderDateTime) {
+		this.firstReminderDateTime = firstReminderDateTime;
+	}
+
+	public LocalDateTime getSecondReminderDateTime() {
+		return secondReminderDateTime;
+	}
+
+	public void setSecondReminderDateTime(LocalDateTime secondReminderDateTime) {
+		this.secondReminderDateTime = secondReminderDateTime;
+	}
+
+	public LocalDateTime getThirdReminderDateTime() {
+		return thirdReminderDateTime;
+	}
+
+	public void setThirdReminderDateTime(LocalDateTime thirdReminderDateTime) {
+		this.thirdReminderDateTime = thirdReminderDateTime;
 	}
 
 }

@@ -10,6 +10,12 @@ import com.jss.osiris.modules.miscellaneous.model.ICode;
 
 @Entity
 public class NatureVoletSocial implements Serializable, ICode {
+    public NatureVoletSocial(String code) {
+        this.code = code;
+    }
+
+    public NatureVoletSocial() {
+    }
 
     @Id
     private String code;

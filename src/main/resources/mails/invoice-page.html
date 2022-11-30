@@ -51,7 +51,7 @@
             <td style="text-align: center;">
                 <p>Facture n°<span th:text="${invoice.id}"></span></p>
                 <p>Paris le <span th:text="${invoiceCreatedDate}"></span></p>
-                <p th:if="${invoice.isCommandNumberMandatory}">Commande externe <span
+                <p th:if="${invoice.isCommandNumberMandatory}">Commande externe n°<span
                         th:text="${invoice.commandNumber}"></span></p>
             </td>
             <td></td>

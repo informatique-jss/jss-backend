@@ -49,4 +49,6 @@ public interface InvoiceService {
 
     public Invoice cancelInvoice(Invoice invoice) throws OsirisException;
 
+    public void sendRemindersForInvoices() throws OsirisException;
+
 }

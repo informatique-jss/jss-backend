@@ -55,27 +55,23 @@ public class CustomerOrderStatusServiceImpl implements CustomerOrderStatusServic
     @Override
     public void updateStatusReferential() throws OsirisException {
         updateStatus(CustomerOrderStatus.OPEN, "Ouvert", "auto_awesome");
-        updateStatus(CustomerOrderStatus.TO_VERIFY, "A vérifier", "search");
         updateStatus(CustomerOrderStatus.BEING_PROCESSED, "En cours de traitement", "groups_2");
         updateStatus(CustomerOrderStatus.WAITING_DEPOSIT, "En attente d'acompte", "hourglass_top");
         updateStatus(CustomerOrderStatus.TO_BILLED, "A facturer", "pending");
         updateStatus(CustomerOrderStatus.BILLED, "Facturée", "task_alt");
         updateStatus(CustomerOrderStatus.ABANDONED, "Abandonné", "block");
 
-        setSuccessor(CustomerOrderStatus.OPEN, CustomerOrderStatus.TO_VERIFY);
-        setSuccessor(CustomerOrderStatus.TO_VERIFY, CustomerOrderStatus.WAITING_DEPOSIT);
-        setSuccessor(CustomerOrderStatus.TO_VERIFY, CustomerOrderStatus.BEING_PROCESSED);
+        setSuccessor(CustomerOrderStatus.OPEN, CustomerOrderStatus.WAITING_DEPOSIT);
+        setSuccessor(CustomerOrderStatus.OPEN, CustomerOrderStatus.BEING_PROCESSED);
         setSuccessor(CustomerOrderStatus.WAITING_DEPOSIT, CustomerOrderStatus.BEING_PROCESSED);
         setSuccessor(CustomerOrderStatus.TO_BILLED, CustomerOrderStatus.BILLED);
 
-        setPredecessor(CustomerOrderStatus.TO_VERIFY, CustomerOrderStatus.OPEN);
-        setPredecessor(CustomerOrderStatus.WAITING_DEPOSIT, CustomerOrderStatus.TO_VERIFY);
+        setPredecessor(CustomerOrderStatus.WAITING_DEPOSIT, CustomerOrderStatus.OPEN);
         setPredecessor(CustomerOrderStatus.TO_BILLED, CustomerOrderStatus.BEING_PROCESSED);
         setPredecessor(CustomerOrderStatus.BILLED, CustomerOrderStatus.TO_BILLED);
 
         // All cancelled
         setSuccessor(CustomerOrderStatus.OPEN, CustomerOrderStatus.ABANDONED);
-        setSuccessor(CustomerOrderStatus.TO_VERIFY, CustomerOrderStatus.ABANDONED);
         setSuccessor(CustomerOrderStatus.WAITING_DEPOSIT, CustomerOrderStatus.ABANDONED);
         setSuccessor(CustomerOrderStatus.BEING_PROCESSED, CustomerOrderStatus.ABANDONED);
         setSuccessor(CustomerOrderStatus.TO_BILLED, CustomerOrderStatus.ABANDONED);

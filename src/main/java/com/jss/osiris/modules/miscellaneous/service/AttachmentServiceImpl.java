@@ -1,6 +1,9 @@
 package com.jss.osiris.modules.miscellaneous.service;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -91,6 +94,18 @@ public class AttachmentServiceImpl implements AttachmentService {
     public List<Attachment> addAttachment(MultipartFile file, Integer idEntity, String entityType,
             AttachmentType attachmentType,
             String filename, Boolean replaceExistingAttachementType) throws OsirisException {
+        try {
+            return addAttachment(file.getInputStream(), idEntity, entityType, attachmentType, filename,
+                    replaceExistingAttachementType, filename);
+        } catch (IOException e) {
+            throw new OsirisException("Error when reading file");
+        }
+    }
+
+    @Override
+    public List<Attachment> addAttachment(InputStream file, Integer idEntity, String entityType,
+            AttachmentType attachmentType,
+            String filename, Boolean replaceExistingAttachementType, String description) throws OsirisException {
         String absoluteFilePath = storageFileService.saveFile(file, filename,
                 entityType + File.separator + idEntity);
 
@@ -111,8 +126,10 @@ public class AttachmentServiceImpl implements AttachmentService {
         }
 
         Attachment attachment = new Attachment();
+        attachment.setCreatDateTime(LocalDateTime.now());
         attachment.setAttachmentType(attachmentType);
         attachment.setIsDisabled(false);
+        attachment.setDescription(description);
         attachment.setUploadedFile(uploadedFileService.createUploadedFile(filename, absoluteFilePath));
 
         if (entityType.equals(Tiers.class.getSimpleName())) {
@@ -173,6 +190,7 @@ public class AttachmentServiceImpl implements AttachmentService {
         }
     }
 
+    @Override
     public Attachment addOrUpdateAttachment(Attachment attachment) {
         return attachmentRepository.save(attachment);
     }

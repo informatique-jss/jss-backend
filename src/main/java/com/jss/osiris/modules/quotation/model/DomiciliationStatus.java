@@ -26,6 +26,9 @@ public class DomiciliationStatus implements Serializable, IId {
 	 * WARNINNG : add update in DomiciliationStatutsService when adding a new status
 	 */
 	public static String DOMICILIATION_NEW = "DOMICILIATION_NEW";
+	public static String DOMICILIATION_IN_PROGRESS = "DOMICILIATION_IN_PROGRESS";
+	public static String DOMICILIATION_WAITING_FOR_DOCUMENTS = "DOMICILIATION_WAITING_FOR_DOCUMENTS";
+	public static String DOMICILIATION_DONE = "DOMICILIATION_DONE";
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;

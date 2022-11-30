@@ -10,6 +10,12 @@ import com.jss.osiris.modules.miscellaneous.model.ICode;
 
 @Entity
 public class ConditionVersementTVA implements Serializable, ICode {
+    public ConditionVersementTVA(String code) {
+        this.code = code;
+    }
+
+    public ConditionVersementTVA() {
+    }
 
     @Id
     private String code;

@@ -2,6 +2,7 @@ package com.jss.osiris.modules.quotation.service;
 
 import java.util.List;
 
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.quotation.model.DomiciliationStatus;
 
 public interface DomiciliationStatusService {
@@ -13,5 +14,5 @@ public interface DomiciliationStatusService {
 
     public DomiciliationStatus getDomiciliationStatusByCode(String code);
 
-    public void updateStatusReferential();
+    public void updateStatusReferential() throws OsirisException;
 }

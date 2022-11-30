@@ -10,6 +10,12 @@ import com.jss.osiris.modules.miscellaneous.model.ICode;
 
 @Entity
 public class TypeFormalite implements Serializable, ICode {
+    public TypeFormalite(String code) {
+        this.code = code;
+    }
+
+    public TypeFormalite() {
+    }
 
     @Id
     private String code;

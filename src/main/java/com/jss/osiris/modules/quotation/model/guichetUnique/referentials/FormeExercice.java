@@ -11,6 +11,13 @@ import com.jss.osiris.modules.miscellaneous.model.ICode;
 @Entity
 public class FormeExercice implements Serializable, ICode {
 
+    public FormeExercice(String code) {
+        this.code = code;
+    }
+
+    public FormeExercice() {
+    }
+
     @Id
     private String code;
 

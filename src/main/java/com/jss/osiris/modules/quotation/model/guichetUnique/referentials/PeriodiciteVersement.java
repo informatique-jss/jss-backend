@@ -10,6 +10,12 @@ import com.jss.osiris.modules.miscellaneous.model.ICode;
 
 @Entity
 public class PeriodiciteVersement implements Serializable, ICode {
+    public PeriodiciteVersement(String code) {
+        this.code = code;
+    }
+
+    public PeriodiciteVersement() {
+    }
 
     @Id
     private String code;

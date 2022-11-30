@@ -10,6 +10,12 @@ import com.jss.osiris.modules.miscellaneous.model.ICode;
 
 @Entity
 public class CodifNorme implements Serializable, ICode {
+    public CodifNorme(String code) {
+        this.code = code;
+    }
+
+    public CodifNorme() {
+    }
 
     @Id
     private String code;

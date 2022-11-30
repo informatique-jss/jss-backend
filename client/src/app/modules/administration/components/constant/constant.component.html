@@ -169,6 +169,38 @@
           </tr>
           <tr>
             <td>
+              <select-attachment-type [(model)]="constant.attachmentTypeInvoice" label="Type de pièce-jointe - Facture"
+                [form]="constantForm" propertyName="attachmentTypeInvoice" [isMandatory]="true"
+                [isDisabled]="!editMode">
+              </select-attachment-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-attachment-type [(model)]="constant.attachmentTypeKbisUpdated"
+                label="Type de pièce-jointe - Kbis mis à jour" [form]="constantForm"
+                propertyName="attachmentTypeKbisUpdated" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-attachment-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-attachment-type [(model)]="constant.attachmentTypePublicationFlag"
+                label="Type de pièce-jointe - Témoin de publication" [form]="constantForm"
+                propertyName="attachmentTypePublicationFlag" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-attachment-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-attachment-type [(model)]="constant.attachmentTypePublicationReceipt"
+                label="Type de pièce-jointe - Justificatif de parution" [form]="constantForm"
+                propertyName="attachmentTypePublicationReceipt" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-attachment-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <autocomplete-country [(model)]="constant.countryFrance" [form]="constantForm" label="Pays - France"
                 propertyName="countryFrance" [isMandatory]="true" [isDisabled]="!editMode"></autocomplete-country>
             </td>
@@ -181,9 +213,225 @@
           </tr>
           <tr>
             <td>
-              <select-billing-type [(model)]="constant.billingTypeLogo" label="Type de poste de facturation - Logo"
-                [form]="constantForm" propertyName="billingTypeLogo" [isMandatory]="true" [isDisabled]="!editMode">
-              </select-billing-type>
+              <autocomplete-billing-type [(model)]="constant.billingTypeLogo"
+                label="Type de poste de facturation - Logo" [form]="constantForm" propertyName="billingTypeLogo"
+                [isMandatory]="true" [isDisabled]="!editMode">
+              </autocomplete-billing-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-billing-type [(model)]="constant.billingTypeRedactedByJss"
+                label="Type de poste de facturation - Rédigé par le JSS" [form]="constantForm"
+                propertyName="billingTypeRedactedByJss" [isMandatory]="true" [isDisabled]="!editMode">
+              </autocomplete-billing-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-billing-type [(model)]="constant.billingTypeBaloPackage"
+                label="Type de poste de facturation - Forfait Image BALO" [form]="constantForm"
+                propertyName="billingTypeBaloPackage" [isMandatory]="true" [isDisabled]="!editMode">
+              </autocomplete-billing-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-billing-type [(model)]="constant.billingTypePublicationReceipt"
+                label="Type de poste de facturation - Journal justificatif PDF" [form]="constantForm"
+                propertyName="billingTypePublicationReceipt" [isMandatory]="true" [isDisabled]="!editMode">
+              </autocomplete-billing-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-billing-type [(model)]="constant.billingTypePublicationPaper"
+                label="Type de poste de facturation - Journal justificatif papier" [form]="constantForm"
+                propertyName="billingTypePublicationPaper" [isMandatory]="true" [isDisabled]="!editMode">
+              </autocomplete-billing-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-billing-type [(model)]="constant.billingTypePublicationFlag"
+                label="Type de poste de facturation - Témoin de Parution" [form]="constantForm"
+                propertyName="billingTypePublicationFlag" [isMandatory]="true" [isDisabled]="!editMode">
+              </autocomplete-billing-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-billing-type [(model)]="constant.billingTypeBodaccFollowup"
+                label="Type de poste de facturation - Suivi BODACC" [form]="constantForm"
+                propertyName="billingTypeBodaccFollowup" [isMandatory]="true" [isDisabled]="!editMode">
+              </autocomplete-billing-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-billing-type [(model)]="constant.billingTypeBodaccFollowupAndRedaction"
+                label="Type de poste de facturation - Rédaction, Publication & Suivi BODACC" [form]="constantForm"
+                propertyName="billingTypeBodaccFollowupAndRedaction" [isMandatory]="true" [isDisabled]="!editMode">
+              </autocomplete-billing-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-billing-type [(model)]="constant.billingTypeNantissementDeposit"
+                label="Type de poste de facturation - Dépôt de Nantissement" [form]="constantForm"
+                propertyName="billingTypeNantissementDeposit" [isMandatory]="true" [isDisabled]="!editMode">
+              </autocomplete-billing-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-billing-type [(model)]="constant.billingTypeSocialShareNantissementRedaction"
+                label="Type de poste de facturation - Rédaction de Bordereaux de nantissement de parts sociales"
+                [form]="constantForm" propertyName="billingTypeSocialShareNantissementRedaction" [isMandatory]="true"
+                [isDisabled]="!editMode">
+              </autocomplete-billing-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-billing-type [(model)]="constant.billingTypeBusinnessNantissementRedaction"
+                label="Type de poste de facturation - Rédaction de Bordereaux de nantissement de fonds de commerce"
+                [form]="constantForm" propertyName="billingTypeBusinnessNantissementRedaction" [isMandatory]="true"
+                [isDisabled]="!editMode">
+              </autocomplete-billing-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-billing-type [(model)]="constant.billingTypeSellerPrivilegeRedaction"
+                label="Type de poste de facturation - Rédaction de Bordereaux de privilège vendeur"
+                [form]="constantForm" propertyName="billingTypeSellerPrivilegeRedaction" [isMandatory]="true"
+                [isDisabled]="!editMode">
+              </autocomplete-billing-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-billing-type [(model)]="constant.billingTypeTreatmentMultipleModiciation"
+                label="Type de poste de facturation - Traitement - Modification Multiple" [form]="constantForm"
+                propertyName="billingTypeTreatmentMultipleModiciation" [isMandatory]="true" [isDisabled]="!editMode">
+              </autocomplete-billing-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-billing-type [(model)]="constant.billingTypeVacationMultipleModification"
+                label="Type de poste de facturation - Vacation - Modification Multiple" [form]="constantForm"
+                propertyName="billingTypeVacationMultipleModification" [isMandatory]="true" [isDisabled]="!editMode">
+              </autocomplete-billing-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-billing-type [(model)]="constant.billingTypeRegisterPurchase"
+                label="Type de poste de facturation - Achat de Registre" [form]="constantForm"
+                propertyName="billingTypeRegisterPurchase" [isMandatory]="true" [isDisabled]="!editMode">
+              </autocomplete-billing-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-billing-type [(model)]="constant.billingTypeRegisterInitials"
+                label="Type de poste de facturation - Paraphe de Registre" [form]="constantForm"
+                propertyName="billingTypeRegisterInitials" [isMandatory]="true" [isDisabled]="!editMode">
+              </autocomplete-billing-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-billing-type [(model)]="constant.billingTypeRegisterShippingCosts"
+                label="Type de poste de facturation - Frais de Port de Registre" [form]="constantForm"
+                propertyName="billingTypeRegisterShippingCosts" [isMandatory]="true" [isDisabled]="!editMode">
+              </autocomplete-billing-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-billing-type [(model)]="constant.billingTypeDisbursement"
+                label="Type de poste de facturation - Débours" [form]="constantForm"
+                propertyName="billingTypeDisbursement" [isMandatory]="true" [isDisabled]="!editMode">
+              </autocomplete-billing-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-billing-type [(model)]="constant.billingTypeFeasibilityStudy"
+                label="Type de poste de facturation - Etude de faisabilité" [form]="constantForm"
+                propertyName="billingTypeFeasibilityStudy" [isMandatory]="true" [isDisabled]="!editMode">
+              </autocomplete-billing-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-billing-type [(model)]="constant.billingTypeChronopostFees"
+                label="Type de poste de facturation - Frais de Chronopost" [form]="constantForm"
+                propertyName="billingTypeChronopostFees" [isMandatory]="true" [isDisabled]="!editMode">
+              </autocomplete-billing-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-billing-type [(model)]="constant.billingTypeBankCheque"
+                label="Type de poste de facturation - Chèque de banque / virement" [form]="constantForm"
+                propertyName="billingTypeBankCheque" [isMandatory]="true" [isDisabled]="!editMode">
+              </autocomplete-billing-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-billing-type [(model)]="constant.billingTypeComplexeFile"
+                label="Type de poste de facturation - Analyse de dossier complexe" [form]="constantForm"
+                propertyName="billingTypeComplexeFile" [isMandatory]="true" [isDisabled]="!editMode">
+              </autocomplete-billing-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-billing-type [(model)]="constant.billingTypeDocumentScanning"
+                label="Type de poste de facturation - Numérisation de document" [form]="constantForm"
+                propertyName="billingTypeDocumentScanning" [isMandatory]="true" [isDisabled]="!editMode">
+              </autocomplete-billing-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-billing-type [(model)]="constant.billingTypeEmergency"
+                label="Type de poste de facturation - Urgence" [form]="constantForm" propertyName="billingTypeEmergency"
+                [isMandatory]="true" [isDisabled]="!editMode">
+              </autocomplete-billing-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <generic-input [(model)]="constant.stringNantissementDepositFormeJuridiqueCode "
+                label="Code de forme juridique - Depot de nantissement" [form]="constantForm"
+                propertyName="stringNantissementDepositFormeJuridiqueCode " [isMandatory]="true"
+                hint="Liste de codes (séparés par ',') de forme juridique (référentiel INPI) pour l'affichage de l'option Dépôt de nantissement"
+                [isDisabled]="!editMode" [maxLength]="255"></generic-input>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <generic-input [(model)]="constant.stringBusinnessNantissementRedactionFormeJuridiqueCode   "
+                label="Code de forme juridique - Bordereaux de nantissement de fonds de commerce &  privilège vendeur"
+                [form]="constantForm" propertyName="stringBusinnessNantissementRedactionFormeJuridiqueCode   "
+                [isMandatory]="true"
+                hint="Liste de codes (séparés par ',') de forme juridique (référentiel INPI) pour l'affichage de l'option Rédaction de Bordereaux de nantissement de fonds de commerce &  privilège vendeur"
+                [isDisabled]="!editMode" [maxLength]="255"></generic-input>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <generic-input [(model)]="constant.strinSocialShareNantissementRedactionFormeJuridiqueCode  "
+                label="Code de forme juridique - Bordereaux de nantissement de parts sociales" [form]="constantForm"
+                propertyName="strinSocialShareNantissementRedactionFormeJuridiqueCode  " [isMandatory]="true"
+                hint="Liste de codes (séparés par ',') de forme juridique (référentiel INPI) pour l'affichage de l'option Rédaction de Bordereaux de nantissement de parts sociales"
+                [isDisabled]="!editMode" [maxLength]="255"></generic-input>
             </td>
           </tr>
           <tr>
@@ -247,6 +495,13 @@
             <td>
               <select-journal-type-one [(model)]="constant.journalTypeSpel" label="Type de journal - SPEL"
                 [form]="constantForm" propertyName="journalTypeSpel" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-journal-type-one>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-journal-type-one [(model)]="constant.journalTypePaper" label="Type de journal - Papier"
+                [form]="constantForm" propertyName="journalTypePaper" [isMandatory]="true" [isDisabled]="!editMode">
               </select-journal-type-one>
             </td>
           </tr>
@@ -376,6 +631,13 @@
               <autocomplete-employee [(model)]="constant.employeeSalesDirector" [form]="constantForm"
                 propertyName="employeeSalesDirector" [isMandatory]="true" [isDisabled]="!editMode"
                 label="Employé Directeur Commercial"></autocomplete-employee>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-employee [(model)]="constant.employeeInvoiceReminderResponsible" [form]="constantForm"
+                propertyName="employeeInvoiceReminderResponsible" [isMandatory]="true" [isDisabled]="!editMode"
+                label="Employé Responsable du recouvrement"></autocomplete-employee>
             </td>
           </tr>
           <tr>
@@ -546,6 +808,20 @@
               <select-type-formalite [(model)]="constant.typeFormaliteCorrection" label="Type de formalité - Correction"
                 [form]="constantForm" propertyName="typeFormaliteCorrection" [isMandatory]="true"
                 [isDisabled]="!editMode" [conditionnalRequired]="true"></select-type-formalite>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <generic-input [(model)]="constant.accountingSharedMaiblox" label="Adresse mail de la boite Comptabilité"
+                [form]="constantForm" propertyName="accountingSharedMaiblox" [isMandatory]="true"
+                [isDisabled]="!editMode" type="email"></generic-input>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <generic-input [(model)]="constant.salesSharedMailbox" label="Adresse mail de la boite Commercial"
+                [form]="constantForm" propertyName="salesSharedMailbox" [isMandatory]="true" [isDisabled]="!editMode"
+                type="email"></generic-input>
             </td>
           </tr>
         </table>

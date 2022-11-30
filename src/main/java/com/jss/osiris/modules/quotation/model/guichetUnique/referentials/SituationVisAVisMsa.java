@@ -10,6 +10,12 @@ import com.jss.osiris.modules.miscellaneous.model.ICode;
 
 @Entity
 public class SituationVisAVisMsa implements Serializable, ICode {
+    public SituationVisAVisMsa(String code) {
+        this.code = code;
+    }
+
+    public SituationVisAVisMsa() {
+    }
 
     @Id
     private String code;

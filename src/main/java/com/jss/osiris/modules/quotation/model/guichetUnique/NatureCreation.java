@@ -17,7 +17,6 @@ import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeExp
 
 @Entity
 public class NatureCreation implements Serializable, IId {
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;

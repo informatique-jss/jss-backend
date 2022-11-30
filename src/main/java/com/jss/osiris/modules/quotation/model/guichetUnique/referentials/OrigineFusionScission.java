@@ -10,6 +10,12 @@ import com.jss.osiris.modules.miscellaneous.model.ICode;
 
 @Entity
 public class OrigineFusionScission implements Serializable, ICode {
+    public OrigineFusionScission(String code) {
+        this.code = code;
+    }
+
+    public OrigineFusionScission() {
+    }
 
     @Id
     private String code;

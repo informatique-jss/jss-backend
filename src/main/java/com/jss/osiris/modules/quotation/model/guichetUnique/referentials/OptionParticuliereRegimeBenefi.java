@@ -10,6 +10,12 @@ import com.jss.osiris.modules.miscellaneous.model.ICode;
 
 @Entity
 public class OptionParticuliereRegimeBenefi implements Serializable, ICode {
+    public OptionParticuliereRegimeBenefi(String code) {
+        this.code = code;
+    }
+
+    public OptionParticuliereRegimeBenefi() {
+    }
 
     @Id
     private String code;

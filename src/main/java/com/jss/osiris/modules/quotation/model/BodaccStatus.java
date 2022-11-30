@@ -25,6 +25,12 @@ public class BodaccStatus implements Serializable, IId {
 	 * WARNINNG : add update in BodaccStatutsService when adding a new status
 	 */
 	public static String BODACC_NEW = "BODACC_NEW";
+	public static String BODACC_IN_PROGRESS = "BODACC_IN_PROGRESS";
+	public static String BODACC_WAITING_DOCUMENT = "BODACC_WAITING_DOCUMENT";
+	public static String BODACC_WAITING_DOCUMENT_BODACC = "BODACC_WAITING_DOCUMENT_BODACC";
+	public static String BODACC_WAITING_PUBLICATION = "BODACC_WAITING_PUBLICATION";
+	public static String BODACC_PUBLISHED = "BODACC_PUBLISHED";
+	public static String BODACC_DONE = "BODACC_DONE";
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;

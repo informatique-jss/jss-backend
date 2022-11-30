@@ -108,7 +108,8 @@
                   </td>
                   <td style="vertical-align: baseline;">
                     <radio-group-language [(model)]="selectedResponsable.language" [form]="principalForm"
-                      [isDisabled]="!editMode" propertyName="language" label="Langue de communication">
+                      [setFirstOptionDefaultChoice]="true" [isDisabled]="!editMode" propertyName="language"
+                      label="Langue de communication">
                     </radio-group-language>
                   </td>
                 </tr>
@@ -149,7 +150,7 @@
               </table>
               <table class="full-width">
                 <tr>
-                  <td
+                  <!--td
                     *ngIf="selectedResponsable.jssSubscription!=undefined && selectedResponsable.jssSubscription!=null">
                     <h4>Abonnement JSS</h4>
                     <mat-checkbox formControlName="jssSubscription1" class="checkbox-margin"
@@ -171,7 +172,7 @@
                     *ngIf="selectedResponsable.subscriptionPeriodType!=null && selectedResponsable.subscriptionPeriodType.id==subscriptionPeriodType12M.id">
                     <generic-toggle [(model)]="selectedResponsable.isBouclette" label="Bouclette ?"
                       [form]="principalForm" propertyName="isBouclette"></generic-toggle>
-                  </td>
+                  </td-->
                   <td>
                     <generic-input [(model)]="tiers.rffFormaliteRate" label="Taux RCA Formalité" [form]="principalForm"
                       propertyName="rcaFormaliteRate" type="number"></generic-input>

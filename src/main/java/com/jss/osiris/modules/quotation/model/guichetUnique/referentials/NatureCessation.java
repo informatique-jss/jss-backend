@@ -11,6 +11,13 @@ import com.jss.osiris.modules.miscellaneous.model.ICode;
 @Entity
 public class NatureCessation implements Serializable, ICode {
 
+    public NatureCessation(String code) {
+        this.code = code;
+    }
+
+    public NatureCessation() {
+    }
+
     @Id
     private String code;
 

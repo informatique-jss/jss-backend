@@ -32,3 +32,44 @@ table {
 .invoice-chip {
   margin-left: 10px;
 }
+
+.info-icon {
+  color: grey;
+}
+
+.container-affaire {
+  margin-top: 20px;
+}
+
+.sub-row {
+  padding-left: 20px;
+}
+
+.top {
+  padding-top: 20px;
+}
+
+.chips-status {
+  position: absolute;
+  right: 10px;
+}
+
+.description-table {
+  padding-top: 10px;
+}
+
+.underline {
+  text-decoration: underline;
+}
+
+.td-info {
+  vertical-align: top;
+  width: 33%;
+  border-right: solid;
+  border-width: 1px;
+  padding: 10px;
+}
+
+.middle-width {
+  min-width: 500px;
+}

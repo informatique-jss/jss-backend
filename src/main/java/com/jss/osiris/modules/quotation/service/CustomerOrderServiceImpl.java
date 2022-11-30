@@ -1,7 +1,11 @@
 package com.jss.osiris.modules.quotation.service;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -32,6 +36,7 @@ import com.jss.osiris.modules.invoicing.service.InvoiceHelper;
 import com.jss.osiris.modules.invoicing.service.InvoiceItemService;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.miscellaneous.model.Document;
+import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.MailService;
 import com.jss.osiris.modules.miscellaneous.service.NotificationService;
@@ -103,6 +108,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Autowired
     CentralPayDelegateService centralPayDelegateService;
 
+    @Autowired
+    AttachmentService attachmentService;
+
     @Value("${payment.cb.redirect.deposit.entry.point}")
     private String paymentCbRedirectDeposit;
 
@@ -145,6 +153,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             assoAffaireOrderService.completeAssoAffaireOrder(assoAffaireOrder, customerOrder);
         }
 
+        boolean isNewCustomerOrder = customerOrder.getId() == null;
+
         // If invoice has not been generated yet, recompute billing items
         if (!hasBeenBilled(customerOrder)) {
             quotationService.getAndSetInvoiceItemsForQuotation(customerOrder);
@@ -159,7 +169,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             }
         }
 
-        boolean isNewCustomerOrder = customerOrder.getId() == null;
         customerOrder = customerOrderRepository.save(customerOrder);
         indexEntityService.indexEntity(customerOrder, customerOrder.getId());
         for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders())
@@ -195,7 +204,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                                     && !provision.getDomiciliation().getDomiciliationStatus().getIsCloseState())
                                 return customerOrderIn;
                         }
-            return addOrUpdateCustomerOrderStatus(customerOrder, CustomerOrderStatus.TO_BILLED);
+            return addOrUpdateCustomerOrderStatus(customerOrder, CustomerOrderStatus.TO_BILLED, false);
         }
         return customerOrderIn;
     }
@@ -204,25 +213,24 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Transactional(rollbackFor = Exception.class)
     public CustomerOrder addOrUpdateCustomerOrderStatusFromUser(CustomerOrder customerOrder, String targetStatusCode)
             throws OsirisException {
-        return addOrUpdateCustomerOrderStatus(customerOrder, targetStatusCode);
+        return addOrUpdateCustomerOrderStatus(customerOrder, targetStatusCode, true);
     }
 
     @Override
-    public CustomerOrder addOrUpdateCustomerOrderStatus(CustomerOrder customerOrder, String targetStatusCode)
+    public CustomerOrder addOrUpdateCustomerOrderStatus(CustomerOrder customerOrder, String targetStatusCode,
+            boolean isFromUser)
             throws OsirisException {
         CustomerOrderStatus targetCustomerStatus = customerOrderStatusService
                 .getCustomerOrderStatusByCode(targetStatusCode);
         if (targetCustomerStatus == null)
             throw new OsirisException("Customer order status not found for code " + targetStatusCode);
-        if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.OPEN)
-                && targetCustomerStatus.getCode().equals(CustomerOrderStatus.TO_VERIFY))
-            notificationService.notifyCustomerOrderToVerify(customerOrder);
-        if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.TO_VERIFY)
-                && targetCustomerStatus.getCode().equals(CustomerOrderStatus.WAITING_DEPOSIT)) {
-            mailHelper.sendCustomerOrderDepositWaitingToCustomer(customerOrder, true);
-        }
-        if (targetCustomerStatus.getCode().equals(CustomerOrderStatus.BEING_PROCESSED))
+        if (targetCustomerStatus.getCode().equals(CustomerOrderStatus.BEING_PROCESSED)) {
+            if (!isFromUser
+                    && customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.WAITING_DEPOSIT)) {
+                mailHelper.sendCustomerOrderDepositConfirmationToCustomer(customerOrder, false);
+            }
             notificationService.notifyCustomerOrderToBeingProcessed(customerOrder, true);
+        }
         if (targetCustomerStatus.getCode().equals(CustomerOrderStatus.TO_BILLED))
             notificationService.notifyCustomerOrderToBeingToBilled(customerOrder);
         if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BILLED)
@@ -254,11 +262,11 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
                     // TODO : changer de compte en contrepasse (attente => client) + check lettrage
                 }
-            mailHelper.sendCustomerOrderInvoiceToCustomer(customerOrder, invoiceService.getInvoice(invoice.getId()),
-                    true);
+            mailHelper.sendCustomerOrderFinalisationToCustomer(customerOrder, false, false, false);
         }
 
         if (targetStatusCode.equals(CustomerOrderStatus.WAITING_DEPOSIT)) {
+            mailHelper.sendCustomerOrderCreationConfirmationToCustomer(customerOrder, true, false);
             // TODO : add rule to check if deposit required + check if a deposit already
             // exists to check if we can go further
             targetStatusCode = CustomerOrderStatus.WAITING_DEPOSIT;
@@ -268,7 +276,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 .getCustomerOrderStatusByCode(targetStatusCode);
         if (customerOrderStatus == null)
             throw new OsirisException("Quotation status not found for code " + targetStatusCode);
+
         customerOrder.setCustomerOrderStatus(customerOrderStatus);
+        customerOrder.setLastStatusUpdate(LocalDateTime.now());
         return this.addOrUpdateCustomerOrder(customerOrder);
     }
 
@@ -281,7 +291,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         if (customerOrder.getCustomerOrderStatus().getCode()
                 .equals(CustomerOrderStatus.WAITING_DEPOSIT)
                 && remainingToPay - effectivePayment <= 0) {
-            addOrUpdateCustomerOrderStatus(customerOrder, CustomerOrderStatus.BEING_PROCESSED);
+            addOrUpdateCustomerOrderStatus(customerOrder, CustomerOrderStatus.BEING_PROCESSED, false);
             notificationService.notifyCustomerOrderToBeingProcessed(customerOrder, false);
         }
         return customerOrder;
@@ -308,7 +318,22 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
         invoice.setCustomerOrder(customerOrder);
         invoiceHelper.setPriceTotal(invoice);
-        return invoiceService.addOrUpdateInvoice(invoice);
+        invoiceService.addOrUpdateInvoice(invoice);
+
+        // Create invoice PDF and attach it to customerOrder
+        File invoicePdf = mailHelper.generateInvoicePdf(customerOrder, invoice);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
+        try {
+            attachmentService.addAttachment(new FileInputStream(invoicePdf), customerOrder.getId(),
+                    CustomerOrder.class.getSimpleName(),
+                    constantService.getAttachmentTypeInvoice(),
+                    "Invoice_" + formatter.format(LocalDateTime.now()) + ".pdf",
+                    false, "Facture n°" + invoice.getId());
+        } catch (FileNotFoundException e) {
+            throw new OsirisException("Impossible to read invoice PDF temp file");
+        }
+
+        return invoice;
     }
 
     private boolean hasAtLeastOneInvoiceItemNotNull(CustomerOrder customerOrder) {
@@ -326,7 +351,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         return false;
     }
 
-    private boolean hasBeenBilled(CustomerOrder customerOrder) {
+    private boolean hasBeenBilled(CustomerOrder customerOrder) throws OsirisException {
         if (customerOrder == null || customerOrder.getAssoAffaireOrders() == null
                 || customerOrder.getAssoAffaireOrders().get(0).getProvisions() == null
                 || customerOrder.getAssoAffaireOrders().get(0).getProvisions().size() == 0
@@ -337,7 +362,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             return false;
 
         return customerOrder.getAssoAffaireOrders().get(0).getProvisions().get(0).getInvoiceItems().get(0)
-                .getInvoice() != null;
+                .getInvoice() != null
+                && customerOrder.getAssoAffaireOrders().get(0).getProvisions().get(0).getInvoiceItems().get(0)
+                        .getInvoice().getInvoiceStatus().getId() != constantService.getInvoiceStatusCancelled().getId();
     }
 
     /**
@@ -393,8 +420,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         List<OrderingSearchResult> customerOrders = customerOrderRepository.findCustomerOrders(
                 salesEmployeeId,
                 statusId,
-                orderingSearch.getStartDate(),
-                orderingSearch.getEndDate(), customerOrderId);
+                orderingSearch.getStartDate().withHour(0).withMinute(0),
+                orderingSearch.getEndDate().withHour(23).withMinute(59), customerOrderId);
         return customerOrders;
     }
 
@@ -415,8 +442,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 quotation.getConfrere(), quotation.getSpecialOffers(), LocalDateTime.now(), statusOpen,
                 quotation.getObservations(), quotation.getDescription(), null,
                 quotation.getDocuments(), quotation.getLabelType(), quotation.getCustomLabelResponsable(),
-                quotation.getCustomLabelTiers(), quotation.getRecordType(), quotation.getAssoAffaireOrders(),
-                quotation.getMails(), quotation.getPhones(), null,
+                quotation.getCustomLabelTiers(), quotation.getRecordType(), quotation.getAssoAffaireOrders(), null,
                 quotation.getOverrideSpecialOffer(), quotation.getQuotationLabel(), false, null, null, null, null);
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -468,20 +494,19 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                         provision.setAttachments(null);
                     }
             }
-        return addOrUpdateCustomerOrder(customerOrder2);
+        addOrUpdateCustomerOrder(customerOrder2);
+
+        mailHelper.sendCustomerOrderCreationConfirmationToCustomer(customerOrder2, false, false);
+        return customerOrder2;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void generateInvoiceMail(CustomerOrder customerOrder)
-            throws Exception {
-        Invoice invoice = generateInvoice(customerOrder);
-        mailHelper.sendCustomerOrderInvoiceToCustomer(customerOrder, invoice, true);
-        if (invoice != null)
-            throw new Exception();
+    public void generateInvoiceMail(CustomerOrder customerOrder) throws OsirisException {
+        mailHelper.sendCustomerOrderFinalisationToCustomer(customerOrder, true, false, false);
     }
 
-    private String getCardPaymentLinkForPayment(CustomerOrder customerOrder, String mail, String subject,
+    private String getCardPaymentLinkForCustomerOrderPayment(CustomerOrder customerOrder, String mail, String subject,
             String redirectEntrypoint)
             throws OsirisException {
         if (customerOrder.getCentralPayPaymentRequestId() != null) {
@@ -520,13 +545,13 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     }
 
     @Override
-    public String getCardPaymentLinkForPaymentDeposit(CustomerOrder customerOrder, String mail, String subject)
+    public String getCardPaymentLinkForCustomerOrderDeposit(CustomerOrder customerOrder, String mail, String subject)
             throws OsirisException {
-        return getCardPaymentLinkForPayment(customerOrder, mail, subject, paymentCbRedirectDeposit);
+        return getCardPaymentLinkForCustomerOrderPayment(customerOrder, mail, subject, paymentCbRedirectDeposit);
     }
 
     @Override
-    public Boolean validateCardPaymentLinkForDeposit(CustomerOrder customerOrder)
+    public Boolean validateCardPaymentLinkForCustomerOrderDeposit(CustomerOrder customerOrder)
             throws OsirisException {
         if (customerOrder.getCentralPayPaymentRequestId() != null) {
             CentralPayPaymentRequest centralPayPaymentRequest = centralPayDelegateService
@@ -539,11 +564,11 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     if (customerOrder.getCustomerOrderStatus().getCode()
                             .equals(CustomerOrderStatus.WAITING_DEPOSIT)) {
                         unlockCustomerOrderFromDeposit(customerOrder, centralPayPaymentRequest.getTotalAmount() / 100f);
-                        customerOrder
-                                .setCentralPayPendingPaymentAmount(customerOrder.getCentralPayPendingPaymentAmount()
-                                        + centralPayPaymentRequest.getTotalAmount() / 100f);
-                        addOrUpdateCustomerOrder(customerOrder);
                     }
+                    customerOrder
+                            .setCentralPayPendingPaymentAmount(customerOrder.getCentralPayPendingPaymentAmount()
+                                    + centralPayPaymentRequest.getTotalAmount() / 100f);
+                    addOrUpdateCustomerOrder(customerOrder);
                     return true;
                 }
             }
@@ -554,7 +579,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Override
     public String getCardPaymentLinkForPaymentInvoice(CustomerOrder customerOrder, String mail, String subject)
             throws OsirisException {
-        return getCardPaymentLinkForPayment(customerOrder, mail, subject, paymentCbRedirectInvoice);
+        return getCardPaymentLinkForCustomerOrderPayment(customerOrder, mail, subject, paymentCbRedirectInvoice);
     }
 
     @Override
@@ -567,15 +592,42 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             if (centralPayPaymentRequest != null) {
                 if (centralPayPaymentRequest.getPaymentRequestStatus().equals(CentralPayPaymentRequest.CLOSED)
                         && centralPayPaymentRequest.getPaymentStatus().equals(CentralPayPaymentRequest.PAID)) {
-                    // Do nothing, wainting for bank credit to letter invoice
-                    customerOrder.setCentralPayPendingPaymentAmount(customerOrder.getCentralPayPendingPaymentAmount()
-                            + centralPayPaymentRequest.getTotalAmount() / 100f);
-                    addOrUpdateCustomerOrder(customerOrder);
-                    return true;
                 }
+                // Do nothing, wainting for bank credit to letter invoice
+                customerOrder.setCentralPayPendingPaymentAmount(customerOrder.getCentralPayPendingPaymentAmount()
+                        + centralPayPaymentRequest.getTotalAmount() / 100f);
+                addOrUpdateCustomerOrder(customerOrder);
+                return true;
             }
         }
         return false;
     }
 
+    @Override
+    public void sendRemindersForCustomerOrderDeposit() throws OsirisException {
+        List<CustomerOrder> customerOrders = customerOrderRepository.findCustomerOrderForReminder(
+                customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.WAITING_DEPOSIT));
+
+        if (customerOrders != null && customerOrders.size() > 0)
+            for (CustomerOrder customerOrder : customerOrders) {
+                boolean toSend = false;
+                if (customerOrder.getFirstReminderDateTime() == null
+                        && customerOrder.getCreatedDate().isBefore(LocalDateTime.now().minusDays(1 * 7))) {
+                    toSend = true;
+                    customerOrder.setFirstReminderDateTime(LocalDateTime.now());
+                } else if (customerOrder.getSecondReminderDateTime() == null
+                        && customerOrder.getCreatedDate().isBefore(LocalDateTime.now().minusDays(3 * 7))) {
+                    toSend = true;
+                    customerOrder.setSecondReminderDateTime(LocalDateTime.now());
+                } else if (customerOrder.getCreatedDate().isBefore(LocalDateTime.now().minusDays(6 * 7))) {
+                    toSend = true;
+                    customerOrder.setThirdReminderDateTime(LocalDateTime.now());
+                }
+
+                if (toSend) {
+                    mailHelper.sendCustomerOrderCreationConfirmationToCustomer(customerOrder, false, true);
+                    addOrUpdateCustomerOrder(customerOrder);
+                }
+            }
+    }
 }

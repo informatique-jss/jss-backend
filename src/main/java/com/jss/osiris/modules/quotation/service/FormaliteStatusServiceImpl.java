@@ -54,8 +54,34 @@ public class FormaliteStatusServiceImpl implements FormaliteStatusService {
     }
 
     @Override
-    public void updateStatusReferential() {
+    public void updateStatusReferential() throws OsirisException {
         updateStatus(FormaliteStatus.FORMALITE_NEW, "Nouveau", "auto_awesome", true, false);
+        updateStatus(FormaliteStatus.FORMALITE_IN_PROGRESS, "En cours", "autorenew", false, false);
+        updateStatus(FormaliteStatus.FORMALITE_WAITING_DOCUMENT, "En attente de documents", "hourglass_top", false,
+                false);
+        updateStatus(FormaliteStatus.FORMALITE_SENT, "Envoyé au greffe", "outgoing_mail", false, false);
+        updateStatus(FormaliteStatus.FORMALITE_VALIDATE, "Validé par le greffe", "approval", false, false);
+        updateStatus(FormaliteStatus.FORMALITE_REFUSED, "Refusé par le greffe", "block", false, false);
+        updateStatus(FormaliteStatus.FORMALITE_WAITING_DOCUMENT_GREFFE, "En attente de documents du greffe", "pending",
+                false, false);
+        updateStatus(FormaliteStatus.FORMALITE_DONE, "Terminé", "check_small", false, true);
+
+        setSuccessor(FormaliteStatus.FORMALITE_NEW, FormaliteStatus.FORMALITE_IN_PROGRESS);
+        setSuccessor(FormaliteStatus.FORMALITE_IN_PROGRESS, FormaliteStatus.FORMALITE_SENT);
+        setSuccessor(FormaliteStatus.FORMALITE_SENT, FormaliteStatus.FORMALITE_VALIDATE);
+        setSuccessor(FormaliteStatus.FORMALITE_VALIDATE, FormaliteStatus.FORMALITE_DONE);
+
+        setSuccessor(FormaliteStatus.FORMALITE_IN_PROGRESS, FormaliteStatus.FORMALITE_WAITING_DOCUMENT);
+        setSuccessor(FormaliteStatus.FORMALITE_WAITING_DOCUMENT, FormaliteStatus.FORMALITE_SENT);
+        setSuccessor(FormaliteStatus.FORMALITE_VALIDATE, FormaliteStatus.FORMALITE_WAITING_DOCUMENT_GREFFE);
+        setSuccessor(FormaliteStatus.FORMALITE_WAITING_DOCUMENT_GREFFE, FormaliteStatus.FORMALITE_DONE);
+
+        setPredecessor(FormaliteStatus.FORMALITE_DONE, FormaliteStatus.FORMALITE_VALIDATE);
+        setPredecessor(FormaliteStatus.FORMALITE_REFUSED, FormaliteStatus.FORMALITE_IN_PROGRESS);
+        setPredecessor(FormaliteStatus.FORMALITE_IN_PROGRESS, FormaliteStatus.FORMALITE_NEW);
+        setPredecessor(FormaliteStatus.FORMALITE_WAITING_DOCUMENT, FormaliteStatus.FORMALITE_IN_PROGRESS);
+        setPredecessor(FormaliteStatus.FORMALITE_WAITING_DOCUMENT_GREFFE, FormaliteStatus.FORMALITE_VALIDATE);
+
     }
 
     protected void updateStatus(String code, String label, String icon, boolean isOpenState, boolean isCloseState) {

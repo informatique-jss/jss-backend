@@ -9,8 +9,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 import javax.mail.Address;
 import javax.mail.Message;
@@ -53,8 +55,11 @@ import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.invoicing.service.InvoiceHelper;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
+import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.model.Mail;
+import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
+import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.profile.service.EmployeeService;
 import com.jss.osiris.modules.quotation.model.Affaire;
@@ -69,6 +74,7 @@ import com.jss.osiris.modules.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.tiers.model.ITiers;
 import com.jss.osiris.modules.tiers.model.Responsable;
+import com.jss.osiris.modules.tiers.model.Tiers;
 
 @Service
 public class MailHelper {
@@ -130,6 +136,12 @@ public class MailHelper {
     @Autowired
     QrCodeHelper qrCodeHelper;
 
+    @Autowired
+    ConstantService constantService;
+
+    @Autowired
+    AttachmentService attachmentService;
+
     private JavaMailSender getMailSender() throws OsirisException {
         if (javaMailSender != null)
             return javaMailSender;
@@ -174,11 +186,15 @@ public class MailHelper {
     }
 
     private void addMailToQueue(CustomerMail mail) {
-        if (mail.getSendInvoiceAttachment() == null)
-            mail.setSendInvoiceAttachment(false);
         mail.setCreatedDateTime(LocalDateTime.now());
         mail.setSendToMeEmployee(employeeService.getCurrentEmployee());
         customerMailRepository.save(mail);
+
+        if (mail.getAttachments() != null)
+            for (Attachment attachment : mail.getAttachments()) {
+                attachment.setCustomerMail(mail);
+                attachmentService.addOrUpdateAttachment(attachment);
+            }
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -189,6 +205,11 @@ public class MailHelper {
             CustomerMail mail = mails.get(0);
             prepareAndSendMail(mail);
 
+            if (mail.getAttachments() != null)
+                for (Attachment attachment : mail.getAttachments()) {
+                    attachment.setCustomerMail(null);
+                    attachmentService.addOrUpdateAttachment(attachment);
+                }
             customerMailRepository.delete(mail);
         }
     }
@@ -244,7 +265,10 @@ public class MailHelper {
         ctx.setVariable("explainationElements",
                 mail.getExplainationElements() != null ? mail.getExplainationElements().split("!#") : null);
         ctx.setVariable("explaination2", mail.getExplaination2());
-        ctx.setVariable("explainationWarning", mail.getExplainationWarning());
+        ctx.setVariable("explaination3", mail.getExplaination3());
+        ctx.setVariable("paymentExplainationWarning", mail.getPaymentExplainationWarning());
+        ctx.setVariable("paymentExplaination", mail.getPaymentExplaination());
+        ctx.setVariable("paymentExplaination2", mail.getPaymentExplaination2());
 
         if (mail.getCustomerMailAssoAffaireOrders() != null) {
             ArrayList<AssoAffaireOrder> assos = new ArrayList<AssoAffaireOrder>();
@@ -288,8 +312,11 @@ public class MailHelper {
                             new InternetAddress(mail.getReplyTo().getMail(),
                                     mail.getReplyTo().getFirstname() + " " + mail.getReplyTo().getLastname()));
                 } catch (UnsupportedEncodingException e) {
-                    throw new OsirisException("Wrong To mail for customer mail " + mail.getId());
+                    throw new OsirisException("Wrong Reply To mail for customer mail " + mail.getId());
                 }
+
+            if (mail.getReplyToMail() != null)
+                message.setReplyTo(mail.getReplyToMail());
 
             if (mail.getSendToMe() != null && mail.getSendToMe())
                 message.setTo(mail.getSendToMeEmployee().getMail());
@@ -354,9 +381,10 @@ public class MailHelper {
                 throw new OsirisException("Unable to find some pictures for customer mail " + mail.getId());
             }
 
-            if (mail.getCustomerOrder() != null && mail.getSendInvoiceAttachment()) {
-                message.addAttachment("Facture n°" + ".pdf",
-                        generateInvoicePdf(mail.getCustomerOrder(), mail.getInvoice()));
+            if (mail.getAttachments() != null) {
+                for (Attachment attachment : mail.getAttachments())
+                    message.addAttachment(attachment.getUploadedFile().getFilename(),
+                            new File(attachment.getUploadedFile().getPath()));
             }
         } catch (MessagingException e) {
 
@@ -660,12 +688,44 @@ public class MailHelper {
 
         computeQuotationPrice(mail, quotation);
 
-        LocalDate localDate = LocalDate.now();
-        localDate = localDate.plusMonths(6);
+        mail.setPaymentExplaination(
+                "Votre commande est en attente de provision. Effectuez dès maintenant un virement de "
+                        + mail.getPriceTotal() + " € sur le compte ci-dessous pour la débloquer.");
+
+        mail.setPaymentExplaination2("IBAN /BIC : FR76 3007 6021 6310 7548 0020 040 / NORDFRPP");
+
+        mail.setCbExplanation(
+                "Vous avez aussi la possibilité de payer par carte bancaire en flashant le QR Code ci-dessous ou en cliquant ");
+
+        MailComputeResult mailComputeResult = computeMailForBillingDocument(quotation);
+
+        mail.setCbLink(paymentCbEntryPoint + "/quotation/deposit?quotationId=" + quotation.getId() + "&mail="
+                + mailComputeResult.getRecipientsMailTo().get(0).getMail());
+
+        mail.setPaymentExplainationWarning(
+                "Référence à indiquer abolument dans le libellé de votre virement : " + quotation.getId());
+
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-        mail.setTotalSubtitle("Ce devis est valable jusqu'au " + localDate.format(formatter));
+        mail.setTotalSubtitle("Ce devis est valable jusqu'au "
+                + LocalDate.now().withMonth(12).withDayOfMonth(31).format(formatter)
+                + " et sous réserve que les formalités à réaliser, au vu des documents transmis, correspondent à la demande de devis. Toute modification entraînera son actualisation.");
         mail.setGreetings("Bonne journée !");
+
+        ITiers tiers = quotationService.getCustomerOrderOfQuotation(quotation);
+
+        boolean isDepositMandatory = false;
+        if (tiers instanceof Tiers)
+            isDepositMandatory = ((Tiers) tiers).getIsProvisionalPaymentMandatory();
+        if (tiers instanceof Confrere)
+            isDepositMandatory = ((Confrere) tiers).getIsProvisionalPaymentMandatory();
+
+        if (isDepositMandatory)
+            mail.setExplaination3("Dès paiement de l'acompte de " + mail.getPriceTotal()
+                    + " € via le lien ci-dessous nous entamerons le traitement de cette commande avec tout notre savoir-faire.");
+        else
+            mail.setExplaination3(
+                    "Dès réception de votre validation concernant ce devis ou paiement de son montant via le lien ci-dessous nous entamerons le traitement de cette commande avec tout notre savoir-faire. Vous pourrez effectuer la validation en ligne sur notre site web : https://www.jss.fr/ Espace abonné, rubrique \"Mon compte\".");
 
         ITiers customerOrder = quotationService.getCustomerOrderOfQuotation(quotation);
         mail.setReplyTo(customerOrder.getSalesEmployee());
@@ -677,101 +737,247 @@ public class MailHelper {
         addMailToQueue(mail);
     }
 
-    public void generateWaintingDepositMail(CustomerOrder customerOrder) throws OsirisException {
-        sendCustomerOrderDepositWaitingToCustomer(customerOrder, true);
-    }
-
-    public void sendCustomerOrderDepositWaitingToCustomer(CustomerOrder customerOrder, boolean sendToMe)
-            throws OsirisException {
-
+    public void sendQuotationCreationConfirmationToCustomer(Quotation quotation) throws OsirisException {
         CustomerMail mail = new CustomerMail();
-        computeQuotationPrice(mail, customerOrder);
-        mail.setHeaderPicture("images/waiting-deposit-header.png");
-        mail.setTitle("Votre commande est en attente de provision");
-        mail.setLabel("Commande n°" + customerOrder.getId());
-        mail.setExplaination("Votre commande est en attente de provision. Effectuez dès maintenant un virement de "
-                + mail.getPreTaxPriceTotal() + " € sur le compte ci-dessous pour la débloquer.");
+        mail.setHeaderPicture("images/quotation-header.png");
+        mail.setTitle("Votre demande de devis");
+        mail.setLabel("Devis n°" + quotation.getId());
+        mail.setLabelSubtitle("Nous vous confirmons la réception de votre demande de devis décrite ci-dessous.");
 
-        mail.setExplaination2("IBAN : FR76 3007 6021 6310 7548 0020 040 \r\n BIC : NORDFRPP");
+        if (quotation.getAssoAffaireOrders().size() == 1) {
+            Affaire affaire = quotation.getAssoAffaireOrders().get(0).getAffaire();
+            mail.setExplaination("Ce devis concerne la société "
+                    + (affaire.getDenomination() != null ? affaire.getDenomination()
+                            : (affaire.getFirstname() + " " + affaire.getLastname())));
+        } else {
+            mail.setExplaination("Ce devis concerne les sociétés suivantes :");
+            ArrayList<String> details = new ArrayList<String>();
+            for (AssoAffaireOrder asso : quotation.getAssoAffaireOrders())
+                details.add(asso.getAffaire().getDenomination() != null ? asso.getAffaire().getDenomination()
+                        : (asso.getAffaire().getFirstname() + " " + asso.getAffaire().getLastname()));
+            mail.setExplainationElements(String.join("!#", details));
+        }
 
-        mail.setCbExplanation(
-                "Vous avez aussi la possibilité de payer par carte bancaire en flashant le QR Code ci-dessous ou en cliquant ");
+        mail.setExplaination2(
+                "Nos équipes vont vous contacter dans les plus brefs délais pour détailler ensemble votre besoin, si nécessaire.");
 
-        MailComputeResult mailComputeResult = computeMailForBillingDocument(customerOrder);
+        if (quotation.getAssoAffaireOrders() != null && quotation.getAssoAffaireOrders().size() > 0) {
+            ArrayList<CustomerMailAssoAffaireOrder> customerAssos = new ArrayList<CustomerMailAssoAffaireOrder>();
+            for (AssoAffaireOrder assos : quotation.getAssoAffaireOrders()) {
+                CustomerMailAssoAffaireOrder asso = new CustomerMailAssoAffaireOrder();
+                asso.setAssoAffaireOrderId(assos.getId());
+                asso.setCustomerMail(mail);
+                customerAssos.add(asso);
+            }
+            if (customerAssos.size() > 0)
+                mail.setCustomerMailAssoAffaireOrders(customerAssos);
+        }
 
-        mail.setCbLink(paymentCbEntryPoint + "/order/deposit?customerOrderId=" + customerOrder.getId() + "&mail="
-                + mailComputeResult.getRecipientsMailTo().get(0).getMail());
+        computeQuotationPrice(mail, quotation);
 
-        mail.setExplainationWarning(
-                "Référence à indiquer abolument dans le libellé de votre virement : " + customerOrder.getId());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
+        mail.setTotalSubtitle("Ce devis est valable jusqu'au "
+                + LocalDate.now().withMonth(12).withDayOfMonth(31).format(formatter)
+                + " et sous réserve que les formalités à réaliser, au vu des documents transmis, correspondent à la demande de devis. Toute modification entraînera son actualisation.");
+        mail.setExplaination3(
+                "Nos équipes vont vous contacter dans les plus brefs délais pour détailler ensemble votre besoin, si nécessaire.");
         mail.setGreetings("Bonne journée !");
 
-        ITiers customerOrderTiers = quotationService.getCustomerOrderOfQuotation(customerOrder);
-        mail.setReplyTo(customerOrderTiers.getSalesEmployee());
-        mail.setSendToMe(sendToMe);
-        mail.setMailComputeResult(computeMailForQuotationDocument(customerOrder));
+        mail.setReplyToMail(constantService.getStringSalesSharedMailbox());
+        mail.setSendToMe(false);
+        mail.setMailComputeResult(computeMailForQuotationDocument(quotation));
 
-        mail.setSubject("Votre commande n°" + customerOrder.getId() + " est en attente de provision");
+        mail.setSubject("Votre devis n°" + quotation.getId() + " du " + LocalDate.now().format(formatter));
 
         addMailToQueue(mail);
-
     }
 
-    public void sendCustomerOrderInvoiceToCustomer(CustomerOrder customerOrder, Invoice invoice, boolean sendToMe)
+    public void generateCustomerOrderCreationConfirmationToCustomer(CustomerOrder customerOrder)
+            throws OsirisException {
+        sendCustomerOrderCreationConfirmationToCustomer(customerOrder, true, false);
+    }
+
+    public void sendCustomerOrderCreationConfirmationToCustomer(CustomerOrder customerOrder, boolean sendToMe,
+            boolean isReminder)
             throws OsirisException {
 
         CustomerMail mail = new CustomerMail();
-        mail.setHeaderPicture("images/invoice-header.png");
-        mail.setTitle("Votre facture est disponible");
-        mail.setLabel("Commande n°" + customerOrder.getId());
-
         computeQuotationPrice(mail, customerOrder);
 
-        Float remainingToPay = accountingRecordService.getRemainingAmountToPayForCustomerOrder(customerOrder);
-        if (remainingToPay > 0) {
-            MailComputeResult mailComputeResult = computeMailForBillingDocument(customerOrder);
+        ITiers tiers = quotationService.getCustomerOrderOfQuotation(customerOrder);
 
-            mail.setExplaination(
-                    "Vous trouverez ci-jointe votre facture pour votre commande. Nous vous remercions de bien vouloir effectuez dès maintenant le réglement par un virement de "
-                            + remainingToPay + " € sur le compte ci-dessous.");
-            mail.setExplaination2("IBAN : FR76 3007 6021 6310 7548 0020 040 \r\n BIC : NORDFRPP");
-            mail.setExplainationWarning(
-                    "Référence à indiquer abolument dans le libellé de votre virement : " + customerOrder.getId());
+        boolean isDepositMandatory = false;
+        if (tiers instanceof Tiers)
+            isDepositMandatory = ((Tiers) tiers).getIsProvisionalPaymentMandatory();
+        if (tiers instanceof Confrere)
+            isDepositMandatory = ((Confrere) tiers).getIsProvisionalPaymentMandatory();
+
+        Float remainingToPay = accountingRecordService.getRemainingAmountToPayForCustomerOrder(customerOrder);
+
+        mail.setHeaderPicture("images/waiting-deposit-header.png");
+        mail.setTitle("Votre commande est prête !");
+
+        if (isDepositMandatory && remainingToPay > 0)
+            mail.setSubtitle("Elle n'attend plus que votre paiement.");
+
+        mail.setLabel("Commande n°" + customerOrder.getId());
+
+        String explainationText = "";
+
+        if (isReminder)
+            explainationText = "Nous sommes toujours  en attente du réglement de l'acompte concernant votre commande n°"
+                    + customerOrder.getId();
+        else if (customerOrder.getQuotations() != null)
+            explainationText = "Nous vous confirmons la validation du devis n°"
+                    + customerOrder.getQuotations().get(0).getId() + "correspondant à votre commande n°"
+                    + customerOrder.getId();
+        else
+            explainationText = "Nous vous confirmons la validation de votre commande n°" + customerOrder.getId();
+
+        String responsibleString = "";
+        if (customerOrder.getAssoAffaireOrders().size() == 1) {
+            Affaire affaire = customerOrder.getAssoAffaireOrders().get(0).getAffaire();
+            responsibleString = customerOrder.getAssoAffaireOrders().get(0).getAssignedTo().getFirstname() + " "
+                    + customerOrder.getAssoAffaireOrders().get(0).getAssignedTo().getLastname() + " et ";
+            mail.setExplaination(explainationText + " concernant la société " +
+                    (affaire.getDenomination() != null ? affaire.getDenomination()
+                            : (affaire.getFirstname() + " " + affaire.getLastname()))
+                    + ".");
+        } else {
+            mail.setExplaination(explainationText + " concernant les sociétés indiquées ci-dessous.");
+
+            ArrayList<String> details = new ArrayList<String>();
+            for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
+                details.add(asso.getAffaire().getDenomination() != null ? asso.getAffaire().getDenomination()
+                        : (asso.getAffaire().getFirstname() + " " + asso.getAffaire().getLastname()));
+            mail.setExplainationElements(String.join("!#", details));
+        }
+
+        if (customerOrder.getAssoAffaireOrders() != null && customerOrder.getAssoAffaireOrders().size() > 0) {
+            ArrayList<CustomerMailAssoAffaireOrder> customerAssos = new ArrayList<CustomerMailAssoAffaireOrder>();
+            for (AssoAffaireOrder assos : customerOrder.getAssoAffaireOrders()) {
+                CustomerMailAssoAffaireOrder asso = new CustomerMailAssoAffaireOrder();
+                asso.setAssoAffaireOrderId(assos.getId());
+                asso.setCustomerMail(mail);
+                customerAssos.add(asso);
+            }
+            if (customerAssos.size() > 0)
+                mail.setCustomerMailAssoAffaireOrders(customerAssos);
+        }
+
+        if (remainingToPay > 0) {
+            if (isDepositMandatory) {
+                mail.setPaymentExplaination(
+                        "Dès reception de votre réglement d'un montant de " + mail.getPriceTotal()
+                                + " €, le traitement de votre commande débutera");
+            } else {
+                mail.setPaymentExplaination(
+                        "Votre commande sera traitée dans les meilleurs délais et avec tout notre savoir-faire par "
+                                + responsibleString
+                                + "toutes nos équipes. Vous pourrez suivre l'état de son avancement en ligne sur notre site https://www.jss.fr/ Espace abonné, rubrique \"Mon compte\". Vous pouvez d'ors et déjà régler cette commande d'un montant de "
+                                + mail.getPriceTotal() + " € en suivant les instructions ci-dessous.");
+            }
+
+            mail.setPaymentExplaination2("IBAN /BIC : FR76 3007 6021 6310 7548 0020 040 / NORDFRPP");
 
             mail.setCbExplanation(
                     "Vous avez aussi la possibilité de payer par carte bancaire en flashant le QR Code ci-dessous ou en cliquant ");
-            if (!sendToMe)
-                mail.setCbLink(
-                        paymentCbEntryPoint + "/order/invoice?customerOrderId=" + customerOrder.getId() + "&mail="
-                                + mailComputeResult.getRecipientsMailTo().get(0).getMail());
-            else
-                mail.setCbLink(
-                        paymentCbEntryPoint + "/order/invoice?customerOrderId=" + customerOrder.getId() + "&mail="
-                                + employeeService.getCurrentEmployee().getMail());
-        } else
-            mail.setExplaination("Vous trouverez ci-jointe votre facture pour votre commande.");
 
-        mail.setGreetings("Nous vous remercions pour votre confiance");
+            MailComputeResult mailComputeResult = computeMailForBillingDocument(customerOrder);
+            mail.setCbLink(paymentCbEntryPoint + "/order/deposit?customerOrderId=" + customerOrder.getId() + "&mail="
+                    + mailComputeResult.getRecipientsMailTo().get(0).getMail());
 
-        ITiers customerOrderTiers = quotationService.getCustomerOrderOfQuotation(customerOrder);
-        mail.setReplyTo(customerOrderTiers.getSalesEmployee());
-        mail.setSendToMe(sendToMe);
-        if (sendToMe) {
-            mail.setSendToMeEmployee(employeeService.getCurrentEmployee());
+            mail.setPaymentExplainationWarning(
+                    "Référence à indiquer abolument dans le libellé de votre virement : " + customerOrder.getId());
+
+        } else {
+            mail.setExplaination3(
+                    "Votre commande sera traitée dans les meilleurs délais et avec tout notre savoir-faire par "
+                            + responsibleString
+                            + "toutes nos équipes. Vous pourrez suivre l'état de son avancement en ligne sur notre site https://www.jss.fr/ Espace abonné, rubrique \"Mon compte\".");
         }
+
+        mail.setGreetings("Bonne journée !");
+
+        mail.setReplyTo(tiers.getSalesEmployee());
+        mail.setSendToMe(sendToMe);
         mail.setMailComputeResult(computeMailForQuotationDocument(customerOrder));
 
-        mail.setSubject("Votre facture pour votre commande n°" + customerOrder.getId());
+        if (isDepositMandatory && remainingToPay > 0)
+            mail.setSubject("Votre commande n°" + customerOrder.getId() + " est en attente de paiement");
+        else
+            mail.setSubject("Votre commande n°" + customerOrder.getId());
 
-        mail.setCustomerOrder(customerOrder);
-        mail.setSendInvoiceAttachment(true);
-        mail.setInvoice(invoice);
+        addMailToQueue(mail);
+    }
 
-        if (sendToMe) {
-            prepareAndSendMail(mail);
-        } else
-            addMailToQueue(mail);
+    public void generateCustomerOrderDepositConfirmationToCustomer(CustomerOrder customerOrder)
+            throws OsirisException {
+        sendCustomerOrderDepositConfirmationToCustomer(customerOrder, true);
+    }
+
+    public void sendCustomerOrderDepositConfirmationToCustomer(CustomerOrder customerOrder, boolean sendToMe)
+            throws OsirisException {
+
+        CustomerMail mail = new CustomerMail();
+        computeQuotationPrice(mail, customerOrder);
+
+        ITiers tiers = quotationService.getCustomerOrderOfQuotation(customerOrder);
+
+        mail.setHeaderPicture("images/waiting-deposit-header.png");
+        mail.setTitle("Votre acompte a bien été reçu !");
+
+        mail.setLabel("Commande n°" + customerOrder.getId());
+
+        String explainationText = "Nous vous confirmons la prise en compte d'un réglement de " + mail.getPriceTotal()
+                + " € concernant vote commande n°" + customerOrder.getId();
+
+        String responsibleString = "";
+        if (customerOrder.getAssoAffaireOrders().size() == 1) {
+            Affaire affaire = customerOrder.getAssoAffaireOrders().get(0).getAffaire();
+            responsibleString = customerOrder.getAssoAffaireOrders().get(0).getAssignedTo().getFirstname() + " "
+                    + customerOrder.getAssoAffaireOrders().get(0).getAssignedTo().getLastname() + " et ";
+            mail.setExplaination(explainationText + " concernant la société " +
+                    (affaire.getDenomination() != null ? affaire.getDenomination()
+                            : (affaire.getFirstname() + " " + affaire.getLastname()))
+                    + ".");
+        } else {
+            mail.setExplaination(explainationText + " concernant les sociétés indiquées ci-dessous.");
+
+            ArrayList<String> details = new ArrayList<String>();
+            for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
+                details.add(asso.getAffaire().getDenomination() != null ? asso.getAffaire().getDenomination()
+                        : (asso.getAffaire().getFirstname() + " " + asso.getAffaire().getLastname()));
+            mail.setExplainationElements(String.join("!#", details));
+        }
+
+        if (customerOrder.getAssoAffaireOrders() != null && customerOrder.getAssoAffaireOrders().size() > 0) {
+            ArrayList<CustomerMailAssoAffaireOrder> customerAssos = new ArrayList<CustomerMailAssoAffaireOrder>();
+            for (AssoAffaireOrder assos : customerOrder.getAssoAffaireOrders()) {
+                CustomerMailAssoAffaireOrder asso = new CustomerMailAssoAffaireOrder();
+                asso.setAssoAffaireOrderId(assos.getId());
+                asso.setCustomerMail(mail);
+                customerAssos.add(asso);
+            }
+            if (customerAssos.size() > 0)
+                mail.setCustomerMailAssoAffaireOrders(customerAssos);
+        }
+
+        mail.setExplaination3(
+                "Votre commande sera traitée dans les meilleurs délais et avec tout notre savoir-faire par "
+                        + responsibleString
+                        + "toutes nos équipes. Vous pourrez suivre l'état de son avancement en ligne sur notre site https://www.jss.fr/ Espace abonné, rubrique \"Mon compte\".");
+
+        mail.setGreetings("Bonne journée !");
+
+        mail.setReplyTo(tiers.getSalesEmployee());
+        mail.setSendToMe(sendToMe);
+        mail.setMailComputeResult(computeMailForQuotationDocument(customerOrder));
+
+        mail.setSubject("Réception de réglement pour votre commande n°" + customerOrder.getId());
+
+        addMailToQueue(mail);
     }
 
     public File generateInvoicePdf(CustomerOrder customerOrder, Invoice invoice) throws OsirisException {
@@ -858,6 +1064,156 @@ public class MailHelper {
             throw new OsirisException("Unable to create PDF file for invoice " + invoice.getId());
         }
         return tempFile;
+    }
+
+    public void generateCustomerOrderFinalisationToCustomer(CustomerOrder customerOrder)
+            throws OsirisException {
+        sendCustomerOrderFinalisationToCustomer(customerOrder, true, false, false);
+    }
+
+    public void sendCustomerOrderFinalisationToCustomer(CustomerOrder customerOrder, boolean sendToMe,
+            boolean isReminder, boolean isLastReminder)
+            throws OsirisException {
+
+        CustomerMail mail = new CustomerMail();
+        computeQuotationPrice(mail, customerOrder);
+
+        ITiers tiers = quotationService.getCustomerOrderOfQuotation(customerOrder);
+
+        Float remainingToPay = accountingRecordService.getRemainingAmountToPayForCustomerOrder(customerOrder);
+
+        List<Attachment> attachments = findAttachmentForCustomerOrder(customerOrder, isReminder);
+
+        mail.setAttachments(attachments);
+
+        mail.setHeaderPicture("images/waiting-deposit-header.png");
+        mail.setTitle("Votre commande est terminée !");
+
+        if (remainingToPay > 0)
+            mail.setSubtitle("Elle n'attend plus que votre paiement.");
+
+        mail.setLabel("Commande n°" + customerOrder.getId());
+
+        String explainationText = "";
+        if (isReminder) {
+            explainationText = "Ceci est un mail de relance automatique concernant le réglement de votre commande n°"
+                    + customerOrder.getId() + " dont vous trouverez la facture ci-jointe.";
+            if (isLastReminder)
+                explainationText += " Sans réglement de votre part dans les 10jours, nous nous verrons contraints de vous mettre en demeure pour la somme en question.";
+            else
+                explainationText += " Nous vous remercions de bien vouloir procéder à son règlement dans les meilleurs délais.";
+        } else {
+            Affaire affaire = customerOrder.getAssoAffaireOrders().get(0).getAffaire();
+            explainationText = "Nous avons le plaisir de vous confirmer la finalisation de votre commande n°"
+                    + customerOrder.getId() + " concernant la société "
+                    + (affaire.getDenomination() != null ? affaire.getDenomination()
+                            : (affaire.getFirstname() + " " + affaire.getLastname()))
+                    + ". Vous trouverez en pièces-jointes les éléments suivants : ";
+
+            mail.setExplainationElements(String.join("!#",
+                    attachments.stream().map(Attachment::getDescription).collect(Collectors.toList())));
+        }
+
+        mail.setExplaination(explainationText);
+
+        if (remainingToPay > 0) {
+            mail.setPaymentExplaination(
+                    "Vous pouvez régler cette facture d'un montant de " + remainingToPay
+                            + " € par virement à l'aide des informations suivantes");
+
+            mail.setPaymentExplaination2("IBAN /BIC : FR76 3007 6021 6310 7548 0020 040 / NORDFRPP");
+
+            mail.setCbExplanation(
+                    "Vous avez aussi la possibilité de payer par carte bancaire en flashant le QR Code ci-dessous ou en cliquant ");
+
+            MailComputeResult mailComputeResult = computeMailForBillingDocument(customerOrder);
+            if (!sendToMe)
+                mail.setCbLink(
+                        paymentCbEntryPoint + "/order/invoice?customerOrderId=" + customerOrder.getId() + "&mail="
+                                + mailComputeResult.getRecipientsMailTo().get(0).getMail());
+            else
+                mail.setCbLink(
+                        paymentCbEntryPoint + "/order/invoice?customerOrderId=" + customerOrder.getId() + "&mail="
+                                + employeeService.getCurrentEmployee().getMail());
+
+            mail.setPaymentExplainationWarning(
+                    "Référence à indiquer abolument dans le libellé de votre virement : " + customerOrder.getId());
+
+        } else if (remainingToPay < 0) {
+            mail.setExplaination3(
+                    "Un remboursement de " + (Math.abs(remainingToPay))
+                            + " € sera bientôt réalisé vers votre compte bancaire.");
+        }
+
+        mail.setGreetings("En vous remerciant pour votre confiance !");
+
+        mail.setReplyTo(tiers.getSalesEmployee());
+        mail.setSendToMe(sendToMe);
+        mail.setMailComputeResult(computeMailForQuotationDocument(customerOrder));
+
+        if (isReminder)
+            mail.setSubject("Votre commande n°" + customerOrder.getId() + " est en attente de paiement");
+        else
+            mail.setSubject("Votre commande n°" + customerOrder.getId() + " est terminée");
+
+        addMailToQueue(mail);
+    }
+
+    private List<Attachment> findAttachmentForCustomerOrder(CustomerOrder customerOrder, boolean isReminder)
+            throws OsirisException {
+        ArrayList<Attachment> attachments = new ArrayList<Attachment>();
+
+        if (customerOrder != null && customerOrder.getAttachments() != null) {
+            customerOrder.getAttachments().sort(new Comparator<Attachment>() {
+                @Override
+                public int compare(Attachment o1, Attachment o2) {
+                    if (o2.getCreatDateTime() == null && o1.getCreatDateTime() != null)
+                        return -1;
+                    if (o2.getCreatDateTime() != null && o1.getCreatDateTime() == null)
+                        return 1;
+                    if (o1.getCreatDateTime() == null && o2.getCreatDateTime() == null)
+                        return 0;
+                    return o2.getCreatDateTime().isAfter(o1.getCreatDateTime()) ? 1 : -1;
+                }
+            });
+            for (Attachment attachment : customerOrder.getAttachments()) {
+                if (attachment.getAttachmentType().getId().equals(constantService.getAttachmentTypeInvoice().getId()))
+                    attachments.add(attachment);
+                break;
+            }
+        }
+
+        if (!isReminder && customerOrder != null && customerOrder.getAssoAffaireOrders() != null)
+            for (
+
+            AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
+                if (asso.getProvisions() != null)
+                    for (Provision provision : asso.getProvisions())
+                        if (provision.getAnnouncement() != null) {
+                            if (provision.getAnnouncement().getAttachments() != null)
+                                for (Attachment attachment : provision.getAnnouncement().getAttachments())
+                                    if (attachment.getAttachmentType().getId()
+                                            .equals(constantService.getAttachmentTypePublicationFlag()
+                                                    .getId())
+                                            || attachment.getAttachmentType().getId().equals(
+                                                    constantService.getAttachmentTypePublicationReceipt()
+                                                            .getId()))
+                                        attachments.add(attachment);
+                        } else if (provision.getFormalite() != null) {
+                            if (provision.getFormalite().getAttachments() != null)
+                                for (Attachment attachment : provision.getFormalite().getAttachments())
+                                    if (attachment.getAttachmentType().getId()
+                                            .equals(constantService.getAttachmentTypeKbisUpdated().getId()))
+                                        attachments.add(attachment);
+                        } else if (provision.getBodacc() != null) {
+                            if (provision.getBodacc().getAttachments() != null)
+                                for (Attachment attachment : provision.getBodacc().getAttachments())
+                                    if (attachment.getAttachmentType().getId()
+                                            .equals(constantService.getAttachmentTypeKbisUpdated().getId()))
+                                        attachments.add(attachment);
+                        }
+
+        return attachments;
     }
 
 }

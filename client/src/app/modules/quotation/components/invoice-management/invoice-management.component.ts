@@ -2,12 +2,15 @@ import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@
 import { FormBuilder } from '@angular/forms';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
 import { instanceOfCustomerOrder, instanceOfQuotation } from 'src/app/libs/TypeHelper';
+import { getAffaireListArrayForIQuotation, getAffaireListFromIQuotation, getCustomerOrderForIQuotation, getCustomerOrderNameForIQuotation, getLetteringDate } from 'src/app/modules/invoicing/components/invoice-tools';
 import { InvoiceService } from 'src/app/modules/invoicing/services/invoice.service';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { AppService } from '../../../../services/app.service';
 import { CustomerOrder } from '../../model/CustomerOrder';
+import { InvoiceLabelResult } from '../../model/InvoiceLabelResult';
 import { IQuotation } from '../../model/IQuotation';
 import { VatBase } from '../../model/VatBase';
+import { InvoiceLabelResultService } from '../../services/invoice.label.result.service';
 import { QuotationComponent } from '../quotation/quotation.component';
 
 @Component({
@@ -23,18 +26,26 @@ export class InvoiceManagementComponent implements OnInit {
   @Input() instanceOfCustomerOrder: boolean = false;
   @Output() invoiceItemChange: EventEmitter<void> = new EventEmitter<void>();
 
+  invoiceLabelResult: InvoiceLabelResult | undefined;
 
   instanceOfCustomerOrderFn = instanceOfCustomerOrder;
   instanceOfQuotation = instanceOfQuotation;
+  getLetteringDate = getLetteringDate;
+  getAffaireListFromIQuotation = getAffaireListFromIQuotation;
+  getCustomerOrderNameForIQuotation = getCustomerOrderNameForIQuotation;
+  getCustomerOrderForIQuotation = getCustomerOrderForIQuotation;
+  getAffaireListArrayForIQuotation = getAffaireListArrayForIQuotation;
 
   invoiceStatusCancelled = this.constantService.getInvoiceStatusCancelled();
 
   constructor(private formBuilder: FormBuilder,
     private constantService: ConstantService,
     private appService: AppService,
+    private invoiceLabelResultService: InvoiceLabelResultService,
     protected invoiceService: InvoiceService,) { }
 
   ngOnInit() {
+    this.updateInvoiceLabelResult();
     this.invoiceManagementForm.markAllAsTouched();
   }
 
@@ -100,6 +111,13 @@ export class InvoiceManagementComponent implements OnInit {
 
   openRoute(event: any, link: string) {
     this.appService.openRoute(event, link, null);
+  }
+
+  updateInvoiceLabelResult() {
+    if (this.quotation && this.quotation.id && instanceOfCustomerOrder(this.quotation))
+      this.invoiceLabelResultService.getInvoiceLabelComputeResult(this.quotation).subscribe(response => {
+        this.invoiceLabelResult = response;
+      });
   }
 
 }

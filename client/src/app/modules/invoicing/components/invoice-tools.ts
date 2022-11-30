@@ -1,8 +1,8 @@
 import { SortTableColumn } from "../../miscellaneous/model/SortTableColumn";
 import { Affaire } from "../../quotation/model/Affaire";
 import { Confrere } from "../../quotation/model/Confrere";
-import { CustomerOrder } from "../../quotation/model/CustomerOrder";
 import { Invoice } from "../../quotation/model/Invoice";
+import { IQuotation } from '../../quotation/model/IQuotation';
 import { ITiers } from "../../tiers/model/ITiers";
 import { Tiers } from "../../tiers/model/Tiers";
 
@@ -31,12 +31,7 @@ export function getColumnLink(column: SortTableColumn, element: any) {
 
 export function getCustomerOrderNameForInvoice(element: Invoice) {
   if (element.customerOrder) {
-    if (element.customerOrder.confrere)
-      return element.customerOrder.confrere.label
-    if (element.customerOrder.responsable)
-      return element.customerOrder.responsable.firstname + " " + element.customerOrder.responsable.lastname;
-    if (element.customerOrder.tiers)
-      return element.customerOrder.tiers.firstname + " " + element.customerOrder.tiers.lastname;
+    return getCustomerOrderNameForIQuotation(element.customerOrder);
   } else {
     if (element.tiers)
       return element.tiers.firstname + " " + element.tiers.lastname;
@@ -58,9 +53,21 @@ export function getCustomerOrderNameForITiers(element: ITiers) {
   return "";
 }
 
+export function getCustomerOrderNameForIQuotation(element: IQuotation) {
+  if (element) {
+    if (element.confrere)
+      return element.confrere.label
+    if (element.responsable)
+      return element.responsable.firstname + " " + element.responsable.lastname;
+    if (element.tiers)
+      return element.tiers.firstname + " " + element.tiers.lastname;
+  }
+  return "";
+}
+
 export function getCustomerOrderForInvoice(invoice: Invoice): ITiers {
   if (invoice.customerOrder) {
-    return getCustomerOrderForCustomerOrder(invoice.customerOrder);
+    return getCustomerOrderForIQuotation(invoice.customerOrder);
   } else {
     if (invoice.tiers)
       return invoice.tiers;
@@ -72,7 +79,7 @@ export function getCustomerOrderForInvoice(invoice: Invoice): ITiers {
   return {} as ITiers;
 }
 
-export function getCustomerOrderForCustomerOrder(customerOrder: CustomerOrder): ITiers {
+export function getCustomerOrderForIQuotation(customerOrder: IQuotation): ITiers {
   if (customerOrder) {
     if (customerOrder.confrere)
       return customerOrder.confrere;
@@ -90,9 +97,21 @@ export function getAffaireList(invoice: Invoice): string {
   return "";
 }
 
+export function getAffaireListFromIQuotation(customerOrder: IQuotation): string {
+  if (customerOrder)
+    return customerOrder.assoAffaireOrders.map(asso => asso.affaire.denomination ? asso.affaire.denomination : (asso.affaire.firstname + ' ' + asso.affaire.lastname)).join(", ");
+  return "";
+}
+
 export function getAffaireListArray(invoice: Invoice): Affaire[] | undefined {
   if (invoice && invoice.customerOrder)
     return invoice.customerOrder.assoAffaireOrders.map(asso => asso.affaire);
+  return undefined;
+}
+
+export function getAffaireListArrayForIQuotation(quotation: IQuotation): Affaire[] | undefined {
+  if (quotation)
+    return quotation.assoAffaireOrders.map(asso => asso.affaire);
   return undefined;
 }
 

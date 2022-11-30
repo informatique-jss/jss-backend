@@ -10,6 +10,12 @@ import com.jss.osiris.modules.miscellaneous.model.ICode;
 
 @Entity
 public class NatureDesActivite implements Serializable, ICode {
+    public NatureDesActivite(String code) {
+        this.code = code;
+    }
+
+    public NatureDesActivite() {
+    }
 
     @Id
     private String code;

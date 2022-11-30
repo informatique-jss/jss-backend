@@ -10,6 +10,12 @@ import com.jss.osiris.modules.miscellaneous.model.ICode;
 
 @Entity
 public class TypeLiasse implements Serializable, ICode {
+    public TypeLiasse(String code) {
+        this.code = code;
+    }
+
+    public TypeLiasse() {
+    }
 
     @Id
     private String code;

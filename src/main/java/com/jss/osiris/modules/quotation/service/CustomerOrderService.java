@@ -17,7 +17,8 @@ public interface CustomerOrderService {
 
         public CustomerOrder addOrUpdateCustomerOrderFromUser(CustomerOrder customerOrder) throws OsirisException;
 
-        public CustomerOrder addOrUpdateCustomerOrderStatus(CustomerOrder customerOrder, String targetStatusCode)
+        public CustomerOrder addOrUpdateCustomerOrderStatus(CustomerOrder customerOrder, String targetStatusCode,
+                        boolean isFromUser)
                         throws OsirisException;
 
         public CustomerOrder addOrUpdateCustomerOrderStatusFromUser(CustomerOrder customerOrder,
@@ -30,19 +31,23 @@ public interface CustomerOrderService {
         public CustomerOrder createNewCustomerOrderFromQuotation(Quotation quotation)
                         throws OsirisException;
 
-        public void generateInvoiceMail(CustomerOrder customerOrder) throws OsirisException, Exception;
+        public void generateInvoiceMail(CustomerOrder customerOrder) throws OsirisException;
 
         public CustomerOrder unlockCustomerOrderFromDeposit(CustomerOrder customerOrder, Float effectivePayment)
                         throws OsirisException;
 
-        public String getCardPaymentLinkForPaymentDeposit(CustomerOrder customerOrder, String mail, String subject)
+        public String getCardPaymentLinkForCustomerOrderDeposit(CustomerOrder customerOrder, String mail,
+                        String subject)
                         throws OsirisException;
 
-        public Boolean validateCardPaymentLinkForDeposit(CustomerOrder customerOrder) throws OsirisException;
+        public Boolean validateCardPaymentLinkForCustomerOrderDeposit(CustomerOrder customerOrder)
+                        throws OsirisException;
 
         public String getCardPaymentLinkForPaymentInvoice(CustomerOrder customerOrder, String mail, String subject)
                         throws OsirisException;
 
         public Boolean validateCardPaymentLinkForInvoice(CustomerOrder customerOrder) throws OsirisException;
+
+        public void sendRemindersForCustomerOrderDeposit() throws OsirisException;
 
 }

@@ -60,12 +60,12 @@
             <table class="full-width">
               <tr>
                 <td>
-                  <chips-mail [(model)]="quotation.mails" label="Mails" [form]="orderingCustomerForm"
-                    propertyName="mails" [isDisabled]="!editMode"></chips-mail>
+                  <chips-mail [(model)]="getCustomerOrderForIQuotation(quotation).mails" label="Mails"
+                    [form]="orderingCustomerForm" propertyName="mails" [isDisabled]="true"></chips-mail>
                 </td>
                 <td>
-                  <chips-phone [(model)]="quotation.phones" label="Téléphones" [form]="orderingCustomerForm"
-                    propertyName="phones" [isDisabled]="!editMode"></chips-phone>
+                  <chips-phone [(model)]="getCustomerOrderForIQuotation(quotation).phones" label="Téléphones"
+                    [form]="orderingCustomerForm" propertyName="phones" [isDisabled]="true"></chips-phone>
                 </td>
               </tr>
             </table>
@@ -128,12 +128,12 @@
             <table class="full-width">
               <tr>
                 <td>
-                  <chips-mail [(model)]="quotation.mails" label="Mails" [form]="orderingCustomerForm"
-                    propertyName="mails" [isDisabled]="!editMode"></chips-mail>
+                  <chips-mail [(model)]="getCustomerOrderForIQuotation(quotation).mails" label="Mails"
+                    [form]="orderingCustomerForm" propertyName="mails" [isDisabled]="true"></chips-mail>
                 </td>
                 <td>
-                  <chips-phone [(model)]="quotation.phones" label="Téléphones" [form]="orderingCustomerForm"
-                    propertyName="phones" [isDisabled]="!editMode"></chips-phone>
+                  <chips-phone [(model)]="getCustomerOrderForIQuotation(quotation).phones" label="Téléphones"
+                    [form]="orderingCustomerForm" propertyName="phones" [isDisabled]="true"></chips-phone>
                 </td>
               </tr>
             </table>

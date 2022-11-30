@@ -10,6 +10,12 @@ import com.jss.osiris.modules.miscellaneous.model.ICode;
 
 @Entity
 public class StatutVisAVisFormalite implements Serializable, ICode {
+    public StatutVisAVisFormalite(String code) {
+        this.code = code;
+    }
+
+    public StatutVisAVisFormalite() {
+    }
 
     @Id
     private String code;

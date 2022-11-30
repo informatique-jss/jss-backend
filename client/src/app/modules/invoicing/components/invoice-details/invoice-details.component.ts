@@ -1,12 +1,12 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { Vat } from 'src/app/modules/miscellaneous/model/Vat';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { QuotationComponent } from 'src/app/modules/quotation/components/quotation/quotation.component';
 import { Affaire } from 'src/app/modules/quotation/model/Affaire';
 import { Invoice } from 'src/app/modules/quotation/model/Invoice';
 import { IQuotation } from 'src/app/modules/quotation/model/IQuotation';
+import { VatBase } from 'src/app/modules/quotation/model/VatBase';
 import { INVOICE_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
 import { InvoiceService } from '../../services/invoice.service';
@@ -105,14 +105,26 @@ export class InvoiceDetailsComponent implements OnInit {
     return vat;
   }
 
-  getApplicableVat(): Vat | undefined {
+  getApplicableVat(): VatBase[] {
+    let vatBases: VatBase[] = [];
     if (this.invoice && this.invoice.invoiceItems) {
       for (let invoiceItem of this.invoice.invoiceItems) {
-        if (invoiceItem.vat)
-          return invoiceItem.vat;
+        if (invoiceItem.vat && invoiceItem.vatPrice && invoiceItem.vatPrice > 0) {
+          let vatFound = false;
+          for (let vatBase of vatBases) {
+            if (vatBase.label == invoiceItem.vat.label) {
+              vatFound = true;
+              vatBase.base += invoiceItem.preTaxPrice - (invoiceItem.discountAmount ? invoiceItem.discountAmount : 0);
+              vatBase.total += invoiceItem.vatPrice;
+            }
+          }
+          if (!vatFound) {
+            vatBases.push({ label: invoiceItem.vat.label, base: (invoiceItem.preTaxPrice - (invoiceItem.discountAmount ? invoiceItem.discountAmount : 0)), total: invoiceItem.vatPrice });
+          }
+        }
       }
     }
-    return undefined;
+    return vatBases;
   }
 
   getPriceTotal(): number {

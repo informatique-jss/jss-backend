@@ -10,6 +10,12 @@ import com.jss.osiris.modules.miscellaneous.model.ICode;
 
 @Entity
 public class CapaciteEngagement implements Serializable, ICode {
+    public CapaciteEngagement() {
+    }
+
+    public CapaciteEngagement(String code) {
+        this.code = code;
+    }
 
     @Id
     private String code;

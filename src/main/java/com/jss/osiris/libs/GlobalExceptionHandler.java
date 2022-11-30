@@ -79,7 +79,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.internalServerError().headers(header).build();
     }
 
-    private void persistLog(Exception exception, String logType) {
+    public void persistLog(Exception exception, String logType) {
         try {
             if (devMode) {
                 exception.printStackTrace();

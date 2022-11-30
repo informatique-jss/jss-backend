@@ -10,6 +10,12 @@ import com.jss.osiris.modules.miscellaneous.model.ICode;
 
 @Entity
 public class TotalitePartie implements Serializable, ICode {
+    public TotalitePartie(String code) {
+        this.code = code;
+    }
+
+    public TotalitePartie() {
+    }
 
     @Id
     private String code;

@@ -54,8 +54,31 @@ public class BodaccStatusServiceImpl implements BodaccStatusService {
     }
 
     @Override
-    public void updateStatusReferential() {
+    public void updateStatusReferential() throws OsirisException {
         updateStatus(BodaccStatus.BODACC_NEW, "Nouveau", "auto_awesome", true, false);
+        updateStatus(BodaccStatus.BODACC_IN_PROGRESS, "En cours", "autorenew", false, false);
+        updateStatus(BodaccStatus.BODACC_WAITING_DOCUMENT, "En attente de documents", "hourglass_top", false, false);
+        updateStatus(BodaccStatus.BODACC_WAITING_DOCUMENT_BODACC, "En attente de documents du BODACC", "hourglass_top",
+                false, false);
+        updateStatus(BodaccStatus.BODACC_WAITING_PUBLICATION, "En attente de parution", "new_releases", false, false);
+        updateStatus(BodaccStatus.BODACC_PUBLISHED, "Publié", "fact_check", false, false);
+        updateStatus(BodaccStatus.BODACC_DONE, "Terminé", "check_small", false, true);
+
+        setSuccessor(BodaccStatus.BODACC_NEW, BodaccStatus.BODACC_IN_PROGRESS);
+        setSuccessor(BodaccStatus.BODACC_IN_PROGRESS, BodaccStatus.BODACC_WAITING_PUBLICATION);
+        setSuccessor(BodaccStatus.BODACC_IN_PROGRESS, BodaccStatus.BODACC_WAITING_DOCUMENT);
+        setSuccessor(BodaccStatus.BODACC_WAITING_DOCUMENT, BodaccStatus.BODACC_WAITING_PUBLICATION);
+        setSuccessor(BodaccStatus.BODACC_WAITING_PUBLICATION, BodaccStatus.BODACC_PUBLISHED);
+        setSuccessor(BodaccStatus.BODACC_PUBLISHED, BodaccStatus.BODACC_WAITING_DOCUMENT_BODACC);
+        setSuccessor(BodaccStatus.BODACC_WAITING_DOCUMENT_BODACC, BodaccStatus.BODACC_DONE);
+        setSuccessor(BodaccStatus.BODACC_PUBLISHED, BodaccStatus.BODACC_DONE);
+
+        setPredecessor(BodaccStatus.BODACC_DONE, BodaccStatus.BODACC_PUBLISHED);
+        setPredecessor(BodaccStatus.BODACC_WAITING_DOCUMENT, BodaccStatus.BODACC_IN_PROGRESS);
+        setPredecessor(BodaccStatus.BODACC_PUBLISHED, BodaccStatus.BODACC_WAITING_PUBLICATION);
+        setPredecessor(BodaccStatus.BODACC_WAITING_PUBLICATION, BodaccStatus.BODACC_IN_PROGRESS);
+        setPredecessor(BodaccStatus.BODACC_PUBLISHED, BodaccStatus.BODACC_WAITING_PUBLICATION);
+        setPredecessor(BodaccStatus.BODACC_IN_PROGRESS, BodaccStatus.BODACC_NEW);
     }
 
     protected void updateStatus(String code, String label, String icon, boolean isOpenState, boolean isCloseState) {

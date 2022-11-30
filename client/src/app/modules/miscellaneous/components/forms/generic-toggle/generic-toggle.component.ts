@@ -21,7 +21,7 @@ export class GenericToggleComponent extends GenericFormComponent implements OnIn
   /**
    * Fired when input is modified by user
    */
-  @Output() onToggleChange: EventEmitter<void> = new EventEmitter();
+  @Output() onToggleChange: EventEmitter<Boolean> = new EventEmitter();
 
 
   constructor(
@@ -29,16 +29,17 @@ export class GenericToggleComponent extends GenericFormComponent implements OnIn
     super(formBuilder3, userNoteService3);
   }
 
-  onChange() {
-    if (this.onToggleChange)
-      this.onToggleChange.emit();
-  }
-
   callOnNgInit(): void {
     if (this.form && (this.model == null || this.model == undefined)) {
       this.model = false;
       this.modelChange.emit(this.model);
     }
+    if (this.form)
+      this.form.get(this.propertyName)!.valueChanges.subscribe(
+        (newValue) => {
+          this.onToggleChange.emit(newValue);
+        }
+      )
   }
 
   ngOnChanges(changes: SimpleChanges): void {

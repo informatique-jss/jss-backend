@@ -10,6 +10,12 @@ import com.jss.osiris.modules.miscellaneous.model.ICode;
 
 @Entity
 public class CodeInseePays implements Serializable, ICode {
+    public CodeInseePays(String code) {
+        this.code = code;
+    }
+
+    public CodeInseePays() {
+    }
 
     @Id
     private String code;

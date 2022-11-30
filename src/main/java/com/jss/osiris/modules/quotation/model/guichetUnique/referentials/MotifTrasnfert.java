@@ -10,6 +10,12 @@ import com.jss.osiris.modules.miscellaneous.model.ICode;
 
 @Entity
 public class MotifTrasnfert implements Serializable, ICode {
+    public MotifTrasnfert(String code) {
+        this.code = code;
+    }
+
+    public MotifTrasnfert() {
+    }
 
     @Id
     private String code;

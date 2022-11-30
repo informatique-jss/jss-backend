@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors } from '@angular/forms';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
 import { validateSiren } from 'src/app/libs/CustomFormsValidatorsHelper';
@@ -30,6 +30,7 @@ export class DomiciliationComponent implements OnInit {
   matcher: CustomErrorStateMatcher = new CustomErrorStateMatcher();
   @Input() domiciliation: Domiciliation = {} as Domiciliation;
   @Input() provision: Provision = {} as Provision;
+  @Output() provisionChange: EventEmitter<void> = new EventEmitter<void>();
   @Input() instanceOfCustomerOrder: boolean = false;
   @Input() isStatusOpen: boolean = true;
   @Input() editMode: boolean = false;
@@ -284,6 +285,10 @@ export class DomiciliationComponent implements OnInit {
         }
       }
     }
+  }
+
+  provisionChangeFunction() {
+    this.provisionChange.emit();
   }
 
 }

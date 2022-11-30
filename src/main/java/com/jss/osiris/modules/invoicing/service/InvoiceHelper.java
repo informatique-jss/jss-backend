@@ -6,11 +6,15 @@ import org.springframework.stereotype.Service;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
+import com.jss.osiris.modules.invoicing.model.InvoiceLabelResult;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.quotation.model.Affaire;
+import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.tiers.model.ITiers;
+import com.jss.osiris.modules.tiers.model.Responsable;
+import com.jss.osiris.modules.tiers.model.Tiers;
 
 @Service
 public class InvoiceHelper {
@@ -75,32 +79,37 @@ public class InvoiceHelper {
         return vatTotal;
     }
 
-    public void setInvoiceLabel(Invoice invoice, Document billingDocument, CustomerOrder customerOrder,
+    public InvoiceLabelResult computeInvoiceLabelResult(Document billingDocument, CustomerOrder customerOrder,
             ITiers orderingCustomer) throws OsirisException {
+        InvoiceLabelResult invoiceLabelResult = new InvoiceLabelResult();
+        if (billingDocument.getBillingLabelType() == null)
+            return invoiceLabelResult;
         // Defined billing label
         if (constantService.getBillingLabelTypeOther().getId().equals(billingDocument.getBillingLabelType().getId())) {
             if (billingDocument.getRegie() != null) {
-                invoice.setBillingLabel(billingDocument.getRegie().getLabel());
-                invoice.setBillingLabelAddress(billingDocument.getRegie().getAddress());
-                invoice.setBillingLabelPostalCode(billingDocument.getRegie().getPostalCode());
-                invoice.setBillingLabelCity(billingDocument.getRegie().getCity());
-                invoice.setBillingLabelCountry(billingDocument.getRegie().getCountry());
-                invoice.setBillingLabelIsIndividual(false);
-                invoice.setBillingLabelType(billingDocument.getBillingLabelType());
-                invoice.setIsResponsableOnBilling(billingDocument.getIsResponsableOnBilling());
-                invoice.setIsCommandNumberMandatory(billingDocument.getIsCommandNumberMandatory());
-                invoice.setCommandNumber(billingDocument.getCommandNumber());
+                invoiceLabelResult.setBillingLabel(billingDocument.getRegie().getLabel());
+                invoiceLabelResult.setBillingLabelAddress(billingDocument.getRegie().getAddress());
+                invoiceLabelResult.setBillingLabelPostalCode(billingDocument.getRegie().getPostalCode());
+                invoiceLabelResult.setBillingLabelCity(billingDocument.getRegie().getCity());
+                invoiceLabelResult.setBillingLabelCountry(billingDocument.getRegie().getCountry());
+                invoiceLabelResult.setBillingLabelIsIndividual(false);
+                invoiceLabelResult.setBillingLabelType(billingDocument.getBillingLabelType());
+                invoiceLabelResult.setIsResponsableOnBilling(billingDocument.getIsResponsableOnBilling());
+                invoiceLabelResult.setIsCommandNumberMandatory(billingDocument.getIsCommandNumberMandatory());
+                invoiceLabelResult.setCommandNumber(billingDocument.getCommandNumber());
+                invoiceLabelResult.setLabelOrigin("la configuration Facture / Autres du confrère");
             } else {
-                invoice.setBillingLabel(billingDocument.getBillingLabel());
-                invoice.setBillingLabelAddress(billingDocument.getBillingAddress());
-                invoice.setBillingLabelPostalCode(billingDocument.getBillingPostalCode());
-                invoice.setBillingLabelCity(billingDocument.getBillingLabelCity());
-                invoice.setBillingLabelCountry(billingDocument.getBillingLabelCountry());
-                invoice.setBillingLabelIsIndividual(billingDocument.getBillingLabelIsIndividual());
-                invoice.setBillingLabelType(billingDocument.getBillingLabelType());
-                invoice.setIsResponsableOnBilling(billingDocument.getIsResponsableOnBilling());
-                invoice.setIsCommandNumberMandatory(billingDocument.getIsCommandNumberMandatory());
-                invoice.setCommandNumber(billingDocument.getCommandNumber());
+                invoiceLabelResult.setBillingLabel(billingDocument.getBillingLabel());
+                invoiceLabelResult.setBillingLabelAddress(billingDocument.getBillingAddress());
+                invoiceLabelResult.setBillingLabelPostalCode(billingDocument.getBillingPostalCode());
+                invoiceLabelResult.setBillingLabelCity(billingDocument.getBillingLabelCity());
+                invoiceLabelResult.setBillingLabelCountry(billingDocument.getBillingLabelCountry());
+                invoiceLabelResult.setBillingLabelIsIndividual(billingDocument.getBillingLabelIsIndividual());
+                invoiceLabelResult.setBillingLabelType(billingDocument.getBillingLabelType());
+                invoiceLabelResult.setIsResponsableOnBilling(billingDocument.getIsResponsableOnBilling());
+                invoiceLabelResult.setIsCommandNumberMandatory(billingDocument.getIsCommandNumberMandatory());
+                invoiceLabelResult.setCommandNumber(billingDocument.getCommandNumber());
+                invoiceLabelResult.setLabelOrigin("la configuration Facture / Autres du donneur d'ordre");
             }
         } else if (customerOrder != null
                 && constantService.getBillingLabelTypeCodeAffaire().getId()
@@ -108,37 +117,77 @@ public class InvoiceHelper {
             if (customerOrder.getAssoAffaireOrders() == null || customerOrder.getAssoAffaireOrders().size() == 0)
                 throw new OsirisException("No affaire in the customer order " + customerOrder.getId());
             Affaire affaire = customerOrder.getAssoAffaireOrders().get(0).getAffaire();
-            invoice.setBillingLabel(affaire.getIsIndividual() ? affaire.getFirstname() + " " + affaire.getLastname()
-                    : affaire.getDenomination());
-            invoice.setBillingLabelAddress(affaire.getAddress());
-            invoice.setBillingLabelPostalCode(affaire.getPostalCode());
-            invoice.setBillingLabelCity(affaire.getCity());
-            invoice.setBillingLabelCountry(affaire.getCountry());
-            invoice.setBillingLabelIsIndividual(affaire.getIsIndividual());
-            invoice.setBillingLabelType(billingDocument.getBillingLabelType());
-            invoice.setIsResponsableOnBilling(billingDocument.getIsResponsableOnBilling());
-            invoice.setIsCommandNumberMandatory(billingDocument.getIsCommandNumberMandatory());
-            invoice.setCommandNumber(billingDocument.getCommandNumber());
+            invoiceLabelResult
+                    .setBillingLabel(affaire.getIsIndividual() ? affaire.getFirstname() + " " + affaire.getLastname()
+                            : affaire.getDenomination());
+            invoiceLabelResult.setBillingLabelAddress(affaire.getAddress());
+            invoiceLabelResult.setBillingLabelPostalCode(affaire.getPostalCode());
+            invoiceLabelResult.setBillingLabelCity(affaire.getCity());
+            invoiceLabelResult.setBillingLabelCountry(affaire.getCountry());
+            invoiceLabelResult.setBillingLabelIsIndividual(affaire.getIsIndividual());
+            invoiceLabelResult.setBillingLabelType(billingDocument.getBillingLabelType());
+            invoiceLabelResult.setIsResponsableOnBilling(billingDocument.getIsResponsableOnBilling());
+            invoiceLabelResult.setIsCommandNumberMandatory(billingDocument.getIsCommandNumberMandatory());
+            invoiceLabelResult.setCommandNumber(billingDocument.getCommandNumber());
+            invoiceLabelResult.setLabelOrigin("les informations de l'affaire");
         } else {
-            if (invoice.getTiers() != null)
-                invoice.setBillingLabel(invoice.getTiers().getIsIndividual()
-                        ? invoice.getTiers().getFirstname() + " " + invoice.getTiers().getLastname()
-                        : invoice.getTiers().getDenomination());
-            if (invoice.getResponsable() != null)
-                invoice.setBillingLabel(
-                        invoice.getResponsable().getFirstname() + " " + invoice.getResponsable().getLastname());
-            if (invoice.getConfrere() != null)
-                invoice.setBillingLabel(invoice.getConfrere().getLabel());
-            invoice.setBillingLabelAddress(orderingCustomer.getAddress());
-            invoice.setBillingLabelPostalCode(orderingCustomer.getPostalCode());
-            invoice.setBillingLabelCity(orderingCustomer.getCity());
-            invoice.setBillingLabelCountry(orderingCustomer.getCountry());
-            invoice.setBillingLabelIsIndividual(orderingCustomer.getIsIndividual());
-            invoice.setBillingLabelType(billingDocument.getBillingLabelType());
-            invoice.setIsResponsableOnBilling(billingDocument.getIsResponsableOnBilling());
-            invoice.setIsCommandNumberMandatory(billingDocument.getIsCommandNumberMandatory());
-            invoice.setCommandNumber(billingDocument.getCommandNumber());
+            ITiers usedOrderingCustomer = null;
+
+            if (orderingCustomer instanceof Tiers
+                    || billingDocument.getIsResponsableOnBilling() && orderingCustomer instanceof Responsable) {
+                Tiers tiers;
+                if (orderingCustomer instanceof Tiers) {
+                    tiers = (Tiers) orderingCustomer;
+                    invoiceLabelResult.setLabelOrigin("les informations postales du tiers");
+                } else {
+                    tiers = ((Responsable) orderingCustomer).getTiers();
+                    invoiceLabelResult.setLabelOrigin("les informations postales du responsable");
+                }
+                usedOrderingCustomer = tiers;
+
+                invoiceLabelResult
+                        .setBillingLabel(tiers.getIsIndividual() ? tiers.getFirstname() + " " + tiers.getLastname()
+                                : tiers.getDenomination());
+            } else if (orderingCustomer instanceof Responsable) {
+                Responsable responsable = (Responsable) orderingCustomer;
+                usedOrderingCustomer = responsable;
+                invoiceLabelResult.setBillingLabel(responsable.getFirstname() + " " + responsable.getLastname());
+                invoiceLabelResult.setLabelOrigin("les informations postales du responsable");
+            } else if (orderingCustomer instanceof Confrere) {
+                Confrere confrere = (Confrere) orderingCustomer;
+                usedOrderingCustomer = confrere;
+                invoiceLabelResult.setBillingLabel(confrere.getLabel());
+                invoiceLabelResult.setLabelOrigin("les informations postales du confrère");
+            }
+            if (usedOrderingCustomer != null) {
+                invoiceLabelResult.setBillingLabelAddress(usedOrderingCustomer.getAddress());
+                invoiceLabelResult.setBillingLabelPostalCode(usedOrderingCustomer.getPostalCode());
+                invoiceLabelResult.setBillingLabelCity(usedOrderingCustomer.getCity());
+                invoiceLabelResult.setBillingLabelCountry(usedOrderingCustomer.getCountry());
+                invoiceLabelResult.setBillingLabelIsIndividual(usedOrderingCustomer.getIsIndividual());
+                invoiceLabelResult.setBillingLabelType(billingDocument.getBillingLabelType());
+                invoiceLabelResult.setIsResponsableOnBilling(billingDocument.getIsResponsableOnBilling());
+                invoiceLabelResult.setIsCommandNumberMandatory(billingDocument.getIsCommandNumberMandatory());
+                invoiceLabelResult.setCommandNumber(billingDocument.getCommandNumber());
+            }
         }
+        return invoiceLabelResult;
+    }
+
+    public void setInvoiceLabel(Invoice invoice, Document billingDocument, CustomerOrder customerOrder,
+            ITiers orderingCustomer) throws OsirisException {
+        InvoiceLabelResult invoiceLabelResult = computeInvoiceLabelResult(billingDocument, customerOrder,
+                orderingCustomer);
+        invoice.setBillingLabel(invoiceLabelResult.getBillingLabel());
+        invoice.setBillingLabelAddress(invoiceLabelResult.getBillingLabelAddress());
+        invoice.setBillingLabelPostalCode(invoiceLabelResult.getBillingLabelPostalCode());
+        invoice.setBillingLabelCity(invoiceLabelResult.getBillingLabelCity());
+        invoice.setBillingLabelCountry(invoiceLabelResult.getBillingLabelCountry());
+        invoice.setBillingLabelIsIndividual(invoiceLabelResult.getBillingLabelIsIndividual());
+        invoice.setBillingLabelType(invoiceLabelResult.getBillingLabelType());
+        invoice.setIsResponsableOnBilling(invoiceLabelResult.getIsResponsableOnBilling());
+        invoice.setIsCommandNumberMandatory(invoiceLabelResult.getIsCommandNumberMandatory());
+        invoice.setCommandNumber(invoiceLabelResult.getCommandNumber());
     }
 
 }

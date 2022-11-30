@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import com.jss.osiris.libs.SSLHelper;
@@ -86,6 +87,7 @@ public class SireneDelegateServiceImpl implements SireneDelegateService {
 	}
 
 	@Override
+	@SuppressWarnings({ "null" })
 	@Cacheable(value = "siren", key = "#siren")
 	public List<Siren> getSiren(String siren) {
 		try {
@@ -100,12 +102,17 @@ public class SireneDelegateServiceImpl implements SireneDelegateService {
 				return out;
 			}
 			return null;
+		} catch (HttpClientErrorException e) {
+			if (e.getMessage() != null && e.getMessage().contains("Aucun élément trouvé pour le siren"))
+				return null;
+			throw e;
 		} catch (Exception e) {
 			throw e;
 		}
 	}
 
 	@Override
+	@SuppressWarnings({ "null" })
 	@Cacheable(value = "siret", key = "#siret")
 	public List<Siret> getSiret(String siret) {
 		try {
@@ -120,6 +127,10 @@ public class SireneDelegateServiceImpl implements SireneDelegateService {
 				return out;
 			}
 			return null;
+		} catch (HttpClientErrorException e) {
+			if (e.getMessage() != null && e.getMessage().contains("Aucun élément trouvé pour le siren"))
+				return null;
+			throw e;
 		} catch (Exception e) {
 			throw e;
 		}

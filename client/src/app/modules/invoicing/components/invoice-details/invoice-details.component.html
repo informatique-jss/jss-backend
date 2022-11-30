@@ -37,41 +37,86 @@
             </td>
           </tr>
         </table>
-        <ng-container *ngFor="let affaire of getAffaireListArray(invoice)">
-          <table class="middle-width container-affaire mat-table" *ngIf="!invoice.customerOrder">
-            <ng-container *ngFor="let invoiceItem of invoice.invoiceItems; let index = index">
-              <ng-container
-                *ngIf="invoiceItem.provision.assoAffaireOrder.affaire.id == affaire.id && getFirstItemIndex(invoice, affaire)==index">
-                <tr class="mat-header-row">
-                  <th class="mat-header-cell" colspan="2">Affaire {{affaire.denomination}}{{affaire.firstname}}
-                    {{affaire.lastname}}
-                  </th>
-                </tr>
+        <table class="full-width container-affaire mat-table" *ngIf="invoice.customerOrder">
+          <tr class=" mat-header-row">
+            <th class="mat-header-cell" colspan="2">Facture</th>
+          </tr>
+          <ng-container *ngFor="let asso of invoice.customerOrder.assoAffaireOrders;let indexAsso = index">
+            <tr class="mat-row">
+              <td class="affaire mat-cell" colspan="2" *ngIf="asso.affaire && asso.affaire.denomination">
+                {{asso.affaire.denomination}}
+              </td>
+              <td class="affaire mat-cell" colspan="2" *ngIf="asso.affaire && asso.affaire.firstname">
+                {{asso.affaire.firstname}} - {{asso.affaire.lastname}} -
+              </td>
+            </tr>
+            <ng-container *ngFor="let provision of asso.provisions">
+              <tr class="mat-row" *ngIf="provision.provisionType">
+                <td class="affaire mat-cell" colspan="2">
+                  {{provision.provisionType.label}}
+                </td>
+              </tr>
+              <ng-container *ngFor="let invoiceItem of provision.invoiceItems;let indexInvoiceItem = index">
                 <tr class="mat-row">
                   <td class="mat-cell">
                     {{invoiceItem.label}}
                   </td>
-                  <td class="td-price  mat-cell">
+                  <td class="td-price mat-cell">
                     {{invoiceItem.preTaxPrice|number}} €
                   </td>
                 </tr>
-                <tr *ngIf="invoiceItem.discountAmount && invoiceItem.discountAmount>0" class="mat-row">
+                <tr class="mat-row" *ngIf="invoiceItem.discountAmount && invoiceItem.discountAmount>0">
                   <td class="mat-cell">
-                    <div class="sub-row">Remise</div>
+                    Remise
                   </td>
                   <td class="td-price remise mat-cell">
                     - {{invoiceItem.discountAmount|number}} €
                   </td>
                 </tr>
-                <tr *ngIf="invoiceItem.vat" class="mat-row">
+                <tr class="mat-row" *ngIf="invoiceItem.vat">
                   <td class="mat-cell">
-                    <div class="sub-row">{{invoiceItem.vat.label}}</div>
+                    {{invoiceItem.vat.label}}
                   </td>
                   <td class="td-price mat-cell">
                     {{invoiceItem.vatPrice|number}} €
                   </td>
                 </tr>
               </ng-container>
+            </ng-container>
+          </ng-container>
+        </table>
+        <ng-container *ngFor="let affaire of getAffaireListArray(invoice)">
+          <table class="middle-width container-affaire mat-table" *ngIf="!invoice.customerOrder">
+            <ng-container *ngFor="let invoiceItem of invoice.invoiceItems; let index = index">
+              <tr class="mat-header-row">
+                <th class="mat-header-cell" colspan="2">Affaire {{affaire.denomination}}{{affaire.firstname}}
+                  {{affaire.lastname}}
+                </th>
+              </tr>
+              <tr class="mat-row">
+                <td class="mat-cell">
+                  {{invoiceItem.label}}
+                </td>
+                <td class="td-price  mat-cell">
+                  {{invoiceItem.preTaxPrice|number}} €
+                </td>
+              </tr>
+              <tr *ngIf="invoiceItem.discountAmount && invoiceItem.discountAmount>0" class="mat-row">
+                <td class="mat-cell">
+                  <div class="sub-row">Remise</div>
+                </td>
+                <td class="td-price remise mat-cell">
+                  - {{invoiceItem.discountAmount|number}} €
+                </td>
+              </tr>
+              <tr *ngIf="invoiceItem.vat" class="mat-row">
+                <td class="mat-cell">
+                  <div class="sub-row">{{invoiceItem.vat.label}}</div>
+                </td>
+                <td class="td-price mat-cell">
+                  {{invoiceItem.vatPrice|number}} €
+                </td>
+              </tr>
             </ng-container>
           </table>
         </ng-container>
@@ -103,14 +148,16 @@
               {{getPreTaxPriceTotal()-getDiscountTotal()|number}} €
             </td>
           </tr>
-          <tr *ngIf="getApplicableVat()!=undefined" class="mat-row">
-            <td class="mat-cell">
-              Total {{getApplicableVat()!.label}}
-            </td>
-            <td class="td-price mat-cell">
-              {{getVatTotal()|number}} €
-            </td>
-          </tr>
+          <ng-container *ngIf="getApplicableVat().length>0">
+            <tr *ngFor="let vat of getApplicableVat()">
+              <td class="mat-cell">
+                Total {{vat.label}} sur la base de {{vat.base |number}} €
+              </td>
+              <td class="td-price mat-cell">
+                {{vat.total|number}} €
+              </td>
+            </tr>
+          </ng-container>
           <tr class="mat-row">
             <td class="mat-cell">
               Total TTC

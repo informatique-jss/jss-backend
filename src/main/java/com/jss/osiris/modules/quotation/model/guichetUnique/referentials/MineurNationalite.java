@@ -10,6 +10,12 @@ import com.jss.osiris.modules.miscellaneous.model.ICode;
 
 @Entity
 public class MineurNationalite implements Serializable, ICode {
+    public MineurNationalite(String code) {
+        this.code = code;
+    }
+
+    public MineurNationalite() {
+    }
 
     @Id
     private String code;

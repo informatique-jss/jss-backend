@@ -13,7 +13,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.modules.invoicing.model.Invoice;
+import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 
@@ -47,21 +49,22 @@ public class CustomerMail {
     private String explaination2;
 
     @Column(length = 2000)
+    private String explaination3;
+
+    @Column(length = 2000)
+    private String paymentExplaination;
+
+    @Column(length = 2000)
+    private String paymentExplaination2;
+
+    @Column(length = 2000)
     private String cbExplanation;
 
     @Column(length = 1000)
     private String cbLink;
 
     @Column(length = 2000)
-    private String explainationWarning;
-
-    public String getExplainationWarning() {
-        return explainationWarning;
-    }
-
-    public void setExplainationWarning(String explainationWarning) {
-        this.explainationWarning = explainationWarning;
-    }
+    private String paymentExplainationWarning;
 
     @OneToMany(mappedBy = "customerMail", cascade = CascadeType.ALL)
     private List<VatMail> vatMails;
@@ -91,6 +94,8 @@ public class CustomerMail {
     @JoinColumn(name = "id_employee_reply_to")
     private Employee replyTo;
 
+    private String replyToMail;
+
     @ManyToOne
     @JoinColumn(name = "id_employee_send_to_me")
     private Employee sendToMeEmployee;
@@ -109,7 +114,9 @@ public class CustomerMail {
     @JoinColumn(name = "id_invoice")
     Invoice invoice;
 
-    private Boolean sendInvoiceAttachment;
+    @OneToMany(mappedBy = "customerMail")
+    @JsonIgnoreProperties(value = { "customerMail" }, allowSetters = true)
+    private List<Attachment> attachments;
 
     public Integer getId() {
         return id;
@@ -303,14 +310,6 @@ public class CustomerMail {
         this.invoice = invoice;
     }
 
-    public Boolean getSendInvoiceAttachment() {
-        return sendInvoiceAttachment;
-    }
-
-    public void setSendInvoiceAttachment(Boolean sendInvoiceAttachment) {
-        this.sendInvoiceAttachment = sendInvoiceAttachment;
-    }
-
     public String getCbExplanation() {
         return cbExplanation;
     }
@@ -333,6 +332,54 @@ public class CustomerMail {
 
     public void setSendToMeEmployee(Employee sendToMeEmployee) {
         this.sendToMeEmployee = sendToMeEmployee;
+    }
+
+    public String getExplaination3() {
+        return explaination3;
+    }
+
+    public void setExplaination3(String explaination3) {
+        this.explaination3 = explaination3;
+    }
+
+    public String getReplyToMail() {
+        return replyToMail;
+    }
+
+    public void setReplyToMail(String replyToMail) {
+        this.replyToMail = replyToMail;
+    }
+
+    public String getPaymentExplaination() {
+        return paymentExplaination;
+    }
+
+    public void setPaymentExplaination(String paymentExplaination) {
+        this.paymentExplaination = paymentExplaination;
+    }
+
+    public String getPaymentExplaination2() {
+        return paymentExplaination2;
+    }
+
+    public void setPaymentExplaination2(String paymentExplaination2) {
+        this.paymentExplaination2 = paymentExplaination2;
+    }
+
+    public String getPaymentExplainationWarning() {
+        return paymentExplainationWarning;
+    }
+
+    public void setPaymentExplainationWarning(String paymentExplainationWarning) {
+        this.paymentExplainationWarning = paymentExplainationWarning;
+    }
+
+    public List<Attachment> getAttachments() {
+        return attachments;
+    }
+
+    public void setAttachments(List<Attachment> attachments) {
+        this.attachments = attachments;
     }
 
 }

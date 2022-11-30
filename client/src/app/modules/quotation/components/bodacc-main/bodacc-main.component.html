@@ -43,7 +43,8 @@
       </div>
     </mat-tab>
     <mat-tab label="Options">
-      <provision-options [editMode]="editMode" [provision]="provision"></provision-options>
+      <provision-options (provisionChange)="provisionChangeFunction()" [editMode]="editMode" [provision]="provision">
+      </provision-options>
     </mat-tab>
     <mat-tab label="Imprimé"
       *ngIf="bodacc.bodaccPublicationType && (bodacc.bodaccPublicationType.id==bodaccPublicationTypePartialSplit.id ||bodacc.bodaccPublicationType.id==bodaccPublicationTypeSplit.id || bodacc.bodaccPublicationType.id==bodaccPublicationTypeMerging.id || bodacc.bodaccPublicationType.id==bodaccPublicationTypeSaleOfBusiness.id)">

@@ -45,9 +45,6 @@ public class Announcement implements IId, IAttachment {
 	@JsonSerialize(using = JacksonLocalDateSerializer.class)
 	private LocalDate publicationDate;
 
-	@Column(nullable = false)
-	private Boolean isRedactedByJss;
-
 	@ManyToOne
 	@JoinColumn(name = "id_notice_type_family")
 	private NoticeTypeFamily noticeTypeFamily;
@@ -69,16 +66,6 @@ public class Announcement implements IId, IAttachment {
 	private Boolean isHeaderFree;
 
 	@Column(nullable = false)
-	private Boolean isLegalDisplay;
-
-	private Float posterProductionPrice;
-	private Float posterProductionJSSPrice;
-	private Float billPostingPrice;
-	private Float billPostingJSSPrice;
-	private Float bailiffReportPrice;
-	private Float bailiffReportJSSPrice;
-
-	@Column(nullable = false)
 	private Boolean isProofReadingDocument;
 
 	@OneToMany(mappedBy = "announcement")
@@ -89,144 +76,8 @@ public class Announcement implements IId, IAttachment {
 		return id;
 	}
 
-	public NoticeTypeFamily getNoticeTypeFamily() {
-		return noticeTypeFamily;
-	}
-
-	public Boolean getIsProofReadingDocument() {
-		return isProofReadingDocument;
-	}
-
-	public String getNoticeHeader() {
-		return noticeHeader;
-	}
-
-	public void setNoticeHeader(String noticeHeader) {
-		this.noticeHeader = noticeHeader;
-	}
-
-	public void setIsProofReadingDocument(Boolean isProofReadingDocument) {
-		this.isProofReadingDocument = isProofReadingDocument;
-	}
-
-	public Boolean getIsHeaderFree() {
-		return isHeaderFree;
-	}
-
-	public void setIsHeaderFree(Boolean isHeaderFree) {
-		this.isHeaderFree = isHeaderFree;
-	}
-
-	public void setNoticeTypeFamily(NoticeTypeFamily noticeTypeFamily) {
-		this.noticeTypeFamily = noticeTypeFamily;
-	}
-
-	public Boolean getIsLegalDisplay() {
-		return isLegalDisplay;
-	}
-
-	public void setIsLegalDisplay(Boolean isLegalDisplay) {
-		this.isLegalDisplay = isLegalDisplay;
-	}
-
-	public Float getPosterProductionPrice() {
-		return posterProductionPrice;
-	}
-
-	public void setPosterProductionPrice(Float posterProductionPrice) {
-		this.posterProductionPrice = posterProductionPrice;
-	}
-
-	public List<Attachment> getAttachments() {
-		return attachments;
-	}
-
-	public void setAttachments(List<Attachment> attachments) {
-		this.attachments = attachments;
-	}
-
-	public Float getPosterProductionJSSPrice() {
-		return posterProductionJSSPrice;
-	}
-
-	public void setPosterProductionJSSPrice(Float posterProductionJSSPrice) {
-		this.posterProductionJSSPrice = posterProductionJSSPrice;
-	}
-
-	public Float getBillPostingPrice() {
-		return billPostingPrice;
-	}
-
-	public void setBillPostingPrice(Float billPostingPrice) {
-		this.billPostingPrice = billPostingPrice;
-	}
-
-	public Float getBillPostingJSSPrice() {
-		return billPostingJSSPrice;
-	}
-
-	public void setBillPostingJSSPrice(Float billPostingJSSPrice) {
-		this.billPostingJSSPrice = billPostingJSSPrice;
-	}
-
-	public Float getBailiffReportPrice() {
-		return bailiffReportPrice;
-	}
-
-	public void setBailiffReportPrice(Float bailiffReportPrice) {
-		this.bailiffReportPrice = bailiffReportPrice;
-	}
-
-	public Float getBailiffReportJSSPrice() {
-		return bailiffReportJSSPrice;
-	}
-
-	public void setBailiffReportJSSPrice(Float bailiffReportJSSPrice) {
-		this.bailiffReportJSSPrice = bailiffReportJSSPrice;
-	}
-
-	public Boolean getIsHeader() {
-		return isHeader;
-	}
-
-	public void setIsHeader(Boolean isHeader) {
-		this.isHeader = isHeader;
-	}
-
-	public List<NoticeType> getNoticeTypes() {
-		return noticeTypes;
-	}
-
-	public void setNoticeTypes(List<NoticeType> noticeTypes) {
-		this.noticeTypes = noticeTypes;
-	}
-
-	public String getNotice() {
-		return notice;
-	}
-
-	public void setNotice(String notice) {
-		this.notice = notice;
-	}
-
 	public void setId(Integer id) {
 		this.id = id;
-	}
-
-	public Boolean getIsRedactedByJss() {
-		return isRedactedByJss;
-	}
-
-	public void setIsRedactedByJss(Boolean isRedactedByJss) {
-		this.isRedactedByJss = isRedactedByJss;
-	}
-
-	public LocalDate getPublicationDate() {
-		return publicationDate;
-	}
-
-	public void setPublicationDate(LocalDate publicationDate) {
-		this.publicationDate = publicationDate;
 	}
 
 	public Department getDepartment() {
@@ -251,6 +102,78 @@ public class Announcement implements IId, IAttachment {
 
 	public void setAnnouncementStatus(AnnouncementStatus announcementStatus) {
 		this.announcementStatus = announcementStatus;
+	}
+
+	public LocalDate getPublicationDate() {
+		return publicationDate;
+	}
+
+	public void setPublicationDate(LocalDate publicationDate) {
+		this.publicationDate = publicationDate;
+	}
+
+	public NoticeTypeFamily getNoticeTypeFamily() {
+		return noticeTypeFamily;
+	}
+
+	public void setNoticeTypeFamily(NoticeTypeFamily noticeTypeFamily) {
+		this.noticeTypeFamily = noticeTypeFamily;
+	}
+
+	public List<NoticeType> getNoticeTypes() {
+		return noticeTypes;
+	}
+
+	public void setNoticeTypes(List<NoticeType> noticeTypes) {
+		this.noticeTypes = noticeTypes;
+	}
+
+	public String getNotice() {
+		return notice;
+	}
+
+	public void setNotice(String notice) {
+		this.notice = notice;
+	}
+
+	public String getNoticeHeader() {
+		return noticeHeader;
+	}
+
+	public void setNoticeHeader(String noticeHeader) {
+		this.noticeHeader = noticeHeader;
+	}
+
+	public Boolean getIsHeader() {
+		return isHeader;
+	}
+
+	public void setIsHeader(Boolean isHeader) {
+		this.isHeader = isHeader;
+	}
+
+	public Boolean getIsHeaderFree() {
+		return isHeaderFree;
+	}
+
+	public void setIsHeaderFree(Boolean isHeaderFree) {
+		this.isHeaderFree = isHeaderFree;
+	}
+
+	public Boolean getIsProofReadingDocument() {
+		return isProofReadingDocument;
+	}
+
+	public void setIsProofReadingDocument(Boolean isProofReadingDocument) {
+		this.isProofReadingDocument = isProofReadingDocument;
+	}
+
+	public List<Attachment> getAttachments() {
+		return attachments;
+	}
+
+	public void setAttachments(List<Attachment> attachments) {
+		this.attachments = attachments;
 	}
 
 }

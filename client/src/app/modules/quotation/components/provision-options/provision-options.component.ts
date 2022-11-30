@@ -6,6 +6,8 @@ import { BillingType } from 'src/app/modules/miscellaneous/model/BillingType';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { UploadAttachmentService } from 'src/app/modules/miscellaneous/services/upload.attachment.service';
 import { PROVISION_ENTITY_TYPE } from 'src/app/routing/search/search.component';
+import { getDocument } from '../../../../libs/DocumentHelper';
+import { ITiers } from '../../../tiers/model/ITiers';
 import { Provision } from '../../model/Provision';
 
 @Component({
@@ -16,13 +18,40 @@ import { Provision } from '../../model/Provision';
 export class ProvisionOptionsComponent implements OnInit {
 
   @Input() provision: Provision | undefined;
+  @Input() customerOrder: ITiers | undefined;
   @Input() editMode: boolean = false;
-
   @Output() provisionChange: EventEmitter<void> = new EventEmitter<void>();
 
   PROVISION_ENTITY_TYPE = PROVISION_ENTITY_TYPE;
 
+  journalTypeSpel = this.constantService.getJournalTypeSpel();
+  journalTypePaper = this.constantService.getJournalTypePaper();
+
   billingTypeLogo = this.constantService.getBillingTypeLogo();
+  billingTypeRedactedByJss = this.constantService.getBillingTypeRedactedByJss();
+  billingTypeBaloPackage = this.constantService.getBillingTypeBaloPackage();
+  billingTypePublicationPaper = this.constantService.getBillingTypePublicationPaper();
+  billingTypePublicationReceipt = this.constantService.getBillingTypePublicationReceipt();
+  billingTypePublicationFlag = this.constantService.getBillingTypePublicationFlag();
+  billingTypeBodaccFollowup = this.constantService.getBillingTypeBodaccFollowup();
+  billingTypeBodaccFollowupAndRedaction = this.constantService.getBillingTypeBodaccFollowupAndRedaction();
+  billingTypeNantissementDeposit = this.constantService.getBillingTypeNantissementDeposit();
+  billingTypeSocialShareNantissementRedaction = this.constantService.getBillingTypeSocialShareNantissementRedaction();
+  billingTypeBusinnessNantissementRedaction = this.constantService.getBillingTypeBusinnessNantissementRedaction();
+  billingTypeSellerPrivilegeRedaction = this.constantService.getBillingTypeSellerPrivilegeRedaction();
+  billingTypeTreatmentMultipleModiciation = this.constantService.getBillingTypeTreatmentMultipleModiciation();
+  billingTypeVacationMultipleModification = this.constantService.getBillingTypeVacationMultipleModification();
+  billingTypeRegisterPurchase = this.constantService.getBillingTypeRegisterPurchase();
+  billingTypeRegisterInitials = this.constantService.getBillingTypeRegisterInitials();
+  billingTypeRegisterShippingCosts = this.constantService.getBillingTypeRegisterShippingCosts();
+  billingTypeDisbursement = this.constantService.getBillingTypeDisbursement();
+  billingTypeFeasibilityStudy = this.constantService.getBillingTypeFeasibilityStudy();
+  billingTypeChronopostFees = this.constantService.getBillingTypeChronopostFees();
+  billingTypeBankCheque = this.constantService.getBillingTypeBankCheque();
+  billingTypeComplexeFile = this.constantService.getBillingTypeComplexeFile();
+  billingTypeDocumentScanning = this.constantService.getBillingTypeDocumentScanning();
+  billingTypeEmergency = this.constantService.getBillingTypeEmergency();
+
 
   attachmentTypeLogo = this.constantService.getAttachmentTypeLogo();
 
@@ -40,17 +69,46 @@ export class ProvisionOptionsComponent implements OnInit {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (!this.provision!.isLogo) {
-      this.provision!.isLogo = false;
-    } else {
-      this.setLogoUrl();
+    if (this.provision) {
+      if (!this.provision.isLogo) {
+        this.provision.isLogo = false;
+      } else {
+        this.setLogoUrl();
+      }
+      if (!this.provision.isRedactedByJss) this.provision.isRedactedByJss = false;
+      if (!this.provision.isBaloPackage) this.provision.isBaloPackage = false;
+      if (!this.provision.isPublicationReceipt) this.provision.isPublicationReceipt = false;
+      if (!this.provision.isPublicationFlag) this.provision.isPublicationFlag = false;
+      if (!this.provision.isPublicationPaper) this.provision.isPublicationPaper = false;
+      if (!this.provision.isBodaccFollowup) this.provision.isBodaccFollowup = false;
+      if (!this.provision.isBodaccFollowupAndRedaction) this.provision.isBodaccFollowupAndRedaction = false;
+      if (!this.provision.isNantissementDeposit) this.provision.isNantissementDeposit = false;
+      if (!this.provision.isSocialShareNantissementRedaction) this.provision.isSocialShareNantissementRedaction = false;
+      if (!this.provision.isBusinnessNantissementRedaction) this.provision.isBusinnessNantissementRedaction = false;
+      if (!this.provision.isSellerPrivilegeRedaction) this.provision.isSellerPrivilegeRedaction = false;
+      if (!this.provision.isTreatmentMultipleModiciation) this.provision.isTreatmentMultipleModiciation = false;
+      if (!this.provision.isVacationMultipleModification) this.provision.isVacationMultipleModification = false;
+      if (!this.provision.isRegisterPurchase) this.provision.isRegisterPurchase = false;
+      if (!this.provision.isRegisterInitials) this.provision.isRegisterInitials = false;
+      if (!this.provision.isRegisterShippingCosts) this.provision.isRegisterShippingCosts = false;
+      if (!this.provision.isDisbursement) this.provision.isDisbursement = false;
+      if (!this.provision.isFeasibilityStudy) this.provision.isFeasibilityStudy = false;
+      if (!this.provision.isChronopostFees) this.provision.isChronopostFees = false;
+      if (!this.provision.isBankCheque) this.provision.isBankCheque = false;
+      if (!this.provision.isComplexeFile) this.provision.isComplexeFile = false;
+      if (!this.provision.isDocumentScanning) this.provision.isDocumentScanning = false;
+      if (!this.provision.isEmergency) this.provision.isEmergency = false;
+      if (!this.provision.isComplexeFile) this.provision.isComplexeFile = false;
+      if (!this.provision.isDocumentScanning) this.provision.isDocumentScanning = false;
+      if (!this.provision.isEmergency) this.provision.isEmergency = false;
+
     }
   }
 
-  displayOption(billingType: BillingType): boolean {
-    if (this.provision && billingType && this.provision.provisionType && this.provision.provisionType.billingTypes)
+  displayOption(billingTypeToDisplay: BillingType): boolean {
+    if (this.provision && billingTypeToDisplay && this.provision.provisionType && this.provision.provisionType.billingTypes)
       for (let billingType of this.provision.provisionType.billingTypes)
-        if (billingType.id == billingType.id)
+        if (billingType.id == billingTypeToDisplay.id)
           return true;
     return false;
   }
@@ -77,7 +135,75 @@ export class ProvisionOptionsComponent implements OnInit {
     }
   }
 
-  //TODO : à ajouter au toggle de logo sur l'event de change
+  toggleIsBodaccFollowup() {
+    if (this.provision) {
+      if (this.provision.isBodaccFollowup)
+        this.provision.isBodaccFollowupAndRedaction = false;
+    }
+  }
+
+  toggleIsBodaccRedaction() {
+    if (this.provision) {
+      if (this.provision.isBodaccFollowupAndRedaction)
+        this.provision.isBodaccFollowup = false;
+    }
+  }
+
+  changeNantissementDeposit(value: boolean) {
+    if (value && this.provision)
+      this.provision.isNantissementDeposit = true;
+  }
+
+  toggleIsMultipleVacation() {
+    if (this.provision)
+      if (this.provision.isVacationMultipleModification)
+        this.provision.isTreatmentMultipleModiciation = true;
+      else
+        this.provision.isTreatmentMultipleModiciation = false;
+  }
+
+  toggleIsMultipleTreatment() {
+    if (this.provision)
+      if (this.provision.isTreatmentMultipleModiciation)
+        this.provision.isVacationMultipleModification = true;
+      else
+        this.provision.isVacationMultipleModification = false;
+  }
+
+  canDisplayNantissementDeposit() {
+    return this.canDisplayNantissement(this.constantService.getStringNantissementDepositFormeJuridiqueCode());
+  }
+  canDisplayNantissementSocialShare() {
+    return this.canDisplayNantissement(this.constantService.getStrinSocialShareNantissementRedactionFormeJuridiqueCode());
+  }
+  canDisplayNantissementBusiness() {
+    return this.canDisplayNantissement(this.constantService.getStringBusinnessNantissementRedactionFormeJuridiqueCode());
+  }
+
+  canDisplayNantissement(codeList: string) {
+    if (codeList && this.provision && this.provision.formalite) {
+      let codes = codeList.split(",");
+      if (codes)
+        for (let code of codes) {
+          if (this.provision.formalite.formeJuridique.code == code.trim())
+            return true;
+        }
+    }
+    return false;
+  }
+
+  fillPublicationPaperNumber() {
+    if (this.provision && this.provision.isPublicationPaper && this.customerOrder) {
+      let document = getDocument(this.constantService.getDocumentTypePublication(), this.customerOrder);
+      if (document && document.isMailingPaper) {
+        if (document.numberMailingAffaire && document.numberMailingAffaire > 0)
+          this.provision.publicationPaperAffaireNumber = document.numberMailingAffaire;
+        if (document.numberMailingClient && document.numberMailingClient > 0)
+          this.provision.publicationPaperClientNumber = document.numberMailingClient;
+      }
+    }
+  }
+
   provisionChangeFunction() {
     this.provisionChange.emit();
   }

@@ -10,6 +10,12 @@ import com.jss.osiris.modules.miscellaneous.model.ICode;
 
 @Entity
 public class RoleContrat implements Serializable, ICode {
+    public RoleContrat(String code) {
+        this.code = code;
+    }
+
+    public RoleContrat() {
+    }
 
     @Id
     private String code;

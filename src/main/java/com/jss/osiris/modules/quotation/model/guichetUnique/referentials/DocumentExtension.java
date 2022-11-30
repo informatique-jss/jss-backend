@@ -10,6 +10,12 @@ import com.jss.osiris.modules.miscellaneous.model.ICode;
 
 @Entity
 public class DocumentExtension implements Serializable, ICode {
+    public DocumentExtension(String code) {
+        this.code = code;
+    }
+
+    public DocumentExtension() {
+    }
 
     @Id
     private String code;

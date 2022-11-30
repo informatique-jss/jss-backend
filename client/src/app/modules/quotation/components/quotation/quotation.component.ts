@@ -58,6 +58,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
 
   instanceOfCustomerOrderFn = instanceOfCustomerOrder;
   instanceOfQuotationFn = instanceOfQuotation;
+  round = Math.round;
 
   selectedTabIndex = 0;
 
@@ -555,8 +556,12 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     this.quotationService.generateQuotationMail(this.quotation).subscribe(response => { });
   }
 
-  generateWaintingDepositMail() {
-    this.quotationService.generateWaintingDepositMail(this.quotation).subscribe(response => { });
+  generateCustomerOrderCreationConfirmationToCustomer() {
+    this.quotationService.generateCustomerOrderCreationConfirmationToCustomer(this.quotation).subscribe(response => { });
+  }
+
+  generateCustomerOrderDepositConfirmationToCustomer() {
+    this.quotationService.generateCustomerOrderDepositConfirmationToCustomer(this.quotation).subscribe(response => { });
   }
 
   generateInvoicetMail() {

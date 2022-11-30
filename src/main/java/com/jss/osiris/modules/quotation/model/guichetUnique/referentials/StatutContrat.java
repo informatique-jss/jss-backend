@@ -10,6 +10,12 @@ import com.jss.osiris.modules.miscellaneous.model.ICode;
 
 @Entity
 public class StatutContrat implements Serializable, ICode {
+    public StatutContrat(String code) {
+        this.code = code;
+    }
+
+    public StatutContrat() {
+    }
 
     @Id
     private String code;

@@ -10,6 +10,12 @@ import com.jss.osiris.modules.miscellaneous.model.ICode;
 
 @Entity
 public class MotifRejetMsa implements Serializable, ICode {
+    public MotifRejetMsa(String code) {
+        this.code = code;
+    }
+
+    public MotifRejetMsa() {
+    }
 
     @Id
     private String code;

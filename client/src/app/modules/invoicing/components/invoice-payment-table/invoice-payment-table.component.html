@@ -36,4 +36,9 @@
     <td class="td-price mat-cell">{{getAmountRemaining(invoice)}} €
     </td>
   </tr>
+  <tr
+    *ngIf="invoice && invoice.customerOrder && invoice.customerOrder.centralPayPendingPaymentAmount  && invoice.customerOrder.centralPayPendingPaymentAmount >0">
+    <td class="mat-cell">Paiement reçu par CB en attente de réception</td>
+    <td class="td-price mat-cell">{{invoice.customerOrder.centralPayPendingPaymentAmount | number}} €</td>
+  </tr>
 </table>

@@ -11,6 +11,13 @@ import com.jss.osiris.modules.miscellaneous.model.ICode;
 @Entity
 public class ActiviteReguliere implements Serializable, ICode {
 
+    public ActiviteReguliere() {
+    }
+
+    public ActiviteReguliere(String code) {
+        this.code = code;
+    }
+
     @Id
     private String code;
 

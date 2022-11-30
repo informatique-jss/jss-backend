@@ -32,12 +32,16 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("mail.smtp.password");
         isOk = isOk && checkProperty("mail.smtp.auth");
         isOk = isOk && checkProperty("mail.smtp.starttls.enable");
+        isOk = isOk && checkProperty("schedulling.enabled");
         isOk = isOk && checkProperty("schedulling.pool.size");
         isOk = isOk && checkProperty("schedulling.account.daily.close");
         isOk = isOk && checkProperty("schedulling.active.directory.user.update");
         isOk = isOk && checkProperty("schedulling.payment.grab");
         isOk = isOk && checkProperty("schedulling.mail.sender");
         isOk = isOk && checkProperty("schedulling.notification.purge");
+        isOk = isOk && checkProperty("schedulling.log.osiris.quotation.reminder");
+        isOk = isOk && checkProperty("schedulling.log.osiris.customerOrder.deposit.reminder");
+        isOk = isOk && checkProperty("schedulling.log.osiris.customerOrder.invoice.reminder");
         isOk = isOk && checkProperty("ldap.dc.level.0");
         isOk = isOk && checkProperty("ldap.dc.level.1");
         isOk = isOk && checkProperty("ldap.ou.osiris");
@@ -50,6 +54,7 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("server.servlet.session.timeout");
         isOk = isOk && checkProperty("invoicing.payment.limit.refund.euros");
         isOk = isOk && checkProperty("payment.cb.entry.point");
+        isOk = isOk && checkProperty("payment.cb.redirect.quotation.deposit.entry.point");
         isOk = isOk && checkProperty("payment.cb.redirect.deposit.entry.point");
         isOk = isOk && checkProperty("payment.cb.redirect.invoice.entry.point");
         isOk = isOk && checkProperty("central.pay.entrypoint");

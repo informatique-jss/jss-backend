@@ -26,7 +26,6 @@ public class CustomerOrderStatus implements Serializable, IId {
 	 * WARNINNG : add update in Service when adding a new status
 	 */
 	public static String OPEN = "OPEN";
-	public static String TO_VERIFY = "TO_VERIFY";
 	public static String ABANDONED = "ABANDONED";
 	public static String BILLED = "BILLED";
 	public static String WAITING_DEPOSIT = "WAITING_DEPOSIT";
@@ -95,14 +94,6 @@ public class CustomerOrderStatus implements Serializable, IId {
 
 	public static void setOPEN(String oPEN) {
 		OPEN = oPEN;
-	}
-
-	public static String getTO_VERIFY() {
-		return TO_VERIFY;
-	}
-
-	public static void setTO_VERIFY(String tO_VERIFY) {
-		TO_VERIFY = tO_VERIFY;
 	}
 
 	public static String getABANDONED() {

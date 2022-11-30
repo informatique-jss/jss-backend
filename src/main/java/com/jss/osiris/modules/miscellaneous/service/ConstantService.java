@@ -83,11 +83,71 @@ public interface ConstantService {
 
     public AttachmentType getAttachmentTypeProofOfAddress() throws OsirisException;
 
+    public AttachmentType getAttachmentTypeInvoice() throws OsirisException;
+
+    public AttachmentType getAttachmentTypeKbisUpdated() throws OsirisException;
+
+    public AttachmentType getAttachmentTypePublicationFlag() throws OsirisException;
+
+    public AttachmentType getAttachmentTypePublicationReceipt() throws OsirisException;
+
     public Country getCountryFrance() throws OsirisException;
 
     public Country getCountryMonaco() throws OsirisException;
 
     public BillingType getBillingTypeLogo() throws OsirisException;
+
+    public BillingType getBillingTypeRedactedByJss() throws OsirisException;
+
+    public BillingType getBillingTypeBaloPackage() throws OsirisException;
+
+    public BillingType getBillingTypePublicationPaper() throws OsirisException;
+
+    public BillingType getBillingTypePublicationReceipt() throws OsirisException;
+
+    public BillingType getBillingTypePublicationFlag() throws OsirisException;
+
+    public BillingType getBillingTypeBodaccFollowup() throws OsirisException;
+
+    public BillingType getBillingTypeBodaccFollowupAndRedaction() throws OsirisException;
+
+    public BillingType getBillingTypeNantissementDeposit() throws OsirisException;
+
+    public BillingType getBillingTypeSocialShareNantissementRedaction() throws OsirisException;
+
+    public BillingType getBillingTypeBusinnessNantissementRedaction() throws OsirisException;
+
+    public BillingType getBillingTypeSellerPrivilegeRedaction() throws OsirisException;
+
+    public BillingType getBillingTypeTreatmentMultipleModiciation() throws OsirisException;
+
+    public BillingType getBillingTypeVacationMultipleModification() throws OsirisException;
+
+    public BillingType getBillingTypeRegisterPurchase() throws OsirisException;
+
+    public BillingType getBillingTypeRegisterInitials() throws OsirisException;
+
+    public BillingType getBillingTypeRegisterShippingCosts() throws OsirisException;
+
+    public BillingType getBillingTypeDisbursement() throws OsirisException;
+
+    public BillingType getBillingTypeFeasibilityStudy() throws OsirisException;
+
+    public BillingType getBillingTypeChronopostFees() throws OsirisException;
+
+    public BillingType getBillingTypeBankCheque() throws OsirisException;
+
+    public BillingType getBillingTypeComplexeFile() throws OsirisException;
+
+    public BillingType getBillingTypeDocumentScanning() throws OsirisException;
+
+    public BillingType getBillingTypeEmergency() throws OsirisException;
+
+    public String getStringNantissementDepositFormeJuridiqueCode() throws OsirisException;
+
+    public String getStrinSocialShareNantissementRedactionFormeJuridiqueCode() throws OsirisException;
+
+    public String getStringBusinnessNantissementRedactionFormeJuridiqueCode() throws OsirisException;
 
     public QuotationLabelType getQuotationLabelTypeOther() throws OsirisException;
 
@@ -106,6 +166,8 @@ public interface ConstantService {
     public LegalForm getLegalFormUnregistered() throws OsirisException;
 
     public JournalType getJournalTypeSpel() throws OsirisException;
+
+    public JournalType getJournalTypePaper() throws OsirisException;
 
     public Confrere getConfrereJss() throws OsirisException;
 
@@ -140,6 +202,8 @@ public interface ConstantService {
     public Employee getEmployeeBillingResponsible() throws OsirisException;
 
     public Employee getEmployeeSalesDirector() throws OsirisException;
+
+    public Employee getEmployeeInvoiceReminderResponsible() throws OsirisException;
 
     public TransfertFundsType getTransfertFundsTypePhysique() throws OsirisException;
 
@@ -186,5 +250,9 @@ public interface ConstantService {
     public TypeFormalite getTypeFormaliteCreation() throws OsirisException;
 
     public TypeFormalite getTypeFormaliteCorrection() throws OsirisException;
+
+    public String getStringAccountingSharedMaiblox() throws OsirisException;
+
+    public String getStringSalesSharedMailbox() throws OsirisException;
 
 }

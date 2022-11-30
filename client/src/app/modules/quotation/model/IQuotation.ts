@@ -1,7 +1,5 @@
 import { IAttachment } from "../../miscellaneous/model/IAttachment";
 import { IDocument } from "../../miscellaneous/model/IDocument";
-import { Mail } from "../../miscellaneous/model/Mail";
-import { Phone } from "../../miscellaneous/model/Phone";
 import { SpecialOffer } from "../../miscellaneous/model/SpecialOffer";
 import { Responsable } from "../../tiers/model/Responsable";
 import { Tiers } from "../../tiers/model/Tiers";
@@ -25,8 +23,6 @@ export interface IQuotation extends IAttachment, IDocument {
   customLabelResponsable: Responsable | undefined;
   customLabelTiers: Tiers | undefined;
   recordType: RecordType;
-  mails: Mail[];
-  phones: Phone[];
   isQuotation: boolean;
   assoAffaireOrders: AssoAffaireOrder[];
 }

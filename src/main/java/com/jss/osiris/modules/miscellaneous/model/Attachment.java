@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.miscellaneous.model;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,6 +16,7 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.jss.osiris.libs.mail.model.CustomerMail;
 import com.jss.osiris.modules.quotation.model.Announcement;
 import com.jss.osiris.modules.quotation.model.Bodacc;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
@@ -42,6 +44,12 @@ public class Attachment implements Serializable, IId {
 	@JoinColumn(name = "id_tiers")
 	@JsonIgnoreProperties(value = { "attachments" }, allowSetters = true)
 	private Tiers tiers;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JsonIgnore
+	@JoinColumn(name = "id_customer_mail")
+	@JsonIgnoreProperties(value = { "attachments" }, allowSetters = true)
+	private CustomerMail customerMail;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JsonIgnore
@@ -101,6 +109,11 @@ public class Attachment implements Serializable, IId {
 
 	@Column(nullable = false)
 	private Boolean isDisabled;
+
+	@Column(length = 2000)
+	private String description;
+
+	private LocalDateTime creatDateTime;
 
 	public Integer getId() {
 		return id;
@@ -204,6 +217,30 @@ public class Attachment implements Serializable, IId {
 
 	public void setFormalite(Formalite formalite) {
 		this.formalite = formalite;
+	}
+
+	public CustomerMail getCustomerMail() {
+		return customerMail;
+	}
+
+	public void setCustomerMail(CustomerMail customerMail) {
+		this.customerMail = customerMail;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public LocalDateTime getCreatDateTime() {
+		return creatDateTime;
+	}
+
+	public void setCreatDateTime(LocalDateTime creatDateTime) {
+		this.creatDateTime = creatDateTime;
 	}
 
 }

@@ -10,6 +10,12 @@ import com.jss.osiris.modules.miscellaneous.model.ICode;
 
 @Entity
 public class Perimetre implements Serializable, ICode {
+    public Perimetre(String code) {
+        this.code = code;
+    }
+
+    public Perimetre() {
+    }
 
     @Id
     private String code;

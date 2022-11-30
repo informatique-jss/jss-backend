@@ -122,6 +122,22 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.attachmentTypeProofOfAddress;
   }
 
+  getAttachmentTypeInvoice() {
+    return this.constant.attachmentTypeInvoice;
+  }
+
+  getAttachmentTypeKbisUpdated() {
+    return this.constant.attachmentTypeKbisUpdated;
+  }
+
+  getAttachmentTypePublicationFlag() {
+    return this.constant.attachmentTypePublicationFlag;
+  }
+
+  getAttachmentTypePublicationReceipt() {
+    return this.constant.attachmentTypePublicationReceipt;
+  }
+
   getCountryFrance() {
     return this.constant.countryFrance;
   }
@@ -132,6 +148,108 @@ export class ConstantService extends AppRestService<Constant>{
 
   getBillingTypeLogo() {
     return this.constant.billingTypeLogo;
+  }
+
+  getBillingTypeRedactedByJss() {
+    return this.constant.billingTypeRedactedByJss;
+  }
+
+  getBillingTypeBaloPackage() {
+    return this.constant.billingTypeBaloPackage;
+  }
+
+  getBillingTypePublicationPaper() {
+    return this.constant.billingTypePublicationPaper;
+  }
+
+  getBillingTypePublicationReceipt() {
+    return this.constant.billingTypePublicationReceipt;
+  }
+
+  getBillingTypePublicationFlag() {
+    return this.constant.billingTypePublicationFlag;
+  }
+
+  getBillingTypeBodaccFollowup() {
+    return this.constant.billingTypeBodaccFollowup;
+  }
+
+  getBillingTypeBodaccFollowupAndRedaction() {
+    return this.constant.billingTypeBodaccFollowupAndRedaction;
+  }
+
+  getBillingTypeNantissementDeposit() {
+    return this.constant.billingTypeNantissementDeposit;
+  }
+
+  getBillingTypeSocialShareNantissementRedaction() {
+    return this.constant.billingTypeSocialShareNantissementRedaction;
+  }
+
+  getBillingTypeBusinnessNantissementRedaction() {
+    return this.constant.billingTypeBusinnessNantissementRedaction;
+  }
+
+  getBillingTypeSellerPrivilegeRedaction() {
+    return this.constant.billingTypeSellerPrivilegeRedaction;
+  }
+
+  getBillingTypeTreatmentMultipleModiciation() {
+    return this.constant.billingTypeTreatmentMultipleModiciation;
+  }
+
+  getBillingTypeVacationMultipleModification() {
+    return this.constant.billingTypeVacationMultipleModification;
+  }
+
+  getBillingTypeRegisterPurchase() {
+    return this.constant.billingTypeRegisterPurchase;
+  }
+
+  getBillingTypeRegisterInitials() {
+    return this.constant.billingTypeRegisterInitials;
+  }
+
+  getBillingTypeRegisterShippingCosts() {
+    return this.constant.billingTypeRegisterShippingCosts;
+  }
+
+  getBillingTypeDisbursement() {
+    return this.constant.billingTypeDisbursement;
+  }
+
+  getBillingTypeFeasibilityStudy() {
+    return this.constant.billingTypeFeasibilityStudy;
+  }
+
+  getBillingTypeChronopostFees() {
+    return this.constant.billingTypeChronopostFees;
+  }
+
+  getBillingTypeBankCheque() {
+    return this.constant.billingTypeBankCheque;
+  }
+
+  getBillingTypeComplexeFile() {
+    return this.constant.billingTypeComplexeFile;
+  }
+
+  getBillingTypeDocumentScanning() {
+    return this.constant.billingTypeDocumentScanning;
+  }
+
+  getBillingTypeEmergency() {
+    return this.constant.billingTypeEmergency;
+  }
+
+  getStringNantissementDepositFormeJuridiqueCode() {
+    return this.constant.stringNantissementDepositFormeJuridiqueCode;
+  }
+  getStrinSocialShareNantissementRedactionFormeJuridiqueCode() {
+    return this.constant.strinSocialShareNantissementRedactionFormeJuridiqueCode;
+  }
+  getStringBusinnessNantissementRedactionFormeJuridiqueCode() {
+    return this.constant.stringBusinnessNantissementRedactionFormeJuridiqueCode;
   }
 
   getQuotationLabelTypeOther() {
@@ -168,6 +286,10 @@ export class ConstantService extends AppRestService<Constant>{
 
   getJournalTypeSpel() {
     return this.constant.journalTypeSpel;
+  }
+
+  getJournalTypePaper() {
+    return this.constant.journalTypePaper;
   }
 
   getConfrereJss() {
@@ -236,6 +358,10 @@ export class ConstantService extends AppRestService<Constant>{
 
   getEmployeeSalesDirector() {
     return this.constant.employeeSalesDirector;
+  }
+
+  getEmployeeInvoiceReminderResponsible() {
+    return this.constant.employeeInvoiceReminderResponsible;
   }
 
   getTransfertFundsTypePhysique() {
@@ -324,5 +450,13 @@ export class ConstantService extends AppRestService<Constant>{
 
   getTypeFormaliteCorrection() {
     return this.constant.typeFormaliteCorrection;
+  }
+
+  getSalesSharedMailbox() {
+    return this.constant.salesSharedMailbox;
+  }
+
+  getAccountingSharedMaiblox() {
+    return this.constant.accountingSharedMaiblox;
   }
 }

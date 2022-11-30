@@ -61,6 +61,7 @@ const routes: Routes = [
     AmountDialogComponent,
   ], exports: [
     InvoiceListComponent,
+    InvoicePaymentTableComponent,
     PaymentListComponent,
   ]
 })

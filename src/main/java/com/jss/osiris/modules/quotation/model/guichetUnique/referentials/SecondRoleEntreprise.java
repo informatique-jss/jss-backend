@@ -10,6 +10,12 @@ import com.jss.osiris.modules.miscellaneous.model.ICode;
 
 @Entity
 public class SecondRoleEntreprise implements Serializable, ICode {
+    public SecondRoleEntreprise(String code) {
+        this.code = code;
+    }
+
+    public SecondRoleEntreprise() {
+    }
 
     @Id
     private String code;

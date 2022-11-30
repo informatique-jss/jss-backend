@@ -48,7 +48,7 @@
     </tr>
   </table>
   <table class="full-width">
-    <tr>
+    <tr *ngIf="affaire.isIndividual==false">
       <td>
         <generic-input [(model)]="affaire.denomination" label="Dénomination" [form]="affaireForm"
           propertyName="denomination" [isMandatory]="true" [isDisabled]="!editMode"

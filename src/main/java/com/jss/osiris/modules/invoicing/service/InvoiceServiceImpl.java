@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.model.AccountingRecord;
@@ -25,6 +26,7 @@ import com.jss.osiris.modules.invoicing.repository.InvoiceRepository;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.DocumentService;
+import com.jss.osiris.modules.miscellaneous.service.NotificationService;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
@@ -60,6 +62,12 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Autowired
     CustomerOrderService customerOrderService;
 
+    @Autowired
+    MailHelper mailHelper;
+
+    @Autowired
+    NotificationService notificationService;
+
     @Override
     public List<Invoice> getAllInvoices() {
         return IterableUtils.toList(invoiceRepository.findAll());
@@ -83,7 +91,7 @@ public class InvoiceServiceImpl implements InvoiceService {
             }
         if (invoice.getCustomerOrder() != null)
             customerOrderService.addOrUpdateCustomerOrderStatus(invoice.getCustomerOrder(),
-                    CustomerOrderStatus.TO_BILLED);
+                    CustomerOrderStatus.TO_BILLED, true);
         return getInvoice(invoice.getId());
     }
 
@@ -237,6 +245,35 @@ public class InvoiceServiceImpl implements InvoiceService {
             }
         invoice.setInvoiceStatus(constantService.getInvoiceStatusSend());
         addOrUpdateInvoice(invoice);
+    }
+
+    @Override
+    public void sendRemindersForInvoices() throws OsirisException {
+        List<Invoice> invoices = invoiceRepository.findInvoiceForReminder(constantService.getInvoiceStatusSend());
+
+        if (invoices != null && invoices.size() > 0)
+            for (Invoice invoice : invoices) {
+                boolean toSend = false;
+                if (invoice.getFirstReminderDateTime() == null
+                        && invoice.getDueDate().isBefore(LocalDate.now().minusDays(1 * 30))) {
+                    toSend = true;
+                    invoice.setFirstReminderDateTime(LocalDateTime.now());
+                } else if (invoice.getSecondReminderDateTime() == null
+                        && invoice.getDueDate().isBefore(LocalDate.now().minusDays(3 * 60))) {
+                    toSend = true;
+                    invoice.setSecondReminderDateTime(LocalDateTime.now());
+                } else if (invoice.getDueDate().isBefore(LocalDate.now().minusDays(6 * 90))) {
+                    toSend = true;
+                    invoice.setThirdReminderDateTime(LocalDateTime.now());
+                    notificationService.notifyInvoiceToReminder(invoice);
+                }
+
+                if (toSend) {
+                    mailHelper.sendCustomerOrderFinalisationToCustomer(invoice.getCustomerOrder(), false, true,
+                            invoice.getThirdReminderDateTime() != null);
+                    addOrUpdateInvoice(invoice);
+                }
+            }
     }
 
 }

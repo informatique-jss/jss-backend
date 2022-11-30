@@ -10,6 +10,12 @@ import com.jss.osiris.modules.miscellaneous.model.ICode;
 
 @Entity
 public class NatureGerance implements Serializable, ICode {
+    public NatureGerance(String code) {
+        this.code = code;
+    }
+
+    public NatureGerance() {
+    }
 
     @Id
     private String code;

@@ -2,7 +2,6 @@ package com.jss.osiris.libs.mail.model;
 
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -19,11 +18,11 @@ public class MailComputeResult {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "customer_mail_sequence")
     private Integer id;
 
-    @ManyToMany(cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
+    @ManyToMany
     @JoinTable(name = "asso_mail_compute_result_to", joinColumns = @JoinColumn(name = "id_mail_compute_result"), inverseJoinColumns = @JoinColumn(name = "id_mail"))
     private List<Mail> recipientsMailTo;
 
-    @ManyToMany(cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
+    @ManyToMany
     @JoinTable(name = "asso_mail_compute_result_cc", joinColumns = @JoinColumn(name = "id_mail_compute_result"), inverseJoinColumns = @JoinColumn(name = "id_mail"))
     private List<Mail> recipientsMailCc;
 

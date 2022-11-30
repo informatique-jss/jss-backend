@@ -13,4 +13,5 @@ export interface CustomerOrder extends IQuotation {
   payments: Payment[];
   accountingRecords: AccountingRecord[];
   customerOrderStatus: CustomerOrderStatus;
+  centralPayPendingPaymentAmount: number;
 }

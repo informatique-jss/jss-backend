@@ -81,8 +81,6 @@ export class HistoryComponent implements OnInit {
 
       setTimeout(() => {
         this.auditDataSource = new MatTableDataSource(this.audits);
-        console.log(this.audits.length);
-        console.log(this.entityType.entityType);
         this.auditDataSource.sort = this.sort;
         this.auditDataSource.sortingDataAccessor = (item: Audit, property) => {
           switch (property) {

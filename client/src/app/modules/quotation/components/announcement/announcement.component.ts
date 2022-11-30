@@ -40,7 +40,7 @@ export class AnnouncementComponent implements OnInit {
   @Input() editMode: boolean = false;
   @Input() instanceOfCustomerOrder: boolean = false;
   @Input() isStatusOpen: boolean = true;
-  @Output() noticeChange: EventEmitter<void> = new EventEmitter<void>();
+  @Output() provisionChange: EventEmitter<void> = new EventEmitter<void>();
 
   @ViewChild('tabs', { static: false }) tabs: any;
   @ViewChild('noticeTypesInput') noticeTypesInput: ElementRef<HTMLInputElement> | undefined;
@@ -106,14 +106,10 @@ export class AnnouncementComponent implements OnInit {
         this.announcement! = {} as Announcement;
       if (!this.announcement!.confrere)
         this.announcement!.confrere = this.constantService.getConfrereJss();
-      if (!this.announcement!.isRedactedByJss)
-        this.announcement!.isRedactedByJss = false;
       if (!this.announcement!.isHeader)
         this.announcement!.isHeader = false;
       if (!this.announcement!.isHeaderFree)
         this.announcement!.isHeaderFree = false;
-      if (!this.announcement!.isLegalDisplay)
-        this.announcement!.isLegalDisplay = false;
       if (!this.announcement!.isProofReadingDocument)
         this.announcement!.isProofReadingDocument = false;
       if (this.announcement!.publicationDate)
@@ -142,7 +138,6 @@ export class AnnouncementComponent implements OnInit {
   });
 
   getFormStatus(): boolean {
-    console.log(this.announcementForm);
     this.announcementForm.markAllAsTouched();
     if (this.announcement && this.announcement.notice)
       this.announcement.notice = this.announcement.notice.replace(/ +(?= )/g, '').replace(/(\r\n|\r|\n){2,}/g, '$1\n');
@@ -184,7 +179,7 @@ export class AnnouncementComponent implements OnInit {
   }
 
   noticeChangeFunction() {
-    this.noticeChange.emit();
+    this.provisionChange.emit();
   }
 
 
@@ -280,7 +275,7 @@ export class AnnouncementComponent implements OnInit {
   }
 
   clearNoticeTypeField() {
-    if (this.announcement!.noticeTypes != undefined && this.announcement!.noticeTypes != null && this.editMode) {
+    if (this.announcement && this.announcement.noticeTypes && this.editMode && this.announcement.noticeTypes.length > 0 && this.announcement.noticeTypeFamily && this.announcement.noticeTypes[0].noticeTypeFamily.id != this.announcement.noticeTypeFamily.id) {
       this.announcement!.noticeTypes = [] as Array<NoticeType>;
       this.filteredNoticeTypes = this.announcementForm.get("noticeTypes")?.valueChanges.pipe(
         startWith(''),

@@ -10,6 +10,12 @@ import com.jss.osiris.modules.miscellaneous.model.ICode;
 
 @Entity
 public class RegistreEirl implements Serializable, ICode {
+    public RegistreEirl(String code) {
+        this.code = code;
+    }
+
+    public RegistreEirl() {
+    }
 
     @Id
     private String code;

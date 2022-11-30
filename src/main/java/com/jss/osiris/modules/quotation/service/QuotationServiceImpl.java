@@ -9,6 +9,7 @@ import java.util.Optional;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,6 +46,7 @@ import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.quotation.model.QuotationSearch;
 import com.jss.osiris.modules.quotation.model.QuotationSearchResult;
 import com.jss.osiris.modules.quotation.model.QuotationStatus;
+import com.jss.osiris.modules.quotation.model.centralPay.CentralPayPaymentRequest;
 import com.jss.osiris.modules.quotation.repository.QuotationRepository;
 import com.jss.osiris.modules.tiers.model.ITiers;
 
@@ -108,6 +110,12 @@ public class QuotationServiceImpl implements QuotationService {
     @Autowired
     CityService cityService;
 
+    @Autowired
+    CentralPayDelegateService centralPayDelegateService;
+
+    @Value("${payment.cb.redirect.quotation.deposit.entry.point}")
+    private String paymentCbRedirectDepositQuotation;
+
     @Override
     public Quotation getQuotation(Integer id) {
         Optional<Quotation> quotation = quotationRepository.findById(id);
@@ -139,6 +147,12 @@ public class QuotationServiceImpl implements QuotationService {
             assoAffaireOrderService.completeAssoAffaireOrder(assoAffaireOrder, quotation);
         }
 
+        boolean isNewQuotation = quotation.getId() == null;
+        if (isNewQuotation) {
+            quotation.setCreatedDate(LocalDateTime.now());
+            quotation = quotationRepository.save(quotation);
+        }
+
         getAndSetInvoiceItemsForQuotation(quotation);
 
         // Save invoice item
@@ -150,14 +164,15 @@ public class QuotationServiceImpl implements QuotationService {
             }
         }
 
-        boolean isNewQuotation = quotation.getId() == null;
-        if (isNewQuotation)
-            quotation.setCreatedDate(LocalDateTime.now());
         quotation = quotationRepository.save(quotation);
         indexEntityService.indexEntity(quotation, quotation.getId());
 
-        if (isNewQuotation)
+        if (isNewQuotation) {
             notificationService.notifyNewQuotation(quotation);
+
+            // if (quotation.getIsCreatedFromWebSite())
+            mailHelper.sendQuotationCreationConfirmationToCustomer(quotation);
+        }
         return quotation;
     }
 
@@ -245,7 +260,7 @@ public class QuotationServiceImpl implements QuotationService {
 
                         if (billingType.getAccountingAccountProduct() != null
                                 && (!billingItem.getBillingType().getIsOptionnal()
-                                        || hasOption(billingItem, provision))) {
+                                        || hasOption(billingItem.getBillingType(), provision))) {
 
                             InvoiceItem invoiceItem = new InvoiceItem();
                             invoiceItem.setBillingItem(billingItem);
@@ -263,12 +278,25 @@ public class QuotationServiceImpl implements QuotationService {
                                 } else {
                                     invoiceItem.setPreTaxPrice(0f);
                                 }
+                            } else if (provision.getIsPublicationPaper() && billingType.getId()
+                                    .equals(constantService.getBillingTypePublicationPaper().getId())) {
+                                Float nbr = 0f;
+                                if (provision.getPublicationPaperAffaireNumber() != null
+                                        && provision.getPublicationPaperAffaireNumber() > 0)
+                                    nbr += provision.getPublicationPaperAffaireNumber();
+                                if (provision.getPublicationPaperClientNumber() != null
+                                        && provision.getPublicationPaperClientNumber() > 0)
+                                    nbr += provision.getPublicationPaperClientNumber();
+                                if (nbr > 0) {
+                                    invoiceItem.setLabel(invoiceItem.getLabel() + " (quantité : " + nbr + ")");
+                                    invoiceItem.setPreTaxPrice(
+                                            Math.round(billingItem.getPreTaxPrice() * nbr * 100f) / 100f);
+                                }
                             } else {
                                 invoiceItem.setPreTaxPrice(Math.round(billingItem.getPreTaxPrice() * 100f) / 100f);
                             }
                             invoiceItem.setProvision(provision);
                             computeInvoiceItemsVatAndDiscount(invoiceItem, quotation);
-
                             invoiceItems.add(invoiceItem);
                         }
                     }
@@ -278,11 +306,88 @@ public class QuotationServiceImpl implements QuotationService {
         return invoiceItems;
     }
 
-    private boolean hasOption(BillingItem billingItem, Provision provision) throws OsirisException {
-        if (billingItem.getBillingType().getId().equals(constantService.getBillingTypeLogo().getId())
-                && provision.getAnnouncement() != null
-                && provision.getIsLogo() != null && provision.getIsLogo())
+    private boolean hasOption(BillingType billingType, Provision provision) throws OsirisException {
+        if (provision.getIsLogo() == null)
+            return false;
+        if (billingType.getId().equals(constantService.getBillingTypeLogo().getId()) && provision.getIsLogo())
             return true;
+        if (billingType.getId().equals(constantService.getBillingTypeRedactedByJss().getId())
+                && provision.getIsRedactedByJss())
+            return true;
+        if (billingType.getId().equals(constantService.getBillingTypeBaloPackage().getId())
+                && provision.getIsBaloPackage())
+            return true;
+        if (billingType.getId().equals(constantService.getBillingTypePublicationReceipt().getId())
+                && provision.getIsPublicationReceipt())
+            return true;
+        if (billingType.getId().equals(constantService.getBillingTypePublicationFlag().getId())
+                && provision.getIsPublicationFlag())
+            return true;
+        if (billingType.getId().equals(constantService.getBillingTypeBodaccFollowup().getId())
+                && provision.getIsBodaccFollowup())
+            return true;
+        if (billingType.getId().equals(constantService.getBillingTypeBodaccFollowupAndRedaction().getId())
+                && provision.getIsBodaccFollowupAndRedaction())
+            return true;
+        if (billingType.getId().equals(constantService.getBillingTypeNantissementDeposit().getId())
+                && provision.getIsNantissementDeposit())
+            return true;
+        if (billingType.getId().equals(constantService.getBillingTypeSocialShareNantissementRedaction().getId())
+                && provision.getIsSocialShareNantissementRedaction())
+            return true;
+        if (billingType.getId().equals(constantService.getBillingTypeBusinnessNantissementRedaction().getId())
+                && provision.getIsBusinnessNantissementRedaction())
+            return true;
+        if (billingType.getId().equals(constantService.getBillingTypeSellerPrivilegeRedaction().getId())
+                && provision.getIsSellerPrivilegeRedaction())
+            return true;
+        if (billingType.getId().equals(constantService.getBillingTypeTreatmentMultipleModiciation().getId())
+                && provision.getIsTreatmentMultipleModiciation())
+            return true;
+        if (billingType.getId().equals(constantService.getBillingTypeVacationMultipleModification().getId())
+                && provision.getIsVacationMultipleModification())
+            return true;
+        if (billingType.getId().equals(constantService.getBillingTypeRegisterPurchase().getId())
+                && provision.getIsRegisterPurchase())
+            return true;
+        if (billingType.getId().equals(constantService.getBillingTypeRegisterInitials().getId())
+                && provision.getIsRegisterInitials())
+            return true;
+        if (billingType.getId().equals(constantService.getBillingTypeRegisterShippingCosts().getId())
+                && provision.getIsRegisterShippingCosts())
+            return true;
+        if (billingType.getId().equals(constantService.getBillingTypeDisbursement().getId())
+                && provision.getIsDisbursement())
+            return true;
+        if (billingType.getId().equals(constantService.getBillingTypeFeasibilityStudy().getId())
+                && provision.getIsFeasibilityStudy())
+            return true;
+        if (billingType.getId().equals(constantService.getBillingTypeChronopostFees().getId())
+                && provision.getIsChronopostFees())
+            return true;
+        if (billingType.getId().equals(constantService.getBillingTypeBankCheque().getId())
+                && provision.getIsBankCheque())
+            return true;
+        if (billingType.getId().equals(constantService.getBillingTypeComplexeFile().getId())
+                && provision.getIsComplexeFile())
+            return true;
+        if (billingType.getId().equals(constantService.getBillingTypeDocumentScanning().getId())
+                && provision.getIsDocumentScanning())
+            return true;
+        if (billingType.getId().equals(constantService.getBillingTypeEmergency().getId()) && provision.getIsEmergency())
+            return true;
+        if (billingType.getId().equals(constantService.getBillingTypeComplexeFile().getId())
+                && provision.getIsComplexeFile())
+            return true;
+        if (billingType.getId().equals(constantService.getBillingTypeDocumentScanning().getId())
+                && provision.getIsDocumentScanning())
+            return true;
+        if (billingType.getId().equals(constantService.getBillingTypeEmergency().getId()) && provision.getIsEmergency())
+            return true;
+        if (billingType.getId().equals(constantService.getBillingTypePublicationPaper().getId())
+                && provision.getIsPublicationPaper())
+            return true;
+
         return false;
     }
 
@@ -340,8 +445,9 @@ public class QuotationServiceImpl implements QuotationService {
         }
 
         if (vat != null) {
-            Float vatPrice = vat.getRate() / 100 * (invoiceItem.getPreTaxPrice()
-                    - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount() : 0));
+            Float vatPrice = vat.getRate() / 100
+                    * ((invoiceItem.getPreTaxPrice() != null ? invoiceItem.getPreTaxPrice() : 0)
+                            - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount() : 0));
             invoiceItem.setVatPrice(Math.round(vatPrice * 100f) / 100f);
             invoiceItem.setVat(vat);
         } else {
@@ -359,16 +465,17 @@ public class QuotationServiceImpl implements QuotationService {
                     for (Provision provision : assoAffaireOrder.getProvisions()) {
                         ArrayList<InvoiceItem> finalInvoiceItems = new ArrayList<InvoiceItem>();
                         for (InvoiceItem invoiceItemToMerge : invoiceItemsToMerge) {
-                            if (provision.getInvoiceItems() != null && provision.getInvoiceItems().size() > 0) {
-                                for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
-                                    invoiceItem.setProvision(provision);
-                                    if (invoiceItemToMerge.getProvision().getId() != null
-                                            && provision.getId() != null
-                                            && invoiceItemToMerge.getProvision().getId()
-                                                    .equals(provision.getId())) {
+                            if (invoiceItemToMerge.getProvision().getId() != null
+                                    && provision.getId() != null
+                                    && invoiceItemToMerge.getProvision().getId().equals(provision.getId())) {
+                                if (provision.getInvoiceItems() != null && provision.getInvoiceItems().size() > 0) {
+                                    boolean invoiceItemToMergeFound = false;
+                                    for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
+                                        invoiceItem.setProvision(provision);
                                         if (invoiceItemToMerge.getBillingItem().getId()
                                                 .equals(invoiceItem.getBillingItem().getId())) {
-                                            // Only if invoice is not cancelled, in that case generate new invoice item
+                                            // Only if invoice is not cancelled, in that case generate new invoice
+                                            // item
                                             if (invoiceItem.getInvoice() == null || !invoiceItem.getInvoice()
                                                     .getInvoiceStatus().getId()
                                                     .equals(constantService.getInvoiceStatusCancelled().getId())) {
@@ -384,18 +491,17 @@ public class QuotationServiceImpl implements QuotationService {
                                                                 / 100f);
                                                 computeInvoiceItemsVatAndDiscount(invoiceItemToMerge, quotation);
                                             }
+                                            invoiceItemToMergeFound = true;
                                             finalInvoiceItems.add(invoiceItemToMerge);
                                         }
                                     }
-                                }
-                            } else {
-                                if (provision.getInvoiceItems() == null) {
+                                    if (!invoiceItemToMergeFound) {
+                                        invoiceItemToMerge.setProvision(provision);
+                                        finalInvoiceItems.add(invoiceItemToMerge);
+                                    }
+                                } else {
                                     provision.setInvoiceItems(invoiceItemsToMerge);
-                                    return;
                                 }
-                                if (provision.getId() != null
-                                        && provision.getId().equals(invoiceItemToMerge.getProvision().getId()))
-                                    finalInvoiceItems.add(invoiceItemToMerge);
                             }
                         }
                         provision.setInvoiceItems(finalInvoiceItems);
@@ -435,6 +541,7 @@ public class QuotationServiceImpl implements QuotationService {
                 && targetQuotationStatus.getCode().equals(QuotationStatus.REFUSED_BY_CUSTOMER))
             notificationService.notifyQuotationRefusedByCustomer(quotation);
 
+        quotation.setLastStatusUpdate(LocalDateTime.now());
         quotation.setQuotationStatus(targetQuotationStatus);
         return this.addOrUpdateQuotation(quotation);
     }
@@ -480,8 +587,8 @@ public class QuotationServiceImpl implements QuotationService {
         return quotationRepository.findQuotations(
                 salesEmployeeId,
                 statusId,
-                quotationSearch.getStartDate(),
-                quotationSearch.getEndDate(), customerOrderId);
+                quotationSearch.getStartDate().withHour(0).withMinute(0),
+                quotationSearch.getEndDate().withHour(23).withMinute(59), customerOrderId);
     }
 
     @Override
@@ -492,4 +599,169 @@ public class QuotationServiceImpl implements QuotationService {
                 indexEntityService.indexEntity(quotation, quotation.getId());
     }
 
+    @Override
+    public String getCardPaymentLinkForQuotationDeposit(Quotation quotation, String mail, String subject)
+            throws OsirisException {
+        return getCardPaymentLinkForQuotationPayment(quotation, mail, subject, paymentCbRedirectDepositQuotation);
+    }
+
+    @Override
+    public Boolean validateCardPaymentLinkForQuotationDeposit(Quotation quotation)
+            throws OsirisException {
+        if (quotation.getCentralPayPaymentRequestId() != null) {
+            CentralPayPaymentRequest centralPayPaymentRequest = centralPayDelegateService
+                    .getPaymentRequest(quotation.getCentralPayPaymentRequestId());
+
+            if (centralPayPaymentRequest != null) {
+                if (centralPayPaymentRequest.getPaymentRequestStatus().equals(CentralPayPaymentRequest.CLOSED)
+                        && centralPayPaymentRequest.getPaymentStatus().equals(CentralPayPaymentRequest.PAID)) {
+
+                    if (quotation.getQuotationStatus().getCode()
+                            .equals(QuotationStatus.SENT_TO_CUSTOMER)) {
+                        unlockQuotationFromDeposit(quotation, centralPayPaymentRequest.getTotalAmount() / 100f);
+                    }
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private String getCardPaymentLinkForQuotationPayment(Quotation quotation, String mail, String subject,
+            String redirectEntrypoint)
+            throws OsirisException {
+
+        if (!quotation.getQuotationStatus().getCode().equals(QuotationStatus.SENT_TO_CUSTOMER))
+            throw new OsirisException("Wrong status to pay for quotation n°" + quotation.getId());
+
+        if (quotation.getQuotationStatus().getCode().equals(QuotationStatus.VALIDATED_BY_CUSTOMER))
+            if (quotation.getCustomerOrders() != null && quotation.getCustomerOrders().size() > 0)
+                return customerOrderService
+                        .getCardPaymentLinkForCustomerOrderDeposit(quotation.getCustomerOrders().get(0), mail, subject);
+            else
+                return "ok";
+
+        if (quotation.getCentralPayPaymentRequestId() != null) {
+            CentralPayPaymentRequest centralPayPaymentRequest = centralPayDelegateService
+                    .getPaymentRequest(quotation.getCentralPayPaymentRequestId());
+
+            if (centralPayPaymentRequest != null) {
+                if (centralPayPaymentRequest.getPaymentRequestStatus().equals(CentralPayPaymentRequest.ACTIVE))
+                    centralPayDelegateService.cancelPaymentRequest(quotation.getCentralPayPaymentRequestId());
+
+                if (centralPayPaymentRequest.getPaymentRequestStatus().equals(CentralPayPaymentRequest.CLOSED)
+                        && centralPayPaymentRequest.getPaymentStatus().equals(CentralPayPaymentRequest.PAID)) {
+                    unlockQuotationFromDeposit(quotation, centralPayPaymentRequest.getTotalAmount() / 100f);
+                    return "ok";
+                }
+            }
+        }
+
+        Float remainingToPay = computeQuotationTotalPrice(quotation);
+
+        if (remainingToPay > 0) {
+            CentralPayPaymentRequest paymentRequest = centralPayDelegateService.generatePayPaymentRequest(
+                    remainingToPay, mail,
+                    quotation.getId() + "", subject);
+
+            quotation.setCentralPayPaymentRequestId(paymentRequest.getPaymentRequestId());
+            addOrUpdateQuotation(quotation);
+            return paymentRequest.getBreakdowns().get(0).getEndpoint()
+                    + "?urlRedirect=" + redirectEntrypoint + "?quotationId=" + quotation.getId() + "&delay=0";
+        }
+        return "ok";
+    }
+
+    private Quotation unlockQuotationFromDeposit(Quotation quotation, Float effectivePayment)
+            throws OsirisException {
+        if (quotation.getQuotationStatus().getCode().equals(QuotationStatus.SENT_TO_CUSTOMER)) {
+            addOrUpdateQuotationStatus(quotation, QuotationStatus.VALIDATED_BY_CUSTOMER);
+            notificationService.notifyQuotationValidatedByCustomer(quotation);
+
+            quotation.getCustomerOrders().get(0).setCentralPayPendingPaymentAmount(effectivePayment);
+            customerOrderService.addOrUpdateCustomerOrder(quotation.getCustomerOrders().get(0));
+        }
+        return quotation;
+    }
+
+    private Float computeQuotationTotalPrice(IQuotation quotation) {
+        // Compute prices
+        Float preTaxPriceTotal = 0f;
+        Float discountTotal = null;
+        Float vatTotal = 0f;
+
+        for (AssoAffaireOrder asso : quotation.getAssoAffaireOrders()) {
+            for (Provision provision : asso.getProvisions()) {
+                for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
+                    preTaxPriceTotal += invoiceItem.getPreTaxPrice();
+                    if (invoiceItem.getDiscountAmount() != null && invoiceItem.getDiscountAmount() > 0) {
+                        if (discountTotal == null)
+                            discountTotal = invoiceItem.getDiscountAmount();
+                        else
+                            discountTotal += invoiceItem.getDiscountAmount();
+                    }
+                    if (invoiceItem.getVat() != null && invoiceItem.getVatPrice() != null
+                            && invoiceItem.getVatPrice() > 0) {
+                        vatTotal += invoiceItem.getVatPrice();
+                    }
+                }
+            }
+        }
+
+        return preTaxPriceTotal - (discountTotal != null ? discountTotal : 0) + vatTotal;
+    }
+
+    public void sendRemindersForQuotation() throws OsirisException {
+        List<Quotation> quotations = quotationRepository.findQuotationForReminder(
+                quotationStatusService.getQuotationStatusByCode(QuotationStatus.SENT_TO_CUSTOMER));
+
+        if (quotations != null && quotations.size() > 0)
+            for (Quotation quotation : quotations) {
+                // if only annonce légale
+                boolean isOnlyAnnonceLegal = true;
+                if (quotation.getAssoAffaireOrders() != null)
+                    loopAsso: for (AssoAffaireOrder asso : quotation.getAssoAffaireOrders())
+                        if (asso.getProvisions() != null)
+                            for (Provision provision : asso.getProvisions())
+                                if (provision.getAnnouncement() == null) {
+                                    isOnlyAnnonceLegal = false;
+                                    break loopAsso;
+                                }
+
+                boolean toSend = false;
+                if (isOnlyAnnonceLegal) {
+                    if (quotation.getFirstReminderDateTime() == null
+                            && quotation.getCreatedDate().isBefore(LocalDateTime.now().minusDays(1))) {
+                        toSend = true;
+                        quotation.setFirstReminderDateTime(LocalDateTime.now());
+                    } else if (quotation.getSecondReminderDateTime() == null
+                            && quotation.getCreatedDate().isBefore(LocalDateTime.now().minusDays(2))) {
+                        toSend = true;
+                        quotation.setSecondReminderDateTime(LocalDateTime.now());
+                    } else if (quotation.getCreatedDate().isBefore(LocalDateTime.now().minusDays(7))) {
+                        toSend = true;
+                        quotation.setThirdReminderDateTime(LocalDateTime.now());
+                    }
+                } else {
+                    if (quotation.getFirstReminderDateTime() == null
+                            && quotation.getCreatedDate().isBefore(LocalDateTime.now().minusDays(1 * 7))) {
+                        toSend = true;
+                        quotation.setFirstReminderDateTime(LocalDateTime.now());
+                    } else if (quotation.getSecondReminderDateTime() == null
+                            && quotation.getCreatedDate().isBefore(LocalDateTime.now().minusDays(3 * 7))) {
+                        toSend = true;
+                        quotation.setSecondReminderDateTime(LocalDateTime.now());
+                    } else if (quotation.getCreatedDate().isBefore(LocalDateTime.now().minusDays(6 * 7))) {
+                        toSend = true;
+                        quotation.setThirdReminderDateTime(LocalDateTime.now());
+                    }
+                }
+
+                if (toSend) {
+                    mailHelper.sendQuotationToCustomer(quotation, false);
+                    addOrUpdateQuotation(quotation);
+                }
+            }
+
+    }
 }

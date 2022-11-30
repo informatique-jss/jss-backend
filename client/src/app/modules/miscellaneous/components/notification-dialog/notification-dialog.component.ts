@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { CUSTOMER_ORDER_ASSO_AFFAIRE_ORDER_TO_ASSIGN, CUSTOMER_ORDER_ASSO_AFFAIRE_ORDER_VERIFY, CUSTOMER_ORDER_BEING_PROCESSED, CUSTOMER_ORDER_CREATE, CUSTOMER_ORDER_TO_BE_BILLED, QUOTATION_ASSO_AFFAIRE_ORDER_VERIFY, QUOTATION_CREATE, QUOTATION_REFUSED_BY_CUSOMER, QUOTATION_SENT, QUOTATION_VALIDATED_BY_CUSOMER } from 'src/app/libs/Constants';
+import { CUSTOMER_ORDER_ASSO_AFFAIRE_ORDER_TO_ASSIGN, CUSTOMER_ORDER_ASSO_AFFAIRE_ORDER_VERIFY, CUSTOMER_ORDER_BEING_PROCESSED, CUSTOMER_ORDER_CREATE, CUSTOMER_ORDER_TO_BE_BILLED, INVOICE_REMINDER_PAYMENT, QUOTATION_ASSO_AFFAIRE_ORDER_VERIFY, QUOTATION_CREATE, QUOTATION_REFUSED_BY_CUSOMER, QUOTATION_SENT, QUOTATION_VALIDATED_BY_CUSOMER } from 'src/app/libs/Constants';
 import { displayInTeams } from 'src/app/libs/MailHelper';
 import { EntityType } from 'src/app/routing/search/EntityType';
-import { QUOTATION_ENTITY_TYPE } from 'src/app/routing/search/search.component';
+import { INVOICE_ENTITY_TYPE, QUOTATION_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { PERSONNAL } from '../../../../libs/Constants';
 import { CUSTOMER_ORDER_ENTITY_TYPE } from '../../../../routing/search/search.component';
 import { AppService } from '../../../../services/app.service';
@@ -24,6 +24,7 @@ export class NotificationDialogComponent implements OnInit {
 
   QUOTATION_ENTITY_TYPE = QUOTATION_ENTITY_TYPE;
   CUSTOMER_ORDER_ENTITY_TYPE = CUSTOMER_ORDER_ENTITY_TYPE;
+  INVOICE_ENTITY_TYPE = INVOICE_ENTITY_TYPE;
 
 
   PERSONNAL = PERSONNAL;
@@ -38,6 +39,8 @@ export class NotificationDialogComponent implements OnInit {
   CUSTOMER_ORDER_BEING_PROCESSED = CUSTOMER_ORDER_BEING_PROCESSED;
   CUSTOMER_ORDER_ASSO_AFFAIRE_ORDER_TO_ASSIGN = CUSTOMER_ORDER_ASSO_AFFAIRE_ORDER_TO_ASSIGN;
   CUSTOMER_ORDER_TO_BE_BILLED = CUSTOMER_ORDER_TO_BE_BILLED;
+
+  INVOICE_REMINDER_PAYMENT = INVOICE_REMINDER_PAYMENT;
 
   constructor(
     private formBuilder: FormBuilder,

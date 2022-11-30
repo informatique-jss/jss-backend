@@ -90,7 +90,8 @@
       </div>
     </mat-tab>
     <mat-tab label="Options">
-      <provision-options [editMode]="editMode" [provision]="provision"></provision-options>
+      <provision-options [editMode]="editMode" (provisionChange)="provisionChangeFunction()" [provision]="provision">
+      </provision-options>
     </mat-tab>
     <mat-tab label="Activité">
       <div class=" form-div">

@@ -23,6 +23,7 @@ import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
+import com.jss.osiris.modules.invoicing.model.InvoiceLabelResult;
 import com.jss.osiris.modules.invoicing.model.InvoiceSearch;
 import com.jss.osiris.modules.invoicing.model.InvoiceSearchResult;
 import com.jss.osiris.modules.invoicing.model.InvoiceStatus;
@@ -37,8 +38,10 @@ import com.jss.osiris.modules.invoicing.service.InvoiceStatusService;
 import com.jss.osiris.modules.invoicing.service.PaymentService;
 import com.jss.osiris.modules.invoicing.service.PaymentWayService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
+import com.jss.osiris.modules.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.tiers.model.BillingLabelType;
 import com.jss.osiris.modules.tiers.model.ITiers;
 
@@ -67,6 +70,12 @@ public class InvoicingController {
 
     @Autowired
     ConstantService constantService;
+
+    @Autowired
+    QuotationService quotationService;
+
+    @Autowired
+    DocumentService documentService;
 
     @GetMapping(inputEntryPoint + "/payment-ways")
     public ResponseEntity<List<PaymentWay>> getPaymentWays() {
@@ -368,6 +377,14 @@ public class InvoicingController {
 
         return new ResponseEntity<List<InvoiceSearchResult>>(invoiceService.searchInvoices(invoiceSearch),
                 HttpStatus.OK);
+    }
+
+    @PostMapping(inputEntryPoint + "/invoice/label/compute")
+    public ResponseEntity<InvoiceLabelResult> computeInvoiceLabelForCustomerOrder(
+            @RequestBody CustomerOrder customerOrder) throws OsirisException {
+        return new ResponseEntity<InvoiceLabelResult>(invoiceHelper.computeInvoiceLabelResult(
+                documentService.getBillingDocument(customerOrder.getDocuments()), customerOrder,
+                quotationService.getCustomerOrderOfQuotation(customerOrder)), HttpStatus.OK);
     }
 
 }

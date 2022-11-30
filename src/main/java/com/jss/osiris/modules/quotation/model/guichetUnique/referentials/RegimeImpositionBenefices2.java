@@ -10,6 +10,12 @@ import com.jss.osiris.modules.miscellaneous.model.ICode;
 
 @Entity
 public class RegimeImpositionBenefices2 implements Serializable, ICode {
+    public RegimeImpositionBenefices2(String code) {
+        this.code = code;
+    }
+
+    public RegimeImpositionBenefices2() {
+    }
 
     @Id
     private String code;

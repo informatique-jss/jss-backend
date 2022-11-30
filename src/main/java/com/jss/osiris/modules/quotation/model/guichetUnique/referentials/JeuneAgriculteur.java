@@ -10,6 +10,12 @@ import com.jss.osiris.modules.miscellaneous.model.ICode;
 
 @Entity
 public class JeuneAgriculteur implements Serializable, ICode {
+    public JeuneAgriculteur(String code) {
+        this.code = code;
+    }
+
+    public JeuneAgriculteur() {
+    }
 
     @Id
     private String code;

@@ -10,6 +10,12 @@ import com.jss.osiris.modules.miscellaneous.model.ICode;
 
 @Entity
 public class RoleConjoint implements Serializable, ICode {
+    public RoleConjoint(String code) {
+        this.code = code;
+    }
+
+    public RoleConjoint() {
+    }
 
     @Id
     private String code;

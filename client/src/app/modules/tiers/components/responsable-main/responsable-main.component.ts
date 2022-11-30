@@ -13,9 +13,7 @@ import { OrderingSearch } from 'src/app/modules/quotation/model/OrderingSearch';
 import { QuotationSearch } from 'src/app/modules/quotation/model/QuotationSearch';
 import { RESPONSABLE_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
-import { Civility } from '../../../miscellaneous/model/Civility';
 import { Document } from "../../../miscellaneous/model/Document";
-import { Language } from '../../../miscellaneous/model/Language';
 import { JssSubscription } from '../../model/JssSubscription';
 import { Responsable } from '../../model/Responsable';
 import { SubscriptionPeriodType } from '../../model/SubscriptionPeriodType';
@@ -49,9 +47,6 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
   selectedResponsable: Responsable | null = null;
 
   selectedResponsableId: number | null = null;
-
-  civilities: Civility[] = [] as Array<Civility>;
-  languages: Language[] = [] as Array<Language>;
 
   isSubscriptionPaper: boolean = false;
   isSubscriptionWeb: boolean = false;
@@ -96,6 +91,13 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
 
       if (this.selectedResponsableId != null)
         this.selectResponsableById(this.selectedResponsableId);
+
+      if (this.selectedResponsable) {
+        if (!this.selectedResponsable.jssSubscription.isPaperSubscription)
+          this.selectedResponsable.jssSubscription.isPaperSubscription = false;
+        if (!this.selectedResponsable.jssSubscription.isWebSubscription)
+          this.selectedResponsable.jssSubscription.isWebSubscription = false;
+      }
     }
   }
 
@@ -168,7 +170,7 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
     let hash = JSON.stringify(responsableRow).toLowerCase();
     for (let i = 0; i < this.tiers.responsables.length; i++) {
       let responsable = this.tiers.responsables[i];
-      if (JSON.stringify(responsable).toLowerCase() == hash) {
+      if (JSON.stringify(responsable).toLowerCase() == hash && responsable.id == undefined) {
         this.tiers.responsables.splice(i, 1);
         this.selectedResponsable = null;
         this.tiersService.setCurrentViewedResponsable(null);
@@ -182,6 +184,11 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
     if (this.selectedResponsable == null || this.getFormStatus()) {
       this.selectedResponsable = {} as Responsable;
       this.selectedResponsable.salesEmployee = this.tiers.salesEmployee;
+      this.selectedResponsable.insertionEmployee = this.tiers.insertionEmployee;
+      this.selectedResponsable.formalisteEmployee = this.tiers.formalisteEmployee;
+      this.selectedResponsable.jssSubscription = {} as JssSubscription;
+      this.selectedResponsable.jssSubscription.isPaperSubscription = false;
+      this.selectedResponsable.jssSubscription.isWebSubscription = false;
       this.tiers.responsables.push(this.selectedResponsable);
 
       if (this.tiers && this.tiers.documents) {

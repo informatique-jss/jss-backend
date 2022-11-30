@@ -2,6 +2,7 @@ package com.jss.osiris.modules.miscellaneous.model;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -126,6 +127,22 @@ public class Constant implements Serializable, IId {
 	private AttachmentType attachmentTypeProofOfAddress;
 
 	@ManyToOne
+	@JoinColumn(name = "id_attachment_type_invoice")
+	private AttachmentType attachmentTypeInvoice;
+
+	@ManyToOne
+	@JoinColumn(name = "id_attachment_type_kbis_updated")
+	private AttachmentType attachmentTypeKbisUpdated;
+
+	@ManyToOne
+	@JoinColumn(name = "id_attachment_type_publication_flag")
+	private AttachmentType attachmentTypePublicationFlag;
+
+	@ManyToOne
+	@JoinColumn(name = "id_attachment_type_publication_receipt")
+	private AttachmentType attachmentTypePublicationReceipt;
+
+	@ManyToOne
 	@JoinColumn(name = "id_country_france")
 	private Country countryFrance;
 
@@ -136,6 +153,105 @@ public class Constant implements Serializable, IId {
 	@ManyToOne
 	@JoinColumn(name = "id_billing_type_logo")
 	private BillingType billingTypeLogo;
+
+	@ManyToOne
+	@JoinColumn(name = "id_billing_type_redacted_by_jss")
+	private BillingType billingTypeRedactedByJss;
+
+	@ManyToOne
+	@JoinColumn(name = "id_billing_type_balo_package")
+	private BillingType billingTypeBaloPackage;
+
+	@ManyToOne
+	@JoinColumn(name = "id_billing_type_publication_paper")
+	private BillingType billingTypePublicationPaper;
+
+	@ManyToOne
+	@JoinColumn(name = "id_billing_type_publication_receipt")
+	private BillingType billingTypePublicationReceipt;
+
+	@ManyToOne
+	@JoinColumn(name = "id_billing_type_publication_flag")
+	private BillingType billingTypePublicationFlag;
+
+	@ManyToOne
+	@JoinColumn(name = "id_billing_type_bodacc_followup")
+	private BillingType billingTypeBodaccFollowup;
+
+	@ManyToOne
+	@JoinColumn(name = "id_billing_type_bodacc_followup_redaction")
+	private BillingType billingTypeBodaccFollowupAndRedaction;
+
+	@ManyToOne
+	@JoinColumn(name = "id_billing_type_nantissement_deposit")
+	private BillingType billingTypeNantissementDeposit;
+
+	@ManyToOne
+	@JoinColumn(name = "id_billing_type_social_share_nantissement_redaction")
+	private BillingType billingTypeSocialShareNantissementRedaction;
+
+	@ManyToOne
+	@JoinColumn(name = "id_billing_type_businness_nantissement_redaction")
+	private BillingType billingTypeBusinnessNantissementRedaction;
+
+	@ManyToOne
+	@JoinColumn(name = "id_billing_type_seller_privilege_redaction")
+	private BillingType billingTypeSellerPrivilegeRedaction;
+
+	@ManyToOne
+	@JoinColumn(name = "id_billing_type_treatment_multiple_modiciation")
+	private BillingType billingTypeTreatmentMultipleModiciation;
+
+	@ManyToOne
+	@JoinColumn(name = "id_billing_type_vacation_multiple_modification")
+	private BillingType billingTypeVacationMultipleModification;
+
+	@ManyToOne
+	@JoinColumn(name = "id_billing_type_register_purchase")
+	private BillingType billingTypeRegisterPurchase;
+
+	@ManyToOne
+	@JoinColumn(name = "id_billing_type_register_initials")
+	private BillingType billingTypeRegisterInitials;
+
+	@ManyToOne
+	@JoinColumn(name = "id_billing_type_register_shipping_costs")
+	private BillingType billingTypeRegisterShippingCosts;
+
+	@ManyToOne
+	@JoinColumn(name = "id_billing_type_disbursement")
+	private BillingType billingTypeDisbursement;
+
+	@ManyToOne
+	@JoinColumn(name = "id_billing_type_feasibility_study")
+	private BillingType billingTypeFeasibilityStudy;
+
+	@ManyToOne
+	@JoinColumn(name = "id_billing_type_chronopost_fees")
+	private BillingType billingTypeChronopostFees;
+
+	@ManyToOne
+	@JoinColumn(name = "id_billing_type_bank_cheque")
+	private BillingType billingTypeBankCheque;
+
+	@ManyToOne
+	@JoinColumn(name = "id_billing_type_complexe_file")
+	private BillingType billingTypeComplexeFile;
+
+	@ManyToOne
+	@JoinColumn(name = "id_billing_type_document_scanning")
+	private BillingType billingTypeDocumentScanning;
+
+	@ManyToOne
+	@JoinColumn(name = "id_billing_type_emergency")
+	private BillingType billingTypeEmergency;
+
+	@Column(length = 1000)
+	private String stringNantissementDepositFormeJuridiqueCode;
+	@Column(length = 1000)
+	private String strinSocialShareNantissementRedactionFormeJuridiqueCode;
+	@Column(length = 1000)
+	private String stringBusinnessNantissementRedactionFormeJuridiqueCode;
 
 	@ManyToOne
 	@JoinColumn(name = "id_quotation_label_type_other")
@@ -172,6 +288,10 @@ public class Constant implements Serializable, IId {
 	@ManyToOne
 	@JoinColumn(name = "id_journal_type_spel")
 	private JournalType journalTypeSpel;
+
+	@ManyToOne
+	@JoinColumn(name = "id_journal_type_paper")
+	private JournalType journalTypePaper;
 
 	@ManyToOne
 	@JoinColumn(name = "id_confrere_jss")
@@ -236,6 +356,10 @@ public class Constant implements Serializable, IId {
 	@ManyToOne
 	@JoinColumn(name = "id_employee_billing_responsible")
 	private Employee employeeBillingResponsible;
+
+	@ManyToOne
+	@JoinColumn(name = "id_employee_invoice_reminder_responsible")
+	private Employee employeeInvoiceReminderResponsible;
 
 	@ManyToOne
 	@JoinColumn(name = "id_transfert_funds_type_physique")
@@ -332,6 +456,9 @@ public class Constant implements Serializable, IId {
 	@ManyToOne
 	@JoinColumn(name = "id_employee_sales_director")
 	private Employee employeeSalesDirector;
+
+	private String salesSharedMailbox;
+	private String accountingSharedMaiblox;
 
 	public Integer getId() {
 		return id;
@@ -934,6 +1061,281 @@ public class Constant implements Serializable, IId {
 
 	public void setEmployeeSalesDirector(Employee employeeSalesDirector) {
 		this.employeeSalesDirector = employeeSalesDirector;
+	}
+
+	public BillingType getBillingTypeRedactedByJss() {
+		return billingTypeRedactedByJss;
+	}
+
+	public void setBillingTypeRedactedByJss(BillingType billingTypeRedactedByJss) {
+		this.billingTypeRedactedByJss = billingTypeRedactedByJss;
+	}
+
+	public BillingType getBillingTypeBaloPackage() {
+		return billingTypeBaloPackage;
+	}
+
+	public BillingType getBillingTypePublicationReceipt() {
+		return billingTypePublicationReceipt;
+	}
+
+	public BillingType getBillingTypePublicationFlag() {
+		return billingTypePublicationFlag;
+	}
+
+	public BillingType getBillingTypeBodaccFollowup() {
+		return billingTypeBodaccFollowup;
+	}
+
+	public BillingType getBillingTypeBodaccFollowupAndRedaction() {
+		return billingTypeBodaccFollowupAndRedaction;
+	}
+
+	public BillingType getBillingTypeNantissementDeposit() {
+		return billingTypeNantissementDeposit;
+	}
+
+	public BillingType getBillingTypeSocialShareNantissementRedaction() {
+		return billingTypeSocialShareNantissementRedaction;
+	}
+
+	public BillingType getBillingTypeBusinnessNantissementRedaction() {
+		return billingTypeBusinnessNantissementRedaction;
+	}
+
+	public BillingType getBillingTypeSellerPrivilegeRedaction() {
+		return billingTypeSellerPrivilegeRedaction;
+	}
+
+	public BillingType getBillingTypeTreatmentMultipleModiciation() {
+		return billingTypeTreatmentMultipleModiciation;
+	}
+
+	public BillingType getBillingTypeVacationMultipleModification() {
+		return billingTypeVacationMultipleModification;
+	}
+
+	public BillingType getBillingTypeRegisterPurchase() {
+		return billingTypeRegisterPurchase;
+	}
+
+	public BillingType getBillingTypeRegisterInitials() {
+		return billingTypeRegisterInitials;
+	}
+
+	public BillingType getBillingTypeRegisterShippingCosts() {
+		return billingTypeRegisterShippingCosts;
+	}
+
+	public BillingType getBillingTypeDisbursement() {
+		return billingTypeDisbursement;
+	}
+
+	public BillingType getBillingTypeFeasibilityStudy() {
+		return billingTypeFeasibilityStudy;
+	}
+
+	public BillingType getBillingTypeChronopostFees() {
+		return billingTypeChronopostFees;
+	}
+
+	public BillingType getBillingTypeBankCheque() {
+		return billingTypeBankCheque;
+	}
+
+	public BillingType getBillingTypeComplexeFile() {
+		return billingTypeComplexeFile;
+	}
+
+	public BillingType getBillingTypeDocumentScanning() {
+		return billingTypeDocumentScanning;
+	}
+
+	public BillingType getBillingTypeEmergency() {
+		return billingTypeEmergency;
+	}
+
+	public void setBillingTypeBaloPackage(BillingType billingTypeBaloPackage) {
+		this.billingTypeBaloPackage = billingTypeBaloPackage;
+	}
+
+	public void setBillingTypePublicationReceipt(BillingType billingTypePublicationReceipt) {
+		this.billingTypePublicationReceipt = billingTypePublicationReceipt;
+	}
+
+	public void setBillingTypePublicationFlag(BillingType billingTypePublicationFlag) {
+		this.billingTypePublicationFlag = billingTypePublicationFlag;
+	}
+
+	public void setBillingTypeBodaccFollowup(BillingType billingTypeBodaccFollowup) {
+		this.billingTypeBodaccFollowup = billingTypeBodaccFollowup;
+	}
+
+	public void setBillingTypeBodaccFollowupAndRedaction(BillingType billingTypeBodaccFollowupAndRedaction) {
+		this.billingTypeBodaccFollowupAndRedaction = billingTypeBodaccFollowupAndRedaction;
+	}
+
+	public void setBillingTypeNantissementDeposit(BillingType billingTypeNantissementDeposit) {
+		this.billingTypeNantissementDeposit = billingTypeNantissementDeposit;
+	}
+
+	public void setBillingTypeSocialShareNantissementRedaction(
+			BillingType billingTypeSocialShareNantissementRedaction) {
+		this.billingTypeSocialShareNantissementRedaction = billingTypeSocialShareNantissementRedaction;
+	}
+
+	public void setBillingTypeBusinnessNantissementRedaction(BillingType billingTypeBusinnessNantissementRedaction) {
+		this.billingTypeBusinnessNantissementRedaction = billingTypeBusinnessNantissementRedaction;
+	}
+
+	public void setBillingTypeSellerPrivilegeRedaction(BillingType billingTypeSellerPrivilegeRedaction) {
+		this.billingTypeSellerPrivilegeRedaction = billingTypeSellerPrivilegeRedaction;
+	}
+
+	public void setBillingTypeTreatmentMultipleModiciation(BillingType billingTypeTreatmentMultipleModiciation) {
+		this.billingTypeTreatmentMultipleModiciation = billingTypeTreatmentMultipleModiciation;
+	}
+
+	public void setBillingTypeVacationMultipleModification(BillingType billingTypeVacationMultipleModification) {
+		this.billingTypeVacationMultipleModification = billingTypeVacationMultipleModification;
+	}
+
+	public void setBillingTypeRegisterPurchase(BillingType billingTypeRegisterPurchase) {
+		this.billingTypeRegisterPurchase = billingTypeRegisterPurchase;
+	}
+
+	public void setBillingTypeRegisterInitials(BillingType billingTypeRegisterInitials) {
+		this.billingTypeRegisterInitials = billingTypeRegisterInitials;
+	}
+
+	public void setBillingTypeRegisterShippingCosts(BillingType billingTypeRegisterShippingCosts) {
+		this.billingTypeRegisterShippingCosts = billingTypeRegisterShippingCosts;
+	}
+
+	public void setBillingTypeDisbursement(BillingType billingTypeDisbursement) {
+		this.billingTypeDisbursement = billingTypeDisbursement;
+	}
+
+	public void setBillingTypeFeasibilityStudy(BillingType billingTypeFeasibilityStudy) {
+		this.billingTypeFeasibilityStudy = billingTypeFeasibilityStudy;
+	}
+
+	public void setBillingTypeChronopostFees(BillingType billingTypeChronopostFees) {
+		this.billingTypeChronopostFees = billingTypeChronopostFees;
+	}
+
+	public void setBillingTypeBankCheque(BillingType billingTypeBankCheque) {
+		this.billingTypeBankCheque = billingTypeBankCheque;
+	}
+
+	public void setBillingTypeComplexeFile(BillingType billingTypeComplexeFile) {
+		this.billingTypeComplexeFile = billingTypeComplexeFile;
+	}
+
+	public void setBillingTypeDocumentScanning(BillingType billingTypeDocumentScanning) {
+		this.billingTypeDocumentScanning = billingTypeDocumentScanning;
+	}
+
+	public void setBillingTypeEmergency(BillingType billingTypeEmergency) {
+		this.billingTypeEmergency = billingTypeEmergency;
+	}
+
+	public JournalType getJournalTypePaper() {
+		return journalTypePaper;
+	}
+
+	public void setJournalTypePaper(JournalType journalTypePaper) {
+		this.journalTypePaper = journalTypePaper;
+	}
+
+	public String getStringNantissementDepositFormeJuridiqueCode() {
+		return stringNantissementDepositFormeJuridiqueCode;
+	}
+
+	public void setStringNantissementDepositFormeJuridiqueCode(String stringNantissementDepositFormeJuridiqueCode) {
+		this.stringNantissementDepositFormeJuridiqueCode = stringNantissementDepositFormeJuridiqueCode;
+	}
+
+	public String getStrinSocialShareNantissementRedactionFormeJuridiqueCode() {
+		return strinSocialShareNantissementRedactionFormeJuridiqueCode;
+	}
+
+	public void setStrinSocialShareNantissementRedactionFormeJuridiqueCode(
+			String strinSocialShareNantissementRedactionFormeJuridiqueCode) {
+		this.strinSocialShareNantissementRedactionFormeJuridiqueCode = strinSocialShareNantissementRedactionFormeJuridiqueCode;
+	}
+
+	public String getStringBusinnessNantissementRedactionFormeJuridiqueCode() {
+		return stringBusinnessNantissementRedactionFormeJuridiqueCode;
+	}
+
+	public void setStringBusinnessNantissementRedactionFormeJuridiqueCode(
+			String stringBusinnessNantissementRedactionFormeJuridiqueCode) {
+		this.stringBusinnessNantissementRedactionFormeJuridiqueCode = stringBusinnessNantissementRedactionFormeJuridiqueCode;
+	}
+
+	public BillingType getBillingTypePublicationPaper() {
+		return billingTypePublicationPaper;
+	}
+
+	public void setBillingTypePublicationPaper(BillingType billingTypePublicationPaper) {
+		this.billingTypePublicationPaper = billingTypePublicationPaper;
+	}
+
+	public String getSalesSharedMailbox() {
+		return salesSharedMailbox;
+	}
+
+	public void setSalesSharedMailbox(String salesSharedMailbox) {
+		this.salesSharedMailbox = salesSharedMailbox;
+	}
+
+	public String getAccountingSharedMaiblox() {
+		return accountingSharedMaiblox;
+	}
+
+	public void setAccountingSharedMaiblox(String accountingSharedMaiblox) {
+		this.accountingSharedMaiblox = accountingSharedMaiblox;
+	}
+
+	public AttachmentType getAttachmentTypeInvoice() {
+		return attachmentTypeInvoice;
+	}
+
+	public void setAttachmentTypeInvoice(AttachmentType attachmentTypeInvoice) {
+		this.attachmentTypeInvoice = attachmentTypeInvoice;
+	}
+
+	public AttachmentType getAttachmentTypeKbisUpdated() {
+		return attachmentTypeKbisUpdated;
+	}
+
+	public void setAttachmentTypeKbisUpdated(AttachmentType attachmentTypeKbisUpdated) {
+		this.attachmentTypeKbisUpdated = attachmentTypeKbisUpdated;
+	}
+
+	public AttachmentType getAttachmentTypePublicationFlag() {
+		return attachmentTypePublicationFlag;
+	}
+
+	public void setAttachmentTypePublicationFlag(AttachmentType attachmentTypePublicationFlag) {
+		this.attachmentTypePublicationFlag = attachmentTypePublicationFlag;
+	}
+
+	public AttachmentType getAttachmentTypePublicationReceipt() {
+		return attachmentTypePublicationReceipt;
+	}
+
+	public void setAttachmentTypePublicationReceipt(AttachmentType attachmentTypePublicationReceipt) {
+		this.attachmentTypePublicationReceipt = attachmentTypePublicationReceipt;
+	}
+
+	public Employee getEmployeeInvoiceReminderResponsible() {
+		return employeeInvoiceReminderResponsible;
+	}
+
+	public void setEmployeeInvoiceReminderResponsible(Employee employeeInvoiceReminderResponsible) {
+		this.employeeInvoiceReminderResponsible = employeeInvoiceReminderResponsible;
 	}
 
 }

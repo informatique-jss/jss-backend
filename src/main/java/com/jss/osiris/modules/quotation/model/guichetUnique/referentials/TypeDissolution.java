@@ -10,6 +10,12 @@ import com.jss.osiris.modules.miscellaneous.model.ICode;
 
 @Entity
 public class TypeDissolution implements Serializable, ICode {
+    public TypeDissolution(String code) {
+        this.code = code;
+    }
+
+    public TypeDissolution() {
+    }
 
     @Id
     private String code;

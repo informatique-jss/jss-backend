@@ -10,6 +10,12 @@ import com.jss.osiris.modules.miscellaneous.model.ICode;
 
 @Entity
 public class TypeOrigine implements Serializable, ICode {
+    public TypeOrigine(String code) {
+        this.code = code;
+    }
+
+    public TypeOrigine() {
+    }
 
     @Id
     private String code;

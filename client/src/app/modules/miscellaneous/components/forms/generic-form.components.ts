@@ -60,8 +60,10 @@ export abstract class GenericFormComponent implements OnInit {
   ) { }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes.model && this.form != undefined)
+    if (changes.model && this.form != undefined) {
       this.form.get(this.propertyName)?.setValue(this.model);
+      this.modelChange.emit(this.model);
+    }
     if (changes.isDisabled) {
       if (this.isDisabled) {
         this.form?.get(this.propertyName)?.disable();

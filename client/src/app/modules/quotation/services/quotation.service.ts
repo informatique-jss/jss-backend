@@ -32,8 +32,12 @@ export class QuotationService extends AppRestService<IQuotation>{
     return this.getList(new HttpParams().set("quotationId", quotation.id), "mail/generate/quotation", "Mail envoyé !", "Erreur lors de l'envoi du mail");
   }
 
-  generateWaintingDepositMail(customerOrder: IQuotation) {
-    return this.getList(new HttpParams().set("customerOrderId", customerOrder.id), "mail/generate/waiting-deposit", "Mail envoyé !", "Erreur lors de l'envoi du mail");
+  generateCustomerOrderCreationConfirmationToCustomer(customerOrder: IQuotation) {
+    return this.getList(new HttpParams().set("customerOrderId", customerOrder.id), "mail/generate/customer-order-confirmation", "Mail envoyé !", "Erreur lors de l'envoi du mail");
+  }
+
+  generateCustomerOrderDepositConfirmationToCustomer(customerOrder: IQuotation) {
+    return this.getList(new HttpParams().set("customerOrderId", customerOrder.id), "mail/generate/customer-order-deposit-confirmation", "Mail envoyé !", "Erreur lors de l'envoi du mail");
   }
 
   generateInvoicetMail(customerOrder: IQuotation) {

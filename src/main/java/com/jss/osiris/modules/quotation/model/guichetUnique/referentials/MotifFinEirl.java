@@ -10,6 +10,12 @@ import com.jss.osiris.modules.miscellaneous.model.ICode;
 
 @Entity
 public class MotifFinEirl implements Serializable, ICode {
+    public MotifFinEirl(String code) {
+        this.code = code;
+    }
+
+    public MotifFinEirl() {
+    }
 
     @Id
     private String code;

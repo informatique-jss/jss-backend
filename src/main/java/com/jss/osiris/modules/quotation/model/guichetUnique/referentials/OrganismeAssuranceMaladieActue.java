@@ -10,6 +10,12 @@ import com.jss.osiris.modules.miscellaneous.model.ICode;
 
 @Entity
 public class OrganismeAssuranceMaladieActue implements Serializable, ICode {
+    public OrganismeAssuranceMaladieActue(String code) {
+        this.code = code;
+    }
+
+    public OrganismeAssuranceMaladieActue() {
+    }
 
     @Id
     private String code;

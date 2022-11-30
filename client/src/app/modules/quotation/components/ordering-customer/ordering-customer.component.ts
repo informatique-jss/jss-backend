@@ -4,6 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
 import { formatDateTimeForSortTable } from 'src/app/libs/FormatHelper';
 import { instanceOfCustomerOrder, instanceOfQuotation } from 'src/app/libs/TypeHelper';
+import { getCustomerOrderForIQuotation } from 'src/app/modules/invoicing/components/invoice-tools';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { SpecialOffer } from 'src/app/modules/miscellaneous/model/SpecialOffer';
 import { DocumentTypeService } from 'src/app/modules/miscellaneous/services/document.type.service';
@@ -76,6 +77,8 @@ export class OrderingCustomerComponent implements OnInit {
   orderingCustomerForm = this.formBuilder.group({
   });
 
+  getCustomerOrderForIQuotation = getCustomerOrderForIQuotation;
+
   displayOverrideSpecialOffers() {
     this.quotation.overrideSpecialOffer = true;
   }
@@ -99,8 +102,6 @@ export class OrderingCustomerComponent implements OnInit {
     this.quotation.responsable = undefined;
     if (this.quotation.tiers) {
       this.quotation.observations = this.quotation.tiers.observations;
-      this.quotation.mails = this.quotation.tiers.mails;
-      this.quotation.phones = this.quotation.tiers.phones;
     }
     this.setDocument();
   }
@@ -111,8 +112,6 @@ export class OrderingCustomerComponent implements OnInit {
     this.quotation.responsable = undefined;
     if (this.quotation.confrere) {
       this.quotation.observations = this.quotation.confrere.observations;
-      this.quotation.mails = this.quotation.confrere.mails;
-      this.quotation.phones = this.quotation.confrere.phones;
     }
     this.setDocument();
   }
@@ -126,13 +125,10 @@ export class OrderingCustomerComponent implements OnInit {
       }
     })
     this.quotation.tiers = undefined;
-    this.quotation.mails = this.quotation.responsable.mails;
-    this.quotation.phones = this.quotation.responsable.phones;
     this.setDocument();
   }
 
   getFormStatus(): boolean {
-    console.log(this.orderingCustomerForm);
     this.orderingCustomerForm.markAllAsTouched();
     return this.orderingCustomerForm.valid && (this.quotation.responsable != undefined || this.quotation.tiers != undefined || this.quotation.confrere != undefined);
   }

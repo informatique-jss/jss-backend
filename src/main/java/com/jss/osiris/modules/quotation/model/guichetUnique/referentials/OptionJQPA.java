@@ -10,6 +10,12 @@ import com.jss.osiris.modules.miscellaneous.model.ICode;
 
 @Entity
 public class OptionJQPA implements Serializable, ICode {
+    public OptionJQPA(String code) {
+        this.code = code;
+    }
+
+    public OptionJQPA() {
+    }
 
     @Id
     private String code;

@@ -63,7 +63,7 @@
             {{getPreTaxPriceTotal() |number}} €
           </td>
         </tr>
-        <tr *ngIf="getDiscountTotal() && getDiscountTotal()>0">
+        <tr *ngIf="getDiscountTotal() && getDiscountTotal()">
           <td>
             Remise totale
           </td>
@@ -71,7 +71,7 @@
             - {{getDiscountTotal()|number}} €
           </td>
         </tr>
-        <tr>
+        <tr *ngIf="getDiscountTotal() && getDiscountTotal()">
           <td>
             Total HT
           </td>
@@ -82,7 +82,7 @@
         <ng-container *ngIf="getApplicableVat().length>0">
           <tr *ngFor="let vat of getApplicableVat()">
             <td>
-              Total {{vat.label}}
+              Total {{vat.label}} sur la base de {{vat.base |number}} €
             </td>
             <td class="td-price">
               {{vat.total|number}} €
@@ -112,8 +112,13 @@
             <td>Reste à payer</td>
             <td class="td-price">{{getRemainingToPay()}} €</td>
           </tr>
+          <tr *ngIf="quotation.centralPayPendingPaymentAmount  && quotation.centralPayPendingPaymentAmount >0">
+            <td>Paiement reçu par CB en attente de réception</td>
+            <td class="td-price">{{quotation.centralPayPendingPaymentAmount | number}} €</td>
+          </tr>
         </ng-container>
       </table>
+
     </ng-container>
   </mat-sidenav>
 
@@ -273,8 +278,11 @@
   *ngIf="editMode==false && instanceOfCustomerOrderFn(quotation) && quotation.id" [matMenuTriggerFor]="menuMail">
   <mat-icon>mail</mat-icon>
   <mat-menu #menuMail="matMenu" style="min-height: 0px;padding: 0;" xPosition="before">
-    <button mat-menu-item (click)="generateWaintingDepositMail()">
-      <span>Recevoir le mail de demande d'accompte</span>
+    <button mat-menu-item (click)="generateCustomerOrderCreationConfirmationToCustomer()">
+      <span>Recevoir le mail de confirmation de la commande</span>
+    </button>
+    <button mat-menu-item (click)="generateCustomerOrderDepositConfirmationToCustomer()">
+      <span>Recevoir le mail de confirmation de réception de l'acompte</span>
     </button>
     <button mat-menu-item (click)="generateInvoicetMail()">
       <span>Recevoir le mail de facturation</span>

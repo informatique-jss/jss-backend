@@ -10,6 +10,12 @@ import com.jss.osiris.modules.miscellaneous.model.ICode;
 
 @Entity
 public class PeriodiciteEtOptionsParticulie implements Serializable, ICode {
+    public PeriodiciteEtOptionsParticulie(String code) {
+        this.code = code;
+    }
+
+    public PeriodiciteEtOptionsParticulie() {
+    }
 
     @Id
     private String code;

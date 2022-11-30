@@ -10,20 +10,30 @@ import com.jss.osiris.modules.quotation.model.QuotationSearchResult;
 import com.jss.osiris.modules.tiers.model.ITiers;
 
 public interface QuotationService {
-    public Quotation getQuotation(Integer id);
+        public Quotation getQuotation(Integer id);
 
-    public Quotation addOrUpdateQuotation(Quotation quotation) throws OsirisException;
+        public Quotation addOrUpdateQuotation(Quotation quotation) throws OsirisException;
 
-    public Quotation addOrUpdateQuotationFromUser(Quotation quotation) throws OsirisException;
+        public Quotation addOrUpdateQuotationFromUser(Quotation quotation) throws OsirisException;
 
-    public IQuotation getAndSetInvoiceItemsForQuotation(IQuotation quotation) throws OsirisException;
+        public IQuotation getAndSetInvoiceItemsForQuotation(IQuotation quotation) throws OsirisException;
 
-    public Quotation addOrUpdateQuotationStatus(Quotation quotation, String targetStatusCode) throws OsirisException;
+        public Quotation addOrUpdateQuotationStatus(Quotation quotation, String targetStatusCode)
+                        throws OsirisException;
 
-    public ITiers getCustomerOrderOfQuotation(IQuotation quotation) throws OsirisException;
+        public ITiers getCustomerOrderOfQuotation(IQuotation quotation) throws OsirisException;
 
-    public List<QuotationSearchResult> searchQuotations(QuotationSearch orderingSearch);
+        public List<QuotationSearchResult> searchQuotations(QuotationSearch orderingSearch);
 
-    public void reindexQuotation();
+        public void reindexQuotation();
+
+        public String getCardPaymentLinkForQuotationDeposit(Quotation quotation, String mail,
+                        String subject)
+                        throws OsirisException;
+
+        public Boolean validateCardPaymentLinkForQuotationDeposit(Quotation quotation)
+                        throws OsirisException;
+
+        public void sendRemindersForQuotation() throws OsirisException;
 
 }

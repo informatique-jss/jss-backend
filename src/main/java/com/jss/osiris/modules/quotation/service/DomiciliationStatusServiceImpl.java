@@ -54,8 +54,22 @@ public class DomiciliationStatusServiceImpl implements DomiciliationStatusServic
     }
 
     @Override
-    public void updateStatusReferential() {
+    public void updateStatusReferential() throws OsirisException {
         updateStatus(DomiciliationStatus.DOMICILIATION_NEW, "Nouveau", "auto_awesome", true, false);
+        updateStatus(DomiciliationStatus.DOMICILIATION_IN_PROGRESS, "En cours", "autorenew", false, false);
+        updateStatus(DomiciliationStatus.DOMICILIATION_WAITING_FOR_DOCUMENTS, "En attente de documents",
+                "hourglass_top", false, false);
+        updateStatus(DomiciliationStatus.DOMICILIATION_DONE, "Terminé", "check_small", false, true);
+
+        setSuccessor(DomiciliationStatus.DOMICILIATION_NEW, DomiciliationStatus.DOMICILIATION_IN_PROGRESS);
+        setSuccessor(DomiciliationStatus.DOMICILIATION_IN_PROGRESS,
+                DomiciliationStatus.DOMICILIATION_WAITING_FOR_DOCUMENTS);
+        setSuccessor(DomiciliationStatus.DOMICILIATION_IN_PROGRESS, DomiciliationStatus.DOMICILIATION_DONE);
+
+        setPredecessor(DomiciliationStatus.DOMICILIATION_IN_PROGRESS, DomiciliationStatus.DOMICILIATION_NEW);
+        setPredecessor(DomiciliationStatus.DOMICILIATION_WAITING_FOR_DOCUMENTS,
+                DomiciliationStatus.DOMICILIATION_IN_PROGRESS);
+        setPredecessor(DomiciliationStatus.DOMICILIATION_DONE, DomiciliationStatus.DOMICILIATION_IN_PROGRESS);
     }
 
     protected void updateStatus(String code, String label, String icon, boolean isOpenState, boolean isCloseState) {

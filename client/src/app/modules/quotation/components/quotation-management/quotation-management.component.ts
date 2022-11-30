@@ -3,8 +3,9 @@ import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { MatAccordion } from '@angular/material/expansion';
 import { Observable, Subscription } from 'rxjs';
 import { CustomErrorStateMatcher } from 'src/app/app.component';
-import { getDocument, replaceDocument } from 'src/app/libs/DocumentHelper';
+import { getDocument } from 'src/app/libs/DocumentHelper';
 import { copyObject } from 'src/app/libs/GenericHelper';
+import { instanceOfCustomerOrder } from 'src/app/libs/TypeHelper';
 import { City } from 'src/app/modules/miscellaneous/model/City';
 import { Country } from 'src/app/modules/miscellaneous/model/Country';
 import { CityService } from 'src/app/modules/miscellaneous/services/city.service';
@@ -14,10 +15,13 @@ import { Tiers } from 'src/app/modules/tiers/model/Tiers';
 import { TiersService } from 'src/app/modules/tiers/services/tiers.service';
 import { Document } from '../../../miscellaneous/model/Document';
 import { DocumentType } from '../../../miscellaneous/model/DocumentType';
+import { ITiers } from '../../../tiers/model/ITiers';
+import { InvoiceLabelResult } from '../../model/InvoiceLabelResult';
 import { IQuotation } from '../../model/IQuotation';
 import { MailComputeResult } from '../../model/MailComputeResult';
 import { QuotationLabelType } from '../../model/QuotationLabelType';
 import { RecordType } from '../../model/RecordType';
+import { InvoiceLabelResultService } from '../../services/invoice.label.result.service';
 import { MailComputeResultService } from '../../services/mail.compute.result.service';
 import { QuotationLabelTypeService } from '../../services/quotation.label.type.service';
 import { RecordTypeService } from '../../services/record.type.service';
@@ -52,6 +56,7 @@ export class QuotationManagementComponent implements OnInit, AfterContentChecked
 
   quotationMailComputeResult: MailComputeResult | undefined;
   billingMailComputeResult: MailComputeResult | undefined;
+  invoiceLabelResult: InvoiceLabelResult | undefined;
 
   Validators = Validators;
 
@@ -61,12 +66,14 @@ export class QuotationManagementComponent implements OnInit, AfterContentChecked
     private constantService: ConstantService,
     protected cityService: CityService,
     private changeDetectorRef: ChangeDetectorRef,
+    private invoiceLabelResultService: InvoiceLabelResultService,
     private mailComputeResultService: MailComputeResultService,
     protected quotationLabelTypeService: QuotationLabelTypeService) { }
 
   ngOnInit() {
     this.updateQuotationMailResult();
     this.updateBillingMailResult();
+    this.updateInvoiceLabelResult();
     this.quotationManagementForm.markAllAsTouched();
     this.quotationLabelTypeService.getQuotationLabelTypes().subscribe(response => {
       this.quotationLabelTypes = response;
@@ -91,6 +98,7 @@ export class QuotationManagementComponent implements OnInit, AfterContentChecked
     if (changes.quotation != undefined) {
       this.updateQuotationMailResult();
       this.updateBillingMailResult();
+      this.updateInvoiceLabelResult();
       if (this.quotation.recordType == null || this.quotation.recordType == undefined)
         this.quotation.recordType = this.recordTypes[0];
       if (this.quotation.quotationLabelType == null || this.quotation.quotationLabelType == undefined)
@@ -104,42 +112,38 @@ export class QuotationManagementComponent implements OnInit, AfterContentChecked
   });
 
   setDocument() {
-    if (this.quotation.tiers != null)
+    let currentOrderingCustomer: ITiers = {} as ITiers;
+    if (this.quotation.tiers) {
       this.tiersService.setCurrentViewedTiers(this.quotation.tiers)
-    if (this.quotation.responsable != null && this.quotation.responsable.tiers != null) {
+      currentOrderingCustomer = this.quotation.tiers;
+    }
+    if (this.quotation.responsable && this.quotation.responsable.tiers) {
       this.tiersService.setCurrentViewedTiers(this.quotation.responsable.tiers)
       this.tiersService.setCurrentViewedResponsable(this.quotation.responsable);
+      currentOrderingCustomer = this.quotation.responsable;
     }
+    if (this.quotation.confrere)
+      currentOrderingCustomer = this.quotation.confrere;
     this.devisDocument = getDocument(this.constantService.getDocumentTypeQuotation(), this.quotation);
     this.billingDocument = getDocument(this.constantService.getDocumentTypeBilling(), this.quotation);
 
     // If billing document does not exist, try to grab it from selected tiers, responsable or confrere
-    if (!this.billingDocument.id) {
-      this.refreshBillingDocument();
-    }
-
-    if (this.billingDocument.id) {
-      replaceDocument(this.constantService.getDocumentTypeBilling(), this.quotation, this.billingDocument);
-    }
+    if (!this.billingDocument.id)
+      this.billingDocument = copyObject(getDocument(this.constantService.getDocumentTypeBilling(), currentOrderingCustomer));
 
     if (!this.billingDocument.billingLabelIsIndividual)
       this.billingDocument.billingLabelIsIndividual = false;
   }
 
-  refreshBillingDocument() {
-    if (this.quotation.responsable) {
-      this.billingDocument = copyObject(getDocument(this.constantService.getDocumentTypeBilling(), this.quotation.responsable));
-    } else if (this.quotation.confrere) {
-      this.billingDocument = copyObject(getDocument(this.constantService.getDocumentTypeBilling(), this.quotation.confrere));
-    } else if (this.quotation.tiers) {
-      this.billingDocument = copyObject(getDocument(this.constantService.getDocumentTypeBilling(), this.quotation.tiers));
-    }
-  }
-
   getFormStatus(): boolean {
-    console.log(this.quotationManagementForm);
     this.quotationManagementForm.markAllAsTouched();
+    this.updateQuotationMailResult();
+    this.updateBillingMailResult();
+    this.updateInvoiceLabelResult();
     if (!this.isStatusOpen && (!this.quotationMailComputeResult?.recipientsMailTo || this.quotationMailComputeResult?.recipientsMailTo.length == 0))
+      return false;
+    if (!this.isStatusOpen && instanceOfCustomerOrder(this.quotation) && (!this.invoiceLabelResult?.billingLabel || !this.invoiceLabelResult.billingLabelAddress || !this.invoiceLabelResult.billingLabelCity
+      || !this.invoiceLabelResult.billingLabelCountry || !this.invoiceLabelResult.billingLabelPostalCode))
       return false;
     return this.quotationManagementForm.valid;
   }
@@ -187,5 +191,12 @@ export class QuotationManagementComponent implements OnInit, AfterContentChecked
       this.mailComputeResultService.getMailComputeResultForBilling(this.quotation).subscribe(response => {
         this.billingMailComputeResult = response;
       })
+  }
+
+  updateInvoiceLabelResult() {
+    if (this.quotation && this.quotation.id && instanceOfCustomerOrder(this.quotation))
+      this.invoiceLabelResultService.getInvoiceLabelComputeResult(this.quotation).subscribe(response => {
+        this.invoiceLabelResult = response;
+      });
   }
 }

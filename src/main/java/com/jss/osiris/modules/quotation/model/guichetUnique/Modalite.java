@@ -2,6 +2,7 @@ package com.jss.osiris.modules.quotation.model.guichetUnique;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,9 +10,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 
 import com.jss.osiris.modules.miscellaneous.model.IId;
+import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.ModalitesDeControle;
 
 @Entity
 public class Modalite implements Serializable, IId {
@@ -140,8 +144,9 @@ public class Modalite implements Serializable, IId {
     @Column(nullable = false)
     private Boolean representantLegalPlacementSansGestionDelegue;
 
-    @Column(nullable = false)
-    private Boolean modalitesDeControle;
+    @ManyToMany
+    @JoinTable(name = "asso_modalite_modalite_de_controle", joinColumns = @JoinColumn(name = "id_modalite"), inverseJoinColumns = @JoinColumn(name = "code_modalite_de_controle"))
+    private List<ModalitesDeControle> modalitesDeControle;
 
     @Column(nullable = false)
     private Boolean detention25pCapital;
@@ -499,14 +504,6 @@ public class Modalite implements Serializable, IId {
         this.representantLegalPlacementSansGestionDelegue = representantLegalPlacementSansGestionDelegue;
     }
 
-    public Boolean getModalitesDeControle() {
-        return modalitesDeControle;
-    }
-
-    public void setModalitesDeControle(Boolean modalitesDeControle) {
-        this.modalitesDeControle = modalitesDeControle;
-    }
-
     public Boolean getDetention25pCapital() {
         return detention25pCapital;
     }
@@ -569,6 +566,14 @@ public class Modalite implements Serializable, IId {
 
     public void setAdresse(AdresseDomicile adresse) {
         this.adresse = adresse;
+    }
+
+    public List<ModalitesDeControle> getModalitesDeControle() {
+        return modalitesDeControle;
+    }
+
+    public void setModalitesDeControle(List<ModalitesDeControle> modalitesDeControle) {
+        this.modalitesDeControle = modalitesDeControle;
     }
 
 }

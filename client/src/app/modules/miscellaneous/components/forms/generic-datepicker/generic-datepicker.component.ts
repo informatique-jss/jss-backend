@@ -43,4 +43,12 @@ export class GenericDatepickerComponent extends GenericFormComponent implements 
     this.onDateChange.emit(value);
   }
 
+  setToday() {
+    this.model = new Date();
+    if (this.form) {
+      this.form.get(this.propertyName)?.setValue(this.model);
+    }
+    this.modelChange.emit(this.model);
+  }
+
 }

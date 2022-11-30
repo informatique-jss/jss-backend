@@ -1,8 +1,9 @@
-<div *ngIf="quotation && quotation.id" class="mat-elevation-z2 form-div">
+<div *ngIf="quotation && quotation.id" class=" form-div ">
   <ng-container *ngIf="instanceOfCustomerOrderFn(quotation) &&  quotation.invoices">
     <h3 class="invoice-title" *ngFor="let invoice of quotation.invoices">
-      Facture n°{{invoice.id}} émise le
-      {{invoice.createdDate|date:'dd/MM/yyyy à HH:mm'}}
+      Facture n°{{invoice.id}} émise à Paris, le {{invoice.createdDate|date:'dd/MM/yyyy à HH:mm'}}<span
+        *ngIf="getLetteringDate(invoice)">,
+        lettrée le {{getLetteringDate(invoice)|date:'dd/MM/yyyy à HH:mm'}}</span>
       <chips-status class="invoice-chip" [status]="invoice.invoiceStatus.code" [value]="invoice.invoiceStatus.label">
       </chips-status>
       <mat-icon (click)="openRoute($event,'/invoicing/'+invoice.id)"
@@ -12,34 +13,74 @@
     </h3>
   </ng-container>
   <fieldset [disabled]="editMode==false" class="fieldset-no-border">
+    <table class="full-width mat-table description-table ">
+      <tr class=" mat-header-row">
+        <th class="mat-header-cell">Affaire(s)</th>
+        <th class="mat-header-cell">Payeur</th>
+        <th class="mat-header-cell">Donneur d'ordre</th>
+      </tr>
+      <tr class=" mat-row">
+        <td class="mat-cell td-info">
+          <p>{{getAffaireListFromIQuotation(quotation)}}</p>
+        </td>
+        <td class="mat-cell td-info">
+          <ng-container *ngIf="invoiceLabelResult">
+            <p [ngClass]="{'color-warn':!invoiceLabelResult.billingLabel}">
+              {{invoiceLabelResult.billingLabel?invoiceLabelResult.billingLabel:"Libellé inconnu"}}</p>
+            <p [ngClass]="{'color-warn':!invoiceLabelResult.billingLabelAddress}">
+              {{invoiceLabelResult.billingLabelAddress?invoiceLabelResult.billingLabelAddress:"Adresse"}}</p>
+            <p
+              [ngClass]="{'color-warn':!invoiceLabelResult.billingLabelPostalCode || !invoiceLabelResult.billingLabelCity || !invoiceLabelResult.billingLabelCountry}">
+              {{invoiceLabelResult.billingLabelPostalCode?invoiceLabelResult.billingLabelPostalCode:"Code
+              postal inconnu"}}
+              {{invoiceLabelResult.billingLabelCity?invoiceLabelResult.billingLabelCity.label:"Ville inconnue"}}
+              {{invoiceLabelResult.billingLabelCountry?invoiceLabelResult.billingLabelCountry.label:"Pays
+              inconnu"}}
+            </p>
+          </ng-container>
+        </td>
+        <td class="mat-cell td-info">
+          <p>{{getCustomerOrderNameForIQuotation(quotation)}}</p>
+          <p>{{getCustomerOrderForIQuotation(quotation).address}}</p>
+          <p>{{getCustomerOrderForIQuotation(quotation).postalCode}}
+            {{getCustomerOrderForIQuotation(quotation).city?getCustomerOrderForIQuotation(quotation).city.label:""}}{{getCustomerOrderForIQuotation(quotation).country?getCustomerOrderForIQuotation(quotation).country.label:""}}
+          </p>
+        </td>
+      </tr>
+    </table>
     <form [formGroup]="invoiceManagementForm" *ngIf="canModifyInvoice()">
-      <div *ngFor="let asso of quotation.assoAffaireOrders;let indexAsso = index">
-        <td class="affaire" *ngIf="asso.affaire && asso.affaire.denomination">
-          {{asso.affaire.denomination}}
-        </td>
-        <td class="affaire" *ngIf="asso.affaire && asso.affaire.firstname">
-          {{asso.affaire.firstname}} - {{asso.affaire.lastname}} -
-        </td>
-        <div *ngFor="let provision of asso.provisions">
-          <div *ngFor="let invoiceItem of provision.invoiceItems;let indexInvoiceItem = index">
-            <table>
-              <tr *ngIf="provision.provisionType">
-                <td class="affaire">
-                  {{provision.provisionType.label}}
-                </td>
-              </tr>
-              <tr>
-                <td>
+      <table class="full-width container-affaire mat-table">
+        <tr class=" mat-header-row">
+          <th class="mat-header-cell" colspan="2">Facture</th>
+        </tr>
+        <ng-container *ngFor="let asso of quotation.assoAffaireOrders;let indexAsso = index">
+          <tr class="mat-row">
+            <td class="affaire mat-cell" colspan="2" *ngIf="asso.affaire && asso.affaire.denomination">
+              {{asso.affaire.denomination}}
+            </td>
+            <td class="affaire mat-cell" colspan="2" *ngIf="asso.affaire && asso.affaire.firstname">
+              {{asso.affaire.firstname}} - {{asso.affaire.lastname}} -
+            </td>
+          </tr>
+          <ng-container *ngFor="let provision of asso.provisions">
+            <tr class="mat-row" *ngIf="provision.provisionType">
+              <td class="affaire mat-cell" colspan="2">
+                {{provision.provisionType.label}}
+              </td>
+            </tr>
+            <ng-container *ngFor="let invoiceItem of provision.invoiceItems;let indexInvoiceItem = index">
+              <tr class="mat-row">
+                <td class="mat-cell">
                   {{invoiceItem.label}} <mat-icon inline="true"
                     matTooltip="Veuillez enregistrer pour pouvoir modifier le prix appliqué"
                     *ngIf="editMode && invoiceItem.billingItem.billingType.canOverridePrice==true && !invoiceItem.id && !invoiceItem.invoice"
                     class="info-icon">info</mat-icon>
                 </td>
-                <td class="td-price"
+                <td class="td-price mat-cell"
                   *ngIf="!editMode || invoiceItem.billingItem.billingType.canOverridePrice==false || !invoiceItem.id || invoiceItem.invoice">
                   {{invoiceItem.preTaxPrice|number}} €
                 </td>
-                <td
+                <td class="mat-cell"
                   *ngIf="editMode && invoiceItem.billingItem.billingType.canOverridePrice==true && invoiceItem.id && !invoiceItem.invoice">
                   <generic-input [(model)]="invoiceItem.preTaxPrice" label="" [form]="invoiceManagementForm"
                     [propertyName]='"preTaxPrice"+indexInvoiceItem+indexAsso' [isMandatory]="true" type="number"
@@ -47,86 +88,82 @@
                   </generic-input>
                 </td>
               </tr>
-              <tr *ngIf="invoiceItem.discountAmount && invoiceItem.discountAmount>0">
-                <td>
+              <tr class="mat-row" *ngIf="invoiceItem.discountAmount && invoiceItem.discountAmount>0">
+                <td class="mat-cell">
                   Remise
                 </td>
-                <td class="td-price remise">
+                <td class="td-price remise mat-cell">
                   - {{invoiceItem.discountAmount|number}} €
                 </td>
               </tr>
-              <tr *ngIf="invoiceItem.vat">
-                <td>
+              <tr class="mat-row" *ngIf="invoiceItem.vat">
+                <td class="mat-cell">
                   {{invoiceItem.vat.label}}
                 </td>
-                <td class="td-price">
+                <td class="td-price mat-cell">
                   {{invoiceItem.vatPrice|number}} €
                 </td>
               </tr>
-            </table>
-          </div>
-        </div>
-      </div>
-      <table class="total-table">
-        <tr>
-          <td>
-            Prix total HT
-          </td>
-          <td class="td-price">
-            {{getPreTaxPriceTotal() |number}} €
-          </td>
-        </tr>
-        <tr *ngIf="getDiscountTotal() && getDiscountTotal()>0">
-          <td>
-            Remise totale
-          </td>
-          <td class="td-price remise">
-            - {{getDiscountTotal()|number}} €
-          </td>
-        </tr>
-        <tr>
-          <td>
-            Total HT
-          </td>
-          <td class="td-price">
-            {{getPreTaxPriceTotal()-getDiscountTotal()|number}} €
-          </td>
-        </tr>
-        <ng-container *ngIf="getApplicableVat().length>0">
-          <tr *ngFor="let vat of getApplicableVat()">
-            <td>
-              Total {{vat.label}}
-            </td>
-            <td class="td-price">
-              {{vat.total|number}} €
-            </td>
-          </tr>
-        </ng-container>
-        <tr>
-          <td>
-            Total TTC
-          </td>
-          <td class="td-price">
-            {{getPriceTotal()|number}} €
-          </td>
-        </tr>
-        <ng-container *ngIf="instanceOfCustomerOrderFn(quotation) && quotation.deposits">
-          <ng-container *ngFor="let deposit of quotation.deposits">
-            <tr>
-              <td>
-                Accompte n°{{deposit.id}}
-              </td>
-              <td class="td-price">
-                {{deposit.depositAmount|number}} €
-              </td>
-            </tr>
+            </ng-container>
           </ng-container>
-          <tr>
-            <td>Reste à payer</td>
-            <td class="td-price">{{getRemainingToPay()}} €</td>
-          </tr>
         </ng-container>
       </table>
     </form>
-  </fieldset>
-</div>
+    <table class="total-table mat-table full-width">
+      <tr class=" mat-header-row">
+        <th class="mat-header-cell" colspan="2">Total</th>
+      </tr>
+      <tr class="mat-row">
+        <td class="mat-cell">
+          Prix total HT
+        </td>
+        <td class="td-price mat-cell">
+          {{getPreTaxPriceTotal() |number}} €
+        </td>
+      </tr>
+      <tr class="mat-row" *ngIf="getDiscountTotal() && getDiscountTotal()>0">
+        <td class="mat-cell">
+          Remise totale
+        </td>
+        <td class="td-price remise mat-cell">
+          - {{getDiscountTotal()|number}} €
+        </td>
+      </tr>
+      <tr class="mat-row" *ngIf="getDiscountTotal() && getDiscountTotal()>0">
+        <td class="mat-cell">
+          Total HT avec remise
+        </td>
+        <td class="td-price mat-cell">
+          {{getPreTaxPriceTotal()-getDiscountTotal()|number}} €
+        </td>
+      </tr>
+      <ng-container *ngIf="getApplicableVat().length>0">
+        <tr *ngFor="let vat of getApplicableVat()">
+          <td class="mat-cell">
+            Total {{vat.label}} sur la base de {{vat.base |number}} €
+          </td>
+          <td class="td-price mat-cell">
+            {{vat.total|number}} €
+          </td>
+        </tr>
+      </ng-container>
+      <tr class="mat-row">
+        <td class="mat-cell">
+          Total TTC
+        </td>
+        <td class="td-price mat-cell">
+          {{getPriceTotal()|number}} €
+        </td>
+      </tr>
+      <tr class="mat-row">
+        <td class="mat-cell">Reste à payer
+        </td>
+        <td class="td-price mat-cell">{{getRemainingToPay()}} €
+        </td>
+      </tr>
+      <tr
+        *ngIf="quotation && instanceOfCustomerOrderFn(quotation) && quotation.centralPayPendingPaymentAmount  && quotation.centralPayPendingPaymentAmount >0">
+        <td class="mat-cell">Paiement reçu par CB en attente de réception</td>
+        <td class="td-price mat-cell">{{quotation.centralPayPendingPaymentAmount | number}} €</td>
+      </tr>
+    </table>

@@ -40,11 +40,10 @@ export class QuotationListComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.putDefaultPeriod();
     this.employeeService.getEmployees().subscribe(response => {
       this.bookmark = this.userPreferenceService.getUserSearchBookmark("quotations") as QuotationSearch;
 
-      if (this.bookmark && !this.isForDashboard) {
+      if (this.bookmark && !this.isForDashboard && !this.isForTiersIntegration) {
         this.quotationSearch = {} as QuotationSearch;
         this.quotationSearch.endDate = new Date(this.bookmark.endDate as any);
         this.quotationSearch.startDate = new Date(this.bookmark.startDate as any);
@@ -52,13 +51,14 @@ export class QuotationListComponent implements OnInit {
         this.quotationSearch.quotationStatus = this.bookmark.quotationStatus;
       }
 
+      this.putDefaultPeriod();
       this.allEmployees = response;
       if (!this.isForDashboard && !this.isForTiersIntegration)
         this.appService.changeHeaderTitle("Devis");
 
 
       this.availableColumns = [];
-      this.availableColumns.push({ id: "id", fieldName: "quotationId", label: "N° de la commande" } as SortTableColumn);
+      this.availableColumns.push({ id: "id", fieldName: "quotationId", label: "N° de la devis" } as SortTableColumn);
       this.availableColumns.push({ id: "customerOrderName", fieldName: "customerOrderLabel", label: "Donneur d'ordre", actionLinkFunction: this.getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la fiche du donneur d'ordre" } as SortTableColumn);
       this.availableColumns.push({ id: "affaireLabel", fieldName: "affaireLabel", label: "Affaire(s)", isShrinkColumn: true } as SortTableColumn);
       this.availableColumns.push({ id: "quotationStatus", fieldName: "quotationStatus", label: "Statut" } as SortTableColumn);

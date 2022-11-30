@@ -10,6 +10,12 @@ import com.jss.osiris.modules.miscellaneous.model.ICode;
 
 @Entity
 public class TypePersonneBlocPreneurBail implements Serializable, ICode {
+    public TypePersonneBlocPreneurBail(String code) {
+        this.code = code;
+    }
+
+    public TypePersonneBlocPreneurBail() {
+    }
 
     @Id
     private String code;

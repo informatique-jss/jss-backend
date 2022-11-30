@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.miscellaneous.service;
 
+import java.io.InputStream;
 import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
@@ -17,8 +18,15 @@ public interface AttachmentService {
                         AttachmentType attachmentType, String filename, Boolean replaceExistingAttachementType)
                         throws OsirisException;
 
+        public List<Attachment> addAttachment(InputStream file, Integer idEntity, String entityType,
+                        AttachmentType attachmentType, String filename, Boolean replaceExistingAttachementType,
+                        String description)
+                        throws OsirisException;
+
         public void deleteAttachment(Attachment attachment);
 
         public void disableDocument(Attachment attachment);
+
+        public Attachment addOrUpdateAttachment(Attachment attachment);
 
 }

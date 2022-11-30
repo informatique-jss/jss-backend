@@ -2,6 +2,7 @@ package com.jss.osiris.modules.miscellaneous.service;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
@@ -13,7 +14,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.jss.osiris.libs.exception.OsirisException;
 
@@ -24,16 +24,17 @@ public class StorageFileServiceImpl implements StorageFileService {
     private String uploadFolder;
 
     @Override
-    public String saveFile(MultipartFile file, String filename, String path) throws OsirisException {
+    public String saveFile(InputStream file, String filename, String path) throws OsirisException {
         if (filename == null || filename.equals(""))
-            filename = file.getOriginalFilename();
+            throw new OsirisException("No filename provided");
+
         try {
             Files.createDirectories(Paths.get(uploadFolder.trim() + File.separator + path));
         } catch (IOException e) {
             throw new OsirisException("Impossible to create folder");
         }
         try {
-            Files.copy(file.getInputStream(), Paths.get(uploadFolder.trim() + File.separator + path).resolve(filename),
+            Files.copy(file, Paths.get(uploadFolder.trim() + File.separator + path).resolve(filename),
                     StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             throw new OsirisException("Impossible to create file");

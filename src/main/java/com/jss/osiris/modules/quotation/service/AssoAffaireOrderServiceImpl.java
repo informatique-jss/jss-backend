@@ -155,7 +155,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
                 if (provision.getFormalite().getReferenceMandataire() == null)
                     // Play with fire ...
-                    provision.getFormalite().setReferenceMandataire(provision.getFormalite().getId());
+                    provision.getFormalite().setReferenceMandataire(provision.getFormalite().getId() + "");
                 if (provision.getFormalite().getNomDossier() == null)
                     provision.getFormalite()
                             .setNomDossier(assoAffaireOrder.getAffaire().getDenomination() != null

@@ -10,6 +10,12 @@ import com.jss.osiris.modules.miscellaneous.model.ICode;
 
 @Entity
 public class StatutExerciceActiviteSimultan implements Serializable, ICode {
+    public StatutExerciceActiviteSimultan(String code) {
+        this.code = code;
+    }
+
+    public StatutExerciceActiviteSimultan() {
+    }
 
     @Id
     private String code;

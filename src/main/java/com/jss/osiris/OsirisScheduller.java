@@ -4,24 +4,30 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Service;
 
 import com.jss.osiris.libs.GlobalExceptionHandler;
+import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.exception.OsirisLog;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
+import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.invoicing.service.PaymentService;
 import com.jss.osiris.modules.miscellaneous.service.NotificationService;
 import com.jss.osiris.modules.profile.service.EmployeeService;
 import com.jss.osiris.modules.quotation.service.AnnouncementStatusService;
 import com.jss.osiris.modules.quotation.service.AssignationTypeService;
 import com.jss.osiris.modules.quotation.service.BodaccStatusService;
+import com.jss.osiris.modules.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderStatusService;
 import com.jss.osiris.modules.quotation.service.DomiciliationStatusService;
 import com.jss.osiris.modules.quotation.service.FormaliteStatusService;
 import com.jss.osiris.modules.quotation.service.ProvisionScreenTypeService;
+import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.quotation.service.QuotationStatusService;
 
 @Service
@@ -74,6 +80,15 @@ public class OsirisScheduller {
 	@Autowired
 	ProvisionScreenTypeService provisionScreenTypeService;
 
+	@Autowired
+	QuotationService quotationService;
+
+	@Autowired
+	CustomerOrderService customerOrderService;
+
+	@Autowired
+	InvoiceService invoiceService;
+
 	@Bean
 	public ThreadPoolTaskScheduler taskExecutor() {
 		ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
@@ -82,6 +97,7 @@ public class OsirisScheduller {
 	}
 
 	@Scheduled(cron = "${schedulling.account.daily.close}")
+	@ConditionalOnProperty(value = "schedulling.enabled", matchIfMissing = false, havingValue = "true")
 	// @Scheduled(initialDelay = 1000, fixedDelay = 1000000)
 	private void dailyAccountClosing() {
 		logger.info("Start of daily account closing");
@@ -89,41 +105,83 @@ public class OsirisScheduller {
 	}
 
 	@Scheduled(cron = "${schedulling.payment.grab}")
-	private void paymentGrab() throws Exception {
+	@ConditionalOnProperty(value = "schedulling.enabled", matchIfMissing = false, havingValue = "true")
+	private void paymentGrab() {
 		logger.info("Start of payment grab");
-		paymentService.payementGrab();
+		try {
+			paymentService.payementGrab();
+		} catch (OsirisException e) {
+			globalExceptionHandler.persistLog(e, OsirisLog.UNHANDLED_LOG);
+		}
 	}
 
 	@Scheduled(cron = "${schedulling.active.directory.user.update}")
-	private void activeDirectoryUserUpdate() throws Exception {
+	@ConditionalOnProperty(value = "schedulling.enabled", matchIfMissing = false, havingValue = "true")
+	private void activeDirectoryUserUpdate() {
 		logger.info("Start of user update from Active Directory");
 		employeeService.updateUserFromActiveDirectory();
 	}
 
 	@Scheduled(initialDelay = 500, fixedDelayString = "${schedulling.mail.sender}")
-	private void mailSender() throws Exception {
-		mailHelper.sendNextMail();
+	@ConditionalOnProperty(value = "schedulling.enabled", matchIfMissing = false, havingValue = "true")
+	private void mailSender() {
+		try {
+			mailHelper.sendNextMail();
+		} catch (OsirisException e) {
+			globalExceptionHandler.persistLog(e, OsirisLog.UNHANDLED_LOG);
+		}
 	}
 
 	@Scheduled(cron = "${schedulling.notification.purge}")
-	private void purgeNotidication() throws Exception {
+	@ConditionalOnProperty(value = "schedulling.enabled", matchIfMissing = false, havingValue = "true")
+	private void purgeNotidication() {
 		notificationService.purgeNotification();
 	}
 
-	@Scheduled(cron = "${schedulling.log.osiris.purge}")
-	private void purgeOsirisLog() throws Exception {
-		globalExceptionHandler.purgeOsirisLog();
+	@Scheduled(cron = "${schedulling.log.osiris.quotation.reminder}")
+	@ConditionalOnProperty(value = "schedulling.enabled", matchIfMissing = false, havingValue = "true")
+	private void reminderQuotation() {
+		try {
+			quotationService.sendRemindersForQuotation();
+		} catch (OsirisException e) {
+			globalExceptionHandler.persistLog(e, OsirisLog.UNHANDLED_LOG);
+		}
 	}
 
-	// @Scheduled(initialDelay = 1000, fixedDelay = 1000000000)
-	private void updateAllStatusEntityReferentials() throws Exception {
-		quotationStatusService.updateStatusReferential();
-		customerOrderStatusService.updateStatusReferential();
-		announcementStatusService.updateStatusReferential();
-		formaliteStatusService.updateStatusReferential();
-		domiciliationStatusService.updateStatusReferential();
-		bodaccStatusService.updateStatusReferential();
-		assignationTypeService.updateAssignationTypes();
-		provisionScreenTypeService.updateScreenTypes();
+	@Scheduled(cron = "${schedulling.log.osiris.customerOrder.deposit.reminder}")
+	@ConditionalOnProperty(value = "schedulling.enabled", matchIfMissing = false, havingValue = "true")
+	private void reminderCustomerOrderDeposit() {
+		try {
+			customerOrderService.sendRemindersForCustomerOrderDeposit();
+		} catch (OsirisException e) {
+			globalExceptionHandler.persistLog(e, OsirisLog.UNHANDLED_LOG);
+		}
+	}
+
+	@Scheduled(cron = "${schedulling.log.osiris.customerOrder.invoice.reminder}")
+	@ConditionalOnProperty(value = "schedulling.enabled", matchIfMissing = false, havingValue = "true")
+	private void reminderCustomerOrderInvoice() {
+		try {
+			invoiceService.sendRemindersForInvoices();
+		} catch (OsirisException e) {
+			globalExceptionHandler.persistLog(e, OsirisLog.UNHANDLED_LOG);
+		}
+	}
+
+	@Scheduled(initialDelay = 1000, fixedDelay = 1000000000)
+	@ConditionalOnProperty(value = "schedulling.enabled", matchIfMissing = false, havingValue = "true")
+	private void updateAllStatusEntityReferentials() {
+		try {
+			quotationStatusService.updateStatusReferential();
+			customerOrderStatusService.updateStatusReferential();
+			announcementStatusService.updateStatusReferential();
+			formaliteStatusService.updateStatusReferential();
+			domiciliationStatusService.updateStatusReferential();
+			bodaccStatusService.updateStatusReferential();
+			assignationTypeService.updateAssignationTypes();
+			provisionScreenTypeService.updateScreenTypes();
+		} catch (OsirisException e) {
+			globalExceptionHandler.persistLog(e, OsirisLog.UNHANDLED_LOG);
+		}
 	}
 }

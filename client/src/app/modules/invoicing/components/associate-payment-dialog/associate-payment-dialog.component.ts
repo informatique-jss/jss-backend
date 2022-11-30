@@ -21,7 +21,7 @@ import { Payment } from '../../model/Payment';
 import { PaymentAssociate } from '../../model/PaymentAssociate';
 import { PaymentService } from '../../services/payment.service';
 import { AmountDialogComponent } from '../amount-dialog/amount-dialog.component';
-import { getAmountPayed, getAmountRemaining, getCustomerOrderForCustomerOrder, getCustomerOrderForInvoice, getCustomerOrderNameForITiers } from '../invoice-tools';
+import { getAmountPayed, getAmountRemaining, getCustomerOrderForInvoice, getCustomerOrderForIQuotation, getCustomerOrderNameForITiers } from '../invoice-tools';
 
 @Component({
   selector: 'associate-payment-dialog',
@@ -184,7 +184,7 @@ export class AssociatePaymentDialogComponent implements OnInit {
           this.appService.displaySnackBar("Cette commande est déjà associée à ce paiement", true, 15);
           return;
         }
-    if (!this.isSameCustomerOrder(getCustomerOrderForCustomerOrder(order))) {
+    if (!this.isSameCustomerOrder(getCustomerOrderForIQuotation(order))) {
       this.appService.displaySnackBar("Veuillez choisir une commande du même donneur d'ordre que les autres éléments associés au paiement", true, 15);
       return;
     }
@@ -213,7 +213,7 @@ export class AssociatePaymentDialogComponent implements OnInit {
         if (asso.invoice)
           customerOrder = getCustomerOrderForInvoice(asso.invoice);
         if (asso.customerOrder)
-          customerOrder = getCustomerOrderForCustomerOrder(asso.customerOrder);
+          customerOrder = getCustomerOrderForIQuotation(asso.customerOrder);
         if (currentCustomerOrder == undefined)
           currentCustomerOrder = customerOrder;
         if (currentCustomerOrder != undefined && newCustomerOrder != undefined && currentCustomerOrder?.id != newCustomerOrder.id)
@@ -229,7 +229,7 @@ export class AssociatePaymentDialogComponent implements OnInit {
       if (this.associationSummaryTable[0].invoice) {
         customerOrder = getCustomerOrderForInvoice(this.associationSummaryTable[0].invoice);
       } else {
-        customerOrder = getCustomerOrderForCustomerOrder(this.associationSummaryTable[0].customerOrder);
+        customerOrder = getCustomerOrderForIQuotation(this.associationSummaryTable[0].customerOrder);
       }
     } else {
       customerOrder = getCustomerOrderForInvoice(this.invoice!);

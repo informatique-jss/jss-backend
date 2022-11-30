@@ -11,6 +11,13 @@ import com.jss.osiris.modules.miscellaneous.model.ICode;
 @Entity
 public class SuccursaleOuFiliale implements Serializable, ICode {
 
+    public SuccursaleOuFiliale(String code) {
+        this.code = code;
+    }
+
+    public SuccursaleOuFiliale() {
+    }
+
     @Id
     private String code;
 
