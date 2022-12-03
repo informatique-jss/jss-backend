@@ -154,18 +154,13 @@ public class QuotationServiceImpl implements QuotationService {
             quotation = quotationRepository.save(quotation);
         }
 
-        getAndSetInvoiceItemsForQuotation(quotation);
+        if (quotation.getId() == null)
+            quotation = quotationRepository.save(quotation);
 
-        // Save invoice item
-        for (AssoAffaireOrder assoAffaireOrder : quotation.getAssoAffaireOrders()) {
-            for (Provision provision : assoAffaireOrder.getProvisions()) {
-                if (provision.getInvoiceItems() != null)
-                    for (InvoiceItem invoiceItem : provision.getInvoiceItems())
-                        invoiceItemService.addOrUpdateInvoiceItem(invoiceItem);
-            }
-        }
+        getAndSetInvoiceItemsForQuotation(quotation, true);
 
-        quotation = quotationRepository.save(quotation);
+        quotation = getQuotation(quotation.getId());
+
         indexEntityService.indexEntity(quotation, quotation.getId());
 
         if (isNewQuotation) {
@@ -178,19 +173,17 @@ public class QuotationServiceImpl implements QuotationService {
     }
 
     @Override
-    public IQuotation getAndSetInvoiceItemsForQuotation(IQuotation quotation) throws OsirisException {
-        ArrayList<InvoiceItem> invoiceItems = new ArrayList<InvoiceItem>();
-        if (quotation.getAssoAffaireOrders() != null && quotation.getAssoAffaireOrders().size() > 0
-                && quotation.getAssoAffaireOrders().get(0).getProvisions() != null
-                && quotation.getAssoAffaireOrders().get(0).getProvisions().size() > 0) {
+    public IQuotation getAndSetInvoiceItemsForQuotation(IQuotation quotation, boolean persistInvoiceItem)
+            throws OsirisException {
+        if (quotation.getAssoAffaireOrders() != null) {
             for (AssoAffaireOrder assoAffaireOrder : quotation.getAssoAffaireOrders()) {
-                for (Provision provision : assoAffaireOrder.getProvisions()) {
-                    provision.setAssoAffaireOrder(assoAffaireOrder);
-                    invoiceItems.addAll(getInvoiceItemsForProvision(provision, quotation));
-                }
+                if (assoAffaireOrder.getProvisions() != null)
+                    for (Provision provision : assoAffaireOrder.getProvisions()) {
+                        provision.setAssoAffaireOrder(assoAffaireOrder);
+                        setInvoiceItemsForProvision(provision, quotation, persistInvoiceItem);
+                    }
             }
         }
-        mergeInvoiceItemsForQuotation(quotation, invoiceItems);
         return quotation;
     }
 
@@ -248,10 +241,78 @@ public class QuotationServiceImpl implements QuotationService {
         return null;
     }
 
-    private List<InvoiceItem> getInvoiceItemsForProvision(Provision provision, IQuotation quotation)
+    private void setInvoiceItemPreTaxPriceAndLabel(InvoiceItem invoiceItem, BillingItem billingItem,
+            Provision provision) throws OsirisException {
+        invoiceItem.setLabel(billingItem.getBillingType().getLabel());
+        if (billingItem.getBillingType().getIsPriceBasedOnCharacterNumber()) {
+            CharacterPrice characterPrice = characterPriceService.getCharacterPrice(provision);
+            if (characterPrice != null) {
+                Float price = characterPrice.getPrice()
+                        * characterPriceService.getCharacterNumber(provision);
+                invoiceItem.setPreTaxPrice(Math.round(price * 100f) / 100f);
+
+                // Add notice type indication for announcements
+                String noticeFamiliyType = (provision.getAnnouncement() != null
+                        && provision.getAnnouncement().getNoticeTypeFamily() != null)
+                                ? provision.getAnnouncement().getNoticeTypeFamily().getLabel()
+                                : null;
+                ArrayList<String> noticeTypes = new ArrayList<String>();
+                if (noticeFamiliyType != null
+                        && provision.getAnnouncement().getNoticeTypes() != null)
+                    for (NoticeType noticeType : provision.getAnnouncement().getNoticeTypes())
+                        noticeTypes.add(noticeType.getLabel());
+
+                if (noticeFamiliyType != null && noticeTypes.size() > 0)
+                    invoiceItem.setLabel(invoiceItem.getLabel() + " ("
+                            + characterPriceService.getCharacterNumber(provision)
+                            + " caractères, rubrique " + noticeFamiliyType + ", sous-rubrique(s) "
+                            + String.join(", ", noticeTypes) + ")");
+                else
+                    invoiceItem.setLabel(invoiceItem.getLabel() + " ("
+                            + characterPriceService.getCharacterNumber(provision) + ")");
+
+            } else {
+                invoiceItem.setPreTaxPrice(0f);
+            }
+        } else if (provision.getIsPublicationPaper() && billingItem.getBillingType().getId()
+                .equals(constantService.getBillingTypePublicationPaper().getId())) {
+            // Compute publication paper price
+            Float nbr = 0f;
+            if (provision.getPublicationPaperAffaireNumber() != null
+                    && provision.getPublicationPaperAffaireNumber() > 0)
+                nbr += provision.getPublicationPaperAffaireNumber();
+            if (provision.getPublicationPaperClientNumber() != null
+                    && provision.getPublicationPaperClientNumber() > 0)
+                nbr += provision.getPublicationPaperClientNumber();
+            if (nbr > 0) {
+                invoiceItem.setLabel(invoiceItem.getLabel() + " (quantité : " + nbr + ")");
+                invoiceItem.setPreTaxPrice(
+                        Math.round(billingItem.getPreTaxPrice() * nbr * 100f) / 100f);
+            }
+        } else {
+            invoiceItem.setPreTaxPrice(Math.round(billingItem.getPreTaxPrice() * 100f) / 100f);
+        }
+
+        if (invoiceItem.getIsGifted() != null && invoiceItem.getIsGifted()) {
+            invoiceItem.setPreTaxPrice(0f);
+            invoiceItem.setLabel(invoiceItem.getLabel() + " (offert)");
+        }
+
+    }
+
+    private void setInvoiceItemsForProvision(Provision provision, IQuotation quotation, boolean persistInvoiceItem)
             throws OsirisException {
-        List<InvoiceItem> invoiceItems = new ArrayList<InvoiceItem>();
-        if (provision.getProvisionType() != null) {
+
+        if (quotation != null && provision != null) {
+            if (provision.getInvoiceItems() == null)
+                provision.setInvoiceItems(new ArrayList<InvoiceItem>());
+
+            // If billed, do not change items
+            if (provision.getInvoiceItems().size() > 0 && provision.getInvoiceItems().get(0).getInvoice() != null
+                    && !provision.getInvoiceItems().get(0).getInvoice().getInvoiceStatus().getId()
+                            .equals(constantService.getInvoiceStatusCancelled().getId()))
+                return;
+
             ProvisionType provisionType = provisionTypeService.getProvisionType(provision.getProvisionType().getId());
             if (provisionType != null) {
                 for (BillingType billingType : provisionType.getBillingTypes()) {
@@ -263,67 +324,63 @@ public class QuotationServiceImpl implements QuotationService {
                                 && (!billingItem.getBillingType().getIsOptionnal()
                                         || hasOption(billingItem.getBillingType(), provision))) {
 
-                            InvoiceItem invoiceItem = new InvoiceItem();
-                            invoiceItem.setBillingItem(billingItem);
+                            InvoiceItem invoiceItem = null;
 
-                            invoiceItem.setLabel(billingType.getLabel());
+                            for (InvoiceItem invoiceItemProvision : provision.getInvoiceItems())
+                                if (invoiceItemProvision.getId() != null
+                                        && invoiceItemProvision.getBillingItem().getBillingType().getId()
+                                                .equals(billingType.getId()))
+                                    invoiceItem = invoiceItemProvision;
 
-                            if (billingType.getIsPriceBasedOnCharacterNumber()) {
-                                CharacterPrice characterPrice = characterPriceService.getCharacterPrice(provision);
-                                if (characterPrice != null) {
-                                    Float price = characterPrice.getPrice()
-                                            * characterPriceService.getCharacterNumber(provision);
-                                    invoiceItem.setPreTaxPrice(Math.round(price * 100f) / 100f);
-
-                                    // Add notice type indication for announcements
-                                    String noticeFamiliyType = (provision.getAnnouncement() != null
-                                            && provision.getAnnouncement().getNoticeTypeFamily() != null)
-                                                    ? provision.getAnnouncement().getNoticeTypeFamily().getLabel()
-                                                    : null;
-                                    ArrayList<String> noticeTypes = new ArrayList<String>();
-                                    if (noticeFamiliyType != null
-                                            && provision.getAnnouncement().getNoticeTypes() != null)
-                                        for (NoticeType noticeType : provision.getAnnouncement().getNoticeTypes())
-                                            noticeTypes.add(noticeType.getLabel());
-
-                                    if (noticeFamiliyType != null && noticeTypes.size() > 0)
-                                        invoiceItem.setLabel(invoiceItem.getLabel() + " ("
-                                                + characterPriceService.getCharacterNumber(provision)
-                                                + " caractères, rubrique " + noticeFamiliyType + ", sous-rubrique(s) "
-                                                + String.join(", ", noticeTypes) + ")");
-                                    else
-                                        invoiceItem.setLabel(invoiceItem.getLabel() + " ("
-                                                + characterPriceService.getCharacterNumber(provision) + ")");
-
-                                } else {
-                                    invoiceItem.setPreTaxPrice(0f);
-                                }
-                            } else if (provision.getIsPublicationPaper() && billingType.getId()
-                                    .equals(constantService.getBillingTypePublicationPaper().getId())) {
-                                Float nbr = 0f;
-                                if (provision.getPublicationPaperAffaireNumber() != null
-                                        && provision.getPublicationPaperAffaireNumber() > 0)
-                                    nbr += provision.getPublicationPaperAffaireNumber();
-                                if (provision.getPublicationPaperClientNumber() != null
-                                        && provision.getPublicationPaperClientNumber() > 0)
-                                    nbr += provision.getPublicationPaperClientNumber();
-                                if (nbr > 0) {
-                                    invoiceItem.setLabel(invoiceItem.getLabel() + " (quantité : " + nbr + ")");
-                                    invoiceItem.setPreTaxPrice(
-                                            Math.round(billingItem.getPreTaxPrice() * nbr * 100f) / 100f);
-                                }
-                            } else {
-                                invoiceItem.setPreTaxPrice(Math.round(billingItem.getPreTaxPrice() * 100f) / 100f);
+                            if (invoiceItem == null) {
+                                invoiceItem = new InvoiceItem();
+                                provision.getInvoiceItems().add(invoiceItem);
                             }
+
+                            // Complete invoice item
+                            invoiceItem.setBillingItem(billingItem);
+                            invoiceItem.setInvoice(null);
                             invoiceItem.setProvision(provision);
+
+                            if (invoiceItem.getIsOverridePrice() == null)
+                                invoiceItem.setIsOverridePrice(false);
+
+                            if (!invoiceItem.getIsOverridePrice() || invoiceItem.getPreTaxPrice() == null
+                                    || invoiceItem.getPreTaxPrice() <= 0
+                                    || invoiceItem.getIsGifted() != null && invoiceItem.getIsGifted())
+                                setInvoiceItemPreTaxPriceAndLabel(invoiceItem, billingItem, provision);
                             computeInvoiceItemsVatAndDiscount(invoiceItem, quotation);
-                            invoiceItems.add(invoiceItem);
+
+                            if (persistInvoiceItem)
+                                invoiceItemService.addOrUpdateInvoiceItem(invoiceItem);
                         }
                     }
                 }
+
+                // Delete unused item
+                ArrayList<InvoiceItem> invoiceItemsDeleted = new ArrayList<InvoiceItem>();
+                for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
+                    boolean found = false;
+                    for (BillingType billingType : provisionType.getBillingTypes()) {
+                        if (invoiceItem.getId() != null
+                                && billingType.getId().equals(invoiceItem.getBillingItem().getBillingType().getId())
+                                && (!billingType.getIsOptionnal()
+                                        || hasOption(billingType, provision)))
+                            found = true;
+                    }
+
+                    if (!found) {
+                        invoiceItemsDeleted.add(invoiceItem);
+                        invoiceItem.setProvision(null);
+                        if (persistInvoiceItem && invoiceItem.getId() != null) {
+                            invoiceItemService.addOrUpdateInvoiceItem(invoiceItem);
+                            invoiceItemService.deleteInvoiceItem(invoiceItem);
+                        }
+                    }
+                }
+                provision.getInvoiceItems().removeAll(invoiceItemsDeleted);
             }
         }
-        return invoiceItems;
     }
 
     private boolean hasOption(BillingType billingType, Provision provision) throws OsirisException {
@@ -472,62 +529,6 @@ public class QuotationServiceImpl implements QuotationService {
             invoiceItem.setVat(vat);
         } else {
             invoiceItem.setVatPrice(0f);
-        }
-
-    }
-
-    private void mergeInvoiceItemsForQuotation(IQuotation quotation, List<InvoiceItem> invoiceItemsToMerge)
-            throws OsirisException {
-        if (quotation != null && invoiceItemsToMerge != null && quotation.getAssoAffaireOrders() != null
-                && quotation.getAssoAffaireOrders().size() > 0) {
-            for (AssoAffaireOrder assoAffaireOrder : quotation.getAssoAffaireOrders()) {
-                if (assoAffaireOrder.getProvisions() != null) {
-                    for (Provision provision : assoAffaireOrder.getProvisions()) {
-                        ArrayList<InvoiceItem> finalInvoiceItems = new ArrayList<InvoiceItem>();
-                        for (InvoiceItem invoiceItemToMerge : invoiceItemsToMerge) {
-                            if (invoiceItemToMerge.getProvision().getId() != null
-                                    && provision.getId() != null
-                                    && invoiceItemToMerge.getProvision().getId().equals(provision.getId())) {
-                                if (provision.getInvoiceItems() != null && provision.getInvoiceItems().size() > 0) {
-                                    boolean invoiceItemToMergeFound = false;
-                                    for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
-                                        invoiceItem.setProvision(provision);
-                                        if (invoiceItemToMerge.getBillingItem().getId()
-                                                .equals(invoiceItem.getBillingItem().getId())) {
-                                            // Only if invoice is not cancelled, in that case generate new invoice
-                                            // item
-                                            if (invoiceItem.getInvoice() == null || !invoiceItem.getInvoice()
-                                                    .getInvoiceStatus().getId()
-                                                    .equals(constantService.getInvoiceStatusCancelled().getId())) {
-                                                invoiceItemToMerge.setId(invoiceItem.getId());
-                                                invoiceItemToMerge.setInvoice(invoiceItem.getInvoice());
-                                            }
-                                            if (invoiceItemToMerge.getBillingItem().getBillingType()
-                                                    .getCanOverridePrice()
-                                                    && invoiceItem.getPreTaxPrice() != null
-                                                    && invoiceItem.getPreTaxPrice() > 0) {
-                                                invoiceItemToMerge.setPreTaxPrice(
-                                                        Math.round(invoiceItem.getPreTaxPrice().floatValue() * 100f)
-                                                                / 100f);
-                                                computeInvoiceItemsVatAndDiscount(invoiceItemToMerge, quotation);
-                                            }
-                                            invoiceItemToMergeFound = true;
-                                            finalInvoiceItems.add(invoiceItemToMerge);
-                                        }
-                                    }
-                                    if (!invoiceItemToMergeFound) {
-                                        invoiceItemToMerge.setProvision(provision);
-                                        finalInvoiceItems.add(invoiceItemToMerge);
-                                    }
-                                } else {
-                                    provision.setInvoiceItems(invoiceItemsToMerge);
-                                }
-                            }
-                        }
-                        provision.setInvoiceItems(finalInvoiceItems);
-                    }
-                }
-            }
         }
 
     }

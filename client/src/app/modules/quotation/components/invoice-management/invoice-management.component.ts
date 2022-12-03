@@ -6,6 +6,7 @@ import { InvoiceService } from 'src/app/modules/invoicing/services/invoice.servi
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { AppService } from '../../../../services/app.service';
 import { CustomerOrder } from '../../model/CustomerOrder';
+import { InvoiceItem } from '../../model/InvoiceItem';
 import { InvoiceLabelResult } from '../../model/InvoiceLabelResult';
 import { IQuotation } from '../../model/IQuotation';
 import { VatBase } from '../../model/VatBase';
@@ -57,7 +58,16 @@ export class InvoiceManagementComponent implements OnInit {
   invoiceManagementForm = this.formBuilder.group({
   });
 
-  itemChange() {
+  itemChange(invoiceItem: InvoiceItem) {
+    invoiceItem.isOverridePrice = true;
+    this.invoiceItemChange.emit();
+  }
+
+  toggleIsGifTed(invoiceItem: InvoiceItem) {
+    if (!invoiceItem.isGifted)
+      invoiceItem.isGifted = true;
+    else
+      invoiceItem.isGifted = false;
     this.invoiceItemChange.emit();
   }
 

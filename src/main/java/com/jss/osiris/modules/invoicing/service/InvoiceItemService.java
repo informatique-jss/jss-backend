@@ -10,4 +10,6 @@ public interface InvoiceItemService {
     public InvoiceItem getInvoiceItem(Integer id);
 
     public InvoiceItem addOrUpdateInvoiceItem(InvoiceItem invoiceItem);
+
+    public void deleteInvoiceItem(InvoiceItem invoiceItem);
 }

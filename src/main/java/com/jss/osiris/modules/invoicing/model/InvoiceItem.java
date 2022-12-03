@@ -34,6 +34,10 @@ public class InvoiceItem implements Serializable, IId {
 	@JoinColumn(name = "id_vat")
 	Vat vat;
 
+	private Boolean isOverridePrice;
+
+	private Boolean isGifted;
+
 	private Float preTaxPrice;
 
 	private Float vatPrice;
@@ -120,6 +124,22 @@ public class InvoiceItem implements Serializable, IId {
 
 	public void setVat(Vat vat) {
 		this.vat = vat;
+	}
+
+	public Boolean getIsOverridePrice() {
+		return isOverridePrice;
+	}
+
+	public void setIsOverridePrice(Boolean isOverridePrice) {
+		this.isOverridePrice = isOverridePrice;
+	}
+
+	public Boolean getIsGifted() {
+		return isGifted;
+	}
+
+	public void setIsGifted(Boolean isGifted) {
+		this.isGifted = isGifted;
 	}
 
 }

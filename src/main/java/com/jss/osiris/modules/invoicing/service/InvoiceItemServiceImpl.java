@@ -35,4 +35,9 @@ public class InvoiceItemServiceImpl implements InvoiceItemService {
         return invoiceItemRepository.save(invoiceItem);
     }
 
+    @Override
+    public void deleteInvoiceItem(InvoiceItem invoiceItem) {
+        invoiceItemRepository.delete(invoiceItem);
+    }
+
 }

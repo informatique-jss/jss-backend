@@ -30,10 +30,12 @@ import com.jss.osiris.modules.miscellaneous.service.NotificationService;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
+import com.jss.osiris.modules.quotation.service.ConfrereService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.tiers.model.ITiers;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
+import com.jss.osiris.modules.tiers.service.TiersService;
 
 @Service
 public class InvoiceServiceImpl implements InvoiceService {
@@ -67,6 +69,12 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Autowired
     NotificationService notificationService;
+
+    @Autowired
+    TiersService tiersService;
+
+    @Autowired
+    ConfrereService confrereService;
 
     @Override
     public List<Invoice> getAllInvoices() {
@@ -258,6 +266,18 @@ public class InvoiceServiceImpl implements InvoiceService {
                         && invoice.getDueDate().isBefore(LocalDate.now().minusDays(1 * 30))) {
                     toSend = true;
                     invoice.setFirstReminderDateTime(LocalDateTime.now());
+
+                    // Reminder once, next time provision will be mandatory :)
+                    ITiers customerOrderToSetProvision = invoiceHelper.getCustomerOrder(invoice);
+                    if (customerOrderToSetProvision instanceof Responsable)
+                        customerOrderToSetProvision = ((Responsable) customerOrderToSetProvision).getTiers();
+                    if (customerOrderToSetProvision instanceof Tiers) {
+                        ((Tiers) customerOrderToSetProvision).setIsProvisionalPaymentMandatory(true);
+                        tiersService.addOrUpdateTiers((Tiers) customerOrderToSetProvision);
+                    } else if (customerOrderToSetProvision instanceof Confrere) {
+                        ((Confrere) customerOrderToSetProvision).setIsProvisionalPaymentMandatory(true);
+                        confrereService.addOrUpdateConfrere((Confrere) customerOrderToSetProvision);
+                    }
                 } else if (invoice.getSecondReminderDateTime() == null
                         && invoice.getDueDate().isBefore(LocalDate.now().minusDays(3 * 60))) {
                     toSend = true;

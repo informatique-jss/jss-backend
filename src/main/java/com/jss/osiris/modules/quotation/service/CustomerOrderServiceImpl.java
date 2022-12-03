@@ -155,21 +155,13 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
         boolean isNewCustomerOrder = customerOrder.getId() == null;
 
-        // If invoice has not been generated yet, recompute billing items
-        if (!hasBeenBilled(customerOrder)) {
-            quotationService.getAndSetInvoiceItemsForQuotation(customerOrder);
-        }
+        if (customerOrder.getId() == null)
+            customerOrder = customerOrderRepository.save(customerOrder);
 
-        // Save invoice item
-        for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders()) {
-            for (Provision provision : assoAffaireOrder.getProvisions()) {
-                if (provision.getInvoiceItems() != null)
-                    for (InvoiceItem invoiceItem : provision.getInvoiceItems())
-                        invoiceItemService.addOrUpdateInvoiceItem(invoiceItem);
-            }
-        }
+        quotationService.getAndSetInvoiceItemsForQuotation(customerOrder, true);
 
-        customerOrder = customerOrderRepository.save(customerOrder);
+        customerOrder = getCustomerOrder(customerOrder.getId());
+
         indexEntityService.indexEntity(customerOrder, customerOrder.getId());
         for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders())
             indexEntityService.indexEntity(assoAffaireOrder, assoAffaireOrder.getId());
@@ -349,22 +341,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 }
         }
         return false;
-    }
-
-    private boolean hasBeenBilled(CustomerOrder customerOrder) throws OsirisException {
-        if (customerOrder == null || customerOrder.getAssoAffaireOrders() == null
-                || customerOrder.getAssoAffaireOrders().get(0).getProvisions() == null
-                || customerOrder.getAssoAffaireOrders().get(0).getProvisions().size() == 0
-                || customerOrder.getAssoAffaireOrders().get(0).getProvisions().get(0) == null
-                || customerOrder.getAssoAffaireOrders().get(0).getProvisions().get(0).getInvoiceItems() == null
-                || customerOrder.getAssoAffaireOrders().get(0).getProvisions().get(0).getInvoiceItems().size() == 0
-                || customerOrder.getAssoAffaireOrders().get(0).getProvisions().get(0).getInvoiceItems().get(0) == null)
-            return false;
-
-        return customerOrder.getAssoAffaireOrders().get(0).getProvisions().get(0).getInvoiceItems().get(0)
-                .getInvoice() != null
-                && customerOrder.getAssoAffaireOrders().get(0).getProvisions().get(0).getInvoiceItems().get(0)
-                        .getInvoice().getInvoiceStatus().getId() != constantService.getInvoiceStatusCancelled().getId();
     }
 
     /**

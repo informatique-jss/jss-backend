@@ -30,7 +30,7 @@
               </td>
             </tr>
           </table>
-          <table class="full-width" *ngIf="announcement.confrere!=null && announcement.confrere!=undefined">
+          <table *ngIf="announcement.confrere!=null && announcement.confrere!=undefined">
             <tr>
               <td>
                 <generic-datepicker [(model)]="announcement.publicationDate" label="Date de publication"

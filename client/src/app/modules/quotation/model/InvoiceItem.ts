@@ -13,4 +13,6 @@ export interface InvoiceItem {
   discountAmount: number;
   invoice: Invoice;
   provision: Provision;
+  isOverridePrice: boolean;
+  isGifted: boolean;
 }

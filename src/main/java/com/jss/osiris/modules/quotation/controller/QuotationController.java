@@ -1481,7 +1481,8 @@ public class QuotationController {
   @PostMapping(inputEntryPoint + "/invoice-item/generate")
   public ResponseEntity<IQuotation> generateInvoiceItemForQuotation(@RequestBody Quotation quotation)
       throws OsirisException {
-    return new ResponseEntity<IQuotation>(quotationService.getAndSetInvoiceItemsForQuotation(quotation), HttpStatus.OK);
+    return new ResponseEntity<IQuotation>(quotationService.getAndSetInvoiceItemsForQuotation(quotation, false),
+        HttpStatus.OK);
   }
 
   // Payment deposit

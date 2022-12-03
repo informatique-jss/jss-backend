@@ -16,7 +16,8 @@ public interface QuotationService {
 
         public Quotation addOrUpdateQuotationFromUser(Quotation quotation) throws OsirisException;
 
-        public IQuotation getAndSetInvoiceItemsForQuotation(IQuotation quotation) throws OsirisException;
+        public IQuotation getAndSetInvoiceItemsForQuotation(IQuotation quotation, boolean persistInvoiceItem)
+                        throws OsirisException;
 
         public Quotation addOrUpdateQuotationStatus(Quotation quotation, String targetStatusCode)
                         throws OsirisException;

@@ -10,116 +10,115 @@
 
 <mat-sidenav-container class="sidenav-container">
   <mat-sidenav #sidenav mode="side" position="end" [fixedInViewport]="true" [fixedTopGap]="165" [fixedBottomGap]="100">
-    <ng-container *ngIf="quotation && quotation.assoAffaireOrders">
-      <div *ngFor="let asso of quotation.assoAffaireOrders">
-        <td class="affaire" *ngIf="asso.affaire && asso.affaire.denomination">
+    <ng-container *ngFor="let asso of quotation.assoAffaireOrders;let indexAsso = index">
+      <tr>
+        <td class="affaire " colspan="2" *ngIf="asso.affaire && asso.affaire.denomination">
           {{asso.affaire.denomination}}
         </td>
-        <td class="affaire" *ngIf="asso.affaire && asso.affaire.firstname">
+        <td class="affaire " colspan="2" *ngIf="asso.affaire && asso.affaire.firstname">
           {{asso.affaire.firstname}} - {{asso.affaire.lastname}} -
         </td>
-        <div *ngFor="let provision of asso.provisions">
-          <div *ngFor="let invoiceItem of provision.invoiceItems;let index = index">
-            <table>
-              <tr *ngIf="provision.provisionType">
-                <td class="affaire">
-                  {{provision.provisionType.label}}
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  {{invoiceItem.label}}
-                </td>
-                <td class="td-price">
-                  {{invoiceItem.preTaxPrice|number}} €
-                </td>
-              </tr>
-              <tr *ngIf="invoiceItem.discountAmount && invoiceItem.discountAmount>0">
-                <td>
-                  Remise
-                </td>
-                <td class="td-price remise">
-                  - {{invoiceItem.discountAmount|number}} €
-                </td>
-              </tr>
-              <tr *ngIf="invoiceItem.vat">
-                <td>
-                  {{invoiceItem.vat.label}}
-                </td>
-                <td class="td-price">
-                  {{invoiceItem.vatPrice|number}} €
-                </td>
-              </tr>
-            </table>
-          </div>
-        </div>
-      </div>
-      <table class="total-table">
-        <tr>
-          <td>
-            Prix total HT
-          </td>
-          <td class="td-price">
-            {{getPreTaxPriceTotal() |number}} €
+      </tr>
+      <ng-container *ngFor="let provision of asso.provisions">
+        <tr *ngIf="provision.provisionType">
+          <td class="affaire " colspan="2">
+            {{provision.provisionType.label}}
           </td>
         </tr>
-        <tr *ngIf="getDiscountTotal() && getDiscountTotal()">
-          <td>
-            Remise totale
-          </td>
-          <td class="td-price remise">
-            - {{getDiscountTotal()|number}} €
-          </td>
-        </tr>
-        <tr *ngIf="getDiscountTotal() && getDiscountTotal()">
-          <td>
-            Total HT
-          </td>
-          <td class="td-price">
-            {{getPreTaxPriceTotal()-getDiscountTotal()|number}} €
-          </td>
-        </tr>
-        <ng-container *ngIf="getApplicableVat().length>0">
-          <tr *ngFor="let vat of getApplicableVat()">
-            <td>
-              Total {{vat.label}} sur la base de {{vat.base |number}} €
-            </td>
-            <td class="td-price">
-              {{vat.total|number}} €
-            </td>
-          </tr>
-        </ng-container>
-        <tr>
-          <td>
-            Total TTC
-          </td>
-          <td class="td-price">
-            {{getPriceTotal()|number}} €
-          </td>
-        </tr>
-        <ng-container *ngIf="instanceOfCustomerOrderFn(quotation) && quotation.deposits">
-          <ng-container *ngFor="let deposit of quotation.deposits">
+        <ng-container *ngFor="let invoiceItem of provision.invoiceItems;let indexInvoiceItem = index">
+          <table>
             <tr>
               <td>
-                Accompte n°{{deposit.id}}
+                {{invoiceItem.label}}
               </td>
               <td class="td-price">
-                {{deposit.depositAmount|number}} €
+                {{invoiceItem.preTaxPrice|number}} €
               </td>
             </tr>
-          </ng-container>
+            <tr *ngIf="invoiceItem.discountAmount && invoiceItem.discountAmount>0">
+              <td>
+                Remise
+              </td>
+              <td class="td-price remise">
+                - {{invoiceItem.discountAmount|number}} €
+              </td>
+            </tr>
+            <tr *ngIf="invoiceItem.vat">
+              <td>
+                {{invoiceItem.vat.label}}
+              </td>
+              <td class="td-price">
+                {{invoiceItem.vatPrice|number}} €
+              </td>
+            </tr>
+          </table>
+        </ng-container>
+      </ng-container>
+    </ng-container>
+    <table class="total-table">
+      <tr>
+        <td>
+          Prix total HT
+        </td>
+        <td class="td-price">
+          {{getPreTaxPriceTotal() |number}} €
+        </td>
+      </tr>
+      <tr *ngIf="getDiscountTotal() && getDiscountTotal()">
+        <td>
+          Remise totale
+        </td>
+        <td class="td-price remise">
+          - {{getDiscountTotal()|number}} €
+        </td>
+      </tr>
+      <tr *ngIf="getDiscountTotal() && getDiscountTotal()">
+        <td>
+          Total HT
+        </td>
+        <td class="td-price">
+          {{getPreTaxPriceTotal()-getDiscountTotal()|number}} €
+        </td>
+      </tr>
+      <ng-container *ngIf="getApplicableVat().length>0">
+        <tr *ngFor="let vat of getApplicableVat()">
+          <td>
+            Total {{vat.label}} sur la base de {{vat.base |number}} €
+          </td>
+          <td class="td-price">
+            {{vat.total|number}} €
+          </td>
+        </tr>
+      </ng-container>
+      <tr>
+        <td>
+          Total TTC
+        </td>
+        <td class="td-price">
+          {{getPriceTotal()|number}} €
+        </td>
+      </tr>
+      <ng-container *ngIf="instanceOfCustomerOrderFn(quotation) && quotation.deposits">
+        <ng-container *ngFor="let deposit of quotation.deposits">
           <tr>
-            <td>Reste à payer</td>
-            <td class="td-price">{{getRemainingToPay()}} €</td>
-          </tr>
-          <tr *ngIf="quotation.centralPayPendingPaymentAmount  && quotation.centralPayPendingPaymentAmount >0">
-            <td>Paiement reçu par CB en attente de réception</td>
-            <td class="td-price">{{quotation.centralPayPendingPaymentAmount | number}} €</td>
+            <td>
+              Accompte n°{{deposit.id}}
+            </td>
+            <td class="td-price">
+              {{deposit.depositAmount|number}} €
+            </td>
           </tr>
         </ng-container>
-      </table>
-
-    </ng-container>
+        <tr>
+          <td>Reste à payer</td>
+          <td class="td-price">{{getRemainingToPay()}} €</td>
+        </tr>
+        <tr *ngIf="quotation.centralPayPendingPaymentAmount  && quotation.centralPayPendingPaymentAmount >0">
+          <td>Paiement reçu par CB en attente de réception</td>
+          <td class="td-price">{{quotation.centralPayPendingPaymentAmount | number}} €</td>
+        </tr>
+      </ng-container>
+    </table>
   </mat-sidenav>
 
   <mat-sidenav-content>
