@@ -2,7 +2,6 @@ import { AfterContentChecked, ChangeDetectorRef, Component, Input, OnInit, Simpl
 import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { MatAccordion } from '@angular/material/expansion';
 import { Observable, Subscription } from 'rxjs';
-import { CustomErrorStateMatcher } from 'src/app/app.component';
 import { getDocument } from 'src/app/libs/DocumentHelper';
 import { copyObject } from 'src/app/libs/GenericHelper';
 import { instanceOfCustomerOrder } from 'src/app/libs/TypeHelper';
@@ -33,7 +32,7 @@ import { RecordTypeService } from '../../services/record.type.service';
 })
 export class QuotationManagementComponent implements OnInit, AfterContentChecked {
 
-  matcher: CustomErrorStateMatcher = new CustomErrorStateMatcher();
+
   @Input() quotation: IQuotation = {} as IQuotation;
   @Input() editMode: boolean = false;
   @Input() isStatusOpen: boolean = false;

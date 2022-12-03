@@ -1,7 +1,6 @@
 import { Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors } from '@angular/forms';
 import { MatAccordion } from '@angular/material/expansion';
-import { CustomErrorStateMatcher } from 'src/app/app.component';
 import { validateSiren } from 'src/app/libs/CustomFormsValidatorsHelper';
 import { CompetentAuthority } from 'src/app/modules/miscellaneous/model/CompetentAuthority';
 import { CompetentAuthorityService } from 'src/app/modules/miscellaneous/services/competent.authority.service';
@@ -19,7 +18,7 @@ import { TransfertFundsType } from '../../model/TransfertFundsType';
 })
 export class BodaccSaleComponent implements OnInit {
 
-  matcher: CustomErrorStateMatcher = new CustomErrorStateMatcher();
+
   @Input() bodaccSale: BodaccSale = {} as BodaccSale;
   @Input() instanceOfCustomerOrder: boolean = false;
   @Input() isStatusOpen: boolean = true;

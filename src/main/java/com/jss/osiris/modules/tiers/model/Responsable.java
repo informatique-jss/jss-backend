@@ -74,11 +74,11 @@ public class Responsable implements ITiers, IAttachment {
 	@IndexedField
 	private Civility civility;
 
-	@Column(length = 20)
+	@Column(length = 40)
 	@IndexedField
 	private String firstname;
 
-	@Column(length = 20)
+	@Column(length = 40)
 	@IndexedField
 	private String lastname;
 

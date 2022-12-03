@@ -1234,7 +1234,7 @@ public class QuotationController {
     // Announcement
     if (provision.getAnnouncement() != null) {
       Announcement announcement = provision.getAnnouncement();
-      validationHelper.validateDateMin(announcement.getPublicationDate(), !isOpen, LocalDate.now().minusDays(1),
+      validationHelper.validateDateMin(announcement.getPublicationDate(), true, LocalDate.now().minusDays(1),
           "PublicationDate");
       validationHelper.validateReferential(announcement.getDepartment(), !isOpen, "Department");
       validationHelper.validateReferential(announcement.getConfrere(), isCustomerOrder, "Confrere");
@@ -1460,11 +1460,11 @@ public class QuotationController {
 
     if (affaire.getIsIndividual()) {
       validationHelper.validateReferential(affaire.getCivility(), true, "Civility");
-      validationHelper.validateString(affaire.getFirstname(), true, 20, "Firstname");
-      validationHelper.validateString(affaire.getLastname(), true, 20, "Lastname");
+      validationHelper.validateString(affaire.getFirstname(), true, 40, "Firstname");
+      validationHelper.validateString(affaire.getLastname(), true, 40, "Lastname");
 
     } else {
-      validationHelper.validateString(affaire.getDenomination(), true, 60, "Denomination");
+      validationHelper.validateString(affaire.getDenomination(), true, 150, "Denomination");
       if (affaire.getRna() != null
           && !validationHelper.validateRna(affaire.getRna().toUpperCase().replaceAll(" ", "")))
         throw new OsirisValidationException("RNA");

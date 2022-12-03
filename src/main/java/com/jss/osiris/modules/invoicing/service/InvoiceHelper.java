@@ -134,7 +134,7 @@ public class InvoiceHelper {
             ITiers usedOrderingCustomer = null;
 
             if (orderingCustomer instanceof Tiers
-                    || billingDocument.getIsResponsableOnBilling() && orderingCustomer instanceof Responsable) {
+                    || !billingDocument.getIsResponsableOnBilling() && orderingCustomer instanceof Responsable) {
                 Tiers tiers;
                 if (orderingCustomer instanceof Tiers) {
                     tiers = (Tiers) orderingCustomer;

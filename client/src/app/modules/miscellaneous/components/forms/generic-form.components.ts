@@ -1,12 +1,11 @@
 import { Directive, EventEmitter, Input, OnInit, Output, SimpleChanges } from "@angular/core";
 import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
-import { CustomErrorStateMatcher } from "src/app/app.component";
 import { UserNoteService } from "src/app/services/user.notes.service";
 
 @Directive()
 export abstract class GenericFormComponent implements OnInit {
 
-  matcher: CustomErrorStateMatcher = new CustomErrorStateMatcher();
+
 
   /**
    * The model of input property

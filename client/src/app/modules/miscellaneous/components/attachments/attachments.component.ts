@@ -1,6 +1,5 @@
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { CustomErrorStateMatcher } from 'src/app/app.component';
 import { formatDateTimeForSortTable } from 'src/app/libs/FormatHelper';
 import { Attachment } from '../../model/Attachment';
 import { IAttachment } from '../../model/IAttachment';
@@ -17,7 +16,7 @@ import { UploadAttachementDialogComponent } from '../upload-attachement-dialog/u
 })
 export class AttachmentsComponent implements OnInit {
 
-  matcher: CustomErrorStateMatcher = new CustomErrorStateMatcher();
+
   @Input() entity: IAttachment = {} as IAttachment;
   @Input() entityType: string = "";
   @Input() editMode: boolean = false;

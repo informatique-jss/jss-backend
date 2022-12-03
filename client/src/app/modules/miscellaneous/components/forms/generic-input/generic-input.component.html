@@ -1,6 +1,7 @@
 <mat-form-field class="full-width" [formGroup]="form!">
   <mat-label *ngIf="label && label.length>0">{{label}}</mat-label>
-  <input matInput [formControlName]="propertyName" [placeholder]="label" [type]="type" (change)="inputChange()">
+  <input matInput [maxlength]="maxLength+''" [minlength]="minLength+''" [formControlName]="propertyName"
+    [placeholder]="label" [type]="type" (change)="inputChange()">
   <mat-icon matTooltip="Ajouter aux notes (maintenez CTRL appuyé pour ajouter un titre)" matTooltipShowDelay="1000"
     matSuffix (click)="addToNotes($event)" *ngIf="isDisabled && model!=undefined" class="pointer note-icon">
     adjust

@@ -1,6 +1,5 @@
 import { AfterContentChecked, ChangeDetectorRef, Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
-import { CustomErrorStateMatcher } from 'src/app/app.component';
 import { copyObject } from 'src/app/libs/GenericHelper';
 import { instanceOfResponsable } from 'src/app/libs/TypeHelper';
 import { City } from 'src/app/modules/miscellaneous/model/City';
@@ -31,7 +30,7 @@ import { SettlementBillingComponent } from '../settlement-billing/settlement-bil
 })
 
 export class ResponsableMainComponent implements OnInit, AfterContentChecked {
-  matcher: CustomErrorStateMatcher = new CustomErrorStateMatcher();
+
   @Input() tiers: Tiers = {} as Tiers;
   @Input() editMode: boolean = false;
   @ViewChild('tabs', { static: false }) tabs: any;

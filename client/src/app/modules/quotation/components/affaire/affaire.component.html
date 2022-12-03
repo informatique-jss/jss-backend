@@ -9,6 +9,25 @@
   <mat-accordion multi>
     <mat-expansion-panel expanded="false">
       <mat-expansion-panel-header>
+        <mat-panel-title>Détails de la commande n°{{asso.customerOrder.id}}
+        </mat-panel-title>
+        <mat-panel-description>
+          <span class="status-text">{{asso.customerOrder.customerOrderStatus.label}}</span>
+          <mat-icon matTooltip="Voir/éditer la commande" (click)="displayCustomerOrder($event)"
+            (auxclick)="displayCustomerOrder($event)" class="pointer status-text">
+            shopping_cart</mat-icon>
+          <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <ordering-customer [quotation]="asso.customerOrder" [editMode]="false">
+      </ordering-customer>
+    </mat-expansion-panel>
+  </mat-accordion>
+</div>
+<div class="mat-accordion-container full-width" *ngIf="asso && asso.affaire">
+  <mat-accordion multi>
+    <mat-expansion-panel expanded="false">
+      <mat-expansion-panel-header>
         <mat-panel-title>Détails de l'affaire
           {{asso.affaire.denomination?asso.affaire.denomination:(asso.affaire.firstname + ' '
           +asso.affaire.lastname)}} - {{asso.affaire.address}} - {{asso.affaire.postalCode}} -
@@ -19,7 +38,7 @@
             (onChangeAssigne)="updateAssignedToForAffaire($event,asso)">
           </avatar-chip>
           <mat-icon matTooltip="Voir/éditer l'affaire" (click)="displayAffaire($event);$event.stopPropagation();"
-            (auxclick)="displayAffaire($event);$event.stopPropagation();" class="pointer">
+            (auxclick)="displayAffaire($event);$event.stopPropagation();" class="pointer status-text">
             edit</mat-icon>
           <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
         </mat-panel-description>
@@ -77,23 +96,13 @@
   *ngIf="editMode==false && asso" (click)="editAsso()">
   <mat-icon>edit</mat-icon>
 </button>
-<button matTooltip="Voir le devis" mat-fab color="accent" class="second-fab-button"
-  *ngIf="editMode==false && asso && asso.quotation" (click)="displayQuotation($event)"
-  (auxclick)="displayQuotation($event)">
-  <mat-icon>request_quote</mat-icon>
-</button>
-<button matTooltip="Voir la commande" mat-fab color="accent" class="second-fab-button"
-  *ngIf="editMode==false && asso && asso.customerOrder" (click)="displayCustomerOrder($event)"
-  (auxclick)="displayCustomerOrder($event)">
-  <mat-icon>shopping_cart</mat-icon>
-</button>
 
-<button matTooltip="Changer de statut" mat-fab color="accent" class="third-fab-button"
+<button matTooltip="Changer de statut" mat-fab color="accent" class="second-fab-button"
   (click)="setCurrentProvisionWorkflow(asso.provisions[0])"
   *ngIf="editMode==false && asso && asso.provisions && asso.provisions.length==1" [matMenuTriggerFor]="menu3">
   <mat-icon>done</mat-icon>
 </button>
-<button matTooltip="Changer de statut" mat-fab color="accent" class="third-fab-button"
+<button matTooltip="Changer de statut" mat-fab color="accent" class="second-fab-button"
   *ngIf="editMode==false && asso && asso.provisions && asso.provisions.length>1" [matMenuTriggerFor]="menu2">
   <mat-icon>done</mat-icon>
   <mat-menu #menu2="matMenu" style="min-height: 0px;padding: 0;" xPosition="before">

@@ -48,8 +48,8 @@
             </td>
             <td>
               <autocomplete-city [(model)]="selectedEntity.city" [modelCountry]="selectedEntity.country"
-                [form]="entityForm" propertyName="city" [isMandatory]="true" [isDisabled]="!editMode" label="Ville"
-                (onOptionSelected)="fillPostalCode($event)">
+                [preFilterPostalCode]="selectedEntity.postalCode" [form]="entityForm" propertyName="city"
+                [isMandatory]="true" [isDisabled]="!editMode" label="Ville" (onOptionSelected)="fillPostalCode($event)">
               </autocomplete-city>
             </td>
             <td>

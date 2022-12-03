@@ -2,7 +2,6 @@ import { Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/cor
 import { UntypedFormBuilder } from '@angular/forms';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { CustomErrorStateMatcher } from 'src/app/app.component';
 import { formatDateForSortTable } from 'src/app/libs/FormatHelper';
 import { ICSEvent } from 'src/app/libs/ICSEvent';
 import { createEvent } from 'src/app/libs/ICSHelper';
@@ -24,7 +23,7 @@ import { TiersFollowupTypeService } from '../../services/tiers.followup.type.ser
   styleUrls: ['./tiers-followup.component.css']
 })
 export class TiersFollowupComponent implements OnInit {
-  matcher: CustomErrorStateMatcher = new CustomErrorStateMatcher();
+
   @Input() tiers: ITiers = {} as ITiers;
   @Input() editMode: boolean = false;
 

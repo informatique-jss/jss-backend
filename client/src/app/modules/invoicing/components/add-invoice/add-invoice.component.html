@@ -54,8 +54,8 @@
           </td>
           <td>
             <autocomplete-city [(model)]="invoice.billingLabelCity" [modelCountry]="invoice.billingLabelCountry"
-              [isDisabled]="!editMode" label="Ville" [form]="invoiceForm" propertyName="city" [isMandatory]="true"
-              (onOptionSelected)="fillPostalCode($event)">
+              [preFilterPostalCode]="invoice.billingLabelPostalCode" [isDisabled]="!editMode" label="Ville"
+              [form]="invoiceForm" propertyName="city" [isMandatory]="true" (onOptionSelected)="fillPostalCode($event)">
             </autocomplete-city>
           </td>
           <td>

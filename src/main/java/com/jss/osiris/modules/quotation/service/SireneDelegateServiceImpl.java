@@ -105,7 +105,8 @@ public class SireneDelegateServiceImpl implements SireneDelegateService {
 		} catch (HttpClientErrorException e) {
 			if (e.getMessage() != null && e.getMessage().contains("Aucun élément trouvé pour le siren"))
 				return null;
-			throw e;
+			else
+				throw e;
 		} catch (Exception e) {
 			throw e;
 		}
@@ -130,7 +131,8 @@ public class SireneDelegateServiceImpl implements SireneDelegateService {
 		} catch (HttpClientErrorException e) {
 			if (e.getMessage() != null && e.getMessage().contains("Aucun élément trouvé pour le siren"))
 				return null;
-			throw e;
+			else
+				throw e;
 		} catch (Exception e) {
 			throw e;
 		}

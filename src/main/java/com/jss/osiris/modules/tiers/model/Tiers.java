@@ -106,11 +106,11 @@ public class Tiers implements ITiers, IAttachment {
 	@IndexedField
 	private Civility civility;
 
-	@Column(length = 20)
+	@Column(length = 40)
 	@IndexedField
 	private String firstname;
 
-	@Column(length = 20)
+	@Column(length = 40)
 	@IndexedField
 	private String lastname;
 
@@ -425,22 +425,6 @@ public class Tiers implements ITiers, IAttachment {
 		this.country = country;
 	}
 
-	public Float getRcaFormaliteRate() {
-		return rffFormaliteRate;
-	}
-
-	public void setRcaFormaliteRate(Float rcaFormaliteRate) {
-		this.rffFormaliteRate = rcaFormaliteRate;
-	}
-
-	public Float getRcaInsertionRate() {
-		return rffInsertionRate;
-	}
-
-	public void setRffInsertionRate(Float rcaInsertionRate) {
-		this.rffInsertionRate = rcaInsertionRate;
-	}
-
 	public String getObservations() {
 		return observations;
 	}
@@ -511,6 +495,26 @@ public class Tiers implements ITiers, IAttachment {
 
 	public void setAccountingAccountDeposit(AccountingAccount accountingAccountDeposit) {
 		this.accountingAccountDeposit = accountingAccountDeposit;
+	}
+
+	public String getPaymentIban() {
+		return paymentIban;
+	}
+
+	public Float getRffFormaliteRate() {
+		return rffFormaliteRate;
+	}
+
+	public void setRffFormaliteRate(Float rffFormaliteRate) {
+		this.rffFormaliteRate = rffFormaliteRate;
+	}
+
+	public Float getRffInsertionRate() {
+		return rffInsertionRate;
+	}
+
+	public void setRffInsertionRate(Float rffInsertionRate) {
+		this.rffInsertionRate = rffInsertionRate;
 	}
 
 }

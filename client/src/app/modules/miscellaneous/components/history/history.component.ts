@@ -1,7 +1,6 @@
 import { Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { CustomErrorStateMatcher } from 'src/app/app.component';
 import { Dictionnary } from 'src/app/libs/Dictionnary';
 import { formatDateTimeForSortTable } from 'src/app/libs/FormatHelper';
 import { IReferential } from 'src/app/modules/administration/model/IReferential';
@@ -19,7 +18,7 @@ import { AuditService } from '../../services/audit.service';
 export class HistoryComponent implements OnInit {
 
 
-  matcher: CustomErrorStateMatcher = new CustomErrorStateMatcher();
+
   @Input() entity: any = {};
   @Input() entityType: EntityType = {} as EntityType;
   @ViewChild(MatSort) sort!: MatSort;

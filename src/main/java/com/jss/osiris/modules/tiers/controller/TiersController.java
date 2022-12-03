@@ -342,8 +342,8 @@ public class TiersController {
 
     if (tiers.getIsIndividual()) {
       validationHelper.validateReferential(tiers.getCivility(), true, "Civility");
-      validationHelper.validateString(tiers.getFirstname(), true, 20, "Firstname");
-      validationHelper.validateString(tiers.getLastname(), true, 20, "Lastname");
+      validationHelper.validateString(tiers.getFirstname(), true, 40, "Firstname");
+      validationHelper.validateString(tiers.getLastname(), true, 40, "Lastname");
     } else {
       validationHelper.validateString(tiers.getDenomination(), true, 60, "Denomination");
       if (tiers.getIntercommunityVat() != null && tiers.getIntercommunityVat().length() > 20)
@@ -433,8 +433,8 @@ public class TiersController {
       for (Responsable responsable : tiers.getResponsables()) {
 
         validationHelper.validateReferential(responsable.getCivility(), true, "Civility");
-        validationHelper.validateString(responsable.getFirstname(), true, 20, "Firstname");
-        validationHelper.validateString(responsable.getLastname(), true, 20, "Lastname");
+        validationHelper.validateString(responsable.getFirstname(), true, 40, "Firstname");
+        validationHelper.validateString(responsable.getLastname(), true, 40, "Lastname");
         validationHelper.validateReferential(responsable.getTiersType(), true, "TiersType");
         validationHelper.validateReferential(responsable.getTiersCategory(), false, "TiersCategory");
         validationHelper.validateReferential(responsable.getSalesEmployee(), true, "SalesEmployee");

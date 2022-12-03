@@ -1,7 +1,5 @@
 import { CdkDragEnd, Point } from '@angular/cdk/drag-drop';
 import { Component, HostListener } from '@angular/core';
-import { FormGroupDirective, NgForm, UntypedFormControl } from '@angular/forms';
-import { ErrorStateMatcher } from '@angular/material/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
 import { environment } from 'src/environments/environment';
@@ -16,13 +14,6 @@ import { Note } from './services/model/Note';
 import { SearchService } from './services/search.service';
 import { UserNoteService } from './services/user.notes.service';
 import { UserPreferenceService } from './services/user.preference.service';
-
-export class CustomErrorStateMatcher implements ErrorStateMatcher {
-  isErrorState(control: UntypedFormControl | null, form: FormGroupDirective | NgForm | null): boolean {
-    const isSubmitted = form && form.submitted;
-    return !!(control && control.invalid && (control.dirty || control.touched || isSubmitted));
-  }
-}
 
 @Component({
   selector: 'app-root',

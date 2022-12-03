@@ -1,7 +1,6 @@
 import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { CustomErrorStateMatcher } from 'src/app/app.component';
 import { formatDateTimeForSortTable } from 'src/app/libs/FormatHelper';
 import { instanceOfCustomerOrder, instanceOfQuotation } from 'src/app/libs/TypeHelper';
 import { getCustomerOrderForIQuotation } from 'src/app/modules/invoicing/components/invoice-tools';
@@ -26,7 +25,7 @@ import { QuotationComponent } from '../quotation/quotation.component';
 })
 export class OrderingCustomerComponent implements OnInit {
 
-  matcher: CustomErrorStateMatcher = new CustomErrorStateMatcher();
+
   @Input() quotation: IQuotation = {} as IQuotation;
   @Input() editMode: boolean = false;
   @Output() updateDocuments: EventEmitter<void> = new EventEmitter<void>();

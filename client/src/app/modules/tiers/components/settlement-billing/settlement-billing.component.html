@@ -78,6 +78,7 @@
               </td>
               <td>
                 <autocomplete-city [(model)]="billingDocument.billingLabelCity" [isDisabled]="!editMode" label="Ville"
+                  [preFilterPostalCode]="billingDocument.billingPostalCode"
                   [modelCountry]="billingDocument.billingLabelCountry" [form]="settlementBillingForm"
                   propertyName="city" [isMandatory]="true" (onOptionSelected)="fillPostalCode($event)">
                 </autocomplete-city>

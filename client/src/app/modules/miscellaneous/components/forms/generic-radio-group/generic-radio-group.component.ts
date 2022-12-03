@@ -27,6 +27,7 @@ export abstract class GenericRadioGroupComponent<T> extends GenericFormComponent
   ngOnChanges(changes: SimpleChanges): void {
     super.ngOnChanges(changes);
     if (this.setFirstOptionDefaultChoice && !this.model) {
+      console.log(this.propertyName);
       this.model = this.types[0];
       this.modelChange.emit(this.model);
     }

@@ -187,7 +187,7 @@ public class NotificationServiceImpl implements NotificationService {
                         + ((Tiers) customerOrderTiers).getFirstname() + " "
                         + ((Tiers) customerOrderTiers).getLastname();
         if (customerOrderTiers instanceof Confrere)
-            customerOrderName = ((Tiers) customerOrderTiers).getDenomination();
+            customerOrderName = ((Confrere) customerOrderTiers).getLabel();
 
         if (notifySalesEmployee) {
             for (Employee employee : compareEmployee)

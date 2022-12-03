@@ -51,8 +51,9 @@
             </td>
             <td>
               <autocomplete-city [(model)]="domiciliation.city" [modelCountry]="domiciliation.country"
-                [form]="domiciliationForm" propertyName="city" [isMandatory]="true" [isDisabled]="!editMode"
-                label="Ville" [conditionnalRequired]="mustDecribeAdresse() && !isStatusOpen"
+                [preFilterPostalCode]="domiciliation.postalCode" [form]="domiciliationForm" propertyName="city"
+                [isMandatory]="true" [isDisabled]="!editMode" label="Ville"
+                [conditionnalRequired]="mustDecribeAdresse() && !isStatusOpen"
                 (onOptionSelected)="fillPostalCode($event)">
               </autocomplete-city>
             </td>
@@ -128,8 +129,9 @@
             </td>
             <td>
               <autocomplete-city [(model)]="domiciliation.activityCity" [modelCountry]="domiciliation.activityCountry"
-                [form]="domiciliationForm" propertyName="activityCity" [isMandatory]="true" [isDisabled]="!editMode"
-                label="Ville" [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen"
+                [preFilterPostalCode]="domiciliation.activityPostalCode" [form]="domiciliationForm"
+                propertyName="activityCity" [isMandatory]="true" [isDisabled]="!editMode" label="Ville"
+                [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen"
                 (onOptionSelected)="fillActivityPostalCode($event)">
               </autocomplete-city>
             </td>
@@ -279,6 +281,7 @@
             </td>
             <td>
               <autocomplete-city [(model)]="domiciliation.legalGardianCity"
+                [preFilterPostalCode]="domiciliation.legalGardianPostalCode"
                 [modelCountry]="domiciliation.legalGardianCountry" [form]="domiciliationForm"
                 propertyName="legalGardianCity" [isMandatory]="true" [isDisabled]="!editMode" label="Ville"
                 [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen"

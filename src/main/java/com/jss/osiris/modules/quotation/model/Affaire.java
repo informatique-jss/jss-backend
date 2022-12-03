@@ -33,18 +33,18 @@ public class Affaire implements Serializable, IId {
 	@JoinColumn(name = "id_civility")
 	private Civility civility;
 
-	@Column(length = 60)
+	@Column(length = 150)
 	@IndexedField
 	private String denomination;
 
 	@Column(nullable = false)
 	private Boolean isIndividual;
 
-	@Column(length = 20)
+	@Column(length = 50)
 	@IndexedField
 	private String firstname;
 
-	@Column(length = 20)
+	@Column(length = 50)
 	@IndexedField
 	private String lastname;
 

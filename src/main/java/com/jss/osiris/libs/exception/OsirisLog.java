@@ -8,13 +8,16 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.profile.model.Employee;
 
 @Entity
+@Table(indexes = { @Index(name = "idx_osiris_log_read", columnList = "is_read") })
 public class OsirisLog implements Serializable, IId {
 
     public static String OSRIS_LOG = "OSRIS_LOG";
@@ -44,6 +47,7 @@ public class OsirisLog implements Serializable, IId {
 
     private String logType;
 
+    @Column(name = "is_read")
     private Boolean isRead;
 
     public Integer getId() {

@@ -40,6 +40,7 @@ import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.CharacterPrice;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.IQuotation;
+import com.jss.osiris.modules.quotation.model.NoticeType;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.ProvisionType;
 import com.jss.osiris.modules.quotation.model.Quotation;
@@ -273,8 +274,27 @@ public class QuotationServiceImpl implements QuotationService {
                                     Float price = characterPrice.getPrice()
                                             * characterPriceService.getCharacterNumber(provision);
                                     invoiceItem.setPreTaxPrice(Math.round(price * 100f) / 100f);
-                                    invoiceItem.setLabel(invoiceItem.getLabel() + " ("
-                                            + characterPriceService.getCharacterNumber(provision) + " caractères)");
+
+                                    // Add notice type indication for announcements
+                                    String noticeFamiliyType = (provision.getAnnouncement() != null
+                                            && provision.getAnnouncement().getNoticeTypeFamily() != null)
+                                                    ? provision.getAnnouncement().getNoticeTypeFamily().getLabel()
+                                                    : null;
+                                    ArrayList<String> noticeTypes = new ArrayList<String>();
+                                    if (noticeFamiliyType != null
+                                            && provision.getAnnouncement().getNoticeTypes() != null)
+                                        for (NoticeType noticeType : provision.getAnnouncement().getNoticeTypes())
+                                            noticeTypes.add(noticeType.getLabel());
+
+                                    if (noticeFamiliyType != null && noticeTypes.size() > 0)
+                                        invoiceItem.setLabel(invoiceItem.getLabel() + " ("
+                                                + characterPriceService.getCharacterNumber(provision)
+                                                + " caractères, rubrique " + noticeFamiliyType + ", sous-rubrique(s) "
+                                                + String.join(", ", noticeTypes) + ")");
+                                    else
+                                        invoiceItem.setLabel(invoiceItem.getLabel() + " ("
+                                                + characterPriceService.getCharacterNumber(provision) + ")");
+
                                 } else {
                                     invoiceItem.setPreTaxPrice(0f);
                                 }

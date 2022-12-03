@@ -1,7 +1,6 @@
 
 import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
-import { CustomErrorStateMatcher } from 'src/app/app.component';
 
 @Component({
   selector: 'generic-date-range-picker',
@@ -10,7 +9,7 @@ import { CustomErrorStateMatcher } from 'src/app/app.component';
 })
 export class GenericDateRangePickerComponent implements OnInit {
 
-  matcher: CustomErrorStateMatcher = new CustomErrorStateMatcher();
+
 
   /**
    * The model of input property

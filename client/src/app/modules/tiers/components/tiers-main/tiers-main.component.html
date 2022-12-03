@@ -39,12 +39,12 @@
             <td [hidden]="tiers.isIndividual==false">
               <generic-input [(model)]="tiers.lastname" label="Nom" [isDisabled]="!editMode" [form]="principalForm"
                 propertyName="lastname" [isMandatory]="true" [conditionnalRequired]="tiers.isIndividual"
-                [maxLength]="20"></generic-input>
+                [maxLength]="40"></generic-input>
             </td>
             <td [hidden]="tiers.isIndividual==false">
               <generic-input [(model)]="tiers.firstname" label="Prénom" [isDisabled]="!editMode" [form]="principalForm"
                 propertyName="firstname" [isMandatory]="true" [conditionnalRequired]="tiers.isIndividual"
-                [maxLength]="20"></generic-input>
+                [maxLength]="40"></generic-input>
             </td>
           </tr>
         </table>
@@ -105,7 +105,7 @@
             <td>
               <autocomplete-city [(model)]="tiers.city" [modelCountry]="tiers.country" [form]="principalForm"
                 propertyName="city" [isMandatory]="true" [isDisabled]="!editMode" label="Ville" [isDisabled]="!editMode"
-                label="Ville" (onOptionSelected)="fillPostalCode($event)">
+                [preFilterPostalCode]="tiers.postalCode" label="Ville" (onOptionSelected)="fillPostalCode($event)">
               </autocomplete-city>
             </td>
             <td>

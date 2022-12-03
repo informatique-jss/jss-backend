@@ -2,7 +2,6 @@ import { Component, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { AbstractControl, FormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
-import { CustomErrorStateMatcher } from 'src/app/app.component';
 import { validateRna, validateSiren, validateSiret } from 'src/app/libs/CustomFormsValidatorsHelper';
 import { City } from 'src/app/modules/miscellaneous/model/City';
 import { Civility } from 'src/app/modules/miscellaneous/model/Civility';
@@ -31,7 +30,7 @@ import { SiretService } from '../../services/siret.service';
 export class AddAffaireDialogComponent implements OnInit {
 
   @ViewChild('tabs', { static: false }) tabs: any;
-  matcher: CustomErrorStateMatcher = new CustomErrorStateMatcher();
+
   affaire: Affaire = {} as Affaire;
 
 

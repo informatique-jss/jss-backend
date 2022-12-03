@@ -6,7 +6,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
-import { CustomErrorStateMatcher } from 'src/app/app.component';
 import { SEPARATOR_KEY_CODES } from 'src/app/libs/Constants';
 import { getDocument } from 'src/app/libs/DocumentHelper';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
@@ -33,7 +32,7 @@ import { NoticeTypeService } from '../../services/notice.type.service';
 })
 export class AnnouncementComponent implements OnInit {
 
-  matcher: CustomErrorStateMatcher = new CustomErrorStateMatcher();
+
   @Input() announcement: Announcement = {} as Announcement;
   @Input() affaire: Affaire = {} as Affaire;
   @Input() provision: Provision = {} as Provision;

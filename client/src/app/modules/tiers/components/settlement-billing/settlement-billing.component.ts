@@ -1,7 +1,6 @@
 import { AfterContentChecked, ChangeDetectorRef, Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { MatAccordion } from '@angular/material/expansion';
-import { CustomErrorStateMatcher } from 'src/app/app.component';
 import { getDocument } from 'src/app/libs/DocumentHelper';
 import { instanceOfResponsable, instanceOfTiers } from 'src/app/libs/TypeHelper';
 import { City } from 'src/app/modules/miscellaneous/model/City';
@@ -21,7 +20,7 @@ import { TiersService } from '../../services/tiers.service';
   styleUrls: ['./settlement-billing.component.css']
 })
 export class SettlementBillingComponent implements OnInit, AfterContentChecked {
-  matcher: CustomErrorStateMatcher = new CustomErrorStateMatcher();
+
   @Input() tiers: ITiers = {} as ITiers;
   @Input() editMode: boolean = false;
   @ViewChild(MatAccordion) accordion: MatAccordion | undefined;

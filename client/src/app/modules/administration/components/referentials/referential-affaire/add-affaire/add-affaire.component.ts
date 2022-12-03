@@ -123,7 +123,7 @@ export class AddAffaireComponent implements OnInit, AfterContentChecked {
         if (siren.uniteLegale.periodesUniteLegale != null && siren.uniteLegale.periodesUniteLegale != undefined && siren.uniteLegale.periodesUniteLegale.length > 0) {
           siren.uniteLegale.periodesUniteLegale.forEach(periode => {
             if (periode.dateFin == null) {
-              this.affaire.denomination = periode.denominationUniteLegale;
+              this.affaire.denomination = !this.affaire.denomination ? periode.denominationUniteLegale : this.affaire.denomination;
               this.affaireForm.markAllAsTouched();
               if (periode.nicSiegeUniteLegale != null && periode.nicSiegeUniteLegale != undefined)
                 this.siretService.getSiret(siren?.uniteLegale.siren + periode.nicSiegeUniteLegale).subscribe(response => {
@@ -149,6 +149,7 @@ export class AddAffaireComponent implements OnInit, AfterContentChecked {
           }
         })
       }
+      this.affaire.denomination = !this.affaire.denomination ? siret.etablissement.periodesEtablissement[0].denominationUsuelleEtablissement : this.affaire.denomination;
       if (siret.etablissement.adresseEtablissement != null && siret.etablissement.adresseEtablissement.codePostalEtablissement != null) {
         this.cityService.getCitiesFilteredByPostalCode(siret.etablissement.adresseEtablissement.codePostalEtablissement).subscribe(response => {
           if (response != null && response.length == 1) {

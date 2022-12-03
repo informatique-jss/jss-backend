@@ -1,7 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { MatExpansionPanel } from '@angular/material/expansion';
-import { CustomErrorStateMatcher } from 'src/app/app.component';
 import { compareWithId } from 'src/app/libs/CompareHelper';
 import { PROVISION_SCREEN_TYPE_ANNOUNCEMENT, PROVISION_SCREEN_TYPE_BODACC, PROVISION_SCREEN_TYPE_DOMICILIATION, PROVISION_SCREEN_TYPE_FORMALITE, PROVISION_SCREEN_TYPE_STANDARD } from 'src/app/libs/Constants';
 import { Employee } from 'src/app/modules/profile/model/Employee';
@@ -33,7 +32,7 @@ import { FormaliteComponent } from '../formalite/formalite.component';
 })
 export class ProvisionItemComponent implements OnInit {
 
-  matcher: CustomErrorStateMatcher = new CustomErrorStateMatcher();
+
   @Input() provision: Provision = {} as Provision;
   @Input() affaire: Affaire = {} as Affaire;
   @Input() editMode: boolean = false;

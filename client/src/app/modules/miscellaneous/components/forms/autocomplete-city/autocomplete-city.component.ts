@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { UserNoteService } from 'src/app/services/user.notes.service';
@@ -21,11 +21,25 @@ export class AutocompleteCityComponent extends GenericAutocompleteComponent<City
    */
   @Input() modelCountry: Country | undefined;
 
+  /**
+   * Bind a model here to prefilter cities with a given postal code
+   * On model change, city search is triggered
+   */
+  @Input() preFilterPostalCode: string | undefined;
+
   constructor(private formBuild: UntypedFormBuilder, private cityService: CityService, private userNoteService2: UserNoteService,) {
     super(formBuild, userNoteService2)
   }
 
   searchEntities(value: string): Observable<City[]> {
-    return this.cityService.getCitiesFilteredByCountryAndName(value, this.modelCountry);
+    if (!this.preFilterPostalCode)
+      return this.cityService.getCitiesFilteredByCountryAndName(value, this.modelCountry);
+    return this.cityService.getCitiesFilteredByPostalCode(this.preFilterPostalCode);
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    super.ngOnChanges(changes);
+    if (changes && changes.preFilterPostalCode && this.preFilterPostalCode && this.preFilterPostalCode.length > 2)
+      this.searchEntities("").subscribe(response => this.filteredTypes = response);
   }
 }

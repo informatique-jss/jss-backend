@@ -1,6 +1,5 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit, SimpleChanges } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
-import { CustomErrorStateMatcher } from 'src/app/app.component';
 import { validateVat } from 'src/app/libs/CustomFormsValidatorsHelper';
 import { City } from 'src/app/modules/miscellaneous/model/City';
 import { Country } from 'src/app/modules/miscellaneous/model/Country';
@@ -14,12 +13,11 @@ import { TiersType } from '../../model/TiersType';
 @Component({
   selector: 'tiers-main',
   templateUrl: './tiers-main.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: ['./tiers-main.component.css']
 })
 
 export class PrincipalComponent implements OnInit {
-  matcher: CustomErrorStateMatcher = new CustomErrorStateMatcher();
+
   @Input() tiers: Tiers = {} as Tiers;
   @Input() editMode: boolean = false;
 

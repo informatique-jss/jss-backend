@@ -15,7 +15,8 @@ public interface AssoAffaireOrderRepository extends CrudRepository<AssoAffaireOr
         @Query(nativeQuery = true, value = "select case when a.denomination is not null and a.denomination!='' then a.denomination else a.firstname || ' '||a.lastname end as affaireLabel,"
                         +
                         " a.address || ' - ' || a.postal_Code ||' - '||ci.label as affaireAddress," +
-                        " case when t.denomination is not null and t.denomination!='' then t.denomination else t.firstname || ' '||t.lastname end as tiersLabel,"
+                        "  coalesce(case when t.denomination is not null and t.denomination!='' then t.denomination else t.firstname || ' '||t.lastname end,"
+                        + "case when t2.denomination is not null and t2.denomination!='' then t2.denomination else t2.firstname || ' '||t2.lastname end) as tiersLabel,"
                         +
                         " r.firstname || ' '||r.lastname as responsableLabel," +
                         " cf.label as confrereLabel," +
@@ -32,6 +33,7 @@ public interface AssoAffaireOrderRepository extends CrudRepository<AssoAffaireOr
                         " left join city ci on ci.id = a.id_city" +
                         " left join tiers t on t.id = c.id_tiers" +
                         " left join responsable r on r.id = c.id_responsable" +
+                        " left join tiers t2 on r.id_tiers = t2.id" +
                         " left join confrere cf on cf.id = c.id_confrere" +
                         " left join employee e1 on e1.id = asso.id_employee" +
                         " left join employee e2 on e2.id = p.id_employee" +

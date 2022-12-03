@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { CustomErrorStateMatcher } from 'src/app/app.component';
 import { instanceOfCustomerOrder, instanceOfQuotation } from 'src/app/libs/TypeHelper';
 import { getAffaireListArrayForIQuotation, getAffaireListFromIQuotation, getCustomerOrderForIQuotation, getCustomerOrderNameForIQuotation, getLetteringDate } from 'src/app/modules/invoicing/components/invoice-tools';
 import { InvoiceService } from 'src/app/modules/invoicing/services/invoice.service';
@@ -19,7 +18,7 @@ import { QuotationComponent } from '../quotation/quotation.component';
   styleUrls: ['./invoice-management.component.css']
 })
 export class InvoiceManagementComponent implements OnInit {
-  matcher: CustomErrorStateMatcher = new CustomErrorStateMatcher();
+
   @Input() quotation: IQuotation = {} as IQuotation;
   customerOrder: CustomerOrder | undefined;
   @Input() editMode: boolean = false;

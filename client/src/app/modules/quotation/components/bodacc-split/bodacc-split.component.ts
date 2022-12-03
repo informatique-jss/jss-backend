@@ -1,7 +1,6 @@
 import { Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { MatAccordion } from '@angular/material/expansion';
-import { CustomErrorStateMatcher } from 'src/app/app.component';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { BodaccSplit } from '../../model/BodaccSplit';
 import { BodaccSplitBeneficiary } from '../../model/BodaccSplitBeneficiary';
@@ -15,7 +14,7 @@ import { Siren } from '../../model/Siren';
 })
 export class BodaccSplitComponent implements OnInit {
 
-  matcher: CustomErrorStateMatcher = new CustomErrorStateMatcher();
+
   @Input() bodaccSplit: BodaccSplit = {} as BodaccSplit;
   @Input() instanceOfCustomerOrder: boolean = false;
   @Input() isStatusOpen: boolean = true;

@@ -11,11 +11,11 @@
       </td>
       <td *ngIf="affaire.isIndividual==true">
         <generic-input [(model)]="affaire.lastname" label="Nom" [form]="affaireForm" propertyName="lastname"
-          [isMandatory]="true" [conditionnalRequired]="affaire.isIndividual" [maxLength]="20"></generic-input>
+          [isMandatory]="true" [conditionnalRequired]="affaire.isIndividual" [maxLength]="40"></generic-input>
       </td>
       <td *ngIf="affaire.isIndividual==true">
         <generic-input [(model)]="affaire.firstname" label="Prénom" [form]="affaireForm" propertyName="firstname"
-          [isMandatory]="true" [conditionnalRequired]="affaire.isIndividual" [maxLength]="20"></generic-input>
+          [isMandatory]="true" [conditionnalRequired]="affaire.isIndividual" [maxLength]="40"></generic-input>
       </td>
     </tr>
   </table>
@@ -52,7 +52,7 @@
       <td>
         <generic-input [(model)]="affaire.denomination" label="Dénomination" [form]="affaireForm"
           propertyName="denomination" [isMandatory]="true" [isDisabled]="!editMode"
-          [conditionnalRequired]="!this.affaire.isIndividual" [maxLength]="60"></generic-input>
+          [conditionnalRequired]="!this.affaire.isIndividual" [maxLength]="150"></generic-input>
       </td>
     </tr>
   </table>
@@ -72,7 +72,8 @@
       <td>
         <autocomplete-city [(model)]="affaire.city" [modelCountry]="affaire.country" [form]="affaireForm"
           propertyName="city" [isMandatory]="true" [conditionnalRequired]="!affaire.isIndividual"
-          [isDisabled]="!editMode" label="Ville" (onOptionSelected)="fillPostalCode($event)"></autocomplete-city>
+          [preFilterPostalCode]="affaire.postalCode" [isDisabled]="!editMode" label="Ville"
+          (onOptionSelected)="fillPostalCode($event)"></autocomplete-city>
       </td>
       <td>
         <autocomplete-country [(model)]="affaire.country" [form]="affaireForm" propertyName="country" label="Pays"

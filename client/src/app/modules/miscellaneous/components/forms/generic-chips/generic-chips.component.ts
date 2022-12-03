@@ -1,7 +1,6 @@
 import { Directive, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { MatChipInputEvent } from '@angular/material/chips';
-import { CustomErrorStateMatcher } from 'src/app/app.component';
 import { SEPARATOR_KEY_CODES } from 'src/app/libs/Constants';
 import { UserNoteService } from 'src/app/services/user.notes.service';
 import { GenericFormComponent } from '../generic-form.components';
@@ -11,7 +10,7 @@ export abstract class GenericChipsComponent<T> extends GenericFormComponent impl
 
   SEPARATOR_KEY_CODES = SEPARATOR_KEY_CODES;
 
-  matcher: CustomErrorStateMatcher = new CustomErrorStateMatcher();
+
 
   /**
    * The model of T property
