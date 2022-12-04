@@ -1,4 +1,4 @@
-import { AfterContentChecked, ChangeDetectorRef, Component, OnInit, ViewChild, ViewChildren } from '@angular/core';
+import { AfterContentChecked, ChangeDetectorRef, Component, OnInit, SimpleChanges, ViewChild, ViewChildren } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
@@ -37,6 +37,7 @@ import { OrderingCustomerComponent } from '../ordering-customer/ordering-custome
 import { ProvisionItemComponent } from '../provision-item/provision-item.component';
 import { QuotationManagementComponent } from '../quotation-management/quotation-management.component';
 import { IQuotation } from './../../model/IQuotation';
+import { replaceDocument } from '../../../../libs/DocumentHelper';
 @Component({
   selector: 'quotation',
   templateUrl: './quotation.component.html',
@@ -145,6 +146,10 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     }
   }
 
+  ngOnChanges(changes: SimpleChanges) {
+    console.log(changes);
+  }
+
   toggleTabs() {
     if (this.tabs != undefined)
       this.tabs.realignInkBar();
@@ -209,6 +214,9 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
   }
 
   saveQuotation(): boolean {
+     
+    // Can't find a way to make it work correctly ...
+    replaceDocument(this.constantService.getDocumentTypeBilling(),this.quotation, this.quotationManagementComponent?.getBillingDocument()!);
     if (this.getFormsStatus()) {
       if (!this.instanceOfCustomerOrder) {
         this.quotationService.addOrUpdateQuotation(this.quotation).subscribe(response => {
@@ -375,7 +383,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
   }
 
   generateInvoiceItem() {
-    if (this.quotation && this.quotation.assoAffaireOrders && this.quotation.assoAffaireOrders[0] && this.quotation.assoAffaireOrders[0].provisions && this.quotation.assoAffaireOrders[0].provisions[0] && this.quotation.assoAffaireOrders[0].provisions[0].provisionType)
+    if (this.quotation && this.quotation.assoAffaireOrders && this.quotation.assoAffaireOrders[0] && this.quotation.assoAffaireOrders[0].provisions && this.quotation.assoAffaireOrders[0].provisions[0] && this.quotation.assoAffaireOrders[0].provisions[0].provisionType && this.quotation.assoAffaireOrders[0].provisions[0].isRedactedByJss != null)
       this.quotationService.getInvoiceItemsForQuotation(this.quotation).subscribe(response => {
         this.mergeInvoiceItem(this.quotation, response);
       })

@@ -50,4 +50,6 @@ public interface CustomerOrderService {
 
         public void sendRemindersForCustomerOrderDeposit() throws OsirisException;
 
+        public void generateStoreAndSendPublicationReceipt(CustomerOrder customerOrder) throws OsirisException;
+
 }

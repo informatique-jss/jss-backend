@@ -8,9 +8,11 @@ import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { SEPARATOR_KEY_CODES } from 'src/app/libs/Constants';
 import { getDocument } from 'src/app/libs/DocumentHelper';
+import { Attachment } from 'src/app/modules/miscellaneous/model/Attachment';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { ANNOUNCEMENT_ENTITY_TYPE } from 'src/app/routing/search/search.component';
+import { AttachmentType } from '../../../miscellaneous/model/AttachmentType';
 import { Document } from "../../../miscellaneous/model/Document";
 import { Affaire } from '../../model/Affaire';
 import { Announcement } from '../../model/Announcement';
@@ -51,6 +53,11 @@ export class AnnouncementComponent implements OnInit {
 
   journalTypes: JournalType[] = [] as Array<JournalType>;
   journalTypeSpel: JournalType = this.constantService.getJournalTypeSpel();
+  journalTypePaper: JournalType = this.constantService.getJournalTypePaper();
+  confrereJssPaper: Confrere = this.constantService.getConfrereJssPaper();
+  confrereJssSpel: Confrere = this.constantService.getConfrereJssSpel();
+  attachmentTypePublicationReceipt: AttachmentType = this.constantService.getAttachmentTypePublicationReceipt();
+  attachmentTypePublicationFlag: AttachmentType = this.constantService.getAttachmentTypePublicationFlag();
 
   characterPrice: CharacterPrice = {} as CharacterPrice;
 
@@ -104,7 +111,7 @@ export class AnnouncementComponent implements OnInit {
       if (!this.announcement!)
         this.announcement! = {} as Announcement;
       if (!this.announcement!.confrere)
-        this.announcement!.confrere = this.constantService.getConfrereJss();
+        this.announcement!.confrere = this.constantService.getConfrereJssPaper();
       if (!this.announcement!.isHeader)
         this.announcement!.isHeader = false;
       if (!this.announcement!.isHeaderFree)
@@ -287,6 +294,12 @@ export class AnnouncementComponent implements OnInit {
     let historyActions = [] as Array<SortTableAction>;
 
     return historyActions;
+  }
+
+  updateAttachments(attachments: Attachment[]) {
+    if (attachments && this.announcement) {
+      this.announcement.attachments = attachments;
+    }
   }
 
 }

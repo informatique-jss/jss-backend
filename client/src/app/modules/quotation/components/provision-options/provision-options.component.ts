@@ -102,6 +102,7 @@ export class ProvisionOptionsComponent implements OnInit {
       if (!this.provision.isDocumentScanning) this.provision.isDocumentScanning = false;
       if (!this.provision.isEmergency) this.provision.isEmergency = false;
 
+      this.fillPublicationPaperNumber();
     }
   }
 
@@ -193,13 +194,17 @@ export class ProvisionOptionsComponent implements OnInit {
   }
 
   fillPublicationPaperNumber() {
-    if (this.provision && this.provision.isPublicationPaper && this.customerOrder) {
-      let document = getDocument(this.constantService.getDocumentTypePublication(), this.customerOrder);
-      if (document && document.isMailingPaper) {
-        if (document.numberMailingAffaire && document.numberMailingAffaire > 0)
-          this.provision.publicationPaperAffaireNumber = document.numberMailingAffaire;
-        if (document.numberMailingClient && document.numberMailingClient > 0)
-          this.provision.publicationPaperClientNumber = document.numberMailingClient;
+    if (this.provision && this.provision.announcement && (!this.provision.publicationPaperAffaireNumber
+      && !this.provision.publicationPaperClientNumber
+    )) {
+      let document = getDocument(this.constantService.getDocumentTypePublication(), this.provision.announcement);
+      if (this.provision.isPublicationPaper) {
+        if (document && document.isMailingPaper) {
+          if (document.numberMailingAffaire && document.numberMailingAffaire > 0)
+            this.provision.publicationPaperAffaireNumber = document.numberMailingAffaire;
+          if (document.numberMailingClient && document.numberMailingClient > 0)
+            this.provision.publicationPaperClientNumber = document.numberMailingClient;
+        }
       }
     }
   }

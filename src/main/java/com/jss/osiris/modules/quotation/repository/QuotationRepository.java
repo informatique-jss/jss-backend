@@ -17,6 +17,7 @@ public interface QuotationRepository extends CrudRepository<Quotation, Integer> 
                         + " case when cf.id is not null then cf.label"
                         + " when r.id is not null then  r.firstname || ' '||r.lastname "
                         + " else case when t.denomination is not null and t.denomination!='' then t.denomination else t.firstname || ' '||t.lastname end end as customerOrderLabel,"
+                        + "  case when t.denomination is not null and t.denomination!='' then t.denomination else t.firstname || ' '||t.lastname end as tiersLabel,"
                         + " cos.label as quotationStatus,"
                         + " co.created_date as createdDate,"
                         + " coalesce(cf.id_commercial,r.id_commercial,t.id_commercial,t2.id_commercial) as salesEmployeeId,"

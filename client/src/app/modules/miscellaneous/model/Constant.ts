@@ -12,7 +12,6 @@ import { TypeFormalite } from '../../quotation/model/guichet-unique/referentials
 import { TypePersonne } from '../../quotation/model/guichet-unique/referentials/TypePersonne';
 import { JournalType } from "../../quotation/model/JournalType";
 import { MailRedirectionType } from "../../quotation/model/MailRedirectionType";
-import { QuotationLabelType } from "../../quotation/model/QuotationLabelType";
 import { TransfertFundsType } from "../../quotation/model/TransfertFundsType";
 import { BillingLabelType } from "../../tiers/model/BillingLabelType";
 import { RefundType } from "../../tiers/model/RefundType";
@@ -56,6 +55,7 @@ export interface Constant {
   attachmentTypeKbisUpdated: AttachmentType;
   attachmentTypePublicationFlag: AttachmentType;
   attachmentTypePublicationReceipt: AttachmentType;
+  attachmentTypePublicationProof: AttachmentType;
   countryFrance: Country;
   countryMonaco: Country;
   billingTypeLogo: BillingType;
@@ -85,7 +85,6 @@ export interface Constant {
   stringNantissementDepositFormeJuridiqueCode: string;
   strinSocialShareNantissementRedactionFormeJuridiqueCode: string;
   stringBusinnessNantissementRedactionFormeJuridiqueCode: string;
-  quotationLabelTypeOther: QuotationLabelType;
   paymentTypePrelevement: PaymentType;
   paymentTypeVirement: PaymentType;
   paymentTypeCB: PaymentType;
@@ -95,7 +94,8 @@ export interface Constant {
   legalFormUnregistered: LegalForm;
   journalTypeSpel: JournalType;
   journalTypePaper: JournalType;
-  confrereJss: Confrere;
+  confrereJssSpel: Confrere;
+  confrereJssPaper: Confrere;
   domiciliationContractTypeKeepMail: DomiciliationContractType;
   domiciliationContractTypeRouteEmail: DomiciliationContractType;
   domiciliationContractTypeRouteMail: DomiciliationContractType;
@@ -111,6 +111,7 @@ export interface Constant {
   actTypeAuthentic: ActType;
   assignationTypeEmployee: AssignationType;
   employeeBillingResponsible: Employee;
+  employeeMailResponsible: Employee;
   employeeInvoiceReminderResponsible: Employee;
   employeeSalesDirector: Employee;
   transfertFundsTypePhysique: TransfertFundsType;

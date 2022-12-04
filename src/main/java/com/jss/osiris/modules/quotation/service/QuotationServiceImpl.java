@@ -154,8 +154,7 @@ public class QuotationServiceImpl implements QuotationService {
             quotation = quotationRepository.save(quotation);
         }
 
-        if (quotation.getId() == null)
-            quotation = quotationRepository.save(quotation);
+        quotation = quotationRepository.save(quotation);
 
         getAndSetInvoiceItemsForQuotation(quotation, true);
 
@@ -166,7 +165,7 @@ public class QuotationServiceImpl implements QuotationService {
         if (isNewQuotation) {
             notificationService.notifyNewQuotation(quotation);
 
-            // if (quotation.getIsCreatedFromWebSite())
+            // TODO : remove when website ready ! if (quotation.getIsCreatedFromWebSite())
             mailHelper.sendQuotationCreationConfirmationToCustomer(quotation);
         }
         return quotation;
@@ -180,7 +179,8 @@ public class QuotationServiceImpl implements QuotationService {
                 if (assoAffaireOrder.getProvisions() != null)
                     for (Provision provision : assoAffaireOrder.getProvisions()) {
                         provision.setAssoAffaireOrder(assoAffaireOrder);
-                        setInvoiceItemsForProvision(provision, quotation, persistInvoiceItem);
+                        if (provision.getProvisionType() != null)
+                            setInvoiceItemsForProvision(provision, quotation, persistInvoiceItem);
                     }
             }
         }
@@ -327,7 +327,7 @@ public class QuotationServiceImpl implements QuotationService {
                             InvoiceItem invoiceItem = null;
 
                             for (InvoiceItem invoiceItemProvision : provision.getInvoiceItems())
-                                if (invoiceItemProvision.getId() != null
+                                if (invoiceItemProvision.getBillingItem() != null
                                         && invoiceItemProvision.getBillingItem().getBillingType().getId()
                                                 .equals(billingType.getId()))
                                     invoiceItem = invoiceItemProvision;
@@ -362,7 +362,7 @@ public class QuotationServiceImpl implements QuotationService {
                 for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
                     boolean found = false;
                     for (BillingType billingType : provisionType.getBillingTypes()) {
-                        if (invoiceItem.getId() != null
+                        if (invoiceItem.getBillingItem() != null
                                 && billingType.getId().equals(invoiceItem.getBillingItem().getBillingType().getId())
                                 && (!billingType.getIsOptionnal()
                                         || hasOption(billingType, provision)))
@@ -557,6 +557,9 @@ public class QuotationServiceImpl implements QuotationService {
                 quotation.setCustomerOrders(new ArrayList<CustomerOrder>());
             quotation.getCustomerOrders().add(customerOrder);
             notificationService.notifyQuotationValidatedByCustomer(quotation);
+            customerOrder.setQuotations(new ArrayList<Quotation>());
+            customerOrder.getQuotations().add(quotation);
+            customerOrderService.generateStoreAndSendPublicationReceipt(customerOrder);
         }
         if (quotation.getQuotationStatus().getCode().equals(QuotationStatus.SENT_TO_CUSTOMER)
                 && targetQuotationStatus.getCode().equals(QuotationStatus.REFUSED_BY_CUSTOMER))
@@ -564,7 +567,9 @@ public class QuotationServiceImpl implements QuotationService {
 
         quotation.setLastStatusUpdate(LocalDateTime.now());
         quotation.setQuotationStatus(targetQuotationStatus);
-        return this.addOrUpdateQuotation(quotation);
+        this.addOrUpdateQuotation(quotation);
+
+        return quotation;
     }
 
     @Override

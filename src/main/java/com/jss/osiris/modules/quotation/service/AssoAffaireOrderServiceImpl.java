@@ -11,15 +11,18 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.search.service.IndexEntityService;
+import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.service.MailService;
 import com.jss.osiris.modules.miscellaneous.service.PhoneService;
 import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.profile.service.EmployeeService;
 import com.jss.osiris.modules.quotation.model.AffaireSearch;
+import com.jss.osiris.modules.quotation.model.Announcement;
 import com.jss.osiris.modules.quotation.model.AnnouncementStatus;
 import com.jss.osiris.modules.quotation.model.AssignationType;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrderSearchResult;
+import com.jss.osiris.modules.quotation.model.Bodacc;
 import com.jss.osiris.modules.quotation.model.BodaccStatus;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.Domiciliation;
@@ -28,6 +31,7 @@ import com.jss.osiris.modules.quotation.model.FormaliteStatus;
 import com.jss.osiris.modules.quotation.model.IQuotation;
 import com.jss.osiris.modules.quotation.model.IWorkflowElement;
 import com.jss.osiris.modules.quotation.model.Provision;
+import com.jss.osiris.modules.quotation.model.guichetUnique.Formalite;
 import com.jss.osiris.modules.quotation.repository.AssoAffaireOrderRepository;
 
 @Service
@@ -89,6 +93,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
         AssoAffaireOrder affaireSaved = assoAffaireOrderRepository.save(assoAffaireOrder);
         indexEntityService.indexEntity(affaireSaved, affaireSaved.getId());
         customerOrderService.checkAllProvisionEnded(assoAffaireOrder.getCustomerOrder());
+        customerOrderService.generateStoreAndSendPublicationReceipt(assoAffaireOrder.getCustomerOrder());
         return affaireSaved;
     }
 
@@ -144,38 +149,55 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                             && domiciliation.getLegalGardianPhones() != null
                             && domiciliation.getLegalGardianPhones().size() > 0)
                         phoneService.populateMPhoneIds(domiciliation.getLegalGardianPhones());
-
                 }
+
+                if (domiciliation.getDocuments() != null)
+                    for (Document document : domiciliation.getDocuments())
+                        document.setDomiciliation(domiciliation);
             }
 
             if (provision.getFormalite() != null) {
-                if (customerOrder.getId() == null || provision.getFormalite().getFormaliteStatus() == null)
-                    provision.getFormalite().setFormaliteStatus(
+                Formalite formalite = provision.getFormalite();
+                if (customerOrder.getId() == null || formalite.getFormaliteStatus() == null)
+                    formalite.setFormaliteStatus(
                             formaliteStatusService.getFormaliteStatusByCode(FormaliteStatus.FORMALITE_NEW));
 
-                if (provision.getFormalite().getReferenceMandataire() == null)
+                if (formalite.getReferenceMandataire() == null)
                     // Play with fire ...
-                    provision.getFormalite().setReferenceMandataire(provision.getFormalite().getId() + "");
-                if (provision.getFormalite().getNomDossier() == null)
-                    provision.getFormalite()
+                    formalite.setReferenceMandataire(formalite.getId() + "");
+                if (formalite.getNomDossier() == null)
+                    formalite
                             .setNomDossier(assoAffaireOrder.getAffaire().getDenomination() != null
                                     ? assoAffaireOrder.getAffaire().getDenomination()
                                     : (assoAffaireOrder.getAffaire().getFirstname() + " "
                                             + assoAffaireOrder.getAffaire().getLastname()));
-                if (provision.getFormalite().getSignedPlace() == null)
-                    provision.getFormalite().setSignedPlace("8 Rue Saint-Augustin, 75002 Paris");
+                if (formalite.getSignedPlace() == null)
+                    formalite.setSignedPlace("8 Rue Saint-Augustin, 75002 Paris");
+
+                if (formalite.getDocuments() != null)
+                    for (Document document : formalite.getDocuments())
+                        document.setFormalite(formalite);
             }
 
             if (provision.getBodacc() != null) {
-                if (customerOrder.getId() == null || provision.getBodacc().getBodaccStatus() == null)
-                    provision.getBodacc()
-                            .setBodaccStatus(bodaccStatusService.getBodaccStatusByCode(BodaccStatus.BODACC_NEW));
+                Bodacc bodacc = provision.getBodacc();
+                if (customerOrder.getId() == null || bodacc.getBodaccStatus() == null)
+                    bodacc.setBodaccStatus(bodaccStatusService.getBodaccStatusByCode(BodaccStatus.BODACC_NEW));
+
+                if (bodacc.getDocuments() != null)
+                    for (Document document : bodacc.getDocuments())
+                        document.setBodacc(bodacc);
             }
 
             if (provision.getAnnouncement() != null) {
-                if (customerOrder.getId() == null || provision.getAnnouncement().getAnnouncementStatus() == null)
-                    provision.getAnnouncement().setAnnouncementStatus(announcementStatusService
+                Announcement announcement = provision.getAnnouncement();
+                if (customerOrder.getId() == null || announcement.getAnnouncementStatus() == null)
+                    announcement.setAnnouncementStatus(announcementStatusService
                             .getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_NEW));
+
+                if (announcement.getDocuments() != null)
+                    for (Document document : announcement.getDocuments())
+                        document.setAnnouncement(announcement);
             }
 
             // Set proper assignation regarding provision item configuration

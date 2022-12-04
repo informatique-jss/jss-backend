@@ -1,6 +1,6 @@
 
 export interface QuotationSearchResult {
-
+  tiersLabel: string;
   customerOrderLabel: string;
   quotationStatus: string;
   createdDate: Date;

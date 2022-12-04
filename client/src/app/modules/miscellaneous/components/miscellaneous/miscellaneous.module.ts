@@ -173,7 +173,6 @@ import { RadioGroupBillingLabelComponent } from '../forms/radio-group-billing-la
 import { RadioGroupCivilityComponent } from '../forms/radio-group-civility/radio-group-civility.component';
 import { RadioGroupJournalTypeComponent } from '../forms/radio-group-journal-type/radio-group-journal-type.component';
 import { RadioGroupLanguageComponent } from '../forms/radio-group-language/radio-group-language.component';
-import { RadioGroupQuotationLabelTypeComponent } from '../forms/radio-group-quotation-label-type/radio-group-quotation-label-type.component';
 import { RadioGroupRecordTypeComponent } from '../forms/radio-group-record-type/radio-group-record-type.component';
 import { RadioGroupTransfertFundsComponent } from '../forms/radio-group-transfert-funds/radio-group-transfert-funds.component';
 import { SelectAccountingAccountClassComponent } from '../forms/select-accounting-account-class/select-accounting-account-class.component';
@@ -334,7 +333,6 @@ const routes: Routes = [
     SelectBillingItemsComponent,
     ChipsConfrereComponent,
     SelectJournalTypeComponent,
-    RadioGroupQuotationLabelTypeComponent,
     TrustHtmlPipe,
     SelectVatCollectionTypeComponent,
     AutocompleteEmployeeComponent,
@@ -491,7 +489,6 @@ const routes: Routes = [
     RadioGroupJournalTypeComponent,
     SelectJournalTypeComponent,
     AutocompleteSirenComponent,
-    RadioGroupQuotationLabelTypeComponent,
     AutocompleteAccountingAccountComponent,
     AutocompleteEmployeeComponent,
     ConfrereDialogComponent,

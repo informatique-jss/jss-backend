@@ -1,4 +1,4 @@
-<mat-form-field class="full-width" [formGroup]="form!">
+<mat-form-field class=" full -width" [formGroup]="form!">
   <mat-label>{{label}}</mat-label>
   <input matInput [matDatepicker]="datetimePicker" [min]="minDate" [max]="maxDate" [formControlName]="propertyName"
     autocomplete="do-not-autocomplete" (dateChange)="dateChange($event.value)">

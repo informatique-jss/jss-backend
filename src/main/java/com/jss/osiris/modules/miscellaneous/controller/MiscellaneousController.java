@@ -314,11 +314,11 @@ public class MiscellaneousController {
         validationHelper.validateReferential(constant.getAttachmentTypeLogo(), true, "AttachmentTypeLogo");
         validationHelper.validateReferential(constant.getAttachmentTypeProofOfAddress(), true,
                 "AttachmentTypeProofOfAddress");
+        validationHelper.validateReferential(constant.getAttachmentTypePublicationProof(), true,
+                "AttachmentTypePublicationProof");
         validationHelper.validateReferential(constant.getCountryFrance(), true, "CountryFrance");
         validationHelper.validateReferential(constant.getCountryMonaco(), true, "CountryMonaco");
         validationHelper.validateReferential(constant.getBillingTypeLogo(), true, "BillingTypeLogo");
-        validationHelper.validateReferential(constant.getQuotationLabelTypeOther(), true,
-                "QuotationLabelTypeOther");
         validationHelper.validateReferential(constant.getPaymentTypePrelevement(), true, "PaymentTypePrelevement");
         validationHelper.validateReferential(constant.getPaymentTypeVirement(), true, "PaymentTypeVirement");
         validationHelper.validateReferential(constant.getPaymentTypeCB(), true, "PaymentTypeCB");
@@ -328,7 +328,8 @@ public class MiscellaneousController {
                 "SubscriptionPeriodType12M");
         validationHelper.validateReferential(constant.getLegalFormUnregistered(), true, "LegalFormUnregistered");
         validationHelper.validateReferential(constant.getJournalTypeSpel(), true, "JournalTypeSpel");
-        validationHelper.validateReferential(constant.getConfrereJss(), true, "ConfrereJss");
+        validationHelper.validateReferential(constant.getConfrereJssPaper(), true, "ConfrereJss");
+        validationHelper.validateReferential(constant.getConfrereJssSpel(), true, "ConfrereJss");
         validationHelper.validateReferential(constant.getDomiciliationContractTypeKeepMail(), true,
                 "DomiciliationContractTypeKeepMail");
         validationHelper.validateReferential(constant.getDomiciliationContractTypeRouteMail(), true,
@@ -357,6 +358,8 @@ public class MiscellaneousController {
                 "AssignationTypeEmployee");
         validationHelper.validateReferential(constant.getEmployeeBillingResponsible(), true,
                 "EmployeeBillingResponsible");
+        validationHelper.validateReferential(constant.getEmployeeMailResponsible(), true,
+                "EmployeeMailResponsible");
         validationHelper.validateReferential(constant.getTransfertFundsTypePhysique(), true,
                 "TransfertFundsTypePhysique");
         validationHelper.validateReferential(constant.getTransfertFundsTypeMoral(), true,

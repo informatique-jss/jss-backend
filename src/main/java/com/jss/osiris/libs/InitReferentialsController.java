@@ -48,7 +48,6 @@ import com.jss.osiris.modules.quotation.repository.NoticeTypeFamilyRepository;
 import com.jss.osiris.modules.quotation.repository.NoticeTypeRepository;
 import com.jss.osiris.modules.quotation.repository.ProvisionFamilyTypeRepository;
 import com.jss.osiris.modules.quotation.repository.ProvisionTypeRepository;
-import com.jss.osiris.modules.quotation.repository.QuotationLabelTypeRepository;
 import com.jss.osiris.modules.quotation.repository.QuotationRepository;
 import com.jss.osiris.modules.quotation.repository.QuotationStatusRepository;
 import com.jss.osiris.modules.quotation.repository.RecordTypeRepository;
@@ -185,9 +184,6 @@ public class InitReferentialsController {
 
 	@Autowired
 	QuotationRepository quotationRepository;
-
-	@Autowired
-	QuotationLabelTypeRepository quotationLabelTypeRepository;
 
 	@Autowired
 	RecordTypeRepository recordTypeRepository;

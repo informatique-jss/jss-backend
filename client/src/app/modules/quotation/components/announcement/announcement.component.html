@@ -38,6 +38,44 @@
                   [isMandatory]="true" [conditionnalRequired]=" !isStatusOpen" [isDisabled]="!editMode"
                   (onDateChange)="updateCharacterPrice()"></generic-datepicker>
               </td>
+              <td>
+                <generic-toggle [(model)]="announcement.isProofReadingDocument" label="Epreuve de relecture ?"
+                  [form]="announcementForm" propertyName="isProofReadingDocument"></generic-toggle>
+              </td>
+            </tr>
+          </table>
+          <table class="full-width">
+            <tr>
+              <td>
+                <select-notice-family [(model)]="announcement.noticeTypeFamily" label="Rubrique"
+                  [form]="announcementForm" propertyName="noticeTypeFamily" [isMandatory]="true"
+                  (selectionChange)="clearNoticeTypeField()"
+                  [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode">
+                </select-notice-family>
+              </td>
+              <td *ngIf="announcement.noticeTypeFamily">
+                <mat-form-field class="full-width">
+                  <mat-label>Sous-rubrique(s)</mat-label>
+                  <mat-chip-list #chipListNoticeTypes>
+                    <mat-chip *ngFor="let noticeType of announcement.noticeTypes"
+                      (removed)="removeNoticeType(noticeType)">
+                      {{noticeType.label}}
+                      <button matChipRemove *ngIf="editMode">
+                        <mat-icon>cancel</mat-icon>
+                      </button>
+                    </mat-chip>
+                    <input placeholder="Saisir une sous-rubrique" #noticeTypesInput formControlName="noticeTypes"
+                      [matChipInputFor]="chipListNoticeTypes" [matChipInputSeparatorKeyCodes]="SEPARATOR_KEY_CODES"
+                      [matAutocomplete]="autoCompleteNoticeTypes">
+                  </mat-chip-list>
+                  <mat-autocomplete autoActiveFirstOption #autoCompleteNoticeTypes="matAutocomplete"
+                    [displayWith]="displayLabel" (optionSelected)="addNoticeType($event)">
+                    <mat-option *ngFor="let noticeType of filteredNoticeTypes | async" [value]="noticeType">
+                      {{noticeType.label}}
+                    </mat-option>
+                  </mat-autocomplete>
+                </mat-form-field>
+              </td>
             </tr>
           </table>
         </div>
@@ -126,35 +164,19 @@
           </table>
           <table class="full-width">
             <tr>
-              <td>
-                <select-notice-family [(model)]="announcement.noticeTypeFamily" label="Rubrique"
-                  [form]="announcementForm" propertyName="noticeTypeFamily" [isMandatory]="true"
-                  (selectionChange)="clearNoticeTypeField()"
-                  [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen" [isDisabled]="!editMode">
-                </select-notice-family>
+              <td
+                *ngIf="announcement.confrere && announcement.confrere.id !=confrereJssPaper.id   && announcement.confrere.journalType.id == journalTypePaper.id">
+                <single-attachment [entity]="announcement!" [entityType]="ANNOUNCEMENT_ENTITY_TYPE.entityType"
+                  [editMode]="editMode" [attachmentTypeToDisplay]="attachmentTypePublicationReceipt"
+                  (onUploadedFile)="updateAttachments($event)">
+                </single-attachment>
               </td>
-              <td *ngIf="announcement.noticeTypeFamily">
-                <mat-form-field class="full-width">
-                  <mat-label>Sous-rubrique(s)</mat-label>
-                  <mat-chip-list #chipListNoticeTypes>
-                    <mat-chip *ngFor="let noticeType of announcement.noticeTypes"
-                      (removed)="removeNoticeType(noticeType)">
-                      {{noticeType.label}}
-                      <button matChipRemove *ngIf="editMode">
-                        <mat-icon>cancel</mat-icon>
-                      </button>
-                    </mat-chip>
-                    <input placeholder="Saisir une sous-rubrique" #noticeTypesInput formControlName="noticeTypes"
-                      [matChipInputFor]="chipListNoticeTypes" [matChipInputSeparatorKeyCodes]="SEPARATOR_KEY_CODES"
-                      [matAutocomplete]="autoCompleteNoticeTypes">
-                  </mat-chip-list>
-                  <mat-autocomplete autoActiveFirstOption #autoCompleteNoticeTypes="matAutocomplete"
-                    [displayWith]="displayLabel" (optionSelected)="addNoticeType($event)">
-                    <mat-option *ngFor="let noticeType of filteredNoticeTypes | async" [value]="noticeType">
-                      {{noticeType.label}}
-                    </mat-option>
-                  </mat-autocomplete>
-                </mat-form-field>
+              <td
+                *ngIf="announcement.confrere && announcement.confrere.id !=confrereJssSpel.id && announcement.confrere.journalType.id == journalTypeSpel.id">
+                <single-attachment [entity]="announcement!" [entityType]="ANNOUNCEMENT_ENTITY_TYPE.entityType"
+                  [editMode]="editMode" [attachmentTypeToDisplay]="attachmentTypePublicationFlag"
+                  (onUploadedFile)="updateAttachments($event)">
+                </single-attachment>
               </td>
             </tr>
           </table>
@@ -169,34 +191,33 @@
       <fieldset [disabled]="editMode==false" class="fieldset-no-border">
         <div class="form-div">
           <mat-accordion multi>
-            <mat-expansion-panel expanded>
+            <mat-expansion-panel>
               <mat-expansion-panel-header>
                 <mat-panel-title>
                   Epreuve de relecture
                 </mat-panel-title>
                 <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
               </mat-expansion-panel-header>
-              <generic-toggle [(model)]="announcement.isProofReadingDocument" label="Epreuve de relecture ?"
-                [form]="announcementForm" propertyName="isProofReadingDocument"></generic-toggle>
-              <addressing *ngIf="announcement.isProofReadingDocument" [displayMailCC]="true" [hideConsignee]="true"
-                [onlyMail]="true" [editMode]="editMode" [document]="proofReadingDocument">
+              <addressing [displayMailCC]="false" [onlyMail]="true" [editMode]=" editMode"
+                [document]="proofReadingDocument">
               </addressing>
             </mat-expansion-panel>
-            <mat-expansion-panel>
+            <mat-expansion-panel
+              *ngIf="announcement.confrere && announcement.confrere.journalType.id == journalTypeSpel.id">
               <mat-expansion-panel-header>
                 <mat-panel-title>
-                  Justificatif de parution
+                  Témoin de publication
                 </mat-panel-title>
                 <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
               </mat-expansion-panel-header>
-              <addressing [editMode]="editMode" [document]="publicationDocument" [displayNumberMailing]="true"
-                [displayPaperCopy]="true">
+              <addressing [editMode]="editMode" [onlyMail]="true" [document]="publicationDocument">
               </addressing>
             </mat-expansion-panel>
-            <mat-expansion-panel>
+            <mat-expansion-panel
+              *ngIf="announcement.confrere && announcement.confrere.journalType.id == journalTypePaper.id">
               <mat-expansion-panel-header>
                 <mat-panel-title>
-                  Attestation de parution
+                  Justificatif de parution
                 </mat-panel-title>
                 <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
               </mat-expansion-panel-header>

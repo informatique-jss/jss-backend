@@ -21,7 +21,6 @@ import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.DomiciliationContractType;
 import com.jss.osiris.modules.quotation.model.JournalType;
 import com.jss.osiris.modules.quotation.model.MailRedirectionType;
-import com.jss.osiris.modules.quotation.model.QuotationLabelType;
 import com.jss.osiris.modules.quotation.model.TransfertFundsType;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormeJuridique;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeFormalite;
@@ -143,6 +142,10 @@ public class Constant implements Serializable, IId {
 	private AttachmentType attachmentTypePublicationReceipt;
 
 	@ManyToOne
+	@JoinColumn(name = "id_attachment_type_publication_proof")
+	private AttachmentType attachmentTypePublicationProof;
+
+	@ManyToOne
 	@JoinColumn(name = "id_country_france")
 	private Country countryFrance;
 
@@ -254,10 +257,6 @@ public class Constant implements Serializable, IId {
 	private String stringBusinnessNantissementRedactionFormeJuridiqueCode;
 
 	@ManyToOne
-	@JoinColumn(name = "id_quotation_label_type_other")
-	private QuotationLabelType quotationLabelTypeOther;
-
-	@ManyToOne
 	@JoinColumn(name = "id_payment_type_prelevement")
 	private PaymentType paymentTypePrelevement;
 
@@ -294,8 +293,12 @@ public class Constant implements Serializable, IId {
 	private JournalType journalTypePaper;
 
 	@ManyToOne
-	@JoinColumn(name = "id_confrere_jss")
-	private Confrere confrereJss;
+	@JoinColumn(name = "id_confrere_jss_spel")
+	private Confrere confrereJssSpel;
+
+	@ManyToOne
+	@JoinColumn(name = "id_confrere_jss_paper")
+	private Confrere confrereJssPaper;
 
 	@ManyToOne
 	@JoinColumn(name = "id_domiciliation_constract_type_keep_mail")
@@ -356,6 +359,10 @@ public class Constant implements Serializable, IId {
 	@ManyToOne
 	@JoinColumn(name = "id_employee_billing_responsible")
 	private Employee employeeBillingResponsible;
+
+	@ManyToOne
+	@JoinColumn(name = "id_employee_mail_responsible")
+	private Employee employeeMailResponsible;
 
 	@ManyToOne
 	@JoinColumn(name = "id_employee_invoice_reminder_responsible")
@@ -668,14 +675,6 @@ public class Constant implements Serializable, IId {
 		this.billingTypeLogo = billingTypeLogo;
 	}
 
-	public QuotationLabelType getQuotationLabelTypeOther() {
-		return quotationLabelTypeOther;
-	}
-
-	public void setQuotationLabelTypeOther(QuotationLabelType quotationLabelTypeOther) {
-		this.quotationLabelTypeOther = quotationLabelTypeOther;
-	}
-
 	public PaymentType getPaymentTypePrelevement() {
 		return paymentTypePrelevement;
 	}
@@ -738,14 +737,6 @@ public class Constant implements Serializable, IId {
 
 	public void setJournalTypeSpel(JournalType journalTypeSpel) {
 		this.journalTypeSpel = journalTypeSpel;
-	}
-
-	public Confrere getConfrereJss() {
-		return confrereJss;
-	}
-
-	public void setConfrereJss(Confrere confrereJss) {
-		this.confrereJss = confrereJss;
 	}
 
 	public DomiciliationContractType getDomiciliationContractTypeKeepMail() {
@@ -1336,6 +1327,38 @@ public class Constant implements Serializable, IId {
 
 	public void setEmployeeInvoiceReminderResponsible(Employee employeeInvoiceReminderResponsible) {
 		this.employeeInvoiceReminderResponsible = employeeInvoiceReminderResponsible;
+	}
+
+	public Confrere getConfrereJssSpel() {
+		return confrereJssSpel;
+	}
+
+	public void setConfrereJssSpel(Confrere confrereJssSpel) {
+		this.confrereJssSpel = confrereJssSpel;
+	}
+
+	public Confrere getConfrereJssPaper() {
+		return confrereJssPaper;
+	}
+
+	public void setConfrereJssPaper(Confrere confrereJssPaper) {
+		this.confrereJssPaper = confrereJssPaper;
+	}
+
+	public AttachmentType getAttachmentTypePublicationProof() {
+		return attachmentTypePublicationProof;
+	}
+
+	public void setAttachmentTypePublicationProof(AttachmentType attachmentTypePublicationProof) {
+		this.attachmentTypePublicationProof = attachmentTypePublicationProof;
+	}
+
+	public Employee getEmployeeMailResponsible() {
+		return employeeMailResponsible;
+	}
+
+	public void setEmployeeMailResponsible(Employee employeeMailResponsible) {
+		this.employeeMailResponsible = employeeMailResponsible;
 	}
 
 }

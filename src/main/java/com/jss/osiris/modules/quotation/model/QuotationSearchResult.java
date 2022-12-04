@@ -3,6 +3,8 @@ package com.jss.osiris.modules.quotation.model;
 import java.time.LocalDateTime;
 
 public interface QuotationSearchResult {
+    public String getTiersLabel();
+
     public String getCustomerOrderLabel();
 
     public String getQuotationStatus();

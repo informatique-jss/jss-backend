@@ -125,7 +125,7 @@
           <tr>
             <td>
               <select-document-type [(model)]="constant.documentTypePublicationCertificate"
-                label="Type de document - Attestation de parution" [form]="constantForm"
+                label="Type de document - Témoin de publication" [form]="constantForm"
                 propertyName="documentTypePublicationCertificate" [isMandatory]="true" [isDisabled]="!editMode">
               </select-document-type>
             </td>
@@ -194,6 +194,14 @@
           <tr>
             <td>
               <select-attachment-type [(model)]="constant.attachmentTypePublicationReceipt"
+                label="Type de pièce-jointe - Attestation de parution" [form]="constantForm"
+                propertyName="attachmentTypePublicationReceipt" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-attachment-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-attachment-type [(model)]="constant.attachmentTypePublicationProof"
                 label="Type de pièce-jointe - Justificatif de parution" [form]="constantForm"
                 propertyName="attachmentTypePublicationReceipt" [isMandatory]="true" [isDisabled]="!editMode">
               </select-attachment-type>
@@ -436,13 +444,6 @@
           </tr>
           <tr>
             <td>
-              <radio-group-quotation-label-type [(model)]="constant.quotationLabelTypeOther" [form]="constantForm"
-                [isDisabled]="!editMode" propertyName="quotationLabelTypeOther" label="Libellé sur devis - Autres">
-              </radio-group-quotation-label-type>
-            </td>
-          </tr>
-          <tr>
-            <td>
               <select-payment-types [(model)]="constant.paymentTypePrelevement" label="Type de paiement - prélèvement"
                 [form]="constantForm" propertyName="paymentTypePrelevement" [isMandatory]="true"
                 [isDisabled]="!editMode"></select-payment-types>
@@ -507,8 +508,16 @@
           </tr>
           <tr>
             <td>
-              <autocomplete-confrere [(model)]="constant.confrereJss" [form]="constantForm" propertyName="confrereJss"
-                [isMandatory]="true" [isDisabled]="!editMode" label="Confrère - JSS"></autocomplete-confrere>
+              <autocomplete-confrere [(model)]="constant.confrereJssSpel" [form]="constantForm"
+                propertyName="confrereJssSpel" [isMandatory]="true" [isDisabled]="!editMode"
+                label="Confrère - JSS SPEL"></autocomplete-confrere>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-confrere [(model)]="constant.confrereJssPaper" [form]="constantForm"
+                propertyName="confrereJssPaper" [isMandatory]="true" [isDisabled]="!editMode"
+                label="Confrère - JSS - Papier"></autocomplete-confrere>
             </td>
           </tr>
           <tr>
@@ -624,6 +633,13 @@
               <autocomplete-employee [(model)]="constant.employeeBillingResponsible" [form]="constantForm"
                 propertyName="employeeBillingResponsible" [isMandatory]="true" [isDisabled]="!editMode"
                 label="Employé responsable de la facturation"></autocomplete-employee>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-employee [(model)]="constant.employeeMailResponsible" [form]="constantForm"
+                propertyName="employeeMailResponsible" [isMandatory]="true" [isDisabled]="!editMode"
+                label="Employé responsable du courrier"></autocomplete-employee>
             </td>
           </tr>
           <tr>

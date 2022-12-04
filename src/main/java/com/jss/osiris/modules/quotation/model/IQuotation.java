@@ -1,17 +1,19 @@
 package com.jss.osiris.modules.quotation.model;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.Document;
+import com.jss.osiris.modules.miscellaneous.model.IAttachment;
+import com.jss.osiris.modules.miscellaneous.model.IDocument;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.miscellaneous.model.SpecialOffer;
+import com.jss.osiris.modules.tiers.model.BillingLabelType;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
-public interface IQuotation extends Serializable, IId {
+public interface IQuotation extends IId, IAttachment, IDocument {
 	public Integer getId();
 
 	public void setId(Integer id);
@@ -48,9 +50,9 @@ public interface IQuotation extends Serializable, IId {
 
 	public void setDocuments(List<Document> documents);
 
-	public QuotationLabelType getQuotationLabelType();
+	public BillingLabelType getQuotationLabelType();
 
-	public void setQuotationLabelType(QuotationLabelType quotationLabelType);
+	public void setQuotationLabelType(BillingLabelType quotationLabelType);
 
 	public Responsable getCustomLabelResponsable();
 

@@ -1,9 +1,13 @@
 package com.jss.osiris.modules.quotation.controller;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Files;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +31,7 @@ import com.jss.osiris.libs.exception.OsirisLog;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.libs.mail.model.MailComputeResult;
+import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.BillingType;
 import com.jss.osiris.modules.miscellaneous.model.Department;
 import com.jss.osiris.modules.miscellaneous.model.Document;
@@ -84,7 +89,6 @@ import com.jss.osiris.modules.quotation.model.ProvisionFamilyType;
 import com.jss.osiris.modules.quotation.model.ProvisionScreenType;
 import com.jss.osiris.modules.quotation.model.ProvisionType;
 import com.jss.osiris.modules.quotation.model.Quotation;
-import com.jss.osiris.modules.quotation.model.QuotationLabelType;
 import com.jss.osiris.modules.quotation.model.QuotationSearch;
 import com.jss.osiris.modules.quotation.model.QuotationSearchResult;
 import com.jss.osiris.modules.quotation.model.QuotationStatus;
@@ -100,6 +104,7 @@ import com.jss.osiris.modules.quotation.model.guichetUnique.NatureCreation;
 import com.jss.osiris.modules.quotation.service.ActTypeService;
 import com.jss.osiris.modules.quotation.service.AffaireService;
 import com.jss.osiris.modules.quotation.service.AnnouncementNoticeTemplateService;
+import com.jss.osiris.modules.quotation.service.AnnouncementService;
 import com.jss.osiris.modules.quotation.service.AnnouncementStatusService;
 import com.jss.osiris.modules.quotation.service.AssignationTypeService;
 import com.jss.osiris.modules.quotation.service.AssoAffaireOrderService;
@@ -122,7 +127,6 @@ import com.jss.osiris.modules.quotation.service.ProvisionFamilyTypeService;
 import com.jss.osiris.modules.quotation.service.ProvisionScreenTypeService;
 import com.jss.osiris.modules.quotation.service.ProvisionService;
 import com.jss.osiris.modules.quotation.service.ProvisionTypeService;
-import com.jss.osiris.modules.quotation.service.QuotationLabelTypeService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.quotation.service.QuotationStatusService;
 import com.jss.osiris.modules.quotation.service.RecordTypeService;
@@ -159,9 +163,6 @@ public class QuotationController {
 
   @Autowired
   SpecialOfferService specialOfferService;
-
-  @Autowired
-  QuotationLabelTypeService quotationLabelTypeService;
 
   @Autowired
   RecordTypeService recordTypeService;
@@ -282,6 +283,9 @@ public class QuotationController {
 
   @Autowired
   GlobalExceptionHandler globalExceptionHandler;
+
+  @Autowired
+  AnnouncementService announcementService;
 
   @GetMapping(inputEntryPoint + "/formalite-status")
   public ResponseEntity<List<FormaliteStatus>> getFormaliteStatus() {
@@ -907,24 +911,6 @@ public class QuotationController {
     return new ResponseEntity<RecordType>(recordTypeService.addOrUpdateRecordType(recordType), HttpStatus.OK);
   }
 
-  @GetMapping(inputEntryPoint + "/quotation-label-types")
-  public ResponseEntity<List<QuotationLabelType>> getQuotationLabelTypes() {
-    return new ResponseEntity<List<QuotationLabelType>>(quotationLabelTypeService.getQuotationLabelTypes(),
-        HttpStatus.OK);
-  }
-
-  @PostMapping(inputEntryPoint + "/quotation-label-type")
-  public ResponseEntity<QuotationLabelType> addOrUpdateQuotationLabelType(
-      @RequestBody QuotationLabelType quotationLabelType) throws OsirisValidationException, OsirisException {
-    if (quotationLabelType.getId() != null)
-      validationHelper.validateReferential(quotationLabelType, true, "quotationLabelType");
-    validationHelper.validateString(quotationLabelType.getCode(), true, 20, "code");
-    validationHelper.validateString(quotationLabelType.getLabel(), true, 100, "label");
-
-    return new ResponseEntity<QuotationLabelType>(
-        quotationLabelTypeService.addOrUpdateQuotationLabelType(quotationLabelType), HttpStatus.OK);
-  }
-
   @GetMapping(inputEntryPoint + "/quotation-status")
   public ResponseEntity<List<QuotationStatus>> getQuotationStatus() {
     return new ResponseEntity<List<QuotationStatus>>(quotationStatusService.getQuotationStatus(), HttpStatus.OK);
@@ -1247,6 +1233,26 @@ public class QuotationController {
           validationHelper.validateReferential(noticeType, isCustomerOrder, "noticeType");
         }
       validationHelper.validateString(announcement.getNotice(), !isOpen, "Notice");
+
+      if (announcement.getAnnouncementStatus() != null && (announcement.getAnnouncementStatus().getCode()
+          .equals(AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE_PUBLISHED)
+          || announcement.getAnnouncementStatus().getCode().equals(AnnouncementStatus.ANNOUNCEMENT_WAITING_PUBLICATION))
+          && announcement.getConfrere() != null
+          && !announcement.getConfrere().getId().equals(constantService.getConfrereJssPaper().getId())
+          && !announcement.getConfrere().getId().equals(constantService.getConfrereJssSpel().getId())) {
+        boolean publicationProofFound = false;
+        if (announcement.getAttachments() != null && announcement.getAttachments().size() > 0)
+          for (Attachment attachment : announcement.getAttachments())
+            if (attachment.getAttachmentType().getId()
+                .equals(constantService.getAttachmentTypePublicationFlag().getId())
+                || attachment.getAttachmentType().getId()
+                    .equals(constantService.getAttachmentTypePublicationReceipt().getId()))
+              publicationProofFound = true;
+        if (!publicationProofFound)
+          throw new OsirisValidationException(
+              "Le témoin de publication ou le justificatif de parution est obligatoire");
+      }
+
     }
 
     // BODACC
@@ -1679,5 +1685,85 @@ public class QuotationController {
               "Veuillez réessayer en utilisant le lien présent dans le mail de notification.", "Bonne journée !"),
           HttpStatus.INTERNAL_SERVER_ERROR);
     }
+  }
+
+  @GetMapping(inputEntryPoint + "/publication/receipt/download")
+  public ResponseEntity<byte[]> downloadPublicationReceipt(@RequestParam("idAnnouncement") Integer idAnnouncement)
+      throws OsirisValidationException, OsirisException {
+    byte[] data = null;
+    HttpHeaders headers = null;
+
+    Announcement announcement = announcementService.getAnnouncement(idAnnouncement);
+
+    if (announcement == null)
+      throw new OsirisValidationException("Annonce non trouvée");
+
+    File file = mailHelper.generatePublicationReceiptPdf(announcement);
+
+    if (file != null) {
+      try {
+        data = Files.readAllBytes(file.toPath());
+      } catch (IOException e) {
+        throw new OsirisException("Unable to read file " + file.getAbsolutePath());
+      }
+
+      headers = new HttpHeaders();
+      headers.setContentLength(data.length);
+      headers.add("filename", file.getName());
+      headers.setAccessControlExposeHeaders(Arrays.asList("filename"));
+
+      // Compute content type
+      String mimeType = null;
+      try {
+        mimeType = Files.probeContentType(file.toPath());
+      } catch (IOException e) {
+        throw new OsirisException("Unable to read file " + file.getAbsolutePath());
+      }
+      if (mimeType == null)
+        mimeType = "application/pdf";
+      headers.set("content-type", mimeType);
+      file.delete();
+    }
+    return new ResponseEntity<byte[]>(data, headers, HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/publication/flag/download")
+  public ResponseEntity<byte[]> downloadPublicationFlag(@RequestParam("idAnnouncement") Integer idAnnouncement)
+      throws OsirisValidationException, OsirisException {
+    byte[] data = null;
+    HttpHeaders headers = null;
+
+    Announcement announcement = announcementService.getAnnouncement(idAnnouncement);
+
+    if (announcement == null)
+      throw new OsirisValidationException("Annonce non trouvée");
+
+    File file = mailHelper.generatePublicationFlagPdf(announcement);
+
+    if (file != null) {
+      try {
+        data = Files.readAllBytes(file.toPath());
+      } catch (IOException e) {
+        throw new OsirisException("Unable to read file " + file.getAbsolutePath());
+      }
+
+      headers = new HttpHeaders();
+      headers.setContentLength(data.length);
+      headers.add("filename", file.getName());
+      headers.setAccessControlExposeHeaders(Arrays.asList("filename"));
+
+      // Compute content type
+      String mimeType = null;
+      try {
+        mimeType = Files.probeContentType(file.toPath());
+      } catch (IOException e) {
+        throw new OsirisException("Unable to read file " + file.getAbsolutePath());
+      }
+      if (mimeType == null)
+        mimeType = "application/pdf";
+      headers.set("content-type", mimeType);
+      file.delete();
+    }
+    return new ResponseEntity<byte[]>(data, headers, HttpStatus.OK);
   }
 }

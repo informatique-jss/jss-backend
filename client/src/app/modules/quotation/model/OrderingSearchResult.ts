@@ -1,6 +1,6 @@
 
 export interface OrderingSearchResult {
-
+  tiersLabel: string;
   customerOrderLabel: string;
   customerOrderStatus: string;
   createdDate: Date;

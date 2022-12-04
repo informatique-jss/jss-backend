@@ -8,8 +8,8 @@ import { GenericLocalAutocompleteComponent } from '../generic-local-autocomplete
 
 @Component({
   selector: 'autocomplete-legal-form',
-  templateUrl: './autocomplete-legal-form.component.html',
-  styleUrls: ['./autocomplete-legal-form.component.css']
+  templateUrl: '../generic-local-autocomplete/generic-local-autocomplete.component.html',
+  styleUrls: ['../generic-local-autocomplete/generic-local-autocomplete.component.css'],
 })
 export class AutocompleteLegalFormComponent extends GenericLocalAutocompleteComponent<LegalForm> implements OnInit {
 

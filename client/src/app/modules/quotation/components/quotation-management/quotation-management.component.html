@@ -23,18 +23,18 @@
               <table class="full-width">
                 <tr>
                   <td>
-                    <radio-group-quotation-label-type [(model)]="quotation.quotationLabelType"
-                      [form]="quotationManagementForm" [isDisabled]="!editMode" propertyName="quotationLabelType"
+                    <radio-group-billing-label [(model)]="quotation.quotationLabelType" [form]="quotationManagementForm"
+                      [isDisabled]="!editMode" propertyName="quotationLabelType"
                       [label]="'Libellé sur '+ (instanceOfCustomerOrder ? 'commande' : 'devis')">
-                    </radio-group-quotation-label-type>
+                    </radio-group-billing-label>
                   </td>
                   <td
-                    *ngIf="quotation.quotationLabelType!=undefined && quotation.quotationLabelType.code!=undefined && quotation.quotationLabelType.id==quotationLabelTypeOther.id">
+                    *ngIf="quotation.quotationLabelType!=undefined && quotation.quotationLabelType.code!=undefined && quotation.quotationLabelType.id==billingLabelTypeOther.id">
                     <generic-textarea [(model)]="quotation.quotationLabel"
                       [label]="'Autre libellé sur '+ (instanceOfCustomerOrder ? 'commande' : 'devis')"
                       [form]="quotationManagementForm" propertyName="quotationLabel" [isMandatory]="true"
                       [isDisabled]="!editMode"
-                      [conditionnalRequired]="quotation.quotationLabelType.id==quotationLabelTypeOther.id">
+                      [conditionnalRequired]="quotation.quotationLabelType.id==billingLabelTypeOther.id">
                     </generic-textarea>
                   </td>
                 </tr>
@@ -95,7 +95,6 @@
                   Facture
                 </mat-panel-title>
                 <mat-panel-description>
-                  <mat-icon matTooltip="Raffraichir depuis le tiers / responsable" class="pointer">refresh</mat-icon>
                   <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
                 </mat-panel-description>
               </mat-expansion-panel-header>

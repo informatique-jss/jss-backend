@@ -10,8 +10,8 @@ import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-au
 @Component({
   selector: 'autocomplete-city',
   templateUrl: '../generic-autocomplete/generic-autocomplete.component.html',
+  styleUrls: ['../generic-autocomplete/generic-autocomplete.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  styleUrls: ['../generic-autocomplete/generic-autocomplete.component.css']
 })
 export class AutocompleteCityComponent extends GenericAutocompleteComponent<City, City> implements OnInit {
 

@@ -38,11 +38,14 @@ import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
+import com.jss.osiris.modules.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.miscellaneous.service.MailService;
 import com.jss.osiris.modules.miscellaneous.service.NotificationService;
 import com.jss.osiris.modules.miscellaneous.service.PhoneService;
 import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.profile.service.EmployeeService;
+import com.jss.osiris.modules.quotation.model.Announcement;
+import com.jss.osiris.modules.quotation.model.AnnouncementStatus;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
@@ -111,6 +114,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Autowired
     AttachmentService attachmentService;
 
+    @Autowired
+    DocumentService documentService;
+
     @Value("${payment.cb.redirect.deposit.entry.point}")
     private String paymentCbRedirectDeposit;
 
@@ -155,8 +161,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
         boolean isNewCustomerOrder = customerOrder.getId() == null;
 
-        if (customerOrder.getId() == null)
-            customerOrder = customerOrderRepository.save(customerOrder);
+        customerOrder = customerOrderRepository.save(customerOrder);
 
         quotationService.getAndSetInvoiceItemsForQuotation(customerOrder, true);
 
@@ -169,7 +174,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         if (isNewCustomerOrder)
             notificationService.notifyNewCustomerOrderQuotation(customerOrder);
 
-        return checkAllProvisionEnded(customerOrder);
+        checkAllProvisionEnded(customerOrder);
+        generateStoreAndSendPublicationReceipt(customerOrder);
+        return customerOrder;
     }
 
     @Override
@@ -254,6 +261,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
                     // TODO : changer de compte en contrepasse (attente => client) + check lettrage
                 }
+
             mailHelper.sendCustomerOrderFinalisationToCustomer(customerOrder, false, false, false);
         }
 
@@ -323,6 +331,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     false, "Facture n°" + invoice.getId());
         } catch (FileNotFoundException e) {
             throw new OsirisException("Impossible to read invoice PDF temp file");
+        } finally {
+            invoicePdf.delete();
         }
 
         return invoice;
@@ -334,10 +344,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     && assoAffaireOrder.getProvisions().size() > 0)
                 for (Provision provision : assoAffaireOrder.getProvisions()) {
                     if (provision.getInvoiceItems() != null && provision.getInvoiceItems().size() > 0)
-                        for (InvoiceItem invoiceItem : provision.getInvoiceItems())
-                            if (invoiceItem.getPreTaxPrice() > 0) {
-                                return true;
-                            }
+                        return true;
                 }
         }
         return false;
@@ -444,9 +451,15 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     "Error when reading clone of quotation for quotation " + quotation.getId());
         }
 
-        if (customerOrder2.getDocuments() != null)
-            for (Document document : customerOrder2.getDocuments())
+        if (customerOrder2.getDocuments() != null) {
+            ArrayList<Document> documents = new ArrayList<Document>();
+            for (Document document : customerOrder2.getDocuments()) {
+                document = documentService.cloneDocument(document);
                 document.setId(null);
+                documents.add(document);
+            }
+            customerOrder2.setDocuments(documents);
+        }
 
         if (customerOrder2.getAssoAffaireOrders() != null)
             for (AssoAffaireOrder asso : customerOrder2.getAssoAffaireOrders()) {
@@ -456,14 +469,34 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 if (asso.getProvisions() != null)
                     for (Provision provision : asso.getProvisions()) {
                         provision.setId(null);
-                        if (provision.getAnnouncement() != null)
+                        if (provision.getAnnouncement() != null) {
                             provision.getAnnouncement().setId(null);
-                        if (provision.getBodacc() != null)
+                            provision.getAnnouncement().setAttachments(null);
+                            if (provision.getAnnouncement().getDocuments() != null)
+                                for (Document document : provision.getAnnouncement().getDocuments())
+                                    document.setId(null);
+                        }
+                        if (provision.getBodacc() != null) {
                             provision.getBodacc().setId(null);
-                        if (provision.getFormalite() != null)
+                            provision.getBodacc().setAttachments(null);
+                            if (provision.getBodacc().getDocuments() != null)
+                                for (Document document : provision.getBodacc().getDocuments())
+                                    document.setId(null);
+                        }
+                        if (provision.getFormalite() != null) {
                             provision.getFormalite().setId(null);
-                        if (provision.getDomiciliation() != null)
+                            provision.getFormalite().setAttachments(null);
+                            if (provision.getFormalite().getDocuments() != null)
+                                for (Document document : provision.getFormalite().getDocuments())
+                                    document.setId(null);
+                        }
+                        if (provision.getDomiciliation() != null) {
                             provision.getDomiciliation().setId(null);
+                            provision.getDomiciliation().setAttachments(null);
+                            if (provision.getDomiciliation().getDocuments() != null)
+                                for (Document document : provision.getDomiciliation().getDocuments())
+                                    document.setId(null);
+                        }
                         if (provision.getInvoiceItems() != null)
                             for (InvoiceItem invoiceItem : provision.getInvoiceItems())
                                 invoiceItem.setId(null);
@@ -472,7 +505,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             }
         addOrUpdateCustomerOrder(customerOrder2);
 
-        mailHelper.sendCustomerOrderCreationConfirmationToCustomer(customerOrder2, false, false);
         return customerOrder2;
     }
 
@@ -605,5 +637,76 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     addOrUpdateCustomerOrder(customerOrder);
                 }
             }
+    }
+
+    @Override
+    public void generateStoreAndSendPublicationReceipt(CustomerOrder customerOrder) throws OsirisException {
+
+        ArrayList<Announcement> allAnnoucement = new ArrayList<Announcement>();
+        ArrayList<Announcement> annoucementWaitingForReading = new ArrayList<Announcement>();
+        ArrayList<Announcement> annoucementToGenerate = new ArrayList<Announcement>();
+        boolean onlyAnnonceLegale = true;
+
+        if (customerOrder != null && customerOrder.getAssoAffaireOrders() != null) {
+            for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
+                if (asso.getProvisions() != null)
+                    for (Provision provision : asso.getProvisions())
+                        if (provision.getAnnouncement() == null)
+                            onlyAnnonceLegale = false;
+                        // Generate only for JSS
+                        else if (provision.getAnnouncement().getConfrere().getId()
+                                .equals(constantService.getConfrereJssPaper().getId())
+                                || provision.getAnnouncement().getConfrere().getId()
+                                        .equals(constantService.getConfrereJssSpel().getId())) {
+                            if (provision.getAnnouncement().getAnnouncementStatus().getCode()
+                                    .equals(AnnouncementStatus.ANNOUNCEMENT_WAITING_READ))
+                                annoucementWaitingForReading.add(provision.getAnnouncement());
+
+                            // If closed and never generated
+                            if (provision.getAnnouncement().getAnnouncementStatus().getCode()
+                                    .equals(AnnouncementStatus.ANNOUNCEMENT_DONE)
+                                    && provision.getAnnouncement().getIsPublicationReciptAlreadySent() == null)
+                                annoucementToGenerate.add(provision.getAnnouncement());
+
+                            allAnnoucement.add(provision.getAnnouncement());
+                        }
+
+            if (onlyAnnonceLegale) {
+                // If customerOrder is created from a validated quotation
+                if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.OPEN)
+                        && customerOrder.getQuotations() != null && customerOrder.getQuotations().size() > 0)
+                    annoucementToGenerate.addAll(allAnnoucement);
+
+                // If customerOrder is created from scratch
+                if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BEING_PROCESSED))
+                    annoucementToGenerate.addAll(allAnnoucement);
+            } else {
+                if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BEING_PROCESSED))
+                    annoucementToGenerate.addAll(annoucementWaitingForReading);
+            }
+
+            if (annoucementToGenerate.size() > 0) {
+                for (Announcement announcement : annoucementToGenerate) {
+                    File publicationReceiptPdf = mailHelper.generatePublicationReceiptPdf(announcement);
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
+                    try {
+                        announcement.setAttachments(
+                                attachmentService.addAttachment(new FileInputStream(publicationReceiptPdf),
+                                        announcement.getId(),
+                                        Announcement.class.getSimpleName(),
+                                        constantService.getAttachmentTypePublicationReceipt(),
+                                        "Publication_receipt_" + formatter.format(LocalDateTime.now()) + ".pdf",
+                                        false, "Attestation de parution n°" + announcement.getId()));
+                    } catch (FileNotFoundException e) {
+                        throw new OsirisException("Impossible to read invoice PDF temp file");
+                    } finally {
+                        publicationReceiptPdf.delete();
+                    }
+                }
+            }
+
+            // Try to send whereas it was JSS or not
+            mailHelper.sendPublicationReceiptToCustomer(getCustomerOrder(customerOrder.getId()), false);
+        }
     }
 }

@@ -29,6 +29,7 @@ public interface AssoAffaireOrderRepository extends CrudRepository<AssoAffaireOr
                         " from asso_affaire_order asso " +
                         " join affaire a on a.id = asso.id_affaire" +
                         " join customer_order c on c.id = asso.id_customer_order" +
+                        " join customer_order_status cs on cs.id = c.id_customer_order_status" +
                         " join provision p on p.id_asso_affaire_order = asso.id" +
                         " left join city ci on ci.id = a.id_city" +
                         " left join tiers t on t.id = c.id_tiers" +
@@ -47,7 +48,8 @@ public interface AssoAffaireOrderRepository extends CrudRepository<AssoAffaireOr
                         " left join domiciliation_status doms on doms.id = dom.id_domicilisation_status " +
                         " left join bodacc bo on bo.id = p.id_bodacc" +
                         " left join bodacc_status bos on bos.id = bo.id_bodacc_status" +
-                        " where (COALESCE(:responsible) is null or asso.id_employee in (:responsible))" +
+                        " where cs.code<>'OPEN' and (COALESCE(:responsible) is null or asso.id_employee in (:responsible))"
+                        +
                         " and ( COALESCE(:assignedTo) is null or p.id_employee in (:assignedTo)) " +
                         " and (:label ='' or upper(a.denomination)  like '%' || upper(CAST(:label as text))  || '%'  or upper(a.firstname)  like '%' || upper(CAST(:label as text)) || '%' or upper(a.lastname)  like '%' || upper(CAST(:label as text)) || '%') "
                         +

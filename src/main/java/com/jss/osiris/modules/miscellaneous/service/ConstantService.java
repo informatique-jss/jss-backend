@@ -22,7 +22,6 @@ import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.DomiciliationContractType;
 import com.jss.osiris.modules.quotation.model.JournalType;
 import com.jss.osiris.modules.quotation.model.MailRedirectionType;
-import com.jss.osiris.modules.quotation.model.QuotationLabelType;
 import com.jss.osiris.modules.quotation.model.TransfertFundsType;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormeJuridique;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeFormalite;
@@ -91,6 +90,8 @@ public interface ConstantService {
 
     public AttachmentType getAttachmentTypePublicationReceipt() throws OsirisException;
 
+    public AttachmentType getAttachmentTypePublicationProof() throws OsirisException;
+
     public Country getCountryFrance() throws OsirisException;
 
     public Country getCountryMonaco() throws OsirisException;
@@ -149,8 +150,6 @@ public interface ConstantService {
 
     public String getStringBusinnessNantissementRedactionFormeJuridiqueCode() throws OsirisException;
 
-    public QuotationLabelType getQuotationLabelTypeOther() throws OsirisException;
-
     public PaymentType getPaymentTypeVirement() throws OsirisException;
 
     public PaymentType getPaymentTypeEspeces() throws OsirisException;
@@ -169,7 +168,9 @@ public interface ConstantService {
 
     public JournalType getJournalTypePaper() throws OsirisException;
 
-    public Confrere getConfrereJss() throws OsirisException;
+    public Confrere getConfrereJssSpel() throws OsirisException;
+
+    public Confrere getConfrereJssPaper() throws OsirisException;
 
     public DomiciliationContractType getDomiciliationContractTypeKeepMail() throws OsirisException;
 
@@ -200,6 +201,8 @@ public interface ConstantService {
     public AssignationType getAssignationTypeEmployee() throws OsirisException;
 
     public Employee getEmployeeBillingResponsible() throws OsirisException;
+
+    public Employee getEmployeeMailResponsible() throws OsirisException;
 
     public Employee getEmployeeSalesDirector() throws OsirisException;
 

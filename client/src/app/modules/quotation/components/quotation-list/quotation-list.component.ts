@@ -59,6 +59,7 @@ export class QuotationListComponent implements OnInit {
 
       this.availableColumns = [];
       this.availableColumns.push({ id: "id", fieldName: "quotationId", label: "N° de la devis" } as SortTableColumn);
+      this.availableColumns.push({ id: "tiersLabel", fieldName: "tiersLabel", label: "Tiers", actionLinkFunction: this.getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la fiche du tiers" } as SortTableColumn);
       this.availableColumns.push({ id: "customerOrderName", fieldName: "customerOrderLabel", label: "Donneur d'ordre", actionLinkFunction: this.getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la fiche du donneur d'ordre" } as SortTableColumn);
       this.availableColumns.push({ id: "affaireLabel", fieldName: "affaireLabel", label: "Affaire(s)", isShrinkColumn: true } as SortTableColumn);
       this.availableColumns.push({ id: "quotationStatus", fieldName: "quotationStatus", label: "Statut" } as SortTableColumn);
@@ -117,6 +118,9 @@ export class QuotationListComponent implements OnInit {
 
 
   getColumnLink(column: SortTableColumn, element: any) {
+    if (element && column.id == "tiersLabel") {
+      return ['/tiers/', element.tiersId];
+    }
     if (element && column.id == "customerOrderName") {
       if (element.responsableId)
         return ['/tiers/responsable/', element.responsableId];

@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Properties;
@@ -20,6 +21,7 @@ import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.util.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -63,10 +65,12 @@ import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.profile.service.EmployeeService;
 import com.jss.osiris.modules.quotation.model.Affaire;
+import com.jss.osiris.modules.quotation.model.Announcement;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.IQuotation;
+import com.jss.osiris.modules.quotation.model.NoticeType;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.quotation.service.AssoAffaireOrderService;
@@ -1066,6 +1070,88 @@ public class MailHelper {
         return tempFile;
     }
 
+    public File generatePublicationReceiptPdf(Announcement announcement) throws OsirisException {
+        final Context ctx = new Context();
+
+        ctx.setVariable("noticeHeader",
+                (announcement.getNoticeHeader() != null && !announcement.getNoticeHeader().equals(""))
+                        ? announcement.getNoticeHeader().replaceAll("<br>", "<br/>")
+                        : null);
+        ctx.setVariable("notice", announcement.getNotice().replaceAll("<br>", "<br/>"));
+        LocalDate localDate = announcement.getPublicationDate();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        ctx.setVariable("date", localDate.format(formatter));
+
+        // Create the HTML body using Thymeleaf
+        final String htmlContent = emailTemplateEngine().process("publication-receipt", ctx);
+
+        File tempFile;
+        OutputStream outputStream;
+        try {
+            tempFile = File.createTempFile("Attestation de parution", "pdf");
+            outputStream = new FileOutputStream(tempFile);
+        } catch (IOException e) {
+            throw new OsirisException("Unable to create temp file");
+        }
+        ITextRenderer renderer = new ITextRenderer();
+        renderer.setDocumentFromString(htmlContent);
+        renderer.layout();
+        try {
+            renderer.createPDF(outputStream);
+            outputStream.close();
+        } catch (DocumentException | IOException e) {
+            throw new OsirisException(
+                    "Unable to create publication receipt PDF file for announcement " + announcement.getId());
+        }
+        return tempFile;
+    }
+
+    public File generatePublicationFlagPdf(Announcement announcement) throws OsirisException {
+        final Context ctx = new Context();
+
+        ctx.setVariable("noticeHeader",
+                (announcement.getNoticeHeader() != null && !announcement.getNoticeHeader().equals(""))
+                        ? announcement.getNoticeHeader().replaceAll("<br>", "<br/>")
+                        : null);
+        ctx.setVariable("notice", announcement.getNotice().replaceAll("<br>", "<br/>"));
+        if (announcement.getDepartment() != null)
+            ctx.setVariable("department",
+                    announcement.getDepartment().getCode() + " - " + announcement.getDepartment().getLabel());
+        if (announcement.getNoticeTypeFamily() != null)
+            ctx.setVariable("noticeType", announcement.getNoticeTypeFamily().getLabel());
+        if (announcement.getNoticeTypes() != null && announcement.getNoticeTypes().size() > 0)
+            ctx.setVariable("noticeSubtype", announcement.getNoticeTypes().stream().map(NoticeType::getLabel)
+                    .collect(Collectors.joining(" - ")));
+        ctx.setVariable("qrCodePicture",
+                Base64.getEncoder().encodeToString(qrCodeHelper.getQrCode("www.jss.fr/" + announcement.getId(), 60)));
+        LocalDate localDate = announcement.getPublicationDate();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE dd MMMM yyyy");
+        ctx.setVariable("date", StringUtils.capitalize(localDate.format(formatter)));
+
+        // Create the HTML body using Thymeleaf
+        final String htmlContent = emailTemplateEngine().process("publication-flag", ctx);
+
+        File tempFile;
+        OutputStream outputStream;
+        try {
+            tempFile = File.createTempFile("Témoin de publication", "pdf");
+            outputStream = new FileOutputStream(tempFile);
+        } catch (IOException e) {
+            throw new OsirisException("Unable to create temp file");
+        }
+        ITextRenderer renderer = new ITextRenderer();
+        renderer.setDocumentFromString(htmlContent);
+        renderer.layout();
+        try {
+            renderer.createPDF(outputStream);
+            outputStream.close();
+        } catch (DocumentException | IOException e) {
+            throw new OsirisException(
+                    "Unable to create publication receipt PDF file for announcement " + announcement.getId());
+        }
+        return tempFile;
+    }
+
     public void generateCustomerOrderFinalisationToCustomer(CustomerOrder customerOrder)
             throws OsirisException {
         sendCustomerOrderFinalisationToCustomer(customerOrder, true, false, false);
@@ -1162,6 +1248,7 @@ public class MailHelper {
     private List<Attachment> findAttachmentForCustomerOrder(CustomerOrder customerOrder, boolean isReminder)
             throws OsirisException {
         ArrayList<Attachment> attachments = new ArrayList<Attachment>();
+        boolean updateCustomerOrder = false;
 
         if (customerOrder != null && customerOrder.getAttachments() != null) {
             customerOrder.getAttachments().sort(new Comparator<Attachment>() {
@@ -1184,9 +1271,7 @@ public class MailHelper {
         }
 
         if (!isReminder && customerOrder != null && customerOrder.getAssoAffaireOrders() != null)
-            for (
-
-            AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
+            for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
                 if (asso.getProvisions() != null)
                     for (Provision provision : asso.getProvisions())
                         if (provision.getAnnouncement() != null) {
@@ -1194,11 +1279,17 @@ public class MailHelper {
                                 for (Attachment attachment : provision.getAnnouncement().getAttachments())
                                     if (attachment.getAttachmentType().getId()
                                             .equals(constantService.getAttachmentTypePublicationFlag()
-                                                    .getId())
-                                            || attachment.getAttachmentType().getId().equals(
-                                                    constantService.getAttachmentTypePublicationReceipt()
-                                                            .getId()))
+                                                    .getId()))
                                         attachments.add(attachment);
+                                    else if (attachment.getAttachmentType().getId()
+                                            .equals(constantService.getAttachmentTypePublicationReceipt()
+                                                    .getId())
+                                            && provision.getAnnouncement()
+                                                    .getIsPublicationReciptAlreadySent() == null) {
+                                        attachments.add(attachment);
+                                        provision.getAnnouncement().setIsPublicationReciptAlreadySent(true);
+                                        updateCustomerOrder = true;
+                                    }
                         } else if (provision.getFormalite() != null) {
                             if (provision.getFormalite().getAttachments() != null)
                                 for (Attachment attachment : provision.getFormalite().getAttachments())
@@ -1213,7 +1304,68 @@ public class MailHelper {
                                         attachments.add(attachment);
                         }
 
+        if (updateCustomerOrder)
+            customerOrderService.addOrUpdateCustomerOrder(customerOrder);
+
         return attachments;
+    }
+
+    public void sendPublicationReceiptToCustomer(CustomerOrder customerOrder, boolean sendToMe)
+            throws OsirisException {
+
+        CustomerMail mail = new CustomerMail();
+
+        mail.setHeaderPicture("images/receipt-header.png");
+        mail.setTitle("Votre attestation de parution");
+        mail.setLabel("Commande n°" + customerOrder.getId());
+        String explainationText = "Vous trouverez ci-joint l'attestation de parution ";
+
+        if (customerOrder.getAssoAffaireOrders().size() == 1) {
+            Affaire affaire = customerOrder.getAssoAffaireOrders().get(0).getAffaire();
+            mail.setExplaination(explainationText + " concernant la société " +
+                    (affaire.getDenomination() != null ? affaire.getDenomination()
+                            : (affaire.getFirstname() + " " + affaire.getLastname()))
+                    + ".");
+        } else {
+            mail.setExplaination(explainationText + " concernant les sociétés indiquées ci-dessous.");
+            ArrayList<String> details = new ArrayList<String>();
+            for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
+                details.add(asso.getAffaire().getDenomination() != null ? asso.getAffaire().getDenomination()
+                        : (asso.getAffaire().getFirstname() + " " + asso.getAffaire().getLastname()));
+            mail.setExplainationElements(String.join("!#", details));
+        }
+
+        List<Attachment> attachments = new ArrayList<Attachment>();
+        for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
+            if (asso.getProvisions() != null)
+                for (Provision provision : asso.getProvisions())
+                    if (provision.getAnnouncement() != null)
+                        if (provision.getAnnouncement().getAttachments() != null)
+                            for (Attachment attachment : provision.getAnnouncement().getAttachments())
+                                if (attachment.getAttachmentType().getId()
+                                        .equals(constantService.getAttachmentTypePublicationReceipt()
+                                                .getId())
+                                        && provision.getAnnouncement().getIsPublicationReciptAlreadySent() == null) {
+                                    attachments.add(attachment);
+                                    provision.getAnnouncement().setIsPublicationReciptAlreadySent(true);
+                                }
+
+        if (attachments.size() == 0)
+            return;
+
+        customerOrderService.addOrUpdateCustomerOrder(customerOrder);
+
+        mail.setAttachments(attachments);
+
+        mail.setGreetings("En vous remerciant pour votre confiance !");
+
+        mail.setReplyTo(quotationService.getCustomerOrderOfQuotation(customerOrder).getSalesEmployee());
+        mail.setSendToMe(sendToMe);
+        mail.setMailComputeResult(computeMailForQuotationDocument(customerOrder));
+
+        mail.setSubject("Votre attestation de parution");
+
+        addMailToQueue(mail);
     }
 
 }

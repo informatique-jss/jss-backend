@@ -138,8 +138,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         InvoiceStatus statusSent = constantService.getInvoiceStatusSend();
 
         invoice.setInvoiceStatus(statusSent);
-        this.addOrUpdateInvoice(invoice);
-        return invoice;
+        return this.addOrUpdateInvoice(invoice);
     }
 
     @Override
@@ -206,9 +205,8 @@ public class InvoiceServiceImpl implements InvoiceService {
             invoiceHelper.setInvoiceLabel(invoice, billingDocument, null, customerOrder);
         }
 
-        InvoiceStatus statusSent = constantService.getInvoiceStatusSend();
+        invoice.setInvoiceStatus(constantService.getInvoiceStatusSend());
 
-        invoice.setInvoiceStatus(statusSent);
         // Associate invoice to invoice item
         for (InvoiceItem invoiceItem : invoice.getInvoiceItems()) {
             invoiceItem.setInvoice(invoice);
@@ -232,7 +230,6 @@ public class InvoiceServiceImpl implements InvoiceService {
         for (InvoiceItem invoiceItem : invoice.getInvoiceItems())
             if (invoiceItem.getPreTaxPrice() > 0) {
                 return true;
-
             }
         return false;
     }

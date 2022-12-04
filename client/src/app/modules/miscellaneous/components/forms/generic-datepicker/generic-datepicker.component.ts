@@ -51,4 +51,8 @@ export class GenericDatepickerComponent extends GenericFormComponent implements 
     this.modelChange.emit(this.model);
   }
 
+  getCurrentDate() {
+    return new Date();
+  }
+
 }

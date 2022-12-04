@@ -11,8 +11,8 @@ import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-au
 
 @Component({
   selector: 'autocomplete-affaire',
-  templateUrl: './autocomplete-affaire.component.html',
-  styleUrls: ['./autocomplete-affaire.component.css']
+  templateUrl: '../generic-autocomplete/generic-autocomplete.component.html',
+  styleUrls: ['../generic-autocomplete/generic-autocomplete.component.css'],
 })
 export class AutocompleteAffaireComponent extends GenericAutocompleteComponent<IndexEntity, IndexEntity> implements OnInit {
   @ViewChild('affaireInput') affaireInput: ElementRef<HTMLInputElement> | undefined;

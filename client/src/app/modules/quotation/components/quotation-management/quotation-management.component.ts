@@ -1,4 +1,4 @@
-import { AfterContentChecked, ChangeDetectorRef, Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { AfterContentChecked, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { MatAccordion } from '@angular/material/expansion';
 import { Observable, Subscription } from 'rxjs';
@@ -18,11 +18,9 @@ import { ITiers } from '../../../tiers/model/ITiers';
 import { InvoiceLabelResult } from '../../model/InvoiceLabelResult';
 import { IQuotation } from '../../model/IQuotation';
 import { MailComputeResult } from '../../model/MailComputeResult';
-import { QuotationLabelType } from '../../model/QuotationLabelType';
 import { RecordType } from '../../model/RecordType';
 import { InvoiceLabelResultService } from '../../services/invoice.label.result.service';
 import { MailComputeResultService } from '../../services/mail.compute.result.service';
-import { QuotationLabelTypeService } from '../../services/quotation.label.type.service';
 import { RecordTypeService } from '../../services/record.type.service';
 
 @Component({
@@ -34,6 +32,7 @@ export class QuotationManagementComponent implements OnInit, AfterContentChecked
 
 
   @Input() quotation: IQuotation = {} as IQuotation;
+  @Output() quotationChange: EventEmitter<IQuotation> = new EventEmitter<IQuotation>();
   @Input() editMode: boolean = false;
   @Input() isStatusOpen: boolean = false;
   @Input() instanceOfCustomerOrder: boolean = false;
@@ -42,7 +41,6 @@ export class QuotationManagementComponent implements OnInit, AfterContentChecked
   @ViewChild(MatAccordion) accordion: MatAccordion | undefined;
 
   documentTypes: DocumentType[] = [] as Array<DocumentType>;
-  quotationLabelTypes: QuotationLabelType[] = [] as Array<QuotationLabelType>;
   recordTypes: RecordType[] = [] as Array<RecordType>;
 
   countryFrance: Country = this.constantService.getCountryFrance();
@@ -50,8 +48,6 @@ export class QuotationManagementComponent implements OnInit, AfterContentChecked
 
   devisDocument: Document = {} as Document;
   billingDocument: Document = {} as Document;
-
-  quotationLabelTypeOther: QuotationLabelType = this.constantService.getQuotationLabelTypeOther();
 
   quotationMailComputeResult: MailComputeResult | undefined;
   billingMailComputeResult: MailComputeResult | undefined;
@@ -66,17 +62,13 @@ export class QuotationManagementComponent implements OnInit, AfterContentChecked
     protected cityService: CityService,
     private changeDetectorRef: ChangeDetectorRef,
     private invoiceLabelResultService: InvoiceLabelResultService,
-    private mailComputeResultService: MailComputeResultService,
-    protected quotationLabelTypeService: QuotationLabelTypeService) { }
+    private mailComputeResultService: MailComputeResultService) { }
 
   ngOnInit() {
     this.updateQuotationMailResult();
     this.updateBillingMailResult();
     this.updateInvoiceLabelResult();
     this.quotationManagementForm.markAllAsTouched();
-    this.quotationLabelTypeService.getQuotationLabelTypes().subscribe(response => {
-      this.quotationLabelTypes = response;
-    })
     this.recordTypeService.getRecordTypes().subscribe(response => {
       this.recordTypes = response;
     })
@@ -100,8 +92,6 @@ export class QuotationManagementComponent implements OnInit, AfterContentChecked
       this.updateInvoiceLabelResult();
       if (this.quotation.recordType == null || this.quotation.recordType == undefined)
         this.quotation.recordType = this.recordTypes[0];
-      if (this.quotation.quotationLabelType == null || this.quotation.quotationLabelType == undefined)
-        this.quotation.quotationLabelType = this.quotationLabelTypes[0];
       this.setDocument();
       this.quotationManagementForm.markAllAsTouched();
     }
@@ -126,15 +116,24 @@ export class QuotationManagementComponent implements OnInit, AfterContentChecked
     this.devisDocument = getDocument(this.constantService.getDocumentTypeQuotation(), this.quotation);
     this.billingDocument = getDocument(this.constantService.getDocumentTypeBilling(), this.quotation);
 
-    // If billing document does not exist, try to grab it from selected tiers, responsable or confrere
-    if (!this.billingDocument.id)
-      this.billingDocument = copyObject(getDocument(this.constantService.getDocumentTypeBilling(), currentOrderingCustomer));
+    let currentBillingDocument = getDocument(this.constantService.getDocumentTypeBilling(), currentOrderingCustomer);
 
-    if (!this.billingDocument.billingLabelIsIndividual)
-      this.billingDocument.billingLabelIsIndividual = false;
+    // If billing document does not exist, try to grab it from selected tiers, responsable or confrere
+    if (!this.billingDocument.id && currentBillingDocument.id) {
+      this.billingDocument = copyObject(getDocument(this.constantService.getDocumentTypeBilling(), currentOrderingCustomer));
+      this.quotation.quotationLabelType = this.billingDocument.billingLabelType;
+
+      if (!this.billingDocument.billingLabelIsIndividual)
+        this.billingDocument.billingLabelIsIndividual = false;
+    }
+  }
+
+  getBillingDocument() {
+    return this.billingDocument;
   }
 
   getFormStatus(): boolean {
+    console.log(this.billingDocument);
     this.quotationManagementForm.markAllAsTouched();
     this.updateQuotationMailResult();
     this.updateBillingMailResult();

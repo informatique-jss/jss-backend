@@ -23,14 +23,14 @@ import com.jss.osiris.libs.JacksonLocalDateTimeSerializer;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.Document;
-import com.jss.osiris.modules.miscellaneous.model.IAttachment;
 import com.jss.osiris.modules.miscellaneous.model.SpecialOffer;
+import com.jss.osiris.modules.tiers.model.BillingLabelType;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
 @Entity
 @Table(indexes = { @Index(name = "idx_quotation_status", columnList = "id_quotation_status") })
-public class Quotation implements IQuotation, IAttachment {
+public class Quotation implements IQuotation {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -82,7 +82,7 @@ public class Quotation implements IQuotation, IAttachment {
 
 	@ManyToOne
 	@JoinColumn(name = "id_quotation_label_type")
-	private QuotationLabelType labelType;
+	private BillingLabelType quotationLabelType;
 
 	@ManyToOne
 	@JoinColumn(name = "id_custom_label_responsable")
@@ -105,6 +105,10 @@ public class Quotation implements IQuotation, IAttachment {
 
 	@Column(length = 40)
 	private String quotationLabel;
+
+	@ManyToOne
+	@JoinColumn(name = "id_label_type")
+	private BillingLabelType labelType;
 
 	@Column(nullable = false)
 	private Boolean isQuotation;
@@ -194,22 +198,6 @@ public class Quotation implements IQuotation, IAttachment {
 		this.documents = documents;
 	}
 
-	public QuotationLabelType getQuotationLabelType() {
-		return labelType;
-	}
-
-	public void setQuotationLabelType(QuotationLabelType labelType) {
-		this.labelType = labelType;
-	}
-
-	public QuotationLabelType getLabelType() {
-		return labelType;
-	}
-
-	public void setLabelType(QuotationLabelType labelType) {
-		this.labelType = labelType;
-	}
-
 	public Responsable getCustomLabelResponsable() {
 		return customLabelResponsable;
 	}
@@ -240,14 +228,6 @@ public class Quotation implements IQuotation, IAttachment {
 
 	public void setOverrideSpecialOffer(Boolean overrideSpecialOffer) {
 		this.overrideSpecialOffer = overrideSpecialOffer;
-	}
-
-	public String getQuotationLabel() {
-		return quotationLabel;
-	}
-
-	public void setQuotationLabel(String quotationLabel) {
-		this.quotationLabel = quotationLabel;
 	}
 
 	public Boolean getIsQuotation() {
@@ -336,6 +316,30 @@ public class Quotation implements IQuotation, IAttachment {
 
 	public void setThirdReminderDateTime(LocalDateTime thirdReminderDateTime) {
 		this.thirdReminderDateTime = thirdReminderDateTime;
+	}
+
+	public BillingLabelType getLabelType() {
+		return labelType;
+	}
+
+	public void setLabelType(BillingLabelType labelType) {
+		this.labelType = labelType;
+	}
+
+	public BillingLabelType getQuotationLabelType() {
+		return quotationLabelType;
+	}
+
+	public void setQuotationLabelType(BillingLabelType quotationLabelType) {
+		this.quotationLabelType = quotationLabelType;
+	}
+
+	public String getQuotationLabel() {
+		return quotationLabel;
+	}
+
+	public void setQuotationLabel(String quotationLabel) {
+		this.quotationLabel = quotationLabel;
 	}
 
 }

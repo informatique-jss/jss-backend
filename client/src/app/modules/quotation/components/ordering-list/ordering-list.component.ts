@@ -64,6 +64,7 @@ export class OrderingListComponent implements OnInit {
         this.appService.changeHeaderTitle("Commande")
       this.availableColumns = [];
       this.availableColumns.push({ id: "id", fieldName: "customerOrderId", label: "N° de la commande" } as SortTableColumn);
+      this.availableColumns.push({ id: "tiersLabel", fieldName: "tiersLabel", label: "Tiers", actionLinkFunction: this.getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la fiche du tiers" } as SortTableColumn);
       this.availableColumns.push({ id: "customerOrderLabel", fieldName: "customerOrderLabel", label: "Donneur d'ordre", actionLinkFunction: this.getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la fiche du donneur d'ordre" } as SortTableColumn);
       this.availableColumns.push({ id: "affaireLabel", fieldName: "affaireLabel", label: "Affaire(s)", isShrinkColumn: true } as SortTableColumn);
       this.availableColumns.push({ id: "customerOrderStatus", fieldName: "customerOrderStatus", label: "Statut" } as SortTableColumn);
@@ -127,6 +128,9 @@ export class OrderingListComponent implements OnInit {
   }
 
   getColumnLink(column: SortTableColumn, element: any) {
+    if (element && column.id == "tiersLabel") {
+      return ['/tiers/', element.tiersId];
+    }
     if (element && column.id == "customerOrderLabel") {
       if (element.responsableId)
         return ['/tiers/responsable/', element.responsableId];

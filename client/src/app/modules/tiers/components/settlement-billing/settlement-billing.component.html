@@ -18,8 +18,8 @@
             </mat-panel-title>
             <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
           </mat-expansion-panel-header>
-          <addressing [editMode]="editMode" [(document)]="publicationDocument" [displayPaperCopy]="true"
-            [displayMailCC]="instanceOfResponsable(tiers)" [displayNumberMailing]="true">
+          <addressing [displayMailCC]="false" [editMode]=" editMode" [document]="publicationDocument"
+            [displayPaperCopy]="true" [displayNumberMailing]="true">
           </addressing>
         </mat-expansion-panel>
         <mat-expansion-panel>

@@ -7,12 +7,15 @@ import { QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN } from 'src/app/libs/
 import { WorkflowDialogComponent } from 'src/app/modules/miscellaneous/components/workflow-dialog/workflow-dialog.component';
 import { AppService } from 'src/app/services/app.service';
 import { IWorkflowElement } from '../../../miscellaneous/model/IWorkflowElement';
+import { ConstantService } from '../../../miscellaneous/services/constant.service';
+import { Announcement } from '../../model/Announcement';
 import { AnnouncementStatus } from '../../model/AnnouncementStatus';
 import { AssoAffaireOrder } from '../../model/AssoAffaireOrder';
 import { BodaccStatus } from '../../model/BodaccStatus';
 import { DomiciliationStatus } from '../../model/DomiciliationStatus';
 import { FormaliteStatus } from '../../model/FormaliteStatus';
 import { Provision } from '../../model/Provision';
+import { AnnouncementService } from '../../services/announcement.service';
 import { AnnouncementStatusService } from '../../services/announcement.status.service';
 import { AssoAffaireOrderService } from '../../services/asso.affaire.order.service';
 import { BodaccStatusService } from '../../services/bodacc.status.service';
@@ -39,6 +42,9 @@ export class AffaireComponent implements OnInit, AfterContentChecked {
   bodaccStatus: BodaccStatus[] = [] as Array<BodaccStatus>;
   domiciliationStatus: DomiciliationStatus[] = [] as Array<DomiciliationStatus>;
 
+  confrereJssPaper = this.constantService.getConfrereJssPaper();
+  confrereJssSpel = this.constantService.getConfrereJssSpel();
+
   currentProvisionWorkflow: Provision | undefined;
 
   constructor(
@@ -49,8 +55,10 @@ export class AffaireComponent implements OnInit, AfterContentChecked {
     private provisionService: ProvisionService,
     public workflowDialog: MatDialog,
     private appService: AppService,
+    private constantService: ConstantService,
     private formaliteStatusService: FormaliteStatusService,
     private bodaccStatusService: BodaccStatusService,
+    private announcementService: AnnouncementService,
     private domiciliationStatusService: DomiciliationStatusService,
     private announcementStatusService: AnnouncementStatusService,
   ) { }
@@ -193,5 +201,13 @@ export class AffaireComponent implements OnInit, AfterContentChecked {
 
   setCurrentProvisionWorkflow(provision: Provision) {
     this.currentProvisionWorkflow = provision;
+  }
+
+  generatePublicationReceipt(announcement: Announcement) {
+    this.announcementService.previewPublicationReceipt(announcement);
+  }
+
+  generatePublicationFlag(announcement: Announcement) {
+    this.announcementService.previewPublicationFlag(announcement);
   }
 }

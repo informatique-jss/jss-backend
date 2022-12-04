@@ -18,9 +18,13 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.jss.osiris.modules.quotation.model.Announcement;
+import com.jss.osiris.modules.quotation.model.Bodacc;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.quotation.model.Domiciliation;
 import com.jss.osiris.modules.quotation.model.Quotation;
+import com.jss.osiris.modules.quotation.model.guichetUnique.Formalite;
 import com.jss.osiris.modules.tiers.model.BillingClosureRecipientType;
 import com.jss.osiris.modules.tiers.model.BillingClosureType;
 import com.jss.osiris.modules.tiers.model.BillingLabelType;
@@ -67,6 +71,30 @@ public class Document implements Serializable, IId {
 	@JoinColumn(name = "id_customer_order")
 	@JsonIgnoreProperties(value = { "documents" }, allowSetters = true)
 	private CustomerOrder customerOrder;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JsonIgnore
+	@JoinColumn(name = "id_formalite")
+	@JsonIgnoreProperties(value = { "documents" }, allowSetters = true)
+	private Formalite formalite;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JsonIgnore
+	@JoinColumn(name = "id_domiciliation")
+	@JsonIgnoreProperties(value = { "documents" }, allowSetters = true)
+	private Domiciliation domiciliation;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JsonIgnore
+	@JoinColumn(name = "id_bodacc")
+	@JsonIgnoreProperties(value = { "documents" }, allowSetters = true)
+	private Bodacc bodacc;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JsonIgnore
+	@JoinColumn(name = "id_announcement")
+	@JsonIgnoreProperties(value = { "documents" }, allowSetters = true)
+	private Announcement announcement;
 
 	@ManyToOne
 	@JoinColumn(name = "id_document_type")
@@ -463,6 +491,38 @@ public class Document implements Serializable, IId {
 
 	public void setRegie(Regie regie) {
 		this.regie = regie;
+	}
+
+	public Formalite getFormalite() {
+		return formalite;
+	}
+
+	public void setFormalite(Formalite formalite) {
+		this.formalite = formalite;
+	}
+
+	public Domiciliation getDomiciliation() {
+		return domiciliation;
+	}
+
+	public void setDomiciliation(Domiciliation domiciliation) {
+		this.domiciliation = domiciliation;
+	}
+
+	public Bodacc getBodacc() {
+		return bodacc;
+	}
+
+	public void setBodacc(Bodacc bodacc) {
+		this.bodacc = bodacc;
+	}
+
+	public Announcement getAnnouncement() {
+		return announcement;
+	}
+
+	public void setAnnouncement(Announcement announcement) {
+		this.announcement = announcement;
 	}
 
 }

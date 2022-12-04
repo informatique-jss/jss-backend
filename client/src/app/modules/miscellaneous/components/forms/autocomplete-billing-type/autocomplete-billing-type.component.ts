@@ -7,8 +7,8 @@ import { GenericLocalAutocompleteComponent } from '../generic-local-autocomplete
 
 @Component({
   selector: 'autocomplete-billing-type',
-  templateUrl: './autocomplete-billing-type.component.html',
-  styleUrls: ['./autocomplete-billing-type.component.css']
+  templateUrl: '../generic-local-autocomplete/generic-local-autocomplete.component.html',
+  styleUrls: ['../generic-local-autocomplete/generic-local-autocomplete.component.css'],
 })
 export class AutocompleteBillingTypeComponent extends GenericLocalAutocompleteComponent<BillingType> implements OnInit {
 

@@ -31,7 +31,6 @@ import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.DomiciliationContractType;
 import com.jss.osiris.modules.quotation.model.JournalType;
 import com.jss.osiris.modules.quotation.model.MailRedirectionType;
-import com.jss.osiris.modules.quotation.model.QuotationLabelType;
 import com.jss.osiris.modules.quotation.model.TransfertFundsType;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormeJuridique;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeFormalite;
@@ -201,6 +200,11 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public AttachmentType getAttachmentTypePublicationProof() throws OsirisException {
+        return getConstants().getAttachmentTypePublicationProof();
+    }
+
+    @Override
     public Country getCountryFrance() throws OsirisException {
         return getConstants().getCountryFrance();
     }
@@ -346,11 +350,6 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
-    public QuotationLabelType getQuotationLabelTypeOther() throws OsirisException {
-        return getConstants().getQuotationLabelTypeOther();
-    }
-
-    @Override
     public PaymentType getPaymentTypeEspeces() throws OsirisException {
         return getConstants().getPaymentTypeEspeces();
     }
@@ -396,8 +395,13 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
-    public Confrere getConfrereJss() throws OsirisException {
-        return getConstants().getConfrereJss();
+    public Confrere getConfrereJssSpel() throws OsirisException {
+        return getConstants().getConfrereJssSpel();
+    }
+
+    @Override
+    public Confrere getConfrereJssPaper() throws OsirisException {
+        return getConstants().getConfrereJssPaper();
     }
 
     @Override
@@ -473,6 +477,11 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public Employee getEmployeeBillingResponsible() throws OsirisException {
         return getConstants().getEmployeeBillingResponsible();
+    }
+
+    @Override
+    public Employee getEmployeeMailResponsible() throws OsirisException {
+        return getConstants().getEmployeeMailResponsible();
     }
 
     @Override

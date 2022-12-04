@@ -3,6 +3,7 @@ package com.jss.osiris.modules.quotation.model;
 import java.time.LocalDate;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -19,11 +20,13 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jss.osiris.libs.JacksonLocalDateSerializer;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.Department;
+import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.model.IAttachment;
+import com.jss.osiris.modules.miscellaneous.model.IDocument;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 
 @Entity
-public class Announcement implements IId, IAttachment {
+public class Announcement implements IId, IAttachment, IDocument {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "announcement_sequence")
@@ -71,6 +74,12 @@ public class Announcement implements IId, IAttachment {
 	@OneToMany(mappedBy = "announcement")
 	@JsonIgnoreProperties(value = { "announcement" }, allowSetters = true)
 	private List<Attachment> attachments;
+
+	@OneToMany(targetEntity = Document.class, mappedBy = "announcement", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonIgnoreProperties(value = { "announcement" }, allowSetters = true)
+	private List<Document> documents;
+
+	private Boolean isPublicationReciptAlreadySent;
 
 	public Integer getId() {
 		return id;
@@ -174,6 +183,22 @@ public class Announcement implements IId, IAttachment {
 
 	public void setAttachments(List<Attachment> attachments) {
 		this.attachments = attachments;
+	}
+
+	public List<Document> getDocuments() {
+		return documents;
+	}
+
+	public void setDocuments(List<Document> documents) {
+		this.documents = documents;
+	}
+
+	public Boolean getIsPublicationReciptAlreadySent() {
+		return isPublicationReciptAlreadySent;
+	}
+
+	public void setIsPublicationReciptAlreadySent(Boolean isPublicationReciptAlreadySent) {
+		this.isPublicationReciptAlreadySent = isPublicationReciptAlreadySent;
 	}
 
 }

@@ -138,6 +138,10 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.attachmentTypePublicationReceipt;
   }
 
+  getAttachmentTypePublicationProof() {
+    return this.constant.attachmentTypePublicationProof;
+  }
+
   getCountryFrance() {
     return this.constant.countryFrance;
   }
@@ -252,10 +256,6 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.stringBusinnessNantissementRedactionFormeJuridiqueCode;
   }
 
-  getQuotationLabelTypeOther() {
-    return this.constant.quotationLabelTypeOther;
-  }
-
   getPaymentTypeEspeces() {
     return this.constant.paymentTypeEspeces;
   }
@@ -292,8 +292,12 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.journalTypePaper;
   }
 
-  getConfrereJss() {
-    return this.constant.confrereJss;
+  getConfrereJssSpel() {
+    return this.constant.confrereJssSpel;
+  }
+
+  getConfrereJssPaper() {
+    return this.constant.confrereJssPaper;
   }
 
   getDomiciliationContractTypeKeepMail() {
@@ -354,6 +358,10 @@ export class ConstantService extends AppRestService<Constant>{
 
   getEmployeeBillingResponsible() {
     return this.constant.employeeBillingResponsible;
+  }
+
+  getEmployeeMailResponsible() {
+    return this.constant.employeeMailResponsible;
   }
 
   getEmployeeSalesDirector() {

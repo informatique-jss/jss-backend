@@ -37,17 +37,14 @@ export class UploadAttachementDialogComponent implements OnInit {
 
   ngOnInit() {
     this.attachmentTypeService.getAttachmentTypes().subscribe(response => {
-      if (this.forcedAttachmentType) {
-        this.attachmentTypes = response;
-      } else {
-        if (response != null && response.length > 0) {
-          response.forEach(attachmentType => {
-            if (attachmentType.id == this.forcedAttachmentType) {
-              this.attachmentTypes.push(attachmentType);
-              this.attachmentType = attachmentType;
-            }
-          })
-        }
+      this.attachmentTypes = response;
+      if (this.forcedAttachmentType && response != null && response.length > 0) {
+        response.forEach(attachmentType => {
+          if (attachmentType.id == this.forcedAttachmentType!.id) {
+            this.attachmentTypes.push(attachmentType);
+            this.attachmentType = attachmentType;
+          }
+        })
       }
     })
   }

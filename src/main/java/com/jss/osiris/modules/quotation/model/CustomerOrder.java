@@ -27,14 +27,14 @@ import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.Document;
-import com.jss.osiris.modules.miscellaneous.model.IAttachment;
 import com.jss.osiris.modules.miscellaneous.model.SpecialOffer;
+import com.jss.osiris.modules.tiers.model.BillingLabelType;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
 @Entity
 @Table(indexes = { @Index(name = "idx_customer_order_status", columnList = "id_customer_order_status") })
-public class CustomerOrder implements IQuotation, IAttachment {
+public class CustomerOrder implements IQuotation {
 
 	public CustomerOrder() {
 	}
@@ -42,7 +42,7 @@ public class CustomerOrder implements IQuotation, IAttachment {
 	public CustomerOrder(Tiers tiers, Responsable responsable, Confrere confrere,
 			List<SpecialOffer> specialOffers, LocalDateTime createdDate, CustomerOrderStatus customerOrderStatus,
 			String observations, String description, List<Attachment> attachments, List<Document> documents,
-			QuotationLabelType labelType, Responsable customLabelResponsable, Tiers customLabelTiers,
+			BillingLabelType labelType, Responsable customLabelResponsable, Tiers customLabelTiers,
 			RecordType recordType, List<AssoAffaireOrder> assoAffaireOrders,
 			List<Quotation> quotations, Boolean overrideSpecialOffer, String quotationLabel, Boolean isQuotation,
 			List<Invoice> invoices, List<Payment> payments, List<Deposit> deposits,
@@ -57,7 +57,7 @@ public class CustomerOrder implements IQuotation, IAttachment {
 		this.description = description;
 		this.attachments = attachments;
 		this.documents = documents;
-		this.labelType = labelType;
+		this.quotationLabelType = labelType;
 		this.customLabelResponsable = customLabelResponsable;
 		this.customLabelTiers = customLabelTiers;
 		this.recordType = recordType;
@@ -121,8 +121,8 @@ public class CustomerOrder implements IQuotation, IAttachment {
 	private List<Document> documents;
 
 	@ManyToOne
-	@JoinColumn(name = "id_label_type")
-	private QuotationLabelType labelType;
+	@JoinColumn(name = "id_quotation_label_type")
+	private BillingLabelType quotationLabelType;
 
 	@ManyToOne
 	@JoinColumn(name = "id_custom_label_responsable")
@@ -268,14 +268,6 @@ public class CustomerOrder implements IQuotation, IAttachment {
 		this.documents = documents;
 	}
 
-	public QuotationLabelType getQuotationLabelType() {
-		return labelType;
-	}
-
-	public void setQuotationLabelType(QuotationLabelType labelType) {
-		this.labelType = labelType;
-	}
-
 	public RecordType getRecordType() {
 		return recordType;
 	}
@@ -290,14 +282,6 @@ public class CustomerOrder implements IQuotation, IAttachment {
 
 	public void setOverrideSpecialOffer(Boolean overrideSpecialOffer) {
 		this.overrideSpecialOffer = overrideSpecialOffer;
-	}
-
-	public QuotationLabelType getLabelType() {
-		return labelType;
-	}
-
-	public void setLabelType(QuotationLabelType labelType) {
-		this.labelType = labelType;
 	}
 
 	public Responsable getCustomLabelResponsable() {
@@ -434,6 +418,14 @@ public class CustomerOrder implements IQuotation, IAttachment {
 
 	public void setThirdReminderDateTime(LocalDateTime thirdReminderDateTime) {
 		this.thirdReminderDateTime = thirdReminderDateTime;
+	}
+
+	public BillingLabelType getQuotationLabelType() {
+		return quotationLabelType;
+	}
+
+	public void setQuotationLabelType(BillingLabelType quotationLabelType) {
+		this.quotationLabelType = quotationLabelType;
 	}
 
 }

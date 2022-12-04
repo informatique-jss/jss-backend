@@ -64,7 +64,6 @@ import { ReferentialPaymentTypeComponent } from '../referentials/referential-pay
 import { ReferentialPaymentWayComponent } from '../referentials/referential-payment-way/referential-payment-way.component';
 import { ReferentialProviderComponent } from '../referentials/referential-provider/referential-provider.component';
 import { ReferentialProvisionTypeComponent } from '../referentials/referential-provision-type/referential-provision-type.component';
-import { ReferentialQuotationLabelTypeComponent } from '../referentials/referential-quotation-label-type/referential-notice-type-family.component';
 import { ReferentialRefundTypeComponent } from '../referentials/referential-refund-type/referential-refund-type.component';
 import { ReferentialRegieComponent } from '../referentials/referential-regie/referential-regie.component';
 import { ReferentialRegionComponent } from '../referentials/referential-region/referential-region.component';
@@ -143,7 +142,6 @@ const routes: Routes = [
     ReferentialMailRedirectionTypeComponent,
     ReferentialNoticeTypeFamilyComponent,
     ReferentialProvisionFamilyTypeComponent,
-    ReferentialQuotationLabelTypeComponent,
     ReferentialRecordTypeComponent,
     ReferentialTransfertFundsTypeComponent,
     ReferentialBillingClosureRecipientTypeComponent,

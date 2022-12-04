@@ -97,6 +97,7 @@
   <mat-icon>edit</mat-icon>
 </button>
 
+<!-- Status menu -->
 <button matTooltip="Changer de statut" mat-fab color="accent" class="second-fab-button"
   (click)="setCurrentProvisionWorkflow(asso.provisions[0])"
   *ngIf="editMode==false && asso && asso.provisions && asso.provisions.length==1" [matMenuTriggerFor]="menu3">
@@ -136,4 +137,32 @@
       <mat-icon>{{status.icon}}</mat-icon><span>{{status.label}}</span>
     </button>
   </ng-container>
+</mat-menu>
+
+<!-- Mail menu -->
+<button matTooltip="Recevoir un mail" mat-fab color="accent" class="third-fab-button"
+  (click)="setCurrentProvisionWorkflow(asso.provisions[0])"
+  *ngIf="editMode==false && asso && asso.provisions && asso.provisions.length==1" [matMenuTriggerFor]="menu4">
+  <mat-icon>mail</mat-icon>
+</button>
+<button matTooltip="Recevoir un mail" mat-fab color="accent" class="third-fab-button"
+  *ngIf="editMode==false && asso && asso.provisions && asso.provisions.length>1" [matMenuTriggerFor]="menu5">
+  <mat-icon>mail</mat-icon>
+  <mat-menu #menu5="matMenu" style="min-height: 0px;padding: 0;" xPosition="before">
+    <button mat-menu-item [matMenuTriggerFor]="menu4" (mouseover)="setCurrentProvisionWorkflow(provision)"
+      *ngFor="let provision of asso.provisions">{{provision.provisionType ? (provision.provisionFamilyType.label +' -
+      '+provision.provisionType.label):''}}</button>
+  </mat-menu>
+</button>
+<mat-menu #menu4="matMenu" style="min-height: 0px;padding: 0;" xPosition="before">
+  <button mat-menu-item
+    *ngIf="currentProvisionWorkflow && currentProvisionWorkflow.announcement && currentProvisionWorkflow.announcement.confrere && currentProvisionWorkflow.announcement.confrere.id==confrereJssPaper.id"
+    (click)="generatePublicationReceipt(currentProvisionWorkflow.announcement)">
+    <span>Générer un justificatif de parution</span>
+  </button>
+  <button mat-menu-item
+    *ngIf="currentProvisionWorkflow && currentProvisionWorkflow.announcement && currentProvisionWorkflow.announcement.confrere && currentProvisionWorkflow.announcement.confrere.id==confrereJssSpel.id"
+    (click)="generatePublicationFlag(currentProvisionWorkflow.announcement)">
+    <span>Générer un témoin de publication</span>
+  </button>
 </mat-menu>

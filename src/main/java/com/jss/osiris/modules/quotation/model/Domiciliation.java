@@ -23,7 +23,9 @@ import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.City;
 import com.jss.osiris.modules.miscellaneous.model.Civility;
 import com.jss.osiris.modules.miscellaneous.model.Country;
+import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.model.IAttachment;
+import com.jss.osiris.modules.miscellaneous.model.IDocument;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.miscellaneous.model.Language;
 import com.jss.osiris.modules.miscellaneous.model.LegalForm;
@@ -31,7 +33,7 @@ import com.jss.osiris.modules.miscellaneous.model.Mail;
 import com.jss.osiris.modules.miscellaneous.model.Phone;
 
 @Entity
-public class Domiciliation implements IId, IAttachment {
+public class Domiciliation implements IId, IAttachment, IDocument {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "domiciliation_sequence")
@@ -172,6 +174,10 @@ public class Domiciliation implements IId, IAttachment {
 	@ManyToMany
 	@JoinTable(name = "asso_domiciliation_legal_guardian_phone", joinColumns = @JoinColumn(name = "id_domiciliation"), inverseJoinColumns = @JoinColumn(name = "id_phone"))
 	private List<Phone> legalGardianPhones;
+
+	@OneToMany(targetEntity = Document.class, mappedBy = "domiciliation", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonIgnoreProperties(value = { "domiciliation" }, allowSetters = true)
+	private List<Document> documents;
 
 	public Integer getId() {
 		return id;
@@ -499,6 +505,14 @@ public class Domiciliation implements IId, IAttachment {
 
 	public void setDomiciliationStatus(DomiciliationStatus domiciliationStatus) {
 		this.domiciliationStatus = domiciliationStatus;
+	}
+
+	public List<Document> getDocuments() {
+		return documents;
+	}
+
+	public void setDocuments(List<Document> documents) {
+		this.documents = documents;
 	}
 
 }

@@ -3,6 +3,7 @@ import { UntypedFormBuilder } from '@angular/forms';
 import { MatExpansionPanel } from '@angular/material/expansion';
 import { compareWithId } from 'src/app/libs/CompareHelper';
 import { PROVISION_SCREEN_TYPE_ANNOUNCEMENT, PROVISION_SCREEN_TYPE_BODACC, PROVISION_SCREEN_TYPE_DOMICILIATION, PROVISION_SCREEN_TYPE_FORMALITE, PROVISION_SCREEN_TYPE_STANDARD } from 'src/app/libs/Constants';
+import { copyObject } from 'src/app/libs/GenericHelper';
 import { Employee } from 'src/app/modules/profile/model/Employee';
 import { getDocument, replaceDocument } from '../../../../libs/DocumentHelper';
 import { ConstantService } from '../../../miscellaneous/services/constant.service';
@@ -127,11 +128,24 @@ export class ProvisionItemComponent implements OnInit {
     } else if (!this.provision.announcement) {
       this.provision.announcement = {} as Announcement;
       this.provision.announcement.documents = [];
-      if (this.quotation && (this.quotation.tiers || this.quotation?.responsable)) {
+      if (this.quotation && (this.quotation.tiers || this.quotation.responsable)) {
         let tiers = this.quotation.responsable ? this.quotation.responsable : this.quotation.tiers;
         if (tiers) {
-          let publicationDocument = getDocument(this.constantService.getDocumentTypePublication(), tiers)
+          let publicationDocument = copyObject(getDocument(this.constantService.getDocumentTypePublication(), tiers));
+          publicationDocument.documentType = this.constantService.getDocumentTypePublication();
           replaceDocument(this.constantService.getDocumentTypePublication(), this.provision.announcement, publicationDocument);
+
+          let publicationCertificateDocument = copyObject(getDocument(this.constantService.getDocumentTypePublication(), tiers));
+          publicationCertificateDocument.documentType = this.constantService.getDocumentTypePublicationCertificate();
+          replaceDocument(this.constantService.getDocumentTypePublicationCertificate(), this.provision.announcement, publicationCertificateDocument);
+
+          let proofReadingDocument = copyObject(getDocument(this.constantService.getDocumentTypePublication(), tiers));
+          proofReadingDocument.documentType = this.constantService.getDocumentTypeProofReading();
+          replaceDocument(this.constantService.getDocumentTypeProofReading(), this.provision.announcement, proofReadingDocument);
+
+          publicationDocument = getDocument(this.constantService.getDocumentTypePublication(), this.provision.announcement);
+          if (publicationDocument.isMailingPaper)
+            this.provision.isPublicationPaper = true;
         }
       }
     }
