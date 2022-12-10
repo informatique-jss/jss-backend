@@ -1,5 +1,12 @@
 package com.jss.osiris.modules.quotation.service;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -7,6 +14,14 @@ import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.pdf.PdfCopy;
+import com.itextpdf.text.pdf.PdfReader;
+import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.modules.miscellaneous.model.Attachment;
+import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
+import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.quotation.model.Announcement;
 import com.jss.osiris.modules.quotation.repository.AnnouncementRepository;
 
@@ -15,6 +30,15 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
     @Autowired
     AnnouncementRepository announcementRepository;
+
+    @Autowired
+    ConstantService constantService;
+
+    @Autowired
+    CustomerOrderService customerOrderService;
+
+    @Autowired
+    AttachmentService attachmentService;
 
     @Override
     public List<Announcement> getAnnouncements() {
@@ -27,5 +51,68 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         if (announcement.isPresent())
             return announcement.get();
         return null;
+    }
+
+    @Override
+    public Announcement addOrUpdateAnnouncement(Announcement announcement) {
+        return announcementRepository.save(announcement);
+    }
+
+    @Override
+    public List<Announcement> getAnnouncementWaitingForPublicationProof() throws OsirisException {
+        return announcementRepository.findAnnouncementWaitingForPublicationProof(constantService.getConfrereJssPaper());
+    }
+
+    @Override
+    public void generatePublicationProof(Announcement announcement) throws OsirisException {
+        Attachment currentAttachment = null;
+
+        if (announcement != null) {
+            if (announcement.getAttachments() != null && announcement.getAttachments().size() > 0)
+                for (Attachment attachment : announcement.getAttachments())
+                    if (attachment.getAttachmentType().getId()
+                            .equals(constantService.getAttachmentTypePublicationProof().getId())) {
+                        currentAttachment = attachment;
+                        break;
+                    }
+            if (currentAttachment == null && announcement.getJournal() != null
+                    && announcement.getJournalPages() != null) {
+                // if journal filled => generate
+                try {
+                    String[] pages = announcement.getJournalPages().split(",");
+                    ArrayList<Integer> pagesNumber = new ArrayList<Integer>();
+                    pagesNumber.add(1);
+                    for (String page : pages)
+                        pagesNumber.add(Integer.parseInt(page));
+
+                    File destFile = File.createTempFile("proof_target", "pdf");
+                    Document targetPdf = new Document();
+                    PdfCopy copy = new PdfCopy(targetPdf, new FileOutputStream(destFile));
+                    targetPdf.open();
+                    PdfReader ReadInputPDF;
+                    ReadInputPDF = new PdfReader(
+                            announcement.getJournal().getAttachments().get(0).getUploadedFile().getPath());
+
+                    copy.addDocument(ReadInputPDF, pagesNumber);
+                    copy.freeReader(ReadInputPDF);
+                    targetPdf.close();
+
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
+                    attachmentService.addAttachment(new FileInputStream(destFile), announcement.getId(),
+                            Announcement.class.getSimpleName(),
+                            constantService.getAttachmentTypePublicationProof(),
+                            "Publication_proof_" + formatter.format(LocalDateTime.now()) + ".pdf",
+                            false, "Justificatif de parution n°" + announcement.getId());
+                    destFile.delete();
+                } catch (IOException i) {
+                    throw new OsirisException(
+                            "Impossible to read files for publication proof generation for announcement n°"
+                                    + announcement.getId());
+                } catch (DocumentException e) {
+                    throw new OsirisException(
+                            "Impossible to generate publication proof for announcement n°" + announcement.getId());
+                }
+            }
+        }
     }
 }

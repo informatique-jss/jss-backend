@@ -17,6 +17,7 @@ import com.jss.osiris.modules.accounting.model.AccountingAccountTrouple;
 import com.jss.osiris.modules.accounting.service.AccountingAccountService;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.miscellaneous.model.Document;
+import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.MailService;
 import com.jss.osiris.modules.miscellaneous.service.PhoneService;
 import com.jss.osiris.modules.tiers.model.Responsable;
@@ -49,6 +50,9 @@ public class TiersServiceImpl implements TiersService {
 
     @Autowired
     InvoiceService invoiceService;
+
+    @Autowired
+    ConstantService constantService;
 
     @Override
     public Tiers getTiers(Integer id) {
@@ -177,5 +181,10 @@ public class TiersServiceImpl implements TiersService {
         if (tiers != null)
             for (Tiers tier : tiers)
                 indexEntityService.indexEntity(tier, tier.getId());
+    }
+
+    @Override
+    public List<Tiers> findAllTiersTypeClient() throws OsirisException {
+        return tiersRepository.findByTiersType(constantService.getTiersTypeClient());
     }
 }

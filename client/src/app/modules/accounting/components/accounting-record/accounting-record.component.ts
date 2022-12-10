@@ -1,5 +1,5 @@
 import { CdkDragEnd, Point } from '@angular/cdk/drag-drop';
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
@@ -8,8 +8,12 @@ import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAc
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { AppService } from 'src/app/services/app.service';
 import { UserPreferenceService } from 'src/app/services/user.preference.service';
+import { instanceOfResponsable } from '../../../../libs/TypeHelper';
+import { ITiers } from '../../../tiers/model/ITiers';
 import { AccountingRecord } from '../../model/AccountingRecord';
 import { AccountingRecordSearch } from '../../model/AccountingRecordSearch';
+import { AccountingRecordSearchResult } from '../../model/AccountingRecordSearchResult';
+import { AccountingRecordSearchResultService } from '../../services/accounting.record.search.result.service';
 import { AccountingRecordService } from '../../services/accounting.record.service';
 import { DeleteAccountingRecordDialogComponent } from '../delete-accounting-record-dialog/delete-accounting-record-dialog.component';
 
@@ -20,6 +24,8 @@ import { DeleteAccountingRecordDialogComponent } from '../delete-accounting-reco
 })
 export class AccountingRecordComponent implements OnInit {
 
+  // Used for integration in tiers and responsable component
+  @Input() tiersToDisplay: ITiers | undefined;
   accountingRecordSearch: AccountingRecordSearch = {} as AccountingRecordSearch;
 
   constructor(
@@ -27,10 +33,11 @@ export class AccountingRecordComponent implements OnInit {
     private accountingRecordService: AccountingRecordService,
     private userPreferenceService: UserPreferenceService,
     private appService: AppService,
+    private accountingRecordSearchService: AccountingRecordSearchResultService,
     public deleteAccountingRecordDialog: MatDialog,
   ) { }
 
-  accountingRecords: AccountingRecord[] | undefined;
+  accountingRecords: AccountingRecordSearchResult[] | undefined;
   displayedColumnsTotal: string[] = ['label', 'debit', 'credit'];
   accumulatedDataSource = new MatTableDataSource<AccountingRecord>();
   currentUserPosition: Point = { x: 0, y: 0 };
@@ -44,12 +51,14 @@ export class AccountingRecordComponent implements OnInit {
 
     // Column init
     this.displayedColumns = [];
-    this.displayedColumns.push({ id: "operationId", fieldName: "operationId", label: "N° d'écriture" } as SortTableColumn);
+    this.displayedColumns.push({ id: "invoice", fieldName: "invoiceId", label: "Facture", actionLinkFunction: this.getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la facture associée" } as SortTableColumn);
+    this.displayedColumns.push({ id: "customerOrder", fieldName: "customerId", label: "Commande", actionLinkFunction: this.getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la commande associée" } as SortTableColumn);
     this.displayedColumns.push({ id: "accountingDateTime", fieldName: "accountingDateTime", label: "Date d'écriture", valueFonction: this.formatDateForSortTable } as SortTableColumn);
     this.displayedColumns.push({ id: "operationDateTime", fieldName: "operationDateTime", label: "Date d'opération", valueFonction: this.formatDateTimeForSortTable } as SortTableColumn);
-    this.displayedColumns.push({ id: "accountingJournal", fieldName: "accountingJournal", label: "Journal", valueFonction: (element: any, elements: any[], column: SortTableColumn, columns: SortTableColumn[]) => { if (element && column) return element.accountingJournal.label; return "" } } as SortTableColumn);
-    this.displayedColumns.push({ id: "accountingAccountNumber", fieldName: "accountingAccountNumber", label: "N° de compte", valueFonction: (element: any, elements: any[], column: SortTableColumn, columns: SortTableColumn[]) => { if (element && column) return element.accountingAccount.accountingAccountNumber + "-" + element.accountingAccount.accountingAccountSubNumber; return "" } } as SortTableColumn);
-    this.displayedColumns.push({ id: "accountingAccountLabel", fieldName: "accountingAccountLabel", label: "Libellé du compte", valueFonction: (element: any, elements: any[], column: SortTableColumn, columns: SortTableColumn[]) => { if (element && column) return element.accountingAccount.label; return "" }, isShrinkColumn: true } as SortTableColumn);
+    this.displayedColumns.push({ id: "operationId", fieldName: "operationId", label: "N° d'écriture" } as SortTableColumn);
+    this.displayedColumns.push({ id: "accountingJournal", fieldName: "accountingJournalLabel", label: "Journal" } as SortTableColumn);
+    this.displayedColumns.push({ id: "accountingAccountNumber", fieldName: "accountingAccountNumber", label: "N° de compte", valueFonction: (element: any, elements: any[], column: SortTableColumn, columns: SortTableColumn[]) => { if (element && column) return element.accountingAccountNumber + "-" + element.accountingAccountSubNumber; return "" } } as SortTableColumn);
+    this.displayedColumns.push({ id: "accountingAccountLabel", fieldName: "accountingAccountLabel", label: "Libellé du compte", isShrinkColumn: true } as SortTableColumn);
     this.displayedColumns.push({ id: "accountingDocumentNumber", fieldName: "manualAccountingDocumentNumber", label: "N° de pièce justificative" } as SortTableColumn);
     this.displayedColumns.push({ id: "accountingDocumentDate", fieldName: "manualAccountingDocumentDate", label: "Date pièce justificative", valueFonction: this.formatDateForSortTable } as SortTableColumn);
     this.displayedColumns.push({ id: "debitAmount", fieldName: "debitAmount", label: "Débit", valueFonction: this.formatEurosForSortTable } as SortTableColumn);
@@ -60,10 +69,8 @@ export class AccountingRecordComponent implements OnInit {
     this.displayedColumns.push({ id: "debitAccumulation", fieldName: "debitAccumulation", label: "Cumul débit", valueFonction: this.formatEurosForSortTable } as SortTableColumn);
     this.displayedColumns.push({ id: "creditAccumulation", fieldName: "creditAccumulation", label: "Cumul crédit", valueFonction: this.formatEurosForSortTable } as SortTableColumn);
     this.displayedColumns.push({ id: "balance", fieldName: "balance", label: "Solde", valueFonction: this.formatEurosForSortTable } as SortTableColumn);
-    this.displayedColumns.push({ id: "invoice", fieldName: "invoice.id", label: "Facture", actionLinkFunction: ((column: SortTableColumn, element: any) => element.invoice ? ['/invoicing', element.invoice.id] : null), actionIcon: "visibility", actionTooltip: "Voir la facture associée" } as SortTableColumn);
-    this.displayedColumns.push({ id: "customerOrder", fieldName: "customerOrder.id", label: "Commande", actionLinkFunction: ((column: SortTableColumn, element: any) => element.customerOrder ? ['/order', element.customerOrder.id] : null), actionIcon: "visibility", actionTooltip: "Voir la commande associée" } as SortTableColumn);
-    this.displayedColumns.push({ id: "payment", fieldName: "payment.id", label: "Paiement", actionLinkFunction: ((column: SortTableColumn, element: any) => element.payment ? ['/payment', element.payment.id] : null), actionIcon: "visibility", actionTooltip: "Voir le paiement associé" } as SortTableColumn);
-    this.displayedColumns.push({ id: "deposit", fieldName: "deposit.id", label: "Acompte", actionLinkFunction: ((column: SortTableColumn, element: any) => element.deposit ? ['/deposit', element.deposit.id] : null), actionIcon: "visibility", actionTooltip: "Voir l'acompte associé" } as SortTableColumn);
+    this.displayedColumns.push({ id: "payment", fieldName: "paymentId", label: "Paiement", actionIcon: "visibility", actionTooltip: "Voir le paiement associé" } as SortTableColumn);
+    this.displayedColumns.push({ id: "deposit", fieldName: "depositId", label: "Acompte", actionIcon: "visibility", actionTooltip: "Voir l'acompte associé" } as SortTableColumn);
 
     this.tableAction.push({
       actionIcon: "block", actionName: "Supprimer / contre-passer l'opération", actionClick: (action: SortTableAction, element: any) => {
@@ -83,6 +90,15 @@ export class AccountingRecordComponent implements OnInit {
         return undefined;
       }, display: true,
     } as SortTableAction);
+
+    if (this.tiersToDisplay && this.tiersToDisplay.id) {
+      if (instanceOfResponsable(this.tiersToDisplay))
+        this.accountingRecordSearch.responsableId = this.tiersToDisplay.id;
+      else
+        this.accountingRecordSearch.tiersId = this.tiersToDisplay.id;
+      this.accountingRecordSearch.hideLettered = true;
+      this.searchRecords();
+    }
   }
 
   formatEurosForSortTable = formatEurosForSortTable;
@@ -91,6 +107,16 @@ export class AccountingRecordComponent implements OnInit {
 
   accountingRecordForm = this.formBuilder.group({
   });
+
+  getColumnLink(column: SortTableColumn, element: any) {
+    if (element && column.id == "invoice" && element.invoiceId) {
+      return ['/invoicing/view/', element.invoiceId];
+    }
+    if (element && column.id == "customerOrder" && element.customerId) {
+      return ['/order/', element.customerId];
+    }
+    return null;
+  }
 
   putEndDateSameYear() {
     if (this.accountingRecordSearch.startDate && this.accountingRecordSearch.endDate
@@ -121,15 +147,17 @@ export class AccountingRecordComponent implements OnInit {
 
   searchRecords() {
     this.restoreTotalDivPosition();
-    if (!this.accountingRecordSearch.startDate || !this.accountingRecordSearch.endDate) {
-      this.appService.displaySnackBar("🙄 Merci de saisir une plage de recherche", false, 10);
-      return;
+    if (!this.accountingRecordSearch.tiersId && !this.accountingRecordSearch.responsableId) {
+      if (!this.accountingRecordSearch.startDate || !this.accountingRecordSearch.endDate) {
+        this.appService.displaySnackBar("🙄 Merci de saisir une plage de recherche", false, 10);
+        return;
+      }
+      if (!this.accountingRecordSearch.accountingAccount && !this.accountingRecordSearch.accountingClass && !this.accountingRecordSearch.accountingJournal) {
+        this.appService.displaySnackBar("🙄 Merci de saisir au moins un critère de recherche", false, 10);
+        return;
+      }
     }
-    if (!this.accountingRecordSearch.accountingAccount && !this.accountingRecordSearch.accountingClass && !this.accountingRecordSearch.accountingJournal) {
-      this.appService.displaySnackBar("🙄 Merci de saisir au moins un critère de recherche", false, 10);
-      return;
-    }
-    this.accountingRecordService.searchAccountingRecords(this.accountingRecordSearch).subscribe(response => {
+    this.accountingRecordSearchService.searchAccountingRecords(this.accountingRecordSearch).subscribe(response => {
       this.accountingRecords = response;
       this.accountingRecords.sort((a, b) => this.sortRecords(a, b));
       this.computeBalanceAndDebitAndCreditAccumulation();
@@ -137,7 +165,7 @@ export class AccountingRecordComponent implements OnInit {
     });
   }
 
-  sortRecords(a: AccountingRecord, b: AccountingRecord): number {
+  sortRecords(a: AccountingRecordSearchResult, b: AccountingRecordSearchResult): number {
     if (a && !b)
       return 1;
     if (!a && b)

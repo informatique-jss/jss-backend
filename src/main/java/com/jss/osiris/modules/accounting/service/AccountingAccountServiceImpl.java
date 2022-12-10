@@ -184,7 +184,7 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
                         maxSubAccount = currentMaxSubAccountProduct;
 
                 AccountingAccountClass accountingAccountClassCharge = accountingAccountClassService
-                                .getAccountingAccountClassByCode(productAccountingAccountNumber.substring(0, 1));
+                                .getAccountingAccountClassByCode(chargeAccountingAccountNumber.substring(0, 1));
                 if (accountingAccountClassCharge == null) {
                         throw new OsirisException(
                                         "Unable to find accountingAccountClass for number "
@@ -192,11 +192,11 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
                 }
 
                 AccountingAccountClass accountingAccountClassProduct = accountingAccountClassService
-                                .getAccountingAccountClassByCode(chargeAccountingAccountNumber.substring(0, 1));
+                                .getAccountingAccountClassByCode(productAccountingAccountNumber.substring(0, 1));
                 if (accountingAccountClassProduct == null) {
                         throw new OsirisException(
                                         "Unable to find accountingAccountClass for number "
-                                                        + chargeAccountingAccountNumber.substring(0, 1));
+                                                        + productAccountingAccountNumber.substring(0, 1));
                 }
 
                 maxSubAccount++;
@@ -205,20 +205,19 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
                 accountingAccountProduct.setAccountingAccountClass(accountingAccountClassProduct);
                 accountingAccountProduct.setAccountingAccountNumber(productAccountingAccountNumber);
                 accountingAccountProduct.setAccountingAccountSubNumber(maxSubAccount);
-                accountingAccountProduct
-                                .setLabel("Produit - "
-                                                + (billingType.getLabel() != null ? billingType.getLabel() : ""));
+                accountingAccountProduct.setLabel(
+                                "Produit - " + (billingType.getLabel() != null ? billingType.getLabel() : ""));
                 accountingAccountRepository.save(accountingAccountProduct);
                 accountingAccountBinome.setAccountingAccountProduct(accountingAccountProduct);
 
-                AccountingAccount accountingAccounCharge = new AccountingAccount();
-                accountingAccounCharge.setAccountingAccountClass(accountingAccountClassCharge);
-                accountingAccounCharge.setAccountingAccountNumber(chargeAccountingAccountNumber);
-                accountingAccounCharge.setAccountingAccountSubNumber(maxSubAccount);
-                accountingAccounCharge
+                AccountingAccount accountingAccountCharge = new AccountingAccount();
+                accountingAccountCharge.setAccountingAccountClass(accountingAccountClassCharge);
+                accountingAccountCharge.setAccountingAccountNumber(chargeAccountingAccountNumber);
+                accountingAccountCharge.setAccountingAccountSubNumber(maxSubAccount);
+                accountingAccountCharge
                                 .setLabel("Charge - " + (billingType.getLabel() != null ? billingType.getLabel() : ""));
-                accountingAccountRepository.save(accountingAccounCharge);
-                accountingAccountBinome.setAccountingAccountCharge(accountingAccounCharge);
+                accountingAccountRepository.save(accountingAccountCharge);
+                accountingAccountBinome.setAccountingAccountCharge(accountingAccountCharge);
 
                 return accountingAccountBinome;
         }

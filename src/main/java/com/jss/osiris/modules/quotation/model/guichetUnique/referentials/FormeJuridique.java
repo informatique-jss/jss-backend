@@ -23,6 +23,9 @@ public class FormeJuridique implements Serializable, ICode {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String label;
 
+    @Column(nullable = false)
+    private String labelShort;
+
     public String getCode() {
         return code;
     }
@@ -37,6 +40,14 @@ public class FormeJuridique implements Serializable, ICode {
 
     public void setLabel(String label) {
         this.label = label;
+    }
+
+    public String getLabelShort() {
+        return labelShort;
+    }
+
+    public void setLabelShort(String labelShort) {
+        this.labelShort = labelShort;
     }
 
 }

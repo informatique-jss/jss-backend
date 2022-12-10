@@ -59,6 +59,26 @@
             </td>
           </tr>
         </table>
+
+        <table class="full-width">
+          <tr>
+            <td>
+              <autocomplete-employee [(model)]="selectedEntity.salesEmployee" [isDisabled]="!editMode"
+                label="Commercial" [form]="entityForm2" propertyName="salesEmployee" [isMandatory]="true">
+              </autocomplete-employee>
+            </td>
+            <td>
+              <autocomplete-employee [(model)]="selectedEntity.formalisteEmployee" [isDisabled]="!editMode"
+                label="Formaliste" [isDisabled]="!editMode" [form]="entityForm2" propertyName="formalisteEmployee">
+              </autocomplete-employee>
+            </td>
+            <td>
+              <autocomplete-employee [(model)]="selectedEntity.insertionEmployee" [isDisabled]="!editMode"
+                label="Publiciste" [isDisabled]="!editMode" [form]="entityForm2" propertyName="insertionEmployee">
+              </autocomplete-employee>
+            </td>
+          </tr>
+        </table>
         <table class="full-width">
           <tr>
             <td *ngIf="selectedEntity.accountingAccountProvider">

@@ -35,6 +35,7 @@ import com.jss.osiris.modules.invoicing.service.DepositService;
 import com.jss.osiris.modules.invoicing.service.InvoiceHelper;
 import com.jss.osiris.modules.invoicing.service.InvoiceItemService;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
+import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
@@ -161,7 +162,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
         boolean isNewCustomerOrder = customerOrder.getId() == null;
 
-        customerOrder = customerOrderRepository.save(customerOrder);
+        if (isNewCustomerOrder)
+            customerOrder = customerOrderRepository.save(customerOrder);
 
         quotationService.getAndSetInvoiceItemsForQuotation(customerOrder, true);
 
@@ -176,6 +178,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
         checkAllProvisionEnded(customerOrder);
         generateStoreAndSendPublicationReceipt(customerOrder);
+        generateStoreAndSendPublicationFlag(customerOrder);
         return customerOrder;
     }
 
@@ -271,6 +274,10 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             // exists to check if we can go further
             targetStatusCode = CustomerOrderStatus.WAITING_DEPOSIT;
         }
+
+        if (targetStatusCode.equals(CustomerOrderStatus.BEING_PROCESSED)
+                && customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.OPEN))
+            mailHelper.sendCustomerOrderCreationConfirmationToCustomer(customerOrder, true, false);
 
         CustomerOrderStatus customerOrderStatus = customerOrderStatusService
                 .getCustomerOrderStatusByCode(targetStatusCode);
@@ -424,8 +431,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         CustomerOrder customerOrder = new CustomerOrder(quotation.getTiers(), quotation.getResponsable(),
                 quotation.getConfrere(), quotation.getSpecialOffers(), LocalDateTime.now(), statusOpen,
                 quotation.getObservations(), quotation.getDescription(), null,
-                quotation.getDocuments(), quotation.getLabelType(), quotation.getCustomLabelResponsable(),
-                quotation.getCustomLabelTiers(), quotation.getRecordType(), quotation.getAssoAffaireOrders(), null,
+                quotation.getDocuments(), quotation.getAssoAffaireOrders(), null,
                 quotation.getOverrideSpecialOffer(), quotation.getQuotationLabel(), false, null, null, null, null);
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -653,11 +659,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     for (Provision provision : asso.getProvisions())
                         if (provision.getAnnouncement() == null)
                             onlyAnnonceLegale = false;
-                        // Generate only for JSS
+                        // Generate only for JSS Paper
                         else if (provision.getAnnouncement().getConfrere().getId()
-                                .equals(constantService.getConfrereJssPaper().getId())
-                                || provision.getAnnouncement().getConfrere().getId()
-                                        .equals(constantService.getConfrereJssSpel().getId())) {
+                                .equals(constantService.getConfrereJssPaper().getId())) {
                             if (provision.getAnnouncement().getAnnouncementStatus().getCode()
                                     .equals(AnnouncementStatus.ANNOUNCEMENT_WAITING_READ))
                                 annoucementWaitingForReading.add(provision.getAnnouncement());
@@ -670,7 +674,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
                             allAnnoucement.add(provision.getAnnouncement());
                         }
-
             if (onlyAnnonceLegale) {
                 // If customerOrder is created from a validated quotation
                 if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.OPEN)
@@ -687,20 +690,30 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
             if (annoucementToGenerate.size() > 0) {
                 for (Announcement announcement : annoucementToGenerate) {
-                    File publicationReceiptPdf = mailHelper.generatePublicationReceiptPdf(announcement);
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
-                    try {
-                        announcement.setAttachments(
-                                attachmentService.addAttachment(new FileInputStream(publicationReceiptPdf),
-                                        announcement.getId(),
-                                        Announcement.class.getSimpleName(),
-                                        constantService.getAttachmentTypePublicationReceipt(),
-                                        "Publication_receipt_" + formatter.format(LocalDateTime.now()) + ".pdf",
-                                        false, "Attestation de parution n°" + announcement.getId()));
-                    } catch (FileNotFoundException e) {
-                        throw new OsirisException("Impossible to read invoice PDF temp file");
-                    } finally {
-                        publicationReceiptPdf.delete();
+                    // Check if publication receipt already exists
+                    boolean publicationReceiptExists = false;
+                    if (announcement.getAttachments() != null)
+                        for (Attachment attachment : announcement.getAttachments())
+                            if (attachment.getAttachmentType().getId()
+                                    .equals(constantService.getAttachmentTypePublicationReceipt().getId()))
+                                publicationReceiptExists = true;
+
+                    if (!publicationReceiptExists) {
+                        File publicationReceiptPdf = mailHelper.generatePublicationReceiptPdf(announcement);
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
+                        try {
+                            announcement.setAttachments(
+                                    attachmentService.addAttachment(new FileInputStream(publicationReceiptPdf),
+                                            announcement.getId(),
+                                            Announcement.class.getSimpleName(),
+                                            constantService.getAttachmentTypePublicationReceipt(),
+                                            "Publication_receipt_" + formatter.format(LocalDateTime.now()) + ".pdf",
+                                            false, "Attestation de parution n°" + announcement.getId()));
+                        } catch (FileNotFoundException e) {
+                            throw new OsirisException("Impossible to read invoice PDF temp file");
+                        } finally {
+                            publicationReceiptPdf.delete();
+                        }
                     }
                 }
             }
@@ -709,4 +722,54 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             mailHelper.sendPublicationReceiptToCustomer(getCustomerOrder(customerOrder.getId()), false);
         }
     }
+
+    private void generateStoreAndSendPublicationFlag(CustomerOrder customerOrder) throws OsirisException {
+
+        ArrayList<Announcement> annoucementToGenerate = new ArrayList<Announcement>();
+
+        if (customerOrder != null && customerOrder.getAssoAffaireOrders() != null) {
+            for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
+                if (asso.getProvisions() != null)
+                    for (Provision provision : asso.getProvisions())
+                        // Only for JSS SPEL
+                        if (provision.getAnnouncement().getIsPublicationFlagAlreadySent() == null
+                                && provision.getAnnouncement() != null
+                                && provision.getAnnouncement().getConfrere().getId()
+                                        .equals(constantService.getConfrereJssSpel().getId()))
+                            annoucementToGenerate.add(provision.getAnnouncement());
+
+            if (annoucementToGenerate.size() > 0) {
+                for (Announcement announcement : annoucementToGenerate) {
+                    // Check if publication receipt already exists
+                    boolean publicationFlagExists = false;
+                    if (announcement.getAttachments() != null)
+                        for (Attachment attachment : announcement.getAttachments())
+                            if (attachment.getAttachmentType().getId()
+                                    .equals(constantService.getAttachmentTypePublicationFlag().getId()))
+                                publicationFlagExists = true;
+
+                    if (!publicationFlagExists) {
+                        File publicationReceiptPdf = mailHelper.generatePublicationFlagPdf(announcement);
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
+                        try {
+                            announcement.setAttachments(
+                                    attachmentService.addAttachment(new FileInputStream(publicationReceiptPdf),
+                                            announcement.getId(),
+                                            Announcement.class.getSimpleName(),
+                                            constantService.getAttachmentTypePublicationFlag(),
+                                            "Publication_falg_" + formatter.format(LocalDateTime.now()) + ".pdf",
+                                            false, "Témoin de publication n°" + announcement.getId()));
+                        } catch (FileNotFoundException e) {
+                            throw new OsirisException("Impossible to read invoice PDF temp file");
+                        } finally {
+                            publicationReceiptPdf.delete();
+                        }
+                    }
+                }
+            }
+        }
+
+        mailHelper.sendPublicationFlagToCustomer(customerOrder, false);
+    }
+
 }

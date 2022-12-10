@@ -13,10 +13,6 @@ export class MailComputeResultService extends AppRestService<MailComputeResult>{
     super(http, "quotation");
   }
 
-  getMailComputeResultForQuotation(quotation: IQuotation) {
-    return this.postItem(new HttpParams(), "mail/quotation/compute", quotation);
-  }
-
   getMailComputeResultForBilling(quotation: IQuotation) {
     return this.postItem(new HttpParams(), "mail/billing/compute", quotation);
   }

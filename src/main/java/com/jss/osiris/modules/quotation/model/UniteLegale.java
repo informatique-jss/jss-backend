@@ -24,6 +24,18 @@ public class UniteLegale {
 	private String categorieEntreprise;
 	private String anneeCategorieEntreprise;
 	private List<PeriodesUniteLegale> periodesUniteLegale;
+	private String etatAdministratifUniteLegale;
+	private String categorieJuridiqueUniteLegale;
+	private String denominationUniteLegale;
+	private String denominationUsuelle1UniteLegale;
+	private String denominationUsuelle2UniteLegale;
+	private String denominationUsuelle3UniteLegale;
+	private String activitePrincipaleUniteLegale;
+	private String nomenclatureActivitePrincipaleUniteLegale;
+	private String economieSocialeSolidaireUniteLegale;
+	private String societeMissionUniteLegale;
+	private String caractereEmployeurUniteLegale;
+	private String nicSiegeUniteLegale;
 
 	public int getScore() {
 		return score;
@@ -191,6 +203,102 @@ public class UniteLegale {
 
 	public void setPeriodesUniteLegale(List<PeriodesUniteLegale> periodesUniteLegale) {
 		this.periodesUniteLegale = periodesUniteLegale;
+	}
+
+	public String getEtatAdministratifUniteLegale() {
+		return etatAdministratifUniteLegale;
+	}
+
+	public void setEtatAdministratifUniteLegale(String etatAdministratifUniteLegale) {
+		this.etatAdministratifUniteLegale = etatAdministratifUniteLegale;
+	}
+
+	public String getCategorieJuridiqueUniteLegale() {
+		return categorieJuridiqueUniteLegale;
+	}
+
+	public void setCategorieJuridiqueUniteLegale(String categorieJuridiqueUniteLegale) {
+		this.categorieJuridiqueUniteLegale = categorieJuridiqueUniteLegale;
+	}
+
+	public String getDenominationUniteLegale() {
+		return denominationUniteLegale;
+	}
+
+	public void setDenominationUniteLegale(String denominationUniteLegale) {
+		this.denominationUniteLegale = denominationUniteLegale;
+	}
+
+	public String getDenominationUsuelle1UniteLegale() {
+		return denominationUsuelle1UniteLegale;
+	}
+
+	public void setDenominationUsuelle1UniteLegale(String denominationUsuelle1UniteLegale) {
+		this.denominationUsuelle1UniteLegale = denominationUsuelle1UniteLegale;
+	}
+
+	public String getDenominationUsuelle2UniteLegale() {
+		return denominationUsuelle2UniteLegale;
+	}
+
+	public void setDenominationUsuelle2UniteLegale(String denominationUsuelle2UniteLegale) {
+		this.denominationUsuelle2UniteLegale = denominationUsuelle2UniteLegale;
+	}
+
+	public String getDenominationUsuelle3UniteLegale() {
+		return denominationUsuelle3UniteLegale;
+	}
+
+	public void setDenominationUsuelle3UniteLegale(String denominationUsuelle3UniteLegale) {
+		this.denominationUsuelle3UniteLegale = denominationUsuelle3UniteLegale;
+	}
+
+	public String getActivitePrincipaleUniteLegale() {
+		return activitePrincipaleUniteLegale;
+	}
+
+	public void setActivitePrincipaleUniteLegale(String activitePrincipaleUniteLegale) {
+		this.activitePrincipaleUniteLegale = activitePrincipaleUniteLegale;
+	}
+
+	public String getNomenclatureActivitePrincipaleUniteLegale() {
+		return nomenclatureActivitePrincipaleUniteLegale;
+	}
+
+	public void setNomenclatureActivitePrincipaleUniteLegale(String nomenclatureActivitePrincipaleUniteLegale) {
+		this.nomenclatureActivitePrincipaleUniteLegale = nomenclatureActivitePrincipaleUniteLegale;
+	}
+
+	public String getEconomieSocialeSolidaireUniteLegale() {
+		return economieSocialeSolidaireUniteLegale;
+	}
+
+	public void setEconomieSocialeSolidaireUniteLegale(String economieSocialeSolidaireUniteLegale) {
+		this.economieSocialeSolidaireUniteLegale = economieSocialeSolidaireUniteLegale;
+	}
+
+	public String getSocieteMissionUniteLegale() {
+		return societeMissionUniteLegale;
+	}
+
+	public void setSocieteMissionUniteLegale(String societeMissionUniteLegale) {
+		this.societeMissionUniteLegale = societeMissionUniteLegale;
+	}
+
+	public String getCaractereEmployeurUniteLegale() {
+		return caractereEmployeurUniteLegale;
+	}
+
+	public void setCaractereEmployeurUniteLegale(String caractereEmployeurUniteLegale) {
+		this.caractereEmployeurUniteLegale = caractereEmployeurUniteLegale;
+	}
+
+	public String getNicSiegeUniteLegale() {
+		return nicSiegeUniteLegale;
+	}
+
+	public void setNicSiegeUniteLegale(String nicSiegeUniteLegale) {
+		this.nicSiegeUniteLegale = nicSiegeUniteLegale;
 	}
 
 }

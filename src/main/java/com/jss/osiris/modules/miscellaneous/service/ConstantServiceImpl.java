@@ -35,6 +35,8 @@ import com.jss.osiris.modules.quotation.model.TransfertFundsType;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormeJuridique;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeFormalite;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypePersonne;
+import com.jss.osiris.modules.tiers.model.BillingClosureRecipientType;
+import com.jss.osiris.modules.tiers.model.BillingClosureType;
 import com.jss.osiris.modules.tiers.model.BillingLabelType;
 import com.jss.osiris.modules.tiers.model.RefundType;
 import com.jss.osiris.modules.tiers.model.SubscriptionPeriodType;
@@ -105,6 +107,11 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public TiersType getTiersTypeClient() throws OsirisException {
+        return getConstants().getTiersTypeClient();
+    }
+
+    @Override
     public DocumentType getDocumentTypePublication() throws OsirisException {
         return getConstants().getDocumentTypePublication();
     }
@@ -155,11 +162,6 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
-    public DocumentType getDocumentTypeQuotation() throws OsirisException {
-        return getConstants().getDocumentTypeQuotation();
-    }
-
-    @Override
     public AttachmentType getAttachmentTypeKbis() throws OsirisException {
         return getConstants().getAttachmentTypeKbis();
     }
@@ -202,6 +204,16 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public AttachmentType getAttachmentTypePublicationProof() throws OsirisException {
         return getConstants().getAttachmentTypePublicationProof();
+    }
+
+    @Override
+    public AttachmentType getAttachmentTypeJournal() throws OsirisException {
+        return getConstants().getAttachmentTypeJournal();
+    }
+
+    @Override
+    public AttachmentType getAttachmentTypeBillingClosure() throws OsirisException {
+        return getConstants().getAttachmentTypeBillingClosure();
     }
 
     @Override
@@ -617,5 +629,20 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public String getStringSalesSharedMailbox() throws OsirisException {
         return getConstants().getSalesSharedMailbox();
+    }
+
+    @Override
+    public BillingClosureRecipientType getBillingClosureRecipientTypeClient() throws OsirisException {
+        return getConstants().getBillingClosureRecipientTypeClient();
+    }
+
+    @Override
+    public BillingClosureRecipientType getBillingClosureRecipientTypeResponsable() throws OsirisException {
+        return getConstants().getBillingClosureRecipientTypeResponsable();
+    }
+
+    @Override
+    public BillingClosureType getBillingClosureTypeAffaire() throws OsirisException {
+        return getConstants().getBillingClosureTypeAffaire();
     }
 }

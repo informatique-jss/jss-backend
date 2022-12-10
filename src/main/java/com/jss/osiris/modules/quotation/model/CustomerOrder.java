@@ -28,12 +28,13 @@ import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.model.SpecialOffer;
-import com.jss.osiris.modules.tiers.model.BillingLabelType;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
 @Entity
-@Table(indexes = { @Index(name = "idx_customer_order_status", columnList = "id_customer_order_status") })
+@Table(indexes = { @Index(name = "idx_customer_order_status", columnList = "id_customer_order_status"),
+		@Index(name = "idx_customer_order_responsable", columnList = "id_responsable"),
+		@Index(name = "idx_customer_order_tiers", columnList = "id_tiers") })
 public class CustomerOrder implements IQuotation {
 
 	public CustomerOrder() {
@@ -42,8 +43,7 @@ public class CustomerOrder implements IQuotation {
 	public CustomerOrder(Tiers tiers, Responsable responsable, Confrere confrere,
 			List<SpecialOffer> specialOffers, LocalDateTime createdDate, CustomerOrderStatus customerOrderStatus,
 			String observations, String description, List<Attachment> attachments, List<Document> documents,
-			BillingLabelType labelType, Responsable customLabelResponsable, Tiers customLabelTiers,
-			RecordType recordType, List<AssoAffaireOrder> assoAffaireOrders,
+			List<AssoAffaireOrder> assoAffaireOrders,
 			List<Quotation> quotations, Boolean overrideSpecialOffer, String quotationLabel, Boolean isQuotation,
 			List<Invoice> invoices, List<Payment> payments, List<Deposit> deposits,
 			List<AccountingRecord> accountingRecords) {
@@ -57,14 +57,9 @@ public class CustomerOrder implements IQuotation {
 		this.description = description;
 		this.attachments = attachments;
 		this.documents = documents;
-		this.quotationLabelType = labelType;
-		this.customLabelResponsable = customLabelResponsable;
-		this.customLabelTiers = customLabelTiers;
-		this.recordType = recordType;
 		this.assoAffaireOrders = assoAffaireOrders;
 		this.quotations = quotations;
 		this.overrideSpecialOffer = overrideSpecialOffer;
-		this.quotationLabel = quotationLabel;
 		this.isQuotation = isQuotation;
 		this.invoices = invoices;
 		this.payments = payments;
@@ -120,22 +115,6 @@ public class CustomerOrder implements IQuotation {
 	@JsonIgnoreProperties(value = { "customerOrder" }, allowSetters = true)
 	private List<Document> documents;
 
-	@ManyToOne
-	@JoinColumn(name = "id_quotation_label_type")
-	private BillingLabelType quotationLabelType;
-
-	@ManyToOne
-	@JoinColumn(name = "id_custom_label_responsable")
-	private Responsable customLabelResponsable;
-
-	@ManyToOne
-	@JoinColumn(name = "id_custom_label_tiers")
-	private Tiers customLabelTiers;
-
-	@ManyToOne
-	@JoinColumn(name = "id_record_type")
-	private RecordType recordType;
-
 	@OneToMany(targetEntity = AssoAffaireOrder.class, mappedBy = "customerOrder", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnoreProperties(value = { "customerOrder" }, allowSetters = true)
 	private List<AssoAffaireOrder> assoAffaireOrders;
@@ -146,9 +125,6 @@ public class CustomerOrder implements IQuotation {
 
 	@Column(nullable = false)
 	private Boolean overrideSpecialOffer;
-
-	@Column(length = 40)
-	private String quotationLabel;
 
 	@Column(nullable = false)
 	private Boolean isQuotation;
@@ -192,22 +168,6 @@ public class CustomerOrder implements IQuotation {
 		return tiers;
 	}
 
-	public List<Payment> getPayments() {
-		return payments;
-	}
-
-	public void setPayments(List<Payment> payments) {
-		this.payments = payments;
-	}
-
-	public List<Deposit> getDeposits() {
-		return deposits;
-	}
-
-	public void setDeposits(List<Deposit> deposits) {
-		this.deposits = deposits;
-	}
-
 	public void setTiers(Tiers tiers) {
 		this.tiers = tiers;
 	}
@@ -218,6 +178,14 @@ public class CustomerOrder implements IQuotation {
 
 	public void setResponsable(Responsable responsable) {
 		this.responsable = responsable;
+	}
+
+	public Confrere getConfrere() {
+		return confrere;
+	}
+
+	public void setConfrere(Confrere confrere) {
+		this.confrere = confrere;
 	}
 
 	public List<SpecialOffer> getSpecialOffers() {
@@ -234,6 +202,22 @@ public class CustomerOrder implements IQuotation {
 
 	public void setCreatedDate(LocalDateTime createdDate) {
 		this.createdDate = createdDate;
+	}
+
+	public CustomerOrderStatus getCustomerOrderStatus() {
+		return customerOrderStatus;
+	}
+
+	public void setCustomerOrderStatus(CustomerOrderStatus customerOrderStatus) {
+		this.customerOrderStatus = customerOrderStatus;
+	}
+
+	public LocalDateTime getLastStatusUpdate() {
+		return lastStatusUpdate;
+	}
+
+	public void setLastStatusUpdate(LocalDateTime lastStatusUpdate) {
+		this.lastStatusUpdate = lastStatusUpdate;
 	}
 
 	public String getObservations() {
@@ -268,60 +252,12 @@ public class CustomerOrder implements IQuotation {
 		this.documents = documents;
 	}
 
-	public RecordType getRecordType() {
-		return recordType;
+	public List<AssoAffaireOrder> getAssoAffaireOrders() {
+		return assoAffaireOrders;
 	}
 
-	public void setRecordType(RecordType recordType) {
-		this.recordType = recordType;
-	}
-
-	public Boolean getOverrideSpecialOffer() {
-		return overrideSpecialOffer;
-	}
-
-	public void setOverrideSpecialOffer(Boolean overrideSpecialOffer) {
-		this.overrideSpecialOffer = overrideSpecialOffer;
-	}
-
-	public Responsable getCustomLabelResponsable() {
-		return customLabelResponsable;
-	}
-
-	public void setCustomLabelResponsable(Responsable customLabelResponsable) {
-		this.customLabelResponsable = customLabelResponsable;
-	}
-
-	public Tiers getCustomLabelTiers() {
-		return customLabelTiers;
-	}
-
-	public void setCustomLabelTiers(Tiers customLabelTiers) {
-		this.customLabelTiers = customLabelTiers;
-	}
-
-	public String getQuotationLabel() {
-		return quotationLabel;
-	}
-
-	public void setQuotationLabel(String quotationLabel) {
-		this.quotationLabel = quotationLabel;
-	}
-
-	public Boolean getIsQuotation() {
-		return isQuotation;
-	}
-
-	public void setIsQuotation(Boolean isQuotation) {
-		this.isQuotation = isQuotation;
-	}
-
-	public Confrere getConfrere() {
-		return confrere;
-	}
-
-	public void setConfrere(Confrere confrere) {
-		this.confrere = confrere;
+	public void setAssoAffaireOrders(List<AssoAffaireOrder> assoAffaireOrders) {
+		this.assoAffaireOrders = assoAffaireOrders;
 	}
 
 	public List<Quotation> getQuotations() {
@@ -332,12 +268,44 @@ public class CustomerOrder implements IQuotation {
 		this.quotations = quotations;
 	}
 
+	public Boolean getOverrideSpecialOffer() {
+		return overrideSpecialOffer;
+	}
+
+	public void setOverrideSpecialOffer(Boolean overrideSpecialOffer) {
+		this.overrideSpecialOffer = overrideSpecialOffer;
+	}
+
+	public Boolean getIsQuotation() {
+		return isQuotation;
+	}
+
+	public void setIsQuotation(Boolean isQuotation) {
+		this.isQuotation = isQuotation;
+	}
+
 	public List<Invoice> getInvoices() {
 		return invoices;
 	}
 
 	public void setInvoices(List<Invoice> invoices) {
 		this.invoices = invoices;
+	}
+
+	public List<Payment> getPayments() {
+		return payments;
+	}
+
+	public void setPayments(List<Payment> payments) {
+		this.payments = payments;
+	}
+
+	public List<Deposit> getDeposits() {
+		return deposits;
+	}
+
+	public void setDeposits(List<Deposit> deposits) {
+		this.deposits = deposits;
 	}
 
 	public List<AccountingRecord> getAccountingRecords() {
@@ -348,44 +316,12 @@ public class CustomerOrder implements IQuotation {
 		this.accountingRecords = accountingRecords;
 	}
 
-	public List<AssoAffaireOrder> getAssoAffaireOrders() {
-		return assoAffaireOrders;
-	}
-
-	public void setAssoAffaireOrders(List<AssoAffaireOrder> assoAffaireOrders) {
-		this.assoAffaireOrders = assoAffaireOrders;
-	}
-
-	public CustomerOrderStatus getCustomerOrderStatus() {
-		return customerOrderStatus;
-	}
-
-	public void setCustomerOrderStatus(CustomerOrderStatus customerOrderStatus) {
-		this.customerOrderStatus = customerOrderStatus;
-	}
-
 	public String getCentralPayPaymentRequestId() {
 		return centralPayPaymentRequestId;
 	}
 
 	public void setCentralPayPaymentRequestId(String centralPayPaymentRequestId) {
 		this.centralPayPaymentRequestId = centralPayPaymentRequestId;
-	}
-
-	public Float getCentralPayPendingPaymentAmount() {
-		return centralPayPendingPaymentAmount;
-	}
-
-	public void setCentralPayPendingPaymentAmount(Float centralPayPendingPaymentAmount) {
-		this.centralPayPendingPaymentAmount = centralPayPendingPaymentAmount;
-	}
-
-	public LocalDateTime getLastStatusUpdate() {
-		return lastStatusUpdate;
-	}
-
-	public void setLastStatusUpdate(LocalDateTime lastStatusUpdate) {
-		this.lastStatusUpdate = lastStatusUpdate;
 	}
 
 	public Boolean getIsCreatedFromWebSite() {
@@ -420,12 +356,12 @@ public class CustomerOrder implements IQuotation {
 		this.thirdReminderDateTime = thirdReminderDateTime;
 	}
 
-	public BillingLabelType getQuotationLabelType() {
-		return quotationLabelType;
+	public Float getCentralPayPendingPaymentAmount() {
+		return centralPayPendingPaymentAmount;
 	}
 
-	public void setQuotationLabelType(BillingLabelType quotationLabelType) {
-		this.quotationLabelType = quotationLabelType;
+	public void setCentralPayPendingPaymentAmount(Float centralPayPendingPaymentAmount) {
+		this.centralPayPendingPaymentAmount = centralPayPendingPaymentAmount;
 	}
 
 }

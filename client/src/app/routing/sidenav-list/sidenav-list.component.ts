@@ -61,6 +61,10 @@ export class SidenavListComponent implements OnInit {
     return this.habilitationService.canViewAffaireModule();
   }
 
+  canViewJournalModule() {
+    return this.habilitationService.canViewJournalModule();
+  }
+
   openSearch() {
     this.searchService.openSearch();
   }

@@ -7,10 +7,13 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
 import com.jss.osiris.modules.tiers.model.Tiers;
+import com.jss.osiris.modules.tiers.model.TiersType;
 
 public interface TiersRepository extends CrudRepository<Tiers, Integer> {
 
     @Query(value = "select a from Tiers a where id = :idTiers and isIndividual = true")
     List<Tiers> findByIsIndividualAndIdTiers(@Param("idTiers") Integer idTiers);
+
+    List<Tiers> findByTiersType(TiersType tiersTypeClient);
 
 }

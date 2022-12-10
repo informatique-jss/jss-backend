@@ -8,11 +8,11 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
-import com.jss.osiris.modules.accounting.model.AccountingAccountClass;
 import com.jss.osiris.modules.accounting.model.AccountingBalance;
 import com.jss.osiris.modules.accounting.model.AccountingBalanceBilan;
 import com.jss.osiris.modules.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.accounting.model.AccountingRecord;
+import com.jss.osiris.modules.accounting.model.AccountingRecordSearchResult;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 
@@ -34,18 +34,56 @@ public interface AccountingRecordRepository extends CrudRepository<AccountingRec
         Integer findMaxLetteringNumberForMinLetteringDateTime(
                         @Param("minLetteringDateTime") LocalDateTime minLetteringDateTime);
 
-        @Query("select a from AccountingRecord a where " +
-                        "(a.accountingAccount=:accountingAccount or :accountingAccount is null ) and "
+        @Query(nativeQuery = true, value = "" +
+                        " select  " +
+                        " r.operation_id as operationId, " +
+                        " r.accounting_date_time as accountingDateTime, " +
+                        " r.operation_date_time as operationDateTime, " +
+                        " j.label as accountingJournalLabel, " +
+                        " j.code as accountingJournalCode, " +
+                        " a.accounting_account_number as accountingAccountNumber, " +
+                        " a.accounting_account_sub_number as accountingAccountSubNumber, " +
+                        " a.label as accountingAccountLabel, " +
+                        " r.manual_accounting_document_number as manualAccountingDocumentNumber, " +
+                        " r.manual_accounting_document_date as manualAccountingDocumentDate, " +
+                        " r.debit_amount as debitAmount, " +
+                        " r.credit_amount as creditAmount, " +
+                        " r.label as label, " +
+                        " r.lettering_number as letteringNumber, " +
+                        " r.lettering_date_time as letteringDate, " +
+                        " r.id_invoice as invoiceId, " +
+                        " r.id_customer_order	 as customerId, " +
+                        " r.id_payment as paymentId, " +
+                        " r2.operation_id as contrePasseOperationId, " +
+                        " COALESCE(re1.firstname || ' ' || re1.lastname ,re2.firstname || ' ' || re2.lastname ) as responsable, "
                         +
-                        "(a.accountingJournal=:accountingJournal or :accountingJournal is null ) and "
+                        " r.id_deposit as depositId " +
+                        " from accounting_record r " +
+                        " join accounting_journal j on j.id = r.id_accounting_journal " +
+                        " join accounting_account a on a.id = r.id_accounting_account " +
+                        " left join tiers t on (t.id_accounting_account_customer = r.id_accounting_account  or t.id_accounting_account_deposit=r.id_accounting_account) "
                         +
-                        "(a.accountingDateTime is null or (a.accountingDateTime >=:startDate and a.accountingDateTime <=:endDate )) and "
+                        " left join accounting_record r2 on r2.id = r.id_contre_passe " +
+                        " left join invoice i on i.id = r.id_invoice " +
+                        " left join customer_order co on co.id = r.id_customer_order " +
+                        " left join responsable re1 on re1.id = i.id_responsable " +
+                        " left join responsable re2 on r2.id = co.id_responsable " +
+                        " where ( COALESCE(:accountingAccountIds) =0 or r.id_accounting_account in (:accountingAccountIds)) "
                         +
-                        "(:accountingClass is null or a.accountingAccount.accountingAccountClass = :accountingClass ) ")
-        List<AccountingRecord> searchAccountingRecords(
-                        @Param("accountingClass") AccountingAccountClass accountingClass,
-                        @Param("accountingAccount") AccountingAccount accountingAccount,
-                        @Param("accountingJournal") AccountingJournal accountingJournal,
+                        " and (:journalId =0 or r.id_accounting_journal = :journalId) " +
+                        " and (:responsableId =0 or COALESCE(re1.id ,re2.id )  = :responsableId and t.id is not null) "
+                        +
+                        " and (:tiersId =0 or COALESCE(i.id_tiers ,co.id_tiers )  = :tiersId and t.id is not null) " +
+                        " and (:hideLettered = false or r.lettering_date is null ) " +
+                        " and r.accounting_date_time>=:startDate and r.accounting_date_time<=:endDate  " +
+                        " and (:accountingClassId =0 or a.id_accounting_account_class = :accountingClassId) ")
+        List<AccountingRecordSearchResult> searchAccountingRecords(
+                        @Param("accountingAccountIds") List<Integer> accountingAccountIds,
+                        @Param("accountingClassId") Integer accountingClassId,
+                        @Param("journalId") Integer journalId,
+                        @Param("responsableId") Integer responsableId,
+                        @Param("tiersId") Integer tiersId,
+                        @Param("hideLettered") Boolean hideLettered,
                         @Param("startDate") LocalDateTime startDate,
                         @Param("endDate") LocalDateTime endDate);
 

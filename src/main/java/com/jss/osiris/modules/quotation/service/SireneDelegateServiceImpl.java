@@ -20,6 +20,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import com.jss.osiris.libs.SSLHelper;
+import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.modules.quotation.model.InseeToken;
 import com.jss.osiris.modules.quotation.model.Siren;
 import com.jss.osiris.modules.quotation.model.Siret;
@@ -42,7 +43,7 @@ public class SireneDelegateServiceImpl implements SireneDelegateService {
 	private String siretUrl = "/siret";
 	private String tokenUrl = "/token";
 
-	private InseeToken getToken() {
+	private InseeToken getToken() throws OsirisClientMessageException {
 		SSLHelper.disableCertificateValidation();
 		HttpHeaders headers = createHeadersForToken();
 		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
@@ -52,9 +53,16 @@ public class SireneDelegateServiceImpl implements SireneDelegateService {
 
 		HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map, headers);
 
-		ResponseEntity<InseeToken> res = new RestTemplate().postForEntity(inseeEntryPoint + tokenUrl, request,
-				InseeToken.class);
-
+		ResponseEntity<InseeToken> res;
+		try {
+			res = new RestTemplate().postForEntity(inseeEntryPoint + tokenUrl, request,
+					InseeToken.class);
+		} catch (Exception e) {
+			if (e.getMessage().contains("Connection timed out"))
+				throw new OsirisClientMessageException("Service de recherche SIRENE de l'INSEE indisponible !");
+			else
+				throw e;
+		}
 		if (res.getBody() != null) {
 			return res.getBody();
 		}
@@ -75,7 +83,7 @@ public class SireneDelegateServiceImpl implements SireneDelegateService {
 		};
 	}
 
-	private HttpHeaders createHeaders() {
+	private HttpHeaders createHeaders() throws OsirisClientMessageException {
 		return new HttpHeaders() {
 			{
 				String authHeader = "Bearer " + getToken().getAccess_token();
@@ -89,7 +97,7 @@ public class SireneDelegateServiceImpl implements SireneDelegateService {
 	@Override
 	@SuppressWarnings({ "null" })
 	@Cacheable(value = "siren", key = "#siren")
-	public List<Siren> getSiren(String siren) {
+	public List<Siren> getSiren(String siren) throws OsirisClientMessageException {
 		try {
 			SSLHelper.disableCertificateValidation();
 			ResponseEntity<Siren> res = new RestTemplate().exchange(
@@ -115,9 +123,10 @@ public class SireneDelegateServiceImpl implements SireneDelegateService {
 	@Override
 	@SuppressWarnings({ "null" })
 	@Cacheable(value = "siret", key = "#siret")
-	public List<Siret> getSiret(String siret) {
+	public List<Siret> getSiret(String siret) throws OsirisClientMessageException {
 		try {
 			SSLHelper.disableCertificateValidation();
+
 			ResponseEntity<Siret> res = new RestTemplate().exchange(
 					inseeEntryPoint + inseeSirenePath + siretUrl + "/" + siret,
 					HttpMethod.GET,

@@ -44,12 +44,12 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
-    public Document getQuotationDocument(List<Document> documents) throws OsirisException {
+    public Document getBillingClosureDocument(List<Document> documents) throws OsirisException {
         if (documents != null && documents.size() > 0)
             for (Document document : documents)
                 if (document.getDocumentType() != null && document.getDocumentType().getCode() != null
                         && document.getDocumentType().getId()
-                                .equals(constantService.getDocumentTypeQuotation().getId()))
+                                .equals(constantService.getDocumentTypeBillingClosure().getId()))
                     return document;
         return null;
     }

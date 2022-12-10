@@ -106,6 +106,9 @@ export class TiersFollowupComponent implements OnInit {
     if (instanceOfResponsable(this.tiers))
       this.newFollowup.responsable = this.tiers;
 
+    // Remove UTC delay
+    this.newFollowup.followupDate = new Date(this.newFollowup.followupDate.setHours(12));
+
     this.tiersFollowupService.addFollowup(this.newFollowup).subscribe(response => {
       this.tiers.tiersFollowups = response;
       this.setData();

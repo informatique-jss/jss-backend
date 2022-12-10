@@ -151,9 +151,9 @@ export class AddAffaireComponent implements OnInit, AfterContentChecked {
       }
       this.affaire.denomination = !this.affaire.denomination ? siret.etablissement.periodesEtablissement[0].denominationUsuelleEtablissement : this.affaire.denomination;
       if (siret.etablissement.adresseEtablissement != null && siret.etablissement.adresseEtablissement.codePostalEtablissement != null) {
+        this.affaire.postalCode = siret!.etablissement.adresseEtablissement.codePostalEtablissement;
         this.cityService.getCitiesFilteredByPostalCode(siret.etablissement.adresseEtablissement.codePostalEtablissement).subscribe(response => {
           if (response != null && response.length == 1) {
-            this.affaire.postalCode = siret!.etablissement.adresseEtablissement.codePostalEtablissement;
             this.fillCity(response[0].postalCode);
             this.affaireForm.markAllAsTouched();
           } else if (siret!.etablissement.adresseEtablissement.libelleCommuneEtablissement) {
@@ -166,7 +166,7 @@ export class AddAffaireComponent implements OnInit, AfterContentChecked {
             })
           }
         })
-        this.affaire.address = siret.etablissement.adresseEtablissement.numeroVoieEtablissement + " " + siret.etablissement.adresseEtablissement.typeVoieEtablissement + " " + siret.etablissement.adresseEtablissement.libelleVoieEtablissement;
+        this.affaire.address = (siret.etablissement.adresseEtablissement.numeroVoieEtablissement != null ? siret.etablissement.adresseEtablissement.numeroVoieEtablissement : "") + " " + (siret.etablissement.adresseEtablissement.typeVoieEtablissement != null ? siret.etablissement.adresseEtablissement.typeVoieEtablissement : "") + " " + (siret.etablissement.adresseEtablissement.libelleVoieEtablissement != null ? siret.etablissement.adresseEtablissement.libelleVoieEtablissement : "");
       }
     }
     this.affaireForm.markAllAsTouched();

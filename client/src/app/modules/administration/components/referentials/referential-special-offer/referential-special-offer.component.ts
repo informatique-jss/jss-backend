@@ -93,7 +93,7 @@ export class ReferentialSpecialOfferComponent implements OnInit {
         this.setDataTable();
       });
     } else {
-      this.appService.displaySnackBar("Erreur, certains champs ne sont pas correctement renseignés !", true, 60);
+      this.appService.displaySnackBar("Erreur, certains champs ne sont pas correctement renseignés !", true, 15);
     }
   }
 

@@ -160,18 +160,6 @@ public class Responsable implements ITiers, IAttachment {
 	@JoinColumn(name = "id_subscription_period_type")
 	private SubscriptionPeriodType subscriptionPeriodType;
 
-	@ManyToMany
-	@JoinTable(name = "asso_tiers_document_responsable_creation_affaire", joinColumns = @JoinColumn(name = "id_tiers_document"), inverseJoinColumns = @JoinColumn(name = "id_responsable"))
-	private List<Responsable> mailsCreationAffaire;
-
-	@ManyToMany
-	@JoinTable(name = "asso_tiers_document_responsable_provisionning_confirmation", joinColumns = @JoinColumn(name = "id_tiers_document"), inverseJoinColumns = @JoinColumn(name = "id_responsable"))
-	private List<Responsable> mailsProvisionningConfirmation;
-
-	@ManyToMany
-	@JoinTable(name = "asso_tiers_document_responsable_missing_formality", joinColumns = @JoinColumn(name = "id_tiers_document"), inverseJoinColumns = @JoinColumn(name = "id_responsable"))
-	private List<Responsable> mailsMissingItemFormality;
-
 	public Tiers getTiers() {
 		return tiers;
 	}
@@ -452,30 +440,6 @@ public class Responsable implements ITiers, IAttachment {
 
 	public void setRffInsertionRate(Float rffInsertionRate) {
 		this.rffInsertionRate = rffInsertionRate;
-	}
-
-	public List<Responsable> getMailsCreationAffaire() {
-		return mailsCreationAffaire;
-	}
-
-	public void setMailsCreationAffaire(List<Responsable> mailsCreationAffaire) {
-		this.mailsCreationAffaire = mailsCreationAffaire;
-	}
-
-	public List<Responsable> getMailsProvisionningConfirmation() {
-		return mailsProvisionningConfirmation;
-	}
-
-	public void setMailsProvisionningConfirmation(List<Responsable> mailsProvisionningConfirmation) {
-		this.mailsProvisionningConfirmation = mailsProvisionningConfirmation;
-	}
-
-	public List<Responsable> getMailsMissingItemFormality() {
-		return mailsMissingItemFormality;
-	}
-
-	public void setMailsMissingItemFormality(List<Responsable> mailsMissingItemFormality) {
-		this.mailsMissingItemFormality = mailsMissingItemFormality;
 	}
 
 }

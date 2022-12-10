@@ -8,6 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatChipsModule } from '@angular/material/chips';
+import { DateAdapter, MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -66,6 +67,7 @@ import { ChipsProvisionFamilyTypeComponent } from '../forms/chips-provision-fami
 import { ChipsSpecialOffersComponent } from '../forms/chips-special-offers/chips-special-offers.component';
 import { GenericCheckboxComponent } from '../forms/generic-checkbox/generic-checkbox.component';
 import { GenericDateRangePickerComponent } from '../forms/generic-date-range-picker/generic-date-range-picker.component';
+import { CustomDateAdapter } from '../forms/generic-datepicker/CustomDateAdapter';
 import { GenericDatepickerComponent } from '../forms/generic-datepicker/generic-datepicker.component';
 import { GenericDatetimePickerComponent } from '../forms/generic-datetime-picker/generic-datetime-picker.component';
 import { GenericInputComponent } from '../forms/generic-input/generic-input.component';
@@ -198,6 +200,7 @@ import { SelectInvoiceStatusOneComponent } from '../forms/select-invoice-status-
 import { SelectInvoiceStatusComponent } from '../forms/select-invoice-status/select-invoice-status.component';
 import { SelectJournalTypeOneComponent } from '../forms/select-journal-type-one/select-journal-type-one.component';
 import { SelectJournalTypeComponent } from '../forms/select-journal-type/select-journal-type.component';
+import { SelectJournalComponent } from '../forms/select-journal/select-journal.component';
 import { SelectMailRedirectionComponent } from '../forms/select-mail-redirection/select-mail-redirection.component';
 import { SelectNoticeFamilyComponent } from '../forms/select-notice-family/select-notice-family.component';
 import { SelectPaymentDeadlineComponent } from '../forms/select-payment-deadline/select-payment-deadline.component';
@@ -247,6 +250,7 @@ const routes: Routes = [
     MatButtonModule,
     MatChipsModule,
     MatDatepickerModule,
+    MatNativeDateModule,
     MatFormFieldModule,
     MatTooltipModule,
     MatMenuModule,
@@ -337,6 +341,7 @@ const routes: Routes = [
     SelectVatCollectionTypeComponent,
     AutocompleteEmployeeComponent,
     AutocompleteConfrereComponent,
+    SelectJournalComponent,
     RadioGroupJournalTypeComponent,
     SelectDayComponent,
     GradeComponent,
@@ -662,6 +667,9 @@ const routes: Routes = [
     RadioGroupTypeRepresentantComponent,
     AutocompleteTypeVoieComponent,
     GenericDatetimePickerComponent,
+    SelectJournalComponent,
+  ], providers: [
+    { provide: DateAdapter, useClass: CustomDateAdapter }
   ]
 })
 export class MiscellaneousModule { }

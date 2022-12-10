@@ -9,7 +9,6 @@ import com.jss.osiris.modules.miscellaneous.model.IAttachment;
 import com.jss.osiris.modules.miscellaneous.model.IDocument;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.miscellaneous.model.SpecialOffer;
-import com.jss.osiris.modules.tiers.model.BillingLabelType;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
@@ -49,22 +48,6 @@ public interface IQuotation extends IId, IAttachment, IDocument {
 	public List<Document> getDocuments();
 
 	public void setDocuments(List<Document> documents);
-
-	public BillingLabelType getQuotationLabelType();
-
-	public void setQuotationLabelType(BillingLabelType quotationLabelType);
-
-	public Responsable getCustomLabelResponsable();
-
-	public void setCustomLabelResponsable(Responsable customLabelResponsable);
-
-	public Tiers getCustomLabelTiers();
-
-	public void setCustomLabelTiers(Tiers customLabelTiers);
-
-	public RecordType getRecordType();
-
-	public void setRecordType(RecordType recordType);
 
 	public List<AssoAffaireOrder> getAssoAffaireOrders();
 

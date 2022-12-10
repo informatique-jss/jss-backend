@@ -77,7 +77,7 @@ export class UploadAttachementDialogComponent implements OnInit {
   checkFile() {
     if (this.file != null && this.file.size > MAX_SIZE_UPLOAD_FILES) {
       this.deleteFile();
-      this.appService.displaySnackBar("Taille maximale d'import limitée à 5 Mo", true, 60);
+      this.appService.displaySnackBar("Taille maximale d'import limitée à 5 Mo", true, 15);
     }
   }
 
@@ -89,7 +89,7 @@ export class UploadAttachementDialogComponent implements OnInit {
         this.entity.attachments.forEach(attachement => {
           if (!found && attachement.uploadedFile.filename == this.filename) {
             found = true;
-            this.appService.displaySnackBar("Nom de fichier déjà existant", true, 60);
+            this.appService.displaySnackBar("Nom de fichier déjà existant", true, 15);
           }
         })
       }
@@ -105,7 +105,7 @@ export class UploadAttachementDialogComponent implements OnInit {
           }
         },
           err => {
-            this.appService.displaySnackBar("Erreur lors de l'envoi du fichier", true, 60);
+            this.appService.displaySnackBar("Erreur lors de l'envoi du fichier", true, 15);
             this.uploadTiersAttachementDialogRef.close(null);
             this.isSending = false;
           });

@@ -1,0 +1,37 @@
+
+export interface AccountingRecordSearchResult {
+  id: number;
+  operationId: number;
+  accountingDateTime: Date;
+  operationDateTime: Date;
+  accountingJournalLabel: string;
+  accountingJournalCode: string;
+  accountingAccountNumber: string;
+  accountingAccountSubNumber: number;
+  accountingAccountLabel: string;
+  manualAccountingDocumentNumber: string;
+  manualAccountingDocumentDate: Date;
+  debitAmount: number;
+  creditAmount: number;
+  label: string;
+  letteringNumber: number;
+  letteringDate: Date;
+  invoiceId: number;
+  customerId: number;
+  paymentId: number;
+  depositId: number;
+  /**
+ * only used in fronted
+ */
+  creditAccumulation: number;
+  /**
+  * only used in fronted
+  */
+  debitAccumulation: number;
+  /**
+  * only used in fronted
+  */
+  balance: number;
+  contrePasseOperationId: number;
+  responsable: string;
+}

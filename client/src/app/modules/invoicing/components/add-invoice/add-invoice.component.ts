@@ -95,7 +95,7 @@ export class AddInvoiceComponent implements OnInit {
       this.invoiceItem = newInvoiceItem;
       this.refreshTable.next();
     } else {
-      this.appService.displaySnackBar("Veuilliez remplir l'ensemble des champs avant d'ajouter une nouvelle ligne de facturation", true, 60);
+      this.appService.displaySnackBar("Veuilliez remplir l'ensemble des champs avant d'ajouter une nouvelle ligne de facturation", true, 15);
     }
   }
 
@@ -108,10 +108,10 @@ export class AddInvoiceComponent implements OnInit {
     if (this.invoiceForm.valid && this.invoiceItems && this.invoiceItems.length > 0) {
       this.invoiceService.saveInvoice(this.invoice).subscribe(response => {
         if (response)
-          this.appService.openRoute(null, '/invoicing/' + response.id, null);
+          this.appService.openRoute(null, '/invoicing/view/' + response.id, null);
       });
     } else {
-      this.appService.displaySnackBar("Veuilliez saisir au moins une ligne de facturation valide", true, 60);
+      this.appService.displaySnackBar("Veuilliez saisir au moins une ligne de facturation valide", true, 15);
     }
   }
 

@@ -31,6 +31,7 @@ import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.quotation.service.QuotationStatusService;
 
 @Service
+@ConditionalOnProperty(value = "schedulling.enabled", matchIfMissing = false, havingValue = "true")
 public class OsirisScheduller {
 
 	private static final Logger logger = LoggerFactory.getLogger(OsirisScheduller.class);
@@ -97,7 +98,6 @@ public class OsirisScheduller {
 	}
 
 	@Scheduled(cron = "${schedulling.account.daily.close}")
-	@ConditionalOnProperty(value = "schedulling.enabled", matchIfMissing = false, havingValue = "true")
 	// @Scheduled(initialDelay = 1000, fixedDelay = 1000000)
 	private void dailyAccountClosing() {
 		logger.info("Start of daily account closing");
@@ -105,7 +105,6 @@ public class OsirisScheduller {
 	}
 
 	@Scheduled(cron = "${schedulling.payment.grab}")
-	@ConditionalOnProperty(value = "schedulling.enabled", matchIfMissing = false, havingValue = "true")
 	private void paymentGrab() {
 		logger.info("Start of payment grab");
 		try {
@@ -116,14 +115,12 @@ public class OsirisScheduller {
 	}
 
 	@Scheduled(cron = "${schedulling.active.directory.user.update}")
-	@ConditionalOnProperty(value = "schedulling.enabled", matchIfMissing = false, havingValue = "true")
 	private void activeDirectoryUserUpdate() {
 		logger.info("Start of user update from Active Directory");
 		employeeService.updateUserFromActiveDirectory();
 	}
 
 	@Scheduled(initialDelay = 500, fixedDelayString = "${schedulling.mail.sender}")
-	@ConditionalOnProperty(value = "schedulling.enabled", matchIfMissing = false, havingValue = "true")
 	private void mailSender() {
 		try {
 			mailHelper.sendNextMail();
@@ -133,13 +130,11 @@ public class OsirisScheduller {
 	}
 
 	@Scheduled(cron = "${schedulling.notification.purge}")
-	@ConditionalOnProperty(value = "schedulling.enabled", matchIfMissing = false, havingValue = "true")
 	private void purgeNotidication() {
 		notificationService.purgeNotification();
 	}
 
 	@Scheduled(cron = "${schedulling.log.osiris.quotation.reminder}")
-	@ConditionalOnProperty(value = "schedulling.enabled", matchIfMissing = false, havingValue = "true")
 	private void reminderQuotation() {
 		try {
 			quotationService.sendRemindersForQuotation();
@@ -149,7 +144,6 @@ public class OsirisScheduller {
 	}
 
 	@Scheduled(cron = "${schedulling.log.osiris.customerOrder.deposit.reminder}")
-	@ConditionalOnProperty(value = "schedulling.enabled", matchIfMissing = false, havingValue = "true")
 	private void reminderCustomerOrderDeposit() {
 		try {
 			customerOrderService.sendRemindersForCustomerOrderDeposit();
@@ -159,7 +153,6 @@ public class OsirisScheduller {
 	}
 
 	@Scheduled(cron = "${schedulling.log.osiris.customerOrder.invoice.reminder}")
-	@ConditionalOnProperty(value = "schedulling.enabled", matchIfMissing = false, havingValue = "true")
 	private void reminderCustomerOrderInvoice() {
 		try {
 			invoiceService.sendRemindersForInvoices();
@@ -168,8 +161,16 @@ public class OsirisScheduller {
 		}
 	}
 
+	@Scheduled(cron = "${schedulling.account.receipt.generation.sender}")
+	private void sendBillingClosureReceipt() {
+		try {
+			accountingRecordService.sendBillingClosureReceipt();
+		} catch (OsirisException e) {
+			globalExceptionHandler.persistLog(e, OsirisLog.UNHANDLED_LOG);
+		}
+	}
+
 	@Scheduled(initialDelay = 1000, fixedDelay = 1000000000)
-	@ConditionalOnProperty(value = "schedulling.enabled", matchIfMissing = false, havingValue = "true")
 	private void updateAllStatusEntityReferentials() {
 		try {
 			quotationStatusService.updateStatusReferential();

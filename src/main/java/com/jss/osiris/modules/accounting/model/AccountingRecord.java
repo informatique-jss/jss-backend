@@ -50,7 +50,7 @@ public class AccountingRecord implements Serializable, IId {
 
 	private LocalDate manualAccountingDocumentDeadline;
 
-	@Column(nullable = false, length = 100)
+	@Column(nullable = false, length = 1000)
 	private String label;
 	private Float creditAmount;
 	private Float debitAmount;

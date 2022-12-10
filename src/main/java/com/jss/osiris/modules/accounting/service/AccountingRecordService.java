@@ -13,6 +13,7 @@ import com.jss.osiris.modules.accounting.model.AccountingBalanceViewTitle;
 import com.jss.osiris.modules.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.accounting.model.AccountingRecordSearch;
+import com.jss.osiris.modules.accounting.model.AccountingRecordSearchResult;
 import com.jss.osiris.modules.invoicing.model.Deposit;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.Payment;
@@ -35,7 +36,8 @@ public interface AccountingRecordService {
 
         public void dailyAccountClosing();
 
-        public List<AccountingRecord> searchAccountingRecords(AccountingRecordSearch accountingRecordSearch);
+        public List<AccountingRecordSearchResult> searchAccountingRecords(
+                        AccountingRecordSearch accountingRecordSearch);
 
         public List<AccountingBalance> searchAccountingBalance(AccountingBalanceSearch accountingBalanceSearch);
 
@@ -115,5 +117,7 @@ public interface AccountingRecordService {
                         throws OsirisException;
 
         public AccountingRecord unassociateCustomerOrderPayementAndDeposit(AccountingRecord accountingRecord);
+
+        public void sendBillingClosureReceipt() throws OsirisException;
 
 }

@@ -11,7 +11,7 @@ import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-au
 
 @Component({
   selector: 'autocomplete-affaire',
-  templateUrl: '../generic-autocomplete/generic-autocomplete.component.html',
+  templateUrl: './autocomplete-affaire.component.html',
   styleUrls: ['../generic-autocomplete/generic-autocomplete.component.css'],
 })
 export class AutocompleteAffaireComponent extends GenericAutocompleteComponent<IndexEntity, IndexEntity> implements OnInit {
@@ -39,7 +39,7 @@ export class AutocompleteAffaireComponent extends GenericAutocompleteComponent<I
   displayLabel(entity: IndexEntity): string {
     if (entity && entity.text) {
       let obj = JSON.parse((entity.text as string));
-      return (obj.firstname ? obj.firstname + " " : "") + (obj.lastname ? obj.lastname + " " : "") + (obj.denomination ? obj.denomination : "");
+      return (obj.firstname ? obj.firstname + " " : " ") + (obj.lastname ? obj.lastname + " " : "") + (obj.denomination ? obj.denomination : "");
     }
     return "";
   }

@@ -13,6 +13,7 @@ import { QuotationSearch } from 'src/app/modules/quotation/model/QuotationSearch
 import { RESPONSABLE_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
 import { Document } from "../../../miscellaneous/model/Document";
+import { ITiers } from '../../model/ITiers';
 import { JssSubscription } from '../../model/JssSubscription';
 import { Responsable } from '../../model/Responsable';
 import { SubscriptionPeriodType } from '../../model/SubscriptionPeriodType';
@@ -52,6 +53,7 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
 
   orderingSearch: OrderingSearch = {} as OrderingSearch;
   quotationSearch: QuotationSearch = {} as QuotationSearch;
+  responsableAccountSearch: ITiers | undefined;
 
   displayedColumns: SortTableColumn[] = [];
   tableActions: SortTableAction[] = [] as Array<SortTableAction>;
@@ -138,6 +140,18 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
       this.tiers.responsables.forEach(responsable => {
         if (responsable.id == responsableId) {
           this.selectedResponsable = responsable;
+
+          this.orderingSearch.customerOrders = [];
+          this.quotationSearch.customerOrders = [];
+          this.responsableAccountSearch = undefined;
+
+          setTimeout(() =>
+            this.orderingSearch.customerOrders = [responsable], 0);
+          setTimeout(() =>
+            this.quotationSearch.customerOrders = [responsable], 0);
+          setTimeout(() =>
+            this.responsableAccountSearch = responsable, 0);
+
           this.tiersService.setCurrentViewedResponsable(responsable);
           this.toggleTabs();
           this.initDefaultValues();
@@ -149,20 +163,12 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
         }
       })
     } else {
-      this.appService.displaySnackBar("Compléter la saisie du responsable courant avant de continuer", true, 60);
+      this.appService.displaySnackBar("Compléter la saisie du responsable courant avant de continuer", true, 15);
     }
   }
   selectResponsable(responsable: Responsable) {
     let responsableId = responsable.id;
     this.selectResponsableById(responsableId);
-
-    this.orderingSearch.customerOrders = [];
-    this.quotationSearch.customerOrders = [];
-
-    setTimeout(() =>
-      this.orderingSearch.customerOrders = [responsable], 0);
-    setTimeout(() =>
-      this.quotationSearch.customerOrders = [responsable], 0);
   }
 
   deleteResponsable(responsableRow: any) {
@@ -204,7 +210,7 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
       this.toggleTabs();
       this.initDefaultValues();
     } else {
-      this.appService.displaySnackBar("Compléter la saisie du responsable courant avant de continuer", true, 60);
+      this.appService.displaySnackBar("Compléter la saisie du responsable courant avant de continuer", true, 15);
     }
   }
 

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisLog;
 import com.jss.osiris.libs.exception.OsirisLogRepository;
@@ -40,6 +41,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleExceptionOsiris(Exception ex, WebRequest request) {
         if (ex instanceof OsirisValidationException) {
             return validationOsirisValidationException((OsirisValidationException) ex, request);
+        }
+        if (ex instanceof OsirisClientMessageException) {
+            return validationOsirisClientMessageException((OsirisClientMessageException) ex, request);
         } else if (ex instanceof OsirisException) {
             return validationOsirisException((OsirisException) ex, request);
         } else {
@@ -54,6 +58,16 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         HttpHeaders header = new HttpHeaders();
         header.setAccessControlExposeHeaders(customHeaders);
         header.set("incorrectField", exception.getMessage());
+        return ResponseEntity.badRequest().headers(header).build();
+    }
+
+    private ResponseEntity<Object> validationOsirisClientMessageException(OsirisClientMessageException exception,
+            WebRequest request) {
+        List<String> customHeaders = new ArrayList<String>();
+        customHeaders.add("errorMessageToDisplay");
+        HttpHeaders header = new HttpHeaders();
+        header.setAccessControlExposeHeaders(customHeaders);
+        header.set("errorMessageToDisplay", exception.getMessage());
         return ResponseEntity.badRequest().headers(header).build();
     }
 

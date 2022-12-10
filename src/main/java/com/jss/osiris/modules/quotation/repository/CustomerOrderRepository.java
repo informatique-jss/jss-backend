@@ -49,4 +49,5 @@ public interface CustomerOrderRepository extends CrudRepository<CustomerOrder, I
         @Query(value = "select n from CustomerOrder n where customerOrderStatus=:customerOrderStatus and thirdReminderDateTime is null ")
         List<CustomerOrder> findCustomerOrderForReminder(
                         @Param("customerOrderStatus") CustomerOrderStatus customerOrderStatus);
+
 }

@@ -26,6 +26,8 @@ import com.jss.osiris.modules.quotation.model.TransfertFundsType;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormeJuridique;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeFormalite;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypePersonne;
+import com.jss.osiris.modules.tiers.model.BillingClosureRecipientType;
+import com.jss.osiris.modules.tiers.model.BillingClosureType;
 import com.jss.osiris.modules.tiers.model.BillingLabelType;
 import com.jss.osiris.modules.tiers.model.RefundType;
 import com.jss.osiris.modules.tiers.model.SubscriptionPeriodType;
@@ -52,6 +54,8 @@ public interface ConstantService {
 
     public TiersType getTiersTypeProspect() throws OsirisException;
 
+    public TiersType getTiersTypeClient() throws OsirisException;
+
     public DocumentType getDocumentTypePublication() throws OsirisException;
 
     public DocumentType getDocumentTypeCfe() throws OsirisException;
@@ -72,8 +76,6 @@ public interface ConstantService {
 
     public DocumentType getDocumentTypePublicationCertificate() throws OsirisException;
 
-    public DocumentType getDocumentTypeQuotation() throws OsirisException;
-
     public AttachmentType getAttachmentTypeKbis() throws OsirisException;
 
     public AttachmentType getAttachmentTypeCni() throws OsirisException;
@@ -91,6 +93,10 @@ public interface ConstantService {
     public AttachmentType getAttachmentTypePublicationReceipt() throws OsirisException;
 
     public AttachmentType getAttachmentTypePublicationProof() throws OsirisException;
+
+    public AttachmentType getAttachmentTypeJournal() throws OsirisException;
+
+    public AttachmentType getAttachmentTypeBillingClosure() throws OsirisException;
 
     public Country getCountryFrance() throws OsirisException;
 
@@ -257,5 +263,11 @@ public interface ConstantService {
     public String getStringAccountingSharedMaiblox() throws OsirisException;
 
     public String getStringSalesSharedMailbox() throws OsirisException;
+
+    public BillingClosureRecipientType getBillingClosureRecipientTypeClient() throws OsirisException;
+
+    public BillingClosureRecipientType getBillingClosureRecipientTypeResponsable() throws OsirisException;
+
+    public BillingClosureType getBillingClosureTypeAffaire() throws OsirisException;
 
 }

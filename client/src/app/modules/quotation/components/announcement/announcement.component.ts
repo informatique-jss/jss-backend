@@ -302,4 +302,8 @@ export class AnnouncementComponent implements OnInit {
     }
   }
 
+  canEditJournal() {
+    return this.announcement.publicationDate.getTime() < (new Date()).getTime();
+  }
+
 }

@@ -11,7 +11,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.search.service.IndexEntityService;
+import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.Document;
+import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.MailService;
 import com.jss.osiris.modules.miscellaneous.service.PhoneService;
 import com.jss.osiris.modules.profile.model.Employee;
@@ -67,6 +69,12 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
     @Autowired
     CustomerOrderService customerOrderService;
 
+    @Autowired
+    AnnouncementService announcementService;
+
+    @Autowired
+    ConstantService constantService;
+
     @Override
     public List<AssoAffaireOrder> getAssoAffaireOrders() {
         return IterableUtils.toList(assoAffaireOrderRepository.findAll());
@@ -113,7 +121,8 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
     }
 
     @Override
-    public AssoAffaireOrder completeAssoAffaireOrder(AssoAffaireOrder assoAffaireOrder, IQuotation customerOrder) {
+    public AssoAffaireOrder completeAssoAffaireOrder(AssoAffaireOrder assoAffaireOrder, IQuotation customerOrder)
+            throws OsirisException {
         // Complete domiciliation end date
         int nbrAssignation = 0;
         Employee currentEmployee = null;
@@ -198,6 +207,25 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                 if (announcement.getDocuments() != null)
                     for (Document document : announcement.getDocuments())
                         document.setAnnouncement(announcement);
+
+                if (announcement.getId() != null)
+                    announcementService.generatePublicationProof(announcement);
+
+                boolean publicationProofFound = false;
+                if (announcement != null) {
+                    if (announcement.getAttachments() != null && announcement.getAttachments().size() > 0)
+                        for (Attachment attachment : announcement.getAttachments())
+                            if (attachment.getAttachmentType().getId()
+                                    .equals(constantService.getAttachmentTypePublicationProof().getId())) {
+                                publicationProofFound = true;
+                                break;
+                            }
+                }
+
+                if (publicationProofFound && announcement.getAnnouncementStatus() != null && announcement
+                        .getAnnouncementStatus().getCode().equals(AnnouncementStatus.ANNOUNCEMENT_WAITING_PUBLICATION))
+                    announcement.setAnnouncementStatus(announcementStatusService
+                            .getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_PUBLISHED));
             }
 
             // Set proper assignation regarding provision item configuration

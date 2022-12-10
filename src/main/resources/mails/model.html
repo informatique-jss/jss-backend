@@ -137,7 +137,7 @@
                                                             <td class="pad"
                                                                 style="padding-left:10px;padding-right:10px;text-align:center;width:100%;">
                                                                 <h1
-                                                                    style="margin: 0; color: #233d56; direction: ltr; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 46px; font-weight: 400; letter-spacing: normal; line-height: 120%; text-align: center; margin-top: 0; margin-bottom: 0;">
+                                                                    style="margin: 0; color: #233d56; direction: ltr; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 40px; font-weight: 400; letter-spacing: normal; line-height: 120%; text-align: center; margin-top: 0; margin-bottom: 0;">
                                                                     <strong><span th:text="${title}"></span></strong>
                                                                 </h1>
                                                             </td>
@@ -248,7 +248,8 @@
                                                                         </p>
                                                                         <p th:if="${paymentExplaination!=null}"
                                                                             style="margin-top:20px; font-size: 16px; text-align: center; mso-line-height-alt: 19.2px;">
-                                                                            <span style="font-size:16px;"
+                                                                            <span
+                                                                                style="font-size:16px; white-space: pre"
                                                                                 th:text="${paymentExplaination}"></span>
                                                                         </p>
                                                                         <p th:if="${paymentExplaination2!=null}"
@@ -318,7 +319,7 @@
                                                                                                     th:text="${invoiceItem.label}"></span>
                                                                                             </td>
                                                                                             <td
-                                                                                                style="text-align: right">
+                                                                                                style="text-align: right;white-space: nowrap;">
                                                                                                 <span
                                                                                                     th:text="${#numbers.formatDecimal(invoiceItem.preTaxPrice,1,2)}"></span>
                                                                                                 €
@@ -330,7 +331,7 @@
                                                                                                 <span>Remise</span>
                                                                                             </td>
                                                                                             <td
-                                                                                                style="text-align: right">
+                                                                                                style="text-align: right;white-space: nowrap;">
                                                                                                 - <span
                                                                                                     th:text="${#numbers.formatDecimal(invoiceItem.discountAmount,1,2)}"></span>
                                                                                                 €</td>
@@ -352,7 +353,7 @@
                                                                                 </th:block>
                                                                             </th:block>
                                                                         </table>
-                                                                        <p style="margin-top: 10px;">&nbsp;</p>
+                                                                        <p style="margin-top: 10px;">&#160;</p>
                                                                         <table th:if="${assos!=null}"
                                                                             style="font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;   color: #233d56; width:100%">
                                                                             <tr th:if="${preTaxPriceTotal!=null}">
@@ -360,7 +361,9 @@
                                                                                     style="text-align: right">
                                                                                     Prix total HT
                                                                                 </td>
-                                                                                <td style="text-align: right"><span
+                                                                                <td
+                                                                                    style="text-align: right;white-space: nowrap;">
+                                                                                    <span
                                                                                         th:text="${#numbers.formatDecimal(preTaxPriceTotal,1,2)}"></span>
                                                                                     €
                                                                                 </td>
@@ -371,7 +374,9 @@
                                                                                     style="text-align: right">
                                                                                     Remise totale
                                                                                 </td>
-                                                                                <td style="text-align: right"> - <span
+                                                                                <td
+                                                                                    style="text-align: right;white-space: nowrap;">
+                                                                                    - <span
                                                                                         th:text="${#numbers.formatDecimal(discountTotal,1,2)}"></span>
                                                                                     €
                                                                                 </td>
@@ -383,7 +388,9 @@
                                                                                     style="text-align: right">
                                                                                     Total HT
                                                                                 </td>
-                                                                                <td style="text-align: right"><span
+                                                                                <td
+                                                                                    style="text-align: right;white-space: nowrap;">
+                                                                                    <span
                                                                                         th:text="${#numbers.formatDecimal(preTaxPriceTotalWithDicount,1,2)}"></span>
                                                                                     €
                                                                                 </td>
@@ -398,7 +405,9 @@
                                                                                         th:text="${#numbers.formatDecimal(vat.base,1,2)}"></span>
                                                                                     €
                                                                                 </td>
-                                                                                <td style="text-align: right"><span
+                                                                                <td
+                                                                                    style="text-align: right;white-space: nowrap;">
+                                                                                    <span
                                                                                         th:text="${#numbers.formatDecimal(vat.total,1,2)}"></span>
                                                                                     €
                                                                                 </td>
@@ -409,7 +418,9 @@
                                                                                     style="text-align: right">
                                                                                     Prix TTC
                                                                                 </td>
-                                                                                <td style="text-align: right"><span
+                                                                                <td
+                                                                                    style="text-align: right;white-space: nowrap;">
+                                                                                    <span
                                                                                         th:text="${#numbers.formatDecimal(priceTotal,1,2)}"></span>
                                                                                     €
                                                                                 </td>
@@ -417,7 +428,7 @@
                                                                         </table>
                                                                         <p
                                                                             style="margin: 0; font-size: 16px; text-align: center; mso-line-height-alt: 16.8px;">
-                                                                            &nbsp;</p>
+                                                                            &#160;</p>
                                                                         <p th:if="${totalSubtitle!=null}"
                                                                             style="margin: 0; font-size: 16px; text-align: center; mso-line-height-alt: 19.2px;">
                                                                             <span style="font-size:14px;"><span

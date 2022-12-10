@@ -1,7 +1,10 @@
 package com.jss.osiris.modules.accounting.service;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.model.AccountingAccountClass;
 import com.jss.osiris.modules.accounting.model.AccountingBalance;
@@ -24,6 +28,7 @@ import com.jss.osiris.modules.accounting.model.AccountingBalanceViewTitle;
 import com.jss.osiris.modules.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.accounting.model.AccountingRecordSearch;
+import com.jss.osiris.modules.accounting.model.AccountingRecordSearchResult;
 import com.jss.osiris.modules.accounting.repository.AccountingRecordRepository;
 import com.jss.osiris.modules.invoicing.model.Deposit;
 import com.jss.osiris.modules.invoicing.model.Invoice;
@@ -34,6 +39,11 @@ import com.jss.osiris.modules.invoicing.service.InvoiceHelper;
 import com.jss.osiris.modules.invoicing.service.InvoiceItemService;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.invoicing.service.PaymentService;
+import com.jss.osiris.modules.miscellaneous.model.Attachment;
+import com.jss.osiris.modules.miscellaneous.model.Document;
+import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
+import com.jss.osiris.modules.miscellaneous.service.ConstantService;
+import com.jss.osiris.modules.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.miscellaneous.service.VatService;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
@@ -41,6 +51,8 @@ import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.tiers.model.ITiers;
 import com.jss.osiris.modules.tiers.model.Responsable;
+import com.jss.osiris.modules.tiers.model.Tiers;
+import com.jss.osiris.modules.tiers.service.TiersService;
 
 @Service
 public class AccountingRecordServiceImpl implements AccountingRecordService {
@@ -78,6 +90,21 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   @Autowired
   PaymentService paymentService;
 
+  @Autowired
+  TiersService tiersService;
+
+  @Autowired
+  DocumentService documentService;
+
+  @Autowired
+  ConstantService constantService;
+
+  @Autowired
+  AttachmentService attachmentService;
+
+  @Autowired
+  MailHelper mailHelper;
+
   @Override
   public List<AccountingRecord> getAccountingRecords() {
     return IterableUtils.toList(accountingRecordRepository.findAll());
@@ -98,7 +125,6 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     return addOrUpdateAccountingRecord(accountingRecord);
   }
 
-  @Override
   public AccountingRecord addOrUpdateAccountingRecord(
       AccountingRecord accountingRecord) {
     return accountingRecordRepository.save(accountingRecord);
@@ -186,7 +212,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     }
 
     // Check balance ok
-    if (Math.round(balance * 10000f) / 10000f != 0) {
+    if (Math.round(balance * 1000f) / 1000f != 0) {
       throw new OsirisException("Accounting records  are not balanced for invoice " + invoice.getId());
     }
   }
@@ -584,9 +610,34 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   }
 
   @Override
-  public List<AccountingRecord> searchAccountingRecords(AccountingRecordSearch accountingRecordSearch) {
-    return accountingRecordRepository.searchAccountingRecords(accountingRecordSearch.getAccountingClass(),
-        accountingRecordSearch.getAccountingAccount(), accountingRecordSearch.getAccountingJournal(),
+  public List<AccountingRecordSearchResult> searchAccountingRecords(AccountingRecordSearch accountingRecordSearch) {
+    ArrayList<Integer> accountingAccountId = new ArrayList<Integer>();
+    if (accountingRecordSearch.getAccountingAccount() != null) {
+      accountingAccountId.add(accountingRecordSearch.getAccountingAccount().getId());
+    } else {
+      accountingAccountId.add(0);
+    }
+
+    Integer journalId = 0;
+    if (accountingRecordSearch.getAccountingJournal() != null)
+      journalId = accountingRecordSearch.getAccountingJournal().getId();
+
+    Integer accountingClass = 0;
+    if (accountingRecordSearch.getAccountingClass() != null)
+      accountingClass = accountingRecordSearch.getAccountingClass().getId();
+
+    if (accountingRecordSearch.getHideLettered() == null)
+      accountingRecordSearch.setHideLettered(false);
+
+    if (accountingRecordSearch.getTiersId() == null)
+      accountingRecordSearch.setTiersId(0);
+
+    if (accountingRecordSearch.getResponsableId() == null)
+      accountingRecordSearch.setResponsableId(0);
+
+    return accountingRecordRepository.searchAccountingRecords(accountingAccountId, accountingClass, journalId,
+        accountingRecordSearch.getResponsableId(), accountingRecordSearch.getTiersId(),
+        accountingRecordSearch.getHideLettered(),
         accountingRecordSearch.getStartDate(), accountingRecordSearch.getEndDate());
   }
 
@@ -873,6 +924,101 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     accountingRecord.setDeposit(null);
     accountingRecord.setPayment(null);
     return addOrUpdateAccountingRecord(accountingRecord);
+  }
+
+  @Transactional
+  public void sendBillingClosureReceipt() throws OsirisException {
+    List<Tiers> tiers = tiersService.findAllTiersTypeClient();
+    if (tiers != null)
+      for (Tiers tier : tiers) {
+        Document billingClosureDocument = documentService.getBillingClosureDocument(tier.getDocuments());
+        if (billingClosureDocument != null)
+          if (billingClosureDocument.getBillingClosureRecipientType() != null
+              && billingClosureDocument.getBillingClosureRecipientType().getId()
+                  .equals(constantService.getBillingClosureRecipientTypeClient().getId())) {
+            AccountingRecordSearch search = new AccountingRecordSearch();
+            search.setTiersId(tier.getId());
+            search.setHideLettered(true);
+            search.setStartDate(LocalDateTime.now().minusYears(90));
+            search.setEndDate(LocalDateTime.now().withHour(0).withMinute(0).withSecond(0));
+            List<AccountingRecordSearchResult> accountingRecords = searchAccountingRecords(search);
+
+            if (accountingRecords != null && accountingRecords.size() > 0) {
+              File billingClosureReceipt = accountingExportHelper.generateBillingClosure(accountingRecords,
+                  tier.getDenomination() != null ? tier.getDenomination()
+                      : (tier.getFirstname() + " " + tier.getLastname()),
+                  billingClosureDocument.getBillingClosureType().getId()
+                      .equals(constantService.getBillingClosureTypeAffaire().getId()));
+
+              List<Attachment> attachments = new ArrayList<Attachment>();
+              try {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+
+                List<Attachment> attachmentsList = attachmentService.addAttachment(
+                    new FileInputStream(billingClosureReceipt), tier.getId(),
+                    Tiers.class.getSimpleName(), constantService.getAttachmentTypeBillingClosure(),
+                    "Relevé de compte du " + LocalDateTime.now().format(formatter) + ".xlsx", false,
+                    "Relevé de compte du " + LocalDateTime.now().format(formatter));
+
+                for (Attachment attachment : attachmentsList)
+                  if (attachment.getUploadedFile().getFilename()
+                      .equals("Relevé de compte du " + LocalDateTime.now().format(formatter) + ".xlsx")) {
+                    attachments.add(attachment);
+                    break;
+                  }
+              } catch (FileNotFoundException e) {
+                throw new OsirisException("Impossible to read excel of billing closure for tiers " + tier.getId());
+              }
+
+              mailHelper.sendPublicationReceiptToCustomer(attachments, tier, false);
+
+            }
+
+          } else if (billingClosureDocument.getBillingClosureRecipientType() != null
+              && billingClosureDocument.getBillingClosureRecipientType().getId()
+                  .equals(constantService.getBillingClosureRecipientTypeResponsable().getId())) {
+            if (tier.getResponsables() != null && tier.getResponsables().size() > 0) {
+              for (Responsable responsable : tier.getResponsables()) {
+                AccountingRecordSearch search = new AccountingRecordSearch();
+                search.setResponsableId(responsable.getId());
+                search.setHideLettered(true);
+                search.setStartDate(LocalDateTime.now().minusYears(90));
+                search.setEndDate(LocalDateTime.now().withHour(0).withMinute(0).withSecond(0));
+                List<AccountingRecordSearchResult> accountingRecords = searchAccountingRecords(search);
+
+                if (accountingRecords != null && accountingRecords.size() > 0) {
+                  File billingClosureReceipt = accountingExportHelper.generateBillingClosure(accountingRecords,
+                      responsable.getFirstname() + " " + responsable.getLastname(),
+                      billingClosureDocument.getBillingClosureType().getId()
+                          .equals(constantService.getBillingClosureTypeAffaire().getId()));
+
+                  List<Attachment> attachments = new ArrayList<Attachment>();
+                  try {
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+
+                    List<Attachment> attachmentsList = attachmentService.addAttachment(
+                        new FileInputStream(billingClosureReceipt), responsable.getId(),
+                        Responsable.class.getSimpleName(), constantService.getAttachmentTypeBillingClosure(),
+                        "Relevé de compte du " + LocalDateTime.now().format(formatter) + ".xlsx", false,
+                        "Relevé de compte du " + LocalDateTime.now().format(formatter));
+
+                    for (Attachment attachment : attachmentsList)
+                      if (attachment.getUploadedFile().getFilename()
+                          .equals("Relevé de compte du " + LocalDateTime.now().format(formatter) + ".xlsx")) {
+                        attachments.add(attachment);
+                        break;
+                      }
+                  } catch (FileNotFoundException e) {
+                    throw new OsirisException(
+                        "Impossible to read excel of billing closure for responsable " + responsable.getId());
+                  }
+
+                  mailHelper.sendPublicationReceiptToCustomer(attachments, responsable, false);
+                }
+              }
+            }
+          }
+      }
   }
 
 }

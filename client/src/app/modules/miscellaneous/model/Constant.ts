@@ -13,6 +13,8 @@ import { TypePersonne } from '../../quotation/model/guichet-unique/referentials/
 import { JournalType } from "../../quotation/model/JournalType";
 import { MailRedirectionType } from "../../quotation/model/MailRedirectionType";
 import { TransfertFundsType } from "../../quotation/model/TransfertFundsType";
+import { BillingClosureRecipientType } from '../../tiers/model/BillingClosureRecipientType';
+import { BillingClosureType } from '../../tiers/model/BillingClosureType';
 import { BillingLabelType } from "../../tiers/model/BillingLabelType";
 import { RefundType } from "../../tiers/model/RefundType";
 import { SubscriptionPeriodType } from "../../tiers/model/SubscriptionPeriodType";
@@ -36,6 +38,7 @@ export interface Constant {
   accountingJournalPurchases: AccountingJournal;
   accountingJournalANouveau: AccountingJournal;
   tiersTypeProspect: TiersType;
+  tiersTypeClient: TiersType;
   documentTypePublication: DocumentType;
   documentTypeCfe: DocumentType;
   documentTypeKbis: DocumentType;
@@ -46,7 +49,6 @@ export interface Constant {
   documentTypeProvisionnalReceipt: DocumentType;
   documentTypeProofReading: DocumentType;
   documentTypePublicationCertificate: DocumentType;
-  documentTypeQuotation: DocumentType;
   attachmentTypeKbis: AttachmentType;
   attachmentTypeCni: AttachmentType;
   attachmentTypeLogo: AttachmentType;
@@ -56,6 +58,8 @@ export interface Constant {
   attachmentTypePublicationFlag: AttachmentType;
   attachmentTypePublicationReceipt: AttachmentType;
   attachmentTypePublicationProof: AttachmentType;
+  attachmentTypeJournal: AttachmentType;
+  attachmentTypeBillingClosure: AttachmentType;
   countryFrance: Country;
   countryMonaco: Country;
   billingTypeLogo: BillingType;
@@ -139,4 +143,7 @@ export interface Constant {
   typeFormaliteCorrection: TypeFormalite;
   salesSharedMailbox: string;
   accountingSharedMaiblox: string;
+  billingClosureRecipientTypeResponsable: BillingClosureRecipientType;
+  billingClosureRecipientTypeClient: BillingClosureRecipientType;
+  billingClosureTypeAffaire: BillingClosureType;
 }

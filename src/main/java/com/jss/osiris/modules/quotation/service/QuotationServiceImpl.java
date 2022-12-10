@@ -154,7 +154,8 @@ public class QuotationServiceImpl implements QuotationService {
             quotation = quotationRepository.save(quotation);
         }
 
-        quotation = quotationRepository.save(quotation);
+        if (isNewQuotation)
+            quotation = quotationRepository.save(quotation);
 
         getAndSetInvoiceItemsForQuotation(quotation, true);
 

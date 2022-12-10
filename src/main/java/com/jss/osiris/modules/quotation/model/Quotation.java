@@ -24,12 +24,13 @@ import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.model.SpecialOffer;
-import com.jss.osiris.modules.tiers.model.BillingLabelType;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
 @Entity
-@Table(indexes = { @Index(name = "idx_quotation_status", columnList = "id_quotation_status") })
+@Table(indexes = { @Index(name = "idx_quotation_status", columnList = "id_quotation_status"),
+		@Index(name = "idx_quotation_responsable", columnList = "id_responsable"),
+		@Index(name = "idx_quotation_tiers", columnList = "id_tiers") })
 public class Quotation implements IQuotation {
 
 	@Id
@@ -80,22 +81,6 @@ public class Quotation implements IQuotation {
 	@JsonIgnoreProperties(value = { "quotation" }, allowSetters = true)
 	private List<Document> documents;
 
-	@ManyToOne
-	@JoinColumn(name = "id_quotation_label_type")
-	private BillingLabelType quotationLabelType;
-
-	@ManyToOne
-	@JoinColumn(name = "id_custom_label_responsable")
-	private Responsable customLabelResponsable;
-
-	@ManyToOne
-	@JoinColumn(name = "id_custom_label_tiers")
-	private Tiers customLabelTiers;
-
-	@ManyToOne
-	@JoinColumn(name = "id_record_type")
-	private RecordType recordType;
-
 	@OneToMany(targetEntity = AssoAffaireOrder.class, mappedBy = "quotation", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnoreProperties(value = { "quotation" }, allowSetters = true)
 	private List<AssoAffaireOrder> assoAffaireOrders;
@@ -105,10 +90,6 @@ public class Quotation implements IQuotation {
 
 	@Column(length = 40)
 	private String quotationLabel;
-
-	@ManyToOne
-	@JoinColumn(name = "id_label_type")
-	private BillingLabelType labelType;
 
 	@Column(nullable = false)
 	private Boolean isQuotation;
@@ -196,38 +177,6 @@ public class Quotation implements IQuotation {
 
 	public void setDocuments(List<Document> documents) {
 		this.documents = documents;
-	}
-
-	public Responsable getCustomLabelResponsable() {
-		return customLabelResponsable;
-	}
-
-	public void setCustomLabelResponsable(Responsable customLabelResponsable) {
-		this.customLabelResponsable = customLabelResponsable;
-	}
-
-	public Tiers getCustomLabelTiers() {
-		return customLabelTiers;
-	}
-
-	public void setCustomLabelTiers(Tiers customLabelTiers) {
-		this.customLabelTiers = customLabelTiers;
-	}
-
-	public RecordType getRecordType() {
-		return recordType;
-	}
-
-	public void setRecordType(RecordType recordType) {
-		this.recordType = recordType;
-	}
-
-	public Boolean getOverrideSpecialOffer() {
-		return overrideSpecialOffer;
-	}
-
-	public void setOverrideSpecialOffer(Boolean overrideSpecialOffer) {
-		this.overrideSpecialOffer = overrideSpecialOffer;
 	}
 
 	public Boolean getIsQuotation() {
@@ -318,28 +267,20 @@ public class Quotation implements IQuotation {
 		this.thirdReminderDateTime = thirdReminderDateTime;
 	}
 
-	public BillingLabelType getLabelType() {
-		return labelType;
-	}
-
-	public void setLabelType(BillingLabelType labelType) {
-		this.labelType = labelType;
-	}
-
-	public BillingLabelType getQuotationLabelType() {
-		return quotationLabelType;
-	}
-
-	public void setQuotationLabelType(BillingLabelType quotationLabelType) {
-		this.quotationLabelType = quotationLabelType;
-	}
-
 	public String getQuotationLabel() {
 		return quotationLabel;
 	}
 
 	public void setQuotationLabel(String quotationLabel) {
 		this.quotationLabel = quotationLabel;
+	}
+
+	public Boolean getOverrideSpecialOffer() {
+		return overrideSpecialOffer;
+	}
+
+	public void setOverrideSpecialOffer(Boolean overrideSpecialOffer) {
+		this.overrideSpecialOffer = overrideSpecialOffer;
 	}
 
 }

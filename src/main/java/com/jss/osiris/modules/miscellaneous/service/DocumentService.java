@@ -19,7 +19,7 @@ public interface DocumentService {
      */
     public Document getBillingDocument(List<Document> documents) throws OsirisException;
 
-    public Document getQuotationDocument(List<Document> documents) throws OsirisException;
+    public Document getBillingClosureDocument(List<Document> documents) throws OsirisException;
 
     public Document cloneDocument(Document document);
 }

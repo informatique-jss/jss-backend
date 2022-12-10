@@ -62,6 +62,10 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.tiersTypeProspect;
   }
 
+  getTiersTypeClient() {
+    return this.constant.tiersTypeClient;
+  }
+
   getDocumentTypePublication() {
     return this.constant.documentTypePublication;
   }
@@ -102,10 +106,6 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.documentTypePublicationCertificate;
   }
 
-  getDocumentTypeQuotation() {
-    return this.constant.documentTypeQuotation;
-  }
-
   getAttachmentTypeKbis() {
     return this.constant.attachmentTypeKbis;
   }
@@ -140,6 +140,14 @@ export class ConstantService extends AppRestService<Constant>{
 
   getAttachmentTypePublicationProof() {
     return this.constant.attachmentTypePublicationProof;
+  }
+
+  getAttachmentTypeJournal() {
+    return this.constant.attachmentTypeJournal;
+  }
+
+  getAttachmentTypeBillingClosure() {
+    return this.constant.attachmentTypeBillingClosure;
   }
 
   getCountryFrance() {
@@ -466,5 +474,17 @@ export class ConstantService extends AppRestService<Constant>{
 
   getAccountingSharedMaiblox() {
     return this.constant.accountingSharedMaiblox;
+  }
+
+  getBillingClosureRecipientTypeResponsable() {
+    return this.constant.billingClosureRecipientTypeResponsable;
+  }
+
+  getBillingClosureRecipientTypeClient() {
+    return this.constant.billingClosureRecipientTypeClient;
+  }
+
+  getBillingClosureTypeAffaire() {
+    return this.constant.billingClosureTypeAffaire;
   }
 }

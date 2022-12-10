@@ -9,8 +9,6 @@ import { City } from 'src/app/modules/miscellaneous/model/City';
 import { Country } from 'src/app/modules/miscellaneous/model/Country';
 import { CityService } from 'src/app/modules/miscellaneous/services/city.service';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
-import { Responsable } from 'src/app/modules/tiers/model/Responsable';
-import { Tiers } from 'src/app/modules/tiers/model/Tiers';
 import { TiersService } from 'src/app/modules/tiers/services/tiers.service';
 import { Document } from '../../../miscellaneous/model/Document';
 import { DocumentType } from '../../../miscellaneous/model/DocumentType';
@@ -46,10 +44,8 @@ export class QuotationManagementComponent implements OnInit, AfterContentChecked
   countryFrance: Country = this.constantService.getCountryFrance();
   billingLabelTypeOther = this.constantService.getBillingLabelTypeOther();
 
-  devisDocument: Document = {} as Document;
   billingDocument: Document = {} as Document;
 
-  quotationMailComputeResult: MailComputeResult | undefined;
   billingMailComputeResult: MailComputeResult | undefined;
   invoiceLabelResult: InvoiceLabelResult | undefined;
 
@@ -65,7 +61,6 @@ export class QuotationManagementComponent implements OnInit, AfterContentChecked
     private mailComputeResultService: MailComputeResultService) { }
 
   ngOnInit() {
-    this.updateQuotationMailResult();
     this.updateBillingMailResult();
     this.updateInvoiceLabelResult();
     this.quotationManagementForm.markAllAsTouched();
@@ -73,7 +68,12 @@ export class QuotationManagementComponent implements OnInit, AfterContentChecked
       this.recordTypes = response;
     })
     if (this.updateDocumentsEvent)
-      this.updateDocumentsSubscription = this.updateDocumentsEvent.subscribe(() => this.setDocument());
+      this.updateDocumentsSubscription = this.updateDocumentsEvent.subscribe(() => {
+        this.updateBillingMailResult();
+        this.updateInvoiceLabelResult();
+        this.setDocument();
+      }
+      );
   }
 
   ngAfterContentChecked(): void {
@@ -87,11 +87,8 @@ export class QuotationManagementComponent implements OnInit, AfterContentChecked
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.quotation != undefined) {
-      this.updateQuotationMailResult();
       this.updateBillingMailResult();
       this.updateInvoiceLabelResult();
-      if (this.quotation.recordType == null || this.quotation.recordType == undefined)
-        this.quotation.recordType = this.recordTypes[0];
       this.setDocument();
       this.quotationManagementForm.markAllAsTouched();
     }
@@ -113,7 +110,6 @@ export class QuotationManagementComponent implements OnInit, AfterContentChecked
     }
     if (this.quotation.confrere)
       currentOrderingCustomer = this.quotation.confrere;
-    this.devisDocument = getDocument(this.constantService.getDocumentTypeQuotation(), this.quotation);
     this.billingDocument = getDocument(this.constantService.getDocumentTypeBilling(), this.quotation);
 
     let currentBillingDocument = getDocument(this.constantService.getDocumentTypeBilling(), currentOrderingCustomer);
@@ -121,8 +117,6 @@ export class QuotationManagementComponent implements OnInit, AfterContentChecked
     // If billing document does not exist, try to grab it from selected tiers, responsable or confrere
     if (!this.billingDocument.id && currentBillingDocument.id) {
       this.billingDocument = copyObject(getDocument(this.constantService.getDocumentTypeBilling(), currentOrderingCustomer));
-      this.quotation.quotationLabelType = this.billingDocument.billingLabelType;
-
       if (!this.billingDocument.billingLabelIsIndividual)
         this.billingDocument.billingLabelIsIndividual = false;
     }
@@ -133,29 +127,16 @@ export class QuotationManagementComponent implements OnInit, AfterContentChecked
   }
 
   getFormStatus(): boolean {
-    console.log(this.billingDocument);
     this.quotationManagementForm.markAllAsTouched();
-    this.updateQuotationMailResult();
     this.updateBillingMailResult();
     this.updateInvoiceLabelResult();
-    if (!this.isStatusOpen && (!this.quotationMailComputeResult?.recipientsMailTo || this.quotationMailComputeResult?.recipientsMailTo.length == 0))
-      return false;
     if (!this.isStatusOpen && instanceOfCustomerOrder(this.quotation) && (!this.invoiceLabelResult?.billingLabel || !this.invoiceLabelResult.billingLabelAddress || !this.invoiceLabelResult.billingLabelCity
       || !this.invoiceLabelResult.billingLabelCountry || !this.invoiceLabelResult.billingLabelPostalCode))
       return false;
+    if (!this.billingMailComputeResult || !this.billingMailComputeResult.recipientsMailTo || this.billingMailComputeResult.recipientsMailTo.length == 0)
+      return false;
     return this.quotationManagementForm.valid;
   }
-
-  fillTiers(tiers: Tiers) {
-    this.quotation.customLabelTiers = tiers;
-    this.quotation.customLabelResponsable = undefined;
-  }
-
-  fillResponsable(responsable: Responsable) {
-    this.quotation.customLabelResponsable = responsable;
-    this.quotation.customLabelTiers = undefined;
-  }
-
 
   fillPostalCode(city: City) {
     if (!this.billingDocument.billingLabelCountry)
@@ -177,15 +158,8 @@ export class QuotationManagementComponent implements OnInit, AfterContentChecked
     })
   }
 
-  updateQuotationMailResult() {
-    if (this.quotation && this.quotation.id)
-      this.mailComputeResultService.getMailComputeResultForQuotation(this.quotation).subscribe(response => {
-        this.quotationMailComputeResult = response;
-      })
-  }
-
   updateBillingMailResult() {
-    if (this.quotation && this.quotation.id)
+    if (this.quotation)
       this.mailComputeResultService.getMailComputeResultForBilling(this.quotation).subscribe(response => {
         this.billingMailComputeResult = response;
       })

@@ -141,17 +141,11 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
   paymentForm2 = this.formBuilder.group({
   });
   addPayment() {
-    this.paymentWayService.getPaymentWays().subscribe(response => {
-      this.currentPayment.isExternallyAssociated = false;
-      for (let paymentWay of response) {
-        if (paymentWay.code == "INBOUND")
-          this.currentPayment.paymentWay = paymentWay;
-      }
-      this.paymentService.addOrUpdatePayment(this.currentPayment).subscribe(response => {
-        this.searchPayments();
-        this.currentPayment = {} as Payment;
-      })
+    this.currentPayment.isExternallyAssociated = false;
+    this.currentPayment.paymentWay = this.constantService.getPaymentWayInbound();
+    this.paymentService.addOrUpdatePayment(this.currentPayment).subscribe(response => {
+      this.searchPayments();
+      this.currentPayment = {} as Payment;
     })
-
   }
 }

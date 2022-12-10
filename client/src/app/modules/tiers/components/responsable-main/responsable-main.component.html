@@ -227,6 +227,9 @@
             [orderingSearch]="orderingSearch" [isForTiersIntegration]="true">
           </ordering-list>
         </mat-tab>
+        <mat-tab label="Comptes" *ngIf="responsableAccountSearch && responsableAccountSearch.id">
+          <accounting-record [tiersToDisplay]="responsableAccountSearch"></accounting-record>
+        </mat-tab>
         <mat-tab label="Suivi" *ngIf="selectedResponsable?.id!=null && selectedResponsable?.id!=undefined">
           <tiers-followup [tiers]="selectedResponsable!" [editMode]="editMode"></tiers-followup>
         </mat-tab>

@@ -16,4 +16,5 @@ public interface TiersService {
 
     public void reindexTiers();
 
+    public List<Tiers> findAllTiersTypeClient() throws OsirisException;
 }

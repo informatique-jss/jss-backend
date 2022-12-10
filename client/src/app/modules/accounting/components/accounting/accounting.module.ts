@@ -63,6 +63,9 @@ const routes: Routes = [
   ],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'fr-FR' }
+  ],
+  exports: [
+    AccountingRecordComponent,
   ]
 })
 export class AccountingModule { }

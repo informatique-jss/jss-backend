@@ -1,6 +1,6 @@
 <div class="mat-elevation-z2 form-div">
   <div class=" full-width">
-    <table class="full-width table-fixed-layout">
+    <table class="full-width table-fixed-layout" *ngIf="tiersToDisplay==undefined">
       <tr>
         <td>
           <autocomplete-accounting-account [(model)]="accountingRecordSearch.accountingAccount"
@@ -53,7 +53,7 @@
     </table>
   </div>
 </div>
-<button matTooltip="Exporter" mat-fab color="accent" class="fab-button" *ngIf="accountingRecords"
+<button matTooltip="Exporter" mat-fab color="accent" class="second-fab-button" *ngIf="accountingRecords"
   [matMenuTriggerFor]="menu">
   <mat-icon>file_download</mat-icon>
   <mat-menu #menu="matMenu" style="min-height: 0px;padding: 0;" xPosition="before">

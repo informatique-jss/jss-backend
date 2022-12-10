@@ -44,6 +44,8 @@ export class AffaireComponent implements OnInit, AfterContentChecked {
 
   confrereJssPaper = this.constantService.getConfrereJssPaper();
   confrereJssSpel = this.constantService.getConfrereJssSpel();
+  journalTypePaper = this.constantService.getJournalTypePaper();
+  journalTypeSpel = this.constantService.getJournalTypeSpel();
 
   currentProvisionWorkflow: Provision | undefined;
 
@@ -127,7 +129,7 @@ export class AffaireComponent implements OnInit, AfterContentChecked {
         this.appService.openRoute(null, '/affaire/' + this.idAffaire, null);
       })
     } else {
-      this.appService.displaySnackBar("Les onglets suivants ne sont pas correctement remplis. Veuillez les compléter avant de sauvegarder : Prestations", true, 60);
+      this.appService.displaySnackBar("Les onglets suivants ne sont pas correctement remplis. Veuillez les compléter avant de sauvegarder : Prestations", true, 15);
     }
   }
 
@@ -209,5 +211,13 @@ export class AffaireComponent implements OnInit, AfterContentChecked {
 
   generatePublicationFlag(announcement: Announcement) {
     this.announcementService.previewPublicationFlag(announcement);
+  }
+
+  generatePublicationReceiptMail() {
+    this.announcementService.generatePublicationReceiptMail(this.asso.customerOrder).subscribe();
+  }
+
+  generatePublicationFlagMail() {
+    this.announcementService.generatePublicationFlagMail(this.asso.customerOrder).subscribe();
   }
 }

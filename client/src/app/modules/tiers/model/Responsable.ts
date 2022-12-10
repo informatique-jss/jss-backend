@@ -15,9 +15,6 @@ export interface Responsable extends ITiers {
   floor: string;
   jssSubscription: JssSubscription;
   subscriptionPeriodType: SubscriptionPeriodType;
-  mailsCreationAffaire: Responsable[];
-  mailsProvisionningConfirmation: Responsable[];
-  mailsMissingItemFormality: Responsable[];
   tiersType: TiersType;
   tiersCategory: TiersCategory;
   firstBilling: Date;

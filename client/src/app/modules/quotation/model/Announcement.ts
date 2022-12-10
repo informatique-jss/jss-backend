@@ -1,6 +1,7 @@
 import { Department } from "../../miscellaneous/model/Department";
 import { IAttachment } from "../../miscellaneous/model/IAttachment";
 import { IDocument } from "../../miscellaneous/model/IDocument";
+import { Journal } from '../../pao/model/Journal';
 import { AnnouncementStatus } from './AnnouncementStatus';
 import { Confrere } from "./Confrere";
 import { NoticeType } from "./NoticeType";
@@ -19,4 +20,6 @@ export interface Announcement extends IAttachment, IDocument {
   isHeaderFree: boolean;
   isProofReadingDocument: boolean;
   announcementStatus: AnnouncementStatus;
+  journal: Journal;
+  journalPages: string;
 }

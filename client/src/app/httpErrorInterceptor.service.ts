@@ -54,7 +54,10 @@ export class HttpErrorInterceptor implements HttpInterceptor {
           } else if (error.status == 0) {
             // Server unavailable or user not connected to network => ignore error
           } else if (error.status == 400) {
-            errorMessage = 'Erreur de validation sur ' + error.headers.get("incorrectField");
+            if (error.headers.get("incorrectField"))
+              errorMessage = 'Erreur de validation sur ' + error.headers.get("incorrectField");
+            else if (error.headers.get("errorMessageToDisplay"))
+              errorMessage = "" + error.headers.get("errorMessageToDisplay");
           } else if (error.status == 500) {
             errorMessage = 'Erreur côté serveur. \nMerci de contacter l\'administrateur ou bien de déclarer un bug à l\'aide du bouton en haut à gauche et de founir l\'indication technique suivante : ' + error.headers.get("error");
           } else {

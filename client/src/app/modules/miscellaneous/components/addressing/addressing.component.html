@@ -5,25 +5,25 @@
         <h4>Destinataire(s)</h4>
         <generic-checkbox [(model)]="document.isRecipientAffaire" label="Affaire" [form]="adressingForm"
           propertyName="isRecipientAffaire"></generic-checkbox>
-        <button matTooltip="Modifier les adresses postales par défaut"
-          *ngIf="document.isMailingPaper && (document.isRecipientAffaire || document.isRecipientClient) && !hideOverriding && editMode"
-          mat-icon-button color="accent" (click)="overrideAffaireAddress=true;overrideClientAddress=true">
-          <mat-icon>edit</mat-icon>
-        </button>
         <generic-checkbox [(model)]="document.isRecipientClient" label="Client" [form]="adressingForm"
-          propertyName="isRecipientClient"></generic-checkbox> <button
-          matTooltip="Modifier les adresses mail par défaut"
-          *ngIf="document.isMailingPdf && (document.isRecipientAffaire || document.isRecipientClient ) && !hideOverriding && editMode"
-          mat-icon-button color="accent" (click)="overrideAffaireMail=true;overrideClientMail=true">
-          <mat-icon>edit</mat-icon>
-        </button>
+          propertyName="isRecipientClient"></generic-checkbox>
       </td>
       <td *ngIf="hideAdressing==false">
         <h4 *ngIf="!onlyMail">Type d'envoi</h4>
         <generic-checkbox [(model)]="document.isMailingPaper" label="Papier" [form]="adressingForm"
           *ngIf="onlyMail==false  " propertyName="isMailingPaper"></generic-checkbox>
+        <button matTooltip="Modifier les adresses postales par défaut"
+          *ngIf="document.isMailingPaper && (document.isRecipientAffaire || document.isRecipientClient) && !hideOverriding && editMode"
+          mat-icon-button color="accent" (click)="overrideAffaireAddress=true;overrideClientAddress=true">
+          <mat-icon>edit</mat-icon>
+        </button>
         <generic-checkbox [(model)]="document.isMailingPdf" label="PDF" [form]="adressingForm" *ngIf="onlyMail==false"
           propertyName="isMailingPdf"></generic-checkbox>
+        <button matTooltip="Modifier les adresses mail par défaut"
+          *ngIf="document.isMailingPdf && (document.isRecipientAffaire || document.isRecipientClient ) && !hideOverriding && editMode"
+          mat-icon-button color="accent" (click)="overrideAffaireMail=true;overrideClientMail=true">
+          <mat-icon>edit</mat-icon>
+        </button>
       </td>
       <td *ngIf="document.isMailingPaper && document.isRecipientAffaire && displayPaperCopy && displayNumberMailing">
         <generic-input [(model)]="document.numberMailingAffaire" label="Nombre d'exemplaire Affaire"

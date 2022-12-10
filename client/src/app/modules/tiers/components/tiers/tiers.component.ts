@@ -29,6 +29,7 @@ export class TiersComponent implements OnInit, AfterContentChecked {
 
   orderingSearch: OrderingSearch = {} as OrderingSearch;
   quotationSearch: QuotationSearch = {} as QuotationSearch;
+  responsableAccountSearch: Tiers | undefined;
 
   selectedTabIndex = 0;
 
@@ -63,6 +64,7 @@ export class TiersComponent implements OnInit, AfterContentChecked {
 
         this.orderingSearch.customerOrders = [this.tiers];
         this.quotationSearch.customerOrders = [this.tiers];
+        this.responsableAccountSearch = this.tiers;
       })
       // Load by tiers
     } else if (idTiers != null && idTiers != undefined) {
@@ -74,6 +76,7 @@ export class TiersComponent implements OnInit, AfterContentChecked {
 
         this.orderingSearch.customerOrders = [this.tiers];
         this.quotationSearch.customerOrders = [this.tiers];
+        this.responsableAccountSearch = this.tiers;
       })
     } else if (this.createMode == false) {
       // Blank page
@@ -131,7 +134,7 @@ export class TiersComponent implements OnInit, AfterContentChecked {
       errorMessages.push("Onglet Responsable");
     if (errorMessages.length > 0) {
       let errorMessage = "Les onglets suivants ne sont pas correctement remplis. Veuillez les compléter avant de sauvegarder : " + errorMessages.join(" / ");
-      this.appService.displaySnackBar(errorMessage, true, 60);
+      this.appService.displaySnackBar(errorMessage, true, 15);
       return false;
     }
     return true;

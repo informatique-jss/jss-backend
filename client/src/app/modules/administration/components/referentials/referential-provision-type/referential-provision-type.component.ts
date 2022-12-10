@@ -41,4 +41,11 @@ export class ReferentialProvisionTypeComponent extends GenericReferentialCompone
         this.selectedEntity.billingTypes = [] as Array<BillingType>;
     this.selectedEntity?.billingTypes.push({} as BillingType);
   }
+
+  deleteBillingType(billingTypeIn: BillingType) {
+    if (this.selectedEntity && this.selectedEntity.billingTypes)
+      for (let i = 0; i < this.selectedEntity.billingTypes.length; i++)
+        if (this.selectedEntity.billingTypes[i].id == billingTypeIn.id)
+          this.selectedEntity.billingTypes.splice(i, 1);
+  }
 }

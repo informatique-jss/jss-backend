@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.jss.osiris.libs.GlobalExceptionHandler;
 import com.jss.osiris.libs.ValidationHelper;
+import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisLog;
 import com.jss.osiris.libs.exception.OsirisValidationException;
@@ -309,12 +310,6 @@ public class QuotationController {
     return new ResponseEntity<List<BodaccStatus>>(bodaccStatusService.getBodaccStatus(), HttpStatus.OK);
   }
 
-  @PostMapping(inputEntryPoint + "/mail/quotation/compute")
-  public ResponseEntity<MailComputeResult> computeMailForQuotation(
-      @RequestBody Quotation quotation) throws OsirisException {
-    return new ResponseEntity<MailComputeResult>(mailHelper.computeMailForQuotationDocument(quotation), HttpStatus.OK);
-  }
-
   @PostMapping(inputEntryPoint + "/mail/billing/compute")
   public ResponseEntity<MailComputeResult> computeMailForBilling(
       @RequestBody Quotation quotation) throws OsirisException {
@@ -328,7 +323,7 @@ public class QuotationController {
     if (quotation == null)
       throw new OsirisValidationException("quotation");
 
-    MailComputeResult mailComputeResult = mailHelper.computeMailForQuotationDocument(quotation);
+    MailComputeResult mailComputeResult = mailHelper.computeMailForBillingDocument(quotation);
     if (mailComputeResult.getRecipientsMailTo() == null || mailComputeResult.getRecipientsMailTo().size() == 0)
       throw new OsirisValidationException("MailTo");
 
@@ -857,14 +852,14 @@ public class QuotationController {
   }
 
   @GetMapping(inputEntryPoint + "/siren")
-  public ResponseEntity<List<Siren>> getSiren(@RequestParam String siren) {
+  public ResponseEntity<List<Siren>> getSiren(@RequestParam String siren) throws OsirisClientMessageException {
     if (siren != null && !siren.equals("") && siren.replaceAll(" ", "").length() == 9)
       return new ResponseEntity<List<Siren>>(sireneDelegateService.getSiren(siren.replaceAll(" ", "")), HttpStatus.OK);
     return new ResponseEntity<List<Siren>>(HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/siret")
-  public ResponseEntity<List<Siret>> getSiret(@RequestParam String siret) {
+  public ResponseEntity<List<Siret>> getSiret(@RequestParam String siret) throws OsirisClientMessageException {
     if (siret != null && !siret.equals("") && siret.replaceAll(" ", "").length() == 14)
       return new ResponseEntity<List<Siret>>(sireneDelegateService.getSiret(siret.replaceAll(" ", "")), HttpStatus.OK);
     return new ResponseEntity<List<Siret>>(HttpStatus.OK);
@@ -1089,10 +1084,6 @@ public class QuotationController {
       throw new OsirisValidationException("Tiers must be individual !");
 
     quotation.setConfrere((Confrere) validationHelper.validateReferential(quotation.getConfrere(), false, "Confrere"));
-    validationHelper.validateReferential(quotation.getQuotationLabelType(), true, "QuotationLabelType");
-    validationHelper.validateReferential(quotation.getCustomLabelResponsable(), false, "CustomLabelResponsable");
-    validationHelper.validateReferential(quotation.getCustomLabelTiers(), false, "CustomLabelTiers");
-    validationHelper.validateReferential(quotation.getRecordType(), true, "RecordType");
 
     if (quotation.getResponsable() == null && quotation.getTiers() == null && quotation.getConfrere() == null)
       throw new OsirisValidationException("No customer order");
@@ -1151,11 +1142,6 @@ public class QuotationController {
     }
 
     if (quotation.getAssoAffaireOrders().size() > 1) {
-      if (quotation.getQuotationLabelType().getId().equals(constantService.getBillingLabelTypeCodeAffaire().getId()))
-        throw new OsirisValidationException("To many affaire");
-      Document quotationDocument = documentService.getQuotationDocument(quotation.getDocuments());
-      if (quotationDocument != null && quotationDocument.getIsRecipientAffaire())
-        throw new OsirisValidationException("To many affaire");
       Document billingDocument = documentService.getBillingDocument(quotation.getDocuments());
       if (billingDocument != null && billingDocument.getIsRecipientAffaire())
         throw new OsirisValidationException("To many affaire");
@@ -1225,6 +1211,8 @@ public class QuotationController {
       validationHelper.validateReferential(announcement.getDepartment(), !isOpen, "Department");
       validationHelper.validateReferential(announcement.getConfrere(), isCustomerOrder, "Confrere");
       validationHelper.validateReferential(announcement.getNoticeTypeFamily(), isCustomerOrder, "NoticeTypeFamily");
+      validationHelper.validateReferential(announcement.getJournal(), false, "journal");
+      validationHelper.validateString(announcement.getJournalPages(), false, 250, "journalPages");
       if (isCustomerOrder && (announcement.getNoticeTypes() == null || announcement.getNoticeTypes().size() == 0))
         throw new OsirisValidationException("NoticeTypes");
 
@@ -1765,5 +1753,35 @@ public class QuotationController {
       file.delete();
     }
     return new ResponseEntity<byte[]>(data, headers, HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/mail/generate/publication/receipt")
+  public ResponseEntity<CustomerOrder> generatePublicationReceiptMail(@RequestParam Integer idCustomerOrder)
+      throws OsirisException, OsirisValidationException {
+    CustomerOrder customerOrder = customerOrderService.getCustomerOrder(idCustomerOrder);
+    if (customerOrder == null)
+      throw new OsirisValidationException("customerOrder");
+
+    MailComputeResult mailComputeResult = mailHelper.computeMailForBillingDocument(customerOrder);
+    if (mailComputeResult.getRecipientsMailTo() == null || mailComputeResult.getRecipientsMailTo().size() == 0)
+      throw new OsirisValidationException("MailTo");
+
+    mailHelper.sendPublicationReceiptToCustomer(customerOrder, true);
+    return new ResponseEntity<CustomerOrder>(customerOrder, HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/mail/generate/publication/flag")
+  public ResponseEntity<CustomerOrder> generatePublicationFlagMail(@RequestParam Integer idCustomerOrder)
+      throws OsirisException, OsirisValidationException {
+    CustomerOrder customerOrder = customerOrderService.getCustomerOrder(idCustomerOrder);
+    if (customerOrder == null)
+      throw new OsirisValidationException("customerOrder");
+
+    MailComputeResult mailComputeResult = mailHelper.computeMailForBillingDocument(customerOrder);
+    if (mailComputeResult.getRecipientsMailTo() == null || mailComputeResult.getRecipientsMailTo().size() == 0)
+      throw new OsirisValidationException("MailTo");
+
+    mailHelper.sendPublicationFlagToCustomer(customerOrder, true);
+    return new ResponseEntity<CustomerOrder>(customerOrder, HttpStatus.OK);
   }
 }

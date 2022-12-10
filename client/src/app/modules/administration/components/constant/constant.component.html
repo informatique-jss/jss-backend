@@ -50,8 +50,15 @@
           </tr>
           <tr>
             <td>
-              <select-tiers-type [(model)]="constant.tiersTypeProspect" [form]="constantForm"
+              <select-tiers-type [(model)]="constant.tiersTypeProspect" [form]="constantForm" [isMandatory]="true"
                 propertyName="tiersTypeProspect" label="Type de tiers - prospect" [isDisabled]="!editMode">
+              </select-tiers-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-tiers-type [(model)]="constant.tiersTypeClient" [form]="constantForm" [isMandatory]="true"
+                propertyName="tiersTypeClient" label="Type de tiers - client" [isDisabled]="!editMode">
               </select-tiers-type>
             </td>
           </tr>
@@ -132,14 +139,6 @@
           </tr>
           <tr>
             <td>
-              <select-document-type [(model)]="constant.documentTypeQuotation"
-                label="Type de document - Devis / commande" [form]="constantForm" propertyName="documentTypeQuotation"
-                [isMandatory]="true" [isDisabled]="!editMode">
-              </select-document-type>
-            </td>
-          </tr>
-          <tr>
-            <td>
               <select-attachment-type [(model)]="constant.attachmentTypeKbis" label="Type de pièce-jointe - KBIS"
                 [form]="constantForm" propertyName="attachmentTypeKbis" [isMandatory]="true" [isDisabled]="!editMode">
               </select-attachment-type>
@@ -203,7 +202,23 @@
             <td>
               <select-attachment-type [(model)]="constant.attachmentTypePublicationProof"
                 label="Type de pièce-jointe - Justificatif de parution" [form]="constantForm"
-                propertyName="attachmentTypePublicationReceipt" [isMandatory]="true" [isDisabled]="!editMode">
+                propertyName="attachmentTypePublicationProof" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-attachment-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-attachment-type [(model)]="constant.attachmentTypeJournal" label="Type de pièce-jointe - Journal"
+                [form]="constantForm" propertyName="attachmentTypeJournal" [isMandatory]="true"
+                [isDisabled]="!editMode">
+              </select-attachment-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-attachment-type [(model)]="constant.attachmentTypeBillingClosure"
+                label="Type de pièce-jointe - relevé de compte" [form]="constantForm"
+                propertyName="attachmentTypeBillingClosure" [isMandatory]="true" [isDisabled]="!editMode">
               </select-attachment-type>
             </td>
           </tr>
@@ -838,6 +853,28 @@
               <generic-input [(model)]="constant.salesSharedMailbox" label="Adresse mail de la boite Commercial"
                 [form]="constantForm" propertyName="salesSharedMailbox" [isMandatory]="true" [isDisabled]="!editMode"
                 type="email"></generic-input>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <radio-group-billing-closure-recipient [(model)]="constant.billingClosureRecipientTypeClient"
+                [form]="constantForm" propertyName="billingClosureRecipientTypeClient"
+                label="Destinataire de relevé comptable - Client"></radio-group-billing-closure-recipient>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <radio-group-billing-closure-recipient [(model)]="constant.billingClosureRecipientTypeResponsable"
+                [form]="constantForm" propertyName="billingClosureRecipientTypeResponsable"
+                label="Destinataire de relevé comptable - Responsable">
+              </radio-group-billing-closure-recipient>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <radio-group-billing-closure [(model)]="constant.billingClosureTypeAffaire" [form]="constantForm"
+                propertyName="billingClosureTypeAffaire" label="Type de relevé comptable - Affaire">
+              </radio-group-billing-closure>
             </td>
           </tr>
         </table>

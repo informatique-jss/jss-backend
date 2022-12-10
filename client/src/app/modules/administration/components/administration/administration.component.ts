@@ -38,7 +38,7 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
   QUOTATION_STATUS_REFERENTIAL = "Statuts du devis";
   RECORD_TYPE_REFERENTIAL = "Type de dossier";
   TRANSFERT_FUNDS_TYPE_REFERENTIAL = "Type de cession de fonds";
-  BILLING_CLOSURE_RECIPIENT_TYPE_REFERENTIAL = "Type de destinataire de document";
+  BILLING_CLOSURE_RECIPIENT_TYPE_REFERENTIAL = "Type de destinataire de relevé comptable";
   BILLING_CLOSURE_TYPE_REFERENTIAL = "Type de relevés de compte";
   BILLING_LABEL_TYPE_REFERENTIAL = "Type de libellé sur facture";
   PAYMENT_DEALINE_TYPE_REFERENTIAL = "Délais de paiement";
@@ -79,6 +79,7 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
   PAYMENT_WAY_REFERENTIAL = "Sens de paiement";
   BILLING_REGIE = "Régie";
   AFFAIRE_REFERENTIAL = "Affaire";
+  ACCOUNT_STATEMENT_RECIPIENT_REFERENTIAL = "Destinataire de relevé comptable";
 
   constructor(private appService: AppService,
     private formBuilder: FormBuilder,

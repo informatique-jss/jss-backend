@@ -34,6 +34,7 @@ import com.jss.osiris.modules.accounting.model.AccountingBalanceViewTitle;
 import com.jss.osiris.modules.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.accounting.model.AccountingRecordSearch;
+import com.jss.osiris.modules.accounting.model.AccountingRecordSearchResult;
 import com.jss.osiris.modules.accounting.service.AccountingAccountClassService;
 import com.jss.osiris.modules.accounting.service.AccountingAccountService;
 import com.jss.osiris.modules.accounting.service.AccountingJournalService;
@@ -179,7 +180,7 @@ public class AccountingController {
 
         if (accountingRecords.getId() != null)
             validationHelper.validateReferential(accountingRecords, true, "accountingRecords");
-        validationHelper.validateString(accountingRecords.getLabel(), true, 100, "label");
+        validationHelper.validateString(accountingRecords.getLabel(), true, 1000, "label");
         accountingRecords.setAccountingDateTime(null);
         validationHelper.validateDateTimeMax(accountingRecords.getOperationDateTime(), false, LocalDateTime.now(),
                 "OperationDateTime");
@@ -256,26 +257,30 @@ public class AccountingController {
     }
 
     @PostMapping(inputEntryPoint + "/accounting-record/search")
-    public ResponseEntity<List<AccountingRecord>> searchAccountingRecords(
+    public ResponseEntity<List<AccountingRecordSearchResult>> searchAccountingRecords(
             @RequestBody AccountingRecordSearch accountingRecordSearch) throws OsirisValidationException {
         if (accountingRecordSearch == null)
             throw new OsirisValidationException("accountingRecordSearch");
 
         if (accountingRecordSearch.getAccountingAccount() == null
                 && accountingRecordSearch.getAccountingClass() == null
-                && accountingRecordSearch.getAccountingJournal() == null)
+                && accountingRecordSearch.getAccountingJournal() == null
+                && accountingRecordSearch.getResponsableId() == null
+                && accountingRecordSearch.getTiersId() == null)
             throw new OsirisValidationException("AccountingAccount or AccountingClass or AccountingJournal");
 
-        if (accountingRecordSearch.getStartDate() == null || accountingRecordSearch.getEndDate() == null)
-            throw new OsirisValidationException("StartDate or EndDate");
+        if (accountingRecordSearch.getResponsableId() == null && accountingRecordSearch.getTiersId() == null) {
+            if (accountingRecordSearch.getStartDate() == null || accountingRecordSearch.getEndDate() == null)
+                throw new OsirisValidationException("StartDate or EndDate");
 
-        Duration duration = Duration.between(accountingRecordSearch.getStartDate(),
-                accountingRecordSearch.getEndDate());
+            Duration duration = Duration.between(accountingRecordSearch.getStartDate(),
+                    accountingRecordSearch.getEndDate());
 
-        if (duration.toDays() > 366)
-            throw new OsirisValidationException("Duration");
+            if (duration.toDays() > 366)
+                throw new OsirisValidationException("Duration");
+        }
 
-        return new ResponseEntity<List<AccountingRecord>>(
+        return new ResponseEntity<List<AccountingRecordSearchResult>>(
                 accountingRecordService.searchAccountingRecords(accountingRecordSearch), HttpStatus.OK);
     }
 

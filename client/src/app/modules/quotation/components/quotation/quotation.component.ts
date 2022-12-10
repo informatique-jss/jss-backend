@@ -15,6 +15,7 @@ import { CUSTOMER_ORDER_ENTITY_TYPE, QUOTATION_ENTITY_TYPE } from 'src/app/routi
 import { AppService } from 'src/app/services/app.service';
 import { SearchService } from 'src/app/services/search.service';
 import { CUSTOMER_ORDER_STATUS_ABANDONED, CUSTOMER_ORDER_STATUS_OPEN } from '../../../../libs/Constants';
+import { replaceDocument } from '../../../../libs/DocumentHelper';
 import { instanceOfQuotation } from '../../../../libs/TypeHelper';
 import { WorkflowDialogComponent } from '../../../miscellaneous/components/workflow-dialog/workflow-dialog.component';
 import { Affaire } from '../../model/Affaire';
@@ -27,6 +28,7 @@ import { VatBase } from '../../model/VatBase';
 import { AssoAffaireOrderService } from '../../services/asso.affaire.order.service';
 import { CustomerOrderService } from '../../services/customer.order.service';
 import { CustomerOrderStatusService } from '../../services/customer.order.status.service';
+import { MailComputeResultService } from '../../services/mail.compute.result.service';
 import { ProvisionService } from '../../services/provision.service';
 import { QuotationStatusService } from '../../services/quotation-status.service';
 import { QuotationService } from '../../services/quotation.service';
@@ -37,7 +39,6 @@ import { OrderingCustomerComponent } from '../ordering-customer/ordering-custome
 import { ProvisionItemComponent } from '../provision-item/provision-item.component';
 import { QuotationManagementComponent } from '../quotation-management/quotation-management.component';
 import { IQuotation } from './../../model/IQuotation';
-import { replaceDocument } from '../../../../libs/DocumentHelper';
 @Component({
   selector: 'quotation',
   templateUrl: './quotation.component.html',
@@ -89,6 +90,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     private formBuilder: FormBuilder,
     private constantService: ConstantService,
     private assoAffaireOrderService: AssoAffaireOrderService,
+    private mailComputeResultService: MailComputeResultService,
     protected searchService: SearchService,
     private provisionService: ProvisionService,
     private changeDetectorRef: ChangeDetectorRef) { }
@@ -214,29 +216,36 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
   }
 
   saveQuotation(): boolean {
-     
+
     // Can't find a way to make it work correctly ...
-    replaceDocument(this.constantService.getDocumentTypeBilling(),this.quotation, this.quotationManagementComponent?.getBillingDocument()!);
+    replaceDocument(this.constantService.getDocumentTypeBilling(), this.quotation, this.quotationManagementComponent?.getBillingDocument()!);
     if (this.getFormsStatus()) {
-      if (!this.instanceOfCustomerOrder) {
-        this.quotationService.addOrUpdateQuotation(this.quotation).subscribe(response => {
-          this.quotation = response;
-          this.editMode = false;
-          this.appService.openRoute(null, '/quotation/' + this.quotation.id, null);
-        })
-      } else {
-        this.customerOrderService.addOrUpdateCustomerOrder(this.quotation).subscribe(response => {
-          this.quotation = response;
-          this.editMode = false;
-          this.appService.openRoute(null, '/order/' + this.quotation.id, null);
-        })
-      }
-      return true;
+      this.mailComputeResultService.getMailComputeResultForBilling(this.quotation).subscribe(response => {
+        if (!response || !response.recipientsMailTo || response.recipientsMailTo.length == 0) {
+          this.appService.displaySnackBar("Aucune adresse mail d'envoi trouvée !", true, 15);
+          return false;
+        }
+        if (!this.instanceOfCustomerOrder) {
+          this.quotationService.addOrUpdateQuotation(this.quotation).subscribe(response => {
+            this.quotation = response;
+            this.editMode = false;
+            this.appService.openRoute(null, '/quotation/' + this.quotation.id, null);
+          })
+        } else {
+          this.customerOrderService.addOrUpdateCustomerOrder(this.quotation).subscribe(response => {
+            this.quotation = response;
+            this.editMode = false;
+            this.appService.openRoute(null, '/order/' + this.quotation.id, null);
+          })
+        }
+        return true;
+      });
     }
     return false;
   }
 
   getFormsStatus(): boolean {
+
     let orderingCustomerFormStatus = this.orderingCustomerComponent?.getFormStatus();
     let quotationManagementFormStatus = this.quotationManagementComponent?.getFormStatus();
 
@@ -244,6 +253,9 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     this.provisionItemComponents.toArray().forEach((provisionComponent: { getFormStatus: () => any; }) => {
       provisionStatus = provisionStatus && provisionComponent.getFormStatus();
     });
+
+    if (this.isStatusOpen && quotationManagementFormStatus)
+      return true;
 
     let errorMessages: string[] = [] as Array<string>;
     if (!orderingCustomerFormStatus)
@@ -254,12 +266,12 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
       errorMessages.push("Onglet Prestations");
     if (errorMessages.length > 0) {
       let errorMessage = "Les onglets suivants ne sont pas correctement remplis. Veuillez les compléter avant de sauvegarder : " + errorMessages.join(" / ");
-      this.appService.displaySnackBar(errorMessage, true, 60);
+      this.appService.displaySnackBar(errorMessage, true, 15);
       return false;
     } else {
       if (this.canCreateMultipleAffaire() == false) {
         let errorMessage = "Il est impossible de créer deux affaires car le libellé d'envoi ou les destinataires sont à l'affaire";
-        this.appService.displaySnackBar(errorMessage, true, 60);
+        this.appService.displaySnackBar(errorMessage, true, 15);
         return false;
       }
     }
@@ -394,11 +406,13 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
       for (let assoIncoming of incomingQuotation.assoAffaireOrders) {
         for (let assoTarget of targetQuotation.assoAffaireOrders) {
           if (assoIncoming.provisions && assoTarget.provisions)
-            for (let incomingProvision of assoIncoming.provisions) {
-              for (let targetProvision of assoTarget.provisions) {
+            for (let i = 0; i < assoIncoming.provisions.length; i++) {
+              let incomingProvision = assoIncoming.provisions[i];
+              for (let j = 0; j < assoTarget.provisions.length; j++) {
+                let targetProvision = assoTarget.provisions[j];
                 if (incomingProvision.id && targetProvision.id && incomingProvision.id == targetProvision.id)
                   targetProvision.invoiceItems = incomingProvision.invoiceItems;
-                else if (incomingProvision.provisionType && targetProvision.provisionType && incomingProvision.provisionType.id == targetProvision.provisionType.id)
+                else if (i == j && incomingProvision.provisionType && targetProvision.provisionType && incomingProvision.provisionType.id == targetProvision.provisionType.id)
                   targetProvision.invoiceItems = incomingProvision.invoiceItems;
               }
             }
@@ -535,18 +549,6 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
 
   // When quotation label type is AFFAIRE, only one affaire is authorized in quotation
   canCreateMultipleAffaire(): boolean {
-    if (this.quotation && this.quotation.quotationLabelType && this.quotation.assoAffaireOrders && this.quotation.assoAffaireOrders.length > 0)
-      if (this.quotation.quotationLabelType.id == this.billingLabelTypeAffaire.id) {
-        if (this.quotation.assoAffaireOrders.length > 1) {
-          this.appService.displaySnackBar("Il est impossible de créer deux affaires car le libellé d'envoi ou les destinataires sont à l'affaire", true, 20);
-          return false;
-        }
-      }
-    let quotationDocument = getDocument(this.constantService.getDocumentTypeQuotation(), this.quotation);
-    if (quotationDocument && quotationDocument.isRecipientAffaire && this.quotation.assoAffaireOrders && this.quotation.assoAffaireOrders.length > 1) {
-      this.appService.displaySnackBar("Il est impossible de créer deux affaires car le libellé d'envoi ou les destinataires sont à l'affaire", true, 20);
-      return false;
-    }
     let billingDocument = getDocument(this.constantService.getDocumentTypeBilling(), this.quotation);
     if (billingDocument && billingDocument.isRecipientAffaire && this.quotation.assoAffaireOrders && this.quotation.assoAffaireOrders.length > 1) {
       this.appService.displaySnackBar("Il est impossible de créer deux affaires car le libellé d'envoi ou les destinataires sont à l'affaire", true, 20);

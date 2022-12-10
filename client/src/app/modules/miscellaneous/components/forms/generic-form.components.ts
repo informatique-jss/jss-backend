@@ -94,6 +94,7 @@ export abstract class GenericFormComponent implements OnInit {
         (newValue) => {
           this.model = newValue;
           this.modelChange.emit(this.model);
+
         }
       )
       this.callOnNgInit();

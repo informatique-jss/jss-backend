@@ -508,4 +508,20 @@
         <key-type>java.lang.Integer</key-type>
         <value-type>com.jss.osiris.modules.quotation.model.FormaliteStatus</value-type>
     </cache>
+    <cache alias="journalList" uses-template="default">
+        <key-type>java.lang.String</key-type>
+        <value-type>java.util.List</value-type>
+    </cache>
+    <cache alias="journal" uses-template="default">
+        <key-type>java.lang.Integer</key-type>
+        <value-type>com.jss.osiris.modules.pao.model.Journal</value-type>
+    </cache>
+    <cache alias="accountStatementRecipientList" uses-template="default">
+        <key-type>java.lang.String</key-type>
+        <value-type>java.util.List</value-type>
+    </cache>
+    <cache alias="accountStatementRecipient" uses-template="default">
+        <key-type>java.lang.Integer</key-type>
+        <value-type>com.jss.osiris.modules.tiers.model.AccountStatementRecipient</value-type>
+    </cache>
 </config>

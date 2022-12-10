@@ -1,12 +1,10 @@
 import { IAttachment } from "../../miscellaneous/model/IAttachment";
 import { IDocument } from "../../miscellaneous/model/IDocument";
 import { SpecialOffer } from "../../miscellaneous/model/SpecialOffer";
-import { BillingLabelType } from "../../tiers/model/BillingLabelType";
 import { Responsable } from "../../tiers/model/Responsable";
 import { Tiers } from "../../tiers/model/Tiers";
 import { AssoAffaireOrder } from "./AssoAffaireOrder";
 import { Confrere } from "./Confrere";
-import { RecordType } from "./RecordType";
 
 export interface IQuotation extends IAttachment, IDocument {
   id: number;
@@ -18,11 +16,6 @@ export interface IQuotation extends IAttachment, IDocument {
   createdDate: Date;
   observations: string;
   description: string;
-  quotationLabelType: BillingLabelType;
-  quotationLabel: string;
-  customLabelResponsable: Responsable | undefined;
-  customLabelTiers: Tiers | undefined;
-  recordType: RecordType;
   isQuotation: boolean;
   assoAffaireOrders: AssoAffaireOrder[];
 }

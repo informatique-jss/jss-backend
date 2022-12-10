@@ -70,7 +70,7 @@ export class InvoiceListComponent implements OnInit, AfterContentChecked {
       this.tableAction.push({
         actionIcon: "point_of_sale", actionName: "Voir le détail de la facture / associer", actionLinkFunction: (action: SortTableAction, element: any) => {
           if (element)
-            return ['/invoicing', element.invoiceId];
+            return ['/invoicing/view/', element.invoiceId];
           return undefined;
         }, display: true,
       } as SortTableAction);

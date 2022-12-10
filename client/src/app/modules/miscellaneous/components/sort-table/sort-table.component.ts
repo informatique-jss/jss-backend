@@ -109,6 +109,11 @@ export class SortTableComponent implements OnInit {
             if (column.id && column.id == property) {
               if (column.sortFonction)
                 return column.sortFonction(item, this.values, column, this.columns);
+
+              // Handle date or date string
+              if (item instanceof Date)
+                return item;
+
               // Handle employees
               let columnValue = this.getColumnValue(column, item);
               if (columnValue && columnValue instanceof Object && columnValue.firstname && columnValue.lastname)

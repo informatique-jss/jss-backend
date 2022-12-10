@@ -6,7 +6,6 @@ import { AccountingRecord } from '../../accounting/model/AccountingRecord';
 import { AccountingAccount } from '../model/AccountingAccount';
 import { AccountingAccountClass } from '../model/AccountingAccountClass';
 import { AccountingJournal } from '../model/AccountingJournal';
-import { AccountingRecordSearch } from '../model/AccountingRecordSearch';
 
 @Injectable({
   providedIn: 'root'
@@ -42,10 +41,6 @@ export class AccountingRecordService extends AppRestService<AccountingRecord>{
 
   addOrUpdateAccountingRecord(accountingRecord: AccountingRecord) {
     return this.addOrUpdate(new HttpParams(), "accounting-record", accountingRecord, "Enregistré", "Erreur lors de l'enregistrement");
-  }
-
-  searchAccountingRecords(accountingRecordSearch: AccountingRecordSearch) {
-    return this.postList(new HttpParams(), "accounting-record/search", accountingRecordSearch);
   }
 
   exportGrandLivre(accountingClass: AccountingAccountClass, startDate: Date, endDate: Date) {

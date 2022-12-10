@@ -33,6 +33,10 @@
     [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/affaire' )>=0}">
     <mat-icon>work</mat-icon> <span>Affaires / Prestations</span>
   </a>
+  <a mat-list-item routerLink="/journal" *ngIf="canViewJournalModule()"
+    [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/journal' )>=0}">
+    <mat-icon>feed</mat-icon> <span>Journaux </span>
+  </a>
   <a mat-list-item routerLink="/invoicing" *ngIf="canViewInvoiceModule()"
     [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/invoicing' )>=0}">
     <mat-icon>point_of_sale</mat-icon> <span>Facturation</span>

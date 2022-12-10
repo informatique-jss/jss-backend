@@ -70,6 +70,11 @@
                 [isMandatory]="true" [isDisabled]="!editMode">
               </autocomplete-billing-type>
             </td>
+            <td>
+              <button *ngIf="editMode" (click)="deleteBillingType(billingType)" mat-raised-button color="accent">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
           </tr>
         </table>
         <table class="full-width">

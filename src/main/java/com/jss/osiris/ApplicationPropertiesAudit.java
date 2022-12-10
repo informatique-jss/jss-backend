@@ -42,6 +42,7 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("schedulling.log.osiris.quotation.reminder");
         isOk = isOk && checkProperty("schedulling.log.osiris.customerOrder.deposit.reminder");
         isOk = isOk && checkProperty("schedulling.log.osiris.customerOrder.invoice.reminder");
+        isOk = isOk && checkProperty("schedulling.account.receipt.generation.sender");
         isOk = isOk && checkProperty("ldap.dc.level.0");
         isOk = isOk && checkProperty("ldap.dc.level.1");
         isOk = isOk && checkProperty("ldap.ou.osiris");

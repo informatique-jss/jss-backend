@@ -18,6 +18,8 @@ import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.AttachmentType;
 import com.jss.osiris.modules.miscellaneous.repository.AttachmentRepository;
+import com.jss.osiris.modules.pao.model.Journal;
+import com.jss.osiris.modules.pao.service.JournalService;
 import com.jss.osiris.modules.quotation.model.Announcement;
 import com.jss.osiris.modules.quotation.model.Bodacc;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
@@ -75,6 +77,9 @@ public class AttachmentServiceImpl implements AttachmentService {
 
     @Autowired
     CustomerOrderService customerOrderService;
+
+    @Autowired
+    JournalService journalService;
 
     @Override
     public List<Attachment> getAttachments() {
@@ -177,6 +182,11 @@ public class AttachmentServiceImpl implements AttachmentService {
             if (customerOrder == null)
                 return new ArrayList<Attachment>();
             attachment.setCustomerOrder(customerOrder);
+        } else if (entityType.equals(Journal.class.getSimpleName())) {
+            Journal journal = journalService.getJournal(idEntity);
+            if (journal == null)
+                return new ArrayList<Attachment>();
+            attachment.setJournal(journal);
         }
         addOrUpdateAttachment(attachment);
 
@@ -220,6 +230,8 @@ public class AttachmentServiceImpl implements AttachmentService {
             attachments = attachmentRepository.findByProvisionId(idEntity);
         } else if (entityType.equals(CustomerOrder.class.getSimpleName())) {
             attachments = attachmentRepository.findByCustomerOrderId(idEntity);
+        } else if (entityType.equals(Journal.class.getSimpleName())) {
+            attachments = attachmentRepository.findByCustomerJournalId(idEntity);
         }
         return attachments;
     }

@@ -25,6 +25,8 @@ import com.jss.osiris.modules.quotation.model.TransfertFundsType;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormeJuridique;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeFormalite;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypePersonne;
+import com.jss.osiris.modules.tiers.model.BillingClosureRecipientType;
+import com.jss.osiris.modules.tiers.model.BillingClosureType;
 import com.jss.osiris.modules.tiers.model.BillingLabelType;
 import com.jss.osiris.modules.tiers.model.RefundType;
 import com.jss.osiris.modules.tiers.model.SubscriptionPeriodType;
@@ -64,6 +66,10 @@ public class Constant implements Serializable, IId {
 	@ManyToOne
 	@JoinColumn(name = "id_tiers_type_prospect")
 	private TiersType tiersTypeProspect;
+
+	@ManyToOne
+	@JoinColumn(name = "id_tiers_type_client")
+	private TiersType tiersTypeClient;
 
 	@ManyToOne
 	@JoinColumn(name = "id_document_type_publication")
@@ -106,10 +112,6 @@ public class Constant implements Serializable, IId {
 	private DocumentType documentTypePublicationCertificate;
 
 	@ManyToOne
-	@JoinColumn(name = "id_document_type_quotation")
-	private DocumentType documentTypeQuotation;
-
-	@ManyToOne
 	@JoinColumn(name = "id_attachment_type_kbis")
 	private AttachmentType attachmentTypeKbis;
 
@@ -144,6 +146,14 @@ public class Constant implements Serializable, IId {
 	@ManyToOne
 	@JoinColumn(name = "id_attachment_type_publication_proof")
 	private AttachmentType attachmentTypePublicationProof;
+
+	@ManyToOne
+	@JoinColumn(name = "id_attachment_type_journal")
+	private AttachmentType attachmentTypeJournal;
+
+	@ManyToOne
+	@JoinColumn(name = "id_attachment_type_billing_closure")
+	private AttachmentType attachmentTypeBillingClosure;
 
 	@ManyToOne
 	@JoinColumn(name = "id_country_france")
@@ -464,6 +474,18 @@ public class Constant implements Serializable, IId {
 	@JoinColumn(name = "id_employee_sales_director")
 	private Employee employeeSalesDirector;
 
+	@ManyToOne
+	@JoinColumn(name = "id_billing_closure_recipient_type_responsable")
+	private BillingClosureRecipientType billingClosureRecipientTypeResponsable;
+
+	@ManyToOne
+	@JoinColumn(name = "id_billing_closure_recipient_type_client")
+	private BillingClosureRecipientType billingClosureRecipientTypeClient;
+
+	@ManyToOne
+	@JoinColumn(name = "id_billing_closure_type_affaire")
+	private BillingClosureType billingClosureTypeAffaire;
+
 	private String salesSharedMailbox;
 	private String accountingSharedMaiblox;
 
@@ -609,14 +631,6 @@ public class Constant implements Serializable, IId {
 
 	public void setDocumentTypePublicationCertificate(DocumentType documentTypePublicationCertificate) {
 		this.documentTypePublicationCertificate = documentTypePublicationCertificate;
-	}
-
-	public DocumentType getDocumentTypeQuotation() {
-		return documentTypeQuotation;
-	}
-
-	public void setDocumentTypeQuotation(DocumentType documentTypeQuotation) {
-		this.documentTypeQuotation = documentTypeQuotation;
 	}
 
 	public AttachmentType getAttachmentTypeKbis() {
@@ -1359,6 +1373,55 @@ public class Constant implements Serializable, IId {
 
 	public void setEmployeeMailResponsible(Employee employeeMailResponsible) {
 		this.employeeMailResponsible = employeeMailResponsible;
+	}
+
+	public AttachmentType getAttachmentTypeJournal() {
+		return attachmentTypeJournal;
+	}
+
+	public void setAttachmentTypeJournal(AttachmentType attachmentTypeJournal) {
+		this.attachmentTypeJournal = attachmentTypeJournal;
+	}
+
+	public BillingClosureRecipientType getBillingClosureRecipientTypeResponsable() {
+		return billingClosureRecipientTypeResponsable;
+	}
+
+	public void setBillingClosureRecipientTypeResponsable(
+			BillingClosureRecipientType billingClosureRecipientTypeResponsable) {
+		this.billingClosureRecipientTypeResponsable = billingClosureRecipientTypeResponsable;
+	}
+
+	public BillingClosureRecipientType getBillingClosureRecipientTypeClient() {
+		return billingClosureRecipientTypeClient;
+	}
+
+	public void setBillingClosureRecipientTypeClient(BillingClosureRecipientType billingClosureRecipientTypeClient) {
+		this.billingClosureRecipientTypeClient = billingClosureRecipientTypeClient;
+	}
+
+	public TiersType getTiersTypeClient() {
+		return tiersTypeClient;
+	}
+
+	public void setTiersTypeClient(TiersType tiersTypeClient) {
+		this.tiersTypeClient = tiersTypeClient;
+	}
+
+	public AttachmentType getAttachmentTypeBillingClosure() {
+		return attachmentTypeBillingClosure;
+	}
+
+	public void setAttachmentTypeBillingClosure(AttachmentType attachmentTypeBillingClosure) {
+		this.attachmentTypeBillingClosure = attachmentTypeBillingClosure;
+	}
+
+	public BillingClosureType getBillingClosureTypeAffaire() {
+		return billingClosureTypeAffaire;
+	}
+
+	public void setBillingClosureTypeAffaire(BillingClosureType billingClosureTypeAffaire) {
+		this.billingClosureTypeAffaire = billingClosureTypeAffaire;
 	}
 
 }

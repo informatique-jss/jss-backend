@@ -186,7 +186,7 @@
             [onlyMail]="true">
           </addressing>
         </mat-expansion-panel>
-        <mat-expansion-panel>
+        <mat-expansion-panel *ngIf="instanceOfTiers(tiers) && !instanceOfResponsable(tiers)">
           <mat-expansion-panel-header>
             <mat-panel-title>
               Relevés de compte
@@ -225,33 +225,6 @@
           </mat-expansion-panel-header>
           <addressing [editMode]="editMode" [document]="provisionalReceiptDocument" [hideAdressing]="true"
             [onlyMail]="true"></addressing>
-        </mat-expansion-panel>
-        <mat-expansion-panel *ngIf="instanceOfResponsable(tiers)">
-          <mat-expansion-panel-header>
-            <mat-panel-title>
-              Divers
-            </mat-panel-title>
-            <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
-          </mat-expansion-panel-header>
-          <table class="full-width">
-            <tr>
-              <td>
-                <select-responsable [(model)]="tiers.mailsCreationAffaire" label="AR pour création d'une affaire"
-                  [isDisabled]="!editMode" [form]="settlementBillingForm" propertyName="mailsCreationAffaire"
-                  [responsableList]="getResponsables()"></select-responsable>
-              </td>
-              <td>
-                <select-responsable [(model)]="tiers.mailsProvisionningConfirmation" label="AR d'une provision"
-                  [isDisabled]="!editMode" [form]="settlementBillingForm" propertyName="mailsProvisionningConfirmation"
-                  [responsableList]="getResponsables()"></select-responsable>
-              </td>
-              <td>
-                <select-responsable [(model)]="tiers.mailsMissingItemFormality"
-                  label="Pièce manquante pour une formalité" [form]="settlementBillingForm" [isDisabled]="!editMode"
-                  propertyName="mailsMissingItemFormality" [responsableList]="getResponsables()"></select-responsable>
-              </td>
-            </tr>
-          </table>
         </mat-expansion-panel>
       </mat-accordion>
     </fieldset>

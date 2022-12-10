@@ -80,6 +80,7 @@ import com.jss.osiris.modules.miscellaneous.service.SpecialOfferService;
 import com.jss.osiris.modules.miscellaneous.service.VatCollectionTypeService;
 import com.jss.osiris.modules.miscellaneous.service.VatService;
 import com.jss.osiris.modules.miscellaneous.service.WeekDayService;
+import com.jss.osiris.modules.pao.model.Journal;
 import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.profile.service.EmployeeService;
 import com.jss.osiris.modules.quotation.model.Announcement;
@@ -293,6 +294,7 @@ public class MiscellaneousController {
         validationHelper.validateReferential(constant.getAccountingJournalANouveau(), true,
                 "AccountingJournalANouveau");
         validationHelper.validateReferential(constant.getTiersTypeProspect(), true, "TiersTypeProspect");
+        validationHelper.validateReferential(constant.getTiersTypeClient(), true, "TiersTypeClient");
         validationHelper.validateReferential(constant.getDocumentTypePublication(), true,
                 "DocumentTypePublication");
         validationHelper.validateReferential(constant.getDocumentTypeCfe(), true, "DocumentTypeCfe");
@@ -308,14 +310,16 @@ public class MiscellaneousController {
                 "DocumentTypeProofReading");
         validationHelper.validateReferential(constant.getDocumentTypePublicationCertificate(), true,
                 "DocumentTypePublicationCertificate");
-        validationHelper.validateReferential(constant.getDocumentTypeQuotation(), true, "DocumentTypeQuotation");
         validationHelper.validateReferential(constant.getAttachmentTypeKbis(), true, "AttachmentTypeKbis");
         validationHelper.validateReferential(constant.getAttachmentTypeCni(), true, "AttachmentTypeCni");
         validationHelper.validateReferential(constant.getAttachmentTypeLogo(), true, "AttachmentTypeLogo");
+        validationHelper.validateReferential(constant.getAttachmentTypeJournal(), true, "AttachmentTypeJournal");
         validationHelper.validateReferential(constant.getAttachmentTypeProofOfAddress(), true,
                 "AttachmentTypeProofOfAddress");
         validationHelper.validateReferential(constant.getAttachmentTypePublicationProof(), true,
                 "AttachmentTypePublicationProof");
+        validationHelper.validateReferential(constant.getAttachmentTypeBillingClosure(), true,
+                "AttachmentTypeBillingClosure");
         validationHelper.validateReferential(constant.getCountryFrance(), true, "CountryFrance");
         validationHelper.validateReferential(constant.getCountryMonaco(), true, "CountryMonaco");
         validationHelper.validateReferential(constant.getBillingTypeLogo(), true, "BillingTypeLogo");
@@ -393,6 +397,12 @@ public class MiscellaneousController {
         validationHelper.validateReferential(constant.getTypeFormaliteModification(), true,
                 "TypeFormaliteModification");
         validationHelper.validateReferential(constant.getTypeFormaliteCreation(), true, "TypeFormaliteCreation");
+        validationHelper.validateReferential(constant.getBillingClosureRecipientTypeClient(), true,
+                "BillingClosureRecipientTypeClient");
+        validationHelper.validateReferential(constant.getBillingClosureRecipientTypeResponsable(), true,
+                "BillingClosureRecipientTypeResponsable");
+        validationHelper.validateReferential(constant.getBillingClosureTypeAffaire(), true,
+                "BillingClosureRecipientTypeResponsable");
 
         return new ResponseEntity<Constant>(constantService.addOrUpdateConstant(constant), HttpStatus.OK);
     }
@@ -889,6 +899,7 @@ public class MiscellaneousController {
                 && !entityType.equals(CustomerOrder.class.getSimpleName())
                 && !entityType.equals(Provision.class.getSimpleName())
                 && !entityType.equals(Formalite.class.getSimpleName())
+                && !entityType.equals(Journal.class.getSimpleName())
                 && !entityType.equals(Bodacc.class.getSimpleName()))
             throw new OsirisValidationException("entityType");
 

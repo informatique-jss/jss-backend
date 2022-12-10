@@ -102,6 +102,7 @@ public class InvoicingController {
             validationHelper.validateReferential(payment, true, "payment");
         validationHelper.validateString(payment.getLabel(), true, "label");
         validationHelper.validateFloat(payment.getPaymentAmount(), true, "code");
+        validationHelper.validateReferential(payment.getPaymentWay(), true, "paymentWay");
 
         payment.setPaymentDate(LocalDateTime.now());
         outPayment = paymentService.addOrUpdatePayment(payment);
