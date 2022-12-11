@@ -77,6 +77,11 @@
                   (onOptionSelected)="fillCity($event)"></autocomplete-postal-code>
               </td>
               <td>
+                <generic-input [(model)]="billingDocument.cedexComplement" label="Complément CEDEX"
+                  [form]="settlementBillingForm" propertyName="cedexComplement" [isMandatory]="false"
+                  [isDisabled]="!editMode" [maxLength]="20"></generic-input>
+              </td>
+              <td>
                 <autocomplete-city [(model)]="billingDocument.billingLabelCity" [isDisabled]="!editMode" label="Ville"
                   [preFilterPostalCode]="billingDocument.billingPostalCode"
                   [modelCountry]="billingDocument.billingLabelCountry" [form]="settlementBillingForm"
@@ -166,24 +171,19 @@
           <table class="full-width">
             <tr>
               <td>
-                <generic-toggle [(model)]="refundDocument.isRefundable" label="Remboursement ?"
-                  [form]="settlementBillingForm" propertyName="isRefundable"></generic-toggle>
-              </td>
-              <td *ngIf="refundDocument.isRefundable">
                 <select-refund-type [(model)]="refundDocument.refundType" label="Type de remboursement"
                   [isDisabled]="!editMode" [form]="settlementBillingForm" propertyName="refundType">
                 </select-refund-type>
               </td>
               <td
-                *ngIf="refundDocument.isRefundable && refundDocument !=undefined && refundDocument.refundType!=undefined && refundDocument.refundType.code!=undefined && refundDocument.refundType.id==refundTypeVirement.id">
+                *ngIf=" refundDocument !=undefined && refundDocument.refundType!=undefined && refundDocument.refundType.code!=undefined && refundDocument.refundType.id==refundTypeVirement.id">
                 <generic-input [(model)]="refundDocument.refundIBAN" label="IBAN" [form]="settlementBillingForm"
                   propertyName="refundIBAN" [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="40">
                 </generic-input>
               </td>
             </tr>
           </table>
-          <addressing [editMode]="editMode" [document]="refundDocument" *ngIf="refundDocument.isRefundable"
-            [onlyMail]="true">
+          <addressing [editMode]="editMode" [document]="refundDocument" [onlyMail]=" true">
           </addressing>
         </mat-expansion-panel>
         <mat-expansion-panel *ngIf="instanceOfTiers(tiers) && !instanceOfResponsable(tiers)">

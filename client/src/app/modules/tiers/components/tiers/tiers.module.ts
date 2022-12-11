@@ -21,7 +21,6 @@ import { AccountingModule } from '../../../accounting/components/accounting/acco
 import { QuotationModule } from '../../../quotation/components/quotation/quotation.module';
 import { ResponsableMainComponent } from '../responsable-main/responsable-main.component';
 import { SettlementBillingComponent } from '../settlement-billing/settlement-billing.component';
-import { TiersFollowupComponent } from '../tiers-followup/tiers-followup.component';
 import { PrincipalComponent } from '../tiers-main/tiers-main.component';
 import { TiersComponent } from './tiers.component';
 
@@ -57,7 +56,6 @@ const routes: Routes = [
     PrincipalComponent,
     SpecialOffersDialogComponent,
     SettlementBillingComponent,
-    TiersFollowupComponent,
     ResponsableMainComponent,
   ],
   providers: [

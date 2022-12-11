@@ -17,12 +17,14 @@ import { QuotationModule } from "src/app/modules/quotation/components/quotation/
 import { MiscellaneousModule } from "../../../miscellaneous/components/miscellaneous/miscellaneous.module";
 import { AddInvoiceComponent } from "../add-invoice/add-invoice.component";
 import { AmountDialogComponent } from "../amount-dialog/amount-dialog.component";
+import { AssociateDepositDialogComponent } from '../associate-deposit-dialog/associate-deposit-dialog.component';
 import { AssociatePaymentDialogComponent } from "../associate-payment-dialog/associate-payment-dialog.component";
 import { InvoiceDetailsComponent } from "../invoice-details/invoice-details.component";
 import { InvoiceListComponent } from "../invoice-list/invoice-list.component";
 import { InvoicePaymentTableComponent } from "../invoice-payment-table/invoice-payment-table.component";
 import { InvoicePaymentComponent } from "../invoice-payment/invoice-payment.component";
 import { PaymentListComponent } from "../payment-list/payment-list.component";
+import { RefundListComponent } from '../refund-list/refund-list.component';
 import { InvoiceComponent } from "./invoicing.component";
 
 const routes: Routes = [
@@ -56,12 +58,15 @@ const routes: Routes = [
     PaymentListComponent,
     InvoicePaymentTableComponent,
     InvoicePaymentComponent,
+    RefundListComponent,
     AssociatePaymentDialogComponent,
+    AssociateDepositDialogComponent,
     AddInvoiceComponent,
     AmountDialogComponent,
   ], exports: [
     InvoiceListComponent,
     InvoicePaymentTableComponent,
+    RefundListComponent,
     PaymentListComponent,
   ]
 })

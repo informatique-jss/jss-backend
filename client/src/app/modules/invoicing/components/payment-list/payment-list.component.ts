@@ -142,7 +142,6 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
   });
   addPayment() {
     this.currentPayment.isExternallyAssociated = false;
-    this.currentPayment.paymentWay = this.constantService.getPaymentWayInbound();
     this.paymentService.addOrUpdatePayment(this.currentPayment).subscribe(response => {
       this.searchPayments();
       this.currentPayment = {} as Payment;

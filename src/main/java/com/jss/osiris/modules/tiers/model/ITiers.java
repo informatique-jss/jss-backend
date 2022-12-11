@@ -28,6 +28,8 @@ public interface ITiers extends IId, IDocument {
 
 	public String getPostalCode();
 
+	public String getCedexComplement();
+
 	public City getCity();
 
 	public Country getCountry();

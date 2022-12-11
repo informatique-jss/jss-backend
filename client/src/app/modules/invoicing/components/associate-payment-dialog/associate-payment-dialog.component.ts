@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
-import { INVOICING_PAYMENT_LIMIT_REFUND_EUROS } from 'src/app/libs/Constants';
+import { CUSTOMER_ORDER_STATUS_OPEN, INVOICING_PAYMENT_LIMIT_REFUND_EUROS } from 'src/app/libs/Constants';
 import { getDocument } from 'src/app/libs/DocumentHelper';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
@@ -40,9 +40,12 @@ export class AssociatePaymentDialogComponent implements OnInit {
   refreshTable: Subject<void> = new Subject<void>();
 
   CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT = CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT;
+  CUSTOMER_ORDER_STATUS_OPEN = CUSTOMER_ORDER_STATUS_OPEN;
   INVOICING_PAYMENT_LIMIT_REFUND_EUROS: number = INVOICING_PAYMENT_LIMIT_REFUND_EUROS;
 
   invoiceStatusSend = this.constantService.getInvoiceStatusSend();
+  invoiceStatusReceived = this.constantService.getInvoiceStatusReceived();
+  paymentWayInbound = this.constantService.getPaymentWayInbound();
 
   getAmountRemaining = getAmountRemaining;
 

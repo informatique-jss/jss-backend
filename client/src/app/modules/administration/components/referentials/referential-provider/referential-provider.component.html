@@ -48,6 +48,12 @@
                 label="Compte comptable d'acompte">
               </autocomplete-accounting-account>
             </td>
+            <td>
+              <autocomplete-billing-item [(model)]="selectedEntity.defaultBillingItem" [form]="entityForm"
+                label="Poste de facturation par défaut" propertyName="defaultBillingItem" [isMandatory]="false"
+                [isDisabled]="!editMode">
+              </autocomplete-billing-item>
+            </td>
           </tr>
         </table>
         <table class="full-width">

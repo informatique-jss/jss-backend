@@ -75,7 +75,7 @@ public interface AccountingRecordRepository extends CrudRepository<AccountingRec
                         +
                         " and (:tiersId =0 or COALESCE(i.id_tiers ,co.id_tiers )  = :tiersId and t.id is not null) " +
                         " and (:hideLettered = false or r.lettering_date is null ) " +
-                        " and r.accounting_date_time>=:startDate and r.accounting_date_time<=:endDate  " +
+                        " and r.operation_date_time>=:startDate and r.operation_date_time<=:endDate  " +
                         " and (:accountingClassId =0 or a.id_accounting_account_class = :accountingClassId) ")
         List<AccountingRecordSearchResult> searchAccountingRecords(
                         @Param("accountingAccountIds") List<Integer> accountingAccountIds,

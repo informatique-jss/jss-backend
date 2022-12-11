@@ -17,8 +17,10 @@ import com.jss.osiris.modules.miscellaneous.model.BillingType;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthorityType;
 import com.jss.osiris.modules.miscellaneous.model.Constant;
 import com.jss.osiris.modules.miscellaneous.model.Country;
+import com.jss.osiris.modules.miscellaneous.model.DeliveryService;
 import com.jss.osiris.modules.miscellaneous.model.Department;
 import com.jss.osiris.modules.miscellaneous.model.DocumentType;
+import com.jss.osiris.modules.miscellaneous.model.Language;
 import com.jss.osiris.modules.miscellaneous.model.LegalForm;
 import com.jss.osiris.modules.miscellaneous.model.PaymentType;
 import com.jss.osiris.modules.miscellaneous.model.Vat;
@@ -537,6 +539,11 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public InvoiceStatus getInvoiceStatusReceived() throws OsirisException {
+        return getConstants().getInvoiceStatusReceived();
+    }
+
+    @Override
     public InvoiceStatus getInvoiceStatusPayed() throws OsirisException {
         return getConstants().getInvoiceStatusPayed();
     }
@@ -644,5 +651,15 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public BillingClosureType getBillingClosureTypeAffaire() throws OsirisException {
         return getConstants().getBillingClosureTypeAffaire();
+    }
+
+    @Override
+    public DeliveryService getDeliveryServiceJss() throws OsirisException {
+        return getConstants().getDeliveryServiceJss();
+    }
+
+    @Override
+    public Language getLanguageFrench() throws OsirisException {
+        return getConstants().getLanguageFrench();
     }
 }

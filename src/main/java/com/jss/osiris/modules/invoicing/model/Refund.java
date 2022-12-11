@@ -11,19 +11,23 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.Confrere;
+import com.jss.osiris.modules.tiers.model.RefundType;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
 @Entity
 public class Refund implements Serializable, IId {
 
 	@Id
+	@IndexedField
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
 
 	@Column(nullable = false)
+	@IndexedField
 	private String label;
 
 	private Float refundAmount;
@@ -45,6 +49,21 @@ public class Refund implements Serializable, IId {
 	@ManyToOne
 	@JoinColumn(name = "id_payment")
 	private Payment payment;
+
+	@ManyToOne
+	@JoinColumn(name = "id_deposit")
+	private Deposit deposit;
+
+	@ManyToOne
+	@JoinColumn(name = "id_refund_type")
+	private RefundType refundType;
+
+	@Column(length = 40)
+	private String refundIBAN;
+
+	private Boolean isMatched;
+
+	private Boolean isAlreadyExported;
 
 	public Integer getId() {
 		return id;
@@ -108,6 +127,46 @@ public class Refund implements Serializable, IId {
 
 	public void setPayment(Payment payment) {
 		this.payment = payment;
+	}
+
+	public RefundType getRefundType() {
+		return refundType;
+	}
+
+	public void setRefundType(RefundType refundType) {
+		this.refundType = refundType;
+	}
+
+	public String getRefundIBAN() {
+		return refundIBAN;
+	}
+
+	public void setRefundIBAN(String refundIBAN) {
+		this.refundIBAN = refundIBAN;
+	}
+
+	public Boolean getIsMatched() {
+		return isMatched;
+	}
+
+	public void setIsMatched(Boolean isMatched) {
+		this.isMatched = isMatched;
+	}
+
+	public Boolean getIsAlreadyExported() {
+		return isAlreadyExported;
+	}
+
+	public void setIsAlreadyExported(Boolean isAlreadyExported) {
+		this.isAlreadyExported = isAlreadyExported;
+	}
+
+	public Deposit getDeposit() {
+		return deposit;
+	}
+
+	public void setDeposit(Deposit deposit) {
+		this.deposit = deposit;
 	}
 
 }

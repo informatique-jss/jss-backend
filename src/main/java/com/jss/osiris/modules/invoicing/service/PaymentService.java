@@ -2,6 +2,7 @@ package com.jss.osiris.modules.invoicing.service;
 
 import java.util.List;
 
+import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.Payment;
@@ -28,7 +29,7 @@ public interface PaymentService {
                         List<Invoice> correspondingInvoices, List<CustomerOrder> correspondingCustomerOrder,
                         Affaire affaireRefund,
                         ITiers tiersRefund, List<Float> byPassAmount)
-                        throws OsirisException;
+                        throws OsirisException, OsirisClientMessageException;
 
         public void unlinkPaymentFromInvoiceCustomerOrder(Payment payment);
 

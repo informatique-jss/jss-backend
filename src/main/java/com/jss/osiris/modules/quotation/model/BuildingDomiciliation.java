@@ -33,6 +33,9 @@ public class BuildingDomiciliation implements Serializable, IId {
 	@Column(length = 10)
 	private String postalCode;
 
+	@Column(length = 20)
+	private String cedexComplement;
+
 	@ManyToOne
 	@JoinColumn(name = "id_city")
 	private City city;
@@ -95,6 +98,14 @@ public class BuildingDomiciliation implements Serializable, IId {
 
 	public void setCountry(Country country) {
 		this.country = country;
+	}
+
+	public String getCedexComplement() {
+		return cedexComplement;
+	}
+
+	public void setCedexComplement(String cedexComplement) {
+		this.cedexComplement = cedexComplement;
 	}
 
 }

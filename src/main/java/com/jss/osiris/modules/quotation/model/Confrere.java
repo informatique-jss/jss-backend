@@ -122,6 +122,9 @@ public class Confrere implements ITiers {
 	@Column(length = 10)
 	private String postalCode;
 
+	@Column(length = 20)
+	private String cedexComplement;
+
 	@ManyToOne
 	@JoinColumn(name = "id_city")
 	private City city;
@@ -173,9 +176,9 @@ public class Confrere implements ITiers {
 	@JoinColumn(name = "id_regie")
 	private Regie regie;
 
-	public List<TiersFollowup> getTiersFollowups() {
-		return null;
-	}
+	@OneToMany(mappedBy = "confrere")
+	@JsonIgnoreProperties(value = { "confrere" }, allowSetters = true)
+	private List<TiersFollowup> tiersFollowups;
 
 	public Integer getId() {
 		return id;
@@ -508,6 +511,22 @@ public class Confrere implements ITiers {
 
 	public void setRegie(Regie regie) {
 		this.regie = regie;
+	}
+
+	public List<TiersFollowup> getTiersFollowups() {
+		return tiersFollowups;
+	}
+
+	public void setTiersFollowups(List<TiersFollowup> tiersFollowups) {
+		this.tiersFollowups = tiersFollowups;
+	}
+
+	public String getCedexComplement() {
+		return cedexComplement;
+	}
+
+	public void setCedexComplement(String cedexComplement) {
+		this.cedexComplement = cedexComplement;
 	}
 
 }

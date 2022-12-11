@@ -252,7 +252,7 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
       if (this.selectedResponsable.country == null || this.selectedResponsable.country == undefined)
         this.selectedResponsable.country = city.country;
 
-      if (this.selectedResponsable.country.id == this.franceCountry.id && city.postalCode != null)
+      if (this.selectedResponsable.country.id == this.franceCountry.id && city.postalCode != null && !this.selectedResponsable.postalCode)
         this.selectedResponsable.postalCode = city.postalCode;
     }
   }

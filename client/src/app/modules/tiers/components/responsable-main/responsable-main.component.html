@@ -130,6 +130,11 @@
                       (onOptionSelected)="fillCity($event)"></autocomplete-postal-code>
                   </td>
                   <td>
+                    <generic-input [(model)]="selectedResponsable.cedexComplement" label="Complément CEDEX"
+                      [form]="principalForm" propertyName="cedexComplement" [isMandatory]="false"
+                      [isDisabled]="!editMode" [maxLength]="20"></generic-input>
+                  </td>
+                  <td>
                     <autocomplete-city [(model)]="selectedResponsable.city" [modelCountry]="selectedResponsable.country"
                       [preFilterPostalCode]="selectedResponsable.postalCode" [form]="principalForm" propertyName="city"
                       [isMandatory]="false" [isDisabled]="!editMode" label="Ville"

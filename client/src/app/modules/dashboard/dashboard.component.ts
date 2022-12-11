@@ -7,6 +7,7 @@ import { HabilitationsService } from '../../services/habilitations.service';
 import { UserPreferenceService } from '../../services/user.preference.service';
 import { InvoiceSearch } from '../invoicing/model/InvoiceSearch';
 import { PaymentSearch } from '../invoicing/model/PaymentSearch';
+import { RefundSearch } from '../invoicing/model/RefundSearch';
 import { IWorkflowElement } from '../miscellaneous/model/IWorkflowElement';
 import { ConstantService } from '../miscellaneous/services/constant.service';
 import { Employee } from '../profile/model/Employee';
@@ -86,6 +87,9 @@ export class DashboardComponent implements OnInit {
 
   PAYMENT_TO_ASSOCIATE = "Paiements entrants à associer";
   paymentSearchToAssociate: PaymentSearch = {} as PaymentSearch;
+
+  REFUND_TO_EMIT = "Remboursements à émettre";
+  refundSearchToEmit: RefundSearch = {} as RefundSearch;
 
   LOG_TO_REVIEW = "Logs à revoir";
 
@@ -167,6 +171,9 @@ export class DashboardComponent implements OnInit {
 
         this.paymentSearchToAssociate.isHideAssociatedPayments = true;
         this.paymentSearchToAssociate.paymentWays = [this.constantService.getPaymentWayInbound()];
+
+        this.refundSearchToEmit.isHideExportedRefunds = true;
+        this.refundSearchToEmit.isHideMatchedRefunds = true;
 
         if (this.canViewLogModule())
           this.allItems.push(this.LOG_TO_REVIEW);

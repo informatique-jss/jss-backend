@@ -50,6 +50,11 @@
               </autocomplete-postal-code>
             </td>
             <td>
+              <generic-input [(model)]="domiciliation.cedexComplement" label="Complément CEDEX"
+                [form]="domiciliationForm" propertyName="cedexComplement" [isMandatory]="false" [isDisabled]="!editMode"
+                [maxLength]="20"></generic-input>
+            </td>
+            <td>
               <autocomplete-city [(model)]="domiciliation.city" [modelCountry]="domiciliation.country"
                 [preFilterPostalCode]="domiciliation.postalCode" [form]="domiciliationForm" propertyName="city"
                 [isMandatory]="true" [isDisabled]="!editMode" label="Ville"
@@ -126,6 +131,11 @@
                 [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen"
                 (onOptionSelected)="fillActivityCity($event)">
               </autocomplete-postal-code>
+            </td>
+            <td>
+              <generic-input [(model)]="domiciliation.activityCedexComplement" label="Complément CEDEX"
+                [form]="domiciliationForm" propertyName="activityCedexComplement" [isMandatory]="false"
+                [isDisabled]="!editMode" [maxLength]="20"></generic-input>
             </td>
             <td>
               <autocomplete-city [(model)]="domiciliation.activityCity" [modelCountry]="domiciliation.activityCountry"
@@ -278,6 +288,11 @@
                 [conditionnalRequired]="instanceOfCustomerOrder && !isStatusOpen"
                 (onOptionSelected)="fillLegalGardianCity($event)">
               </autocomplete-postal-code>
+            </td>
+            <td>
+              <generic-input [(model)]="domiciliation.legalGardianCedexComplement" label="Complément CEDEX"
+                [form]="domiciliationForm" propertyName="legalGardianCedexComplement" [isMandatory]="false"
+                [isDisabled]="!editMode" [maxLength]="20"></generic-input>
             </td>
             <td>
               <autocomplete-city [(model)]="domiciliation.legalGardianCity"

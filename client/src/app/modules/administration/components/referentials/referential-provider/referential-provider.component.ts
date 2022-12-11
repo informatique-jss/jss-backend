@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { Provider } from 'src/app/modules/miscellaneous/model/Provider';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
@@ -16,8 +17,25 @@ export class ReferentialProviderComponent extends GenericReferentialComponent<Pr
   constructor(private providerService: ProviderService,
     private formBuilder2: FormBuilder,
     private constantService: ConstantService,
+    private activatedRoute: ActivatedRoute,
     private appService2: AppService,) {
     super(formBuilder2, appService2);
+  }
+
+  selectedProviderId: number | undefined;
+
+  ngOnInit(): void {
+    super.ngOnInit();
+    let idProvider = this.activatedRoute.snapshot.params.id;
+    if (idProvider)
+      this.selectedProviderId = idProvider;
+  }
+
+  mapEntities(): void {
+    if (this.selectedProviderId && this.entities)
+      for (let confrere of this.entities)
+        if (confrere.id == this.selectedProviderId)
+          this.selectEntity(confrere);
   }
 
   paymentTypePrelevement = this.constantService.getPaymentTypePrelevement();

@@ -90,6 +90,7 @@ public class InvoiceHelper {
                 invoiceLabelResult.setBillingLabel(billingDocument.getRegie().getLabel());
                 invoiceLabelResult.setBillingLabelAddress(billingDocument.getRegie().getAddress());
                 invoiceLabelResult.setBillingLabelPostalCode(billingDocument.getRegie().getPostalCode());
+                invoiceLabelResult.setCedexComplement(billingDocument.getRegie().getCedexComplement());
                 invoiceLabelResult.setBillingLabelCity(billingDocument.getRegie().getCity());
                 invoiceLabelResult.setBillingLabelCountry(billingDocument.getRegie().getCountry());
                 invoiceLabelResult.setBillingLabelIsIndividual(false);
@@ -102,6 +103,7 @@ public class InvoiceHelper {
                 invoiceLabelResult.setBillingLabel(billingDocument.getBillingLabel());
                 invoiceLabelResult.setBillingLabelAddress(billingDocument.getBillingAddress());
                 invoiceLabelResult.setBillingLabelPostalCode(billingDocument.getBillingPostalCode());
+                invoiceLabelResult.setCedexComplement(billingDocument.getCedexComplement());
                 invoiceLabelResult.setBillingLabelCity(billingDocument.getBillingLabelCity());
                 invoiceLabelResult.setBillingLabelCountry(billingDocument.getBillingLabelCountry());
                 invoiceLabelResult.setBillingLabelIsIndividual(billingDocument.getBillingLabelIsIndividual());
@@ -122,6 +124,7 @@ public class InvoiceHelper {
                             : affaire.getDenomination());
             invoiceLabelResult.setBillingLabelAddress(affaire.getAddress());
             invoiceLabelResult.setBillingLabelPostalCode(affaire.getPostalCode());
+            invoiceLabelResult.setCedexComplement(affaire.getCedexComplement());
             invoiceLabelResult.setBillingLabelCity(affaire.getCity());
             invoiceLabelResult.setBillingLabelCountry(affaire.getCountry());
             invoiceLabelResult.setBillingLabelIsIndividual(affaire.getIsIndividual());
@@ -181,6 +184,7 @@ public class InvoiceHelper {
         invoice.setBillingLabel(invoiceLabelResult.getBillingLabel());
         invoice.setBillingLabelAddress(invoiceLabelResult.getBillingLabelAddress());
         invoice.setBillingLabelPostalCode(invoiceLabelResult.getBillingLabelPostalCode());
+        invoice.setCedexComplement(invoiceLabelResult.getCedexComplement());
         invoice.setBillingLabelCity(invoiceLabelResult.getBillingLabelCity());
         invoice.setBillingLabelCountry(invoiceLabelResult.getBillingLabelCountry());
         invoice.setBillingLabelIsIndividual(invoiceLabelResult.getBillingLabelIsIndividual());

@@ -14,7 +14,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -57,7 +56,7 @@ public class GuichetUniqueDelegateServiceImpl implements GuichetUniqueDelegateSe
         };
     }
 
-    @Scheduled(initialDelay = 100, fixedDelay = 1000000000)
+    // @Scheduled(initialDelay = 100, fixedDelay = 1000000000)
     public void test() throws OsirisException {
         getFormalities(LocalDateTime.now().minusMonths(0), null);
     }

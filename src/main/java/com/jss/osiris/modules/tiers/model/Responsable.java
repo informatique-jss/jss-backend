@@ -110,6 +110,9 @@ public class Responsable implements ITiers, IAttachment {
 	@IndexedField
 	private String postalCode;
 
+	@Column(length = 20)
+	private String cedexComplement;
+
 	@ManyToOne
 	@JoinColumn(name = "id_city")
 	@IndexedField
@@ -440,6 +443,14 @@ public class Responsable implements ITiers, IAttachment {
 
 	public void setRffInsertionRate(Float rffInsertionRate) {
 		this.rffInsertionRate = rffInsertionRate;
+	}
+
+	public String getCedexComplement() {
+		return cedexComplement;
+	}
+
+	public void setCedexComplement(String cedexComplement) {
+		this.cedexComplement = cedexComplement;
 	}
 
 }

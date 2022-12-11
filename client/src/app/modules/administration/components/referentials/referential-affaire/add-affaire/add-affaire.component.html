@@ -70,6 +70,11 @@
         </autocomplete-postal-code>
       </td>
       <td>
+        <generic-input [(model)]="affaire.cedexComplement" label="Complément CEDEX" [form]="affaireForm"
+          propertyName="cedexComplement" [isMandatory]="false" [isDisabled]="!editMode"
+          [maxLength]="20"></generic-input>
+      </td>
+      <td>
         <autocomplete-city [(model)]="affaire.city" [modelCountry]="affaire.country" [form]="affaireForm"
           propertyName="city" [isMandatory]="true" [conditionnalRequired]="!affaire.isIndividual"
           [preFilterPostalCode]="affaire.postalCode" [isDisabled]="!editMode" label="Ville"

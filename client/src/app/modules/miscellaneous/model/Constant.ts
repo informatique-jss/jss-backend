@@ -23,8 +23,10 @@ import { AttachmentType } from "./AttachmentType";
 import { BillingType } from "./BillingType";
 import { CompetentAuthorityType } from "./CompetentAuthorityType";
 import { Country } from "./Country";
+import { DeliveryService } from './DeliveryService';
 import { Department } from "./Department";
 import { DocumentType } from "./DocumentType";
+import { Language } from './Language';
 import { LegalForm } from "./LegalForm";
 import { PaymentType } from "./PaymentType";
 import { Vat } from "./Vat";
@@ -124,6 +126,7 @@ export interface Constant {
   competentAuthorityTypeRcs: CompetentAuthorityType;
   competentAuthorityTypeCfp: CompetentAuthorityType;
   invoiceStatusSend: InvoiceStatus;
+  invoiceStatusReceived: InvoiceStatus;
   invoiceStatusPayed: InvoiceStatus;
   invoiceStatusCancelled: InvoiceStatus;
   paymentWayInbound: PaymentWay;
@@ -146,4 +149,6 @@ export interface Constant {
   billingClosureRecipientTypeResponsable: BillingClosureRecipientType;
   billingClosureRecipientTypeClient: BillingClosureRecipientType;
   billingClosureTypeAffaire: BillingClosureType;
+  deliveryServiceJss: DeliveryService;
+  languageFrench: Language;
 }

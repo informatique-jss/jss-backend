@@ -403,6 +403,10 @@ public class Constant implements Serializable, IId {
 	private InvoiceStatus invoiceStatusSend;
 
 	@ManyToOne
+	@JoinColumn(name = "id_invoice_status_received")
+	private InvoiceStatus invoiceStatusReceived;
+
+	@ManyToOne
 	@JoinColumn(name = "id_invoice_status_payed")
 	private InvoiceStatus invoiceStatusPayed;
 
@@ -485,6 +489,14 @@ public class Constant implements Serializable, IId {
 	@ManyToOne
 	@JoinColumn(name = "id_billing_closure_type_affaire")
 	private BillingClosureType billingClosureTypeAffaire;
+
+	@ManyToOne
+	@JoinColumn(name = "id_delivery_service_jss")
+	private DeliveryService deliveryServiceJss;
+
+	@ManyToOne
+	@JoinColumn(name = "id_language_french")
+	private Language languageFrench;
 
 	private String salesSharedMailbox;
 	private String accountingSharedMaiblox;
@@ -1422,6 +1434,30 @@ public class Constant implements Serializable, IId {
 
 	public void setBillingClosureTypeAffaire(BillingClosureType billingClosureTypeAffaire) {
 		this.billingClosureTypeAffaire = billingClosureTypeAffaire;
+	}
+
+	public InvoiceStatus getInvoiceStatusReceived() {
+		return invoiceStatusReceived;
+	}
+
+	public void setInvoiceStatusReceived(InvoiceStatus invoiceStatusReceived) {
+		this.invoiceStatusReceived = invoiceStatusReceived;
+	}
+
+	public DeliveryService getDeliveryServiceJss() {
+		return deliveryServiceJss;
+	}
+
+	public void setDeliveryServiceJss(DeliveryService deliveryServiceJss) {
+		this.deliveryServiceJss = deliveryServiceJss;
+	}
+
+	public Language getLanguageFrench() {
+		return languageFrench;
+	}
+
+	public void setLanguageFrench(Language languageFrench) {
+		this.languageFrench = languageFrench;
 	}
 
 }

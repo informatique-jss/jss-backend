@@ -13,7 +13,7 @@
             (auxclick)="openRoute($event,'/order/'+invoice.customerOrder.id)">visibility
           </mat-icon>
         </p>
-        <table class="full-width mat-table description-table ">
+        <table class="full-width mat-table description-table " *ngIf="!invoice.provider">
           <tr class=" mat-header-row">
             <th class="mat-header-cell">Affaire(s)</th>
             <th class="mat-header-cell">Payeur</th>
@@ -34,6 +34,20 @@
               <p>{{getCustomerOrder(invoice).address}}</p>
               <p>{{getCustomerOrder(invoice).postalCode}}
                 {{getCustomerOrder(invoice).city.label}}{{getCustomerOrder(invoice).country.label}}</p>
+            </td>
+          </tr>
+        </table>
+        <table class="full-width mat-table description-table " *ngIf="invoice.provider">
+          <tr class=" mat-header-row">
+            <th class="mat-header-cell">Fournisseur</th>
+          </tr>
+          <tr class=" mat-row">
+            <td class="mat-cell td-info">
+              <p>{{invoice.provider.label}} <mat-icon matTooltip="Voir le fournisseur" color="accent" class="pointer"
+                  (click)="openRoute($event,'/referential/provider/'+invoice.provider.id)"
+                  (auxclick)="openRoute($event,'/referential/provider/'+invoice.provider.id)">visibility
+                </mat-icon></p>
+              <p>IBAN : {{invoice.provider.iban}}</p>
             </td>
           </tr>
         </table>

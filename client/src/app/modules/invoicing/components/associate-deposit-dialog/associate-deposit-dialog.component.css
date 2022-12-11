@@ -1,0 +1,10 @@
+.top {
+  padding-top: 20px;
+}
+
+.big-chip {
+  position: absolute;
+  left: 50%;
+  bottom: 8%;
+  transform: scale(3);
+}

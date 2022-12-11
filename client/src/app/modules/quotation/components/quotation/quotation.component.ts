@@ -4,9 +4,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
 import { ActivatedRoute, UrlSegment } from '@angular/router';
 import { Subject } from 'rxjs';
-import { QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN, VALIDATED_BY_CUSTOMER } from 'src/app/libs/Constants';
+import { CUSTOMER_ORDER_STATUS_BILLED, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN, VALIDATED_BY_CUSTOMER } from 'src/app/libs/Constants';
 import { getDocument } from 'src/app/libs/DocumentHelper';
 import { instanceOfCustomerOrder } from 'src/app/libs/TypeHelper';
+import { getAmountRemaining } from 'src/app/modules/invoicing/components/invoice-tools';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { Employee } from 'src/app/modules/profile/model/Employee';
 import { BillingLabelType } from 'src/app/modules/tiers/model/BillingLabelType';
@@ -17,6 +18,7 @@ import { SearchService } from 'src/app/services/search.service';
 import { CUSTOMER_ORDER_STATUS_ABANDONED, CUSTOMER_ORDER_STATUS_OPEN } from '../../../../libs/Constants';
 import { replaceDocument } from '../../../../libs/DocumentHelper';
 import { instanceOfQuotation } from '../../../../libs/TypeHelper';
+import { AssociateDepositDialogComponent } from '../../../invoicing/components/associate-deposit-dialog/associate-deposit-dialog.component';
 import { WorkflowDialogComponent } from '../../../miscellaneous/components/workflow-dialog/workflow-dialog.component';
 import { Affaire } from '../../model/Affaire';
 import { AssoAffaireOrder } from '../../model/AssoAffaireOrder';
@@ -92,6 +94,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     private assoAffaireOrderService: AssoAffaireOrderService,
     private mailComputeResultService: MailComputeResultService,
     protected searchService: SearchService,
+    public associateDepositDialog: MatDialog,
     private provisionService: ProvisionService,
     private changeDetectorRef: ChangeDetectorRef) { }
 
@@ -376,10 +379,20 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
             this.appService.openRoute(null, '/quotation/' + this.quotation.id, null);
           })
         } else {
-          this.customerOrderService.updateCustomerStatus(this.quotation, targetStatus.code).subscribe(response => {
-            this.quotation = response;
-            this.appService.openRoute(null, '/order/' + this.quotation.id, null);
-          })
+          if (this.getRemainingToPay() < 0 && targetStatus.code == CUSTOMER_ORDER_STATUS_BILLED || targetStatus.code == CUSTOMER_ORDER_STATUS_ABANDONED) {
+            let dialogDepositDialogRef = this.associateDepositDialog.open(AssociateDepositDialogComponent, {
+              width: '100%'
+            });
+            dialogDepositDialogRef.componentInstance.deposit = (this.quotation as CustomerOrder).deposits[0];
+            dialogDepositDialogRef.componentInstance.customerOrder = (this.quotation as CustomerOrder);
+            dialogDepositDialogRef.afterClosed().subscribe(response => {
+              this.appService.openRoute(null, '/order/' + this.quotation.id, null);
+            });
+          } else
+            this.customerOrderService.updateCustomerStatus(this.quotation, targetStatus.code).subscribe(response => {
+              this.quotation = response;
+              this.appService.openRoute(null, '/order/' + this.quotation.id, null);
+            })
         }
       }
       this.editMode = false;
@@ -543,7 +556,13 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
 
   getRemainingToPay() {
     if (instanceOfCustomerOrder(this.quotation))
-      return Math.round((QuotationComponent.computePriceTotal(this.quotation) - QuotationComponent.computePayed(this.quotation)) * 100) / 100;
+      if (this.quotation.customerOrderStatus.code != CUSTOMER_ORDER_STATUS_BILLED)
+        return Math.round((QuotationComponent.computePriceTotal(this.quotation) - QuotationComponent.computePayed(this.quotation)) * 100) / 100;
+      else {
+        for (let invoice of this.quotation.invoices)
+          if (invoice.invoiceStatus.code != this.constantService.getInvoiceStatusCancelled().code)
+            return getAmountRemaining(invoice);
+      }
     return this.getPriceTotal();
   }
 

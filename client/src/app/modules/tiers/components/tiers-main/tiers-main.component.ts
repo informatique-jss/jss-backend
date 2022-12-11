@@ -90,7 +90,7 @@ export class PrincipalComponent implements OnInit {
     if (this.tiers.country == null || this.tiers.country == undefined)
       this.tiers.country = city.country;
 
-    if (this.tiers.country.id == this.countryFrance.id && city.postalCode != null)
+    if (this.tiers.country.id == this.countryFrance.id && city.postalCode != null && !this.tiers.postalCode && !this.tiers.postalCode)
       this.tiers.postalCode = city.postalCode;
   }
 

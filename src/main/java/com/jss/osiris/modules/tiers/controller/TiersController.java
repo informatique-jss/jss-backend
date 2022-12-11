@@ -170,10 +170,12 @@ public class TiersController {
   @PostMapping(inputEntryPoint + "/tiers-followup")
   public ResponseEntity<List<TiersFollowup>> addTiersFollowup(@RequestBody TiersFollowup tiersFollowup)
       throws OsirisValidationException, OsirisException {
-    if (tiersFollowup.getTiers() == null && tiersFollowup.getResponsable() == null)
+    if (tiersFollowup.getTiers() == null && tiersFollowup.getResponsable() == null
+        && tiersFollowup.getConfrere() == null)
       throw new OsirisValidationException("tiers or responsable");
     validationHelper.validateReferential(tiersFollowup.getTiers(), false, "Tiers");
     validationHelper.validateReferential(tiersFollowup.getResponsable(), false, "Responsable");
+    validationHelper.validateReferential(tiersFollowup.getConfrere(), false, "Responsable");
     validationHelper.validateReferential(tiersFollowup.getTiersFollowupType(), true, "TiersFollowupType");
     validationHelper.validateReferential(tiersFollowup.getSalesEmployee(), true, "SalesEmployee");
     validationHelper.validateDate(tiersFollowup.getFollowupDate(), true, "FollowupDate");
@@ -362,6 +364,7 @@ public class TiersController {
     if (tiers.getCountry() != null
         && tiers.getCountry().getId().equals(constantService.getCountryFrance().getId()))
       validationHelper.validateString(tiers.getPostalCode(), true, 10, "PostalCode");
+    validationHelper.validateString(tiers.getCedexComplement(), false, 20, "CedexComplement");
     validationHelper.validateReferential(tiers.getCity(), true, "City");
 
     validationHelper.validateString(tiers.getIntercom(), false, 12, "Intercom");
@@ -412,6 +415,7 @@ public class TiersController {
         validationHelper.validateString(document.getBillingAddress(), false, 60, "BillingAddress");
         validationHelper.validateString(document.getBillingLabel(), false, 60, "BillingLabel");
         validationHelper.validateString(document.getBillingPostalCode(), false, 10, "BillingPostalCode");
+        validationHelper.validateString(document.getCedexComplement(), false, 20, "CedexComplement");
 
         if (document.getIsMailingPaper() == null)
           document.setIsMailingPaper(false);
@@ -445,6 +449,7 @@ public class TiersController {
         validationHelper.validateReferential(responsable.getCountry(), false, "Country");
         validationHelper.validateReferential(responsable.getCity(), false, "City");
         validationHelper.validateString(responsable.getPostalCode(), false, 10, "PostalCode");
+        validationHelper.validateString(responsable.getCedexComplement(), false, 20, "CedexComplement");
         validationHelper.validateString(responsable.getFunction(), false, 20, "Function");
         validationHelper.validateString(responsable.getBuilding(), false, 20, "Building");
         validationHelper.validateString(responsable.getFloor(), false, 20, "Floor");
@@ -490,6 +495,7 @@ public class TiersController {
             validationHelper.validateString(document.getBillingAddress(), false, 60, "BillingAddress");
             validationHelper.validateString(document.getBillingLabel(), false, 60, "BillingLabel");
             validationHelper.validateString(document.getBillingPostalCode(), false, 10, "BillingPostalCode");
+            validationHelper.validateString(document.getCedexComplement(), false, 20, "CedexComplement");
 
           }
         }

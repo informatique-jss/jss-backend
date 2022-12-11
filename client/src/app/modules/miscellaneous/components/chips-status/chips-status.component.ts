@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { ConstantService } from '../../services/constant.service';
 
 @Component({
   selector: 'chips-status',
@@ -19,9 +20,11 @@ export class ChipsStatusComponent implements OnInit {
 
   okStatus: string[] = ["VALIDATED_BY_JSS", "VALIDATED_BY_CUSTOMER", "BILLED", "PAYED"];
   warnStatus: string[] = ["TO_VERIFY", "WAITING_DEPOSIT"];
-  koStatus: string[] = ["REFUSED_BY_CUSTOMER"];
+  koStatus: string[] = ["REFUSED_BY_CUSTOMER", this.constantService.getInvoiceStatusCancelled().code];
 
-  constructor() { }
+  constructor(
+    private constantService: ConstantService
+  ) { }
 
   ngOnInit() {
     if (this.okStatus.indexOf(this.status) >= 0)

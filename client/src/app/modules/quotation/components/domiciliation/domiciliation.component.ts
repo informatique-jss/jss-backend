@@ -152,7 +152,7 @@ export class DomiciliationComponent implements OnInit {
       if (this.domiciliation!.country == null || this.domiciliation!.country == undefined)
         this.domiciliation!.country = city.country;
 
-      if (this.domiciliation!.country.id == this.constantService.getCountryFrance().id && city.postalCode != null)
+      if (this.domiciliation!.country.id == this.constantService.getCountryFrance().id && city.postalCode != null && !this.domiciliation!.postalCode)
         this.domiciliation!.postalCode = city.postalCode;
     }
   }

@@ -36,9 +36,9 @@ export class ReferentialConfrereComponent extends GenericReferentialComponent<Co
 
   ngOnInit(): void {
     super.ngOnInit();
-    let idAffaire = this.activatedRoute.snapshot.params.id;
-    if (idAffaire)
-      this.selectedConfrereId = idAffaire;
+    let idConfrere = this.activatedRoute.snapshot.params.id;
+    if (idConfrere)
+      this.selectedConfrereId = idConfrere;
   }
 
   entityForm2 = this.formBuilder2.group({
@@ -109,7 +109,6 @@ export class ReferentialConfrereComponent extends GenericReferentialComponent<Co
       for (let confrere of this.entities)
         if (confrere.id == this.selectedConfrereId)
           this.selectEntity(confrere);
-
   }
 
   fillPostalCode(city: City) {
@@ -117,7 +116,7 @@ export class ReferentialConfrereComponent extends GenericReferentialComponent<Co
       if (this.selectedEntity!.country == null || this.selectedEntity!.country == undefined)
         this.selectedEntity!.country = city.country;
 
-      if (this.selectedEntity!.country.id == this.countryFrance.id && city.postalCode != null)
+      if (this.selectedEntity!.country.id == this.countryFrance.id && city.postalCode != null && !this.selectedEntity!.postalCode)
         this.selectedEntity!.postalCode = city.postalCode;
     }
   }

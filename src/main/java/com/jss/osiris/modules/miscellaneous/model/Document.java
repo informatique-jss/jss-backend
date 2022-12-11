@@ -156,8 +156,6 @@ public class Document implements Serializable, IId {
 	@Column(length = 40)
 	private String refundIBAN;
 
-	private Boolean isRefundable;
-
 	@ManyToOne
 	@JoinColumn(name = "id_billing_closure_type")
 	private BillingClosureType billingClosureType;
@@ -174,6 +172,9 @@ public class Document implements Serializable, IId {
 
 	@Column(length = 60)
 	private String billingPostalCode;
+
+	@Column(length = 20)
+	private String cedexComplement;
 
 	@ManyToOne
 	@JoinColumn(name = "id_billing_label_city")
@@ -413,14 +414,6 @@ public class Document implements Serializable, IId {
 		this.refundIBAN = refundIBAN;
 	}
 
-	public Boolean getIsRefundable() {
-		return isRefundable;
-	}
-
-	public void setIsRefundable(Boolean isRefundable) {
-		this.isRefundable = isRefundable;
-	}
-
 	public BillingClosureType getBillingClosureType() {
 		return billingClosureType;
 	}
@@ -523,6 +516,14 @@ public class Document implements Serializable, IId {
 
 	public void setAnnouncement(Announcement announcement) {
 		this.announcement = announcement;
+	}
+
+	public String getCedexComplement() {
+		return cedexComplement;
+	}
+
+	public void setCedexComplement(String cedexComplement) {
+		this.cedexComplement = cedexComplement;
 	}
 
 }

@@ -142,7 +142,7 @@ export class QuotationManagementComponent implements OnInit, AfterContentChecked
     if (!this.billingDocument.billingLabelCountry)
       this.billingDocument.billingLabelCountry = city.country;
 
-    if (this.billingDocument.billingLabelCountry.id == this.countryFrance.id && city.postalCode != null)
+    if (this.billingDocument.billingLabelCountry.id == this.countryFrance.id && city.postalCode != null && !this.billingDocument.billingPostalCode)
       this.billingDocument.billingPostalCode = city.postalCode;
   }
 

@@ -24,6 +24,7 @@ import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.Domiciliation;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Quotation;
+import com.jss.osiris.modules.quotation.model.SimpleProvision;
 import com.jss.osiris.modules.quotation.model.guichetUnique.Formalite;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
@@ -81,6 +82,12 @@ public class Attachment implements Serializable, IId {
 	@JoinColumn(name = "id_announcement")
 	@JsonIgnoreProperties(value = { "attachments" }, allowSetters = true)
 	private Announcement announcement;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JsonIgnore
+	@JoinColumn(name = "id_simple_provision")
+	@JsonIgnoreProperties(value = { "attachments" }, allowSetters = true)
+	private SimpleProvision simpleProvision;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JsonIgnore
@@ -256,6 +263,14 @@ public class Attachment implements Serializable, IId {
 
 	public void setJournal(Journal journal) {
 		this.journal = journal;
+	}
+
+	public SimpleProvision getSimpleProvision() {
+		return simpleProvision;
+	}
+
+	public void setSimpleProvision(SimpleProvision simpleProvision) {
+		this.simpleProvision = simpleProvision;
 	}
 
 }

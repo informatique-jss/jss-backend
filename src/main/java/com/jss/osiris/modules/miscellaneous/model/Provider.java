@@ -37,6 +37,10 @@ public class Provider implements Serializable, IId {
 	@JoinColumn(name = "id_accounting_account_deposit")
 	private AccountingAccount accountingAccountDeposit;
 
+	@ManyToOne
+	@JoinColumn(name = "id_default_billing_item")
+	private BillingItem defaultBillingItem;
+
 	@Column(length = 20)
 	private String jssReference;
 
@@ -157,6 +161,14 @@ public class Provider implements Serializable, IId {
 
 	public void setPaymentType(PaymentType paymentType) {
 		this.paymentType = paymentType;
+	}
+
+	public BillingItem getDefaultBillingItem() {
+		return defaultBillingItem;
+	}
+
+	public void setDefaultBillingItem(BillingItem defaultBillingItem) {
+		this.defaultBillingItem = defaultBillingItem;
 	}
 
 }

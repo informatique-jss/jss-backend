@@ -7,6 +7,7 @@ import com.jss.osiris.modules.tiers.model.BillingLabelType;
 public class InvoiceLabelResult {
     private String billingLabel;
     private String billingLabelAddress;
+    private String cedexComplement;
     private String billingLabelPostalCode;
     private City billingLabelCity;
     private Country billingLabelCountry;
@@ -103,6 +104,14 @@ public class InvoiceLabelResult {
 
     public void setLabelOrigin(String labelOrigin) {
         this.labelOrigin = labelOrigin;
+    }
+
+    public String getCedexComplement() {
+        return cedexComplement;
+    }
+
+    public void setCedexComplement(String cedexComplement) {
+        this.cedexComplement = cedexComplement;
     }
 
 }

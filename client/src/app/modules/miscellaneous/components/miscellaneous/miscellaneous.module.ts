@@ -50,6 +50,7 @@ import { AutocompleteDepartmentComponent } from '../forms/autocomplete-departmen
 import { AutocompleteEmployeeComponent } from '../forms/autocomplete-employee/autocomplete-employee.component';
 import { AutocompleteLegalFormComponent } from '../forms/autocomplete-legal-form/autocomplete-legal-form.component';
 import { AutocompletePostalCodeComponent } from '../forms/autocomplete-postal-code/autocomplete-postal-code.component';
+import { AutocompleteProviderComponent } from '../forms/autocomplete-provider/autocomplete-provider.component';
 import { AutocompleteRegieComponent } from '../forms/autocomplete-regie/autocomplete-regie.component';
 import { AutocompleteRegionComponent } from '../forms/autocomplete-region/autocomplete-region.component';
 import { AutocompleteResponsableComponent } from '../forms/autocomplete-responsable/autocomplete-responsable.component';
@@ -225,12 +226,14 @@ import { HistoryComponent } from '../history/history.component';
 import { NotificationDialogComponent } from '../notification-dialog/notification-dialog.component';
 import { SingleAttachmentComponent } from '../single-attachment/single-attachment.component';
 import { SortTableComponent } from '../sort-table/sort-table.component';
+import { TiersFollowupComponent } from '../tiers-followup/tiers-followup.component';
 import { UploadAttachementDialogComponent } from '../upload-attachement-dialog/upload-attachement-dialog.component';
 import { WorkflowDialogComponent } from '../workflow-dialog/workflow-dialog.component';
 import { MiscellaneousComponent } from './miscellaneous.component';
 
 const routes: Routes = [
   { path: 'referential/affaire/:id', component: AdministrationComponent },
+  { path: 'referential/provider/:id', component: AdministrationComponent },
   { path: 'referential/confrere/:id', component: AdministrationComponent },
 ];
 
@@ -349,6 +352,7 @@ const routes: Routes = [
     AutocompleteAccountingAccountComponent,
     SelectAccountingJournalComponent,
     SortTableComponent,
+    AutocompleteProviderComponent,
     ChipsProvisionFamilyTypeComponent,
     SelectProvisionScreenTypeComponent,
     SelectAttachmentTypeComponent,
@@ -373,6 +377,7 @@ const routes: Routes = [
     SingleAttachmentComponent,
     AddNotificationDialogComponent,
     GenericDatetimePickerComponent,
+    TiersFollowupComponent,
     //Guichet Unique
     AutocompleteTypeDocumentComponent,
     RadioGroupMotifRejetCmaComponent,
@@ -535,6 +540,7 @@ const routes: Routes = [
     SelectBillingItemsComponent,
     SelectQuotationStatusComponent,
     RadioGroupBillingLabelComponent,
+    AutocompleteProviderComponent,
     SelectProvisionScreenTypeComponent,
     SelectResponsableComponent,
     SelectSubscriptionPeriodComponent,
@@ -570,6 +576,7 @@ const routes: Routes = [
     SelectPaymentWayComponent,
     AutocompleteBillingItemComponent,
     WorkflowDialogComponent,
+    TiersFollowupComponent,
     //Guichet Unique
     AutocompleteTypeDocumentComponent,
     RadioGroupMotifRejetCmaComponent,

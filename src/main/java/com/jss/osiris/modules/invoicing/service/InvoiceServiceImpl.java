@@ -29,7 +29,6 @@ import com.jss.osiris.modules.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.miscellaneous.service.NotificationService;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
-import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.quotation.service.ConfrereService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.tiers.model.ITiers;
@@ -97,10 +96,8 @@ public class InvoiceServiceImpl implements InvoiceService {
                 accountingRecordService.unassociateCustomerOrderPayementAndDeposit(accountingRecord);
                 accountingRecordService.generateCounterPart(accountingRecord);
             }
-        if (invoice.getCustomerOrder() != null)
-            customerOrderService.addOrUpdateCustomerOrderStatus(invoice.getCustomerOrder(),
-                    CustomerOrderStatus.TO_BILLED, true);
-        return getInvoice(invoice.getId());
+        invoice.setInvoiceStatus(constantService.getInvoiceStatusCancelled());
+        return addOrUpdateInvoice(invoice);
     }
 
     @Override
@@ -190,22 +187,28 @@ public class InvoiceServiceImpl implements InvoiceService {
             invoiceItem.setVatPrice(invoiceItem.getVat().getRate() * invoiceItem.getPreTaxPrice() / 100);
         }
 
+        Integer nbrOfDayFromDueDate = 30;
+        if (invoice.getDueDate() == null)
+            invoice.setDueDate(LocalDate.now().plusDays(nbrOfDayFromDueDate));
+
         // Defined billing label
-        if (!constantService.getBillingLabelTypeOther().getId().equals(invoice.getBillingLabelType().getId())) {
+        if (invoice.getProvider() == null
+                && !constantService.getBillingLabelTypeOther().getId().equals(invoice.getBillingLabelType().getId())) {
 
             ITiers customerOrder = invoice.getTiers();
             if (invoice.getResponsable() != null)
                 customerOrder = invoice.getResponsable();
             if (invoice.getConfrere() != null)
                 customerOrder = invoice.getConfrere();
-            if (invoice.getProvider() != null)
-                customerOrder = invoice.getProvider();
             Document billingDocument = documentService.getBillingDocument(customerOrder.getDocuments());
 
             invoiceHelper.setInvoiceLabel(invoice, billingDocument, null, customerOrder);
         }
 
-        invoice.setInvoiceStatus(constantService.getInvoiceStatusSend());
+        if (invoice.getProvider() != null)
+            invoice.setInvoiceStatus(constantService.getInvoiceStatusReceived());
+        else
+            invoice.setInvoiceStatus(constantService.getInvoiceStatusSend());
 
         // Associate invoice to invoice item
         for (InvoiceItem invoiceItem : invoice.getInvoiceItems()) {

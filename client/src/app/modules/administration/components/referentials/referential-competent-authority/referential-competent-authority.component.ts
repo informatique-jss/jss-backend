@@ -54,7 +54,7 @@ export class ReferentialCompetentAuthorityComponent extends GenericReferentialCo
       if (this.selectedEntity!.country == null || this.selectedEntity!.country == undefined)
         this.selectedEntity!.country = city.country;
 
-      if (this.selectedEntity!.country.id == this.constantService.getCountryFrance().id && city.postalCode != null)
+      if (this.selectedEntity!.country.id == this.constantService.getCountryFrance().id && city.postalCode != null && !this.selectedEntity!.postalCode)
         this.selectedEntity!.postalCode = city.postalCode;
     }
   }

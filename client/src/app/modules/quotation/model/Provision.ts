@@ -8,12 +8,14 @@ import { Formalite } from './guichet-unique/Formalite';
 import { InvoiceItem } from "./InvoiceItem";
 import { ProvisionFamilyType } from "./ProvisionFamilyType";
 import { ProvisionType } from "./ProvisionType";
+import { SimpleProvision } from './SimpleProvision';
 
 export interface Provision extends IAttachment {
   id: number;
   domiciliation: Domiciliation | undefined;
   announcement: Announcement | undefined;
   bodacc: Bodacc | undefined;
+  simpleProvision: SimpleProvision | undefined;
   formalite: Formalite | undefined;
   provisionFamilyType: ProvisionFamilyType;
   provisionType: ProvisionType;

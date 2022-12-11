@@ -20,6 +20,7 @@ export interface Domiciliation extends IAttachment, IDocument {
   mailRedirectionType: MailRedirectionType;
   address: string;
   postalCode: string;
+  cedexComplement: string;
   city: City;
   country: Country;
   mails: Mail[];
@@ -29,6 +30,7 @@ export interface Domiciliation extends IAttachment, IDocument {
   activityDescription: string;
   activityAddress: string;
   activityPostalCode: string;
+  activityCedexComplement: string;
   activityCity: City;
   activityCountry: Country;
   activityMailRecipient: string;
@@ -47,6 +49,7 @@ export interface Domiciliation extends IAttachment, IDocument {
   legalGardianMailRecipient: string;
   legalGardianAddress: string;
   legalGardianPostalCode: string;
+  legalGardianCedexComplement: string;
   legalGardianCity: City;
   legalGardianCountry: Country;
   legalGardianMails: Mail[];

@@ -71,11 +71,21 @@ public interface AccountingRecordService {
         public void generateAccountingRecordsForSaleOnInvoicePayment(Invoice invoice, List<Payment> payments,
                         List<Deposit> deposits, Float amountToUse) throws OsirisException;
 
-        public void generateAccountingRecordsForDepositAndInvoice(Deposit deposit, Invoice invoice, Payment payment)
+        public void generateAccountingRecordsForPurshaseOnInvoicePayment(Invoice invoice, List<Payment> payments,
+                        Float amountToUse) throws OsirisException;
+
+        public void generateAccountingRecordsForRefundPayment(Refund refund, Payment payment, Float amount)
                         throws OsirisException;
 
+        public void generateAccountingRecordsForTemporaryDepositForInvoice(Deposit deposit, Invoice invoice,
+                        Integer overrideAccountingOperationId)
+                        throws OsirisException;
+
+        public void generateAccountingRecordsForDepositOnInvoice(Deposit deposit, Invoice invoice,
+                        Integer overrideAccountingOperationId) throws OsirisException;
+
         public void generateAccountingRecordsForDepositAndCustomerOrder(Deposit deposit, CustomerOrder customerOrder,
-                        Payment payment) throws OsirisException;
+                        Integer overrideAccountingOperationId) throws OsirisException;
 
         public AccountingAccount getCustomerAccountingAccountForInvoice(Invoice invoice) throws OsirisException;
 
@@ -85,11 +95,17 @@ public interface AccountingRecordService {
 
         public AccountingAccount getProviderAccountingAccountForITiers(ITiers tiers) throws OsirisException;
 
-        public void generateAccountingRecordsForWaintingPayment(Payment payment) throws OsirisException;
+        public void generateAccountingRecordsForWaintingInboundPayment(Payment payment) throws OsirisException;
 
-        public void generateBankAccountingRecordsForPayment(Payment payment) throws OsirisException;
+        public void generateAccountingRecordsForWaintingOutboundPayment(Payment payment) throws OsirisException;
+
+        public void generateBankAccountingRecordsForInboundPayment(Payment payment) throws OsirisException;
+
+        public void generateBankAccountingRecordsForOutboundPayment(Payment payment) throws OsirisException;
 
         public Float getRemainingAmountToPayForInvoice(Invoice invoice) throws OsirisException;
+
+        public Float getRemainingAmountToPayForProviderInvoice(Invoice invoice) throws OsirisException;
 
         public Float getRemainingAmountToPayForCustomerOrder(CustomerOrder customerOrder);
 
@@ -100,6 +116,9 @@ public interface AccountingRecordService {
         public List<AccountingRecord> getAccountingRecordsByOperationId(Integer operationId);
 
         public void generateAppointForPayment(Payment payment, float remainingMoney, ITiers customerOrder)
+                        throws OsirisException;
+
+        public void generateAppointForDeposit(Deposit deposit, float remainingMoney, ITiers customerOrder)
                         throws OsirisException;
 
         public List<AccountingRecord> addOrUpdateAccountingRecords(List<AccountingRecord> accountingRecords);

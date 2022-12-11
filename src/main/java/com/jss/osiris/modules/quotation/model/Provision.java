@@ -53,6 +53,10 @@ public class Provision implements IId, IAttachment {
 	private Announcement announcement;
 
 	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "id_simple_provision")
+	private SimpleProvision simpleProvision;
+
+	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "id_bodacc")
 	private Bodacc bodacc;
 
@@ -442,6 +446,14 @@ public class Provision implements IId, IAttachment {
 
 	public void setPublicationPaperClientNumber(Integer publicationPaperClientNumber) {
 		this.publicationPaperClientNumber = publicationPaperClientNumber;
+	}
+
+	public SimpleProvision getSimpleProvision() {
+		return simpleProvision;
+	}
+
+	public void setSimpleProvision(SimpleProvision simpleProvision) {
+		this.simpleProvision = simpleProvision;
 	}
 
 }

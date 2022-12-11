@@ -6,8 +6,8 @@ import { IDocument } from "../../miscellaneous/model/IDocument";
 import { Language } from "../../miscellaneous/model/Language";
 import { Mail } from "../../miscellaneous/model/Mail";
 import { Phone } from "../../miscellaneous/model/Phone";
+import { TiersFollowup } from "../../miscellaneous/model/TiersFollowup";
 import { Employee } from "../../profile/model/Employee";
-import { TiersFollowup } from "./TiersFollowup";
 
 export interface ITiers extends IAttachment, IDocument {
   id: number;
@@ -18,6 +18,7 @@ export interface ITiers extends IAttachment, IDocument {
   language: Language;
   address: string;
   postalCode: string;
+  cedexComplement: string;
   city: City;
   country: Country;
   mails: Mail[];

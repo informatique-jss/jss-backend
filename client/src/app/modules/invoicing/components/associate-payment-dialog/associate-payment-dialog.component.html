@@ -34,10 +34,10 @@
   <div class="top">
   </div>
 
-  <div class="big-chip" *ngIf="amountToPayCompletely()<0">
+  <div class="big-chip" *ngIf="amountToPayCompletely()<0 && payment.paymentWay.id==paymentWayInbound.id">
     <chips-status [value]="'Solde '+amountRemaining()+' €'"></chips-status>
   </div>
-  <div *ngIf="amountToPayCompletely()<0">
+  <div *ngIf="amountToPayCompletely()<0 && payment.paymentWay.id==paymentWayInbound.id">
     <mat-vertical-stepper [linear]="false" #stepper animationDuration="500">
       <mat-step>
         <ng-template matStepLabel>Validation de l'association</ng-template>
@@ -59,7 +59,7 @@
           <mat-tab label="Commandes">
             <ordering-list (actionBypass)="associateOrder($event)" [overrideIconAction]="'merge_type'"
               [overrideTooltipAction]="'Associer cette facture au paiement'"
-              [defaultStatusFilter]="[CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT]"></ordering-list>
+              [defaultStatusFilter]="[CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT,CUSTOMER_ORDER_STATUS_OPEN]"></ordering-list>
           </mat-tab>
         </mat-tab-group>
         <div class="top">

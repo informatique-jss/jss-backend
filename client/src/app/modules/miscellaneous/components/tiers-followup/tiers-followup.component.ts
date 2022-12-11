@@ -5,13 +5,13 @@ import { MatTableDataSource } from '@angular/material/table';
 import { formatDateForSortTable } from 'src/app/libs/FormatHelper';
 import { ICSEvent } from 'src/app/libs/ICSEvent';
 import { createEvent } from 'src/app/libs/ICSHelper';
-import { instanceOfResponsable, instanceOfTiers } from 'src/app/libs/TypeHelper';
+import { instanceOfConfrere, instanceOfResponsable, instanceOfTiers } from 'src/app/libs/TypeHelper';
 import { Gift } from 'src/app/modules/miscellaneous/model/Gift';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { Employee } from 'src/app/modules/profile/model/Employee';
 import { EmployeeService } from 'src/app/modules/profile/services/employee.service';
+import { ITiers } from 'src/app/modules/tiers/model/ITiers';
 import { environment } from 'src/environments/environment';
-import { ITiers } from '../../model/ITiers';
 import { TiersFollowup } from '../../model/TiersFollowup';
 import { TiersFollowupType } from '../../model/TiersFollowupType';
 import { TiersFollowupService } from '../../services/tiers.followup.service';
@@ -100,10 +100,11 @@ export class TiersFollowupComponent implements OnInit {
     if (this.tiers.tiersFollowups == null || this.tiers.tiersFollowups == undefined)
       this.tiers.tiersFollowups = [] as Array<TiersFollowup>;
 
-    if (instanceOfTiers(this.tiers))
+    if (instanceOfConfrere(this.tiers))
+      this.newFollowup.confrere = this.tiers;
+    else if (instanceOfTiers(this.tiers))
       this.newFollowup.tiers = this.tiers;
-
-    if (instanceOfResponsable(this.tiers))
+    else if (instanceOfResponsable(this.tiers))
       this.newFollowup.responsable = this.tiers;
 
     // Remove UTC delay

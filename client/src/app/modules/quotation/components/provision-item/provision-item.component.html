@@ -38,7 +38,7 @@
   [instanceOfCustomerOrder]="instanceOfCustomerOrder" [provision]="provision" (provisionChange)="noticeChange()"
   *ngIf="provision.formalite && provision.provisionType && provision.provisionType.provisionScreenType.code==PROVISION_SCREEN_TYPE_FORMALITE && false">
 </formalite>
-<div
-  *ngIf="provision && provision.provisionType && provision.provisionType.provisionScreenType.code==PROVISION_SCREEN_TYPE_STANDARD">
-  Ecran standard
-</div>
+<simple-provision [simpleProvision]="provision.simpleProvision" [editMode]="editMode" [isStatusOpen]="isStatusOpen"
+  [instanceOfCustomerOrder]="instanceOfCustomerOrder" [provision]="provision" (provisionChange)="noticeChange()"
+  *ngIf="provision.simpleProvision && provision.provisionType && provision.provisionType.provisionScreenType.code==PROVISION_SCREEN_TYPE_STANDARD">
+</simple-provision>

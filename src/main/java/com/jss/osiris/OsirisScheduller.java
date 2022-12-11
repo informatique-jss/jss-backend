@@ -29,6 +29,7 @@ import com.jss.osiris.modules.quotation.service.FormaliteStatusService;
 import com.jss.osiris.modules.quotation.service.ProvisionScreenTypeService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.quotation.service.QuotationStatusService;
+import com.jss.osiris.modules.quotation.service.SimpleProvisionStatusService;
 
 @Service
 @ConditionalOnProperty(value = "schedulling.enabled", matchIfMissing = false, havingValue = "true")
@@ -73,6 +74,9 @@ public class OsirisScheduller {
 	DomiciliationStatusService domiciliationStatusService;
 
 	@Autowired
+	SimpleProvisionStatusService simpleProvisionStatusService;
+
+	@Autowired
 	BodaccStatusService bodaccStatusService;
 
 	@Autowired
@@ -104,7 +108,8 @@ public class OsirisScheduller {
 		accountingRecordService.dailyAccountClosing();
 	}
 
-	@Scheduled(cron = "${schedulling.payment.grab}")
+	// @Scheduled(cron = "${schedulling.payment.grab}")
+	// @Scheduled(initialDelay = 1000, fixedDelay = 1000000)
 	private void paymentGrab() {
 		logger.info("Start of payment grab");
 		try {
@@ -178,6 +183,7 @@ public class OsirisScheduller {
 			announcementStatusService.updateStatusReferential();
 			formaliteStatusService.updateStatusReferential();
 			domiciliationStatusService.updateStatusReferential();
+			simpleProvisionStatusService.updateStatusReferential();
 			bodaccStatusService.updateStatusReferential();
 			assignationTypeService.updateAssignationTypes();
 			provisionScreenTypeService.updateScreenTypes();

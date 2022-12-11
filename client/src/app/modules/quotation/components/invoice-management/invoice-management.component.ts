@@ -1,7 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { CUSTOMER_ORDER_STATUS_BILLED } from 'src/app/libs/Constants';
 import { instanceOfCustomerOrder, instanceOfQuotation } from 'src/app/libs/TypeHelper';
-import { getAffaireListArrayForIQuotation, getAffaireListFromIQuotation, getCustomerOrderForIQuotation, getCustomerOrderNameForIQuotation, getLetteringDate } from 'src/app/modules/invoicing/components/invoice-tools';
+import { getAffaireListArrayForIQuotation, getAffaireListFromIQuotation, getAmountRemaining, getCustomerOrderForIQuotation, getCustomerOrderNameForIQuotation, getLetteringDate } from 'src/app/modules/invoicing/components/invoice-tools';
 import { InvoiceService } from 'src/app/modules/invoicing/services/invoice.service';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { AppService } from '../../../../services/app.service';
@@ -98,24 +99,14 @@ export class InvoiceManagementComponent implements OnInit {
 
   getRemainingToPay() {
     if (instanceOfCustomerOrder(this.quotation))
-      return Math.round((QuotationComponent.computePriceTotal(this.quotation) - QuotationComponent.computePayed(this.quotation)) * 100) / 100;
-    return this.getPriceTotal();
-  }
-
-  canModifyInvoice(): boolean {
-    if (instanceOfQuotation(this.quotation))
-      return true;
-    if (instanceOfCustomerOrder(this.quotation)) {
-      if ((this.quotation as CustomerOrder).invoices == undefined || (this.quotation as CustomerOrder).invoices == null || (this.quotation as CustomerOrder).invoices.length == 0) {
-        return true;
-      } else {
-        for (let invoice of (this.quotation as CustomerOrder).invoices) {
-          if (invoice.invoiceStatus.id != this.invoiceStatusCancelled.id)
-            return true;
-        }
+      if (this.quotation.customerOrderStatus.code != CUSTOMER_ORDER_STATUS_BILLED)
+        return Math.round((QuotationComponent.computePriceTotal(this.quotation) - QuotationComponent.computePayed(this.quotation)) * 100) / 100;
+      else {
+        for (let invoice of this.quotation.invoices)
+          if (invoice.invoiceStatus.code != this.constantService.getInvoiceStatusCancelled().code)
+            return getAmountRemaining(invoice);
       }
-    }
-    return false;
+    return this.getPriceTotal();
   }
 
   openRoute(event: any, link: string) {

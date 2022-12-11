@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Confrere } from '../../../quotation/model/Confrere';
+import { JournalType } from '../../../quotation/model/JournalType';
 import { ConfrereService } from '../../../quotation/services/confrere.service';
 import { SortTableColumn } from '../../model/SortTableColumn';
 
@@ -18,6 +19,8 @@ export class ConfrereDialogComponent implements OnInit {
 
   displayedColumns: SortTableColumn[] = [];
   searchText: string | undefined;
+
+  @Input() journalType: JournalType | undefined;
 
   filterValue: string = "";
 
@@ -37,7 +40,7 @@ export class ConfrereDialogComponent implements OnInit {
           return 1;
         return (a.boardGrade).localeCompare(b.boardGrade)
       }
-      );
+      ).filter(confrere => this.journalType == undefined || this.journalType.id == confrere.journalType.id);
 
       this.displayedColumns.push({ id: "denomination", fieldName: "label", label: "Dénomination" } as SortTableColumn);
       this.displayedColumns.push({ id: "type", fieldName: "journalType.label", label: "Type" } as SortTableColumn);

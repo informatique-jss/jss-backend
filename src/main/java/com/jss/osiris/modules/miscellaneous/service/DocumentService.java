@@ -21,5 +21,7 @@ public interface DocumentService {
 
     public Document getBillingClosureDocument(List<Document> documents) throws OsirisException;
 
+    public Document getRefundDocument(List<Document> documents) throws OsirisException;
+
     public Document cloneDocument(Document document);
 }

@@ -1,0 +1,29 @@
+<form [formGroup]="simpleProvisionForm" *ngIf="simpleProvision">
+  <mat-tab-group animationDuration="0ms" #tabs>
+    <mat-tab label="Formalité">
+      <div class="form-div">
+        <table class="full-width">
+          <tr>
+            <td>
+              <generic-textarea [(model)]="simpleProvision.observations" label="Observations"
+                [form]="simpleProvisionForm" propertyName="observations" [isMandatory]="false" [isDisabled]="!editMode"
+                [numberOfLines]="10"></generic-textarea>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </mat-tab>
+    <mat-tab label="Options">
+      <provision-options [editMode]="editMode" [provision]="provision" (provisionChange)="provisionChangeFunction()">
+      </provision-options>
+    </mat-tab>
+    <mat-tab label="Documents" *ngIf="simpleProvision.id ">
+      <attachments [entity]="simpleProvision" [editMode]="editMode"
+        [entityType]="SIMPLE_PROVISION_ENTITY_TYPE.entityType">
+      </attachments>
+    </mat-tab>
+    <mat-tab label="Historique" *ngIf="simpleProvision && simpleProvision.id">
+      <history [entity]="simpleProvision" [entityType]="SIMPLE_PROVISION_ENTITY_TYPE"></history>
+    </mat-tab>
+  </mat-tab-group>
+</form>

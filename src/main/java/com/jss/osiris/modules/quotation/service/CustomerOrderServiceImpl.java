@@ -26,7 +26,6 @@ import com.jss.osiris.libs.JacksonLocalDateTimeSerializer;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.libs.search.service.IndexEntityService;
-import com.jss.osiris.modules.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.invoicing.model.Deposit;
 import com.jss.osiris.modules.invoicing.model.Invoice;
@@ -48,6 +47,7 @@ import com.jss.osiris.modules.profile.service.EmployeeService;
 import com.jss.osiris.modules.quotation.model.Announcement;
 import com.jss.osiris.modules.quotation.model.AnnouncementStatus;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
+import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.quotation.model.OrderingSearch;
@@ -57,6 +57,7 @@ import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.quotation.model.centralPay.CentralPayPaymentRequest;
 import com.jss.osiris.modules.quotation.repository.CustomerOrderRepository;
 import com.jss.osiris.modules.tiers.model.ITiers;
+import com.jss.osiris.modules.tiers.model.Tiers;
 
 @Service
 public class CustomerOrderServiceImpl implements CustomerOrderService {
@@ -245,6 +246,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                         invoiceToCancel = invoice;
                         break;
                     }
+            moveInvoiceDepositToCustomerOrderDeposit(customerOrder, invoiceToCancel);
             invoiceService.cancelInvoice(invoiceToCancel);
         }
 
@@ -253,26 +255,48 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             accountingRecordService.generateAccountingRecordsForSaleOnInvoiceGeneration(
                     getInvoice(customerOrder));
             // If deposit already set, associate them to invoice
-            if (customerOrder.getDeposits() != null && customerOrder.getDeposits().size() > 0)
-                for (Deposit deposit : customerOrder.getDeposits()) {
-                    deposit.setInvoice(invoice);
-                    depositService.addOrUpdateDeposit(deposit);
-                    for (AccountingRecord accountingRecord : deposit.getAccountingRecords()) {
-                        accountingRecord.setInvoice(invoice);
-                        accountingRecordService.addOrUpdateAccountingRecord(accountingRecord);
-                    }
+            moveCustomerOrderDepositToInvoiceDeposit(customerOrder, invoice);
 
-                    // TODO : changer de compte en contrepasse (attente => client) + check lettrage
+            // Check invoice payed
+            Float remainingToPayForCurrentInvoice = accountingRecordService.getRemainingAmountToPayForInvoice(invoice);
+            if (remainingToPayForCurrentInvoice >= 0) {
+                if (customerOrder.getDeposits() != null && customerOrder.getDeposits().size() > 0) {
+                    float totalDeposit = 0f;
+                    for (Deposit deposit : customerOrder.getDeposits())
+                        totalDeposit += deposit.getDepositAmount();
+                    accountingRecordService.generateAccountingRecordsForSaleOnInvoicePayment(invoice, null,
+                            customerOrder.getDeposits(), totalDeposit);
+
+                    if (remainingToPayForCurrentInvoice == 0) {
+                        invoice.setInvoiceStatus(constantService.getInvoiceStatusPayed());
+                        invoiceService.addOrUpdateInvoice(invoice);
+                    }
                 }
+            } else {
+                throw new OsirisException("Impossible to billed, too much money on customerOrder !");
+            }
 
             mailHelper.sendCustomerOrderFinalisationToCustomer(customerOrder, false, false, false);
         }
 
-        if (targetStatusCode.equals(CustomerOrderStatus.WAITING_DEPOSIT)) {
+        if (targetStatusCode.equals(CustomerOrderStatus.WAITING_DEPOSIT))
+
+        {
+            Float remainingToPay = Math
+                    .round(accountingRecordService.getRemainingAmountToPayForCustomerOrder(customerOrder) * 100f)
+                    / 100f;
+
+            ITiers tiers = quotationService.getCustomerOrderOfQuotation(customerOrder);
+            boolean isDepositMandatory = false;
+            if (tiers instanceof Tiers)
+                isDepositMandatory = ((Tiers) tiers).getIsProvisionalPaymentMandatory();
+            if (tiers instanceof Confrere)
+                isDepositMandatory = ((Confrere) tiers).getIsProvisionalPaymentMandatory();
+
             mailHelper.sendCustomerOrderCreationConfirmationToCustomer(customerOrder, true, false);
-            // TODO : add rule to check if deposit required + check if a deposit already
-            // exists to check if we can go further
-            targetStatusCode = CustomerOrderStatus.WAITING_DEPOSIT;
+
+            if (!isDepositMandatory || remainingToPay <= 0)
+                targetStatusCode = CustomerOrderStatus.BEING_PROCESSED;
         }
 
         if (targetStatusCode.equals(CustomerOrderStatus.BEING_PROCESSED)
@@ -280,13 +304,30 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             mailHelper.sendCustomerOrderCreationConfirmationToCustomer(customerOrder, true, false);
 
         CustomerOrderStatus customerOrderStatus = customerOrderStatusService
-                .getCustomerOrderStatusByCode(targetStatusCode);
+                .getCustomerOrderStatusByCode(
+                        targetStatusCode);
         if (customerOrderStatus == null)
             throw new OsirisException("Quotation status not found for code " + targetStatusCode);
 
         customerOrder.setCustomerOrderStatus(customerOrderStatus);
         customerOrder.setLastStatusUpdate(LocalDateTime.now());
         return this.addOrUpdateCustomerOrder(customerOrder);
+    }
+
+    private void moveCustomerOrderDepositToInvoiceDeposit(CustomerOrder customerOrder, Invoice invoice)
+            throws OsirisException {
+        if (customerOrder.getDeposits() != null && customerOrder.getDeposits().size() > 0)
+            for (Deposit deposit : customerOrder.getDeposits()) {
+                depositService.moveDepositFromCustomerOrderToInvoice(deposit, customerOrder, invoice);
+            }
+    }
+
+    private void moveInvoiceDepositToCustomerOrderDeposit(CustomerOrder customerOrder, Invoice invoice)
+            throws OsirisException {
+        if (invoice.getDeposits() != null && invoice.getDeposits().size() > 0)
+            for (Deposit deposit : invoice.getDeposits()) {
+                depositService.moveDepositFromInvoiceToCustomerOrder(deposit, invoice, customerOrder);
+            }
     }
 
     @Override
@@ -732,8 +773,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 if (asso.getProvisions() != null)
                     for (Provision provision : asso.getProvisions())
                         // Only for JSS SPEL
-                        if (provision.getAnnouncement().getIsPublicationFlagAlreadySent() == null
-                                && provision.getAnnouncement() != null
+                        if (provision.getAnnouncement() != null
+                                && provision.getAnnouncement().getIsPublicationFlagAlreadySent() == null
                                 && provision.getAnnouncement().getConfrere().getId()
                                         .equals(constantService.getConfrereJssSpel().getId()))
                             annoucementToGenerate.add(provision.getAnnouncement());

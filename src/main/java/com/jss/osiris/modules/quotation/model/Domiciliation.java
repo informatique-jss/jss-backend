@@ -69,6 +69,9 @@ public class Domiciliation implements IId, IAttachment, IDocument {
 	@Column(length = 10)
 	private String postalCode;
 
+	@Column(length = 20)
+	private String cedexComplement;
+
 	@ManyToOne
 	@JoinColumn(name = "id_city")
 	private City city;
@@ -101,6 +104,9 @@ public class Domiciliation implements IId, IAttachment, IDocument {
 
 	@Column(length = 10)
 	private String activityPostalCode;
+
+	@Column(length = 20)
+	private String acitivityCedexComplement;
 
 	@ManyToOne
 	@JoinColumn(name = "id_activity_city")
@@ -158,6 +164,9 @@ public class Domiciliation implements IId, IAttachment, IDocument {
 
 	@Column(length = 10)
 	private String legalGardianPostalCode;
+
+	@Column(length = 20)
+	private String legalGardianCedexComplement;
 
 	@ManyToOne
 	@JoinColumn(name = "id_legal_guardian_city")
@@ -513,6 +522,30 @@ public class Domiciliation implements IId, IAttachment, IDocument {
 
 	public void setDocuments(List<Document> documents) {
 		this.documents = documents;
+	}
+
+	public String getCedexComplement() {
+		return cedexComplement;
+	}
+
+	public void setCedexComplement(String cedexComplement) {
+		this.cedexComplement = cedexComplement;
+	}
+
+	public String getAcitivityCedexComplement() {
+		return acitivityCedexComplement;
+	}
+
+	public void setAcitivityCedexComplement(String acitivityCedexComplement) {
+		this.acitivityCedexComplement = acitivityCedexComplement;
+	}
+
+	public String getLegalGardianCedexComplement() {
+		return legalGardianCedexComplement;
+	}
+
+	public void setLegalGardianCedexComplement(String legalGardianCedexComplement) {
+		this.legalGardianCedexComplement = legalGardianCedexComplement;
 	}
 
 }

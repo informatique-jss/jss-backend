@@ -48,6 +48,7 @@ import { ProvisionItemComponent } from '../provision-item/provision-item.compone
 import { ProvisionOptionsComponent } from '../provision-options/provision-options.component';
 import { QuotationListComponent } from '../quotation-list/quotation-list.component';
 import { QuotationManagementComponent } from '../quotation-management/quotation-management.component';
+import { SimpleProvisionComponent } from '../simple-provision/simple-provision.component';
 import { QuotationComponent } from './quotation.component';
 
 const routes: Routes = [
@@ -128,6 +129,7 @@ const routes: Routes = [
     ProvisionOptionsComponent,
     FormaliteComponent,
     AnnouncementComponent,
+    SimpleProvisionComponent,
     // Guichet unique
     ContentComponent,
     NatureCreationComponent,

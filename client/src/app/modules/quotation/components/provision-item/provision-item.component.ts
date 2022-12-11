@@ -16,6 +16,7 @@ import { IQuotation } from '../../model/IQuotation';
 import { Provision } from '../../model/Provision';
 import { ProvisionFamilyType } from '../../model/ProvisionFamilyType';
 import { ProvisionType } from '../../model/ProvisionType';
+import { SimpleProvision } from '../../model/SimpleProvision';
 import { ProvisionFamilyTypeService } from '../../services/provision.family.type.service';
 import { ProvisionService } from '../../services/provision.service';
 import { ProvisionTypeService } from '../../services/provision.type.service';
@@ -23,6 +24,7 @@ import { AnnouncementComponent } from '../announcement/announcement.component';
 import { BodaccMainComponent } from '../bodacc-main/bodacc-main.component';
 import { DomiciliationComponent } from '../domiciliation/domiciliation.component';
 import { FormaliteComponent } from '../formalite/formalite.component';
+import { SimpleProvisionComponent } from '../simple-provision/simple-provision.component';
 
 
 @Component({
@@ -45,6 +47,7 @@ export class ProvisionItemComponent implements OnInit {
   @ViewChild(AnnouncementComponent) announcementComponent: AnnouncementComponent | undefined;
   @ViewChild(BodaccMainComponent) bodaccComponent: BodaccMainComponent | undefined;
   @ViewChild(FormaliteComponent) formaliteComponent: FormaliteComponent | undefined;
+  @ViewChild(SimpleProvisionComponent) simpleProvisionComponent: SimpleProvisionComponent | undefined;
 
   provisionFamilyTypes: ProvisionFamilyType[] = [] as Array<ProvisionFamilyType>;
   provisionTypes: ProvisionType[] = [] as Array<ProvisionType>;
@@ -73,6 +76,9 @@ export class ProvisionItemComponent implements OnInit {
 
   ngOnChanges(changes: SimpleChanges) {
     this.provisionItemForm.markAllAsTouched();
+
+    if (changes.provision)
+      this.changeProvisionType();
   }
 
   updateAssignedToForProvision(employee: Employee, provision: Provision) {
@@ -94,6 +100,9 @@ export class ProvisionItemComponent implements OnInit {
     if (this.formaliteComponent)
       status = status && this.formaliteComponent.getFormStatus();
 
+    if (this.simpleProvisionComponent)
+      status = status && this.simpleProvisionComponent.getFormStatus();
+
     return status && (this.provisionItemForm.status == "DISABLED" || this.provisionItemForm.valid);
   }
 
@@ -101,18 +110,14 @@ export class ProvisionItemComponent implements OnInit {
   });
 
   changeProvisionType() {
-    if (this.provision.provisionFamilyType) {
-      for (let provisionType of this.provisionTypes) {
-        if (provisionType.label == this.provision.provisionFamilyType.label)
-          this.provision.provisionType = provisionType;
-      }
-    }
+
 
     if (!this.provision.provisionFamilyType || !this.provision.provisionType) {
       this.provision.announcement = undefined;
       this.provision.domiciliation = undefined;
       this.provision.bodacc = undefined;
       this.provision.formalite = undefined;
+      this.provision.simpleProvision = undefined;
       this.selectedProvisionTypeChange.emit();
       return;
     }
@@ -160,6 +165,12 @@ export class ProvisionItemComponent implements OnInit {
       this.provision.formalite = undefined;
     } else if (!this.provision.formalite) {
       this.provision.formalite = {} as Formalite;
+    }
+
+    if (this.provision.provisionType.provisionScreenType.code != PROVISION_SCREEN_TYPE_STANDARD) {
+      this.provision.simpleProvision = undefined;
+    } else if (!this.provision.simpleProvision) {
+      this.provision.simpleProvision = {} as SimpleProvision;
     }
 
     this.selectedProvisionTypeChange.emit();

@@ -101,6 +101,9 @@ public class MailHelper {
     @Value("${payment.cb.entry.point}")
     private String paymentCbEntryPoint;
 
+    @Value("${jss.rib}")
+    private String ribJss;
+
     private JavaMailSender javaMailSender;
 
     public static final String EMAIL_TEMPLATE_ENCODING = "UTF-8";
@@ -602,7 +605,7 @@ public class MailHelper {
                 "Votre commande est en attente de provision. Effectuez dès maintenant un virement de "
                         + mail.getPriceTotal() + " € sur le compte ci-dessous pour la débloquer.");
 
-        mail.setPaymentExplaination2("IBAN /BIC : FR76 3007 6021 6310 7548 0020 040 / NORDFRPP");
+        mail.setPaymentExplaination2(ribJss);
 
         mail.setCbExplanation(
                 "Vous avez aussi la possibilité de payer par carte bancaire en flashant le QR Code ci-dessous ou en cliquant ");
@@ -787,7 +790,7 @@ public class MailHelper {
                                 + mail.getPriceTotal() + " € en suivant les instructions ci-dessous.");
             }
 
-            mail.setPaymentExplaination2("IBAN /BIC : FR76 3007 6021 6310 7548 0020 040 / NORDFRPP");
+            mail.setPaymentExplaination2(ribJss);
 
             mail.setCbExplanation(
                     "Vous avez aussi la possibilité de payer par carte bancaire en flashant le QR Code ci-dessous ou en cliquant ");
@@ -1119,7 +1122,7 @@ public class MailHelper {
                     "Vous pouvez régler cette facture d'un montant de " + remainingToPay
                             + " € par virement à l'aide des informations suivantes");
 
-            mail.setPaymentExplaination2("IBAN /BIC : FR76 3007 6021 6310 7548 0020 040 / NORDFRPP");
+            mail.setPaymentExplaination2(ribJss);
 
             mail.setCbExplanation(
                     "Vous avez aussi la possibilité de payer par carte bancaire en flashant le QR Code ci-dessous ou en cliquant ");

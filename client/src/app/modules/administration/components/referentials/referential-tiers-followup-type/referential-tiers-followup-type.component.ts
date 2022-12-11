@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { TiersFollowupType } from 'src/app/modules/tiers/model/TiersFollowupType';
-import { TiersFollowupTypeService } from 'src/app/modules/tiers/services/tiers.followup.type.service';
+import { TiersFollowupType } from 'src/app/modules/miscellaneous/model/TiersFollowupType';
+import { TiersFollowupTypeService } from 'src/app/modules/miscellaneous/services/tiers.followup.type.service';
 import { AppService } from 'src/app/services/app.service';
 import { GenericReferentialComponent } from '../generic-referential/generic-referential-component';
 

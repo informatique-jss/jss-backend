@@ -8,6 +8,7 @@ export interface Regie extends IReferential {
   country: Country;
   city: City;
   postalCode: string;
+  cedexComplement: string;
   address: string;
   phones: Phone[];
   mails: Mail[];

@@ -1,0 +1,116 @@
+<h1 mat-dialog-title>Associer un acompte </h1>
+<div mat-dialog-content *ngIf="deposit">
+  <sort-table [columns]="displayedColumns" [values]="associationSummaryTable" tableName="Association acompte / commande"
+    [actions]="tableAction" [refreshTable]="refreshTable.asObservable()">
+  </sort-table>
+  <div class="mat-elevation-z2"
+    *ngIf="amountToPayCompletely()<0 && amountRemaining()>0 && amountRemaining()>INVOICING_PAYMENT_LIMIT_REFUND_EUROS">
+    <table class=" full-width mat-table top" *ngIf="selectedRefundTiers">
+      <tr class=" mat-header-row">
+        <th class="mat-header-cell">Acompte</th>
+        <th class="mat-header-cell">Tiers remboursé</th>
+        <th class="mat-header-cell">Montant du remboursement</th>
+      </tr>
+      <tr class=" mat-row">
+        <td class="mat-cell">{{deposit.id}}</td>
+        <td class="mat-cell" *ngIf="selectedRefundTiers.rna==undefined">
+          {{getCustomerOrderNameForITiers(selectedRefundTiers)}}</td>
+        <td class="mat-cell" *ngIf="selectedRefundTiers.rna!=undefined">
+          {{(selectedRefundTiers.denomination)?selectedRefundTiers.denomination : selectedRefundTiers.firstname + "
+          "+selectedRefundTiers.lastname}}</td>
+        <td class="mat-cell">{{amountRemaining()}} €</td>
+      </tr>
+    </table>
+  </div>
+  <div *ngIf="amountToPayCompletely()>=0" class="top">
+    <div>
+      <p>L'acompte associé à la commande est trop important. Le solde doit être associé ou remboursé avant de changer le
+        statut de la commande.</p>
+    </div>
+  </div>
+  <div mat-dialog-actions align="end" *ngIf="amountToPayCompletely()>=0">
+    <button mat-raised-button color="accent" (click)="onClose()">Annuler</button>
+    <button mat-raised-button color="warn" (click)="onConfirm()">Ok</button>
+  </div>
+  <div class="top">
+  </div>
+
+  <div class="big-chip" *ngIf="amountToPayCompletely()<0  ">
+    <chips-status [value]="'Solde '+amountRemaining()+' €'"></chips-status>
+  </div>
+  <div *ngIf="amountToPayCompletely()<0  ">
+    <mat-vertical-stepper [linear]="false" #stepper animationDuration="500">
+      <mat-step>
+        <ng-template matStepLabel>Acompte trop important</ng-template>
+        <p>L'acompte associé à la commande est trop important. Le solde doit être associé ou remboursé</p>
+        <div class="top">
+          <button mat-raised-button color="accent" (click)="onClose()">Annuler</button>
+          <button mat-raised-button color="warn" matStepperNext>Suivant</button>
+        </div>
+      </mat-step>
+      <mat-step>
+        <ng-template matStepLabel>Choix d'une commande / facture suplémentaire</ng-template>
+        <p>Merci de choisir ci-dessous, la commande et /ou la facture à associer avec ce solde.</p>
+        <mat-tab-group animationDuration="0ms">
+          <mat-tab label="Factures">
+            <invoice-list (actionBypass)="associateInvoice($event)" [overrideIconAction]="'merge_type'"
+              [overrideTooltipAction]="'Associer cette facture à l\'acompte'"
+              [defaultStatusFilter]="[invoiceStatusSend]"></invoice-list>
+          </mat-tab>
+          <mat-tab label="Commandes">
+            <ordering-list (actionBypass)="associateOrder($event)" [overrideIconAction]="'merge_type'"
+              [overrideTooltipAction]="'Associer cette facture à l\'acompte'"
+              [defaultStatusFilter]="[CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT]"></ordering-list>
+          </mat-tab>
+        </mat-tab-group>
+        <div class="top">
+          <button mat-raised-button color="accent" matStepperPrevious>Précédent</button>
+          <button mat-raised-button color="warn" matStepperNext>Suivant</button>
+        </div>
+      </mat-step>
+      <mat-step *ngIf="amountRemaining()>0 && amountRemaining()>INVOICING_PAYMENT_LIMIT_REFUND_EUROS">
+        <ng-template matStepLabel>Remboursement</ng-template>
+        <p>Le solde n'est pas nul. A qui souhaitez-vous rembourser la somme de {{amountRemaining()}} € ?
+        </p>
+        <form [formGroup]="refundForm">
+          <mat-radio-group class="radio-group-column" formControlName="refundTiers">
+            <span *ngIf="getRefundCustomerOrder()!=null">Impossible de rembourser le donneur d'ordre, l'IBAN de
+              remboursement n'a pas été renseigné dans la fiche Tiers</span>
+            <mat-radio-button [value]="getRefundCustomerOrder()" checked="true" *ngIf="getRefundCustomerOrder()!=null">
+              Donneur d'ordre {{getCustomerOrderNameForITiers(getRefundCustomerOrder()!)}}
+            </mat-radio-button>
+            <mat-radio-button *ngFor="let affaire of getAllAffaireRefundable()" [value]="affaire">
+              Affaire {{affaire.denomination}}
+            </mat-radio-button>
+          </mat-radio-group>
+        </form>
+        <div class="top">
+          <button mat-raised-button color="accent" matStepperPrevious>Précédent</button>
+          <button mat-raised-button color="warn" matStepperNext>Suivant</button>
+        </div>
+      </mat-step>
+      <mat-step
+        *ngIf="amountRemaining()>0 && amountRemaining()<=INVOICING_PAYMENT_LIMIT_REFUND_EUROS || amountRemaining()<0 && amountRemaining()>=-INVOICING_PAYMENT_LIMIT_REFUND_EUROS">
+        <ng-template matStepLabel>Appoint</ng-template>
+        <p>Le solde n'est pas nul.
+        </p>
+        <p *ngIf="amountRemaining()>0 && amountRemaining()<=INVOICING_PAYMENT_LIMIT_REFUND_EUROS">La somme de
+          {{amountRemaining()}} € sera placée sur le compte de profit</p>
+        <p *ngIf=" amountRemaining()<0 && amountRemaining()>=-INVOICING_PAYMENT_LIMIT_REFUND_EUROS">La somme de
+          {{amountRemaining()}} € sera prise sur le compte de perte</p>
+        <div class="top">
+          <button mat-raised-button color="accent" matStepperPrevious>Précédent</button>
+          <button mat-raised-button color="warn" matStepperNext>Suivant</button>
+        </div>
+      </mat-step>
+      <mat-step>
+        <ng-template matStepLabel>Récapitulatif</ng-template>
+        <p>Validez-vous les associations présentées ci-dessus ?</p>
+        <div class="top">
+          <button mat-raised-button color="accent" matStepperPrevious>Précédent</button>
+          <button mat-raised-button color="warn" (click)="onConfirm()">Valider</button>
+        </div>
+      </mat-step>
+    </mat-vertical-stepper>
+  </div>
+</div>

@@ -47,6 +47,11 @@
               </autocomplete-postal-code>
             </td>
             <td>
+              <generic-input [(model)]="selectedEntity.cedexComplement" label="Complément CEDEX" [form]="entityForm"
+                propertyName="cedexComplement" [isMandatory]="false" [isDisabled]="!editMode"
+                [maxLength]="20"></generic-input>
+            </td>
+            <td>
               <autocomplete-city [(model)]="selectedEntity.city" [modelCountry]="selectedEntity.country"
                 [preFilterPostalCode]="selectedEntity.postalCode" [form]="entityForm" propertyName="city"
                 [isMandatory]="true" [isDisabled]="!editMode" label="Ville" (onOptionSelected)="fillPostalCode($event)">

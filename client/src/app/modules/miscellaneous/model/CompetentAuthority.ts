@@ -24,6 +24,7 @@ export interface CompetentAuthority extends IReferential {
   address: string;
   city: City;
   postalCode: string;
+  cedexComplement: string;
   country: Country;
   accountingAccountProvider: AccountingAccount;
   accountingAccountCustomer: AccountingAccount;

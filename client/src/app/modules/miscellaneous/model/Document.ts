@@ -36,12 +36,12 @@ export interface Document {
   paymentDeadlineType: PaymentDeadlineType;
   refundType: RefundType;
   refundIBAN: string;
-  isRefundable: boolean;
   billingClosureType: BillingClosureType;
   billingClosureRecipientType: BillingClosureRecipientType;
   billingLabel: string;
   billingAddress: string;
   billingPostalCode: string;
+  cedexComplement: string;
   billingLabelCity: City;
   billingLabelCountry: Country;
   billingLabelIsIndividual: boolean;

@@ -4,6 +4,7 @@ import { InvoiceStatus } from "../../invoicing/model/InvoiceStatus";
 import { Payment } from "../../invoicing/model/Payment";
 import { City } from "../../miscellaneous/model/City";
 import { Country } from "../../miscellaneous/model/Country";
+import { Provider } from '../../miscellaneous/model/Provider';
 import { BillingLabelType } from "../../tiers/model/BillingLabelType";
 import { Responsable } from "../../tiers/model/Responsable";
 import { Tiers } from "../../tiers/model/Tiers";
@@ -19,6 +20,7 @@ export interface Invoice {
   billingLabel: string;
   billingLabelAddress: string;
   billingLabelPostalCode: string;
+  cedexComplement: string;
   billingLabelCity: City;
   billingLabelCountry: Country;
   billingLabelIsIndividual: boolean;
@@ -35,4 +37,5 @@ export interface Invoice {
   tiers: Tiers | undefined;
   responsable: Responsable | undefined;
   confrere: Confrere | undefined;
+  provider: Provider | undefined;
 }

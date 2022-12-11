@@ -8,7 +8,7 @@
       </button>
       <mat-icon matChipRemove *ngIf="isDisabled" (click)="prepareMail(chip)">mail</mat-icon>
     </mat-chip>
-    <input placeholder="Saisir un mail et appuyer sur Entrée" #chipInput [matChipInputFor]="chipList"
+    <input [placeholder]="isDisabled?'':'Saisir un mail et appuyer sur Entrée'" #chipInput [matChipInputFor]="chipList"
       [disabled]="isDisabled" [matChipInputSeparatorKeyCodes]="SEPARATOR_KEY_CODES"
       (matChipInputTokenEnd)="addElement($event)">
   </mat-chip-list>

@@ -159,6 +159,9 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
     if (url != undefined && url != null && url[0] != undefined && url[1] != undefined && url[1].path == "confrere") {
       this.selectedReferential = this.CONFRERE_REFERENTIAL;
     }
+    if (url != undefined && url != null && url[0] != undefined && url[1] != undefined && url[1].path == "provider") {
+      this.selectedReferential = this.PROVIDER_REFERENTIAL;
+    }
   }
 
   referentialForm = this.formBuilder.group({

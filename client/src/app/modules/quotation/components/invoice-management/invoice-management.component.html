@@ -6,8 +6,8 @@
         lettrée le {{getLetteringDate(invoice)|date:'dd/MM/yyyy à HH:mm'}}</span>
       <chips-status class="invoice-chip" [status]="invoice.invoiceStatus.code" [value]="invoice.invoiceStatus.label">
       </chips-status>
-      <mat-icon (click)="openRoute($event,'/invoicing/'+invoice.id)"
-        (auxclick)="openRoute($event,'/invoicing/'+invoice.id)" matTooltip="Voir la facture" color="accent"
+      <mat-icon (click)="openRoute($event,'/invoicing/view/'+invoice.id)"
+        (auxclick)="openRoute($event,'/invoicing/view/'+invoice.id)" matTooltip="Voir la facture" color="accent"
         class="pointer invoice-chip">visibility
       </mat-icon>
     </h3>
@@ -48,7 +48,7 @@
         </td>
       </tr>
     </table>
-    <form [formGroup]="invoiceManagementForm" *ngIf="canModifyInvoice()">
+    <form [formGroup]="invoiceManagementForm">
       <table class="full-width container-affaire mat-table">
         <tr class=" mat-header-row">
           <th class="mat-header-cell" colspan="2">Facture</th>
@@ -73,7 +73,8 @@
                 <td class="mat-cell">
                   {{invoiceItem.label}} <mat-icon inline="true"
                     [matTooltip]="invoiceItem.isGifted?'Ne plus offrir cette ligne de facturation':'Offrir cette ligne de facturation'"
-                    *ngIf="editMode" class="info-icon pointer" (click)="toggleIsGifTed(invoiceItem)">redeem</mat-icon>
+                    *ngIf="editMode && !getLetteringDate(invoiceItem.invoice)" class="info-icon pointer"
+                    (click)="toggleIsGifTed(invoiceItem)">redeem</mat-icon>
                   <mat-icon inline="true" matTooltip="Veuillez enregistrer pour pouvoir modifier le prix appliqué"
                     *ngIf="editMode && invoiceItem.billingItem.billingType.canOverridePrice==true && !invoiceItem.id && !invoiceItem.invoice"
                     class="info-icon">info</mat-icon>
@@ -149,6 +150,16 @@
           {{getPriceTotal()|number}} €
         </td>
       </tr>
+      <ng-container *ngIf="instanceOfCustomerOrderFn(quotation)">
+        <tr class="mat-row" *ngFor="let deposit of quotation.deposits">
+          <td class="mat-cell">
+            Accompte n°{{deposit.id}}
+          </td>
+          <td class="td-price mat-cell">
+            - {{deposit.depositAmount|number}} €
+          </td>
+        </tr>
+      </ng-container>
       <tr class="mat-row">
         <td class="mat-cell">Reste à payer
         </td>

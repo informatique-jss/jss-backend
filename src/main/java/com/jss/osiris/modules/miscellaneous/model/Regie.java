@@ -37,6 +37,9 @@ public class Regie implements Serializable, IId {
 	@Column(length = 6)
 	private String postalCode;
 
+	@Column(length = 20)
+	private String cedexComplement;
+
 	@Column(nullable = false, length = 60)
 	private String address;
 
@@ -129,6 +132,14 @@ public class Regie implements Serializable, IId {
 
 	public void setIban(String iban) {
 		this.iban = iban;
+	}
+
+	public String getCedexComplement() {
+		return cedexComplement;
+	}
+
+	public void setCedexComplement(String cedexComplement) {
+		this.cedexComplement = cedexComplement;
 	}
 
 }

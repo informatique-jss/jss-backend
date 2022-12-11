@@ -132,6 +132,11 @@
               </autocomplete-postal-code>
             </td>
             <td>
+              <generic-input [(model)]="selectedEntity.cedexComplement" label="Complément CEDEX" [form]="entityForm2"
+                propertyName="cedexComplement" [isMandatory]="false" [isDisabled]="!editMode"
+                [maxLength]="20"></generic-input>
+            </td>
+            <td>
               <autocomplete-city [(model)]="selectedEntity.city" [modelCountry]="selectedEntity.country"
                 [preFilterPostalCode]="selectedEntity.postalCode" [form]="entityForm2" propertyName="city"
                 [isMandatory]="true" [isDisabled]="!editMode" label="Ville" (onOptionSelected)="fillPostalCode($event)">
@@ -357,24 +362,28 @@
             <table class="full-width">
               <tr>
                 <td>
-                  <generic-toggle [(model)]="refundDocument.isRefundable" label="Remboursement ?" [form]="entityForm2"
-                    propertyName="isRefundable"></generic-toggle>
-                </td>
-                <td *ngIf="refundDocument.isRefundable">
                   <select-refund-type [(model)]="refundDocument.refundType" label="Type de remboursement"
                     [isDisabled]="!editMode" [form]="entityForm2" propertyName="refundType"></select-refund-type>
                 </td>
                 <td
-                  *ngIf="refundDocument && refundDocument.isRefundable && refundDocument && refundDocument.refundType.code!=undefined && refundDocument.refundType.id==refundTypeVirement.id">
+                  *ngIf="refundDocument && refundDocument && refundDocument.refundType.code!=undefined && refundDocument.refundType.id==refundTypeVirement.id">
                   <generic-input [(model)]="refundDocument.refundIBAN" label="IBAN" [form]="entityForm2"
                     propertyName="refundIBAN" [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="40">
                   </generic-input>
                 </td>
               </tr>
             </table>
-            <addressing [editMode]="editMode" [document]="refundDocument" *ngIf="refundDocument.isRefundable"
-              [onlyMail]="true">
+            <addressing [editMode]="editMode" [document]="refundDocument" [onlyMail]="true">
             </addressing>
+          </mat-expansion-panel>
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                Suivi
+              </mat-panel-title>
+              <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
+            </mat-expansion-panel-header>
+            <tiers-followup [tiers]="selectedEntity" [editMode]="editMode"></tiers-followup>
           </mat-expansion-panel>
         </mat-accordion>
       </fieldset>

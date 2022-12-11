@@ -49,7 +49,7 @@ export class InvoiceDetailsComponent implements OnInit {
       this.appService.changeHeaderTitle("Facture n°" + idInvoice);
       this.invoiceService.getInvoiceById(idInvoice).subscribe(response => {
         this.invoice = response;
-        this.appService.changeHeaderTitle("Facture n°" + idInvoice + " - " + this.invoice.billingLabel + " - " + this.invoice.invoiceStatus.label);
+        this.appService.changeHeaderTitle("Facture n°" + idInvoice + " - " + this.invoice.invoiceStatus.label);
       })
     }
   }
@@ -58,7 +58,15 @@ export class InvoiceDetailsComponent implements OnInit {
   });
 
   getCustomerOrderName = getCustomerOrderNameForInvoice;
-  getCustomerOrder = getCustomerOrderForInvoice;
+
+  getCustomerOrder(invoice: Invoice): any {
+    if (invoice) {
+      if (invoice.provider)
+        return invoice.provider
+      return getCustomerOrderForInvoice(invoice);
+    }
+    return {};
+  }
   getResponsableName = getResponsableName;
   getLetteringDate = getLetteringDate;
 

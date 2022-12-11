@@ -15,6 +15,7 @@ import { BodaccStatus } from '../../model/BodaccStatus';
 import { DomiciliationStatus } from '../../model/DomiciliationStatus';
 import { FormaliteStatus } from '../../model/FormaliteStatus';
 import { Provision } from '../../model/Provision';
+import { SimpleProvisionStatus } from '../../model/SimpleProvisonStatus';
 import { AnnouncementService } from '../../services/announcement.service';
 import { AnnouncementStatusService } from '../../services/announcement.status.service';
 import { AssoAffaireOrderService } from '../../services/asso.affaire.order.service';
@@ -22,6 +23,7 @@ import { BodaccStatusService } from '../../services/bodacc.status.service';
 import { DomiciliationStatusService } from '../../services/domiciliation-status.service';
 import { FormaliteStatusService } from '../../services/formalite.status.service';
 import { ProvisionService } from '../../services/provision.service';
+import { SimpleProvisionStatusService } from '../../services/simple.provision.status.service';
 
 @Component({
   selector: 'affaire',
@@ -39,6 +41,7 @@ export class AffaireComponent implements OnInit, AfterContentChecked {
 
   announcementStatus: AnnouncementStatus[] = [] as Array<AnnouncementStatus>;
   formaliteStatus: FormaliteStatus[] = [] as Array<FormaliteStatus>;
+  simpleProvisionStatus: SimpleProvisionStatus[] = [] as Array<SimpleProvisionStatus>;
   bodaccStatus: BodaccStatus[] = [] as Array<BodaccStatus>;
   domiciliationStatus: DomiciliationStatus[] = [] as Array<DomiciliationStatus>;
 
@@ -62,6 +65,7 @@ export class AffaireComponent implements OnInit, AfterContentChecked {
     private bodaccStatusService: BodaccStatusService,
     private announcementService: AnnouncementService,
     private domiciliationStatusService: DomiciliationStatusService,
+    private simpleProvisionStatusService: SimpleProvisionStatusService,
     private announcementStatusService: AnnouncementStatusService,
   ) { }
 
@@ -77,6 +81,7 @@ export class AffaireComponent implements OnInit, AfterContentChecked {
     this.bodaccStatusService.getBodaccStatus().subscribe(response => this.bodaccStatus = response);
     this.domiciliationStatusService.getDomiciliationStatus().subscribe(response => this.domiciliationStatus = response);
     this.announcementStatusService.getAnnouncementStatus().subscribe(response => this.announcementStatus = response);
+    this.simpleProvisionStatusService.getSimpleProvisionStatus().subscribe(response => this.simpleProvisionStatus = response);
   }
 
   ngAfterContentChecked(): void {
@@ -165,6 +170,8 @@ export class AffaireComponent implements OnInit, AfterContentChecked {
       return this.announcementStatus;
     if (provision.formalite)
       return this.formaliteStatus;
+    if (provision.simpleProvision)
+      return this.simpleProvisionStatus;
     if (provision.bodacc)
       return this.bodaccStatus;
     if (provision.domiciliation)
@@ -181,6 +188,8 @@ export class AffaireComponent implements OnInit, AfterContentChecked {
       return provision.announcement.announcementStatus;
     if (provision.formalite)
       return provision.formalite.formaliteStatus;
+    if (provision.simpleProvision)
+      return provision.simpleProvision.simpleProvisionStatus;
     if (provision.bodacc)
       return provision.bodacc.bodaccStatus;
     if (provision.domiciliation)
@@ -193,6 +202,8 @@ export class AffaireComponent implements OnInit, AfterContentChecked {
       provision.announcement.announcementStatus = status;
     if (provision.formalite)
       provision.formalite.formaliteStatus = status;
+    if (provision.simpleProvision)
+      provision.simpleProvision.simpleProvisionStatus = status;
     if (provision.bodacc)
       provision.bodacc.bodaccStatus = status;
     if (provision.domiciliation)

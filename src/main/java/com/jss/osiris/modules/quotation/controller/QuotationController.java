@@ -95,6 +95,7 @@ import com.jss.osiris.modules.quotation.model.QuotationSearchResult;
 import com.jss.osiris.modules.quotation.model.QuotationStatus;
 import com.jss.osiris.modules.quotation.model.RecordType;
 import com.jss.osiris.modules.quotation.model.Rna;
+import com.jss.osiris.modules.quotation.model.SimpleProvisionStatus;
 import com.jss.osiris.modules.quotation.model.Siren;
 import com.jss.osiris.modules.quotation.model.Siret;
 import com.jss.osiris.modules.quotation.model.TransfertFundsType;
@@ -132,6 +133,7 @@ import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.quotation.service.QuotationStatusService;
 import com.jss.osiris.modules.quotation.service.RecordTypeService;
 import com.jss.osiris.modules.quotation.service.RnaDelegateService;
+import com.jss.osiris.modules.quotation.service.SimpleProvisionStatusService;
 import com.jss.osiris.modules.quotation.service.SireneDelegateService;
 import com.jss.osiris.modules.quotation.service.TransfertFundsTypeService;
 import com.jss.osiris.modules.tiers.model.Responsable;
@@ -287,6 +289,15 @@ public class QuotationController {
 
   @Autowired
   AnnouncementService announcementService;
+
+  @Autowired
+  SimpleProvisionStatusService simpleProvisonStatusService;
+
+  @GetMapping(inputEntryPoint + "/simple-provision-status")
+  public ResponseEntity<List<SimpleProvisionStatus>> getSimpleProvisionStatus() {
+    return new ResponseEntity<List<SimpleProvisionStatus>>(simpleProvisonStatusService.getSimpleProvisionStatus(),
+        HttpStatus.OK);
+  }
 
   @GetMapping(inputEntryPoint + "/formalite-status")
   public ResponseEntity<List<FormaliteStatus>> getFormaliteStatus() {
@@ -463,7 +474,7 @@ public class QuotationController {
     boolean isCustomerOrder = quotation instanceof CustomerOrder && !isOpen;
 
     for (Provision provision : assoAffaireOrder.getProvisions())
-      validateProvision(provision, isOpen, isCustomerOrder);
+      validateProvision(provision, isOpen, isCustomerOrder, quotation);
 
     return new ResponseEntity<AssoAffaireOrder>(assoAffaireOrderService.addOrUpdateAssoAffaireOrder(assoAffaireOrder),
         HttpStatus.OK);
@@ -695,6 +706,7 @@ public class QuotationController {
     validationHelper.validateString(confrere.getMailRecipient(), false, 60, "MailRecipient");
     validationHelper.validateString(confrere.getAddress(), false, 60, "Address");
     validationHelper.validateString(confrere.getPostalCode(), false, 10, "PostalCode");
+    validationHelper.validateString(confrere.getCedexComplement(), false, 20, "CedexComplement");
     validationHelper.validateReferential(confrere.getCity(), false, "City");
     validationHelper.validateReferential(confrere.getCountry(), false, "Country");
     validationHelper.validateString(confrere.getIban(), false, 40, "Iban");
@@ -780,6 +792,7 @@ public class QuotationController {
     validationHelper.validateString(buildingDomiciliation.getLabel(), true, 100, "Label");
     validationHelper.validateString(buildingDomiciliation.getAddress(), false, 60, "Address");
     validationHelper.validateString(buildingDomiciliation.getPostalCode(), false, 10, "PostalCode");
+    validationHelper.validateString(buildingDomiciliation.getCedexComplement(), false, 20, "CedexComplement");
     validationHelper.validateReferential(buildingDomiciliation.getCity(), false, "City");
     validationHelper.validateReferential(buildingDomiciliation.getCountry(), false, "Country");
 
@@ -929,7 +942,7 @@ public class QuotationController {
 
   @PostMapping(inputEntryPoint + "/quotation")
   public ResponseEntity<Quotation> addOrUpdateQuotation(@RequestBody Quotation quotation)
-      throws OsirisValidationException, OsirisException {
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException {
     validateQuotationAndCustomerOrder(quotation);
 
     QuotationStatus openQuotationStatus = quotationStatusService.getQuotationStatusByCode(QuotationStatus.OPEN);
@@ -990,7 +1003,7 @@ public class QuotationController {
 
   @PostMapping(inputEntryPoint + "/customer-order")
   public ResponseEntity<CustomerOrder> addOrUpdateCustomerOrder(@RequestBody CustomerOrder customerOrder)
-      throws OsirisException, OsirisValidationException {
+      throws OsirisException, OsirisValidationException, OsirisClientMessageException {
     validateQuotationAndCustomerOrder(customerOrder);
     CustomerOrderStatus customerOrderStatus = customerOrderStatusService
         .getCustomerOrderStatusByCode(CustomerOrderStatus.OPEN);
@@ -1007,8 +1020,9 @@ public class QuotationController {
 
   @PostMapping(inputEntryPoint + "/customer-order/status")
   public ResponseEntity<CustomerOrder> addOrUpdateCustomerOrderStatus(@RequestBody CustomerOrder customerOrder,
-      @RequestParam String targetStatusCode) throws OsirisValidationException, OsirisException {
-    validateQuotationAndCustomerOrder(customerOrder);
+      @RequestParam String targetStatusCode)
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+    validateQuotationAndCustomerOrder(customerOrder, targetStatusCode);
     customerOrder = customerOrderService.getCustomerOrder(customerOrder.getId());
     boolean found = true;
     if (customerOrder.getCustomerOrderStatus() != null) {
@@ -1030,7 +1044,8 @@ public class QuotationController {
 
   @PostMapping(inputEntryPoint + "/quotation/status")
   public ResponseEntity<Quotation> addOrUpdateQuotationStatus(@RequestBody Quotation quotation,
-      @RequestParam String targetStatusCode) throws OsirisValidationException, OsirisException {
+      @RequestParam String targetStatusCode)
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException {
     validateQuotationAndCustomerOrder(quotation);
     quotation = quotationService.getQuotation(quotation.getId());
     boolean found = true;
@@ -1052,7 +1067,12 @@ public class QuotationController {
   }
 
   private void validateQuotationAndCustomerOrder(IQuotation quotation)
-      throws OsirisValidationException, OsirisException {
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+    validateQuotationAndCustomerOrder(quotation, null);
+  }
+
+  private void validateQuotationAndCustomerOrder(IQuotation quotation, String targetStatusCode)
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException {
     boolean isOpen = false;
 
     if (quotation.getIsCreatedFromWebSite() == null)
@@ -1062,6 +1082,9 @@ public class QuotationController {
       CustomerOrder customerOrder = (CustomerOrder) quotation;
       isOpen = customerOrder.getCustomerOrderStatus() == null ||
           customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.OPEN);
+
+      if (targetStatusCode != null)
+        isOpen = targetStatusCode.equals(CustomerOrderStatus.OPEN);
     }
 
     if (quotation instanceof Quotation) {
@@ -1087,6 +1110,17 @@ public class QuotationController {
 
     if (quotation.getResponsable() == null && quotation.getTiers() == null && quotation.getConfrere() == null)
       throw new OsirisValidationException("No customer order");
+
+    // Check customer order is not a prospect
+    if (isCustomerOrder) {
+      if (quotation.getTiers() != null
+          && quotation.getTiers().getTiersType().getId().equals(constantService.getTiersTypeProspect().getId()))
+        throw new OsirisClientMessageException("Le donneur d'ordre ne doit pas être un prospect");
+
+      if (quotation.getResponsable() != null
+          && quotation.getResponsable().getTiersType().getId().equals(constantService.getTiersTypeProspect().getId()))
+        throw new OsirisClientMessageException("Le donneur d'ordre ne doit pas être un prospect");
+    }
 
     if (quotation.getAssoAffaireOrders() == null || quotation.getAssoAffaireOrders().size() == 0)
       throw new OsirisValidationException("No affaire");
@@ -1132,24 +1166,42 @@ public class QuotationController {
       }
     }
 
+    Document billingDocument = documentService.getBillingDocument(quotation.getDocuments());
+    if (billingDocument == null) {
+      billingDocument = new Document();
+      billingDocument.setIsRecipientAffaire(false);
+      billingDocument.setIsRecipientClient(false);
+      billingDocument.setIsMailingPaper(false);
+      billingDocument.setIsMailingPdf(true);
+      billingDocument.setDocumentType(constantService.getDocumentTypeBilling());
+      if (isCustomerOrder)
+        billingDocument.setCustomerOrder((CustomerOrder) quotation);
+      else
+        billingDocument.setQuotation((Quotation) quotation);
+      if (quotation.getDocuments() == null)
+        quotation.setDocuments(new ArrayList<Document>());
+      quotation.getDocuments().add(billingDocument);
+    }
+
     for (AssoAffaireOrder assoAffaireOrder : quotation.getAssoAffaireOrders()) {
       if (assoAffaireOrder.getAffaire() == null)
         throw new OsirisValidationException("Affaire");
       validationHelper.validateReferential(assoAffaireOrder.getAffaire(), true, "Affaire");
       for (Provision provision : assoAffaireOrder.getProvisions()) {
-        validateProvision(provision, isOpen, isCustomerOrder);
+        validateProvision(provision, isOpen, isCustomerOrder, quotation);
       }
     }
 
     if (quotation.getAssoAffaireOrders().size() > 1) {
-      Document billingDocument = documentService.getBillingDocument(quotation.getDocuments());
+      billingDocument = documentService.getBillingDocument(quotation.getDocuments());
       if (billingDocument != null && billingDocument.getIsRecipientAffaire())
         throw new OsirisValidationException("To many affaire");
     }
 
   }
 
-  private void validateProvision(Provision provision, boolean isOpen, boolean isCustomerOrder)
+  private void validateProvision(Provision provision, boolean isOpen, boolean isCustomerOrder,
+      IQuotation quotation)
       throws OsirisValidationException, OsirisException {
 
     // Domiciliation
@@ -1162,8 +1214,13 @@ public class QuotationController {
       validationHelper.validateReferential(domiciliation.getMailRedirectionType(), !isOpen, "MailRedirectionType");
       validationHelper.validateString(domiciliation.getAddress(), false, 60, "Address");
       validationHelper.validateString(domiciliation.getPostalCode(), false, 10, "PostalCode");
+      validationHelper.validateString(domiciliation.getCedexComplement(), false, 20, "CedexComplement");
       validationHelper.validateString(domiciliation.getMailRecipient(), false, 60, "MailRecipient");
       validationHelper.validateString(domiciliation.getActivityAddress(), false, 60, "ActivityAddress");
+      validationHelper.validateReferential(domiciliation.getActivityCity(), false, "ActivityCity");
+      validationHelper.validateString(domiciliation.getActivityPostalCode(), false, 10, "ActivityPostalCode");
+      validationHelper.validateString(domiciliation.getAcitivityCedexComplement(), false, 20,
+          "ActivityCedexComplement");
       validationHelper.validateReferential(domiciliation.getCity(), false, "City");
       validationHelper.validateReferential(domiciliation.getCountry(), false, "Country");
       validationHelper.validateString(domiciliation.getAccountingRecordDomiciliation(), isCustomerOrder, 60,
@@ -1198,6 +1255,8 @@ public class QuotationController {
       if (domiciliation.getCountry() != null && domiciliation.getCountry().getCode().equals("FR"))
         validationHelper.validateString(domiciliation.getLegalGardianPostalCode(), isCustomerOrder, 10,
             "LegalGardianPostalCode");
+      validationHelper.validateString(domiciliation.getLegalGardianCedexComplement(), false, 20,
+          "LegalGardianCedexComplement");
       validationHelper.validateReferential(domiciliation.getLegalGardianCity(), isCustomerOrder, "LegalGardianCity");
       validationHelper.validateReferential(domiciliation.getLegalGardianCountry(), isCustomerOrder,
           "LegalGardianCountry");
@@ -1206,7 +1265,17 @@ public class QuotationController {
     // Announcement
     if (provision.getAnnouncement() != null) {
       Announcement announcement = provision.getAnnouncement();
-      validationHelper.validateDateMin(announcement.getPublicationDate(), true, LocalDate.now().minusDays(1),
+
+      LocalDate publicationDateVerification = LocalDate.now().minusDays(1);
+      // Do not verify date when quotation has started
+      if (isCustomerOrder) {
+        CustomerOrderStatus status = ((CustomerOrder) quotation).getCustomerOrderStatus();
+        if (!status.getCode().equals(CustomerOrderStatus.OPEN)
+            && !status.getCode().equals(CustomerOrderStatus.WAITING_DEPOSIT))
+          publicationDateVerification = null;
+      }
+
+      validationHelper.validateDateMin(announcement.getPublicationDate(), true, publicationDateVerification,
           "PublicationDate");
       validationHelper.validateReferential(announcement.getDepartment(), !isOpen, "Department");
       validationHelper.validateReferential(announcement.getConfrere(), isCustomerOrder, "Confrere");
@@ -1451,6 +1520,7 @@ public class QuotationController {
     validationHelper.validateString(affaire.getExternalReference(), false, 60, "ExternalReference");
     if (affaire.getCountry() != null && affaire.getCountry().getId().equals(constantService.getCountryFrance().getId()))
       validationHelper.validateString(affaire.getPostalCode(), true, 10, "PostalCode");
+    validationHelper.validateString(affaire.getCedexComplement(), false, 20, "CedexComplement");
 
     if (affaire.getIsIndividual()) {
       validationHelper.validateReferential(affaire.getCivility(), true, "Civility");

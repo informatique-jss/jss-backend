@@ -93,6 +93,8 @@ public class AccountingRecord implements Serializable, IId {
 
 	@OneToOne
 	@JoinColumn(name = "id_contre_passe")
+	@JsonIgnoreProperties(value = { "accountingRecords", "deposit", "payment", "invoice",
+			"customerOrder" }, allowSetters = true)
 	private AccountingRecord contrePasse;
 
 	private Integer letteringNumber;

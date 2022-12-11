@@ -55,6 +55,17 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
+    public Document getRefundDocument(List<Document> documents) throws OsirisException {
+        if (documents != null && documents.size() > 0)
+            for (Document document : documents)
+                if (document.getDocumentType() != null && document.getDocumentType().getCode() != null
+                        && document.getDocumentType().getId()
+                                .equals(constantService.getDocumentTypeRefund().getId()))
+                    return document;
+        return null;
+    }
+
+    @Override
     public Document cloneDocument(Document document) {
         Document newDocument = new Document();
         newDocument.setTiers(document.getTiers());
@@ -84,12 +95,12 @@ public class DocumentServiceImpl implements DocumentService {
         newDocument.setPaymentDeadlineType(document.getPaymentDeadlineType());
         newDocument.setRefundType(document.getRefundType());
         newDocument.setRefundIBAN(document.getRefundIBAN());
-        newDocument.setIsRefundable(document.getIsRefundable());
         newDocument.setBillingClosureType(document.getBillingClosureType());
         newDocument.setBillingClosureRecipientType(document.getBillingClosureRecipientType());
         newDocument.setBillingLabel(document.getBillingLabel());
         newDocument.setBillingAddress(document.getBillingAddress());
         newDocument.setBillingPostalCode(document.getBillingPostalCode());
+        newDocument.setCedexComplement(document.getCedexComplement());
         newDocument.setBillingLabelCity(document.getBillingLabelCity());
         newDocument.setBillingLabelCountry(document.getBillingLabelCountry());
         newDocument.setBillingLabelIsIndividual(document.getBillingLabelIsIndividual());

@@ -1,5 +1,6 @@
 import { AccountingAccount } from "../../accounting/model/AccountingAccount";
 import { IReferential } from "../../administration/model/IReferential";
+import { BillingItem } from './BillingItem';
 import { Mail } from "./Mail";
 import { PaymentType } from "./PaymentType";
 import { Phone } from "./Phone";
@@ -11,6 +12,7 @@ export interface Provider extends IReferential {
   accountingAccountCustomer: AccountingAccount;
   accountingAccountProvider: AccountingAccount;
   accountingAccountDeposit: AccountingAccount;
+  defaultBillingItem: BillingItem;
   iban: string;
   accountingMails: Mail[];
   mails: Mail[];

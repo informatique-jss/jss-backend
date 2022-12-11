@@ -524,4 +524,13 @@
         <key-type>java.lang.Integer</key-type>
         <value-type>com.jss.osiris.modules.tiers.model.AccountStatementRecipient</value-type>
     </cache>
+    <cache alias="simpleProvisonStatusList" uses-template="default">
+        <key-type>java.lang.String</key-type>
+        <value-type>java.util.List</value-type>
+    </cache>
+    <cache alias="simpleProvisonStatus" uses-template="default">
+        <key-type>java.lang.Integer</key-type>
+        <value-type>com.jss.osiris.modules.quotation.model.SimpleProvisonStatus</value-type>
+    </cache>
+
 </config>

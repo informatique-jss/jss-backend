@@ -1,13 +1,15 @@
 import { Gift } from "../../miscellaneous/model/Gift";
 import { Employee } from "../../profile/model/Employee";
-import { Responsable } from "./Responsable";
-import { Tiers } from "./Tiers";
+import { Confrere } from "../../quotation/model/Confrere";
+import { Responsable } from "../../tiers/model/Responsable";
+import { Tiers } from "../../tiers/model/Tiers";
 import { TiersFollowupType } from "./TiersFollowupType";
 
 export interface TiersFollowup {
   id: number;
   tiers: Tiers;
   responsable: Responsable;
+  confrere: Confrere;
   tiersFollowupType: TiersFollowupType;
   gift: Gift;
   salesEmployee: Employee | undefined;

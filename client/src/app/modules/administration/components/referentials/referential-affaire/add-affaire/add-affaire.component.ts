@@ -94,7 +94,7 @@ export class AddAffaireComponent implements OnInit, AfterContentChecked {
     if (this.affaire.country == null || this.affaire.country == undefined)
       this.affaire.country = city.country;
 
-    if (this.affaire.country.id == this.constantService.getCountryFrance().id && city.postalCode != null)
+    if (this.affaire.country.id == this.constantService.getCountryFrance().id && city.postalCode != null && !this.affaire.postalCode)
       this.affaire.postalCode = city.postalCode;
   }
 
@@ -152,6 +152,7 @@ export class AddAffaireComponent implements OnInit, AfterContentChecked {
       this.affaire.denomination = !this.affaire.denomination ? siret.etablissement.periodesEtablissement[0].denominationUsuelleEtablissement : this.affaire.denomination;
       if (siret.etablissement.adresseEtablissement != null && siret.etablissement.adresseEtablissement.codePostalEtablissement != null) {
         this.affaire.postalCode = siret!.etablissement.adresseEtablissement.codePostalEtablissement;
+        this.affaire.cedexComplement = siret!.etablissement.adresseEtablissement.codeCedexEtablissement;
         this.cityService.getCitiesFilteredByPostalCode(siret.etablissement.adresseEtablissement.codePostalEtablissement).subscribe(response => {
           if (response != null && response.length == 1) {
             this.fillCity(response[0].postalCode);

@@ -26,6 +26,7 @@ import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.Domiciliation;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Quotation;
+import com.jss.osiris.modules.quotation.model.SimpleProvision;
 import com.jss.osiris.modules.quotation.model.guichetUnique.Formalite;
 import com.jss.osiris.modules.quotation.service.AnnouncementService;
 import com.jss.osiris.modules.quotation.service.BodaccService;
@@ -34,6 +35,7 @@ import com.jss.osiris.modules.quotation.service.DomiciliationService;
 import com.jss.osiris.modules.quotation.service.FormaliteService;
 import com.jss.osiris.modules.quotation.service.ProvisionService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
+import com.jss.osiris.modules.quotation.service.SimpleProvisionService;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 import com.jss.osiris.modules.tiers.service.ResponsableService;
@@ -80,6 +82,9 @@ public class AttachmentServiceImpl implements AttachmentService {
 
     @Autowired
     JournalService journalService;
+
+    @Autowired
+    SimpleProvisionService simpleProvisionService;
 
     @Override
     public List<Attachment> getAttachments() {
@@ -187,6 +192,11 @@ public class AttachmentServiceImpl implements AttachmentService {
             if (journal == null)
                 return new ArrayList<Attachment>();
             attachment.setJournal(journal);
+        } else if (entityType.equals(SimpleProvision.class.getSimpleName())) {
+            SimpleProvision simpleProvision = simpleProvisionService.getSimpleProvision(idEntity);
+            if (simpleProvision == null)
+                return new ArrayList<Attachment>();
+            attachment.setSimpleProvision(simpleProvision);
         }
         addOrUpdateAttachment(attachment);
 
@@ -232,6 +242,8 @@ public class AttachmentServiceImpl implements AttachmentService {
             attachments = attachmentRepository.findByCustomerOrderId(idEntity);
         } else if (entityType.equals(Journal.class.getSimpleName())) {
             attachments = attachmentRepository.findByCustomerJournalId(idEntity);
+        } else if (entityType.equals(SimpleProvision.class.getSimpleName())) {
+            attachments = attachmentRepository.findBySimpleProvisonId(idEntity);
         }
         return attachments;
     }

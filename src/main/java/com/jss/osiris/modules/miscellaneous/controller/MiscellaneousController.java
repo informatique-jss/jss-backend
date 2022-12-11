@@ -29,6 +29,7 @@ import com.jss.osiris.libs.exception.OsirisLog;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.accounting.service.AccountingAccountService;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
+import com.jss.osiris.modules.invoicing.service.RefundService;
 import com.jss.osiris.modules.miscellaneous.model.AssoSpecialOfferBillingType;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.AttachmentType;
@@ -89,6 +90,7 @@ import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.Domiciliation;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Quotation;
+import com.jss.osiris.modules.quotation.model.SimpleProvision;
 import com.jss.osiris.modules.quotation.model.guichetUnique.Formalite;
 import com.jss.osiris.modules.quotation.service.AffaireService;
 import com.jss.osiris.modules.quotation.service.AssoAffaireOrderService;
@@ -214,6 +216,9 @@ public class MiscellaneousController {
 
     @Autowired
     ActiveDirectoryHelper activeDirectoryHelper;
+
+    @Autowired
+    RefundService refundService;
 
     @GetMapping(inputEntryPoint + "/notifications")
     public ResponseEntity<List<Notification>> getNotifications(@RequestParam Boolean displayFuture) {
@@ -374,6 +379,7 @@ public class MiscellaneousController {
         validationHelper.validateReferential(constant.getCompetentAuthorityTypeCfp(), true,
                 "CompetentAuthorityTypeCfp");
         validationHelper.validateReferential(constant.getInvoiceStatusSend(), true, "InvoiceStatusSend");
+        validationHelper.validateReferential(constant.getInvoiceStatusReceived(), true, "InvoiceStatusReceived");
         validationHelper.validateReferential(constant.getInvoiceStatusPayed(), true, "InvoiceStatusPayed");
         validationHelper.validateReferential(constant.getInvoiceStatusCancelled(), true, "InvoiceStatusCancelled");
         validationHelper.validateReferential(constant.getPaymentWayInbound(), true, "PaymentWayInbound");
@@ -422,6 +428,7 @@ public class MiscellaneousController {
         validationHelper.validateReferential(regie.getCountry(), true, "Country");
         validationHelper.validateReferential(regie.getCity(), true, "City");
         validationHelper.validateString(regie.getPostalCode(), false, 6, "PostalCode");
+        validationHelper.validateString(regie.getCedexComplement(), false, 20, "CedexComplement");
         validationHelper.validateString(regie.getAddress(), true, 60, "Address");
         validationHelper.validateString(regie.getIban(), true, 40, "Iban");
 
@@ -443,6 +450,7 @@ public class MiscellaneousController {
         validationHelper.validateString(provider.getJssReference(), false, 20, "JssReference");
         validationHelper.validateReferential(provider.getVatCollectionType(), true, "VatCollectionType");
         validationHelper.validateReferential(provider.getPaymentType(), false, "PaymentType");
+        validationHelper.validateReferential(provider.getDefaultBillingItem(), false, "DefaultBillingItem");
 
         return new ResponseEntity<Provider>(providerService.addOrUpdateProvider(provider), HttpStatus.OK);
     }
@@ -779,6 +787,7 @@ public class MiscellaneousController {
         validationHelper.validateString(competentAuthorities.getMailRecipient(), false, 60, "MailRecipient");
         validationHelper.validateString(competentAuthorities.getAddress(), false, 60, "Address");
         validationHelper.validateString(competentAuthorities.getPostalCode(), false, 10, "PostalCode");
+        validationHelper.validateString(competentAuthorities.getCedexComplement(), false, 20, "CedexComplement");
         validationHelper.validateReferential(competentAuthorities.getCity(), false, "City");
         validationHelper.validateReferential(competentAuthorities.getCountry(), false, "Country");
 
@@ -900,7 +909,8 @@ public class MiscellaneousController {
                 && !entityType.equals(Provision.class.getSimpleName())
                 && !entityType.equals(Formalite.class.getSimpleName())
                 && !entityType.equals(Journal.class.getSimpleName())
-                && !entityType.equals(Bodacc.class.getSimpleName()))
+                && !entityType.equals(Bodacc.class.getSimpleName())
+                && !entityType.equals(SimpleProvision.class.getSimpleName()))
             throw new OsirisValidationException("entityType");
 
         return new ResponseEntity<List<Attachment>>(
@@ -954,6 +964,7 @@ public class MiscellaneousController {
     public ResponseEntity<Boolean> reindexAll() {
         invoiceService.reindexInvoices();
         tiersService.reindexTiers();
+        refundService.reindexRefunds();
         responsableService.reindexResponsable();
         quotationService.reindexQuotation();
         customerOrderService.reindexCustomerOrder();

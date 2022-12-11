@@ -19,6 +19,7 @@ import com.jss.osiris.libs.JacksonLocalDateSerializer;
 import com.jss.osiris.modules.miscellaneous.model.Gift;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.profile.model.Employee;
+import com.jss.osiris.modules.quotation.model.Confrere;
 
 @Entity
 @Table(indexes = { @Index(name = "idx_tiers_followup_tiers", columnList = "id_tiers"),
@@ -38,6 +39,11 @@ public class TiersFollowup implements Serializable, IId {
 	@JoinColumn(name = "id_responsable")
 	@JsonIgnoreProperties(value = { "tiersFollowups" }, allowSetters = true)
 	private Responsable responsable;
+
+	@ManyToOne
+	@JoinColumn(name = "id_confrere")
+	@JsonIgnoreProperties(value = { "tiersFollowups" }, allowSetters = true)
+	private Confrere confrere;
 
 	@ManyToOne
 	@JoinColumn(name = "id_tiers_followup_type")
@@ -120,6 +126,14 @@ public class TiersFollowup implements Serializable, IId {
 
 	public void setObservations(String observations) {
 		this.observations = observations;
+	}
+
+	public Confrere getConfrere() {
+		return confrere;
+	}
+
+	public void setConfrere(Confrere confrere) {
+		this.confrere = confrere;
 	}
 
 }

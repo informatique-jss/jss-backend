@@ -18,6 +18,7 @@ export interface Affaire extends IReferential {
   city: City;
   country: Country;
   postalCode: string;
+  cedexComplement: string;
   address: string;
   mails: Mail[];
   phones: Phone[];

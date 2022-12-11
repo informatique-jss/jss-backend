@@ -33,6 +33,8 @@ import com.jss.osiris.modules.quotation.model.FormaliteStatus;
 import com.jss.osiris.modules.quotation.model.IQuotation;
 import com.jss.osiris.modules.quotation.model.IWorkflowElement;
 import com.jss.osiris.modules.quotation.model.Provision;
+import com.jss.osiris.modules.quotation.model.SimpleProvision;
+import com.jss.osiris.modules.quotation.model.SimpleProvisionStatus;
 import com.jss.osiris.modules.quotation.model.guichetUnique.Formalite;
 import com.jss.osiris.modules.quotation.repository.AssoAffaireOrderRepository;
 
@@ -59,6 +61,9 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
     @Autowired
     DomiciliationStatusService domiciliationStatusService;
+
+    @Autowired
+    SimpleProvisionStatusService simpleProvisionStatusService;
 
     @Autowired
     PhoneService phoneService;
@@ -226,6 +231,13 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                         .getAnnouncementStatus().getCode().equals(AnnouncementStatus.ANNOUNCEMENT_WAITING_PUBLICATION))
                     announcement.setAnnouncementStatus(announcementStatusService
                             .getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_PUBLISHED));
+            }
+
+            if (provision.getSimpleProvision() != null) {
+                SimpleProvision simpleProvision = provision.getSimpleProvision();
+                if (customerOrder.getId() == null || simpleProvision.getSimpleProvisionStatus() == null)
+                    simpleProvision.setSimpleProvisionStatus(simpleProvisionStatusService
+                            .getSimpleProvisionStatusByCode(SimpleProvisionStatus.SIMPLE_PROVISION_NEW));
             }
 
             // Set proper assignation regarding provision item configuration

@@ -64,6 +64,9 @@ public class Affaire implements Serializable, IId {
 	@IndexedField
 	private String postalCode;
 
+	@Column(length = 20)
+	private String cedexComplement;
+
 	@ManyToOne
 	@JoinColumn(name = "id_city")
 	@IndexedField
@@ -256,6 +259,14 @@ public class Affaire implements Serializable, IId {
 
 	public void setIsUnregistered(Boolean isUnregistered) {
 		this.isUnregistered = isUnregistered;
+	}
+
+	public String getCedexComplement() {
+		return cedexComplement;
+	}
+
+	public void setCedexComplement(String cedexComplement) {
+		this.cedexComplement = cedexComplement;
 	}
 
 }

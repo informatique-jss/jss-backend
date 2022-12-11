@@ -43,6 +43,10 @@
       <table class="full-width table-fixed-layout">
         <tr>
           <td>
+            <select-payment-way-one [(model)]="currentPayment.paymentWay" label="Sens du paiement" [form]="paymentForm"
+              propertyName="paymentWay" [isMandatory]="true" [isDisabled]="false"></select-payment-way-one>
+          </td>
+          <td>
             <generic-input [(model)]="currentPayment.label" label="Libellé du paiement" [form]="paymentForm2"
               propertyName="label" [isMandatory]="true" [isDisabled]="false" [maxLength]="200"></generic-input>
           </td>

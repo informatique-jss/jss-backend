@@ -4,6 +4,7 @@ import { Subject } from 'rxjs';
 import { formatEurosForSortTable } from 'src/app/libs/FormatHelper';
 import { City } from 'src/app/modules/miscellaneous/model/City';
 import { Country } from 'src/app/modules/miscellaneous/model/Country';
+import { Provider } from 'src/app/modules/miscellaneous/model/Provider';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { CityService } from 'src/app/modules/miscellaneous/services/city.service';
@@ -128,6 +129,13 @@ export class AddInvoiceComponent implements OnInit {
     this.invoice.responsable = undefined;
   }
 
+  fillProvider(provider: Provider) {
+    this.invoice.provider = provider;
+    this.invoice.confrere = undefined;
+    this.invoice.tiers = undefined;
+    this.invoice.responsable = undefined;
+  }
+
   fillResponsable(responsable: Responsable) {
     this.invoice.responsable = responsable;
     this.tiersService.getTiersByResponsable(responsable.id).subscribe(response => {
@@ -142,7 +150,7 @@ export class AddInvoiceComponent implements OnInit {
     if (!this.invoice.billingLabelCountry)
       this.invoice.billingLabelCountry = city.country;
 
-    if (this.invoice.billingLabelCountry.id == this.countryFrance.id && city.postalCode != null)
+    if (this.invoice.billingLabelCountry.id == this.countryFrance.id && city.postalCode != null && !this.invoice.billingLabelPostalCode)
       this.invoice.billingLabelPostalCode = city.postalCode;
   }
 

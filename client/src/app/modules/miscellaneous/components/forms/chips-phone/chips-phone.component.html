@@ -8,8 +8,8 @@
       </button>
       <mat-icon matChipRemove *ngIf="isDisabled" (click)="call(chip)">phone</mat-icon>
     </mat-chip>
-    <input placeholder="Saisir un téléphone et appuyer sur Entrée" #chipInput [matChipInputFor]="chipList"
-      [disabled]="isDisabled" [matChipInputSeparatorKeyCodes]="SEPARATOR_KEY_CODES"
+    <input [placeholder]="isDisabled?'':'Saisir un téléphone et appuyer sur Entrée'" #chipInput
+      [matChipInputFor]="chipList" [disabled]="isDisabled" [matChipInputSeparatorKeyCodes]="SEPARATOR_KEY_CODES"
       (matChipInputTokenEnd)="addElement($event)">
   </mat-chip-list>
 </mat-form-field>

@@ -718,6 +718,14 @@
           </tr>
           <tr>
             <td>
+              <select-invoice-status-one [(model)]="constant.invoiceStatusReceived" label="Statut de facture - reçue"
+                [form]="constantForm" propertyName="invoiceStatusReceived" [isMandatory]="true"
+                [isDisabled]="!editMode">
+              </select-invoice-status-one>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <select-invoice-status-one [(model)]="constant.invoiceStatusCancelled" label="Statut de facture - annulée"
                 [form]="constantForm" propertyName="invoiceStatusCancelled" [isMandatory]="true"
                 [isDisabled]="!editMode">
@@ -875,6 +883,19 @@
               <radio-group-billing-closure [(model)]="constant.billingClosureTypeAffaire" [form]="constantForm"
                 propertyName="billingClosureTypeAffaire" label="Type de relevé comptable - Affaire">
               </radio-group-billing-closure>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-delivery-service [(model)]="constant.deliveryServiceJss" label="Service de livraison - JSS"
+                [form]="constantForm" propertyName="deliveryServiceJss" [isMandatory]="true"
+                [isDisabled]="!editMode"></select-delivery-service>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <radio-group-language [(model)]="constant.languageFrench" [form]="constantForm"
+                propertyName="languageFrench" label="Langue - Français"></radio-group-language>
             </td>
           </tr>
         </table>

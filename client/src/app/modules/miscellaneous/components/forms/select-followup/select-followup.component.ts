@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
-import { TiersFollowupType } from 'src/app/modules/tiers/model/TiersFollowupType';
-import { TiersFollowupTypeService } from 'src/app/modules/tiers/services/tiers.followup.type.service';
 import { UserNoteService } from 'src/app/services/user.notes.service';
+import { TiersFollowupType } from '../../../model/TiersFollowupType';
+import { TiersFollowupTypeService } from '../../../services/tiers.followup.type.service';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
 
 

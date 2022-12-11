@@ -27,6 +27,7 @@ import com.jss.osiris.modules.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.miscellaneous.model.City;
 import com.jss.osiris.modules.miscellaneous.model.Country;
 import com.jss.osiris.modules.miscellaneous.model.IId;
+import com.jss.osiris.modules.miscellaneous.model.Provider;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.tiers.model.BillingLabelType;
@@ -72,7 +73,7 @@ public class Invoice implements Serializable, IId {
 
 	@ManyToOne
 	@JoinColumn(name = "id_provider")
-	private Tiers provider;
+	private Provider provider;
 
 	@Column(length = 40, name = "billing_label")
 	private String billingLabel;
@@ -85,6 +86,9 @@ public class Invoice implements Serializable, IId {
 	@ManyToOne
 	@JoinColumn(name = "id_billing_label_city")
 	private City billingLabelCity;
+
+	@Column(length = 20)
+	private String cedexComplement;
 
 	@ManyToOne
 	@JoinColumn(name = "id_billing_label_country")
@@ -308,14 +312,6 @@ public class Invoice implements Serializable, IId {
 		this.deposits = deposits;
 	}
 
-	public Tiers getProvider() {
-		return provider;
-	}
-
-	public void setProvider(Tiers provider) {
-		this.provider = provider;
-	}
-
 	public LocalDateTime getFirstReminderDateTime() {
 		return firstReminderDateTime;
 	}
@@ -338,6 +334,22 @@ public class Invoice implements Serializable, IId {
 
 	public void setThirdReminderDateTime(LocalDateTime thirdReminderDateTime) {
 		this.thirdReminderDateTime = thirdReminderDateTime;
+	}
+
+	public String getCedexComplement() {
+		return cedexComplement;
+	}
+
+	public void setCedexComplement(String cedexComplement) {
+		this.cedexComplement = cedexComplement;
+	}
+
+	public Provider getProvider() {
+		return provider;
+	}
+
+	public void setProvider(Provider provider) {
+		this.provider = provider;
 	}
 
 }

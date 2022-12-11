@@ -404,6 +404,10 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.invoiceStatusSend;
   }
 
+  getInvoiceStatusReceived() {
+    return this.constant.invoiceStatusReceived;
+  }
+
   getPaymentWayInbound() {
     return this.constant.paymentWayInbound;
   }
@@ -486,5 +490,13 @@ export class ConstantService extends AppRestService<Constant>{
 
   getBillingClosureTypeAffaire() {
     return this.constant.billingClosureTypeAffaire;
+  }
+
+  getDeliveryServiceJss() {
+    return this.constant.deliveryServiceJss;
+  }
+
+  getLanguageFrench() {
+    return this.constant.languageFrench;
   }
 }

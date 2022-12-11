@@ -62,7 +62,6 @@ public class AnnouncementStatusServiceImpl implements AnnouncementStatusService 
                 false);
         updateStatus(AnnouncementStatus.ANNOUNCEMENT_WAITING_READ, "En attente de relecture", "local_library", false,
                 false);
-        updateStatus(AnnouncementStatus.ANNOUNCEMENT_WAINTING_PAO, "En attente de montage", "web", false, false);
         updateStatus(AnnouncementStatus.ANNOUNCEMENT_WAITING_PUBLICATION, "En attente de parution", "new_releases",
                 false, false);
         updateStatus(AnnouncementStatus.ANNOUNCEMENT_PUBLISHED, "Publié", "fact_check", false, false);
