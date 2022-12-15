@@ -80,7 +80,7 @@
             </td>
             <td style="vertical-align: baseline;">
               <radio-group-language [(model)]="tiers.language" [form]="principalForm" propertyName="language"
-                [setFirstOptionDefaultChoice]="true" [isDisabled]="!editMode" label="Langue de communication">
+                [isDisabled]="!editMode" label="Langue de communication">
               </radio-group-language>
             </td>
             <td>
@@ -179,17 +179,6 @@
             <td>
               <chips-phone [(model)]="tiers.phones" [form]="principalForm" propertyName="phones" label="Téléphones"
                 [isDisabled]="!editMode"></chips-phone>
-            </td>
-            <td *ngIf="tiers.isIndividual==false">
-              <!-- TODO : fill it when reponsibles done-->
-              <generic-input [(model)]="tiers.responsibleSuscribersNumber" label="Nombre de responsables abonnés"
-                [form]="principalForm" propertyName="responsibleSuscribersNumber" [isMandatory]="false"
-                [isDisabled]="true"></generic-input>
-            </td>
-            <td *ngIf="tiers.isIndividual==false">
-              <!-- TODO : fill it when reponsibles done-->
-              <generic-input [(model)]="tiers.webAccountNumber" label="Nombre de comptes web" [form]="principalForm"
-                propertyName="webAccountNumber" [isMandatory]="false" [isDisabled]="true"></generic-input>
             </td>
           </tr>
         </table>

@@ -116,7 +116,7 @@ public class Confrere implements ITiers {
 	@Column(length = 60)
 	private String mailRecipient;
 
-	@Column(length = 60)
+	@Column(length = 100)
 	private String address;
 
 	@Column(length = 10)

@@ -143,6 +143,9 @@ public class Provision implements IId, IAttachment {
 	private Boolean isComplexeFile;
 
 	@Column(nullable = false)
+	private Boolean isBilan;
+
+	@Column(nullable = false)
 	private Boolean isDocumentScanning;
 
 	@Column(nullable = false)
@@ -454,6 +457,14 @@ public class Provision implements IId, IAttachment {
 
 	public void setSimpleProvision(SimpleProvision simpleProvision) {
 		this.simpleProvision = simpleProvision;
+	}
+
+	public Boolean getIsBilan() {
+		return isBilan;
+	}
+
+	public void setIsBilan(Boolean isBilan) {
+		this.isBilan = isBilan;
 	}
 
 }

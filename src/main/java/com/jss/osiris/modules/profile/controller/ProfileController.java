@@ -20,6 +20,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.jss.osiris.libs.ActiveDirectoryHelper;
@@ -29,6 +30,8 @@ import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.profile.model.User;
 import com.jss.osiris.modules.profile.service.EmployeeService;
+import com.jss.osiris.modules.tiers.model.Responsable;
+import com.jss.osiris.modules.tiers.service.ResponsableService;
 
 @RestController
 public class ProfileController {
@@ -46,6 +49,9 @@ public class ProfileController {
 
 	@Autowired
 	ActiveDirectoryHelper activeDirectoryHelper;
+
+	@Autowired
+	ResponsableService responsableService;
 
 	@GetMapping(inputEntryPoint + "/login/check")
 	public ResponseEntity<Boolean> checkLogin() {
@@ -82,6 +88,25 @@ public class ProfileController {
 			SecurityContextHolder.getContext().setAuthentication(null);
 			return new ResponseEntity<Boolean>(false, HttpStatus.OK);
 		}
+	}
+
+	@PostMapping(inputEntryPoint + "/login/website")
+	public ResponseEntity<Responsable> loginWebsiteUser(@RequestBody User user, HttpServletRequest request)
+			throws OsirisValidationException {
+		validationHelper.validateString(user.getUsername(), true, 255, "Username");
+		validationHelper.validateString(user.getPassword(), true, 255, "Password");
+		return new ResponseEntity<Responsable>(employeeService.loginWebsiteUser(user), HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/responsable/password")
+	public ResponseEntity<Boolean> renewResponsablePassword(@RequestParam Integer idResponsable)
+			throws OsirisValidationException, OsirisException {
+		Responsable responsable = responsableService.getResponsable(idResponsable);
+
+		if (responsable == null)
+			throw new OsirisValidationException("idResponsable");
+		return new ResponseEntity<Boolean>(employeeService.renewResponsablePassword(responsable),
+				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/login/roles")

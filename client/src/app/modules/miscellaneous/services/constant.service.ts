@@ -246,6 +246,10 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.billingTypeComplexeFile;
   }
 
+  getBillingTypeBilan() {
+    return this.constant.billingTypeBilan;
+  }
+
   getBillingTypeDocumentScanning() {
     return this.constant.billingTypeDocumentScanning;
   }

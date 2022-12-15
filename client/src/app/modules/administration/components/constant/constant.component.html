@@ -415,6 +415,14 @@
           </tr>
           <tr>
             <td>
+              <autocomplete-billing-type [(model)]="constant.billingTypeBilan"
+                label="Type de poste de facturation - Bilan" [form]="constantForm" propertyName="billingTypeBilan"
+                [isMandatory]="true" [isDisabled]="!editMode">
+              </autocomplete-billing-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <autocomplete-billing-type [(model)]="constant.billingTypeDocumentScanning"
                 label="Type de poste de facturation - Numérisation de document" [form]="constantForm"
                 propertyName="billingTypeDocumentScanning" [isMandatory]="true" [isDisabled]="!editMode">

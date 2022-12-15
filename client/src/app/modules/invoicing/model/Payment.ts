@@ -5,6 +5,7 @@ import { PaymentWay } from "./PaymentWay";
 
 export interface Payment {
   id: number;
+  bankId: string;
   paymentDate: Date;
   paymentAmount: number;
   paymentWay: PaymentWay;

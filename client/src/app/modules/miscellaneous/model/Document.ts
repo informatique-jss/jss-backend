@@ -36,6 +36,7 @@ export interface Document {
   paymentDeadlineType: PaymentDeadlineType;
   refundType: RefundType;
   refundIBAN: string;
+  refundBic: string;
   billingClosureType: BillingClosureType;
   billingClosureRecipientType: BillingClosureRecipientType;
   billingLabel: string;

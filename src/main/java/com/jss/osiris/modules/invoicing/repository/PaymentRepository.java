@@ -12,27 +12,30 @@ import com.jss.osiris.modules.invoicing.model.PaymentSearchResult;
 
 public interface PaymentRepository extends CrudRepository<Payment, Integer> {
 
-    @Query("select p from Payment p  where p.invoice is null and p.customerOrder is null and p.isExternallyAssociated=false")
-    List<Payment> findNotAssociatedPayments();
+        @Query("select p from Payment p  where p.invoice is null and p.customerOrder is null and p.isExternallyAssociated=false")
+        List<Payment> findNotAssociatedPayments();
 
-    @Query(nativeQuery = true, value = " select p.id as id,"
-            + " pw.label as paymentWayLabel,"
-            + " p.payment_Date as paymentDate,"
-            + " p.payment_amount  as paymentAmount ,"
-            + " p.label as paymentLabel,"
-            + " p.is_externally_associated  as isExternallyAssociated ,"
-            + "  p.id_customer_order as customerOrderId ,"
-            + " p.id_invoice as invoiceId"
-            + " from payment p "
-            + " join payment_way pw on pw.id = p.id_payment_way"
-            + " where (:isHideAssociatedPayments=false OR (p.id_invoice is null and p.id_customer_Order is null and p.is_externally_associated=false)) "
-            + "  and ( COALESCE(:paymentWays)=0 or p.id_payment_way in (:paymentWays) )"
-            + " and p.payment_date>=:startDate and p.payment_date<=:endDate "
-            + "  and (:minAmount is null or p.payment_amount>=CAST(CAST(:minAmount as text) as real) ) "
-            + "  and (:maxAmount is null or p.payment_amount<=CAST(CAST(:maxAmount as text) as real) )"
-            + " and (:label is null or  upper(p.label)  like '%' || upper(CAST(:label as text))  || '%' )")
-    List<PaymentSearchResult> findPayments(@Param("paymentWays") List<Integer> paymentWays,
-            @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
-            @Param("minAmount") Float minAmount, @Param("maxAmount") Float maxAmount, @Param("label") String label,
-            @Param("isHideAssociatedPayments") boolean isHideAssociatedPayments);
+        @Query(nativeQuery = true, value = " select p.id as id,"
+                        + " pw.label as paymentWayLabel,"
+                        + " p.payment_Date as paymentDate,"
+                        + " p.payment_amount  as paymentAmount ,"
+                        + " p.label as paymentLabel,"
+                        + " p.is_externally_associated  as isExternallyAssociated ,"
+                        + "  p.id_customer_order as customerOrderId ,"
+                        + " p.id_invoice as invoiceId"
+                        + " from payment p "
+                        + " join payment_way pw on pw.id = p.id_payment_way"
+                        + " where (:isHideAssociatedPayments=false OR (p.id_invoice is null and p.id_customer_Order is null and p.is_externally_associated=false)) "
+                        + "  and ( COALESCE(:paymentWays)=0 or p.id_payment_way in (:paymentWays) )"
+                        + " and p.payment_date>=:startDate and p.payment_date<=:endDate "
+                        + "  and (:minAmount is null or p.payment_amount>=CAST(CAST(:minAmount as text) as real) ) "
+                        + "  and (:maxAmount is null or p.payment_amount<=CAST(CAST(:maxAmount as text) as real) )"
+                        + " and (:label is null or  upper(p.label)  like '%' || upper(CAST(:label as text))  || '%' )")
+        List<PaymentSearchResult> findPayments(@Param("paymentWays") List<Integer> paymentWays,
+                        @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                        @Param("minAmount") Float minAmount, @Param("maxAmount") Float maxAmount,
+                        @Param("label") String label,
+                        @Param("isHideAssociatedPayments") boolean isHideAssociatedPayments);
+
+        Payment findByBankId(String id);
 }

@@ -43,14 +43,6 @@
                 - {{invoiceItem.discountAmount|number}} €
               </td>
             </tr>
-            <tr *ngIf="invoiceItem.vat">
-              <td>
-                {{invoiceItem.vat.label}}
-              </td>
-              <td class="td-price">
-                {{invoiceItem.vatPrice|number}} €
-              </td>
-            </tr>
           </table>
         </ng-container>
       </ng-container>

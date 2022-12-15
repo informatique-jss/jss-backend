@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.modules.invoicing.service.PaymentService;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.AttachmentType;
 import com.jss.osiris.modules.miscellaneous.repository.AttachmentRepository;
@@ -86,6 +87,9 @@ public class AttachmentServiceImpl implements AttachmentService {
     @Autowired
     SimpleProvisionService simpleProvisionService;
 
+    @Autowired
+    PaymentService paymentService;
+
     @Override
     public List<Attachment> getAttachments() {
         return IterableUtils.toList(attachmentRepository.findAll());
@@ -116,6 +120,10 @@ public class AttachmentServiceImpl implements AttachmentService {
     public List<Attachment> addAttachment(InputStream file, Integer idEntity, String entityType,
             AttachmentType attachmentType,
             String filename, Boolean replaceExistingAttachementType, String description) throws OsirisException {
+
+        if (entityType.equals("Ofx"))
+            return this.paymentService.uploadOfxFile(file);
+
         String absoluteFilePath = storageFileService.saveFile(file, filename,
                 entityType + File.separator + idEntity);
 

@@ -181,6 +181,12 @@
                   propertyName="refundIBAN" [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="40">
                 </generic-input>
               </td>
+              <td
+                *ngIf=" refundDocument !=undefined && refundDocument.refundType!=undefined && refundDocument.refundType.code!=undefined && refundDocument.refundType.id==refundTypeVirement.id">
+                <generic-input [(model)]="refundDocument.refundBic" label="BIC" [form]="settlementBillingForm"
+                  propertyName="refundBic" [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="40">
+                </generic-input>
+              </td>
             </tr>
           </table>
           <addressing [editMode]="editMode" [document]="refundDocument" [onlyMail]=" true">

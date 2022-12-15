@@ -73,3 +73,7 @@ table {
 .middle-width {
   min-width: 500px;
 }
+
+.min-height {
+  min-height: 1000px;
+}

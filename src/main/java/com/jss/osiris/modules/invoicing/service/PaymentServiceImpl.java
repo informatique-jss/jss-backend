@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.invoicing.service;
 
+import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +16,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.ofx.OFXParser;
+import com.jss.osiris.libs.ofx.OFXStatement;
+import com.jss.osiris.libs.ofx.StatementTransaction;
 import com.jss.osiris.libs.search.model.IndexEntity;
 import com.jss.osiris.libs.search.service.SearchService;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
@@ -27,6 +31,7 @@ import com.jss.osiris.modules.invoicing.model.PaymentSearchResult;
 import com.jss.osiris.modules.invoicing.model.PaymentWay;
 import com.jss.osiris.modules.invoicing.model.Refund;
 import com.jss.osiris.modules.invoicing.repository.PaymentRepository;
+import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.NotificationService;
 import com.jss.osiris.modules.quotation.model.Affaire;
@@ -76,6 +81,9 @@ public class PaymentServiceImpl implements PaymentService {
     @Autowired
     NotificationService notificationService;
 
+    @Autowired
+    OFXParser ofxParser;
+
     @Value("${invoicing.payment.limit.refund.euros}")
     private String payementLimitRefundInEuros;
 
@@ -118,8 +126,37 @@ public class PaymentServiceImpl implements PaymentService {
     @Transactional(rollbackFor = Exception.class)
     public void payementGrab()
             throws OsirisException {
-        // TODO : plug bank API
         automatchPaymentsInvoicesAndGeneratePaymentAccountingRecords();
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public List<Attachment> uploadOfxFile(InputStream file) throws OsirisException {
+        OFXStatement operationList = ofxParser.parseOfx(file);
+
+        if (operationList != null && operationList.getAccountStatements() != null
+                && operationList.getAccountStatements().size() > 0
+                && operationList.getAccountStatements().get(0) != null
+                && operationList.getAccountStatements().get(0).getBankTransactionList() != null
+                && operationList.getAccountStatements().get(0).getBankTransactionList().transactions() != null
+                && operationList.getAccountStatements().get(0).getBankTransactionList().transactions().size() > 0)
+            for (StatementTransaction transaction : operationList.getAccountStatements().get(0).getBankTransactionList()
+                    .transactions()) {
+                Payment existingTransaction = paymentRepository.findByBankId(transaction.id());
+                if (existingTransaction == null) {
+                    Payment payment = new Payment();
+                    payment.setBankId(transaction.id());
+                    payment.setExternallyAssociated(false);
+                    payment.setLabel(transaction.name() + " " + transaction.memo());
+                    payment.setPaymentAmount(Math.abs(transaction.amount().floatValue()));
+                    payment.setPaymentDate(transaction.datePosted().atStartOfDay());
+                    payment.setPaymentWay(transaction.amount().floatValue() > 0 ? constantService.getPaymentWayInbound()
+                            : constantService.getPaymentWayOutboud());
+                    addOrUpdatePayment(payment);
+                }
+            }
+        automatchPaymentsInvoicesAndGeneratePaymentAccountingRecords();
+        return null;
     }
 
     private void automatchPaymentsInvoicesAndGeneratePaymentAccountingRecords()
@@ -221,7 +258,8 @@ public class PaymentServiceImpl implements PaymentService {
                     }
                 }
 
-                associateOutboundPaymentAndRefund(payment, refundFound, generateWaitingAccountAccountingRecords);
+                if (refundFound != null)
+                    associateOutboundPaymentAndRefund(payment, refundFound, generateWaitingAccountAccountingRecords);
 
                 // If payment not used, put it in waiting account
                 if (generateWaitingAccountAccountingRecords) {
@@ -463,7 +501,7 @@ public class PaymentServiceImpl implements PaymentService {
 
         if (refundAmount == paymentAmount) {
             generateWaitingAccountAccountingRecords = false;
-            accountingRecordService.generateAccountingRecordsForRefundPayment(refund, payment, refundAmount);
+            accountingRecordService.generateAccountingRecordsForRefund(refund);
 
             refund.setIsMatched(true);
             refundService.addOrUpdateRefund(refund);
@@ -496,8 +534,15 @@ public class PaymentServiceImpl implements PaymentService {
         if (payment.getLabel() != null) {
             Matcher m = p.matcher(payment.getLabel());
             while (m.find()) {
-                List<IndexEntity> tmpEntitiesFound = searchService.searchForEntitiesById(Integer.parseInt(m.group()),
-                        entityTypesToSearch);
+                Integer idToFind = null;
+                List<IndexEntity> tmpEntitiesFound = null;
+                try {
+                    idToFind = Integer.parseInt(m.group());
+                } catch (NumberFormatException e) {
+                }
+
+                if (idToFind != null)
+                    tmpEntitiesFound = searchService.searchForEntitiesById(idToFind, entityTypesToSearch);
                 if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
                     for (IndexEntity newEntity : tmpEntitiesFound) {
                         boolean found = false;

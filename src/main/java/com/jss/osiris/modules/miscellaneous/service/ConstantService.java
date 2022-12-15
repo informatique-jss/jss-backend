@@ -148,6 +148,8 @@ public interface ConstantService {
 
     public BillingType getBillingTypeComplexeFile() throws OsirisException;
 
+    public BillingType getBillingTypeBilan() throws OsirisException;
+
     public BillingType getBillingTypeDocumentScanning() throws OsirisException;
 
     public BillingType getBillingTypeEmergency() throws OsirisException;

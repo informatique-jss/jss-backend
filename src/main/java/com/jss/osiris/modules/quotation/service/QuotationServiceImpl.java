@@ -21,6 +21,7 @@ import com.jss.osiris.modules.invoicing.service.InvoiceItemService;
 import com.jss.osiris.modules.miscellaneous.model.AssoSpecialOfferBillingType;
 import com.jss.osiris.modules.miscellaneous.model.BillingItem;
 import com.jss.osiris.modules.miscellaneous.model.BillingType;
+import com.jss.osiris.modules.miscellaneous.model.City;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.miscellaneous.model.Vat;
@@ -154,8 +155,7 @@ public class QuotationServiceImpl implements QuotationService {
             quotation = quotationRepository.save(quotation);
         }
 
-        if (isNewQuotation)
-            quotation = quotationRepository.save(quotation);
+        quotation = quotationRepository.save(quotation);
 
         getAndSetInvoiceItemsForQuotation(quotation, true);
 
@@ -166,8 +166,8 @@ public class QuotationServiceImpl implements QuotationService {
         if (isNewQuotation) {
             notificationService.notifyNewQuotation(quotation);
 
-            // TODO : remove when website ready ! if (quotation.getIsCreatedFromWebSite())
-            mailHelper.sendQuotationCreationConfirmationToCustomer(quotation);
+            if (quotation.getIsCreatedFromWebSite())
+                mailHelper.sendQuotationCreationConfirmationToCustomer(quotation);
         }
         return quotation;
     }
@@ -272,11 +272,16 @@ public class QuotationServiceImpl implements QuotationService {
                     invoiceItem.setLabel(invoiceItem.getLabel() + " ("
                             + characterPriceService.getCharacterNumber(provision) + ")");
 
+                if (provision.getAnnouncement().getDepartment() != null)
+                    invoiceItem.setLabel(
+                            invoiceItem.getLabel() + " - " + provision.getAnnouncement().getDepartment().getCode());
+
             } else {
                 invoiceItem.setPreTaxPrice(0f);
             }
-        } else if (provision.getIsPublicationPaper() && billingItem.getBillingType().getId()
-                .equals(constantService.getBillingTypePublicationPaper().getId())) {
+        } else if (provision.getIsPublicationPaper() != null && provision.getIsPublicationPaper()
+                && billingItem.getBillingType().getId()
+                        .equals(constantService.getBillingTypePublicationPaper().getId())) {
             // Compute publication paper price
             Float nbr = 0f;
             if (provision.getPublicationPaperAffaireNumber() != null
@@ -321,7 +326,7 @@ public class QuotationServiceImpl implements QuotationService {
                     if (billingItems != null && billingItems.size() > 0) {
                         BillingItem billingItem = getAppliableBillingItem(billingItems);
 
-                        if (billingType.getAccountingAccountProduct() != null
+                        if (billingItem != null && billingType.getAccountingAccountProduct() != null
                                 && (!billingItem.getBillingType().getIsOptionnal()
                                         || hasOption(billingItem.getBillingType(), provision))) {
 
@@ -385,85 +390,93 @@ public class QuotationServiceImpl implements QuotationService {
     }
 
     private boolean hasOption(BillingType billingType, Provision provision) throws OsirisException {
-        if (provision.getIsLogo() == null)
-            return false;
-        if (billingType.getId().equals(constantService.getBillingTypeLogo().getId()) && provision.getIsLogo())
+        if (billingType.getId().equals(constantService.getBillingTypeLogo().getId()) && provision.getIsLogo() != null
+                && provision.getIsLogo())
             return true;
         if (billingType.getId().equals(constantService.getBillingTypeRedactedByJss().getId())
-                && provision.getIsRedactedByJss())
+                && provision.getIsRedactedByJss() != null && provision.getIsRedactedByJss())
             return true;
         if (billingType.getId().equals(constantService.getBillingTypeBaloPackage().getId())
-                && provision.getIsBaloPackage())
+                && provision.getIsBaloPackage() != null && provision.getIsBaloPackage())
             return true;
         if (billingType.getId().equals(constantService.getBillingTypePublicationReceipt().getId())
-                && provision.getIsPublicationReceipt())
+                && provision.getIsPublicationReceipt() != null && provision.getIsPublicationReceipt())
             return true;
         if (billingType.getId().equals(constantService.getBillingTypePublicationFlag().getId())
-                && provision.getIsPublicationFlag())
+                && provision.getIsPublicationFlag() != null && provision.getIsPublicationFlag())
             return true;
         if (billingType.getId().equals(constantService.getBillingTypeBodaccFollowup().getId())
-                && provision.getIsBodaccFollowup())
+                && provision.getIsBodaccFollowup() != null && provision.getIsBodaccFollowup())
             return true;
         if (billingType.getId().equals(constantService.getBillingTypeBodaccFollowupAndRedaction().getId())
-                && provision.getIsBodaccFollowupAndRedaction())
+                && provision.getIsBodaccFollowupAndRedaction() != null && provision.getIsBodaccFollowupAndRedaction())
             return true;
         if (billingType.getId().equals(constantService.getBillingTypeNantissementDeposit().getId())
-                && provision.getIsNantissementDeposit())
+                && provision.getIsNantissementDeposit() != null && provision.getIsNantissementDeposit())
             return true;
         if (billingType.getId().equals(constantService.getBillingTypeSocialShareNantissementRedaction().getId())
+                && provision.getIsSocialShareNantissementRedaction() != null
                 && provision.getIsSocialShareNantissementRedaction())
             return true;
         if (billingType.getId().equals(constantService.getBillingTypeBusinnessNantissementRedaction().getId())
+                && provision.getIsBusinnessNantissementRedaction() != null
                 && provision.getIsBusinnessNantissementRedaction())
             return true;
         if (billingType.getId().equals(constantService.getBillingTypeSellerPrivilegeRedaction().getId())
-                && provision.getIsSellerPrivilegeRedaction())
+                && provision.getIsSellerPrivilegeRedaction() != null && provision.getIsSellerPrivilegeRedaction())
             return true;
         if (billingType.getId().equals(constantService.getBillingTypeTreatmentMultipleModiciation().getId())
+                && provision.getIsTreatmentMultipleModiciation() != null
                 && provision.getIsTreatmentMultipleModiciation())
             return true;
         if (billingType.getId().equals(constantService.getBillingTypeVacationMultipleModification().getId())
+                && provision.getIsVacationMultipleModification() != null
                 && provision.getIsVacationMultipleModification())
             return true;
         if (billingType.getId().equals(constantService.getBillingTypeRegisterPurchase().getId())
-                && provision.getIsRegisterPurchase())
+                && provision.getIsRegisterPurchase() != null && provision.getIsRegisterPurchase())
             return true;
         if (billingType.getId().equals(constantService.getBillingTypeRegisterInitials().getId())
-                && provision.getIsRegisterInitials())
+                && provision.getIsRegisterInitials() != null && provision.getIsRegisterInitials())
             return true;
         if (billingType.getId().equals(constantService.getBillingTypeRegisterShippingCosts().getId())
-                && provision.getIsRegisterShippingCosts())
+                && provision.getIsRegisterShippingCosts() != null && provision.getIsRegisterShippingCosts())
             return true;
         if (billingType.getId().equals(constantService.getBillingTypeDisbursement().getId())
-                && provision.getIsDisbursement())
+                && provision.getIsDisbursement() != null && provision.getIsDisbursement())
             return true;
         if (billingType.getId().equals(constantService.getBillingTypeFeasibilityStudy().getId())
-                && provision.getIsFeasibilityStudy())
+                && provision.getIsFeasibilityStudy() != null && provision.getIsFeasibilityStudy())
             return true;
         if (billingType.getId().equals(constantService.getBillingTypeChronopostFees().getId())
-                && provision.getIsChronopostFees())
+                && provision.getIsChronopostFees() != null && provision.getIsChronopostFees())
             return true;
         if (billingType.getId().equals(constantService.getBillingTypeBankCheque().getId())
-                && provision.getIsBankCheque())
+                && provision.getIsBankCheque() != null && provision.getIsBankCheque())
             return true;
         if (billingType.getId().equals(constantService.getBillingTypeComplexeFile().getId())
-                && provision.getIsComplexeFile())
+                && provision.getIsComplexeFile() != null && provision.getIsComplexeFile())
+            return true;
+        if (billingType.getId().equals(constantService.getBillingTypeBilan().getId())
+                && provision.getIsBilan() != null && provision.getIsBilan())
             return true;
         if (billingType.getId().equals(constantService.getBillingTypeDocumentScanning().getId())
-                && provision.getIsDocumentScanning())
+                && provision.getIsDocumentScanning() != null && provision.getIsDocumentScanning())
             return true;
-        if (billingType.getId().equals(constantService.getBillingTypeEmergency().getId()) && provision.getIsEmergency())
+        if (billingType.getId().equals(constantService.getBillingTypeEmergency().getId())
+                && provision.getIsEmergency() != null && provision.getIsEmergency())
             return true;
         if (billingType.getId().equals(constantService.getBillingTypeComplexeFile().getId())
-                && provision.getIsComplexeFile())
+                && provision.getIsComplexeFile() != null && provision.getIsComplexeFile())
             return true;
         if (billingType.getId().equals(constantService.getBillingTypeDocumentScanning().getId())
-                && provision.getIsDocumentScanning())
+                && provision.getIsDocumentScanning() != null && provision.getIsDocumentScanning())
             return true;
-        if (billingType.getId().equals(constantService.getBillingTypeEmergency().getId()) && provision.getIsEmergency())
+        if (billingType.getId().equals(constantService.getBillingTypeEmergency().getId())
+                && provision.getIsEmergency() != null && provision.getIsEmergency())
             return true;
         if (billingType.getId().equals(constantService.getBillingTypePublicationPaper().getId())
-                && provision.getIsPublicationPaper())
+                && provision.getIsPublicationPaper() != null && provision.getIsPublicationPaper())
             return true;
 
         return false;
@@ -507,8 +520,9 @@ public class QuotationServiceImpl implements QuotationService {
             if (billingDocument == null || billingDocument.getBillingLabelType() == null
                     || billingDocument.getBillingLabelType().getId()
                             .equals(constantService.getBillingLabelTypeCustomer().getId())) {
+                City city = cityService.getCity(customerOrder.getCity().getId());
                 vat = vatService.getGeographicalApplicableVat(customerOrder.getCountry(),
-                        customerOrder.getCity().getDepartment(),
+                        city.getDepartment(),
                         customerOrder.getIsIndividual());
             } else if (billingDocument.getBillingLabelType().getId()
                     .equals(constantService.getBillingLabelTypeCodeAffaire().getId())) {

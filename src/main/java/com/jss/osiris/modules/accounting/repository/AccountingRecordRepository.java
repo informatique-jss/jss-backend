@@ -55,6 +55,8 @@ public interface AccountingRecordRepository extends CrudRepository<AccountingRec
                         " r.id_customer_order	 as customerId, " +
                         " r.id_payment as paymentId, " +
                         " r2.operation_id as contrePasseOperationId, " +
+                        " (select STRING_AGG( case when af.denomination is not null and af.denomination!='' then af.denomination else af.firstname || ' '||af.lastname end,', ' order by 1) as affaireLabel from asso_affaire_order asso join affaire af on af.id = asso.id_affaire where  asso.id_customer_order = i.customer_order_id or asso.id_customer_order = r.id_customer_order)  as affaireLabel,"
+                        +
                         " COALESCE(re1.firstname || ' ' || re1.lastname ,re2.firstname || ' ' || re2.lastname ) as responsable, "
                         +
                         " r.id_deposit as depositId " +

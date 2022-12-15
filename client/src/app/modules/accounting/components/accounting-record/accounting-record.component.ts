@@ -53,6 +53,7 @@ export class AccountingRecordComponent implements OnInit {
     this.displayedColumns = [];
     this.displayedColumns.push({ id: "invoice", fieldName: "invoiceId", label: "Facture", actionLinkFunction: this.getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la facture associée" } as SortTableColumn);
     this.displayedColumns.push({ id: "customerOrder", fieldName: "customerId", label: "Commande", actionLinkFunction: this.getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la commande associée" } as SortTableColumn);
+    this.displayedColumns.push({ id: "affaireLabel", fieldName: "affaireLabel", label: "Affaire(s)" } as SortTableColumn);
     this.displayedColumns.push({ id: "accountingDateTime", fieldName: "accountingDateTime", label: "Date d'écriture", valueFonction: this.formatDateForSortTable } as SortTableColumn);
     this.displayedColumns.push({ id: "operationDateTime", fieldName: "operationDateTime", label: "Date d'opération", valueFonction: this.formatDateTimeForSortTable } as SortTableColumn);
     this.displayedColumns.push({ id: "operationId", fieldName: "operationId", label: "N° d'écriture" } as SortTableColumn);
@@ -208,13 +209,13 @@ export class AccountingRecordComponent implements OnInit {
       let accumulatedData = [];
       let totalLine = {} as any;
       totalLine.label = "Total";
-      totalLine.debit = debit;
-      totalLine.credit = credit;
+      totalLine.debit = Math.round(debit * 100) / 100;
+      totalLine.credit = Math.round(credit * 100) / 100;
       accumulatedData.push(totalLine);
 
       let balanceLine = {} as any;
       balanceLine.label = "Balance";
-      balanceLine.credit = balance;
+      balanceLine.credit = Math.round(balance * 100) / 100;
       accumulatedData.push(balanceLine);
 
       this.accumulatedDataSource.data = accumulatedData;

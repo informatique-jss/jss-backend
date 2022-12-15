@@ -49,6 +49,7 @@ export class ProvisionOptionsComponent implements OnInit {
   billingTypeChronopostFees = this.constantService.getBillingTypeChronopostFees();
   billingTypeBankCheque = this.constantService.getBillingTypeBankCheque();
   billingTypeComplexeFile = this.constantService.getBillingTypeComplexeFile();
+  billingTypeBilan = this.constantService.getBillingTypeBilan();
   billingTypeDocumentScanning = this.constantService.getBillingTypeDocumentScanning();
   billingTypeEmergency = this.constantService.getBillingTypeEmergency();
 
@@ -96,6 +97,7 @@ export class ProvisionOptionsComponent implements OnInit {
       if (!this.provision.isChronopostFees) this.provision.isChronopostFees = false;
       if (!this.provision.isBankCheque) this.provision.isBankCheque = false;
       if (!this.provision.isComplexeFile) this.provision.isComplexeFile = false;
+      if (!this.provision.isBilan) this.provision.isBilan = false;
       if (!this.provision.isDocumentScanning) this.provision.isDocumentScanning = false;
       if (!this.provision.isEmergency) this.provision.isEmergency = false;
       if (!this.provision.isComplexeFile) this.provision.isComplexeFile = false;

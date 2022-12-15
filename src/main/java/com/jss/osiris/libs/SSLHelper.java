@@ -12,6 +12,8 @@ import javax.net.ssl.X509TrustManager;
 
 public class SSLHelper {
 
+	private static final String ALPHA_NUMERIC_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz@+=&!";
+
 	public static void disableCertificateValidation() {
 		// Create a trust manager that does not validate certificate chains
 		TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
@@ -46,6 +48,15 @@ public class SSLHelper {
 		} catch (Exception e) {
 		}
 		System.setProperty("jsse.enableSNIExtension", "false");
+	}
+
+	public static String randomPassword(int count) {
+		StringBuilder builder = new StringBuilder();
+		while (count-- != 0) {
+			int character = (int) (Math.random() * ALPHA_NUMERIC_STRING.length());
+			builder.append(ALPHA_NUMERIC_STRING.charAt(character));
+		}
+		return builder.toString();
 	}
 
 }

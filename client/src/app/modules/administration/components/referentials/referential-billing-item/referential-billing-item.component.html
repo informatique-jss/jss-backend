@@ -23,9 +23,9 @@
           </tr>
           <tr>
             <td>
-              <select-billing-type [(model)]="selectedEntity.billingType" label="Famille de poste de facturation"
+              <autocomplete-billing-type [(model)]="selectedEntity.billingType" label="Famille de poste de facturation"
                 [form]="entityForm" propertyName="billingType" [isMandatory]="true" [isDisabled]="!editMode">
-              </select-billing-type>
+              </autocomplete-billing-type>
             </td>
           </tr>
           <tr>

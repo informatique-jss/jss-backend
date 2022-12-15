@@ -1418,7 +1418,7 @@ public class AccountingExportHelper {
         }
 
         public File generateBillingClosure(List<AccountingRecordSearchResult> accountingRecords, String tiersLabel,
-                        boolean showInvoiceDetails) throws OsirisException {
+                        boolean showAffaireDetails) throws OsirisException {
 
                 accountingRecords.sort(new Comparator<AccountingRecordSearchResult>() {
                         @Override
@@ -1426,6 +1426,14 @@ public class AccountingExportHelper {
                                 return sortRecords(o1, o2);
                         }
                 });
+
+                if (showAffaireDetails)
+                        accountingRecords.sort(new Comparator<AccountingRecordSearchResult>() {
+                                @Override
+                                public int compare(AccountingRecordSearchResult o1, AccountingRecordSearchResult o2) {
+                                        return o1.getAffaireLabel().compareTo(o2.getAffaireLabel());
+                                }
+                        });
 
                 XSSFWorkbook wb = new XSSFWorkbook();
 
@@ -1533,7 +1541,17 @@ public class AccountingExportHelper {
                 Float debit = 0f;
                 Float credit = 0f;
                 if (accountingRecords != null) {
+                        String currentAffaire = "";
                         for (AccountingRecordSearchResult accountingRecord : accountingRecords) {
+                                if (showAffaireDetails && !currentAffaire.equals(accountingRecord.getAffaireLabel())) {
+                                        currentAffaire = accountingRecord.getAffaireLabel();
+                                        currentRow = currentSheet.createRow(currentLine++);
+                                        currentRow = currentSheet.createRow(currentLine++);
+                                        currentColumn = 0;
+                                        currentCell = currentRow.createCell(currentColumn++);
+                                        currentCell.setCellValue(currentAffaire);
+                                        currentCell.setCellStyle(recordCellStyle);
+                                }
                                 currentRow = currentSheet.createRow(currentLine++);
                                 currentColumn = 0;
                                 currentCell = currentRow.createCell(currentColumn++);

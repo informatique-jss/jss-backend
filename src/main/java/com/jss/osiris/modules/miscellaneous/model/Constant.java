@@ -252,6 +252,10 @@ public class Constant implements Serializable, IId {
 	private BillingType billingTypeComplexeFile;
 
 	@ManyToOne
+	@JoinColumn(name = "id_billing_type_bilan")
+	private BillingType billingTypeBilan;
+
+	@ManyToOne
 	@JoinColumn(name = "id_billing_type_document_scanning")
 	private BillingType billingTypeDocumentScanning;
 
@@ -1458,6 +1462,14 @@ public class Constant implements Serializable, IId {
 
 	public void setLanguageFrench(Language languageFrench) {
 		this.languageFrench = languageFrench;
+	}
+
+	public BillingType getBillingTypeBilan() {
+		return billingTypeBilan;
+	}
+
+	public void setBillingTypeBilan(BillingType billingTypeBilan) {
+		this.billingTypeBilan = billingTypeBilan;
 	}
 
 }

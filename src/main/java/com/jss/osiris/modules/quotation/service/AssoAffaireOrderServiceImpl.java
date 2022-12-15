@@ -11,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.search.service.IndexEntityService;
+import com.jss.osiris.modules.invoicing.model.InvoiceItem;
+import com.jss.osiris.modules.invoicing.service.InvoiceItemService;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
@@ -80,6 +82,9 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
     @Autowired
     ConstantService constantService;
 
+    @Autowired
+    InvoiceItemService invoiceItemService;
+
     @Override
     public List<AssoAffaireOrder> getAssoAffaireOrders() {
         return IterableUtils.toList(assoAffaireOrderRepository.findAll());
@@ -134,6 +139,13 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
         for (Provision provision : assoAffaireOrder.getProvisions()) {
             provision.setAssoAffaireOrder(assoAffaireOrder);
+
+            if (provision.getId() != null && provision.getInvoiceItems() != null)
+                for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
+                    invoiceItem.setProvision(provision);
+                    invoiceItemService.addOrUpdateInvoiceItem(invoiceItem);
+                }
+
             if (provision.getDomiciliation() != null) {
                 Domiciliation domiciliation = provision.getDomiciliation();
                 if (customerOrder.getId() == null || domiciliation.getDomiciliationStatus() == null)

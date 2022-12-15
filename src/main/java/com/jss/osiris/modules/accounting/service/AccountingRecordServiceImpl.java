@@ -370,12 +370,6 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   }
 
   @Override
-  public void generateAccountingRecordsForRefundPayment(Refund refund, Payment payment, Float amount)
-      throws OsirisException {
-    // TODO !
-  }
-
-  @Override
   public void generateAccountingRecordsForTemporaryDepositForInvoice(Deposit deposit, Invoice invoice,
       Integer overrideAccountingOperationId)
       throws OsirisException {

@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { formatDateTimeForSortTable, toIsoString } from 'src/app/libs/FormatHelper';
+import { formatDateForSortTable, toIsoString } from 'src/app/libs/FormatHelper';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { AppService } from 'src/app/services/app.service';
@@ -23,7 +23,7 @@ export class OrderingListComponent implements OnInit {
   @Input() isForTiersIntegration: boolean = false;
   orders: OrderingSearchResult[] | undefined;
   availableColumns: SortTableColumn[] = [];
-  columnToDisplayOnDashboard: string[] = ["customerOrderLabel", "customerOrderStatus", "customerOrderDescription"];
+  columnToDisplayOnDashboard: string[] = ["customerOrderLabel", "customerOrderStatus", "affaireLabel", "createdDate"];
   displayedColumns: SortTableColumn[] = [];
   tableAction: SortTableAction[] = [];
   bookmark: OrderingSearch | undefined;
@@ -50,8 +50,6 @@ export class OrderingListComponent implements OnInit {
 
       if (this.bookmark && !this.isForDashboard && !this.isForTiersIntegration) {
         this.orderingSearch = {} as OrderingSearch;
-        this.orderingSearch.endDate = new Date(this.bookmark.endDate as any);
-        this.orderingSearch.startDate = new Date(this.bookmark.startDate as any);
         this.orderingSearch.salesEmployee = this.bookmark.salesEmployee;
         this.orderingSearch.customerOrderStatus = this.bookmark.customerOrderStatus;
       }
@@ -64,11 +62,12 @@ export class OrderingListComponent implements OnInit {
         this.appService.changeHeaderTitle("Commande")
       this.availableColumns = [];
       this.availableColumns.push({ id: "id", fieldName: "customerOrderId", label: "N° de la commande" } as SortTableColumn);
-      this.availableColumns.push({ id: "tiersLabel", fieldName: "tiersLabel", label: "Tiers", actionLinkFunction: this.getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la fiche du tiers" } as SortTableColumn);
-      this.availableColumns.push({ id: "customerOrderLabel", fieldName: "customerOrderLabel", label: "Donneur d'ordre", actionLinkFunction: this.getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la fiche du donneur d'ordre" } as SortTableColumn);
+      this.availableColumns.push({ id: "createdDate", fieldName: "createdDate", label: "Date de création", valueFonction: formatDateForSortTable } as SortTableColumn);
       this.availableColumns.push({ id: "affaireLabel", fieldName: "affaireLabel", label: "Affaire(s)", isShrinkColumn: true } as SortTableColumn);
       this.availableColumns.push({ id: "customerOrderStatus", fieldName: "customerOrderStatus", label: "Statut" } as SortTableColumn);
-      this.availableColumns.push({ id: "createdDate", fieldName: "createdDate", label: "Date de création", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
+      this.availableColumns.push({ id: "customerOrderDescription", fieldName: "customerOrderDescription", label: "Description", isShrinkColumn: true } as SortTableColumn);
+      this.availableColumns.push({ id: "tiersLabel", fieldName: "tiersLabel", label: "Tiers", actionLinkFunction: this.getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la fiche du tiers" } as SortTableColumn);
+      this.availableColumns.push({ id: "customerOrderLabel", fieldName: "customerOrderLabel", label: "Donneur d'ordre", actionLinkFunction: this.getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la fiche du donneur d'ordre" } as SortTableColumn);
       this.availableColumns.push({
         id: "salesEmployee", fieldName: "salesEmployeeId", label: "Commercial", displayAsEmployee: true, valueFonction: (element: any) => {
           if (element && this.allEmployees) {
@@ -79,7 +78,6 @@ export class OrderingListComponent implements OnInit {
           return undefined;
         }
       } as SortTableColumn);
-      this.availableColumns.push({ id: "customerOrderDescription", fieldName: "customerOrderDescription", label: "Description", isShrinkColumn: true } as SortTableColumn);
 
       this.setColumns();
 

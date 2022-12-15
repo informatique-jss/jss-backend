@@ -148,6 +148,7 @@ export class TiersComponent implements OnInit, AfterContentChecked {
     this.createMode = true;
     this.editMode = true;
     this.tiers = {} as Tiers;
+    this.tiers.language = this.constantService.getLanguageFrench();
     this.tiers.isProvisionalPaymentMandatory = true;
     this.tiers.responsables = [] as Array<Responsable>;
     this.tiersService.setCurrentViewedTiers(this.tiers);

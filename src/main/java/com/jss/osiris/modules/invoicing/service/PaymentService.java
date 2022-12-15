@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.invoicing.service;
 
+import java.io.InputStream;
 import java.util.List;
 
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
@@ -8,6 +9,7 @@ import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.model.PaymentSearch;
 import com.jss.osiris.modules.invoicing.model.PaymentSearchResult;
+import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.tiers.model.ITiers;
@@ -36,5 +38,7 @@ public interface PaymentService {
         public void setExternallyAssociated(Payment payment);
 
         public void unsetExternallyAssociated(Payment payment);
+
+        public List<Attachment> uploadOfxFile(InputStream file) throws OsirisException;
 
 }

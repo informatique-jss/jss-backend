@@ -61,7 +61,7 @@
       <td>
         <generic-input [(model)]="affaire.address" label="Adresse" [form]="affaireForm" propertyName="address"
           [isMandatory]="true" [isDisabled]="!editMode" [conditionnalRequired]="!this.affaire.isIndividual"
-          [maxLength]="60"></generic-input>
+          [maxLength]="100"></generic-input>
       </td>
       <td>
         <autocomplete-postal-code [(model)]="affaire.postalCode" [form]="affaireForm" propertyName="postalCode"
@@ -110,6 +110,10 @@
     <tr>
       <td>
         <generic-input [(model)]="affaire.paymentIban" label="IBAN" [form]="affaireForm" propertyName="paymentIban"
+          [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="40"></generic-input>
+      </td>
+      <td>
+        <generic-input [(model)]="affaire.paymentBic" label="BIC" [form]="affaireForm" propertyName="paymentBic"
           [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="40"></generic-input>
       </td>
     </tr>

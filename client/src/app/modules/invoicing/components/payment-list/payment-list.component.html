@@ -65,3 +65,7 @@
     </div>
   </div>
 </div>
+<button *ngIf="!isForDashboard " matTooltip="Importer un relevé de compte (format OFX)" mat-fab color="accent"
+  class="fab-button" (click)="importOfxFile()">
+  <mat-icon>upload</mat-icon>
+</button>

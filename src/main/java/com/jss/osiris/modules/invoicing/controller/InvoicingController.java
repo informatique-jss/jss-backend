@@ -176,10 +176,10 @@ public class InvoicingController {
             headers = new HttpHeaders();
             headers.add("filename",
                     "SPPS - Remboursements - "
-                            + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd HHmm")) + ".csv");
+                            + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd HHmm")) + ".xml");
             headers.setAccessControlExposeHeaders(Arrays.asList("filename"));
             headers.setContentLength(data.length);
-            headers.set("content-type", "text/csv");
+            headers.set("content-type", "application/xml");
 
             refunds.delete();
 

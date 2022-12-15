@@ -40,7 +40,7 @@ public class Regie implements Serializable, IId {
 	@Column(length = 20)
 	private String cedexComplement;
 
-	@Column(nullable = false, length = 60)
+	@Column(nullable = false, length = 100)
 	private String address;
 
 	@ManyToMany

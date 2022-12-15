@@ -1,16 +1,19 @@
 import { AfterContentChecked, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { formatDateTimeForSortTable, formatEurosForSortTable, toIsoString } from 'src/app/libs/FormatHelper';
+import { UploadAttachementDialogComponent } from 'src/app/modules/miscellaneous/components/upload-attachement-dialog/upload-attachement-dialog.component';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
+import { OFX_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
+import { IAttachment } from '../../../miscellaneous/model/IAttachment';
 import { Payment } from '../../model/Payment';
 import { PaymentSearch } from '../../model/PaymentSearch';
 import { PaymentSearchResult } from '../../model/PaymentSearchResult';
 import { PaymentSearchResultService } from '../../services/payment.search.result.service';
 import { PaymentService } from '../../services/payment.service';
-import { PaymentWayService } from '../../services/payment.way.service';
 
 @Component({
   selector: 'payment-list',
@@ -25,6 +28,7 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
   displayedColumns: SortTableColumn[] = [];
   columnToDisplayOnDashboard: string[] = ["payemntDate", "payemntAmount", "label"];
   tableAction: SortTableAction[] = [];
+  uploadAttachementDialogRef: MatDialogRef<UploadAttachementDialogComponent> | undefined;
 
   @Output() actionBypass: EventEmitter<Payment> = new EventEmitter<Payment>();
   @Input() overrideIconAction: string = "";
@@ -36,7 +40,7 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
     private paymentSearchResultService: PaymentSearchResultService,
     private paymentService: PaymentService,
     private constantService: ConstantService,
-    private paymentWayService: PaymentWayService,
+    protected uploadAttachementDialog: MatDialog,
     private changeDetectorRef: ChangeDetectorRef,
     private appService: AppService,
     private formBuilder: FormBuilder,
@@ -53,7 +57,7 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
     this.availableColumns.push({ id: "paymentWay", fieldName: "paymentWayLabel", label: "Sens" } as SortTableColumn);
     this.availableColumns.push({ id: "payemntDate", fieldName: "paymentDate", label: "Date", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
     this.availableColumns.push({ id: "payemntAmount", fieldName: "paymentAmount", label: "Montant", valueFonction: formatEurosForSortTable } as SortTableColumn);
-    this.availableColumns.push({ id: "label", fieldName: "paymentLabel", label: "Libellé" } as SortTableColumn);
+    this.availableColumns.push({ id: "label", fieldName: "paymentLabel", label: "Libellé", isShrinkColumn: true } as SortTableColumn);
     this.availableColumns.push({ id: "isInternallyAssociated", fieldName: "isInternallyAssociated", label: "Associé dans Osiris", valueFonction: (element: any) => { return (element.invoiceId || element.customerOrderId) ? "Oui" : "Non" } } as SortTableColumn);
     this.availableColumns.push({ id: "isExternallyAssociated", fieldName: "isExternallyAssociated", label: "Associé hors Osiris", valueFonction: (element: any) => { return element.isExternallyAssociated ? "Oui" : "Non" } } as SortTableColumn);
     this.availableColumns.push({ id: "invoice", fieldName: "invoiceId", label: "Facture associée", actionLinkFunction: this.getActionLink, actionIcon: "visibility", actionTooltip: "Voir la facture associée" } as SortTableColumn);
@@ -134,6 +138,18 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
         this.payments = response;
       })
     }
+  }
+
+  importOfxFile() {
+    this.uploadAttachementDialogRef = this.uploadAttachementDialog.open(UploadAttachementDialogComponent, {
+    });
+    this.uploadAttachementDialogRef.componentInstance.entity = { id: 1 } as IAttachment;
+    this.uploadAttachementDialogRef.componentInstance.entityType = OFX_ENTITY_TYPE.entityType;
+    this.uploadAttachementDialogRef.componentInstance.forcedAttachmentType = this.constantService.getAttachmentTypeCni();
+    this.uploadAttachementDialogRef.componentInstance.replaceExistingAttachementType = true;
+    this.uploadAttachementDialogRef.afterClosed().subscribe(response => {
+      this.searchPayments();
+    });
   }
 
   // TODO : à retirer avant la MEP !!

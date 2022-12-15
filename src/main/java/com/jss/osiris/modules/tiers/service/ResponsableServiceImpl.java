@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.search.model.IndexEntity;
 import com.jss.osiris.libs.search.service.IndexEntityService;
@@ -29,6 +30,12 @@ public class ResponsableServiceImpl implements ResponsableService {
 
     @Autowired
     IndexEntityService indexEntityService;
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Responsable addOrUpdateResponsable(Responsable responsable) {
+        return responsableRepository.save(responsable);
+    }
 
     @Override
     public List<Responsable> getResponsables() {
@@ -67,5 +74,10 @@ public class ResponsableServiceImpl implements ResponsableService {
         if (responsables != null)
             for (Responsable responsable : responsables)
                 indexEntityService.indexEntity(responsable, responsable.getId());
+    }
+
+    @Override
+    public Responsable getResponsableByLoginWeb(String loginWeb) {
+        return responsableRepository.findByLoginWeb(loginWeb);
     }
 }

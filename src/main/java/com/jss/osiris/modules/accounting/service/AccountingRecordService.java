@@ -74,9 +74,6 @@ public interface AccountingRecordService {
         public void generateAccountingRecordsForPurshaseOnInvoicePayment(Invoice invoice, List<Payment> payments,
                         Float amountToUse) throws OsirisException;
 
-        public void generateAccountingRecordsForRefundPayment(Refund refund, Payment payment, Float amount)
-                        throws OsirisException;
-
         public void generateAccountingRecordsForTemporaryDepositForInvoice(Deposit deposit, Invoice invoice,
                         Integer overrideAccountingOperationId)
                         throws OsirisException;

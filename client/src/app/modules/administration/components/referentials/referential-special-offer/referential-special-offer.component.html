@@ -37,9 +37,9 @@
           <table class="full-width" *ngIf="assoSpecialOfferBillingItems">
             <tr *ngFor="let assoSpecialOfferBillingItem of assoSpecialOfferBillingItems; let i = index">
               <td>
-                <select-billing-type [(model)]="assoSpecialOfferBillingItems[i].billingType"
+                <autocomplete-billing-type [(model)]="assoSpecialOfferBillingItems[i].billingType"
                   label="Famille de poste de facturation" [form]="entityForm" [propertyName]="'billingType'+i"
-                  [isMandatory]="true" [isDisabled]="!editMode"></select-billing-type>
+                  [isMandatory]="true" [isDisabled]="!editMode"></autocomplete-billing-type>
               </td>
               <td>
                 <generic-input [(model)]="assoSpecialOfferBillingItems[i].discountAmount" label="Réduction (€)"

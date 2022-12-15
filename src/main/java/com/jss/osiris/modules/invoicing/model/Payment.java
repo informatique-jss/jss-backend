@@ -9,9 +9,11 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.modules.accounting.model.AccountingRecord;
@@ -19,13 +21,16 @@ import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 
 @Entity
+@Table(indexes = { @Index(name = "idx_bank_id", columnList = "bankId", unique = true) })
 public class Payment implements Serializable, IId {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
 
-	@Column(nullable = false)
+	private String bankId;
+
+	@Column(nullable = false, columnDefinition = "TEXT")
 	private String label;
 
 	@Column(nullable = false)
@@ -133,6 +138,14 @@ public class Payment implements Serializable, IId {
 
 	public void setIsExternallyAssociated(Boolean isExternallyAssociated) {
 		this.isExternallyAssociated = isExternallyAssociated;
+	}
+
+	public String getBankId() {
+		return bankId;
+	}
+
+	public void setBankId(String bankId) {
+		this.bankId = bankId;
 	}
 
 }

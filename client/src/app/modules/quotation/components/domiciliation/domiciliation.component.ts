@@ -3,11 +3,9 @@ import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors
 import { validateSiren } from 'src/app/libs/CustomFormsValidatorsHelper';
 import { City } from 'src/app/modules/miscellaneous/model/City';
 import { Civility } from 'src/app/modules/miscellaneous/model/Civility';
-import { Language } from 'src/app/modules/miscellaneous/model/Language';
 import { CityService } from 'src/app/modules/miscellaneous/services/city.service';
 import { CivilityService } from 'src/app/modules/miscellaneous/services/civility.service';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
-import { LanguageService } from 'src/app/modules/miscellaneous/services/language.service';
 import { DOMICILIATION_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { BuildingDomiciliation } from '../../model/BuildingDomiciliation';
 import { Domiciliation } from '../../model/Domiciliation';
@@ -41,7 +39,6 @@ export class DomiciliationComponent implements OnInit {
   attachmentTypeCni = this.constantService.getAttachmentTypeCni();
   attachmentProofOfAddress = this.constantService.getAttachmentTypeProofOfAddress();
 
-  languages: Language[] = [] as Array<Language>;
   buildingDomiciliations: BuildingDomiciliation[] = [] as Array<BuildingDomiciliation>;
   mailRedirectionTypes: MailRedirectionType[] = [] as Array<MailRedirectionType>;
   contractTypes: DomiciliationContractType[] = [] as Array<DomiciliationContractType>;
@@ -57,7 +54,6 @@ export class DomiciliationComponent implements OnInit {
 
   constructor(private formBuilder: UntypedFormBuilder,
     protected domiciliationContractTypeService: DomiciliationContractTypeService,
-    protected languageService: LanguageService,
     private buildingDomiciliationService: BuildingDomiciliationService,
     private cityService: CityService,
     private constantService: ConstantService,
@@ -66,11 +62,6 @@ export class DomiciliationComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.languageService.getLanguages().subscribe(response => {
-      this.languages = response;
-      if (this.domiciliation! != null && this.domiciliation!.language == undefined || this.domiciliation!.language == null)
-        this.domiciliation!.language = this.languages[0];
-    })
     this.buildingDomiciliationService.getBuildingDomiciliations().subscribe(response => {
       this.buildingDomiciliations = response;
       if (this.domiciliation! != null && this.domiciliation!.buildingDomiciliation == undefined || this.domiciliation!.buildingDomiciliation == null)
@@ -101,8 +92,6 @@ export class DomiciliationComponent implements OnInit {
     if (changes.domiciliation != undefined) {
       if (this.domiciliation! == undefined || this.domiciliation! == null)
         this.domiciliation! = {} as Domiciliation;
-      if (this.domiciliation!.language == undefined || this.domiciliation!.language == null)
-        this.domiciliation!.language = this.languages[0];
       if (this.domiciliation! != null && this.domiciliation!.mailRedirectionType == undefined || this.domiciliation!.mailRedirectionType == null)
         this.domiciliation!.mailRedirectionType = this.mailRedirectionTypes[0];
       if (this.domiciliation! != null && this.domiciliation!.buildingDomiciliation == undefined || this.domiciliation!.buildingDomiciliation == null)

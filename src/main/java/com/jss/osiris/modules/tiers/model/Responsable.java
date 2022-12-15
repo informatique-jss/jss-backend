@@ -34,7 +34,8 @@ import com.jss.osiris.modules.miscellaneous.model.Phone;
 import com.jss.osiris.modules.profile.model.Employee;
 
 @Entity
-@Table(indexes = { @Index(name = "idx_responsable_tiers", columnList = "id_tiers") })
+@Table(indexes = { @Index(name = "idx_responsable_tiers", columnList = "id_tiers"),
+		@Index(name = "idx_responsable_login_web", columnList = "loginWeb", unique = true) })
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Responsable implements ITiers, IAttachment {
 	@Id
@@ -102,7 +103,7 @@ public class Responsable implements ITiers, IAttachment {
 	@JoinColumn(name = "id_language")
 	private Language language;
 
-	@Column(length = 60)
+	@Column(length = 100)
 	@IndexedField
 	private String address;
 
@@ -162,6 +163,16 @@ public class Responsable implements ITiers, IAttachment {
 	@ManyToOne
 	@JoinColumn(name = "id_subscription_period_type")
 	private SubscriptionPeriodType subscriptionPeriodType;
+
+	private String loginWeb;
+
+	private String salt;
+
+	@Column(length = 300)
+	private String password;
+
+	private Integer idAs400;
+	private Integer newIdAs400;
 
 	public Tiers getTiers() {
 		return tiers;
@@ -451,6 +462,46 @@ public class Responsable implements ITiers, IAttachment {
 
 	public void setCedexComplement(String cedexComplement) {
 		this.cedexComplement = cedexComplement;
+	}
+
+	public String getLoginWeb() {
+		return loginWeb;
+	}
+
+	public void setLoginWeb(String loginWeb) {
+		this.loginWeb = loginWeb;
+	}
+
+	public String getSalt() {
+		return salt;
+	}
+
+	public void setSalt(String salt) {
+		this.salt = salt;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public Integer getIdAs400() {
+		return idAs400;
+	}
+
+	public void setIdAs400(Integer idAs400) {
+		this.idAs400 = idAs400;
+	}
+
+	public Integer getNewIdAs400() {
+		return newIdAs400;
+	}
+
+	public void setNewIdAs400(Integer newIdAs400) {
+		this.newIdAs400 = newIdAs400;
 	}
 
 }

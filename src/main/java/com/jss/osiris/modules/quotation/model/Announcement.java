@@ -57,7 +57,7 @@ public class Announcement implements IId, IAttachment, IDocument {
 	@JoinTable(name = "asso_announcement_notice_type", joinColumns = @JoinColumn(name = "id_announcement"), inverseJoinColumns = @JoinColumn(name = "id_notice_type"))
 	private List<NoticeType> noticeTypes;
 
-	@Column(nullable = false, columnDefinition = "TEXT")
+	@Column(columnDefinition = "TEXT")
 	private String notice;
 
 	@Column(columnDefinition = "TEXT")

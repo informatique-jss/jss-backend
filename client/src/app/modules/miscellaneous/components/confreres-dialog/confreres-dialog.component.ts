@@ -3,6 +3,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { Confrere } from '../../../quotation/model/Confrere';
 import { JournalType } from '../../../quotation/model/JournalType';
 import { ConfrereService } from '../../../quotation/services/confrere.service';
+import { Department } from '../../model/Department';
 import { SortTableColumn } from '../../model/SortTableColumn';
 
 @Component({
@@ -19,6 +20,8 @@ export class ConfrereDialogComponent implements OnInit {
 
   displayedColumns: SortTableColumn[] = [];
   searchText: string | undefined;
+
+  filteredDepartments: Department | undefined;
 
   @Input() journalType: JournalType | undefined;
 
@@ -41,6 +44,16 @@ export class ConfrereDialogComponent implements OnInit {
         return (a.boardGrade).localeCompare(b.boardGrade)
       }
       ).filter(confrere => this.journalType == undefined || this.journalType.id == confrere.journalType.id);
+
+      if (this.filteredDepartments) {
+        let filteredConfrere = [];
+        for (let confrere of this.confreres)
+          if (confrere.departments)
+            for (let department of confrere.departments)
+              if (this.filteredDepartments.id == department.id)
+                filteredConfrere.push(confrere);
+        this.confreres = filteredConfrere;
+      }
 
       this.displayedColumns.push({ id: "denomination", fieldName: "label", label: "Dénomination" } as SortTableColumn);
       this.displayedColumns.push({ id: "type", fieldName: "journalType.label", label: "Type" } as SortTableColumn);

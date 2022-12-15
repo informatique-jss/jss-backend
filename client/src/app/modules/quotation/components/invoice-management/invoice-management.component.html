@@ -1,4 +1,4 @@
-<div *ngIf="quotation && quotation.id" class=" form-div ">
+<div *ngIf="quotation && quotation.id" class=" form-div min-height ">
   <ng-container *ngIf="instanceOfCustomerOrderFn(quotation) &&  quotation.invoices">
     <h3 class="invoice-title" *ngFor="let invoice of quotation.invoices">
       Facture n°{{invoice.id}} émise à Paris, le {{invoice.createdDate|date:'dd/MM/yyyy à HH:mm'}}<span
@@ -172,3 +172,5 @@
         <td class="td-price mat-cell">{{quotation.centralPayPendingPaymentAmount | number}} €</td>
       </tr>
     </table>
+  </fieldset>
+</div>

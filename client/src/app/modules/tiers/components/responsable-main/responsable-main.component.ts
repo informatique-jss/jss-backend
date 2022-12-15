@@ -13,6 +13,7 @@ import { QuotationSearch } from 'src/app/modules/quotation/model/QuotationSearch
 import { RESPONSABLE_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
 import { Document } from "../../../miscellaneous/model/Document";
+import { EmployeeService } from '../../../profile/services/employee.service';
 import { ITiers } from '../../model/ITiers';
 import { JssSubscription } from '../../model/JssSubscription';
 import { Responsable } from '../../model/Responsable';
@@ -66,6 +67,7 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
     private appService: AppService,
     protected tiersService: TiersService,
     protected tiersTypeService: TiersTypeService,
+    private employeeService: EmployeeService,
     private constantService: ConstantService,
     protected subscriptionPeriodTypeService: SubscriptionPeriodTypeService,
     private changeDetectorRef: ChangeDetectorRef,
@@ -188,6 +190,7 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
   addResponsable() {
     if (this.selectedResponsable == null || this.getFormStatus()) {
       this.selectedResponsable = {} as Responsable;
+      this.selectedResponsable.language = this.constantService.getLanguageFrench();
       this.selectedResponsable.salesEmployee = this.tiers.salesEmployee;
       this.selectedResponsable.insertionEmployee = this.tiers.insertionEmployee;
       this.selectedResponsable.formalisteEmployee = this.tiers.formalisteEmployee;
@@ -291,5 +294,13 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
     return status;
   }
 
+  renewPassword() {
+    if (!this.selectedResponsable || !this.selectedResponsable.mails || this.selectedResponsable.mails.length == 0) {
+      this.appService.displaySnackBar("Aucune adresse mail disponible pour ce responsable !", true, 20);
+      return;
+    }
+
+    this.employeeService.renewResponsablePassword(this.selectedResponsable!).subscribe(response => { });
+  }
 
 }

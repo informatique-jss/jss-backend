@@ -61,6 +61,9 @@ public class Refund implements Serializable, IId {
 	@Column(length = 40)
 	private String refundIBAN;
 
+	@Column(length = 40)
+	private String refundBic;
+
 	private Boolean isMatched;
 
 	private Boolean isAlreadyExported;
@@ -167,6 +170,14 @@ public class Refund implements Serializable, IId {
 
 	public void setDeposit(Deposit deposit) {
 		this.deposit = deposit;
+	}
+
+	public String getRefundBic() {
+		return refundBic;
+	}
+
+	public void setRefundBic(String refundBic) {
+		this.refundBic = refundBic;
 	}
 
 }

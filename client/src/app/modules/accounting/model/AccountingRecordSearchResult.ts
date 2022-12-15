@@ -33,5 +33,6 @@ export interface AccountingRecordSearchResult {
   */
   balance: number;
   contrePasseOperationId: number;
+  affaireLabel: string;
   responsable: string;
 }

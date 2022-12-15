@@ -76,7 +76,7 @@ public class Affaire implements Serializable, IId {
 	@JoinColumn(name = "id_country")
 	private Country country;
 
-	@Column(length = 60, nullable = false)
+	@Column(length = 100, nullable = false)
 	@IndexedField
 	private String address;
 
@@ -98,6 +98,9 @@ public class Affaire implements Serializable, IId {
 
 	@Column(length = 40, name = "payment_iban")
 	private String paymentIban;
+
+	@Column(length = 40, name = "payment_bic")
+	private String paymentBic;
 
 	private Boolean isUnregistered;
 
@@ -267,6 +270,14 @@ public class Affaire implements Serializable, IId {
 
 	public void setCedexComplement(String cedexComplement) {
 		this.cedexComplement = cedexComplement;
+	}
+
+	public String getPaymentBic() {
+		return paymentBic;
+	}
+
+	public void setPaymentBic(String paymentBic) {
+		this.paymentBic = paymentBic;
 	}
 
 }

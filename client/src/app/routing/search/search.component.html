@@ -24,7 +24,8 @@
                     <mat-card-title-group>
                       <mat-card-title>{{entity.text.denomination}} {{entity.text.firstname}} {{entity.text.lastname}}
                         ({{entity.text.id}})</mat-card-title>
-                      <mat-card-subtitle>Commercial {{entity.text.salesEmployee.firstname}}
+                      <mat-card-subtitle *ngIf="entity.text.salesEmployee">Commercial
+                        {{entity.text.salesEmployee.firstname}}
                         {{entity.text.salesEmployee.lastname}}
                         -
                         {{entity.text.address}} {{entity.text.postalCode}}

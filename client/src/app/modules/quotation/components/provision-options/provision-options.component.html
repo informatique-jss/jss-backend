@@ -178,6 +178,12 @@
               (onToggleChange)="provisionChangeFunction()" propertyName="isComplexeFile"></generic-toggle>
           </td>
         </tr>
+        <tr *ngIf="displayOption(billingTypeBilan)">
+          <td>
+            <generic-toggle [(model)]="provision.isBilan" label="Relecture de bilan ?" [form]="optionForm"
+              (onToggleChange)="provisionChangeFunction()" propertyName="isBilan"></generic-toggle>
+          </td>
+        </tr>
         <tr *ngIf="displayOption(billingTypeDocumentScanning)">
           <td>
             <generic-toggle [(model)]="provision.isDocumentScanning" label="Numérisation de Document ?"

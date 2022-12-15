@@ -57,6 +57,7 @@ import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.quotation.model.centralPay.CentralPayPaymentRequest;
 import com.jss.osiris.modules.quotation.repository.CustomerOrderRepository;
 import com.jss.osiris.modules.tiers.model.ITiers;
+import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
 @Service
@@ -163,8 +164,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
         boolean isNewCustomerOrder = customerOrder.getId() == null;
 
-        if (isNewCustomerOrder)
-            customerOrder = customerOrderRepository.save(customerOrder);
+        customerOrder = customerOrderRepository.save(customerOrder);
 
         quotationService.getAndSetInvoiceItemsForQuotation(customerOrder, true);
 
@@ -290,6 +290,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             boolean isDepositMandatory = false;
             if (tiers instanceof Tiers)
                 isDepositMandatory = ((Tiers) tiers).getIsProvisionalPaymentMandatory();
+            if (tiers instanceof Responsable)
+                isDepositMandatory = ((Responsable) tiers).getTiers().getIsProvisionalPaymentMandatory();
             if (tiers instanceof Confrere)
                 isDepositMandatory = ((Confrere) tiers).getIsProvisionalPaymentMandatory();
 
@@ -575,7 +577,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 if (centralPayPaymentRequest.getPaymentRequestStatus().equals(CentralPayPaymentRequest.CLOSED)
                         && centralPayPaymentRequest.getPaymentStatus().equals(CentralPayPaymentRequest.PAID)
                         && customerOrder.getCustomerOrderStatus().getCode()
-                                .equals(CustomerOrderStatus.BILLED)) {
+                                .equals(CustomerOrderStatus.WAITING_DEPOSIT)) {
                     unlockCustomerOrderFromDeposit(customerOrder, centralPayPaymentRequest.getTotalAmount() / 100f);
                     return "ok";
                 }
@@ -621,8 +623,11 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                         unlockCustomerOrderFromDeposit(customerOrder, centralPayPaymentRequest.getTotalAmount() / 100f);
                     }
                     customerOrder
-                            .setCentralPayPendingPaymentAmount(customerOrder.getCentralPayPendingPaymentAmount()
-                                    + centralPayPaymentRequest.getTotalAmount() / 100f);
+                            .setCentralPayPendingPaymentAmount(
+                                    (customerOrder.getCentralPayPendingPaymentAmount() != null
+                                            ? customerOrder.getCentralPayPendingPaymentAmount()
+                                            : 0f)
+                                            + centralPayPaymentRequest.getTotalAmount() / 100f);
                     addOrUpdateCustomerOrder(customerOrder);
                     return true;
                 }
@@ -649,8 +654,11 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                         && centralPayPaymentRequest.getPaymentStatus().equals(CentralPayPaymentRequest.PAID)) {
                 }
                 // Do nothing, wainting for bank credit to letter invoice
-                customerOrder.setCentralPayPendingPaymentAmount(customerOrder.getCentralPayPendingPaymentAmount()
-                        + centralPayPaymentRequest.getTotalAmount() / 100f);
+                customerOrder
+                        .setCentralPayPendingPaymentAmount((customerOrder.getCentralPayPendingPaymentAmount() != null
+                                ? customerOrder.getCentralPayPendingPaymentAmount()
+                                : 0f)
+                                + centralPayPaymentRequest.getTotalAmount() / 100f);
                 addOrUpdateCustomerOrder(customerOrder);
                 return true;
             }
@@ -789,7 +797,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                                     .equals(constantService.getAttachmentTypePublicationFlag().getId()))
                                 publicationFlagExists = true;
 
-                    if (!publicationFlagExists) {
+                    if (!publicationFlagExists && announcement.getNotice() != null) {
                         File publicationReceiptPdf = mailHelper.generatePublicationFlagPdf(announcement);
                         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
                         try {

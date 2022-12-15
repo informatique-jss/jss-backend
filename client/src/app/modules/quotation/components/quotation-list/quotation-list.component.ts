@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { formatDateTimeForSortTable, toIsoString } from 'src/app/libs/FormatHelper';
+import { formatDateForSortTable, toIsoString } from 'src/app/libs/FormatHelper';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { EmployeeService } from 'src/app/modules/profile/services/employee.service';
@@ -24,7 +24,7 @@ export class QuotationListComponent implements OnInit {
   @Input() isForTiersIntegration: boolean = false;
   quotations: QuotationSearchResult[] | undefined;
   availableColumns: SortTableColumn[] = [];
-  columnToDisplayOnDashboard: string[] = ["customerOrderName", "quotationStatus", "quotationDescription"];
+  columnToDisplayOnDashboard: string[] = ["customerOrderName", "quotationStatus", "affaireLabel", "createdDate"];
   displayedColumns: SortTableColumn[] = [];
   tableAction: SortTableAction[] = [];
   bookmark: QuotationSearch | undefined;
@@ -45,8 +45,6 @@ export class QuotationListComponent implements OnInit {
 
       if (this.bookmark && !this.isForDashboard && !this.isForTiersIntegration) {
         this.quotationSearch = {} as QuotationSearch;
-        this.quotationSearch.endDate = new Date(this.bookmark.endDate as any);
-        this.quotationSearch.startDate = new Date(this.bookmark.startDate as any);
         this.quotationSearch.salesEmployee = this.bookmark.salesEmployee;
         this.quotationSearch.quotationStatus = this.bookmark.quotationStatus;
       }
@@ -59,10 +57,12 @@ export class QuotationListComponent implements OnInit {
 
       this.availableColumns = [];
       this.availableColumns.push({ id: "id", fieldName: "quotationId", label: "N° de la devis" } as SortTableColumn);
-      this.availableColumns.push({ id: "tiersLabel", fieldName: "tiersLabel", label: "Tiers", actionLinkFunction: this.getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la fiche du tiers" } as SortTableColumn);
-      this.availableColumns.push({ id: "customerOrderName", fieldName: "customerOrderLabel", label: "Donneur d'ordre", actionLinkFunction: this.getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la fiche du donneur d'ordre" } as SortTableColumn);
+      this.availableColumns.push({ id: "createdDate", fieldName: "createdDate", label: "Date de création", valueFonction: formatDateForSortTable } as SortTableColumn);
       this.availableColumns.push({ id: "affaireLabel", fieldName: "affaireLabel", label: "Affaire(s)", isShrinkColumn: true } as SortTableColumn);
       this.availableColumns.push({ id: "quotationStatus", fieldName: "quotationStatus", label: "Statut" } as SortTableColumn);
+      this.availableColumns.push({ id: "quotationDescription", fieldName: "quotationDescription", label: "Description", isShrinkColumn: true } as SortTableColumn);
+      this.availableColumns.push({ id: "tiersLabel", fieldName: "tiersLabel", label: "Tiers", actionLinkFunction: this.getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la fiche du tiers" } as SortTableColumn);
+      this.availableColumns.push({ id: "customerOrderName", fieldName: "customerOrderLabel", label: "Donneur d'ordre", actionLinkFunction: this.getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la fiche du donneur d'ordre" } as SortTableColumn);
       this.availableColumns.push({
         id: "salesEmployee", fieldName: "salesEmployeeId", label: "Commercial", displayAsEmployee: true, valueFonction: (element: any) => {
           if (element && this.allEmployees) {
@@ -73,8 +73,6 @@ export class QuotationListComponent implements OnInit {
           return undefined;
         }
       } as SortTableColumn);
-      this.availableColumns.push({ id: "quotationDescription", fieldName: "quotationDescription", label: "Description", isShrinkColumn: true } as SortTableColumn);
-      this.availableColumns.push({ id: "createdDate", fieldName: "createdDate", label: "Date de création", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
 
       this.setColumns();
 

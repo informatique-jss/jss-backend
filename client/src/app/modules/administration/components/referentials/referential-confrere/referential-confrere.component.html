@@ -123,7 +123,7 @@
             </td>
             <td>
               <generic-input [(model)]="selectedEntity.address" label="Adresse" [form]="entityForm2"
-                propertyName="address" [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="60"></generic-input>
+                propertyName="address" [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="100"></generic-input>
             </td>
             <td>
               <autocomplete-postal-code [(model)]="selectedEntity.postalCode" [form]="entityForm2" label="Code postal"
@@ -279,7 +279,7 @@
               </tr>
             </table>
             <table class="full-width"
-              *ngIf="billingDocument.billingLabelType!=undefined && billingDocument.billingLabelType.code!=undefined && billingDocument.billingLabelType.id==billingLabelTypeOther.id">
+              *ngIf="billingDocument.billingLabelType && billingDocument.billingLabelType.code!=undefined && billingDocument.billingLabelType.id==billingLabelTypeOther.id">
               <tr>
                 <td>
                   <autocomplete-regie [(model)]="billingDocument.regie" [form]="entityForm2" propertyName="regie"
@@ -333,7 +333,7 @@
                     [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="40"></generic-input>
                 </td>
                 <td
-                  *ngIf="selectedEntity !=undefined && selectedEntity.paymentType!=undefined && selectedEntity.paymentType.code!=undefined && selectedEntity.paymentType.id==paymentTypePrelevement.id">
+                  *ngIf="selectedEntity !=undefined && selectedEntity.paymentType && selectedEntity.paymentType.code!=undefined && selectedEntity.paymentType.id==paymentTypePrelevement.id">
                   <generic-toggle [(model)]="selectedEntity.isSepaMandateReceived" label="Mandat SEPA reçu ?"
                     [form]="entityForm2" propertyName="isSepaMandateReceived"></generic-toggle>
                 </td>
@@ -366,9 +366,15 @@
                     [isDisabled]="!editMode" [form]="entityForm2" propertyName="refundType"></select-refund-type>
                 </td>
                 <td
-                  *ngIf="refundDocument && refundDocument && refundDocument.refundType.code!=undefined && refundDocument.refundType.id==refundTypeVirement.id">
+                  *ngIf="refundDocument && refundDocument.refundType && refundDocument.refundType.code!=undefined && refundDocument.refundType.id==refundTypeVirement.id">
                   <generic-input [(model)]="refundDocument.refundIBAN" label="IBAN" [form]="entityForm2"
                     propertyName="refundIBAN" [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="40">
+                  </generic-input>
+                </td>
+                <td
+                  *ngIf="refundDocument && refundDocument.refundType && refundDocument.refundType.code!=undefined && refundDocument.refundType.id==refundTypeVirement.id">
+                  <generic-input [(model)]="refundDocument.refundBic" label="BIC" [form]="entityForm2"
+                    propertyName="refundBic" [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="40">
                   </generic-input>
                 </td>
               </tr>

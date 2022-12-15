@@ -147,6 +147,8 @@ public class TiersServiceImpl implements TiersService {
         indexEntityService.indexEntity(tiers, tiers.getId());
         if (tiers.getResponsables() != null)
             for (Responsable responsable : tiers.getResponsables()) {
+                if (responsable.getLoginWeb() == null)
+                    responsable.setLoginWeb(responsable.getId() + "");
                 indexEntityService.indexEntity(responsable, responsable.getId());
             }
 

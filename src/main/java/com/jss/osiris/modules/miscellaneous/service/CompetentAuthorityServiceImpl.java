@@ -85,7 +85,11 @@ public class CompetentAuthorityServiceImpl implements CompetentAuthorityService 
     @Override
     public List<CompetentAuthority> getCompetentAuthorityByDepartment(Integer departmentId, String authority) {
         List<CompetentAuthority> outAuthorities = new ArrayList<CompetentAuthority>();
-        List<CompetentAuthority> authorities = competentAuthorityRepository.findByLabelContainingIgnoreCase(authority);
+        List<CompetentAuthority> authorities;
+        if (authority != null)
+            authorities = competentAuthorityRepository.findByLabelContainingIgnoreCase(authority);
+        else
+            authorities = IterableUtils.toList(competentAuthorityRepository.findAll());
         if (departmentId != null && authorities != null && authorities.size() > 0) {
             for (CompetentAuthority a : authorities) {
                 for (Department d : a.getDepartments()) {

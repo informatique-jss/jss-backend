@@ -14,23 +14,21 @@ export abstract class GenericRadioGroupComponent<T> extends GenericFormComponent
  */
   @Input() isMandatory: boolean = true;
 
-  /**
-   * Indicate that first option must be choosed by default
-   */
-  @Input() setFirstOptionDefaultChoice: boolean = false;
-
-
   constructor(private formBuilder3: UntypedFormBuilder, private userNoteService3: UserNoteService) {
     super(formBuilder3, userNoteService3)
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(changes: SimpleChanges) {
     super.ngOnChanges(changes);
-    if (this.setFirstOptionDefaultChoice && !this.model) {
-      console.log(this.propertyName);
-      this.model = this.types[0];
-      this.modelChange.emit(this.model);
-    }
+    if (this.model && this.types)
+      for (let type of this.types) {
+        let typeAny = type as any;
+        if (typeAny.id && this.model.id && typeAny.id == this.model.id) {
+          this.model = type;
+          this.form!.get(this.propertyName)?.setValue(this.model);
+          this.modelChange.emit(this.model);
+        }
+      }
   }
 
   callOnNgInit(): void {

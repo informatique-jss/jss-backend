@@ -101,8 +101,11 @@ public class MailHelper {
     @Value("${payment.cb.entry.point}")
     private String paymentCbEntryPoint;
 
-    @Value("${jss.rib}")
-    private String ribJss;
+    @Value("${jss.iban}")
+    private String ibanJss;
+
+    @Value("${jss.bic}")
+    private String bicJss;
 
     private JavaMailSender javaMailSender;
 
@@ -194,6 +197,7 @@ public class MailHelper {
 
     private void addMailToQueue(CustomerMail mail) {
         mail.setCreatedDateTime(LocalDateTime.now());
+        mail.setHasErrors(false);
         mail.setSendToMeEmployee(employeeService.getCurrentEmployee());
         customerMailRepository.save(mail);
 
@@ -210,7 +214,15 @@ public class MailHelper {
 
         if (mails != null && mails.size() > 0) {
             CustomerMail mail = mails.get(0);
-            prepareAndSendMail(mail);
+
+            try {
+                prepareAndSendMail(mail);
+            } catch (Exception e) {
+                mail.setHasErrors(true);
+                customerMailRepository.save(mail);
+                if (e instanceof OsirisException)
+                    throw e;
+            }
 
             if (mail.getAttachments() != null)
                 for (Attachment attachment : mail.getAttachments()) {
@@ -601,11 +613,22 @@ public class MailHelper {
 
         computeQuotationPrice(mail, quotation);
 
-        mail.setPaymentExplaination(
-                "Votre commande est en attente de provision. Effectuez dès maintenant un virement de "
-                        + mail.getPriceTotal() + " € sur le compte ci-dessous pour la débloquer.");
+        ITiers tiers = quotationService.getCustomerOrderOfQuotation(quotation);
+        boolean isDepositMandatory = false;
+        if (tiers instanceof Tiers)
+            isDepositMandatory = ((Tiers) tiers).getIsProvisionalPaymentMandatory();
+        if (tiers instanceof Confrere)
+            isDepositMandatory = ((Confrere) tiers).getIsProvisionalPaymentMandatory();
 
-        mail.setPaymentExplaination2(ribJss);
+        if (isDepositMandatory)
+            mail.setPaymentExplaination(
+                    "Votre commande est en attente de provision. Effectuez dès maintenant un virement de "
+                            + mail.getPriceTotal() + " € sur le compte ci-dessous pour la débloquer.");
+        else
+            mail.setPaymentExplaination("Vous pouvez d'orses et déjà régler cette commande d'un montant de "
+                    + mail.getPriceTotal() + " € en suivant les instructions ci-dessous.");
+
+        mail.setPaymentExplaination2("IBAN / BIC : " + ibanJss + " / " + bicJss);
 
         mail.setCbExplanation(
                 "Vous avez aussi la possibilité de payer par carte bancaire en flashant le QR Code ci-dessous ou en cliquant ");
@@ -624,14 +647,6 @@ public class MailHelper {
                 + LocalDate.now().withMonth(12).withDayOfMonth(31).format(formatter)
                 + " et sous réserve que les formalités à réaliser, au vu des documents transmis, correspondent à la demande de devis. Toute modification entraînera son actualisation.");
         mail.setGreetings("Bonne journée !");
-
-        ITiers tiers = quotationService.getCustomerOrderOfQuotation(quotation);
-
-        boolean isDepositMandatory = false;
-        if (tiers instanceof Tiers)
-            isDepositMandatory = ((Tiers) tiers).getIsProvisionalPaymentMandatory();
-        if (tiers instanceof Confrere)
-            isDepositMandatory = ((Confrere) tiers).getIsProvisionalPaymentMandatory();
 
         if (isDepositMandatory)
             mail.setExplaination3("Dès paiement de l'acompte de " + mail.getPriceTotal()
@@ -786,11 +801,11 @@ public class MailHelper {
                 mail.setPaymentExplaination(
                         "Votre commande sera traitée dans les meilleurs délais et avec tout notre savoir-faire par "
                                 + responsibleString
-                                + "toutes nos équipes. Vous pourrez suivre l'état de son avancement en ligne sur notre site https://www.jss.fr/ Espace abonné, rubrique \"Mon compte\". \nVous pouvez d'ors et déjà régler cette commande d'un montant de "
+                                + "toutes nos équipes. Vous pourrez suivre l'état de son avancement en ligne sur notre site https://www.jss.fr/ Espace abonné, rubrique \"Mon compte\". \nVous pouvez d'orses et déjà régler cette commande d'un montant de "
                                 + mail.getPriceTotal() + " € en suivant les instructions ci-dessous.");
             }
 
-            mail.setPaymentExplaination2(ribJss);
+            mail.setPaymentExplaination2("IBAN / BIC : " + ibanJss + " / " + bicJss);
 
             mail.setCbExplanation(
                     "Vous avez aussi la possibilité de payer par carte bancaire en flashant le QR Code ci-dessous ou en cliquant ");
@@ -940,7 +955,7 @@ public class MailHelper {
         }
 
         ctx.setVariable("vats", vats);
-        ctx.setVariable("priceTotal", invoiceHelper.getPriceTotal(invoice));
+        ctx.setVariable("priceTotal", Math.round(invoiceHelper.getPriceTotal(invoice) * 100f) / 100f);
         ctx.setVariable("invoice", invoice);
 
         // Exclude deposits generated after invoice
@@ -1122,7 +1137,7 @@ public class MailHelper {
                     "Vous pouvez régler cette facture d'un montant de " + remainingToPay
                             + " € par virement à l'aide des informations suivantes");
 
-            mail.setPaymentExplaination2(ribJss);
+            mail.setPaymentExplaination2("IBAN / BIC : " + ibanJss + " / " + bicJss);
 
             mail.setCbExplanation(
                     "Vous avez aussi la possibilité de payer par carte bancaire en flashant le QR Code ci-dessous ou en cliquant ");
@@ -1371,6 +1386,33 @@ public class MailHelper {
         mail.setMailComputeResult(computeMailForPublicationReceiptDocument(tiers));
 
         mail.setSubject("Votre relevé de compte");
+
+        addMailToQueue(mail);
+    }
+
+    public void sendNewPasswordMail(Responsable responsable, String password)
+            throws OsirisException {
+
+        CustomerMail mail = new CustomerMail();
+
+        mail.setHeaderPicture("images/password-header.png");
+        mail.setTitle("Votre mot de passe");
+        String explainationText = "Votre nouveau mot de passe de connexion à JSS.fr est : " + password;
+        mail.setExplaination(explainationText);
+
+        mail.setGreetings("En vous remerciant pour votre confiance");
+
+        mail.setReplyToMail(constantService.getStringSalesSharedMailbox() + "");
+        mail.setSendToMe(false);
+        MailComputeResult mailComputeResult = new MailComputeResult();
+        mailComputeResult.setRecipientsMailTo(new ArrayList<Mail>());
+
+        for (Mail mailResponsable : responsable.getMails()) {
+            mailComputeResult.getRecipientsMailTo().add(mailResponsable);
+        }
+        mail.setMailComputeResult(mailComputeResult);
+
+        mail.setSubject("Votre nouveau mot de passe");
 
         addMailToQueue(mail);
     }

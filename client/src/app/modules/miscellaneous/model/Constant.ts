@@ -86,6 +86,7 @@ export interface Constant {
   billingTypeChronopostFees: BillingType;
   billingTypeBankCheque: BillingType;
   billingTypeComplexeFile: BillingType;
+  billingTypeBilan: BillingType;
   billingTypeDocumentScanning: BillingType;
   billingTypeEmergency: BillingType;
   stringNantissementDepositFormeJuridiqueCode: string;

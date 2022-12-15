@@ -134,7 +134,7 @@ public class Tiers implements ITiers, IAttachment {
 	@JoinColumn(name = "id_language")
 	private Language language;
 
-	@Column(length = 60, nullable = false)
+	@Column(length = 100, nullable = false)
 	@IndexedField
 	private String address;
 
@@ -195,6 +195,9 @@ public class Tiers implements ITiers, IAttachment {
 	@ManyToOne
 	@JoinColumn(name = "id_accounting_account_deposit")
 	private AccountingAccount accountingAccountDeposit;
+
+	private Integer idAs400;
+	private Integer newIdAs400;
 
 	public List<Competitor> getCompetitors() {
 		return competitors;
@@ -526,6 +529,30 @@ public class Tiers implements ITiers, IAttachment {
 
 	public void setCedexComplement(String cedexComplement) {
 		this.cedexComplement = cedexComplement;
+	}
+
+	public Float getInsertionRate() {
+		return rffInsertionRate;
+	}
+
+	public void setInsertionRate(Float insertionRate) {
+		rffInsertionRate = insertionRate;
+	}
+
+	public Integer getIdAs400() {
+		return idAs400;
+	}
+
+	public void setIdAs400(Integer idAs400) {
+		this.idAs400 = idAs400;
+	}
+
+	public Integer getNewIdAs400() {
+		return newIdAs400;
+	}
+
+	public void setNewIdAs400(Integer newIdAs400) {
+		this.newIdAs400 = newIdAs400;
 	}
 
 }

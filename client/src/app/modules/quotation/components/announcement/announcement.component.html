@@ -17,7 +17,7 @@
               <td>
                 <autocomplete-confrere [(model)]="announcement.confrere" [form]="announcementForm"
                   propertyName="confrere" [isMandatory]="true" [isDisabled]="!editMode"
-                  (onOptionSelected)="updateHeaderFree()">
+                  [filteredDepartments]="announcement.department" (onOptionSelected)="updateHeaderFree()">
                 </autocomplete-confrere>
               </td>
               <td *ngIf="announcement.confrere!=null && announcement.confrere!=undefined">

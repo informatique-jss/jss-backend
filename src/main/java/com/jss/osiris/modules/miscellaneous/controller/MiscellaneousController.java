@@ -429,7 +429,7 @@ public class MiscellaneousController {
         validationHelper.validateReferential(regie.getCity(), true, "City");
         validationHelper.validateString(regie.getPostalCode(), false, 6, "PostalCode");
         validationHelper.validateString(regie.getCedexComplement(), false, 20, "CedexComplement");
-        validationHelper.validateString(regie.getAddress(), true, 60, "Address");
+        validationHelper.validateString(regie.getAddress(), true, 100, "Address");
         validationHelper.validateString(regie.getIban(), true, 40, "Iban");
 
         return new ResponseEntity<Regie>(regieService.addOrUpdateRegie(regie), HttpStatus.OK);
@@ -714,7 +714,7 @@ public class MiscellaneousController {
     @GetMapping(inputEntryPoint + "/competent-authorities/search/department")
     public ResponseEntity<List<CompetentAuthority>> getCompetentAuthorityByDepartmentAndName(
             @RequestParam(required = false) Integer departmentId,
-            @RequestParam String authority) {
+            @RequestParam(required = false) String authority) {
         return new ResponseEntity<List<CompetentAuthority>>(
                 competentAuthorityService.getCompetentAuthorityByDepartment(departmentId, authority), HttpStatus.OK);
     }
@@ -785,7 +785,7 @@ public class MiscellaneousController {
         validationHelper.validateString(competentAuthorities.getJssAccount(), false, 40, "JssAccount");
         validationHelper.validateString(competentAuthorities.getContact(), false, 40, "Contact");
         validationHelper.validateString(competentAuthorities.getMailRecipient(), false, 60, "MailRecipient");
-        validationHelper.validateString(competentAuthorities.getAddress(), false, 60, "Address");
+        validationHelper.validateString(competentAuthorities.getAddress(), false, 100, "Address");
         validationHelper.validateString(competentAuthorities.getPostalCode(), false, 10, "PostalCode");
         validationHelper.validateString(competentAuthorities.getCedexComplement(), false, 20, "CedexComplement");
         validationHelper.validateReferential(competentAuthorities.getCity(), false, "City");
@@ -901,6 +901,7 @@ public class MiscellaneousController {
             throw new OsirisValidationException("entityType");
 
         if (!entityType.equals(Tiers.class.getSimpleName())
+                && !entityType.equals("Ofx")
                 && !entityType.equals(Responsable.class.getSimpleName())
                 && !entityType.equals(Quotation.class.getSimpleName())
                 && !entityType.equals(Announcement.class.getSimpleName())

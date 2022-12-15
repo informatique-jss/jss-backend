@@ -359,7 +359,7 @@ public class TiersController {
     validationHelper.validateReferential(tiers.getLanguage(), true, "Language");
     validationHelper.validateReferential(tiers.getDeliveryService(), true, "DeliveryService");
 
-    validationHelper.validateString(tiers.getAddress(), true, 60, "Address");
+    validationHelper.validateString(tiers.getAddress(), true, 100, "Address");
     validationHelper.validateReferential(tiers.getCountry(), true, "Country");
     if (tiers.getCountry() != null
         && tiers.getCountry().getId().equals(constantService.getCountryFrance().getId()))
@@ -407,6 +407,7 @@ public class TiersController {
         validationHelper.validateReferential(document.getPaymentDeadlineType(), false, "PaymentDeadlineType");
         validationHelper.validateReferential(document.getRefundType(), false, "RefundType");
         validationHelper.validateString(document.getRefundIBAN(), false, 40, "RefundIBAN");
+        validationHelper.validateString(document.getRefundBic(), false, 40, "RefundBic");
         validationHelper.validateReferential(document.getBillingClosureType(), false, "BillingClosureType");
         validationHelper.validateReferential(document.getBillingClosureRecipientType(), false,
             "BillingClosureRecipientType");
@@ -445,7 +446,7 @@ public class TiersController {
         validationHelper.validateReferential(responsable.getFormalisteEmployee(), false, "FormalisteEmployee");
         validationHelper.validateReferential(responsable.getInsertionEmployee(), false, "InsertionEmployee");
         validationHelper.validateReferential(responsable.getLanguage(), true, "Language");
-        validationHelper.validateString(responsable.getAddress(), false, 60, "Address");
+        validationHelper.validateString(responsable.getAddress(), false, 100, "Address");
         validationHelper.validateReferential(responsable.getCountry(), false, "Country");
         validationHelper.validateReferential(responsable.getCity(), false, "City");
         validationHelper.validateString(responsable.getPostalCode(), false, 10, "PostalCode");

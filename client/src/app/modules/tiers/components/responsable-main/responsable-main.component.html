@@ -108,9 +108,13 @@
                   </td>
                   <td style="vertical-align: baseline;">
                     <radio-group-language [(model)]="selectedResponsable.language" [form]="principalForm"
-                      [setFirstOptionDefaultChoice]="true" [isDisabled]="!editMode" propertyName="language"
-                      label="Langue de communication">
+                      [isDisabled]="!editMode" propertyName="language" label="Langue de communication">
                     </radio-group-language>
+                  </td>
+                  <td>
+                    <generic-input [(model)]="selectedResponsable.loginWeb" label="Numéro de compte JSS.FR"
+                      [form]="principalForm" propertyName="loginWeb" [isMandatory]="false"
+                      [isDisabled]="true"></generic-input>
                   </td>
                 </tr>
               </table>
@@ -156,29 +160,6 @@
               </table>
               <table class="full-width">
                 <tr>
-                  <!--td
-                    *ngIf="selectedResponsable.jssSubscription!=undefined && selectedResponsable.jssSubscription!=null">
-                    <h4>Abonnement JSS</h4>
-                    <mat-checkbox formControlName="jssSubscription1" class="checkbox-margin"
-                      [(ngModel)]="selectedResponsable.jssSubscription.isWebSubscription">Numérique
-                    </mat-checkbox>
-                    <mat-checkbox formControlName="jssSubscription2" class="checkbox-margin"
-                      [(ngModel)]="selectedResponsable.jssSubscription.isPaperSubscription">Papier/Numérique
-                    </mat-checkbox>
-                  </td>
-                  <td
-                    *ngIf="selectedResponsable.jssSubscription.isPaperSubscription || selectedResponsable.jssSubscription.isWebSubscription">
-                    <select-subscription-period [(model)]="selectedResponsable.subscriptionPeriodType"
-                      label="Durée de l'abonnement" [form]="principalForm" propertyName="subscriptionPeriodType"
-                      [isDisabled]="!editMode" [isMandatory]="true"
-                      [conditionnalRequired]="this.selectedResponsable != null && this.selectedResponsable.jssSubscription != null && (this.selectedResponsable.jssSubscription.isPaperSubscription || this.selectedResponsable.jssSubscription.isWebSubscription)">
-                    </select-subscription-period>
-                  </td>
-                  <td
-                    *ngIf="selectedResponsable.subscriptionPeriodType!=null && selectedResponsable.subscriptionPeriodType.id==subscriptionPeriodType12M.id">
-                    <generic-toggle [(model)]="selectedResponsable.isBouclette" label="Bouclette ?"
-                      [form]="principalForm" propertyName="isBouclette"></generic-toggle>
-                  </td-->
                   <td>
                     <generic-input [(model)]="selectedResponsable.rffFormaliteRate" label="Taux RCA Formalité"
                       [form]="principalForm" propertyName="rcaFormaliteRate" type="number"></generic-input>
@@ -244,3 +225,10 @@
       </mat-tab-group>
     </form>
   </div>
+
+
+  <button
+    [matTooltip]="'Renouveler le mot de passe JSS.fr pour '+selectedResponsable.firstname+' '+ selectedResponsable.lastname"
+    mat-fab color="accent" class="third-fab-button" *ngIf="!editMode && selectedResponsable" (click)="renewPassword()">
+    <mat-icon>password</mat-icon>
+  </button>

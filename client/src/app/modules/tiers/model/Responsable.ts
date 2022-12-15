@@ -23,4 +23,5 @@ export interface Responsable extends ITiers {
   lastname: string | null;
   rffFormaliteRate: number;
   rffInsertionRate: number;
+  loginWeb: string;
 }

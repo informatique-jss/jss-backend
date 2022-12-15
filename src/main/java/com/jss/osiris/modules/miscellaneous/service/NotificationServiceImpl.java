@@ -124,7 +124,7 @@ public class NotificationServiceImpl implements NotificationService {
                 customerOrderName = ((Tiers) customerOrder).getCivility().getLabel() + " "
                         + ((Tiers) customerOrder).getFirstname() + " " + ((Tiers) customerOrder).getLastname();
         if (customerOrder instanceof Confrere)
-            customerOrderName = ((Tiers) customerOrder).getDenomination();
+            customerOrderName = ((Confrere) customerOrder).getLabel();
 
         if (!createdByMe)
             return generateNewNotification(employeeService.getCurrentEmployee(), salesEmployee,
@@ -190,25 +190,33 @@ public class NotificationServiceImpl implements NotificationService {
             customerOrderName = ((Confrere) customerOrderTiers).getLabel();
 
         if (notifySalesEmployee) {
-            for (Employee employee : compareEmployee)
-                if (employee.getId().equals(salesEmployee.getId()))
-                    createdByMe = true;
+            if (compareEmployee != null)
+                for (Employee employee : compareEmployee)
+                    if (employee.getId().equals(salesEmployee.getId()))
+                        createdByMe = true;
 
             if (!createdByMe)
                 notifications.add(
-                        generateNewNotification(isFromHuman ? employeeService.getCurrentEmployee() : null,
+                        generateNewNotification(
+                                isFromHuman && employeeService.getCurrentEmployee() != null
+                                        ? employeeService.getCurrentEmployee()
+                                        : null,
                                 salesEmployee,
                                 notificationType, customerOrder, customerOrderName, null, false));
         }
 
         if (notifiyBillingResponsible) {
-            for (Employee employee : compareEmployee)
-                if (employee.getId().equals(constantService.getEmployeeBillingResponsible().getId()))
-                    createdByMe = true;
+            if (compareEmployee != null)
+                for (Employee employee : compareEmployee)
+                    if (employee.getId().equals(constantService.getEmployeeBillingResponsible().getId()))
+                        createdByMe = true;
 
             if (!createdByMe)
                 notifications.add(
-                        generateNewNotification(isFromHuman ? employeeService.getCurrentEmployee() : null,
+                        generateNewNotification(
+                                isFromHuman && employeeService.getCurrentEmployee() != null
+                                        ? employeeService.getCurrentEmployee()
+                                        : null,
                                 constantService.getEmployeeBillingResponsible(),
                                 notificationType, customerOrder, customerOrderName, null, false));
         }
@@ -217,16 +225,21 @@ public class NotificationServiceImpl implements NotificationService {
             for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders()) {
                 createdByMe = false;
                 if (asso.getAssignedTo() != null) {
-                    for (Employee employee : compareEmployee)
-                        if (employee.getId().equals(asso.getAssignedTo().getId()))
-                            createdByMe = true;
+                    if (compareEmployee != null)
+                        for (Employee employee : compareEmployee)
+                            if (employee.getId().equals(asso.getAssignedTo().getId()))
+                                createdByMe = true;
                     if (!createdByMe) {
                         notifications.add(
-                                generateNewNotification(isFromHuman ? employeeService.getCurrentEmployee() : null,
+                                generateNewNotification(
+                                        isFromHuman && employeeService.getCurrentEmployee() != null
+                                                ? employeeService.getCurrentEmployee()
+                                                : null,
                                         asso.getAssignedTo(),
                                         notificationType, customerOrder, customerOrderName, null, false));
                         // Do not notify twice
-                        compareEmployee.add(asso.getAssignedTo());
+                        if (compareEmployee != null)
+                            compareEmployee.add(asso.getAssignedTo());
                     }
                 }
             }

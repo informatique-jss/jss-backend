@@ -4,13 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.jss.osiris.libs.ActiveDirectoryHelper;
+import com.jss.osiris.libs.SSLHelper;
+import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.modules.profile.model.Employee;
+import com.jss.osiris.modules.profile.model.User;
 import com.jss.osiris.modules.profile.repository.EmployeeRepository;
+import com.jss.osiris.modules.tiers.model.Responsable;
+import com.jss.osiris.modules.tiers.service.ResponsableService;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -20,6 +27,12 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Autowired
     ActiveDirectoryHelper activeDirectoryHelper;
+
+    @Autowired
+    ResponsableService responsableService;
+
+    @Autowired
+    MailHelper mailHelper;
 
     @Override
     public Employee getEmployee(Integer id) {
@@ -105,11 +118,41 @@ public class EmployeeServiceImpl implements EmployeeService {
         if (requestedEmployee == null)
             return null;
 
-        Employee currentUser = getCurrentEmployee();
-        List<Employee> holidaymakers = employeeRepository.getMyHolidaymaker(currentUser.getId());
+        List<Employee> holidaymakers = employeeRepository.getMyHolidaymaker(requestedEmployee.getId());
         if (holidaymakers == null)
             holidaymakers = new ArrayList<Employee>();
-        holidaymakers.add(currentUser);
+        holidaymakers.add(requestedEmployee);
         return holidaymakers;
     }
+
+    @Override
+    public Responsable loginWebsiteUser(User user) {
+        Responsable responsable = responsableService.getResponsableByLoginWeb(user.getUsername());
+        if (responsable != null) {
+            String passwordExpected = responsable.getPassword();
+            String passwordGiven = diggestPassword(user.getPassword(), responsable.getSalt());
+
+            if (passwordExpected.equals(passwordGiven))
+                return responsable;
+        }
+        return null;
+    }
+
+    @Override
+    public boolean renewResponsablePassword(Responsable responsable) throws OsirisException {
+        String salt = SSLHelper.randomPassword(20);
+        String password = SSLHelper.randomPassword(12);
+
+        responsable.setSalt(salt);
+        responsable.setPassword(diggestPassword(password, salt));
+        responsableService.addOrUpdateResponsable(responsable);
+
+        mailHelper.sendNewPasswordMail(responsable, password);
+        return true;
+    }
+
+    private String diggestPassword(String clearPassword, String salt) {
+        return DigestUtils.sha256Hex(salt + clearPassword + salt);
+    }
+
 }

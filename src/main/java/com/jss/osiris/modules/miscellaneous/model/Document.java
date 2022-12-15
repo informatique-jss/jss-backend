@@ -156,6 +156,9 @@ public class Document implements Serializable, IId {
 	@Column(length = 40)
 	private String refundIBAN;
 
+	@Column(length = 40)
+	private String refundBic;
+
 	@ManyToOne
 	@JoinColumn(name = "id_billing_closure_type")
 	private BillingClosureType billingClosureType;
@@ -524,6 +527,14 @@ public class Document implements Serializable, IId {
 
 	public void setCedexComplement(String cedexComplement) {
 		this.cedexComplement = cedexComplement;
+	}
+
+	public String getRefundBic() {
+		return refundBic;
+	}
+
+	public void setRefundBic(String refundBic) {
+		this.refundBic = refundBic;
 	}
 
 }
