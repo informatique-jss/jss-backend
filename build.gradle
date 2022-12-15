@@ -26,12 +26,14 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web:2.6.4'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa:2.6.4' 
     implementation 'org.springframework.boot:spring-boot-starter-security:2.6.4'
+    implementation 'org.springframework.session:spring-session-jdbc:2.6.3'
     implementation 'org.springframework.ldap:spring-ldap-core:2.4.1'
     implementation 'org.springframework.security:spring-security-ldap:5.7.3'
     implementation 'org.ehcache:ehcache:3.9.7'
     implementation 'org.springdoc:springdoc-openapi-ui:1.6.11'
     runtimeOnly 'org.springframework.boot:spring-boot-devtools:2.6.4'
     implementation 'org.springframework.boot:spring-boot-starter-mail:2.7.5'
+
 
     
     // Database
@@ -44,21 +46,24 @@ dependencies {
     implementation 'org.apache.commons:commons-lang3:3.12.0'
     implementation 'commons-validator:commons-validator:1.7'
     
-    // PDF, Office & HTML generation
+    // PDF, XML, Office & HTML generation
     implementation 'com.itextpdf:itextpdf:5.5.13.3'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf:2.7.1'
     implementation 'org.apache.poi:poi-ooxml:5.2.2'
     implementation 'org.apache.poi:poi:5.2.2'
     implementation 'org.xhtmlrenderer:flying-saucer-core:9.1.22'
     implementation 'org.xhtmlrenderer:flying-saucer-pdf-itext5:9.1.22'
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.14.1'
+
 
     // QR code generation
     implementation 'com.google.zxing:core:3.5.1'
     implementation 'com.google.zxing:javase:3.5.1'
+
 }
  
 group = 'com.jss.osiris'
 version = '1.0'
 description = 'Outil Sympa, Interactif, Révolutionnairement Intuitif et Simple'
-sourceCompatibility = '1.8'
-targetCompatibility = '1.8'
+sourceCompatibility = '17'
+targetCompatibility = '17'
