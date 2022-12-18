@@ -44,6 +44,7 @@ import com.jss.osiris.modules.miscellaneous.service.NotificationService;
 import com.jss.osiris.modules.miscellaneous.service.PhoneService;
 import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.profile.service.EmployeeService;
+import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.Announcement;
 import com.jss.osiris.modules.quotation.model.AnnouncementStatus;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
@@ -186,30 +187,31 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Override
     public CustomerOrder checkAllProvisionEnded(CustomerOrder customerOrderIn)
             throws OsirisException {
-        if (customerOrderIn != null
-                && customerOrderIn.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BEING_PROCESSED)) {
-            CustomerOrder customerOrder = getCustomerOrder(customerOrderIn.getId());
-            if (customerOrder != null && customerOrder.getAssoAffaireOrders() != null
-                    && customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BEING_PROCESSED))
-                for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders())
-                    if (assoAffaireOrder.getProvisions() != null)
-                        for (Provision provision : assoAffaireOrder.getProvisions()) {
-                            if (provision.getAnnouncement() != null
-                                    && !provision.getAnnouncement().getAnnouncementStatus().getIsCloseState())
-                                return customerOrderIn;
-                            if (provision.getBodacc() != null
-                                    && !provision.getBodacc().getBodaccStatus().getIsCloseState())
-                                return customerOrderIn;
-                            if (provision.getFormalite() != null
-                                    && !provision.getFormalite().getFormaliteStatus().getIsCloseState())
-                                return customerOrderIn;
-                            if (provision.getDomiciliation() != null
-                                    && !provision.getDomiciliation().getDomiciliationStatus().getIsCloseState())
-                                return customerOrderIn;
-                        }
+        CustomerOrder customerOrder = getCustomerOrder(customerOrderIn.getId());
+        if (customerOrder != null && customerOrder.getAssoAffaireOrders() != null
+                && customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BEING_PROCESSED)) {
+            for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders())
+                if (assoAffaireOrder.getProvisions() != null)
+                    for (Provision provision : assoAffaireOrder.getProvisions()) {
+                        if (provision.getAnnouncement() != null
+                                && !provision.getAnnouncement().getAnnouncementStatus().getIsCloseState())
+                            return customerOrderIn;
+                        if (provision.getBodacc() != null
+                                && !provision.getBodacc().getBodaccStatus().getIsCloseState())
+                            return customerOrderIn;
+                        if (provision.getFormalite() != null
+                                && !provision.getFormalite().getFormaliteStatus().getIsCloseState())
+                            return customerOrderIn;
+                        if (provision.getSimpleProvision() != null
+                                && !provision.getSimpleProvision().getSimpleProvisionStatus().getIsCloseState())
+                            return customerOrderIn;
+                        if (provision.getDomiciliation() != null
+                                && !provision.getDomiciliation().getDomiciliationStatus().getIsCloseState())
+                            return customerOrderIn;
+                    }
             return addOrUpdateCustomerOrderStatus(customerOrder, CustomerOrderStatus.TO_BILLED, false);
         }
-        return customerOrderIn;
+        return customerOrder;
     }
 
     @Override
@@ -226,7 +228,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         CustomerOrderStatus targetCustomerStatus = customerOrderStatusService
                 .getCustomerOrderStatusByCode(targetStatusCode);
         if (targetCustomerStatus == null)
-            throw new OsirisException("Customer order status not found for code " + targetStatusCode);
+            throw new OsirisException(null, "Customer order status not found for code " + targetStatusCode);
         if (targetCustomerStatus.getCode().equals(CustomerOrderStatus.BEING_PROCESSED)) {
             if (!isFromUser
                     && customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.WAITING_DEPOSIT)) {
@@ -273,7 +275,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     }
                 }
             } else {
-                throw new OsirisException("Impossible to billed, too much money on customerOrder !");
+                throw new OsirisException(null, "Impossible to billed, too much money on customerOrder !");
             }
 
             mailHelper.sendCustomerOrderFinalisationToCustomer(customerOrder, false, false, false);
@@ -309,7 +311,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 .getCustomerOrderStatusByCode(
                         targetStatusCode);
         if (customerOrderStatus == null)
-            throw new OsirisException("Quotation status not found for code " + targetStatusCode);
+            throw new OsirisException(null, "Quotation status not found for code " + targetStatusCode);
 
         customerOrder.setCustomerOrderStatus(customerOrderStatus);
         customerOrder.setLastStatusUpdate(LocalDateTime.now());
@@ -349,7 +351,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     private Invoice generateInvoice(CustomerOrder customerOrder) throws OsirisException {
         if (!hasAtLeastOneInvoiceItemNotNull(customerOrder))
-            throw new OsirisException("No invoice item found on customer order " + customerOrder.getId());
+            throw new OsirisException(null, "No invoice item found on customer order " + customerOrder.getId());
 
         // Generate blank invoice
         Invoice invoice = invoiceService.createInvoice(customerOrder,
@@ -380,7 +382,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     "Invoice_" + formatter.format(LocalDateTime.now()) + ".pdf",
                     false, "Facture n°" + invoice.getId());
         } catch (FileNotFoundException e) {
-            throw new OsirisException("Impossible to read invoice PDF temp file");
+            throw new OsirisException(e, "Impossible to read invoice PDF temp file");
         } finally {
             invoicePdf.delete();
         }
@@ -419,7 +421,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 || customerOrder.getAssoAffaireOrders().get(0).getProvisions().get(0).getInvoiceItems() == null
                 || customerOrder.getAssoAffaireOrders().get(0).getProvisions().get(0).getInvoiceItems().size() == 0
                 || customerOrder.getAssoAffaireOrders().get(0).getProvisions().get(0).getInvoiceItems().get(0) == null)
-            throw new OsirisException("No invoice found");
+            throw new OsirisException(null, "No invoice found");
 
         return customerOrder.getAssoAffaireOrders().get(0).getProvisions().get(0).getInvoiceItems().get(0).getInvoice();
     }
@@ -450,11 +452,19 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             customerOrderId.add(0);
         }
 
+        ArrayList<Integer> affaireId = new ArrayList<Integer>();
+        if (orderingSearch.getAffaires() != null && orderingSearch.getAffaires().size() > 0) {
+            for (Affaire affaire : orderingSearch.getAffaires())
+                affaireId.add(affaire.getId());
+        } else {
+            affaireId.add(0);
+        }
+
         List<OrderingSearchResult> customerOrders = customerOrderRepository.findCustomerOrders(
                 salesEmployeeId,
                 statusId,
                 orderingSearch.getStartDate().withHour(0).withMinute(0),
-                orderingSearch.getEndDate().withHour(23).withMinute(59), customerOrderId);
+                orderingSearch.getEndDate().withHour(23).withMinute(59), customerOrderId, affaireId);
         return customerOrders;
     }
 
@@ -488,7 +498,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         try {
             customerOrderString = objectMapper.writeValueAsString(customerOrder);
         } catch (JsonProcessingException e) {
-            throw new OsirisException(
+            throw new OsirisException(e,
                     "Error when cloning quotation to customer order for quotation " + quotation.getId());
         }
 
@@ -496,7 +506,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         try {
             customerOrder2 = objectMapper.readValue(customerOrderString, CustomerOrder.class);
         } catch (JsonProcessingException e) {
-            throw new OsirisException(
+            throw new OsirisException(e,
                     "Error when reading clone of quotation for quotation " + quotation.getId());
         }
 
@@ -759,7 +769,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                                             "Publication_receipt_" + formatter.format(LocalDateTime.now()) + ".pdf",
                                             false, "Attestation de parution n°" + announcement.getId()));
                         } catch (FileNotFoundException e) {
-                            throw new OsirisException("Impossible to read invoice PDF temp file");
+                            throw new OsirisException(e, "Impossible to read invoice PDF temp file");
                         } finally {
                             publicationReceiptPdf.delete();
                         }
@@ -809,7 +819,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                                             "Publication_falg_" + formatter.format(LocalDateTime.now()) + ".pdf",
                                             false, "Témoin de publication n°" + announcement.getId()));
                         } catch (FileNotFoundException e) {
-                            throw new OsirisException("Impossible to read invoice PDF temp file");
+                            throw new OsirisException(e, "Impossible to read invoice PDF temp file");
                         } finally {
                             publicationReceiptPdf.delete();
                         }

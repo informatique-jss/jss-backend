@@ -2,6 +2,7 @@
 export interface InvoiceSearchResult {
   invoiceId: number;
   invoiceStatus: string;
+  invoiceStatusId: number;
   customerOrderId: number;
   customerOrderLabel: string;
   confrereId: number;

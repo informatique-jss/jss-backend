@@ -110,7 +110,7 @@ public class SimpleProvisionStatusServiceImpl implements SimpleProvisionStatusSe
         SimpleProvisionStatus sourceStatus = getSimpleProvisionStatusByCode(code);
         SimpleProvisionStatus targetStatus = getSimpleProvisionStatusByCode(code2);
         if (sourceStatus == null || targetStatus == null)
-            throw new OsirisException("Simple provision " + code + " or " + code2 + " do not exist");
+            throw new OsirisException(null, "Simple provision " + code + " or " + code2 + " do not exist");
 
         if (sourceStatus.getSuccessors() == null)
             sourceStatus.setSuccessors(new ArrayList<SimpleProvisionStatus>());
@@ -127,7 +127,7 @@ public class SimpleProvisionStatusServiceImpl implements SimpleProvisionStatusSe
         SimpleProvisionStatus sourceStatus = getSimpleProvisionStatusByCode(code);
         SimpleProvisionStatus targetStatus = getSimpleProvisionStatusByCode(code2);
         if (sourceStatus == null || targetStatus == null)
-            throw new OsirisException("Simple provision status code " + code + " or " + code2 + " do not exist");
+            throw new OsirisException(null, "Simple provision status code " + code + " or " + code2 + " do not exist");
 
         if (sourceStatus.getPredecessors() == null)
             sourceStatus.setPredecessors(new ArrayList<SimpleProvisionStatus>());

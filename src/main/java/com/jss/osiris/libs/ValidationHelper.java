@@ -103,7 +103,7 @@ public class ValidationHelper {
             try {
                 serviceClass = Class.forName(String.join(".", valueClass));
             } catch (ClassNotFoundException e) {
-                throw new OsirisException("Class not found in ValidationHelper generic check method. Class : "
+                throw new OsirisException(e, "Class not found in ValidationHelper generic check method. Class : "
                         + value.getClass().getName());
             }
 
@@ -111,7 +111,7 @@ public class ValidationHelper {
             try {
                 service = ctx.getBean(serviceClass);
             } catch (NoSuchBeanDefinitionException e) {
-                throw new OsirisException("Bean not found in ValidationHelper generic check method. Bean for "
+                throw new OsirisException(e, "Bean not found in ValidationHelper generic check method. Bean for "
                         + serviceClass);
             }
 
@@ -119,7 +119,7 @@ public class ValidationHelper {
             try {
                 m = serviceClass.getDeclaredMethod("get" + value.getClass().getSimpleName(), Integer.class);
             } catch (NoSuchMethodException e) {
-                throw new OsirisException("Method not found in ValidationHelper generic check method. Bean : "
+                throw new OsirisException(e, "Method not found in ValidationHelper generic check method. Bean : "
                         + serviceClass
                         + ". Method : " + "get" + value.getClass().getSimpleName());
             }
@@ -128,11 +128,12 @@ public class ValidationHelper {
             try {
                 returnValue = m.invoke(service, value.getId());
             } catch (IllegalAccessException e) {
-                throw new OsirisException("Illegal access to methode in ValidationHelper generic check method. Bean : "
-                        + serviceClass
-                        + ". Method : " + "get" + value.getClass().getSimpleName());
+                throw new OsirisException(e,
+                        "Illegal access to methode in ValidationHelper generic check method. Bean : "
+                                + serviceClass
+                                + ". Method : " + "get" + value.getClass().getSimpleName());
             } catch (InvocationTargetException e) {
-                throw new OsirisException(
+                throw new OsirisException(e,
                         "Invocation target error to methode in ValidationHelper generic check method. Bean : "
                                 + serviceClass
                                 + ". Method : " + "get" + value.getClass().getSimpleName());
@@ -169,7 +170,7 @@ public class ValidationHelper {
             try {
                 serviceClass = Class.forName(String.join(".", valueClass));
             } catch (ClassNotFoundException e) {
-                throw new OsirisException("Class not found in ValidationHelper generic check method. Class : "
+                throw new OsirisException(e, "Class not found in ValidationHelper generic check method. Class : "
                         + value.getClass().getName());
             }
 
@@ -177,7 +178,7 @@ public class ValidationHelper {
             try {
                 service = ctx.getBean(serviceClass);
             } catch (NoSuchBeanDefinitionException e) {
-                throw new OsirisException("Bean not found in ValidationHelper generic check method. Bean for "
+                throw new OsirisException(e, "Bean not found in ValidationHelper generic check method. Bean for "
                         + serviceClass);
             }
 
@@ -185,7 +186,7 @@ public class ValidationHelper {
             try {
                 m = serviceClass.getDeclaredMethod("get" + value.getClass().getSimpleName());
             } catch (NoSuchMethodException e) {
-                throw new OsirisException("Method not found in ValidationHelper generic check method. Bean : "
+                throw new OsirisException(e, "Method not found in ValidationHelper generic check method. Bean : "
                         + serviceClass
                         + ". Method : " + "get" + value.getClass().getSimpleName());
             }
@@ -194,11 +195,12 @@ public class ValidationHelper {
             try {
                 returnValue = (List<ICode>) m.invoke(service);
             } catch (IllegalAccessException e) {
-                throw new OsirisException("Illegal access to methode in ValidationHelper generic check method. Bean : "
-                        + serviceClass
-                        + ". Method : " + "get" + value.getClass().getSimpleName());
+                throw new OsirisException(e,
+                        "Illegal access to methode in ValidationHelper generic check method. Bean : "
+                                + serviceClass
+                                + ". Method : " + "get" + value.getClass().getSimpleName());
             } catch (InvocationTargetException e) {
-                throw new OsirisException(
+                throw new OsirisException(e,
                         "Invocation target error to methode in ValidationHelper generic check method. Bean : "
                                 + serviceClass
                                 + ". Method : " + "get" + value.getClass().getSimpleName());

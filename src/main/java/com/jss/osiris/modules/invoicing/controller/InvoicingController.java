@@ -123,6 +123,14 @@ public class InvoicingController {
         return new ResponseEntity<Payment>(outPayment, HttpStatus.OK);
     }
 
+    @GetMapping(inputEntryPoint + "/payment")
+    public ResponseEntity<Payment> getPaymentById(@RequestParam Integer id) throws OsirisValidationException {
+        if (id == null)
+            throw new OsirisValidationException("Id");
+
+        return new ResponseEntity<Payment>(paymentService.getPayment(id), HttpStatus.OK);
+    }
+
     @PostMapping(inputEntryPoint + "/payments/search")
     public ResponseEntity<List<PaymentSearchResult>> getPayments(@RequestBody PaymentSearch paymentSearch)
             throws OsirisValidationException {
@@ -170,7 +178,7 @@ public class InvoicingController {
             try {
                 data = Files.readAllBytes(refunds.toPath());
             } catch (IOException e) {
-                throw new OsirisException("Unable to read file " + refunds.toPath());
+                throw new OsirisException(e, "Unable to read file " + refunds.toPath());
             }
 
             headers = new HttpHeaders();
@@ -261,9 +269,16 @@ public class InvoicingController {
         ITiers commonCustomerOrder = paymentAssociate.getTiersRefund() != null ? paymentAssociate.getTiersRefund()
                 : paymentAssociate.getConfrereRefund();
         if (paymentAssociate.getInvoices() != null) {
-            for (Invoice invoice : paymentAssociate.getInvoices())
-                if (!invoiceHelper.getCustomerOrder(invoice).getId().equals(commonCustomerOrder.getId()))
+            for (Invoice invoice : paymentAssociate.getInvoices()) {
+                if (invoice.getResponsable() != null
+                        && !invoice.getResponsable().getTiers().getId().equals(commonCustomerOrder.getId()))
                     throw new OsirisValidationException("not same customer order chosed");
+                if (invoice.getConfrere() != null
+                        && !invoice.getConfrere().getId().equals(commonCustomerOrder.getId()))
+                    throw new OsirisValidationException("not same customer order chosed");
+                if (!invoice.getTiers().getId().equals(commonCustomerOrder.getId()))
+                    throw new OsirisValidationException("not same customer order chosed");
+            }
         }
 
         if (paymentAssociate.getCustomerOrders() != null) {
@@ -433,11 +448,8 @@ public class InvoicingController {
     @PostMapping(inputEntryPoint + "/invoice")
     public ResponseEntity<Invoice> addOrUpdateInvoice(@RequestBody Invoice invoice)
             throws OsirisValidationException, OsirisException {
-        if (invoice.getId() != null)
+        if (invoice.getId() != null && invoice.getCustomerOrder() != null)
             throw new OsirisValidationException("Id");
-
-        if (invoice.getCustomerOrder() != null)
-            throw new OsirisValidationException("CustomerOrder");
 
         int doFound = 0;
 
@@ -487,6 +499,9 @@ public class InvoicingController {
         }
         validationHelper.validateReferential(invoice.getInvoiceStatus(), false, "InvoiceStatus");
         validationHelper.validateDate(invoice.getDueDate(), false, "DueDate");
+        validationHelper.validateDate(invoice.getManualAccountingDocumentDate(), false, "AccountingDocumentDate");
+        validationHelper.validateString(invoice.getManualAccountingDocumentNumber(), false, 150,
+                "ManualAccountingDocumentNumber");
 
         if (invoice.getInvoiceItems() == null) {
             throw new OsirisValidationException("InvoiceItems");

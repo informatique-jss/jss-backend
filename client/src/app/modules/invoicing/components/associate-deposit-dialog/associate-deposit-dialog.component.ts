@@ -16,9 +16,11 @@ import { ITiers } from 'src/app/modules/tiers/model/ITiers';
 import { Tiers } from 'src/app/modules/tiers/model/Tiers';
 import { AppService } from 'src/app/services/app.service';
 import { CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT } from '../../../../libs/Constants';
+import { OrderingSearchResult } from '../../../quotation/model/OrderingSearchResult';
 import { CustomerOrderService } from '../../../quotation/services/customer.order.service';
 import { AssociationSummaryTable } from '../../model/AssociationSummaryTable';
 import { Deposit } from '../../model/Deposit';
+import { InvoiceSearchResult } from '../../model/InvoiceSearchResult';
 import { PaymentAssociate } from '../../model/PaymentAssociate';
 import { DepositService } from '../../services/deposit.service';
 import { InvoiceService } from '../../services/invoice.service';
@@ -55,6 +57,7 @@ export class AssociateDepositDialogComponent implements OnInit, AfterContentChec
     public amountDialog: MatDialog,
     private depositService: DepositService,
     private customerOrderService: CustomerOrderService,
+    private invoiceService: InvoiceService,
     private InvoiceService: InvoiceService,
     private changeDetectorRef: ChangeDetectorRef,
     private constantService: ConstantService,
@@ -96,7 +99,7 @@ export class AssociateDepositDialogComponent implements OnInit, AfterContentChec
 
     if (this.deposit && this.customerOrder) {
       this.associationSummaryTable.push({
-        deposit: this.deposit, customerOrder: this.customerOrder, amountUsed: Math.min(QuotationComponent.computePriceTotal(this.customerOrder), this.deposit.depositAmount)
+        deposit: this.deposit, customerOrder: this.customerOrder, amountUsed: Math.round(Math.min(QuotationComponent.computePriceTotal(this.customerOrder) - QuotationComponent.computePayed(this.customerOrder), this.deposit.depositAmount) * 100) / 100
       } as AssociationSummaryTable)
     };
 
@@ -157,91 +160,95 @@ export class AssociateDepositDialogComponent implements OnInit, AfterContentChec
     this.refreshTable.next();
   }
 
-  associateInvoice(invoice: Invoice) {
-    if (this.associationSummaryTable)
-      for (let asso of this.associationSummaryTable)
-        if (asso.invoice && asso.invoice.id == invoice.id) {
-          this.appService.displaySnackBar("Cette facture est déjà associée à cet acompte", true, 15);
-          return;
-        }
-    if (invoice.invoiceStatus.id != this.invoiceStatusSend.id) {
-      this.appService.displaySnackBar("Veuillez choisir une facture au statut " + this.invoiceStatusSend.label, true, 15);
-      return;
-    }
+  associateInvoice(invoiceIn: InvoiceSearchResult) {
+    this.invoiceService.getInvoiceById(invoiceIn.invoiceId).subscribe(invoice => {
+      if (this.associationSummaryTable)
+        for (let asso of this.associationSummaryTable)
+          if (asso.invoice && asso.invoice.id == invoice.id) {
+            this.appService.displaySnackBar("Cette facture est déjà associée à cet acompte", true, 15);
+            return;
+          }
+      if (invoice.invoiceStatus.id != this.invoiceStatusSend.id) {
+        this.appService.displaySnackBar("Veuillez choisir une facture au statut " + this.invoiceStatusSend.label, true, 15);
+        return;
+      }
 
-    let customerOrderId: number = 0;
-    let invoiceAny = invoice as any;
-    if (invoiceAny.confrereId)
-      customerOrderId = invoiceAny.confrereId
-    if (invoiceAny.responsableId)
-      customerOrderId = invoiceAny.responsableId
-    if (invoiceAny.tiersId)
-      customerOrderId = invoiceAny.tiersId
+      let customerOrderId: number = 0;
+      let invoiceAny = invoice as any;
+      if (invoiceAny.confrereId)
+        customerOrderId = invoiceAny.confrereId
+      if (invoiceAny.responsableId)
+        customerOrderId = invoiceAny.responsableId
+      if (invoiceAny.tiersId)
+        customerOrderId = invoiceAny.tiersId
 
-    if (!this.isSameCustomerOrder(customerOrderId)) {
-      this.appService.displaySnackBar("Veuillez choisir une facture du même donneur d'ordre que les autres éléments associés à l'acompte", true, 15);
-      return;
-    }
-    this.InvoiceService.getInvoiceById(invoice.id).subscribe(invoiceResponse => {
-      let amountDialogRef = this.amountDialog.open(AmountDialogComponent, {
-        width: '100%'
+      if (!this.isSameCustomerOrder(customerOrderId)) {
+        this.appService.displaySnackBar("Veuillez choisir une facture du même donneur d'ordre que les autres éléments associés à l'acompte", true, 15);
+        return;
+      }
+      this.InvoiceService.getInvoiceById(invoice.id).subscribe(invoiceResponse => {
+        let amountDialogRef = this.amountDialog.open(AmountDialogComponent, {
+          width: '100%'
+        });
+        let asso = { deposit: this.deposit, invoice: invoiceResponse } as AssociationSummaryTable;
+        let maxAmount = Math.round((Math.min(this.getLeftMaxAmountPayed(asso), this.getInitialAmount(asso) - this.getInitialPayedAmount(asso))) * 100) / 100;
+        amountDialogRef.componentInstance.maxAmount = maxAmount;
+        amountDialogRef.afterClosed().subscribe(response => {
+          if (response != null) {
+            asso.amountUsed = Math.min(parseFloat(response), maxAmount);
+            this.associationSummaryTable.push(asso);
+            this.refreshSummaryTables();
+          } else {
+            return;
+          }
+        });
       });
-      let asso = { deposit: this.deposit, invoice: invoiceResponse } as AssociationSummaryTable;
-      let maxAmount = Math.round((Math.min(this.getLeftMaxAmountPayed(asso), this.getInitialAmount(asso) - this.getInitialPayedAmount(asso))) * 100) / 100;
-      amountDialogRef.componentInstance.maxAmount = maxAmount;
-      amountDialogRef.afterClosed().subscribe(response => {
-        if (response != null) {
-          asso.amountUsed = Math.min(parseFloat(response), maxAmount);
-          this.associationSummaryTable.push(asso);
-          this.refreshSummaryTables();
-        } else {
-          return;
-        }
-      });
-    });
+    })
   }
 
-  associateOrder(order: CustomerOrder) {
-    if (this.associationSummaryTable)
-      for (let asso of this.associationSummaryTable)
-        if (asso.customerOrder && asso.customerOrder.id == order.id) {
-          this.appService.displaySnackBar("Cette commande est déjà associée à cet acompte", true, 15);
-          return;
-        }
+  associateOrder(orderIn: OrderingSearchResult) {
+    this.customerOrderService.getCustomerOrder(orderIn.customerOrderId).subscribe(order => {
+      if (this.associationSummaryTable)
+        for (let asso of this.associationSummaryTable)
+          if (asso.customerOrder && asso.customerOrder.id == order.id) {
+            this.appService.displaySnackBar("Cette commande est déjà associée à cet acompte", true, 15);
+            return;
+          }
 
-    let customerOrderId: number = 0;
-    let orderAny = order as any;
-    if (orderAny.confrereId)
-      customerOrderId = orderAny.confrereId
-    if (orderAny.responsableId)
-      customerOrderId = orderAny.responsableId
-    if (orderAny.tiersId)
-      customerOrderId = orderAny.tiersId
+      let customerOrderId: number = 0;
+      let orderAny = order as any;
+      if (orderAny.confrereId)
+        customerOrderId = orderAny.confrereId
+      if (orderAny.responsableId)
+        customerOrderId = orderAny.responsableId
+      if (orderAny.tiersId)
+        customerOrderId = orderAny.tiersId
 
 
-    if (!this.isSameCustomerOrder(customerOrderId)) {
-      this.appService.displaySnackBar("Veuillez choisir une commande du même donneur d'ordre que les autres éléments associés à l'acompte", true, 15);
-      return;
-    }
+      if (!this.isSameCustomerOrder(customerOrderId)) {
+        this.appService.displaySnackBar("Veuillez choisir une commande du même donneur d'ordre que les autres éléments associés à l'acompte", true, 15);
+        return;
+      }
 
-    this.customerOrderService.getCustomerOrder(orderAny.customerOrderId).subscribe(responseOrder => {
-      let amountDialogRef = this.amountDialog.open(AmountDialogComponent, {
-        width: '35%'
+      this.customerOrderService.getCustomerOrder(orderAny.customerOrderId).subscribe(responseOrder => {
+        let amountDialogRef = this.amountDialog.open(AmountDialogComponent, {
+          width: '35%'
+        });
+
+        let asso = { deposit: this.deposit, customerOrder: responseOrder, } as AssociationSummaryTable;
+        let maxAmount = Math.round((Math.min(this.amountRemaining(), this.getInitialAmount(asso) - this.getInitialPayedAmount(asso))) * 100) / 100;
+        amountDialogRef.componentInstance.maxAmount = maxAmount;
+        amountDialogRef.afterClosed().subscribe(response => {
+          if (response != null) {
+            asso.amountUsed = Math.min(parseFloat(response), maxAmount);
+            this.associationSummaryTable.push(asso);
+            this.refreshSummaryTables();
+          } else {
+            return;
+          }
+        });
       });
-
-      let asso = { deposit: this.deposit, customerOrder: responseOrder, } as AssociationSummaryTable;
-      let maxAmount = Math.round((Math.min(this.amountRemaining(), this.getInitialAmount(asso) - this.getInitialPayedAmount(asso))) * 100) / 100;
-      amountDialogRef.componentInstance.maxAmount = maxAmount;
-      amountDialogRef.afterClosed().subscribe(response => {
-        if (response != null) {
-          asso.amountUsed = Math.min(parseFloat(response), maxAmount);
-          this.associationSummaryTable.push(asso);
-          this.refreshSummaryTables();
-        } else {
-          return;
-        }
-      });
-    });
+    })
   }
 
   isSameCustomerOrder(newCustomerOrder: number): boolean {

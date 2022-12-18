@@ -7,7 +7,6 @@ import { AppService } from 'src/app/services/app.service';
 import { UserPreferenceService } from '../../../../services/user.preference.service';
 import { Employee } from '../../../profile/model/Employee';
 import { EmployeeService } from '../../../profile/services/employee.service';
-import { CustomerOrder } from '../../model/CustomerOrder';
 import { OrderingSearch } from '../../model/OrderingSearch';
 import { OrderingSearchResult } from '../../model/OrderingSearchResult';
 import { OrderingSearchResultService } from '../../services/ordering.search.result.service';
@@ -28,7 +27,7 @@ export class OrderingListComponent implements OnInit {
   tableAction: SortTableAction[] = [];
   bookmark: OrderingSearch | undefined;
 
-  @Output() actionBypass: EventEmitter<CustomerOrder> = new EventEmitter<CustomerOrder>();
+  @Output() actionBypass: EventEmitter<OrderingSearchResult> = new EventEmitter<OrderingSearchResult>();
   @Input() overrideIconAction: string = "";
   @Input() overrideTooltipAction: string = "";
   @Input() defaultStatusFilter: string[] | undefined;

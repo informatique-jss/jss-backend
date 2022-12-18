@@ -16,7 +16,7 @@ public interface AccountingRecordSearchResult {
 
   String getAccountingJournalCode();
 
-  String getAccountingAccountNumber();
+  String getPrincipalAccountingAccountCode();
 
   Integer getAccountingAccountSubNumber();
 

@@ -11,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import com.jss.osiris.modules.accounting.model.AccountingJournal;
+import com.jss.osiris.modules.accounting.model.PrincipalAccountingAccount;
 import com.jss.osiris.modules.invoicing.model.InvoiceStatus;
 import com.jss.osiris.modules.invoicing.model.PaymentWay;
 import com.jss.osiris.modules.profile.model.Employee;
@@ -242,6 +243,10 @@ public class Constant implements Serializable, IId {
 	@ManyToOne
 	@JoinColumn(name = "id_billing_type_chronopost_fees")
 	private BillingType billingTypeChronopostFees;
+
+	@ManyToOne
+	@JoinColumn(name = "id_billing_type_application_fees")
+	private BillingType billingTypeApplicationFees;
 
 	@ManyToOne
 	@JoinColumn(name = "id_billing_type_bank_cheque")
@@ -501,6 +506,42 @@ public class Constant implements Serializable, IId {
 	@ManyToOne
 	@JoinColumn(name = "id_language_french")
 	private Language languageFrench;
+
+	@ManyToOne
+	@JoinColumn(name = "id_principal_accounting_account_customer")
+	private PrincipalAccountingAccount principalAccountingAccountCustomer;
+
+	@ManyToOne
+	@JoinColumn(name = "id_principal_accounting_account_provider")
+	private PrincipalAccountingAccount principalAccountingAccountProvider;
+
+	@ManyToOne
+	@JoinColumn(name = "id_principal_accounting_account_deposit")
+	private PrincipalAccountingAccount principalAccountingAccountDeposit;
+
+	@ManyToOne
+	@JoinColumn(name = "id_principal_accounting_account_product")
+	private PrincipalAccountingAccount principalAccountingAccountProduct;
+
+	@ManyToOne
+	@JoinColumn(name = "id_principal_accounting_account_charge")
+	private PrincipalAccountingAccount principalAccountingAccountCharge;
+
+	@ManyToOne
+	@JoinColumn(name = "id_principal_accounting_account_bank")
+	private PrincipalAccountingAccount principalAccountingAccountBank;
+
+	@ManyToOne
+	@JoinColumn(name = "id_principal_accounting_account_waiting")
+	private PrincipalAccountingAccount principalAccountingAccountWaiting;
+
+	@ManyToOne
+	@JoinColumn(name = "id_principal_accounting_account_lost")
+	private PrincipalAccountingAccount principalAccountingAccountLost;
+
+	@ManyToOne
+	@JoinColumn(name = "id_principal_accounting_account_profit")
+	private PrincipalAccountingAccount principalAccountingAccountProfit;
 
 	private String salesSharedMailbox;
 	private String accountingSharedMaiblox;
@@ -1470,6 +1511,86 @@ public class Constant implements Serializable, IId {
 
 	public void setBillingTypeBilan(BillingType billingTypeBilan) {
 		this.billingTypeBilan = billingTypeBilan;
+	}
+
+	public PrincipalAccountingAccount getPrincipalAccountingAccountCustomer() {
+		return principalAccountingAccountCustomer;
+	}
+
+	public void setPrincipalAccountingAccountCustomer(PrincipalAccountingAccount principalAccountingAccountCustomer) {
+		this.principalAccountingAccountCustomer = principalAccountingAccountCustomer;
+	}
+
+	public PrincipalAccountingAccount getPrincipalAccountingAccountProvider() {
+		return principalAccountingAccountProvider;
+	}
+
+	public void setPrincipalAccountingAccountProvider(PrincipalAccountingAccount principalAccountingAccountProvider) {
+		this.principalAccountingAccountProvider = principalAccountingAccountProvider;
+	}
+
+	public PrincipalAccountingAccount getPrincipalAccountingAccountDeposit() {
+		return principalAccountingAccountDeposit;
+	}
+
+	public void setPrincipalAccountingAccountDeposit(PrincipalAccountingAccount principalAccountingAccountDeposit) {
+		this.principalAccountingAccountDeposit = principalAccountingAccountDeposit;
+	}
+
+	public PrincipalAccountingAccount getPrincipalAccountingAccountProduct() {
+		return principalAccountingAccountProduct;
+	}
+
+	public void setPrincipalAccountingAccountProduct(PrincipalAccountingAccount principalAccountingAccountProduct) {
+		this.principalAccountingAccountProduct = principalAccountingAccountProduct;
+	}
+
+	public PrincipalAccountingAccount getPrincipalAccountingAccountCharge() {
+		return principalAccountingAccountCharge;
+	}
+
+	public void setPrincipalAccountingAccountCharge(PrincipalAccountingAccount principalAccountingAccountCharge) {
+		this.principalAccountingAccountCharge = principalAccountingAccountCharge;
+	}
+
+	public PrincipalAccountingAccount getPrincipalAccountingAccountBank() {
+		return principalAccountingAccountBank;
+	}
+
+	public void setPrincipalAccountingAccountBank(PrincipalAccountingAccount principalAccountingAccountBank) {
+		this.principalAccountingAccountBank = principalAccountingAccountBank;
+	}
+
+	public PrincipalAccountingAccount getPrincipalAccountingAccountWaiting() {
+		return principalAccountingAccountWaiting;
+	}
+
+	public void setPrincipalAccountingAccountWaiting(PrincipalAccountingAccount principalAccountingAccountWaiting) {
+		this.principalAccountingAccountWaiting = principalAccountingAccountWaiting;
+	}
+
+	public PrincipalAccountingAccount getPrincipalAccountingAccountLost() {
+		return principalAccountingAccountLost;
+	}
+
+	public void setPrincipalAccountingAccountLost(PrincipalAccountingAccount principalAccountingAccountLost) {
+		this.principalAccountingAccountLost = principalAccountingAccountLost;
+	}
+
+	public PrincipalAccountingAccount getPrincipalAccountingAccountProfit() {
+		return principalAccountingAccountProfit;
+	}
+
+	public void setPrincipalAccountingAccountProfit(PrincipalAccountingAccount principalAccountingAccountProfit) {
+		this.principalAccountingAccountProfit = principalAccountingAccountProfit;
+	}
+
+	public BillingType getBillingTypeApplicationFees() {
+		return billingTypeApplicationFees;
+	}
+
+	public void setBillingTypeApplicationFees(BillingType billingTypeApplicationFees) {
+		this.billingTypeApplicationFees = billingTypeApplicationFees;
 	}
 
 }

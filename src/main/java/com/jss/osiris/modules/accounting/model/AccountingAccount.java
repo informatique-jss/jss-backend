@@ -16,7 +16,7 @@ import com.jss.osiris.modules.miscellaneous.model.IId;
 
 @Entity
 @Table(indexes = {
-		@Index(name = "idx_accounting_account_number", columnList = "accountingAccountNumber,accountingAccountSubNumber", unique = true) })
+		@Index(name = "idx_accounting_account_number", columnList = "id_principal_accounting_account,accountingAccountSubNumber", unique = true) })
 public class AccountingAccount implements Serializable, IId {
 
 	@Id
@@ -26,14 +26,11 @@ public class AccountingAccount implements Serializable, IId {
 	@Column(nullable = false, length = 100)
 	private String label;
 
-	@Column(length = 6, nullable = false)
-	private String accountingAccountNumber;
+	@ManyToOne
+	@JoinColumn(name = "id_principal_accounting_account")
+	private PrincipalAccountingAccount principalAccountingAccount;
 
 	private Integer accountingAccountSubNumber;
-
-	@ManyToOne
-	@JoinColumn(name = "id_accounting_account_class")
-	private AccountingAccountClass accountingAccountClass;
 
 	public Integer getId() {
 		return id;
@@ -47,22 +44,6 @@ public class AccountingAccount implements Serializable, IId {
 		return label;
 	}
 
-	public String getAccountingAccountNumber() {
-		return accountingAccountNumber;
-	}
-
-	public void setAccountingAccountNumber(String accountingAccountNumber) {
-		this.accountingAccountNumber = accountingAccountNumber;
-	}
-
-	public AccountingAccountClass getAccountingAccountClass() {
-		return accountingAccountClass;
-	}
-
-	public void setAccountingAccountClass(AccountingAccountClass accountingAccountClass) {
-		this.accountingAccountClass = accountingAccountClass;
-	}
-
 	public void setLabel(String label) {
 		this.label = label;
 	}
@@ -73,6 +54,14 @@ public class AccountingAccount implements Serializable, IId {
 
 	public void setAccountingAccountSubNumber(Integer accountingAccountSubNumber) {
 		this.accountingAccountSubNumber = accountingAccountSubNumber;
+	}
+
+	public PrincipalAccountingAccount getPrincipalAccountingAccount() {
+		return principalAccountingAccount;
+	}
+
+	public void setPrincipalAccountingAccount(PrincipalAccountingAccount principalAccountingAccount) {
+		this.principalAccountingAccount = principalAccountingAccount;
 	}
 
 }

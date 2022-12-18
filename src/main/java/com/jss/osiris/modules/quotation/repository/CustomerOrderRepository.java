@@ -39,12 +39,13 @@ public interface CustomerOrderRepository extends CrudRepository<CustomerOrder, I
                         + " and co.created_date>=:startDate and co.created_date<=:endDate "
                         + " and ( COALESCE(:salesEmployee) =0 or cf.id_commercial in (:salesEmployee) or r.id_commercial in (:salesEmployee) or t.id_commercial in (:salesEmployee) or t.id_commercial is null and t2.id_commercial in (:salesEmployee))"
                         + " and ( COALESCE(:customerOrder)=0 or cf.id in (:customerOrder) or r.id in (:customerOrder) or t.id in (:customerOrder))"
+                        + " and ( COALESCE(:affaire)=0 or af.id in (:affaire) )"
                         + " group by cf.id, cf.label, r.id, r.firstname, r.lastname, t.denomination, t.firstname, t.lastname, cos.label, "
                         + " co.created_date, cf.id_commercial, r.id_commercial, t.id_commercial, t2.id_commercial, co.id, r.id, t.id, cf.id, co.description ")
         List<OrderingSearchResult> findCustomerOrders(@Param("salesEmployee") List<Integer> salesEmployee,
                         @Param("customerOrderStatus") List<Integer> customerOrderStatus,
                         @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
-                        @Param("customerOrder") List<Integer> customerOrder);
+                        @Param("customerOrder") List<Integer> customerOrder, @Param("affaire") List<Integer> affaire);
 
         @Query(value = "select n from CustomerOrder n where customerOrderStatus=:customerOrderStatus and thirdReminderDateTime is null ")
         List<CustomerOrder> findCustomerOrderForReminder(

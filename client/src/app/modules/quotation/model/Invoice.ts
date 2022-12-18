@@ -4,6 +4,7 @@ import { InvoiceStatus } from "../../invoicing/model/InvoiceStatus";
 import { Payment } from "../../invoicing/model/Payment";
 import { City } from "../../miscellaneous/model/City";
 import { Country } from "../../miscellaneous/model/Country";
+import { IAttachment } from '../../miscellaneous/model/IAttachment';
 import { Provider } from '../../miscellaneous/model/Provider';
 import { BillingLabelType } from "../../tiers/model/BillingLabelType";
 import { Responsable } from "../../tiers/model/Responsable";
@@ -12,7 +13,7 @@ import { Confrere } from "./Confrere";
 import { CustomerOrder } from "./CustomerOrder";
 import { InvoiceItem } from "./InvoiceItem";
 
-export interface Invoice {
+export interface Invoice extends IAttachment {
   id: number;
   createdDate: Date;
   dueDate: Date;
@@ -38,4 +39,6 @@ export interface Invoice {
   responsable: Responsable | undefined;
   confrere: Confrere | undefined;
   provider: Provider | undefined;
+  manualAccountingDocumentDate: Date;
+  manualAccountingDocumentNumber: string;
 }

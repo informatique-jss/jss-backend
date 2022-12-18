@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.hibernate.EmptyInterceptor;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.hibernate.type.Type;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -37,6 +38,8 @@ public class AuditEntityInterceptor extends EmptyInterceptor {
     @Autowired
     @Lazy
     ActiveDirectoryHelper activeDirectoryHelper;
+
+    private HashSet<Audit> auditToSave = new HashSet<Audit>();
 
     @Override
     public boolean onFlushDirty(
@@ -71,7 +74,7 @@ public class AuditEntityInterceptor extends EmptyInterceptor {
                         if (oldField != null)
                             audit.setOldValue(oldField.toString());
                         audit.setFieldName(propertyNames[i]);
-                        auditRepository.save(audit);
+                        addToAuditToSave(audit);
                     }
                 } else {
                     String oldCode = getCodeValue(oldField);
@@ -89,9 +92,53 @@ public class AuditEntityInterceptor extends EmptyInterceptor {
                         if (oldCode != null)
                             audit.setOldValue(oldCode.toString());
                         audit.setFieldName(propertyNames[i]);
-                        auditRepository.save(audit);
+                        addToAuditToSave(audit);
                     }
                 }
+            }
+        }
+    }
+
+    private void addToAuditToSave(Audit auditToAdd) {
+        synchronized (auditToSave) {
+            boolean found = false;
+            if (auditToSave != null && auditToSave.size() > 0) {
+                for (Audit audit : auditToSave) {
+                    if (audit.getEntity().equals(auditToAdd.getEntity())
+                            && audit.getEntityId().equals(auditToAdd.getEntityId()) &&
+                            audit.getFieldName().equals(auditToAdd.getFieldName()))
+                        if (audit.getNewValue() == null && auditToAdd.getNewValue() == null
+                                || audit.getNewValue().equals(auditToAdd.getNewValue()))
+                            if (audit.getOldValue() == null && auditToAdd.getOldValue() == null
+                                    || audit.getOldValue().equals(auditToAdd.getOldValue())) {
+                                found = true;
+                                break;
+                            }
+                }
+            }
+
+            if (!found)
+                auditToSave.add(auditToAdd);
+        }
+    }
+
+    @Override
+    public void afterTransactionCompletion(Transaction tx) {
+        synchronized (auditToSave) {
+            HashSet<Audit> auditsToDelete = new HashSet<Audit>();
+            if (auditToSave != null && auditToSave.size() > 0) {
+                tx.begin();
+                try {
+                    for (Audit audit : auditToSave) {
+                        auditsToDelete.add(audit);
+                        auditRepository.save(audit);
+                    }
+                } catch (Exception e) {
+                    tx.rollback();
+                    return;
+                }
+                auditToSave.removeAll(auditsToDelete);
+                tx.commit();
             }
         }
     }

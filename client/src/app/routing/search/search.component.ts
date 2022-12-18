@@ -18,7 +18,7 @@ export const ANNOUNCEMENT_ENTITY_TYPE: EntityType = { entityType: 'Announcement'
 export const FORMALITE_ENTITY_TYPE: EntityType = { entityType: 'Formalite', tabName: 'Formalité', entryPoint: 'quotation/formalite' };
 export const PROVISION_ENTITY_TYPE: EntityType = { entityType: 'Provision', tabName: 'Provision', entryPoint: 'quotation/provision' };
 export const BODACC_ENTITY_TYPE: EntityType = { entityType: 'Bodacc', tabName: 'BODACC', entryPoint: 'quotation/bodacc  ' };
-export const ASSO_AFFAIRE_ENTITY_TYPE: EntityType = { entityType: 'AssoAffaireOrder', tabName: 'Affaires / Prestations', entryPoint: 'affaire' };
+export const ASSO_AFFAIRE_ENTITY_TYPE: EntityType = { entityType: 'AssoAffaireOrder', tabName: 'Prestations', entryPoint: 'provision' };
 export const AFFAIRE_ENTITY_TYPE: EntityType = { entityType: 'Affaire', tabName: 'Affaires', entryPoint: 'affaire' };
 export const INVOICE_ENTITY_TYPE: EntityType = { entityType: 'Invoice', tabName: 'Factures', entryPoint: 'invoicing/view' };
 export const JOURNAL_ENTITY_TYPE: EntityType = { entityType: 'Journal', tabName: 'Journaux', entryPoint: 'journal' };
@@ -44,7 +44,8 @@ export class SearchComponent implements OnInit {
   CUSTOMER_ORDER_ENTITY_TYPE = CUSTOMER_ORDER_ENTITY_TYPE;
   INVOICE_ENTITY_TYPE = INVOICE_ENTITY_TYPE;
   ASSO_AFFAIRE_ENTITY_TYPE = ASSO_AFFAIRE_ENTITY_TYPE;
-  entityTypes: EntityType[] = [TIERS_ENTITY_TYPE, RESPONSABLE_ENTITY_TYPE, QUOTATION_ENTITY_TYPE, CUSTOMER_ORDER_ENTITY_TYPE, INVOICE_ENTITY_TYPE, ASSO_AFFAIRE_ENTITY_TYPE];
+  AFFAIRE_ENTITY_TYPE = AFFAIRE_ENTITY_TYPE;
+  entityTypes: EntityType[] = [AFFAIRE_ENTITY_TYPE, TIERS_ENTITY_TYPE, RESPONSABLE_ENTITY_TYPE, QUOTATION_ENTITY_TYPE, CUSTOMER_ORDER_ENTITY_TYPE, INVOICE_ENTITY_TYPE, ASSO_AFFAIRE_ENTITY_TYPE];
   userSelectedModule: EntityType | null = null;
   @ViewChild(MatTabGroup) tabGroup: MatTabGroup | undefined;
 

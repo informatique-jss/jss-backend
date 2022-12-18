@@ -60,11 +60,11 @@ public interface AccountingRecordService {
 
         public List<AccountingBalance> searchAccountingBalanceGenerale(AccountingBalanceSearch accountingRecordSearch);
 
-        public File getAccountingBalanceExport(Integer accountingClassId, String accountingAccountNumber,
+        public File getAccountingBalanceExport(Integer accountingClassId, Integer principalAccountingAccountId,
                         Integer accountingAccountId, LocalDateTime startDate, LocalDateTime endDate)
                         throws OsirisException;
 
-        public File getAccountingBalanceGeneraleExport(Integer accountingClassId, String accountingAccountNumber,
+        public File getAccountingBalanceGeneraleExport(Integer accountingClassId, Integer principalAccountingAccountId,
                         Integer accountingAccountId, LocalDateTime startDate, LocalDateTime endDate)
                         throws OsirisException;
 

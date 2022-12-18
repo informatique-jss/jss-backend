@@ -17,6 +17,10 @@ export class PaymentService extends AppRestService<Payment>{
     return this.getList(new HttpParams().set("invoiceId", invoice.id), "payments/advise");
   }
 
+  getPaymentById(paymentId: number) {
+    return this.getById("payment", paymentId);
+  }
+
   // TODO : à retirer avant la MEP !!
   addOrUpdatePayment(payment: Payment) {
     return this.addOrUpdate(new HttpParams(), "payment", payment, "Enregistré", "Erreur lors de l'enregistrement");

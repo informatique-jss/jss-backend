@@ -34,10 +34,10 @@
   <div class="top">
   </div>
 
-  <div class="big-chip" *ngIf="amountToPayCompletely()<0 && payment.paymentWay.id==paymentWayInbound.id">
+  <div class="big-chip" *ngIf="amountToPayCompletely()<0 && isPaymentWayInbound(payment)">
     <chips-status [value]="'Solde '+amountRemaining()+' €'"></chips-status>
   </div>
-  <div *ngIf="amountToPayCompletely()<0 && payment.paymentWay.id==paymentWayInbound.id">
+  <div *ngIf="amountToPayCompletely()<0 && isPaymentWayInbound(payment)">
     <mat-vertical-stepper [linear]="false" #stepper animationDuration="500">
       <mat-step>
         <ng-template matStepLabel>Validation de l'association</ng-template>
@@ -73,7 +73,7 @@
         </p>
         <form [formGroup]="refundForm">
           <mat-radio-group class="radio-group-column" formControlName="refundTiers">
-            <span *ngIf="getRefundCustomerOrder()!=null">Impossible de rembourser le donneur d'ordre, l'IBAN de
+            <span *ngIf="getRefundCustomerOrder()==null">Impossible de rembourser le donneur d'ordre, l'IBAN de
               remboursement n'a pas été renseigné dans la fiche Tiers</span>
             <mat-radio-button [value]="getRefundCustomerOrder()" checked="true" *ngIf="getRefundCustomerOrder()!=null">
               Donneur d'ordre {{getCustomerOrderNameForITiers(getRefundCustomerOrder()!)}}

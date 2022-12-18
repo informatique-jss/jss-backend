@@ -124,7 +124,7 @@ public class AnnouncementStatusServiceImpl implements AnnouncementStatusService 
         AnnouncementStatus sourceStatus = getAnnouncementStatusByCode(code);
         AnnouncementStatus targetStatus = getAnnouncementStatusByCode(code2);
         if (sourceStatus == null || targetStatus == null)
-            throw new OsirisException("Status code " + code + " or " + code2 + " do not exist");
+            throw new OsirisException(null, "Status code " + code + " or " + code2 + " do not exist");
 
         if (sourceStatus.getSuccessors() == null)
             sourceStatus.setSuccessors(new ArrayList<AnnouncementStatus>());
@@ -141,7 +141,7 @@ public class AnnouncementStatusServiceImpl implements AnnouncementStatusService 
         AnnouncementStatus sourceStatus = getAnnouncementStatusByCode(code);
         AnnouncementStatus targetStatus = getAnnouncementStatusByCode(code2);
         if (sourceStatus == null || targetStatus == null)
-            throw new OsirisException("Announcement status code " + code + " or " + code2 + " do not exist");
+            throw new OsirisException(null, "Announcement status code " + code + " or " + code2 + " do not exist");
 
         if (sourceStatus.getPredecessors() == null)
             sourceStatus.setPredecessors(new ArrayList<AnnouncementStatus>());

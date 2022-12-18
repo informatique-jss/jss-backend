@@ -3,7 +3,8 @@ export interface AccountingBalance {
   creditAmount: number;
   debitAmount: number;
   accountingAccountLabel: string;
-  accountingAccountNumber: string;
+  principalAccountingAccountCode: string;
+  principalAccountingAccountLabel: string;
   accountingAccountSubNumber: string
   echoir30: string;
   echoir60: string;

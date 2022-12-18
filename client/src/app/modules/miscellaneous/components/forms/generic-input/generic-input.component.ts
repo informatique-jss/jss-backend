@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { UserNoteService } from 'src/app/services/user.notes.service';
 import { GenericFormComponent } from '../generic-form.components';
@@ -34,10 +34,6 @@ export class GenericInputComponent extends GenericFormComponent implements OnIni
  * Hint to display
  */
   @Input() hint: string = "";
-  /**
-   * Fired when input is modified by user
-   */
-  @Output() onInputChange: EventEmitter<void> = new EventEmitter();
 
   constructor(
     private formBuilder2: UntypedFormBuilder,
@@ -49,7 +45,4 @@ export class GenericInputComponent extends GenericFormComponent implements OnIni
   callOnNgInit(): void {
   }
 
-  inputChange() {
-    this.onInputChange.emit();
-  }
 }

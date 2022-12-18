@@ -8,9 +8,9 @@
           </autocomplete-accounting-account>
         </td>
         <td>
-          <generic-input [(model)]="accountingBalanceSearch.accountingAccountNumber" label="N° de compte"
-            [form]="accountingBalanceForm" propertyName="accountingAccountNumber" [isMandatory]="false" [maxLength]="3"
-            [minLength]="3"></generic-input>
+          <autocomplete-principal-accounting-account [(model)]="accountingBalanceSearch.principalAccountingAccount"
+            [form]="accountingBalanceForm" propertyName="principalAccountingAccount" [isMandatory]="false"
+            [isDisabled]="false" label="Compte comptable"></autocomplete-principal-accounting-account>
         </td>
         <td>
           <select-accounting-account-class [(model)]="accountingBalanceSearch.accountingClass" label="Classe comptable"
@@ -45,7 +45,11 @@
       </ng-container>
       <ng-container matColumnDef="credit">
         <th mat-header-cell *matHeaderCellDef>Crédit</th>
-        <td mat-cell *matCellDef="let element">{{element.credit}} €</td>
+        <td mat-cell *matCellDef="let element">{{element.credit}} {{(element.credit?" €":"")}}</td>
+      </ng-container>
+      <ng-container matColumnDef="balance">
+        <th mat-header-cell *matHeaderCellDef>Balance</th>
+        <td mat-cell *matCellDef="let element">{{element.balance}} {{(element.balance?" €":"")}}</td>
       </ng-container>
       <tr mat-header-row *matHeaderRowDef="displayedColumnsTotal"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumnsTotal;"></tr>

@@ -50,9 +50,10 @@ export abstract class GenericFormComponent implements OnInit {
    */
   @Input() customValidators: ValidatorFn[] | undefined;
   /**
- * Max length of input
- * No check if not devined
- */
+   * Fired when input is modified by user
+   */
+  @Output() onFormChange: EventEmitter<void> = new EventEmitter();
+
   constructor(
     private formBuilder: UntypedFormBuilder,
     private userNoteService: UserNoteService,
@@ -94,6 +95,7 @@ export abstract class GenericFormComponent implements OnInit {
         (newValue) => {
           this.model = newValue;
           this.modelChange.emit(this.model);
+          this.onFormChange.emit(this.model);
         }
       )
       this.callOnNgInit();

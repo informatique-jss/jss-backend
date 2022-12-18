@@ -54,6 +54,8 @@ import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.AffaireSearch;
 import com.jss.osiris.modules.quotation.model.Announcement;
 import com.jss.osiris.modules.quotation.model.AnnouncementNoticeTemplate;
+import com.jss.osiris.modules.quotation.model.AnnouncementSearch;
+import com.jss.osiris.modules.quotation.model.AnnouncementSearchResult;
 import com.jss.osiris.modules.quotation.model.AnnouncementStatus;
 import com.jss.osiris.modules.quotation.model.AssignationType;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
@@ -313,6 +315,28 @@ public class QuotationController {
   @GetMapping(inputEntryPoint + "/announcement-status")
   public ResponseEntity<List<AnnouncementStatus>> getAnnouncementStatus() {
     return new ResponseEntity<List<AnnouncementStatus>>(announcementStatusService.getAnnouncementStatus(),
+        HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/announcement")
+  public ResponseEntity<Announcement> getAnnouncementById(@RequestParam Integer id) {
+    return new ResponseEntity<Announcement>(announcementService.getAnnouncement(id),
+        HttpStatus.OK);
+  }
+
+  @PostMapping(inputEntryPoint + "/announcement/search")
+  public ResponseEntity<List<AnnouncementSearchResult>> searchAnnouncements(@RequestBody AnnouncementSearch search)
+      throws OsirisValidationException, OsirisException {
+    if (search.getAffaireName() == null && search.getDepartment() == null && search.getStartDate() == null
+        && search.getEndDate() == null && search.getNoticeType() == null)
+      throw new OsirisValidationException("Give at least one filter");
+
+    validationHelper.validateReferential(search.getDepartment(), false, "Department");
+    validationHelper.validateReferential(search.getNoticeType(), false, "NoticeType");
+    validationHelper.validateDate(search.getEndDate(), false, "EndDate");
+    validationHelper.validateDate(search.getStartDate(), false, "StartDate");
+
+    return new ResponseEntity<List<AnnouncementSearchResult>>(announcementService.searchAnnouncements(search),
         HttpStatus.OK);
   }
 
@@ -948,7 +972,7 @@ public class QuotationController {
     QuotationStatus openQuotationStatus = quotationStatusService.getQuotationStatusByCode(QuotationStatus.OPEN);
     if (openQuotationStatus == null)
       if (quotation.getQuotationStatus() == null)
-        throw new OsirisException("OPEN Quotation status not found");
+        throw new OsirisException(null, "OPEN Quotation status not found");
 
     if (quotation.getQuotationStatus() == null)
       quotation.setQuotationStatus(openQuotationStatus);
@@ -1009,7 +1033,7 @@ public class QuotationController {
         .getCustomerOrderStatusByCode(CustomerOrderStatus.OPEN);
     if (customerOrderStatus == null)
       if (customerOrder.getCustomerOrderStatus() == null)
-        throw new OsirisException("OPEN Customer Order status not found");
+        throw new OsirisException(null, "OPEN Customer Order status not found");
 
     if (customerOrder.getCustomerOrderStatus() == null)
       customerOrder.setCustomerOrderStatus(customerOrderStatus);
@@ -1093,7 +1117,7 @@ public class QuotationController {
           quotationQuotation.getQuotationStatus().getCode().equals(QuotationStatus.OPEN);
     }
 
-    boolean isCustomerOrder = quotation instanceof CustomerOrder && !isOpen;
+    boolean isCustomerOrder = quotation instanceof CustomerOrder;
 
     if (quotation.getSpecialOffers() != null && quotation.getSpecialOffers().size() > 0)
       for (SpecialOffer specialOffer : quotation.getSpecialOffers())
@@ -1112,7 +1136,7 @@ public class QuotationController {
       throw new OsirisValidationException("No customer order");
 
     // Check customer order is not a prospect
-    if (isCustomerOrder) {
+    if (isCustomerOrder && !isOpen) {
       if (quotation.getTiers() != null
           && quotation.getTiers().getTiersType().getId().equals(constantService.getTiersTypeProspect().getId()))
         throw new OsirisClientMessageException("Le donneur d'ordre ne doit pas être un prospect");
@@ -1123,10 +1147,12 @@ public class QuotationController {
     }
 
     if (quotation.getAssoAffaireOrders() == null || quotation.getAssoAffaireOrders().size() == 0)
-      throw new OsirisValidationException("No affaire");
+      throw new OsirisValidationException("No asso affaire order");
 
-    if (quotation.getAssoAffaireOrders().get(0).getAffaire() == null
-        || quotation.getAssoAffaireOrders().get(0).getProvisions() == null
+    if (quotation.getAssoAffaireOrders().get(0).getAffaire() == null) {
+      throw new OsirisValidationException("No affaire");
+    }
+    if (quotation.getAssoAffaireOrders().get(0).getProvisions() == null
         || quotation.getAssoAffaireOrders().get(0).getProvisions().size() == 0)
       throw new OsirisValidationException("No provision");
 
@@ -1203,6 +1229,8 @@ public class QuotationController {
   private void validateProvision(Provision provision, boolean isOpen, boolean isCustomerOrder,
       IQuotation quotation)
       throws OsirisValidationException, OsirisException {
+
+    isCustomerOrder = isCustomerOrder && !isOpen;
 
     // Domiciliation
     if (provision.getDomiciliation() != null) {
@@ -1762,7 +1790,7 @@ public class QuotationController {
       try {
         data = Files.readAllBytes(file.toPath());
       } catch (IOException e) {
-        throw new OsirisException("Unable to read file " + file.getAbsolutePath());
+        throw new OsirisException(e, "Unable to read file " + file.getAbsolutePath());
       }
 
       headers = new HttpHeaders();
@@ -1775,7 +1803,7 @@ public class QuotationController {
       try {
         mimeType = Files.probeContentType(file.toPath());
       } catch (IOException e) {
-        throw new OsirisException("Unable to read file " + file.getAbsolutePath());
+        throw new OsirisException(e, "Unable to read file " + file.getAbsolutePath());
       }
       if (mimeType == null)
         mimeType = "application/pdf";
@@ -1802,7 +1830,7 @@ public class QuotationController {
       try {
         data = Files.readAllBytes(file.toPath());
       } catch (IOException e) {
-        throw new OsirisException("Unable to read file " + file.getAbsolutePath());
+        throw new OsirisException(e, "Unable to read file " + file.getAbsolutePath());
       }
 
       headers = new HttpHeaders();
@@ -1815,7 +1843,7 @@ public class QuotationController {
       try {
         mimeType = Files.probeContentType(file.toPath());
       } catch (IOException e) {
-        throw new OsirisException("Unable to read file " + file.getAbsolutePath());
+        throw new OsirisException(e, "Unable to read file " + file.getAbsolutePath());
       }
       if (mimeType == null)
         mimeType = "application/pdf";

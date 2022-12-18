@@ -49,7 +49,7 @@ public class ConfrereServiceImpl implements ConfrereService {
     @Transactional(rollbackFor = Exception.class)
     public Confrere addOrUpdateConfrere(Confrere confrere) throws OsirisException {
         if (confrere == null)
-            throw new OsirisException("Confrere provided is null");
+            throw new OsirisException(null, "Confrere provided is null");
 
         // If mails already exists, get their ids
         if (confrere != null && confrere.getMails() != null

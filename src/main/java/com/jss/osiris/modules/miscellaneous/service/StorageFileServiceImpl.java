@@ -26,18 +26,18 @@ public class StorageFileServiceImpl implements StorageFileService {
     @Override
     public String saveFile(InputStream file, String filename, String path) throws OsirisException {
         if (filename == null || filename.equals(""))
-            throw new OsirisException("No filename provided");
+            throw new OsirisException(null, "No filename provided");
 
         try {
             Files.createDirectories(Paths.get(uploadFolder.trim() + File.separator + path));
         } catch (IOException e) {
-            throw new OsirisException("Impossible to create folder");
+            throw new OsirisException(e, "Impossible to create folder");
         }
         try {
             Files.copy(file, Paths.get(uploadFolder.trim() + File.separator + path).resolve(filename),
                     StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
-            throw new OsirisException("Impossible to create file");
+            throw new OsirisException(e, "Impossible to create file");
         }
         return Paths.get(uploadFolder.trim() + File.separator + path).resolve(filename).normalize().toAbsolutePath()
                 .toString();
@@ -58,7 +58,7 @@ public class StorageFileServiceImpl implements StorageFileService {
         try {
             resource = new UrlResource(file.toUri());
         } catch (MalformedURLException e) {
-            throw new OsirisException("URI File not found");
+            throw new OsirisException(e, "URI File not found");
         }
         if (resource.exists() || resource.isReadable()) {
             return resource;

@@ -15,7 +15,6 @@ import { AppService } from 'src/app/services/app.service';
 import { Document } from "../../../miscellaneous/model/Document";
 import { EmployeeService } from '../../../profile/services/employee.service';
 import { ITiers } from '../../model/ITiers';
-import { JssSubscription } from '../../model/JssSubscription';
 import { Responsable } from '../../model/Responsable';
 import { SubscriptionPeriodType } from '../../model/SubscriptionPeriodType';
 import { Tiers } from '../../model/Tiers';
@@ -89,18 +88,11 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
     if (changes.tiers != undefined && this.tiers.responsables != undefined && this.tiers.responsables != null) {
       this.principalForm.markAllAsTouched();
       this.setDataTable();
-      this.initDefaultValues();
       this.toggleTabs();
 
       if (this.selectedResponsableId != null)
         this.selectResponsableById(this.selectedResponsableId);
 
-      if (this.selectedResponsable) {
-        if (!this.selectedResponsable.jssSubscription.isPaperSubscription)
-          this.selectedResponsable.jssSubscription.isPaperSubscription = false;
-        if (!this.selectedResponsable.jssSubscription.isWebSubscription)
-          this.selectedResponsable.jssSubscription.isWebSubscription = false;
-      }
     }
   }
 
@@ -156,7 +148,6 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
 
           this.tiersService.setCurrentViewedResponsable(responsable);
           this.toggleTabs();
-          this.initDefaultValues();
           if (this.tiers.denomination != null) {
             this.appService.changeHeaderTitle(this.tiers.denomination + " - " + (this.selectedResponsable.firstname != null ? (this.selectedResponsable.firstname + " " + this.selectedResponsable.lastname) : ""));
           } else if (this.tiers.firstname != null) {
@@ -194,9 +185,6 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
       this.selectedResponsable.salesEmployee = this.tiers.salesEmployee;
       this.selectedResponsable.insertionEmployee = this.tiers.insertionEmployee;
       this.selectedResponsable.formalisteEmployee = this.tiers.formalisteEmployee;
-      this.selectedResponsable.jssSubscription = {} as JssSubscription;
-      this.selectedResponsable.jssSubscription.isPaperSubscription = false;
-      this.selectedResponsable.jssSubscription.isWebSubscription = false;
       this.tiers.responsables.push(this.selectedResponsable);
 
       if (this.tiers && this.tiers.documents) {
@@ -211,17 +199,11 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
       this.tiersService.setCurrentViewedResponsable(this.selectedResponsable);
       this.setDataTable();
       this.toggleTabs();
-      this.initDefaultValues();
     } else {
       this.appService.displaySnackBar("Compléter la saisie du responsable courant avant de continuer", true, 15);
     }
   }
 
-  initDefaultValues() {
-    if (this.selectedResponsable != null && (this.selectedResponsable?.jssSubscription == null || this.selectedResponsable.jssSubscription == undefined)) {
-      this.selectedResponsable.jssSubscription = { isPaperSubscription: false, isWebSubscription: false } as JssSubscription;
-    }
-  }
 
   applyFilter(filterValue: any) {
     let filterValueCast = (filterValue as HTMLInputElement);
@@ -234,9 +216,6 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
   }
 
   principalForm = this.formBuilder.group({
-    jssSubscription1: [''],
-    jssSubscription2: [''],
-
   });
 
   limitTextareaSize(numberOfLine: number) {
@@ -285,9 +264,6 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
 
       if (this.selectedResponsable != null && (this.selectedResponsable.isBouclette == null || this.selectedResponsable.isBouclette == undefined))
         this.selectedResponsable.isBouclette = false;
-
-      if (this.selectedResponsable?.jssSubscription != undefined && this.selectedResponsable.jssSubscription.isPaperSubscription)
-        this.selectedResponsable.jssSubscription.isWebSubscription = true;
 
       status = status && this.principalForm.valid && (documentSettlementBillingFormStatus! || this.isResponsableTypeProspect());
     }

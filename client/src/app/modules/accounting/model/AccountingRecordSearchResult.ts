@@ -6,7 +6,7 @@ export interface AccountingRecordSearchResult {
   operationDateTime: Date;
   accountingJournalLabel: string;
   accountingJournalCode: string;
-  accountingAccountNumber: string;
+  principalAccountingAccountCode: string;
   accountingAccountSubNumber: number;
   accountingAccountLabel: string;
   manualAccountingDocumentNumber: string;

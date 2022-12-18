@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 public class AccountingBalanceSearch {
   private AccountingAccountClass accountingClass;
   private AccountingAccount accountingAccount;
-  private String accountingAccountNumber;
+  private PrincipalAccountingAccount principalAccountingAccount;
 
   private LocalDateTime startDate;
   private LocalDateTime endDate;
@@ -42,12 +42,12 @@ public class AccountingBalanceSearch {
     this.endDate = endDate;
   }
 
-  public String getAccountingAccountNumber() {
-    return accountingAccountNumber;
+  public PrincipalAccountingAccount getPrincipalAccountingAccount() {
+    return principalAccountingAccount;
   }
 
-  public void setAccountingAccountNumber(String accountingAccountNumber) {
-    this.accountingAccountNumber = accountingAccountNumber;
+  public void setPrincipalAccountingAccount(PrincipalAccountingAccount principalAccountingAccount) {
+    this.principalAccountingAccount = principalAccountingAccount;
   }
 
 }

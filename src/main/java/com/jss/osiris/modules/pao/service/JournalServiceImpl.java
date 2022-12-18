@@ -75,7 +75,7 @@ public class JournalServiceImpl implements JournalService {
                 }
                 pdfReader.close();
             } catch (IOException e) {
-                throw new OsirisException("Can't open file for journal n°" + journal.getId());
+                throw new OsirisException(e, "Can't open file for journal n°" + journal.getId());
             }
 
             // find in journal

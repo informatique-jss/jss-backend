@@ -2,7 +2,6 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { Affaire } from 'src/app/modules/quotation/model/Affaire';
-import { AffaireService } from 'src/app/modules/quotation/services/affaire.service';
 import { IndexEntityService } from 'src/app/routing/search/index.entity.service';
 import { IndexEntity } from 'src/app/routing/search/IndexEntity';
 import { AFFAIRE_ENTITY_TYPE } from 'src/app/routing/search/search.component';
@@ -17,23 +16,12 @@ import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-au
 export class AutocompleteAffaireComponent extends GenericAutocompleteComponent<IndexEntity, IndexEntity> implements OnInit {
   @ViewChild('affaireInput') affaireInput: ElementRef<HTMLInputElement> | undefined;
 
-  constructor(private formBuild: UntypedFormBuilder, private indexEntityService: IndexEntityService,
-    private affaireService: AffaireService, private userNoteService2: UserNoteService,) {
+  constructor(private formBuild: UntypedFormBuilder, private indexEntityService: IndexEntityService, private userNoteService2: UserNoteService,) {
     super(formBuild, userNoteService2)
   }
 
   searchEntities(value: string): Observable<IndexEntity[]> {
-    return this.indexEntityService.searchEntities(value);
-  }
-
-  mapResponse(response: IndexEntity[]): IndexEntity[] {
-    this.filteredTypes = [] as Array<IndexEntity>;
-    response.forEach(entity => {
-      if (entity.entityType == AFFAIRE_ENTITY_TYPE.entityType) {
-        this.filteredTypes?.push(entity);
-      }
-    })
-    return this.filteredTypes;
+    return this.indexEntityService.searchEntitiesByType(value, AFFAIRE_ENTITY_TYPE);
   }
 
   displayLabel(entity: IndexEntity): string {

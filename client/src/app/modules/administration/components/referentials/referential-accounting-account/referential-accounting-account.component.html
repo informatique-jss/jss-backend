@@ -31,16 +31,9 @@
         <table class="full-width">
           <tr>
             <td>
-              <select-accounting-account-class [(model)]="selectedEntity.accountingAccountClass"
-                label="Classe du compte comptable" [form]="entityForm" propertyName="accountingAccountClass"
-                [isMandatory]="false" [isDisabled]="true"></select-accounting-account-class>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <generic-input [(model)]="selectedEntity.accountingAccountNumber" label="N° de compte comptable"
-                [form]="entityForm" propertyName="accountingAccountNumber" [isMandatory]="true" [isDisabled]="!editMode"
-                [maxLength]="6"></generic-input>
+              <autocomplete-principal-accounting-account [(model)]="selectedEntity.principalAccountingAccount"
+                [form]="entityForm" propertyName="principalAccountingAccount" [isMandatory]="true"
+                [isDisabled]="!editMode" label="label"></autocomplete-principal-accounting-account>
             </td>
             <td>
               <generic-input [(model)]="selectedEntity.accountingAccountSubNumber" label="N° de sous-compte comptable"

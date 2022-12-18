@@ -14,7 +14,6 @@ import { ConstantService } from 'src/app/modules/miscellaneous/services/constant
 import { ANNOUNCEMENT_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AttachmentType } from '../../../miscellaneous/model/AttachmentType';
 import { Document } from "../../../miscellaneous/model/Document";
-import { Affaire } from '../../model/Affaire';
 import { Announcement } from '../../model/Announcement';
 import { AnnouncementNoticeTemplate } from '../../model/AnnouncementNoticeTemplate';
 import { CharacterPrice } from '../../model/CharacterPrice';
@@ -36,7 +35,6 @@ export class AnnouncementComponent implements OnInit {
 
 
   @Input() announcement: Announcement = {} as Announcement;
-  @Input() affaire: Affaire = {} as Affaire;
   @Input() provision: Provision = {} as Provision;
   @Input() editMode: boolean = false;
   @Input() instanceOfCustomerOrder: boolean = false;

@@ -23,7 +23,6 @@ export class SelectProvisionTypeComponent extends GenericSelectComponent<Provisi
 
   initTypes(): void {
     this.provisionTypeService.getProvisionTypes().subscribe(response => {
-      console.log(response);
       this.types = response;
     })
   }

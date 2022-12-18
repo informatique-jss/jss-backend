@@ -43,6 +43,10 @@ export class HabilitationsService {
     return true;
   }
 
+  canViewProvisionModule() {
+    return true;
+  }
+
   canViewJournalModule() {
     return true;
   }

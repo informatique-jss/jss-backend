@@ -87,9 +87,9 @@ public class AccountingExportHelper {
                         try {
                                 wb.close();
                         } catch (IOException e2) {
-                                throw new OsirisException("Unable to close workbook");
+                                throw new OsirisException(e, "Unable to close workbook");
                         }
-                        throw new OsirisException("Unable to decode color " + rgbS);
+                        throw new OsirisException(e, "Unable to decode color " + rgbS);
                 }
                 XSSFColor color = new XSSFColor(rgbB, null);
                 headerCellStyle.setFillForegroundColor(color);
@@ -270,9 +270,9 @@ public class AccountingExportHelper {
                         try {
                                 wb.close();
                         } catch (IOException e2) {
-                                throw new OsirisException("Unable to close excel file");
+                                throw new OsirisException(e, "Unable to close excel file");
                         }
-                        throw new OsirisException("Unable to create temp file");
+                        throw new OsirisException(e, "Unable to create temp file");
                 }
 
                 try {
@@ -280,7 +280,7 @@ public class AccountingExportHelper {
                         wb.close();
                         outputStream.close();
                 } catch (IOException e) {
-                        throw new OsirisException("Unable to save excel file");
+                        throw new OsirisException(e, "Unable to save excel file");
                 }
 
                 return file;
@@ -322,9 +322,9 @@ public class AccountingExportHelper {
                         try {
                                 wb.close();
                         } catch (IOException e2) {
-                                throw new OsirisException("Unable to close workbook");
+                                throw new OsirisException(e, "Unable to close workbook");
                         }
-                        throw new OsirisException("Unable to decode color " + rgbS);
+                        throw new OsirisException(e, "Unable to decode color " + rgbS);
                 }
                 XSSFColor color = new XSSFColor(rgbB, null);
                 headerCellStyle.setFillForegroundColor(color);
@@ -413,7 +413,7 @@ public class AccountingExportHelper {
                                 currentColumn = 0;
                                 currentCell = currentRow.createCell(currentColumn++);
                                 currentCell.setCellValue(
-                                                balanceRecord.getAccountingAccountNumber() + (!isGenerale ? "-"
+                                                balanceRecord.getPrincipalAccountingAccountCode() + (!isGenerale ? "-"
                                                                 + balanceRecord.getAccountingAccountSubNumber() : ""));
                                 currentCell.setCellStyle(styleDate);
                                 if (!isGenerale) {
@@ -505,9 +505,9 @@ public class AccountingExportHelper {
                         try {
                                 wb.close();
                         } catch (IOException e2) {
-                                throw new OsirisException("Unable to close excel file");
+                                throw new OsirisException(e, "Unable to close excel file");
                         }
-                        throw new OsirisException("Unable to create temp file");
+                        throw new OsirisException(e, "Unable to create temp file");
                 }
 
                 try {
@@ -515,7 +515,7 @@ public class AccountingExportHelper {
                         wb.close();
                         outputStream.close();
                 } catch (IOException e) {
-                        throw new OsirisException("Unable to save excel file");
+                        throw new OsirisException(e, "Unable to save excel file");
                 }
 
                 return file;
@@ -571,9 +571,9 @@ public class AccountingExportHelper {
                         try {
                                 wb.close();
                         } catch (IOException e2) {
-                                throw new OsirisException("Unable to close workbook");
+                                throw new OsirisException(e, "Unable to close workbook");
                         }
-                        throw new OsirisException("Unable to decode color " + rgbS);
+                        throw new OsirisException(e, "Unable to decode color " + rgbS);
                 }
                 XSSFColor color = new XSSFColor(rgbB, null);
                 headerCellStyle.setFillForegroundColor(color);
@@ -746,9 +746,9 @@ public class AccountingExportHelper {
                         try {
                                 wb.close();
                         } catch (IOException e2) {
-                                throw new OsirisException("Unable to close excel file");
+                                throw new OsirisException(e, "Unable to close excel file");
                         }
-                        throw new OsirisException("Unable to create temp file");
+                        throw new OsirisException(e, "Unable to create temp file");
                 }
 
                 try {
@@ -756,7 +756,7 @@ public class AccountingExportHelper {
                         wb.close();
                         outputStream.close();
                 } catch (IOException e) {
-                        throw new OsirisException("Unable to save excel file");
+                        throw new OsirisException(e, "Unable to save excel file");
                 }
 
                 return file;
@@ -812,9 +812,9 @@ public class AccountingExportHelper {
                         try {
                                 wb.close();
                         } catch (IOException e2) {
-                                throw new OsirisException("Unable to close workbook");
+                                throw new OsirisException(e, "Unable to close workbook");
                         }
-                        throw new OsirisException("Unable to decode color " + rgbS);
+                        throw new OsirisException(e, "Unable to decode color " + rgbS);
                 }
                 XSSFColor color = new XSSFColor(rgbB, null);
                 headerCellStyle.setFillForegroundColor(color);
@@ -844,8 +844,9 @@ public class AccountingExportHelper {
                 CreationHelper createHelper = wb.getCreationHelper();
                 styleDate.setDataFormat(createHelper.createDataFormat().getFormat("dd/mm/yyyy"));
 
-                XSSFSheet currentSheet = wb.createSheet("Compte " + accountingAccount.getAccountingAccountNumber() + "-"
-                                + accountingAccount.getAccountingAccountSubNumber());
+                XSSFSheet currentSheet = wb.createSheet(
+                                "Compte " + accountingAccount.getPrincipalAccountingAccount().getCode() + "-"
+                                                + accountingAccount.getAccountingAccountSubNumber());
 
                 // Title
                 int currentLine = 0;
@@ -988,9 +989,9 @@ public class AccountingExportHelper {
                         try {
                                 wb.close();
                         } catch (IOException e2) {
-                                throw new OsirisException("Unable to close excel file");
+                                throw new OsirisException(e, "Unable to close excel file");
                         }
-                        throw new OsirisException("Unable to create temp file");
+                        throw new OsirisException(e, "Unable to create temp file");
                 }
 
                 try {
@@ -998,7 +999,7 @@ public class AccountingExportHelper {
                         wb.close();
                         outputStream.close();
                 } catch (IOException e) {
-                        throw new OsirisException("Unable to save excel file");
+                        throw new OsirisException(e, "Unable to save excel file");
                 }
 
                 return file;
@@ -1018,9 +1019,9 @@ public class AccountingExportHelper {
                         try {
                                 wb.close();
                         } catch (IOException e2) {
-                                throw new OsirisException("Unable to close excel file");
+                                throw new OsirisException(e, "Unable to close excel file");
                         }
-                        throw new OsirisException("Unable to create temp file");
+                        throw new OsirisException(e, "Unable to create temp file");
                 }
 
                 try {
@@ -1028,7 +1029,7 @@ public class AccountingExportHelper {
                         wb.close();
                         outputStream.close();
                 } catch (IOException e) {
-                        throw new OsirisException("Unable to save excel file");
+                        throw new OsirisException(e, "Unable to save excel file");
                 }
 
                 return file;
@@ -1050,9 +1051,9 @@ public class AccountingExportHelper {
                         try {
                                 wb.close();
                         } catch (IOException e2) {
-                                throw new OsirisException("Unable to close excel file");
+                                throw new OsirisException(e, "Unable to close excel file");
                         }
-                        throw new OsirisException("Unable to create temp file");
+                        throw new OsirisException(e, "Unable to create temp file");
                 }
 
                 try {
@@ -1060,7 +1061,7 @@ public class AccountingExportHelper {
                         wb.close();
                         outputStream.close();
                 } catch (IOException e) {
-                        throw new OsirisException("Unable to save excel file");
+                        throw new OsirisException(e, "Unable to save excel file");
                 }
 
                 return file;
@@ -1100,9 +1101,9 @@ public class AccountingExportHelper {
                         try {
                                 wb.close();
                         } catch (IOException e2) {
-                                throw new OsirisException("Unable to close workbook");
+                                throw new OsirisException(e, "Unable to close workbook");
                         }
-                        throw new OsirisException("Unable to decode color " + rgbSSub);
+                        throw new OsirisException(e, "Unable to decode color " + rgbSSub);
                 }
                 XSSFColor colorSub = new XSSFColor(rgbBSub, null);
                 subTitleCellStyle.setFillForegroundColor(colorSub);
@@ -1123,9 +1124,9 @@ public class AccountingExportHelper {
                         try {
                                 wb.close();
                         } catch (IOException e2) {
-                                throw new OsirisException("Unable to close workbook");
+                                throw new OsirisException(e, "Unable to close workbook");
                         }
-                        throw new OsirisException("Unable to decode color " + rgbS);
+                        throw new OsirisException(e, "Unable to decode color " + rgbS);
                 }
                 XSSFColor colorHeader = new XSSFColor(rgbB, null);
                 headerCellStyle.setFillForegroundColor(colorHeader);
@@ -1340,9 +1341,11 @@ public class AccountingExportHelper {
                 ArrayList<String> accountingAccounts = new ArrayList<String>();
                 if (accountingRecords != null)
                         for (AccountingRecordSearchResult accountingRecord : accountingRecords)
-                                if (!accountingAccounts.contains(accountingRecord.getAccountingAccountNumber() + " - " +
-                                                +accountingRecord.getAccountingAccountSubNumber()))
-                                        accountingAccounts.add(accountingRecord.getAccountingAccountNumber() + " - " +
+                                if (!accountingAccounts
+                                                .contains(accountingRecord.getPrincipalAccountingAccountCode() + " - " +
+                                                                +accountingRecord.getAccountingAccountSubNumber()))
+                                        accountingAccounts.add(accountingRecord.getPrincipalAccountingAccountCode()
+                                                        + " - " +
                                                         +accountingRecord.getAccountingAccountSubNumber());
                 return accountingAccounts;
         }
@@ -1351,7 +1354,7 @@ public class AccountingExportHelper {
                         List<AccountingRecordSearchResult> accountingRecords, String accountingAccount) {
                 if (accountingRecords != null)
                         for (AccountingRecordSearchResult accountingRecord : accountingRecords)
-                                if ((accountingRecord.getAccountingAccountNumber() + " - " +
+                                if ((accountingRecord.getPrincipalAccountingAccountCode() + " - " +
                                                 +accountingRecord.getAccountingAccountSubNumber())
                                                 .equals(accountingAccount))
                                         return accountingRecord.getAccountingAccountLabel();
@@ -1365,7 +1368,7 @@ public class AccountingExportHelper {
                 if (accountingAccountNumber != null && accountingRecordsIn != null)
                         for (AccountingRecordSearchResult accountingRecord : accountingRecordsIn)
                                 if (accountingAccountNumber
-                                                .equals(accountingRecord.getAccountingAccountNumber() + " - " +
+                                                .equals(accountingRecord.getPrincipalAccountingAccountCode() + " - " +
                                                                 +accountingRecord.getAccountingAccountSubNumber()))
                                         accountingRecords.add(accountingRecord);
                 accountingRecords.sort(new Comparator<AccountingRecordSearchResult>() {
@@ -1469,9 +1472,9 @@ public class AccountingExportHelper {
                         try {
                                 wb.close();
                         } catch (IOException e2) {
-                                throw new OsirisException("Unable to close workbook");
+                                throw new OsirisException(e, "Unable to close workbook");
                         }
-                        throw new OsirisException("Unable to decode color " + rgbS);
+                        throw new OsirisException(e, "Unable to decode color " + rgbS);
                 }
                 XSSFColor color = new XSSFColor(rgbB, null);
                 headerCellStyle.setFillForegroundColor(color);
@@ -1627,9 +1630,9 @@ public class AccountingExportHelper {
                         try {
                                 wb.close();
                         } catch (IOException e2) {
-                                throw new OsirisException("Unable to close excel file");
+                                throw new OsirisException(e, "Unable to close excel file");
                         }
-                        throw new OsirisException("Unable to create temp file");
+                        throw new OsirisException(e, "Unable to create temp file");
                 }
 
                 try {
@@ -1637,7 +1640,7 @@ public class AccountingExportHelper {
                         wb.close();
                         outputStream.close();
                 } catch (IOException e) {
-                        throw new OsirisException("Unable to save excel file");
+                        throw new OsirisException(e, "Unable to save excel file");
                 }
 
                 return file;

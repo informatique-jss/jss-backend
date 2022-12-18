@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.jss.osiris.libs.audit.repository.AuditRepository;
 import com.jss.osiris.libs.search.repository.IndexEntityRepository;
-import com.jss.osiris.modules.accounting.repository.AccountingAccountClassRepository;
 import com.jss.osiris.modules.invoicing.repository.InvoiceStatusRepository;
 import com.jss.osiris.modules.miscellaneous.repository.AttachmentTypeRepository;
 import com.jss.osiris.modules.miscellaneous.repository.BillingItemRepository;
@@ -55,7 +54,6 @@ import com.jss.osiris.modules.quotation.repository.TransfertFundsTypeRepository;
 import com.jss.osiris.modules.tiers.repository.BillingClosureRecipientTypeRepository;
 import com.jss.osiris.modules.tiers.repository.BillingClosureTypeRepository;
 import com.jss.osiris.modules.tiers.repository.BillingLabelTypeRepository;
-import com.jss.osiris.modules.tiers.repository.JssSubscriptionRepository;
 import com.jss.osiris.modules.tiers.repository.PaymentDeadlineTypeRepository;
 import com.jss.osiris.modules.tiers.repository.RefundTypeRepository;
 import com.jss.osiris.modules.tiers.repository.ResponsableRepository;
@@ -174,9 +172,6 @@ public class InitReferentialsController {
 	DepartmentRepository departmentRepository;
 
 	@Autowired
-	JssSubscriptionRepository jssSubscriptionRepository;
-
-	@Autowired
 	SubscriptionPeriodTypeRepository subscriptionPeriodTypeRepository;
 
 	@Autowired
@@ -244,9 +239,6 @@ public class InitReferentialsController {
 
 	@Autowired
 	AnnouncementNoticeTemplateRepository AnnouncementNoticeTemplateRepository;
-
-	@Autowired
-	AccountingAccountClassRepository accountingAccountClassRepository;
 
 	@Autowired
 	VatCollectionTypeRepository vatCollectionTypeRepository;
@@ -679,8 +671,6 @@ public class InitReferentialsController {
 		 * gift.setCode("FOIE GRAS");
 		 * gift.setLabel("Foie gras");
 		 * giftRepository.save(gift);
-		 * 
-		 * jssSubscriptionRepository.deleteAll();
 		 * 
 		 * subscriptionPeriodTypeRepository.deleteAll();
 		 * SubscriptionPeriodType subscriptionPeriodType = new SubscriptionPeriodType();
@@ -1121,21 +1111,6 @@ public class InitReferentialsController {
 		 * );
 		 * AnnouncementNoticeTemplateRepository.save(AnnouncementNoticeTemplate);
 		 * 
-		 * accountingAccountClassRepository.deleteAll();
-		 * AccountingAccountClass accountingAccountClass = new AccountingAccountClass();
-		 * accountingAccountClass.setCode("6");
-		 * accountingAccountClass.setLabel("Charge");
-		 * accountingAccountClassRepository.save(accountingAccountClass);
-		 * 
-		 * accountingAccountClass = new AccountingAccountClass();
-		 * accountingAccountClass.setCode("7");
-		 * accountingAccountClass.setLabel("Produits");
-		 * accountingAccountClassRepository.save(accountingAccountClass);
-		 * 
-		 * accountingAccountClass = new AccountingAccountClass();
-		 * accountingAccountClass.setCode("4");
-		 * accountingAccountClass.setLabel("Tiers");
-		 * accountingAccountClassRepository.save(accountingAccountClass);
 		 * 
 		 * vatCollectionTypeRepository.deleteAll();
 		 * VatCollectionType vatCollectionType = new VatCollectionType();

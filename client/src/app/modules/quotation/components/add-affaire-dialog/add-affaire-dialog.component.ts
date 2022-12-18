@@ -1,15 +1,12 @@
 import { Component, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { AbstractControl, FormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
-import { Observable } from 'rxjs';
 import { validateRna, validateSiren, validateSiret } from 'src/app/libs/CustomFormsValidatorsHelper';
+import { AddAffaireComponent } from 'src/app/modules/administration/components/referentials/referential-affaire/add-affaire/add-affaire.component';
 import { City } from 'src/app/modules/miscellaneous/model/City';
-import { Civility } from 'src/app/modules/miscellaneous/model/Civility';
-import { LegalForm } from 'src/app/modules/miscellaneous/model/LegalForm';
 import { Mail } from 'src/app/modules/miscellaneous/model/Mail';
 import { Phone } from 'src/app/modules/miscellaneous/model/Phone';
 import { CityService } from 'src/app/modules/miscellaneous/services/city.service';
-import { CivilityService } from 'src/app/modules/miscellaneous/services/civility.service';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { IndexEntity } from 'src/app/routing/search/IndexEntity';
 import { AppService } from 'src/app/services/app.service';
@@ -30,28 +27,17 @@ import { SiretService } from '../../services/siret.service';
 export class AddAffaireDialogComponent implements OnInit {
 
   @ViewChild('tabs', { static: false }) tabs: any;
+  @ViewChild(AddAffaireComponent) addAffaireComponent: AddAffaireComponent | undefined;
 
   affaire: Affaire = {} as Affaire;
-
-
-  civilities: Civility[] = [] as Civility[];
-  legalForms: LegalForm[] = [] as LegalForm[];
-  filteredLegalForms: Observable<LegalForm[]> | undefined;
-
-  filteredPostalCodes: String[] | undefined;
-
-  filteredCities: City[] | undefined;
-
-  filteredAffaires: Affaire[] | undefined;
-
   selectedAffaire: Affaire | null = null;
+  isLabelAffaire: boolean = false;
 
 
   constructor(private formBuilder: FormBuilder,
     private cityService: CityService,
     private sirenService: SirenService,
     private siretService: SiretService,
-    private civilityService: CivilityService,
     private rnaService: RnaService,
     private constantService: ConstantService,
     private affaireService: AffaireService,
@@ -60,11 +46,7 @@ export class AddAffaireDialogComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.civilityService.getCivilities().subscribe(response => {
-      this.civilities = response;
-      if (!this.affaire.civility)
-        this.affaire.civility = this.civilities[0];
-    })
+    console.log(this.isLabelAffaire);
     if (this.affaire && !this.affaire.isIndividual)
       this.affaire.isIndividual = false;
     if (this.tabs)
@@ -75,8 +57,6 @@ export class AddAffaireDialogComponent implements OnInit {
     if (changes.affaire != undefined) {
       if (this.affaire && !this.affaire.isIndividual)
         this.affaire.isIndividual = false;
-      if (this.affaire.isIndividual && (this.affaire.civility == null || this.affaire.civility == undefined))
-        this.affaire.civility = this.civilities[0];
       this.affaireForm.markAllAsTouched();
     }
   }
@@ -92,7 +72,7 @@ export class AddAffaireDialogComponent implements OnInit {
   });
 
   getFormStatus(): boolean {
-    return this.affaireForm.valid;
+    return this.affaireForm.valid && this.addAffaireComponent!.getFormStatus();
   }
 
   saveAffaire() {

@@ -1,8 +1,7 @@
 import { IReferential } from "../../administration/model/IReferential";
-import { AccountingAccountClass } from "./AccountingAccountClass";
+import { PrincipalAccountingAccount } from './PrincipalAccountingAccount';
 
 export interface AccountingAccount extends IReferential {
-  accountingAccountNumber: string;
+  principalAccountingAccount: PrincipalAccountingAccount;
   accountingAccountSubNumber: number;
-  accountingAccountClass: AccountingAccountClass;
 }

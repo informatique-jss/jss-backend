@@ -78,13 +78,13 @@ public class IndexEntityServiceImpl implements IndexEntityService {
                             outObject.put(field.getName(), cleanObjectForSerialization(fieldResult));
                         }
                     } catch (NoSuchMethodException e) {
-                        new OsirisException("Indexation : getter not found for field " + field.getName());
+                        new OsirisException(e, "Indexation : getter not found for field " + field.getName());
                     } catch (SecurityException e) {
-                        new OsirisException("Indexation error");
+                        new OsirisException(e, "Indexation error");
                     } catch (IllegalAccessException e) {
-                        new OsirisException("Indexation error");
+                        new OsirisException(e, "Indexation error");
                     } catch (InvocationTargetException e) {
-                        new OsirisException("Indexation error");
+                        new OsirisException(e, "Indexation error");
                     }
                 }
             }

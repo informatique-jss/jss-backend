@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -23,6 +24,8 @@ import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.quotation.model.Announcement;
+import com.jss.osiris.modules.quotation.model.AnnouncementSearch;
+import com.jss.osiris.modules.quotation.model.AnnouncementSearchResult;
 import com.jss.osiris.modules.quotation.repository.AnnouncementRepository;
 
 @Service
@@ -105,14 +108,43 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                             false, "Justificatif de parution n°" + announcement.getId());
                     destFile.delete();
                 } catch (IOException i) {
-                    throw new OsirisException(
+                    throw new OsirisException(i,
                             "Impossible to read files for publication proof generation for announcement n°"
                                     + announcement.getId());
                 } catch (DocumentException e) {
-                    throw new OsirisException(
+                    throw new OsirisException(e,
                             "Impossible to generate publication proof for announcement n°" + announcement.getId());
                 }
             }
         }
+    }
+
+    public List<AnnouncementSearchResult> searchAnnouncements(AnnouncementSearch announcementSearch) {
+        if (announcementSearch.getAffaireName() == null)
+            announcementSearch.setAffaireName("");
+        else
+            announcementSearch.setAffaireName(announcementSearch.getAffaireName().trim());
+
+        if (announcementSearch.getIsStricNameSearch() == null)
+            announcementSearch.setIsStricNameSearch(false);
+
+        Integer departementId = 0;
+        if (announcementSearch.getDepartment() != null)
+            departementId = announcementSearch.getDepartment().getId();
+
+        Integer noticeTypeId = 0;
+        if (announcementSearch.getNoticeType() != null)
+            noticeTypeId = announcementSearch.getNoticeType().getId();
+
+        if (announcementSearch.getStartDate() == null)
+            announcementSearch.setStartDate(LocalDate.now().minusYears(100));
+
+        if (announcementSearch.getEndDate() == null)
+            announcementSearch.setEndDate(LocalDate.now().plusYears(100));
+
+        return announcementRepository.searchAnnouncements(announcementSearch.getAffaireName(),
+                announcementSearch.getIsStricNameSearch(), departementId,
+                announcementSearch.getStartDate(),
+                announcementSearch.getEndDate(), noticeTypeId);
     }
 }

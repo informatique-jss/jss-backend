@@ -14,7 +14,7 @@ import { LoginDialogComponent } from './login-dialog/login-dialog.component';
 import { SearchComponent } from './search/search.component';
 
 const routes: Routes = [
-  { path: '', redirectTo: '/affaire', pathMatch: 'full' },
+  { path: '', redirectTo: '/provision', pathMatch: 'full' },
   { path: 'my-profil', component: MyProfilComponent },
 ];
 

@@ -50,6 +50,7 @@ import { AutocompleteDepartmentComponent } from '../forms/autocomplete-departmen
 import { AutocompleteEmployeeComponent } from '../forms/autocomplete-employee/autocomplete-employee.component';
 import { AutocompleteLegalFormComponent } from '../forms/autocomplete-legal-form/autocomplete-legal-form.component';
 import { AutocompletePostalCodeComponent } from '../forms/autocomplete-postal-code/autocomplete-postal-code.component';
+import { AutocompletePrincipalAccountingAccountComponent } from '../forms/autocomplete-principal-accounting-account/autocomplete-principal-accounting-account.component';
 import { AutocompleteProviderComponent } from '../forms/autocomplete-provider/autocomplete-provider.component';
 import { AutocompleteRegieComponent } from '../forms/autocomplete-regie/autocomplete-regie.component';
 import { AutocompleteRegionComponent } from '../forms/autocomplete-region/autocomplete-region.component';
@@ -376,6 +377,7 @@ const routes: Routes = [
     ChipsEmployeeComponent,
     SingleAttachmentComponent,
     AddNotificationDialogComponent,
+    AutocompletePrincipalAccountingAccountComponent,
     GenericDatetimePickerComponent,
     TiersFollowupComponent,
     //Guichet Unique
@@ -577,6 +579,7 @@ const routes: Routes = [
     AutocompleteBillingItemComponent,
     WorkflowDialogComponent,
     TiersFollowupComponent,
+    AutocompletePrincipalAccountingAccountComponent,
     //Guichet Unique
     AutocompleteTypeDocumentComponent,
     RadioGroupMotifRejetCmaComponent,

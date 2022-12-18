@@ -64,7 +64,7 @@ public class UploadedFileServiceImpl implements UploadedFileService {
         try {
             md = MessageDigest.getInstance("MD5");
         } catch (NoSuchAlgorithmException e) {
-            throw new OsirisException("Impossible to find MDR5 algorithm");
+            throw new OsirisException(e, "Impossible to find MDR5 algorithm");
         }
         try {
             InputStream fis = new FileInputStream(absoluteFilePath);
@@ -75,7 +75,7 @@ public class UploadedFileServiceImpl implements UploadedFileService {
             }
             fis.close();
         } catch (IOException e) {
-            throw new OsirisException("Impossible to find file to compute");
+            throw new OsirisException(e, "Impossible to find file to compute");
         }
 
         // bytes to hex

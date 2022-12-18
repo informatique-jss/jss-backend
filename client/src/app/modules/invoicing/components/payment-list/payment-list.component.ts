@@ -30,7 +30,7 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
   tableAction: SortTableAction[] = [];
   uploadAttachementDialogRef: MatDialogRef<UploadAttachementDialogComponent> | undefined;
 
-  @Output() actionBypass: EventEmitter<Payment> = new EventEmitter<Payment>();
+  @Output() actionBypass: EventEmitter<PaymentSearchResult> = new EventEmitter<PaymentSearchResult>();
   @Input() overrideIconAction: string = "";
   @Input() overrideTooltipAction: string = "";
   @Input() defaultStatusFilter: string[] | undefined;

@@ -39,6 +39,9 @@ public class OsirisLog implements Serializable, IId {
     @Column(columnDefinition = "TEXT")
     private String stackTrace;
 
+    @Column(columnDefinition = "TEXT")
+    private String causeStackTrace;
+
     @ManyToOne
     @JoinColumn(name = "id_employee")
     private Employee currentUser;
@@ -136,6 +139,14 @@ public class OsirisLog implements Serializable, IId {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public String getCauseStackTrace() {
+        return causeStackTrace;
+    }
+
+    public void setCauseStackTrace(String causeStackTrace) {
+        this.causeStackTrace = causeStackTrace;
     }
 
 }

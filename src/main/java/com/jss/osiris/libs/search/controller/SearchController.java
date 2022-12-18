@@ -26,4 +26,13 @@ public class SearchController {
 			return new ResponseEntity<List<IndexEntity>>(searchService.searchForEntities(search), HttpStatus.OK);
 		return new ResponseEntity<List<IndexEntity>>(HttpStatus.OK);
 	}
+
+	@GetMapping(inputEntryPoint + "/search/type")
+	public ResponseEntity<List<IndexEntity>> searchEntitiesAndType(@RequestParam String search,
+			@RequestParam String entityType) {
+		if (search != null && search.length() >= 2)
+			return new ResponseEntity<List<IndexEntity>>(searchService.searchForEntities(search, entityType),
+					HttpStatus.OK);
+		return new ResponseEntity<List<IndexEntity>>(HttpStatus.OK);
+	}
 }

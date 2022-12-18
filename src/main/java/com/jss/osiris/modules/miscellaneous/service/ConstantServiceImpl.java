@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.accounting.model.AccountingJournal;
+import com.jss.osiris.modules.accounting.model.PrincipalAccountingAccount;
 import com.jss.osiris.modules.invoicing.model.InvoiceStatus;
 import com.jss.osiris.modules.invoicing.model.PaymentWay;
 import com.jss.osiris.modules.miscellaneous.model.AttachmentType;
@@ -54,7 +55,7 @@ public class ConstantServiceImpl implements ConstantService {
     public Constant getConstants() throws OsirisException {
         List<Constant> constants = IterableUtils.toList(constantRepository.findAll());
         if (constants == null || constants.size() != 1)
-            throw new OsirisException("Constants not defined or multiple");
+            throw new OsirisException(null, "Constants not defined or multiple");
         return constants.get(0);
     }
 
@@ -326,6 +327,11 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public BillingType getBillingTypeChronopostFees() throws OsirisException {
         return getConstants().getBillingTypeChronopostFees();
+    }
+
+    @Override
+    public BillingType getBillingTypeApplicationFees() throws OsirisException {
+        return getConstants().getBillingTypeApplicationFees();
     }
 
     @Override
@@ -667,4 +673,50 @@ public class ConstantServiceImpl implements ConstantService {
     public Language getLanguageFrench() throws OsirisException {
         return getConstants().getLanguageFrench();
     }
+
+    @Override
+    public PrincipalAccountingAccount getPrincipalAccountingAccountProvider() throws OsirisException {
+        return getConstants().getPrincipalAccountingAccountProvider();
+    }
+
+    @Override
+    public PrincipalAccountingAccount getPrincipalAccountingAccountCustomer() throws OsirisException {
+        return getConstants().getPrincipalAccountingAccountCustomer();
+    }
+
+    @Override
+    public PrincipalAccountingAccount getPrincipalAccountingAccountDeposit() throws OsirisException {
+        return getConstants().getPrincipalAccountingAccountDeposit();
+    }
+
+    @Override
+    public PrincipalAccountingAccount getPrincipalAccountingAccountProduct() throws OsirisException {
+        return getConstants().getPrincipalAccountingAccountProduct();
+    }
+
+    @Override
+    public PrincipalAccountingAccount getPrincipalAccountingAccountCharge() throws OsirisException {
+        return getConstants().getPrincipalAccountingAccountCharge();
+    }
+
+    @Override
+    public PrincipalAccountingAccount getPrincipalAccountingAccountBank() throws OsirisException {
+        return getConstants().getPrincipalAccountingAccountBank();
+    }
+
+    @Override
+    public PrincipalAccountingAccount getPrincipalAccountingAccountLost() throws OsirisException {
+        return getConstants().getPrincipalAccountingAccountLost();
+    }
+
+    @Override
+    public PrincipalAccountingAccount getPrincipalAccountingAccountProfit() throws OsirisException {
+        return getConstants().getPrincipalAccountingAccountProfit();
+    }
+
+    @Override
+    public PrincipalAccountingAccount getPrincipalAccountingAccountWaiting() throws OsirisException {
+        return getConstants().getPrincipalAccountingAccountWaiting();
+    }
+
 }

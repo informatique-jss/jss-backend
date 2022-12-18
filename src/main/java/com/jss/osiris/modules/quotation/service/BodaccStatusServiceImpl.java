@@ -99,7 +99,7 @@ public class BodaccStatusServiceImpl implements BodaccStatusService {
         BodaccStatus sourceStatus = getBodaccStatusByCode(code);
         BodaccStatus targetStatus = getBodaccStatusByCode(code2);
         if (sourceStatus == null || targetStatus == null)
-            throw new OsirisException("Status code " + code + " or " + code2 + " do not exist");
+            throw new OsirisException(null, "Status code " + code + " or " + code2 + " do not exist");
 
         if (sourceStatus.getSuccessors() == null)
             sourceStatus.setSuccessors(new ArrayList<BodaccStatus>());
@@ -116,7 +116,7 @@ public class BodaccStatusServiceImpl implements BodaccStatusService {
         BodaccStatus sourceStatus = getBodaccStatusByCode(code);
         BodaccStatus targetStatus = getBodaccStatusByCode(code2);
         if (sourceStatus == null || targetStatus == null)
-            throw new OsirisException("Bodacc status code " + code + " or " + code2 + " do not exist");
+            throw new OsirisException(null, "Bodacc status code " + code + " or " + code2 + " do not exist");
 
         if (sourceStatus.getPredecessors() == null)
             sourceStatus.setPredecessors(new ArrayList<BodaccStatus>());

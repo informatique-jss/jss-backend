@@ -51,7 +51,7 @@ public class OFXParser {
 
             return parse(new ByteArrayInputStream(xml.getBytes()));
         } catch (Exception e) {
-            throw new OsirisException("Error when importing OFX file");
+            throw new OsirisException(e, "Error when importing OFX file");
         }
     }
 
@@ -137,7 +137,6 @@ public class OFXParser {
                                 .evaluate(transactionResponseNode, XPathConstants.NODE);
                         var bankTransactionList = parseBankTransactionList(bankTransactionListNode);
 
-                        // TODO: parse pending transaction list
                         var pendingTransactionListNodeExpr = xPath.compile("BANKTRANLISTP");
                         var pendingTransactionListNode = (Node) pendingTransactionListNodeExpr
                                 .evaluate(transactionResponseNode, XPathConstants.NODE);

@@ -15,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.modules.invoicing.model.Invoice;
+import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.invoicing.service.PaymentService;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.AttachmentType;
@@ -90,6 +92,9 @@ public class AttachmentServiceImpl implements AttachmentService {
     @Autowired
     PaymentService paymentService;
 
+    @Autowired
+    InvoiceService invoiceService;
+
     @Override
     public List<Attachment> getAttachments() {
         return IterableUtils.toList(attachmentRepository.findAll());
@@ -112,7 +117,7 @@ public class AttachmentServiceImpl implements AttachmentService {
             return addAttachment(file.getInputStream(), idEntity, entityType, attachmentType, filename,
                     replaceExistingAttachementType, filename);
         } catch (IOException e) {
-            throw new OsirisException("Error when reading file");
+            throw new OsirisException(e, "Error when reading file");
         }
     }
 
@@ -205,6 +210,11 @@ public class AttachmentServiceImpl implements AttachmentService {
             if (simpleProvision == null)
                 return new ArrayList<Attachment>();
             attachment.setSimpleProvision(simpleProvision);
+        } else if (entityType.equals(Invoice.class.getSimpleName())) {
+            Invoice invoice = invoiceService.getInvoice(idEntity);
+            if (invoice == null)
+                return new ArrayList<Attachment>();
+            attachment.setInvoice(invoice);
         }
         addOrUpdateAttachment(attachment);
 
@@ -252,6 +262,8 @@ public class AttachmentServiceImpl implements AttachmentService {
             attachments = attachmentRepository.findByCustomerJournalId(idEntity);
         } else if (entityType.equals(SimpleProvision.class.getSimpleName())) {
             attachments = attachmentRepository.findBySimpleProvisonId(idEntity);
+        } else if (entityType.equals(Invoice.class.getSimpleName())) {
+            attachments = attachmentRepository.findByInvoiceId(idEntity);
         }
         return attachments;
     }

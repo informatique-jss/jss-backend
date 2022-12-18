@@ -45,7 +45,9 @@ import { InvoiceManagementComponent } from '../invoice-management/invoice-manage
 import { OrderingCustomerComponent } from '../ordering-customer/ordering-customer.component';
 import { OrderingListComponent } from '../ordering-list/ordering-list.component';
 import { ProvisionItemComponent } from '../provision-item/provision-item.component';
+import { ProvisionListComponent } from '../provision-list/provision-list.component';
 import { ProvisionOptionsComponent } from '../provision-options/provision-options.component';
+import { ProvisionComponent } from '../provision/provision.component';
 import { QuotationListComponent } from '../quotation-list/quotation-list.component';
 import { QuotationManagementComponent } from '../quotation-management/quotation-management.component';
 import { SimpleProvisionComponent } from '../simple-provision/simple-provision.component';
@@ -56,9 +58,11 @@ const routes: Routes = [
   { path: 'quotation/:id', component: QuotationComponent },
   { path: 'order', component: QuotationComponent },
   { path: 'order/:id', component: QuotationComponent },
+  { path: 'provision', component: ProvisionListComponent },
+  { path: 'provision/:id', component: ProvisionComponent },
+  { path: 'provision/:id/:idProvision', component: ProvisionComponent },
   { path: 'affaire', component: AffaireListComponent },
   { path: 'affaire/:id', component: AffaireComponent },
-  { path: 'affaire/:id/:idProvision', component: AffaireComponent },
 ];
 
 @NgModule({
@@ -123,13 +127,15 @@ const routes: Routes = [
     BodaccSplitComponent,
     QuotationListComponent,
     ChooseAssignedUserDialogComponent,
-    AffaireListComponent,
-    AffaireComponent,
+    ProvisionListComponent,
+    ProvisionComponent,
     OrderingListComponent,
     ProvisionOptionsComponent,
     FormaliteComponent,
     AnnouncementComponent,
     SimpleProvisionComponent,
+    AffaireListComponent,
+    AffaireComponent,
     // Guichet unique
     ContentComponent,
     NatureCreationComponent,
@@ -139,7 +145,7 @@ const routes: Routes = [
   ],
   exports: [
     OrderingListComponent,
-    AffaireListComponent,
+    ProvisionListComponent,
     QuotationListComponent,
     OrderingListComponent,
   ],

@@ -23,6 +23,6 @@ export class AutocompleteAccountingAccountComponent extends GenericAutocompleteC
 
 
   displayLabel(object: any): string {
-    return object ? object.label + " - " + object.accountingAccountNumber + "-" + object.accountingAccountSubNumber : '';
+    return object ? object.label + " - " + object.principalAccountingAccount.code + "-" + object.accountingAccountSubNumber : '';
   }
 }

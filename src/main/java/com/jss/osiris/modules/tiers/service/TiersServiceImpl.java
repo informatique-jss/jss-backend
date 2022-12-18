@@ -73,7 +73,7 @@ public class TiersServiceImpl implements TiersService {
     @Transactional(rollbackFor = Exception.class)
     public Tiers addOrUpdateTiers(Tiers tiers) throws OsirisException {
         if (tiers == null)
-            throw new OsirisException("Provided tiers is null");
+            throw new OsirisException(null, "Provided tiers is null");
 
         // If mails already exists, get their ids
         if (tiers != null && tiers.getMails() != null && tiers.getMails().size() > 0)

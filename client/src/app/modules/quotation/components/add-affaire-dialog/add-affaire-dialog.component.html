@@ -8,11 +8,12 @@
         </td>
       </tr>
     </table>
+    <add-affaire *ngIf="selectedAffaire" [affaire]="selectedAffaire" [editMode]="false"></add-affaire>
   </mat-tab>
-  <mat-tab label="Créer une affaire">
+  <mat-tab label="Créer une affaire" *ngIf="!selectedAffaire">
     <form [formGroup]="affaireForm" *ngIf="affaire">
       <div class="full-width">
-        <add-affaire [affaire]="affaire" [editMode]="true"></add-affaire>
+        <add-affaire [isLabelAffaire]="isLabelAffaire" [affaire]="affaire" [editMode]="true"></add-affaire>
       </div>
     </form>
   </mat-tab>

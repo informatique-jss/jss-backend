@@ -1,4 +1,4 @@
-import { AfterContentChecked, ChangeDetectorRef, Component, OnInit, SimpleChanges, ViewChild, ViewChildren } from '@angular/core';
+import { AfterContentChecked, ChangeDetectorRef, Component, OnInit, ViewChild, ViewChildren } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
@@ -35,10 +35,10 @@ import { ProvisionService } from '../../services/provision.service';
 import { QuotationStatusService } from '../../services/quotation-status.service';
 import { QuotationService } from '../../services/quotation.service';
 import { AddAffaireDialogComponent } from '../add-affaire-dialog/add-affaire-dialog.component';
-import { AffaireComponent } from '../affaire/affaire.component';
 import { ChooseAssignedUserDialogComponent } from '../choose-assigned-user-dialog/choose-assigned-user-dialog.component';
 import { OrderingCustomerComponent } from '../ordering-customer/ordering-customer.component';
 import { ProvisionItemComponent } from '../provision-item/provision-item.component';
+import { ProvisionComponent } from '../provision/provision.component';
 import { QuotationManagementComponent } from '../quotation-management/quotation-management.component';
 import { IQuotation } from './../../model/IQuotation';
 @Component({
@@ -149,10 +149,6 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
       // Blank page
       this.appService.changeHeaderTitle("Devis");
     }
-  }
-
-  ngOnChanges(changes: SimpleChanges) {
-    console.log(changes);
   }
 
   toggleTabs() {
@@ -319,6 +315,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     let dialogRef = this.addAffaireDialog.open(AddAffaireDialogComponent, {
       width: '100%'
     });
+    dialogRef.componentInstance.isLabelAffaire = this.quotationManagementComponent?.getBillingDocument()!.billingLabelType.id == this.constantService.getBillingLabelTypeCodeAffaire().id;
     dialogRef.afterClosed().subscribe(response => {
       if (response != null) {
         let asso = {} as AssoAffaireOrder;
@@ -407,11 +404,17 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     this.generateInvoiceItem();
   }
 
+  currentInvoiceGeneration: boolean = false;
   generateInvoiceItem() {
-    if (this.quotation && this.quotation.assoAffaireOrders && this.quotation.assoAffaireOrders[0] && this.quotation.assoAffaireOrders[0].provisions && this.quotation.assoAffaireOrders[0].provisions[0] && this.quotation.assoAffaireOrders[0].provisions[0].provisionType && this.quotation.assoAffaireOrders[0].provisions[0].isRedactedByJss != null)
+    if (!this.currentInvoiceGeneration && this.quotation && this.quotation.assoAffaireOrders && this.quotation.assoAffaireOrders[0]
+      && this.quotation.assoAffaireOrders[0].provisions && this.quotation.assoAffaireOrders[0].provisions[0]
+      && this.quotation.assoAffaireOrders[0].provisions[0].provisionType && this.quotation.assoAffaireOrders[0].provisions[0].isRedactedByJss != null) {
+      this.currentInvoiceGeneration = true;
       this.quotationService.getInvoiceItemsForQuotation(this.quotation).subscribe(response => {
+        this.currentInvoiceGeneration = false;
         this.mergeInvoiceItem(this.quotation, response);
       })
+    }
   }
 
   mergeInvoiceItem(targetQuotation: IQuotation, incomingQuotation: IQuotation) {
@@ -598,14 +601,14 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
   }
 
   displayAffaire(event: any, affaire: Affaire) {
-    this.appService.openRoute(event, '/referential/affaire/' + affaire.id, null);
+    this.appService.openRoute(event, '/affaire/' + affaire.id, null);
   }
 
   displayProvision(event: any, asso: AssoAffaireOrder, provision: Provision) {
-    this.appService.openRoute(event, '/affaire/' + asso.id + "/" + provision.id, null);
+    this.appService.openRoute(event, '/provision/' + asso.id + "/" + provision.id, null);
   }
 
   getActiveWorkflowElementsForProvision(provision: Provision) {
-    return AffaireComponent.getActiveWorkflowElementsForProvision(provision);
+    return ProvisionComponent.getActiveWorkflowElementsForProvision(provision);
   }
 }

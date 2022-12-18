@@ -32,7 +32,7 @@ public class QrCodeHelper {
         try {
             bitMatrix = new QRCodeWriter().encode(data, BarcodeFormat.QR_CODE, size, size);
         } catch (WriterException e) {
-            throw new OsirisException("Unable to generate QR Code for value " + data);
+            throw new OsirisException(e, "Unable to generate QR Code for value " + data);
         }
 
         String imageFormat = "png";
@@ -44,7 +44,7 @@ public class QrCodeHelper {
             MatrixToImageWriter.writeToStream(bitMatrix, imageFormat, fileOutputStream, conf);
             fileOutputStream.close();
         } catch (IOException e) {
-            throw new OsirisException("Unable to write QR Code in memory for value " + data);
+            throw new OsirisException(e, "Unable to write QR Code in memory for value " + data);
         }
 
         return fileOutputStream.toByteArray();

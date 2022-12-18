@@ -6,6 +6,8 @@ public interface InvoiceSearchResult {
 
     public Integer getInvoiceId();
 
+    public Integer getInvoiceStatusId();
+
     public String getInvoiceStatus();
 
     public Integer getCustomerOrderId();

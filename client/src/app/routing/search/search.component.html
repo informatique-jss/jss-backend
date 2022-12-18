@@ -137,6 +137,28 @@
                   </mat-card>
                 </mat-dialog-content>
               </mat-tab>
+              <mat-tab [label]="getTabLabel(AFFAIRE_ENTITY_TYPE)">
+                <mat-dialog-content class="mat-content">
+                  <mat-card class="pointer" *ngFor="let entity of getEntitiesForTab(AFFAIRE_ENTITY_TYPE)"
+                    (click)="openEntity($event, entity)" (auxclick)="openEntity($event, entity)">
+                    <mat-card-title-group>
+                      <mat-card-title>
+                        {{entity.text.denomination?entity.text.denomination:(entity.text.firstname+"
+                        "+entity.text.lastname)}}</mat-card-title>
+                      <mat-card-subtitle>
+                        <p> {{entity.text.address}} - {{entity.text.postalCode}} -
+                          {{entity.text.country?entity.text.country.label:""}}{{entity.text.siren?("
+                          - SIREN
+                          : "+entity.text.siren):""}}{{entity.text.siret?(" - SIRET
+                          : "+entity.text.siret):""}}{{entity.text.rna?(" - RNA
+                          : "+entity.text.rna):""}}</p>
+                      </mat-card-subtitle>
+                      <mat-icon class="mat-card-icon">work</mat-icon>
+                    </mat-card-title-group>
+                    <mat-divider></mat-divider>
+                  </mat-card>
+                </mat-dialog-content>
+              </mat-tab>
             </mat-tab-group>
           </div>
         </td>

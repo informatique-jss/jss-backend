@@ -7,14 +7,16 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
+import com.jss.osiris.modules.accounting.model.PrincipalAccountingAccount;
 
 public interface AccountingAccountRepository extends CrudRepository<AccountingAccount, Integer> {
-    @Query("select a from AccountingAccount a where   upper(cast(label as string))  like '%' || cast(upper(:label) as string) || '%' or   upper(cast(accountingAccountNumber as string))  like '%' || cast(upper(:label) as string) || '%' or  upper(cast(accountingAccountSubNumber as string))   like '%' || cast(upper(:label) as string) || '%' ")
+    @Query("select a from AccountingAccount a where   upper(cast(label as string))  like '%' || cast(upper(:label) as string) || '%'  ")
     List<AccountingAccount> findByLabelOrCodeContainingIgnoreCase(@Param("label") String label);
 
-    List<AccountingAccount> findByAccountingAccountNumber(String code);
+    List<AccountingAccount> findByPrincipalAccountingAccount(PrincipalAccountingAccount principalAccountingAccount);
 
-    @Query("select max(accountingAccountSubNumber) from AccountingAccount where  accountingAccountNumber=:accountNumber")
-    Integer findMaxSubAccontNumberForAccountNumber(@Param("accountNumber") String accountNumber);
+    @Query("select max(accountingAccountSubNumber) from AccountingAccount where  principalAccountingAccount=:principalAccountingAccount")
+    Integer findMaxSubAccontNumberForPrincipalAccountingAccount(
+            @Param("principalAccountingAccount") PrincipalAccountingAccount principalAccountingAccount);
 
 }

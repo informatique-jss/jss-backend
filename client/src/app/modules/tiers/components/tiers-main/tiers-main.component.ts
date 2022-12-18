@@ -32,7 +32,6 @@ export class PrincipalComponent implements OnInit {
     private cityService: CityService) { }
 
   ngOnChanges(changes: SimpleChanges) {
-    console.log(this.tiers);
     if (changes.tiers != undefined) {
       if (this.tiers.deliveryService == null || this.tiers.deliveryService == undefined)
         this.tiers.deliveryService = this.deliveryServices[0];

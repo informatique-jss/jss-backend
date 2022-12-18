@@ -165,6 +165,12 @@
               (onToggleChange)="provisionChangeFunction()" propertyName="isChronopostFees"></generic-toggle>
           </td>
         </tr>
+        <tr *ngIf="displayOption(billingTypeApplicationFees)">
+          <td>
+            <generic-toggle [(model)]="provision.isApplicationFees" label="Frais de dossier ?" [form]="optionForm"
+              (onToggleChange)="provisionChangeFunction()" propertyName="isApplicationFees"></generic-toggle>
+          </td>
+        </tr>
         <tr *ngIf="displayOption(billingTypeBankCheque)">
           <td>
             <generic-toggle [(model)]="provision.isBankCheque" label="Chèque de Banque / Virement ?" [form]="optionForm"

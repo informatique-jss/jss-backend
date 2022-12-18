@@ -30,7 +30,7 @@ import { InvoiceComponent } from "./invoicing.component";
 const routes: Routes = [
   { path: 'invoicing', component: InvoiceComponent },
   { path: 'invoicing/view/:id', component: InvoiceDetailsComponent },
-  { path: 'invoicing/add', component: AddInvoiceComponent },
+  { path: 'invoicing/add/:id', component: AddInvoiceComponent },
 ];
 
 @NgModule({

@@ -238,6 +238,10 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.billingTypeChronopostFees;
   }
 
+  getBillingTypeApplicationFees() {
+    return this.constant.billingTypeApplicationFees;
+  }
+
   getBillingTypeBankCheque() {
     return this.constant.billingTypeBankCheque;
   }
@@ -502,5 +506,41 @@ export class ConstantService extends AppRestService<Constant>{
 
   getLanguageFrench() {
     return this.constant.languageFrench;
+  }
+
+  getPrincipalAccountingAccountProvider() {
+    return this.constant.principalAccountingAccountProvider;
+  }
+
+  getPrincipalAccountingAccountCustomer() {
+    return this.constant.principalAccountingAccountCustomer;
+  }
+
+  getPrincipalAccountingAccountDeposit() {
+    return this.constant.principalAccountingAccountDeposit;
+  }
+
+  getPrincipalAccountingAccountProduct() {
+    return this.constant.principalAccountingAccountProduct;
+  }
+
+  getPrincipalAccountingAccountCharge() {
+    return this.constant.principalAccountingAccountCharge;
+  }
+
+  getPrincipalAccountingAccountBank() {
+    return this.constant.principalAccountingAccountBank;
+  }
+
+  getPrincipalAccountingAccountWaiting() {
+    return this.constant.principalAccountingAccountWaiting;
+  }
+
+  getPrincipalAccountingAccountLost() {
+    return this.constant.principalAccountingAccountLost;
+  }
+
+  getPrincipalAccountingAccountProfit() {
+    return this.constant.principalAccountingAccountProfit;
   }
 }

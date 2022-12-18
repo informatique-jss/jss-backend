@@ -60,7 +60,7 @@ public class AccountingJournalServiceImpl implements AccountingJournalService {
     public AccountingJournal getSalesAccountingJournal() throws OsirisException {
         AccountingJournal salesJournal = constantService.getAccountingJournalSales();
         if (salesJournal == null)
-            throw new OsirisException("Unable to find accounting journal Sales. Check constants");
+            throw new OsirisException(null, "Unable to find accounting journal Sales. Check constants");
         return salesJournal;
     }
 
@@ -68,7 +68,7 @@ public class AccountingJournalServiceImpl implements AccountingJournalService {
     public AccountingJournal getPurchasesAccountingJournal() throws OsirisException {
         AccountingJournal purchasesJournal = constantService.getAccountingJournalPurchases();
         if (purchasesJournal == null)
-            throw new OsirisException("Unable to find accounting journal Purchases. Check constants");
+            throw new OsirisException(null, "Unable to find accounting journal Purchases. Check constants");
         return purchasesJournal;
     }
 
@@ -76,7 +76,7 @@ public class AccountingJournalServiceImpl implements AccountingJournalService {
     public AccountingJournal getANouveauAccountingJournal() throws OsirisException {
         AccountingJournal aNouveauJournal = constantService.getAccountingJournalANouveau();
         if (aNouveauJournal == null)
-            throw new OsirisException("Unable to find accounting journal A Nouveau. Check constants");
+            throw new OsirisException(null, "Unable to find accounting journal A Nouveau. Check constants");
         return aNouveauJournal;
     }
 }

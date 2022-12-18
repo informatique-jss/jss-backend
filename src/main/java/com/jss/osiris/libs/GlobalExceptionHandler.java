@@ -103,6 +103,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             osirisLog.setClassName(exception.getStackTrace()[0].getFileName().replace(".java", ""));
             osirisLog.setMethodName(exception.getStackTrace()[0].getMethodName());
             osirisLog.setStackTrace(ExceptionUtils.getStackTrace(exception));
+            if (exception instanceof OsirisException && ((OsirisException) exception).getCauseException() != null)
+                osirisLog.setCauseStackTrace(
+                        ExceptionUtils.getStackTrace(((OsirisException) exception).getCauseException()));
             osirisLog.setMessage(exception.getMessage());
             osirisLog.setIsRead(false);
             osirisLog.setLogType(logType);

@@ -2,6 +2,7 @@ package com.jss.osiris.modules.miscellaneous.service;
 
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.accounting.model.AccountingJournal;
+import com.jss.osiris.modules.accounting.model.PrincipalAccountingAccount;
 import com.jss.osiris.modules.invoicing.model.InvoiceStatus;
 import com.jss.osiris.modules.invoicing.model.PaymentWay;
 import com.jss.osiris.modules.miscellaneous.model.AttachmentType;
@@ -144,6 +145,8 @@ public interface ConstantService {
 
     public BillingType getBillingTypeChronopostFees() throws OsirisException;
 
+    public BillingType getBillingTypeApplicationFees() throws OsirisException;
+
     public BillingType getBillingTypeBankCheque() throws OsirisException;
 
     public BillingType getBillingTypeComplexeFile() throws OsirisException;
@@ -279,4 +282,22 @@ public interface ConstantService {
     public DeliveryService getDeliveryServiceJss() throws OsirisException;
 
     public Language getLanguageFrench() throws OsirisException;
+
+    public PrincipalAccountingAccount getPrincipalAccountingAccountProvider() throws OsirisException;
+
+    public PrincipalAccountingAccount getPrincipalAccountingAccountDeposit() throws OsirisException;
+
+    public PrincipalAccountingAccount getPrincipalAccountingAccountCustomer() throws OsirisException;
+
+    public PrincipalAccountingAccount getPrincipalAccountingAccountProduct() throws OsirisException;
+
+    public PrincipalAccountingAccount getPrincipalAccountingAccountCharge() throws OsirisException;
+
+    public PrincipalAccountingAccount getPrincipalAccountingAccountBank() throws OsirisException;
+
+    public PrincipalAccountingAccount getPrincipalAccountingAccountWaiting() throws OsirisException;
+
+    public PrincipalAccountingAccount getPrincipalAccountingAccountLost() throws OsirisException;
+
+    public PrincipalAccountingAccount getPrincipalAccountingAccountProfit() throws OsirisException;
 }

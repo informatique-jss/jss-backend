@@ -23,6 +23,7 @@ export class AddAffaireComponent implements OnInit, AfterContentChecked {
 
   @Input() affaire: Affaire = {} as Affaire;
   @Input() editMode: boolean = false;
+  @Input() isLabelAffaire: boolean = false;
 
   legalFormUnregistered = this.constantService.getLegalFormUnregistered();
 
@@ -208,5 +209,10 @@ export class AddAffaireComponent implements OnInit, AfterContentChecked {
       })
     }
     this.affaireForm.markAllAsTouched();
+  }
+
+  getFormStatus(): boolean {
+    this.affaireForm.markAllAsTouched();
+    return this.affaireForm.valid;
   }
 }

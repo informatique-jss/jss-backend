@@ -28,6 +28,7 @@ import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisLog;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.accounting.service.AccountingAccountService;
+import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.invoicing.service.RefundService;
 import com.jss.osiris.modules.miscellaneous.model.AssoSpecialOfferBillingType;
@@ -409,6 +410,24 @@ public class MiscellaneousController {
                 "BillingClosureRecipientTypeResponsable");
         validationHelper.validateReferential(constant.getBillingClosureTypeAffaire(), true,
                 "BillingClosureRecipientTypeResponsable");
+        validationHelper.validateReferential(constant.getPrincipalAccountingAccountBank(), true,
+                "PrincipalAccountingAccountBank");
+        validationHelper.validateReferential(constant.getPrincipalAccountingAccountCharge(), true,
+                "PrincipalAccountingAccountCharge");
+        validationHelper.validateReferential(constant.getPrincipalAccountingAccountCustomer(), true,
+                "PrincipalAccountingCustomer");
+        validationHelper.validateReferential(constant.getPrincipalAccountingAccountDeposit(), true,
+                "PrincipalAccountingDeposit");
+        validationHelper.validateReferential(constant.getPrincipalAccountingAccountLost(), true,
+                "PrincipalAccountingLost");
+        validationHelper.validateReferential(constant.getPrincipalAccountingAccountProduct(), true,
+                "PrincipalAccountingProduct");
+        validationHelper.validateReferential(constant.getPrincipalAccountingAccountProfit(), true,
+                "PrincipalAccountingProfit");
+        validationHelper.validateReferential(constant.getPrincipalAccountingAccountProvider(), true,
+                "PrincipalAccountingAccountProvider");
+        validationHelper.validateReferential(constant.getPrincipalAccountingAccountWaiting(), true,
+                "PrincipalAccountingAccountWaiting");
 
         return new ResponseEntity<Constant>(constantService.addOrUpdateConstant(constant), HttpStatus.OK);
     }
@@ -910,6 +929,7 @@ public class MiscellaneousController {
                 && !entityType.equals(Provision.class.getSimpleName())
                 && !entityType.equals(Formalite.class.getSimpleName())
                 && !entityType.equals(Journal.class.getSimpleName())
+                && !entityType.equals(Invoice.class.getSimpleName())
                 && !entityType.equals(Bodacc.class.getSimpleName())
                 && !entityType.equals(SimpleProvision.class.getSimpleName()))
             throw new OsirisValidationException("entityType");
@@ -937,7 +957,7 @@ public class MiscellaneousController {
             try {
                 data = Files.readAllBytes(file.toPath());
             } catch (IOException e) {
-                throw new OsirisException("Unable to read file " + file.getAbsolutePath());
+                throw new OsirisException(e, "Unable to read file " + file.getAbsolutePath());
             }
 
             headers = new HttpHeaders();
@@ -950,7 +970,7 @@ public class MiscellaneousController {
             try {
                 mimeType = Files.probeContentType(file.toPath());
             } catch (IOException e) {
-                throw new OsirisException("Unable to read file " + file.getAbsolutePath());
+                throw new OsirisException(e, "Unable to read file " + file.getAbsolutePath());
             }
             if (mimeType == null)
                 mimeType = "application/octet-stream";

@@ -156,15 +156,13 @@ public class Responsable implements ITiers, IAttachment {
 	@Column(length = 8)
 	private String floor;
 
-	@ManyToOne(cascade = CascadeType.ALL)
-	@JsonIgnoreProperties(value = { "responsable" }, allowSetters = true)
-	private JssSubscription jssSubscription;
-
 	@ManyToOne
 	@JoinColumn(name = "id_subscription_period_type")
 	private SubscriptionPeriodType subscriptionPeriodType;
 
 	private String loginWeb;
+
+	private Boolean canViewAllTiersInWeb;
 
 	private String salt;
 
@@ -398,14 +396,6 @@ public class Responsable implements ITiers, IAttachment {
 		this.floor = floor;
 	}
 
-	public JssSubscription getJssSubscription() {
-		return jssSubscription;
-	}
-
-	public void setJssSubscription(JssSubscription jssSubscription) {
-		this.jssSubscription = jssSubscription;
-	}
-
 	public SubscriptionPeriodType getSubscriptionPeriodType() {
 		return subscriptionPeriodType;
 	}
@@ -502,6 +492,14 @@ public class Responsable implements ITiers, IAttachment {
 
 	public void setNewIdAs400(Integer newIdAs400) {
 		this.newIdAs400 = newIdAs400;
+	}
+
+	public Boolean getCanViewAllTiersInWeb() {
+		return canViewAllTiersInWeb;
+	}
+
+	public void setCanViewAllTiersInWeb(Boolean canViewAllTiersInWeb) {
+		this.canViewAllTiersInWeb = canViewAllTiersInWeb;
 	}
 
 }

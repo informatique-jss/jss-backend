@@ -1,14 +1,11 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
-import { Employee } from 'src/app/modules/profile/model/Employee';
-import { EmployeeService } from 'src/app/modules/profile/services/employee.service';
+import { IndexEntityService } from 'src/app/routing/search/index.entity.service';
+import { IndexEntity } from 'src/app/routing/search/IndexEntity';
 import { AppService } from 'src/app/services/app.service';
-import { UserPreferenceService } from 'src/app/services/user.preference.service';
-import { AffaireSearch } from '../../model/AffaireSearch';
-import { AssoAffaireOrderSearchResult } from '../../model/AssoAffaireOrderSearchResult';
-import { AssoAffaireOrderSearchResultService } from '../../services/asso.affaire.order.search.result.service';
+import { AFFAIRE_ENTITY_TYPE } from '../../../../routing/search/search.component';
 
 @Component({
   selector: 'affaire-list',
@@ -16,120 +13,46 @@ import { AssoAffaireOrderSearchResultService } from '../../services/asso.affaire
   styleUrls: ['./affaire-list.component.css']
 })
 export class AffaireListComponent implements OnInit {
-  @Input() affaireSearch: AffaireSearch | undefined;
-  affaires: AssoAffaireOrderSearchResult[] | undefined;
-  availableColumns: SortTableColumn[] = [];
-  columnToDisplayOnDashboard: string[] = ["affaireLabel", "provisionType", "status"];
+  affaires: IndexEntity[] | undefined;
   displayedColumns: SortTableColumn[] = [];
   tableAction: SortTableAction[] = [];
-
-  @Input() isForDashboard: boolean = false;
-
-  currentEmployee: Employee | undefined;
-  allEmployees: Employee[] = [] as Array<Employee>;
-  bookmark: AffaireSearch | undefined;
+  textSearch: string = "";
 
   constructor(
     private appService: AppService,
-    private assoAffaireOrderSearchResultService: AssoAffaireOrderSearchResultService,
-    private employeeService: EmployeeService,
     private formBuilder: FormBuilder,
-    private userPreferenceService: UserPreferenceService,
+    private indexEntityService: IndexEntityService,
   ) { }
 
   ngOnInit() {
-    this.availableColumns = [];
+    this.appService.changeHeaderTitle("Affaires");
+    this.displayedColumns.push({ id: "affaireLabel", fieldName: "affaireLabel", label: "Affaire", valueFonction: (element: any) => { return element.text.denomination ? element.text.denomination : element.text.firstname + ' ' + element.text.lastname } } as SortTableColumn);
+    this.displayedColumns.push({ id: "siren", fieldName: "siren", label: "Siren", valueFonction: (element: any) => { return element.text.siren } } as SortTableColumn);
+    this.displayedColumns.push({ id: "siret", fieldName: "siret", label: "Siret", valueFonction: (element: any) => { return element.text.siret } } as SortTableColumn);
+    this.displayedColumns.push({ id: "rna", fieldName: "rna", label: "Rna", valueFonction: (element: any) => { return element.text.rna } } as SortTableColumn);
+    this.displayedColumns.push({ id: "postalCode", fieldName: "postalCode", label: "postalCode", valueFonction: (element: any) => { return element.text.postalCode } } as SortTableColumn);
+    this.displayedColumns.push({ id: "city", fieldName: "city", label: "city", valueFonction: (element: any) => { return element.text.city ? element.text.city.label : "" } } as SortTableColumn);
 
-    this.employeeService.getEmployees().subscribe(employees => {
-      this.allEmployees = employees;
-
-      this.bookmark = this.userPreferenceService.getUserSearchBookmark("affaires") as AffaireSearch;
-      if (!this.isForDashboard) {
-        this.appService.changeHeaderTitle("Affaires / Prestations");
-        if (this.bookmark && !this.isForDashboard) {
-          this.affaireSearch = {} as AffaireSearch;
-          this.affaireSearch.assignedTo = this.bookmark.assignedTo;
-          this.affaireSearch.label = this.bookmark.label;
-          this.affaireSearch.responsible = this.bookmark.responsible;
-          this.affaireSearch.status = this.bookmark.status;
-        }
-      }
-
-      this.availableColumns.push({ id: "affaireLabel", fieldName: "affaireLabel", label: "Affaire" } as SortTableColumn);
-      this.availableColumns.push({ id: "affaireAddress", fieldName: "affaireAddress", label: "Adresse de l'affaire" } as SortTableColumn);
-      this.availableColumns.push({ id: "tiers", fieldName: "tiersLabel", label: "Tiers" } as SortTableColumn);
-      this.availableColumns.push({ id: "responsable", fieldName: "responsableLabel", label: "Responsable" } as SortTableColumn);
-      this.availableColumns.push({ id: "confrere", fieldName: "confrereLabel", label: "Confrère" } as SortTableColumn);
-      this.availableColumns.push({
-        id: "responsible", fieldName: "responsibleLabel", label: "Responsable de l'affaire", valueFonction: (element: any) => {
-          if (this.allEmployees)
-            for (let employee of this.allEmployees)
-              if (employee.id == element.responsibleId)
-                return employee;
-          return null;
-        }, displayAsEmployee: true
-      } as SortTableColumn);
-      this.availableColumns.push({
-        id: "assignedTo", fieldName: "assignedToLabel", label: "Assignée à", valueFonction: (element: any) => {
-          if (this.allEmployees)
-            for (let employee of this.allEmployees)
-              if (employee.id == element.assignedToId)
-                return employee;
-          return null;
-        }, displayAsEmployee: true
-      } as SortTableColumn);
-      this.availableColumns.push({ id: "provisionType", fieldName: "provisionTypeLabel", label: "Prestation" } as SortTableColumn);
-      this.availableColumns.push({ id: "status", fieldName: "statusLabel", label: "Statut" } as SortTableColumn);
-      this.getCurrentEmployee();
-
-      this.setColumns();
-
-      this.tableAction.push({
-        actionIcon: "work", actionName: "Voir l'affaire / prestation", actionLinkFunction: (action: SortTableAction, element: any) => {
-          if (element)
-            return ['/affaire', element.assoId, element.provisionId];
-          return undefined;
-        }, display: true,
-      } as SortTableAction);
-
-      if (this.isForDashboard && !this.affaires && this.affaireSearch)
-        this.searchAffaires();
-    })
-  }
-
-  setColumns() {
-    this.displayedColumns = [];
-    if (this.availableColumns && this.columnToDisplayOnDashboard && this.isForDashboard) {
-      for (let availableColumn of this.availableColumns)
-        for (let columnToDisplay of this.columnToDisplayOnDashboard)
-          if (availableColumn.id == columnToDisplay)
-            this.displayedColumns.push(availableColumn);
-    }
-    else
-      this.displayedColumns.push(...this.availableColumns);
-  }
-
-  getCurrentEmployee() {
-    this.employeeService.getCurrentEmployee().subscribe(response => this.currentEmployee = response);
+    this.tableAction.push({
+      actionIcon: "edit", actionName: "Editer l'affaire", actionLinkFunction: (action: SortTableAction, element: any) => {
+        if (element)
+          return ['/affaire', element.entityId];
+        return undefined;
+      }, display: true,
+    } as SortTableAction);
   }
 
   affaireSearchForm = this.formBuilder.group({
   });
 
   searchAffaires() {
-    if (this.affaireSearch && this.affaireSearchForm.valid && (
-      this.affaireSearch.assignedTo
-      || this.affaireSearch.label
-      || this.affaireSearch.responsible
-      || this.affaireSearch.status
-    )) {
-      if (!this.isForDashboard)
-        this.userPreferenceService.setUserSearchBookmark(this.affaireSearch, "affaires");
-      this.assoAffaireOrderSearchResultService.getAssoAffaireOrders(this.affaireSearch).subscribe(response => {
+    if (this.textSearch.length >= 2) {
+      this.indexEntityService.searchEntitiesByType(this.textSearch, AFFAIRE_ENTITY_TYPE).subscribe(response => {
         this.affaires = response;
-      })
-    } else {
-      this.appService.displaySnackBar("Veuillez remplir au moins un filtre", true, 20);
+        if (this.affaires)
+          for (let affaire of this.affaires)
+            affaire.text = JSON.parse(affaire.text);
+      });
     }
   }
 }

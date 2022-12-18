@@ -33,6 +33,7 @@ export class InvoiceDetailsComponent implements OnInit {
   ) { }
 
   invoiceStatusSend = this.constantService.getInvoiceStatusSend();
+  attachmentTypeInvoice = this.constantService.getAttachmentTypeInvoice();
 
   ngOnInit() {
     this.refreshData();

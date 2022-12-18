@@ -62,7 +62,7 @@
               {{asso.affaire.firstname}} - {{asso.affaire.lastname}} -
             </td>
           </tr>
-          <ng-container *ngFor="let provision of asso.provisions">
+          <ng-container *ngFor="let provision of asso.provisions;let indexProvision = index">
             <tr class="mat-row" *ngIf="provision.provisionType">
               <td class="affaire mat-cell" colspan="2">
                 {{provision.provisionType.label}}
@@ -86,8 +86,9 @@
                 <td class="mat-cell"
                   *ngIf="editMode && invoiceItem.billingItem.billingType.canOverridePrice==true && invoiceItem.id && !invoiceItem.invoice">
                   <generic-input [(model)]="invoiceItem.preTaxPrice" label="" [form]="invoiceManagementForm"
-                    [propertyName]='"preTaxPrice"+indexInvoiceItem+indexAsso' [isMandatory]="true" type="number"
-                    step="0,01" (onInputChange)="itemChange(invoiceItem)" hint="Laisser vide pour recalculer le prix">
+                    [propertyName]='"preTaxPrice"+indexInvoiceItem+indexProvision+indexAsso' [isMandatory]="true"
+                    type="number" step="0,01" (onInputChange)="itemChange(invoiceItem)"
+                    hint="Laisser vide pour recalculer le prix">
                   </generic-input>
                 </td>
               </tr>

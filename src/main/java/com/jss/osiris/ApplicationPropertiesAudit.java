@@ -16,16 +16,6 @@ public class ApplicationPropertiesAudit {
     @PostConstruct
     public void checkApplicationProperty() throws OsirisException {
         boolean isOk = true;
-        isOk = isOk && checkProperty("accounting.account.number.customer");
-        isOk = isOk && checkProperty("accounting.account.number.deposit");
-        isOk = isOk && checkProperty("accounting.account.number.provider");
-        isOk = isOk && checkProperty("accounting.account.number.product");
-        isOk = isOk && checkProperty("accounting.account.number.charge");
-        isOk = isOk && checkProperty("accounting.account.number.bank");
-        isOk = isOk && checkProperty("accounting.account.number.waiting");
-        isOk = isOk && checkProperty("accounting.account.number.profit");
-        isOk = isOk && checkProperty("accounting.account.number.lost");
-        isOk = isOk && checkProperty("accounting.account.number.bank");
         isOk = isOk && checkProperty("mail.smtp.host");
         isOk = isOk && checkProperty("mail.smtp.port");
         isOk = isOk && checkProperty("mail.smtp.username");
@@ -52,6 +42,10 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("ldap.server.port");
         isOk = isOk && checkProperty("ldap.manager.login");
         isOk = isOk && checkProperty("ldap.manager.password");
+        isOk = isOk && checkProperty("spring.session.store-type");
+        isOk = isOk && checkProperty("spring.session.jdbc.initialize-schema");
+        isOk = isOk && checkProperty("spring.session.jdbc.schema");
+        isOk = isOk && checkProperty("server.servlet.session.timeout");
         isOk = isOk && checkProperty("server.servlet.session.timeout");
         isOk = isOk && checkProperty("invoicing.payment.limit.refund.euros");
         isOk = isOk && checkProperty("payment.cb.entry.point");
@@ -71,7 +65,7 @@ public class ApplicationPropertiesAudit {
     private boolean checkProperty(String propertyName) throws OsirisException {
         String property = env.getProperty(propertyName);
         if (property == null) {
-            throw new OsirisException("Unable to find " + propertyName + " property in app properties");
+            throw new OsirisException(null, "Unable to find " + propertyName + " property in app properties");
         }
         return true;
     }

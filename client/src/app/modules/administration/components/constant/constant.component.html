@@ -399,6 +399,14 @@
           </tr>
           <tr>
             <td>
+              <autocomplete-billing-type [(model)]="constant.billingTypeApplicationFees"
+                label="Type de poste de facturation - Frais de dossier" [form]="constantForm"
+                propertyName="billingTypeApplicationFees" [isMandatory]="true" [isDisabled]="!editMode">
+              </autocomplete-billing-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <autocomplete-billing-type [(model)]="constant.billingTypeBankCheque"
                 label="Type de poste de facturation - Chèque de banque / virement" [form]="constantForm"
                 propertyName="billingTypeBankCheque" [isMandatory]="true" [isDisabled]="!editMode">
@@ -874,14 +882,14 @@
           <tr>
             <td>
               <radio-group-billing-closure-recipient [(model)]="constant.billingClosureRecipientTypeClient"
-                [form]="constantForm" propertyName="billingClosureRecipientTypeClient"
+                [form]="constantForm" propertyName="billingClosureRecipientTypeClient" [isDisabled]="!editMode"
                 label="Destinataire de relevé comptable - Client"></radio-group-billing-closure-recipient>
             </td>
           </tr>
           <tr>
             <td>
               <radio-group-billing-closure-recipient [(model)]="constant.billingClosureRecipientTypeResponsable"
-                [form]="constantForm" propertyName="billingClosureRecipientTypeResponsable"
+                [form]="constantForm" propertyName="billingClosureRecipientTypeResponsable" [isDisabled]="!editMode"
                 label="Destinataire de relevé comptable - Responsable">
               </radio-group-billing-closure-recipient>
             </td>
@@ -889,7 +897,8 @@
           <tr>
             <td>
               <radio-group-billing-closure [(model)]="constant.billingClosureTypeAffaire" [form]="constantForm"
-                propertyName="billingClosureTypeAffaire" label="Type de relevé comptable - Affaire">
+                [isDisabled]="!editMode" propertyName="billingClosureTypeAffaire"
+                label="Type de relevé comptable - Affaire">
               </radio-group-billing-closure>
             </td>
           </tr>
@@ -902,8 +911,80 @@
           </tr>
           <tr>
             <td>
-              <radio-group-language [(model)]="constant.languageFrench" [form]="constantForm"
+              <radio-group-language [(model)]="constant.languageFrench" [form]="constantForm" [isDisabled]="!editMode"
                 propertyName="languageFrench" label="Langue - Français"></radio-group-language>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-principal-accounting-account [(model)]="constant.principalAccountingAccountCustomer"
+                [form]="constantForm" propertyName="principalAccountingAccountCustomer" [isMandatory]="true"
+                label="Compte comptable principal - Client"
+                [isDisabled]="!editMode"></autocomplete-principal-accounting-account>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-principal-accounting-account [(model)]="constant.principalAccountingAccountDeposit"
+                [form]="constantForm" propertyName="principalAccountingAccountDeposit" [isMandatory]="true"
+                label="Compte comptable principal - Acompte"
+                [isDisabled]="!editMode"></autocomplete-principal-accounting-account>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-principal-accounting-account [(model)]="constant.principalAccountingAccountProvider"
+                [form]="constantForm" propertyName="principalAccountingAccountProvider" [isMandatory]="true"
+                label="Compte comptable principal - Fournisseur"
+                [isDisabled]="!editMode"></autocomplete-principal-accounting-account>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-principal-accounting-account [(model)]="constant.principalAccountingAccountProduct"
+                [form]="constantForm" propertyName="principalAccountingAccountProduct" [isMandatory]="true"
+                label="Compte comptable principal - Produit"
+                [isDisabled]="!editMode"></autocomplete-principal-accounting-account>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-principal-accounting-account [(model)]="constant.principalAccountingAccountCharge"
+                [form]="constantForm" propertyName="principalAccountingAccountCharge" [isMandatory]="true"
+                label="Compte comptable principal - Charge"
+                [isDisabled]="!editMode"></autocomplete-principal-accounting-account>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-principal-accounting-account [(model)]="constant.principalAccountingAccountBank"
+                [form]="constantForm" propertyName="principalAccountingAccountBank" [isMandatory]="true"
+                label="Compte comptable principal - Banque"
+                [isDisabled]="!editMode"></autocomplete-principal-accounting-account>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-principal-accounting-account [(model)]="constant.principalAccountingAccountWaiting"
+                [form]="constantForm" propertyName="principalAccountingAccountWaiting" [isMandatory]="true"
+                label="Compte comptable principal - Attente"
+                [isDisabled]="!editMode"></autocomplete-principal-accounting-account>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-principal-accounting-account [(model)]="constant.principalAccountingAccountLost"
+                [form]="constantForm" propertyName="principalAccountingAccountLost" [isMandatory]="true"
+                label="Compte comptable principal - Pertes"
+                [isDisabled]="!editMode"></autocomplete-principal-accounting-account>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-principal-accounting-account [(model)]="constant.principalAccountingAccountProfit"
+                [form]="constantForm" propertyName="principalAccountingAccountProfit" [isMandatory]="true"
+                label="Compte comptable principal - Profit"
+                [isDisabled]="!editMode"></autocomplete-principal-accounting-account>
             </td>
           </tr>
         </table>

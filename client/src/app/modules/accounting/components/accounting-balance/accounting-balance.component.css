@@ -41,7 +41,7 @@
 
 .without-padding-left>mat-icon {
   transform: scale(0.60);
-  margin-left: -45px;
+  margin-left: -15px;
 }
 
 .table-bilan {

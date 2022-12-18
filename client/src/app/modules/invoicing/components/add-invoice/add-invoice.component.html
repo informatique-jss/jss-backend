@@ -5,27 +5,28 @@
         <tr>
           <td *ngIf="!invoice.responsable && !invoice.confrere && !invoice.provider">
             <autocomplete-tiers-individual [(model)]="invoice.tiers" [form]="invoiceForm" propertyName="tiers"
-              (onOptionSelected)="fillTiers($event)" [isMandatory]="true" label="Tiers" [isDisabled]="!editMode"
+              (onOptionSelected)="fillTiers($event)" [isMandatory]="true" label="Tiers"
+              [isDisabled]="!editMode || invoice.id!=undefined"
               [conditionnalRequired]="invoice.responsable==undefined && invoice.confrere==undefined && invoice.provider ==undefined">
             </autocomplete-tiers-individual>
           </td>
           <td *ngIf="!invoice.tiers && !invoice.confrere && !invoice.provider">
             <autocomplete-responsable [(model)]="invoice.responsable" [form]="invoiceForm" propertyName="responsable"
               (onOptionSelected)="fillResponsable($event)" [isMandatory]="true" label="Responsable"
-              [isDisabled]="!editMode"
+              [isDisabled]="!editMode   || invoice.id!=undefined"
               [conditionnalRequired]="invoice.tiers==undefined && invoice.confrere==undefined && invoice.provider ==undefined">
             </autocomplete-responsable>
           </td>
           <td *ngIf="!invoice.tiers && !invoice.responsable && !invoice.provider">
             <autocomplete-confrere label="Confrère" [(model)]="invoice.confrere" [form]="invoiceForm"
-              propertyName="confrere" [isDisabled]="!editMode" (onOptionSelected)="fillConfrere($event)"
-              [isMandatory]="true"
+              propertyName="confrere" [isDisabled]="!editMode   || invoice.id!=undefined"
+              (onOptionSelected)="fillConfrere($event)" [isMandatory]="true"
               [conditionnalRequired]="invoice.responsable==undefined && invoice.tiers==undefined && invoice.provider ==undefined">
             </autocomplete-confrere>
           </td>
           <td *ngIf="!invoice.tiers && !invoice.responsable && !invoice.confrere">
             <autocomplete-provider [(model)]="invoice.provider" [form]="invoiceForm" propertyName="provider"
-              [isMandatory]="true" [isDisabled]="!editMode"
+              [isMandatory]="true" [isDisabled]="!editMode   || invoice.id!=undefined"
               [conditionnalRequired]="invoice.responsable==undefined && invoice.tiers==undefined && invoice.confrere ==undefined"
               (onOptionSelected)="fillProvider($event)" label="Fournisseur"></autocomplete-provider>
           </td>
@@ -35,7 +36,8 @@
         <tr>
           <td>
             <radio-group-billing-label [(model)]="invoice.billingLabelType" [form]="invoiceForm"
-              [isDisabled]="!editMode" propertyName="billingLabelType" label="Libellé sur facture">
+              [isDisabled]="!editMode || !isManualInvoice()" propertyName="billingLabelType"
+              label="Libellé sur facture">
             </radio-group-billing-label>
           </td>
         </tr>
@@ -45,39 +47,42 @@
         <tr>
           <td>
             <generic-input [(model)]="invoice.billingLabel" label="Libellé" [form]="invoiceForm"
-              propertyName="billingLabel" [isMandatory]="true" [maxLength]="40" [isDisabled]="!editMode">
+              propertyName="billingLabel" [isMandatory]="true" [maxLength]="40"
+              [isDisabled]="!editMode || !isManualInvoice()">
             </generic-input>
           </td>
           <td>
             <generic-input [(model)]="invoice.billingLabelAddress" label="Adresse" [form]="invoiceForm"
-              propertyName="billingAddress" [isMandatory]="true" [isDisabled]="!editMode" [maxLength]="160">
+              propertyName="billingAddress" [isMandatory]="true" [isDisabled]="!editMode || !isManualInvoice()"
+              [maxLength]="160">
             </generic-input>
           </td>
           <td>
             <autocomplete-postal-code [(model)]="invoice.billingLabelPostalCode" [form]="invoiceForm"
-              [byPassAutocompletValidator]="true" label="Code postal" [isDisabled]="!editMode" propertyName="postalCode"
-              [isMandatory]="true"
+              [byPassAutocompletValidator]="true" label="Code postal" [isDisabled]="!editMode || !isManualInvoice()"
+              propertyName="postalCode" [isMandatory]="true"
               [conditionnalRequired]="invoice.billingLabelCountry != null && invoice.billingLabelCountry.id == countryFrance.id"
               (onOptionSelected)="fillCity($event)"></autocomplete-postal-code>
           </td>
           <td>
             <generic-input [(model)]="invoice.cedexComplement" label="Complément CEDEX" [form]="invoiceForm"
-              propertyName="cedexComplement" [isMandatory]="false" [isDisabled]="!editMode"
+              propertyName="cedexComplement" [isMandatory]="false" [isDisabled]="!editMode || !isManualInvoice()"
               [maxLength]="20"></generic-input>
           </td>
           <td>
             <autocomplete-city [(model)]="invoice.billingLabelCity" [modelCountry]="invoice.billingLabelCountry"
-              [preFilterPostalCode]="invoice.billingLabelPostalCode" [isDisabled]="!editMode" label="Ville"
-              [form]="invoiceForm" propertyName="city" [isMandatory]="true" (onOptionSelected)="fillPostalCode($event)">
+              [preFilterPostalCode]="invoice.billingLabelPostalCode" [isDisabled]="!editMode || !isManualInvoice()"
+              label="Ville" [form]="invoiceForm" propertyName="city" [isMandatory]="true"
+              (onOptionSelected)="fillPostalCode($event)">
             </autocomplete-city>
           </td>
           <td>
             <autocomplete-country [(model)]="invoice.billingLabelCountry" [form]="invoiceForm" propertyName="country"
-              label="Pays" [isDisabled]="!editMode" [isMandatory]="true"></autocomplete-country>
+              label="Pays" [isDisabled]="!editMode || !isManualInvoice()" [isMandatory]="true"></autocomplete-country>
           </td>
           <td>
-            <generic-toggle [(model)]="invoice.billingLabelIsIndividual" label="Est particulier ?" [form]="invoiceForm"
-              propertyName="billingLabelIsIndividual"></generic-toggle>
+            <generic-toggle [(model)]="invoice.billingLabelIsIndividual" [isDisabled]="!editMode || !isManualInvoice()"
+              label="Est particulier ?" [form]="invoiceForm" propertyName="billingLabelIsIndividual"></generic-toggle>
           </td>
         </tr>
       </table>
@@ -85,12 +90,35 @@
         <tr>
           <td>
             <generic-input [(model)]="invoice.commandNumber" label="N° de commande" [form]="invoiceForm"
-              propertyName="commandNumber" [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="40">
+              propertyName="commandNumber" [isMandatory]="false" [isDisabled]="!editMode || !isManualInvoice()"
+              [maxLength]="40">
             </generic-input>
           </td>
           <td>
             <generic-datepicker [(model)]="invoice.dueDate" label="Date d'échéance" [form]="invoiceForm"
-              propertyName="dueDate" [isMandatory]="false" [isDisabled]="!editMode"></generic-datepicker>
+              propertyName="dueDate" [isMandatory]="false"
+              [isDisabled]="!editMode || invoice.id!=undefined"></generic-datepicker>
+          </td>
+        </tr>
+      </table>
+      <table class="full-width">
+        <tr>
+          <td>
+            <generic-input [(model)]="invoice.manualAccountingDocumentNumber" label="Référence de la pièce comptable"
+              [form]="invoiceForm" propertyName="manualAccountingDocumentNumber" [isMandatory]="false"
+              [isDisabled]="!editMode || !isManualInvoice()" [maxLength]="150">
+            </generic-input>
+          </td>
+          <td>
+            <generic-datepicker [(model)]="invoice.manualAccountingDocumentDate" label="Date de la pièce comptable"
+              [form]="invoiceForm" propertyName="manualAccountingDocumentDate" [isMandatory]="false"
+              [isDisabled]="!editMode || !isManualInvoice()"></generic-datepicker>
+          </td>
+          <td>
+            <single-attachment *ngIf="invoice.id" [entity]="invoice" [entityType]="INVOICE_ENTITY_TYPE.entityType"
+              [editMode]="true" [attachmentTypeToDisplay]="attachmentTypeInvoice"
+              (onUploadedFile)="updateAttachments($event)">
+            </single-attachment>
           </td>
         </tr>
       </table>
@@ -106,12 +134,12 @@
       <tr>
         <td>
           <generic-input [(model)]="invoiceItem.label" label="Libellé" [form]="invoiceForm" propertyName="label"
-            [isMandatory]="true" [isDisabled]="!editMode" [maxLength]="200"></generic-input>
+            [isMandatory]="true" [isDisabled]="!editMode || invoice.id!=undefined" [maxLength]="200"></generic-input>
         </td>
         <td>
           <autocomplete-billing-item [(model)]="invoiceItem.billingItem" [form]="invoiceForm"
             label="Poste de facturation" propertyName="Poste de facturation" [isMandatory]="true"
-            [isDisabled]="!editMode">
+            [isDisabled]="!editMode || invoice.id!=undefined">
           </autocomplete-billing-item>
         </td>
       </tr>
@@ -120,15 +148,17 @@
       <tr>
         <td>
           <generic-input [(model)]="invoiceItem.preTaxPrice" label="Prix HT" [form]="invoiceForm"
-            propertyName="preTaxPrice" [isMandatory]="true" [isDisabled]="!editMode" type="number"></generic-input>
+            propertyName="preTaxPrice" [isMandatory]="true" [isDisabled]="!editMode || invoice.id!=undefined"
+            type="number"></generic-input>
         </td>
         <td>
           <select-vat [(model)]="invoiceItem.vat" label="TVA applicable" [form]="invoiceForm" propertyName="vat"
-            [isMandatory]="true" [isDisabled]="!editMode"></select-vat>
+            [isMandatory]="true" [isDisabled]="!editMode || invoice.id!=undefined"></select-vat>
         </td>
         <td>
           <generic-input [(model)]="invoiceItem.discountAmount" label="Remise totale" [form]="invoiceForm"
-            propertyName="discountAmount" [isMandatory]="false" [isDisabled]="!editMode" type="number"></generic-input>
+            propertyName="discountAmount" [isMandatory]="false" [isDisabled]="!editMode || invoice.id!=undefined"
+            type="number"></generic-input>
         </td>
       </tr>
     </table>

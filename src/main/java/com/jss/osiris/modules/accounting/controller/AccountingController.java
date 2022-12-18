@@ -35,10 +35,12 @@ import com.jss.osiris.modules.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.accounting.model.AccountingRecordSearch;
 import com.jss.osiris.modules.accounting.model.AccountingRecordSearchResult;
+import com.jss.osiris.modules.accounting.model.PrincipalAccountingAccount;
 import com.jss.osiris.modules.accounting.service.AccountingAccountClassService;
 import com.jss.osiris.modules.accounting.service.AccountingAccountService;
 import com.jss.osiris.modules.accounting.service.AccountingJournalService;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
+import com.jss.osiris.modules.accounting.service.PrincipalAccountingAccountService;
 
 @RestController
 public class AccountingController {
@@ -61,6 +63,31 @@ public class AccountingController {
 
     @Autowired
     AccountingJournalService accountingJournalService;
+
+    @Autowired
+    PrincipalAccountingAccountService principalAccountingAccountService;
+
+    @GetMapping(inputEntryPoint + "/principal-accounting-accounts")
+    public ResponseEntity<List<PrincipalAccountingAccount>> getPrincipalAccountingAccounts() {
+        return new ResponseEntity<List<PrincipalAccountingAccount>>(
+                principalAccountingAccountService.getPrincipalAccountingAccounts(), HttpStatus.OK);
+    }
+
+    @PostMapping(inputEntryPoint + "/principal-accounting-account")
+    public ResponseEntity<PrincipalAccountingAccount> addOrUpdatePrincipalAccountingAccount(
+            @RequestBody PrincipalAccountingAccount principalAccountingAccounts)
+            throws OsirisValidationException, OsirisException {
+        if (principalAccountingAccounts.getId() != null)
+            validationHelper.validateReferential(principalAccountingAccounts, true, "principalAccountingAccounts");
+        validationHelper.validateString(principalAccountingAccounts.getCode(), true, "code");
+        validationHelper.validateString(principalAccountingAccounts.getLabel(), true, "label");
+        validationHelper.validateReferential(principalAccountingAccounts.getAccountingAccountClass(), true,
+                "AccountingAccountClass");
+
+        return new ResponseEntity<PrincipalAccountingAccount>(
+                principalAccountingAccountService.addOrUpdatePrincipalAccountingAccount(principalAccountingAccounts),
+                HttpStatus.OK);
+    }
 
     @PostMapping(inputEntryPoint + "/accounting-records/manual/add")
     public ResponseEntity<List<AccountingRecord>> addOrUpdateAccountingRecords(
@@ -236,8 +263,8 @@ public class AccountingController {
         if (accountingAccounts.getId() != null)
             validationHelper.validateReferential(accountingAccounts, true, "accountingAccounts");
         validationHelper.validateString(accountingAccounts.getLabel(), true, 100, "label");
-        validationHelper.validateString(accountingAccounts.getAccountingAccountNumber(), true, 6,
-                "AccountingAccountNumber");
+        validationHelper.validateReferential(accountingAccounts.getPrincipalAccountingAccount(), true,
+                "PrincipalAccountingAccount");
 
         return new ResponseEntity<AccountingAccount>(
                 accountingAccountService.addOrUpdateAccountingAccountFromUser(accountingAccounts), HttpStatus.OK);
@@ -316,7 +343,7 @@ public class AccountingController {
             try {
                 data = Files.readAllBytes(grandLivre.toPath());
             } catch (IOException e) {
-                throw new OsirisException("Unable to read file " + grandLivre.toPath());
+                throw new OsirisException(e, "Unable to read file " + grandLivre.toPath());
             }
 
             headers = new HttpHeaders();
@@ -364,7 +391,7 @@ public class AccountingController {
             try {
                 data = Files.readAllBytes(grandLivre.toPath());
             } catch (IOException e) {
-                throw new OsirisException("Unable to read file " + grandLivre.toPath());
+                throw new OsirisException(e, "Unable to read file " + grandLivre.toPath());
             }
 
             headers = new HttpHeaders();
@@ -414,12 +441,12 @@ public class AccountingController {
             try {
                 data = Files.readAllBytes(grandLivre.toPath());
             } catch (IOException e) {
-                throw new OsirisException("Unable to read file " + grandLivre.toPath());
+                throw new OsirisException(e, "Unable to read file " + grandLivre.toPath());
             }
 
             headers = new HttpHeaders();
             headers.add("filename",
-                    "SPPS - Compte - " + accountingAccount.getAccountingAccountNumber() + "-"
+                    "SPPS - Compte - " + accountingAccount.getPrincipalAccountingAccount().getCode() + "-"
                             + accountingAccount.getAccountingAccountSubNumber() + " - "
                             + startDate.format(dateFormatter) + " - "
                             + endDate.format(dateFormatter) + ".xlsx");
@@ -435,7 +462,8 @@ public class AccountingController {
 
     @PostMapping(inputEntryPoint + "/accounting-balance/search")
     public ResponseEntity<List<AccountingBalance>> searchAccountingBalance(
-            @RequestBody AccountingBalanceSearch accountingRecordSearch) throws OsirisValidationException {
+            @RequestBody AccountingBalanceSearch accountingRecordSearch)
+            throws OsirisValidationException, OsirisException {
         if (accountingRecordSearch == null)
             throw new OsirisValidationException("accountingRecordSearch");
 
@@ -448,12 +476,8 @@ public class AccountingController {
         if (duration.toDays() > 366)
             throw new OsirisValidationException("Duration");
 
-        validationHelper.validateString(accountingRecordSearch.getAccountingAccountNumber(), false, 3,
-                "AccountingAccountNumber");
-
-        if (accountingRecordSearch.getAccountingAccountNumber() != null
-                && accountingRecordSearch.getAccountingAccountNumber().length() == 0)
-            accountingRecordSearch.setAccountingAccountNumber(null);
+        validationHelper.validateReferential(accountingRecordSearch.getPrincipalAccountingAccount(), false,
+                "PrincipalAccountingAccount");
 
         return new ResponseEntity<List<AccountingBalance>>(
                 accountingRecordService.searchAccountingBalance(accountingRecordSearch), HttpStatus.OK);
@@ -462,7 +486,7 @@ public class AccountingController {
     @GetMapping(inputEntryPoint + "/accounting-balance/export")
     public ResponseEntity<byte[]> downloadAccountingBalance(
             @RequestParam(name = "accountingClassId", required = false) Integer accountingClassId,
-            @RequestParam(name = "accountingAccountNumber", required = false) String accountingAccountNumber,
+            @RequestParam(name = "principalAccountingAccountId", required = false) Integer principalAccountingAccountId,
             @RequestParam(name = "accountingAccountId", required = false) Integer accountingAccountId,
             @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
             @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate)
@@ -488,13 +512,13 @@ public class AccountingController {
         if (duration.toDays() > 366)
             throw new OsirisValidationException("duration");
         File grandLivre = accountingRecordService.getAccountingBalanceExport(accountingClassId,
-                accountingAccountNumber, accountingAccountId, startDate, endDate);
+                principalAccountingAccountId, accountingAccountId, startDate, endDate);
 
         if (grandLivre != null) {
             try {
                 data = Files.readAllBytes(grandLivre.toPath());
             } catch (IOException e) {
-                throw new OsirisException("Unable to read file " + grandLivre.toPath());
+                throw new OsirisException(e, "Unable to read file " + grandLivre.toPath());
             }
 
             headers = new HttpHeaders();
@@ -514,7 +538,8 @@ public class AccountingController {
 
     @PostMapping(inputEntryPoint + "/accounting-balance/generale/search")
     public ResponseEntity<List<AccountingBalance>> searchAccountingBalanceGenerale(
-            @RequestBody AccountingBalanceSearch accountingRecordSearch) throws OsirisValidationException {
+            @RequestBody AccountingBalanceSearch accountingRecordSearch)
+            throws OsirisValidationException, OsirisException {
         if (accountingRecordSearch == null)
             throw new OsirisValidationException("accountingRecordSearch");
 
@@ -527,12 +552,8 @@ public class AccountingController {
         if (duration.toDays() > 366)
             throw new OsirisValidationException("Duration");
 
-        validationHelper.validateString(accountingRecordSearch.getAccountingAccountNumber(), false, 3,
-                "AccountingAccountNumber");
-
-        if (accountingRecordSearch.getAccountingAccountNumber() != null
-                && accountingRecordSearch.getAccountingAccountNumber().length() == 0)
-            accountingRecordSearch.setAccountingAccountNumber(null);
+        validationHelper.validateReferential(accountingRecordSearch.getPrincipalAccountingAccount(), false,
+                "PrincipalAccountingAccount");
 
         return new ResponseEntity<List<AccountingBalance>>(
                 accountingRecordService.searchAccountingBalanceGenerale(accountingRecordSearch), HttpStatus.OK);
@@ -541,7 +562,7 @@ public class AccountingController {
     @GetMapping(inputEntryPoint + "/accounting-balance/generale/export")
     public ResponseEntity<byte[]> downloadAccountingBalanceGenerale(
             @RequestParam(name = "accountingClassId", required = false) Integer accountingClassId,
-            @RequestParam(name = "accountingAccountNumber", required = false) String accountingAccountNumber,
+            @RequestParam(name = "principalAccountingAccountId", required = false) Integer principalAccountingAccountId,
             @RequestParam(name = "accountingAccountId", required = false) Integer accountingAccountId,
             @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
             @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate)
@@ -567,13 +588,13 @@ public class AccountingController {
         if (duration.toDays() > 366)
             throw new OsirisValidationException("Duration");
         File grandLivre = accountingRecordService.getAccountingBalanceGeneraleExport(accountingClassId,
-                accountingAccountNumber, accountingAccountId, startDate, endDate);
+                principalAccountingAccountId, accountingAccountId, startDate, endDate);
 
         if (grandLivre != null) {
             try {
                 data = Files.readAllBytes(grandLivre.toPath());
             } catch (IOException e) {
-                throw new OsirisException("Unable to read file " + grandLivre.toPath());
+                throw new OsirisException(e, "Unable to read file " + grandLivre.toPath());
             }
 
             headers = new HttpHeaders();
@@ -648,7 +669,7 @@ public class AccountingController {
             try {
                 data = Files.readAllBytes(profitAndLost.toPath());
             } catch (IOException e) {
-                throw new OsirisException("Unable to read file " + profitAndLost.toPath());
+                throw new OsirisException(e, "Unable to read file " + profitAndLost.toPath());
             }
 
             headers = new HttpHeaders();
@@ -687,7 +708,7 @@ public class AccountingController {
             try {
                 data = Files.readAllBytes(bilan.toPath());
             } catch (IOException e) {
-                throw new OsirisException("Unable to read file " + bilan.toPath());
+                throw new OsirisException(e, "Unable to read file " + bilan.toPath());
             }
 
             headers = new HttpHeaders();

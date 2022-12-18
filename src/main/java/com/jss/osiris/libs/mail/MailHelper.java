@@ -167,7 +167,7 @@ public class MailHelper {
             javaMailProperties
                     .load(this.applicationContext.getResource("classpath:application.properties").getInputStream());
         } catch (IOException e) {
-            throw new OsirisException("Unable to find application.properties in classpath");
+            throw new OsirisException(e, "Unable to find application.properties in classpath");
         }
         mailSender.setJavaMailProperties(javaMailProperties);
 
@@ -242,7 +242,7 @@ public class MailHelper {
             try {
                 recipients = message.getRecipients(Message.RecipientType.TO);
             } catch (MessagingException e) {
-                throw new OsirisException("Unable to find recipients To for mail " + mail.getId());
+                throw new OsirisException(e, "Unable to find recipients To for mail " + mail.getId());
             }
             if (recipients != null)
                 for (Address address : recipients) {
@@ -253,7 +253,7 @@ public class MailHelper {
             try {
                 recipients = message.getRecipients(Message.RecipientType.CC);
             } catch (MessagingException e) {
-                throw new OsirisException("Unable to find recipients Cc for mail " + mail.getId());
+                throw new OsirisException(e, "Unable to find recipients Cc for mail " + mail.getId());
             }
             if (recipients != null)
                 for (Address address : recipients) {
@@ -322,7 +322,7 @@ public class MailHelper {
             try {
                 message.setFrom(new InternetAddress("no-reply@jss.fr", "Journal Spécial des Sociétés"));
             } catch (UnsupportedEncodingException e) {
-                throw new OsirisException("Wrong From mail for customer mail " + mail.getId());
+                throw new OsirisException(e, "Wrong From mail for customer mail " + mail.getId());
             }
 
             if (mail.getReplyTo() != null)
@@ -331,7 +331,7 @@ public class MailHelper {
                             new InternetAddress(mail.getReplyTo().getMail(),
                                     mail.getReplyTo().getFirstname() + " " + mail.getReplyTo().getLastname()));
                 } catch (UnsupportedEncodingException e) {
-                    throw new OsirisException("Wrong Reply To mail for customer mail " + mail.getId());
+                    throw new OsirisException(e, "Wrong Reply To mail for customer mail " + mail.getId());
                 }
 
             if (mail.getReplyToMail() != null)
@@ -342,7 +342,7 @@ public class MailHelper {
             else {
                 if (mail.getMailComputeResult().getRecipientsMailTo() == null
                         || mail.getMailComputeResult().getRecipientsMailTo().size() == 0)
-                    throw new OsirisException("No recipient found");
+                    throw new OsirisException(null, "No recipient found");
 
                 for (Mail mailTo : mail.getMailComputeResult().getRecipientsMailTo())
                     message.setTo(mailTo.getMail());
@@ -397,7 +397,7 @@ public class MailHelper {
                         IOUtils.toByteArray(new ClassPathResource("images/twitter.png").getInputStream()));
                 message.addInline("twitter", imageSourceTwitter, PNG_MIME);
             } catch (IOException e) {
-                throw new OsirisException("Unable to find some pictures for customer mail " + mail.getId());
+                throw new OsirisException(e, "Unable to find some pictures for customer mail " + mail.getId());
             }
 
             if (mail.getAttachments() != null) {
@@ -615,31 +615,46 @@ public class MailHelper {
 
         ITiers tiers = quotationService.getCustomerOrderOfQuotation(quotation);
         boolean isDepositMandatory = false;
-        if (tiers instanceof Tiers)
+        boolean isPaymentTypePrelevement = false;
+
+        if (tiers instanceof Tiers) {
             isDepositMandatory = ((Tiers) tiers).getIsProvisionalPaymentMandatory();
-        if (tiers instanceof Confrere)
+            isPaymentTypePrelevement = ((Tiers) tiers).getPaymentType() != null && ((Tiers) tiers).getPaymentType()
+                    .getId().equals(constantService.getPaymentTypePrelevement().getId());
+        } else if (tiers instanceof Confrere) {
             isDepositMandatory = ((Confrere) tiers).getIsProvisionalPaymentMandatory();
+            isPaymentTypePrelevement = ((Confrere) tiers).getPaymentType() != null && ((Tiers) tiers).getPaymentType()
+                    .getId().equals(constantService.getPaymentTypePrelevement().getId());
+        } else if (tiers instanceof Responsable) {
+            isDepositMandatory = ((Responsable) tiers).getTiers().getIsProvisionalPaymentMandatory();
+            isPaymentTypePrelevement = ((Responsable) tiers).getTiers().getPaymentType() != null
+                    && ((Tiers) tiers).getPaymentType()
+                            .getId().equals(constantService.getPaymentTypePrelevement().getId());
+        }
 
-        if (isDepositMandatory)
-            mail.setPaymentExplaination(
-                    "Votre commande est en attente de provision. Effectuez dès maintenant un virement de "
-                            + mail.getPriceTotal() + " € sur le compte ci-dessous pour la débloquer.");
-        else
-            mail.setPaymentExplaination("Vous pouvez d'orses et déjà régler cette commande d'un montant de "
-                    + mail.getPriceTotal() + " € en suivant les instructions ci-dessous.");
+        if (!isPaymentTypePrelevement) {
+            if (isDepositMandatory)
+                mail.setPaymentExplaination(
+                        "Votre commande est en attente de provision. Effectuez dès maintenant un virement de "
+                                + mail.getPriceTotal() + " € sur le compte ci-dessous pour la débloquer.");
+            else
+                mail.setPaymentExplaination("Vous pouvez d'orses et déjà régler cette commande d'un montant de "
+                        + mail.getPriceTotal() + " € en suivant les instructions ci-dessous.");
 
-        mail.setPaymentExplaination2("IBAN / BIC : " + ibanJss + " / " + bicJss);
+            mail.setPaymentExplaination2("IBAN / BIC : " + ibanJss + " / " + bicJss);
 
-        mail.setCbExplanation(
-                "Vous avez aussi la possibilité de payer par carte bancaire en flashant le QR Code ci-dessous ou en cliquant ");
+            mail.setCbExplanation(
+                    "Vous avez aussi la possibilité de payer par carte bancaire en flashant le QR Code ci-dessous ou en cliquant ");
 
-        MailComputeResult mailComputeResult = computeMailForBillingDocument(quotation);
+            MailComputeResult mailComputeResult = computeMailForBillingDocument(quotation);
 
-        mail.setCbLink(paymentCbEntryPoint + "/quotation/deposit?quotationId=" + quotation.getId() + "&mail="
-                + mailComputeResult.getRecipientsMailTo().get(0).getMail());
+            mail.setCbLink(paymentCbEntryPoint + "/quotation/deposit?quotationId=" + quotation.getId() + "&mail="
+                    + mailComputeResult.getRecipientsMailTo().get(0).getMail());
 
-        mail.setPaymentExplainationWarning(
-                "Référence à indiquer abolument dans le libellé de votre virement : " + quotation.getId());
+            mail.setPaymentExplainationWarning(
+                    "Référence à indiquer abolument dans le libellé de votre virement : " + quotation.getId());
+
+        }
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
@@ -733,25 +748,36 @@ public class MailHelper {
         ITiers tiers = quotationService.getCustomerOrderOfQuotation(customerOrder);
 
         boolean isDepositMandatory = false;
-        if (tiers instanceof Tiers)
-            isDepositMandatory = ((Tiers) tiers).getIsProvisionalPaymentMandatory();
-        if (tiers instanceof Confrere)
-            isDepositMandatory = ((Confrere) tiers).getIsProvisionalPaymentMandatory();
+        boolean isPaymentTypePrelevement = false;
 
+        if (tiers instanceof Tiers) {
+            isDepositMandatory = ((Tiers) tiers).getIsProvisionalPaymentMandatory();
+            isPaymentTypePrelevement = ((Tiers) tiers).getPaymentType() != null && ((Tiers) tiers).getPaymentType()
+                    .getId().equals(constantService.getPaymentTypePrelevement().getId());
+        } else if (tiers instanceof Confrere) {
+            isDepositMandatory = ((Confrere) tiers).getIsProvisionalPaymentMandatory();
+            isPaymentTypePrelevement = ((Confrere) tiers).getPaymentType() != null && ((Tiers) tiers).getPaymentType()
+                    .getId().equals(constantService.getPaymentTypePrelevement().getId());
+        } else if (tiers instanceof Responsable) {
+            isDepositMandatory = ((Responsable) tiers).getTiers().getIsProvisionalPaymentMandatory();
+            isPaymentTypePrelevement = ((Responsable) tiers).getTiers().getPaymentType() != null
+                    && ((Tiers) tiers).getPaymentType()
+                            .getId().equals(constantService.getPaymentTypePrelevement().getId());
+        }
         Float remainingToPay = Math
                 .round(accountingRecordService.getRemainingAmountToPayForCustomerOrder(customerOrder) * 100f) / 100f;
 
         mail.setHeaderPicture("images/waiting-deposit-header.png");
         mail.setTitle("Votre commande est prête !");
 
-        if (isDepositMandatory && remainingToPay > 0)
+        if (isDepositMandatory && remainingToPay > 0 && !isPaymentTypePrelevement)
             mail.setSubtitle("Elle n'attend plus que votre paiement.");
 
         mail.setLabel("Commande n°" + customerOrder.getId());
 
         String explainationText = "";
 
-        if (isReminder)
+        if (isReminder && !isPaymentTypePrelevement)
             explainationText = "Nous sommes toujours  en attente du réglement de l'acompte concernant votre commande n°"
                     + customerOrder.getId();
         else if (customerOrder.getQuotations() != null && customerOrder.getQuotations().size() > 0)
@@ -792,7 +818,7 @@ public class MailHelper {
                 mail.setCustomerMailAssoAffaireOrders(customerAssos);
         }
 
-        if (remainingToPay > 0) {
+        if (remainingToPay > 0 && !isPaymentTypePrelevement) {
             if (isDepositMandatory) {
                 mail.setPaymentExplaination(
                         "Dès reception de votre réglement d'un montant de " + mail.getPriceTotal()
@@ -815,7 +841,7 @@ public class MailHelper {
             if (mailComputeResult.getRecipientsMailTo() == null
                     || mailComputeResult.getRecipientsMailTo().get(0) == null
                     || mailComputeResult.getRecipientsMailTo().get(0).getMail() == null)
-                throw new OsirisException(
+                throw new OsirisException(null,
                         "Unable to find mail for CB generation for customerOrder n°" + customerOrder.getId());
 
             mail.setCbLink(paymentCbEntryPoint + "/order/deposit?customerOrderId=" + customerOrder.getId() + "&mail="
@@ -985,7 +1011,7 @@ public class MailHelper {
             tempFile = File.createTempFile("invoice", "pdf");
             outputStream = new FileOutputStream(tempFile);
         } catch (IOException e) {
-            throw new OsirisException("Unable to create temp file");
+            throw new OsirisException(e, "Unable to create temp file");
         }
         ITextRenderer renderer = new ITextRenderer();
         renderer.setDocumentFromString(htmlContent);
@@ -994,7 +1020,7 @@ public class MailHelper {
             renderer.createPDF(outputStream);
             outputStream.close();
         } catch (DocumentException | IOException e) {
-            throw new OsirisException("Unable to create PDF file for invoice " + invoice.getId());
+            throw new OsirisException(e, "Unable to create PDF file for invoice " + invoice.getId());
         }
         return tempFile;
     }
@@ -1020,7 +1046,7 @@ public class MailHelper {
             tempFile = File.createTempFile("Attestation de parution", "pdf");
             outputStream = new FileOutputStream(tempFile);
         } catch (IOException e) {
-            throw new OsirisException("Unable to create temp file");
+            throw new OsirisException(e, "Unable to create temp file");
         }
         ITextRenderer renderer = new ITextRenderer();
         renderer.setDocumentFromString(htmlContent);
@@ -1029,7 +1055,7 @@ public class MailHelper {
             renderer.createPDF(outputStream);
             outputStream.close();
         } catch (DocumentException | IOException e) {
-            throw new OsirisException(
+            throw new OsirisException(e,
                     "Unable to create publication receipt PDF file for announcement " + announcement.getId());
         }
         return tempFile;
@@ -1066,7 +1092,7 @@ public class MailHelper {
             tempFile = File.createTempFile("Témoin de publication", "pdf");
             outputStream = new FileOutputStream(tempFile);
         } catch (IOException e) {
-            throw new OsirisException("Unable to create temp file");
+            throw new OsirisException(e, "Unable to create temp file");
         }
         ITextRenderer renderer = new ITextRenderer();
         renderer.setDocumentFromString(htmlContent);
@@ -1075,7 +1101,7 @@ public class MailHelper {
             renderer.createPDF(outputStream);
             outputStream.close();
         } catch (DocumentException | IOException e) {
-            throw new OsirisException(
+            throw new OsirisException(e,
                     "Unable to create publication flag PDF file for announcement " + announcement.getId());
         }
         return tempFile;
@@ -1094,6 +1120,19 @@ public class MailHelper {
         computeQuotationPrice(mail, customerOrder);
 
         ITiers tiers = quotationService.getCustomerOrderOfQuotation(customerOrder);
+        boolean isPaymentTypePrelevement = false;
+
+        if (tiers instanceof Tiers) {
+            isPaymentTypePrelevement = ((Tiers) tiers).getPaymentType() != null && ((Tiers) tiers).getPaymentType()
+                    .getId().equals(constantService.getPaymentTypePrelevement().getId());
+        } else if (tiers instanceof Confrere) {
+            isPaymentTypePrelevement = ((Confrere) tiers).getPaymentType() != null && ((Tiers) tiers).getPaymentType()
+                    .getId().equals(constantService.getPaymentTypePrelevement().getId());
+        } else if (tiers instanceof Responsable) {
+            isPaymentTypePrelevement = ((Responsable) tiers).getTiers().getPaymentType() != null
+                    && ((Tiers) tiers).getPaymentType()
+                            .getId().equals(constantService.getPaymentTypePrelevement().getId());
+        }
 
         Float remainingToPay = Math
                 .round(accountingRecordService.getRemainingAmountToPayForCustomerOrder(customerOrder) * 100f) / 100f;
@@ -1105,7 +1144,7 @@ public class MailHelper {
         mail.setHeaderPicture("images/waiting-deposit-header.png");
         mail.setTitle("Votre commande est terminée !");
 
-        if (remainingToPay > 0)
+        if (remainingToPay > 0 && !isPaymentTypePrelevement)
             mail.setSubtitle("Elle n'attend plus que votre paiement.");
 
         mail.setLabel("Commande n°" + customerOrder.getId());
@@ -1132,7 +1171,7 @@ public class MailHelper {
 
         mail.setExplaination(explainationText);
 
-        if (remainingToPay > 0) {
+        if (remainingToPay > 0 && !isPaymentTypePrelevement) {
             mail.setPaymentExplaination(
                     "Vous pouvez régler cette facture d'un montant de " + remainingToPay
                             + " € par virement à l'aide des informations suivantes");

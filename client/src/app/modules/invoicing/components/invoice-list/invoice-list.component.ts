@@ -4,7 +4,6 @@ import { formatDateTimeForSortTable, formatEurosForSortTable } from 'src/app/lib
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
-import { Invoice } from 'src/app/modules/quotation/model/Invoice';
 import { AppService } from 'src/app/services/app.service';
 import { InvoiceSearch } from '../../model/InvoiceSearch';
 import { InvoiceSearchResult } from '../../model/InvoiceSearchResult';
@@ -26,7 +25,7 @@ export class InvoiceListComponent implements OnInit, AfterContentChecked {
   columnToDisplayOnDashboard: string[] = ["description", "affaires", "invoicePayer", "totalPrice"];
   displayedColumns: SortTableColumn[] = [];
   tableAction: SortTableAction[] = [];
-  @Output() actionBypass: EventEmitter<Invoice> = new EventEmitter<Invoice>();
+  @Output() actionBypass: EventEmitter<InvoiceSearchResult> = new EventEmitter<InvoiceSearchResult>();
   @Input() overrideIconAction: string = "";
   @Input() overrideTooltipAction: string = "";
   @Input() defaultStatusFilter: InvoiceStatus[] | undefined;
@@ -71,6 +70,14 @@ export class InvoiceListComponent implements OnInit, AfterContentChecked {
         actionIcon: "point_of_sale", actionName: "Voir le détail de la facture / associer", actionLinkFunction: (action: SortTableAction, element: any) => {
           if (element)
             return ['/invoicing/view/', element.invoiceId];
+          return undefined;
+        }, display: true,
+      } as SortTableAction);
+
+      this.tableAction.push({
+        actionIcon: "edit", actionName: "Editer la facture", actionLinkFunction: (action: SortTableAction, element: any) => {
+          if (element)
+            return ['/invoicing/add/', element.invoiceId];
           return undefined;
         }, display: true,
       } as SortTableAction);

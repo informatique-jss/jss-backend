@@ -8,7 +8,9 @@ public interface AccountingBalance {
 
 	public String getAccountingAccountLabel();
 
-	public String getAccountingAccountNumber();
+	public String getPrincipalAccountingAccountCode();
+
+	public String getPrincipalAccountingAccountLabel();
 
 	public Integer getAccountingAccountSubNumber();
 

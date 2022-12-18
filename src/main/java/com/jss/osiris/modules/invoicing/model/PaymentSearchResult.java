@@ -8,6 +8,8 @@ public interface PaymentSearchResult {
 
     public String getPaymentWayLabel();
 
+    public String getPaymentWayId();
+
     public LocalDateTime getPaymentDate();
 
     public Float getPaymentAmount();

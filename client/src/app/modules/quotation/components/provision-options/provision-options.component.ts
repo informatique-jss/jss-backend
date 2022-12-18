@@ -47,6 +47,7 @@ export class ProvisionOptionsComponent implements OnInit {
   billingTypeDisbursement = this.constantService.getBillingTypeDisbursement();
   billingTypeFeasibilityStudy = this.constantService.getBillingTypeFeasibilityStudy();
   billingTypeChronopostFees = this.constantService.getBillingTypeChronopostFees();
+  billingTypeApplicationFees = this.constantService.getBillingTypeApplicationFees();
   billingTypeBankCheque = this.constantService.getBillingTypeBankCheque();
   billingTypeComplexeFile = this.constantService.getBillingTypeComplexeFile();
   billingTypeBilan = this.constantService.getBillingTypeBilan();

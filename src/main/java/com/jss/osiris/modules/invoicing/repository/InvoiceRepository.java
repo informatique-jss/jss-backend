@@ -27,6 +27,7 @@ public interface InvoiceRepository extends CrudRepository<Invoice, Integer> {
         @Query(nativeQuery = true, value = "select "
                         + " i.id as invoiceId,"
                         + " ist.label as invoiceStatus,"
+                        + " ist.id as invoiceStatusId,"
                         + " c.id as customerOrderId,"
                         + " case when co.id is not null then co.label"
                         + " when r1.id is not null then  r1.firstname || ' '||r1.lastname "
@@ -44,8 +45,8 @@ public interface InvoiceRepository extends CrudRepository<Invoice, Integer> {
                         + " from invoice i"
                         + " join invoice_status ist on ist.id = i.id_invoice_status "
                         + " left join customer_order c on c.id = i.customer_order_id"
-                        + "  join asso_affaire_order asso on asso.id_customer_order = c.id"
-                        + "  join affaire af on af.id = asso.id_affaire"
+                        + " left join asso_affaire_order asso on asso.id_customer_order = c.id"
+                        + " left join affaire af on af.id = asso.id_affaire"
                         + " left join tiers t on t.id = c.id_tiers"
                         + " left join responsable r1 on r1.id = c.id_responsable"
                         + " left join confrere co on co.id = c.id_confrere"
@@ -54,7 +55,7 @@ public interface InvoiceRepository extends CrudRepository<Invoice, Integer> {
                         + " and  ( COALESCE(:invoiceStatus) is null or ist.id in (:invoiceStatus)) "
                         + " and (:minAmount is null or total_price>=CAST(CAST(:minAmount as text) as real) ) "
                         + " and (:maxAmount is null or total_price<=CAST(CAST(:maxAmount as text) as real) )"
-                        + " group by i.id, ist.label, c.id, co.id, co.label, r1.id, r1.firstname,t.id, r1.lastname,"
+                        + " group by i.id, ist.label,ist.id, c.id, co.id, co.label, r1.id, r1.firstname,t.id, r1.lastname,"
                         + " t.denomination, t.firstname, t.lastname, r1.firstname, r1.lastname, i.billing_label, i.created_date, i.total_price, c.description")
         List<InvoiceSearchResult> findInvoice(@Param("invoiceStatus") List<Integer> invoiceStatus,
                         @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,

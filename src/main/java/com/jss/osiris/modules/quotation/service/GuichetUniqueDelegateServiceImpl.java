@@ -79,7 +79,7 @@ public class GuichetUniqueDelegateServiceImpl implements GuichetUniqueDelegateSe
             bearerValue = cookies.get(0).getValue();
             bearerExpireDateTime = LocalDateTime.now().plusSeconds(cookies.get(0).getMaxAge()).minusHours(1);
         } else {
-            throw new OsirisException("No bearer cookie found in response");
+            throw new OsirisException(null, "No bearer cookie found in response");
         }
     }
 

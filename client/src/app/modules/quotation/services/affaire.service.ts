@@ -21,6 +21,6 @@ export class AffaireService extends AppRestService<Affaire>{
   }
 
   addOrUpdateAffaire(affaire: Affaire) {
-    return this.addOrUpdate(new HttpParams(), "affaire", affaire, "Affaire créée", "Erreur lors de l'enregistrement de l'affaire");
+    return this.addOrUpdate(new HttpParams(), "affaire", affaire, affaire.id ? "Affaire mise à jour" : "Affaire créée", "Erreur lors de l'enregistrement de l'affaire");
   }
 }

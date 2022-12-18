@@ -17,6 +17,7 @@ public interface PaymentRepository extends CrudRepository<Payment, Integer> {
 
         @Query(nativeQuery = true, value = " select p.id as id,"
                         + " pw.label as paymentWayLabel,"
+                        + " pw.id as paymentWayId,"
                         + " p.payment_Date as paymentDate,"
                         + " p.payment_amount  as paymentAmount ,"
                         + " p.label as paymentLabel,"

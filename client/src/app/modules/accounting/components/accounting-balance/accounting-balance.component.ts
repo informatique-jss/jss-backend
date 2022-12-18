@@ -39,7 +39,7 @@ export class AccountingBalanceComponent implements OnInit {
 
     // Column init
     this.displayedColumns = [];
-    this.displayedColumns.push({ id: "accountingAccountNumber", fieldName: "accountingAccountNumber", label: "N° de compte", valueFonction: (element: any, elements: any[], column: SortTableColumn, columns: SortTableColumn[]) => { if (element && column) return element.accountingAccountNumber + "-" + element.accountingAccountSubNumber; return "" } } as SortTableColumn);
+    this.displayedColumns.push({ id: "accountingAccountNumber", fieldName: "accountingAccountNumber", label: "N° de compte", valueFonction: (element: any, elements: any[], column: SortTableColumn, columns: SortTableColumn[]) => { if (element && column) return element.principalAccountingAccountCode + "-" + element.accountingAccountSubNumber; return "" } } as SortTableColumn);
     this.displayedColumns.push({ id: "accountingAccountLabel", fieldName: "accountingAccountLabel", label: "Libellé du compte" } as SortTableColumn);
     this.displayedColumns.push({ id: "debitAmount", fieldName: "debitAmount", label: "Débit", valueFonction: this.formatEurosForSortTable } as SortTableColumn);
     this.displayedColumns.push({ id: "creditAmount", fieldName: "creditAmount", label: "Crédit", valueFonction: this.formatEurosForSortTable } as SortTableColumn);
@@ -87,8 +87,8 @@ export class AccountingBalanceComponent implements OnInit {
       return -1;
     if (!a && !b)
       return 0;
-    let aNumber = a.accountingAccountNumber + a.accountingAccountSubNumber;
-    let bNumber = b.accountingAccountNumber + b.accountingAccountSubNumber;
+    let aNumber = a.principalAccountingAccountCode + a.accountingAccountSubNumber;
+    let bNumber = b.principalAccountingAccountCode + b.accountingAccountSubNumber;
     return aNumber.localeCompare(bNumber);
   }
 
@@ -124,14 +124,10 @@ export class AccountingBalanceComponent implements OnInit {
       let accumulatedData = [];
       let totalLine = {} as any;
       totalLine.label = "Total";
-      totalLine.debit = debit;
-      totalLine.credit = credit;
+      totalLine.debit = Math.round(debit * 100) / 100;
+      totalLine.credit = Math.round(credit * 100) / 100;
+      totalLine.balance = Math.round(balance * 100) / 100;
       accumulatedData.push(totalLine);
-
-      let balanceLine = {} as any;
-      balanceLine.label = "Balance";
-      balanceLine.credit = balance;
-      accumulatedData.push(balanceLine);
 
       this.accumulatedDataSource.data = accumulatedData;
 

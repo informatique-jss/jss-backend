@@ -100,7 +100,7 @@ public class QuotationStatusServiceImpl implements QuotationStatusService {
         QuotationStatus sourceStatus = getQuotationStatusByCode(code);
         QuotationStatus targetStatus = getQuotationStatusByCode(code2);
         if (sourceStatus == null || targetStatus == null)
-            throw new OsirisException("Status code " + code + " or " + code2 + " do not exist");
+            throw new OsirisException(null, "Status code " + code + " or " + code2 + " do not exist");
 
         if (sourceStatus.getSuccessors() == null)
             sourceStatus.setSuccessors(new ArrayList<QuotationStatus>());
@@ -117,7 +117,7 @@ public class QuotationStatusServiceImpl implements QuotationStatusService {
         QuotationStatus sourceStatus = getQuotationStatusByCode(code);
         QuotationStatus targetStatus = getQuotationStatusByCode(code2);
         if (sourceStatus == null || targetStatus == null)
-            throw new OsirisException("Quotation status code " + code + " or " + code2 + " do not exist");
+            throw new OsirisException(null, "Quotation status code " + code + " or " + code2 + " do not exist");
 
         if (sourceStatus.getPredecessors() == null)
             sourceStatus.setPredecessors(new ArrayList<QuotationStatus>());

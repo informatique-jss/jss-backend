@@ -41,7 +41,6 @@ export class HttpErrorInterceptor implements HttpInterceptor {
         }
         if (error.error instanceof Error) {
           // A client-side or network error occurred. Handle it accordingly.
-          console.error('A client-side error occurred:', error.message);
           errorMessage = 'Erreur côté navigateur, vous êtes peut-être déconnecté : ' + error.message;
         } else {
           // The backend returned an unsuccessful response code.
@@ -61,7 +60,6 @@ export class HttpErrorInterceptor implements HttpInterceptor {
           } else if (error.status == 500) {
             errorMessage = 'Erreur côté serveur. \nMerci de contacter l\'administrateur ou bien de déclarer un bug à l\'aide du bouton en haut à gauche et de founir l\'indication technique suivante : ' + error.headers.get("error");
           } else {
-            console.error(`Backend returned code ${error.status}, body was: ${error.message}`);
             errorMessage = 'Erreur côté serveur : ' + `HTTP ${error.status}, body : ${error.message}`;
           }
         }

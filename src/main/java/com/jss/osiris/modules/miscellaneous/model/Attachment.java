@@ -17,6 +17,7 @@ import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.libs.mail.model.CustomerMail;
+import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.pao.model.Journal;
 import com.jss.osiris.modules.quotation.model.Announcement;
 import com.jss.osiris.modules.quotation.model.Bodacc;
@@ -112,6 +113,12 @@ public class Attachment implements Serializable, IId {
 	@JoinColumn(name = "id_journal")
 	@JsonIgnoreProperties(value = { "attachments" }, allowSetters = true)
 	private Journal journal;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JsonIgnore
+	@JoinColumn(name = "id_invoice")
+	@JsonIgnoreProperties(value = { "attachments" }, allowSetters = true)
+	private Invoice invoice;
 
 	@ManyToOne
 	@JoinColumn(name = "id_attachment_type")
@@ -271,6 +278,14 @@ public class Attachment implements Serializable, IId {
 
 	public void setSimpleProvision(SimpleProvision simpleProvision) {
 		this.simpleProvision = simpleProvision;
+	}
+
+	public Invoice getInvoice() {
+		return invoice;
+	}
+
+	public void setInvoice(Invoice invoice) {
+		this.invoice = invoice;
 	}
 
 }

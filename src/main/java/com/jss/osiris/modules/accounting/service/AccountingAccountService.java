@@ -21,8 +21,6 @@ public interface AccountingAccountService {
 
         public List<AccountingAccount> getAccountingAccountByLabelOrCode(String label);
 
-        public List<AccountingAccount> getAccountingAccountByAccountingAccountNumber(String accountingAccountNumber);
-
         /**
          * Generate provider and customer accounting accounts for an entity
          * WARNING ! accounting accounts are persisted after operation but not

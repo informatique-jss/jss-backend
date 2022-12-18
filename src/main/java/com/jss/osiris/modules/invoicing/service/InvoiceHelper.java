@@ -32,7 +32,7 @@ public class InvoiceHelper {
         if (invoice.getTiers() != null)
             return invoice.getTiers();
 
-        throw new OsirisException("No customer order declared on Invoice " + invoice.getId());
+        throw new OsirisException(null, "No customer order declared on Invoice " + invoice.getId());
     }
 
     public Invoice setPriceTotal(Invoice invoice) {
@@ -117,7 +117,7 @@ public class InvoiceHelper {
                 && constantService.getBillingLabelTypeCodeAffaire().getId()
                         .equals(billingDocument.getBillingLabelType().getId())) {
             if (customerOrder.getAssoAffaireOrders() == null || customerOrder.getAssoAffaireOrders().size() == 0)
-                throw new OsirisException("No affaire in the customer order " + customerOrder.getId());
+                throw new OsirisException(null, "No affaire in the customer order " + customerOrder.getId());
             Affaire affaire = customerOrder.getAssoAffaireOrders().get(0).getAffaire();
             invoiceLabelResult
                     .setBillingLabel(affaire.getIsIndividual() ? affaire.getFirstname() + " " + affaire.getLastname()

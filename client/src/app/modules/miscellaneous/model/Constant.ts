@@ -1,4 +1,5 @@
 import { AccountingJournal } from "../../accounting/model/AccountingJournal";
+import { PrincipalAccountingAccount } from '../../accounting/model/PrincipalAccountingAccount';
 import { InvoiceStatus } from "../../invoicing/model/InvoiceStatus";
 import { PaymentWay } from "../../invoicing/model/PaymentWay";
 import { Employee } from '../../profile/model/Employee';
@@ -84,6 +85,7 @@ export interface Constant {
   billingTypeDisbursement: BillingType;
   billingTypeFeasibilityStudy: BillingType;
   billingTypeChronopostFees: BillingType;
+  billingTypeApplicationFees: BillingType;
   billingTypeBankCheque: BillingType;
   billingTypeComplexeFile: BillingType;
   billingTypeBilan: BillingType;
@@ -152,4 +154,13 @@ export interface Constant {
   billingClosureTypeAffaire: BillingClosureType;
   deliveryServiceJss: DeliveryService;
   languageFrench: Language;
+  principalAccountingAccountProvider: PrincipalAccountingAccount;
+  principalAccountingAccountCustomer: PrincipalAccountingAccount;
+  principalAccountingAccountDeposit: PrincipalAccountingAccount;
+  principalAccountingAccountProduct: PrincipalAccountingAccount;
+  principalAccountingAccountCharge: PrincipalAccountingAccount;
+  principalAccountingAccountBank: PrincipalAccountingAccount;
+  principalAccountingAccountWaiting: PrincipalAccountingAccount;
+  principalAccountingAccountLost: PrincipalAccountingAccount;
+  principalAccountingAccountProfit: PrincipalAccountingAccount;
 }

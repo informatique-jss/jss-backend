@@ -137,6 +137,9 @@ public class Provision implements IId, IAttachment {
 	private Boolean isChronopostFees;
 
 	@Column(nullable = false)
+	private Boolean isApplicationFees;
+
+	@Column(nullable = false)
 	private Boolean isBankCheque;
 
 	@Column(nullable = false)
@@ -465,6 +468,14 @@ public class Provision implements IId, IAttachment {
 
 	public void setIsBilan(Boolean isBilan) {
 		this.isBilan = isBilan;
+	}
+
+	public Boolean getIsApplicationFees() {
+		return isApplicationFees;
+	}
+
+	public void setIsApplicationFees(Boolean isApplicationFees) {
+		this.isApplicationFees = isApplicationFees;
 	}
 
 }

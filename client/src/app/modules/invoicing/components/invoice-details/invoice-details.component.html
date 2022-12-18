@@ -13,6 +13,11 @@
             (auxclick)="openRoute($event,'/order/'+invoice.customerOrder.id)">visibility
           </mat-icon>
         </p>
+        <p *ngIf="invoice.attachments"> <single-attachment [entity]="invoice"
+            [entityType]="INVOICE_ENTITY_TYPE.entityType" [editMode]="false"
+            [attachmentTypeToDisplay]="attachmentTypeInvoice">
+          </single-attachment>
+        </p>
         <table class="full-width mat-table description-table " *ngIf="!invoice.provider">
           <tr class=" mat-header-row">
             <th class="mat-header-cell">Affaire(s)</th>

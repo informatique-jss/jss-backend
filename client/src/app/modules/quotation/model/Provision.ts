@@ -44,6 +44,7 @@ export interface Provision extends IAttachment {
   isDisbursement: boolean;
   isFeasibilityStudy: boolean;
   isChronopostFees: boolean;
+  isApplicationFees: boolean;
   isBankCheque: boolean;
   isComplexeFile: boolean;
   isBilan: boolean;

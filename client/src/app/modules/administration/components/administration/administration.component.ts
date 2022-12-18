@@ -80,6 +80,7 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
   BILLING_REGIE = "Régie";
   AFFAIRE_REFERENTIAL = "Affaire";
   ACCOUNT_STATEMENT_RECIPIENT_REFERENTIAL = "Destinataire de relevé comptable";
+  PRINCIPAL_ACCOUNTING_ACCOUNT_REFERENTIAL = "Compte comptable principal";
 
   constructor(private appService: AppService,
     private formBuilder: FormBuilder,
@@ -145,6 +146,7 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
     this.referentials.push(this.PAYMENT_WAY_REFERENTIAL);
     this.referentials.push(this.BILLING_REGIE);
     this.referentials.push(this.AFFAIRE_REFERENTIAL);
+    this.referentials.push(this.PRINCIPAL_ACCOUNTING_ACCOUNT_REFERENTIAL);
     this.referentials.sort((a, b) => a.localeCompare(b));
 
     this.filteredReferentials = this.referentialForm.get("entity")?.valueChanges.pipe(

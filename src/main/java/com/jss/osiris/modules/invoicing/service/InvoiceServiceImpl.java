@@ -114,7 +114,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         Document billingDocument = documentService.getBillingDocument(customerOrder.getDocuments());
 
         if (billingDocument == null)
-            throw new OsirisException("Billing document not found for ordering customer provided");
+            throw new OsirisException(null, "Billing document not found for ordering customer provided");
 
         if (orderingCustomer instanceof Tiers)
             invoice.setTiers((Tiers) orderingCustomer);
@@ -179,7 +179,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public Invoice addOrUpdateInvoiceFromUser(Invoice invoice) throws OsirisException {
         if (!hasAtLeastOneInvoiceItemNotNull(invoice))
-            throw new OsirisException("No invoice item found on manual invoice");
+            throw new OsirisException(null, "No invoice item found on manual invoice");
 
         invoice.setCreatedDate(LocalDateTime.now());
 

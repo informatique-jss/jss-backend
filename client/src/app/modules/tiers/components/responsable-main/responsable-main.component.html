@@ -27,8 +27,6 @@
                   </td>
                 </tr>
               </table>
-              <!--TODO: Compte Web-->
-
               <table class="full-width">
                 <tr>
                   <td>
@@ -115,6 +113,11 @@
                     <generic-input [(model)]="selectedResponsable.loginWeb" label="Numéro de compte JSS.FR"
                       [form]="principalForm" propertyName="loginWeb" [isMandatory]="false"
                       [isDisabled]="true"></generic-input>
+                  </td>
+                  <td>
+                    <generic-toggle [(model)]="selectedResponsable.canViewAllTiersInWeb"
+                      label="Peut voir l'ensemble des responsables du tiers sur le web ?" [form]="principalForm"
+                      propertyName="canViewAllTiersInWeb"></generic-toggle>
                   </td>
                 </tr>
               </table>

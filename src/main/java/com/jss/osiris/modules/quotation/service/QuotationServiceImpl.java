@@ -451,6 +451,9 @@ public class QuotationServiceImpl implements QuotationService {
         if (billingType.getId().equals(constantService.getBillingTypeChronopostFees().getId())
                 && provision.getIsChronopostFees() != null && provision.getIsChronopostFees())
             return true;
+        if (billingType.getId().equals(constantService.getBillingTypeApplicationFees().getId())
+                && provision.getIsApplicationFees() != null && provision.getIsApplicationFees())
+            return true;
         if (billingType.getId().equals(constantService.getBillingTypeBankCheque().getId())
                 && provision.getIsBankCheque() != null && provision.getIsBankCheque())
             return true;
@@ -554,7 +557,7 @@ public class QuotationServiceImpl implements QuotationService {
             throws OsirisException {
         QuotationStatus targetQuotationStatus = quotationStatusService.getQuotationStatusByCode(targetStatusCode);
         if (targetQuotationStatus == null)
-            throw new OsirisException("Quotation status not found for code " + targetStatusCode);
+            throw new OsirisException(null, "Quotation status not found for code " + targetStatusCode);
         if (quotation.getQuotationStatus().getCode().equals(QuotationStatus.OPEN)
                 && targetQuotationStatus.getCode().equals(QuotationStatus.TO_VERIFY))
             notificationService.notifyQuotationToVerify(quotation);
@@ -567,7 +570,8 @@ public class QuotationServiceImpl implements QuotationService {
                 && targetQuotationStatus.getCode().equals(QuotationStatus.VALIDATED_BY_CUSTOMER)) {
             CustomerOrder customerOrder = customerOrderService.createNewCustomerOrderFromQuotation(quotation);
             if (customerOrder == null)
-                throw new OsirisException("Erreur when createing customer order from quotation " + quotation.getId());
+                throw new OsirisException(null,
+                        "Erreur when createing customer order from quotation " + quotation.getId());
             if (quotation.getCustomerOrders() == null)
                 quotation.setCustomerOrders(new ArrayList<CustomerOrder>());
             quotation.getCustomerOrders().add(customerOrder);
@@ -596,7 +600,7 @@ public class QuotationServiceImpl implements QuotationService {
         if (quotation.getTiers() != null)
             return quotation.getTiers();
 
-        throw new OsirisException("No customer order declared on IQuotation " + quotation.getId());
+        throw new OsirisException(null, "No customer order declared on IQuotation " + quotation.getId());
     }
 
     @Override
@@ -625,11 +629,19 @@ public class QuotationServiceImpl implements QuotationService {
             customerOrderId.add(0);
         }
 
+        ArrayList<Integer> affaireId = new ArrayList<Integer>();
+        if (quotationSearch.getAffaires() != null && quotationSearch.getAffaires().size() > 0) {
+            for (Affaire affaire : quotationSearch.getAffaires())
+                affaireId.add(affaire.getId());
+        } else {
+            affaireId.add(0);
+        }
+
         return quotationRepository.findQuotations(
                 salesEmployeeId,
                 statusId,
                 quotationSearch.getStartDate().withHour(0).withMinute(0),
-                quotationSearch.getEndDate().withHour(23).withMinute(59), customerOrderId);
+                quotationSearch.getEndDate().withHour(23).withMinute(59), customerOrderId, affaireId);
     }
 
     @Override
@@ -673,7 +685,7 @@ public class QuotationServiceImpl implements QuotationService {
             throws OsirisException {
 
         if (!quotation.getQuotationStatus().getCode().equals(QuotationStatus.SENT_TO_CUSTOMER))
-            throw new OsirisException("Wrong status to pay for quotation n°" + quotation.getId());
+            throw new OsirisException(null, "Wrong status to pay for quotation n°" + quotation.getId());
 
         if (quotation.getQuotationStatus().getCode().equals(QuotationStatus.VALIDATED_BY_CUSTOMER))
             if (quotation.getCustomerOrders() != null && quotation.getCustomerOrders().size() > 0)

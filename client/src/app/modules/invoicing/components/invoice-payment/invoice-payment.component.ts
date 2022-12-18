@@ -7,6 +7,7 @@ import { ConstantService } from 'src/app/modules/miscellaneous/services/constant
 import { Invoice } from 'src/app/modules/quotation/model/Invoice';
 import { AppService } from 'src/app/services/app.service';
 import { Payment } from '../../model/Payment';
+import { PaymentSearchResult } from '../../model/PaymentSearchResult';
 import { PaymentService } from '../../services/payment.service';
 import { AssociatePaymentDialogComponent } from '../associate-payment-dialog/associate-payment-dialog.component';
 
@@ -55,14 +56,16 @@ export class InvoicePaymentComponent implements OnInit {
     }
   }
 
-  openAssociationDialog(element: Payment) {
-    let dialogPaymentDialogRef = this.associatePaymentDialog.open(AssociatePaymentDialogComponent, {
-      width: '100%'
-    });
-    dialogPaymentDialogRef.componentInstance.invoice = this.invoice;
-    dialogPaymentDialogRef.componentInstance.payment = element;
-    dialogPaymentDialogRef.afterClosed().subscribe(response => {
-      this.stateChanged.emit();
-    });
+  openAssociationDialog(elementIn: PaymentSearchResult) {
+    this.paymentService.getPaymentById(elementIn.id).subscribe(element => {
+      let dialogPaymentDialogRef = this.associatePaymentDialog.open(AssociatePaymentDialogComponent, {
+        width: '100%'
+      });
+      dialogPaymentDialogRef.componentInstance.invoice = this.invoice;
+      dialogPaymentDialogRef.componentInstance.payment = element;
+      dialogPaymentDialogRef.afterClosed().subscribe(response => {
+        this.stateChanged.emit();
+      });
+    })
   }
 }

@@ -12,6 +12,7 @@ public class QuotationSearch {
     private Employee salesEmployee;
     private List<QuotationStatus> quotationStatus;
     private List<Tiers> customerOrders;
+    private List<Affaire> affaires;
 
     public LocalDateTime getStartDate() {
         return startDate;
@@ -51,6 +52,14 @@ public class QuotationSearch {
 
     public void setCustomerOrders(List<Tiers> customerOrders) {
         this.customerOrders = customerOrders;
+    }
+
+    public List<Affaire> getAffaires() {
+        return affaires;
+    }
+
+    public void setAffaires(List<Affaire> affaires) {
+        this.affaires = affaires;
     }
 
 }

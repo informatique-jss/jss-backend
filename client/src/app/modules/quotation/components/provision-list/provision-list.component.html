@@ -1,0 +1,35 @@
+<div class="mat-elevation-z2 form-div">
+  <div class=" full-width">
+    <table class="full-width table-fixed-layout" *ngIf="!isForDashboard && affaireSearch">
+      <tr>
+        <td>
+          <autocomplete-employee [(model)]="affaireSearch.responsible" label="Responsable" [form]="affaireSearchForm"
+            [isMandatory]="false" propertyName="responsible" [isMandatory]="false">
+          </autocomplete-employee>
+        </td>
+        <td>
+          <autocomplete-employee [(model)]="affaireSearch.assignedTo" label="Assigné à" [form]="affaireSearchForm"
+            [isMandatory]="false" propertyName="assignedTo" [isMandatory]="false"
+            [defaultEmployee]="bookmark?undefined:currentEmployee">
+          </autocomplete-employee>
+        </td>
+        <td>
+          <select-provision-stauts [(model)]="affaireSearch.status" label="Statut de la prestation"
+            [form]="affaireSearchForm" propertyName="status" [isMandatory]="false" [isDisabled]="false">
+          </select-provision-stauts>
+        </td>
+        <td>
+          <generic-input [(model)]="affaireSearch.label" label="Libellé de l'affaire" [form]="affaireSearchForm"
+            propertyName="label" [isMandatory]="false" [isDisabled]="false"></generic-input>
+        </td>
+        <td class="fab-td-button">
+          <button mat-mini-fab color="warn" matTooltip="Rechercher" (click)="searchAffaires()" class="add-button">
+            <mat-icon>search</mat-icon>
+          </button>
+        </td>
+      </tr>
+    </table>
+    <sort-table [actions]="tableAction" [columns]="displayedColumns" [values]="affaires" tableName="Affaires">
+    </sort-table>
+  </div>
+</div>

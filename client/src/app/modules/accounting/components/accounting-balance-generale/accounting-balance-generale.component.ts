@@ -30,7 +30,7 @@ export class AccountingBalanceGeneraleComponent implements OnInit {
 
   accumulatedDataSource = new MatTableDataSource<AccountingBalance>();
   accountingBalances: AccountingBalance[] | undefined;
-  displayedColumnsTotal: string[] = ['label', 'debit', 'credit'];
+  displayedColumnsTotal: string[] = ['label', 'debit', 'credit', 'balance'];
   currentUserPosition: Point = { x: 0, y: 0 };
 
 
@@ -40,7 +40,8 @@ export class AccountingBalanceGeneraleComponent implements OnInit {
 
     // Column init
     this.displayedColumns = [];
-    this.displayedColumns.push({ id: "accountingAccountNumber", fieldName: "accountingAccountNumber", label: "N° de compte", valueFonction: (element: any, elements: any[], column: SortTableColumn, columns: SortTableColumn[]) => { if (element && column) return element.accountingAccountNumber; return "" } } as SortTableColumn);
+    this.displayedColumns.push({ id: "principalAccountingAccountCode", fieldName: "principalAccountingAccountCode", label: "N° de compte" } as SortTableColumn);
+    this.displayedColumns.push({ id: "principalAccountingAccountLabel", fieldName: "principalAccountingAccountLabel", label: "Libellé du compte" } as SortTableColumn);
     this.displayedColumns.push({ id: "debitAmount", fieldName: "debitAmount", label: "Débit", valueFonction: this.formatEurosForSortTable } as SortTableColumn);
     this.displayedColumns.push({ id: "creditAmount", fieldName: "creditAmount", label: "Crédit", valueFonction: this.formatEurosForSortTable } as SortTableColumn);
     this.displayedColumns.push({ id: "echoir30", fieldName: "echoir30", label: "Créances à échoir à -30 j", valueFonction: this.formatEurosForSortTable } as SortTableColumn);
@@ -88,8 +89,8 @@ export class AccountingBalanceGeneraleComponent implements OnInit {
       return -1;
     if (!a && !b)
       return 0;
-    let aNumber = a.accountingAccountNumber + a.accountingAccountSubNumber;
-    let bNumber = b.accountingAccountNumber + b.accountingAccountSubNumber;
+    let aNumber = a.principalAccountingAccountCode + a.accountingAccountSubNumber;
+    let bNumber = b.principalAccountingAccountCode + b.accountingAccountSubNumber;
     return aNumber.localeCompare(bNumber);
   }
 
@@ -126,14 +127,11 @@ export class AccountingBalanceGeneraleComponent implements OnInit {
       let accumulatedData = [];
       let totalLine = {} as any;
       totalLine.label = "Total";
-      totalLine.debit = debit;
-      totalLine.credit = credit;
-      accumulatedData.push(totalLine);
+      totalLine.debit = Math.round(debit * 100) / 100;
+      totalLine.credit = Math.round(credit * 100) / 100;
+      totalLine.balance = Math.round(balance * 100) / 100;
 
-      let balanceLine = {} as any;
-      balanceLine.label = "Balance";
-      balanceLine.credit = balance;
-      accumulatedData.push(balanceLine);
+      accumulatedData.push(totalLine);
 
       this.accumulatedDataSource.data = accumulatedData;
 

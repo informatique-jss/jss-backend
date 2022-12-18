@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { Subject } from 'rxjs';
 import { formatEurosForSortTable } from 'src/app/libs/FormatHelper';
+import { Attachment } from 'src/app/modules/miscellaneous/model/Attachment';
 import { City } from 'src/app/modules/miscellaneous/model/City';
 import { Country } from 'src/app/modules/miscellaneous/model/Country';
 import { Provider } from 'src/app/modules/miscellaneous/model/Provider';
@@ -15,6 +17,7 @@ import { InvoiceItem } from 'src/app/modules/quotation/model/InvoiceItem';
 import { Responsable } from 'src/app/modules/tiers/model/Responsable';
 import { Tiers } from 'src/app/modules/tiers/model/Tiers';
 import { TiersService } from 'src/app/modules/tiers/services/tiers.service';
+import { INVOICE_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
 import { InvoiceService } from '../../services/invoice.service';
 
@@ -37,6 +40,7 @@ export class AddInvoiceComponent implements OnInit {
   constructor(private formBuilder: FormBuilder,
     private appService: AppService,
     private invoiceService: InvoiceService,
+    private activatedRoute: ActivatedRoute,
     private tiersService: TiersService,
     private cityService: CityService,
     private contantService: ConstantService,
@@ -46,12 +50,25 @@ export class AddInvoiceComponent implements OnInit {
   invoiceForm = this.formBuilder.group({});
   displayedColumns: SortTableColumn[] = [] as Array<SortTableColumn>;
   tableAction: SortTableAction[] = [] as Array<SortTableAction>;
+  attachmentTypeInvoice = this.contantService.getAttachmentTypeInvoice();
 
   refreshTable: Subject<void> = new Subject<void>();
 
+  INVOICE_ENTITY_TYPE = INVOICE_ENTITY_TYPE;
+
   ngOnInit() {
-    this.addInvoiceItem();
+    let idInvoice = this.activatedRoute.snapshot.params.id;
+
+    if (idInvoice != null)
+      this.invoiceService.getInvoiceById(idInvoice).subscribe(response => {
+        this.invoice = response;
+        this.invoiceItems = this.invoice.invoiceItems;
+        this.appService.changeHeaderTitle("Facture n°" + this.invoice.id);
+      });
+    else
+      this.addInvoiceItem();
     this.invoice.invoiceItems = this.invoiceItems;
+    this.appService.changeHeaderTitle("Nouvelle facture");
 
     // Column init
     this.displayedColumns = [];
@@ -106,7 +123,7 @@ export class AddInvoiceComponent implements OnInit {
   }
 
   saveInvoice() {
-    if (this.invoiceForm.valid && this.invoiceItems && this.invoiceItems.length > 0) {
+    if (this.invoiceForm.valid && this.invoiceItems && this.invoiceItems.length > 0 || this.invoice.id) {
       this.invoiceService.saveInvoice(this.invoice).subscribe(response => {
         if (response)
           this.appService.openRoute(null, '/invoicing/view/' + response.id, null);
@@ -164,6 +181,15 @@ export class AddInvoiceComponent implements OnInit {
         this.invoice.billingLabelCity = city;
       }
     })
+  }
 
+  updateAttachments(attachments: Attachment[]) {
+    if (attachments && this.invoice) {
+      this.invoice.attachments = attachments;
+    }
+  }
+
+  isManualInvoice(): boolean {
+    return !this.invoice.id || !this.invoice.customerOrder;
   }
 }

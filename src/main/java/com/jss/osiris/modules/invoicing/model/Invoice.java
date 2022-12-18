@@ -1,6 +1,5 @@
 package com.jss.osiris.modules.invoicing.model;
 
-import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -24,8 +23,10 @@ import com.jss.osiris.libs.JacksonLocalDateSerializer;
 import com.jss.osiris.libs.JacksonLocalDateTimeSerializer;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.accounting.model.AccountingRecord;
+import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.City;
 import com.jss.osiris.modules.miscellaneous.model.Country;
+import com.jss.osiris.modules.miscellaneous.model.IAttachment;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.miscellaneous.model.Provider;
 import com.jss.osiris.modules.quotation.model.Confrere;
@@ -36,7 +37,7 @@ import com.jss.osiris.modules.tiers.model.Tiers;
 
 @Entity
 @Table(indexes = { @Index(name = "idx_invoice_status", columnList = "id_invoice_status") })
-public class Invoice implements Serializable, IId {
+public class Invoice implements IId, IAttachment {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -124,9 +125,17 @@ public class Invoice implements Serializable, IId {
 	@JsonIgnoreProperties(value = { "invoice", "customerOrder" }, allowSetters = true)
 	private List<AccountingRecord> accountingRecords;
 
+	@OneToMany(mappedBy = "invoice")
+	@JsonIgnoreProperties(value = { "invoice" }, allowSetters = true)
+	private List<Attachment> attachments;
+
 	private LocalDateTime firstReminderDateTime;
 	private LocalDateTime secondReminderDateTime;
 	private LocalDateTime thirdReminderDateTime;
+
+	private LocalDate manualAccountingDocumentDate;
+	@Column(length = 150)
+	private String manualAccountingDocumentNumber;
 
 	public Integer getId() {
 		return id;
@@ -350,6 +359,30 @@ public class Invoice implements Serializable, IId {
 
 	public void setProvider(Provider provider) {
 		this.provider = provider;
+	}
+
+	public String getManualAccountingDocumentNumber() {
+		return manualAccountingDocumentNumber;
+	}
+
+	public void setManualAccountingDocumentNumber(String manualAccountingDocumentNumber) {
+		this.manualAccountingDocumentNumber = manualAccountingDocumentNumber;
+	}
+
+	public LocalDate getManualAccountingDocumentDate() {
+		return manualAccountingDocumentDate;
+	}
+
+	public void setManualAccountingDocumentDate(LocalDate manualAccountingDocumentDate) {
+		this.manualAccountingDocumentDate = manualAccountingDocumentDate;
+	}
+
+	public List<Attachment> getAttachments() {
+		return attachments;
+	}
+
+	public void setAttachments(List<Attachment> attachments) {
+		this.attachments = attachments;
 	}
 
 }

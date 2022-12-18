@@ -9,6 +9,8 @@ import { BodaccStatusService } from 'src/app/modules/quotation/services/bodacc.s
 import { DomiciliationStatusService } from 'src/app/modules/quotation/services/domiciliation-status.service';
 import { FormaliteStatusService } from 'src/app/modules/quotation/services/formalite.status.service';
 import { UserNoteService } from 'src/app/services/user.notes.service';
+import { SimpleProvisionStatus } from '../../../../quotation/model/SimpleProvisonStatus';
+import { SimpleProvisionStatusService } from '../../../../quotation/services/simple.provision.status.service';
 import { IWorkflowElement } from '../../../model/IWorkflowElement';
 import { GenericMultipleSelectComponent } from '../generic-select/generic-multiple-select.component';
 
@@ -30,12 +32,14 @@ export class SelectProvisionStautsComponent extends GenericMultipleSelectCompone
   formaliteStatus: FormaliteStatus[] = [] as Array<FormaliteStatus>;
   bodaccStatus: BodaccStatus[] = [] as Array<BodaccStatus>;
   domiciliationStatus: DomiciliationStatus[] = [] as Array<DomiciliationStatus>;
+  simpleProvisionStatus: SimpleProvisionStatus[] = [] as Array<SimpleProvisionStatus>;
 
   constructor(private formBuild: UntypedFormBuilder,
     private formaliteStatusService: FormaliteStatusService,
     private bodaccStatusService: BodaccStatusService,
     private domiciliationStatusService: DomiciliationStatusService,
     private announcementStatusService: AnnouncementStatusService,
+    private simpleProvisionStatusService: SimpleProvisionStatusService,
     private userNoteService2: UserNoteService,) {
     super(formBuild, userNoteService2)
   }
@@ -72,5 +76,9 @@ export class SelectProvisionStautsComponent extends GenericMultipleSelectCompone
       this.announcementStatus = response;
       this.types.push(...response);
     });
+    this.simpleProvisionStatusService.getSimpleProvisionStatus().subscribe(response => {
+      this.simpleProvisionStatus = response;
+      this.types.push(...response);
+    })
   }
 }

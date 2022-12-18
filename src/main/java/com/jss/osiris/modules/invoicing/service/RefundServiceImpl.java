@@ -308,20 +308,20 @@ public class RefundServiceImpl implements RefundService {
 
             xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + xml;
         } catch (JsonProcessingException e2) {
-            throw new OsirisException("Impossible to generate XML file for refund export");
+            throw new OsirisException(null, "Impossible to generate XML file for refund export");
         }
         File xmlOutputFile;
         try {
             xmlOutputFile = File.createTempFile("refundExport", "xml");
         } catch (IOException e1) {
-            throw new OsirisException("Impossible to create temp file for refund export");
+            throw new OsirisException(null, "Impossible to create temp file for refund export");
         }
 
         try (PrintWriter pw = new PrintWriter(xmlOutputFile)) {
             pw.write(xml);
             pw.close();
         } catch (FileNotFoundException e) {
-            throw new OsirisException("Impossible to read file " + xmlOutputFile.getAbsolutePath());
+            throw new OsirisException(e, "Impossible to read file " + xmlOutputFile.getAbsolutePath());
         }
 
         return xmlOutputFile;

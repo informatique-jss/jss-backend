@@ -287,6 +287,11 @@
           [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
           [cloneEvent]="cloneEvent.asObservable()">
         </referential-affaire>
+        <referential-principal-accounting-account *ngIf="selectedReferential==PRINCIPAL_ACCOUNTING_ACCOUNT_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
+        </referential-principal-accounting-account>
       </div>
     </mat-tab>
     <mat-tab label="Constantes">

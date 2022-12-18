@@ -1,6 +1,5 @@
 import { Civility } from "../../miscellaneous/model/Civility";
 import { ITiers } from "./ITiers";
-import { JssSubscription } from "./JssSubscription";
 import { SubscriptionPeriodType } from "./SubscriptionPeriodType";
 import { Tiers } from "./Tiers";
 import { TiersCategory } from "./TiersCategory";
@@ -13,7 +12,6 @@ export interface Responsable extends ITiers {
   function: string;
   building: string;
   floor: string;
-  jssSubscription: JssSubscription;
   subscriptionPeriodType: SubscriptionPeriodType;
   tiersType: TiersType;
   tiersCategory: TiersCategory;
@@ -24,4 +22,5 @@ export interface Responsable extends ITiers {
   rffFormaliteRate: number;
   rffInsertionRate: number;
   loginWeb: string;
+  canViewAllTiersInWeb: boolean;
 }
