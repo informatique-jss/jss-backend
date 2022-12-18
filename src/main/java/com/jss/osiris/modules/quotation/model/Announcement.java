@@ -83,6 +83,8 @@ public class Announcement implements IId, IAttachment, IDocument {
 	private Boolean isPublicationReciptAlreadySent;
 	private Boolean isPublicationFlagAlreadySent;
 
+	private Integer actuLegaleId;
+
 	@ManyToOne
 	@JoinColumn(name = "id_journal")
 	private Journal journal;
@@ -231,6 +233,14 @@ public class Announcement implements IId, IAttachment, IDocument {
 
 	public void setJournalPages(String journalPages) {
 		this.journalPages = journalPages;
+	}
+
+	public Integer getActuLegaleId() {
+		return actuLegaleId;
+	}
+
+	public void setActuLegaleId(Integer actuLegaleId) {
+		this.actuLegaleId = actuLegaleId;
 	}
 
 }

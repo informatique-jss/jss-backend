@@ -10,10 +10,10 @@
     <mat-tab label="Balance générale">
       <accounting-balance-generale></accounting-balance-generale>
     </mat-tab>
-    <mat-tab label="Bilan">
+    <mat-tab label="Bilan" *ngIf="canDisplayBilan()">
       <accounting-bilan></accounting-bilan>
     </mat-tab>
-    <mat-tab label="Compte de résultats">
+    <mat-tab label="Compte de résultats" *ngIf="canDisplayProfitLost()">
       <app-accounting-profit-lost></app-accounting-profit-lost>
     </mat-tab>
   </mat-tab-group>

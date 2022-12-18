@@ -68,11 +68,11 @@ public class CharacterPriceServiceImpl implements CharacterPriceService {
             int noticeNumber = 0;
             int headerNumber = 0;
             if (provision.getAnnouncement().getNotice() != null)
-                noticeNumber = provision.getAnnouncement().getNotice().replaceAll("\\r|\\n|\\r\\n", " ")
+                noticeNumber = provision.getAnnouncement().getNotice().replaceAll("(\r?\n){2,}", "$1")
                         .replaceAll("\\<.*?>", "").replaceAll("&nbsp;", " ")
                         .length();
             if (provision.getAnnouncement().getNoticeHeader() != null)
-                headerNumber = provision.getAnnouncement().getNoticeHeader().replaceAll("\\r|\\n|\\r\\n", " ")
+                headerNumber = provision.getAnnouncement().getNoticeHeader().replaceAll("(\r?\n){2,}", "$1")
                         .replaceAll("\\<.*?>", "").replaceAll("&nbsp;", " ")
                         .length();
 

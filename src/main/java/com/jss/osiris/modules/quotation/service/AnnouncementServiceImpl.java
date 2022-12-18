@@ -14,6 +14,7 @@ import java.util.Optional;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
@@ -23,9 +24,11 @@ import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
+import com.jss.osiris.modules.quotation.model.ActuLegaleAnnouncement;
 import com.jss.osiris.modules.quotation.model.Announcement;
 import com.jss.osiris.modules.quotation.model.AnnouncementSearch;
 import com.jss.osiris.modules.quotation.model.AnnouncementSearchResult;
+import com.jss.osiris.modules.quotation.model.AnnouncementStatus;
 import com.jss.osiris.modules.quotation.repository.AnnouncementRepository;
 
 @Service
@@ -42,6 +45,15 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
     @Autowired
     AttachmentService attachmentService;
+
+    @Autowired
+    ActuLegaleDelegate actuLegaleDelegate;
+
+    @Autowired
+    AnnouncementStatusService announcementStatusService;
+
+    @Autowired
+    AffaireService affaireService;
 
     @Override
     public List<Announcement> getAnnouncements() {
@@ -119,6 +131,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         }
     }
 
+    @Override
     public List<AnnouncementSearchResult> searchAnnouncements(AnnouncementSearch announcementSearch) {
         if (announcementSearch.getAffaireName() == null)
             announcementSearch.setAffaireName("");
@@ -146,5 +159,29 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                 announcementSearch.getIsStricNameSearch(), departementId,
                 announcementSearch.getStartDate(),
                 announcementSearch.getEndDate(), noticeTypeId);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void publishAnnouncementsToActuLegale() throws OsirisException {
+        List<Announcement> announcements = announcementRepository.getAnnouncementByStatusAndPublicationDateMin(
+                announcementStatusService.getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_DONE),
+                LocalDate.now().minusWeeks(0));
+
+        if (announcements != null && announcements.size() > 0)
+            for (Announcement announcement : announcements) {
+                Integer affaire = announcementRepository.getAffaireForAnnouncement(announcement.getId());
+                if (affaire == null)
+                    throw new OsirisException(null,
+                            "Impossible to find affaire for announcement n°" + announcement.getId());
+
+                ActuLegaleAnnouncement actuLegaleAnnouncement = actuLegaleDelegate.publishAnnouncement(announcement,
+                        affaireService.getAffaire(affaire));
+
+                announcement.setActuLegaleId(actuLegaleAnnouncement.getId());
+                addOrUpdateAnnouncement(announcement);
+                if (actuLegaleAnnouncement == null || actuLegaleAnnouncement.getId() == null)
+                    throw new OsirisException(null, "Impossible to publish announcement n°" + announcement.getId());
+            }
     }
 }

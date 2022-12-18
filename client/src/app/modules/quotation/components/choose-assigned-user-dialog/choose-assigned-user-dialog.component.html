@@ -2,11 +2,16 @@
 <div mat-dialog-content>
   <p>{{text}}</p>
   <form [formGroup]="assignedForm">
-    <mat-radio-group class="radio-group-column" formControlName="choosedEmployee" [(ngModel)]="choosedEmployee">
-      <mat-radio-button *ngFor="let user of userList" [value]="user">
-        {{user.firstname}} {{user.lastname}}
-      </mat-radio-button>
-    </mat-radio-group>
+    <div><mat-radio-group class="radio-group-column" formControlName="choosedEmployee" [(ngModel)]="choosedEmployee">
+        <mat-radio-button *ngFor="let user of userList" [value]="user">
+          {{user.firstname}} {{user.lastname}}
+        </mat-radio-button>
+      </mat-radio-group>
+    </div>
+    <div>
+      <autocomplete-employee [(model)]="choosedEmployee" [form]="assignedForm" propertyName="choosedEmployee"
+        [isMandatory]="true" [isDisabled]="false" label="Employé"></autocomplete-employee>
+    </div>
   </form>
 </div>
 <div mat-dialog-actions align="end">

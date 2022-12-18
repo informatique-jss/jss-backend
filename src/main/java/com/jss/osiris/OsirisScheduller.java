@@ -1,7 +1,5 @@
 package com.jss.osiris;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -11,14 +9,13 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Service;
 
 import com.jss.osiris.libs.GlobalExceptionHandler;
-import com.jss.osiris.libs.exception.OsirisException;
-import com.jss.osiris.libs.exception.OsirisLog;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.invoicing.service.PaymentService;
 import com.jss.osiris.modules.miscellaneous.service.NotificationService;
 import com.jss.osiris.modules.profile.service.EmployeeService;
+import com.jss.osiris.modules.quotation.service.AnnouncementService;
 import com.jss.osiris.modules.quotation.service.AnnouncementStatusService;
 import com.jss.osiris.modules.quotation.service.AssignationTypeService;
 import com.jss.osiris.modules.quotation.service.BodaccStatusService;
@@ -34,8 +31,6 @@ import com.jss.osiris.modules.quotation.service.SimpleProvisionStatusService;
 @Service
 @ConditionalOnProperty(value = "schedulling.enabled", matchIfMissing = false, havingValue = "true")
 public class OsirisScheduller {
-
-	private static final Logger logger = LoggerFactory.getLogger(OsirisScheduller.class);
 
 	@Autowired
 	AccountingRecordService accountingRecordService;
@@ -94,6 +89,9 @@ public class OsirisScheduller {
 	@Autowired
 	InvoiceService invoiceService;
 
+	@Autowired
+	AnnouncementService announcementService;
+
 	@Bean
 	public ThreadPoolTaskScheduler taskExecutor() {
 		ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
@@ -102,49 +100,47 @@ public class OsirisScheduller {
 	}
 
 	@Scheduled(cron = "${schedulling.account.daily.close}")
-	// @Scheduled(initialDelay = 1000, fixedDelay = 1000000)
 	private void dailyAccountClosing() {
-		logger.info("Start of daily account closing");
-		accountingRecordService.dailyAccountClosing();
-	}
-
-	// @Scheduled(cron = "${schedulling.payment.grab}")
-	// @Scheduled(initialDelay = 1000, fixedDelay = 1000000)
-	private void paymentGrab() {
-		logger.info("Start of payment grab");
 		try {
-			paymentService.payementGrab();
-		} catch (OsirisException e) {
-			globalExceptionHandler.persistLog(e, OsirisLog.UNHANDLED_LOG);
+			accountingRecordService.dailyAccountClosing();
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e, null);
 		}
 	}
 
 	@Scheduled(cron = "${schedulling.active.directory.user.update}")
 	private void activeDirectoryUserUpdate() {
-		logger.info("Start of user update from Active Directory");
-		employeeService.updateUserFromActiveDirectory();
+		try {
+			employeeService.updateUserFromActiveDirectory();
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e, null);
+		}
 	}
 
 	@Scheduled(initialDelay = 500, fixedDelayString = "${schedulling.mail.sender}")
 	private void mailSender() {
 		try {
 			mailHelper.sendNextMail();
-		} catch (OsirisException e) {
-			globalExceptionHandler.persistLog(e, OsirisLog.UNHANDLED_LOG);
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e, null);
 		}
 	}
 
 	@Scheduled(cron = "${schedulling.notification.purge}")
 	private void purgeNotidication() {
-		notificationService.purgeNotification();
+		try {
+			notificationService.purgeNotification();
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e, null);
+		}
 	}
 
 	@Scheduled(cron = "${schedulling.log.osiris.quotation.reminder}")
 	private void reminderQuotation() {
 		try {
 			quotationService.sendRemindersForQuotation();
-		} catch (OsirisException e) {
-			globalExceptionHandler.persistLog(e, OsirisLog.UNHANDLED_LOG);
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e, null);
 		}
 	}
 
@@ -152,8 +148,8 @@ public class OsirisScheduller {
 	private void reminderCustomerOrderDeposit() {
 		try {
 			customerOrderService.sendRemindersForCustomerOrderDeposit();
-		} catch (OsirisException e) {
-			globalExceptionHandler.persistLog(e, OsirisLog.UNHANDLED_LOG);
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e, null);
 		}
 	}
 
@@ -161,8 +157,8 @@ public class OsirisScheduller {
 	private void reminderCustomerOrderInvoice() {
 		try {
 			invoiceService.sendRemindersForInvoices();
-		} catch (OsirisException e) {
-			globalExceptionHandler.persistLog(e, OsirisLog.UNHANDLED_LOG);
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e, null);
 		}
 	}
 
@@ -170,8 +166,17 @@ public class OsirisScheduller {
 	private void sendBillingClosureReceipt() {
 		try {
 			accountingRecordService.sendBillingClosureReceipt();
-		} catch (OsirisException e) {
-			globalExceptionHandler.persistLog(e, OsirisLog.UNHANDLED_LOG);
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e, null);
+		}
+	}
+
+	@Scheduled(cron = "${schedulling.announcement.publish.actu.legale}")
+	private void publishAnnouncementToActuLegale() {
+		try {
+			announcementService.publishAnnouncementsToActuLegale();
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e, null);
 		}
 	}
 
@@ -187,8 +192,8 @@ public class OsirisScheduller {
 			bodaccStatusService.updateStatusReferential();
 			assignationTypeService.updateAssignationTypes();
 			provisionScreenTypeService.updateScreenTypes();
-		} catch (OsirisException e) {
-			globalExceptionHandler.persistLog(e, OsirisLog.UNHANDLED_LOG);
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e, null);
 		}
 	}
 }

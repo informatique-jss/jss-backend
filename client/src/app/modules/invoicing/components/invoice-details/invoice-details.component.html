@@ -18,7 +18,8 @@
             [attachmentTypeToDisplay]="attachmentTypeInvoice">
           </single-attachment>
         </p>
-        <table class="full-width mat-table description-table " *ngIf="!invoice.provider">
+        <table class="full-width mat-table description-table "
+          *ngIf="invoice.isInvoiceFromProvider==undefined || invoice.isInvoiceFromProvider==false">
           <tr class=" mat-header-row">
             <th class="mat-header-cell">Affaire(s)</th>
             <th class="mat-header-cell">Payeur</th>
@@ -53,6 +54,41 @@
                   (auxclick)="openRoute($event,'/referential/provider/'+invoice.provider.id)">visibility
                 </mat-icon></p>
               <p>IBAN : {{invoice.provider.iban}}</p>
+            </td>
+          </tr>
+        </table>
+        <table class="full-width mat-table description-table "
+          *ngIf="invoice.confrere && invoice.isInvoiceFromProvider">
+          <tr class=" mat-header-row">
+            <th class="mat-header-cell">Confrère (fournisseur)</th>
+          </tr>
+          <tr class=" mat-row">
+            <td class="mat-cell td-info">
+              <p>{{invoice.confrere.label}}</p>
+            </td>
+          </tr>
+        </table>
+        <table class="full-width mat-table description-table " *ngIf="invoice.tiers && invoice.isInvoiceFromProvider">
+          <tr class=" mat-header-row">
+            <th class="mat-header-cell">Tiers (fournisseur)</th>
+          </tr>
+          <tr class=" mat-row">
+            <td class="mat-cell td-info">
+              <p>{{invoice.tiers.denomination?invoice.tiers.denomination:invoice.tiers.firstname +' ' +
+                invoice.tiers.lastname}}
+              <p>
+            </td>
+          </tr>
+        </table>
+        <table class="full-width mat-table description-table "
+          *ngIf="invoice.responsable && invoice.isInvoiceFromProvider">
+          <tr class=" mat-header-row">
+            <th class="mat-header-cell">Responsable (fournisseur)</th>
+          </tr>
+          <tr class=" mat-row">
+            <td class="mat-cell td-info">
+              <p>{{invoice.responsable.firstname +' ' + invoice.responsable.lastname}}
+              <p>
             </td>
           </tr>
         </table>

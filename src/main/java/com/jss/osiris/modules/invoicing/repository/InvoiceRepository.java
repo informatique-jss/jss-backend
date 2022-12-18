@@ -32,6 +32,7 @@ public interface InvoiceRepository extends CrudRepository<Invoice, Integer> {
                         + " case when co.id is not null then co.label"
                         + " when r1.id is not null then  r1.firstname || ' '||r1.lastname "
                         + " else case when t.denomination is not null and t.denomination!='' then t.denomination else t.firstname || ' '||t.lastname end end as customerOrderLabel,"
+                        + " pro.label as providerLabel, "
                         + " co.id as confrereId, "
                         + " r1.id as responsableId, "
                         + " t.id as tiersId, "
@@ -50,12 +51,13 @@ public interface InvoiceRepository extends CrudRepository<Invoice, Integer> {
                         + " left join tiers t on t.id = c.id_tiers"
                         + " left join responsable r1 on r1.id = c.id_responsable"
                         + " left join confrere co on co.id = c.id_confrere"
+                        + " left join provider pro on pro.id = i.id_provider"
                         + " left join payment p on p.id_invoice = i.id"
                         + " where i.created_date>=:startDate and i.created_date<=:endDate "
                         + " and  ( COALESCE(:invoiceStatus) is null or ist.id in (:invoiceStatus)) "
                         + " and (:minAmount is null or total_price>=CAST(CAST(:minAmount as text) as real) ) "
                         + " and (:maxAmount is null or total_price<=CAST(CAST(:maxAmount as text) as real) )"
-                        + " group by i.id, ist.label,ist.id, c.id, co.id, co.label, r1.id, r1.firstname,t.id, r1.lastname,"
+                        + " group by i.id, ist.label,ist.id, pro.label,c.id, co.id, co.label, r1.id, r1.firstname,t.id, r1.lastname,"
                         + " t.denomination, t.firstname, t.lastname, r1.firstname, r1.lastname, i.billing_label, i.created_date, i.total_price, c.description")
         List<InvoiceSearchResult> findInvoice(@Param("invoiceStatus") List<Integer> invoiceStatus,
                         @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,

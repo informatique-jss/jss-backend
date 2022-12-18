@@ -628,7 +628,7 @@ public class MailHelper {
         } else if (tiers instanceof Responsable) {
             isDepositMandatory = ((Responsable) tiers).getTiers().getIsProvisionalPaymentMandatory();
             isPaymentTypePrelevement = ((Responsable) tiers).getTiers().getPaymentType() != null
-                    && ((Tiers) tiers).getPaymentType()
+                    && ((Responsable) tiers).getTiers().getPaymentType()
                             .getId().equals(constantService.getPaymentTypePrelevement().getId());
         }
 
@@ -761,7 +761,7 @@ public class MailHelper {
         } else if (tiers instanceof Responsable) {
             isDepositMandatory = ((Responsable) tiers).getTiers().getIsProvisionalPaymentMandatory();
             isPaymentTypePrelevement = ((Responsable) tiers).getTiers().getPaymentType() != null
-                    && ((Tiers) tiers).getPaymentType()
+                    && ((Responsable) tiers).getTiers().getPaymentType()
                             .getId().equals(constantService.getPaymentTypePrelevement().getId());
         }
         Float remainingToPay = Math
@@ -1130,7 +1130,7 @@ public class MailHelper {
                     .getId().equals(constantService.getPaymentTypePrelevement().getId());
         } else if (tiers instanceof Responsable) {
             isPaymentTypePrelevement = ((Responsable) tiers).getTiers().getPaymentType() != null
-                    && ((Tiers) tiers).getPaymentType()
+                    && ((Responsable) tiers).getTiers().getPaymentType()
                             .getId().equals(constantService.getPaymentTypePrelevement().getId());
         }
 

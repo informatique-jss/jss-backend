@@ -17,22 +17,29 @@
               [conditionnalRequired]="invoice.tiers==undefined && invoice.confrere==undefined && invoice.provider ==undefined">
             </autocomplete-responsable>
           </td>
-          <td *ngIf="!invoice.tiers && !invoice.responsable && !invoice.provider">
+          <td *ngIf="!invoice.tiers && !invoice.responsable && !invoice.provider ">
             <autocomplete-confrere label="Confrère" [(model)]="invoice.confrere" [form]="invoiceForm"
               propertyName="confrere" [isDisabled]="!editMode   || invoice.id!=undefined"
               (onOptionSelected)="fillConfrere($event)" [isMandatory]="true"
               [conditionnalRequired]="invoice.responsable==undefined && invoice.tiers==undefined && invoice.provider ==undefined">
             </autocomplete-confrere>
           </td>
-          <td *ngIf="!invoice.tiers && !invoice.responsable && !invoice.confrere">
-            <autocomplete-provider [(model)]="invoice.provider" [form]="invoiceForm" propertyName="provider"
+          <td *ngIf="!invoice.tiers && !invoice.responsable && !invoice.confrere && invoice.isInvoiceFromProvider">
+            <autocomplete-provider [(model)]=" invoice.provider" [form]="invoiceForm" propertyName="provider"
               [isMandatory]="true" [isDisabled]="!editMode   || invoice.id!=undefined"
               [conditionnalRequired]="invoice.responsable==undefined && invoice.tiers==undefined && invoice.confrere ==undefined"
               (onOptionSelected)="fillProvider($event)" label="Fournisseur"></autocomplete-provider>
           </td>
         </tr>
+        <tr>
+          <td>
+            <generic-toggle [(model)]="invoice.isInvoiceFromProvider" label="Est une facture entrante ?"
+              [form]="invoiceForm" propertyName="isInvoiceFromProvider"
+              (onToggleChange)="emptyProvider()"></generic-toggle>
+          </td>
+        </tr>
       </table>
-      <table class="full-width" *ngIf="!invoice.provider">
+      <table class="full-width" *ngIf="!invoice.provider && !invoice.confrere">
         <tr>
           <td>
             <radio-group-billing-label [(model)]="invoice.billingLabelType" [form]="invoiceForm"

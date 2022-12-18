@@ -6,6 +6,8 @@ import { AppService } from '../../services/app.service';
 import { User } from './User';
 
 export const ADMINISTRATEURS: string = 'ROLE_OSIRIS_ADMINISTRATEURS';
+export const ACCOUNTING: string = 'ROLE_OSIRIS_COMPTABILITE';
+export const ACCOUNTING_RESPONSIBLE: string = 'ROLE_OSIRIS_RESPONSABLE_COMPTABILITE';
 
 @Injectable({
   providedIn: 'root'

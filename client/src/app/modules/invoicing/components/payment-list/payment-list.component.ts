@@ -8,6 +8,7 @@ import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableCo
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { OFX_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
+import { HabilitationsService } from '../../../../services/habilitations.service';
 import { IAttachment } from '../../../miscellaneous/model/IAttachment';
 import { Payment } from '../../model/Payment';
 import { PaymentSearch } from '../../model/PaymentSearch';
@@ -44,10 +45,15 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
     private changeDetectorRef: ChangeDetectorRef,
     private appService: AppService,
     private formBuilder: FormBuilder,
+    private habilitationService: HabilitationsService,
   ) { }
 
   ngAfterContentChecked(): void {
     this.changeDetectorRef.detectChanges();
+  }
+
+  canImportOfxFile() {
+    return this.habilitationService.canImportOfxFile();
   }
 
   ngOnInit() {

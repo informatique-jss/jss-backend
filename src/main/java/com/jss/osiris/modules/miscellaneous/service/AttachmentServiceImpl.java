@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
@@ -95,6 +96,9 @@ public class AttachmentServiceImpl implements AttachmentService {
     @Autowired
     InvoiceService invoiceService;
 
+    @Autowired
+    ActiveDirectoryHelper activeDirectoryHelper;
+
     @Override
     public List<Attachment> getAttachments() {
         return IterableUtils.toList(attachmentRepository.findAll());
@@ -127,7 +131,11 @@ public class AttachmentServiceImpl implements AttachmentService {
             String filename, Boolean replaceExistingAttachementType, String description) throws OsirisException {
 
         if (entityType.equals("Ofx"))
-            return this.paymentService.uploadOfxFile(file);
+            if (activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_GROUP)
+                    || activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP))
+                return this.paymentService.uploadOfxFile(file);
+            else
+                return null;
 
         String absoluteFilePath = storageFileService.saveFile(file, filename,
                 entityType + File.separator + idEntity);

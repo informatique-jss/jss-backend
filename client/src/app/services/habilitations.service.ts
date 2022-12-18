@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ADMINISTRATEURS, LoginService } from '../routing/login-dialog/login.service';
+import { ACCOUNTING, ACCOUNTING_RESPONSIBLE, ADMINISTRATEURS, LoginService } from '../routing/login-dialog/login.service';
 
 @Injectable({
   providedIn: 'root'
@@ -53,6 +53,26 @@ export class HabilitationsService {
 
   canViewLogModule() {
     return this.loginService.hasGroup([ADMINISTRATEURS]);
+  }
+
+  canAddNewInvoice() {
+    return this.loginService.hasGroup([ACCOUNTING, ACCOUNTING_RESPONSIBLE])
+  }
+
+  canAddNewAccountingRecord() {
+    return this.loginService.hasGroup([ACCOUNTING, ACCOUNTING_RESPONSIBLE])
+  }
+
+  canDisplayBilan() {
+    return this.loginService.hasGroup([ACCOUNTING, ACCOUNTING_RESPONSIBLE])
+  }
+
+  canDisplayProfitLost() {
+    return this.loginService.hasGroup([ACCOUNTING, ACCOUNTING_RESPONSIBLE])
+  }
+
+  canImportOfxFile() {
+    return this.loginService.hasGroup([ACCOUNTING, ACCOUNTING_RESPONSIBLE])
   }
 
 }

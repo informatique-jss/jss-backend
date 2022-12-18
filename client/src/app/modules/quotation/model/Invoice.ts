@@ -28,6 +28,7 @@ export interface Invoice extends IAttachment {
   billingLabelType: BillingLabelType;
   isResponsableOnBilling: boolean;
   isCommandNumberMandatory: boolean;
+  isInvoiceFromProvider: boolean;
   commandNumber: string;
   customerOrder: CustomerOrder;
   totalPrice: number;

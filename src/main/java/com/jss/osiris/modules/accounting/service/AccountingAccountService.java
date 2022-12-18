@@ -13,9 +13,6 @@ public interface AccountingAccountService {
 
         public AccountingAccount getAccountingAccount(Integer id);
 
-        public AccountingAccount addOrUpdateAccountingAccount(AccountingAccount accountingAccount)
-                        throws OsirisException;
-
         public AccountingAccount addOrUpdateAccountingAccountFromUser(AccountingAccount accountingAccount)
                         throws OsirisException;
 

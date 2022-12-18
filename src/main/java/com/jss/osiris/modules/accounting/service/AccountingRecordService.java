@@ -22,13 +22,7 @@ import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.tiers.model.ITiers;
 
 public interface AccountingRecordService {
-        public List<AccountingRecord> getAccountingRecords();
-
-        public AccountingRecord getAccountingRecord(Integer id);
-
         public AccountingRecord addOrUpdateAccountingRecord(AccountingRecord accountingRecord);
-
-        public AccountingRecord addOrUpdateAccountingRecordFromUser(AccountingRecord accountingRecord);
 
         public void generateAccountingRecordsForSaleOnInvoiceGeneration(Invoice invoice) throws OsirisException;
 

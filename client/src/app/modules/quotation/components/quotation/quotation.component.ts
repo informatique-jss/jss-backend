@@ -279,7 +279,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
 
   editQuotation() {
     if (instanceOfQuotation(this.quotation) && this.quotation.quotationStatus.code == VALIDATED_BY_CUSTOMER) {
-      this.appService.displaySnackBar("Impossible de modifier un devis validé par le client. Il s'agit maintenant de la commande ", true, 30);
+      this.appService.displaySnackBar("Impossible de modifier un devis validé par le client. Il s'agit maintenant d'une commande ", true, 30);
       return;
     }
     this.editMode = true;

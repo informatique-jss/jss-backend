@@ -192,7 +192,7 @@ public class InvoiceServiceImpl implements InvoiceService {
             invoice.setDueDate(LocalDate.now().plusDays(nbrOfDayFromDueDate));
 
         // Defined billing label
-        if (invoice.getProvider() == null
+        if (!invoice.getIsInvoiceFromProvider()
                 && !constantService.getBillingLabelTypeOther().getId().equals(invoice.getBillingLabelType().getId())) {
 
             ITiers customerOrder = invoice.getTiers();
@@ -205,7 +205,7 @@ public class InvoiceServiceImpl implements InvoiceService {
             invoiceHelper.setInvoiceLabel(invoice, billingDocument, null, customerOrder);
         }
 
-        if (invoice.getProvider() != null)
+        if (invoice.getIsInvoiceFromProvider())
             invoice.setInvoiceStatus(constantService.getInvoiceStatusReceived());
         else
             invoice.setInvoiceStatus(constantService.getInvoiceStatusSend());
@@ -220,10 +220,10 @@ public class InvoiceServiceImpl implements InvoiceService {
         // Save before to have an ID on invoice
         addOrUpdateInvoice(invoice);
 
-        if (invoice.getProvider() == null)
-            accountingRecordService.generateAccountingRecordsForSaleOnInvoiceGeneration(invoice);
-        else
+        if (invoice.getIsInvoiceFromProvider())
             accountingRecordService.generateAccountingRecordsForPurshaseOnInvoiceGeneration(invoice);
+        else
+            accountingRecordService.generateAccountingRecordsForSaleOnInvoiceGeneration(invoice);
 
         addOrUpdateInvoice(invoice);
         return invoice;

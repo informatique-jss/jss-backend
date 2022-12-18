@@ -96,6 +96,7 @@ export class ProvisionOptionsComponent implements OnInit {
       if (!this.provision.isDisbursement) this.provision.isDisbursement = false;
       if (!this.provision.isFeasibilityStudy) this.provision.isFeasibilityStudy = false;
       if (!this.provision.isChronopostFees) this.provision.isChronopostFees = false;
+      if (!this.provision.isApplicationFees) this.provision.isApplicationFees = false;
       if (!this.provision.isBankCheque) this.provision.isBankCheque = false;
       if (!this.provision.isComplexeFile) this.provision.isComplexeFile = false;
       if (!this.provision.isBilan) this.provision.isBilan = false;

@@ -5,6 +5,7 @@ import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAc
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { AppService } from 'src/app/services/app.service';
+import { HabilitationsService } from '../../../../services/habilitations.service';
 import { InvoiceSearch } from '../../model/InvoiceSearch';
 import { InvoiceSearchResult } from '../../model/InvoiceSearchResult';
 import { InvoiceStatus } from '../../model/InvoiceStatus';
@@ -38,10 +39,15 @@ export class InvoiceListComponent implements OnInit, AfterContentChecked {
     private constantService: ConstantService,
     private changeDetectorRef: ChangeDetectorRef,
     private formBuilder: FormBuilder,
+    private habilitationService: HabilitationsService,
   ) { }
 
   ngAfterContentChecked(): void {
     this.changeDetectorRef.detectChanges();
+  }
+
+  canAddNewInvoice() {
+    return this.habilitationService.canAddNewInvoice();
   }
 
   ngOnInit() {
@@ -57,6 +63,7 @@ export class InvoiceListComponent implements OnInit, AfterContentChecked {
     this.availableColumns.push({ id: "customerOrderName", fieldName: "customerOrderLabel", label: "Donneur d'ordre", actionLinkFunction: getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la fiche du donneur d'ordre" } as SortTableColumn);
     this.availableColumns.push({ id: "responsable", fieldName: "responsableLabel", label: "Responsable" } as SortTableColumn);
     this.availableColumns.push({ id: "affaires", fieldName: "affaireLabel", label: "Affaire(s)", isShrinkColumn: true } as SortTableColumn);
+    this.availableColumns.push({ id: "providerLabel", fieldName: "providerLabel", label: "Fournisseur" } as SortTableColumn);
     this.availableColumns.push({ id: "invoicePayer", fieldName: "billingLabel", label: "Payeur" } as SortTableColumn);
     this.availableColumns.push({ id: "createdDate", fieldName: "createdDate", label: "Date d'émission", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
     this.availableColumns.push({ id: "totalPrice", fieldName: "totalPrice", label: "Montant TTC", valueFonction: formatEurosForSortTable } as SortTableColumn);
@@ -128,6 +135,6 @@ export class InvoiceListComponent implements OnInit, AfterContentChecked {
   }
 
   addInvoice(event: any) {
-    this.appService.openRoute(event, '/invoicing/add/', null);
+    this.appService.openRoute(event, 'invoicing/add/null', null);
   }
 }

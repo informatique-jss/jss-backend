@@ -39,6 +39,7 @@ import com.jss.osiris.modules.profile.service.EmployeeService;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.CharacterPrice;
+import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.IQuotation;
 import com.jss.osiris.modules.quotation.model.NoticeType;
@@ -279,24 +280,38 @@ public class QuotationServiceImpl implements QuotationService {
             } else {
                 invoiceItem.setPreTaxPrice(0f);
             }
-        } else if (provision.getIsPublicationPaper() != null && provision.getIsPublicationPaper()
-                && billingItem.getBillingType().getId()
-                        .equals(constantService.getBillingTypePublicationPaper().getId())) {
-            // Compute publication paper price
-            Float nbr = 0f;
-            if (provision.getPublicationPaperAffaireNumber() != null
-                    && provision.getPublicationPaperAffaireNumber() > 0)
-                nbr += provision.getPublicationPaperAffaireNumber();
-            if (provision.getPublicationPaperClientNumber() != null
-                    && provision.getPublicationPaperClientNumber() > 0)
-                nbr += provision.getPublicationPaperClientNumber();
+        } else if (billingItem.getBillingType().getId()
+                .equals(constantService.getBillingTypePublicationPaper().getId())) {
+            Integer nbr = getPublicationPaperNbr(provision);
             if (nbr > 0) {
                 invoiceItem.setLabel(invoiceItem.getLabel() + " (quantité : " + nbr + ")");
-                invoiceItem.setPreTaxPrice(
-                        Math.round(billingItem.getPreTaxPrice() * nbr * 100f) / 100f);
+
+                Confrere confrere = provision.getAnnouncement().getConfrere();
+                if (isNotJssConfrere(provision) && confrere.getPaperPrice() != null) {
+                    Float confrerePrice = confrere.getPaperPrice() * nbr;
+                    if (confrere.getShippingCosts() != null)
+                        confrerePrice += confrere.getShippingCosts();
+
+                    invoiceItem.setPreTaxPrice(confrerePrice * (1 + confrere.getReinvoicing() / 100));
+                } else
+                    invoiceItem.setPreTaxPrice(
+                            Math.round(billingItem.getPreTaxPrice() * nbr * 100f) / 100f);
             }
         } else {
             invoiceItem.setPreTaxPrice(Math.round(billingItem.getPreTaxPrice() * 100f) / 100f);
+        }
+
+        // If it's an announcement published by a Confrere, apply additionnal fees and
+        // JSS markup
+        if (isNotJssConfrere(provision)) {
+            Float additionnalFees = 0f;
+            Confrere confrere = provision.getAnnouncement().getConfrere();
+            if (confrere.getAdministrativeFees() != null)
+                additionnalFees += confrere.getAdministrativeFees();
+
+            invoiceItem.setPreTaxPrice(
+                    invoiceItem.getPreTaxPrice() + additionnalFees * (1 + confrere.getReinvoicing() / 100));
+
         }
 
         if (invoiceItem.getIsGifted() != null && invoiceItem.getIsGifted()) {
@@ -304,6 +319,28 @@ public class QuotationServiceImpl implements QuotationService {
             invoiceItem.setLabel(invoiceItem.getLabel() + " (offert)");
         }
 
+    }
+
+    private boolean isNotJssConfrere(Provision provision) throws OsirisException {
+        return provision.getAnnouncement() != null && provision.getAnnouncement().getConfrere() != null
+                && !provision.getAnnouncement().getConfrere().getId()
+                        .equals(constantService.getConfrereJssPaper().getId())
+                && !provision.getAnnouncement().getConfrere().getId()
+                        .equals(constantService.getConfrereJssSpel().getId());
+    }
+
+    private Integer getPublicationPaperNbr(Provision provision) {
+        Integer nbr = 0;
+        if (provision.getIsPublicationPaper() != null && provision.getIsPublicationPaper()) {
+            // Compute publication paper price
+            if (provision.getPublicationPaperAffaireNumber() != null
+                    && provision.getPublicationPaperAffaireNumber() > 0)
+                nbr += provision.getPublicationPaperAffaireNumber();
+            if (provision.getPublicationPaperClientNumber() != null
+                    && provision.getPublicationPaperClientNumber() > 0)
+                nbr += provision.getPublicationPaperClientNumber();
+        }
+        return nbr;
     }
 
     private void setInvoiceItemsForProvision(Provision provision, IQuotation quotation, boolean persistInvoiceItem)

@@ -12,12 +12,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.ValidationHelper;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
@@ -446,10 +448,14 @@ public class InvoicingController {
     }
 
     @PostMapping(inputEntryPoint + "/invoice")
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
     public ResponseEntity<Invoice> addOrUpdateInvoice(@RequestBody Invoice invoice)
             throws OsirisValidationException, OsirisException {
         if (invoice.getId() != null && invoice.getCustomerOrder() != null)
             throw new OsirisValidationException("Id");
+
+        if (invoice.getIsInvoiceFromProvider() == null)
+            invoice.setIsInvoiceFromProvider(false);
 
         int doFound = 0;
 
@@ -476,9 +482,12 @@ public class InvoicingController {
         if (doFound != 1)
             throw new OsirisValidationException("Too many customer order");
 
+        if (!invoice.getIsInvoiceFromProvider() && invoice.getProvider() != null)
+            throw new OsirisValidationException("Provider not allowed");
+
         BillingLabelType billingLabelAffaire = constantService.getBillingLabelTypeCodeAffaire();
 
-        if (invoice.getProvider() == null) {
+        if (invoice.getIsInvoiceFromProvider() == false) {
             validationHelper.validateReferential(invoice.getBillingLabelType(), true, "BillingLabelType");
             validationHelper.validateString(invoice.getBillingLabelAddress(),
                     invoice.getBillingLabelType().getId().equals(billingLabelAffaire.getId()), 160,

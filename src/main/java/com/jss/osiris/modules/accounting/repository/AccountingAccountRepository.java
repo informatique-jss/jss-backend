@@ -15,6 +15,9 @@ public interface AccountingAccountRepository extends CrudRepository<AccountingAc
 
     List<AccountingAccount> findByPrincipalAccountingAccount(PrincipalAccountingAccount principalAccountingAccount);
 
+    @Query("select a from AccountingAccount a where :canViewRestricted=true or isViewRestricted=false")
+    List<AccountingAccount> findAllAccountingAccounts(@Param("canViewRestricted") boolean canViewRestricted);
+
     @Query("select max(accountingAccountSubNumber) from AccountingAccount where  principalAccountingAccount=:principalAccountingAccount")
     Integer findMaxSubAccontNumberForPrincipalAccountingAccount(
             @Param("principalAccountingAccount") PrincipalAccountingAccount principalAccountingAccount);

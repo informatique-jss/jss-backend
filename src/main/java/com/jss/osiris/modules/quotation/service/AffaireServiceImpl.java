@@ -39,6 +39,11 @@ public class AffaireServiceImpl implements AffaireService {
         return null;
     }
 
+    @Override
+    public Affaire getAffaireBySiret(String siret) {
+        return affaireRepository.findBySiret(siret);
+    }
+
     @Autowired
     IndexEntityService indexEntityService;
 

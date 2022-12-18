@@ -1,4 +1,4 @@
-import { AfterContentChecked, ChangeDetectorRef, Component, Input, OnInit, SimpleChanges } from '@angular/core';
+import { AfterContentChecked, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { AbstractControl, FormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { validateRna, validateSiren, validateSiret } from 'src/app/libs/CustomFormsValidatorsHelper';
 import { City } from 'src/app/modules/miscellaneous/model/City';
@@ -13,6 +13,7 @@ import { Siret } from 'src/app/modules/quotation/model/Siret';
 import { RnaService } from 'src/app/modules/quotation/services/rna.service';
 import { SirenService } from 'src/app/modules/quotation/services/siren.service';
 import { SiretService } from 'src/app/modules/quotation/services/siret.service';
+import { AffaireService } from '../../../../../quotation/services/affaire.service';
 
 @Component({
   selector: 'add-affaire',
@@ -22,6 +23,7 @@ import { SiretService } from 'src/app/modules/quotation/services/siret.service';
 export class AddAffaireComponent implements OnInit, AfterContentChecked {
 
   @Input() affaire: Affaire = {} as Affaire;
+  @Output() affaireChange: EventEmitter<Affaire> = new EventEmitter<Affaire>();
   @Input() editMode: boolean = false;
   @Input() isLabelAffaire: boolean = false;
 
@@ -32,6 +34,7 @@ export class AddAffaireComponent implements OnInit, AfterContentChecked {
     private rnaService: RnaService,
     private constantService: ConstantService,
     private sirenService: SirenService,
+    private affaireService: AffaireService,
     private siretService: SiretService,
     private changeDetectorRef: ChangeDetectorRef
   ) { }
@@ -142,36 +145,42 @@ export class AddAffaireComponent implements OnInit, AfterContentChecked {
 
   fillSiret(siret: Siret) {
     if (siret != undefined && siret != null) {
-      this.affaire.siret = siret!.etablissement.siret;
-      if ((this.affaire.siren == null || this.affaire.siren == undefined) && siret.etablissement.siren != null && siret.etablissement.siren != undefined) {
-        this.sirenService.getSiren(siret.etablissement.siren).subscribe(response => {
-          if (response != null && response.length == 1) {
-            this.fillSiren(response[0]);
-          }
-        })
-      }
-      this.affaire.denomination = !this.affaire.denomination ? siret.etablissement.periodesEtablissement[0].denominationUsuelleEtablissement : this.affaire.denomination;
-      if (siret.etablissement.adresseEtablissement != null && siret.etablissement.adresseEtablissement.codePostalEtablissement != null) {
-        this.affaire.postalCode = siret!.etablissement.adresseEtablissement.codePostalEtablissement;
-        this.affaire.cedexComplement = siret!.etablissement.adresseEtablissement.codeCedexEtablissement;
-        this.cityService.getCitiesFilteredByPostalCode(siret.etablissement.adresseEtablissement.codePostalEtablissement).subscribe(response => {
-          if (response != null && response.length == 1) {
-            this.fillCity(response[0].postalCode);
-            this.affaireForm.markAllAsTouched();
-          } else if (siret!.etablissement.adresseEtablissement.libelleCommuneEtablissement) {
-            this.cityService.getCitiesFilteredByCountryAndName(siret!.etablissement.adresseEtablissement.libelleCommuneEtablissement, undefined).subscribe(response2 => {
-              if (response2 != null && response2.length == 1) {
-                this.affaire.city = response2[0];
-                this.affaire.country = response2[0].country;
-                this.affaireForm.markAllAsTouched();
+      this.affaireService.getAffaireBySiret(siret.etablissement.siret).subscribe(reponse => {
+        if (reponse && reponse.id)
+          this.affaire = reponse;
+        else {
+          this.affaire.siret = siret!.etablissement.siret;
+          if ((this.affaire.siren == null || this.affaire.siren == undefined) && siret.etablissement.siren != null && siret.etablissement.siren != undefined) {
+            this.sirenService.getSiren(siret.etablissement.siren).subscribe(response => {
+              if (response != null && response.length == 1) {
+                this.fillSiren(response[0]);
               }
             })
           }
-        })
-        this.affaire.address = (siret.etablissement.adresseEtablissement.numeroVoieEtablissement != null ? siret.etablissement.adresseEtablissement.numeroVoieEtablissement : "") + " " + (siret.etablissement.adresseEtablissement.typeVoieEtablissement != null ? siret.etablissement.adresseEtablissement.typeVoieEtablissement : "") + " " + (siret.etablissement.adresseEtablissement.libelleVoieEtablissement != null ? siret.etablissement.adresseEtablissement.libelleVoieEtablissement : "");
-      }
+          this.affaire.denomination = !this.affaire.denomination ? siret.etablissement.periodesEtablissement[0].denominationUsuelleEtablissement : this.affaire.denomination;
+          if (siret.etablissement.adresseEtablissement != null && siret.etablissement.adresseEtablissement.codePostalEtablissement != null) {
+            this.affaire.postalCode = siret!.etablissement.adresseEtablissement.codePostalEtablissement;
+            this.affaire.cedexComplement = siret!.etablissement.adresseEtablissement.codeCedexEtablissement;
+            this.cityService.getCitiesFilteredByPostalCode(siret.etablissement.adresseEtablissement.codePostalEtablissement).subscribe(response => {
+              if (response != null && response.length == 1) {
+                this.fillCity(response[0].postalCode);
+                this.affaireForm.markAllAsTouched();
+              } else if (siret!.etablissement.adresseEtablissement.libelleCommuneEtablissement) {
+                this.cityService.getCitiesFilteredByCountryAndName(siret!.etablissement.adresseEtablissement.libelleCommuneEtablissement, undefined).subscribe(response2 => {
+                  if (response2 != null && response2.length == 1) {
+                    this.affaire.city = response2[0];
+                    this.affaire.country = response2[0].country;
+                    this.affaireForm.markAllAsTouched();
+                  }
+                })
+              }
+            })
+            this.affaire.address = (siret.etablissement.adresseEtablissement.numeroVoieEtablissement != null ? siret.etablissement.adresseEtablissement.numeroVoieEtablissement : "") + " " + (siret.etablissement.adresseEtablissement.typeVoieEtablissement != null ? siret.etablissement.adresseEtablissement.typeVoieEtablissement : "") + " " + (siret.etablissement.adresseEtablissement.libelleVoieEtablissement != null ? siret.etablissement.adresseEtablissement.libelleVoieEtablissement : "");
+          }
+        }
+      });
+      this.affaireForm.markAllAsTouched();
     }
-    this.affaireForm.markAllAsTouched();
   }
 
   fillRna(rna: Rna) {

@@ -79,6 +79,7 @@ public interface AccountingRecordRepository extends CrudRepository<AccountingRec
                         " and (:tiersId =0 or COALESCE(i.id_tiers ,co.id_tiers )  = :tiersId and t.id is not null) " +
                         " and (:hideLettered = false or r.lettering_date is null ) " +
                         " and r.operation_date_time>=:startDate and r.operation_date_time<=:endDate  " +
+                        " and :canViewRestricted=true or a.is_view_restricted=false  " +
                         " and (:accountingClassId =0 or pa.id_accounting_account_class = :accountingClassId) ")
         List<AccountingRecordSearchResult> searchAccountingRecords(
                         @Param("accountingAccountIds") List<Integer> accountingAccountIds,
@@ -88,7 +89,8 @@ public interface AccountingRecordRepository extends CrudRepository<AccountingRec
                         @Param("tiersId") Integer tiersId,
                         @Param("hideLettered") Boolean hideLettered,
                         @Param("startDate") LocalDateTime startDate,
-                        @Param("endDate") LocalDateTime endDate);
+                        @Param("endDate") LocalDateTime endDate,
+                        @Param("canViewRestricted") boolean canViewRestricted);
 
         @Query(nativeQuery = true, value = "select" + "        sum(case "
                         + "            when record.isanouveau=false then record.credit_amount "
@@ -114,14 +116,15 @@ public interface AccountingRecordRepository extends CrudRepository<AccountingRec
                         "(record.accounting_date_time is null or (record.accounting_date_time >=:startDate and record.accounting_date_time <=:endDate )) and "
                         +
                         "(:accountingClassId =0 or pa.id_accounting_account_class = :accountingClassId ) "
-                        +
+                        + " and :canViewRestricted=true or accounting.is_view_restricted=false  " +
                         " group by accounting.label,pa.code,accounting.accounting_account_sub_number ")
         List<AccountingBalance> searchAccountingBalance(
                         @Param("accountingClassId") Integer accountingClassId,
                         @Param("accountingAccountId") Integer accountingAccountId,
                         @Param("principalAccountingAccountId") Integer principalAccountingAccountId,
                         @Param("startDate") LocalDateTime startDate,
-                        @Param("endDate") LocalDateTime endDate);
+                        @Param("endDate") LocalDateTime endDate,
+                        @Param("canViewRestricted") boolean canViewRestricted);
 
         @Query(nativeQuery = true, value = "select" + "        sum(case "
                         + "            when record.isanouveau=false then record.credit_amount "
@@ -147,14 +150,15 @@ public interface AccountingRecordRepository extends CrudRepository<AccountingRec
                         "(record.accounting_date_time is null or (record.accounting_date_time >=:startDate and record.accounting_date_time <=:endDate )) and "
                         +
                         "(:accountingClassId =0 or pa.id_accounting_account_class = :accountingClassId ) "
-                        +
+                        + " and :canViewRestricted=true or accounting.is_view_restricted=false  " +
                         " group by pa.code,pa.label ")
         List<AccountingBalance> searchAccountingBalanceGenerale(
                         @Param("accountingClassId") Integer accountingClassId,
                         @Param("accountingAccountId") Integer accountingAccountId,
                         @Param("principalAccountingAccountId") Integer principalAccountingAccountId,
                         @Param("startDate") LocalDateTime startDate,
-                        @Param("endDate") LocalDateTime endDate);
+                        @Param("endDate") LocalDateTime endDate,
+                        @Param("canViewRestricted") boolean canViewRestricted);
 
         @Query("select sum(a.creditAmount) as creditAmount, " +
                         " sum(a.debitAmount) as debitAmount, pa.code as accountingAccountNumber "
@@ -162,11 +166,12 @@ public interface AccountingRecordRepository extends CrudRepository<AccountingRec
                         " from AccountingRecord a  JOIN a.accountingAccount aa  JOIN aa.principalAccountingAccount pa  where "
                         +
                         "(a.accountingDateTime is null or (a.accountingDateTime >=:startDate and a.accountingDateTime <=:endDate ))   "
-                        +
+                        + " and :canViewRestricted=true or aa.isViewRestricted=false  " +
                         " group by pa.code ")
         List<AccountingBalanceBilan> getAccountingRecordAggregateByAccountingNumber(
                         @Param("startDate") LocalDateTime startDate,
-                        @Param("endDate") LocalDateTime endDate);
+                        @Param("endDate") LocalDateTime endDate,
+                        @Param("canViewRestricted") boolean canViewRestricted);
 
         List<AccountingRecord> findByAccountingAccountAndInvoice(AccountingAccount accountingAccountCustomer,
                         Invoice invoice);

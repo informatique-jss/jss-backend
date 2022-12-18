@@ -9,6 +9,7 @@ import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableCo
 import { AppService } from 'src/app/services/app.service';
 import { UserPreferenceService } from 'src/app/services/user.preference.service';
 import { instanceOfResponsable } from '../../../../libs/TypeHelper';
+import { HabilitationsService } from '../../../../services/habilitations.service';
 import { ITiers } from '../../../tiers/model/ITiers';
 import { AccountingRecord } from '../../model/AccountingRecord';
 import { AccountingRecordSearch } from '../../model/AccountingRecordSearch';
@@ -35,6 +36,7 @@ export class AccountingRecordComponent implements OnInit {
     private appService: AppService,
     private accountingRecordSearchService: AccountingRecordSearchResultService,
     public deleteAccountingRecordDialog: MatDialog,
+    private habilitationService: HabilitationsService,
   ) { }
 
   accountingRecords: AccountingRecordSearchResult[] | undefined;
@@ -44,6 +46,9 @@ export class AccountingRecordComponent implements OnInit {
   displayedColumns: SortTableColumn[] = [] as Array<SortTableColumn>;
   tableAction: SortTableAction[] = [] as Array<SortTableAction>;
 
+  canAddNewAccountingRecord() {
+    return this.habilitationService.canAddNewAccountingRecord();
+  }
 
   ngOnInit() {
     this.accountingRecordSearch.startDate = new Date(new Date().getFullYear(), 0, 1);

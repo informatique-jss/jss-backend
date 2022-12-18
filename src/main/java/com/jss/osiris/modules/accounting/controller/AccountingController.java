@@ -89,6 +89,7 @@ public class AccountingController {
                 HttpStatus.OK);
     }
 
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
     @PostMapping(inputEntryPoint + "/accounting-records/manual/add")
     public ResponseEntity<List<AccountingRecord>> addOrUpdateAccountingRecords(
             @RequestBody List<AccountingRecord> accountingRecords) throws OsirisValidationException, OsirisException {
@@ -188,47 +189,6 @@ public class AccountingController {
 
         return new ResponseEntity<List<AccountingRecord>>(
                 accountingRecordService.doCounterPartByOperationId(operationId), HttpStatus.OK);
-    }
-
-    @GetMapping(inputEntryPoint + "/accounting-records")
-    public ResponseEntity<List<AccountingRecord>> getAccountingRecords() {
-        return new ResponseEntity<List<AccountingRecord>>(accountingRecordService.getAccountingRecords(),
-                HttpStatus.OK);
-    }
-
-    @PostMapping(inputEntryPoint + "/accounting-record")
-    public ResponseEntity<AccountingRecord> addOrUpdateAccountingRecord(
-            @RequestBody AccountingRecord accountingRecords) throws OsirisValidationException, OsirisException {
-        if (accountingRecords.getIsTemporary() == null && accountingRecords.getId() != null)
-            throw new OsirisValidationException("IsTemporary");
-
-        if (accountingRecords.getIsTemporary() == false)
-            throw new OsirisValidationException("IsTemporary");
-
-        if (accountingRecords.getId() != null)
-            validationHelper.validateReferential(accountingRecords, true, "accountingRecords");
-        validationHelper.validateString(accountingRecords.getLabel(), true, 1000, "label");
-        accountingRecords.setAccountingDateTime(null);
-        validationHelper.validateDateTimeMax(accountingRecords.getOperationDateTime(), false, LocalDateTime.now(),
-                "OperationDateTime");
-        accountingRecords.setOperationDateTime(null);
-        accountingRecords.setOperationId(null);
-        validationHelper.validateString(accountingRecords.getManualAccountingDocumentNumber(), false, 150,
-                "ManualAccountingDocumentNumber");
-
-        if (accountingRecords.getCreditAmount() != null && accountingRecords.getCreditAmount() != 0
-                && accountingRecords.getDebitAmount() != null && accountingRecords.getDebitAmount() != 0)
-            throw new OsirisValidationException("DebitAmount or CreditAmount not set");
-
-        validationHelper.validateDateMax(accountingRecords.getManualAccountingDocumentDate(), false,
-                accountingRecords.getOperationDateTime().toLocalDate(), "ManualAccountingDocumentDate");
-        validationHelper.validateReferential(accountingRecords.getAccountingAccount(), true, "AccountingAccount");
-        validationHelper.validateReferential(accountingRecords.getInvoice(), false, "Invoice");
-        validationHelper.validateReferential(accountingRecords.getInvoice(), false, "Invoice");
-        validationHelper.validateReferential(accountingRecords.getAccountingJournal(), true, "AccountingJournal");
-
-        return new ResponseEntity<AccountingRecord>(
-                accountingRecordService.addOrUpdateAccountingRecordFromUser(accountingRecords), HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/accounting-account-classes")
@@ -420,12 +380,12 @@ public class AccountingController {
         HttpHeaders headers = null;
 
         if (accountingAccountId == null)
-            throw new OsirisValidationException("accountingJournalId");
+            throw new OsirisValidationException("accountingAccountId");
 
         AccountingAccount accountingAccount = accountingAccountService.getAccountingAccount(accountingAccountId);
 
         if (accountingAccount == null)
-            throw new OsirisValidationException("accountingJournalId");
+            throw new OsirisValidationException("accountingAccount");
 
         if (startDate == null || endDate == null)
             throw new OsirisValidationException("StartDate or EndDate");
@@ -613,6 +573,7 @@ public class AccountingController {
     }
 
     @GetMapping(inputEntryPoint + "/bilan")
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
     public ResponseEntity<List<AccountingBalanceViewTitle>> getBilan(
             @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
             @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate)
@@ -631,6 +592,7 @@ public class AccountingController {
     }
 
     @GetMapping(inputEntryPoint + "/profit-lost")
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
     public ResponseEntity<List<AccountingBalanceViewTitle>> getProfitAndLost(
             @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
             @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate)
@@ -649,6 +611,7 @@ public class AccountingController {
     }
 
     @GetMapping(inputEntryPoint + "/profit-lost/export")
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
     public ResponseEntity<byte[]> downloadProfitLost(
             @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
             @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate)
@@ -688,6 +651,7 @@ public class AccountingController {
     }
 
     @GetMapping(inputEntryPoint + "/bilan/export")
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
     public ResponseEntity<byte[]> downloadBilan(
             @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
             @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate)

@@ -14,6 +14,8 @@ public interface InvoiceSearchResult {
 
     public String getCustomerOrderLabel();
 
+    public String getProviderLabel();
+
     public Integer getConfrereId();
 
     public Integer getResponsableId();

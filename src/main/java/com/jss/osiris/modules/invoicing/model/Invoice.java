@@ -103,6 +103,8 @@ public class Invoice implements IId, IAttachment {
 	private Boolean isResponsableOnBilling;
 	private Boolean isCommandNumberMandatory;
 
+	private Boolean isInvoiceFromProvider;
+
 	@Column(length = 40)
 	private String commandNumber;
 
@@ -383,6 +385,14 @@ public class Invoice implements IId, IAttachment {
 
 	public void setAttachments(List<Attachment> attachments) {
 		this.attachments = attachments;
+	}
+
+	public Boolean getIsInvoiceFromProvider() {
+		return isInvoiceFromProvider;
+	}
+
+	public void setIsInvoiceFromProvider(Boolean isInvoiceFromProvider) {
+		this.isInvoiceFromProvider = isInvoiceFromProvider;
 	}
 
 }

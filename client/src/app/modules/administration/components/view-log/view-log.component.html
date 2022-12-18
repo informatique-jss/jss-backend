@@ -45,6 +45,13 @@
               [isMandatory]="true" [isDisabled]="true" [numberOfLines]="30"></generic-textarea>
           </td>
         </tr>
+        <tr>
+          <td>
+            <generic-textarea *ngIf="log.causeStackTrace" [(model)]="log.causeStackTrace" label="Cause stacktrace"
+              [form]="logForm" propertyName="causeStackTrace" [isMandatory]="true" [isDisabled]="true"
+              [numberOfLines]="30"></generic-textarea>
+          </td>
+        </tr>
       </table>
     </div>
   </div>

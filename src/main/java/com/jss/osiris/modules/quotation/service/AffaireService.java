@@ -13,4 +13,6 @@ public interface AffaireService {
 
     public void reindexAffaire();
 
+    public Affaire getAffaireBySiret(String siret);
+
 }

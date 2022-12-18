@@ -26,13 +26,13 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("schedulling.pool.size");
         isOk = isOk && checkProperty("schedulling.account.daily.close");
         isOk = isOk && checkProperty("schedulling.active.directory.user.update");
-        isOk = isOk && checkProperty("schedulling.payment.grab");
         isOk = isOk && checkProperty("schedulling.mail.sender");
         isOk = isOk && checkProperty("schedulling.notification.purge");
         isOk = isOk && checkProperty("schedulling.log.osiris.quotation.reminder");
         isOk = isOk && checkProperty("schedulling.log.osiris.customerOrder.deposit.reminder");
         isOk = isOk && checkProperty("schedulling.log.osiris.customerOrder.invoice.reminder");
         isOk = isOk && checkProperty("schedulling.account.receipt.generation.sender");
+        isOk = isOk && checkProperty("schedulling.announcement.publish.actu.legale");
         isOk = isOk && checkProperty("ldap.dc.level.0");
         isOk = isOk && checkProperty("ldap.dc.level.1");
         isOk = isOk && checkProperty("ldap.ou.osiris");
@@ -55,6 +55,13 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("central.pay.entrypoint");
         isOk = isOk && checkProperty("central.pay.api.key");
         isOk = isOk && checkProperty("central.pay.api.password");
+        isOk = isOk && checkProperty("actu.legale.auth.entry.point");
+        isOk = isOk && checkProperty("actu.legale.is.test");
+        isOk = isOk && checkProperty("actu.legale.auth.username");
+        isOk = isOk && checkProperty("actu.legale.auth.password");
+        isOk = isOk && checkProperty("actu.legale.auth.token");
+        isOk = isOk && checkProperty("actu.legale.publish.entry.point");
+        isOk = isOk && checkProperty("actu.legale.publish.newpapper.id");
 
         isOk = isOk && checkAccountingParams();
 

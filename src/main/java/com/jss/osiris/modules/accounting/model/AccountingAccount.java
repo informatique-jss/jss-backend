@@ -32,6 +32,9 @@ public class AccountingAccount implements Serializable, IId {
 
 	private Integer accountingAccountSubNumber;
 
+	@Column(nullable = false)
+	private Boolean isViewRestricted;
+
 	public Integer getId() {
 		return id;
 	}
@@ -62,6 +65,14 @@ public class AccountingAccount implements Serializable, IId {
 
 	public void setPrincipalAccountingAccount(PrincipalAccountingAccount principalAccountingAccount) {
 		this.principalAccountingAccount = principalAccountingAccount;
+	}
+
+	public Boolean getIsViewRestricted() {
+		return isViewRestricted;
+	}
+
+	public void setIsViewRestricted(Boolean isViewRestricted) {
+		this.isViewRestricted = isViewRestricted;
 	}
 
 }

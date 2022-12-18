@@ -281,9 +281,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             mailHelper.sendCustomerOrderFinalisationToCustomer(customerOrder, false, false, false);
         }
 
-        if (targetStatusCode.equals(CustomerOrderStatus.WAITING_DEPOSIT))
-
-        {
+        if (targetStatusCode.equals(CustomerOrderStatus.WAITING_DEPOSIT)) {
             Float remainingToPay = Math
                     .round(accountingRecordService.getRemainingAmountToPayForCustomerOrder(customerOrder) * 100f)
                     / 100f;
@@ -548,6 +546,10 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                             if (provision.getFormalite().getDocuments() != null)
                                 for (Document document : provision.getFormalite().getDocuments())
                                     document.setId(null);
+                        }
+                        if (provision.getSimpleProvision() != null) {
+                            provision.getSimpleProvision().setId(null);
+                            provision.getSimpleProvision().setAttachments(null);
                         }
                         if (provision.getDomiciliation() != null) {
                             provision.getDomiciliation().setId(null);

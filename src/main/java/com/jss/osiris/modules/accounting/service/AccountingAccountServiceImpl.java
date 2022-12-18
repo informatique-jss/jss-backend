@@ -3,11 +3,11 @@ package com.jss.osiris.modules.accounting.service;
 import java.util.List;
 import java.util.Optional;
 
-import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.model.AccountingAccountBinome;
@@ -28,9 +28,13 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
         @Autowired
         ConstantService constantService;
 
+        @Autowired
+        ActiveDirectoryHelper activeDirectoryHelper;
+
         @Override
         public List<AccountingAccount> getAccountingAccounts() {
-                return IterableUtils.toList(accountingAccountRepository.findAll());
+                return accountingAccountRepository.findAllAccountingAccounts(activeDirectoryHelper
+                                .isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP));
         }
 
         @Override
@@ -45,12 +49,19 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
         @Transactional(rollbackFor = Exception.class)
         public AccountingAccount addOrUpdateAccountingAccountFromUser(AccountingAccount accountingAccount)
                         throws OsirisException {
+                if (accountingAccount.getId() != null) {
+                        AccountingAccount currentAccountingAccount = getAccountingAccount(accountingAccount.getId());
+                        if (currentAccountingAccount.getIsViewRestricted() && !activeDirectoryHelper
+                                        .isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP))
+                                return accountingAccount;
+                }
                 return addOrUpdateAccountingAccount(accountingAccount);
         }
 
-        @Override
-        public AccountingAccount addOrUpdateAccountingAccount(
+        private AccountingAccount addOrUpdateAccountingAccount(
                         AccountingAccount accountingAccount) throws OsirisException {
+                if (accountingAccount.getIsViewRestricted() == null)
+                        accountingAccount.setIsViewRestricted(false);
                 return accountingAccountRepository.save(accountingAccount);
         }
 
@@ -91,7 +102,7 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
                 accountingAccountProvider.setAccountingAccountSubNumber(maxSubAccount);
                 accountingAccountProvider
                                 .setLabel("Fournisseur - " + (label != null ? label : ""));
-                accountingAccountRepository.save(accountingAccountProvider);
+                addOrUpdateAccountingAccount(accountingAccountProvider);
                 accountingAccountTrouple.setAccountingAccountProvider(accountingAccountProvider);
 
                 AccountingAccount accountingAccountCustomer = new AccountingAccount();
@@ -100,7 +111,7 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
                 accountingAccountCustomer.setAccountingAccountSubNumber(maxSubAccount);
                 accountingAccountCustomer
                                 .setLabel("Client - " + (label != null ? label : ""));
-                accountingAccountRepository.save(accountingAccountCustomer);
+                addOrUpdateAccountingAccount(accountingAccountCustomer);
                 accountingAccountTrouple.setAccountingAccountCustomer(accountingAccountCustomer);
 
                 AccountingAccount accountingAccountDeposit = new AccountingAccount();
@@ -109,7 +120,7 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
                 accountingAccountDeposit.setAccountingAccountSubNumber(maxSubAccount);
                 accountingAccountDeposit
                                 .setLabel("Acompte - " + (label != null ? label : ""));
-                accountingAccountRepository.save(accountingAccountDeposit);
+                addOrUpdateAccountingAccount(accountingAccountDeposit);
                 accountingAccountTrouple.setAccountingAccountDeposit(accountingAccountDeposit);
 
                 return accountingAccountTrouple;
@@ -144,7 +155,7 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
                 accountingAccountProduct.setAccountingAccountSubNumber(maxSubAccount);
                 accountingAccountProduct.setLabel(
                                 "Produit - " + (billingType.getLabel() != null ? billingType.getLabel() : ""));
-                accountingAccountRepository.save(accountingAccountProduct);
+                addOrUpdateAccountingAccount(accountingAccountProduct);
                 accountingAccountBinome.setAccountingAccountProduct(accountingAccountProduct);
 
                 AccountingAccount accountingAccountCharge = new AccountingAccount();
@@ -153,7 +164,7 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
                 accountingAccountCharge.setAccountingAccountSubNumber(maxSubAccount);
                 accountingAccountCharge
                                 .setLabel("Charge - " + (billingType.getLabel() != null ? billingType.getLabel() : ""));
-                accountingAccountRepository.save(accountingAccountCharge);
+                addOrUpdateAccountingAccount(accountingAccountCharge);
                 accountingAccountBinome.setAccountingAccountCharge(accountingAccountCharge);
 
                 return accountingAccountBinome;
@@ -179,7 +190,7 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
                 accountingAccountProvider.setAccountingAccountSubNumber(maxSubAccount);
                 accountingAccountProvider
                                 .setLabel("Produit - " + (label != null ? label : ""));
-                accountingAccountRepository.save(accountingAccountProvider);
+                addOrUpdateAccountingAccount(accountingAccountProvider);
 
                 return accountingAccountProvider;
         }

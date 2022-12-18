@@ -28,7 +28,7 @@ import { InvoiceService } from '../../services/invoice.service';
 })
 export class AddInvoiceComponent implements OnInit {
 
-  invoice: Invoice = {} as Invoice;
+  invoice: Invoice = { isInvoiceFromProvider: true } as Invoice;
   invoiceItems: InvoiceItem[] = new Array<InvoiceItem>;
   invoiceItem: InvoiceItem = {} as InvoiceItem;
   isEditing: boolean = false;
@@ -59,14 +59,15 @@ export class AddInvoiceComponent implements OnInit {
   ngOnInit() {
     let idInvoice = this.activatedRoute.snapshot.params.id;
 
-    if (idInvoice != null)
+    if (idInvoice != null && idInvoice != "null")
       this.invoiceService.getInvoiceById(idInvoice).subscribe(response => {
         this.invoice = response;
-        this.invoiceItems = this.invoice.invoiceItems;
         this.appService.changeHeaderTitle("Facture n°" + this.invoice.id);
       });
-    else
+    else {
       this.addInvoiceItem();
+      this.invoice.isInvoiceFromProvider = true;
+    }
     this.invoice.invoiceItems = this.invoiceItems;
     this.appService.changeHeaderTitle("Nouvelle facture");
 
@@ -91,6 +92,11 @@ export class AddInvoiceComponent implements OnInit {
     if (element && element.vat && element.preTaxPrice)
       return Math.round(element.preTaxPrice * element.vat.rate / 100 * 100) / 100 + " €";
     return "0 €";
+  }
+
+  emptyProvider() {
+    if (this.invoice && this.invoice.isInvoiceFromProvider == false)
+      this.invoice.provider = undefined;
   }
 
   getTotalPrice(element: any) {

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, SimpleChanges } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { AccountingAccount } from 'src/app/modules/accounting/model/AccountingAccount';
@@ -17,6 +17,11 @@ export class ReferentialAccountingAccountComponent extends GenericReferentialCom
     private appService2: AppService,
     private formBuilder2: FormBuilder) {
     super(formBuilder2, appService2);
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes && this.selectedEntity && !this.selectedEntity.isViewRestricted)
+      this.selectedEntity.isViewRestricted = false;
   }
 
   definedMatTableColumn() {

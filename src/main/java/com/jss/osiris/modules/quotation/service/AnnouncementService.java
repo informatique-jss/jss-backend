@@ -19,4 +19,6 @@ public interface AnnouncementService {
     public Announcement addOrUpdateAnnouncement(Announcement announcement) throws OsirisException;
 
     public List<AnnouncementSearchResult> searchAnnouncements(AnnouncementSearch announcementSearch);
+
+    public void publishAnnouncementsToActuLegale() throws OsirisException;
 }

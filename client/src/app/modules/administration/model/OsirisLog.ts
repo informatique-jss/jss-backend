@@ -6,6 +6,7 @@ export interface OsirisLog {
   methodName: string;
   message: string;
   stackTrace: string;
+  causeStackTrace: string;
   currentUser: Employee;
   createdDateTime: Date;
   logType: string;

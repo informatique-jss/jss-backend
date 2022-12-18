@@ -10,7 +10,6 @@ import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
 import org.apache.commons.collections4.IterableUtils;
@@ -18,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
@@ -47,6 +47,7 @@ import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.miscellaneous.service.VatService;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
+import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.service.QuotationService;
@@ -106,25 +107,8 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   @Autowired
   MailHelper mailHelper;
 
-  @Override
-  public List<AccountingRecord> getAccountingRecords() {
-    return IterableUtils.toList(accountingRecordRepository.findAll());
-  }
-
-  @Override
-  public AccountingRecord getAccountingRecord(Integer id) {
-    Optional<AccountingRecord> accountingRecord = accountingRecordRepository.findById(id);
-    if (accountingRecord.isPresent())
-      return accountingRecord.get();
-    return null;
-  }
-
-  @Override
-  @Transactional(rollbackFor = Exception.class)
-  public AccountingRecord addOrUpdateAccountingRecordFromUser(
-      AccountingRecord accountingRecord) {
-    return addOrUpdateAccountingRecord(accountingRecord);
-  }
+  @Autowired
+  ActiveDirectoryHelper activeDirectoryHelper;
 
   public AccountingRecord addOrUpdateAccountingRecord(
       AccountingRecord accountingRecord) {
@@ -150,6 +134,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     return accountingRecords;
   }
 
+  @Override
   public void generateAccountingRecordsForSaleOnInvoiceGeneration(Invoice invoice) throws OsirisException {
     AccountingJournal salesJournal = accountingJournalService.getSalesAccountingJournal();
 
@@ -601,16 +586,34 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     else
       accountingAccountCustomer = tiers.getAccountingAccountCustomer();
 
+    AccountingAccount accountingAccount = null;
+    if (tiers instanceof Confrere)
+      accountingAccount = ((Confrere) tiers).getAccountingAccountProvider();
+    if (tiers instanceof Tiers)
+      accountingAccount = tiers.getAccountingAccountProvider();
+    if (tiers instanceof Responsable && ((Responsable) tiers).getTiers() != null)
+      accountingAccount = ((Responsable) tiers).getTiers().getAccountingAccountProvider();
+    if (accountingAccount == null)
+      throw new OsirisException(null, "No customer accounting account in Provider " + tiers.getId());
+
     return accountingAccountCustomer;
   }
 
   @Override
   public AccountingAccount getProviderAccountingAccountForInvoice(Invoice invoice) throws OsirisException {
-    // If cusomter order is a Responsable, get accounting account of parent Tiers
-    if (invoice.getProvider().getAccountingAccountProvider() == null)
-      throw new OsirisException(null, "No customer accounting account in Provider " + invoice.getProvider().getId());
+    AccountingAccount accountingAccount = null;
+    if (invoice.getProvider() != null)
+      accountingAccount = invoice.getProvider().getAccountingAccountProvider();
+    if (invoice.getConfrere() != null)
+      accountingAccount = invoice.getConfrere().getAccountingAccountProvider();
+    if (invoice.getTiers() != null)
+      accountingAccount = invoice.getTiers().getAccountingAccountProvider();
+    if (invoice.getResponsable() != null && invoice.getResponsable().getTiers() != null)
+      accountingAccount = invoice.getResponsable().getTiers().getAccountingAccountProvider();
+    if (accountingAccount == null)
+      throw new OsirisException(null, "No customer accounting account in Provider ");
 
-    return invoice.getProvider().getAccountingAccountProvider();
+    return accountingAccount;
   }
 
   @Override
@@ -750,7 +753,8 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     return accountingRecordRepository.searchAccountingRecords(accountingAccountId, accountingClass, journalId,
         accountingRecordSearch.getResponsableId(), accountingRecordSearch.getTiersId(),
         accountingRecordSearch.getHideLettered(),
-        accountingRecordSearch.getStartDate(), accountingRecordSearch.getEndDate());
+        accountingRecordSearch.getStartDate(), accountingRecordSearch.getEndDate(),
+        activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP));
   }
 
   @Override
@@ -767,7 +771,8 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     List<AccountingBalance> aa = accountingRecordRepository.searchAccountingBalance(
         accountingClassId,
         accountingAccountId, principalAccountingAccountId,
-        accountingBalanceSearch.getStartDate(), accountingBalanceSearch.getEndDate());
+        accountingBalanceSearch.getStartDate(), accountingBalanceSearch.getEndDate(),
+        activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP));
 
     return aa;
   }
@@ -786,17 +791,20 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     return accountingRecordRepository.searchAccountingBalanceGenerale(
         accountingClassId,
         accountingAccountId, principalAccountingAccountId,
-        accountingBalanceSearch.getStartDate(), accountingBalanceSearch.getEndDate());
+        accountingBalanceSearch.getStartDate(), accountingBalanceSearch.getEndDate(),
+        activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP));
 
   }
 
   @Override
   public List<AccountingBalanceViewTitle> getBilan(LocalDateTime startDate, LocalDateTime endDate) {
     List<AccountingBalanceBilan> accountingRecords = accountingRecordRepository
-        .getAccountingRecordAggregateByAccountingNumber(startDate, endDate);
+        .getAccountingRecordAggregateByAccountingNumber(startDate, endDate,
+            activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP));
 
     List<AccountingBalanceBilan> accountingRecordsN1 = accountingRecordRepository
-        .getAccountingRecordAggregateByAccountingNumber(startDate.minusYears(1), endDate.minusYears(1));
+        .getAccountingRecordAggregateByAccountingNumber(startDate.minusYears(1), endDate.minusYears(1),
+            activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP));
 
     ArrayList<AccountingBalanceViewTitle> outBilan = new ArrayList<AccountingBalanceViewTitle>();
 
@@ -809,10 +817,12 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   @Override
   public List<AccountingBalanceViewTitle> getProfitAndLost(LocalDateTime startDate, LocalDateTime endDate) {
     List<AccountingBalanceBilan> accountingRecords = accountingRecordRepository
-        .getAccountingRecordAggregateByAccountingNumber(startDate, endDate);
+        .getAccountingRecordAggregateByAccountingNumber(startDate, endDate,
+            activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP));
 
     List<AccountingBalanceBilan> accountingRecordsN1 = accountingRecordRepository
-        .getAccountingRecordAggregateByAccountingNumber(startDate.minusYears(1), endDate.minusYears(1));
+        .getAccountingRecordAggregateByAccountingNumber(startDate.minusYears(1), endDate.minusYears(1),
+            activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP));
 
     return accountingBalanceHelper.getProfitAndLost(accountingRecords, accountingRecordsN1);
   }
@@ -843,10 +853,12 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   @Override
   public File getBilanExport(LocalDateTime startDate, LocalDateTime endDate) throws OsirisException {
     List<AccountingBalanceBilan> accountingRecords = accountingRecordRepository
-        .getAccountingRecordAggregateByAccountingNumber(startDate, endDate);
+        .getAccountingRecordAggregateByAccountingNumber(startDate, endDate,
+            activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP));
 
     List<AccountingBalanceBilan> accountingRecordsN1 = accountingRecordRepository
-        .getAccountingRecordAggregateByAccountingNumber(startDate.minusYears(1), endDate.minusYears(1));
+        .getAccountingRecordAggregateByAccountingNumber(startDate.minusYears(1), endDate.minusYears(1),
+            activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP));
 
     ArrayList<AccountingBalanceViewTitle> outBilanActif = new ArrayList<AccountingBalanceViewTitle>();
 
@@ -867,7 +879,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
         accountingAccountId != null ? accountingAccountId : 0,
         (principalAccountingAccountId != null && !principalAccountingAccountId.equals(0) ? principalAccountingAccountId
             : 0),
-        startDate, endDate);
+        startDate, endDate, activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP));
     return accountingExportHelper.getBalance(accountingBalanceRecords, false);
   }
 
@@ -879,7 +891,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
         accountingAccountId != null ? accountingAccountId : 0,
         (principalAccountingAccountId != null && !principalAccountingAccountId.equals(0) ? principalAccountingAccountId
             : 0),
-        startDate, endDate);
+        startDate, endDate, activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP));
     return accountingExportHelper.getBalance(accountingBalanceRecords, true);
   }
 
