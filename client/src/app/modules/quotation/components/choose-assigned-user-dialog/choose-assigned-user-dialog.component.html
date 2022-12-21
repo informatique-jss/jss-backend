@@ -2,9 +2,10 @@
 <div mat-dialog-content>
   <p>{{text}}</p>
   <form [formGroup]="assignedForm">
-    <div><mat-radio-group class="radio-group-column" formControlName="choosedEmployee" [(ngModel)]="choosedEmployee">
+    <div><mat-radio-group class="radio-group-column" formControlName="choosedEmployee" [(ngModel)]="choosedEmployee"
+        *ngIf="userList">
         <mat-radio-button *ngFor="let user of userList" [value]="user">
-          {{user.firstname}} {{user.lastname}}
+          {{user?user.firstname:""}} {{user?user.lastname:""}}
         </mat-radio-button>
       </mat-radio-group>
     </div>

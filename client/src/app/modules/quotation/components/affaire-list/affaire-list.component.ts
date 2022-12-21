@@ -30,8 +30,9 @@ export class AffaireListComponent implements OnInit {
     this.displayedColumns.push({ id: "siren", fieldName: "siren", label: "Siren", valueFonction: (element: any) => { return element.text.siren } } as SortTableColumn);
     this.displayedColumns.push({ id: "siret", fieldName: "siret", label: "Siret", valueFonction: (element: any) => { return element.text.siret } } as SortTableColumn);
     this.displayedColumns.push({ id: "rna", fieldName: "rna", label: "Rna", valueFonction: (element: any) => { return element.text.rna } } as SortTableColumn);
-    this.displayedColumns.push({ id: "postalCode", fieldName: "postalCode", label: "postalCode", valueFonction: (element: any) => { return element.text.postalCode } } as SortTableColumn);
-    this.displayedColumns.push({ id: "city", fieldName: "city", label: "city", valueFonction: (element: any) => { return element.text.city ? element.text.city.label : "" } } as SortTableColumn);
+    this.displayedColumns.push({ id: "address", fieldName: "address", label: "Adresse", valueFonction: (element: any) => { return element.text.address } } as SortTableColumn);
+    this.displayedColumns.push({ id: "postalCode", fieldName: "postalCode", label: "Code postal", valueFonction: (element: any) => { return element.text.postalCode } } as SortTableColumn);
+    this.displayedColumns.push({ id: "city", fieldName: "city", label: "Ville", valueFonction: (element: any) => { return element.text.city ? element.text.city.label : "" } } as SortTableColumn);
 
     this.tableAction.push({
       actionIcon: "edit", actionName: "Editer l'affaire", actionLinkFunction: (action: SortTableAction, element: any) => {

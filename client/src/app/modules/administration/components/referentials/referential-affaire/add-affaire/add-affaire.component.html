@@ -86,6 +86,12 @@
       </td>
     </tr>
   </table>
+  <table class="full-width" *ngIf="editMode">
+    <tr>
+      <td class="color-warn" *ngIf="isLabelAffaire">La facture est à adresser à l'affaire, pensez à renseinger un mail
+      </td>
+    </tr>
+  </table>
   <table class="full-width">
     <tr>
       <td>
@@ -108,8 +114,8 @@
   </table>
   <table class="full-width" *ngIf="editMode">
     <tr>
-      <td class="color-warn" *ngIf="isLabelAffaire">La facture est à adresser à l'affaire, pensez à renseinger un mail
-      </td>
+      <td class="color-warn" *ngIf="isLabelAffaire">La facture est à adresser à l'affaire, pensez à renseinger
+        l'IBAN/BIC</td>
     </tr>
   </table>
   <table class="full-width">
@@ -124,12 +130,7 @@
       </td>
     </tr>
   </table>
-  <table class="full-width" *ngIf="editMode">
-    <tr>
-      <td class="color-warn" *ngIf="isLabelAffaire">La facture est à adresser à l'affaire, pensez à renseinger
-        l'IBAN/BIC</td>
-    </tr>
-  </table>
+
   <table class="full-width">
     <tr>
       <td>

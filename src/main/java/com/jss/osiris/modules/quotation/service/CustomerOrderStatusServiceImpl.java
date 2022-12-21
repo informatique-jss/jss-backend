@@ -62,6 +62,7 @@ public class CustomerOrderStatusServiceImpl implements CustomerOrderStatusServic
         updateStatus(CustomerOrderStatus.ABANDONED, "Abandonné", "block");
 
         setSuccessor(CustomerOrderStatus.OPEN, CustomerOrderStatus.WAITING_DEPOSIT);
+        setSuccessor(CustomerOrderStatus.OPEN, CustomerOrderStatus.BEING_PROCESSED);
         setSuccessor(CustomerOrderStatus.WAITING_DEPOSIT, CustomerOrderStatus.BEING_PROCESSED);
         setSuccessor(CustomerOrderStatus.TO_BILLED, CustomerOrderStatus.BILLED);
 

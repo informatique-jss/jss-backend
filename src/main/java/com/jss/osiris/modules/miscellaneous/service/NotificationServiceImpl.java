@@ -109,9 +109,10 @@ public class NotificationServiceImpl implements NotificationService {
         boolean createdByMe = false;
         List<Employee> compareEmployee = employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee());
 
-        for (Employee employee : compareEmployee)
-            if (employee.getId().equals(salesEmployee.getId()))
-                createdByMe = true;
+        if (compareEmployee != null)
+            for (Employee employee : compareEmployee)
+                if (employee.getId().equals(salesEmployee.getId()))
+                    createdByMe = true;
 
         String customerOrderName = "";
         if (customerOrder instanceof Responsable)

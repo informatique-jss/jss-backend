@@ -240,7 +240,8 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                 }
 
                 if (publicationProofFound && announcement.getAnnouncementStatus() != null && announcement
-                        .getAnnouncementStatus().getCode().equals(AnnouncementStatus.ANNOUNCEMENT_WAITING_PUBLICATION))
+                        .getAnnouncementStatus().getCode()
+                        .equals(AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE_PUBLISHED))
                     announcement.setAnnouncementStatus(announcementStatusService
                             .getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_PUBLISHED));
             }

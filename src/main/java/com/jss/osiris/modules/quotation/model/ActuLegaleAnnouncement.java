@@ -5,13 +5,13 @@ import java.time.LocalDate;
 public class ActuLegaleAnnouncement {
     private Integer id;
     private Integer newspaperId;
-    private String siren;
+    private Integer siren;
     private String companyName;
     private String comparnyAddress;
-    private String companyZip;
+    private Integer companyZip;
     private String companyCity;
     private LocalDate parutionDate;
-    private String departementParution;
+    private Integer departementParution;
     private String text;
     private boolean test = true;
 
@@ -23,11 +23,11 @@ public class ActuLegaleAnnouncement {
         this.newspaperId = newspaperId;
     }
 
-    public String getSiren() {
+    public Integer getSiren() {
         return siren;
     }
 
-    public void setSiren(String siren) {
+    public void setSiren(Integer siren) {
         this.siren = siren;
     }
 
@@ -47,11 +47,11 @@ public class ActuLegaleAnnouncement {
         this.comparnyAddress = comparnyAddress;
     }
 
-    public String getCompanyZip() {
+    public Integer getCompanyZip() {
         return companyZip;
     }
 
-    public void setCompanyZip(String companyZip) {
+    public void setCompanyZip(Integer companyZip) {
         this.companyZip = companyZip;
     }
 
@@ -71,11 +71,11 @@ public class ActuLegaleAnnouncement {
         this.parutionDate = parutionDate;
     }
 
-    public String getDepartementParution() {
+    public Integer getDepartementParution() {
         return departementParution;
     }
 
-    public void setDepartementParution(String departementParution) {
+    public void setDepartementParution(Integer departementParution) {
         this.departementParution = departementParution;
     }
 

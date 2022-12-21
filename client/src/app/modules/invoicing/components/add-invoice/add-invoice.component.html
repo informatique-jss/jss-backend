@@ -39,7 +39,7 @@
           </td>
         </tr>
       </table>
-      <table class="full-width" *ngIf="!invoice.provider && !invoice.confrere">
+      <table class="full-width" *ngIf="!invoice.isInvoiceFromProvider">
         <tr>
           <td>
             <radio-group-billing-label [(model)]="invoice.billingLabelType" [form]="invoiceForm"

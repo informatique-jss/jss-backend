@@ -60,35 +60,26 @@ public class SimpleProvisionStatusServiceImpl implements SimpleProvisionStatusSe
         updateStatus(SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_DOCUMENT, "En attente de documents",
                 "hourglass_top", false,
                 false);
-        updateStatus(SimpleProvisionStatus.SIMPLE_PROVISION_SENT, "Envoyé à l'autorité", "outgoing_mail", false, false);
-        updateStatus(SimpleProvisionStatus.SIMPLE_PROVISION_VALIDATE, "Validé par l'autorité", "approval", false,
-                false);
         updateStatus(SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_DOCUMENT_AUTHORITY,
-                "En attente de documents de l'autorité", "pending",
+                "En attente de l'autorité compétente", "pending",
                 false, false);
         updateStatus(SimpleProvisionStatus.SIMPLE_PROVISION_DONE, "Terminé", "check_small", false, true);
 
         setSuccessor(SimpleProvisionStatus.SIMPLE_PROVISION_NEW, SimpleProvisionStatus.SIMPLE_PROVISION_IN_PROGRESS);
-        setSuccessor(SimpleProvisionStatus.SIMPLE_PROVISION_IN_PROGRESS, SimpleProvisionStatus.SIMPLE_PROVISION_SENT);
-        setSuccessor(SimpleProvisionStatus.SIMPLE_PROVISION_SENT, SimpleProvisionStatus.SIMPLE_PROVISION_VALIDATE);
-        setSuccessor(SimpleProvisionStatus.SIMPLE_PROVISION_VALIDATE, SimpleProvisionStatus.SIMPLE_PROVISION_DONE);
-        setSuccessor(SimpleProvisionStatus.SIMPLE_PROVISION_SENT, SimpleProvisionStatus.SIMPLE_PROVISION_IN_PROGRESS);
-
         setSuccessor(SimpleProvisionStatus.SIMPLE_PROVISION_IN_PROGRESS,
                 SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_DOCUMENT);
-        setSuccessor(SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_DOCUMENT,
-                SimpleProvisionStatus.SIMPLE_PROVISION_SENT);
-        setSuccessor(SimpleProvisionStatus.SIMPLE_PROVISION_VALIDATE,
+        setSuccessor(SimpleProvisionStatus.SIMPLE_PROVISION_IN_PROGRESS,
                 SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_DOCUMENT_AUTHORITY);
+        setSuccessor(SimpleProvisionStatus.SIMPLE_PROVISION_IN_PROGRESS, SimpleProvisionStatus.SIMPLE_PROVISION_DONE);
+        setSuccessor(SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_DOCUMENT,
+                SimpleProvisionStatus.SIMPLE_PROVISION_DONE);
         setSuccessor(SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_DOCUMENT_AUTHORITY,
                 SimpleProvisionStatus.SIMPLE_PROVISION_DONE);
 
-        setPredecessor(SimpleProvisionStatus.SIMPLE_PROVISION_DONE, SimpleProvisionStatus.SIMPLE_PROVISION_VALIDATE);
-        setPredecessor(SimpleProvisionStatus.SIMPLE_PROVISION_IN_PROGRESS, SimpleProvisionStatus.SIMPLE_PROVISION_NEW);
+        setPredecessor(SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_DOCUMENT_AUTHORITY,
+                SimpleProvisionStatus.SIMPLE_PROVISION_IN_PROGRESS);
         setPredecessor(SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_DOCUMENT,
                 SimpleProvisionStatus.SIMPLE_PROVISION_IN_PROGRESS);
-        setPredecessor(SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_DOCUMENT_AUTHORITY,
-                SimpleProvisionStatus.SIMPLE_PROVISION_VALIDATE);
 
     }
 

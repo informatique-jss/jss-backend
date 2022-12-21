@@ -56,8 +56,8 @@ public interface AnnouncementRepository extends CrudRepository<Announcement, Int
                         "")
         Integer getAffaireForAnnouncement(@Param("announcementId") Integer announcementId);
 
-        @Query("select a from Announcement a where a.announcementStatus=:announcementStatus and publicationDate is not null and actuLegaleId is null and publicationDate<=:publicationDate")
+        @Query("select a from Announcement a where a.announcementStatus=:announcementStatus and publicationDate is not null and actuLegaleId is null and publicationDate<=:publicationDate and confrere = :confrere")
         List<Announcement> getAnnouncementByStatusAndPublicationDateMin(
                         @Param("announcementStatus") AnnouncementStatus announcementStatus,
-                        @Param("publicationDate") LocalDate publicationDate);
+                        @Param("publicationDate") LocalDate publicationDate, @Param("confrere") Confrere confrere);
 }

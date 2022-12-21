@@ -20,7 +20,7 @@
                   [filteredDepartments]="announcement.department" (onOptionSelected)="updateHeaderFree()">
                 </autocomplete-confrere>
               </td>
-              <td *ngIf="announcement.confrere!=null && announcement.confrere!=undefined">
+              <td>
                 <autocomplete-department [(model)]="announcement.department" [form]="announcementForm"
                   propertyName="department" [isMandatory]="true" [isDisabled]="!editMode" label="Département"
                   [isDisabled]="!editMode" (onOptionSelected)="updateCharacterPrice()"
@@ -30,7 +30,7 @@
               </td>
             </tr>
           </table>
-          <table *ngIf="announcement.confrere!=null && announcement.confrere!=undefined">
+          <table>
             <tr>
               <td>
                 <generic-datepicker [(model)]="announcement.publicationDate" label="Date de publication"

@@ -175,7 +175,7 @@
           <tr>
             <td>
               <generic-input [(model)]="selectedEntity.reinvoicing" label="Refacturation (%)" [form]="entityForm2"
-                propertyName="reinvoicing" [isMandatory]="false" [isDisabled]="!editMode" type="number"></generic-input>
+                propertyName="reinvoicing" [isMandatory]="true" [isDisabled]="!editMode" type="number"></generic-input>
             </td>
             <td>
               <chips-special-offers [(model)]="selectedEntity.specialOffers" [form]="entityForm2"

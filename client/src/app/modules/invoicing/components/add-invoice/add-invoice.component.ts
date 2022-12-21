@@ -62,6 +62,7 @@ export class AddInvoiceComponent implements OnInit {
     if (idInvoice != null && idInvoice != "null")
       this.invoiceService.getInvoiceById(idInvoice).subscribe(response => {
         this.invoice = response;
+        this.invoiceItems = this.invoice.invoiceItems;
         this.appService.changeHeaderTitle("Facture n°" + this.invoice.id);
       });
     else {

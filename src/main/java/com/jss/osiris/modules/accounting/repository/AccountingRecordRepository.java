@@ -55,7 +55,7 @@ public interface AccountingRecordRepository extends CrudRepository<AccountingRec
                         " r.id_customer_order	 as customerId, " +
                         " r.id_payment as paymentId, " +
                         " r2.operation_id as contrePasseOperationId, " +
-                        " (select STRING_AGG( case when af.denomination is not null and af.denomination!='' then af.denomination else af.firstname || ' '||af.lastname end,', ' order by 1) as affaireLabel from asso_affaire_order asso join affaire af on af.id = asso.id_affaire where  asso.id_customer_order = i.customer_order_id or asso.id_customer_order = r.id_customer_order)  as affaireLabel,"
+                        " (select STRING_AGG( case when af.denomination is not null and af.denomination!='' then af.denomination else af.firstname || ' '||af.lastname end  || ' ('||city.label ||')',', ' order by 1) as affaireLabel from asso_affaire_order asso join affaire af on af.id = asso.id_affaire left join city on city.id = af.id_city where  asso.id_customer_order = i.customer_order_id or asso.id_customer_order = r.id_customer_order)  as affaireLabel,"
                         +
                         " COALESCE(re1.firstname || ' ' || re1.lastname ,re2.firstname || ' ' || re2.lastname ) as responsable, "
                         +
@@ -79,7 +79,7 @@ public interface AccountingRecordRepository extends CrudRepository<AccountingRec
                         " and (:tiersId =0 or COALESCE(i.id_tiers ,co.id_tiers )  = :tiersId and t.id is not null) " +
                         " and (:hideLettered = false or r.lettering_date is null ) " +
                         " and r.operation_date_time>=:startDate and r.operation_date_time<=:endDate  " +
-                        " and :canViewRestricted=true or a.is_view_restricted=false  " +
+                        " and (:canViewRestricted=true or a.is_view_restricted=false)  " +
                         " and (:accountingClassId =0 or pa.id_accounting_account_class = :accountingClassId) ")
         List<AccountingRecordSearchResult> searchAccountingRecords(
                         @Param("accountingAccountIds") List<Integer> accountingAccountIds,
@@ -116,7 +116,7 @@ public interface AccountingRecordRepository extends CrudRepository<AccountingRec
                         "(record.accounting_date_time is null or (record.accounting_date_time >=:startDate and record.accounting_date_time <=:endDate )) and "
                         +
                         "(:accountingClassId =0 or pa.id_accounting_account_class = :accountingClassId ) "
-                        + " and :canViewRestricted=true or accounting.is_view_restricted=false  " +
+                        + " (and :canViewRestricted=true or accounting.is_view_restricted=false ) " +
                         " group by accounting.label,pa.code,accounting.accounting_account_sub_number ")
         List<AccountingBalance> searchAccountingBalance(
                         @Param("accountingClassId") Integer accountingClassId,
@@ -150,7 +150,7 @@ public interface AccountingRecordRepository extends CrudRepository<AccountingRec
                         "(record.accounting_date_time is null or (record.accounting_date_time >=:startDate and record.accounting_date_time <=:endDate )) and "
                         +
                         "(:accountingClassId =0 or pa.id_accounting_account_class = :accountingClassId ) "
-                        + " and :canViewRestricted=true or accounting.is_view_restricted=false  " +
+                        + " (and :canViewRestricted=true or accounting.is_view_restricted=false)  " +
                         " group by pa.code,pa.label ")
         List<AccountingBalance> searchAccountingBalanceGenerale(
                         @Param("accountingClassId") Integer accountingClassId,

@@ -567,7 +567,7 @@ public class MailHelper {
         mail.setDiscountTotal(discountTotal);
         mail.setPreTaxPriceTotalWithDicount(preTaxPriceTotalWithDicount);
         mail.setVatMails(vats);
-        mail.setPriceTotal(priceTotal);
+        mail.setPriceTotal(Math.round(priceTotal * 100f) / 100f);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -687,33 +687,37 @@ public class MailHelper {
         mail.setLabel("Devis n°" + quotation.getId());
         mail.setLabelSubtitle("Nous vous confirmons la réception de votre demande de devis décrite ci-dessous.");
 
-        if (quotation.getAssoAffaireOrders().size() == 1) {
-            Affaire affaire = quotation.getAssoAffaireOrders().get(0).getAffaire();
-            mail.setExplaination("Ce devis concerne la société "
-                    + (affaire.getDenomination() != null ? affaire.getDenomination()
-                            : (affaire.getFirstname() + " " + affaire.getLastname())));
-        } else {
-            mail.setExplaination("Ce devis concerne les sociétés suivantes :");
-            ArrayList<String> details = new ArrayList<String>();
-            for (AssoAffaireOrder asso : quotation.getAssoAffaireOrders())
-                details.add(asso.getAffaire().getDenomination() != null ? asso.getAffaire().getDenomination()
-                        : (asso.getAffaire().getFirstname() + " " + asso.getAffaire().getLastname()));
-            mail.setExplainationElements(String.join("!#", details));
-        }
-
-        if (quotation.getAssoAffaireOrders() != null && quotation.getAssoAffaireOrders().size() > 0) {
-            ArrayList<CustomerMailAssoAffaireOrder> customerAssos = new ArrayList<CustomerMailAssoAffaireOrder>();
-            for (AssoAffaireOrder assos : quotation.getAssoAffaireOrders()) {
-                CustomerMailAssoAffaireOrder asso = new CustomerMailAssoAffaireOrder();
-                asso.setAssoAffaireOrderId(assos.getId());
-                asso.setCustomerMail(mail);
-                customerAssos.add(asso);
+        if (quotation.getAssoAffaireOrders() != null) {
+            if (quotation.getAssoAffaireOrders().size() == 1) {
+                Affaire affaire = quotation.getAssoAffaireOrders().get(0).getAffaire();
+                mail.setExplaination("Ce devis concerne la société "
+                        + (affaire.getDenomination() != null ? affaire.getDenomination()
+                                : (affaire.getFirstname() + " " + affaire.getLastname())));
+            } else {
+                mail.setExplaination("Ce devis concerne les sociétés suivantes :");
+                ArrayList<String> details = new ArrayList<String>();
+                for (AssoAffaireOrder asso : quotation.getAssoAffaireOrders())
+                    details.add(asso.getAffaire().getDenomination() != null ? asso.getAffaire().getDenomination()
+                            : (asso.getAffaire().getFirstname() + " " + asso.getAffaire().getLastname()));
+                mail.setExplainationElements(String.join("!#", details));
             }
-            if (customerAssos.size() > 0)
-                mail.setCustomerMailAssoAffaireOrders(customerAssos);
-        }
 
-        computeQuotationPrice(mail, quotation);
+            if (quotation.getAssoAffaireOrders() != null && quotation.getAssoAffaireOrders().size() > 0) {
+                ArrayList<CustomerMailAssoAffaireOrder> customerAssos = new ArrayList<CustomerMailAssoAffaireOrder>();
+                for (AssoAffaireOrder assos : quotation.getAssoAffaireOrders()) {
+                    CustomerMailAssoAffaireOrder asso = new CustomerMailAssoAffaireOrder();
+                    asso.setAssoAffaireOrderId(assos.getId());
+                    asso.setCustomerMail(mail);
+                    customerAssos.add(asso);
+                }
+                if (customerAssos.size() > 0)
+                    mail.setCustomerMailAssoAffaireOrders(customerAssos);
+            }
+
+            computeQuotationPrice(mail, quotation);
+        } else {
+            mail.setExplaination("Description du devis : " + quotation.getDescription());
+        }
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 

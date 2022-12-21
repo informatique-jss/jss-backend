@@ -61,7 +61,6 @@ export class AppComponent {
         });
       }
 
-      // For dev mode
       if (environment.production == false && this.loginService.hasGroup(['toto']) == false)
         this.loginService.setUserRoleAndRefresh();
     });

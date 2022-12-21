@@ -166,8 +166,8 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     public void publishAnnouncementsToActuLegale() throws OsirisException {
         List<Announcement> announcements = announcementRepository.getAnnouncementByStatusAndPublicationDateMin(
                 announcementStatusService.getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_DONE),
-                LocalDate.now().minusWeeks(0));
-
+                LocalDate.now().minusDays(5), constantService.getConfrereJssSpel());
+        // TODO : remettre à 3 semaines
         if (announcements != null && announcements.size() > 0)
             for (Announcement announcement : announcements) {
                 Integer affaire = announcementRepository.getAffaireForAnnouncement(announcement.getId());

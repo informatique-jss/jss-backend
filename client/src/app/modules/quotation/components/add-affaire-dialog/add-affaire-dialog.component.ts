@@ -77,7 +77,10 @@ export class AddAffaireDialogComponent implements OnInit {
 
   saveAffaire() {
     if (this.selectedAffaire) {
-      this.affaireDialogRef.close(this.selectedAffaire);
+      this.affaireService.addOrUpdateAffaire(this.addAffaireComponent!.affaire).subscribe(response => {
+        this.affaire = response;
+        this.affaireDialogRef.close(this.selectedAffaire);
+      })
     } else if (this.getFormStatus()) {
       this.affaireService.addOrUpdateAffaire(this.addAffaireComponent!.affaire).subscribe(response => {
         this.affaire = response;

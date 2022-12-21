@@ -93,13 +93,13 @@ export function getCustomerOrderForIQuotation(customerOrder: IQuotation): ITiers
 
 export function getAffaireList(invoice: Invoice): string {
   if (invoice && invoice.customerOrder)
-    return invoice.customerOrder.assoAffaireOrders.map(asso => asso.affaire.denomination ? asso.affaire.denomination : (asso.affaire.firstname + ' ' + asso.affaire.lastname)).join(", ");
+    return invoice.customerOrder.assoAffaireOrders.map(asso => (asso.affaire.denomination ? asso.affaire.denomination : (asso.affaire.firstname + ' ' + asso.affaire.lastname)) + (asso.affaire.city ? " (" + asso.affaire.city.label + ")" : "")).join(", ");
   return "";
 }
 
 export function getAffaireListFromIQuotation(customerOrder: IQuotation): string {
   if (customerOrder)
-    return customerOrder.assoAffaireOrders.map(asso => asso.affaire.denomination ? asso.affaire.denomination : (asso.affaire.firstname + ' ' + asso.affaire.lastname)).join(", ");
+    return customerOrder.assoAffaireOrders.map(asso => (asso.affaire.denomination ? asso.affaire.denomination : (asso.affaire.firstname + ' ' + asso.affaire.lastname)) + (asso.affaire.city ? " (" + asso.affaire.city.label + ")" : "")).join(", ");
   return "";
 }
 

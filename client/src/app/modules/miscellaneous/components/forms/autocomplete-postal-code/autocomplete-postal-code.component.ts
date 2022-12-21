@@ -24,6 +24,15 @@ export class AutocompletePostalCodeComponent extends GenericAutocompleteComponen
   }
 
   mapResponse(response: City[]): string[] {
+    if (this.form)
+      this.form.get(this.propertyName)!.valueChanges.subscribe(
+        (newValue) => {
+          this.model = newValue;
+          this.modelChange.emit(this.model);
+          this.onFormChange.emit(this.model);
+        }
+      )
+
     return [...new Set(response.map(city => city.postalCode))]
   }
   displayLabel(object: any): string {

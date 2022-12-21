@@ -116,10 +116,10 @@ export class AccountingRecordComponent implements OnInit {
 
   getColumnLink(column: SortTableColumn, element: any) {
     if (element && column.id == "invoice" && element.invoiceId) {
-      return ['/invoicing/view/', element.invoiceId];
+      return ['/invoicing/view', element.invoiceId];
     }
     if (element && column.id == "customerOrder" && element.customerId) {
-      return ['/order/', element.customerId];
+      return ['/order', element.customerId];
     }
     return null;
   }

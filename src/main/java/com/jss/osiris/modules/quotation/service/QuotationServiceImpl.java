@@ -145,10 +145,11 @@ public class QuotationServiceImpl implements QuotationService {
             }
 
         // Complete provisions
-        for (AssoAffaireOrder assoAffaireOrder : quotation.getAssoAffaireOrders()) {
-            assoAffaireOrder.setQuotation(quotation);
-            assoAffaireOrderService.completeAssoAffaireOrder(assoAffaireOrder, quotation);
-        }
+        if (quotation.getAssoAffaireOrders() != null)
+            for (AssoAffaireOrder assoAffaireOrder : quotation.getAssoAffaireOrders()) {
+                assoAffaireOrder.setQuotation(quotation);
+                assoAffaireOrderService.completeAssoAffaireOrder(assoAffaireOrder, quotation);
+            }
 
         boolean isNewQuotation = quotation.getId() == null;
         if (isNewQuotation) {
@@ -253,6 +254,19 @@ public class QuotationServiceImpl implements QuotationService {
                         * characterPriceService.getCharacterNumber(provision);
                 invoiceItem.setPreTaxPrice(Math.round(price * 100f) / 100f);
 
+                // If it's an announcement published by a Confrere, apply additionnal fees and
+                // JSS markup
+                if (isNotJssConfrere(provision)) {
+                    Float additionnalFees = 0f;
+                    Confrere confrere = provision.getAnnouncement().getConfrere();
+                    if (confrere.getAdministrativeFees() != null)
+                        additionnalFees += confrere.getAdministrativeFees();
+
+                    invoiceItem.setPreTaxPrice(
+                            invoiceItem.getPreTaxPrice() * (1 + confrere.getReinvoicing() / 100) + additionnalFees);
+
+                }
+
                 // Add notice type indication for announcements
                 String noticeFamiliyType = (provision.getAnnouncement() != null
                         && provision.getAnnouncement().getNoticeTypeFamily() != null)
@@ -267,8 +281,8 @@ public class QuotationServiceImpl implements QuotationService {
                 if (noticeFamiliyType != null && noticeTypes.size() > 0)
                     invoiceItem.setLabel(invoiceItem.getLabel() + " ("
                             + characterPriceService.getCharacterNumber(provision)
-                            + " caractères, rubrique " + noticeFamiliyType + ", sous-rubrique(s) "
-                            + String.join(", ", noticeTypes) + ")");
+                            + " caractères, rubrique " + noticeFamiliyType + ", "
+                            + String.join(" / ", noticeTypes) + ")");
                 else
                     invoiceItem.setLabel(invoiceItem.getLabel() + " ("
                             + characterPriceService.getCharacterNumber(provision) + ")");
@@ -288,30 +302,16 @@ public class QuotationServiceImpl implements QuotationService {
 
                 Confrere confrere = provision.getAnnouncement().getConfrere();
                 if (isNotJssConfrere(provision) && confrere.getPaperPrice() != null) {
-                    Float confrerePrice = confrere.getPaperPrice() * nbr;
-                    if (confrere.getShippingCosts() != null)
-                        confrerePrice += confrere.getShippingCosts();
-
-                    invoiceItem.setPreTaxPrice(confrerePrice * (1 + confrere.getReinvoicing() / 100));
+                    invoiceItem
+                            .setPreTaxPrice(
+                                    Math.round(confrere.getPaperPrice() * nbr + confrere.getShippingCosts() * 100f)
+                                            / 100f);
                 } else
                     invoiceItem.setPreTaxPrice(
                             Math.round(billingItem.getPreTaxPrice() * nbr * 100f) / 100f);
             }
         } else {
             invoiceItem.setPreTaxPrice(Math.round(billingItem.getPreTaxPrice() * 100f) / 100f);
-        }
-
-        // If it's an announcement published by a Confrere, apply additionnal fees and
-        // JSS markup
-        if (isNotJssConfrere(provision)) {
-            Float additionnalFees = 0f;
-            Confrere confrere = provision.getAnnouncement().getConfrere();
-            if (confrere.getAdministrativeFees() != null)
-                additionnalFees += confrere.getAdministrativeFees();
-
-            invoiceItem.setPreTaxPrice(
-                    invoiceItem.getPreTaxPrice() + additionnalFees * (1 + confrere.getReinvoicing() / 100));
-
         }
 
         if (invoiceItem.getIsGifted() != null && invoiceItem.getIsGifted()) {

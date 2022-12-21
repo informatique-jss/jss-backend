@@ -1143,6 +1143,10 @@ public class QuotationController {
     if (quotation.getResponsable() == null && quotation.getTiers() == null && quotation.getConfrere() == null)
       throw new OsirisValidationException("No customer order");
 
+    // Do not check anything from website, a human will correct if after
+    if (isOpen && quotation.getIsCreatedFromWebSite())
+      return;
+
     // Check customer order is not a prospect
     if (isCustomerOrder && !isOpen) {
       if (quotation.getTiers() != null
@@ -1328,8 +1332,7 @@ public class QuotationController {
       validationHelper.validateString(announcement.getNotice(), !isOpen, "Notice");
 
       if (announcement.getAnnouncementStatus() != null && (announcement.getAnnouncementStatus().getCode()
-          .equals(AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE_PUBLISHED)
-          || announcement.getAnnouncementStatus().getCode().equals(AnnouncementStatus.ANNOUNCEMENT_WAITING_PUBLICATION))
+          .equals(AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE_PUBLISHED))
           && announcement.getConfrere() != null
           && !announcement.getConfrere().getId().equals(constantService.getConfrereJssPaper().getId())
           && !announcement.getConfrere().getId().equals(constantService.getConfrereJssSpel().getId())) {
@@ -1580,7 +1583,14 @@ public class QuotationController {
 
   @PostMapping(inputEntryPoint + "/invoice-item/generate")
   public ResponseEntity<IQuotation> generateInvoiceItemForQuotation(@RequestBody Quotation quotation)
-      throws OsirisException {
+      throws OsirisException, OsirisValidationException {
+    if (quotation != null && quotation.getAssoAffaireOrders() != null)
+      for (AssoAffaireOrder assoAffaireOrder : quotation.getAssoAffaireOrders())
+        if (assoAffaireOrder.getProvisions() != null)
+          for (Provision provision : assoAffaireOrder.getProvisions())
+            if (provision.getAnnouncement() != null)
+              provision.getAnnouncement().setConfrere((Confrere) validationHelper
+                  .validateReferential(provision.getAnnouncement().getConfrere(), true, "Confrere"));
     return new ResponseEntity<IQuotation>(quotationService.getAndSetInvoiceItemsForQuotation(quotation, false),
         HttpStatus.OK);
   }

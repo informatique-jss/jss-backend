@@ -126,15 +126,15 @@ export class OrderingListComponent implements OnInit {
 
   getColumnLink(column: SortTableColumn, element: any) {
     if (element && column.id == "tiersLabel") {
-      return ['/tiers/', element.tiersId];
+      return ['/tiers', element.tiersId];
     }
     if (element && column.id == "customerOrderLabel") {
       if (element.responsableId)
-        return ['/tiers/responsable/', element.responsableId];
+        return ['/tiers/responsable', element.responsableId];
       if (element.tiersId)
-        return ['/tiers/', element.tiersId];
+        return ['/tiers', element.tiersId];
       if (element.confrereId)
-        return ['/referential/confrere/', element.confrereId];
+        return ['/referential/confrere', element.confrereId];
     }
     return ['/tiers'];
   }

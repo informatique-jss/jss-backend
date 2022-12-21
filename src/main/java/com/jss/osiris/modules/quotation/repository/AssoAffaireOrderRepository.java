@@ -12,7 +12,7 @@ import com.jss.osiris.modules.quotation.model.AssoAffaireOrderSearchResult;
 
 public interface AssoAffaireOrderRepository extends CrudRepository<AssoAffaireOrder, Integer> {
 
-        @Query(nativeQuery = true, value = "select case when a.denomination is not null and a.denomination!='' then a.denomination else a.firstname || ' '||a.lastname end as affaireLabel,"
+        @Query(nativeQuery = true, value = "select case when a.denomination is not null and a.denomination!='' then a.denomination else a.firstname || ' '||a.lastname end   as affaireLabel,"
                         +
                         " a.address || ' - ' || a.postal_Code ||' - '||ci.label as affaireAddress," +
                         "  coalesce(case when t.denomination is not null and t.denomination!='' then t.denomination else t.firstname || ' '||t.lastname end,"

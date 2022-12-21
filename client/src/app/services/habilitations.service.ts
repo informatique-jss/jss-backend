@@ -28,7 +28,7 @@ export class HabilitationsService {
   }
 
   canViewAdministrationModule() {
-    return true;
+    return this.loginService.hasGroup([ADMINISTRATEURS])
   }
 
   canViewAccountingModule() {

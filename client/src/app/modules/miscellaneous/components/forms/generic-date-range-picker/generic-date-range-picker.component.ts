@@ -118,12 +118,16 @@ export class GenericDateRangePickerComponent implements OnInit {
       this.form.controls[this.propertyNameEnd].valueChanges.subscribe(
         (newValue) => {
           this.modelEnd = newValue;
+          if (newValue)
+            this.modelEnd = new Date(new Date(newValue.setHours(22)).setMinutes(59));
           this.modelEndChange.emit(this.modelEnd);
         }
       )
       this.form.controls[this.propertyNameStart].valueChanges.subscribe(
         (newValue) => {
           this.modelStart = newValue;
+          if (newValue)
+            this.modelStart = new Date(new Date(newValue.setHours(0)).setMinutes(0));
           this.modelStartChange.emit(this.modelStart);
         }
       )

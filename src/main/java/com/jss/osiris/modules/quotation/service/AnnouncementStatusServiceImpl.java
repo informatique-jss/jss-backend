@@ -62,8 +62,6 @@ public class AnnouncementStatusServiceImpl implements AnnouncementStatusService 
                 false);
         updateStatus(AnnouncementStatus.ANNOUNCEMENT_WAITING_READ, "En attente de relecture", "local_library", false,
                 false);
-        updateStatus(AnnouncementStatus.ANNOUNCEMENT_WAITING_PUBLICATION, "En attente de parution", "new_releases",
-                false, false);
         updateStatus(AnnouncementStatus.ANNOUNCEMENT_PUBLISHED, "Publié", "fact_check", false, false);
         updateStatus(AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE, "En attente du confrère", "supervisor_account",
                 false, false);
@@ -74,9 +72,9 @@ public class AnnouncementStatusServiceImpl implements AnnouncementStatusService 
 
         setSuccessor(AnnouncementStatus.ANNOUNCEMENT_NEW, AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS);
         setSuccessor(AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS, AnnouncementStatus.ANNOUNCEMENT_WAITING_READ);
-        setSuccessor(AnnouncementStatus.ANNOUNCEMENT_WAITING_READ, AnnouncementStatus.ANNOUNCEMENT_WAINTING_PAO);
-        setSuccessor(AnnouncementStatus.ANNOUNCEMENT_WAINTING_PAO, AnnouncementStatus.ANNOUNCEMENT_WAITING_PUBLICATION);
-        setSuccessor(AnnouncementStatus.ANNOUNCEMENT_WAITING_PUBLICATION, AnnouncementStatus.ANNOUNCEMENT_PUBLISHED);
+        setSuccessor(AnnouncementStatus.ANNOUNCEMENT_WAITING_READ,
+                AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE_PUBLISHED);
+        setSuccessor(AnnouncementStatus.ANNOUNCEMENT_WAITING_READ, AnnouncementStatus.ANNOUNCEMENT_PUBLISHED);
         setSuccessor(AnnouncementStatus.ANNOUNCEMENT_PUBLISHED, AnnouncementStatus.ANNOUNCEMENT_DONE);
 
         setSuccessor(AnnouncementStatus.ANNOUNCEMENT_WAITING_READ,
@@ -93,10 +91,7 @@ public class AnnouncementStatusServiceImpl implements AnnouncementStatusService 
         setPredecessor(AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE_PUBLISHED,
                 AnnouncementStatus.ANNOUNCEMENT_WAITING_READ);
         setPredecessor(AnnouncementStatus.ANNOUNCEMENT_DONE, AnnouncementStatus.ANNOUNCEMENT_PUBLISHED);
-        setPredecessor(AnnouncementStatus.ANNOUNCEMENT_PUBLISHED, AnnouncementStatus.ANNOUNCEMENT_WAITING_PUBLICATION);
-        setPredecessor(AnnouncementStatus.ANNOUNCEMENT_WAITING_PUBLICATION,
-                AnnouncementStatus.ANNOUNCEMENT_WAINTING_PAO);
-        setPredecessor(AnnouncementStatus.ANNOUNCEMENT_WAINTING_PAO, AnnouncementStatus.ANNOUNCEMENT_WAITING_READ);
+        setPredecessor(AnnouncementStatus.ANNOUNCEMENT_PUBLISHED, AnnouncementStatus.ANNOUNCEMENT_WAITING_READ);
         setPredecessor(AnnouncementStatus.ANNOUNCEMENT_WAITING_READ, AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS);
         setPredecessor(AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS, AnnouncementStatus.ANNOUNCEMENT_NEW);
         setPredecessor(AnnouncementStatus.ANNOUNCEMENT_WAITING_READ, AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE);

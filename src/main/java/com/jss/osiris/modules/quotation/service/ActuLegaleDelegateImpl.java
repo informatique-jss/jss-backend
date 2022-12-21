@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.quotation.service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 
@@ -13,6 +14,11 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.jss.osiris.libs.JacksonLocalDateSerializer;
+import com.jss.osiris.libs.JacksonLocalDateTimeSerializer;
 import com.jss.osiris.libs.SSLHelper;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.quotation.model.ActuLegaleAnnouncement;
@@ -51,7 +57,7 @@ public class ActuLegaleDelegateImpl implements ActuLegaleDelegate {
             loginUser();
         return new HttpHeaders() {
             {
-                add("Authorization", "BEARER " + bearerValue);
+                add("Authorization", "Bearer " + bearerValue);
                 setAccept(Arrays.asList(new MediaType[] { MediaType.APPLICATION_JSON }));
                 setContentType(MediaType.APPLICATION_JSON);
             }
@@ -110,18 +116,44 @@ public class ActuLegaleDelegateImpl implements ActuLegaleDelegate {
         actuLegaleAnnouncement.setCompanyCity(affaire.getCity() != null ? affaire.getCity().getLabel() : null);
         actuLegaleAnnouncement.setCompanyName(affaire.getDenomination() != null ? affaire.getDenomination()
                 : affaire.getFirstname() + " " + affaire.getLastname());
-        actuLegaleAnnouncement.setCompanyZip(affaire.getPostalCode());
+        try {
+            actuLegaleAnnouncement.setCompanyZip(Integer.parseInt(affaire.getPostalCode()));
+        } catch (Exception e) {
+        } // Completely a foul to expect an Integer here ...
         actuLegaleAnnouncement.setComparnyAddress(affaire.getAddress());
-        actuLegaleAnnouncement.setDepartementParution(
-                announcement.getDepartment() != null ? announcement.getDepartment().getCode() : null);
+        try {
+            if (announcement.getDepartment() != null)
+                actuLegaleAnnouncement.setDepartementParution(Integer.parseInt(announcement.getDepartment().getCode()));
+        } catch (Exception e) {
+        } // Completely a foul to expect an Integer here ...
+        actuLegaleAnnouncement.setDepartementParution(75);
         actuLegaleAnnouncement.setNewspaperId(actuLegalePublishNewsPaperId);
         actuLegaleAnnouncement.setParutionDate(announcement.getPublicationDate());
-        actuLegaleAnnouncement.setSiren(affaire.getSiren());
+        try {
+            actuLegaleAnnouncement.setSiren(Integer.parseInt(affaire.getSiren()));
+        } catch (Exception e) {
+        } // Completely a foul to expect an Integer here ...
         actuLegaleAnnouncement.setTest(actuLegaleIsTest);
-        actuLegaleAnnouncement.setText(announcement.getNotice());
+        actuLegaleAnnouncement.setText(announcement.getNotice().replaceAll("(\r?\n){2,}", " ")
+                .replaceAll("\\<.*?>", "").replaceAll("&nbsp;", " "));
 
         HttpEntity<ActuLegaleAnnouncement> request = new HttpEntity<ActuLegaleAnnouncement>(actuLegaleAnnouncement,
                 headers);
+
+        // TODO remove
+        ObjectMapper objectMapper = new ObjectMapper();
+        SimpleModule simpleModule = new SimpleModule("SimpleModule");
+        simpleModule.addSerializer(LocalDateTime.class, new JacksonLocalDateTimeSerializer());
+        simpleModule.addSerializer(LocalDate.class, new JacksonLocalDateSerializer());
+        objectMapper.registerModule(simpleModule);
+        String json = null;
+        try {
+            json = objectMapper.writeValueAsString(actuLegaleAnnouncement);
+        } catch (JsonProcessingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        System.out.println(json);
 
         ResponseEntity<ActuLegaleAnnouncement> response = new RestTemplate().postForEntity(
                 actuLegalePublishEntryPoint + publishUrl, request, ActuLegaleAnnouncement.class);
