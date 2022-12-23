@@ -184,7 +184,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoice.setCreatedDate(LocalDateTime.now());
 
         for (InvoiceItem invoiceItem : invoice.getInvoiceItems()) {
-            invoiceItem.setVatPrice(invoiceItem.getVat().getRate() * invoiceItem.getPreTaxPrice() / 100);
+            invoiceItem.setVatPrice(invoiceItem.getVat().getRate() * invoiceItem.getPreTaxPrice() / 100f);
         }
 
         Integer nbrOfDayFromDueDate = 30;

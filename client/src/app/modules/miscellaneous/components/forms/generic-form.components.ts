@@ -53,6 +53,10 @@ export abstract class GenericFormComponent implements OnInit {
    * Fired when input is modified by user
    */
   @Output() onFormChange: EventEmitter<void> = new EventEmitter();
+  /**
+ * Fired when input blur
+ */
+  @Output() onFormBlur: EventEmitter<void> = new EventEmitter();
 
   constructor(
     private formBuilder: UntypedFormBuilder,
@@ -75,6 +79,10 @@ export abstract class GenericFormComponent implements OnInit {
       this.form.get(this.propertyName)?.updateValueAndValidity();
       this.form.get(this.propertyName)?.markAllAsTouched();
     }
+  }
+
+  blurForm() {
+    this.onFormBlur.emit();
   }
 
   ngOnDestroy() {

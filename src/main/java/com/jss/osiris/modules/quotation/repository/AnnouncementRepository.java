@@ -19,11 +19,12 @@ public interface AnnouncementRepository extends CrudRepository<Announcement, Int
                         @Param("journalJssPaper") Confrere journalJssPaper);
 
         @Query(nativeQuery = true, value = "" +
-                        " select coalesce(affaire.denomination, affaire.firstname || ' ' || affaire.lastname) as affaireName, "
+                        " select a.id, coalesce(affaire.denomination, affaire.firstname || ' ' || affaire.lastname) as affaireName, "
                         +
                         " d.code as department, " +
                         " a.publication_date as publicationDate, " +
-                        " STRING_AGG( notice_type.label,', ' order by 1)  as noticeTypeLabels, " +
+                        " STRING_AGG( DISTINCT notice_type.label,', ' order by notice_type.label)  as noticeTypeLabels, "
+                        +
                         " a.notice " +
                         " from announcement a " +
                         " join provision p on p.id_announcement = a.id " +
@@ -40,7 +41,7 @@ public interface AnnouncementRepository extends CrudRepository<Announcement, Int
                         " and (  a.publication_date >=:startDate ) " +
                         "  and ( :departmentId = 0 or a.id_department = :departmentId) " +
                         "  and ( :noticeTypeId = 0 or asso.id_notice_type = :noticeTypeId) " +
-                        "  group by coalesce(affaire.denomination, affaire.firstname || ' ' || affaire.lastname),d.code,a.publication_date,a.notice ")
+                        "  group by a.id, coalesce(affaire.denomination, affaire.firstname || ' ' || affaire.lastname),d.code,a.publication_date,a.notice ")
         List<AnnouncementSearchResult> searchAnnouncements(@Param("affaireName") String affaireName,
                         @Param("isStricNameSearch") Boolean isStricNameSearch,
                         @Param("departmentId") Integer departmentId,

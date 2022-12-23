@@ -126,6 +126,7 @@ public class ActuLegaleDelegateImpl implements ActuLegaleDelegate {
                 actuLegaleAnnouncement.setDepartementParution(Integer.parseInt(announcement.getDepartment().getCode()));
         } catch (Exception e) {
         } // Completely a foul to expect an Integer here ...
+          // TODO
         actuLegaleAnnouncement.setDepartementParution(75);
         actuLegaleAnnouncement.setNewspaperId(actuLegalePublishNewsPaperId);
         actuLegaleAnnouncement.setParutionDate(announcement.getPublicationDate());

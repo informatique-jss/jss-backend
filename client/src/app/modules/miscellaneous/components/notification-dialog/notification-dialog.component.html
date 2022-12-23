@@ -232,6 +232,31 @@
                   </mat-card>
                 </mat-dialog-content>
               </mat-tab>
+              <mat-tab [label]="getTabLabel(INVOICE_ENTITY_TYPE)">
+                <mat-dialog-content class="mat-content">
+                  <mat-card class="pointer" *ngFor="let notification of getEntitiesForTab(INVOICE_ENTITY_TYPE)"
+                    (click)="openEntity($event,notification,INVOICE_ENTITY_TYPE)"
+                    (auxclick)="openEntity($event,notification,INVOICE_ENTITY_TYPE)">
+                    <ng-container *ngIf="notification.notificationType==INVOICE_REMINDER_PAYMENT">
+                      <mat-card-title-group>
+                        <mat-card-title matBadge="X" matBadgePosition="above before"
+                          [matBadgeHidden]="notification.isRead" matBadgeColor="warn" matBadgeSize="small"
+                          class="hide-text">Facture à relancer</mat-card-title>
+                        <mat-card-subtitle><span>{{notification.createdDateTime |date:'EEEE d LLLL yyyy à
+                            HH:mm'}}</span>
+                        </mat-card-subtitle>
+                        <ng-container [ngTemplateOutlet]="cardActions"
+                          [ngTemplateOutletContext]="{notification:notification}">
+                        </ng-container>
+                      </mat-card-title-group>
+                      <mat-card-content>
+                        La facture n°{{notification.entityId}} a été relancé pour paiement pour la troisème fois
+                      </mat-card-content>
+                    </ng-container>
+                    <mat-divider></mat-divider>
+                  </mat-card>
+                </mat-dialog-content>
+              </mat-tab>
               <mat-tab
                 [label]="'Personnel ( '+getPersonnalNotificationNumber(false)+' / '+(getPersonnalNotificationNumber(false)+getPersonnalNotificationNumber(true))+')'">
                 <mat-dialog-content class="mat-content">
@@ -261,31 +286,6 @@
                     <mat-card-content>
                       {{notification.detail1}}
                     </mat-card-content>
-                    <mat-divider></mat-divider>
-                  </mat-card>
-                </mat-dialog-content>
-              </mat-tab>
-              <mat-tab [label]="getTabLabel(INVOICE_ENTITY_TYPE)">
-                <mat-dialog-content class="mat-content">
-                  <mat-card class="pointer" *ngFor="let notification of getEntitiesForTab(INVOICE_ENTITY_TYPE)"
-                    (click)="openEntity($event,notification,INVOICE_ENTITY_TYPE)"
-                    (auxclick)="openEntity($event,notification,INVOICE_ENTITY_TYPE)">
-                    <ng-container *ngIf="notification.notificationType==INVOICE_REMINDER_PAYMENT">
-                      <mat-card-title-group>
-                        <mat-card-title matBadge="X" matBadgePosition="above before"
-                          [matBadgeHidden]="notification.isRead" matBadgeColor="warn" matBadgeSize="small"
-                          class="hide-text">Facture à relancer</mat-card-title>
-                        <mat-card-subtitle><span>{{notification.createdDateTime |date:'EEEE d LLLL yyyy à
-                            HH:mm'}}</span>
-                        </mat-card-subtitle>
-                        <ng-container [ngTemplateOutlet]="cardActions"
-                          [ngTemplateOutletContext]="{notification:notification}">
-                        </ng-container>
-                      </mat-card-title-group>
-                      <mat-card-content>
-                        La facture n°{{notification.entityId}} a été relancé pour paiement pour la troisème fois
-                      </mat-card-content>
-                    </ng-container>
                     <mat-divider></mat-divider>
                   </mat-card>
                 </mat-dialog-content>

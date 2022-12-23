@@ -116,7 +116,7 @@ public interface AccountingRecordRepository extends CrudRepository<AccountingRec
                         "(record.accounting_date_time is null or (record.accounting_date_time >=:startDate and record.accounting_date_time <=:endDate )) and "
                         +
                         "(:accountingClassId =0 or pa.id_accounting_account_class = :accountingClassId ) "
-                        + " (and :canViewRestricted=true or accounting.is_view_restricted=false ) " +
+                        + " and (:canViewRestricted=true or accounting.is_view_restricted=false ) " +
                         " group by accounting.label,pa.code,accounting.accounting_account_sub_number ")
         List<AccountingBalance> searchAccountingBalance(
                         @Param("accountingClassId") Integer accountingClassId,
@@ -150,7 +150,7 @@ public interface AccountingRecordRepository extends CrudRepository<AccountingRec
                         "(record.accounting_date_time is null or (record.accounting_date_time >=:startDate and record.accounting_date_time <=:endDate )) and "
                         +
                         "(:accountingClassId =0 or pa.id_accounting_account_class = :accountingClassId ) "
-                        + " (and :canViewRestricted=true or accounting.is_view_restricted=false)  " +
+                        + " and (:canViewRestricted=true or accounting.is_view_restricted=false)  " +
                         " group by pa.code,pa.label ")
         List<AccountingBalance> searchAccountingBalanceGenerale(
                         @Param("accountingClassId") Integer accountingClassId,
@@ -166,7 +166,7 @@ public interface AccountingRecordRepository extends CrudRepository<AccountingRec
                         " from AccountingRecord a  JOIN a.accountingAccount aa  JOIN aa.principalAccountingAccount pa  where "
                         +
                         "(a.accountingDateTime is null or (a.accountingDateTime >=:startDate and a.accountingDateTime <=:endDate ))   "
-                        + " and :canViewRestricted=true or aa.isViewRestricted=false  " +
+                        + " and (:canViewRestricted=true or aa.isViewRestricted=false)  " +
                         " group by pa.code ")
         List<AccountingBalanceBilan> getAccountingRecordAggregateByAccountingNumber(
                         @Param("startDate") LocalDateTime startDate,

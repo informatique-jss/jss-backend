@@ -51,6 +51,11 @@
                   {{quotation.tiers.city?quotation.tiers.city.label:""}}
                   {{quotation.tiers.country?quotation.tiers.country.label:""}}</td>
               </tr>
+              <tr *ngIf="quotation.responsable ">
+                <td>Adresse : {{quotation.responsable.tiers.address}} {{quotation.responsable.tiers.postalCode}}
+                  {{quotation.responsable.tiers.city?quotation.responsable.tiers.city.label:""}}
+                  {{quotation.responsable.tiers.country?quotation.responsable.tiers.country.label:""}}</td>
+              </tr>
               <tr *ngIf="quotation.confrere && quotation.confrere.city && quotation.confrere.city ">
                 <td>Adresse : {{quotation.confrere.address}} {{quotation.confrere.postalCode}}
                   {{quotation.confrere.city.label}}

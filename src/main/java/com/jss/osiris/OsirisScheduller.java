@@ -172,6 +172,7 @@ public class OsirisScheduller {
 	}
 
 	@Scheduled(cron = "${schedulling.announcement.publish.actu.legale}")
+	// @Scheduled(initialDelay = 1000, fixedDelay = 1000000000)
 	private void publishAnnouncementToActuLegale() {
 		try {
 			announcementService.publishAnnouncementsToActuLegale();

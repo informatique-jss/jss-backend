@@ -64,14 +64,14 @@ public class QuotationStatusServiceImpl implements QuotationStatusService {
 
         setSuccessor(QuotationStatus.OPEN, QuotationStatus.TO_VERIFY);
         setSuccessor(QuotationStatus.OPEN, QuotationStatus.QUOTATION_WAITING_CONFRERE);
+        setSuccessor(QuotationStatus.OPEN, QuotationStatus.SENT_TO_CUSTOMER);
         setSuccessor(QuotationStatus.TO_VERIFY, QuotationStatus.SENT_TO_CUSTOMER);
         setSuccessor(QuotationStatus.SENT_TO_CUSTOMER, QuotationStatus.VALIDATED_BY_CUSTOMER);
         setSuccessor(QuotationStatus.SENT_TO_CUSTOMER, QuotationStatus.REFUSED_BY_CUSTOMER);
-        setSuccessor(QuotationStatus.REFUSED_BY_CUSTOMER, QuotationStatus.OPEN);
 
         setPredecessor(QuotationStatus.QUOTATION_WAITING_CONFRERE, QuotationStatus.OPEN);
         setPredecessor(QuotationStatus.TO_VERIFY, QuotationStatus.OPEN);
-        setPredecessor(QuotationStatus.SENT_TO_CUSTOMER, QuotationStatus.OPEN);
+        setPredecessor(QuotationStatus.REFUSED_BY_CUSTOMER, QuotationStatus.OPEN);
         setPredecessor(QuotationStatus.SENT_TO_CUSTOMER, QuotationStatus.TO_VERIFY);
 
         // All cancelled

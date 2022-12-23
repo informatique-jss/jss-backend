@@ -638,7 +638,7 @@ public class MailHelper {
                         "Votre commande est en attente de provision. Effectuez dès maintenant un virement de "
                                 + mail.getPriceTotal() + " € sur le compte ci-dessous pour la débloquer.");
             else
-                mail.setPaymentExplaination("Vous pouvez d'orses et déjà régler cette commande d'un montant de "
+                mail.setPaymentExplaination("Vous pouvez d'ores et déjà régler cette commande d'un montant de "
                         + mail.getPriceTotal() + " € en suivant les instructions ci-dessous.");
 
             mail.setPaymentExplaination2("IBAN / BIC : " + ibanJss + " / " + bicJss);
@@ -831,7 +831,7 @@ public class MailHelper {
                 mail.setPaymentExplaination(
                         "Votre commande sera traitée dans les meilleurs délais et avec tout notre savoir-faire par "
                                 + responsibleString
-                                + "toutes nos équipes. Vous pourrez suivre l'état de son avancement en ligne sur notre site https://www.jss.fr/ Espace abonné, rubrique \"Mon compte\". \nVous pouvez d'orses et déjà régler cette commande d'un montant de "
+                                + "toutes nos équipes. Vous pourrez suivre l'état de son avancement en ligne sur notre site https://www.jss.fr/ Espace abonné, rubrique \"Mon compte\". \nVous pouvez d'ores et déjà régler cette commande d'un montant de "
                                 + mail.getPriceTotal() + " € en suivant les instructions ci-dessous.");
             }
 

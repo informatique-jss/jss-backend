@@ -273,7 +273,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     }
 
     // Check balance ok
-    if (Math.round(balance * 10000f) / 10000f != 0) {
+    if (Math.round(balance * 100f) / 100f != 0) {
       throw new OsirisException(null, "Accounting records  are not balanced for invoice " + invoice.getId());
     }
   }

@@ -388,7 +388,8 @@ public class QuotationServiceImpl implements QuotationService {
                             if (invoiceItem.getIsOverridePrice() == null)
                                 invoiceItem.setIsOverridePrice(false);
 
-                            if (!invoiceItem.getIsOverridePrice() || invoiceItem.getPreTaxPrice() == null
+                            if (!invoiceItem.getIsOverridePrice() || !billingType.getCanOverridePrice()
+                                    || invoiceItem.getPreTaxPrice() == null
                                     || invoiceItem.getPreTaxPrice() <= 0
                                     || invoiceItem.getIsGifted() != null && invoiceItem.getIsGifted())
                                 setInvoiceItemPreTaxPriceAndLabel(invoiceItem, billingItem, provision);
@@ -801,6 +802,7 @@ public class QuotationServiceImpl implements QuotationService {
         return preTaxPriceTotal - (discountTotal != null ? discountTotal : 0) + vatTotal;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public void sendRemindersForQuotation() throws OsirisException {
         List<Quotation> quotations = quotationRepository.findQuotationForReminder(
                 quotationStatusService.getQuotationStatusByCode(QuotationStatus.SENT_TO_CUSTOMER));

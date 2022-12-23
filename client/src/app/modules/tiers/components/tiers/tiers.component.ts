@@ -127,11 +127,11 @@ export class TiersComponent implements OnInit, AfterContentChecked {
     let responsableMainComponentFormStatus = this.responsableMainComponent?.getFormStatus();
     let errorMessages: string[] = [] as Array<string>;
     if (!principalFormStatus)
-      errorMessages.push("Onglet Fiche du tiers");
+      errorMessages.push("Onglet Fiche du tiers" + (this.principalFormComponent!.principalForm.errors ? " : " + this.principalFormComponent!.principalForm.errors["notFilled"] : ""));
     if (!this.isTiersTypeProspect() && !documentSettlementBillingFormStatus)
-      errorMessages.push("Onglet Pièces, réglements, facturations & relances");
+      errorMessages.push("Onglet Pièces, réglements, facturations & relances" + (this.documentSettlementBillingComponent!.settlementBillingForm.errors ? " : " + this.documentSettlementBillingComponent?.settlementBillingForm.errors["notFilled"] : ""));
     if (!responsableMainComponentFormStatus)
-      errorMessages.push("Onglet Responsable");
+      errorMessages.push("Onglet Responsable" + (this.responsableMainComponent!.principalForm.errors ? " : " + this.responsableMainComponent!.principalForm.errors["notFilled"] : ""));
     if (errorMessages.length > 0) {
       let errorMessage = "Les onglets suivants ne sont pas correctement remplis. Veuillez les compléter avant de sauvegarder : " + errorMessages.join(" / ");
       this.appService.displaySnackBar(errorMessage, true, 15);

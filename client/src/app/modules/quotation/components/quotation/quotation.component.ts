@@ -313,7 +313,8 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
 
   addAffaire() {
     let dialogRef = this.addAffaireDialog.open(AddAffaireDialogComponent, {
-      width: '100%'
+      width: '100%',
+      height: '90%'
     });
     dialogRef.componentInstance.isLabelAffaire = this.quotationManagementComponent?.getBillingDocument()!.billingLabelType.id == this.constantService.getBillingLabelTypeCodeAffaire().id;
     dialogRef.afterClosed().subscribe(response => {

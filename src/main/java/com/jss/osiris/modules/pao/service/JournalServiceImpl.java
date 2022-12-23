@@ -62,7 +62,8 @@ public class JournalServiceImpl implements JournalService {
 
         List<Announcement> announcements = announcementService.getAnnouncementWaitingForPublicationProof();
 
-        if (announcements != null && announcements.size() > 0 && journal.getAttachments() != null) {
+        if (announcements != null && announcements.size() > 0 && journal.getAttachments() != null
+                && journal.getAttachments().size() > 0) {
             // parse journal
             HashMap<Integer, String> pageContent = new HashMap<Integer, String>();
             PdfReader pdfReader;

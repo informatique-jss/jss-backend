@@ -77,7 +77,7 @@ public class GuichetUniqueDelegateServiceImpl implements GuichetUniqueDelegateSe
         if (res.getHeaders() != null && res.getHeaders().getFirst(HttpHeaders.SET_COOKIE) != null) {
             List<HttpCookie> cookies = HttpCookie.parse(res.getHeaders().getFirst(HttpHeaders.SET_COOKIE));
             bearerValue = cookies.get(0).getValue();
-            bearerExpireDateTime = LocalDateTime.now().plusSeconds(cookies.get(0).getMaxAge()).minusHours(1);
+            bearerExpireDateTime = LocalDateTime.now().plusSeconds(cookies.get(0).getMaxAge()).minusMinutes(10);
         } else {
             throw new OsirisException(null, "No bearer cookie found in response");
         }
