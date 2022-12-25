@@ -2,11 +2,11 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AFFAIRE_ENTITY_TYPE } from '../../../../routing/search/search.component';
 import { AppService } from '../../../../services/app.service';
-import { AddAffaireComponent } from '../../../administration/components/referentials/referential-affaire/add-affaire/add-affaire.component';
 import { Affaire } from '../../model/Affaire';
 import { OrderingSearch } from '../../model/OrderingSearch';
 import { QuotationSearch } from '../../model/QuotationSearch';
 import { AffaireService } from '../../services/affaire.service';
+import { AddAffaireComponent } from '../add-affaire/add-affaire.component';
 
 @Component({
   selector: 'app-affaire',

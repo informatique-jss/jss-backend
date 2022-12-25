@@ -130,6 +130,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
           this.toggleTabs();
           this.setOpenStatus();
           this.checkAffaireAssignation();
+          this.updateDocumentsEvent.next();
         })
       }
       // Load by quotation
@@ -143,6 +144,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
             (this.quotation.quotationStatus != null ? this.quotation.quotationStatus.label : ""));
         this.toggleTabs();
         this.setOpenStatus();
+        this.updateDocumentsEvent.next();
       })
     } else if (this.createMode == false) {
       this.isQuotationUrl = true;
@@ -218,27 +220,23 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
 
     // Can't find a way to make it work correctly ...
     replaceDocument(this.constantService.getDocumentTypeBilling(), this.quotation, this.quotationManagementComponent?.getBillingDocument()!);
+    replaceDocument(this.constantService.getDocumentTypeDigital(), this.quotation, this.quotationManagementComponent?.getDigitalDocument()!);
+    replaceDocument(this.constantService.getDocumentTypePaper(), this.quotation, this.quotationManagementComponent?.getPaperDocument()!);
     if (this.getFormsStatus()) {
-      this.mailComputeResultService.getMailComputeResultForBilling(this.quotation).subscribe(response => {
-        if (!response || !response.recipientsMailTo || response.recipientsMailTo.length == 0) {
-          this.appService.displaySnackBar("Aucune adresse mail d'envoi trouvée !", true, 15);
-          return false;
-        }
-        if (!this.instanceOfCustomerOrder) {
-          this.quotationService.addOrUpdateQuotation(this.quotation).subscribe(response => {
-            this.quotation = response;
-            this.editMode = false;
-            this.appService.openRoute(null, '/quotation/' + this.quotation.id, null);
-          })
-        } else {
-          this.customerOrderService.addOrUpdateCustomerOrder(this.quotation).subscribe(response => {
-            this.quotation = response;
-            this.editMode = false;
-            this.appService.openRoute(null, '/order/' + this.quotation.id, null);
-          })
-        }
-        return true;
-      });
+      if (!this.instanceOfCustomerOrder) {
+        this.quotationService.addOrUpdateQuotation(this.quotation).subscribe(response => {
+          this.quotation = response;
+          this.editMode = false;
+          this.appService.openRoute(null, '/quotation/' + this.quotation.id, null);
+        })
+      } else {
+        this.customerOrderService.addOrUpdateCustomerOrder(this.quotation).subscribe(response => {
+          this.quotation = response;
+          this.editMode = false;
+          this.appService.openRoute(null, '/order/' + this.quotation.id, null);
+        })
+      }
+      return true;
     }
     return false;
   }
@@ -377,7 +375,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
             this.appService.openRoute(null, '/quotation/' + this.quotation.id, null);
           })
         } else {
-          if (this.getRemainingToPay() < 0 && targetStatus.code == CUSTOMER_ORDER_STATUS_BILLED || targetStatus.code == CUSTOMER_ORDER_STATUS_ABANDONED) {
+          if (this.getRemainingToPay() < 0 && (targetStatus.code == CUSTOMER_ORDER_STATUS_BILLED || targetStatus.code == CUSTOMER_ORDER_STATUS_ABANDONED)) {
             let dialogDepositDialogRef = this.associateDepositDialog.open(AssociateDepositDialogComponent, {
               width: '100%'
             });

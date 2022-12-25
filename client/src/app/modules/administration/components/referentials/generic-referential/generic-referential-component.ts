@@ -21,6 +21,7 @@ export abstract class GenericReferentialComponent<T extends IReferential> implem
   entities: T[] = [] as Array<T>;
   displayedColumns: SortTableColumn[] = [];
   searchText: string | undefined;
+  idRowSelected: number | undefined;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -51,6 +52,7 @@ export abstract class GenericReferentialComponent<T extends IReferential> implem
 
   selectEntity(element: T) {
     this.selectedEntity = element;
+    this.idRowSelected = element.id;
     this.selectedEntityChange.emit(this.selectedEntity);
   }
 

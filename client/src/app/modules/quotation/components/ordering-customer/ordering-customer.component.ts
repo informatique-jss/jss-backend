@@ -31,7 +31,6 @@ export class OrderingCustomerComponent implements OnInit {
   @Output() updateDocuments: EventEmitter<void> = new EventEmitter<void>();
 
   documentTypes: DocumentType[] = [] as Array<DocumentType>;
-  devisDocument: Document = {} as Document;
   billingDocument: Document = {} as Document;
 
   customerOrderTableActions: SortTableAction[] = [] as Array<SortTableAction>;

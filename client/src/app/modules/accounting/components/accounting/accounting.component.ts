@@ -14,11 +14,11 @@ export class AccountingComponent implements OnInit {
   ) { }
 
   canDisplayProfitLost() {
-    this.habilitationService.canDisplayProfitLost();
+    return this.habilitationService.canDisplayProfitLost();
   }
 
   canDisplayBilan() {
-    this.habilitationService.canDisplayBilan();
+    return this.habilitationService.canDisplayBilan();
   }
 
   ngOnInit() {

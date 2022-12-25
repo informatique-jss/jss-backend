@@ -66,16 +66,12 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.tiersTypeClient;
   }
 
-  getDocumentTypePublication() {
-    return this.constant.documentTypePublication;
+  getDocumentTypeDigital() {
+    return this.constant.documentTypeDigital;
   }
 
-  getDocumentTypeCfe() {
-    return this.constant.documentTypeCfe;
-  }
-
-  getDocumentTypeKbis() {
-    return this.constant.documentTypeKbis;
+  getDocumentTypePaper() {
+    return this.constant.documentTypePaper;
   }
 
   getDocumentTypeBilling() {
@@ -96,14 +92,6 @@ export class ConstantService extends AppRestService<Constant>{
 
   getDocumentTypeProvisionnalReceipt() {
     return this.constant.documentTypeProvisionnalReceipt;
-  }
-
-  getDocumentTypeProofReading() {
-    return this.constant.documentTypeProofReading;
-  }
-
-  getDocumentTypePublicationCertificate() {
-    return this.constant.documentTypePublicationCertificate;
   }
 
   getAttachmentTypeKbis() {
@@ -148,6 +136,10 @@ export class ConstantService extends AppRestService<Constant>{
 
   getAttachmentTypeBillingClosure() {
     return this.constant.attachmentTypeBillingClosure;
+  }
+
+  getAttachmentTypeAttachmentTypeProofReading() {
+    return this.constant.attachmentTypeProofReading;
   }
 
   getCountryFrance() {

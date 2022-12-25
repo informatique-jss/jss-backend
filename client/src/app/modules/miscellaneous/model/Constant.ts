@@ -42,16 +42,13 @@ export interface Constant {
   accountingJournalANouveau: AccountingJournal;
   tiersTypeProspect: TiersType;
   tiersTypeClient: TiersType;
-  documentTypePublication: DocumentType;
-  documentTypeCfe: DocumentType;
-  documentTypeKbis: DocumentType;
+  documentTypeDigital: DocumentType;
+  documentTypePaper: DocumentType;
   documentTypeBilling: DocumentType;
   documentTypeDunning: DocumentType;
   documentTypeRefund: DocumentType;
   documentTypeBillingClosure: DocumentType;
   documentTypeProvisionnalReceipt: DocumentType;
-  documentTypeProofReading: DocumentType;
-  documentTypePublicationCertificate: DocumentType;
   attachmentTypeKbis: AttachmentType;
   attachmentTypeCni: AttachmentType;
   attachmentTypeLogo: AttachmentType;
@@ -63,6 +60,7 @@ export interface Constant {
   attachmentTypePublicationProof: AttachmentType;
   attachmentTypeJournal: AttachmentType;
   attachmentTypeBillingClosure: AttachmentType;
+  attachmentTypeProofReading: AttachmentType;
   countryFrance: Country;
   countryMonaco: Country;
   billingTypeLogo: BillingType;

@@ -1,5 +1,10 @@
 package com.jss.osiris.modules.quotation.service;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -10,11 +15,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.invoicing.service.InvoiceItemService;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.Document;
+import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.MailService;
 import com.jss.osiris.modules.miscellaneous.service.PhoneService;
@@ -29,6 +36,7 @@ import com.jss.osiris.modules.quotation.model.AssoAffaireOrderSearchResult;
 import com.jss.osiris.modules.quotation.model.Bodacc;
 import com.jss.osiris.modules.quotation.model.BodaccStatus;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.quotation.model.Domiciliation;
 import com.jss.osiris.modules.quotation.model.DomiciliationStatus;
 import com.jss.osiris.modules.quotation.model.FormaliteStatus;
@@ -85,6 +93,12 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
     @Autowired
     InvoiceItemService invoiceItemService;
 
+    @Autowired
+    MailHelper mailHelper;
+
+    @Autowired
+    AttachmentService attachmentService;
+
     @Override
     public List<AssoAffaireOrder> getAssoAffaireOrders() {
         return IterableUtils.toList(assoAffaireOrderRepository.findAll());
@@ -111,7 +125,6 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
         AssoAffaireOrder affaireSaved = assoAffaireOrderRepository.save(assoAffaireOrder);
         indexEntityService.indexEntity(affaireSaved, affaireSaved.getId());
         customerOrderService.checkAllProvisionEnded(assoAffaireOrder.getCustomerOrder());
-        customerOrderService.generateStoreAndSendPublicationReceipt(assoAffaireOrder.getCustomerOrder());
         return affaireSaved;
     }
 
@@ -177,9 +190,6 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                         phoneService.populateMPhoneIds(domiciliation.getLegalGardianPhones());
                 }
 
-                if (domiciliation.getDocuments() != null)
-                    for (Document document : domiciliation.getDocuments())
-                        document.setDomiciliation(domiciliation);
             }
 
             if (provision.getFormalite() != null) {
@@ -200,9 +210,6 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                 if (formalite.getSignedPlace() == null)
                     formalite.setSignedPlace("8 Rue Saint-Augustin, 75002 Paris");
 
-                if (formalite.getDocuments() != null)
-                    for (Document document : formalite.getDocuments())
-                        document.setFormalite(formalite);
             }
 
             if (provision.getBodacc() != null) {
@@ -210,9 +217,6 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                 if (customerOrder.getId() == null || bodacc.getBodaccStatus() == null)
                     bodacc.setBodaccStatus(bodaccStatusService.getBodaccStatusByCode(BodaccStatus.BODACC_NEW));
 
-                if (bodacc.getDocuments() != null)
-                    for (Document document : bodacc.getDocuments())
-                        document.setBodacc(bodacc);
             }
 
             if (provision.getAnnouncement() != null) {
@@ -239,11 +243,26 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                             }
                 }
 
-                if (publicationProofFound && announcement.getAnnouncementStatus() != null && announcement
-                        .getAnnouncementStatus().getCode()
-                        .equals(AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE_PUBLISHED))
-                    announcement.setAnnouncementStatus(announcementStatusService
-                            .getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_PUBLISHED));
+                // Handle status change
+                if (announcement.getAnnouncementStatus() != null) {
+                    if (publicationProofFound && announcement.getAnnouncementStatus().getCode()
+                            .equals(AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE_PUBLISHED))
+                        announcement.setAnnouncementStatus(announcementStatusService
+                                .getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_PUBLISHED));
+
+                    if (announcement.getIsProofReadingDocument() && (announcement.getAnnouncementStatus().getCode()
+                            .equals(AnnouncementStatus.ANNOUNCEMENT_WAITING_READ)
+                            || announcement.getAnnouncementStatus().getCode()
+                                    .equals(AnnouncementStatus.ANNOUNCEMENT_WAITING_READ_CUSTOMER))) {
+                        announcement.setAnnouncementStatus(announcementStatusService
+                                .getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_WAITING_READ_CUSTOMER));
+                        generateStoreAndSendProofReading(announcement, (CustomerOrder) customerOrder);
+                    }
+
+                    if (announcement.getAnnouncementStatus().getCode().equals(AnnouncementStatus.ANNOUNCEMENT_DONE))
+                        customerOrderService.generateStoreAndSendPublicationReceipt((CustomerOrder) customerOrder);
+                }
+
             }
 
             if (provision.getSimpleProvision() != null) {
@@ -325,8 +344,43 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
         if (affaireSearch.getLabel() == null)
             affaireSearch.setLabel("");
 
+        ArrayList<String> excludedCustomerOrderStatusCode = new ArrayList<String>();
+        excludedCustomerOrderStatusCode.add(CustomerOrderStatus.OPEN);
+        excludedCustomerOrderStatusCode.add(CustomerOrderStatus.WAITING_DEPOSIT);
+
         return assoAffaireOrderRepository.findAsso(new ArrayList<Integer>(),
                 new ArrayList<Integer>(), affaireSearch.getLabel(),
-                statusId);
+                statusId, excludedCustomerOrderStatusCode);
+    }
+
+    private void generateStoreAndSendProofReading(Announcement announcement, CustomerOrder customerOrder)
+            throws OsirisException {
+        // Check if publication receipt already exists
+        boolean proofReading = false;
+        if (announcement.getAttachments() != null)
+            for (Attachment attachment : announcement.getAttachments())
+                if (attachment.getAttachmentType().getId()
+                        .equals(constantService.getAttachmentTypeProofReading().getId()))
+                    proofReading = true;
+
+        if (!proofReading && announcement.getNotice() != null) {
+            File publicationReceiptPdf = mailHelper.generatePublicationReceiptPdf(announcement, false);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
+            try {
+                announcement.setAttachments(
+                        attachmentService.addAttachment(new FileInputStream(publicationReceiptPdf),
+                                announcement.getId(),
+                                Announcement.class.getSimpleName(),
+                                constantService.getAttachmentTypeProofReading(),
+                                "Proof_reading_" + formatter.format(LocalDateTime.now()) + ".pdf",
+                                false, "Bon à tirer n°" + announcement.getId()));
+            } catch (FileNotFoundException e) {
+                throw new OsirisException(e, "Impossible to read invoice PDF temp file");
+            } finally {
+                publicationReceiptPdf.delete();
+            }
+        }
+
+        mailHelper.sendProofReadingToCustomer(customerOrder, false);
     }
 }

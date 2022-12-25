@@ -15,9 +15,7 @@ import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
-import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.model.IAttachment;
-import com.jss.osiris.modules.miscellaneous.model.IDocument;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.quotation.model.FormaliteStatus;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.DiffusionINSEE;
@@ -27,7 +25,7 @@ import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypePer
 
 @Entity
 @JsonIgnoreProperties
-public class Formalite implements IId, IAttachment, IDocument {
+public class Formalite implements IId, IAttachment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -97,10 +95,6 @@ public class Formalite implements IId, IAttachment, IDocument {
     FormeJuridique formeJuridique;
 
     private Integer optionJqpaNumber;
-
-    @OneToMany(targetEntity = Document.class, mappedBy = "formalite", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnoreProperties(value = { "formalite" }, allowSetters = true)
-    private List<Document> documents;
 
     @Column(nullable = false)
     private Boolean regularisation;
@@ -288,13 +282,4 @@ public class Formalite implements IId, IAttachment, IDocument {
     public void setReferenceMandataire(String referenceMandataire) {
         this.referenceMandataire = referenceMandataire;
     }
-
-    public List<Document> getDocuments() {
-        return documents;
-    }
-
-    public void setDocuments(List<Document> documents) {
-        this.documents = documents;
-    }
-
 }

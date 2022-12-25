@@ -1,12 +1,12 @@
 import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { getDocument } from 'src/app/libs/DocumentHelper';
 import { Attachment } from 'src/app/modules/miscellaneous/model/Attachment';
 import { BillingType } from 'src/app/modules/miscellaneous/model/BillingType';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { UploadAttachmentService } from 'src/app/modules/miscellaneous/services/upload.attachment.service';
 import { PROVISION_ENTITY_TYPE } from 'src/app/routing/search/search.component';
-import { getDocument } from '../../../../libs/DocumentHelper';
 import { ITiers } from '../../../tiers/model/ITiers';
 import { Provision } from '../../model/Provision';
 
@@ -196,23 +196,21 @@ export class ProvisionOptionsComponent implements OnInit {
     }
     return false;
   }
-
   fillPublicationPaperNumber() {
-    if (this.provision && this.provision.announcement && (!this.provision.publicationPaperAffaireNumber
-      && !this.provision.publicationPaperClientNumber
-    )) {
-      let document = getDocument(this.constantService.getDocumentTypePublication(), this.provision.announcement);
-      if (this.provision.isPublicationPaper) {
-        if (document && document.isMailingPaper) {
-          if (document.numberMailingAffaire && document.numberMailingAffaire > 0)
-            this.provision.publicationPaperAffaireNumber = document.numberMailingAffaire;
-          if (document.numberMailingClient && document.numberMailingClient > 0)
-            this.provision.publicationPaperClientNumber = document.numberMailingClient;
+    if (this.provision && this.provision.announcement && (!this.provision.publicationPaperAffaireNumber && !this.provision.publicationPaperClientNumber)) {
+      let document = getDocument(this.constantService.getDocumentTypePaper(), this.provision.announcement);
+      if (document) {
+        if (document.numberMailingAffaire && document.numberMailingAffaire > 0) {
+          this.provision.publicationPaperAffaireNumber = document.numberMailingAffaire;
+          this.provision.isPublicationPaper = true;
+        }
+        if (document.numberMailingClient && document.numberMailingClient > 0) {
+          this.provision.publicationPaperClientNumber = document.numberMailingClient;
+          this.provision.isPublicationPaper = true;
         }
       }
     }
   }
-
   provisionChangeFunction() {
     this.provisionChange.emit();
   }

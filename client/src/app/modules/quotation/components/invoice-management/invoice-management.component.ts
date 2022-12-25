@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { Subscription } from 'rxjs';
 import { CUSTOMER_ORDER_STATUS_BILLED } from 'src/app/libs/Constants';
 import { instanceOfCustomerOrder, instanceOfQuotation } from 'src/app/libs/TypeHelper';
 import { getAffaireListArrayForIQuotation, getAffaireListFromIQuotation, getAmountRemaining, getCustomerOrderForIQuotation, getCustomerOrderNameForIQuotation, getLetteringDate } from 'src/app/modules/invoicing/components/invoice-tools';
@@ -26,6 +27,7 @@ export class InvoiceManagementComponent implements OnInit {
   @Input() editMode: boolean = false;
   @Input() instanceOfCustomerOrder: boolean = false;
   @Output() invoiceItemChange: EventEmitter<void> = new EventEmitter<void>();
+  updateDocumentsSubscription: Subscription | undefined;
 
   invoiceLabelResult: InvoiceLabelResult | undefined;
 
@@ -48,6 +50,11 @@ export class InvoiceManagementComponent implements OnInit {
   ngOnInit() {
     this.updateInvoiceLabelResult();
     this.invoiceManagementForm.markAllAsTouched();
+  }
+
+  ngOnDestroy() {
+    if (this.updateDocumentsSubscription)
+      this.updateDocumentsSubscription.unsubscribe();
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -114,10 +121,12 @@ export class InvoiceManagementComponent implements OnInit {
   }
 
   updateInvoiceLabelResult() {
-    if (this.quotation && this.quotation.id && instanceOfCustomerOrder(this.quotation))
+    if (this.quotation && this.quotation.id && instanceOfCustomerOrder(this.quotation) && (this.quotation.tiers || this.quotation.confrere || this.quotation.responsable)) {
       this.invoiceLabelResultService.getInvoiceLabelComputeResult(this.quotation).subscribe(response => {
-        this.invoiceLabelResult = response;
+        console.log(response);
+        if (response && response.billingLabel)
+          this.invoiceLabelResult = response;
       });
+    }
   }
-
 }

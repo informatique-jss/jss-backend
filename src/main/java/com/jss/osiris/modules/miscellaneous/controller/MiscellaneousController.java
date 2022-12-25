@@ -301,10 +301,6 @@ public class MiscellaneousController {
                 "AccountingJournalANouveau");
         validationHelper.validateReferential(constant.getTiersTypeProspect(), true, "TiersTypeProspect");
         validationHelper.validateReferential(constant.getTiersTypeClient(), true, "TiersTypeClient");
-        validationHelper.validateReferential(constant.getDocumentTypePublication(), true,
-                "DocumentTypePublication");
-        validationHelper.validateReferential(constant.getDocumentTypeCfe(), true, "DocumentTypeCfe");
-        validationHelper.validateReferential(constant.getDocumentTypeKbis(), true, "DocumentTypeKbis");
         validationHelper.validateReferential(constant.getDocumentTypeBilling(), true, "DocumentTypeBilling");
         validationHelper.validateReferential(constant.getDocumentTypeDunning(), true, "DocumentTypeDunning");
         validationHelper.validateReferential(constant.getDocumentTypeRefund(), true, "DocumentTypeRefund");
@@ -312,10 +308,6 @@ public class MiscellaneousController {
                 "DocumentTypeBillingClosure");
         validationHelper.validateReferential(constant.getDocumentTypeProvisionnalReceipt(), true,
                 "DocumentTypeProvisionnalReceipt");
-        validationHelper.validateReferential(constant.getDocumentTypeProofReading(), true,
-                "DocumentTypeProofReading");
-        validationHelper.validateReferential(constant.getDocumentTypePublicationCertificate(), true,
-                "DocumentTypePublicationCertificate");
         validationHelper.validateReferential(constant.getAttachmentTypeKbis(), true, "AttachmentTypeKbis");
         validationHelper.validateReferential(constant.getAttachmentTypeCni(), true, "AttachmentTypeCni");
         validationHelper.validateReferential(constant.getAttachmentTypeLogo(), true, "AttachmentTypeLogo");
@@ -437,6 +429,7 @@ public class MiscellaneousController {
         return new ResponseEntity<List<Regie>>(regieService.getRegies(), HttpStatus.OK);
     }
 
+    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
     @PostMapping(inputEntryPoint + "/regie")
     public ResponseEntity<Regie> addOrUpdateRegie(
             @RequestBody Regie regie) throws OsirisValidationException, OsirisException {
@@ -459,6 +452,7 @@ public class MiscellaneousController {
         return new ResponseEntity<List<Provider>>(providerService.getProviders(), HttpStatus.OK);
     }
 
+    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
     @PostMapping(inputEntryPoint + "/provider")
     public ResponseEntity<Provider> addOrUpdateProvider(
             @RequestBody Provider provider) throws OsirisValidationException, OsirisException {
@@ -480,6 +474,7 @@ public class MiscellaneousController {
                 HttpStatus.OK);
     }
 
+    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
     @PostMapping(inputEntryPoint + "/vat-collection-type")
     public ResponseEntity<VatCollectionType> addOrUpdateVatCollectionType(
             @RequestBody VatCollectionType vatCollectionTypes) throws OsirisValidationException, OsirisException {
@@ -497,6 +492,7 @@ public class MiscellaneousController {
         return new ResponseEntity<List<Gift>>(giftService.getGifts(), HttpStatus.OK);
     }
 
+    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
     @PostMapping(inputEntryPoint + "/gift")
     public ResponseEntity<Gift> addOrUpdateGift(
             @RequestBody Gift gifts) throws OsirisValidationException, OsirisException {
@@ -514,6 +510,7 @@ public class MiscellaneousController {
         return new ResponseEntity<List<SpecialOffer>>(specialOfferService.getSpecialOffers(), HttpStatus.OK);
     }
 
+    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
     @PostMapping(inputEntryPoint + "/special-offer")
     public ResponseEntity<SpecialOffer> addOrUpdateSpecialOffer(
             @RequestBody SpecialOffer specialOffers) throws OsirisValidationException, OsirisException {
@@ -538,6 +535,7 @@ public class MiscellaneousController {
         return new ResponseEntity<List<Department>>(departmentService.getDepartments(), HttpStatus.OK);
     }
 
+    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
     @PostMapping(inputEntryPoint + "/department")
     public ResponseEntity<Department> addOrUpdateDepartment(
             @RequestBody Department departments) throws OsirisValidationException, OsirisException {
@@ -554,6 +552,7 @@ public class MiscellaneousController {
         return new ResponseEntity<List<City>>(cityService.getCities(), HttpStatus.OK);
     }
 
+    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
     @PostMapping(inputEntryPoint + "/city")
     public ResponseEntity<City> addOrUpdateCity(
             @RequestBody City cities) throws OsirisValidationException, OsirisException {
@@ -584,6 +583,7 @@ public class MiscellaneousController {
         return new ResponseEntity<List<BillingType>>(billingTypeService.getBillingTypes(), HttpStatus.OK);
     }
 
+    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
     @PostMapping(inputEntryPoint + "/billing-type")
     public ResponseEntity<BillingType> addOrUpdateBillingType(
             @RequestBody BillingType billingType) throws OsirisValidationException, OsirisException {
@@ -603,6 +603,7 @@ public class MiscellaneousController {
         return new ResponseEntity<List<BillingItem>>(billingItemService.getBillingItems(), HttpStatus.OK);
     }
 
+    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
     @PostMapping(inputEntryPoint + "/billing-item")
     public ResponseEntity<BillingItem> addOrUpdateBillingItem(
             @RequestBody BillingItem billingItems) throws OsirisValidationException, OsirisException {
@@ -620,6 +621,7 @@ public class MiscellaneousController {
         return new ResponseEntity<List<Vat>>(vatService.getVats(), HttpStatus.OK);
     }
 
+    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
     @PostMapping(inputEntryPoint + "/vat")
     public ResponseEntity<Vat> addOrUpdateVat(
             @RequestBody Vat vat) throws OsirisValidationException, OsirisException {
@@ -638,6 +640,7 @@ public class MiscellaneousController {
         return new ResponseEntity<List<Region>>(regionService.getRegions(), HttpStatus.OK);
     }
 
+    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
     @PostMapping(inputEntryPoint + "/region")
     public ResponseEntity<Region> addOrUpdateRegion(
             @RequestBody Region regions) throws OsirisValidationException, OsirisException {
@@ -654,6 +657,7 @@ public class MiscellaneousController {
         return new ResponseEntity<List<PaymentType>>(paymentTypeService.getPaymentTypes(), HttpStatus.OK);
     }
 
+    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
     @PostMapping(inputEntryPoint + "/payment-type")
     public ResponseEntity<PaymentType> addOrUpdatePaymentType(
             @RequestBody PaymentType paymentTypes) throws OsirisValidationException, OsirisException {
@@ -670,6 +674,7 @@ public class MiscellaneousController {
         return new ResponseEntity<List<Language>>(languageService.getLanguages(), HttpStatus.OK);
     }
 
+    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
     @PostMapping(inputEntryPoint + "/language")
     public ResponseEntity<Language> addOrUpdateLanguage(
             @RequestBody Language languages) throws OsirisValidationException, OsirisException {
@@ -686,6 +691,7 @@ public class MiscellaneousController {
         return new ResponseEntity<List<DeliveryService>>(deliveryServiceService.getDeliveryServices(), HttpStatus.OK);
     }
 
+    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
     @PostMapping(inputEntryPoint + "/delivery-service")
     public ResponseEntity<DeliveryService> addOrUpdateDeliveryService(
             @RequestBody DeliveryService deliveryServices) throws OsirisValidationException, OsirisException {
@@ -703,6 +709,7 @@ public class MiscellaneousController {
         return new ResponseEntity<List<Country>>(countryService.getCountries(), HttpStatus.OK);
     }
 
+    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
     @PostMapping(inputEntryPoint + "/country")
     public ResponseEntity<Country> addOrUpdateCountry(
             @RequestBody Country countries) throws OsirisValidationException, OsirisException {
@@ -719,6 +726,7 @@ public class MiscellaneousController {
         return new ResponseEntity<List<Civility>>(civilityService.getCivilities(), HttpStatus.OK);
     }
 
+    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
     @PostMapping(inputEntryPoint + "/civility")
     public ResponseEntity<Civility> addOrUpdateCivility(
             @RequestBody Civility civilities) throws OsirisValidationException, OsirisException {
@@ -753,6 +761,7 @@ public class MiscellaneousController {
                 competentAuthorityTypeService.getCompetentAuthorityTypes(), HttpStatus.OK);
     }
 
+    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
     @PostMapping(inputEntryPoint + "/competent-authority-type")
     public ResponseEntity<CompetentAuthorityType> addOrUpdateCompetentAuthorityType(
             @RequestBody CompetentAuthorityType competentAuthorityTypes)
@@ -773,6 +782,7 @@ public class MiscellaneousController {
                 HttpStatus.OK);
     }
 
+    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
     @PostMapping(inputEntryPoint + "/competent-authority")
     public ResponseEntity<CompetentAuthority> addOrUpdateCompetentAuthority(
             @RequestBody CompetentAuthority competentAuthorities) throws OsirisValidationException, OsirisException {
@@ -819,6 +829,7 @@ public class MiscellaneousController {
         return new ResponseEntity<List<WeekDay>>(weekDayService.getWeekDays(), HttpStatus.OK);
     }
 
+    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
     @PostMapping(inputEntryPoint + "/weekday")
     public ResponseEntity<WeekDay> addOrUpdateWeekDay(
             @RequestBody WeekDay weekDays) throws OsirisException, OsirisValidationException {
@@ -835,6 +846,7 @@ public class MiscellaneousController {
         return new ResponseEntity<List<LegalForm>>(legalFormService.getLegalForms(), HttpStatus.OK);
     }
 
+    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
     @PostMapping(inputEntryPoint + "/legal-form")
     public ResponseEntity<LegalForm> addOrUpdateLegalForm(
             @RequestBody LegalForm legalForms) throws OsirisValidationException, OsirisException {
@@ -852,6 +864,7 @@ public class MiscellaneousController {
         return new ResponseEntity<List<DocumentType>>(documentTypeService.getDocumentTypes(), HttpStatus.OK);
     }
 
+    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
     @PostMapping(inputEntryPoint + "/document-type")
     public ResponseEntity<DocumentType> addOrUpdateDocumentType(
             @RequestBody DocumentType documentTypes) throws OsirisValidationException, OsirisException {
@@ -869,6 +882,7 @@ public class MiscellaneousController {
         return new ResponseEntity<List<AttachmentType>>(attachmentTypeService.getAttachmentTypes(), HttpStatus.OK);
     }
 
+    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
     @PostMapping(inputEntryPoint + "/attachment-type")
     public ResponseEntity<AttachmentType> addOrUpdateAttachmentType(
             @RequestBody AttachmentType attachmentTypes) throws OsirisValidationException, OsirisException {

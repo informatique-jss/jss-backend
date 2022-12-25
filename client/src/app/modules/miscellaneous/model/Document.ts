@@ -11,7 +11,7 @@ import { Mail } from "./Mail";
 import { Regie } from "./Regie";
 
 export interface Document {
-  id: number;
+  id: number | undefined;
   code: string;
   documentType: DocumentType;
   isRecipientClient: boolean;
@@ -21,8 +21,6 @@ export interface Document {
   affaireRecipient: string;
   clientRecipient: string;
   mails: Mail[];
-  isMailingPaper: boolean;
-  isMailingPdf: boolean;
   numberMailingAffaire: number;
   numberMailingClient: number;
   mailsClient: Mail[];

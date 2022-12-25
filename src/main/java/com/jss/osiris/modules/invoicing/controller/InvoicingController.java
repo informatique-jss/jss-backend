@@ -24,6 +24,7 @@ import com.jss.osiris.libs.ValidationHelper;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
+import com.jss.osiris.libs.mail.MailComputeHelper;
 import com.jss.osiris.modules.invoicing.model.Deposit;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
@@ -91,11 +92,15 @@ public class InvoicingController {
     @Autowired
     RefundService refundService;
 
+    @Autowired
+    MailComputeHelper mailComputeHelper;
+
     @GetMapping(inputEntryPoint + "/payment-ways")
     public ResponseEntity<List<PaymentWay>> getPaymentWays() {
         return new ResponseEntity<List<PaymentWay>>(paymentWayService.getPaymentWays(), HttpStatus.OK);
     }
 
+    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
     @PostMapping(inputEntryPoint + "/payment-way")
     public ResponseEntity<PaymentWay> addOrUpdatePaymentWay(
             @RequestBody PaymentWay paymentWays) throws OsirisValidationException, OsirisException {
@@ -536,6 +541,7 @@ public class InvoicingController {
         return new ResponseEntity<List<InvoiceStatus>>(invoiceStatusService.getInvoiceStatus(), HttpStatus.OK);
     }
 
+    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
     @PostMapping(inputEntryPoint + "/invoice-status")
     public ResponseEntity<InvoiceStatus> addOrUpdateInvoiceStatus(
             @RequestBody InvoiceStatus invoiceStatus) throws OsirisValidationException, OsirisException {
@@ -575,6 +581,13 @@ public class InvoicingController {
         return new ResponseEntity<InvoiceLabelResult>(invoiceHelper.computeInvoiceLabelResult(
                 documentService.getBillingDocument(customerOrder.getDocuments()), customerOrder,
                 quotationService.getCustomerOrderOfQuotation(customerOrder)), HttpStatus.OK);
+    }
+
+    @PostMapping(inputEntryPoint + "/paper/label/compute")
+    public ResponseEntity<InvoiceLabelResult> computePaperLabelForCustomerOrder(
+            @RequestBody CustomerOrder customerOrder) throws OsirisException {
+        return new ResponseEntity<InvoiceLabelResult>(mailComputeHelper.computePaperLabelResult(customerOrder),
+                HttpStatus.OK);
     }
 
 }

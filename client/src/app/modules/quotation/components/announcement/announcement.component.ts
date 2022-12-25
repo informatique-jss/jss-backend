@@ -7,11 +7,11 @@ import { MatAccordion } from '@angular/material/expansion';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { SEPARATOR_KEY_CODES } from 'src/app/libs/Constants';
-import { getDocument } from 'src/app/libs/DocumentHelper';
 import { Attachment } from 'src/app/modules/miscellaneous/model/Attachment';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { ANNOUNCEMENT_ENTITY_TYPE } from 'src/app/routing/search/search.component';
+import { getDocument } from '../../../../libs/DocumentHelper';
 import { AttachmentType } from '../../../miscellaneous/model/AttachmentType';
 import { Document } from "../../../miscellaneous/model/Document";
 import { Announcement } from '../../model/Announcement';
@@ -59,16 +59,13 @@ export class AnnouncementComponent implements OnInit {
 
   characterPrice: CharacterPrice = {} as CharacterPrice;
 
-  publicationDocument: Document = {} as Document;
-  proofReadingDocument: Document = {} as Document;
-  publicationCertificateDocument: Document = {} as Document;
-
   noticeTypes: NoticeType[] = [] as Array<NoticeType>;
   filteredNoticeTypes: Observable<NoticeType[]> | undefined;
 
   noticeTemplates: AnnouncementNoticeTemplate[] = [] as Array<AnnouncementNoticeTemplate>;
   filteredNoticeTemplates: Observable<AnnouncementNoticeTemplate[]> | undefined;
   selectedNoticeTemplates: AnnouncementNoticeTemplate[] = [] as Array<AnnouncementNoticeTemplate>;
+  paperDocument: Document = {} as Document;
 
   constructor(private formBuilder: UntypedFormBuilder,
     private characterPriceService: CharacterPriceService,
@@ -102,6 +99,9 @@ export class AnnouncementComponent implements OnInit {
       startWith(''),
       map(value => this._filterNoticeTemplates(value)),
     );
+
+    if (this.provision.announcement)
+      this.paperDocument = getDocument(this.constantService.getDocumentTypePaper(), this.provision.announcement);
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -118,10 +118,6 @@ export class AnnouncementComponent implements OnInit {
         this.announcement!.isProofReadingDocument = false;
       if (this.announcement!.publicationDate)
         this.announcement.publicationDate = new Date(this.announcement.publicationDate);
-
-      this.publicationDocument = getDocument(this.constantService.getDocumentTypePublication(), this.announcement!);
-      this.proofReadingDocument = getDocument(this.constantService.getDocumentTypeProofReading(), this.announcement!);
-      this.publicationCertificateDocument = getDocument(this.constantService.getDocumentTypePublicationCertificate(), this.announcement!);
 
       this.announcementForm.get('notice')?.setValue(this.announcement.notice);
       this.announcementForm.get('noticeHeader')?.setValue(this.announcement.noticeHeader);

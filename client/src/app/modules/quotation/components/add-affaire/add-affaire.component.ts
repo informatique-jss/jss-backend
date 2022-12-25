@@ -13,7 +13,7 @@ import { Siret } from 'src/app/modules/quotation/model/Siret';
 import { RnaService } from 'src/app/modules/quotation/services/rna.service';
 import { SirenService } from 'src/app/modules/quotation/services/siren.service';
 import { SiretService } from 'src/app/modules/quotation/services/siret.service';
-import { AffaireService } from '../../../../../quotation/services/affaire.service';
+import { AffaireService } from '../../services/affaire.service';
 
 @Component({
   selector: 'add-affaire',

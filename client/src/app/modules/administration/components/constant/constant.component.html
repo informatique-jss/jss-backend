@@ -64,28 +64,6 @@
           </tr>
           <tr>
             <td>
-              <select-document-type [(model)]="constant.documentTypePublication"
-                label="Type de document - Justificatif de parution" [form]="constantForm"
-                propertyName="documentTypePublication" [isMandatory]="true" [isDisabled]="!editMode">
-              </select-document-type>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <select-document-type [(model)]="constant.documentTypeCfe" label="Type de document - CFE"
-                [form]="constantForm" propertyName="documentTypeCfe" [isMandatory]="true" [isDisabled]="!editMode">
-              </select-document-type>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <select-document-type [(model)]="constant.documentTypeKbis" label="Type de document - KBIS"
-                [form]="constantForm" propertyName="documentTypeKbis" [isMandatory]="true" [isDisabled]="!editMode">
-              </select-document-type>
-            </td>
-          </tr>
-          <tr>
-            <td>
               <select-document-type [(model)]="constant.documentTypeBilling" label="Type de document - Facturation"
                 [form]="constantForm" propertyName="documentTypeBilling" [isMandatory]="true" [isDisabled]="!editMode">
               </select-document-type>
@@ -123,17 +101,16 @@
           </tr>
           <tr>
             <td>
-              <select-document-type [(model)]="constant.documentTypeProofReading"
-                label="Type de document - Preuve de relecture" [form]="constantForm"
-                propertyName="documentTypeProofReading" [isMandatory]="true" [isDisabled]="!editMode">
+              <select-document-type [(model)]="constant.documentTypePaper" label="Type de document - Documents papiers"
+                [form]="constantForm" propertyName="documentTypePaper" [isMandatory]="true" [isDisabled]="!editMode">
               </select-document-type>
             </td>
           </tr>
           <tr>
             <td>
-              <select-document-type [(model)]="constant.documentTypePublicationCertificate"
-                label="Type de document - Témoin de publication" [form]="constantForm"
-                propertyName="documentTypePublicationCertificate" [isMandatory]="true" [isDisabled]="!editMode">
+              <select-document-type [(model)]="constant.documentTypeDigital"
+                label="Type de document - Documents numériques" [form]="constantForm" propertyName="documentTypeDigital"
+                [isMandatory]="true" [isDisabled]="!editMode">
               </select-document-type>
             </td>
           </tr>
@@ -219,6 +196,14 @@
               <select-attachment-type [(model)]="constant.attachmentTypeBillingClosure"
                 label="Type de pièce-jointe - relevé de compte" [form]="constantForm"
                 propertyName="attachmentTypeBillingClosure" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-attachment-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-attachment-type [(model)]="constant.attachmentTypeProofReading"
+                label="Type de pièce-jointe - bon à tirer" [form]="constantForm"
+                propertyName="attachmentTypeProofReading" [isMandatory]="true" [isDisabled]="!editMode">
               </select-attachment-type>
             </td>
           </tr>

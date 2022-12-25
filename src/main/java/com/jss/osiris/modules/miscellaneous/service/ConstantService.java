@@ -59,11 +59,9 @@ public interface ConstantService {
 
     public TiersType getTiersTypeClient() throws OsirisException;
 
-    public DocumentType getDocumentTypePublication() throws OsirisException;
+    public DocumentType getDocumentTypeDigital() throws OsirisException;
 
-    public DocumentType getDocumentTypeCfe() throws OsirisException;
-
-    public DocumentType getDocumentTypeKbis() throws OsirisException;
+    public DocumentType getDocumentTypePaper() throws OsirisException;
 
     public DocumentType getDocumentTypeBilling() throws OsirisException;
 
@@ -74,10 +72,6 @@ public interface ConstantService {
     public DocumentType getDocumentTypeBillingClosure() throws OsirisException;
 
     public DocumentType getDocumentTypeProvisionnalReceipt() throws OsirisException;
-
-    public DocumentType getDocumentTypeProofReading() throws OsirisException;
-
-    public DocumentType getDocumentTypePublicationCertificate() throws OsirisException;
 
     public AttachmentType getAttachmentTypeKbis() throws OsirisException;
 
@@ -100,6 +94,8 @@ public interface ConstantService {
     public AttachmentType getAttachmentTypeJournal() throws OsirisException;
 
     public AttachmentType getAttachmentTypeBillingClosure() throws OsirisException;
+
+    public AttachmentType getAttachmentTypeProofReading() throws OsirisException;
 
     public Country getCountryFrance() throws OsirisException;
 

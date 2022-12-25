@@ -2,7 +2,7 @@ import { AfterContentChecked, ChangeDetectorRef, Component, Input, OnInit, Simpl
 import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { MatAccordion } from '@angular/material/expansion';
 import { getDocument } from 'src/app/libs/DocumentHelper';
-import { instanceOfResponsable, instanceOfTiers } from 'src/app/libs/TypeHelper';
+import { instanceOfConfrere, instanceOfResponsable, instanceOfTiers } from 'src/app/libs/TypeHelper';
 import { City } from 'src/app/modules/miscellaneous/model/City';
 import { Country } from 'src/app/modules/miscellaneous/model/Country';
 import { PaymentType } from 'src/app/modules/miscellaneous/model/PaymentType';
@@ -37,14 +37,13 @@ export class SettlementBillingComponent implements OnInit, AfterContentChecked {
 
   countryFrance: Country = this.constantService.getCountryFrance();
 
+  paperDocument: Document = {} as Document;
+  digitalDocument: Document = {} as Document;
   billingDocument: Document = {} as Document;
   dunningDocument: Document = {} as Document;
   refundDocument: Document = {} as Document;
   provisionalReceiptDocument: Document = {} as Document;
   billingClosureDocument: Document = {} as Document;
-  publicationDocument: Document = {} as Document;
-  cfeDocument: Document = {} as Document;
-  kbisDocument: Document = {} as Document;
 
   tiersTypeProspect = this.constantService.getTiersTypeProspect();
 
@@ -82,7 +81,8 @@ export class SettlementBillingComponent implements OnInit, AfterContentChecked {
       }
 
       this.billingDocument = getDocument(this.constantService.getDocumentTypeBilling(), this.tiers);
-
+      this.paperDocument = getDocument(this.constantService.getDocumentTypePaper(), this.tiers);
+      this.digitalDocument = getDocument(this.constantService.getDocumentTypeDigital(), this.tiers);
 
       if (!this.billingDocument.billingLabelIsIndividual)
         this.billingDocument.billingLabelIsIndividual = false;
@@ -96,10 +96,6 @@ export class SettlementBillingComponent implements OnInit, AfterContentChecked {
         this.refundDocument = getDocument(this.constantService.getDocumentTypeRefund(), this.tiers);
         this.provisionalReceiptDocument = getDocument(this.constantService.getDocumentTypeProvisionnalReceipt(), this.tiers);
       }
-      this.publicationDocument = getDocument(this.constantService.getDocumentTypePublication(), this.tiers);
-      this.cfeDocument = getDocument(this.constantService.getDocumentTypeCfe(), this.tiers);
-      this.kbisDocument = getDocument(this.constantService.getDocumentTypeKbis(), this.tiers);
-
     }
     this.settlementBillingForm.markAllAsTouched();
   }
@@ -111,6 +107,7 @@ export class SettlementBillingComponent implements OnInit, AfterContentChecked {
 
   instanceOfTiers = instanceOfTiers;
   instanceOfResponsable = instanceOfResponsable;
+  instanceOfConfrere = instanceOfConfrere;
 
   getFormStatus(): boolean {
     this.settlementBillingForm.markAllAsTouched();

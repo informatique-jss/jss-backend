@@ -17,14 +17,12 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jss.osiris.libs.JacksonLocalDateSerializer;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
-import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.model.IAttachment;
-import com.jss.osiris.modules.miscellaneous.model.IDocument;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.miscellaneous.model.PaymentType;
 
 @Entity
-public class Bodacc implements IId, IAttachment, IDocument {
+public class Bodacc implements IId, IAttachment {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "bodacc_sequence")
@@ -61,10 +59,6 @@ public class Bodacc implements IId, IAttachment, IDocument {
 
 	@JsonSerialize(using = JacksonLocalDateSerializer.class)
 	private LocalDate dateOfPublication;
-
-	@OneToMany(targetEntity = Document.class, mappedBy = "bodacc", cascade = CascadeType.ALL, orphanRemoval = true)
-	@JsonIgnoreProperties(value = { "bodacc" }, allowSetters = true)
-	private List<Document> documents;
 
 	public Integer getId() {
 		return id;
@@ -144,14 +138,6 @@ public class Bodacc implements IId, IAttachment, IDocument {
 
 	public void setBodaccStatus(BodaccStatus bodaccStatus) {
 		this.bodaccStatus = bodaccStatus;
-	}
-
-	public List<Document> getDocuments() {
-		return documents;
-	}
-
-	public void setDocuments(List<Document> documents) {
-		this.documents = documents;
 	}
 
 }

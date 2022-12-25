@@ -147,11 +147,9 @@ export class QuotationListComponent implements OnInit {
 
 
   putDefaultPeriod() {
-    if (!this.quotationSearch.startDate && !this.quotationSearch.endDate) {
-      this.quotationSearch.startDate = new Date();
-      this.quotationSearch.endDate = new Date();
-      this.quotationSearch.startDate.setDate(this.quotationSearch.endDate.getDate() - 30);
-    }
+    this.quotationSearch.startDate = new Date();
+    this.quotationSearch.endDate = new Date();
+    this.quotationSearch.startDate.setDate(this.quotationSearch.endDate.getDate() - 30);
   }
 
   searchOrders() {

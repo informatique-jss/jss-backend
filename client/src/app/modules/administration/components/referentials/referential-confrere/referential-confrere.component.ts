@@ -10,8 +10,12 @@ import { CityService } from 'src/app/modules/miscellaneous/services/city.service
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { PaymentTypeService } from 'src/app/modules/miscellaneous/services/payment.type.service';
 import { Confrere } from 'src/app/modules/quotation/model/Confrere';
+import { OrderingSearch } from 'src/app/modules/quotation/model/OrderingSearch';
+import { QuotationSearch } from 'src/app/modules/quotation/model/QuotationSearch';
 import { ConfrereService } from 'src/app/modules/quotation/services/confrere.service';
+import { ITiers } from 'src/app/modules/tiers/model/ITiers';
 import { RefundType } from 'src/app/modules/tiers/model/RefundType';
+import { CONFRERE_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
 import { Document } from "../../../../miscellaneous/model/Document";
 import { GenericReferentialComponent } from '../generic-referential/generic-referential-component';
@@ -33,6 +37,11 @@ export class ReferentialConfrereComponent extends GenericReferentialComponent<Co
   }
 
   selectedConfrereId: number | undefined;
+  CONFRERE_ENTITY_TYPE = CONFRERE_ENTITY_TYPE;
+
+  orderingSearch: OrderingSearch = {} as OrderingSearch;
+  quotationSearch: QuotationSearch = {} as QuotationSearch;
+  responsableAccountSearch: ITiers | undefined;
 
   ngOnInit(): void {
     super.ngOnInit();
@@ -81,6 +90,20 @@ export class ReferentialConfrereComponent extends GenericReferentialComponent<Co
     this.dunningDocument = getDocument(this.constantService.getDocumentTypeDunning(), this.selectedEntity!);
     this.refundDocument = getDocument(this.constantService.getDocumentTypeRefund(), this.selectedEntity!);
     this.entityForm.markAllAsTouched();
+
+
+    this.orderingSearch.customerOrders = [];
+    this.quotationSearch.customerOrders = [];
+    this.responsableAccountSearch = undefined;
+
+    if (this.selectedEntity) {
+      setTimeout(() =>
+        this.orderingSearch.customerOrders = [this.selectedEntity!], 0);
+      setTimeout(() =>
+        this.quotationSearch.customerOrders = [this.selectedEntity!], 0);
+      setTimeout(() =>
+        this.responsableAccountSearch = this.selectedEntity, 0);
+    }
   }
 
   getAddOrUpdateObservable(): Observable<Confrere> {

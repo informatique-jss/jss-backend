@@ -5,12 +5,12 @@ import { IDocument } from "../modules/miscellaneous/model/IDocument";
 export function getDocument(documentType: DocumentType, entity: IDocument) {
   // Tiers not loaded
   if (entity == null || documentType.id == undefined)
-    return { isRecipientClient: false, isRecipientAffaire: false, isMailingPaper: false, isMailingPdf: false } as Document;
+    return { isRecipientClient: false, isRecipientAffaire: false } as Document;
 
   // No document in Tiers
   if (entity.documents == null || entity.documents == undefined) {
     entity.documents = [] as Array<Document>;
-    let doc = { isRecipientClient: false, isRecipientAffaire: false, isMailingPaper: false, isMailingPdf: false } as Document;
+    let doc = { isRecipientClient: false, isRecipientAffaire: false } as Document;
     doc.documentType = documentType;
     entity.documents.push(doc);
     return entity.documents[0];
@@ -27,7 +27,7 @@ export function getDocument(documentType: DocumentType, entity: IDocument) {
   }
 
   // Document not exists, create it
-  let doc = { isRecipientClient: false, isRecipientAffaire: false, isMailingPaper: false, isMailingPdf: false } as Document;
+  let doc = { isRecipientClient: false, isRecipientAffaire: false } as Document;
   doc.documentType = documentType;
   entity.documents.push(doc);
   return entity.documents[entity.documents.length - 1];
@@ -55,5 +55,5 @@ export function replaceDocument(documentType: DocumentType, entity: IDocument, n
   }
 
   // Document not exists
-  return entity.documents.push(newDocument);
+  // return entity.documents.push(newDocument);
 }

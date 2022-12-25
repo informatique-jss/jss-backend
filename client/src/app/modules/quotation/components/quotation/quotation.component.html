@@ -128,7 +128,7 @@
           </ordering-customer>
         </mat-tab>
         <fieldset [disabled]="editMode==false" class="fieldset-no-border">
-          <mat-tab label="Prestations" *ngIf="(quotation.tiers || quotation.responsable || quotation.confrere)  ">
+          <mat-tab label="Prestations" *ngIf="(quotation.tiers || quotation.responsable  || quotation.confrere)  ">
             <div class="mat-elevation-z2 form-div" *ngIf="quotation.assoAffaireOrders">
               <mat-tab-group animationDuration="0ms" #tabs>
                 <mat-tab *ngFor="let asso of quotation.assoAffaireOrders" [label]="asso.affaire.denomination?asso.affaire.denomination:(asso.affaire.firstname + ' ' +

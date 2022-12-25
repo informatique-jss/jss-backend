@@ -1,119 +1,121 @@
 <form [formGroup]="adressingForm" *ngIf="document">
   <table class="full-width" *ngIf="document">
     <tr>
-      <td *ngIf="hideConsignee==false">
+      <td *ngIf="displayConsignee">
         <h4>Destinataire(s)</h4>
         <generic-checkbox [(model)]="document.isRecipientAffaire" label="Affaire" [form]="adressingForm"
-          propertyName="isRecipientAffaire"></generic-checkbox>
+          (onFormChange)="changeDocument()" propertyName="isRecipientAffaire"></generic-checkbox>
         <generic-checkbox [(model)]="document.isRecipientClient" label="Client" [form]="adressingForm"
-          propertyName="isRecipientClient"></generic-checkbox>
+          (onFormChange)="changeDocument()" propertyName="isRecipientClient"></generic-checkbox>
       </td>
-      <td *ngIf="hideAdressing==false">
-        <h4 *ngIf="!onlyMail">Type d'envoi</h4>
-        <generic-checkbox [(model)]="document.isMailingPaper" label="Papier" [form]="adressingForm"
-          *ngIf="onlyMail==false  " propertyName="isMailingPaper"></generic-checkbox>
-        <button matTooltip="Modifier les adresses postales par défaut"
-          *ngIf="document.isMailingPaper && (document.isRecipientAffaire || document.isRecipientClient) && !hideOverriding && editMode"
-          mat-icon-button color="accent" (click)="overrideAffaireAddress=true;overrideClientAddress=true">
+      <td>
+        <button matTooltip="Modifier les adresses postales par défaut" *ngIf="editMode && displayOverrideMail"
+          (click)="changeDocument()" mat-icon-button color="accent"
+          (click)="overrideAffaireAddress=true;overrideClientAddress=true">
           <mat-icon>edit</mat-icon>
         </button>
-        <generic-checkbox [(model)]="document.isMailingPdf" label="PDF" [form]="adressingForm" *ngIf="onlyMail==false"
-          propertyName="isMailingPdf"></generic-checkbox>
-        <button matTooltip="Modifier les adresses mail par défaut"
-          *ngIf="document.isMailingPdf && (document.isRecipientAffaire || document.isRecipientClient ) && !hideOverriding && editMode"
-          mat-icon-button color="accent" (click)="overrideAffaireMail=true;overrideClientMail=true">
+
+        <button matTooltip="Modifier les adresses mail par défaut" *ngIf="editMode && displayOverrideEMail"
+          (click)="changeDocument()" mat-icon-button color="accent"
+          (click)="overrideAffaireMail=true;overrideClientMail=true">
           <mat-icon>edit</mat-icon>
         </button>
       </td>
-      <td *ngIf="document.isMailingPaper && document.isRecipientAffaire && displayPaperCopy && displayNumberMailing">
+      <td *ngIf="document.isRecipientAffaire && displayNumberMailing">
         <generic-input [(model)]="document.numberMailingAffaire" label="Nombre d'exemplaire Affaire"
-          [form]="adressingForm" propertyName="numberMailingAffaire" [isDisabled]="!editMode" type="number">
+          (onFormChange)="changeDocument()" [form]="adressingForm" propertyName="numberMailingAffaire"
+          [isDisabled]="!editMode" type="number">
         </generic-input>
       </td>
-      <td *ngIf="document.isMailingPaper && document.isRecipientClient && displayPaperCopy && displayNumberMailing">
+      <td *ngIf="document.isRecipientClient && displayNumberMailing">
         <generic-input [(model)]="document.numberMailingClient" label="Nombre d'exemplaire Client"
-          [form]="adressingForm" propertyName="numberMailingClient" [isDisabled]="!editMode" type="number">
+          (onFormChange)="changeDocument()" [form]="adressingForm" propertyName="numberMailingClient"
+          [isDisabled]="!editMode" type="number">
         </generic-input>
       </td>
     </tr>
-    <tr *ngIf="document.isMailingPaper && document.isRecipientAffaire && overrideAffaireAddress">
+    <tr *ngIf=" document.isRecipientAffaire && overrideAffaireAddress">
       <td>
         <generic-input [(model)]="document.affaireRecipient" label="Autres destinataires pour l'affaire"
-          [form]="adressingForm" propertyName="affaireRecipient" [isDisabled]="!editMode" [maxLength]="40">
+          (onFormChange)="changeDocument()" [form]="adressingForm" propertyName="affaireRecipient"
+          [isDisabled]="!editMode" [maxLength]="40">
         </generic-input>
       </td>
       <td colspan="2">
         <generic-input [(model)]="document.affaireAddress" label="Autres adresses pour l'affaire" [form]="adressingForm"
-          propertyName="affaireAddress" [isDisabled]="!editMode" [maxLength]="60">
+          (onFormChange)="changeDocument()" propertyName="affaireAddress" [isDisabled]="!editMode" [maxLength]="60">
         </generic-input>
       </td>
       <td [hidden]="!editMode" align="end"><button mat-icon-button color="accent"
-          (click)="overrideAffaireAddress=false ; document.affaireRecipient='' ; document.affaireAddress=''">
+          (click)="overrideAffaireAddress=false ; document.affaireRecipient='' ; document.affaireAddress='';changeDocument()">
           <mat-icon>close</mat-icon>
         </button>
       </td>
     </tr>
-    <tr *ngIf="document.isMailingPdf && document.isRecipientAffaire && overrideAffaireMail">
+    <tr *ngIf="document.isRecipientAffaire && overrideAffaireMail">
       <td colspan="3">
         <chips-mail [(model)]="document.mailsAffaire" [form]="adressingForm" propertyName="mailsAffaire"
-          label="Autres adresses mail pour l'affaire" [isDisabled]="!editMode"></chips-mail>
+          (onFormChange)="changeDocument()" label="Autres adresses mail pour l'affaire"
+          [isDisabled]="!editMode"></chips-mail>
       </td>
       <td [hidden]="  !editMode" align="end"><button mat-icon-button color="accent"
-          (click)="overrideAffaireMail=false ; removeAllMailAffaire(document)">
+          (click)="overrideAffaireMail=false ; removeAllMailAffaire(document);changeDocument()">
           <mat-icon>close</mat-icon>
         </button>
       </td>
     </tr>
-    <tr *ngIf="document.isMailingPdf && document.isRecipientAffaire && overrideAffaireMail && displayMailCC">
+    <tr *ngIf="document.isRecipientAffaire && overrideAffaireMail && displayMailCC">
       <td colspan=" 3">
         <select-responsable [(model)]="document.mailsCCResponsableAffaire"
-          label="Autres destinataires mail (CC) pour l'affaire" [form]="adressingForm"
+          label="Autres destinataires mail (CC) pour l'affaire" [form]="adressingForm" (onFormChange)="changeDocument()"
           propertyName="mailsCCResponsableAffaire" [isDisabled]="!editMode" [responsableList]="getResponsables()">
         </select-responsable>
       </td>
       <td [hidden]="  !editMode" align="end"><button mat-icon-button color="accent"
-          (click)="overrideAffaireMailCC=false ; document.mailsCCResponsableAffaire=[]">
+          (click)="overrideAffaireMailCC=false ; document.mailsCCResponsableAffaire=[];changeDocument()">
           <mat-icon>close</mat-icon>
         </button>
       </td>
     </tr>
-    <tr *ngIf="document.isMailingPaper && (document.isRecipientClient ) && overrideClientAddress">
+    <tr *ngIf="document.isRecipientClient && overrideClientAddress">
       <td>
         <generic-input [(model)]="document.clientRecipient" label="Autres destinataires pour le client"
-          [form]="adressingForm" propertyName="clientRecipient" [isDisabled]="!editMode" [maxLength]="40">
+          (onFormChange)="changeDocument()" [form]="adressingForm" propertyName="clientRecipient"
+          [isDisabled]="!editMode" [maxLength]="40">
         </generic-input>
       </td>
       <td colspan="2">
         <generic-input [(model)]="document.clientAddress" label="Autres adresses pour le client" [form]="adressingForm"
-          propertyName="clientAddress" [isDisabled]="!editMode" [maxLength]="60">
+          (onFormChange)="changeDocument()" propertyName="clientAddress" [isDisabled]="!editMode" [maxLength]="60">
         </generic-input>
       </td>
       <td [hidden]="  !editMode" align="end"><button mat-icon-button color="accent"
-          (click)="overrideClientAddress=false ; document.clientAddress='' ; document.clientRecipient=''">
+          (click)="overrideClientAddress=false ; document.clientAddress='' ; document.clientRecipient='';changeDocument()">
           <mat-icon>close</mat-icon>
         </button>
       </td>
     </tr>
-    <tr *ngIf="document.isMailingPdf && (document.isRecipientClient ) && overrideClientMail">
+    <tr *ngIf="document.isRecipientClient && overrideClientMail">
       <td [hidden]="!overrideClientMail " colspan="3">
         <chips-mail [(model)]="document.mailsClient" [form]="adressingForm" propertyName="mailsClient"
-          label="Autres adresses mail pour le client" [isDisabled]="!editMode"></chips-mail>
+          (onFormChange)="changeDocument()" label="Autres adresses mail pour le client"
+          [isDisabled]="!editMode"></chips-mail>
       </td>
       <td [hidden]="!editMode" align="end"><button mat-icon-button color="accent"
-          (click)="overrideClientMail=false ;removeAllMailClient(document)">
+          (click)="overrideClientMail=false ;removeAllMailClient(document);changeDocument()">
           <mat-icon>close</mat-icon>
         </button>
       </td>
     </tr>
-    <tr *ngIf="document.isMailingPdf && (document.isRecipientClient ) && overrideClientMail && displayMailCC">
+    <tr *ngIf="document.isRecipientClient && overrideClientMail && displayMailCC">
       <td colspan=" 3">
         <select-responsable [(model)]="document.mailsCCResponsableClient"
-          label="Autres destinataires mail (CC) pour le client" [form]="adressingForm"
+          label="Autres destinataires mail (CC) pour le client" [form]="adressingForm" (onFormChange)="changeDocument()"
           propertyName="mailsCCResponsableClient" [isDisabled]="!editMode" [responsableList]="getResponsables()">
         </select-responsable>
       </td>
       <td [hidden]="  !editMode" align="end"><button mat-icon-button color="accent"
-          (click)="overrideAffaireMailCC=false ; document.mailsCCResponsableAffaire=[]">
+          (click)="overrideAffaireMailCC=false ; document.mailsCCResponsableAffaire=[];changeDocument()">
           <mat-icon>close</mat-icon>
         </button>
       </td>

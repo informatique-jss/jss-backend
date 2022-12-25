@@ -35,7 +35,6 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
   NOTICE_TYPE = "Rubrique de l'annonce";
   PROVISION_FAMILY_TYPE_REFERENTIAL = "Famille de prestation";
   PROVISION_TYPE_REFERENTIAL = "Type de prestation";
-  QUOTATION_STATUS_REFERENTIAL = "Statuts du devis";
   RECORD_TYPE_REFERENTIAL = "Type de dossier";
   TRANSFERT_FUNDS_TYPE_REFERENTIAL = "Type de cession de fonds";
   BILLING_CLOSURE_RECIPIENT_TYPE_REFERENTIAL = "Type de destinataire de relevé comptable";
@@ -78,7 +77,6 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
   INVOICE_STAUTS_REFERENTIAL = "Statut de facture";
   PAYMENT_WAY_REFERENTIAL = "Sens de paiement";
   BILLING_REGIE = "Régie";
-  AFFAIRE_REFERENTIAL = "Affaire";
   ACCOUNT_STATEMENT_RECIPIENT_REFERENTIAL = "Destinataire de relevé comptable";
   PRINCIPAL_ACCOUNTING_ACCOUNT_REFERENTIAL = "Compte comptable principal";
 
@@ -102,7 +100,6 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
     this.referentials.push(this.CITY_REFERENTIAL);
     this.referentials.push(this.PROVISION_FAMILY_TYPE_REFERENTIAL);
     this.referentials.push(this.PROVISION_TYPE_REFERENTIAL);
-    this.referentials.push(this.QUOTATION_STATUS_REFERENTIAL);
     this.referentials.push(this.RECORD_TYPE_REFERENTIAL);
     this.referentials.push(this.TRANSFERT_FUNDS_TYPE_REFERENTIAL);
     this.referentials.push(this.BILLING_CLOSURE_RECIPIENT_TYPE_REFERENTIAL);
@@ -137,7 +134,6 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
     this.referentials.push(this.COMPETENT_AUTHORITY_REFERENTIAL);
     this.referentials.push(this.ACCOUNTING_ACCOUNT_CLASS_REFERENTIAL);
     this.referentials.push(this.ACCOUNTING_ACCOUNT_REFERENTIAL);
-    this.referentials.push(this.CONFRERE_REFERENTIAL);
     this.referentials.push(this.COMPETITOR_REFERENTIAL);
     this.referentials.push(this.VAT_COLLECTION_TYPE_REFERENTIAL);
     this.referentials.push(this.PROVIDER_REFERENTIAL);
@@ -145,7 +141,6 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
     this.referentials.push(this.INVOICE_STAUTS_REFERENTIAL);
     this.referentials.push(this.PAYMENT_WAY_REFERENTIAL);
     this.referentials.push(this.BILLING_REGIE);
-    this.referentials.push(this.AFFAIRE_REFERENTIAL);
     this.referentials.push(this.PRINCIPAL_ACCOUNTING_ACCOUNT_REFERENTIAL);
     this.referentials.sort((a, b) => a.localeCompare(b));
 
@@ -155,9 +150,6 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
       ));
 
     let url: UrlSegment[] = this.activatedRoute.snapshot.url;
-    if (url != undefined && url != null && url[0] != undefined && url[1] != undefined && url[1].path == "affaire") {
-      this.selectedReferential = this.AFFAIRE_REFERENTIAL;
-    }
     if (url != undefined && url != null && url[0] != undefined && url[1] != undefined && url[1].path == "confrere") {
       this.selectedReferential = this.CONFRERE_REFERENTIAL;
     }

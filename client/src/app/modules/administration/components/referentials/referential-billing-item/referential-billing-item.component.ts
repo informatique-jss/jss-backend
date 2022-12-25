@@ -26,6 +26,7 @@ export class ReferentialBillingItemComponent implements OnInit {
   @Output() selectedEntityChange: EventEmitter<BillingItem> = new EventEmitter<BillingItem>();
   entities: BillingItem[] = [] as Array<BillingItem>;
   displayedColumns: SortTableColumn[] = [];
+  idRowSelected: number | undefined;
 
   searchText: string | undefined;
 
@@ -66,6 +67,7 @@ export class ReferentialBillingItemComponent implements OnInit {
 
   selectEntity(element: BillingItem) {
     this.selectedEntity = element;
+    this.idRowSelected = element.id;
     if (this.selectedEntity.startDate)
       this.selectedEntity.startDate = new Date(this.selectedEntity.startDate);
     this.selectedEntityChange.emit(this.selectedEntity);

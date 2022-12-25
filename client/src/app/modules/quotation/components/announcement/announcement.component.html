@@ -211,39 +211,15 @@
       <fieldset [disabled]="editMode==false" class="fieldset-no-border">
         <div class="form-div">
           <mat-accordion multi>
-            <mat-expansion-panel>
+            <mat-expansion-panel expanded>
               <mat-expansion-panel-header>
                 <mat-panel-title>
                   Epreuve de relecture
                 </mat-panel-title>
                 <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
               </mat-expansion-panel-header>
-              <addressing [displayMailCC]="false" [onlyMail]="true" [editMode]=" editMode"
-                [document]="proofReadingDocument">
-              </addressing>
-            </mat-expansion-panel>
-            <mat-expansion-panel
-              *ngIf="announcement.confrere && announcement.confrere.journalType.id == journalTypeSpel.id">
-              <mat-expansion-panel-header>
-                <mat-panel-title>
-                  Témoin de publication
-                </mat-panel-title>
-                <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
-              </mat-expansion-panel-header>
-              <addressing [editMode]="editMode" [onlyMail]="true" [document]="publicationDocument">
-              </addressing>
-            </mat-expansion-panel>
-            <mat-expansion-panel
-              *ngIf="announcement.confrere && announcement.confrere.journalType.id == journalTypePaper.id">
-              <mat-expansion-panel-header>
-                <mat-panel-title>
-                  Justificatif de parution
-                </mat-panel-title>
-                <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
-              </mat-expansion-panel-header>
-              <addressing [displayMailCC]="false" [onlyMail]="true" [editMode]=" editMode"
-                [document]="publicationCertificateDocument">
-              </addressing>
+              <generic-toggle [(model)]="announcement.isProofReadingDocument" label="Epreuve de relecture ?"
+                [form]="announcementForm" propertyName="isProofReadingDocument"></generic-toggle>
             </mat-expansion-panel>
           </mat-accordion>
         </div>

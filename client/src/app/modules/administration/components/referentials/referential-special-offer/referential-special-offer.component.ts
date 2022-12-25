@@ -27,6 +27,7 @@ export class ReferentialSpecialOfferComponent implements OnInit {
   @Output() selectedEntityChange: EventEmitter<SpecialOffer> = new EventEmitter<SpecialOffer>();
   entities: SpecialOffer[] = [] as Array<SpecialOffer>;
   @ViewChild(MatAccordion) accordion: MatAccordion | undefined;
+  idRowSelected: number | undefined;
 
   assoSpecialOfferBillingItems: AssoSpecialOfferBillingType[] | undefined;
 
@@ -70,6 +71,7 @@ export class ReferentialSpecialOfferComponent implements OnInit {
 
   selectEntity(element: SpecialOffer) {
     this.selectedEntity = element;
+    this.idRowSelected = element.id;
     this.setBillingItems();
     this.selectedEntityChange.emit(this.selectedEntity);
   }

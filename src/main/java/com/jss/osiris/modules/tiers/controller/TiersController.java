@@ -5,12 +5,14 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.ValidationHelper;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
@@ -121,6 +123,7 @@ public class TiersController {
     return new ResponseEntity<List<Competitor>>(competitorService.getCompetitors(), HttpStatus.OK);
   }
 
+  @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
   @PostMapping(inputEntryPoint + "/competitor")
   public ResponseEntity<Competitor> addOrUpdateCompetitor(
       @RequestBody Competitor competitors) throws OsirisValidationException, OsirisException {
@@ -138,6 +141,7 @@ public class TiersController {
         HttpStatus.OK);
   }
 
+  @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
   @PostMapping(inputEntryPoint + "/subscription-period-type")
   public ResponseEntity<SubscriptionPeriodType> addOrUpdateSubscriptionPeriodType(
       @RequestBody SubscriptionPeriodType subscriptionPeriodTypes) throws OsirisValidationException, OsirisException {
@@ -155,6 +159,7 @@ public class TiersController {
     return new ResponseEntity<List<TiersFollowupType>>(tiersFollowupTypeService.getTiersFollowupTypes(), HttpStatus.OK);
   }
 
+  @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
   @PostMapping(inputEntryPoint + "/tiers-followup-type")
   public ResponseEntity<TiersFollowupType> addOrUpdateTiersFollowupType(
       @RequestBody TiersFollowupType tiersFollowupTypes) throws OsirisValidationException, OsirisException {
@@ -190,6 +195,7 @@ public class TiersController {
         billingClosureRecipientTypeService.getBillingClosureRecipientTypes(), HttpStatus.OK);
   }
 
+  @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
   @PostMapping(inputEntryPoint + "/billing-closure-recipient-type")
   public ResponseEntity<BillingClosureRecipientType> addOrUpdateBillingClosureRecipientType(
       @RequestBody BillingClosureRecipientType billingClosureRecipientType)
@@ -210,6 +216,7 @@ public class TiersController {
         HttpStatus.OK);
   }
 
+  @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
   @PostMapping(inputEntryPoint + "/billing-closure-type")
   public ResponseEntity<BillingClosureType> addOrUpdateBillingClosureType(
       @RequestBody BillingClosureType billingClosureTypes) throws OsirisValidationException, OsirisException {
@@ -227,6 +234,7 @@ public class TiersController {
     return new ResponseEntity<List<RefundType>>(refundTypeService.getRefundTypes(), HttpStatus.OK);
   }
 
+  @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
   @PostMapping(inputEntryPoint + "/refund-type")
   public ResponseEntity<RefundType> addOrUpdateRefundType(
       @RequestBody RefundType refundTypes) throws OsirisValidationException, OsirisException {
@@ -244,6 +252,7 @@ public class TiersController {
         HttpStatus.OK);
   }
 
+  @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
   @PostMapping(inputEntryPoint + "/payment-deadline-type")
   public ResponseEntity<PaymentDeadlineType> addOrUpdatePaymentDeadlineType(
       @RequestBody PaymentDeadlineType paymentDeadlineTypes) throws OsirisValidationException, OsirisException {
@@ -261,6 +270,7 @@ public class TiersController {
     return new ResponseEntity<List<BillingLabelType>>(billingLabelTypeService.getBillingLabelTypes(), HttpStatus.OK);
   }
 
+  @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
   @PostMapping(inputEntryPoint + "/billing-label-type")
   public ResponseEntity<BillingLabelType> addOrUpdateBillingLabelType(
       @RequestBody BillingLabelType billingLabelTypes) throws OsirisValidationException, OsirisException {
@@ -288,6 +298,7 @@ public class TiersController {
     return new ResponseEntity<List<TiersType>>(tiersTypeService.getTiersTypes(), HttpStatus.OK);
   }
 
+  @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
   @PostMapping(inputEntryPoint + "/tiers-type")
   public ResponseEntity<TiersType> addOrUpdateTiersType(
       @RequestBody TiersType tiersTypes) throws OsirisValidationException, OsirisException {
@@ -304,6 +315,7 @@ public class TiersController {
     return new ResponseEntity<List<TiersCategory>>(tiersCategoryService.getTiersCategories(), HttpStatus.OK);
   }
 
+  @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
   @PostMapping(inputEntryPoint + "/tiers-category")
   public ResponseEntity<TiersCategory> addOrUpdateTiersCategory(
       @RequestBody TiersCategory tiersCategories) throws OsirisValidationException, OsirisException {
@@ -418,10 +430,6 @@ public class TiersController {
         validationHelper.validateString(document.getBillingPostalCode(), false, 10, "BillingPostalCode");
         validationHelper.validateString(document.getCedexComplement(), false, 20, "CedexComplement");
 
-        if (document.getIsMailingPaper() == null)
-          document.setIsMailingPaper(false);
-        if (document.getIsMailingPdf() == null)
-          document.setIsMailingPdf(false);
         if (document.getIsRecipientAffaire() == null)
           document.setIsRecipientAffaire(false);
         if (document.getIsRecipientClient() == null)

@@ -49,6 +49,12 @@ public class BillingType implements Serializable, IId {
 	@JoinColumn(name = "id_accounting_account_charge")
 	private AccountingAccount accountingAccountCharge;
 
+	@Column(nullable = false)
+	private Boolean isGenerateAccountProduct;
+
+	@Column(nullable = false)
+	private Boolean isGenerateAccountCharge;
+
 	public Integer getId() {
 		return id;
 	}
@@ -127,6 +133,22 @@ public class BillingType implements Serializable, IId {
 
 	public void setAccountingAccountCharge(AccountingAccount accountingAccountCharge) {
 		this.accountingAccountCharge = accountingAccountCharge;
+	}
+
+	public Boolean getIsGenerateAccountProduct() {
+		return isGenerateAccountProduct;
+	}
+
+	public void setIsGenerateAccountProduct(Boolean isGenerateAccountProduct) {
+		this.isGenerateAccountProduct = isGenerateAccountProduct;
+	}
+
+	public Boolean getIsGenerateAccountCharge() {
+		return isGenerateAccountCharge;
+	}
+
+	public void setIsGenerateAccountCharge(Boolean isGenerateAccountCharge) {
+		this.isGenerateAccountCharge = isGenerateAccountCharge;
 	}
 
 }

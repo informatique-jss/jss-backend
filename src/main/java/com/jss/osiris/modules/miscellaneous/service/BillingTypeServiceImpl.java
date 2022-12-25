@@ -45,8 +45,11 @@ public class BillingTypeServiceImpl implements BillingTypeService {
                         && billingType.getAccountingAccountProduct() == null) {
             AccountingAccountBinome accountingAccounts = accountingAccountService
                     .generateAccountingAccountsForBillingType(billingType);
-            billingType.setAccountingAccountCharge(accountingAccounts.getAccountingAccountCharge());
-            billingType.setAccountingAccountProduct(accountingAccounts.getAccountingAccountProduct());
+
+            if (billingType.getIsGenerateAccountCharge())
+                billingType.setAccountingAccountCharge(accountingAccounts.getAccountingAccountCharge());
+            if (billingType.getIsGenerateAccountProduct())
+                billingType.setAccountingAccountProduct(accountingAccounts.getAccountingAccountProduct());
         }
         return billingTypeRepository.save(billingType);
     }

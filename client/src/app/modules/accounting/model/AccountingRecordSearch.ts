@@ -11,5 +11,6 @@ export interface AccountingRecordSearch {
   hideLettered: boolean;
   responsableId: number;
   tiersId: number;
+  confrereId: number;
 
 }

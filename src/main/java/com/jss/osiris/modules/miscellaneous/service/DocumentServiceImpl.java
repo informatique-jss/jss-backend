@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.miscellaneous.model.Document;
+import com.jss.osiris.modules.miscellaneous.model.DocumentType;
 import com.jss.osiris.modules.miscellaneous.repository.DocumentRepository;
 
 @Service
@@ -30,6 +31,17 @@ public class DocumentServiceImpl implements DocumentService {
         Optional<Document> document = documentRepository.findById(id);
         if (document.isPresent())
             return document.get();
+        return null;
+    }
+
+    @Override
+    public Document getDocumentByDocumentType(List<Document> documents, DocumentType documentType)
+            throws OsirisException {
+        if (documents != null && documents.size() > 0)
+            for (Document document : documents)
+                if (document.getDocumentType() != null && document.getDocumentType().getId() != null
+                        && document.getDocumentType().getId().equals(documentType.getId()))
+                    return document;
         return null;
     }
 
@@ -80,8 +92,6 @@ public class DocumentServiceImpl implements DocumentService {
         newDocument.setAffaireRecipient(document.getAffaireRecipient());
         newDocument.setClientAddress(document.getClientAddress());
         newDocument.setClientRecipient(document.getClientRecipient());
-        newDocument.setIsMailingPaper(document.getIsMailingPaper());
-        newDocument.setIsMailingPdf(document.getIsMailingPdf());
         newDocument.setNumberMailingAffaire(document.getNumberMailingAffaire());
         newDocument.setNumberMailingClient(document.getNumberMailingClient());
         newDocument.setBillingLabelType(document.getBillingLabelType());

@@ -10,4 +10,6 @@ export interface BillingType extends IReferential {
   isOptionnal: boolean;
   accountingAccountProduct: AccountingAccount;
   accountingAccountCharge: AccountingAccount;
+  isGenerateAccountProduct: boolean;
+  isGenerateAccountCharge: boolean;
 }

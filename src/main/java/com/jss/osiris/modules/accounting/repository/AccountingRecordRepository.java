@@ -71,10 +71,14 @@ public interface AccountingRecordRepository extends CrudRepository<AccountingRec
                         " left join customer_order co on co.id = r.id_customer_order " +
                         " left join responsable re1 on re1.id = i.id_responsable " +
                         " left join responsable re2 on r2.id = co.id_responsable " +
+                        " left join confrere cf1 on cf1.id = i.id_confrere " +
+                        " left join confrere cf2 on cf2.id = co.id_confrere " +
                         " where ( COALESCE(:accountingAccountIds) =0 or r.id_accounting_account in (:accountingAccountIds)) "
                         +
                         " and (:journalId =0 or r.id_accounting_journal = :journalId) " +
                         " and (:responsableId =0 or COALESCE(re1.id ,re2.id )  = :responsableId and t.id is not null) "
+                        +
+                        " and (:confrereId =0 or COALESCE(cf1.id ,cf2.id )  = :confrereId) "
                         +
                         " and (:tiersId =0 or COALESCE(i.id_tiers ,co.id_tiers )  = :tiersId and t.id is not null) " +
                         " and (:hideLettered = false or r.lettering_date is null ) " +
@@ -87,6 +91,7 @@ public interface AccountingRecordRepository extends CrudRepository<AccountingRec
                         @Param("journalId") Integer journalId,
                         @Param("responsableId") Integer responsableId,
                         @Param("tiersId") Integer tiersId,
+                        @Param("confrereId") Integer confrereId,
                         @Param("hideLettered") Boolean hideLettered,
                         @Param("startDate") LocalDateTime startDate,
                         @Param("endDate") LocalDateTime endDate,

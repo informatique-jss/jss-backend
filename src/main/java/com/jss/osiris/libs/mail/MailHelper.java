@@ -58,11 +58,11 @@ import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.invoicing.service.InvoiceHelper;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
-import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.model.Mail;
 import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.DocumentService;
+import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.profile.service.EmployeeService;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.Announcement;
@@ -151,6 +151,9 @@ public class MailHelper {
 
     @Autowired
     AttachmentService attachmentService;
+
+    @Autowired
+    MailComputeHelper mailComputeHelper;
 
     private JavaMailSender getMailSender() throws OsirisException {
         if (javaMailSender != null)
@@ -428,86 +431,6 @@ public class MailHelper {
         return emailTemplateEngine().process("model", ctx);
     }
 
-    public MailComputeResult computeMailForBillingDocument(IQuotation quotation) throws OsirisException {
-        // Compute recipients
-        MailComputeResult mailComputeResult = new MailComputeResult();
-        mailComputeResult.setRecipientsMailTo(new ArrayList<Mail>());
-        mailComputeResult.setRecipientsMailCc(new ArrayList<Mail>());
-        mailComputeResult.setIsSendToClient(false);
-        mailComputeResult.setIsSendToAffaire(false);
-
-        Document billingDocument = documentService.getBillingDocument(quotation.getDocuments());
-        if (billingDocument != null && (quotation.getTiers() != null || quotation.getResponsable() != null
-                || quotation.getConfrere() != null)) {
-            ITiers customerOrder = quotationService.getCustomerOrderOfQuotation(quotation);
-            if (billingDocument.getIsRecipientAffaire()) {
-                mailComputeResult.setIsSendToAffaire(true);
-                if (billingDocument.getMailsAffaire() != null && billingDocument.getMailsAffaire().size() > 0) {
-                    mailComputeResult.getRecipientsMailTo().addAll(billingDocument.getMailsAffaire());
-                    mailComputeResult.setMailToAffaireOrigin("mails indiqués dans la commande");
-                } else if (quotation.getAssoAffaireOrders().get(0).getAffaire().getMails() != null
-                        && quotation.getAssoAffaireOrders().get(0).getAffaire().getMails().size() > 0) {
-                    mailComputeResult.getRecipientsMailTo()
-                            .addAll(quotation.getAssoAffaireOrders().get(0).getAffaire().getMails());
-                    mailComputeResult.setMailToAffaireOrigin("mails indiqués sur l'affaire");
-                } else
-                    return mailComputeResult;
-
-                if (billingDocument.getMailsCCResponsableAffaire() != null
-                        && billingDocument.getMailsCCResponsableAffaire().size() > 0) {
-                    for (Responsable responsable : billingDocument.getMailsCCResponsableAffaire())
-                        if (responsable.getMails() != null
-                                && responsable.getMails().size() > 0) {
-                            mailComputeResult.getRecipientsMailCc().addAll(responsable.getMails());
-                            mailComputeResult.setMailCcAffaireOrigin("mails des responsables choisis");
-                        }
-                }
-            }
-
-            if (billingDocument.getIsRecipientClient()
-                    || !billingDocument.getIsRecipientClient() && !billingDocument.getIsRecipientAffaire()) {
-                mailComputeResult.setIsSendToClient(true);
-                if (billingDocument.getMailsClient() != null
-                        && billingDocument.getMailsClient().size() > 0) {
-                    mailComputeResult.getRecipientsMailTo().addAll(billingDocument.getMailsClient());
-                    mailComputeResult.setMailToClientOrigin("mails indiqués dans la commande");
-                } else if (customerOrder instanceof Responsable
-                        && ((Responsable) customerOrder).getMails() != null
-                        && ((Responsable) customerOrder).getMails().size() > 0) {
-                    mailComputeResult.getRecipientsMailTo().addAll(((Responsable) customerOrder).getMails());
-                    mailComputeResult.setMailToClientOrigin("mails du responsable");
-                } else if (customerOrder instanceof Responsable
-                        && ((Responsable) customerOrder).getTiers().getMails() != null
-                        && ((Responsable) customerOrder).getTiers().getMails().size() > 0) {
-                    mailComputeResult.getRecipientsMailTo().addAll(((Responsable) customerOrder).getTiers().getMails());
-                    mailComputeResult.setMailToClientOrigin("mails du tiers associé au responsable");
-                } else if (customerOrder instanceof Confrere
-                        && ((Confrere) customerOrder).getRegie() != null
-                        && ((Confrere) customerOrder).getRegie().getMails() != null
-                        && ((Confrere) customerOrder).getRegie().getMails().size() > 0) {
-                    mailComputeResult.getRecipientsMailTo().addAll(((Confrere) customerOrder).getRegie().getMails());
-                    mailComputeResult.setMailToClientOrigin("mails de la régie du confrère");
-                } else if (customerOrder.getMails() != null
-                        && customerOrder.getMails().size() > 0) {
-                    mailComputeResult.getRecipientsMailTo().addAll(customerOrder.getMails());
-                    mailComputeResult.setMailToClientOrigin("mails du tiers/confrère");
-                } else
-                    return mailComputeResult;
-
-                if (billingDocument.getMailsCCResponsableClient() != null
-                        && billingDocument.getMailsCCResponsableClient().size() > 0) {
-                    for (Responsable responsable : billingDocument.getMailsCCResponsableClient())
-                        if (responsable.getMails() != null
-                                && responsable.getMails().size() > 0) {
-                            mailComputeResult.getRecipientsMailCc().addAll(responsable.getMails());
-                            mailComputeResult.setMailCcClientOrigin("mails des responsables choisis");
-                        }
-                }
-            }
-        }
-        return mailComputeResult;
-    }
-
     private void computeQuotationPrice(CustomerMail mail, IQuotation quotation) {
         // Compute prices
         Float preTaxPriceTotal = 0f;
@@ -582,6 +505,8 @@ public class MailHelper {
         mail.setSubtitle("Il n'attend plus que votre validation.");
         mail.setLabel("Devis n°" + quotation.getId());
 
+        MailComputeResult mailComputeResult = mailComputeHelper.computeMailForQuotationMail(quotation);
+
         if (quotation.getAssoAffaireOrders().size() == 1) {
             Affaire affaire = quotation.getAssoAffaireOrders().get(0).getAffaire();
             mail.setExplaination("Vous trouverez ci-dessous le devis pour la société "
@@ -646,8 +571,6 @@ public class MailHelper {
             mail.setCbExplanation(
                     "Vous avez aussi la possibilité de payer par carte bancaire en flashant le QR Code ci-dessous ou en cliquant ");
 
-            MailComputeResult mailComputeResult = computeMailForBillingDocument(quotation);
-
             mail.setCbLink(paymentCbEntryPoint + "/quotation/deposit?quotationId=" + quotation.getId() + "&mail="
                     + mailComputeResult.getRecipientsMailTo().get(0).getMail());
 
@@ -673,7 +596,7 @@ public class MailHelper {
         ITiers customerOrder = quotationService.getCustomerOrderOfQuotation(quotation);
         mail.setReplyTo(customerOrder.getSalesEmployee());
         mail.setSendToMe(sendToMe);
-        mail.setMailComputeResult(computeMailForBillingDocument(quotation));
+        mail.setMailComputeResult(mailComputeResult);
 
         mail.setSubject("Votre devis n°" + quotation.getId());
 
@@ -730,7 +653,7 @@ public class MailHelper {
 
         mail.setReplyToMail(constantService.getStringSalesSharedMailbox());
         mail.setSendToMe(false);
-        mail.setMailComputeResult(computeMailForBillingDocument(quotation));
+        mail.setMailComputeResult(mailComputeHelper.computeMailForQuotationCreationConfirmation(quotation));
 
         mail.setSubject("Votre devis n°" + quotation.getId() + " du " + LocalDate.now().format(formatter));
 
@@ -748,6 +671,9 @@ public class MailHelper {
 
         CustomerMail mail = new CustomerMail();
         computeQuotationPrice(mail, customerOrder);
+
+        MailComputeResult mailComputeResult = mailComputeHelper
+                .computeMailForCustomerOrderCreationConfirmation(customerOrder);
 
         ITiers tiers = quotationService.getCustomerOrderOfQuotation(customerOrder);
 
@@ -840,8 +766,6 @@ public class MailHelper {
             mail.setCbExplanation(
                     "Vous avez aussi la possibilité de payer par carte bancaire en flashant le QR Code ci-dessous ou en cliquant ");
 
-            MailComputeResult mailComputeResult = computeMailForBillingDocument(customerOrder);
-
             if (mailComputeResult.getRecipientsMailTo() == null
                     || mailComputeResult.getRecipientsMailTo().get(0) == null
                     || mailComputeResult.getRecipientsMailTo().get(0).getMail() == null)
@@ -865,7 +789,7 @@ public class MailHelper {
 
         mail.setReplyTo(tiers.getSalesEmployee());
         mail.setSendToMe(sendToMe);
-        mail.setMailComputeResult(computeMailForBillingDocument(customerOrder));
+        mail.setMailComputeResult(mailComputeResult);
 
         if (isDepositMandatory && remainingToPay > 0)
             mail.setSubject("Votre commande n°" + customerOrder.getId() + " est en attente de paiement");
@@ -936,7 +860,7 @@ public class MailHelper {
 
         mail.setReplyTo(tiers.getSalesEmployee());
         mail.setSendToMe(sendToMe);
-        mail.setMailComputeResult(computeMailForBillingDocument(customerOrder));
+        mail.setMailComputeResult(mailComputeHelper.computeMailForDepositConfirmation(customerOrder));
 
         mail.setSubject("Réception de réglement pour votre commande n°" + customerOrder.getId());
 
@@ -1029,17 +953,20 @@ public class MailHelper {
         return tempFile;
     }
 
-    public File generatePublicationReceiptPdf(Announcement announcement) throws OsirisException {
+    public File generatePublicationReceiptPdf(Announcement announcement, boolean withStamp) throws OsirisException {
         final Context ctx = new Context();
 
         ctx.setVariable("noticeHeader",
                 (announcement.getNoticeHeader() != null && !announcement.getNoticeHeader().equals(""))
                         ? announcement.getNoticeHeader().replaceAll("<br>", "<br/>").replaceAll("&nbsp;", " ")
+                                .replaceAll("&", "&amp;")
                         : null);
-        ctx.setVariable("notice", announcement.getNotice().replaceAll("<br>", "<br/>").replaceAll("&nbsp;", " "));
+        ctx.setVariable("notice", announcement.getNotice().replaceAll("<br>", "<br/>").replaceAll("&nbsp;", " ")
+                .replaceAll("&", "&amp;"));
         LocalDate localDate = announcement.getPublicationDate();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         ctx.setVariable("date", localDate.format(formatter));
+        ctx.setVariable("withStamp", withStamp);
 
         // Create the HTML body using Thymeleaf
         final String htmlContent = emailTemplateEngine().process("publication-receipt", ctx);
@@ -1071,8 +998,10 @@ public class MailHelper {
         ctx.setVariable("noticeHeader",
                 (announcement.getNoticeHeader() != null && !announcement.getNoticeHeader().equals(""))
                         ? announcement.getNoticeHeader().replaceAll("<br>", "<br/>").replaceAll("&nbsp;", " ")
+                                .replaceAll("&", "&amp;")
                         : null);
-        ctx.setVariable("notice", announcement.getNotice().replaceAll("<br>", "<br/>").replaceAll("&nbsp;", " "));
+        ctx.setVariable("notice", announcement.getNotice().replaceAll("<br>", "<br/>").replaceAll("&nbsp;", " ")
+                .replaceAll("&", "&amp;"));
         if (announcement.getDepartment() != null)
             ctx.setVariable("department",
                     announcement.getDepartment().getCode() + " - " + announcement.getDepartment().getLabel());
@@ -1122,6 +1051,9 @@ public class MailHelper {
 
         CustomerMail mail = new CustomerMail();
         computeQuotationPrice(mail, customerOrder);
+
+        MailComputeResult mailComputeResult = mailComputeHelper
+                .computeMailForCustomerOrderFinalizationAndInvoice(customerOrder);
 
         ITiers tiers = quotationService.getCustomerOrderOfQuotation(customerOrder);
         boolean isPaymentTypePrelevement = false;
@@ -1185,7 +1117,6 @@ public class MailHelper {
             mail.setCbExplanation(
                     "Vous avez aussi la possibilité de payer par carte bancaire en flashant le QR Code ci-dessous ou en cliquant ");
 
-            MailComputeResult mailComputeResult = computeMailForBillingDocument(customerOrder);
             if (!sendToMe)
                 mail.setCbLink(
                         paymentCbEntryPoint + "/order/invoice?customerOrderId=" + customerOrder.getId() + "&mail="
@@ -1208,7 +1139,7 @@ public class MailHelper {
 
         mail.setReplyTo(tiers.getSalesEmployee());
         mail.setSendToMe(sendToMe);
-        mail.setMailComputeResult(computeMailForBillingDocument(customerOrder));
+        mail.setMailComputeResult(mailComputeResult);
 
         if (isReminder)
             mail.setSubject("Votre commande n°" + customerOrder.getId() + " est en attente de paiement");
@@ -1342,7 +1273,7 @@ public class MailHelper {
 
         mail.setReplyTo(quotationService.getCustomerOrderOfQuotation(customerOrder).getSalesEmployee());
         mail.setSendToMe(sendToMe);
-        mail.setMailComputeResult(computeMailForBillingDocument(customerOrder));
+        mail.setMailComputeResult(mailComputeHelper.computeMailForPublicationReceipt(customerOrder));
 
         mail.setSubject("Votre attestation de parution");
 
@@ -1400,14 +1331,77 @@ public class MailHelper {
 
         mail.setReplyTo(quotationService.getCustomerOrderOfQuotation(customerOrder).getSalesEmployee());
         mail.setSendToMe(sendToMe);
-        mail.setMailComputeResult(computeMailForBillingDocument(customerOrder));
+        mail.setMailComputeResult(mailComputeHelper.computeMailForPublicationFlag(customerOrder));
 
         mail.setSubject("Votre témoin de publication");
 
         addMailToQueue(mail);
     }
 
-    public void sendPublicationReceiptToCustomer(List<Attachment> attachments, ITiers tiers, boolean sendToMe)
+    public void sendProofReadingToCustomer(CustomerOrder customerOrder, boolean sendToMe) throws OsirisException {
+
+        CustomerMail mail = new CustomerMail();
+
+        mail.setHeaderPicture("images/reading-proof-header.png");
+        mail.setTitle("Votre épreuve de relecture de publication");
+        mail.setLabel("Commande n°" + customerOrder.getId());
+        String explainationText = "Vous trouverez ci-joint votre épreuve de relecture pour validation ";
+
+        if (customerOrder.getAssoAffaireOrders().size() == 1) {
+            Affaire affaire = customerOrder.getAssoAffaireOrders().get(0).getAffaire();
+            mail.setExplaination(explainationText + " concernant la société " +
+                    (affaire.getDenomination() != null ? affaire.getDenomination()
+                            : (affaire.getFirstname() + " " + affaire.getLastname()))
+                    + ".");
+        } else {
+            mail.setExplaination(explainationText + " concernant les sociétés indiquées ci-dessous.");
+            ArrayList<String> details = new ArrayList<String>();
+            for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
+                details.add(asso.getAffaire().getDenomination() != null ? asso.getAffaire().getDenomination()
+                        : (asso.getAffaire().getFirstname() + " " + asso.getAffaire().getLastname()));
+            mail.setExplainationElements(String.join("!#", details));
+        }
+
+        List<Attachment> attachments = new ArrayList<Attachment>();
+        for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
+            if (asso.getProvisions() != null)
+                for (Provision provision : asso.getProvisions())
+                    if (provision.getAnnouncement() != null)
+                        if (provision.getAnnouncement().getAttachments() != null)
+                            for (Attachment attachment : provision.getAnnouncement().getAttachments())
+                                if (attachment.getAttachmentType().getId()
+                                        .equals(constantService.getAttachmentTypeProofReading()
+                                                .getId())) {
+                                    attachments.add(attachment);
+                                }
+
+        if (attachments.size() == 0)
+            throw new OsirisException(null,
+                    "Unable to find reading proof PDF for CustomerOrder n°" + customerOrder.getId());
+
+        mail.setAttachments(attachments);
+
+        mail.setGreetings("En vous remerciant pour votre confiance !");
+
+        Employee currentAssignee = null;
+        if (customerOrder != null && customerOrder.getAssoAffaireOrders() != null)
+            for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
+                if (asso.getProvisions() != null)
+                    for (Provision provision : asso.getProvisions())
+                        if (provision.getAnnouncement() != null && provision.getAssignedTo() != null)
+                            currentAssignee = provision.getAssignedTo();
+
+        mail.setReplyTo(currentAssignee != null ? currentAssignee
+                : quotationService.getCustomerOrderOfQuotation(customerOrder).getSalesEmployee());
+        mail.setSendToMe(sendToMe);
+        mail.setMailComputeResult(mailComputeHelper.computeMailForReadingProof(customerOrder));
+
+        mail.setSubject("Votre épreuve de relecture");
+
+        addMailToQueue(mail);
+    }
+
+    public void sendBillingClosureToCustomer(List<Attachment> attachments, ITiers tiers, boolean sendToMe)
             throws OsirisException {
 
         CustomerMail mail = new CustomerMail();
@@ -1426,7 +1420,7 @@ public class MailHelper {
 
         mail.setReplyToMail(constantService.getStringAccountingSharedMaiblox() + "");
         mail.setSendToMe(sendToMe);
-        mail.setMailComputeResult(computeMailForPublicationReceiptDocument(tiers));
+        mail.setMailComputeResult(mailComputeHelper.computeMailForBillingClosure(tiers));
 
         mail.setSubject("Votre relevé de compte");
 
@@ -1458,22 +1452,6 @@ public class MailHelper {
         mail.setSubject("Votre nouveau mot de passe");
 
         addMailToQueue(mail);
-    }
-
-    private MailComputeResult computeMailForPublicationReceiptDocument(ITiers tiers) {
-        MailComputeResult mailComputeResult = new MailComputeResult();
-        mailComputeResult.setRecipientsMailTo(new ArrayList<Mail>());
-        if (tiers instanceof Tiers)
-            mailComputeResult.setMailToClientOrigin("Mails du tiers");
-        if (tiers instanceof Responsable)
-            mailComputeResult.setMailToClientOrigin("Mails du responsable");
-
-        if (tiers.getMails() != null) {
-            for (Mail mail : tiers.getMails())
-                mailComputeResult.getRecipientsMailTo().add(mail);
-        }
-
-        return mailComputeResult;
     }
 
 }

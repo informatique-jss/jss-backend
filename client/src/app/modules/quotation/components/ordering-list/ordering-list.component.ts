@@ -152,11 +152,9 @@ export class OrderingListComponent implements OnInit {
 
 
   putDefaultPeriod() {
-    if (!this.orderingSearch.startDate && !this.orderingSearch.endDate) {
-      this.orderingSearch.startDate = new Date();
-      this.orderingSearch.endDate = new Date();
-      this.orderingSearch.startDate.setDate(this.orderingSearch.endDate.getDate() - 30);
-    }
+    this.orderingSearch.startDate = new Date();
+    this.orderingSearch.endDate = new Date();
+    this.orderingSearch.startDate.setDate(this.orderingSearch.endDate.getDate() - 30);
   }
 
   searchOrders() {

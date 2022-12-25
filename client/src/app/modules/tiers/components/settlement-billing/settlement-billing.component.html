@@ -18,8 +18,8 @@
             </mat-panel-title>
             <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
           </mat-expansion-panel-header>
-          <addressing [displayMailCC]="false" [editMode]=" editMode" [document]="publicationDocument"
-            [displayPaperCopy]="true" [displayNumberMailing]="true">
+          <addressing [editMode]=" editMode" [document]="paperDocument" [displayOverrideMail]="true"
+            [displayNumberMailing]="true" [displayOverrideEMail]="false">
           </addressing>
         </mat-expansion-panel>
         <mat-expansion-panel>
@@ -29,17 +29,8 @@
             </mat-panel-title>
             <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
           </mat-expansion-panel-header>
-          <addressing [editMode]="editMode" [document]="kbisDocument" [displayMailCC]="instanceOfResponsable(tiers)">
-          </addressing>
-        </mat-expansion-panel>
-        <mat-expansion-panel>
-          <mat-expansion-panel-header>
-            <mat-panel-title>
-              CFE
-            </mat-panel-title>
-            <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
-          </mat-expansion-panel-header>
-          <addressing [editMode]="editMode" [document]="cfeDocument" [displayMailCC]="instanceOfResponsable(tiers)">
+          <addressing [editMode]="editMode" [document]="digitalDocument" [displayOverrideMail]="false"
+            [displayOverrideEMail]="true">
           </addressing>
         </mat-expansion-panel>
         <mat-expansion-panel>
@@ -120,7 +111,7 @@
               </td>
             </tr>
           </table>
-          <addressing [editMode]="editMode" [document]="billingDocument " [onlyMail]="true"
+          <addressing [editMode]="editMode" [document]="billingDocument "
             [displayMailCC]="instanceOfResponsable(tiers)"></addressing>
         </mat-expansion-panel>
         <mat-expansion-panel *ngIf="instanceOfTiers(tiers) && !instanceOfResponsable(tiers)">
@@ -189,10 +180,9 @@
               </td>
             </tr>
           </table>
-          <addressing [editMode]="editMode" [document]="refundDocument" [onlyMail]=" true">
-          </addressing>
         </mat-expansion-panel>
-        <mat-expansion-panel *ngIf="instanceOfTiers(tiers) && !instanceOfResponsable(tiers)">
+        <mat-expansion-panel
+          *ngIf="instanceOfTiers(tiers) && !instanceOfResponsable(tiers) && !instanceOfConfrere(tiers)">
           <mat-expansion-panel-header>
             <mat-panel-title>
               Relevés de compte
@@ -213,24 +203,8 @@
                   propertyName="billingClosureRecipientType" label="Destinataire(s)">
                 </radio-group-billing-closure-recipient>
               </td>
-              <td>
-                <addressing [editMode]="editMode" [document]="billingClosureDocument" [hideConsignee]="true"
-                  [onlyMail]="true"
-                  [hideOverriding]="!billingClosureDocument.billingClosureRecipientType || !billingClosureDocument.billingClosureRecipientType.code "
-                  [displayMailCC]="instanceOfResponsable(tiers)"></addressing>
-              </td>
             </tr>
           </table>
-        </mat-expansion-panel>
-        <mat-expansion-panel *ngIf="instanceOfTiers(tiers) && !instanceOfResponsable(tiers)">
-          <mat-expansion-panel-header>
-            <mat-panel-title>
-              Reçu de provision / chèque du trésor public
-            </mat-panel-title>
-            <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
-          </mat-expansion-panel-header>
-          <addressing [editMode]="editMode" [document]="provisionalReceiptDocument" [hideAdressing]="true"
-            [onlyMail]="true"></addressing>
         </mat-expansion-panel>
       </mat-accordion>
     </fieldset>

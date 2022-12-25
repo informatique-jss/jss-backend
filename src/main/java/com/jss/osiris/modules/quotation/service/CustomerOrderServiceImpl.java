@@ -44,6 +44,7 @@ import com.jss.osiris.modules.miscellaneous.service.NotificationService;
 import com.jss.osiris.modules.miscellaneous.service.PhoneService;
 import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.profile.service.EmployeeService;
+import com.jss.osiris.modules.quotation.controller.QuotationController;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.Announcement;
 import com.jss.osiris.modules.quotation.model.AnnouncementStatus;
@@ -121,6 +122,12 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Autowired
     DocumentService documentService;
 
+    @Autowired
+    AnnouncementStatusService announcementStatusService;
+
+    @Autowired
+    QuotationController quotationController;
+
     @Value("${payment.cb.redirect.deposit.entry.point}")
     private String paymentCbRedirectDeposit;
 
@@ -145,8 +152,12 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Override
     public CustomerOrder addOrUpdateCustomerOrder(CustomerOrder customerOrder)
             throws OsirisException {
-        if (customerOrder.getId() == null)
+        if (customerOrder.getId() == null) {
             customerOrder.setCreatedDate(LocalDateTime.now());
+        }
+
+        if (customerOrder.getIsCreatedFromWebSite() == null)
+            customerOrder.setIsCreatedFromWebSite(false);
 
         customerOrder.setIsQuotation(false);
 
@@ -179,8 +190,12 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             notificationService.notifyNewCustomerOrderQuotation(customerOrder);
 
         checkAllProvisionEnded(customerOrder);
-        generateStoreAndSendPublicationReceipt(customerOrder);
         generateStoreAndSendPublicationFlag(customerOrder);
+
+        // Trigger move forward for announcement created in website
+        if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.OPEN)
+                && customerOrder.getIsCreatedFromWebSite() != null && customerOrder.getIsCreatedFromWebSite())
+            addOrUpdateCustomerOrderStatus(customerOrder, CustomerOrderStatus.OPEN, false);
         return customerOrder;
     }
 
@@ -225,33 +240,80 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     public CustomerOrder addOrUpdateCustomerOrderStatus(CustomerOrder customerOrder, String targetStatusCode,
             boolean isFromUser)
             throws OsirisException {
-        CustomerOrderStatus targetCustomerStatus = customerOrderStatusService
-                .getCustomerOrderStatusByCode(targetStatusCode);
-        if (targetCustomerStatus == null)
-            throw new OsirisException(null, "Customer order status not found for code " + targetStatusCode);
-        if (targetCustomerStatus.getCode().equals(CustomerOrderStatus.BEING_PROCESSED)) {
+        // Handle automatic workflow for Announcement created from website
+        boolean onlyAnnonceLegale = true;
+        boolean isFromWebsite = customerOrder.getIsCreatedFromWebSite();
+        if (customerOrder != null && customerOrder.getAssoAffaireOrders() != null)
+            for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
+                if (asso.getProvisions() != null)
+                    for (Provision provision : asso.getProvisions())
+                        if (provision.getAnnouncement() == null)
+                            onlyAnnonceLegale = false;
+
+        // Determine if deposit is mandatory or not
+        if (targetStatusCode.equals(CustomerOrderStatus.BEING_PROCESSED)
+                || targetStatusCode.equals(CustomerOrderStatus.WAITING_DEPOSIT)) {
+            Float remainingToPay = Math
+                    .round(accountingRecordService.getRemainingAmountToPayForCustomerOrder(customerOrder) * 100f)
+                    / 100f;
+
+            ITiers tiers = quotationService.getCustomerOrderOfQuotation(customerOrder);
+            boolean isDepositMandatory = false;
+            if (tiers instanceof Tiers)
+                isDepositMandatory = ((Tiers) tiers).getIsProvisionalPaymentMandatory();
+            if (tiers instanceof Responsable)
+                isDepositMandatory = ((Responsable) tiers).getTiers().getIsProvisionalPaymentMandatory();
+            if (tiers instanceof Confrere)
+                isDepositMandatory = ((Confrere) tiers).getIsProvisionalPaymentMandatory();
+
+            if (!isDepositMandatory || remainingToPay <= 0)
+                targetStatusCode = CustomerOrderStatus.BEING_PROCESSED;
+            else
+                targetStatusCode = CustomerOrderStatus.WAITING_DEPOSIT;
+
+            // Confirm customer order to cutomser with or without deposit
+            mailHelper.sendCustomerOrderCreationConfirmationToCustomer(customerOrder, true, false);
+        }
+
+        // Handle automatic workflow for Announcement created from website
+        if (isFromWebsite && onlyAnnonceLegale) {
+            // First round : move forward customerOrder
+            if (targetStatusCode.equals(CustomerOrderStatus.OPEN)) {
+                boolean hasError = false;
+                try {
+                    quotationController.validateQuotationAndCustomerOrder(customerOrder,
+                            CustomerOrderStatus.BEING_PROCESSED);
+                } catch (Exception e) {
+                    hasError = true;
+                }
+                if (!hasError)
+                    targetStatusCode = CustomerOrderStatus.BEING_PROCESSED;
+            }
+        }
+
+        // Target : BEING PROCESSED => notify customer
+        if (targetStatusCode.equals(CustomerOrderStatus.BEING_PROCESSED)) {
+            // Confirm deposit taken into account or customer order starting
             if (!isFromUser
                     && customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.WAITING_DEPOSIT)) {
                 mailHelper.sendCustomerOrderDepositConfirmationToCustomer(customerOrder, false);
-            }
-            notificationService.notifyCustomerOrderToBeingProcessed(customerOrder, true);
-        }
-        if (targetCustomerStatus.getCode().equals(CustomerOrderStatus.TO_BILLED))
-            notificationService.notifyCustomerOrderToBeingToBilled(customerOrder);
-        if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BILLED)
-                && targetCustomerStatus.getCode().equals(CustomerOrderStatus.TO_BILLED)) {
-            Invoice invoiceToCancel = null;
-            if (customerOrder.getInvoices() != null)
-                for (Invoice invoice : customerOrder.getInvoices())
-                    if (!invoice.getInvoiceStatus().getId()
-                            .equals(constantService.getInvoiceStatusCancelled().getId())) {
-                        invoiceToCancel = invoice;
-                        break;
-                    }
-            moveInvoiceDepositToCustomerOrderDeposit(customerOrder, invoiceToCancel);
-            invoiceService.cancelInvoice(invoiceToCancel);
+            } else
+                notificationService.notifyCustomerOrderToBeingProcessed(customerOrder, true);
         }
 
+        // Handle automatic workflow for Announcement created from website
+        if (isFromWebsite && onlyAnnonceLegale) {
+            // Second round : move forward announcements. Final check checkAllProvisionEnded
+            // on save will put it to TO BILLED if necessary
+            if (targetStatusCode.equals(CustomerOrderStatus.BEING_PROCESSED))
+                moveForwardAnnouncementFromWebsite(customerOrder);
+        }
+
+        // Target : TO BILLED => notify
+        if (targetStatusCode.equals(CustomerOrderStatus.TO_BILLED))
+            notificationService.notifyCustomerOrderToBeingToBilled(customerOrder);
+
+        // Target : BILLED => generate invoice
         if (targetStatusCode.equals(CustomerOrderStatus.BILLED)) {
             Invoice invoice = generateInvoice(customerOrder);
             accountingRecordService.generateAccountingRecordsForSaleOnInvoiceGeneration(
@@ -281,29 +343,20 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             mailHelper.sendCustomerOrderFinalisationToCustomer(customerOrder, false, false, false);
         }
 
-        if (targetStatusCode.equals(CustomerOrderStatus.WAITING_DEPOSIT)) {
-            Float remainingToPay = Math
-                    .round(accountingRecordService.getRemainingAmountToPayForCustomerOrder(customerOrder) * 100f)
-                    / 100f;
-
-            ITiers tiers = quotationService.getCustomerOrderOfQuotation(customerOrder);
-            boolean isDepositMandatory = false;
-            if (tiers instanceof Tiers)
-                isDepositMandatory = ((Tiers) tiers).getIsProvisionalPaymentMandatory();
-            if (tiers instanceof Responsable)
-                isDepositMandatory = ((Responsable) tiers).getTiers().getIsProvisionalPaymentMandatory();
-            if (tiers instanceof Confrere)
-                isDepositMandatory = ((Confrere) tiers).getIsProvisionalPaymentMandatory();
-
-            mailHelper.sendCustomerOrderCreationConfirmationToCustomer(customerOrder, true, false);
-
-            if (!isDepositMandatory || remainingToPay <= 0)
-                targetStatusCode = CustomerOrderStatus.BEING_PROCESSED;
+        // Target : going back to TO BILLED => cancel invoice
+        if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BILLED)
+                && targetStatusCode.equals(CustomerOrderStatus.TO_BILLED)) {
+            Invoice invoiceToCancel = null;
+            if (customerOrder.getInvoices() != null)
+                for (Invoice invoice : customerOrder.getInvoices())
+                    if (!invoice.getInvoiceStatus().getId()
+                            .equals(constantService.getInvoiceStatusCancelled().getId())) {
+                        invoiceToCancel = invoice;
+                        break;
+                    }
+            moveInvoiceDepositToCustomerOrderDeposit(customerOrder, invoiceToCancel);
+            invoiceService.cancelInvoice(invoiceToCancel);
         }
-
-        if (targetStatusCode.equals(CustomerOrderStatus.BEING_PROCESSED)
-                && customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.OPEN))
-            mailHelper.sendCustomerOrderCreationConfirmationToCustomer(customerOrder, true, false);
 
         CustomerOrderStatus customerOrderStatus = customerOrderStatusService
                 .getCustomerOrderStatusByCode(
@@ -314,6 +367,40 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         customerOrder.setCustomerOrderStatus(customerOrderStatus);
         customerOrder.setLastStatusUpdate(LocalDateTime.now());
         return this.addOrUpdateCustomerOrder(customerOrder);
+    }
+
+    /**
+     * Return true if announcement is done at the end, false otherwise
+     */
+    private boolean moveForwardAnnouncementFromWebsite(CustomerOrder customerOrder) throws OsirisException {
+        boolean allDone = true;
+        if (customerOrder != null && customerOrder.getAssoAffaireOrders() != null)
+            for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
+                if (asso.getProvisions() != null)
+                    for (Provision provision : asso.getProvisions())
+                        if (provision.getAnnouncement() != null) {
+                            Announcement announcement = provision.getAnnouncement();
+                            announcement.setAnnouncementStatus(announcementStatusService
+                                    .getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS));
+                            assoAffaireOrderService.addOrUpdateAssoAffaireOrder(asso);
+                            if (announcement.getIsProofReadingDocument() == false) {
+                                announcement.setAnnouncementStatus(announcementStatusService
+                                        .getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_WAITING_READ));
+                                assoAffaireOrderService.addOrUpdateAssoAffaireOrder(asso);
+                                announcement.setAnnouncementStatus(announcementStatusService
+                                        .getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_PUBLISHED));
+                                assoAffaireOrderService.addOrUpdateAssoAffaireOrder(asso);
+                                announcement.setAnnouncementStatus(announcementStatusService
+                                        .getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_DONE));
+                                assoAffaireOrderService.addOrUpdateAssoAffaireOrder(asso);
+                            } else {
+                                allDone = false;
+                                announcement.setAnnouncementStatus(announcementStatusService
+                                        .getAnnouncementStatusByCode(
+                                                AnnouncementStatus.ANNOUNCEMENT_WAITING_READ_CUSTOMER));
+                            }
+                        }
+        return allDone;
     }
 
     private void moveCustomerOrderDepositToInvoiceDeposit(CustomerOrder customerOrder, Invoice invoice)
@@ -536,16 +623,10 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                         if (provision.getBodacc() != null) {
                             provision.getBodacc().setId(null);
                             provision.getBodacc().setAttachments(null);
-                            if (provision.getBodacc().getDocuments() != null)
-                                for (Document document : provision.getBodacc().getDocuments())
-                                    document.setId(null);
                         }
                         if (provision.getFormalite() != null) {
                             provision.getFormalite().setId(null);
                             provision.getFormalite().setAttachments(null);
-                            if (provision.getFormalite().getDocuments() != null)
-                                for (Document document : provision.getFormalite().getDocuments())
-                                    document.setId(null);
                         }
                         if (provision.getSimpleProvision() != null) {
                             provision.getSimpleProvision().setId(null);
@@ -554,9 +635,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                         if (provision.getDomiciliation() != null) {
                             provision.getDomiciliation().setId(null);
                             provision.getDomiciliation().setAttachments(null);
-                            if (provision.getDomiciliation().getDocuments() != null)
-                                for (Document document : provision.getDomiciliation().getDocuments())
-                                    document.setId(null);
                         }
                         if (provision.getInvoiceItems() != null)
                             for (InvoiceItem invoiceItem : provision.getInvoiceItems())
@@ -760,7 +838,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                                 publicationReceiptExists = true;
 
                     if (!publicationReceiptExists) {
-                        File publicationReceiptPdf = mailHelper.generatePublicationReceiptPdf(announcement);
+                        File publicationReceiptPdf = mailHelper.generatePublicationReceiptPdf(announcement, true);
                         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
                         try {
                             announcement.setAttachments(

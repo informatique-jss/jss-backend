@@ -25,9 +25,9 @@
               <table class="full-width">
                 <tr>
                   <td>
-                    <radio-group-billing-label [(model)]="billingDocument.billingLabelType" [isDisabled]="!editMode"
-                      [isMandatory]="true" [form]="quotationManagementForm" propertyName="billingLabelType"
-                      label="Libellé sur facture">
+                    <radio-group-billing-label [(model)]="billingDocument.billingLabelType"
+                      (onFormChange)="updateAdressing($event)" [form]="quotationManagementForm" [isDisabled]="!editMode"
+                      propertyName="billingLabelType" label="Libellé sur facture">
                     </radio-group-billing-label>
                   </td>
                 </tr>
@@ -37,37 +37,46 @@
                 <tr>
                   <td>
                     <generic-input [(model)]="billingDocument.billingLabel" label="Libellé"
-                      [form]="quotationManagementForm" propertyName="billingLabel" [isMandatory]="true"
-                      [isDisabled]="!editMode"></generic-input>
+                      (onFormChange)="updateAdressing($event)" [form]="quotationManagementForm"
+                      propertyName="billingLabel" [isMandatory]="true" [isDisabled]="!editMode"></generic-input>
                   </td>
                   <td>
                     <generic-input [(model)]="billingDocument.billingAddress" label="Adresse"
-                      [form]="quotationManagementForm" propertyName="billingAddress" [isMandatory]="true"
-                      [isDisabled]="!editMode"></generic-input>
+                      (onFormChange)="updateAdressing($event)" [form]="quotationManagementForm"
+                      propertyName="billingAddress" [isMandatory]="true" [isDisabled]="!editMode"></generic-input>
                   </td>
                   <td>
                     <autocomplete-postal-code [(model)]="billingDocument.billingPostalCode"
-                      [byPassAutocompletValidator]="true" [form]="quotationManagementForm" propertyName="postalCode"
-                      [isMandatory]="true" label="Code postal" [isDisabled]="!editMode"
+                      (onFormChange)="updateAdressing($event)" [form]="quotationManagementForm"
+                      [byPassAutocompletValidator]="true" propertyName="postalCode" [isMandatory]="true"
+                      label="Code postal" [isDisabled]="!editMode"
                       [conditionnalRequired]="billingDocument.billingLabelCountry != null && billingDocument.billingLabelCountry.id == countryFrance.id"
                       (onOptionSelected)="fillCity($event)"></autocomplete-postal-code>
                   </td>
                   <td>
+                    <generic-input [(model)]="billingDocument.cedexComplement" label="Complément CEDEX"
+                      (onFormChange)="updateAdressing($event)" [form]="quotationManagementForm"
+                      propertyName="cedexComplement" [isMandatory]="false" [isDisabled]="!editMode"
+                      [maxLength]="20"></generic-input>
+                  </td>
+                  <td>
                     <autocomplete-city [(model)]="billingDocument.billingLabelCity" [isDisabled]="!editMode"
-                      label="Ville" [modelCountry]="billingDocument.billingLabelCountry"
-                      [preFilterPostalCode]="billingDocument.billingPostalCode" [form]="quotationManagementForm"
-                      propertyName="city" [isMandatory]="true" (onOptionSelected)="fillPostalCode($event)">
+                      label="Ville" [preFilterPostalCode]="billingDocument.billingPostalCode"
+                      (onFormChange)="updateAdressing($event)" [modelCountry]="billingDocument.billingLabelCountry"
+                      [form]="quotationManagementForm" propertyName="city" [isMandatory]="true"
+                      (onOptionSelected)="fillPostalCode($event)">
                     </autocomplete-city>
                   </td>
                   <td>
                     <autocomplete-country [(model)]="billingDocument.billingLabelCountry"
-                      [form]="quotationManagementForm" label="Pays" [isDisabled]="!editMode" propertyName="country"
-                      [isMandatory]="true">
+                      (onFormChange)="updateAdressing($event)" [form]="quotationManagementForm" label="Pays"
+                      [isDisabled]="!editMode" propertyName="country" [isMandatory]="true">
                     </autocomplete-country>
                   </td>
                   <td>
                     <generic-toggle [(model)]="billingDocument.billingLabelIsIndividual" label="Est particulier ?"
-                      [form]="quotationManagementForm" propertyName="billingLabelIsIndividual"></generic-toggle>
+                      (onFormChange)="updateAdressing($event)" [form]="quotationManagementForm"
+                      propertyName="billingLabelIsIndividual"></generic-toggle>
                   </td>
                 </tr>
               </table>
@@ -75,7 +84,8 @@
                 <tr>
                   <td>
                     <generic-toggle [(model)]="billingDocument.isResponsableOnBilling" label="Responsable sur facture ?"
-                      [form]="quotationManagementForm" propertyName="isResponsableOnBilling"></generic-toggle>
+                      (onFormChange)="updateAdressing($event)" [form]="quotationManagementForm"
+                      propertyName="isResponsableOnBilling"></generic-toggle>
                   </td>
                 </tr>
               </table>
@@ -83,17 +93,18 @@
                 <tr>
                   <td>
                     <generic-toggle [(model)]="billingDocument.isCommandNumberMandatory"
-                      label="Numéro de commande obligatoire ?" [form]="quotationManagementForm"
-                      propertyName="isCommandNumberMandatory"></generic-toggle>
+                      (onFormChange)="updateAdressing($event)" label="Numéro de commande obligatoire ?"
+                      [form]="quotationManagementForm" propertyName="isCommandNumberMandatory"></generic-toggle>
                   </td>
                   <td *ngIf="billingDocument.isCommandNumberMandatory">
-                    <generic-input [(model)]="billingDocument.commandNumber" label="N° de commande annuel"
-                      [form]="quotationManagementForm" propertyName="commandNumber" [maxLength]="40"></generic-input>
+                    <generic-input [(model)]="billingDocument.commandNumber" label="N° de commande"
+                      (onFormChange)="updateAdressing($event)" [form]="quotationManagementForm"
+                      propertyName="commandNumber" [maxLength]="40"></generic-input>
                   </td>
                 </tr>
               </table>
-              <addressing [editMode]="editMode" [document]="billingDocument " [onlyMail]="true"
-                [displayMailCC]="quotation.responsable?true : false"></addressing>
+              <addressing [editMode]="editMode" [document]="billingDocument " (documentChange)="updateAdressing($event)"
+                [displayMailCC]="instanceOfResponsable(getCustomerOrderForIQuotation(quotation))"></addressing>
               <table class="full-width">
                 <tr *ngIf="billingMailComputeResult">
                   <td>
@@ -156,6 +167,81 @@
                 </tr>
                 <tr *ngIf=" billingMailComputeResult && billingMailComputeResult.recipientsMailTo.length==0">
                   <td class="color-warn">Aucun mail trouvé !</td>
+                </tr>
+              </table>
+            </mat-expansion-panel>
+            <mat-expansion-panel>
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  Documents numériques
+                </mat-panel-title>
+                <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
+              </mat-expansion-panel-header>
+              <addressing [editMode]="editMode" [document]="digitalDocument" [displayOverrideMail]="false"
+                (documentChange)="updateAdressing($event)" [displayOverrideEMail]="true">
+              </addressing>
+              <table class="full-width">
+                <tr *ngIf="digitalMailComputeResult">
+                  <td>
+                    <div *ngIf="digitalMailComputeResult?.isSendToAffaire">
+                      <p>Les mails pour l'envoi à l'affaire sont les suivants (récupérés depuis les
+                        {{digitalMailComputeResult.mailToAffaireOrigin}}) :</p>
+                      <ul>
+                        <li *ngFor="let mail of digitalMailComputeResult.recipientsMailTo">{{mail.mail}}</li>
+                      </ul>
+                      <p
+                        *ngIf="digitalMailComputeResult.recipientsMailCc && digitalMailComputeResult.recipientsMailCc!.length>0">
+                        Les mails pour l'envoi en copie à l'affaire
+                        sont les suivants (récupérés depuis les
+                        {{digitalMailComputeResult.mailCcAffaireOrigin}}) :
+                      <ul>
+                        <li *ngFor="let mail of digitalMailComputeResult.recipientsMailCc">{{mail.mail}}</li>
+                      </ul>
+                    </div>
+
+                    <div *ngIf="digitalMailComputeResult.isSendToClient">
+                      <p>Les mails pour l'envoi au client sont les suivants (récupérés depuis les
+                        {{digitalMailComputeResult.mailToClientOrigin}}) :</p>
+                      <ul>
+                        <li *ngFor="let mail of digitalMailComputeResult.recipientsMailTo">{{mail.mail}}</li>
+                      </ul>
+                      <p
+                        *ngIf="digitalMailComputeResult.recipientsMailCc && digitalMailComputeResult.recipientsMailCc!.length>0">
+                        Les mails pour l'envoi en copie au client
+                        sont les suivants (récupérés depuis les
+                        {{digitalMailComputeResult.mailCcClientOrigin}}) :
+                      <ul>
+                        <li *ngFor="let mail of digitalMailComputeResult.recipientsMailCc">{{mail.mail}}</li>
+                      </ul>
+                    </div>
+                  </td>
+                </tr>
+                <tr *ngIf=" digitalMailComputeResult && digitalMailComputeResult.recipientsMailTo.length==0">
+                  <td class="color-warn">Aucun mail trouvé !</td>
+                </tr>
+              </table>
+            </mat-expansion-panel>
+            <mat-expansion-panel expanded>
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  Documents papiers
+                </mat-panel-title>
+                <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
+              </mat-expansion-panel-header>
+              <addressing [editMode]=" editMode" [document]="paperDocument" [displayOverrideMail]="true"
+                [displayNumberMailing]="true" (documentChange)="updateAdressing($event)" [displayOverrideEMail]="false">
+              </addressing>
+              <table class="full-width">
+                <tr *ngIf="paperLabelResult">
+                  <td>
+                    <p>L'adressage des documents papiers est le suivant (récupéré depuis
+                      {{paperLabelResult.labelOrigin}}) :
+                    </p>
+                    <p [ngClass]="{'color-warn':!paperLabelResult.billingLabel}">
+                      {{paperLabelResult.billingLabel?paperLabelResult.billingLabel:"Libellé inconnu"}}</p>
+                    <p [ngClass]="{'color-warn':!paperLabelResult.billingLabelAddress}">
+                      {{paperLabelResult.billingLabelAddress?paperLabelResult.billingLabelAddress:"Adresse"}}</p>
+                  </td>
                 </tr>
               </table>
             </mat-expansion-panel>

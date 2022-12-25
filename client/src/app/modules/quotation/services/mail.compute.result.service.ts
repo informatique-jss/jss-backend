@@ -17,4 +17,8 @@ export class MailComputeResultService extends AppRestService<MailComputeResult>{
     return this.postItem(new HttpParams(), "mail/billing/compute", quotation);
   }
 
+  getMailComputeResultForDigital(quotation: IQuotation) {
+    return this.postItem(new HttpParams(), "mail/digital/compute", quotation);
+  }
+
 }

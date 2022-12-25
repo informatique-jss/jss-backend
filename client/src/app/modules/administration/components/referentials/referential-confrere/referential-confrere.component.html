@@ -14,384 +14,296 @@
     </mat-form-field>
   </div>
   <div class="table-container-scroll">
-    <sort-table [columns]="displayedColumns" (onRowClick)="selectEntity($event)" [values]="entities"
-      tableName="Référentiel" [filterText]="searchText">
+    <sort-table [idRowSelected]="idRowSelected" [columns]="displayedColumns" (onRowClick)="selectEntity($event)"
+      [values]="entities" tableName="Référentiel" [filterText]="searchText">
     </sort-table>
   </div>
 </div>
-<div class="mat-elevation-z2 form-div" *ngIf="selectedEntity ">
-  <form [formGroup]="entityForm2">
-    <div class="full-width">
-      <fieldset [disabled]="editMode==false" class="fieldset-no-border">
-        <table class="full-width">
-          <tr *ngIf="selectedEntity.id">
-            <td>
-              <generic-input [(model)]="selectedEntity.id" label="Identifiant technique" [form]="entityForm2"
-                propertyName="id" [isMandatory]="true" [isDisabled]="true"></generic-input>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <generic-input [(model)]="selectedEntity.code" label="Codification" [maxLength]="20" [form]="entityForm2"
-                propertyName="code" [isMandatory]="true" [isDisabled]="!editMode"></generic-input>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <generic-input [(model)]="selectedEntity.label" label="Nom fonctionnel" [maxLength]="100"
-                [form]="entityForm2" propertyName="label" [isMandatory]="true" [isDisabled]="!editMode"></generic-input>
-            </td>
-          </tr>
-        </table>
-        <table class="full-width">
-          <tr>
-            <td>
-              <chips-mail [(model)]="selectedEntity.mails" label="Mails (annonce)" [form]="entityForm2"
-                propertyName="mails" [isMandatory]="false" [isDisabled]="!editMode"></chips-mail>
-            </td>
-            <td>
-              <chips-mail [(model)]="selectedEntity.accountingMails" label="Mails (comptabilité)" [form]="entityForm2"
-                propertyName="accountingMails" [isMandatory]="false" [isDisabled]="!editMode"></chips-mail>
-            </td>
-            <td>
-              <chips-phone [(model)]="selectedEntity.phones" label="Téléphones" [form]="entityForm2"
-                propertyName="phones" [isMandatory]="false" [isDisabled]="!editMode"></chips-phone>
-            </td>
-          </tr>
-        </table>
 
-        <table class="full-width">
-          <tr>
-            <td>
-              <autocomplete-employee [(model)]="selectedEntity.salesEmployee" [isDisabled]="!editMode"
-                label="Commercial" [form]="entityForm2" propertyName="salesEmployee" [isMandatory]="true">
-              </autocomplete-employee>
-            </td>
-            <td>
-              <autocomplete-employee [(model)]="selectedEntity.formalisteEmployee" [isDisabled]="!editMode"
-                label="Formaliste" [isDisabled]="!editMode" [form]="entityForm2" propertyName="formalisteEmployee">
-              </autocomplete-employee>
-            </td>
-            <td>
-              <autocomplete-employee [(model)]="selectedEntity.insertionEmployee" [isDisabled]="!editMode"
-                label="Publiciste" [isDisabled]="!editMode" [form]="entityForm2" propertyName="insertionEmployee">
-              </autocomplete-employee>
-            </td>
-          </tr>
-        </table>
-        <table class="full-width">
-          <tr>
-            <td *ngIf="selectedEntity.accountingAccountProvider">
-              <autocomplete-accounting-account [(model)]="selectedEntity.accountingAccountProvider" [form]="entityForm2"
-                propertyName="accountingAccountProvider" [isMandatory]="false" [isDisabled]="true"
-                label="Compte comptable fournisseur">
-              </autocomplete-accounting-account>
-            </td>
-            <td *ngIf="selectedEntity.accountingAccountCustomer">
-              <autocomplete-accounting-account [(model)]="selectedEntity.accountingAccountCustomer" [form]="entityForm2"
-                propertyName="accountingAccountCustomer" [isMandatory]="false" [isDisabled]="true"
-                label="Compte comptable client">
-              </autocomplete-accounting-account>
-            </td>
-            <td *ngIf="selectedEntity.accountingAccountDeposit">
-              <autocomplete-accounting-account [(model)]="selectedEntity.accountingAccountDeposit" [form]="entityForm2"
-                propertyName="accountingAccountDeposit" [isMandatory]="false" [isDisabled]="true"
-                label="Compte comptable d'acompte">
-              </autocomplete-accounting-account>
-            </td>
-          </tr>
-        </table>
-        <table class="full-width">
-          <tr>
-            <td>
-              <generic-input [(model)]="selectedEntity.iban" label="IBAN" [form]="entityForm2" propertyName="iban"
-                [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="40"></generic-input>
-            </td>
-            <td>
-              <select-vat-collection-type [(model)]="selectedEntity.vatCollectionType"
-                label="Type d'encaissement de la TVA" [form]="entityForm2" propertyName="vatCollectionType"
-                [isMandatory]="true" [isDisabled]="!editMode"></select-vat-collection-type>
-            </td>
-          </tr>
-        </table>
-        <table class="full-width">
-          <tr>
-            <td>
-              <generic-textarea [(model)]="selectedEntity.mailRecipient" label="Destinataire(s) courrier"
-                [form]="entityForm2" propertyName="mailRecipient" [isMandatory]="false" [isDisabled]="!editMode"
-                (filterInput)="limitTextareaSize(3)"></generic-textarea>
-            </td>
-            <td>
-              <generic-input [(model)]="selectedEntity.address" label="Adresse" [form]="entityForm2"
-                propertyName="address" [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="100"></generic-input>
-            </td>
-            <td>
-              <autocomplete-postal-code [(model)]="selectedEntity.postalCode" [form]="entityForm2" label="Code postal"
-                [isDisabled]="!editMode" propertyName="postalCode" [isMandatory]="false"
-                [byPassAutocompletValidator]="true" (onOptionSelected)="fillCity($event)">
-              </autocomplete-postal-code>
-            </td>
-            <td>
-              <generic-input [(model)]="selectedEntity.cedexComplement" label="Complément CEDEX" [form]="entityForm2"
-                propertyName="cedexComplement" [isMandatory]="false" [isDisabled]="!editMode"
-                [maxLength]="20"></generic-input>
-            </td>
-            <td>
-              <autocomplete-city [(model)]="selectedEntity.city" [modelCountry]="selectedEntity.country"
-                [preFilterPostalCode]="selectedEntity.postalCode" [form]="entityForm2" propertyName="city"
-                [isMandatory]="true" [isDisabled]="!editMode" label="Ville" (onOptionSelected)="fillPostalCode($event)">
-              </autocomplete-city>
-            </td>
-            <td>
-              <autocomplete-country [(model)]="selectedEntity.country" [form]="entityForm2" propertyName="country"
-                label="Pays" [isDisabled]="!editMode" [isMandatory]="false" [isDisabled]="!editMode">
-              </autocomplete-country>
-            </td>
-          </tr>
-        </table>
-        <table class="full-width">
-          <tr>
-            <td>
-              <radio-group-journal-type [(model)]="selectedEntity.journalType" [form]="entityForm2"
-                [isDisabled]="!editMode" propertyName="journalType" label="Type de journal"></radio-group-journal-type>
-            </td>
-            <td>
-              <select-day [(model)]="selectedEntity.weekDays" label="Jour(s) de publication" [form]="entityForm2"
-                propertyName="weekDays" [isMandatory]="true" [isDisabled]="!editMode"></select-day>
-            </td>
-            <td>
-              <select-departments [(model)]="selectedEntity.departments" label="Département(s) de publication"
-                [form]="entityForm2" propertyName="departments" [isMandatory]="true" [isDisabled]="!editMode">
-              </select-departments>
-            </td>
-            <td>
-              <generic-input [(model)]="selectedEntity.lastShipmentForPublication" label="Dernier envoi"
-                [form]="entityForm2" propertyName="lastShipmentForPublication" [isMandatory]="false"
-                [isDisabled]="!editMode" [maxLength]="60"></generic-input>
-            </td>
-          </tr>
-        </table>
-        <table class="full-width">
-          <tr>
-            <td>
-              <generic-input [(model)]="selectedEntity.reinvoicing" label="Refacturation (%)" [form]="entityForm2"
-                propertyName="reinvoicing" [isMandatory]="true" [isDisabled]="!editMode" type="number"></generic-input>
-            </td>
-            <td>
-              <chips-special-offers [(model)]="selectedEntity.specialOffers" [form]="entityForm2"
-                propertyName="specialOffers" [isDisabled]="!editMode"></chips-special-offers>
-            </td>
-            <td>
-              <generic-input [(model)]="selectedEntity.shippingCosts" label="Frais de port (€)" [form]="entityForm2"
-                propertyName="shippingCosts" [isMandatory]="false" [isDisabled]="!editMode" type="number">
-              </generic-input>
-            </td>
-            <td>
-              <generic-input [(model)]="selectedEntity.administrativeFees" label="Frais administratifs (€)"
-                [form]="entityForm2" propertyName="administrativeFees" [isMandatory]="false" [isDisabled]="!editMode"
-                type="number"></generic-input>
-            </td>
-            <td>
-              <generic-input [(model)]="selectedEntity.discountRate" label="Remise consentie (%)" [form]="entityForm2"
-                propertyName="discountRate" [isMandatory]="false" [isDisabled]="!editMode" type="number">
-              </generic-input>
-            </td>
-          </tr>
-        </table>
-        <table class="full-width">
-          <tr>
-            <td>
-              <generic-input [(model)]="selectedEntity.numberOfPrint" label="Tirage" [form]="entityForm2"
-                propertyName="numberOfPrint" [isMandatory]="false" [isDisabled]="!editMode" type="number">
-              </generic-input>
-            </td>
-            <td>
-              <generic-input [(model)]="selectedEntity.paperPrice" label="Prix du journal" [form]="entityForm2"
-                propertyName="paperPrice" [isMandatory]="false" [isDisabled]="!editMode" type="number">
-              </generic-input>
-            </td>
-          </tr>
-        </table>
-        <table class="full-width">
-          <tr>
-            <td>
-              <label>Préférence de la direction</label>
-              <mat-radio-group class="confrere-radio-group" [(ngModel)]="selectedEntity.boardGrade"
-                formControlName="boardGrade">
-                <mat-radio-button *ngFor="let grade of grades" class="confrere-radio-button" [value]="grade">
-                  <grade [grade]="grade"></grade>
-                </mat-radio-button>
-              </mat-radio-group>
-            </td>
-            <td>
-              <label>Préférence attestation de parution</label>
-              <mat-radio-group class="confrere-radio-group"
-                [(ngModel)]="selectedEntity.publicationCertificateDocumentGrade"
-                formControlName="publicationCertificateDocumentGrade">
-                <mat-radio-button *ngFor="let grade of grades" class="confrere-radio-button" [value]="grade">
-                  <grade [grade]="grade"></grade>
-                </mat-radio-button>
-              </mat-radio-group>
-            </td>
-            <td>
-              <label>Préférence de facturation</label>
-              <mat-radio-group class="confrere-radio-group" [(ngModel)]="selectedEntity.billingGrade"
-                formControlName="billingGrade">
-                <mat-radio-button *ngFor="let grade of grades" class="confrere-radio-button" [value]="grade">
-                  <grade [grade]="grade"></grade>
-                </mat-radio-button>
-              </mat-radio-group>
-            </td>
-            <td>
-              <label>Préférence du journal</label>
-              <mat-radio-group class="confrere-radio-group" [(ngModel)]="selectedEntity.paperGrade"
-                formControlName="paperGrade">
-                <mat-radio-button *ngFor="let grade of grades" class="confrere-radio-button" [value]="grade">
-                  <grade [grade]="grade"></grade>
-                </mat-radio-button>
-              </mat-radio-group>
-            </td>
-          </tr>
-        </table>
-        <table class="full-width">
-          <tr>
-            <td>
-              <generic-textarea [(model)]="selectedEntity.observations" label="Commentaires" [form]="entityForm2"
-                propertyName="observations" [isMandatory]="false" [isDisabled]="!editMode"></generic-textarea>
-            </td>
-          </tr>
-        </table>
-        <mat-accordion multi>
-          <mat-expansion-panel>
-            <mat-expansion-panel-header>
-              <mat-panel-title>
-                Facture
-              </mat-panel-title>
-              <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
-            </mat-expansion-panel-header>
-            <table class="full-width">
-              <tr>
-                <td>
-                  <radio-group-billing-label [(model)]="billingDocument.billingLabelType" [form]="entityForm2"
-                    [isDisabled]="!editMode" propertyName="billingLabelType" label="Libellé sur facture">
-                  </radio-group-billing-label>
-                </td>
-              </tr>
-            </table>
-            <table class="full-width"
-              *ngIf="billingDocument.billingLabelType && billingDocument.billingLabelType.code!=undefined && billingDocument.billingLabelType.id==billingLabelTypeOther.id">
-              <tr>
-                <td>
-                  <autocomplete-regie [(model)]="billingDocument.regie" [form]="entityForm2" propertyName="regie"
-                    [isMandatory]="false" [isDisabled]="!editMode" label="Régie"></autocomplete-regie>
-                </td>
-              </tr>
-            </table>
 
-            <table class="full-width">
-              <tr>
-                <td>
-                  <generic-toggle [(model)]="billingDocument.isResponsableOnBilling" label="Responsable sur facture ?"
-                    [form]="entityForm2" propertyName="isResponsableOnBilling"></generic-toggle>
-                </td>
-              </tr>
-            </table>
-            <table class="full-width">
-              <tr>
-                <td>
-                  <generic-toggle [(model)]="billingDocument.isCommandNumberMandatory"
-                    label="Numéro de commande obligatoire ?" [form]="entityForm2"
-                    propertyName="isCommandNumberMandatory"></generic-toggle>
-                </td>
-                <td *ngIf="billingDocument.isCommandNumberMandatory">
-                  <generic-input [(model)]="billingDocument.commandNumber" label="N° de commande annuel"
-                    [form]="entityForm2" propertyName="commandNumber" [maxLength]="40"></generic-input>
-                </td>
-              </tr>
-            </table>
-            <addressing [editMode]="editMode" [document]="billingDocument " [displayMailCC]="true" [onlyMail]="true">
-            </addressing>
-          </mat-expansion-panel>
-          <mat-expansion-panel>
-            <mat-expansion-panel-header>
-              <mat-panel-title>
-                Règlement
-              </mat-panel-title>
-              <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
-            </mat-expansion-panel-header>
-            <table class="full-width">
-              <tr>
-                <td>
-                  <select-payment-types [(model)]="selectedEntity.paymentType" label="Type" [form]="entityForm2"
-                    propertyName="paymentType" [isMandatory]="true" [isDisabled]="!editMode"
-                    [filteredPaymentType]="[paymentTypePrelevement,paymentTypeVirement,paymentTypeCB, paymentTypeEspeces]">
-                  </select-payment-types>
-                </td>
-                <td
-                  *ngIf="selectedEntity && selectedEntity.paymentType && selectedEntity.paymentType.id==paymentTypePrelevement.id">
-                  <generic-input [(model)]="selectedEntity.iban" label="IBAN" [form]="entityForm2" propertyName="iban"
-                    [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="40"></generic-input>
-                </td>
-                <td
-                  *ngIf="selectedEntity !=undefined && selectedEntity.paymentType && selectedEntity.paymentType.code!=undefined && selectedEntity.paymentType.id==paymentTypePrelevement.id">
-                  <generic-toggle [(model)]="selectedEntity.isSepaMandateReceived" label="Mandat SEPA reçu ?"
-                    [form]="entityForm2" propertyName="isSepaMandateReceived"></generic-toggle>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <generic-toggle [(model)]="selectedEntity.isProvisionalPaymentMandatory"
-                    label="Provision obligatoire ?" [form]="entityForm2" propertyName="isProvisionalPaymentMandatory">
-                  </generic-toggle>
-                </td>
-                <td>
-                  <select-payment-deadline [(model)]="dunningDocument.paymentDeadlineType" label="Délai de paiement"
-                    [form]="entityForm2" propertyName="paymentDeadlineType" [isDisabled]="!editMode">
-                  </select-payment-deadline>
-                </td>
-              </tr>
-            </table>
-          </mat-expansion-panel>
-          <mat-expansion-panel>
-            <mat-expansion-panel-header>
-              <mat-panel-title>
-                Remboursement
-              </mat-panel-title>
-              <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
-            </mat-expansion-panel-header>
-            <table class="full-width">
-              <tr>
-                <td>
-                  <select-refund-type [(model)]="refundDocument.refundType" label="Type de remboursement"
-                    [isDisabled]="!editMode" [form]="entityForm2" propertyName="refundType"></select-refund-type>
-                </td>
-                <td
-                  *ngIf="refundDocument && refundDocument.refundType && refundDocument.refundType.code!=undefined && refundDocument.refundType.id==refundTypeVirement.id">
-                  <generic-input [(model)]="refundDocument.refundIBAN" label="IBAN" [form]="entityForm2"
-                    propertyName="refundIBAN" [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="40">
-                  </generic-input>
-                </td>
-                <td
-                  *ngIf="refundDocument && refundDocument.refundType && refundDocument.refundType.code!=undefined && refundDocument.refundType.id==refundTypeVirement.id">
-                  <generic-input [(model)]="refundDocument.refundBic" label="BIC" [form]="entityForm2"
-                    propertyName="refundBic" [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="40">
-                  </generic-input>
-                </td>
-              </tr>
-            </table>
-            <addressing [editMode]="editMode" [document]="refundDocument" [onlyMail]="true">
-            </addressing>
-          </mat-expansion-panel>
-          <mat-expansion-panel>
-            <mat-expansion-panel-header>
-              <mat-panel-title>
-                Suivi
-              </mat-panel-title>
-              <ng-template [ngTemplateOutlet]="accordionTools"></ng-template>
-            </mat-expansion-panel-header>
-            <tiers-followup [tiers]="selectedEntity" [editMode]="editMode"></tiers-followup>
-          </mat-expansion-panel>
-        </mat-accordion>
-      </fieldset>
-    </div>
-  </form>
+<div *ngIf="selectedEntity" class="div-confrere">
+  <mat-tab-group animationDuration="0ms">
+    <mat-tab label="Fiche du confrère">
+      <div class="mat-elevation-z2 form-div">
+        <form [formGroup]="entityForm2">
+          <div class="full-width">
+            <fieldset [disabled]="editMode==false" class="fieldset-no-border">
+              <table class="full-width">
+                <tr *ngIf="selectedEntity.id">
+                  <td>
+                    <generic-input [(model)]="selectedEntity.id" label="Identifiant technique" [form]="entityForm2"
+                      propertyName="id" [isMandatory]="true" [isDisabled]="true"></generic-input>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <generic-input [(model)]="selectedEntity.code" label="Codification" [maxLength]="20"
+                      [form]="entityForm2" propertyName="code" [isMandatory]="true"
+                      [isDisabled]="!editMode"></generic-input>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <generic-input [(model)]="selectedEntity.label" label="Nom fonctionnel" [maxLength]="100"
+                      [form]="entityForm2" propertyName="label" [isMandatory]="true"
+                      [isDisabled]="!editMode"></generic-input>
+                  </td>
+                </tr>
+              </table>
+              <table class="full-width">
+                <tr>
+                  <td>
+                    <chips-mail [(model)]="selectedEntity.mails" label="Mails (annonce)" [form]="entityForm2"
+                      propertyName="mails" [isMandatory]="false" [isDisabled]="!editMode"></chips-mail>
+                  </td>
+                  <td>
+                    <chips-mail [(model)]="selectedEntity.accountingMails" label="Mails (comptabilité)"
+                      [form]="entityForm2" propertyName="accountingMails" [isMandatory]="false"
+                      [isDisabled]="!editMode"></chips-mail>
+                  </td>
+                  <td>
+                    <chips-phone [(model)]="selectedEntity.phones" label="Téléphones" [form]="entityForm2"
+                      propertyName="phones" [isMandatory]="false" [isDisabled]="!editMode"></chips-phone>
+                  </td>
+                </tr>
+              </table>
+
+              <table class="full-width">
+                <tr>
+                  <td>
+                    <autocomplete-employee [(model)]="selectedEntity.salesEmployee" [isDisabled]="!editMode"
+                      label="Commercial" [form]="entityForm2" propertyName="salesEmployee" [isMandatory]="true">
+                    </autocomplete-employee>
+                  </td>
+                  <td>
+                    <autocomplete-employee [(model)]="selectedEntity.formalisteEmployee" [isDisabled]="!editMode"
+                      label="Formaliste" [isDisabled]="!editMode" [form]="entityForm2"
+                      propertyName="formalisteEmployee">
+                    </autocomplete-employee>
+                  </td>
+                  <td>
+                    <autocomplete-employee [(model)]="selectedEntity.insertionEmployee" [isDisabled]="!editMode"
+                      label="Publiciste" [isDisabled]="!editMode" [form]="entityForm2" propertyName="insertionEmployee">
+                    </autocomplete-employee>
+                  </td>
+                </tr>
+              </table>
+              <table class="full-width">
+                <tr>
+                  <td *ngIf="selectedEntity.accountingAccountProvider">
+                    <autocomplete-accounting-account [(model)]="selectedEntity.accountingAccountProvider"
+                      [form]="entityForm2" propertyName="accountingAccountProvider" [isMandatory]="false"
+                      [isDisabled]="true" label="Compte comptable fournisseur">
+                    </autocomplete-accounting-account>
+                  </td>
+                  <td *ngIf="selectedEntity.accountingAccountCustomer">
+                    <autocomplete-accounting-account [(model)]="selectedEntity.accountingAccountCustomer"
+                      [form]="entityForm2" propertyName="accountingAccountCustomer" [isMandatory]="false"
+                      [isDisabled]="true" label="Compte comptable client">
+                    </autocomplete-accounting-account>
+                  </td>
+                  <td *ngIf="selectedEntity.accountingAccountDeposit">
+                    <autocomplete-accounting-account [(model)]="selectedEntity.accountingAccountDeposit"
+                      [form]="entityForm2" propertyName="accountingAccountDeposit" [isMandatory]="false"
+                      [isDisabled]="true" label="Compte comptable d'acompte">
+                    </autocomplete-accounting-account>
+                  </td>
+                </tr>
+              </table>
+              <table class="full-width">
+                <tr>
+                  <td>
+                    <generic-input [(model)]="selectedEntity.iban" label="IBAN" [form]="entityForm2" propertyName="iban"
+                      [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="40"></generic-input>
+                  </td>
+                  <td>
+                    <select-vat-collection-type [(model)]="selectedEntity.vatCollectionType"
+                      label="Type d'encaissement de la TVA" [form]="entityForm2" propertyName="vatCollectionType"
+                      [isMandatory]="true" [isDisabled]="!editMode"></select-vat-collection-type>
+                  </td>
+                </tr>
+              </table>
+              <table class="full-width">
+                <tr>
+                  <td>
+                    <generic-textarea [(model)]="selectedEntity.mailRecipient" label="Destinataire(s) courrier"
+                      [form]="entityForm2" propertyName="mailRecipient" [isMandatory]="false" [isDisabled]="!editMode"
+                      (filterInput)="limitTextareaSize(3)"></generic-textarea>
+                  </td>
+                  <td>
+                    <generic-input [(model)]="selectedEntity.address" label="Adresse" [form]="entityForm2"
+                      propertyName="address" [isMandatory]="false" [isDisabled]="!editMode"
+                      [maxLength]="100"></generic-input>
+                  </td>
+                  <td>
+                    <autocomplete-postal-code [(model)]="selectedEntity.postalCode" [form]="entityForm2"
+                      label="Code postal" [isDisabled]="!editMode" propertyName="postalCode" [isMandatory]="false"
+                      [byPassAutocompletValidator]="true" (onOptionSelected)="fillCity($event)">
+                    </autocomplete-postal-code>
+                  </td>
+                  <td>
+                    <generic-input [(model)]="selectedEntity.cedexComplement" label="Complément CEDEX"
+                      [form]="entityForm2" propertyName="cedexComplement" [isMandatory]="false" [isDisabled]="!editMode"
+                      [maxLength]="20"></generic-input>
+                  </td>
+                  <td>
+                    <autocomplete-city [(model)]="selectedEntity.city" [modelCountry]="selectedEntity.country"
+                      [preFilterPostalCode]="selectedEntity.postalCode" [form]="entityForm2" propertyName="city"
+                      [isMandatory]="true" [isDisabled]="!editMode" label="Ville"
+                      (onOptionSelected)="fillPostalCode($event)">
+                    </autocomplete-city>
+                  </td>
+                  <td>
+                    <autocomplete-country [(model)]="selectedEntity.country" [form]="entityForm2" propertyName="country"
+                      label="Pays" [isDisabled]="!editMode" [isMandatory]="false" [isDisabled]="!editMode">
+                    </autocomplete-country>
+                  </td>
+                </tr>
+              </table>
+              <table class="full-width">
+                <tr>
+                  <td>
+                    <radio-group-journal-type [(model)]="selectedEntity.journalType" [form]="entityForm2"
+                      [isDisabled]="!editMode" propertyName="journalType"
+                      label="Type de journal"></radio-group-journal-type>
+                  </td>
+                  <td>
+                    <select-day [(model)]="selectedEntity.weekDays" label="Jour(s) de publication" [form]="entityForm2"
+                      propertyName="weekDays" [isMandatory]="true" [isDisabled]="!editMode"></select-day>
+                  </td>
+                  <td>
+                    <select-departments [(model)]="selectedEntity.departments" label="Département(s) de publication"
+                      [form]="entityForm2" propertyName="departments" [isMandatory]="true" [isDisabled]="!editMode">
+                    </select-departments>
+                  </td>
+                  <td>
+                    <generic-input [(model)]="selectedEntity.lastShipmentForPublication" label="Dernier envoi"
+                      [form]="entityForm2" propertyName="lastShipmentForPublication" [isMandatory]="false"
+                      [isDisabled]="!editMode" [maxLength]="60"></generic-input>
+                  </td>
+                </tr>
+              </table>
+              <table class="full-width">
+                <tr>
+                  <td>
+                    <generic-input [(model)]="selectedEntity.reinvoicing" label="Refacturation (%)" [form]="entityForm2"
+                      propertyName="reinvoicing" [isMandatory]="true" [isDisabled]="!editMode"
+                      type="number"></generic-input>
+                  </td>
+                  <td>
+                    <chips-special-offers [(model)]="selectedEntity.specialOffers" [form]="entityForm2"
+                      propertyName="specialOffers" [isDisabled]="!editMode"></chips-special-offers>
+                  </td>
+                  <td>
+                    <generic-input [(model)]="selectedEntity.shippingCosts" label="Frais de port (€)"
+                      [form]="entityForm2" propertyName="shippingCosts" [isMandatory]="false" [isDisabled]="!editMode"
+                      type="number">
+                    </generic-input>
+                  </td>
+                  <td>
+                    <generic-input [(model)]="selectedEntity.administrativeFees" label="Frais administratifs (€)"
+                      [form]="entityForm2" propertyName="administrativeFees" [isMandatory]="false"
+                      [isDisabled]="!editMode" type="number"></generic-input>
+                  </td>
+                  <td>
+                    <generic-input [(model)]="selectedEntity.discountRate" label="Remise consentie (%)"
+                      [form]="entityForm2" propertyName="discountRate" [isMandatory]="false" [isDisabled]="!editMode"
+                      type="number">
+                    </generic-input>
+                  </td>
+                </tr>
+              </table>
+              <table class="full-width">
+                <tr>
+                  <td>
+                    <generic-input [(model)]="selectedEntity.numberOfPrint" label="Tirage" [form]="entityForm2"
+                      propertyName="numberOfPrint" [isMandatory]="false" [isDisabled]="!editMode" type="number">
+                    </generic-input>
+                  </td>
+                  <td>
+                    <generic-input [(model)]="selectedEntity.paperPrice" label="Prix du journal" [form]="entityForm2"
+                      propertyName="paperPrice" [isMandatory]="false" [isDisabled]="!editMode" type="number">
+                    </generic-input>
+                  </td>
+                </tr>
+              </table>
+              <table class="full-width">
+                <tr>
+                  <td>
+                    <label>Préférence de la direction</label>
+                    <mat-radio-group class="confrere-radio-group" [(ngModel)]="selectedEntity.boardGrade"
+                      formControlName="boardGrade">
+                      <mat-radio-button *ngFor="let grade of grades" class="confrere-radio-button" [value]="grade">
+                        <grade [grade]="grade"></grade>
+                      </mat-radio-button>
+                    </mat-radio-group>
+                  </td>
+                  <td>
+                    <label>Préférence attestation de parution</label>
+                    <mat-radio-group class="confrere-radio-group"
+                      [(ngModel)]="selectedEntity.publicationCertificateDocumentGrade"
+                      formControlName="publicationCertificateDocumentGrade">
+                      <mat-radio-button *ngFor="let grade of grades" class="confrere-radio-button" [value]="grade">
+                        <grade [grade]="grade"></grade>
+                      </mat-radio-button>
+                    </mat-radio-group>
+                  </td>
+                  <td>
+                    <label>Préférence de facturation</label>
+                    <mat-radio-group class="confrere-radio-group" [(ngModel)]="selectedEntity.billingGrade"
+                      formControlName="billingGrade">
+                      <mat-radio-button *ngFor="let grade of grades" class="confrere-radio-button" [value]="grade">
+                        <grade [grade]="grade"></grade>
+                      </mat-radio-button>
+                    </mat-radio-group>
+                  </td>
+                  <td>
+                    <label>Préférence du journal</label>
+                    <mat-radio-group class="confrere-radio-group" [(ngModel)]="selectedEntity.paperGrade"
+                      formControlName="paperGrade">
+                      <mat-radio-button *ngFor="let grade of grades" class="confrere-radio-button" [value]="grade">
+                        <grade [grade]="grade"></grade>
+                      </mat-radio-button>
+                    </mat-radio-group>
+                  </td>
+                </tr>
+              </table>
+              <table class="full-width">
+                <tr>
+                  <td>
+                    <generic-textarea [(model)]="selectedEntity.observations" label="Commentaires" [form]="entityForm2"
+                      propertyName="observations" [isMandatory]="false" [isDisabled]="!editMode"></generic-textarea>
+                  </td>
+                </tr>
+              </table>
+            </fieldset>
+          </div>
+        </form>
+      </div>
+    </mat-tab>
+    <mat-tab label="Pièces, réglements, facturations & relances">
+      <settlement-billing [tiers]="selectedEntity" [editMode]="editMode"></settlement-billing>
+    </mat-tab>
+    <mat-tab label="Devis" *ngIf="selectedEntity.id">
+      <quotation-list class="integration-component"
+        *ngIf="this.quotationSearch.customerOrders && this.quotationSearch.customerOrders.length>0"
+        [quotationSearch]="quotationSearch" [isForTiersIntegration]="true">
+      </quotation-list>
+    </mat-tab>
+    <mat-tab label="Commandes" *ngIf="selectedEntity.id">
+      <ordering-list class="integration-component"
+        *ngIf="this.orderingSearch.customerOrders && this.orderingSearch.customerOrders.length>0"
+        [orderingSearch]="orderingSearch" [isForTiersIntegration]="true">
+      </ordering-list>
+    </mat-tab>
+    <mat-tab label="Comptes" *ngIf="responsableAccountSearch && responsableAccountSearch.id">
+      <accounting-record [tiersToDisplay]="responsableAccountSearch"></accounting-record>
+    </mat-tab>
+    <mat-tab label="Suivi" *ngIf="selectedEntity.id">
+      <tiers-followup [tiers]="selectedEntity" [editMode]="editMode"></tiers-followup>
+    </mat-tab>
+    <mat-tab label="Historique" *ngIf="selectedEntity.id">
+      <history [entity]="selectedEntity" [entityType]="CONFRERE_ENTITY_TYPE"></history>
+    </mat-tab>
+  </mat-tab-group>
+</div>

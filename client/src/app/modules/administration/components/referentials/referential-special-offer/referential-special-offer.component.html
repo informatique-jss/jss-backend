@@ -6,7 +6,7 @@
   </div>
   <div class="table-container-scroll">
     <sort-table [columns]="displayedColumns" (onRowClick)="selectEntity($event)" [values]="entities"
-      tableName="Référentiel" [filterText]="searchText"></sort-table>
+      tableName="Référentiel" [idRowSelected]="idRowSelected" [filterText]="searchText"></sort-table>
   </div>
 </div>
 <div class="mat-elevation-z2 form-div" *ngIf="selectedEntity ">

@@ -21,14 +21,15 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule, Routes } from '@angular/router';
 import { QuillModule } from 'ngx-quill';
 import { MiscellaneousModule } from 'src/app/modules/miscellaneous/components/miscellaneous/miscellaneous.module';
+import { AccountingModule } from '../../../accounting/components/accounting/accounting.module';
+import { QuotationModule } from '../../../quotation/components/quotation/quotation.module';
+import { TiersModule } from '../../../tiers/components/tiers/tiers.module';
 import { ConstantComponent } from '../constant/constant.component';
 import { LogComponent } from '../log/log.component';
 import { ReferentialAccountingAccountClassComponent } from '../referentials/referential-accounting-account-class/referential-accounting-account-class.component';
 import { ReferentialAccountingAccountComponent } from '../referentials/referential-accounting-account/referential-accounting-account.component';
 import { ReferentialAccountingJournalComponent } from '../referentials/referential-accounting-journal/referential-accounting-journal.component';
 import { ReferentialActTypeComponent } from '../referentials/referential-act-type/referential-act-type.component';
-import { AddAffaireComponent } from '../referentials/referential-affaire/add-affaire/add-affaire.component';
-import { ReferentialAffaireComponent } from '../referentials/referential-affaire/referential-affaire';
 import { ReferentialAnnouncementNoticeTemplateComponent } from '../referentials/referential-announcement-notice-template/referential-announcement-notice-template.component';
 import { ReferentialAttachmentTypeComponent } from '../referentials/referential-attachment-type/referential-attachment-type.component';
 import { ReferentialBillingClosureRecipientTypeComponent } from '../referentials/referential-billing-closure-recipient-type/referential-billing-closure-recipient-type.component';
@@ -132,6 +133,9 @@ const routes: Routes = [
     MatSortModule,
     MatExpansionModule,
     MatTableModule,
+    TiersModule,
+    QuotationModule,
+    AccountingModule,
   ],
   declarations: [AdministrationComponent,
     ReferentialActTypeComponent,
@@ -188,11 +192,9 @@ const routes: Routes = [
     ReferentialAccountingJournalComponent,
     ReferentialInvoiceStatusComponent,
     ReferentialPaymentWayComponent,
-    ReferentialAffaireComponent,
     ReferentialPrincipalAccountingAccountComponent,
-    AddAffaireComponent,
     LogComponent,
     ViewLogComponent,
-  ], exports: [AddAffaireComponent, LogComponent]
+  ], exports: [LogComponent]
 })
 export class AdministrationModule { }

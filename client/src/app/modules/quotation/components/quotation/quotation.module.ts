@@ -23,9 +23,9 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule, Routes } from '@angular/router';
 import { QuillModule } from 'ngx-quill';
-import { AdministrationModule } from 'src/app/modules/administration/components/administration/administration.module';
 import { MiscellaneousModule } from 'src/app/modules/miscellaneous/components/miscellaneous/miscellaneous.module';
 import { AddAffaireDialogComponent } from '../add-affaire-dialog/add-affaire-dialog.component';
+import { AddAffaireComponent } from '../add-affaire/add-affaire.component';
 import { AffaireListComponent } from '../affaire-list/affaire-list.component';
 import { AffaireComponent } from '../affaire/affaire.component';
 import { AnnouncementComponent } from '../announcement/announcement.component';
@@ -109,7 +109,6 @@ const routes: Routes = [
     MiscellaneousModule,
     MatSidenavModule,
     MatTableModule,
-    AdministrationModule,
     MatSortModule,
     MatMenuModule,
     MatDatepickerModule,
@@ -136,6 +135,7 @@ const routes: Routes = [
     SimpleProvisionComponent,
     AffaireListComponent,
     AffaireComponent,
+    AddAffaireComponent,
     // Guichet unique
     ContentComponent,
     NatureCreationComponent,

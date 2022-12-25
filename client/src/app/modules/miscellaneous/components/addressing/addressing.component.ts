@@ -15,13 +15,11 @@ export class AddressingComponent implements OnInit {
   @Input() document: Document = {} as Document;
   @Output() documentChange: EventEmitter<Document> = new EventEmitter<Document>();
   @Input() editMode: boolean = false;
-  @Input() displayPaperCopy: boolean = false;
-  @Input() hideAdressing: boolean = false;
-  @Input() hideConsignee: boolean = false;
+  @Input() displayConsignee: boolean = true;
+  @Input() displayOverrideMail: boolean = false;
+  @Input() displayOverrideEMail: boolean = true;
   @Input() displayMailCC: boolean = false;
   @Input() displayNumberMailing: boolean = false;
-  @Input() onlyMail: boolean = false;
-  @Input() hideOverriding: boolean = false;
 
   overrideAffaireAddress: boolean = false;
   overrideAffaireMail: boolean = false;
@@ -44,10 +42,6 @@ export class AddressingComponent implements OnInit {
     this.overrideClientMail = false;
 
     if (changes.document != undefined) {
-      if (!this.document.isMailingPaper)
-        this.document.isMailingPaper = false;
-      if (!this.document.isMailingPdf)
-        this.document.isMailingPdf = false;
       if (!this.document.isRecipientAffaire)
         this.document.isRecipientAffaire = false;
       if (!this.document.isRecipientClient)
@@ -70,10 +64,6 @@ export class AddressingComponent implements OnInit {
         this.overrideClientMail = true;
       if (this.document.mailsClient && this.document.mailsClient.length > 0)
         this.overrideClientMail = true;
-
-      if (this.onlyMail)
-        this.document.isMailingPdf = true;
-
     }
     this.adressingForm.markAllAsTouched();
   }
@@ -103,6 +93,10 @@ export class AddressingComponent implements OnInit {
 
   removeAllMailAffaire(document: Document): void {
     document.mailsAffaire = [] as Array<Mail>;
+  }
+
+  changeDocument() {
+    this.documentChange.emit(this.document);
   }
 
 }

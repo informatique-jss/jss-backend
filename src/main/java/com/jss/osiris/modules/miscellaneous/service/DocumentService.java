@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.miscellaneous.model.Document;
+import com.jss.osiris.modules.miscellaneous.model.DocumentType;
 
 public interface DocumentService {
     public List<Document> getDocuments();
@@ -18,6 +19,9 @@ public interface DocumentService {
      * @throws OsirisException
      */
     public Document getBillingDocument(List<Document> documents) throws OsirisException;
+
+    public Document getDocumentByDocumentType(List<Document> documents, DocumentType documentType)
+            throws OsirisException;
 
     public Document getBillingClosureDocument(List<Document> documents) throws OsirisException;
 

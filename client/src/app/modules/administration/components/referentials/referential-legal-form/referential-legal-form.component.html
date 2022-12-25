@@ -6,7 +6,7 @@
   </div>
   <div class="table-container-scroll">
     <sort-table [columns]="displayedColumns" (onRowClick)="selectEntity($event)" [values]="entities"
-      tableName="Référentiel" [filterText]="searchText">
+      tableName="Référentiel" [idRowSelected]="idRowSelected" [filterText]="searchText">
     </sort-table>
   </div>
 </div>

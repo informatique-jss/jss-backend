@@ -596,14 +596,20 @@ public class QuotationServiceImpl implements QuotationService {
         QuotationStatus targetQuotationStatus = quotationStatusService.getQuotationStatusByCode(targetStatusCode);
         if (targetQuotationStatus == null)
             throw new OsirisException(null, "Quotation status not found for code " + targetStatusCode);
+
+        // Target TO VERIFY from OPEN : notify users
         if (quotation.getQuotationStatus().getCode().equals(QuotationStatus.OPEN)
                 && targetQuotationStatus.getCode().equals(QuotationStatus.TO_VERIFY))
             notificationService.notifyQuotationToVerify(quotation);
+
+        // Target TO VERIFY from SENT TO CUSTOMER : notify users and customer
         if (quotation.getQuotationStatus().getCode().equals(QuotationStatus.TO_VERIFY)
                 && targetQuotationStatus.getCode().equals(QuotationStatus.SENT_TO_CUSTOMER)) {
             mailHelper.sendQuotationToCustomer(quotation, false);
             notificationService.notifyQuotationSent(quotation);
         }
+
+        // Target VALIDATED from SENT : generate Customer Order and Publication receipt
         if (quotation.getQuotationStatus().getCode().equals(QuotationStatus.SENT_TO_CUSTOMER)
                 && targetQuotationStatus.getCode().equals(QuotationStatus.VALIDATED_BY_CUSTOMER)) {
             CustomerOrder customerOrder = customerOrderService.createNewCustomerOrderFromQuotation(quotation);
@@ -616,8 +622,9 @@ public class QuotationServiceImpl implements QuotationService {
             notificationService.notifyQuotationValidatedByCustomer(quotation);
             customerOrder.setQuotations(new ArrayList<Quotation>());
             customerOrder.getQuotations().add(quotation);
-            customerOrderService.generateStoreAndSendPublicationReceipt(customerOrder);
         }
+
+        // Target REFUSED from SENT TO CUSTOMER : notify user
         if (quotation.getQuotationStatus().getCode().equals(QuotationStatus.SENT_TO_CUSTOMER)
                 && targetQuotationStatus.getCode().equals(QuotationStatus.REFUSED_BY_CUSTOMER))
             notificationService.notifyQuotationRefusedByCustomer(quotation);

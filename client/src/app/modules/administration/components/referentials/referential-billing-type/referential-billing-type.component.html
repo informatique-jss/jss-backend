@@ -6,7 +6,7 @@
   </div>
   <div class="table-container-scroll">
     <sort-table [columns]="displayedColumns" (onRowClick)="selectEntity($event)" [values]="entities"
-      tableName="Référentiel" [filterText]="searchText">
+      tableName="Référentiel" [idRowSelected]="idRowSelected" [filterText]="searchText">
     </sort-table>
   </div>
 </div>
@@ -65,16 +65,26 @@
         </table>
         <table class="full-width">
           <tr>
+            <td>
+              <generic-toggle [(model)]="selectedEntity.isGenerateAccountProduct"
+                label="Auto-générer un compte de produit ?" [form]="entityForm"
+                propertyName="isGenerateAccountProduct"></generic-toggle>
+            </td>
+            <td><generic-toggle [(model)]="selectedEntity.isGenerateAccountCharge"
+                label="Auto-générer un compte de charge ?" [form]="entityForm"
+                propertyName="isGenerateAccountCharge"></generic-toggle></td>
+          </tr>
+          <tr>
             <td *ngIf="selectedEntity.accountingAccountProduct">
               <autocomplete-accounting-account [(model)]="selectedEntity.accountingAccountProduct" [form]="entityForm"
-                propertyName="accountingAccountProduct" [isMandatory]="false" [isDisabled]="true"
-                label="Compte comptable produit">
+                propertyName="accountingAccountProduct" [isMandatory]="false"
+                [isDisabled]="selectedEntity.isGenerateAccountProduct" label="Compte comptable produit">
               </autocomplete-accounting-account>
             </td>
             <td *ngIf="selectedEntity.accountingAccountCharge">
               <autocomplete-accounting-account [(model)]="selectedEntity.accountingAccountCharge" [form]="entityForm"
-                propertyName="accountingAccountCharge" [isMandatory]="false" [isDisabled]="true"
-                label="Compte comptable charge">
+                propertyName="accountingAccountCharge" [isMandatory]="false"
+                [isDisabled]="selectedEntity.isGenerateAccountCharge" label="Compte comptable charge">
               </autocomplete-accounting-account>
             </td>
           </tr>

@@ -17,6 +17,10 @@ export class AnnouncementService extends AppRestService<Announcement>{
     this.previewFileGet(new HttpParams().set("idAnnouncement", announcement.id + ""), "publication/receipt/download");
   }
 
+  previewProofReading(announcement: Announcement) {
+    this.previewFileGet(new HttpParams().set("idAnnouncement", announcement.id + ""), "proof/reading/download");
+  }
+
   previewPublicationFlag(announcement: Announcement) {
     this.previewFileGet(new HttpParams().set("idAnnouncement", announcement.id + ""), "publication/flag/download");
   }

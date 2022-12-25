@@ -115,18 +115,13 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
-    public DocumentType getDocumentTypePublication() throws OsirisException {
-        return getConstants().getDocumentTypePublication();
+    public DocumentType getDocumentTypeDigital() throws OsirisException {
+        return getConstants().getDocumentTypeDigital();
     }
 
     @Override
-    public DocumentType getDocumentTypeCfe() throws OsirisException {
-        return getConstants().getDocumentTypeCfe();
-    }
-
-    @Override
-    public DocumentType getDocumentTypeKbis() throws OsirisException {
-        return getConstants().getDocumentTypeKbis();
+    public DocumentType getDocumentTypePaper() throws OsirisException {
+        return getConstants().getDocumentTypePaper();
     }
 
     @Override
@@ -152,16 +147,6 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public DocumentType getDocumentTypeProvisionnalReceipt() throws OsirisException {
         return getConstants().getDocumentTypeProvisionnalReceipt();
-    }
-
-    @Override
-    public DocumentType getDocumentTypeProofReading() throws OsirisException {
-        return getConstants().getDocumentTypeProofReading();
-    }
-
-    @Override
-    public DocumentType getDocumentTypePublicationCertificate() throws OsirisException {
-        return getConstants().getDocumentTypePublicationCertificate();
     }
 
     @Override
@@ -217,6 +202,11 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public AttachmentType getAttachmentTypeBillingClosure() throws OsirisException {
         return getConstants().getAttachmentTypeBillingClosure();
+    }
+
+    @Override
+    public AttachmentType getAttachmentTypeProofReading() throws OsirisException {
+        return getConstants().getAttachmentTypeProofReading();
     }
 
     @Override

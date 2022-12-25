@@ -161,6 +161,11 @@
     <span>Générer un justificatif de parution</span>
   </button>
   <button mat-menu-item
+    *ngIf="currentProvisionWorkflow && currentProvisionWorkflow.announcement && currentProvisionWorkflow.announcement.isProofReadingDocument"
+    (click)="generateProofReading(currentProvisionWorkflow.announcement)">
+    <span>Générer une épreuve de relcture</span>
+  </button>
+  <button mat-menu-item
     *ngIf="currentProvisionWorkflow && currentProvisionWorkflow.announcement && currentProvisionWorkflow.announcement.confrere && currentProvisionWorkflow.announcement.confrere.journalType.id==journalTypePaper.id"
     (click)="generatePublicationReceiptMail()">
     <span>Recevoir le mail d'attestation de parution</span>

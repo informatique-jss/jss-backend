@@ -220,6 +220,10 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     this.announcementService.previewPublicationReceipt(announcement);
   }
 
+  generateProofReading(announcement: Announcement) {
+    this.announcementService.previewProofReading(announcement);
+  }
+
   generatePublicationFlag(announcement: Announcement) {
     this.announcementService.previewPublicationFlag(announcement);
   }

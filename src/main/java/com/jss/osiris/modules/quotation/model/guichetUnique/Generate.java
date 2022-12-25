@@ -671,7 +671,7 @@ public class Generate {
                                                                 }
                                                         }
                                                         if (!found) {
-                                                                newLines.add("//TODO : not found for property "
+                                                                newLines.add("// : not found for property "
                                                                                 + field);
                                                         }
                                                 }

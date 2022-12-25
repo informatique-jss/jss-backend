@@ -73,6 +73,7 @@ public class AccountingController {
                 principalAccountingAccountService.getPrincipalAccountingAccounts(), HttpStatus.OK);
     }
 
+    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
     @PostMapping(inputEntryPoint + "/principal-accounting-account")
     public ResponseEntity<PrincipalAccountingAccount> addOrUpdatePrincipalAccountingAccount(
             @RequestBody PrincipalAccountingAccount principalAccountingAccounts)
@@ -138,6 +139,7 @@ public class AccountingController {
                 HttpStatus.OK);
     }
 
+    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
     @PostMapping(inputEntryPoint + "/accounting-journal")
     public ResponseEntity<AccountingJournal> addOrUpdateAccountingJournal(
             @RequestBody AccountingJournal accountingJournals) throws OsirisValidationException, OsirisException {
@@ -197,6 +199,7 @@ public class AccountingController {
                 accountingAccountClassService.getAccountingAccountClasses(), HttpStatus.OK);
     }
 
+    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
     @PostMapping(inputEntryPoint + "/accounting-account-class")
     public ResponseEntity<AccountingAccountClass> addOrUpdateAccountingAccountClass(
             @RequestBody AccountingAccountClass accountingAccountClasses)
@@ -217,6 +220,7 @@ public class AccountingController {
                 HttpStatus.OK);
     }
 
+    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
     @PostMapping(inputEntryPoint + "/accounting-account")
     public ResponseEntity<AccountingAccount> addOrUpdateAccountingAccount(
             @RequestBody AccountingAccount accountingAccounts) throws OsirisValidationException, OsirisException {
@@ -253,10 +257,12 @@ public class AccountingController {
                 && accountingRecordSearch.getAccountingClass() == null
                 && accountingRecordSearch.getAccountingJournal() == null
                 && accountingRecordSearch.getResponsableId() == null
+                && accountingRecordSearch.getConfrereId() == null
                 && accountingRecordSearch.getTiersId() == null)
             throw new OsirisValidationException("AccountingAccount or AccountingClass or AccountingJournal");
 
-        if (accountingRecordSearch.getResponsableId() == null && accountingRecordSearch.getTiersId() == null) {
+        if (accountingRecordSearch.getResponsableId() == null && accountingRecordSearch.getTiersId() == null
+                && accountingRecordSearch.getConfrereId() == null) {
             if (accountingRecordSearch.getStartDate() == null || accountingRecordSearch.getEndDate() == null)
                 throw new OsirisValidationException("StartDate or EndDate");
 

@@ -242,11 +242,6 @@
           [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
           [cloneEvent]="cloneEvent.asObservable()">
         </referential-accounting-account>
-        <referential-confrere *ngIf="selectedReferential==CONFRERE_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-confrere>
         <referential-competitor *ngIf="selectedReferential==COMPETITOR_REFERENTIAL"
           (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
           [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
@@ -282,16 +277,51 @@
           [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
           [cloneEvent]="cloneEvent.asObservable()">
         </referential-regie>
-        <referential-affaire *ngIf="selectedReferential==AFFAIRE_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-affaire>
         <referential-principal-accounting-account *ngIf="selectedReferential==PRINCIPAL_ACCOUNTING_ACCOUNT_REFERENTIAL"
           (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
           [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
           [cloneEvent]="cloneEvent.asObservable()">
         </referential-principal-accounting-account>
+        <button matTooltip="Sauvegarder" mat-fab color="warn" class="fab-button" *ngIf="editMode"
+          (click)="saveEntity()">
+          <mat-icon>save</mat-icon>
+        </button>
+        <button matTooltip="Modifier l'élément" mat-fab color="accent" class="second-fab-button"
+          *ngIf="selectedEntity && !editMode" (click)="editEntity()">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button matTooltip="Cloner l'élément" mat-fab color="accent" class="third-fab-button"
+          *ngIf="selectedEntity && !editMode" (click)="cloneEntity()">
+          <mat-icon>content_copy</mat-icon>
+        </button>
+        <button matTooltip="Ajouter un élément" mat-fab color="accent" class="fab-button"
+          *ngIf="selectedReferential && !editMode" (click)="createEntity()">
+          <mat-icon>add</mat-icon>
+        </button>
+      </div>
+    </mat-tab>
+    <mat-tab label="Confrères">
+      <div class="mat-elevation-z2 form-div">
+        <referential-confrere (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
+        </referential-confrere>
+        <button matTooltip="Sauvegarder" mat-fab color="warn" class="fab-button" *ngIf="editMode"
+          (click)="saveEntity()">
+          <mat-icon>save</mat-icon>
+        </button>
+        <button matTooltip="Modifier le confrère" mat-fab color="accent" class="second-fab-button"
+          *ngIf="selectedEntity && !editMode" (click)="editEntity()">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button matTooltip="Cloner le confrère" mat-fab color="accent" class="third-fab-button"
+          *ngIf="selectedEntity && !editMode" (click)="cloneEntity()">
+          <mat-icon>content_copy</mat-icon>
+        </button>
+        <button matTooltip="Ajouter un confrère" mat-fab color="accent" class="fab-button" *ngIf="!editMode"
+          (click)="createEntity()">
+          <mat-icon>add</mat-icon>
+        </button>
       </div>
     </mat-tab>
     <mat-tab label="Constantes">
@@ -302,18 +332,3 @@
     </mat-tab>
   </mat-tab-group>
 </div>
-<button matTooltip="Sauvegarder" mat-fab color="warn" class="fab-button" *ngIf="editMode" (click)="saveEntity()">
-  <mat-icon>save</mat-icon>
-</button>
-<button matTooltip="Modifier l'élément" mat-fab color="accent" class="second-fab-button"
-  *ngIf="selectedEntity && !editMode" (click)="editEntity()">
-  <mat-icon>edit</mat-icon>
-</button>
-<button matTooltip="Cloner l'élément" mat-fab color="accent" class="third-fab-button"
-  *ngIf="selectedEntity && !editMode" (click)="cloneEntity()">
-  <mat-icon>content_copy</mat-icon>
-</button>
-<button matTooltip="Ajouter un élément" mat-fab color="accent" class="fab-button"
-  *ngIf="selectedReferential && !editMode" (click)="createEntity()">
-  <mat-icon>add</mat-icon>
-</button>

@@ -750,8 +750,12 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     if (accountingRecordSearch.getResponsableId() == null)
       accountingRecordSearch.setResponsableId(0);
 
+    if (accountingRecordSearch.getConfrereId() == null)
+      accountingRecordSearch.setConfrereId(0);
+
     return accountingRecordRepository.searchAccountingRecords(accountingAccountId, accountingClass, journalId,
         accountingRecordSearch.getResponsableId(), accountingRecordSearch.getTiersId(),
+        accountingRecordSearch.getConfrereId(),
         accountingRecordSearch.getHideLettered(),
         accountingRecordSearch.getStartDate(), accountingRecordSearch.getEndDate(),
         activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP));
@@ -1115,7 +1119,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
                 throw new OsirisException(e, "Impossible to read excel of billing closure for tiers " + tier.getId());
               }
 
-              mailHelper.sendPublicationReceiptToCustomer(attachments, tier, false);
+              mailHelper.sendBillingClosureToCustomer(attachments, tier, false);
 
             }
 
@@ -1158,7 +1162,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
                         "Impossible to read excel of billing closure for responsable " + responsable.getId());
                   }
 
-                  mailHelper.sendPublicationReceiptToCustomer(attachments, responsable, false);
+                  mailHelper.sendBillingClosureToCustomer(attachments, responsable, false);
                 }
               }
             }

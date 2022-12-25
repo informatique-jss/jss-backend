@@ -48,7 +48,7 @@ public interface AssoAffaireOrderRepository extends CrudRepository<AssoAffaireOr
                         " left join domiciliation_status doms on doms.id = dom.id_domicilisation_status " +
                         " left join bodacc bo on bo.id = p.id_bodacc" +
                         " left join bodacc_status bos on bos.id = bo.id_bodacc_status" +
-                        " where cs.code<>'OPEN' and (COALESCE(:responsible) is null or asso.id_employee in (:responsible))"
+                        " where cs.code not in (:excludedCustomerOrderStatusCode) and (COALESCE(:responsible) is null or asso.id_employee in (:responsible))"
                         +
                         " and ( COALESCE(:assignedTo) is null or p.id_employee in (:assignedTo)) " +
                         " and (:label ='' or upper(a.denomination)  like '%' || upper(CAST(:label as text))  || '%'  or upper(a.firstname)  like '%' || upper(CAST(:label as text)) || '%' or upper(a.lastname)  like '%' || upper(CAST(:label as text)) || '%') "
@@ -56,5 +56,6 @@ public interface AssoAffaireOrderRepository extends CrudRepository<AssoAffaireOr
                         " and (COALESCE(:status) is null or coalesce(ans.id,fs.id,doms.id, bos.id) in (:status) )")
         ArrayList<AssoAffaireOrderSearchResult> findAsso(@Param("responsible") List<Integer> responsibleIds,
                         @Param("assignedTo") List<Integer> assignedToIds,
-                        @Param("label") String label, @Param("status") ArrayList<Integer> arrayList);
+                        @Param("label") String label, @Param("status") ArrayList<Integer> arrayList,
+                        @Param("excludedCustomerOrderStatusCode") List<String> excludedCustomerOrderStatusCode);
 }

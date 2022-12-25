@@ -31,3 +31,12 @@ td {
 .confrere-radio-button {
   margin: 5px;
 }
+
+.div-confrere {
+  padding-top: 30px;
+}
+
+.integration-component {
+  width: 100%;
+  height: 100%;
+}

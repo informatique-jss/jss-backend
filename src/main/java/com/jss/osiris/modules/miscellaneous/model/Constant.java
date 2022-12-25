@@ -73,16 +73,12 @@ public class Constant implements Serializable, IId {
 	private TiersType tiersTypeClient;
 
 	@ManyToOne
-	@JoinColumn(name = "id_document_type_publication")
-	private DocumentType documentTypePublication;
+	@JoinColumn(name = "id_document_type_digital")
+	private DocumentType documentTypeDigital;
 
 	@ManyToOne
-	@JoinColumn(name = "id_document_type_cfe")
-	private DocumentType documentTypeCfe;
-
-	@ManyToOne
-	@JoinColumn(name = "id_document_type_kbis")
-	private DocumentType documentTypeKbis;
+	@JoinColumn(name = "id_document_type_paper")
+	private DocumentType documentTypePaper;
 
 	@ManyToOne
 	@JoinColumn(name = "id_document_type_billing")
@@ -103,14 +99,6 @@ public class Constant implements Serializable, IId {
 	@ManyToOne
 	@JoinColumn(name = "id_document_type_provisionnal_receipt")
 	private DocumentType documentTypeProvisionnalReceipt;
-
-	@ManyToOne
-	@JoinColumn(name = "id_document_type_proof_reading")
-	private DocumentType documentTypeProofReading;
-
-	@ManyToOne
-	@JoinColumn(name = "id_document_type_publication_certificate")
-	private DocumentType documentTypePublicationCertificate;
 
 	@ManyToOne
 	@JoinColumn(name = "id_attachment_type_kbis")
@@ -155,6 +143,10 @@ public class Constant implements Serializable, IId {
 	@ManyToOne
 	@JoinColumn(name = "id_attachment_type_billing_closure")
 	private AttachmentType attachmentTypeBillingClosure;
+
+	@ManyToOne
+	@JoinColumn(name = "id_attachment_type_proof_reading")
+	private AttachmentType attachmentTypeProofReading;
 
 	@ManyToOne
 	@JoinColumn(name = "id_country_france")
@@ -610,30 +602,6 @@ public class Constant implements Serializable, IId {
 		this.tiersTypeProspect = tiersTypeProspect;
 	}
 
-	public DocumentType getDocumentTypePublication() {
-		return documentTypePublication;
-	}
-
-	public void setDocumentTypePublication(DocumentType documentTypePublication) {
-		this.documentTypePublication = documentTypePublication;
-	}
-
-	public DocumentType getDocumentTypeCfe() {
-		return documentTypeCfe;
-	}
-
-	public void setDocumentTypeCfe(DocumentType documentTypeCfe) {
-		this.documentTypeCfe = documentTypeCfe;
-	}
-
-	public DocumentType getDocumentTypeKbis() {
-		return documentTypeKbis;
-	}
-
-	public void setDocumentTypeKbis(DocumentType documentTypeKbis) {
-		this.documentTypeKbis = documentTypeKbis;
-	}
-
 	public DocumentType getDocumentTypeBilling() {
 		return documentTypeBilling;
 	}
@@ -672,22 +640,6 @@ public class Constant implements Serializable, IId {
 
 	public void setDocumentTypeProvisionnalReceipt(DocumentType documentTypeProvisionnalReceipt) {
 		this.documentTypeProvisionnalReceipt = documentTypeProvisionnalReceipt;
-	}
-
-	public DocumentType getDocumentTypeProofReading() {
-		return documentTypeProofReading;
-	}
-
-	public void setDocumentTypeProofReading(DocumentType documentTypeProofReading) {
-		this.documentTypeProofReading = documentTypeProofReading;
-	}
-
-	public DocumentType getDocumentTypePublicationCertificate() {
-		return documentTypePublicationCertificate;
-	}
-
-	public void setDocumentTypePublicationCertificate(DocumentType documentTypePublicationCertificate) {
-		this.documentTypePublicationCertificate = documentTypePublicationCertificate;
 	}
 
 	public AttachmentType getAttachmentTypeKbis() {
@@ -1591,6 +1543,30 @@ public class Constant implements Serializable, IId {
 
 	public void setBillingTypeApplicationFees(BillingType billingTypeApplicationFees) {
 		this.billingTypeApplicationFees = billingTypeApplicationFees;
+	}
+
+	public DocumentType getDocumentTypeDigital() {
+		return documentTypeDigital;
+	}
+
+	public void setDocumentTypeDigital(DocumentType documentTypeDigital) {
+		this.documentTypeDigital = documentTypeDigital;
+	}
+
+	public DocumentType getDocumentTypePaper() {
+		return documentTypePaper;
+	}
+
+	public void setDocumentTypePaper(DocumentType documentTypePaper) {
+		this.documentTypePaper = documentTypePaper;
+	}
+
+	public AttachmentType getAttachmentTypeProofReading() {
+		return attachmentTypeProofReading;
+	}
+
+	public void setAttachmentTypeProofReading(AttachmentType attachmentTypeProofReading) {
+		this.attachmentTypeProofReading = attachmentTypeProofReading;
 	}
 
 }
