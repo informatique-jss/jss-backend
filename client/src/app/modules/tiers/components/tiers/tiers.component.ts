@@ -63,7 +63,11 @@ export class TiersComponent implements OnInit, AfterContentChecked {
         this.responsableMainComponent?.setSelectedResponsableId(idTiers);
 
         this.orderingSearch.customerOrders = [this.tiers];
+        if (this.tiers.responsables)
+          this.orderingSearch.customerOrders.push(...this.tiers.responsables);
         this.quotationSearch.customerOrders = [this.tiers];
+        if (this.tiers.responsables)
+          this.quotationSearch.customerOrders.push(...this.tiers.responsables);
         this.responsableAccountSearch = this.tiers;
       })
       // Load by tiers

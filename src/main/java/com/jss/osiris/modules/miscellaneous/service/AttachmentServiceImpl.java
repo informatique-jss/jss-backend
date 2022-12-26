@@ -16,6 +16,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.mail.CustomerMailService;
+import com.jss.osiris.libs.mail.model.CustomerMail;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.invoicing.service.PaymentService;
@@ -98,6 +100,9 @@ public class AttachmentServiceImpl implements AttachmentService {
 
     @Autowired
     ActiveDirectoryHelper activeDirectoryHelper;
+
+    @Autowired
+    CustomerMailService customerMailService;
 
     @Override
     public List<Attachment> getAttachments() {
@@ -223,6 +228,11 @@ public class AttachmentServiceImpl implements AttachmentService {
             if (invoice == null)
                 return new ArrayList<Attachment>();
             attachment.setInvoice(invoice);
+        } else if (entityType.equals(CustomerMail.class.getSimpleName())) {
+            CustomerMail mail = customerMailService.getMail(idEntity);
+            if (mail == null)
+                return new ArrayList<Attachment>();
+            attachment.setCustomerMail(mail);
         }
         addOrUpdateAttachment(attachment);
 
@@ -272,6 +282,8 @@ public class AttachmentServiceImpl implements AttachmentService {
             attachments = attachmentRepository.findBySimpleProvisonId(idEntity);
         } else if (entityType.equals(Invoice.class.getSimpleName())) {
             attachments = attachmentRepository.findByInvoiceId(idEntity);
+        } else if (entityType.equals(CustomerMail.class.getSimpleName())) {
+            attachments = attachmentRepository.findByCustomerMailId(idEntity);
         }
         return attachments;
     }

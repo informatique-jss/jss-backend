@@ -111,7 +111,8 @@ public class MailComputeHelper {
                 if (quotationDocument.getMailsAffaire() != null && quotationDocument.getMailsAffaire().size() > 0) {
                     mailComputeResult.getRecipientsMailTo().addAll(quotationDocument.getMailsAffaire());
                     mailComputeResult.setMailToAffaireOrigin("mails indiqués dans la commande");
-                } else if (quotation.getAssoAffaireOrders().get(0).getAffaire().getMails() != null
+                } else if (quotation.getAssoAffaireOrders() != null
+                        && quotation.getAssoAffaireOrders().get(0).getAffaire().getMails() != null
                         && quotation.getAssoAffaireOrders().get(0).getAffaire().getMails().size() > 0) {
                     mailComputeResult.getRecipientsMailTo()
                             .addAll(quotation.getAssoAffaireOrders().get(0).getAffaire().getMails());
@@ -226,7 +227,7 @@ public class MailComputeHelper {
                 invoiceLabelResult.setBillingLabel(paperDocument.getAffaireRecipient());
                 invoiceLabelResult.setBillingLabelAddress(paperDocument.getAffaireAddress());
                 invoiceLabelResult.setLabelOrigin("adresse indiquée dans la commande");
-            } else if (customerOrder.getAssoAffaireOrders() != null
+            } else if (customerOrder.getAssoAffaireOrders() != null && customerOrder.getAssoAffaireOrders().size() > 0
                     && customerOrder.getAssoAffaireOrders().get(0) != null
                     && customerOrder.getAssoAffaireOrders().get(0).getAffaire() != null
                     && customerOrder.getAssoAffaireOrders().get(0).getAffaire().getAddress() != null

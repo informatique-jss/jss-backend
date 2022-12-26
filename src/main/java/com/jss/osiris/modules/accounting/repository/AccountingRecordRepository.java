@@ -65,22 +65,21 @@ public interface AccountingRecordRepository extends CrudRepository<AccountingRec
                         " join accounting_account a on a.id = r.id_accounting_account " +
                         " join principal_accounting_account pa on pa.id = a.id_principal_accounting_account " +
                         " left join tiers t on (t.id_accounting_account_customer = r.id_accounting_account  or t.id_accounting_account_deposit=r.id_accounting_account) "
+                        + " left join confrere cf on (cf.id_accounting_account_customer = r.id_accounting_account  or cf.id_accounting_account_deposit=r.id_accounting_account) "
                         +
                         " left join accounting_record r2 on r2.id = r.id_contre_passe " +
                         " left join invoice i on i.id = r.id_invoice " +
                         " left join customer_order co on co.id = r.id_customer_order " +
                         " left join responsable re1 on re1.id = i.id_responsable " +
                         " left join responsable re2 on r2.id = co.id_responsable " +
-                        " left join confrere cf1 on cf1.id = i.id_confrere " +
-                        " left join confrere cf2 on cf2.id = co.id_confrere " +
                         " where ( COALESCE(:accountingAccountIds) =0 or r.id_accounting_account in (:accountingAccountIds)) "
                         +
                         " and (:journalId =0 or r.id_accounting_journal = :journalId) " +
                         " and (:responsableId =0 or COALESCE(re1.id ,re2.id )  = :responsableId and t.id is not null) "
                         +
-                        " and (:confrereId =0 or COALESCE(cf1.id ,cf2.id )  = :confrereId) "
+                        " and (:confrereId =0 or cf.id is not null and cf.id =:confrereId ) "
                         +
-                        " and (:tiersId =0 or COALESCE(i.id_tiers ,co.id_tiers )  = :tiersId and t.id is not null) " +
+                        " and (:tiersId =0 or t.id is not null and t.id = :tiersId) " +
                         " and (:hideLettered = false or r.lettering_date is null ) " +
                         " and r.operation_date_time>=:startDate and r.operation_date_time<=:endDate  " +
                         " and (:canViewRestricted=true or a.is_view_restricted=false)  " +

@@ -61,6 +61,7 @@ export interface Constant {
   attachmentTypeJournal: AttachmentType;
   attachmentTypeBillingClosure: AttachmentType;
   attachmentTypeProofReading: AttachmentType;
+  attachmentTypeAutomaticMail: AttachmentType;
   countryFrance: Country;
   countryMonaco: Country;
   billingTypeLogo: BillingType;

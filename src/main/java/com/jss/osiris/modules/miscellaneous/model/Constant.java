@@ -149,6 +149,10 @@ public class Constant implements Serializable, IId {
 	private AttachmentType attachmentTypeProofReading;
 
 	@ManyToOne
+	@JoinColumn(name = "id_attachment_type_automatic_mail")
+	private AttachmentType attachmentTypeAutomaticMail;
+
+	@ManyToOne
 	@JoinColumn(name = "id_country_france")
 	private Country countryFrance;
 
@@ -1567,6 +1571,14 @@ public class Constant implements Serializable, IId {
 
 	public void setAttachmentTypeProofReading(AttachmentType attachmentTypeProofReading) {
 		this.attachmentTypeProofReading = attachmentTypeProofReading;
+	}
+
+	public AttachmentType getAttachmentTypeAutomaticMail() {
+		return attachmentTypeAutomaticMail;
+	}
+
+	public void setAttachmentTypeAutomaticMail(AttachmentType attachmentTypeAutomaticMail) {
+		this.attachmentTypeAutomaticMail = attachmentTypeAutomaticMail;
 	}
 
 }

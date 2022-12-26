@@ -21,6 +21,10 @@
     [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/tiers' )>=0}">
     <mat-icon>group</mat-icon> <span>Tiers / Responsables</span>
   </a>
+  <a mat-list-item routerLink="/confrere/null" *ngIf="canViewConfrereModule()"
+    [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/confrere' )>=0}">
+    <mat-icon>share</mat-icon> <span>Confreres</span>
+  </a>
   <a mat-list-item routerLink="/quotation" *ngIf="canViewQuotationModule()"
     [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/quotation' )>=0}">
     <mat-icon>request_quote</mat-icon> <span>Devis</span>

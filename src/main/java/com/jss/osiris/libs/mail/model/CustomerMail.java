@@ -9,17 +9,28 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.profile.model.Employee;
+import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.quotation.model.Quotation;
+import com.jss.osiris.modules.tiers.model.Responsable;
+import com.jss.osiris.modules.tiers.model.Tiers;
 
 @Entity
+@Table(indexes = {
+        @Index(name = "idx_customer_mail_tiers", columnList = "id_tiers"),
+        @Index(name = "idx_customer_mail_responsable", columnList = "id_responsable"),
+        @Index(name = "idx_customer_mail_quotation", columnList = "id_quotation"),
+        @Index(name = "idx_customer_mail_customer_order", columnList = "id_customer_order"),
+        @Index(name = "idx_customer_mail_confrere", columnList = "id_confrere") })
 public class CustomerMail {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "customer_mail_sequence")
@@ -111,14 +122,27 @@ public class CustomerMail {
     CustomerOrder customerOrder;
 
     @ManyToOne
-    @JoinColumn(name = "id_invoice")
-    Invoice invoice;
+    @JoinColumn(name = "id_quotation")
+    Quotation quotation;
+
+    @ManyToOne
+    @JoinColumn(name = "id_tiers")
+    Tiers tiers;
+
+    @ManyToOne
+    @JoinColumn(name = "id_responsable")
+    Responsable responsable;
+
+    @ManyToOne
+    @JoinColumn(name = "id_confrere")
+    Confrere confrere;
 
     @OneToMany(mappedBy = "customerMail")
     @JsonIgnoreProperties(value = { "customerMail" }, allowSetters = true)
     private List<Attachment> attachments;
 
     private Boolean hasErrors;
+    private Boolean isSent;
 
     public Integer getId() {
         return id;
@@ -304,14 +328,6 @@ public class CustomerMail {
         this.customerOrder = customerOrder;
     }
 
-    public Invoice getInvoice() {
-        return invoice;
-    }
-
-    public void setInvoice(Invoice invoice) {
-        this.invoice = invoice;
-    }
-
     public String getCbExplanation() {
         return cbExplanation;
     }
@@ -390,6 +406,46 @@ public class CustomerMail {
 
     public void setHasErrors(Boolean hasErrors) {
         this.hasErrors = hasErrors;
+    }
+
+    public Boolean getIsSent() {
+        return isSent;
+    }
+
+    public void setIsSent(Boolean isSent) {
+        this.isSent = isSent;
+    }
+
+    public Tiers getTiers() {
+        return tiers;
+    }
+
+    public void setTiers(Tiers tiers) {
+        this.tiers = tiers;
+    }
+
+    public Quotation getQuotation() {
+        return quotation;
+    }
+
+    public void setQuotation(Quotation quotation) {
+        this.quotation = quotation;
+    }
+
+    public Responsable getResponsable() {
+        return responsable;
+    }
+
+    public void setResponsable(Responsable responsable) {
+        this.responsable = responsable;
+    }
+
+    public Confrere getConfrere() {
+        return confrere;
+    }
+
+    public void setConfrere(Confrere confrere) {
+        this.confrere = confrere;
     }
 
 }

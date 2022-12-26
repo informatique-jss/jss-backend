@@ -440,7 +440,8 @@ public class TiersController {
 
     validationHelper.validateReferential(tiers.getPaymentType(),
         !tiers.getTiersType().getId().equals(constantService.getTiersTypeProspect().getId()), "PaymentType");
-    validationHelper.validateString(tiers.getPaymentIBAN(), false, 40, "PaymentIBAN");
+    validationHelper.validateString(tiers.getPaymentIban(), false, 40, "PaymentIBAN");
+    validationHelper.validateString(tiers.getPaymentBic(), false, 40, "PaymentBic");
 
     if (tiers.getResponsables() != null && tiers.getResponsables().size() > 0) {
       for (Responsable responsable : tiers.getResponsables()) {

@@ -18,6 +18,7 @@ export interface Tiers extends ITiers {
   instructions: string;
   paymentType: PaymentType;
   paymentIban: string;
+  paymentBic: string;
   isProvisionalPaymentMandatory: boolean;
   isSepaMandateReceived: boolean;
   responsables: Responsable[];

@@ -35,7 +35,7 @@
           <td>
             <generic-toggle [(model)]="invoice.isInvoiceFromProvider" label="Est une facture entrante ?"
               [form]="invoiceForm" propertyName="isInvoiceFromProvider"
-              (onToggleChange)="emptyProvider()"></generic-toggle>
+              [isDisabled]="!editMode   || invoice.id!=undefined" (onToggleChange)="emptyProvider()"></generic-toggle>
           </td>
         </tr>
       </table>
@@ -172,7 +172,7 @@
   </div>
 </div>
 <button matTooltip="Ajouter une ligne de facturation" mat-fab color="accent" class="second-fab-button"
-  (click)="addInvoiceItem()">
+  *ngIf="!editMode   || invoice.id!=undefined" (click)="addInvoiceItem()">
   <mat-icon>add</mat-icon>
 </button>
 <button matTooltip="Enregistrer la facture" mat-fab color="warn" class="fab-button" (click)="saveInvoice()">

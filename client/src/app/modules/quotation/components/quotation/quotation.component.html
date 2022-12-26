@@ -223,6 +223,14 @@
           <attachments [entity]="quotation" [editMode]="editMode" [entityType]="getEntityType().entityType">
           </attachments>
         </mat-tab>
+        <mat-tab label="Mails" *ngIf="quotation.id && instanceOfQuotationFn(quotation)">
+          <automatic-mail-list [quotation]="quotation">
+          </automatic-mail-list>
+        </mat-tab>
+        <mat-tab label="Mails" *ngIf="quotation.id && instanceOfCustomerOrderFn(quotation)">
+          <automatic-mail-list [customerOrder]="quotation">
+          </automatic-mail-list>
+        </mat-tab>
         <mat-tab label="Historique du statut" *ngIf="quotation.id!=null && quotation.id!=undefined">
           <history [entity]="quotation" [entityType]="getEntityType()" [displayOnlyFields]="['quotationStatus']"
             [parseTypeList]="quotationStatusList"></history>

@@ -204,6 +204,10 @@
             [entityType]="RESPONSABLE_ENTITY_TYPE.entityType">
           </attachments>
         </mat-tab>
+        <mat-tab label="Mails" *ngIf="selectedResponsable.id">
+          <automatic-mail-list [responsable]="selectedResponsable">
+          </automatic-mail-list>
+        </mat-tab>
         <mat-tab label="Devis" *ngIf="tiers.id!=null && tiers.id!=undefined">
           <quotation-list class="integration-component"
             *ngIf="this.quotationSearch.customerOrders && this.quotationSearch.customerOrders.length>0"

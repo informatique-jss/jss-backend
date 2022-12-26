@@ -1,7 +1,7 @@
 import { CdkDragEnter, CdkDropList, DragRef, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { combineLatest, map } from 'rxjs';
-import { CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_TO_VERIFY, QUOTATION_STATUS_OPEN, QUOTATION_STATUS_REFUSED_BY_CUSTOMER, QUOTATION_STATUS_TO_VERIFY } from 'src/app/libs/Constants';
+import { CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_TO_BILLED, QUOTATION_STATUS_OPEN, QUOTATION_STATUS_REFUSED_BY_CUSTOMER, QUOTATION_STATUS_TO_VERIFY } from 'src/app/libs/Constants';
 import { AppService } from 'src/app/services/app.service';
 import { HabilitationsService } from '../../services/habilitations.service';
 import { UserPreferenceService } from '../../services/user.preference.service';
@@ -66,12 +66,10 @@ export class DashboardComponent implements OnInit {
   affaireSearchResponsibleToDo: AffaireSearch = {} as AffaireSearch;
 
   ORDER_OPEN = "Mes commandes ouvertes";
-  ORDER_TO_VERIFY = "Mes commandes à vérifier";
   ORDER_BEING_PROCESSED = "Mes commandes en cours";
   ORDER_TO_BILLED = "Commandes en attente de facturation";
 
   orderingSearchOpen: OrderingSearch = {} as OrderingSearch;
-  orderingSearchToVerify: OrderingSearch = {} as OrderingSearch;
   orderingSearchBeingProcessed: OrderingSearch = {} as OrderingSearch;
   orderingSearchToBilled: OrderingSearch = {} as OrderingSearch;
 
@@ -93,7 +91,7 @@ export class DashboardComponent implements OnInit {
 
   LOG_TO_REVIEW = "Logs à revoir";
 
-  allItems: Array<string> = [this.QUOTATION_REFUSED, this.PAYMENT_TO_ASSOCIATE, this.INVOICE_TO_ASSOCIATE, this.QUOTATION_TO_VERIFY, this.QUOTATION_OPEN, this.ORDER_TO_BILLED, this.ORDER_BEING_PROCESSED, this.ORDER_TO_VERIFY, this.ORDER_OPEN, this.AFFAIRE_RESPONSIBLE_IN_PROGRESS, this.AFFAIRE_RESPONSIBLE_TO_DO, this.AFFAIRE_IN_PROGRESS, this.AFFAIRE_TO_DO].sort((a, b) => a.localeCompare(b));
+  allItems: Array<string> = [this.QUOTATION_REFUSED, this.PAYMENT_TO_ASSOCIATE, this.INVOICE_TO_ASSOCIATE, this.QUOTATION_TO_VERIFY, this.QUOTATION_OPEN, this.ORDER_TO_BILLED, this.ORDER_BEING_PROCESSED, this.ORDER_OPEN, this.AFFAIRE_RESPONSIBLE_IN_PROGRESS, this.AFFAIRE_RESPONSIBLE_TO_DO, this.AFFAIRE_IN_PROGRESS, this.AFFAIRE_TO_DO].sort((a, b) => a.localeCompare(b));
 
   constructor(private appService: AppService,
     private employeeService: EmployeeService,
@@ -149,9 +147,6 @@ export class DashboardComponent implements OnInit {
 
         this.orderingSearchOpen.salesEmployee = this.currentEmployee!;
         this.orderingSearchOpen.customerOrderStatus = [this.customerOrderStatusService.getCustomerStatusByCode(this.customerOrderStatus, CUSTOMER_ORDER_STATUS_OPEN)!];
-
-        this.orderingSearchToVerify.salesEmployee = this.currentEmployee!;
-        this.orderingSearchToVerify.customerOrderStatus = [this.customerOrderStatusService.getCustomerStatusByCode(this.customerOrderStatus, CUSTOMER_ORDER_STATUS_TO_VERIFY)!];
 
         this.orderingSearchBeingProcessed.salesEmployee = this.currentEmployee!;
         this.orderingSearchBeingProcessed.customerOrderStatus = [this.customerOrderStatusService.getCustomerStatusByCode(this.customerOrderStatus, CUSTOMER_ORDER_STATUS_BEING_PROCESSED)!];

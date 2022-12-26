@@ -210,6 +210,11 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public AttachmentType getAttachmentTypeAutomaticMail() throws OsirisException {
+        return getConstants().getAttachmentTypeAutomaticMail();
+    }
+
+    @Override
     public Country getCountryFrance() throws OsirisException {
         return getConstants().getCountryFrance();
     }

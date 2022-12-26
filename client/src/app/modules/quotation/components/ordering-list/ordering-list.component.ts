@@ -134,7 +134,7 @@ export class OrderingListComponent implements OnInit {
       if (element.tiersId)
         return ['/tiers', element.tiersId];
       if (element.confrereId)
-        return ['/referential/confrere', element.confrereId];
+        return ['/confrere', element.confrereId];
     }
     return ['/tiers'];
   }

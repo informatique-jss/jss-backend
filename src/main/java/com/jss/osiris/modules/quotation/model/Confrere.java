@@ -15,6 +15,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.miscellaneous.model.City;
 import com.jss.osiris.modules.miscellaneous.model.Country;
@@ -43,7 +44,7 @@ public class Confrere implements ITiers {
 	@Column(nullable = false, length = 20)
 	private String code;
 
-	@Column(length = 40)
+	@Column(length = 100)
 	private String label;
 
 	@ManyToMany
@@ -133,9 +134,6 @@ public class Confrere implements ITiers {
 	@JoinColumn(name = "id_country")
 	private Country country;
 
-	@Column(length = 40)
-	private String iban;
-
 	@Column(columnDefinition = "TEXT")
 	private String observations;
 
@@ -144,6 +142,7 @@ public class Confrere implements ITiers {
 	private VatCollectionType vatCollectionType;
 
 	@OneToMany(mappedBy = "confrere", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonIgnoreProperties(value = { "confrere" }, allowSetters = true)
 	private List<Document> documents;
 
 	@Column(nullable = false)
@@ -155,6 +154,13 @@ public class Confrere implements ITiers {
 	@ManyToOne
 	@JoinColumn(name = "id_payment_type")
 	private PaymentType paymentType;
+
+	@Column(length = 40)
+	@JsonProperty("paymentIban")
+	private String paymentIban;
+
+	@Column(length = 40)
+	private String paymentBic;
 
 	@ManyToOne
 	@JoinColumn(name = "id_commercial")
@@ -214,14 +220,6 @@ public class Confrere implements ITiers {
 
 	public void setAccountingMails(List<Mail> accountingMails) {
 		this.accountingMails = accountingMails;
-	}
-
-	public String getIban() {
-		return iban;
-	}
-
-	public void setIban(String iban) {
-		this.iban = iban;
 	}
 
 	public JournalType getJournalType() {
@@ -527,6 +525,22 @@ public class Confrere implements ITiers {
 
 	public void setCedexComplement(String cedexComplement) {
 		this.cedexComplement = cedexComplement;
+	}
+
+	public String getPaymentIban() {
+		return paymentIban;
+	}
+
+	public void setPaymentIban(String paymentIban) {
+		this.paymentIban = paymentIban;
+	}
+
+	public String getPaymentBic() {
+		return paymentBic;
+	}
+
+	public void setPaymentBic(String paymentBic) {
+		this.paymentBic = paymentBic;
 	}
 
 }

@@ -97,6 +97,8 @@ public interface ConstantService {
 
     public AttachmentType getAttachmentTypeProofReading() throws OsirisException;
 
+    public AttachmentType getAttachmentTypeAutomaticMail() throws OsirisException;
+
     public Country getCountryFrance() throws OsirisException;
 
     public Country getCountryMonaco() throws OsirisException;

@@ -29,8 +29,6 @@
           [affaireSearch]="affaireSearchToDo" [isForDashboard]="true"></provision-list>
         <ordering-list class="dashboard-box-component" *ngIf="item==ORDER_OPEN" [orderingSearch]="orderingSearchOpen"
           [isForDashboard]="true"></ordering-list>
-        <ordering-list class="dashboard-box-component" *ngIf="item==ORDER_TO_VERIFY"
-          [orderingSearch]="orderingSearchToVerify" [isForDashboard]="true"></ordering-list>
         <ordering-list class="dashboard-box-component" *ngIf="item==ORDER_BEING_PROCESSED"
           [orderingSearch]="orderingSearchBeingProcessed" [isForDashboard]="true"></ordering-list>
         <ordering-list class="dashboard-box-component" *ngIf="item==ORDER_TO_BILLED"

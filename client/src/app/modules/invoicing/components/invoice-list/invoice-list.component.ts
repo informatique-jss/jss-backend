@@ -6,6 +6,7 @@ import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableCo
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { AppService } from 'src/app/services/app.service';
 import { HabilitationsService } from '../../../../services/habilitations.service';
+import { UserPreferenceService } from '../../../../services/user.preference.service';
 import { InvoiceSearch } from '../../model/InvoiceSearch';
 import { InvoiceSearchResult } from '../../model/InvoiceSearchResult';
 import { InvoiceStatus } from '../../model/InvoiceStatus';
@@ -31,6 +32,8 @@ export class InvoiceListComponent implements OnInit, AfterContentChecked {
   @Input() overrideTooltipAction: string = "";
   @Input() defaultStatusFilter: InvoiceStatus[] | undefined;
 
+  bookmark: InvoiceSearch | undefined;
+
   invoiceStatusSend = this.constantService.getInvoiceStatusSend();
 
   constructor(
@@ -40,6 +43,7 @@ export class InvoiceListComponent implements OnInit, AfterContentChecked {
     private changeDetectorRef: ChangeDetectorRef,
     private formBuilder: FormBuilder,
     private habilitationService: HabilitationsService,
+    private userPreferenceService: UserPreferenceService,
   ) { }
 
   ngAfterContentChecked(): void {
@@ -53,6 +57,16 @@ export class InvoiceListComponent implements OnInit, AfterContentChecked {
   ngOnInit() {
     if (!this.defaultStatusFilter && !this.isForDashboard)
       this.defaultStatusFilter = [this.invoiceStatusSend];
+
+    this.bookmark = this.userPreferenceService.getUserSearchBookmark("invoices") as InvoiceSearch;
+    if (this.bookmark && !this.isForDashboard) {
+      this.invoiceSearch = {} as InvoiceSearch;
+      this.invoiceSearch.invoiceStatus = this.bookmark.invoiceStatus;
+      this.defaultStatusFilter = this.bookmark.invoiceStatus;
+      this.invoiceSearch.maxAmount = this.bookmark.maxAmount;
+      this.invoiceSearch.minAmount = this.bookmark.minAmount;
+    }
+
     if (!this.isForDashboard)
       this.appService.changeHeaderTitle("Factures & paiements");
     this.putDefaultPeriod();
@@ -128,6 +142,9 @@ export class InvoiceListComponent implements OnInit, AfterContentChecked {
 
   searchInvoices() {
     if (this.invoiceForm.valid && this.invoiceSearch.startDate && this.invoiceSearch.endDate) {
+      if (!this.isForDashboard)
+        this.userPreferenceService.setUserSearchBookmark(this.invoiceSearch, "invoices");
+
       this.invoiceSearchResultService.getInvoicesList(this.invoiceSearch).subscribe(response => {
         this.invoices = response;
       })

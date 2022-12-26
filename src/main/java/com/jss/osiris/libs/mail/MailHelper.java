@@ -15,8 +15,6 @@ import java.util.List;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
-import javax.mail.Address;
-import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
@@ -50,7 +48,6 @@ import com.jss.osiris.libs.mail.model.CustomerMail;
 import com.jss.osiris.libs.mail.model.CustomerMailAssoAffaireOrder;
 import com.jss.osiris.libs.mail.model.MailComputeResult;
 import com.jss.osiris.libs.mail.model.VatMail;
-import com.jss.osiris.libs.mail.repository.CustomerMailRepository;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.invoicing.model.Deposit;
 import com.jss.osiris.modules.invoicing.model.Invoice;
@@ -95,9 +92,6 @@ public class MailHelper {
     @Value("${mail.smtp.password}")
     private String mailPassword;
 
-    @Value("${mail.domain.filter}")
-    private String mailDomainFilter;
-
     @Value("${payment.cb.entry.point}")
     private String paymentCbEntryPoint;
 
@@ -138,9 +132,6 @@ public class MailHelper {
     AccountingRecordService accountingRecordService;
 
     @Autowired
-    CustomerMailRepository customerMailRepository;
-
-    @Autowired
     AssoAffaireOrderService assoAffaireOrderService;
 
     @Autowired
@@ -155,7 +146,29 @@ public class MailHelper {
     @Autowired
     MailComputeHelper mailComputeHelper;
 
-    private JavaMailSender getMailSender() throws OsirisException {
+    @Autowired
+    CustomerMailService mailService;
+
+    @Bean
+    public TemplateEngine emailTemplateEngine() {
+        final SpringTemplateEngine templateEngine = new SpringTemplateEngine();
+        templateEngine.addTemplateResolver(htmlTemplateResolver());
+        // Message source, internationalization specific to emails
+        return templateEngine;
+    }
+
+    private ITemplateResolver htmlTemplateResolver() {
+        final ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
+        templateResolver.setOrder(Integer.valueOf(1));
+        templateResolver.setPrefix("mails/");
+        templateResolver.setSuffix(".html");
+        templateResolver.setTemplateMode(TemplateMode.HTML);
+        templateResolver.setCharacterEncoding(EMAIL_TEMPLATE_ENCODING);
+        templateResolver.setCacheable(false);
+        return templateResolver;
+    }
+
+    public JavaMailSender getMailSender() throws OsirisException {
         if (javaMailSender != null)
             return javaMailSender;
 
@@ -179,142 +192,9 @@ public class MailHelper {
         return mailSender;
     }
 
-    @Bean
-    public TemplateEngine emailTemplateEngine() {
-        final SpringTemplateEngine templateEngine = new SpringTemplateEngine();
-        templateEngine.addTemplateResolver(htmlTemplateResolver());
-        // Message source, internationalization specific to emails
-        return templateEngine;
-    }
-
-    private ITemplateResolver htmlTemplateResolver() {
-        final ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
-        templateResolver.setOrder(Integer.valueOf(1));
-        templateResolver.setPrefix("mails/");
-        templateResolver.setSuffix(".html");
-        templateResolver.setTemplateMode(TemplateMode.HTML);
-        templateResolver.setCharacterEncoding(EMAIL_TEMPLATE_ENCODING);
-        templateResolver.setCacheable(false);
-        return templateResolver;
-    }
-
-    private void addMailToQueue(CustomerMail mail) {
-        mail.setCreatedDateTime(LocalDateTime.now());
-        mail.setHasErrors(false);
-        mail.setSendToMeEmployee(employeeService.getCurrentEmployee());
-        customerMailRepository.save(mail);
-
-        if (mail.getAttachments() != null)
-            for (Attachment attachment : mail.getAttachments()) {
-                attachment.setCustomerMail(mail);
-                attachmentService.addOrUpdateAttachment(attachment);
-            }
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    public void sendNextMail() throws OsirisException {
-        List<CustomerMail> mails = customerMailRepository.findAllByOrderByCreatedDateTimeAsc();
-
-        if (mails != null && mails.size() > 0) {
-            CustomerMail mail = mails.get(0);
-
-            try {
-                prepareAndSendMail(mail);
-            } catch (Exception e) {
-                mail.setHasErrors(true);
-                customerMailRepository.save(mail);
-                if (e instanceof OsirisException)
-                    throw e;
-            }
-
-            if (mail.getAttachments() != null)
-                for (Attachment attachment : mail.getAttachments()) {
-                    attachment.setCustomerMail(null);
-                    attachmentService.addOrUpdateAttachment(attachment);
-                }
-            customerMailRepository.delete(mail);
-        }
-    }
-
-    private void prepareAndSendMail(CustomerMail mail) throws OsirisException {
-        boolean canSend = true;
-        MimeMessage message = generateGenericMail(mail);
-
-        if (mailDomainFilter != null && !mailDomainFilter.equals("")) {
-            Address[] recipients;
-            try {
-                recipients = message.getRecipients(Message.RecipientType.TO);
-            } catch (MessagingException e) {
-                throw new OsirisException(e, "Unable to find recipients To for mail " + mail.getId());
-            }
-            if (recipients != null)
-                for (Address address : recipients) {
-                    String[] chunk = address.toString().split("@");
-                    if (chunk.length != 2 || !chunk[1].equals(mailDomainFilter))
-                        canSend = false;
-                }
-            try {
-                recipients = message.getRecipients(Message.RecipientType.CC);
-            } catch (MessagingException e) {
-                throw new OsirisException(e, "Unable to find recipients Cc for mail " + mail.getId());
-            }
-            if (recipients != null)
-                for (Address address : recipients) {
-                    String[] chunk = address.toString().split("@");
-                    if (chunk.length != 2
-                            || !chunk[1].toLowerCase().trim().equals(mailDomainFilter.toLowerCase().trim()))
-                        canSend = false;
-                }
-        }
-
-        if (canSend)
-            getMailSender().send(message);
-    }
-
-    private MimeMessage generateGenericMail(CustomerMail mail) throws OsirisException {
-        // Prepare the evaluation context
+    public MimeMessage generateGenericMail(CustomerMail mail) throws OsirisException {
         final Context ctx = new Context();
-        ctx.setVariable("instagram", "instagram");
-        ctx.setVariable("facebook", "facebook");
-        ctx.setVariable("linkedin", "linkedin");
-        ctx.setVariable("twitter", "twitter");
-        ctx.setVariable("jssHeaderPicture", "jssHeaderPicture");
-        ctx.setVariable("headerPicture", mail.getHeaderPicture() != null ? "headerPicture" : null);
-        ctx.setVariable("title", mail.getTitle());
-        ctx.setVariable("subtitle", mail.getSubtitle());
-        ctx.setVariable("label", mail.getLabel());
-        ctx.setVariable("explaination", mail.getExplaination());
-        ctx.setVariable("explainationElements",
-                mail.getExplainationElements() != null ? mail.getExplainationElements().split("!#") : null);
-        ctx.setVariable("explaination2", mail.getExplaination2());
-        ctx.setVariable("explaination3", mail.getExplaination3());
-        ctx.setVariable("paymentExplainationWarning", mail.getPaymentExplainationWarning());
-        ctx.setVariable("paymentExplaination", mail.getPaymentExplaination());
-        ctx.setVariable("paymentExplaination2", mail.getPaymentExplaination2());
-
-        if (mail.getCustomerMailAssoAffaireOrders() != null) {
-            ArrayList<AssoAffaireOrder> assos = new ArrayList<AssoAffaireOrder>();
-            for (CustomerMailAssoAffaireOrder customerAsso : mail.getCustomerMailAssoAffaireOrders()) {
-                AssoAffaireOrder tmpAsso = assoAffaireOrderService
-                        .getAssoAffaireOrder(customerAsso.getAssoAffaireOrderId());
-                if (tmpAsso != null)
-                    assos.add(tmpAsso);
-            }
-            if (assos.size() > 0)
-                ctx.setVariable("assos", assos);
-        }
-
-        ctx.setVariable("preTaxPriceTotal", mail.getPreTaxPriceTotal());
-        ctx.setVariable("discountTotal", mail.getDiscountTotal());
-        ctx.setVariable("preTaxPriceTotalWithDicount", mail.getPreTaxPriceTotalWithDicount());
-        ctx.setVariable("vats", mail.getVatMails());
-        ctx.setVariable("priceTotal", mail.getPriceTotal());
-        ctx.setVariable("totalSubtitle", mail.getTotalSubtitle());
-        ctx.setVariable("greetings", mail.getGreetings());
-        ctx.setVariable("cbExplanation", mail.getCbExplanation());
-        ctx.setVariable("cbLink", mail.getCbLink());
-        ctx.setVariable("qrCodePicture", mail.getCbLink() != null ? "qrCodePicture" : null);
-
+        setContextVariable(ctx, mail, false);
         // Prepare message using a Spring helper
         MimeMessage mimeMessage;
         mimeMessage = getMailSender().createMimeMessage();
@@ -409,10 +289,87 @@ public class MailHelper {
                             new File(attachment.getUploadedFile().getPath()));
             }
         } catch (MessagingException e) {
-
         }
 
         return mimeMessage;
+    }
+
+    public File generateGenericPdf(CustomerMail mail) throws OsirisException {
+        final Context ctx = new Context();
+        setContextVariable(ctx, mail, true);
+        String htmlContent = "";
+        // Create the HTML body using Thymeleaf
+        try {
+            htmlContent = emailTemplateEngine().process("model", ctx);
+        } catch (Exception e) {
+            throw new OsirisException(e, "Unable to parse HTML for mail " + mail.getId());
+        }
+
+        File tempFile;
+        OutputStream outputStream;
+        try {
+            tempFile = File.createTempFile("genericMail", "pdf");
+            outputStream = new FileOutputStream(tempFile);
+        } catch (IOException e) {
+            throw new OsirisException(e, "Unable to create temp file");
+        }
+        ITextRenderer renderer = new ITextRenderer();
+        try {
+            renderer.setDocumentFromString(htmlContent);
+            renderer.layout();
+            renderer.createPDF(outputStream);
+            outputStream.close();
+        } catch (Exception e) {
+            throw new OsirisException(e, "Unable to create PDF file for mail " + mail.getId());
+        }
+        return tempFile;
+    }
+
+    private void setContextVariable(Context ctx, CustomerMail mail, boolean setPlainPictures) {
+        // Prepare the evaluation context
+        ctx.setVariable("instagram", "instagram");
+        ctx.setVariable("facebook", "facebook");
+        ctx.setVariable("linkedin", "linkedin");
+        ctx.setVariable("twitter", "twitter");
+        if (setPlainPictures)
+            ctx.setVariable("jssHeaderPicturePlain", "/images/jss-header.png");
+        else
+            ctx.setVariable("jssHeaderPicture", "jssHeaderPicture");
+        ctx.setVariable("headerPicture", mail.getHeaderPicture() != null ? "headerPicture" : null);
+        ctx.setVariable("title", mail.getTitle());
+        ctx.setVariable("subtitle", mail.getSubtitle());
+        ctx.setVariable("label", mail.getLabel());
+        ctx.setVariable("explaination", mail.getExplaination());
+        ctx.setVariable("explainationElements",
+                mail.getExplainationElements() != null ? mail.getExplainationElements().split("!#") : null);
+        ctx.setVariable("explaination2", mail.getExplaination2());
+        ctx.setVariable("explaination3", mail.getExplaination3());
+        ctx.setVariable("paymentExplainationWarning", mail.getPaymentExplainationWarning());
+        ctx.setVariable("paymentExplaination", mail.getPaymentExplaination());
+        ctx.setVariable("paymentExplaination2", mail.getPaymentExplaination2());
+
+        if (mail.getCustomerMailAssoAffaireOrders() != null) {
+            ArrayList<AssoAffaireOrder> assos = new ArrayList<AssoAffaireOrder>();
+            for (CustomerMailAssoAffaireOrder customerAsso : mail.getCustomerMailAssoAffaireOrders()) {
+                AssoAffaireOrder tmpAsso = assoAffaireOrderService
+                        .getAssoAffaireOrder(customerAsso.getAssoAffaireOrderId());
+                if (tmpAsso != null)
+                    assos.add(tmpAsso);
+            }
+            if (assos.size() > 0)
+                ctx.setVariable("assos", assos);
+        }
+
+        ctx.setVariable("preTaxPriceTotal", mail.getPreTaxPriceTotal());
+        ctx.setVariable("discountTotal", mail.getDiscountTotal());
+        ctx.setVariable("preTaxPriceTotalWithDicount", mail.getPreTaxPriceTotalWithDicount());
+        ctx.setVariable("vats", mail.getVatMails());
+        ctx.setVariable("priceTotal", mail.getPriceTotal());
+        ctx.setVariable("totalSubtitle", mail.getTotalSubtitle());
+        ctx.setVariable("greetings", mail.getGreetings());
+        ctx.setVariable("cbExplanation", mail.getCbExplanation());
+        ctx.setVariable("cbLink", mail.getCbLink());
+        ctx.setVariable("qrCodePicture", mail.getCbLink() != null ? "qrCodePicture" : null);
     }
 
     public String generateGenericHtmlConfirmation(String title, String subtitle, String label, String explaination,
@@ -486,6 +443,9 @@ public class MailHelper {
 
         priceTotal = preTaxPriceTotal - (discountTotal != null ? discountTotal : 0) + (vats != null ? vatTotal : 0);
 
+        if (discountTotal != null && (Math.round(discountTotal * 100f) / 100f) == 0f)
+            discountTotal = null;
+
         mail.setPreTaxPriceTotal(preTaxPriceTotal);
         mail.setDiscountTotal(discountTotal);
         mail.setPreTaxPriceTotalWithDicount(preTaxPriceTotalWithDicount);
@@ -500,6 +460,7 @@ public class MailHelper {
 
     public void sendQuotationToCustomer(Quotation quotation, boolean sendToMe) throws OsirisException {
         CustomerMail mail = new CustomerMail();
+        mail.setQuotation(quotation);
         mail.setHeaderPicture("images/quotation-header.png");
         mail.setTitle("Votre nouveau devis est prêt !");
         mail.setSubtitle("Il n'attend plus que votre validation.");
@@ -600,11 +561,12 @@ public class MailHelper {
 
         mail.setSubject("Votre devis n°" + quotation.getId());
 
-        addMailToQueue(mail);
+        mailService.addMailToQueue(mail);
     }
 
     public void sendQuotationCreationConfirmationToCustomer(Quotation quotation) throws OsirisException {
         CustomerMail mail = new CustomerMail();
+        mail.setQuotation(quotation);
         mail.setHeaderPicture("images/quotation-header.png");
         mail.setTitle("Votre demande de devis");
         mail.setLabel("Devis n°" + quotation.getId());
@@ -657,7 +619,7 @@ public class MailHelper {
 
         mail.setSubject("Votre devis n°" + quotation.getId() + " du " + LocalDate.now().format(formatter));
 
-        addMailToQueue(mail);
+        mailService.addMailToQueue(mail);
     }
 
     public void generateCustomerOrderCreationConfirmationToCustomer(CustomerOrder customerOrder)
@@ -670,6 +632,7 @@ public class MailHelper {
             throws OsirisException {
 
         CustomerMail mail = new CustomerMail();
+        mail.setCustomerOrder(customerOrder);
         computeQuotationPrice(mail, customerOrder);
 
         MailComputeResult mailComputeResult = mailComputeHelper
@@ -796,7 +759,7 @@ public class MailHelper {
         else
             mail.setSubject("Votre commande n°" + customerOrder.getId());
 
-        addMailToQueue(mail);
+        mailService.addMailToQueue(mail);
     }
 
     public void generateCustomerOrderDepositConfirmationToCustomer(CustomerOrder customerOrder)
@@ -808,6 +771,7 @@ public class MailHelper {
             throws OsirisException {
 
         CustomerMail mail = new CustomerMail();
+        mail.setCustomerOrder(customerOrder);
         computeQuotationPrice(mail, customerOrder);
 
         ITiers tiers = quotationService.getCustomerOrderOfQuotation(customerOrder);
@@ -864,7 +828,7 @@ public class MailHelper {
 
         mail.setSubject("Réception de réglement pour votre commande n°" + customerOrder.getId());
 
-        addMailToQueue(mail);
+        mailService.addMailToQueue(mail);
     }
 
     public File generateInvoicePdf(CustomerOrder customerOrder, Invoice invoice) throws OsirisException {
@@ -1050,6 +1014,7 @@ public class MailHelper {
             throws OsirisException {
 
         CustomerMail mail = new CustomerMail();
+        mail.setCustomerOrder(customerOrder);
         computeQuotationPrice(mail, customerOrder);
 
         MailComputeResult mailComputeResult = mailComputeHelper
@@ -1146,7 +1111,7 @@ public class MailHelper {
         else
             mail.setSubject("Votre commande n°" + customerOrder.getId() + " est terminée");
 
-        addMailToQueue(mail);
+        mailService.addMailToQueue(mail);
     }
 
     private List<Attachment> findAttachmentForCustomerOrder(CustomerOrder customerOrder, boolean isReminder)
@@ -1226,6 +1191,7 @@ public class MailHelper {
             throws OsirisException {
 
         CustomerMail mail = new CustomerMail();
+        mail.setCustomerOrder(customerOrder);
 
         mail.setHeaderPicture("images/receipt-header.png");
         mail.setTitle("Votre attestation de parution");
@@ -1277,13 +1243,14 @@ public class MailHelper {
 
         mail.setSubject("Votre attestation de parution");
 
-        addMailToQueue(mail);
+        mailService.addMailToQueue(mail);
     }
 
     public void sendPublicationFlagToCustomer(CustomerOrder customerOrder, boolean sendToMe)
             throws OsirisException {
 
         CustomerMail mail = new CustomerMail();
+        mail.setCustomerOrder(customerOrder);
 
         mail.setHeaderPicture("images/receipt-header.png");
         mail.setTitle("Votre témoin de publication");
@@ -1335,12 +1302,13 @@ public class MailHelper {
 
         mail.setSubject("Votre témoin de publication");
 
-        addMailToQueue(mail);
+        mailService.addMailToQueue(mail);
     }
 
     public void sendProofReadingToCustomer(CustomerOrder customerOrder, boolean sendToMe) throws OsirisException {
 
         CustomerMail mail = new CustomerMail();
+        mail.setCustomerOrder(customerOrder);
 
         mail.setHeaderPicture("images/reading-proof-header.png");
         mail.setTitle("Votre épreuve de relecture de publication");
@@ -1398,13 +1366,19 @@ public class MailHelper {
 
         mail.setSubject("Votre épreuve de relecture");
 
-        addMailToQueue(mail);
+        mailService.addMailToQueue(mail);
     }
 
     public void sendBillingClosureToCustomer(List<Attachment> attachments, ITiers tiers, boolean sendToMe)
             throws OsirisException {
 
         CustomerMail mail = new CustomerMail();
+        if (tiers instanceof Tiers)
+            mail.setTiers((Tiers) tiers);
+        if (tiers instanceof Responsable)
+            mail.setResponsable((Responsable) tiers);
+        if (tiers instanceof Confrere)
+            mail.setConfrere((Confrere) tiers);
 
         mail.setHeaderPicture("images/billing-receipt-header.png");
         mail.setTitle("Votre relevé de compte");
@@ -1424,7 +1398,7 @@ public class MailHelper {
 
         mail.setSubject("Votre relevé de compte");
 
-        addMailToQueue(mail);
+        mailService.addMailToQueue(mail);
     }
 
     public void sendNewPasswordMail(Responsable responsable, String password)
@@ -1451,7 +1425,7 @@ public class MailHelper {
 
         mail.setSubject("Votre nouveau mot de passe");
 
-        addMailToQueue(mail);
+        mailService.addMailToQueue(mail);
     }
 
 }

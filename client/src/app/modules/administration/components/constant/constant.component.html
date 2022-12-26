@@ -209,6 +209,14 @@
           </tr>
           <tr>
             <td>
+              <select-attachment-type [(model)]="constant.attachmentTypeAutomaticMail"
+                label="Type de pièce-jointe - mails automatiques" [form]="constantForm"
+                propertyName="attachmentTypeAutomaticMail" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-attachment-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <autocomplete-country [(model)]="constant.countryFrance" [form]="constantForm" label="Pays - France"
                 propertyName="countryFrance" [isMandatory]="true" [isDisabled]="!editMode"></autocomplete-country>
             </td>

@@ -9,7 +9,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Service;
 
 import com.jss.osiris.libs.GlobalExceptionHandler;
-import com.jss.osiris.libs.mail.MailHelper;
+import com.jss.osiris.libs.mail.CustomerMailService;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.invoicing.service.PaymentService;
@@ -42,7 +42,7 @@ public class OsirisScheduller {
 	EmployeeService employeeService;
 
 	@Autowired
-	MailHelper mailHelper;
+	CustomerMailService customerMailService;
 
 	@Autowired
 	NotificationService notificationService;
@@ -120,7 +120,7 @@ public class OsirisScheduller {
 	@Scheduled(initialDelay = 500, fixedDelayString = "${schedulling.mail.sender}")
 	private void mailSender() {
 		try {
-			mailHelper.sendNextMail();
+			customerMailService.sendNextMail();
 		} catch (Exception e) {
 			globalExceptionHandler.handleExceptionOsiris(e, null);
 		}

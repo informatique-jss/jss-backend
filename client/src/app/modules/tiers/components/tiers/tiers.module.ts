@@ -10,6 +10,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
+import { MatRadioModule } from '@angular/material/radio';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -19,6 +20,7 @@ import { MiscellaneousModule } from 'src/app/modules/miscellaneous/components/mi
 import { SpecialOffersDialogComponent } from 'src/app/modules/miscellaneous/components/special-offers-dialog/special-offers-dialog.component';
 import { AccountingModule } from '../../../accounting/components/accounting/accounting.module';
 import { QuotationModule } from '../../../quotation/components/quotation/quotation.module';
+import { ConfrereComponent } from '../confrere/confrere.component';
 import { ResponsableMainComponent } from '../responsable-main/responsable-main.component';
 import { SettlementBillingComponent } from '../settlement-billing/settlement-billing.component';
 import { PrincipalComponent } from '../tiers-main/tiers-main.component';
@@ -27,7 +29,8 @@ import { TiersComponent } from './tiers.component';
 const routes: Routes = [
   { path: 'tiers', component: TiersComponent },
   { path: 'tiers/:id', component: TiersComponent },
-  { path: 'tiers/responsable/:id', component: TiersComponent }
+  { path: 'tiers/responsable/:id', component: TiersComponent },
+  { path: 'confrere/:id', component: ConfrereComponent }
 ];
 
 @NgModule({
@@ -45,6 +48,7 @@ const routes: Routes = [
     MatIconModule,
     MatExpansionModule,
     MatListModule,
+    MatRadioModule,
     MatSortModule,
     MiscellaneousModule,
     AccountingModule,
@@ -57,6 +61,7 @@ const routes: Routes = [
     SpecialOffersDialogComponent,
     SettlementBillingComponent,
     ResponsableMainComponent,
+    ConfrereComponent,
   ],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'fr-FR' }

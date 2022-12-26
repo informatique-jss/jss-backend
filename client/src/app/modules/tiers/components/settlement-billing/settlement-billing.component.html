@@ -50,7 +50,17 @@
             </tr>
           </table>
           <table class="full-width"
-            *ngIf="billingDocument.billingLabelType!=undefined && billingDocument.billingLabelType.code!=undefined && billingDocument.billingLabelType.id==billingLableTypeOther.id">
+            *ngIf="instanceOfConfrere(tiers) && billingDocument.billingLabelType && billingDocument.billingLabelType.code!=undefined && billingDocument.billingLabelType.id==billingLableTypeOther.id">
+            <tr>
+              <td>
+                <autocomplete-regie [(model)]="billingDocument.regie" [form]="settlementBillingForm"
+                  propertyName="regie" [isMandatory]="false" [isDisabled]="!editMode"
+                  label="Régie"></autocomplete-regie>
+              </td>
+            </tr>
+          </table>
+          <table class="full-width"
+            *ngIf="!instanceOfConfrere(tiers) && billingDocument.billingLabelType!=undefined && billingDocument.billingLabelType.code!=undefined && billingDocument.billingLabelType.id==billingLableTypeOther.id">
             <tr>
               <td>
                 <generic-input [(model)]="billingDocument.billingLabel" label="Libellé" [form]="settlementBillingForm"
@@ -129,9 +139,16 @@
                   [filteredPaymentType]="[paymentTypePrelevement,paymentTypeVirement,paymentTypeCB, paymentTypeEspeces]">
                 </select-payment-types>
               </td>
-              <td *ngIf="tiers  && tiers.paymentType && tiers.paymentType.id==paymentTypePrelevement.id">
+              <td
+                *ngIf="tiers  && tiers.paymentType && (tiers.paymentType.id==paymentTypePrelevement.id || tiers.paymentType.id==paymentTypeVirement.id)">
                 <generic-input [(model)]="tiers.paymentIban" label="IBAN" [form]="settlementBillingForm"
                   propertyName="paymentIban" [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="40">
+                </generic-input>
+              </td>
+              <td
+                *ngIf="tiers  && tiers.paymentType && (tiers.paymentType.id==paymentTypePrelevement.id || tiers.paymentType.id==paymentTypeVirement.id)">
+                <generic-input [(model)]="tiers.paymentBic" label="BIC" [form]="settlementBillingForm"
+                  propertyName="paymentBic" [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="40">
                 </generic-input>
               </td>
               <td *ngIf="tiers&& tiers.paymentType && tiers.paymentType.id==paymentTypePrelevement.id">

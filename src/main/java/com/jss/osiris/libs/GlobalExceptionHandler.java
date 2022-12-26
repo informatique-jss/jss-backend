@@ -97,6 +97,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         try {
             if (devMode) {
                 exception.printStackTrace();
+                if (exception instanceof OsirisException && ((OsirisException) exception).getCauseException() != null)
+                    ((OsirisException) exception).getCauseException().printStackTrace();
                 return;
             }
             OsirisLog osirisLog = new OsirisLog();

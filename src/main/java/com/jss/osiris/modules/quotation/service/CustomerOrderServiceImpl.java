@@ -251,8 +251,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                             onlyAnnonceLegale = false;
 
         // Determine if deposit is mandatory or not
-        if (targetStatusCode.equals(CustomerOrderStatus.BEING_PROCESSED)
-                || targetStatusCode.equals(CustomerOrderStatus.WAITING_DEPOSIT)) {
+        if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.OPEN)
+                && (targetStatusCode.equals(CustomerOrderStatus.BEING_PROCESSED)
+                        || targetStatusCode.equals(CustomerOrderStatus.WAITING_DEPOSIT))) {
             Float remainingToPay = Math
                     .round(accountingRecordService.getRemainingAmountToPayForCustomerOrder(customerOrder) * 100f)
                     / 100f;
@@ -516,7 +517,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         ArrayList<Integer> statusId = new ArrayList<Integer>();
         if (orderingSearch.getCustomerOrderStatus() != null && orderingSearch.getCustomerOrderStatus().size() > 0) {
             for (CustomerOrderStatus customerOrderStatus : orderingSearch.getCustomerOrderStatus())
-                statusId.add(customerOrderStatus.getId());
+                if (customerOrderStatus != null)
+                    statusId.add(customerOrderStatus.getId());
         } else {
             statusId.add(0);
         }
@@ -896,7 +898,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                                             announcement.getId(),
                                             Announcement.class.getSimpleName(),
                                             constantService.getAttachmentTypePublicationFlag(),
-                                            "Publication_falg_" + formatter.format(LocalDateTime.now()) + ".pdf",
+                                            "Publication_flag_" + formatter.format(LocalDateTime.now()) + ".pdf",
                                             false, "Témoin de publication n°" + announcement.getId()));
                         } catch (FileNotFoundException e) {
                             throw new OsirisException(e, "Impossible to read invoice PDF temp file");

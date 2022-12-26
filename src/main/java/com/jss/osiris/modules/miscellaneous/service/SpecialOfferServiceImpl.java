@@ -52,6 +52,7 @@ public class SpecialOfferServiceImpl implements SpecialOfferService {
         if (specialOffer.getAssoSpecialOfferBillingTypes() != null
                 && specialOffer.getAssoSpecialOfferBillingTypes().size() > 0) {
             for (AssoSpecialOfferBillingType asso : specialOffer.getAssoSpecialOfferBillingTypes()) {
+                asso.setSpecialOffer(currentSpecialOffer);
                 assoSpecialOfferBillingTypeService.addOrUpdateAssoSpecialOfferBillingItem(asso);
             }
         }

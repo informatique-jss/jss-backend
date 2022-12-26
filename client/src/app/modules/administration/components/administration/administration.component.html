@@ -300,30 +300,6 @@
         </button>
       </div>
     </mat-tab>
-    <mat-tab label="Confrères">
-      <div class="mat-elevation-z2 form-div">
-        <referential-confrere (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-confrere>
-        <button matTooltip="Sauvegarder" mat-fab color="warn" class="fab-button" *ngIf="editMode"
-          (click)="saveEntity()">
-          <mat-icon>save</mat-icon>
-        </button>
-        <button matTooltip="Modifier le confrère" mat-fab color="accent" class="second-fab-button"
-          *ngIf="selectedEntity && !editMode" (click)="editEntity()">
-          <mat-icon>edit</mat-icon>
-        </button>
-        <button matTooltip="Cloner le confrère" mat-fab color="accent" class="third-fab-button"
-          *ngIf="selectedEntity && !editMode" (click)="cloneEntity()">
-          <mat-icon>content_copy</mat-icon>
-        </button>
-        <button matTooltip="Ajouter un confrère" mat-fab color="accent" class="fab-button" *ngIf="!editMode"
-          (click)="createEntity()">
-          <mat-icon>add</mat-icon>
-        </button>
-      </div>
-    </mat-tab>
     <mat-tab label="Constantes">
       <constant></constant>
     </mat-tab>

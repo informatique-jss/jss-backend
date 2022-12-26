@@ -43,5 +43,8 @@ public interface AttachmentRepository extends CrudRepository<Attachment, Integer
     List<Attachment> findBySimpleProvisonId(@Param("idSimpleProvision") Integer idSimpleProvision);
 
     @Query(value = "select a from Attachment a where id_invoice =:idInvoice")
-    List<Attachment> findByInvoiceId(@Param("idInvoice") Integer idSimpleProvision);
+    List<Attachment> findByInvoiceId(@Param("idInvoice") Integer idInvoice);
+
+    @Query(value = "select a from Attachment a where id_customer_mail =:idCustomerMail")
+    List<Attachment> findByCustomerMailId(@Param("idCustomerMail") Integer idCustomerMail);
 }

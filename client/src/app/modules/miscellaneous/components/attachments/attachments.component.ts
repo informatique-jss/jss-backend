@@ -2,9 +2,11 @@ import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { formatDateTimeForSortTable } from 'src/app/libs/FormatHelper';
 import { Attachment } from '../../model/Attachment';
+import { AttachmentType } from '../../model/AttachmentType';
 import { IAttachment } from '../../model/IAttachment';
 import { SortTableAction } from '../../model/SortTableAction';
 import { SortTableColumn } from '../../model/SortTableColumn';
+import { ConstantService } from '../../services/constant.service';
 import { UploadAttachmentService } from '../../services/upload.attachment.service';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { UploadAttachementDialogComponent } from '../upload-attachement-dialog/upload-attachement-dialog.component';
@@ -29,10 +31,15 @@ export class AttachmentsComponent implements OnInit {
 
   uploadAttachementDialogRef: MatDialogRef<UploadAttachementDialogComponent> | undefined;
 
+  attachmentTypesToHide: AttachmentType[] = [this.constantService.getAttachmentTypeAutomaticMail()];
+
+  filteredAttachments: Attachment[] = [];
+
   constructor(
     protected uploadAttachementDialog: MatDialog,
     public confirmationDialog: MatDialog,
-    protected uploadAttachmentService: UploadAttachmentService
+    protected uploadAttachmentService: UploadAttachmentService,
+    private constantService: ConstantService,
   ) { }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -86,6 +93,14 @@ export class AttachmentsComponent implements OnInit {
     this.entity.attachments.sort(function (a: Attachment, b: Attachment) {
       return new Date(b.uploadedFile.creationDate).getTime() - new Date(a.uploadedFile.creationDate).getTime();
     });
+
+    this.filteredAttachments = [];
+    if (this.entity && this.entity.attachments)
+      for (let attachment of this.entity.attachments)
+        if (this.attachmentTypesToHide)
+          for (let toHideType of this.attachmentTypesToHide)
+            if (toHideType.id != attachment.attachmentType.id)
+              this.filteredAttachments.push(attachment);
   }
 
   applyFilter(filterValue: any) {

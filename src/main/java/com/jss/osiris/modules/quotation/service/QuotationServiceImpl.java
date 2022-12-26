@@ -602,9 +602,8 @@ public class QuotationServiceImpl implements QuotationService {
                 && targetQuotationStatus.getCode().equals(QuotationStatus.TO_VERIFY))
             notificationService.notifyQuotationToVerify(quotation);
 
-        // Target TO VERIFY from SENT TO CUSTOMER : notify users and customer
-        if (quotation.getQuotationStatus().getCode().equals(QuotationStatus.TO_VERIFY)
-                && targetQuotationStatus.getCode().equals(QuotationStatus.SENT_TO_CUSTOMER)) {
+        // Target SENT TO CUSTOMER from TO VERIFY : notify users and customer
+        if (targetQuotationStatus.getCode().equals(QuotationStatus.SENT_TO_CUSTOMER)) {
             mailHelper.sendQuotationToCustomer(quotation, false);
             notificationService.notifyQuotationSent(quotation);
         }
@@ -652,8 +651,9 @@ public class QuotationServiceImpl implements QuotationService {
     public List<QuotationSearchResult> searchQuotations(QuotationSearch quotationSearch) {
         ArrayList<Integer> statusId = new ArrayList<Integer>();
         if (quotationSearch.getQuotationStatus() != null && quotationSearch.getQuotationStatus().size() > 0) {
-            for (QuotationStatus customerOrderStatus : quotationSearch.getQuotationStatus())
-                statusId.add(customerOrderStatus.getId());
+            for (QuotationStatus quotationStatus : quotationSearch.getQuotationStatus())
+                if (quotationStatus != null)
+                    statusId.add(quotationStatus.getId());
         } else {
             statusId.add(0);
         }

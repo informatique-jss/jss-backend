@@ -32,14 +32,15 @@
             <td class="mat-cell td-info">
               <p>{{invoice.billingLabel}}</p>
               <p>{{invoice.billingLabelAddress}}</p>
-              <p>{{invoice.billingLabelPostalCode}} {{invoice.billingLabelCity.label}}
-                {{invoice.billingLabelCountry.label}}</p>
+              <p>{{invoice.billingLabelPostalCode}} {{invoice.billingLabelCity?invoice.billingLabelCity.label:""}}
+                {{invoice.billingLabelCountry?invoice.billingLabelCountry.label:""}}</p>
             </td>
             <td class="mat-cell td-info">
               <p>{{getCustomerOrderName(invoice)}}</p>
               <p>{{getCustomerOrder(invoice).address}}</p>
               <p>{{getCustomerOrder(invoice).postalCode}}
-                {{getCustomerOrder(invoice).city.label}}{{getCustomerOrder(invoice).country.label}}</p>
+                {{getCustomerOrder(invoice).city?getCustomerOrder(invoice).city.label:""}}{{getCustomerOrder(invoice).country?getCustomerOrder(invoice).country.label:""}}
+              </p>
             </td>
           </tr>
         </table>

@@ -45,7 +45,6 @@ import { ReferentialCivilityComponent } from '../referentials/referential-civili
 import { ReferentialCompetentAuthorityTypeComponent } from '../referentials/referential-competent-authority-type/referential-competent-authority-type.component';
 import { ReferentialCompetentAuthorityComponent } from '../referentials/referential-competent-authority/referential-competent-authority.component';
 import { ReferentialCompetitorComponent } from '../referentials/referential-competitor/referential-competitor.component';
-import { ReferentialConfrereComponent } from '../referentials/referential-confrere/referential-confrere.component';
 import { ReferentialCountryComponent } from '../referentials/referential-country/referential-country.component';
 import { ReferentialDeliveryServiceComponent } from '../referentials/referential-delivery-service/referential-delivery-service.component';
 import { ReferentialDepartmentComponent } from '../referentials/referential-department/referential-department.component';
@@ -182,7 +181,6 @@ const routes: Routes = [
     ReferentialCityComponent,
     ReferentialAnnouncementNoticeTemplateComponent,
     ReferentialVatCollectionTypeComponent,
-    ReferentialConfrereComponent,
     ReferentialBillingItemComponent,
     ReferentialDepartmentComponent,
     ConstantComponent,

@@ -132,7 +132,8 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     }
 
     @Override
-    public List<AnnouncementSearchResult> searchAnnouncements(AnnouncementSearch announcementSearch) {
+    public List<AnnouncementSearchResult> searchAnnouncements(AnnouncementSearch announcementSearch)
+            throws OsirisException {
         if (announcementSearch.getAffaireName() == null)
             announcementSearch.setAffaireName("");
         else
@@ -155,10 +156,17 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         if (announcementSearch.getEndDate() == null)
             announcementSearch.setEndDate(LocalDate.now().plusYears(100));
 
+        // Keep only finalized announcement
+        ArrayList<Integer> announcementStautsId = new ArrayList<Integer>();
+        AnnouncementStatus closeStatus = announcementStatusService
+                .getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_DONE);
+        announcementStautsId.add(closeStatus.getId());
+
         return announcementRepository.searchAnnouncements(announcementSearch.getAffaireName(),
                 announcementSearch.getIsStricNameSearch(), departementId,
                 announcementSearch.getStartDate(),
-                announcementSearch.getEndDate(), noticeTypeId);
+                announcementSearch.getEndDate(), announcementStautsId, constantService.getConfrereJssSpel().getId(),
+                noticeTypeId);
     }
 
     @Override

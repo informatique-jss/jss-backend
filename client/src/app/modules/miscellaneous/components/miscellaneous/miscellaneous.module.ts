@@ -32,6 +32,7 @@ import { AdministrationComponent } from '../../../administration/components/admi
 import { AddNotificationDialogComponent } from '../add-notification-dialog/add-notification-dialog.component';
 import { AddressingComponent } from '../addressing/addressing.component';
 import { AttachmentsComponent } from '../attachments/attachments.component';
+import { AutomaticMailListComponent } from '../automatic-mail-list/automatic-mail-list.component';
 import { AvatarChipComponent } from '../avatar-chip/avatar-chip.component';
 import { AvatarComponent } from '../avatar/avatar.component';
 import { ChipsStatusComponent } from '../chips-status/chips-status.component';
@@ -235,7 +236,6 @@ import { MiscellaneousComponent } from './miscellaneous.component';
 const routes: Routes = [
   { path: 'referential/affaire/:id', component: AdministrationComponent },
   { path: 'referential/provider/:id', component: AdministrationComponent },
-  { path: 'referential/confrere/:id', component: AdministrationComponent },
 ];
 
 @NgModule({
@@ -380,6 +380,7 @@ const routes: Routes = [
     AutocompletePrincipalAccountingAccountComponent,
     GenericDatetimePickerComponent,
     TiersFollowupComponent,
+    AutomaticMailListComponent,
     //Guichet Unique
     AutocompleteTypeDocumentComponent,
     RadioGroupMotifRejetCmaComponent,
@@ -579,6 +580,7 @@ const routes: Routes = [
     AutocompleteBillingItemComponent,
     WorkflowDialogComponent,
     TiersFollowupComponent,
+    AutomaticMailListComponent,
     AutocompletePrincipalAccountingAccountComponent,
     //Guichet Unique
     AutocompleteTypeDocumentComponent,

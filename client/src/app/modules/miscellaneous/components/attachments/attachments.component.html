@@ -8,7 +8,7 @@
         <mat-icon>add</mat-icon>
       </button>
     </div>
-    <sort-table [columns]="displayedColumns" [actions]="tableActions" [values]="entity.attachments"
+    <sort-table [columns]="displayedColumns" [actions]="tableActions" [values]="filteredAttachments"
       tableName="Pièce jointes" [filterText]="searchText">
     </sort-table>
   </div>

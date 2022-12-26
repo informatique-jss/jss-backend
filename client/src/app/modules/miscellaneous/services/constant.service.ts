@@ -138,8 +138,12 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.attachmentTypeBillingClosure;
   }
 
-  getAttachmentTypeAttachmentTypeProofReading() {
+  getAttachmentTypeProofReading() {
     return this.constant.attachmentTypeProofReading;
+  }
+
+  getAttachmentTypeAutomaticMail() {
+    return this.constant.attachmentTypeAutomaticMail;
   }
 
   getCountryFrance() {

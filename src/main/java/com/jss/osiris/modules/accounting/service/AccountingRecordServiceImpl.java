@@ -1168,6 +1168,8 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
             }
           }
       }
+
+    // TODO confrères
   }
 
 }

@@ -27,6 +27,8 @@ import com.jss.osiris.libs.ValidationHelper;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisLog;
 import com.jss.osiris.libs.exception.OsirisValidationException;
+import com.jss.osiris.libs.mail.CustomerMailService;
+import com.jss.osiris.libs.mail.model.CustomerMail;
 import com.jss.osiris.modules.accounting.service.AccountingAccountService;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
@@ -87,6 +89,7 @@ import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.profile.service.EmployeeService;
 import com.jss.osiris.modules.quotation.model.Announcement;
 import com.jss.osiris.modules.quotation.model.Bodacc;
+import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.Domiciliation;
 import com.jss.osiris.modules.quotation.model.Provision;
@@ -220,6 +223,9 @@ public class MiscellaneousController {
 
     @Autowired
     RefundService refundService;
+
+    @Autowired
+    CustomerMailService customerMailService;
 
     @GetMapping(inputEntryPoint + "/notifications")
     public ResponseEntity<List<Notification>> getNotifications(@RequestParam Boolean displayFuture) {
@@ -1025,5 +1031,55 @@ public class MiscellaneousController {
     public ResponseEntity<OsirisLog> addOrUpdateLogs(@RequestBody OsirisLog osirisLog)
             throws OsirisValidationException, OsirisException {
         return new ResponseEntity<OsirisLog>(globalExceptionHandler.addOrUpdateLog(osirisLog), HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/customer-mail/quotation")
+    public ResponseEntity<List<CustomerMail>> getCustomerMailByQuotation(@RequestParam Integer idQuotation)
+            throws OsirisValidationException, OsirisException {
+        Quotation quotation = new Quotation();
+        quotation.setId(idQuotation);
+        quotation = (Quotation) validationHelper.validateReferential(quotation, true, "Quotation");
+        return new ResponseEntity<List<CustomerMail>>(customerMailService.getMailsByQuotation(quotation),
+                HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/customer-mail/customer-order")
+    public ResponseEntity<List<CustomerMail>> getCustomerMailByCustomerOrder(@RequestParam Integer idCustomerOrder)
+            throws OsirisValidationException, OsirisException {
+        CustomerOrder customerOrder = new CustomerOrder();
+        customerOrder.setId(idCustomerOrder);
+        customerOrder = (CustomerOrder) validationHelper.validateReferential(customerOrder, true, "CustomerOrder");
+        return new ResponseEntity<List<CustomerMail>>(customerMailService.getMailsByCustomerOrder(customerOrder),
+                HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/customer-mail/tiers")
+    public ResponseEntity<List<CustomerMail>> getCustomerMailByTiers(@RequestParam Integer idTiers)
+            throws OsirisValidationException, OsirisException {
+        Tiers tiers = new Tiers();
+        tiers.setId(idTiers);
+        tiers = (Tiers) validationHelper.validateReferential(tiers, true, "CustomerOrder");
+        return new ResponseEntity<List<CustomerMail>>(customerMailService.getMailsByTiers(tiers),
+                HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/customer-mail/responsable")
+    public ResponseEntity<List<CustomerMail>> getCustomerMailByResponsable(@RequestParam Integer idResponsable)
+            throws OsirisValidationException, OsirisException {
+        Responsable responsable = new Responsable();
+        responsable.setId(idResponsable);
+        responsable = (Responsable) validationHelper.validateReferential(responsable, true, "Responsable");
+        return new ResponseEntity<List<CustomerMail>>(customerMailService.getMailsByResponsable(responsable),
+                HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/customer-mail/confrere")
+    public ResponseEntity<List<CustomerMail>> getCustomerMailByConfrere(@RequestParam Integer idConfrere)
+            throws OsirisValidationException, OsirisException {
+        Confrere confrere = new Confrere();
+        confrere.setId(idConfrere);
+        confrere = (Confrere) validationHelper.validateReferential(confrere, true, "Responsable");
+        return new ResponseEntity<List<CustomerMail>>(customerMailService.getMailsByConfrere(confrere),
+                HttpStatus.OK);
     }
 }

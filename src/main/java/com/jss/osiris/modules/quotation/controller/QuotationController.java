@@ -141,6 +141,7 @@ import com.jss.osiris.modules.quotation.service.RnaDelegateService;
 import com.jss.osiris.modules.quotation.service.SimpleProvisionStatusService;
 import com.jss.osiris.modules.quotation.service.SireneDelegateService;
 import com.jss.osiris.modules.quotation.service.TransfertFundsTypeService;
+import com.jss.osiris.modules.tiers.model.ITiers;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 import com.jss.osiris.modules.tiers.service.ResponsableService;
@@ -655,12 +656,12 @@ public class QuotationController {
         HttpStatus.OK);
   }
 
-  @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
   @GetMapping(inputEntryPoint + "/notice-types")
   public ResponseEntity<List<NoticeType>> getNoticeTypes() {
     return new ResponseEntity<List<NoticeType>>(noticeTypeService.getNoticeTypes(), HttpStatus.OK);
   }
 
+  @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
   @PostMapping(inputEntryPoint + "/notice-type")
   public ResponseEntity<NoticeType> addOrUpdateNoticeType(
       @RequestBody NoticeType noticeTypes) throws OsirisValidationException, OsirisException {
@@ -761,9 +762,10 @@ public class QuotationController {
     validationHelper.validateString(confrere.getCedexComplement(), false, 20, "CedexComplement");
     validationHelper.validateReferential(confrere.getCity(), false, "City");
     validationHelper.validateReferential(confrere.getCountry(), false, "Country");
-    validationHelper.validateString(confrere.getIban(), false, 40, "Iban");
     validationHelper.validateReferential(confrere.getVatCollectionType(), true, "VatCollectionType");
     validationHelper.validateReferential(confrere.getPaymentType(), true, "PaymentType");
+    validationHelper.validateString(confrere.getPaymentIban(), false, 40, "PaymentIBAN");
+    validationHelper.validateString(confrere.getPaymentBic(), false, 40, "PaymentBic");
 
     if (confrere.getSpecialOffers() != null) {
       for (SpecialOffer specialOffer : confrere.getSpecialOffers()) {
@@ -1160,6 +1162,29 @@ public class QuotationController {
     if (quotation.getSpecialOffers() != null && quotation.getSpecialOffers().size() > 0)
       for (SpecialOffer specialOffer : quotation.getSpecialOffers())
         validationHelper.validateReferential(specialOffer, false, "specialOffer");
+
+    // If from website, grab special offer from tiers / responsable / confrere
+    if (quotation.getIsCreatedFromWebSite()
+        && (quotation.getSpecialOffers() == null || quotation.getSpecialOffers().size() == 0)) {
+      ITiers tiers = quotationService.getCustomerOrderOfQuotation(quotation);
+      if (tiers instanceof Responsable)
+        tiers = ((Responsable) tiers).getTiers();
+
+      List<SpecialOffer> specialOffers = null;
+      if (tiers instanceof Tiers && ((Tiers) tiers).getSpecialOffers() != null
+          && ((Tiers) tiers).getSpecialOffers().size() > 0)
+        specialOffers = ((Tiers) tiers).getSpecialOffers();
+      if (tiers instanceof Confrere && ((Confrere) tiers).getSpecialOffers() != null
+          && ((Confrere) tiers).getSpecialOffers().size() > 0)
+        specialOffers = ((Confrere) tiers).getSpecialOffers();
+
+      if (specialOffers != null) {
+        quotation.setSpecialOffers(new ArrayList<SpecialOffer>());
+        for (SpecialOffer specialOffer : specialOffers)
+          quotation.getSpecialOffers().add(specialOffer);
+      }
+    }
+
     quotation.setTiers((Tiers) validationHelper.validateReferential(quotation.getTiers(), false, "Tiers"));
     quotation.setResponsable(
         (Responsable) validationHelper.validateReferential(quotation.getResponsable(), false, "Responsable"));
@@ -1230,6 +1255,7 @@ public class QuotationController {
       }
     }
 
+    // Generate missing documents
     Document billingDocument = documentService.getBillingDocument(quotation.getDocuments());
     if (billingDocument == null) {
       billingDocument = new Document();
@@ -1243,6 +1269,38 @@ public class QuotationController {
       if (quotation.getDocuments() == null)
         quotation.setDocuments(new ArrayList<Document>());
       quotation.getDocuments().add(billingDocument);
+    }
+
+    Document digitalDocument = documentService.getDocumentByDocumentType(quotation.getDocuments(),
+        constantService.getDocumentTypeDigital());
+    if (digitalDocument == null) {
+      digitalDocument = new Document();
+      digitalDocument.setIsRecipientAffaire(false);
+      digitalDocument.setIsRecipientClient(false);
+      digitalDocument.setDocumentType(constantService.getDocumentTypeDigital());
+      if (isCustomerOrder)
+        digitalDocument.setCustomerOrder((CustomerOrder) quotation);
+      else
+        digitalDocument.setQuotation((Quotation) quotation);
+      if (quotation.getDocuments() == null)
+        quotation.setDocuments(new ArrayList<Document>());
+      quotation.getDocuments().add(digitalDocument);
+    }
+
+    Document paperDocument = documentService.getDocumentByDocumentType(quotation.getDocuments(),
+        constantService.getDocumentTypePaper());
+    if (paperDocument == null) {
+      paperDocument = new Document();
+      paperDocument.setIsRecipientAffaire(false);
+      paperDocument.setIsRecipientClient(false);
+      paperDocument.setDocumentType(constantService.getDocumentTypePaper());
+      if (isCustomerOrder)
+        paperDocument.setCustomerOrder((CustomerOrder) quotation);
+      else
+        paperDocument.setQuotation((Quotation) quotation);
+      if (quotation.getDocuments() == null)
+        quotation.setDocuments(new ArrayList<Document>());
+      quotation.getDocuments().add(paperDocument);
     }
 
     for (AssoAffaireOrder assoAffaireOrder : quotation.getAssoAffaireOrders()) {

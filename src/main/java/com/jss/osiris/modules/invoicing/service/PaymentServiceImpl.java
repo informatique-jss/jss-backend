@@ -628,18 +628,20 @@ public class PaymentServiceImpl implements PaymentService {
                     while (m.find()) {
                         if (m.group().equals(invoice.getId().toString()))
                             advisedPayments.add(payment);
-                        if (invoice.getCustomerOrder() != null
+                        else if (invoice.getCustomerOrder() != null
                                 && m.group().equals(invoice.getCustomerOrder().getId().toString()))
                             advisedPayments.add(payment);
                     }
                 }
             }
             // If no match by name, attempt by amount
-            Float totalRound = Math.round(invoice.getTotalPrice() * 100f) / 100f;
-            for (Payment payment : payments) {
-                Float paymentRound = Math.round(payment.getPaymentAmount() * 100f) / 100f;
-                if (paymentRound.equals(totalRound)) {
-                    advisedPayments.add(payment);
+            if (advisedPayments.size() == 0) {
+                Float totalRound = Math.round(invoice.getTotalPrice() * 100f) / 100f;
+                for (Payment payment : payments) {
+                    Float paymentRound = Math.round(payment.getPaymentAmount() * 100f) / 100f;
+                    if (paymentRound.equals(totalRound)) {
+                        advisedPayments.add(payment);
+                    }
                 }
             }
         }

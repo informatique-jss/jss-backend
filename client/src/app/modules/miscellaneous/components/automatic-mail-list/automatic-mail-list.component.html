@@ -1,0 +1,12 @@
+<div class="mat-elevation-z2 form-div" *ngIf="customerMails ">
+  <div class="full-width">
+    <div class="row-field-container">
+      <mat-form-field class="full-width">
+        <input matInput (keyup)="applyFilter($event.target)" placeholder="Rechercher">
+      </mat-form-field>
+    </div>
+    <sort-table [columns]="displayedColumns" [actions]="tableActions" [values]="customerMails"
+      tableName="Mails automatiques" [filterText]="searchText">
+    </sort-table>
+  </div>
+</div>

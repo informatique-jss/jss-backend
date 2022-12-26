@@ -125,8 +125,10 @@ export class AddInvoiceComponent implements OnInit {
   }
 
   selectInvoiceItem(element: InvoiceItem) {
-    this.invoiceItem = element;
-    this.refreshTable.next();
+    if (this.editMode && !this.invoice.id) {
+      this.invoiceItem = element;
+      this.refreshTable.next();
+    }
   }
 
   saveInvoice() {

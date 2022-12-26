@@ -1,0 +1,325 @@
+<ng-template #accordionTools>
+  <mat-panel-description>
+    <mat-icon matTooltip="Ouvrir tous les onglets" (click)="accordion!.openAll();$event.stopPropagation();"
+      class="pointer">
+      unfold_more_double</mat-icon>
+    <mat-icon matTooltip="Fermer tous les autres onglets" (click)="accordion!.closeAll();" class="pointer">
+      unfold_less_double</mat-icon>
+  </mat-panel-description>
+</ng-template>
+<div class="mat-elevation-z2 form-div">
+  <div>
+    <mat-form-field class="full-width">
+      <input matInput (keyup)="applyFilter($event.target)" placeholder="Rechercher">
+    </mat-form-field>
+  </div>
+  <div class="table-container-scroll">
+    <sort-table [idRowSelected]="selectedConfrereId" [columns]="displayedColumns" (onRowClick)="selectConfrere($event)"
+      [values]="confreres" tableName="Confrères" [filterText]="searchText">
+    </sort-table>
+  </div>
+
+  <div *ngIf="selectedConfrere" class="div-confrere">
+    <mat-tab-group animationDuration="0ms">
+      <mat-tab label="Fiche du confrère">
+        <div class="mat-elevation-z2 form-div">
+          <form [formGroup]="entityForm2">
+            <div class="full-width">
+              <fieldset [disabled]="editMode==false" class="fieldset-no-border">
+                <table class="full-width">
+                  <tr *ngIf="selectedConfrere.id">
+                    <td>
+                      <generic-input [(model)]="selectedConfrere.id" label="Identifiant technique" [form]="entityForm2"
+                        propertyName="id" [isMandatory]="true" [isDisabled]="true"></generic-input>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <generic-input [(model)]="selectedConfrere.code" label="Codification" [maxLength]="20"
+                        [form]="entityForm2" propertyName="code" [isMandatory]="true"
+                        [isDisabled]="!editMode"></generic-input>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <generic-input [(model)]="selectedConfrere.label" label="Nom fonctionnel" [maxLength]="100"
+                        [form]="entityForm2" propertyName="label" [isMandatory]="true"
+                        [isDisabled]="!editMode"></generic-input>
+                    </td>
+                  </tr>
+                </table>
+                <table class="full-width">
+                  <tr>
+                    <td>
+                      <chips-mail [(model)]="selectedConfrere.mails" label="Mails (annonce)" [form]="entityForm2"
+                        propertyName="mails" [isMandatory]="false" [isDisabled]="!editMode"></chips-mail>
+                    </td>
+                    <td>
+                      <chips-mail [(model)]="selectedConfrere.accountingMails" label="Mails (comptabilité)"
+                        [form]="entityForm2" propertyName="accountingMails" [isMandatory]="false"
+                        [isDisabled]="!editMode"></chips-mail>
+                    </td>
+                    <td>
+                      <chips-phone [(model)]="selectedConfrere.phones" label="Téléphones" [form]="entityForm2"
+                        propertyName="phones" [isMandatory]="false" [isDisabled]="!editMode"></chips-phone>
+                    </td>
+                  </tr>
+                </table>
+
+                <table class="full-width">
+                  <tr>
+                    <td>
+                      <autocomplete-employee [(model)]="selectedConfrere.salesEmployee" [isDisabled]="!editMode"
+                        label="Commercial" [form]="entityForm2" propertyName="salesEmployee" [isMandatory]="true">
+                      </autocomplete-employee>
+                    </td>
+                    <td>
+                      <autocomplete-employee [(model)]="selectedConfrere.formalisteEmployee" [isDisabled]="!editMode"
+                        label="Formaliste" [isDisabled]="!editMode" [form]="entityForm2"
+                        propertyName="formalisteEmployee">
+                      </autocomplete-employee>
+                    </td>
+                    <td>
+                      <autocomplete-employee [(model)]="selectedConfrere.insertionEmployee" [isDisabled]="!editMode"
+                        label="Publiciste" [isDisabled]="!editMode" [form]="entityForm2"
+                        propertyName="insertionEmployee">
+                      </autocomplete-employee>
+                    </td>
+                  </tr>
+                </table>
+                <table class="full-width">
+                  <tr>
+                    <td *ngIf="selectedConfrere.accountingAccountProvider">
+                      <autocomplete-accounting-account [(model)]="selectedConfrere.accountingAccountProvider"
+                        [form]="entityForm2" propertyName="accountingAccountProvider" [isMandatory]="false"
+                        [isDisabled]="true" label="Compte comptable fournisseur">
+                      </autocomplete-accounting-account>
+                    </td>
+                    <td *ngIf="selectedConfrere.accountingAccountCustomer">
+                      <autocomplete-accounting-account [(model)]="selectedConfrere.accountingAccountCustomer"
+                        [form]="entityForm2" propertyName="accountingAccountCustomer" [isMandatory]="false"
+                        [isDisabled]="true" label="Compte comptable client">
+                      </autocomplete-accounting-account>
+                    </td>
+                    <td *ngIf="selectedConfrere.accountingAccountDeposit">
+                      <autocomplete-accounting-account [(model)]="selectedConfrere.accountingAccountDeposit"
+                        [form]="entityForm2" propertyName="accountingAccountDeposit" [isMandatory]="false"
+                        [isDisabled]="true" label="Compte comptable d'acompte">
+                      </autocomplete-accounting-account>
+                    </td>
+                  </tr>
+                </table>
+                <table class="full-width">
+                  <tr>
+                    <td>
+                      <select-vat-collection-type [(model)]="selectedConfrere.vatCollectionType"
+                        label="Type d'encaissement de la TVA" [form]="entityForm2" propertyName="vatCollectionType"
+                        [isMandatory]="true" [isDisabled]="!editMode"></select-vat-collection-type>
+                    </td>
+                  </tr>
+                </table>
+                <table class="full-width">
+                  <tr>
+                    <td>
+                      <generic-textarea [(model)]="selectedConfrere.mailRecipient" label="Destinataire(s) courrier"
+                        [form]="entityForm2" propertyName="mailRecipient" [isMandatory]="false" [isDisabled]="!editMode"
+                        (filterInput)="limitTextareaSize(3)"></generic-textarea>
+                    </td>
+                    <td>
+                      <generic-input [(model)]="selectedConfrere.address" label="Adresse" [form]="entityForm2"
+                        propertyName="address" [isMandatory]="false" [isDisabled]="!editMode"
+                        [maxLength]="100"></generic-input>
+                    </td>
+                    <td>
+                      <autocomplete-postal-code [(model)]="selectedConfrere.postalCode" [form]="entityForm2"
+                        label="Code postal" [isDisabled]="!editMode" propertyName="postalCode" [isMandatory]="false"
+                        [byPassAutocompletValidator]="true" (onOptionSelected)="fillCity($event)">
+                      </autocomplete-postal-code>
+                    </td>
+                    <td>
+                      <generic-input [(model)]="selectedConfrere.cedexComplement" label="Complément CEDEX"
+                        [form]="entityForm2" propertyName="cedexComplement" [isMandatory]="false"
+                        [isDisabled]="!editMode" [maxLength]="20"></generic-input>
+                    </td>
+                    <td>
+                      <autocomplete-city [(model)]="selectedConfrere.city" [modelCountry]="selectedConfrere.country"
+                        [preFilterPostalCode]="selectedConfrere.postalCode" [form]="entityForm2" propertyName="city"
+                        [isMandatory]="true" [isDisabled]="!editMode" label="Ville"
+                        (onOptionSelected)="fillPostalCode($event)">
+                      </autocomplete-city>
+                    </td>
+                    <td>
+                      <autocomplete-country [(model)]="selectedConfrere.country" [form]="entityForm2"
+                        propertyName="country" label="Pays" [isDisabled]="!editMode" [isMandatory]="false"
+                        [isDisabled]="!editMode">
+                      </autocomplete-country>
+                    </td>
+                  </tr>
+                </table>
+                <table class="full-width">
+                  <tr>
+                    <td>
+                      <radio-group-journal-type [(model)]="selectedConfrere.journalType" [form]="entityForm2"
+                        [isDisabled]="!editMode" propertyName="journalType"
+                        label="Type de journal"></radio-group-journal-type>
+                    </td>
+                    <td>
+                      <select-day [(model)]="selectedConfrere.weekDays" label="Jour(s) de publication"
+                        [form]="entityForm2" propertyName="weekDays" [isMandatory]="true"
+                        [isDisabled]="!editMode"></select-day>
+                    </td>
+                    <td>
+                      <select-departments [(model)]="selectedConfrere.departments" label="Département(s) de publication"
+                        [form]="entityForm2" propertyName="departments" [isMandatory]="true" [isDisabled]="!editMode">
+                      </select-departments>
+                    </td>
+                    <td>
+                      <generic-input [(model)]="selectedConfrere.lastShipmentForPublication" label="Dernier envoi"
+                        [form]="entityForm2" propertyName="lastShipmentForPublication" [isMandatory]="false"
+                        [isDisabled]="!editMode" [maxLength]="60"></generic-input>
+                    </td>
+                  </tr>
+                </table>
+                <table class="full-width">
+                  <tr>
+                    <td>
+                      <generic-input [(model)]="selectedConfrere.reinvoicing" label="Refacturation (%)"
+                        [form]="entityForm2" propertyName="reinvoicing" [isMandatory]="true" [isDisabled]="!editMode"
+                        type="number"></generic-input>
+                    </td>
+                    <td>
+                      <chips-special-offers [(model)]="selectedConfrere.specialOffers" [form]="entityForm2"
+                        propertyName="specialOffers" [isDisabled]="!editMode"></chips-special-offers>
+                    </td>
+                    <td>
+                      <generic-input [(model)]="selectedConfrere.shippingCosts" label="Frais de port (€)"
+                        [form]="entityForm2" propertyName="shippingCosts" [isMandatory]="false" [isDisabled]="!editMode"
+                        type="number">
+                      </generic-input>
+                    </td>
+                    <td>
+                      <generic-input [(model)]="selectedConfrere.administrativeFees" label="Frais administratifs (€)"
+                        [form]="entityForm2" propertyName="administrativeFees" [isMandatory]="false"
+                        [isDisabled]="!editMode" type="number"></generic-input>
+                    </td>
+                    <td>
+                      <generic-input [(model)]="selectedConfrere.discountRate" label="Remise consentie (%)"
+                        [form]="entityForm2" propertyName="discountRate" [isMandatory]="false" [isDisabled]="!editMode"
+                        type="number">
+                      </generic-input>
+                    </td>
+                  </tr>
+                </table>
+                <table class="full-width">
+                  <tr>
+                    <td>
+                      <generic-input [(model)]="selectedConfrere.numberOfPrint" label="Tirage" [form]="entityForm2"
+                        propertyName="numberOfPrint" [isMandatory]="false" [isDisabled]="!editMode" type="number">
+                      </generic-input>
+                    </td>
+                    <td>
+                      <generic-input [(model)]="selectedConfrere.paperPrice" label="Prix du journal"
+                        [form]="entityForm2" propertyName="paperPrice" [isMandatory]="false" [isDisabled]="!editMode"
+                        type="number">
+                      </generic-input>
+                    </td>
+                  </tr>
+                </table>
+                <table class="full-width">
+                  <tr>
+                    <td>
+                      <label>Préférence de la direction</label>
+                      <mat-radio-group class="confrere-radio-group" [(ngModel)]="selectedConfrere.boardGrade"
+                        formControlName="boardGrade">
+                        <mat-radio-button *ngFor="let grade of grades" class="confrere-radio-button" [value]="grade">
+                          <grade [grade]="grade"></grade>
+                        </mat-radio-button>
+                      </mat-radio-group>
+                    </td>
+                    <td>
+                      <label>Préférence attestation de parution</label>
+                      <mat-radio-group class="confrere-radio-group"
+                        [(ngModel)]="selectedConfrere.publicationCertificateDocumentGrade"
+                        formControlName="publicationCertificateDocumentGrade">
+                        <mat-radio-button *ngFor="let grade of grades" class="confrere-radio-button" [value]="grade">
+                          <grade [grade]="grade"></grade>
+                        </mat-radio-button>
+                      </mat-radio-group>
+                    </td>
+                    <td>
+                      <label>Préférence de facturation</label>
+                      <mat-radio-group class="confrere-radio-group" [(ngModel)]="selectedConfrere.billingGrade"
+                        formControlName="billingGrade">
+                        <mat-radio-button *ngFor="let grade of grades" class="confrere-radio-button" [value]="grade">
+                          <grade [grade]="grade"></grade>
+                        </mat-radio-button>
+                      </mat-radio-group>
+                    </td>
+                    <td>
+                      <label>Préférence du journal</label>
+                      <mat-radio-group class="confrere-radio-group" [(ngModel)]="selectedConfrere.paperGrade"
+                        formControlName="paperGrade">
+                        <mat-radio-button *ngFor="let grade of grades" class="confrere-radio-button" [value]="grade">
+                          <grade [grade]="grade"></grade>
+                        </mat-radio-button>
+                      </mat-radio-group>
+                    </td>
+                  </tr>
+                </table>
+                <table class="full-width">
+                  <tr>
+                    <td>
+                      <generic-textarea [(model)]="selectedConfrere.observations" label="Commentaires"
+                        [form]="entityForm2" propertyName="observations" [isMandatory]="false"
+                        [isDisabled]="!editMode"></generic-textarea>
+                    </td>
+                  </tr>
+                </table>
+              </fieldset>
+            </div>
+          </form>
+        </div>
+      </mat-tab>
+      <mat-tab label="Pièces, réglements, facturations & relances">
+        <settlement-billing [tiers]="selectedConfrere" [editMode]="editMode"></settlement-billing>
+      </mat-tab>
+      <mat-tab label="Devis" *ngIf="selectedConfrere.id">
+        <quotation-list class="integration-component"
+          *ngIf="this.quotationSearch.customerOrders && this.quotationSearch.customerOrders.length>0"
+          [quotationSearch]="quotationSearch" [isForTiersIntegration]="true">
+        </quotation-list>
+      </mat-tab>
+      <mat-tab label="Commandes" *ngIf="selectedConfrere.id">
+        <ordering-list class="integration-component"
+          *ngIf="this.orderingSearch.customerOrders && this.orderingSearch.customerOrders.length>0"
+          [orderingSearch]="orderingSearch" [isForTiersIntegration]="true">
+        </ordering-list>
+      </mat-tab>
+      <mat-tab label="Comptes" *ngIf="responsableAccountSearch && responsableAccountSearch.id">
+        <accounting-record [tiersToDisplay]="responsableAccountSearch"></accounting-record>
+      </mat-tab>
+      <mat-tab label="Mails" *ngIf="selectedConfrere.id">
+        <automatic-mail-list [confrere]="selectedConfrere">
+        </automatic-mail-list>
+      </mat-tab>
+      <mat-tab label="Suivi" *ngIf="selectedConfrere.id">
+        <tiers-followup [tiers]="selectedConfrere" [editMode]="editMode"></tiers-followup>
+      </mat-tab>
+      <mat-tab label="Historique" *ngIf="selectedConfrere.id">
+        <history [entity]="selectedConfrere" [entityType]="CONFRERE_ENTITY_TYPE"></history>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+  <button matTooltip="Sauvegarder" mat-fab color="warn" class="fab-button" *ngIf="editMode==true"
+    (click)="saveConfrere()">
+    <mat-icon>save</mat-icon>
+  </button>
+  <button matTooltip="Modifier le confrère" mat-fab color="accent" class="second-fab-button"
+    *ngIf="editMode==false && selectedConfrere && selectedConfrere.id" (click)="editConfrere()">
+    <mat-icon>edit</mat-icon>
+  </button>
+  <button matTooltip="Ajouter un confrère" mat-fab color="accent" class="fab-button"
+    *ngIf="editMode==false && selectedConfrere && selectedConfrere.id" (click)="addConfrere()">
+    <mat-icon>add</mat-icon>
+  </button>
+</div>

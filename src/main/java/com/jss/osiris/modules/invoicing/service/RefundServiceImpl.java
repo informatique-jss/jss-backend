@@ -141,6 +141,7 @@ public class RefundServiceImpl implements RefundService {
             Document refundDocument = documentService.getRefundDocument(tiersRefund.getDocuments());
             if (refundDocument != null) {
                 refund.setRefundType(refundDocument.getRefundType());
+                refund.setRefundIBAN(refundDocument.getRefundIBAN());
                 refund.setRefundBic(refundDocument.getRefundBic());
             }
         }

@@ -283,7 +283,7 @@ public class InvoicingController {
                 if (invoice.getConfrere() != null
                         && !invoice.getConfrere().getId().equals(commonCustomerOrder.getId()))
                     throw new OsirisValidationException("not same customer order chosed");
-                if (!invoice.getTiers().getId().equals(commonCustomerOrder.getId()))
+                if (invoice.getTiers() != null && !invoice.getTiers().getId().equals(commonCustomerOrder.getId()))
                     throw new OsirisValidationException("not same customer order chosed");
             }
         }
@@ -296,7 +296,8 @@ public class InvoicingController {
                 if (customerOrder.getConfrere() != null
                         && !customerOrder.getConfrere().getId().equals(commonCustomerOrder.getId()))
                     throw new OsirisValidationException("not same customer order chosed");
-                if (!customerOrder.getTiers().getId().equals(commonCustomerOrder.getId()))
+                if (customerOrder.getTiers() != null
+                        && !customerOrder.getTiers().getId().equals(commonCustomerOrder.getId()))
                     throw new OsirisValidationException("not same customer order chosed");
             }
         }

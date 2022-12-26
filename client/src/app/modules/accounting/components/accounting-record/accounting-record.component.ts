@@ -71,31 +71,32 @@ export class AccountingRecordComponent implements OnInit {
     this.displayedColumns.push({ id: "creditAmount", fieldName: "creditAmount", label: "Crédit", valueFonction: this.formatEurosForSortTable } as SortTableColumn);
     this.displayedColumns.push({ id: "label", fieldName: "label", label: "Libellé", isShrinkColumn: true } as SortTableColumn);
     this.displayedColumns.push({ id: "letteringNumber", fieldName: "letteringNumber", label: "Lettrage" } as SortTableColumn);
-    this.displayedColumns.push({ id: "letteringDate", fieldName: "letteringDateTime", label: "Date de lettrage", valueFonction: this.formatDateForSortTable } as SortTableColumn);
+    this.displayedColumns.push({ id: "letteringDate", fieldName: "letteringDate", label: "Date de lettrage", valueFonction: this.formatDateForSortTable } as SortTableColumn);
     this.displayedColumns.push({ id: "debitAccumulation", fieldName: "debitAccumulation", label: "Cumul débit", valueFonction: this.formatEurosForSortTable } as SortTableColumn);
     this.displayedColumns.push({ id: "creditAccumulation", fieldName: "creditAccumulation", label: "Cumul crédit", valueFonction: this.formatEurosForSortTable } as SortTableColumn);
     this.displayedColumns.push({ id: "balance", fieldName: "balance", label: "Solde", valueFonction: this.formatEurosForSortTable } as SortTableColumn);
     this.displayedColumns.push({ id: "payment", fieldName: "paymentId", label: "Paiement", actionIcon: "visibility", actionTooltip: "Voir le paiement associé" } as SortTableColumn);
     this.displayedColumns.push({ id: "deposit", fieldName: "depositId", label: "Acompte", actionIcon: "visibility", actionTooltip: "Voir l'acompte associé" } as SortTableColumn);
 
-    this.tableAction.push({
-      actionIcon: "block", actionName: "Supprimer / contre-passer l'opération", actionClick: (action: SortTableAction, element: any) => {
-        if (element) {
-          let dialogRef = this.deleteAccountingRecordDialog.open(DeleteAccountingRecordDialogComponent, {
-            width: '100%'
-          });
-          if (element.isTemporary && element.temporaryOperationId)
-            dialogRef.componentInstance.temporaryOperationId = element.temporaryOperationId;
-          else if (!element.isTemporary && element.operationId)
-            dialogRef.componentInstance.operationId = element.operationId;
-          dialogRef.afterClosed().subscribe(response => {
-            this.searchRecords();
-          })
-        }
+    if (this.tiersToDisplay == undefined)
+      this.tableAction.push({
+        actionIcon: "block", actionName: "Supprimer / contre-passer l'opération", actionClick: (action: SortTableAction, element: any) => {
+          if (element) {
+            let dialogRef = this.deleteAccountingRecordDialog.open(DeleteAccountingRecordDialogComponent, {
+              width: '100%'
+            });
+            if (element.isTemporary && element.temporaryOperationId)
+              dialogRef.componentInstance.temporaryOperationId = element.temporaryOperationId;
+            else if (!element.isTemporary && element.operationId)
+              dialogRef.componentInstance.operationId = element.operationId;
+            dialogRef.afterClosed().subscribe(response => {
+              this.searchRecords();
+            })
+          }
 
-        return undefined;
-      }, display: true,
-    } as SortTableAction);
+          return undefined;
+        }, display: true,
+      } as SortTableAction);
 
     if (this.tiersToDisplay && this.tiersToDisplay.id) {
       if (instanceOfResponsable(this.tiersToDisplay))

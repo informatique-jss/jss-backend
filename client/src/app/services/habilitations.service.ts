@@ -19,6 +19,10 @@ export class HabilitationsService {
     return true;
   }
 
+  canViewConfrereModule() {
+    return true;
+  }
+
   canViewQuotationModule() {
     return true;
   }
