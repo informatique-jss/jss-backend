@@ -1,6 +1,6 @@
 import { AfterContentChecked, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { formatDateTimeForSortTable, formatEurosForSortTable } from 'src/app/libs/FormatHelper';
+import { formatDateForSortTable, formatDateTimeForSortTable, formatEurosForSortTable } from 'src/app/libs/FormatHelper';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
@@ -22,6 +22,7 @@ export class InvoiceListComponent implements OnInit, AfterContentChecked {
 
   @Input() invoiceSearch: InvoiceSearch = {} as InvoiceSearch;
   @Input() isForDashboard: boolean = false;
+  @Input() isForTiersIntegration: boolean = false;
   invoices: InvoiceSearchResult[] | undefined;
   availableColumns: SortTableColumn[] = [];
   columnToDisplayOnDashboard: string[] = ["description", "affaires", "invoicePayer", "totalPrice"];
@@ -55,21 +56,21 @@ export class InvoiceListComponent implements OnInit, AfterContentChecked {
   }
 
   ngOnInit() {
-    if (!this.defaultStatusFilter && !this.isForDashboard)
+    if (!this.defaultStatusFilter && !this.isForDashboard && !this.isForTiersIntegration)
       this.defaultStatusFilter = [this.invoiceStatusSend];
 
     this.bookmark = this.userPreferenceService.getUserSearchBookmark("invoices") as InvoiceSearch;
-    if (this.bookmark && !this.isForDashboard) {
+    if (this.bookmark && !this.isForDashboard && !this.isForTiersIntegration) {
       this.invoiceSearch = {} as InvoiceSearch;
       this.invoiceSearch.invoiceStatus = this.bookmark.invoiceStatus;
       this.defaultStatusFilter = this.bookmark.invoiceStatus;
       this.invoiceSearch.maxAmount = this.bookmark.maxAmount;
       this.invoiceSearch.minAmount = this.bookmark.minAmount;
+      this.putDefaultPeriod();
     }
 
-    if (!this.isForDashboard)
+    if (!this.isForDashboard && !this.isForTiersIntegration)
       this.appService.changeHeaderTitle("Factures & paiements");
-    this.putDefaultPeriod();
     this.availableColumns = [];
     this.availableColumns.push({ id: "id", fieldName: "invoiceId", label: "N° de facture" } as SortTableColumn);
     this.availableColumns.push({ id: "status", fieldName: "invoiceStatus", label: "Status" } as SortTableColumn);
@@ -83,6 +84,10 @@ export class InvoiceListComponent implements OnInit, AfterContentChecked {
     this.availableColumns.push({ id: "totalPrice", fieldName: "totalPrice", label: "Montant TTC", valueFonction: formatEurosForSortTable } as SortTableColumn);
     this.availableColumns.push({ id: "description", fieldName: "customerOrderDescription", label: "Description" } as SortTableColumn);
     this.availableColumns.push({ id: "payments", fieldName: "paymentId", label: "Paiement(s) associé(s)" } as SortTableColumn);
+    this.availableColumns.push({ id: "dueDate", fieldName: "dueDate", label: "Date d'échéance", valueFonction: formatDateForSortTable } as SortTableColumn);
+    this.availableColumns.push({ id: "firstReminderDateTime", fieldName: "firstReminderDateTime", label: "Date de première relance", valueFonction: formatDateForSortTable } as SortTableColumn);
+    this.availableColumns.push({ id: "secondReminderDateTime", fieldName: "secondReminderDateTime", label: "Date de seconde relance", valueFonction: formatDateForSortTable } as SortTableColumn);
+    this.availableColumns.push({ id: "thirdReminderDateTime", fieldName: "thirdReminderDateTime", label: "Date de troisième relance", valueFonction: formatDateForSortTable } as SortTableColumn);
 
     this.setColumns();
 
@@ -111,8 +116,7 @@ export class InvoiceListComponent implements OnInit, AfterContentChecked {
 
     };
 
-    if (this.isForDashboard && !this.invoices && this.invoiceSearch) {
-      this.putDefaultPeriod();
+    if ((this.isForDashboard || this.isForTiersIntegration) && !this.invoices && this.invoiceSearch) {
       this.searchInvoices();
     }
   }
@@ -136,12 +140,11 @@ export class InvoiceListComponent implements OnInit, AfterContentChecked {
     if (!this.invoiceSearch.startDate && !this.invoiceSearch.endDate) {
       this.invoiceSearch.startDate = new Date();
       this.invoiceSearch.endDate = new Date();
-      this.invoiceSearch.startDate.setDate(this.invoiceSearch.endDate.getDate() - 90);
     }
   }
 
   searchInvoices() {
-    if (this.invoiceForm.valid && this.invoiceSearch.startDate && this.invoiceSearch.endDate) {
+    if (this.invoiceForm.valid) {
       if (!this.isForDashboard)
         this.userPreferenceService.setUserSearchBookmark(this.invoiceSearch, "invoices");
 

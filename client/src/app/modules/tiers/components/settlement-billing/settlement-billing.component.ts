@@ -10,6 +10,7 @@ import { CityService } from 'src/app/modules/miscellaneous/services/city.service
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { PaymentTypeService } from 'src/app/modules/miscellaneous/services/payment.type.service';
 import { Document } from "../../../miscellaneous/model/Document";
+import { BillingClosureRecipientType } from '../../model/BillingClosureRecipientType';
 import { ITiers } from '../../model/ITiers';
 import { Responsable } from '../../model/Responsable';
 import { TiersService } from '../../services/tiers.service';
@@ -36,6 +37,8 @@ export class SettlementBillingComponent implements OnInit, AfterContentChecked {
   billingLableTypeOther = this.constantService.getBillingLabelTypeOther();
 
   countryFrance: Country = this.constantService.getCountryFrance();
+
+  billingClosureRecipientTypeOther: BillingClosureRecipientType = this.constantService.getBillingClosureRecipientTypeOther();
 
   paperDocument: Document = {} as Document;
   digitalDocument: Document = {} as Document;

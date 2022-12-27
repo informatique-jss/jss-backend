@@ -51,3 +51,8 @@
 .middle-width {
   min-width: 500px;
 }
+
+.chips-reminder {
+  display: inline-flex;
+  padding-top: 5px;
+}

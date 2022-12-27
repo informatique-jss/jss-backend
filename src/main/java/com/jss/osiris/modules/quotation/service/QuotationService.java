@@ -2,6 +2,7 @@ package com.jss.osiris.modules.quotation.service;
 
 import java.util.List;
 
+import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.quotation.model.IQuotation;
 import com.jss.osiris.modules.quotation.model.Quotation;
@@ -12,15 +13,16 @@ import com.jss.osiris.modules.tiers.model.ITiers;
 public interface QuotationService {
         public Quotation getQuotation(Integer id);
 
-        public Quotation addOrUpdateQuotation(Quotation quotation) throws OsirisException;
+        public Quotation addOrUpdateQuotation(Quotation quotation) throws OsirisException, OsirisClientMessageException;
 
-        public Quotation addOrUpdateQuotationFromUser(Quotation quotation) throws OsirisException;
+        public Quotation addOrUpdateQuotationFromUser(Quotation quotation)
+                        throws OsirisException, OsirisClientMessageException;
 
         public IQuotation getAndSetInvoiceItemsForQuotation(IQuotation quotation, boolean persistInvoiceItem)
                         throws OsirisException;
 
         public Quotation addOrUpdateQuotationStatus(Quotation quotation, String targetStatusCode)
-                        throws OsirisException;
+                        throws OsirisException, OsirisClientMessageException;
 
         public ITiers getCustomerOrderOfQuotation(IQuotation quotation) throws OsirisException;
 
@@ -30,11 +32,11 @@ public interface QuotationService {
 
         public String getCardPaymentLinkForQuotationDeposit(Quotation quotation, String mail,
                         String subject)
-                        throws OsirisException;
+                        throws OsirisException, OsirisClientMessageException;
 
         public Boolean validateCardPaymentLinkForQuotationDeposit(Quotation quotation)
-                        throws OsirisException;
+                        throws OsirisException, OsirisClientMessageException;
 
-        public void sendRemindersForQuotation() throws OsirisException;
+        public void sendRemindersForQuotation() throws OsirisException, OsirisClientMessageException;
 
 }

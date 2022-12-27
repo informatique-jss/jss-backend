@@ -23,6 +23,7 @@ import com.jss.osiris.libs.JacksonLocalDateDeserializer;
 import com.jss.osiris.libs.JacksonLocalDateSerializer;
 import com.jss.osiris.libs.JacksonLocalDateTimeDeserializer;
 import com.jss.osiris.libs.JacksonLocalDateTimeSerializer;
+import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.libs.search.service.IndexEntityService;
@@ -145,13 +146,13 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public CustomerOrder addOrUpdateCustomerOrderFromUser(CustomerOrder customerOrder)
-            throws OsirisException {
+            throws OsirisException, OsirisClientMessageException {
         return addOrUpdateCustomerOrder(customerOrder);
     }
 
     @Override
     public CustomerOrder addOrUpdateCustomerOrder(CustomerOrder customerOrder)
-            throws OsirisException {
+            throws OsirisException, OsirisClientMessageException {
         if (customerOrder.getId() == null) {
             customerOrder.setCreatedDate(LocalDateTime.now());
         }
@@ -201,7 +202,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Override
     public CustomerOrder checkAllProvisionEnded(CustomerOrder customerOrderIn)
-            throws OsirisException {
+            throws OsirisException, OsirisClientMessageException {
         CustomerOrder customerOrder = getCustomerOrder(customerOrderIn.getId());
         if (customerOrder != null && customerOrder.getAssoAffaireOrders() != null
                 && customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BEING_PROCESSED)) {
@@ -232,14 +233,14 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public CustomerOrder addOrUpdateCustomerOrderStatusFromUser(CustomerOrder customerOrder, String targetStatusCode)
-            throws OsirisException {
+            throws OsirisException, OsirisClientMessageException {
         return addOrUpdateCustomerOrderStatus(customerOrder, targetStatusCode, true);
     }
 
     @Override
     public CustomerOrder addOrUpdateCustomerOrderStatus(CustomerOrder customerOrder, String targetStatusCode,
             boolean isFromUser)
-            throws OsirisException {
+            throws OsirisException, OsirisClientMessageException {
         // Handle automatic workflow for Announcement created from website
         boolean onlyAnnonceLegale = true;
         boolean isFromWebsite = customerOrder.getIsCreatedFromWebSite();
@@ -372,8 +373,11 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     /**
      * Return true if announcement is done at the end, false otherwise
+     * 
+     * @throws OsirisClientMessageException
      */
-    private boolean moveForwardAnnouncementFromWebsite(CustomerOrder customerOrder) throws OsirisException {
+    private boolean moveForwardAnnouncementFromWebsite(CustomerOrder customerOrder)
+            throws OsirisException, OsirisClientMessageException {
         boolean allDone = true;
         if (customerOrder != null && customerOrder.getAssoAffaireOrders() != null)
             for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
@@ -422,7 +426,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Override
     public CustomerOrder unlockCustomerOrderFromDeposit(CustomerOrder customerOrder, Float effectivePayment)
-            throws OsirisException {
+            throws OsirisException, OsirisClientMessageException {
         Float remainingToPay = accountingRecordService
                 .getRemainingAmountToPayForCustomerOrder(customerOrder);
 
@@ -435,7 +439,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         return customerOrder;
     }
 
-    private Invoice generateInvoice(CustomerOrder customerOrder) throws OsirisException {
+    private Invoice generateInvoice(CustomerOrder customerOrder) throws OsirisException, OsirisClientMessageException {
         if (!hasAtLeastOneInvoiceItemNotNull(customerOrder))
             throw new OsirisException(null, "No invoice item found on customer order " + customerOrder.getId());
 
@@ -547,6 +551,12 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             affaireId.add(0);
         }
 
+        if (orderingSearch.getStartDate() == null)
+            orderingSearch.setStartDate(LocalDateTime.now().minusYears(100));
+
+        if (orderingSearch.getEndDate() == null)
+            orderingSearch.setEndDate(LocalDateTime.now().plusYears(100));
+
         List<OrderingSearchResult> customerOrders = customerOrderRepository.findCustomerOrders(
                 salesEmployeeId,
                 statusId,
@@ -565,7 +575,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Override
     public CustomerOrder createNewCustomerOrderFromQuotation(Quotation quotation)
-            throws OsirisException {
+            throws OsirisException, OsirisClientMessageException {
         CustomerOrderStatus statusOpen = customerOrderStatusService
                 .getCustomerOrderStatusByCode(CustomerOrderStatus.OPEN);
         CustomerOrder customerOrder = new CustomerOrder(quotation.getTiers(), quotation.getResponsable(),
@@ -651,13 +661,13 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void generateInvoiceMail(CustomerOrder customerOrder) throws OsirisException {
+    public void generateInvoiceMail(CustomerOrder customerOrder) throws OsirisException, OsirisClientMessageException {
         mailHelper.sendCustomerOrderFinalisationToCustomer(customerOrder, true, false, false);
     }
 
     private String getCardPaymentLinkForCustomerOrderPayment(CustomerOrder customerOrder, String mail, String subject,
             String redirectEntrypoint)
-            throws OsirisException {
+            throws OsirisException, OsirisClientMessageException {
         if (customerOrder.getCentralPayPaymentRequestId() != null) {
             CentralPayPaymentRequest centralPayPaymentRequest = centralPayDelegateService
                     .getPaymentRequest(customerOrder.getCentralPayPaymentRequestId());
@@ -695,13 +705,13 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Override
     public String getCardPaymentLinkForCustomerOrderDeposit(CustomerOrder customerOrder, String mail, String subject)
-            throws OsirisException {
+            throws OsirisException, OsirisClientMessageException {
         return getCardPaymentLinkForCustomerOrderPayment(customerOrder, mail, subject, paymentCbRedirectDeposit);
     }
 
     @Override
     public Boolean validateCardPaymentLinkForCustomerOrderDeposit(CustomerOrder customerOrder)
-            throws OsirisException {
+            throws OsirisException, OsirisClientMessageException {
         if (customerOrder.getCentralPayPaymentRequestId() != null) {
             CentralPayPaymentRequest centralPayPaymentRequest = centralPayDelegateService
                     .getPaymentRequest(customerOrder.getCentralPayPaymentRequestId());
@@ -730,13 +740,13 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Override
     public String getCardPaymentLinkForPaymentInvoice(CustomerOrder customerOrder, String mail, String subject)
-            throws OsirisException {
+            throws OsirisException, OsirisClientMessageException {
         return getCardPaymentLinkForCustomerOrderPayment(customerOrder, mail, subject, paymentCbRedirectInvoice);
     }
 
     @Override
     public Boolean validateCardPaymentLinkForInvoice(CustomerOrder customerOrder)
-            throws OsirisException {
+            throws OsirisException, OsirisClientMessageException {
         if (customerOrder.getCentralPayPaymentRequestId() != null) {
             CentralPayPaymentRequest centralPayPaymentRequest = centralPayDelegateService
                     .getPaymentRequest(customerOrder.getCentralPayPaymentRequestId());
@@ -759,7 +769,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     }
 
     @Override
-    public void sendRemindersForCustomerOrderDeposit() throws OsirisException {
+    public void sendRemindersForCustomerOrderDeposit() throws OsirisException, OsirisClientMessageException {
         List<CustomerOrder> customerOrders = customerOrderRepository.findCustomerOrderForReminder(
                 customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.WAITING_DEPOSIT));
 
@@ -787,7 +797,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     }
 
     @Override
-    public void generateStoreAndSendPublicationReceipt(CustomerOrder customerOrder) throws OsirisException {
+    public void generateStoreAndSendPublicationReceipt(CustomerOrder customerOrder)
+            throws OsirisException, OsirisClientMessageException {
 
         ArrayList<Announcement> allAnnoucement = new ArrayList<Announcement>();
         ArrayList<Announcement> annoucementWaitingForReading = new ArrayList<Announcement>();
@@ -864,7 +875,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         }
     }
 
-    private void generateStoreAndSendPublicationFlag(CustomerOrder customerOrder) throws OsirisException {
+    private void generateStoreAndSendPublicationFlag(CustomerOrder customerOrder)
+            throws OsirisException, OsirisClientMessageException {
 
         ArrayList<Announcement> annoucementToGenerate = new ArrayList<Announcement>();
 

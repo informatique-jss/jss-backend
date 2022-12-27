@@ -17,4 +17,7 @@ public interface TiersFollowupRepository extends CrudRepository<TiersFollowup, I
 
     @Query(value = "select a from TiersFollowup a where id_confrere =:idConfrere")
     List<TiersFollowup> findByConfrereId(@Param("idConfrere") Integer idConfrere);
+
+    @Query(value = "select a from TiersFollowup a where id_invoice =:idInvoice")
+    List<TiersFollowup> findByInvoiceId(@Param("idInvoice") Integer idInvoice);
 }

@@ -54,6 +54,9 @@ public class Regie implements Serializable, IId {
 	@Column(length = 40, nullable = false)
 	private String iban;
 
+	@Column(length = 40)
+	private String bic;
+
 	public Integer getId() {
 		return id;
 	}
@@ -140,6 +143,14 @@ public class Regie implements Serializable, IId {
 
 	public void setCedexComplement(String cedexComplement) {
 		this.cedexComplement = cedexComplement;
+	}
+
+	public String getBic() {
+		return bic;
+	}
+
+	public void setBic(String bic) {
+		this.bic = bic;
 	}
 
 }

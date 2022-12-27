@@ -13,5 +13,6 @@ export interface Regie extends IReferential {
   phones: Phone[];
   mails: Mail[];
   iban: string;
+  bic: string;
 }
 

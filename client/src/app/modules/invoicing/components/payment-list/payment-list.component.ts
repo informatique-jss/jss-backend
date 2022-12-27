@@ -57,7 +57,6 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
   }
 
   ngOnInit() {
-    this.putDefaultPeriod();
     this.availableColumns = [];
     this.availableColumns.push({ id: "id", fieldName: "id", label: "N° du paiement" } as SortTableColumn);
     this.availableColumns.push({ id: "paymentWay", fieldName: "paymentWayLabel", label: "Sens" } as SortTableColumn);
@@ -132,7 +131,6 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
     if (!this.paymentSearch.startDate && !this.paymentSearch.endDate) {
       this.paymentSearch.startDate = new Date();
       this.paymentSearch.endDate = new Date();
-      this.paymentSearch.startDate.setDate(this.paymentSearch.endDate.getDate() - 30);
     }
   }
 

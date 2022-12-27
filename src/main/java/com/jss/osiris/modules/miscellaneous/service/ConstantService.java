@@ -271,6 +271,8 @@ public interface ConstantService {
 
     public String getStringSalesSharedMailbox() throws OsirisException;
 
+    public BillingClosureRecipientType getBillingClosureRecipientTypeOther() throws OsirisException;
+
     public BillingClosureRecipientType getBillingClosureRecipientTypeClient() throws OsirisException;
 
     public BillingClosureRecipientType getBillingClosureRecipientTypeResponsable() throws OsirisException;

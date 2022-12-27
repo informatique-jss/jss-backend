@@ -20,6 +20,7 @@ import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.PdfCopy;
 import com.itextpdf.text.pdf.PdfReader;
+import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
@@ -79,7 +80,8 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     }
 
     @Override
-    public void generatePublicationProof(Announcement announcement) throws OsirisException {
+    public void generatePublicationProof(Announcement announcement)
+            throws OsirisException, OsirisClientMessageException {
         Attachment currentAttachment = null;
 
         if (announcement != null) {

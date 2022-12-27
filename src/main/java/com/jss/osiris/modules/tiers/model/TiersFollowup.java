@@ -16,6 +16,7 @@ import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jss.osiris.libs.JacksonLocalDateSerializer;
+import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.miscellaneous.model.Gift;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.profile.model.Employee;
@@ -44,6 +45,11 @@ public class TiersFollowup implements Serializable, IId {
 	@JoinColumn(name = "id_confrere")
 	@JsonIgnoreProperties(value = { "tiersFollowups" }, allowSetters = true)
 	private Confrere confrere;
+
+	@ManyToOne
+	@JoinColumn(name = "id_invoice")
+	@JsonIgnoreProperties(value = { "tiersFollowups" }, allowSetters = true)
+	private Invoice invoice;
 
 	@ManyToOne
 	@JoinColumn(name = "id_tiers_followup_type")
@@ -134,6 +140,14 @@ public class TiersFollowup implements Serializable, IId {
 
 	public void setConfrere(Confrere confrere) {
 		this.confrere = confrere;
+	}
+
+	public Invoice getInvoice() {
+		return invoice;
+	}
+
+	public void setInvoice(Invoice invoice) {
+		this.invoice = invoice;
 	}
 
 }

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.jss.osiris.libs.ValidationHelper;
+import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.pao.model.Journal;
@@ -40,7 +41,8 @@ public class PaoController {
 
     @PostMapping(inputEntryPoint + "/journal")
     public ResponseEntity<Journal> addOrUpdateJournal(
-            @RequestBody Journal journal) throws OsirisValidationException, OsirisException {
+            @RequestBody Journal journal)
+            throws OsirisValidationException, OsirisException, OsirisClientMessageException {
         if (journal.getId() != null)
             validationHelper.validateReferential(journal, true, "journals");
         validationHelper.validateString(journal.getLabel(), true, "label");

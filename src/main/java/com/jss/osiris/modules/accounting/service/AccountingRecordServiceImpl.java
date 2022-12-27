@@ -18,7 +18,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.ActiveDirectoryHelper;
+import com.jss.osiris.libs.GlobalExceptionHandler;
+import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.exception.OsirisLog;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.model.AccountingAccountClass;
@@ -109,6 +112,9 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
   @Autowired
   ActiveDirectoryHelper activeDirectoryHelper;
+
+  @Autowired
+  GlobalExceptionHandler globalExceptionHandler;
 
   public AccountingRecord addOrUpdateAccountingRecord(
       AccountingRecord accountingRecord) {
@@ -753,11 +759,18 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     if (accountingRecordSearch.getConfrereId() == null)
       accountingRecordSearch.setConfrereId(0);
 
+    if (accountingRecordSearch.getStartDate() == null)
+      accountingRecordSearch.setStartDate(LocalDateTime.now().minusYears(100));
+
+    if (accountingRecordSearch.getEndDate() == null)
+      accountingRecordSearch.setEndDate(LocalDateTime.now().plusYears(100));
+
     return accountingRecordRepository.searchAccountingRecords(accountingAccountId, accountingClass, journalId,
         accountingRecordSearch.getResponsableId(), accountingRecordSearch.getTiersId(),
         accountingRecordSearch.getConfrereId(),
         accountingRecordSearch.getHideLettered(),
-        accountingRecordSearch.getStartDate(), accountingRecordSearch.getEndDate(),
+        accountingRecordSearch.getStartDate().withHour(0).withMinute(0),
+        accountingRecordSearch.getEndDate().withHour(23).withMinute(59),
         activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP));
   }
 
@@ -775,7 +788,8 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     List<AccountingBalance> aa = accountingRecordRepository.searchAccountingBalance(
         accountingClassId,
         accountingAccountId, principalAccountingAccountId,
-        accountingBalanceSearch.getStartDate(), accountingBalanceSearch.getEndDate(),
+        accountingBalanceSearch.getStartDate().withHour(0).withMinute(0),
+        accountingBalanceSearch.getEndDate().withHour(23).withMinute(59),
         activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP));
 
     return aa;
@@ -795,7 +809,8 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     return accountingRecordRepository.searchAccountingBalanceGenerale(
         accountingClassId,
         accountingAccountId, principalAccountingAccountId,
-        accountingBalanceSearch.getStartDate(), accountingBalanceSearch.getEndDate(),
+        accountingBalanceSearch.getStartDate().withHour(0).withMinute(0),
+        accountingBalanceSearch.getEndDate().withHour(23).withMinute(59),
         activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP));
 
   }
@@ -1076,15 +1091,17 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   }
 
   @Transactional
-  public void sendBillingClosureReceipt() throws OsirisException {
+  public void sendBillingClosureReceipt() throws OsirisException, OsirisClientMessageException {
     List<Tiers> tiers = tiersService.findAllTiersTypeClient();
     if (tiers != null)
       for (Tiers tier : tiers) {
         Document billingClosureDocument = documentService.getBillingClosureDocument(tier.getDocuments());
         if (billingClosureDocument != null)
           if (billingClosureDocument.getBillingClosureRecipientType() != null
-              && billingClosureDocument.getBillingClosureRecipientType().getId()
-                  .equals(constantService.getBillingClosureRecipientTypeClient().getId())) {
+              && (billingClosureDocument.getBillingClosureRecipientType().getId()
+                  .equals(constantService.getBillingClosureRecipientTypeClient().getId())
+                  || billingClosureDocument.getBillingClosureRecipientType().getId()
+                      .equals(constantService.getBillingClosureRecipientTypeOther().getId()))) {
             AccountingRecordSearch search = new AccountingRecordSearch();
             search.setTiersId(tier.getId());
             search.setHideLettered(true);
@@ -1118,9 +1135,11 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
               } catch (FileNotFoundException e) {
                 throw new OsirisException(e, "Impossible to read excel of billing closure for tiers " + tier.getId());
               }
-
-              mailHelper.sendBillingClosureToCustomer(attachments, tier, false);
-
+              try {
+                mailHelper.sendBillingClosureToCustomer(attachments, tier, false);
+              } catch (Exception e) {
+                globalExceptionHandler.persistLog(e, OsirisLog.UNHANDLED_LOG);
+              }
             }
 
           } else if (billingClosureDocument.getBillingClosureRecipientType() != null
@@ -1162,7 +1181,11 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
                         "Impossible to read excel of billing closure for responsable " + responsable.getId());
                   }
 
-                  mailHelper.sendBillingClosureToCustomer(attachments, responsable, false);
+                  try {
+                    mailHelper.sendBillingClosureToCustomer(attachments, responsable, false);
+                  } catch (Exception e) {
+                    globalExceptionHandler.persistLog(e, OsirisLog.UNHANDLED_LOG);
+                  }
                 }
               }
             }

@@ -115,7 +115,7 @@ public class InvoicingController {
     // TODO : à retirer avant la MEP, seulement pour test !
     @PostMapping(inputEntryPoint + "/payment")
     public ResponseEntity<Payment> addOrUpdatePayment(@RequestBody Payment payment)
-            throws OsirisValidationException, OsirisException {
+            throws OsirisValidationException, OsirisException, OsirisClientMessageException {
         Payment outPayment;
         if (payment.getId() != null)
             validationHelper.validateReferential(payment, true, "payment");
@@ -562,15 +562,9 @@ public class InvoicingController {
 
     @PostMapping(inputEntryPoint + "/invoice/search")
     public ResponseEntity<List<InvoiceSearchResult>> searchInvoices(@RequestBody InvoiceSearch invoiceSearch)
-            throws OsirisValidationException {
+            throws OsirisValidationException, OsirisException {
         if (invoiceSearch == null)
             throw new OsirisValidationException("invoiceSearch");
-
-        if (invoiceSearch.getInvoiceStatus() == null)
-            throw new OsirisValidationException("InvoiceStatus");
-
-        if (invoiceSearch.getStartDate() == null || invoiceSearch.getEndDate() == null)
-            throw new OsirisValidationException("StartDate or EndDate");
 
         return new ResponseEntity<List<InvoiceSearchResult>>(invoiceService.searchInvoices(invoiceSearch),
                 HttpStatus.OK);
@@ -586,7 +580,7 @@ public class InvoicingController {
 
     @PostMapping(inputEntryPoint + "/paper/label/compute")
     public ResponseEntity<InvoiceLabelResult> computePaperLabelForCustomerOrder(
-            @RequestBody CustomerOrder customerOrder) throws OsirisException {
+            @RequestBody CustomerOrder customerOrder) throws OsirisException, OsirisClientMessageException {
         return new ResponseEntity<InvoiceLabelResult>(mailComputeHelper.computePaperLabelResult(customerOrder),
                 HttpStatus.OK);
     }

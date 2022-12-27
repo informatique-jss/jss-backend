@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
-import java.time.Duration;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -354,7 +353,7 @@ public class QuotationController {
 
   @PostMapping(inputEntryPoint + "/mail/billing/compute")
   public ResponseEntity<MailComputeResult> computeMailForBilling(
-      @RequestBody Quotation quotation) throws OsirisException {
+      @RequestBody Quotation quotation) throws OsirisException, OsirisClientMessageException {
     return new ResponseEntity<MailComputeResult>(
         mailComputeHelper.computeMailForCustomerOrderFinalizationAndInvoice(quotation),
         HttpStatus.OK);
@@ -362,7 +361,7 @@ public class QuotationController {
 
   @PostMapping(inputEntryPoint + "/mail/digital/compute")
   public ResponseEntity<MailComputeResult> computeMailForDigitalDocument(
-      @RequestBody Quotation quotation) throws OsirisException {
+      @RequestBody Quotation quotation) throws OsirisException, OsirisClientMessageException {
     return new ResponseEntity<MailComputeResult>(
         mailComputeHelper.computeMailForGenericDigitalDocument(quotation),
         HttpStatus.OK);
@@ -370,7 +369,7 @@ public class QuotationController {
 
   @GetMapping(inputEntryPoint + "/mail/generate/quotation")
   public ResponseEntity<Quotation> generateQuotationMail(@RequestParam Integer quotationId)
-      throws OsirisException, OsirisValidationException {
+      throws OsirisException, OsirisValidationException, OsirisClientMessageException {
     Quotation quotation = quotationService.getQuotation(quotationId);
     if (quotation == null)
       throw new OsirisValidationException("quotation");
@@ -386,7 +385,7 @@ public class QuotationController {
   @GetMapping(inputEntryPoint + "/mail/generate/customer-order-confirmation")
   public ResponseEntity<CustomerOrder> generateCustomerOrderCreationConfirmationToCustomer(
       @RequestParam Integer customerOrderId)
-      throws OsirisValidationException, OsirisException {
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException {
     CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
     if (customerOrder == null)
       throw new OsirisValidationException("customerOrder");
@@ -403,7 +402,7 @@ public class QuotationController {
   @GetMapping(inputEntryPoint + "/mail/generate/customer-order-deposit-confirmation")
   public ResponseEntity<CustomerOrder> generateCustomerOrderDepositConfirmationToCustomer(
       @RequestParam Integer customerOrderId)
-      throws OsirisValidationException, OsirisException {
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException {
     CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
     if (customerOrder == null)
       throw new OsirisValidationException("customerOrder");
@@ -418,7 +417,7 @@ public class QuotationController {
 
   @GetMapping(inputEntryPoint + "/mail/generate/invoice")
   public ResponseEntity<CustomerOrder> generateInvoiceMail(@RequestParam Integer customerOrderId)
-      throws OsirisValidationException {
+      throws OsirisValidationException, OsirisClientMessageException {
     CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
     if (customerOrder == null)
       throw new OsirisValidationException("customerOrder");
@@ -484,7 +483,7 @@ public class QuotationController {
 
   @PostMapping(inputEntryPoint + "/asso/affaire/order/update")
   public ResponseEntity<AssoAffaireOrder> addOrUpdateAssoAffaireOrder(@RequestBody AssoAffaireOrder assoAffaireOrder)
-      throws OsirisValidationException, OsirisException {
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException {
     validationHelper.validateReferential(assoAffaireOrder, true, "assoAffaireOrder");
     validationHelper.validateReferential(assoAffaireOrder.getAffaire(), true, "Affaire");
     validationHelper.validateReferential(assoAffaireOrder.getAssignedTo(), true, "AssignedTo");
@@ -732,7 +731,6 @@ public class QuotationController {
     return new ResponseEntity<List<Confrere>>(confrereService.getConfreres(), HttpStatus.OK);
   }
 
-  @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
   @PostMapping(inputEntryPoint + "/confrere")
   public ResponseEntity<Confrere> addOrUpdateConfrere(
       @RequestBody Confrere confrere) throws OsirisValidationException, OsirisException {
@@ -750,7 +748,7 @@ public class QuotationController {
         validationHelper.validateReferential(weekDay, false, "weekDay");
 
     validationHelper.validateReferential(confrere.getJournalType(), true, "JournalType");
-    validationHelper.validateString(confrere.getLastShipmentForPublication(), false, 60, "LastShipmentForPublication");
+    validationHelper.validateString(confrere.getLastShipmentForPublication(), false, 200, "LastShipmentForPublication");
     validationHelper.validateString(confrere.getBoardGrade(), false, 20, "BoardGrade");
     validationHelper.validateString(confrere.getPaperGrade(), false, 20, "PaperGrade");
     validationHelper.validateString(confrere.getBillingGrade(), false, 20, "BillingGrade");
@@ -1025,14 +1023,6 @@ public class QuotationController {
     if (orderingSearch == null)
       throw new OsirisValidationException("orderingSearch");
 
-    if (orderingSearch.getStartDate() == null || orderingSearch.getEndDate() == null)
-      throw new OsirisValidationException("StartDate or EndDate");
-
-    Duration duration = Duration.between(orderingSearch.getStartDate(), orderingSearch.getEndDate());
-
-    if (duration.toDays() > 366)
-      throw new OsirisValidationException("Duration");
-
     validationHelper.validateReferential(orderingSearch.getSalesEmployee(), false, "SalesEmployee");
     if (orderingSearch.getCustomerOrderStatus() != null)
       for (CustomerOrderStatus status : orderingSearch.getCustomerOrderStatus())
@@ -1047,14 +1037,6 @@ public class QuotationController {
       throws OsirisValidationException, OsirisException {
     if (quotationSearch == null)
       throw new OsirisValidationException("quotationSearch");
-
-    if (quotationSearch.getStartDate() == null || quotationSearch.getEndDate() == null)
-      throw new OsirisValidationException("StartDate or EndDate");
-
-    Duration duration = Duration.between(quotationSearch.getStartDate(), quotationSearch.getEndDate());
-
-    if (duration.toDays() > 366)
-      throw new OsirisValidationException("Duration");
 
     validationHelper.validateReferential(quotationSearch.getSalesEmployee(), false, "SalesEmployee");
     if (quotationSearch.getQuotationStatus() != null)
@@ -1647,6 +1629,8 @@ public class QuotationController {
       validationHelper.validateReferential(affaire.getCivility(), true, "Civility");
       validationHelper.validateString(affaire.getFirstname(), true, 40, "Firstname");
       validationHelper.validateString(affaire.getLastname(), true, 40, "Lastname");
+      if (affaire.getLastname() != null)
+        affaire.setLastname(affaire.getLastname().toUpperCase());
 
     } else {
       validationHelper.validateString(affaire.getDenomination(), true, 150, "Denomination");
@@ -2001,7 +1985,7 @@ public class QuotationController {
 
   @GetMapping(inputEntryPoint + "/mail/generate/publication/receipt")
   public ResponseEntity<CustomerOrder> generatePublicationReceiptMail(@RequestParam Integer idCustomerOrder)
-      throws OsirisException, OsirisValidationException {
+      throws OsirisException, OsirisValidationException, OsirisClientMessageException {
     CustomerOrder customerOrder = customerOrderService.getCustomerOrder(idCustomerOrder);
     if (customerOrder == null)
       throw new OsirisValidationException("customerOrder");
@@ -2016,7 +2000,7 @@ public class QuotationController {
 
   @GetMapping(inputEntryPoint + "/mail/generate/publication/flag")
   public ResponseEntity<CustomerOrder> generatePublicationFlagMail(@RequestParam Integer idCustomerOrder)
-      throws OsirisException, OsirisValidationException {
+      throws OsirisException, OsirisValidationException, OsirisClientMessageException {
     CustomerOrder customerOrder = customerOrderService.getCustomerOrder(idCustomerOrder);
     if (customerOrder == null)
       throw new OsirisValidationException("customerOrder");

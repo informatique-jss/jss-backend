@@ -19,6 +19,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { MiscellaneousModule } from 'src/app/modules/miscellaneous/components/miscellaneous/miscellaneous.module';
 import { SpecialOffersDialogComponent } from 'src/app/modules/miscellaneous/components/special-offers-dialog/special-offers-dialog.component';
 import { AccountingModule } from '../../../accounting/components/accounting/accounting.module';
+import { InvoicingModule } from '../../../invoicing/components/invoicing/invoicing.module';
 import { QuotationModule } from '../../../quotation/components/quotation/quotation.module';
 import { ConfrereComponent } from '../confrere/confrere.component';
 import { ResponsableMainComponent } from '../responsable-main/responsable-main.component';
@@ -55,6 +56,7 @@ const routes: Routes = [
     MatTooltipModule,
     DragDropModule,
     QuotationModule,
+    InvoicingModule
   ],
   declarations: [TiersComponent,
     PrincipalComponent,

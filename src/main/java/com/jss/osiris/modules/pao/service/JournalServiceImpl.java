@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.parser.PdfTextExtractor;
+import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.pao.model.Journal;
 import com.jss.osiris.modules.pao.repository.JournalRepository;
@@ -52,13 +53,13 @@ public class JournalServiceImpl implements JournalService {
             @CacheEvict(value = "journal", key = "#journal.id")
     })
     @Transactional(rollbackFor = Exception.class)
-    public Journal addOrUpdateJournal(Journal journal) throws OsirisException {
+    public Journal addOrUpdateJournal(Journal journal) throws OsirisException, OsirisClientMessageException {
         journalRepository.save(journal);
         findAnnouncementInJournal(journal);
         return journal;
     }
 
-    private void findAnnouncementInJournal(Journal journal) throws OsirisException {
+    private void findAnnouncementInJournal(Journal journal) throws OsirisException, OsirisClientMessageException {
 
         List<Announcement> announcements = announcementService.getAnnouncementWaitingForPublicationProof();
 

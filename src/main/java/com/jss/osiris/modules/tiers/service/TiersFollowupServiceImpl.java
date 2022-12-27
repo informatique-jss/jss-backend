@@ -44,6 +44,8 @@ public class TiersFollowupServiceImpl implements TiersFollowupService {
             return tiersFollowupRepository.findByTiersId(tiersFollowup.getTiers().getId());
         if (tiersFollowup.getResponsable() != null)
             return tiersFollowupRepository.findByResponsableId(tiersFollowup.getResponsable().getId());
+        if (tiersFollowup.getInvoice() != null)
+            return tiersFollowupRepository.findByInvoiceId(tiersFollowup.getInvoice().getId());
         return tiersFollowupRepository.findByConfrereId(tiersFollowup.getConfrere().getId());
     }
 }

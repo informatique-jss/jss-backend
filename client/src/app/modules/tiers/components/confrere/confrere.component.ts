@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatAccordion } from '@angular/material/expansion';
 import { ActivatedRoute } from '@angular/router';
+import { InvoiceSearch } from 'src/app/modules/invoicing/model/InvoiceSearch';
 import { City } from 'src/app/modules/miscellaneous/model/City';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { CityService } from 'src/app/modules/miscellaneous/services/city.service';
@@ -41,6 +42,7 @@ export class ConfrereComponent implements OnInit {
 
   orderingSearch: OrderingSearch = {} as OrderingSearch;
   quotationSearch: QuotationSearch = {} as QuotationSearch;
+  invoiceSearch: InvoiceSearch = {} as InvoiceSearch;
   responsableAccountSearch: ITiers | undefined;
 
   ngOnInit(): void {
@@ -80,6 +82,7 @@ export class ConfrereComponent implements OnInit {
 
     this.orderingSearch.customerOrders = [];
     this.quotationSearch.customerOrders = [];
+    this.invoiceSearch.customerOrders = [];
     this.responsableAccountSearch = undefined;
 
     if (this.selectedConfrere) {
@@ -87,6 +90,8 @@ export class ConfrereComponent implements OnInit {
         this.orderingSearch.customerOrders = [this.selectedConfrere!], 0);
       setTimeout(() =>
         this.quotationSearch.customerOrders = [this.selectedConfrere!], 0);
+      setTimeout(() =>
+        this.invoiceSearch.customerOrders = [this.selectedConfrere!], 0);
       setTimeout(() =>
         this.responsableAccountSearch = this.selectedConfrere, 0);
     }

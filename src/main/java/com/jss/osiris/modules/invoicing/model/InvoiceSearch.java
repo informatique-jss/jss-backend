@@ -3,12 +3,16 @@ package com.jss.osiris.modules.invoicing.model;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.jss.osiris.modules.tiers.model.Tiers;
+
 public class InvoiceSearch {
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private Float minAmount;
     private Float maxAmount;
     private List<InvoiceStatus> invoiceStatus;
+    private Boolean showToRecover;
+    private List<Tiers> customerOrders;
 
     public LocalDateTime getStartDate() {
         return startDate;
@@ -48,6 +52,22 @@ public class InvoiceSearch {
 
     public void setMaxAmount(Float maxAmount) {
         this.maxAmount = maxAmount;
+    }
+
+    public Boolean getShowToRecover() {
+        return showToRecover;
+    }
+
+    public void setShowToRecover(Boolean showToRecover) {
+        this.showToRecover = showToRecover;
+    }
+
+    public List<Tiers> getCustomerOrders() {
+        return customerOrders;
+    }
+
+    public void setCustomerOrders(List<Tiers> customerOrders) {
+        this.customerOrders = customerOrders;
     }
 
 }

@@ -77,7 +77,7 @@ public class Confrere implements ITiers {
 	@JoinColumn(name = "id_journal_type")
 	private JournalType journalType;
 
-	@Column(length = 60)
+	@Column(length = 200)
 	private String lastShipmentForPublication;
 
 	@Column(length = 20)

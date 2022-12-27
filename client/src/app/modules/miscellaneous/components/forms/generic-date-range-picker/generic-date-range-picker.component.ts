@@ -89,6 +89,8 @@ export class GenericDateRangePickerComponent implements OnInit {
       this.form.get(this.propertyNameStart)?.setValue(this.modelStart);
     }
     if (changes.modelEnd && this.form != undefined) {
+      console.log(changes);
+      console.log(this.modelEnd);
       this.form.get(this.propertyNameEnd)?.setValue(this.modelEnd);
     }
     if (changes.isDisabled) {
@@ -119,7 +121,7 @@ export class GenericDateRangePickerComponent implements OnInit {
         (newValue) => {
           this.modelEnd = newValue;
           if (newValue)
-            this.modelEnd = new Date(new Date(newValue.setHours(22)).setMinutes(59));
+            this.modelEnd = new Date(new Date(newValue.setHours(20)).setMinutes(59));
           this.modelEndChange.emit(this.modelEnd);
         }
       )
@@ -131,8 +133,6 @@ export class GenericDateRangePickerComponent implements OnInit {
           this.modelStartChange.emit(this.modelStart);
         }
       )
-      this.form.get(this.propertyNameEnd)?.setValue(this.modelEnd);
-      this.form.get(this.propertyNameStart)?.setValue(this.modelStart);
       this.form.markAllAsTouched();
     }
   }

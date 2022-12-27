@@ -23,7 +23,7 @@ public interface PaymentService {
 
         public List<PaymentSearchResult> searchPayments(PaymentSearch payemntSearch);
 
-        public void payementGrab() throws OsirisException;
+        public void payementGrab() throws OsirisException, OsirisClientMessageException;
 
         public List<Payment> getAdvisedPaymentForInvoice(Invoice invoice);
 
@@ -39,6 +39,6 @@ public interface PaymentService {
 
         public void unsetExternallyAssociated(Payment payment);
 
-        public List<Attachment> uploadOfxFile(InputStream file) throws OsirisException;
+        public List<Attachment> uploadOfxFile(InputStream file) throws OsirisException, OsirisClientMessageException;
 
 }

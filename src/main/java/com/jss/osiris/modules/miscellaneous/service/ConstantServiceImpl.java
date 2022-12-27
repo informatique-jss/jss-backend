@@ -645,6 +645,11 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public BillingClosureRecipientType getBillingClosureRecipientTypeOther() throws OsirisException {
+        return getConstants().getBillingClosureRecipientTypeOther();
+    }
+
+    @Override
     public BillingClosureRecipientType getBillingClosureRecipientTypeClient() throws OsirisException {
         return getConstants().getBillingClosureRecipientTypeClient();
     }

@@ -175,8 +175,8 @@ export class QuotationManagementComponent implements OnInit, AfterContentChecked
     if (!this.isStatusOpen && instanceOfCustomerOrder(this.quotation) && (!this.invoiceLabelResult?.billingLabel || !this.invoiceLabelResult.billingLabelAddress || !this.invoiceLabelResult.billingLabelCity
       || !this.invoiceLabelResult.billingLabelCountry || !this.invoiceLabelResult.billingLabelPostalCode))
       return false;
-    if (!this.billingMailComputeResult || !this.billingMailComputeResult.recipientsMailTo || this.billingMailComputeResult.recipientsMailTo.length == 0
-      || !this.digitalMailComputeResult || !this.digitalMailComputeResult.recipientsMailTo || this.digitalMailComputeResult.recipientsMailTo.length == 0)
+    if (!this.isStatusOpen && (!this.billingMailComputeResult || !this.billingMailComputeResult.recipientsMailTo || this.billingMailComputeResult.recipientsMailTo.length == 0
+      || !this.digitalMailComputeResult || !this.digitalMailComputeResult.recipientsMailTo || this.digitalMailComputeResult.recipientsMailTo.length == 0))
       return false;
     return this.quotationManagementForm.valid;
   }

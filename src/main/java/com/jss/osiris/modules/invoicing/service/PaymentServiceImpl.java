@@ -117,21 +117,22 @@ public class PaymentServiceImpl implements PaymentService {
         }
 
         return paymentRepository.findPayments(paymentWayId,
-                paymentSearch.getStartDate(),
-                paymentSearch.getEndDate(), paymentSearch.getMinAmount(), paymentSearch.getMaxAmount(),
+                paymentSearch.getStartDate().withHour(0).withMinute(0),
+                paymentSearch.getEndDate().withHour(23).withMinute(59), paymentSearch.getMinAmount(),
+                paymentSearch.getMaxAmount(),
                 paymentSearch.getLabel(), paymentSearch.isHideAssociatedPayments());
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void payementGrab()
-            throws OsirisException {
+            throws OsirisException, OsirisClientMessageException {
         automatchPaymentsInvoicesAndGeneratePaymentAccountingRecords();
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public List<Attachment> uploadOfxFile(InputStream file) throws OsirisException {
+    public List<Attachment> uploadOfxFile(InputStream file) throws OsirisException, OsirisClientMessageException {
         OFXStatement operationList = ofxParser.parseOfx(file);
 
         if (operationList != null && operationList.getAccountStatements() != null
@@ -160,7 +161,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     private void automatchPaymentsInvoicesAndGeneratePaymentAccountingRecords()
-            throws OsirisException {
+            throws OsirisException, OsirisClientMessageException {
         List<Payment> payments = paymentRepository.findNotAssociatedPayments();
 
         for (Payment payment : payments) {
@@ -316,7 +317,7 @@ public class PaymentServiceImpl implements PaymentService {
             List<CustomerOrder> correspondingCustomerOrder,
             List<Invoice> correspondingInvoice,
             boolean generateWaitingAccountAccountingRecords, List<Float> byPassAmount, float remainingMoney)
-            throws OsirisException {
+            throws OsirisException, OsirisClientMessageException {
         Float remainingToPay = 0f;
         int amountIndex = 0;
         if (correspondingInvoice != null)

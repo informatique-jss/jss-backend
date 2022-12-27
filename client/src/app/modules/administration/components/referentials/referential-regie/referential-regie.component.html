@@ -48,6 +48,10 @@
               <generic-input [(model)]="selectedEntity.iban" label="IBAN" [form]="entityForm" propertyName="iban"
                 [isMandatory]="true" [isDisabled]="!editMode" [maxLength]="40"></generic-input>
             </td>
+            <td>
+              <generic-input [(model)]="selectedEntity.bic" label="BIC" [form]="entityForm" propertyName="bic"
+                [isMandatory]="true" [isDisabled]="!editMode" [maxLength]="40"></generic-input>
+            </td>
           </tr>
         </table>
         <table class="full-width">

@@ -42,6 +42,10 @@ public interface InvoiceRepository extends CrudRepository<Invoice, Integer> {
                         + "  i.created_date as createdDate,"
                         + "  i.total_price as totalPrice,"
                         + "  c.description as customerOrderDescription,"
+                        + "  i.first_reminder_date_time as firstReminderDateTime,"
+                        + "  i.second_reminder_date_time as secondReminderDateTime,"
+                        + "  i.third_reminder_date_time as thirdReminderDateTime,"
+                        + "  i.due_date as dueDate,"
                         + "  STRING_AGG( cast(p.id as text),', ' order by 1) as paymentId"
                         + " from invoice i"
                         + " join invoice_status ist on ist.id = i.id_invoice_status "
@@ -55,14 +59,20 @@ public interface InvoiceRepository extends CrudRepository<Invoice, Integer> {
                         + " left join provider pro on pro.id = i.id_provider"
                         + " left join payment p on p.id_invoice = i.id"
                         + " where i.created_date>=:startDate and i.created_date<=:endDate "
-                        + " and  ( COALESCE(:invoiceStatus) is null or ist.id in (:invoiceStatus)) "
+                        + " and  ( COALESCE(:invoiceStatus)=0 or ist.id in (:invoiceStatus)) "
+                        + " and  ( COALESCE(:customerOrderId) =0 or t.id in (:customerOrderId) or r1.id in (:customerOrderId) or co.id in (:customerOrderId) ) "
                         + " and (:minAmount is null or total_price>=CAST(CAST(:minAmount as text) as real) ) "
                         + " and (:maxAmount is null or total_price<=CAST(CAST(:maxAmount as text) as real) )"
+                        + " and (:showToRecover is false or (  i.first_reminder_date_time is not null and  i.second_reminder_date_time  is not null and  i.third_reminder_date_time  is not null and i.id_invoice_status<>:invoicePayedStatusId ) )"
                         + " group by i.id, ist.label,ist.id, pro.label,c.id, co.id, co.label, r1.id, r1.firstname,t.id, r1.lastname,"
-                        + " t.denomination, t.firstname, t.lastname, r1.firstname, r1.lastname, i.billing_label, i.created_date, i.total_price, c.description")
+                        + " t.denomination, t.firstname, t.lastname, r1.firstname, r1.lastname, i.billing_label, i.created_date, i.total_price,"
+                        + " i.first_reminder_date_time , i.second_reminder_date_time,i.third_reminder_date_time, i.due_date ,c.description")
         List<InvoiceSearchResult> findInvoice(@Param("invoiceStatus") List<Integer> invoiceStatus,
                         @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
-                        @Param("minAmount") Float minAmount, @Param("maxAmount") Float maxAmount);
+                        @Param("minAmount") Float minAmount, @Param("maxAmount") Float maxAmount,
+                        @Param("showToRecover") Boolean showToRecover,
+                        @Param("invoicePayedStatusId") Integer invoicePayedStatusId,
+                        @Param("customerOrderId") List<Integer> customerOrderId);
 
         @Query(value = "select n from Invoice n where invoiceStatus=:invoiceStatus and thirdReminderDateTime is null ")
         List<Invoice> findInvoiceForReminder(@Param("invoiceStatus") InvoiceStatus invoiceStatus);

@@ -47,9 +47,9 @@ export class QuotationListComponent implements OnInit {
         this.quotationSearch = {} as QuotationSearch;
         this.quotationSearch.salesEmployee = this.bookmark.salesEmployee;
         this.quotationSearch.quotationStatus = this.bookmark.quotationStatus;
+        this.putDefaultPeriod();
       }
 
-      this.putDefaultPeriod();
       this.allEmployees = response;
       if (!this.isForDashboard && !this.isForTiersIntegration)
         this.appService.changeHeaderTitle("Devis");
@@ -149,15 +149,16 @@ export class QuotationListComponent implements OnInit {
   putDefaultPeriod() {
     this.quotationSearch.startDate = new Date();
     this.quotationSearch.endDate = new Date();
-    this.quotationSearch.startDate.setDate(this.quotationSearch.endDate.getDate() - 30);
   }
 
   searchOrders() {
-    if (this.quotationSearchForm.valid && this.quotationSearch.startDate && this.quotationSearch.endDate) {
+    if (this.quotationSearchForm.valid) {
       if (!this.isForDashboard)
         this.userPreferenceService.setUserSearchBookmark(this.quotationSearch, "quotations");
-      this.quotationSearch.startDate = new Date(toIsoString(this.quotationSearch.startDate));
-      this.quotationSearch.endDate = new Date(toIsoString(this.quotationSearch.endDate));
+      if (this.quotationSearch.startDate)
+        this.quotationSearch.startDate = new Date(toIsoString(this.quotationSearch.startDate));
+      if (this.quotationSearch.endDate)
+        this.quotationSearch.endDate = new Date(toIsoString(this.quotationSearch.endDate));
       this.quotationSearchResultService.getQuotations(this.quotationSearch).subscribe(response => {
         this.quotations = response;
       })

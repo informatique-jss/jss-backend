@@ -24,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.GlobalExceptionHandler;
 import com.jss.osiris.libs.ValidationHelper;
+import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisLog;
 import com.jss.osiris.libs.exception.OsirisValidationException;
@@ -449,6 +450,7 @@ public class MiscellaneousController {
         validationHelper.validateString(regie.getCedexComplement(), false, 20, "CedexComplement");
         validationHelper.validateString(regie.getAddress(), true, 100, "Address");
         validationHelper.validateString(regie.getIban(), true, 40, "Iban");
+        validationHelper.validateString(regie.getBic(), true, 40, "BIC");
 
         return new ResponseEntity<Regie>(regieService.addOrUpdateRegie(regie), HttpStatus.OK);
     }
@@ -921,7 +923,7 @@ public class MiscellaneousController {
             @RequestParam Integer idEntity, @RequestParam String entityType,
             @RequestParam Integer idAttachmentType,
             @RequestParam String filename, @RequestParam Boolean replaceExistingAttachementType)
-            throws OsirisValidationException, OsirisException {
+            throws OsirisValidationException, OsirisException, OsirisClientMessageException {
         if (idAttachmentType == null)
             throw new OsirisValidationException("idAttachmentType");
 

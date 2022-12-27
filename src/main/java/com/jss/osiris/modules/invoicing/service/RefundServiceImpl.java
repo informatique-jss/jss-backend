@@ -118,8 +118,9 @@ public class RefundServiceImpl implements RefundService {
     @Override
     public List<RefundSearchResult> searchRefunds(RefundSearch refundSearch) {
         return refundRepository.findRefunds(
-                refundSearch.getStartDate(),
-                refundSearch.getEndDate(), refundSearch.getMinAmount(), refundSearch.getMaxAmount(),
+                refundSearch.getStartDate().withHour(0).withMinute(0),
+                refundSearch.getEndDate().withHour(23).withMinute(59), refundSearch.getMinAmount(),
+                refundSearch.getMaxAmount(),
                 refundSearch.getLabel(), refundSearch.isHideExportedRefunds(), refundSearch.isHideMatchedRefunds());
     }
 
@@ -141,8 +142,14 @@ public class RefundServiceImpl implements RefundService {
             Document refundDocument = documentService.getRefundDocument(tiersRefund.getDocuments());
             if (refundDocument != null) {
                 refund.setRefundType(refundDocument.getRefundType());
-                refund.setRefundIBAN(refundDocument.getRefundIBAN());
-                refund.setRefundBic(refundDocument.getRefundBic());
+                if (refundDocument.getRegie() != null && refundDocument.getRegie().getIban() != null
+                        && !refundDocument.getRegie().getIban().equals("")) {
+                    refund.setRefundIBAN(refundDocument.getRegie().getIban());
+                    refund.setRefundBic(refundDocument.getRegie().getBic());
+                } else {
+                    refund.setRefundIBAN(refundDocument.getRefundIBAN());
+                    refund.setRefundBic(refundDocument.getRefundBic());
+                }
             }
         }
 

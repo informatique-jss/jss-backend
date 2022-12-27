@@ -874,6 +874,13 @@
           </tr>
           <tr>
             <td>
+              <radio-group-billing-closure-recipient [(model)]="constant.billingClosureRecipientTypeOther"
+                [form]="constantForm" propertyName="billingClosureRecipientTypeOther" [isDisabled]="!editMode"
+                label="Destinataire de relevé comptable - Autres"></radio-group-billing-closure-recipient>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <radio-group-billing-closure-recipient [(model)]="constant.billingClosureRecipientTypeClient"
                 [form]="constantForm" propertyName="billingClosureRecipientTypeClient" [isDisabled]="!editMode"
                 label="Destinataire de relevé comptable - Client"></radio-group-billing-closure-recipient>

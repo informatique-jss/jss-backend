@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.invoicing.model;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public interface InvoiceSearchResult {
@@ -32,7 +33,15 @@ public interface InvoiceSearchResult {
 
     public Float getTotalPrice();
 
-    public String getCstomerOrderDescription();
+    public String getCustomerOrderDescription();
+
+    public LocalDateTime getfirstReminderDateTime();
+
+    public LocalDateTime getSecondReminderDateTime();
+
+    public LocalDateTime getThirdReminderDateTime();
+
+    public LocalDate getDueDate();
 
     public String getPaymentId();
 }

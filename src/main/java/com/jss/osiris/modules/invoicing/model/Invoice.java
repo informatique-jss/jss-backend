@@ -34,6 +34,7 @@ import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.tiers.model.BillingLabelType;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
+import com.jss.osiris.modules.tiers.model.TiersFollowup;
 
 @Entity
 @Table(indexes = { @Index(name = "idx_invoice_status", columnList = "id_invoice_status") })
@@ -138,6 +139,10 @@ public class Invoice implements IId, IAttachment {
 	private LocalDate manualAccountingDocumentDate;
 	@Column(length = 150)
 	private String manualAccountingDocumentNumber;
+
+	@OneToMany(mappedBy = "invoice")
+	@JsonIgnoreProperties(value = { "invoice" }, allowSetters = true)
+	private List<TiersFollowup> tiersFollowups;
 
 	public Integer getId() {
 		return id;
@@ -393,6 +398,14 @@ public class Invoice implements IId, IAttachment {
 
 	public void setIsInvoiceFromProvider(Boolean isInvoiceFromProvider) {
 		this.isInvoiceFromProvider = isInvoiceFromProvider;
+	}
+
+	public List<TiersFollowup> getTiersFollowups() {
+		return tiersFollowups;
+	}
+
+	public void setTiersFollowups(List<TiersFollowup> tiersFollowups) {
+		this.tiersFollowups = tiersFollowups;
 	}
 
 }

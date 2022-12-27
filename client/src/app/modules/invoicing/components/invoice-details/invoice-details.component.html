@@ -41,6 +41,11 @@
               <p>{{getCustomerOrder(invoice).postalCode}}
                 {{getCustomerOrder(invoice).city?getCustomerOrder(invoice).city.label:""}}{{getCustomerOrder(invoice).country?getCustomerOrder(invoice).country.label:""}}
               </p>
+              <p>Compte client :
+                {{getCustomerOrder(invoice).accountingAccountCustomer.principalAccountingAccount.code+"-"+getCustomerOrder(invoice).accountingAccountCustomer.accountingAccountSubNumber}}
+                <br />Compte fournisseur :
+                {{getCustomerOrder(invoice).accountingAccountProvider.principalAccountingAccount.code+"-"+getCustomerOrder(invoice).accountingAccountProvider.accountingAccountSubNumber}}
+              </p>
             </td>
           </tr>
         </table>
@@ -55,6 +60,9 @@
                   (auxclick)="openRoute($event,'/referential/provider/'+invoice.provider.id)">visibility
                 </mat-icon></p>
               <p>IBAN : {{invoice.provider.iban}}</p>
+              <p>Compte fournissuer :
+                {{invoice.provider.accountingAccountProvider.principalAccountingAccount.code+"-"+invoice.provider.accountingAccountProvider.accountingAccountSubNumber}}
+              </p>
             </td>
           </tr>
         </table>
@@ -230,6 +238,27 @@
       *ngIf="getAmountRemaining(invoice)>0 && invoice.invoiceStatus.id==invoiceStatusSend.id">
       <invoice-payment (stateChanged)=" onStateChange()" [invoice]="invoice">
       </invoice-payment>
+    </mat-tab>
+    <mat-tab label="Suivi" *ngIf="invoice.id">
+      <div>
+        <ul>
+          <li [ngClass]="{'color-warn':beforeToday(invoice.dueDate)}">Echéance de paiement : {{invoice.dueDate |
+            date:'dd/MM/yyyy'}}</li>
+          <li *ngIf="beforeToday(invoice.dueDate)">Relance n°1 : {{invoice.firstReminderDateTime |date:'dd/MM/yyyy'}}
+            <chips-status class="chips-reminder" [status]="beforeToday(invoice.firstReminderDateTime)?'SENT':'WAITING'"
+              [value]="beforeToday(invoice.firstReminderDateTime)?'Envoyée':'En attente'"></chips-status>
+          </li>
+          <li *ngIf="beforeToday(invoice.dueDate)">Relance n°2 : {{invoice.secondReminderDateTime|date:'dd/MM/yyyy'}}
+            <chips-status class="chips-reminder" [status]="beforeToday(invoice.secondReminderDateTime)?'SENT':'WAITING'"
+              [value]="beforeToday(invoice.secondReminderDateTime)?'Envoyée':'En attente'"></chips-status>
+          </li>
+          <li *ngIf="beforeToday(invoice.dueDate)">Relance n°3 : {{invoice.thirdReminderDateTime|date:'dd/MM/yyyy'}}
+            <chips-status class="chips-reminder" [status]="beforeToday(invoice.thirdReminderDateTime)?'SENT':'WAITING'"
+              [value]="beforeToday(invoice.thirdReminderDateTime)?'Envoyée':'En attente'"></chips-status>
+          </li>
+        </ul>
+      </div>
+      <tiers-followup [invoice]="invoice" [editMode]="true"></tiers-followup>
     </mat-tab>
     <mat-tab label="Historique" *ngIf="invoice.id">
       <history [entity]="invoice" [entityType]="INVOICE_ENTITY_TYPE"></history>

@@ -1,3 +1,4 @@
+import { ITiers } from "../../tiers/model/ITiers";
 import { InvoiceStatus } from "./InvoiceStatus";
 
 export interface InvoiceSearch {
@@ -6,4 +7,6 @@ export interface InvoiceSearch {
   minAmount: number;
   maxAmount: number;
   invoiceStatus: InvoiceStatus[];
+  showToRecover: boolean;
+  customerOrders: ITiers[];
 }

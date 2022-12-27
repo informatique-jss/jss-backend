@@ -1,10 +1,10 @@
 <div class="mat-elevation-z2 form-div">
   <div class=" full-width">
-    <table class="full-width table-fixed-layout" *ngIf="!isForDashboard && invoiceSearch">
+    <table class="full-width table-fixed-layout" *ngIf="!isForDashboard && !isForTiersIntegration && invoiceSearch">
       <tr>
         <td>
           <select-invoice-status [(model)]=" invoiceSearch.invoiceStatus" label="Statut de la facture"
-            [form]="invoiceForm" propertyName="invoiceStatus" [isMandatory]="true"
+            [form]="invoiceForm" propertyName="invoiceStatus" [isMandatory]="false"
             [defaultStatusSelected]="defaultStatusFilter">
           </select-invoice-status>
         </td>
@@ -20,6 +20,10 @@
           <generic-date-range-picker [(modelStart)]="invoiceSearch.startDate" [(modelEnd)]="invoiceSearch.endDate"
             label="Plage de recherche" [form]="invoiceForm" propertyNameStart="startDate" propertyNameEnd="endDate">
           </generic-date-range-picker>
+        </td>
+        <td>
+          <generic-toggle [(model)]="invoiceSearch.showToRecover" label="A recouvrer ?" [form]="invoiceForm"
+            propertyName="showToRecover"></generic-toggle>
         </td>
         <td class="fab-td-button">
           <button mat-mini-fab color="warn" matTooltip="Rechercher" (click)="searchInvoices()" class="add-button">

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.mail.model.MailComputeResult;
 import com.jss.osiris.modules.invoicing.model.InvoiceLabelResult;
@@ -34,52 +35,57 @@ public class MailComputeHelper {
     ConstantService constantService;
 
     public MailComputeResult computeMailForGenericDigitalDocument(IQuotation quotation)
-            throws OsirisException {
+            throws OsirisException, OsirisClientMessageException {
         return computeMailForDocument(quotation, constantService.getDocumentTypeDigital(), true);
     }
 
-    public MailComputeResult computeMailForQuotationMail(IQuotation quotation) throws OsirisException {
+    public MailComputeResult computeMailForQuotationMail(IQuotation quotation)
+            throws OsirisException, OsirisClientMessageException {
         return computeMailForDocument(quotation, constantService.getDocumentTypeDigital(), false);
     }
 
-    public MailComputeResult computeMailForQuotationCreationConfirmation(IQuotation quotation) throws OsirisException {
+    public MailComputeResult computeMailForQuotationCreationConfirmation(IQuotation quotation)
+            throws OsirisException, OsirisClientMessageException {
         return computeMailForDocument(quotation, constantService.getDocumentTypeDigital(), false);
     }
 
     public MailComputeResult computeMailForCustomerOrderCreationConfirmation(IQuotation quotation)
-            throws OsirisException {
+            throws OsirisException, OsirisClientMessageException {
         return computeMailForDocument(quotation, constantService.getDocumentTypeDigital(), false);
     }
 
-    public MailComputeResult computeMailForDepositConfirmation(IQuotation quotation) throws OsirisException {
+    public MailComputeResult computeMailForDepositConfirmation(IQuotation quotation)
+            throws OsirisException, OsirisClientMessageException {
         return computeMailForDocument(quotation, constantService.getDocumentTypeDigital(), false);
     }
 
     public MailComputeResult computeMailForCustomerOrderFinalizationAndInvoice(IQuotation quotation)
-            throws OsirisException {
+            throws OsirisException, OsirisClientMessageException {
         return computeMailForDocument(quotation, constantService.getDocumentTypeBilling(), true);
     }
 
     public MailComputeResult computeMailForPublicationReceipt(IQuotation quotation)
-            throws OsirisException {
+            throws OsirisException, OsirisClientMessageException {
         return computeMailForDocument(quotation, constantService.getDocumentTypeDigital(), true);
     }
 
     public MailComputeResult computeMailForReadingProof(IQuotation quotation)
-            throws OsirisException {
+            throws OsirisException, OsirisClientMessageException {
         return computeMailForDocument(quotation, constantService.getDocumentTypeDigital(), true);
     }
 
-    public MailComputeResult computeMailForPublicationFlag(IQuotation quotation) throws OsirisException {
+    public MailComputeResult computeMailForPublicationFlag(IQuotation quotation)
+            throws OsirisException, OsirisClientMessageException {
         return computeMailForDocument(quotation, constantService.getDocumentTypeDigital(), false);
     }
 
-    public MailComputeResult computeMailForBillingClosure(ITiers tiers) throws OsirisException {
+    public MailComputeResult computeMailForBillingClosure(ITiers tiers)
+            throws OsirisException, OsirisClientMessageException {
         return computeMailForITiers(tiers);
     }
 
     private MailComputeResult computeMailForDocument(IQuotation quotation, DocumentType documentType, boolean useRegie)
-            throws OsirisException {
+            throws OsirisException, OsirisClientMessageException {
 
         if (quotation == null)
             throw new OsirisException(null, "Quotation not provided");
@@ -118,7 +124,7 @@ public class MailComputeHelper {
                             .addAll(quotation.getAssoAffaireOrders().get(0).getAffaire().getMails());
                     mailComputeResult.setMailToAffaireOrigin("mails indiqués sur l'affaire");
                 } else
-                    throw new OsirisException(null, "No mail found for affaire");
+                    throw new OsirisClientMessageException("Aucun mail trouvé pour l'affaire");
 
                 if (quotationDocument.getMailsCCResponsableAffaire() != null
                         && quotationDocument.getMailsCCResponsableAffaire().size() > 0) {
@@ -159,7 +165,7 @@ public class MailComputeHelper {
                     mailComputeResult.getRecipientsMailTo().addAll(customerOrder.getMails());
                     mailComputeResult.setMailToClientOrigin("mails du tiers/confrère");
                 } else
-                    throw new OsirisException(null, "No mail found for client");
+                    throw new OsirisClientMessageException("Aucun mail trouvé pour le client");
 
                 if (quotationDocument.getMailsCCResponsableClient() != null
                         && quotationDocument.getMailsCCResponsableClient().size() > 0) {
@@ -175,7 +181,7 @@ public class MailComputeHelper {
         return mailComputeResult;
     }
 
-    private MailComputeResult computeMailForITiers(ITiers tiers) throws OsirisException {
+    private MailComputeResult computeMailForITiers(ITiers tiers) throws OsirisException, OsirisClientMessageException {
 
         if (tiers == null)
             throw new OsirisException(null, "ITiers not provided");
@@ -187,7 +193,13 @@ public class MailComputeHelper {
         mailComputeResult.setIsSendToClient(true);
         mailComputeResult.setIsSendToAffaire(false);
 
-        if (tiers instanceof Responsable
+        Document billingClosureDocument = documentService.getDocumentByDocumentType(tiers.getDocuments(),
+                constantService.getDocumentTypeBillingClosure());
+        if (billingClosureDocument != null && billingClosureDocument.getMailsClient() != null
+                && billingClosureDocument.getMailsClient().size() > 0) {
+            mailComputeResult.getRecipientsMailTo().addAll(billingClosureDocument.getMailsClient());
+            mailComputeResult.setMailToClientOrigin("mails Autres du paramétrage du relevé de compte");
+        } else if (tiers instanceof Responsable
                 && ((Responsable) tiers).getMails() != null
                 && ((Responsable) tiers).getMails().size() > 0) {
             mailComputeResult.getRecipientsMailTo().addAll(((Responsable) tiers).getMails());
@@ -208,12 +220,13 @@ public class MailComputeHelper {
             mailComputeResult.getRecipientsMailTo().addAll(tiers.getMails());
             mailComputeResult.setMailToClientOrigin("mails du tiers/confrère");
         } else
-            throw new OsirisException(null, "No mail found for client");
+            throw new OsirisClientMessageException("Aucun mail trouvé pour le client");
 
         return mailComputeResult;
     }
 
-    public InvoiceLabelResult computePaperLabelResult(CustomerOrder customerOrder) throws OsirisException {
+    public InvoiceLabelResult computePaperLabelResult(CustomerOrder customerOrder)
+            throws OsirisException, OsirisClientMessageException {
         Document paperDocument = documentService.getDocumentByDocumentType(customerOrder.getDocuments(),
                 constantService.getDocumentTypePaper());
 
@@ -244,7 +257,7 @@ public class MailComputeHelper {
                                 + customerOrder.getAssoAffaireOrders().get(0).getAffaire().getCedexComplement());
                 invoiceLabelResult.setLabelOrigin("adresse de l'affaire");
             } else
-                throw new OsirisException(null, "No mail found for affaire");
+                throw new OsirisClientMessageException("Aucune adresse postale trouvée pour l'affaire");
         }
 
         if (paperDocument.getIsRecipientClient()
@@ -280,6 +293,18 @@ public class MailComputeHelper {
                                         ? ((Responsable) customer).getTiers().getCedexComplement()
                                         : ""));
                 invoiceLabelResult.setLabelOrigin("l'adresse du tiers");
+            } else if (customer instanceof Confrere && ((Confrere) customer).getRegie() != null
+                    && ((Confrere) customer).getRegie().getAddress() != null
+                    && ((Confrere) customer).getRegie().getCity() != null) {
+                invoiceLabelResult.setBillingLabel(
+                        ((Confrere) customer).getRegie().getLabel());
+                invoiceLabelResult.setBillingLabelAddress(
+                        ((Confrere) customer).getRegie().getPostalCode() + " "
+                                + ((Confrere) customer).getRegie().getCity().getLabel()
+                                + " " + (((Confrere) customer).getRegie().getCedexComplement() != null
+                                        ? ((Confrere) customer).getRegie().getCedexComplement()
+                                        : ""));
+                invoiceLabelResult.setLabelOrigin("l'adresse de la régie du confrère");
             } else if (customer instanceof Confrere
                     && ((Confrere) customer).getAddress() != null
                     && ((Confrere) customer).getCity() != null) {
@@ -304,7 +329,7 @@ public class MailComputeHelper {
                                         : ""));
                 invoiceLabelResult.setLabelOrigin("l'adresse du tiers");
             } else
-                throw new OsirisException(null, "No mail found for client");
+                throw new OsirisClientMessageException("Aucune adresse postale trouvée pour le client");
         }
         return invoiceLabelResult;
     }

@@ -13,8 +13,13 @@ export interface InvoiceSearchResult {
   affaireLabel: string;
   billingLabel: string;
   createdDate: Date;
+  firstReminderDateTime: Date;
+  secondReminderDateTime: Date;
+  thirdReminderDateTime: Date;
+  dueDate: Date;
   totalPrice: number;
   customerOrderDescription: string;
   paymentId: string;
 }
+
 

@@ -176,7 +176,7 @@ public class TiersController {
   public ResponseEntity<List<TiersFollowup>> addTiersFollowup(@RequestBody TiersFollowup tiersFollowup)
       throws OsirisValidationException, OsirisException {
     if (tiersFollowup.getTiers() == null && tiersFollowup.getResponsable() == null
-        && tiersFollowup.getConfrere() == null)
+        && tiersFollowup.getConfrere() == null && tiersFollowup.getInvoice() == null)
       throw new OsirisValidationException("tiers or responsable");
     validationHelper.validateReferential(tiersFollowup.getTiers(), false, "Tiers");
     validationHelper.validateReferential(tiersFollowup.getResponsable(), false, "Responsable");
@@ -358,6 +358,8 @@ public class TiersController {
       validationHelper.validateReferential(tiers.getCivility(), true, "Civility");
       validationHelper.validateString(tiers.getFirstname(), true, 40, "Firstname");
       validationHelper.validateString(tiers.getLastname(), true, 40, "Lastname");
+      if (tiers.getLastname() != null)
+        tiers.setLastname(tiers.getLastname().toUpperCase());
     } else {
       validationHelper.validateString(tiers.getDenomination(), true, 60, "Denomination");
       if (tiers.getIntercommunityVat() != null && tiers.getIntercommunityVat().length() > 20)
@@ -449,6 +451,8 @@ public class TiersController {
         validationHelper.validateReferential(responsable.getCivility(), true, "Civility");
         validationHelper.validateString(responsable.getFirstname(), true, 40, "Firstname");
         validationHelper.validateString(responsable.getLastname(), true, 40, "Lastname");
+        if (responsable.getLastname() != null)
+          responsable.setLastname(responsable.getLastname().toUpperCase());
         validationHelper.validateReferential(responsable.getTiersType(), true, "TiersType");
         validationHelper.validateReferential(responsable.getTiersCategory(), false, "TiersCategory");
         validationHelper.validateReferential(responsable.getSalesEmployee(), true, "SalesEmployee");

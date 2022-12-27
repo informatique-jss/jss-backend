@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.libs.search.service.IndexEntityService;
@@ -154,17 +155,37 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public List<InvoiceSearchResult> searchInvoices(InvoiceSearch invoiceSearch) {
-        ArrayList<Integer> statusId = null;
+    public List<InvoiceSearchResult> searchInvoices(InvoiceSearch invoiceSearch) throws OsirisException {
+        ArrayList<Integer> statusId = new ArrayList<Integer>();
         if (invoiceSearch.getInvoiceStatus() != null) {
-            statusId = new ArrayList<Integer>();
             for (InvoiceStatus invoiceStatus : invoiceSearch.getInvoiceStatus())
                 statusId.add(invoiceStatus.getId());
+        } else {
+            statusId.add(0);
+        }
+
+        if (invoiceSearch.getStartDate() == null)
+            invoiceSearch.setStartDate(LocalDateTime.now().minusYears(100));
+
+        if (invoiceSearch.getEndDate() == null)
+            invoiceSearch.setEndDate(LocalDateTime.now().plusYears(100));
+
+        if (invoiceSearch.getShowToRecover() == null)
+            invoiceSearch.setShowToRecover(false);
+
+        ArrayList<Integer> customerOrderId = new ArrayList<Integer>();
+        if (invoiceSearch.getCustomerOrders() != null && invoiceSearch.getCustomerOrders().size() > 0) {
+            for (ITiers tiers : invoiceSearch.getCustomerOrders())
+                customerOrderId.add(tiers.getId());
+        } else {
+            customerOrderId.add(0);
         }
 
         return invoiceRepository.findInvoice(statusId,
-                invoiceSearch.getStartDate(),
-                invoiceSearch.getEndDate(), invoiceSearch.getMinAmount(), invoiceSearch.getMaxAmount());
+                invoiceSearch.getStartDate().withHour(0).withMinute(0),
+                invoiceSearch.getEndDate().withHour(23).withMinute(59), invoiceSearch.getMinAmount(),
+                invoiceSearch.getMaxAmount(), invoiceSearch.getShowToRecover(),
+                constantService.getInvoiceStatusPayed().getId(), customerOrderId);
     }
 
     @Override
@@ -256,7 +277,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public void sendRemindersForInvoices() throws OsirisException {
+    public void sendRemindersForInvoices() throws OsirisException, OsirisClientMessageException {
         List<Invoice> invoices = invoiceRepository.findInvoiceForReminder(constantService.getInvoiceStatusSend());
 
         if (invoices != null && invoices.size() > 0)

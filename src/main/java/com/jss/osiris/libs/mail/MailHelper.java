@@ -43,6 +43,7 @@ import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import com.itextpdf.text.DocumentException;
 import com.jss.osiris.libs.QrCodeHelper;
+import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.mail.model.CustomerMail;
 import com.jss.osiris.libs.mail.model.CustomerMailAssoAffaireOrder;
@@ -454,11 +455,12 @@ public class MailHelper {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void generateQuotationMail(Quotation quotation) throws OsirisException {
+    public void generateQuotationMail(Quotation quotation) throws OsirisException, OsirisClientMessageException {
         sendQuotationToCustomer(quotation, true);
     }
 
-    public void sendQuotationToCustomer(Quotation quotation, boolean sendToMe) throws OsirisException {
+    public void sendQuotationToCustomer(Quotation quotation, boolean sendToMe)
+            throws OsirisException, OsirisClientMessageException {
         CustomerMail mail = new CustomerMail();
         mail.setQuotation(quotation);
         mail.setHeaderPicture("images/quotation-header.png");
@@ -564,7 +566,8 @@ public class MailHelper {
         mailService.addMailToQueue(mail);
     }
 
-    public void sendQuotationCreationConfirmationToCustomer(Quotation quotation) throws OsirisException {
+    public void sendQuotationCreationConfirmationToCustomer(Quotation quotation)
+            throws OsirisException, OsirisClientMessageException {
         CustomerMail mail = new CustomerMail();
         mail.setQuotation(quotation);
         mail.setHeaderPicture("images/quotation-header.png");
@@ -623,13 +626,13 @@ public class MailHelper {
     }
 
     public void generateCustomerOrderCreationConfirmationToCustomer(CustomerOrder customerOrder)
-            throws OsirisException {
+            throws OsirisException, OsirisClientMessageException {
         sendCustomerOrderCreationConfirmationToCustomer(customerOrder, true, false);
     }
 
     public void sendCustomerOrderCreationConfirmationToCustomer(CustomerOrder customerOrder, boolean sendToMe,
             boolean isReminder)
-            throws OsirisException {
+            throws OsirisException, OsirisClientMessageException {
 
         CustomerMail mail = new CustomerMail();
         mail.setCustomerOrder(customerOrder);
@@ -649,8 +652,9 @@ public class MailHelper {
                     .getId().equals(constantService.getPaymentTypePrelevement().getId());
         } else if (tiers instanceof Confrere) {
             isDepositMandatory = ((Confrere) tiers).getIsProvisionalPaymentMandatory();
-            isPaymentTypePrelevement = ((Confrere) tiers).getPaymentType() != null && ((Tiers) tiers).getPaymentType()
-                    .getId().equals(constantService.getPaymentTypePrelevement().getId());
+            isPaymentTypePrelevement = ((Confrere) tiers).getPaymentType() != null
+                    && ((Confrere) tiers).getPaymentType()
+                            .getId().equals(constantService.getPaymentTypePrelevement().getId());
         } else if (tiers instanceof Responsable) {
             isDepositMandatory = ((Responsable) tiers).getTiers().getIsProvisionalPaymentMandatory();
             isPaymentTypePrelevement = ((Responsable) tiers).getTiers().getPaymentType() != null
@@ -763,12 +767,12 @@ public class MailHelper {
     }
 
     public void generateCustomerOrderDepositConfirmationToCustomer(CustomerOrder customerOrder)
-            throws OsirisException {
+            throws OsirisException, OsirisClientMessageException {
         sendCustomerOrderDepositConfirmationToCustomer(customerOrder, true);
     }
 
     public void sendCustomerOrderDepositConfirmationToCustomer(CustomerOrder customerOrder, boolean sendToMe)
-            throws OsirisException {
+            throws OsirisException, OsirisClientMessageException {
 
         CustomerMail mail = new CustomerMail();
         mail.setCustomerOrder(customerOrder);
@@ -1005,13 +1009,13 @@ public class MailHelper {
     }
 
     public void generateCustomerOrderFinalisationToCustomer(CustomerOrder customerOrder)
-            throws OsirisException {
+            throws OsirisException, OsirisClientMessageException {
         sendCustomerOrderFinalisationToCustomer(customerOrder, true, false, false);
     }
 
     public void sendCustomerOrderFinalisationToCustomer(CustomerOrder customerOrder, boolean sendToMe,
             boolean isReminder, boolean isLastReminder)
-            throws OsirisException {
+            throws OsirisException, OsirisClientMessageException {
 
         CustomerMail mail = new CustomerMail();
         mail.setCustomerOrder(customerOrder);
@@ -1027,8 +1031,9 @@ public class MailHelper {
             isPaymentTypePrelevement = ((Tiers) tiers).getPaymentType() != null && ((Tiers) tiers).getPaymentType()
                     .getId().equals(constantService.getPaymentTypePrelevement().getId());
         } else if (tiers instanceof Confrere) {
-            isPaymentTypePrelevement = ((Confrere) tiers).getPaymentType() != null && ((Tiers) tiers).getPaymentType()
-                    .getId().equals(constantService.getPaymentTypePrelevement().getId());
+            isPaymentTypePrelevement = ((Confrere) tiers).getPaymentType() != null
+                    && ((Confrere) tiers).getPaymentType()
+                            .getId().equals(constantService.getPaymentTypePrelevement().getId());
         } else if (tiers instanceof Responsable) {
             isPaymentTypePrelevement = ((Responsable) tiers).getTiers().getPaymentType() != null
                     && ((Responsable) tiers).getTiers().getPaymentType()
@@ -1115,7 +1120,7 @@ public class MailHelper {
     }
 
     private List<Attachment> findAttachmentForCustomerOrder(CustomerOrder customerOrder, boolean isReminder)
-            throws OsirisException {
+            throws OsirisException, OsirisClientMessageException {
         ArrayList<Attachment> attachments = new ArrayList<Attachment>();
         boolean updateCustomerOrder = false;
 
@@ -1188,7 +1193,7 @@ public class MailHelper {
     }
 
     public void sendPublicationReceiptToCustomer(CustomerOrder customerOrder, boolean sendToMe)
-            throws OsirisException {
+            throws OsirisException, OsirisClientMessageException {
 
         CustomerMail mail = new CustomerMail();
         mail.setCustomerOrder(customerOrder);
@@ -1247,7 +1252,7 @@ public class MailHelper {
     }
 
     public void sendPublicationFlagToCustomer(CustomerOrder customerOrder, boolean sendToMe)
-            throws OsirisException {
+            throws OsirisException, OsirisClientMessageException {
 
         CustomerMail mail = new CustomerMail();
         mail.setCustomerOrder(customerOrder);
@@ -1305,7 +1310,8 @@ public class MailHelper {
         mailService.addMailToQueue(mail);
     }
 
-    public void sendProofReadingToCustomer(CustomerOrder customerOrder, boolean sendToMe) throws OsirisException {
+    public void sendProofReadingToCustomer(CustomerOrder customerOrder, boolean sendToMe)
+            throws OsirisException, OsirisClientMessageException {
 
         CustomerMail mail = new CustomerMail();
         mail.setCustomerOrder(customerOrder);
@@ -1370,7 +1376,7 @@ public class MailHelper {
     }
 
     public void sendBillingClosureToCustomer(List<Attachment> attachments, ITiers tiers, boolean sendToMe)
-            throws OsirisException {
+            throws OsirisException, OsirisClientMessageException {
 
         CustomerMail mail = new CustomerMail();
         if (tiers instanceof Tiers)

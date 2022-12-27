@@ -55,6 +55,10 @@ export class InvoiceDetailsComponent implements OnInit {
     }
   }
 
+  beforeToday(date: Date): boolean {
+    return (new Date(date)).getTime() < (new Date()).getTime();
+  }
+
   invoiceDetailForm = this.formBuilder.group({
   });
 

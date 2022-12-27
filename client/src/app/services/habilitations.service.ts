@@ -52,7 +52,7 @@ export class HabilitationsService {
   }
 
   canViewJournalModule() {
-    return true;
+    return false;
   }
 
   canViewLogModule() {

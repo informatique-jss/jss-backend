@@ -366,6 +366,8 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
   }
 
   changeStatus(targetStatus: QuotationStatus) {
+    let currentStatusOpen = this.isStatusOpen;
+    this.isStatusOpen = false;
     this.editMode = true;
     setTimeout(() => {
       if (this.getFormsStatus()) {
@@ -390,6 +392,8 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
               this.appService.openRoute(null, '/order/' + this.quotation.id, null);
             })
         }
+      } else {
+        this.isStatusOpen = currentStatusOpen;
       }
       this.editMode = false;
     }, 100);

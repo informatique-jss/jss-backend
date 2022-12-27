@@ -116,7 +116,7 @@
                   </td>
                   <td>
                     <generic-toggle [(model)]="selectedResponsable.canViewAllTiersInWeb"
-                      label="Peut voir l'ensemble des responsables du tiers sur le web ?" [form]="principalForm"
+                      label="JSS.fr : peut voir l'ensemble du tiers ? " [form]="principalForm"
                       propertyName="canViewAllTiersInWeb"></generic-toggle>
                   </td>
                 </tr>
@@ -164,12 +164,12 @@
               <table class="full-width">
                 <tr>
                   <td>
-                    <generic-input [(model)]="selectedResponsable.rffFormaliteRate" label="Taux RCA Formalité"
-                      [form]="principalForm" propertyName="rcaFormaliteRate" type="number"></generic-input>
+                    <generic-input [(model)]="selectedResponsable.rffFormaliteRate" label="Taux RFF Formalité"
+                      [form]="principalForm" propertyName="rffFormaliteRate" type="number"></generic-input>
                   </td>
                   <td>
-                    <generic-input [(model)]="selectedResponsable.rffInsertionRate" label="Taux RCA Insertion"
-                      [form]="principalForm" propertyName="rcaInsertionRate" type="number"></generic-input>
+                    <generic-input [(model)]="selectedResponsable.rffInsertionRate" label="Taux RFF Insertion"
+                      [form]="principalForm" propertyName="rffInsertionRate" type="number"></generic-input>
                   </td>
                 </tr>
               </table>
@@ -219,6 +219,10 @@
             *ngIf="this.orderingSearch.customerOrders && this.orderingSearch.customerOrders.length>0"
             [orderingSearch]="orderingSearch" [isForTiersIntegration]="true">
           </ordering-list>
+        </mat-tab>
+        <mat-tab label="Factures" *ngIf="tiers.id!=null && tiers.id!=undefined">
+          <invoice-list *ngIf="this.invoiceSearch.customerOrders && this.invoiceSearch.customerOrders.length>0"
+            [invoiceSearch]="invoiceSearch" [isForTiersIntegration]="true"></invoice-list>
         </mat-tab>
         <mat-tab label="Comptes" *ngIf="responsableAccountSearch && responsableAccountSearch.id">
           <accounting-record [tiersToDisplay]="responsableAccountSearch"></accounting-record>

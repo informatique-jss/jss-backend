@@ -51,9 +51,9 @@ export class OrderingListComponent implements OnInit {
         this.orderingSearch = {} as OrderingSearch;
         this.orderingSearch.salesEmployee = this.bookmark.salesEmployee;
         this.orderingSearch.customerOrderStatus = this.bookmark.customerOrderStatus;
+        this.putDefaultPeriod();
       }
 
-      this.putDefaultPeriod();
 
       this.allEmployees = response;
 
@@ -154,15 +154,16 @@ export class OrderingListComponent implements OnInit {
   putDefaultPeriod() {
     this.orderingSearch.startDate = new Date();
     this.orderingSearch.endDate = new Date();
-    this.orderingSearch.startDate.setDate(this.orderingSearch.endDate.getDate() - 30);
   }
 
   searchOrders() {
-    if (this.orderingSearchForm.valid && this.orderingSearch.startDate && this.orderingSearch.endDate) {
+    if (this.orderingSearchForm.valid) {
       if (!this.isForDashboard)
         this.userPreferenceService.setUserSearchBookmark(this.orderingSearch, "customerOrders");
-      this.orderingSearch.startDate = new Date(toIsoString(this.orderingSearch.startDate));
-      this.orderingSearch.endDate = new Date(toIsoString(this.orderingSearch.endDate));
+      if (this.orderingSearch.startDate)
+        this.orderingSearch.startDate = new Date(toIsoString(this.orderingSearch.startDate));
+      if (this.orderingSearch.endDate)
+        this.orderingSearch.endDate = new Date(toIsoString(this.orderingSearch.endDate));
       this.orderingSearchResultService.getOrders(this.orderingSearch).subscribe(response => {
         this.orders = response;
       })

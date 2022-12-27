@@ -252,6 +252,11 @@ export class AssociatePaymentDialogComponent implements OnInit {
       return (customerOrder as any).tiers;
 
     let refundDocument = getDocument(this.constantService.getDocumentTypeRefund(), customerOrder);
+
+    // If confrere check regie
+    if (refundDocument && refundDocument.regie && refundDocument.regie.iban)
+      return customerOrder;
+
     if (!refundDocument || !refundDocument.refundIBAN)
       return null;
     return customerOrder;

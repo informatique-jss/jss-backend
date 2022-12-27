@@ -33,7 +33,6 @@ export class RefundListComponent implements OnInit, AfterContentChecked {
   }
 
   ngOnInit() {
-    this.putDefaultPeriod();
     this.availableColumns = [];
     this.availableColumns.push({ id: "id", fieldName: "id", label: "N° du remboursement" } as SortTableColumn);
     this.availableColumns.push({ id: "refundDate", fieldName: "refundDate", label: "Date", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
@@ -72,7 +71,6 @@ export class RefundListComponent implements OnInit, AfterContentChecked {
     if (!this.refundSearch.startDate && !this.refundSearch.endDate) {
       this.refundSearch.startDate = new Date();
       this.refundSearch.endDate = new Date();
-      this.refundSearch.startDate.setDate(this.refundSearch.endDate.getDate() - 30);
     }
   }
 

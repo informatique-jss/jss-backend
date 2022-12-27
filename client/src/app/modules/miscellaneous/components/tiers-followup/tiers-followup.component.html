@@ -8,10 +8,11 @@
               propertyName="tiersFollowupType" [isMandatory]="true" [isDisabled]="false"></select-followup>
           </td>
           <td>
-            <autocomplete-employee [(model)]="newFollowup.salesEmployee" [form]="followupForm" label="Commercial"
-              propertyName="salesEmployee" [isMandatory]="true" [isDisabled]="false"></autocomplete-employee>
+            <autocomplete-employee [(model)]="newFollowup.salesEmployee" [form]="followupForm"
+              [label]="tiers!=undefined?'Commercial':'Responsable du suivi'" propertyName="salesEmployee"
+              [isMandatory]="true" [isDisabled]="false"></autocomplete-employee>
           </td>
-          <td>
+          <td *ngIf="tiers!=undefined">
             <select-gift [(model)]="newFollowup.gift" label="Cadeau" [form]="followupForm" propertyName="gift"
               [isDisabled]="false"></select-gift>
           </td>
@@ -49,6 +50,8 @@
         <mat-icon>event</mat-icon>
       </button></span>
   </div>
-  <sort-table [columns]="displayedColumns" [values]="tiers.tiersFollowups" tableName="Cadeaux"
-    [filterText]="searchText"></sort-table>
+  <sort-table *ngIf='tiers!=undefined' [columns]="displayedColumns" [values]="tiers.tiersFollowups"
+    tableName="Suivi factures" [filterText]="searchText"></sort-table>
+  <sort-table *ngIf='invoice!=undefined' [columns]="displayedColumns" [values]="invoice.tiersFollowups"
+    tableName="Suivi factures" [filterText]="searchText"></sort-table>
 </div>

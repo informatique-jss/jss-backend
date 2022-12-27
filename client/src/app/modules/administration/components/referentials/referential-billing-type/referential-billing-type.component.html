@@ -75,13 +75,13 @@
                 propertyName="isGenerateAccountCharge"></generic-toggle></td>
           </tr>
           <tr>
-            <td *ngIf="selectedEntity.accountingAccountProduct">
+            <td>
               <autocomplete-accounting-account [(model)]="selectedEntity.accountingAccountProduct" [form]="entityForm"
                 propertyName="accountingAccountProduct" [isMandatory]="false"
                 [isDisabled]="selectedEntity.isGenerateAccountProduct" label="Compte comptable produit">
               </autocomplete-accounting-account>
             </td>
-            <td *ngIf="selectedEntity.accountingAccountCharge">
+            <td>
               <autocomplete-accounting-account [(model)]="selectedEntity.accountingAccountCharge" [form]="entityForm"
                 propertyName="accountingAccountCharge" [isMandatory]="false"
                 [isDisabled]="selectedEntity.isGenerateAccountCharge" label="Compte comptable charge">

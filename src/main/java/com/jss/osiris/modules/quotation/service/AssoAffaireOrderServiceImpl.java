@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.libs.search.service.IndexEntityService;
@@ -116,7 +117,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
     @Transactional(rollbackFor = Exception.class)
     public AssoAffaireOrder addOrUpdateAssoAffaireOrder(
             AssoAffaireOrder assoAffaireOrder)
-            throws OsirisException {
+            throws OsirisException, OsirisClientMessageException {
         for (Provision provision : assoAffaireOrder.getProvisions()) {
             provision.setAssoAffaireOrder(assoAffaireOrder);
         }
@@ -145,7 +146,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
     @Override
     public AssoAffaireOrder completeAssoAffaireOrder(AssoAffaireOrder assoAffaireOrder, IQuotation customerOrder)
-            throws OsirisException {
+            throws OsirisException, OsirisClientMessageException {
         // Complete domiciliation end date
         int nbrAssignation = 0;
         Employee currentEmployee = null;
@@ -256,11 +257,13 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                                     .equals(AnnouncementStatus.ANNOUNCEMENT_WAITING_READ_CUSTOMER))) {
                         announcement.setAnnouncementStatus(announcementStatusService
                                 .getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_WAITING_READ_CUSTOMER));
-                        generateStoreAndSendProofReading(announcement, (CustomerOrder) customerOrder);
+                        generateStoreAndSendProofReading(announcement,
+                                customerOrderService.getCustomerOrder(customerOrder.getId()));
                     }
 
                     if (announcement.getAnnouncementStatus().getCode().equals(AnnouncementStatus.ANNOUNCEMENT_DONE))
-                        customerOrderService.generateStoreAndSendPublicationReceipt((CustomerOrder) customerOrder);
+                        customerOrderService.generateStoreAndSendPublicationReceipt(
+                                customerOrderService.getCustomerOrder(customerOrder.getId()));
                 }
 
             }
@@ -354,7 +357,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
     }
 
     private void generateStoreAndSendProofReading(Announcement announcement, CustomerOrder customerOrder)
-            throws OsirisException {
+            throws OsirisException, OsirisClientMessageException {
         // Check if publication receipt already exists
         boolean proofReading = false;
         if (announcement.getAttachments() != null)

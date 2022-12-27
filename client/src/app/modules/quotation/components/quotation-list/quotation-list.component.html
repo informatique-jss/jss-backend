@@ -14,8 +14,8 @@
         </td>
         <td>
           <generic-date-range-picker [(modelStart)]="quotationSearch.startDate" [(modelEnd)]="quotationSearch.endDate"
-            label="Date de création" [form]="quotationSearchForm" propertyNameStart="startDate"
-            propertyNameEnd="endDate" (onDateChange)="putDefaultPeriod()">
+            label="Date de création" [form]="quotationSearchForm" propertyNameStart="startDate" [isMandatory]="false"
+            propertyNameEnd="endDate">
           </generic-date-range-picker>
         </td>
         <td class="fab-td-button">

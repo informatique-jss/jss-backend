@@ -14,8 +14,12 @@ public interface IndexEntityRepository extends CrudRepository<IndexEntity, Integ
         List<IndexEntity> searchForEntities(@Param("searchQuery") String searchQuery,
                         @Param("numberOfResult") Integer numberOfResult);
 
+        @Query(nativeQuery = true, value = "select entity_id, entity_type, text from (SELECT index_entity.* , similarity(text, :searchQuery)  AS rank FROM index_entity ) t where text ILIKE '%'||  :searchQuery ||'%' ORDER BY rank DESC LIMIT :numberOfResult")
+        List<IndexEntity> searchForContainsSimilarEntities(@Param("searchQuery") String searchQuery,
+                        @Param("numberOfResult") Integer numberOfResult);
+
         @Query(nativeQuery = true, value = "select entity_id, entity_type, text from (SELECT index_entity.* , similarity(text, :searchQuery)  AS rank FROM index_entity ) t ORDER BY rank DESC LIMIT :numberOfResult")
-        List<IndexEntity> searchForSimilarEntities(@Param("searchQuery") String searchQuery,
+        List<IndexEntity> searchForDeepSimilarEntities(@Param("searchQuery") String searchQuery,
                         @Param("numberOfResult") Integer numberOfResult);
 
         @Query(nativeQuery = true, value = "select entity_id, entity_type, text from (SELECT index_entity.* , ts_rank_cd(ts_text, websearch_to_tsquery(:searchQuery)) AS rank FROM index_entity WHERE entity_type=:entityType and websearch_to_tsquery(:searchQuery)  @@ ts_text) t ORDER BY rank DESC LIMIT :numberOfResult")

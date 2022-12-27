@@ -51,9 +51,6 @@ export class AccountingRecordComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.accountingRecordSearch.startDate = new Date(new Date().getFullYear(), 0, 1);
-    this.accountingRecordSearch.endDate = new Date(new Date().getFullYear(), 11, 31);
-
     // Column init
     this.displayedColumns = [];
     this.displayedColumns.push({ id: "invoice", fieldName: "invoiceId", label: "Facture", actionLinkFunction: this.getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la facture associée" } as SortTableColumn);
@@ -78,7 +75,9 @@ export class AccountingRecordComponent implements OnInit {
     this.displayedColumns.push({ id: "payment", fieldName: "paymentId", label: "Paiement", actionIcon: "visibility", actionTooltip: "Voir le paiement associé" } as SortTableColumn);
     this.displayedColumns.push({ id: "deposit", fieldName: "depositId", label: "Acompte", actionIcon: "visibility", actionTooltip: "Voir l'acompte associé" } as SortTableColumn);
 
-    if (this.tiersToDisplay == undefined)
+    if (this.tiersToDisplay == undefined) {
+      this.accountingRecordSearch.startDate = new Date();
+      this.accountingRecordSearch.endDate = new Date();
       this.tableAction.push({
         actionIcon: "block", actionName: "Supprimer / contre-passer l'opération", actionClick: (action: SortTableAction, element: any) => {
           if (element) {
@@ -97,6 +96,7 @@ export class AccountingRecordComponent implements OnInit {
           return undefined;
         }, display: true,
       } as SortTableAction);
+    }
 
     if (this.tiersToDisplay && this.tiersToDisplay.id) {
       if (instanceOfResponsable(this.tiersToDisplay))
@@ -157,11 +157,11 @@ export class AccountingRecordComponent implements OnInit {
   searchRecords() {
     this.restoreTotalDivPosition();
     if (!this.accountingRecordSearch.tiersId && !this.accountingRecordSearch.responsableId && !this.accountingRecordSearch.confrereId) {
-      if (!this.accountingRecordSearch.startDate || !this.accountingRecordSearch.endDate) {
+      if (this.tiersToDisplay == undefined && (!this.accountingRecordSearch.startDate || !this.accountingRecordSearch.endDate)) {
         this.appService.displaySnackBar("🙄 Merci de saisir une plage de recherche", false, 10);
         return;
       }
-      if (!this.accountingRecordSearch.accountingAccount && !this.accountingRecordSearch.accountingClass && !this.accountingRecordSearch.accountingJournal) {
+      if (this.tiersToDisplay == undefined && !this.accountingRecordSearch.accountingAccount && !this.accountingRecordSearch.accountingClass && !this.accountingRecordSearch.accountingJournal) {
         this.appService.displaySnackBar("🙄 Merci de saisir au moins un critère de recherche", false, 10);
         return;
       }

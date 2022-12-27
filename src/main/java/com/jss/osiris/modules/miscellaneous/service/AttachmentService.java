@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.AttachmentType;
@@ -16,12 +17,12 @@ public interface AttachmentService {
 
         public List<Attachment> addAttachment(MultipartFile file, Integer idEntity, String entityType,
                         AttachmentType attachmentType, String filename, Boolean replaceExistingAttachementType)
-                        throws OsirisException;
+                        throws OsirisException, OsirisClientMessageException;
 
         public List<Attachment> addAttachment(InputStream file, Integer idEntity, String entityType,
                         AttachmentType attachmentType, String filename, Boolean replaceExistingAttachementType,
                         String description)
-                        throws OsirisException;
+                        throws OsirisException, OsirisClientMessageException;
 
         public void deleteAttachment(Attachment attachment);
 

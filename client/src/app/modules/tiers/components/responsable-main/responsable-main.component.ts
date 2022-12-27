@@ -2,6 +2,7 @@ import { AfterContentChecked, ChangeDetectorRef, Component, Input, OnInit, Simpl
 import { UntypedFormBuilder } from '@angular/forms';
 import { copyObject } from 'src/app/libs/GenericHelper';
 import { instanceOfResponsable } from 'src/app/libs/TypeHelper';
+import { InvoiceSearch } from 'src/app/modules/invoicing/model/InvoiceSearch';
 import { City } from 'src/app/modules/miscellaneous/model/City';
 import { Country } from 'src/app/modules/miscellaneous/model/Country';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
@@ -53,6 +54,7 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
 
   orderingSearch: OrderingSearch = {} as OrderingSearch;
   quotationSearch: QuotationSearch = {} as QuotationSearch;
+  invoiceSearch: InvoiceSearch = {} as InvoiceSearch;
   responsableAccountSearch: ITiers | undefined;
 
   displayedColumns: SortTableColumn[] = [];
@@ -103,7 +105,8 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
     // Table definition
     this.displayedColumns = [];
     this.displayedColumns.push({ id: "id", fieldName: "id", label: "N° du responsable" } as SortTableColumn);
-    this.displayedColumns.push({ id: "name", fieldName: "name", label: "Nom", valueFonction: (element: any) => { return (element) ? element.firstname + " " + element.lastname : "" } } as SortTableColumn);
+    this.displayedColumns.push({ id: "lastname", fieldName: "lastname", label: "Nom" } as SortTableColumn);
+    this.displayedColumns.push({ id: "firstname", fieldName: "firstname", label: "Prénom" } as SortTableColumn);
     this.displayedColumns.push({ id: "address", fieldName: "address", label: "Adresse" } as SortTableColumn);
     this.displayedColumns.push({ id: "city", fieldName: "city.label", label: "Ville" } as SortTableColumn);
     this.displayedColumns.push({ id: "salesEmployee", fieldName: "salesEmployee", label: "Commercial", valueFonction: (element: any) => { return (element && element.salesEmployee) ? element.salesEmployee.firstname + " " + element.salesEmployee.lastname : "" } } as SortTableColumn);
@@ -130,19 +133,22 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
   }
 
   selectResponsableById(responsableId: number) {
-    if (this.selectedResponsable == null || this.getFormStatus()) {
+    if (!this.editMode || this.selectedResponsable == null || this.getFormStatus()) {
       this.tiers.responsables.forEach(responsable => {
         if (responsable.id == responsableId) {
           this.selectedResponsable = responsable;
 
           this.orderingSearch.customerOrders = [];
           this.quotationSearch.customerOrders = [];
+          this.invoiceSearch.customerOrders = [];
           this.responsableAccountSearch = undefined;
 
           setTimeout(() =>
             this.orderingSearch.customerOrders = [responsable], 0);
           setTimeout(() =>
             this.quotationSearch.customerOrders = [responsable], 0);
+          setTimeout(() =>
+            this.invoiceSearch.customerOrders = [responsable], 0);
           setTimeout(() =>
             this.responsableAccountSearch = responsable, 0);
 

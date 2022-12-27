@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.libs.search.service.IndexEntityService;
@@ -129,12 +130,13 @@ public class QuotationServiceImpl implements QuotationService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Quotation addOrUpdateQuotationFromUser(Quotation quotation) throws OsirisException {
+    public Quotation addOrUpdateQuotationFromUser(Quotation quotation)
+            throws OsirisException, OsirisClientMessageException {
         return addOrUpdateQuotation(quotation);
     }
 
     @Override
-    public Quotation addOrUpdateQuotation(Quotation quotation) throws OsirisException {
+    public Quotation addOrUpdateQuotation(Quotation quotation) throws OsirisException, OsirisClientMessageException {
         quotation.setIsQuotation(true);
 
         if (quotation.getDocuments() != null)
@@ -592,7 +594,7 @@ public class QuotationServiceImpl implements QuotationService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Quotation addOrUpdateQuotationStatus(Quotation quotation, String targetStatusCode)
-            throws OsirisException {
+            throws OsirisException, OsirisClientMessageException {
         QuotationStatus targetQuotationStatus = quotationStatusService.getQuotationStatusByCode(targetStatusCode);
         if (targetQuotationStatus == null)
             throw new OsirisException(null, "Quotation status not found for code " + targetStatusCode);
@@ -682,6 +684,12 @@ public class QuotationServiceImpl implements QuotationService {
             affaireId.add(0);
         }
 
+        if (quotationSearch.getStartDate() == null)
+            quotationSearch.setStartDate(LocalDateTime.now().minusYears(100));
+
+        if (quotationSearch.getEndDate() == null)
+            quotationSearch.setEndDate(LocalDateTime.now().plusYears(100));
+
         return quotationRepository.findQuotations(
                 salesEmployeeId,
                 statusId,
@@ -699,13 +707,13 @@ public class QuotationServiceImpl implements QuotationService {
 
     @Override
     public String getCardPaymentLinkForQuotationDeposit(Quotation quotation, String mail, String subject)
-            throws OsirisException {
+            throws OsirisException, OsirisClientMessageException {
         return getCardPaymentLinkForQuotationPayment(quotation, mail, subject, paymentCbRedirectDepositQuotation);
     }
 
     @Override
     public Boolean validateCardPaymentLinkForQuotationDeposit(Quotation quotation)
-            throws OsirisException {
+            throws OsirisException, OsirisClientMessageException {
         if (quotation.getCentralPayPaymentRequestId() != null) {
             CentralPayPaymentRequest centralPayPaymentRequest = centralPayDelegateService
                     .getPaymentRequest(quotation.getCentralPayPaymentRequestId());
@@ -727,7 +735,7 @@ public class QuotationServiceImpl implements QuotationService {
 
     private String getCardPaymentLinkForQuotationPayment(Quotation quotation, String mail, String subject,
             String redirectEntrypoint)
-            throws OsirisException {
+            throws OsirisException, OsirisClientMessageException {
 
         if (!quotation.getQuotationStatus().getCode().equals(QuotationStatus.SENT_TO_CUSTOMER))
             throw new OsirisException(null, "Wrong status to pay for quotation n°" + quotation.getId());
@@ -771,7 +779,7 @@ public class QuotationServiceImpl implements QuotationService {
     }
 
     private Quotation unlockQuotationFromDeposit(Quotation quotation, Float effectivePayment)
-            throws OsirisException {
+            throws OsirisException, OsirisClientMessageException {
         if (quotation.getQuotationStatus().getCode().equals(QuotationStatus.SENT_TO_CUSTOMER)) {
             addOrUpdateQuotationStatus(quotation, QuotationStatus.VALIDATED_BY_CUSTOMER);
             notificationService.notifyQuotationValidatedByCustomer(quotation);
@@ -810,7 +818,7 @@ public class QuotationServiceImpl implements QuotationService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void sendRemindersForQuotation() throws OsirisException {
+    public void sendRemindersForQuotation() throws OsirisException, OsirisClientMessageException {
         List<Quotation> quotations = quotationRepository.findQuotationForReminder(
                 quotationStatusService.getQuotationStatusByCode(QuotationStatus.SENT_TO_CUSTOMER));
 

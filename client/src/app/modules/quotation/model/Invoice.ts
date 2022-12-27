@@ -6,6 +6,7 @@ import { City } from "../../miscellaneous/model/City";
 import { Country } from "../../miscellaneous/model/Country";
 import { IAttachment } from '../../miscellaneous/model/IAttachment';
 import { Provider } from '../../miscellaneous/model/Provider';
+import { TiersFollowup } from "../../miscellaneous/model/TiersFollowup";
 import { BillingLabelType } from "../../tiers/model/BillingLabelType";
 import { Responsable } from "../../tiers/model/Responsable";
 import { Tiers } from "../../tiers/model/Tiers";
@@ -42,4 +43,8 @@ export interface Invoice extends IAttachment {
   provider: Provider | undefined;
   manualAccountingDocumentDate: Date;
   manualAccountingDocumentNumber: string;
+  firstReminderDateTime: Date;
+  secondReminderDateTime: Date;
+  thirdReminderDateTime: Date;
+  tiersFollowups: TiersFollowup[];
 }

@@ -3,6 +3,7 @@ package com.jss.osiris.modules.invoicing.service;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceSearch;
@@ -39,7 +40,7 @@ public interface InvoiceService {
 
     public LocalDate getFirstBillingDateForResponsable(Responsable responsable);
 
-    public List<InvoiceSearchResult> searchInvoices(InvoiceSearch invoiceSearch);
+    public List<InvoiceSearchResult> searchInvoices(InvoiceSearch invoiceSearch) throws OsirisException;
 
     public void reindexInvoices();
 
@@ -49,6 +50,6 @@ public interface InvoiceService {
 
     public Invoice cancelInvoice(Invoice invoice) throws OsirisException;
 
-    public void sendRemindersForInvoices() throws OsirisException;
+    public void sendRemindersForInvoices() throws OsirisException, OsirisClientMessageException;
 
 }

@@ -176,7 +176,7 @@
                     <td>
                       <generic-input [(model)]="selectedConfrere.lastShipmentForPublication" label="Dernier envoi"
                         [form]="entityForm2" propertyName="lastShipmentForPublication" [isMandatory]="false"
-                        [isDisabled]="!editMode" [maxLength]="60"></generic-input>
+                        [isDisabled]="!editMode" [maxLength]="200"></generic-input>
                     </td>
                   </tr>
                 </table>
@@ -294,6 +294,10 @@
           *ngIf="this.orderingSearch.customerOrders && this.orderingSearch.customerOrders.length>0"
           [orderingSearch]="orderingSearch" [isForTiersIntegration]="true">
         </ordering-list>
+      </mat-tab>
+      <mat-tab label="Factures" *ngIf="selectedConfrere.id!=null && selectedConfrere.id!=undefined">
+        <invoice-list *ngIf="this.invoiceSearch.customerOrders && this.invoiceSearch.customerOrders.length>0"
+          [invoiceSearch]="invoiceSearch" [isForTiersIntegration]="true"></invoice-list>
       </mat-tab>
       <mat-tab label="Comptes" *ngIf="responsableAccountSearch && responsableAccountSearch.id">
         <accounting-record [tiersToDisplay]="responsableAccountSearch"></accounting-record>

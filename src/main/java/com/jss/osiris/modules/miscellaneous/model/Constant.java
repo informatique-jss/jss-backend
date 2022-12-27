@@ -484,6 +484,10 @@ public class Constant implements Serializable, IId {
 	private Employee employeeSalesDirector;
 
 	@ManyToOne
+	@JoinColumn(name = "id_billing_closure_recipient_type_other")
+	private BillingClosureRecipientType billingClosureRecipientTypeOther;
+
+	@ManyToOne
 	@JoinColumn(name = "id_billing_closure_recipient_type_responsable")
 	private BillingClosureRecipientType billingClosureRecipientTypeResponsable;
 
@@ -1579,6 +1583,14 @@ public class Constant implements Serializable, IId {
 
 	public void setAttachmentTypeAutomaticMail(AttachmentType attachmentTypeAutomaticMail) {
 		this.attachmentTypeAutomaticMail = attachmentTypeAutomaticMail;
+	}
+
+	public BillingClosureRecipientType getBillingClosureRecipientTypeOther() {
+		return billingClosureRecipientTypeOther;
+	}
+
+	public void setBillingClosureRecipientTypeOther(BillingClosureRecipientType billingClosureRecipientTypeOther) {
+		this.billingClosureRecipientTypeOther = billingClosureRecipientTypeOther;
 	}
 
 }

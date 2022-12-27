@@ -6,6 +6,7 @@ import { QuotationSearch } from 'src/app/modules/quotation/model/QuotationSearch
 import { TIERS_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
 import { SearchService } from 'src/app/services/search.service';
+import { InvoiceSearch } from '../../../invoicing/model/InvoiceSearch';
 import { Responsable } from '../../model/Responsable';
 import { Tiers } from '../../model/Tiers';
 import { TiersService } from '../../services/tiers.service';
@@ -29,6 +30,7 @@ export class TiersComponent implements OnInit, AfterContentChecked {
 
   orderingSearch: OrderingSearch = {} as OrderingSearch;
   quotationSearch: QuotationSearch = {} as QuotationSearch;
+  invoiceSearch: InvoiceSearch = {} as InvoiceSearch;
   responsableAccountSearch: Tiers | undefined;
 
   selectedTabIndex = 0;
@@ -59,16 +61,10 @@ export class TiersComponent implements OnInit, AfterContentChecked {
         this.tiersService.setCurrentViewedTiers(this.tiers);
         this.appService.changeHeaderTitle(this.tiers.denomination != null ? this.tiers.denomination : "");
         this.toggleTabs();
-        this.selectedTabIndex = (!this.tiers.tiersType || this.tiers.tiersType.id == this.constantService.getTiersTypeProspect().id) ? 1 : 2;
+        this.selectedTabIndex = 2;
         this.responsableMainComponent?.setSelectedResponsableId(idTiers);
 
-        this.orderingSearch.customerOrders = [this.tiers];
-        if (this.tiers.responsables)
-          this.orderingSearch.customerOrders.push(...this.tiers.responsables);
-        this.quotationSearch.customerOrders = [this.tiers];
-        if (this.tiers.responsables)
-          this.quotationSearch.customerOrders.push(...this.tiers.responsables);
-        this.responsableAccountSearch = this.tiers;
+        this.loadQuotationFilter();
       })
       // Load by tiers
     } else if (idTiers != null && idTiers != undefined) {
@@ -78,14 +74,26 @@ export class TiersComponent implements OnInit, AfterContentChecked {
         this.changeHeader();
         this.toggleTabs();
 
-        this.orderingSearch.customerOrders = [this.tiers];
-        this.quotationSearch.customerOrders = [this.tiers];
-        this.responsableAccountSearch = this.tiers;
+        this.loadQuotationFilter();
       })
     } else if (this.createMode == false) {
       // Blank page
       this.appService.changeHeaderTitle("Tiers / Responsables");
     }
+  }
+
+  loadQuotationFilter() {
+    this.orderingSearch.customerOrders = [this.tiers];
+    this.invoiceSearch.customerOrders = [this.tiers];
+    this.quotationSearch.customerOrders = [this.tiers];
+
+    if (this.tiers.responsables) {
+      this.orderingSearch.customerOrders.push(...this.tiers.responsables);
+      this.invoiceSearch.customerOrders.push(...this.tiers.responsables);
+      this.quotationSearch.customerOrders.push(...this.tiers.responsables);
+    }
+
+    this.responsableAccountSearch = this.tiers;
   }
 
   ngAfterContentChecked(): void {
