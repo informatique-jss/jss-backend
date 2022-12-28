@@ -51,7 +51,6 @@ export class OrderingListComponent implements OnInit {
         this.orderingSearch = {} as OrderingSearch;
         this.orderingSearch.salesEmployee = this.bookmark.salesEmployee;
         this.orderingSearch.customerOrderStatus = this.bookmark.customerOrderStatus;
-        this.putDefaultPeriod();
       }
 
 
@@ -150,11 +149,6 @@ export class OrderingListComponent implements OnInit {
     }
   }
 
-
-  putDefaultPeriod() {
-    this.orderingSearch.startDate = new Date();
-    this.orderingSearch.endDate = new Date();
-  }
 
   searchOrders() {
     if (this.orderingSearchForm.valid) {

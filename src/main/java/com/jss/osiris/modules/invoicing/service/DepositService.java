@@ -7,8 +7,10 @@ import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.invoicing.model.Deposit;
 import com.jss.osiris.modules.invoicing.model.Invoice;
+import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.quotation.model.centralPay.CentralPayPaymentRequest;
 import com.jss.osiris.modules.tiers.model.ITiers;
 
 public interface DepositService {
@@ -23,6 +25,10 @@ public interface DepositService {
 
         public Deposit getNewDepositForCustomerOrder(Float depositAmount, LocalDateTime depositDatetime,
                         CustomerOrder customerOrder, Integer overrideAccountingOperationId) throws OsirisException;
+
+        public Deposit getNewCbDepositForCustomerOrder(LocalDateTime depositDatetime, CustomerOrder customerOrder,
+                        Payment payment,
+                        CentralPayPaymentRequest centralPayPaymentRequest) throws OsirisException;
 
         public void moveDepositFromCustomerOrderToInvoice(Deposit deposit, CustomerOrder fromCustomerOrder,
                         Invoice toInvoice) throws OsirisException;

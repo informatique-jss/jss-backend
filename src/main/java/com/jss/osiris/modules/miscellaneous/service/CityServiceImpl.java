@@ -47,7 +47,12 @@ public class CityServiceImpl implements CityService {
     }
 
     @Override
-    public List<City> getCitiesByCountry(Integer countryId, String city) {
+    public List<City> getCitiesByCountry(Integer countryId, String city, String postalCode) {
+        if (postalCode != null) {
+            List<City> cities = getCitiesByPostalCode(postalCode);
+            if (cities != null && cities.size() > 0)
+                return cities;
+        }
         if (countryId != null) {
             Country country = countryService.getCountry(countryId);
             if (country != null)

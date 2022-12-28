@@ -26,10 +26,15 @@ export class CityService extends AppRestService<City>{
     return this.getList(new HttpParams().set("postalCode", postalCode), "cities/search/postal-code");
   }
 
-  getCitiesFilteredByCountryAndName(value: string, country: Country | undefined) {
-    if (country != undefined && country != null)
-      return this.getList(new HttpParams().set("countryId", country.id!).set("city", value), "cities/search/country");
-    return this.getList(new HttpParams().set("city", value), "cities/search/country");
+  getCitiesFilteredByCountryAndNameAndPostalCode(value: string, country: Country | undefined, postalCode: string | undefined) {
+    let params = new HttpParams();
+    if (country)
+      params = params.set("countryId", country.id!);
+    if (postalCode)
+      params = params.set("postalCode", postalCode);
+    params = params.set("city", value);
+
+    return this.getList(params, "cities/search/country");
   }
 
 }

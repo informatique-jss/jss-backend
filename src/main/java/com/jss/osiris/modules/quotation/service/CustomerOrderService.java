@@ -8,6 +8,7 @@ import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.OrderingSearch;
 import com.jss.osiris.modules.quotation.model.OrderingSearchResult;
 import com.jss.osiris.modules.quotation.model.Quotation;
+import com.jss.osiris.modules.quotation.model.centralPay.CentralPayPaymentRequest;
 
 public interface CustomerOrderService {
         public CustomerOrder getCustomerOrder(Integer id);
@@ -38,25 +39,26 @@ public interface CustomerOrderService {
         public void generateInvoiceMail(CustomerOrder customerOrder)
                         throws OsirisException, OsirisClientMessageException;
 
-        public CustomerOrder unlockCustomerOrderFromDeposit(CustomerOrder customerOrder, Float effectivePayment)
-                        throws OsirisException, OsirisClientMessageException;
-
         public String getCardPaymentLinkForCustomerOrderDeposit(CustomerOrder customerOrder, String mail,
                         String subject)
-                        throws OsirisException, OsirisClientMessageException;
-
-        public Boolean validateCardPaymentLinkForCustomerOrderDeposit(CustomerOrder customerOrder)
                         throws OsirisException, OsirisClientMessageException;
 
         public String getCardPaymentLinkForPaymentInvoice(CustomerOrder customerOrder, String mail, String subject)
                         throws OsirisException, OsirisClientMessageException;
 
-        public Boolean validateCardPaymentLinkForInvoice(CustomerOrder customerOrder)
-                        throws OsirisException, OsirisClientMessageException;
-
         public void sendRemindersForCustomerOrderDeposit() throws OsirisException, OsirisClientMessageException;
 
         public void generateStoreAndSendPublicationReceipt(CustomerOrder customerOrder)
+                        throws OsirisException, OsirisClientMessageException;
+
+        public void generateDepositOnCustomerOrderForCbPayment(CustomerOrder customerOrder,
+                        CentralPayPaymentRequest centralPayPaymentRequest)
+                        throws OsirisException, OsirisClientMessageException;
+
+        public CustomerOrder unlockCustomerOrderFromDeposit(CustomerOrder customerOrder)
+                        throws OsirisException, OsirisClientMessageException;
+
+        public Boolean validateCardPaymentLinkForCustomerOrder(CustomerOrder customerOrder)
                         throws OsirisException, OsirisClientMessageException;
 
 }

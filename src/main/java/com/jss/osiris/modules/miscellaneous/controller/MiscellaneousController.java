@@ -582,8 +582,9 @@ public class MiscellaneousController {
 
     @GetMapping(inputEntryPoint + "/cities/search/country")
     public ResponseEntity<List<City>> getCitiesByCountry(@RequestParam(required = false) Integer countryId,
-            @RequestParam String city) {
-        return new ResponseEntity<List<City>>(cityService.getCitiesByCountry(countryId, city), HttpStatus.OK);
+            @RequestParam String city, @RequestParam(required = false) String postalCode) {
+        return new ResponseEntity<List<City>>(cityService.getCitiesByCountry(countryId, city, postalCode),
+                HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/billing-types")

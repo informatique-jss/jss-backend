@@ -153,9 +153,6 @@ public class CustomerOrder implements IQuotation {
 	private LocalDateTime secondReminderDateTime;
 	private LocalDateTime thirdReminderDateTime;
 
-	// TODO : put it at 0 when payment is grabbed and matched
-	private Float centralPayPendingPaymentAmount;
-
 	public Integer getId() {
 		return id;
 	}
@@ -354,14 +351,6 @@ public class CustomerOrder implements IQuotation {
 
 	public void setThirdReminderDateTime(LocalDateTime thirdReminderDateTime) {
 		this.thirdReminderDateTime = thirdReminderDateTime;
-	}
-
-	public Float getCentralPayPendingPaymentAmount() {
-		return centralPayPendingPaymentAmount;
-	}
-
-	public void setCentralPayPendingPaymentAmount(Float centralPayPendingPaymentAmount) {
-		this.centralPayPendingPaymentAmount = centralPayPendingPaymentAmount;
 	}
 
 }

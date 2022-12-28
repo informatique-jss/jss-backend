@@ -1,3 +1,4 @@
+import { AccountingAccount } from '../../accounting/model/AccountingAccount';
 import { AccountingJournal } from "../../accounting/model/AccountingJournal";
 import { PrincipalAccountingAccount } from '../../accounting/model/PrincipalAccountingAccount';
 import { InvoiceStatus } from "../../invoicing/model/InvoiceStatus";
@@ -90,6 +91,7 @@ export interface Constant {
   billingTypeBilan: BillingType;
   billingTypeDocumentScanning: BillingType;
   billingTypeEmergency: BillingType;
+  billingTypeCentralPayFees: BillingType;
   stringNantissementDepositFormeJuridiqueCode: string;
   strinSocialShareNantissementRedactionFormeJuridiqueCode: string;
   stringBusinnessNantissementRedactionFormeJuridiqueCode: string;
@@ -163,4 +165,6 @@ export interface Constant {
   principalAccountingAccountWaiting: PrincipalAccountingAccount;
   principalAccountingAccountLost: PrincipalAccountingAccount;
   principalAccountingAccountProfit: PrincipalAccountingAccount;
+  accountingAccountBankCentralPay: AccountingAccount;
+  accountingAccountBankJss: AccountingAccount;
 }

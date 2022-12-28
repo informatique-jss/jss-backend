@@ -242,20 +242,4 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
 
                 return waitingAccountingAccounts.get(0);
         }
-
-        @Override
-        public AccountingAccount getBankAccountingAccount() throws OsirisException {
-                List<AccountingAccount> waitingAccountingAccounts = accountingAccountRepository
-                                .findByPrincipalAccountingAccount(
-                                                constantService.getPrincipalAccountingAccountBank());
-
-                if (waitingAccountingAccounts == null || waitingAccountingAccounts.size() == 0)
-                        throw new OsirisException(null, "Bank accounting account not found");
-
-                if (waitingAccountingAccounts.size() > 1)
-                        throw new OsirisException(null,
-                                        "Multiple waiting accounting account found for bank accounting account ");
-
-                return waitingAccountingAccounts.get(0);
-        }
 }

@@ -102,7 +102,6 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
 
     if (this.isForDashboard && !this.payments && this.paymentSearch) {
       this.searchPayments();
-      this.putDefaultPeriod();
     }
   }
 
@@ -125,13 +124,6 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
     if (element && action.id == "invoice" && element.invoices && element.invoices[0] && element.invoices.length == 1)
       return ['/invoicing', element.invoices[0].id];
     return undefined;
-  }
-
-  putDefaultPeriod() {
-    if (!this.paymentSearch.startDate && !this.paymentSearch.endDate) {
-      this.paymentSearch.startDate = new Date();
-      this.paymentSearch.endDate = new Date();
-    }
   }
 
   searchPayments() {

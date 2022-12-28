@@ -129,6 +129,7 @@ import com.jss.osiris.modules.quotation.service.JournalTypeService;
 import com.jss.osiris.modules.quotation.service.MailRedirectionTypeService;
 import com.jss.osiris.modules.quotation.service.NoticeTypeFamilyService;
 import com.jss.osiris.modules.quotation.service.NoticeTypeService;
+import com.jss.osiris.modules.quotation.service.PricingHelper;
 import com.jss.osiris.modules.quotation.service.ProvisionFamilyTypeService;
 import com.jss.osiris.modules.quotation.service.ProvisionScreenTypeService;
 import com.jss.osiris.modules.quotation.service.ProvisionService;
@@ -300,6 +301,9 @@ public class QuotationController {
 
   @Autowired
   MailComputeHelper mailComputeHelper;
+
+  @Autowired
+  PricingHelper pricingHelper;
 
   @GetMapping(inputEntryPoint + "/simple-provision-status")
   public ResponseEntity<List<SimpleProvisionStatus>> getSimpleProvisionStatus() {
@@ -1663,7 +1667,7 @@ public class QuotationController {
                   .validateReferential(provision.getAnnouncement().getConfrere(), true, "Confrere"));
             }
 
-    return new ResponseEntity<IQuotation>(quotationService.getAndSetInvoiceItemsForQuotation(quotation, false),
+    return new ResponseEntity<IQuotation>(pricingHelper.getAndSetInvoiceItemsForQuotation(quotation, false),
         HttpStatus.OK);
   }
 
@@ -1775,7 +1779,7 @@ public class QuotationController {
       if (customerOrder == null)
         throw new OsirisValidationException("customerOrder");
 
-      Boolean status = customerOrderService.validateCardPaymentLinkForCustomerOrderDeposit(customerOrder);
+      Boolean status = customerOrderService.validateCardPaymentLinkForCustomerOrder(customerOrder);
 
       if (status) {
         return new ResponseEntity<String>(
@@ -1841,7 +1845,7 @@ public class QuotationController {
       if (customerOrder == null)
         throw new OsirisValidationException("customerOrder");
 
-      Boolean status = customerOrderService.validateCardPaymentLinkForInvoice(customerOrder);
+      Boolean status = customerOrderService.validateCardPaymentLinkForCustomerOrder(customerOrder);
 
       if (status) {
         return new ResponseEntity<String>(

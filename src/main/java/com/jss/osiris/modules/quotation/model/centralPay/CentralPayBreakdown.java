@@ -1,11 +1,12 @@
 package com.jss.osiris.modules.quotation.model.centralPay;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.jss.osiris.libs.JacksonLocalDateTimeGmtDeserializer;
 
-public class Breakdown {
+public class CentralPayBreakdown {
     public String paymentRequestBreakdownId;
     public String customerId;
     @JsonDeserialize(using = JacksonLocalDateTimeGmtDeserializer.class)
@@ -23,6 +24,7 @@ public class Breakdown {
     public boolean paymentAttempted;
     public boolean paid;
     public int view;
+    public List<CentralPayPayment> payments;
 
     public String getPaymentRequestBreakdownId() {
         return paymentRequestBreakdownId;
@@ -142,6 +144,14 @@ public class Breakdown {
 
     public void setView(int view) {
         this.view = view;
+    }
+
+    public List<CentralPayPayment> getPayments() {
+        return payments;
+    }
+
+    public void setPayments(List<CentralPayPayment> payments) {
+        this.payments = payments;
     }
 
 }

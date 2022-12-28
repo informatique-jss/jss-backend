@@ -229,6 +229,14 @@
           </tr>
           <tr>
             <td>
+              <autocomplete-billing-type [(model)]="constant.billingTypeCentralPayFees"
+                label="Type de poste de facturation - Frais Central Pay" [form]="constantForm"
+                propertyName="billingTypeCentralPayFees" [isMandatory]="true" [isDisabled]="!editMode">
+              </autocomplete-billing-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <autocomplete-billing-type [(model)]="constant.billingTypeLogo"
                 label="Type de poste de facturation - Logo" [form]="constantForm" propertyName="billingTypeLogo"
                 [isMandatory]="true" [isDisabled]="!editMode">
@@ -985,6 +993,21 @@
                 [form]="constantForm" propertyName="principalAccountingAccountProfit" [isMandatory]="true"
                 label="Compte comptable principal - Profit"
                 [isDisabled]="!editMode"></autocomplete-principal-accounting-account>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-accounting-account [(model)]="constant.accountingAccountBankCentralPay"
+                [form]="constantForm" propertyName="accountingAccountBankCentralPay" [isMandatory]="true"
+                [isDisabled]="!editMode"
+                label="Compte comptable - Banque Central Pay"></autocomplete-accounting-account>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-accounting-account [(model)]="constant.accountingAccountBankJss" [form]="constantForm"
+                propertyName="accountingAccountBankJss" [isMandatory]="true" [isDisabled]="!editMode"
+                label="Compte comptable - Banque JSS"></autocomplete-accounting-account>
             </td>
           </tr>
         </table>

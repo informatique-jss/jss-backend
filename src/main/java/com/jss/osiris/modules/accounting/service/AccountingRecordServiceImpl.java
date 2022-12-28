@@ -44,15 +44,18 @@ import com.jss.osiris.modules.invoicing.service.InvoiceItemService;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.invoicing.service.PaymentService;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
+import com.jss.osiris.modules.miscellaneous.model.BillingType;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.miscellaneous.service.VatService;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
-import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.Provision;
+import com.jss.osiris.modules.quotation.model.centralPay.CentralPayPaymentRequest;
+import com.jss.osiris.modules.quotation.model.centralPay.CentralPayTransaction;
+import com.jss.osiris.modules.quotation.service.CentralPayDelegateService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.tiers.model.ITiers;
 import com.jss.osiris.modules.tiers.model.Responsable;
@@ -115,6 +118,9 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
   @Autowired
   GlobalExceptionHandler globalExceptionHandler;
+
+  @Autowired
+  CentralPayDelegateService centralPayDelegateService;
 
   public AccountingRecord addOrUpdateAccountingRecord(
       AccountingRecord accountingRecord) {
@@ -295,7 +301,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     if ((payments == null || payments.size() == 0) && (deposits == null || deposits.size() == 0))
       throw new OsirisException(null, "No payments nor deposits provided with invoice " + invoice.getId());
 
-    AccountingAccount bankAccountingAccount = accountingAccountService.getBankAccountingAccount();
+    AccountingAccount bankAccountingAccount = constantService.getAccountingAccountBankJss();
     AccountingAccount waitingAccountingAccount = accountingAccountService.getWaitingAccountingAccount();
 
     AccountingAccount accountingAccountCustomer = getCustomerAccountingAccountForInvoice(invoice);
@@ -388,7 +394,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   @Override
   public void generateAccountingRecordsForDepositOnInvoice(Deposit deposit, Invoice invoice,
       Integer overrideAccountingOperationId) throws OsirisException {
-    AccountingAccount customerAccountingAccount = getCustomerAccountingAccountForInvoice(invoice);
+    AccountingAccount customerAccountingAccount = getDepositAccountingAccountForInvoice(invoice);
     AccountingJournal salesJournal = accountingJournalService.getSalesAccountingJournal();
 
     Integer operationId = deposit.getId();
@@ -449,6 +455,68 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   }
 
   @Override
+  public void generateAccountingRecordsForCentralPayPayment(CentralPayPaymentRequest centralPayPaymentRequest,
+      Payment payment, Deposit deposit, CustomerOrder customerOrder, Invoice invoice) throws OsirisException {
+
+    AccountingAccount accountingAccountBankCentralPay = constantService.getAccountingAccountBankCentralPay();
+    AccountingJournal accountingJournalSales = constantService.getAccountingJournalSales();
+    AccountingJournal accountingJournalPurshases = constantService.getAccountingJournalPurchases();
+    BillingType billingTypeCentralPayCommission = constantService.getBillingTypeCentralPayFees();
+
+    if (accountingAccountBankCentralPay == null)
+      throw new OsirisException(null, "Accounting account for Central Pay not defined in constants");
+    if (accountingJournalSales == null)
+      throw new OsirisException(null, "Accounting journal Sales not defined in constants");
+    if (accountingJournalPurshases == null)
+      throw new OsirisException(null, "Accounting journal Purshases not defined in constants");
+    if (billingTypeCentralPayCommission == null)
+      throw new OsirisException(null, "Billing type central pay fees not defined in constants");
+    if (billingTypeCentralPayCommission.getVat() == null)
+      throw new OsirisException(null, "VAT not defined in billing type central pay fees");
+    if (billingTypeCentralPayCommission.getAccountingAccountCharge() == null)
+      throw new OsirisException(null, "Charge accounting account not defined in billing type central pay fees");
+    if (billingTypeCentralPayCommission.getAccountingAccountCharge() == null)
+      throw new OsirisException(null, "Charge accounting account not defined in billing type central pay fees");
+    if (billingTypeCentralPayCommission.getVat().getRate() == null)
+      throw new OsirisException(null, "Rate not defined in VAT of billing type central pay fees");
+    if (invoice == null && deposit == null)
+      throw new OsirisException(null, "Must provide at least an invoice or a deposit");
+
+    String label = "";
+    if (deposit != null)
+      label = "Paiement d'acompte pour la commande n°" + customerOrder.getId();
+    else if (invoice != null)
+      label = "Paiement pour la facture " + invoice.getId();
+
+    generateNewAccountingRecord(payment.getPaymentDate(), payment.getId(), null, null,
+        label, null, payment.getPaymentAmount(),
+        accountingAccountBankCentralPay, null,
+        invoice, customerOrder, accountingJournalSales, payment, deposit);
+
+    CentralPayTransaction transaction = centralPayDelegateService.getTransaction(centralPayPaymentRequest);
+
+    Float preTaxPrice = transaction.getCommission() / 100f
+        / ((100 + billingTypeCentralPayCommission.getVat().getRate()) / 100f);
+    Float taxPrice = billingTypeCentralPayCommission.getVat().getRate() / 100f * preTaxPrice;
+    Float commission = (preTaxPrice + taxPrice) / 100f;
+
+    generateNewAccountingRecord(payment.getPaymentDate(), payment.getId(), null, null,
+        label, commission, null,
+        accountingAccountBankCentralPay, null, invoice, customerOrder, accountingJournalPurshases, payment, deposit);
+
+    generateNewAccountingRecord(payment.getPaymentDate(), payment.getId(), null, null,
+        label, null, preTaxPrice,
+        billingTypeCentralPayCommission.getAccountingAccountCharge(), null, invoice, customerOrder,
+        accountingJournalPurshases, payment, deposit);
+
+    generateNewAccountingRecord(payment.getPaymentDate(), payment.getId(), null, null,
+        label, null, taxPrice,
+        billingTypeCentralPayCommission.getVat().getAccountingAccount(), null, invoice, customerOrder,
+        accountingJournalPurshases, payment, deposit);
+
+  }
+
+  @Override
   public void generateAccountingRecordsForDepositAndCustomerOrder(Deposit deposit, CustomerOrder customerOrder,
       Integer overrideAccountingOperationId) throws OsirisException {
 
@@ -496,7 +564,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
       customerAccountingAccount = getCustomerAccountingAccountForITiers(refund.getTiers());
     }
     generateNewAccountingRecord(LocalDateTime.now(), refund.getId(), null, null, "Remboursement n°" + refund.getId(),
-        refund.getRefundAmount(), null, accountingAccountService.getBankAccountingAccount(), null, null, null,
+        refund.getRefundAmount(), null, constantService.getAccountingAccountBankJss(), null, null, null,
         salesJournal, null, null);
     generateNewAccountingRecord(LocalDateTime.now(), refund.getId(), null, null, "Remboursement n°" + refund.getId(),
         null, refund.getRefundAmount(), customerAccountingAccount, null, null, null,
@@ -509,7 +577,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
     generateNewAccountingRecord(LocalDateTime.now(), payment.getId(), null, null,
         "Paiement n°" + payment.getId(), null, payment.getPaymentAmount(),
-        accountingAccountService.getBankAccountingAccount(),
+        constantService.getAccountingAccountBankJss(),
         null, null, null, salesJournal, payment, null);
 
   }
@@ -520,7 +588,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
     generateNewAccountingRecord(LocalDateTime.now(), payment.getId(), null, null,
         "Paiement n°" + payment.getId(), payment.getPaymentAmount(), null,
-        accountingAccountService.getBankAccountingAccount(),
+        constantService.getAccountingAccountBankJss(),
         null, null, null, purchaseJournal, payment, null);
 
   }
@@ -579,30 +647,36 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     return getCustomerAccountingAccountForITiers(customerOrder);
   }
 
+  private AccountingAccount getDepositAccountingAccountForInvoice(Invoice invoice) throws OsirisException {
+    ITiers customerOrder = invoiceHelper.getCustomerOrder(invoice);
+    return getDepositAccountingAccountForITiers(customerOrder);
+  }
+
   @Override
   public AccountingAccount getCustomerAccountingAccountForITiers(ITiers tiers) throws OsirisException {
-    // If cusomter order is a Responsable, get accounting account of parent Tiers
-    if (tiers.getAccountingAccountCustomer() == null || (tiers instanceof Responsable
-        && ((Responsable) tiers).getTiers().getAccountingAccountCustomer() == null))
-      throw new OsirisException(null, "No customer accounting account in ITiers " + tiers.getId());
-
     AccountingAccount accountingAccountCustomer = null;
     if (tiers instanceof Responsable)
       accountingAccountCustomer = ((Responsable) tiers).getTiers().getAccountingAccountCustomer();
     else
       accountingAccountCustomer = tiers.getAccountingAccountCustomer();
 
-    AccountingAccount accountingAccount = null;
-    if (tiers instanceof Confrere)
-      accountingAccount = ((Confrere) tiers).getAccountingAccountProvider();
-    if (tiers instanceof Tiers)
-      accountingAccount = tiers.getAccountingAccountProvider();
-    if (tiers instanceof Responsable && ((Responsable) tiers).getTiers() != null)
-      accountingAccount = ((Responsable) tiers).getTiers().getAccountingAccountProvider();
-    if (accountingAccount == null)
-      throw new OsirisException(null, "No customer accounting account in Provider " + tiers.getId());
+    if (accountingAccountCustomer == null)
+      throw new OsirisException(null, "No customer accounting account in ITiers " + tiers.getId());
 
     return accountingAccountCustomer;
+  }
+
+  private AccountingAccount getDepositAccountingAccountForITiers(ITiers tiers) throws OsirisException {
+    AccountingAccount accountingAccountDeposit = null;
+    if (tiers instanceof Responsable)
+      accountingAccountDeposit = ((Responsable) tiers).getTiers().getAccountingAccountDeposit();
+    else
+      accountingAccountDeposit = tiers.getAccountingAccountDeposit();
+
+    if (accountingAccountDeposit == null)
+      throw new OsirisException(null, "No deposit accounting account in ITiers " + tiers.getId());
+
+    return accountingAccountDeposit;
   }
 
   @Override
@@ -932,6 +1006,8 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     newAccountingRecord.setPayment(originalAccountingRecord.getPayment());
     newAccountingRecord.setTemporaryOperationId(originalAccountingRecord.getTemporaryOperationId());
     newAccountingRecord.setOperationDateTime(LocalDateTime.now());
+    newAccountingRecord.setCustomerOrder(originalAccountingRecord.getCustomerOrder());
+    newAccountingRecord.setInvoice(originalAccountingRecord.getInvoice());
     addOrUpdateAccountingRecord(newAccountingRecord);
     originalAccountingRecord.setContrePasse(newAccountingRecord);
     addOrUpdateAccountingRecord(originalAccountingRecord);

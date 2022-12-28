@@ -47,7 +47,6 @@ export class QuotationListComponent implements OnInit {
         this.quotationSearch = {} as QuotationSearch;
         this.quotationSearch.salesEmployee = this.bookmark.salesEmployee;
         this.quotationSearch.quotationStatus = this.bookmark.quotationStatus;
-        this.putDefaultPeriod();
       }
 
       this.allEmployees = response;
@@ -145,11 +144,6 @@ export class QuotationListComponent implements OnInit {
     }
   }
 
-
-  putDefaultPeriod() {
-    this.quotationSearch.startDate = new Date();
-    this.quotationSearch.endDate = new Date();
-  }
 
   searchOrders() {
     if (this.quotationSearchForm.valid) {

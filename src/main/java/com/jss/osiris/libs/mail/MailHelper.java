@@ -552,7 +552,7 @@ public class MailHelper {
         if (isDepositMandatory)
             mail.setExplaination3("Dès paiement de l'acompte de " + mail.getPriceTotal()
                     + " € via le lien ci-dessous nous entamerons le traitement de cette commande avec tout notre savoir-faire.");
-        else
+        else if (!isPaymentTypePrelevement)
             mail.setExplaination3(
                     "Dès réception de votre validation concernant ce devis ou paiement de son montant via le lien ci-dessous nous entamerons le traitement de cette commande avec tout notre savoir-faire. Vous pourrez effectuer la validation en ligne sur notre site web : https://www.jss.fr/ Espace abonné, rubrique \"Mon compte\".");
 

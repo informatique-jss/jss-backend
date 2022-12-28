@@ -23,7 +23,7 @@ export class AssoAffaireOrderService extends AppRestService<AssoAffaireOrder>{
   }
 
   updateAsso(asso: AssoAffaireOrder): Observable<AssoAffaireOrder> {
-    return this.postItem(new HttpParams(), "asso/affaire/order/update", asso, "Affaire / Prestations mises à jour", "Erreur lors de la mise à jour de l'affaire / prestations");
+    return this.postItem(new HttpParams(), "asso/affaire/order/update", asso, "Prestations mises à jour", "Erreur lors de la mise à jour de l'affaire / prestations");
   }
 
 }

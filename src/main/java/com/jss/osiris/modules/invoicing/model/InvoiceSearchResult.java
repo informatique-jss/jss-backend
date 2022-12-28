@@ -43,5 +43,7 @@ public interface InvoiceSearchResult {
 
     public LocalDate getDueDate();
 
+    public LocalDate getLastFollowupDate();
+
     public String getPaymentId();
 }

@@ -124,6 +124,7 @@ public class InvoicingController {
         validationHelper.validateReferential(payment.getPaymentWay(), true, "paymentWay");
 
         payment.setPaymentDate(LocalDateTime.now());
+        payment.setPaymentType(constantService.getPaymentTypeVirement());
         outPayment = paymentService.addOrUpdatePayment(payment);
         paymentService.payementGrab();
 

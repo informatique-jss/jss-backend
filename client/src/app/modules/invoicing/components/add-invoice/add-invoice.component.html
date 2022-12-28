@@ -150,6 +150,22 @@
           </autocomplete-billing-item>
         </td>
       </tr>
+      <tr *ngIf="invoiceItem.billingItem">
+        <td>
+          <autocomplete-accounting-account *ngIf="invoiceItem.billingItem.billingType.accountingAccountProduct"
+            [(model)]="invoiceItem.billingItem.billingType.accountingAccountProduct" [form]="invoiceForm"
+            propertyName="accountingAccountProduct" [isMandatory]="false" [isDisabled]="true"
+            label="Compte comptable produit">
+          </autocomplete-accounting-account>
+        </td>
+        <td>
+          <autocomplete-accounting-account *ngIf="invoiceItem.billingItem.billingType.accountingAccountCharge"
+            [(model)]="invoiceItem.billingItem.billingType.accountingAccountCharge" [form]="invoiceForm"
+            propertyName="accountingAccountCharge" [isMandatory]="false" [isDisabled]="true"
+            label="Compte comptable charge">
+          </autocomplete-accounting-account>
+        </td>
+      </tr>
     </table>
     <table class="full-width">
       <tr>
@@ -172,7 +188,7 @@
   </div>
 </div>
 <button matTooltip="Ajouter une ligne de facturation" mat-fab color="accent" class="second-fab-button"
-  *ngIf="!editMode   || invoice.id!=undefined" (click)="addInvoiceItem()">
+  *ngIf="!editMode   || invoice.id==undefined" (click)="addInvoiceItem()">
   <mat-icon>add</mat-icon>
 </button>
 <button matTooltip="Enregistrer la facture" mat-fab color="warn" class="fab-button" (click)="saveInvoice()">

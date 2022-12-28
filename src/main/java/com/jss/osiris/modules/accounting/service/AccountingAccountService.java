@@ -33,8 +33,6 @@ public interface AccountingAccountService {
         public AccountingAccountBinome generateAccountingAccountsForBillingType(BillingType billingType)
                         throws OsirisException;
 
-        public AccountingAccount getBankAccountingAccount() throws OsirisException;
-
         public AccountingAccount getWaitingAccountingAccount() throws OsirisException;
 
         public AccountingAccount generateAccountingAccountsForProduct(String label) throws OsirisException;

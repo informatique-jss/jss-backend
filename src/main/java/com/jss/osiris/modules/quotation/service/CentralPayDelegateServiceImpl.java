@@ -18,7 +18,11 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import com.jss.osiris.libs.SSLHelper;
+import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.modules.quotation.model.centralPay.CentralPayBreakdown;
+import com.jss.osiris.modules.quotation.model.centralPay.CentralPayPayment;
 import com.jss.osiris.modules.quotation.model.centralPay.CentralPayPaymentRequest;
+import com.jss.osiris.modules.quotation.model.centralPay.CentralPayTransaction;
 
 @Service
 public class CentralPayDelegateServiceImpl implements CentralPayDelegateService {
@@ -33,6 +37,7 @@ public class CentralPayDelegateServiceImpl implements CentralPayDelegateService 
     private String centralPayPassword;
 
     private String paymentRequestUrl = "/paymentRequest";
+    private String transactiontUrl = "/transaction";
     private String paymentRequestCancelUrl = "/cancel";
 
     HttpHeaders createHeaders() {
@@ -59,6 +64,42 @@ public class CentralPayDelegateServiceImpl implements CentralPayDelegateService 
                 centralPayEndpoint + paymentRequestUrl + "/" + centralPayPaymentRequestId, HttpMethod.GET,
                 new HttpEntity<Object>(headers),
                 CentralPayPaymentRequest.class);
+
+        if (res.getBody() != null) {
+            return res.getBody();
+        }
+        return null;
+    }
+
+    @Override
+    public CentralPayTransaction getTransaction(CentralPayPaymentRequest centralPayPaymentRequest)
+            throws OsirisException {
+        SSLHelper.disableCertificateValidation();
+        HttpHeaders headers = createHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+        if (centralPayPaymentRequest.getBreakdowns() == null || centralPayPaymentRequest.getBreakdowns().size() == 0)
+            throw new OsirisException(null, "CentralPayBreakdown not found in Payment Request n°"
+                    + centralPayPaymentRequest.getPaymentRequestId());
+
+        String transactionId = null;
+        for (CentralPayBreakdown centralPayBreakdown : centralPayPaymentRequest.getBreakdowns()) {
+            if (centralPayBreakdown.getPayments() != null && centralPayBreakdown.getPayments().size() > 0)
+                for (CentralPayPayment centralPayPayment : centralPayBreakdown.getPayments())
+                    if (centralPayPayment.getPaymentMethod().equals("TRANSACTION")) {
+                        transactionId = centralPayPayment.getUuid();
+                        break;
+                    }
+        }
+
+        if (transactionId == null)
+            throw new OsirisException(null, "No transaction found not found in Payment Request n°"
+                    + centralPayPaymentRequest.getPaymentRequestId());
+
+        ResponseEntity<CentralPayTransaction> res = new RestTemplate().exchange(
+                centralPayEndpoint + transactiontUrl + "/" + transactionId, HttpMethod.GET,
+                new HttpEntity<Object>(headers),
+                CentralPayTransaction.class);
 
         if (res.getBody() != null) {
             return res.getBody();

@@ -18,6 +18,7 @@ import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.modules.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.miscellaneous.model.IId;
+import com.jss.osiris.modules.miscellaneous.model.PaymentType;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 
 @Entity
@@ -59,6 +60,10 @@ public class Payment implements Serializable, IId {
 
 	@Column(nullable = false)
 	private Boolean isExternallyAssociated;
+
+	@ManyToOne
+	@JoinColumn(name = "id_payment_type")
+	private PaymentType paymentType;
 
 	public Integer getId() {
 		return id;
@@ -146,6 +151,14 @@ public class Payment implements Serializable, IId {
 
 	public void setBankId(String bankId) {
 		this.bankId = bankId;
+	}
+
+	public PaymentType getPaymentType() {
+		return paymentType;
+	}
+
+	public void setPaymentType(PaymentType paymentType) {
+		this.paymentType = paymentType;
 	}
 
 }

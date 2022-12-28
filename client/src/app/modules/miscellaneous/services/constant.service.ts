@@ -154,6 +154,10 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.countryMonaco;
   }
 
+  getBillingTypeCentralPayFees() {
+    return this.constant.billingTypeCentralPayFees;
+  }
+
   getBillingTypeLogo() {
     return this.constant.billingTypeLogo;
   }
@@ -542,5 +546,13 @@ export class ConstantService extends AppRestService<Constant>{
 
   getPrincipalAccountingAccountProfit() {
     return this.constant.principalAccountingAccountProfit;
+  }
+
+  getAccountingAccountBankCentralPay() {
+    return this.constant.accountingAccountBankCentralPay;
+  }
+
+  getAccountingAccountBankJss() {
+    return this.constant.accountingAccountBankJss;
   }
 }

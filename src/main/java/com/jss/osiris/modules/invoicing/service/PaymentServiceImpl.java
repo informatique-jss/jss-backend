@@ -153,6 +153,7 @@ public class PaymentServiceImpl implements PaymentService {
                     payment.setPaymentDate(transaction.datePosted().atStartOfDay());
                     payment.setPaymentWay(transaction.amount().floatValue() > 0 ? constantService.getPaymentWayInbound()
                             : constantService.getPaymentWayOutboud());
+                    payment.setPaymentType(constantService.getPaymentTypeVirement());
                     addOrUpdatePayment(payment);
                 }
             }
@@ -359,8 +360,7 @@ public class PaymentServiceImpl implements PaymentService {
                     remainingToPay -= effectivePayment;
 
                     // Try unlocked customer order
-                    customerOrderService.unlockCustomerOrderFromDeposit(correspondingCustomerOrder.get(i),
-                            effectivePayment);
+                    customerOrderService.unlockCustomerOrderFromDeposit(correspondingCustomerOrder.get(i));
                 }
             }
             payment.setCustomerOrder(correspondingCustomerOrder.get(0));

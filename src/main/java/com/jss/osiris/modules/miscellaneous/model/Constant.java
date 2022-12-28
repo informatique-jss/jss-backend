@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.accounting.model.PrincipalAccountingAccount;
 import com.jss.osiris.modules.invoicing.model.InvoiceStatus;
@@ -159,6 +160,10 @@ public class Constant implements Serializable, IId {
 	@ManyToOne
 	@JoinColumn(name = "id_country_monaco")
 	private Country countryMonaco;
+
+	@ManyToOne
+	@JoinColumn(name = "id_billing_type_central_pay_fees")
+	private BillingType billingTypeCentralPayFees;
 
 	@ManyToOne
 	@JoinColumn(name = "id_billing_type_logo")
@@ -545,6 +550,14 @@ public class Constant implements Serializable, IId {
 
 	private String salesSharedMailbox;
 	private String accountingSharedMaiblox;
+
+	@ManyToOne
+	@JoinColumn(name = "id_accounting_account_bank_central_pay")
+	private AccountingAccount accountingAccountBankCentralPay;
+
+	@ManyToOne
+	@JoinColumn(name = "id_accounting_account_bank_jss")
+	private AccountingAccount accountingAccountBankJss;
 
 	public Integer getId() {
 		return id;
@@ -1591,6 +1604,30 @@ public class Constant implements Serializable, IId {
 
 	public void setBillingClosureRecipientTypeOther(BillingClosureRecipientType billingClosureRecipientTypeOther) {
 		this.billingClosureRecipientTypeOther = billingClosureRecipientTypeOther;
+	}
+
+	public AccountingAccount getAccountingAccountBankCentralPay() {
+		return accountingAccountBankCentralPay;
+	}
+
+	public void setAccountingAccountBankCentralPay(AccountingAccount accountingAccountBankCentralPay) {
+		this.accountingAccountBankCentralPay = accountingAccountBankCentralPay;
+	}
+
+	public BillingType getBillingTypeCentralPayFees() {
+		return billingTypeCentralPayFees;
+	}
+
+	public void setBillingTypeCentralPayFees(BillingType billingTypeCentralPayFees) {
+		this.billingTypeCentralPayFees = billingTypeCentralPayFees;
+	}
+
+	public AccountingAccount getAccountingAccountBankJss() {
+		return accountingAccountBankJss;
+	}
+
+	public void setAccountingAccountBankJss(AccountingAccount accountingAccountBankJss) {
+		this.accountingAccountBankJss = accountingAccountBankJss;
 	}
 
 }

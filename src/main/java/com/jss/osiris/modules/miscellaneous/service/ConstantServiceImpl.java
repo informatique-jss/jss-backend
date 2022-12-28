@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.accounting.model.PrincipalAccountingAccount;
 import com.jss.osiris.modules.invoicing.model.InvoiceStatus;
@@ -222,6 +223,11 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public Country getCountryMonaco() throws OsirisException {
         return getConstants().getCountryMonaco();
+    }
+
+    @Override
+    public BillingType getBillingTypeCentralPayFees() throws OsirisException {
+        return getConstants().getBillingTypeCentralPayFees();
     }
 
     @Override
@@ -717,6 +723,16 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public PrincipalAccountingAccount getPrincipalAccountingAccountWaiting() throws OsirisException {
         return getConstants().getPrincipalAccountingAccountWaiting();
+    }
+
+    @Override
+    public AccountingAccount getAccountingAccountBankCentralPay() throws OsirisException {
+        return getConstants().getAccountingAccountBankCentralPay();
+    }
+
+    @Override
+    public AccountingAccount getAccountingAccountBankJss() throws OsirisException {
+        return getConstants().getAccountingAccountBankJss();
     }
 
 }

@@ -17,10 +17,12 @@ import com.jss.osiris.modules.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.invoicing.model.Deposit;
 import com.jss.osiris.modules.invoicing.model.Invoice;
+import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.repository.DepositRepository;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.quotation.model.centralPay.CentralPayPaymentRequest;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.tiers.model.ITiers;
@@ -97,6 +99,19 @@ public class DepositServiceImpl implements DepositService {
         deposit = addOrUpdateDeposit(deposit);
         accountingRecordService.generateAccountingRecordsForDepositAndCustomerOrder(deposit, customerOrder,
                 overrideAccountingOperationId);
+        return getDeposit(deposit.getId());
+    }
+
+    @Override
+    public Deposit getNewCbDepositForCustomerOrder(LocalDateTime depositDatetime, CustomerOrder customerOrder,
+            Payment payment, CentralPayPaymentRequest centralPayPaymentRequest) throws OsirisException {
+        Deposit deposit = new Deposit();
+        deposit.setDepositAmount(centralPayPaymentRequest.getTotalAmount() / 100f);
+        deposit.setDepositDate(depositDatetime);
+        deposit.setLabel("Acompte pour la commande n°" + customerOrder.getId());
+        deposit = addOrUpdateDeposit(deposit);
+        accountingRecordService.generateAccountingRecordsForDepositAndCustomerOrder(deposit, customerOrder,
+                payment.getId());
         return getDeposit(deposit.getId());
     }
 
@@ -234,8 +249,7 @@ public class DepositServiceImpl implements DepositService {
                     customerOrderService.addOrUpdateCustomerOrder(correspondingCustomerOrder.get(i));
 
                     // Try unlocked customer order
-                    customerOrderService.unlockCustomerOrderFromDeposit(correspondingCustomerOrder.get(i),
-                            remainingToPayForCustomerOrder);
+                    customerOrderService.unlockCustomerOrderFromDeposit(correspondingCustomerOrder.get(i));
 
                     remainingMoney -= byPassAmount.get(i + correspondingInvoiceSize);
                 }

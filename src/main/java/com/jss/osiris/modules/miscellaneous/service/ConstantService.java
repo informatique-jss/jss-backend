@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.miscellaneous.service;
 
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.accounting.model.PrincipalAccountingAccount;
 import com.jss.osiris.modules.invoicing.model.InvoiceStatus;
@@ -102,6 +103,8 @@ public interface ConstantService {
     public Country getCountryFrance() throws OsirisException;
 
     public Country getCountryMonaco() throws OsirisException;
+
+    public BillingType getBillingTypeCentralPayFees() throws OsirisException;
 
     public BillingType getBillingTypeLogo() throws OsirisException;
 
@@ -300,4 +303,8 @@ public interface ConstantService {
     public PrincipalAccountingAccount getPrincipalAccountingAccountLost() throws OsirisException;
 
     public PrincipalAccountingAccount getPrincipalAccountingAccountProfit() throws OsirisException;
+
+    public AccountingAccount getAccountingAccountBankCentralPay() throws OsirisException;
+
+    public AccountingAccount getAccountingAccountBankJss() throws OsirisException;
 }

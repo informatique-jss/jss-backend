@@ -37,7 +37,8 @@ public class CentralPayPaymentRequest {
     public String language;
     public String redirectUrl;
     public String closeComment;
-    public ArrayList<Breakdown> breakdowns;
+    public ArrayList<CentralPayBreakdown> breakdowns;
+    public CentralPayTransaction transaction;
 
     public String getPaymentRequestId() {
         return paymentRequestId;
@@ -191,12 +192,32 @@ public class CentralPayPaymentRequest {
         this.closeComment = closeComment;
     }
 
-    public ArrayList<Breakdown> getBreakdowns() {
+    public ArrayList<CentralPayBreakdown> getBreakdowns() {
         return breakdowns;
     }
 
-    public void setBreakdowns(ArrayList<Breakdown> breakdowns) {
+    public void setBreakdowns(ArrayList<CentralPayBreakdown> breakdowns) {
         this.breakdowns = breakdowns;
+    }
+
+    public static String getActive() {
+        return ACTIVE;
+    }
+
+    public static String getClosed() {
+        return CLOSED;
+    }
+
+    public static String getPaid() {
+        return PAID;
+    }
+
+    public CentralPayTransaction getTransaction() {
+        return transaction;
+    }
+
+    public void setTransaction(CentralPayTransaction transaction) {
+        this.transaction = transaction;
     }
 
 }

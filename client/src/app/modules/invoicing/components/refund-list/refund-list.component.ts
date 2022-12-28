@@ -48,7 +48,6 @@ export class RefundListComponent implements OnInit, AfterContentChecked {
 
     if (this.isForDashboard && !this.refunds && this.refundSearch) {
       this.searchRefunds();
-      this.putDefaultPeriod();
     }
   }
 
@@ -65,13 +64,6 @@ export class RefundListComponent implements OnInit, AfterContentChecked {
     }
     else
       this.displayedColumns.push(...this.availableColumns);
-  }
-
-  putDefaultPeriod() {
-    if (!this.refundSearch.startDate && !this.refundSearch.endDate) {
-      this.refundSearch.startDate = new Date();
-      this.refundSearch.endDate = new Date();
-    }
   }
 
   searchRefunds() {

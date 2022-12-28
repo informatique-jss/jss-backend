@@ -66,7 +66,6 @@ export class InvoiceListComponent implements OnInit, AfterContentChecked {
       this.defaultStatusFilter = this.bookmark.invoiceStatus;
       this.invoiceSearch.maxAmount = this.bookmark.maxAmount;
       this.invoiceSearch.minAmount = this.bookmark.minAmount;
-      this.putDefaultPeriod();
     }
 
     if (!this.isForDashboard && !this.isForTiersIntegration)
@@ -88,6 +87,7 @@ export class InvoiceListComponent implements OnInit, AfterContentChecked {
     this.availableColumns.push({ id: "firstReminderDateTime", fieldName: "firstReminderDateTime", label: "Date de première relance", valueFonction: formatDateForSortTable } as SortTableColumn);
     this.availableColumns.push({ id: "secondReminderDateTime", fieldName: "secondReminderDateTime", label: "Date de seconde relance", valueFonction: formatDateForSortTable } as SortTableColumn);
     this.availableColumns.push({ id: "thirdReminderDateTime", fieldName: "thirdReminderDateTime", label: "Date de troisième relance", valueFonction: formatDateForSortTable } as SortTableColumn);
+    this.availableColumns.push({ id: "lastFollowupDate", fieldName: "lastFollowupDate", label: "Dernier suivi", valueFonction: formatDateForSortTable } as SortTableColumn);
 
     this.setColumns();
 
@@ -134,13 +134,6 @@ export class InvoiceListComponent implements OnInit, AfterContentChecked {
     }
     else
       this.displayedColumns.push(...this.availableColumns);
-  }
-
-  putDefaultPeriod() {
-    if (!this.invoiceSearch.startDate && !this.invoiceSearch.endDate) {
-      this.invoiceSearch.startDate = new Date();
-      this.invoiceSearch.endDate = new Date();
-    }
   }
 
   searchInvoices() {

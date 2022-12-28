@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { PrincipalAccountingAccountService } from 'src/app/modules/accounting/services/principal.accounting.account.service';
 import { UserNoteService } from 'src/app/services/user.notes.service';
@@ -13,6 +13,7 @@ import { GenericLocalAutocompleteComponent } from '../generic-local-autocomplete
 export class AutocompletePrincipalAccountingAccountComponent extends GenericLocalAutocompleteComponent<PrincipalAccountingAccount> implements OnInit {
 
   types: PrincipalAccountingAccount[] = [] as Array<PrincipalAccountingAccount>;
+  @Input() label: string = "Compte compatable principal";
 
   constructor(private formBuild: UntypedFormBuilder,
     private principalAccountingAccountService: PrincipalAccountingAccountService,

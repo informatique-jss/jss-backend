@@ -166,7 +166,7 @@ export class AddAffaireComponent implements OnInit, AfterContentChecked {
                 this.fillCity(response[0].postalCode);
                 this.affaireForm.markAllAsTouched();
               } else if (siret!.etablissement.adresseEtablissement.libelleCommuneEtablissement) {
-                this.cityService.getCitiesFilteredByCountryAndName(siret!.etablissement.adresseEtablissement.libelleCommuneEtablissement, undefined).subscribe(response2 => {
+                this.cityService.getCitiesFilteredByCountryAndNameAndPostalCode(siret!.etablissement.adresseEtablissement.libelleCommuneEtablissement, undefined, undefined).subscribe(response2 => {
                   if (response2 != null && response2.length == 1) {
                     this.affaire.city = response2[0];
                     this.affaire.country = response2[0].country;
@@ -207,7 +207,7 @@ export class AddAffaireComponent implements OnInit, AfterContentChecked {
           this.affaire.postalCode = rna!.association.adresse_code_postal;
           this.fillPostalCode(response[0]);
         } else {
-          this.cityService.getCitiesFilteredByCountryAndName(rna!.association.adresse_libelle_commune, undefined).subscribe(response2 => {
+          this.cityService.getCitiesFilteredByCountryAndNameAndPostalCode(rna!.association.adresse_libelle_commune, undefined, undefined).subscribe(response2 => {
             if (response2 != null && response2.length == 1) {
               this.affaire.city = response2[0];
               this.affaire.country = response2[0].country;

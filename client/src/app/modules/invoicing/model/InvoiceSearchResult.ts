@@ -17,6 +17,7 @@ export interface InvoiceSearchResult {
   secondReminderDateTime: Date;
   thirdReminderDateTime: Date;
   dueDate: Date;
+  lastFollowupDate: Date;
   totalPrice: number;
   customerOrderDescription: string;
   paymentId: string;

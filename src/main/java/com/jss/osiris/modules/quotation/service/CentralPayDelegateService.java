@@ -1,6 +1,8 @@
 package com.jss.osiris.modules.quotation.service;
 
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.quotation.model.centralPay.CentralPayPaymentRequest;
+import com.jss.osiris.modules.quotation.model.centralPay.CentralPayTransaction;
 
 public interface CentralPayDelegateService {
 
@@ -10,4 +12,7 @@ public interface CentralPayDelegateService {
             String subject);
 
     public CentralPayPaymentRequest getPaymentRequest(String centralPayPaymentRequestId);
+
+    public CentralPayTransaction getTransaction(CentralPayPaymentRequest centralPayPaymentRequest)
+            throws OsirisException;
 }

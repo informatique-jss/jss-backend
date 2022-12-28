@@ -42,7 +42,7 @@ export class ChipsCityComponent extends GenericChipsComponent<City> implements O
           this.filteredTypes = [];
           this.modelChange.emit(this.model);
         }),
-        switchMap(value => this.cityService.getCitiesFilteredByCountryAndName(value, this.modelCountry)
+        switchMap(value => this.cityService.getCitiesFilteredByCountryAndNameAndPostalCode(value, this.modelCountry, undefined)
         )
       ).subscribe(response => {
         this.filteredTypes = response;

@@ -20,6 +20,7 @@ import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.model.Refund;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.quotation.model.centralPay.CentralPayPaymentRequest;
 import com.jss.osiris.modules.tiers.model.ITiers;
 
 public interface AccountingRecordService {
@@ -130,5 +131,10 @@ public interface AccountingRecordService {
         public AccountingRecord unassociateCustomerOrderPayementAndDeposit(AccountingRecord accountingRecord);
 
         public void sendBillingClosureReceipt() throws OsirisException, OsirisClientMessageException;
+
+        public void generateAccountingRecordsForCentralPayPayment(
+                        CentralPayPaymentRequest centralPayPaymentRequest,
+                        Payment payment, Deposit deposit, CustomerOrder customerOrder, Invoice invoice)
+                        throws OsirisException;
 
 }
