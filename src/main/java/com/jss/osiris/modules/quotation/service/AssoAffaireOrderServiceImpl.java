@@ -328,20 +328,26 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
         ArrayList<Integer> assignedId = null;
         ArrayList<Integer> responsibleId = null;
 
+        statusId = new ArrayList<Integer>();
         if (affaireSearch.getStatus() != null) {
-            statusId = new ArrayList<Integer>();
             for (IWorkflowElement status : affaireSearch.getStatus())
                 statusId.add(status.getId());
+        } else {
+            statusId.add(0);
         }
 
+        assignedId = new ArrayList<Integer>();
         if (affaireSearch.getAssignedTo() != null) {
-            assignedId = new ArrayList<Integer>();
             assignedId.add(affaireSearch.getAssignedTo().getId());
+        } else {
+            assignedId.add(0);
         }
 
+        responsibleId = new ArrayList<Integer>();
         if (affaireSearch.getResponsible() != null) {
-            responsibleId = new ArrayList<Integer>();
             responsibleId.add(affaireSearch.getResponsible().getId());
+        } else {
+            responsibleId.add(0);
         }
 
         if (affaireSearch.getLabel() == null)
@@ -351,8 +357,8 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
         excludedCustomerOrderStatusCode.add(CustomerOrderStatus.OPEN);
         excludedCustomerOrderStatusCode.add(CustomerOrderStatus.WAITING_DEPOSIT);
 
-        return assoAffaireOrderRepository.findAsso(new ArrayList<Integer>(),
-                new ArrayList<Integer>(), affaireSearch.getLabel(),
+        return assoAffaireOrderRepository.findAsso(responsibleId,
+                assignedId, affaireSearch.getLabel(),
                 statusId, excludedCustomerOrderStatusCode);
     }
 

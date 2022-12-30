@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -27,6 +28,7 @@ import com.jss.osiris.modules.quotation.model.CustomerOrder;
 public class AccountingRecord implements Serializable, IId {
 
 	@Id
+	@SequenceGenerator(name = "accounting_record_sequence", sequenceName = "accounting_record_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "accounting_record_sequence")
 	private Integer id;
 
@@ -100,6 +102,8 @@ public class AccountingRecord implements Serializable, IId {
 	private Integer letteringNumber;
 
 	private LocalDateTime letteringDateTime;
+
+	private Boolean isCounterPart;
 
 	@Column(nullable = false)
 	private Boolean isANouveau;
@@ -294,6 +298,14 @@ public class AccountingRecord implements Serializable, IId {
 
 	public void setManualAccountingDocumentDeadline(LocalDate manualAccountingDocumentDeadline) {
 		this.manualAccountingDocumentDeadline = manualAccountingDocumentDeadline;
+	}
+
+	public Boolean getIsCounterPart() {
+		return isCounterPart;
+	}
+
+	public void setIsCounterPart(Boolean isCounterPart) {
+		this.isCounterPart = isCounterPart;
 	}
 
 }

@@ -8,6 +8,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -15,7 +16,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class AssoSpecialOfferBillingType implements Serializable, IId {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@SequenceGenerator(name = "asso_special_offer_billing_type_sequence", sequenceName = "asso_special_offer_billing_type_sequence", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "asso_special_offer_billing_type_sequence")
 	private Integer id;
 
 	@ManyToOne

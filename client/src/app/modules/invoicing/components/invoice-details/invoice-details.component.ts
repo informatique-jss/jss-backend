@@ -9,6 +9,8 @@ import { IQuotation } from 'src/app/modules/quotation/model/IQuotation';
 import { VatBase } from 'src/app/modules/quotation/model/VatBase';
 import { INVOICE_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
+import { instanceOfConfrere, instanceOfResponsable, instanceOfTiers } from '../../../../libs/TypeHelper';
+import { ITiers } from '../../../tiers/model/ITiers';
 import { InvoiceService } from '../../services/invoice.service';
 import { getAffaireList, getAffaireListArray, getAmountRemaining, getCustomerOrderForInvoice, getCustomerOrderNameForInvoice, getLetteringDate, getResponsableName } from '../invoice-tools';
 
@@ -70,8 +72,28 @@ export class InvoiceDetailsComponent implements OnInit {
         return invoice.provider
       return getCustomerOrderForInvoice(invoice);
     }
-    return {};
+    return {} as ITiers;
   }
+
+  openCustomerOrderLink(event: any) {
+    if (this.invoice) {
+      let link: string[] = [];
+      let tiers = this.getCustomerOrder(this.invoice);
+      if (this.invoice.provider)
+        link = ['/provider', this.invoice.provider.id + ""];
+      else if (tiers) {
+        if (instanceOfTiers(tiers))
+          link = ['/tiers', tiers.id + ""];
+        if (instanceOfResponsable(tiers))
+          link = ['/tiers/responsable', tiers.id + ""];
+        if (instanceOfConfrere(tiers))
+          link = ['/confrere', tiers.id + ""];
+      }
+
+      this.appService.openRoute(event, link.join("/"), null);
+    }
+  }
+
   getResponsableName = getResponsableName;
   getLetteringDate = getLetteringDate;
 

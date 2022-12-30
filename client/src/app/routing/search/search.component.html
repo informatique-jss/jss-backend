@@ -23,7 +23,7 @@
                     (click)="openEntity($event, entity)" (auxclick)="openEntity($event, entity)">
                     <mat-card-title-group>
                       <mat-card-title>{{entity.text.denomination}} {{entity.text.firstname}} {{entity.text.lastname}}
-                        ({{entity.text.id}})</mat-card-title>
+                        {{entity.text.idAs400?"("+entity.text.idAs400+")":""}}</mat-card-title>
                       <mat-card-subtitle *ngIf="entity.text.salesEmployee">Commercial
                         {{entity.text.salesEmployee.firstname}}
                         {{entity.text.salesEmployee.lastname}}
@@ -42,7 +42,8 @@
                   <mat-card class="pointer" *ngFor="let entity of getEntitiesForTab(RESPONSABLE_ENTITY_TYPE)"
                     (click)="openEntity($event, entity)" (auxclick)="openEntity($event, entity)">
                     <mat-card-title-group>
-                      <mat-card-title>{{entity.text.firstname}} {{entity.text.lastname}} </mat-card-title>
+                      <mat-card-title>{{entity.text.firstname}} {{entity.text.lastname}}
+                        {{entity.text.idAs400?"("+entity.text.idAs400+")":""}}</mat-card-title>
                       <mat-card-subtitle *ngIf="entity.text.salesEmployee">Commercial
                         {{entity.text.salesEmployee.firstname}}
                         {{entity.text.salesEmployee.lastname}}

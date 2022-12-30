@@ -127,9 +127,11 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
   }
 
   searchPayments() {
-    if (this.paymentForm.valid && this.paymentSearch.startDate && this.paymentSearch.endDate) {
-      this.paymentSearch.startDate = new Date(toIsoString(this.paymentSearch.startDate));
-      this.paymentSearch.endDate = new Date(toIsoString(this.paymentSearch.endDate));
+    if (this.paymentForm.valid) {
+      if (this.paymentSearch.startDate)
+        this.paymentSearch.startDate = new Date(toIsoString(this.paymentSearch.startDate));
+      if (this.paymentSearch.endDate)
+        this.paymentSearch.endDate = new Date(toIsoString(this.paymentSearch.endDate));
       this.paymentSearchResultService.getPayments(this.paymentSearch).subscribe(response => {
         this.payments = response;
       })

@@ -12,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 
@@ -19,7 +20,8 @@ import com.jss.osiris.modules.accounting.model.AccountingAccount;
 public class Provider implements Serializable, IId {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@SequenceGenerator(name = "provider_sequence", sequenceName = "provider_sequence", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "provider_sequence")
 	private Integer id;
 
 	@Column(nullable = false)

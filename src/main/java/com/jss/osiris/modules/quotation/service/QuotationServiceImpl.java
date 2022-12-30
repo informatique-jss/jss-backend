@@ -337,7 +337,8 @@ public class QuotationServiceImpl implements QuotationService {
             // Generate customer order
             quotation = addOrUpdateQuotationStatus(quotation, QuotationStatus.VALIDATED_BY_CUSTOMER);
             notificationService.notifyQuotationValidatedByCustomer(quotation);
-
+            quotation.setCentralPayPaymentRequestId(null);
+            addOrUpdateQuotation(quotation);
             customerOrderService.generateDepositOnCustomerOrderForCbPayment(quotation.getCustomerOrders().get(0),
                     centralPayPaymentRequest);
         }

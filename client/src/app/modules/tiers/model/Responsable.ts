@@ -23,4 +23,5 @@ export interface Responsable extends ITiers {
   rffInsertionRate: number;
   loginWeb: string;
   canViewAllTiersInWeb: boolean;
+  idAs400: string;
 }

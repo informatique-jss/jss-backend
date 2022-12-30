@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.SequenceGenerator;
 
 import com.jss.osiris.modules.miscellaneous.model.IId;
 
@@ -18,7 +19,8 @@ import com.jss.osiris.modules.miscellaneous.model.IId;
 public class AnnouncementNoticeTemplate implements Serializable, IId {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@SequenceGenerator(name = "announcement_notice_template_sequence", sequenceName = "announcement_notice_template_sequence", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "announcement_notice_template_sequence")
 	private Integer id;
 
 	@Column(nullable = false, length = 100)

@@ -2,10 +2,10 @@
   <div class="menu bug-report" id="jiraBugReporter" matTooltip="Délarer un bug ou une évolution">
     <mat-icon>bug_report</mat-icon>
   </div>
-  <div class="menu" matTooltip="Rechercher (F4)">
+  <div class="menu" matTooltip="Rechercher (F8)">
     <mat-icon (click)="openSearch()">search</mat-icon>
   </div>
-  <div class="menu notif" matTooltip="Notifications (F8)">
+  <div class="menu notif" matTooltip="Notifications (F9)">
     <mat-icon (click)="openNotificationDialog()" [matBadge]="getNotificationNumber()" matBadgePosition="below after"
       [matBadgeHidden]="getNotificationNumber()==0" matBadgeColor="warn" matBadgeSize="small">
       notifications</mat-icon>

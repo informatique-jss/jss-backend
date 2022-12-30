@@ -57,6 +57,16 @@
                   propertyName="regie" [isMandatory]="false" [isDisabled]="!editMode"
                   label="Régie"></autocomplete-regie>
               </td>
+              <td *ngIf="billingDocument.regie">
+                <chips-mail [(model)]="billingDocument.regie.mails" label="Mails de la régie"
+                  [form]="settlementBillingForm" propertyName="regieMail" [isMandatory]="false"
+                  [isDisabled]="true"></chips-mail>
+              </td>
+              <td *ngIf="billingDocument.regie">
+                <generic-input [(model)]="billingDocument.regie.iban" label="IBAN de la régie"
+                  [form]="settlementBillingForm" propertyName="regieIban" [isMandatory]="false"
+                  [isDisabled]="true"></generic-input>
+              </td>
             </tr>
           </table>
           <table class="full-width"
@@ -68,7 +78,8 @@
               </td>
               <td>
                 <generic-input [(model)]="billingDocument.billingAddress" label="Adresse" [form]="settlementBillingForm"
-                  propertyName="billingAddress" [isMandatory]="true" [isDisabled]="!editMode"></generic-input>
+                  propertyName="billingAddress" [isMandatory]="true" [isDisabled]="!editMode"
+                  [maxLength]="100"></generic-input>
               </td>
               <td>
                 <autocomplete-postal-code [(model)]="billingDocument.billingPostalCode" [form]="settlementBillingForm"

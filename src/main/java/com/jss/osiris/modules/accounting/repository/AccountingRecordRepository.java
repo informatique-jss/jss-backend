@@ -80,7 +80,7 @@ public interface AccountingRecordRepository extends CrudRepository<AccountingRec
                         " and (:confrereId =0 or cf.id is not null and cf.id =:confrereId ) "
                         +
                         " and (:tiersId =0 or t.id is not null and t.id = :tiersId) " +
-                        " and (:hideLettered = false or r.lettering_date is null ) " +
+                        " and (:hideLettered = false or r.lettering_date_time is null ) " +
                         " and r.operation_date_time>=:startDate and r.operation_date_time<=:endDate  " +
                         " and (:canViewRestricted=true or a.is_view_restricted=false)  " +
                         " and (:accountingClassId =0 or pa.id_accounting_account_class = :accountingClassId) ")

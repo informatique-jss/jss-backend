@@ -395,8 +395,6 @@ public class MiscellaneousController {
                 "TypePersonneExploitation");
         validationHelper.validateReferential(constant.getTypePersonnePersonneMorale(), true,
                 "TypePersonnePersonneMorale");
-        validationHelper.validateReferential(constant.getFormeJuridiqueEntrepreneurIndividuel(), true,
-                "FormeJuridiqueEntrepreneurIndividuel");
         validationHelper.validateReferential(constant.getTypeFormaliteCessation(), true, "TypeFormaliteCessation");
         validationHelper.validateReferential(constant.getTypeFormaliteCorrection(), true,
                 "TypeFormaliteCorrection");

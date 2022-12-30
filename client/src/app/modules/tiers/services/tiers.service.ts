@@ -27,6 +27,7 @@ export class TiersService extends AppRestService<Tiers>{
   getIndividualTiersByKeyword(searchedValue: string) {
     return this.getList(new HttpParams().set("searchedValue", searchedValue), "individual/search");
   }
+
   addOrUpdateTiers(tiers: Tiers) {
     return this.addOrUpdate(new HttpParams(), "tiers", tiers, "Tiers enregistré", "Erreur lors de l'enregistrement du tiers");
   }

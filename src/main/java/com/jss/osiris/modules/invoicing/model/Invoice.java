@@ -77,7 +77,7 @@ public class Invoice implements IId, IAttachment {
 	@JoinColumn(name = "id_provider")
 	private Provider provider;
 
-	@Column(length = 40, name = "billing_label")
+	@Column(length = 100, name = "billing_label")
 	private String billingLabel;
 
 	@Column(name = "billing_label_address", length = 160)

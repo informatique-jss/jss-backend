@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -28,6 +29,7 @@ import com.jss.osiris.modules.quotation.model.Confrere;
 public class TiersFollowup implements Serializable, IId {
 
 	@Id
+	@SequenceGenerator(name = "tiers_followup_sequence", sequenceName = "tiers_followup_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "tiers_followup_sequence")
 	private Integer id;
 

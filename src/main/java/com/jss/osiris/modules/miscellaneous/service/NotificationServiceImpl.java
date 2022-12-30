@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.ActiveDirectoryHelper;
+import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.miscellaneous.model.IId;
@@ -98,9 +99,13 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     private Notification genericNotificationForQuotation(Quotation quotation, String notificationType)
-            throws OsirisException {
+            throws OsirisException, OsirisClientMessageException {
         ITiers customerOrder = quotationService.getCustomerOrderOfQuotation(quotation);
         Employee salesEmployee = customerOrder.getSalesEmployee();
+
+        if (salesEmployee == null)
+            throw new OsirisClientMessageException(
+                    "Commercial introuvable sur le donneur d'ordre. Merci de compléter avant de poursuivre.");
 
         // If responsable, try to get Sales Employee of Tiers
         if (customerOrder instanceof Responsable)
@@ -136,27 +141,30 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public Notification notifyNewQuotation(Quotation quotation) throws OsirisException {
+    public Notification notifyNewQuotation(Quotation quotation) throws OsirisException, OsirisClientMessageException {
         return genericNotificationForQuotation(quotation, Notification.QUOTATION_CREATE);
     }
 
     @Override
-    public Notification notifyQuotationToVerify(Quotation quotation) throws OsirisException {
+    public Notification notifyQuotationToVerify(Quotation quotation)
+            throws OsirisException, OsirisClientMessageException {
         return genericNotificationForQuotation(quotation, Notification.QUOTATION_ASSO_AFFAIRE_ORDER_VERIFY);
     }
 
     @Override
-    public Notification notifyQuotationSent(Quotation quotation) throws OsirisException {
+    public Notification notifyQuotationSent(Quotation quotation) throws OsirisException, OsirisClientMessageException {
         return genericNotificationForQuotation(quotation, Notification.QUOTATION_SENT);
     }
 
     @Override
-    public Notification notifyQuotationValidatedByCustomer(Quotation quotation) throws OsirisException {
+    public Notification notifyQuotationValidatedByCustomer(Quotation quotation)
+            throws OsirisException, OsirisClientMessageException {
         return genericNotificationForQuotation(quotation, Notification.QUOTATION_VALIDATED_BY_CUSOMER);
     }
 
     @Override
-    public Notification notifyQuotationRefusedByCustomer(Quotation quotation) throws OsirisException {
+    public Notification notifyQuotationRefusedByCustomer(Quotation quotation)
+            throws OsirisException, OsirisClientMessageException {
         return genericNotificationForQuotation(quotation, Notification.QUOTATION_REFUSED_BY_CUSOMER);
     }
 

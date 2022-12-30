@@ -14,6 +14,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -36,6 +37,7 @@ import com.jss.osiris.modules.tiers.model.Tiers;
 public class Document implements Serializable, IId {
 
 	@Id
+	@SequenceGenerator(name = "document_sequence", sequenceName = "document_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "document_sequence")
 	private Integer id;
 
@@ -83,13 +85,13 @@ public class Document implements Serializable, IId {
 	private Boolean isRecipientClient;
 	@Column(nullable = false)
 	private Boolean isRecipientAffaire;
-	@Column(length = 60)
+	@Column(length = 200)
 	private String affaireAddress;
-	@Column(length = 40)
+	@Column(length = 100)
 	private String affaireRecipient;
-	@Column(length = 60)
+	@Column(length = 100)
 	private String clientAddress;
-	@Column(length = 40)
+	@Column(length = 200)
 	private String clientRecipient;
 	private Integer numberMailingAffaire;
 	private Integer numberMailingClient;
@@ -142,10 +144,10 @@ public class Document implements Serializable, IId {
 	@JoinColumn(name = "id_billing_closure_recipient_type")
 	private BillingClosureRecipientType billingClosureRecipientType;
 
-	@Column(length = 60)
+	@Column(length = 100)
 	private String billingLabel;
 
-	@Column(length = 60)
+	@Column(length = 100)
 	private String billingAddress;
 
 	@Column(length = 60)

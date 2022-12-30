@@ -10,17 +10,20 @@ import javax.persistence.Id;
 import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import com.jss.osiris.modules.miscellaneous.model.IId;
 
 @Entity
 @Table(indexes = {
-		@Index(name = "idx_accounting_account_number", columnList = "id_principal_accounting_account,accountingAccountSubNumber", unique = true) })
+		@Index(name = "idx_accounting_account_number", columnList = "id_principal_accounting_account,accountingAccountSubNumber", unique = true),
+		@Index(name = "idx_accounting_account_principal", columnList = "id_principal_accounting_account") })
 public class AccountingAccount implements Serializable, IId {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@SequenceGenerator(name = "accounting_account_sequence", sequenceName = "accounting_account_sequence", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "accounting_account_sequence")
 	private Integer id;
 
 	@Column(nullable = false, length = 100)

@@ -56,7 +56,7 @@ export class AttachmentsComponent implements OnInit {
     this.displayedColumns.push({ id: "creationDate", fieldName: "uploadedFile.creationDate", label: "Ajouté le", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
 
     this.tableActions.push({
-      actionIcon: "preview", actionName: "Prévisualiser le fichier", actionClick: (action: SortTableAction, element: any): void => {
+      actionIcon: "visibility", actionName: "Prévisualiser le fichier", actionClick: (action: SortTableAction, element: any): void => {
         this.uploadAttachmentService.previewAttachment(element);
       }, display: true
     } as SortTableAction);

@@ -29,7 +29,6 @@ export class FormaliteComponent implements OnInit {
 
   typePersonnePersonnePhysique = this.constantService.getTypePersonnePersonnePhysique();
   typePersonnePersonneMorale = this.constantService.getTypePersonnePersonneMorale();
-  formeJuridiqueEntrepreneurIndividuel = this.constantService.getFormeJuridiqueEntrepreneurIndividuel();
 
   constructor(
     private formBuilder: FormBuilder,

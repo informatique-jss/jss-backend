@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 
 import com.jss.osiris.libs.search.model.IndexedField;
 
@@ -16,7 +17,8 @@ public class Civility implements Serializable, IId {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @SequenceGenerator(name = "civility_sequence", sequenceName = "civility_sequence", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "civility_sequence")
     private Integer id;
 
     @Column(nullable = false)

@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Index;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -20,6 +21,7 @@ import com.jss.osiris.libs.JacksonLocalDateTimeSerializer;
 public class Audit implements Serializable {
 
 	@Id
+	@SequenceGenerator(name = "audit_sequence", sequenceName = "audit_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "audit_sequence")
 	private Integer id;
 

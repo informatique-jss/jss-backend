@@ -58,6 +58,10 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.accountingJournalANouveau;
   }
 
+  getAccountingJournalBank() {
+    return this.constant.accountingJournalBank;
+  }
+
   getTiersTypeProspect() {
     return this.constant.tiersTypeProspect;
   }
@@ -458,10 +462,6 @@ export class ConstantService extends AppRestService<Constant>{
 
   getTypePersonneExploitation() {
     return this.constant.typePersonneExploitation;
-  }
-
-  getFormeJuridiqueEntrepreneurIndividuel() {
-    return this.constant.formeJuridiqueEntrepreneurIndividuel;
   }
 
   getTypeFormaliteCessation() {

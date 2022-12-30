@@ -11,7 +11,6 @@ import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.accounting.repository.AccountingJournalRepository;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
@@ -54,29 +53,5 @@ public class AccountingJournalServiceImpl implements AccountingJournalService {
     @Override
     public AccountingJournal getAccountingJournalByCode(String code) {
         return accountingJournalRepository.findByCode(code);
-    }
-
-    @Override
-    public AccountingJournal getSalesAccountingJournal() throws OsirisException {
-        AccountingJournal salesJournal = constantService.getAccountingJournalSales();
-        if (salesJournal == null)
-            throw new OsirisException(null, "Unable to find accounting journal Sales. Check constants");
-        return salesJournal;
-    }
-
-    @Override
-    public AccountingJournal getPurchasesAccountingJournal() throws OsirisException {
-        AccountingJournal purchasesJournal = constantService.getAccountingJournalPurchases();
-        if (purchasesJournal == null)
-            throw new OsirisException(null, "Unable to find accounting journal Purchases. Check constants");
-        return purchasesJournal;
-    }
-
-    @Override
-    public AccountingJournal getANouveauAccountingJournal() throws OsirisException {
-        AccountingJournal aNouveauJournal = constantService.getAccountingJournalANouveau();
-        if (aNouveauJournal == null)
-            throw new OsirisException(null, "Unable to find accounting journal A Nouveau. Check constants");
-        return aNouveauJournal;
     }
 }

@@ -27,7 +27,6 @@ import com.jss.osiris.modules.quotation.model.DomiciliationContractType;
 import com.jss.osiris.modules.quotation.model.JournalType;
 import com.jss.osiris.modules.quotation.model.MailRedirectionType;
 import com.jss.osiris.modules.quotation.model.TransfertFundsType;
-import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormeJuridique;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeFormalite;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypePersonne;
 import com.jss.osiris.modules.tiers.model.BillingClosureRecipientType;
@@ -55,6 +54,8 @@ public interface ConstantService {
     public AccountingJournal getAccountingJournalPurchases() throws OsirisException;
 
     public AccountingJournal getAccountingJournalANouveau() throws OsirisException;
+
+    public AccountingJournal getAccountingJournalBank() throws OsirisException;
 
     public TiersType getTiersTypeProspect() throws OsirisException;
 
@@ -259,8 +260,6 @@ public interface ConstantService {
     public TypePersonne getTypePersonnePersonneMorale() throws OsirisException;
 
     public TypePersonne getTypePersonneExploitation() throws OsirisException;
-
-    public FormeJuridique getFormeJuridiqueEntrepreneurIndividuel() throws OsirisException;
 
     public TypeFormalite getTypeFormaliteCessation() throws OsirisException;
 

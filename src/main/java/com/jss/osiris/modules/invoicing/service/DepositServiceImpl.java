@@ -123,7 +123,8 @@ public class DepositServiceImpl implements DepositService {
         addOrUpdateDeposit(deposit);
         if (deposit.getAccountingRecords() != null)
             for (AccountingRecord accountingRecord : deposit.getAccountingRecords()) {
-                accountingRecordService.generateCounterPart(accountingRecord);
+                if (!accountingRecord.getIsCounterPart())
+                    accountingRecordService.generateCounterPart(accountingRecord);
             }
         accountingRecordService.generateAccountingRecordsForDepositOnInvoice(deposit, toInvoice, null);
     }
@@ -136,9 +137,10 @@ public class DepositServiceImpl implements DepositService {
         addOrUpdateDeposit(deposit);
         if (deposit.getAccountingRecords() != null)
             for (AccountingRecord accountingRecord : deposit.getAccountingRecords()) {
-                accountingRecordService.generateCounterPart(accountingRecord);
+                if (!accountingRecord.getIsCounterPart())
+                    accountingRecordService.generateCounterPart(accountingRecord);
             }
-        accountingRecordService.generateAccountingRecordsForTemporaryDepositForInvoice(deposit, fromInvoice, null);
+        accountingRecordService.generateAccountingRecordsForDepositAndCustomerOrder(deposit, toCustomerOrder, null);
     }
 
     @Override
@@ -154,7 +156,8 @@ public class DepositServiceImpl implements DepositService {
         // Cancel account records for deposit
         if (deposit.getAccountingRecords() != null)
             for (AccountingRecord accountingRecord : deposit.getAccountingRecords()) {
-                accountingRecordService.generateCounterPart(accountingRecord);
+                if (!accountingRecord.getIsCounterPart())
+                    accountingRecordService.generateCounterPart(accountingRecord);
             }
 
         // If deposit already associated to a choosen invoice or customerOrder reduce

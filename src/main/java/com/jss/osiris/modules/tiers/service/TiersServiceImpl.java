@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -188,5 +189,32 @@ public class TiersServiceImpl implements TiersService {
     @Override
     public List<Tiers> findAllTiersTypeClient() throws OsirisException {
         return tiersRepository.findByTiersType(constantService.getTiersTypeClient());
+    }
+
+    @Scheduled(initialDelay = 100, fixedDelay = 100000)
+    @Transactional
+    public void re() throws OsirisException {
+        List<Tiers> tierss = IterableUtils.toList(tiersRepository.findAll());
+        int i = 0;
+        for (Tiers tiers : tierss) {
+            i++;
+            System.out.println(i);
+            if (tiers.getId() == null
+                    || tiers.getAccountingAccountCustomer() == null && tiers.getAccountingAccountProvider() == null
+                            && tiers.getAccountingAccountDeposit() == null) {
+                String label = "";
+                if (tiers.getIsIndividual()) {
+                    label = tiers.getFirstname() + " " + tiers.getLastname();
+                } else {
+                    label = tiers.getDenomination();
+                }
+                AccountingAccountTrouple accountingAccountCouple = accountingAccountService
+                        .generateAccountingAccountsForEntity(label);
+                tiers.setAccountingAccountCustomer(accountingAccountCouple.getAccountingAccountCustomer());
+                tiers.setAccountingAccountProvider(accountingAccountCouple.getAccountingAccountProvider());
+                tiers.setAccountingAccountDeposit(accountingAccountCouple.getAccountingAccountDeposit());
+                tiersRepository.save(tiers);
+            }
+        }
     }
 }

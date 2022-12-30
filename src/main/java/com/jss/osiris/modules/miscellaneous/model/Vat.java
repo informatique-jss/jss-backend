@@ -9,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 
@@ -16,7 +17,8 @@ import com.jss.osiris.modules.accounting.model.AccountingAccount;
 public class Vat implements Serializable, IId {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@SequenceGenerator(name = "vat_sequence", sequenceName = "vat_sequence", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "vat_sequence")
 	private Integer id;
 
 	@Column(nullable = false, length = 100)

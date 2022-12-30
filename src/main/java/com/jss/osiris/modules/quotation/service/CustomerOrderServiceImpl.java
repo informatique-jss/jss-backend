@@ -179,10 +179,11 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             }
 
         // Complete provisions
-        for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders()) {
-            assoAffaireOrder.setCustomerOrder(customerOrder);
-            assoAffaireOrderService.completeAssoAffaireOrder(assoAffaireOrder, customerOrder);
-        }
+        if (customerOrder.getAssoAffaireOrders() != null)
+            for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders()) {
+                assoAffaireOrder.setCustomerOrder(customerOrder);
+                assoAffaireOrderService.completeAssoAffaireOrder(assoAffaireOrder, customerOrder);
+            }
 
         boolean isNewCustomerOrder = customerOrder.getId() == null;
 
@@ -193,8 +194,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         customerOrder = getCustomerOrder(customerOrder.getId());
 
         indexEntityService.indexEntity(customerOrder, customerOrder.getId());
-        for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders())
-            indexEntityService.indexEntity(assoAffaireOrder, assoAffaireOrder.getId());
+        if (customerOrder.getAssoAffaireOrders() != null)
+            for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders())
+                indexEntityService.indexEntity(assoAffaireOrder, assoAffaireOrder.getId());
 
         if (isNewCustomerOrder)
             notificationService.notifyNewCustomerOrderQuotation(customerOrder);
@@ -203,7 +205,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         generateStoreAndSendPublicationFlag(customerOrder);
 
         // Trigger move forward for announcement created in website
-        if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.OPEN)
+        if (customerOrder.getAssoAffaireOrders() != null
+                && customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.OPEN)
                 && customerOrder.getIsCreatedFromWebSite() != null && customerOrder.getIsCreatedFromWebSite())
             addOrUpdateCustomerOrderStatus(customerOrder, CustomerOrderStatus.OPEN, false);
         return customerOrder;
@@ -439,12 +442,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Override
     public CustomerOrder unlockCustomerOrderFromDeposit(CustomerOrder customerOrder)
             throws OsirisException, OsirisClientMessageException {
-        Float remainingToPay = accountingRecordService
-                .getRemainingAmountToPayForCustomerOrder(customerOrder);
-
-        if (customerOrder.getCustomerOrderStatus().getCode()
-                .equals(CustomerOrderStatus.WAITING_DEPOSIT)
-                && remainingToPay <= 0) {
+        if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.WAITING_DEPOSIT)) {
             addOrUpdateCustomerOrderStatus(customerOrder, CustomerOrderStatus.BEING_PROCESSED, false);
             notificationService.notifyCustomerOrderToBeingProcessed(customerOrder, false);
         }
@@ -751,6 +749,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                                 }
                     } else {
                         generateDepositOnCustomerOrderForCbPayment(customerOrder, centralPayPaymentRequest);
+                        customerOrder.setCentralPayPaymentRequestId(null);
+                        addOrUpdateCustomerOrder(customerOrder);
                         unlockCustomerOrderFromDeposit(customerOrder);
                     }
                     return true;
@@ -952,10 +952,10 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                         }
                     }
                 }
+                mailHelper.sendPublicationFlagToCustomer(customerOrder, false);
             }
         }
 
-        mailHelper.sendPublicationFlagToCustomer(customerOrder, false);
     }
 
 }

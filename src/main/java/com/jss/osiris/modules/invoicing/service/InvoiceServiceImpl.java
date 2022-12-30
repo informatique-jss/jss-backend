@@ -95,7 +95,8 @@ public class InvoiceServiceImpl implements InvoiceService {
         if (invoice.getAccountingRecords() != null)
             for (AccountingRecord accountingRecord : invoice.getAccountingRecords()) {
                 accountingRecordService.unassociateCustomerOrderPayementAndDeposit(accountingRecord);
-                accountingRecordService.generateCounterPart(accountingRecord);
+                if (!accountingRecord.getIsCounterPart())
+                    accountingRecordService.generateCounterPart(accountingRecord);
             }
         invoice.setInvoiceStatus(constantService.getInvoiceStatusCancelled());
         return addOrUpdateInvoice(invoice);

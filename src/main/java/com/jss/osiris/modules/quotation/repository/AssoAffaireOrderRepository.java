@@ -23,7 +23,7 @@ public interface AssoAffaireOrderRepository extends CrudRepository<AssoAffaireOr
                         " e1.id as responsibleId," +
                         " e2.id as assignedToId," +
                         " pf.label ||' - '||pt.label as provisionTypeLabel," +
-                        " coalesce(ans.label,fs.label,doms.label, bos.label) as statusLabel," +
+                        " coalesce(ans.label,fs.label,doms.label, bos.label,sps.label) as statusLabel," +
                         " asso.id as assoId," +
                         " p.id as provisionId" +
                         " from asso_affaire_order asso " +
@@ -46,14 +46,16 @@ public interface AssoAffaireOrderRepository extends CrudRepository<AssoAffaireOr
                         " left join formalite_status fs on fs.id = fo.id_formalite_status" +
                         " left join domiciliation dom on dom.id = p.id_domiciliation" +
                         " left join domiciliation_status doms on doms.id = dom.id_domicilisation_status " +
+                        " left join simple_provision sp on sp.id = p.id_simple_provision" +
+                        " left join simple_provision_status sps on sps.id = sp.id_simple_provision_status " +
                         " left join bodacc bo on bo.id = p.id_bodacc" +
                         " left join bodacc_status bos on bos.id = bo.id_bodacc_status" +
-                        " where cs.code not in (:excludedCustomerOrderStatusCode) and (COALESCE(:responsible) is null or asso.id_employee in (:responsible))"
+                        " where cs.code not in (:excludedCustomerOrderStatusCode) and (COALESCE(:responsible)=0 or asso.id_employee in (:responsible))"
                         +
-                        " and ( COALESCE(:assignedTo) is null or p.id_employee in (:assignedTo)) " +
+                        " and ( COALESCE(:assignedTo) =0 or p.id_employee in (:assignedTo)) " +
                         " and (:label ='' or upper(a.denomination)  like '%' || upper(CAST(:label as text))  || '%'  or upper(a.firstname)  like '%' || upper(CAST(:label as text)) || '%' or upper(a.lastname)  like '%' || upper(CAST(:label as text)) || '%') "
                         +
-                        " and (COALESCE(:status) is null or coalesce(ans.id,fs.id,doms.id, bos.id) in (:status) )")
+                        " and (COALESCE(:status) is null or coalesce(ans.id,fs.id,doms.id, bos.id,sps.id) in (:status) )")
         ArrayList<AssoAffaireOrderSearchResult> findAsso(@Param("responsible") List<Integer> responsibleIds,
                         @Param("assignedTo") List<Integer> assignedToIds,
                         @Param("label") String label, @Param("status") ArrayList<Integer> arrayList,

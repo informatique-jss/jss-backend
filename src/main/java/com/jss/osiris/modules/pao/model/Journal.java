@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
@@ -19,6 +20,7 @@ import com.jss.osiris.modules.miscellaneous.model.IId;
 public class Journal implements IId, IAttachment {
 
 	@Id
+	@SequenceGenerator(name = "journal_sequence", sequenceName = "journal_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "journal_sequence")
 	private Integer id;
 

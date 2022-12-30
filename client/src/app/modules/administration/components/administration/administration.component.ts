@@ -77,7 +77,6 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
   INVOICE_STAUTS_REFERENTIAL = "Statut de facture";
   PAYMENT_WAY_REFERENTIAL = "Sens de paiement";
   BILLING_REGIE = "Régie";
-  ACCOUNT_STATEMENT_RECIPIENT_REFERENTIAL = "Destinataire de relevé comptable";
   PRINCIPAL_ACCOUNTING_ACCOUNT_REFERENTIAL = "Compte comptable principal";
 
   constructor(private appService: AppService,

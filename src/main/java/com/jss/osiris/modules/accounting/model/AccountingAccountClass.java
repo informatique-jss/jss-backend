@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Index;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import com.jss.osiris.modules.miscellaneous.model.IId;
@@ -18,7 +19,8 @@ import com.jss.osiris.modules.miscellaneous.model.IId;
 public class AccountingAccountClass implements Serializable, IId {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@SequenceGenerator(name = "accounting_account_class_sequence", sequenceName = "accounting_account_class_sequence", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "accounting_account_class_sequence")
 	private Integer id;
 
 	@Column(nullable = false, length = 100)

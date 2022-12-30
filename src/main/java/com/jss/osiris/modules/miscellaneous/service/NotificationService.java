@@ -2,6 +2,7 @@ package com.jss.osiris.modules.miscellaneous.service;
 
 import java.util.List;
 
+import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.miscellaneous.model.Notification;
@@ -19,15 +20,20 @@ public interface NotificationService {
 
         public void deleteNotification(Notification notification);
 
-        public Notification notifyNewQuotation(Quotation quotation) throws OsirisException;
+        public Notification notifyNewQuotation(Quotation quotation)
+                        throws OsirisException, OsirisClientMessageException;
 
-        public Notification notifyQuotationToVerify(Quotation quotation) throws OsirisException;
+        public Notification notifyQuotationToVerify(Quotation quotation)
+                        throws OsirisException, OsirisClientMessageException;
 
-        public Notification notifyQuotationSent(Quotation quotation) throws OsirisException;
+        public Notification notifyQuotationSent(Quotation quotation)
+                        throws OsirisException, OsirisClientMessageException;
 
-        public Notification notifyQuotationValidatedByCustomer(Quotation quotation) throws OsirisException;
+        public Notification notifyQuotationValidatedByCustomer(Quotation quotation)
+                        throws OsirisException, OsirisClientMessageException;
 
-        public Notification notifyQuotationRefusedByCustomer(Quotation quotation) throws OsirisException;
+        public Notification notifyQuotationRefusedByCustomer(Quotation quotation)
+                        throws OsirisException, OsirisClientMessageException;
 
         public List<Notification> notifyNewCustomerOrderQuotation(CustomerOrder customerOrder) throws OsirisException;
 

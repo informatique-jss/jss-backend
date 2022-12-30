@@ -19,7 +19,6 @@ import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -685,7 +684,7 @@ public class Generate {
                 }
         }
 
-        @Scheduled(initialDelay = 500, fixedDelay = 100000)
+        // @Scheduled(initialDelay = 500, fixedDelay = 100000)
         public void generatePojo() {
                 try {
                         ArrayList<File> files = listFilesForFolder(new File(

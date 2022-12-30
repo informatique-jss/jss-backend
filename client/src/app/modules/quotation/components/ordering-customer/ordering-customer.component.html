@@ -33,7 +33,7 @@
                   "+quotation.tiers.lastname)}} ({{quotation.tiers.id}}) <mat-icon matTooltip="Ouvrir le client"
                     (click)="openRoute($event,'/tiers/'+quotation.tiers.id)"
                     (auxclick)="openRoute($event,'/tiers/'+quotation.tiers.id)" class="pointer">
-                    preview
+                    visibility
                   </mat-icon>
                 </td>
               </tr>
@@ -111,7 +111,7 @@
                   "+quotation.responsable.tiers.lastname)}} ({{quotation.responsable.tiers.id}}) <mat-icon
                     matTooltip="Ouvrir le client" (click)="openRoute($event,'/tiers/'+quotation.responsable.tiers.id)"
                     (auxclick)="openRoute($event,'/tiers/'+quotation.responsable.tiers.id)" class="pointer">
-                    preview
+                    visibility
                   </mat-icon>
                 </td>
               </tr>
@@ -188,7 +188,8 @@
             <tr>
               <td>
                 <generic-textarea [(model)]="quotation.description" label="Description de la demande"
-                  [form]="orderingCustomerForm" propertyName="description" [isDisabled]="!editMode" [numberOfLines]="4">
+                  [form]="orderingCustomerForm" propertyName="description" [isDisabled]="!editMode"
+                  [numberOfLines]="10">
                 </generic-textarea>
               </td>
             </tr>

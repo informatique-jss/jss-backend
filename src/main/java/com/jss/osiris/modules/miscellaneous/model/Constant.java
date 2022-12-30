@@ -24,7 +24,6 @@ import com.jss.osiris.modules.quotation.model.DomiciliationContractType;
 import com.jss.osiris.modules.quotation.model.JournalType;
 import com.jss.osiris.modules.quotation.model.MailRedirectionType;
 import com.jss.osiris.modules.quotation.model.TransfertFundsType;
-import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormeJuridique;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeFormalite;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypePersonne;
 import com.jss.osiris.modules.tiers.model.BillingClosureRecipientType;
@@ -64,6 +63,10 @@ public class Constant implements Serializable, IId {
 	@ManyToOne
 	@JoinColumn(name = "id_accounting_journal_anouveau")
 	private AccountingJournal accountingJournalANouveau;
+
+	@ManyToOne
+	@JoinColumn(name = "id_accounting_journal_bank")
+	private AccountingJournal accountingJournalBank;
 
 	@ManyToOne
 	@JoinColumn(name = "id_tiers_type_prospect")
@@ -463,10 +466,6 @@ public class Constant implements Serializable, IId {
 	@ManyToOne
 	@JoinColumn(name = "id_type_personne_personne_morale")
 	private TypePersonne typePersonnePersonneMorale;
-
-	@ManyToOne
-	@JoinColumn(name = "id_forme_juridique_entrepreneur_individuel")
-	private FormeJuridique formeJuridiqueEntrepreneurIndividuel;
 
 	@ManyToOne
 	@JoinColumn(name = "id_type_formalite_cessation")
@@ -1050,14 +1049,6 @@ public class Constant implements Serializable, IId {
 		this.typePersonnePersonneMorale = typePersonnePersonneMorale;
 	}
 
-	public FormeJuridique getFormeJuridiqueEntrepreneurIndividuel() {
-		return formeJuridiqueEntrepreneurIndividuel;
-	}
-
-	public void setFormeJuridiqueEntrepreneurIndividuel(FormeJuridique formeJuridiqueEntrepreneurIndividuel) {
-		this.formeJuridiqueEntrepreneurIndividuel = formeJuridiqueEntrepreneurIndividuel;
-	}
-
 	public TypeFormalite getTypeFormaliteCessation() {
 		return typeFormaliteCessation;
 	}
@@ -1628,6 +1619,14 @@ public class Constant implements Serializable, IId {
 
 	public void setAccountingAccountBankJss(AccountingAccount accountingAccountBankJss) {
 		this.accountingAccountBankJss = accountingAccountBankJss;
+	}
+
+	public AccountingJournal getAccountingJournalBank() {
+		return accountingJournalBank;
+	}
+
+	public void setAccountingJournalBank(AccountingJournal accountingJournalBank) {
+		this.accountingJournalBank = accountingJournalBank;
 	}
 
 }

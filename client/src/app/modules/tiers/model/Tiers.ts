@@ -31,4 +31,5 @@ export interface Tiers extends ITiers {
   lastname: string | null;
   rffFormaliteRate: number;
   rffInsertionRate: number;
+  idAs400: string;
 }

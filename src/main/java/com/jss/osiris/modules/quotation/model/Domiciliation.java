@@ -14,6 +14,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -34,6 +35,7 @@ import com.jss.osiris.modules.miscellaneous.model.Phone;
 public class Domiciliation implements IId, IAttachment {
 
 	@Id
+	@SequenceGenerator(name = "domiciliation_sequence", sequenceName = "domiciliation_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "domiciliation_sequence")
 	private Integer id;
 

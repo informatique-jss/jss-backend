@@ -36,7 +36,6 @@ import com.jss.osiris.modules.quotation.model.DomiciliationContractType;
 import com.jss.osiris.modules.quotation.model.JournalType;
 import com.jss.osiris.modules.quotation.model.MailRedirectionType;
 import com.jss.osiris.modules.quotation.model.TransfertFundsType;
-import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.FormeJuridique;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypeFormalite;
 import com.jss.osiris.modules.quotation.model.guichetUnique.referentials.TypePersonne;
 import com.jss.osiris.modules.tiers.model.BillingClosureRecipientType;
@@ -52,12 +51,17 @@ public class ConstantServiceImpl implements ConstantService {
     @Autowired
     ConstantRepository constantRepository;
 
+    Constant constantsSingleton = null;
+
     @Override
     public Constant getConstants() throws OsirisException {
+        if (constantsSingleton != null)
+            return constantsSingleton;
         List<Constant> constants = IterableUtils.toList(constantRepository.findAll());
         if (constants == null || constants.size() != 1)
             throw new OsirisException(null, "Constants not defined or multiple");
-        return constants.get(0);
+        constantsSingleton = constants.get(0);
+        return constantsSingleton;
     }
 
     @Override
@@ -72,7 +76,8 @@ public class ConstantServiceImpl implements ConstantService {
     @Transactional(rollbackFor = Exception.class)
     public Constant addOrUpdateConstant(
             Constant constant) {
-        return constantRepository.save(constant);
+        constantsSingleton = constantRepository.save(constant);
+        return constantsSingleton;
     }
 
     @Override
@@ -103,6 +108,11 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public AccountingJournal getAccountingJournalANouveau() throws OsirisException {
         return getConstants().getAccountingJournalANouveau();
+    }
+
+    @Override
+    public AccountingJournal getAccountingJournalBank() throws OsirisException {
+        return getConstants().getAccountingJournalBank();
     }
 
     @Override
@@ -613,11 +623,6 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public TypePersonne getTypePersonneExploitation() throws OsirisException {
         return getConstants().getTypePersonneExploitation();
-    }
-
-    @Override
-    public FormeJuridique getFormeJuridiqueEntrepreneurIndividuel() throws OsirisException {
-        return getConstants().getFormeJuridiqueEntrepreneurIndividuel();
     }
 
     @Override

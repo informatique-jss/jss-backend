@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import com.jss.osiris.modules.profile.model.Employee;
@@ -36,6 +37,7 @@ public class Notification implements Serializable, IId {
   public static String INVOICE_REMINDER_PAYMENT = "INVOICE_REMINDER_PAYMENT";
 
   @Id
+  @SequenceGenerator(name = "notification_sequence", sequenceName = "notification_sequence", allocationSize = 1)
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "notification_sequence")
   private Integer id;
 

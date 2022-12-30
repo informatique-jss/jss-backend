@@ -12,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.libs.search.model.IndexedField;
@@ -26,6 +27,7 @@ import com.jss.osiris.modules.quotation.model.guichetUnique.Formalite;
 public class Provision implements IId, IAttachment {
 
 	@Id
+	@SequenceGenerator(name = "provision_sequence", sequenceName = "provision_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "provision_sequence")
 	private Integer id;
 

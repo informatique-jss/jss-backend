@@ -147,7 +147,7 @@ public class Responsable implements ITiers, IAttachment {
 	@JsonIgnoreProperties(value = { "responsable" }, allowSetters = true)
 	private List<TiersFollowup> tiersFollowups;
 
-	@Column(length = 20)
+	@Column(length = 100)
 	private String function;
 
 	@Column(length = 20)
@@ -169,6 +169,7 @@ public class Responsable implements ITiers, IAttachment {
 	@Column(length = 300)
 	private String password;
 
+	@IndexedField
 	private Integer idAs400;
 	private Integer newIdAs400;
 

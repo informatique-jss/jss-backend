@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import com.jss.osiris.modules.miscellaneous.model.IId;
@@ -24,6 +25,7 @@ public class OsirisLog implements Serializable, IId {
     public static String UNHANDLED_LOG = "UNHANDLED_LOG";
 
     @Id
+    @SequenceGenerator(name = "osiris_log_sequence", sequenceName = "osiris_log_sequence", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "osiris_log_sequence")
     private Integer id;
 

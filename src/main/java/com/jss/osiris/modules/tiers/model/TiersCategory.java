@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.miscellaneous.model.IId;
@@ -15,7 +16,8 @@ import com.jss.osiris.modules.miscellaneous.model.IId;
 public class TiersCategory implements Serializable, IId {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@SequenceGenerator(name = "tiers_category_sequence", sequenceName = "tiers_category_sequence", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "tiers_category_sequence")
 	private Integer id;
 
 	@Column(nullable = false, length = 100)

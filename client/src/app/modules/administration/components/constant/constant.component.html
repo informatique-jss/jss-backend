@@ -50,6 +50,13 @@
           </tr>
           <tr>
             <td>
+              <select-accounting-journal [(model)]="constant.accountingJournalBank" [form]="constantForm"
+                propertyName="accountingJournalBank" label="Journal de comptabilité - Banque" [isDisabled]="!editMode">
+              </select-accounting-journal>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <select-tiers-type [(model)]="constant.tiersTypeProspect" [form]="constantForm" [isMandatory]="true"
                 propertyName="tiersTypeProspect" label="Type de tiers - prospect" [isDisabled]="!editMode">
               </select-tiers-type>
@@ -827,15 +834,6 @@
                 label="Type de personne - Exploitation" [form]="constantForm" propertyName="typePersonneExploitation"
                 [isMandatory]="true" [isDisabled]="!editMode" [conditionnalRequired]="true">
               </radio-group-type-personne>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <autocomplete-forme-juridique [(model)]="constant.formeJuridiqueEntrepreneurIndividuel"
-                label="Forme jurisique - entrepreneur individuel" [form]="constantForm"
-                propertyName="formeJuridiqueEntrepreneurIndividuel" [isMandatory]="true" [isDisabled]="!editMode"
-                [conditionnalRequired]="true">
-              </autocomplete-forme-juridique>
             </td>
           </tr>
           <tr>

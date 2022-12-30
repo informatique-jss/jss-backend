@@ -9,7 +9,6 @@ import { AssignationType } from "../../quotation/model/AssignationType";
 import { BodaccPublicationType } from "../../quotation/model/BodaccPublicationType";
 import { Confrere } from "../../quotation/model/Confrere";
 import { DomiciliationContractType } from "../../quotation/model/DomiciliationContractType";
-import { FormeJuridique } from '../../quotation/model/guichet-unique/referentials/FormeJuridique';
 import { TypeFormalite } from '../../quotation/model/guichet-unique/referentials/TypeFormalite';
 import { TypePersonne } from '../../quotation/model/guichet-unique/referentials/TypePersonne';
 import { JournalType } from "../../quotation/model/JournalType";
@@ -41,6 +40,7 @@ export interface Constant {
   accountingJournalSales: AccountingJournal;
   accountingJournalPurchases: AccountingJournal;
   accountingJournalANouveau: AccountingJournal;
+  accountingJournalBank: AccountingJournal;
   tiersTypeProspect: TiersType;
   tiersTypeClient: TiersType;
   documentTypeDigital: DocumentType;
@@ -143,7 +143,6 @@ export interface Constant {
   typePersonnePersonnePhysique: TypePersonne;
   typePersonnePersonneMorale: TypePersonne;
   typePersonneExploitation: TypePersonne;
-  formeJuridiqueEntrepreneurIndividuel: FormeJuridique;
   typeFormaliteCessation: TypeFormalite;
   typeFormaliteModification: TypeFormalite;
   typeFormaliteCreation: TypeFormalite;

@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 
 import com.jss.osiris.modules.miscellaneous.model.IId;
 
@@ -14,7 +15,8 @@ import com.jss.osiris.modules.miscellaneous.model.IId;
 public class MailRedirectionType implements Serializable, IId {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@SequenceGenerator(name = "mail_redirection_type_sequence", sequenceName = "mail_redirection_type_sequence", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "mail_redirection_type_sequence")
 	private Integer id;
 
 	@Column(nullable = false, length = 100)

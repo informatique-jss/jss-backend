@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 
 import com.jss.osiris.modules.miscellaneous.model.IId;
 
@@ -14,6 +15,7 @@ import com.jss.osiris.modules.miscellaneous.model.IId;
 public class BodaccPublicationType implements Serializable, IId {
 
 	@Id
+	@SequenceGenerator(name = "bodacc_sequence", sequenceName = "bodacc_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "bodacc_sequence")
 	private Integer id;
 

@@ -8,6 +8,9 @@ public interface PrincipalAccountingAccountService {
     public List<PrincipalAccountingAccount> getPrincipalAccountingAccounts();
 
     public PrincipalAccountingAccount getPrincipalAccountingAccount(Integer id);
-	
-	 public PrincipalAccountingAccount addOrUpdatePrincipalAccountingAccount(PrincipalAccountingAccount principalAccountingAccount);
+
+    public PrincipalAccountingAccount addOrUpdatePrincipalAccountingAccount(
+            PrincipalAccountingAccount principalAccountingAccount);
+
+    public PrincipalAccountingAccount getPrincipalAccountingAccountByCode(String code);
 }

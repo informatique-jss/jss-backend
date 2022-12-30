@@ -63,7 +63,7 @@ export class OrderingCustomerComponent implements OnInit {
     this.customerOrderDisplayedColumns.push({ id: "totalPrice", fieldName: "totalPrice", label: "Prix total", valueFonction: (element: any, elements: any[], column: SortTableColumn, columns: SortTableColumn[]): string => { return QuotationComponent.computePriceTotal(element) + " €"; } } as SortTableColumn);
 
     this.customerOrderTableActions.push({
-      actionIcon: "preview", actionName: "Voir la commande", actionLinkFunction: (action: SortTableAction, element: any) => {
+      actionIcon: "visibility", actionName: "Voir la commande", actionLinkFunction: (action: SortTableAction, element: any) => {
         if (element)
           return ['/order', element.id];
         return undefined;

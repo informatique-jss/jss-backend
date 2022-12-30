@@ -41,6 +41,7 @@ import com.jss.osiris.modules.accounting.service.AccountingAccountService;
 import com.jss.osiris.modules.accounting.service.AccountingJournalService;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.accounting.service.PrincipalAccountingAccountService;
+import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 
 @RestController
 public class AccountingController {
@@ -66,6 +67,9 @@ public class AccountingController {
 
     @Autowired
     PrincipalAccountingAccountService principalAccountingAccountService;
+
+    @Autowired
+    ConstantService constantService;
 
     @GetMapping(inputEntryPoint + "/principal-accounting-accounts")
     public ResponseEntity<List<PrincipalAccountingAccount>> getPrincipalAccountingAccounts() {
@@ -97,9 +101,9 @@ public class AccountingController {
         if (accountingRecords == null || accountingRecords.size() == 0)
             throw new OsirisValidationException("accountingRecords");
 
-        AccountingJournal salesJournal = accountingJournalService.getSalesAccountingJournal();
-        AccountingJournal purchasesJournal = accountingJournalService.getPurchasesAccountingJournal();
-        AccountingJournal aNouveauJournal = accountingJournalService.getANouveauAccountingJournal();
+        AccountingJournal salesJournal = constantService.getAccountingJournalSales();
+        AccountingJournal purchasesJournal = constantService.getAccountingJournalPurchases();
+        AccountingJournal aNouveauJournal = constantService.getAccountingJournalANouveau();
 
         for (AccountingRecord accountingRecord : accountingRecords) {
             if (accountingRecord.getId() != null

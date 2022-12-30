@@ -116,6 +116,12 @@ public class PaymentServiceImpl implements PaymentService {
             paymentWayId.add(0);
         }
 
+        if (paymentSearch.getStartDate() == null)
+            paymentSearch.setStartDate(LocalDateTime.now().minusYears(100));
+
+        if (paymentSearch.getEndDate() == null)
+            paymentSearch.setEndDate(LocalDateTime.now().plusYears(100));
+
         return paymentRepository.findPayments(paymentWayId,
                 paymentSearch.getStartDate().withHour(0).withMinute(0),
                 paymentSearch.getEndDate().withHour(23).withMinute(59), paymentSearch.getMinAmount(),

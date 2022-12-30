@@ -8,6 +8,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.invoicing.service.InvoiceItemService;
@@ -65,7 +66,7 @@ public class PricingHelper {
     CityService cityService;
 
     public IQuotation getAndSetInvoiceItemsForQuotation(IQuotation quotation, boolean persistInvoiceItem)
-            throws OsirisException {
+            throws OsirisException, OsirisClientMessageException {
         if (quotation.getAssoAffaireOrders() != null) {
             for (AssoAffaireOrder assoAffaireOrder : quotation.getAssoAffaireOrders()) {
                 if (assoAffaireOrder.getProvisions() != null)
@@ -233,7 +234,7 @@ public class PricingHelper {
     }
 
     private void setInvoiceItemsForProvision(Provision provision, IQuotation quotation, boolean persistInvoiceItem)
-            throws OsirisException {
+            throws OsirisException, OsirisClientMessageException {
 
         if (quotation != null && provision != null) {
             if (provision.getInvoiceItems() == null)
@@ -413,7 +414,7 @@ public class PricingHelper {
     }
 
     private void computeInvoiceItemsVatAndDiscount(InvoiceItem invoiceItem, IQuotation quotation)
-            throws OsirisException {
+            throws OsirisException, OsirisClientMessageException {
         AssoSpecialOfferBillingType assoSpecialOfferBillingType = getAppliableSpecialOfferForProvision(
                 invoiceItem.getBillingItem().getBillingType(), quotation);
 
@@ -440,6 +441,10 @@ public class PricingHelper {
             customerOrder = quotation.getResponsable().getTiers();
         else
             customerOrder = quotation.getTiers();
+
+        if (customerOrder.getCity() == null)
+            throw new OsirisClientMessageException(
+                    "Aucune ville trouvée sur le donneur d'ordre pour générer le prix. Merci de compléter le donneur d'ordre");
 
         // If document not found or document indicate to use it, take customer order as
         // default

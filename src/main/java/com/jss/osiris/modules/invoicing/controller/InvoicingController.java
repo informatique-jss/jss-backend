@@ -145,9 +145,6 @@ public class InvoicingController {
         if (paymentSearch == null)
             throw new OsirisValidationException("paymentSearch");
 
-        if (paymentSearch.getStartDate() == null || paymentSearch.getEndDate() == null)
-            throw new OsirisValidationException("StartDate or EndDate");
-
         if (paymentSearch.getPaymentWays() == null)
             throw new OsirisValidationException("paymentWays");
 
@@ -396,7 +393,8 @@ public class InvoicingController {
                 if (customerOrder.getConfrere() != null
                         && !customerOrder.getConfrere().getId().equals(commonCustomerOrder.getId()))
                     throw new OsirisValidationException("not same customer order chosed");
-                if (!customerOrder.getTiers().getId().equals(commonCustomerOrder.getId()))
+                if (customerOrder.getTiers() != null
+                        && !customerOrder.getTiers().getId().equals(commonCustomerOrder.getId()))
                     throw new OsirisValidationException("not same customer order chosed");
             }
         }
@@ -500,7 +498,7 @@ public class InvoicingController {
                     invoice.getBillingLabelType().getId().equals(billingLabelAffaire.getId()), 160,
                     "BillingLabelAddress");
             validationHelper.validateString(invoice.getBillingLabel(),
-                    invoice.getBillingLabelType().getId().equals(billingLabelAffaire.getId()), 40, "BillingLabel");
+                    invoice.getBillingLabelType().getId().equals(billingLabelAffaire.getId()), 100, "BillingLabel");
             validationHelper.validateString(invoice.getBillingLabelPostalCode(),
                     invoice.getBillingLabelType().getId().equals(billingLabelAffaire.getId()), 10,
                     "BillingLabelPostalCode");

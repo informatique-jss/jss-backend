@@ -5,7 +5,6 @@ import java.util.Optional;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,23 +42,17 @@ public class BillingTypeServiceImpl implements BillingTypeService {
         if (billingType.getId() == null
                 || billingType.getAccountingAccountCharge() == null
                         && billingType.getAccountingAccountProduct() == null) {
-            AccountingAccountBinome accountingAccounts = accountingAccountService
-                    .generateAccountingAccountsForBillingType(billingType);
+            if (billingType.getIsGenerateAccountCharge() || billingType.getIsGenerateAccountProduct()) {
+                AccountingAccountBinome accountingAccounts = accountingAccountService
+                        .generateAccountingAccountsForBillingType(billingType);
 
-            if (billingType.getIsGenerateAccountCharge())
-                billingType.setAccountingAccountCharge(accountingAccounts.getAccountingAccountCharge());
-            if (billingType.getIsGenerateAccountProduct())
-                billingType.setAccountingAccountProduct(accountingAccounts.getAccountingAccountProduct());
+                if (billingType.getIsGenerateAccountCharge())
+                    billingType.setAccountingAccountCharge(accountingAccounts.getAccountingAccountCharge());
+                if (billingType.getIsGenerateAccountProduct())
+                    billingType.setAccountingAccountProduct(accountingAccounts.getAccountingAccountProduct());
+            }
         }
         return billingTypeRepository.save(billingType);
     }
 
-    // TOOD : delete !
-    @Scheduled(initialDelay = 1000, fixedDelay = 1000000)
-    public void upgradeBillingType() throws OsirisException {
-        List<BillingType> billingTypes = getBillingTypes();
-        if (billingTypes != null)
-            for (BillingType billingType : billingTypes)
-                addOrUpdateBillingType(billingType);
-    }
 }

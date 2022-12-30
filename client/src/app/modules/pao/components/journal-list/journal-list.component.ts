@@ -41,7 +41,7 @@ export class JournalListComponent implements OnInit {
     } as SortTableAction);
 
     this.tableAction.push({
-      actionIcon: "preview", actionName: "Prévisualiser le journal", actionClick: (action: SortTableAction, element: any): void => {
+      actionIcon: "visibility", actionName: "Prévisualiser le journal", actionClick: (action: SortTableAction, element: any): void => {
         this.uploadAttachmentService.previewAttachment(element.attachments[0]);
       }, display: true
     } as SortTableAction);

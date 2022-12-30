@@ -12,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.jss.osiris.libs.search.model.IndexedField;
@@ -23,7 +24,8 @@ import com.jss.osiris.modules.profile.model.Employee;
 public class ProvisionType implements Serializable, IId {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@SequenceGenerator(name = "provision_type_sequence", sequenceName = "provision_type_sequence", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "provision_type_sequence")
 	private Integer id;
 
 	@Column(nullable = false, length = 100)

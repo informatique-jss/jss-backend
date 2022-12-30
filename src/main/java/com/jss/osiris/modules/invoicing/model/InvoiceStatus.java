@@ -6,19 +6,22 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
-import com.jss.osiris.modules.miscellaneous.model.IId;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+
+import com.jss.osiris.modules.miscellaneous.model.IId;
 
 @Entity
-public class InvoiceStatus implements Serializable,IId {
+public class InvoiceStatus implements Serializable, IId {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@SequenceGenerator(name = "invoice_status_sequence", sequenceName = "invoice_status_sequence", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "invoice_status_sequence")
 	private Integer id;
 
 	@Column(nullable = false)
 	private String label;
-	
+
 	private String code;
 
 	public Integer getId() {
@@ -36,7 +39,7 @@ public class InvoiceStatus implements Serializable,IId {
 	public void setLabel(String label) {
 		this.label = label;
 	}
-	
+
 	public String getCode() {
 		return code;
 	}

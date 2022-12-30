@@ -335,7 +335,8 @@ public class TiersController {
 
   @GetMapping(inputEntryPoint + "/individual/search")
   public ResponseEntity<List<Tiers>> getIndividualTiersByKeyword(@RequestParam String searchedValue) {
-    return new ResponseEntity<List<Tiers>>(tiersService.getIndividualTiersByKeyword(searchedValue), HttpStatus.OK);
+    return new ResponseEntity<List<Tiers>>(tiersService.getIndividualTiersByKeyword(searchedValue),
+        HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/responsable/search")
@@ -413,10 +414,10 @@ public class TiersController {
           if (!validationHelper.validateMailList(document.getMailsClient()))
             throw new OsirisValidationException("MailsClient");
 
-        validationHelper.validateString(document.getAffaireAddress(), false, 60, "AffaireAddress");
-        validationHelper.validateString(document.getClientAddress(), false, 60, "ClientAddress");
-        validationHelper.validateString(document.getAffaireRecipient(), false, 40, "AffaireRecipient");
-        validationHelper.validateString(document.getClientRecipient(), false, 40, "ClientRecipient");
+        validationHelper.validateString(document.getAffaireAddress(), false, 200, "AffaireAddress");
+        validationHelper.validateString(document.getClientAddress(), false, 200, "ClientAddress");
+        validationHelper.validateString(document.getAffaireRecipient(), false, 100, "AffaireRecipient");
+        validationHelper.validateString(document.getClientRecipient(), false, 100, "ClientRecipient");
         validationHelper.validateString(document.getCommandNumber(), false, 40, "CommandNumber");
         validationHelper.validateReferential(document.getPaymentDeadlineType(), false, "PaymentDeadlineType");
         validationHelper.validateReferential(document.getRefundType(), false, "RefundType");
@@ -427,8 +428,8 @@ public class TiersController {
             "BillingClosureRecipientType");
         validationHelper.validateReferential(document.getBillingLabelCity(), false, "BillingLabelCity");
         validationHelper.validateReferential(document.getBillingLabelCountry(), false, "BillingLabelCountry");
-        validationHelper.validateString(document.getBillingAddress(), false, 60, "BillingAddress");
-        validationHelper.validateString(document.getBillingLabel(), false, 60, "BillingLabel");
+        validationHelper.validateString(document.getBillingAddress(), false, 100, "BillingAddress");
+        validationHelper.validateString(document.getBillingLabel(), false, 100, "BillingLabel");
         validationHelper.validateString(document.getBillingPostalCode(), false, 10, "BillingPostalCode");
         validationHelper.validateString(document.getCedexComplement(), false, 20, "CedexComplement");
 
@@ -464,7 +465,7 @@ public class TiersController {
         validationHelper.validateReferential(responsable.getCity(), false, "City");
         validationHelper.validateString(responsable.getPostalCode(), false, 10, "PostalCode");
         validationHelper.validateString(responsable.getCedexComplement(), false, 20, "CedexComplement");
-        validationHelper.validateString(responsable.getFunction(), false, 20, "Function");
+        validationHelper.validateString(responsable.getFunction(), false, 100, "Function");
         validationHelper.validateString(responsable.getBuilding(), false, 20, "Building");
         validationHelper.validateString(responsable.getFloor(), false, 20, "Floor");
         validationHelper.validateReferential(responsable.getSubscriptionPeriodType(), false, "SubscriptionPeriodType");
@@ -506,8 +507,8 @@ public class TiersController {
                 "BillingClosureRecipientType");
             validationHelper.validateReferential(document.getBillingLabelCity(), false, "BillingLabelCity");
             validationHelper.validateReferential(document.getBillingLabelCountry(), false, "BillingLabelCountry");
-            validationHelper.validateString(document.getBillingAddress(), false, 60, "BillingAddress");
-            validationHelper.validateString(document.getBillingLabel(), false, 60, "BillingLabel");
+            validationHelper.validateString(document.getBillingAddress(), false, 100, "BillingAddress");
+            validationHelper.validateString(document.getBillingLabel(), false, 100, "BillingLabel");
             validationHelper.validateString(document.getBillingPostalCode(), false, 10, "BillingPostalCode");
             validationHelper.validateString(document.getCedexComplement(), false, 20, "CedexComplement");
 

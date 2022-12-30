@@ -13,6 +13,7 @@ import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -33,6 +34,7 @@ import com.jss.osiris.modules.tiers.model.Tiers;
         @Index(name = "idx_customer_mail_confrere", columnList = "id_confrere") })
 public class CustomerMail {
     @Id
+    @SequenceGenerator(name = "customer_mail_sequence", sequenceName = "customer_mail_sequence", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "customer_mail_sequence")
     private Integer id;
 

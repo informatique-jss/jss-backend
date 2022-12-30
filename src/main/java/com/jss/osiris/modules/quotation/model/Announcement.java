@@ -30,7 +30,7 @@ import com.jss.osiris.modules.pao.model.Journal;
 public class Announcement implements IId, IAttachment, IDocument {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "announcement_sequence")
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
 
 	@ManyToOne

@@ -123,7 +123,7 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
 
   setDataTable() {
     this.tiers.responsables.sort(function (a: Responsable, b: Responsable) {
-      return (a.firstname + "" + a.lastname).localeCompare(b.firstname + "" + a.lastname);
+      return (a.lastname + "" + a.firstname).localeCompare(b.lastname + "" + a.firstname);
     });
     this.toggleTabs();
   }

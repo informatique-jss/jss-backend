@@ -38,12 +38,12 @@
       <td>
         <generic-input [(model)]="document.affaireRecipient" label="Autres destinataires pour l'affaire"
           (onFormChange)="changeDocument()" [form]="adressingForm" propertyName="affaireRecipient"
-          [isDisabled]="!editMode" [maxLength]="40">
+          [isDisabled]="!editMode" [maxLength]="100">
         </generic-input>
       </td>
       <td colspan="2">
         <generic-input [(model)]="document.affaireAddress" label="Autres adresses pour l'affaire" [form]="adressingForm"
-          (onFormChange)="changeDocument()" propertyName="affaireAddress" [isDisabled]="!editMode" [maxLength]="60">
+          (onFormChange)="changeDocument()" propertyName="affaireAddress" [isDisabled]="!editMode" [maxLength]="200">
         </generic-input>
       </td>
       <td [hidden]="!editMode" align="end"><button mat-icon-button color="accent"
@@ -81,12 +81,12 @@
       <td>
         <generic-input [(model)]="document.clientRecipient" label="Autres destinataires pour le client"
           (onFormChange)="changeDocument()" [form]="adressingForm" propertyName="clientRecipient"
-          [isDisabled]="!editMode" [maxLength]="40">
+          [isDisabled]="!editMode" [maxLength]="100">
         </generic-input>
       </td>
       <td colspan="2">
         <generic-input [(model)]="document.clientAddress" label="Autres adresses pour le client" [form]="adressingForm"
-          (onFormChange)="changeDocument()" propertyName="clientAddress" [isDisabled]="!editMode" [maxLength]="60">
+          (onFormChange)="changeDocument()" propertyName="clientAddress" [isDisabled]="!editMode" [maxLength]="200">
         </generic-input>
       </td>
       <td [hidden]="  !editMode" align="end"><button mat-icon-button color="accent"

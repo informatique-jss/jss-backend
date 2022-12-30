@@ -10,7 +10,7 @@ public interface AccountingRecordSearchResult {
 
   LocalDateTime getAccountingDateTime();
 
-  LocalDate getOperationDateTime();
+  LocalDateTime getOperationDateTime();
 
   String getAccountingJournalLabel();
 

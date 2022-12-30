@@ -21,4 +21,6 @@ export class IndexEntityService extends AppRestService<IndexEntity>{
     return this.getList(new HttpParams().set("search", search).set("entityType", entityType.entityType), "search/type");
   }
 
+
+
 }

@@ -54,6 +54,7 @@ public class Tiers implements ITiers, IAttachment {
 	private String denomination;
 
 	@Column(nullable = false)
+	@IndexedField
 	private Boolean isIndividual;
 
 	@ManyToOne
@@ -199,6 +200,7 @@ public class Tiers implements ITiers, IAttachment {
 	@JoinColumn(name = "id_accounting_account_deposit")
 	private AccountingAccount accountingAccountDeposit;
 
+	@IndexedField
 	private Integer idAs400;
 	private Integer newIdAs400;
 

@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -24,6 +25,7 @@ import com.jss.osiris.modules.profile.model.Employee;
 public class AssoAffaireOrder implements Serializable, IId {
 
 	@Id
+	@SequenceGenerator(name = "asso_affaire_order_sequence", sequenceName = "asso_affaire_order_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "asso_affaire_order_sequence")
 	@IndexedField
 	private Integer id;

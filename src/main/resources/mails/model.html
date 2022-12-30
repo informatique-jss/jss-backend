@@ -241,7 +241,7 @@
                                                                         <p th:if="${explaination!=null}"
                                                                             style="margin: 0; font-size: 16px; text-align: center; mso-line-height-alt: 19.2px;">
                                                                             <span style="font-size:16px;"
-                                                                                th:text="${explaination}"></span>
+                                                                                th:utext="${explaination}"></span>
                                                                         <ul th:if="${explainationElements!=null}">
                                                                             <li
                                                                                 th:each="explainationElement : ${explainationElements}">

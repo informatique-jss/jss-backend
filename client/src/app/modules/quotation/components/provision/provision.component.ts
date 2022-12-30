@@ -3,7 +3,7 @@ import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
 import { ActivatedRoute } from '@angular/router';
-import { QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN } from 'src/app/libs/Constants';
+import { CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN } from 'src/app/libs/Constants';
 import { WorkflowDialogComponent } from 'src/app/modules/miscellaneous/components/workflow-dialog/workflow-dialog.component';
 import { AppService } from 'src/app/services/app.service';
 import { IWorkflowElement } from '../../../miscellaneous/model/IWorkflowElement';
@@ -72,7 +72,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
   affaireForm = this.formBuilder.group({});
 
   ngOnInit() {
-    this.appService.changeHeaderTitle("Affaire");
+    this.appService.changeHeaderTitle("Prestation");
     this.idAffaire = this.activatedRoute.snapshot.params.id;
     this.inputProvisionId = this.activatedRoute.snapshot.params.idProvision;
     this.refreshAffaire();
@@ -94,7 +94,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
       this.assoAffaireOrderService.getAssoAffaireOrder(this.idAffaire).subscribe(response => {
         this.asso = response;
         if (this.asso.affaire)
-          this.appService.changeHeaderTitle("Affaire " + (this.asso.affaire.denomination ? this.asso.affaire.denomination : (this.asso.affaire.firstname + " " + this.asso.affaire.lastname)));
+          this.appService.changeHeaderTitle("Prestation " + (this.asso.affaire.denomination ? this.asso.affaire.denomination : (this.asso.affaire.firstname + " " + this.asso.affaire.lastname)));
       })
   }
 
@@ -234,5 +234,13 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
 
   generatePublicationFlagMail() {
     this.announcementService.generatePublicationFlagMail(this.asso.customerOrder).subscribe();
+  }
+
+  canModifyStatus() {
+    if (this.asso && this.asso.customerOrder && this.asso.customerOrder.customerOrderStatus &&
+      this.asso.customerOrder.customerOrderStatus.code != CUSTOMER_ORDER_STATUS_OPEN
+      && this.asso.customerOrder.customerOrderStatus.code != CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT)
+      return true;
+    return false;
   }
 }

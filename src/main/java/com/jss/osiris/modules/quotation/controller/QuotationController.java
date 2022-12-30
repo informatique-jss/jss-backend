@@ -1184,6 +1184,54 @@ public class QuotationController {
     if (quotation.getResponsable() == null && quotation.getTiers() == null && quotation.getConfrere() == null)
       throw new OsirisValidationException("No customer order");
 
+    // Generate missing documents
+    Document billingDocument = documentService.getBillingDocument(quotation.getDocuments());
+    if (billingDocument == null) {
+      billingDocument = new Document();
+      billingDocument.setIsRecipientAffaire(false);
+      billingDocument.setIsRecipientClient(false);
+      billingDocument.setDocumentType(constantService.getDocumentTypeBilling());
+      if (isCustomerOrder)
+        billingDocument.setCustomerOrder((CustomerOrder) quotation);
+      else
+        billingDocument.setQuotation((Quotation) quotation);
+      if (quotation.getDocuments() == null)
+        quotation.setDocuments(new ArrayList<Document>());
+      quotation.getDocuments().add(billingDocument);
+    }
+
+    Document digitalDocument = documentService.getDocumentByDocumentType(quotation.getDocuments(),
+        constantService.getDocumentTypeDigital());
+    if (digitalDocument == null) {
+      digitalDocument = new Document();
+      digitalDocument.setIsRecipientAffaire(false);
+      digitalDocument.setIsRecipientClient(false);
+      digitalDocument.setDocumentType(constantService.getDocumentTypeDigital());
+      if (isCustomerOrder)
+        digitalDocument.setCustomerOrder((CustomerOrder) quotation);
+      else
+        digitalDocument.setQuotation((Quotation) quotation);
+      if (quotation.getDocuments() == null)
+        quotation.setDocuments(new ArrayList<Document>());
+      quotation.getDocuments().add(digitalDocument);
+    }
+
+    Document paperDocument = documentService.getDocumentByDocumentType(quotation.getDocuments(),
+        constantService.getDocumentTypePaper());
+    if (paperDocument == null) {
+      paperDocument = new Document();
+      paperDocument.setIsRecipientAffaire(false);
+      paperDocument.setIsRecipientClient(false);
+      paperDocument.setDocumentType(constantService.getDocumentTypePaper());
+      if (isCustomerOrder)
+        paperDocument.setCustomerOrder((CustomerOrder) quotation);
+      else
+        paperDocument.setQuotation((Quotation) quotation);
+      if (quotation.getDocuments() == null)
+        quotation.setDocuments(new ArrayList<Document>());
+      quotation.getDocuments().add(paperDocument);
+    }
+
     // Do not check anything from website, a human will correct if after
     if (isOpen && quotation.getIsCreatedFromWebSite())
       return;
@@ -1241,54 +1289,6 @@ public class QuotationController {
       }
     }
 
-    // Generate missing documents
-    Document billingDocument = documentService.getBillingDocument(quotation.getDocuments());
-    if (billingDocument == null) {
-      billingDocument = new Document();
-      billingDocument.setIsRecipientAffaire(false);
-      billingDocument.setIsRecipientClient(false);
-      billingDocument.setDocumentType(constantService.getDocumentTypeBilling());
-      if (isCustomerOrder)
-        billingDocument.setCustomerOrder((CustomerOrder) quotation);
-      else
-        billingDocument.setQuotation((Quotation) quotation);
-      if (quotation.getDocuments() == null)
-        quotation.setDocuments(new ArrayList<Document>());
-      quotation.getDocuments().add(billingDocument);
-    }
-
-    Document digitalDocument = documentService.getDocumentByDocumentType(quotation.getDocuments(),
-        constantService.getDocumentTypeDigital());
-    if (digitalDocument == null) {
-      digitalDocument = new Document();
-      digitalDocument.setIsRecipientAffaire(false);
-      digitalDocument.setIsRecipientClient(false);
-      digitalDocument.setDocumentType(constantService.getDocumentTypeDigital());
-      if (isCustomerOrder)
-        digitalDocument.setCustomerOrder((CustomerOrder) quotation);
-      else
-        digitalDocument.setQuotation((Quotation) quotation);
-      if (quotation.getDocuments() == null)
-        quotation.setDocuments(new ArrayList<Document>());
-      quotation.getDocuments().add(digitalDocument);
-    }
-
-    Document paperDocument = documentService.getDocumentByDocumentType(quotation.getDocuments(),
-        constantService.getDocumentTypePaper());
-    if (paperDocument == null) {
-      paperDocument = new Document();
-      paperDocument.setIsRecipientAffaire(false);
-      paperDocument.setIsRecipientClient(false);
-      paperDocument.setDocumentType(constantService.getDocumentTypePaper());
-      if (isCustomerOrder)
-        paperDocument.setCustomerOrder((CustomerOrder) quotation);
-      else
-        paperDocument.setQuotation((Quotation) quotation);
-      if (quotation.getDocuments() == null)
-        quotation.setDocuments(new ArrayList<Document>());
-      quotation.getDocuments().add(paperDocument);
-    }
-
     for (AssoAffaireOrder assoAffaireOrder : quotation.getAssoAffaireOrders()) {
       if (assoAffaireOrder.getAffaire() == null)
         throw new OsirisValidationException("Affaire");
@@ -1309,6 +1309,9 @@ public class QuotationController {
   private void validateProvision(Provision provision, boolean isOpen, boolean isCustomerOrder,
       IQuotation quotation)
       throws OsirisValidationException, OsirisException {
+
+    validationHelper.validateReferential(provision.getProvisionFamilyType(), true, "Famille de prestation");
+    validationHelper.validateReferential(provision.getProvisionType(), true, "Type de prestation");
 
     isCustomerOrder = isCustomerOrder && !isOpen;
 
@@ -1653,7 +1656,7 @@ public class QuotationController {
 
   @PostMapping(inputEntryPoint + "/invoice-item/generate")
   public ResponseEntity<IQuotation> generateInvoiceItemForQuotation(@RequestBody Quotation quotation)
-      throws OsirisException, OsirisValidationException {
+      throws OsirisException, OsirisValidationException, OsirisClientMessageException {
     if (quotation != null && quotation.getAssoAffaireOrders() != null)
       for (AssoAffaireOrder assoAffaireOrder : quotation.getAssoAffaireOrders())
         if (assoAffaireOrder.getProvisions() != null)

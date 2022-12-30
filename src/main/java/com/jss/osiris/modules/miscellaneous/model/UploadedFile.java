@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jss.osiris.libs.JacksonLocalDateTimeSerializer;
@@ -16,6 +17,7 @@ import com.jss.osiris.libs.JacksonLocalDateTimeSerializer;
 public class UploadedFile implements Serializable, IId {
 
 	@Id
+	@SequenceGenerator(name = "uploaded_file_sequence", sequenceName = "uploaded_file_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "uploaded_file_sequence")
 	private Integer id;
 

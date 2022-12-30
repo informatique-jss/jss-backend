@@ -3,7 +3,7 @@
     [matTooltip]="(currentAttachment!=null?(currentAttachment!.uploadedFile.filename+' - '):'')+attachmentType.description">
     {{attachmentType.label}}</mat-chip> : <span *ngIf="currentAttachment!=null">
     <mat-icon class="pointer" (click)="previewFile(currentAttachment!)" color="accent"
-      matTooltip="Prévisualiser le fichier">preview
+      matTooltip="Prévisualiser le fichier">visibility
     </mat-icon>
     <mat-icon class="pointer" (click)="downloadFile(currentAttachment!)" color="accent"
       matTooltip="Télécharger le fichier">download
