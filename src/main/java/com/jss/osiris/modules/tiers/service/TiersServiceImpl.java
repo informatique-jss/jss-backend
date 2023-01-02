@@ -1,17 +1,14 @@
 package com.jss.osiris.modules.tiers.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisException;
-import com.jss.osiris.libs.search.model.IndexEntity;
 import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.libs.search.service.SearchService;
 import com.jss.osiris.modules.accounting.model.AccountingAccountTrouple;
@@ -165,20 +162,6 @@ public class TiersServiceImpl implements TiersService {
     }
 
     @Override
-    public List<Tiers> getIndividualTiersByKeyword(String searchedValue) {
-        List<Tiers> foundTiers = new ArrayList<Tiers>();
-        List<IndexEntity> tiers = searchService.searchForEntities(searchedValue, Tiers.class.getSimpleName());
-        if (tiers != null && tiers.size() > 0) {
-            for (IndexEntity t : tiers) {
-                List<Tiers> individualTiers = tiersRepository.findByIsIndividualAndIdTiers(t.getEntityId());
-                if (individualTiers != null && individualTiers.size() == 1)
-                    foundTiers.add(individualTiers.get(0));
-            }
-        }
-        return foundTiers;
-    }
-
-    @Override
     public void reindexTiers() {
         List<Tiers> tiers = IterableUtils.toList(tiersRepository.findAll());
         if (tiers != null)
@@ -191,30 +174,4 @@ public class TiersServiceImpl implements TiersService {
         return tiersRepository.findByTiersType(constantService.getTiersTypeClient());
     }
 
-    @Scheduled(initialDelay = 100, fixedDelay = 100000)
-    @Transactional
-    public void re() throws OsirisException {
-        List<Tiers> tierss = IterableUtils.toList(tiersRepository.findAll());
-        int i = 0;
-        for (Tiers tiers : tierss) {
-            i++;
-            System.out.println(i);
-            if (tiers.getId() == null
-                    || tiers.getAccountingAccountCustomer() == null && tiers.getAccountingAccountProvider() == null
-                            && tiers.getAccountingAccountDeposit() == null) {
-                String label = "";
-                if (tiers.getIsIndividual()) {
-                    label = tiers.getFirstname() + " " + tiers.getLastname();
-                } else {
-                    label = tiers.getDenomination();
-                }
-                AccountingAccountTrouple accountingAccountCouple = accountingAccountService
-                        .generateAccountingAccountsForEntity(label);
-                tiers.setAccountingAccountCustomer(accountingAccountCouple.getAccountingAccountCustomer());
-                tiers.setAccountingAccountProvider(accountingAccountCouple.getAccountingAccountProvider());
-                tiers.setAccountingAccountDeposit(accountingAccountCouple.getAccountingAccountDeposit());
-                tiersRepository.save(tiers);
-            }
-        }
-    }
 }

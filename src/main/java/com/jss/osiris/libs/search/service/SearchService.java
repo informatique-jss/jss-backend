@@ -10,4 +10,8 @@ public interface SearchService {
     public List<IndexEntity> searchForEntities(String search, String entityType);
 
     public List<IndexEntity> searchForEntitiesById(Integer id, List<String> entityTypeToSearch);
+
+    public List<IndexEntity> getResponsableByKeyword(String searchedValue);
+
+    public List<IndexEntity> getIndividualTiersByKeyword(String searchedValue);
 }

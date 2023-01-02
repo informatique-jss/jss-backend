@@ -15,8 +15,7 @@
       [matAutocomplete]="autoComplete">
   </mat-chip-list>
   <mat-hint>Indiquez ici les personnes qui vous remplaceront pendant vos vacances. Elles verront alors vos objets
-    associés
-    aux leurs</mat-hint>
+    associés aux leurs.</mat-hint>
   <mat-autocomplete autoActiveFirstOption #autoComplete="matAutocomplete" [displayWith]="displayLabel"
     (optionSelected)="addEmployee($event)">
     <mat-option *ngFor="let employee of filteredEmployees | async" [value]="employee">

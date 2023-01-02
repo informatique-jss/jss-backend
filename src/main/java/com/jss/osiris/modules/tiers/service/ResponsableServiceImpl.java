@@ -1,6 +1,5 @@
 package com.jss.osiris.modules.tiers.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -9,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.jss.osiris.libs.search.model.IndexEntity;
 import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.libs.search.service.SearchService;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
@@ -53,19 +51,6 @@ public class ResponsableServiceImpl implements ResponsableService {
             return responsableInstance;
         }
         return null;
-    }
-
-    @Override
-    public List<Responsable> getResponsableByKeyword(String searchedValue) {
-        List<Responsable> foundResponsables = new ArrayList<Responsable>();
-        List<IndexEntity> responsables = searchService.searchForEntities(searchedValue,
-                Responsable.class.getSimpleName());
-        if (responsables != null && responsables.size() > 0) {
-            for (IndexEntity t : responsables) {
-                foundResponsables.add(this.getResponsable(t.getEntityId()));
-            }
-        }
-        return foundResponsables;
     }
 
     @Override

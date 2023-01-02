@@ -14,11 +14,11 @@ import { ConstantService } from 'src/app/modules/miscellaneous/services/constant
 import { Confrere } from 'src/app/modules/quotation/model/Confrere';
 import { Invoice } from 'src/app/modules/quotation/model/Invoice';
 import { InvoiceItem } from 'src/app/modules/quotation/model/InvoiceItem';
-import { Responsable } from 'src/app/modules/tiers/model/Responsable';
-import { Tiers } from 'src/app/modules/tiers/model/Tiers';
 import { TiersService } from 'src/app/modules/tiers/services/tiers.service';
 import { INVOICE_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
+import { IndexEntity } from '../../../../routing/search/IndexEntity';
+import { ResponsableService } from '../../../tiers/services/responsable.service';
 import { InvoiceService } from '../../services/invoice.service';
 
 @Component({
@@ -43,6 +43,7 @@ export class AddInvoiceComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private tiersService: TiersService,
     private cityService: CityService,
+    private responsableService: ResponsableService,
     private contantService: ConstantService,
   ) {
   }
@@ -143,10 +144,13 @@ export class AddInvoiceComponent implements OnInit {
   }
 
 
-  fillTiers(tiers: Tiers) {
-    this.invoice.tiers = tiers;
-    this.invoice.responsable = undefined;
-    this.invoice.responsable = undefined;
+  fillTiers(tiers: IndexEntity) {
+    this.tiersService.getTiers(tiers.entityId).subscribe(response => {
+      this.invoice.tiers = response;
+      this.invoice.responsable = undefined;
+      this.invoice.confrere = undefined;
+      this.invoice.provider = undefined;
+    })
   }
 
   fillConfrere(confrere: Confrere) {
@@ -162,9 +166,11 @@ export class AddInvoiceComponent implements OnInit {
     this.invoice.responsable = undefined;
   }
 
-  fillResponsable(responsable: Responsable) {
-    this.invoice.responsable = responsable;
-    this.tiersService.getTiersByResponsable(responsable.id).subscribe(response => {
+  fillResponsable(responsable: IndexEntity) {
+    this.responsableService.getResponsable(responsable.entityId).subscribe(response => {
+      this.invoice.responsable = response;
+    })
+    this.tiersService.getTiersByResponsable(responsable.entityId).subscribe(response => {
       if (this.invoice.responsable != null) {
         this.invoice.responsable.tiers = response;
       }

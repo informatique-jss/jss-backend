@@ -8,12 +8,14 @@ import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableCo
 import { SpecialOffer } from 'src/app/modules/miscellaneous/model/SpecialOffer';
 import { DocumentTypeService } from 'src/app/modules/miscellaneous/services/document.type.service';
 import { Responsable } from 'src/app/modules/tiers/model/Responsable';
-import { Tiers } from 'src/app/modules/tiers/model/Tiers';
 import { TiersService } from 'src/app/modules/tiers/services/tiers.service';
+import { IndexEntity } from '../../../../routing/search/IndexEntity';
 import { AppService } from '../../../../services/app.service';
 import { Document } from '../../../miscellaneous/model/Document';
 import { DocumentType } from '../../../miscellaneous/model/DocumentType';
 import { SortTableAction } from '../../../miscellaneous/model/SortTableAction';
+import { Tiers } from '../../../tiers/model/Tiers';
+import { ResponsableService } from '../../../tiers/services/responsable.service';
 import { Confrere } from '../../model/Confrere';
 import { IQuotation } from '../../model/IQuotation';
 import { QuotationComponent } from '../quotation/quotation.component';
@@ -32,6 +34,8 @@ export class OrderingCustomerComponent implements OnInit {
 
   documentTypes: DocumentType[] = [] as Array<DocumentType>;
   billingDocument: Document = {} as Document;
+  searchedTiers: Tiers | undefined;
+  searchedResponsable: Responsable | undefined;
 
   customerOrderTableActions: SortTableAction[] = [] as Array<SortTableAction>;
   customerOrderDisplayedColumns: SortTableColumn[] = [] as Array<SortTableColumn>;
@@ -40,6 +44,7 @@ export class OrderingCustomerComponent implements OnInit {
     private tiersService: TiersService,
     private appService: AppService,
     protected cd: ChangeDetectorRef,
+    private responsableService: ResponsableService,
     protected documentTypeService: DocumentTypeService,
     public specialOfferDialog: MatDialog) { }
 
@@ -94,14 +99,16 @@ export class OrderingCustomerComponent implements OnInit {
   }
 
 
-  fillTiers(tiers: Tiers) {
-    this.quotation.tiers = tiers;
-    this.quotation.responsable = undefined;
-    this.quotation.responsable = undefined;
-    if (this.quotation.tiers) {
-      this.quotation.observations = this.quotation.tiers.observations;
-    }
-    this.setDocument();
+  fillTiers(tiers: IndexEntity) {
+    this.tiersService.getTiers(tiers.entityId).subscribe(response => {
+      this.quotation.tiers = response;
+      this.quotation.responsable = undefined;
+      this.quotation.responsable = undefined;
+      if (this.quotation.tiers) {
+        this.quotation.observations = this.quotation.tiers.observations;
+      }
+      this.setDocument();
+    })
   }
 
   fillConfrere(confrere: Confrere) {
@@ -114,9 +121,11 @@ export class OrderingCustomerComponent implements OnInit {
     this.setDocument();
   }
 
-  fillResponsable(responsable: Responsable) {
-    this.quotation.responsable = responsable;
-    this.tiersService.getTiersByResponsable(responsable.id).subscribe(response => {
+  fillResponsable(responsable: IndexEntity) {
+    this.responsableService.getResponsable(responsable.entityId).subscribe(response => {
+      this.quotation.responsable = response;
+    });
+    this.tiersService.getTiersByResponsable(responsable.entityId).subscribe(response => {
       if (this.quotation.responsable != null) {
         this.quotation.responsable.tiers = response;
         this.quotation.observations = this.quotation.responsable.tiers.observations;

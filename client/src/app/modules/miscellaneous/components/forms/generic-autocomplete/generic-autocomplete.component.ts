@@ -2,7 +2,7 @@ import { Directive, EventEmitter, Input, OnInit, Output, ViewChild } from '@angu
 import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { Observable } from 'rxjs';
-import { debounceTime, distinctUntilChanged, filter, switchMap, tap } from 'rxjs/operators';
+import { debounceTime, filter, switchMap, tap } from 'rxjs/operators';
 import { UserNoteService } from 'src/app/services/user.notes.service';
 import { GenericFormComponent } from '../generic-form.components';
 
@@ -30,6 +30,8 @@ export abstract class GenericAutocompleteComponent<T, U> extends GenericFormComp
 
   @ViewChild(MatAutocompleteTrigger) trigger: MatAutocompleteTrigger | undefined;
 
+  @Input() fieldToCheckAgainstForValidation: string = "id";
+
   constructor(private formBuilder3: UntypedFormBuilder,
     private userNoteService3: UserNoteService) {
     super(formBuilder3, userNoteService3);
@@ -45,9 +47,8 @@ export abstract class GenericAutocompleteComponent<T, U> extends GenericFormComp
       this.form.addValidators(this.checkAutocompleteField());
       this.form.get(this.propertyName)?.valueChanges.pipe(
         filter(res => {
-          return res != undefined && res !== null && res.length >= this.expectedMinLengthInput
+          return res != undefined && res !== null && res.length > this.expectedMinLengthInput
         }),
-        distinctUntilChanged(),
         debounceTime(300),
         tap((value) => {
           this.filteredTypes = [];
@@ -84,13 +85,13 @@ export abstract class GenericAutocompleteComponent<T, U> extends GenericFormComp
       const fieldValue = root.get(this.propertyName)?.value;
       if (this.form && this.form!.get(this.propertyName)) {
         if (this.conditionnalRequired != undefined) {
-          if (this.conditionnalRequired && (!fieldValue || fieldValue.id == null && fieldValue.code == null)) {
+          if (this.conditionnalRequired && (!fieldValue || fieldValue[this.fieldToCheckAgainstForValidation] == null)) {
             this.form!.get(this.propertyName)!.setErrors({ notFilled: this.propertyName });
             return {
               notFilled: this.propertyName
             };
           }
-        } else if (this.isMandatory && (!fieldValue || fieldValue.id == null && fieldValue.code == null)) {
+        } else if (this.isMandatory && (!fieldValue || fieldValue[this.fieldToCheckAgainstForValidation] == null)) {
           this.form!.get(this.propertyName)!.setErrors({ notFilled: this.propertyName });
           return {
             notFilled: this.propertyName

@@ -53,6 +53,9 @@ public class CityServiceImpl implements CityService {
             if (cities != null && cities.size() > 0)
                 return cities;
         }
+        if (city == null || city.length() <= 2)
+            return null;
+
         if (countryId != null) {
             Country country = countryService.getCountry(countryId);
             if (country != null)

@@ -21,11 +21,7 @@ export class TiersService extends AppRestService<Tiers>{
   }
 
   getTiersByResponsable(idResponsable: number) {
-    return this.get(new HttpParams().set("idResponsable", idResponsable), "responsable");
-  }
-
-  getIndividualTiersByKeyword(searchedValue: string) {
-    return this.getList(new HttpParams().set("searchedValue", searchedValue), "individual/search");
+    return this.get(new HttpParams().set("idResponsable", idResponsable), "tiers/responsable");
   }
 
   addOrUpdateTiers(tiers: Tiers) {

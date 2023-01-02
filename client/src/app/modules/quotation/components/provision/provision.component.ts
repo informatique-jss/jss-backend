@@ -94,7 +94,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
       this.assoAffaireOrderService.getAssoAffaireOrder(this.idAffaire).subscribe(response => {
         this.asso = response;
         if (this.asso.affaire)
-          this.appService.changeHeaderTitle("Prestation " + (this.asso.affaire.denomination ? this.asso.affaire.denomination : (this.asso.affaire.firstname + " " + this.asso.affaire.lastname)));
+          this.appService.changeHeaderTitle("Prestation - " + (this.asso.affaire.denomination ? this.asso.affaire.denomination : (this.asso.affaire.firstname + " " + this.asso.affaire.lastname)));
       })
   }
 

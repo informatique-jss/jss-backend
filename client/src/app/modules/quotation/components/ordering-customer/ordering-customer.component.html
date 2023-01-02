@@ -5,19 +5,21 @@
         <fieldset [disabled]="editMode==false" class="fieldset-no-border">
           <table class="full-width">
             <tr>
-              <td *ngIf="!quotation.responsable && !quotation.confrere">
-                <autocomplete-tiers-individual [(model)]="quotation.tiers" [form]="orderingCustomerForm" label="Tiers"
+              <td *ngIf="!searchedResponsable && !quotation.confrere">
+                <autocomplete-tiers-individual [(model)]="searchedTiers" [form]="orderingCustomerForm" label="Tiers"
                   [isDisabled]="!editMode" propertyName="tiers" (onOptionSelected)="fillTiers($event)"
-                  [isMandatory]="true" [conditionnalRequired]="!quotation.responsable && !quotation.confrere">
+                  [isMandatory]="true" [conditionnalRequired]="!quotation.responsable && !quotation.confrere"
+                  fieldToCheckAgainstForValidation="entityId">
                 </autocomplete-tiers-individual>
               </td>
-              <td *ngIf="!quotation.tiers && !quotation.confrere">
-                <autocomplete-responsable [(model)]="quotation.responsable" [form]="orderingCustomerForm"
+              <td *ngIf="!searchedTiers && !quotation.confrere">
+                <autocomplete-responsable [(model)]="searchedResponsable" [form]="orderingCustomerForm"
                   label="Responsable" [isDisabled]="!editMode" propertyName="responsable" [isMandatory]="true"
                   [conditionnalRequired]="!quotation.tiers && !quotation.confrere"
+                  fieldToCheckAgainstForValidation="entityId"
                   (onOptionSelected)="fillResponsable($event)"></autocomplete-responsable>
               </td>
-              <td *ngIf="!quotation.tiers && !quotation.responsable">
+              <td *ngIf="!searchedTiers && !searchedResponsable">
                 <autocomplete-confrere label="Confrère" [(model)]="quotation.confrere" [form]="orderingCustomerForm"
                   [isMandatory]="true" [conditionnalRequired]="!quotation.responsable && !quotation.tiers"
                   propertyName="confrere" [isDisabled]="!editMode" (onOptionSelected)="fillConfrere($event)">

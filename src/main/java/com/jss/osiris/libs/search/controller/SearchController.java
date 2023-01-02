@@ -35,4 +35,16 @@ public class SearchController {
 					HttpStatus.OK);
 		return new ResponseEntity<List<IndexEntity>>(HttpStatus.OK);
 	}
+
+	@GetMapping(inputEntryPoint + "/individual/search")
+	public ResponseEntity<List<IndexEntity>> getIndividualTiersByKeyword(@RequestParam String searchedValue) {
+		return new ResponseEntity<List<IndexEntity>>(searchService.getIndividualTiersByKeyword(searchedValue),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/responsable/search")
+	public ResponseEntity<List<IndexEntity>> getResponsableByKeyword(@RequestParam String searchedValue) {
+		return new ResponseEntity<List<IndexEntity>>(searchService.getResponsableByKeyword(searchedValue),
+				HttpStatus.OK);
+	}
 }

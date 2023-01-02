@@ -16,6 +16,7 @@ import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.ValidationHelper;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
+import com.jss.osiris.libs.search.service.SearchService;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.model.Mail;
 import com.jss.osiris.modules.miscellaneous.model.Phone;
@@ -117,6 +118,9 @@ public class TiersController {
 
   @Autowired
   CompetitorService competitorService;
+
+  @Autowired
+  SearchService searchService;
 
   @GetMapping(inputEntryPoint + "/competitors")
   public ResponseEntity<List<Competitor>> getCompetitors() {
@@ -333,19 +337,12 @@ public class TiersController {
     return new ResponseEntity<Tiers>(tiersService.getTiers(id), HttpStatus.OK);
   }
 
-  @GetMapping(inputEntryPoint + "/individual/search")
-  public ResponseEntity<List<Tiers>> getIndividualTiersByKeyword(@RequestParam String searchedValue) {
-    return new ResponseEntity<List<Tiers>>(tiersService.getIndividualTiersByKeyword(searchedValue),
-        HttpStatus.OK);
-  }
-
-  @GetMapping(inputEntryPoint + "/responsable/search")
-  public ResponseEntity<List<Responsable>> getResponsableByKeyword(@RequestParam String searchedValue) {
-    return new ResponseEntity<List<Responsable>>(responsableService.getResponsableByKeyword(searchedValue),
-        HttpStatus.OK);
-  }
-
   @GetMapping(inputEntryPoint + "/responsable")
+  public ResponseEntity<Responsable> getResponsableById(@RequestParam Integer id) {
+    return new ResponseEntity<Responsable>(responsableService.getResponsable(id), HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/tiers/responsable")
   public ResponseEntity<Tiers> getTiersByIdResponsable(@RequestParam Integer idResponsable) {
     return new ResponseEntity<Tiers>(tiersService.getTiersByIdResponsable(idResponsable), HttpStatus.OK);
   }

@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { Tiers } from 'src/app/modules/tiers/model/Tiers';
-import { TiersService } from 'src/app/modules/tiers/services/tiers.service';
 import { UserNoteService } from 'src/app/services/user.notes.service';
+import { IndexEntityService } from '../../../../../routing/search/index.entity.service';
+import { IndexEntity } from '../../../../../routing/search/IndexEntity';
 import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-autocomplete.component';
 
 @Component({
@@ -11,24 +11,24 @@ import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-au
   templateUrl: '../generic-autocomplete/generic-autocomplete.component.html',
   styleUrls: ['../generic-autocomplete/generic-autocomplete.component.css']
 })
-export class AutocompleteTiersIndividualComponent extends GenericAutocompleteComponent<Tiers, Tiers> implements OnInit {
+export class AutocompleteTiersIndividualComponent extends GenericAutocompleteComponent<IndexEntity, IndexEntity> implements OnInit {
 
-  constructor(private formBuild: UntypedFormBuilder, private tiersService: TiersService, private userNoteService2: UserNoteService,) {
+  constructor(private formBuild: UntypedFormBuilder, private indexEntityService: IndexEntityService, private userNoteService2: UserNoteService,) {
     super(formBuild, userNoteService2)
   }
 
-  searchEntities(value: string): Observable<Tiers[]> {
-    this.expectedMinLengthInput = 14;
-    return this.tiersService.getIndividualTiersByKeyword(value);
+  searchEntities(value: string): Observable<IndexEntity[]> {
+    return this.indexEntityService.getIndividualTiersByKeyword(value);
   }
 
-  displayLabel(tiers: Tiers): string {
+  displayLabel(tiers: IndexEntity): string {
     if (!tiers)
       return "";
-    if (tiers.denomination)
-      return tiers.denomination!;
-    if (tiers.firstname)
-      return tiers.firstname + " " + tiers.lastname;
+    let text = JSON.parse(tiers.text);
+    if (text.denomination)
+      return text.denomination!;
+    if (text.firstname)
+      return text.firstname + " " + text.lastname;
     return "";
   }
 }

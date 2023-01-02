@@ -37,7 +37,7 @@ export class AffaireComponent implements OnInit {
           this.affaire = response;
           this.orderingSearch.affaires = [this.affaire];
           this.quotationSearch.affaires = [this.affaire];
-          this.appService.changeHeaderTitle(this.affaire.denomination ? this.affaire.denomination : this.affaire.firstname + " " + this.affaire.lastname);
+          this.appService.changeHeaderTitle("Affaire - " + (this.affaire.denomination ? this.affaire.denomination : this.affaire.firstname + " " + this.affaire.lastname));
         }
       })
   }

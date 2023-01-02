@@ -12,8 +12,6 @@ public interface TiersService {
 
     public Tiers getTiersByIdResponsable(Integer idResponsable);
 
-    public List<Tiers> getIndividualTiersByKeyword(String searchedValue);
-
     public void reindexTiers();
 
     public List<Tiers> findAllTiersTypeClient() throws OsirisException;
