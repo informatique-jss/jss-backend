@@ -108,6 +108,8 @@ public class MailHelper {
 
     private static final String PNG_MIME = "image/png";
 
+    private boolean disableCbLink = true;
+
     @Autowired
     private ApplicationContext applicationContext;
 
@@ -523,7 +525,7 @@ public class MailHelper {
         if (!isPaymentTypePrelevement) {
             if (isDepositMandatory)
                 mail.setPaymentExplaination(
-                        "Votre commande est en attente de provision. Effectuez dès maintenant un virement de "
+                        "Votre commande est en attente d'acompte. Effectuez dès maintenant un virement de "
                                 + mail.getPriceTotal() + " € sur le compte ci-dessous pour la débloquer.");
             else
                 mail.setPaymentExplaination("Vous pouvez d'ores et déjà régler cette commande d'un montant de "
@@ -531,11 +533,13 @@ public class MailHelper {
 
             mail.setPaymentExplaination2("IBAN / BIC : " + ibanJss + " / " + bicJss);
 
-            mail.setCbExplanation(
-                    "Vous avez aussi la possibilité de payer par carte bancaire en flashant le QR Code ci-dessous ou en cliquant ");
+            if (!disableCbLink) {
+                mail.setCbExplanation(
+                        "Vous avez aussi la possibilité de payer par carte bancaire en flashant le QR Code ci-dessous ou en cliquant ");
 
-            mail.setCbLink(paymentCbEntryPoint + "/quotation/deposit?quotationId=" + quotation.getId() + "&mail="
-                    + mailComputeResult.getRecipientsMailTo().get(0).getMail());
+                mail.setCbLink(paymentCbEntryPoint + "/quotation/deposit?quotationId=" + quotation.getId() + "&mail="
+                        + mailComputeResult.getRecipientsMailTo().get(0).getMail());
+            }
 
             mail.setPaymentExplainationWarning(
                     "Référence à indiquer abolument dans le libellé de votre virement : " + quotation.getId());
@@ -730,17 +734,20 @@ public class MailHelper {
 
             mail.setPaymentExplaination2("IBAN / BIC : " + ibanJss + " / " + bicJss);
 
-            mail.setCbExplanation(
-                    "Vous avez aussi la possibilité de payer par carte bancaire en flashant le QR Code ci-dessous ou en cliquant ");
+            if (!disableCbLink) {
+                mail.setCbExplanation(
+                        "Vous avez aussi la possibilité de payer par carte bancaire en flashant le QR Code ci-dessous ou en cliquant ");
 
-            if (mailComputeResult.getRecipientsMailTo() == null
-                    || mailComputeResult.getRecipientsMailTo().get(0) == null
-                    || mailComputeResult.getRecipientsMailTo().get(0).getMail() == null)
-                throw new OsirisException(null,
-                        "Unable to find mail for CB generation for customerOrder n°" + customerOrder.getId());
+                if (mailComputeResult.getRecipientsMailTo() == null
+                        || mailComputeResult.getRecipientsMailTo().get(0) == null
+                        || mailComputeResult.getRecipientsMailTo().get(0).getMail() == null)
+                    throw new OsirisException(null,
+                            "Unable to find mail for CB generation for customerOrder n°" + customerOrder.getId());
 
-            mail.setCbLink(paymentCbEntryPoint + "/order/deposit?customerOrderId=" + customerOrder.getId() + "&mail="
-                    + mailComputeResult.getRecipientsMailTo().get(0).getMail());
+                mail.setCbLink(
+                        paymentCbEntryPoint + "/order/deposit?customerOrderId=" + customerOrder.getId() + "&mail="
+                                + mailComputeResult.getRecipientsMailTo().get(0).getMail());
+            }
 
             mail.setPaymentExplainationWarning(
                     "Référence à indiquer abolument dans le libellé de votre virement : " + customerOrder.getId());
@@ -1084,17 +1091,19 @@ public class MailHelper {
 
             mail.setPaymentExplaination2("IBAN / BIC : " + ibanJss + " / " + bicJss);
 
-            mail.setCbExplanation(
-                    "Vous avez aussi la possibilité de payer par carte bancaire en flashant le QR Code ci-dessous ou en cliquant ");
+            if (!disableCbLink) {
+                mail.setCbExplanation(
+                        "Vous avez aussi la possibilité de payer par carte bancaire en flashant le QR Code ci-dessous ou en cliquant ");
 
-            if (!sendToMe)
-                mail.setCbLink(
-                        paymentCbEntryPoint + "/order/invoice?customerOrderId=" + customerOrder.getId() + "&mail="
-                                + mailComputeResult.getRecipientsMailTo().get(0).getMail());
-            else
-                mail.setCbLink(
-                        paymentCbEntryPoint + "/order/invoice?customerOrderId=" + customerOrder.getId() + "&mail="
-                                + employeeService.getCurrentEmployee().getMail());
+                if (!sendToMe)
+                    mail.setCbLink(
+                            paymentCbEntryPoint + "/order/invoice?customerOrderId=" + customerOrder.getId() + "&mail="
+                                    + mailComputeResult.getRecipientsMailTo().get(0).getMail());
+                else
+                    mail.setCbLink(
+                            paymentCbEntryPoint + "/order/invoice?customerOrderId=" + customerOrder.getId() + "&mail="
+                                    + employeeService.getCurrentEmployee().getMail());
+            }
 
             mail.setPaymentExplainationWarning(
                     "Référence à indiquer abolument dans le libellé de votre virement : " + customerOrder.getId());

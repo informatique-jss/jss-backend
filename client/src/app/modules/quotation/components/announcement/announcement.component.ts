@@ -141,6 +141,8 @@ export class AnnouncementComponent implements OnInit {
     this.announcementForm.markAllAsTouched();
     if (this.announcement && this.announcement.notice)
       this.announcement.notice = this.announcement.notice.replace(/ +(?= )/g, '').replace(/(\r\n|\r|\n){2,}/g, '$1\n');
+    if (this.announcement && this.announcement.publicationDate)
+      this.announcement.publicationDate = new Date(this.announcement.publicationDate.setHours(12));
     return this.announcementForm.valid && (this.isStatusOpen || !this.instanceOfCustomerOrder || this.announcement.noticeTypes && this.announcement.noticeTypes.length > 0);
   }
 

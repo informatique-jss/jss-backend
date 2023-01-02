@@ -177,6 +177,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         List<Announcement> announcements = announcementRepository.getAnnouncementByStatusAndPublicationDateMin(
                 announcementStatusService.getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_DONE),
                 LocalDate.now().minusDays(0), constantService.getConfrereJssSpel());
+        // TODO
         if (announcements != null && announcements.size() > 0)
             for (Announcement announcement : announcements) {
                 Integer affaire = announcementRepository.getAffaireForAnnouncement(announcement.getId());

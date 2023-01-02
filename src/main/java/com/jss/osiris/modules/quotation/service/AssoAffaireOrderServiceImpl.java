@@ -332,9 +332,9 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
         if (affaireSearch.getStatus() != null) {
             for (IWorkflowElement status : affaireSearch.getStatus())
                 statusId.add(status.getId());
-        } else {
-            statusId.add(0);
         }
+        if (statusId.size() == 0)
+            statusId.add(0);
 
         assignedId = new ArrayList<Integer>();
         if (affaireSearch.getAssignedTo() != null) {
@@ -356,6 +356,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
         ArrayList<String> excludedCustomerOrderStatusCode = new ArrayList<String>();
         excludedCustomerOrderStatusCode.add(CustomerOrderStatus.OPEN);
         excludedCustomerOrderStatusCode.add(CustomerOrderStatus.WAITING_DEPOSIT);
+        excludedCustomerOrderStatusCode.add(CustomerOrderStatus.ABANDONED);
 
         return assoAffaireOrderRepository.findAsso(responsibleId,
                 assignedId, affaireSearch.getLabel(),

@@ -30,7 +30,6 @@ import { VatBase } from '../../model/VatBase';
 import { AssoAffaireOrderService } from '../../services/asso.affaire.order.service';
 import { CustomerOrderService } from '../../services/customer.order.service';
 import { CustomerOrderStatusService } from '../../services/customer.order.status.service';
-import { MailComputeResultService } from '../../services/mail.compute.result.service';
 import { ProvisionService } from '../../services/provision.service';
 import { QuotationStatusService } from '../../services/quotation-status.service';
 import { QuotationService } from '../../services/quotation.service';
@@ -75,7 +74,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
   instanceOfCustomerOrder: boolean = false;
   isStatusOpen: boolean = true;
 
-  updateDocumentsEvent: Subject<void> = new Subject<void>();
+  updateDocumentsEvent: Subject<IQuotation> = new Subject<IQuotation>();
 
   idQuotation: number | undefined;
 
@@ -92,7 +91,6 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     private formBuilder: FormBuilder,
     private constantService: ConstantService,
     private assoAffaireOrderService: AssoAffaireOrderService,
-    private mailComputeResultService: MailComputeResultService,
     protected searchService: SearchService,
     public associateDepositDialog: MatDialog,
     private provisionService: ProvisionService,
@@ -130,7 +128,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
           this.toggleTabs();
           this.setOpenStatus();
           this.checkAffaireAssignation();
-          this.updateDocumentsEvent.next();
+          this.updateDocumentsEvent.next(this.quotation);
         })
       }
       // Load by quotation
@@ -144,7 +142,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
             (this.quotation.quotationStatus != null ? this.quotation.quotationStatus.label : ""));
         this.toggleTabs();
         this.setOpenStatus();
-        this.updateDocumentsEvent.next();
+        this.updateDocumentsEvent.next(this.quotation);
       })
     } else if (this.createMode == false) {
       this.isQuotationUrl = true;
@@ -169,7 +167,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
   }
 
   updateDocuments() {
-    this.updateDocumentsEvent.next();
+    this.updateDocumentsEvent.next(this.quotation);
   }
 
   updateAssignedToForAffaire(employee: Employee, asso: AssoAffaireOrder) {
@@ -314,7 +312,10 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
       width: '100%',
       height: '90%'
     });
-    dialogRef.componentInstance.isLabelAffaire = this.quotationManagementComponent?.getBillingDocument()!.billingLabelType.id == this.constantService.getBillingLabelTypeCodeAffaire().id;
+
+    if (this.quotationManagementComponent?.getBillingDocument() && this.quotationManagementComponent?.getBillingDocument().billingLabelType && this.quotationManagementComponent?.getBillingDocument().billingLabelType.id)
+      dialogRef.componentInstance.isLabelAffaire = this.quotationManagementComponent?.getBillingDocument()!.billingLabelType.id == this.constantService.getBillingLabelTypeCodeAffaire().id;
+
     dialogRef.afterClosed().subscribe(response => {
       if (response != null) {
         let asso = {} as AssoAffaireOrder;

@@ -7,14 +7,13 @@ import { getCustomerOrderForIQuotation } from 'src/app/modules/invoicing/compone
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { SpecialOffer } from 'src/app/modules/miscellaneous/model/SpecialOffer';
 import { DocumentTypeService } from 'src/app/modules/miscellaneous/services/document.type.service';
-import { Responsable } from 'src/app/modules/tiers/model/Responsable';
 import { TiersService } from 'src/app/modules/tiers/services/tiers.service';
+import { IndexEntityService } from 'src/app/routing/search/index.entity.service';
 import { IndexEntity } from '../../../../routing/search/IndexEntity';
 import { AppService } from '../../../../services/app.service';
 import { Document } from '../../../miscellaneous/model/Document';
 import { DocumentType } from '../../../miscellaneous/model/DocumentType';
 import { SortTableAction } from '../../../miscellaneous/model/SortTableAction';
-import { Tiers } from '../../../tiers/model/Tiers';
 import { ResponsableService } from '../../../tiers/services/responsable.service';
 import { Confrere } from '../../model/Confrere';
 import { IQuotation } from '../../model/IQuotation';
@@ -34,8 +33,8 @@ export class OrderingCustomerComponent implements OnInit {
 
   documentTypes: DocumentType[] = [] as Array<DocumentType>;
   billingDocument: Document = {} as Document;
-  searchedTiers: Tiers | undefined;
-  searchedResponsable: Responsable | undefined;
+  searchedTiers: IndexEntity | undefined;
+  searchedResponsable: IndexEntity | undefined;
 
   customerOrderTableActions: SortTableAction[] = [] as Array<SortTableAction>;
   customerOrderDisplayedColumns: SortTableColumn[] = [] as Array<SortTableColumn>;
@@ -45,14 +44,22 @@ export class OrderingCustomerComponent implements OnInit {
     private appService: AppService,
     protected cd: ChangeDetectorRef,
     private responsableService: ResponsableService,
+    private indexEntityService: IndexEntityService,
     protected documentTypeService: DocumentTypeService,
     public specialOfferDialog: MatDialog) { }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes.quotation != undefined) {
+    if (changes.quotation) {
       if (!this.quotation.overrideSpecialOffer) {
         this.quotation.overrideSpecialOffer = false;
         this.initSpecialOffers();
+      }
+
+      if (this.quotation.responsable && this.quotation.responsable.id && !this.searchedResponsable) {
+        this.indexEntityService.getResponsableByKeyword(this.quotation.responsable.id + "").subscribe(response => this.searchedResponsable = response[0]);
+      }
+      if (this.quotation.tiers && this.quotation.tiers.id && !this.searchedTiers) {
+        this.indexEntityService.getIndividualTiersByKeyword(this.quotation.tiers.id + "").subscribe(response => this.searchedTiers = response[0]);
       }
       this.orderingCustomerForm.markAllAsTouched();
     }
@@ -124,15 +131,16 @@ export class OrderingCustomerComponent implements OnInit {
   fillResponsable(responsable: IndexEntity) {
     this.responsableService.getResponsable(responsable.entityId).subscribe(response => {
       this.quotation.responsable = response;
+      this.setDocument();
     });
     this.tiersService.getTiersByResponsable(responsable.entityId).subscribe(response => {
       if (this.quotation.responsable != null) {
         this.quotation.responsable.tiers = response;
         this.quotation.observations = this.quotation.responsable.tiers.observations;
+        this.setDocument();
       }
     })
     this.quotation.tiers = undefined;
-    this.setDocument();
   }
 
   getFormStatus(): boolean {

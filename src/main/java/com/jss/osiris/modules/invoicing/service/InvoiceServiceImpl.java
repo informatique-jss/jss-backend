@@ -161,9 +161,9 @@ public class InvoiceServiceImpl implements InvoiceService {
         if (invoiceSearch.getInvoiceStatus() != null) {
             for (InvoiceStatus invoiceStatus : invoiceSearch.getInvoiceStatus())
                 statusId.add(invoiceStatus.getId());
-        } else {
-            statusId.add(0);
         }
+        if (statusId.size() == 0)
+            statusId.add(0);
 
         if (invoiceSearch.getStartDate() == null)
             invoiceSearch.setStartDate(LocalDateTime.now().minusYears(100));

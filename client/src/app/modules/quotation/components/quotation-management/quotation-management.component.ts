@@ -35,7 +35,7 @@ export class QuotationManagementComponent implements OnInit, AfterContentChecked
   @Input() editMode: boolean = false;
   @Input() isStatusOpen: boolean = false;
   @Input() instanceOfCustomerOrder: boolean = false;
-  @Input() updateDocumentsEvent: Observable<void> | undefined;
+  @Input() updateDocumentsEvent: Observable<IQuotation> | undefined;
   updateDocumentsSubscription: Subscription | undefined;
   @ViewChild(MatAccordion) accordion: MatAccordion | undefined;
 
@@ -76,11 +76,11 @@ export class QuotationManagementComponent implements OnInit, AfterContentChecked
       this.recordTypes = response;
     })
     if (this.updateDocumentsEvent)
-      this.updateDocumentsSubscription = this.updateDocumentsEvent.subscribe(() => {
+      this.updateDocumentsSubscription = this.updateDocumentsEvent.subscribe((quotation) => {
+        this.setDocument();
         this.updateBillingMailResult();
         this.updateInvoiceLabelResult();
         this.updatePaperLabelResult();
-        this.setDocument();
       }
       );
   }
@@ -111,7 +111,8 @@ export class QuotationManagementComponent implements OnInit, AfterContentChecked
   });
 
   setDocument() {
-    let currentOrderingCustomer: ITiers = {} as ITiers;
+    console.log("setdoc");
+    let currentOrderingCustomer: ITiers | undefined;
     if (this.quotation.tiers) {
       this.tiersService.setCurrentViewedTiers(this.quotation.tiers)
       currentOrderingCustomer = this.quotation.tiers;
@@ -123,6 +124,9 @@ export class QuotationManagementComponent implements OnInit, AfterContentChecked
     }
     if (this.quotation.confrere)
       currentOrderingCustomer = this.quotation.confrere;
+
+    if (!currentOrderingCustomer)
+      return;
 
     this.billingDocument = getDocument(this.constantService.getDocumentTypeBilling(), this.quotation);
     let currentBillingDocument = getDocument(this.constantService.getDocumentTypeBilling(), currentOrderingCustomer);

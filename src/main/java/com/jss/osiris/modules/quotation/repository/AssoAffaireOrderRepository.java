@@ -55,9 +55,9 @@ public interface AssoAffaireOrderRepository extends CrudRepository<AssoAffaireOr
                         " and ( COALESCE(:assignedTo) =0 or p.id_employee in (:assignedTo)) " +
                         " and (:label ='' or upper(a.denomination)  like '%' || upper(CAST(:label as text))  || '%'  or upper(a.firstname)  like '%' || upper(CAST(:label as text)) || '%' or upper(a.lastname)  like '%' || upper(CAST(:label as text)) || '%') "
                         +
-                        " and (COALESCE(:status) is null or coalesce(ans.id,fs.id,doms.id, bos.id,sps.id) in (:status) )")
+                        " and (COALESCE(:status) =0 or coalesce(ans.id,fs.id,doms.id, bos.id,sps.id) in (:status) )")
         ArrayList<AssoAffaireOrderSearchResult> findAsso(@Param("responsible") List<Integer> responsibleIds,
                         @Param("assignedTo") List<Integer> assignedToIds,
-                        @Param("label") String label, @Param("status") ArrayList<Integer> arrayList,
+                        @Param("label") String label, @Param("status") ArrayList<Integer> status,
                         @Param("excludedCustomerOrderStatusCode") List<String> excludedCustomerOrderStatusCode);
 }

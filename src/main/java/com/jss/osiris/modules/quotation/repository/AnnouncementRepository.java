@@ -43,6 +43,7 @@ public interface AnnouncementRepository extends CrudRepository<Announcement, Int
                         "  and ( :noticeTypeId = 0 or asso.id_notice_type = :noticeTypeId) " +
                         "  and a.id_announcement_status in (:announcementStatus) " +
                         "  and a.id_confrere = :confrereId " +
+                        "  and a.publication_date <= now() " +
                         "  group by a.id, coalesce(affaire.denomination, affaire.firstname || ' ' || affaire.lastname),d.code,a.publication_date,a.notice ")
         List<AnnouncementSearchResult> searchAnnouncements(@Param("affaireName") String affaireName,
                         @Param("isStricNameSearch") Boolean isStricNameSearch,

@@ -293,7 +293,7 @@ public class ValidationHelper {
     public boolean validateMailList(List<Mail> mails) {
         EmailValidator emailvalidator = EmailValidator.getInstance();
         for (Mail mail : mails) {
-            if (mail.getMail() == null || mail.getMail().length() > 30 || !emailvalidator.isValid(mail.getMail()))
+            if (mail.getMail() == null || mail.getMail().length() > 250 || !emailvalidator.isValid(mail.getMail()))
                 return false;
         }
         return true;
