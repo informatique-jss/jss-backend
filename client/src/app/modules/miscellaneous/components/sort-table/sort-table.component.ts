@@ -158,6 +158,15 @@ export class SortTableComponent implements OnInit {
     return "Not found";
   }
 
+  getIsElementWarnColor(column: SortTableColumn, element: any): any {
+    if (column) {
+      if (column.colorWarnFunction) {
+        return column.colorWarnFunction(element);
+      }
+    }
+    return false;
+  }
+
   getDisplayedColumns() {
     let columnList = [];
     if (this.columns)

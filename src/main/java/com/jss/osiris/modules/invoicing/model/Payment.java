@@ -61,6 +61,7 @@ public class Payment implements Serializable, IId {
 
 	@ManyToOne
 	@JoinColumn(name = "id_origin_payment")
+	@JsonIgnoreProperties(value = { "payments", "accountingRecords" }, allowSetters = true)
 	private Payment originPayment;
 
 	private Boolean isCancelled;

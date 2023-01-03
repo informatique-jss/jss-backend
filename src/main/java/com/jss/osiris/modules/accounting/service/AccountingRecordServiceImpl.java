@@ -366,14 +366,14 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   public void generateAccountingRecordsForDepositOnInvoice(Deposit deposit, Invoice invoice,
       Integer overrideAccountingOperationId) throws OsirisException {
     AccountingAccount customerAccountingAccount = getCustomerAccountingAccountForInvoice(invoice);
-    AccountingJournal salesJournal = constantService.getAccountingJournalSales();
+    AccountingJournal bankJournal = constantService.getAccountingJournalBank();
 
     Integer operationId = deposit.getId();
     if (overrideAccountingOperationId != null)
       operationId = overrideAccountingOperationId;
     generateNewAccountingRecord(LocalDateTime.now(), operationId, null, null,
         "Acompte pour la facture n°" + invoice.getId(), deposit.getDepositAmount(), null, customerAccountingAccount,
-        null, invoice, null, salesJournal, null, deposit);
+        null, invoice, null, bankJournal, null, deposit);
     checkInvoiceForLettrage(invoice);
   }
 
@@ -383,7 +383,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
     AccountingAccount depositAccountingAccount = getDepositAccountingAccountForCustomerOrder(
         quotationService.getCustomerOrderOfQuotation(customerOrder));
-    AccountingJournal salesJournal = constantService.getAccountingJournalSales();
+    AccountingJournal bankJournal = constantService.getAccountingJournalBank();
 
     // If deposit is created from a payment, use the payment ID as operation ID to
     // keep the balance to 0 for a same operationID
@@ -394,7 +394,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     generateNewAccountingRecord(LocalDateTime.now(), operationId, null, null,
         "Acompte pour la commande n°" + customerOrder.getId(), deposit.getDepositAmount(), null,
         depositAccountingAccount,
-        null, null, customerOrder, salesJournal, null, deposit);
+        null, null, customerOrder, bankJournal, null, deposit);
   }
 
   @Override
@@ -1026,8 +1026,6 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
       for (AccountingRecord accountingRecord : accountingRecords) {
         generateCounterPart(accountingRecord);
         accountingRecord.setInvoice(null);
-        // TODO :
-        // paymentService.unlinkPaymentFromInvoiceCustomerOrder(accountingRecord.getPayment());
         accountingRecord.setPayment(null);
         accountingRecord.setDeposit(null);
         boolean invoiceFound = false;

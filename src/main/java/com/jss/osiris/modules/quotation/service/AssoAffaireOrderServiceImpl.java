@@ -1,10 +1,5 @@
 package com.jss.osiris.modules.quotation.service;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -246,24 +241,24 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
                 // Handle status change
                 if (announcement.getAnnouncementStatus() != null) {
+                    if (announcement.getAnnouncementStatus().getCode()
+                            .equals(AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS)) {
+                        announcementService.generateStoreAndSendPublicationReceipt((CustomerOrder) customerOrder);
+                    }
                     if (publicationProofFound && announcement.getAnnouncementStatus().getCode()
                             .equals(AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE_PUBLISHED))
                         announcement.setAnnouncementStatus(announcementStatusService
                                 .getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_PUBLISHED));
 
-                    if (announcement.getIsProofReadingDocument() && (announcement.getAnnouncementStatus().getCode()
-                            .equals(AnnouncementStatus.ANNOUNCEMENT_WAITING_READ)
-                            || announcement.getAnnouncementStatus().getCode()
-                                    .equals(AnnouncementStatus.ANNOUNCEMENT_WAITING_READ_CUSTOMER))) {
-                        announcement.setAnnouncementStatus(announcementStatusService
-                                .getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_WAITING_READ_CUSTOMER));
-                        generateStoreAndSendProofReading(announcement,
-                                customerOrderService.getCustomerOrder(customerOrder.getId()));
+                    if (announcement.getIsProofReadingDocument() && announcement.getAnnouncementStatus().getCode()
+                            .equals(AnnouncementStatus.ANNOUNCEMENT_WAITING_READ_CUSTOMER)) {
+                        announcementService.generateStoreAndSendProofReading(announcement,
+                                (CustomerOrder) customerOrder);
                     }
 
-                    if (announcement.getAnnouncementStatus().getCode().equals(AnnouncementStatus.ANNOUNCEMENT_DONE))
-                        customerOrderService.generateStoreAndSendPublicationReceipt(
-                                customerOrderService.getCustomerOrder(customerOrder.getId()));
+                    if (announcement.getAnnouncementStatus().getCode().equals(AnnouncementStatus.ANNOUNCEMENT_DONE)) {
+                        announcementService.generateStoreAndSendPublicationFlag((CustomerOrder) customerOrder);
+                    }
                 }
 
             }
@@ -363,34 +358,4 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                 statusId, excludedCustomerOrderStatusCode);
     }
 
-    private void generateStoreAndSendProofReading(Announcement announcement, CustomerOrder customerOrder)
-            throws OsirisException, OsirisClientMessageException {
-        // Check if publication receipt already exists
-        boolean proofReading = false;
-        if (announcement.getAttachments() != null)
-            for (Attachment attachment : announcement.getAttachments())
-                if (attachment.getAttachmentType().getId()
-                        .equals(constantService.getAttachmentTypeProofReading().getId()))
-                    proofReading = true;
-
-        if (!proofReading && announcement.getNotice() != null) {
-            File publicationReceiptPdf = mailHelper.generatePublicationReceiptPdf(announcement, false);
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
-            try {
-                announcement.setAttachments(
-                        attachmentService.addAttachment(new FileInputStream(publicationReceiptPdf),
-                                announcement.getId(),
-                                Announcement.class.getSimpleName(),
-                                constantService.getAttachmentTypeProofReading(),
-                                "Proof_reading_" + formatter.format(LocalDateTime.now()) + ".pdf",
-                                false, "Bon à tirer n°" + announcement.getId()));
-            } catch (FileNotFoundException e) {
-                throw new OsirisException(e, "Impossible to read invoice PDF temp file");
-            } finally {
-                publicationReceiptPdf.delete();
-            }
-        }
-
-        mailHelper.sendProofReadingToCustomer(customerOrder, false);
-    }
 }

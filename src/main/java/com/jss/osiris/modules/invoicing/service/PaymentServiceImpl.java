@@ -207,7 +207,7 @@ public class PaymentServiceImpl implements PaymentService {
 
                 // If invoice and pending customer orders found, do nothing => to complicated to
                 // manage automaticaly
-                // If to many money inbound, do nothing, a human will choose who must be refund
+                // If too many money inbound, do nothing, a human will choose who must be refund
                 if (correspondingInvoices.size() > 0 && correspondingCustomerOrder.size() > 0
                         || payment.getPaymentAmount() > totalToPay)
                     continue;

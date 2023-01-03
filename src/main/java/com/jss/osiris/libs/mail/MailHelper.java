@@ -707,18 +707,6 @@ public class MailHelper {
             mail.setExplainationElements(String.join("!#", details));
         }
 
-        if (customerOrder.getAssoAffaireOrders() != null && customerOrder.getAssoAffaireOrders().size() > 0) {
-            ArrayList<CustomerMailAssoAffaireOrder> customerAssos = new ArrayList<CustomerMailAssoAffaireOrder>();
-            for (AssoAffaireOrder assos : customerOrder.getAssoAffaireOrders()) {
-                CustomerMailAssoAffaireOrder asso = new CustomerMailAssoAffaireOrder();
-                asso.setAssoAffaireOrderId(assos.getId());
-                asso.setCustomerMail(mail);
-                customerAssos.add(asso);
-            }
-            if (customerAssos.size() > 0)
-                mail.setCustomerMailAssoAffaireOrders(customerAssos);
-        }
-
         if (remainingToPay > 0 && !isPaymentTypePrelevement) {
             if (isDepositMandatory) {
                 mail.setPaymentExplaination(
@@ -814,18 +802,6 @@ public class MailHelper {
             mail.setExplainationElements(String.join("!#", details));
         }
 
-        if (customerOrder.getAssoAffaireOrders() != null && customerOrder.getAssoAffaireOrders().size() > 0) {
-            ArrayList<CustomerMailAssoAffaireOrder> customerAssos = new ArrayList<CustomerMailAssoAffaireOrder>();
-            for (AssoAffaireOrder assos : customerOrder.getAssoAffaireOrders()) {
-                CustomerMailAssoAffaireOrder asso = new CustomerMailAssoAffaireOrder();
-                asso.setAssoAffaireOrderId(assos.getId());
-                asso.setCustomerMail(mail);
-                customerAssos.add(asso);
-            }
-            if (customerAssos.size() > 0)
-                mail.setCustomerMailAssoAffaireOrders(customerAssos);
-        }
-
         mail.setExplaination3(
                 "Votre commande sera traitée dans les meilleurs délais et avec tout notre savoir-faire par "
                         + responsibleString
@@ -846,10 +822,14 @@ public class MailHelper {
         final Context ctx = new Context();
 
         ctx.setVariable("preTaxPriceTotal", invoiceHelper.getPreTaxPriceTotal(invoice));
-        ctx.setVariable("discountTotal", invoiceHelper.getDiscountTotal(invoice));
+        if (Math.round(invoiceHelper.getDiscountTotal(invoice) * 100f) / 100f > 0)
+            ctx.setVariable("discountTotal", invoiceHelper.getDiscountTotal(invoice));
         ctx.setVariable("assos", customerOrder.getAssoAffaireOrders());
-        ctx.setVariable("preTaxPriceTotalWithDicount", invoiceHelper.getDiscountTotal(invoice)
-                + (invoiceHelper.getDiscountTotal(invoice) != null ? invoiceHelper.getDiscountTotal(invoice) : 0f));
+        ctx.setVariable("preTaxPriceTotalWithDicount", invoiceHelper.getPreTaxPriceTotal(invoice)
+                + (invoiceHelper.getDiscountTotal(invoice) != null
+                        && Math.round(invoiceHelper.getDiscountTotal(invoice) * 100f) / 100f > 0
+                                ? invoiceHelper.getDiscountTotal(invoice)
+                                : 0f));
         ArrayList<VatMail> vats = null;
         Float vatTotal = 0f;
         for (InvoiceItem invoiceItem : invoice.getInvoiceItems()) {

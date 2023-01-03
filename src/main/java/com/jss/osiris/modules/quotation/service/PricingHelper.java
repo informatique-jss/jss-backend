@@ -194,7 +194,9 @@ public class PricingHelper {
                 if (isNotJssConfrere(provision) && confrere.getPaperPrice() != null) {
                     invoiceItem
                             .setPreTaxPrice(
-                                    Math.round(confrere.getPaperPrice() * nbr + confrere.getShippingCosts() * 100f)
+                                    Math.round(confrere.getPaperPrice() * nbr
+                                            + (confrere.getShippingCosts() != null ? confrere.getShippingCosts() : 0f)
+                                                    * 100f)
                                             / 100f);
                 } else
                     invoiceItem.setPreTaxPrice(

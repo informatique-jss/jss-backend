@@ -50,6 +50,7 @@ public class Deposit implements Serializable, IId {
 
   @ManyToOne
   @JoinColumn(name = "id_origin_payment")
+  @JsonIgnoreProperties(value = { "deposits", "accountingRecords" }, allowSetters = true)
   private Payment originPayment;
 
   private Boolean isCancelled;

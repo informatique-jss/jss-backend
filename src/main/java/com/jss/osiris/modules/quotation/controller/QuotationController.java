@@ -1300,8 +1300,10 @@ public class QuotationController {
 
     if (quotation.getAssoAffaireOrders().size() > 1) {
       billingDocument = documentService.getBillingDocument(quotation.getDocuments());
-      if (billingDocument != null && billingDocument.getIsRecipientAffaire())
-        throw new OsirisValidationException("To many affaire");
+      // If recipient affaire and no override, we can't determine what affaire to use
+      if (billingDocument != null && billingDocument.getIsRecipientAffaire()
+          && (billingDocument.getMailsAffaire() == null || billingDocument.getMailsAffaire().size() == 0))
+        throw new OsirisValidationException("Too many affaire");
     }
 
   }
