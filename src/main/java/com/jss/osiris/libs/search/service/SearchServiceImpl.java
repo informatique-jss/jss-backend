@@ -33,7 +33,9 @@ public class SearchServiceImpl implements SearchService {
     public List<IndexEntity> searchForEntities(String search, String entityType) {
         List<IndexEntity> entities = indexEntityRepository.searchForEntities(search, entityType, maxNumberOfResults);
         if (entities == null || entities.size() == 0)
-            entities = indexEntityRepository.searchForSimilarEntities(search, entityType, maxNumberOfResults);
+            entities = indexEntityRepository.searchForContainsSimilarEntities(search, entityType, maxNumberOfResults);
+        if (entities == null || entities.size() == 0)
+            entities = indexEntityRepository.searchForDeepSimilarEntities(search, entityType, maxNumberOfResults);
         return entities;
     }
 

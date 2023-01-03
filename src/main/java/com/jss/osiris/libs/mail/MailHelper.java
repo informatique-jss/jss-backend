@@ -108,7 +108,7 @@ public class MailHelper {
 
     private static final String PNG_MIME = "image/png";
 
-    private boolean disableCbLink = true;
+    private boolean disableCbLink = false;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -666,7 +666,7 @@ public class MailHelper {
                             .getId().equals(constantService.getPaymentTypePrelevement().getId());
         }
         Float remainingToPay = Math
-                .round(accountingRecordService.getRemainingAmountToPayForCustomerOrder(customerOrder) * 100f) / 100f;
+                .round(customerOrderService.getRemainingAmountToPayForCustomerOrder(customerOrder) * 100f) / 100f;
 
         mail.setHeaderPicture("images/waiting-deposit-header.png");
         mail.setTitle("Votre commande est prête !");
@@ -1048,7 +1048,7 @@ public class MailHelper {
         }
 
         Float remainingToPay = Math
-                .round(accountingRecordService.getRemainingAmountToPayForCustomerOrder(customerOrder) * 100f) / 100f;
+                .round(customerOrderService.getRemainingAmountToPayForCustomerOrder(customerOrder) * 100f) / 100f;
 
         List<Attachment> attachments = findAttachmentForCustomerOrder(customerOrder, isReminder);
 

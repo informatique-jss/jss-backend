@@ -16,7 +16,7 @@ import com.jss.osiris.modules.tiers.model.Tiers;
 
 public interface InvoiceRepository extends CrudRepository<Invoice, Integer> {
 
-        Invoice findByCustomerOrderId(Integer customerOrderId);
+        List<Invoice> findByCustomerOrderId(Integer customerOrderId);
 
         @Query("select min(createdDate) from Invoice where  tiers=:tiers")
         LocalDate findFirstBillingDateForTiers(@Param("tiers") Tiers tiers);

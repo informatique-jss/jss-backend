@@ -6,7 +6,7 @@ import { IQuotation } from '../../quotation/model/IQuotation';
 import { ITiers } from "../../tiers/model/ITiers";
 import { Tiers } from "../../tiers/model/Tiers";
 
-export function getAmountRemaining(invoice: Invoice) {
+export function getRemainingToPay(invoice: Invoice) {
   return Math.round((invoice.totalPrice - getAmountPayed(invoice)) * 100) / 100;
 }
 
@@ -124,7 +124,6 @@ export function getResponsableName(element: any) {
 }
 
 export function getAmountPayed(invoice: Invoice) {
-  // TODO : à revoir et à passer par les lignes de compta pour les paiements partiels
   let payed = 0;
   if (invoice.payments && invoice.payments.length)
     for (let payment of invoice.payments)
@@ -133,8 +132,7 @@ export function getAmountPayed(invoice: Invoice) {
     for (let deposit of invoice.deposits)
       payed += deposit.depositAmount;
 
-  payed = Math.round(payed * 100) / 100;
-  return payed;
+  return Math.round(payed * 100) / 100;
 }
 
 export function getLetteringDate(invoice: Invoice): Date | undefined {

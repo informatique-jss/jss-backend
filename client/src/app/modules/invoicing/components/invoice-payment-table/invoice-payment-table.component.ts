@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { formatDate } from 'src/app/libs/FormatHelper';
 import { Invoice } from 'src/app/modules/quotation/model/Invoice';
-import { getAmountRemaining } from '../invoice-tools';
+import { getRemainingToPay } from '../invoice-tools';
 
 @Component({
   selector: 'invoice-payment-table',
@@ -13,9 +13,7 @@ export class InvoicePaymentTableComponent implements OnInit {
   @Input() invoice: Invoice = {} as Invoice;
 
   formatDate = formatDate;
-  getAmountRemaining(invoice: Invoice): number {
-    return Math.max(getAmountRemaining(invoice), 0);
-  }
+  getAmountRemaining = getRemainingToPay;
 
   constructor() { }
 

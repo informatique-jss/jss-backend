@@ -25,7 +25,7 @@ import { PaymentAssociate } from '../../model/PaymentAssociate';
 import { InvoiceService } from '../../services/invoice.service';
 import { PaymentService } from '../../services/payment.service';
 import { AmountDialogComponent } from '../amount-dialog/amount-dialog.component';
-import { getAmountPayed, getAmountRemaining, getCustomerOrderForInvoice, getCustomerOrderForIQuotation, getCustomerOrderNameForITiers } from '../invoice-tools';
+import { getAmountPayed, getCustomerOrderForInvoice, getCustomerOrderForIQuotation, getCustomerOrderNameForITiers, getRemainingToPay } from '../invoice-tools';
 
 @Component({
   selector: 'associate-payment-dialog',
@@ -51,7 +51,7 @@ export class AssociatePaymentDialogComponent implements OnInit {
   invoiceStatusReceived = this.constantService.getInvoiceStatusReceived();
   paymentWayInbound = this.constantService.getPaymentWayInbound();
 
-  getAmountRemaining = getAmountRemaining;
+  getAmountRemaining = getRemainingToPay;
 
   constructor(public dialogRef: MatDialogRef<AssociatePaymentDialogComponent>,
     private appService: AppService,
@@ -72,13 +72,13 @@ export class AssociatePaymentDialogComponent implements OnInit {
     this.displayedColumns.push({ id: "payment", fieldName: "payment.id", label: "Paiement" } as SortTableColumn);
     this.displayedColumns.push({ id: "customerOrder", fieldName: "customerOrder.id", label: "Commande" } as SortTableColumn);
     this.displayedColumns.push({ id: "invoice", fieldName: "invoice.id", label: "Facture" } as SortTableColumn);
-    this.displayedColumns.push({ id: "initialAmount", fieldName: "invoice", label: "Montant TTC", valueFonction: (element: any, elements: any[], column: SortTableColumn, columns: SortTableColumn[]): string => { return this.getInitialAmount(element) + " €"; } } as SortTableColumn);
-    this.displayedColumns.push({ id: "initialPayed", fieldName: "invoice", label: "Montant déjà réglé", valueFonction: (element: any, elements: any[], column: SortTableColumn, columns: SortTableColumn[]): string => { return this.getInitialPayedAmount(element) + " €"; } } as SortTableColumn);
-    this.displayedColumns.push({ id: "amountPayed", fieldName: "invoice", label: "Montant associé", valueFonction: (element: any, elements: any[], column: SortTableColumn, columns: SortTableColumn[]): string => { return this.getAmountPayed(element) + " €"; } } as SortTableColumn);
-    this.displayedColumns.push({ id: "finalPayed", fieldName: "invoice", label: "Montant final réglé", valueFonction: (element: any, elements: any[], column: SortTableColumn, columns: SortTableColumn[]): string => { return this.getFinalPayed(element) + " €"; } } as SortTableColumn);
-    this.displayedColumns.push({ id: "remainingToPay", fieldName: "invoice", label: "Montant restant à payer", valueFonction: (element: any, elements: any[], column: SortTableColumn, columns: SortTableColumn[]): string => { return this.getRemainingToPay(element) + " €"; } } as SortTableColumn);
-    this.displayedColumns.push({ id: "isLettreeValidated", fieldName: "invoice", label: "Facture lettrée", valueFonction: (element: any, elements: any[], column: SortTableColumn, columns: SortTableColumn[]): any => { if (element.invoice) { return (this.getRemainingToPay(element) <= 0 ? "Oui" : "Non"); } } } as SortTableColumn);
-    this.displayedColumns.push({ id: "isDepositValidated", fieldName: "invoice", label: "Acompte validé", valueFonction: (element: any, elements: any[], column: SortTableColumn, columns: SortTableColumn[]): any => { if (element.customerOrder) { return (this.getRemainingToPay(element) <= 0 && element.customerOrder ? "Oui" : "Non"); } } } as SortTableColumn);
+    this.displayedColumns.push({ id: "initialAmount", fieldName: "invoice", label: "Montant TTC", valueFonction: (element: any): string => { return this.getInitialAmount(element) + " €"; } } as SortTableColumn);
+    this.displayedColumns.push({ id: "initialPayed", fieldName: "invoice", label: "Montant déjà réglé", valueFonction: (element: any): string => { return this.getInitialPayedAmount(element) + " €"; } } as SortTableColumn);
+    this.displayedColumns.push({ id: "amountPayed", fieldName: "invoice", label: "Montant associé", valueFonction: (element: any): string => { return this.getAmountPayed(element) + " €"; } } as SortTableColumn);
+    this.displayedColumns.push({ id: "finalPayed", fieldName: "invoice", label: "Montant final réglé", valueFonction: (element: any): string => { return this.getFinalPayed(element) + " €"; } } as SortTableColumn);
+    this.displayedColumns.push({ id: "remainingToPay", fieldName: "invoice", label: "Montant restant à payer", valueFonction: (element: any): string => { return this.getRemainingToPay(element) + " €"; } } as SortTableColumn);
+    this.displayedColumns.push({ id: "isLettreeValidated", fieldName: "invoice", label: "Facture lettrée", valueFonction: (element: any): any => { if (element.invoice) { return (this.getRemainingToPay(element) <= 0 ? "Oui" : "Non"); } } } as SortTableColumn);
+    this.displayedColumns.push({ id: "isDepositValidated", fieldName: "invoice", label: "Acompte validé", valueFonction: (element: any): any => { if (element.customerOrder) { return (this.getRemainingToPay(element) <= 0 && element.customerOrder ? "Oui" : "Non"); } } } as SortTableColumn);
 
     this.tableAction.push({
       actionIcon: "delete", actionName: "Supprimer l'association", actionClick: (action: SortTableAction, element: any): void => {
@@ -94,8 +94,9 @@ export class AssociatePaymentDialogComponent implements OnInit {
 
     if (this.payment && this.invoice)
       this.associationSummaryTable.push({
-        payment: this.payment, invoice: this.invoice, amountUsed: Math.min(this.invoice.totalPrice - getAmountPayed(this.invoice), this.payment.paymentAmount)
+        payment: this.payment, invoice: this.invoice, amountUsed: Math.min(this.getInitialAmount({ invoice: this.invoice }) - this.getInitialPayedAmount({ invoice: this.invoice }), this.payment.paymentAmount)
       } as AssociationSummaryTable);
+
 
     this.selectedRefundTiers = this.getRefundCustomerOrder();
     this.refundForm.get("refundTiers")!.valueChanges.subscribe(
@@ -300,7 +301,7 @@ export class AssociatePaymentDialogComponent implements OnInit {
   getInitialAmount(element: any): number {
     if (element) {
       if (element.invoice)
-        return element.invoice.totalPrice;
+        return Math.round(element.invoice.totalPrice * 100) / 100;
       if (element.customerOrder)
         return QuotationComponent.computePriceTotal(element.customerOrder);
     }

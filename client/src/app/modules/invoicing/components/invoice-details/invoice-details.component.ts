@@ -12,7 +12,7 @@ import { AppService } from 'src/app/services/app.service';
 import { instanceOfConfrere, instanceOfResponsable, instanceOfTiers } from '../../../../libs/TypeHelper';
 import { ITiers } from '../../../tiers/model/ITiers';
 import { InvoiceService } from '../../services/invoice.service';
-import { getAffaireList, getAffaireListArray, getAmountRemaining, getCustomerOrderForInvoice, getCustomerOrderNameForInvoice, getLetteringDate, getResponsableName } from '../invoice-tools';
+import { getAffaireList, getAffaireListArray, getCustomerOrderForInvoice, getCustomerOrderNameForInvoice, getLetteringDate, getRemainingToPay, getResponsableName } from '../invoice-tools';
 
 @Component({
   selector: 'app-invoice-details',
@@ -22,7 +22,7 @@ import { getAffaireList, getAffaireListArray, getAmountRemaining, getCustomerOrd
 export class InvoiceDetailsComponent implements OnInit {
 
   @Input() invoice: Invoice | undefined;
-  getAmountRemaining = getAmountRemaining;
+  getAmountRemaining = getRemainingToPay;
   getAffaireList = getAffaireList;
   getAffaireListArray = getAffaireListArray;
   INVOICE_ENTITY_TYPE = INVOICE_ENTITY_TYPE;

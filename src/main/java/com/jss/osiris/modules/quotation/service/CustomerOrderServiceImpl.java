@@ -7,7 +7,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -267,9 +266,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.OPEN)
                 && (targetStatusCode.equals(CustomerOrderStatus.BEING_PROCESSED)
                         || targetStatusCode.equals(CustomerOrderStatus.WAITING_DEPOSIT))) {
-            Float remainingToPay = Math
-                    .round(accountingRecordService.getRemainingAmountToPayForCustomerOrder(customerOrder) * 100f)
-                    / 100f;
+            Float remainingToPay = getRemainingAmountToPayForCustomerOrder(customerOrder);
 
             ITiers tiers = quotationService.getCustomerOrderOfQuotation(customerOrder);
             boolean isDepositMandatory = false;
@@ -336,24 +333,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             moveCustomerOrderDepositToInvoiceDeposit(customerOrder, invoice);
 
             // Check invoice payed
-            Float remainingToPayForCurrentInvoice = accountingRecordService.getRemainingAmountToPayForInvoice(invoice);
-            if (remainingToPayForCurrentInvoice >= 0) {
-                if (customerOrder.getDeposits() != null && customerOrder.getDeposits().size() > 0) {
-                    float totalDeposit = 0f;
-                    for (Deposit deposit : customerOrder.getDeposits())
-                        totalDeposit += deposit.getDepositAmount();
-                    accountingRecordService.generateAccountingRecordsForSaleOnInvoicePayment(invoice, null,
-                            customerOrder.getDeposits(), totalDeposit);
-
-                    remainingToPayForCurrentInvoice = accountingRecordService
-                            .getRemainingAmountToPayForInvoice(invoice);
-
-                    if (remainingToPayForCurrentInvoice == 0) {
-                        invoice.setInvoiceStatus(constantService.getInvoiceStatusPayed());
-                        invoiceService.addOrUpdateInvoice(invoice);
-                    }
-                }
-            } else {
+            Float remainingToPayForCurrentInvoice = invoiceService.getRemainingAmountToPayForInvoice(invoice);
+            if (remainingToPayForCurrentInvoice < 0) {
                 throw new OsirisException(null, "Impossible to billed, too much money on customerOrder !");
             }
 
@@ -593,7 +574,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 quotation.getConfrere(), quotation.getSpecialOffers(), LocalDateTime.now(), statusOpen,
                 quotation.getObservations(), quotation.getDescription(), null,
                 quotation.getDocuments(), quotation.getAssoAffaireOrders(), null,
-                quotation.getOverrideSpecialOffer(), quotation.getQuotationLabel(), false, null, null, null, null);
+                quotation.getOverrideSpecialOffer(), quotation.getQuotationLabel(), false, null, null, null);
 
         ObjectMapper objectMapper = new ObjectMapper();
         SimpleModule simpleModule = new SimpleModule("SimpleModule");
@@ -713,10 +694,10 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             }
         }
 
-        Float remainingToPay = accountingRecordService.getRemainingAmountToPayForCustomerOrder(customerOrder);
+        Float remainingToPay = getRemainingAmountToPayForCustomerOrder(customerOrder);
         if (remainingToPay > 0) {
             CentralPayPaymentRequest paymentRequest = centralPayDelegateService.generatePayPaymentRequest(
-                    accountingRecordService.getRemainingAmountToPayForCustomerOrder(customerOrder), mail,
+                    getRemainingAmountToPayForCustomerOrder(customerOrder), mail,
                     customerOrder.getId() + "", subject);
 
             customerOrder.setCentralPayPaymentRequestId(paymentRequest.getPaymentRequestId());
@@ -766,8 +747,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         // Generate payment to materialize CB payment
         Payment payment = getCentralPayPayment(centralPayPaymentRequest);
 
-        Deposit deposit = depositService.getNewCbDepositForCustomerOrder(LocalDateTime.now(), customerOrder, payment,
-                centralPayPaymentRequest);
+        Deposit deposit = depositService.getNewDepositForCustomerOrder(payment.getPaymentAmount(), LocalDateTime.now(),
+                customerOrder, null, payment);
 
         deposit.setCustomerOrder(customerOrder);
         depositService.addOrUpdateDeposit(deposit);
@@ -783,8 +764,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         // Generate payment to materialize CB payment
         Payment payment = getCentralPayPayment(centralPayPaymentRequest);
 
-        accountingRecordService.generateAccountingRecordsForSaleOnInvoicePayment(invoice, Arrays.asList(payment), null,
-                payment.getPaymentAmount());
+        accountingRecordService.generateAccountingRecordsForSaleOnInvoicePayment(invoice, payment);
         accountingRecordService.generateAccountingRecordsForCentralPayPayment(centralPayPaymentRequest, payment,
                 null, invoice.getCustomerOrder(), invoice);
     }
@@ -956,6 +936,38 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             }
         }
 
+    }
+
+    @Override
+    public Float getRemainingAmountToPayForCustomerOrder(CustomerOrder customerOrder) {
+        customerOrder = getCustomerOrder(customerOrder.getId());
+        if (customerOrder != null) {
+            Float total = 0f;
+            // Total of items
+            if (customerOrder.getAssoAffaireOrders() != null) {
+                for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders()) {
+                    if (assoAffaireOrder.getProvisions() != null) {
+                        for (Provision provision : assoAffaireOrder.getProvisions()) {
+                            if (provision.getInvoiceItems() != null && provision.getInvoiceItems().size() > 0) {
+                                for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
+                                    total += invoiceItem.getPreTaxPrice() + invoiceItem.getVatPrice()
+                                            - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount()
+                                                    : 0f);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (customerOrder.getDeposits() != null && customerOrder.getDeposits().size() > 0)
+                for (Deposit deposit : customerOrder.getDeposits())
+                    if (!deposit.getIsCancelled())
+                        total -= deposit.getDepositAmount();
+
+            return Math.round(total * 100f) / 100f;
+        }
+        return 0f;
     }
 
 }

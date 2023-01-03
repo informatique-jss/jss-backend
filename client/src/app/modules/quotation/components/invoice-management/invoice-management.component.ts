@@ -3,7 +3,7 @@ import { FormBuilder } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { CUSTOMER_ORDER_STATUS_BILLED } from 'src/app/libs/Constants';
 import { instanceOfCustomerOrder, instanceOfQuotation } from 'src/app/libs/TypeHelper';
-import { getAffaireListArrayForIQuotation, getAffaireListFromIQuotation, getAmountRemaining, getCustomerOrderForIQuotation, getCustomerOrderNameForIQuotation, getLetteringDate } from 'src/app/modules/invoicing/components/invoice-tools';
+import { getAffaireListArrayForIQuotation, getAffaireListFromIQuotation, getCustomerOrderForIQuotation, getCustomerOrderNameForIQuotation, getLetteringDate, getRemainingToPay } from 'src/app/modules/invoicing/components/invoice-tools';
 import { InvoiceService } from 'src/app/modules/invoicing/services/invoice.service';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { AppService } from '../../../../services/app.service';
@@ -111,7 +111,7 @@ export class InvoiceManagementComponent implements OnInit {
       else {
         for (let invoice of this.quotation.invoices)
           if (invoice.invoiceStatus.code != this.constantService.getInvoiceStatusCancelled().code)
-            return getAmountRemaining(invoice);
+            return getRemainingToPay(invoice);
       }
     return this.getPriceTotal();
   }

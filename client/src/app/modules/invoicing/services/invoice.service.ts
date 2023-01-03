@@ -18,7 +18,7 @@ export class InvoiceService extends AppRestService<Invoice>{
   }
 
   getInvoiceForCustomerOrder(customerOrder: IQuotation) {
-    return this.get(new HttpParams().set("customerOrderId", customerOrder.id), "invoice/customer-order");
+    return this.getList(new HttpParams().set("customerOrderId", customerOrder.id), "invoice/customer-order");
   }
 
   getInvoiceById(invoiceId: number) {

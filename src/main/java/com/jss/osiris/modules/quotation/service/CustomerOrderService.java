@@ -61,4 +61,6 @@ public interface CustomerOrderService {
         public Boolean validateCardPaymentLinkForCustomerOrder(CustomerOrder customerOrder)
                         throws OsirisException, OsirisClientMessageException;
 
+        public Float getRemainingAmountToPayForCustomerOrder(CustomerOrder customerOrder);
+
 }

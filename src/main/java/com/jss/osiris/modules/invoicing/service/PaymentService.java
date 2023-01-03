@@ -15,8 +15,6 @@ import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.tiers.model.ITiers;
 
 public interface PaymentService {
-        public List<Payment> getPayments();
-
         public Payment getPayment(Integer id);
 
         public Payment addOrUpdatePayment(Payment payment);
@@ -27,13 +25,11 @@ public interface PaymentService {
 
         public List<Payment> getAdvisedPaymentForInvoice(Invoice invoice);
 
-        public void manualMatchPaymentInvoicesAndGeneratePaymentAccountingRecords(Payment payment,
+        public void manualMatchPaymentInvoicesAndCustomerOrders(Payment payment,
                         List<Invoice> correspondingInvoices, List<CustomerOrder> correspondingCustomerOrder,
                         Affaire affaireRefund,
                         ITiers tiersRefund, List<Float> byPassAmount)
                         throws OsirisException, OsirisClientMessageException;
-
-        public void unlinkPaymentFromInvoiceCustomerOrder(Payment payment);
 
         public void setExternallyAssociated(Payment payment);
 
