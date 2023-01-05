@@ -236,9 +236,6 @@ public class InvoicingController {
             for (CustomerOrder customerOrder : paymentAssociate.getCustomerOrders()) {
                 customerOrder = (CustomerOrder) validationHelper.validateReferential(customerOrder, true,
                         "customerOrder");
-                if (paymentAssociate.getPayment().getCustomerOrder() != null
-                        && customerOrder.getId().equals(paymentAssociate.getPayment().getCustomerOrder().getId()))
-                    throw new OsirisValidationException("payment already associate");
             }
         }
 
@@ -300,7 +297,7 @@ public class InvoicingController {
             }
         }
 
-        paymentService.manualMatchPaymentInvoicesAndGeneratePaymentAccountingRecords(
+        paymentService.manualMatchPaymentInvoicesAndCustomerOrders(
                 paymentAssociate.getPayment(),
                 paymentAssociate.getInvoices(), paymentAssociate.getCustomerOrders(),
                 paymentAssociate.getAffaire(),
@@ -399,7 +396,7 @@ public class InvoicingController {
             }
         }
 
-        depositService.manualMatchDepositInvoicesAndGenerateDepositAccountingRecords(
+        depositService.manualMatchDepositInvoicesAndCustomerOrders(
                 paymentAssociate.getDeposit(),
                 paymentAssociate.getInvoices(), paymentAssociate.getCustomerOrders(),
                 paymentAssociate.getAffaire(),
@@ -413,8 +410,8 @@ public class InvoicingController {
             throws OsirisValidationException, OsirisException {
         Payment paymentOut = (Payment) validationHelper.validateReferential(payment, true, "payment");
 
-        if (paymentOut.getCustomerOrder() != null || paymentOut.getInvoice() != null)
-            throw new OsirisValidationException("CustomerOrder or Invoice");
+        if (paymentOut.getInvoice() != null)
+            throw new OsirisValidationException("Invoice");
 
         paymentService.setExternallyAssociated(paymentOut);
 
@@ -426,8 +423,8 @@ public class InvoicingController {
             throws OsirisValidationException, OsirisException {
         Payment paymentOut = (Payment) validationHelper.validateReferential(payment, true, "payment");
 
-        if (paymentOut.getCustomerOrder() != null || paymentOut.getInvoice() != null)
-            throw new OsirisValidationException("CustomerOrder or Invoice");
+        if (paymentOut.getInvoice() != null)
+            throw new OsirisValidationException("Invoice");
 
         paymentService.unsetExternallyAssociated(paymentOut);
 
@@ -555,8 +552,9 @@ public class InvoicingController {
     }
 
     @GetMapping(inputEntryPoint + "/invoice/customer-order")
-    public ResponseEntity<Invoice> getInvoiceForCustomerOrder(@RequestParam Integer customerOrderId) {
-        return new ResponseEntity<Invoice>(invoiceService.getInvoiceForCustomerOrder(customerOrderId), HttpStatus.OK);
+    public ResponseEntity<List<Invoice>> getInvoiceForCustomerOrder(@RequestParam Integer customerOrderId) {
+        return new ResponseEntity<List<Invoice>>(invoiceService.getInvoiceForCustomerOrder(customerOrderId),
+                HttpStatus.OK);
     }
 
     @PostMapping(inputEntryPoint + "/invoice/search")

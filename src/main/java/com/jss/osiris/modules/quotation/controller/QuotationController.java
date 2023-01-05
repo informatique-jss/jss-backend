@@ -491,11 +491,8 @@ public class QuotationController {
     validationHelper.validateReferential(assoAffaireOrder, true, "assoAffaireOrder");
     validationHelper.validateReferential(assoAffaireOrder.getAffaire(), true, "Affaire");
     validationHelper.validateReferential(assoAffaireOrder.getAssignedTo(), true, "AssignedTo");
-    validationHelper.validateReferential(assoAffaireOrder.getCustomerOrder(), true, "CustomerOrder");
-    validationHelper.validateReferential(assoAffaireOrder.getCustomerOrder(), assoAffaireOrder.getQuotation() == null,
-        "CustomerOrder");
-    validationHelper.validateReferential(assoAffaireOrder.getQuotation(), assoAffaireOrder.getCustomerOrder() == null,
-        "Quotation");
+    assoAffaireOrder.setCustomerOrder((CustomerOrder) validationHelper
+        .validateReferential(assoAffaireOrder.getCustomerOrder(), true, "CustomerOrder"));
 
     if (assoAffaireOrder.getProvisions() == null)
       throw new OsirisValidationException("Provisions");
@@ -1300,8 +1297,10 @@ public class QuotationController {
 
     if (quotation.getAssoAffaireOrders().size() > 1) {
       billingDocument = documentService.getBillingDocument(quotation.getDocuments());
-      if (billingDocument != null && billingDocument.getIsRecipientAffaire())
-        throw new OsirisValidationException("To many affaire");
+      // If recipient affaire and no override, we can't determine what affaire to use
+      if (billingDocument != null && billingDocument.getIsRecipientAffaire()
+          && (billingDocument.getMailsAffaire() == null || billingDocument.getMailsAffaire().size() == 0))
+        throw new OsirisValidationException("Too many affaire");
     }
 
   }

@@ -68,7 +68,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			http.authorizeRequests()
 					.antMatchers(HttpMethod.OPTIONS).permitAll()
 					.antMatchers("/profile/login").permitAll()
-					.antMatchers("*").hasIpAddress("192.168.3.16") // To allow website backend
 					.antMatchers(HttpMethod.GET, "/quotation/payment/cb/order/deposit").permitAll()
 					.antMatchers(HttpMethod.GET, "/quotation/payment/cb/quotation/deposit").permitAll()
 					.antMatchers(HttpMethod.POST, "/quotation/payment/cb/order/deposit/validate").permitAll()

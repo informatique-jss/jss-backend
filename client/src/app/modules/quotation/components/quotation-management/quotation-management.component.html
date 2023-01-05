@@ -104,8 +104,8 @@
                   </td>
                 </tr>
               </table>
-              <addressing [editMode]="editMode" [document]="billingDocument " (documentChange)="updateAdressing($event)"
-                [displayMailCC]="instanceOfResponsable(getCustomerOrderForIQuotation(quotation))"></addressing>
+              <addressing [editMode]="editMode" [document]="billingDocument "
+                (documentChange)="updateAdressing($event)"></addressing>
               <table class="full-width">
                 <tr *ngIf="billingMailComputeResult">
                   <td>

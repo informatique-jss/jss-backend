@@ -74,7 +74,6 @@ export class AutomaticMailListComponent implements OnInit {
     this.tableActions.push({
       actionIcon: "visibility", actionName: "Prévisualiser le mail", actionClick: (action: SortTableAction, element: any): void => {
         let customerMail = element as CustomerMail;
-        console.log(customerMail);
         if (customerMail && customerMail.attachments)
           for (let attachment of customerMail.attachments)
             if (attachment.attachmentType && attachment.attachmentType.id == this.attachmentTypeAutomaticMail.id)

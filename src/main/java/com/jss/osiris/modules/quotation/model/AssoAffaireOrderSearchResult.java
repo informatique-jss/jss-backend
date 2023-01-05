@@ -23,4 +23,6 @@ public interface AssoAffaireOrderSearchResult {
 	public String getAssoId();
 
 	public String getProvisionId();
+
+	public Boolean getIsEmergency();
 }

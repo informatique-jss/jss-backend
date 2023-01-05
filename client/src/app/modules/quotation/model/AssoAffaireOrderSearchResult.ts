@@ -12,4 +12,5 @@ export interface AssoAffaireOrderSearchResult {
   statusLabel: Employee;
   assoId: number;
   provisionId: number;
+  isEmergency: boolean;
 }

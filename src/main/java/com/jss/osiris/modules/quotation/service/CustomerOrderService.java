@@ -48,17 +48,16 @@ public interface CustomerOrderService {
 
         public void sendRemindersForCustomerOrderDeposit() throws OsirisException, OsirisClientMessageException;
 
-        public void generateStoreAndSendPublicationReceipt(CustomerOrder customerOrder)
-                        throws OsirisException, OsirisClientMessageException;
-
-        public void generateDepositOnCustomerOrderForCbPayment(CustomerOrder customerOrder,
-                        CentralPayPaymentRequest centralPayPaymentRequest)
-                        throws OsirisException, OsirisClientMessageException;
-
         public CustomerOrder unlockCustomerOrderFromDeposit(CustomerOrder customerOrder)
                         throws OsirisException, OsirisClientMessageException;
 
         public Boolean validateCardPaymentLinkForCustomerOrder(CustomerOrder customerOrder)
+                        throws OsirisException, OsirisClientMessageException;
+
+        public Float getRemainingAmountToPayForCustomerOrder(CustomerOrder customerOrder);
+
+        public void generateDepositOnCustomerOrderForCbPayment(CustomerOrder customerOrder,
+                        CentralPayPaymentRequest centralPayPaymentRequest)
                         throws OsirisException, OsirisClientMessageException;
 
 }

@@ -225,4 +225,5 @@ public class CustomerMailServiceImpl implements CustomerMailService {
         if (canSend)
             mailHelper.getMailSender().send(message);
     }
+
 }

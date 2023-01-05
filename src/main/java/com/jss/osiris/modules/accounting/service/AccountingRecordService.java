@@ -64,15 +64,11 @@ public interface AccountingRecordService {
                         Integer accountingAccountId, LocalDateTime startDate, LocalDateTime endDate)
                         throws OsirisException;
 
-        public void generateAccountingRecordsForSaleOnInvoicePayment(Invoice invoice, List<Payment> payments,
-                        List<Deposit> deposits, Float amountToUse) throws OsirisException;
+        public void generateAccountingRecordsForSaleOnInvoicePayment(Invoice invoice, Payment payment)
+                        throws OsirisException;
 
         public void generateAccountingRecordsForPurshaseOnInvoicePayment(Invoice invoice, List<Payment> payments,
                         Float amountToUse) throws OsirisException;
-
-        public void generateAccountingRecordsForTemporaryDepositForInvoice(Deposit deposit, Invoice invoice,
-                        Integer overrideAccountingOperationId)
-                        throws OsirisException;
 
         public void generateAccountingRecordsForDepositOnInvoice(Deposit deposit, Invoice invoice,
                         Integer overrideAccountingOperationId) throws OsirisException;
@@ -96,12 +92,6 @@ public interface AccountingRecordService {
 
         public void generateBankAccountingRecordsForOutboundPayment(Payment payment) throws OsirisException;
 
-        public Float getRemainingAmountToPayForInvoice(Invoice invoice) throws OsirisException;
-
-        public Float getRemainingAmountToPayForProviderInvoice(Invoice invoice) throws OsirisException;
-
-        public Float getRemainingAmountToPayForCustomerOrder(CustomerOrder customerOrder);
-
         public void generateAccountingRecordsForRefund(Refund refund) throws OsirisException;
 
         public List<AccountingRecord> getAccountingRecordsByTemporaryOperationId(Integer operationId);
@@ -119,7 +109,7 @@ public interface AccountingRecordService {
         public List<AccountingRecord> findByAccountingAccountAndInvoice(AccountingAccount accountingAccount,
                         Invoice invoice);
 
-        public void generateCounterPart(AccountingRecord originalAccountingRecord);
+        public void generateCounterPart(AccountingRecord originalAccountingRecord, AccountingJournal overrideJournal);
 
         public void deleteAccountingRecord(AccountingRecord accountingRecord);
 
@@ -136,5 +126,7 @@ public interface AccountingRecordService {
                         CentralPayPaymentRequest centralPayPaymentRequest,
                         Payment payment, Deposit deposit, CustomerOrder customerOrder, Invoice invoice)
                         throws OsirisException;
+
+        public void checkInvoiceForLettrage(Invoice invoice) throws OsirisException;
 
 }

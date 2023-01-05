@@ -666,7 +666,7 @@ public class MailHelper {
                             .getId().equals(constantService.getPaymentTypePrelevement().getId());
         }
         Float remainingToPay = Math
-                .round(accountingRecordService.getRemainingAmountToPayForCustomerOrder(customerOrder) * 100f) / 100f;
+                .round(customerOrderService.getRemainingAmountToPayForCustomerOrder(customerOrder) * 100f) / 100f;
 
         mail.setHeaderPicture("images/waiting-deposit-header.png");
         mail.setTitle("Votre commande est prête !");
@@ -707,22 +707,10 @@ public class MailHelper {
             mail.setExplainationElements(String.join("!#", details));
         }
 
-        if (customerOrder.getAssoAffaireOrders() != null && customerOrder.getAssoAffaireOrders().size() > 0) {
-            ArrayList<CustomerMailAssoAffaireOrder> customerAssos = new ArrayList<CustomerMailAssoAffaireOrder>();
-            for (AssoAffaireOrder assos : customerOrder.getAssoAffaireOrders()) {
-                CustomerMailAssoAffaireOrder asso = new CustomerMailAssoAffaireOrder();
-                asso.setAssoAffaireOrderId(assos.getId());
-                asso.setCustomerMail(mail);
-                customerAssos.add(asso);
-            }
-            if (customerAssos.size() > 0)
-                mail.setCustomerMailAssoAffaireOrders(customerAssos);
-        }
-
         if (remainingToPay > 0 && !isPaymentTypePrelevement) {
             if (isDepositMandatory) {
                 mail.setPaymentExplaination(
-                        "Dès reception de votre réglement d'un montant de " + mail.getPriceTotal()
+                        "Dès reception de votre réglement d'acompte d'un montant de " + mail.getPriceTotal()
                                 + " €, le traitement de votre commande débutera");
             } else {
                 mail.setPaymentExplaination(
@@ -814,18 +802,6 @@ public class MailHelper {
             mail.setExplainationElements(String.join("!#", details));
         }
 
-        if (customerOrder.getAssoAffaireOrders() != null && customerOrder.getAssoAffaireOrders().size() > 0) {
-            ArrayList<CustomerMailAssoAffaireOrder> customerAssos = new ArrayList<CustomerMailAssoAffaireOrder>();
-            for (AssoAffaireOrder assos : customerOrder.getAssoAffaireOrders()) {
-                CustomerMailAssoAffaireOrder asso = new CustomerMailAssoAffaireOrder();
-                asso.setAssoAffaireOrderId(assos.getId());
-                asso.setCustomerMail(mail);
-                customerAssos.add(asso);
-            }
-            if (customerAssos.size() > 0)
-                mail.setCustomerMailAssoAffaireOrders(customerAssos);
-        }
-
         mail.setExplaination3(
                 "Votre commande sera traitée dans les meilleurs délais et avec tout notre savoir-faire par "
                         + responsibleString
@@ -846,10 +822,14 @@ public class MailHelper {
         final Context ctx = new Context();
 
         ctx.setVariable("preTaxPriceTotal", invoiceHelper.getPreTaxPriceTotal(invoice));
-        ctx.setVariable("discountTotal", invoiceHelper.getDiscountTotal(invoice));
+        if (Math.round(invoiceHelper.getDiscountTotal(invoice) * 100f) / 100f > 0)
+            ctx.setVariable("discountTotal", invoiceHelper.getDiscountTotal(invoice));
         ctx.setVariable("assos", customerOrder.getAssoAffaireOrders());
-        ctx.setVariable("preTaxPriceTotalWithDicount", invoiceHelper.getDiscountTotal(invoice)
-                + (invoiceHelper.getDiscountTotal(invoice) != null ? invoiceHelper.getDiscountTotal(invoice) : 0f));
+        ctx.setVariable("preTaxPriceTotalWithDicount", invoiceHelper.getPreTaxPriceTotal(invoice)
+                + (invoiceHelper.getDiscountTotal(invoice) != null
+                        && Math.round(invoiceHelper.getDiscountTotal(invoice) * 100f) / 100f > 0
+                                ? invoiceHelper.getDiscountTotal(invoice)
+                                : 0f));
         ArrayList<VatMail> vats = null;
         Float vatTotal = 0f;
         for (InvoiceItem invoiceItem : invoice.getInvoiceItems()) {
@@ -934,10 +914,8 @@ public class MailHelper {
         ctx.setVariable("noticeHeader",
                 (announcement.getNoticeHeader() != null && !announcement.getNoticeHeader().equals(""))
                         ? announcement.getNoticeHeader().replaceAll("<br>", "<br/>").replaceAll("&nbsp;", " ")
-                                .replaceAll("&", "&amp;")
                         : null);
-        ctx.setVariable("notice", announcement.getNotice().replaceAll("<br>", "<br/>").replaceAll("&nbsp;", " ")
-                .replaceAll("&", "&amp;"));
+        ctx.setVariable("notice", announcement.getNotice().replaceAll("<br>", "<br/>").replaceAll("&nbsp;", " "));
         LocalDate localDate = announcement.getPublicationDate();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         ctx.setVariable("date", localDate.format(formatter));
@@ -973,10 +951,8 @@ public class MailHelper {
         ctx.setVariable("noticeHeader",
                 (announcement.getNoticeHeader() != null && !announcement.getNoticeHeader().equals(""))
                         ? announcement.getNoticeHeader().replaceAll("<br>", "<br/>").replaceAll("&nbsp;", " ")
-                                .replaceAll("&", "&amp;")
                         : null);
-        ctx.setVariable("notice", announcement.getNotice().replaceAll("<br>", "<br/>").replaceAll("&nbsp;", " ")
-                .replaceAll("&", "&amp;"));
+        ctx.setVariable("notice", announcement.getNotice().replaceAll("<br>", "<br/>").replaceAll("&nbsp;", " "));
         if (announcement.getDepartment() != null)
             ctx.setVariable("department",
                     announcement.getDepartment().getCode() + " - " + announcement.getDepartment().getLabel());
@@ -1015,11 +991,6 @@ public class MailHelper {
         return tempFile;
     }
 
-    public void generateCustomerOrderFinalisationToCustomer(CustomerOrder customerOrder)
-            throws OsirisException, OsirisClientMessageException {
-        sendCustomerOrderFinalisationToCustomer(customerOrder, true, false, false);
-    }
-
     public void sendCustomerOrderFinalisationToCustomer(CustomerOrder customerOrder, boolean sendToMe,
             boolean isReminder, boolean isLastReminder)
             throws OsirisException, OsirisClientMessageException {
@@ -1048,7 +1019,7 @@ public class MailHelper {
         }
 
         Float remainingToPay = Math
-                .round(accountingRecordService.getRemainingAmountToPayForCustomerOrder(customerOrder) * 100f) / 100f;
+                .round(customerOrderService.getRemainingAmountToPayForCustomerOrder(customerOrder) * 100f) / 100f;
 
         List<Attachment> attachments = findAttachmentForCustomerOrder(customerOrder, isReminder);
 
@@ -1245,8 +1216,6 @@ public class MailHelper {
         if (attachments.size() == 0)
             return;
 
-        customerOrderService.addOrUpdateCustomerOrder(customerOrder);
-
         mail.setAttachments(attachments);
 
         mail.setGreetings("En vous remerciant pour votre confiance !");
@@ -1303,8 +1272,6 @@ public class MailHelper {
 
         if (attachments.size() == 0)
             return;
-
-        customerOrderService.addOrUpdateCustomerOrder(customerOrder);
 
         mail.setAttachments(attachments);
 

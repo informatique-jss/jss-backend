@@ -18,11 +18,13 @@ import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
+import com.jss.osiris.modules.invoicing.model.Deposit;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.invoicing.model.InvoiceSearch;
 import com.jss.osiris.modules.invoicing.model.InvoiceSearchResult;
 import com.jss.osiris.modules.invoicing.model.InvoiceStatus;
+import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.repository.InvoiceRepository;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
@@ -96,7 +98,7 @@ public class InvoiceServiceImpl implements InvoiceService {
             for (AccountingRecord accountingRecord : invoice.getAccountingRecords()) {
                 accountingRecordService.unassociateCustomerOrderPayementAndDeposit(accountingRecord);
                 if (!accountingRecord.getIsCounterPart())
-                    accountingRecordService.generateCounterPart(accountingRecord);
+                    accountingRecordService.generateCounterPart(accountingRecord, null);
             }
         invoice.setInvoiceStatus(constantService.getInvoiceStatusCancelled());
         return addOrUpdateInvoice(invoice);
@@ -141,7 +143,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public Invoice getInvoiceForCustomerOrder(Integer customerOrderId) {
+    public List<Invoice> getInvoiceForCustomerOrder(Integer customerOrderId) {
         return invoiceRepository.findByCustomerOrderId(customerOrderId);
     }
 
@@ -316,6 +318,27 @@ public class InvoiceServiceImpl implements InvoiceService {
                     addOrUpdateInvoice(invoice);
                 }
             }
+    }
+
+    @Override
+    public Float getRemainingAmountToPayForInvoice(Invoice invoice) throws OsirisException {
+        invoice = getInvoice(invoice.getId());
+        if (invoice != null) {
+            Float total = invoice.getTotalPrice();
+
+            if (invoice.getPayments() != null && invoice.getPayments().size() > 0)
+                for (Payment payment : invoice.getPayments())
+                    if (!payment.getIsCancelled())
+                        total -= payment.getPaymentAmount();
+
+            if (invoice.getDeposits() != null && invoice.getDeposits().size() > 0)
+                for (Deposit deposit : invoice.getDeposits())
+                    if (!deposit.getIsCancelled())
+                        total -= deposit.getDepositAmount();
+
+            return Math.round(total * 100f) / 100f;
+        }
+        return 0f;
     }
 
 }

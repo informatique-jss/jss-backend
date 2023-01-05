@@ -111,7 +111,6 @@ export class QuotationManagementComponent implements OnInit, AfterContentChecked
   });
 
   setDocument() {
-    console.log("setdoc");
     let currentOrderingCustomer: ITiers | undefined;
     if (this.quotation.tiers) {
       this.tiersService.setCurrentViewedTiers(this.quotation.tiers)

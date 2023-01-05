@@ -24,7 +24,6 @@ import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.invoicing.model.Deposit;
 import com.jss.osiris.modules.invoicing.model.Invoice;
-import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.model.SpecialOffer;
@@ -45,7 +44,7 @@ public class CustomerOrder implements IQuotation {
 			String observations, String description, List<Attachment> attachments, List<Document> documents,
 			List<AssoAffaireOrder> assoAffaireOrders,
 			List<Quotation> quotations, Boolean overrideSpecialOffer, String quotationLabel, Boolean isQuotation,
-			List<Invoice> invoices, List<Payment> payments, List<Deposit> deposits,
+			List<Invoice> invoices, List<Deposit> deposits,
 			List<AccountingRecord> accountingRecords) {
 		this.tiers = tiers;
 		this.responsable = responsable;
@@ -62,7 +61,6 @@ public class CustomerOrder implements IQuotation {
 		this.overrideSpecialOffer = overrideSpecialOffer;
 		this.isQuotation = isQuotation;
 		this.invoices = invoices;
-		this.payments = payments;
 		this.deposits = deposits;
 		this.accountingRecords = accountingRecords;
 	}
@@ -132,10 +130,6 @@ public class CustomerOrder implements IQuotation {
 	@OneToMany(mappedBy = "customerOrder")
 	@JsonIgnoreProperties(value = { "customerOrder" }, allowSetters = true)
 	private List<Invoice> invoices;
-
-	@OneToMany(targetEntity = Payment.class, mappedBy = "customerOrder")
-	@JsonIgnoreProperties(value = { "customerOrder", "accountingRecords", "invoice" }, allowSetters = true)
-	private List<Payment> payments;
 
 	@OneToMany(targetEntity = Deposit.class, mappedBy = "customerOrder")
 	@JsonIgnoreProperties(value = { "customerOrder", "accountingRecords", "invoice" }, allowSetters = true)
@@ -287,14 +281,6 @@ public class CustomerOrder implements IQuotation {
 
 	public void setInvoices(List<Invoice> invoices) {
 		this.invoices = invoices;
-	}
-
-	public List<Payment> getPayments() {
-		return payments;
-	}
-
-	public void setPayments(List<Payment> payments) {
-		this.payments = payments;
 	}
 
 	public List<Deposit> getDeposits() {

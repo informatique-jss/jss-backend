@@ -14,6 +14,11 @@ export interface SortTableColumn {
    * If not provided, label field is used
    */
   sortFonction: any | undefined;
+  /**
+   * Function to display line as warn color
+   * Return true or false
+   */
+  colorWarnFunction: any | undefined;
   display: boolean | undefined;
   /**
    * Display element as star

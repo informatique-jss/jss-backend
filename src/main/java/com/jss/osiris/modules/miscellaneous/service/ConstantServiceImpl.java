@@ -1,5 +1,7 @@
 package com.jss.osiris.modules.miscellaneous.service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -8,6 +10,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.jss.osiris.libs.JacksonLocalDateDeserializer;
+import com.jss.osiris.libs.JacksonLocalDateSerializer;
+import com.jss.osiris.libs.JacksonLocalDateTimeDeserializer;
+import com.jss.osiris.libs.JacksonLocalDateTimeSerializer;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.model.AccountingJournal;
@@ -60,8 +69,23 @@ public class ConstantServiceImpl implements ConstantService {
         List<Constant> constants = IterableUtils.toList(constantRepository.findAll());
         if (constants == null || constants.size() != 1)
             throw new OsirisException(null, "Constants not defined or multiple");
+        fecthAllProperty(constants.get(0));
         constantsSingleton = constants.get(0);
         return constantsSingleton;
+    }
+
+    private void fecthAllProperty(Constant contants) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        SimpleModule simpleModule = new SimpleModule("SimpleModule");
+        simpleModule.addSerializer(LocalDateTime.class, new JacksonLocalDateTimeSerializer());
+        simpleModule.addSerializer(LocalDate.class, new JacksonLocalDateSerializer());
+        simpleModule.addDeserializer(LocalDateTime.class, new JacksonLocalDateTimeDeserializer());
+        simpleModule.addDeserializer(LocalDate.class, new JacksonLocalDateDeserializer());
+        objectMapper.registerModule(simpleModule);
+        try {
+            objectMapper.writeValueAsString(contants);
+        } catch (JsonProcessingException e) {
+        }
     }
 
     @Override
@@ -103,6 +127,11 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public AccountingJournal getAccountingJournalPurchases() throws OsirisException {
         return getConstants().getAccountingJournalPurchases();
+    }
+
+    @Override
+    public AccountingJournal getAccountingJournalMiscellaneousOperations() throws OsirisException {
+        return getConstants().getAccountingJournalMiscellaneousOperations();
     }
 
     @Override

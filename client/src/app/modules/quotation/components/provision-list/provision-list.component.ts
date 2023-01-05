@@ -55,11 +55,11 @@ export class ProvisionListComponent implements OnInit {
         }
       }
 
-      this.availableColumns.push({ id: "affaireLabel", fieldName: "affaireLabel", label: "Affaire" } as SortTableColumn);
-      this.availableColumns.push({ id: "affaireAddress", fieldName: "affaireAddress", label: "Adresse de l'affaire" } as SortTableColumn);
-      this.availableColumns.push({ id: "tiers", fieldName: "tiersLabel", label: "Tiers" } as SortTableColumn);
-      this.availableColumns.push({ id: "responsable", fieldName: "responsableLabel", label: "Responsable" } as SortTableColumn);
-      this.availableColumns.push({ id: "confrere", fieldName: "confrereLabel", label: "Confrère" } as SortTableColumn);
+      this.availableColumns.push({ id: "affaireLabel", fieldName: "affaireLabel", label: "Affaire", colorWarnFunction: (element: any) => { return element.isEmergency } } as SortTableColumn);
+      this.availableColumns.push({ id: "affaireAddress", fieldName: "affaireAddress", label: "Adresse de l'affaire", colorWarnFunction: (element: any) => { return element.isEmergency } } as SortTableColumn);
+      this.availableColumns.push({ id: "tiers", fieldName: "tiersLabel", label: "Tiers", colorWarnFunction: (element: any) => { return element.isEmergency } } as SortTableColumn);
+      this.availableColumns.push({ id: "responsable", fieldName: "responsableLabel", label: "Responsable", colorWarnFunction: (element: any) => { return element.isEmergency } } as SortTableColumn);
+      this.availableColumns.push({ id: "confrere", fieldName: "confrereLabel", label: "Confrère", colorWarnFunction: (element: any) => { return element.isEmergency } } as SortTableColumn);
       this.availableColumns.push({
         id: "responsible", fieldName: "responsibleLabel", label: "Responsable de l'affaire", valueFonction: (element: any) => {
           if (this.allEmployees)
@@ -78,8 +78,8 @@ export class ProvisionListComponent implements OnInit {
           return null;
         }, displayAsEmployee: true
       } as SortTableColumn);
-      this.availableColumns.push({ id: "provisionType", fieldName: "provisionTypeLabel", label: "Prestation" } as SortTableColumn);
-      this.availableColumns.push({ id: "status", fieldName: "statusLabel", label: "Statut" } as SortTableColumn);
+      this.availableColumns.push({ id: "provisionType", fieldName: "provisionTypeLabel", label: "Prestation", colorWarnFunction: (element: any) => { return element.isEmergency } } as SortTableColumn);
+      this.availableColumns.push({ id: "status", fieldName: "statusLabel", label: "Statut", colorWarnFunction: (element: any) => { return element.isEmergency } } as SortTableColumn);
       this.getCurrentEmployee();
 
       this.setColumns();

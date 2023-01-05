@@ -91,7 +91,7 @@
                         <td colspan="4">
                             <span th:text="${invoiceItem.label}"></span>
                         </td>
-                        <td style="text-align: right">
+                        <td style="text-align: right;white-space: nowrap;">
                             <span th:text="${#numbers.formatDecimal(invoiceItem.preTaxPrice,1,2)}"></span>
                             €
                         </td>
@@ -100,7 +100,7 @@
                         <td colspan="4">
                             <span>Remise</span>
                         </td>
-                        <td style="text-align: right">
+                        <td style="text-align: right;white-space: nowrap;">
                             - <span th:text="${#numbers.formatDecimal(invoiceItem.discountAmount,1,2)}"></span>
                             €</td>
                     </tr>
@@ -114,7 +114,8 @@
             <td colspan="4" style="text-align: right">
                 Prix total HT
             </td>
-            <td style="text-align: right"><span th:text="${#numbers.formatDecimal(preTaxPriceTotal,1,2)}"></span>
+            <td style="text-align: right;white-space: nowrap;"><span
+                    th:text="${#numbers.formatDecimal(preTaxPriceTotal,1,2)}"></span>
                 €
             </td>
         </tr>
@@ -123,7 +124,8 @@
             <td colspan="4" style="text-align: right">
                 Remise totale
             </td>
-            <td style="text-align: right"> - <span th:text="${#numbers.formatDecimal(discountTotal,1,2)}"></span>
+            <td style="text-align: right;white-space: nowrap;"> - <span
+                    th:text="${#numbers.formatDecimal(discountTotal,1,2)}"></span>
                 €
             </td>
         </tr>
@@ -132,7 +134,7 @@
             <td colspan="4" style="text-align: right">
                 Total HT
             </td>
-            <td style="text-align: right"><span
+            <td style="text-align: right;white-space: nowrap;"><span
                     th:text="${#numbers.formatDecimal(preTaxPriceTotalWithDicount,1,2)}"></span>
                 €
             </td>
@@ -143,7 +145,8 @@
                     sur la base de </span><span th:text="${#numbers.formatDecimal(vat.base,1,2)}"></span>
                 €
             </td>
-            <td style="text-align: right"><span th:text="${#numbers.formatDecimal(vat.total,1,2)}"></span>
+            <td style="text-align: right;white-space: nowrap;"><span
+                    th:text="${#numbers.formatDecimal(vat.total,1,2)}"></span>
                 €
             </td>
         </tr>
@@ -152,7 +155,8 @@
             <td colspan="4" style="text-align: right">
                 Prix TTC
             </td>
-            <td style="text-align: right"><span th:text="${#numbers.formatDecimal(priceTotal,1,2)}"></span>
+            <td style="text-align: right;white-space: nowrap;"><span
+                    th:text="${#numbers.formatDecimal(priceTotal,1,2)}"></span>
                 €
             </td>
         </tr>
@@ -163,7 +167,7 @@
             <td colspan="4" style="text-align: right">
                 Acompte
             </td>
-            <td style="text-align: right"> - <span
+            <td style="text-align: right;white-space: nowrap;"> - <span
                     th:text="${#numbers.formatDecimal(deposit.depositAmount,1,2)}"></span>
                 €
             </td>
@@ -173,7 +177,8 @@
             <td colspan="4" style="text-align: right">
                 Restant dû
             </td>
-            <td style="text-align: right"><span th:text="${#numbers.formatDecimal(remainingToPay,1,2)}"></span>
+            <td style="text-align: right;white-space: nowrap;"><span
+                    th:text="${#numbers.formatDecimal(remainingToPay,1,2)}"></span>
                 €
             </td>
         </tr>

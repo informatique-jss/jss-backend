@@ -1,11 +1,9 @@
 package com.jss.osiris.modules.invoicing.service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -22,7 +20,6 @@ import com.jss.osiris.modules.invoicing.repository.DepositRepository;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
-import com.jss.osiris.modules.quotation.model.centralPay.CentralPayPaymentRequest;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.tiers.model.ITiers;
@@ -58,11 +55,6 @@ public class DepositServiceImpl implements DepositService {
     private String payementLimitRefundInEuros;
 
     @Override
-    public List<Deposit> getDeposits() {
-        return IterableUtils.toList(depositRepository.findAll());
-    }
-
-    @Override
     public Deposit getDeposit(Integer id) {
         Optional<Deposit> deposit = depositRepository.findById(id);
         if (deposit.isPresent())
@@ -78,24 +70,31 @@ public class DepositServiceImpl implements DepositService {
 
     @Override
     public Deposit getNewDepositForInvoice(Float depositAmount, LocalDateTime depositDatetime, Invoice invoice,
-            Integer overrideAccountingOperationId) throws OsirisException {
+            Integer overrideAccountingOperationId, Payment payment) throws OsirisException {
         Deposit deposit = new Deposit();
         deposit.setDepositAmount(depositAmount);
         deposit.setDepositDate(depositDatetime);
         deposit.setLabel("Acompte pour la facture n°" + invoice.getId());
+        deposit.setIsCancelled(false);
+        deposit.setOriginPayment(payment);
         deposit = addOrUpdateDeposit(deposit);
-        accountingRecordService.generateAccountingRecordsForTemporaryDepositForInvoice(deposit, invoice,
+        deposit.setInvoice(invoice);
+        accountingRecordService.generateAccountingRecordsForDepositOnInvoice(deposit, invoice,
                 overrideAccountingOperationId);
         return getDeposit(deposit.getId());
     }
 
     @Override
     public Deposit getNewDepositForCustomerOrder(Float depositAmount, LocalDateTime depositDatetime,
-            CustomerOrder customerOrder, Integer overrideAccountingOperationId) throws OsirisException {
+            CustomerOrder customerOrder, Integer overrideAccountingOperationId, Payment payment)
+            throws OsirisException {
         Deposit deposit = new Deposit();
         deposit.setDepositAmount(depositAmount);
         deposit.setDepositDate(depositDatetime);
         deposit.setLabel("Acompte pour la commande n°" + customerOrder.getId());
+        deposit.setOriginPayment(payment);
+        deposit.setIsCancelled(false);
+        deposit.setCustomerOrder(customerOrder);
         deposit = addOrUpdateDeposit(deposit);
         accountingRecordService.generateAccountingRecordsForDepositAndCustomerOrder(deposit, customerOrder,
                 overrideAccountingOperationId);
@@ -103,49 +102,41 @@ public class DepositServiceImpl implements DepositService {
     }
 
     @Override
-    public Deposit getNewCbDepositForCustomerOrder(LocalDateTime depositDatetime, CustomerOrder customerOrder,
-            Payment payment, CentralPayPaymentRequest centralPayPaymentRequest) throws OsirisException {
-        Deposit deposit = new Deposit();
-        deposit.setDepositAmount(centralPayPaymentRequest.getTotalAmount() / 100f);
-        deposit.setDepositDate(depositDatetime);
-        deposit.setLabel("Acompte pour la commande n°" + customerOrder.getId());
-        deposit = addOrUpdateDeposit(deposit);
-        accountingRecordService.generateAccountingRecordsForDepositAndCustomerOrder(deposit, customerOrder,
-                payment.getId());
-        return getDeposit(deposit.getId());
-    }
-
-    @Override
     public void moveDepositFromCustomerOrderToInvoice(Deposit deposit, CustomerOrder fromCustomerOrder,
             Invoice toInvoice) throws OsirisException {
-        deposit.setCustomerOrder(null);
-        deposit.setInvoice(toInvoice);
-        addOrUpdateDeposit(deposit);
-        if (deposit.getAccountingRecords() != null)
-            for (AccountingRecord accountingRecord : deposit.getAccountingRecords()) {
-                if (!accountingRecord.getIsCounterPart())
-                    accountingRecordService.generateCounterPart(accountingRecord);
-            }
-        accountingRecordService.generateAccountingRecordsForDepositOnInvoice(deposit, toInvoice, null);
+        cancelDeposit(deposit);
+        getNewDepositForInvoice(deposit.getDepositAmount(), LocalDateTime.now(), toInvoice, null,
+                deposit.getOriginPayment());
     }
 
     @Override
     public void moveDepositFromInvoiceToCustomerOrder(Deposit deposit, Invoice fromInvoice,
             CustomerOrder toCustomerOrder) throws OsirisException {
-        deposit.setCustomerOrder(toCustomerOrder);
-        deposit.setInvoice(null);
-        addOrUpdateDeposit(deposit);
+
+        cancelDeposit(deposit);
+        getNewDepositForCustomerOrder(deposit.getDepositAmount(), LocalDateTime.now(), toCustomerOrder, null,
+                deposit.getOriginPayment());
+
+    }
+
+    private Deposit cancelDeposit(Deposit deposit) throws OsirisException {
         if (deposit.getAccountingRecords() != null)
             for (AccountingRecord accountingRecord : deposit.getAccountingRecords()) {
-                if (!accountingRecord.getIsCounterPart())
-                    accountingRecordService.generateCounterPart(accountingRecord);
+                if (!accountingRecord.getIsCounterPart()
+                        && !accountingRecord.getAccountingAccount().getPrincipalAccountingAccount().getId()
+                                .equals(constantService.getPrincipalAccountingAccountBank().getId()))
+                    accountingRecordService.generateCounterPart(accountingRecord,
+                            constantService.getAccountingJournalMiscellaneousOperations());
             }
-        accountingRecordService.generateAccountingRecordsForDepositAndCustomerOrder(deposit, toCustomerOrder, null);
+        deposit.setIsCancelled(true);
+        deposit.setCustomerOrder(null);
+        deposit.setInvoice(null);
+        return addOrUpdateDeposit(deposit);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void manualMatchDepositInvoicesAndGenerateDepositAccountingRecords(Deposit deposit,
+    public void manualMatchDepositInvoicesAndCustomerOrders(Deposit deposit,
             List<Invoice> correspondingInvoices,
             List<CustomerOrder> correspondingCustomerOrder, Affaire affaireRefund, ITiers tiersRefund,
             List<Float> byPassAmount)
@@ -153,109 +144,43 @@ public class DepositServiceImpl implements DepositService {
 
         float remainingMoney = deposit.getDepositAmount();
 
-        // Cancel account records for deposit
-        if (deposit.getAccountingRecords() != null)
-            for (AccountingRecord accountingRecord : deposit.getAccountingRecords()) {
-                if (!accountingRecord.getIsCounterPart())
-                    accountingRecordService.generateCounterPart(accountingRecord);
-            }
+        cancelDeposit(deposit);
 
-        // If deposit already associated to a choosen invoice or customerOrder reduce
-        // amount to byPassAmount
-        Integer idFound = null;
-        Integer correspondingInvoiceSize = 0;
-        if (correspondingInvoices != null)
+        int correspondingInvoiceSize = 0;
+        if (correspondingInvoices != null) {
             for (int i = 0; i < correspondingInvoices.size(); i++) {
                 Invoice invoice = correspondingInvoices.get(i);
-                if (invoice.getId().equals(deposit.getInvoice().getId())) {
-                    deposit.setDepositAmount(byPassAmount.get(i));
-                    idFound = invoice.getId();
-                    remainingMoney -= accountingRecordService.getRemainingAmountToPayForInvoice(invoice);
-                    break;
-                }
-            }
+                Float remainingToPayForInvoice = Math
+                        .min(invoiceService.getRemainingAmountToPayForInvoice(invoice),
+                                byPassAmount.get(i));
 
-        if (idFound == null && correspondingCustomerOrder != null)
-            for (int i = 0; i < correspondingCustomerOrder.size(); i++) {
-                CustomerOrder customerOrder = correspondingCustomerOrder.get(i);
-                if (customerOrder.getId().equals(deposit.getCustomerOrder().getId())) {
-                    deposit.setDepositAmount(byPassAmount.get(i + correspondingInvoiceSize));
-                    idFound = customerOrder.getId();
-                    remainingMoney -= accountingRecordService.getRemainingAmountToPayForCustomerOrder(customerOrder);
-                    break;
-                }
-            }
+                getNewDepositForInvoice(remainingToPayForInvoice, LocalDateTime.now(), invoice, deposit.getId(),
+                        deposit.getOriginPayment());
 
-        // Cancel deposit
-        if (idFound == null) {
-            deposit.setInvoice(null);
-            deposit.setCustomerOrder(null);
+                remainingToPayForInvoice = Math.min(invoiceService.getRemainingAmountToPayForInvoice(invoice),
+                        byPassAmount.get(i));
+
+                accountingRecordService.checkInvoiceForLettrage(invoice);
+
+                remainingMoney -= byPassAmount.get(i);
+            }
+            correspondingInvoiceSize += correspondingInvoices.size();
         }
-        addOrUpdateDeposit(deposit);
-
-        if (correspondingInvoices != null)
-            for (int i = 0; i < correspondingInvoices.size(); i++) {
-                Invoice invoice = correspondingInvoices.get(i);
-                if (!invoice.getId().equals(idFound)) {
-                    List<Deposit> invoiceDeposits = new ArrayList<Deposit>();
-                    Float remainingToPayForInvoice = Math
-                            .min(accountingRecordService.getRemainingAmountToPayForInvoice(invoice),
-                                    byPassAmount.get(i));
-                    invoiceDeposits
-                            .add(getNewDepositForInvoice(remainingToPayForInvoice, LocalDateTime.now(), invoice,
-                                    deposit.getId()));
-                    accountingRecordService.generateAccountingRecordsForSaleOnInvoicePayment(
-                            correspondingInvoices.get(i), null, invoiceDeposits,
-                            byPassAmount.get(i));
-
-                    invoiceDeposits.get(0).setInvoice(invoice);
-                    addOrUpdateDeposit(invoiceDeposits.get(0));
-
-                    if (correspondingInvoices.get(i).getDeposits() == null)
-                        correspondingInvoices.get(i).setDeposits(invoiceDeposits);
-                    else
-                        correspondingInvoices.get(i).getDeposits().add(invoiceDeposits.get(0));
-
-                    invoiceService.addOrUpdateInvoice(correspondingInvoices.get(i));
-
-                    if (remainingToPayForInvoice == 0) {
-                        invoice.setInvoiceStatus(constantService.getInvoiceStatusPayed());
-                        invoiceService.addOrUpdateInvoice(invoice);
-                    }
-
-                    remainingMoney -= byPassAmount.get(i);
-                }
-            }
 
         if (correspondingCustomerOrder != null)
             for (int i = 0; i < correspondingCustomerOrder.size(); i++) {
                 CustomerOrder customerOrder = correspondingCustomerOrder.get(i);
-                if (!customerOrder.getId().equals(idFound)) {
-                    List<Deposit> customerOrderDeposits = new ArrayList<Deposit>();
-                    Float remainingToPayForCustomerOrder = Math.min(accountingRecordService
-                            .getRemainingAmountToPayForCustomerOrder(customerOrder),
-                            byPassAmount.get(i + correspondingInvoiceSize));
-                    Deposit newDeposit = getNewDepositForCustomerOrder(remainingToPayForCustomerOrder,
-                            LocalDateTime.now(),
-                            customerOrder, deposit.getId());
-                    customerOrderDeposits
-                            .add(newDeposit);
+                Float remainingToPayForCustomerOrder = Math.min(
+                        customerOrderService.getRemainingAmountToPayForCustomerOrder(customerOrder),
+                        byPassAmount.get(i + correspondingInvoiceSize));
 
-                    newDeposit.setCustomerOrder(correspondingCustomerOrder.get(i));
-                    addOrUpdateDeposit(newDeposit);
+                getNewDepositForCustomerOrder(remainingToPayForCustomerOrder, LocalDateTime.now(), customerOrder,
+                        deposit.getId(), null);
 
-                    if (correspondingCustomerOrder.get(i).getDeposits() == null)
-                        correspondingCustomerOrder.get(i).setDeposits(customerOrderDeposits);
-                    else
-                        correspondingCustomerOrder.get(i).getDeposits().add(customerOrderDeposits.get(0));
+                // Try unlocked customer order
+                customerOrderService.unlockCustomerOrderFromDeposit(correspondingCustomerOrder.get(i));
 
-                    customerOrderService.addOrUpdateCustomerOrder(correspondingCustomerOrder.get(i));
-
-                    // Try unlocked customer order
-                    customerOrderService.unlockCustomerOrderFromDeposit(correspondingCustomerOrder.get(i));
-
-                    remainingMoney -= byPassAmount.get(i + correspondingInvoiceSize);
-                }
+                remainingMoney -= byPassAmount.get(i + correspondingInvoiceSize);
             }
 
         if (remainingMoney > 0) {

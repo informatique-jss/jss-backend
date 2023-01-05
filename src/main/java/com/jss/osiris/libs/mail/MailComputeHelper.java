@@ -268,17 +268,6 @@ public class MailComputeHelper {
                 invoiceLabelResult.setBillingLabelAddress(paperDocument.getClientAddress());
                 invoiceLabelResult.setLabelOrigin("l'adresse indiquée dans la commande");
             } else if (customer instanceof Responsable
-                    && ((Responsable) customer).getAddress() != null
-                    && ((Responsable) customer).getCity() != null) {
-                invoiceLabelResult.setBillingLabel(
-                        ((Responsable) customer).getFirstname() + " " + ((Responsable) customer).getLastname());
-                invoiceLabelResult.setBillingLabelAddress(
-                        ((Responsable) customer).getPostalCode() + " " + ((Responsable) customer).getCity().getLabel()
-                                + " " + (((Responsable) customer).getCedexComplement() != null
-                                        ? ((Responsable) customer).getCedexComplement()
-                                        : ""));
-                invoiceLabelResult.setLabelOrigin("l'adresse du responsable");
-            } else if (customer instanceof Responsable
                     && ((Responsable) customer).getTiers().getAddress() != null
                     && ((Responsable) customer).getTiers().getCity() != null) {
                 invoiceLabelResult.setBillingLabel(

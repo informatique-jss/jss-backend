@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,9 +49,7 @@ import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.miscellaneous.service.VatService;
-import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
-import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.centralPay.CentralPayPaymentRequest;
 import com.jss.osiris.modules.quotation.model.centralPay.CentralPayTransaction;
 import com.jss.osiris.modules.quotation.service.CentralPayDelegateService;
@@ -291,49 +288,38 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   }
 
   @Override
-  public void generateAccountingRecordsForSaleOnInvoicePayment(Invoice invoice, List<Payment> payments,
-      List<Deposit> deposits, Float amountToUse) throws OsirisException {
+  public void generateAccountingRecordsForSaleOnInvoicePayment(Invoice invoice, Payment payment)
+      throws OsirisException {
     AccountingJournal bankJournal = constantService.getAccountingJournalBank();
 
     if (invoice == null)
       throw new OsirisException(null, "No invoice provided");
 
-    if ((payments == null || payments.size() == 0) && (deposits == null || deposits.size() == 0))
+    if (payment == null)
       throw new OsirisException(null, "No payments nor deposits provided with invoice " + invoice.getId());
 
     AccountingAccount bankAccountingAccount = constantService.getAccountingAccountBankJss();
-    AccountingAccount waitingAccountingAccount = accountingAccountService.getWaitingAccountingAccount();
 
     AccountingAccount accountingAccountCustomer = getCustomerAccountingAccountForInvoice(invoice);
 
     Integer operationId = 0;
 
-    if (payments != null && payments.size() > 0)
-      for (Payment payment : payments) {
-        if (payment.getAccountingRecords() != null && payment.getAccountingRecords().size() > 0)
-          for (AccountingRecord accountingRecord : payment.getAccountingRecords())
-            // Counter part waiting account record
-            if (!accountingRecord.getIsCounterPart()
-                && accountingRecord.getAccountingAccount().getId().equals(waitingAccountingAccount.getId()))
-              generateCounterPart(accountingRecord);
+    if (payment != null) {
+      if (payment.getAccountingRecords() != null && payment.getAccountingRecords().size() > 0) {
+        for (AccountingRecord accountingRecord : payment.getAccountingRecords())
+          // Counter part waiting account record
+          if (!accountingRecord.getIsCounterPart())
+            generateCounterPart(accountingRecord, null);
       }
-
-    if (deposits != null && deposits.size() > 0)
-      for (Deposit deposit : deposits) {
-        if (deposit.getAccountingRecords() != null && deposit.getAccountingRecords().size() > 0)
-          for (AccountingRecord accountingRecord : deposit.getAccountingRecords())
-            if (!accountingRecord.getIsCounterPart())
-              generateCounterPart(accountingRecord);
-
-        operationId = invoice.getId() + deposits.get(0).getId();
-        generateNewAccountingRecord(LocalDateTime.now(), operationId, null, null,
-            "Réglement de la facture n°" + invoice.getId(), null, deposit.getDepositAmount(),
-            bankAccountingAccount, null, invoice, null, bankJournal, null, deposit);
-      }
+      operationId = invoice.getId() + payment.getId();
+      generateNewAccountingRecord(LocalDateTime.now(), operationId, null, null,
+          "Réglement de la facture n°" + invoice.getId(), null, payment.getPaymentAmount(),
+          bankAccountingAccount, null, invoice, null, bankJournal, payment, null);
+    }
 
     // One write on customer account to equilibrate invoice
     generateNewAccountingRecord(LocalDateTime.now(), operationId, null, null,
-        "Réglement de la facture n°" + invoice.getId(), amountToUse, null,
+        "Réglement de la facture n°" + invoice.getId(), payment.getPaymentAmount(), null,
         accountingAccountCustomer, null, invoice, null, bankJournal, null, null);
 
     // Trigger lettrage
@@ -364,7 +350,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
             // Counter part waiting account record
             if (!accountingRecord.getIsCounterPart()
                 && accountingRecord.getAccountingAccount().getId().equals(waitingAccountingAccount.getId()))
-              generateCounterPart(accountingRecord);
+              generateCounterPart(accountingRecord, null);
       }
 
     // One write on customer account to equilibrate invoice
@@ -377,36 +363,36 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   }
 
   @Override
-  public void generateAccountingRecordsForTemporaryDepositForInvoice(Deposit deposit, Invoice invoice,
-      Integer overrideAccountingOperationId)
-      throws OsirisException {
-    AccountingAccount depositAccountingAccount = getDepositAccountingAccountForCustomerOrder(
-        invoiceHelper.getCustomerOrder(invoice));
-    AccountingJournal salesJournal = constantService.getAccountingJournalSales();
-
-    // If deposit is created from a payment, use the payment ID as operation ID to
-    // keep the balance to 0 for a same operationID
-    Integer operationId = deposit.getId();
-    if (overrideAccountingOperationId != null)
-      operationId = overrideAccountingOperationId;
-    generateNewAccountingRecord(LocalDateTime.now(), operationId, null, null,
-        "Acompte pour la facture n°" + invoice.getId(), deposit.getDepositAmount(), null, depositAccountingAccount,
-        null, invoice, null, salesJournal, null, deposit);
-  }
-
-  @Override
   public void generateAccountingRecordsForDepositOnInvoice(Deposit deposit, Invoice invoice,
       Integer overrideAccountingOperationId) throws OsirisException {
-    AccountingAccount customerAccountingAccount = getDepositAccountingAccountForInvoice(invoice);
-    AccountingJournal salesJournal = constantService.getAccountingJournalSales();
+    AccountingAccount customerAccountingAccount = getCustomerAccountingAccountForInvoice(invoice);
 
     Integer operationId = deposit.getId();
     if (overrideAccountingOperationId != null)
       operationId = overrideAccountingOperationId;
     generateNewAccountingRecord(LocalDateTime.now(), operationId, null, null,
         "Acompte pour la facture n°" + invoice.getId(), deposit.getDepositAmount(), null, customerAccountingAccount,
-        null, invoice, null, salesJournal, null, deposit);
+        null, invoice, null, constantService.getAccountingJournalMiscellaneousOperations(), null, deposit);
     checkInvoiceForLettrage(invoice);
+  }
+
+  @Override
+  public void generateAccountingRecordsForDepositAndCustomerOrder(Deposit deposit, CustomerOrder customerOrder,
+      Integer overrideAccountingOperationId) throws OsirisException {
+
+    AccountingAccount depositAccountingAccount = getDepositAccountingAccountForCustomerOrder(
+        quotationService.getCustomerOrderOfQuotation(customerOrder));
+
+    // If deposit is created from a payment, use the payment ID as operation ID to
+    // keep the balance to 0 for a same operationID
+    Integer operationId = deposit.getId();
+    if (overrideAccountingOperationId != null)
+      operationId = overrideAccountingOperationId;
+
+    generateNewAccountingRecord(LocalDateTime.now(), operationId, null, null,
+        "Acompte pour la commande n°" + customerOrder.getId(), deposit.getDepositAmount(), null,
+        depositAccountingAccount,
+        null, null, customerOrder, constantService.getAccountingJournalMiscellaneousOperations(), null, deposit);
   }
 
   @Override
@@ -501,8 +487,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
     CentralPayTransaction transaction = centralPayDelegateService.getTransaction(centralPayPaymentRequest);
 
-    Float commission = centralPayPaymentRequest.getTotalAmount() * transaction.getCommission() / 100f
-        + transaction.getFee();
+    Float commission = transaction.getCommission() / 100f;
     Float preTaxPrice = commission / ((100 + billingTypeCentralPayCommission.getVat().getRate()) / 100f);
     Float taxPrice = commission - preTaxPrice;
 
@@ -520,26 +505,6 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
         billingTypeCentralPayCommission.getVat().getAccountingAccount(), null, invoice, customerOrder,
         accountingJournalPurshases, payment, deposit);
 
-  }
-
-  @Override
-  public void generateAccountingRecordsForDepositAndCustomerOrder(Deposit deposit, CustomerOrder customerOrder,
-      Integer overrideAccountingOperationId) throws OsirisException {
-
-    AccountingAccount depositAccountingAccount = getDepositAccountingAccountForCustomerOrder(
-        quotationService.getCustomerOrderOfQuotation(customerOrder));
-    AccountingJournal salesJournal = constantService.getAccountingJournalSales();
-
-    // If deposit is created from a payment, use the payment ID as operation ID to
-    // keep the balance to 0 for a same operationID
-    Integer operationId = deposit.getId();
-    if (overrideAccountingOperationId != null)
-      operationId = overrideAccountingOperationId;
-
-    generateNewAccountingRecord(LocalDateTime.now(), operationId, null, null,
-        "Acompte pour la commande n°" + customerOrder.getId(), deposit.getDepositAmount(), null,
-        depositAccountingAccount,
-        null, null, customerOrder, salesJournal, null, deposit);
   }
 
   @Override
@@ -599,8 +564,10 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
   }
 
-  private void checkInvoiceForLettrage(Invoice invoice) throws OsirisException {
+  @Override
+  public void checkInvoiceForLettrage(Invoice invoice) throws OsirisException {
     AccountingAccount accountingAccount;
+    invoice = invoiceService.getInvoice(invoice.getId());
     if (invoice.getProvider() != null)
       accountingAccount = getProviderAccountingAccountForInvoice(invoice);
     else
@@ -637,6 +604,8 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
           accountingRecord.setLetteringNumber(maxLetteringNumber);
           this.addOrUpdateAccountingRecord(accountingRecord);
         }
+
+      invoice.setInvoiceStatus(constantService.getInvoiceStatusPayed());
     }
 
   }
@@ -653,11 +622,6 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     return getCustomerAccountingAccountForITiers(customerOrder);
   }
 
-  private AccountingAccount getDepositAccountingAccountForInvoice(Invoice invoice) throws OsirisException {
-    ITiers customerOrder = invoiceHelper.getCustomerOrder(invoice);
-    return getDepositAccountingAccountForITiers(customerOrder);
-  }
-
   @Override
   public AccountingAccount getCustomerAccountingAccountForITiers(ITiers tiers) throws OsirisException {
     AccountingAccount accountingAccountCustomer = null;
@@ -670,19 +634,6 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
       throw new OsirisException(null, "No customer accounting account in ITiers " + tiers.getId());
 
     return accountingAccountCustomer;
-  }
-
-  private AccountingAccount getDepositAccountingAccountForITiers(ITiers tiers) throws OsirisException {
-    AccountingAccount accountingAccountDeposit = null;
-    if (tiers instanceof Responsable)
-      accountingAccountDeposit = ((Responsable) tiers).getTiers().getAccountingAccountDeposit();
-    else
-      accountingAccountDeposit = tiers.getAccountingAccountDeposit();
-
-    if (accountingAccountDeposit == null)
-      throw new OsirisException(null, "No deposit accounting account in ITiers " + tiers.getId());
-
-    return accountingAccountDeposit;
   }
 
   @Override
@@ -996,10 +947,11 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   }
 
   @Override
-  public void generateCounterPart(AccountingRecord originalAccountingRecord) {
+  public void generateCounterPart(AccountingRecord originalAccountingRecord, AccountingJournal overrideJournal) {
     AccountingRecord newAccountingRecord = new AccountingRecord();
     newAccountingRecord.setAccountingAccount(originalAccountingRecord.getAccountingAccount());
-    newAccountingRecord.setAccountingJournal(originalAccountingRecord.getAccountingJournal());
+    newAccountingRecord.setAccountingJournal(
+        overrideJournal != null ? overrideJournal : originalAccountingRecord.getAccountingJournal());
     newAccountingRecord.setCreditAmount(originalAccountingRecord.getDebitAmount());
     newAccountingRecord.setDebitAmount(originalAccountingRecord.getCreditAmount());
     newAccountingRecord.setDeposit(originalAccountingRecord.getDeposit());
@@ -1019,80 +971,6 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     addOrUpdateAccountingRecord(newAccountingRecord);
     originalAccountingRecord.setContrePasse(newAccountingRecord);
     addOrUpdateAccountingRecord(originalAccountingRecord);
-  }
-
-  @Override
-  public Float getRemainingAmountToPayForInvoice(Invoice invoice) throws OsirisException {
-    if (invoice != null) {
-      List<AccountingRecord> accountingRecords = getAccountingRecordsForInvoice(invoice);
-      if (accountingRecords == null || accountingRecords.size() == 0)
-        return invoice.getTotalPrice();
-
-      Float total = invoice.getTotalPrice();
-      AccountingAccount customerAccountingAccount = getCustomerAccountingAccountForInvoice(invoice);
-      for (AccountingRecord accountingRecord : accountingRecords) {
-        if (accountingRecord.getAccountingAccount().getId().equals(customerAccountingAccount.getId())
-            && accountingRecord.getCreditAmount() != null)
-          total -= accountingRecord.getCreditAmount();
-      }
-      return Math.round(total * 100f) / 100f;
-    }
-    return 0f;
-  }
-
-  @Override
-  public Float getRemainingAmountToPayForProviderInvoice(Invoice invoice) throws OsirisException {
-    if (invoice != null) {
-      List<AccountingRecord> accountingRecords = getAccountingRecordsForInvoice(invoice);
-      if (accountingRecords == null || accountingRecords.size() == 0)
-        return invoice.getTotalPrice();
-
-      Float total = invoice.getTotalPrice();
-      AccountingAccount providerAccountingAccount = getProviderAccountingAccountForInvoice(invoice);
-      for (AccountingRecord accountingRecord : accountingRecords) {
-        if (accountingRecord.getAccountingAccount().getId().equals(providerAccountingAccount.getId())
-            && accountingRecord.getDebitAmount() != null)
-          total -= accountingRecord.getDebitAmount();
-      }
-      return Math.round(total * 100f) / 100f;
-    }
-    return 0f;
-  }
-
-  @Override
-  public Float getRemainingAmountToPayForCustomerOrder(CustomerOrder customerOrder) {
-    if (customerOrder != null) {
-      Float total = 0f;
-      // Total of items
-      if (customerOrder.getAssoAffaireOrders() != null) {
-        for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders()) {
-          if (assoAffaireOrder.getProvisions() != null) {
-            for (Provision provision : assoAffaireOrder.getProvisions()) {
-              if (provision.getInvoiceItems() != null && provision.getInvoiceItems().size() > 0) {
-                for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
-                  total += invoiceItem.getPreTaxPrice() + invoiceItem.getVatPrice()
-                      - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount() : 0f);
-                }
-              }
-            }
-          }
-        }
-      }
-
-      if (customerOrder.getAccountingRecords() == null || customerOrder.getAccountingRecords().size() == 0)
-        return total;
-
-      for (AccountingRecord accountingRecord : customerOrder.getAccountingRecords()) {
-        if (accountingRecord.getCreditAmount() != null)
-          total -= accountingRecord.getCreditAmount();
-      }
-      return Math.round(total * 100f) / 100f;
-    }
-    return 0f;
-  }
-
-  private List<AccountingRecord> getAccountingRecordsForInvoice(Invoice invoice) {
-    return IterableUtils.toList(accountingRecordRepository.findByInvoice(invoice));
   }
 
   @Override
@@ -1145,9 +1023,8 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
     if (accountingRecords != null) {
       for (AccountingRecord accountingRecord : accountingRecords) {
-        generateCounterPart(accountingRecord);
+        generateCounterPart(accountingRecord, null);
         accountingRecord.setInvoice(null);
-        paymentService.unlinkPaymentFromInvoiceCustomerOrder(accountingRecord.getPayment());
         accountingRecord.setPayment(null);
         accountingRecord.setDeposit(null);
         boolean invoiceFound = false;

@@ -7,7 +7,7 @@ import { Subject } from 'rxjs';
 import { CUSTOMER_ORDER_STATUS_BILLED, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN, VALIDATED_BY_CUSTOMER } from 'src/app/libs/Constants';
 import { getDocument } from 'src/app/libs/DocumentHelper';
 import { instanceOfCustomerOrder } from 'src/app/libs/TypeHelper';
-import { getAmountRemaining } from 'src/app/modules/invoicing/components/invoice-tools';
+import { getRemainingToPay } from 'src/app/modules/invoicing/components/invoice-tools';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { Employee } from 'src/app/modules/profile/model/Employee';
 import { BillingLabelType } from 'src/app/modules/tiers/model/BillingLabelType';
@@ -545,6 +545,16 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     return vatBases;
   }
 
+  deleteAffaire(affaire: Affaire) {
+    if (this.quotation && this.quotation.assoAffaireOrders)
+      for (let i = 0; i < this.quotation.assoAffaireOrders.length; i++) {
+        const asso = this.quotation.assoAffaireOrders[i];
+        if (asso.affaire && asso.affaire.id == affaire.id) {
+          this.quotation.assoAffaireOrders.splice(i, 1);
+        }
+      }
+  }
+
   getPriceTotal(): number {
     return QuotationComponent.computePriceTotal(this.quotation);
   }
@@ -568,7 +578,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
       else {
         for (let invoice of this.quotation.invoices)
           if (invoice.invoiceStatus.code != this.constantService.getInvoiceStatusCancelled().code)
-            return getAmountRemaining(invoice);
+            return getRemainingToPay(invoice);
       }
     return this.getPriceTotal();
   }

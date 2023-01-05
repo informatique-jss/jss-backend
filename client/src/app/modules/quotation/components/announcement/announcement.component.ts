@@ -12,6 +12,7 @@ import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAc
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { ANNOUNCEMENT_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { getDocument } from '../../../../libs/DocumentHelper';
+import { AppService } from '../../../../services/app.service';
 import { AttachmentType } from '../../../miscellaneous/model/AttachmentType';
 import { Document } from "../../../miscellaneous/model/Document";
 import { Announcement } from '../../model/Announcement';
@@ -72,6 +73,7 @@ export class AnnouncementComponent implements OnInit {
     private constantService: ConstantService,
     private noticeTypeService: NoticeTypeService,
     public confrereDialog: MatDialog,
+    private appService: AppService,
     private journalTypeService: JournalTypeService,
     private announcementNoticeTemplateService: AnnouncementNoticeTemplateService,
   ) { }
@@ -109,7 +111,7 @@ export class AnnouncementComponent implements OnInit {
       if (!this.announcement!)
         this.announcement! = {} as Announcement;
       if (!this.announcement!.confrere)
-        this.announcement!.confrere = this.constantService.getConfrereJssPaper();
+        this.announcement!.confrere = this.constantService.getConfrereJssSpel();
       if (!this.announcement!.isHeader)
         this.announcement!.isHeader = false;
       if (!this.announcement!.isHeaderFree)
@@ -139,6 +141,10 @@ export class AnnouncementComponent implements OnInit {
 
   getFormStatus(): boolean {
     this.announcementForm.markAllAsTouched();
+    if (this.announcement && this.announcement.notice == null) {
+      this.appService.displaySnackBar("Le texte de l'annonce est obligatoire", true, 15);
+      return false;
+    }
     if (this.announcement && this.announcement.notice)
       this.announcement.notice = this.announcement.notice.replace(/ +(?= )/g, '').replace(/(\r\n|\r|\n){2,}/g, '$1\n');
     if (this.announcement && this.announcement.publicationDate)

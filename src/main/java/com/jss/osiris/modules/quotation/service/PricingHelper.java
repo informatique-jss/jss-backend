@@ -194,7 +194,9 @@ public class PricingHelper {
                 if (isNotJssConfrere(provision) && confrere.getPaperPrice() != null) {
                     invoiceItem
                             .setPreTaxPrice(
-                                    Math.round(confrere.getPaperPrice() * nbr + confrere.getShippingCosts() * 100f)
+                                    Math.round(confrere.getPaperPrice() * nbr
+                                            + (confrere.getShippingCosts() != null ? confrere.getShippingCosts() : 0f)
+                                                    * 100f)
                                             / 100f);
                 } else
                     invoiceItem.setPreTaxPrice(
@@ -465,6 +467,12 @@ public class PricingHelper {
                 vat = vatService.getGeographicalApplicableVat(affaire.getCountry(), affaire.getCity().getDepartment(),
                         affaire.getIsIndividual());
             } else {
+                if (billingDocument.getBillingLabelCity() == null)
+                    throw new OsirisClientMessageException(
+                            "Ville non trouvée dans l'adresse indiquée dans la configuration de facturation de la commande");
+                if (billingDocument.getBillingLabelCountry() == null)
+                    throw new OsirisClientMessageException(
+                            "Pays non trouvé dans l'adresse indiquée dans la configuration de facturation de la commande");
                 vat = vatService.getGeographicalApplicableVat(billingDocument.getBillingLabelCountry(),
                         billingDocument.getBillingLabelCity().getDepartment(),
                         billingDocument.getBillingLabelIsIndividual());

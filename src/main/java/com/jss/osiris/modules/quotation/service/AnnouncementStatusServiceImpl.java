@@ -19,149 +19,155 @@ import com.jss.osiris.modules.quotation.repository.AnnouncementStatusRepository;
 @Service
 public class AnnouncementStatusServiceImpl implements AnnouncementStatusService {
 
-    @Autowired
-    AnnouncementStatusRepository announcementStatusRepository;
+        @Autowired
+        AnnouncementStatusRepository announcementStatusRepository;
 
-    @Override
-    @Cacheable(value = "announcementStatusList", key = "#root.methodName")
-    public List<AnnouncementStatus> getAnnouncementStatus() {
-        return IterableUtils.toList(announcementStatusRepository.findAll());
-    }
+        @Override
+        @Cacheable(value = "announcementStatusList", key = "#root.methodName")
+        public List<AnnouncementStatus> getAnnouncementStatus() {
+                return IterableUtils.toList(announcementStatusRepository.findAll());
+        }
 
-    @Override
-    @Cacheable(value = "announcementStatus", key = "#id")
-    public AnnouncementStatus getAnnouncementStatus(Integer id) {
-        Optional<AnnouncementStatus> announcementStatus = announcementStatusRepository.findById(id);
-        if (announcementStatus.isPresent())
-            return announcementStatus.get();
-        return null;
-    }
+        @Override
+        @Cacheable(value = "announcementStatus", key = "#id")
+        public AnnouncementStatus getAnnouncementStatus(Integer id) {
+                Optional<AnnouncementStatus> announcementStatus = announcementStatusRepository.findById(id);
+                if (announcementStatus.isPresent())
+                        return announcementStatus.get();
+                return null;
+        }
 
-    @Override
-    @Caching(evict = {
-            @CacheEvict(value = "announcementStatusList", allEntries = true),
-            @CacheEvict(value = "announcementStatus", key = "#announcementStatus.id")
-    })
-    @Transactional(rollbackFor = Exception.class)
-    public AnnouncementStatus addOrUpdateAnnouncementStatus(
-            AnnouncementStatus announcementStatus) {
-        return announcementStatusRepository.save(announcementStatus);
-    }
+        @Override
+        @Caching(evict = {
+                        @CacheEvict(value = "announcementStatusList", allEntries = true),
+                        @CacheEvict(value = "announcementStatus", key = "#announcementStatus.id")
+        })
+        @Transactional(rollbackFor = Exception.class)
+        public AnnouncementStatus addOrUpdateAnnouncementStatus(
+                        AnnouncementStatus announcementStatus) {
+                return announcementStatusRepository.save(announcementStatus);
+        }
 
-    @Override
-    public AnnouncementStatus getAnnouncementStatusByCode(String code) {
-        return announcementStatusRepository.findByCode(code);
-    }
+        @Override
+        public AnnouncementStatus getAnnouncementStatusByCode(String code) {
+                return announcementStatusRepository.findByCode(code);
+        }
 
-    @Override
-    public void updateStatusReferential() throws OsirisException {
-        updateStatus(AnnouncementStatus.ANNOUNCEMENT_NEW, "Nouveau", "auto_awesome", true, false);
-        updateStatus(AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS, "En cours", "autorenew", false, false);
-        updateStatus(AnnouncementStatus.ANNOUNCEMENT_WAITING_DOCUMENT, "En attente de documents", "hourglass_top",
-                false,
-                false);
-        updateStatus(AnnouncementStatus.ANNOUNCEMENT_WAITING_READ, "En attente de relecture", "local_library", false,
-                false);
-        updateStatus(AnnouncementStatus.ANNOUNCEMENT_WAITING_READ_CUSTOMER, "En attente de relecture client",
-                "local_library", false,
-                false);
-        updateStatus(AnnouncementStatus.ANNOUNCEMENT_PUBLISHED, "Publié", "fact_check", false, false);
-        updateStatus(AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE, "En attente du confrère", "supervisor_account",
-                false, false);
-        updateStatus(AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE_PUBLISHED,
-                "En attente de publication par le confrère", "supervisor_account",
-                false, false);
-        updateStatus(AnnouncementStatus.ANNOUNCEMENT_DONE, "Terminé", "check_small", false, true);
+        @Override
+        public void updateStatusReferential() throws OsirisException {
+                updateStatus(AnnouncementStatus.ANNOUNCEMENT_NEW, "Nouveau", "auto_awesome", true, false);
+                updateStatus(AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS, "En cours", "autorenew", false, false);
+                updateStatus(AnnouncementStatus.ANNOUNCEMENT_WAITING_DOCUMENT, "En attente de documents",
+                                "hourglass_top",
+                                false,
+                                false);
+                updateStatus(AnnouncementStatus.ANNOUNCEMENT_WAITING_READ_CUSTOMER, "En attente de relecture client",
+                                "local_library", false,
+                                false);
+                updateStatus(AnnouncementStatus.ANNOUNCEMENT_PUBLISHED, "Publié", "fact_check", false, false);
+                updateStatus(AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE, "En attente du confrère",
+                                "supervisor_account",
+                                false, false);
+                updateStatus(AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE_PUBLISHED,
+                                "En attente de publication par le confrère", "supervisor_account",
+                                false, false);
+                updateStatus(AnnouncementStatus.ANNOUNCEMENT_DONE, "Terminé", "check_small", false, true);
 
-        setSuccessor(AnnouncementStatus.ANNOUNCEMENT_NEW, AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS);
-        setSuccessor(AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS, AnnouncementStatus.ANNOUNCEMENT_WAITING_READ);
-        setSuccessor(AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS,
-                AnnouncementStatus.ANNOUNCEMENT_WAITING_READ_CUSTOMER);
-        setSuccessor(AnnouncementStatus.ANNOUNCEMENT_WAITING_READ,
-                AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE_PUBLISHED);
-        setSuccessor(AnnouncementStatus.ANNOUNCEMENT_WAITING_READ, AnnouncementStatus.ANNOUNCEMENT_PUBLISHED);
-        setSuccessor(AnnouncementStatus.ANNOUNCEMENT_WAITING_READ_CUSTOMER,
-                AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE_PUBLISHED);
-        setSuccessor(AnnouncementStatus.ANNOUNCEMENT_WAITING_READ_CUSTOMER, AnnouncementStatus.ANNOUNCEMENT_PUBLISHED);
-        setSuccessor(AnnouncementStatus.ANNOUNCEMENT_PUBLISHED, AnnouncementStatus.ANNOUNCEMENT_DONE);
+                setSuccessor(AnnouncementStatus.ANNOUNCEMENT_NEW, AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS);
+                setSuccessor(AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS,
+                                AnnouncementStatus.ANNOUNCEMENT_WAITING_READ_CUSTOMER);
+                setSuccessor(AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS,
+                                AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE_PUBLISHED);
+                setSuccessor(AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS, AnnouncementStatus.ANNOUNCEMENT_PUBLISHED);
+                setSuccessor(AnnouncementStatus.ANNOUNCEMENT_WAITING_READ_CUSTOMER,
+                                AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE_PUBLISHED);
+                setSuccessor(AnnouncementStatus.ANNOUNCEMENT_WAITING_READ_CUSTOMER,
+                                AnnouncementStatus.ANNOUNCEMENT_PUBLISHED);
+                setSuccessor(AnnouncementStatus.ANNOUNCEMENT_PUBLISHED, AnnouncementStatus.ANNOUNCEMENT_DONE);
 
-        setSuccessor(AnnouncementStatus.ANNOUNCEMENT_WAITING_READ,
-                AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE_PUBLISHED);
-        setSuccessor(AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE_PUBLISHED,
-                AnnouncementStatus.ANNOUNCEMENT_PUBLISHED);
-        setSuccessor(AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS, AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE);
-        setSuccessor(AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE, AnnouncementStatus.ANNOUNCEMENT_WAITING_READ);
-        setSuccessor(AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE,
-                AnnouncementStatus.ANNOUNCEMENT_WAITING_READ_CUSTOMER);
-        setSuccessor(AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS, AnnouncementStatus.ANNOUNCEMENT_WAITING_DOCUMENT);
-        setSuccessor(AnnouncementStatus.ANNOUNCEMENT_WAITING_DOCUMENT, AnnouncementStatus.ANNOUNCEMENT_WAITING_READ);
-        setSuccessor(AnnouncementStatus.ANNOUNCEMENT_WAITING_DOCUMENT,
-                AnnouncementStatus.ANNOUNCEMENT_WAITING_READ_CUSTOMER);
+                setSuccessor(AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE_PUBLISHED,
+                                AnnouncementStatus.ANNOUNCEMENT_PUBLISHED);
+                setSuccessor(AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS,
+                                AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE);
+                setSuccessor(AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE,
+                                AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS);
+                setSuccessor(AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE,
+                                AnnouncementStatus.ANNOUNCEMENT_WAITING_READ_CUSTOMER);
+                setSuccessor(AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS,
+                                AnnouncementStatus.ANNOUNCEMENT_WAITING_DOCUMENT);
+                setSuccessor(AnnouncementStatus.ANNOUNCEMENT_WAITING_DOCUMENT,
+                                AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS);
+                setSuccessor(AnnouncementStatus.ANNOUNCEMENT_WAITING_DOCUMENT,
+                                AnnouncementStatus.ANNOUNCEMENT_WAITING_READ_CUSTOMER);
 
-        setPredecessor(AnnouncementStatus.ANNOUNCEMENT_DONE,
-                AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE_PUBLISHED);
-        setPredecessor(AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE_PUBLISHED,
-                AnnouncementStatus.ANNOUNCEMENT_WAITING_READ);
-        setPredecessor(AnnouncementStatus.ANNOUNCEMENT_DONE, AnnouncementStatus.ANNOUNCEMENT_PUBLISHED);
-        setPredecessor(AnnouncementStatus.ANNOUNCEMENT_PUBLISHED, AnnouncementStatus.ANNOUNCEMENT_WAITING_READ);
-        setPredecessor(AnnouncementStatus.ANNOUNCEMENT_PUBLISHED,
-                AnnouncementStatus.ANNOUNCEMENT_WAITING_READ_CUSTOMER);
-        setPredecessor(AnnouncementStatus.ANNOUNCEMENT_WAITING_READ, AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS);
-        setPredecessor(AnnouncementStatus.ANNOUNCEMENT_WAITING_READ_CUSTOMER,
-                AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS);
-        setPredecessor(AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS, AnnouncementStatus.ANNOUNCEMENT_NEW);
-        setPredecessor(AnnouncementStatus.ANNOUNCEMENT_WAITING_READ, AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE);
-        setPredecessor(AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE, AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS);
-        setPredecessor(AnnouncementStatus.ANNOUNCEMENT_WAITING_READ, AnnouncementStatus.ANNOUNCEMENT_WAITING_DOCUMENT);
-        setPredecessor(AnnouncementStatus.ANNOUNCEMENT_WAITING_DOCUMENT, AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS);
+                setPredecessor(AnnouncementStatus.ANNOUNCEMENT_DONE,
+                                AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE_PUBLISHED);
+                setPredecessor(AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE_PUBLISHED,
+                                AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS);
+                setPredecessor(AnnouncementStatus.ANNOUNCEMENT_DONE, AnnouncementStatus.ANNOUNCEMENT_PUBLISHED);
+                setPredecessor(AnnouncementStatus.ANNOUNCEMENT_PUBLISHED, AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS);
+                setPredecessor(AnnouncementStatus.ANNOUNCEMENT_PUBLISHED,
+                                AnnouncementStatus.ANNOUNCEMENT_WAITING_READ_CUSTOMER);
+                setPredecessor(AnnouncementStatus.ANNOUNCEMENT_WAITING_READ_CUSTOMER,
+                                AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS);
+                setPredecessor(AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS, AnnouncementStatus.ANNOUNCEMENT_NEW);
+                setPredecessor(AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS,
+                                AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE);
+                setPredecessor(AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE,
+                                AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS);
+                setPredecessor(AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS,
+                                AnnouncementStatus.ANNOUNCEMENT_WAITING_DOCUMENT);
+                setPredecessor(AnnouncementStatus.ANNOUNCEMENT_WAITING_DOCUMENT,
+                                AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS);
 
-    }
+        }
 
-    protected void updateStatus(String code, String label, String icon, boolean isOpenState, boolean isCloseState) {
-        AnnouncementStatus announcementStatus = getAnnouncementStatusByCode(code);
-        if (getAnnouncementStatusByCode(code) == null)
-            announcementStatus = new AnnouncementStatus();
-        announcementStatus.setPredecessors(null);
-        announcementStatus.setSuccessors(null);
-        announcementStatus.setCode(code);
-        announcementStatus.setLabel(label);
-        announcementStatus.setIcon(icon);
-        announcementStatus.setIsCloseState(isCloseState);
-        announcementStatus.setIsOpenState(isOpenState);
-        addOrUpdateAnnouncementStatus(announcementStatus);
-    }
+        protected void updateStatus(String code, String label, String icon, boolean isOpenState, boolean isCloseState) {
+                AnnouncementStatus announcementStatus = getAnnouncementStatusByCode(code);
+                if (getAnnouncementStatusByCode(code) == null)
+                        announcementStatus = new AnnouncementStatus();
+                announcementStatus.setPredecessors(null);
+                announcementStatus.setSuccessors(null);
+                announcementStatus.setCode(code);
+                announcementStatus.setLabel(label);
+                announcementStatus.setIcon(icon);
+                announcementStatus.setIsCloseState(isCloseState);
+                announcementStatus.setIsOpenState(isOpenState);
+                addOrUpdateAnnouncementStatus(announcementStatus);
+        }
 
-    protected void setSuccessor(String code, String code2) throws OsirisException {
-        AnnouncementStatus sourceStatus = getAnnouncementStatusByCode(code);
-        AnnouncementStatus targetStatus = getAnnouncementStatusByCode(code2);
-        if (sourceStatus == null || targetStatus == null)
-            throw new OsirisException(null, "Status code " + code + " or " + code2 + " do not exist");
+        protected void setSuccessor(String code, String code2) throws OsirisException {
+                AnnouncementStatus sourceStatus = getAnnouncementStatusByCode(code);
+                AnnouncementStatus targetStatus = getAnnouncementStatusByCode(code2);
+                if (sourceStatus == null || targetStatus == null)
+                        throw new OsirisException(null, "Status code " + code + " or " + code2 + " do not exist");
 
-        if (sourceStatus.getSuccessors() == null)
-            sourceStatus.setSuccessors(new ArrayList<AnnouncementStatus>());
+                if (sourceStatus.getSuccessors() == null)
+                        sourceStatus.setSuccessors(new ArrayList<AnnouncementStatus>());
 
-        for (AnnouncementStatus status : sourceStatus.getSuccessors())
-            if (status.getCode().equals(targetStatus.getCode()))
-                return;
+                for (AnnouncementStatus status : sourceStatus.getSuccessors())
+                        if (status.getCode().equals(targetStatus.getCode()))
+                                return;
 
-        sourceStatus.getSuccessors().add(targetStatus);
-        addOrUpdateAnnouncementStatus(sourceStatus);
-    }
+                sourceStatus.getSuccessors().add(targetStatus);
+                addOrUpdateAnnouncementStatus(sourceStatus);
+        }
 
-    protected void setPredecessor(String code, String code2) throws OsirisException {
-        AnnouncementStatus sourceStatus = getAnnouncementStatusByCode(code);
-        AnnouncementStatus targetStatus = getAnnouncementStatusByCode(code2);
-        if (sourceStatus == null || targetStatus == null)
-            throw new OsirisException(null, "Announcement status code " + code + " or " + code2 + " do not exist");
+        protected void setPredecessor(String code, String code2) throws OsirisException {
+                AnnouncementStatus sourceStatus = getAnnouncementStatusByCode(code);
+                AnnouncementStatus targetStatus = getAnnouncementStatusByCode(code2);
+                if (sourceStatus == null || targetStatus == null)
+                        throw new OsirisException(null,
+                                        "Announcement status code " + code + " or " + code2 + " do not exist");
 
-        if (sourceStatus.getPredecessors() == null)
-            sourceStatus.setPredecessors(new ArrayList<AnnouncementStatus>());
+                if (sourceStatus.getPredecessors() == null)
+                        sourceStatus.setPredecessors(new ArrayList<AnnouncementStatus>());
 
-        for (AnnouncementStatus status : sourceStatus.getPredecessors())
-            if (status.getCode().equals(targetStatus.getCode()))
-                return;
+                for (AnnouncementStatus status : sourceStatus.getPredecessors())
+                        if (status.getCode().equals(targetStatus.getCode()))
+                                return;
 
-        sourceStatus.getPredecessors().add(targetStatus);
-        addOrUpdateAnnouncementStatus(sourceStatus);
-    }
+                sourceStatus.getPredecessors().add(targetStatus);
+                addOrUpdateAnnouncementStatus(sourceStatus);
+        }
 }

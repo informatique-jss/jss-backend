@@ -19,7 +19,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.modules.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.miscellaneous.model.PaymentType;
-import com.jss.osiris.modules.quotation.model.CustomerOrder;
 
 @Entity
 @Table(indexes = { @Index(name = "idx_bank_id", columnList = "bankId", unique = true) })
@@ -53,17 +52,19 @@ public class Payment implements Serializable, IId {
 	@JsonIgnoreProperties(value = { "payments", "accountingRecords" }, allowSetters = true)
 	private Invoice invoice;
 
-	@ManyToOne
-	@JoinColumn(name = "id_customer_order")
-	@JsonIgnoreProperties(value = { "payments" }, allowSetters = true)
-	private CustomerOrder customerOrder;
-
 	@Column(nullable = false)
 	private Boolean isExternallyAssociated;
 
 	@ManyToOne
 	@JoinColumn(name = "id_payment_type")
 	private PaymentType paymentType;
+
+	@ManyToOne
+	@JoinColumn(name = "id_origin_payment")
+	@JsonIgnoreProperties(value = { "payments", "accountingRecords" }, allowSetters = true)
+	private Payment originPayment;
+
+	private Boolean isCancelled;
 
 	public Integer getId() {
 		return id;
@@ -121,14 +122,6 @@ public class Payment implements Serializable, IId {
 		this.invoice = invoice;
 	}
 
-	public CustomerOrder getCustomerOrder() {
-		return customerOrder;
-	}
-
-	public void setCustomerOrder(CustomerOrder customerOrder) {
-		this.customerOrder = customerOrder;
-	}
-
 	public boolean isExternallyAssociated() {
 		return isExternallyAssociated;
 	}
@@ -159,6 +152,22 @@ public class Payment implements Serializable, IId {
 
 	public void setPaymentType(PaymentType paymentType) {
 		this.paymentType = paymentType;
+	}
+
+	public Payment getOriginPayment() {
+		return originPayment;
+	}
+
+	public void setOriginPayment(Payment originPayment) {
+		this.originPayment = originPayment;
+	}
+
+	public Boolean getIsCancelled() {
+		return isCancelled;
+	}
+
+	public void setIsCancelled(Boolean isCancelled) {
+		this.isCancelled = isCancelled;
 	}
 
 }

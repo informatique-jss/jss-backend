@@ -7,7 +7,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,7 +37,6 @@ import com.jss.osiris.modules.invoicing.service.InvoiceHelper;
 import com.jss.osiris.modules.invoicing.service.InvoiceItemService;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.invoicing.service.PaymentService;
-import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
@@ -202,7 +200,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             notificationService.notifyNewCustomerOrderQuotation(customerOrder);
 
         checkAllProvisionEnded(customerOrder);
-        generateStoreAndSendPublicationFlag(customerOrder);
 
         // Trigger move forward for announcement created in website
         if (customerOrder.getAssoAffaireOrders() != null
@@ -255,7 +252,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             throws OsirisException, OsirisClientMessageException {
         // Handle automatic workflow for Announcement created from website
         boolean onlyAnnonceLegale = true;
-        boolean isFromWebsite = customerOrder.getIsCreatedFromWebSite();
+        boolean isFromWebsite = (customerOrder.getIsCreatedFromWebSite() != null
+                && customerOrder.getIsCreatedFromWebSite()) ? true : false;
         if (customerOrder != null && customerOrder.getAssoAffaireOrders() != null)
             for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
                 if (asso.getProvisions() != null)
@@ -267,9 +265,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.OPEN)
                 && (targetStatusCode.equals(CustomerOrderStatus.BEING_PROCESSED)
                         || targetStatusCode.equals(CustomerOrderStatus.WAITING_DEPOSIT))) {
-            Float remainingToPay = Math
-                    .round(accountingRecordService.getRemainingAmountToPayForCustomerOrder(customerOrder) * 100f)
-                    / 100f;
+            Float remainingToPay = getRemainingAmountToPayForCustomerOrder(customerOrder);
 
             ITiers tiers = quotationService.getCustomerOrderOfQuotation(customerOrder);
             boolean isDepositMandatory = false;
@@ -286,7 +282,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 targetStatusCode = CustomerOrderStatus.WAITING_DEPOSIT;
 
             // Confirm customer order to cutomser with or without deposit
-            mailHelper.sendCustomerOrderCreationConfirmationToCustomer(customerOrder, true, false);
+            mailHelper.sendCustomerOrderCreationConfirmationToCustomer(customerOrder, false, false);
         }
 
         // Handle automatic workflow for Announcement created from website
@@ -336,24 +332,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             moveCustomerOrderDepositToInvoiceDeposit(customerOrder, invoice);
 
             // Check invoice payed
-            Float remainingToPayForCurrentInvoice = accountingRecordService.getRemainingAmountToPayForInvoice(invoice);
-            if (remainingToPayForCurrentInvoice >= 0) {
-                if (customerOrder.getDeposits() != null && customerOrder.getDeposits().size() > 0) {
-                    float totalDeposit = 0f;
-                    for (Deposit deposit : customerOrder.getDeposits())
-                        totalDeposit += deposit.getDepositAmount();
-                    accountingRecordService.generateAccountingRecordsForSaleOnInvoicePayment(invoice, null,
-                            customerOrder.getDeposits(), totalDeposit);
-
-                    remainingToPayForCurrentInvoice = accountingRecordService
-                            .getRemainingAmountToPayForInvoice(invoice);
-
-                    if (remainingToPayForCurrentInvoice == 0) {
-                        invoice.setInvoiceStatus(constantService.getInvoiceStatusPayed());
-                        invoiceService.addOrUpdateInvoice(invoice);
-                    }
-                }
-            } else {
+            Float remainingToPayForCurrentInvoice = invoiceService.getRemainingAmountToPayForInvoice(invoice);
+            if (remainingToPayForCurrentInvoice < 0) {
                 throw new OsirisException(null, "Impossible to billed, too much money on customerOrder !");
             }
 
@@ -404,9 +384,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                                     .getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS));
                             assoAffaireOrderService.addOrUpdateAssoAffaireOrder(asso);
                             if (announcement.getIsProofReadingDocument() == false) {
-                                announcement.setAnnouncementStatus(announcementStatusService
-                                        .getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_WAITING_READ));
-                                assoAffaireOrderService.addOrUpdateAssoAffaireOrder(asso);
                                 announcement.setAnnouncementStatus(announcementStatusService
                                         .getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_PUBLISHED));
                                 assoAffaireOrderService.addOrUpdateAssoAffaireOrder(asso);
@@ -593,7 +570,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 quotation.getConfrere(), quotation.getSpecialOffers(), LocalDateTime.now(), statusOpen,
                 quotation.getObservations(), quotation.getDescription(), null,
                 quotation.getDocuments(), quotation.getAssoAffaireOrders(), null,
-                quotation.getOverrideSpecialOffer(), quotation.getQuotationLabel(), false, null, null, null, null);
+                quotation.getOverrideSpecialOffer(), quotation.getQuotationLabel(), false, null, null, null);
 
         ObjectMapper objectMapper = new ObjectMapper();
         SimpleModule simpleModule = new SimpleModule("SimpleModule");
@@ -713,10 +690,10 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             }
         }
 
-        Float remainingToPay = accountingRecordService.getRemainingAmountToPayForCustomerOrder(customerOrder);
+        Float remainingToPay = getRemainingAmountToPayForCustomerOrder(customerOrder);
         if (remainingToPay > 0) {
             CentralPayPaymentRequest paymentRequest = centralPayDelegateService.generatePayPaymentRequest(
-                    accountingRecordService.getRemainingAmountToPayForCustomerOrder(customerOrder), mail,
+                    getRemainingAmountToPayForCustomerOrder(customerOrder), mail,
                     customerOrder.getId() + "", subject);
 
             customerOrder.setCentralPayPaymentRequestId(paymentRequest.getPaymentRequestId());
@@ -766,8 +743,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         // Generate payment to materialize CB payment
         Payment payment = getCentralPayPayment(centralPayPaymentRequest);
 
-        Deposit deposit = depositService.getNewCbDepositForCustomerOrder(LocalDateTime.now(), customerOrder, payment,
-                centralPayPaymentRequest);
+        Deposit deposit = depositService.getNewDepositForCustomerOrder(payment.getPaymentAmount(), LocalDateTime.now(),
+                customerOrder, null, payment);
 
         deposit.setCustomerOrder(customerOrder);
         depositService.addOrUpdateDeposit(deposit);
@@ -783,8 +760,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         // Generate payment to materialize CB payment
         Payment payment = getCentralPayPayment(centralPayPaymentRequest);
 
-        accountingRecordService.generateAccountingRecordsForSaleOnInvoicePayment(invoice, Arrays.asList(payment), null,
-                payment.getPaymentAmount());
+        accountingRecordService.generateAccountingRecordsForSaleOnInvoicePayment(invoice, payment);
         accountingRecordService.generateAccountingRecordsForCentralPayPayment(centralPayPaymentRequest, payment,
                 null, invoice.getCustomerOrder(), invoice);
     }
@@ -830,132 +806,35 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     }
 
     @Override
-    public void generateStoreAndSendPublicationReceipt(CustomerOrder customerOrder)
-            throws OsirisException, OsirisClientMessageException {
-
-        ArrayList<Announcement> allAnnoucement = new ArrayList<Announcement>();
-        ArrayList<Announcement> annoucementWaitingForReading = new ArrayList<Announcement>();
-        ArrayList<Announcement> annoucementToGenerate = new ArrayList<Announcement>();
-        boolean onlyAnnonceLegale = true;
-
-        if (customerOrder != null && customerOrder.getAssoAffaireOrders() != null) {
-            for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
-                if (asso.getProvisions() != null)
-                    for (Provision provision : asso.getProvisions())
-                        if (provision.getAnnouncement() == null)
-                            onlyAnnonceLegale = false;
-                        // Generate only for JSS Paper
-                        else if (provision.getAnnouncement().getConfrere().getId()
-                                .equals(constantService.getConfrereJssPaper().getId())) {
-                            if (provision.getAnnouncement().getAnnouncementStatus().getCode()
-                                    .equals(AnnouncementStatus.ANNOUNCEMENT_WAITING_READ))
-                                annoucementWaitingForReading.add(provision.getAnnouncement());
-
-                            // If closed and never generated
-                            if (provision.getAnnouncement().getAnnouncementStatus().getCode()
-                                    .equals(AnnouncementStatus.ANNOUNCEMENT_DONE)
-                                    && provision.getAnnouncement().getIsPublicationReciptAlreadySent() == null)
-                                annoucementToGenerate.add(provision.getAnnouncement());
-
-                            allAnnoucement.add(provision.getAnnouncement());
-                        }
-            if (onlyAnnonceLegale) {
-                // If customerOrder is created from a validated quotation
-                if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.OPEN)
-                        && customerOrder.getQuotations() != null && customerOrder.getQuotations().size() > 0)
-                    annoucementToGenerate.addAll(allAnnoucement);
-
-                // If customerOrder is created from scratch
-                if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BEING_PROCESSED))
-                    annoucementToGenerate.addAll(allAnnoucement);
-            } else {
-                if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BEING_PROCESSED))
-                    annoucementToGenerate.addAll(annoucementWaitingForReading);
-            }
-
-            if (annoucementToGenerate.size() > 0) {
-                for (Announcement announcement : annoucementToGenerate) {
-                    // Check if publication receipt already exists
-                    boolean publicationReceiptExists = false;
-                    if (announcement.getAttachments() != null)
-                        for (Attachment attachment : announcement.getAttachments())
-                            if (attachment.getAttachmentType().getId()
-                                    .equals(constantService.getAttachmentTypePublicationReceipt().getId()))
-                                publicationReceiptExists = true;
-
-                    if (!publicationReceiptExists) {
-                        File publicationReceiptPdf = mailHelper.generatePublicationReceiptPdf(announcement, true);
-                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
-                        try {
-                            announcement.setAttachments(
-                                    attachmentService.addAttachment(new FileInputStream(publicationReceiptPdf),
-                                            announcement.getId(),
-                                            Announcement.class.getSimpleName(),
-                                            constantService.getAttachmentTypePublicationReceipt(),
-                                            "Publication_receipt_" + formatter.format(LocalDateTime.now()) + ".pdf",
-                                            false, "Attestation de parution n°" + announcement.getId()));
-                        } catch (FileNotFoundException e) {
-                            throw new OsirisException(e, "Impossible to read invoice PDF temp file");
-                        } finally {
-                            publicationReceiptPdf.delete();
+    public Float getRemainingAmountToPayForCustomerOrder(CustomerOrder customerOrder) {
+        customerOrder = getCustomerOrder(customerOrder.getId());
+        if (customerOrder != null) {
+            Float total = 0f;
+            // Total of items
+            if (customerOrder.getAssoAffaireOrders() != null) {
+                for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders()) {
+                    if (assoAffaireOrder.getProvisions() != null) {
+                        for (Provision provision : assoAffaireOrder.getProvisions()) {
+                            if (provision.getInvoiceItems() != null && provision.getInvoiceItems().size() > 0) {
+                                for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
+                                    total += invoiceItem.getPreTaxPrice() + invoiceItem.getVatPrice()
+                                            - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount()
+                                                    : 0f);
+                                }
+                            }
                         }
                     }
                 }
             }
 
-            // Try to send whereas it was JSS or not
-            mailHelper.sendPublicationReceiptToCustomer(getCustomerOrder(customerOrder.getId()), false);
+            if (customerOrder.getDeposits() != null && customerOrder.getDeposits().size() > 0)
+                for (Deposit deposit : customerOrder.getDeposits())
+                    if (!deposit.getIsCancelled())
+                        total -= deposit.getDepositAmount();
+
+            return Math.round(total * 100f) / 100f;
         }
-    }
-
-    private void generateStoreAndSendPublicationFlag(CustomerOrder customerOrder)
-            throws OsirisException, OsirisClientMessageException {
-
-        ArrayList<Announcement> annoucementToGenerate = new ArrayList<Announcement>();
-
-        if (customerOrder != null && customerOrder.getAssoAffaireOrders() != null) {
-            for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
-                if (asso.getProvisions() != null)
-                    for (Provision provision : asso.getProvisions())
-                        // Only for JSS SPEL
-                        if (provision.getAnnouncement() != null
-                                && provision.getAnnouncement().getIsPublicationFlagAlreadySent() == null
-                                && provision.getAnnouncement().getConfrere().getId()
-                                        .equals(constantService.getConfrereJssSpel().getId()))
-                            annoucementToGenerate.add(provision.getAnnouncement());
-
-            if (annoucementToGenerate.size() > 0) {
-                for (Announcement announcement : annoucementToGenerate) {
-                    // Check if publication receipt already exists
-                    boolean publicationFlagExists = false;
-                    if (announcement.getAttachments() != null)
-                        for (Attachment attachment : announcement.getAttachments())
-                            if (attachment.getAttachmentType().getId()
-                                    .equals(constantService.getAttachmentTypePublicationFlag().getId()))
-                                publicationFlagExists = true;
-
-                    if (!publicationFlagExists && announcement.getNotice() != null) {
-                        File publicationReceiptPdf = mailHelper.generatePublicationFlagPdf(announcement);
-                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
-                        try {
-                            announcement.setAttachments(
-                                    attachmentService.addAttachment(new FileInputStream(publicationReceiptPdf),
-                                            announcement.getId(),
-                                            Announcement.class.getSimpleName(),
-                                            constantService.getAttachmentTypePublicationFlag(),
-                                            "Publication_flag_" + formatter.format(LocalDateTime.now()) + ".pdf",
-                                            false, "Témoin de publication n°" + announcement.getId()));
-                        } catch (FileNotFoundException e) {
-                            throw new OsirisException(e, "Impossible to read invoice PDF temp file");
-                        } finally {
-                            publicationReceiptPdf.delete();
-                        }
-                    }
-                }
-                mailHelper.sendPublicationFlagToCustomer(customerOrder, false);
-            }
-        }
-
+        return 0f;
     }
 
 }

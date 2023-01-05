@@ -2,6 +2,7 @@ package com.jss.osiris.modules.quotation.service;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -22,6 +23,7 @@ import com.itextpdf.text.pdf.PdfCopy;
 import com.itextpdf.text.pdf.PdfReader;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
@@ -30,6 +32,9 @@ import com.jss.osiris.modules.quotation.model.Announcement;
 import com.jss.osiris.modules.quotation.model.AnnouncementSearch;
 import com.jss.osiris.modules.quotation.model.AnnouncementSearchResult;
 import com.jss.osiris.modules.quotation.model.AnnouncementStatus;
+import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
+import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.repository.AnnouncementRepository;
 
 @Service
@@ -55,6 +60,9 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
     @Autowired
     AffaireService affaireService;
+
+    @Autowired
+    MailHelper mailHelper;
 
     @Override
     public List<Announcement> getAnnouncements() {
@@ -194,4 +202,140 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                     throw new OsirisException(null, "Impossible to publish announcement n°" + announcement.getId());
             }
     }
+
+    @Override
+    public void generateStoreAndSendPublicationReceipt(CustomerOrder customerOrder)
+            throws OsirisException, OsirisClientMessageException {
+
+        ArrayList<Announcement> annoucementToGenerate = new ArrayList<Announcement>();
+
+        if (customerOrder != null && customerOrder.getAssoAffaireOrders() != null) {
+            for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
+                if (asso.getProvisions() != null)
+                    for (Provision provision : asso.getProvisions())
+                        // Generate only for JSS Spel
+                        if (provision.getAnnouncement() != null && provision.getAnnouncement().getConfrere().getId()
+                                .equals(constantService.getConfrereJssSpel().getId())) {
+                            annoucementToGenerate.add(provision.getAnnouncement());
+                        }
+
+            if (annoucementToGenerate.size() > 0) {
+                for (Announcement announcement : annoucementToGenerate) {
+                    // Check if publication receipt already exists
+                    boolean publicationReceiptExists = false;
+                    if (announcement.getAttachments() != null)
+                        for (Attachment attachment : announcement.getAttachments())
+                            if (attachment.getAttachmentType().getId()
+                                    .equals(constantService.getAttachmentTypePublicationReceipt().getId()))
+                                publicationReceiptExists = true;
+
+                    if (!publicationReceiptExists) {
+                        File publicationReceiptPdf = mailHelper.generatePublicationReceiptPdf(announcement, true);
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
+                        try {
+                            announcement.setAttachments(
+                                    attachmentService.addAttachment(new FileInputStream(publicationReceiptPdf),
+                                            announcement.getId(),
+                                            Announcement.class.getSimpleName(),
+                                            constantService.getAttachmentTypePublicationReceipt(),
+                                            "Publication_receipt_" + formatter.format(LocalDateTime.now()) + ".pdf",
+                                            false, "Attestation de parution n°" + announcement.getId()));
+                        } catch (FileNotFoundException e) {
+                            throw new OsirisException(e, "Impossible to read invoice PDF temp file");
+                        } finally {
+                            publicationReceiptPdf.delete();
+                        }
+                    }
+                }
+            }
+
+            // Try to send whereas it was JSS or not
+            mailHelper.sendPublicationReceiptToCustomer(customerOrderService.getCustomerOrder(customerOrder.getId()),
+                    false);
+        }
+    }
+
+    @Override
+    public void generateStoreAndSendPublicationFlag(CustomerOrder customerOrder)
+            throws OsirisException, OsirisClientMessageException {
+
+        ArrayList<Announcement> annoucementToGenerate = new ArrayList<Announcement>();
+
+        if (customerOrder != null && customerOrder.getAssoAffaireOrders() != null) {
+            for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
+                if (asso.getProvisions() != null)
+                    for (Provision provision : asso.getProvisions())
+                        // Only for JSS SPEL
+                        if (provision.getAnnouncement() != null
+                                && provision.getAnnouncement().getIsPublicationFlagAlreadySent() == null
+                                && provision.getAnnouncement().getConfrere().getId()
+                                        .equals(constantService.getConfrereJssSpel().getId()))
+                            annoucementToGenerate.add(provision.getAnnouncement());
+
+            if (annoucementToGenerate.size() > 0) {
+                for (Announcement announcement : annoucementToGenerate) {
+                    // Check if publication receipt already exists
+                    boolean publicationFlagExists = false;
+                    if (announcement.getAttachments() != null)
+                        for (Attachment attachment : announcement.getAttachments())
+                            if (attachment.getAttachmentType().getId()
+                                    .equals(constantService.getAttachmentTypePublicationFlag().getId()))
+                                publicationFlagExists = true;
+
+                    if (!publicationFlagExists && announcement.getNotice() != null) {
+                        File publicationReceiptPdf = mailHelper.generatePublicationFlagPdf(announcement);
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
+                        try {
+                            announcement.setAttachments(
+                                    attachmentService.addAttachment(new FileInputStream(publicationReceiptPdf),
+                                            announcement.getId(),
+                                            Announcement.class.getSimpleName(),
+                                            constantService.getAttachmentTypePublicationFlag(),
+                                            "Publication_flag_" + formatter.format(LocalDateTime.now()) + ".pdf",
+                                            false, "Témoin de publication n°" + announcement.getId()));
+                        } catch (FileNotFoundException e) {
+                            throw new OsirisException(e, "Impossible to read invoice PDF temp file");
+                        } finally {
+                            publicationReceiptPdf.delete();
+                        }
+                    }
+                }
+                mailHelper.sendPublicationFlagToCustomer(customerOrder, false);
+            }
+        }
+
+    }
+
+    @Override
+    public void generateStoreAndSendProofReading(Announcement announcement, CustomerOrder customerOrder)
+            throws OsirisException, OsirisClientMessageException {
+        // Check if publication receipt already exists
+        boolean proofReading = false;
+        if (announcement.getAttachments() != null)
+            for (Attachment attachment : announcement.getAttachments())
+                if (attachment.getAttachmentType().getId()
+                        .equals(constantService.getAttachmentTypeProofReading().getId()))
+                    proofReading = true;
+
+        if (!proofReading && announcement.getNotice() != null) {
+            File publicationReceiptPdf = mailHelper.generatePublicationReceiptPdf(announcement, false);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
+            try {
+                announcement.setAttachments(
+                        attachmentService.addAttachment(new FileInputStream(publicationReceiptPdf),
+                                announcement.getId(),
+                                Announcement.class.getSimpleName(),
+                                constantService.getAttachmentTypeProofReading(),
+                                "Proof_reading_" + formatter.format(LocalDateTime.now()) + ".pdf",
+                                false, "Bon à tirer n°" + announcement.getId()));
+            } catch (FileNotFoundException e) {
+                throw new OsirisException(e, "Impossible to read invoice PDF temp file");
+            } finally {
+                publicationReceiptPdf.delete();
+            }
+        }
+
+        mailHelper.sendProofReadingToCustomer(customerOrder, false);
+    }
+
 }

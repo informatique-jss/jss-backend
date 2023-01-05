@@ -3,7 +3,7 @@ import { FormBuilder } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { CUSTOMER_ORDER_STATUS_BILLED } from 'src/app/libs/Constants';
 import { instanceOfCustomerOrder, instanceOfQuotation } from 'src/app/libs/TypeHelper';
-import { getAffaireListArrayForIQuotation, getAffaireListFromIQuotation, getAmountRemaining, getCustomerOrderForIQuotation, getCustomerOrderNameForIQuotation, getLetteringDate } from 'src/app/modules/invoicing/components/invoice-tools';
+import { getAffaireListArrayForIQuotation, getAffaireListFromIQuotation, getCustomerOrderForIQuotation, getCustomerOrderNameForIQuotation, getLetteringDate, getRemainingToPay } from 'src/app/modules/invoicing/components/invoice-tools';
 import { InvoiceService } from 'src/app/modules/invoicing/services/invoice.service';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { AppService } from '../../../../services/app.service';
@@ -111,7 +111,7 @@ export class InvoiceManagementComponent implements OnInit {
       else {
         for (let invoice of this.quotation.invoices)
           if (invoice.invoiceStatus.code != this.constantService.getInvoiceStatusCancelled().code)
-            return getAmountRemaining(invoice);
+            return getRemainingToPay(invoice);
       }
     return this.getPriceTotal();
   }
@@ -123,7 +123,6 @@ export class InvoiceManagementComponent implements OnInit {
   updateInvoiceLabelResult() {
     if (this.quotation && this.quotation.id && instanceOfCustomerOrder(this.quotation) && (this.quotation.tiers || this.quotation.confrere || this.quotation.responsable)) {
       this.invoiceLabelResultService.getInvoiceLabelComputeResult(this.quotation).subscribe(response => {
-        console.log(response);
         if (response && response.billingLabel)
           this.invoiceLabelResult = response;
       });

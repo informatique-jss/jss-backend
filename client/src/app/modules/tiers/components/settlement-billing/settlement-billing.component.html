@@ -132,8 +132,7 @@
               </td>
             </tr>
           </table>
-          <addressing [editMode]="editMode" [document]="billingDocument "
-            [displayMailCC]="instanceOfResponsable(tiers)"></addressing>
+          <addressing [editMode]="editMode" [document]="billingDocument "></addressing>
         </mat-expansion-panel>
         <mat-expansion-panel *ngIf="instanceOfTiers(tiers) && !instanceOfResponsable(tiers)">
           <mat-expansion-panel-header>

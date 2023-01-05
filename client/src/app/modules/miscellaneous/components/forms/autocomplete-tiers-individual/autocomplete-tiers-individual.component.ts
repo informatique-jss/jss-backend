@@ -21,6 +21,17 @@ export class AutocompleteTiersIndividualComponent extends GenericAutocompleteCom
     return this.indexEntityService.getIndividualTiersByKeyword(value);
   }
 
+  mapResponse(response: IndexEntity[]): IndexEntity[] {
+    let out: IndexEntity[] = [];
+    if (response)
+      for (let u of response) {
+        let text = JSON.parse(u.text);
+        if (text.isIndividual)
+          out.push(u);
+      }
+    return out;
+  }
+
   displayLabel(tiers: IndexEntity): string {
     if (!tiers)
       return "";

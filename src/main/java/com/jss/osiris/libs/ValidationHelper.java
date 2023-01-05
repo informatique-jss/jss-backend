@@ -291,8 +291,13 @@ public class ValidationHelper {
     }
 
     public boolean validateMailList(List<Mail> mails) {
-        EmailValidator emailvalidator = EmailValidator.getInstance();
+        EmailValidator emailvalidator = EmailValidator.getInstance(true);
         for (Mail mail : mails) {
+            if (mail.getMail() != null) {
+                String[] mailSplit = mail.getMail().toLowerCase().split("\\.");
+                if (mailSplit[mailSplit.length - 1].equals("notaires"))
+                    return true;
+            }
             if (mail.getMail() == null || mail.getMail().length() > 250 || !emailvalidator.isValid(mail.getMail()))
                 return false;
         }

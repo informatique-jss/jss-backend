@@ -21,87 +21,110 @@ import com.jss.osiris.modules.quotation.model.CustomerOrder;
 @Entity
 public class Deposit implements Serializable, IId {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Integer id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  private Integer id;
 
-	@Column(nullable = false)
-	private String label;
+  @Column(nullable = false)
+  private String label;
 
-	@Column(nullable = false)
-	private LocalDateTime depositDate;
+  @Column(nullable = false)
+  private LocalDateTime depositDate;
 
-	@Column(nullable = false)
-	private Float depositAmount;
+  @Column(nullable = false)
+  private Float depositAmount;
 
-	@OneToMany(mappedBy = "deposit")
-	@JsonIgnoreProperties(value = { "deposit" }, allowSetters = true)
-	private List<AccountingRecord> accountingRecords;
+  @OneToMany(mappedBy = "deposit")
+  @JsonIgnoreProperties(value = { "deposit" }, allowSetters = true)
+  private List<AccountingRecord> accountingRecords;
 
-	@ManyToOne
-	@JoinColumn(name = "id_invoice")
-	@JsonIgnoreProperties(value = { "deposits", "accountingRecords" }, allowSetters = true)
-	private Invoice invoice;
+  @ManyToOne
+  @JoinColumn(name = "id_invoice")
+  @JsonIgnoreProperties(value = { "deposits", "accountingRecords" }, allowSetters = true)
+  private Invoice invoice;
 
-	@ManyToOne
-	@JoinColumn(name = "id_customer_order")
-	@JsonIgnoreProperties(value = { "deposits" }, allowSetters = true)
-	private CustomerOrder customerOrder;
+  @ManyToOne
+  @JoinColumn(name = "id_customer_order")
+  @JsonIgnoreProperties(value = { "deposits" }, allowSetters = true)
+  private CustomerOrder customerOrder;
 
-	public Integer getId() {
-		return id;
-	}
+  @ManyToOne
+  @JoinColumn(name = "id_origin_payment")
+  @JsonIgnoreProperties(value = { "deposits", "accountingRecords" }, allowSetters = true)
+  private Payment originPayment;
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+  private Boolean isCancelled;
 
-	public Invoice getInvoice() {
-		return invoice;
-	}
+  public Integer getId() {
+    return id;
+  }
 
-	public void setInvoice(Invoice invoice) {
-		this.invoice = invoice;
-	}
+  public void setId(Integer id) {
+    this.id = id;
+  }
 
-	public CustomerOrder getCustomerOrder() {
-		return customerOrder;
-	}
+  public Invoice getInvoice() {
+    return invoice;
+  }
 
-	public void setCustomerOrder(CustomerOrder customerOrder) {
-		this.customerOrder = customerOrder;
-	}
+  public void setInvoice(Invoice invoice) {
+    this.invoice = invoice;
+  }
 
-	public String getLabel() {
-		return label;
-	}
+  public CustomerOrder getCustomerOrder() {
+    return customerOrder;
+  }
 
-	public void setLabel(String label) {
-		this.label = label;
-	}
+  public void setCustomerOrder(CustomerOrder customerOrder) {
+    this.customerOrder = customerOrder;
+  }
 
-	public LocalDateTime getDepositDate() {
-		return depositDate;
-	}
+  public String getLabel() {
+    return label;
+  }
 
-	public void setDepositDate(LocalDateTime depositDate) {
-		this.depositDate = depositDate;
-	}
+  public void setLabel(String label) {
+    this.label = label;
+  }
 
-	public Float getDepositAmount() {
-		return depositAmount;
-	}
+  public LocalDateTime getDepositDate() {
+    return depositDate;
+  }
 
-	public void setDepositAmount(Float depositAmount) {
-		this.depositAmount = depositAmount;
-	}
+  public void setDepositDate(LocalDateTime depositDate) {
+    this.depositDate = depositDate;
+  }
 
-	public List<AccountingRecord> getAccountingRecords() {
-		return accountingRecords;
-	}
+  public Float getDepositAmount() {
+    return depositAmount;
+  }
 
-	public void setAccountingRecords(List<AccountingRecord> accountingRecords) {
-		this.accountingRecords = accountingRecords;
-	}
+  public void setDepositAmount(Float depositAmount) {
+    this.depositAmount = depositAmount;
+  }
+
+  public List<AccountingRecord> getAccountingRecords() {
+    return accountingRecords;
+  }
+
+  public void setAccountingRecords(List<AccountingRecord> accountingRecords) {
+    this.accountingRecords = accountingRecords;
+  }
+
+  public Payment getOriginPayment() {
+    return originPayment;
+  }
+
+  public void setOriginPayment(Payment originPayment) {
+    this.originPayment = originPayment;
+  }
+
+  public Boolean getIsCancelled() {
+    return isCancelled;
+  }
+
+  public void setIsCancelled(Boolean isCancelled) {
+    this.isCancelled = isCancelled;
+  }
 
 }
