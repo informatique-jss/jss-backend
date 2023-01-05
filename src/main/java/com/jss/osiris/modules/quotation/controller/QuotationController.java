@@ -491,11 +491,8 @@ public class QuotationController {
     validationHelper.validateReferential(assoAffaireOrder, true, "assoAffaireOrder");
     validationHelper.validateReferential(assoAffaireOrder.getAffaire(), true, "Affaire");
     validationHelper.validateReferential(assoAffaireOrder.getAssignedTo(), true, "AssignedTo");
-    validationHelper.validateReferential(assoAffaireOrder.getCustomerOrder(), true, "CustomerOrder");
-    validationHelper.validateReferential(assoAffaireOrder.getCustomerOrder(), assoAffaireOrder.getQuotation() == null,
-        "CustomerOrder");
-    validationHelper.validateReferential(assoAffaireOrder.getQuotation(), assoAffaireOrder.getCustomerOrder() == null,
-        "Quotation");
+    assoAffaireOrder.setCustomerOrder((CustomerOrder) validationHelper
+        .validateReferential(assoAffaireOrder.getCustomerOrder(), true, "CustomerOrder"));
 
     if (assoAffaireOrder.getProvisions() == null)
       throw new OsirisValidationException("Provisions");

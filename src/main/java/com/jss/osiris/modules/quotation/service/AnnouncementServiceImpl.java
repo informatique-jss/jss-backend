@@ -213,18 +213,10 @@ public class AnnouncementServiceImpl implements AnnouncementService {
             for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
                 if (asso.getProvisions() != null)
                     for (Provision provision : asso.getProvisions())
-                        // Generate only for JSS Paper
-                        if (provision.getAnnouncement().getConfrere().getId()
-                                .equals(constantService.getConfrereJssPaper().getId())) {
-                            if (provision.getAnnouncement().getAnnouncementStatus().getCode()
-                                    .equals(AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS))
-                                annoucementToGenerate.add(provision.getAnnouncement());
-
-                            // If closed and never generated
-                            if (provision.getAnnouncement().getAnnouncementStatus().getCode()
-                                    .equals(AnnouncementStatus.ANNOUNCEMENT_DONE)
-                                    && provision.getAnnouncement().getIsPublicationReciptAlreadySent() == null)
-                                annoucementToGenerate.add(provision.getAnnouncement());
+                        // Generate only for JSS Spel
+                        if (provision.getAnnouncement() != null && provision.getAnnouncement().getConfrere().getId()
+                                .equals(constantService.getConfrereJssSpel().getId())) {
+                            annoucementToGenerate.add(provision.getAnnouncement());
                         }
 
             if (annoucementToGenerate.size() > 0) {

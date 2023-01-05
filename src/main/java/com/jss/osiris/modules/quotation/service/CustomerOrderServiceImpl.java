@@ -252,7 +252,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             throws OsirisException, OsirisClientMessageException {
         // Handle automatic workflow for Announcement created from website
         boolean onlyAnnonceLegale = true;
-        boolean isFromWebsite = customerOrder.getIsCreatedFromWebSite();
+        boolean isFromWebsite = (customerOrder.getIsCreatedFromWebSite() != null
+                && customerOrder.getIsCreatedFromWebSite()) ? true : false;
         if (customerOrder != null && customerOrder.getAssoAffaireOrders() != null)
             for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
                 if (asso.getProvisions() != null)
@@ -281,7 +282,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 targetStatusCode = CustomerOrderStatus.WAITING_DEPOSIT;
 
             // Confirm customer order to cutomser with or without deposit
-            mailHelper.sendCustomerOrderCreationConfirmationToCustomer(customerOrder, true, false);
+            mailHelper.sendCustomerOrderCreationConfirmationToCustomer(customerOrder, false, false);
         }
 
         // Handle automatic workflow for Announcement created from website

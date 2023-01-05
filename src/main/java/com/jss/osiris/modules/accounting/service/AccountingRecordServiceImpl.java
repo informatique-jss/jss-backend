@@ -309,7 +309,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
         for (AccountingRecord accountingRecord : payment.getAccountingRecords())
           // Counter part waiting account record
           if (!accountingRecord.getIsCounterPart())
-            generateCounterPart(accountingRecord);
+            generateCounterPart(accountingRecord, null);
       }
       operationId = invoice.getId() + payment.getId();
       generateNewAccountingRecord(LocalDateTime.now(), operationId, null, null,
@@ -350,7 +350,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
             // Counter part waiting account record
             if (!accountingRecord.getIsCounterPart()
                 && accountingRecord.getAccountingAccount().getId().equals(waitingAccountingAccount.getId()))
-              generateCounterPart(accountingRecord);
+              generateCounterPart(accountingRecord, null);
       }
 
     // One write on customer account to equilibrate invoice
@@ -366,14 +366,13 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   public void generateAccountingRecordsForDepositOnInvoice(Deposit deposit, Invoice invoice,
       Integer overrideAccountingOperationId) throws OsirisException {
     AccountingAccount customerAccountingAccount = getCustomerAccountingAccountForInvoice(invoice);
-    AccountingJournal bankJournal = constantService.getAccountingJournalBank();
 
     Integer operationId = deposit.getId();
     if (overrideAccountingOperationId != null)
       operationId = overrideAccountingOperationId;
     generateNewAccountingRecord(LocalDateTime.now(), operationId, null, null,
         "Acompte pour la facture n°" + invoice.getId(), deposit.getDepositAmount(), null, customerAccountingAccount,
-        null, invoice, null, bankJournal, null, deposit);
+        null, invoice, null, constantService.getAccountingJournalMiscellaneousOperations(), null, deposit);
     checkInvoiceForLettrage(invoice);
   }
 
@@ -383,7 +382,6 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
     AccountingAccount depositAccountingAccount = getDepositAccountingAccountForCustomerOrder(
         quotationService.getCustomerOrderOfQuotation(customerOrder));
-    AccountingJournal bankJournal = constantService.getAccountingJournalBank();
 
     // If deposit is created from a payment, use the payment ID as operation ID to
     // keep the balance to 0 for a same operationID
@@ -394,7 +392,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     generateNewAccountingRecord(LocalDateTime.now(), operationId, null, null,
         "Acompte pour la commande n°" + customerOrder.getId(), deposit.getDepositAmount(), null,
         depositAccountingAccount,
-        null, null, customerOrder, bankJournal, null, deposit);
+        null, null, customerOrder, constantService.getAccountingJournalMiscellaneousOperations(), null, deposit);
   }
 
   @Override
@@ -949,10 +947,11 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   }
 
   @Override
-  public void generateCounterPart(AccountingRecord originalAccountingRecord) {
+  public void generateCounterPart(AccountingRecord originalAccountingRecord, AccountingJournal overrideJournal) {
     AccountingRecord newAccountingRecord = new AccountingRecord();
     newAccountingRecord.setAccountingAccount(originalAccountingRecord.getAccountingAccount());
-    newAccountingRecord.setAccountingJournal(originalAccountingRecord.getAccountingJournal());
+    newAccountingRecord.setAccountingJournal(
+        overrideJournal != null ? overrideJournal : originalAccountingRecord.getAccountingJournal());
     newAccountingRecord.setCreditAmount(originalAccountingRecord.getDebitAmount());
     newAccountingRecord.setDebitAmount(originalAccountingRecord.getCreditAmount());
     newAccountingRecord.setDeposit(originalAccountingRecord.getDeposit());
@@ -1024,7 +1023,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
     if (accountingRecords != null) {
       for (AccountingRecord accountingRecord : accountingRecords) {
-        generateCounterPart(accountingRecord);
+        generateCounterPart(accountingRecord, null);
         accountingRecord.setInvoice(null);
         accountingRecord.setPayment(null);
         accountingRecord.setDeposit(null);

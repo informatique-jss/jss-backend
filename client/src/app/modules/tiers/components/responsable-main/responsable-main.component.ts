@@ -114,7 +114,21 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
     this.displayedColumns.push({ id: "formalisteEmployee", fieldName: "formalisteEmployee", label: "Formaliste", valueFonction: (element: any) => { return (element && element.formalisteEmployee) ? element.formalisteEmployee.firstname + " " + element.formalisteEmployee.lastname : "" } } as SortTableColumn);
     this.displayedColumns.push({ id: "insertionEmployee", fieldName: "insertionEmployee", label: "Publiciste", valueFonction: (element: any) => { return (element && element.insertionEmployee) ? element.insertionEmployee.firstname + " " + element.insertionEmployee.lastname : "" } } as SortTableColumn);
 
-    this.tableActions.push({ actionIcon: "delete", actionName: 'Supprimer le responsable', display: true, actionClick: (action: SortTableAction, element: any) => { return this.deleteResponsable(element) } } as SortTableAction);
+    this.tableActions.push({
+      actionIcon: "delete", actionName: 'Supprimer le responsable', display: true, actionClick: (action: SortTableAction, element: any) => {
+        let hash = JSON.stringify(element).toLowerCase();
+        for (let i = 0; i < this.tiers.responsables.length; i++) {
+          let responsable = this.tiers.responsables[i];
+          if (JSON.stringify(responsable).toLowerCase() == hash && responsable.id == undefined) {
+            this.tiers.responsables.splice(i, 1);
+            this.selectedResponsable = null;
+            this.tiersService.setCurrentViewedResponsable(null);
+            this.setDataTable();
+            return;
+          }
+        }
+      }
+    } as SortTableAction);
   }
 
   toggleTabs() {
@@ -169,20 +183,6 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
   selectResponsable(responsable: Responsable) {
     let responsableId = responsable.id;
     this.selectResponsableById(responsableId);
-  }
-
-  deleteResponsable(responsableRow: any) {
-    let hash = JSON.stringify(responsableRow).toLowerCase();
-    for (let i = 0; i < this.tiers.responsables.length; i++) {
-      let responsable = this.tiers.responsables[i];
-      if (JSON.stringify(responsable).toLowerCase() == hash && responsable.id == undefined) {
-        this.tiers.responsables.splice(i, 1);
-        this.selectedResponsable = null;
-        this.tiersService.setCurrentViewedResponsable(null);
-        this.setDataTable();
-        return;
-      }
-    }
   }
 
   addResponsable() {

@@ -123,7 +123,6 @@ export class InvoiceManagementComponent implements OnInit {
   updateInvoiceLabelResult() {
     if (this.quotation && this.quotation.id && instanceOfCustomerOrder(this.quotation) && (this.quotation.tiers || this.quotation.confrere || this.quotation.responsable)) {
       this.invoiceLabelResultService.getInvoiceLabelComputeResult(this.quotation).subscribe(response => {
-        console.log(response);
         if (response && response.billingLabel)
           this.invoiceLabelResult = response;
       });

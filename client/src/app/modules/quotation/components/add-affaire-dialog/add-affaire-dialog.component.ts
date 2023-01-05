@@ -46,7 +46,6 @@ export class AddAffaireDialogComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    console.log(this.isLabelAffaire);
     if (this.affaire && !this.affaire.isIndividual)
       this.affaire.isIndividual = false;
     if (this.tabs)

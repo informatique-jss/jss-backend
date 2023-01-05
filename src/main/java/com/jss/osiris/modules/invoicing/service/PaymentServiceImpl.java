@@ -675,8 +675,8 @@ public class PaymentServiceImpl implements PaymentService {
     private Payment cancelPayment(Payment payment) throws OsirisException {
         if (payment.getAccountingRecords() != null)
             for (AccountingRecord accountingRecord : payment.getAccountingRecords()) {
-                if (!accountingRecord.getIsCounterPart())
-                    accountingRecordService.generateCounterPart(accountingRecord);
+                if (accountingRecord.getIsCounterPart() == null || !accountingRecord.getIsCounterPart())
+                    accountingRecordService.generateCounterPart(accountingRecord, null);
             }
         payment.setIsCancelled(true);
         payment.setInvoice(null);

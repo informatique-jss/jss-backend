@@ -89,8 +89,6 @@ export class GenericDateRangePickerComponent implements OnInit {
       this.form.get(this.propertyNameStart)?.setValue(this.modelStart);
     }
     if (changes.modelEnd && this.form != undefined) {
-      console.log(changes);
-      console.log(this.modelEnd);
       this.form.get(this.propertyNameEnd)?.setValue(this.modelEnd);
     }
     if (changes.isDisabled) {

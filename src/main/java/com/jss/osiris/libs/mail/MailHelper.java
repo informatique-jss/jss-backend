@@ -108,7 +108,7 @@ public class MailHelper {
 
     private static final String PNG_MIME = "image/png";
 
-    private boolean disableCbLink = false;
+    private boolean disableCbLink = true;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -710,7 +710,7 @@ public class MailHelper {
         if (remainingToPay > 0 && !isPaymentTypePrelevement) {
             if (isDepositMandatory) {
                 mail.setPaymentExplaination(
-                        "Dès reception de votre réglement d'un montant de " + mail.getPriceTotal()
+                        "Dès reception de votre réglement d'acompte d'un montant de " + mail.getPriceTotal()
                                 + " €, le traitement de votre commande débutera");
             } else {
                 mail.setPaymentExplaination(
@@ -914,10 +914,8 @@ public class MailHelper {
         ctx.setVariable("noticeHeader",
                 (announcement.getNoticeHeader() != null && !announcement.getNoticeHeader().equals(""))
                         ? announcement.getNoticeHeader().replaceAll("<br>", "<br/>").replaceAll("&nbsp;", " ")
-                                .replaceAll("&", "&amp;")
                         : null);
-        ctx.setVariable("notice", announcement.getNotice().replaceAll("<br>", "<br/>").replaceAll("&nbsp;", " ")
-                .replaceAll("&", "&amp;"));
+        ctx.setVariable("notice", announcement.getNotice().replaceAll("<br>", "<br/>").replaceAll("&nbsp;", " "));
         LocalDate localDate = announcement.getPublicationDate();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         ctx.setVariable("date", localDate.format(formatter));
@@ -953,10 +951,8 @@ public class MailHelper {
         ctx.setVariable("noticeHeader",
                 (announcement.getNoticeHeader() != null && !announcement.getNoticeHeader().equals(""))
                         ? announcement.getNoticeHeader().replaceAll("<br>", "<br/>").replaceAll("&nbsp;", " ")
-                                .replaceAll("&", "&amp;")
                         : null);
-        ctx.setVariable("notice", announcement.getNotice().replaceAll("<br>", "<br/>").replaceAll("&nbsp;", " ")
-                .replaceAll("&", "&amp;"));
+        ctx.setVariable("notice", announcement.getNotice().replaceAll("<br>", "<br/>").replaceAll("&nbsp;", " "));
         if (announcement.getDepartment() != null)
             ctx.setVariable("department",
                     announcement.getDepartment().getCode() + " - " + announcement.getDepartment().getLabel());
@@ -993,11 +989,6 @@ public class MailHelper {
                     "Unable to create publication flag PDF file for announcement " + announcement.getId());
         }
         return tempFile;
-    }
-
-    public void generateCustomerOrderFinalisationToCustomer(CustomerOrder customerOrder)
-            throws OsirisException, OsirisClientMessageException {
-        sendCustomerOrderFinalisationToCustomer(customerOrder, true, false, false);
     }
 
     public void sendCustomerOrderFinalisationToCustomer(CustomerOrder customerOrder, boolean sendToMe,
@@ -1225,8 +1216,6 @@ public class MailHelper {
         if (attachments.size() == 0)
             return;
 
-        customerOrderService.addOrUpdateCustomerOrder(customerOrder);
-
         mail.setAttachments(attachments);
 
         mail.setGreetings("En vous remerciant pour votre confiance !");
@@ -1283,8 +1272,6 @@ public class MailHelper {
 
         if (attachments.size() == 0)
             return;
-
-        customerOrderService.addOrUpdateCustomerOrder(customerOrder);
 
         mail.setAttachments(attachments);
 

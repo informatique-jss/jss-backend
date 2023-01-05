@@ -186,7 +186,7 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
 
                 AccountingAccount accountingAccountProvider = new AccountingAccount();
                 accountingAccountProvider
-                                .setPrincipalAccountingAccount(constantService.getPrincipalAccountingAccountProvider());
+                                .setPrincipalAccountingAccount(constantService.getPrincipalAccountingAccountProduct());
                 accountingAccountProvider.setAccountingAccountSubNumber(maxSubAccount);
                 accountingAccountProvider
                                 .setLabel("Produit - " + (label != null ? label : ""));

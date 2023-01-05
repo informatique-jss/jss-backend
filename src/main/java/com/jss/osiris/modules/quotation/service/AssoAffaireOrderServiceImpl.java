@@ -116,6 +116,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
         for (Provision provision : assoAffaireOrder.getProvisions()) {
             provision.setAssoAffaireOrder(assoAffaireOrder);
         }
+
         assoAffaireOrder = completeAssoAffaireOrder(assoAffaireOrder, assoAffaireOrder.getCustomerOrder());
         assoAffaireOrder.setCustomerOrder(assoAffaireOrder.getCustomerOrder());
         AssoAffaireOrder affaireSaved = assoAffaireOrderRepository.save(assoAffaireOrder);

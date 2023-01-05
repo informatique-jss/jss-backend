@@ -545,6 +545,16 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     return vatBases;
   }
 
+  deleteAffaire(affaire: Affaire) {
+    if (this.quotation && this.quotation.assoAffaireOrders)
+      for (let i = 0; i < this.quotation.assoAffaireOrders.length; i++) {
+        const asso = this.quotation.assoAffaireOrders[i];
+        if (asso.affaire && asso.affaire.id == affaire.id) {
+          this.quotation.assoAffaireOrders.splice(i, 1);
+        }
+      }
+  }
+
   getPriceTotal(): number {
     return QuotationComponent.computePriceTotal(this.quotation);
   }
