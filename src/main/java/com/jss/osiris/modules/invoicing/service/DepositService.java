@@ -18,10 +18,12 @@ public interface DepositService {
         public Deposit addOrUpdateDeposit(Deposit deposit);
 
         public Deposit getNewDepositForInvoice(Float depositAmount, LocalDateTime depositDatetime, Invoice invoice,
-                        Integer overrideAccountingOperationId, Payment payment) throws OsirisException;
+                        Integer overrideAccountingOperationId, Payment payment, boolean isFromOriginPayment)
+                        throws OsirisException;
 
         public Deposit getNewDepositForCustomerOrder(Float depositAmount, LocalDateTime depositDatetime,
-                        CustomerOrder customerOrder, Integer overrideAccountingOperationId, Payment payment)
+                        CustomerOrder customerOrder, Integer overrideAccountingOperationId, Payment payment,
+                        boolean isFromOriginPayment)
                         throws OsirisException;
 
         public void moveDepositFromCustomerOrderToInvoice(Deposit deposit, CustomerOrder fromCustomerOrder,

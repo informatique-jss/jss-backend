@@ -3,21 +3,21 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 
-import { AutocompleteConfrereComponent } from './autocomplete-confrere.component';
+import { SelectAttachmentTypeDialogComponent } from './select-attachment-type-dialog.component';
 
-describe('AutocompleteConfrereComponent', () => {
-  let component: AutocompleteConfrereComponent;
-  let fixture: ComponentFixture<AutocompleteConfrereComponent>;
+describe('SelectAttachmentTypeDialogComponent', () => {
+  let component: SelectAttachmentTypeDialogComponent;
+  let fixture: ComponentFixture<SelectAttachmentTypeDialogComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ AutocompleteConfrereComponent ]
+      declarations: [ SelectAttachmentTypeDialogComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(AutocompleteConfrereComponent);
+    fixture = TestBed.createComponent(SelectAttachmentTypeDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

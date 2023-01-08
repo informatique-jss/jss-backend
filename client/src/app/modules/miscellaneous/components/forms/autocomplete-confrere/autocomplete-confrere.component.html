@@ -16,8 +16,8 @@
     <mat-icon>close</mat-icon>
   </button>
   <mat-autocomplete autoActiveFirstOption #matAutocomplete="matAutocomplete"
-    (optionSelected)='optionSelected($event.option.value!)' [displayWith]="displayConfrere">
-    <mat-option *ngFor="let confrere of filteredTypes | async" [value]="confrere">
+    (optionSelected)='optionSelected($event.option.value!)' [displayWith]="displayLabel">
+    <mat-option *ngFor="let confrere of filteredTypes " [value]="confrere">
       {{displayLabel(confrere)}}
     </mat-option>
   </mat-autocomplete>

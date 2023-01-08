@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.accounting.model.AccountingAccountTrouple;
 import com.jss.osiris.modules.accounting.service.AccountingAccountService;
+import com.jss.osiris.modules.miscellaneous.model.Department;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.service.MailService;
 import com.jss.osiris.modules.miscellaneous.service.PhoneService;
@@ -43,6 +44,14 @@ public class ConfrereServiceImpl implements ConfrereService {
         if (confrere.isPresent())
             return confrere.get();
         return null;
+    }
+
+    @Override
+    public List<Confrere> searchConfrereFilteredByDepartmentAndName(Department department, String label) {
+        Integer departmentId = 0;
+        if (department != null)
+            departmentId = department.getId();
+        return confrereRepository.findConfrereFilteredByDepartmentAndName(departmentId, label);
     }
 
     @Override

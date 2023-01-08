@@ -71,10 +71,12 @@ public interface AccountingRecordService {
                         Float amountToUse) throws OsirisException;
 
         public void generateAccountingRecordsForDepositOnInvoice(Deposit deposit, Invoice invoice,
-                        Integer overrideAccountingOperationId) throws OsirisException;
+                        Integer overrideAccountingOperationId, boolean isFromOriginPayment) throws OsirisException;
 
         public void generateAccountingRecordsForDepositAndCustomerOrder(Deposit deposit, CustomerOrder customerOrder,
-                        Integer overrideAccountingOperationId) throws OsirisException;
+                        Integer overrideAccountingOperationId, boolean isFromOriginPayment) throws OsirisException;
+
+        public void generateAccountingRecordsForRefundOnGeneration(Refund refund) throws OsirisException;
 
         public AccountingAccount getCustomerAccountingAccountForInvoice(Invoice invoice) throws OsirisException;
 
@@ -92,7 +94,7 @@ public interface AccountingRecordService {
 
         public void generateBankAccountingRecordsForOutboundPayment(Payment payment) throws OsirisException;
 
-        public void generateAccountingRecordsForRefund(Refund refund) throws OsirisException;
+        public void generateAccountingRecordsForRefundOnVirement(Refund refund) throws OsirisException;
 
         public List<AccountingRecord> getAccountingRecordsByTemporaryOperationId(Integer operationId);
 

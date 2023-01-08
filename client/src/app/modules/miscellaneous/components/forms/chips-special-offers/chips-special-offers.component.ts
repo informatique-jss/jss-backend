@@ -44,7 +44,8 @@ export class ChipsSpecialOffersComponent extends GenericChipsComponent<SpecialOf
 
   openSpecialOffersDialog() {
     let dialogSpecialOffer = this.specialOfferDialog.open(SpecialOffersDialogComponent, {
-      width: '90%'
+      width: '90%',
+      height: '80%'
     });
     dialogSpecialOffer.afterClosed().subscribe(response => {
       if (!this.model)

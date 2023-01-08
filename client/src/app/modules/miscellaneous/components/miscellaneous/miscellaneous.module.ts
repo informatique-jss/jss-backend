@@ -60,6 +60,7 @@ import { AutocompleteRnaComponent } from '../forms/autocomplete-rna/autocomplete
 import { AutocompleteSirenComponent } from '../forms/autocomplete-siren/autocomplete-siren.component';
 import { AutocompleteSiretComponent } from '../forms/autocomplete-siret/autocomplete-siret.component';
 import { AutocompleteTiersIndividualComponent } from '../forms/autocomplete-tiers-individual/autocomplete-tiers-individual.component';
+import { ChipsAttachmentTypeComponent } from '../forms/chips-attachment-type/chips-attachment-type.component';
 import { ChipsCityComponent } from '../forms/chips-city/chips-city.component';
 import { ChipsCompetitorComponent } from '../forms/chips-competitor/chips-competitor.component';
 import { ChipsConfrereComponent } from '../forms/chips-confrere/chips-confrere.component';
@@ -68,6 +69,7 @@ import { ChipsMailComponent } from '../forms/chips-mail/chips-mail.component';
 import { ChipsPhoneComponent } from '../forms/chips-phone/chips-phone.component';
 import { ChipsProvisionFamilyTypeComponent } from '../forms/chips-provision-family/chips-provision-family.component';
 import { ChipsSpecialOffersComponent } from '../forms/chips-special-offers/chips-special-offers.component';
+import { ChipsTypeDocumentComponent } from '../forms/chips-type-document/chips-type-document.component';
 import { GenericCheckboxComponent } from '../forms/generic-checkbox/generic-checkbox.component';
 import { GenericDateRangePickerComponent } from '../forms/generic-date-range-picker/generic-date-range-picker.component';
 import { CustomDateAdapter } from '../forms/generic-datepicker/CustomDateAdapter';
@@ -376,6 +378,7 @@ const routes: Routes = [
     WorkflowDialogComponent,
     ChipsEmployeeComponent,
     SingleAttachmentComponent,
+    ChipsAttachmentTypeComponent,
     AddNotificationDialogComponent,
     AutocompletePrincipalAccountingAccountComponent,
     GenericDatetimePickerComponent,
@@ -383,6 +386,7 @@ const routes: Routes = [
     AutomaticMailListComponent,
     //Guichet Unique
     AutocompleteTypeDocumentComponent,
+    ChipsTypeDocumentComponent,
     RadioGroupMotifRejetCmaComponent,
     SelectMotifRejetGreffeComponent,
     RadioGroupMotifRejetMsaComponent,
@@ -564,6 +568,7 @@ const routes: Routes = [
     SelectCustomerOrderStatusComponent,
     RadioGroupCivilityComponent,
     AutocompleteRnaComponent,
+    ChipsAttachmentTypeComponent,
     SelectProvisionStautsComponent,
     GenericToggleComponent,
     SelectVatCollectionTypeComponent,
@@ -586,6 +591,7 @@ const routes: Routes = [
     AutocompleteTypeDocumentComponent,
     RadioGroupMotifRejetCmaComponent,
     SelectMotifRejetGreffeComponent,
+    ChipsAttachmentTypeComponent,
     RadioGroupMotifRejetMsaComponent,
     RadioGroupMotifTrasnfertComponent,
     RadioGroupActiviteReguliereComponent,
@@ -662,6 +668,7 @@ const routes: Routes = [
     SelectStatutVisAVisFormaliteComponent,
     SelectSuccursaleOuFilialeComponent,
     RadioGroupTaciteReconductionComponent,
+    ChipsAttachmentTypeComponent,
     RadioGroupTotalitePartieComponent,
     SelectTutelleCuratelleComponent,
     SelectTypeDePersonneComponent,
@@ -677,6 +684,7 @@ const routes: Routes = [
     RadioGroupTypePersonneAncienExploitantComponent,
     SelectTypePersonneContractanteComponent,
     RadioGroupTypeRepresentantComponent,
+    ChipsTypeDocumentComponent,
     AutocompleteTypeVoieComponent,
     GenericDatetimePickerComponent,
     SelectJournalComponent,

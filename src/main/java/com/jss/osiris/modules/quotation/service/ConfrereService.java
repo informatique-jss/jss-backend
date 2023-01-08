@@ -3,6 +3,7 @@ package com.jss.osiris.modules.quotation.service;
 import java.util.List;
 
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.modules.miscellaneous.model.Department;
 import com.jss.osiris.modules.quotation.model.Confrere;
 
 public interface ConfrereService {
@@ -11,4 +12,6 @@ public interface ConfrereService {
     public Confrere getConfrere(Integer id);
 
     public Confrere addOrUpdateConfrere(Confrere confrere) throws OsirisException;
+
+    public List<Confrere> searchConfrereFilteredByDepartmentAndName(Department department, String label);
 }

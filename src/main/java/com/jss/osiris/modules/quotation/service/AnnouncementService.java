@@ -26,13 +26,15 @@ public interface AnnouncementService {
 
         public void publishAnnouncementsToActuLegale() throws OsirisException;
 
-        public void generateStoreAndSendPublicationReceipt(CustomerOrder customerOrder)
+        public void generateStoreAndSendPublicationReceipt(CustomerOrder customerOrder, Announcement announcement)
                         throws OsirisException, OsirisClientMessageException;
 
-        public void generateStoreAndSendPublicationFlag(CustomerOrder customerOrder)
+        public void generateStoreAndSendPublicationFlag(CustomerOrder customerOrder, Announcement announcement)
                         throws OsirisException, OsirisClientMessageException;
 
         public void generateStoreAndSendProofReading(Announcement announcement, CustomerOrder customerOrder)
                         throws OsirisException, OsirisClientMessageException;
+
+        public void sendPublicationFlagNotSent() throws OsirisException, OsirisClientMessageException;
 
 }

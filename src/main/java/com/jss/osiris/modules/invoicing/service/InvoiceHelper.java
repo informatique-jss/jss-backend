@@ -137,25 +137,25 @@ public class InvoiceHelper {
             ITiers usedOrderingCustomer = null;
 
             if (orderingCustomer instanceof Tiers
-                    || !billingDocument.getIsResponsableOnBilling() && orderingCustomer instanceof Responsable) {
+                    || orderingCustomer instanceof Responsable) {
                 Tiers tiers;
                 if (orderingCustomer instanceof Tiers) {
                     tiers = (Tiers) orderingCustomer;
-                    invoiceLabelResult.setLabelOrigin("les informations postales du tiers");
                 } else {
                     tiers = ((Responsable) orderingCustomer).getTiers();
-                    invoiceLabelResult.setLabelOrigin("les informations postales du responsable");
                 }
+                invoiceLabelResult.setLabelOrigin("les informations postales du responsable");
                 usedOrderingCustomer = tiers;
 
-                invoiceLabelResult
-                        .setBillingLabel(tiers.getIsIndividual() ? tiers.getFirstname() + " " + tiers.getLastname()
-                                : tiers.getDenomination());
-            } else if (orderingCustomer instanceof Responsable) {
-                Responsable responsable = (Responsable) orderingCustomer;
-                usedOrderingCustomer = responsable;
-                invoiceLabelResult.setBillingLabel(responsable.getFirstname() + " " + responsable.getLastname());
-                invoiceLabelResult.setLabelOrigin("les informations postales du responsable");
+                String labelResult = tiers.getIsIndividual() ? tiers.getFirstname() + " " + tiers.getLastname()
+                        : tiers.getDenomination();
+
+                if (orderingCustomer instanceof Responsable && billingDocument.getIsResponsableOnBilling()) {
+                    labelResult = ((Responsable) orderingCustomer).getFirstname() + " "
+                            + ((Responsable) orderingCustomer).getLastname() + " - " + labelResult;
+                }
+
+                invoiceLabelResult.setBillingLabel(labelResult);
             } else if (orderingCustomer instanceof Confrere) {
                 Confrere confrere = (Confrere) orderingCustomer;
                 usedOrderingCustomer = confrere;

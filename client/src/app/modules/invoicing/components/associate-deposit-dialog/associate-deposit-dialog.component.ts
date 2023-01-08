@@ -2,7 +2,7 @@ import { AfterContentChecked, ChangeDetectorRef, Component, OnInit } from '@angu
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
-import { INVOICING_PAYMENT_LIMIT_REFUND_EUROS } from 'src/app/libs/Constants';
+import { CUSTOMER_ORDER_STATUS_ABANDONED, CUSTOMER_ORDER_STATUS_BILLED, INVOICING_PAYMENT_LIMIT_REFUND_EUROS } from 'src/app/libs/Constants';
 import { getDocument } from 'src/app/libs/DocumentHelper';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
@@ -174,34 +174,31 @@ export class AssociateDepositDialogComponent implements OnInit, AfterContentChec
       }
 
       let customerOrderId: number = 0;
-      let invoiceAny = invoice as any;
-      if (invoiceAny.confrereId)
-        customerOrderId = invoiceAny.confrereId
-      if (invoiceAny.responsableId)
-        customerOrderId = invoiceAny.responsableId
-      if (invoiceAny.tiersId)
-        customerOrderId = invoiceAny.tiersId
+      if (invoice.confrere)
+        customerOrderId = invoice.confrere.id
+      if (invoice.responsable)
+        customerOrderId = invoice.responsable.id
+      if (invoice.tiers)
+        customerOrderId = invoice.tiers.id
 
       if (!this.isSameCustomerOrder(customerOrderId)) {
         this.appService.displaySnackBar("Veuillez choisir une facture du même donneur d'ordre que les autres éléments associés à l'acompte", true, 15);
         return;
       }
-      this.InvoiceService.getInvoiceById(invoice.id).subscribe(invoiceResponse => {
-        let amountDialogRef = this.amountDialog.open(AmountDialogComponent, {
-          width: '100%'
-        });
-        let asso = { deposit: this.deposit, invoice: invoiceResponse } as AssociationSummaryTable;
-        let maxAmount = Math.round((Math.min(this.getLeftMaxAmountPayed(asso), this.getInitialAmount(asso) - this.getInitialPayedAmount(asso))) * 100) / 100;
-        amountDialogRef.componentInstance.maxAmount = maxAmount;
-        amountDialogRef.afterClosed().subscribe(response => {
-          if (response != null) {
-            asso.amountUsed = Math.min(parseFloat(response), maxAmount);
-            this.associationSummaryTable.push(asso);
-            this.refreshSummaryTables();
-          } else {
-            return;
-          }
-        });
+      let amountDialogRef = this.amountDialog.open(AmountDialogComponent, {
+        width: '100%'
+      });
+      let asso = { deposit: this.deposit, invoice: invoice } as AssociationSummaryTable;
+      let maxAmount = Math.round((Math.min(this.getLeftMaxAmountPayed(asso), this.getInitialAmount(asso) - this.getInitialPayedAmount(asso))) * 100) / 100;
+      amountDialogRef.componentInstance.maxAmount = maxAmount;
+      amountDialogRef.afterClosed().subscribe(response => {
+        if (response != null) {
+          asso.amountUsed = Math.min(parseFloat(response), maxAmount);
+          this.associationSummaryTable.push(asso);
+          this.refreshSummaryTables();
+        } else {
+          return;
+        }
       });
     })
   }
@@ -216,13 +213,12 @@ export class AssociateDepositDialogComponent implements OnInit, AfterContentChec
           }
 
       let customerOrderId: number = 0;
-      let orderAny = order as any;
-      if (orderAny.confrereId)
-        customerOrderId = orderAny.confrereId
-      if (orderAny.responsableId)
-        customerOrderId = orderAny.responsableId
-      if (orderAny.tiersId)
-        customerOrderId = orderAny.tiersId
+      if (order.confrere)
+        customerOrderId = order.confrere.id
+      if (order.responsable)
+        customerOrderId = order.responsable.id
+      if (order.tiers)
+        customerOrderId = order.tiers.id
 
 
       if (!this.isSameCustomerOrder(customerOrderId)) {
@@ -230,23 +226,34 @@ export class AssociateDepositDialogComponent implements OnInit, AfterContentChec
         return;
       }
 
-      this.customerOrderService.getCustomerOrder(orderAny.customerOrderId).subscribe(responseOrder => {
-        let amountDialogRef = this.amountDialog.open(AmountDialogComponent, {
-          width: '35%'
-        });
+      let orderAs = order as CustomerOrder;
+      if (orderAs && orderAs.customerOrderStatus && orderAs.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_ABANDONED) {
+        this.appService.displaySnackBar("Il est impossible de choisir une commande abandonnée", true, 15);
+        return;
+      }
 
-        let asso = { deposit: this.deposit, customerOrder: responseOrder, } as AssociationSummaryTable;
-        let maxAmount = Math.round((Math.min(this.amountRemaining(), this.getInitialAmount(asso) - this.getInitialPayedAmount(asso))) * 100) / 100;
-        amountDialogRef.componentInstance.maxAmount = maxAmount;
-        amountDialogRef.afterClosed().subscribe(response => {
-          if (response != null) {
-            asso.amountUsed = Math.min(parseFloat(response), maxAmount);
-            this.associationSummaryTable.push(asso);
-            this.refreshSummaryTables();
-          } else {
-            return;
-          }
-        });
+      let amountDialogRef = this.amountDialog.open(AmountDialogComponent, {
+        width: '35%'
+      });
+
+      let asso = {} as AssociationSummaryTable;
+      // If invoice found on CustomerOrder, associate invoice, not customer order
+      if (orderAs && orderAs.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED && orderAs.invoices) {
+        for (let invoice of orderAs.invoices)
+          if (invoice.invoiceStatus && invoice.invoiceStatus.id == this.constantService.getInvoiceStatusSend().id)
+            asso = { deposit: this.deposit, invoice: invoice, } as AssociationSummaryTable;
+      } else
+        asso = { deposit: this.deposit, customerOrder: order, } as AssociationSummaryTable;
+      let maxAmount = Math.round((Math.min(this.amountRemaining(), this.getInitialAmount(asso) - this.getInitialPayedAmount(asso))) * 100) / 100;
+      amountDialogRef.componentInstance.maxAmount = maxAmount;
+      amountDialogRef.afterClosed().subscribe(response => {
+        if (response != null) {
+          asso.amountUsed = Math.min(parseFloat(response), maxAmount);
+          this.associationSummaryTable.push(asso);
+          this.refreshSummaryTables();
+        } else {
+          return;
+        }
       });
     })
   }
@@ -350,7 +357,7 @@ export class AssociateDepositDialogComponent implements OnInit, AfterContentChec
         amount = QuotationComponent.computePayed(element.customerOrder);
     }
     // Do not consider current deposit
-    if (this.deposit)
+    if (this.deposit && element.customerOrder && this.customerOrder && element.customerOrder.id == this.customerOrder.id)
       amount -= this.deposit.depositAmount;
     return amount;
   }

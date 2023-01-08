@@ -376,7 +376,7 @@ public class PaymentServiceImpl implements PaymentService {
                     // Generate one deposit per customer order
                     depositService.getNewDepositForCustomerOrder(
                             effectivePayment, LocalDateTime.now(), correspondingCustomerOrder.get(i), payment.getId(),
-                            payment);
+                            payment, true);
 
                     remainingToPay -= effectivePayment;
 
@@ -457,7 +457,9 @@ public class PaymentServiceImpl implements PaymentService {
         outPayment.setPaymentAmount(amountToUse);
         outPayment.setPaymentDate(payment.getPaymentDate());
         outPayment.setPaymentType(payment.getPaymentType());
+        outPayment.setExternallyAssociated(false);
         outPayment.setPaymentWay(payment.getPaymentWay());
+
         addOrUpdatePayment(outPayment);
         return outPayment;
     }
@@ -519,7 +521,7 @@ public class PaymentServiceImpl implements PaymentService {
 
         if (refundAmount == paymentAmount) {
             generateWaitingAccountAccountingRecords = false;
-            accountingRecordService.generateAccountingRecordsForRefund(refund);
+            accountingRecordService.generateAccountingRecordsForRefundOnVirement(refund);
 
             refund.setIsMatched(true);
             refundService.addOrUpdateRefund(refund);

@@ -32,9 +32,7 @@ import com.jss.osiris.modules.quotation.model.Announcement;
 import com.jss.osiris.modules.quotation.model.AnnouncementSearch;
 import com.jss.osiris.modules.quotation.model.AnnouncementSearchResult;
 import com.jss.osiris.modules.quotation.model.AnnouncementStatus;
-import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
-import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.repository.AnnouncementRepository;
 
 @Service
@@ -204,106 +202,90 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     }
 
     @Override
-    public void generateStoreAndSendPublicationReceipt(CustomerOrder customerOrder)
+    public void generateStoreAndSendPublicationReceipt(CustomerOrder customerOrder, Announcement announcement)
             throws OsirisException, OsirisClientMessageException {
-
-        ArrayList<Announcement> annoucementToGenerate = new ArrayList<Announcement>();
-
-        if (customerOrder != null && customerOrder.getAssoAffaireOrders() != null) {
-            for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
-                if (asso.getProvisions() != null)
-                    for (Provision provision : asso.getProvisions())
-                        // Generate only for JSS Spel
-                        if (provision.getAnnouncement() != null && provision.getAnnouncement().getConfrere().getId()
-                                .equals(constantService.getConfrereJssSpel().getId())) {
-                            annoucementToGenerate.add(provision.getAnnouncement());
-                        }
-
-            if (annoucementToGenerate.size() > 0) {
-                for (Announcement announcement : annoucementToGenerate) {
-                    // Check if publication receipt already exists
-                    boolean publicationReceiptExists = false;
-                    if (announcement.getAttachments() != null)
-                        for (Attachment attachment : announcement.getAttachments())
-                            if (attachment.getAttachmentType().getId()
-                                    .equals(constantService.getAttachmentTypePublicationReceipt().getId()))
-                                publicationReceiptExists = true;
-
-                    if (!publicationReceiptExists) {
-                        File publicationReceiptPdf = mailHelper.generatePublicationReceiptPdf(announcement, true);
-                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
-                        try {
-                            announcement.setAttachments(
-                                    attachmentService.addAttachment(new FileInputStream(publicationReceiptPdf),
-                                            announcement.getId(),
-                                            Announcement.class.getSimpleName(),
-                                            constantService.getAttachmentTypePublicationReceipt(),
-                                            "Publication_receipt_" + formatter.format(LocalDateTime.now()) + ".pdf",
-                                            false, "Attestation de parution n°" + announcement.getId()));
-                        } catch (FileNotFoundException e) {
-                            throw new OsirisException(e, "Impossible to read invoice PDF temp file");
-                        } finally {
-                            publicationReceiptPdf.delete();
-                        }
-                    }
+        if (announcement.getIsPublicationReciptAlreadySent() == null
+                || !announcement.getIsPublicationReciptAlreadySent()) {
+            if (announcement.getConfrere() != null
+                    && announcement.getConfrere().getId().equals(constantService.getConfrereJssSpel().getId())) {
+                File publicationReceiptPdf = mailHelper.generatePublicationReceiptPdf(announcement, true);
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
+                try {
+                    announcement.setAttachments(
+                            attachmentService.addAttachment(new FileInputStream(publicationReceiptPdf),
+                                    announcement.getId(),
+                                    Announcement.class.getSimpleName(),
+                                    constantService.getAttachmentTypePublicationReceipt(),
+                                    "Publication_receipt_" + formatter.format(LocalDateTime.now()) + ".pdf",
+                                    false, "Attestation de parution n°" + announcement.getId()));
+                } catch (FileNotFoundException e) {
+                    throw new OsirisException(e, "Impossible to read invoice PDF temp file");
+                } finally {
+                    publicationReceiptPdf.delete();
                 }
             }
 
             // Try to send whereas it was JSS or not
-            mailHelper.sendPublicationReceiptToCustomer(customerOrderService.getCustomerOrder(customerOrder.getId()),
-                    false);
+            mailHelper.sendPublicationReceiptToCustomer(
+                    customerOrderService.getCustomerOrder(customerOrder.getId()),
+                    false, announcement);
+
+            announcement.setIsPublicationReciptAlreadySent(true);
+            addOrUpdateAnnouncement(announcement);
+        }
+
+    }
+
+    @Override
+    public void generateStoreAndSendPublicationFlag(CustomerOrder customerOrder, Announcement announcement)
+            throws OsirisException, OsirisClientMessageException {
+
+        if (announcement.getPublicationDate().isBefore(LocalDate.now())
+                || announcement.getPublicationDate().isEqual(LocalDate.now())) {
+            if ((announcement.getIsPublicationFlagAlreadySent() == null
+                    || !announcement.getIsPublicationFlagAlreadySent()) && announcement.getNotice() != null) {
+                if (announcement.getConfrere() != null
+                        && announcement.getConfrere().getId().equals(constantService.getConfrereJssSpel().getId())) {
+                    File publicationReceiptPdf = mailHelper.generatePublicationFlagPdf(announcement);
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
+                    try {
+                        announcement.setAttachments(
+                                attachmentService.addAttachment(new FileInputStream(publicationReceiptPdf),
+                                        announcement.getId(),
+                                        Announcement.class.getSimpleName(),
+                                        constantService.getAttachmentTypePublicationFlag(),
+                                        "Publication_flag_" + formatter.format(LocalDateTime.now()) + ".pdf",
+                                        false, "Témoin de publication n°" + announcement.getId()));
+                    } catch (FileNotFoundException e) {
+                        throw new OsirisException(e, "Impossible to read invoice PDF temp file");
+                    } finally {
+                        publicationReceiptPdf.delete();
+                    }
+                }
+                mailHelper.sendPublicationFlagToCustomer(customerOrder, false, announcement);
+                announcement.setIsPublicationFlagAlreadySent(true);
+                addOrUpdateAnnouncement(announcement);
+            }
         }
     }
 
     @Override
-    public void generateStoreAndSendPublicationFlag(CustomerOrder customerOrder)
-            throws OsirisException, OsirisClientMessageException {
+    @Transactional(rollbackFor = Exception.class)
+    public void sendPublicationFlagNotSent() throws OsirisException, OsirisClientMessageException {
+        List<Announcement> announcements = announcementRepository.getAnnouncementForPublicationFlagBatch(
+                announcementStatusService.getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_DONE),
+                LocalDate.now());
 
-        ArrayList<Announcement> annoucementToGenerate = new ArrayList<Announcement>();
+        if (announcements != null && announcements.size() > 0)
+            for (Announcement announcement : announcements) {
+                CustomerOrder customerOrder = customerOrderService.getCustomerOrderForAnnouncement(announcement);
+                if (customerOrder == null)
+                    throw new OsirisException(null,
+                            "Impossible to find Customer Order for Announcement n°" + announcement.getId());
 
-        if (customerOrder != null && customerOrder.getAssoAffaireOrders() != null) {
-            for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
-                if (asso.getProvisions() != null)
-                    for (Provision provision : asso.getProvisions())
-                        // Only for JSS SPEL
-                        if (provision.getAnnouncement() != null
-                                && provision.getAnnouncement().getIsPublicationFlagAlreadySent() == null
-                                && provision.getAnnouncement().getConfrere().getId()
-                                        .equals(constantService.getConfrereJssSpel().getId()))
-                            annoucementToGenerate.add(provision.getAnnouncement());
-
-            if (annoucementToGenerate.size() > 0) {
-                for (Announcement announcement : annoucementToGenerate) {
-                    // Check if publication receipt already exists
-                    boolean publicationFlagExists = false;
-                    if (announcement.getAttachments() != null)
-                        for (Attachment attachment : announcement.getAttachments())
-                            if (attachment.getAttachmentType().getId()
-                                    .equals(constantService.getAttachmentTypePublicationFlag().getId()))
-                                publicationFlagExists = true;
-
-                    if (!publicationFlagExists && announcement.getNotice() != null) {
-                        File publicationReceiptPdf = mailHelper.generatePublicationFlagPdf(announcement);
-                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
-                        try {
-                            announcement.setAttachments(
-                                    attachmentService.addAttachment(new FileInputStream(publicationReceiptPdf),
-                                            announcement.getId(),
-                                            Announcement.class.getSimpleName(),
-                                            constantService.getAttachmentTypePublicationFlag(),
-                                            "Publication_flag_" + formatter.format(LocalDateTime.now()) + ".pdf",
-                                            false, "Témoin de publication n°" + announcement.getId()));
-                        } catch (FileNotFoundException e) {
-                            throw new OsirisException(e, "Impossible to read invoice PDF temp file");
-                        } finally {
-                            publicationReceiptPdf.delete();
-                        }
-                    }
-                }
-                mailHelper.sendPublicationFlagToCustomer(customerOrder, false);
+                generateStoreAndSendPublicationFlag(customerOrderService.getCustomerOrderForAnnouncement(announcement),
+                        announcement);
             }
-        }
-
     }
 
     @Override

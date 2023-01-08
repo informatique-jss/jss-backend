@@ -141,8 +141,13 @@ export class AnnouncementComponent implements OnInit {
 
   getFormStatus(): boolean {
     this.announcementForm.markAllAsTouched();
-    if (this.announcement && this.announcement.notice == null) {
+    console.log(this.announcementForm);
+    if (this.announcement && this.announcement.notice == null && !this.isStatusOpen && this.instanceOfCustomerOrder) {
       this.appService.displaySnackBar("Le texte de l'annonce est obligatoire", true, 15);
+      return false;
+    }
+    if (this.announcement && (!this.announcement.noticeTypes || this.announcement.noticeTypes.length == 0) && !this.isStatusOpen && this.instanceOfCustomerOrder) {
+      this.appService.displaySnackBar("La rubrique de l'annonce est obligatoire", true, 15);
       return false;
     }
     if (this.announcement && this.announcement.notice)

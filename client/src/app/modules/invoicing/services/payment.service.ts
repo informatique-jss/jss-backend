@@ -21,11 +21,6 @@ export class PaymentService extends AppRestService<Payment>{
     return this.getById("payment", paymentId);
   }
 
-  // TODO : à retirer avant la MEP !!
-  addOrUpdatePayment(payment: Payment) {
-    return this.addOrUpdate(new HttpParams(), "payment", payment, "Enregistré", "Erreur lors de l'enregistrement");
-  }
-
   associatePaymentAndInvoiceAndCustomerOrder(paymentAssociate: PaymentAssociate) {
     return this.postList(new HttpParams(), "payments/associate", paymentAssociate, "Association réalisée avec succès", "Erreur lors de l'association");
   }

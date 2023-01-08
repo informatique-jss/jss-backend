@@ -195,32 +195,30 @@ public class CustomerMailServiceImpl implements CustomerMailService {
         boolean canSend = true;
         MimeMessage message = mailHelper.generateGenericMail(mail);
 
-        if (mailDomainFilter != null && !mailDomainFilter.equals("")) {
-            Address[] recipients;
-            try {
-                recipients = message.getRecipients(Message.RecipientType.TO);
-            } catch (MessagingException e) {
-                throw new OsirisException(e, "Unable to find recipients To for mail " + mail.getId());
-            }
-            if (recipients != null)
-                for (Address address : recipients) {
-                    String[] chunk = address.toString().split("@");
-                    if (chunk.length != 2 || !chunk[1].equals(mailDomainFilter))
-                        canSend = false;
-                }
-            try {
-                recipients = message.getRecipients(Message.RecipientType.CC);
-            } catch (MessagingException e) {
-                throw new OsirisException(e, "Unable to find recipients Cc for mail " + mail.getId());
-            }
-            if (recipients != null)
-                for (Address address : recipients) {
-                    String[] chunk = address.toString().split("@");
-                    if (chunk.length != 2
-                            || !chunk[1].toLowerCase().trim().equals(mailDomainFilter.toLowerCase().trim()))
-                        canSend = false;
-                }
+        Address[] recipients;
+        try {
+            recipients = message.getRecipients(Message.RecipientType.TO);
+        } catch (MessagingException e) {
+            throw new OsirisException(e, "Unable to find recipients To for mail " + mail.getId());
         }
+        if (recipients != null && mailDomainFilter != null && !mailDomainFilter.equals(""))
+            for (Address address : recipients) {
+                String[] chunk = address.toString().split("@");
+                if (chunk.length != 2 || !chunk[1].equals(mailDomainFilter))
+                    canSend = false;
+            }
+        try {
+            recipients = message.getRecipients(Message.RecipientType.CC);
+        } catch (MessagingException e) {
+            throw new OsirisException(e, "Unable to find recipients Cc for mail " + mail.getId());
+        }
+        if (recipients != null)
+            for (Address address : recipients) {
+                String[] chunk = address.toString().split("@");
+                if (chunk.length != 2
+                        || !chunk[1].toLowerCase().trim().equals(mailDomainFilter.toLowerCase().trim()))
+                    canSend = false;
+            }
 
         if (canSend)
             mailHelper.getMailSender().send(message);

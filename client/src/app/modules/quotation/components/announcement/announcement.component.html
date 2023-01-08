@@ -17,7 +17,7 @@
               <td>
                 <autocomplete-confrere [(model)]="announcement.confrere" [form]="announcementForm"
                   propertyName="confrere" [isMandatory]="true" [isDisabled]="!editMode"
-                  [filteredDepartments]="announcement.department" (onOptionSelected)="updateHeaderFree()">
+                  [filteredDepartment]="announcement.department" (onOptionSelected)="updateHeaderFree()">
                 </autocomplete-confrere>
               </td>
               <td>
@@ -96,6 +96,22 @@
                 <generic-input *ngIf="false" [(model)]="announcement.journalPages" label="Page(s) dans le journal"
                   [form]="announcementForm" propertyName="journalPages" [isMandatory]="false"
                   [isDisabled]="!editMode  && !canEditJournal()" [maxLength]="250"></generic-input>
+              </td>
+            </tr>
+          </table>
+          <table class="full-width">
+            <tr>
+              <td *ngIf="announcement.confrere && announcement.confrere.id !=confrereJssSpel.id ">
+                <single-attachment [entity]=" announcement!" [entityType]="ANNOUNCEMENT_ENTITY_TYPE.entityType"
+                  [editMode]="editMode" [attachmentTypeToDisplay]="attachmentTypePublicationReceipt"
+                  (onUploadedFile)="updateAttachments($event)">
+                </single-attachment>
+              </td>
+              <td *ngIf="announcement.confrere && announcement.confrere.id !=confrereJssSpel.id">
+                <single-attachment [entity]=" announcement!" [entityType]="ANNOUNCEMENT_ENTITY_TYPE.entityType"
+                  [editMode]="editMode" [attachmentTypeToDisplay]="attachmentTypePublicationFlag"
+                  (onUploadedFile)="updateAttachments($event)">
+                </single-attachment>
               </td>
             </tr>
           </table>
@@ -180,24 +196,6 @@
               <td
                 *ngIf="announcement.confrere!=undefined && announcement.department!=undefined && announcement.publicationDate!=undefined">
                 Prix total : {{countCharacterNumber()*characterPrice.price | number}} €
-              </td>
-            </tr>
-          </table>
-          <table class="full-width">
-            <tr>
-              <td
-                *ngIf="announcement.confrere && announcement.confrere.id !=confrereJssPaper.id   && announcement.confrere.journalType.id == journalTypePaper.id">
-                <single-attachment [entity]="announcement!" [entityType]="ANNOUNCEMENT_ENTITY_TYPE.entityType"
-                  [editMode]="editMode" [attachmentTypeToDisplay]="attachmentTypePublicationReceipt"
-                  (onUploadedFile)="updateAttachments($event)">
-                </single-attachment>
-              </td>
-              <td
-                *ngIf="announcement.confrere && announcement.confrere.id !=confrereJssSpel.id && announcement.confrere.journalType.id == journalTypeSpel.id">
-                <single-attachment [entity]="announcement!" [entityType]="ANNOUNCEMENT_ENTITY_TYPE.entityType"
-                  [editMode]="editMode" [attachmentTypeToDisplay]="attachmentTypePublicationFlag"
-                  (onUploadedFile)="updateAttachments($event)">
-                </single-attachment>
               </td>
             </tr>
           </table>

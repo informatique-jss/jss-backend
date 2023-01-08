@@ -66,4 +66,9 @@ public interface AnnouncementRepository extends CrudRepository<Announcement, Int
         List<Announcement> getAnnouncementByStatusAndPublicationDateMin(
                         @Param("announcementStatus") AnnouncementStatus announcementStatus,
                         @Param("publicationDate") LocalDate publicationDate, @Param("confrere") Confrere confrere);
+
+        @Query("select a from Announcement a where a.announcementStatus=:announcementStatus and publicationDate is not null and publicationDate<=:publicationDate and isPublicationFlagAlreadySent=false ")
+        List<Announcement> getAnnouncementForPublicationFlagBatch(
+                        @Param("announcementStatus") AnnouncementStatus announcementStatus,
+                        @Param("publicationDate") LocalDate publicationDate);
 }

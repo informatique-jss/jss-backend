@@ -2,6 +2,7 @@ package com.jss.osiris.modules.quotation.repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -51,5 +52,8 @@ public interface CustomerOrderRepository extends CrudRepository<CustomerOrder, I
         @Query(value = "select n from CustomerOrder n where customerOrderStatus=:customerOrderStatus and thirdReminderDateTime is null ")
         List<CustomerOrder> findCustomerOrderForReminder(
                         @Param("customerOrderStatus") CustomerOrderStatus customerOrderStatus);
+
+        @Query(value = "select c.* from customer_order c where exists (select 1 from asso_affaire_order a join provision p on p.id_asso_affaire_order = a.id where a.id_customer_order = c.id and  p.id_announcement = :announcementId)", nativeQuery = true)
+        Optional<CustomerOrder> findCustomerOrderForAnnouncement(@Param("announcementId") Integer announcementId);
 
 }

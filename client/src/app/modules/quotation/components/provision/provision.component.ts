@@ -3,7 +3,8 @@ import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
 import { ActivatedRoute } from '@angular/router';
-import { CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN } from 'src/app/libs/Constants';
+import { ANNOUNCEMENT_STATUS_DONE, ANNOUNCEMENT_STATUS_IN_PROGRESS, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN } from 'src/app/libs/Constants';
+import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
 import { WorkflowDialogComponent } from 'src/app/modules/miscellaneous/components/workflow-dialog/workflow-dialog.component';
 import { AppService } from 'src/app/services/app.service';
 import { IWorkflowElement } from '../../../miscellaneous/model/IWorkflowElement';
@@ -19,11 +20,13 @@ import { SimpleProvisionStatus } from '../../model/SimpleProvisonStatus';
 import { AnnouncementService } from '../../services/announcement.service';
 import { AnnouncementStatusService } from '../../services/announcement.status.service';
 import { AssoAffaireOrderService } from '../../services/asso.affaire.order.service';
+import { AttachmentTypeMailQueryService } from '../../services/attachment-type-mail-query.service';
 import { BodaccStatusService } from '../../services/bodacc.status.service';
 import { DomiciliationStatusService } from '../../services/domiciliation-status.service';
 import { FormaliteStatusService } from '../../services/formalite.status.service';
 import { ProvisionService } from '../../services/provision.service';
 import { SimpleProvisionStatusService } from '../../services/simple.provision.status.service';
+import { SelectAttachmentTypeDialogComponent } from '../select-attachment-type-dialog/select-attachment-type-dialog.component';
 
 @Component({
   selector: 'provision',
@@ -60,10 +63,13 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     private provisionService: ProvisionService,
     public workflowDialog: MatDialog,
     private appService: AppService,
+    public confirmationDialog: MatDialog,
+    public attachmentTypeDialog: MatDialog,
     private constantService: ConstantService,
     private formaliteStatusService: FormaliteStatusService,
     private bodaccStatusService: BodaccStatusService,
     private announcementService: AnnouncementService,
+    private attachmentTypeMailQueryService: AttachmentTypeMailQueryService,
     private domiciliationStatusService: DomiciliationStatusService,
     private simpleProvisionStatusService: SimpleProvisionStatusService,
     private announcementStatusService: AnnouncementStatusService,
@@ -198,8 +204,51 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
   }
 
   changeStatus(status: IWorkflowElement, provision: Provision) {
-    if (provision.announcement)
+    let saveAsso = true;
+    if (provision.announcement) {
       provision.announcement.announcementStatus = status;
+      if (status.code == ANNOUNCEMENT_STATUS_IN_PROGRESS) {
+        saveAsso = false;
+        const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
+          maxWidth: "400px",
+          data: {
+            title: "Envoyer le attestation de parution ?",
+            content: "Voulez vous envoyer le attestation de parution pour cette annonce ?",
+            closeActionText: "Envoyer",
+            validationActionText: "Ne pas envoyer"
+          }
+        });
+
+        dialogRef.afterClosed().subscribe(dialogResult => {
+          if (dialogResult == true || dialogResult == false) {
+            if (provision.announcement) {
+              provision.announcement.isPublicationReciptAlreadySent = dialogResult;
+            }
+          }
+          this.saveAsso();
+        });
+      } else if (status.code == ANNOUNCEMENT_STATUS_DONE) {
+        saveAsso = false;
+        const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
+          maxWidth: "400px",
+          data: {
+            title: "Envoyer le témoin de publication ?",
+            content: "Voulez vous envoyer le témoin de publication pour cette annonce ?",
+            closeActionText: "Envoyer",
+            validationActionText: "Ne pas envoyer"
+          }
+        });
+
+        dialogRef.afterClosed().subscribe(dialogResult => {
+          if (dialogResult == true || dialogResult == false) {
+            if (provision.announcement) {
+              provision.announcement.isPublicationFlagAlreadySent = dialogResult;
+            }
+          }
+          this.saveAsso();
+        });
+      }
+    }
     if (provision.formalite)
       provision.formalite.formaliteStatus = status;
     if (provision.simpleProvision)
@@ -208,7 +257,9 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
       provision.bodacc.bodaccStatus = status;
     if (provision.domiciliation)
       provision.domiciliation.domiciliationStatus = status;
-    this.saveAsso();
+
+    if (saveAsso)
+      this.saveAsso();
   }
 
 
@@ -228,8 +279,8 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     this.announcementService.previewPublicationFlag(announcement);
   }
 
-  generatePublicationReceiptMail() {
-    this.announcementService.generatePublicationReceiptMail(this.asso.customerOrder).subscribe();
+  generatePublicationReceiptMail(announcement: Announcement) {
+    this.announcementService.generatePublicationReceiptMail(this.asso.customerOrder, announcement).subscribe();
   }
 
   generatePublicationFlagMail() {
@@ -242,5 +293,17 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
       && this.asso.customerOrder.customerOrderStatus.code != CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT)
       return true;
     return false;
+  }
+
+  generateAttachmentQueryMail() {
+    const dialogRef = this.attachmentTypeDialog.open(SelectAttachmentTypeDialogComponent, {
+      maxWidth: "1000px",
+    });
+
+    dialogRef.afterClosed().subscribe(dialogResult => {
+      if (dialogResult && this.currentProvisionWorkflow) {
+        this.attachmentTypeMailQueryService.generateAttachmentTypeMail(dialogResult, this.asso.customerOrder, this.currentProvisionWorkflow).subscribe(response => { });
+      }
+    });
   }
 }

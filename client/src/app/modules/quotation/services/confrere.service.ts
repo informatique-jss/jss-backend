@@ -1,6 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AppRestService } from 'src/app/services/appRest.service';
+import { Department } from '../../miscellaneous/model/Department';
 import { Confrere } from '../../quotation/model/Confrere';
 
 @Injectable({
@@ -14,6 +15,13 @@ export class ConfrereService extends AppRestService<Confrere>{
 
   getConfreres() {
     return this.getListCached(new HttpParams(), "confreres");
+  }
+
+  getConfrereFilteredByDepartmentAndName(department: Department | undefined, label: string) {
+    let params = new HttpParams();
+    if (department)
+      params = params.set("departmentId", (department ? department.id : null) + "");
+    return this.getList(params.set("label", label), "confreres/search");
   }
 
   addOrUpdateConfrere(confrere: Confrere) {

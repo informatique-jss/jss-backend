@@ -170,6 +170,7 @@ public class RefundServiceImpl implements RefundService {
         refund.setIsAlreadyExported(false);
         refund.setRefundDateTime(LocalDateTime.now());
         this.addOrUpdateRefund(refund);
+        accountingRecordService.generateAccountingRecordsForRefundOnGeneration(refund);
     }
 
     @Override

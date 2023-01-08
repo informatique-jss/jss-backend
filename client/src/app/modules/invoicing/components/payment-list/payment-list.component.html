@@ -37,31 +37,6 @@
     </table>
     <sort-table [actions]="tableAction" [columns]="displayedColumns" [values]="payments" tableName="Paiements">
     </sort-table>
-    <div *ngIf="!isForDashboard && paymentSearch">
-      <h2>Ajouter un paiement (pour tests)</h2>
-      <table class="full-width table-fixed-layout">
-        <tr>
-          <td>
-            <select-payment-way-one [(model)]="currentPayment.paymentWay" label="Sens du paiement" [form]="paymentForm"
-              propertyName="paymentWay" [isMandatory]="true" [isDisabled]="false"></select-payment-way-one>
-          </td>
-          <td>
-            <generic-input [(model)]="currentPayment.label" label="Libellé du paiement" [form]="paymentForm2"
-              propertyName="label" [isMandatory]="true" [isDisabled]="false" [maxLength]="200"></generic-input>
-          </td>
-          <td>
-            <generic-input [(model)]="currentPayment.paymentAmount" label="Montant" [form]="paymentForm2"
-              propertyName="paymentAmount" [isMandatory]="true" [isDisabled]="false" type="number"></generic-input>
-          </td>
-          <td>
-            <button mat-mini-fab color="warn" matTooltip="Ajouter le paiement" (click)="addPayment()"
-              class="add-button">
-              <mat-icon>add</mat-icon>
-            </button>
-          </td>
-        </tr>
-      </table>
-    </div>
   </div>
 </div>
 <button *ngIf="!isForDashboard && canImportOfxFile()" matTooltip="Importer un relevé de compte (format OFX)" mat-fab

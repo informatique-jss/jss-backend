@@ -1,19 +1,20 @@
-import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { Observable } from 'rxjs';
 import { Confrere } from 'src/app/modules/quotation/model/Confrere';
 import { ConfrereService } from 'src/app/modules/quotation/services/confrere.service';
 import { UserNoteService } from 'src/app/services/user.notes.service';
 import { Department } from '../../../model/Department';
 import { ConfrereDialogComponent } from '../../confreres-dialog/confreres-dialog.component';
-import { GenericLocalAutocompleteComponent } from '../generic-local-autocomplete/generic-local-autocomplete.component';
+import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-autocomplete.component';
 
 @Component({
   selector: 'autocomplete-confrere',
   templateUrl: './autocomplete-confrere.component.html',
-  styleUrls: ['./autocomplete-confrere.component.css']
+  styleUrls: ['../generic-autocomplete/generic-autocomplete.component.css'],
 })
-export class AutocompleteConfrereComponent extends GenericLocalAutocompleteComponent<Confrere> implements OnInit {
+export class AutocompleteConfrereComponent extends GenericAutocompleteComponent<Confrere, Confrere> implements OnInit {
 
   types: Confrere[] = [] as Array<Confrere>;
 
@@ -23,67 +24,30 @@ export class AutocompleteConfrereComponent extends GenericLocalAutocompleteCompo
 */
   @Input() label: string = "Support";
 
-  @Input() filteredDepartments: Department | undefined;
+  @Input() filteredDepartment: Department | undefined;
 
   constructor(private formBuild: UntypedFormBuilder, private confrereService: ConfrereService, public confrereDialog: MatDialog, private userNoteService2: UserNoteService,) {
     super(formBuild, userNoteService2)
   }
 
-  filterEntities(types: Confrere[], value: string): Confrere[] {
-    const filterValue = (value != undefined && value != null && value.toLowerCase != undefined) ? value.toLowerCase() : "";
-    return types.filter(confrere =>
-      confrere.label != undefined
-      && (confrere.label.toLowerCase().includes(filterValue)));
-  }
-
-  ngOnChanges(changes: SimpleChanges) {
-    super.ngOnChanges(changes);
-    if (changes.filteredDepartments) {
-      if (this.filteredDepartments) {
-        let filteredConfrere = [];
-        for (let confrere of this.types)
-          if (confrere.departments)
-            for (let department of confrere.departments)
-              if (this.filteredDepartments.id == department.id)
-                filteredConfrere.push(confrere);
-        this.types = filteredConfrere;
-      }
-    }
-  }
-
-  initTypes(): void {
-    this.confrereService.getConfreres().subscribe(response => {
-      this.types = response;
-      if (this.filteredDepartments) {
-        let filteredConfrere = [];
-        for (let confrere of this.types)
-          if (confrere.departments)
-            for (let department of confrere.departments)
-              if (this.filteredDepartments.id == department.id)
-                filteredConfrere.push(confrere);
-        this.types = filteredConfrere;
-      }
-    })
-  }
-
   displayLabel(object: Confrere): string {
-    return object ? object.label + " " + object.journalType.label : '';
+    return object ? object.label + " (" + object.journalType.label + ')' : '';
+  }
+
+  searchEntities(value: string): Observable<Confrere[]> {
+    return this.confrereService.getConfrereFilteredByDepartmentAndName(this.filteredDepartment, value);
   }
 
   openConfrereDialog() {
     let dialogConfrere = this.confrereDialog.open(ConfrereDialogComponent, {
       width: '100%'
     });
-    if (this.filteredDepartments)
-      dialogConfrere.componentInstance.filteredDepartments = this.filteredDepartments;
+    if (this.filteredDepartment)
+      dialogConfrere.componentInstance.filteredDepartments = this.filteredDepartment;
     dialogConfrere.afterClosed().subscribe(response => {
       if (response && response != null)
         this.model! = response;
       this.optionSelected(this.model!);
     });
-  }
-
-  public displayConfrere(object: Confrere): string {
-    return object ? object.label : '';
   }
 }

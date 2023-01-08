@@ -150,16 +150,4 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
       this.searchPayments();
     });
   }
-
-  // TODO : à retirer avant la MEP !!
-  currentPayment = {} as Payment;
-  paymentForm2 = this.formBuilder.group({
-  });
-  addPayment() {
-    this.currentPayment.isExternallyAssociated = false;
-    this.paymentService.addOrUpdatePayment(this.currentPayment).subscribe(response => {
-      this.searchPayments();
-      this.currentPayment = {} as Payment;
-    })
-  }
 }

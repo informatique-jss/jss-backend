@@ -244,7 +244,8 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                 if (announcement.getAnnouncementStatus() != null) {
                     if (announcement.getAnnouncementStatus().getCode()
                             .equals(AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS)) {
-                        announcementService.generateStoreAndSendPublicationReceipt((CustomerOrder) customerOrder);
+                        announcementService.generateStoreAndSendPublicationReceipt((CustomerOrder) customerOrder,
+                                announcement);
                     }
                     if (publicationProofFound && announcement.getAnnouncementStatus().getCode()
                             .equals(AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE_PUBLISHED))
@@ -258,7 +259,8 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                     }
 
                     if (announcement.getAnnouncementStatus().getCode().equals(AnnouncementStatus.ANNOUNCEMENT_DONE)) {
-                        announcementService.generateStoreAndSendPublicationFlag((CustomerOrder) customerOrder);
+                        announcementService.generateStoreAndSendPublicationFlag((CustomerOrder) customerOrder,
+                                announcement);
                     }
                 }
 

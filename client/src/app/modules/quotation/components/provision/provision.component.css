@@ -10,3 +10,7 @@
   white-space: nowrap;
   padding-right: 10px;
 }
+
+::ng-deep.mat-menu-panel {
+  max-width: none !important;
+}

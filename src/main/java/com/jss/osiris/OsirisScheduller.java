@@ -181,6 +181,15 @@ public class OsirisScheduller {
 		}
 	}
 
+	@Scheduled(cron = "${schedulling.announcement.publication.flag}")
+	private void sendPublicationFlagNotSent() {
+		try {
+			announcementService.sendPublicationFlagNotSent();
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e, null);
+		}
+	}
+
 	@Scheduled(initialDelay = 1000, fixedDelay = 1000000000)
 	private void updateAllStatusEntityReferentials() {
 		try {

@@ -25,8 +25,8 @@ export class AnnouncementService extends AppRestService<Announcement>{
     this.previewFileGet(new HttpParams().set("idAnnouncement", announcement.id + ""), "publication/flag/download");
   }
 
-  generatePublicationReceiptMail(customerOrder: CustomerOrder) {
-    return this.getList(new HttpParams().set("idCustomerOrder", customerOrder.id), "mail/generate/publication/receipt", "Mail envoyé !", "Erreur lors de l'envoi du mail");
+  generatePublicationReceiptMail(customerOrder: CustomerOrder, announcement: Announcement) {
+    return this.getList(new HttpParams().set("idCustomerOrder", customerOrder.id).set("idAnnouncement", announcement.id), "mail/generate/publication/receipt", "Mail envoyé !", "Erreur lors de l'envoi du mail");
   }
 
   generatePublicationFlagMail(customerOrder: CustomerOrder) {

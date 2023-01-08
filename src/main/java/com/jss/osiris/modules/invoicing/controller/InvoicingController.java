@@ -112,25 +112,6 @@ public class InvoicingController {
         return new ResponseEntity<PaymentWay>(paymentWayService.addOrUpdatePaymentWay(paymentWays), HttpStatus.OK);
     }
 
-    // TODO : à retirer avant la MEP, seulement pour test !
-    @PostMapping(inputEntryPoint + "/payment")
-    public ResponseEntity<Payment> addOrUpdatePayment(@RequestBody Payment payment)
-            throws OsirisValidationException, OsirisException, OsirisClientMessageException {
-        Payment outPayment;
-        if (payment.getId() != null)
-            validationHelper.validateReferential(payment, true, "payment");
-        validationHelper.validateString(payment.getLabel(), true, "label");
-        validationHelper.validateFloat(payment.getPaymentAmount(), true, "code");
-        validationHelper.validateReferential(payment.getPaymentWay(), true, "paymentWay");
-
-        payment.setPaymentDate(LocalDateTime.now());
-        payment.setPaymentType(constantService.getPaymentTypeVirement());
-        outPayment = paymentService.addOrUpdatePayment(payment);
-        paymentService.payementGrab();
-
-        return new ResponseEntity<Payment>(outPayment, HttpStatus.OK);
-    }
-
     @GetMapping(inputEntryPoint + "/payment")
     public ResponseEntity<Payment> getPaymentById(@RequestParam Integer id) throws OsirisValidationException {
         if (id == null)

@@ -30,8 +30,11 @@
             box-shadow: 2px 2px 3px #9e9e9e;
         }
 
-        .picture-table img {
-            width: 350px
+        .picture-table {
+            width: 350px;
+            color: rgb(38, 61, 83);
+            font-weight: bolder;
+            font-size: xx-large;
         }
 
         .habilitation-table {
@@ -78,10 +81,10 @@
                 </td>
             </tr>
             <tr>
-                <td style="padding-left: 10px; padding-right : 10px; padding-top : 7px">
+                <td style="padding-left: 50px; padding-right : 50px; padding-top : 7px">
                     <table class="date-table full-width">
                         <tr>
-                            <td class="center">www.jss.fr le <span th:text="${date}"></span></td>
+                            <td class="center">Pour le <span th:text="${date}"></span></td>
                         </tr>
                     </table>
                 </td>
@@ -90,7 +93,7 @@
                 <td>
                     <table class="picture-table full-width">
                         <tr>
-                            <td class="center"><img th:src="@{classpath:/images/jss-logo.png}" src="picture.png" /></td>
+                            <td class="center">www.jss.fr</td>
                         </tr>
                     </table>
                 </td>

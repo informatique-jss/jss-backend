@@ -62,6 +62,7 @@ import com.jss.osiris.modules.quotation.model.AnnouncementStatus;
 import com.jss.osiris.modules.quotation.model.AssignationType;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrderSearchResult;
+import com.jss.osiris.modules.quotation.model.AttachmentTypeMailQuery;
 import com.jss.osiris.modules.quotation.model.Bodacc;
 import com.jss.osiris.modules.quotation.model.BodaccFusion;
 import com.jss.osiris.modules.quotation.model.BodaccFusionAbsorbedCompany;
@@ -730,6 +731,16 @@ public class QuotationController {
   @GetMapping(inputEntryPoint + "/confreres")
   public ResponseEntity<List<Confrere>> getConfreres() {
     return new ResponseEntity<List<Confrere>>(confrereService.getConfreres(), HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/confreres/search")
+  public ResponseEntity<List<Confrere>> getConfreres(@RequestParam(required = false) Integer departmentId,
+      @RequestParam String label) {
+    Department department = null;
+    if (departmentId != null)
+      department = departmentService.getDepartment(departmentId);
+    return new ResponseEntity<List<Confrere>>(
+        confrereService.searchConfrereFilteredByDepartmentAndName(department, label), HttpStatus.OK);
   }
 
   @PostMapping(inputEntryPoint + "/confrere")
@@ -1990,32 +2001,62 @@ public class QuotationController {
   }
 
   @GetMapping(inputEntryPoint + "/mail/generate/publication/receipt")
-  public ResponseEntity<CustomerOrder> generatePublicationReceiptMail(@RequestParam Integer idCustomerOrder)
+  public ResponseEntity<CustomerOrder> generatePublicationReceiptMail(@RequestParam Integer idCustomerOrder,
+      @RequestParam Integer idAnnouncement)
       throws OsirisException, OsirisValidationException, OsirisClientMessageException {
     CustomerOrder customerOrder = customerOrderService.getCustomerOrder(idCustomerOrder);
     if (customerOrder == null)
       throw new OsirisValidationException("customerOrder");
+
+    Announcement announcement = announcementService.getAnnouncement(idAnnouncement);
+    if (announcement == null)
+      throw new OsirisValidationException("announcement");
 
     MailComputeResult mailComputeResult = mailComputeHelper.computeMailForPublicationReceipt(customerOrder);
     if (mailComputeResult.getRecipientsMailTo() == null || mailComputeResult.getRecipientsMailTo().size() == 0)
       throw new OsirisValidationException("MailTo");
 
-    mailHelper.sendPublicationReceiptToCustomer(customerOrder, true);
+    mailHelper.sendPublicationReceiptToCustomer(customerOrder, true, announcement);
     return new ResponseEntity<CustomerOrder>(customerOrder, HttpStatus.OK);
   }
 
-  @GetMapping(inputEntryPoint + "/mail/generate/publication/flag")
-  public ResponseEntity<CustomerOrder> generatePublicationFlagMail(@RequestParam Integer idCustomerOrder)
+  @PostMapping(inputEntryPoint + "/mail/generate/attachment")
+  public ResponseEntity<Boolean> generateAttachmentTypeMail(@RequestBody AttachmentTypeMailQuery query,
+      @RequestParam Integer idCustomerOrder, @RequestParam Integer idProvision)
       throws OsirisException, OsirisValidationException, OsirisClientMessageException {
     CustomerOrder customerOrder = customerOrderService.getCustomerOrder(idCustomerOrder);
     if (customerOrder == null)
       throw new OsirisValidationException("customerOrder");
 
+    Provision provision = provisionService.getProvision(idProvision);
+    if (provision == null)
+      throw new OsirisValidationException("provision");
+
+    MailComputeResult mailComputeResult = mailComputeHelper.computeMailForPublicationReceipt(customerOrder);
+    if (mailComputeResult.getRecipientsMailTo() == null || mailComputeResult.getRecipientsMailTo().size() == 0)
+      throw new OsirisValidationException("MailTo");
+
+    mailHelper.sendCustomerOrderAttachmentTypeQueryToCustomer(customerOrder, provision, query);
+    return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/mail/generate/publication/flag")
+  public ResponseEntity<CustomerOrder> generatePublicationFlagMail(@RequestParam Integer idCustomerOrder,
+      @RequestParam Integer idAnnouncement)
+      throws OsirisException, OsirisValidationException, OsirisClientMessageException {
+    CustomerOrder customerOrder = customerOrderService.getCustomerOrder(idCustomerOrder);
+    if (customerOrder == null)
+      throw new OsirisValidationException("customerOrder");
+
+    Announcement announcement = announcementService.getAnnouncement(idAnnouncement);
+    if (announcement == null)
+      throw new OsirisValidationException("announcement");
+
     MailComputeResult mailComputeResult = mailComputeHelper.computeMailForPublicationFlag(customerOrder);
     if (mailComputeResult.getRecipientsMailTo() == null || mailComputeResult.getRecipientsMailTo().size() == 0)
       throw new OsirisValidationException("MailTo");
 
-    mailHelper.sendPublicationFlagToCustomer(customerOrder, true);
+    mailHelper.sendPublicationFlagToCustomer(customerOrder, true, announcement);
     return new ResponseEntity<CustomerOrder>(customerOrder, HttpStatus.OK);
   }
 }

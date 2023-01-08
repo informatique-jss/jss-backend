@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
-import { CUSTOMER_ORDER_STATUS_OPEN, INVOICING_PAYMENT_LIMIT_REFUND_EUROS } from 'src/app/libs/Constants';
+import { CUSTOMER_ORDER_STATUS_ABANDONED, CUSTOMER_ORDER_STATUS_OPEN, INVOICING_PAYMENT_LIMIT_REFUND_EUROS } from 'src/app/libs/Constants';
 import { getDocument } from 'src/app/libs/DocumentHelper';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
@@ -201,6 +201,13 @@ export class AssociatePaymentDialogComponent implements OnInit {
         this.appService.displaySnackBar("Veuillez choisir une commande du même donneur d'ordre que les autres éléments associés au paiement", true, 15);
         return;
       }
+
+      let orderAs = order as CustomerOrder;
+      if (orderAs && orderAs.customerOrderStatus && orderAs.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_ABANDONED) {
+        this.appService.displaySnackBar("Il est impossible de choisir une commande abandonnée", true, 15);
+        return;
+      }
+
       let amountDialogRef = this.amountDialog.open(AmountDialogComponent, {
         width: '35%'
       });

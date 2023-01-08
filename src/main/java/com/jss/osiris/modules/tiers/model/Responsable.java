@@ -138,6 +138,8 @@ public class Responsable implements ITiers, IAttachment {
 	private List<Phone> phones;
 
 	@OneToMany(mappedBy = "responsable", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonIgnoreProperties(value = { "mailsCCResponsableClient", "mailsCCResponsableAffaire",
+			"responsable" }, allowSetters = true)
 	private List<Document> documents;
 
 	@OneToMany(mappedBy = "responsable")

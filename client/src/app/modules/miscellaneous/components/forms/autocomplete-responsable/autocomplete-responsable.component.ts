@@ -25,6 +25,11 @@ export class AutocompleteResponsableComponent extends GenericAutocompleteCompone
     if (!responsable || !responsable.text)
       return "";
     let text = JSON.parse(responsable.text);
-    return text.firstname + " " + text.lastname;
+    let label = text.firstname + " " + text.lastname;
+    if (text.tiers && text.tiers.denomination)
+      label += " (" + text.tiers.denomination + ")";
+    else if (text.tiers && text.tiers.firstname)
+      label += " (" + text.tiers.firstname + " " + text.tiers.lastname + ")";
+    return label;
   }
 }

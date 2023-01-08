@@ -70,7 +70,8 @@ public class DepositServiceImpl implements DepositService {
 
     @Override
     public Deposit getNewDepositForInvoice(Float depositAmount, LocalDateTime depositDatetime, Invoice invoice,
-            Integer overrideAccountingOperationId, Payment payment) throws OsirisException {
+            Integer overrideAccountingOperationId, Payment payment, boolean isFromOriginPayment)
+            throws OsirisException {
         Deposit deposit = new Deposit();
         deposit.setDepositAmount(depositAmount);
         deposit.setDepositDate(depositDatetime);
@@ -80,13 +81,14 @@ public class DepositServiceImpl implements DepositService {
         deposit = addOrUpdateDeposit(deposit);
         deposit.setInvoice(invoice);
         accountingRecordService.generateAccountingRecordsForDepositOnInvoice(deposit, invoice,
-                overrideAccountingOperationId);
+                overrideAccountingOperationId, isFromOriginPayment);
         return getDeposit(deposit.getId());
     }
 
     @Override
     public Deposit getNewDepositForCustomerOrder(Float depositAmount, LocalDateTime depositDatetime,
-            CustomerOrder customerOrder, Integer overrideAccountingOperationId, Payment payment)
+            CustomerOrder customerOrder, Integer overrideAccountingOperationId, Payment payment,
+            boolean isFromOriginPayment)
             throws OsirisException {
         Deposit deposit = new Deposit();
         deposit.setDepositAmount(depositAmount);
@@ -97,7 +99,7 @@ public class DepositServiceImpl implements DepositService {
         deposit.setCustomerOrder(customerOrder);
         deposit = addOrUpdateDeposit(deposit);
         accountingRecordService.generateAccountingRecordsForDepositAndCustomerOrder(deposit, customerOrder,
-                overrideAccountingOperationId);
+                overrideAccountingOperationId, isFromOriginPayment);
         return getDeposit(deposit.getId());
     }
 
@@ -106,7 +108,7 @@ public class DepositServiceImpl implements DepositService {
             Invoice toInvoice) throws OsirisException {
         cancelDeposit(deposit);
         getNewDepositForInvoice(deposit.getDepositAmount(), LocalDateTime.now(), toInvoice, null,
-                deposit.getOriginPayment());
+                deposit.getOriginPayment(), false);
     }
 
     @Override
@@ -115,7 +117,7 @@ public class DepositServiceImpl implements DepositService {
 
         cancelDeposit(deposit);
         getNewDepositForCustomerOrder(deposit.getDepositAmount(), LocalDateTime.now(), toCustomerOrder, null,
-                deposit.getOriginPayment());
+                deposit.getOriginPayment(), false);
 
     }
 
@@ -155,7 +157,7 @@ public class DepositServiceImpl implements DepositService {
                                 byPassAmount.get(i));
 
                 getNewDepositForInvoice(remainingToPayForInvoice, LocalDateTime.now(), invoice, deposit.getId(),
-                        deposit.getOriginPayment());
+                        deposit.getOriginPayment(), true);
 
                 remainingToPayForInvoice = Math.min(invoiceService.getRemainingAmountToPayForInvoice(invoice),
                         byPassAmount.get(i));
@@ -175,7 +177,7 @@ public class DepositServiceImpl implements DepositService {
                         byPassAmount.get(i + correspondingInvoiceSize));
 
                 getNewDepositForCustomerOrder(remainingToPayForCustomerOrder, LocalDateTime.now(), customerOrder,
-                        deposit.getId(), null);
+                        deposit.getId(), null, true);
 
                 // Try unlocked customer order
                 customerOrderService.unlockCustomerOrderFromDeposit(correspondingCustomerOrder.get(i));

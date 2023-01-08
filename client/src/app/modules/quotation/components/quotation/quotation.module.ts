@@ -50,6 +50,7 @@ import { ProvisionOptionsComponent } from '../provision-options/provision-option
 import { ProvisionComponent } from '../provision/provision.component';
 import { QuotationListComponent } from '../quotation-list/quotation-list.component';
 import { QuotationManagementComponent } from '../quotation-management/quotation-management.component';
+import { SelectAttachmentTypeDialogComponent } from '../select-attachment-type-dialog/select-attachment-type-dialog.component';
 import { SimpleProvisionComponent } from '../simple-provision/simple-provision.component';
 import { QuotationComponent } from './quotation.component';
 
@@ -135,6 +136,7 @@ const routes: Routes = [
     SimpleProvisionComponent,
     AffaireListComponent,
     AffaireComponent,
+    SelectAttachmentTypeDialogComponent,
     AddAffaireComponent,
     // Guichet unique
     ContentComponent,

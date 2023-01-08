@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.modules.quotation.model.Announcement;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.OrderingSearch;
 import com.jss.osiris.modules.quotation.model.OrderingSearchResult;
@@ -12,6 +13,8 @@ import com.jss.osiris.modules.quotation.model.centralPay.CentralPayPaymentReques
 
 public interface CustomerOrderService {
         public CustomerOrder getCustomerOrder(Integer id);
+
+        public CustomerOrder getCustomerOrderForAnnouncement(Announcement announcement);
 
         public CustomerOrder checkAllProvisionEnded(CustomerOrder customerOrderIn)
                         throws OsirisException, OsirisClientMessageException;

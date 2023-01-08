@@ -19,6 +19,8 @@ export interface Announcement extends IAttachment, IDocument {
   isHeader: boolean;
   isHeaderFree: boolean;
   isProofReadingDocument: boolean;
+  isPublicationFlagAlreadySent: boolean;
+  isPublicationReciptAlreadySent: boolean;
   announcementStatus: AnnouncementStatus;
   journal: Journal;
   journalPages: string;

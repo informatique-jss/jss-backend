@@ -364,24 +364,28 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
   @Override
   public void generateAccountingRecordsForDepositOnInvoice(Deposit deposit, Invoice invoice,
-      Integer overrideAccountingOperationId) throws OsirisException {
+      Integer overrideAccountingOperationId, boolean isFromOriginPayment) throws OsirisException {
     AccountingAccount customerAccountingAccount = getCustomerAccountingAccountForInvoice(invoice);
+    AccountingJournal journal = isFromOriginPayment ? constantService.getAccountingJournalBank()
+        : constantService.getAccountingJournalMiscellaneousOperations();
 
     Integer operationId = deposit.getId();
     if (overrideAccountingOperationId != null)
       operationId = overrideAccountingOperationId;
     generateNewAccountingRecord(LocalDateTime.now(), operationId, null, null,
         "Acompte pour la facture n°" + invoice.getId(), deposit.getDepositAmount(), null, customerAccountingAccount,
-        null, invoice, null, constantService.getAccountingJournalMiscellaneousOperations(), null, deposit);
+        null, invoice, null, journal, null, deposit);
     checkInvoiceForLettrage(invoice);
   }
 
   @Override
   public void generateAccountingRecordsForDepositAndCustomerOrder(Deposit deposit, CustomerOrder customerOrder,
-      Integer overrideAccountingOperationId) throws OsirisException {
+      Integer overrideAccountingOperationId, boolean isFromOriginPayment) throws OsirisException {
 
     AccountingAccount depositAccountingAccount = getDepositAccountingAccountForCustomerOrder(
         quotationService.getCustomerOrderOfQuotation(customerOrder));
+    AccountingJournal journal = isFromOriginPayment ? constantService.getAccountingJournalBank()
+        : constantService.getAccountingJournalMiscellaneousOperations();
 
     // If deposit is created from a payment, use the payment ID as operation ID to
     // keep the balance to 0 for a same operationID
@@ -392,7 +396,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     generateNewAccountingRecord(LocalDateTime.now(), operationId, null, null,
         "Acompte pour la commande n°" + customerOrder.getId(), deposit.getDepositAmount(), null,
         depositAccountingAccount,
-        null, null, customerOrder, constantService.getAccountingJournalMiscellaneousOperations(), null, deposit);
+        null, null, customerOrder, journal, null, deposit);
   }
 
   @Override
@@ -526,7 +530,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   }
 
   @Override
-  public void generateAccountingRecordsForRefund(Refund refund) throws OsirisException {
+  public void generateAccountingRecordsForRefundOnVirement(Refund refund) throws OsirisException {
     AccountingJournal bankJournal = constantService.getAccountingJournalBank();
     AccountingAccount customerAccountingAccount = null;
     if (refund.getConfrere() != null) {
@@ -540,6 +544,20 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     generateNewAccountingRecord(LocalDateTime.now(), refund.getId(), null, null, "Remboursement n°" + refund.getId(),
         null, refund.getRefundAmount(), customerAccountingAccount, null, null, null,
         bankJournal, null, null);
+  }
+
+  @Override
+  public void generateAccountingRecordsForRefundOnGeneration(Refund refund) throws OsirisException {
+    AccountingJournal salesJournal = constantService.getAccountingJournalSales();
+    AccountingAccount customerAccountingAccount = null;
+    if (refund.getConfrere() != null) {
+      customerAccountingAccount = getCustomerAccountingAccountForITiers(refund.getConfrere());
+    } else {
+      customerAccountingAccount = getCustomerAccountingAccountForITiers(refund.getTiers());
+    }
+    generateNewAccountingRecord(LocalDateTime.now(), refund.getId(), null, null, "Remboursement n°" + refund.getId(),
+        refund.getRefundAmount(), null, customerAccountingAccount, null, null, null,
+        salesJournal, null, null);
   }
 
   @Override

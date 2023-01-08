@@ -151,6 +151,15 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     }
 
     @Override
+    public CustomerOrder getCustomerOrderForAnnouncement(Announcement announcement) {
+        Optional<CustomerOrder> customerOrder = customerOrderRepository
+                .findCustomerOrderForAnnouncement(announcement.getId());
+        if (customerOrder.isPresent())
+            return customerOrder.get();
+        return null;
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public CustomerOrder addOrUpdateCustomerOrderFromUser(CustomerOrder customerOrder)
             throws OsirisException, OsirisClientMessageException {
@@ -690,7 +699,20 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             }
         }
 
-        Float remainingToPay = getRemainingAmountToPayForCustomerOrder(customerOrder);
+        Float remainingToPay = 0f;
+
+        if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BILLED)) {
+            if (customerOrder.getInvoices() != null)
+                for (Invoice invoice : customerOrder.getInvoices())
+                    if (invoice.getInvoiceStatus().getId()
+                            .equals(constantService.getInvoiceStatusSend().getId())) {
+                        remainingToPay = invoiceService.getRemainingAmountToPayForInvoice(invoice);
+                        break;
+                    }
+        } else {
+            remainingToPay = getRemainingAmountToPayForCustomerOrder(customerOrder);
+        }
+
         if (remainingToPay > 0) {
             CentralPayPaymentRequest paymentRequest = centralPayDelegateService.generatePayPaymentRequest(
                     getRemainingAmountToPayForCustomerOrder(customerOrder), mail,
@@ -744,7 +766,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         Payment payment = getCentralPayPayment(centralPayPaymentRequest);
 
         Deposit deposit = depositService.getNewDepositForCustomerOrder(payment.getPaymentAmount(), LocalDateTime.now(),
-                customerOrder, null, payment);
+                customerOrder, null, payment, true);
 
         deposit.setCustomerOrder(customerOrder);
         depositService.addOrUpdateDeposit(deposit);

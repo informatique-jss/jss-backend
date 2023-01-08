@@ -84,7 +84,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     private ResponseEntity<Object> validationOtherException(Exception exception,
             WebRequest request) {
-        persistLog(exception, OsirisLog.UNHANDLED_LOG);
+        if (!exception.getMessage().contains("Relais brisé (pipe)")
+                && !exception.getMessage().contains("Connexion ré-initialisée par le correspondant"))
+            persistLog(exception, OsirisLog.UNHANDLED_LOG);
         List<String> customHeaders = new ArrayList<String>();
         customHeaders.add("error");
         HttpHeaders header = new HttpHeaders();
