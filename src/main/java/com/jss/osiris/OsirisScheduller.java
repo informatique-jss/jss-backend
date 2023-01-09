@@ -1,7 +1,5 @@
 package com.jss.osiris;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -12,23 +10,15 @@ import org.springframework.stereotype.Service;
 
 import com.jss.osiris.libs.GlobalExceptionHandler;
 import com.jss.osiris.libs.mail.CustomerMailService;
-import com.jss.osiris.modules.accounting.model.AccountingAccountTrouple;
-import com.jss.osiris.modules.accounting.service.AccountingAccountService;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.invoicing.service.PaymentService;
-import com.jss.osiris.modules.miscellaneous.model.Provider;
-import com.jss.osiris.modules.miscellaneous.repository.ProviderRepository;
 import com.jss.osiris.modules.miscellaneous.service.NotificationService;
-import com.jss.osiris.modules.miscellaneous.service.ProviderService;
 import com.jss.osiris.modules.profile.service.EmployeeService;
-import com.jss.osiris.modules.quotation.model.Confrere;
-import com.jss.osiris.modules.quotation.repository.ConfrereRepository;
 import com.jss.osiris.modules.quotation.service.AnnouncementService;
 import com.jss.osiris.modules.quotation.service.AnnouncementStatusService;
 import com.jss.osiris.modules.quotation.service.AssignationTypeService;
 import com.jss.osiris.modules.quotation.service.BodaccStatusService;
-import com.jss.osiris.modules.quotation.service.ConfrereService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderStatusService;
 import com.jss.osiris.modules.quotation.service.DomiciliationStatusService;
@@ -37,9 +27,6 @@ import com.jss.osiris.modules.quotation.service.ProvisionScreenTypeService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.quotation.service.QuotationStatusService;
 import com.jss.osiris.modules.quotation.service.SimpleProvisionStatusService;
-import com.jss.osiris.modules.tiers.model.Tiers;
-import com.jss.osiris.modules.tiers.repository.TiersRepository;
-import com.jss.osiris.modules.tiers.service.TiersService;
 
 @Service
 @ConditionalOnProperty(value = "schedulling.enabled", matchIfMissing = false, havingValue = "true")
@@ -214,90 +201,6 @@ public class OsirisScheduller {
 			bodaccStatusService.updateStatusReferential();
 			assignationTypeService.updateAssignationTypes();
 			provisionScreenTypeService.updateScreenTypes();
-		} catch (Exception e) {
-			globalExceptionHandler.handleExceptionOsiris(e, null);
-		}
-	}
-
-	// TODO delete
-	@Autowired
-	TiersService tiersService;
-
-	@Autowired
-	ProviderService providerService;
-
-	@Autowired
-	ConfrereService confrereService;
-
-	@Autowired
-	AccountingAccountService accountingAccountService;
-
-	@Autowired
-	ConfrereRepository confrereRepository;
-
-	@Autowired
-	ProviderRepository providerRepository;
-
-	@Autowired
-	TiersRepository tiersRepository;
-
-	@Scheduled(initialDelay = 1000, fixedDelay = 1000000000)
-	private void updateAccontingAccount() {
-		try {
-			List<Provider> providers = providerService.getProviders();
-			if (providers != null)
-				for (Provider provider : providers)
-					if (provider.getAccountingAccountCustomer() == null
-							&& provider.getAccountingAccountDeposit() == null
-							&& provider.getAccountingAccountProvider() == null) {
-						AccountingAccountTrouple accountingAccountCouple = accountingAccountService
-								.generateAccountingAccountsForEntity(provider.getLabel());
-						provider.setAccountingAccountCustomer(accountingAccountCouple.getAccountingAccountCustomer());
-						provider.setAccountingAccountProvider(accountingAccountCouple.getAccountingAccountProvider());
-						provider.setAccountingAccountDeposit(accountingAccountCouple.getAccountingAccountDeposit());
-						providerRepository.save(provider);
-					}
-
-			List<Confrere> confreres = confrereService.getConfreres();
-			for (Confrere confrere : confreres)
-				if (confrere.getAccountingAccountCustomer() == null && confrere.getAccountingAccountDeposit() == null
-						&& confrere.getAccountingAccountProvider() == null) {
-
-					AccountingAccountTrouple accountingAccountCouple = accountingAccountService
-							.generateAccountingAccountsForEntity(confrere.getLabel());
-					confrere.setAccountingAccountCustomer(accountingAccountCouple.getAccountingAccountCustomer());
-					confrere.setAccountingAccountProvider(accountingAccountCouple.getAccountingAccountProvider());
-					confrere.setAccountingAccountDeposit(accountingAccountCouple.getAccountingAccountDeposit());
-					confrereRepository.save(confrere);
-
-				}
-
-			List<Tiers> tiers = tiersService.getTiers();
-			int i = 0;
-			for (Tiers tier : tiers) {
-				i++;
-				System.out.println(i);
-				if (tier.getAccountingAccountCustomer() == null && tier.getAccountingAccountDeposit() == null
-						&& tier.getAccountingAccountProvider() == null) {
-					String label = "";
-					if (tier.getIsIndividual()) {
-						label = tier.getFirstname() + " " + tier.getLastname();
-					} else {
-						label = tier.getDenomination();
-					}
-
-					try {
-						AccountingAccountTrouple accountingAccountCouple = accountingAccountService
-								.generateAccountingAccountsForEntity(label);
-						tier.setAccountingAccountCustomer(accountingAccountCouple.getAccountingAccountCustomer());
-						tier.setAccountingAccountProvider(accountingAccountCouple.getAccountingAccountProvider());
-						tier.setAccountingAccountDeposit(accountingAccountCouple.getAccountingAccountDeposit());
-						tiersRepository.save(tier);
-					} catch (Exception e) {
-					}
-				}
-			}
-
 		} catch (Exception e) {
 			globalExceptionHandler.handleExceptionOsiris(e, null);
 		}
