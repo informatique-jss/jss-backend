@@ -2,6 +2,7 @@ package com.jss.osiris.modules.quotation.model;
 
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -32,7 +33,7 @@ public class SimpleProvision implements IId, IAttachment {
 	@Column(columnDefinition = "TEXT")
 	private String observations;
 
-	@OneToMany(mappedBy = "simpleProvision")
+	@OneToMany(mappedBy = "simpleProvision", cascade = CascadeType.REMOVE)
 	@JsonIgnoreProperties(value = { "simpleProvision" }, allowSetters = true)
 	private List<Attachment> attachments;
 

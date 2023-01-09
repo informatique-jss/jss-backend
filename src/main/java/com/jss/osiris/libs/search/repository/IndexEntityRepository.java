@@ -40,4 +40,7 @@ public interface IndexEntityRepository extends CrudRepository<IndexEntity, Integ
         @Query("select e from IndexEntity e where e.entityType in (:entityTypeToSearch) and entityId = :id")
         List<IndexEntity> searchForEntitiesByIdAndEntityType(@Param("id") Integer id,
                         @Param("entityTypeToSearch") List<String> entityTypeToSearch);
+
+        @Query("select e from IndexEntity e where  entityId = :id")
+        List<IndexEntity> searchForEntitiesById(@Param("id") Integer id);
 }

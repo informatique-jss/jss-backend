@@ -120,7 +120,8 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
         assoAffaireOrder = completeAssoAffaireOrder(assoAffaireOrder, assoAffaireOrder.getCustomerOrder());
         assoAffaireOrder.setCustomerOrder(assoAffaireOrder.getCustomerOrder());
         AssoAffaireOrder affaireSaved = assoAffaireOrderRepository.save(assoAffaireOrder);
-        indexEntityService.indexEntity(affaireSaved, affaireSaved.getId());
+        if (affaireSaved.getCustomerOrder() != null)
+            indexEntityService.indexEntity(affaireSaved, affaireSaved.getId());
         customerOrderService.checkAllProvisionEnded(assoAffaireOrder.getCustomerOrder());
         return affaireSaved;
     }

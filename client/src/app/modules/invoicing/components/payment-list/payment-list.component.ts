@@ -144,7 +144,7 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
     });
     this.uploadAttachementDialogRef.componentInstance.entity = { id: 1 } as IAttachment;
     this.uploadAttachementDialogRef.componentInstance.entityType = OFX_ENTITY_TYPE.entityType;
-    this.uploadAttachementDialogRef.componentInstance.forcedAttachmentType = this.constantService.getAttachmentTypeCni();
+    this.uploadAttachementDialogRef.componentInstance.forcedAttachmentType = this.constantService.getAttachmentTypeBillingClosure();
     this.uploadAttachementDialogRef.componentInstance.replaceExistingAttachementType = true;
     this.uploadAttachementDialogRef.afterClosed().subscribe(response => {
       this.searchPayments();

@@ -174,4 +174,9 @@ public class TiersServiceImpl implements TiersService {
         return tiersRepository.findByTiersType(constantService.getTiersTypeClient());
     }
 
+    @Override
+    public List<Tiers> getTiers() {
+        return IterableUtils.toList(tiersRepository.findAll());
+    }
+
 }

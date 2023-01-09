@@ -133,6 +133,12 @@ public class InvoiceHelper {
             invoiceLabelResult.setIsCommandNumberMandatory(billingDocument.getIsCommandNumberMandatory());
             invoiceLabelResult.setCommandNumber(billingDocument.getCommandNumber());
             invoiceLabelResult.setLabelOrigin("les informations de l'affaire");
+
+            if (orderingCustomer instanceof Responsable && billingDocument.getIsResponsableOnBilling()) {
+                String labelResult = ((Responsable) orderingCustomer).getFirstname() + " "
+                        + ((Responsable) orderingCustomer).getLastname();
+                invoiceLabelResult.setBillingLabel(invoiceLabelResult.getBillingLabel() + " - " + labelResult);
+            }
         } else {
             ITiers usedOrderingCustomer = null;
 

@@ -31,7 +31,7 @@ public class Formalite implements IId, IAttachment {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @OneToMany(mappedBy = "formalite")
+    @OneToMany(mappedBy = "formalite", cascade = CascadeType.REMOVE)
     @JsonIgnoreProperties(value = { "formalite" }, allowSetters = true)
     private List<Attachment> attachments;
 

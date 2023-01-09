@@ -60,9 +60,6 @@ public class SireneDelegateServiceImpl implements SireneDelegateService {
 		} catch (Exception e) {
 			if (e.getMessage().contains("Connection timed out"))
 				throw new OsirisClientMessageException("Service de recherche SIRENE de l'INSEE indisponible !");
-			else if (e.getMessage().contains("Unité légale non diffusable"))
-				throw new OsirisClientMessageException(
-						"Cette société s'est opposée à la diffusion de ses données par le service SIRENE");
 			else
 				throw e;
 		}
@@ -116,6 +113,9 @@ public class SireneDelegateServiceImpl implements SireneDelegateService {
 		} catch (HttpClientErrorException e) {
 			if (e.getMessage() != null && e.getMessage().contains("Aucun élément trouvé pour le siren"))
 				return null;
+			else if (e.getMessage().contains("Unité légale non diffusable"))
+				throw new OsirisClientMessageException(
+						"Cette société s'est opposée à la diffusion de ses données par le service SIRENE");
 			else
 				throw e;
 		} catch (Exception e) {
@@ -143,6 +143,9 @@ public class SireneDelegateServiceImpl implements SireneDelegateService {
 		} catch (HttpClientErrorException e) {
 			if (e.getMessage() != null && e.getMessage().contains("Aucun élément trouvé pour le siren"))
 				return null;
+			else if (e.getMessage().contains("Unité légale non diffusable"))
+				throw new OsirisClientMessageException(
+						"Cette société s'est opposée à la diffusion de ses données par le service SIRENE");
 			else
 				throw e;
 		} catch (Exception e) {

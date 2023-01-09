@@ -55,7 +55,7 @@ public class Bodacc implements IId, IAttachment {
 	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
 	private BodaccSplit bodaccSplit;
 
-	@OneToMany(mappedBy = "bodacc")
+	@OneToMany(mappedBy = "bodacc", cascade = CascadeType.REMOVE)
 	@JsonIgnoreProperties(value = { "bodacc" }, allowSetters = true)
 	private List<Attachment> attachments;
 

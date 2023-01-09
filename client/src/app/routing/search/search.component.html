@@ -43,13 +43,16 @@
                     (click)="openEntity($event, entity)" (auxclick)="openEntity($event, entity)">
                     <mat-card-title-group>
                       <mat-card-title>{{entity.text.firstname}} {{entity.text.lastname}}
-                        {{entity.text.idAs400?"("+entity.text.idAs400+")":""}}</mat-card-title>
+                        ({{entity.text.tiers.denomination?entity.text.tiers.denomination:entity.text.tiers.firstname+"
+                        "+entity.text.tiers.lastname}})
+                      </mat-card-title>
                       <mat-card-subtitle *ngIf="entity.text.salesEmployee">Commercial
                         {{entity.text.salesEmployee.firstname}}
                         {{entity.text.salesEmployee.lastname}}
                         -
-                        {{entity.text.address}} {{entity.text.postalCode}}
-                        {{entity.text.city?entity.text.city.label:""}}
+                        {{entity.text.postalCode}}
+                        {{entity.text.city?entity.text.city.label:""}} -
+                        {{entity.text.idAs400?"("+entity.text.idAs400+")":""}}
                       </mat-card-subtitle>
                       <mat-icon class="mat-card-icon">group</mat-icon>
                     </mat-card-title-group>

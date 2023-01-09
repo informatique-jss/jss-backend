@@ -1,16 +1,14 @@
 package com.jss.osiris.modules.quotation.model;
 
-import java.time.LocalDate;
-
 public class ActuLegaleAnnouncement {
     private Integer id;
     private Integer newspaperId;
     private Integer siren;
     private String companyName;
-    private String comparnyAddress;
+    private String companyAddress;
     private Integer companyZip;
     private String companyCity;
-    private LocalDate parutionDate;
+    private String parutionDate;
     private Integer departementParution;
     private String text;
     private boolean test = true;
@@ -39,14 +37,6 @@ public class ActuLegaleAnnouncement {
         this.companyName = companyName;
     }
 
-    public String getComparnyAddress() {
-        return comparnyAddress;
-    }
-
-    public void setComparnyAddress(String comparnyAddress) {
-        this.comparnyAddress = comparnyAddress;
-    }
-
     public Integer getCompanyZip() {
         return companyZip;
     }
@@ -61,14 +51,6 @@ public class ActuLegaleAnnouncement {
 
     public void setCompanyCity(String companyCity) {
         this.companyCity = companyCity;
-    }
-
-    public LocalDate getParutionDate() {
-        return parutionDate;
-    }
-
-    public void setParutionDate(LocalDate parutionDate) {
-        this.parutionDate = parutionDate;
     }
 
     public Integer getDepartementParution() {
@@ -101,6 +83,22 @@ public class ActuLegaleAnnouncement {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public String getCompanyAddress() {
+        return companyAddress;
+    }
+
+    public void setCompanyAddress(String companyAddress) {
+        this.companyAddress = companyAddress;
+    }
+
+    public String getParutionDate() {
+        return parutionDate;
+    }
+
+    public void setParutionDate(String parutionDate) {
+        this.parutionDate = parutionDate;
     }
 
 }

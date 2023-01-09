@@ -345,6 +345,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             if (remainingToPayForCurrentInvoice < 0) {
                 throw new OsirisException(null, "Impossible to billed, too much money on customerOrder !");
             }
+            accountingRecordService.checkInvoiceForLettrage(invoice);
 
             mailHelper.sendCustomerOrderFinalisationToCustomer(customerOrder, false, false, false);
         }

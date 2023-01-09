@@ -1,5 +1,7 @@
 package com.jss.osiris.libs.search.service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +23,13 @@ public class SearchServiceImpl implements SearchService {
 
     @Override
     public List<IndexEntity> searchForEntities(String search) {
-        List<IndexEntity> entities = indexEntityRepository.searchForEntities(search, maxNumberOfResults);
+        List<IndexEntity> entities = null;
+        try {
+            entities = indexEntityRepository.searchForEntitiesById(Integer.parseInt(search));
+        } catch (Exception e) {
+        }
+        if (entities == null || entities.size() == 0)
+            entities = indexEntityRepository.searchForEntities(search, maxNumberOfResults);
         if (entities == null || entities.size() == 0)
             entities = indexEntityRepository.searchForContainsSimilarEntities(search, maxNumberOfResults);
         if (entities == null || entities.size() == 0)
@@ -31,7 +39,14 @@ public class SearchServiceImpl implements SearchService {
 
     @Override
     public List<IndexEntity> searchForEntities(String search, String entityType) {
-        List<IndexEntity> entities = indexEntityRepository.searchForEntities(search, entityType, maxNumberOfResults);
+        List<IndexEntity> entities = null;
+        try {
+            entities = indexEntityRepository.searchForEntitiesByIdAndEntityType(Integer.parseInt(search),
+                    Arrays.asList(entityType));
+        } catch (Exception e) {
+        }
+        if (entities == null || entities.size() == 0)
+            entities = indexEntityRepository.searchForEntities(search, entityType, maxNumberOfResults);
         if (entities == null || entities.size() == 0)
             entities = indexEntityRepository.searchForContainsSimilarEntities(search, entityType, maxNumberOfResults);
         if (entities == null || entities.size() == 0)
@@ -51,8 +66,14 @@ public class SearchServiceImpl implements SearchService {
 
     @Override
     public List<IndexEntity> getIndividualTiersByKeyword(String searchedValue) {
-        return searchForEntities(searchedValue + "\"isIndividual\"=\"true\"", Tiers.class.getSimpleName());
+        List<IndexEntity> tiers = searchForEntities(searchedValue, Tiers.class.getSimpleName());
+        List<IndexEntity> outTiers = new ArrayList<IndexEntity>();
 
+        if (tiers != null && tiers.size() > 0)
+            for (IndexEntity entity : tiers) {
+                if (entity.getText() != null && !entity.getText().contains("\"denomination\""))
+                    outTiers.add(entity);
+            }
+        return outTiers;
     }
-
 }

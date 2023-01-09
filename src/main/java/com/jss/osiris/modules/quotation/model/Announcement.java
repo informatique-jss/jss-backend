@@ -72,7 +72,7 @@ public class Announcement implements IId, IAttachment, IDocument {
 	@Column(nullable = false)
 	private Boolean isProofReadingDocument;
 
-	@OneToMany(mappedBy = "announcement")
+	@OneToMany(mappedBy = "announcement", cascade = CascadeType.REMOVE)
 	@JsonIgnoreProperties(value = { "announcement" }, allowSetters = true)
 	private List<Attachment> attachments;
 

@@ -182,8 +182,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     public void publishAnnouncementsToActuLegale() throws OsirisException {
         List<Announcement> announcements = announcementRepository.getAnnouncementByStatusAndPublicationDateMin(
                 announcementStatusService.getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_DONE),
-                LocalDate.now().minusDays(0), constantService.getConfrereJssSpel());
-        // TODO
+                LocalDate.now().minusDays(3), constantService.getConfrereJssSpel());
         if (announcements != null && announcements.size() > 0)
             for (Announcement announcement : announcements) {
                 Integer affaire = announcementRepository.getAffaireForAnnouncement(announcement.getId());
@@ -194,10 +193,11 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                 ActuLegaleAnnouncement actuLegaleAnnouncement = actuLegaleDelegate.publishAnnouncement(announcement,
                         affaireService.getAffaire(affaire));
 
-                announcement.setActuLegaleId(actuLegaleAnnouncement.getId());
-                addOrUpdateAnnouncement(announcement);
                 if (actuLegaleAnnouncement == null || actuLegaleAnnouncement.getId() == null)
                     throw new OsirisException(null, "Impossible to publish announcement n°" + announcement.getId());
+
+                announcement.setActuLegaleId(actuLegaleAnnouncement.getId());
+                addOrUpdateAnnouncement(announcement);
             }
     }
 

@@ -493,7 +493,7 @@ public class TiersController {
 
             validationHelper.validateString(document.getAffaireAddress(), false, 60, "AffaireAddress");
             validationHelper.validateString(document.getClientAddress(), false, 60, "ClientAddress");
-            validationHelper.validateString(document.getAffaireRecipient(), false, 40, "AffaireRecipient");
+            validationHelper.validateString(document.getAffaireRecipient(), false, 100, "AffaireRecipient");
             validationHelper.validateString(document.getClientRecipient(), false, 40, "ClientRecipient");
             validationHelper.validateString(document.getCommandNumber(), false, 40, "CommandNumber");
             validationHelper.validateReferential(document.getPaymentDeadlineType(), false, "PaymentDeadlineType");
