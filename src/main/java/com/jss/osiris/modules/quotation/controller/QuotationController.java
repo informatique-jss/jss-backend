@@ -1192,6 +1192,9 @@ public class QuotationController {
     if (quotation.getResponsable() == null && quotation.getTiers() == null && quotation.getConfrere() == null)
       throw new OsirisValidationException("No customer order");
 
+    if (!quotation.getResponsable().getIsActive()) 
+      throw new OsirisValidationException("No active customer manager");
+
     // Generate missing documents
     Document billingDocument = documentService.getBillingDocument(quotation.getDocuments());
     if (billingDocument == null) {

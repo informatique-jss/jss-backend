@@ -67,7 +67,7 @@ public class IndexEntityServiceImpl implements IndexEntityService {
                         Object fieldResult = getter.invoke(entity);
 
                         if (fieldResult instanceof String || fieldResult instanceof Integer
-                                || fieldResult instanceof LocalDate || fieldResult instanceof LocalDateTime) {
+                                || fieldResult instanceof LocalDate || fieldResult instanceof LocalDateTime  || fieldResult instanceof Boolean) {
                             outObject.put(field.getName(), getter.invoke(entity));
                         } else if (fieldResult instanceof List) {
                             ArrayList<Object> cleanOutList = new ArrayList<Object>();

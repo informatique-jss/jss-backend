@@ -50,6 +50,7 @@ public class Responsable implements ITiers, IAttachment {
 	private Tiers tiers;
 
 	@Column(nullable = false)
+	@IndexedField
 	private Boolean isActive;
 
 	@Column(nullable = false)
