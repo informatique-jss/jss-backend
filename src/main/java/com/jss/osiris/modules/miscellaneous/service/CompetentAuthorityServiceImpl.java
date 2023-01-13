@@ -45,6 +45,14 @@ public class CompetentAuthorityServiceImpl implements CompetentAuthorityService 
     }
 
     @Override
+    public CompetentAuthority getCompetentAuthorityByApiId(String apiId) {
+        Optional<CompetentAuthority> competentAuthority = competentAuthorityRepository.findByApiId(apiId);
+        if (competentAuthority.isPresent())
+            return competentAuthority.get();
+        return null;
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public CompetentAuthority addOrUpdateCompetentAuthority(
             CompetentAuthority competentAuthority) throws OsirisException {
@@ -64,7 +72,7 @@ public class CompetentAuthorityServiceImpl implements CompetentAuthorityService 
         // If phones already exists, get their ids
         if (competentAuthority != null && competentAuthority.getPhones() != null
                 && competentAuthority.getPhones().size() > 0) {
-            phoneService.populateMPhoneIds(competentAuthority.getPhones());
+            phoneService.populatePhoneIds(competentAuthority.getPhones());
         }
 
         // Generate accounting accounts
@@ -78,7 +86,6 @@ public class CompetentAuthorityServiceImpl implements CompetentAuthorityService 
             competentAuthority.setAccountingAccountProvider(accountingAccountCouple.getAccountingAccountProvider());
             competentAuthority.setAccountingAccountDeposit(accountingAccountCouple.getAccountingAccountDeposit());
         }
-
         return competentAuthorityRepository.save(competentAuthority);
     }
 

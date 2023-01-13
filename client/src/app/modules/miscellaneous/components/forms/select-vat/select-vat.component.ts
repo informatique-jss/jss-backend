@@ -7,8 +7,8 @@ import { GenericSelectComponent } from '../generic-select/generic-select.compone
 
 @Component({
   selector: 'select-vat',
-  templateUrl: './select-vat.component.html',
-  styleUrls: ['./select-vat.component.css']
+  templateUrl: './../generic-select/generic-select.component.html',
+  styleUrls: ['./../generic-select/generic-select.component.css']
 })
 export class SelectVatComponent extends GenericSelectComponent<Vat> implements OnInit {
 
@@ -23,4 +23,11 @@ export class SelectVatComponent extends GenericSelectComponent<Vat> implements O
       this.types = response;
     })
   }
+
+  displayLabel(object: Vat): string {
+    if (object)
+      return object.label + " (" + object.accountingAccount.principalAccountingAccount.code + "-" + object.accountingAccount.accountingAccountSubNumber + ")";
+    return "";
+  }
+
 }

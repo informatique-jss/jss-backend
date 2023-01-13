@@ -185,7 +185,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                     if (domiciliation != null
                             && domiciliation.getLegalGardianPhones() != null
                             && domiciliation.getLegalGardianPhones().size() > 0)
-                        phoneService.populateMPhoneIds(domiciliation.getLegalGardianPhones());
+                        phoneService.populatePhoneIds(domiciliation.getLegalGardianPhones());
                 }
 
             }

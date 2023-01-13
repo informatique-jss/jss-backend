@@ -35,6 +35,7 @@ export class SettlementBillingComponent implements OnInit, AfterContentChecked {
   refundTypeVirement = this.constantService.getRefundTypeVirement();
 
   billingLableTypeOther = this.constantService.getBillingLabelTypeOther();
+  billingLabelTypeAffaire = this.constantService.getBillingLabelTypeCodeAffaire();
 
   countryFrance: Country = this.constantService.getCountryFrance();
 

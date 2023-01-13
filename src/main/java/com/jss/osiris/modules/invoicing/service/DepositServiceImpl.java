@@ -3,6 +3,7 @@ package com.jss.osiris.modules.invoicing.service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -122,13 +123,14 @@ public class DepositServiceImpl implements DepositService {
     }
 
     private Deposit cancelDeposit(Deposit deposit) throws OsirisException {
+        Integer operationIdCounterPart = ThreadLocalRandom.current().nextInt(1, 1000000000);
         if (deposit.getAccountingRecords() != null)
             for (AccountingRecord accountingRecord : deposit.getAccountingRecords()) {
-                if (!accountingRecord.getIsCounterPart()
+                if (accountingRecord.getIsCounterPart() == null || !accountingRecord.getIsCounterPart()
                         && !accountingRecord.getAccountingAccount().getPrincipalAccountingAccount().getId()
                                 .equals(constantService.getPrincipalAccountingAccountBank().getId()))
                     accountingRecordService.generateCounterPart(accountingRecord,
-                            constantService.getAccountingJournalMiscellaneousOperations());
+                            constantService.getAccountingJournalMiscellaneousOperations(), operationIdCounterPart);
             }
         deposit.setIsCancelled(true);
         deposit.setCustomerOrder(null);

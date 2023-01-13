@@ -9,6 +9,7 @@ import java.util.Set;
 import org.hibernate.EmptyInterceptor;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.resource.transaction.spi.TransactionStatus;
 import org.hibernate.type.Type;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -127,7 +128,8 @@ public class AuditEntityInterceptor extends EmptyInterceptor {
         synchronized (auditToSave) {
             HashSet<Audit> auditsToDelete = new HashSet<Audit>();
             if (auditToSave != null && auditToSave.size() > 0) {
-                tx.begin();
+                if (!tx.getStatus().equals(TransactionStatus.ACTIVE))
+                    tx.begin();
                 try {
                     for (Audit audit : auditToSave) {
                         auditsToDelete.add(audit);

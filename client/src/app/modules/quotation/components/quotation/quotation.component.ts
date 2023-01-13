@@ -385,7 +385,13 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
             dialogDepositDialogRef.componentInstance.deposit = (this.quotation as CustomerOrder).deposits[0];
             dialogDepositDialogRef.componentInstance.customerOrder = (this.quotation as CustomerOrder);
             dialogDepositDialogRef.afterClosed().subscribe(response => {
-              this.appService.openRoute(null, '/order/' + this.quotation.id, null);
+              if (response)
+                this.customerOrderService.updateCustomerStatus(this.quotation, targetStatus.code).subscribe(response => {
+                  this.quotation = response;
+                  this.appService.openRoute(null, '/order/' + this.quotation.id, null);
+                })
+              else
+                this.appService.openRoute(null, '/order/' + this.quotation.id, null);
             });
           } else
             this.customerOrderService.updateCustomerStatus(this.quotation, targetStatus.code).subscribe(response => {
@@ -625,4 +631,17 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
   getActiveWorkflowElementsForProvision(provision: Provision) {
     return ProvisionComponent.getActiveWorkflowElementsForProvision(provision);
   }
+
+
+  getProvisionLabel(provision: Provision): string {
+    return QuotationComponent.computeProvisionLabel(provision);
+  }
+
+  public static computeProvisionLabel(provision: Provision): string {
+    let label = provision.provisionType ? (provision.provisionFamilyType.label + ' - ' + provision.provisionType.label) : '';
+    if (provision.announcement && provision.announcement.department)
+      label += " - Département " + provision.announcement.department.code;
+    return label;
+  }
+
 }

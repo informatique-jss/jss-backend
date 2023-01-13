@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,11 +95,12 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public Invoice cancelInvoice(Invoice invoice) throws OsirisException {
         unletterInvoice(invoice);
+        Integer operationIdCounterPart = ThreadLocalRandom.current().nextInt(1, 1000000000);
         if (invoice.getAccountingRecords() != null)
             for (AccountingRecord accountingRecord : invoice.getAccountingRecords()) {
                 accountingRecordService.unassociateCustomerOrderPayementAndDeposit(accountingRecord);
-                if (!accountingRecord.getIsCounterPart())
-                    accountingRecordService.generateCounterPart(accountingRecord, null);
+                if (accountingRecord.getIsCounterPart() == null || !accountingRecord.getIsCounterPart())
+                    accountingRecordService.generateCounterPart(accountingRecord, null, operationIdCounterPart);
             }
         invoice.setInvoiceStatus(constantService.getInvoiceStatusCancelled());
         return addOrUpdateInvoice(invoice);

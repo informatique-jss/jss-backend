@@ -81,7 +81,8 @@
                   </td>
                 </tr>
               </table>
-              <table class="full-width">
+              <table class="full-width"
+                *ngIf="billingDocument && billingLabelTypeAffaire &&  billingDocument.billingLabelType && billingDocument.billingLabelType.id!=billingLabelTypeAffaire.id">
                 <tr>
                   <td>
                     <generic-toggle [(model)]="billingDocument.isResponsableOnBilling" label="Responsable sur facture ?"

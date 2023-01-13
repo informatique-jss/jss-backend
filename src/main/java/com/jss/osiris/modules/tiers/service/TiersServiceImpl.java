@@ -79,7 +79,7 @@ public class TiersServiceImpl implements TiersService {
 
         // If phones already exists, get their ids
         if (tiers != null && tiers.getPhones() != null && tiers.getPhones().size() > 0) {
-            phoneService.populateMPhoneIds(tiers.getPhones());
+            phoneService.populatePhoneIds(tiers.getPhones());
         }
 
         // If document mails already exists, get their ids
@@ -126,7 +126,7 @@ public class TiersServiceImpl implements TiersService {
 
                 // If phones already exists, get their ids
                 if (responsable.getPhones() != null && responsable.getPhones().size() > 0) {
-                    phoneService.populateMPhoneIds(responsable.getPhones());
+                    phoneService.populatePhoneIds(responsable.getPhones());
                 }
 
                 if (responsable.getDocuments() != null && responsable.getDocuments().size() > 0) {
@@ -154,6 +154,7 @@ public class TiersServiceImpl implements TiersService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Tiers getTiersByIdResponsable(Integer idResponsable) {
         Responsable responsable = responsableService.getResponsable(idResponsable);
         if (responsable != null)

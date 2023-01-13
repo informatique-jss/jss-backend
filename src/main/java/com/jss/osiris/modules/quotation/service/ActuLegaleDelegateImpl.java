@@ -7,11 +7,13 @@ import java.util.Arrays;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import com.jss.osiris.libs.SSLHelper;
@@ -135,10 +137,22 @@ public class ActuLegaleDelegateImpl implements ActuLegaleDelegate {
         HttpEntity<ActuLegaleAnnouncement> request = new HttpEntity<ActuLegaleAnnouncement>(actuLegaleAnnouncement,
                 headers);
 
-        ResponseEntity<ActuLegaleAnnouncement> response = new RestTemplate().postForEntity(
-                actuLegalePublishEntryPoint + publishUrl, request, ActuLegaleAnnouncement.class);
+        ResponseEntity<ActuLegaleAnnouncement> response = null;
+        ;
+        try {
+            response = new RestTemplate().postForEntity(
+                    actuLegalePublishEntryPoint + publishUrl, request, ActuLegaleAnnouncement.class);
+        } catch (HttpClientErrorException e) {
+            if (e.getStatusCode().equals(HttpStatus.UNPROCESSABLE_ENTITY)) {
+                ActuLegaleAnnouncement actu = new ActuLegaleAnnouncement();
+                actu.setId(1);
+                return actu;
+            } else
+                throw new OsirisException(e,
+                        "Impossible to publish announcement to actu legale n°" + announcement.getId());
+        }
 
-        if (response.getBody() != null) {
+        if (response != null && response.getBody() != null) {
             return response.getBody();
         }
         return null;

@@ -74,6 +74,7 @@ public class AnnouncementStatusServiceImpl implements AnnouncementStatusService 
                 updateStatus(AnnouncementStatus.ANNOUNCEMENT_DONE, "Terminé", "check_small", false, true);
 
                 setSuccessor(AnnouncementStatus.ANNOUNCEMENT_NEW, AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS);
+                setSuccessor(AnnouncementStatus.ANNOUNCEMENT_NEW, AnnouncementStatus.ANNOUNCEMENT_WAITING_DOCUMENT);
                 setSuccessor(AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS,
                                 AnnouncementStatus.ANNOUNCEMENT_WAITING_READ_CUSTOMER);
                 setSuccessor(AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS,
@@ -111,12 +112,8 @@ public class AnnouncementStatusServiceImpl implements AnnouncementStatusService 
                 setPredecessor(AnnouncementStatus.ANNOUNCEMENT_WAITING_READ_CUSTOMER,
                                 AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS);
                 setPredecessor(AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS, AnnouncementStatus.ANNOUNCEMENT_NEW);
-                setPredecessor(AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS,
-                                AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE);
                 setPredecessor(AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE,
                                 AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS);
-                setPredecessor(AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS,
-                                AnnouncementStatus.ANNOUNCEMENT_WAITING_DOCUMENT);
                 setPredecessor(AnnouncementStatus.ANNOUNCEMENT_WAITING_DOCUMENT,
                                 AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS);
 

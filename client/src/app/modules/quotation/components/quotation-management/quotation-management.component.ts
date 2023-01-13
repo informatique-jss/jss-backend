@@ -44,6 +44,7 @@ export class QuotationManagementComponent implements OnInit, AfterContentChecked
 
   countryFrance: Country = this.constantService.getCountryFrance();
   billingLabelTypeOther = this.constantService.getBillingLabelTypeOther();
+  billingLabelTypeAffaire = this.constantService.getBillingLabelTypeCodeAffaire();
   billingDocument: Document = {} as Document;
   digitalDocument: Document = {} as Document;
   paperDocument: Document = {} as Document;
@@ -178,7 +179,7 @@ export class QuotationManagementComponent implements OnInit, AfterContentChecked
     if (!this.isStatusOpen && instanceOfCustomerOrder(this.quotation) && (!this.invoiceLabelResult?.billingLabel || !this.invoiceLabelResult.billingLabelAddress || !this.invoiceLabelResult.billingLabelCity
       || !this.invoiceLabelResult.billingLabelCountry || !this.invoiceLabelResult.billingLabelPostalCode))
       return false;
-    if (!this.isStatusOpen && (!this.billingMailComputeResult || !this.billingMailComputeResult.recipientsMailTo || this.billingMailComputeResult.recipientsMailTo.length == 0
+    if (!this.isStatusOpen && instanceOfCustomerOrder(this.quotation) && (!this.billingMailComputeResult || !this.billingMailComputeResult.recipientsMailTo || this.billingMailComputeResult.recipientsMailTo.length == 0
       || !this.digitalMailComputeResult || !this.digitalMailComputeResult.recipientsMailTo || this.digitalMailComputeResult.recipientsMailTo.length == 0))
       return false;
     return this.quotationManagementForm.valid;

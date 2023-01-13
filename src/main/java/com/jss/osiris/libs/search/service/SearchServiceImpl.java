@@ -25,7 +25,7 @@ public class SearchServiceImpl implements SearchService {
     public List<IndexEntity> searchForEntities(String search) {
         List<IndexEntity> entities = null;
         try {
-            entities = indexEntityRepository.searchForEntitiesById(Integer.parseInt(search));
+            entities = indexEntityRepository.searchForEntitiesById(Integer.parseInt(search.trim()));
         } catch (Exception e) {
         }
         if (entities == null || entities.size() == 0)
@@ -41,7 +41,7 @@ public class SearchServiceImpl implements SearchService {
     public List<IndexEntity> searchForEntities(String search, String entityType) {
         List<IndexEntity> entities = null;
         try {
-            entities = indexEntityRepository.searchForEntitiesByIdAndEntityType(Integer.parseInt(search),
+            entities = indexEntityRepository.searchForEntitiesByIdAndEntityType(Integer.parseInt(search.trim()),
                     Arrays.asList(entityType));
         } catch (Exception e) {
         }

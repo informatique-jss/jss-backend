@@ -34,6 +34,7 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("schedulling.account.receipt.generation.sender");
         isOk = isOk && checkProperty("schedulling.announcement.publish.actu.legale");
         isOk = isOk && checkProperty("schedulling.announcement.publication.flag");
+        isOk = isOk && checkProperty("schedulling.competant.authorities.update");
         isOk = isOk && checkProperty("ldap.dc.level.0");
         isOk = isOk && checkProperty("ldap.dc.level.1");
         isOk = isOk && checkProperty("ldap.ou.osiris");
@@ -63,6 +64,8 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("actu.legale.auth.token");
         isOk = isOk && checkProperty("actu.legale.publish.entry.point");
         isOk = isOk && checkProperty("actu.legale.publish.newpapper.id");
+        isOk = isOk && checkProperty("fr.gouv.etablissements.publics.api.entry.point");
+        isOk = isOk && checkProperty("fr.gouv.geo.api.entry.point");
 
         isOk = isOk && checkAccountingParams();
 

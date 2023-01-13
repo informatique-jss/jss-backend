@@ -317,7 +317,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
             }
         }
 
-        mailHelper.sendProofReadingToCustomer(customerOrder, false);
+        mailHelper.sendProofReadingToCustomer(customerOrder, false, announcement);
     }
 
 }

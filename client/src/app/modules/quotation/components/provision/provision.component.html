@@ -59,8 +59,7 @@
       [expanded]="provision.id==inputProvisionId">
       <mat-expansion-panel-header>
         <mat-panel-title>
-          {{provision.provisionType ? (provision.provisionFamilyType.label +' -
-          '+provision.provisionType.label):''}}
+          {{getProvisionLabel(provision)}}
         </mat-panel-title>
         <mat-panel-description>
           <span class="status-text"
@@ -158,7 +157,7 @@
 </button>
 <mat-menu #menu4="matMenu" style="min-height: 0px;padding: 0;" xPosition="before">
   <button mat-menu-item
-    *ngIf="currentProvisionWorkflow && currentProvisionWorkflow.announcement && currentProvisionWorkflow.announcement.confrere && currentProvisionWorkflow.announcement.confrere.id==confrereJssPaper.id"
+    *ngIf="currentProvisionWorkflow && currentProvisionWorkflow.announcement && currentProvisionWorkflow.announcement.confrere && currentProvisionWorkflow.announcement.confrere.id==confrereJssSpel.id"
     (click)="generatePublicationReceipt(currentProvisionWorkflow.announcement)">
     <span>Générer un justificatif de parution</span>
   </button>
@@ -168,7 +167,7 @@
     <span>Générer une épreuve de relcture</span>
   </button>
   <button mat-menu-item
-    *ngIf="currentProvisionWorkflow && currentProvisionWorkflow.announcement && currentProvisionWorkflow.announcement.confrere && currentProvisionWorkflow.announcement.confrere.journalType.id==journalTypePaper.id"
+    *ngIf="currentProvisionWorkflow && currentProvisionWorkflow.announcement && currentProvisionWorkflow.announcement.confrere && currentProvisionWorkflow.announcement.confrere.journalType.id==journalTypeSpel.id"
     (click)="generatePublicationReceiptMail(currentProvisionWorkflow.announcement)">
     <span>Recevoir le mail d'attestation de parution</span>
   </button>

@@ -71,7 +71,7 @@ export class WorkflowDialogComponent implements OnInit {
         series: [
           {
             type: 'graph',
-            layout: 'force',
+            layout: 'circular',
             zoom: 0.7,
             force: {
               repulsion: 10000

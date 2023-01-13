@@ -24,7 +24,9 @@ public class CompetentAuthority implements Serializable, IId {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "competent_authority_sequence")
 	private Integer id;
 
-	@Column(nullable = false, length = 100)
+	private String apiId;
+
+	@Column(nullable = false, length = 200)
 	private String label;
 
 	@Column(nullable = false, length = 20)
@@ -73,7 +75,7 @@ public class CompetentAuthority implements Serializable, IId {
 	@Column(length = 60)
 	private String mailRecipient;
 
-	@Column(length = 100)
+	@Column(length = 200)
 	private String address;
 
 	@Column(length = 10)
@@ -104,7 +106,7 @@ public class CompetentAuthority implements Serializable, IId {
 
 	private Integer reinvoicing;
 
-	@Column(length = 150)
+	@Column(length = 2000)
 	private String schedulle;
 
 	public Integer getId() {
@@ -305,6 +307,14 @@ public class CompetentAuthority implements Serializable, IId {
 
 	public void setCedexComplement(String cedexComplement) {
 		this.cedexComplement = cedexComplement;
+	}
+
+	public String getApiId() {
+		return apiId;
+	}
+
+	public void setApiId(String apiId) {
+		this.apiId = apiId;
 	}
 
 }

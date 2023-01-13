@@ -9,5 +9,5 @@ public interface PhoneService {
 
     public Phone getPhone(Integer id);
 
-    public void populateMPhoneIds(List<Phone> phones);
+    public List<Phone> populatePhoneIds(List<Phone> phones);
 }

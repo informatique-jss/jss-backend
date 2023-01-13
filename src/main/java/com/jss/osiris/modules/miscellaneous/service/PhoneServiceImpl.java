@@ -31,7 +31,7 @@ public class PhoneServiceImpl implements PhoneService {
     }
 
     @Override
-    public void populateMPhoneIds(List<Phone> phones) {
+    public List<Phone> populatePhoneIds(List<Phone> phones) {
         if (phones != null)
             for (Phone phone : phones) {
                 if (phone.getId() == null) {
@@ -41,5 +41,6 @@ public class PhoneServiceImpl implements PhoneService {
                     phoneRepository.save(phone);
                 }
             }
+        return phones;
     }
 }

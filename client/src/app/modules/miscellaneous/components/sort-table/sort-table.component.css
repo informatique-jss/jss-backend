@@ -46,3 +46,7 @@ td {
 .avatar {
   padding-right: 5px;
 }
+
+.nowrap {
+  white-space: nowrap;
+}

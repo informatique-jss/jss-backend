@@ -16,4 +16,6 @@ public interface CompetentAuthorityService {
     public List<CompetentAuthority> getCompetentAuthorityByDepartment(Integer departmentId, String authority);
 
     public List<CompetentAuthority> getCompetentAuthorityByCity(Integer cityId);
+
+    public CompetentAuthority getCompetentAuthorityByApiId(String apiId);
 }

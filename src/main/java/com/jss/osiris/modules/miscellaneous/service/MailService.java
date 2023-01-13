@@ -9,5 +9,5 @@ public interface MailService {
 
     public Mail getMail(Integer id);
 
-    public void populateMailIds(List<Mail> mails);
+    public List<Mail> populateMailIds(List<Mail> mails);
 }

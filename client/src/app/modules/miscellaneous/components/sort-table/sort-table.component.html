@@ -8,7 +8,7 @@
       <ng-container *ngIf="!column.displayAsGrade && !column.displayAsEmployee">
         <td mat-cell *matCellDef="let element" [matTooltip]="column.isShrinkColumn?getColumnValue(column,element):''"
           [ngClass]="{'td-label':column.isShrinkColumn}">
-          <span [ngClass]="{'color-warn':getIsElementWarnColor(column,element)}">{{getColumnValue(column,
+          <span [ngClass]="{'color-warn':getIsElementWarnColor(column,element)}" class="nowrap">{{getColumnValue(column,
             element)}}
             <mat-icon [matTooltip]="column.actionTooltip" color="accent" class="pointer column-content-icon"
               (click)="openColumnLink($event, column, element)" (auxclick)="openColumnLink($event, column, element)"

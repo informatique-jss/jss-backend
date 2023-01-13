@@ -72,7 +72,7 @@ public class ConfrereServiceImpl implements ConfrereService {
         // If phones already exists, get their ids
         if (confrere != null && confrere.getPhones() != null
                 && confrere.getPhones().size() > 0) {
-            phoneService.populateMPhoneIds(confrere.getPhones());
+            phoneService.populatePhoneIds(confrere.getPhones());
         }
 
         // If document mails already exists, get their ids

@@ -102,7 +102,7 @@ export class ProvisionItemComponent implements OnInit {
     if (this.simpleProvisionComponent)
       status = status && this.simpleProvisionComponent.getFormStatus();
 
-    return status && (this.provisionItemForm.status == "DISABLED" || this.provisionItemForm.valid);
+    return status && (this.provisionItemForm.valid);
   }
 
   provisionItemForm = this.formBuilder.group({
