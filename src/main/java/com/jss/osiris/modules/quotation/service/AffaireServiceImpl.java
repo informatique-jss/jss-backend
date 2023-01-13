@@ -63,7 +63,7 @@ public class AffaireServiceImpl implements AffaireService {
 
         // If phones already exists, get their ids
         if (affaire != null && affaire.getPhones() != null && affaire.getPhones().size() > 0) {
-            phoneService.populateMPhoneIds(affaire.getPhones());
+            phoneService.populatePhoneIds(affaire.getPhones());
         }
 
         Affaire affaireSaved = affaireRepository.save(affaire);

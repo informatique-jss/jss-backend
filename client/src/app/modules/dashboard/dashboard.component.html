@@ -25,8 +25,12 @@
           [isForDashboard]="true"></provision-list>
         <provision-list class="dashboard-box-component" *ngIf="item==AFFAIRE_RESPONSIBLE_TO_DO"
           [affaireSearch]="affaireSearchToDo" [isForDashboard]="true"></provision-list>
+        <provision-list class="dashboard-box-component" *ngIf="item==AFFAIRE_SIMPLE_PROVISION_WAITING_AUTHORITY"
+          [affaireSearch]="affaireSearchWaitingAuthority" [isForDashboard]="true"></provision-list>
+        <provision-list class="dashboard-box-component" *ngIf="item==AFFAIRE_SIMPLE_PROVISION_WAITING_DOCUMENT"
+          [affaireSearch]="affaireSearchWaitingDocument" [isForDashboard]="true"></provision-list>
         <provision-list class="dashboard-box-component" *ngIf="item==AFFAIRE_RESPONSIBLE_IN_PROGRESS"
-          [affaireSearch]="affaireSearchToDo" [isForDashboard]="true"></provision-list>
+          [affaireSearch]="affaireSearchResponsibleInProgress" [isForDashboard]="true"></provision-list>
         <ordering-list class="dashboard-box-component" *ngIf="item==ORDER_OPEN" [orderingSearch]="orderingSearchOpen"
           [isForDashboard]="true"></ordering-list>
         <ordering-list class="dashboard-box-component" *ngIf="item==ORDER_BEING_PROCESSED"

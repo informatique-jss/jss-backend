@@ -49,7 +49,7 @@ public class RegieServiceImpl implements RegieService {
 
         // If phones already exists, get their ids
         if (regie != null && regie.getPhones() != null && regie.getPhones().size() > 0) {
-            phoneService.populateMPhoneIds(regie.getPhones());
+            phoneService.populatePhoneIds(regie.getPhones());
         }
 
         return regieRepository.save(regie);

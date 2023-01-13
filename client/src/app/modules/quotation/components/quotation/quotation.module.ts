@@ -71,6 +71,7 @@ const routes: Routes = [
     RouterModule.forRoot(routes, { onSameUrlNavigation: 'reload' }),
     QuillModule.forRoot({
       modules: {
+        table: true,
         syntax: false,
         toolbar: {
           container: [

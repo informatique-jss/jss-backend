@@ -33,7 +33,7 @@ public interface PaymentService {
 
         public void setExternallyAssociated(Payment payment);
 
-        public void unsetExternallyAssociated(Payment payment);
+        public void unsetExternallyAssociated(Payment payment) throws OsirisException, OsirisClientMessageException;
 
         public List<Attachment> uploadOfxFile(InputStream file) throws OsirisException, OsirisClientMessageException;
 

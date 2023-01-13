@@ -13,6 +13,7 @@ import com.jss.osiris.libs.mail.CustomerMailService;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.invoicing.service.PaymentService;
+import com.jss.osiris.modules.miscellaneous.service.EtablissementPublicsDelegate;
 import com.jss.osiris.modules.miscellaneous.service.NotificationService;
 import com.jss.osiris.modules.profile.service.EmployeeService;
 import com.jss.osiris.modules.quotation.service.AnnouncementService;
@@ -91,6 +92,9 @@ public class OsirisScheduller {
 
 	@Autowired
 	AnnouncementService announcementService;
+
+	@Autowired
+	EtablissementPublicsDelegate etablissementPublicsDelegate;
 
 	@Bean
 	public ThreadPoolTaskScheduler taskExecutor() {
@@ -184,6 +188,15 @@ public class OsirisScheduller {
 	private void sendPublicationFlagNotSent() {
 		try {
 			announcementService.sendPublicationFlagNotSent();
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e, null);
+		}
+	}
+
+	@Scheduled(cron = "${schedulling.competant.authorities.update}")
+	private void updateCompetentAuthorities() {
+		try {
+			etablissementPublicsDelegate.updateCompetentAuthorities();
 		} catch (Exception e) {
 			globalExceptionHandler.handleExceptionOsiris(e, null);
 		}

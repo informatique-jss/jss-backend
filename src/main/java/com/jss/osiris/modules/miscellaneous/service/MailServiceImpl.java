@@ -31,7 +31,7 @@ public class MailServiceImpl implements MailService {
     }
 
     @Override
-    public void populateMailIds(List<Mail> mails) {
+    public List<Mail> populateMailIds(List<Mail> mails) {
         if (mails != null)
             for (Mail mail : mails) {
                 if (mail.getId() == null) {
@@ -42,5 +42,6 @@ public class MailServiceImpl implements MailService {
                     mailRepository.save(mail);
                 }
             }
+        return mails;
     }
 }

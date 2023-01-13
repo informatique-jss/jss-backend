@@ -79,7 +79,7 @@ export class AccountingRecordComponent implements OnInit {
       this.accountingRecordSearch.startDate = new Date();
       this.accountingRecordSearch.endDate = new Date();
       this.tableAction.push({
-        actionIcon: "block", actionName: "Supprimer / contre-passer l'opération", actionClick: (action: SortTableAction, element: any) => {
+        actionIcon: "block", actionName: "Supprimer / contre-passer l'opération", actionClick: (action: SortTableAction, element: AccountingRecordSearchResult) => {
           if (element) {
             let dialogRef = this.deleteAccountingRecordDialog.open(DeleteAccountingRecordDialogComponent, {
               width: '100%'

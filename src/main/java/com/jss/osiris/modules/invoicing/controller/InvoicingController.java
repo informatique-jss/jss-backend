@@ -401,7 +401,7 @@ public class InvoicingController {
 
     @PostMapping(inputEntryPoint + "/payments/unassociate/externally")
     public ResponseEntity<Boolean> unsetExternallyAssociated(@RequestBody Payment payment)
-            throws OsirisValidationException, OsirisException {
+            throws OsirisValidationException, OsirisException, OsirisClientMessageException {
         Payment paymentOut = (Payment) validationHelper.validateReferential(payment, true, "payment");
 
         if (paymentOut.getInvoice() != null)

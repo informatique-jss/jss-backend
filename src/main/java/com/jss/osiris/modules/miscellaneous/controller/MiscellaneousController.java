@@ -796,8 +796,8 @@ public class MiscellaneousController {
         if (competentAuthorities.getId() != null)
             validationHelper.validateReferential(competentAuthorities, true, "competentAuthorities");
         validationHelper.validateString(competentAuthorities.getCode(), true, 20, "code");
-        validationHelper.validateString(competentAuthorities.getLabel(), true, 100, "label");
-        validationHelper.validateString(competentAuthorities.getSchedulle(), false, 150, "Schedulle");
+        validationHelper.validateString(competentAuthorities.getLabel(), true, 200, "label");
+        validationHelper.validateString(competentAuthorities.getSchedulle(), false, 2000, "Schedulle");
         validationHelper.validateReferential(competentAuthorities.getCompetentAuthorityType(), true,
                 "CompetentAuthorityType");
         if (competentAuthorities.getCities() == null && competentAuthorities.getDepartments() == null
@@ -821,7 +821,7 @@ public class MiscellaneousController {
         validationHelper.validateString(competentAuthorities.getJssAccount(), false, 40, "JssAccount");
         validationHelper.validateString(competentAuthorities.getContact(), false, 40, "Contact");
         validationHelper.validateString(competentAuthorities.getMailRecipient(), false, 60, "MailRecipient");
-        validationHelper.validateString(competentAuthorities.getAddress(), false, 100, "Address");
+        validationHelper.validateString(competentAuthorities.getAddress(), false, 200, "Address");
         validationHelper.validateString(competentAuthorities.getPostalCode(), false, 10, "PostalCode");
         validationHelper.validateString(competentAuthorities.getCedexComplement(), false, 20, "CedexComplement");
         validationHelper.validateReferential(competentAuthorities.getCity(), false, "City");

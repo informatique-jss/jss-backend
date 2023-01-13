@@ -22,7 +22,7 @@ export class OrderingListComponent implements OnInit {
   @Input() isForTiersIntegration: boolean = false;
   orders: OrderingSearchResult[] | undefined;
   availableColumns: SortTableColumn[] = [];
-  columnToDisplayOnDashboard: string[] = ["customerOrderLabel", "customerOrderStatus", "affaireLabel", "createdDate"];
+  columnToDisplayOnDashboard: string[] = ["id", "customerOrderLabel", "customerOrderStatus", "affaireLabel", "createdDate"];
   displayedColumns: SortTableColumn[] = [];
   tableAction: SortTableAction[] = [];
   bookmark: OrderingSearch | undefined;

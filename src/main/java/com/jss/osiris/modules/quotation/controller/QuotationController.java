@@ -1280,6 +1280,10 @@ public class QuotationController {
           if (!validationHelper.validateMailList(document.getMailsClient()))
             throw new OsirisValidationException("MailsClient");
 
+        if (document.getBillingLabelType() != null
+            && document.getBillingLabelType().getId().equals(constantService.getBillingLabelTypeCodeAffaire().getId()))
+          document.setIsResponsableOnBilling(false);
+
         validationHelper.validateString(document.getAffaireAddress(), false, 60, "AffaireAddress");
         validationHelper.validateString(document.getClientAddress(), false, 60, "ClientAddress");
         validationHelper.validateString(document.getAffaireRecipient(), false, 40, "AffaireRecipient");
@@ -1683,7 +1687,7 @@ public class QuotationController {
                   .validateReferential(provision.getAnnouncement().getConfrere(), true, "Confrere"));
             }
 
-    return new ResponseEntity<IQuotation>(pricingHelper.getAndSetInvoiceItemsForQuotation(quotation, false),
+    return new ResponseEntity<IQuotation>(pricingHelper.getAndSetInvoiceItemsForQuotationForFront(quotation, false),
         HttpStatus.OK);
   }
 

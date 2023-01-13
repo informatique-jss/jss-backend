@@ -68,7 +68,7 @@ public class ProviderServiceImpl implements ProviderService {
         // If phones already exists, get their ids
         if (provider != null && provider.getPhones() != null
                 && provider.getPhones().size() > 0) {
-            phoneService.populateMPhoneIds(provider.getPhones());
+            phoneService.populatePhoneIds(provider.getPhones());
         }
 
         return providerRepository.save(provider);

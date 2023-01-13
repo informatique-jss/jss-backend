@@ -24,7 +24,7 @@ export class QuotationListComponent implements OnInit {
   @Input() isForTiersIntegration: boolean = false;
   quotations: QuotationSearchResult[] | undefined;
   availableColumns: SortTableColumn[] = [];
-  columnToDisplayOnDashboard: string[] = ["customerOrderName", "quotationStatus", "affaireLabel", "createdDate"];
+  columnToDisplayOnDashboard: string[] = ["id", "customerOrderName", "quotationStatus", "affaireLabel", "createdDate"];
   displayedColumns: SortTableColumn[] = [];
   tableAction: SortTableAction[] = [];
   bookmark: QuotationSearch | undefined;

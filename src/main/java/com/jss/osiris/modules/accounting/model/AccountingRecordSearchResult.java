@@ -8,6 +8,8 @@ public interface AccountingRecordSearchResult {
 
   Integer getOperationId();
 
+  Integer getTemporaryOperationId();
+
   LocalDateTime getAccountingDateTime();
 
   LocalDateTime getOperationDateTime();
@@ -49,4 +51,6 @@ public interface AccountingRecordSearchResult {
   String getAffaireLabel();
 
   String getResponsable();
+
+  Boolean getIsTemporary();
 }

@@ -298,23 +298,19 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     if (payment == null)
       throw new OsirisException(null, "No payments nor deposits provided with invoice " + invoice.getId());
 
-    AccountingAccount bankAccountingAccount = constantService.getAccountingAccountBankJss();
-
     AccountingAccount accountingAccountCustomer = getCustomerAccountingAccountForInvoice(invoice);
 
     Integer operationId = 0;
 
     if (payment != null) {
+      Integer operationIdCounterPart = ThreadLocalRandom.current().nextInt(1, 1000000000);
       if (payment.getAccountingRecords() != null && payment.getAccountingRecords().size() > 0) {
         for (AccountingRecord accountingRecord : payment.getAccountingRecords())
           // Counter part waiting account record
-          if (!accountingRecord.getIsCounterPart())
-            generateCounterPart(accountingRecord, null);
+          if (accountingRecord.getIsCounterPart() == null || !accountingRecord.getIsCounterPart())
+            generateCounterPart(accountingRecord, null, operationIdCounterPart);
       }
       operationId = invoice.getId() + payment.getId();
-      generateNewAccountingRecord(LocalDateTime.now(), operationId, null, null,
-          "Réglement de la facture n°" + invoice.getId(), null, payment.getPaymentAmount(),
-          bankAccountingAccount, null, invoice, null, bankJournal, payment, null);
     }
 
     // One write on customer account to equilibrate invoice
@@ -342,15 +338,15 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     AccountingAccount accountingAccountProvider = getProviderAccountingAccountForInvoice(invoice);
 
     Integer operationId = 0;
-
+    Integer operationIdCounterPart = ThreadLocalRandom.current().nextInt(1, 1000000000);
     if (payments != null && payments.size() > 0)
       for (Payment payment : payments) {
         if (payment.getAccountingRecords() != null && payment.getAccountingRecords().size() > 0)
           for (AccountingRecord accountingRecord : payment.getAccountingRecords())
             // Counter part waiting account record
-            if (!accountingRecord.getIsCounterPart()
+            if (accountingRecord.getIsCounterPart() == null || !accountingRecord.getIsCounterPart()
                 && accountingRecord.getAccountingAccount().getId().equals(waitingAccountingAccount.getId()))
-              generateCounterPart(accountingRecord, null);
+              generateCounterPart(accountingRecord, null, operationIdCounterPart);
       }
 
     // One write on customer account to equilibrate invoice
@@ -965,7 +961,8 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   }
 
   @Override
-  public void generateCounterPart(AccountingRecord originalAccountingRecord, AccountingJournal overrideJournal) {
+  public void generateCounterPart(AccountingRecord originalAccountingRecord, AccountingJournal overrideJournal,
+      Integer operationId) {
     AccountingRecord newAccountingRecord = new AccountingRecord();
     newAccountingRecord.setAccountingAccount(originalAccountingRecord.getAccountingAccount());
     newAccountingRecord.setAccountingJournal(
@@ -981,7 +978,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     newAccountingRecord.setManualAccountingDocumentDate(originalAccountingRecord.getManualAccountingDocumentDate());
     newAccountingRecord.setManualAccountingDocumentNumber(originalAccountingRecord.getManualAccountingDocumentNumber());
     newAccountingRecord.setPayment(originalAccountingRecord.getPayment());
-    newAccountingRecord.setTemporaryOperationId(originalAccountingRecord.getTemporaryOperationId());
+    newAccountingRecord.setTemporaryOperationId(operationId);
     newAccountingRecord.setOperationDateTime(LocalDateTime.now());
     newAccountingRecord.setCustomerOrder(originalAccountingRecord.getCustomerOrder());
     newAccountingRecord.setInvoice(originalAccountingRecord.getInvoice());
@@ -1038,10 +1035,10 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     List<AccountingRecord> accountingRecords = getAccountingRecordsByOperationId(operationId);
 
     List<Invoice> invoicesToUnleter = new ArrayList<Invoice>();
-
+    Integer operationIdCounterPart = ThreadLocalRandom.current().nextInt(1, 1000000000);
     if (accountingRecords != null) {
       for (AccountingRecord accountingRecord : accountingRecords) {
-        generateCounterPart(accountingRecord, null);
+        generateCounterPart(accountingRecord, null, operationIdCounterPart);
         accountingRecord.setInvoice(null);
         accountingRecord.setPayment(null);
         accountingRecord.setDeposit(null);

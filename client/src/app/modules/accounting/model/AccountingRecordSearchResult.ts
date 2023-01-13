@@ -35,4 +35,6 @@ export interface AccountingRecordSearchResult {
   contrePasseOperationId: number;
   affaireLabel: string;
   responsable: string;
+  isTemporary: boolean;
+  temporaryOperationId: number;
 }

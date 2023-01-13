@@ -1,4 +1,4 @@
-import { AfterContentChecked, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
+import { AfterContentChecked, ChangeDetectorRef, Component, OnInit, ViewChild, ViewChildren } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
@@ -26,6 +26,8 @@ import { DomiciliationStatusService } from '../../services/domiciliation-status.
 import { FormaliteStatusService } from '../../services/formalite.status.service';
 import { ProvisionService } from '../../services/provision.service';
 import { SimpleProvisionStatusService } from '../../services/simple.provision.status.service';
+import { ProvisionItemComponent } from '../provision-item/provision-item.component';
+import { QuotationComponent } from '../quotation/quotation.component';
 import { SelectAttachmentTypeDialogComponent } from '../select-attachment-type-dialog/select-attachment-type-dialog.component';
 
 @Component({
@@ -38,6 +40,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
   idAffaire: number | undefined;
   asso: AssoAffaireOrder = {} as AssoAffaireOrder;
   @ViewChild(MatAccordion) accordion: MatAccordion | undefined;
+  @ViewChildren(ProvisionItemComponent) provisionItemComponents: any;
   editMode: boolean = false;
   isStatusOpen: boolean = false;
   inputProvisionId: number = 0;
@@ -52,6 +55,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
   confrereJssSpel = this.constantService.getConfrereJssSpel();
   journalTypePaper = this.constantService.getJournalTypePaper();
   journalTypeSpel = this.constantService.getJournalTypeSpel();
+  getProvisionLabel = QuotationComponent.computeProvisionLabel;
 
   currentProvisionWorkflow: Provision | undefined;
 
@@ -133,13 +137,24 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
   }
 
   saveAsso() {
-    if (this.affaireForm.valid) {
+    this.editMode = true;
+    setTimeout(() => this.checkAndSave(), 0);
+  }
+
+  checkAndSave() {
+    let provisionStatus = true;
+    this.provisionItemComponents.toArray().forEach((provisionComponent: { getFormStatus: () => any; }) => {
+      provisionStatus = provisionStatus && provisionComponent.getFormStatus();
+    });
+
+    if (provisionStatus && this.affaireForm.valid) {
       this.assoAffaireOrderService.updateAsso(this.asso).subscribe(response => {
         this.asso = response;
         this.editMode = false;
         this.appService.openRoute(null, '/provision/' + this.idAffaire, null);
       })
     } else {
+      this.editMode = false;
       this.appService.displaySnackBar("Les onglets suivants ne sont pas correctement remplis. Veuillez les compléter avant de sauvegarder : Prestations", true, 15);
     }
   }
@@ -207,13 +222,13 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     let saveAsso = true;
     if (provision.announcement) {
       provision.announcement.announcementStatus = status;
-      if (status.code == ANNOUNCEMENT_STATUS_IN_PROGRESS) {
+      if (status.code == ANNOUNCEMENT_STATUS_IN_PROGRESS && !provision.announcement.isPublicationReciptAlreadySent) {
         saveAsso = false;
         const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
           maxWidth: "400px",
           data: {
             title: "Envoyer le attestation de parution ?",
-            content: "Voulez vous envoyer le attestation de parution pour cette annonce ?",
+            content: "Voulez vous envoyer l'attestation de parution pour cette annonce ?",
             closeActionText: "Envoyer",
             validationActionText: "Ne pas envoyer"
           }
@@ -227,13 +242,13 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
           }
           this.saveAsso();
         });
-      } else if (status.code == ANNOUNCEMENT_STATUS_DONE) {
+      } else if (status.code == ANNOUNCEMENT_STATUS_DONE && !provision.announcement.isPublicationFlagAlreadySent) {
         saveAsso = false;
         const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
           maxWidth: "400px",
           data: {
             title: "Envoyer le témoin de publication ?",
-            content: "Voulez vous envoyer le témoin de publication pour cette annonce ?",
+            content: "Voulez vous envoyer le témoin de publication pour cette annonce une fois la date de publication atteinte ?",
             closeActionText: "Envoyer",
             validationActionText: "Ne pas envoyer"
           }

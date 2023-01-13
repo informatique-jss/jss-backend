@@ -173,8 +173,7 @@
                       <mat-expansion-panel *ngFor="let provision of asso.provisions" [expanded]="!provision.id">
                         <mat-expansion-panel-header>
                           <mat-panel-title>
-                            {{provision.provisionType ? (provision.provisionFamilyType.label +' -
-                            '+provision.provisionType.label):''}}
+                            {{getProvisionLabel(provision)}}
                           </mat-panel-title>
                           <span class="status-text"
                             *ngIf="instanceOfCustomerOrderFn(quotation) && getActiveWorkflowElementsForProvision(provision)">{{getActiveWorkflowElementsForProvision(provision).label}}</span>

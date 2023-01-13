@@ -113,8 +113,39 @@ export class SortTableComponent implements OnInit {
               let columnValue = this.getColumnValue(column, item);
 
               // Handle date or date string
-              if (new Date(columnValue))
-                return new Date(columnValue);
+              if (columnValue && columnValue.indexOf && columnValue.indexOf("/") > 0) {
+                let dateTimeSplit = columnValue.split(" ");
+                if (dateTimeSplit.length == 1) {
+                  // Date
+                  let dateSplit = dateTimeSplit[0].split("/");
+                  if (dateSplit.length == 3) {
+                    let dateTest = new Date(dateSplit[0], dateSplit[1], dateSplit[2]) as any;
+                    if (dateTest != "Invalid Date") {
+                      return dateTest.getTime();
+                    }
+                  }
+                } else if (dateTimeSplit.length == 2) {
+                  // Date time
+                  let dateSplit = dateTimeSplit[0].split("/");
+                  if (dateSplit.length == 3) {
+                    let dateTest = new Date(dateSplit[0], dateSplit[1], dateSplit[2]) as any;
+                    if (dateTest != "Invalid Date") {
+                      let timeSplit = dateTimeSplit[1].split(":");
+                      if (dateSplit.length == 3) {
+                        dateTest = new Date(dateSplit[0], dateSplit[1], dateSplit[2], timeSplit[0], timeSplit[1], timeSplit[2]) as any;
+                        if (dateTest != "Invalid Date") {
+                          return dateTest.getTime();
+                        }
+                      } else if (dateSplit.length == 2) {
+                        dateTest = new Date(dateSplit[0], dateSplit[1], dateSplit[2], timeSplit[0], timeSplit[1]) as any;
+                        if (dateTest != "Invalid Date") {
+                          return dateTest.getTime();
+                        }
+                      }
+                    }
+                  }
+                }
+              }
 
               // Handle employees
               if (columnValue && columnValue instanceof Object && columnValue.firstname && columnValue.lastname)

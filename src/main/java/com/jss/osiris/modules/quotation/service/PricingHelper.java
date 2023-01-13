@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
@@ -64,6 +65,12 @@ public class PricingHelper {
 
     @Autowired
     CityService cityService;
+
+    @Transactional
+    public IQuotation getAndSetInvoiceItemsForQuotationForFront(IQuotation quotation, boolean persistInvoiceItem)
+            throws OsirisException, OsirisClientMessageException {
+        return getAndSetInvoiceItemsForQuotation(quotation, persistInvoiceItem);
+    }
 
     public IQuotation getAndSetInvoiceItemsForQuotation(IQuotation quotation, boolean persistInvoiceItem)
             throws OsirisException, OsirisClientMessageException {

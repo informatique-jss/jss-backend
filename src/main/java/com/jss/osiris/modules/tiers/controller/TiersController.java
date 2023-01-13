@@ -354,11 +354,14 @@ public class TiersController {
 
     if (tiers.getIsIndividual()) {
       validationHelper.validateReferential(tiers.getCivility(), true, "Civility");
+      tiers.setDenomination(null);
       validationHelper.validateString(tiers.getFirstname(), true, 40, "Firstname");
       validationHelper.validateString(tiers.getLastname(), true, 40, "Lastname");
       if (tiers.getLastname() != null)
         tiers.setLastname(tiers.getLastname().toUpperCase());
     } else {
+      tiers.setFirstname(null);
+      tiers.setLastname(null);
       validationHelper.validateString(tiers.getDenomination(), true, 60, "Denomination");
       if (tiers.getIntercommunityVat() != null && tiers.getIntercommunityVat().length() > 20)
         throw new OsirisValidationException("IntercommunityVat");
