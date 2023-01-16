@@ -26,7 +26,7 @@ export class DomiciliationComponent implements OnInit {
 
 
   @Input() domiciliation: Domiciliation = {} as Domiciliation;
-  @Input() provision: Provision = {} as Provision;
+  @Input() provision: Provision | undefined;;
   @Output() provisionChange: EventEmitter<Provision> = new EventEmitter<Provision>();
   @Input() instanceOfCustomerOrder: boolean = false;
   @Input() isStatusOpen: boolean = true;
@@ -276,7 +276,7 @@ export class DomiciliationComponent implements OnInit {
   }
 
   provisionChangeFunction() {
-    this.provisionChange.emit();
+    this.provisionChange.emit(this.provision);
   }
 
 }

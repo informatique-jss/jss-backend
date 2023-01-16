@@ -1068,7 +1068,7 @@ public class MiscellaneousController {
             throws OsirisValidationException, OsirisException {
         Tiers tiers = new Tiers();
         tiers.setId(idTiers);
-        tiers = (Tiers) validationHelper.validateReferential(tiers, true, "CustomerOrder");
+        tiers = (Tiers) validationHelper.validateReferential((Tiers) tiers, true, "tiers");
         return new ResponseEntity<List<CustomerMail>>(customerMailService.getMailsByTiers(tiers),
                 HttpStatus.OK);
     }

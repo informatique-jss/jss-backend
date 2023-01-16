@@ -175,7 +175,7 @@ public class CustomerMailServiceImpl implements CustomerMailService {
                 } catch (Exception e) {
                     mail.setHasErrors(true);
                     customerMailRepository.save(mail);
-                    throw new OsirisException(e, "Impossible to generate mail PDF");
+                    throw new OsirisException(e, "Impossible to generate mail PDF for mail " + mail.getId());
                 } finally {
                     if (mailPdf != null)
                         mailPdf.delete();

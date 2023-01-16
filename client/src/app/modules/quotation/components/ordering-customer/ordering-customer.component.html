@@ -197,6 +197,19 @@
           <div *ngIf=" instanceOfCustomerOrder(quotation)">Commande créée le {{quotation.createdDate |date:'dd/MM/yyyy à
             HH:mm'}}
           </div>
+          <div *ngIf="quotation.firstReminderDateTime">
+            <ul>
+              <li *ngIf="quotation.firstReminderDateTime">Relance n°1 : {{quotation.firstReminderDateTime
+                |date:'dd/MM/yyyy'}}
+              </li>
+              <li *ngIf="quotation.secondReminderDateTime">Relance n°2 : {{quotation.secondReminderDateTime
+                |date:'dd/MM/yyyy'}}
+              </li>
+              <li *ngIf="quotation.thirdReminderDateTime">Relance n°3 : {{quotation.thirdReminderDateTime
+                |date:'dd/MM/yyyy'}}
+              </li>
+            </ul>
+          </div>
         </fieldset>
       </div>
     </form>

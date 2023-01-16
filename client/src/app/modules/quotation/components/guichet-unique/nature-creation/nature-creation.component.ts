@@ -12,11 +12,11 @@ import { Provision } from '../../../model/Provision';
 export class NatureCreationComponent implements OnInit {
 
   @Input() formalite: Formalite = {} as Formalite;
-  @Input() provision: Provision = {} as Provision;
+  @Input() provision: Provision | undefined;
   @Input() editMode: boolean = false;
   @Input() instanceOfCustomerOrder: boolean = false;
   @Input() isStatusOpen: boolean = true;
-  @Output() provisionChange: EventEmitter<void> = new EventEmitter<void>();
+  @Output() provisionChange: EventEmitter<Provision> = new EventEmitter<Provision>();
 
   typePersonneExploitation = this.constantService.getTypePersonneExploitation();
   typePersonnePersonnePhysique = this.constantService.getTypePersonnePersonnePhysique();
@@ -65,7 +65,7 @@ export class NatureCreationComponent implements OnInit {
   }
 
   provisionChangeFunction() {
-    this.provisionChange.emit();
+    this.provisionChange.emit(this.provision);
   }
 
 }

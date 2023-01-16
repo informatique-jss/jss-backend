@@ -14,7 +14,7 @@ export class SimpleProvisionComponent implements OnInit {
 
 
   @Input() simpleProvision: SimpleProvision = {} as SimpleProvision;
-  @Input() provision: Provision = {} as Provision;
+  @Input() provision: Provision | undefined;
   @Input() editMode: boolean = false;
   @Input() instanceOfCustomerOrder: boolean = false;
   @Input() isStatusOpen: boolean = true;
@@ -45,7 +45,7 @@ export class SimpleProvisionComponent implements OnInit {
   }
 
   provisionChangeFunction() {
-    this.provisionChange.emit();
+    this.provisionChange.emit(this.provision);
   }
 
 }

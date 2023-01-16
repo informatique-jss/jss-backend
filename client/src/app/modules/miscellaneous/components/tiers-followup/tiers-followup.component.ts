@@ -61,6 +61,7 @@ export class TiersFollowupComponent implements OnInit {
     this.displayedColumns.push({ id: "name", fieldName: "tiersFollowupType.label", label: "Type" } as SortTableColumn);
     this.displayedColumns.push({ id: "salesEmployee", fieldName: "salesEmployee", label: "Par", valueFonction: (element: any, elements: any[], column: SortTableColumn, columns: SortTableColumn[]) => { return (element && element.salesEmployee) ? element.salesEmployee.firstname + " " + element.salesEmployee.lastname : "" } } as SortTableColumn);
     this.displayedColumns.push({ id: "gift", fieldName: "gift.label", label: "Cadeau" } as SortTableColumn);
+    this.displayedColumns.push({ id: "giftNumber", fieldName: "giftNumber", label: "Nombre" } as SortTableColumn);
     this.displayedColumns.push({ id: "observations", fieldName: "observations", label: "Observations" } as SortTableColumn);
   }
 

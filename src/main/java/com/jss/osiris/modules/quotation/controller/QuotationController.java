@@ -1483,6 +1483,8 @@ public class QuotationController {
       Announcement announcement = provision.getAnnouncement();
 
       // If published to Actu Legale, to late ...
+      // TODO : marche pas si asso avec une annonce + une formalité, ça bloque la
+      // formalité
       if (announcement.getActuLegaleId() != null)
         throw new OsirisValidationException("Annonce déjà publiée sur Actu Légale");
 

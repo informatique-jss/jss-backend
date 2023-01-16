@@ -325,8 +325,8 @@
     *ngIf="editMode==false && selectedConfrere && selectedConfrere.id" (click)="editConfrere()">
     <mat-icon>edit</mat-icon>
   </button>
-  <button matTooltip="Ajouter un confrère" mat-fab color="accent" class="fab-button"
-    *ngIf="editMode==false && selectedConfrere && selectedConfrere.id" (click)="addConfrere()">
+  <button matTooltip="Ajouter un confrère" mat-fab color="accent" class="fab-button" *ngIf="editMode==false"
+    (click)="addConfrere()">
     <mat-icon>add</mat-icon>
   </button>
 </div>

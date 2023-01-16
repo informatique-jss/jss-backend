@@ -136,6 +136,8 @@ export class QuotationManagementComponent implements OnInit, AfterContentChecked
       this.billingDocument = copyObject(getDocument(this.constantService.getDocumentTypeBilling(), currentOrderingCustomer));
       if (!this.billingDocument.billingLabelIsIndividual)
         this.billingDocument.billingLabelIsIndividual = false;
+      if (!this.billingDocument.isResponsableOnBilling)
+        this.billingDocument.isResponsableOnBilling = false;
     }
 
     this.digitalDocument = getDocument(this.constantService.getDocumentTypeDigital(), this.quotation);

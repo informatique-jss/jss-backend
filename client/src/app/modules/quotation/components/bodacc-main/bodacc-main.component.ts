@@ -23,7 +23,7 @@ import { BodaccSplitComponent } from '../bodacc-split/bodacc-split.component';
 export class BodaccMainComponent implements OnInit {
 
   @Input() bodacc: Bodacc = {} as Bodacc;
-  @Input() provision: Provision = {} as Provision;
+  @Input() provision: Provision | undefined;;
   @Input() affaire: Affaire = {} as Affaire;
   @Input() editMode: boolean = false;
   @Input() instanceOfCustomerOrder: boolean = false;
@@ -115,7 +115,7 @@ export class BodaccMainComponent implements OnInit {
   }
 
   provisionChangeFunction() {
-    this.provisionChange.emit();
+    this.provisionChange.emit(this.provision);
   }
 
 }

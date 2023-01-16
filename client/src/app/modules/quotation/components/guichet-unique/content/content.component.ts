@@ -15,11 +15,11 @@ import { PersonnePhysiqueComponent } from '../personne-physique/personne-physiqu
 export class ContentComponent implements OnInit {
 
   @Input() formalite: Formalite = {} as Formalite;
-  @Input() provision: Provision = {} as Provision;
+  @Input() provision: Provision | undefined;;
   @Input() editMode: boolean = false;
   @Input() instanceOfCustomerOrder: boolean = false;
   @Input() isStatusOpen: boolean = true;
-  @Output() provisionChange: EventEmitter<void> = new EventEmitter<void>();
+  @Output() provisionChange: EventEmitter<Provision> = new EventEmitter<Provision>();
   @ViewChild(PersonnePhysiqueComponent) personnePhysiqueComponent: PersonnePhysiqueComponent | undefined;
 
   typeFormaliteCessation = this.constantService.getTypeFormaliteCessation();
@@ -60,7 +60,7 @@ export class ContentComponent implements OnInit {
   }
 
   provisionChangeFunction() {
-    this.provisionChange.emit();
+    this.provisionChange.emit(this.provision);
   }
 
   checkVAT(fieldName: string): ValidatorFn {

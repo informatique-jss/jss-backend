@@ -35,7 +35,7 @@ import { SimpleProvisionComponent } from '../simple-provision/simple-provision.c
 export class ProvisionItemComponent implements OnInit {
 
 
-  @Input() provision: Provision = {} as Provision;
+  @Input() provision: Provision | undefined;
   @Output() provisionChange: EventEmitter<Provision> = new EventEmitter<Provision>();
   @Input() affaire: Affaire = {} as Affaire;
   @Input() editMode: boolean = false;
@@ -110,53 +110,53 @@ export class ProvisionItemComponent implements OnInit {
   });
 
   changeProvisionType() {
+    if (this.provision) {
+      if (!this.provision.provisionFamilyType || !this.provision.provisionType) {
+        this.provision.announcement = undefined;
+        this.provision.domiciliation = undefined;
+        this.provision.bodacc = undefined;
+        this.provision.formalite = undefined;
+        this.provision.simpleProvision = undefined;
+        this.selectedProvisionTypeChange.emit();
+        return;
+      }
 
+      if (this.provision.provisionType.provisionScreenType.code != PROVISION_SCREEN_TYPE_DOMICILIATION) {
+        this.provision.domiciliation = undefined;
+      } else if (!this.provision.domiciliation) {
+        this.provision.domiciliation = {} as Domiciliation;
+      }
 
-    if (!this.provision.provisionFamilyType || !this.provision.provisionType) {
-      this.provision.announcement = undefined;
-      this.provision.domiciliation = undefined;
-      this.provision.bodacc = undefined;
-      this.provision.formalite = undefined;
-      this.provision.simpleProvision = undefined;
+      if (this.provision.provisionType.provisionScreenType.code != PROVISION_SCREEN_TYPE_ANNOUNCEMENT) {
+        this.provision.announcement = undefined;
+      } else if (!this.provision.announcement) {
+        this.provision.announcement = {} as Announcement;
+        this.provision.announcement.documents = [];
+        let paperDocument = getDocument(this.constantService.getDocumentTypePaper(), this.quotation!);
+        paperDocument.id = undefined;
+        this.provision.announcement.documents.push(paperDocument);
+      }
+
+      if (this.provision.provisionType.provisionScreenType.code != PROVISION_SCREEN_TYPE_BODACC) {
+        this.provision.bodacc = undefined;
+      } else if (!this.provision.bodacc) {
+        this.provision.bodacc = {} as Bodacc;
+      }
+
+      if (this.provision.provisionType.provisionScreenType.code != PROVISION_SCREEN_TYPE_FORMALITE) {
+        this.provision.formalite = undefined;
+      } else if (!this.provision.formalite) {
+        this.provision.formalite = {} as Formalite;
+      }
+
+      if (this.provision.provisionType.provisionScreenType.code != PROVISION_SCREEN_TYPE_STANDARD) {
+        this.provision.simpleProvision = undefined;
+      } else if (!this.provision.simpleProvision) {
+        this.provision.simpleProvision = {} as SimpleProvision;
+      }
+
       this.selectedProvisionTypeChange.emit();
-      return;
     }
-
-    if (this.provision.provisionType.provisionScreenType.code != PROVISION_SCREEN_TYPE_DOMICILIATION) {
-      this.provision.domiciliation = undefined;
-    } else if (!this.provision.domiciliation) {
-      this.provision.domiciliation = {} as Domiciliation;
-    }
-
-    if (this.provision.provisionType.provisionScreenType.code != PROVISION_SCREEN_TYPE_ANNOUNCEMENT) {
-      this.provision.announcement = undefined;
-    } else if (!this.provision.announcement) {
-      this.provision.announcement = {} as Announcement;
-      this.provision.announcement.documents = [];
-      let paperDocument = getDocument(this.constantService.getDocumentTypePaper(), this.quotation!);
-      paperDocument.id = undefined;
-      this.provision.announcement.documents.push(paperDocument);
-    }
-
-    if (this.provision.provisionType.provisionScreenType.code != PROVISION_SCREEN_TYPE_BODACC) {
-      this.provision.bodacc = undefined;
-    } else if (!this.provision.bodacc) {
-      this.provision.bodacc = {} as Bodacc;
-    }
-
-    if (this.provision.provisionType.provisionScreenType.code != PROVISION_SCREEN_TYPE_FORMALITE) {
-      this.provision.formalite = undefined;
-    } else if (!this.provision.formalite) {
-      this.provision.formalite = {} as Formalite;
-    }
-
-    if (this.provision.provisionType.provisionScreenType.code != PROVISION_SCREEN_TYPE_STANDARD) {
-      this.provision.simpleProvision = undefined;
-    } else if (!this.provision.simpleProvision) {
-      this.provision.simpleProvision = {} as SimpleProvision;
-    }
-
-    this.selectedProvisionTypeChange.emit();
   }
 
   noticeChange() {

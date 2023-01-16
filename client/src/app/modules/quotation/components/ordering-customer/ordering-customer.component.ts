@@ -158,4 +158,5 @@ export class OrderingCustomerComponent implements OnInit {
   openRoute(event: any, link: string) {
     this.appService.openRoute(event, link, null);
   }
+
 }

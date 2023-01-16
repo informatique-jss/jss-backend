@@ -109,9 +109,11 @@ public class AuditEntityInterceptor extends EmptyInterceptor {
                             && audit.getEntityId().equals(auditToAdd.getEntityId()) &&
                             audit.getFieldName().equals(auditToAdd.getFieldName()))
                         if (audit.getNewValue() == null && auditToAdd.getNewValue() == null
-                                || audit.getNewValue().equals(auditToAdd.getNewValue()))
+                                || audit.getNewValue() != null && auditToAdd.getNewValue() != null
+                                        && audit.getNewValue().equals(auditToAdd.getNewValue()))
                             if (audit.getOldValue() == null && auditToAdd.getOldValue() == null
-                                    || audit.getOldValue().equals(auditToAdd.getOldValue())) {
+                                    || audit.getOldValue() != null && auditToAdd.getOldValue() != null
+                                            && audit.getOldValue().equals(auditToAdd.getOldValue())) {
                                 found = true;
                                 break;
                             }

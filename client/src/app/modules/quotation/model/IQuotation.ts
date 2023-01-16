@@ -18,4 +18,7 @@ export interface IQuotation extends IAttachment, IDocument {
   description: string;
   isQuotation: boolean;
   assoAffaireOrders: AssoAffaireOrder[];
+  firstReminderDateTime: Date;
+  secondReminderDateTime: Date;
+  thirdReminderDateTime: Date;
 }

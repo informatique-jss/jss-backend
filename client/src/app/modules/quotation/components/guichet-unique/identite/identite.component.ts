@@ -14,12 +14,12 @@ import { EntrepriseComponent } from '../entreprise/entreprise.component';
 export class IdentiteComponent implements OnInit {
 
   @Input() formalite: Formalite = {} as Formalite;
-  @Input() provision: Provision = {} as Provision;
+  @Input() provision: Provision | undefined;
   @Input() identite: Identite = {} as Identite;
   @Input() editMode: boolean = false;
   @Input() instanceOfCustomerOrder: boolean = false;
   @Input() isStatusOpen: boolean = true;
-  @Output() provisionChange: EventEmitter<void> = new EventEmitter<void>();
+  @Output() provisionChange: EventEmitter<Provision> = new EventEmitter<Provision>();
   @ViewChild(EntrepriseComponent) entrepriseComponent: EntrepriseComponent | undefined;
 
   constructor(
@@ -48,7 +48,7 @@ export class IdentiteComponent implements OnInit {
   }
 
   provisionChangeFunction() {
-    this.provisionChange.emit();
+    this.provisionChange.emit(this.provision);
   }
 
 }

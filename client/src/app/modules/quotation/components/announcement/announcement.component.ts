@@ -36,7 +36,7 @@ export class AnnouncementComponent implements OnInit {
 
 
   @Input() announcement: Announcement = {} as Announcement;
-  @Input() provision: Provision = {} as Provision;
+  @Input() provision: Provision | undefined;
   @Input() editMode: boolean = false;
   @Input() instanceOfCustomerOrder: boolean = false;
   @Input() isStatusOpen: boolean = true;
@@ -101,7 +101,7 @@ export class AnnouncementComponent implements OnInit {
       map(value => this._filterNoticeTemplates(value)),
     );
 
-    if (this.provision.announcement)
+    if (this.provision && this.provision.announcement)
       this.paperDocument = getDocument(this.constantService.getDocumentTypePaper(), this.provision.announcement);
   }
 
@@ -190,7 +190,7 @@ export class AnnouncementComponent implements OnInit {
   }
 
   noticeChangeFunction() {
-    this.provisionChange.emit();
+    this.provisionChange.emit(this.provision);
   }
 
 
@@ -235,7 +235,7 @@ export class AnnouncementComponent implements OnInit {
 
   private _filterNoticeTemplates(value: string): AnnouncementNoticeTemplate[] {
     const filterValue = (value != undefined && value.toLowerCase != undefined) ? value.toLowerCase() : "";
-    return this.noticeTemplates.filter(noticeTemplate => noticeTemplate.label != undefined && noticeTemplate.label.toLowerCase().includes(filterValue) && (!noticeTemplate.provisionFamilyTypes || noticeTemplate.provisionFamilyTypes.map(type => type.code).indexOf(this.provision.provisionFamilyType.code) >= 0));
+    return this.noticeTemplates.filter(noticeTemplate => noticeTemplate.label != undefined && noticeTemplate.label.toLowerCase().includes(filterValue) && (!noticeTemplate.provisionFamilyTypes || this.provision && noticeTemplate.provisionFamilyTypes.map(type => type.code).indexOf(this.provision.provisionFamilyType.code) >= 0));
   }
 
   addNoticeType(event: MatAutocompleteSelectedEvent): void {

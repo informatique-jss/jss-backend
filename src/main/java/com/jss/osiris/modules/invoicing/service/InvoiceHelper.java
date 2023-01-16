@@ -134,7 +134,8 @@ public class InvoiceHelper {
             invoiceLabelResult.setCommandNumber(billingDocument.getCommandNumber());
             invoiceLabelResult.setLabelOrigin("les informations de l'affaire");
 
-            if (orderingCustomer instanceof Responsable && billingDocument.getIsResponsableOnBilling()) {
+            if (orderingCustomer instanceof Responsable && billingDocument.getIsResponsableOnBilling() != null
+                    && billingDocument.getIsResponsableOnBilling()) {
                 String labelResult = ((Responsable) orderingCustomer).getFirstname() + " "
                         + ((Responsable) orderingCustomer).getLastname();
                 invoiceLabelResult.setBillingLabel(invoiceLabelResult.getBillingLabel() + " - " + labelResult);
@@ -156,7 +157,8 @@ public class InvoiceHelper {
                 String labelResult = tiers.getIsIndividual() ? tiers.getFirstname() + " " + tiers.getLastname()
                         : tiers.getDenomination();
 
-                if (orderingCustomer instanceof Responsable && billingDocument.getIsResponsableOnBilling()) {
+                if (orderingCustomer instanceof Responsable && billingDocument.getIsResponsableOnBilling() != null
+                        && billingDocument.getIsResponsableOnBilling()) {
                     labelResult = ((Responsable) orderingCustomer).getFirstname() + " "
                             + ((Responsable) orderingCustomer).getLastname() + " - " + labelResult;
                 }

@@ -16,11 +16,11 @@ export class PersonnePhysiqueComponent implements OnInit {
 
   @Input() formalite: Formalite = {} as Formalite;
   @Input() personnePhysique: PersonnePhysique = {} as PersonnePhysique;
-  @Input() provision: Provision = {} as Provision;
+  @Input() provision: Provision | undefined;
   @Input() editMode: boolean = false;
   @Input() instanceOfCustomerOrder: boolean = false;
   @Input() isStatusOpen: boolean = true;
-  @Output() provisionChange: EventEmitter<void> = new EventEmitter<void>();
+  @Output() provisionChange: EventEmitter<Provision> = new EventEmitter<Provision>();
   @ViewChild(IdentiteComponent) identiteComponent: IdentiteComponent | undefined;
 
   constructor(
@@ -49,6 +49,6 @@ export class PersonnePhysiqueComponent implements OnInit {
   }
 
   provisionChangeFunction() {
-    this.provisionChange.emit();
+    this.provisionChange.emit(this.provision);
   }
 }

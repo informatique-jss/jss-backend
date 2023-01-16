@@ -1,4 +1,4 @@
-<form [formGroup]="simpleProvisionForm" *ngIf="simpleProvision">
+<form [formGroup]="simpleProvisionForm" *ngIf="simpleProvision && provision">
   <mat-tab-group animationDuration="0ms" #tabs>
     <mat-tab [label]="provision.provisionType.label">
       <div class="form-div">

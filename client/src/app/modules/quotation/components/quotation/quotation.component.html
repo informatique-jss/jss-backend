@@ -235,7 +235,7 @@
           </automatic-mail-list>
         </mat-tab>
         <mat-tab label="Associer un paiement"
-          *ngIf="getRemainingToPay()>0 && instanceOfCustomerOrderFn(quotation) && quotation.customerOrderStatus.code!=CUSTOMER_ORDER_STATUS_BILLED">
+          *ngIf="getRemainingToPay()>0 && instanceOfCustomerOrderFn(quotation) && quotation.customerOrderStatus && quotation.customerOrderStatus.code!=CUSTOMER_ORDER_STATUS_BILLED">
           <invoice-payment (stateChanged)="onStateChange()" [customerOrder]="quotation">
           </invoice-payment>
         </mat-tab>

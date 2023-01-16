@@ -17,7 +17,7 @@ import { NatureCreationComponent } from '../guichet-unique/nature-creation/natur
 export class FormaliteComponent implements OnInit {
 
   @Input() formalite: Formalite = {} as Formalite;
-  @Input() provision: Provision = {} as Provision;
+  @Input() provision: Provision | undefined;;
   @Input() editMode: boolean = false;
   @Input() instanceOfCustomerOrder: boolean = false;
   @Input() isStatusOpen: boolean = true;
@@ -70,7 +70,7 @@ export class FormaliteComponent implements OnInit {
   }
 
   provisionChangeFunction() {
-    this.provisionChange.emit();
+    this.provisionChange.emit(this.provision);
   }
 
 }

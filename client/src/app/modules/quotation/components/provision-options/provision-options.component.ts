@@ -20,7 +20,7 @@ export class ProvisionOptionsComponent implements OnInit {
   @Input() provision: Provision | undefined;
   @Input() customerOrder: ITiers | undefined;
   @Input() editMode: boolean = false;
-  @Output() provisionChange: EventEmitter<void> = new EventEmitter<void>();
+  @Output() provisionChange: EventEmitter<Provision> = new EventEmitter<Provision>();
 
   PROVISION_ENTITY_TYPE = PROVISION_ENTITY_TYPE;
 
@@ -212,6 +212,6 @@ export class ProvisionOptionsComponent implements OnInit {
     }
   }
   provisionChangeFunction() {
-    this.provisionChange.emit();
+    this.provisionChange.emit(this.provision);
   }
 }
