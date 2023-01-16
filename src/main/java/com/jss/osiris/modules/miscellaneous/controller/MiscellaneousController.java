@@ -85,7 +85,6 @@ import com.jss.osiris.modules.miscellaneous.service.SpecialOfferService;
 import com.jss.osiris.modules.miscellaneous.service.VatCollectionTypeService;
 import com.jss.osiris.modules.miscellaneous.service.VatService;
 import com.jss.osiris.modules.miscellaneous.service.WeekDayService;
-import com.jss.osiris.modules.pao.model.Journal;
 import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.profile.service.EmployeeService;
 import com.jss.osiris.modules.quotation.model.Announcement;
@@ -99,6 +98,7 @@ import com.jss.osiris.modules.quotation.model.SimpleProvision;
 import com.jss.osiris.modules.quotation.model.guichetUnique.Formalite;
 import com.jss.osiris.modules.quotation.service.AffaireService;
 import com.jss.osiris.modules.quotation.service.AssoAffaireOrderService;
+import com.jss.osiris.modules.quotation.service.BankTransfertService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.tiers.model.Responsable;
@@ -228,6 +228,9 @@ public class MiscellaneousController {
     @Autowired
     CustomerMailService customerMailService;
 
+    @Autowired
+    BankTransfertService bankTransfertService;
+
     @GetMapping(inputEntryPoint + "/notifications")
     public ResponseEntity<List<Notification>> getNotifications(@RequestParam Boolean displayFuture) {
         return new ResponseEntity<List<Notification>>(
@@ -337,7 +340,6 @@ public class MiscellaneousController {
                 "SubscriptionPeriodType12M");
         validationHelper.validateReferential(constant.getLegalFormUnregistered(), true, "LegalFormUnregistered");
         validationHelper.validateReferential(constant.getJournalTypeSpel(), true, "JournalTypeSpel");
-        validationHelper.validateReferential(constant.getConfrereJssPaper(), true, "ConfrereJss");
         validationHelper.validateReferential(constant.getConfrereJssSpel(), true, "ConfrereJss");
         validationHelper.validateReferential(constant.getDomiciliationContractTypeKeepMail(), true,
                 "DomiciliationContractTypeKeepMail");
@@ -590,6 +592,11 @@ public class MiscellaneousController {
         return new ResponseEntity<List<BillingType>>(billingTypeService.getBillingTypes(), HttpStatus.OK);
     }
 
+    @GetMapping(inputEntryPoint + "/billing-types/debour")
+    public ResponseEntity<List<BillingType>> getBillingTypesDebour() {
+        return new ResponseEntity<List<BillingType>>(billingTypeService.getBillingTypesDebour(), HttpStatus.OK);
+    }
+
     @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
     @PostMapping(inputEntryPoint + "/billing-type")
     public ResponseEntity<BillingType> addOrUpdateBillingType(
@@ -818,6 +825,8 @@ public class MiscellaneousController {
 
         validationHelper.validateString(competentAuthorities.getIban(), competentAuthorities.getHasAccount(), 40,
                 "Iban");
+        validationHelper.validateString(competentAuthorities.getBic(), competentAuthorities.getHasAccount(), 40,
+                "Bic");
         validationHelper.validateString(competentAuthorities.getJssAccount(), false, 40, "JssAccount");
         validationHelper.validateString(competentAuthorities.getContact(), false, 40, "Contact");
         validationHelper.validateString(competentAuthorities.getMailRecipient(), false, 60, "MailRecipient");
@@ -949,7 +958,6 @@ public class MiscellaneousController {
                 && !entityType.equals(CustomerOrder.class.getSimpleName())
                 && !entityType.equals(Provision.class.getSimpleName())
                 && !entityType.equals(Formalite.class.getSimpleName())
-                && !entityType.equals(Journal.class.getSimpleName())
                 && !entityType.equals(Invoice.class.getSimpleName())
                 && !entityType.equals(Bodacc.class.getSimpleName())
                 && !entityType.equals(SimpleProvision.class.getSimpleName()))
@@ -1012,6 +1020,7 @@ public class MiscellaneousController {
         customerOrderService.reindexCustomerOrder();
         assoAffaireOrderService.reindexAffaires();
         affaireService.reindexAffaire();
+        bankTransfertService.reindexBankTransfert();
 
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }

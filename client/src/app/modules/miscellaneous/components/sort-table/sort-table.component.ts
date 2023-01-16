@@ -69,12 +69,12 @@ export class SortTableComponent implements OnInit {
       this.refreshTableSubscription.unsubscribe();
   }
 
-  actionTrigger(action: SortTableAction, element: any) {
+  actionTrigger(action: SortTableAction, element: any, event: any) {
     // find in internal
     if (this.internalActions) {
       for (let internalAction of this.internalActions)
         if (action == internalAction) {
-          internalAction.actionClick(action, element);
+          internalAction.actionClick(action, element, event);
           if (this.values)
             this.dataSource.data = this.values;
         }

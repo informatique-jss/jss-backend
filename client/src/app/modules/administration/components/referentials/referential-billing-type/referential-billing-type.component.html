@@ -57,9 +57,21 @@
                 [isMandatory]="true" [isDisabled]="!editMode" [conditionnalRequired]="selectedEntity.isOverrideVat">
               </select-vat>
             </td>
+          <tr>
+        </table>
+        <table class="full-width">
+          <tr>
             <td>
               <generic-toggle [(model)]="selectedEntity.isOptionnal" label="Est optionnel ?" [form]="entityForm"
                 propertyName="isOptionnal"></generic-toggle>
+            </td>
+            <td>
+              <generic-toggle [(model)]="selectedEntity.isNonTaxable" label="Est non taxable à l'achat ?"
+                [form]="entityForm" propertyName="isNonTaxable"></generic-toggle>
+            </td>
+            <td>
+              <generic-toggle [(model)]="selectedEntity.isDebour" label="Est un débour ?" [form]="entityForm"
+                propertyName="isDebour"></generic-toggle>
             </td>
           </tr>
         </table>

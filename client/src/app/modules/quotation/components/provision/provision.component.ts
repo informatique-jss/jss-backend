@@ -7,6 +7,7 @@ import { ANNOUNCEMENT_STATUS_DONE, ANNOUNCEMENT_STATUS_IN_PROGRESS, CUSTOMER_ORD
 import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
 import { WorkflowDialogComponent } from 'src/app/modules/miscellaneous/components/workflow-dialog/workflow-dialog.component';
 import { AppService } from 'src/app/services/app.service';
+import { ANNOUNCEMENT_WAITING_CONFRERE } from '../../../../libs/Constants';
 import { IWorkflowElement } from '../../../miscellaneous/model/IWorkflowElement';
 import { ConstantService } from '../../../miscellaneous/services/constant.service';
 import { Announcement } from '../../model/Announcement';
@@ -29,6 +30,7 @@ import { SimpleProvisionStatusService } from '../../services/simple.provision.st
 import { ProvisionItemComponent } from '../provision-item/provision-item.component';
 import { QuotationComponent } from '../quotation/quotation.component';
 import { SelectAttachmentTypeDialogComponent } from '../select-attachment-type-dialog/select-attachment-type-dialog.component';
+import { SelectAttachmentsDialogComponent } from '../select-attachments-dialog/select-attachment-type-dialog.component';
 
 @Component({
   selector: 'provision',
@@ -51,7 +53,6 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
   bodaccStatus: BodaccStatus[] = [] as Array<BodaccStatus>;
   domiciliationStatus: DomiciliationStatus[] = [] as Array<DomiciliationStatus>;
 
-  confrereJssPaper = this.constantService.getConfrereJssPaper();
   confrereJssSpel = this.constantService.getConfrereJssSpel();
   journalTypePaper = this.constantService.getJournalTypePaper();
   journalTypeSpel = this.constantService.getJournalTypeSpel();
@@ -69,6 +70,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     private appService: AppService,
     public confirmationDialog: MatDialog,
     public attachmentTypeDialog: MatDialog,
+    public attachmentsDialog: MatDialog,
     private constantService: ConstantService,
     private formaliteStatusService: FormaliteStatusService,
     private bodaccStatusService: BodaccStatusService,
@@ -262,6 +264,26 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
           }
           this.saveAsso();
         });
+      } else if (status.code == ANNOUNCEMENT_WAITING_CONFRERE && !provision.announcement.isAnnouncementAlreadySentToConfrere && provision.announcement.confrere) {
+        saveAsso = false;
+        const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
+          maxWidth: "400px",
+          data: {
+            title: "Envoyer au confrère ?",
+            content: "Voulez vous envoyer la demande de publication de cette annonce au confrère " + provision.announcement.confrere.label + " ?",
+            closeActionText: "Envoyer",
+            validationActionText: "Ne pas envoyer"
+          }
+        });
+
+        dialogRef.afterClosed().subscribe(dialogResult => {
+          if (dialogResult == true || dialogResult == false) {
+            if (provision.announcement) {
+              provision.announcement.isAnnouncementAlreadySentToConfrere = dialogResult;
+            }
+          }
+          this.saveAsso();
+        });
       }
     }
     if (provision.formalite)
@@ -298,6 +320,11 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     this.announcementService.generatePublicationReceiptMail(this.asso.customerOrder, announcement).subscribe();
   }
 
+  generateAnnouncementRequestToConfrereMail(announcement: Announcement) {
+    if (this.currentProvisionWorkflow)
+      this.announcementService.generateAnnouncementRequestToConfrereMail(this.asso.customerOrder, this.asso, this.currentProvisionWorkflow, announcement).subscribe();
+  }
+
   generatePublicationFlagMail() {
     this.announcementService.generatePublicationFlagMail(this.asso.customerOrder).subscribe();
   }
@@ -318,6 +345,22 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     dialogRef.afterClosed().subscribe(dialogResult => {
       if (dialogResult && this.currentProvisionWorkflow) {
         this.attachmentTypeMailQueryService.generateAttachmentTypeMail(dialogResult, this.asso.customerOrder, this.currentProvisionWorkflow).subscribe(response => { });
+      }
+    });
+  }
+
+  generateAttachmentsMail() {
+    const dialogRef = this.attachmentsDialog.open(SelectAttachmentsDialogComponent, {
+      maxWidth: "1000px",
+    });
+
+    dialogRef.componentInstance.assoAffaireOrder = this.asso;
+    dialogRef.componentInstance.customerOrder = this.asso.customerOrder;
+    dialogRef.componentInstance.provision = this.currentProvisionWorkflow;
+
+    dialogRef.afterClosed().subscribe(dialogResult => {
+      if (dialogResult && this.currentProvisionWorkflow) {
+        this.attachmentTypeMailQueryService.generateAttachmentsMail(dialogResult).subscribe(response => { });
       }
     });
   }

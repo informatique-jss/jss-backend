@@ -16,6 +16,10 @@ export class BillingTypeService extends AppRestService<BillingType>{
     return this.getListCached(new HttpParams(), "billing-types");
   }
 
+  getBillingTypesDebour() {
+    return this.getListCached(new HttpParams(), "billing-types/debour");
+  }
+
   addOrUpdateBillingType(billingType: BillingType) {
     this.clearListCache(new HttpParams(), "billing-types");
     return this.addOrUpdate(new HttpParams(), "billing-type", billingType, "Enregistré", "Erreur lors de l'enregistrement");

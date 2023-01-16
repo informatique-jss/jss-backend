@@ -61,6 +61,8 @@ public class TiersFollowup implements Serializable, IId {
 	@JoinColumn(name = "id_gift")
 	private Gift gift;
 
+	private Integer giftNumber;
+
 	@ManyToOne
 	@JoinColumn(name = "id_commercial")
 	private Employee salesEmployee;
@@ -150,6 +152,14 @@ public class TiersFollowup implements Serializable, IId {
 
 	public void setInvoice(Invoice invoice) {
 		this.invoice = invoice;
+	}
+
+	public Integer getGiftNumber() {
+		return giftNumber;
+	}
+
+	public void setGiftNumber(Integer giftNumber) {
+		this.giftNumber = giftNumber;
 	}
 
 }

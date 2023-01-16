@@ -25,6 +25,8 @@ import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.MailComputeHelper;
+import com.jss.osiris.modules.invoicing.model.BankTransfertSearch;
+import com.jss.osiris.modules.invoicing.model.BankTransfertSearchResult;
 import com.jss.osiris.modules.invoicing.model.Deposit;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
@@ -50,6 +52,8 @@ import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.quotation.service.BankTransfertService;
+import com.jss.osiris.modules.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.tiers.model.BillingLabelType;
 import com.jss.osiris.modules.tiers.model.ITiers;
@@ -64,6 +68,9 @@ public class InvoicingController {
 
     @Autowired
     InvoiceService invoiceService;
+
+    @Autowired
+    CustomerOrderService customerOrderService;
 
     @Autowired
     InvoiceHelper invoiceHelper;
@@ -94,6 +101,9 @@ public class InvoicingController {
 
     @Autowired
     MailComputeHelper mailComputeHelper;
+
+    @Autowired
+    BankTransfertService bankTransfertService;
 
     @GetMapping(inputEntryPoint + "/payment-ways")
     public ResponseEntity<List<PaymentWay>> getPaymentWays() {
@@ -181,6 +191,56 @@ public class InvoicingController {
         return new ResponseEntity<byte[]>(data, headers, HttpStatus.OK);
     }
 
+    @PostMapping(inputEntryPoint + "/transfert/search")
+    public ResponseEntity<List<BankTransfertSearchResult>> getTransferts(
+            @RequestBody BankTransfertSearch transfertSearch)
+            throws OsirisValidationException {
+        if (transfertSearch == null)
+            throw new OsirisValidationException("transfertSearch");
+
+        if (transfertSearch.getStartDate() == null || transfertSearch.getEndDate() == null)
+            throw new OsirisValidationException("StartDate or EndDate");
+
+        return new ResponseEntity<List<BankTransfertSearchResult>>(
+                bankTransfertService.searchBankTransfert(transfertSearch),
+                HttpStatus.OK);
+    }
+
+    @PostMapping(inputEntryPoint + "/transfert/export")
+    public ResponseEntity<byte[]> downloadTransferts(@RequestBody BankTransfertSearch transfertSearch)
+            throws OsirisValidationException, OsirisException {
+        byte[] data = null;
+        HttpHeaders headers = null;
+
+        if (transfertSearch == null)
+            throw new OsirisValidationException("refundSearch");
+
+        if (transfertSearch.getStartDate() == null || transfertSearch.getEndDate() == null)
+            throw new OsirisValidationException("StartDate or EndDate");
+
+        File refunds = bankTransfertService.getBankTransfertExport(transfertSearch);
+
+        if (refunds != null) {
+            try {
+                data = Files.readAllBytes(refunds.toPath());
+            } catch (IOException e) {
+                throw new OsirisException(e, "Unable to read file " + refunds.toPath());
+            }
+
+            headers = new HttpHeaders();
+            headers.add("filename",
+                    "SPPS - Virements - "
+                            + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd HHmm")) + ".xml");
+            headers.setAccessControlExposeHeaders(Arrays.asList("filename"));
+            headers.setContentLength(data.length);
+            headers.set("content-type", "application/xml");
+
+            refunds.delete();
+
+        }
+        return new ResponseEntity<byte[]>(data, headers, HttpStatus.OK);
+    }
+
     @PostMapping(inputEntryPoint + "/payments/associate")
     public ResponseEntity<Boolean> associatePaymentAndInvoiceAndCustomerOrder(
             @RequestBody PaymentAssociate paymentAssociate)
@@ -199,6 +259,9 @@ public class InvoicingController {
 
             for (Invoice invoice : paymentAssociate.getInvoices()) {
                 invoice = (Invoice) validationHelper.validateReferential(invoice, true, "invoice");
+                if (paymentAssociate.getPayment().getIsCancelled() != null
+                        && paymentAssociate.getPayment().getIsCancelled() == true)
+                    throw new OsirisValidationException("payment cancelled");
                 if (paymentAssociate.getPayment().getInvoice() != null
                         && invoice.getId().equals(paymentAssociate.getPayment().getInvoice().getId()))
                     throw new OsirisValidationException("payment already associate");
@@ -420,6 +483,17 @@ public class InvoicingController {
             throw new OsirisValidationException("Invoice");
 
         return new ResponseEntity<List<Payment>>(paymentService.getAdvisedPaymentForInvoice(invoice), HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/payments/advise/order")
+    public ResponseEntity<List<Payment>> getPaymentAdvisedForCustomerOrder(@RequestParam Integer customerOrderId)
+            throws OsirisValidationException {
+        CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
+        if (customerOrder == null)
+            throw new OsirisValidationException("customerOrder");
+
+        return new ResponseEntity<List<Payment>>(paymentService.getAdvisedPaymentForCustomerOrder(customerOrder),
+                HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/invoice")

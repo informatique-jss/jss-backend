@@ -190,6 +190,9 @@ public class TiersController {
     validationHelper.validateDate(tiersFollowup.getFollowupDate(), true, "FollowupDate");
     validationHelper.validateReferential(tiersFollowup.getGift(), false, "Gift");
 
+    if (tiersFollowup.getGift() != null && (tiersFollowup.getGiftNumber() == null || tiersFollowup.getGiftNumber() < 0))
+      tiersFollowup.setGiftNumber(1);
+
     return new ResponseEntity<List<TiersFollowup>>(tiersFollowupService.addTiersFollowup(tiersFollowup), HttpStatus.OK);
   }
 

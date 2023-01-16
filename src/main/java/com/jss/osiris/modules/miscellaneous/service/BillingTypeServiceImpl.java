@@ -29,6 +29,11 @@ public class BillingTypeServiceImpl implements BillingTypeService {
     }
 
     @Override
+    public List<BillingType> getBillingTypesDebour() {
+        return billingTypeRepository.findByIsDebour(true);
+    }
+
+    @Override
     public BillingType getBillingType(Integer id) {
         Optional<BillingType> billingType = billingTypeRepository.findById(id);
         if (billingType.isPresent())

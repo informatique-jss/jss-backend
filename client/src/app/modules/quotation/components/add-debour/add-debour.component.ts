@@ -1,0 +1,97 @@
+import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
+import { FormBuilder } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { Subject } from 'rxjs';
+import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
+import { PaymentType } from 'src/app/modules/miscellaneous/model/PaymentType';
+import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
+import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
+import { formatDateForSortTable, formatEurosForSortTable } from '../../../../libs/FormatHelper';
+import { Debour } from '../../model/Debour';
+import { Provision } from '../../model/Provision';
+
+
+@Component({
+  selector: 'add-debour',
+  templateUrl: './add-debour.component.html',
+  styleUrls: ['./add-debour.component.css']
+})
+export class AddDebourComponent implements OnInit {
+
+  @Input() provision: Provision | undefined;
+  @Output() provisionChange: EventEmitter<Provision> = new EventEmitter<Provision>();
+  @Input() editMode: boolean = false;
+  newDebour: Debour | undefined;
+  displayedColumns: SortTableColumn[] = [];
+  paymentTypeVirement: PaymentType = this.constantService.getPaymentTypeVirement();
+  paymentTypeCb: PaymentType = this.constantService.getPaymentTypeCB();
+  refreshTable: Subject<void> = new Subject<void>();
+
+  constructor(private formBuilder: FormBuilder,
+    public confirmationDialog: MatDialog,
+    private constantService: ConstantService,) { }
+
+  ngOnInit() {
+    this.displayedColumns = [];
+    this.displayedColumns.push({ id: "billingType", fieldName: "billingType.label", label: "Débour" } as SortTableColumn);
+    this.displayedColumns.push({ id: "competentAuthority", fieldName: "competentAuthority.label", label: "Autorité compétente" } as SortTableColumn);
+    this.displayedColumns.push({ id: "debourAmount", fieldName: "debourAmount", label: "Montant", valueFonction: formatEurosForSortTable } as SortTableColumn);
+    this.displayedColumns.push({ id: "paymentType", fieldName: "paymentType.label", label: "Type de paiement" } as SortTableColumn);
+    this.displayedColumns.push({ id: "paymentDateTime", fieldName: "paymentDateTime", label: "Date de paiement", valueFonction: formatDateForSortTable } as SortTableColumn);
+    this.displayedColumns.push({ id: "payment", fieldName: "payment.id", label: "Paiement associé" } as SortTableColumn);
+    this.displayedColumns.push({ id: "comments", fieldName: "comments", label: "Commentaires", isShrinkColumn: true } as SortTableColumn);
+    this.refreshTable.next();
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes.provision) {
+      this.setData();
+    }
+  }
+
+  setData() {
+    if (!this.newDebour) {
+      this.newDebour = {} as Debour;
+      this.refreshTable.next();
+    }
+  }
+
+  addDebour() {
+    if (this.getFormStatus()) {
+      if (this.newDebour) {
+        if (this.newDebour.paymentDateTime)
+          this.newDebour.paymentDateTime = new Date(this.newDebour.paymentDateTime.setHours(12));
+
+        const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
+          data: {
+            title: "Ajouter le débour ?",
+            content: "Êtes-vous sûr de vouloir ajouter ce débour ? Cette action est irréversible ! ",
+            closeActionText: "Annuler",
+            validationActionText: "Confirmer"
+          }
+        });
+
+        dialogRef.afterClosed().subscribe(dialogResult => {
+          if (dialogResult) {
+            if (this.provision) {
+              if (!this.provision.debours)
+                this.provision.debours = [];
+              this.provision.debours.push(this.newDebour!);
+              this.provisionChange.next(this.provision);
+              this.newDebour = undefined;
+              this.setData();
+            }
+          }
+        });
+      }
+    }
+  }
+
+  debourForm = this.formBuilder.group({
+  })
+
+  getFormStatus(): boolean {
+    return this.debourForm.valid;
+  }
+
+}

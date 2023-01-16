@@ -20,6 +20,7 @@ import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.model.Refund;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.quotation.model.Debour;
 import com.jss.osiris.modules.quotation.model.centralPay.CentralPayPaymentRequest;
 import com.jss.osiris.modules.tiers.model.ITiers;
 
@@ -29,6 +30,8 @@ public interface AccountingRecordService {
         public void generateAccountingRecordsForSaleOnInvoiceGeneration(Invoice invoice) throws OsirisException;
 
         public void generateAccountingRecordsForPurshaseOnInvoiceGeneration(Invoice invoice) throws OsirisException;
+
+        public void generateAccountingRecordsForDebourPayment(Debour debour) throws OsirisException;
 
         public void dailyAccountClosing();
 
@@ -86,7 +89,7 @@ public interface AccountingRecordService {
 
         public AccountingAccount getProviderAccountingAccountForITiers(ITiers tiers) throws OsirisException;
 
-        public void generateAccountingRecordsForWaintingInboundPayment(Payment payment) throws OsirisException;
+        public void generateAccountingRecordsForWaitingInboundPayment(Payment payment) throws OsirisException;
 
         public void generateAccountingRecordsForWaintingOutboundPayment(Payment payment) throws OsirisException;
 
@@ -95,6 +98,8 @@ public interface AccountingRecordService {
         public void generateBankAccountingRecordsForOutboundPayment(Payment payment) throws OsirisException;
 
         public void generateAccountingRecordsForRefundOnVirement(Refund refund) throws OsirisException;
+
+        public void generateAccountingRecordsForDebourOnDebour(Debour debour) throws OsirisException;
 
         public List<AccountingRecord> getAccountingRecordsByTemporaryOperationId(Integer operationId);
 

@@ -11,4 +11,6 @@ public interface BillingTypeService {
     public BillingType getBillingType(Integer id);
 
     public BillingType addOrUpdateBillingType(BillingType billingType) throws OsirisException;
+
+    public List<BillingType> getBillingTypesDebour();
 }

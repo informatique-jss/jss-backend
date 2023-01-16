@@ -33,6 +33,7 @@ import com.jss.osiris.modules.quotation.model.Bodacc;
 import com.jss.osiris.modules.quotation.model.BodaccStatus;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
+import com.jss.osiris.modules.quotation.model.Debour;
 import com.jss.osiris.modules.quotation.model.Domiciliation;
 import com.jss.osiris.modules.quotation.model.DomiciliationStatus;
 import com.jss.osiris.modules.quotation.model.FormaliteStatus;
@@ -95,6 +96,9 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
     @Autowired
     AttachmentService attachmentService;
 
+    @Autowired
+    BankTransfertService bankTransfertService;
+
     @Override
     public List<AssoAffaireOrder> getAssoAffaireOrders() {
         return IterableUtils.toList(assoAffaireOrderRepository.findAll());
@@ -155,6 +159,18 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                 for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
                     invoiceItem.setProvision(provision);
                     invoiceItemService.addOrUpdateInvoiceItem(invoiceItem);
+                }
+
+            if (provision.getId() != null && provision.getDebours() != null)
+                for (Debour debour : provision.getDebours()) {
+                    if (debour.getProvision() == null)
+                        debour.setProvision(provision);
+
+                    if (debour.getBankTransfert() == null && debour.getPaymentType().getId()
+                            .equals(constantService.getPaymentTypeVirement().getId())) {
+                        debour.setBankTransfert(
+                                bankTransfertService.generateBankTransfertForDebour(debour, assoAffaireOrder));
+                    }
                 }
 
             if (provision.getDomiciliation() != null) {
@@ -227,9 +243,6 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                     for (Document document : announcement.getDocuments())
                         document.setAnnouncement(announcement);
 
-                if (announcement.getId() != null)
-                    announcementService.generatePublicationProof(announcement);
-
                 boolean publicationProofFound = false;
                 if (announcement != null) {
                     if (announcement.getAttachments() != null && announcement.getAttachments().size() > 0)
@@ -247,6 +260,11 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                             .equals(AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS)) {
                         announcementService.generateStoreAndSendPublicationReceipt((CustomerOrder) customerOrder,
                                 announcement);
+                    }
+                    if (announcement.getAnnouncementStatus().getCode()
+                            .equals(AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE)) {
+                        announcementService.generateAndStoreAnnouncementWordFile((CustomerOrder) customerOrder,
+                                assoAffaireOrder, provision, announcement);
                     }
                     if (publicationProofFound && announcement.getAnnouncementStatus().getCode()
                             .equals(AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE_PUBLISHED))

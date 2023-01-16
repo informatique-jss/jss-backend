@@ -295,6 +295,9 @@
           [orderingSearch]="orderingSearch" [isForTiersIntegration]="true">
         </ordering-list>
       </mat-tab>
+      <mat-tab label="Annonces" *ngIf="selectedConfrere.id!=null && selectedConfrere.id!=undefined">
+        <announcement-list [confrere]="selectedConfrere"></announcement-list>
+      </mat-tab>
       <mat-tab label="Factures" *ngIf="selectedConfrere.id!=null && selectedConfrere.id!=undefined">
         <invoice-list *ngIf="this.invoiceSearch.customerOrders && this.invoiceSearch.customerOrders.length>0"
           [invoiceSearch]="invoiceSearch" [isForTiersIntegration]="true"></invoice-list>

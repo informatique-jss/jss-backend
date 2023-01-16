@@ -26,14 +26,17 @@ import { QuillModule } from 'ngx-quill';
 import { MiscellaneousModule } from 'src/app/modules/miscellaneous/components/miscellaneous/miscellaneous.module';
 import { AddAffaireDialogComponent } from '../add-affaire-dialog/add-affaire-dialog.component';
 import { AddAffaireComponent } from '../add-affaire/add-affaire.component';
+import { AddDebourComponent } from '../add-debour/add-debour.component';
 import { AffaireListComponent } from '../affaire-list/affaire-list.component';
 import { AffaireComponent } from '../affaire/affaire.component';
+import { AnnouncementListComponent } from '../announcement-list/announcement-list.component';
 import { AnnouncementComponent } from '../announcement/announcement.component';
 import { BodaccFusionComponent } from '../bodacc-fusion/bodacc-fusion.component';
 import { BodaccMainComponent } from '../bodacc-main/bodacc-main.component';
 import { BodaccSaleComponent } from '../bodacc-sale/bodacc-sale.component';
 import { BodaccSplitComponent } from '../bodacc-split/bodacc-split.component';
 import { ChooseAssignedUserDialogComponent } from '../choose-assigned-user-dialog/choose-assigned-user-dialog.component';
+import { CustomerOrderPaymentComponent } from '../customer-order-payment/customer-order-payment.component';
 import { DomiciliationComponent } from '../domiciliation/domiciliation.component';
 import { FormaliteComponent } from '../formalite/formalite.component';
 import { ContentComponent } from '../guichet-unique/content/content.component';
@@ -44,6 +47,8 @@ import { PersonnePhysiqueComponent } from '../guichet-unique/personne-physique/p
 import { InvoiceManagementComponent } from '../invoice-management/invoice-management.component';
 import { OrderingCustomerComponent } from '../ordering-customer/ordering-customer.component';
 import { OrderingListComponent } from '../ordering-list/ordering-list.component';
+import { PaymentListComponent } from '../payment-list/payment-list.component';
+import { PrintLabelDialogComponent } from '../print-label-dialog/print-label-dialog.component';
 import { ProvisionItemComponent } from '../provision-item/provision-item.component';
 import { ProvisionListComponent } from '../provision-list/provision-list.component';
 import { ProvisionOptionsComponent } from '../provision-options/provision-options.component';
@@ -51,6 +56,7 @@ import { ProvisionComponent } from '../provision/provision.component';
 import { QuotationListComponent } from '../quotation-list/quotation-list.component';
 import { QuotationManagementComponent } from '../quotation-management/quotation-management.component';
 import { SelectAttachmentTypeDialogComponent } from '../select-attachment-type-dialog/select-attachment-type-dialog.component';
+import { SelectAttachmentsDialogComponent } from '../select-attachments-dialog/select-attachment-type-dialog.component';
 import { SimpleProvisionComponent } from '../simple-provision/simple-provision.component';
 import { QuotationComponent } from './quotation.component';
 
@@ -139,6 +145,12 @@ const routes: Routes = [
     AffaireComponent,
     SelectAttachmentTypeDialogComponent,
     AddAffaireComponent,
+    CustomerOrderPaymentComponent,
+    PaymentListComponent,
+    AnnouncementListComponent,
+    SelectAttachmentsDialogComponent,
+    PrintLabelDialogComponent,
+    AddDebourComponent,
     // Guichet unique
     ContentComponent,
     NatureCreationComponent,
@@ -151,6 +163,8 @@ const routes: Routes = [
     ProvisionListComponent,
     QuotationListComponent,
     OrderingListComponent,
+    PaymentListComponent,
+    AnnouncementListComponent,
   ],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'fr-FR' }

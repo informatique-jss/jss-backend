@@ -232,6 +232,14 @@
           </tr>
           <tr>
             <td>
+              <select-attachment-type [(model)]="constant.attachmentTypeAnnouncement"
+                label="Type de pièce-jointe - annonce" [form]="constantForm" propertyName="attachmentTypeAnnouncement"
+                [isMandatory]="true" [isDisabled]="!editMode">
+              </select-attachment-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <autocomplete-country [(model)]="constant.countryFrance" [form]="constantForm" label="Pays - France"
                 propertyName="countryFrance" [isMandatory]="true" [isDisabled]="!editMode"></autocomplete-country>
             </td>
@@ -562,13 +570,6 @@
           </tr>
           <tr>
             <td>
-              <autocomplete-confrere [(model)]="constant.confrereJssPaper" [form]="constantForm"
-                propertyName="confrereJssPaper" [isMandatory]="true" [isDisabled]="!editMode"
-                label="Confrère - JSS - Papier"></autocomplete-confrere>
-            </td>
-          </tr>
-          <tr>
-            <td>
               <select-contract-type [(model)]="constant.domiciliationContractTypeKeepMail"
                 label="Contrat de domiciliation - conservation du courrier" [form]="constantForm"
                 propertyName="domiciliationContractTypeKeepMail" [isMandatory]="true" [isDisabled]="!editMode">
@@ -795,6 +796,12 @@
             <td>
               <select-vat [(model)]="constant.vatEight" label="Taux de TVA - 8.5%" [form]="constantForm"
                 propertyName="vatEight" [isMandatory]="true" [isDisabled]="!editMode"></select-vat>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-vat [(model)]="constant.vatDeductible" label="Taux de TVA - TVA déductible" [form]="constantForm"
+                propertyName="vatDeductible" [isMandatory]="true" [isDisabled]="!editMode"></select-vat>
             </td>
           </tr>
           <tr>

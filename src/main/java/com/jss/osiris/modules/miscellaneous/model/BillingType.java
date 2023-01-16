@@ -37,6 +37,12 @@ public class BillingType implements Serializable, IId {
 	private Boolean isOverrideVat;
 
 	@Column(nullable = false)
+	private Boolean isNonTaxable;
+
+	@Column(nullable = false)
+	private Boolean isDebour;
+
+	@Column(nullable = false)
 	private Boolean isOptionnal;
 
 	@ManyToOne
@@ -151,6 +157,22 @@ public class BillingType implements Serializable, IId {
 
 	public void setIsGenerateAccountCharge(Boolean isGenerateAccountCharge) {
 		this.isGenerateAccountCharge = isGenerateAccountCharge;
+	}
+
+	public Boolean getIsNonTaxable() {
+		return isNonTaxable;
+	}
+
+	public void setIsNonTaxable(Boolean isNonTaxable) {
+		this.isNonTaxable = isNonTaxable;
+	}
+
+	public Boolean getIsDebour() {
+		return isDebour;
+	}
+
+	public void setIsDebour(Boolean isDebour) {
+		this.isDebour = isDebour;
 	}
 
 }

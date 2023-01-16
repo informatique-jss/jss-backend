@@ -1,0 +1,27 @@
+<div class="mat-elevation-z2 form-div">
+  <div class=" full-width">
+    <table class="full-width table-fixed-layout" *ngIf="announcementSearch">
+      <tr>
+        <td>
+          <select-provision-stauts [(model)]="announcementSearch.announcementStatus" label="Statut"
+            [form]="announcementListForm" propertyName="paymentWay" [isMandatory]="false" [loadBodacc]="false"
+            [loadDomiciliation]="false" [loadFormalite]="false" [loadSimpleprovision]="false">
+          </select-provision-stauts>
+        </td>
+        <td>
+          <generic-date-range-picker [(modelStart)]="announcementSearch.startDate"
+            [(modelEnd)]="announcementSearch.endDate" label="Plage de recherche" [form]="announcementListForm"
+            propertyNameStart="startDate" propertyNameEnd="endDate">
+          </generic-date-range-picker>
+        </td>
+        <td class="fab-td-button">
+          <button mat-mini-fab color="warn" matTooltip="Rechercher" (click)="searchAnnouncements()" class="add-button">
+            <mat-icon>search</mat-icon>
+          </button>
+        </td>
+      </tr>
+    </table>
+    <sort-table [actions]="tableAction" [columns]="displayedColumns" [values]="announcements" tableName="Annonces">
+    </sort-table>
+  </div>
+</div>

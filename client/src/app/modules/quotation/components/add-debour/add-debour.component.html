@@ -1,0 +1,44 @@
+<div class="mat-elevation-z2 form-div" *ngIf="provision && newDebour && false">
+  <form [formGroup]="debourForm">
+    <div class="full-width" *ngIf="editMode">
+      <table class="full-width">
+        <tr>
+          <td>
+            <select-billing-type-debour [(model)]="newDebour.billingType" label="Type de débour" [form]="debourForm"
+              propertyName="billingType" [isMandatory]="true" [isDisabled]="!editMode"></select-billing-type-debour>
+          </td>
+          <td>
+            <autocomplete-competent-authority [(model)]="newDebour.competentAuthority" [form]="debourForm"
+              propertyName="competentAuthority" [isMandatory]="true" [isDisabled]="!editMode"
+              label="Autorité compétente"></autocomplete-competent-authority>
+          </td>
+          <td>
+            <generic-input [(model)]="newDebour.debourAmount" label="Montant" [form]="debourForm"
+              propertyName="debourAmount" [isMandatory]="true" [isDisabled]="!editMode" type="number"
+              step="0,01"></generic-input>
+          </td>
+          <td>
+            <select-payment-types [(model)]="newDebour.paymentType" label="Mode de paiement" [form]="debourForm"
+              [filteredPaymentType]="[paymentTypeVirement,paymentTypeCb]" propertyName="paymentType"
+              [isMandatory]="true" [isDisabled]="!editMode"></select-payment-types>
+          </td>
+          <td *ngIf="newDebour.paymentType && newDebour.paymentType.id ==paymentTypeCb.id">
+            <generic-datepicker [(model)]="newDebour.paymentDateTime" label="Date de paiement" [form]="debourForm"
+              propertyName="paymentDateTime" [isMandatory]="true" [isDisabled]="!editMode"></generic-datepicker>
+          </td>
+          <td>
+            <generic-input [(model)]="newDebour.comments" label="Commentaire" [form]="debourForm"
+              propertyName="comments" [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="250"></generic-input>
+          </td>
+          <td class="button-td">
+            <button (click)="addDebour()" mat-mini-fab color="warn" class="mini-fab-add add-button">
+              <mat-icon>add</mat-icon>
+            </button>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </form>
+  <sort-table [refreshTable]="refreshTable" [columns]="displayedColumns" [values]="provision.debours"
+    tableName="Débours"></sort-table>
+</div>

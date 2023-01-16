@@ -30,6 +30,7 @@ import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.CharacterPrice;
 import com.jss.osiris.modules.quotation.model.Confrere;
+import com.jss.osiris.modules.quotation.model.Debour;
 import com.jss.osiris.modules.quotation.model.IQuotation;
 import com.jss.osiris.modules.quotation.model.NoticeType;
 import com.jss.osiris.modules.quotation.model.Provision;
@@ -209,6 +210,19 @@ public class PricingHelper {
                     invoiceItem.setPreTaxPrice(
                             Math.round(billingItem.getPreTaxPrice() * nbr * 100f) / 100f);
             }
+        } else if (billingItem.getBillingType().getIsDebour() && !billingItem.getBillingType().getCanOverridePrice()
+                && provision.getDebours() != null && provision.getDebours().size() > 0) {
+            // Compute debour prices
+            Float total = 0f;
+            for (Debour debour : provision.getDebours()) {
+                total += debour.getDebourAmount();
+            }
+            if (billingItem.getBillingType().getIsNonTaxable())
+                invoiceItem.setPreTaxPrice(Math.round(total * 100f) / 100f);
+            else {
+                Float preTaxPrice = total / ((100 + constantService.getVatDeductible().getRate()) / 100f);
+                invoiceItem.setPreTaxPrice(Math.round(preTaxPrice * 100f) / 100f);
+            }
         } else {
             invoiceItem.setPreTaxPrice(Math.round(billingItem.getPreTaxPrice() * 100f) / 100f);
         }
@@ -222,8 +236,6 @@ public class PricingHelper {
 
     private boolean isNotJssConfrere(Provision provision) throws OsirisException {
         return provision.getAnnouncement() != null && provision.getAnnouncement().getConfrere() != null
-                && !provision.getAnnouncement().getConfrere().getId()
-                        .equals(constantService.getConfrereJssPaper().getId())
                 && !provision.getAnnouncement().getConfrere().getId()
                         .equals(constantService.getConfrereJssSpel().getId());
     }
@@ -460,6 +472,10 @@ public class PricingHelper {
         if (invoiceItem.getBillingItem() != null && invoiceItem.getBillingItem().getBillingType() != null
                 && invoiceItem.getBillingItem().getBillingType().getIsOverrideVat()) {
             vat = invoiceItem.getBillingItem().getBillingType().getVat();
+        } else if (invoiceItem.getBillingItem().getBillingType().getIsDebour()
+                && !invoiceItem.getBillingItem().getBillingType().getCanOverridePrice()) {
+            if (!invoiceItem.getBillingItem().getBillingType().getIsNonTaxable())
+                vat = constantService.getVatDeductible();
         } else {
             if (billingDocument == null || billingDocument.getBillingLabelType() == null
                     || billingDocument.getBillingLabelType().getId()

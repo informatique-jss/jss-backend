@@ -56,6 +56,9 @@ public class CompetentAuthority implements Serializable, IId {
 	private String iban;
 
 	@Column(length = 40)
+	private String bic;
+
+	@Column(length = 40)
 	private String jssAccount;
 
 	@Column(length = 60)
@@ -315,6 +318,14 @@ public class CompetentAuthority implements Serializable, IId {
 
 	public void setApiId(String apiId) {
 		this.apiId = apiId;
+	}
+
+	public String getBic() {
+		return bic;
+	}
+
+	public void setBic(String bic) {
+		this.bic = bic;
 	}
 
 }

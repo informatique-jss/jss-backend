@@ -66,6 +66,8 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("actu.legale.publish.newpapper.id");
         isOk = isOk && checkProperty("fr.gouv.etablissements.publics.api.entry.point");
         isOk = isOk && checkProperty("fr.gouv.geo.api.entry.point");
+        isOk = isOk && checkProperty("printer.label.ip");
+        isOk = isOk && checkProperty("printer.label.port");
 
         isOk = isOk && checkAccountingParams();
 

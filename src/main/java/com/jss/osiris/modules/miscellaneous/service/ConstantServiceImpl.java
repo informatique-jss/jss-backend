@@ -255,6 +255,11 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public AttachmentType getAttachmentTypeAnnouncement() throws OsirisException {
+        return getConstants().getAttachmentTypeAnnouncement();
+    }
+
+    @Override
     public Country getCountryFrance() throws OsirisException {
         return getConstants().getCountryFrance();
     }
@@ -465,11 +470,6 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
-    public Confrere getConfrereJssPaper() throws OsirisException {
-        return getConstants().getConfrereJssPaper();
-    }
-
-    @Override
     public DomiciliationContractType getDomiciliationContractTypeKeepMail() throws OsirisException {
         return getConstants().getDomiciliationContractTypeKeepMail();
     }
@@ -622,6 +622,11 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public Vat getVatEight() throws OsirisException {
         return getConstants().getVatEight();
+    }
+
+    @Override
+    public Vat getVatDeductible() throws OsirisException {
+        return getConstants().getVatDeductible();
     }
 
     @Override

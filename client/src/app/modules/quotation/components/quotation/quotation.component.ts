@@ -36,6 +36,7 @@ import { QuotationService } from '../../services/quotation.service';
 import { AddAffaireDialogComponent } from '../add-affaire-dialog/add-affaire-dialog.component';
 import { ChooseAssignedUserDialogComponent } from '../choose-assigned-user-dialog/choose-assigned-user-dialog.component';
 import { OrderingCustomerComponent } from '../ordering-customer/ordering-customer.component';
+import { PrintLabelDialogComponent } from '../print-label-dialog/print-label-dialog.component';
 import { ProvisionItemComponent } from '../provision-item/provision-item.component';
 import { ProvisionComponent } from '../provision/provision.component';
 import { QuotationManagementComponent } from '../quotation-management/quotation-management.component';
@@ -56,6 +57,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
   VALIDATED_BY_CUSTOMER = VALIDATED_BY_CUSTOMER;
   QUOTATION_ENTITY_TYPE = QUOTATION_ENTITY_TYPE;
   CUSTOMER_ORDER_ENTITY_TYPE = CUSTOMER_ORDER_ENTITY_TYPE;
+  CUSTOMER_ORDER_STATUS_BILLED = CUSTOMER_ORDER_STATUS_BILLED;
 
   billingLabelTypeAffaire: BillingLabelType = this.constantService.getBillingLabelTypeCodeAffaire();
 
@@ -85,6 +87,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     private customerOrderStatusService: CustomerOrderStatusService,
     private activatedRoute: ActivatedRoute,
     public chooseUserDialog: MatDialog,
+    public mailLabelDialog: MatDialog,
     public addAffaireDialog: MatDialog,
     public quotationWorkflowDialog: MatDialog,
     public customerOrderWorkflowDialog: MatDialog,
@@ -371,7 +374,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     this.isStatusOpen = false;
     this.editMode = true;
     setTimeout(() => {
-      if (this.getFormsStatus()) {
+      if (this.getFormsStatus() || targetStatus.code == CUSTOMER_ORDER_STATUS_ABANDONED) {
         if (!this.instanceOfCustomerOrder) {
           this.quotationService.updateQuotationStatus(this.quotation, targetStatus.code).subscribe(response => {
             this.quotation = response;
@@ -412,6 +415,10 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
 
   invoiceItemChange($event: any) {
     this.generateInvoiceItem();
+  }
+
+  onStateChange() {
+    this.appService.openRoute(null, '/order/' + this.quotation.id, null);
   }
 
   currentInvoiceGeneration: boolean = false;
@@ -578,7 +585,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
   }
 
   getRemainingToPay() {
-    if (instanceOfCustomerOrder(this.quotation))
+    if (instanceOfCustomerOrder(this.quotation) && this.quotation.customerOrderStatus)
       if (this.quotation.customerOrderStatus.code != CUSTOMER_ORDER_STATUS_BILLED)
         return Math.round((QuotationComponent.computePriceTotal(this.quotation) - QuotationComponent.computePayed(this.quotation)) * 100) / 100;
       else {
@@ -616,8 +623,22 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     this.quotationService.generateCustomerOrderDepositConfirmationToCustomer(this.quotation).subscribe(response => { });
   }
 
-  generateInvoicetMail() {
+  generateInvoiceMail() {
     this.quotationService.generateInvoicetMail(this.quotation).subscribe(response => { });
+  }
+
+  generateMailingLabel() {
+    const dialogRef = this.mailLabelDialog.open(PrintLabelDialogComponent, {
+      maxWidth: "600px",
+    });
+
+    dialogRef.componentInstance.customerOrders.push(this.quotation.id + "");
+
+    dialogRef.afterClosed().subscribe(dialogResult => {
+      if (dialogResult) {
+        this.customerOrderService.generateMailingLabel(dialogResult).subscribe(response => { });
+      }
+    });
   }
 
   displayAffaire(event: any, affaire: Affaire) {

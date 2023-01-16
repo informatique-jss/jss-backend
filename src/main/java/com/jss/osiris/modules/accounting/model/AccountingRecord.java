@@ -23,6 +23,7 @@ import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.quotation.model.Debour;
 
 @Entity
 public class AccountingRecord implements Serializable, IId {
@@ -88,6 +89,11 @@ public class AccountingRecord implements Serializable, IId {
 	@JoinColumn(name = "id_deposit")
 	@JsonIgnoreProperties(value = { "accountingRecords", "customerOrder" }, allowSetters = true)
 	private Deposit deposit;
+
+	@ManyToOne
+	@JoinColumn(name = "id_debour")
+	@JsonIgnoreProperties(value = { "accountingRecords", "customerOrder" }, allowSetters = true)
+	private Debour debour;
 
 	@ManyToOne
 	@JoinColumn(name = "id_accounting_journal")
@@ -306,6 +312,14 @@ public class AccountingRecord implements Serializable, IId {
 
 	public void setIsCounterPart(Boolean isCounterPart) {
 		this.isCounterPart = isCounterPart;
+	}
+
+	public Debour getDebour() {
+		return debour;
+	}
+
+	public void setDebour(Debour debour) {
+		this.debour = debour;
 	}
 
 }

@@ -1,0 +1,32 @@
+<h1 mat-dialog-title>Choix des pièces jointes</h1>
+<div mat-dialog-content>
+  <p>Choisissez ci-dessous la liste des pièces jointes à envoyer :</p>
+  <table>
+    <tr>
+      <td>
+        <sort-table class="margin-bottom" (onRowClick)="selectAttachment($event)" [columns]="displayedColumns"
+          [values]="getAttachments()" tableName="Pièce jointes">
+        </sort-table>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <div *ngIf="selectedAttachments && selectedAttachments.length>0">
+          <p>Pièces envoyées : </p>
+          <ul>
+            <li *ngFor="let attachment of selectedAttachments; let index = index">{{attachment.attachmentType.label}} -
+              {{attachment.uploadedFile.filename}} <span class="pointer"
+                (click)="deleteAttachment(index)">(supprimer)</span>
+            </li>
+          </ul>
+        </div>
+      </td>
+    </tr>
+  </table>
+  <generic-toggle [(model)]="attachmentMailRequest.sendToMe" label="Me l'envoyer" [form]="attachmentsForm"
+    propertyName="sendToMe"></generic-toggle>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-raised-button color="accent" (click)="closeDialog()">Annuler</button>
+  <button mat-raised-button color="warn" (click)="generateMail()">Valider</button>
+</div>

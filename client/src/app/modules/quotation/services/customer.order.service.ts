@@ -1,6 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AppRestService } from 'src/app/services/appRest.service';
+import { Announcement } from '../model/Announcement';
 import { IQuotation } from '../model/IQuotation';
 
 @Injectable({
@@ -22,6 +23,14 @@ export class CustomerOrderService extends AppRestService<IQuotation>{
 
   addOrUpdateCustomerOrder(customerOrder: IQuotation) {
     return this.addOrUpdate(new HttpParams(), "customer-order", customerOrder, "Commande enregistrée", "Erreur lors de l'enregistrement de la commande");
+  }
+
+  getCustomerOrderOfAnnouncement(announcement: Announcement) {
+    return this.get(new HttpParams().set("idAnnouncement", announcement.id), "customer-order/announcement");
+  }
+
+  generateMailingLabel(customerOrders: string[]) {
+    return this.get(new HttpParams().set("customerOrders", customerOrders.join(",")), "customer-order/print/label", "Etiquettes en cours d'impression", "Erreur lors de l'impression");
   }
 
 }

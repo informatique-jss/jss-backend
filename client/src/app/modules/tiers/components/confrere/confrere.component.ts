@@ -49,19 +49,18 @@ export class ConfrereComponent implements OnInit {
     this.appService.changeHeaderTitle("Confrères");
     let idConfrere = this.activatedRoute.snapshot.params.id;
     if (idConfrere && idConfrere != "null") {
-      this.selectedConfrereId = idConfrere;
-      if (this.selectedConfrereId && this.confreres)
-        for (let confrere of this.confreres)
-          if (confrere.id == this.selectedConfrereId)
-            this.selectConfrere(confrere);
+      this.selectedConfrereId = parseInt(idConfrere);
+      this.confrereService.getConfrereById(this.selectedConfrereId).subscribe(response => {
+        this.confreres = [];
+        this.confreres.push(response);
+        this.selectConfrere(this.confreres[0]);
+      })
     }
 
     this.displayedColumns = [];
     this.displayedColumns.push({ id: "id", fieldName: "id", label: "Identifiant technique" } as SortTableColumn);
     this.displayedColumns.push({ id: "code", fieldName: "code", label: "Codification fonctionnelle" } as SortTableColumn);
     this.displayedColumns.push({ id: "label", fieldName: "label", label: "Libellé" } as SortTableColumn);
-
-    this.setDataTable();
   }
 
   entityForm2 = this.formBuilder.group({
@@ -138,13 +137,16 @@ export class ConfrereComponent implements OnInit {
     let filterValueCast = (filterValue as HTMLInputElement);
     filterValue = filterValueCast.value.trim();
     this.searchText = filterValue.toLowerCase();
+    if (this.searchText.length > 2) {
+      this.confrereService.getConfrereFilteredByDepartmentAndName(undefined, this.searchText).subscribe(response => this.confreres = response);
+    }
   }
 
   saveConfrere() {
     if (this.getFormStatus() && this.selectedConfrere) {
       this.editMode = false;
       this.confrereService.addOrUpdateConfrere(this.selectedConfrere).subscribe(response => {
-        this.setDataTable();
+        this.selectedConfrere = response;
       });
     } else {
       this.appService.displaySnackBar("Erreur, certains champs ne sont pas correctement renseignés !", true, 15);
@@ -167,9 +169,4 @@ export class ConfrereComponent implements OnInit {
     this.editMode = true;
   }
 
-  setDataTable() {
-    this.confrereService.getConfreres().subscribe(response => {
-      this.confreres = response;
-    })
-  }
 }

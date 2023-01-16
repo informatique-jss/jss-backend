@@ -51,10 +51,6 @@ export class HabilitationsService {
     return true;
   }
 
-  canViewJournalModule() {
-    return false;
-  }
-
   canViewLogModule() {
     return this.loginService.hasGroup([ADMINISTRATEURS]);
   }

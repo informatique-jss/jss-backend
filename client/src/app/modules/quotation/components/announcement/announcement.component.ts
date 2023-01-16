@@ -40,7 +40,7 @@ export class AnnouncementComponent implements OnInit {
   @Input() editMode: boolean = false;
   @Input() instanceOfCustomerOrder: boolean = false;
   @Input() isStatusOpen: boolean = true;
-  @Output() provisionChange: EventEmitter<void> = new EventEmitter<void>();
+  @Output() provisionChange: EventEmitter<Provision> = new EventEmitter<Provision>();
 
   @ViewChild('tabs', { static: false }) tabs: any;
   @ViewChild('noticeTypesInput') noticeTypesInput: ElementRef<HTMLInputElement> | undefined;
@@ -53,7 +53,6 @@ export class AnnouncementComponent implements OnInit {
   journalTypes: JournalType[] = [] as Array<JournalType>;
   journalTypeSpel: JournalType = this.constantService.getJournalTypeSpel();
   journalTypePaper: JournalType = this.constantService.getJournalTypePaper();
-  confrereJssPaper: Confrere = this.constantService.getConfrereJssPaper();
   confrereJssSpel: Confrere = this.constantService.getConfrereJssSpel();
   attachmentTypePublicationReceipt: AttachmentType = this.constantService.getAttachmentTypePublicationReceipt();
   attachmentTypePublicationFlag: AttachmentType = this.constantService.getAttachmentTypePublicationFlag();
@@ -141,8 +140,7 @@ export class AnnouncementComponent implements OnInit {
 
   getFormStatus(): boolean {
     this.announcementForm.markAllAsTouched();
-    console.log(this.announcementForm);
-    if (this.announcement && this.announcement.notice == null && !this.isStatusOpen && this.instanceOfCustomerOrder) {
+    if (this.announcement && (this.announcement.notice == null || this.announcement.notice == undefined || this.announcement.notice.length == 0) && !this.isStatusOpen && this.instanceOfCustomerOrder) {
       this.appService.displaySnackBar("Le texte de l'annonce est obligatoire", true, 15);
       return false;
     }

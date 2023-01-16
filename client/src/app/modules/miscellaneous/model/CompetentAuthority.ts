@@ -15,6 +15,7 @@ export interface CompetentAuthority extends IReferential {
   mails: Mail[];
   accountingMails: Mail[];
   iban: string;
+  bic: string;
   jssAccount: string;
   cities: City[];
   regions: Region[];

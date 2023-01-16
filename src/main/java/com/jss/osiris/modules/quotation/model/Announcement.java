@@ -24,7 +24,6 @@ import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.model.IAttachment;
 import com.jss.osiris.modules.miscellaneous.model.IDocument;
 import com.jss.osiris.modules.miscellaneous.model.IId;
-import com.jss.osiris.modules.pao.model.Journal;
 
 @Entity
 public class Announcement implements IId, IAttachment, IDocument {
@@ -82,14 +81,9 @@ public class Announcement implements IId, IAttachment, IDocument {
 
 	private Boolean isPublicationReciptAlreadySent;
 	private Boolean isPublicationFlagAlreadySent;
+	private Boolean isAnnouncementAlreadySentToConfrere;
 
 	private Integer actuLegaleId;
-
-	@ManyToOne
-	@JoinColumn(name = "id_journal")
-	private Journal journal;
-
-	private String journalPages;
 
 	public Integer getId() {
 		return id;
@@ -219,28 +213,20 @@ public class Announcement implements IId, IAttachment, IDocument {
 		this.isPublicationFlagAlreadySent = isPublicationFlagAlreadySent;
 	}
 
-	public Journal getJournal() {
-		return journal;
-	}
-
-	public void setJournal(Journal journal) {
-		this.journal = journal;
-	}
-
-	public String getJournalPages() {
-		return journalPages;
-	}
-
-	public void setJournalPages(String journalPages) {
-		this.journalPages = journalPages;
-	}
-
 	public Integer getActuLegaleId() {
 		return actuLegaleId;
 	}
 
 	public void setActuLegaleId(Integer actuLegaleId) {
 		this.actuLegaleId = actuLegaleId;
+	}
+
+	public Boolean getIsAnnouncementAlreadySentToConfrere() {
+		return isAnnouncementAlreadySentToConfrere;
+	}
+
+	public void setIsAnnouncementAlreadySentToConfrere(Boolean isAnnouncementAlreadySentToConfrere) {
+		this.isAnnouncementAlreadySentToConfrere = isAnnouncementAlreadySentToConfrere;
 	}
 
 }

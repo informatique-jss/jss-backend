@@ -234,6 +234,11 @@
           <automatic-mail-list [customerOrder]="quotation">
           </automatic-mail-list>
         </mat-tab>
+        <mat-tab label="Associer un paiement"
+          *ngIf="getRemainingToPay()>0 && instanceOfCustomerOrderFn(quotation) && quotation.customerOrderStatus.code!=CUSTOMER_ORDER_STATUS_BILLED">
+          <invoice-payment (stateChanged)="onStateChange()" [customerOrder]="quotation">
+          </invoice-payment>
+        </mat-tab>
         <mat-tab label="Historique du statut" *ngIf="quotation.id!=null && quotation.id!=undefined">
           <history [entity]="quotation" [entityType]="getEntityType()" [displayOnlyFields]="['quotationStatus']"
             [parseTypeList]="quotationStatusList"></history>
@@ -286,8 +291,11 @@
     <button mat-menu-item (click)="generateCustomerOrderDepositConfirmationToCustomer()">
       <span>Recevoir le mail de confirmation de réception de l'acompte</span>
     </button>
-    <button mat-menu-item (click)="generateInvoicetMail()">
+    <button mat-menu-item (click)="generateInvoiceMail()">
       <span>Recevoir le mail de facturation</span>
+    </button>
+    <button mat-menu-item (click)="generateMailingLabel()">
+      <span>Imprimer une étiquette postale</span>
     </button>
   </mat-menu>
 </button>

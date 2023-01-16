@@ -150,6 +150,10 @@ public class Constant implements Serializable, IId {
 	private AttachmentType attachmentTypeJournal;
 
 	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_attachment_type_announcement")
+	private AttachmentType attachmentTypeAnnouncement;
+
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_attachment_type_billing_closure")
 	private AttachmentType attachmentTypeBillingClosure;
 
@@ -325,10 +329,6 @@ public class Constant implements Serializable, IId {
 	private Confrere confrereJssSpel;
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "id_confrere_jss_paper")
-	private Confrere confrereJssPaper;
-
-	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_domiciliation_constract_type_keep_mail")
 	private DomiciliationContractType domiciliationContractTypeKeepMail;
 
@@ -447,6 +447,10 @@ public class Constant implements Serializable, IId {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_vat_eight")
 	private Vat vatEight;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_vat_deductible")
+	private Vat vatDeductible;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_department_martinique")
@@ -1377,14 +1381,6 @@ public class Constant implements Serializable, IId {
 		this.confrereJssSpel = confrereJssSpel;
 	}
 
-	public Confrere getConfrereJssPaper() {
-		return confrereJssPaper;
-	}
-
-	public void setConfrereJssPaper(Confrere confrereJssPaper) {
-		this.confrereJssPaper = confrereJssPaper;
-	}
-
 	public AttachmentType getAttachmentTypePublicationProof() {
 		return attachmentTypePublicationProof;
 	}
@@ -1641,6 +1637,22 @@ public class Constant implements Serializable, IId {
 	public void setAccountingJournalMiscellaneousOperations(
 			AccountingJournal accountingJournalMiscellaneousOperations) {
 		this.accountingJournalMiscellaneousOperations = accountingJournalMiscellaneousOperations;
+	}
+
+	public AttachmentType getAttachmentTypeAnnouncement() {
+		return attachmentTypeAnnouncement;
+	}
+
+	public void setAttachmentTypeAnnouncement(AttachmentType attachmentTypeAnnouncement) {
+		this.attachmentTypeAnnouncement = attachmentTypeAnnouncement;
+	}
+
+	public Vat getVatDeductible() {
+		return vatDeductible;
+	}
+
+	public void setVatDeductible(Vat vatDeductible) {
+		this.vatDeductible = vatDeductible;
 	}
 
 }

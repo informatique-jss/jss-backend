@@ -40,6 +40,7 @@
 
 .menu:hover {
   background: #4d4d4d;
+  transition: all 0.2s ease;
   color: #ffffff;
 }
 
@@ -86,6 +87,7 @@ mat-nav-list a mat-icon {
 
 mat-nav-list a:hover,
 .menu-item-active {
+  transition: all 0.5s ease;
   color: #ffffff !important;
   background: #44546A !important;
 }

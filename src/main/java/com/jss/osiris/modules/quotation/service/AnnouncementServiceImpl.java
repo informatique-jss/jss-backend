@@ -3,8 +3,6 @@ package com.jss.osiris.modules.quotation.service;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -17,10 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.pdf.PdfCopy;
-import com.itextpdf.text.pdf.PdfReader;
+import com.jss.osiris.libs.WordGenerationHelper;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.mail.MailHelper;
@@ -29,10 +24,13 @@ import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.quotation.model.ActuLegaleAnnouncement;
 import com.jss.osiris.modules.quotation.model.Announcement;
+import com.jss.osiris.modules.quotation.model.AnnouncementListSearch;
 import com.jss.osiris.modules.quotation.model.AnnouncementSearch;
 import com.jss.osiris.modules.quotation.model.AnnouncementSearchResult;
 import com.jss.osiris.modules.quotation.model.AnnouncementStatus;
+import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.repository.AnnouncementRepository;
 
 @Service
@@ -62,6 +60,9 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     @Autowired
     MailHelper mailHelper;
 
+    @Autowired
+    WordGenerationHelper wordGenerationHelper;
+
     @Override
     public List<Announcement> getAnnouncements() {
         return IterableUtils.toList(announcementRepository.findAll());
@@ -81,66 +82,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     }
 
     @Override
-    public List<Announcement> getAnnouncementWaitingForPublicationProof() throws OsirisException {
-        return announcementRepository.findAnnouncementWaitingForPublicationProof(constantService.getConfrereJssPaper());
-    }
-
-    @Override
-    public void generatePublicationProof(Announcement announcement)
-            throws OsirisException, OsirisClientMessageException {
-        Attachment currentAttachment = null;
-
-        if (announcement != null) {
-            if (announcement.getAttachments() != null && announcement.getAttachments().size() > 0)
-                for (Attachment attachment : announcement.getAttachments())
-                    if (attachment.getAttachmentType().getId()
-                            .equals(constantService.getAttachmentTypePublicationProof().getId())) {
-                        currentAttachment = attachment;
-                        break;
-                    }
-            if (currentAttachment == null && announcement.getJournal() != null
-                    && announcement.getJournalPages() != null) {
-                // if journal filled => generate
-                try {
-                    String[] pages = announcement.getJournalPages().split(",");
-                    ArrayList<Integer> pagesNumber = new ArrayList<Integer>();
-                    pagesNumber.add(1);
-                    for (String page : pages)
-                        pagesNumber.add(Integer.parseInt(page));
-
-                    File destFile = File.createTempFile("proof_target", "pdf");
-                    Document targetPdf = new Document();
-                    PdfCopy copy = new PdfCopy(targetPdf, new FileOutputStream(destFile));
-                    targetPdf.open();
-                    PdfReader ReadInputPDF;
-                    ReadInputPDF = new PdfReader(
-                            announcement.getJournal().getAttachments().get(0).getUploadedFile().getPath());
-
-                    copy.addDocument(ReadInputPDF, pagesNumber);
-                    copy.freeReader(ReadInputPDF);
-                    targetPdf.close();
-
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
-                    attachmentService.addAttachment(new FileInputStream(destFile), announcement.getId(),
-                            Announcement.class.getSimpleName(),
-                            constantService.getAttachmentTypePublicationProof(),
-                            "Publication_proof_" + formatter.format(LocalDateTime.now()) + ".pdf",
-                            false, "Justificatif de parution n°" + announcement.getId());
-                    destFile.delete();
-                } catch (IOException i) {
-                    throw new OsirisException(i,
-                            "Impossible to read files for publication proof generation for announcement n°"
-                                    + announcement.getId());
-                } catch (DocumentException e) {
-                    throw new OsirisException(e,
-                            "Impossible to generate publication proof for announcement n°" + announcement.getId());
-                }
-            }
-        }
-    }
-
-    @Override
-    public List<AnnouncementSearchResult> searchAnnouncements(AnnouncementSearch announcementSearch)
+    public List<AnnouncementSearchResult> searchAnnouncementsForWebSite(AnnouncementSearch announcementSearch)
             throws OsirisException {
         if (announcementSearch.getAffaireName() == null)
             announcementSearch.setAffaireName("");
@@ -175,6 +117,22 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                 announcementSearch.getStartDate(),
                 announcementSearch.getEndDate(), announcementStautsId, constantService.getConfrereJssSpel().getId(),
                 noticeTypeId);
+    }
+
+    @Override
+    public List<Announcement> searchAnnouncements(AnnouncementListSearch announcementSearch)
+            throws OsirisException {
+
+        if (announcementSearch.getStartDate() == null)
+            announcementSearch.setStartDate(LocalDate.now().minusYears(100));
+
+        if (announcementSearch.getEndDate() == null)
+            announcementSearch.setEndDate(LocalDate.now().plusYears(100));
+
+        return announcementRepository.getAnnouncementByStatusPublicationDateAndConfrere(
+                announcementSearch.getAnnouncementStatus(),
+                announcementSearch.getStartDate(),
+                announcementSearch.getEndDate(), announcementSearch.getConfrere());
     }
 
     @Override
@@ -318,6 +276,42 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         }
 
         mailHelper.sendProofReadingToCustomer(customerOrder, false, announcement);
+    }
+
+    @Override
+    public void generateAndStoreAnnouncementWordFile(CustomerOrder customerOrder, AssoAffaireOrder asso,
+            Provision provision, Announcement announcement)
+            throws OsirisException, OsirisClientMessageException {
+        if (announcement.getIsAnnouncementAlreadySentToConfrere() == null
+                || !announcement.getIsAnnouncementAlreadySentToConfrere()) {
+            if (announcement.getConfrere() != null
+                    && !announcement.getConfrere().getId().equals(constantService.getConfrereJssSpel().getId())) {
+                File wordFile = wordGenerationHelper.generateWordFromHtml(announcement.getNotice());
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
+                try {
+                    announcement.setAttachments(
+                            attachmentService.addAttachment(new FileInputStream(wordFile),
+                                    announcement.getId(),
+                                    Announcement.class.getSimpleName(), constantService.getAttachmentTypeAnnouncement(),
+                                    "announcement_" + announcement.getId() + formatter.format(LocalDateTime.now())
+                                            + ".docx",
+                                    false, "Annonce n°" + announcement.getId()));
+                } catch (FileNotFoundException e) {
+                    throw new OsirisException(e, "Impossible to read invoice PDF temp file");
+                } finally {
+                    wordFile.delete();
+                }
+
+                // Try to send whereas it was JSS or not
+                mailHelper.sendAnnouncementRequestToConfrere(
+                        customerOrderService.getCustomerOrder(customerOrder.getId()), asso,
+                        false, provision, announcement);
+
+                announcement.setIsAnnouncementAlreadySentToConfrere(true);
+                addOrUpdateAnnouncement(announcement);
+            }
+        }
+
     }
 
 }

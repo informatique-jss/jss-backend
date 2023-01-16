@@ -30,4 +30,6 @@ public interface AttachmentService {
 
         public Attachment addOrUpdateAttachment(Attachment attachment);
 
+        public List<Attachment> sortAttachmentByDateDesc(List<Attachment> attachments);
+
 }

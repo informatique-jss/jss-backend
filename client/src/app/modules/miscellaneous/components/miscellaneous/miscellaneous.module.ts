@@ -71,6 +71,7 @@ import { ChipsProvisionFamilyTypeComponent } from '../forms/chips-provision-fami
 import { ChipsSpecialOffersComponent } from '../forms/chips-special-offers/chips-special-offers.component';
 import { ChipsTypeDocumentComponent } from '../forms/chips-type-document/chips-type-document.component';
 import { GenericCheckboxComponent } from '../forms/generic-checkbox/generic-checkbox.component';
+import { GenericChipsInputComponent } from '../forms/generic-chips-input/generic-chips-input.component';
 import { GenericDateRangePickerComponent } from '../forms/generic-date-range-picker/generic-date-range-picker.component';
 import { CustomDateAdapter } from '../forms/generic-datepicker/CustomDateAdapter';
 import { GenericDatepickerComponent } from '../forms/generic-datepicker/generic-datepicker.component';
@@ -187,7 +188,7 @@ import { SelectAccountingJournalComponent } from '../forms/select-accounting-jou
 import { SelectAssignationTypeComponent } from '../forms/select-assignation-type/select-assignation-type.component';
 import { SelectAttachmentTypeComponent } from '../forms/select-attachment-type/select-attachment-type.component';
 import { SelectBillingItemsComponent } from '../forms/select-billing-items/select-billing-items.component';
-import { SelectBillingTypeComponent } from '../forms/select-billing-type/select-billing-type.component';
+import { SelectBillingTypeDebourComponent } from '../forms/select-billing-type-debour/select-billing-type-debour.component';
 import { SelectBodaccPublicationTypeComponent } from '../forms/select-bodacc-publication-type/select-bodacc-publication-type.component';
 import { SelectBuildingDomicilationComponent } from '../forms/select-building-domicilation/select-building-domicilation.component';
 import { SelectCompetentAuthorityTypeComponent } from '../forms/select-competent-authority-type/select-competent-authority-type.component';
@@ -205,7 +206,6 @@ import { SelectInvoiceStatusOneComponent } from '../forms/select-invoice-status-
 import { SelectInvoiceStatusComponent } from '../forms/select-invoice-status/select-invoice-status.component';
 import { SelectJournalTypeOneComponent } from '../forms/select-journal-type-one/select-journal-type-one.component';
 import { SelectJournalTypeComponent } from '../forms/select-journal-type/select-journal-type.component';
-import { SelectJournalComponent } from '../forms/select-journal/select-journal.component';
 import { SelectMailRedirectionComponent } from '../forms/select-mail-redirection/select-mail-redirection.component';
 import { SelectNoticeFamilyComponent } from '../forms/select-notice-family/select-notice-family.component';
 import { SelectPaymentDeadlineComponent } from '../forms/select-payment-deadline/select-payment-deadline.component';
@@ -329,7 +329,7 @@ const routes: Routes = [
     SelectAssignationTypeComponent,
     RadioGroupRecordTypeComponent,
     AutocompleteCityComponent,
-    SelectBillingTypeComponent,
+    SelectBillingTypeDebourComponent,
     SelectVatComponent,
     SelectRegionsComponent,
     AutocompleteRegionComponent,
@@ -347,7 +347,6 @@ const routes: Routes = [
     SelectVatCollectionTypeComponent,
     AutocompleteEmployeeComponent,
     AutocompleteConfrereComponent,
-    SelectJournalComponent,
     RadioGroupJournalTypeComponent,
     SelectDayComponent,
     GradeComponent,
@@ -384,6 +383,7 @@ const routes: Routes = [
     GenericDatetimePickerComponent,
     TiersFollowupComponent,
     AutomaticMailListComponent,
+    GenericChipsInputComponent,
     //Guichet Unique
     AutocompleteTypeDocumentComponent,
     ChipsTypeDocumentComponent,
@@ -535,7 +535,7 @@ const routes: Routes = [
     SelectDepartmentsComponent,
     SelectCompetentAuthorityTypeComponent,
     SelectRegionsComponent,
-    SelectBillingTypeComponent,
+    SelectBillingTypeDebourComponent,
     AutocompleteAffaireComponent,
     SelectDocumentTypeComponent,
     SelectAttachmentTypeComponent,
@@ -587,6 +587,7 @@ const routes: Routes = [
     TiersFollowupComponent,
     AutomaticMailListComponent,
     AutocompletePrincipalAccountingAccountComponent,
+    GenericChipsInputComponent,
     //Guichet Unique
     AutocompleteTypeDocumentComponent,
     RadioGroupMotifRejetCmaComponent,
@@ -687,7 +688,6 @@ const routes: Routes = [
     ChipsTypeDocumentComponent,
     AutocompleteTypeVoieComponent,
     GenericDatetimePickerComponent,
-    SelectJournalComponent,
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
   ]

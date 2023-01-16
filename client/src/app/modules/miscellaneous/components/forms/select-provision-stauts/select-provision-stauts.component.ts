@@ -28,11 +28,19 @@ export class SelectProvisionStautsComponent extends GenericMultipleSelectCompone
  */
   @Input() defaultCodesSelected: string[] | undefined;
 
+  @Input() loadAnnouncement: boolean = true;
+  @Input() loadBodacc: boolean = true;
+  @Input() loadDomiciliation: boolean = true;
+  @Input() loadSimpleprovision: boolean = true;
+  @Input() loadFormalite: boolean = true;
+
   announcementStatus: AnnouncementStatus[] = [] as Array<AnnouncementStatus>;
   formaliteStatus: FormaliteStatus[] = [] as Array<FormaliteStatus>;
   bodaccStatus: BodaccStatus[] = [] as Array<BodaccStatus>;
   domiciliationStatus: DomiciliationStatus[] = [] as Array<DomiciliationStatus>;
   simpleProvisionStatus: SimpleProvisionStatus[] = [] as Array<SimpleProvisionStatus>;
+
+
 
   constructor(private formBuild: UntypedFormBuilder,
     private formaliteStatusService: FormaliteStatusService,
@@ -60,25 +68,30 @@ export class SelectProvisionStautsComponent extends GenericMultipleSelectCompone
   }
 
   initTypes(): void {
-    this.formaliteStatusService.getFormaliteStatus().subscribe(response => {
-      this.formaliteStatus = response;
-      this.types.push(...response);
-    });
-    this.bodaccStatusService.getBodaccStatus().subscribe(response => {
-      this.bodaccStatus = response;
-      this.types.push(...response);
-    });
-    this.domiciliationStatusService.getDomiciliationStatus().subscribe(response => {
-      this.domiciliationStatus = response;
-      this.types.push(...response);
-    });
-    this.announcementStatusService.getAnnouncementStatus().subscribe(response => {
-      this.announcementStatus = response;
-      this.types.push(...response);
-    });
-    this.simpleProvisionStatusService.getSimpleProvisionStatus().subscribe(response => {
-      this.simpleProvisionStatus = response;
-      this.types.push(...response);
-    })
+    if (this.loadFormalite)
+      this.formaliteStatusService.getFormaliteStatus().subscribe(response => {
+        this.formaliteStatus = response;
+        this.types.push(...response);
+      });
+    if (this.loadBodacc)
+      this.bodaccStatusService.getBodaccStatus().subscribe(response => {
+        this.bodaccStatus = response;
+        this.types.push(...response);
+      });
+    if (this.loadDomiciliation)
+      this.domiciliationStatusService.getDomiciliationStatus().subscribe(response => {
+        this.domiciliationStatus = response;
+        this.types.push(...response);
+      });
+    if (this.loadAnnouncement)
+      this.announcementStatusService.getAnnouncementStatus().subscribe(response => {
+        this.announcementStatus = response;
+        this.types.push(...response);
+      });
+    if (this.loadSimpleprovision)
+      this.simpleProvisionStatusService.getSimpleProvisionStatus().subscribe(response => {
+        this.simpleProvisionStatus = response;
+        this.types.push(...response);
+      })
   }
 }

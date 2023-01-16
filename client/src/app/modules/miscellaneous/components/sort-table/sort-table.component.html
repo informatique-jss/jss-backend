@@ -39,7 +39,7 @@
       <td mat-cell *matCellDef="let element">
         <ng-container *ngFor="let action of actions">
           <mat-icon [matTooltip]="action.actionName" *ngIf="action.display && action.actionClick" color="accent"
-            class="pointer  column-content-icon" (click)="actionTrigger(action, element)">{{action.actionIcon}}
+            class="pointer  column-content-icon" (click)="actionTrigger(action, element,$event)">{{action.actionIcon}}
           </mat-icon>
           <mat-icon [matTooltip]="action.actionName" *ngIf="action.display &&  getActionLink(action, element)"
             (click)="openActionLink($event, action, element)" (auxclick)="openActionLink($event, action, element)"

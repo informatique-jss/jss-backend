@@ -34,6 +34,7 @@ import { getAmountPayed, getCustomerOrderForInvoice, getCustomerOrderForIQuotati
 })
 export class AssociatePaymentDialogComponent implements OnInit {
 
+  customerOrder: CustomerOrder | undefined;
   invoice: Invoice | undefined;
   payment: Payment | undefined;
   associationSummaryTable: AssociationSummaryTable[] = [] as Array<AssociationSummaryTable>;
@@ -95,6 +96,11 @@ export class AssociatePaymentDialogComponent implements OnInit {
     if (this.payment && this.invoice)
       this.associationSummaryTable.push({
         payment: this.payment, invoice: this.invoice, amountUsed: Math.min(this.getInitialAmount({ invoice: this.invoice }) - this.getInitialPayedAmount({ invoice: this.invoice }), this.payment.paymentAmount)
+      } as AssociationSummaryTable);
+
+    if (this.payment && this.customerOrder)
+      this.associationSummaryTable.push({
+        payment: this.payment, customerOrder: this.customerOrder, amountUsed: Math.min(this.getInitialAmount({ customerOrder: this.customerOrder }) - this.getInitialPayedAmount({ customerOrder: this.customerOrder }), this.payment.paymentAmount)
       } as AssociationSummaryTable);
 
 
@@ -290,6 +296,10 @@ export class AssociatePaymentDialogComponent implements OnInit {
     let amount = 0;
     if (this.invoice && this.payment) {
       amount = Math.round(this.getAmountRemaining(this.invoice) * 100) / 100 - Math.round(this.payment.paymentAmount * 100) / 100;
+    }
+    if (this.customerOrder && this.payment) {
+      let remainingToPay = Math.round((QuotationComponent.computePriceTotal(this.customerOrder) - QuotationComponent.computePayed(this.customerOrder)) * 100) / 100;
+      amount = remainingToPay - Math.round(this.payment.paymentAmount * 100) / 100;
     }
     return amount;
   }

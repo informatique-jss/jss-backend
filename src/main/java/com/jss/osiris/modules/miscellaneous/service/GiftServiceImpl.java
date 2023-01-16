@@ -47,11 +47,11 @@ public class GiftServiceImpl implements GiftService {
     }
 
     @Override
-    public void decreaseStock(Gift gift) {
+    public void decreaseStock(Gift gift, Integer giftNumber) {
         if (gift != null) {
             if (gift.getStock() == null)
                 gift.setStock(0);
-            gift.setStock(gift.getStock() - 1);
+            gift.setStock(gift.getStock() - giftNumber);
             giftRepository.save(gift);
         }
     }

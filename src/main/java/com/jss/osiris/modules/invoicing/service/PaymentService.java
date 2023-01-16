@@ -25,6 +25,8 @@ public interface PaymentService {
 
         public List<Payment> getAdvisedPaymentForInvoice(Invoice invoice);
 
+        public List<Payment> getAdvisedPaymentForCustomerOrder(CustomerOrder customerOrder);
+
         public void manualMatchPaymentInvoicesAndCustomerOrders(Payment payment,
                         List<Invoice> correspondingInvoices, List<CustomerOrder> correspondingCustomerOrder,
                         Affaire affaireRefund,

@@ -9,6 +9,7 @@ public class InvoiceLabelResult {
     private String billingLabelAddress;
     private String cedexComplement;
     private String billingLabelPostalCode;
+    private String billingLabelComplementCedex;
     private City billingLabelCity;
     private Country billingLabelCountry;
     private Boolean billingLabelIsIndividual;
@@ -112,6 +113,14 @@ public class InvoiceLabelResult {
 
     public void setCedexComplement(String cedexComplement) {
         this.cedexComplement = cedexComplement;
+    }
+
+    public String getBillingLabelComplementCedex() {
+        return billingLabelComplementCedex;
+    }
+
+    public void setBillingLabelComplementCedex(String billingLabelComplementCedex) {
+        this.billingLabelComplementCedex = billingLabelComplementCedex;
     }
 
 }

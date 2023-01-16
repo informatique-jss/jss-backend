@@ -14,7 +14,11 @@ export class ConfrereService extends AppRestService<Confrere>{
   }
 
   getConfreres() {
-    return this.getListCached(new HttpParams(), "confreres");
+    return this.getList(new HttpParams(), "confreres");
+  }
+
+  getConfrereById(id: number) {
+    return this.getById("confrere", id);
   }
 
   getConfrereFilteredByDepartmentAndName(department: Department | undefined, label: string) {

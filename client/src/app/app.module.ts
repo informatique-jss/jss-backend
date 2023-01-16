@@ -26,7 +26,6 @@ import { AdministrationModule } from './modules/administration/components/admini
 import { DashboardModule } from './modules/dashboard/dashboard.module';
 import { InvoicingModule } from "./modules/invoicing/components/invoicing/invoicing.module";
 import { MiscellaneousModule } from './modules/miscellaneous/components/miscellaneous/miscellaneous.module';
-import { PaoModule } from "./modules/pao/components/pao/pao.module";
 import { MyProfilComponent } from './modules/profile/components/my-profil/my-profil.component';
 import { QuotationModule } from './modules/quotation/components/quotation/quotation.module';
 import { TiersModule } from './modules/tiers/components/tiers/tiers.module';
@@ -77,8 +76,7 @@ registerLocaleData(localeFr, 'fr');
     AdministrationModule,
     AccountingModule,
     InvoicingModule,
-    DashboardModule,
-    PaoModule,
+    DashboardModule
   ],
   exports: [
   ],

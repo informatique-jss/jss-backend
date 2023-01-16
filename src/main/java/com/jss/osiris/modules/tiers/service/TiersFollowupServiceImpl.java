@@ -38,7 +38,7 @@ public class TiersFollowupServiceImpl implements TiersFollowupService {
     @Transactional(rollbackFor = Exception.class)
     public List<TiersFollowup> addTiersFollowup(TiersFollowup tiersFollowup) {
         if (tiersFollowup.getGift() != null && tiersFollowup.getId() == null)
-            giftService.decreaseStock(tiersFollowup.getGift());
+            giftService.decreaseStock(tiersFollowup.getGift(), tiersFollowup.getGiftNumber());
         tiersFollowupRepository.save(tiersFollowup);
         if (tiersFollowup.getTiers() != null)
             return tiersFollowupRepository.findByTiersId(tiersFollowup.getTiers().getId());

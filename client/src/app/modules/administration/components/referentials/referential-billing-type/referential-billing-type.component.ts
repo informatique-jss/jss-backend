@@ -26,6 +26,12 @@ export class ReferentialBillingTypeComponent extends GenericReferentialComponent
         entity.isPriceBasedOnCharacterNumber = false;
       if (!entity.isOptionnal)
         entity.isOptionnal = false;
+      if (!entity.isOverrideVat)
+        entity.isOverrideVat = false;
+      if (!entity.isNonTaxable)
+        entity.isNonTaxable = false;
+      if (!entity.isDebour)
+        entity.isDebour = false;
     }
   }
 

@@ -19,11 +19,11 @@ import { AddInvoiceComponent } from "../add-invoice/add-invoice.component";
 import { AmountDialogComponent } from "../amount-dialog/amount-dialog.component";
 import { AssociateDepositDialogComponent } from '../associate-deposit-dialog/associate-deposit-dialog.component';
 import { AssociatePaymentDialogComponent } from "../associate-payment-dialog/associate-payment-dialog.component";
+import { BankTransfertListComponent } from '../bank-transfert-list/bank-transfert-list.component';
 import { InvoiceDetailsComponent } from "../invoice-details/invoice-details.component";
 import { InvoiceListComponent } from "../invoice-list/invoice-list.component";
 import { InvoicePaymentTableComponent } from "../invoice-payment-table/invoice-payment-table.component";
 import { InvoicePaymentComponent } from "../invoice-payment/invoice-payment.component";
-import { PaymentListComponent } from "../payment-list/payment-list.component";
 import { RefundListComponent } from '../refund-list/refund-list.component';
 import { InvoiceComponent } from "./invoicing.component";
 
@@ -55,7 +55,6 @@ const routes: Routes = [
   declarations: [InvoiceComponent,
     InvoiceListComponent,
     InvoiceDetailsComponent,
-    PaymentListComponent,
     InvoicePaymentTableComponent,
     InvoicePaymentComponent,
     RefundListComponent,
@@ -63,11 +62,11 @@ const routes: Routes = [
     AssociateDepositDialogComponent,
     AddInvoiceComponent,
     AmountDialogComponent,
+    BankTransfertListComponent,
   ], exports: [
     InvoiceListComponent,
     InvoicePaymentTableComponent,
     RefundListComponent,
-    PaymentListComponent,
   ]
 })
 export class InvoicingModule { }

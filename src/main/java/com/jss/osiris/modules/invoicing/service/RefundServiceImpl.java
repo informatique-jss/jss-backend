@@ -311,6 +311,9 @@ public class RefundServiceImpl implements RefundService {
 
                 body.getCdtTrfTxInfBeanList().add(virement);
 
+                completeRefund.setIsAlreadyExported(true);
+                addOrUpdateRefund(completeRefund);
+
             }
 
             xml = xmlMapper.writeValueAsString(document);

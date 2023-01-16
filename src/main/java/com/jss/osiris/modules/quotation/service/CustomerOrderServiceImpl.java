@@ -23,8 +23,10 @@ import com.jss.osiris.libs.JacksonLocalDateDeserializer;
 import com.jss.osiris.libs.JacksonLocalDateSerializer;
 import com.jss.osiris.libs.JacksonLocalDateTimeDeserializer;
 import com.jss.osiris.libs.JacksonLocalDateTimeSerializer;
+import com.jss.osiris.libs.PrintDelegate;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.mail.MailComputeHelper;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
@@ -54,6 +56,8 @@ import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
+import com.jss.osiris.modules.quotation.model.Debour;
+import com.jss.osiris.modules.quotation.model.IQuotation;
 import com.jss.osiris.modules.quotation.model.OrderingSearch;
 import com.jss.osiris.modules.quotation.model.OrderingSearchResult;
 import com.jss.osiris.modules.quotation.model.Provision;
@@ -136,6 +140,12 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Autowired
     PricingHelper pricingHelper;
 
+    @Autowired
+    PrintDelegate printDelegate;
+
+    @Autowired
+    MailComputeHelper mailComputeHelper;
+
     @Value("${payment.cb.redirect.deposit.entry.point}")
     private String paymentCbRedirectDeposit;
 
@@ -202,8 +212,15 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
         indexEntityService.indexEntity(customerOrder, customerOrder.getId());
         if (customerOrder.getAssoAffaireOrders() != null)
-            for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders())
+            for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders()) {
                 indexEntityService.indexEntity(assoAffaireOrder, assoAffaireOrder.getId());
+                if (assoAffaireOrder.getProvisions() != null)
+                    for (Provision provision : assoAffaireOrder.getProvisions())
+                        if (provision.getDebours() != null)
+                            for (Debour debour : provision.getDebours())
+                                if (debour.getId() != null)
+                                    indexEntityService.indexEntity(debour, debour.getId());
+            }
 
         if (isNewCustomerOrder)
             notificationService.notifyNewCustomerOrderQuotation(customerOrder);
@@ -213,7 +230,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         // Trigger move forward for announcement created in website
         if (customerOrder.getAssoAffaireOrders() != null
                 && customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.OPEN)
-                && customerOrder.getIsCreatedFromWebSite() != null && customerOrder.getIsCreatedFromWebSite())
+                && customerOrder.getIsCreatedFromWebSite() != null && customerOrder.getIsCreatedFromWebSite()
+                && isOnlyAnnouncement(customerOrder))
             addOrUpdateCustomerOrderStatus(customerOrder, CustomerOrderStatus.OPEN, false);
         return customerOrder;
     }
@@ -255,20 +273,24 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         return addOrUpdateCustomerOrderStatus(customerOrder, targetStatusCode, true);
     }
 
-    @Override
-    public CustomerOrder addOrUpdateCustomerOrderStatus(CustomerOrder customerOrder, String targetStatusCode,
-            boolean isFromUser)
-            throws OsirisException, OsirisClientMessageException {
-        // Handle automatic workflow for Announcement created from website
-        boolean onlyAnnonceLegale = true;
-        boolean isFromWebsite = (customerOrder.getIsCreatedFromWebSite() != null
-                && customerOrder.getIsCreatedFromWebSite()) ? true : false;
+    private boolean isOnlyAnnouncement(CustomerOrder customerOrder) {
         if (customerOrder != null && customerOrder.getAssoAffaireOrders() != null)
             for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
                 if (asso.getProvisions() != null)
                     for (Provision provision : asso.getProvisions())
                         if (provision.getAnnouncement() == null)
-                            onlyAnnonceLegale = false;
+                            return false;
+        return true;
+    }
+
+    @Override
+    public CustomerOrder addOrUpdateCustomerOrderStatus(CustomerOrder customerOrder, String targetStatusCode,
+            boolean isFromUser)
+            throws OsirisException, OsirisClientMessageException {
+        // Handle automatic workflow for Announcement created from website
+        boolean onlyAnnonceLegale = isOnlyAnnouncement(customerOrder);
+        boolean isFromWebsite = (customerOrder.getIsCreatedFromWebSite() != null
+                && customerOrder.getIsCreatedFromWebSite()) ? true : false;
 
         // Determine if deposit is mandatory or not
         if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.OPEN)
@@ -339,6 +361,14 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     getInvoice(customerOrder));
             // If deposit already set, associate them to invoice
             moveCustomerOrderDepositToInvoiceDeposit(customerOrder, invoice);
+
+            // If we have debours, generate purshase accounting records
+            for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
+                if (asso.getProvisions() != null)
+                    for (Provision provision : asso.getProvisions())
+                        if (provision.getDebours() != null && provision.getDebours().size() > 0)
+                            for (Debour debour : provision.getDebours())
+                                accountingRecordService.generateAccountingRecordsForDebourPayment(debour);
 
             // Check invoice payed
             Float remainingToPayForCurrentInvoice = invoiceService.getRemainingAmountToPayForInvoice(invoice);
@@ -829,11 +859,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     }
 
     @Override
-    public Float getRemainingAmountToPayForCustomerOrder(CustomerOrder customerOrder) {
-        customerOrder = getCustomerOrder(customerOrder.getId());
+    public Float getTotalForCustomerOrder(IQuotation customerOrder) {
+        Float total = 0f;
         if (customerOrder != null) {
-            Float total = 0f;
-            // Total of items
             if (customerOrder.getAssoAffaireOrders() != null) {
                 for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders()) {
                     if (assoAffaireOrder.getProvisions() != null) {
@@ -849,6 +877,15 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     }
                 }
             }
+        }
+        return total;
+    }
+
+    @Override
+    public Float getRemainingAmountToPayForCustomerOrder(CustomerOrder customerOrder) {
+        customerOrder = getCustomerOrder(customerOrder.getId());
+        if (customerOrder != null) {
+            Float total = getTotalForCustomerOrder(customerOrder);
 
             if (customerOrder.getDeposits() != null && customerOrder.getDeposits().size() > 0)
                 for (Deposit deposit : customerOrder.getDeposits())
@@ -858,6 +895,21 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             return Math.round(total * 100f) / 100f;
         }
         return 0f;
+    }
+
+    @Override
+    public void printMailingLabel(List<String> customerOrders)
+            throws OsirisException, OsirisClientMessageException {
+        if (customerOrders != null && customerOrders.size() > 0)
+            for (String id : customerOrders) {
+                try {
+                    printDelegate.printMailingLabel(
+                            mailComputeHelper.computePaperLabelResult(getCustomerOrder(Integer.parseInt(id))));
+                } catch (NumberFormatException e) {
+                } catch (Exception e) {
+                    throw new OsirisException(e, "Error when printing label");
+                }
+            }
     }
 
 }

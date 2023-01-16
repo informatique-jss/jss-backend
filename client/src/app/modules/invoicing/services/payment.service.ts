@@ -1,6 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AppRestService } from 'src/app/services/appRest.service';
+import { CustomerOrder } from '../../quotation/model/CustomerOrder';
 import { Invoice } from '../../quotation/model/Invoice';
 import { Payment } from '../model/Payment';
 import { PaymentAssociate } from '../model/PaymentAssociate';
@@ -15,6 +16,10 @@ export class PaymentService extends AppRestService<Payment>{
 
   getAdvisedPayment(invoice: Invoice) {
     return this.getList(new HttpParams().set("invoiceId", invoice.id), "payments/advise");
+  }
+
+  getAdvisedPaymentForCustomerOrder(customerOrder: CustomerOrder) {
+    return this.getList(new HttpParams().set("customerOrderId", customerOrder.id), "payments/advise/order");
   }
 
   getPaymentById(paymentId: number) {

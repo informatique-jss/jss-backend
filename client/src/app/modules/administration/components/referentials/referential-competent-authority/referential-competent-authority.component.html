@@ -65,15 +65,16 @@
         <table class="full-width">
           <tr>
             <td>
-              <generic-toggle [(model)]="selectedEntity.hasAccount" label="Possède un compte ?" [form]="entityForm"
-                propertyName="hasAccount"></generic-toggle>
-            </td>
-            <td *ngIf="selectedEntity.hasAccount">
               <generic-input [(model)]="selectedEntity.iban" label="IBAN" [form]="entityForm" propertyName="iban"
                 [isMandatory]="true" [isDisabled]="!editMode" [conditionnalRequired]="selectedEntity.hasAccount"
                 [maxLength]="40"></generic-input>
             </td>
-            <td *ngIf="selectedEntity.hasAccount">
+            <td>
+              <generic-input [(model)]="selectedEntity.bic" label="BIC" [form]="entityForm" propertyName="bic"
+                [isMandatory]="true" [isDisabled]="!editMode" [conditionnalRequired]="selectedEntity.hasAccount"
+                [maxLength]="40"></generic-input>
+            </td>
+            <td>
               <generic-input [(model)]="selectedEntity.jssAccount" label="Compte du JSS chez AC" [form]="entityForm"
                 propertyName="jssAccount" [isMandatory]="true" [isDisabled]="!editMode"
                 [conditionnalRequired]="selectedEntity.hasAccount" [maxLength]="40"></generic-input>

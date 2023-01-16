@@ -78,24 +78,17 @@
               </td>
             </tr>
           </table>
-          <table class="full-width"
-            *ngIf="announcement && announcement.id && announcement.confrere && announcement.confrere.id == confrereJssPaper.id">
+          <table class="full-width" *ngIf="announcement && announcement.id && announcement.confrere">
             <tr>
               <td>
                 <generic-input [(model)]="announcement.id" label="Numéro de l'annonce" [form]="announcementForm"
                   propertyName="id" [isMandatory]="false" [isDisabled]="true">
                 </generic-input>
               </td>
-              <td>
-                <select-journal *ngIf="false" [(model)]="announcement.journal" label="Edition du journal"
-                  [form]="announcementForm" propertyName="journal" [isMandatory]="false"
-                  [isDisabled]="!editMode && !canEditJournal()">
-                </select-journal>
-              </td>
-              <td>
-                <generic-input *ngIf="false" [(model)]="announcement.journalPages" label="Page(s) dans le journal"
-                  [form]="announcementForm" propertyName="journalPages" [isMandatory]="false"
-                  [isDisabled]="!editMode  && !canEditJournal()" [maxLength]="250"></generic-input>
+              <td *ngIf="announcement.actuLegaleId">
+                <generic-input [(model)]="announcement.actuLegaleId" label="Identifiant ActuLegale"
+                  [form]="announcementForm" propertyName="actuLegaleId" [isMandatory]="false" [isDisabled]="true">
+                </generic-input>
               </td>
             </tr>
           </table>
@@ -205,6 +198,10 @@
     <mat-tab label="Options">
       <provision-options [editMode]="editMode" [provision]="provision" (provisionChange)="noticeChangeFunction()">
       </provision-options>
+    </mat-tab>
+    <mat-tab label="Débours" *ngIf="instanceOfCustomerOrder">
+      <add-debour [editMode]="editMode" [(provision)]="provision">
+      </add-debour>
     </mat-tab>
     <mat-tab label="Historique de l'annonce" *ngIf="announcement.id!=null && announcement.id!=undefined">
       <history [entity]="announcement" [entityType]="ANNOUNCEMENT_ENTITY_TYPE" [displayOnlyFields]="['notice']"

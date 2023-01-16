@@ -26,7 +26,7 @@ export class SelectVatComponent extends GenericSelectComponent<Vat> implements O
 
   displayLabel(object: Vat): string {
     if (object)
-      return object.label + " (" + object.accountingAccount.principalAccountingAccount.code + "-" + object.accountingAccount.accountingAccountSubNumber + ")";
+      return object.label + " (" + object.code + ")";
     return "";
   }
 

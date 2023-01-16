@@ -16,7 +16,7 @@
   </mat-chip-list>
   <mat-autocomplete autoActiveFirstOption #autoComplete="matAutocomplete" [displayWith]="displayLabel"
     (optionSelected)="addConfrere($event)">
-    <mat-option *ngFor="let confrere of filteredConfreres | async" [value]="confrere">
+    <mat-option *ngFor="let confrere of filteredConfreres " [value]="confrere">
       {{confrere.label}} - {{confrere.journalType.label}}
     </mat-option>
   </mat-autocomplete>

@@ -6,6 +6,7 @@ import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.quotation.model.Announcement;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.quotation.model.IQuotation;
 import com.jss.osiris.modules.quotation.model.OrderingSearch;
 import com.jss.osiris.modules.quotation.model.OrderingSearchResult;
 import com.jss.osiris.modules.quotation.model.Quotation;
@@ -57,10 +58,15 @@ public interface CustomerOrderService {
         public Boolean validateCardPaymentLinkForCustomerOrder(CustomerOrder customerOrder)
                         throws OsirisException, OsirisClientMessageException;
 
+        public Float getTotalForCustomerOrder(IQuotation customerOrder);
+
         public Float getRemainingAmountToPayForCustomerOrder(CustomerOrder customerOrder);
 
         public void generateDepositOnCustomerOrderForCbPayment(CustomerOrder customerOrder,
                         CentralPayPaymentRequest centralPayPaymentRequest)
+                        throws OsirisException, OsirisClientMessageException;
+
+        public void printMailingLabel(List<String> customerOrders)
                         throws OsirisException, OsirisClientMessageException;
 
 }

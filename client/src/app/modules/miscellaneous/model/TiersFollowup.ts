@@ -14,6 +14,7 @@ export interface TiersFollowup {
   invoice: Invoice;
   tiersFollowupType: TiersFollowupType;
   gift: Gift;
+  giftNumber: number;
   salesEmployee: Employee | undefined;
   followupDate: Date;
   observations: string;

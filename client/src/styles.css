@@ -185,6 +185,7 @@ mat-form-field.mat-form-field-should-float label {
 
 tr.table-row:hover {
   background: whitesmoke;
+  transition: all 0.2s ease;
 }
 
 .fieldset-no-border {
@@ -282,8 +283,10 @@ tr.mat-row {
 
 .mat-row:nth-child(odd):hover {
   background-color: #6B9CBF;
+  transition: all 0.2s ease;
 }
 
 .mat-row:nth-child(even):hover {
   background-color: #6B9CBF;
+  transition: all 0.2s ease;
 }

@@ -103,6 +103,8 @@ public interface ConstantService {
 
     public AttachmentType getAttachmentTypeAutomaticMail() throws OsirisException;
 
+    public AttachmentType getAttachmentTypeAnnouncement() throws OsirisException;
+
     public Country getCountryFrance() throws OsirisException;
 
     public Country getCountryMonaco() throws OsirisException;
@@ -187,8 +189,6 @@ public interface ConstantService {
 
     public Confrere getConfrereJssSpel() throws OsirisException;
 
-    public Confrere getConfrereJssPaper() throws OsirisException;
-
     public DomiciliationContractType getDomiciliationContractTypeKeepMail() throws OsirisException;
 
     public DomiciliationContractType getDomiciliationContractTypeRouteMail() throws OsirisException;
@@ -250,6 +250,8 @@ public interface ConstantService {
     public Vat getVatTwenty() throws OsirisException;
 
     public Vat getVatEight() throws OsirisException;
+
+    public Vat getVatDeductible() throws OsirisException;
 
     public Department getDepartmentMartinique() throws OsirisException;
 

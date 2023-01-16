@@ -89,6 +89,9 @@ export class TiersFollowupComponent implements OnInit {
       // By default, select Invoice recover responsible
       if (this.newFollowup && !this.newFollowup.salesEmployee)
         this.newFollowup.salesEmployee = this.constantService.getEmployeeInvoiceReminderResponsible();
+
+      if (this.newFollowup)
+        this.newFollowup.giftNumber = 1;
     }
   }
 

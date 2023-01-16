@@ -154,6 +154,10 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.attachmentTypeAutomaticMail;
   }
 
+  getAttachmentTypeAnnouncement() {
+    return this.constant.attachmentTypeAnnouncement;
+  }
+
   getCountryFrance() {
     return this.constant.countryFrance;
   }
@@ -320,10 +324,6 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.confrereJssSpel;
   }
 
-  getConfrereJssPaper() {
-    return this.constant.confrereJssPaper;
-  }
-
   getDomiciliationContractTypeKeepMail() {
     return this.constant.domiciliationContractTypeKeepMail;
   }
@@ -438,6 +438,10 @@ export class ConstantService extends AppRestService<Constant>{
 
   getVatEight() {
     return this.constant.vatEight;
+  }
+
+  getVatDeductible() {
+    return this.constant.vatDeductible;
   }
 
   getDepartmentMartinique() {

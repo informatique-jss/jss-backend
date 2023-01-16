@@ -64,6 +64,7 @@ export interface Constant {
   attachmentTypeBillingClosure: AttachmentType;
   attachmentTypeProofReading: AttachmentType;
   attachmentTypeAutomaticMail: AttachmentType;
+  attachmentTypeAnnouncement: AttachmentType;
   countryFrance: Country;
   countryMonaco: Country;
   billingTypeLogo: BillingType;
@@ -106,7 +107,6 @@ export interface Constant {
   journalTypeSpel: JournalType;
   journalTypePaper: JournalType;
   confrereJssSpel: Confrere;
-  confrereJssPaper: Confrere;
   domiciliationContractTypeKeepMail: DomiciliationContractType;
   domiciliationContractTypeRouteEmail: DomiciliationContractType;
   domiciliationContractTypeRouteMail: DomiciliationContractType;
@@ -138,6 +138,7 @@ export interface Constant {
   paymentWayOutboud: PaymentWay;
   vatTwenty: Vat;
   vatEight: Vat;
+  vatDeductible: Vat;
   departmentMartinique: Department;
   departmentGuadeloupe: Department;
   departmentReunion: Department;

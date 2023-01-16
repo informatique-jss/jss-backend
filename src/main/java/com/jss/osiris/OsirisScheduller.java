@@ -218,4 +218,5 @@ public class OsirisScheduller {
 			globalExceptionHandler.handleExceptionOsiris(e, null);
 		}
 	}
+
 }

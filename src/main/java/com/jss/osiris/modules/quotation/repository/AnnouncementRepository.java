@@ -14,10 +14,6 @@ import com.jss.osiris.modules.quotation.model.Confrere;
 
 public interface AnnouncementRepository extends CrudRepository<Announcement, Integer> {
 
-        @Query("select a from Announcement a where confrere=:journalJssPaper and journal is null")
-        List<Announcement> findAnnouncementWaitingForPublicationProof(
-                        @Param("journalJssPaper") Confrere journalJssPaper);
-
         @Query(nativeQuery = true, value = "" +
                         " select a.id, coalesce(affaire.denomination, affaire.firstname || ' ' || affaire.lastname) as affaireName, "
                         +
@@ -66,6 +62,12 @@ public interface AnnouncementRepository extends CrudRepository<Announcement, Int
         List<Announcement> getAnnouncementByStatusAndPublicationDateMin(
                         @Param("announcementStatus") AnnouncementStatus announcementStatus,
                         @Param("publicationDate") LocalDate publicationDate, @Param("confrere") Confrere confrere);
+
+        @Query("select a from Announcement a where ( a.announcementStatus in (:announcementStatus) or :announcementStatus is null) and publicationDate is not null and publicationDate<=:startDate and publicationDate<=:endDate and confrere = :confrere")
+        List<Announcement> getAnnouncementByStatusPublicationDateAndConfrere(
+                        @Param("announcementStatus") List<AnnouncementStatus> announcementStatus,
+                        @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate,
+                        @Param("confrere") Confrere confrere);
 
         @Query("select a from Announcement a where a.announcementStatus=:announcementStatus and publicationDate is not null and publicationDate<=:publicationDate and isPublicationFlagAlreadySent=false ")
         List<Announcement> getAnnouncementForPublicationFlagBatch(

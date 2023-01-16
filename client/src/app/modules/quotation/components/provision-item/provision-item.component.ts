@@ -36,6 +36,7 @@ export class ProvisionItemComponent implements OnInit {
 
 
   @Input() provision: Provision = {} as Provision;
+  @Output() provisionChange: EventEmitter<Provision> = new EventEmitter<Provision>();
   @Input() affaire: Affaire = {} as Affaire;
   @Input() editMode: boolean = false;
   @Input() instanceOfCustomerOrder: boolean = false;

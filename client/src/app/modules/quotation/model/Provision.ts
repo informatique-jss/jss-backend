@@ -3,6 +3,7 @@ import { Employee } from "../../profile/model/Employee";
 import { Announcement } from "./Announcement";
 import { AssoAffaireOrder } from "./AssoAffaireOrder";
 import { Bodacc } from "./Bodacc";
+import { Debour } from './Debour';
 import { Domiciliation } from "./Domiciliation";
 import { Formalite } from './guichet-unique/Formalite';
 import { InvoiceItem } from "./InvoiceItem";
@@ -20,6 +21,7 @@ export interface Provision extends IAttachment {
   provisionFamilyType: ProvisionFamilyType;
   provisionType: ProvisionType;
   invoiceItems: InvoiceItem[]
+  debours: Debour[]
   assoAffaireOrder: AssoAffaireOrder;
   assignedTo: Employee;
   isLogo: boolean;

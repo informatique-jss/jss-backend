@@ -12,8 +12,11 @@ import com.jss.osiris.modules.invoicing.model.InvoiceLabelResult;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.model.DocumentType;
 import com.jss.osiris.modules.miscellaneous.model.Mail;
+import com.jss.osiris.modules.miscellaneous.model.Regie;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.DocumentService;
+import com.jss.osiris.modules.quotation.model.Affaire;
+import com.jss.osiris.modules.quotation.model.Announcement;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.IQuotation;
@@ -79,9 +82,19 @@ public class MailComputeHelper {
         return computeMailForDocument(quotation, constantService.getDocumentTypeDigital(), false);
     }
 
+    public MailComputeResult computeMailForSendNumericAttachment(IQuotation quotation)
+            throws OsirisException, OsirisClientMessageException {
+        return computeMailForDocument(quotation, constantService.getDocumentTypeDigital(), false);
+    }
+
     public MailComputeResult computeMailForBillingClosure(ITiers tiers)
             throws OsirisException, OsirisClientMessageException {
         return computeMailForITiers(tiers);
+    }
+
+    public MailComputeResult computeMailForSendAnnouncementToConfrere(Announcement announcement)
+            throws OsirisException, OsirisClientMessageException {
+        return computeMailForConfrereAnnouncementRequest(announcement);
     }
 
     private MailComputeResult computeMailForDocument(IQuotation quotation, DocumentType documentType, boolean useRegie)
@@ -181,6 +194,27 @@ public class MailComputeHelper {
         return mailComputeResult;
     }
 
+    private MailComputeResult computeMailForConfrereAnnouncementRequest(Announcement announcement)
+            throws OsirisException, OsirisClientMessageException {
+
+        if (announcement == null)
+            throw new OsirisException(null, "Announcement not provided");
+
+        if (announcement.getConfrere() == null)
+            throw new OsirisException(null, "Confrere not found in announce " + announcement.getId());
+
+        // Compute recipients
+        MailComputeResult mailComputeResult = new MailComputeResult();
+        mailComputeResult.setRecipientsMailTo(new ArrayList<Mail>());
+        mailComputeResult.setRecipientsMailCc(new ArrayList<Mail>());
+        mailComputeResult.setIsSendToClient(false);
+        mailComputeResult.setIsSendToAffaire(false);
+
+        mailComputeResult.getRecipientsMailTo().addAll(announcement.getConfrere().getMails());
+
+        return mailComputeResult;
+    }
+
     private MailComputeResult computeMailForITiers(ITiers tiers) throws OsirisException, OsirisClientMessageException {
 
         if (tiers == null)
@@ -239,22 +273,21 @@ public class MailComputeHelper {
             if (paperDocument.getAffaireRecipient() != null || paperDocument.getAffaireAddress() != null) {
                 invoiceLabelResult.setBillingLabel(paperDocument.getAffaireRecipient());
                 invoiceLabelResult.setBillingLabelAddress(paperDocument.getAffaireAddress());
+                invoiceLabelResult.setBillingLabelCity(null);
                 invoiceLabelResult.setLabelOrigin("adresse indiquée dans la commande");
             } else if (customerOrder.getAssoAffaireOrders() != null && customerOrder.getAssoAffaireOrders().size() > 0
                     && customerOrder.getAssoAffaireOrders().get(0) != null
                     && customerOrder.getAssoAffaireOrders().get(0).getAffaire() != null
                     && customerOrder.getAssoAffaireOrders().get(0).getAffaire().getAddress() != null
                     && customerOrder.getAssoAffaireOrders().get(0).getAffaire().getCity() != null) {
-                invoiceLabelResult.setBillingLabel(
-                        customerOrder.getAssoAffaireOrders().get(0).getAffaire().getDenomination() != null
-                                ? customerOrder.getAssoAffaireOrders().get(0).getAffaire().getDenomination()
-                                : customerOrder.getAssoAffaireOrders().get(0).getAffaire().getFirstname() + " "
-                                        + customerOrder.getAssoAffaireOrders().get(0).getAffaire().getLastname());
-                invoiceLabelResult
-                        .setBillingLabelAddress(customerOrder.getAssoAffaireOrders().get(0).getAffaire().getAddress()
-                                + "\n" + customerOrder.getAssoAffaireOrders().get(0).getAffaire().getPostalCode() + " "
-                                + customerOrder.getAssoAffaireOrders().get(0).getAffaire().getCity().getLabel() + " "
-                                + customerOrder.getAssoAffaireOrders().get(0).getAffaire().getCedexComplement());
+                Affaire affaire = customerOrder.getAssoAffaireOrders().get(0).getAffaire();
+                invoiceLabelResult.setBillingLabel(affaire.getDenomination() != null ? affaire.getDenomination()
+                        : affaire.getFirstname() + " " + affaire.getLastname());
+                invoiceLabelResult.setBillingLabelAddress(affaire.getAddress());
+                invoiceLabelResult.setBillingLabelCity(affaire.getCity());
+                invoiceLabelResult.setBillingLabelComplementCedex(affaire.getCedexComplement());
+                invoiceLabelResult.setBillingLabelCountry(affaire.getCountry());
+                invoiceLabelResult.setBillingLabelPostalCode(affaire.getPostalCode());
                 invoiceLabelResult.setLabelOrigin("adresse de l'affaire");
             } else
                 throw new OsirisClientMessageException("Aucune adresse postale trouvée pour l'affaire");
@@ -270,52 +303,52 @@ public class MailComputeHelper {
             } else if (customer instanceof Responsable
                     && ((Responsable) customer).getTiers().getAddress() != null
                     && ((Responsable) customer).getTiers().getCity() != null) {
+                Tiers tiers = ((Responsable) customer).getTiers();
                 invoiceLabelResult.setBillingLabel(
-                        ((Responsable) customer).getTiers().getDenomination() != null
-                                ? ((Responsable) customer).getTiers().getDenomination()
-                                : ((Responsable) customer).getTiers().getFirstname() + " "
-                                        + ((Responsable) customer).getTiers().getLastname());
-                invoiceLabelResult.setBillingLabelAddress(
-                        ((Responsable) customer).getTiers().getPostalCode() + " "
-                                + ((Responsable) customer).getTiers().getCity().getLabel()
-                                + " " + (((Responsable) customer).getTiers().getCedexComplement() != null
-                                        ? ((Responsable) customer).getTiers().getCedexComplement()
-                                        : ""));
+                        tiers.getDenomination() != null ? tiers.getDenomination()
+                                : tiers.getFirstname() + " " + tiers.getLastname());
+                invoiceLabelResult.setBillingLabelAddress(tiers.getAddress());
+                invoiceLabelResult.setBillingLabelCity(tiers.getCity());
+                invoiceLabelResult.setBillingLabelComplementCedex(tiers.getCedexComplement());
+                invoiceLabelResult.setBillingLabelCountry(tiers.getCountry());
+                invoiceLabelResult.setBillingLabelPostalCode(tiers.getPostalCode());
                 invoiceLabelResult.setLabelOrigin("l'adresse du tiers");
             } else if (customer instanceof Confrere && ((Confrere) customer).getRegie() != null
                     && ((Confrere) customer).getRegie().getAddress() != null
                     && ((Confrere) customer).getRegie().getCity() != null) {
-                invoiceLabelResult.setBillingLabel(
-                        ((Confrere) customer).getRegie().getLabel());
-                invoiceLabelResult.setBillingLabelAddress(
-                        ((Confrere) customer).getRegie().getPostalCode() + " "
-                                + ((Confrere) customer).getRegie().getCity().getLabel()
-                                + " " + (((Confrere) customer).getRegie().getCedexComplement() != null
-                                        ? ((Confrere) customer).getRegie().getCedexComplement()
-                                        : ""));
+                Regie regie = ((Confrere) customer).getRegie();
+
+                invoiceLabelResult.setBillingLabel(regie.getLabel());
+                invoiceLabelResult.setBillingLabelAddress(regie.getAddress());
+                invoiceLabelResult.setBillingLabelCity(regie.getCity());
+                invoiceLabelResult.setBillingLabelComplementCedex(regie.getCedexComplement());
+                invoiceLabelResult.setBillingLabelCountry(regie.getCountry());
+                invoiceLabelResult.setBillingLabelPostalCode(regie.getPostalCode());
                 invoiceLabelResult.setLabelOrigin("l'adresse de la régie du confrère");
             } else if (customer instanceof Confrere
                     && ((Confrere) customer).getAddress() != null
                     && ((Confrere) customer).getCity() != null) {
-                invoiceLabelResult.setBillingLabel(
-                        ((Confrere) customer).getLabel());
-                invoiceLabelResult.setBillingLabelAddress(
-                        ((Confrere) customer).getPostalCode() + " " + ((Confrere) customer).getCity().getLabel()
-                                + " " + (((Confrere) customer).getCedexComplement() != null
-                                        ? ((Confrere) customer).getCedexComplement()
-                                        : ""));
+                Confrere confrere = ((Confrere) customer);
+
+                invoiceLabelResult.setBillingLabel(confrere.getLabel());
+                invoiceLabelResult.setBillingLabelAddress(confrere.getAddress());
+                invoiceLabelResult.setBillingLabelCity(confrere.getCity());
+                invoiceLabelResult.setBillingLabelComplementCedex(confrere.getCedexComplement());
+                invoiceLabelResult.setBillingLabelCountry(confrere.getCountry());
+                invoiceLabelResult.setBillingLabelPostalCode(confrere.getPostalCode());
                 invoiceLabelResult.setLabelOrigin("l'adresse du confrère");
             } else if (customer instanceof Tiers
                     && ((Tiers) customer).getAddress() != null
                     && ((Tiers) customer).getCity() != null) {
+                Tiers tiers = (Tiers) customer;
                 invoiceLabelResult.setBillingLabel(
-                        ((Tiers) customer).getDenomination() != null ? ((Tiers) customer).getDenomination()
-                                : ((Tiers) customer).getFirstname() + " " + ((Tiers) customer).getLastname());
-                invoiceLabelResult.setBillingLabelAddress(
-                        ((Tiers) customer).getPostalCode() + " " + ((Tiers) customer).getCity().getLabel()
-                                + " " + (((Tiers) customer).getCedexComplement() != null
-                                        ? ((Tiers) customer).getCedexComplement()
-                                        : ""));
+                        tiers.getDenomination() != null ? tiers.getDenomination()
+                                : tiers.getFirstname() + " " + tiers.getLastname());
+                invoiceLabelResult.setBillingLabelAddress(tiers.getAddress());
+                invoiceLabelResult.setBillingLabelCity(tiers.getCity());
+                invoiceLabelResult.setBillingLabelComplementCedex(tiers.getCedexComplement());
+                invoiceLabelResult.setBillingLabelCountry(tiers.getCountry());
+                invoiceLabelResult.setBillingLabelPostalCode(tiers.getPostalCode());
                 invoiceLabelResult.setLabelOrigin("l'adresse du tiers");
             } else
                 throw new OsirisClientMessageException("Aucune adresse postale trouvée pour le client");

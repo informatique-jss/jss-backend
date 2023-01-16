@@ -27,7 +27,7 @@ export class DomiciliationComponent implements OnInit {
 
   @Input() domiciliation: Domiciliation = {} as Domiciliation;
   @Input() provision: Provision = {} as Provision;
-  @Output() provisionChange: EventEmitter<void> = new EventEmitter<void>();
+  @Output() provisionChange: EventEmitter<Provision> = new EventEmitter<Provision>();
   @Input() instanceOfCustomerOrder: boolean = false;
   @Input() isStatusOpen: boolean = true;
   @Input() editMode: boolean = false;

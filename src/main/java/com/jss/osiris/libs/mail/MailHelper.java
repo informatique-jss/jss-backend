@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Base64;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Properties;
 import java.util.stream.Collectors;
@@ -347,7 +346,7 @@ public class MailHelper {
         ctx.setVariable("label", mail.getLabel());
         ctx.setVariable("explaination", mail.getExplaination());
         ctx.setVariable("explainationElements",
-                mail.getExplainationElements() != null ? mail.getExplainationElements().split("!#") : null);
+                mail.getExplainationElements() != null ? mail.getExplainationElements().split("forgetThis") : null);
         ctx.setVariable("explaination2", mail.getExplaination2());
         ctx.setVariable("explaination3", mail.getExplaination3());
         ctx.setVariable("paymentExplainationWarning", mail.getPaymentExplainationWarning());
@@ -489,7 +488,7 @@ public class MailHelper {
             for (AssoAffaireOrder asso : quotation.getAssoAffaireOrders())
                 details.add(asso.getAffaire().getDenomination() != null ? asso.getAffaire().getDenomination()
                         : (asso.getAffaire().getFirstname() + " " + asso.getAffaire().getLastname()));
-            mail.setExplainationElements(String.join("!#", details));
+            mail.setExplainationElements(String.join("forgetThis", details));
         }
 
         if (quotation.getAssoAffaireOrders() != null && quotation.getAssoAffaireOrders().size() > 0) {
@@ -588,7 +587,7 @@ public class MailHelper {
                 for (AssoAffaireOrder asso : quotation.getAssoAffaireOrders())
                     details.add(asso.getAffaire().getDenomination() != null ? asso.getAffaire().getDenomination()
                             : (asso.getAffaire().getFirstname() + " " + asso.getAffaire().getLastname()));
-                mail.setExplainationElements(String.join("!#", details));
+                mail.setExplainationElements(String.join("forgetThis", details));
             }
 
             if (quotation.getAssoAffaireOrders() != null && quotation.getAssoAffaireOrders().size() > 0) {
@@ -698,7 +697,7 @@ public class MailHelper {
             for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
                 details.add(asso.getAffaire().getDenomination() != null ? asso.getAffaire().getDenomination()
                         : (asso.getAffaire().getFirstname() + " " + asso.getAffaire().getLastname()));
-            mail.setExplainationElements(String.join("!#", details));
+            mail.setExplainationElements(String.join("forgetThis", details));
         }
 
         if (remainingToPay > 0 && !isPaymentTypePrelevement) {
@@ -793,7 +792,7 @@ public class MailHelper {
             for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
                 details.add(asso.getAffaire().getDenomination() != null ? asso.getAffaire().getDenomination()
                         : (asso.getAffaire().getFirstname() + " " + asso.getAffaire().getLastname()));
-            mail.setExplainationElements(String.join("!#", details));
+            mail.setExplainationElements(String.join("forgetThis", details));
         }
 
         mail.setExplaination3(
@@ -841,7 +840,7 @@ public class MailHelper {
             for (TypeDocument attachementType : query.getTypeDocument())
                 details.add(attachementType.getLabel());
 
-        mail.setExplainationElements(String.join("!#", details));
+        mail.setExplainationElements(String.join("forgetThis", details));
 
         mail.setExplaination2(query.getComment());
 
@@ -1102,7 +1101,7 @@ public class MailHelper {
             for (Attachment attachment : attachments)
                 attachementNames
                         .add(attachment.getDescription() + " (" + attachment.getUploadedFile().getFilename() + ")");
-            mail.setExplainationElements(String.join("!#", attachementNames));
+            mail.setExplainationElements(String.join("forgetThis", attachementNames));
         }
 
         mail.setExplaination(explainationText);
@@ -1151,25 +1150,136 @@ public class MailHelper {
         mailService.addMailToQueue(mail);
     }
 
+    public void sendCustomerOrderAttachmentsToCustomer(CustomerOrder customerOrder, AssoAffaireOrder asso,
+            boolean sendToMe,
+            List<Attachment> attachmentsToSend)
+            throws OsirisException, OsirisClientMessageException {
+
+        if (attachmentsToSend == null || attachmentsToSend.size() == 0)
+            return;
+
+        CustomerMail mail = new CustomerMail();
+        mail.setCustomerOrder(customerOrder);
+        computeQuotationPrice(mail, customerOrder);
+
+        MailComputeResult mailComputeResult = mailComputeHelper
+                .computeMailForSendNumericAttachment(customerOrder);
+
+        mail.setAttachments(attachmentsToSend);
+
+        mail.setHeaderPicture("images/attachment-query-header.png");
+        mail.setTitle("Vos pièces numériques");
+
+        mail.setLabel("Commande n°" + customerOrder.getId());
+
+        mail.setExplaination("Suite à votre commande n°" + customerOrder.getId()
+                + ", vous trouverez ci-joint les différentes pièces numériques pour la société "
+                + (asso.getAffaire().getDenomination() != null ? asso.getAffaire().getDenomination()
+                        : (asso.getAffaire().getFirstname() + " "
+                                + asso.getAffaire().getLastname())));
+
+        ArrayList<String> attachementNames = new ArrayList<String>();
+        for (Attachment attachment : attachmentsToSend)
+            attachementNames
+                    .add(attachment.getDescription() + " (" + attachment.getUploadedFile().getFilename() + ")");
+        mail.setExplainationElements(String.join("forgetThis", attachementNames));
+
+        mail.setGreetings("En vous remerciant pour votre confiance !");
+
+        mail.setReplyTo(asso.getAssignedTo());
+        mail.setSendToMe(sendToMe);
+        mail.setMailComputeResult(mailComputeResult);
+
+        mail.setSubject("Votre commande n°" + customerOrder.getId() + " - vos pièces numériques");
+
+        mailService.addMailToQueue(mail);
+    }
+
+    public void sendAnnouncementRequestToConfrere(CustomerOrder customerOrder, AssoAffaireOrder asso,
+            boolean sendToMe, Provision provision, Announcement announcement)
+            throws OsirisException, OsirisClientMessageException {
+
+        if (announcement == null || announcement.getConfrere() == null || announcement.getPublicationDate() == null
+                || announcement.getNoticeTypes() == null || announcement.getNoticeTypes().size() == 0)
+            return;
+
+        Confrere confrere = announcement.getConfrere();
+
+        CustomerMail mail = new CustomerMail();
+        mail.setCustomerOrder(customerOrder);
+        computeQuotationPrice(mail, customerOrder);
+
+        MailComputeResult mailComputeResult = mailComputeHelper.computeMailForSendAnnouncementToConfrere(announcement);
+
+        List<Attachment> attachments = new ArrayList<Attachment>();
+        for (Attachment attachment : attachmentService.sortAttachmentByDateDesc(announcement.getAttachments()))
+            if (attachment.getAttachmentType().getId()
+                    .equals(constantService.getAttachmentTypeAnnouncement()
+                            .getId())
+                    && (announcement.getIsAnnouncementAlreadySentToConfrere() == null
+                            || !announcement.getIsAnnouncementAlreadySentToConfrere())) {
+                attachments.add(attachment);
+                break;
+            }
+
+        mail.setAttachments(attachments);
+
+        mail.setHeaderPicture("images/attachment-query-header.png");
+        mail.setTitle("Demande de parution");
+
+        mail.setLabel("Annonce n°" + announcement.getId());
+
+        mail.setExplaination(
+                "Vous trouverez en pièce jointe le texte d'insertion légale à faire paraître dans votre prochaine édition de "
+                        +
+                        confrere.getLabel() + " (département " + announcement.getDepartment().getCode() +
+                        ", rubrique "
+                        + String.join("/", announcement.getNoticeTypes().stream().map(NoticeType::getLabel).toList())
+                        + ") en composition économique. <br/>Cette dernière concerne la société "
+                        + (asso.getAffaire().getDenomination() != null ? asso.getAffaire().getDenomination()
+                                : (asso.getAffaire().getFirstname() + " "
+                                        + asso.getAffaire().getLastname()))
+                        + "<br/><br/>A cet effet, nous vous prions de bien vouoir nous adresser : ");
+
+        ArrayList<String> explanationItems = new ArrayList<String>();
+        explanationItems.add("Une attestation de parution par email à l'adresse annonces@jss.fr");
+        explanationItems.add("Un justificatif électronique par email à l'adresse annonces@jss.fr");
+        if (provision.getIsPublicationPaper()) {
+            int nbr = 0;
+            if (provision.getPublicationPaperClientNumber() != null)
+                nbr += provision.getPublicationPaperClientNumber();
+            if (provision.getPublicationPaperAffaireNumber() != null)
+                nbr += provision.getPublicationPaperAffaireNumber();
+
+            if (nbr > 0)
+                explanationItems.add(nbr + " exemplaire" + (nbr > 1 ? "s" : "")
+                        + " justificatifs papiers avec le nom de l'affaire et la page de parution");
+        }
+
+        if (provision.getIsPublicationReceipt()) {
+            explanationItems.add("La version PDF du journal ou la version PDF de la page contenant l'annonce");
+        }
+        mail.setExplainationElements(String.join("forgetThis", explanationItems));
+
+        mail.setGreetings("En vous remerciant pour votre confiance !");
+
+        mail.setReplyTo(asso.getAssignedTo());
+        mail.setSendToMe(sendToMe);
+        mail.setMailComputeResult(mailComputeResult);
+
+        mail.setSubject("Annonce n°" + announcement.getId() + " - demande de parution");
+
+        mailService.addMailToQueue(mail);
+    }
+
     private List<Attachment> findAttachmentForCustomerOrder(CustomerOrder customerOrder, boolean isReminder)
             throws OsirisException, OsirisClientMessageException {
         ArrayList<Attachment> attachments = new ArrayList<Attachment>();
         boolean updateCustomerOrder = false;
 
         if (customerOrder != null && customerOrder.getAttachments() != null) {
-            customerOrder.getAttachments().sort(new Comparator<Attachment>() {
-                @Override
-                public int compare(Attachment o1, Attachment o2) {
-                    if (o2.getCreatDateTime() == null && o1.getCreatDateTime() != null)
-                        return -1;
-                    if (o2.getCreatDateTime() != null && o1.getCreatDateTime() == null)
-                        return 1;
-                    if (o1.getCreatDateTime() == null && o2.getCreatDateTime() == null)
-                        return 0;
-                    return o2.getCreatDateTime().isAfter(o1.getCreatDateTime()) ? 1 : -1;
-                }
-            });
-            for (Attachment attachment : customerOrder.getAttachments()) {
+
+            for (Attachment attachment : attachmentService.sortAttachmentByDateDesc(customerOrder.getAttachments())) {
                 if (attachment.getAttachmentType().getId().equals(constantService.getAttachmentTypeInvoice().getId()))
                     attachments.add(attachment);
                 break;
@@ -1180,31 +1290,7 @@ public class MailHelper {
             for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
                 if (asso.getProvisions() != null)
                     for (Provision provision : asso.getProvisions())
-                        if (provision.getAnnouncement() != null) {
-                            if (provision.getAnnouncement().getAttachments() != null)
-                                for (Attachment attachment : provision.getAnnouncement().getAttachments())
-                                    if (attachment.getAttachmentType().getId()
-                                            .equals(constantService.getAttachmentTypePublicationFlag()
-                                                    .getId())
-                                            && provision.getAnnouncement()
-                                                    .getIsPublicationFlagAlreadySent() == null) {
-                                        attachments.add(attachment);
-                                        provision.getAnnouncement().setIsPublicationFlagAlreadySent(true);
-                                        updateCustomerOrder = true;
-                                    } else if (attachment.getAttachmentType().getId()
-                                            .equals(constantService.getAttachmentTypePublicationReceipt()
-                                                    .getId())
-                                            && provision.getAnnouncement()
-                                                    .getIsPublicationReciptAlreadySent() == null) {
-                                        attachments.add(attachment);
-                                        provision.getAnnouncement().setIsPublicationReciptAlreadySent(true);
-                                        updateCustomerOrder = true;
-                                    } else if (attachment.getAttachmentType().getId()
-                                            .equals(constantService.getAttachmentTypePublicationProof()
-                                                    .getId())) {
-                                        attachments.add(attachment);
-                                    }
-                        } else if (provision.getFormalite() != null) {
+                        if (provision.getFormalite() != null) {
                             if (provision.getFormalite().getAttachments() != null)
                                 for (Attachment attachment : provision.getFormalite().getAttachments())
                                     if (attachment.getAttachmentType().getId()
@@ -1250,13 +1336,14 @@ public class MailHelper {
 
         List<Attachment> attachments = new ArrayList<Attachment>();
         if (announcement.getAttachments() != null) {
-            for (Attachment attachment : sortAttachments(announcement.getAttachments()))
+            for (Attachment attachment : attachmentService.sortAttachmentByDateDesc(announcement.getAttachments()))
                 if (attachment.getAttachmentType().getId()
                         .equals(constantService.getAttachmentTypePublicationReceipt()
                                 .getId())
                         && (announcement.getIsPublicationReciptAlreadySent() == null
                                 || !announcement.getIsPublicationReciptAlreadySent())) {
                     attachments.add(attachment);
+                    break;
                 }
         }
 
@@ -1301,13 +1388,14 @@ public class MailHelper {
                                     + ".");
 
         List<Attachment> attachments = new ArrayList<Attachment>();
-        for (Attachment attachment : sortAttachments(announcement.getAttachments()))
+        for (Attachment attachment : attachmentService.sortAttachmentByDateDesc(announcement.getAttachments()))
             if (attachment.getAttachmentType().getId()
                     .equals(constantService.getAttachmentTypePublicationFlag()
                             .getId())
                     && (announcement.getIsPublicationFlagAlreadySent() == null
                             || !announcement.getIsPublicationFlagAlreadySent())) {
                 attachments.add(attachment);
+                break;
             }
 
         if (attachments.size() == 0)
@@ -1351,11 +1439,12 @@ public class MailHelper {
                                     + ".");
 
         List<Attachment> attachments = new ArrayList<Attachment>();
-        for (Attachment attachment : sortAttachments(announcement.getAttachments()))
+        for (Attachment attachment : attachmentService.sortAttachmentByDateDesc(announcement.getAttachments()))
             if (attachment.getAttachmentType().getId()
                     .equals(constantService.getAttachmentTypeProofReading()
                             .getId())) {
                 attachments.add(attachment);
+                break;
             }
 
         if (attachments.size() == 0)
@@ -1441,20 +1530,6 @@ public class MailHelper {
         mail.setSubject("Votre nouveau mot de passe");
 
         mailService.addMailToQueue(mail);
-    }
-
-    private List<Attachment> sortAttachments(List<Attachment> attachments) {
-        if (attachments == null || attachments.size() == 0)
-            return new ArrayList<Attachment>();
-
-        attachments.sort(new Comparator<Attachment>() {
-            @Override
-            public int compare(Attachment o1, Attachment o2) {
-                return o2.getCreatDateTime().compareTo(o1.getCreatDateTime());
-            }
-        });
-
-        return attachments;
     }
 
 }

@@ -70,6 +70,10 @@ public class Provision implements IId, IAttachment {
 	@JsonIgnoreProperties(value = { "provision" }, allowSetters = true)
 	private List<InvoiceItem> invoiceItems;
 
+	@OneToMany(targetEntity = Debour.class, mappedBy = "provision", cascade = CascadeType.ALL)
+	@JsonIgnoreProperties(value = { "provision" }, allowSetters = true)
+	private List<Debour> debours;
+
 	@ManyToOne
 	@JoinColumn(name = "id_employee")
 	@IndexedField
@@ -478,6 +482,14 @@ public class Provision implements IId, IAttachment {
 
 	public void setIsApplicationFees(Boolean isApplicationFees) {
 		this.isApplicationFees = isApplicationFees;
+	}
+
+	public List<Debour> getDebours() {
+		return debours;
+	}
+
+	public void setDebours(List<Debour> debours) {
+		this.debours = debours;
 	}
 
 }

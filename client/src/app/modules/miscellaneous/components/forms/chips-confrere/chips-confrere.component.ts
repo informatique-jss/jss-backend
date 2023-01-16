@@ -2,8 +2,7 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatDialog } from '@angular/material/dialog';
-import { Observable } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
+import { debounceTime, filter, switchMap, tap } from 'rxjs/operators';
 import { Confrere } from 'src/app/modules/quotation/model/Confrere';
 import { ConfrereService } from 'src/app/modules/quotation/services/confrere.service';
 import { UserNoteService } from 'src/app/services/user.notes.service';
@@ -18,7 +17,7 @@ import { GenericChipsComponent } from '../generic-chips/generic-chips.component'
 export class ChipsConfrereComponent extends GenericChipsComponent<Confrere> implements OnInit {
 
   confreres: Confrere[] = [] as Array<Confrere>;
-  filteredConfreres: Observable<Confrere[]> | undefined;
+  filteredConfreres: Confrere[] | undefined;
   @ViewChild('confrereInput') confrereInput: ElementRef<HTMLInputElement> | undefined;
 
   constructor(private formBuild: UntypedFormBuilder, public confrereDialog: MatDialog, private confrereService: ConfrereService, private userNoteService2: UserNoteService,) {
@@ -26,14 +25,22 @@ export class ChipsConfrereComponent extends GenericChipsComponent<Confrere> impl
   }
 
   callOnNgInit(): void {
-    this.confrereService.getConfreres().subscribe(response => {
-      this.confreres = response;
-    })
-    if (this.form)
-      this.filteredConfreres = this.form.get(this.propertyName)?.valueChanges.pipe(
-        startWith(''),
-        map(value => (typeof value === 'string') ? this._filterByName(this.confreres, value) : [])
-      );
+    if (this.form) {
+      this.form.get(this.propertyName)?.valueChanges.pipe(
+        filter(res => {
+          return res != undefined && res !== null && res.length > 2
+        }),
+        debounceTime(300),
+        tap((value) => {
+          this.filteredConfreres = [];
+          this.modelChange.emit(this.model);
+        }),
+        switchMap(value => this.confrereService.getConfrereFilteredByDepartmentAndName(undefined, value)
+        )
+      ).subscribe(response => {
+        this.filteredConfreres = response;
+      });
+    }
   }
 
 

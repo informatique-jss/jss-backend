@@ -8,3 +8,11 @@
   bottom: 8%;
   transform: scale(3);
 }
+
+:host ::ng-deep .mat-tab-body-wrapper {
+  height: 400px;
+}
+
+:host ::ng-deep .mat-tab-body.mat-tab-body-active {
+  height: 400px;
+}

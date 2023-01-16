@@ -19,7 +19,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.libs.mail.model.CustomerMail;
 import com.jss.osiris.modules.invoicing.model.Invoice;
-import com.jss.osiris.modules.pao.model.Journal;
 import com.jss.osiris.modules.quotation.model.Announcement;
 import com.jss.osiris.modules.quotation.model.Bodacc;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
@@ -109,12 +108,6 @@ public class Attachment implements Serializable, IId {
 	@JoinColumn(name = "id_customer_order")
 	@JsonIgnoreProperties(value = { "attachments" }, allowSetters = true)
 	private CustomerOrder customerOrder;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JsonIgnore
-	@JoinColumn(name = "id_journal")
-	@JsonIgnoreProperties(value = { "attachments" }, allowSetters = true)
-	private Journal journal;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JsonIgnore
@@ -264,14 +257,6 @@ public class Attachment implements Serializable, IId {
 
 	public void setCreatDateTime(LocalDateTime creatDateTime) {
 		this.creatDateTime = creatDateTime;
-	}
-
-	public Journal getJournal() {
-		return journal;
-	}
-
-	public void setJournal(Journal journal) {
-		this.journal = journal;
 	}
 
 	public SimpleProvision getSimpleProvision() {

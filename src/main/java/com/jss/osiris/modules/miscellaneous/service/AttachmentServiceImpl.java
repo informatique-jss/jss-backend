@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,8 +26,6 @@ import com.jss.osiris.modules.invoicing.service.PaymentService;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.AttachmentType;
 import com.jss.osiris.modules.miscellaneous.repository.AttachmentRepository;
-import com.jss.osiris.modules.pao.model.Journal;
-import com.jss.osiris.modules.pao.service.JournalService;
 import com.jss.osiris.modules.quotation.model.Announcement;
 import com.jss.osiris.modules.quotation.model.Bodacc;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
@@ -86,9 +85,6 @@ public class AttachmentServiceImpl implements AttachmentService {
 
     @Autowired
     CustomerOrderService customerOrderService;
-
-    @Autowired
-    JournalService journalService;
 
     @Autowired
     SimpleProvisionService simpleProvisionService;
@@ -216,11 +212,6 @@ public class AttachmentServiceImpl implements AttachmentService {
             if (customerOrder == null)
                 return new ArrayList<Attachment>();
             attachment.setCustomerOrder(customerOrder);
-        } else if (entityType.equals(Journal.class.getSimpleName())) {
-            Journal journal = journalService.getJournal(idEntity);
-            if (journal == null)
-                return new ArrayList<Attachment>();
-            attachment.setJournal(journal);
         } else if (entityType.equals(SimpleProvision.class.getSimpleName())) {
             SimpleProvision simpleProvision = simpleProvisionService.getSimpleProvision(idEntity);
             if (simpleProvision == null)
@@ -279,8 +270,6 @@ public class AttachmentServiceImpl implements AttachmentService {
             attachments = attachmentRepository.findByProvisionId(idEntity);
         } else if (entityType.equals(CustomerOrder.class.getSimpleName())) {
             attachments = attachmentRepository.findByCustomerOrderId(idEntity);
-        } else if (entityType.equals(Journal.class.getSimpleName())) {
-            attachments = attachmentRepository.findByCustomerJournalId(idEntity);
         } else if (entityType.equals(SimpleProvision.class.getSimpleName())) {
             attachments = attachmentRepository.findBySimpleProvisonId(idEntity);
         } else if (entityType.equals(Invoice.class.getSimpleName())) {
@@ -288,6 +277,24 @@ public class AttachmentServiceImpl implements AttachmentService {
         } else if (entityType.equals(CustomerMail.class.getSimpleName())) {
             attachments = attachmentRepository.findByCustomerMailId(idEntity);
         }
+        return attachments;
+    }
+
+    @Override
+    public List<Attachment> sortAttachmentByDateDesc(List<Attachment> attachments) {
+        if (attachments != null)
+            attachments.sort(new Comparator<Attachment>() {
+                @Override
+                public int compare(Attachment o1, Attachment o2) {
+                    if (o2.getCreatDateTime() == null && o1.getCreatDateTime() != null)
+                        return -1;
+                    if (o2.getCreatDateTime() != null && o1.getCreatDateTime() == null)
+                        return 1;
+                    if (o1.getCreatDateTime() == null && o2.getCreatDateTime() == null)
+                        return 0;
+                    return o2.getCreatDateTime().isAfter(o1.getCreatDateTime()) ? 1 : -1;
+                }
+            });
         return attachments;
     }
 }

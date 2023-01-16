@@ -38,8 +38,11 @@ import com.jss.osiris.modules.miscellaneous.service.NotificationService;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
+import com.jss.osiris.modules.quotation.model.Debour;
 import com.jss.osiris.modules.quotation.model.Quotation;
+import com.jss.osiris.modules.quotation.model.QuotationStatus;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
+import com.jss.osiris.modules.quotation.service.DebourService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.tiers.model.ITiers;
 
@@ -75,6 +78,9 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Autowired
     RefundService refundService;
+
+    @Autowired
+    DebourService debourService;
 
     @Autowired
     ConstantService constantService;
@@ -177,6 +183,7 @@ public class PaymentServiceImpl implements PaymentService {
                 List<IndexEntity> correspondingEntities = getCorrespondingEntityForInboudPayment(payment);
                 List<Invoice> correspondingInvoices = new ArrayList<Invoice>();
                 List<CustomerOrder> correspondingCustomerOrder = new ArrayList<CustomerOrder>();
+                List<Quotation> correspondingQuotation = new ArrayList<Quotation>();
 
                 // Use mutable to get value from children method
                 MutableBoolean generateWaitingAccountAccountingRecords = new MutableBoolean(true);
@@ -189,7 +196,7 @@ public class PaymentServiceImpl implements PaymentService {
                 if (generateWaitingAccountAccountingRecords.getValue())
                     accountingRecordService.generateBankAccountingRecordsForInboundPayment(payment);
 
-                // Get invoices
+                // Get invoices and customer orders and quotations
                 Float totalToPay = 0f;
                 if (correspondingEntities != null && correspondingEntities.size() > 0) {
                     for (IndexEntity foundEntity : correspondingEntities) {
@@ -206,6 +213,11 @@ public class PaymentServiceImpl implements PaymentService {
                             correspondingCustomerOrder.add(customerOrder);
                             totalToPay += customerOrderService.getRemainingAmountToPayForCustomerOrder(customerOrder);
                         }
+                        Quotation quotation = getQuotationForEntity(foundEntity);
+                        if (quotation != null) {
+                            correspondingQuotation.add(quotation);
+                            totalToPay += customerOrderService.getTotalForCustomerOrder(quotation);
+                        }
                     }
                 }
 
@@ -213,10 +225,12 @@ public class PaymentServiceImpl implements PaymentService {
                 // manage automaticaly
                 // If too many money inbound, do nothing, a human will choose who must be refund
                 if (correspondingInvoices.size() > 0 && correspondingCustomerOrder.size() > 0
+                        || correspondingInvoices.size() > 0 && correspondingQuotation.size() > 0
+                        || correspondingCustomerOrder.size() > 0 && correspondingQuotation.size() > 0
                         || payment.getPaymentAmount() > totalToPay) {
                     // If payment not used, put it in waiting account
                     if (generateWaitingAccountAccountingRecords.getValue())
-                        accountingRecordService.generateAccountingRecordsForWaintingInboundPayment(payment);
+                        accountingRecordService.generateAccountingRecordsForWaitingInboundPayment(payment);
                     continue;
                 }
 
@@ -229,24 +243,35 @@ public class PaymentServiceImpl implements PaymentService {
                             null);
                 }
 
+                // Quotation waiting customer answer found
+                // Transform them to customer order
+                if (correspondingQuotation.size() > 0 && remainingMoney > 0) {
+                    for (Quotation quotation : correspondingQuotation)
+                        correspondingCustomerOrder
+                                .add(quotationService
+                                        .addOrUpdateQuotationStatus(quotation, QuotationStatus.VALIDATED_BY_CUSTOMER)
+                                        .getCustomerOrders().get(0));
+                }
+
                 // Customer order waiting for deposit found
                 if (correspondingCustomerOrder.size() > 0 && remainingMoney > 0) {
                     associateInboundPaymentAndCustomerOrders(payment, correspondingCustomerOrder, correspondingInvoices,
                             generateWaitingAccountAccountingRecords, null, payment.getPaymentAmount());
                     cancelPayment(payment);
                 }
+
                 // If payment not used, put it in waiting account
                 if (generateWaitingAccountAccountingRecords.getValue())
-                    accountingRecordService.generateAccountingRecordsForWaintingInboundPayment(payment);
+                    accountingRecordService.generateAccountingRecordsForWaitingInboundPayment(payment);
 
             } else {
                 // Get corresponding entities
                 List<IndexEntity> correspondingEntities = getCorrespondingEntityForOutboundPayment(payment);
                 List<Invoice> correspondingInvoices = new ArrayList<Invoice>();
 
-                boolean generateWaitingAccountAccountingRecords = true;
+                MutableBoolean generateWaitingAccountAccountingRecords = new MutableBoolean(true);
                 if (payment.getAccountingRecords() != null && payment.getAccountingRecords().size() > 0) {
-                    generateWaitingAccountAccountingRecords = false;
+                    generateWaitingAccountAccountingRecords = new MutableBoolean(false);
                 } else {
                     accountingRecordService.generateBankAccountingRecordsForOutboundPayment(payment);
                 }
@@ -265,6 +290,8 @@ public class PaymentServiceImpl implements PaymentService {
                     }
                 }
 
+                Refund refundFound = null;
+
                 // Invoices to payed found
                 if (correspondingInvoices.size() > 0) {
                     associateOutboundPaymentAndInvoice(payment, correspondingInvoices.get(0),
@@ -273,7 +300,6 @@ public class PaymentServiceImpl implements PaymentService {
                 }
 
                 // If not found, try to match refunds
-                Refund refundFound = null;
                 if (correspondingEntities != null && correspondingEntities.size() > 0) {
                     for (IndexEntity foundEntity : correspondingEntities) {
                         if (foundEntity.getEntityType().equals(Refund.class.getSimpleName())) {
@@ -287,8 +313,23 @@ public class PaymentServiceImpl implements PaymentService {
                 if (refundFound != null)
                     associateOutboundPaymentAndRefund(payment, refundFound, generateWaitingAccountAccountingRecords);
 
+                // If not found, try to match debour
+                Debour debourFound = null;
+                if (correspondingEntities != null && correspondingEntities.size() > 0) {
+                    for (IndexEntity foundEntity : correspondingEntities) {
+                        if (foundEntity.getEntityType().equals(Debour.class.getSimpleName())) {
+                            Debour debour = debourService.getDebour(foundEntity.getEntityId());
+                            if (debour != null && debour.getPayment() == null)
+                                debourFound = debour;
+                        }
+                    }
+                }
+
+                if (debourFound != null)
+                    associateOutboundPaymentAndDebour(payment, debourFound, generateWaitingAccountAccountingRecords);
+
                 // If payment not used, put it in waiting account
-                if (generateWaitingAccountAccountingRecords) {
+                if (generateWaitingAccountAccountingRecords.isTrue()) {
                     accountingRecordService.generateAccountingRecordsForWaintingOutboundPayment(payment);
                 }
             }
@@ -339,7 +380,8 @@ public class PaymentServiceImpl implements PaymentService {
         } else {
             // Invoices to payed found
             if (correspondingInvoices != null && correspondingInvoices.size() > 0) {
-                remainingMoney = associateOutboundPaymentAndInvoice(payment, correspondingInvoices.get(0), true,
+                remainingMoney = associateOutboundPaymentAndInvoice(payment, correspondingInvoices.get(0),
+                        new MutableBoolean(true),
                         byPassAmount);
             }
         }
@@ -484,7 +526,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     private Float associateOutboundPaymentAndInvoice(Payment payment, Invoice correspondingInvoice,
-            boolean generateWaitingAccountAccountingRecords, List<Float> byPassAmount) throws OsirisException {
+            MutableBoolean generateWaitingAccountAccountingRecords, List<Float> byPassAmount) throws OsirisException {
         Float remainingToPay = 0f;
         int amountIndex = 0;
         Float remainingMoney = Math.abs(payment.getPaymentAmount());
@@ -493,7 +535,7 @@ public class PaymentServiceImpl implements PaymentService {
         // If payment is not over total of remaining to pay on all invoices
         if (byPassAmount != null || remainingToPay >= remainingMoney) {
             // Payment will be used, not necessary to put it in wainting account
-            generateWaitingAccountAccountingRecords = false;
+            generateWaitingAccountAccountingRecords = new MutableBoolean(false);
 
             Float remainingToPayForCurrentInvoice = invoiceService
                     .getRemainingAmountToPayForInvoice(correspondingInvoice);
@@ -533,13 +575,13 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     private Float associateOutboundPaymentAndRefund(Payment payment, Refund refund,
-            boolean generateWaitingAccountAccountingRecords) throws OsirisException {
+            MutableBoolean generateWaitingAccountAccountingRecords) throws OsirisException {
 
         Float refundAmount = Math.round(refund.getRefundAmount() * 100f) / 100f;
         Float paymentAmount = Math.round(payment.getPaymentAmount() * 100f) / 100f;
 
         if (refundAmount == paymentAmount) {
-            generateWaitingAccountAccountingRecords = false;
+            generateWaitingAccountAccountingRecords = new MutableBoolean(false);
             accountingRecordService.generateAccountingRecordsForRefundOnVirement(refund);
 
             refund.setIsMatched(true);
@@ -548,10 +590,27 @@ public class PaymentServiceImpl implements PaymentService {
         return 0f;
     }
 
+    private Float associateOutboundPaymentAndDebour(Payment payment, Debour debour,
+            MutableBoolean generateWaitingAccountAccountingRecords) throws OsirisException {
+
+        Float debourAmount = Math.round(debour.getDebourAmount() * 100f) / 100f;
+        Float paymentAmount = Math.round(payment.getPaymentAmount() * 100f) / 100f;
+
+        if (debourAmount == paymentAmount) {
+            generateWaitingAccountAccountingRecords = new MutableBoolean(false);
+            accountingRecordService.generateAccountingRecordsForDebourOnDebour(debour);
+
+            debour.setPayment(payment);
+            debourService.addOrUpdateDebour(debour);
+        }
+        return 0f;
+    }
+
     private List<IndexEntity> getCorrespondingEntityForOutboundPayment(Payment payment) {
         ArrayList<String> entityTypesToSearch = new ArrayList<String>();
         entityTypesToSearch.add(Invoice.class.getSimpleName());
         entityTypesToSearch.add(Refund.class.getSimpleName());
+        entityTypesToSearch.add(Debour.class.getSimpleName());
 
         return getCorrespondingEntityForPayment(payment, entityTypesToSearch);
     }
@@ -642,8 +701,22 @@ public class PaymentServiceImpl implements PaymentService {
                         && (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.WAITING_DEPOSIT)
                                 || customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.OPEN)
                                 || customerOrder.getCustomerOrderStatus().getCode()
-                                        .equals(CustomerOrderStatus.BEING_PROCESSED)))
+                                        .equals(CustomerOrderStatus.BEING_PROCESSED)
+                                || customerOrder.getCustomerOrderStatus().getCode()
+                                        .equals(CustomerOrderStatus.TO_BILLED)))
                     return customerOrder;
+            }
+        }
+        return null;
+    }
+
+    private Quotation getQuotationForEntity(IndexEntity foundEntity) {
+        if (foundEntity != null && foundEntity.getEntityType() != null) {
+            if (foundEntity.getEntityType().equals(Quotation.class.getSimpleName())) {
+                Quotation quotation = quotationService.getQuotation(foundEntity.getEntityId());
+                if (quotation.getQuotationStatus() != null
+                        && (quotation.getQuotationStatus().getCode().equals(QuotationStatus.SENT_TO_CUSTOMER)))
+                    return quotation;
             }
         }
         return null;
@@ -664,12 +737,49 @@ public class PaymentServiceImpl implements PaymentService {
                         else if (invoice.getCustomerOrder() != null
                                 && m.group().equals(invoice.getCustomerOrder().getId().toString()))
                             advisedPayments.add(payment);
+                        else if (invoice.getCustomerOrder() != null
+                                && invoice.getCustomerOrder().getQuotations() != null
+                                && invoice.getCustomerOrder().getQuotations().size() > 0 && m.group()
+                                        .equals(invoice.getCustomerOrder().getQuotations().get(0).getId().toString()))
+                            advisedPayments.add(payment);
                     }
                 }
             }
             // If no match by name, attempt by amount
             if (advisedPayments.size() == 0) {
                 Float totalRound = Math.round(invoice.getTotalPrice() * 100f) / 100f;
+                for (Payment payment : payments) {
+                    Float paymentRound = Math.round(payment.getPaymentAmount() * 100f) / 100f;
+                    if (paymentRound.equals(totalRound)) {
+                        advisedPayments.add(payment);
+                    }
+                }
+            }
+        }
+        return advisedPayments;
+    }
+
+    @Override
+    public List<Payment> getAdvisedPaymentForCustomerOrder(CustomerOrder customerOrder) {
+        List<Payment> payments = paymentRepository.findNotAssociatedPayments();
+        List<Payment> advisedPayments = new ArrayList<Payment>();
+        if (payments != null && payments.size() > 0) {
+            Pattern p = Pattern.compile("\\d+");
+            for (Payment payment : payments) {
+                if (payment.getLabel() != null) {
+                    Matcher m = p.matcher(payment.getLabel());
+                    while (m.find()) {
+                        if (m.group().equals(customerOrder.getId().toString()))
+                            advisedPayments.add(payment);
+                        else if (customerOrder.getQuotations() != null && customerOrder.getQuotations().size() > 0
+                                && m.group().equals(customerOrder.getQuotations().get(0).getId().toString()))
+                            advisedPayments.add(payment);
+                    }
+                }
+            }
+            // If no match by name, attempt by amount
+            if (advisedPayments.size() == 0) {
+                Float totalRound = customerOrderService.getTotalForCustomerOrder(customerOrder);
                 for (Payment payment : payments) {
                     Float paymentRound = Math.round(payment.getPaymentAmount() * 100f) / 100f;
                     if (paymentRound.equals(totalRound)) {
@@ -704,7 +814,9 @@ public class PaymentServiceImpl implements PaymentService {
         if (payment.getAccountingRecords() != null)
             for (AccountingRecord accountingRecord : payment.getAccountingRecords()) {
                 if (accountingRecord.getIsCounterPart() == null || !accountingRecord.getIsCounterPart())
-                    accountingRecordService.generateCounterPart(accountingRecord, null, operationIdCounterPart);
+                    if (!accountingRecord.getAccountingAccount().getPrincipalAccountingAccount().getId()
+                            .equals(constantService.getPrincipalAccountingAccountBank().getId()))
+                        accountingRecordService.generateCounterPart(accountingRecord, null, operationIdCounterPart);
             }
         payment.setIsCancelled(true);
         payment.setInvoice(null);

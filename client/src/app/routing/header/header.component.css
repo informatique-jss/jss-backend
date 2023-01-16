@@ -29,29 +29,3 @@
 #navbar.active .navbar-title {
   padding-left: 156px;
 }
-
-
-#menu {
-  width: 0px;
-  height: 0px;
-  cursor: pointer;
-  color: #0082AD;
-  background-color: #F0F0F0;
-  padding: 16px;
-  border-radius: 23px;
-  margin-right: 20px;
-  position: absolute;
-  top: 35px;
-}
-
-#menu .mat-icon {
-  position: relative;
-  top: -10px;
-  left: -10px;
-  font-size: 20px;
-}
-
-#menu:hover {
-  background: #4D4D4D;
-  color: #FFFFFF;
-}

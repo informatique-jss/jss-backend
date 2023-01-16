@@ -16,6 +16,10 @@
             <select-gift [(model)]="newFollowup.gift" label="Cadeau" [form]="followupForm" propertyName="gift"
               [isDisabled]="false"></select-gift>
           </td>
+          <td *ngIf="tiers!=undefined">
+            <generic-input [(model)]="newFollowup.giftNumber" label="Nombre" [form]="followupForm"
+              propertyName="giftNumber" [isMandatory]="true" [isDisabled]="false" type="number"></generic-input>
+          </td>
           <td>
             <generic-datepicker [(model)]="newFollowup.followupDate" label="Date" [form]="followupForm"
               propertyName="followupDate" [isMandatory]="true" [isDisabled]="false"></generic-datepicker>
