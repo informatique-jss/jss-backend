@@ -41,6 +41,7 @@ import org.thymeleaf.templateresolver.ITemplateResolver;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import com.itextpdf.text.DocumentException;
+import com.jss.osiris.libs.PictureHelper;
 import com.jss.osiris.libs.QrCodeHelper;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
@@ -153,6 +154,9 @@ public class MailHelper {
 
     @Autowired
     CustomerMailService mailService;
+
+    @Autowired
+    PictureHelper pictureHelper;
 
     @Bean
     public TemplateEngine emailTemplateEngine() {
@@ -945,8 +949,15 @@ public class MailHelper {
         return tempFile;
     }
 
-    public File generatePublicationReceiptPdf(Announcement announcement, boolean withStamp) throws OsirisException {
+    public File generatePublicationReceiptPdf(Announcement announcement, boolean withStamp, Provision provision)
+            throws OsirisException {
         final Context ctx = new Context();
+
+        if (provision.getAttachments() != null && provision.getAttachments().size() > 0)
+            for (Attachment attachment : provision.getAttachments())
+                if (attachment.getAttachmentType().getId().equals(constantService.getAttachmentTypeLogo().getId()))
+                    ctx.setVariable("logo", pictureHelper
+                            .getPictureFileAsBase64String(new File(attachment.getUploadedFile().getPath())));
 
         ctx.setVariable("noticeHeader",
                 (announcement.getNoticeHeader() != null && !announcement.getNoticeHeader().equals(""))
@@ -982,8 +993,14 @@ public class MailHelper {
         return tempFile;
     }
 
-    public File generatePublicationFlagPdf(Announcement announcement) throws OsirisException {
+    public File generatePublicationFlagPdf(Announcement announcement, Provision provision) throws OsirisException {
         final Context ctx = new Context();
+
+        if (provision.getAttachments() != null && provision.getAttachments().size() > 0)
+            for (Attachment attachment : provision.getAttachments())
+                if (attachment.getAttachmentType().getId().equals(constantService.getAttachmentTypeLogo().getId()))
+                    ctx.setVariable("logo", pictureHelper
+                            .getPictureFileAsBase64String(new File(attachment.getUploadedFile().getPath())));
 
         ctx.setVariable("noticeHeader",
                 (announcement.getNoticeHeader() != null && !announcement.getNoticeHeader().equals(""))
@@ -1067,7 +1084,7 @@ public class MailHelper {
             remainingToPay = Math.round(invoiceService.getRemainingAmountToPayForInvoice(invoice) * 100f) / 100f;
         else
             remainingToPay = Math
-                    .round(customerOrderService.getRemainingAmountToPayForCustomerOrder(customerOrder) / 100f) * 100f;
+                    .round(customerOrderService.getRemainingAmountToPayForCustomerOrder(customerOrder) * 100f) / 100f;
 
         List<Attachment> attachments = findAttachmentForCustomerOrder(customerOrder, isReminder);
 

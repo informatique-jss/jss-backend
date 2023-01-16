@@ -84,8 +84,8 @@
 </head>
 
 <body>
-    <a href="http://www.google.fr" target="_blank"><img th:src="@{'data:image/png;base64,'+${qrCodePicture}}"
-            width="60px" height="60px" class="qr-code" /></a>
+    <!--/*<a href="http://www.google.fr" target="_blank"><img th:src="@{'data:image/png;base64,'+${qrCodePicture}}"
+            width="60px" height="60px" class="qr-code" /></a>*/-->
     <div class="center blue-color">
         <div class="title">www.JSS.fr</div>
         <div class="subtitle">Service de Presse En Ligne d'informations Générales, Juridiques, Judiciaires et
@@ -103,6 +103,8 @@
                 th:text="${noticeSubtype}"></span></div>
     </div>
     <hr class="solid" />
+    <div th:if="${logo!=null}" class="alignment" align="center" style="line-height:10px"><img width="500px"
+            th:src="@{'data:image/jpeg;base64,'+${logo}}" /></div>
     <div th:if="${noticeHeader!=null}">
         <p class="text" th:utext="${noticeHeader}">header</p>
     </div>

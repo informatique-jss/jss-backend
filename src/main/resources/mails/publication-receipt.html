@@ -63,6 +63,8 @@
 </head>
 
 <body>
+    <div th:if="${logo!=null}" class="alignment" align="center" style="line-height:10px"><img width="500px"
+            th:src="@{'data:image/jpeg;base64,'+${logo}}" /></div>
     <div th:if="${noticeHeader!=null}">
         <p class="text" th:utext="${noticeHeader}"></p>
     </div>

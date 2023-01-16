@@ -230,7 +230,7 @@ public class AccountingController {
             @RequestBody AccountingAccount accountingAccounts) throws OsirisValidationException, OsirisException {
         if (accountingAccounts.getId() != null)
             validationHelper.validateReferential(accountingAccounts, true, "accountingAccounts");
-        validationHelper.validateString(accountingAccounts.getLabel(), true, 100, "label");
+        validationHelper.validateString(accountingAccounts.getLabel(), true, 200, "label");
         validationHelper.validateReferential(accountingAccounts.getPrincipalAccountingAccount(), true,
                 "PrincipalAccountingAccount");
 

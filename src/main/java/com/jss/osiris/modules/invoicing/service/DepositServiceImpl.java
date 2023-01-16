@@ -150,6 +150,7 @@ public class DepositServiceImpl implements DepositService {
 
         cancelDeposit(deposit);
 
+        String refundLabelSuffix = "";
         int correspondingInvoiceSize = 0;
         if (correspondingInvoices != null) {
             for (int i = 0; i < correspondingInvoices.size(); i++) {
@@ -167,6 +168,7 @@ public class DepositServiceImpl implements DepositService {
                 accountingRecordService.checkInvoiceForLettrage(invoice);
 
                 remainingMoney -= byPassAmount.get(i);
+                refundLabelSuffix = "facture n°" + invoice.getId();
             }
             correspondingInvoiceSize += correspondingInvoices.size();
         }
@@ -185,6 +187,7 @@ public class DepositServiceImpl implements DepositService {
                 customerOrderService.unlockCustomerOrderFromDeposit(correspondingCustomerOrder.get(i));
 
                 remainingMoney -= byPassAmount.get(i + correspondingInvoiceSize);
+                refundLabelSuffix = "commande n°" + customerOrder.getId();
             }
 
         if (remainingMoney > 0) {
@@ -196,7 +199,8 @@ public class DepositServiceImpl implements DepositService {
                     accountingRecordService.generateAppointForDeposit(deposit, remainingMoney,
                             quotationService.getCustomerOrderOfQuotation(correspondingCustomerOrder.get(0)));
             } else {
-                refundService.generateRefund(tiersRefund, affaireRefund, null, deposit, remainingMoney);
+                refundService.generateRefund(tiersRefund, affaireRefund, null, deposit, remainingMoney,
+                        refundLabelSuffix);
             }
         }
     }

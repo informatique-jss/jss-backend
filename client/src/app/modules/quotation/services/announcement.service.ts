@@ -16,16 +16,16 @@ export class AnnouncementService extends AppRestService<Announcement>{
     super(http, "quotation");
   }
 
-  previewPublicationReceipt(announcement: Announcement) {
-    this.previewFileGet(new HttpParams().set("idAnnouncement", announcement.id + ""), "publication/receipt/download");
+  previewPublicationReceipt(announcement: Announcement, provision: Provision) {
+    this.previewFileGet(new HttpParams().set("idAnnouncement", announcement.id + "").set("idProvision", provision.id + ""), "publication/receipt/download");
   }
 
-  previewProofReading(announcement: Announcement) {
-    this.previewFileGet(new HttpParams().set("idAnnouncement", announcement.id + ""), "proof/reading/download");
+  previewProofReading(announcement: Announcement, provision: Provision) {
+    this.previewFileGet(new HttpParams().set("idAnnouncement", announcement.id + "").set("idProvision", provision.id + ""), "proof/reading/download");
   }
 
-  previewPublicationFlag(announcement: Announcement) {
-    this.previewFileGet(new HttpParams().set("idAnnouncement", announcement.id + ""), "publication/flag/download");
+  previewPublicationFlag(announcement: Announcement, provision: Provision) {
+    this.previewFileGet(new HttpParams().set("idAnnouncement", announcement.id + "").set("idProvision", provision.id + ""), "publication/flag/download");
   }
 
   generatePublicationReceiptMail(customerOrder: CustomerOrder, announcement: Announcement) {

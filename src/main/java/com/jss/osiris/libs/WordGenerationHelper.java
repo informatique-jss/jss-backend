@@ -70,7 +70,6 @@ public class WordGenerationHelper {
 
     // a wrapper class for the htmlDoc /word/htmlDoc#.html in the *.docx ZIP archive
     // provides methods for manipulating the HTML
-    // TODO: We should *not* using String methods for manipulating HTML!
     private static class MyXWPFHtmlDocument extends POIXMLDocumentPart {
 
         private String html;

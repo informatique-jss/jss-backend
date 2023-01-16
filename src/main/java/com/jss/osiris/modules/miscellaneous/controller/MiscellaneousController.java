@@ -832,7 +832,7 @@ public class MiscellaneousController {
         validationHelper.validateString(competentAuthorities.getMailRecipient(), false, 60, "MailRecipient");
         validationHelper.validateString(competentAuthorities.getAddress(), false, 200, "Address");
         validationHelper.validateString(competentAuthorities.getPostalCode(), false, 10, "PostalCode");
-        validationHelper.validateString(competentAuthorities.getCedexComplement(), false, 20, "CedexComplement");
+        validationHelper.validateString(competentAuthorities.getCedexComplement(), false, 40, "CedexComplement");
         validationHelper.validateReferential(competentAuthorities.getCity(), false, "City");
         validationHelper.validateReferential(competentAuthorities.getCountry(), false, "Country");
 

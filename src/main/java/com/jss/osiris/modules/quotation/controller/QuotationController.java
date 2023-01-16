@@ -1482,12 +1482,6 @@ public class QuotationController {
     if (provision.getAnnouncement() != null) {
       Announcement announcement = provision.getAnnouncement();
 
-      // If published to Actu Legale, to late ...
-      // TODO : marche pas si asso avec une annonce + une formalité, ça bloque la
-      // formalité
-      if (announcement.getActuLegaleId() != null)
-        throw new OsirisValidationException("Annonce déjà publiée sur Actu Légale");
-
       LocalDate publicationDateVerification = LocalDate.now().minusDays(1);
       // Do not verify date when quotation has started
       if (isCustomerOrder) {
@@ -1526,6 +1520,18 @@ public class QuotationController {
         if (!publicationProofFound)
           throw new OsirisValidationException(
               "Le témoin de publication ou le justificatif de parution est obligatoire");
+      }
+
+      // If published to Actu Legale, to late ...
+      if (announcement.getActuLegaleId() != null) {
+        // keep current notice
+        Announcement currentAnnouncement = announcementService.getAnnouncement(announcement.getId());
+        announcement.setNotice(currentAnnouncement.getNotice());
+        announcement.setNoticeHeader(currentAnnouncement.getNoticeHeader());
+        announcement.setPublicationDate(currentAnnouncement.getPublicationDate());
+        announcement.setConfrere(currentAnnouncement.getConfrere());
+        announcement.setDepartment(currentAnnouncement.getDepartment());
+        announcement.setNoticeTypeFamily(currentAnnouncement.getNoticeTypeFamily());
       }
 
     }
@@ -1979,17 +1985,19 @@ public class QuotationController {
   }
 
   @GetMapping(inputEntryPoint + "/publication/receipt/download")
-  public ResponseEntity<byte[]> downloadPublicationReceipt(@RequestParam("idAnnouncement") Integer idAnnouncement)
+  public ResponseEntity<byte[]> downloadPublicationReceipt(@RequestParam("idAnnouncement") Integer idAnnouncement,
+      @RequestParam("idProvision") Integer idProvision)
       throws OsirisValidationException, OsirisException {
     byte[] data = null;
     HttpHeaders headers = null;
 
     Announcement announcement = announcementService.getAnnouncement(idAnnouncement);
+    Provision provision = provisionService.getProvision(idProvision);
 
     if (announcement == null)
       throw new OsirisValidationException("Annonce non trouvée");
 
-    File file = mailHelper.generatePublicationReceiptPdf(announcement, true);
+    File file = mailHelper.generatePublicationReceiptPdf(announcement, true, provision);
 
     if (file != null) {
       try {
@@ -2019,17 +2027,19 @@ public class QuotationController {
   }
 
   @GetMapping(inputEntryPoint + "/proof/reading/download")
-  public ResponseEntity<byte[]> downloadProofReading(@RequestParam("idAnnouncement") Integer idAnnouncement)
+  public ResponseEntity<byte[]> downloadProofReading(@RequestParam("idAnnouncement") Integer idAnnouncement,
+      @RequestParam("idProvision") Integer idProvision)
       throws OsirisValidationException, OsirisException {
     byte[] data = null;
     HttpHeaders headers = null;
 
     Announcement announcement = announcementService.getAnnouncement(idAnnouncement);
+    Provision provision = provisionService.getProvision(idProvision);
 
     if (announcement == null)
       throw new OsirisValidationException("Annonce non trouvée");
 
-    File file = mailHelper.generatePublicationReceiptPdf(announcement, false);
+    File file = mailHelper.generatePublicationReceiptPdf(announcement, false, provision);
 
     if (file != null) {
       try {
@@ -2059,17 +2069,21 @@ public class QuotationController {
   }
 
   @GetMapping(inputEntryPoint + "/publication/flag/download")
-  public ResponseEntity<byte[]> downloadPublicationFlag(@RequestParam("idAnnouncement") Integer idAnnouncement)
+  public ResponseEntity<byte[]> downloadPublicationFlag(@RequestParam("idAnnouncement") Integer idAnnouncement,
+      @RequestParam("idProvision") Integer idProvision)
       throws OsirisValidationException, OsirisException {
     byte[] data = null;
     HttpHeaders headers = null;
 
     Announcement announcement = announcementService.getAnnouncement(idAnnouncement);
+    Provision provision = provisionService.getProvision(idProvision);
 
     if (announcement == null)
       throw new OsirisValidationException("Annonce non trouvée");
+    if (provision == null)
+      throw new OsirisValidationException("Provision non trouvée");
 
-    File file = mailHelper.generatePublicationFlagPdf(announcement);
+    File file = mailHelper.generatePublicationFlagPdf(announcement, provision);
 
     if (file != null) {
       try {

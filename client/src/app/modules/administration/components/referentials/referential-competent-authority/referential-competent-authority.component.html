@@ -146,7 +146,7 @@
             <td>
               <generic-input [(model)]="selectedEntity.cedexComplement" label="Complément CEDEX" [form]="entityForm"
                 propertyName="cedexComplement" [isMandatory]="false" [isDisabled]="!editMode"
-                [maxLength]="20"></generic-input>
+                [maxLength]="40"></generic-input>
             </td>
             <td>
               <autocomplete-city [(model)]="selectedEntity.city" [modelCountry]="selectedEntity.country"

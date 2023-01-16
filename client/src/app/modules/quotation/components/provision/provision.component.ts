@@ -220,16 +220,25 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     return {} as IWorkflowElement;
   }
 
+  publicationReceiptFound(announcement: Announcement): boolean {
+    if (announcement && announcement.attachments && announcement.attachments.length > 0)
+      for (let attachement of announcement.attachments)
+        if (attachement.attachmentType && attachement.attachmentType.id == this.constantService.getAttachmentTypePublicationReceipt().id)
+          return true;
+    return false;
+  }
+
   changeStatus(status: IWorkflowElement, provision: Provision) {
     let saveAsso = true;
     if (provision.announcement) {
       provision.announcement.announcementStatus = status;
-      if (status.code == ANNOUNCEMENT_STATUS_IN_PROGRESS && !provision.announcement.isPublicationReciptAlreadySent) {
+      if (status.code == ANNOUNCEMENT_STATUS_IN_PROGRESS && !provision.announcement.isPublicationReciptAlreadySent && provision.announcement.confrere && provision.announcement.confrere.id == this.constantService.getConfrereJssSpel().id
+        || provision.announcement.confrere && provision.announcement.confrere.id != this.constantService.getConfrereJssSpel().id && this.publicationReceiptFound(provision.announcement)) {
         saveAsso = false;
         const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
           maxWidth: "400px",
           data: {
-            title: "Envoyer le attestation de parution ?",
+            title: "Envoyer l'attestation de parution ?",
             content: "Voulez vous envoyer l'attestation de parution pour cette annonce ?",
             closeActionText: "Envoyer",
             validationActionText: "Ne pas envoyer"
@@ -304,16 +313,16 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     this.currentProvisionWorkflow = provision;
   }
 
-  generatePublicationReceipt(announcement: Announcement) {
-    this.announcementService.previewPublicationReceipt(announcement);
+  generatePublicationReceipt(announcement: Announcement, provision: Provision) {
+    this.announcementService.previewPublicationReceipt(announcement, provision);
   }
 
-  generateProofReading(announcement: Announcement) {
-    this.announcementService.previewProofReading(announcement);
+  generateProofReading(announcement: Announcement, provision: Provision) {
+    this.announcementService.previewProofReading(announcement, provision);
   }
 
-  generatePublicationFlag(announcement: Announcement) {
-    this.announcementService.previewPublicationFlag(announcement);
+  generatePublicationFlag(announcement: Announcement, provision: Provision) {
+    this.announcementService.previewPublicationFlag(announcement, provision);
   }
 
   generatePublicationReceiptMail(announcement: Announcement) {

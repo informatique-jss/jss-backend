@@ -293,7 +293,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     AccountingJournal pushasingJournal = constantService.getAccountingJournalPurchases();
 
     if (debour == null)
-      throw new OsirisException(null, "No invoice provided");
+      throw new OsirisException(null, "No debour provided");
 
     String labelPrefix = "Débour n°" + debour.getId();
 

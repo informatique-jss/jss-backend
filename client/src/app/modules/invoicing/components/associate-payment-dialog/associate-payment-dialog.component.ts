@@ -281,13 +281,13 @@ export class AssociatePaymentDialogComponent implements OnInit {
     if (this.associationSummaryTable && this.associationSummaryTable.length > 0) {
       for (let asso of this.associationSummaryTable) {
         if (asso.invoice && asso.invoice.customerOrder) {
-          affaires.push(...asso.invoice.customerOrder.assoAffaireOrders.filter(asso => asso.affaire && asso.affaire.paymentIban != "").map(asso => asso.affaire));
+          affaires.push(...asso.invoice.customerOrder.assoAffaireOrders.filter(asso => asso.affaire && asso.affaire.paymentIban && asso.affaire.paymentIban != "").map(asso => asso.affaire));
         } else {
-          affaires.push(...asso.customerOrder.assoAffaireOrders.filter(asso => asso.affaire && asso.affaire.paymentIban != "").map(asso => asso.affaire));
+          affaires.push(...asso.customerOrder.assoAffaireOrders.filter(asso => asso.affaire && asso.affaire.paymentIban && asso.affaire.paymentIban != "").map(asso => asso.affaire));
         }
       }
     } else if (this.invoice!.customerOrder) {
-      affaires.push(...this.invoice!.customerOrder.assoAffaireOrders.filter(asso => asso.affaire && asso.affaire.paymentIban != "").map(asso => asso.affaire));
+      affaires.push(...this.invoice!.customerOrder.assoAffaireOrders.filter(asso => asso.affaire && asso.affaire.paymentIban && asso.affaire.paymentIban != "").map(asso => asso.affaire));
     }
     return affaires;
   }

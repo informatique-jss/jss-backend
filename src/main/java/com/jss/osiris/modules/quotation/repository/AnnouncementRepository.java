@@ -63,7 +63,7 @@ public interface AnnouncementRepository extends CrudRepository<Announcement, Int
                         @Param("announcementStatus") AnnouncementStatus announcementStatus,
                         @Param("publicationDate") LocalDate publicationDate, @Param("confrere") Confrere confrere);
 
-        @Query("select a from Announcement a where ( a.announcementStatus in (:announcementStatus) or :announcementStatus is null) and publicationDate is not null and publicationDate<=:startDate and publicationDate<=:endDate and confrere = :confrere")
+        @Query("select a from Announcement a where ( a.announcementStatus in (:announcementStatus) or :announcementStatus is null) and publicationDate is not null and publicationDate>=:startDate and publicationDate<=:endDate and confrere = :confrere")
         List<Announcement> getAnnouncementByStatusPublicationDateAndConfrere(
                         @Param("announcementStatus") List<AnnouncementStatus> announcementStatus,
                         @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate,

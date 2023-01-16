@@ -347,9 +347,11 @@ public class PaymentServiceImpl implements PaymentService {
         float remainingMoney = payment.getPaymentAmount();
         if (payment.getPaymentWay().getId().equals(constantService.getPaymentWayInbound().getId())) {
             // Invoices to payed found
+            String refundLabelSuffix = "";
             if (correspondingInvoices != null && correspondingInvoices.size() > 0) {
                 remainingMoney = associateInboundPaymentAndInvoices(payment, correspondingInvoices,
                         new MutableBoolean(true), byPassAmount);
+                refundLabelSuffix = "facture n°" + correspondingInvoices.get(0).getId();
             }
 
             // Customer order waiting for deposit found
@@ -358,6 +360,7 @@ public class PaymentServiceImpl implements PaymentService {
                 cancelPayment = true;
                 remainingMoney = associateInboundPaymentAndCustomerOrders(payment, correspondingCustomerOrder,
                         correspondingInvoices, new MutableBoolean(true), byPassAmount, remainingMoney);
+                refundLabelSuffix = "commande n°" + correspondingCustomerOrder.get(0).getId();
             }
 
             if (remainingMoney > 0) {
@@ -370,7 +373,8 @@ public class PaymentServiceImpl implements PaymentService {
                                 quotationService.getCustomerOrderOfQuotation(correspondingCustomerOrder.get(0)));
 
                 } else {
-                    refundService.generateRefund(tiersRefund, affaireRefund, payment, null, remainingMoney);
+                    refundService.generateRefund(tiersRefund, affaireRefund, payment, null, remainingMoney,
+                            refundLabelSuffix);
                 }
             }
 

@@ -256,11 +256,27 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
                 // Handle status change
                 if (announcement.getAnnouncementStatus() != null) {
-                    if (announcement.getAnnouncementStatus().getCode()
-                            .equals(AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS)) {
-                        announcementService.generateStoreAndSendPublicationReceipt((CustomerOrder) customerOrder,
-                                announcement);
+
+                    // If JSS generate publication receipt if user accept
+                    if (announcement.getConfrere().getId().equals(constantService.getConfrereJssSpel().getId())) {
+                        if (announcement.getAnnouncementStatus().getCode()
+                                .equals(AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS)) {
+                            announcementService.generateStoreAndSendPublicationReceipt((CustomerOrder) customerOrder,
+                                    announcement);
+                        }
+                    } else {
+                        // Else send publication receipt when it's available and if user accept
+                        if (announcement.getAttachments() != null && announcement.getAttachments().size() > 0)
+                            for (Attachment attachment : announcement.getAttachments())
+                                if (attachment.getAttachmentType().getId()
+                                        .equals(constantService.getAttachmentTypePublicationReceipt().getId())) {
+                                    announcementService.generateStoreAndSendPublicationReceipt(
+                                            (CustomerOrder) customerOrder,
+                                            announcement);
+                                    break;
+                                }
                     }
+
                     if (announcement.getAnnouncementStatus().getCode()
                             .equals(AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE)) {
                         announcementService.generateAndStoreAnnouncementWordFile((CustomerOrder) customerOrder,

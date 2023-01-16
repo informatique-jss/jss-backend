@@ -84,7 +84,7 @@ public class CompetentAuthority implements Serializable, IId {
 	@Column(length = 10)
 	private String postalCode;
 
-	@Column(length = 20)
+	@Column(length = 40)
 	private String cedexComplement;
 
 	@ManyToOne

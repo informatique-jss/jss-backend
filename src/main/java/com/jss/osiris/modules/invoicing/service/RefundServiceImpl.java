@@ -126,7 +126,7 @@ public class RefundServiceImpl implements RefundService {
 
     @Override
     public void generateRefund(ITiers tiersRefund, Affaire affaireRefund, Payment payment, Deposit deposit,
-            Float amount)
+            Float amount, String labelSuffix)
             throws OsirisException, OsirisClientMessageException {
         Refund refund = new Refund();
         if (tiersRefund instanceof Confrere)
@@ -165,6 +165,8 @@ public class RefundServiceImpl implements RefundService {
                     .getId());
             refund.setDeposit(deposit);
         }
+        if (labelSuffix != null)
+            refund.setLabel(refund.getLabel() + " / " + labelSuffix);
         refund.setRefundAmount(amount);
         refund.setIsMatched(false);
         refund.setIsAlreadyExported(false);

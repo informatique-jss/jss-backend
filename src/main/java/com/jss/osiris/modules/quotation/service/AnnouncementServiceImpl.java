@@ -162,11 +162,25 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     @Override
     public void generateStoreAndSendPublicationReceipt(CustomerOrder customerOrder, Announcement announcement)
             throws OsirisException, OsirisClientMessageException {
+
+        // Get provision
+        Provision currentProvision = null;
+        if (customerOrder.getAssoAffaireOrders() != null)
+            for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
+                if (asso.getProvisions() != null)
+                    for (Provision provision : asso.getProvisions())
+                        if (provision.getAnnouncement() != null
+                                && provision.getAnnouncement().getId().equals(announcement.getId())) {
+                            currentProvision = provision;
+                            break;
+                        }
+
         if (announcement.getIsPublicationReciptAlreadySent() == null
                 || !announcement.getIsPublicationReciptAlreadySent()) {
             if (announcement.getConfrere() != null
                     && announcement.getConfrere().getId().equals(constantService.getConfrereJssSpel().getId())) {
-                File publicationReceiptPdf = mailHelper.generatePublicationReceiptPdf(announcement, true);
+                File publicationReceiptPdf = mailHelper.generatePublicationReceiptPdf(announcement, true,
+                        currentProvision);
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
                 try {
                     announcement.setAttachments(
@@ -198,13 +212,25 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     public void generateStoreAndSendPublicationFlag(CustomerOrder customerOrder, Announcement announcement)
             throws OsirisException, OsirisClientMessageException {
 
+        // Get provision
+        Provision currentProvision = null;
+        if (customerOrder != null && customerOrder.getAssoAffaireOrders() != null)
+            for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
+                if (asso.getProvisions() != null)
+                    for (Provision provision : asso.getProvisions())
+                        if (provision.getAnnouncement() != null
+                                && provision.getAnnouncement().getId().equals(announcement.getId())) {
+                            currentProvision = provision;
+                            break;
+                        }
+
         if (announcement.getPublicationDate().isBefore(LocalDate.now())
                 || announcement.getPublicationDate().isEqual(LocalDate.now())) {
             if ((announcement.getIsPublicationFlagAlreadySent() == null
                     || !announcement.getIsPublicationFlagAlreadySent()) && announcement.getNotice() != null) {
                 if (announcement.getConfrere() != null
                         && announcement.getConfrere().getId().equals(constantService.getConfrereJssSpel().getId())) {
-                    File publicationReceiptPdf = mailHelper.generatePublicationFlagPdf(announcement);
+                    File publicationReceiptPdf = mailHelper.generatePublicationFlagPdf(announcement, currentProvision);
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
                     try {
                         announcement.setAttachments(
@@ -257,8 +283,21 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                         .equals(constantService.getAttachmentTypeProofReading().getId()))
                     proofReading = true;
 
+        // Get provision
+        Provision currentProvision = null;
+        if (customerOrder != null && customerOrder.getAssoAffaireOrders() != null)
+            for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
+                if (asso.getProvisions() != null)
+                    for (Provision provision : asso.getProvisions())
+                        if (provision.getAnnouncement() != null
+                                && provision.getAnnouncement().getId().equals(announcement.getId())) {
+                            currentProvision = provision;
+                            break;
+                        }
+
         if (!proofReading && announcement.getNotice() != null) {
-            File publicationReceiptPdf = mailHelper.generatePublicationReceiptPdf(announcement, false);
+            File publicationReceiptPdf = mailHelper.generatePublicationReceiptPdf(announcement, false,
+                    currentProvision);
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
             try {
                 announcement.setAttachments(

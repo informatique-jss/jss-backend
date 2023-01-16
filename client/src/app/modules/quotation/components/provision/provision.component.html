@@ -158,12 +158,12 @@
 <mat-menu #menu4="matMenu" style="min-height: 0px;padding: 0;" xPosition="before">
   <button mat-menu-item
     *ngIf="currentProvisionWorkflow && currentProvisionWorkflow.announcement && currentProvisionWorkflow.announcement.confrere && currentProvisionWorkflow.announcement.confrere.id==confrereJssSpel.id"
-    (click)="generatePublicationReceipt(currentProvisionWorkflow.announcement)">
+    (click)="generatePublicationReceipt(currentProvisionWorkflow.announcement,currentProvisionWorkflow)">
     <span>Générer un justificatif de parution</span>
   </button>
   <button mat-menu-item
     *ngIf="currentProvisionWorkflow && currentProvisionWorkflow.announcement && currentProvisionWorkflow.announcement.isProofReadingDocument"
-    (click)="generateProofReading(currentProvisionWorkflow.announcement)">
+    (click)="generateProofReading(currentProvisionWorkflow.announcement,currentProvisionWorkflow)">
     <span>Générer une épreuve de relecture</span>
   </button>
   <button mat-menu-item
@@ -178,7 +178,7 @@
   </button>
   <button mat-menu-item
     *ngIf="currentProvisionWorkflow && currentProvisionWorkflow.announcement && currentProvisionWorkflow.announcement.confrere && currentProvisionWorkflow.announcement.confrere.id==confrereJssSpel.id"
-    (click)="generatePublicationFlag(currentProvisionWorkflow.announcement)">
+    (click)="generatePublicationFlag(currentProvisionWorkflow.announcement,currentProvisionWorkflow)">
     <span>Générer un témoin de publication</span>
   </button>
   <button mat-menu-item

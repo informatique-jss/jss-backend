@@ -42,6 +42,8 @@ export class AnnouncementListComponent implements OnInit, AfterContentChecked {
     this.availableColumns.push({ id: "publicationDate", fieldName: "publicationDate", label: "Date de publication", valueFonction: formatDateForSortTable } as SortTableColumn);
     this.availableColumns.push({ id: "noticeTypes", fieldName: "noticeTypes", label: "Rubrique(s)", valueFonction: (element: Announcement) => { return element.noticeTypes.map(notice => notice.label).join(" / ") } } as SortTableColumn);
     this.availableColumns.push({ id: "announcementStatus", fieldName: "announcementStatus.label", label: "Statut" } as SortTableColumn);
+    this.availableColumns.push({ id: "isPublicationReciptAlreadySent", fieldName: "isPublicationReciptAlreadySent", label: "Attestation de parution envoyée ?", valueFonction: (element: any) => { return element.isPublicationReciptAlreadySent ? "Oui" : "Non" } } as SortTableColumn);
+    this.availableColumns.push({ id: "isPublicationFlagAlreadySent", fieldName: "isPublicationFlagAlreadySent", label: "Témoin de parution envoyé ?", valueFonction: (element: any) => { return element.isPublicationFlagAlreadySent ? "Oui" : "Non" } } as SortTableColumn);
 
     this.tableAction.push({
       actionIcon: "shopping_cart", actionName: "Voir la commande", actionClick: (action: SortTableAction, element: Announcement, event: any) => {
