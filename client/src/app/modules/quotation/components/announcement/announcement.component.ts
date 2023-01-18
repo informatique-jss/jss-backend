@@ -120,9 +120,6 @@ export class AnnouncementComponent implements OnInit {
       if (this.announcement!.publicationDate)
         this.announcement.publicationDate = new Date(this.announcement.publicationDate);
 
-      this.announcementForm.get('notice')?.setValue(this.announcement.notice);
-      this.announcementForm.get('noticeHeader')?.setValue(this.announcement.noticeHeader);
-
       this.announcementForm.markAllAsTouched();
       this.toggleTabs();
       this.updateCharacterPrice();
@@ -173,7 +170,6 @@ export class AnnouncementComponent implements OnInit {
       for (let template of this.selectedNoticeTemplates) {
         this.announcement.notice += template.text + "<br>";
       }
-      this.announcementForm.get('notice')?.setValue(this.announcement.notice);
     }
   }
 

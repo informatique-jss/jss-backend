@@ -78,6 +78,13 @@
                 [values]="quotation.customerOrders" tableName="Liste commandes">
               </sort-table>
             </div>
+            <div class="div-customer-order"
+              *ngIf="quotation && instanceOfCustomerOrder(quotation) && quotation.quotations && quotation.quotations.length>0">
+              <p>Devis issues de cette commande</p>
+              <sort-table [actions]="quotationTableActions" [columns]="quotationDisplayedColumns"
+                [values]="quotation.quotations" tableName="Liste devis">
+              </sort-table>
+            </div>
             <table class="full-width">
               <tr>
                 <td>Tarif special :
@@ -144,6 +151,13 @@
               <p>Commandes issues de ce devis</p>
               <sort-table [actions]="customerOrderTableActions" [columns]="customerOrderDisplayedColumns"
                 [values]="quotation.customerOrders" tableName="Liste commandes">
+              </sort-table>
+            </div>
+            <div class="div-customer-order"
+              *ngIf="quotation && instanceOfCustomerOrder(quotation) && quotation.quotations && quotation.quotations.length>0">
+              <p>Devis issues de cette commande</p>
+              <sort-table [actions]="quotationTableActions" [columns]="quotationDisplayedColumns"
+                [values]="quotation.quotations" tableName="Liste devis">
               </sort-table>
             </div>
             <table class="full-width">

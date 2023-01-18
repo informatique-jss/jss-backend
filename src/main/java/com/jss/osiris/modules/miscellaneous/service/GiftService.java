@@ -12,5 +12,5 @@ public interface GiftService {
 
     public Gift addOrUpdateGift(Gift gift) throws OsirisException;
 
-    public void decreaseStock(Gift gift, Integer giftNumber);
+    public void decreaseStock(Gift gift, Integer giftNumber) throws OsirisException;
 }

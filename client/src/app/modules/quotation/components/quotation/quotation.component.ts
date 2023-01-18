@@ -317,7 +317,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     });
 
     if (this.quotationManagementComponent?.getBillingDocument() && this.quotationManagementComponent?.getBillingDocument().billingLabelType && this.quotationManagementComponent?.getBillingDocument().billingLabelType.id)
-      dialogRef.componentInstance.isLabelAffaire = this.quotationManagementComponent?.getBillingDocument()!.billingLabelType.id == this.constantService.getBillingLabelTypeCodeAffaire().id;
+      dialogRef.componentInstance.isLabelAffaire = this.quotationManagementComponent?.getBillingDocument()!.isRecipientAffaire;
 
     dialogRef.afterClosed().subscribe(response => {
       if (response != null) {

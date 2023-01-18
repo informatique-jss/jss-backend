@@ -39,6 +39,9 @@ export class OrderingCustomerComponent implements OnInit {
   customerOrderTableActions: SortTableAction[] = [] as Array<SortTableAction>;
   customerOrderDisplayedColumns: SortTableColumn[] = [] as Array<SortTableColumn>;
 
+  quotationTableActions: SortTableAction[] = [] as Array<SortTableAction>;
+  quotationDisplayedColumns: SortTableColumn[] = [] as Array<SortTableColumn>;
+
   constructor(private formBuilder: UntypedFormBuilder,
     private tiersService: TiersService,
     private appService: AppService,
@@ -78,6 +81,20 @@ export class OrderingCustomerComponent implements OnInit {
       actionIcon: "visibility", actionName: "Voir la commande", actionLinkFunction: (action: SortTableAction, element: any) => {
         if (element)
           return ['/order', element.id];
+        return undefined;
+      }, display: true,
+    } as SortTableAction);
+
+    this.quotationDisplayedColumns = [];
+    this.quotationDisplayedColumns.push({ id: "id", fieldName: "id", label: "N° de la commande" } as SortTableColumn);
+    this.quotationDisplayedColumns.push({ id: "quotationStatus", fieldName: "quotationStatus.label", label: "Statut" } as SortTableColumn);
+    this.quotationDisplayedColumns.push({ id: "createdDate", fieldName: "createdDate", label: "Date de création", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
+    this.quotationDisplayedColumns.push({ id: "totalPrice", fieldName: "totalPrice", label: "Prix total", valueFonction: (element: any, elements: any[], column: SortTableColumn, columns: SortTableColumn[]): string => { return QuotationComponent.computePriceTotal(element) + " €"; } } as SortTableColumn);
+
+    this.quotationTableActions.push({
+      actionIcon: "visibility", actionName: "Voir le devis", actionLinkFunction: (action: SortTableAction, element: any) => {
+        if (element)
+          return ['/quotation', element.id];
         return undefined;
       }, display: true,
     } as SortTableAction);

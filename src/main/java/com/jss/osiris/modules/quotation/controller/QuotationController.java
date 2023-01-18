@@ -2070,13 +2070,28 @@ public class QuotationController {
 
   @GetMapping(inputEntryPoint + "/publication/flag/download")
   public ResponseEntity<byte[]> downloadPublicationFlag(@RequestParam("idAnnouncement") Integer idAnnouncement,
-      @RequestParam("idProvision") Integer idProvision)
+      @RequestParam(name = "idProvision", required = false) Integer idProvision)
       throws OsirisValidationException, OsirisException {
     byte[] data = null;
     HttpHeaders headers = null;
 
     Announcement announcement = announcementService.getAnnouncement(idAnnouncement);
-    Provision provision = provisionService.getProvision(idProvision);
+    Provision provision = null;
+    if (idProvision == null) {
+      CustomerOrder customerOrder = customerOrderService.getCustomerOrderForAnnouncement(announcement);
+      // Get provision
+      if (customerOrder != null && customerOrder.getAssoAffaireOrders() != null)
+        for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
+          if (asso.getProvisions() != null)
+            for (Provision orderProvision : asso.getProvisions())
+              if (orderProvision.getAnnouncement() != null
+                  && orderProvision.getAnnouncement().getId().equals(announcement.getId())) {
+                provision = orderProvision;
+                break;
+              }
+    } else {
+      provision = provisionService.getProvision(idProvision);
+    }
 
     if (announcement == null)
       throw new OsirisValidationException("Annonce non trouvée");

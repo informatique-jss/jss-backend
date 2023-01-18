@@ -150,13 +150,12 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     });
 
     if (provisionStatus && this.affaireForm.valid) {
+      this.editMode = false;
       this.assoAffaireOrderService.updateAsso(this.asso).subscribe(response => {
         this.asso = response;
-        this.editMode = false;
         this.appService.openRoute(null, '/provision/' + this.idAffaire, null);
       })
     } else {
-      this.editMode = false;
       this.appService.displaySnackBar("Les onglets suivants ne sont pas correctement remplis. Veuillez les compléter avant de sauvegarder : Prestations", true, 15);
     }
   }

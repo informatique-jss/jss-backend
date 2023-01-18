@@ -691,6 +691,25 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   }
 
   @Override
+  public void letterWaitingRecords(AccountingRecord record, AccountingRecord counterPart) throws OsirisException {
+    Integer maxLetteringNumber = accountingRecordRepository
+        .findMaxLetteringNumberForMinLetteringDateTime(LocalDateTime.now().with(ChronoField.DAY_OF_YEAR, 1)
+            .with(ChronoField.HOUR_OF_DAY, 0)
+            .with(ChronoField.MINUTE_OF_DAY, 0).with(ChronoField.SECOND_OF_DAY, 0));
+
+    if (maxLetteringNumber == null)
+      maxLetteringNumber = 0;
+    maxLetteringNumber++;
+
+    record.setLetteringDateTime(LocalDateTime.now());
+    record.setLetteringNumber(maxLetteringNumber);
+    counterPart.setLetteringDateTime(LocalDateTime.now());
+    counterPart.setLetteringNumber(maxLetteringNumber);
+    this.addOrUpdateAccountingRecord(record);
+    this.addOrUpdateAccountingRecord(counterPart);
+  }
+
+  @Override
   public List<AccountingRecord> findByAccountingAccountAndInvoice(AccountingAccount accountingAccount,
       Invoice invoice) {
     return accountingRecordRepository.findByAccountingAccountAndInvoice(accountingAccount, invoice);
@@ -1028,8 +1047,8 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   }
 
   @Override
-  public void generateCounterPart(AccountingRecord originalAccountingRecord, AccountingJournal overrideJournal,
-      Integer operationId) {
+  public AccountingRecord generateCounterPart(AccountingRecord originalAccountingRecord,
+      AccountingJournal overrideJournal, Integer operationId) {
     AccountingRecord newAccountingRecord = new AccountingRecord();
     newAccountingRecord.setAccountingAccount(originalAccountingRecord.getAccountingAccount());
     newAccountingRecord.setAccountingJournal(
@@ -1053,6 +1072,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     addOrUpdateAccountingRecord(newAccountingRecord);
     originalAccountingRecord.setContrePasse(newAccountingRecord);
     addOrUpdateAccountingRecord(originalAccountingRecord);
+    return newAccountingRecord;
   }
 
   @Override

@@ -40,19 +40,21 @@ public class GiftServiceImpl implements GiftService {
     @Transactional(rollbackFor = Exception.class)
     public Gift addOrUpdateGift(Gift gift) throws OsirisException {
         giftRepository.save(gift);
-        AccountingAccount accountingAccount = accountingAccountService
-                .generateAccountingAccountsForProduct("Cadeau - " + gift.getLabel());
-        gift.setAccountingAccount(accountingAccount);
+        if (gift.getAccountingAccount() == null) {
+            AccountingAccount accountingAccount = accountingAccountService
+                    .generateAccountingAccountsForProduct("Cadeau - " + gift.getLabel());
+            gift.setAccountingAccount(accountingAccount);
+        }
         return giftRepository.save(gift);
     }
 
     @Override
-    public void decreaseStock(Gift gift, Integer giftNumber) {
+    public void decreaseStock(Gift gift, Integer giftNumber) throws OsirisException {
         if (gift != null) {
             if (gift.getStock() == null)
                 gift.setStock(0);
             gift.setStock(gift.getStock() - giftNumber);
-            giftRepository.save(gift);
+            addOrUpdateGift(gift);
         }
     }
 }

@@ -160,7 +160,7 @@
                 <div *ngIf="!editMode">
                   <span [innerHTML]="announcement.noticeHeader | trustHtml"></span>
                 </div>
-                <quill-editor [hidden]="!editMode" formControlName="noticeHeader"
+                <quill-editor *ngIf="editMode" [ngModel]="announcement.noticeHeader" formControlName="noticeHeader"
                   (onContentChanged)="setNoticeHeaderModel($event)">
                 </quill-editor>
               </td>
@@ -171,7 +171,8 @@
                 <div *ngIf="!editMode">
                   <span [innerHTML]="announcement.notice | trustHtml"></span>
                 </div>
-                <quill-editor [hidden]="!editMode" formControlName="notice" (onContentChanged)="setNoticeModel($event)">
+                <quill-editor *ngIf="editMode" [ngModel]="announcement.notice" formControlName="notice"
+                  (onContentChanged)="setNoticeModel($event)">
                 </quill-editor>
               </td>
             </tr>

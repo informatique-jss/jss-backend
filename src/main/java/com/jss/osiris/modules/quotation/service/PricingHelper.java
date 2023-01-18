@@ -161,8 +161,9 @@ public class PricingHelper {
                         additionnalFees += confrere.getAdministrativeFees();
 
                     invoiceItem.setPreTaxPrice(
-                            invoiceItem.getPreTaxPrice() * (1 + confrere.getReinvoicing() / 100) + additionnalFees);
-
+                            invoiceItem.getPreTaxPrice()
+                                    * (1 + (confrere.getReinvoicing() != null ? confrere.getReinvoicing() : 0f) / 100)
+                                    + additionnalFees);
                 }
 
                 // Add notice type indication for announcements

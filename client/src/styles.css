@@ -205,6 +205,10 @@ tr.table-row:hover {
   text-align: left;
 }
 
+.ql-align-justify {
+  text-align: justify;
+}
+
 .avatar-select {
   margin-top: auto;
   margin-bottom: auto;

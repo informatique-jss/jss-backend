@@ -246,11 +246,19 @@ public class PaymentServiceImpl implements PaymentService {
                 // Quotation waiting customer answer found
                 // Transform them to customer order
                 if (correspondingQuotation.size() > 0 && remainingMoney > 0) {
-                    for (Quotation quotation : correspondingQuotation)
-                        correspondingCustomerOrder
-                                .add(quotationService
-                                        .addOrUpdateQuotationStatus(quotation, QuotationStatus.VALIDATED_BY_CUSTOMER)
-                                        .getCustomerOrders().get(0));
+                    for (Quotation quotation : correspondingQuotation) {
+                        if (quotation.getQuotationStatus().getCode().equals(QuotationStatus.VALIDATED_BY_CUSTOMER)
+                                && quotation.getCustomerOrders() != null && quotation.getCustomerOrders().size() > 0) {
+                            correspondingCustomerOrder
+                                    .add(quotation.getCustomerOrders().get(0));
+                        } else if (quotation.getQuotationStatus().getCode().equals(QuotationStatus.SENT_TO_CUSTOMER)) {
+                            correspondingCustomerOrder
+                                    .add(quotationService
+                                            .addOrUpdateQuotationStatus(quotation,
+                                                    QuotationStatus.VALIDATED_BY_CUSTOMER)
+                                            .getCustomerOrders().get(0));
+                        }
+                    }
                 }
 
                 // Customer order waiting for deposit found
@@ -347,11 +355,9 @@ public class PaymentServiceImpl implements PaymentService {
         float remainingMoney = payment.getPaymentAmount();
         if (payment.getPaymentWay().getId().equals(constantService.getPaymentWayInbound().getId())) {
             // Invoices to payed found
-            String refundLabelSuffix = "";
             if (correspondingInvoices != null && correspondingInvoices.size() > 0) {
                 remainingMoney = associateInboundPaymentAndInvoices(payment, correspondingInvoices,
                         new MutableBoolean(true), byPassAmount);
-                refundLabelSuffix = "facture n°" + correspondingInvoices.get(0).getId();
             }
 
             // Customer order waiting for deposit found
@@ -360,22 +366,6 @@ public class PaymentServiceImpl implements PaymentService {
                 cancelPayment = true;
                 remainingMoney = associateInboundPaymentAndCustomerOrders(payment, correspondingCustomerOrder,
                         correspondingInvoices, new MutableBoolean(true), byPassAmount, remainingMoney);
-                refundLabelSuffix = "commande n°" + correspondingCustomerOrder.get(0).getId();
-            }
-
-            if (remainingMoney > 0) {
-                if (Math.abs(remainingMoney) <= Float.parseFloat(payementLimitRefundInEuros)) {
-                    if (correspondingInvoices != null && correspondingInvoices.size() > 0)
-                        accountingRecordService.generateAppointForPayment(payment, remainingMoney,
-                                invoiceHelper.getCustomerOrder(correspondingInvoices.get(0)));
-                    else if (correspondingCustomerOrder != null && correspondingCustomerOrder.size() > 0)
-                        accountingRecordService.generateAppointForPayment(payment, remainingMoney,
-                                quotationService.getCustomerOrderOfQuotation(correspondingCustomerOrder.get(0)));
-
-                } else {
-                    refundService.generateRefund(tiersRefund, affaireRefund, payment, null, remainingMoney,
-                            refundLabelSuffix);
-                }
             }
 
             if (cancelPayment) {
@@ -406,40 +396,35 @@ public class PaymentServiceImpl implements PaymentService {
                     customerOrderService.getRemainingAmountToPayForCustomerOrder(customerOrder) * 100f)
                     / 100f;
         }
-        // If payment is not equal to all customer order, do nothing, a human will
-        if (byPassAmount != null || remainingToPay >= payment.getPaymentAmount()) {
-            // Payment will be used, not necessary to put it in wainting account
-            generateWaitingAccountAccountingRecords.setValue(false);
+        // if no by pass, put all on first customer order even if there is too much
+        // money
+        // Payment will be used, not necessary to put it in wainting account
+        generateWaitingAccountAccountingRecords.setValue(false);
 
-            for (int i = 0; i < correspondingCustomerOrder.size(); i++) {
-                if (remainingToPay > 0) {
-                    Float remainingToPayForCurrentCustomerOrder = customerOrderService
-                            .getRemainingAmountToPayForCustomerOrder(correspondingCustomerOrder.get(i));
-
-                    Float effectivePayment;
-                    if (byPassAmount != null) {
-                        effectivePayment = byPassAmount.get(amountIndex);
-                        amountIndex++;
-                    } else {
-                        effectivePayment = Math.min(payment.getPaymentAmount(),
-                                remainingToPayForCurrentCustomerOrder);
-                    }
-
-                    remainingMoney -= effectivePayment;
-
-                    // Generate one deposit per customer order
-                    depositService.getNewDepositForCustomerOrder(
-                            effectivePayment, LocalDateTime.now(), correspondingCustomerOrder.get(i), payment.getId(),
-                            payment, true);
-
-                    remainingToPay -= effectivePayment;
-
-                    // Try unlocked customer order
-                    customerOrderService.unlockCustomerOrderFromDeposit(correspondingCustomerOrder.get(i));
+        for (int i = 0; i < correspondingCustomerOrder.size(); i++) {
+            if (remainingToPay > 0) {
+                Float effectivePayment;
+                if (byPassAmount != null) {
+                    effectivePayment = byPassAmount.get(amountIndex);
+                    amountIndex++;
+                } else {
+                    effectivePayment = payment.getPaymentAmount();
                 }
+
+                remainingMoney -= effectivePayment;
+
+                // Generate one deposit per customer order
+                depositService.getNewDepositForCustomerOrder(
+                        effectivePayment, LocalDateTime.now(), correspondingCustomerOrder.get(i), payment.getId(),
+                        payment, true);
+
+                remainingToPay -= effectivePayment;
+
+                // Try unlocked customer order
+                customerOrderService.unlockCustomerOrderFromDeposit(correspondingCustomerOrder.get(i));
             }
-            addOrUpdatePayment(payment);
         }
+        addOrUpdatePayment(payment);
         return remainingMoney;
     }
 
@@ -488,9 +473,11 @@ public class PaymentServiceImpl implements PaymentService {
                         for (AccountingRecord record : payment.getAccountingRecords())
                             if (record.getIsCounterPart() == false
                                     && record.getAccountingAccount().getPrincipalAccountingAccount().getId()
-                                            .equals(constantService.getPrincipalAccountingAccountWaiting().getId()))
-                                accountingRecordService.generateCounterPart(record,
-                                        constantService.getAccountingJournalSales(), null);
+                                            .equals(constantService.getPrincipalAccountingAccountWaiting().getId())) {
+                                accountingRecordService.letterWaitingRecords(record,
+                                        accountingRecordService.generateCounterPart(record,
+                                                constantService.getAccountingJournalSales(), null));
+                            }
                 }
                 newPayment.setInvoice(correspondingInvoices.get(i));
                 addOrUpdatePayment(newPayment);

@@ -173,11 +173,11 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Transactional(rollbackFor = Exception.class)
     public CustomerOrder addOrUpdateCustomerOrderFromUser(CustomerOrder customerOrder)
             throws OsirisException, OsirisClientMessageException {
-        return addOrUpdateCustomerOrder(customerOrder);
+        return addOrUpdateCustomerOrder(customerOrder, true);
     }
 
     @Override
-    public CustomerOrder addOrUpdateCustomerOrder(CustomerOrder customerOrder)
+    public CustomerOrder addOrUpdateCustomerOrder(CustomerOrder customerOrder, boolean isFromUser)
             throws OsirisException, OsirisClientMessageException {
         if (customerOrder.getId() == null) {
             customerOrder.setCreatedDate(LocalDateTime.now());
@@ -228,11 +228,11 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         checkAllProvisionEnded(customerOrder);
 
         // Trigger move forward for announcement created in website
-        if (customerOrder.getAssoAffaireOrders() != null
+        if (!isFromUser && customerOrder.getAssoAffaireOrders() != null
                 && customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.OPEN)
                 && customerOrder.getIsCreatedFromWebSite() != null && customerOrder.getIsCreatedFromWebSite()
                 && isOnlyAnnouncement(customerOrder))
-            addOrUpdateCustomerOrderStatus(customerOrder, CustomerOrderStatus.OPEN, false);
+            addOrUpdateCustomerOrderStatus(customerOrder, CustomerOrderStatus.OPEN, isFromUser);
         return customerOrder;
     }
 
@@ -317,7 +317,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         }
 
         // Handle automatic workflow for Announcement created from website
-        if (isFromWebsite && onlyAnnonceLegale) {
+        if (isFromWebsite && onlyAnnonceLegale && !isFromUser) {
             // First round : move forward customerOrder
             if (targetStatusCode.equals(CustomerOrderStatus.OPEN)) {
                 boolean hasError = false;
@@ -343,7 +343,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         }
 
         // Handle automatic workflow for Announcement created from website
-        if (isFromWebsite && onlyAnnonceLegale) {
+        if (isFromWebsite && onlyAnnonceLegale && !isFromUser) {
             // Second round : move forward announcements. Final check checkAllProvisionEnded
             // on save will put it to TO BILLED if necessary
             if (targetStatusCode.equals(CustomerOrderStatus.BEING_PROCESSED))
@@ -403,7 +403,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
         customerOrder.setCustomerOrderStatus(customerOrderStatus);
         customerOrder.setLastStatusUpdate(LocalDateTime.now());
-        return this.addOrUpdateCustomerOrder(customerOrder);
+        return this.addOrUpdateCustomerOrder(customerOrder, false);
     }
 
     /**
@@ -682,7 +682,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                         provision.setAttachments(null);
                     }
             }
-        addOrUpdateCustomerOrder(customerOrder2);
+        addOrUpdateCustomerOrder(customerOrder2, false);
 
         return customerOrder2;
     }
@@ -750,7 +750,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     customerOrder.getId() + "", subject);
 
             customerOrder.setCentralPayPaymentRequestId(paymentRequest.getPaymentRequestId());
-            addOrUpdateCustomerOrder(customerOrder);
+            addOrUpdateCustomerOrder(customerOrder, false);
             return paymentRequest.getBreakdowns().get(0).getEndpoint()
                     + "?urlRedirect=" + redirectEntrypoint + "?customerOrderId=" + customerOrder.getId() + "&delay=0";
         }
@@ -780,7 +780,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     } else {
                         generateDepositOnCustomerOrderForCbPayment(customerOrder, centralPayPaymentRequest);
                         customerOrder.setCentralPayPaymentRequestId(null);
-                        addOrUpdateCustomerOrder(customerOrder);
+                        addOrUpdateCustomerOrder(customerOrder, false);
                         unlockCustomerOrderFromDeposit(customerOrder);
                     }
                     return true;
@@ -802,7 +802,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         deposit.setCustomerOrder(customerOrder);
         depositService.addOrUpdateDeposit(deposit);
 
-        addOrUpdateCustomerOrder(customerOrder);
+        addOrUpdateCustomerOrder(customerOrder, false);
 
         accountingRecordService.generateAccountingRecordsForCentralPayPayment(centralPayPaymentRequest, payment,
                 deposit, customerOrder, null);
@@ -853,7 +853,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
                 if (toSend) {
                     mailHelper.sendCustomerOrderCreationConfirmationToCustomer(customerOrder, false, true);
-                    addOrUpdateCustomerOrder(customerOrder);
+                    addOrUpdateCustomerOrder(customerOrder, false);
                 }
             }
     }
@@ -868,7 +868,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                         for (Provision provision : assoAffaireOrder.getProvisions()) {
                             if (provision.getInvoiceItems() != null && provision.getInvoiceItems().size() > 0) {
                                 for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
-                                    total += invoiceItem.getPreTaxPrice() + invoiceItem.getVatPrice()
+                                    total += invoiceItem.getPreTaxPrice()
+                                            + (invoiceItem.getVatPrice() != null ? invoiceItem.getVatPrice() : 0f)
                                             - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount()
                                                     : 0f);
                                 }

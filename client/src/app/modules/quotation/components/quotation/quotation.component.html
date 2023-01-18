@@ -10,43 +10,45 @@
 
 <mat-sidenav-container class="sidenav-container">
   <mat-sidenav #sidenav mode="side" position="end" [fixedInViewport]="true" [fixedTopGap]="165" [fixedBottomGap]="100">
-    <ng-container *ngFor="let asso of quotation.assoAffaireOrders;let indexAsso = index">
-      <tr>
-        <td class="affaire " colspan="2" *ngIf="asso.affaire && asso.affaire.denomination">
-          {{asso.affaire.denomination}}
-        </td>
-        <td class="affaire " colspan="2" *ngIf="asso.affaire && asso.affaire.firstname">
-          {{asso.affaire.firstname}} - {{asso.affaire.lastname}} -
-        </td>
-      </tr>
-      <ng-container *ngFor="let provision of asso.provisions">
-        <tr *ngIf="provision.provisionType">
-          <td class="affaire " colspan="2">
-            {{provision.provisionType.label}}
+    <table>
+      <ng-container *ngFor="let asso of quotation.assoAffaireOrders;let indexAsso = index">
+        <tr>
+          <td class="affaire " colspan="2" *ngIf="asso.affaire && asso.affaire.denomination">
+            {{asso.affaire.denomination}}
+          </td>
+          <td class="affaire " colspan="2" *ngIf="asso.affaire && asso.affaire.firstname">
+            {{asso.affaire.firstname}} - {{asso.affaire.lastname}} -
           </td>
         </tr>
-        <ng-container *ngFor="let invoiceItem of provision.invoiceItems;let indexInvoiceItem = index">
-          <table>
-            <tr>
-              <td>
-                {{invoiceItem.label}}
-              </td>
-              <td class="td-price">
-                {{invoiceItem.preTaxPrice|number}} €
-              </td>
-            </tr>
-            <tr *ngIf="invoiceItem.discountAmount && invoiceItem.discountAmount>0">
-              <td>
-                Remise
-              </td>
-              <td class="td-price remise">
-                - {{invoiceItem.discountAmount|number}} €
-              </td>
-            </tr>
-          </table>
+        <ng-container *ngFor="let provision of asso.provisions">
+          <tr *ngIf="provision.provisionType">
+            <td class="affaire " colspan="2">
+              {{provision.provisionType.label}}
+            </td>
+          </tr>
+          <ng-container *ngFor="let invoiceItem of provision.invoiceItems;let indexInvoiceItem = index">
+            <table>
+              <tr>
+                <td>
+                  {{invoiceItem.label}}
+                </td>
+                <td class="td-price">
+                  {{invoiceItem.preTaxPrice|number}} €
+                </td>
+              </tr>
+              <tr *ngIf="invoiceItem.discountAmount && invoiceItem.discountAmount>0">
+                <td>
+                  Remise
+                </td>
+                <td class="td-price remise">
+                  - {{invoiceItem.discountAmount|number}} €
+                </td>
+              </tr>
+            </table>
+          </ng-container>
         </ng-container>
       </ng-container>
-    </ng-container>
+    </table>
     <table class="total-table">
       <tr>
         <td>

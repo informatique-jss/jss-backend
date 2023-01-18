@@ -716,7 +716,7 @@ public class MailHelper {
             } else {
                 mail.setPaymentExplaination(
                         "Votre commande sera traitée dans les meilleurs délais et avec tout notre savoir-faire par toutes nos équipes. Vous pourrez suivre l'état de son avancement en ligne sur notre site https://www.jss.fr/ Espace abonné, rubrique \"Mon compte\". \nVous pouvez, si vous le souhaitez, régler un acompte pour commande d'un montant de "
-                                + mail.getPriceTotal()
+                                + remainingToPay
                                 + " € en suivant les instructions ci-dessous.\nLe montant de cet acompte facultatif sera pris en compte dans la facture finale qui vous sera transmise par mail ultérieurement.");
             }
 
@@ -1016,7 +1016,8 @@ public class MailHelper {
             ctx.setVariable("noticeSubtype", announcement.getNoticeTypes().stream().map(NoticeType::getLabel)
                     .collect(Collectors.joining(" - ")));
         ctx.setVariable("qrCodePicture",
-                Base64.getEncoder().encodeToString(qrCodeHelper.getQrCode("www.jss.fr/" + announcement.getId(), 60)));
+                Base64.getEncoder().encodeToString(qrCodeHelper
+                        .getQrCode("https://www.jss.fr/Annonce-publiee.awp?P1=" + announcement.getId() + ".awp", 60)));
         LocalDate localDate = announcement.getPublicationDate();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE dd MMMM yyyy");
         ctx.setVariable("date", StringUtils.capitalize(localDate.format(formatter)));
@@ -1244,10 +1245,15 @@ public class MailHelper {
         mail.setHeaderPicture("images/attachment-query-header.png");
         mail.setTitle("Demande de parution");
 
-        mail.setLabel("Annonce n°" + announcement.getId());
+        mail.setLabel("Commande n°" + customerOrder.getId());
+
+        String currentUserMail = "annonces@jss.fr";
+        if (provision.getAssignedTo() != null)
+            currentUserMail = provision.getAssignedTo().getMail();
 
         mail.setExplaination(
-                "Vous trouverez en pièce jointe le texte d'insertion légale à faire paraître dans votre prochaine édition de "
+                "Vous trouverez en pièce jointe le texte d'insertion légale à faire paraître dans votre édition du "
+                        + announcement.getPublicationDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + " de "
                         +
                         confrere.getLabel() + " (département " + announcement.getDepartment().getCode() +
                         ", rubrique "
@@ -1259,8 +1265,8 @@ public class MailHelper {
                         + "<br/><br/>A cet effet, nous vous prions de bien vouoir nous adresser : ");
 
         ArrayList<String> explanationItems = new ArrayList<String>();
-        explanationItems.add("Une attestation de parution par email à l'adresse annonces@jss.fr");
-        explanationItems.add("Un justificatif électronique par email à l'adresse annonces@jss.fr");
+        explanationItems.add("Une attestation de parution par email à l'adresse " + currentUserMail);
+        explanationItems.add("Un justificatif électronique par email à l'adresse " + currentUserMail);
         if (provision.getIsPublicationPaper()) {
             int nbr = 0;
             if (provision.getPublicationPaperClientNumber() != null)
@@ -1284,7 +1290,7 @@ public class MailHelper {
         mail.setSendToMe(sendToMe);
         mail.setMailComputeResult(mailComputeResult);
 
-        mail.setSubject("Annonce n°" + announcement.getId() + " - demande de parution");
+        mail.setSubject("Commande n°" + customerOrder.getId() + " - demande de parution");
 
         mailService.addMailToQueue(mail);
     }
@@ -1322,7 +1328,7 @@ public class MailHelper {
                         }
 
         if (updateCustomerOrder)
-            customerOrderService.addOrUpdateCustomerOrder(customerOrder);
+            customerOrderService.addOrUpdateCustomerOrder(customerOrder, false);
 
         return attachments;
     }

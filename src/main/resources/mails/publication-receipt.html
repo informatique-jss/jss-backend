@@ -45,6 +45,22 @@
             text-align: center;
         }
 
+        .ql-align-right {
+            text-align: right;
+        }
+
+        .ql-align-center {
+            text-align: center;
+        }
+
+        .ql-align-left {
+            text-align: left;
+        }
+
+        .ql-align-justify {
+            text-align: justify;
+        }
+
         .full-width {
             width: 100%
         }
@@ -63,7 +79,7 @@
 </head>
 
 <body>
-    <div th:if="${logo!=null}" class="alignment" align="center" style="line-height:10px"><img width="500px"
+    <div th:if="${logo!=null}" class="alignment" align="center" style="line-height:10px"><img style="max-width:500px"
             th:src="@{'data:image/jpeg;base64,'+${logo}}" /></div>
     <div th:if="${noticeHeader!=null}">
         <p class="text" th:utext="${noticeHeader}"></p>

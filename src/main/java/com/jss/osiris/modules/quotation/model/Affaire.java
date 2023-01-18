@@ -60,7 +60,7 @@ public class Affaire implements Serializable, IId {
 	@IndexedField
 	private String rna;
 
-	@Column(length = 10, nullable = false)
+	@Column(length = 10)
 	@IndexedField
 	private String postalCode;
 

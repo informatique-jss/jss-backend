@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.PictureHelper;
 import com.jss.osiris.libs.WordGenerationHelper;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
@@ -62,6 +63,9 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
     @Autowired
     WordGenerationHelper wordGenerationHelper;
+
+    @Autowired
+    PictureHelper pictureHelper;
 
     @Override
     public List<Announcement> getAnnouncements() {
@@ -325,7 +329,27 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                 || !announcement.getIsAnnouncementAlreadySentToConfrere()) {
             if (announcement.getConfrere() != null
                     && !announcement.getConfrere().getId().equals(constantService.getConfrereJssSpel().getId())) {
-                File wordFile = wordGenerationHelper.generateWordFromHtml(announcement.getNotice());
+
+                // Get and set logo
+                String htmlContent = "";
+                if (provision.getAttachments() != null && provision.getAttachments().size() > 0)
+                    for (Attachment attachment : provision.getAttachments())
+                        if (attachment.getAttachmentType().getId()
+                                .equals(constantService.getAttachmentTypeLogo().getId())) {
+                            htmlContent += "<div class=\"alignment\" align=\"center\"><img style=\"max-width:500px\" src=\"data:image/jpeg;base64,"
+                                    + pictureHelper.getPictureFileAsBase64String(
+                                            new File(attachment.getUploadedFile().getPath()))
+                                    + "\" /></div><br/>";
+                            break;
+                        }
+
+                if (announcement.getNoticeHeader() != null)
+                    htmlContent += announcement.getNoticeHeader() + "</br>";
+
+                if (announcement.getNotice() != null)
+                    htmlContent += announcement.getNotice();
+
+                File wordFile = wordGenerationHelper.generateWordFromHtml(htmlContent);
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
                 try {
                     announcement.setAttachments(
