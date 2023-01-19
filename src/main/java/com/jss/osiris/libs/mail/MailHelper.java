@@ -230,19 +230,19 @@ public class MailHelper {
                 message.setReplyTo(mail.getReplyToMail());
 
             if (mail.getSendToMe() != null && mail.getSendToMe())
-                message.setTo(mail.getSendToMeEmployee().getMail());
+                message.addTo(mail.getSendToMeEmployee().getMail());
             else {
                 if (mail.getMailComputeResult().getRecipientsMailTo() == null
                         || mail.getMailComputeResult().getRecipientsMailTo().size() == 0)
                     throw new OsirisException(null, "No recipient found");
 
                 for (Mail mailTo : mail.getMailComputeResult().getRecipientsMailTo())
-                    message.setTo(mailTo.getMail());
+                    message.addTo(mailTo.getMail());
 
                 if (mail.getMailComputeResult().getRecipientsMailCc() != null
                         && mail.getMailComputeResult().getRecipientsMailTo().size() > 0)
                     for (Mail mailCc : mail.getMailComputeResult().getRecipientsMailCc())
-                        message.setCc(mailCc.getMail());
+                        message.addCc(mailCc.getMail());
             }
 
             message.setSubject(mail.getSubject());
@@ -1262,7 +1262,7 @@ public class MailHelper {
                         + (asso.getAffaire().getDenomination() != null ? asso.getAffaire().getDenomination()
                                 : (asso.getAffaire().getFirstname() + " "
                                         + asso.getAffaire().getLastname()))
-                        + "<br/><br/>A cet effet, nous vous prions de bien vouoir nous adresser : ");
+                        + "<br/><br/>A cet effet, nous vous prions de bien vouloir nous adresser : ");
 
         ArrayList<String> explanationItems = new ArrayList<String>();
         explanationItems.add("Une attestation de parution par email à l'adresse " + currentUserMail);

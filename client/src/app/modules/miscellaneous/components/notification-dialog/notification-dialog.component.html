@@ -49,7 +49,7 @@
                       </mat-card-title-group>
                       <mat-card-content>
                         <avatar-chip [employee]="notification.createdBy" [disableEmployeeDialog]="true"></avatar-chip> a
-                        envoyé un nouveau devis pour
+                        envoyé un nouveau devis n°{{notification.entityId}} pour
                         {{notification.detail1}}
                       </mat-card-content>
                     </ng-container>
@@ -67,7 +67,7 @@
                       </mat-card-title-group>
                       <mat-card-content>
                         <avatar-chip [employee]="notification.createdBy" [disableEmployeeDialog]="true"></avatar-chip> a
-                        créé un nouveau devis pour
+                        créé un nouveau devis n°{{notification.entityId}} pour
                         {{notification.detail1}}
                       </mat-card-content>
                     </ng-container>
@@ -85,7 +85,7 @@
                       </mat-card-title-group>
                       <mat-card-content>
                         <avatar-chip [employee]="notification.createdBy" [disableEmployeeDialog]="true"></avatar-chip> a
-                        indiqué qu'un devis pour
+                        indiqué que le devis n°{{notification.entityId}} pour
                         {{notification.detail1}} a été refusé
                       </mat-card-content>
                     </ng-container>
@@ -103,9 +103,8 @@
                       </mat-card-title-group>
                       <mat-card-content>
                         <avatar-chip [employee]="notification.createdBy" [disableEmployeeDialog]="true"></avatar-chip> a
-                        indiqué qu'un devis pour
-                        {{notification.detail1}} a été validé
-                      </mat-card-content>
+                        indiqué que le devis n°{{notification.entityId}} pour
+                        {{notification.detail1}} a été validé </mat-card-content>
                     </ng-container>
                     <ng-container *ngIf="notification.notificationType==QUOTATION_ASSO_AFFAIRE_ORDER_VERIFY">
                       <mat-card-title-group>
@@ -121,8 +120,7 @@
                       </mat-card-title-group>
                       <mat-card-content>
                         <avatar-chip [employee]="notification.createdBy" [disableEmployeeDialog]="true"></avatar-chip>
-                        vous demande de vérifier un
-                        devis pour {{notification.detail1}}
+                        vous demande de vérifier le devis n°{{notification.entityId}} pour {{notification.detail1}}
                       </mat-card-content>
                     </ng-container>
                     <mat-divider></mat-divider>
@@ -147,10 +145,10 @@
                         </ng-container>
                       </mat-card-title-group>
                       <mat-card-content>
-                        <avatar-chip [employee]="notification.createdBy" [disableEmployeeDialog]="true"></avatar-chip> a
-                        créé une nouvelle commande
-                        pour
-                        {{notification.detail1}}
+                        <avatar-chip *ngIf="notification.createdBy" [employee]="notification.createdBy"
+                          [disableEmployeeDialog]="true"></avatar-chip><span *ngIf="!notification.createdBy">Un
+                          client</span> a
+                        créé une nouvelle commande n°{{notification.entityId}} pour {{notification.detail1}}
                       </mat-card-content>
                     </ng-container>
                     <ng-container *ngIf="notification.notificationType==CUSTOMER_ORDER_ASSO_AFFAIRE_ORDER_VERIFY">
@@ -167,8 +165,7 @@
                       </mat-card-title-group>
                       <mat-card-content>
                         <avatar-chip [employee]="notification.createdBy" [disableEmployeeDialog]="true"></avatar-chip>
-                        vous demande de vérifier une
-                        commande pour
+                        vous demande de vérifier une commande n°{{notification.entityId}} pour
                         {{notification.detail1}}
                       </mat-card-content>
                     </ng-container>
@@ -187,7 +184,7 @@
                       <mat-card-content *ngIf="notification.createdBy">
                         Suite à un geste manuel de <avatar-chip [employee]="notification.createdBy"
                           [disableEmployeeDialog]="true"></avatar-chip>, la
-                        commande {{notification.entityId}} pour le compte de {{notification.detail1}} débute
+                        commande n°{{notification.entityId}} pour le compte de {{notification.detail1}} débute
                       </mat-card-content>
                       <mat-card-content *ngIf="!notification.createdBy">
                         Suite à réception d'un acompte suffisant, la commande {{notification.entityId}} pour le
@@ -207,7 +204,7 @@
                         </ng-container>
                       </mat-card-title-group>
                       <mat-card-content>
-                        Suite au démarrage de la commande {{notification.entityId}} pour le compte de
+                        Suite au démarrage de la commande n°{{notification.entityId}} pour le compte de
                         {{notification.detail1}}, merci d'assigner les prestations sous votre responsabilité
                       </mat-card-content>
                     </ng-container>

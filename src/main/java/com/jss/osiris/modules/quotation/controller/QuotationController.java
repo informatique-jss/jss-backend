@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
@@ -39,6 +40,7 @@ import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.BillingType;
 import com.jss.osiris.modules.miscellaneous.model.Department;
 import com.jss.osiris.modules.miscellaneous.model.Document;
+import com.jss.osiris.modules.miscellaneous.model.IDocument;
 import com.jss.osiris.modules.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.miscellaneous.model.WeekDay;
 import com.jss.osiris.modules.miscellaneous.service.CityService;
@@ -1269,12 +1271,13 @@ public class QuotationController {
       throw new OsirisValidationException("No customer order");
 
     // Generate missing documents
-    Document billingDocument = documentService.getBillingDocument(quotation.getDocuments());
-    if (billingDocument == null) {
-      billingDocument = new Document();
-      billingDocument.setIsRecipientAffaire(false);
-      billingDocument.setIsRecipientClient(false);
-      billingDocument.setDocumentType(constantService.getDocumentTypeBilling());
+    IDocument tiersDocument = ObjectUtils.firstNonNull(quotation.getConfrere(), quotation.getResponsable(),
+        quotation.getTiers());
+    Document billingDocument = documentService.getBillingDocument(tiersDocument.getDocuments());
+    if (documentService.getBillingDocument(quotation.getDocuments()) == null) {
+      billingDocument.setTiers(null);
+      billingDocument.setResponsable(null);
+      billingDocument.setConfrere(null);
       if (isCustomerOrder)
         billingDocument.setCustomerOrder((CustomerOrder) quotation);
       else
@@ -1284,13 +1287,13 @@ public class QuotationController {
       quotation.getDocuments().add(billingDocument);
     }
 
-    Document digitalDocument = documentService.getDocumentByDocumentType(quotation.getDocuments(),
+    Document digitalDocument = documentService.getDocumentByDocumentType(tiersDocument.getDocuments(),
         constantService.getDocumentTypeDigital());
-    if (digitalDocument == null) {
-      digitalDocument = new Document();
-      digitalDocument.setIsRecipientAffaire(false);
-      digitalDocument.setIsRecipientClient(false);
-      digitalDocument.setDocumentType(constantService.getDocumentTypeDigital());
+    if (documentService.getDocumentByDocumentType(quotation.getDocuments(),
+        constantService.getDocumentTypeDigital()) == null) {
+      digitalDocument.setTiers(null);
+      digitalDocument.setResponsable(null);
+      digitalDocument.setConfrere(null);
       if (isCustomerOrder)
         digitalDocument.setCustomerOrder((CustomerOrder) quotation);
       else
@@ -1300,13 +1303,13 @@ public class QuotationController {
       quotation.getDocuments().add(digitalDocument);
     }
 
-    Document paperDocument = documentService.getDocumentByDocumentType(quotation.getDocuments(),
+    Document paperDocument = documentService.getDocumentByDocumentType(tiersDocument.getDocuments(),
         constantService.getDocumentTypePaper());
-    if (paperDocument == null) {
-      paperDocument = new Document();
-      paperDocument.setIsRecipientAffaire(false);
-      paperDocument.setIsRecipientClient(false);
-      paperDocument.setDocumentType(constantService.getDocumentTypePaper());
+    if (documentService.getDocumentByDocumentType(quotation.getDocuments(),
+        constantService.getDocumentTypePaper()) == null) {
+      paperDocument.setTiers(null);
+      paperDocument.setResponsable(null);
+      paperDocument.setConfrere(null);
       if (isCustomerOrder)
         paperDocument.setCustomerOrder((CustomerOrder) quotation);
       else
@@ -1738,7 +1741,7 @@ public class QuotationController {
   @PostMapping(inputEntryPoint + "/affaire")
   public ResponseEntity<Affaire> addOrUpdateAffaire(@RequestBody Affaire affaire)
       throws OsirisValidationException, OsirisException {
-    validationHelper.validateString(affaire.getAddress(), true, 60, "Address");
+    validationHelper.validateString(affaire.getAddress(), true, 100, "Address");
     validationHelper.validateReferential(affaire.getCity(), true, "City");
     validationHelper.validateReferential(affaire.getCountry(), true, "Country");
     validationHelper.validateString(affaire.getExternalReference(), false, 60, "ExternalReference");

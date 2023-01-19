@@ -86,7 +86,7 @@ export class OrderingCustomerComponent implements OnInit {
     } as SortTableAction);
 
     this.quotationDisplayedColumns = [];
-    this.quotationDisplayedColumns.push({ id: "id", fieldName: "id", label: "N° de la commande" } as SortTableColumn);
+    this.quotationDisplayedColumns.push({ id: "id", fieldName: "id", label: "N° du devis" } as SortTableColumn);
     this.quotationDisplayedColumns.push({ id: "quotationStatus", fieldName: "quotationStatus.label", label: "Statut" } as SortTableColumn);
     this.quotationDisplayedColumns.push({ id: "createdDate", fieldName: "createdDate", label: "Date de création", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
     this.quotationDisplayedColumns.push({ id: "totalPrice", fieldName: "totalPrice", label: "Prix total", valueFonction: (element: any, elements: any[], column: SortTableColumn, columns: SortTableColumn[]): string => { return QuotationComponent.computePriceTotal(element) + " €"; } } as SortTableColumn);

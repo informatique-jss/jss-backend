@@ -20,6 +20,7 @@ import { replaceDocument } from '../../../../libs/DocumentHelper';
 import { instanceOfQuotation } from '../../../../libs/TypeHelper';
 import { AssociateDepositDialogComponent } from '../../../invoicing/components/associate-deposit-dialog/associate-deposit-dialog.component';
 import { WorkflowDialogComponent } from '../../../miscellaneous/components/workflow-dialog/workflow-dialog.component';
+import { ITiers } from '../../../tiers/model/ITiers';
 import { Affaire } from '../../model/Affaire';
 import { AssoAffaireOrder } from '../../model/AssoAffaireOrder';
 import { CustomerOrder } from '../../model/CustomerOrder';
@@ -187,7 +188,8 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
 
   checkAffaireAssignation() {
     let userList: Employee[] = [] as Array<Employee>;
-    if (this.quotation && this.instanceOfCustomerOrder && this.quotation.assoAffaireOrders)
+    if (this.quotation && this.instanceOfCustomerOrder && this.quotation.assoAffaireOrders && this.quotation.assoAffaireOrders.length > 0
+      && this.quotation.assoAffaireOrders[0].provisions && this.quotation.assoAffaireOrders[0].provisions.length > 0)
       for (let asso of this.quotation.assoAffaireOrders)
         if (asso.affaire && asso.provisions && !asso.assignedTo) {
           let found = false;
@@ -196,8 +198,17 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
               if (provision.assignedTo && provision.assignedTo.id == employee.id)
                 found = true;
             }
-            if (!found)
+            if (!found && provision.assignedTo)
               userList.push(provision.assignedTo);
+          }
+          if (userList.length == 0) {
+            let tiers: ITiers | undefined = this.quotation.responsable ?? this.quotation.tiers ?? this.quotation.confrere;
+            if (tiers) {
+              if (tiers.formalisteEmployee)
+                userList.push(tiers.formalisteEmployee);
+              if (tiers.insertionEmployee)
+                userList.push(tiers.insertionEmployee);
+            }
           }
           let chooseUserDialogRef = this.chooseUserDialog.open(ChooseAssignedUserDialogComponent, {
             width: '100%'

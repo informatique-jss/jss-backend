@@ -80,7 +80,7 @@
             </div>
             <div class="div-customer-order"
               *ngIf="quotation && instanceOfCustomerOrder(quotation) && quotation.quotations && quotation.quotations.length>0">
-              <p>Devis issues de cette commande</p>
+              <p>Devis issus de cette commande</p>
               <sort-table [actions]="quotationTableActions" [columns]="quotationDisplayedColumns"
                 [values]="quotation.quotations" tableName="Liste devis">
               </sort-table>
@@ -155,7 +155,7 @@
             </div>
             <div class="div-customer-order"
               *ngIf="quotation && instanceOfCustomerOrder(quotation) && quotation.quotations && quotation.quotations.length>0">
-              <p>Devis issues de cette commande</p>
+              <p>Devis issus de cette commande</p>
               <sort-table [actions]="quotationTableActions" [columns]="quotationDisplayedColumns"
                 [values]="quotation.quotations" tableName="Liste devis">
               </sort-table>

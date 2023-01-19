@@ -203,9 +203,9 @@ public class PricingHelper {
                 if (isNotJssConfrere(provision) && confrere.getPaperPrice() != null) {
                     invoiceItem
                             .setPreTaxPrice(
-                                    Math.round(confrere.getPaperPrice() * nbr
-                                            + (confrere.getShippingCosts() != null ? confrere.getShippingCosts() : 0f)
-                                                    * 100f)
+                                    Math.round((confrere.getPaperPrice() * nbr
+                                            + (confrere.getShippingCosts() != null ? confrere.getShippingCosts() : 0f))
+                                            * 100f)
                                             / 100f);
                 } else
                     invoiceItem.setPreTaxPrice(
@@ -315,14 +315,19 @@ public class PricingHelper {
 
                 // Delete unused item
                 ArrayList<InvoiceItem> invoiceItemsDeleted = new ArrayList<InvoiceItem>();
+                ArrayList<Integer> billingTypeAlreadyFound = new ArrayList<Integer>();
                 for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
                     boolean found = false;
                     for (BillingType billingType : provisionType.getBillingTypes()) {
                         if (invoiceItem.getBillingItem() != null
                                 && billingType.getId().equals(invoiceItem.getBillingItem().getBillingType().getId())
                                 && (!billingType.getIsOptionnal()
-                                        || hasOption(billingType, provision)))
+                                        || hasOption(billingType, provision))
+                                && !billingTypeAlreadyFound
+                                        .contains(invoiceItem.getBillingItem().getBillingType().getId())) {
                             found = true;
+                            billingTypeAlreadyFound.add(invoiceItem.getBillingItem().getBillingType().getId());
+                        }
                     }
 
                     if (!found) {

@@ -723,15 +723,17 @@ public class PaymentServiceImpl implements PaymentService {
                 if (payment.getLabel() != null) {
                     Matcher m = p.matcher(payment.getLabel());
                     while (m.find()) {
-                        if (m.group().equals(invoice.getId().toString()))
+                        if (m.group().equals(invoice.getId().toString()) && !advisedPayments.contains(payment))
                             advisedPayments.add(payment);
                         else if (invoice.getCustomerOrder() != null
-                                && m.group().equals(invoice.getCustomerOrder().getId().toString()))
+                                && m.group().equals(invoice.getCustomerOrder().getId().toString())
+                                && !advisedPayments.contains(payment))
                             advisedPayments.add(payment);
                         else if (invoice.getCustomerOrder() != null
                                 && invoice.getCustomerOrder().getQuotations() != null
                                 && invoice.getCustomerOrder().getQuotations().size() > 0 && m.group()
-                                        .equals(invoice.getCustomerOrder().getQuotations().get(0).getId().toString()))
+                                        .equals(invoice.getCustomerOrder().getQuotations().get(0).getId().toString())
+                                && !advisedPayments.contains(payment))
                             advisedPayments.add(payment);
                     }
                 }
@@ -760,10 +762,11 @@ public class PaymentServiceImpl implements PaymentService {
                 if (payment.getLabel() != null) {
                     Matcher m = p.matcher(payment.getLabel());
                     while (m.find()) {
-                        if (m.group().equals(customerOrder.getId().toString()))
+                        if (m.group().equals(customerOrder.getId().toString()) && !advisedPayments.contains(payment))
                             advisedPayments.add(payment);
                         else if (customerOrder.getQuotations() != null && customerOrder.getQuotations().size() > 0
-                                && m.group().equals(customerOrder.getQuotations().get(0).getId().toString()))
+                                && m.group().equals(customerOrder.getQuotations().get(0).getId().toString())
+                                && !advisedPayments.contains(payment))
                             advisedPayments.add(payment);
                     }
                 }

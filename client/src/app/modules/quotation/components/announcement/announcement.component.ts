@@ -170,6 +170,7 @@ export class AnnouncementComponent implements OnInit {
       for (let template of this.selectedNoticeTemplates) {
         this.announcement.notice += template.text + "<br>";
       }
+      this.noticeChangeFunction();
     }
   }
 
