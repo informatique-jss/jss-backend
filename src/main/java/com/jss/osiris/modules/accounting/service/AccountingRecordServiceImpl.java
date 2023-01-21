@@ -359,7 +359,8 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
         for (AccountingRecord accountingRecord : payment.getAccountingRecords())
           // Counter part waiting account record
           if (accountingRecord.getIsCounterPart() == null || !accountingRecord.getIsCounterPart())
-            generateCounterPart(accountingRecord, null, operationIdCounterPart);
+            letterWaitingRecords(accountingRecord,
+                generateCounterPart(accountingRecord, bankJournal, operationIdCounterPart));
       }
       operationId = invoice.getId() + payment.getId();
     }
@@ -397,7 +398,8 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
             // Counter part waiting account record
             if (accountingRecord.getIsCounterPart() == null || !accountingRecord.getIsCounterPart()
                 && accountingRecord.getAccountingAccount().getId().equals(waitingAccountingAccount.getId()))
-              generateCounterPart(accountingRecord, null, operationIdCounterPart);
+              letterWaitingRecords(accountingRecord,
+                  generateCounterPart(accountingRecord, bankJournal, operationIdCounterPart));
       }
 
     // One write on customer account to equilibrate invoice

@@ -109,8 +109,7 @@
   <mat-icon>done</mat-icon>
   <mat-menu #menu2="matMenu" style="min-height: 0px;padding: 0;" xPosition="before">
     <button mat-menu-item [matMenuTriggerFor]="menu3" (mouseover)="setCurrentProvisionWorkflow(provision)"
-      *ngFor="let provision of asso.provisions">{{provision.provisionType ? (provision.provisionFamilyType.label +' -
-      '+provision.provisionType.label):''}}</button>
+      *ngFor="let provision of asso.provisions">{{getProvisionLabel(provision)}}</button>
   </mat-menu>
 </button>
 

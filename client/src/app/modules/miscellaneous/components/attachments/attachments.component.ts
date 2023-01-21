@@ -8,7 +8,6 @@ import { SortTableAction } from '../../model/SortTableAction';
 import { SortTableColumn } from '../../model/SortTableColumn';
 import { ConstantService } from '../../services/constant.service';
 import { UploadAttachmentService } from '../../services/upload.attachment.service';
-import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { UploadAttachementDialogComponent } from '../upload-attachement-dialog/upload-attachement-dialog.component';
 
 @Component({
@@ -63,27 +62,6 @@ export class AttachmentsComponent implements OnInit {
     this.tableActions.push({
       actionIcon: "download", actionName: "Télécharger le fichier", actionClick: (action: SortTableAction, element: any): void => {
         this.uploadAttachmentService.downloadAttachment(element);
-      }, display: true
-    } as SortTableAction);
-    this.tableActions.push({
-      actionIcon: "block", actionName: "Désactiver le fichier", actionClick: (action: SortTableAction, element: any): void => {
-        const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
-          maxWidth: "400px",
-          data: {
-            title: "Désactiver le fichier",
-            content: "Êtes-vous sûr de vouloir désactiver ce fichier ?",
-            closeActionText: "Annuler",
-            validationActionText: "Confirmer"
-          }
-        });
-
-        dialogRef.afterClosed().subscribe(dialogResult => {
-          if (dialogResult)
-            this.uploadAttachmentService.disableAttachment(element).subscribe(response => {
-              element.isDisabled = true;
-              this.setDataTable();
-            });
-        });
       }, display: true
     } as SortTableAction);
   }

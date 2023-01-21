@@ -592,7 +592,8 @@ public class QuotationController {
     for (Provision provision : assoAffaireOrder.getProvisions())
       validateProvision(provision, isOpen, isCustomerOrder, quotation);
 
-    return new ResponseEntity<AssoAffaireOrder>(assoAffaireOrderService.addOrUpdateAssoAffaireOrder(assoAffaireOrder),
+    return new ResponseEntity<AssoAffaireOrder>(
+        assoAffaireOrderService.addOrUpdateAssoAffaireOrderFromUser(assoAffaireOrder),
         HttpStatus.OK);
   }
 
@@ -1275,6 +1276,7 @@ public class QuotationController {
         quotation.getTiers());
     Document billingDocument = documentService.getBillingDocument(tiersDocument.getDocuments());
     if (documentService.getBillingDocument(quotation.getDocuments()) == null) {
+      billingDocument = documentService.cloneDocument(billingDocument);
       billingDocument.setTiers(null);
       billingDocument.setResponsable(null);
       billingDocument.setConfrere(null);
@@ -1291,6 +1293,7 @@ public class QuotationController {
         constantService.getDocumentTypeDigital());
     if (documentService.getDocumentByDocumentType(quotation.getDocuments(),
         constantService.getDocumentTypeDigital()) == null) {
+      digitalDocument = documentService.cloneDocument(digitalDocument);
       digitalDocument.setTiers(null);
       digitalDocument.setResponsable(null);
       digitalDocument.setConfrere(null);
@@ -1307,6 +1310,7 @@ public class QuotationController {
         constantService.getDocumentTypePaper());
     if (documentService.getDocumentByDocumentType(quotation.getDocuments(),
         constantService.getDocumentTypePaper()) == null) {
+      paperDocument = documentService.cloneDocument(paperDocument);
       paperDocument.setTiers(null);
       paperDocument.setResponsable(null);
       paperDocument.setConfrere(null);
@@ -1319,8 +1323,10 @@ public class QuotationController {
       quotation.getDocuments().add(paperDocument);
     }
 
-    // Do not check anything from website, a human will correct if after
-    if (isOpen && quotation.getIsCreatedFromWebSite())
+    // Do not check anything from website with no provision, a human will correct if
+    // after
+    if (isOpen && quotation.getIsCreatedFromWebSite()
+        && (quotation.getAssoAffaireOrders() == null || quotation.getAssoAffaireOrders().size() == 0))
       return;
 
     // Check customer order is not a prospect
@@ -1383,10 +1389,12 @@ public class QuotationController {
     for (AssoAffaireOrder assoAffaireOrder : quotation.getAssoAffaireOrders()) {
       if (assoAffaireOrder.getAffaire() == null)
         throw new OsirisValidationException("Affaire");
-      validationHelper.validateReferential(assoAffaireOrder.getAffaire(), true, "Affaire");
-      for (Provision provision : assoAffaireOrder.getProvisions()) {
-        validateProvision(provision, isOpen, isCustomerOrder, quotation);
-      }
+      assoAffaireOrder
+          .setAffaire((Affaire) validationHelper.validateReferential(assoAffaireOrder.getAffaire(), true, "Affaire"));
+      if (assoAffaireOrder.getProvisions() != null && assoAffaireOrder.getProvisions().size() > 0)
+        for (Provision provision : assoAffaireOrder.getProvisions()) {
+          validateProvision(provision, isOpen, isCustomerOrder, quotation);
+        }
     }
 
     if (quotation.getAssoAffaireOrders().size() > 1) {
@@ -1489,8 +1497,8 @@ public class QuotationController {
       // Do not verify date when quotation has started
       if (isCustomerOrder) {
         CustomerOrderStatus status = ((CustomerOrder) quotation).getCustomerOrderStatus();
-        if (!status.getCode().equals(CustomerOrderStatus.OPEN)
-            && !status.getCode().equals(CustomerOrderStatus.WAITING_DEPOSIT))
+        if (status.getCode().equals(CustomerOrderStatus.OPEN)
+            || status.getCode().equals(CustomerOrderStatus.WAITING_DEPOSIT))
           publicationDateVerification = null;
       }
 

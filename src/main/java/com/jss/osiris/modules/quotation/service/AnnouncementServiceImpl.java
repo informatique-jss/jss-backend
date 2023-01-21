@@ -350,17 +350,17 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                     htmlContent += announcement.getNotice();
 
                 File wordFile = wordGenerationHelper.generateWordFromHtml(htmlContent);
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
                 try {
                     announcement.setAttachments(
                             attachmentService.addAttachment(new FileInputStream(wordFile),
                                     announcement.getId(),
                                     Announcement.class.getSimpleName(), constantService.getAttachmentTypeAnnouncement(),
-                                    "announcement_" + announcement.getId() + formatter.format(LocalDateTime.now())
+                                    "announcement_" + announcement.getId()
+                                            + DateTimeFormatter.ofPattern("yyyyMMdd HHmm").format(LocalDateTime.now())
                                             + ".docx",
                                     false, "Annonce n°" + announcement.getId()));
                 } catch (FileNotFoundException e) {
-                    throw new OsirisException(e, "Impossible to read invoice PDF temp file");
+                    throw new OsirisException(e, "Impossible to read announcement Word temp file");
                 } finally {
                     wordFile.delete();
                 }

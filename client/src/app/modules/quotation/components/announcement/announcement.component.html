@@ -204,10 +204,6 @@
       <add-debour [editMode]="editMode" [(provision)]="provision">
       </add-debour>
     </mat-tab>
-    <mat-tab label="Historique de l'annonce" *ngIf="announcement.id!=null && announcement.id!=undefined">
-      <history [entity]="announcement" [entityType]="ANNOUNCEMENT_ENTITY_TYPE" [displayOnlyFields]="['notice']"
-        [historyActions]="getHistoryActions()"></history>
-    </mat-tab>
     <mat-tab label="Documents" *ngIf="announcement.id!=null && announcement.id!=undefined">
       <attachments [entity]="announcement" [editMode]="editMode" [entityType]="ANNOUNCEMENT_ENTITY_TYPE.entityType">
       </attachments>

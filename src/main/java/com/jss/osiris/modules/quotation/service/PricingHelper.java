@@ -80,7 +80,7 @@ public class PricingHelper {
                 if (assoAffaireOrder.getProvisions() != null)
                     for (Provision provision : assoAffaireOrder.getProvisions()) {
                         provision.setAssoAffaireOrder(assoAffaireOrder);
-                        if (provision.getProvisionType() != null)
+                        if (provision.getProvisionType() != null && provision.getProvisionType().getId() != null)
                             setInvoiceItemsForProvision(provision, quotation, persistInvoiceItem);
                     }
             }

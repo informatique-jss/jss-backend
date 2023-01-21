@@ -52,6 +52,7 @@ public class Provision implements IId, IAttachment {
 
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "id_announcement")
+	@IndexedField
 	private Announcement announcement;
 
 	@OneToOne(cascade = CascadeType.ALL)

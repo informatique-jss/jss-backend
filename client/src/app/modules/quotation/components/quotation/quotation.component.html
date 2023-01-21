@@ -241,10 +241,6 @@
           <invoice-payment (stateChanged)="onStateChange()" [customerOrder]="quotation">
           </invoice-payment>
         </mat-tab>
-        <mat-tab label="Historique du statut" *ngIf="quotation.id!=null && quotation.id!=undefined">
-          <history [entity]="quotation" [entityType]="getEntityType()" [displayOnlyFields]="['quotationStatus']"
-            [parseTypeList]="quotationStatusList"></history>
-        </mat-tab>
         <mat-tab label="Historique" *ngIf="quotation.id!=null && quotation.id!=undefined">
           <history [entity]="quotation" [entityType]="getEntityType()"></history>
         </mat-tab>

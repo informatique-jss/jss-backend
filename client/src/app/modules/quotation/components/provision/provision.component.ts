@@ -30,7 +30,7 @@ import { SimpleProvisionStatusService } from '../../services/simple.provision.st
 import { ProvisionItemComponent } from '../provision-item/provision-item.component';
 import { QuotationComponent } from '../quotation/quotation.component';
 import { SelectAttachmentTypeDialogComponent } from '../select-attachment-type-dialog/select-attachment-type-dialog.component';
-import { SelectAttachmentsDialogComponent } from '../select-attachments-dialog/select-attachment-type-dialog.component';
+import { SelectAttachmentsDialogComponent } from '../select-attachments-dialog/select-attachment-dialog.component';
 
 @Component({
   selector: 'provision',

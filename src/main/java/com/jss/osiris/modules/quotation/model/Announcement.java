@@ -18,6 +18,7 @@ import javax.persistence.OneToMany;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jss.osiris.libs.JacksonLocalDateSerializer;
+import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.Department;
 import com.jss.osiris.modules.miscellaneous.model.Document;
@@ -30,6 +31,7 @@ public class Announcement implements IId, IAttachment, IDocument {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
+	@IndexedField
 	private Integer id;
 
 	@ManyToOne

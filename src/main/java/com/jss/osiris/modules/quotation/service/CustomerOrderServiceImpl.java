@@ -868,7 +868,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                         for (Provision provision : assoAffaireOrder.getProvisions()) {
                             if (provision.getInvoiceItems() != null && provision.getInvoiceItems().size() > 0) {
                                 for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
-                                    total += invoiceItem.getPreTaxPrice()
+                                    total += (invoiceItem.getPreTaxPrice() != null ? invoiceItem.getPreTaxPrice() : 0f)
                                             + (invoiceItem.getVatPrice() != null ? invoiceItem.getVatPrice() : 0f)
                                             - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount()
                                                     : 0f);

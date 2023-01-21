@@ -69,18 +69,25 @@ public class EtablissementPublicsDelegatImpl implements EtablissementPublicsDele
                 competentAuthority.setAddress(
                         String.join("\n", organisme.getProperties().getAdresses().get(0).getLignes()));
 
-            List<City> foundCity = getCitiesFromInseeCodeList(
+            List<City> foundCities = getCitiesFromInseeCodeList(
                     Arrays.asList(organisme.getProperties().getCodeInsee()));
-            if (foundCity != null && foundCity.size() > 0) {
-                competentAuthority.setCity(foundCity.get(0));
+            if (foundCities != null)
+                if (foundCities.size() == 1) {
+                    competentAuthority.setCity(foundCities.get(0));
+                } else if (foundCities.size() > 1) {
+                    for (City foundCity : foundCities)
+                        if (organisme.getProperties().getAdresses() != null
+                                && organisme.getProperties().getAdresses().get(0).getCommune().toUpperCase()
+                                        .contains(foundCity.getLabel().toUpperCase()))
+                            competentAuthority.setCity(foundCity);
+                }
 
-                if (competentAuthority.getCity() != null
-                        && organisme.getProperties().getAdresses().get(0).getCommune() != null)
-                    competentAuthority.setCedexComplement(
-                            organisme.getProperties().getAdresses().get(0).getCommune().toUpperCase()
-                                    .replace(competentAuthority.getCity().getLabel().toUpperCase(), "")
-                                    .trim());
-            }
+            if (competentAuthority.getCity() != null
+                    && organisme.getProperties().getAdresses().get(0).getCommune() != null)
+                competentAuthority.setCedexComplement(
+                        organisme.getProperties().getAdresses().get(0).getCommune().toUpperCase()
+                                .replace(competentAuthority.getCity().getLabel().toUpperCase(), "")
+                                .trim());
 
             competentAuthority
                     .setPostalCode(organisme.getProperties().getAdresses().get(0).getCodePostal());
@@ -132,7 +139,6 @@ public class EtablissementPublicsDelegatImpl implements EtablissementPublicsDele
     private void updateRcs() throws OsirisException {
         ResponseEntity<Organisme> response = new RestTemplate().getForEntity(etablissementPublicEntryPoint + rcsUrl,
                 Organisme.class);
-
         if (response.getBody() != null && response.getBody().getFeatures() != null
                 && response.getBody().getFeatures().size() > 0
                 && response.getBody().getFeatures().get(0) != null)
@@ -153,7 +159,6 @@ public class EtablissementPublicsDelegatImpl implements EtablissementPublicsDele
     private void updateCfp() throws OsirisException {
         ResponseEntity<Organisme> response = new RestTemplate().getForEntity(etablissementPublicEntryPoint + cfpUrl,
                 Organisme.class);
-
         if (response.getBody() != null && response.getBody().getFeatures() != null
                 && response.getBody().getFeatures().size() > 0
                 && response.getBody().getFeatures().get(0) != null)

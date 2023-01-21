@@ -38,7 +38,7 @@
             </generic-toggle>
           </td>
         </tr>
-        <tr *ngIf="displayOption(billingTypePublicationReceipt) && provision.announcement && provision.announcement.confrere
+        <tr *ngIf="displayOption(billingTypePublicationPaper) && provision.announcement && provision.announcement.confrere
          && provision.announcement.confrere.journalType.id==journalTypePaper.id">
           <td>
             <generic-toggle [(model)]="provision.isPublicationPaper" label="Envoi de journaux papier ?"

@@ -130,7 +130,7 @@ public class MailComputeHelper {
                 if (quotationDocument.getMailsAffaire() != null && quotationDocument.getMailsAffaire().size() > 0) {
                     mailComputeResult.getRecipientsMailTo().addAll(quotationDocument.getMailsAffaire());
                     mailComputeResult.setMailToAffaireOrigin("mails indiqués dans la commande");
-                } else if (quotation.getAssoAffaireOrders() != null
+                } else if (quotation.getAssoAffaireOrders() != null && quotation.getAssoAffaireOrders().size() > 0
                         && quotation.getAssoAffaireOrders().get(0).getAffaire().getMails() != null
                         && quotation.getAssoAffaireOrders().get(0).getAffaire().getMails().size() > 0) {
                     mailComputeResult.getRecipientsMailTo()

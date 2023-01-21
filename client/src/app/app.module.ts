@@ -55,7 +55,9 @@ registerLocaleData(localeFr, 'fr');
       debounceTime: 200,
       spinner: false,
     }),
-    NgProgressHttpModule,
+    NgProgressHttpModule.withConfig({
+      silentApis: ['notifications']
+    }),
     // Angular material modules
     MatIconModule,
     MatListModule,

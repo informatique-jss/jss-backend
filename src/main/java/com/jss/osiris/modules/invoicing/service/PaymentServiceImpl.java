@@ -171,8 +171,7 @@ public class PaymentServiceImpl implements PaymentService {
         return null;
     }
 
-    @Transactional(rollbackFor = Exception.class)
-    public void automatchPaymentsInvoicesAndGeneratePaymentAccountingRecords()
+    private void automatchPaymentsInvoicesAndGeneratePaymentAccountingRecords()
             throws OsirisException, OsirisClientMessageException {
         List<Payment> payments = paymentRepository.findNotAssociatedPayments();
 
@@ -223,11 +222,9 @@ public class PaymentServiceImpl implements PaymentService {
 
                 // If invoice and pending customer orders found, do nothing => to complicated to
                 // manage automaticaly
-                // If too many money inbound, do nothing, a human will choose who must be refund
                 if (correspondingInvoices.size() > 0 && correspondingCustomerOrder.size() > 0
                         || correspondingInvoices.size() > 0 && correspondingQuotation.size() > 0
-                        || correspondingCustomerOrder.size() > 0 && correspondingQuotation.size() > 0
-                        || payment.getPaymentAmount() > totalToPay) {
+                        || correspondingCustomerOrder.size() > 0 && correspondingQuotation.size() > 0) {
                     // If payment not used, put it in waiting account
                     if (generateWaitingAccountAccountingRecords.getValue())
                         accountingRecordService.generateAccountingRecordsForWaitingInboundPayment(payment);
@@ -249,8 +246,14 @@ public class PaymentServiceImpl implements PaymentService {
                     for (Quotation quotation : correspondingQuotation) {
                         if (quotation.getQuotationStatus().getCode().equals(QuotationStatus.VALIDATED_BY_CUSTOMER)
                                 && quotation.getCustomerOrders() != null && quotation.getCustomerOrders().size() > 0) {
-                            correspondingCustomerOrder
-                                    .add(quotation.getCustomerOrders().get(0));
+                            boolean found = false;
+                            if (correspondingCustomerOrder.size() > 0)
+                                for (CustomerOrder customerOrderFound : correspondingCustomerOrder)
+                                    if (customerOrderFound.getId().equals(quotation.getCustomerOrders().get(0).getId()))
+                                        found = true;
+                            if (!found)
+                                correspondingCustomerOrder
+                                        .add(quotation.getCustomerOrders().get(0));
                         } else if (quotation.getQuotationStatus().getCode().equals(QuotationStatus.SENT_TO_CUSTOMER)) {
                             correspondingCustomerOrder
                                     .add(quotationService
@@ -799,8 +802,8 @@ public class PaymentServiceImpl implements PaymentService {
     @Transactional
     public void unsetExternallyAssociated(Payment payment) throws OsirisException, OsirisClientMessageException {
         payment.setIsExternallyAssociated(false);
-        automatchPaymentsInvoicesAndGeneratePaymentAccountingRecords();
         addOrUpdatePayment(payment);
+        automatchPaymentsInvoicesAndGeneratePaymentAccountingRecords();
     }
 
     private Payment cancelPayment(Payment payment) throws OsirisException {
@@ -810,7 +813,9 @@ public class PaymentServiceImpl implements PaymentService {
                 if (accountingRecord.getIsCounterPart() == null || !accountingRecord.getIsCounterPart())
                     if (!accountingRecord.getAccountingAccount().getPrincipalAccountingAccount().getId()
                             .equals(constantService.getPrincipalAccountingAccountBank().getId()))
-                        accountingRecordService.generateCounterPart(accountingRecord, null, operationIdCounterPart);
+                        accountingRecordService.letterWaitingRecords(accountingRecord,
+                                accountingRecordService.generateCounterPart(accountingRecord, null,
+                                        operationIdCounterPart));
             }
         payment.setIsCancelled(true);
         payment.setInvoice(null);

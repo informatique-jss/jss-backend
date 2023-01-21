@@ -234,7 +234,7 @@ public class MailHelper {
             else {
                 if (mail.getMailComputeResult().getRecipientsMailTo() == null
                         || mail.getMailComputeResult().getRecipientsMailTo().size() == 0)
-                    throw new OsirisException(null, "No recipient found");
+                    throw new OsirisException(null, "No recipient found for mail n°" + mail.getId());
 
                 for (Mail mailTo : mail.getMailComputeResult().getRecipientsMailTo())
                     message.addTo(mailTo.getMail());
@@ -324,9 +324,12 @@ public class MailHelper {
         }
         ITextRenderer renderer = new ITextRenderer();
         try {
-            renderer.setDocumentFromString(htmlContent.replaceAll("\\p{C}", " "));
+            renderer.setDocumentFromString(
+                    htmlContent.replaceAll("\\p{C}", " ").replaceAll("&", "<![CDATA[&]]>").replaceAll("&#160;", " "));
+            renderer.setScaleToFit(true);
             renderer.layout();
             renderer.createPDF(outputStream);
+
             outputStream.close();
         } catch (Exception e) {
             throw new OsirisException(e, "Unable to create PDF file for mail " + mail.getId());
@@ -1362,9 +1365,7 @@ public class MailHelper {
             for (Attachment attachment : attachmentService.sortAttachmentByDateDesc(announcement.getAttachments()))
                 if (attachment.getAttachmentType().getId()
                         .equals(constantService.getAttachmentTypePublicationReceipt()
-                                .getId())
-                        && (announcement.getIsPublicationReciptAlreadySent() == null
-                                || !announcement.getIsPublicationReciptAlreadySent())) {
+                                .getId())) {
                     attachments.add(attachment);
                     break;
                 }

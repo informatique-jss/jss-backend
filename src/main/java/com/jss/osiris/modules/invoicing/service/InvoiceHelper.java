@@ -116,8 +116,9 @@ public class InvoiceHelper {
         } else if (customerOrder != null
                 && constantService.getBillingLabelTypeCodeAffaire().getId()
                         .equals(billingDocument.getBillingLabelType().getId())) {
+            invoiceLabelResult.setLabelOrigin("les informations de l'affaire");
             if (customerOrder.getAssoAffaireOrders() == null || customerOrder.getAssoAffaireOrders().size() == 0)
-                throw new OsirisException(null, "No affaire in the customer order " + customerOrder.getId());
+                return invoiceLabelResult;
             Affaire affaire = customerOrder.getAssoAffaireOrders().get(0).getAffaire();
             invoiceLabelResult
                     .setBillingLabel(affaire.getIsIndividual() ? affaire.getFirstname() + " " + affaire.getLastname()
