@@ -709,7 +709,9 @@ public class PaymentServiceImpl implements PaymentService {
             if (foundEntity.getEntityType().equals(Quotation.class.getSimpleName())) {
                 Quotation quotation = quotationService.getQuotation(foundEntity.getEntityId());
                 if (quotation.getQuotationStatus() != null
-                        && (quotation.getQuotationStatus().getCode().equals(QuotationStatus.SENT_TO_CUSTOMER)))
+                        && (quotation.getQuotationStatus().getCode().equals(QuotationStatus.SENT_TO_CUSTOMER)
+                                || quotation.getQuotationStatus().getCode()
+                                        .equals(QuotationStatus.VALIDATED_BY_CUSTOMER)))
                     return quotation;
             }
         }
