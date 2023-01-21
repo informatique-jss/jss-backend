@@ -60,20 +60,16 @@ public class SearchServiceImpl implements SearchService {
     }
 
     @Override
-    public List<IndexEntity> getActifResponsableByKeyword(String searchedValue) {
+    public List<IndexEntity> getActifResponsableByKeyword(String searchedValue, Boolean onlyActive) {
         List<IndexEntity> responsables = searchForEntities(searchedValue, Responsable.class.getSimpleName());
-        List<IndexEntity> outResponsables = new ArrayList<IndexEntity>();
+        if (!onlyActive)
+            return responsables;
 
-        // Use this test only for Quotes / Orders
-        if (responsables != null && responsables.size() > 0) {
-            for (IndexEntity entity : responsables) {
-                //System.out.println("SearchServiceImpl.getActifResponsableByKeyword "+Responsable.class.getSimpleName()+
-                //    " : id="+entity.getEntityId()+" isActive "+entity.getText().contains("\"isActive\":true"));
-                if (entity.getText() != null && entity.getText().contains("\"isActive\":true")) {
+        List<IndexEntity> outResponsables = new ArrayList<IndexEntity>();
+        if (responsables != null && responsables.size() > 0)
+            for (IndexEntity entity : responsables)
+                if (entity.getText() != null && entity.getText().contains("\"isActive\":true"))
                     outResponsables.add(entity);
-                }
-            }
-        }
         return outResponsables;
     }
 
