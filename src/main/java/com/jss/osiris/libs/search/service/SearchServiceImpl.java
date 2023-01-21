@@ -60,8 +60,17 @@ public class SearchServiceImpl implements SearchService {
     }
 
     @Override
-    public List<IndexEntity> getResponsableByKeyword(String searchedValue) {
-        return searchForEntities(searchedValue, Responsable.class.getSimpleName());
+    public List<IndexEntity> getActifResponsableByKeyword(String searchedValue, Boolean onlyActive) {
+        List<IndexEntity> responsables = searchForEntities(searchedValue, Responsable.class.getSimpleName());
+        if (!onlyActive)
+            return responsables;
+
+        List<IndexEntity> outResponsables = new ArrayList<IndexEntity>();
+        if (responsables != null && responsables.size() > 0)
+            for (IndexEntity entity : responsables)
+                if (entity.getText() != null && entity.getText().contains("\"isActive\":true"))
+                    outResponsables.add(entity);
+        return outResponsables;
     }
 
     @Override

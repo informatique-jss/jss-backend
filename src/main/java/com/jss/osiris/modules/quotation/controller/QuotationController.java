@@ -1271,6 +1271,9 @@ public class QuotationController {
     if (quotation.getResponsable() == null && quotation.getTiers() == null && quotation.getConfrere() == null)
       throw new OsirisValidationException("No customer order");
 
+    if (quotation.getResponsable() != null && !quotation.getResponsable().getIsActive())
+      throw new OsirisClientMessageException("Il n'est pas possible d'utiliser un responsable inactif !");
+
     // Generate missing documents
     IDocument tiersDocument = ObjectUtils.firstNonNull(quotation.getConfrere(), quotation.getResponsable(),
         quotation.getTiers());

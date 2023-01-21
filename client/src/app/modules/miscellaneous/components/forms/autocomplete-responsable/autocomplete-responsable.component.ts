@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { UserNoteService } from 'src/app/services/user.notes.service';
@@ -17,8 +17,10 @@ export class AutocompleteResponsableComponent extends GenericAutocompleteCompone
     super(formBuild, userNoteService2)
   }
 
+  @Input() onlyActive: boolean = true;
+
   searchEntities(value: string): Observable<IndexEntity[]> {
-    return this.indexEntityService.getResponsableByKeyword(value);
+    return this.indexEntityService.getResponsableByKeyword(value, this.onlyActive);
   }
 
   displayLabel(responsable: IndexEntity): string {
