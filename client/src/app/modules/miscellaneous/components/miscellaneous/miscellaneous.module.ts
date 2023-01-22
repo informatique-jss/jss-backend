@@ -47,9 +47,11 @@ import { AutocompleteCityComponent } from '../forms/autocomplete-city/autocomple
 import { AutocompleteCompetentAuthorityComponent } from '../forms/autocomplete-competent-authority/autocomplete-competent-authority.component';
 import { AutocompleteConfrereComponent } from '../forms/autocomplete-confrere/autocomplete-confrere.component';
 import { AutocompleteCountryComponent } from '../forms/autocomplete-country/autocomplete-country.component';
+import { AutocompleteCustomerOrderComponent } from '../forms/autocomplete-customer-order/autocomplete-customer-order.component';
 import { AutocompleteDepartmentComponent } from '../forms/autocomplete-department/autocomplete-department.component';
 import { AutocompleteEmployeeComponent } from '../forms/autocomplete-employee/autocomplete-employee.component';
 import { AutocompleteLegalFormComponent } from '../forms/autocomplete-legal-form/autocomplete-legal-form.component';
+import { AutocompletePaymentComponent } from '../forms/autocomplete-payment/autocomplete-payment.component';
 import { AutocompletePostalCodeComponent } from '../forms/autocomplete-postal-code/autocomplete-postal-code.component';
 import { AutocompletePrincipalAccountingAccountComponent } from '../forms/autocomplete-principal-accounting-account/autocomplete-principal-accounting-account.component';
 import { AutocompleteProviderComponent } from '../forms/autocomplete-provider/autocomplete-provider.component';
@@ -368,6 +370,7 @@ const routes: Routes = [
     SelectInvoiceStatusOneComponent,
     SelectCustomerOrderStatusComponent,
     SelectPaymentWayOneComponent,
+    AutocompletePaymentComponent,
     SelectPaymentWayComponent,
     AvatarComponent,
     AvatarChipComponent,
@@ -375,6 +378,7 @@ const routes: Routes = [
     NotificationDialogComponent,
     SelectDepartmentComponent,
     WorkflowDialogComponent,
+    AutocompleteCustomerOrderComponent,
     ChipsEmployeeComponent,
     SingleAttachmentComponent,
     ChipsAttachmentTypeComponent,
@@ -583,6 +587,8 @@ const routes: Routes = [
     ChipsProvisionFamilyTypeComponent,
     SelectPaymentWayComponent,
     AutocompleteBillingItemComponent,
+    AutocompleteCustomerOrderComponent,
+    AutocompletePaymentComponent,
     WorkflowDialogComponent,
     TiersFollowupComponent,
     AutomaticMailListComponent,

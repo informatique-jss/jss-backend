@@ -5,5 +5,5 @@ export interface BankTransfertSearch {
   minAmount: number;
   maxAmount: number;
   label: string;
-  isHideExportedRefunds: boolean;
+  isHideExportedBankTransfert: boolean;
 }

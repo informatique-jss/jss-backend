@@ -2,6 +2,7 @@ import { AfterContentChecked, ChangeDetectorRef, Component, EventEmitter, Input,
 import { FormBuilder } from "@angular/forms";
 import { MatDialog, MatDialogRef } from "@angular/material/dialog";
 import { formatDateTimeForSortTable, formatEurosForSortTable, toIsoString } from "src/app/libs/FormatHelper";
+import { AssociatePaymentDialogComponent } from "src/app/modules/invoicing/components/associate-payment-dialog/associate-payment-dialog.component";
 import { Payment } from "src/app/modules/invoicing/model/Payment";
 import { PaymentSearch } from "src/app/modules/invoicing/model/PaymentSearch";
 import { PaymentSearchResult } from "src/app/modules/invoicing/model/PaymentSearchResult";
@@ -45,6 +46,7 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
     protected uploadAttachementDialog: MatDialog,
     private changeDetectorRef: ChangeDetectorRef,
     private appService: AppService,
+    public associatePaymentDialog: MatDialog,
     private formBuilder: FormBuilder,
     private habilitationService: HabilitationsService,
   ) { }
@@ -63,33 +65,41 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
     this.availableColumns.push({ id: "paymentWay", fieldName: "paymentWayLabel", label: "Sens" } as SortTableColumn);
     this.availableColumns.push({ id: "payemntDate", fieldName: "paymentDate", label: "Date", valueFonction: formatDateTimeForSortTable } as SortTableColumn);
     this.availableColumns.push({ id: "payemntAmount", fieldName: "paymentAmount", label: "Montant", valueFonction: formatEurosForSortTable } as SortTableColumn);
-    this.availableColumns.push({ id: "label", fieldName: "paymentLabel", label: "Libellé", isShrinkColumn: true } as SortTableColumn);
-    this.availableColumns.push({ id: "isInternallyAssociated", fieldName: "isInternallyAssociated", label: "Associé dans Osiris", valueFonction: (element: any) => { return (element.invoiceId || element.customerOrderId) ? "Oui" : "Non" } } as SortTableColumn);
+    this.availableColumns.push({ id: "label", fieldName: "paymentLabel", label: "Libellé" } as SortTableColumn);
+    this.availableColumns.push({ id: "isInternallyAssociated", fieldName: "isInternallyAssociated", label: "Associé dans Osiris", valueFonction: (element: any) => { return (element.isAssociated) ? "Oui" : "Non" } } as SortTableColumn);
     this.availableColumns.push({ id: "isExternallyAssociated", fieldName: "isExternallyAssociated", label: "Associé hors Osiris", valueFonction: (element: any) => { return element.isExternallyAssociated ? "Oui" : "Non" } } as SortTableColumn);
     this.availableColumns.push({ id: "isCancelled", fieldName: "isCancelled", label: "Annulé", valueFonction: (element: any) => { return element.isCancelled ? "Oui" : "Non" } } as SortTableColumn);
     this.availableColumns.push({ id: "invoice", fieldName: "invoiceId", label: "Facture associée", actionLinkFunction: this.getActionLink, actionIcon: "visibility", actionTooltip: "Voir la facture associée" } as SortTableColumn);
 
     if (this.overrideIconAction == "") {
-      this.tableAction.push({
-        actionIcon: "merge_type", actionName: "Indiquer comme associé hors Osiris", actionClick: (action: SortTableAction, element: any) => {
-          if ((!element.invoice && !element.customerOrder))
-            this.paymentService.setExternallyAssociated(element as Payment).subscribe(response => {
-              this.searchPayments();
-            });
-          else
-            this.appService.displaySnackBar("Paiement déjà associé dans Osiris", true, 20);
-        }, display: true,
-      } as SortTableAction);
-      this.tableAction.push({
-        actionIcon: "remove_done", actionName: "Indiquer comme non associé hors Osiris", actionClick: (action: SortTableAction, element: any) => {
-          if ((!element.invoice && !element.customerOrder && element.isExternallyAssociated))
-            this.paymentService.unsetExternallyAssociated(element as Payment).subscribe(response => {
-              this.searchPayments();
-            });
-          else
-            this.appService.displaySnackBar("Paiement non indiqué associé hors Osiris", true, 20);
-        }, display: true,
-      } as SortTableAction);
+      if (this.habilitationService.canModifyPaymentAssociation()) {
+        this.tableAction.push({
+          actionIcon: "login", actionName: "Est non associé hors Osiris", actionClick: (action: SortTableAction, element: any) => {
+            if ((!element.invoice && !element.customerOrder && element.isExternallyAssociated))
+              this.paymentService.unsetExternallyAssociated(element as Payment).subscribe(response => {
+                this.searchPayments();
+              });
+            else
+              this.appService.displaySnackBar("Paiement non indiqué associé hors Osiris", true, 20);
+          }, display: true,
+        } as SortTableAction);
+        this.tableAction.push({
+          actionIcon: "logout", actionName: "Est associé hors Osiris", actionClick: (action: SortTableAction, element: any) => {
+            if ((!element.invoice && !element.customerOrder))
+              this.paymentService.setExternallyAssociated(element as Payment).subscribe(response => {
+                this.searchPayments();
+              });
+            else
+              this.appService.displaySnackBar("Paiement déjà associé dans Osiris", true, 20);
+          }, display: true,
+        } as SortTableAction);
+        this.tableAction.push({
+          actionIcon: "merge_type", actionName: "Associer le paiement", actionClick: (action: SortTableAction, element: any) => {
+            if ((!element.invoice && !element.customerOrder && !element.isExternallyAssociated))
+              this.openAssociationDialog(element);
+          }, display: true,
+        } as SortTableAction);
+      }
     } else {
       this.tableAction.push({
         actionIcon: this.overrideIconAction, actionName: this.overrideTooltipAction, actionClick: (action: SortTableAction, element: any) => {
@@ -150,5 +160,17 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
     this.uploadAttachementDialogRef.afterClosed().subscribe(response => {
       this.searchPayments();
     });
+  }
+
+  openAssociationDialog(elementIn: PaymentSearchResult) {
+    this.paymentService.getPaymentById(elementIn.id).subscribe(element => {
+      let dialogPaymentDialogRef = this.associatePaymentDialog.open(AssociatePaymentDialogComponent, {
+        width: '100%'
+      });
+      dialogPaymentDialogRef.componentInstance.payment = element;
+      dialogPaymentDialogRef.afterClosed().subscribe(response => {
+        this.searchPayments();
+      });
+    })
   }
 }

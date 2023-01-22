@@ -49,4 +49,11 @@ public class SearchController {
 				searchService.getActifResponsableByKeyword(searchedValue, onlyActive),
 				HttpStatus.OK);
 	}
+
+	@GetMapping(inputEntryPoint + "/customer/order/search")
+	public ResponseEntity<List<IndexEntity>> getCustomerOrdersByKeyword(@RequestParam String searchedValue) {
+		return new ResponseEntity<List<IndexEntity>>(
+				searchService.getCustomerOrdersByKeyword(searchedValue),
+				HttpStatus.OK);
+	}
 }

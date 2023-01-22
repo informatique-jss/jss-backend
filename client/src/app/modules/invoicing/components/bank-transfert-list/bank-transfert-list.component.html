@@ -15,8 +15,8 @@
             propertyName="label" [isMandatory]="false" [isDisabled]="false"></generic-input>
         </td>
         <td>
-          <generic-toggle [(model)]="transfertSearch.isHideExportedRefunds" label="Masquer les paiements exportés"
-            [form]="transfertForm" propertyName="isHideExportedRefunds"></generic-toggle>
+          <generic-toggle [(model)]="transfertSearch.isHideExportedBankTransfert" label="Masquer les paiements exportés"
+            [form]="transfertForm" propertyName="isHideExportedBankTransfert"></generic-toggle>
         </td>
         <td>
           <generic-date-range-picker [(modelStart)]="transfertSearch.startDate" [(modelEnd)]="transfertSearch.endDate"

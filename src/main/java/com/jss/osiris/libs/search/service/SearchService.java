@@ -13,5 +13,7 @@ public interface SearchService {
 
     public List<IndexEntity> getActifResponsableByKeyword(String searchedValue, Boolean onlyActive);
 
+    public List<IndexEntity> getCustomerOrdersByKeyword(String searchedValue);
+
     public List<IndexEntity> getIndividualTiersByKeyword(String searchedValue);
 }

@@ -36,6 +36,8 @@ import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.MailComputeHelper;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.libs.mail.model.MailComputeResult;
+import com.jss.osiris.modules.invoicing.model.Payment;
+import com.jss.osiris.modules.invoicing.service.PaymentService;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.BillingType;
 import com.jss.osiris.modules.miscellaneous.model.Department;
@@ -316,6 +318,9 @@ public class QuotationController {
 
   @Autowired
   BankTransfertService bankTransfertService;
+
+  @Autowired
+  PaymentService paymentService;
 
   @GetMapping(inputEntryPoint + "/bank-transferts")
   public ResponseEntity<List<BankTransfert>> getBankTransfers() {
@@ -2232,5 +2237,31 @@ public class QuotationController {
     customerOrderService.printMailingLabel(customerOrders);
 
     return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+  }
+
+  @PostMapping(inputEntryPoint + "/debour/payment/associate")
+  public ResponseEntity<List<Debour>> associateDeboursAndPayment(@RequestBody List<Debour> debours,
+      @RequestParam Integer paymentId)
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+    if (paymentId == null)
+      throw new OsirisValidationException("paymentId");
+
+    if (debours == null || debours.size() == 0)
+      throw new OsirisValidationException("debours");
+
+    for (Debour debour : debours) {
+      if (!debour.getCompetentAuthority().getCompetentAuthorityType().getIsDirectCharge())
+        throw new OsirisClientMessageException(
+            "Les autorités compétentes choisies ne sont pas à charge directe. L'association du paiement se fait sur le facture associée");
+
+      if (debour.getPayment() != null)
+        throw new OsirisClientMessageException("Un des débours a déjà été rapproché d'un paiement");
+    }
+
+    Payment payment = paymentService.getPayment(paymentId);
+    if (payment == null)
+      throw new OsirisValidationException("payment");
+    paymentService.associateOutboundPaymentAndDebourFromUser(payment, debours);
+    return new ResponseEntity<List<Debour>>(debours, HttpStatus.OK);
   }
 }

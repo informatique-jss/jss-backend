@@ -12,6 +12,7 @@ import com.jss.osiris.modules.invoicing.model.PaymentSearchResult;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.quotation.model.Debour;
 import com.jss.osiris.modules.tiers.model.ITiers;
 
 public interface PaymentService {
@@ -38,5 +39,8 @@ public interface PaymentService {
         public void unsetExternallyAssociated(Payment payment) throws OsirisException, OsirisClientMessageException;
 
         public List<Attachment> uploadOfxFile(InputStream file) throws OsirisException, OsirisClientMessageException;
+
+        public Float associateOutboundPaymentAndDebourFromUser(Payment payment, List<Debour> debours)
+                        throws OsirisException;
 
 }

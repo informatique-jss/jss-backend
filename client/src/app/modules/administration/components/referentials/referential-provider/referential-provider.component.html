@@ -84,6 +84,10 @@
                 [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="40"></generic-input>
             </td>
             <td>
+              <generic-input [(model)]="selectedEntity.bic" label="BIC" [form]="entityForm" propertyName="bic"
+                [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="40"></generic-input>
+            </td>
+            <td>
               <select-payment-types [(model)]="selectedEntity.paymentType" label="Type" [form]="entityForm"
                 propertyName="paymentType" [isMandatory]="true" [isDisabled]="!editMode"
                 [filteredPaymentType]="[paymentTypePrelevement,paymentTypeVirement]"></select-payment-types>

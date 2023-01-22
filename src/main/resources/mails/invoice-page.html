@@ -105,6 +105,24 @@
                             €</td>
                     </tr>
                 </th:block>
+                <tr th:if="${provision.debours!=null}">
+                    <td colspan="4">
+                        <span>Détail des débours (TTC)</span>
+                    </td>
+                    <td></td>
+                </tr>
+                <th:block th:each="debour : ${provision.debours}" th:if="${provision.debours!=null}">
+                    <tr>
+                        <td colspan="4">
+                            <span th:text="${debour.competentAuthority.label}"></span> : <span
+                                th:text="${debour.billingType.label}"></span>
+                        </td>
+                        <td style="text-align: right;white-space: nowrap;">
+                            <span th:text="${#numbers.formatDecimal(debour.debourAmount,1,2)}"></span>
+                            €
+                        </td>
+                    </tr>
+                </th:block>
             </th:block>
         </th:block>
     </table>

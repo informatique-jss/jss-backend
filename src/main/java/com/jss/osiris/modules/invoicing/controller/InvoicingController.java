@@ -130,6 +130,34 @@ public class InvoicingController {
         return new ResponseEntity<Payment>(paymentService.getPayment(id), HttpStatus.OK);
     }
 
+    // TODO remove !
+    @GetMapping(inputEntryPoint + "/payment/add")
+    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+    public ResponseEntity<Payment> addPayment(@RequestParam Float amount, @RequestParam Integer paymentWayId,
+            @RequestParam String label)
+            throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+        Payment payment = new Payment();
+        payment.setExternallyAssociated(false);
+        payment.setIsCancelled(false);
+        payment.setLabel(label);
+        payment.setPaymentAmount(amount);
+        payment.setPaymentDate(LocalDateTime.now());
+        payment.setPaymentType(constantService.getPaymentTypeVirement());
+        payment.setPaymentWay(paymentWayService.getPaymentWay(paymentWayId));
+        paymentService.addOrUpdatePayment(payment);
+        paymentService.payementGrab();
+        return new ResponseEntity<Payment>(payment, HttpStatus.OK);
+    }
+
+    // TODO remove !
+    @GetMapping(inputEntryPoint + "/payment/automatch")
+    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+    public ResponseEntity<Payment> automatchPayment()
+            throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+        paymentService.payementGrab();
+        return new ResponseEntity<Payment>(new Payment(), HttpStatus.OK);
+    }
+
     @PostMapping(inputEntryPoint + "/payments/search")
     public ResponseEntity<List<PaymentSearchResult>> getPayments(@RequestBody PaymentSearch paymentSearch)
             throws OsirisValidationException {
@@ -197,9 +225,6 @@ public class InvoicingController {
             throws OsirisValidationException {
         if (transfertSearch == null)
             throw new OsirisValidationException("transfertSearch");
-
-        if (transfertSearch.getStartDate() == null || transfertSearch.getEndDate() == null)
-            throw new OsirisValidationException("StartDate or EndDate");
 
         return new ResponseEntity<List<BankTransfertSearchResult>>(
                 bankTransfertService.searchBankTransfert(transfertSearch),
@@ -507,7 +532,7 @@ public class InvoicingController {
     @PostMapping(inputEntryPoint + "/invoice")
     @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
     public ResponseEntity<Invoice> addOrUpdateInvoice(@RequestBody Invoice invoice)
-            throws OsirisValidationException, OsirisException {
+            throws OsirisValidationException, OsirisException, OsirisClientMessageException {
         if (invoice.getId() != null && invoice.getCustomerOrder() != null)
             throw new OsirisValidationException("Id");
 
@@ -533,6 +558,11 @@ public class InvoicingController {
 
         if (invoice.getProvider() != null) {
             validationHelper.validateReferential(invoice.getProvider(), true, "Provider");
+            doFound++;
+        }
+
+        if (invoice.getCompetentAuthority() != null) {
+            validationHelper.validateReferential(invoice.getCompetentAuthority(), true, "CompetentAuthority");
             doFound++;
         }
 
@@ -583,6 +613,24 @@ public class InvoicingController {
                     invoiceItem.setVatPrice(0f);
 
             }
+        }
+
+        if (invoice.getCustomerOrderForInboundInvoice() != null) {
+            if (!invoice.getIsInvoiceFromProvider())
+                throw new OsirisValidationException("customerOrderForInboundInvoice");
+            validationHelper.validateReferential(invoice.getCustomerOrderForInboundInvoice(), false,
+                    "customerOrderForInboundInvoice");
+        }
+
+        // Handle automatic bank transfert
+        validationHelper.validateReferential(invoice.getManualPaymentType(), invoice.getIsInvoiceFromProvider(),
+                "PaymentType");
+        if (invoice.getIsInvoiceFromProvider()
+                && invoice.getManualPaymentType().getId().equals(constantService.getPaymentTypeVirement().getId())) {
+            if (invoiceHelper.getIbanOfOrderingCustomer(invoice) == null)
+                throw new OsirisClientMessageException("Aucun IBAN trouvé sur le donneur d'ordre");
+            if (invoiceHelper.getBicOfOrderingCustomer(invoice) == null)
+                throw new OsirisClientMessageException("Aucun BIC trouvé sur le donneur d'ordre");
         }
 
         return new ResponseEntity<Invoice>(invoiceService.addOrUpdateInvoiceFromUser(invoice), HttpStatus.OK);

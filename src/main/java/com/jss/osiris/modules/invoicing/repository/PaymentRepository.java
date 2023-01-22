@@ -12,7 +12,7 @@ import com.jss.osiris.modules.invoicing.model.PaymentSearchResult;
 
 public interface PaymentRepository extends CrudRepository<Payment, Integer> {
 
-        @Query("select p from Payment p  where p.invoice is null  and p.isExternallyAssociated=false and p.isCancelled=false ")
+        @Query(nativeQuery = true, value = "select p.* from payment p  where p.id_invoice is null and p.is_externally_associated=false and p.is_cancelled=false and not exists (select 1 from debour d where d.id_payment = p.id) ")
         List<Payment> findNotAssociatedPayments();
 
         @Query(nativeQuery = true, value = " select p.id as id,"
@@ -23,6 +23,7 @@ public interface PaymentRepository extends CrudRepository<Payment, Integer> {
                         + " p.label as paymentLabel,"
                         + " p.is_externally_associated  as isExternallyAssociated ,"
                         + " p.is_cancelled  as isCancelled ,"
+                        + " p.id_invoice is not null or d.id is not null  or p.is_cancelled=true  as isAssociated ,"
                         + " p.id_invoice as invoiceId"
                         + " from payment p "
                         + " join payment_way pw on pw.id = p.id_payment_way"

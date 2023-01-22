@@ -59,7 +59,7 @@ export class OrderingCustomerComponent implements OnInit {
       }
 
       if (this.quotation.responsable && this.quotation.responsable.id && !this.searchedResponsable) {
-        this.indexEntityService.getResponsableByKeyword(this.quotation.responsable.id + "").subscribe(response => this.searchedResponsable = response[0]);
+        this.indexEntityService.getResponsableByKeyword(this.quotation.responsable.id + "", false).subscribe(response => this.searchedResponsable = response[0]);
       }
       if (this.quotation.tiers && this.quotation.tiers.id && !this.searchedTiers) {
         this.indexEntityService.getIndividualTiersByKeyword(this.quotation.tiers.id + "").subscribe(response => this.searchedTiers = response[0]);

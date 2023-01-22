@@ -1,5 +1,5 @@
 <h1 mat-dialog-title>Associer un paiement </h1>
-<div mat-dialog-content *ngIf="payment && (invoice || customerOrder)">
+<div mat-dialog-content *ngIf="payment ">
   <sort-table [columns]="displayedColumns" [values]="associationSummaryTable" tableName="Association paiement / facture"
     [actions]="tableAction" [refreshTable]="refreshTable.asObservable()">
   </sort-table>
@@ -39,7 +39,7 @@
   </div>
   <div *ngIf="amountToPayCompletely()<0 && isPaymentWayInbound(payment)">
     <mat-vertical-stepper [linear]="false" #stepper animationDuration="500">
-      <mat-step>
+      <mat-step *ngIf="invoice || customerOrder">
         <ng-template matStepLabel>Validation de l'association</ng-template>
         <p>Validez-vous l'association présentée ci-dessus ?</p>
         <div class="top">

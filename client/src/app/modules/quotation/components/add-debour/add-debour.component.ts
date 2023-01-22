@@ -7,8 +7,12 @@ import { PaymentType } from 'src/app/modules/miscellaneous/model/PaymentType';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { formatDateForSortTable, formatEurosForSortTable } from '../../../../libs/FormatHelper';
+import { CompetentAuthority } from '../../../miscellaneous/model/CompetentAuthority';
 import { Debour } from '../../model/Debour';
+import { DebourPaymentAssociationRequest } from '../../model/DebourPaymentAssociationRequest';
 import { Provision } from '../../model/Provision';
+import { DebourService } from '../../services/debour.service';
+import { SelectDeboursDialogComponent } from '../select-debours-dialog/select-debours-dialog.component';
 
 
 @Component({
@@ -29,10 +33,13 @@ export class AddDebourComponent implements OnInit {
 
   constructor(private formBuilder: FormBuilder,
     public confirmationDialog: MatDialog,
+    private debourService: DebourService,
+    public selectDeboursDialog: MatDialog,
     private constantService: ConstantService,) { }
 
   ngOnInit() {
     this.displayedColumns = [];
+    this.displayedColumns.push({ id: "id", fieldName: "id", label: "N°" } as SortTableColumn);
     this.displayedColumns.push({ id: "billingType", fieldName: "billingType.label", label: "Débour" } as SortTableColumn);
     this.displayedColumns.push({ id: "competentAuthority", fieldName: "competentAuthority.label", label: "Autorité compétente" } as SortTableColumn);
     this.displayedColumns.push({ id: "debourAmount", fieldName: "debourAmount", label: "Montant", valueFonction: formatEurosForSortTable } as SortTableColumn);
@@ -92,6 +99,45 @@ export class AddDebourComponent implements OnInit {
 
   getFormStatus(): boolean {
     return this.debourForm.valid;
+  }
+
+  getCompetentAuthorities(): CompetentAuthority[] {
+    let outCompetentAuthorities: CompetentAuthority[] = [];
+    if (this.provision && this.provision.debours && this.provision.debours.length > 0)
+      for (let debour of this.provision.debours) {
+        let found = false;
+        for (let outCompetentAuthority of outCompetentAuthorities)
+          if (outCompetentAuthority.id == debour.competentAuthority.id)
+            found = true
+        if (!found)
+          outCompetentAuthorities.push(debour.competentAuthority);
+      }
+    return outCompetentAuthorities;
+  }
+
+  getTotalForCompetentAuthority(competentAuthority: CompetentAuthority): number {
+    let total: number = 0;
+
+    if (this.provision && this.provision.debours && this.provision.debours.length > 0)
+      for (let debour of this.provision.debours) {
+        if (debour.competentAuthority.id == competentAuthority.id)
+          total += debour.debourAmount;
+      }
+
+    return total;
+  }
+
+  associateToPayment() {
+    const dialogRef = this.selectDeboursDialog.open(SelectDeboursDialogComponent, {});
+    dialogRef.componentInstance.provision = this.provision;
+    dialogRef.afterClosed().subscribe((dialogResult: DebourPaymentAssociationRequest) => {
+      if (dialogResult) {
+        this.debourService.associateDeboursAndPayment(dialogResult).subscribe(response => {
+          if (this.provision)
+            this.provision.debours = response;
+        })
+      }
+    });
   }
 
 }

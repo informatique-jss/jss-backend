@@ -23,3 +23,7 @@ td {
   flex-direction: row;
   display: flex;
 }
+
+.margin-bottom {
+  margin-bottom: 15px;
+}

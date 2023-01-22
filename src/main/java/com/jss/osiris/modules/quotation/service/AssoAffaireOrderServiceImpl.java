@@ -99,6 +99,9 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
     @Autowired
     BankTransfertService bankTransfertService;
 
+    @Autowired
+    DebourService debourService;
+
     @Override
     public List<AssoAffaireOrder> getAssoAffaireOrders() {
         return IterableUtils.toList(assoAffaireOrderRepository.findAll());
@@ -175,6 +178,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
                     if (debour.getBankTransfert() == null && debour.getPaymentType().getId()
                             .equals(constantService.getPaymentTypeVirement().getId())) {
+                        debour = debourService.addOrUpdateDebour(debour);
                         debour.setBankTransfert(
                                 bankTransfertService.generateBankTransfertForDebour(debour, assoAffaireOrder));
                     }

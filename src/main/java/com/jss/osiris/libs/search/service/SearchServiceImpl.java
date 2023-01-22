@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.jss.osiris.libs.search.model.IndexEntity;
 import com.jss.osiris.libs.search.repository.IndexEntityRepository;
+import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
@@ -71,6 +72,11 @@ public class SearchServiceImpl implements SearchService {
                 if (entity.getText() != null && entity.getText().contains("\"isActive\":true"))
                     outResponsables.add(entity);
         return outResponsables;
+    }
+
+    @Override
+    public List<IndexEntity> getCustomerOrdersByKeyword(String searchedValue) {
+        return searchForEntities(searchedValue, CustomerOrder.class.getSimpleName());
     }
 
     @Override

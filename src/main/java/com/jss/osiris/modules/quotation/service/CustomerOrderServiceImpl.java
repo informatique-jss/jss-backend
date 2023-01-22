@@ -334,6 +334,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
         // Target : BEING PROCESSED => notify customer
         if (targetStatusCode.equals(CustomerOrderStatus.BEING_PROCESSED)) {
+            resetDeboursManuelAmoung(customerOrder);
             // Confirm deposit taken into account or customer order starting
             if (!isFromUser
                     && customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.WAITING_DEPOSIT)) {
@@ -361,14 +362,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     getInvoice(customerOrder));
             // If deposit already set, associate them to invoice
             moveCustomerOrderDepositToInvoiceDeposit(customerOrder, invoice);
-
-            // If we have debours, generate purshase accounting records
-            for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
-                if (asso.getProvisions() != null)
-                    for (Provision provision : asso.getProvisions())
-                        if (provision.getDebours() != null && provision.getDebours().size() > 0)
-                            for (Debour debour : provision.getDebours())
-                                accountingRecordService.generateAccountingRecordsForDebourPayment(debour);
 
             // Check invoice payed
             Float remainingToPayForCurrentInvoice = invoiceService.getRemainingAmountToPayForInvoice(invoice);
@@ -404,6 +397,26 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         customerOrder.setCustomerOrderStatus(customerOrderStatus);
         customerOrder.setLastStatusUpdate(LocalDateTime.now());
         return this.addOrUpdateCustomerOrder(customerOrder, false);
+    }
+
+    private void resetDeboursManuelAmoung(CustomerOrder customerOrder) {
+        if (customerOrder.getAssoAffaireOrders() != null)
+            for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders()) {
+                indexEntityService.indexEntity(assoAffaireOrder, assoAffaireOrder.getId());
+                if (assoAffaireOrder.getProvisions() != null)
+                    for (Provision provision : assoAffaireOrder.getProvisions())
+                        if (provision.getInvoiceItems() != null)
+                            for (InvoiceItem invoiceItem : provision.getInvoiceItems())
+                                if (invoiceItem.getBillingItem().getBillingType().getIsDebour()) {
+                                    invoiceItem.setPreTaxPrice(0f);
+                                    invoiceItem.setDiscountAmount(0f);
+                                    invoiceItem.setIsOverridePrice(false);
+                                    invoiceItem.setVatPrice(null);
+                                    invoiceItem.setVat(null);
+                                    invoiceItem.setIsGifted(false);
+                                    invoiceItemService.addOrUpdateInvoiceItem(invoiceItem);
+                                }
+            }
     }
 
     /**
@@ -831,6 +844,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     }
 
     @Override
+    @Transactional
     public void sendRemindersForCustomerOrderDeposit() throws OsirisException, OsirisClientMessageException {
         List<CustomerOrder> customerOrders = customerOrderRepository.findCustomerOrderForReminder(
                 customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.WAITING_DEPOSIT));

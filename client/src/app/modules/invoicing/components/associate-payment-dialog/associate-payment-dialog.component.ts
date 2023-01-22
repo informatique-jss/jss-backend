@@ -250,7 +250,11 @@ export class AssociatePaymentDialogComponent implements OnInit {
   }
 
   getCustomerOrderNameForITiers = getCustomerOrderNameForITiers;
+
   getRefundCustomerOrder(): ITiers | null {
+    if (!this.invoice && !this.customerOrder)
+      return null;
+
     let customerOrder: ITiers | undefined = undefined;
     if (this.associationSummaryTable && this.associationSummaryTable.length > 0) {
       if (this.associationSummaryTable[0].invoice) {
@@ -286,14 +290,14 @@ export class AssociatePaymentDialogComponent implements OnInit {
           affaires.push(...asso.customerOrder.assoAffaireOrders.filter(asso => asso.affaire && asso.affaire.paymentIban && asso.affaire.paymentIban != "").map(asso => asso.affaire));
         }
       }
-    } else if (this.invoice!.customerOrder) {
+    } else if (this.invoice && this.invoice.customerOrder) {
       affaires.push(...this.invoice!.customerOrder.assoAffaireOrders.filter(asso => asso.affaire && asso.affaire.paymentIban && asso.affaire.paymentIban != "").map(asso => asso.affaire));
     }
     return affaires;
   }
 
   amountToPayCompletely() {
-    let amount = 0;
+    let amount = -(this.payment ? this.payment?.paymentAmount : 0);
     if (this.invoice && this.payment) {
       amount = Math.round(this.getAmountRemaining(this.invoice) * 100) / 100 - Math.round(this.payment.paymentAmount * 100) / 100;
     }

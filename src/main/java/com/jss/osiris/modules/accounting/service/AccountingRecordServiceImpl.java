@@ -289,56 +289,6 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   }
 
   @Override
-  public void generateAccountingRecordsForDebourPayment(Debour debour) throws OsirisException {
-    AccountingJournal pushasingJournal = constantService.getAccountingJournalPurchases();
-
-    if (debour == null)
-      throw new OsirisException(null, "No debour provided");
-
-    String labelPrefix = "Débour n°" + debour.getId();
-
-    AccountingAccount accountingAccountProvider = debour.getCompetentAuthority().getAccountingAccountProvider();
-
-    if (debour.getCompetentAuthority().getAccountingAccountProvider() == null)
-      throw new OsirisException(null,
-          "No accounting account provider for competent authority " + debour.getCompetentAuthority().getLabel());
-
-    // One write on provider account
-    generateNewAccountingRecord(LocalDateTime.now(), debour.getId(), null, null,
-        labelPrefix, debour.getDebourAmount(), null, accountingAccountProvider, null, null, null, pushasingJournal,
-        null, null, debour);
-
-    // One write on product and VAT account for each debour item
-    AccountingAccount chargeAccountingAccount = debour.getBillingType().getAccountingAccountCharge();
-
-    if (chargeAccountingAccount == null)
-      throw new OsirisException(null, "No charge accounting account defined in billing type n°"
-          + debour.getBillingType().getId());
-
-    Float preTaxPrice = 0f;
-    if (debour.getBillingType().getIsNonTaxable())
-      preTaxPrice = Math.round(debour.getDebourAmount() * 100f) / 100f;
-    else {
-      preTaxPrice = debour.getDebourAmount() / ((100 + constantService.getVatDeductible().getRate()) / 100f);
-    }
-
-    generateNewAccountingRecord(LocalDateTime.now(), debour.getId(), null, null, labelPrefix + " - charge "
-        + debour.getBillingType().getLabel(), null, preTaxPrice, chargeAccountingAccount,
-        null, null, null, pushasingJournal, null, null, debour);
-
-    if (!debour.getBillingType().getIsNonTaxable()) {
-      if (constantService.getVatDeductible().getAccountingAccount() == null)
-        throw new OsirisException(null,
-            "No accounting account for VAT " + constantService.getVatDeductible().getLabel());
-
-      generateNewAccountingRecord(LocalDateTime.now(), debour.getId(), null, null,
-          labelPrefix + " - TVA pour la charge " + debour.getBillingType().getLabel(),
-          null, debour.getDebourAmount() - preTaxPrice, constantService.getVatDeductible().getAccountingAccount(),
-          null, null, null, pushasingJournal, null, null, debour);
-    }
-  }
-
-  @Override
   public void generateAccountingRecordsForSaleOnInvoicePayment(Invoice invoice, Payment payment)
       throws OsirisException {
     AccountingJournal bankJournal = constantService.getAccountingJournalBank();
@@ -603,9 +553,6 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     customerAccountingAccount = debour.getCompetentAuthority().getAccountingAccountProvider();
 
     generateNewAccountingRecord(LocalDateTime.now(), debour.getId(), null, null, "Débour n°" + debour.getId(),
-        debour.getDebourAmount(), null, constantService.getAccountingAccountBankJss(), null, null, null,
-        bankJournal, null, null, null);
-    generateNewAccountingRecord(LocalDateTime.now(), debour.getId(), null, null, "Débour n°" + debour.getId(),
         null, debour.getDebourAmount(), customerAccountingAccount, null, null, null,
         bankJournal, null, null, null);
   }
@@ -650,7 +597,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   public void checkInvoiceForLettrage(Invoice invoice) throws OsirisException {
     AccountingAccount accountingAccount;
     invoice = invoiceService.getInvoice(invoice.getId());
-    if (invoice.getProvider() != null)
+    if (invoice.getProvider() != null || invoice.getCompetentAuthority() != null)
       accountingAccount = getProviderAccountingAccountForInvoice(invoice);
     else
       accountingAccount = getCustomerAccountingAccountForInvoice(invoice);
@@ -742,6 +689,8 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     AccountingAccount accountingAccount = null;
     if (invoice.getProvider() != null)
       accountingAccount = invoice.getProvider().getAccountingAccountProvider();
+    if (invoice.getCompetentAuthority() != null)
+      accountingAccount = invoice.getCompetentAuthority().getAccountingAccountProvider();
     if (invoice.getConfrere() != null)
       accountingAccount = invoice.getConfrere().getAccountingAccountProvider();
     if (invoice.getTiers() != null)

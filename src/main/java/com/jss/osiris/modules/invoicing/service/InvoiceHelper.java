@@ -203,4 +203,36 @@ public class InvoiceHelper {
         invoice.setCommandNumber(invoiceLabelResult.getCommandNumber());
     }
 
+    public String getIbanOfOrderingCustomer(Invoice invoice) {
+        if (invoice != null) {
+            if (invoice.getTiers() != null)
+                return invoice.getTiers().getPaymentIban();
+            if (invoice.getResponsable() != null)
+                return invoice.getResponsable().getTiers().getPaymentIban();
+            if (invoice.getConfrere() != null)
+                return invoice.getConfrere().getPaymentIban();
+            if (invoice.getProvider() != null)
+                return invoice.getProvider().getIban();
+            if (invoice.getCompetentAuthority() != null)
+                return invoice.getCompetentAuthority().getIban();
+        }
+        return null;
+    }
+
+    public String getBicOfOrderingCustomer(Invoice invoice) {
+        if (invoice != null) {
+            if (invoice.getTiers() != null)
+                return invoice.getTiers().getPaymentBic();
+            if (invoice.getResponsable() != null)
+                return invoice.getResponsable().getTiers().getPaymentBic();
+            if (invoice.getConfrere() != null)
+                return invoice.getConfrere().getPaymentBic();
+            if (invoice.getProvider() != null)
+                return invoice.getProvider().getBic();
+            if (invoice.getCompetentAuthority() != null)
+                return invoice.getCompetentAuthority().getBic();
+        }
+        return null;
+    }
+
 }

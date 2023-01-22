@@ -468,6 +468,7 @@ public class MiscellaneousController {
             validationHelper.validateReferential(provider, true, "provider");
         validationHelper.validateString(provider.getLabel(), true, "Label");
         validationHelper.validateString(provider.getIban(), false, 40, "Iban");
+        validationHelper.validateString(provider.getBic(), false, 40, "Bic");
         validationHelper.validateString(provider.getJssReference(), false, 20, "JssReference");
         validationHelper.validateReferential(provider.getVatCollectionType(), true, "VatCollectionType");
         validationHelper.validateReferential(provider.getPaymentType(), false, "PaymentType");

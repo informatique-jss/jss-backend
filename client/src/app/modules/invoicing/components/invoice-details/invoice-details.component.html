@@ -13,6 +13,12 @@
             (auxclick)="openRoute($event,'/order/'+invoice.customerOrder.id)">visibility
           </mat-icon>
         </p>
+        <p *ngIf="invoice.customerOrderForInboundInvoice">Commande n°{{invoice.customerOrderForInboundInvoice.id}}
+          <mat-icon matTooltip="Voir la commande" color="accent" class="pointer"
+            (click)="openRoute($event,'/order/'+invoice.customerOrderForInboundInvoice.id)"
+            (auxclick)="openRoute($event,'/order/'+invoice.customerOrderForInboundInvoice.id)">visibility
+          </mat-icon>
+        </p>
         <p *ngIf="invoice.attachments"> <single-attachment [entity]="invoice"
             [entityType]="INVOICE_ENTITY_TYPE.entityType" [editMode]="false"
             [attachmentTypeToDisplay]="attachmentTypeInvoice">
