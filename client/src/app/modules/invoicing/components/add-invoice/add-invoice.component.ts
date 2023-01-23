@@ -239,6 +239,9 @@ export class AddInvoiceComponent implements OnInit {
       if (billingItem.billingType && billingItem.billingType.isOverrideVat && billingItem.billingType.vat)
         invoiceItem.vat = billingItem.billingType.vat;
     if (billingItem.billingType && billingItem.billingType.isDebour)
-      invoiceItem.vat = this.contantService.getVatDeductible();
+      if (billingItem.billingType.isNonTaxable)
+        invoiceItem.vat = this.contantService.getVatZero();
+      else
+        invoiceItem.vat = this.contantService.getVatDeductible();
   }
 }

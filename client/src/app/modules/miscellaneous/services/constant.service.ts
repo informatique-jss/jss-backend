@@ -444,6 +444,10 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.vatEight;
   }
 
+  getVatZero() {
+    return this.constant.vatZero;
+  }
+
   getVatDeductible() {
     return this.constant.vatDeductible;
   }

@@ -35,6 +35,7 @@ export class InvoiceDetailsComponent implements OnInit {
   ) { }
 
   invoiceStatusSend = this.constantService.getInvoiceStatusSend();
+  invoiceStatusReceived = this.constantService.getInvoiceStatusReceived();
   attachmentTypeInvoice = this.constantService.getAttachmentTypeInvoice();
 
   ngOnInit() {

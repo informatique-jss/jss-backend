@@ -33,7 +33,7 @@ public interface PaymentRepository extends CrudRepository<Payment, Integer> {
                         + " and p.payment_date>=:startDate and p.payment_date<=:endDate "
                         + "  and (:minAmount is null or p.payment_amount>=CAST(CAST(:minAmount as text) as real) ) "
                         + "  and (:maxAmount is null or p.payment_amount<=CAST(CAST(:maxAmount as text) as real) )"
-                        + " and (:label is null or  upper(p.label)  like '%' || upper(CAST(:label as text))  || '%' )")
+                        + " and (:label is null or CAST(p.id as text) = upper(CAST(:label as text)) or  upper(p.label)  like '%' || trim(upper(CAST(:label as text)))  || '%' )")
         List<PaymentSearchResult> findPayments(@Param("paymentWays") List<Integer> paymentWays,
                         @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                         @Param("minAmount") Float minAmount, @Param("maxAmount") Float maxAmount,

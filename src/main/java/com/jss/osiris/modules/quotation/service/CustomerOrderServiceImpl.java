@@ -334,7 +334,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
         // Target : BEING PROCESSED => notify customer
         if (targetStatusCode.equals(CustomerOrderStatus.BEING_PROCESSED)) {
-            resetDeboursManuelAmoung(customerOrder);
+            resetDeboursManuelAmount(customerOrder);
             // Confirm deposit taken into account or customer order starting
             if (!isFromUser
                     && customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.WAITING_DEPOSIT)) {
@@ -399,7 +399,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         return this.addOrUpdateCustomerOrder(customerOrder, false);
     }
 
-    private void resetDeboursManuelAmoung(CustomerOrder customerOrder) {
+    private void resetDeboursManuelAmount(CustomerOrder customerOrder) {
         if (customerOrder.getAssoAffaireOrders() != null)
             for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders()) {
                 indexEntityService.indexEntity(assoAffaireOrder, assoAffaireOrder.getId());

@@ -169,7 +169,11 @@ export class AssociatePaymentDialogComponent implements OnInit {
             this.appService.displaySnackBar("Cette facture est déjà associée à ce paiement", true, 15);
             return;
           }
-      if (invoice.invoiceStatus.id != this.invoiceStatusSend.id) {
+      if (this.isPaymentWayInbound(this.payment) && invoice.invoiceStatus.id != this.invoiceStatusSend.id) {
+        this.appService.displaySnackBar("Veuillez choisir une facture au statut " + this.invoiceStatusSend.label, true, 15);
+        return;
+      }
+      if (!this.isPaymentWayInbound(this.payment) && invoice.invoiceStatus.id != this.invoiceStatusReceived.id) {
         this.appService.displaySnackBar("Veuillez choisir une facture au statut " + this.invoiceStatusSend.label, true, 15);
         return;
       }
@@ -309,34 +313,37 @@ export class AssociatePaymentDialogComponent implements OnInit {
   }
 
   amountRemaining(): number {
+    let total = 0;
     if (this.payment) {
       let amountRemaining = this.payment.paymentAmount;
       if (this.associationSummaryTable)
         for (let asso of this.associationSummaryTable)
           amountRemaining -= this.getAmountPayed(asso);
-      return Math.round(amountRemaining * 100) / 100;
+      total = Math.round(amountRemaining * 100) / 100;
     }
-    return 0;
+    return total;
   }
 
   getInitialAmount(element: any): number {
+    let total = 0;
     if (element) {
       if (element.invoice)
-        return Math.round(element.invoice.totalPrice * 100) / 100;
+        total = Math.round(element.invoice.totalPrice * 100) / 100;
       if (element.customerOrder)
-        return QuotationComponent.computePriceTotal(element.customerOrder);
+        total = QuotationComponent.computePriceTotal(element.customerOrder);
     }
-    return 0;
+    return total;
   }
 
   getInitialPayedAmount(element: any): number {
+    let total = 0;
     if (element) {
       if (element.invoice)
-        return getAmountPayed(element.invoice);
+        total = getAmountPayed(element.invoice);
       if (element.customerOrder)
-        return QuotationComponent.computePayed(element.customerOrder);
+        total = QuotationComponent.computePayed(element.customerOrder);
     }
-    return 0;
+    return total;
   }
 
   getAmountPayed(element: any): number {
@@ -344,8 +351,9 @@ export class AssociatePaymentDialogComponent implements OnInit {
   }
 
   getLeftMaxAmountPayed(element: any): number {
+    let amountRemaining = 0;
     if (this.payment) {
-      let amountRemaining = this.payment.paymentAmount;
+      amountRemaining = this.payment.paymentAmount;
       if (element && this.associationSummaryTable)
         for (let asso of this.associationSummaryTable)
           if (asso.invoice && (!element.invoice || element.invoice.id != asso.invoice.id) || asso.customerOrder && (!element.customerOrder || asso.customerOrder.id != element.customerOrder.id)) {
@@ -355,7 +363,7 @@ export class AssociatePaymentDialogComponent implements OnInit {
           }
       return amountRemaining;
     }
-    return 0;
+    return amountRemaining;
   }
 
   getFinalPayed(element: any): number {
