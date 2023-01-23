@@ -860,6 +860,12 @@ public class QuotationController {
     validationHelper.validateString(confrere.getPaymentIban(), false, 40, "PaymentIBAN");
     validationHelper.validateString(confrere.getPaymentBic(), false, 40, "PaymentBic");
 
+    if (confrere.getPaymentType() != null
+        && confrere.getPaymentType().getId().equals(constantService.getPaymentTypePrelevement().getId())) {
+      validationHelper.validateString(confrere.getSepaMandateReference(), true, 250, "SepaMandateReference");
+      validationHelper.validateDate(confrere.getSepaMandateSignatureDate(), true, "SepaMandateSignatureDate");
+    }
+
     if (confrere.getSpecialOffers() != null) {
       for (SpecialOffer specialOffer : confrere.getSpecialOffers()) {
         validationHelper.validateReferential(specialOffer, false, "specialOffer");

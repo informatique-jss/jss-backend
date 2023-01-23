@@ -28,6 +28,8 @@ import com.jss.osiris.libs.mail.MailComputeHelper;
 import com.jss.osiris.modules.invoicing.model.BankTransfertSearch;
 import com.jss.osiris.modules.invoicing.model.BankTransfertSearchResult;
 import com.jss.osiris.modules.invoicing.model.Deposit;
+import com.jss.osiris.modules.invoicing.model.DirectDebitTransfertSearch;
+import com.jss.osiris.modules.invoicing.model.DirectDebitTransfertSearchResult;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.invoicing.model.InvoiceLabelResult;
@@ -54,6 +56,7 @@ import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.service.BankTransfertService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
+import com.jss.osiris.modules.quotation.service.DirectDebitTransfertService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.tiers.model.BillingLabelType;
 import com.jss.osiris.modules.tiers.model.ITiers;
@@ -104,6 +107,9 @@ public class InvoicingController {
 
     @Autowired
     BankTransfertService bankTransfertService;
+
+    @Autowired
+    DirectDebitTransfertService directDebitTransfertService;
 
     @GetMapping(inputEntryPoint + "/payment-ways")
     public ResponseEntity<List<PaymentWay>> getPaymentWays() {
@@ -255,6 +261,53 @@ public class InvoicingController {
             headers = new HttpHeaders();
             headers.add("filename",
                     "SPPS - Virements - "
+                            + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd HHmm")) + ".xml");
+            headers.setAccessControlExposeHeaders(Arrays.asList("filename"));
+            headers.setContentLength(data.length);
+            headers.set("content-type", "application/xml");
+
+            refunds.delete();
+
+        }
+        return new ResponseEntity<byte[]>(data, headers, HttpStatus.OK);
+    }
+
+    @PostMapping(inputEntryPoint + "/direct/transfert/search")
+    public ResponseEntity<List<DirectDebitTransfertSearchResult>> getTransferts(
+            @RequestBody DirectDebitTransfertSearch transfertSearch)
+            throws OsirisValidationException {
+        if (transfertSearch == null)
+            throw new OsirisValidationException("transfertSearch");
+
+        return new ResponseEntity<List<DirectDebitTransfertSearchResult>>(
+                directDebitTransfertService.searchDirectDebitTransfert(transfertSearch),
+                HttpStatus.OK);
+    }
+
+    @PostMapping(inputEntryPoint + "/direct/transfert/export")
+    public ResponseEntity<byte[]> downloadTransferts(@RequestBody DirectDebitTransfertSearch transfertSearch)
+            throws OsirisValidationException, OsirisException {
+        byte[] data = null;
+        HttpHeaders headers = null;
+
+        if (transfertSearch == null)
+            throw new OsirisValidationException("refundSearch");
+
+        if (transfertSearch.getStartDate() == null || transfertSearch.getEndDate() == null)
+            throw new OsirisValidationException("StartDate or EndDate");
+
+        File refunds = directDebitTransfertService.getDirectDebitTransfertExport(transfertSearch);
+
+        if (refunds != null) {
+            try {
+                data = Files.readAllBytes(refunds.toPath());
+            } catch (IOException e) {
+                throw new OsirisException(e, "Unable to read file " + refunds.toPath());
+            }
+
+            headers = new HttpHeaders();
+            headers.add("filename",
+                    "SPPS - Prélèvements - "
                             + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd HHmm")) + ".xml");
             headers.setAccessControlExposeHeaders(Arrays.asList("filename"));
             headers.setContentLength(data.length);

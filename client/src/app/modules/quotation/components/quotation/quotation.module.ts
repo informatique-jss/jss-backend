@@ -23,6 +23,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule, Routes } from '@angular/router';
 import { QuillModule } from 'ngx-quill';
+import { DirectDebitTransfertListComponent } from 'src/app/modules/invoicing/components/direct-debit-transfert-list/direct-debit-transfert-list.component';
 import { MiscellaneousModule } from 'src/app/modules/miscellaneous/components/miscellaneous/miscellaneous.module';
 import { AddAffaireDialogComponent } from '../add-affaire-dialog/add-affaire-dialog.component';
 import { AddAffaireComponent } from '../add-affaire/add-affaire.component';
@@ -153,6 +154,7 @@ const routes: Routes = [
     PrintLabelDialogComponent,
     AddDebourComponent,
     SelectDeboursDialogComponent,
+    DirectDebitTransfertListComponent,
     // Guichet unique
     ContentComponent,
     NatureCreationComponent,
@@ -167,6 +169,7 @@ const routes: Routes = [
     OrderingListComponent,
     PaymentListComponent,
     AnnouncementListComponent,
+    DirectDebitTransfertListComponent,
   ],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'fr-FR' }

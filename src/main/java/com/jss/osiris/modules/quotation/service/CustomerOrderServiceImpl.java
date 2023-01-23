@@ -40,6 +40,7 @@ import com.jss.osiris.modules.invoicing.service.InvoiceItemService;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.invoicing.service.PaymentService;
 import com.jss.osiris.modules.miscellaneous.model.Document;
+import com.jss.osiris.modules.miscellaneous.model.PaymentType;
 import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.DocumentService;
@@ -145,6 +146,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Autowired
     MailComputeHelper mailComputeHelper;
+
+    @Autowired
+    DirectDebitTransfertService debitTransfertService;
 
     @Value("${payment.cb.redirect.deposit.entry.point}")
     private String paymentCbRedirectDeposit;
@@ -362,6 +366,21 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     getInvoice(customerOrder));
             // If deposit already set, associate them to invoice
             moveCustomerOrderDepositToInvoiceDeposit(customerOrder, invoice);
+
+            // If customer order is on direct debit, generate it
+            ITiers tiers = invoiceHelper.getCustomerOrder(invoice);
+            PaymentType paymentType = null;
+            if (tiers instanceof Responsable)
+                paymentType = ((Responsable) tiers).getTiers().getPaymentType();
+            if (tiers instanceof Tiers)
+                paymentType = ((Tiers) tiers).getPaymentType();
+            if (tiers instanceof Confrere)
+                paymentType = ((Confrere) tiers).getPaymentType();
+
+            if (paymentType != null
+                    && paymentType.getId().equals(constantService.getPaymentTypePrelevement().getId())) {
+                debitTransfertService.generateDirectDebitTransfertForOutboundInvoice(invoice);
+            }
 
             // Check invoice payed
             Float remainingToPayForCurrentInvoice = invoiceService.getRemainingAmountToPayForInvoice(invoice);
