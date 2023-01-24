@@ -22,6 +22,8 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.search.service.IndexEntityService;
+import com.jss.osiris.libs.transfer.CdtrSchmeIdBean;
+import com.jss.osiris.libs.transfer.CdtrSchmeIdBeanIdBean;
 import com.jss.osiris.libs.transfer.CstmrCdtTrfInitnBean;
 import com.jss.osiris.libs.transfer.CtgyPurpBean;
 import com.jss.osiris.libs.transfer.DbtrAcctBean;
@@ -39,7 +41,10 @@ import com.jss.osiris.libs.transfer.MndtRltdInfBean;
 import com.jss.osiris.libs.transfer.PmtIdBean;
 import com.jss.osiris.libs.transfer.PmtInfBean;
 import com.jss.osiris.libs.transfer.PmtTpInfBean;
+import com.jss.osiris.libs.transfer.PrvtIdBean;
+import com.jss.osiris.libs.transfer.PrvtOtherBean;
 import com.jss.osiris.libs.transfer.RmtInfBean;
+import com.jss.osiris.libs.transfer.SchmeNmBean;
 import com.jss.osiris.libs.transfer.SvcLvlBean;
 import com.jss.osiris.modules.invoicing.model.DirectDebitTransfertSearch;
 import com.jss.osiris.modules.invoicing.model.DirectDebitTransfertSearchResult;
@@ -69,6 +74,9 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
 
     @Value("${jss.bic}")
     private String bicJss;
+
+    @Value("${jss.sepa.identification}")
+    private String jssSepaIdentification;
 
     @Override
     public List<DirectDebitTransfert> getDirectDebitTransferts() {
@@ -233,6 +241,24 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
             bic.setFinInstnIdBean(financialInstitution);
 
             body.setChrgBr("SLEV");
+
+            CdtrSchmeIdBean cdtrSchmeIdBean = new CdtrSchmeIdBean();
+            body.setCdtrSchmeIdBean(cdtrSchmeIdBean);
+
+            CdtrSchmeIdBeanIdBean cdtrSchmeIdBeanIdBean = new CdtrSchmeIdBeanIdBean();
+            cdtrSchmeIdBean.setIdBean(cdtrSchmeIdBeanIdBean);
+
+            PrvtIdBean prvtIdBean = new PrvtIdBean();
+            cdtrSchmeIdBeanIdBean.setPrvtIdBean(prvtIdBean);
+
+            PrvtOtherBean prvtOtherBean = new PrvtOtherBean();
+            prvtIdBean.setPrvtOtherBean(prvtOtherBean);
+
+            SchmeNmBean schmeNmBean = new SchmeNmBean();
+            prvtOtherBean.setSchmeNmBean(schmeNmBean);
+
+            schmeNmBean.setPrtry("SEPA");
+            prvtOtherBean.setId(jssSepaIdentification);
 
             body.setDrctDbtTxInfBeanList(new ArrayList<DrctDbtTxInfBean>());
 

@@ -206,7 +206,7 @@ public class RefundServiceImpl implements RefundService {
 
             InitgPtyBean emiterDetails = new InitgPtyBean();
             header.setInitgPtyBean(emiterDetails);
-            emiterDetails.setNm("SPPS - JSS COMPTE 00011");
+            emiterDetails.setNm("SPPS - JSS REMBOURSEMENT");
             PstlAdrBean address = new PstlAdrBean();
             address.setCtry("FR");
             emiterDetails.setPstlAdrBean(address);
