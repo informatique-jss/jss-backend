@@ -50,6 +50,8 @@
             <td>&#160;</td>
             <td style="text-align: center;">
                 <p>Facture n°<span th:text="${invoice.id}"></span></p>
+                <p>Commande n°<span th:text="${customerOrder.id}"></span></p>
+                <p th:if="${quotation!=null}">Devis n°<span th:text="${quotation.id}"></span></p>
                 <p>Paris le <span th:text="${invoiceCreatedDate}"></span></p>
                 <p th:if="${invoice.isCommandNumberMandatory}">Commande externe n°<span
                         th:text="${invoice.commandNumber}"></span></p>
@@ -96,7 +98,7 @@
                             €
                         </td>
                     </tr>
-                    <tr th:if="${invoiceItem.discountAmount!=null}">
+                    <tr th:if="${invoiceItem.discountAmount!=null && invoiceItem.discountAmount>0}">
                         <td colspan="4">
                             <span>Remise</span>
                         </td>
@@ -191,12 +193,21 @@
             </td>
         </tr>
 
-        <tr>
+        <tr th:if="${remainingToPay>0}">
             <td colspan="4" style="text-align: right">
                 Restant dû
             </td>
             <td style="text-align: right;white-space: nowrap;"><span
                     th:text="${#numbers.formatDecimal(remainingToPay,1,2)}"></span>
+                €
+            </td>
+        </tr>
+        <tr th:if="${remainingToPay<0}">
+            <td colspan="4" style="text-align: right">
+                Solde en votre faveur
+            </td>
+            <td style="text-align: right;white-space: nowrap;"><span
+                    th:text="${#numbers.formatDecimal(-remainingToPay,1,2)}"></span>
                 €
             </td>
         </tr>

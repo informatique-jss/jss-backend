@@ -48,6 +48,9 @@ public class PmtInfBean {
 	@JacksonXmlProperty(localName = "CdtrAgt")
 	DbtrAgtBean cdtrAgtBean;
 
+	@JacksonXmlProperty(localName = "CdtrSchmeId")
+	CdtrSchmeIdBean cdtrSchmeIdBean;
+
 	@JacksonXmlProperty(localName = "CdtTrfTxInf")
 	List<CdtTrfTxInfBean> cdtTrfTxInfBeanList;
 
@@ -201,6 +204,14 @@ public class PmtInfBean {
 
 	public void setDrctDbtTxInfBeanList(List<DrctDbtTxInfBean> drctDbtTxInfBeanList) {
 		this.drctDbtTxInfBeanList = drctDbtTxInfBeanList;
+	}
+
+	public CdtrSchmeIdBean getCdtrSchmeIdBean() {
+		return cdtrSchmeIdBean;
+	}
+
+	public void setCdtrSchmeIdBean(CdtrSchmeIdBean cdtrSchmeIdBean) {
+		this.cdtrSchmeIdBean = cdtrSchmeIdBean;
 	}
 
 }
