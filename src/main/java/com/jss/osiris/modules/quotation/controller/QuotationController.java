@@ -1506,7 +1506,9 @@ public class QuotationController {
     // Announcement
     if (provision.getAnnouncement() != null) {
       Announcement announcement = provision.getAnnouncement();
-      Announcement currentAnnouncement = announcementService.getAnnouncement(announcement.getId());
+      Announcement currentAnnouncement = null;
+      if (announcement.getId() != null)
+        currentAnnouncement = announcementService.getAnnouncement(announcement.getId());
 
       LocalDate publicationDateVerification = LocalDate.now().minusDays(1);
       // Do not verify date when quotation has started
@@ -1520,7 +1522,8 @@ public class QuotationController {
           if (announcement.getAnnouncementStatus().getCode().equals(AnnouncementStatus.ANNOUNCEMENT_PUBLISHED)
               || announcement.getAnnouncementStatus().getCode().equals(AnnouncementStatus.ANNOUNCEMENT_DONE)) {
             publicationDateVerification = null;
-            announcement.setPublicationDate(currentAnnouncement.getPublicationDate());
+            if (currentAnnouncement != null)
+              announcement.setPublicationDate(currentAnnouncement.getPublicationDate());
           }
         }
       }
@@ -1557,7 +1560,7 @@ public class QuotationController {
       }
 
       // If published to Actu Legale, to late ...
-      if (announcement.getActuLegaleId() != null) {
+      if (currentAnnouncement != null && announcement.getActuLegaleId() != null) {
         // keep current notice
         announcement.setNotice(currentAnnouncement.getNotice());
         announcement.setNoticeHeader(currentAnnouncement.getNoticeHeader());
