@@ -1506,6 +1506,7 @@ public class QuotationController {
     // Announcement
     if (provision.getAnnouncement() != null) {
       Announcement announcement = provision.getAnnouncement();
+      Announcement currentAnnouncement = announcementService.getAnnouncement(announcement.getId());
 
       LocalDate publicationDateVerification = LocalDate.now().minusDays(1);
       // Do not verify date when quotation has started
@@ -1514,6 +1515,14 @@ public class QuotationController {
         if (status.getCode().equals(CustomerOrderStatus.OPEN)
             || status.getCode().equals(CustomerOrderStatus.WAITING_DEPOSIT))
           publicationDateVerification = null;
+        else {
+          // If published : no verification but you can't modify the date
+          if (announcement.getAnnouncementStatus().getCode().equals(AnnouncementStatus.ANNOUNCEMENT_PUBLISHED)
+              || announcement.getAnnouncementStatus().getCode().equals(AnnouncementStatus.ANNOUNCEMENT_DONE)) {
+            publicationDateVerification = null;
+            announcement.setPublicationDate(currentAnnouncement.getPublicationDate());
+          }
+        }
       }
 
       validationHelper.validateDateMin(announcement.getPublicationDate(), true, publicationDateVerification,
@@ -1550,7 +1559,6 @@ public class QuotationController {
       // If published to Actu Legale, to late ...
       if (announcement.getActuLegaleId() != null) {
         // keep current notice
-        Announcement currentAnnouncement = announcementService.getAnnouncement(announcement.getId());
         announcement.setNotice(currentAnnouncement.getNotice());
         announcement.setNoticeHeader(currentAnnouncement.getNoticeHeader());
         announcement.setPublicationDate(currentAnnouncement.getPublicationDate());
