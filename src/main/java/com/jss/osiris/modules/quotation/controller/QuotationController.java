@@ -1508,12 +1508,12 @@ public class QuotationController {
           publicationDateVerification = null;
         else {
           // If published : no verification but you can't modify the date
-          if (announcement.getAnnouncementStatus().getCode().equals(AnnouncementStatus.ANNOUNCEMENT_PUBLISHED)
-              || announcement.getAnnouncementStatus().getCode().equals(AnnouncementStatus.ANNOUNCEMENT_DONE)) {
-            publicationDateVerification = null;
-            if (currentAnnouncement != null)
+          if (currentAnnouncement != null)
+            if (announcement.getAnnouncementStatus().getCode().equals(AnnouncementStatus.ANNOUNCEMENT_PUBLISHED)
+                || announcement.getAnnouncementStatus().getCode().equals(AnnouncementStatus.ANNOUNCEMENT_DONE)) {
+              publicationDateVerification = null;
               announcement.setPublicationDate(currentAnnouncement.getPublicationDate());
-          }
+            }
         }
       }
 
