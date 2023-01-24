@@ -507,8 +507,9 @@ public class PaymentServiceImpl implements PaymentService {
                 remainingMoney = Math.round(remainingMoney * 100f) / 100f;
                 remainingToPay -= remainingToPayForCurrentInvoice;
                 if (isPayed) {
-                    correspondingInvoices.get(i).setInvoiceStatus(payedStatus);
-                    invoiceService.addOrUpdateInvoice(correspondingInvoices.get(i));
+                    Invoice updateInvoice = invoiceService.getInvoice(correspondingInvoices.get(i).getId());
+                    updateInvoice.setInvoiceStatus(payedStatus);
+                    invoiceService.addOrUpdateInvoice(updateInvoice);
                 } else {
                     break;
                 }
@@ -575,8 +576,9 @@ public class PaymentServiceImpl implements PaymentService {
             remainingToPay -= remainingToPayForCurrentInvoice;
 
             if (isPayed) {
-                correspondingInvoice.setInvoiceStatus(constantService.getInvoiceStatusPayed());
-                invoiceService.addOrUpdateInvoice(correspondingInvoice);
+                Invoice updateInvoice = invoiceService.getInvoice(correspondingInvoice.getId());
+                updateInvoice.setInvoiceStatus(constantService.getInvoiceStatusPayed());
+                invoiceService.addOrUpdateInvoice(updateInvoice);
             }
         }
         return remainingMoney;

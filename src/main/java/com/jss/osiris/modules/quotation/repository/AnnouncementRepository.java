@@ -25,11 +25,14 @@ public interface AnnouncementRepository extends CrudRepository<Announcement, Int
                         " from announcement a " +
                         " join provision p on p.id_announcement = a.id " +
                         " join asso_affaire_order asso_affaire on asso_affaire.id = p.id_asso_affaire_order " +
+                        " join customer_order order on order.id = asso.id_customer_order " +
+                        " join customer_order_status order_status on order_status.id = order.id_customer_order_status "
+                        +
                         " join affaire on affaire.id = asso_affaire.id_affaire " +
                         " join department d on d.id = a.id_department " +
                         " left join asso_announcement_notice_type asso on a.id = asso.id_announcement " +
                         " left join  notice_type   on notice_type.id = asso.id_notice_type " +
-                        " where ((:isStricNameSearch = true and (:affaireName='' or upper(coalesce(affaire.denomination, affaire.firstname || ' ' || affaire.lastname))=upper(:affaireName ) ) )"
+                        " where order_status.code!='ABANDONED' and ((:isStricNameSearch = true and (:affaireName='' or upper(coalesce(affaire.denomination, affaire.firstname || ' ' || affaire.lastname))=upper(:affaireName ) ) )"
                         +
                         " or (:isStricNameSearch = false and (:affaireName='' or upper(coalesce(affaire.denomination, affaire.firstname || ' ' || affaire.lastname))  like '%' || upper(:affaireName)  || '%'  ))) "
                         +

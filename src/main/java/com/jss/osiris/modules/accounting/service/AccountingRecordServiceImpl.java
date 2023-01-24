@@ -198,7 +198,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
       balance -= invoiceItem.getPreTaxPrice()
           - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount() : 0f);
 
-      if (invoiceItem.getVat() != null) {
+      if (invoiceItem.getVat() != null && invoiceItem.getVatPrice() != null && invoiceItem.getVatPrice() > 0) {
         generateNewAccountingRecord(LocalDateTime.now(), invoice.getId(), invoice.getManualAccountingDocumentNumber(),
             invoice.getManualAccountingDocumentDate(),
             labelPrefix + " - TVA pour le produit "
@@ -271,12 +271,13 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
         if (invoiceItem.getVat().getAccountingAccount() == null)
           throw new OsirisException(null, "No accounting account for VAT " + invoiceItem.getVat().getLabel());
 
-        generateNewAccountingRecord(LocalDateTime.now(), invoice.getId(), invoice.getManualAccountingDocumentNumber(),
-            invoice.getManualAccountingDocumentDate(),
-            labelPrefix + " - TVA pour la charge "
-                + invoiceItem.getBillingItem().getBillingType().getLabel(),
-            null, invoiceItem.getVatPrice(), invoiceItem.getVat().getAccountingAccount(),
-            invoiceItem, invoice, null, pushasingJournal, null, null, null);
+        if (invoiceItem.getVatPrice() != null && invoiceItem.getVatPrice() > 0)
+          generateNewAccountingRecord(LocalDateTime.now(), invoice.getId(), invoice.getManualAccountingDocumentNumber(),
+              invoice.getManualAccountingDocumentDate(),
+              labelPrefix + " - TVA pour la charge "
+                  + invoiceItem.getBillingItem().getBillingType().getLabel(),
+              null, invoiceItem.getVatPrice(), invoiceItem.getVat().getAccountingAccount(),
+              invoiceItem, invoice, null, pushasingJournal, null, null, null);
 
         balance -= invoiceItem.getVatPrice();
       }
