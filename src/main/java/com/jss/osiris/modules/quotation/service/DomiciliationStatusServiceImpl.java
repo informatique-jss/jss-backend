@@ -55,11 +55,12 @@ public class DomiciliationStatusServiceImpl implements DomiciliationStatusServic
 
     @Override
     public void updateStatusReferential() throws OsirisException {
-        updateStatus(DomiciliationStatus.DOMICILIATION_NEW, "Nouveau", "auto_awesome", true, false);
-        updateStatus(DomiciliationStatus.DOMICILIATION_IN_PROGRESS, "En cours", "autorenew", false, false);
+        Integer priority = 1;
+        updateStatus(DomiciliationStatus.DOMICILIATION_NEW, "Nouveau", "auto_awesome", true, false, priority++);
+        updateStatus(DomiciliationStatus.DOMICILIATION_IN_PROGRESS, "En cours", "autorenew", false, false, priority++);
         updateStatus(DomiciliationStatus.DOMICILIATION_WAITING_FOR_DOCUMENTS, "En attente de documents",
-                "hourglass_top", false, false);
-        updateStatus(DomiciliationStatus.DOMICILIATION_DONE, "Terminé", "check_small", false, true);
+                "hourglass_top", false, false, priority++);
+        updateStatus(DomiciliationStatus.DOMICILIATION_DONE, "Terminé", "check_small", false, true, priority++);
 
         setSuccessor(DomiciliationStatus.DOMICILIATION_NEW, DomiciliationStatus.DOMICILIATION_IN_PROGRESS);
         setSuccessor(DomiciliationStatus.DOMICILIATION_IN_PROGRESS,
@@ -72,7 +73,7 @@ public class DomiciliationStatusServiceImpl implements DomiciliationStatusServic
         setPredecessor(DomiciliationStatus.DOMICILIATION_DONE, DomiciliationStatus.DOMICILIATION_IN_PROGRESS);
     }
 
-    protected void updateStatus(String code, String label, String icon, boolean isOpenState, boolean isCloseState) {
+    protected void updateStatus(String code, String label, String icon, boolean isOpenState, boolean isCloseState, Integer priority) {
         DomiciliationStatus domiciliationStatus = getDomiciliationStatusByCode(code);
         if (getDomiciliationStatusByCode(code) == null)
             domiciliationStatus = new DomiciliationStatus();
@@ -83,6 +84,8 @@ public class DomiciliationStatusServiceImpl implements DomiciliationStatusServic
         domiciliationStatus.setIcon(icon);
         domiciliationStatus.setIsCloseState(isCloseState);
         domiciliationStatus.setIsOpenState(isOpenState);
+        domiciliationStatus.setAggregateLabel(label);
+        domiciliationStatus.setAggregatePriority(priority);
         addOrUpdateDomiciliationStatus(domiciliationStatus);
     }
 

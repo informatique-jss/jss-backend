@@ -1,13 +1,16 @@
 import { CdkDragEnter, CdkDropList, DragRef, moveItemInArray } from '@angular/cdk/drag-drop';
+import { HttpParams } from '@angular/common/http';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { combineLatest, map } from 'rxjs';
 import { CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_TO_BILLED, QUOTATION_STATUS_OPEN, QUOTATION_STATUS_REFUSED_BY_CUSTOMER, QUOTATION_STATUS_TO_VERIFY, SIMPLE_PROVISION_WAITING_DOCUMENT, SIMPLE_PROVISION_WAITING_DOCUMENT_AUTHORITY } from 'src/app/libs/Constants';
 import { AppService } from 'src/app/services/app.service';
+import { AppRestService } from 'src/app/services/appRest.service';
 import { HabilitationsService } from '../../services/habilitations.service';
 import { UserPreferenceService } from '../../services/user.preference.service';
 import { InvoiceSearch } from '../invoicing/model/InvoiceSearch';
 import { PaymentSearch } from '../invoicing/model/PaymentSearch';
 import { RefundSearch } from '../invoicing/model/RefundSearch';
+import { IProvisionStatus } from '../miscellaneous/model/IProvisionStatus';
 import { IWorkflowElement } from '../miscellaneous/model/IWorkflowElement';
 import { ConstantService } from '../miscellaneous/services/constant.service';
 import { Employee } from '../profile/model/Employee';
@@ -19,6 +22,7 @@ import { CustomerOrderStatus } from '../quotation/model/CustomerOrderStatus';
 import { DomiciliationStatus } from '../quotation/model/DomiciliationStatus';
 import { FormaliteStatus } from '../quotation/model/FormaliteStatus';
 import { OrderingSearch } from '../quotation/model/OrderingSearch';
+import { ProvisionBoardResult } from '../quotation/model/ProvisionBoardResult';
 import { QuotationSearch } from '../quotation/model/QuotationSearch';
 import { QuotationStatus } from '../quotation/model/QuotationStatus';
 import { SimpleProvisionStatus } from '../quotation/model/SimpleProvisonStatus';
@@ -27,6 +31,8 @@ import { BodaccStatusService } from '../quotation/services/bodacc.status.service
 import { CustomerOrderStatusService } from '../quotation/services/customer.order.status.service';
 import { DomiciliationStatusService } from '../quotation/services/domiciliation-status.service';
 import { FormaliteStatusService } from '../quotation/services/formalite.status.service';
+import { ProvisionBoardResultService } from '../quotation/services/provision.board.result.service';
+import { ProvisionBoardStatusService } from '../quotation/services/provision.board.status.service';
 import { QuotationStatusService } from '../quotation/services/quotation-status.service';
 import { SimpleProvisionStatusService } from '../quotation/services/simple.provision.status.service';
 
@@ -53,6 +59,10 @@ export class DashboardComponent implements OnInit {
 
   customerOrderStatus: CustomerOrderStatus[] = [] as Array<CustomerOrderStatus>;
   quotationStatus: QuotationStatus[] = [] as Array<QuotationStatus>;
+
+  boardAnnouncementStatus: IProvisionStatus[][] = [] as Array<Array<IProvisionStatus>>;
+  boardFormaliteStatus: IProvisionStatus[][] = [] as Array<Array<IProvisionStatus>>;
+
 
   currentEmployee: Employee | undefined;
   items: Array<string> = [];
@@ -98,10 +108,17 @@ export class DashboardComponent implements OnInit {
 
   LOG_TO_REVIEW = "Logs à revoir";
 
+  BOARD_AL = "Suivi d'équipe AL";
+  BOARD_FORMALITE = "Suivi d'équipe Formalite"
+  provisionBoardAL: ProvisionBoardResult[] = [] as Array<ProvisionBoardResult>;
+  provisionBoardFormalite: ProvisionBoardResult[] = [] as Array<ProvisionBoardResult>;
+
+
   allItems: Array<string> = [this.QUOTATION_REFUSED, this.PAYMENT_TO_ASSOCIATE, this.INVOICE_TO_ASSOCIATE, this.QUOTATION_TO_VERIFY,
   this.QUOTATION_OPEN, this.ORDER_TO_BILLED, this.ORDER_BEING_PROCESSED, this.ORDER_OPEN,
   this.AFFAIRE_RESPONSIBLE_IN_PROGRESS, this.AFFAIRE_RESPONSIBLE_TO_DO, this.AFFAIRE_SIMPLE_PROVISION_WAITING_AUTHORITY,
-  this.AFFAIRE_SIMPLE_PROVISION_WAITING_DOCUMENT, this.AFFAIRE_IN_PROGRESS, this.AFFAIRE_TO_DO].sort((a, b) => a.localeCompare(b));
+  this.AFFAIRE_SIMPLE_PROVISION_WAITING_DOCUMENT, this.AFFAIRE_IN_PROGRESS, this.AFFAIRE_TO_DO,
+  this.BOARD_AL, this.BOARD_FORMALITE].sort((a, b) => a.localeCompare(b));
 
   constructor(private appService: AppService,
     private employeeService: EmployeeService,
@@ -131,7 +148,7 @@ export class DashboardComponent implements OnInit {
         this.customerOrderStatusService.getCustomerOrderStatus(),
         this.quotationStatusService.getQuotationStatus()
       ]).pipe(
-        map(([bodaccStatus, domiciliationStatus, announcementStatus, formaliteStatus, simpleProvisionStatus, customerOrderStatus, quotationStatus]) => ({ bodaccStatus, domiciliationStatus, announcementStatus, formaliteStatus, simpleProvisionStatus, customerOrderStatus, quotationStatus })),
+        map(([bodaccStatus, domiciliationStatus, announcementStatus, formaliteStatus, simpleProvisionStatus, customerOrderStatus, quotationStatus ]) => ({ bodaccStatus, domiciliationStatus, announcementStatus, formaliteStatus, simpleProvisionStatus, customerOrderStatus, quotationStatus })),
       ).subscribe(response => {
         this.bodaccStatus = response.bodaccStatus;
         this.statusTypes.push(...response.bodaccStatus);
@@ -242,7 +259,7 @@ export class DashboardComponent implements OnInit {
 
   /* Drag & drop functions */
 
-  boxWidth = '500px';
+  boxWidth = '600px';
   boxHeight = '400px';
 
   ngAfterViewInit() {

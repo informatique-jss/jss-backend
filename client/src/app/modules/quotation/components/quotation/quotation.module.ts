@@ -49,6 +49,7 @@ import { OrderingCustomerComponent } from '../ordering-customer/ordering-custome
 import { OrderingListComponent } from '../ordering-list/ordering-list.component';
 import { PaymentListComponent } from '../payment-list/payment-list.component';
 import { PrintLabelDialogComponent } from '../print-label-dialog/print-label-dialog.component';
+import { ProvisionBoardComponent } from '../provision-board/provision-board.component';
 import { ProvisionItemComponent } from '../provision-item/provision-item.component';
 import { ProvisionListComponent } from '../provision-list/provision-list.component';
 import { ProvisionOptionsComponent } from '../provision-options/provision-options.component';
@@ -157,6 +158,7 @@ const routes: Routes = [
     PersonnePhysiqueComponent,
     IdentiteComponent,
     EntrepriseComponent,
+    ProvisionBoardComponent,
   ],
   exports: [
     OrderingListComponent,
@@ -165,6 +167,7 @@ const routes: Routes = [
     OrderingListComponent,
     PaymentListComponent,
     AnnouncementListComponent,
+    ProvisionBoardComponent,
   ],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'fr-FR' }

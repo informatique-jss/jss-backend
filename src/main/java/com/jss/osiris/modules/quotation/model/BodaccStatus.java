@@ -20,7 +20,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 
 @Entity
-public class BodaccStatus implements Serializable, IId {
+public class BodaccStatus extends ProvisionStatus implements Serializable, IId {
 	/**
 	 * WARNINNG : add update in BodaccStatutsService when adding a new status
 	 */
@@ -57,6 +57,9 @@ public class BodaccStatus implements Serializable, IId {
 	@JoinTable(name = "asso_bodacc_status_predecessor", joinColumns = @JoinColumn(name = "id_bodacc_status"), inverseJoinColumns = @JoinColumn(name = "id_bodacc_status_predecessor"))
 	@JsonIgnoreProperties(value = { "predecessors", "successors" })
 	private List<BodaccStatus> predecessors;
+
+	private String aggregateLabel;
+	private Integer aggregatePriority;
 
 	public Integer getId() {
 		return id;
@@ -120,6 +123,22 @@ public class BodaccStatus implements Serializable, IId {
 
 	public void setPredecessors(List<BodaccStatus> predecessors) {
 		this.predecessors = predecessors;
+	}
+
+	public String getAggregateLabel() {
+		return aggregateLabel;
+	}
+
+	public void setAggregateLabel(String aggregateLabel) {
+		this.aggregateLabel = aggregateLabel;
+	}
+
+	public Integer getAggregatePriority() {
+		return aggregatePriority;
+	}
+
+	public void setAggregatePriority(Integer aggregatePriority) {
+		this.aggregatePriority = aggregatePriority;
 	}
 
 }

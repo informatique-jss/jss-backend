@@ -55,16 +55,17 @@ public class FormaliteStatusServiceImpl implements FormaliteStatusService {
 
     @Override
     public void updateStatusReferential() throws OsirisException {
-        updateStatus(FormaliteStatus.FORMALITE_NEW, "Nouveau", "auto_awesome", true, false);
-        updateStatus(FormaliteStatus.FORMALITE_IN_PROGRESS, "En cours", "autorenew", false, false);
+        Integer priority = 1;
+        updateStatus(FormaliteStatus.FORMALITE_NEW, "Nouveau", "auto_awesome", true, false, priority++);
+        updateStatus(FormaliteStatus.FORMALITE_IN_PROGRESS, "En cours", "autorenew", false, false, priority++);
         updateStatus(FormaliteStatus.FORMALITE_WAITING_DOCUMENT, "En attente de documents", "hourglass_top", false,
-                false);
-        updateStatus(FormaliteStatus.FORMALITE_SENT, "Envoyé au greffe", "outgoing_mail", false, false);
-        updateStatus(FormaliteStatus.FORMALITE_VALIDATE, "Validé par le greffe", "approval", false, false);
-        updateStatus(FormaliteStatus.FORMALITE_REFUSED, "Refusé par le greffe", "block", false, false);
+                false, priority++);
+        updateStatus(FormaliteStatus.FORMALITE_SENT, "Envoyé au greffe", "outgoing_mail", false, false, priority++);
+        updateStatus(FormaliteStatus.FORMALITE_VALIDATE, "Validé par le greffe", "approval", false, false, priority++);
+        updateStatus(FormaliteStatus.FORMALITE_REFUSED, "Refusé par le greffe", "block", false, false, priority++);
         updateStatus(FormaliteStatus.FORMALITE_WAITING_DOCUMENT_GREFFE, "En attente de documents du greffe", "pending",
-                false, false);
-        updateStatus(FormaliteStatus.FORMALITE_DONE, "Terminé", "check_small", false, true);
+                false, false, priority++);
+        updateStatus(FormaliteStatus.FORMALITE_DONE, "Terminé", "check_small", false, true, priority++);
 
         setSuccessor(FormaliteStatus.FORMALITE_NEW, FormaliteStatus.FORMALITE_IN_PROGRESS);
         setSuccessor(FormaliteStatus.FORMALITE_IN_PROGRESS, FormaliteStatus.FORMALITE_SENT);
@@ -84,7 +85,7 @@ public class FormaliteStatusServiceImpl implements FormaliteStatusService {
 
     }
 
-    protected void updateStatus(String code, String label, String icon, boolean isOpenState, boolean isCloseState) {
+    protected void updateStatus(String code, String label, String icon, boolean isOpenState, boolean isCloseState, Integer priority) {
         FormaliteStatus formaliteStatus = getFormaliteStatusByCode(code);
         if (getFormaliteStatusByCode(code) == null)
             formaliteStatus = new FormaliteStatus();
@@ -95,6 +96,8 @@ public class FormaliteStatusServiceImpl implements FormaliteStatusService {
         formaliteStatus.setIcon(icon);
         formaliteStatus.setIsCloseState(isCloseState);
         formaliteStatus.setIsOpenState(isOpenState);
+        formaliteStatus.setAggregateLabel(label);
+        formaliteStatus.setAggregatePriority(priority);
         addOrUpdateFormaliteStatus(formaliteStatus);
     }
 

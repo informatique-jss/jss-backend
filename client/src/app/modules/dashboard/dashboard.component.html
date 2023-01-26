@@ -51,6 +51,11 @@
           [isForDashboard]="true"></refund-list>
         <log class="dashboard-box-component" *ngIf="item==LOG_TO_REVIEW && canViewLogModule()" [isForDashboard]="true">
         </log>
+        <provision-board class="dashboard-box-component" *ngIf="item==BOARD_AL"
+        [currentEmployee]="currentEmployee" [teamBoard]="'AL'" ></provision-board>
+        <provision-board class="dashboard-box-component" *ngIf="item==BOARD_FORMALITE"
+        [currentEmployee]="currentEmployee" [teamBoard]="'FORMALITE'" ></provision-board>
+
       </div>
     </div>
   </div>

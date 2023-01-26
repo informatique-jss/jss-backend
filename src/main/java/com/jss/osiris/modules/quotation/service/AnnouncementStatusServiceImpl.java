@@ -55,23 +55,24 @@ public class AnnouncementStatusServiceImpl implements AnnouncementStatusService 
 
         @Override
         public void updateStatusReferential() throws OsirisException {
-                updateStatus(AnnouncementStatus.ANNOUNCEMENT_NEW, "Nouveau", "auto_awesome", true, false);
-                updateStatus(AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS, "En cours", "autorenew", false, false);
+                Integer priority = 1;
+                updateStatus(AnnouncementStatus.ANNOUNCEMENT_NEW, "Nouveau", "auto_awesome", true, false, priority++);
+                updateStatus(AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS, "En cours", "autorenew", false, false, priority++);
                 updateStatus(AnnouncementStatus.ANNOUNCEMENT_WAITING_DOCUMENT, "En attente de documents",
                                 "hourglass_top",
                                 false,
-                                false);
+                                false, priority++);
                 updateStatus(AnnouncementStatus.ANNOUNCEMENT_WAITING_READ_CUSTOMER, "En attente de relecture client",
                                 "local_library", false,
-                                false);
-                updateStatus(AnnouncementStatus.ANNOUNCEMENT_PUBLISHED, "Publié", "fact_check", false, false);
+                                false, priority++);
                 updateStatus(AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE, "En attente du confrère",
                                 "supervisor_account",
-                                false, false);
+                                false, false, priority++);
                 updateStatus(AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE_PUBLISHED,
                                 "En attente de publication par le confrère", "supervisor_account",
-                                false, false);
-                updateStatus(AnnouncementStatus.ANNOUNCEMENT_DONE, "Terminé", "check_small", false, true);
+                                false, false, priority++);
+                updateStatus(AnnouncementStatus.ANNOUNCEMENT_PUBLISHED, "Publié", "fact_check", false, false, priority++);
+                updateStatus(AnnouncementStatus.ANNOUNCEMENT_DONE, "Terminé", "check_small", false, true, priority++);
 
                 setSuccessor(AnnouncementStatus.ANNOUNCEMENT_NEW, AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS);
                 setSuccessor(AnnouncementStatus.ANNOUNCEMENT_NEW, AnnouncementStatus.ANNOUNCEMENT_WAITING_DOCUMENT);
@@ -119,7 +120,7 @@ public class AnnouncementStatusServiceImpl implements AnnouncementStatusService 
 
         }
 
-        protected void updateStatus(String code, String label, String icon, boolean isOpenState, boolean isCloseState) {
+        protected void updateStatus(String code, String label, String icon, boolean isOpenState, boolean isCloseState, Integer priority) {
                 AnnouncementStatus announcementStatus = getAnnouncementStatusByCode(code);
                 if (getAnnouncementStatusByCode(code) == null)
                         announcementStatus = new AnnouncementStatus();
@@ -130,6 +131,8 @@ public class AnnouncementStatusServiceImpl implements AnnouncementStatusService 
                 announcementStatus.setIcon(icon);
                 announcementStatus.setIsCloseState(isCloseState);
                 announcementStatus.setIsOpenState(isOpenState);
+                announcementStatus.setAggregateLabel(label);
+                announcementStatus.setAggregatePriority(priority);
                 addOrUpdateAnnouncementStatus(announcementStatus);
         }
 

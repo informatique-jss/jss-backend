@@ -14,6 +14,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { AdministrationModule } from '../administration/components/administration/administration.module';
 import { InvoicingModule } from '../invoicing/components/invoicing/invoicing.module';
 import { MiscellaneousModule } from '../miscellaneous/components/miscellaneous/miscellaneous.module';
+import { ProvisionBoardComponent } from '../quotation/components/provision-board/provision-board.component';
 import { QuotationModule } from '../quotation/components/quotation/quotation.module';
 import { DashboardComponent } from './dashboard.component';
 

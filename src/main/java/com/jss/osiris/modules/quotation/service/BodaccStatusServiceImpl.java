@@ -55,14 +55,15 @@ public class BodaccStatusServiceImpl implements BodaccStatusService {
 
     @Override
     public void updateStatusReferential() throws OsirisException {
-        updateStatus(BodaccStatus.BODACC_NEW, "Nouveau", "auto_awesome", true, false);
-        updateStatus(BodaccStatus.BODACC_IN_PROGRESS, "En cours", "autorenew", false, false);
-        updateStatus(BodaccStatus.BODACC_WAITING_DOCUMENT, "En attente de documents", "hourglass_top", false, false);
+        Integer priority = 1;
+        updateStatus(BodaccStatus.BODACC_NEW, "Nouveau", "auto_awesome", true, false, priority++);
+        updateStatus(BodaccStatus.BODACC_IN_PROGRESS, "En cours", "autorenew", false, false, priority++);
+        updateStatus(BodaccStatus.BODACC_WAITING_DOCUMENT, "En attente de documents", "hourglass_top", false, false, priority++);
         updateStatus(BodaccStatus.BODACC_WAITING_DOCUMENT_BODACC, "En attente de documents du BODACC", "hourglass_top",
-                false, false);
-        updateStatus(BodaccStatus.BODACC_WAITING_PUBLICATION, "En attente de parution", "new_releases", false, false);
-        updateStatus(BodaccStatus.BODACC_PUBLISHED, "Publié", "fact_check", false, false);
-        updateStatus(BodaccStatus.BODACC_DONE, "Terminé", "check_small", false, true);
+                false, false, priority++);
+        updateStatus(BodaccStatus.BODACC_WAITING_PUBLICATION, "En attente de parution", "new_releases", false, false, priority++);
+        updateStatus(BodaccStatus.BODACC_PUBLISHED, "Publié", "fact_check", false, false, priority++);
+        updateStatus(BodaccStatus.BODACC_DONE, "Terminé", "check_small", false, true, priority++);
 
         setSuccessor(BodaccStatus.BODACC_NEW, BodaccStatus.BODACC_IN_PROGRESS);
         setSuccessor(BodaccStatus.BODACC_IN_PROGRESS, BodaccStatus.BODACC_WAITING_PUBLICATION);
@@ -81,7 +82,7 @@ public class BodaccStatusServiceImpl implements BodaccStatusService {
         setPredecessor(BodaccStatus.BODACC_IN_PROGRESS, BodaccStatus.BODACC_NEW);
     }
 
-    protected void updateStatus(String code, String label, String icon, boolean isOpenState, boolean isCloseState) {
+    protected void updateStatus(String code, String label, String icon, boolean isOpenState, boolean isCloseState, Integer priority) {
         BodaccStatus bodaccStatus = getBodaccStatusByCode(code);
         if (getBodaccStatusByCode(code) == null)
             bodaccStatus = new BodaccStatus();
@@ -92,6 +93,8 @@ public class BodaccStatusServiceImpl implements BodaccStatusService {
         bodaccStatus.setIcon(icon);
         bodaccStatus.setIsCloseState(isCloseState);
         bodaccStatus.setIsOpenState(isOpenState);
+        bodaccStatus.setAggregateLabel(label);
+        bodaccStatus.setAggregatePriority(priority);
         addOrUpdateBodaccStatus(bodaccStatus);
     }
 
