@@ -25,7 +25,7 @@ public interface AnnouncementRepository extends CrudRepository<Announcement, Int
                         " from announcement a " +
                         " join provision p on p.id_announcement = a.id " +
                         " join asso_affaire_order asso_affaire on asso_affaire.id = p.id_asso_affaire_order " +
-                        " join customer_order order on order.id = asso.id_customer_order " +
+                        " join customer_order order on order.id = asso_affaire.id_customer_order " +
                         " join customer_order_status order_status on order_status.id = order.id_customer_order_status "
                         +
                         " join affaire on affaire.id = asso_affaire.id_affaire " +
