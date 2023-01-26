@@ -47,7 +47,6 @@
     </table>
     <table style="table-layout: fixed;width: 690px;margin-top: 20px;">
         <tr>
-            <td>&#160;</td>
             <td style="text-align: center;">
                 <p>Facture n°<span th:text="${invoice.id}"></span></p>
                 <p>Commande n°<span th:text="${customerOrder.id}"></span></p>
@@ -98,7 +97,7 @@
                             €
                         </td>
                     </tr>
-                    <tr th:if="${invoiceItem.discountAmount!=null && invoiceItem.discountAmount>0}">
+                    <tr th:if="${invoiceItem.discountAmount!=null} and ${invoiceItem.discountAmount>0}">
                         <td colspan="4">
                             <span>Remise</span>
                         </td>
@@ -202,7 +201,7 @@
                 €
             </td>
         </tr>
-        <tr th:if="${remainingToPay<0}">
+        <tr th:if="${0>remainingToPay}">
             <td colspan="4" style="text-align: right">
                 Solde en votre faveur
             </td>

@@ -382,17 +382,6 @@ public class PaymentServiceImpl implements PaymentService {
                 remainingMoney = associateOutboundPaymentAndInvoice(payment, correspondingInvoices.get(0),
                         new MutableBoolean(true),
                         byPassAmount);
-
-                // if payment completly use and not cancelled, do counter part of waiting record
-                if (payment.getAccountingRecords() != null && payment.getAccountingRecords().size() > 0)
-                    for (AccountingRecord record : payment.getAccountingRecords())
-                        if (record.getIsCounterPart() == false
-                                && record.getAccountingAccount().getPrincipalAccountingAccount().getId()
-                                        .equals(constantService.getPrincipalAccountingAccountWaiting().getId())) {
-                            accountingRecordService.letterWaitingRecords(record,
-                                    accountingRecordService.generateCounterPart(record,
-                                            constantService.getAccountingJournalSales(), payment.getId()));
-                        }
             }
         }
     }
@@ -621,22 +610,30 @@ public class PaymentServiceImpl implements PaymentService {
     private Float associateOutboundPaymentAndDebour(Payment payment, List<Debour> debours,
             MutableBoolean generateWaitingAccountAccountingRecords) throws OsirisException {
 
-        if (debours != null && debours.size() > 0)
+        if (debours != null && debours.size() > 0) {
+            Float debourAmount = 0f;
             for (Debour debour : debours) {
                 Debour inDebour = debourService.getDebour(debour.getId());
                 debour.setProvision(inDebour.getProvision());
-                Float debourAmount = Math.round(inDebour.getDebourAmount() * 100f) / 100f;
-                Float paymentAmount = Math.round(payment.getPaymentAmount() * 100f) / 100f;
+                debourAmount += inDebour.getDebourAmount();
+            }
+            Float paymentAmount = Math.round(payment.getPaymentAmount() * 100f) / 100f;
+            debourAmount = Math.round(debourAmount * 100f) / 100f;
 
-                if (debourAmount.equals(paymentAmount)) {
+            if (debourAmount.equals(paymentAmount)) {
+                for (Debour debour : debours) {
+                    Debour inDebour = debourService.getDebour(debour.getId());
+                    debour.setProvision(inDebour.getProvision());
                     generateWaitingAccountAccountingRecords.setFalse();
                     accountingRecordService.generateAccountingRecordsForDebourOnDebour(inDebour);
-
                     inDebour.setPayment(payment);
                     debourService.addOrUpdateDebour(inDebour);
                 }
+                cancelPayment(payment);
             }
+        }
         return 0f;
+
     }
 
     private List<IndexEntity> getCorrespondingEntityForOutboundPayment(Payment payment) {

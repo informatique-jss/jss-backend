@@ -889,11 +889,12 @@ public class MailHelper {
                 for (VatMail vatMail : vats) {
                     if (vatMail.getLabel().equals(invoiceItem.getVat().getLabel())) {
                         vatFound = true;
-                        if (vatMail.getTotal() == null) {
+                        if (vatMail.getTotal() == null && invoiceItem.getVatPrice() != null
+                                && invoiceItem.getVatPrice() > 0) {
                             vatMail.setTotal(invoiceItem.getVatPrice());
                             vatMail.setBase(invoiceItem.getPreTaxPrice()
                                     - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount() : 0f));
-                        } else {
+                        } else if (invoiceItem.getVatPrice() != null && invoiceItem.getVatPrice() > 0) {
                             vatMail.setTotal(vatMail.getTotal() + invoiceItem.getVatPrice());
                             vatMail.setBase(vatMail.getBase() + invoiceItem.getPreTaxPrice()
                                     - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount() : 0f));

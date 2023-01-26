@@ -158,10 +158,10 @@ public class RefundServiceImpl implements RefundService {
                     "IBAN non trouvé pour effectuer le remboursement. Merci de renseigner le tiers ou l'affaire. L'opération est annulée.");
 
         if (payment != null) {
-            refund.setLabel("Remboursement du paiement n°" + payment.getId());
+            refund.setLabel("Remboursement du paiement N " + payment.getId());
             refund.setPayment(payment);
         } else if (deposit != null) {
-            refund.setLabel("Remboursement de l'acompte n°" + deposit
+            refund.setLabel("Remboursement de l'acompte N " + deposit
                     .getId());
             refund.setDeposit(deposit);
         }
@@ -245,7 +245,7 @@ public class RefundServiceImpl implements RefundService {
 
             DbtrBean debiteur = new DbtrBean();
             body.setDbtrBean(debiteur);
-            debiteur.setNm("SPPS - JSS COMPTE 00011");
+            debiteur.setNm("SPPS - JSS REMBOURSEMENT");
 
             DbtrAcctBean account = new DbtrAcctBean();
             body.setDbtrAcctBean(account);
