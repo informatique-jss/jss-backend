@@ -1194,7 +1194,8 @@ public class QuotationController {
   public ResponseEntity<Quotation> addOrUpdateQuotationStatus(@RequestBody Quotation quotation,
       @RequestParam String targetStatusCode)
       throws OsirisValidationException, OsirisException, OsirisClientMessageException {
-    validateQuotationAndCustomerOrder(quotation);
+    if (!targetStatusCode.equals(QuotationStatus.ABANDONED))
+      validateQuotationAndCustomerOrder(quotation);
     quotation = quotationService.getQuotation(quotation.getId());
     boolean found = true;
     if (quotation.getQuotationStatus() != null) {
