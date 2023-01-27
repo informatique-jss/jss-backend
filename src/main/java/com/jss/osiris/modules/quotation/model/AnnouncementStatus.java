@@ -20,7 +20,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 
 @Entity
-public class AnnouncementStatus extends ProvisionStatus  implements Serializable, IId {
+public class AnnouncementStatus  implements Serializable, IId {
 
 	/**
 	 * WARNINNG : add update in AnnouncementStatutsService when adding a new status

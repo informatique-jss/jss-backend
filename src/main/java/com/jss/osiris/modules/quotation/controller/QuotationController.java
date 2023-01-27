@@ -99,7 +99,6 @@ import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.ProvisionBoardResult;
 import com.jss.osiris.modules.quotation.model.ProvisionFamilyType;
 import com.jss.osiris.modules.quotation.model.ProvisionScreenType;
-import com.jss.osiris.modules.quotation.model.ProvisionStatus;
 import com.jss.osiris.modules.quotation.model.ProvisionType;
 import com.jss.osiris.modules.quotation.model.Quotation;
 import com.jss.osiris.modules.quotation.model.QuotationSearch;
@@ -2205,16 +2204,6 @@ public class QuotationController {
     customerOrderService.printMailingLabel(customerOrders);
 
     return new ResponseEntity<Boolean>(true, HttpStatus.OK);
-  }
-
-
-  /**
-   * Set status in workflow order (beginning with new) group by same code
-   * @return
-   */
-  @PostMapping(inputEntryPoint + "/dashboard/announcement-status")
-  public ResponseEntity<List<List<ProvisionStatus>>> getBoardAnnouncementStatus() {
-    return new ResponseEntity<List<List<ProvisionStatus>>>(provisionService.getBoardAnnouncementStatus(), HttpStatus.OK);
   }
 
   /**

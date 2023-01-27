@@ -56,7 +56,7 @@ public class FormaliteStatusServiceImpl implements FormaliteStatusService {
     @Override
     public void updateStatusReferential() throws OsirisException {
         Integer priority = 1;
-        updateStatus(FormaliteStatus.FORMALITE_NEW, "Nouveau", "auto_awesome", true, false, priority++);
+        updateStatus(FormaliteStatus.FORMALITE_NEW, "Nouveau", "auto_awesome", true, false, priority++, "Ouvert");
         updateStatus(FormaliteStatus.FORMALITE_IN_PROGRESS, "En cours", "autorenew", false, false, priority++);
         updateStatus(FormaliteStatus.FORMALITE_WAITING_DOCUMENT, "En attente de documents", "hourglass_top", false,
                 false, priority++);
@@ -85,7 +85,12 @@ public class FormaliteStatusServiceImpl implements FormaliteStatusService {
 
     }
 
-    protected void updateStatus(String code, String label, String icon, boolean isOpenState, boolean isCloseState, Integer priority) {
+    protected void updateStatus(String code, String label, String icon, boolean isOpenState, boolean isCloseState, 
+                                    Integer aggregatePriority) {
+            updateStatus(code, label, icon, isOpenState, isCloseState, aggregatePriority, label);
+    }
+    protected void updateStatus(String code, String label, String icon, boolean isOpenState, boolean isCloseState, 
+                                    Integer aggregatePriority, String aggregateLabel) {
         FormaliteStatus formaliteStatus = getFormaliteStatusByCode(code);
         if (getFormaliteStatusByCode(code) == null)
             formaliteStatus = new FormaliteStatus();
@@ -96,8 +101,8 @@ public class FormaliteStatusServiceImpl implements FormaliteStatusService {
         formaliteStatus.setIcon(icon);
         formaliteStatus.setIsCloseState(isCloseState);
         formaliteStatus.setIsOpenState(isOpenState);
-        formaliteStatus.setAggregateLabel(label);
-        formaliteStatus.setAggregatePriority(priority);
+        formaliteStatus.setAggregateLabel(aggregateLabel);
+        formaliteStatus.setAggregatePriority(aggregatePriority);
         addOrUpdateFormaliteStatus(formaliteStatus);
     }
 

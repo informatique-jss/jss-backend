@@ -31,8 +31,6 @@ import { BodaccStatusService } from '../quotation/services/bodacc.status.service
 import { CustomerOrderStatusService } from '../quotation/services/customer.order.status.service';
 import { DomiciliationStatusService } from '../quotation/services/domiciliation-status.service';
 import { FormaliteStatusService } from '../quotation/services/formalite.status.service';
-import { ProvisionBoardResultService } from '../quotation/services/provision.board.result.service';
-import { ProvisionBoardStatusService } from '../quotation/services/provision.board.status.service';
 import { QuotationStatusService } from '../quotation/services/quotation-status.service';
 import { SimpleProvisionStatusService } from '../quotation/services/simple.provision.status.service';
 
@@ -108,7 +106,7 @@ export class DashboardComponent implements OnInit {
 
   LOG_TO_REVIEW = "Logs à revoir";
 
-  BOARD_AL = "Suivi d'équipe AL";
+  BOARD_AL = "Suivi d'équipe Annonce Légale";
   BOARD_FORMALITE = "Suivi d'équipe Formalite"
   provisionBoardAL: ProvisionBoardResult[] = [] as Array<ProvisionBoardResult>;
   provisionBoardFormalite: ProvisionBoardResult[] = [] as Array<ProvisionBoardResult>;

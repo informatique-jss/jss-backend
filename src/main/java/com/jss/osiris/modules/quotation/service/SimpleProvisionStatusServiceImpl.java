@@ -56,7 +56,7 @@ public class SimpleProvisionStatusServiceImpl implements SimpleProvisionStatusSe
     @Override
     public void updateStatusReferential() throws OsirisException {
         Integer priority = 1;
-        updateStatus(SimpleProvisionStatus.SIMPLE_PROVISION_NEW, "Nouveau", "auto_awesome", true, false, priority++);
+        updateStatus(SimpleProvisionStatus.SIMPLE_PROVISION_NEW, "Nouveau", "auto_awesome", true, false, priority++, "Ouvert");
         updateStatus(SimpleProvisionStatus.SIMPLE_PROVISION_IN_PROGRESS, "En cours", "autorenew", false, false, priority++);
         updateStatus(SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_DOCUMENT, "En attente de documents",
                 "hourglass_top", false,
@@ -84,7 +84,12 @@ public class SimpleProvisionStatusServiceImpl implements SimpleProvisionStatusSe
 
     }
 
-    protected void updateStatus(String code, String label, String icon, boolean isOpenState, boolean isCloseState, Integer priority) {
+    protected void updateStatus(String code, String label, String icon, boolean isOpenState, boolean isCloseState, 
+                                    Integer aggregatePriority) {
+            updateStatus(code, label, icon, isOpenState, isCloseState, aggregatePriority, label);
+    }
+    protected void updateStatus(String code, String label, String icon, boolean isOpenState, boolean isCloseState, 
+                                    Integer aggregatePriority, String aggregateLabel) {
         SimpleProvisionStatus simpleProvisionStatus = getSimpleProvisionStatusByCode(code);
         if (getSimpleProvisionStatusByCode(code) == null)
             simpleProvisionStatus = new SimpleProvisionStatus();
@@ -95,8 +100,8 @@ public class SimpleProvisionStatusServiceImpl implements SimpleProvisionStatusSe
         simpleProvisionStatus.setIcon(icon);
         simpleProvisionStatus.setIsCloseState(isCloseState);
         simpleProvisionStatus.setIsOpenState(isOpenState);
-        simpleProvisionStatus.setAggregateLabel(label);
-        simpleProvisionStatus.setAggregatePriority(priority);
+        simpleProvisionStatus.setAggregateLabel(aggregateLabel);
+        simpleProvisionStatus.setAggregatePriority(aggregatePriority);
         addOrUpdateSimpleProvisonStatus(simpleProvisionStatus);
     }
 

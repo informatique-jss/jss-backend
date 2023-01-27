@@ -20,7 +20,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 
 @Entity
-public class BodaccStatus extends ProvisionStatus implements Serializable, IId {
+public class BodaccStatus implements Serializable, IId {
 	/**
 	 * WARNINNG : add update in BodaccStatutsService when adding a new status
 	 */

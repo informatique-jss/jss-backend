@@ -56,7 +56,7 @@ public class AnnouncementStatusServiceImpl implements AnnouncementStatusService 
         @Override
         public void updateStatusReferential() throws OsirisException {
                 Integer priority = 1;
-                updateStatus(AnnouncementStatus.ANNOUNCEMENT_NEW, "Nouveau", "auto_awesome", true, false, priority++);
+                updateStatus(AnnouncementStatus.ANNOUNCEMENT_NEW, "Nouveau", "auto_awesome", true, false, priority++, "Ouvert");
                 updateStatus(AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS, "En cours", "autorenew", false, false, priority++);
                 updateStatus(AnnouncementStatus.ANNOUNCEMENT_WAITING_DOCUMENT, "En attente de documents",
                                 "hourglass_top",
@@ -120,7 +120,21 @@ public class AnnouncementStatusServiceImpl implements AnnouncementStatusService 
 
         }
 
-        protected void updateStatus(String code, String label, String icon, boolean isOpenState, boolean isCloseState, Integer priority) {
+        /**
+         * Set status values for one status
+         * @param code
+         * @param label
+         * @param icon
+         * @param isOpenState
+         * @param isCloseState
+         * @param aggregatePriority
+         */
+        protected void updateStatus(String code, String label, String icon, boolean isOpenState, boolean isCloseState, 
+                                        Integer aggregatePriority) {
+                updateStatus(code, label, icon, isOpenState, isCloseState, aggregatePriority, label);
+        }
+        protected void updateStatus(String code, String label, String icon, boolean isOpenState, boolean isCloseState, 
+                                        Integer aggregatePriority, String aggregateLabel) {
                 AnnouncementStatus announcementStatus = getAnnouncementStatusByCode(code);
                 if (getAnnouncementStatusByCode(code) == null)
                         announcementStatus = new AnnouncementStatus();
@@ -131,8 +145,8 @@ public class AnnouncementStatusServiceImpl implements AnnouncementStatusService 
                 announcementStatus.setIcon(icon);
                 announcementStatus.setIsCloseState(isCloseState);
                 announcementStatus.setIsOpenState(isOpenState);
-                announcementStatus.setAggregateLabel(label);
-                announcementStatus.setAggregatePriority(priority);
+                announcementStatus.setAggregateLabel(aggregateLabel);
+                announcementStatus.setAggregatePriority(aggregatePriority);
                 addOrUpdateAnnouncementStatus(announcementStatus);
         }
 

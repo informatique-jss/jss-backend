@@ -40,7 +40,7 @@ registerLocaleData(localeFr, 'fr');
     AppComponent,
     SidenavListComponent,
     HeaderComponent,
-    MyProfilComponent,
+    MyProfilComponent
   ],
   imports: [
     // Core modules
