@@ -108,15 +108,15 @@
         </table>
         <table class="full-width">
           <tr>
-            <td *ngIf="selectedEntity.accountingAccountProvider">
+            <td>
               <autocomplete-accounting-account [(model)]="selectedEntity.accountingAccountProvider" [form]="entityForm"
-                propertyName="accountingAccountProvider" [isMandatory]="false" [isDisabled]="true"
+                propertyName="accountingAccountProvider" [isMandatory]="false" [isDisabled]="!editMode"
                 label="Compte comptable fournisseur">
               </autocomplete-accounting-account>
             </td>
-            <td *ngIf="selectedEntity.accountingAccountCustomer">
+            <td>
               <autocomplete-accounting-account [(model)]="selectedEntity.accountingAccountCustomer" [form]="entityForm"
-                propertyName="accountingAccountCustomer" [isMandatory]="false" [isDisabled]="true"
+                propertyName="accountingAccountCustomer" [isMandatory]="false" [isDisabled]="!editMode"
                 label="Compte comptable client">
               </autocomplete-accounting-account>
             </td>

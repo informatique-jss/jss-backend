@@ -25,9 +25,11 @@ import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.City;
+import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.miscellaneous.model.Country;
 import com.jss.osiris.modules.miscellaneous.model.IAttachment;
 import com.jss.osiris.modules.miscellaneous.model.IId;
+import com.jss.osiris.modules.miscellaneous.model.PaymentType;
 import com.jss.osiris.modules.miscellaneous.model.Provider;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
@@ -72,6 +74,10 @@ public class Invoice implements IId, IAttachment {
 	@ManyToOne
 	@JoinColumn(name = "id_tiers")
 	private Tiers tiers;
+
+	@ManyToOne
+	@JoinColumn(name = "id_competent_authority")
+	private CompetentAuthority competentAuthority;
 
 	@ManyToOne
 	@JoinColumn(name = "id_provider")
@@ -140,9 +146,18 @@ public class Invoice implements IId, IAttachment {
 	@Column(length = 150)
 	private String manualAccountingDocumentNumber;
 
+	@ManyToOne
+	@JoinColumn(name = "id_payment_type")
+	private PaymentType manualPaymentType;
+
 	@OneToMany(mappedBy = "invoice")
 	@JsonIgnoreProperties(value = { "invoice" }, allowSetters = true)
 	private List<TiersFollowup> tiersFollowups;
+
+	@ManyToOne
+	@JsonIgnoreProperties(value = { "invoices", "providerInvoices" }, allowSetters = true)
+	@JoinColumn(name = "id_customer_order_for_inbound_invoice")
+	private CustomerOrder customerOrderForInboundInvoice;
 
 	public Integer getId() {
 		return id;
@@ -406,6 +421,30 @@ public class Invoice implements IId, IAttachment {
 
 	public void setTiersFollowups(List<TiersFollowup> tiersFollowups) {
 		this.tiersFollowups = tiersFollowups;
+	}
+
+	public PaymentType getManualPaymentType() {
+		return manualPaymentType;
+	}
+
+	public void setManualPaymentType(PaymentType manualPaymentType) {
+		this.manualPaymentType = manualPaymentType;
+	}
+
+	public CompetentAuthority getCompetentAuthority() {
+		return competentAuthority;
+	}
+
+	public void setCompetentAuthority(CompetentAuthority competentAuthority) {
+		this.competentAuthority = competentAuthority;
+	}
+
+	public CustomerOrder getCustomerOrderForInboundInvoice() {
+		return customerOrderForInboundInvoice;
+	}
+
+	public void setCustomerOrderForInboundInvoice(CustomerOrder customerOrderForInboundInvoice) {
+		this.customerOrderForInboundInvoice = customerOrderForInboundInvoice;
 	}
 
 }

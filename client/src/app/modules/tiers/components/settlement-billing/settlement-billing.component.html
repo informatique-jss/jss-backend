@@ -177,6 +177,18 @@
                   [form]="settlementBillingForm" propertyName="paymentDeadlineType" [isDisabled]="!editMode">
                 </select-payment-deadline>
               </td>
+              <td *ngIf="tiers && tiers.paymentType && tiers.paymentType.id==paymentTypePrelevement.id">
+                <generic-datepicker [(model)]="tiers.sepaMandateSignatureDate" label="Date de signature du mandat SEPA"
+                  [form]="settlementBillingForm" propertyName="sepaMandateSignatureDate" [isMandatory]="true"
+                  [isDisabled]="!editMode"
+                  [conditionnalRequired]="tiers.paymentType.id==paymentTypePrelevement.id"></generic-datepicker>
+              </td>
+              <td>
+                <generic-input [(model)]="tiers.sepaMandateReference" label="Référence du mandat SEPA"
+                  [form]="settlementBillingForm" propertyName="sepaMandateReference" [isMandatory]="true"
+                  [isDisabled]="!editMode" [conditionnalRequired]="tiers.paymentType.id==paymentTypePrelevement.id"
+                  [maxLength]="250"></generic-input>
+              </td>
             </tr>
           </table>
         </mat-expansion-panel>

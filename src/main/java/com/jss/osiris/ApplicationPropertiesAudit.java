@@ -68,6 +68,9 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("fr.gouv.geo.api.entry.point");
         isOk = isOk && checkProperty("printer.label.ip");
         isOk = isOk && checkProperty("printer.label.port");
+        isOk = isOk && checkProperty("jss.sepa.identification");
+        isOk = isOk && checkProperty("jss.bic");
+        isOk = isOk && checkProperty("jss.iban");
 
         isOk = isOk && checkAccountingParams();
 

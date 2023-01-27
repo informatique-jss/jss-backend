@@ -25,6 +25,10 @@ export class IndexEntityService extends AppRestService<IndexEntity>{
     return this.getList(new HttpParams().set("searchedValue", searchedValue).set("onlyActive", onlyActive), "responsable/search");
   }
 
+  getCustomerOrdersByKeyword(searchedValue: string) {
+    return this.getList(new HttpParams().set("searchedValue", searchedValue), "customer/order/search");
+  }
+
   getIndividualTiersByKeyword(searchedValue: string) {
     return this.getList(new HttpParams().set("searchedValue", searchedValue), "individual/search");
   }

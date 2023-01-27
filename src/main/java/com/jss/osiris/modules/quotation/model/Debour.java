@@ -51,6 +51,7 @@ public class Debour implements Serializable, IId {
 
 	@ManyToOne
 	@JoinColumn(name = "id_payment")
+	@JsonIgnoreProperties(value = { "payment", "debours" }, allowSetters = true)
 	private Payment payment;
 
 	@ManyToOne

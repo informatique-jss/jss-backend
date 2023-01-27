@@ -93,6 +93,9 @@ public class Tiers implements ITiers, IAttachment {
 	@Column(nullable = false)
 	private Boolean isProvisionalPaymentMandatory;
 
+	private String sepaMandateReference;
+	private LocalDate sepaMandateSignatureDate;
+
 	@Column(nullable = false)
 	private Boolean isSepaMandateReceived;
 
@@ -562,6 +565,22 @@ public class Tiers implements ITiers, IAttachment {
 
 	public void setPaymentBic(String paymentBic) {
 		this.paymentBic = paymentBic;
+	}
+
+	public String getSepaMandateReference() {
+		return sepaMandateReference;
+	}
+
+	public void setSepaMandateReference(String sepaMandateReference) {
+		this.sepaMandateReference = sepaMandateReference;
+	}
+
+	public LocalDate getSepaMandateSignatureDate() {
+		return sepaMandateSignatureDate;
+	}
+
+	public void setSepaMandateSignatureDate(LocalDate sepaMandateSignatureDate) {
+		this.sepaMandateSignatureDate = sepaMandateSignatureDate;
 	}
 
 }

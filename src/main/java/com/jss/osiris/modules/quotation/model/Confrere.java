@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.quotation.model;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -163,6 +164,9 @@ public class Confrere implements ITiers {
 
 	@Column(length = 40)
 	private String paymentBic;
+
+	private String sepaMandateReference;
+	private LocalDate sepaMandateSignatureDate;
 
 	@ManyToOne
 	@JoinColumn(name = "id_commercial")
@@ -543,6 +547,22 @@ public class Confrere implements ITiers {
 
 	public void setPaymentBic(String paymentBic) {
 		this.paymentBic = paymentBic;
+	}
+
+	public String getSepaMandateReference() {
+		return sepaMandateReference;
+	}
+
+	public void setSepaMandateReference(String sepaMandateReference) {
+		this.sepaMandateReference = sepaMandateReference;
+	}
+
+	public LocalDate getSepaMandateSignatureDate() {
+		return sepaMandateSignatureDate;
+	}
+
+	public void setSepaMandateSignatureDate(LocalDate sepaMandateSignatureDate) {
+		this.sepaMandateSignatureDate = sepaMandateSignatureDate;
 	}
 
 }

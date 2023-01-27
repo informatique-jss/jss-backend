@@ -436,6 +436,8 @@ public class MailHelper {
                                     vatMail.setTotal(vatMail.getTotal() + invoiceItem.getVatPrice());
                                     vatMail.setBase(vatMail.getBase()
                                             + (invoiceItem.getPreTaxPrice() != null ? invoiceItem.getPreTaxPrice()
+                                                    : 0f)
+                                            - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount()
                                                     : 0f));
                                 }
                             }
@@ -444,7 +446,8 @@ public class MailHelper {
                             VatMail vatmail = new VatMail();
                             vatmail.setTotal(invoiceItem.getVatPrice());
                             vatmail.setLabel(invoiceItem.getVat().getLabel());
-                            vatmail.setBase(invoiceItem.getPreTaxPrice() != null ? invoiceItem.getPreTaxPrice() : 0f);
+                            vatmail.setBase((invoiceItem.getPreTaxPrice() != null ? invoiceItem.getPreTaxPrice() : 0f)
+                                    - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount() : 0f));
                             vatmail.setCustomerMail(mail);
                             vats.add(vatmail);
                         }
@@ -886,11 +889,12 @@ public class MailHelper {
                 for (VatMail vatMail : vats) {
                     if (vatMail.getLabel().equals(invoiceItem.getVat().getLabel())) {
                         vatFound = true;
-                        if (vatMail.getTotal() == null) {
+                        if (vatMail.getTotal() == null && invoiceItem.getVatPrice() != null
+                                && invoiceItem.getVatPrice() > 0) {
                             vatMail.setTotal(invoiceItem.getVatPrice());
                             vatMail.setBase(invoiceItem.getPreTaxPrice()
                                     - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount() : 0f));
-                        } else {
+                        } else if (invoiceItem.getVatPrice() != null && invoiceItem.getVatPrice() > 0) {
                             vatMail.setTotal(vatMail.getTotal() + invoiceItem.getVatPrice());
                             vatMail.setBase(vatMail.getBase() + invoiceItem.getPreTaxPrice()
                                     - (invoiceItem.getDiscountAmount() != null ? invoiceItem.getDiscountAmount() : 0f));
@@ -910,6 +914,11 @@ public class MailHelper {
         ctx.setVariable("vats", vats);
         ctx.setVariable("priceTotal", Math.round(invoiceHelper.getPriceTotal(invoice) * 100f) / 100f);
         ctx.setVariable("invoice", invoice);
+        ctx.setVariable("customerOrder", customerOrder);
+        ctx.setVariable("quotation",
+                customerOrder.getQuotations() != null && customerOrder.getQuotations().size() > 0
+                        ? customerOrder.getQuotations().get(0)
+                        : null);
 
         // Exclude deposits generated after invoice
         ArrayList<Deposit> deposits = new ArrayList<Deposit>();

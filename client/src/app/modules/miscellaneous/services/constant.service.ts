@@ -428,6 +428,10 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.paymentWayInbound;
   }
 
+  getPaymentWayOutbound() {
+    return this.constant.paymentWayOutboud;
+  }
+
   getInvoiceStatusPayed() {
     return this.constant.invoiceStatusPayed;
   }
@@ -438,6 +442,10 @@ export class ConstantService extends AppRestService<Constant>{
 
   getVatEight() {
     return this.constant.vatEight;
+  }
+
+  getVatZero() {
+    return this.constant.vatZero;
   }
 
   getVatDeductible() {

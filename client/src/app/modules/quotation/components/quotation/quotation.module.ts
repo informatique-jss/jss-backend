@@ -23,6 +23,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule, Routes } from '@angular/router';
 import { QuillModule } from 'ngx-quill';
+import { DirectDebitTransfertListComponent } from 'src/app/modules/invoicing/components/direct-debit-transfert-list/direct-debit-transfert-list.component';
 import { MiscellaneousModule } from 'src/app/modules/miscellaneous/components/miscellaneous/miscellaneous.module';
 import { AddAffaireDialogComponent } from '../add-affaire-dialog/add-affaire-dialog.component';
 import { AddAffaireComponent } from '../add-affaire/add-affaire.component';
@@ -57,6 +58,7 @@ import { QuotationListComponent } from '../quotation-list/quotation-list.compone
 import { QuotationManagementComponent } from '../quotation-management/quotation-management.component';
 import { SelectAttachmentTypeDialogComponent } from '../select-attachment-type-dialog/select-attachment-type-dialog.component';
 import { SelectAttachmentsDialogComponent } from '../select-attachments-dialog/select-attachment-dialog.component';
+import { SelectDeboursDialogComponent } from '../select-debours-dialog/select-debours-dialog.component';
 import { SimpleProvisionComponent } from '../simple-provision/simple-provision.component';
 import { QuotationComponent } from './quotation.component';
 
@@ -151,6 +153,8 @@ const routes: Routes = [
     SelectAttachmentsDialogComponent,
     PrintLabelDialogComponent,
     AddDebourComponent,
+    SelectDeboursDialogComponent,
+    DirectDebitTransfertListComponent,
     // Guichet unique
     ContentComponent,
     NatureCreationComponent,
@@ -165,6 +169,7 @@ const routes: Routes = [
     OrderingListComponent,
     PaymentListComponent,
     AnnouncementListComponent,
+    DirectDebitTransfertListComponent,
   ],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'fr-FR' }

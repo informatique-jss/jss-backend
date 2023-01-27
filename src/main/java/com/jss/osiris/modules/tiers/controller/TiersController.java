@@ -449,6 +449,12 @@ public class TiersController {
     validationHelper.validateString(tiers.getPaymentIban(), false, 40, "PaymentIBAN");
     validationHelper.validateString(tiers.getPaymentBic(), false, 40, "PaymentBic");
 
+    if (tiers.getPaymentType() != null
+        && tiers.getPaymentType().getId().equals(constantService.getPaymentTypePrelevement().getId())) {
+      validationHelper.validateString(tiers.getSepaMandateReference(), true, 250, "SepaMandateReference");
+      validationHelper.validateDate(tiers.getSepaMandateSignatureDate(), true, "SepaMandateSignatureDate");
+    }
+
     if (tiers.getResponsables() != null && tiers.getResponsables().size() > 0) {
       for (Responsable responsable : tiers.getResponsables()) {
 

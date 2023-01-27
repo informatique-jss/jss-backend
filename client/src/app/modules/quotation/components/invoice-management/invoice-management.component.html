@@ -12,6 +12,19 @@
       </mat-icon>
     </h3>
   </ng-container>
+  <ng-container *ngIf="instanceOfCustomerOrderFn(quotation) &&  quotation.providerInvoices">
+    <h3 class="invoice-title" *ngFor="let invoice of quotation.providerInvoices">
+      Facture fournisseur n°{{invoice.id}}, saisie le {{invoice.createdDate|date:'dd/MM/yyyy à HH:mm'}}, pour un total
+      de {{invoice.totalPrice}} €<span *ngIf="getLetteringDate(invoice)">, lettrée le
+        {{getLetteringDate(invoice)|date:'dd/MM/yyyy à HH:mm'}}</span>
+      <chips-status class="invoice-chip" [status]="invoice.invoiceStatus.code" [value]="invoice.invoiceStatus.label">
+      </chips-status>
+      <mat-icon (click)="openRoute($event,'/invoicing/view/'+invoice.id)"
+        (auxclick)="openRoute($event,'/invoicing/view/'+invoice.id)" matTooltip="Voir la facture" color="accent"
+        class="pointer invoice-chip">visibility
+      </mat-icon>
+    </h3>
+  </ng-container>
   <fieldset [disabled]="editMode==false" class="fieldset-no-border">
     <table class="full-width mat-table description-table ">
       <tr class=" mat-header-row">

@@ -28,6 +28,8 @@ import com.jss.osiris.libs.mail.MailComputeHelper;
 import com.jss.osiris.modules.invoicing.model.BankTransfertSearch;
 import com.jss.osiris.modules.invoicing.model.BankTransfertSearchResult;
 import com.jss.osiris.modules.invoicing.model.Deposit;
+import com.jss.osiris.modules.invoicing.model.DirectDebitTransfertSearch;
+import com.jss.osiris.modules.invoicing.model.DirectDebitTransfertSearchResult;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.invoicing.model.InvoiceLabelResult;
@@ -54,6 +56,7 @@ import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.service.BankTransfertService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
+import com.jss.osiris.modules.quotation.service.DirectDebitTransfertService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.tiers.model.BillingLabelType;
 import com.jss.osiris.modules.tiers.model.ITiers;
@@ -105,6 +108,9 @@ public class InvoicingController {
     @Autowired
     BankTransfertService bankTransfertService;
 
+    @Autowired
+    DirectDebitTransfertService directDebitTransfertService;
+
     @GetMapping(inputEntryPoint + "/payment-ways")
     public ResponseEntity<List<PaymentWay>> getPaymentWays() {
         return new ResponseEntity<List<PaymentWay>>(paymentWayService.getPaymentWays(), HttpStatus.OK);
@@ -128,6 +134,34 @@ public class InvoicingController {
             throw new OsirisValidationException("Id");
 
         return new ResponseEntity<Payment>(paymentService.getPayment(id), HttpStatus.OK);
+    }
+
+    // TODO remove !
+    @GetMapping(inputEntryPoint + "/payment/add")
+    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+    public ResponseEntity<Payment> addPayment(@RequestParam Float amount, @RequestParam Integer paymentWayId,
+            @RequestParam String label)
+            throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+        Payment payment = new Payment();
+        payment.setExternallyAssociated(false);
+        payment.setIsCancelled(false);
+        payment.setLabel(label);
+        payment.setPaymentAmount(amount);
+        payment.setPaymentDate(LocalDateTime.now());
+        payment.setPaymentType(constantService.getPaymentTypeVirement());
+        payment.setPaymentWay(paymentWayService.getPaymentWay(paymentWayId));
+        paymentService.addOrUpdatePayment(payment);
+        paymentService.payementGrab();
+        return new ResponseEntity<Payment>(payment, HttpStatus.OK);
+    }
+
+    // TODO remove !
+    @GetMapping(inputEntryPoint + "/payment/automatch")
+    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+    public ResponseEntity<Payment> automatchPayment()
+            throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+        paymentService.payementGrab();
+        return new ResponseEntity<Payment>(new Payment(), HttpStatus.OK);
     }
 
     @PostMapping(inputEntryPoint + "/payments/search")
@@ -198,9 +232,6 @@ public class InvoicingController {
         if (transfertSearch == null)
             throw new OsirisValidationException("transfertSearch");
 
-        if (transfertSearch.getStartDate() == null || transfertSearch.getEndDate() == null)
-            throw new OsirisValidationException("StartDate or EndDate");
-
         return new ResponseEntity<List<BankTransfertSearchResult>>(
                 bankTransfertService.searchBankTransfert(transfertSearch),
                 HttpStatus.OK);
@@ -230,6 +261,53 @@ public class InvoicingController {
             headers = new HttpHeaders();
             headers.add("filename",
                     "SPPS - Virements - "
+                            + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd HHmm")) + ".xml");
+            headers.setAccessControlExposeHeaders(Arrays.asList("filename"));
+            headers.setContentLength(data.length);
+            headers.set("content-type", "application/xml");
+
+            refunds.delete();
+
+        }
+        return new ResponseEntity<byte[]>(data, headers, HttpStatus.OK);
+    }
+
+    @PostMapping(inputEntryPoint + "/direct/transfert/search")
+    public ResponseEntity<List<DirectDebitTransfertSearchResult>> getTransferts(
+            @RequestBody DirectDebitTransfertSearch transfertSearch)
+            throws OsirisValidationException {
+        if (transfertSearch == null)
+            throw new OsirisValidationException("transfertSearch");
+
+        return new ResponseEntity<List<DirectDebitTransfertSearchResult>>(
+                directDebitTransfertService.searchDirectDebitTransfert(transfertSearch),
+                HttpStatus.OK);
+    }
+
+    @PostMapping(inputEntryPoint + "/direct/transfert/export")
+    public ResponseEntity<byte[]> downloadTransferts(@RequestBody DirectDebitTransfertSearch transfertSearch)
+            throws OsirisValidationException, OsirisException {
+        byte[] data = null;
+        HttpHeaders headers = null;
+
+        if (transfertSearch == null)
+            throw new OsirisValidationException("refundSearch");
+
+        if (transfertSearch.getStartDate() == null || transfertSearch.getEndDate() == null)
+            throw new OsirisValidationException("StartDate or EndDate");
+
+        File refunds = directDebitTransfertService.getDirectDebitTransfertExport(transfertSearch);
+
+        if (refunds != null) {
+            try {
+                data = Files.readAllBytes(refunds.toPath());
+            } catch (IOException e) {
+                throw new OsirisException(e, "Unable to read file " + refunds.toPath());
+            }
+
+            headers = new HttpHeaders();
+            headers.add("filename",
+                    "SPPS - Prélèvements - "
                             + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd HHmm")) + ".xml");
             headers.setAccessControlExposeHeaders(Arrays.asList("filename"));
             headers.setContentLength(data.length);
@@ -300,10 +378,14 @@ public class InvoicingController {
         totalAmount = Math.round(totalAmount * 100f) / 100f;
 
         // Mandatory because we need customer order to get customer accounting account
-        if (paymentAssociate.getTiersRefund() == null && paymentAssociate.getConfrereRefund() == null)
-            throw new OsirisValidationException("TiersRefund or ConfrereRefund");
-        validationHelper.validateReferential(paymentAssociate.getTiersRefund(), false, "TiersRefund");
-        validationHelper.validateReferential(paymentAssociate.getConfrereRefund(), false, "ConfrereRefund");
+        // for inbound payment
+        if (paymentAssociate.getPayment().getPaymentWay().getId()
+                .equals(constantService.getPaymentWayInbound().getId())) {
+            if (paymentAssociate.getTiersRefund() == null && paymentAssociate.getConfrereRefund() == null)
+                throw new OsirisValidationException("TiersRefund or ConfrereRefund");
+            validationHelper.validateReferential(paymentAssociate.getTiersRefund(), false, "TiersRefund");
+            validationHelper.validateReferential(paymentAssociate.getConfrereRefund(), false, "ConfrereRefund");
+        }
 
         if (paymentAssociate.getPayment().getPaymentAmount() < totalAmount)
             throw new OsirisValidationException("not all payment used");
@@ -312,32 +394,51 @@ public class InvoicingController {
                 && paymentAssociate.getTiersRefund() == null && paymentAssociate.getAffaire() == null)
             throw new OsirisValidationException("no refund tiers set");
 
-        ITiers commonCustomerOrder = paymentAssociate.getTiersRefund() != null ? paymentAssociate.getTiersRefund()
-                : paymentAssociate.getConfrereRefund();
-        if (paymentAssociate.getInvoices() != null) {
-            for (Invoice invoice : paymentAssociate.getInvoices()) {
-                if (invoice.getResponsable() != null
-                        && !invoice.getResponsable().getTiers().getId().equals(commonCustomerOrder.getId()))
-                    throw new OsirisValidationException("not same customer order chosed");
-                if (invoice.getConfrere() != null
-                        && !invoice.getConfrere().getId().equals(commonCustomerOrder.getId()))
-                    throw new OsirisValidationException("not same customer order chosed");
-                if (invoice.getTiers() != null && !invoice.getTiers().getId().equals(commonCustomerOrder.getId()))
-                    throw new OsirisValidationException("not same customer order chosed");
+        ITiers commonCustomerOrder = null;
+        if (paymentAssociate.getPayment().getPaymentWay().getId()
+                .equals(constantService.getPaymentWayInbound().getId())) {
+            commonCustomerOrder = paymentAssociate.getTiersRefund() != null ? paymentAssociate.getTiersRefund()
+                    : paymentAssociate.getConfrereRefund();
+            if (paymentAssociate.getInvoices() != null) {
+                for (Invoice invoice : paymentAssociate.getInvoices()) {
+                    if (invoice.getResponsable() != null
+                            && !invoice.getResponsable().getTiers().getId().equals(commonCustomerOrder.getId()))
+                        throw new OsirisValidationException("not same customer order chosed");
+                    if (invoice.getConfrere() != null
+                            && !invoice.getConfrere().getId().equals(commonCustomerOrder.getId()))
+                        throw new OsirisValidationException("not same customer order chosed");
+                    if (invoice.getTiers() != null && !invoice.getTiers().getId().equals(commonCustomerOrder.getId()))
+                        throw new OsirisValidationException("not same customer order chosed");
+                }
             }
-        }
 
-        if (paymentAssociate.getCustomerOrders() != null) {
-            for (CustomerOrder customerOrder : paymentAssociate.getCustomerOrders()) {
-                if (customerOrder.getResponsable() != null
-                        && !customerOrder.getResponsable().getTiers().getId().equals(commonCustomerOrder.getId()))
-                    throw new OsirisValidationException("not same customer order chosed");
-                if (customerOrder.getConfrere() != null
-                        && !customerOrder.getConfrere().getId().equals(commonCustomerOrder.getId()))
-                    throw new OsirisValidationException("not same customer order chosed");
-                if (customerOrder.getTiers() != null
-                        && !customerOrder.getTiers().getId().equals(commonCustomerOrder.getId()))
-                    throw new OsirisValidationException("not same customer order chosed");
+            if (paymentAssociate.getCustomerOrders() != null) {
+                for (CustomerOrder customerOrder : paymentAssociate.getCustomerOrders()) {
+                    if (customerOrder.getResponsable() != null
+                            && !customerOrder.getResponsable().getTiers().getId().equals(commonCustomerOrder.getId()))
+                        throw new OsirisValidationException("not same customer order chosed");
+                    if (customerOrder.getConfrere() != null
+                            && !customerOrder.getConfrere().getId().equals(commonCustomerOrder.getId()))
+                        throw new OsirisValidationException("not same customer order chosed");
+                    if (customerOrder.getTiers() != null
+                            && !customerOrder.getTiers().getId().equals(commonCustomerOrder.getId()))
+                        throw new OsirisValidationException("not same customer order chosed");
+                }
+            }
+        } else {
+            // All invoice same provider / AC
+            if (paymentAssociate.getInvoices() != null && paymentAssociate.getInvoices().size() > 1) {
+                Integer providerId = paymentAssociate.getInvoices().get(0).getProvider() != null
+                        ? paymentAssociate.getInvoices().get(0).getProvider().getId()
+                        : paymentAssociate.getInvoices().get(0).getCompetentAuthority().getId();
+                for (Invoice invoice : paymentAssociate.getInvoices()) {
+                    if (invoice.getProvider() != null
+                            && !providerId.equals(invoice.getProvider().getId()))
+                        throw new OsirisValidationException("not same customer order chosed");
+                    if (invoice.getCompetentAuthority() != null
+                            && !providerId.equals(invoice.getCompetentAuthority().getId()))
+                        throw new OsirisValidationException("not same customer order chosed");
+                }
             }
         }
 
@@ -507,7 +608,7 @@ public class InvoicingController {
     @PostMapping(inputEntryPoint + "/invoice")
     @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE + "||" + ActiveDirectoryHelper.ACCOUNTING)
     public ResponseEntity<Invoice> addOrUpdateInvoice(@RequestBody Invoice invoice)
-            throws OsirisValidationException, OsirisException {
+            throws OsirisValidationException, OsirisException, OsirisClientMessageException {
         if (invoice.getId() != null && invoice.getCustomerOrder() != null)
             throw new OsirisValidationException("Id");
 
@@ -533,6 +634,11 @@ public class InvoicingController {
 
         if (invoice.getProvider() != null) {
             validationHelper.validateReferential(invoice.getProvider(), true, "Provider");
+            doFound++;
+        }
+
+        if (invoice.getCompetentAuthority() != null) {
+            validationHelper.validateReferential(invoice.getCompetentAuthority(), true, "CompetentAuthority");
             doFound++;
         }
 
@@ -583,6 +689,24 @@ public class InvoicingController {
                     invoiceItem.setVatPrice(0f);
 
             }
+        }
+
+        if (invoice.getCustomerOrderForInboundInvoice() != null) {
+            if (!invoice.getIsInvoiceFromProvider())
+                throw new OsirisValidationException("customerOrderForInboundInvoice");
+            validationHelper.validateReferential(invoice.getCustomerOrderForInboundInvoice(), false,
+                    "customerOrderForInboundInvoice");
+        }
+
+        // Handle automatic bank transfert
+        validationHelper.validateReferential(invoice.getManualPaymentType(), invoice.getIsInvoiceFromProvider(),
+                "PaymentType");
+        if (invoice.getIsInvoiceFromProvider()
+                && invoice.getManualPaymentType().getId().equals(constantService.getPaymentTypeVirement().getId())) {
+            if (invoiceHelper.getIbanOfOrderingCustomer(invoice) == null)
+                throw new OsirisClientMessageException("Aucun IBAN trouvé sur le donneur d'ordre");
+            if (invoiceHelper.getBicOfOrderingCustomer(invoice) == null)
+                throw new OsirisClientMessageException("Aucun BIC trouvé sur le donneur d'ordre");
         }
 
         return new ResponseEntity<Invoice>(invoiceService.addOrUpdateInvoiceFromUser(invoice), HttpStatus.OK);

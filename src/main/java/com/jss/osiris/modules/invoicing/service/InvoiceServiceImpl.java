@@ -33,6 +33,7 @@ import com.jss.osiris.modules.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.miscellaneous.service.NotificationService;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.quotation.service.BankTransfertService;
 import com.jss.osiris.modules.quotation.service.ConfrereService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.tiers.model.ITiers;
@@ -78,6 +79,9 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Autowired
     ConfrereService confrereService;
+
+    @Autowired
+    BankTransfertService bankTransfertService;
 
     @Override
     public List<Invoice> getAllInvoices() {
@@ -203,14 +207,17 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public Invoice addOrUpdateInvoiceFromUser(Invoice invoice) throws OsirisException {
+    public Invoice addOrUpdateInvoiceFromUser(Invoice invoice) throws OsirisException, OsirisClientMessageException {
         if (!hasAtLeastOneInvoiceItemNotNull(invoice))
             throw new OsirisException(null, "No invoice item found on manual invoice");
 
         invoice.setCreatedDate(LocalDateTime.now());
 
         for (InvoiceItem invoiceItem : invoice.getInvoiceItems()) {
-            invoiceItem.setVatPrice(invoiceItem.getVat().getRate() * invoiceItem.getPreTaxPrice() / 100f);
+            if (invoiceItem.getBillingItem().getBillingType().getIsNonTaxable())
+                invoiceItem.setVatPrice(0f);
+            else
+                invoiceItem.setVatPrice(invoiceItem.getVat().getRate() * invoiceItem.getPreTaxPrice() / 100f);
         }
 
         Integer nbrOfDayFromDueDate = 30;
@@ -250,6 +257,13 @@ public class InvoiceServiceImpl implements InvoiceService {
             accountingRecordService.generateAccountingRecordsForPurshaseOnInvoiceGeneration(invoice);
         else
             accountingRecordService.generateAccountingRecordsForSaleOnInvoiceGeneration(invoice);
+
+        // Do not generate bank transfert if invoice from Competent Authority
+        // It's done when debour is filled in provision
+        if (invoice.getIsInvoiceFromProvider()
+                && invoice.getManualPaymentType().getId().equals(constantService.getPaymentTypeVirement().getId())
+                && invoice.getCompetentAuthority() == null)
+            bankTransfertService.generateBankTransfertForManualInvoice(invoice);
 
         addOrUpdateInvoice(invoice);
         return invoice;

@@ -7,6 +7,7 @@ import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.invoicing.model.BankTransfertSearch;
 import com.jss.osiris.modules.invoicing.model.BankTransfertSearchResult;
+import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.BankTransfert;
 import com.jss.osiris.modules.quotation.model.Debour;
@@ -23,6 +24,9 @@ public interface BankTransfertService {
     public BankTransfert addOrUpdateBankTransfert(BankTransfert bankTransfert);
 
     public BankTransfert generateBankTransfertForDebour(Debour debour, AssoAffaireOrder asso)
+            throws OsirisException, OsirisClientMessageException;
+
+    public BankTransfert generateBankTransfertForManualInvoice(Invoice invoice)
             throws OsirisException, OsirisClientMessageException;
 
     public File getBankTransfertExport(BankTransfertSearch transfertSearch) throws OsirisException;

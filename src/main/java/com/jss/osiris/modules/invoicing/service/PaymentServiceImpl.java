@@ -3,6 +3,7 @@ package com.jss.osiris.modules.invoicing.service;
 import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
@@ -337,7 +338,8 @@ public class PaymentServiceImpl implements PaymentService {
                 }
 
                 if (debourFound != null)
-                    associateOutboundPaymentAndDebour(payment, debourFound, generateWaitingAccountAccountingRecords);
+                    associateOutboundPaymentAndDebour(payment, Arrays.asList(debourFound),
+                            generateWaitingAccountAccountingRecords);
 
                 // If payment not used, put it in waiting account
                 if (generateWaitingAccountAccountingRecords.isTrue()) {
@@ -479,7 +481,7 @@ public class PaymentServiceImpl implements PaymentService {
                                             .equals(constantService.getPrincipalAccountingAccountWaiting().getId())) {
                                 accountingRecordService.letterWaitingRecords(record,
                                         accountingRecordService.generateCounterPart(record,
-                                                constantService.getAccountingJournalSales(), null));
+                                                constantService.getAccountingJournalSales(), payment.getId()));
                             }
                 }
                 newPayment.setInvoice(correspondingInvoices.get(i));
@@ -494,8 +496,9 @@ public class PaymentServiceImpl implements PaymentService {
                 remainingMoney = Math.round(remainingMoney * 100f) / 100f;
                 remainingToPay -= remainingToPayForCurrentInvoice;
                 if (isPayed) {
-                    correspondingInvoices.get(i).setInvoiceStatus(payedStatus);
-                    invoiceService.addOrUpdateInvoice(correspondingInvoices.get(i));
+                    Invoice updateInvoice = invoiceService.getInvoice(correspondingInvoices.get(i).getId());
+                    updateInvoice.setInvoiceStatus(payedStatus);
+                    invoiceService.addOrUpdateInvoice(updateInvoice);
                 } else {
                     break;
                 }
@@ -560,9 +563,11 @@ public class PaymentServiceImpl implements PaymentService {
 
             remainingMoney = Math.round(remainingMoney * 100f) / 100f;
             remainingToPay -= remainingToPayForCurrentInvoice;
+
             if (isPayed) {
-                correspondingInvoice.setInvoiceStatus(constantService.getInvoiceStatusPayed());
-                invoiceService.addOrUpdateInvoice(correspondingInvoice);
+                Invoice updateInvoice = invoiceService.getInvoice(correspondingInvoice.getId());
+                updateInvoice.setInvoiceStatus(constantService.getInvoiceStatusPayed());
+                invoiceService.addOrUpdateInvoice(updateInvoice);
             }
         }
         return remainingMoney;
@@ -574,8 +579,8 @@ public class PaymentServiceImpl implements PaymentService {
         Float refundAmount = Math.round(refund.getRefundAmount() * 100f) / 100f;
         Float paymentAmount = Math.round(payment.getPaymentAmount() * 100f) / 100f;
 
-        if (refundAmount == paymentAmount) {
-            generateWaitingAccountAccountingRecords = new MutableBoolean(false);
+        if (refundAmount.equals(paymentAmount)) {
+            generateWaitingAccountAccountingRecords.setFalse();
             accountingRecordService.generateAccountingRecordsForRefundOnVirement(refund);
 
             refund.setIsMatched(true);
@@ -584,20 +589,51 @@ public class PaymentServiceImpl implements PaymentService {
         return 0f;
     }
 
-    private Float associateOutboundPaymentAndDebour(Payment payment, Debour debour,
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Float associateOutboundPaymentAndDebourFromUser(Payment payment, List<Debour> debours)
+            throws OsirisException {
+        associateOutboundPaymentAndDebour(payment, debours, new MutableBoolean(false));
+        // do counter part of waiting record
+        if (payment.getAccountingRecords() != null && payment.getAccountingRecords().size() > 0)
+            for (AccountingRecord record : payment.getAccountingRecords())
+                if (record.getIsCounterPart() == false
+                        && record.getAccountingAccount().getPrincipalAccountingAccount().getId()
+                                .equals(constantService.getPrincipalAccountingAccountWaiting().getId())) {
+                    accountingRecordService.letterWaitingRecords(record,
+                            accountingRecordService.generateCounterPart(record,
+                                    constantService.getAccountingJournalSales(), payment.getId()));
+                }
+        return 0f;
+    }
+
+    private Float associateOutboundPaymentAndDebour(Payment payment, List<Debour> debours,
             MutableBoolean generateWaitingAccountAccountingRecords) throws OsirisException {
 
-        Float debourAmount = Math.round(debour.getDebourAmount() * 100f) / 100f;
-        Float paymentAmount = Math.round(payment.getPaymentAmount() * 100f) / 100f;
+        if (debours != null && debours.size() > 0) {
+            Float debourAmount = 0f;
+            for (Debour debour : debours) {
+                Debour inDebour = debourService.getDebour(debour.getId());
+                debour.setProvision(inDebour.getProvision());
+                debourAmount += inDebour.getDebourAmount();
+            }
+            Float paymentAmount = Math.round(payment.getPaymentAmount() * 100f) / 100f;
+            debourAmount = Math.round(debourAmount * 100f) / 100f;
 
-        if (debourAmount == paymentAmount) {
-            generateWaitingAccountAccountingRecords = new MutableBoolean(false);
-            accountingRecordService.generateAccountingRecordsForDebourOnDebour(debour);
-
-            debour.setPayment(payment);
-            debourService.addOrUpdateDebour(debour);
+            if (debourAmount.equals(paymentAmount)) {
+                for (Debour debour : debours) {
+                    Debour inDebour = debourService.getDebour(debour.getId());
+                    debour.setProvision(inDebour.getProvision());
+                    generateWaitingAccountAccountingRecords.setFalse();
+                    accountingRecordService.generateAccountingRecordsForDebourOnDebour(inDebour);
+                    inDebour.setPayment(payment);
+                    debourService.addOrUpdateDebour(inDebour);
+                }
+                cancelPayment(payment);
+            }
         }
         return 0f;
+
     }
 
     private List<IndexEntity> getCorrespondingEntityForOutboundPayment(Payment payment) {

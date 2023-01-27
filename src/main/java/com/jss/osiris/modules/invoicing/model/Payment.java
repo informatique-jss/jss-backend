@@ -19,6 +19,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.modules.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.miscellaneous.model.PaymentType;
+import com.jss.osiris.modules.quotation.model.Debour;
 
 @Entity
 @Table(indexes = { @Index(name = "idx_bank_id", columnList = "bankId", unique = true) })
@@ -65,6 +66,10 @@ public class Payment implements Serializable, IId {
 	private Payment originPayment;
 
 	private Boolean isCancelled;
+
+	@OneToMany(mappedBy = "payment")
+	@JsonIgnoreProperties(value = { "payment", "debours" }, allowSetters = true)
+	private List<Debour> debours;
 
 	public Integer getId() {
 		return id;
@@ -168,6 +173,14 @@ public class Payment implements Serializable, IId {
 
 	public void setIsCancelled(Boolean isCancelled) {
 		this.isCancelled = isCancelled;
+	}
+
+	public List<Debour> getDebours() {
+		return debours;
+	}
+
+	public void setDebours(List<Debour> debours) {
+		this.debours = debours;
 	}
 
 }

@@ -147,6 +147,10 @@ public class CustomerOrder implements IQuotation {
 	private LocalDateTime secondReminderDateTime;
 	private LocalDateTime thirdReminderDateTime;
 
+	@OneToMany(targetEntity = Invoice.class, mappedBy = "customerOrderForInboundInvoice")
+	@JsonIgnoreProperties(value = { "customerOrder" }, allowSetters = true)
+	private List<Invoice> providerInvoices;
+
 	public Integer getId() {
 		return id;
 	}
@@ -337,6 +341,14 @@ public class CustomerOrder implements IQuotation {
 
 	public void setThirdReminderDateTime(LocalDateTime thirdReminderDateTime) {
 		this.thirdReminderDateTime = thirdReminderDateTime;
+	}
+
+	public List<Invoice> getProviderInvoices() {
+		return providerInvoices;
+	}
+
+	public void setProviderInvoices(List<Invoice> providerInvoices) {
+		this.providerInvoices = providerInvoices;
 	}
 
 }

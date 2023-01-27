@@ -449,6 +449,10 @@ public class Constant implements Serializable, IId {
 	private Vat vatEight;
 
 	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_vat_zero")
+	private Vat vatZero;
+
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_vat_deductible")
 	private Vat vatDeductible;
 
@@ -1653,6 +1657,14 @@ public class Constant implements Serializable, IId {
 
 	public void setVatDeductible(Vat vatDeductible) {
 		this.vatDeductible = vatDeductible;
+	}
+
+	public Vat getVatZero() {
+		return vatZero;
+	}
+
+	public void setVatZero(Vat vatZero) {
+		this.vatZero = vatZero;
 	}
 
 }

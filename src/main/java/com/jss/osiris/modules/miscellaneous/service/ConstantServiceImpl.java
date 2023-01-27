@@ -620,6 +620,11 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public Vat getVatZero() throws OsirisException {
+        return getConstants().getVatZero();
+    }
+
+    @Override
     public Vat getVatEight() throws OsirisException {
         return getConstants().getVatEight();
     }

@@ -49,6 +49,8 @@ import com.jss.osiris.libs.transfer.RmtInfBean;
 import com.jss.osiris.libs.transfer.SvcLvlBean;
 import com.jss.osiris.modules.invoicing.model.BankTransfertSearch;
 import com.jss.osiris.modules.invoicing.model.BankTransfertSearchResult;
+import com.jss.osiris.modules.invoicing.model.Invoice;
+import com.jss.osiris.modules.invoicing.service.InvoiceHelper;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.BankTransfert;
 import com.jss.osiris.modules.quotation.model.Debour;
@@ -68,6 +70,9 @@ public class BankTransfertServiceImpl implements BankTransfertService {
 
     @Value("${jss.bic}")
     private String bicJss;
+
+    @Autowired
+    InvoiceHelper invoiceHelper;
 
     @Override
     public List<BankTransfert> getBankTransfers() {
@@ -101,6 +106,10 @@ public class BankTransfertServiceImpl implements BankTransfertService {
 
     @Override
     public List<BankTransfertSearchResult> searchBankTransfert(BankTransfertSearch bankTransfertSearch) {
+        if (bankTransfertSearch.getStartDate() == null)
+            bankTransfertSearch.setStartDate(LocalDateTime.now().minusYears(100));
+        if (bankTransfertSearch.getEndDate() == null)
+            bankTransfertSearch.setEndDate(LocalDateTime.now().plusYears(100));
         return bankTransfertRepository.findTransferts(
                 bankTransfertSearch.getStartDate().withHour(0).withMinute(0),
                 bankTransfertSearch.getEndDate().withHour(23).withMinute(59), bankTransfertSearch.getMinAmount(),
@@ -132,6 +141,20 @@ public class BankTransfertServiceImpl implements BankTransfertService {
         bankTransfert.setTransfertDateTime(LocalDateTime.now());
         bankTransfert.setTransfertIban(debour.getCompetentAuthority().getIban());
         bankTransfert.setTransfertBic(debour.getCompetentAuthority().getBic());
+        return this.addOrUpdateBankTransfert(bankTransfert);
+    }
+
+    @Override
+    public BankTransfert generateBankTransfertForManualInvoice(Invoice invoice)
+            throws OsirisException, OsirisClientMessageException {
+        BankTransfert bankTransfert = new BankTransfert();
+        bankTransfert.setLabel("Facture " + invoice.getId() + " / Journal Spécial des Sociétés / "
+                + invoice.getCommandNumber() + " / " + invoice.getManualAccountingDocumentNumber());
+        bankTransfert.setIsAlreadyExported(false);
+        bankTransfert.setTransfertAmount(invoice.getTotalPrice());
+        bankTransfert.setTransfertDateTime(LocalDateTime.now());
+        bankTransfert.setTransfertIban(invoiceHelper.getIbanOfOrderingCustomer(invoice));
+        bankTransfert.setTransfertBic(invoiceHelper.getBicOfOrderingCustomer(invoice));
         return this.addOrUpdateBankTransfert(bankTransfert);
     }
 

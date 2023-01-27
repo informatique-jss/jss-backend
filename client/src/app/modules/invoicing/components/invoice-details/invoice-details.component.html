@@ -13,6 +13,12 @@
             (auxclick)="openRoute($event,'/order/'+invoice.customerOrder.id)">visibility
           </mat-icon>
         </p>
+        <p *ngIf="invoice.customerOrderForInboundInvoice">Commande n°{{invoice.customerOrderForInboundInvoice.id}}
+          <mat-icon matTooltip="Voir la commande" color="accent" class="pointer"
+            (click)="openRoute($event,'/order/'+invoice.customerOrderForInboundInvoice.id)"
+            (auxclick)="openRoute($event,'/order/'+invoice.customerOrderForInboundInvoice.id)">visibility
+          </mat-icon>
+        </p>
         <p *ngIf="invoice.attachments"> <single-attachment [entity]="invoice"
             [entityType]="INVOICE_ENTITY_TYPE.entityType" [editMode]="false"
             [attachmentTypeToDisplay]="attachmentTypeInvoice">
@@ -62,7 +68,7 @@
                   (auxclick)="openRoute($event,'/referential/provider/'+invoice.provider.id)">visibility
                 </mat-icon></p>
               <p>IBAN : {{invoice.provider.iban}}</p>
-              <p>Compte fournissuer :
+              <p>Compte fournisseur :
                 {{invoice.provider.accountingAccountProvider.principalAccountingAccount.code+"-"+invoice.provider.accountingAccountProvider.accountingAccountSubNumber}}
               </p>
             </td>
@@ -237,11 +243,11 @@
       </div>
     </mat-tab>
     <mat-tab label="Associer un paiement"
-      *ngIf="getAmountRemaining(invoice)>0 && invoice.invoiceStatus.id==invoiceStatusSend.id">
+      *ngIf="getAmountRemaining(invoice)>0 && (invoice.invoiceStatus.id==invoiceStatusSend.id ||invoice.invoiceStatus.id==invoiceStatusReceived.id)">
       <invoice-payment (stateChanged)=" onStateChange()" [invoice]="invoice">
       </invoice-payment>
     </mat-tab>
-    <mat-tab label="Suivi" *ngIf="invoice.id">
+    <mat-tab label="Suivi" *ngIf="invoice.id && invoice.invoiceStatus.id==invoiceStatusSend.id ">
       <div>
         <ul>
           <li [ngClass]="{'color-warn':beforeToday(invoice.dueDate)}">Echéance de paiement : {{invoice.dueDate |

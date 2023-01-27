@@ -800,6 +800,12 @@
           </tr>
           <tr>
             <td>
+              <select-vat [(model)]="constant.vatZero" label="Taux de TVA - 0%" [form]="constantForm"
+                propertyName="vatZero" [isMandatory]="true" [isDisabled]="!editMode"></select-vat>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <select-vat [(model)]="constant.vatDeductible" label="Taux de TVA - TVA déductible" [form]="constantForm"
                 propertyName="vatDeductible" [isMandatory]="true" [isDisabled]="!editMode"></select-vat>
             </td>
