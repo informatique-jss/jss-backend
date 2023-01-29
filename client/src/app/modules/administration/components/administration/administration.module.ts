@@ -19,7 +19,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule, Routes } from '@angular/router';
-import { QuillModule } from 'ngx-quill';
+import { NgxTrumbowygModule } from 'ngx-trumbowyg';
 import { MiscellaneousModule } from 'src/app/modules/miscellaneous/components/miscellaneous/miscellaneous.module';
 import { AccountingModule } from '../../../accounting/components/accounting/accounting.module';
 import { QuotationModule } from '../../../quotation/components/quotation/quotation.module';
@@ -90,26 +90,30 @@ const routes: Routes = [
 @NgModule({
   imports: [
     RouterModule.forRoot(routes, { onSameUrlNavigation: 'reload' }),
-    QuillModule.forRoot({
-      modules: {
-        syntax: false,
-        toolbar: {
-          container: [
-            ['bold', 'italic'],
-            [{ 'font': [] }],
-            [{ 'color': [] }],
-            [{ 'background': [] }],
-            [{ align: '' }, { align: 'center' }],
-            [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-            [{ 'size': [] }],
-            ['clean'],
-            //['link'],
-
-          ],
+    NgxTrumbowygModule.withConfig({
+      lang: 'fr',
+      svgPath: '/assets/images/icons.svg',
+      removeformatPasted: true,
+      autogrow: true,
+      btns: [
+        ['formatting'],
+        ['strong', 'em'],
+        ['foreColor', 'backColor'],
+        ['fontsize'],
+        ['justifyLeft', 'justifyCenter', 'justifyRight', 'justifyFull'],
+        ['unorderedList', 'orderedList'],
+        ['removeformat'],
+        ['fullscreen'],
+        ['table']
+      ],
+      // Some plugins, like emoji, has a prerequisite to run certain functions at certain DOM events.
+      // Please keep in mind that some events are protected for the sake of this library.
+      // Protected events: tbwinit, tbwchange, tbwfocus
+      // You can register events like this:
+      events: {
+        'input propertychange': () => {
         }
-      },
-      placeholder: '',
+      }
     }),
     CommonModule,
     MatTabsModule,

@@ -158,22 +158,20 @@
               <td>
                 <p>En-tête :</p>
                 <div *ngIf="!editMode">
-                  <span [innerHTML]="announcement.noticeHeader | trustHtml"></span>
+                  <span [innerHTML]="announcement.noticeHeader | trustHtml" class="announce-container"></span>
                 </div>
-                <quill-editor *ngIf="editMode" [ngModel]="announcement.noticeHeader" formControlName="noticeHeader"
-                  (onContentChanged)="setNoticeHeaderModel($event)">
-                </quill-editor>
+                <ngx-trumbowyg-editor *ngIf="editMode" name="noticeHeader" [(ngModel)]="announcement.noticeHeader"
+                  formControlName="noticeHeader"></ngx-trumbowyg-editor>
               </td>
             </tr>
             <tr>
               <td>
                 <p>Annonce :</p>
                 <div *ngIf="!editMode">
-                  <span [innerHTML]="announcement.notice | trustHtml"></span>
+                  <span [innerHTML]="announcement.notice | trustHtml" class="announce-container"></span>
                 </div>
-                <quill-editor *ngIf="editMode" [ngModel]="announcement.notice" formControlName="notice"
-                  (onContentChanged)="setNoticeModel($event)">
-                </quill-editor>
+                <ngx-trumbowyg-editor *ngIf="editMode" name="editor" [(ngModel)]="announcement.notice"
+                  formControlName="notice"></ngx-trumbowyg-editor>
               </td>
             </tr>
           </table>

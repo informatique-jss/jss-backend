@@ -65,20 +65,18 @@
             right: 30px;
         }
 
-        .ql-align-right {
-            text-align: right;
+        table.table,
+        table.table>thead,
+        table.table>tbody,
+        table.table>thead>th,
+        table.table>tbody>tr>td,
+        table.table>tbody>tr {
+            border: 1px solid;
+            border-collapse: collapse;
         }
 
-        .ql-align-center {
-            text-align: center;
-        }
-
-        .ql-align-left {
-            text-align: left;
-        }
-
-        .ql-align-justify {
-            text-align: justify;
+        table.table>tbody>tr>td {
+            padding: 5px;
         }
 
         @page {

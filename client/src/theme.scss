@@ -1,5 +1,7 @@
 @import "~@angular/material/theming";
-@import '~quill/dist/quill.snow.css';
+@import "~trumbowyg/dist/ui/trumbowyg.min.css";
+@import "~trumbowyg/dist/plugins/table/ui/trumbowyg.table.min.css";
+@import "~trumbowyg/dist/plugins/colors/ui/trumbowyg.colors.min.css";
 
 @include mat-core();
 

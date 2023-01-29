@@ -10,7 +10,3 @@ td {
 .legalDisplayTd {
   width: 170px;
 }
-
-::ng-deep .ql-editor {
-  height: 400px;
-}

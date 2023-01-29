@@ -31,7 +31,14 @@
               "src/styles.css",
               "src/theme.scss"
             ],
-            "scripts": []
+            "scripts": [
+              "./node_modules/jquery/dist/jquery.js",
+              "./node_modules/trumbowyg/dist/trumbowyg.min.js",
+              "./node_modules/trumbowyg/dist/plugins/table/trumbowyg.table.min.js",
+              "./node_modules/trumbowyg/dist/plugins/colors/trumbowyg.colors.min.js",
+              "./node_modules/trumbowyg/dist/plugins/fontsize/trumbowyg.fontsize.min.js",
+              "./node_modules/trumbowyg/dist/langs/fr.min.js"
+            ]
           },
           "configurations": {
             "production": {
