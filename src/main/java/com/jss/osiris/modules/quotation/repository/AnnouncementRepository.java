@@ -27,6 +27,7 @@ public interface AnnouncementRepository extends CrudRepository<Announcement, Int
                         " join asso_affaire_order asso_affaire on asso_affaire.id = p.id_asso_affaire_order " +
                         " join affaire on affaire.id = asso_affaire.id_affaire " +
                         " join department d on d.id = a.id_department " +
+                        " join customer_order on customer_order.id = asso_affaire.id_customer_order " +
                         " left join asso_announcement_notice_type asso on a.id = asso.id_announcement " +
                         " left join  notice_type   on notice_type.id = asso.id_notice_type " +
                         " where ((:isStricNameSearch = true and (:affaireName='' or upper(coalesce(affaire.denomination, affaire.firstname || ' ' || affaire.lastname))=upper(:affaireName ) ) )"
@@ -40,6 +41,7 @@ public interface AnnouncementRepository extends CrudRepository<Announcement, Int
                         "  and a.id_announcement_status in (:announcementStatus) " +
                         "  and a.id_confrere = :confrereId " +
                         "  and a.publication_date <= now() " +
+                        "  and customer_order.id_customer_order_status != :customerOrderStatusIdExcluded " +
                         "  group by a.id, coalesce(affaire.denomination, affaire.firstname || ' ' || affaire.lastname),d.code,a.publication_date,a.notice ")
         List<AnnouncementSearchResult> searchAnnouncements(@Param("affaireName") String affaireName,
                         @Param("isStricNameSearch") Boolean isStricNameSearch,
@@ -47,7 +49,8 @@ public interface AnnouncementRepository extends CrudRepository<Announcement, Int
                         @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate,
                         @Param("announcementStatus") List<Integer> announcementStatusId,
                         @Param("confrereId") Integer confrereId,
-                        @Param("noticeTypeId") Integer noticeTypeId);
+                        @Param("noticeTypeId") Integer noticeTypeId,
+                        @Param("customerOrderStatusIdExcluded") Integer customerOrderStatusIdExcluded);
 
         @Query(nativeQuery = true, value = " " +
                         " select affaire.id " +

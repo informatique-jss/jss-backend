@@ -31,6 +31,7 @@ import com.jss.osiris.modules.quotation.model.AnnouncementSearchResult;
 import com.jss.osiris.modules.quotation.model.AnnouncementStatus;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.repository.AnnouncementRepository;
 
@@ -66,6 +67,9 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
     @Autowired
     PictureHelper pictureHelper;
+
+    @Autowired
+    CustomerOrderStatusService customerOrderStatusService;
 
     @Override
     public List<Announcement> getAnnouncements() {
@@ -116,11 +120,14 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                 .getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_DONE);
         announcementStautsId.add(closeStatus.getId());
 
+        CustomerOrderStatus customerOrderStatusExcluded = customerOrderStatusService
+                .getCustomerOrderStatusByCode(CustomerOrderStatus.ABANDONED);
+
         return announcementRepository.searchAnnouncements(announcementSearch.getAffaireName(),
                 announcementSearch.getIsStricNameSearch(), departementId,
                 announcementSearch.getStartDate(),
                 announcementSearch.getEndDate(), announcementStautsId, constantService.getConfrereJssSpel().getId(),
-                noticeTypeId);
+                noticeTypeId, customerOrderStatusExcluded.getId());
     }
 
     @Override
