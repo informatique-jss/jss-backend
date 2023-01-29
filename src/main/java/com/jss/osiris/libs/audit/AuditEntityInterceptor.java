@@ -132,11 +132,7 @@ public class AuditEntityInterceptor extends EmptyInterceptor {
             if (auditToSave != null && auditToSave.size() > 0) {
                 if (!tx.getStatus().equals(TransactionStatus.ACTIVE)
                         && !tx.getStatus().equals(TransactionStatus.MARKED_ROLLBACK))
-                    try {
-                        tx.begin();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    tx.begin();
                 try {
                     for (Audit audit : auditToSave) {
                         auditsToDelete.add(audit);
