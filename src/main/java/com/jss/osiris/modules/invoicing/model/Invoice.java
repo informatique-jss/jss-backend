@@ -15,6 +15,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -43,8 +44,9 @@ import com.jss.osiris.modules.tiers.model.TiersFollowup;
 public class Invoice implements IId, IAttachment {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@SequenceGenerator(name = "invoice_sequence", sequenceName = "invoice_sequence", allocationSize = 1)
 	@IndexedField
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "invoice_sequence")
 	private Integer id;
 
 	@Column(nullable = false)
