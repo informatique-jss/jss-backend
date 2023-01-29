@@ -99,8 +99,7 @@ public class EtablissementPublicsDelegatImpl implements EtablissementPublicsDele
             competentAuthority
                     .setCode(organisme.getProperties().getZonage().getCommunes().get(0).substring(0, 1));
             competentAuthority
-                    .setCities(getCitiesFromInseeCodeList(
-                            organisme.getProperties().getZonage().getCommunes()));
+                    .setCities(getCitiesFromInseeCodeList(organisme.getProperties().getZonage().getCommunes()));
         }
 
         competentAuthority.setCountry(constantService.getCountryFrance());
@@ -112,7 +111,9 @@ public class EtablissementPublicsDelegatImpl implements EtablissementPublicsDele
                 && !isMailInList(organisme.getProperties().getEmail(), competentAuthority.getMails())) {
             Mail mail = new Mail();
             mail.setMail(organisme.getProperties().getEmail());
-            competentAuthority.setMails(mailService.populateMailIds(Arrays.asList(mail)));
+            ArrayList<Mail> mails = new ArrayList<Mail>();
+            mails.add(mail);
+            competentAuthority.setMails(mailService.populateMailIds(mails));
             ;
         }
 
@@ -121,7 +122,9 @@ public class EtablissementPublicsDelegatImpl implements EtablissementPublicsDele
                         competentAuthority.getPhones())) {
             Phone phone = new Phone();
             phone.setPhoneNumber(organisme.getProperties().getTelephone().replaceAll(" ", ""));
-            competentAuthority.setPhones(phoneService.populatePhoneIds(Arrays.asList(phone)));
+            ArrayList<Phone> phones = new ArrayList<>();
+            phones.add(phone);
+            competentAuthority.setPhones(phoneService.populatePhoneIds(phones));
         }
 
         if (competentAuthority.getSchedulle() == null && organisme.getProperties().getHoraires() != null
