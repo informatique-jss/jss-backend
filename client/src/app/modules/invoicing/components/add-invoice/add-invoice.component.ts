@@ -111,10 +111,10 @@ export class AddInvoiceComponent implements OnInit {
     let total = 0;
     if (element && element.preTaxPrice) {
       total += parseFloat(element.preTaxPrice + "");
-      if (element.vat)
-        total += element.preTaxPrice * element.vat.rate / 100;
       if (element.discountAmount)
         total -= parseFloat(element.discountAmount + "");
+      if (element.vat)
+        total += element.preTaxPrice * element.vat.rate / 100;
       return Math.round(total * 100) / 100 + " €";
     }
     return "0 €";
