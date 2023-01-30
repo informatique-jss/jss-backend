@@ -151,13 +151,13 @@
                 </select-payment-types>
               </td>
               <td
-                *ngIf="tiers  && tiers.paymentType && (tiers.paymentType.id==paymentTypePrelevement.id || tiers.paymentType.id==paymentTypePrelevement.id)">
+                *ngIf="tiers  && tiers.paymentType && (tiers.paymentType.id==paymentTypePrelevement.id || tiers.paymentType.id==paymentTypeVirement.id)">
                 <generic-input [(model)]="tiers.paymentIban" label="IBAN" [form]="settlementBillingForm"
                   propertyName="paymentIban" [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="40">
                 </generic-input>
               </td>
               <td
-                *ngIf="tiers  && tiers.paymentType && (tiers.paymentType.id==paymentTypePrelevement.id || tiers.paymentType.id==paymentTypePrelevement.id)">
+                *ngIf="tiers  && tiers.paymentType && (tiers.paymentType.id==paymentTypePrelevement.id || tiers.paymentType.id==paymentTypeVirement.id)">
                 <generic-input [(model)]="tiers.paymentBic" label="BIC" [form]="settlementBillingForm"
                   propertyName="paymentBic" [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="40">
                 </generic-input>
