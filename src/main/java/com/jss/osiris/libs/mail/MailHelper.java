@@ -873,7 +873,7 @@ public class MailHelper {
             ctx.setVariable("discountTotal", invoiceHelper.getDiscountTotal(invoice));
         ctx.setVariable("assos", customerOrder.getAssoAffaireOrders());
         ctx.setVariable("preTaxPriceTotalWithDicount", invoiceHelper.getPreTaxPriceTotal(invoice)
-                + (invoiceHelper.getDiscountTotal(invoice) != null
+                - (invoiceHelper.getDiscountTotal(invoice) != null
                         && Math.round(invoiceHelper.getDiscountTotal(invoice) * 100f) / 100f > 0
                                 ? invoiceHelper.getDiscountTotal(invoice)
                                 : 0f));
