@@ -198,13 +198,15 @@ public class PaymentServiceImpl implements PaymentService {
 
                 // Get invoices and customer orders and quotations
                 Float totalToPay = 0f;
+                ArrayList<Integer> foundInvoices = new ArrayList<Integer>();
                 if (correspondingEntities != null && correspondingEntities.size() > 0) {
                     for (IndexEntity foundEntity : correspondingEntities) {
                         Invoice invoice = getInvoiceForEntity(foundEntity);
                         if (invoice != null
                                 && invoice.getInvoiceStatus().getId()
                                         .equals(constantService.getInvoiceStatusSend().getId())
-                                && invoice.getProvider() == null) {
+                                && invoice.getProvider() == null && !foundInvoices.contains(invoice.getId())) {
+                            foundInvoices.add(invoice.getId());
                             correspondingInvoices.add(invoice);
                             totalToPay += invoiceService.getRemainingAmountToPayForInvoice(invoice);
                         }
@@ -509,7 +511,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     private Payment generateNewPaymentFromPayment(Payment payment, Float amountToUse) {
         Payment outPayment = new Payment();
-        outPayment.setBankId(payment.getBankId());
+        outPayment.setBankId(null);
         outPayment.setLabel(payment.getLabel());
         outPayment.setOriginPayment(payment);
         outPayment.setPaymentAmount(amountToUse);
