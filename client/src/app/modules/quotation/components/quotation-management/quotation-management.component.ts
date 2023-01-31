@@ -225,6 +225,7 @@ export class QuotationManagementComponent implements OnInit, AfterContentChecked
       })
 
       this.mailComputeResultService.getMailComputeResultForDigital(this.quotation).subscribe(response => {
+        this.isLoadingMailResult = false;
         this.digitalMailComputeResult = response;
       })
     }
