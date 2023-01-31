@@ -1787,11 +1787,14 @@ public class QuotationController {
       validationHelper.validateReferential(affaire.getCivility(), true, "Civility");
       validationHelper.validateString(affaire.getFirstname(), true, 40, "Firstname");
       validationHelper.validateString(affaire.getLastname(), true, 40, "Lastname");
+      affaire.setDenomination(null);
       if (affaire.getLastname() != null)
         affaire.setLastname(affaire.getLastname().toUpperCase());
 
     } else {
       validationHelper.validateString(affaire.getDenomination(), true, 150, "Denomination");
+      affaire.setFirstname(null);
+      affaire.setLastname(null);
       if (affaire.getRna() != null
           && !validationHelper.validateRna(affaire.getRna().toUpperCase().replaceAll(" ", "")))
         throw new OsirisValidationException("RNA");
