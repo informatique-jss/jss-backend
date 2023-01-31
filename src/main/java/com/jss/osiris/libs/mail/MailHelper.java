@@ -713,7 +713,7 @@ public class MailHelper {
         if (remainingToPay > 0 && !isPaymentTypePrelevement) {
             if (isDepositMandatory) {
                 String complementary = "";
-                if (remainingToPay != mail.getPriceTotal())
+                if (Math.round(remainingToPay) != Math.round(mail.getPriceTotal()))
                     complementary = " complémentaire ";
                 mail.setPaymentExplaination(
                         "Dès réception de votre règlement d'acompte" + complementary + " d'un montant de "
