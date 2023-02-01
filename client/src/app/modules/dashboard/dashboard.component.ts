@@ -106,8 +106,8 @@ export class DashboardComponent implements OnInit {
 
   LOG_TO_REVIEW = "Logs à revoir";
 
-  BOARD_AL = "Suivi d'équipe Annonce Légale";
-  BOARD_FORMALITE = "Suivi d'équipe Formalite"
+  BOARD_AL = "Suivi d'équipe Annonces Légales";
+  BOARD_FORMALITE = "Suivi d'équipe Formalités"
   provisionBoardAL: ProvisionBoardResult[] = [] as Array<ProvisionBoardResult>;
   provisionBoardFormalite: ProvisionBoardResult[] = [] as Array<ProvisionBoardResult>;
 
