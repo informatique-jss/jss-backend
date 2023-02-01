@@ -153,6 +153,9 @@
       (onRowClick)="selectInvoiceItem($event)" [refreshTable]="refreshTable.asObservable()">
     </sort-table>
   </div>
+  <div class="align-right">
+    <span class="mat-cell">Total TTC : {{getInvoiceTotal()}} €</span>
+  </div>
   <div>
     <table class="full-width ">
       <tr>
