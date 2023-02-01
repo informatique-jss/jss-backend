@@ -1519,9 +1519,11 @@ public class QuotationController {
             || status.getCode().equals(CustomerOrderStatus.WAITING_DEPOSIT))
           publicationDateVerification = null;
         else {
-          // If published : no verification but you can't modify the date
+          // If published and no status change : no verification but you can't modify the
+          // date
           if (currentAnnouncement != null)
-            if (announcement.getAnnouncementStatus().getCode().equals(AnnouncementStatus.ANNOUNCEMENT_PUBLISHED)
+            if (currentAnnouncement.getAnnouncementStatus().getId().equals(announcement.getAnnouncementStatus().getId())
+                && announcement.getAnnouncementStatus().getCode().equals(AnnouncementStatus.ANNOUNCEMENT_PUBLISHED)
                 || announcement.getAnnouncementStatus().getCode().equals(AnnouncementStatus.ANNOUNCEMENT_DONE)) {
               publicationDateVerification = null;
               announcement.setPublicationDate(currentAnnouncement.getPublicationDate());
