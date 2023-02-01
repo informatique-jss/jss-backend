@@ -535,14 +535,6 @@ public class Tiers implements ITiers, IAttachment {
 		this.cedexComplement = cedexComplement;
 	}
 
-	public Float getInsertionRate() {
-		return rffInsertionRate;
-	}
-
-	public void setInsertionRate(Float insertionRate) {
-		rffInsertionRate = insertionRate;
-	}
-
 	public Integer getIdAs400() {
 		return idAs400;
 	}
