@@ -87,7 +87,7 @@ export class AddInvoiceComponent implements OnInit {
     this.displayedColumns.push({ id: "vat", fieldName: "vat.label", label: "TVA applicable" } as SortTableColumn);
     this.displayedColumns.push({ id: "vatPrice", fieldName: "vatPrice", label: "Montant de la TVA", valueFonction: this.getVatPrice } as SortTableColumn);
     this.displayedColumns.push({ id: "discountAmount", fieldName: "discountAmount", label: "Remise totale", valueFonction: formatEurosForSortTable } as SortTableColumn);
-    this.displayedColumns.push({ id: "totalPrice", fieldName: "totalPrice", label: "Prix total", valueFonction: this.getTotalPrice } as SortTableColumn);
+    this.displayedColumns.push({ id: "totalPrice", fieldName: "totalPrice", label: "Prix total", valueFonction: (element: any) => { return this.getTotalPriceValue(element) + " €" } } as SortTableColumn);
 
     this.tableAction.push({
       actionIcon: "delete", actionName: "Supprimer la ligne de facturation", actionClick: (action: SortTableAction, element: any) => {
@@ -107,7 +107,7 @@ export class AddInvoiceComponent implements OnInit {
       this.invoice.provider = undefined;
   }
 
-  getTotalPrice(element: any) {
+  getTotalPriceValue(element: any): number {
     let total = 0;
     if (element && element.preTaxPrice) {
       total += parseFloat(element.preTaxPrice + "");
@@ -115,9 +115,18 @@ export class AddInvoiceComponent implements OnInit {
         total -= parseFloat(element.discountAmount + "");
       if (element.vat)
         total += (parseFloat(element.preTaxPrice + "") + (parseFloat(element.discountAmount + "") ? parseFloat(element.discountAmount + "") : 0)) * element.vat.rate / 100;
-      return Math.round(total * 100) / 100 + " €";
+      return Math.round(total * 100) / 100;
     }
-    return "0 €";
+    return 0;
+  }
+
+  getInvoiceTotal(): number {
+    let total = 0;
+    if (this.invoiceItems)
+      for (let invoiceItem of this.invoiceItems)
+        total += this.getTotalPriceValue(invoiceItem);
+
+    return total;
   }
 
   addInvoiceItem() {
@@ -236,8 +245,10 @@ export class AddInvoiceComponent implements OnInit {
 
   fillBillingItem(invoiceItem: InvoiceItem, billingItem: BillingItem) {
     if (invoiceItem && billingItem)
-      if (billingItem.billingType && billingItem.billingType.isOverrideVat && billingItem.billingType.vat)
+      if (billingItem.billingType && billingItem.billingType.isOverrideVat && billingItem.billingType.vat) {
         invoiceItem.vat = billingItem.billingType.vat;
+        return;
+      }
     if (billingItem.billingType && billingItem.billingType.isDebour)
       if (billingItem.billingType.isNonTaxable)
         invoiceItem.vat = this.contantService.getVatZero();
