@@ -416,9 +416,6 @@ public class PricingHelper {
         if (billingType.getId().equals(constantService.getBillingTypeBilan().getId())
                 && provision.getIsBilan() != null && provision.getIsBilan())
             return true;
-        if (billingType.getId().equals(constantService.getBillingTypeDocumentScanning().getId())
-                && provision.getIsDocumentScanning() != null && provision.getIsDocumentScanning())
-            return true;
         if (billingType.getId().equals(constantService.getBillingTypeEmergency().getId())
                 && provision.getIsEmergency() != null && provision.getIsEmergency())
             return true;
@@ -430,6 +427,18 @@ public class PricingHelper {
             return true;
         if (billingType.getId().equals(constantService.getBillingTypeEmergency().getId())
                 && provision.getIsEmergency() != null && provision.getIsEmergency())
+            return true;
+        if (billingType.getId().equals(constantService.getBillingtypeVacationDepositBeneficialOwners().getId())
+                && provision.getIsVacationDepositBeneficialOwners() != null && provision.getIsVacationDepositBeneficialOwners())
+            return true;
+        if (billingType.getId().equals(constantService.getBillingtypeVacationUpdateBeneficialOwners().getId())
+                && provision.getIsVacationUpdateBeneficialOwners() != null && provision.getIsVacationUpdateBeneficialOwners())
+            return true;
+        if (billingType.getId().equals(constantService.getBillingtypeFormalityAdditionalDeclaration().getId())
+                && provision.getIsFormalityAdditionalDeclaration() != null && provision.getIsFormalityAdditionalDeclaration())
+            return true;
+        if (billingType.getId().equals(constantService.getBillingtypeCorrespondenceFees().getId())
+                && provision.getIsCorrespondenceFees() != null && provision.getIsCorrespondenceFees())
             return true;
         if (billingType.getId().equals(constantService.getBillingTypePublicationPaper().getId())
                 && provision.getIsPublicationPaper() != null && provision.getIsPublicationPaper())

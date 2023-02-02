@@ -405,6 +405,26 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public BillingType getBillingtypeVacationDepositBeneficialOwners() throws OsirisException {
+        return getConstants().getBillingTypeVacationDepositBeneficialOwners();
+    }
+
+    @Override
+    public BillingType getBillingtypeVacationUpdateBeneficialOwners() throws OsirisException {
+        return getConstants().getBillingTypeVacationUpdateBeneficialOwners();
+    }
+
+    @Override
+    public BillingType getBillingtypeFormalityAdditionalDeclaration() throws OsirisException {
+        return getConstants().getBillingTypeFormalityAdditionalDeclaration();
+    }
+
+    @Override
+    public BillingType getBillingtypeCorrespondenceFees() throws OsirisException {
+        return getConstants().getBillingTypeCorrespondenceFees();
+    }
+
+    @Override
     public String getStringNantissementDepositFormeJuridiqueCode() throws OsirisException {
         return getConstants().getStringNantissementDepositFormeJuridiqueCode();
     }
