@@ -126,7 +126,7 @@ export class AddInvoiceComponent implements OnInit {
       for (let invoiceItem of this.invoiceItems)
         total += this.getTotalPriceValue(invoiceItem);
 
-    return total;
+    return Math.round(total * 100) / 100;
   }
 
   addInvoiceItem() {
