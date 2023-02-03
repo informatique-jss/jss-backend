@@ -400,7 +400,7 @@ public class InvoicingController {
 
             if (paymentAssociate.getInvoices() != null) {
                 if (paymentAssociate.getInvoices().get(0).getResponsable() != null)
-                    commonCustomerOrder = paymentAssociate.getInvoices().get(0).getResponsable();
+                    commonCustomerOrder = paymentAssociate.getInvoices().get(0).getResponsable().getTiers();
                 if (paymentAssociate.getInvoices().get(0).getConfrere() != null)
                     commonCustomerOrder = paymentAssociate.getInvoices().get(0).getConfrere();
                 if (paymentAssociate.getInvoices().get(0).getTiers() != null)
@@ -424,7 +424,7 @@ public class InvoicingController {
             if (paymentAssociate.getCustomerOrders() != null) {
                 if (commonCustomerOrder == null) {
                     if (paymentAssociate.getCustomerOrders().get(0).getResponsable() != null)
-                        commonCustomerOrder = paymentAssociate.getCustomerOrders().get(0).getResponsable();
+                        commonCustomerOrder = paymentAssociate.getCustomerOrders().get(0).getResponsable().getTiers();
                     if (paymentAssociate.getCustomerOrders().get(0).getConfrere() != null)
                         commonCustomerOrder = paymentAssociate.getCustomerOrders().get(0).getConfrere();
                     if (paymentAssociate.getCustomerOrders().get(0).getTiers() != null)
