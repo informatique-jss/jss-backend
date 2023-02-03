@@ -377,11 +377,10 @@ public class InvoicingController {
         }
         totalAmount = Math.round(totalAmount * 100f) / 100f;
 
-        // Mandatory because we need customer order to get customer accounting account
-        // for inbound payment
         if (paymentAssociate.getPayment().getPaymentWay().getId()
                 .equals(constantService.getPaymentWayInbound().getId())) {
-            if (paymentAssociate.getTiersRefund() == null && paymentAssociate.getConfrereRefund() == null)
+            if (paymentAssociate.getTiersRefund() == null && paymentAssociate.getConfrereRefund() == null
+                    && paymentAssociate.getPayment().getPaymentAmount() > totalAmount)
                 throw new OsirisValidationException("TiersRefund or ConfrereRefund");
             validationHelper.validateReferential(paymentAssociate.getTiersRefund(), false, "TiersRefund");
             validationHelper.validateReferential(paymentAssociate.getConfrereRefund(), false, "ConfrereRefund");
@@ -397,32 +396,54 @@ public class InvoicingController {
         ITiers commonCustomerOrder = null;
         if (paymentAssociate.getPayment().getPaymentWay().getId()
                 .equals(constantService.getPaymentWayInbound().getId())) {
-            commonCustomerOrder = paymentAssociate.getTiersRefund() != null ? paymentAssociate.getTiersRefund()
-                    : paymentAssociate.getConfrereRefund();
+            commonCustomerOrder = null;
+
             if (paymentAssociate.getInvoices() != null) {
-                for (Invoice invoice : paymentAssociate.getInvoices()) {
-                    if (invoice.getResponsable() != null
-                            && !invoice.getResponsable().getTiers().getId().equals(commonCustomerOrder.getId()))
-                        throw new OsirisValidationException("not same customer order chosed");
-                    if (invoice.getConfrere() != null
-                            && !invoice.getConfrere().getId().equals(commonCustomerOrder.getId()))
-                        throw new OsirisValidationException("not same customer order chosed");
-                    if (invoice.getTiers() != null && !invoice.getTiers().getId().equals(commonCustomerOrder.getId()))
-                        throw new OsirisValidationException("not same customer order chosed");
+                if (paymentAssociate.getInvoices().get(0).getResponsable() != null)
+                    commonCustomerOrder = paymentAssociate.getInvoices().get(0).getResponsable();
+                if (paymentAssociate.getInvoices().get(0).getConfrere() != null)
+                    commonCustomerOrder = paymentAssociate.getInvoices().get(0).getConfrere();
+                if (paymentAssociate.getInvoices().get(0).getTiers() != null)
+                    commonCustomerOrder = paymentAssociate.getInvoices().get(0).getTiers();
+
+                if (commonCustomerOrder != null) {
+                    for (Invoice invoice : paymentAssociate.getInvoices()) {
+                        if (invoice.getResponsable() != null
+                                && !invoice.getResponsable().getTiers().getId().equals(commonCustomerOrder.getId()))
+                            throw new OsirisValidationException("not same customer order chosed");
+                        if (invoice.getConfrere() != null
+                                && !invoice.getConfrere().getId().equals(commonCustomerOrder.getId()))
+                            throw new OsirisValidationException("not same customer order chosed");
+                        if (invoice.getTiers() != null
+                                && !invoice.getTiers().getId().equals(commonCustomerOrder.getId()))
+                            throw new OsirisValidationException("not same customer order chosed");
+                    }
                 }
             }
 
             if (paymentAssociate.getCustomerOrders() != null) {
-                for (CustomerOrder customerOrder : paymentAssociate.getCustomerOrders()) {
-                    if (customerOrder.getResponsable() != null
-                            && !customerOrder.getResponsable().getTiers().getId().equals(commonCustomerOrder.getId()))
-                        throw new OsirisValidationException("not same customer order chosed");
-                    if (customerOrder.getConfrere() != null
-                            && !customerOrder.getConfrere().getId().equals(commonCustomerOrder.getId()))
-                        throw new OsirisValidationException("not same customer order chosed");
-                    if (customerOrder.getTiers() != null
-                            && !customerOrder.getTiers().getId().equals(commonCustomerOrder.getId()))
-                        throw new OsirisValidationException("not same customer order chosed");
+                if (commonCustomerOrder == null) {
+                    if (paymentAssociate.getCustomerOrders().get(0).getResponsable() != null)
+                        commonCustomerOrder = paymentAssociate.getCustomerOrders().get(0).getResponsable();
+                    if (paymentAssociate.getCustomerOrders().get(0).getConfrere() != null)
+                        commonCustomerOrder = paymentAssociate.getCustomerOrders().get(0).getConfrere();
+                    if (paymentAssociate.getCustomerOrders().get(0).getTiers() != null)
+                        commonCustomerOrder = paymentAssociate.getCustomerOrders().get(0).getTiers();
+                }
+
+                if (commonCustomerOrder != null) {
+                    for (CustomerOrder customerOrder : paymentAssociate.getCustomerOrders()) {
+                        if (customerOrder.getResponsable() != null
+                                && !customerOrder.getResponsable().getTiers().getId()
+                                        .equals(commonCustomerOrder.getId()))
+                            throw new OsirisValidationException("not same customer order chosed");
+                        if (customerOrder.getConfrere() != null
+                                && !customerOrder.getConfrere().getId().equals(commonCustomerOrder.getId()))
+                            throw new OsirisValidationException("not same customer order chosed");
+                        if (customerOrder.getTiers() != null
+                                && !customerOrder.getTiers().getId().equals(commonCustomerOrder.getId()))
+                            throw new OsirisValidationException("not same customer order chosed");
+                    }
                 }
             }
         } else {
