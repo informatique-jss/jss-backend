@@ -1086,7 +1086,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
           for (Invoice invoice : invoicesToUnleter)
             if (invoice.getId().equals(accountingRecord.getInvoice().getId()))
               invoiceFound = true;
-        if (!invoiceFound)
+        if (!invoiceFound && accountingRecord.getInvoice() != null)
           invoicesToUnleter.add(accountingRecord.getInvoice());
       }
     }
