@@ -54,6 +54,24 @@ public class AuditEntityInterceptor extends EmptyInterceptor {
         return super.onFlushDirty(entity, id, currentState, previousState, propertyNames, types);
     }
 
+    @Override
+    public boolean onSave(
+            Object entity,
+            Serializable id,
+            Object[] state,
+            String[] propertyNames,
+            Type[] types) {
+        Audit audit = new Audit();
+        audit.setUsername(activeDirectoryHelper.getCurrentUsername());
+        audit.setDatetime(LocalDateTime.now());
+        audit.setEntity(entity.getClass().getSimpleName());
+        audit.setEntityId((Integer) id);
+        audit.setNewValue(audit.getNewValue());
+        audit.setFieldName("id");
+        addToAuditToSave(audit);
+        return super.onSave(entity, id, state, propertyNames, types);
+    }
+
     private void auditEntity(Object[] previousState, Object[] currentState, Object entity,
             Serializable id, String[] propertyNames) {
         if (!entity.getClass().getName().equals(IndexEntity.class.getName())) {
