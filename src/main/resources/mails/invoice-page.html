@@ -87,7 +87,8 @@
                     </td>
                     <td></td>
                 </tr>
-                <th:block th:each="invoiceItem : ${provision.invoiceItems}">
+                <th:block th:each="invoiceItem : ${provision.invoiceItems}"
+                    th:if="${invoiceItem.billingItem.billingType.isDebour==false}">
                     <tr>
                         <td colspan="4">
                             <span th:text="${invoiceItem.label}"></span>
@@ -106,12 +107,6 @@
                             €</td>
                     </tr>
                 </th:block>
-                <tr th:if="${provision.debours!=null}">
-                    <td colspan="4">
-                        <span>Détail des débours (TTC)</span>
-                    </td>
-                    <td></td>
-                </tr>
                 <th:block th:each="debour : ${provision.debours}" th:if="${provision.debours!=null}">
                     <tr>
                         <td colspan="4">
