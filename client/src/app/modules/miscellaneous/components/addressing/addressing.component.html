@@ -42,9 +42,10 @@
         </generic-input>
       </td>
       <td colspan="2">
-        <generic-input [(model)]="document.affaireAddress" label="Autres adresses pour l'affaire" [form]="adressingForm"
-          (onFormChange)="changeDocument()" propertyName="affaireAddress" [isDisabled]="!editMode" [maxLength]="100">
-        </generic-input>
+        <generic-textarea [(model)]="document.affaireAddress" label="Autres adresses pour l'affaire"
+          [form]="adressingForm" propertyName="affaireAddress" [isDisabled]="!editMode"
+          (onFormChange)="changeDocument()" [maxLength]="100"
+          (filterInput)="limitTextareaSizeAffaire(3)"></generic-textarea>
       </td>
       <td [hidden]="!editMode" align="end"><button mat-icon-button color="accent"
           (click)="overrideAffaireAddress=false ; document.affaireRecipient='' ; document.affaireAddress='';changeDocument()">
@@ -85,9 +86,9 @@
         </generic-input>
       </td>
       <td colspan="2">
-        <generic-input [(model)]="document.clientAddress" label="Autres adresses pour le client" [form]="adressingForm"
-          (onFormChange)="changeDocument()" propertyName="clientAddress" [isDisabled]="!editMode" [maxLength]="100">
-        </generic-input>
+        <generic-textarea [(model)]="document.clientAddress" label="Autres adresses pour le client"
+          [form]="adressingForm" propertyName="clientAddress" [isDisabled]="!editMode" (onFormChange)="changeDocument()"
+          [maxLength]="100" (filterInput)="limitTextareaSizeClient(3)"></generic-textarea>
       </td>
       <td [hidden]="  !editMode" align="end"><button mat-icon-button color="accent"
           (click)="overrideClientAddress=false ; document.clientAddress='' ; document.clientRecipient='';changeDocument()">
