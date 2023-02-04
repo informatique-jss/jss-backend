@@ -8,6 +8,7 @@ import { CUSTOMER_ORDER_STATUS_BILLED, QUOTATION_STATUS_ABANDONED, QUOTATION_STA
 import { getDocument } from 'src/app/libs/DocumentHelper';
 import { instanceOfCustomerOrder } from 'src/app/libs/TypeHelper';
 import { getRemainingToPay } from 'src/app/modules/invoicing/components/invoice-tools';
+import { Vat } from 'src/app/modules/miscellaneous/model/Vat';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { Employee } from 'src/app/modules/profile/model/Employee';
 import { BillingLabelType } from 'src/app/modules/tiers/model/BillingLabelType';
@@ -536,10 +537,10 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
   }
 
   getApplicableVat(): VatBase[] {
-    return QuotationComponent.computeApplicableVat(this.quotation);
+    return QuotationComponent.computeApplicableVat(this.quotation, this.constantService.getVatDeductible());
   }
 
-  public static computeApplicableVat(quotation: IQuotation): VatBase[] {
+  public static computeApplicableVat(quotation: IQuotation, debourVat: Vat): VatBase[] {
     let vatBases: VatBase[] = [];
     if (quotation && quotation.assoAffaireOrders) {
       for (let asso of quotation.assoAffaireOrders) {
@@ -548,16 +549,36 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
             if (provision.invoiceItems) {
               for (let invoiceItem of provision.invoiceItems) {
                 if (invoiceItem.vat && invoiceItem.vatPrice && invoiceItem.vatPrice > 0) {
-                  let vatFound = false;
-                  for (let vatBase of vatBases) {
-                    if (vatBase.label == invoiceItem.vat.label) {
-                      vatFound = true;
-                      vatBase.base += invoiceItem.preTaxPrice - (invoiceItem.discountAmount ? invoiceItem.discountAmount : 0);
-                      vatBase.total += invoiceItem.vatPrice;
+
+                  if (!invoiceItem.billingItem.billingType.isDebour) {
+                    let vatFound = false;
+                    for (let vatBase of vatBases) {
+                      if (vatBase.label == invoiceItem.vat.label) {
+                        vatFound = true;
+                        vatBase.base += invoiceItem.preTaxPrice - (invoiceItem.discountAmount ? invoiceItem.discountAmount : 0);
+                        vatBase.total += invoiceItem.vatPrice;
+                      }
                     }
-                  }
-                  if (!vatFound) {
-                    vatBases.push({ label: invoiceItem.vat.label, base: (invoiceItem.preTaxPrice - (invoiceItem.discountAmount ? invoiceItem.discountAmount : 0)), total: invoiceItem.vatPrice });
+                    if (!vatFound) {
+                      vatBases.push({ label: invoiceItem.vat.label, base: (invoiceItem.preTaxPrice - (invoiceItem.discountAmount ? invoiceItem.discountAmount : 0)), total: invoiceItem.vatPrice });
+                    }
+                  } else if (provision.debours) {
+                    for (let debour of provision.debours) {
+                      if (!debour.billingType.isNonTaxable) {
+                        let vatFound = false;
+
+                        for (let vatBase of vatBases) {
+                          if (vatBase.label == debourVat.label) {
+                            vatFound = true;
+                            vatBase.base += debour.debourAmount / (1 + (debourVat.rate / 100));
+                            vatBase.total += (debour.debourAmount / (1 + (debourVat.rate / 100))) * debourVat.rate / 100;
+                          }
+                        }
+                        if (!vatFound) {
+                          vatBases.push({ label: debourVat.label, base: debour.debourAmount / (1 + (debourVat.rate / 100)), total: (debour.debourAmount / (1 + (debourVat.rate / 100))) * debourVat.rate / 100 });
+                        }
+                      }
+                    }
                   }
                 }
               }

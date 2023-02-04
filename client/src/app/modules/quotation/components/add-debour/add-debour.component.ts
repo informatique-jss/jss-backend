@@ -121,7 +121,7 @@ export class AddDebourComponent implements OnInit {
     if (this.provision && this.provision.debours && this.provision.debours.length > 0)
       for (let debour of this.provision.debours) {
         if (debour.competentAuthority.id == competentAuthority.id)
-          total += debour.debourAmount;
+          total += parseFloat(debour.debourAmount + "");
       }
 
     return total;

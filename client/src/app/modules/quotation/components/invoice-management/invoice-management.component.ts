@@ -97,7 +97,7 @@ export class InvoiceManagementComponent implements OnInit {
   }
 
   getApplicableVat(): VatBase[] {
-    return QuotationComponent.computeApplicableVat(this.quotation);
+    return QuotationComponent.computeApplicableVat(this.quotation, this.constantService.getVatDeductible());
   }
 
   getPriceTotal(): number {
