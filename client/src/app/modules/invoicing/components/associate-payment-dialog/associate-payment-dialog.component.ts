@@ -100,7 +100,7 @@ export class AssociatePaymentDialogComponent implements OnInit {
 
     if (this.payment && this.customerOrder)
       this.associationSummaryTable.push({
-        payment: this.payment, customerOrder: this.customerOrder, amountUsed: Math.min(this.getInitialAmount({ customerOrder: this.customerOrder }) - this.getInitialPayedAmount({ customerOrder: this.customerOrder }), this.payment.paymentAmount)
+        payment: this.payment, customerOrder: this.customerOrder, amountUsed: this.payment.paymentAmount
       } as AssociationSummaryTable);
 
 

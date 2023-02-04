@@ -238,8 +238,8 @@
         </mat-tab>
         <mat-tab label="Associer un paiement"
           *ngIf="getRemainingToPay()>0 && instanceOfCustomerOrderFn(quotation) && quotation.customerOrderStatus && quotation.customerOrderStatus.code!=CUSTOMER_ORDER_STATUS_BILLED">
-          <invoice-payment (stateChanged)="onStateChange()" [customerOrder]="quotation">
-          </invoice-payment>
+          <customer-order-payment (stateChanged)="onStateChange()" [customerOrder]="quotation">
+          </customer-order-payment>
         </mat-tab>
         <mat-tab label="Historique" *ngIf="quotation.id!=null && quotation.id!=undefined">
           <history [entity]="quotation" [entityType]="getEntityType()"></history>
