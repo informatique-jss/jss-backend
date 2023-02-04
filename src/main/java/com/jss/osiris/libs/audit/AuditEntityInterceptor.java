@@ -68,7 +68,7 @@ public class AuditEntityInterceptor extends EmptyInterceptor {
             audit.setDatetime(LocalDateTime.now());
             audit.setEntity(entity.getClass().getSimpleName());
             audit.setEntityId((Integer) id);
-            audit.setNewValue(id);
+            audit.setNewValue(((Integer) id) + "");
             audit.setFieldName("id");
             addToAuditToSave(audit);
         }
