@@ -1381,10 +1381,10 @@ public class QuotationController {
             && document.getBillingLabelType().getId().equals(constantService.getBillingLabelTypeCodeAffaire().getId()))
           document.setIsResponsableOnBilling(false);
 
-        validationHelper.validateString(document.getAffaireAddress(), false, 60, "AffaireAddress");
-        validationHelper.validateString(document.getClientAddress(), false, 60, "ClientAddress");
+        validationHelper.validateString(document.getAffaireAddress(), false, 200, "AffaireAddress");
+        validationHelper.validateString(document.getClientAddress(), false, 100, "ClientAddress");
         validationHelper.validateString(document.getAffaireRecipient(), false, 100, "AffaireRecipient");
-        validationHelper.validateString(document.getClientRecipient(), false, 40, "ClientRecipient");
+        validationHelper.validateString(document.getClientRecipient(), false, 200, "ClientRecipient");
         validationHelper.validateString(document.getCommandNumber(), false, 40, "CommandNumber");
         validationHelper.validateReferential(document.getPaymentDeadlineType(), false, "PaymentDeadlineType");
         validationHelper.validateReferential(document.getRefundType(), false, "RefundType");
