@@ -12,7 +12,7 @@ import { AppService } from "src/app/services/app.service";
 import { CustomerOrder } from "../../model/CustomerOrder";
 
 @Component({
-  selector: 'invoice-payment',
+  selector: 'customer-order-payment',
   templateUrl: './customer-order-payment.component.html',
   styleUrls: ['./customer-order-payment.component.css']
 })
