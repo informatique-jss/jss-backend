@@ -61,14 +61,17 @@ public class AuditEntityInterceptor extends EmptyInterceptor {
             Object[] state,
             String[] propertyNames,
             Type[] types) {
-        Audit audit = new Audit();
-        audit.setUsername(activeDirectoryHelper.getCurrentUsername());
-        audit.setDatetime(LocalDateTime.now());
-        audit.setEntity(entity.getClass().getSimpleName());
-        audit.setEntityId((Integer) id);
-        audit.setNewValue(audit.getNewValue());
-        audit.setFieldName("id");
-        addToAuditToSave(audit);
+        if (!entity.getClass().getName().equals(IndexEntity.class.getName())
+                && !entity.getClass().getName().equals(Audit.class.getName())) {
+            Audit audit = new Audit();
+            audit.setUsername(activeDirectoryHelper.getCurrentUsername());
+            audit.setDatetime(LocalDateTime.now());
+            audit.setEntity(entity.getClass().getSimpleName());
+            audit.setEntityId((Integer) id);
+            audit.setNewValue(id);
+            audit.setFieldName("id");
+            addToAuditToSave(audit);
+        }
         return super.onSave(entity, id, state, propertyNames, types);
     }
 
