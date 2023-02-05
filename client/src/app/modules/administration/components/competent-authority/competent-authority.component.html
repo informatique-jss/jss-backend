@@ -1,0 +1,193 @@
+<div class="mat-elevation-z2 form-div">
+  <div>
+    <mat-form-field class="full-width">
+      <input matInput (keyup)="applyFilter($event.target)" placeholder="Rechercher">
+    </mat-form-field>
+  </div>
+  <div class="table-container-scroll">
+    <sort-table [idRowSelected]="selectedcompetentAuthorityId" [columns]="displayedColumns"
+      (onRowClick)="selectCompetentAuthority($event)" [values]="competentAuthorities" tableName="Autorités compétentes"
+      [filterText]="searchText">
+    </sort-table>
+  </div>
+
+  <div class="mat-elevation-z2 form-div" *ngIf="selectedcompetentAuthority ">
+    <form [formGroup]="entityForm2">
+      <div class="full-width">
+        <fieldset [disabled]="editMode==false" class="fieldset-no-border">
+          <table class="full-width">
+            <tr *ngIf="selectedcompetentAuthority.id">
+              <td>
+                <generic-input [(model)]="selectedcompetentAuthority.id" label="Identifiant technique"
+                  [form]="entityForm2" propertyName="id" [isMandatory]="true" [isDisabled]="true"></generic-input>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <generic-input [(model)]="selectedcompetentAuthority.code" label="Codification" [maxLength]="20"
+                  [form]="entityForm2" propertyName="code" [isMandatory]="true"
+                  [isDisabled]="!editMode"></generic-input>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <generic-input [(model)]="selectedcompetentAuthority.label" label="Nom fonctionnel" [maxLength]="200"
+                  [form]="entityForm2" propertyName="label" [isMandatory]="true"
+                  [isDisabled]="!editMode"></generic-input>
+              </td>
+            </tr>
+          </table>
+          <table class="full-width">
+            <tr>
+              <td>
+                <select-competent-authority-type [(model)]="selectedcompetentAuthority.competentAuthorityType"
+                  label="Type d'autorité compétente" [form]="entityForm2" propertyName="competentAuthorityType"
+                  [isMandatory]="true" [isDisabled]="!editMode"></select-competent-authority-type>
+              </td>
+            </tr>
+          </table>
+          <table class="full-width">
+            <tr>
+              <td>
+                <select-regions [(model)]="selectedcompetentAuthority.regions" label="Régions" [form]="entityForm2"
+                  propertyName="regions" [isMandatory]="true" [isDisabled]="!editMode"
+                  [conditionnalRequired]="!selectedcompetentAuthority.departments && !selectedcompetentAuthority.cities"></select-regions>
+              </td>
+              <td>
+                <select-departments [(model)]="selectedcompetentAuthority.departments" label="Départements"
+                  [form]="entityForm2"
+                  [conditionnalRequired]="!selectedcompetentAuthority.regions && !selectedcompetentAuthority.cities"
+                  propertyName="departments" [isMandatory]="true" [isDisabled]="!editMode"></select-departments>
+              </td>
+              <td>
+                <chips-city [(model)]="selectedcompetentAuthority.cities" [form]="entityForm2" propertyName="cities"
+                  [isMandatory]="true" [isDisabled]="!editMode" label="Villes"
+                  [conditionnalRequired]="!selectedcompetentAuthority.regions && !selectedcompetentAuthority.departments"></chips-city>
+              </td>
+            </tr>
+          </table>
+          <table class="full-width">
+            <tr>
+              <td>
+                <generic-input [(model)]="selectedcompetentAuthority.iban" label="IBAN" [form]="entityForm2"
+                  propertyName="iban" [isMandatory]="true" [isDisabled]="!editMode"
+                  [conditionnalRequired]="selectedcompetentAuthority.hasAccount" [maxLength]="40"></generic-input>
+              </td>
+              <td>
+                <generic-input [(model)]="selectedcompetentAuthority.bic" label="BIC" [form]="entityForm2"
+                  propertyName="bic" [isMandatory]="true" [isDisabled]="!editMode"
+                  [conditionnalRequired]="selectedcompetentAuthority.hasAccount" [maxLength]="40"></generic-input>
+              </td>
+              <td>
+                <generic-input [(model)]="selectedcompetentAuthority.jssAccount" label="Compte du JSS chez AC"
+                  [form]="entityForm2" propertyName="jssAccount" [isMandatory]="true" [isDisabled]="!editMode"
+                  [conditionnalRequired]="selectedcompetentAuthority.hasAccount" [maxLength]="40"></generic-input>
+              </td>
+            </tr>
+          </table>
+          <table class="full-width">
+            <tr>
+              <td>
+                <chips-mail [(model)]="selectedcompetentAuthority.mails" label="Mails" [form]="entityForm2"
+                  propertyName="mails" [isMandatory]="true" [isDisabled]="!editMode"></chips-mail>
+              </td>
+              <td>
+                <chips-mail [(model)]="selectedcompetentAuthority.accountingMails" label="Mails (comptabilité)"
+                  [form]="entityForm2" propertyName="accountingMails" [isMandatory]="false"
+                  [isDisabled]="!editMode"></chips-mail>
+              </td>
+              <td>
+                <chips-phone [(model)]="selectedcompetentAuthority.phones" label="Téléphones" [form]="entityForm2"
+                  propertyName="phones" [isMandatory]="true" [isDisabled]="!editMode"></chips-phone>
+              </td>
+              <td>
+                <generic-input [(model)]="selectedcompetentAuthority.contact" label="Contact" [form]="entityForm2"
+                  propertyName="contact" [isMandatory]="false" [isDisabled]="!editMode"
+                  [maxLength]="60"></generic-input>
+              </td>
+              <td>
+                <generic-input [(model)]="selectedcompetentAuthority.schedulle" label="Horaires" [form]="entityForm2"
+                  propertyName="schedulle" [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="2000">
+                </generic-input>
+              </td>
+            </tr>
+          </table>
+          <table class="full-width">
+            <tr>
+              <td>
+                <autocomplete-accounting-account [(model)]="selectedcompetentAuthority.accountingAccountProvider"
+                  [form]="entityForm2" propertyName="accountingAccountProvider" [isMandatory]="false"
+                  [isDisabled]="!editMode" label="Compte comptable fournisseur">
+                </autocomplete-accounting-account>
+              </td>
+              <td>
+                <autocomplete-accounting-account [(model)]="selectedcompetentAuthority.accountingAccountCustomer"
+                  [form]="entityForm2" propertyName="accountingAccountCustomer" [isMandatory]="false"
+                  [isDisabled]="!editMode" label="Compte comptable client">
+                </autocomplete-accounting-account>
+              </td>
+              <td>
+                <generic-input [(model)]="selectedcompetentAuthority.reinvoicing" label="Refacturation (%)"
+                  [form]="entityForm2" propertyName="reinvoicing" [isMandatory]="false" [isDisabled]="!editMode"
+                  type="number"></generic-input>
+              </td>
+            </tr>
+          </table>
+          <table class="full-width">
+            <tr>
+              <td>
+                <generic-textarea [(model)]="selectedcompetentAuthority.mailRecipient" label="Destinataire(s) courrier"
+                  [form]="entityForm2" propertyName="mailRecipient" [isMandatory]="false" [isDisabled]="!editMode"
+                  (filterInput)="limitTextareaSize(3)"></generic-textarea>
+              </td>
+              <td>
+                <generic-input [(model)]="selectedcompetentAuthority.address" label="Adresse" [form]="entityForm2"
+                  propertyName="address" [isMandatory]="false" [isDisabled]="!editMode"
+                  [maxLength]="200"></generic-input>
+              </td>
+              <td>
+                <autocomplete-postal-code [(model)]="selectedcompetentAuthority.postalCode" [form]="entityForm2"
+                  label="Code postal" [isDisabled]="!editMode" propertyName="postalCode" [isMandatory]="false"
+                  [byPassAutocompletValidator]="true" (onOptionSelected)="fillCity($event)">
+                </autocomplete-postal-code>
+              </td>
+              <td>
+                <generic-input [(model)]="selectedcompetentAuthority.cedexComplement" label="Complément CEDEX"
+                  [form]="entityForm2" propertyName="cedexComplement" [isMandatory]="false" [isDisabled]="!editMode"
+                  [maxLength]="40"></generic-input>
+              </td>
+              <td>
+                <autocomplete-city [(model)]="selectedcompetentAuthority.city"
+                  [modelCountry]="selectedcompetentAuthority.country"
+                  [preFilterPostalCode]="selectedcompetentAuthority.postalCode" [form]="entityForm2" propertyName="city"
+                  [isMandatory]="false" [isDisabled]="!editMode" label="Ville"
+                  (onOptionSelected)="fillPostalCode($event)">
+                </autocomplete-city>
+              </td>
+              <td>
+                <autocomplete-country [(model)]="selectedcompetentAuthority.country" [form]="entityForm2"
+                  propertyName="country" label="Pays" [isDisabled]="!editMode" [isMandatory]="false"
+                  [isDisabled]="!editMode">
+                </autocomplete-country>
+              </td>
+            </tr>
+          </table>
+        </fieldset>
+      </div>
+    </form>
+  </div>
+
+  <button matTooltip="Sauvegarder" mat-fab color="warn" class="fab-button" *ngIf="editMode==true"
+    (click)="saveCompetentAuthority()">
+    <mat-icon>save</mat-icon>
+  </button>
+  <button matTooltip="Modifier le confrère" mat-fab color="accent" class="second-fab-button"
+    *ngIf="editMode==false && selectedcompetentAuthority &&  selectedcompetentAuthority.id"
+    (click)="editCompetentAuthority()">
+    <mat-icon>edit</mat-icon>
+  </button>
+  <button matTooltip="Ajouter un confrère" mat-fab color="accent" class="fab-button" *ngIf="editMode==false"
+    (click)="addCompetentAuthority()">
+    <mat-icon>add</mat-icon>
+  </button>
+</div>

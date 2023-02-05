@@ -66,7 +66,6 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
   DEPARTMENT_REFERENTIAL = "Département";
   GIFT_REFERENTIAL = "Cadeau";
   SPECIAL_OFFER_REFERENTIAL = "Tarifs spéciaux";
-  COMPETENT_AUTHORITY_REFERENTIAL = "Autorité compétente";
   ACCOUNTING_ACCOUNT_CLASS_REFERENTIAL = "Classe de compte comptable";
   ACCOUNTING_ACCOUNT_REFERENTIAL = "Compte comptable";
   CONFRERE_REFERENTIAL = "Confrère";
@@ -130,7 +129,6 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
     this.referentials.push(this.DEPARTMENT_REFERENTIAL);
     this.referentials.push(this.GIFT_REFERENTIAL);
     this.referentials.push(this.SPECIAL_OFFER_REFERENTIAL);
-    this.referentials.push(this.COMPETENT_AUTHORITY_REFERENTIAL);
     this.referentials.push(this.ACCOUNTING_ACCOUNT_CLASS_REFERENTIAL);
     this.referentials.push(this.ACCOUNTING_ACCOUNT_REFERENTIAL);
     this.referentials.push(this.COMPETITOR_REFERENTIAL);

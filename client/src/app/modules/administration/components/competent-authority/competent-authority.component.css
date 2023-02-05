@@ -1,0 +1,42 @@
+.table-container-scroll {
+  max-height: 215px;
+  overflow-y: auto;
+}
+
+table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+td {
+  padding-right: 8px;
+}
+
+.selected-mat-row {
+  background-color: #6B9CBF;
+}
+
+.selected-mat-row:hover {
+  background-color: #6B9CBF;
+}
+
+
+.confrere-radio-group {
+  display: flex;
+  flex-direction: column;
+  margin: 15px 0;
+  align-items: flex-start;
+}
+
+.confrere-radio-button {
+  margin: 5px;
+}
+
+.div-confrere {
+  padding-top: 30px;
+}
+
+.integration-component {
+  width: 100%;
+  height: 100%;
+}

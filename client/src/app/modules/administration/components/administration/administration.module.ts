@@ -24,6 +24,7 @@ import { MiscellaneousModule } from 'src/app/modules/miscellaneous/components/mi
 import { AccountingModule } from '../../../accounting/components/accounting/accounting.module';
 import { QuotationModule } from '../../../quotation/components/quotation/quotation.module';
 import { TiersModule } from '../../../tiers/components/tiers/tiers.module';
+import { CompetentAuthorityComponent } from '../competent-authority/competent-authority.component';
 import { ConstantComponent } from '../constant/constant.component';
 import { LogComponent } from '../log/log.component';
 import { ReferentialAccountingAccountClassComponent } from '../referentials/referential-accounting-account-class/referential-accounting-account-class.component';
@@ -43,7 +44,6 @@ import { ReferentialCharacterPriceComponent } from '../referentials/referential-
 import { ReferentialCityComponent } from '../referentials/referential-city/referential-city.component';
 import { ReferentialCivilityComponent } from '../referentials/referential-civility/referential-civility.component';
 import { ReferentialCompetentAuthorityTypeComponent } from '../referentials/referential-competent-authority-type/referential-competent-authority-type.component';
-import { ReferentialCompetentAuthorityComponent } from '../referentials/referential-competent-authority/referential-competent-authority.component';
 import { ReferentialCompetitorComponent } from '../referentials/referential-competitor/referential-competitor.component';
 import { ReferentialCountryComponent } from '../referentials/referential-country/referential-country.component';
 import { ReferentialDeliveryServiceComponent } from '../referentials/referential-delivery-service/referential-delivery-service.component';
@@ -84,6 +84,7 @@ import { AdministrationComponent } from './administration.component';
 
 const routes: Routes = [
   { path: 'administration', component: AdministrationComponent },
+  { path: 'administration/competent/authority', component: CompetentAuthorityComponent },
   { path: 'administration/log/:id', component: ViewLogComponent },
 ];
 
@@ -181,7 +182,6 @@ const routes: Routes = [
     ReferentialProvisionTypeComponent,
     ReferentialSpecialOfferComponent,
     ReferentialCompetitorComponent,
-    ReferentialCompetentAuthorityComponent,
     ReferentialCityComponent,
     ReferentialAnnouncementNoticeTemplateComponent,
     ReferentialVatCollectionTypeComponent,
@@ -197,6 +197,7 @@ const routes: Routes = [
     ReferentialPrincipalAccountingAccountComponent,
     LogComponent,
     ViewLogComponent,
+    CompetentAuthorityComponent,
   ], exports: [LogComponent]
 })
 export class AdministrationModule { }

@@ -25,6 +25,10 @@
     [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/confrere' )>=0}">
     <mat-icon>share</mat-icon> <span>Confreres</span>
   </a>
+  <a mat-list-item routerLink="/administration/competent/authority" *ngIf="canViewCompetentAuthorityModule()"
+    [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/administration/competent/authority' )>=0}">
+    <mat-icon>gavel</mat-icon> <span>Autorités compétentes</span>
+  </a>
   <a mat-list-item routerLink="/quotation" *ngIf="canViewQuotationModule()"
     [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/quotation' )>=0}">
     <mat-icon>request_quote</mat-icon> <span>Devis</span>

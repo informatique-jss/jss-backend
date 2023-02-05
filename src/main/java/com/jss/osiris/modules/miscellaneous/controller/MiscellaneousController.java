@@ -801,7 +801,6 @@ public class MiscellaneousController {
                 HttpStatus.OK);
     }
 
-    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
     @PostMapping(inputEntryPoint + "/competent-authority")
     public ResponseEntity<CompetentAuthority> addOrUpdateCompetentAuthority(
             @RequestBody CompetentAuthority competentAuthorities) throws OsirisValidationException, OsirisException {
