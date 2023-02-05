@@ -420,6 +420,18 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.competentAuthorityTypeCfp;
   }
 
+  getCompetentAuthorityTypeCci() {
+    return this.constant.competentAuthorityTypeCci;
+  }
+
+  getCompetentAuthorityTypeChambreMetier() {
+    return this.constant.competentAuthorityTypeChambreMetier;
+  }
+
+  getCompetentAuthorityTypeDireccte() {
+    return this.constant.competentAuthorityTypeDireccte;
+  }
+
   getInvoiceStatusSend() {
     return this.constant.invoiceStatusSend;
   }

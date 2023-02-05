@@ -585,6 +585,21 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public CompetentAuthorityType getCompetentAuthorityTypeCci() throws OsirisException {
+        return getConstants().getCompetentAuthorityTypeCci();
+    }
+
+    @Override
+    public CompetentAuthorityType getCompetentAuthorityTypeChambreMetier() throws OsirisException {
+        return getConstants().getCompetentAuthorityTypeChambreMetier();
+    }
+
+    @Override
+    public CompetentAuthorityType getCompetentAuthorityTypeDireccte() throws OsirisException {
+        return getConstants().getCompetentAuthorityTypeDireccte();
+    }
+
+    @Override
     public CompetentAuthorityType getCompetentAuthorityTypeCfp() throws OsirisException {
         return getConstants().getCompetentAuthorityTypeCfp();
     }

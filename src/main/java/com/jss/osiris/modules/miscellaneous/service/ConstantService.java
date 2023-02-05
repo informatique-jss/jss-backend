@@ -237,6 +237,12 @@ public interface ConstantService {
 
     public CompetentAuthorityType getCompetentAuthorityTypeCfp() throws OsirisException;
 
+    public CompetentAuthorityType getCompetentAuthorityTypeCci() throws OsirisException;
+
+    public CompetentAuthorityType getCompetentAuthorityTypeChambreMetier() throws OsirisException;
+
+    public CompetentAuthorityType getCompetentAuthorityTypeDireccte() throws OsirisException;
+
     public InvoiceStatus getInvoiceStatusSend() throws OsirisException;
 
     public InvoiceStatus getInvoiceStatusReceived() throws OsirisException;

@@ -31,6 +31,7 @@ public class EtablissementPublicsDelegatImpl implements EtablissementPublicsDele
 
     private String rcsUrl = "/tribunal_commerce";
     private String cfpUrl = "/sie";
+    private String cciUrl = "/cci";
 
     @Autowired
     CompetentAuthorityService competentAuthorityService;
@@ -55,6 +56,9 @@ public class EtablissementPublicsDelegatImpl implements EtablissementPublicsDele
     public void updateCompetentAuthorities() throws OsirisException {
         updateRcs();
         updateCfp();
+        updateCci();
+        updateChambreMetier();
+        updateDireccte();
         geoCities = new ArrayList<GeoCity>();
         localCities = new ArrayList<City>();
     }
@@ -173,6 +177,66 @@ public class EtablissementPublicsDelegatImpl implements EtablissementPublicsDele
                     competentAuthority = new CompetentAuthority();
 
                 competentAuthority.setCompetentAuthorityType(constantService.getCompetentAuthorityTypeCfp());
+                competentAuthority = mergeCompetentAuthorityWithCityZonage(competentAuthority, organisme);
+                competentAuthorityService.addOrUpdateCompetentAuthority(competentAuthority);
+            }
+    }
+
+    @SuppressWarnings({ "null" })
+    private void updateCci() throws OsirisException {
+        ResponseEntity<Organisme> response = new RestTemplate().getForEntity(etablissementPublicEntryPoint + cciUrl,
+                Organisme.class);
+        if (response.getBody() != null && response.getBody().getFeatures() != null
+                && response.getBody().getFeatures().size() > 0
+                && response.getBody().getFeatures().get(0) != null)
+            for (Feature organisme : response.getBody().getFeatures().get(0)) {
+                CompetentAuthority competentAuthority = null;
+                competentAuthority = competentAuthorityService
+                        .getCompetentAuthorityByApiId(organisme.getProperties().getId());
+                if (competentAuthority == null)
+                    competentAuthority = new CompetentAuthority();
+
+                competentAuthority.setCompetentAuthorityType(constantService.getCompetentAuthorityTypeCci());
+                competentAuthority = mergeCompetentAuthorityWithCityZonage(competentAuthority, organisme);
+                competentAuthorityService.addOrUpdateCompetentAuthority(competentAuthority);
+            }
+    }
+
+    @SuppressWarnings({ "null" })
+    private void updateChambreMetier() throws OsirisException {
+        ResponseEntity<Organisme> response = new RestTemplate().getForEntity(etablissementPublicEntryPoint + cciUrl,
+                Organisme.class);
+        if (response.getBody() != null && response.getBody().getFeatures() != null
+                && response.getBody().getFeatures().size() > 0
+                && response.getBody().getFeatures().get(0) != null)
+            for (Feature organisme : response.getBody().getFeatures().get(0)) {
+                CompetentAuthority competentAuthority = null;
+                competentAuthority = competentAuthorityService
+                        .getCompetentAuthorityByApiId(organisme.getProperties().getId());
+                if (competentAuthority == null)
+                    competentAuthority = new CompetentAuthority();
+
+                competentAuthority.setCompetentAuthorityType(constantService.getCompetentAuthorityTypeChambreMetier());
+                competentAuthority = mergeCompetentAuthorityWithCityZonage(competentAuthority, organisme);
+                competentAuthorityService.addOrUpdateCompetentAuthority(competentAuthority);
+            }
+    }
+
+    @SuppressWarnings({ "null" })
+    private void updateDireccte() throws OsirisException {
+        ResponseEntity<Organisme> response = new RestTemplate().getForEntity(etablissementPublicEntryPoint + cciUrl,
+                Organisme.class);
+        if (response.getBody() != null && response.getBody().getFeatures() != null
+                && response.getBody().getFeatures().size() > 0
+                && response.getBody().getFeatures().get(0) != null)
+            for (Feature organisme : response.getBody().getFeatures().get(0)) {
+                CompetentAuthority competentAuthority = null;
+                competentAuthority = competentAuthorityService
+                        .getCompetentAuthorityByApiId(organisme.getProperties().getId());
+                if (competentAuthority == null)
+                    competentAuthority = new CompetentAuthority();
+
+                competentAuthority.setCompetentAuthorityType(constantService.getCompetentAuthorityTypeDireccte());
                 competentAuthority = mergeCompetentAuthorityWithCityZonage(competentAuthority, organisme);
                 competentAuthorityService.addOrUpdateCompetentAuthority(competentAuthority);
             }

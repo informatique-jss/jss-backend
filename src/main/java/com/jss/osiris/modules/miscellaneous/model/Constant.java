@@ -421,6 +421,18 @@ public class Constant implements Serializable, IId {
 	private CompetentAuthorityType competentAuthorityTypeCfp;
 
 	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_competent_authority_type_cci")
+	private CompetentAuthorityType competentAuthorityTypeCci;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_competent_authority_type_chambre_metier")
+	private CompetentAuthorityType competentAuthorityTypeChambreMetier;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_competent_authority_type_direccte")
+	private CompetentAuthorityType competentAuthorityTypeDireccte;
+
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_invoice_status_send")
 	private InvoiceStatus invoiceStatusSend;
 
@@ -1689,6 +1701,30 @@ public class Constant implements Serializable, IId {
 
 	public void setAttachmentTypeCreditNote(AttachmentType attachmentTypeCreditNote) {
 		this.attachmentTypeCreditNote = attachmentTypeCreditNote;
+	}
+
+	public CompetentAuthorityType getCompetentAuthorityTypeCci() {
+		return competentAuthorityTypeCci;
+	}
+
+	public void setCompetentAuthorityTypeCci(CompetentAuthorityType competentAuthorityTypeCci) {
+		this.competentAuthorityTypeCci = competentAuthorityTypeCci;
+	}
+
+	public CompetentAuthorityType getCompetentAuthorityTypeChambreMetier() {
+		return competentAuthorityTypeChambreMetier;
+	}
+
+	public void setCompetentAuthorityTypeChambreMetier(CompetentAuthorityType competentAuthorityTypeChambreMetier) {
+		this.competentAuthorityTypeChambreMetier = competentAuthorityTypeChambreMetier;
+	}
+
+	public CompetentAuthorityType getCompetentAuthorityTypeDireccte() {
+		return competentAuthorityTypeDireccte;
+	}
+
+	public void setCompetentAuthorityTypeDireccte(CompetentAuthorityType competentAuthorityTypeDireccte) {
+		this.competentAuthorityTypeDireccte = competentAuthorityTypeDireccte;
 	}
 
 }

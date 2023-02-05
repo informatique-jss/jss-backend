@@ -131,6 +131,9 @@ export interface Constant {
   transfertFundsTypeBail: TransfertFundsType;
   competentAuthorityTypeRcs: CompetentAuthorityType;
   competentAuthorityTypeCfp: CompetentAuthorityType;
+  competentAuthorityTypeCci: CompetentAuthorityType;
+  competentAuthorityTypeChambreMetier: CompetentAuthorityType;
+  competentAuthorityTypeDireccte: CompetentAuthorityType;
   invoiceStatusSend: InvoiceStatus;
   invoiceStatusReceived: InvoiceStatus;
   invoiceStatusPayed: InvoiceStatus;

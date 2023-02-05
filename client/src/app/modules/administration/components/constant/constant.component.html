@@ -752,6 +752,29 @@
           </tr>
           <tr>
             <td>
+              <select-competent-authority-type [(model)]="constant.competentAuthorityTypeCci"
+                label="Type d'authorité compétente - CCI" [form]="constantForm" propertyName="competentAuthorityTypeCci"
+                [isMandatory]="true" [isDisabled]="!editMode"></select-competent-authority-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-competent-authority-type [(model)]="constant.competentAuthorityTypeChambreMetier"
+                label="Type d'authorité compétente - Chambre des métiers" [form]="constantForm"
+                propertyName="competentAuthorityTypeChambreMetier" [isMandatory]="true"
+                [isDisabled]="!editMode"></select-competent-authority-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-competent-authority-type [(model)]="constant.competentAuthorityTypeDireccte"
+                label="Type d'authorité compétente - DIRECCTE" [form]="constantForm"
+                propertyName="competentAuthorityTypeDireccte" [isMandatory]="true"
+                [isDisabled]="!editMode"></select-competent-authority-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <select-invoice-status-one [(model)]="constant.invoiceStatusPayed" label="Statut de facture - payée"
                 [form]="constantForm" propertyName="invoiceStatusPayed" [isMandatory]="true" [isDisabled]="!editMode">
               </select-invoice-status-one>
