@@ -3,7 +3,7 @@ import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
 import { ActivatedRoute } from '@angular/router';
-import { ANNOUNCEMENT_STATUS_DONE, ANNOUNCEMENT_STATUS_IN_PROGRESS, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN } from 'src/app/libs/Constants';
+import { ANNOUNCEMENT_STATUS_DONE, ANNOUNCEMENT_STATUS_IN_PROGRESS, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN, SIMPLE_PROVISION_WAITING_DOCUMENT_AUTHORITY } from 'src/app/libs/Constants';
 import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
 import { WorkflowDialogComponent } from 'src/app/modules/miscellaneous/components/workflow-dialog/workflow-dialog.component';
 import { AppService } from 'src/app/services/app.service';
@@ -27,6 +27,7 @@ import { DomiciliationStatusService } from '../../services/domiciliation-status.
 import { FormaliteStatusService } from '../../services/formalite.status.service';
 import { ProvisionService } from '../../services/provision.service';
 import { SimpleProvisionStatusService } from '../../services/simple.provision.status.service';
+import { ChooseCompetentAuthorityDialogComponent } from '../choose-competent-authority-dialog/choose-competent-authority-dialog.component';
 import { ProvisionItemComponent } from '../provision-item/provision-item.component';
 import { QuotationComponent } from '../quotation/quotation.component';
 import { SelectAttachmentTypeDialogComponent } from '../select-attachment-type-dialog/select-attachment-type-dialog.component';
@@ -69,6 +70,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     public workflowDialog: MatDialog,
     private appService: AppService,
     public confirmationDialog: MatDialog,
+    public chooseCompetentAuthorityDialog: MatDialog,
     public attachmentTypeDialog: MatDialog,
     public attachmentsDialog: MatDialog,
     private constantService: ConstantService,
@@ -296,8 +298,26 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     }
     if (provision.formalite)
       provision.formalite.formaliteStatus = status;
-    if (provision.simpleProvision)
-      provision.simpleProvision.simpleProvisionStatus = status;
+    if (provision.simpleProvision) {
+      if (status.code == SIMPLE_PROVISION_WAITING_DOCUMENT_AUTHORITY) {
+        saveAsso = false;
+        const dialogRef = this.chooseCompetentAuthorityDialog.open(ChooseCompetentAuthorityDialogComponent, {
+          maxWidth: "400px",
+        });
+
+        dialogRef.componentInstance.title = "Choix de l'autorité compétente";
+        dialogRef.componentInstance.label = "Veuilliez choisir l'autorité compétente associée au statut " + status.label;
+        dialogRef.afterClosed().subscribe(dialogResult => {
+          if (dialogResult && dialogResult != false && provision.simpleProvision) {
+            provision.simpleProvision.waitedCompetentAuthority = dialogResult;
+            provision.simpleProvision.simpleProvisionStatus = status;
+            this.saveAsso();
+          }
+        });
+      } else {
+        provision.simpleProvision.simpleProvisionStatus = status;
+      }
+    }
     if (provision.bodacc)
       provision.bodacc.bodaccStatus = status;
     if (provision.domiciliation)

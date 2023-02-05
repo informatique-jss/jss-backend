@@ -25,4 +25,6 @@ public interface AssoAffaireOrderSearchResult {
 	public String getProvisionId();
 
 	public Boolean getIsEmergency();
+
+	public String getWaitedCompetentAuthorityLabel();
 }

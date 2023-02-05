@@ -109,6 +109,7 @@ import com.jss.osiris.modules.quotation.model.QuotationSearchResult;
 import com.jss.osiris.modules.quotation.model.QuotationStatus;
 import com.jss.osiris.modules.quotation.model.RecordType;
 import com.jss.osiris.modules.quotation.model.Rna;
+import com.jss.osiris.modules.quotation.model.SimpleProvision;
 import com.jss.osiris.modules.quotation.model.SimpleProvisionStatus;
 import com.jss.osiris.modules.quotation.model.Siren;
 import com.jss.osiris.modules.quotation.model.Siret;
@@ -1770,6 +1771,13 @@ public class QuotationController {
       validationHelper.validateReferential(natureCreation.getTypeExploitation(),
           formalite.getTypePersonne().getCode().equals(constantService.getTypePersonneExploitation().getCode()),
           "TypeExploitation");
+    }
+
+    // Simple provision
+    if (provision.getSimpleProvision() != null) {
+      SimpleProvision simpleProvision = provision.getSimpleProvision();
+      validationHelper.validateReferential(simpleProvision.getWaitedCompetentAuthority(), false,
+          "WaitedCompetentAuthority");
     }
 
   }
