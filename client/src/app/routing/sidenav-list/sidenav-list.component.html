@@ -54,7 +54,7 @@
     <mat-icon>account_balance</mat-icon> <span>Comptabilité</span>
   </a>
   <a mat-list-item routerLink="/administration" *ngIf="canViewAdministrationModule()"
-    [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/administration' )>=0}">
+    [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/administration' )>=0 && getCurrentRoute().indexOf('/administration/competent/authority' )<0}">
     <mat-icon>settings</mat-icon> <span>Administration</span>
   </a>
   <a mat-list-item routerLink="/my-profil" [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/my-profil' )>=0}">
