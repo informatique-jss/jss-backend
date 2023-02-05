@@ -471,6 +471,38 @@
           </tr>
           <tr>
             <td>
+              <autocomplete-billing-type [(model)]="constant.billingTypeVacationDepositBeneficialOwners"
+                label="Type de poste de facturation - Vacation - Dépôt des Bénéficiaires Effectifs" [form]="constantForm"
+                propertyName="billingTypeVacationDepositBeneficialOwners" [isMandatory]="true" [isDisabled]="!editMode">
+              </autocomplete-billing-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-billing-type [(model)]="constant.billingTypeVacationUpdateBeneficialOwners"
+                label="Type de poste de facturation - Vacation - Mise à jour - Bénéficiaires Effectifs" [form]="constantForm"
+                propertyName="billingTypeVacationUpdateBeneficialOwners" [isMandatory]="true" [isDisabled]="!editMode">
+              </autocomplete-billing-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-billing-type [(model)]="constant.billingTypeFormalityAdditionalDeclaration"
+                label="Type de poste de facturation - Formalité - Déclaration Supplémentaire" [form]="constantForm"
+                propertyName="billingTypeFormalityAdditionalDeclaration" [isMandatory]="true" [isDisabled]="!editMode">
+              </autocomplete-billing-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-billing-type [(model)]="constant.billingTypeCorrespondenceFees"
+                label="Type de poste de facturation - Frais de Correspondance" [form]="constantForm"
+                propertyName="billingTypeCorrespondenceFees" [isMandatory]="true" [isDisabled]="!editMode">
+              </autocomplete-billing-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <generic-input [(model)]="constant.stringNantissementDepositFormeJuridiqueCode "
                 label="Code de forme juridique - Depot de nantissement" [form]="constantForm"
                 propertyName="stringNantissementDepositFormeJuridiqueCode " [isMandatory]="true"

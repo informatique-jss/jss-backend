@@ -203,6 +203,34 @@
             </generic-toggle>
           </td>
         </tr>
+        <tr *ngIf="displayOption(billingTypeVacationDepositBeneficialOwners)">
+          <td>
+            <generic-toggle [(model)]="provision.isVacationDepositBeneficialOwners" label="Vacation - Dépôt des Bénéficiaires Effectifs ?"
+              (onToggleChange)="provisionChangeFunction()" [form]="optionForm" propertyName="isVacationDepositBeneficialOwners">
+            </generic-toggle>
+          </td>
+        </tr>
+        <tr *ngIf="displayOption(billingTypeVacationUpdateBeneficialOwners)">
+          <td>
+            <generic-toggle [(model)]="provision.isVacationUpdateBeneficialOwners" label="Vacation - Mise à jour - Bénéficiaires Effectifs ?"
+              (onToggleChange)="provisionChangeFunction()" [form]="optionForm" propertyName="isVacationUpdateBeneficialOwners">
+            </generic-toggle>
+          </td>
+        </tr>
+        <tr *ngIf="displayOption(billingTypeFormalityAdditionalDeclaration)">
+          <td>
+            <generic-toggle [(model)]="provision.isFormalityAdditionalDeclaration" label="Formalité - Déclaration Supplémentaire ?"
+              (onToggleChange)="provisionChangeFunction()" [form]="optionForm" propertyName="isFormalityAdditionalDeclaration">
+            </generic-toggle>
+          </td>
+        </tr>
+        <tr *ngIf="displayOption(billingTypeCorrespondenceFees)">
+          <td>
+            <generic-toggle [(model)]="provision.isCorrespondenceFees" label="Frais de Correspondance ?"
+              (onToggleChange)="provisionChangeFunction()" [form]="optionForm" propertyName="isCorrespondenceFees">
+            </generic-toggle>
+          </td>
+        </tr>
       </table>
     </div>
   </form>
