@@ -162,6 +162,18 @@ public class Provision implements IId, IAttachment {
 	@Column(nullable = false)
 	private Boolean isEmergency;
 
+	@Column(nullable = false)
+	private Boolean isVacationDepositBeneficialOwners;
+
+	@Column(nullable = false)
+	private Boolean isVacationUpdateBeneficialOwners;
+
+	@Column(nullable = false)
+	private Boolean isFormalityAdditionalDeclaration;
+
+	@Column(nullable = false)
+	private Boolean isCorrespondenceFees;
+
 	@OneToMany(mappedBy = "provision")
 	@JsonIgnoreProperties(value = { "provision" }, allowSetters = true)
 	private List<Attachment> attachments;
@@ -436,6 +448,38 @@ public class Provision implements IId, IAttachment {
 
 	public void setIsEmergency(Boolean isEmergency) {
 		this.isEmergency = isEmergency;
+	}
+
+	public Boolean getIsVacationDepositBeneficialOwners() {
+		return isVacationDepositBeneficialOwners;
+	}
+
+	public void setIsVacationDepositBeneficialOwners(Boolean isVacationDepositBeneficialOwners) {
+		this.isVacationDepositBeneficialOwners = isVacationDepositBeneficialOwners;
+	}
+
+	public Boolean getIsVacationUpdateBeneficialOwners() {
+		return isVacationUpdateBeneficialOwners;
+	}
+
+	public void setIsVacationUpdateBeneficialOwners(Boolean isVacationUpdateBeneficialOwners) {
+		this.isVacationUpdateBeneficialOwners = isVacationUpdateBeneficialOwners;
+	}
+
+	public Boolean getIsFormalityAdditionalDeclaration() {
+		return isFormalityAdditionalDeclaration;
+	}
+
+	public void setIsFormalityAdditionalDeclaration(Boolean isFormalityAdditionalDeclaration) {
+		this.isFormalityAdditionalDeclaration = isFormalityAdditionalDeclaration;
+	}
+
+	public Boolean getIsCorrespondenceFees() {
+		return isCorrespondenceFees;
+	}
+
+	public void setIsCorrespondenceFees(Boolean isCorrespondenceFees) {
+		this.isCorrespondenceFees = isCorrespondenceFees;
 	}
 
 	public Boolean getIsPublicationPaper() {
