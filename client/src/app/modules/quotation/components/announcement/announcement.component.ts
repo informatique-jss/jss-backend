@@ -299,6 +299,7 @@ export class AnnouncementComponent implements OnInit {
   }
 
   updateAttachments(attachments: Attachment[]) {
+    this.appService.displaySnackBar("N'oubliez pas de mettre à jours la date de publication de l'annonce !", false, 20);
     if (attachments && this.announcement) {
       this.announcement.attachments = attachments;
     }
