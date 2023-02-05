@@ -427,27 +427,25 @@ public class PaymentServiceImpl implements PaymentService {
         generateWaitingAccountAccountingRecords.setValue(false);
 
         for (int i = 0; i < correspondingCustomerOrder.size(); i++) {
-            if (remainingToPay > 0) {
-                Float effectivePayment;
-                if (byPassAmount != null) {
-                    effectivePayment = byPassAmount.get(amountIndex);
-                    amountIndex++;
-                } else {
-                    effectivePayment = payment.getPaymentAmount();
-                }
-
-                remainingMoney -= effectivePayment;
-
-                // Generate one deposit per customer order
-                depositService.getNewDepositForCustomerOrder(
-                        effectivePayment, LocalDateTime.now(), correspondingCustomerOrder.get(i), payment.getId(),
-                        payment, true);
-
-                remainingToPay -= effectivePayment;
-
-                // Try unlocked customer order
-                customerOrderService.unlockCustomerOrderFromDeposit(correspondingCustomerOrder.get(i));
+            Float effectivePayment;
+            if (byPassAmount != null) {
+                effectivePayment = byPassAmount.get(amountIndex);
+                amountIndex++;
+            } else {
+                effectivePayment = payment.getPaymentAmount();
             }
+
+            remainingMoney -= effectivePayment;
+
+            // Generate one deposit per customer order
+            depositService.getNewDepositForCustomerOrder(
+                    effectivePayment, LocalDateTime.now(), correspondingCustomerOrder.get(i), payment.getId(),
+                    payment, true);
+
+            remainingToPay -= effectivePayment;
+
+            // Try unlocked customer order
+            customerOrderService.unlockCustomerOrderFromDeposit(correspondingCustomerOrder.get(i));
         }
         addOrUpdatePayment(payment);
         return remainingMoney;
