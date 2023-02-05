@@ -401,12 +401,14 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             if (customerOrder.getInvoices() != null)
                 for (Invoice invoice : customerOrder.getInvoices())
                     if (!invoice.getInvoiceStatus().getId()
-                            .equals(constantService.getInvoiceStatusCancelled().getId())) {
+                            .equals(constantService.getInvoiceStatusCancelled().getId())
+                            && !invoice.getInvoiceStatus().getId()
+                                    .equals(constantService.getInvoiceStatusCreditNoteEmited().getId())) {
                         invoiceToCancel = invoice;
                         break;
                     }
             moveInvoiceDepositToCustomerOrderDeposit(customerOrder, invoiceToCancel);
-            invoiceService.cancelInvoice(invoiceToCancel);
+            invoiceService.cancelInvoice(invoiceToCancel, customerOrder);
         }
 
         CustomerOrderStatus customerOrderStatus = customerOrderStatusService
@@ -525,7 +527,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         invoiceService.addOrUpdateInvoice(invoice);
 
         // Create invoice PDF and attach it to customerOrder
-        File invoicePdf = mailHelper.generateInvoicePdf(customerOrder, invoice);
+        File invoicePdf = mailHelper.generateInvoicePdf(customerOrder, invoice, null);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
         try {
             attachmentService.addAttachment(new FileInputStream(invoicePdf), customerOrder.getId(),

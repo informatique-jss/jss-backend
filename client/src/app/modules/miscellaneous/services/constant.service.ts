@@ -122,6 +122,10 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.attachmentTypeInvoice;
   }
 
+  getAttachmentTypeCreditNote() {
+    return this.constant.attachmentTypeCreditNote;
+  }
+
   getAttachmentTypeKbisUpdated() {
     return this.constant.attachmentTypeKbisUpdated;
   }
@@ -422,6 +426,10 @@ export class ConstantService extends AppRestService<Constant>{
 
   getInvoiceStatusReceived() {
     return this.constant.invoiceStatusReceived;
+  }
+
+  getInvoiceStatusCreditNoteEmited() {
+    return this.constant.invoiceStatusCreditNoteEmited;
   }
 
   getPaymentWayInbound() {

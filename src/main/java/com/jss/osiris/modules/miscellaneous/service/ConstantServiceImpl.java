@@ -215,6 +215,11 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public AttachmentType getAttachmentTypeCreditNote() throws OsirisException {
+        return getConstants().getAttachmentTypeCreditNote();
+    }
+
+    @Override
     public AttachmentType getAttachmentTypeKbisUpdated() throws OsirisException {
         return getConstants().getAttachmentTypeKbisUpdated();
     }
@@ -602,6 +607,11 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public InvoiceStatus getInvoiceStatusCancelled() throws OsirisException {
         return getConstants().getInvoiceStatusCancelled();
+    }
+
+    @Override
+    public InvoiceStatus getInvoiceStatusCreditNoteEmited() throws OsirisException {
+        return getConstants().getInvoiceStatusCreditNoteEmited();
     }
 
     @Override

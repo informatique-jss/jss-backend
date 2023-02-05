@@ -903,8 +903,12 @@ public class MailHelper {
         mailService.addMailToQueue(mail);
     }
 
-    public File generateInvoicePdf(CustomerOrder customerOrder, Invoice invoice) throws OsirisException {
+    public File generateInvoicePdf(CustomerOrder customerOrder, Invoice invoice, Invoice originalInvoice)
+            throws OsirisException {
         final Context ctx = new Context();
+
+        if (originalInvoice != null)
+            ctx.setVariable("reverseCreditNote", originalInvoice);
 
         ctx.setVariable("preTaxPriceTotal", invoiceHelper.getPreTaxPriceTotal(invoice));
         if (Math.round(invoiceHelper.getDiscountTotal(invoice) * 100f) / 100f > 0)
@@ -1262,6 +1266,52 @@ public class MailHelper {
             mail.setSubject("Votre commande n°" + customerOrder.getId() + " est en attente de paiement");
         else
             mail.setSubject("Votre commande n°" + customerOrder.getId() + " est terminée");
+
+        mailService.addMailToQueue(mail);
+    }
+
+    public void sendCreditNoteToCustomer(CustomerOrder customerOrder, boolean sendToMe, Invoice creditNote,
+            Invoice invoice)
+            throws OsirisException, OsirisClientMessageException {
+
+        CustomerMail mail = new CustomerMail();
+        mail.setCustomerOrder(customerOrder);
+        computeQuotationPrice(mail, customerOrder);
+
+        MailComputeResult mailComputeResult = mailComputeHelper
+                .computeMailForCustomerOrderFinalizationAndInvoice(customerOrder);
+
+        ITiers tiers = quotationService.getCustomerOrderOfQuotation(customerOrder);
+
+        List<Attachment> attachments = new ArrayList<Attachment>();
+        if (customerOrder != null && customerOrder.getAttachments() != null) {
+            for (Attachment attachment : attachmentService.sortAttachmentByDateDesc(customerOrder.getAttachments())) {
+                if (attachment.getAttachmentType().getId()
+                        .equals(constantService.getAttachmentTypeCreditNote().getId()))
+                    attachments.add(attachment);
+                break;
+            }
+        }
+
+        mail.setAttachments(attachments);
+
+        mail.setHeaderPicture("images/credit-note-header.png");
+        mail.setTitle("Votre avoir");
+
+        if (customerOrder != null)
+            mail.setLabel("Commande n°" + customerOrder.getId());
+
+        String explainationText = "Vous trouverez ci-joint l'avoir n°" + creditNote.getId()
+                + " correspondant à la facture n°" + invoice.getId() + ".";
+        mail.setExplaination(explainationText);
+
+        mail.setSubject("Votre avoir n°" + creditNote.getId());
+
+        mail.setGreetings("En vous remerciant pour votre confiance !");
+
+        mail.setReplyTo(tiers.getSalesEmployee());
+        mail.setSendToMe(sendToMe);
+        mail.setMailComputeResult(mailComputeResult);
 
         mailService.addMailToQueue(mail);
     }

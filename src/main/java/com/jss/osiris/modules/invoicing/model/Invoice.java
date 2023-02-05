@@ -161,6 +161,17 @@ public class Invoice implements IId, IAttachment {
 	@JoinColumn(name = "id_customer_order_for_inbound_invoice")
 	private CustomerOrder customerOrderForInboundInvoice;
 
+	private Boolean isCreditNote;
+
+	@OneToOne
+	@JoinColumn(name = "id_credit_note")
+	@JsonIgnoreProperties(value = { "reverseCreditNote" }, allowSetters = true)
+	private Invoice creditNote;
+
+	@OneToOne(mappedBy = "creditNote")
+	@JsonIgnoreProperties(value = { "creditNote", "customerOrder" }, allowSetters = true)
+	private Invoice reverseCreditNote;
+
 	public Integer getId() {
 		return id;
 	}
@@ -447,6 +458,30 @@ public class Invoice implements IId, IAttachment {
 
 	public void setCustomerOrderForInboundInvoice(CustomerOrder customerOrderForInboundInvoice) {
 		this.customerOrderForInboundInvoice = customerOrderForInboundInvoice;
+	}
+
+	public Boolean getIsCreditNote() {
+		return isCreditNote;
+	}
+
+	public void setIsCreditNote(Boolean isCreditNote) {
+		this.isCreditNote = isCreditNote;
+	}
+
+	public Invoice getCreditNote() {
+		return creditNote;
+	}
+
+	public void setCreditNote(Invoice creditNote) {
+		this.creditNote = creditNote;
+	}
+
+	public Invoice getReverseCreditNote() {
+		return reverseCreditNote;
+	}
+
+	public void setReverseCreditNote(Invoice reverseCreditNote) {
+		this.reverseCreditNote = reverseCreditNote;
 	}
 
 }

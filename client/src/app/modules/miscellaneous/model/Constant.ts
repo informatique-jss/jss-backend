@@ -56,6 +56,7 @@ export interface Constant {
   attachmentTypeLogo: AttachmentType;
   attachmentTypeProofOfAddress: AttachmentType;
   attachmentTypeInvoice: AttachmentType;
+  attachmentTypeCreditNote: AttachmentType;
   attachmentTypeKbisUpdated: AttachmentType;
   attachmentTypePublicationFlag: AttachmentType;
   attachmentTypePublicationReceipt: AttachmentType;
@@ -134,6 +135,7 @@ export interface Constant {
   invoiceStatusReceived: InvoiceStatus;
   invoiceStatusPayed: InvoiceStatus;
   invoiceStatusCancelled: InvoiceStatus;
+  invoiceStatusCreditNoteEmited: InvoiceStatus;
   paymentWayInbound: PaymentWay;
   paymentWayOutboud: PaymentWay;
   vatTwenty: Vat;

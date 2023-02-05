@@ -87,6 +87,8 @@ public interface ConstantService {
 
     public AttachmentType getAttachmentTypeInvoice() throws OsirisException;
 
+    public AttachmentType getAttachmentTypeCreditNote() throws OsirisException;
+
     public AttachmentType getAttachmentTypeKbisUpdated() throws OsirisException;
 
     public AttachmentType getAttachmentTypePublicationFlag() throws OsirisException;
@@ -242,6 +244,8 @@ public interface ConstantService {
     public InvoiceStatus getInvoiceStatusPayed() throws OsirisException;
 
     public InvoiceStatus getInvoiceStatusCancelled() throws OsirisException;
+
+    public InvoiceStatus getInvoiceStatusCreditNoteEmited() throws OsirisException;
 
     public PaymentWay getPaymentWayInbound() throws OsirisException;
 

@@ -263,7 +263,9 @@ public class PricingHelper {
             // If billed, do not change items
             if (provision.getInvoiceItems().size() > 0 && provision.getInvoiceItems().get(0).getInvoice() != null
                     && !provision.getInvoiceItems().get(0).getInvoice().getInvoiceStatus().getId()
-                            .equals(constantService.getInvoiceStatusCancelled().getId()))
+                            .equals(constantService.getInvoiceStatusCancelled().getId())
+                    && !provision.getInvoiceItems().get(0).getInvoice().getInvoiceStatus().getId()
+                            .equals(constantService.getInvoiceStatusCreditNoteEmited().getId()))
                 return;
 
             ProvisionType provisionType = provisionTypeService.getProvisionType(provision.getProvisionType().getId());

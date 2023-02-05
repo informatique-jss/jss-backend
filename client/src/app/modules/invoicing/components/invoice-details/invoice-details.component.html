@@ -5,8 +5,25 @@
         <div class="chips-status">
           <chips-status [status]="invoice.invoiceStatus.code" [value]="invoice.invoiceStatus.label"></chips-status>
         </div>
-        <p>Emise à Paris, le {{invoice.createdDate|date:'dd/MM/yyyy à HH:mm'}}<span *ngIf="getLetteringDate(invoice)">,
+        <p>Emis<span *ngIf="!invoice.isCreditNote">e</span> à Paris, le {{invoice.createdDate|date:'dd/MM/yyyy à
+          HH:mm'}}<span *ngIf="getLetteringDate(invoice)">,
             lettrée le {{getLetteringDate(invoice)|date:'dd/MM/yyyy à HH:mm'}}</span></p>
+        <div class="invoice-title" *ngIf="invoice.creditNote">
+          <span>Avoir n°{{invoice.creditNote.id}} émis à Paris, le
+            {{invoice.creditNote.createdDate|date:'dd/MM/yyyy à HH:mm'}}</span>
+          <mat-icon (click)="openRoute($event,'/invoicing/view/'+invoice.creditNote.id)"
+            (auxclick)="openRoute($event,'/invoicing/view/'+invoice.creditNote.id)" matTooltip="Voir l'avoir"
+            color="accent" class="pointer invoice-chip">visibility
+          </mat-icon>
+        </div>
+        <div class="invoice-title" *ngIf="invoice.isCreditNote">
+          <span>Pour la facture n°{{invoice.reverseCreditNote.id}} émise à Paris, le
+            {{invoice.reverseCreditNote.createdDate|date:'dd/MM/yyyy à HH:mm'}}</span>
+          <mat-icon (click)="openRoute($event,'/invoicing/view/'+invoice.reverseCreditNote.id)"
+            (auxclick)="openRoute($event,'/invoicing/view/'+invoice.reverseCreditNote.id)" matTooltip="Voir la facture"
+            color="accent" class="pointer invoice-chip">visibility
+          </mat-icon>
+        </div>
         <p *ngIf="invoice.customerOrder">Commande n°{{invoice.customerOrder.id}}
           <mat-icon matTooltip="Voir la commande" color="accent" class="pointer"
             (click)="openRoute($event,'/order/'+invoice.customerOrder.id)"
@@ -19,7 +36,7 @@
             (auxclick)="openRoute($event,'/order/'+invoice.customerOrderForInboundInvoice.id)">visibility
           </mat-icon>
         </p>
-        <p *ngIf="invoice.attachments"> <single-attachment [entity]="invoice"
+        <p *ngIf="invoice.attachments && !invoice.isCreditNote"> <single-attachment [entity]="invoice"
             [entityType]="INVOICE_ENTITY_TYPE.entityType" [editMode]="false"
             [attachmentTypeToDisplay]="attachmentTypeInvoice">
           </single-attachment>

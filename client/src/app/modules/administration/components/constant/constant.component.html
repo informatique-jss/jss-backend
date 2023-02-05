@@ -168,6 +168,14 @@
           </tr>
           <tr>
             <td>
+              <select-attachment-type [(model)]="constant.attachmentTypeCreditNote" label="Type de pièce-jointe - Avoir"
+                [form]="constantForm" propertyName="attachmentTypeCreditNote" [isMandatory]="true"
+                [isDisabled]="!editMode">
+              </select-attachment-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <select-attachment-type [(model)]="constant.attachmentTypeKbisUpdated"
                 label="Type de pièce-jointe - Kbis mis à jour" [form]="constantForm"
                 propertyName="attachmentTypeKbisUpdated" [isMandatory]="true" [isDisabled]="!editMode">
@@ -769,6 +777,14 @@
             <td>
               <select-invoice-status-one [(model)]="constant.invoiceStatusSend" label="Statut de facture - envoyée"
                 [form]="constantForm" propertyName="invoiceStatusSend" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-invoice-status-one>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-invoice-status-one [(model)]="constant.invoiceStatusCreditNoteEmited"
+                label="Statut de facture - avoir émis" [form]="constantForm"
+                propertyName="invoiceStatusCreditNoteEmited" [isMandatory]="true" [isDisabled]="!editMode">
               </select-invoice-status-one>
             </td>
           </tr>

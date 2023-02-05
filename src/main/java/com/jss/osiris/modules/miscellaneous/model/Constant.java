@@ -130,6 +130,10 @@ public class Constant implements Serializable, IId {
 	private AttachmentType attachmentTypeInvoice;
 
 	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_attachment_type_credit_note")
+	private AttachmentType attachmentTypeCreditNote;
+
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_attachment_type_kbis_updated")
 	private AttachmentType attachmentTypeKbisUpdated;
 
@@ -431,6 +435,10 @@ public class Constant implements Serializable, IId {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_invoice_status_cancelled")
 	private InvoiceStatus invoiceStatusCancelled;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_invoice_status_credit_note_emited")
+	private InvoiceStatus invoiceStatusCreditNoteEmited;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_payment_way_inbound")
@@ -1665,6 +1673,22 @@ public class Constant implements Serializable, IId {
 
 	public void setVatZero(Vat vatZero) {
 		this.vatZero = vatZero;
+	}
+
+	public InvoiceStatus getInvoiceStatusCreditNoteEmited() {
+		return invoiceStatusCreditNoteEmited;
+	}
+
+	public void setInvoiceStatusCreditNoteEmited(InvoiceStatus invoiceStatusCreditNoteEmited) {
+		this.invoiceStatusCreditNoteEmited = invoiceStatusCreditNoteEmited;
+	}
+
+	public AttachmentType getAttachmentTypeCreditNote() {
+		return attachmentTypeCreditNote;
+	}
+
+	public void setAttachmentTypeCreditNote(AttachmentType attachmentTypeCreditNote) {
+		this.attachmentTypeCreditNote = attachmentTypeCreditNote;
 	}
 
 }

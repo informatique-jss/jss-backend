@@ -47,8 +47,12 @@
     </table>
     <table style="table-layout: fixed;width: 690px;margin-top: 20px;">
         <tr>
-            <td style="text-align: center;">
-                <p>Facture n°<span th:text="${invoice.id}"></span></p>
+            <td style="text-align: left;">
+                <p th:if="${invoice.isCreditNote!=null} and ${invoice.isCreditNote==true}">Avoir n°<span
+                        th:text="${invoice.id}"></span></p>
+                <p th:if="${invoice.isCreditNote!=null} and ${invoice.isCreditNote==true}">Facture n°<span
+                        th:text="${reverseCreditNote.id}"></span></p>
+                <p th:if="${invoice.isCreditNote==false}">Facture n°<span th:text="${invoice.id}"></span></p>
                 <p>Commande n°<span th:text="${customerOrder.id}"></span></p>
                 <p th:if="${quotation!=null}">Devis n°<span th:text="${quotation.id}"></span></p>
                 <p>Paris le <span th:text="${invoiceCreatedDate}"></span></p>
@@ -187,7 +191,7 @@
             </td>
         </tr>
 
-        <tr th:if="${remainingToPay>0}">
+        <tr th:if="${remainingToPay>0}  and ${invoice.isCreditNote==false}">
             <td colspan="4" style="text-align: right">
                 Restant dû
             </td>
@@ -196,12 +200,24 @@
                 €
             </td>
         </tr>
-        <tr th:if="${0>remainingToPay}">
+        <tr th:if="${0>remainingToPay}  and ${invoice.isCreditNote==false}">
             <td colspan="4" style="text-align: right">
                 Solde en votre faveur
             </td>
             <td style="text-align: right;white-space: nowrap;"><span
                     th:text="${#numbers.formatDecimal(-remainingToPay,1,2)}"></span>
+                €
+            </td>
+        </tr>
+    </table>
+    <table style="border : solid; border-color: rgb(0,83,159);width: 680px;margin-top: 20px;"
+        th:if=" ${invoice.isCreditNote==true}">
+        <tr>
+            <td colspan="4" style="text-align: right">
+                Net à créditer
+            </td>
+            <td style="text-align: right;white-space: nowrap;"><span
+                    th:text="${#numbers.formatDecimal(priceTotal-remainingToPay,1,2)}"></span>
                 €
             </td>
         </tr>

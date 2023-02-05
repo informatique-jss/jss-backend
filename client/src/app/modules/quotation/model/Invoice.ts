@@ -52,4 +52,7 @@ export interface Invoice extends IAttachment {
   thirdReminderDateTime: Date;
   tiersFollowups: TiersFollowup[];
   customerOrderForInboundInvoice: CustomerOrder;
+  isCreditNote: boolean;
+  creditNote: Invoice;
+  reverseCreditNote: Invoice;
 }
