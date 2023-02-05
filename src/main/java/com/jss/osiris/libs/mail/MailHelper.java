@@ -1367,7 +1367,7 @@ public class MailHelper {
     }
 
     public void sendAnnouncementRequestToConfrere(CustomerOrder customerOrder, AssoAffaireOrder asso,
-            boolean sendToMe, Provision provision, Announcement announcement)
+            boolean sendToMe, Provision provision, Announcement announcement, boolean isReminder)
             throws OsirisException, OsirisClientMessageException {
 
         if (announcement == null || announcement.getConfrere() == null || announcement.getPublicationDate() == null
@@ -1404,18 +1404,18 @@ public class MailHelper {
         if (provision.getAssignedTo() != null)
             currentUserMail = provision.getAssignedTo().getMail();
 
-        mail.setExplaination(
-                "Vous trouverez en pièce jointe le texte d'insertion légale à faire paraître dans votre édition du "
-                        + announcement.getPublicationDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + " de "
-                        +
-                        confrere.getLabel() + " (département " + announcement.getDepartment().getCode() +
-                        ", rubrique "
-                        + String.join("/", announcement.getNoticeTypes().stream().map(NoticeType::getLabel).toList())
-                        + ") en composition économique. <br/>Cette dernière concerne la société "
-                        + (asso.getAffaire().getDenomination() != null ? asso.getAffaire().getDenomination()
-                                : (asso.getAffaire().getFirstname() + " "
-                                        + asso.getAffaire().getLastname()))
-                        + "<br/><br/>A cet effet, nous vous prions de bien vouloir nous adresser : ");
+        mail.setExplaination((isReminder ? "Pour relance, vous" : "Vous")
+                + " trouverez en pièce jointe le texte d'insertion légale à faire paraître dans votre édition du "
+                + announcement.getPublicationDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + " de "
+                +
+                confrere.getLabel() + " (département " + announcement.getDepartment().getCode() +
+                ", rubrique "
+                + String.join("/", announcement.getNoticeTypes().stream().map(NoticeType::getLabel).toList())
+                + ") en composition économique. <br/>Cette dernière concerne la société "
+                + (asso.getAffaire().getDenomination() != null ? asso.getAffaire().getDenomination()
+                        : (asso.getAffaire().getFirstname() + " "
+                                + asso.getAffaire().getLastname()))
+                + "<br/><br/>A cet effet, nous vous prions de bien vouloir nous adresser : ");
 
         ArrayList<String> explanationItems = new ArrayList<String>();
         explanationItems.add("Une attestation de parution par email à l'adresse " + currentUserMail);
@@ -1443,7 +1443,8 @@ public class MailHelper {
         mail.setSendToMe(sendToMe);
         mail.setMailComputeResult(mailComputeResult);
 
-        mail.setSubject("Commande n°" + customerOrder.getId() + " - demande de parution");
+        mail.setSubject(
+                "Commande n°" + customerOrder.getId() + " - demande de parution" + (isReminder ? " - Relance" : ""));
 
         mailService.addMailToQueue(mail);
     }

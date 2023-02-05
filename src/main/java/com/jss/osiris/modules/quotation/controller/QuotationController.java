@@ -487,7 +487,7 @@ public class QuotationController {
     if (mailComputeResult.getRecipientsMailTo() == null || mailComputeResult.getRecipientsMailTo().size() == 0)
       throw new OsirisValidationException("MailTo");
 
-    mailHelper.sendAnnouncementRequestToConfrere(customerOrder, assoAffaireOrder, true, provision, announcement);
+    mailHelper.sendAnnouncementRequestToConfrere(customerOrder, assoAffaireOrder, true, provision, announcement, false);
     return new ResponseEntity<CustomerOrder>(new CustomerOrder(), HttpStatus.OK);
   }
 

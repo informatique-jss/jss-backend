@@ -388,13 +388,66 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                 // Try to send whereas it was JSS or not
                 mailHelper.sendAnnouncementRequestToConfrere(
                         customerOrderService.getCustomerOrder(customerOrder.getId()), asso,
-                        false, provision, announcement);
+                        false, provision, announcement, false);
 
                 announcement.setIsAnnouncementAlreadySentToConfrere(true);
+                announcement.setFirstConfrereSentMailDateTime(LocalDateTime.now());
                 addOrUpdateAnnouncement(announcement);
             }
         }
+    }
 
+    @Override
+    @Transactional
+    public void sendRemindersToConfrereForAnnouncement() throws OsirisException, OsirisClientMessageException {
+        List<Announcement> announcements = announcementRepository
+                .getAnnouncementForConfrereReminder(announcementStatusService
+                        .getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE));
+
+        if (announcements != null && announcements.size() > 0) {
+            for (Announcement announcement : announcements) {
+                CustomerOrder customerOrder = customerOrderService.getCustomerOrderForAnnouncement(announcement);
+
+                // Get provision
+                Provision currentProvision = null;
+                AssoAffaireOrder currentAsso = null;
+                if (customerOrder != null && customerOrder.getAssoAffaireOrders() != null) {
+                    for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
+                        if (asso.getProvisions() != null)
+                            for (Provision provision : asso.getProvisions())
+                                if (provision.getAnnouncement() != null
+                                        && provision.getAnnouncement().getId().equals(announcement.getId())) {
+                                    currentProvision = provision;
+                                    currentAsso = asso;
+                                    break;
+                                }
+
+                    boolean toSend = false;
+                    if (announcement.getFirstConfrereReminderDateTime() == null
+                            && announcement.getFirstConfrereSentMailDateTime()
+                                    .isBefore(LocalDateTime.now().minusDays(1 * 3))) {
+                        toSend = true;
+                        announcement.setFirstConfrereReminderDateTime(LocalDateTime.now());
+                    } else if (announcement.getSecondConfrereReminderDateTime() == null
+                            && announcement.getFirstConfrereSentMailDateTime()
+                                    .isBefore(LocalDateTime.now().minusDays(1 * 4))) {
+                        toSend = true;
+                        announcement.setSecondConfrereReminderDateTime(LocalDateTime.now());
+                    } else if (announcement.getSecondConfrereReminderDateTime()
+                            .isBefore(LocalDateTime.now().minusDays(1 * 7))) {
+                        toSend = true;
+                        announcement.setThirdConfrereReminderDateTime(LocalDateTime.now());
+                    }
+
+                    if (toSend) {
+                        mailHelper.sendAnnouncementRequestToConfrere(
+                                customerOrderService.getCustomerOrder(customerOrder.getId()), currentAsso,
+                                false, currentProvision, announcement, true);
+                        addOrUpdateAnnouncement(announcement);
+                    }
+                }
+            }
+        }
     }
 
 }
