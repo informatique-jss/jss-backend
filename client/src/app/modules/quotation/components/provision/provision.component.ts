@@ -130,7 +130,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
   }
 
   deleteProvision(asso: AssoAffaireOrder, provision: Provision) {
-    if (this.asso.customerOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.asso.customerOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED) {
+    if (this.asso.customerOrder.customerOrderStatus && (this.asso.customerOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.asso.customerOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)) {
       this.displaySnakBarLockProvision();
       return;
     }
@@ -139,7 +139,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
   }
 
   createProvision(asso: AssoAffaireOrder): Provision {
-    if (this.asso.customerOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.asso.customerOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED) {
+    if (this.asso.customerOrder.customerOrderStatus && (this.asso.customerOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.asso.customerOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)) {
       this.displaySnakBarLockProvision();
       return {} as Provision;
     }
@@ -244,7 +244,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
   }
 
   changeStatus(status: IWorkflowElement, provision: Provision) {
-    if (this.asso.customerOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.asso.customerOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED) {
+    if (this.asso.customerOrder.customerOrderStatus && (this.asso.customerOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.asso.customerOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)) {
       this.displaySnakBarLockProvision();
       return;
     }

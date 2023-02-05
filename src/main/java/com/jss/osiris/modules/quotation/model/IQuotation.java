@@ -65,4 +65,6 @@ public interface IQuotation extends IId, IAttachment, IDocument {
 
 	public void setIsCreatedFromWebSite(Boolean createdFromWebSite);
 
+	public String getCustomerMailCustomMessage();
+
 }

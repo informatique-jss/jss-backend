@@ -354,6 +354,7 @@ public class MailHelper {
         ctx.setVariable("subtitle", mail.getSubtitle());
         ctx.setVariable("label", mail.getLabel());
         ctx.setVariable("explaination", mail.getExplaination());
+        ctx.setVariable("customerMailCustomMessage", mail.getCustomerMailCustomMessage());
         ctx.setVariable("explainationElements",
                 mail.getExplainationElements() != null ? mail.getExplainationElements().split("forgetThis") : null);
         ctx.setVariable("explaination2", mail.getExplaination2());
@@ -521,6 +522,8 @@ public class MailHelper {
         mail.setHeaderPicture("images/quotation-header.png");
         mail.setTitle("Votre nouveau devis est prêt !");
         mail.setSubtitle("Il n'attend plus que votre validation.");
+        if (quotation.getCustomerMailCustomMessage() != null)
+            mail.setCustomerMailCustomMessage(quotation.getCustomerMailCustomMessage());
         mail.setLabel("Devis n°" + quotation.getId());
 
         MailComputeResult mailComputeResult = mailComputeHelper.computeMailForQuotationMail(quotation);
@@ -714,6 +717,8 @@ public class MailHelper {
 
         mail.setHeaderPicture("images/waiting-deposit-header.png");
         mail.setTitle("Votre commande est prête à être traitée");
+        if (customerOrder.getCustomerMailCustomMessage() != null)
+            mail.setCustomerMailCustomMessage(customerOrder.getCustomerMailCustomMessage());
 
         if (isDepositMandatory && remainingToPay > 0 && !isPaymentTypePrelevement)
             mail.setSubtitle("Elle n'attend plus que le paiement d'un acompte pour démarrer.");

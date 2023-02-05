@@ -99,6 +99,9 @@ public class CustomerMail {
 
     private Boolean sendToMe;
 
+    @Column(columnDefinition = "TEXT")
+    private String customerMailCustomMessage;
+
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_mail_compute_result")
     MailComputeResult mailComputeResult;
@@ -448,6 +451,14 @@ public class CustomerMail {
 
     public void setConfrere(Confrere confrere) {
         this.confrere = confrere;
+    }
+
+    public String getCustomerMailCustomMessage() {
+        return customerMailCustomMessage;
+    }
+
+    public void setCustomerMailCustomMessage(String customerMailCustomMessage) {
+        this.customerMailCustomMessage = customerMailCustomMessage;
     }
 
 }

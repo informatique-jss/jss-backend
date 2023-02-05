@@ -314,7 +314,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
   }
 
   createProvision(asso: AssoAffaireOrder): Provision {
-    if (instanceOfCustomerOrder(this.quotation) && (this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)) {
+    if (instanceOfCustomerOrder(this.quotation) && this.quotation.customerOrderStatus && (this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)) {
       this.displaySnakBarLockProvision();
       return {} as Provision;
     }
@@ -331,7 +331,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
   }
 
   addAffaire() {
-    if (instanceOfCustomerOrder(this.quotation) && (this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)) {
+    if (instanceOfCustomerOrder(this.quotation) && this.quotation.customerOrderStatus && (this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)) {
       this.displaySnakBarLockProvision();
       return;
     }
@@ -391,7 +391,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
   }
 
   deleteProvision(asso: AssoAffaireOrder, provision: Provision) {
-    if (instanceOfCustomerOrder(this.quotation) && (this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)) {
+    if (instanceOfCustomerOrder(this.quotation) && this.quotation.customerOrderStatus && (this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)) {
       this.displaySnakBarLockProvision();
       return;
     }

@@ -103,6 +103,11 @@
                     mat-icon-button color="accent">
                     <mat-icon>edit</mat-icon>
                   </button>
+                  <button *ngIf="editMode==true && quotation.overrideSpecialOffer"
+                    matTooltip="Ne pas modifier le tarif spécial par défaut" (click)="hideOverrideSpecialOffers()"
+                    mat-icon-button color="accent">
+                    <mat-icon>close</mat-icon>
+                  </button>
                 </td>
               </tr>
             </table>
@@ -173,6 +178,11 @@
                     mat-icon-button color="accent">
                     <mat-icon>edit</mat-icon>
                   </button>
+                  <button *ngIf="editMode==true && quotation.overrideSpecialOffer"
+                    matTooltip="Ne pas modifier le tarif spécial par défaut" (click)="hideOverrideSpecialOffers()"
+                    mat-icon-button color="accent">
+                    <mat-icon>close</mat-icon>
+                  </button>
                 </td>
               </tr>
             </table>
@@ -201,6 +211,14 @@
                 <generic-textarea [(model)]="quotation.description" label="Description de la demande"
                   [form]="orderingCustomerForm" propertyName="description" [isDisabled]="!editMode"
                   [numberOfLines]="10">
+                </generic-textarea>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <generic-textarea [(model)]="quotation.customerMailCustomMessage"
+                  label="Message personnalisé à insérer dans le mail client" [form]="orderingCustomerForm"
+                  propertyName="customerMailCustomMessage" [isDisabled]="!editMode" [numberOfLines]="10">
                 </generic-textarea>
               </td>
             </tr>
