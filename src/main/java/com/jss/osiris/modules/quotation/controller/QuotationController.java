@@ -2068,6 +2068,20 @@ public class QuotationController {
     return new ResponseEntity<byte[]>(data, headers, HttpStatus.OK);
   }
 
+  @GetMapping(inputEntryPoint + "/publication/receipt/store")
+  public ResponseEntity<Provision> storePublicationReceipt(@RequestParam("idAnnouncement") Integer idAnnouncement,
+      @RequestParam("idProvision") Integer idProvision)
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+    Announcement announcement = announcementService.getAnnouncement(idAnnouncement);
+    Provision provision = provisionService.getProvision(idProvision);
+
+    if (announcement == null)
+      throw new OsirisValidationException("Annonce non trouvée");
+
+    announcementService.generateAndStorePublicationReceipt(announcement, provision);
+    return new ResponseEntity<Provision>(provision, HttpStatus.OK);
+  }
+
   @GetMapping(inputEntryPoint + "/proof/reading/download")
   public ResponseEntity<byte[]> downloadProofReading(@RequestParam("idAnnouncement") Integer idAnnouncement,
       @RequestParam("idProvision") Integer idProvision)
@@ -2167,6 +2181,38 @@ public class QuotationController {
       file.delete();
     }
     return new ResponseEntity<byte[]>(data, headers, HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/publication/flag/store")
+  public ResponseEntity<Provision> storePublicationFlag(@RequestParam("idAnnouncement") Integer idAnnouncement,
+      @RequestParam(name = "idProvision", required = false) Integer idProvision)
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+    Announcement announcement = announcementService.getAnnouncement(idAnnouncement);
+    Provision provision = null;
+    if (idProvision == null) {
+      CustomerOrder customerOrder = customerOrderService.getCustomerOrderForAnnouncement(announcement);
+      // Get provision
+      if (customerOrder != null && customerOrder.getAssoAffaireOrders() != null)
+        for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
+          if (asso.getProvisions() != null)
+            for (Provision orderProvision : asso.getProvisions())
+              if (orderProvision.getAnnouncement() != null
+                  && orderProvision.getAnnouncement().getId().equals(announcement.getId())) {
+                provision = orderProvision;
+                break;
+              }
+    } else {
+      provision = provisionService.getProvision(idProvision);
+    }
+
+    if (announcement == null)
+      throw new OsirisValidationException("Annonce non trouvée");
+    if (provision == null)
+      throw new OsirisValidationException("Provision non trouvée");
+
+    announcementService.generateAndStorePublicationFlag(announcement, provision);
+
+    return new ResponseEntity<Provision>(provision, HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/mail/generate/publication/receipt")

@@ -313,7 +313,23 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
   }
 
   generatePublicationReceipt(announcement: Announcement, provision: Provision) {
-    this.announcementService.previewPublicationReceipt(announcement, provision);
+    const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
+      maxWidth: "400px",
+      data: {
+        title: "Générer le justificatif de parution ?",
+        content: "Voulez vous simplement visualiser un justificatif de parution pour cette annonce ou bien la stocker sur cette dernière ?",
+        closeActionText: "Visualiser",
+        validationActionText: "Stocker"
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(dialogResult => {
+      if (dialogResult == true) {
+        this.announcementService.generateAndStorePublicationReceipt(announcement, provision).subscribe(response => this.refreshAffaire());
+      } else {
+        this.announcementService.previewPublicationReceipt(announcement, provision);
+      }
+    });
   }
 
   generateProofReading(announcement: Announcement, provision: Provision) {
@@ -321,7 +337,23 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
   }
 
   generatePublicationFlag(announcement: Announcement, provision: Provision) {
-    this.announcementService.previewPublicationFlag(announcement, provision);
+    const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
+      maxWidth: "400px",
+      data: {
+        title: "Générer le témoin de publication ?",
+        content: "Voulez vous simplement visualiser un témoin de publication pour cette annonce ou bien le stocker sur cette dernière ?",
+        closeActionText: "Visualiser",
+        validationActionText: "Stocker"
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(dialogResult => {
+      if (dialogResult == true) {
+        this.announcementService.generateAndStorePublicationFlag(announcement, provision).subscribe(response => this.refreshAffaire());
+      } else {
+        this.announcementService.previewPublicationFlag(announcement, provision);
+      }
+    });
   }
 
   generatePublicationReceiptMail(announcement: Announcement) {
