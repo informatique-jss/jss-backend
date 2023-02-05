@@ -24,6 +24,7 @@
     "ajv": "^8.10.0",
     "echarts": "^5.4.0",
     "mat-table-exporter": "^10.2.4",
+    "ng-webdatarocks": "^1.4.7",
     "ngx-echarts": "^14.0.0",
     "ngx-progressbar": "^9.0.0",
     "ngx-trumbowyg": "^6.0.7",
