@@ -3,7 +3,7 @@ import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
 import { ActivatedRoute } from '@angular/router';
-import { ANNOUNCEMENT_STATUS_DONE, ANNOUNCEMENT_STATUS_IN_PROGRESS, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN, SIMPLE_PROVISION_WAITING_DOCUMENT_AUTHORITY } from 'src/app/libs/Constants';
+import { ANNOUNCEMENT_STATUS_DONE, ANNOUNCEMENT_STATUS_IN_PROGRESS, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN, SIMPLE_PROVISION_WAITING_DOCUMENT_AUTHORITY } from 'src/app/libs/Constants';
 import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
 import { WorkflowDialogComponent } from 'src/app/modules/miscellaneous/components/workflow-dialog/workflow-dialog.component';
 import { AppService } from 'src/app/services/app.service';
@@ -124,11 +124,25 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     });
   }
 
+
+  displaySnakBarLockProvision() {
+    this.appService.displaySnackBar("Il n'est pas possible d'ajouter ou modifier une prestation sur une commande au statut A facturer ou Facturer. Veuillez modifier le statut de la commande.", false, 15);
+  }
+
   deleteProvision(asso: AssoAffaireOrder, provision: Provision) {
+    if (this.asso.customerOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.asso.customerOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED) {
+      this.displaySnakBarLockProvision();
+      return;
+    }
+
     asso.provisions.splice(asso.provisions.indexOf(provision), 1);
   }
 
   createProvision(asso: AssoAffaireOrder): Provision {
+    if (this.asso.customerOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.asso.customerOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED) {
+      this.displaySnakBarLockProvision();
+      return {} as Provision;
+    }
     if (asso && !asso.provisions)
       asso.provisions = [] as Array<Provision>;
     let provision = {} as Provision;
@@ -230,6 +244,11 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
   }
 
   changeStatus(status: IWorkflowElement, provision: Provision) {
+    if (this.asso.customerOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.asso.customerOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED) {
+      this.displaySnakBarLockProvision();
+      return;
+    }
+
     let saveAsso = true;
     if (provision.announcement) {
       provision.announcement.announcementStatus = status;
@@ -306,7 +325,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
         });
 
         dialogRef.componentInstance.title = "Choix de l'autorité compétente";
-        dialogRef.componentInstance.label = "Veuilliez choisir l'autorité compétente associée au statut " + status.label;
+        dialogRef.componentInstance.label = "Veuillez choisir l'autorité compétente associée au statut " + status.label;
         dialogRef.afterClosed().subscribe(dialogResult => {
           if (dialogResult && dialogResult != false && provision.simpleProvision) {
             provision.simpleProvision.waitedCompetentAuthority = dialogResult;

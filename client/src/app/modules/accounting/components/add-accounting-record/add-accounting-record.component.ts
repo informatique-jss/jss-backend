@@ -73,7 +73,7 @@ export class AddAccountingRecordComponent implements OnInit {
       this.computeBalanceAndDebitAndCreditAccumulation();
       this.refreshTable.next();
     } else {
-      this.appService.displaySnackBar("Veuilliez remplir l'ensemble des champs avant d'ajouter une nouvelle opération", true, 15);
+      this.appService.displaySnackBar("Veuillez remplir l'ensemble des champs avant d'ajouter une nouvelle opération", true, 15);
     }
   }
 
@@ -128,10 +128,10 @@ export class AddAccountingRecordComponent implements OnInit {
             this.location.back();
         });
       } else {
-        this.appService.displaySnackBar("Veuilliez à saisir un ensemble d'opérations équilibrées", true, 15);
+        this.appService.displaySnackBar("Veuillez à saisir un ensemble d'opérations équilibrées", true, 15);
       }
     } else {
-      this.appService.displaySnackBar("Veuilliez saisir au moins une opération valide", true, 15);
+      this.appService.displaySnackBar("Veuillez saisir au moins une opération valide", true, 15);
     }
   }
 }

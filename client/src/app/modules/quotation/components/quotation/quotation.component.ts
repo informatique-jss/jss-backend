@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
 import { ActivatedRoute, UrlSegment } from '@angular/router';
 import { Subject } from 'rxjs';
-import { CUSTOMER_ORDER_STATUS_BILLED, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN, VALIDATED_BY_CUSTOMER } from 'src/app/libs/Constants';
+import { CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_TO_BILLED, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN, VALIDATED_BY_CUSTOMER } from 'src/app/libs/Constants';
 import { getDocument } from 'src/app/libs/DocumentHelper';
 import { instanceOfCustomerOrder } from 'src/app/libs/TypeHelper';
 import { getRemainingToPay } from 'src/app/modules/invoicing/components/invoice-tools';
@@ -314,6 +314,10 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
   }
 
   createProvision(asso: AssoAffaireOrder): Provision {
+    if (instanceOfCustomerOrder(this.quotation) && (this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)) {
+      this.displaySnakBarLockProvision();
+      return {} as Provision;
+    }
     if (asso && !asso.provisions)
       asso.provisions = [] as Array<Provision>;
     let provision = {} as Provision;
@@ -322,7 +326,16 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     return provision;
   }
 
+  displaySnakBarLockProvision() {
+    this.appService.displaySnackBar("Il n'est pas possible d'ajouter ou modifier une prestation sur une commande au statut A facturer ou Facturer. Veuillez modifier le statut de la commande.", false, 15);
+  }
+
   addAffaire() {
+    if (instanceOfCustomerOrder(this.quotation) && (this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)) {
+      this.displaySnakBarLockProvision();
+      return;
+    }
+
     let dialogRef = this.addAffaireDialog.open(AddAffaireDialogComponent, {
       width: '100%',
       height: '90%'
@@ -378,6 +391,10 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
   }
 
   deleteProvision(asso: AssoAffaireOrder, provision: Provision) {
+    if (instanceOfCustomerOrder(this.quotation) && (this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)) {
+      this.displaySnakBarLockProvision();
+      return;
+    }
     asso.provisions.splice(asso.provisions.indexOf(provision), 1);
   }
 
