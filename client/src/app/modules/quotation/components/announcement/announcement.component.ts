@@ -119,6 +119,12 @@ export class AnnouncementComponent implements OnInit {
         this.announcement!.isProofReadingDocument = false;
       if (this.announcement!.publicationDate)
         this.announcement.publicationDate = new Date(this.announcement.publicationDate);
+      if (this.announcement.confrere && this.provision) {
+        if (this.announcement.confrere.journalType.id == this.constantService.getJournalTypePaper().id)
+          this.provision.isPublicationFlag = false;
+        if (this.announcement.confrere.journalType.id == this.constantService.getJournalTypeSpel().id)
+          this.provision.isPublicationPaper = false;
+      }
 
       this.announcementForm.markAllAsTouched();
       this.toggleTabs();
