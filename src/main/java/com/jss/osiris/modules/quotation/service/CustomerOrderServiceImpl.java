@@ -72,6 +72,9 @@ import com.jss.osiris.modules.tiers.model.Tiers;
 @Service
 public class CustomerOrderServiceImpl implements CustomerOrderService {
 
+    @Value("${invoicing.payment.limit.refund.euros}")
+    private String payementLimitRefundInEuros;
+
     @Autowired
     CustomerOrderRepository customerOrderRepository;
 
@@ -385,7 +388,21 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             }
 
             // Check invoice payed
-            Float remainingToPayForCurrentInvoice = invoiceService.getRemainingAmountToPayForInvoice(invoice);
+            Float remainingToPayForCurrentInvoice = Math
+                    .round(invoiceService.getRemainingAmountToPayForInvoice(invoice) * 100f) / 100f;
+
+            // Handle appoint
+            if (remainingToPayForCurrentInvoice != 0 && customerOrder.getDeposits() != null
+                    && customerOrder.getDeposits().size() > 0) {
+                if (Math.abs(remainingToPayForCurrentInvoice) <= Float.parseFloat(payementLimitRefundInEuros)) {
+                    accountingRecordService.generateAppointForDeposit(customerOrder.getDeposits().get(0),
+                            remainingToPayForCurrentInvoice, invoiceHelper.getCustomerOrder(invoice));
+                    Deposit deposit = customerOrder.getDeposits().get(0);
+                    deposit.setDepositAmount(deposit.getDepositAmount() + remainingToPayForCurrentInvoice);
+                    depositService.addOrUpdateDeposit(deposit);
+                }
+            }
+
             if (remainingToPayForCurrentInvoice < 0) {
                 throw new OsirisException(null, "Impossible to billed, too much money on customerOrder !");
             }
