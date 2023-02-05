@@ -23,6 +23,7 @@ import { JournalType } from '../../model/JournalType';
 import { NoticeType } from '../../model/NoticeType';
 import { Provision } from '../../model/Provision';
 import { AnnouncementNoticeTemplateService } from '../../services/announcement.notice.template.service';
+import { CharacterNumberService } from '../../services/character.number.service';
 import { CharacterPriceService } from '../../services/character.price.service';
 import { JournalTypeService } from '../../services/journal.type.service';
 import { NoticeTypeService } from '../../services/notice.type.service';
@@ -67,6 +68,8 @@ export class AnnouncementComponent implements OnInit {
   selectedNoticeTemplates: AnnouncementNoticeTemplate[] = [] as Array<AnnouncementNoticeTemplate>;
   paperDocument: Document = {} as Document;
 
+  characterNumber: number = 0;
+
   constructor(private formBuilder: UntypedFormBuilder,
     private characterPriceService: CharacterPriceService,
     private constantService: ConstantService,
@@ -75,6 +78,7 @@ export class AnnouncementComponent implements OnInit {
     private appService: AppService,
     private journalTypeService: JournalTypeService,
     private announcementNoticeTemplateService: AnnouncementNoticeTemplateService,
+    private characterNumberService: CharacterNumberService,
   ) { }
 
   ngOnInit() {
@@ -100,6 +104,9 @@ export class AnnouncementComponent implements OnInit {
       startWith(''),
       map(value => this._filterNoticeTemplates(value)),
     );
+
+    this.announcementForm.get("notice")?.valueChanges.subscribe(response => this.noticeChangeFunction());
+    this.announcementForm.get("noticeHeader")?.valueChanges.subscribe(response => this.noticeChangeFunction());
 
     if (this.provision && this.provision.announcement)
       this.paperDocument = getDocument(this.constantService.getDocumentTypePaper(), this.provision.announcement);
@@ -193,24 +200,13 @@ export class AnnouncementComponent implements OnInit {
   }
 
   noticeChangeFunction() {
+    setTimeout(() => {
+      if (this.provision)
+        this.characterNumberService.getCharacterNumber(this.provision).subscribe(response => {
+          this.characterNumber = response;
+        })
+    }, 0);
     this.provisionChange.emit(this.provision);
-  }
-
-
-  countCharacterNumber() {
-    let noticeValue = this.announcementForm.get('notice')?.value != undefined ? this.announcementForm.get('notice')?.value : "";
-    // Ignore HTML tags
-    noticeValue = new DOMParser().parseFromString(noticeValue, "text/html").documentElement.textContent;
-
-    let headerValue = this.announcementForm.get('noticeHeader')?.value != undefined ? this.announcementForm.get('noticeHeader')?.value : "";
-    // Ignore HTML tags
-    headerValue = new DOMParser().parseFromString(headerValue, "text/html").documentElement.textContent;
-
-    let nbr = noticeValue.replace(/ +(?= )/g, '').replace(/(\r\n|\r|\n){2,}/g, ' ').trim().length;
-    if (!this.announcement?.isHeaderFree)
-      nbr += headerValue.replace(/ +(?= )/g, '').replace(/(\r\n|\r|\n){2,}/g, ' ').trim().length;
-
-    return nbr;
   }
 
   toggleTabs() {

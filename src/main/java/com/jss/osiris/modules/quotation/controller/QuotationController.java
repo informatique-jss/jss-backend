@@ -767,6 +767,13 @@ public class QuotationController {
     return new ResponseEntity<CharacterPrice>(characterPriceService.getCharacterPrice(department, date), HttpStatus.OK);
   }
 
+  @PostMapping(inputEntryPoint + "/character/number")
+  public ResponseEntity<Integer> getCharacterNumber(@RequestBody Provision provision)
+      throws OsirisValidationException {
+
+    return new ResponseEntity<Integer>(characterPriceService.getCharacterNumber(provision), HttpStatus.OK);
+  }
+
   @GetMapping(inputEntryPoint + "/character-prices")
   public ResponseEntity<List<CharacterPrice>> getCharacterPrices() {
     return new ResponseEntity<List<CharacterPrice>>(characterPriceService.getCharacterPrices(), HttpStatus.OK);

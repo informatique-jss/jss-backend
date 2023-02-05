@@ -183,11 +183,11 @@
               </td>
               <td
                 *ngIf="announcement.confrere!=undefined && announcement.department!=undefined && announcement.publicationDate!=undefined">
-                Nombre de caractères : {{countCharacterNumber()}}
+                Nombre de caractères : {{characterNumber}}
               </td>
               <td
                 *ngIf="announcement.confrere!=undefined && announcement.department!=undefined && announcement.publicationDate!=undefined">
-                Prix total : {{countCharacterNumber()*characterPrice.price | number}} €
+                Prix total : {{characterNumber*characterPrice.price | number}} €
               </td>
             </tr>
           </table>

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.collections4.IterableUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -68,13 +69,11 @@ public class CharacterPriceServiceImpl implements CharacterPriceService {
             int noticeNumber = 0;
             int headerNumber = 0;
             if (provision.getAnnouncement().getNotice() != null)
-                noticeNumber = provision.getAnnouncement().getNotice().replaceAll("(\r?\n){2,}", "$1")
-                        .replaceAll("\\<.*?>", "").replaceAll("&nbsp;", " ")
-                        .length();
+                noticeNumber = StringEscapeUtils.unescapeXml(provision.getAnnouncement().getNotice()
+                        .replaceAll("(\r?\n){2,}", "$1").replaceAll("\\<.*?>", "").replaceAll("&nbsp;", " ")).length();
             if (provision.getAnnouncement().getNoticeHeader() != null)
-                headerNumber = provision.getAnnouncement().getNoticeHeader().replaceAll("(\r?\n){2,}", "$1")
-                        .replaceAll("\\<.*?>", "").replaceAll("&nbsp;", " ")
-                        .length();
+                headerNumber = StringEscapeUtils.unescapeXml(provision.getAnnouncement().getNoticeHeader()
+                        .replaceAll("(\r?\n){2,}", "$1").replaceAll("\\<.*?>", "").replaceAll("&nbsp;", " ")).length();
 
             return noticeNumber
                     + ((provision.getAnnouncement().getIsHeaderFree() == null
