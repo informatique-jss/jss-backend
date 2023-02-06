@@ -74,6 +74,10 @@
             </td>
         </tr>
     </table>
+    <div th:if="${invoice.isCreditNote!=null} and ${invoice.isCreditNote==true}">
+        <p>Avoir n°<span th:text="${invoice.id}"></span> annulant la facture n°<span
+                th:text="${reverseCreditNote.id}">th:text="${invoice.id}"</span></p>
+    </div>
     <table style="border : solid; border-color: rgb(0,83,159);width: 680px;margin-top: 20px;">
         <th:block th:each="asso : ${assos}">
             <tr>
@@ -179,10 +183,7 @@
                 €
             </td>
         </tr>
-    </table>
-    <table style="border : solid; border-color: rgb(0,83,159);width: 680px;margin-top: 20px;"
-        th:if="${deposits.size()>0}">
-        <tr th:each="deposit : ${deposits}">
+        <tr th:each="deposit : ${deposits}" th:if="${deposits.size()>0}">
             <td colspan="4" style="text-align: right">
                 Acompte
             </td>
@@ -192,7 +193,7 @@
             </td>
         </tr>
 
-        <tr th:if="${remainingToPay>0}  and ${invoice.isCreditNote==false}">
+        <tr th:if="${remainingToPay>0}  and ${invoice.isCreditNote==false} and ${deposits.size()>0}">
             <td colspan="4" style="text-align: right">
                 Restant dû
             </td>
@@ -201,7 +202,7 @@
                 €
             </td>
         </tr>
-        <tr th:if="${0>remainingToPay}  and ${invoice.isCreditNote==false}">
+        <tr th:if="${0>remainingToPay}  and ${invoice.isCreditNote==false} and ${deposits.size()>0}">
             <td colspan="4" style="text-align: right">
                 Solde en votre faveur
             </td>
@@ -210,10 +211,7 @@
                 €
             </td>
         </tr>
-    </table>
-    <table style="border : solid; border-color: rgb(0,83,159);width: 680px;margin-top: 20px;"
-        th:if=" ${invoice.isCreditNote==true}">
-        <tr>
+        <tr th:if=" ${invoice.isCreditNote==true}">
             <td colspan="4" style="text-align: right">
                 Net à créditer
             </td>
