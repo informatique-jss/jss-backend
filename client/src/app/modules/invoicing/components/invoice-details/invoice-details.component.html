@@ -174,41 +174,37 @@
             </ng-container>
           </ng-container>
         </table>
-        <ng-container *ngFor="let affaire of getAffaireListArray(invoice)">
-          <table class="middle-width container-affaire mat-table" *ngIf="!invoice.customerOrder">
-            <ng-container *ngFor="let invoiceItem of invoice.invoiceItems; let index = index">
-              <tr class="mat-header-row">
-                <th class="mat-header-cell" colspan="2">Affaire {{affaire.denomination}}{{affaire.firstname}}
-                  {{affaire.lastname}}
-                </th>
-              </tr>
-              <tr class="mat-row">
-                <td class="mat-cell">
-                  {{invoiceItem.label}}
-                </td>
-                <td class="td-price  mat-cell">
-                  {{invoiceItem.preTaxPrice|number}} €
-                </td>
-              </tr>
-              <tr *ngIf="invoiceItem.discountAmount && invoiceItem.discountAmount>0" class="mat-row">
-                <td class="mat-cell">
-                  <div class="sub-row">Remise</div>
-                </td>
-                <td class="td-price remise mat-cell">
-                  - {{invoiceItem.discountAmount|number}} €
-                </td>
-              </tr>
-              <tr *ngIf="invoiceItem.vat" class="mat-row">
-                <td class="mat-cell">
-                  <div class="sub-row">{{invoiceItem.vat.label}}</div>
-                </td>
-                <td class="td-price mat-cell">
-                  {{invoiceItem.vatPrice|number}} €
-                </td>
-              </tr>
-            </ng-container>
-          </table>
-        </ng-container>
+        <table class="full-width container-affaire mat-table" *ngIf="!invoice.customerOrder">
+          <tr class=" mat-header-row">
+            <th class="mat-header-cell" colspan="2">Facture</th>
+          </tr>
+          <ng-container *ngFor="let invoiceItem of invoice.invoiceItems;let indexInvoiceItem = index">
+            <tr class="mat-row">
+              <td class="mat-cell">
+                {{invoiceItem.label}}
+              </td>
+              <td class="td-price mat-cell">
+                {{invoiceItem.preTaxPrice|number}} €
+              </td>
+            </tr>
+            <tr class="mat-row" *ngIf="invoiceItem.discountAmount && invoiceItem.discountAmount>0">
+              <td class="mat-cell">
+                Remise
+              </td>
+              <td class="td-price remise mat-cell">
+                - {{invoiceItem.discountAmount|number}} €
+              </td>
+            </tr>
+            <tr class="mat-row" *ngIf="invoiceItem.vat">
+              <td class="mat-cell">
+                {{invoiceItem.vat.label}}
+              </td>
+              <td class="td-price mat-cell">
+                {{invoiceItem.vatPrice|number}} €
+              </td>
+            </tr>
+          </ng-container>
+        </table>
         <table class="total-table mat-table full-width">
           <tr class=" mat-header-row">
             <th class="mat-header-cell" colspan="2">Total</th>
