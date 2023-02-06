@@ -1,13 +1,24 @@
 <div class="mat-elevation-z2 form-div">
   <div>
-    <mat-form-field class="full-width">
-      <input matInput (keyup)="applyFilter($event.target)" placeholder="Rechercher">
-    </mat-form-field>
+    <table>
+      <tr>
+        <td>
+          <select-competent-authority-type [(model)]="selectedCompetentAuthorityType" label="Type d'autorité"
+            [form]="entityForm2" propertyName="selectedCompetentAuthorityType" [isMandatory]="true"
+            (selectionChange)="fetchCompetentAuthorities()" [isDisabled]="false"></select-competent-authority-type>
+        </td>
+        <td *ngIf="selectedCompetentAuthorityType">
+          <mat-form-field class="full-width">
+            <input matInput (keyup)="applyFilter($event.target)" placeholder="Rechercher">
+          </mat-form-field>
+        </td>
+      </tr>
+    </table>
   </div>
   <div class="table-container-scroll">
     <sort-table [idRowSelected]="selectedcompetentAuthorityId" [columns]="displayedColumns"
-      (onRowClick)="selectCompetentAuthority($event)" [values]="competentAuthorities" tableName="Autorités compétentes"
-      [filterText]="searchText">
+      (onRowClick)="selectCompetentAuthority($event)" [values]="filteredCompetentAuthorities"
+      tableName="Autorités compétentes" [filterText]="searchText">
     </sort-table>
   </div>
 

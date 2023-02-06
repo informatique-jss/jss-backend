@@ -7,6 +7,7 @@ import { ConstantService } from 'src/app/modules/miscellaneous/services/constant
 import { PaymentTypeService } from 'src/app/modules/miscellaneous/services/payment.type.service';
 import { AppService } from '../../../../services/app.service';
 import { CompetentAuthority } from '../../../miscellaneous/model/CompetentAuthority';
+import { CompetentAuthorityType } from '../../../miscellaneous/model/CompetentAuthorityType';
 import { CompetentAuthorityService } from '../../../miscellaneous/services/competent.authority.service';
 
 @Component({
@@ -25,8 +26,10 @@ export class CompetentAuthorityComponent implements OnInit {
   }
 
   competentAuthorities: CompetentAuthority[] = [];
+  filteredCompetentAuthorities: CompetentAuthority[] = [];
   searchText: string = "";
   selectedcompetentAuthority: CompetentAuthority | undefined;
+  selectedCompetentAuthorityType: CompetentAuthorityType | undefined;
   selectedcompetentAuthorityId: number | undefined;
   displayedColumns: SortTableColumn[] = [];
   editMode: boolean = false;
@@ -89,10 +92,25 @@ export class CompetentAuthorityComponent implements OnInit {
 
   applyFilter(filterValue: any) {
     let filterValueCast = (filterValue as HTMLInputElement);
-    filterValue = filterValueCast.value.trim();
-    this.searchText = filterValue.toLowerCase();
-    if (this.searchText.length > 2) {
-      this.competentAuthorityService.getCompetentAuthorityByDepartmentAndName(this.searchText, undefined).subscribe(response => this.competentAuthorities = response);
+    filterValue = filterValueCast.value;
+    this.searchText = filterValue ? filterValue.trim().toLowerCase() : "";
+    this.filteredCompetentAuthorities = [];
+    this.selectedcompetentAuthority = undefined;
+    if (this.competentAuthorities)
+      for (let competentAuthority of this.competentAuthorities)
+        if (competentAuthority.label.toLocaleLowerCase().indexOf(this.searchText) >= 0)
+          this.filteredCompetentAuthorities.push(competentAuthority);
+  }
+
+  isLoading = false;
+  fetchCompetentAuthorities() {
+    if (this.selectedCompetentAuthorityType && !this.isLoading) {
+      this.isLoading = true;
+      this.competentAuthorityService.getCompetentAuthoritiesByType(this.selectedCompetentAuthorityType).subscribe(response => {
+        this.competentAuthorities = response;
+        this.applyFilter(this.searchText);
+        this.isLoading = false;
+      })
     }
   }
 
