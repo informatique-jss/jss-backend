@@ -19,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
+import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module.Feature;
 import com.jss.osiris.libs.JacksonLocalDateDeserializer;
 import com.jss.osiris.libs.JacksonLocalDateSerializer;
 import com.jss.osiris.libs.JacksonLocalDateTimeDeserializer;
@@ -672,6 +674,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         simpleModule.addDeserializer(LocalDateTime.class, new JacksonLocalDateTimeDeserializer());
         simpleModule.addDeserializer(LocalDate.class, new JacksonLocalDateDeserializer());
         objectMapper.registerModule(simpleModule);
+        Hibernate5Module module = new Hibernate5Module();
+        module.enable(Feature.FORCE_LAZY_LOADING);
+        objectMapper.registerModule(module);
         String customerOrderString;
         try {
             customerOrderString = objectMapper.writeValueAsString(customerOrder);
