@@ -118,7 +118,8 @@
                                 th:text="${debour.billingType.label}"></span>
                         </td>
                         <td style="text-align: right;white-space: nowrap;">
-                            <span th:text="${#numbers.formatDecimal(debour.debourAmount,1,2)}"></span>
+                            <span
+                                th:text="${#numbers.formatDecimal(debour.debourAmount-(debour.debourAmount/(1f+(vatDebour.rate/100f)))*vatDebour.rate/100f,1,2)}"></span>
                             €
                         </td>
                     </tr>

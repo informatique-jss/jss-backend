@@ -994,17 +994,13 @@ public class MailHelper {
                                 vatmail.setBase(debour.getDebourAmount() / (1 + (vatDebour.getRate() / 100)));
                                 vats.add(vatmail);
                             }
-
-                            // Replace temporarely debour amount with amount without taxes to proper display
-                            debour.setDebourAmount(debour.getDebourAmount()
-                                    - (debour.getDebourAmount() / (1f + (vatDebour.getRate() / 100f)))
-                                            * vatDebour.getRate() / 100f);
                         }
                     }
                 }
             }
         }
 
+        ctx.setVariable("vatDebour", vatDebour);
         ctx.setVariable("vats", vats);
         ctx.setVariable("priceTotal", Math.round(invoiceHelper.getPriceTotal(invoice) * 100f) / 100f);
         ctx.setVariable("invoice", invoice);
