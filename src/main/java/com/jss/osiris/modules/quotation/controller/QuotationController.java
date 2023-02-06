@@ -1527,20 +1527,25 @@ public class QuotationController {
             || status.getCode().equals(CustomerOrderStatus.WAITING_DEPOSIT))
           publicationDateVerification = null;
         else {
-          // If published and no status change : no verification but you can't modify the
-          // date
           if (currentAnnouncement != null)
-            if (currentAnnouncement.getAnnouncementStatus().getId().equals(announcement.getAnnouncementStatus().getId())
-                && announcement.getAnnouncementStatus().getCode().equals(AnnouncementStatus.ANNOUNCEMENT_PUBLISHED)
-                || announcement.getAnnouncementStatus().getCode().equals(AnnouncementStatus.ANNOUNCEMENT_DONE)) {
+            if (currentAnnouncement.getConfrere() != null
+                && currentAnnouncement.getConfrere().getId().equals(constantService.getConfrereJssSpel().getId())) {
+              if (currentAnnouncement.getAnnouncementStatus().getId()
+                  .equals(announcement.getAnnouncementStatus().getId())
+                  && announcement.getAnnouncementStatus().getCode().equals(AnnouncementStatus.ANNOUNCEMENT_PUBLISHED)
+                  || announcement.getAnnouncementStatus().getCode().equals(AnnouncementStatus.ANNOUNCEMENT_DONE)) {
+                publicationDateVerification = null;
+                announcement.setPublicationDate(currentAnnouncement.getPublicationDate());
+              }
+            } else {
+              // if not jss, no verification
               publicationDateVerification = null;
-              announcement.setPublicationDate(currentAnnouncement.getPublicationDate());
             }
         }
       }
 
       validationHelper.validateDateMin(announcement.getPublicationDate(), true, publicationDateVerification,
-          "PublicationDate");
+          "Date de publication de l'annonce");
       validationHelper.validateReferential(announcement.getDepartment(), !isOpen, "Department");
       validationHelper.validateReferential(announcement.getConfrere(), isCustomerOrder, "Confrere");
       validationHelper.validateReferential(announcement.getNoticeTypeFamily(), isCustomerOrder, "NoticeTypeFamily");
