@@ -182,11 +182,12 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Transactional(rollbackFor = Exception.class)
     public CustomerOrder addOrUpdateCustomerOrderFromUser(CustomerOrder customerOrder)
             throws OsirisException, OsirisClientMessageException {
-        return addOrUpdateCustomerOrder(customerOrder, true);
+        return addOrUpdateCustomerOrder(customerOrder, true, true);
     }
 
     @Override
-    public CustomerOrder addOrUpdateCustomerOrder(CustomerOrder customerOrder, boolean isFromUser)
+    public CustomerOrder addOrUpdateCustomerOrder(CustomerOrder customerOrder, boolean isFromUser,
+            boolean checkAllProvisionEnded)
             throws OsirisException, OsirisClientMessageException {
         if (customerOrder.getId() == null) {
             customerOrder.setCreatedDate(LocalDateTime.now());
@@ -234,7 +235,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         if (isNewCustomerOrder)
             notificationService.notifyNewCustomerOrderQuotation(customerOrder);
 
-        checkAllProvisionEnded(customerOrder);
+        if (checkAllProvisionEnded)
+            checkAllProvisionEnded(customerOrder);
 
         // Trigger move forward for announcement created in website
         if (!isFromUser && customerOrder.getAssoAffaireOrders() != null
@@ -367,7 +369,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         // Target : BILLED => generate invoice
         if (targetStatusCode.equals(CustomerOrderStatus.BILLED)) {
             // save once customer order to recompute invoice item before set it in stone...
-            this.addOrUpdateCustomerOrder(customerOrder, true);
+            this.addOrUpdateCustomerOrder(customerOrder, true, true);
             Invoice invoice = generateInvoice(customerOrder);
             accountingRecordService.generateAccountingRecordsForSaleOnInvoiceGeneration(
                     getInvoice(customerOrder));
@@ -438,7 +440,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
         customerOrder.setCustomerOrderStatus(customerOrderStatus);
         customerOrder.setLastStatusUpdate(LocalDateTime.now());
-        return this.addOrUpdateCustomerOrder(customerOrder, false);
+        return this.addOrUpdateCustomerOrder(customerOrder, false, false);
     }
 
     private void resetDeboursManuelAmount(CustomerOrder customerOrder) {
@@ -740,7 +742,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                         provision.setAttachments(null);
                     }
             }
-        addOrUpdateCustomerOrder(customerOrder2, false);
+        addOrUpdateCustomerOrder(customerOrder2, false, true);
 
         return customerOrder2;
     }
@@ -808,7 +810,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     customerOrder.getId() + "", subject);
 
             customerOrder.setCentralPayPaymentRequestId(paymentRequest.getPaymentRequestId());
-            addOrUpdateCustomerOrder(customerOrder, false);
+            addOrUpdateCustomerOrder(customerOrder, false, true);
             return paymentRequest.getBreakdowns().get(0).getEndpoint()
                     + "?urlRedirect=" + redirectEntrypoint + "?customerOrderId=" + customerOrder.getId() + "&delay=0";
         }
@@ -838,7 +840,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     } else {
                         generateDepositOnCustomerOrderForCbPayment(customerOrder, centralPayPaymentRequest);
                         customerOrder.setCentralPayPaymentRequestId(null);
-                        addOrUpdateCustomerOrder(customerOrder, false);
+                        addOrUpdateCustomerOrder(customerOrder, false, true);
                         unlockCustomerOrderFromDeposit(customerOrder);
                     }
                     return true;
@@ -860,7 +862,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         deposit.setCustomerOrder(customerOrder);
         depositService.addOrUpdateDeposit(deposit);
 
-        addOrUpdateCustomerOrder(customerOrder, false);
+        addOrUpdateCustomerOrder(customerOrder, false, true);
 
         accountingRecordService.generateAccountingRecordsForCentralPayPayment(centralPayPaymentRequest, payment,
                 deposit, customerOrder, null);
@@ -912,7 +914,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
                 if (toSend) {
                     mailHelper.sendCustomerOrderCreationConfirmationToCustomer(customerOrder, false, true);
-                    addOrUpdateCustomerOrder(customerOrder, false);
+                    addOrUpdateCustomerOrder(customerOrder, false, true);
                 }
             }
     }

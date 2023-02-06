@@ -1478,7 +1478,7 @@ public class MailHelper {
                         }
 
         if (updateCustomerOrder)
-            customerOrderService.addOrUpdateCustomerOrder(customerOrder, false);
+            customerOrderService.addOrUpdateCustomerOrder(customerOrder, false, true);
 
         return attachments;
     }
