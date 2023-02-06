@@ -200,7 +200,9 @@ export class ProvisionOptionsComponent implements OnInit {
           if (this.provision.formalite.formeJuridique.code == code.trim())
             return true;
         }
-    }
+    } else if (this.provision && this.provision.simpleProvision)
+      return true;
+
     return false;
   }
   fillPublicationPaperNumber() {
