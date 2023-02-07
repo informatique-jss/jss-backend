@@ -3,6 +3,18 @@ package com.jss.osiris.modules.quotation.model;
 
 public class ProvisionBoardResult {
 
+	// Status
+	public static String STATUS_NEW = "NEW"; // Priorite 1
+	public static String STATUS_IN_PROGRESS = "IN_PROGRESS"; // Priorite 2
+	public static String STATUS_WAITING = "WAITING"; // Priorite 3
+	public static String STATUS_WAITING_GREFFE = "WAITING_GREFFE"; // Priorite 4
+	public static String STATUS_WAITING_AUTHORITY = "WAITING_AUTHORITY"; // Priorite 4
+	public static String STATUS_WAITING_CONFRERE_PUBLISHED = "WAITING_CONFRERE_PUBLISHED"; // Priorite 4
+	public static String STATUS_VALIDATE_GREFFE = "VALIDATE_GREFFE"; // Priorite 5
+	public static String STATUS_REFUSED_GREFFE = "REFUSED_GREFFE"; // Priorite 5
+	public static String STATUS_PUBLISHED = "PUBLISHED"; // Priorite 6
+	public static String STATUS_DONE = "DONE"; // Priorite 7
+
 	private final Integer DEFAULT_PRIORITY = 20;
 
 	private Integer employee;

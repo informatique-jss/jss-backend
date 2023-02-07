@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.quotation.model.DomiciliationStatus;
+import com.jss.osiris.modules.quotation.model.ProvisionBoardResult;
 import com.jss.osiris.modules.quotation.repository.DomiciliationStatusRepository;
 
 @Service
@@ -56,11 +57,15 @@ public class DomiciliationStatusServiceImpl implements DomiciliationStatusServic
     @Override
     public void updateStatusReferential() throws OsirisException {
         Integer priority = 1;
-        updateStatus(DomiciliationStatus.DOMICILIATION_NEW, "Nouveau", "auto_awesome", true, false, priority++, "Ouvert");
-        updateStatus(DomiciliationStatus.DOMICILIATION_IN_PROGRESS, "En cours", "autorenew", false, false, priority++);
+        updateStatus(DomiciliationStatus.DOMICILIATION_NEW, "Nouveau", "auto_awesome", true, false, 
+                1, ProvisionBoardResult.STATUS_NEW);
+        updateStatus(DomiciliationStatus.DOMICILIATION_IN_PROGRESS, "En cours", "autorenew", false, false, 
+                2, ProvisionBoardResult.STATUS_IN_PROGRESS);
         updateStatus(DomiciliationStatus.DOMICILIATION_WAITING_FOR_DOCUMENTS, "En attente de documents",
-                "hourglass_top", false, false, priority++);
-        updateStatus(DomiciliationStatus.DOMICILIATION_DONE, "Terminé", "check_small", false, true, priority++);
+                "hourglass_top", false, false, 
+                3, ProvisionBoardResult.STATUS_WAITING);
+        updateStatus(DomiciliationStatus.DOMICILIATION_DONE, "Terminé", "check_small", false, true, 
+                7, ProvisionBoardResult.STATUS_DONE);
 
         setSuccessor(DomiciliationStatus.DOMICILIATION_NEW, DomiciliationStatus.DOMICILIATION_IN_PROGRESS);
         setSuccessor(DomiciliationStatus.DOMICILIATION_IN_PROGRESS,
@@ -73,13 +78,9 @@ public class DomiciliationStatusServiceImpl implements DomiciliationStatusServic
         setPredecessor(DomiciliationStatus.DOMICILIATION_DONE, DomiciliationStatus.DOMICILIATION_IN_PROGRESS);
     }
 
-protected void updateStatus(String code, String label, String icon, boolean isOpenState, boolean isCloseState, 
-    Integer aggregatePriority) {
-updateStatus(code, label, icon, isOpenState, isCloseState, aggregatePriority, label);
-}
-protected void updateStatus(String code, String label, String icon, boolean isOpenState, boolean isCloseState, 
-                                Integer aggregatePriority, String aggregateLabel) {
-DomiciliationStatus domiciliationStatus = getDomiciliationStatusByCode(code);
+    protected void updateStatus(String code, String label, String icon, boolean isOpenState, boolean isCloseState, 
+                                    Integer aggregatePriority, String aggregateLabel) {
+        DomiciliationStatus domiciliationStatus = getDomiciliationStatusByCode(code);
         if (getDomiciliationStatusByCode(code) == null)
             domiciliationStatus = new DomiciliationStatus();
         domiciliationStatus.setPredecessors(null);

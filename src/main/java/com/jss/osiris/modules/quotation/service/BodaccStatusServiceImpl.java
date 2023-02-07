@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.quotation.model.BodaccStatus;
+import com.jss.osiris.modules.quotation.model.ProvisionBoardResult;
 import com.jss.osiris.modules.quotation.repository.BodaccStatusRepository;
 
 @Service
@@ -55,15 +56,21 @@ public class BodaccStatusServiceImpl implements BodaccStatusService {
 
     @Override
     public void updateStatusReferential() throws OsirisException {
-        Integer priority = 1;
-        updateStatus(BodaccStatus.BODACC_NEW, "Nouveau", "auto_awesome", true, false, priority++, "Ouvert");
-        updateStatus(BodaccStatus.BODACC_IN_PROGRESS, "En cours", "autorenew", false, false, priority++);
-        updateStatus(BodaccStatus.BODACC_WAITING_DOCUMENT, "En attente de documents", "hourglass_top", false, false, priority++);
+        updateStatus(BodaccStatus.BODACC_NEW, "Nouveau", "auto_awesome", true, false, 
+                1, ProvisionBoardResult.STATUS_NEW);
+        updateStatus(BodaccStatus.BODACC_IN_PROGRESS, "En cours", "autorenew", false, false, 
+                2, ProvisionBoardResult.STATUS_IN_PROGRESS);
+        updateStatus(BodaccStatus.BODACC_WAITING_DOCUMENT, "En attente de documents", "hourglass_top", false, false, 
+                3, ProvisionBoardResult.STATUS_WAITING);
         updateStatus(BodaccStatus.BODACC_WAITING_DOCUMENT_BODACC, "En attente de documents du BODACC", "hourglass_top",
-                false, false, priority++);
-        updateStatus(BodaccStatus.BODACC_WAITING_PUBLICATION, "En attente de parution", "new_releases", false, false, priority++);
-        updateStatus(BodaccStatus.BODACC_PUBLISHED, "Publié", "fact_check", false, false, priority++);
-        updateStatus(BodaccStatus.BODACC_DONE, "Terminé", "check_small", false, true, priority++);
+                false, false, 
+                3, ProvisionBoardResult.STATUS_WAITING);
+        updateStatus(BodaccStatus.BODACC_WAITING_PUBLICATION, "En attente de parution", "new_releases", false, false, 
+                3, ProvisionBoardResult.STATUS_WAITING);
+        updateStatus(BodaccStatus.BODACC_PUBLISHED, "Publié", "fact_check", false, false, 
+                6, ProvisionBoardResult.STATUS_PUBLISHED);
+        updateStatus(BodaccStatus.BODACC_DONE, "Terminé", "check_small", false, true, 
+                7, ProvisionBoardResult.STATUS_DONE);
 
         setSuccessor(BodaccStatus.BODACC_NEW, BodaccStatus.BODACC_IN_PROGRESS);
         setSuccessor(BodaccStatus.BODACC_IN_PROGRESS, BodaccStatus.BODACC_WAITING_PUBLICATION);
@@ -82,10 +89,6 @@ public class BodaccStatusServiceImpl implements BodaccStatusService {
         setPredecessor(BodaccStatus.BODACC_IN_PROGRESS, BodaccStatus.BODACC_NEW);
     }
 
-    protected void updateStatus(String code, String label, String icon, boolean isOpenState, boolean isCloseState, 
-                                        Integer aggregatePriority) {
-        updateStatus(code, label, icon, isOpenState, isCloseState, aggregatePriority, label);
-    }
     protected void updateStatus(String code, String label, String icon, boolean isOpenState, boolean isCloseState, 
                                     Integer aggregatePriority, String aggregateLabel) {
         BodaccStatus bodaccStatus = getBodaccStatusByCode(code);

@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.quotation.model.AnnouncementStatus;
+import com.jss.osiris.modules.quotation.model.ProvisionBoardResult;
 import com.jss.osiris.modules.quotation.repository.AnnouncementStatusRepository;
 
 @Service
@@ -55,24 +56,31 @@ public class AnnouncementStatusServiceImpl implements AnnouncementStatusService 
 
         @Override
         public void updateStatusReferential() throws OsirisException {
-                Integer priority = 1;
-                updateStatus(AnnouncementStatus.ANNOUNCEMENT_NEW, "Nouveau", "auto_awesome", true, false, priority++, "Ouvert");
-                updateStatus(AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS, "En cours", "autorenew", false, false, priority++);
+                updateStatus(AnnouncementStatus.ANNOUNCEMENT_NEW, "Nouveau", "auto_awesome", true, false, 
+                                1, ProvisionBoardResult.STATUS_NEW);
+                updateStatus(AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS, "En cours", "autorenew", false, false, 
+                                2, ProvisionBoardResult.STATUS_IN_PROGRESS);
                 updateStatus(AnnouncementStatus.ANNOUNCEMENT_WAITING_DOCUMENT, "En attente de documents",
                                 "hourglass_top",
                                 false,
-                                false, priority++);
+                                false, 
+                                3, ProvisionBoardResult.STATUS_WAITING);
                 updateStatus(AnnouncementStatus.ANNOUNCEMENT_WAITING_READ_CUSTOMER, "En attente de relecture client",
                                 "local_library", false,
-                                false, priority++);
+                                false, 
+                                3, ProvisionBoardResult.STATUS_WAITING);
                 updateStatus(AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE, "En attente du confrère",
                                 "supervisor_account",
-                                false, false, priority++);
+                                false, false, 
+                                4, ProvisionBoardResult.STATUS_WAITING_CONFRERE_PUBLISHED);
                 updateStatus(AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE_PUBLISHED,
                                 "En attente de publication par le confrère", "supervisor_account",
-                                false, false, priority++);
-                updateStatus(AnnouncementStatus.ANNOUNCEMENT_PUBLISHED, "Publié", "fact_check", false, false, priority++);
-                updateStatus(AnnouncementStatus.ANNOUNCEMENT_DONE, "Terminé", "check_small", false, true, priority++);
+                                false, false, 
+                                5, ProvisionBoardResult.STATUS_WAITING_CONFRERE_PUBLISHED);
+                updateStatus(AnnouncementStatus.ANNOUNCEMENT_PUBLISHED, "Publié", "fact_check", false, false, 
+                                6, ProvisionBoardResult.STATUS_PUBLISHED);
+                updateStatus(AnnouncementStatus.ANNOUNCEMENT_DONE, "Terminé", "check_small", false, true, 
+                                7, ProvisionBoardResult.STATUS_DONE);
 
                 setSuccessor(AnnouncementStatus.ANNOUNCEMENT_NEW, AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS);
                 setSuccessor(AnnouncementStatus.ANNOUNCEMENT_NEW, AnnouncementStatus.ANNOUNCEMENT_WAITING_DOCUMENT);
@@ -129,10 +137,6 @@ public class AnnouncementStatusServiceImpl implements AnnouncementStatusService 
          * @param isCloseState
          * @param aggregatePriority
          */
-        protected void updateStatus(String code, String label, String icon, boolean isOpenState, boolean isCloseState, 
-                                        Integer aggregatePriority) {
-                updateStatus(code, label, icon, isOpenState, isCloseState, aggregatePriority, label);
-        }
         protected void updateStatus(String code, String label, String icon, boolean isOpenState, boolean isCloseState, 
                                         Integer aggregatePriority, String aggregateLabel) {
                 AnnouncementStatus announcementStatus = getAnnouncementStatusByCode(code);
