@@ -232,7 +232,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     if (provision.announcement) {
       provision.announcement.announcementStatus = status;
       if (status.code == ANNOUNCEMENT_STATUS_IN_PROGRESS && !provision.announcement.isPublicationReciptAlreadySent && provision.announcement.confrere && provision.announcement.confrere.id == this.constantService.getConfrereJssSpel().id
-        || provision.announcement.confrere && provision.announcement.confrere.id != this.constantService.getConfrereJssSpel().id && this.publicationReceiptFound(provision.announcement)) {
+        || !provision.announcement.isPublicationReciptAlreadySent && provision.announcement.confrere && provision.announcement.confrere.id != this.constantService.getConfrereJssSpel().id && this.publicationReceiptFound(provision.announcement)) {
         saveAsso = false;
         const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
           maxWidth: "400px",
