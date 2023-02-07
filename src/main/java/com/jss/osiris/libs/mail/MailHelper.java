@@ -427,7 +427,8 @@ public class MailHelper {
                         vats = new ArrayList<VatMail>();
                     if (invoiceItem.getVat() != null && invoiceItem.getVatPrice() != null
                             && invoiceItem.getVatPrice() > 0
-                            && !invoiceItem.getBillingItem().getBillingType().getIsDebour()) {
+                            && (!invoiceItem.getBillingItem().getBillingType().getIsDebour()
+                                    || provision.getDebours() == null || provision.getDebours().size() == 0)) {
                         vatTotal += invoiceItem.getVatPrice();
                         boolean vatFound = false;
                         for (VatMail vatMail : vats) {
@@ -459,6 +460,8 @@ public class MailHelper {
                     } else if (provision.getDebours() != null && provision.getDebours().size() > 0) {
                         for (Debour debour : provision.getDebours()) {
                             if (!debour.getBillingType().getIsNonTaxable()) {
+                                vatTotal += (debour.getDebourAmount() / (1f + (vatDebour.getRate() / 100f)))
+                                        * vatDebour.getRate() / 100f;
                                 boolean vatFound = false;
                                 for (VatMail vatMail : vats) {
                                     if (vatMail.getLabel().equals(vatDebour.getLabel())) {

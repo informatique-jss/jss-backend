@@ -567,7 +567,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
               for (let invoiceItem of provision.invoiceItems) {
                 if (invoiceItem.vat && invoiceItem.vatPrice && invoiceItem.vatPrice > 0) {
 
-                  if (!invoiceItem.billingItem.billingType.isDebour) {
+                  if (!invoiceItem.billingItem.billingType.isDebour || !provision.debours || provision.debours.length == 0) {
                     let vatFound = false;
                     for (let vatBase of vatBases) {
                       if (vatBase.label == invoiceItem.vat.label) {
