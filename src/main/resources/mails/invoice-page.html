@@ -121,9 +121,15 @@
                             <span th:text="${debour.competentAuthority.label}"></span> : <span
                                 th:text="${debour.billingType.label}"></span>
                         </td>
-                        <td style="text-align: right;white-space: nowrap;">
+                        <td style="text-align: right;white-space: nowrap;"
+                            th:if="${debour.billingType.isNonTaxable==false}">
                             <span
                                 th:text="${#numbers.formatDecimal(debour.debourAmount-(debour.debourAmount/(1f+(vatDebour.rate/100f)))*vatDebour.rate/100f,1,2)}"></span>
+                            €
+                        </td>
+                        <td style="text-align: right;white-space: nowrap;"
+                            th:if="${debour.billingType.isNonTaxable==true}">
+                            <span th:text="${#numbers.formatDecimal(debour.debourAmount,1,2)}"></span>
                             €
                         </td>
                     </tr>
