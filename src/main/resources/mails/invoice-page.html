@@ -187,7 +187,11 @@
             <td colspan="4" style="text-align: right">
                 Acompte
             </td>
-            <td style="text-align: right;white-space: nowrap;"> - <span
+            <td style="text-align: right;white-space: nowrap;" th:if="${deposit.originPayment!=null}"> - <span
+                    th:text="${#numbers.formatDecimal(deposit.originPayment.paymentAmount,1,2)}"></span>
+                €
+            </td>
+            <td style="text-align: right;white-space: nowrap;" th:if="${deposit.originPayment==null}"> - <span
                     th:text="${#numbers.formatDecimal(deposit.depositAmount,1,2)}"></span>
                 €
             </td>

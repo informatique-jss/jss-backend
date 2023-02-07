@@ -181,7 +181,7 @@ public class DepositServiceImpl implements DepositService {
                         byPassAmount.get(i + correspondingInvoiceSize));
 
                 getNewDepositForCustomerOrder(remainingToPayForCustomerOrder, LocalDateTime.now(), customerOrder,
-                        deposit.getId(), null, true);
+                        deposit.getId(), deposit.getOriginPayment(), true);
 
                 // Try unlocked customer order
                 customerOrderService.unlockCustomerOrderFromDeposit(correspondingCustomerOrder.get(i));
