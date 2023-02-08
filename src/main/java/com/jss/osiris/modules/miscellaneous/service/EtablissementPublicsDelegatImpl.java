@@ -32,6 +32,8 @@ public class EtablissementPublicsDelegatImpl implements EtablissementPublicsDele
     private String rcsUrl = "/tribunal_commerce";
     private String cfpUrl = "/sie";
     private String cciUrl = "/cci";
+    private String direccteUrl = "/direccte";
+    private String chambreMetierUrl = "/chambre_metier";
 
     @Autowired
     CompetentAuthorityService competentAuthorityService;
@@ -204,7 +206,8 @@ public class EtablissementPublicsDelegatImpl implements EtablissementPublicsDele
 
     @SuppressWarnings({ "null" })
     private void updateChambreMetier() throws OsirisException {
-        ResponseEntity<Organisme> response = new RestTemplate().getForEntity(etablissementPublicEntryPoint + cciUrl,
+        ResponseEntity<Organisme> response = new RestTemplate().getForEntity(
+                etablissementPublicEntryPoint + chambreMetierUrl,
                 Organisme.class);
         if (response.getBody() != null && response.getBody().getFeatures() != null
                 && response.getBody().getFeatures().size() > 0
@@ -224,7 +227,8 @@ public class EtablissementPublicsDelegatImpl implements EtablissementPublicsDele
 
     @SuppressWarnings({ "null" })
     private void updateDireccte() throws OsirisException {
-        ResponseEntity<Organisme> response = new RestTemplate().getForEntity(etablissementPublicEntryPoint + cciUrl,
+        ResponseEntity<Organisme> response = new RestTemplate().getForEntity(
+                etablissementPublicEntryPoint + direccteUrl,
                 Organisme.class);
         if (response.getBody() != null && response.getBody().getFeatures() != null
                 && response.getBody().getFeatures().size() > 0
