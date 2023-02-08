@@ -100,6 +100,7 @@ import com.jss.osiris.modules.quotation.model.NoticeTypeFamily;
 import com.jss.osiris.modules.quotation.model.OrderingSearch;
 import com.jss.osiris.modules.quotation.model.OrderingSearchResult;
 import com.jss.osiris.modules.quotation.model.Provision;
+import com.jss.osiris.modules.quotation.model.ProvisionBoardResult;
 import com.jss.osiris.modules.quotation.model.ProvisionFamilyType;
 import com.jss.osiris.modules.quotation.model.ProvisionScreenType;
 import com.jss.osiris.modules.quotation.model.ProvisionType;
@@ -2326,6 +2327,18 @@ public class QuotationController {
     customerOrderService.printMailingLabel(customerOrders);
 
     return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+  }
+
+  @PostMapping(inputEntryPoint + "/dashboard/employee")
+  public ResponseEntity<List<ProvisionBoardResult>> getDashboardEmployee(@RequestBody List<Employee> employees)
+      throws OsirisValidationException, OsirisException {
+    if (employees == null || employees.size() == 0)
+      throw new OsirisValidationException("employees");
+
+    for (Employee employee : employees)
+      validationHelper.validateReferential(employee, true, "Employee");
+    return new ResponseEntity<List<ProvisionBoardResult>>(provisionService.getDashboardEmployee(employees),
+        HttpStatus.OK);
   }
 
   @PostMapping(inputEntryPoint + "/debour/payment/associate")

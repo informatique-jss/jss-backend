@@ -1,5 +1,7 @@
 package com.jss.osiris.modules.quotation.service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +10,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.quotation.model.Provision;
+import com.jss.osiris.modules.quotation.model.ProvisionBoardResult;
+import com.jss.osiris.modules.quotation.repository.AnnouncementStatusRepository;
+import com.jss.osiris.modules.quotation.repository.BodaccStatusRepository;
 import com.jss.osiris.modules.quotation.repository.ProvisionRepository;
 
 @Service
@@ -15,6 +20,12 @@ public class ProvisionServiceImpl implements ProvisionService {
 
     @Autowired
     ProvisionRepository provisionRepository;
+
+    @Autowired
+    BodaccStatusRepository bodaccStatusRepository;
+
+    @Autowired
+    AnnouncementStatusRepository announcementStatusRepository;
 
     @Override
     public Provision getProvision(Integer id) {
@@ -30,4 +41,14 @@ public class ProvisionServiceImpl implements ProvisionService {
         provision.setAssignedTo(employee);
         provisionRepository.save(provision);
     }
+
+    @Override
+    public List<ProvisionBoardResult> getDashboardEmployee(List<Employee> employees) {
+        List<Integer> employeeIds = new ArrayList<Integer>();
+        for (Employee employee : employees)
+            employeeIds.add(employee.getId());
+
+        return provisionRepository.getDashboardEmployee(employeeIds);
+    }
+
 }

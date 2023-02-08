@@ -27,7 +27,7 @@
           [affaireSearch]="affaireSearchToDo" [isForDashboard]="true"></provision-list>
         <provision-list class="dashboard-box-component" *ngIf="item==AFFAIRE_SIMPLE_PROVISION_WAITING_AUTHORITY"
           [affaireSearch]="affaireSearchWaitingAuthority" [isForDashboard]="true"></provision-list>
-        <provision-list class="dashboard-box-component" *ngIf="item==AFFAIRE_SIMPLE_PROVISION_WAITING_DOCUMENT"
+        <provision-list class="dashboard-box-component" *ngIf="item==AFFAIRE_SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT"
           [affaireSearch]="affaireSearchWaitingDocument" [isForDashboard]="true"></provision-list>
         <provision-list class="dashboard-box-component" *ngIf="item==AFFAIRE_RESPONSIBLE_IN_PROGRESS"
           [affaireSearch]="affaireSearchResponsibleInProgress" [isForDashboard]="true"></provision-list>
@@ -51,6 +51,7 @@
           [isForDashboard]="true"></refund-list>
         <log class="dashboard-box-component" *ngIf="item==LOG_TO_REVIEW && canViewLogModule()" [isForDashboard]="true">
         </log>
+        <provision-board class="dashboard-box-component" *ngIf="item==PROVISION_BOARD"></provision-board>
       </div>
     </div>
   </div>
@@ -59,6 +60,12 @@
   <div mat-menu-item *ngFor="let checkbox of checkboxes">
     <mat-checkbox [(ngModel)]="checkbox.value" (click)="toggleDisplay(checkbox.id);$event.stopPropagation()">
       {{checkbox.id}}
+    </mat-checkbox>
+  </div>
+  <mat-divider></mat-divider>
+  <div mat-menu-item *ngFor="let boxSize of boxSizesSelected">
+    <mat-checkbox [(ngModel)]="boxSize.value" (click)="toggleDisplaySize(boxSize.id);$event.stopPropagation()">
+      {{boxSize.id}}
     </mat-checkbox>
   </div>
 </mat-menu>

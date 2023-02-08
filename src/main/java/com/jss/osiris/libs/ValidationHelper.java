@@ -82,6 +82,16 @@ public class ValidationHelper {
         return m.matches();
     }
 
+    /**
+     * Check that the input value matches the expected class
+     * 
+     * @param value
+     * @param isMandatory
+     * @param className
+     * @return
+     * @throws OsirisValidationException
+     * @throws OsirisException
+     */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public Object validateReferential(IId value, Boolean isMandatory, String className)
             throws OsirisValidationException, OsirisException {
@@ -303,5 +313,4 @@ public class ValidationHelper {
         }
         return true;
     }
-
 }

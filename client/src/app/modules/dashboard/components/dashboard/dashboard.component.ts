@@ -1,34 +1,34 @@
 import { CdkDragEnter, CdkDropList, DragRef, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { combineLatest, map } from 'rxjs';
-import { CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_TO_BILLED, QUOTATION_STATUS_OPEN, QUOTATION_STATUS_REFUSED_BY_CUSTOMER, QUOTATION_STATUS_TO_VERIFY, SIMPLE_PROVISION_WAITING_DOCUMENT, SIMPLE_PROVISION_WAITING_DOCUMENT_AUTHORITY } from 'src/app/libs/Constants';
+import { CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_TO_BILLED, QUOTATION_STATUS_OPEN, QUOTATION_STATUS_REFUSED_BY_CUSTOMER, QUOTATION_STATUS_TO_VERIFY, SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT, SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT_AUTHORITY } from 'src/app/libs/Constants';
+import { InvoiceSearch } from 'src/app/modules/invoicing/model/InvoiceSearch';
+import { PaymentSearch } from 'src/app/modules/invoicing/model/PaymentSearch';
+import { RefundSearch } from 'src/app/modules/invoicing/model/RefundSearch';
+import { IWorkflowElement } from 'src/app/modules/miscellaneous/model/IWorkflowElement';
+import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
+import { Employee } from 'src/app/modules/profile/model/Employee';
+import { EmployeeService } from 'src/app/modules/profile/services/employee.service';
+import { AffaireSearch } from 'src/app/modules/quotation/model/AffaireSearch';
+import { AnnouncementStatus } from 'src/app/modules/quotation/model/AnnouncementStatus';
+import { BodaccStatus } from 'src/app/modules/quotation/model/BodaccStatus';
+import { CustomerOrderStatus } from 'src/app/modules/quotation/model/CustomerOrderStatus';
+import { DomiciliationStatus } from 'src/app/modules/quotation/model/DomiciliationStatus';
+import { FormaliteStatus } from 'src/app/modules/quotation/model/FormaliteStatus';
+import { OrderingSearch } from 'src/app/modules/quotation/model/OrderingSearch';
+import { QuotationSearch } from 'src/app/modules/quotation/model/QuotationSearch';
+import { QuotationStatus } from 'src/app/modules/quotation/model/QuotationStatus';
+import { SimpleProvisionStatus } from 'src/app/modules/quotation/model/SimpleProvisonStatus';
+import { AnnouncementStatusService } from 'src/app/modules/quotation/services/announcement.status.service';
+import { BodaccStatusService } from 'src/app/modules/quotation/services/bodacc.status.service';
+import { CustomerOrderStatusService } from 'src/app/modules/quotation/services/customer.order.status.service';
+import { DomiciliationStatusService } from 'src/app/modules/quotation/services/domiciliation-status.service';
+import { FormaliteStatusService } from 'src/app/modules/quotation/services/formalite.status.service';
+import { QuotationStatusService } from 'src/app/modules/quotation/services/quotation-status.service';
+import { SimpleProvisionStatusService } from 'src/app/modules/quotation/services/simple.provision.status.service';
 import { AppService } from 'src/app/services/app.service';
-import { HabilitationsService } from '../../services/habilitations.service';
-import { UserPreferenceService } from '../../services/user.preference.service';
-import { InvoiceSearch } from '../invoicing/model/InvoiceSearch';
-import { PaymentSearch } from '../invoicing/model/PaymentSearch';
-import { RefundSearch } from '../invoicing/model/RefundSearch';
-import { IWorkflowElement } from '../miscellaneous/model/IWorkflowElement';
-import { ConstantService } from '../miscellaneous/services/constant.service';
-import { Employee } from '../profile/model/Employee';
-import { EmployeeService } from '../profile/services/employee.service';
-import { AffaireSearch } from '../quotation/model/AffaireSearch';
-import { AnnouncementStatus } from '../quotation/model/AnnouncementStatus';
-import { BodaccStatus } from '../quotation/model/BodaccStatus';
-import { CustomerOrderStatus } from '../quotation/model/CustomerOrderStatus';
-import { DomiciliationStatus } from '../quotation/model/DomiciliationStatus';
-import { FormaliteStatus } from '../quotation/model/FormaliteStatus';
-import { OrderingSearch } from '../quotation/model/OrderingSearch';
-import { QuotationSearch } from '../quotation/model/QuotationSearch';
-import { QuotationStatus } from '../quotation/model/QuotationStatus';
-import { SimpleProvisionStatus } from '../quotation/model/SimpleProvisonStatus';
-import { AnnouncementStatusService } from '../quotation/services/announcement.status.service';
-import { BodaccStatusService } from '../quotation/services/bodacc.status.service';
-import { CustomerOrderStatusService } from '../quotation/services/customer.order.status.service';
-import { DomiciliationStatusService } from '../quotation/services/domiciliation-status.service';
-import { FormaliteStatusService } from '../quotation/services/formalite.status.service';
-import { QuotationStatusService } from '../quotation/services/quotation-status.service';
-import { SimpleProvisionStatusService } from '../quotation/services/simple.provision.status.service';
+import { HabilitationsService } from 'src/app/services/habilitations.service';
+import { UserPreferenceService } from 'src/app/services/user.preference.service';
 
 @Component({
   selector: 'dashboard',
@@ -54,16 +54,20 @@ export class DashboardComponent implements OnInit {
   customerOrderStatus: CustomerOrderStatus[] = [] as Array<CustomerOrderStatus>;
   quotationStatus: QuotationStatus[] = [] as Array<QuotationStatus>;
 
+
+
   currentEmployee: Employee | undefined;
   items: Array<string> = [];
+  itemsSize: Array<string> = [];
   checkboxes: any = [];
+  boxSizesSelected: any = [];
 
   AFFAIRE_IN_PROGRESS = "Mes prestations en cours";
   AFFAIRE_TO_DO = "Mes prestations à faire";
   AFFAIRE_RESPONSIBLE_TO_DO = "Mes prestations en responsabilité à faire";
   AFFAIRE_RESPONSIBLE_IN_PROGRESS = "Mes prestations en responsabilité en cours";
   AFFAIRE_SIMPLE_PROVISION_WAITING_AUTHORITY = "Mes formalités simples en attente de l'autorité compétente"
-  AFFAIRE_SIMPLE_PROVISION_WAITING_DOCUMENT = "Mes formalités simples en attente de documents"
+  AFFAIRE_SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT = "Mes formalités simples en attente de documents"
 
   affaireSearchInProgress: AffaireSearch = {} as AffaireSearch;
   affaireSearchToDo: AffaireSearch = {} as AffaireSearch;
@@ -98,10 +102,21 @@ export class DashboardComponent implements OnInit {
 
   LOG_TO_REVIEW = "Logs à revoir";
 
+  PROVISION_BOARD = "Suivi d'équipe";
+
   allItems: Array<string> = [this.QUOTATION_REFUSED, this.PAYMENT_TO_ASSOCIATE, this.INVOICE_TO_ASSOCIATE, this.QUOTATION_TO_VERIFY,
   this.QUOTATION_OPEN, this.ORDER_TO_BILLED, this.ORDER_BEING_PROCESSED, this.ORDER_OPEN,
   this.AFFAIRE_RESPONSIBLE_IN_PROGRESS, this.AFFAIRE_RESPONSIBLE_TO_DO, this.AFFAIRE_SIMPLE_PROVISION_WAITING_AUTHORITY,
-  this.AFFAIRE_SIMPLE_PROVISION_WAITING_DOCUMENT, this.AFFAIRE_IN_PROGRESS, this.AFFAIRE_TO_DO].sort((a, b) => a.localeCompare(b));
+  this.AFFAIRE_SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT, this.AFFAIRE_IN_PROGRESS, this.AFFAIRE_TO_DO,
+  this.PROVISION_BOARD].sort((a, b) => a.localeCompare(b));
+
+  BOX_SIZE_X_SMALL = "Zoom très petit";
+  BOX_SIZE_SMALL = "Zoom petit";
+  BOX_SIZE_MEDIUM = "Zoom moyen";
+  BOX_SIZE_LARGE = "Zoom grand";
+  BOX_SIZE_X_LARGE = "Zoom très grand";
+
+  allBoxSizes: Array<string> = [this.BOX_SIZE_X_SMALL, this.BOX_SIZE_SMALL, this.BOX_SIZE_MEDIUM, this.BOX_SIZE_LARGE, this.BOX_SIZE_X_LARGE];
 
   constructor(private appService: AppService,
     private employeeService: EmployeeService,
@@ -160,10 +175,10 @@ export class DashboardComponent implements OnInit {
         this.affaireSearchResponsibleToDo.status = this.statusTypes.filter(stauts => stauts.isOpenState);
 
         this.affaireSearchWaitingDocument.assignedTo = this.currentEmployee;
-        this.affaireSearchWaitingDocument.status = this.simpleProvisionStatus.filter(stauts => stauts.code == SIMPLE_PROVISION_WAITING_DOCUMENT);
+        this.affaireSearchWaitingDocument.status = this.simpleProvisionStatus.filter(stauts => stauts.code == SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT);
 
         this.affaireSearchWaitingAuthority.assignedTo = this.currentEmployee;
-        this.affaireSearchWaitingAuthority.status = this.simpleProvisionStatus.filter(stauts => stauts.code == SIMPLE_PROVISION_WAITING_DOCUMENT_AUTHORITY);
+        this.affaireSearchWaitingAuthority.status = this.simpleProvisionStatus.filter(stauts => stauts.code == SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT_AUTHORITY);
 
         this.orderingSearchOpen.salesEmployee = this.currentEmployee!;
         this.orderingSearchOpen.customerOrderStatus = [this.customerOrderStatusService.getCustomerStatusByCode(this.customerOrderStatus, CUSTOMER_ORDER_STATUS_OPEN)!];
@@ -195,19 +210,32 @@ export class DashboardComponent implements OnInit {
 
         // restore bookmark
         let bookmark = this.userPreferenceService.getUserSearchBookmark("dashboard") as Array<string>;
+        let bookmarkSize = this.userPreferenceService.getUserSearchBookmark("dashboardSize") as Array<string>;
         if (bookmark)
           this.items = bookmark;
+        if (bookmarkSize)
+          this.itemsSize = bookmarkSize;
+        if (!this.itemsSize || this.itemsSize.length == 0)
+          this.itemsSize.push(this.BOX_SIZE_SMALL);
 
         // clean items that doesn't exist anymore
         for (let item of this.items)
           if (this.allItems.indexOf(item) < 0)
             this.items.splice(this.items.indexOf(item));
+        for (let size of this.itemsSize)
+          if (this.allBoxSizes.indexOf(size) < 0)
+            this.itemsSize.splice(this.itemsSize.indexOf(size));
 
         // init checkboxes
         for (let allItem of this.allItems)
           this.checkboxes.push({ id: allItem, value: false })
 
+        // init sizes
+        for (let allBoxSize of this.allBoxSizes)
+          this.boxSizesSelected.push({ id: allBoxSize, value: false })
+
         this.updateCheckboxes();
+        this.updateCheckboxesBoxSizes();
 
       });
 
@@ -225,6 +253,18 @@ export class DashboardComponent implements OnInit {
     });
   }
 
+  toggleDisplaySize(size: string) {
+    if (this.itemsSize.indexOf(size) >= 0)
+      return;
+
+    this.itemsSize = [];
+    this.itemsSize.push(size);
+    this.userPreferenceService.setUserSearchBookmark(this.itemsSize, "dashboardSize");
+    setTimeout(() => {
+      this.updateCheckboxesBoxSizes();
+    });
+  }
+
   canViewLogModule(): boolean {
     return this.habilitationsService.canViewLogModule();
   }
@@ -237,6 +277,36 @@ export class DashboardComponent implements OnInit {
           if (item == checkbox.id)
             found = true;
       checkbox.value = found;
+    }
+  }
+
+  updateCheckboxesBoxSizes() {
+    let currentSize = "";
+    for (let boxSize of this.boxSizesSelected) {
+      let found = false;
+      if (this.itemsSize)
+        for (let size of this.itemsSize)
+          if (size == boxSize.id) {
+            found = true;
+            currentSize = size;
+          }
+      boxSize.value = found;
+    }
+    if (currentSize == this.BOX_SIZE_X_SMALL) {
+      this.boxWidth = '300px';
+      this.boxHeight = '150px';
+    } else if (currentSize == this.BOX_SIZE_SMALL) {
+      this.boxWidth = '400px';
+      this.boxHeight = '300px';
+    } else if (currentSize == this.BOX_SIZE_MEDIUM) {
+      this.boxWidth = '500px';
+      this.boxHeight = '400px';
+    } else if (currentSize == this.BOX_SIZE_LARGE) {
+      this.boxWidth = '650px';
+      this.boxHeight = '500px';
+    } else if (currentSize == this.BOX_SIZE_X_LARGE) {
+      this.boxWidth = '700px';
+      this.boxHeight = '600px';
     }
   }
 

@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { map, Observable, startWith } from 'rxjs';
@@ -18,6 +18,11 @@ export class ChipsEmployeeComponent extends GenericChipsComponent<Employee> impl
   Employees: Employee[] = [] as Array<Employee>;
   filteredEmployees: Observable<Employee[]> | undefined;
   @ViewChild('employeeInput') EmployeeInput: ElementRef<HTMLInputElement> | undefined;
+
+  /**
+ * Hint to display
+ */
+  @Input() hint: string = "";
 
   constructor(private formBuild: UntypedFormBuilder, private employeeService: EmployeeService, private userNoteService2: UserNoteService,) {
     super(formBuild, userNoteService2)

@@ -55,7 +55,7 @@ export class QuotationListComponent implements OnInit {
 
 
       this.availableColumns = [];
-      this.availableColumns.push({ id: "id", fieldName: "quotationId", label: "N° de la devis" } as SortTableColumn);
+      this.availableColumns.push({ id: "id", fieldName: "quotationId", label: "N° du devis" } as SortTableColumn);
       this.availableColumns.push({ id: "createdDate", fieldName: "createdDate", label: "Date de création", valueFonction: formatDateForSortTable } as SortTableColumn);
       this.availableColumns.push({ id: "affaireLabel", fieldName: "affaireLabel", label: "Affaire(s)", isShrinkColumn: true } as SortTableColumn);
       this.availableColumns.push({ id: "quotationStatus", fieldName: "quotationStatus", label: "Statut" } as SortTableColumn);

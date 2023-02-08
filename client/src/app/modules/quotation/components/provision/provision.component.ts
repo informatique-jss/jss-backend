@@ -7,7 +7,7 @@ import { ANNOUNCEMENT_STATUS_DONE, ANNOUNCEMENT_STATUS_IN_PROGRESS, CUSTOMER_ORD
 import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
 import { WorkflowDialogComponent } from 'src/app/modules/miscellaneous/components/workflow-dialog/workflow-dialog.component';
 import { AppService } from 'src/app/services/app.service';
-import { ANNOUNCEMENT_WAITING_CONFRERE } from '../../../../libs/Constants';
+import { ANNOUNCEMENT_STATUS_WAITING_CONFRERE } from '../../../../libs/Constants';
 import { IWorkflowElement } from '../../../miscellaneous/model/IWorkflowElement';
 import { ConstantService } from '../../../miscellaneous/services/constant.service';
 import { Announcement } from '../../model/Announcement';
@@ -293,7 +293,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
           }
           this.saveAsso();
         });
-      } else if (status.code == ANNOUNCEMENT_WAITING_CONFRERE && !provision.announcement.isAnnouncementAlreadySentToConfrere && provision.announcement.confrere) {
+      } else if (status.code == ANNOUNCEMENT_STATUS_WAITING_CONFRERE && !provision.announcement.isAnnouncementAlreadySentToConfrere && provision.announcement.confrere) {
         saveAsso = false;
         const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
           maxWidth: "400px",
