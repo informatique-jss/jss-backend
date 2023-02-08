@@ -160,8 +160,18 @@
                 <div *ngIf="!editMode">
                   <span [innerHTML]="announcement.noticeHeader | trustHtml" class="announce-container"></span>
                 </div>
-                <ngx-trumbowyg-editor *ngIf="editMode" name="noticeHeader" [(ngModel)]="announcement.noticeHeader"
-                  formControlName="noticeHeader"></ngx-trumbowyg-editor>
+                <editor apiKey="tuyvqqbiskpltllm13hwnc00n4gjq5sc3gzrhlocmr75s1fw" *ngIf="editMode"
+                  formControlName="noticeHeader" [disabled]="!editMode" [(ngModel)]="announcement.noticeHeader" [init]="{
+     height: 500,
+     menubar: false,
+     plugins: [
+       'table'
+     ],
+     toolbar:
+       'undo redo | formatselect | bold italic backcolor | \
+       alignleft aligncenter alignright alignjustify | \
+       bullist numlist outdent indent | removeformat | help'
+   }"></editor>
               </td>
             </tr>
             <tr>
@@ -170,8 +180,18 @@
                 <div *ngIf="!editMode">
                   <span [innerHTML]="announcement.notice | trustHtml" class="announce-container"></span>
                 </div>
-                <ngx-trumbowyg-editor *ngIf="editMode" name="editor" [(ngModel)]="announcement.notice"
-                  formControlName="notice"></ngx-trumbowyg-editor>
+                <editor apiKey="tuyvqqbiskpltllm13hwnc00n4gjq5sc3gzrhlocmr75s1fw" *ngIf="editMode"
+                  formControlName="notice" [disabled]="!editMode" [(ngModel)]="announcement.notice" [init]="{
+     height: 500,
+     menubar: false,
+     plugins: [
+       'table'
+     ],
+     toolbar:
+       'undo redo | formatselect | bold italic backcolor | \
+       alignleft aligncenter alignright alignjustify | \
+       bullist numlist outdent indent | removeformat | help'
+   }"></editor>
               </td>
             </tr>
           </table>
