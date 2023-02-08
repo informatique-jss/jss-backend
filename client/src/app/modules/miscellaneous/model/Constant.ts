@@ -106,6 +106,7 @@ export interface Constant {
   paymentTypeVirement: PaymentType;
   paymentTypeCB: PaymentType;
   paymentTypeEspeces: PaymentType;
+  paymentTypeCheques: PaymentType;
   refundTypeVirement: RefundType;
   subscriptionPeriodType12M: SubscriptionPeriodType;
   legalFormUnregistered: LegalForm;

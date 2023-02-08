@@ -480,16 +480,18 @@
           <tr>
             <td>
               <autocomplete-billing-type [(model)]="constant.billingTypeVacationDepositBeneficialOwners"
-                label="Type de poste de facturation - Vacation - Dépôt des Bénéficiaires Effectifs" [form]="constantForm"
-                propertyName="billingTypeVacationDepositBeneficialOwners" [isMandatory]="true" [isDisabled]="!editMode">
+                label="Type de poste de facturation - Vacation - Dépôt des Bénéficiaires Effectifs"
+                [form]="constantForm" propertyName="billingTypeVacationDepositBeneficialOwners" [isMandatory]="true"
+                [isDisabled]="!editMode">
               </autocomplete-billing-type>
             </td>
           </tr>
           <tr>
             <td>
               <autocomplete-billing-type [(model)]="constant.billingTypeVacationUpdateBeneficialOwners"
-                label="Type de poste de facturation - Vacation - Mise à jour - Bénéficiaires Effectifs" [form]="constantForm"
-                propertyName="billingTypeVacationUpdateBeneficialOwners" [isMandatory]="true" [isDisabled]="!editMode">
+                label="Type de poste de facturation - Vacation - Mise à jour - Bénéficiaires Effectifs"
+                [form]="constantForm" propertyName="billingTypeVacationUpdateBeneficialOwners" [isMandatory]="true"
+                [isDisabled]="!editMode">
               </autocomplete-billing-type>
             </td>
           </tr>
@@ -555,6 +557,13 @@
             <td>
               <select-payment-types [(model)]="constant.paymentTypeEspeces" label="Type de paiement - espèces"
                 [form]="constantForm" propertyName="paymentTypeEspeces" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-payment-types>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-payment-types [(model)]="constant.paymentTypeCheques" label="Type de paiement - chèques"
+                [form]="constantForm" propertyName="paymentTypeCheques" [isMandatory]="true" [isDisabled]="!editMode">
               </select-payment-types>
             </td>
           </tr>

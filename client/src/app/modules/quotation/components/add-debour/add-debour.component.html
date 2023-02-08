@@ -19,12 +19,16 @@
           </td>
           <td>
             <select-payment-types [(model)]="newDebour.paymentType" label="Mode de paiement" [form]="debourForm"
-              [filteredPaymentType]="[paymentTypeVirement,paymentTypeCb]" propertyName="paymentType"
-              [isMandatory]="true" [isDisabled]="!editMode"></select-payment-types>
+              [filteredPaymentType]="[paymentTypeVirement,paymentTypeCb, paymentTypeCheques,paymentTypeEspeces]"
+              propertyName="paymentType" [isMandatory]="true" [isDisabled]="!editMode"></select-payment-types>
           </td>
           <td *ngIf="newDebour.paymentType && newDebour.paymentType.id ==paymentTypeCb.id">
             <generic-datepicker [(model)]="newDebour.paymentDateTime" label="Date de paiement" [form]="debourForm"
               propertyName="paymentDateTime" [isMandatory]="true" [isDisabled]="!editMode"></generic-datepicker>
+          </td>
+          <td *ngIf="newDebour.paymentType && newDebour.paymentType.id ==paymentTypeCheques.id">
+            <generic-input [(model)]="newDebour.checkNumber" label="Numéro du chèque" [form]="debourForm"
+              propertyName="checkNumber" [isMandatory]="true" [isDisabled]="false" [maxLength]="100"></generic-input>
           </td>
           <td>
             <generic-input [(model)]="newDebour.comments" label="Commentaire" [form]="debourForm"

@@ -166,7 +166,7 @@ public interface ConstantService {
     public BillingType getBillingTypeEmergency() throws OsirisException;
 
     public BillingType getBillingtypeVacationDepositBeneficialOwners() throws OsirisException;
- 
+
     public BillingType getBillingtypeVacationUpdateBeneficialOwners() throws OsirisException;
 
     public BillingType getBillingtypeFormalityAdditionalDeclaration() throws OsirisException;
@@ -182,6 +182,8 @@ public interface ConstantService {
     public PaymentType getPaymentTypeVirement() throws OsirisException;
 
     public PaymentType getPaymentTypeEspeces() throws OsirisException;
+
+    public PaymentType getPaymentTypeCheques() throws OsirisException;
 
     public PaymentType getPaymentTypeCB() throws OsirisException;
 

@@ -308,6 +308,10 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.paymentTypeEspeces;
   }
 
+  getPaymentTypeCheques() {
+    return this.constant.paymentTypeCheques;
+  }
+
   getPaymentTypeCB() {
     return this.constant.paymentTypeCB;
   }

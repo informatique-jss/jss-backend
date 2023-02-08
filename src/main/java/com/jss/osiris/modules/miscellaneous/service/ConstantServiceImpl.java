@@ -455,6 +455,11 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public PaymentType getPaymentTypeCheques() throws OsirisException {
+        return getConstants().getPaymentTypeCheques();
+    }
+
+    @Override
     public PaymentType getPaymentTypeCB() throws OsirisException {
         return getConstants().getPaymentTypeCB();
     }

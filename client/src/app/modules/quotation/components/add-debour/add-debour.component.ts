@@ -29,6 +29,8 @@ export class AddDebourComponent implements OnInit {
   displayedColumns: SortTableColumn[] = [];
   paymentTypeVirement: PaymentType = this.constantService.getPaymentTypeVirement();
   paymentTypeCb: PaymentType = this.constantService.getPaymentTypeCB();
+  paymentTypeEspeces: PaymentType = this.constantService.getPaymentTypeEspeces();
+  paymentTypeCheques: PaymentType = this.constantService.getPaymentTypeCheques();
   refreshTable: Subject<void> = new Subject<void>();
 
   constructor(private formBuilder: FormBuilder,

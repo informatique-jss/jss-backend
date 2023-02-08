@@ -309,6 +309,10 @@ public class Constant implements Serializable, IId {
 	private PaymentType paymentTypeEspeces;
 
 	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_payment_type_cheques")
+	private PaymentType paymentTypeCheques;
+
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_refund_type_virement")
 	private RefundType refundTypeVirement;
 
@@ -606,8 +610,6 @@ public class Constant implements Serializable, IId {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_billing_type_correspondence_fees")
 	private BillingType billingTypeCorrespondenceFees;
-
-
 
 	public Integer getId() {
 		return id;
@@ -1729,7 +1731,6 @@ public class Constant implements Serializable, IId {
 		this.billingTypeCorrespondenceFees = billingTypeCorrespondenceFees;
 	}
 
-	
 	public Vat getVatZero() {
 		return vatZero;
 	}
@@ -1776,6 +1777,14 @@ public class Constant implements Serializable, IId {
 
 	public void setCompetentAuthorityTypeDireccte(CompetentAuthorityType competentAuthorityTypeDireccte) {
 		this.competentAuthorityTypeDireccte = competentAuthorityTypeDireccte;
+	}
+
+	public PaymentType getPaymentTypeCheques() {
+		return paymentTypeCheques;
+	}
+
+	public void setPaymentTypeCheques(PaymentType paymentTypeCheques) {
+		this.paymentTypeCheques = paymentTypeCheques;
 	}
 
 }

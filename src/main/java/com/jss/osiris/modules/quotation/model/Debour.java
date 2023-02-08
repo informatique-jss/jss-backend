@@ -3,6 +3,7 @@ package com.jss.osiris.modules.quotation.model;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -48,6 +49,9 @@ public class Debour implements Serializable, IId {
 	private LocalDateTime paymentDateTime;
 
 	private String comments;
+
+	@Column(length = 100)
+	private String checkNumber;
 
 	@ManyToOne
 	@JoinColumn(name = "id_payment")
@@ -136,6 +140,14 @@ public class Debour implements Serializable, IId {
 
 	public void setBankTransfert(BankTransfert bankTransfert) {
 		this.bankTransfert = bankTransfert;
+	}
+
+	public String getCheckNumber() {
+		return checkNumber;
+	}
+
+	public void setCheckNumber(String checkNumber) {
+		this.checkNumber = checkNumber;
 	}
 
 }
