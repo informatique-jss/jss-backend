@@ -57,7 +57,7 @@ public class SimpleProvisionStatus implements Serializable, IId {
 	@JsonIgnoreProperties(value = { "predecessors", "successors" })
 	private List<SimpleProvisionStatus> predecessors;
 
-	private String aggregateLabel;
+	private String aggregateStatus;
 
 	public static String getSIMPLE_PROVISION_NEW() {
 		return SIMPLE_PROVISION_NEW;
@@ -155,12 +155,12 @@ public class SimpleProvisionStatus implements Serializable, IId {
 		this.predecessors = predecessors;
 	}
 
-	public String getAggregateLabel() {
-		return aggregateLabel;
+	public String getAggregateStatus() {
+		return aggregateStatus;
 	}
 
-	public void setAggregateLabel(String aggregateLabel) {
-		this.aggregateLabel = aggregateLabel;
+	public void setAggregateStatus(String aggregateLabel) {
+		this.aggregateStatus = aggregateLabel;
 	}
 
 	public static String getSIMPLE_PROVISION_WAITING_DOCUMENT_AUTHORITY() {

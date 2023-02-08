@@ -19,7 +19,10 @@ export class ChipsEmployeeComponent extends GenericChipsComponent<Employee> impl
   filteredEmployees: Observable<Employee[]> | undefined;
   @ViewChild('employeeInput') EmployeeInput: ElementRef<HTMLInputElement> | undefined;
 
-  @Input() isInProfile!: boolean | undefined;
+  /**
+ * Hint to display
+ */
+  @Input() hint: string = "";
 
   constructor(private formBuild: UntypedFormBuilder, private employeeService: EmployeeService, private userNoteService2: UserNoteService,) {
     super(formBuild, userNoteService2)

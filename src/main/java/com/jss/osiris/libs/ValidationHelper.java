@@ -83,7 +83,8 @@ public class ValidationHelper {
     }
 
     /**
-     * Check that the input value matches the expected class 
+     * Check that the input value matches the expected class
+     * 
      * @param value
      * @param isMandatory
      * @param className
@@ -312,22 +313,4 @@ public class ValidationHelper {
         }
         return true;
     }
-
-
-    /**
-     * Validate a list of objects, types : Integer, String, Mail
-     * @param <T>
-     * @param mails
-     * @return
-     * @throws OsirisValidationException
-     */
-    public boolean validateIntegerList(List<Integer> items, String fieldName) throws OsirisValidationException {
-        for (Integer item : items) {
-            this.validateInteger(item, Boolean.TRUE, fieldName);
-        }
-        return true;
-    }
-
-
-
 }

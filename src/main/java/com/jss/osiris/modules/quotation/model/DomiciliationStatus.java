@@ -56,7 +56,7 @@ public class DomiciliationStatus implements Serializable, IId {
 	@JsonIgnoreProperties(value = { "predecessors", "successors" })
 	private List<DomiciliationStatus> predecessors;
 
-	private String aggregateLabel;
+	private String aggregateStatus;
 
 	public static String getDOMICILIATION_NEW() {
 		return DOMICILIATION_NEW;
@@ -130,12 +130,12 @@ public class DomiciliationStatus implements Serializable, IId {
 		this.predecessors = predecessors;
 	}
 
-	public String getAggregateLabel() {
-		return aggregateLabel;
+	public String getAggregateStatus() {
+		return aggregateStatus;
 	}
 
-	public void setAggregateLabel(String aggregateLabel) {
-		this.aggregateLabel = aggregateLabel;
+	public void setAggregateStatus(String aggregateLabel) {
+		this.aggregateStatus = aggregateLabel;
 	}
 
 }

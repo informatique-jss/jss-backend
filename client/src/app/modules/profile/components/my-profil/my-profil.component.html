@@ -29,7 +29,8 @@
         <tr>
           <td>
             <chips-employee label="Mode vacances" [(model)]="currentEmployee.backups" [form]="employeeForm"
-              propertyName="backups" [isMandatory]="false" [isDisabled]="!editMode" [isInProfile]="true"></chips-employee>
+              propertyName="backups" [isMandatory]="false" [isDisabled]="!editMode"
+              hint="Indiquez ici les personnes qui vous remplaceront pendant vos vacances. Elles verront alors vos objets associés aux leurs."></chips-employee>
           </td>
         </tr>
       </table>

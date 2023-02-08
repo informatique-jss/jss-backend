@@ -6,45 +6,43 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
-import com.jss.osiris.modules.quotation.model.IProvisionBoardResult;
 import com.jss.osiris.modules.quotation.model.Provision;
+import com.jss.osiris.modules.quotation.model.ProvisionBoardResult;
 
 public interface ProvisionRepository extends CrudRepository<Provision, Integer> {
 
-
-    
-    @Query(nativeQuery = true, value = " " +
-    "select p.id_employee as employee, count(*) as nbProvision, coalesce(sa.aggregate_label, sb.aggregate_label) as status " +
-    "from Provision p " +
-    "    left join announcement a on p.id_announcement = a.id " +
-    "    left join announcement_status sa on a.id_announcement_status = sa.id and sa.is_close_state = false " +
-    "    left join bodacc b on p.id_bodacc = b.id " +
-    "    left join bodacc_status sb on b.id_bodacc_status = sb.id and sb.is_close_state = false " +
-    "	join asso_affaire_order asso_ord on p.id_asso_affaire_order = asso_ord.id " +
-    "	join customer_order ord ON asso_ord.id_customer_order = ord.id " +
-    "	join customer_order_status s_ord on ord.id_customer_order_status = s_ord.id and s_ord.code not in ('OPEN', 'ABANDONED', 'WAITING_DEPOSIT') " +
-    "where (:employees is null or p.id_employee in (:employees)) " +
-    "	and (p.id_announcement is not null or p.id_bodacc is not null) " +
-    "group by p.id_employee, status " +
-    "")
-    List<IProvisionBoardResult> getBoardALs(@Param("employees") List<Integer> employees);
-
-    
-    @Query(nativeQuery = true, value = " " +
-    "select p.id_employee as employee, count(*) as nbProvision, coalesce(ssi.aggregate_label, sf.aggregate_label, sd.aggregate_label) as status " +
-    "from provision p  " +
-    "    left join simple_provision sp on p.id_simple_provision = sp.id  " +
-    "    left join simple_provision_status ssi on sp.id_simple_provision_status = ssi.id and ssi.is_close_state = false " +
-    "    left join formalite f on p.id_formalite = f.id  " +
-    "    left join formalite_status sf on f.id_formalite_status = sf.id and sf.is_close_state = false " +
-    "    left join domiciliation d on p.id_domiciliation = d.id  " +
-    "    left join domiciliation_status sd on d.id_domicilisation_status = sd.id and sd.is_close_state = false " +
-    "	join asso_affaire_order asso_ord on p.id_asso_affaire_order = asso_ord.id " +
-    "	join customer_order ord ON asso_ord.id_customer_order = ord.id " +
-    "	join customer_order_status s_ord on ord.id_customer_order_status = s_ord.id and s_ord.code not in ('OPEN', 'ABANDONED', 'WAITING_DEPOSIT') " +
-    "where (:employees is null or p.id_employee in (:employees)) " +
-    "	and (p.id_simple_provision is not null or p.id_formalite is not null or p.id_domiciliation is not null) " +
-    "group by p.id_employee, status " +
-    "")
-    List<IProvisionBoardResult> getBoardFormalite(@Param("employees") List<Integer> employees);
+        @Query(nativeQuery = true, value = " " +
+                        " select  " +
+                        " e.firstname || ' '|| e.lastname as employeeName, " +
+                        " coalesce(ans.aggregate_status,fos.aggregate_status,bos.aggregate_status, doms.aggregate_status,sps.aggregate_status) as aggregateStatus, "
+                        +
+                        " case  " +
+                        " when ans.aggregate_status is not null then 'Annonce légale' " +
+                        " when fos.aggregate_status is not null then 'Formalité' " +
+                        " when bos.aggregate_status is not null then 'BODACC' " +
+                        " when doms.aggregate_status is not null then 'Domiciliation' " +
+                        " when sps.aggregate_status is not null then 'Formalité simple' " +
+                        " end as type, " +
+                        " count(*) as number " +
+                        " from provision p  " +
+                        " join asso_affaire_order asso on asso.id = p.id_asso_affaire_order " +
+                        " join customer_order c on c.id = asso.id_customer_order " +
+                        " join customer_order_status cs on cs.id = c.id_customer_order_status " +
+                        " join employee e on e.id = p.id_employee " +
+                        " left join announcement an on an.id = p.id_announcement " +
+                        " left join announcement_status ans on ans.id = an.id_announcement_status " +
+                        " left join formalite fo on fo.id = p.id_formalite " +
+                        " left join formalite_status fos on fos.id = fo.id_formalite_status " +
+                        " left join bodacc bo on bo.id = p.id_bodacc " +
+                        " left join bodacc_status bos on bos.id = bo.id_bodacc_status " +
+                        " left join domiciliation dom on dom.id = p.id_domiciliation " +
+                        " left join domiciliation_status doms on doms.id = dom.id_domicilisation_status " +
+                        " left join simple_provision sp on sp.id = p.id_simple_provision " +
+                        " left join simple_provision_status sps on sps.id = sp.id_simple_provision_status " +
+                        " where cs.code<>'ABANDONED' " +
+                        " and p.id_employee in (:employeeIds) " +
+                        " group by e.firstname, e.lastname,ans.aggregate_status,fos.aggregate_status,bos.aggregate_status,doms.aggregate_status,sps.aggregate_status "
+                        +
+                        "")
+        List<ProvisionBoardResult> getDashboardEmployee(@Param("employeeIds") List<Integer> employeeIds);
 }

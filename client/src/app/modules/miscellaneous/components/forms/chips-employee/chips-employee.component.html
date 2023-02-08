@@ -14,8 +14,7 @@
       [matChipInputFor]="chipListEmployee" [matChipInputSeparatorKeyCodes]="SEPARATOR_KEY_CODES" [disabled]="isDisabled"
       [matAutocomplete]="autoComplete">
   </mat-chip-list>
-  <mat-hint #employeHint *ngIf="isInProfile" >Indiquez ici les personnes qui vous remplaceront pendant vos vacances. Elles verront alors vos objets
-    associés aux leurs.</mat-hint>
+  <mat-hint #employeHint *ngIf="hint">{{hint}}</mat-hint>
   <mat-autocomplete autoActiveFirstOption #autoComplete="matAutocomplete" [displayWith]="displayLabel"
     (optionSelected)="addEmployee($event)">
     <mat-option *ngFor="let employee of filteredEmployees | async" [value]="employee">

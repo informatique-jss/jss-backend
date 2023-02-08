@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { Observable, Subject, Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { getObjectPropertybyString } from 'src/app/libs/FormatHelper';
 import { UserPreferenceService } from 'src/app/services/user.preference.service';
 import { AppService } from '../../../../services/app.service';
@@ -27,8 +27,6 @@ export class SortTableComponent implements OnInit {
  * Fired when row is clicked is modified by user
  */
   @Output() onRowClick: EventEmitter<any> = new EventEmitter();
-
-  @Input() refreshDatasTable: Subject<void> | undefined;
 
   @Input() refreshTable: Observable<void> | undefined;
   private refreshTableSubscription: Subscription | undefined;

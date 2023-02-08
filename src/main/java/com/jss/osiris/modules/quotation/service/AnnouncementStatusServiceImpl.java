@@ -13,8 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.modules.quotation.model.AggregateStatus;
 import com.jss.osiris.modules.quotation.model.AnnouncementStatus;
-import com.jss.osiris.modules.quotation.model.ProvisionBoardDisplayedResult;
 import com.jss.osiris.modules.quotation.repository.AnnouncementStatusRepository;
 
 @Service
@@ -56,31 +56,31 @@ public class AnnouncementStatusServiceImpl implements AnnouncementStatusService 
 
         @Override
         public void updateStatusReferential() throws OsirisException {
-                updateStatus(AnnouncementStatus.ANNOUNCEMENT_NEW, "Nouveau", "auto_awesome", true, false, 
-                                ProvisionBoardDisplayedResult.STATUS_NEW);
-                updateStatus(AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS, "En cours", "autorenew", false, false, 
-                                ProvisionBoardDisplayedResult.STATUS_IN_PROGRESS);
+                updateStatus(AnnouncementStatus.ANNOUNCEMENT_NEW, "Nouveau", "auto_awesome", true, false,
+                                AggregateStatus.AGGREGATE_STATUS_NEW);
+                updateStatus(AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS, "En cours", "autorenew", false, false,
+                                AggregateStatus.AGGREGATE_STATUS_IN_PROGRESS);
                 updateStatus(AnnouncementStatus.ANNOUNCEMENT_WAITING_DOCUMENT, "En attente de documents",
                                 "hourglass_top",
                                 false,
-                                false, 
-                                ProvisionBoardDisplayedResult.STATUS_WAITING);
+                                false,
+                                AggregateStatus.AGGREGATE_STATUS_WAITING);
                 updateStatus(AnnouncementStatus.ANNOUNCEMENT_WAITING_READ_CUSTOMER, "En attente de relecture client",
                                 "local_library", false,
-                                false, 
-                                ProvisionBoardDisplayedResult.STATUS_WAITING);
+                                false,
+                                AggregateStatus.AGGREGATE_STATUS_WAITING);
                 updateStatus(AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE, "En attente du confrère",
                                 "supervisor_account",
-                                false, false, 
-                                ProvisionBoardDisplayedResult.STATUS_WAITING_CONFRERE_PUBLISHED);
+                                false, false,
+                                AggregateStatus.AGGREGATE_STATUS_WAITING);
                 updateStatus(AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE_PUBLISHED,
                                 "En attente de publication par le confrère", "supervisor_account",
-                                false, false, 
-                                ProvisionBoardDisplayedResult.STATUS_WAITING_CONFRERE_PUBLISHED);
-                updateStatus(AnnouncementStatus.ANNOUNCEMENT_PUBLISHED, "Publié", "fact_check", false, false, 
-                                ProvisionBoardDisplayedResult.STATUS_PUBLISHED);
-                updateStatus(AnnouncementStatus.ANNOUNCEMENT_DONE, "Terminé", "check_small", false, true, 
-                                ProvisionBoardDisplayedResult.STATUS_DONE);
+                                false, false,
+                                AggregateStatus.AGGREGATE_STATUS_WAITING);
+                updateStatus(AnnouncementStatus.ANNOUNCEMENT_PUBLISHED, "Publié", "fact_check", false, false,
+                                AggregateStatus.AGGREGATE_STATUS_IN_PROGRESS);
+                updateStatus(AnnouncementStatus.ANNOUNCEMENT_DONE, "Terminé", "check_small", false, true,
+                                AggregateStatus.AGGREGATE_STATUS_DONE);
 
                 setSuccessor(AnnouncementStatus.ANNOUNCEMENT_NEW, AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS);
                 setSuccessor(AnnouncementStatus.ANNOUNCEMENT_NEW, AnnouncementStatus.ANNOUNCEMENT_WAITING_DOCUMENT);
@@ -130,14 +130,15 @@ public class AnnouncementStatusServiceImpl implements AnnouncementStatusService 
 
         /**
          * Set status values for one status
+         * 
          * @param code
          * @param label
          * @param icon
          * @param isOpenState
          * @param isCloseState
          */
-        protected void updateStatus(String code, String label, String icon, boolean isOpenState, boolean isCloseState, 
-                                        String aggregateLabel) {
+        protected void updateStatus(String code, String label, String icon, boolean isOpenState, boolean isCloseState,
+                        String aggregateStatus) {
                 AnnouncementStatus announcementStatus = getAnnouncementStatusByCode(code);
                 if (getAnnouncementStatusByCode(code) == null)
                         announcementStatus = new AnnouncementStatus();
@@ -148,7 +149,7 @@ public class AnnouncementStatusServiceImpl implements AnnouncementStatusService 
                 announcementStatus.setIcon(icon);
                 announcementStatus.setIsCloseState(isCloseState);
                 announcementStatus.setIsOpenState(isOpenState);
-                announcementStatus.setAggregateLabel(aggregateLabel);
+                announcementStatus.setAggregateStatus(aggregateStatus);
                 addOrUpdateAnnouncementStatus(announcementStatus);
         }
 
