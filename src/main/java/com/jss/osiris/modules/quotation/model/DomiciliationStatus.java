@@ -57,7 +57,6 @@ public class DomiciliationStatus implements Serializable, IId {
 	private List<DomiciliationStatus> predecessors;
 
 	private String aggregateLabel;
-	private Integer aggregatePriority;
 
 	public static String getDOMICILIATION_NEW() {
 		return DOMICILIATION_NEW;
@@ -137,14 +136,6 @@ public class DomiciliationStatus implements Serializable, IId {
 
 	public void setAggregateLabel(String aggregateLabel) {
 		this.aggregateLabel = aggregateLabel;
-	}
-
-	public Integer getAggregatePriority() {
-		return aggregatePriority;
-	}
-
-	public void setAggregatePriority(Integer aggregatePriority) {
-		this.aggregatePriority = aggregatePriority;
 	}
 
 }

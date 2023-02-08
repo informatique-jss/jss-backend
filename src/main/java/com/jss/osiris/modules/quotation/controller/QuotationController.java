@@ -96,7 +96,7 @@ import com.jss.osiris.modules.quotation.model.NoticeTypeFamily;
 import com.jss.osiris.modules.quotation.model.OrderingSearch;
 import com.jss.osiris.modules.quotation.model.OrderingSearchResult;
 import com.jss.osiris.modules.quotation.model.Provision;
-import com.jss.osiris.modules.quotation.model.ProvisionBoardResult;
+import com.jss.osiris.modules.quotation.model.ProvisionBoardDisplayedResult;
 import com.jss.osiris.modules.quotation.model.ProvisionFamilyType;
 import com.jss.osiris.modules.quotation.model.ProvisionScreenType;
 import com.jss.osiris.modules.quotation.model.ProvisionType;
@@ -2210,24 +2210,24 @@ public class QuotationController {
     * Data to display in announcement + bodacc board
     */
   @PostMapping(inputEntryPoint + "/dashboard/employee-announcement")
-  public ResponseEntity<List<ProvisionBoardResult>> getBoardALs(@RequestBody List<Integer> employees) throws OsirisValidationException {
+  public ResponseEntity<List<ProvisionBoardDisplayedResult>> getBoardALs(@RequestBody List<Integer> employees) throws OsirisValidationException {
     if (employees == null)
       throw new OsirisValidationException("employees");
 
     validationHelper.validateIntegerList(employees, "employees");
     
-    System.out.println("com.jss.osiris.modules.quotation.controller.QuotationController getBoardALs employees="+employees);
-    return new ResponseEntity<List<ProvisionBoardResult>>(provisionService.getBoardALs(employees), HttpStatus.OK);
+    //System.out.println("com.jss.osiris.modules.quotation.controller.QuotationController getBoardALs employees="+employees);
+    return new ResponseEntity<List<ProvisionBoardDisplayedResult>>(provisionService.getBoardALs(employees), HttpStatus.OK);
   }
 
   @PostMapping(inputEntryPoint + "/dashboard/employee-formalite")
-  public ResponseEntity<List<ProvisionBoardResult>> getBoardFormalite(@RequestBody List<Integer> employees) throws OsirisValidationException {
+  public ResponseEntity<List<ProvisionBoardDisplayedResult>> getBoardFormalite(@RequestBody List<Integer> employees) throws OsirisValidationException {
     if (employees == null)
       throw new OsirisValidationException("employees");
 
     validationHelper.validateIntegerList(employees, "employees");
     
-    System.out.println("com.jss.osiris.modules.quotation.controller.QuotationController getBoardFormalite employees="+employees);
-    return new ResponseEntity<List<ProvisionBoardResult>>(provisionService.getBoardFormalite(employees), HttpStatus.OK);
+    //System.out.println("com.jss.osiris.modules.quotation.controller.QuotationController getBoardFormalite employees="+employees);
+    return new ResponseEntity<List<ProvisionBoardDisplayedResult>>(provisionService.getBoardFormalite(employees), HttpStatus.OK);
   }
 }

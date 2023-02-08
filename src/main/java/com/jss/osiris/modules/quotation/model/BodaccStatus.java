@@ -59,7 +59,6 @@ public class BodaccStatus implements Serializable, IId {
 	private List<BodaccStatus> predecessors;
 
 	private String aggregateLabel;
-	private Integer aggregatePriority;
 
 	public Integer getId() {
 		return id;
@@ -131,14 +130,6 @@ public class BodaccStatus implements Serializable, IId {
 
 	public void setAggregateLabel(String aggregateLabel) {
 		this.aggregateLabel = aggregateLabel;
-	}
-
-	public Integer getAggregatePriority() {
-		return aggregatePriority;
-	}
-
-	public void setAggregatePriority(Integer aggregatePriority) {
-		this.aggregatePriority = aggregatePriority;
 	}
 
 }

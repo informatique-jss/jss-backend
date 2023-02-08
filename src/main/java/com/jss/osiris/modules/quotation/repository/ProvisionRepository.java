@@ -14,8 +14,7 @@ public interface ProvisionRepository extends CrudRepository<Provision, Integer> 
 
     
     @Query(nativeQuery = true, value = " " +
-    "select p.id_employee as employee, count(*) as nbProvision, coalesce(sa.aggregate_label, sb.aggregate_label) as status, " +
-    "	max(sa.aggregate_priority) as priority1, max(sb.aggregate_priority) as priority2, 1 as priority3 " +
+    "select p.id_employee as employee, count(*) as nbProvision, coalesce(sa.aggregate_label, sb.aggregate_label) as status " +
     "from Provision p " +
     "    left join announcement a on p.id_announcement = a.id " +
     "    left join announcement_status sa on a.id_announcement_status = sa.id and sa.is_close_state = false " +
@@ -32,8 +31,7 @@ public interface ProvisionRepository extends CrudRepository<Provision, Integer> 
 
     
     @Query(nativeQuery = true, value = " " +
-    "select p.id_employee as employee, count(*) as nbProvision, coalesce(ssi.aggregate_label, sf.aggregate_label, sd.aggregate_label) as status, " +
-    "	max(ssi.aggregate_priority) as priority1, max(sf.aggregate_priority) as priority2, max(sd.aggregate_priority) as priority3 " +
+    "select p.id_employee as employee, count(*) as nbProvision, coalesce(ssi.aggregate_label, sf.aggregate_label, sd.aggregate_label) as status " +
     "from provision p  " +
     "    left join simple_provision sp on p.id_simple_provision = sp.id  " +
     "    left join simple_provision_status ssi on sp.id_simple_provision_status = ssi.id and ssi.is_close_state = false " +

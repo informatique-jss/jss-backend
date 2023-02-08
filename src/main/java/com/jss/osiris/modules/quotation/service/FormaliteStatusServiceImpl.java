@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.quotation.model.FormaliteStatus;
+import com.jss.osiris.modules.quotation.model.ProvisionBoardDisplayedResult;
 import com.jss.osiris.modules.quotation.repository.FormaliteStatusRepository;
 
 @Service
@@ -55,17 +56,24 @@ public class FormaliteStatusServiceImpl implements FormaliteStatusService {
 
     @Override
     public void updateStatusReferential() throws OsirisException {
-        Integer priority = 1;
-        updateStatus(FormaliteStatus.FORMALITE_NEW, "Nouveau", "auto_awesome", true, false, priority++, "Ouvert");
-        updateStatus(FormaliteStatus.FORMALITE_IN_PROGRESS, "En cours", "autorenew", false, false, priority++);
+        updateStatus(FormaliteStatus.FORMALITE_NEW, "Nouveau", "auto_awesome", true, false, 
+                ProvisionBoardDisplayedResult.STATUS_NEW);
+        updateStatus(FormaliteStatus.FORMALITE_IN_PROGRESS, "En cours", "autorenew", false, false, 
+                ProvisionBoardDisplayedResult.STATUS_IN_PROGRESS);
         updateStatus(FormaliteStatus.FORMALITE_WAITING_DOCUMENT, "En attente de documents", "hourglass_top", false,
-                false, priority++);
-        updateStatus(FormaliteStatus.FORMALITE_SENT, "Envoyé au greffe", "outgoing_mail", false, false, priority++);
-        updateStatus(FormaliteStatus.FORMALITE_VALIDATE, "Validé par le greffe", "approval", false, false, priority++);
-        updateStatus(FormaliteStatus.FORMALITE_REFUSED, "Refusé par le greffe", "block", false, false, priority++);
+                false, 
+                ProvisionBoardDisplayedResult.STATUS_WAITING);
+        updateStatus(FormaliteStatus.FORMALITE_SENT, "Envoyé au greffe", "outgoing_mail", false, false, 
+                ProvisionBoardDisplayedResult.STATUS_WAITING_GREFFE);
+        updateStatus(FormaliteStatus.FORMALITE_VALIDATE, "Validé par le greffe", "approval", false, false, 
+                ProvisionBoardDisplayedResult.STATUS_VALIDATE_GREFFE);
+        updateStatus(FormaliteStatus.FORMALITE_REFUSED, "Refusé par le greffe", "block", false, false, 
+                ProvisionBoardDisplayedResult.STATUS_REFUSED_GREFFE);
         updateStatus(FormaliteStatus.FORMALITE_WAITING_DOCUMENT_GREFFE, "En attente de documents du greffe", "pending",
-                false, false, priority++);
-        updateStatus(FormaliteStatus.FORMALITE_DONE, "Terminé", "check_small", false, true, priority++);
+                false, false, 
+                ProvisionBoardDisplayedResult.STATUS_VALIDATE_GREFFE);
+        updateStatus(FormaliteStatus.FORMALITE_DONE, "Terminé", "check_small", false, true, 
+                ProvisionBoardDisplayedResult.STATUS_DONE);
 
         setSuccessor(FormaliteStatus.FORMALITE_NEW, FormaliteStatus.FORMALITE_IN_PROGRESS);
         setSuccessor(FormaliteStatus.FORMALITE_IN_PROGRESS, FormaliteStatus.FORMALITE_SENT);
@@ -86,11 +94,7 @@ public class FormaliteStatusServiceImpl implements FormaliteStatusService {
     }
 
     protected void updateStatus(String code, String label, String icon, boolean isOpenState, boolean isCloseState, 
-                                    Integer aggregatePriority) {
-            updateStatus(code, label, icon, isOpenState, isCloseState, aggregatePriority, label);
-    }
-    protected void updateStatus(String code, String label, String icon, boolean isOpenState, boolean isCloseState, 
-                                    Integer aggregatePriority, String aggregateLabel) {
+                                    String aggregateLabel) {
         FormaliteStatus formaliteStatus = getFormaliteStatusByCode(code);
         if (getFormaliteStatusByCode(code) == null)
             formaliteStatus = new FormaliteStatus();
@@ -102,7 +106,6 @@ public class FormaliteStatusServiceImpl implements FormaliteStatusService {
         formaliteStatus.setIsCloseState(isCloseState);
         formaliteStatus.setIsOpenState(isOpenState);
         formaliteStatus.setAggregateLabel(aggregateLabel);
-        formaliteStatus.setAggregatePriority(aggregatePriority);
         addOrUpdateFormaliteStatus(formaliteStatus);
     }
 

@@ -58,7 +58,6 @@ public class SimpleProvisionStatus implements Serializable, IId {
 	private List<SimpleProvisionStatus> predecessors;
 
 	private String aggregateLabel;
-	private Integer aggregatePriority;
 
 	public static String getSIMPLE_PROVISION_NEW() {
 		return SIMPLE_PROVISION_NEW;
@@ -162,14 +161,6 @@ public class SimpleProvisionStatus implements Serializable, IId {
 
 	public void setAggregateLabel(String aggregateLabel) {
 		this.aggregateLabel = aggregateLabel;
-	}
-
-	public Integer getAggregatePriority() {
-		return aggregatePriority;
-	}
-
-	public void setAggregatePriority(Integer aggregatePriority) {
-		this.aggregatePriority = aggregatePriority;
 	}
 
 	public static String getSIMPLE_PROVISION_WAITING_DOCUMENT_AUTHORITY() {

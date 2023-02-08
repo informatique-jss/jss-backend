@@ -1,10 +1,8 @@
 import { CdkDragEnter, CdkDropList, DragRef, moveItemInArray } from '@angular/cdk/drag-drop';
-import { HttpParams } from '@angular/common/http';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { combineLatest, map } from 'rxjs';
-import { CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_TO_BILLED, QUOTATION_STATUS_OPEN, QUOTATION_STATUS_REFUSED_BY_CUSTOMER, QUOTATION_STATUS_TO_VERIFY, SIMPLE_PROVISION_WAITING_DOCUMENT, SIMPLE_PROVISION_WAITING_DOCUMENT_AUTHORITY } from 'src/app/libs/Constants';
+import { CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_TO_BILLED, QUOTATION_STATUS_OPEN, QUOTATION_STATUS_REFUSED_BY_CUSTOMER, QUOTATION_STATUS_TO_VERIFY, SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT, SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT_AUTHORITY } from 'src/app/libs/Constants';
 import { AppService } from 'src/app/services/app.service';
-import { AppRestService } from 'src/app/services/appRest.service';
 import { HabilitationsService } from '../../services/habilitations.service';
 import { UserPreferenceService } from '../../services/user.preference.service';
 import { InvoiceSearch } from '../invoicing/model/InvoiceSearch';
@@ -22,7 +20,7 @@ import { CustomerOrderStatus } from '../quotation/model/CustomerOrderStatus';
 import { DomiciliationStatus } from '../quotation/model/DomiciliationStatus';
 import { FormaliteStatus } from '../quotation/model/FormaliteStatus';
 import { OrderingSearch } from '../quotation/model/OrderingSearch';
-import { ProvisionBoardResult } from '../quotation/model/ProvisionBoardResult';
+import { ProvisionBoardDisplayedResult } from '../quotation/model/ProvisionBoardDisplayedResult';
 import { QuotationSearch } from '../quotation/model/QuotationSearch';
 import { QuotationStatus } from '../quotation/model/QuotationStatus';
 import { SimpleProvisionStatus } from '../quotation/model/SimpleProvisonStatus';
@@ -71,7 +69,7 @@ export class DashboardComponent implements OnInit {
   AFFAIRE_RESPONSIBLE_TO_DO = "Mes prestations en responsabilité à faire";
   AFFAIRE_RESPONSIBLE_IN_PROGRESS = "Mes prestations en responsabilité en cours";
   AFFAIRE_SIMPLE_PROVISION_WAITING_AUTHORITY = "Mes formalités simples en attente de l'autorité compétente"
-  AFFAIRE_SIMPLE_PROVISION_WAITING_DOCUMENT = "Mes formalités simples en attente de documents"
+  AFFAIRE_SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT = "Mes formalités simples en attente de documents"
 
   affaireSearchInProgress: AffaireSearch = {} as AffaireSearch;
   affaireSearchToDo: AffaireSearch = {} as AffaireSearch;
@@ -108,14 +106,14 @@ export class DashboardComponent implements OnInit {
 
   BOARD_AL = "Suivi d'équipe Annonces Légales";
   BOARD_FORMALITE = "Suivi d'équipe Formalités"
-  provisionBoardAL: ProvisionBoardResult[] = [] as Array<ProvisionBoardResult>;
-  provisionBoardFormalite: ProvisionBoardResult[] = [] as Array<ProvisionBoardResult>;
+  provisionBoardAL: ProvisionBoardDisplayedResult[] = [] as Array<ProvisionBoardDisplayedResult>;
+  provisionBoardFormalite: ProvisionBoardDisplayedResult[] = [] as Array<ProvisionBoardDisplayedResult>;
 
 
   allItems: Array<string> = [this.QUOTATION_REFUSED, this.PAYMENT_TO_ASSOCIATE, this.INVOICE_TO_ASSOCIATE, this.QUOTATION_TO_VERIFY,
   this.QUOTATION_OPEN, this.ORDER_TO_BILLED, this.ORDER_BEING_PROCESSED, this.ORDER_OPEN,
   this.AFFAIRE_RESPONSIBLE_IN_PROGRESS, this.AFFAIRE_RESPONSIBLE_TO_DO, this.AFFAIRE_SIMPLE_PROVISION_WAITING_AUTHORITY,
-  this.AFFAIRE_SIMPLE_PROVISION_WAITING_DOCUMENT, this.AFFAIRE_IN_PROGRESS, this.AFFAIRE_TO_DO,
+  this.AFFAIRE_SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT, this.AFFAIRE_IN_PROGRESS, this.AFFAIRE_TO_DO,
   this.BOARD_AL, this.BOARD_FORMALITE].sort((a, b) => a.localeCompare(b));
 
   constructor(private appService: AppService,
@@ -175,10 +173,10 @@ export class DashboardComponent implements OnInit {
         this.affaireSearchResponsibleToDo.status = this.statusTypes.filter(stauts => stauts.isOpenState);
 
         this.affaireSearchWaitingDocument.responsible = this.currentEmployee;
-        this.affaireSearchWaitingDocument.status = this.simpleProvisionStatus.filter(stauts => stauts.code == SIMPLE_PROVISION_WAITING_DOCUMENT);
+        this.affaireSearchWaitingDocument.status = this.simpleProvisionStatus.filter(stauts => stauts.code == SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT);
 
         this.affaireSearchWaitingAuthority.responsible = this.currentEmployee;
-        this.affaireSearchWaitingAuthority.status = this.simpleProvisionStatus.filter(stauts => stauts.code == SIMPLE_PROVISION_WAITING_DOCUMENT_AUTHORITY);
+        this.affaireSearchWaitingAuthority.status = this.simpleProvisionStatus.filter(stauts => stauts.code == SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT_AUTHORITY);
 
         this.orderingSearchOpen.salesEmployee = this.currentEmployee!;
         this.orderingSearchOpen.customerOrderStatus = [this.customerOrderStatusService.getCustomerStatusByCode(this.customerOrderStatus, CUSTOMER_ORDER_STATUS_OPEN)!];
