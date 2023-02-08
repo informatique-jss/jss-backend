@@ -1,15 +1,15 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Subject } from 'rxjs/internal/Subject';
+import { STATUS_DONE, STATUS_IN_PROGRESS, STATUS_NEW, STATUS_PUBLISHED, STATUS_REFUSED_GREFFE, STATUS_VALIDATE_GREFFE, STATUS_WAITING, STATUS_WAITING_AUTHORITY, STATUS_WAITING_CONFRERE_PUBLISHED, STATUS_WAITING_GREFFE } from 'src/app/libs/Constants';
 import { getObjectPropertybyString } from 'src/app/libs/FormatHelper';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { Employee } from 'src/app/modules/profile/model/Employee';
 import { EmployeeService } from 'src/app/modules/profile/services/employee.service';
 import { AppService } from 'src/app/services/app.service';
-import { UserPreferenceService } from 'src/app/services/user.preference.service';
 import { ProvisionBoardDisplayed } from '../../model/ProvisionBoardDisplayed';
-import { ProvisionBoardResult } from '../../model/ProvisionBoardResult';
+import { ProvisionBoardDisplayedResult } from '../../model/ProvisionBoardDisplayedResult';
 import { ProvisionBoardResultService } from '../../services/provision.board.result.service';
 
 @Component({
@@ -22,10 +22,11 @@ export class ProvisionBoardComponent implements OnInit {
   @Input() currentEmployee: Employee | undefined = {} as Employee;
   @Input() teamBoard: string = '';
 
-  nbProvisions!: ProvisionBoardResult[];
+  nbProvisions!: ProvisionBoardDisplayedResult[];
   allEmployees: Employee[] = [];
   employeeSelected: Employee[];
   displayedEmployees: Employee[] = [] as Employee[];
+  listStatusUsed: string[] = [];
 
   // List of headers of columns
   columnToDisplayOnDashboard: string[] = ["Employé"];
@@ -62,37 +63,62 @@ export class ProvisionBoardComponent implements OnInit {
     this.provisionBoardResultService.getTeamBoards(this.teamBoard, employeeSelectedIds).subscribe(response => {
       this.nbProvisions = response;
 
+    // Set all used status in columnToDisplayOnDashboard
+    this.listStatusUsed.push(STATUS_NEW);        // allway used
+    this.listStatusUsed.push(STATUS_IN_PROGRESS);// allway used
 
-      this.nbProvisions.sort(function(n1, n2){
-        if (n1.priority !== n2.priority)
-          return n1.priority - n2.priority;
-        else {
-          if (n1.status < n2.status)
-            return -1;
-          else if (n1.status > n2.status)
-            return 1;
-          else
-            return 0;
-        }
-      }); // this.nbProvisions?.sort
+    let found: string|undefined;
+    this.nbProvisions.forEach((item:ProvisionBoardDisplayedResult) => {
+      if (item.nbProvisionWaiting > 0) {
+        this.setStatusUsed(STATUS_WAITING);
+      }
+      if (item.nbProvisionWaitingGreffe > 0) {
+        this.setStatusUsed(STATUS_WAITING_GREFFE);
+      }
+      if (item.nbProvisionWaitingAuthority > 0) {
+        this.setStatusUsed(STATUS_WAITING_AUTHORITY);
+      }
+      if (item.nbProvisionConfrerePublished > 0) {
+        this.setStatusUsed(STATUS_WAITING_CONFRERE_PUBLISHED);
+      }
+      if (item.nbProvisionValidateGreffe > 0) {
+        this.setStatusUsed(STATUS_VALIDATE_GREFFE);
+      }
+      if (item.nbProvisionRefusedGreffe > 0) {
+        this.setStatusUsed(STATUS_REFUSED_GREFFE);
+      }
+      if (item.nbProvisionPublished > 0) {
+        this.setStatusUsed(STATUS_PUBLISHED);
+      }
+      if (item.nbProvisionDone > 0) {
+        this.setStatusUsed(STATUS_DONE);
+      }
 
-      // Set all used status in columnToDisplayOnDashboard
-      let lastLabelStatus = '';
-      this.nbProvisions.forEach((item:ProvisionBoardResult) => {
-        if (item.status != lastLabelStatus) {
-          this.columnToDisplayOnDashboard.push(item.status);
-          lastLabelStatus = item.status;
-        }
-      });
+    });
 
       // displayedColumns define columns of the board
       this.displayedColumns = [];
       this.displayedColumns.push({ id: "employee", fieldName: "employee", label: "Personne" } as SortTableColumn);
-      for(var i: number = 1; i < this.columnToDisplayOnDashboard.length; i++) {
-        this.displayedColumns.push({ id:this.FIELD_NAME_NB_PROVISION+i,
-                              fieldName: this.FIELD_NAME_NB_PROVISION+i,
-                              label: this.columnToDisplayOnDashboard[i] } as SortTableColumn);
-      }
+      if (this.foundStatusUsed(STATUS_NEW))
+        this.displayedColumns.push({ id: "nbProvisionNew", fieldName: "nbProvisionNew", label: "Ouvert" } as SortTableColumn);
+      if (this.foundStatusUsed(STATUS_IN_PROGRESS))
+        this.displayedColumns.push({ id: "nbProvisionInProgress", fieldName: "nbProvisionInProgress", label: "En cours" } as SortTableColumn);
+      if (this.foundStatusUsed(STATUS_WAITING))
+        this.displayedColumns.push({ id: "nbProvisionWaiting", fieldName: "nbProvisionWaiting", label: "En attente" } as SortTableColumn);
+      if (this.foundStatusUsed(STATUS_WAITING_AUTHORITY))
+        this.displayedColumns.push({ id: "nbProvisionWaitingAuthority", fieldName: "nbProvisionWaitingAuthority", label: "En attente de l'autorité compétente" } as SortTableColumn);
+      if (this.foundStatusUsed(STATUS_WAITING_GREFFE))
+        this.displayedColumns.push({ id: "nbProvisionWaitingGreffe", fieldName: "nbProvisionWaitingGreffe", label: "Envoyé au greffe" } as SortTableColumn);
+      if (this.foundStatusUsed(STATUS_VALIDATE_GREFFE))
+        this.displayedColumns.push({ id: "nbProvisionValidateGreffe", fieldName: "nbProvisionValidateGreffe", label: "Validé par le greffe" } as SortTableColumn);
+      if (this.foundStatusUsed(STATUS_REFUSED_GREFFE))
+        this.displayedColumns.push({ id: "nbProvisionRefusedGreffe", fieldName: "nbProvisionRefusedGreffe", label: "Refusé par le greffe" } as SortTableColumn);
+      if (this.foundStatusUsed(STATUS_WAITING_CONFRERE_PUBLISHED))
+        this.displayedColumns.push({ id: "nbProvisionConfrerePublished", fieldName: "nbProvisionConfrerePublished", label: "En attente de publication par le confrère" } as SortTableColumn);
+      if (this.foundStatusUsed(STATUS_PUBLISHED))
+        this.displayedColumns.push({ id: "nbProvisionPublished", fieldName: "nbProvisionPublished", label: "Publié" } as SortTableColumn);
+      if (this.foundStatusUsed(STATUS_DONE))
+        this.displayedColumns.push({ id: "nbProvisionDone", fieldName: "nbProvisionDone", label: "Terminé" } as SortTableColumn);
 
       // Get Datas on allEmployees
       this.employeeService.getEmployees().subscribe(response => {
@@ -105,6 +131,31 @@ export class ProvisionBoardComponent implements OnInit {
 
     }); // this.provisionBoardResultService.getTeamBoards
 
+
+  }
+
+  /**
+   * Set all used status found in nbProvisions
+   */
+  setStatusUsed(status: string) {
+    let found: string|undefined;
+
+    found = this.listStatusUsed.find((value: string) =>
+      value === status
+    );
+    if (found === undefined) {
+      this.listStatusUsed.push(status);
+    }
+
+  }
+
+  foundStatusUsed(status: string) {
+    let found: string|undefined;
+
+    found = this.listStatusUsed.find((value: string) =>
+      value === status
+    );
+    return (found !== undefined);
 
   }
 
@@ -149,13 +200,9 @@ export class ProvisionBoardComponent implements OnInit {
     /* ***************************************************** */
     /* Display in first lines : employee who have provisions */
 
-    this.nbProvisions.sort(function(n1, n2){
-      if (n1.employee !== n2.employee)
+    this.nbProvisions.sort((n1, n2) => {
         return n1.employee - n2.employee;
-      else {
-        return n1.priority - n2.priority;
-      }
-    }); // this.nbProvisions?.sort
+      }); // this.nbProvisions?.sort
 
     this.nbProvisionsDisplayed = [];
 
@@ -163,7 +210,7 @@ export class ProvisionBoardComponent implements OnInit {
     let current:ProvisionBoardDisplayed|undefined = undefined;
     let emp:Employee|undefined;
     let indexEmp: number = -1;
-    let item:ProvisionBoardResult|undefined = undefined;
+    let item:ProvisionBoardDisplayedResult|undefined = undefined;
     let isNewEmployee = true;
     for (let indexDataSource=0; indexDataSource < this.nbProvisions.length; ) {
       item = this.nbProvisions[indexDataSource];
@@ -187,53 +234,17 @@ export class ProvisionBoardComponent implements OnInit {
 
         current = new ProvisionBoardDisplayed();
         current.employee = emp.firstname+' '+emp.lastname;
-        current.initNbProvision();
+        current.initNbProvision(item.nbProvisionNew, item.nbProvisionInProgress,
+                  item.nbProvisionWaiting, item.nbProvisionWaitingGreffe,
+                  item.nbProvisionWaitingAuthority, item.nbProvisionConfrerePublished,
+                  item.nbProvisionValidateGreffe, item.nbProvisionRefusedGreffe,
+                  item.nbProvisionPublished, item.nbProvisionDone);
 
-        // Set in nbProvisionsDisplayed in function of emp and values in nbProvisions
-        for(var i: number = 1; i < this.columnToDisplayOnDashboard.length && !isNewEmployee; i++) {
+        this.nbProvisionsDisplayed.push(current);
 
-          if (item !== undefined && this.columnToDisplayOnDashboard[i] === item.status) {
+        // L'employe will be displayed : we remove him from the array
+        employeesToAddForDisplaying.splice(indexEmp, 1);
 
-            let indexNnProv = i;
-            switch (indexNnProv) {
-              case 1: {current.nbProvision1 = item.nbProvision; break;}
-              case 2: {current.nbProvision2 = item.nbProvision; break;}
-              case 3: {current.nbProvision3 = item.nbProvision; break;}
-              case 4: {current.nbProvision4 = item.nbProvision; break;}
-              case 5: {current.nbProvision5 = item.nbProvision; break;}
-              case 6: {current.nbProvision6 = item.nbProvision; break;}
-              case 7: {current.nbProvision7 = item.nbProvision; break;}
-              case 8: {current.nbProvision8 = item.nbProvision; break;}
-              case 9: {current.nbProvision9 = item.nbProvision; break;}
-              case 10: {current.nbProvision10 = item.nbProvision; break;}
-              case 11: {current.nbProvision11 = item.nbProvision; break;}
-              case 12: {current.nbProvision12 = item.nbProvision; break;}
-              case 13: {current.nbProvision13 = item.nbProvision; break;}
-              case 14: {current.nbProvision14 = item.nbProvision; break;}
-              case 15: {current.nbProvision15 = item.nbProvision; break;}
-              case 16: {current.nbProvision16 = item.nbProvision; break;}
-              case 17: {current.nbProvision17 = item.nbProvision; break;}
-              case 18: {current.nbProvision18= item.nbProvision; break;}
-              case 19: {current.nbProvision19 = item.nbProvision; break;}
-              case 20: {current.nbProvision20 = item.nbProvision; break;}
-            }
-
-            indexDataSource++;
-            item = this.nbProvisions[indexDataSource];
-            if (item === undefined || item.employee !== emp.id) {
-              isNewEmployee = true;
-            }
-          }
-        } // for(var i: number = 1; i < this.columnToDisplayOnDashboard.length ...
-
-        if (isNewEmployee && current !== undefined) {
-          this.nbProvisionsDisplayed.push(current);
-
-          // L'employe will be displayed : we remove him from the array
-          employeesToAddForDisplaying.splice(indexEmp, 1);
-        } else {
-          console.log("Status "+item.status+" not found for "+item.employee);
-        }
       } else { // employe incorrect
         console.log("Employe n'a pas de prestation "+item.employee);
         indexDataSource++;
@@ -266,7 +277,7 @@ export class ProvisionBoardComponent implements OnInit {
 
         current = new ProvisionBoardDisplayed();
         current.employee = unEmp.firstname+' '+unEmp.lastname;
-        current.initNbProvision();
+        current.initNbProvision(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
         this.nbProvisionsDisplayed.push(current);
 

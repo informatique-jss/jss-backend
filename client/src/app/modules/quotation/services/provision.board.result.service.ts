@@ -1,12 +1,12 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AppRestService } from 'src/app/services/appRest.service';
-import { ProvisionBoardResult } from '../model/ProvisionBoardResult';
+import { ProvisionBoardDisplayedResult } from '../model/ProvisionBoardDisplayedResult';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ProvisionBoardResultService extends AppRestService<ProvisionBoardResult>{
+export class ProvisionBoardResultService extends AppRestService<ProvisionBoardDisplayedResult>{
 
   constructor(http: HttpClient) {
     super(http, "quotation");

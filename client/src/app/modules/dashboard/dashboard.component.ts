@@ -1,10 +1,8 @@
 import { CdkDragEnter, CdkDropList, DragRef, moveItemInArray } from '@angular/cdk/drag-drop';
-import { HttpParams } from '@angular/common/http';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { combineLatest, map } from 'rxjs';
 import { CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_TO_BILLED, QUOTATION_STATUS_OPEN, QUOTATION_STATUS_REFUSED_BY_CUSTOMER, QUOTATION_STATUS_TO_VERIFY, SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT, SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT_AUTHORITY } from 'src/app/libs/Constants';
 import { AppService } from 'src/app/services/app.service';
-import { AppRestService } from 'src/app/services/appRest.service';
 import { HabilitationsService } from '../../services/habilitations.service';
 import { UserPreferenceService } from '../../services/user.preference.service';
 import { InvoiceSearch } from '../invoicing/model/InvoiceSearch';
@@ -22,7 +20,7 @@ import { CustomerOrderStatus } from '../quotation/model/CustomerOrderStatus';
 import { DomiciliationStatus } from '../quotation/model/DomiciliationStatus';
 import { FormaliteStatus } from '../quotation/model/FormaliteStatus';
 import { OrderingSearch } from '../quotation/model/OrderingSearch';
-import { ProvisionBoardResult } from '../quotation/model/ProvisionBoardResult';
+import { ProvisionBoardDisplayedResult } from '../quotation/model/ProvisionBoardDisplayedResult';
 import { QuotationSearch } from '../quotation/model/QuotationSearch';
 import { QuotationStatus } from '../quotation/model/QuotationStatus';
 import { SimpleProvisionStatus } from '../quotation/model/SimpleProvisonStatus';
@@ -108,8 +106,8 @@ export class DashboardComponent implements OnInit {
 
   BOARD_AL = "Suivi d'équipe Annonces Légales";
   BOARD_FORMALITE = "Suivi d'équipe Formalités"
-  provisionBoardAL: ProvisionBoardResult[] = [] as Array<ProvisionBoardResult>;
-  provisionBoardFormalite: ProvisionBoardResult[] = [] as Array<ProvisionBoardResult>;
+  provisionBoardAL: ProvisionBoardDisplayedResult[] = [] as Array<ProvisionBoardDisplayedResult>;
+  provisionBoardFormalite: ProvisionBoardDisplayedResult[] = [] as Array<ProvisionBoardDisplayedResult>;
 
 
   allItems: Array<string> = [this.QUOTATION_REFUSED, this.PAYMENT_TO_ASSOCIATE, this.INVOICE_TO_ASSOCIATE, this.QUOTATION_TO_VERIFY,

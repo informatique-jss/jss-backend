@@ -10,13 +10,7 @@ public interface IProvisionBoardResult {
 
 	public String getStatus();
 
-	public Integer getPriority1();
-	public Integer getPriority2();
-	public Integer getPriority3();
-
 	//@Override
 	//public String toString();
-
-
 
 }
