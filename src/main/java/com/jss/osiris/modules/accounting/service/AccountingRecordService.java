@@ -31,8 +31,6 @@ public interface AccountingRecordService {
 
         public void generateAccountingRecordsForPurshaseOnInvoiceGeneration(Invoice invoice) throws OsirisException;
 
-        public void generateAccountingRecordsForDebourPayment(Debour debour) throws OsirisException;
-
         public void dailyAccountClosing();
 
         public List<AccountingRecordSearchResult> searchAccountingRecords(
@@ -116,7 +114,8 @@ public interface AccountingRecordService {
         public List<AccountingRecord> findByAccountingAccountAndInvoice(AccountingAccount accountingAccount,
                         Invoice invoice);
 
-        public void generateCounterPart(AccountingRecord originalAccountingRecord, AccountingJournal overrideJournal,
+        public AccountingRecord generateCounterPart(AccountingRecord originalAccountingRecord,
+                        AccountingJournal overrideJournal,
                         Integer operationId);
 
         public void deleteAccountingRecord(AccountingRecord accountingRecord);
@@ -136,5 +135,7 @@ public interface AccountingRecordService {
                         throws OsirisException;
 
         public void checkInvoiceForLettrage(Invoice invoice) throws OsirisException;
+
+        public void letterWaitingRecords(AccountingRecord record, AccountingRecord counterPart) throws OsirisException;
 
 }

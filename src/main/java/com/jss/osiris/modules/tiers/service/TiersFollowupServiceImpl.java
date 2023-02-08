@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.miscellaneous.service.GiftService;
 import com.jss.osiris.modules.tiers.model.TiersFollowup;
 import com.jss.osiris.modules.tiers.repository.TiersFollowupRepository;
@@ -36,7 +37,7 @@ public class TiersFollowupServiceImpl implements TiersFollowupService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public List<TiersFollowup> addTiersFollowup(TiersFollowup tiersFollowup) {
+    public List<TiersFollowup> addTiersFollowup(TiersFollowup tiersFollowup) throws OsirisException {
         if (tiersFollowup.getGift() != null && tiersFollowup.getId() == null)
             giftService.decreaseStock(tiersFollowup.getGift(), tiersFollowup.getGiftNumber());
         tiersFollowupRepository.save(tiersFollowup);

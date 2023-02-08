@@ -130,6 +130,10 @@ public class Constant implements Serializable, IId {
 	private AttachmentType attachmentTypeInvoice;
 
 	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_attachment_type_credit_note")
+	private AttachmentType attachmentTypeCreditNote;
+
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_attachment_type_kbis_updated")
 	private AttachmentType attachmentTypeKbisUpdated;
 
@@ -305,6 +309,10 @@ public class Constant implements Serializable, IId {
 	private PaymentType paymentTypeEspeces;
 
 	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_payment_type_cheques")
+	private PaymentType paymentTypeCheques;
+
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_refund_type_virement")
 	private RefundType refundTypeVirement;
 
@@ -417,6 +425,18 @@ public class Constant implements Serializable, IId {
 	private CompetentAuthorityType competentAuthorityTypeCfp;
 
 	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_competent_authority_type_cci")
+	private CompetentAuthorityType competentAuthorityTypeCci;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_competent_authority_type_chambre_metier")
+	private CompetentAuthorityType competentAuthorityTypeChambreMetier;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_competent_authority_type_direccte")
+	private CompetentAuthorityType competentAuthorityTypeDireccte;
+
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_invoice_status_send")
 	private InvoiceStatus invoiceStatusSend;
 
@@ -433,6 +453,10 @@ public class Constant implements Serializable, IId {
 	private InvoiceStatus invoiceStatusCancelled;
 
 	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_invoice_status_credit_note_emited")
+	private InvoiceStatus invoiceStatusCreditNoteEmited;
+
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_payment_way_inbound")
 	private PaymentWay paymentWayInbound;
 
@@ -447,6 +471,10 @@ public class Constant implements Serializable, IId {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_vat_eight")
 	private Vat vatEight;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_vat_zero")
+	private Vat vatZero;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_vat_deductible")
@@ -566,6 +594,22 @@ public class Constant implements Serializable, IId {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_accounting_account_bank_jss")
 	private AccountingAccount accountingAccountBankJss;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_billing_type_vacation_deposit_beneficial_owners")
+	private BillingType billingTypeVacationDepositBeneficialOwners;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_billing_type_vacation_update_beneficial_owners")
+	private BillingType billingTypeVacationUpdateBeneficialOwners;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_billing_type_formality_additional_declaration")
+	private BillingType billingTypeFormalityAdditionalDeclaration;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_billing_type_correspondence_fees")
+	private BillingType billingTypeCorrespondenceFees;
 
 	public Integer getId() {
 		return id;
@@ -1653,6 +1697,94 @@ public class Constant implements Serializable, IId {
 
 	public void setVatDeductible(Vat vatDeductible) {
 		this.vatDeductible = vatDeductible;
+	}
+
+	public BillingType getBillingTypeVacationDepositBeneficialOwners() {
+		return billingTypeVacationDepositBeneficialOwners;
+	}
+
+	public void setBillingTypeVacationDepositBeneficialOwners(BillingType billingTypeVacationDepositBeneficialOwners) {
+		this.billingTypeVacationDepositBeneficialOwners = billingTypeVacationDepositBeneficialOwners;
+	}
+
+	public BillingType getBillingTypeVacationUpdateBeneficialOwners() {
+		return billingTypeVacationUpdateBeneficialOwners;
+	}
+
+	public void setBillingTypeVacationUpdateBeneficialOwners(BillingType billingTypeVacationUpdateBeneficialOwners) {
+		this.billingTypeVacationUpdateBeneficialOwners = billingTypeVacationUpdateBeneficialOwners;
+	}
+
+	public BillingType getBillingTypeFormalityAdditionalDeclaration() {
+		return billingTypeFormalityAdditionalDeclaration;
+	}
+
+	public void setBillingTypeFormalityAdditionalDeclaration(BillingType billingTypeFormalityAdditionalDeclaration) {
+		this.billingTypeFormalityAdditionalDeclaration = billingTypeFormalityAdditionalDeclaration;
+	}
+
+	public BillingType getBillingTypeCorrespondenceFees() {
+		return billingTypeCorrespondenceFees;
+	}
+
+	public void setBillingTypeCorrespondenceFees(BillingType billingTypeCorrespondenceFees) {
+		this.billingTypeCorrespondenceFees = billingTypeCorrespondenceFees;
+	}
+
+	public Vat getVatZero() {
+		return vatZero;
+	}
+
+	public void setVatZero(Vat vatZero) {
+		this.vatZero = vatZero;
+	}
+
+	public InvoiceStatus getInvoiceStatusCreditNoteEmited() {
+		return invoiceStatusCreditNoteEmited;
+	}
+
+	public void setInvoiceStatusCreditNoteEmited(InvoiceStatus invoiceStatusCreditNoteEmited) {
+		this.invoiceStatusCreditNoteEmited = invoiceStatusCreditNoteEmited;
+	}
+
+	public AttachmentType getAttachmentTypeCreditNote() {
+		return attachmentTypeCreditNote;
+	}
+
+	public void setAttachmentTypeCreditNote(AttachmentType attachmentTypeCreditNote) {
+		this.attachmentTypeCreditNote = attachmentTypeCreditNote;
+	}
+
+	public CompetentAuthorityType getCompetentAuthorityTypeCci() {
+		return competentAuthorityTypeCci;
+	}
+
+	public void setCompetentAuthorityTypeCci(CompetentAuthorityType competentAuthorityTypeCci) {
+		this.competentAuthorityTypeCci = competentAuthorityTypeCci;
+	}
+
+	public CompetentAuthorityType getCompetentAuthorityTypeChambreMetier() {
+		return competentAuthorityTypeChambreMetier;
+	}
+
+	public void setCompetentAuthorityTypeChambreMetier(CompetentAuthorityType competentAuthorityTypeChambreMetier) {
+		this.competentAuthorityTypeChambreMetier = competentAuthorityTypeChambreMetier;
+	}
+
+	public CompetentAuthorityType getCompetentAuthorityTypeDireccte() {
+		return competentAuthorityTypeDireccte;
+	}
+
+	public void setCompetentAuthorityTypeDireccte(CompetentAuthorityType competentAuthorityTypeDireccte) {
+		this.competentAuthorityTypeDireccte = competentAuthorityTypeDireccte;
+	}
+
+	public PaymentType getPaymentTypeCheques() {
+		return paymentTypeCheques;
+	}
+
+	public void setPaymentTypeCheques(PaymentType paymentTypeCheques) {
+		this.paymentTypeCheques = paymentTypeCheques;
 	}
 
 }

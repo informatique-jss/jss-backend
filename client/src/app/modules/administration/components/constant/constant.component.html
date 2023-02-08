@@ -168,6 +168,14 @@
           </tr>
           <tr>
             <td>
+              <select-attachment-type [(model)]="constant.attachmentTypeCreditNote" label="Type de pièce-jointe - Avoir"
+                [form]="constantForm" propertyName="attachmentTypeCreditNote" [isMandatory]="true"
+                [isDisabled]="!editMode">
+              </select-attachment-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <select-attachment-type [(model)]="constant.attachmentTypeKbisUpdated"
                 label="Type de pièce-jointe - Kbis mis à jour" [form]="constantForm"
                 propertyName="attachmentTypeKbisUpdated" [isMandatory]="true" [isDisabled]="!editMode">
@@ -471,6 +479,40 @@
           </tr>
           <tr>
             <td>
+              <autocomplete-billing-type [(model)]="constant.billingTypeVacationDepositBeneficialOwners"
+                label="Type de poste de facturation - Vacation - Dépôt des Bénéficiaires Effectifs"
+                [form]="constantForm" propertyName="billingTypeVacationDepositBeneficialOwners" [isMandatory]="true"
+                [isDisabled]="!editMode">
+              </autocomplete-billing-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-billing-type [(model)]="constant.billingTypeVacationUpdateBeneficialOwners"
+                label="Type de poste de facturation - Vacation - Mise à jour - Bénéficiaires Effectifs"
+                [form]="constantForm" propertyName="billingTypeVacationUpdateBeneficialOwners" [isMandatory]="true"
+                [isDisabled]="!editMode">
+              </autocomplete-billing-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-billing-type [(model)]="constant.billingTypeFormalityAdditionalDeclaration"
+                label="Type de poste de facturation - Formalité - Déclaration Supplémentaire" [form]="constantForm"
+                propertyName="billingTypeFormalityAdditionalDeclaration" [isMandatory]="true" [isDisabled]="!editMode">
+              </autocomplete-billing-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-billing-type [(model)]="constant.billingTypeCorrespondenceFees"
+                label="Type de poste de facturation - Frais de Correspondance" [form]="constantForm"
+                propertyName="billingTypeCorrespondenceFees" [isMandatory]="true" [isDisabled]="!editMode">
+              </autocomplete-billing-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <generic-input [(model)]="constant.stringNantissementDepositFormeJuridiqueCode "
                 label="Code de forme juridique - Depot de nantissement" [form]="constantForm"
                 propertyName="stringNantissementDepositFormeJuridiqueCode " [isMandatory]="true"
@@ -515,6 +557,13 @@
             <td>
               <select-payment-types [(model)]="constant.paymentTypeEspeces" label="Type de paiement - espèces"
                 [form]="constantForm" propertyName="paymentTypeEspeces" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-payment-types>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-payment-types [(model)]="constant.paymentTypeCheques" label="Type de paiement - chèques"
+                [form]="constantForm" propertyName="paymentTypeCheques" [isMandatory]="true" [isDisabled]="!editMode">
               </select-payment-types>
             </td>
           </tr>
@@ -744,6 +793,29 @@
           </tr>
           <tr>
             <td>
+              <select-competent-authority-type [(model)]="constant.competentAuthorityTypeCci"
+                label="Type d'authorité compétente - CCI" [form]="constantForm" propertyName="competentAuthorityTypeCci"
+                [isMandatory]="true" [isDisabled]="!editMode"></select-competent-authority-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-competent-authority-type [(model)]="constant.competentAuthorityTypeChambreMetier"
+                label="Type d'authorité compétente - Chambre des métiers" [form]="constantForm"
+                propertyName="competentAuthorityTypeChambreMetier" [isMandatory]="true"
+                [isDisabled]="!editMode"></select-competent-authority-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-competent-authority-type [(model)]="constant.competentAuthorityTypeDireccte"
+                label="Type d'authorité compétente - DIRECCTE" [form]="constantForm"
+                propertyName="competentAuthorityTypeDireccte" [isMandatory]="true"
+                [isDisabled]="!editMode"></select-competent-authority-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <select-invoice-status-one [(model)]="constant.invoiceStatusPayed" label="Statut de facture - payée"
                 [form]="constantForm" propertyName="invoiceStatusPayed" [isMandatory]="true" [isDisabled]="!editMode">
               </select-invoice-status-one>
@@ -774,6 +846,14 @@
           </tr>
           <tr>
             <td>
+              <select-invoice-status-one [(model)]="constant.invoiceStatusCreditNoteEmited"
+                label="Statut de facture - avoir émis" [form]="constantForm"
+                propertyName="invoiceStatusCreditNoteEmited" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-invoice-status-one>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <select-payment-way-one [(model)]="constant.paymentWayInbound" label="Sens de paiement - entrant"
                 [form]="constantForm" propertyName="paymentWayInbound" [isMandatory]="true" [isDisabled]="!editMode">
               </select-payment-way-one>
@@ -796,6 +876,12 @@
             <td>
               <select-vat [(model)]="constant.vatEight" label="Taux de TVA - 8.5%" [form]="constantForm"
                 propertyName="vatEight" [isMandatory]="true" [isDisabled]="!editMode"></select-vat>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-vat [(model)]="constant.vatZero" label="Taux de TVA - 0%" [form]="constantForm"
+                propertyName="vatZero" [isMandatory]="true" [isDisabled]="!editMode"></select-vat>
             </td>
           </tr>
           <tr>

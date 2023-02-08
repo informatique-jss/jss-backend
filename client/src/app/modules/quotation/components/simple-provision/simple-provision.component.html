@@ -3,6 +3,14 @@
     <mat-tab [label]="provision.provisionType.label">
       <div class="form-div">
         <table class="full-width">
+          <tr
+            *ngIf="simpleProvision.waitedCompetentAuthority && simpleProvision.simpleProvisionStatus && simpleProvision.simpleProvisionStatus.code ==SIMPLE_PROVISION_WAITING_DOCUMENT_AUTHORITY">
+            <td>
+              <autocomplete-competent-authority [(model)]="simpleProvision.waitedCompetentAuthority"
+                [form]="simpleProvisionForm" propertyName="waitedCompetentAuthority" [isMandatory]="false"
+                label="Autorité compétente en attente" [isDisabled]="true"></autocomplete-competent-authority>
+            </td>
+          </tr>
           <tr>
             <td>
               <generic-textarea [(model)]="simpleProvision.observations" label="Observations"
@@ -17,7 +25,7 @@
       <provision-options [editMode]="editMode" [provision]="provision" (provisionChange)="provisionChangeFunction()">
       </provision-options>
     </mat-tab>
-    <mat-tab label="Débours" *ngIf="instanceOfCustomerOrder">
+    <mat-tab label="Débours" *ngIf="instanceOfCustomerOrder && !isStatusOpen">
       <add-debour [editMode]="editMode" [(provision)]="provision">
       </add-debour>
     </mat-tab>

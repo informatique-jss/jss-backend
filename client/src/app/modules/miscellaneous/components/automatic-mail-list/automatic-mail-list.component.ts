@@ -92,6 +92,8 @@ export class AutomaticMailListComponent implements OnInit {
   }
 
   getSentToLabel(element: any, elements: any[], column: SortTableColumn, columns: SortTableColumn[]): string {
+    if (element && element.sendToMe && element.sendToMeEmployee)
+      return element.sendToMeEmployee.mail;
     if (element && column && element.mailComputeResult && element.mailComputeResult.recipientsMailTo)
       return element.mailComputeResult.recipientsMailTo.map((mail: { mail: any; }) => mail.mail).join(", ");
     return "";

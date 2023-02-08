@@ -57,8 +57,12 @@ export class AutocompleteEmployeeComponent extends GenericLocalAutocompleteCompo
     }
   }
 
-  displayLabel(object: Employee): string {
-    return object ? object.firstname + " " + object.lastname : '';
+  displayLabel(object: any): string {
+    if (object && object.firstname && object.lastname)
+      return object.firstname + " " + object.lastname;
+    if (typeof object === "string")
+      return object;
+    return "";
   }
 
   chooseMyself() {

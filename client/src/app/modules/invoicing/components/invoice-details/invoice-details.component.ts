@@ -35,6 +35,7 @@ export class InvoiceDetailsComponent implements OnInit {
   ) { }
 
   invoiceStatusSend = this.constantService.getInvoiceStatusSend();
+  invoiceStatusReceived = this.constantService.getInvoiceStatusReceived();
   attachmentTypeInvoice = this.constantService.getAttachmentTypeInvoice();
 
   ngOnInit() {
@@ -49,10 +50,10 @@ export class InvoiceDetailsComponent implements OnInit {
     let idInvoice: number = this.activatedRoute.snapshot.params.id;
 
     if (idInvoice) {
-      this.appService.changeHeaderTitle("Facture n°" + idInvoice);
+      this.appService.changeHeaderTitle("Facture/avoir n°" + idInvoice);
       this.invoiceService.getInvoiceById(idInvoice).subscribe(response => {
         this.invoice = response;
-        this.appService.changeHeaderTitle("Facture n°" + idInvoice + " - " + this.invoice.invoiceStatus.label);
+        this.appService.changeHeaderTitle((this.invoice.isCreditNote ? "Avoir" : "Facture") + " n°" + idInvoice + " - " + this.invoice.invoiceStatus.label);
       })
     }
   }
@@ -124,7 +125,7 @@ export class InvoiceDetailsComponent implements OnInit {
     let discountAmount = 0;
     if (this.invoice && this.invoice.invoiceItems) {
       for (let invoiceItem of this.invoice.invoiceItems) {
-        discountAmount += parseFloat(invoiceItem.discountAmount + "");
+        discountAmount += parseFloat((invoiceItem.discountAmount ? invoiceItem.discountAmount : 0) + "");
       }
     }
     return discountAmount;
@@ -134,7 +135,7 @@ export class InvoiceDetailsComponent implements OnInit {
     let vat = 0;
     if (this.invoice && this.invoice.invoiceItems) {
       for (let invoiceItem of this.invoice.invoiceItems) {
-        vat += invoiceItem.vatPrice;
+        vat += parseFloat((invoiceItem.vatPrice ? invoiceItem.vatPrice : 0) + "");
       }
     }
     return vat;

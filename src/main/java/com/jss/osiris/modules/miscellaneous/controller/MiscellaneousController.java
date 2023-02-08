@@ -100,6 +100,7 @@ import com.jss.osiris.modules.quotation.service.AffaireService;
 import com.jss.osiris.modules.quotation.service.AssoAffaireOrderService;
 import com.jss.osiris.modules.quotation.service.BankTransfertService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
+import com.jss.osiris.modules.quotation.service.DirectDebitTransfertService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
@@ -230,6 +231,9 @@ public class MiscellaneousController {
 
     @Autowired
     BankTransfertService bankTransfertService;
+
+    @Autowired
+    DirectDebitTransfertService directDebitTransfertService;
 
     @GetMapping(inputEntryPoint + "/notifications")
     public ResponseEntity<List<Notification>> getNotifications(@RequestParam Boolean displayFuture) {
@@ -427,6 +431,14 @@ public class MiscellaneousController {
                 "PrincipalAccountingAccountProvider");
         validationHelper.validateReferential(constant.getPrincipalAccountingAccountWaiting(), true,
                 "PrincipalAccountingAccountWaiting");
+        validationHelper.validateReferential(constant.getBillingTypeVacationDepositBeneficialOwners(), true,
+                "BillingTypeVacationDepositBeneficialOwners");
+        validationHelper.validateReferential(constant.getBillingTypeVacationUpdateBeneficialOwners(), true,
+                "BillingTypeVacationUpdateBeneficialOwners");
+        validationHelper.validateReferential(constant.getBillingTypeFormalityAdditionalDeclaration(), true,
+                "BillingTypeFormalityAdditionalDeclaration");
+        validationHelper.validateReferential(constant.getBillingTypeCorrespondenceFees(), true,
+                "BillingTypeCorrespondenceFees");
 
         return new ResponseEntity<Constant>(constantService.addOrUpdateConstant(constant), HttpStatus.OK);
     }
@@ -468,6 +480,7 @@ public class MiscellaneousController {
             validationHelper.validateReferential(provider, true, "provider");
         validationHelper.validateString(provider.getLabel(), true, "Label");
         validationHelper.validateString(provider.getIban(), false, 40, "Iban");
+        validationHelper.validateString(provider.getBic(), false, 40, "Bic");
         validationHelper.validateString(provider.getJssReference(), false, 20, "JssReference");
         validationHelper.validateReferential(provider.getVatCollectionType(), true, "VatCollectionType");
         validationHelper.validateReferential(provider.getPaymentType(), false, "PaymentType");
@@ -769,6 +782,16 @@ public class MiscellaneousController {
                 competentAuthorityService.getCompetentAuthorityByCity(cityId), HttpStatus.OK);
     }
 
+    @GetMapping(inputEntryPoint + "/competent-authorities/search/competent-authority-type")
+    public ResponseEntity<List<CompetentAuthority>> getCompetentAuthoritiesByType(Integer competentAuthorityTypeId)
+            throws OsirisValidationException {
+        if (competentAuthorityTypeId == null)
+            throw new OsirisValidationException("competentAuthorityTypeId");
+        return new ResponseEntity<List<CompetentAuthority>>(
+                competentAuthorityService.getCompetentAuthorityByAuthorityType(competentAuthorityTypeId),
+                HttpStatus.OK);
+    }
+
     @GetMapping(inputEntryPoint + "/competent-authority-types")
     public ResponseEntity<List<CompetentAuthorityType>> getCompetentAuthorityTypes() {
         return new ResponseEntity<List<CompetentAuthorityType>>(
@@ -796,7 +819,6 @@ public class MiscellaneousController {
                 HttpStatus.OK);
     }
 
-    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
     @PostMapping(inputEntryPoint + "/competent-authority")
     public ResponseEntity<CompetentAuthority> addOrUpdateCompetentAuthority(
             @RequestBody CompetentAuthority competentAuthorities) throws OsirisValidationException, OsirisException {
@@ -1021,6 +1043,7 @@ public class MiscellaneousController {
         assoAffaireOrderService.reindexAffaires();
         affaireService.reindexAffaire();
         bankTransfertService.reindexBankTransfert();
+        directDebitTransfertService.reindexDirectDebitTransfert();
 
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }

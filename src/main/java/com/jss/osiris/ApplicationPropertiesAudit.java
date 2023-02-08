@@ -35,6 +35,7 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("schedulling.announcement.publish.actu.legale");
         isOk = isOk && checkProperty("schedulling.announcement.publication.flag");
         isOk = isOk && checkProperty("schedulling.competant.authorities.update");
+        isOk = isOk && checkProperty("schedulling.log.osiris.announcement.confrere.query.reminder");
         isOk = isOk && checkProperty("ldap.dc.level.0");
         isOk = isOk && checkProperty("ldap.dc.level.1");
         isOk = isOk && checkProperty("ldap.ou.osiris");
@@ -68,6 +69,9 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("fr.gouv.geo.api.entry.point");
         isOk = isOk && checkProperty("printer.label.ip");
         isOk = isOk && checkProperty("printer.label.port");
+        isOk = isOk && checkProperty("jss.sepa.identification");
+        isOk = isOk && checkProperty("jss.bic");
+        isOk = isOk && checkProperty("jss.iban");
 
         isOk = isOk && checkAccountingParams();
 

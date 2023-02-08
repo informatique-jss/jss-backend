@@ -71,7 +71,7 @@ export class SpecialOffersDialogComponent implements OnInit {
   chooseSpecialOffer(specialOfferFlatten: SpecialOfferFlatten) {
     this.specialOffers.forEach(specialOffer => {
       if (specialOffer.id == specialOfferFlatten.id)
-        return this.specialOffersDialogRef.close(specialOfferFlatten);
+        return this.specialOffersDialogRef.close(specialOffer);
     });
   }
 

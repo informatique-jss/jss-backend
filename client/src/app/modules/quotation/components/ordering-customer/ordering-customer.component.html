@@ -78,6 +78,13 @@
                 [values]="quotation.customerOrders" tableName="Liste commandes">
               </sort-table>
             </div>
+            <div class="div-customer-order"
+              *ngIf="quotation && instanceOfCustomerOrder(quotation) && quotation.quotations && quotation.quotations.length>0">
+              <p>Devis issus de cette commande</p>
+              <sort-table [actions]="quotationTableActions" [columns]="quotationDisplayedColumns"
+                [values]="quotation.quotations" tableName="Liste devis">
+              </sort-table>
+            </div>
             <table class="full-width">
               <tr>
                 <td>Tarif special :
@@ -95,6 +102,11 @@
                     matTooltip="Modifier le tarif spécial par défaut" (click)="displayOverrideSpecialOffers()"
                     mat-icon-button color="accent">
                     <mat-icon>edit</mat-icon>
+                  </button>
+                  <button *ngIf="editMode==true && quotation.overrideSpecialOffer"
+                    matTooltip="Ne pas modifier le tarif spécial par défaut" (click)="hideOverrideSpecialOffers()"
+                    mat-icon-button color="accent">
+                    <mat-icon>close</mat-icon>
                   </button>
                 </td>
               </tr>
@@ -146,6 +158,13 @@
                 [values]="quotation.customerOrders" tableName="Liste commandes">
               </sort-table>
             </div>
+            <div class="div-customer-order"
+              *ngIf="quotation && instanceOfCustomerOrder(quotation) && quotation.quotations && quotation.quotations.length>0">
+              <p>Devis issus de cette commande</p>
+              <sort-table [actions]="quotationTableActions" [columns]="quotationDisplayedColumns"
+                [values]="quotation.quotations" tableName="Liste devis">
+              </sort-table>
+            </div>
             <table class="full-width">
               <tr>
                 <td>Tarif special :
@@ -158,6 +177,11 @@
                     matTooltip="Modifier le tarif spécial par défaut" (click)="displayOverrideSpecialOffers()"
                     mat-icon-button color="accent">
                     <mat-icon>edit</mat-icon>
+                  </button>
+                  <button *ngIf="editMode==true && quotation.overrideSpecialOffer"
+                    matTooltip="Ne pas modifier le tarif spécial par défaut" (click)="hideOverrideSpecialOffers()"
+                    mat-icon-button color="accent">
+                    <mat-icon>close</mat-icon>
                   </button>
                 </td>
               </tr>
@@ -187,6 +211,14 @@
                 <generic-textarea [(model)]="quotation.description" label="Description de la demande"
                   [form]="orderingCustomerForm" propertyName="description" [isDisabled]="!editMode"
                   [numberOfLines]="10">
+                </generic-textarea>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <generic-textarea [(model)]="quotation.customerMailCustomMessage"
+                  label="Message personnalisé à insérer dans le mail client" [form]="orderingCustomerForm"
+                  propertyName="customerMailCustomMessage" [isDisabled]="!editMode" [numberOfLines]="10">
                 </generic-textarea>
               </td>
             </tr>

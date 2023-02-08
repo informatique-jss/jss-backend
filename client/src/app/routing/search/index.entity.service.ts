@@ -21,8 +21,12 @@ export class IndexEntityService extends AppRestService<IndexEntity>{
     return this.getList(new HttpParams().set("search", search).set("entityType", entityType.entityType), "search/type");
   }
 
-  getResponsableByKeyword(searchedValue: string) {
-    return this.getList(new HttpParams().set("searchedValue", searchedValue), "responsable/search");
+  getResponsableByKeyword(searchedValue: string, onlyActive: boolean) {
+    return this.getList(new HttpParams().set("searchedValue", searchedValue).set("onlyActive", onlyActive), "responsable/search");
+  }
+
+  getCustomerOrdersByKeyword(searchedValue: string) {
+    return this.getList(new HttpParams().set("searchedValue", searchedValue), "customer/order/search");
   }
 
   getIndividualTiersByKeyword(searchedValue: string) {

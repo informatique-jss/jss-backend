@@ -3,7 +3,7 @@ import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
 import { ActivatedRoute } from '@angular/router';
-import { ANNOUNCEMENT_STATUS_DONE, ANNOUNCEMENT_STATUS_IN_PROGRESS, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN } from 'src/app/libs/Constants';
+import { ANNOUNCEMENT_STATUS_DONE, ANNOUNCEMENT_STATUS_IN_PROGRESS, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN, SIMPLE_PROVISION_WAITING_DOCUMENT_AUTHORITY } from 'src/app/libs/Constants';
 import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
 import { WorkflowDialogComponent } from 'src/app/modules/miscellaneous/components/workflow-dialog/workflow-dialog.component';
 import { AppService } from 'src/app/services/app.service';
@@ -27,10 +27,11 @@ import { DomiciliationStatusService } from '../../services/domiciliation-status.
 import { FormaliteStatusService } from '../../services/formalite.status.service';
 import { ProvisionService } from '../../services/provision.service';
 import { SimpleProvisionStatusService } from '../../services/simple.provision.status.service';
+import { ChooseCompetentAuthorityDialogComponent } from '../choose-competent-authority-dialog/choose-competent-authority-dialog.component';
 import { ProvisionItemComponent } from '../provision-item/provision-item.component';
 import { QuotationComponent } from '../quotation/quotation.component';
 import { SelectAttachmentTypeDialogComponent } from '../select-attachment-type-dialog/select-attachment-type-dialog.component';
-import { SelectAttachmentsDialogComponent } from '../select-attachments-dialog/select-attachment-type-dialog.component';
+import { SelectAttachmentsDialogComponent } from '../select-attachments-dialog/select-attachment-dialog.component';
 
 @Component({
   selector: 'provision',
@@ -69,6 +70,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     public workflowDialog: MatDialog,
     private appService: AppService,
     public confirmationDialog: MatDialog,
+    public chooseCompetentAuthorityDialog: MatDialog,
     public attachmentTypeDialog: MatDialog,
     public attachmentsDialog: MatDialog,
     private constantService: ConstantService,
@@ -122,11 +124,25 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     });
   }
 
+
+  displaySnakBarLockProvision() {
+    this.appService.displaySnackBar("Il n'est pas possible d'ajouter ou modifier une prestation sur une commande au statut A facturer ou Facturer. Veuillez modifier le statut de la commande.", false, 15);
+  }
+
   deleteProvision(asso: AssoAffaireOrder, provision: Provision) {
+    if (this.asso.customerOrder.customerOrderStatus && (this.asso.customerOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.asso.customerOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)) {
+      this.displaySnakBarLockProvision();
+      return;
+    }
+
     asso.provisions.splice(asso.provisions.indexOf(provision), 1);
   }
 
   createProvision(asso: AssoAffaireOrder): Provision {
+    if (this.asso.customerOrder.customerOrderStatus && (this.asso.customerOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.asso.customerOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)) {
+      this.displaySnakBarLockProvision();
+      return {} as Provision;
+    }
     if (asso && !asso.provisions)
       asso.provisions = [] as Array<Provision>;
     let provision = {} as Provision;
@@ -150,13 +166,12 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     });
 
     if (provisionStatus && this.affaireForm.valid) {
+      this.editMode = false;
       this.assoAffaireOrderService.updateAsso(this.asso).subscribe(response => {
         this.asso = response;
-        this.editMode = false;
         this.appService.openRoute(null, '/provision/' + this.idAffaire, null);
       })
     } else {
-      this.editMode = false;
       this.appService.displaySnackBar("Les onglets suivants ne sont pas correctement remplis. Veuillez les compléter avant de sauvegarder : Prestations", true, 15);
     }
   }
@@ -229,11 +244,16 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
   }
 
   changeStatus(status: IWorkflowElement, provision: Provision) {
+    if (this.asso.customerOrder.customerOrderStatus && (this.asso.customerOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.asso.customerOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)) {
+      this.displaySnakBarLockProvision();
+      return;
+    }
+
     let saveAsso = true;
     if (provision.announcement) {
       provision.announcement.announcementStatus = status;
       if (status.code == ANNOUNCEMENT_STATUS_IN_PROGRESS && !provision.announcement.isPublicationReciptAlreadySent && provision.announcement.confrere && provision.announcement.confrere.id == this.constantService.getConfrereJssSpel().id
-        || provision.announcement.confrere && provision.announcement.confrere.id != this.constantService.getConfrereJssSpel().id && this.publicationReceiptFound(provision.announcement)) {
+        || !provision.announcement.isPublicationReciptAlreadySent && provision.announcement.confrere && provision.announcement.confrere.id != this.constantService.getConfrereJssSpel().id && this.publicationReceiptFound(provision.announcement)) {
         saveAsso = false;
         const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
           maxWidth: "400px",
@@ -297,8 +317,26 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     }
     if (provision.formalite)
       provision.formalite.formaliteStatus = status;
-    if (provision.simpleProvision)
-      provision.simpleProvision.simpleProvisionStatus = status;
+    if (provision.simpleProvision) {
+      if (status.code == SIMPLE_PROVISION_WAITING_DOCUMENT_AUTHORITY) {
+        saveAsso = false;
+        const dialogRef = this.chooseCompetentAuthorityDialog.open(ChooseCompetentAuthorityDialogComponent, {
+          maxWidth: "400px",
+        });
+
+        dialogRef.componentInstance.title = "Choix de l'autorité compétente";
+        dialogRef.componentInstance.label = "Veuillez choisir l'autorité compétente associée au statut " + status.label;
+        dialogRef.afterClosed().subscribe(dialogResult => {
+          if (dialogResult && dialogResult != false && provision.simpleProvision) {
+            provision.simpleProvision.waitedCompetentAuthority = dialogResult;
+            provision.simpleProvision.simpleProvisionStatus = status;
+            this.saveAsso();
+          }
+        });
+      } else {
+        provision.simpleProvision.simpleProvisionStatus = status;
+      }
+    }
     if (provision.bodacc)
       provision.bodacc.bodaccStatus = status;
     if (provision.domiciliation)
@@ -314,7 +352,23 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
   }
 
   generatePublicationReceipt(announcement: Announcement, provision: Provision) {
-    this.announcementService.previewPublicationReceipt(announcement, provision);
+    const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
+      maxWidth: "400px",
+      data: {
+        title: "Générer le justificatif de parution ?",
+        content: "Voulez vous simplement visualiser un justificatif de parution pour cette annonce ou bien la stocker sur cette dernière ?",
+        closeActionText: "Visualiser",
+        validationActionText: "Stocker"
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(dialogResult => {
+      if (dialogResult == true) {
+        this.announcementService.generateAndStorePublicationReceipt(announcement, provision).subscribe(response => this.refreshAffaire());
+      } else {
+        this.announcementService.previewPublicationReceipt(announcement, provision);
+      }
+    });
   }
 
   generateProofReading(announcement: Announcement, provision: Provision) {
@@ -322,7 +376,23 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
   }
 
   generatePublicationFlag(announcement: Announcement, provision: Provision) {
-    this.announcementService.previewPublicationFlag(announcement, provision);
+    const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
+      maxWidth: "400px",
+      data: {
+        title: "Générer le témoin de publication ?",
+        content: "Voulez vous simplement visualiser un témoin de publication pour cette annonce ou bien le stocker sur cette dernière ?",
+        closeActionText: "Visualiser",
+        validationActionText: "Stocker"
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(dialogResult => {
+      if (dialogResult == true) {
+        this.announcementService.generateAndStorePublicationFlag(announcement, provision).subscribe(response => this.refreshAffaire());
+      } else {
+        this.announcementService.previewPublicationFlag(announcement, provision);
+      }
+    });
   }
 
   generatePublicationReceiptMail(announcement: Announcement) {

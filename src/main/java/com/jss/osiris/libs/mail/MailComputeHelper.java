@@ -130,7 +130,7 @@ public class MailComputeHelper {
                 if (quotationDocument.getMailsAffaire() != null && quotationDocument.getMailsAffaire().size() > 0) {
                     mailComputeResult.getRecipientsMailTo().addAll(quotationDocument.getMailsAffaire());
                     mailComputeResult.setMailToAffaireOrigin("mails indiqués dans la commande");
-                } else if (quotation.getAssoAffaireOrders() != null
+                } else if (quotation.getAssoAffaireOrders() != null && quotation.getAssoAffaireOrders().size() > 0
                         && quotation.getAssoAffaireOrders().get(0).getAffaire().getMails() != null
                         && quotation.getAssoAffaireOrders().get(0).getAffaire().getMails().size() > 0) {
                     mailComputeResult.getRecipientsMailTo()
@@ -304,9 +304,12 @@ public class MailComputeHelper {
                     && ((Responsable) customer).getTiers().getAddress() != null
                     && ((Responsable) customer).getTiers().getCity() != null) {
                 Tiers tiers = ((Responsable) customer).getTiers();
-                invoiceLabelResult.setBillingLabel(
-                        tiers.getDenomination() != null ? tiers.getDenomination()
-                                : tiers.getFirstname() + " " + tiers.getLastname());
+                if (tiers.getMailRecipient() == null || tiers.getMailRecipient().length() == 0)
+                    invoiceLabelResult.setBillingLabel(
+                            tiers.getDenomination() != null ? tiers.getDenomination()
+                                    : tiers.getFirstname() + " " + tiers.getLastname());
+                else
+                    invoiceLabelResult.setBillingLabel(tiers.getMailRecipient());
                 invoiceLabelResult.setBillingLabelAddress(tiers.getAddress());
                 invoiceLabelResult.setBillingLabelCity(tiers.getCity());
                 invoiceLabelResult.setBillingLabelComplementCedex(tiers.getCedexComplement());
@@ -341,9 +344,12 @@ public class MailComputeHelper {
                     && ((Tiers) customer).getAddress() != null
                     && ((Tiers) customer).getCity() != null) {
                 Tiers tiers = (Tiers) customer;
-                invoiceLabelResult.setBillingLabel(
-                        tiers.getDenomination() != null ? tiers.getDenomination()
-                                : tiers.getFirstname() + " " + tiers.getLastname());
+                if (tiers.getMailRecipient() == null || tiers.getMailRecipient().length() == 0)
+                    invoiceLabelResult.setBillingLabel(
+                            tiers.getDenomination() != null ? tiers.getDenomination()
+                                    : tiers.getFirstname() + " " + tiers.getLastname());
+                else
+                    invoiceLabelResult.setBillingLabel(tiers.getMailRecipient());
                 invoiceLabelResult.setBillingLabelAddress(tiers.getAddress());
                 invoiceLabelResult.setBillingLabelCity(tiers.getCity());
                 invoiceLabelResult.setBillingLabelComplementCedex(tiers.getCedexComplement());

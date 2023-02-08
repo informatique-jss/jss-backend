@@ -58,7 +58,8 @@ public class SireneDelegateServiceImpl implements SireneDelegateService {
 			res = new RestTemplate().postForEntity(inseeEntryPoint + tokenUrl, request,
 					InseeToken.class);
 		} catch (Exception e) {
-			if (e.getMessage().contains("Connection timed out"))
+			if (e.getMessage().contains("Connection timed out")
+					|| e.getMessage().contains("Connexion terminée par expiration du délai d'attente"))
 				throw new OsirisClientMessageException("Service de recherche SIRENE de l'INSEE indisponible !");
 			else
 				throw e;

@@ -14,4 +14,6 @@ public interface CompetentAuthorityRepository extends CrudRepository<CompetentAu
     List<CompetentAuthority> findByCity_Id(Integer cityId);
 
     Optional<CompetentAuthority> findByApiId(String apiId);
+
+    List<CompetentAuthority> findByCompetentAuthorityType_Id(Integer competentAuthorityTypeId);
 }

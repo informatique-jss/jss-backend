@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
+import { formatDate } from 'src/app/libs/FormatHelper';
 import { UserNoteService } from 'src/app/services/user.notes.service';
 import { BillingItem } from '../../../model/BillingItem';
 import { BillingItemService } from '../../../services/billing.item.service';
@@ -30,7 +31,7 @@ export class AutocompleteBillingItemComponent extends GenericLocalAutocompleteCo
   }
 
   displayLabel(object: BillingItem): string {
-    return object ? object.billingType.label + " (" + object.billingType.code + ")" : '';
+    return object ? object.billingType.label + " (" + object.billingType.code + " / " + formatDate(object.startDate) + ")" : '';
   }
 
 }

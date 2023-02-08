@@ -26,7 +26,8 @@ public interface AssoAffaireOrderRepository extends CrudRepository<AssoAffaireOr
                         " coalesce(ans.label,fs.label,doms.label, bos.label,sps.label) as statusLabel," +
                         " asso.id as assoId," +
                         " p.is_emergency as isEmergency," +
-                        " p.id as provisionId" +
+                        " p.id as provisionId, " +
+                        " sp_ca.label as waitedCompetentAuthorityLabel " +
                         " from asso_affaire_order asso " +
                         " join affaire a on a.id = asso.id_affaire" +
                         " join customer_order c on c.id = asso.id_customer_order" +
@@ -49,6 +50,7 @@ public interface AssoAffaireOrderRepository extends CrudRepository<AssoAffaireOr
                         " left join domiciliation_status doms on doms.id = dom.id_domicilisation_status " +
                         " left join simple_provision sp on sp.id = p.id_simple_provision" +
                         " left join simple_provision_status sps on sps.id = sp.id_simple_provision_status " +
+                        " left join competent_authority sp_ca on sp_ca.id = sp.id_waited_competent_authority " +
                         " left join bodacc bo on bo.id = p.id_bodacc" +
                         " left join bodacc_status bos on bos.id = bo.id_bodacc_status" +
                         " where cs.code not in (:excludedCustomerOrderStatusCode) and (COALESCE(:responsible)=0 or asso.id_employee in (:responsible))"

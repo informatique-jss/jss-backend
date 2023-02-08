@@ -13,8 +13,8 @@ import { AddAffaireDialogComponent } from '../add-affaire-dialog/add-affaire-dia
 
 @Component({
   selector: 'app-select-attachment-type-dialog',
-  templateUrl: './select-attachment-type-dialog.component.html',
-  styleUrls: ['./select-attachment-type-dialog.component.css']
+  templateUrl: './select-attachment-dialog.component.html',
+  styleUrls: ['./select-attachment-dialog.component.css']
 })
 export class SelectAttachmentsDialogComponent implements OnInit {
 

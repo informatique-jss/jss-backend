@@ -40,7 +40,7 @@ export class BankTransfertListComponent implements OnInit, AfterContentChecked {
 
     this.setColumns();
 
-    this.transfertSearch.isHideExportedRefunds = true;
+    this.transfertSearch.isHideExportedBankTransfert = true;
   }
 
   transfertForm = this.formBuilder.group({
@@ -51,9 +51,11 @@ export class BankTransfertListComponent implements OnInit, AfterContentChecked {
   }
 
   searchTransferts() {
-    if (this.transfertForm.valid && this.transfertSearch.startDate && this.transfertSearch.endDate) {
-      this.transfertSearch.startDate = new Date(toIsoString(this.transfertSearch.startDate));
-      this.transfertSearch.endDate = new Date(toIsoString(this.transfertSearch.endDate));
+    if (this.transfertForm.valid) {
+      if (this.transfertSearch.startDate)
+        this.transfertSearch.startDate = new Date(toIsoString(this.transfertSearch.startDate));
+      if (this.transfertSearch.endDate)
+        this.transfertSearch.endDate = new Date(toIsoString(this.transfertSearch.endDate));
       this.bankTransfertSearchResultService.getTransferts(this.transfertSearch).subscribe(response => {
         this.transfers = response;
       })

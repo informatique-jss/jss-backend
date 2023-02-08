@@ -26,6 +26,7 @@ export class InvoicePaymentComponent implements OnInit {
   @Output() stateChanged = new EventEmitter<void>();
 
   invoiceStatusSend = this.constantService.getInvoiceStatusSend();
+  invoiceStatusReceived = this.constantService.getInvoiceStatusReceived();
 
   constructor(private paymentService: PaymentService,
     private appService: AppService,

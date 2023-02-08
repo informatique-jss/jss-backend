@@ -30,10 +30,16 @@
     <td class="td-price mat-cell">
     </td>
   </tr>
-  <tr class="mat-row">
+  <tr class="mat-row" *ngIf="!invoice.isCreditNote">
     <td class="mat-cell">Reste à payer
     </td>
     <td class="td-price mat-cell">{{getAmountRemaining(invoice)}} €
+    </td>
+  </tr>
+  <tr class="mat-row" *ngIf="invoice.isCreditNote">
+    <td class="mat-cell">Net à créditer
+    </td>
+    <td class="td-price mat-cell">{{getAmountPayed(invoice)}} €
     </td>
   </tr>
   <tr

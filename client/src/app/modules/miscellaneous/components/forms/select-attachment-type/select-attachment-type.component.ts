@@ -20,7 +20,7 @@ export class SelectAttachmentTypeComponent extends GenericSelectComponent<Attach
 
   initTypes(): void {
     this.attachmentTypeService.getAttachmentTypes().subscribe(response => {
-      this.types = response;
+      this.types = response.sort((a, b) => a.label.localeCompare(b.label));
     })
   }
 }

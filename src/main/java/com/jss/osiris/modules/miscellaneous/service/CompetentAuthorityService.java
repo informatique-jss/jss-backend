@@ -18,4 +18,6 @@ public interface CompetentAuthorityService {
     public List<CompetentAuthority> getCompetentAuthorityByCity(Integer cityId);
 
     public CompetentAuthority getCompetentAuthorityByApiId(String apiId);
+
+    public List<CompetentAuthority> getCompetentAuthorityByAuthorityType(Integer competentAuthorityTypeId);
 }

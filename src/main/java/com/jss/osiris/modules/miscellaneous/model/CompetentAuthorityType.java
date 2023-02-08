@@ -23,6 +23,9 @@ public class CompetentAuthorityType implements Serializable, IId {
 	@Column(nullable = false, length = 20)
 	private String code;
 
+	@Column(nullable = false)
+	private Boolean isDirectCharge;
+
 	public Integer getId() {
 		return id;
 	}
@@ -45,6 +48,14 @@ public class CompetentAuthorityType implements Serializable, IId {
 
 	public void setCode(String code) {
 		this.code = code;
+	}
+
+	public Boolean getIsDirectCharge() {
+		return isDirectCharge;
+	}
+
+	public void setIsDirectCharge(Boolean isDirectCharge) {
+		this.isDirectCharge = isDirectCharge;
 	}
 
 }

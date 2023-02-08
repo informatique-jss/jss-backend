@@ -244,7 +244,7 @@ export class AssociateDepositDialogComponent implements OnInit, AfterContentChec
             asso = { deposit: this.deposit, invoice: invoice, } as AssociationSummaryTable;
       } else
         asso = { deposit: this.deposit, customerOrder: order, } as AssociationSummaryTable;
-      let maxAmount = Math.round((Math.min(this.amountRemaining(), this.getInitialAmount(asso) - this.getInitialPayedAmount(asso))) * 100) / 100;
+      let maxAmount = Math.round((this.amountRemaining()) * 100) / 100;
       amountDialogRef.componentInstance.maxAmount = maxAmount;
       amountDialogRef.afterClosed().subscribe(response => {
         if (response != null) {

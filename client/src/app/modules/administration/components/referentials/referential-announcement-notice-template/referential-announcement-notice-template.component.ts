@@ -1,5 +1,5 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { AnnouncementNoticeTemplate } from 'src/app/modules/quotation/model/AnnouncementNoticeTemplate';
 import { AnnouncementNoticeTemplateService } from 'src/app/modules/quotation/services/announcement.notice.template.service';
@@ -18,17 +18,11 @@ export class ReferentialAnnouncementNoticeTemplateComponent extends GenericRefer
     super(formBuilder2, appService2);
   }
 
-  @Output() noticeChange: EventEmitter<void> = new EventEmitter<void>();
+  entityForm2 = this.formBuilder2.group({
+    notice: ['', Validators.required]
+  })
 
   ngOnInit() {
-    this.entityForm.addControl("text", this.formBuilder2.control({}));
-    this.entityForm.get("text")!.valueChanges.subscribe(
-      (newValue) => {
-        if (newValue != undefined && this.selectedEntity) {
-          this.selectedEntity.text = newValue;
-        }
-      }
-    )
     this.setDataTable();
     if (this.saveEvent)
       this.saveEventSubscription = this.saveEvent.subscribe(() => this.saveEntity());
@@ -40,9 +34,6 @@ export class ReferentialAnnouncementNoticeTemplateComponent extends GenericRefer
 
   selectEntity(element: AnnouncementNoticeTemplate) {
     this.selectedEntity = element;
-    this.entityForm.patchValue({
-      text: this.selectedEntity.text
-    });
     this.selectedEntityChange.emit(this.selectedEntity);
   }
 
@@ -52,11 +43,4 @@ export class ReferentialAnnouncementNoticeTemplateComponent extends GenericRefer
   getGetObservable(): Observable<AnnouncementNoticeTemplate[]> {
     return this.announcementNoticeTemplateService.getAnnouncementNoticeTemplates();
   }
-
-  setTextModel(event: any) {
-    if (this.selectedEntity)
-      this.selectedEntity.text = event.html;
-    this.noticeChange.emit();
-  }
-
 }

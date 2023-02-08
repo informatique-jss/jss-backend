@@ -174,10 +174,10 @@ export class DashboardComponent implements OnInit {
         this.affaireSearchResponsibleToDo.responsible = this.currentEmployee;
         this.affaireSearchResponsibleToDo.status = this.statusTypes.filter(stauts => stauts.isOpenState);
 
-        this.affaireSearchWaitingDocument.responsible = this.currentEmployee;
+        this.affaireSearchWaitingDocument.assignedTo = this.currentEmployee;
         this.affaireSearchWaitingDocument.status = this.simpleProvisionStatus.filter(stauts => stauts.code == SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT);
 
-        this.affaireSearchWaitingAuthority.responsible = this.currentEmployee;
+        this.affaireSearchWaitingAuthority.assignedTo = this.currentEmployee;
         this.affaireSearchWaitingAuthority.status = this.simpleProvisionStatus.filter(stauts => stauts.code == SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT_AUTHORITY);
 
         this.orderingSearchOpen.salesEmployee = this.currentEmployee!;

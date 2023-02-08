@@ -27,7 +27,15 @@ public interface AnnouncementService {
         public void generateStoreAndSendPublicationReceipt(CustomerOrder customerOrder, Announcement announcement)
                         throws OsirisException, OsirisClientMessageException;
 
+        public void generateAndStorePublicationReceipt(Announcement announcement,
+                        Provision currentProvision)
+                        throws OsirisException, OsirisClientMessageException;
+
         public void generateStoreAndSendPublicationFlag(CustomerOrder customerOrder, Announcement announcement)
+                        throws OsirisException, OsirisClientMessageException;
+
+        public void generateAndStorePublicationFlag(Announcement announcement,
+                        Provision currentProvision)
                         throws OsirisException, OsirisClientMessageException;
 
         public void generateStoreAndSendProofReading(Announcement announcement, CustomerOrder customerOrder)
@@ -41,5 +49,7 @@ public interface AnnouncementService {
         public void generateAndStoreAnnouncementWordFile(CustomerOrder customerOrder, AssoAffaireOrder asso,
                         Provision provision, Announcement announcement)
                         throws OsirisException, OsirisClientMessageException;
+
+        public void sendRemindersToConfrereForAnnouncement() throws OsirisException, OsirisClientMessageException;
 
 }

@@ -14,4 +14,5 @@ export interface Debour {
   paymentType: PaymentType;
   paymentDateTime: Date;
   payment: Payment;
+  checkNumber: string;
 }

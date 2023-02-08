@@ -24,20 +24,41 @@ public class PmtInfBean {
 	@JacksonXmlProperty(localName = "ReqdExctnDt")
 	String reqdExctnDt = "";
 
+	@JacksonXmlProperty(localName = "ReqdColltnDt")
+	String reqdColltnDt = "";
+
 	@JacksonXmlProperty(localName = "PmtTpInf")
 	PmtTpInfBean pmtTpInfBean;
 
 	@JacksonXmlProperty(localName = "Dbtr")
 	DbtrBean dbtrBean;
 
+	@JacksonXmlProperty(localName = "Cdtr")
+	DbtrBean cdtrBean;
+
 	@JacksonXmlProperty(localName = "DbtrAcct")
 	DbtrAcctBean dbtrAcctBean;
+
+	@JacksonXmlProperty(localName = "CdtrAcct")
+	DbtrAcctBean cdtrAcctBean;
 
 	@JacksonXmlProperty(localName = "DbtrAgt")
 	DbtrAgtBean dbtrAgtBean;
 
+	@JacksonXmlProperty(localName = "CdtrAgt")
+	DbtrAgtBean cdtrAgtBean;
+
+	@JacksonXmlProperty(localName = "CdtrSchmeId")
+	CdtrSchmeIdBean cdtrSchmeIdBean;
+
 	@JacksonXmlProperty(localName = "CdtTrfTxInf")
 	List<CdtTrfTxInfBean> cdtTrfTxInfBeanList;
+
+	@JacksonXmlProperty(localName = "DrctDbtTxInf")
+	List<DrctDbtTxInfBean> drctDbtTxInfBeanList;
+
+	@JacksonXmlProperty(localName = "ChrgBr")
+	String ChrgBr;
 
 	public void setBtchBookg(Boolean btchBookg) {
 		this.btchBookg = btchBookg;
@@ -135,6 +156,62 @@ public class PmtInfBean {
 		if (cdtTrfTxInfBeanList == null)
 			cdtTrfTxInfBeanList = new ArrayList<CdtTrfTxInfBean>();
 		return cdtTrfTxInfBeanList;
+	}
+
+	public String getReqdColltnDt() {
+		return reqdColltnDt;
+	}
+
+	public void setReqdColltnDt(String reqdColltnDt) {
+		this.reqdColltnDt = reqdColltnDt;
+	}
+
+	public DbtrBean getCdtrBean() {
+		return cdtrBean;
+	}
+
+	public void setCdtrBean(DbtrBean cdtrBean) {
+		this.cdtrBean = cdtrBean;
+	}
+
+	public DbtrAcctBean getCdtrAcctBean() {
+		return cdtrAcctBean;
+	}
+
+	public void setCdtrAcctBean(DbtrAcctBean cdtrAcctBean) {
+		this.cdtrAcctBean = cdtrAcctBean;
+	}
+
+	public DbtrAgtBean getCdtrAgtBean() {
+		return cdtrAgtBean;
+	}
+
+	public void setCdtrAgtBean(DbtrAgtBean cdtrAgtBean) {
+		this.cdtrAgtBean = cdtrAgtBean;
+	}
+
+	public String getChrgBr() {
+		return ChrgBr;
+	}
+
+	public void setChrgBr(String chrgBr) {
+		ChrgBr = chrgBr;
+	}
+
+	public List<DrctDbtTxInfBean> getDrctDbtTxInfBeanList() {
+		return drctDbtTxInfBeanList;
+	}
+
+	public void setDrctDbtTxInfBeanList(List<DrctDbtTxInfBean> drctDbtTxInfBeanList) {
+		this.drctDbtTxInfBeanList = drctDbtTxInfBeanList;
+	}
+
+	public CdtrSchmeIdBean getCdtrSchmeIdBean() {
+		return cdtrSchmeIdBean;
+	}
+
+	public void setCdtrSchmeIdBean(CdtrSchmeIdBean cdtrSchmeIdBean) {
+		this.cdtrSchmeIdBean = cdtrSchmeIdBean;
 	}
 
 }

@@ -101,6 +101,12 @@ public class AnnouncementStatusServiceImpl implements AnnouncementStatusService 
                                 AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE);
                 setSuccessor(AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE,
                                 AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS);
+
+                setSuccessor(AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE,
+                                AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE_PUBLISHED);
+                setSuccessor(AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE,
+                                AnnouncementStatus.ANNOUNCEMENT_PUBLISHED);
+
                 setSuccessor(AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE,
                                 AnnouncementStatus.ANNOUNCEMENT_WAITING_READ_CUSTOMER);
                 setSuccessor(AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS,

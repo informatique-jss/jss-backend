@@ -4,10 +4,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
 import { ActivatedRoute, UrlSegment } from '@angular/router';
 import { Subject } from 'rxjs';
-import { CUSTOMER_ORDER_STATUS_BILLED, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN, VALIDATED_BY_CUSTOMER } from 'src/app/libs/Constants';
+import { CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_TO_BILLED, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN, VALIDATED_BY_CUSTOMER } from 'src/app/libs/Constants';
 import { getDocument } from 'src/app/libs/DocumentHelper';
 import { instanceOfCustomerOrder } from 'src/app/libs/TypeHelper';
 import { getRemainingToPay } from 'src/app/modules/invoicing/components/invoice-tools';
+import { Vat } from 'src/app/modules/miscellaneous/model/Vat';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { Employee } from 'src/app/modules/profile/model/Employee';
 import { BillingLabelType } from 'src/app/modules/tiers/model/BillingLabelType';
@@ -20,6 +21,7 @@ import { replaceDocument } from '../../../../libs/DocumentHelper';
 import { instanceOfQuotation } from '../../../../libs/TypeHelper';
 import { AssociateDepositDialogComponent } from '../../../invoicing/components/associate-deposit-dialog/associate-deposit-dialog.component';
 import { WorkflowDialogComponent } from '../../../miscellaneous/components/workflow-dialog/workflow-dialog.component';
+import { ITiers } from '../../../tiers/model/ITiers';
 import { Affaire } from '../../model/Affaire';
 import { AssoAffaireOrder } from '../../model/AssoAffaireOrder';
 import { CustomerOrder } from '../../model/CustomerOrder';
@@ -187,7 +189,8 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
 
   checkAffaireAssignation() {
     let userList: Employee[] = [] as Array<Employee>;
-    if (this.quotation && this.instanceOfCustomerOrder && this.quotation.assoAffaireOrders)
+    if (this.quotation && this.instanceOfCustomerOrder && this.quotation.assoAffaireOrders && this.quotation.assoAffaireOrders.length > 0
+      && this.quotation.assoAffaireOrders[0].provisions && this.quotation.assoAffaireOrders[0].provisions.length > 0)
       for (let asso of this.quotation.assoAffaireOrders)
         if (asso.affaire && asso.provisions && !asso.assignedTo) {
           let found = false;
@@ -196,8 +199,17 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
               if (provision.assignedTo && provision.assignedTo.id == employee.id)
                 found = true;
             }
-            if (!found)
+            if (!found && provision.assignedTo)
               userList.push(provision.assignedTo);
+          }
+          if (userList.length == 0) {
+            let tiers: ITiers | undefined = this.quotation.responsable ?? this.quotation.tiers ?? this.quotation.confrere;
+            if (tiers) {
+              if (tiers.formalisteEmployee)
+                userList.push(tiers.formalisteEmployee);
+              if (tiers.insertionEmployee)
+                userList.push(tiers.insertionEmployee);
+            }
           }
           let chooseUserDialogRef = this.chooseUserDialog.open(ChooseAssignedUserDialogComponent, {
             width: '100%'
@@ -302,6 +314,10 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
   }
 
   createProvision(asso: AssoAffaireOrder): Provision {
+    if (instanceOfCustomerOrder(this.quotation) && this.quotation.customerOrderStatus && (this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)) {
+      this.displaySnakBarLockProvision();
+      return {} as Provision;
+    }
     if (asso && !asso.provisions)
       asso.provisions = [] as Array<Provision>;
     let provision = {} as Provision;
@@ -310,14 +326,23 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     return provision;
   }
 
+  displaySnakBarLockProvision() {
+    this.appService.displaySnackBar("Il n'est pas possible d'ajouter ou modifier une prestation sur une commande au statut A facturer ou Facturer. Veuillez modifier le statut de la commande.", false, 15);
+  }
+
   addAffaire() {
+    if (instanceOfCustomerOrder(this.quotation) && this.quotation.customerOrderStatus && (this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)) {
+      this.displaySnakBarLockProvision();
+      return;
+    }
+
     let dialogRef = this.addAffaireDialog.open(AddAffaireDialogComponent, {
       width: '100%',
       height: '90%'
     });
 
     if (this.quotationManagementComponent?.getBillingDocument() && this.quotationManagementComponent?.getBillingDocument().billingLabelType && this.quotationManagementComponent?.getBillingDocument().billingLabelType.id)
-      dialogRef.componentInstance.isLabelAffaire = this.quotationManagementComponent?.getBillingDocument()!.billingLabelType.id == this.constantService.getBillingLabelTypeCodeAffaire().id;
+      dialogRef.componentInstance.isLabelAffaire = this.quotationManagementComponent?.getBillingDocument()!.isRecipientAffaire;
 
     dialogRef.afterClosed().subscribe(response => {
       if (response != null) {
@@ -366,6 +391,10 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
   }
 
   deleteProvision(asso: AssoAffaireOrder, provision: Provision) {
+    if (instanceOfCustomerOrder(this.quotation) && this.quotation.customerOrderStatus && (this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)) {
+      this.displaySnakBarLockProvision();
+      return;
+    }
     asso.provisions.splice(asso.provisions.indexOf(provision), 1);
   }
 
@@ -525,10 +554,10 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
   }
 
   getApplicableVat(): VatBase[] {
-    return QuotationComponent.computeApplicableVat(this.quotation);
+    return QuotationComponent.computeApplicableVat(this.quotation, this.constantService.getVatDeductible());
   }
 
-  public static computeApplicableVat(quotation: IQuotation): VatBase[] {
+  public static computeApplicableVat(quotation: IQuotation, debourVat: Vat): VatBase[] {
     let vatBases: VatBase[] = [];
     if (quotation && quotation.assoAffaireOrders) {
       for (let asso of quotation.assoAffaireOrders) {
@@ -537,16 +566,36 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
             if (provision.invoiceItems) {
               for (let invoiceItem of provision.invoiceItems) {
                 if (invoiceItem.vat && invoiceItem.vatPrice && invoiceItem.vatPrice > 0) {
-                  let vatFound = false;
-                  for (let vatBase of vatBases) {
-                    if (vatBase.label == invoiceItem.vat.label) {
-                      vatFound = true;
-                      vatBase.base += invoiceItem.preTaxPrice - (invoiceItem.discountAmount ? invoiceItem.discountAmount : 0);
-                      vatBase.total += invoiceItem.vatPrice;
+
+                  if (!invoiceItem.billingItem.billingType.isDebour || !provision.debours || provision.debours.length == 0) {
+                    let vatFound = false;
+                    for (let vatBase of vatBases) {
+                      if (vatBase.label == invoiceItem.vat.label) {
+                        vatFound = true;
+                        vatBase.base += invoiceItem.preTaxPrice - (invoiceItem.discountAmount ? invoiceItem.discountAmount : 0);
+                        vatBase.total += invoiceItem.vatPrice;
+                      }
                     }
-                  }
-                  if (!vatFound) {
-                    vatBases.push({ label: invoiceItem.vat.label, base: (invoiceItem.preTaxPrice - (invoiceItem.discountAmount ? invoiceItem.discountAmount : 0)), total: invoiceItem.vatPrice });
+                    if (!vatFound) {
+                      vatBases.push({ label: invoiceItem.vat.label, base: (invoiceItem.preTaxPrice - (invoiceItem.discountAmount ? invoiceItem.discountAmount : 0)), total: invoiceItem.vatPrice });
+                    }
+                  } else if (provision.debours) {
+                    for (let debour of provision.debours) {
+                      if (!debour.billingType.isNonTaxable) {
+                        let vatFound = false;
+
+                        for (let vatBase of vatBases) {
+                          if (vatBase.label == debourVat.label) {
+                            vatFound = true;
+                            vatBase.base += debour.debourAmount / (1 + (debourVat.rate / 100));
+                            vatBase.total += (debour.debourAmount / (1 + (debourVat.rate / 100))) * debourVat.rate / 100;
+                          }
+                        }
+                        if (!vatFound) {
+                          vatBases.push({ label: debourVat.label, base: debour.debourAmount / (1 + (debourVat.rate / 100)), total: (debour.debourAmount / (1 + (debourVat.rate / 100))) * debourVat.rate / 100 });
+                        }
+                      }
+                    }
                   }
                 }
               }

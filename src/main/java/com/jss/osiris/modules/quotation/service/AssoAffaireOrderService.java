@@ -19,6 +19,9 @@ public interface AssoAffaireOrderService {
         public AssoAffaireOrder addOrUpdateAssoAffaireOrder(AssoAffaireOrder assoAffaireOrder)
                         throws OsirisException, OsirisClientMessageException;
 
+        public AssoAffaireOrder addOrUpdateAssoAffaireOrderFromUser(AssoAffaireOrder assoAffaireOrder)
+                        throws OsirisException, OsirisClientMessageException;
+
         public void updateAssignedToForAsso(AssoAffaireOrder asso, Employee employee);
 
         public ArrayList<AssoAffaireOrderSearchResult> searchForAsso(AffaireSearch affaireSearch);

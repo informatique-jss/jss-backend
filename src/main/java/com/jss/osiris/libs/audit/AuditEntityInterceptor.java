@@ -54,6 +54,27 @@ public class AuditEntityInterceptor extends EmptyInterceptor {
         return super.onFlushDirty(entity, id, currentState, previousState, propertyNames, types);
     }
 
+    @Override
+    public boolean onSave(
+            Object entity,
+            Serializable id,
+            Object[] state,
+            String[] propertyNames,
+            Type[] types) {
+        if (!entity.getClass().getName().equals(IndexEntity.class.getName())
+                && !entity.getClass().getName().equals(Audit.class.getName())) {
+            Audit audit = new Audit();
+            audit.setUsername(activeDirectoryHelper.getCurrentUsername());
+            audit.setDatetime(LocalDateTime.now());
+            audit.setEntity(entity.getClass().getSimpleName());
+            audit.setEntityId((Integer) id);
+            audit.setNewValue(((Integer) id) + "");
+            audit.setFieldName("id");
+            addToAuditToSave(audit);
+        }
+        return super.onSave(entity, id, state, propertyNames, types);
+    }
+
     private void auditEntity(Object[] previousState, Object[] currentState, Object entity,
             Serializable id, String[] propertyNames) {
         if (!entity.getClass().getName().equals(IndexEntity.class.getName())) {
@@ -130,7 +151,8 @@ public class AuditEntityInterceptor extends EmptyInterceptor {
         synchronized (auditToSave) {
             HashSet<Audit> auditsToDelete = new HashSet<Audit>();
             if (auditToSave != null && auditToSave.size() > 0) {
-                if (!tx.getStatus().equals(TransactionStatus.ACTIVE))
+                if (!tx.getStatus().equals(TransactionStatus.ACTIVE)
+                        && !tx.getStatus().equals(TransactionStatus.MARKED_ROLLBACK))
                     tx.begin();
                 try {
                     for (Audit audit : auditToSave) {

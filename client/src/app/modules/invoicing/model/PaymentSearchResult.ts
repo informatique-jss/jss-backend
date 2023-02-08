@@ -7,6 +7,7 @@ export interface PaymentSearchResult {
   paymentAmount: number;
   paymentLabel: string;
   isExternallyAssociated: boolean;
+  isAssociated: boolean;
   isCancelled: boolean;
   invoiceId: number;
 }

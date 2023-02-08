@@ -49,6 +49,9 @@ public class Provider implements Serializable, IId {
 	@Column(length = 40)
 	private String iban;
 
+	@Column(length = 40)
+	private String bic;
+
 	@ManyToMany
 	@JoinTable(name = "asso_provider_mail", joinColumns = @JoinColumn(name = "id_provider"), inverseJoinColumns = @JoinColumn(name = "id_mail"))
 	private List<Mail> mails;
@@ -171,6 +174,14 @@ public class Provider implements Serializable, IId {
 
 	public void setDefaultBillingItem(BillingItem defaultBillingItem) {
 		this.defaultBillingItem = defaultBillingItem;
+	}
+
+	public String getBic() {
+		return bic;
+	}
+
+	public void setBic(String bic) {
+		this.bic = bic;
 	}
 
 }

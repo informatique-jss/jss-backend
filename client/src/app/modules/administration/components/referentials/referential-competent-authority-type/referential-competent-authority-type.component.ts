@@ -8,7 +8,7 @@ import { GenericReferentialComponent } from '../generic-referential/generic-refe
 
 @Component({
   selector: 'referential-competent-authority-type',
-  templateUrl: './../generic-referential/generic-referential.component.html',
+  templateUrl: './referential-competent-authority-type.component.html',
   styleUrls: ['./../generic-referential/generic-referential.component.css']
 })
 export class ReferentialCompetentAuthorityTypeComponent extends GenericReferentialComponent<CompetentAuthorityType> implements OnInit {

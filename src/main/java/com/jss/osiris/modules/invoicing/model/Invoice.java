@@ -15,6 +15,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -25,9 +26,11 @@ import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.City;
+import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.miscellaneous.model.Country;
 import com.jss.osiris.modules.miscellaneous.model.IAttachment;
 import com.jss.osiris.modules.miscellaneous.model.IId;
+import com.jss.osiris.modules.miscellaneous.model.PaymentType;
 import com.jss.osiris.modules.miscellaneous.model.Provider;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
@@ -41,8 +44,9 @@ import com.jss.osiris.modules.tiers.model.TiersFollowup;
 public class Invoice implements IId, IAttachment {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@SequenceGenerator(name = "invoice_sequence", sequenceName = "invoice_sequence", allocationSize = 1)
 	@IndexedField
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "invoice_sequence")
 	private Integer id;
 
 	@Column(nullable = false)
@@ -72,6 +76,10 @@ public class Invoice implements IId, IAttachment {
 	@ManyToOne
 	@JoinColumn(name = "id_tiers")
 	private Tiers tiers;
+
+	@ManyToOne
+	@JoinColumn(name = "id_competent_authority")
+	private CompetentAuthority competentAuthority;
 
 	@ManyToOne
 	@JoinColumn(name = "id_provider")
@@ -140,9 +148,29 @@ public class Invoice implements IId, IAttachment {
 	@Column(length = 150)
 	private String manualAccountingDocumentNumber;
 
+	@ManyToOne
+	@JoinColumn(name = "id_payment_type")
+	private PaymentType manualPaymentType;
+
 	@OneToMany(mappedBy = "invoice")
 	@JsonIgnoreProperties(value = { "invoice" }, allowSetters = true)
 	private List<TiersFollowup> tiersFollowups;
+
+	@ManyToOne
+	@JsonIgnoreProperties(value = { "invoices", "providerInvoices" }, allowSetters = true)
+	@JoinColumn(name = "id_customer_order_for_inbound_invoice")
+	private CustomerOrder customerOrderForInboundInvoice;
+
+	private Boolean isCreditNote;
+
+	@OneToOne
+	@JoinColumn(name = "id_credit_note")
+	@JsonIgnoreProperties(value = { "reverseCreditNote" }, allowSetters = true)
+	private Invoice creditNote;
+
+	@OneToOne(mappedBy = "creditNote")
+	@JsonIgnoreProperties(value = { "creditNote", "customerOrder" }, allowSetters = true)
+	private Invoice reverseCreditNote;
 
 	public Integer getId() {
 		return id;
@@ -406,6 +434,54 @@ public class Invoice implements IId, IAttachment {
 
 	public void setTiersFollowups(List<TiersFollowup> tiersFollowups) {
 		this.tiersFollowups = tiersFollowups;
+	}
+
+	public PaymentType getManualPaymentType() {
+		return manualPaymentType;
+	}
+
+	public void setManualPaymentType(PaymentType manualPaymentType) {
+		this.manualPaymentType = manualPaymentType;
+	}
+
+	public CompetentAuthority getCompetentAuthority() {
+		return competentAuthority;
+	}
+
+	public void setCompetentAuthority(CompetentAuthority competentAuthority) {
+		this.competentAuthority = competentAuthority;
+	}
+
+	public CustomerOrder getCustomerOrderForInboundInvoice() {
+		return customerOrderForInboundInvoice;
+	}
+
+	public void setCustomerOrderForInboundInvoice(CustomerOrder customerOrderForInboundInvoice) {
+		this.customerOrderForInboundInvoice = customerOrderForInboundInvoice;
+	}
+
+	public Boolean getIsCreditNote() {
+		return isCreditNote;
+	}
+
+	public void setIsCreditNote(Boolean isCreditNote) {
+		this.isCreditNote = isCreditNote;
+	}
+
+	public Invoice getCreditNote() {
+		return creditNote;
+	}
+
+	public void setCreditNote(Invoice creditNote) {
+		this.creditNote = creditNote;
+	}
+
+	public Invoice getReverseCreditNote() {
+		return reverseCreditNote;
+	}
+
+	public void setReverseCreditNote(Invoice reverseCreditNote) {
+		this.reverseCreditNote = reverseCreditNote;
 	}
 
 }

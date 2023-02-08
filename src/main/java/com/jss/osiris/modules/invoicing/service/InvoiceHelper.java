@@ -116,8 +116,9 @@ public class InvoiceHelper {
         } else if (customerOrder != null
                 && constantService.getBillingLabelTypeCodeAffaire().getId()
                         .equals(billingDocument.getBillingLabelType().getId())) {
+            invoiceLabelResult.setLabelOrigin("les informations de l'affaire");
             if (customerOrder.getAssoAffaireOrders() == null || customerOrder.getAssoAffaireOrders().size() == 0)
-                throw new OsirisException(null, "No affaire in the customer order " + customerOrder.getId());
+                return invoiceLabelResult;
             Affaire affaire = customerOrder.getAssoAffaireOrders().get(0).getAffaire();
             invoiceLabelResult
                     .setBillingLabel(affaire.getIsIndividual() ? affaire.getFirstname() + " " + affaire.getLastname()
@@ -200,6 +201,38 @@ public class InvoiceHelper {
         invoice.setIsResponsableOnBilling(invoiceLabelResult.getIsResponsableOnBilling());
         invoice.setIsCommandNumberMandatory(invoiceLabelResult.getIsCommandNumberMandatory());
         invoice.setCommandNumber(invoiceLabelResult.getCommandNumber());
+    }
+
+    public String getIbanOfOrderingCustomer(Invoice invoice) {
+        if (invoice != null) {
+            if (invoice.getTiers() != null)
+                return invoice.getTiers().getPaymentIban();
+            if (invoice.getResponsable() != null)
+                return invoice.getResponsable().getTiers().getPaymentIban();
+            if (invoice.getConfrere() != null)
+                return invoice.getConfrere().getPaymentIban();
+            if (invoice.getProvider() != null)
+                return invoice.getProvider().getIban();
+            if (invoice.getCompetentAuthority() != null)
+                return invoice.getCompetentAuthority().getIban();
+        }
+        return null;
+    }
+
+    public String getBicOfOrderingCustomer(Invoice invoice) {
+        if (invoice != null) {
+            if (invoice.getTiers() != null)
+                return invoice.getTiers().getPaymentBic();
+            if (invoice.getResponsable() != null)
+                return invoice.getResponsable().getTiers().getPaymentBic();
+            if (invoice.getConfrere() != null)
+                return invoice.getConfrere().getPaymentBic();
+            if (invoice.getProvider() != null)
+                return invoice.getProvider().getBic();
+            if (invoice.getCompetentAuthority() != null)
+                return invoice.getCompetentAuthority().getBic();
+        }
+        return null;
     }
 
 }

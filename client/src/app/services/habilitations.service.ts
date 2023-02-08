@@ -23,6 +23,10 @@ export class HabilitationsService {
     return true;
   }
 
+  canViewCompetentAuthorityModule() {
+    return true;
+  }
+
   canViewQuotationModule() {
     return true;
   }
@@ -72,6 +76,10 @@ export class HabilitationsService {
   }
 
   canImportOfxFile() {
+    return this.loginService.hasGroup([ACCOUNTING, ACCOUNTING_RESPONSIBLE])
+  }
+
+  canModifyPaymentAssociation() {
     return this.loginService.hasGroup([ACCOUNTING, ACCOUNTING_RESPONSIBLE])
   }
 

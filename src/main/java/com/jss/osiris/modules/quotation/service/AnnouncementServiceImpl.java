@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.PictureHelper;
 import com.jss.osiris.libs.WordGenerationHelper;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
@@ -30,6 +31,7 @@ import com.jss.osiris.modules.quotation.model.AnnouncementSearchResult;
 import com.jss.osiris.modules.quotation.model.AnnouncementStatus;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.repository.AnnouncementRepository;
 
@@ -62,6 +64,12 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
     @Autowired
     WordGenerationHelper wordGenerationHelper;
+
+    @Autowired
+    PictureHelper pictureHelper;
+
+    @Autowired
+    CustomerOrderStatusService customerOrderStatusService;
 
     @Override
     public List<Announcement> getAnnouncements() {
@@ -112,11 +120,14 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                 .getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_DONE);
         announcementStautsId.add(closeStatus.getId());
 
+        CustomerOrderStatus customerOrderStatusExcluded = customerOrderStatusService
+                .getCustomerOrderStatusByCode(CustomerOrderStatus.ABANDONED);
+
         return announcementRepository.searchAnnouncements(announcementSearch.getAffaireName(),
                 announcementSearch.getIsStricNameSearch(), departementId,
                 announcementSearch.getStartDate(),
                 announcementSearch.getEndDate(), announcementStautsId, constantService.getConfrereJssSpel().getId(),
-                noticeTypeId);
+                noticeTypeId, customerOrderStatusExcluded.getId());
     }
 
     @Override
@@ -177,25 +188,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
         if (announcement.getIsPublicationReciptAlreadySent() == null
                 || !announcement.getIsPublicationReciptAlreadySent()) {
-            if (announcement.getConfrere() != null
-                    && announcement.getConfrere().getId().equals(constantService.getConfrereJssSpel().getId())) {
-                File publicationReceiptPdf = mailHelper.generatePublicationReceiptPdf(announcement, true,
-                        currentProvision);
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
-                try {
-                    announcement.setAttachments(
-                            attachmentService.addAttachment(new FileInputStream(publicationReceiptPdf),
-                                    announcement.getId(),
-                                    Announcement.class.getSimpleName(),
-                                    constantService.getAttachmentTypePublicationReceipt(),
-                                    "Publication_receipt_" + formatter.format(LocalDateTime.now()) + ".pdf",
-                                    false, "Attestation de parution n°" + announcement.getId()));
-                } catch (FileNotFoundException e) {
-                    throw new OsirisException(e, "Impossible to read invoice PDF temp file");
-                } finally {
-                    publicationReceiptPdf.delete();
-                }
-            }
+            generateAndStorePublicationReceipt(announcement, currentProvision);
 
             // Try to send whereas it was JSS or not
             mailHelper.sendPublicationReceiptToCustomer(
@@ -206,6 +199,31 @@ public class AnnouncementServiceImpl implements AnnouncementService {
             addOrUpdateAnnouncement(announcement);
         }
 
+    }
+
+    @Override
+    public void generateAndStorePublicationReceipt(Announcement announcement, Provision currentProvision)
+            throws OsirisException, OsirisClientMessageException {
+
+        if (announcement.getConfrere() != null
+                && announcement.getConfrere().getId().equals(constantService.getConfrereJssSpel().getId())) {
+            File publicationReceiptPdf = mailHelper.generatePublicationReceiptPdf(announcement, true,
+                    currentProvision);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
+            try {
+                announcement.setAttachments(
+                        attachmentService.addAttachment(new FileInputStream(publicationReceiptPdf),
+                                announcement.getId(),
+                                Announcement.class.getSimpleName(),
+                                constantService.getAttachmentTypePublicationReceipt(),
+                                "Publication_receipt_" + formatter.format(LocalDateTime.now()) + ".pdf",
+                                false, "Attestation de parution n°" + announcement.getId()));
+            } catch (FileNotFoundException e) {
+                throw new OsirisException(e, "Impossible to read invoice PDF temp file");
+            } finally {
+                publicationReceiptPdf.delete();
+            }
+        }
     }
 
     @Override
@@ -228,27 +246,33 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                 || announcement.getPublicationDate().isEqual(LocalDate.now())) {
             if ((announcement.getIsPublicationFlagAlreadySent() == null
                     || !announcement.getIsPublicationFlagAlreadySent()) && announcement.getNotice() != null) {
-                if (announcement.getConfrere() != null
-                        && announcement.getConfrere().getId().equals(constantService.getConfrereJssSpel().getId())) {
-                    File publicationReceiptPdf = mailHelper.generatePublicationFlagPdf(announcement, currentProvision);
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
-                    try {
-                        announcement.setAttachments(
-                                attachmentService.addAttachment(new FileInputStream(publicationReceiptPdf),
-                                        announcement.getId(),
-                                        Announcement.class.getSimpleName(),
-                                        constantService.getAttachmentTypePublicationFlag(),
-                                        "Publication_flag_" + formatter.format(LocalDateTime.now()) + ".pdf",
-                                        false, "Témoin de publication n°" + announcement.getId()));
-                    } catch (FileNotFoundException e) {
-                        throw new OsirisException(e, "Impossible to read invoice PDF temp file");
-                    } finally {
-                        publicationReceiptPdf.delete();
-                    }
-                }
+                generateAndStorePublicationFlag(announcement, currentProvision);
                 mailHelper.sendPublicationFlagToCustomer(customerOrder, false, announcement);
                 announcement.setIsPublicationFlagAlreadySent(true);
                 addOrUpdateAnnouncement(announcement);
+            }
+        }
+    }
+
+    @Override
+    public void generateAndStorePublicationFlag(Announcement announcement, Provision currentProvision)
+            throws OsirisException, OsirisClientMessageException {
+        if (announcement.getConfrere() != null
+                && announcement.getConfrere().getId().equals(constantService.getConfrereJssSpel().getId())) {
+            File publicationReceiptPdf = mailHelper.generatePublicationFlagPdf(announcement, currentProvision);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
+            try {
+                announcement.setAttachments(
+                        attachmentService.addAttachment(new FileInputStream(publicationReceiptPdf),
+                                announcement.getId(),
+                                Announcement.class.getSimpleName(),
+                                constantService.getAttachmentTypePublicationFlag(),
+                                "Publication_flag_" + formatter.format(LocalDateTime.now()) + ".pdf",
+                                false, "Témoin de publication n°" + announcement.getId()));
+            } catch (FileNotFoundException e) {
+                throw new OsirisException(e, "Impossible to read invoice PDF temp file");
+            } finally {
+                publicationReceiptPdf.delete();
             }
         }
     }
@@ -325,18 +349,38 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                 || !announcement.getIsAnnouncementAlreadySentToConfrere()) {
             if (announcement.getConfrere() != null
                     && !announcement.getConfrere().getId().equals(constantService.getConfrereJssSpel().getId())) {
-                File wordFile = wordGenerationHelper.generateWordFromHtml(announcement.getNotice());
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
+
+                // Get and set logo
+                String htmlContent = "";
+                if (provision.getAttachments() != null && provision.getAttachments().size() > 0)
+                    for (Attachment attachment : provision.getAttachments())
+                        if (attachment.getAttachmentType().getId()
+                                .equals(constantService.getAttachmentTypeLogo().getId())) {
+                            htmlContent += "<div class=\"alignment\" align=\"center\"><img style=\"max-width:500px\" src=\"data:image/jpeg;base64,"
+                                    + pictureHelper.getPictureFileAsBase64String(
+                                            new File(attachment.getUploadedFile().getPath()))
+                                    + "\" /></div><br/>";
+                            break;
+                        }
+
+                if (announcement.getNoticeHeader() != null)
+                    htmlContent += announcement.getNoticeHeader() + "</br>";
+
+                if (announcement.getNotice() != null)
+                    htmlContent += announcement.getNotice();
+
+                File wordFile = wordGenerationHelper.generateWordFromHtml(htmlContent);
                 try {
                     announcement.setAttachments(
                             attachmentService.addAttachment(new FileInputStream(wordFile),
                                     announcement.getId(),
                                     Announcement.class.getSimpleName(), constantService.getAttachmentTypeAnnouncement(),
-                                    "announcement_" + announcement.getId() + formatter.format(LocalDateTime.now())
+                                    "announcement_" + announcement.getId()
+                                            + DateTimeFormatter.ofPattern("yyyyMMdd HHmm").format(LocalDateTime.now())
                                             + ".docx",
                                     false, "Annonce n°" + announcement.getId()));
                 } catch (FileNotFoundException e) {
-                    throw new OsirisException(e, "Impossible to read invoice PDF temp file");
+                    throw new OsirisException(e, "Impossible to read announcement Word temp file");
                 } finally {
                     wordFile.delete();
                 }
@@ -344,13 +388,66 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                 // Try to send whereas it was JSS or not
                 mailHelper.sendAnnouncementRequestToConfrere(
                         customerOrderService.getCustomerOrder(customerOrder.getId()), asso,
-                        false, provision, announcement);
+                        false, provision, announcement, false);
 
                 announcement.setIsAnnouncementAlreadySentToConfrere(true);
+                announcement.setFirstConfrereSentMailDateTime(LocalDateTime.now());
                 addOrUpdateAnnouncement(announcement);
             }
         }
+    }
 
+    @Override
+    @Transactional
+    public void sendRemindersToConfrereForAnnouncement() throws OsirisException, OsirisClientMessageException {
+        List<Announcement> announcements = announcementRepository
+                .getAnnouncementForConfrereReminder(announcementStatusService
+                        .getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_WAITING_CONFRERE));
+
+        if (announcements != null && announcements.size() > 0) {
+            for (Announcement announcement : announcements) {
+                CustomerOrder customerOrder = customerOrderService.getCustomerOrderForAnnouncement(announcement);
+
+                // Get provision
+                Provision currentProvision = null;
+                AssoAffaireOrder currentAsso = null;
+                if (customerOrder != null && customerOrder.getAssoAffaireOrders() != null) {
+                    for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
+                        if (asso.getProvisions() != null)
+                            for (Provision provision : asso.getProvisions())
+                                if (provision.getAnnouncement() != null
+                                        && provision.getAnnouncement().getId().equals(announcement.getId())) {
+                                    currentProvision = provision;
+                                    currentAsso = asso;
+                                    break;
+                                }
+
+                    boolean toSend = false;
+                    if (announcement.getFirstConfrereReminderDateTime() == null
+                            && announcement.getFirstConfrereSentMailDateTime()
+                                    .isBefore(LocalDateTime.now().minusDays(1 * 3))) {
+                        toSend = true;
+                        announcement.setFirstConfrereReminderDateTime(LocalDateTime.now());
+                    } else if (announcement.getSecondConfrereReminderDateTime() == null
+                            && announcement.getFirstConfrereSentMailDateTime()
+                                    .isBefore(LocalDateTime.now().minusDays(1 * 4))) {
+                        toSend = true;
+                        announcement.setSecondConfrereReminderDateTime(LocalDateTime.now());
+                    } else if (announcement.getSecondConfrereReminderDateTime()
+                            .isBefore(LocalDateTime.now().minusDays(1 * 7))) {
+                        toSend = true;
+                        announcement.setThirdConfrereReminderDateTime(LocalDateTime.now());
+                    }
+
+                    if (toSend) {
+                        mailHelper.sendAnnouncementRequestToConfrere(
+                                customerOrderService.getCustomerOrder(customerOrder.getId()), currentAsso,
+                                false, currentProvision, announcement, true);
+                        addOrUpdateAnnouncement(announcement);
+                    }
+                }
+            }
+        }
     }
 
 }

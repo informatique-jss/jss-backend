@@ -56,6 +56,7 @@ export interface Constant {
   attachmentTypeLogo: AttachmentType;
   attachmentTypeProofOfAddress: AttachmentType;
   attachmentTypeInvoice: AttachmentType;
+  attachmentTypeCreditNote: AttachmentType;
   attachmentTypeKbisUpdated: AttachmentType;
   attachmentTypePublicationFlag: AttachmentType;
   attachmentTypePublicationReceipt: AttachmentType;
@@ -94,6 +95,10 @@ export interface Constant {
   billingTypeDocumentScanning: BillingType;
   billingTypeEmergency: BillingType;
   billingTypeCentralPayFees: BillingType;
+  billingTypeVacationDepositBeneficialOwners: BillingType;
+  billingTypeVacationUpdateBeneficialOwners: BillingType;
+  billingTypeFormalityAdditionalDeclaration: BillingType;
+  billingTypeCorrespondenceFees: BillingType;
   stringNantissementDepositFormeJuridiqueCode: string;
   strinSocialShareNantissementRedactionFormeJuridiqueCode: string;
   stringBusinnessNantissementRedactionFormeJuridiqueCode: string;
@@ -101,6 +106,7 @@ export interface Constant {
   paymentTypeVirement: PaymentType;
   paymentTypeCB: PaymentType;
   paymentTypeEspeces: PaymentType;
+  paymentTypeCheques: PaymentType;
   refundTypeVirement: RefundType;
   subscriptionPeriodType12M: SubscriptionPeriodType;
   legalFormUnregistered: LegalForm;
@@ -130,14 +136,19 @@ export interface Constant {
   transfertFundsTypeBail: TransfertFundsType;
   competentAuthorityTypeRcs: CompetentAuthorityType;
   competentAuthorityTypeCfp: CompetentAuthorityType;
+  competentAuthorityTypeCci: CompetentAuthorityType;
+  competentAuthorityTypeChambreMetier: CompetentAuthorityType;
+  competentAuthorityTypeDireccte: CompetentAuthorityType;
   invoiceStatusSend: InvoiceStatus;
   invoiceStatusReceived: InvoiceStatus;
   invoiceStatusPayed: InvoiceStatus;
   invoiceStatusCancelled: InvoiceStatus;
+  invoiceStatusCreditNoteEmited: InvoiceStatus;
   paymentWayInbound: PaymentWay;
   paymentWayOutboud: PaymentWay;
   vatTwenty: Vat;
   vatEight: Vat;
+  vatZero: Vat;
   vatDeductible: Vat;
   departmentMartinique: Department;
   departmentGuadeloupe: Department;

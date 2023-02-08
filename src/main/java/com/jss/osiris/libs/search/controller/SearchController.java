@@ -43,8 +43,17 @@ public class SearchController {
 	}
 
 	@GetMapping(inputEntryPoint + "/responsable/search")
-	public ResponseEntity<List<IndexEntity>> getResponsableByKeyword(@RequestParam String searchedValue) {
-		return new ResponseEntity<List<IndexEntity>>(searchService.getResponsableByKeyword(searchedValue),
+	public ResponseEntity<List<IndexEntity>> getActifResponsableByKeyword(@RequestParam String searchedValue,
+			@RequestParam Boolean onlyActive) {
+		return new ResponseEntity<List<IndexEntity>>(
+				searchService.getActifResponsableByKeyword(searchedValue, onlyActive),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/customer/order/search")
+	public ResponseEntity<List<IndexEntity>> getCustomerOrdersByKeyword(@RequestParam String searchedValue) {
+		return new ResponseEntity<List<IndexEntity>>(
+				searchService.getCustomerOrdersByKeyword(searchedValue),
 				HttpStatus.OK);
 	}
 }

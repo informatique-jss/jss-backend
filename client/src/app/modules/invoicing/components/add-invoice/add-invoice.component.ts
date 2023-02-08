@@ -5,6 +5,7 @@ import { Subject } from 'rxjs';
 import { formatEurosForSortTable } from 'src/app/libs/FormatHelper';
 import { Attachment } from 'src/app/modules/miscellaneous/model/Attachment';
 import { City } from 'src/app/modules/miscellaneous/model/City';
+import { CompetentAuthority } from 'src/app/modules/miscellaneous/model/CompetentAuthority';
 import { Country } from 'src/app/modules/miscellaneous/model/Country';
 import { Provider } from 'src/app/modules/miscellaneous/model/Provider';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
@@ -18,6 +19,9 @@ import { TiersService } from 'src/app/modules/tiers/services/tiers.service';
 import { INVOICE_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
 import { IndexEntity } from '../../../../routing/search/IndexEntity';
+import { BillingItem } from '../../../miscellaneous/model/BillingItem';
+import { CustomerOrder } from '../../../quotation/model/CustomerOrder';
+import { CustomerOrderService } from '../../../quotation/services/customer.order.service';
 import { ResponsableService } from '../../../tiers/services/responsable.service';
 import { InvoiceService } from '../../services/invoice.service';
 
@@ -28,7 +32,7 @@ import { InvoiceService } from '../../services/invoice.service';
 })
 export class AddInvoiceComponent implements OnInit {
 
-  invoice: Invoice = { isInvoiceFromProvider: true } as Invoice;
+  invoice: Invoice = { isInvoiceFromProvider: true, manualPaymentType: this.contantService.getPaymentTypeVirement() } as Invoice;
   invoiceItems: InvoiceItem[] = new Array<InvoiceItem>;
   invoiceItem: InvoiceItem = {} as InvoiceItem;
   isEditing: boolean = false;
@@ -44,6 +48,7 @@ export class AddInvoiceComponent implements OnInit {
     private tiersService: TiersService,
     private cityService: CityService,
     private responsableService: ResponsableService,
+    private customerOrderService: CustomerOrderService,
     private contantService: ConstantService,
   ) {
   }
@@ -52,6 +57,7 @@ export class AddInvoiceComponent implements OnInit {
   displayedColumns: SortTableColumn[] = [] as Array<SortTableColumn>;
   tableAction: SortTableAction[] = [] as Array<SortTableAction>;
   attachmentTypeInvoice = this.contantService.getAttachmentTypeInvoice();
+  indexedCustomerOrder: IndexEntity | undefined;
 
   refreshTable: Subject<void> = new Subject<void>();
 
@@ -81,7 +87,7 @@ export class AddInvoiceComponent implements OnInit {
     this.displayedColumns.push({ id: "vat", fieldName: "vat.label", label: "TVA applicable" } as SortTableColumn);
     this.displayedColumns.push({ id: "vatPrice", fieldName: "vatPrice", label: "Montant de la TVA", valueFonction: this.getVatPrice } as SortTableColumn);
     this.displayedColumns.push({ id: "discountAmount", fieldName: "discountAmount", label: "Remise totale", valueFonction: formatEurosForSortTable } as SortTableColumn);
-    this.displayedColumns.push({ id: "totalPrice", fieldName: "totalPrice", label: "Prix total", valueFonction: this.getTotalPrice } as SortTableColumn);
+    this.displayedColumns.push({ id: "totalPrice", fieldName: "totalPrice", label: "Prix total", valueFonction: (element: any) => { return this.getTotalPriceValue(element) + " €" } } as SortTableColumn);
 
     this.tableAction.push({
       actionIcon: "delete", actionName: "Supprimer la ligne de facturation", actionClick: (action: SortTableAction, element: any) => {
@@ -101,17 +107,26 @@ export class AddInvoiceComponent implements OnInit {
       this.invoice.provider = undefined;
   }
 
-  getTotalPrice(element: any) {
+  getTotalPriceValue(element: any): number {
     let total = 0;
     if (element && element.preTaxPrice) {
       total += parseFloat(element.preTaxPrice + "");
-      if (element.vat)
-        total += element.preTaxPrice * element.vat.rate / 100;
       if (element.discountAmount)
         total -= parseFloat(element.discountAmount + "");
-      return Math.round(total * 100) / 100 + " €";
+      if (element.vat)
+        total += (parseFloat(element.preTaxPrice + "") + (parseFloat(element.discountAmount + "") ? parseFloat(element.discountAmount + "") : 0)) * element.vat.rate / 100;
+      return Math.round(total * 100) / 100;
     }
-    return "0 €";
+    return 0;
+  }
+
+  getInvoiceTotal(): number {
+    let total = 0;
+    if (this.invoiceItems)
+      for (let invoiceItem of this.invoiceItems)
+        total += this.getTotalPriceValue(invoiceItem);
+
+    return Math.round(total * 100) / 100;
   }
 
   addInvoiceItem() {
@@ -121,7 +136,7 @@ export class AddInvoiceComponent implements OnInit {
       this.invoiceItem = newInvoiceItem;
       this.refreshTable.next();
     } else {
-      this.appService.displaySnackBar("Veuilliez remplir l'ensemble des champs avant d'ajouter une nouvelle ligne de facturation", true, 15);
+      this.appService.displaySnackBar("Veuillez remplir l'ensemble des champs avant d'ajouter une nouvelle ligne de facturation", true, 15);
     }
   }
 
@@ -134,12 +149,14 @@ export class AddInvoiceComponent implements OnInit {
 
   saveInvoice() {
     if (this.invoiceForm.valid && this.invoiceItems && this.invoiceItems.length > 0 || this.invoice.id) {
+      if (this.indexedCustomerOrder)
+        this.invoice.customerOrderForInboundInvoice = { id: this.indexedCustomerOrder.entityId } as CustomerOrder;
       this.invoiceService.saveInvoice(this.invoice).subscribe(response => {
         if (response)
           this.appService.openRoute(null, '/invoicing/view/' + response.id, null);
       });
     } else {
-      this.appService.displaySnackBar("Veuilliez saisir au moins une ligne de facturation valide", true, 15);
+      this.appService.displaySnackBar("Veuillez saisir au moins une ligne de facturation valide", true, 15);
     }
   }
 
@@ -150,6 +167,7 @@ export class AddInvoiceComponent implements OnInit {
       this.invoice.responsable = undefined;
       this.invoice.confrere = undefined;
       this.invoice.provider = undefined;
+      this.invoice.competentAuthority = undefined;
     })
   }
 
@@ -157,10 +175,20 @@ export class AddInvoiceComponent implements OnInit {
     this.invoice.confrere = confrere;
     this.invoice.tiers = undefined;
     this.invoice.responsable = undefined;
+    this.invoice.competentAuthority = undefined;
   }
 
   fillProvider(provider: Provider) {
     this.invoice.provider = provider;
+    this.invoice.confrere = undefined;
+    this.invoice.tiers = undefined;
+    this.invoice.responsable = undefined;
+    this.invoice.competentAuthority = undefined;
+  }
+
+  fillCompetentAuthority(competentAuthority: CompetentAuthority) {
+    this.invoice.competentAuthority = competentAuthority;
+    this.invoice.provider = undefined;
     this.invoice.confrere = undefined;
     this.invoice.tiers = undefined;
     this.invoice.responsable = undefined;
@@ -169,13 +197,20 @@ export class AddInvoiceComponent implements OnInit {
   fillResponsable(responsable: IndexEntity) {
     this.responsableService.getResponsable(responsable.entityId).subscribe(response => {
       this.invoice.responsable = response;
+      this.invoice.competentAuthority = undefined;
+      this.invoice.provider = undefined;
+      this.invoice.confrere = undefined;
+      this.invoice.tiers = undefined;
     })
-    this.tiersService.getTiersByResponsable(responsable.entityId).subscribe(response => {
-      if (this.invoice.responsable != null) {
-        this.invoice.responsable.tiers = response;
-      }
+  }
+
+  fillCustomerOrder(customerOrderIndexed: IndexEntity) {
+    this.customerOrderService.getCustomerOrder(customerOrderIndexed.entityId).subscribe(response => {
+      if (response)
+        this.invoice.customerOrderForInboundInvoice = response as CustomerOrder;
+      else
+        this.indexedCustomerOrder = undefined;
     })
-    this.invoice.tiers = undefined;
   }
 
   fillPostalCode(city: City) {
@@ -206,5 +241,18 @@ export class AddInvoiceComponent implements OnInit {
 
   isManualInvoice(): boolean {
     return !this.invoice.id || !this.invoice.customerOrder;
+  }
+
+  fillBillingItem(invoiceItem: InvoiceItem, billingItem: BillingItem) {
+    if (invoiceItem && billingItem)
+      if (billingItem.billingType && billingItem.billingType.isOverrideVat && billingItem.billingType.vat) {
+        invoiceItem.vat = billingItem.billingType.vat;
+        return;
+      }
+    if (billingItem.billingType && billingItem.billingType.isDebour)
+      if (billingItem.billingType.isNonTaxable)
+        invoiceItem.vat = this.contantService.getVatZero();
+      else
+        invoiceItem.vat = this.contantService.getVatDeductible();
   }
 }

@@ -2,6 +2,7 @@ package com.jss.osiris.modules.miscellaneous.service;
 
 import java.util.List;
 
+import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.miscellaneous.model.Country;
 import com.jss.osiris.modules.miscellaneous.model.Department;
@@ -13,7 +14,7 @@ public interface VatService {
     public Vat getVat(Integer id);
 
     public Vat getGeographicalApplicableVat(Country country, Department departement, boolean isIndividual)
-            throws OsirisException;
+            throws OsirisException, OsirisClientMessageException;
 
     public Vat addOrUpdateVat(Vat vat);
 

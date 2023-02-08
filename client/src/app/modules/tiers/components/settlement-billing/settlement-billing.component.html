@@ -151,13 +151,13 @@
                 </select-payment-types>
               </td>
               <td
-                *ngIf="tiers  && tiers.paymentType && (tiers.paymentType.id==paymentTypePrelevement.id || tiers.paymentType.id==paymentTypePrelevement.id)">
+                *ngIf="tiers  && tiers.paymentType && (tiers.paymentType.id==paymentTypePrelevement.id || tiers.paymentType.id==paymentTypeVirement.id)">
                 <generic-input [(model)]="tiers.paymentIban" label="IBAN" [form]="settlementBillingForm"
                   propertyName="paymentIban" [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="40">
                 </generic-input>
               </td>
               <td
-                *ngIf="tiers  && tiers.paymentType && (tiers.paymentType.id==paymentTypePrelevement.id || tiers.paymentType.id==paymentTypePrelevement.id)">
+                *ngIf="tiers  && tiers.paymentType && (tiers.paymentType.id==paymentTypePrelevement.id || tiers.paymentType.id==paymentTypeVirement.id)">
                 <generic-input [(model)]="tiers.paymentBic" label="BIC" [form]="settlementBillingForm"
                   propertyName="paymentBic" [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="40">
                 </generic-input>
@@ -176,6 +176,18 @@
                 <select-payment-deadline [(model)]="dunningDocument.paymentDeadlineType" label="Délai de paiement"
                   [form]="settlementBillingForm" propertyName="paymentDeadlineType" [isDisabled]="!editMode">
                 </select-payment-deadline>
+              </td>
+              <td *ngIf="tiers && tiers.paymentType && tiers.paymentType.id==paymentTypePrelevement.id">
+                <generic-datepicker [(model)]="tiers.sepaMandateSignatureDate" label="Date de signature du mandat SEPA"
+                  [form]="settlementBillingForm" propertyName="sepaMandateSignatureDate" [isMandatory]="true"
+                  [isDisabled]="!editMode"
+                  [conditionnalRequired]="tiers.paymentType.id==paymentTypePrelevement.id"></generic-datepicker>
+              </td>
+              <td>
+                <generic-input [(model)]="tiers.sepaMandateReference" label="Référence du mandat SEPA"
+                  [form]="settlementBillingForm" propertyName="sepaMandateReference" [isMandatory]="true"
+                  [isDisabled]="!editMode" [conditionnalRequired]="tiers.paymentType.id==paymentTypePrelevement.id"
+                  [maxLength]="250"></generic-input>
               </td>
             </tr>
           </table>

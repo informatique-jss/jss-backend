@@ -18,6 +18,8 @@ public interface PaymentSearchResult {
 
     public Boolean getIsExternallyAssociated();
 
+    public Boolean getIsAssociated();
+
     public Boolean getIsCancelled();
 
     public Integer getInvoiceId();

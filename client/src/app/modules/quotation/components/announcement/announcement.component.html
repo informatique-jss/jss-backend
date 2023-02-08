@@ -158,21 +158,40 @@
               <td>
                 <p>En-tête :</p>
                 <div *ngIf="!editMode">
-                  <span [innerHTML]="announcement.noticeHeader | trustHtml"></span>
+                  <span [innerHTML]="announcement.noticeHeader | trustHtml" class="announce-container"></span>
                 </div>
-                <quill-editor [hidden]="!editMode" formControlName="noticeHeader"
-                  (onContentChanged)="setNoticeHeaderModel($event)">
-                </quill-editor>
+                <editor apiKey="tuyvqqbiskpltllm13hwnc00n4gjq5sc3gzrhlocmr75s1fw" *ngIf="editMode"
+                  formControlName="noticeHeader" [disabled]="!editMode" [(ngModel)]="announcement.noticeHeader" [init]="{
+     height: 500,
+     menubar: false,
+     plugins: [
+       'table'
+     ],
+     toolbar:
+       'undo redo | formatselect | bold italic backcolor | \
+       alignleft aligncenter alignright alignjustify | \
+       bullist numlist outdent indent | removeformat | help'
+   }"></editor>
               </td>
             </tr>
             <tr>
               <td>
                 <p>Annonce :</p>
                 <div *ngIf="!editMode">
-                  <span [innerHTML]="announcement.notice | trustHtml"></span>
+                  <span [innerHTML]="announcement.notice | trustHtml" class="announce-container"></span>
                 </div>
-                <quill-editor [hidden]="!editMode" formControlName="notice" (onContentChanged)="setNoticeModel($event)">
-                </quill-editor>
+                <editor apiKey="tuyvqqbiskpltllm13hwnc00n4gjq5sc3gzrhlocmr75s1fw" *ngIf="editMode"
+                  formControlName="notice" [disabled]="!editMode" [(ngModel)]="announcement.notice" [init]="{
+     height: 500,
+     menubar: false,
+     plugins: [
+       'table'
+     ],
+     toolbar:
+       'undo redo | formatselect | bold italic backcolor | \
+       alignleft aligncenter alignright alignjustify | \
+       bullist numlist outdent indent | removeformat | help'
+   }"></editor>
               </td>
             </tr>
           </table>
@@ -184,11 +203,11 @@
               </td>
               <td
                 *ngIf="announcement.confrere!=undefined && announcement.department!=undefined && announcement.publicationDate!=undefined">
-                Nombre de caractères : {{countCharacterNumber()}}
+                Nombre de caractères : {{characterNumber}}
               </td>
               <td
                 *ngIf="announcement.confrere!=undefined && announcement.department!=undefined && announcement.publicationDate!=undefined">
-                Prix total : {{countCharacterNumber()*characterPrice.price | number}} €
+                Prix total : {{characterNumber*characterPrice.price | number}} €
               </td>
             </tr>
           </table>
@@ -199,13 +218,9 @@
       <provision-options [editMode]="editMode" [provision]="provision" (provisionChange)="noticeChangeFunction()">
       </provision-options>
     </mat-tab>
-    <mat-tab label="Débours" *ngIf="instanceOfCustomerOrder">
+    <mat-tab label="Débours" *ngIf="instanceOfCustomerOrder && !isStatusOpen">
       <add-debour [editMode]="editMode" [(provision)]="provision">
       </add-debour>
-    </mat-tab>
-    <mat-tab label="Historique de l'annonce" *ngIf="announcement.id!=null && announcement.id!=undefined">
-      <history [entity]="announcement" [entityType]="ANNOUNCEMENT_ENTITY_TYPE" [displayOnlyFields]="['notice']"
-        [historyActions]="getHistoryActions()"></history>
     </mat-tab>
     <mat-tab label="Documents" *ngIf="announcement.id!=null && announcement.id!=undefined">
       <attachments [entity]="announcement" [editMode]="editMode" [entityType]="ANNOUNCEMENT_ENTITY_TYPE.entityType">

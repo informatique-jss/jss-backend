@@ -20,7 +20,8 @@ public interface CustomerOrderService {
         public CustomerOrder checkAllProvisionEnded(CustomerOrder customerOrderIn)
                         throws OsirisException, OsirisClientMessageException;
 
-        public CustomerOrder addOrUpdateCustomerOrder(CustomerOrder quotation)
+        public CustomerOrder addOrUpdateCustomerOrder(CustomerOrder quotation, boolean isFromUser,
+                        boolean checkAllProvisionEnded)
                         throws OsirisException, OsirisClientMessageException;
 
         public CustomerOrder addOrUpdateCustomerOrderFromUser(CustomerOrder customerOrder)

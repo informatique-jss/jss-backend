@@ -99,6 +99,9 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
     @Autowired
     BankTransfertService bankTransfertService;
 
+    @Autowired
+    DebourService debourService;
+
     @Override
     public List<AssoAffaireOrder> getAssoAffaireOrders() {
         return IterableUtils.toList(assoAffaireOrderRepository.findAll());
@@ -114,6 +117,13 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    public AssoAffaireOrder addOrUpdateAssoAffaireOrderFromUser(
+            AssoAffaireOrder assoAffaireOrder)
+            throws OsirisException, OsirisClientMessageException {
+        return addOrUpdateAssoAffaireOrder(assoAffaireOrder);
+    }
+
+    @Override
     public AssoAffaireOrder addOrUpdateAssoAffaireOrder(
             AssoAffaireOrder assoAffaireOrder)
             throws OsirisException, OsirisClientMessageException {
@@ -168,6 +178,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
                     if (debour.getBankTransfert() == null && debour.getPaymentType().getId()
                             .equals(constantService.getPaymentTypeVirement().getId())) {
+                        debour = debourService.addOrUpdateDebour(debour);
                         debour.setBankTransfert(
                                 bankTransfertService.generateBankTransfertForDebour(debour, assoAffaireOrder));
                     }
@@ -255,7 +266,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                 }
 
                 // Handle status change
-                if (announcement.getAnnouncementStatus() != null) {
+                if (announcement.getAnnouncementStatus() != null && announcement.getConfrere() != null) {
 
                     // If JSS generate publication receipt if user accept
                     if (announcement.getConfrere().getId().equals(constantService.getConfrereJssSpel().getId())) {

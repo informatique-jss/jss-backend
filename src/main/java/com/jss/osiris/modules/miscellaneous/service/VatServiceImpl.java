@@ -11,6 +11,7 @@ import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.miscellaneous.model.Country;
 import com.jss.osiris.modules.miscellaneous.model.Department;
@@ -56,12 +57,14 @@ public class VatServiceImpl implements VatService {
      * Using https://sumup.fr/factures/essentiels-facturation/tva-dom-tom/
      * 
      * @throws OsirisException
+     * @throws OsirisClientMessageException
      */
     @Override
     public Vat getGeographicalApplicableVat(Country country, Department departement, boolean isIndividual)
-            throws OsirisException {
+            throws OsirisException, OsirisClientMessageException {
         if (country == null)
-            throw new OsirisException(null, "Country not provided");
+            throw new OsirisClientMessageException(
+                    "Pays non trouvé sur le donneur d'ordre, l'affaire ou le libellé de facturation");
 
         // No VAT abroad (France and Monaco)
         if (!country.getId().equals(constantService.getCountryFrance().getId())

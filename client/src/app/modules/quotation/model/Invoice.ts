@@ -3,8 +3,10 @@ import { Deposit } from "../../invoicing/model/Deposit";
 import { InvoiceStatus } from "../../invoicing/model/InvoiceStatus";
 import { Payment } from "../../invoicing/model/Payment";
 import { City } from "../../miscellaneous/model/City";
+import { CompetentAuthority } from '../../miscellaneous/model/CompetentAuthority';
 import { Country } from "../../miscellaneous/model/Country";
 import { IAttachment } from '../../miscellaneous/model/IAttachment';
+import { PaymentType } from '../../miscellaneous/model/PaymentType';
 import { Provider } from '../../miscellaneous/model/Provider';
 import { TiersFollowup } from "../../miscellaneous/model/TiersFollowup";
 import { BillingLabelType } from "../../tiers/model/BillingLabelType";
@@ -41,10 +43,16 @@ export interface Invoice extends IAttachment {
   responsable: Responsable | undefined;
   confrere: Confrere | undefined;
   provider: Provider | undefined;
+  competentAuthority: CompetentAuthority | undefined;
+  manualPaymentType: PaymentType;
   manualAccountingDocumentDate: Date;
   manualAccountingDocumentNumber: string;
   firstReminderDateTime: Date;
   secondReminderDateTime: Date;
   thirdReminderDateTime: Date;
   tiersFollowups: TiersFollowup[];
+  customerOrderForInboundInvoice: CustomerOrder;
+  isCreditNote: boolean;
+  creditNote: Invoice;
+  reverseCreditNote: Invoice;
 }

@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { AppRestService } from 'src/app/services/appRest.service';
 import { CompetentAuthority } from '../../miscellaneous/model/CompetentAuthority';
 import { City } from '../model/City';
+import { CompetentAuthorityType } from '../model/CompetentAuthorityType';
 import { Department } from '../model/Department';
 
 @Injectable({
@@ -31,7 +32,10 @@ export class CompetentAuthorityService extends AppRestService<CompetentAuthority
 
   getCompetentAuthorityByCity(city: City) {
     return this.getList(new HttpParams().set("cityId", city.id!), "competent-authorities/search/city");
+  }
 
+  getCompetentAuthoritiesByType(competentAuthorityType: CompetentAuthorityType) {
+    return this.getList(new HttpParams().set("competentAuthorityTypeId", competentAuthorityType.id!), "competent-authorities/search/competent-authority-type");
   }
 
 }

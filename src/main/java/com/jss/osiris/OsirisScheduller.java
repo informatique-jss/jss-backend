@@ -166,6 +166,15 @@ public class OsirisScheduller {
 		}
 	}
 
+	@Scheduled(cron = "${schedulling.log.osiris.announcement.confrere.query.reminder}")
+	private void reminderConfrereForAnnouncementQuery() {
+		try {
+			announcementService.sendRemindersToConfrereForAnnouncement();
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e, null);
+		}
+	}
+
 	@Scheduled(cron = "${schedulling.account.receipt.generation.sender}")
 	private void sendBillingClosureReceipt() {
 		try {

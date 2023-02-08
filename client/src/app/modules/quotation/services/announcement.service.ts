@@ -20,12 +20,20 @@ export class AnnouncementService extends AppRestService<Announcement>{
     this.previewFileGet(new HttpParams().set("idAnnouncement", announcement.id + "").set("idProvision", provision.id + ""), "publication/receipt/download");
   }
 
+  generateAndStorePublicationReceipt(announcement: Announcement, provision: Provision) {
+    return this.get(new HttpParams().set("idAnnouncement", announcement.id + "").set("idProvision", provision.id + ""), "publication/receipt/store", "Justificatif de parution généré et stocké");
+  }
+
   previewProofReading(announcement: Announcement, provision: Provision) {
     this.previewFileGet(new HttpParams().set("idAnnouncement", announcement.id + "").set("idProvision", provision.id + ""), "proof/reading/download");
   }
 
   previewPublicationFlag(announcement: Announcement, provision: Provision) {
     this.previewFileGet(new HttpParams().set("idAnnouncement", announcement.id + "").set("idProvision", provision.id + ""), "publication/flag/download");
+  }
+
+  generateAndStorePublicationFlag(announcement: Announcement, provision: Provision) {
+    return this.get(new HttpParams().set("idAnnouncement", announcement.id + "").set("idProvision", provision.id + ""), "publication/flag/store", "Témoin de publication généré et stocké");
   }
 
   generatePublicationReceiptMail(customerOrder: CustomerOrder, announcement: Announcement) {

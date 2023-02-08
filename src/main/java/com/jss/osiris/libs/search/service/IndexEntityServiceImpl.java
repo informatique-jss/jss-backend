@@ -18,6 +18,8 @@ import org.springframework.util.StringUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
+import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module.Feature;
 import com.jss.osiris.libs.JacksonLocalDateSerializer;
 import com.jss.osiris.libs.JacksonLocalDateTimeSerializer;
 import com.jss.osiris.libs.exception.OsirisException;
@@ -40,6 +42,9 @@ public class IndexEntityServiceImpl implements IndexEntityService {
         simpleModule.addSerializer(LocalDateTime.class, new JacksonLocalDateTimeSerializer());
         simpleModule.addSerializer(LocalDate.class, new JacksonLocalDateSerializer());
         objectMapper.registerModule(simpleModule);
+        Hibernate5Module module = new Hibernate5Module();
+        module.enable(Feature.FORCE_LAZY_LOADING);
+        objectMapper.registerModule(module);
 
         indexedEntity.setEntityId(entityId);
         indexedEntity.setEntityType(entity.getClass().getSimpleName());
@@ -67,7 +72,8 @@ public class IndexEntityServiceImpl implements IndexEntityService {
                         Object fieldResult = getter.invoke(entity);
 
                         if (fieldResult instanceof String || fieldResult instanceof Integer
-                                || fieldResult instanceof LocalDate || fieldResult instanceof LocalDateTime) {
+                                || fieldResult instanceof LocalDate || fieldResult instanceof LocalDateTime
+                                || fieldResult instanceof Boolean) {
                             outObject.put(field.getName(), getter.invoke(entity));
                         } else if (fieldResult instanceof List) {
                             ArrayList<Object> cleanOutList = new ArrayList<Object>();

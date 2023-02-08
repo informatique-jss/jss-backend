@@ -65,6 +65,20 @@
             right: 30px;
         }
 
+        table.table,
+        table.table>thead,
+        table.table>tbody,
+        table.table>thead>th,
+        table.table>tbody>tr>td,
+        table.table>tbody>tr {
+            border: 1px solid;
+            border-collapse: collapse;
+        }
+
+        table.table>tbody>tr>td {
+            padding: 5px;
+        }
+
         @page {
             size: A4 portrait;
 
@@ -84,8 +98,7 @@
 </head>
 
 <body>
-    <!--/*<a href="http://www.google.fr" target="_blank"><img th:src="@{'data:image/png;base64,'+${qrCodePicture}}"
-            width="60px" height="60px" class="qr-code" /></a>*/-->
+    <img th:src="@{'data:image/png;base64,'+${qrCodePicture}}" width="60px" height="60px" class="qr-code" />
     <div class="center blue-color">
         <div class="title">www.JSS.fr</div>
         <div class="subtitle">Service de Presse En Ligne d'informations Générales, Juridiques, Judiciaires et
@@ -103,7 +116,7 @@
                 th:text="${noticeSubtype}"></span></div>
     </div>
     <hr class="solid" />
-    <div th:if="${logo!=null}" class="alignment" align="center" style="line-height:10px"><img width="500px"
+    <div th:if="${logo!=null}" class="alignment" align="center" style="line-height:10px"><img style="max-width:500px"
             th:src="@{'data:image/jpeg;base64,'+${logo}}" /></div>
     <div th:if="${noticeHeader!=null}">
         <p class="text" th:utext="${noticeHeader}">header</p>
