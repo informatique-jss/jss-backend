@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { SIMPLE_PROVISION_WAITING_DOCUMENT_AUTHORITY } from 'src/app/libs/Constants';
+import { SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT_AUTHORITY } from 'src/app/libs/Constants';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { SIMPLE_PROVISION_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { Provision } from '../../model/Provision';
@@ -21,7 +21,7 @@ export class SimpleProvisionComponent implements OnInit {
   @Input() isStatusOpen: boolean = true;
   @Output() provisionChange: EventEmitter<Provision> = new EventEmitter<Provision>();
 
-  SIMPLE_PROVISION_WAITING_DOCUMENT_AUTHORITY = SIMPLE_PROVISION_WAITING_DOCUMENT_AUTHORITY;
+  SIMPLE_PROVISION_WAITING_DOCUMENT_AUTHORITY = SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT_AUTHORITY;
 
   constructor(
     private formBuilder: FormBuilder,
