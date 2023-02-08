@@ -1573,6 +1573,9 @@ public class MailHelper {
             throw new OsirisException(null,
                     "Unable to find reading proof PDF for CustomerOrder n°" + customerOrder.getId());
 
+        mail.setExplaination2(
+                "Merci de répondre directement à ce mail pour confirmer votre Bon à Tirer ou tout autre retour concernant cette annonce.");
+
         mail.setAttachments(attachments);
 
         mail.setGreetings("En vous remerciant pour votre confiance !");
