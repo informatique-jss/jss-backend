@@ -22,7 +22,6 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule, Routes } from '@angular/router';
-//import { NgxTrumbowygModule } from 'ngx-trumbowyg';
 import { QuillModule } from 'ngx-quill';
 import { MiscellaneousModule } from 'src/app/modules/miscellaneous/components/miscellaneous/miscellaneous.module';
 import { AddAffaireDialogComponent } from '../add-affaire-dialog/add-affaire-dialog.component';
@@ -77,30 +76,6 @@ const routes: Routes = [
 @NgModule({
   imports: [
     RouterModule.forRoot(routes, { onSameUrlNavigation: 'reload' }),
-    /*NgxTrumbowygModule.withConfig({
-      lang: 'fr',
-      svgPath: '/assets/images/icons.svg',
-      removeformatPasted: true,
-      autogrow: true,
-      btns: [
-        ['formatting'],
-        ['strong', 'em'],
-        ['foreColor', 'backColor'],
-        ['fontsize'],
-        ['justifyLeft', 'justifyCenter', 'justifyRight', 'justifyFull'],
-        ['unorderedList', 'orderedList'],
-        ['removeformat'],
-        ['fullscreen'],
-        ['table']
-      ],
-      // Some plugins, like emoji, has a prerequisite to run certain functions at certain DOM events.
-      // Please keep in mind that some events are protected for the sake of this library.
-      // Protected events: tbwinit, tbwchange, tbwfocus
-      // You can register events like this:
-      events: {
-        'input propertychange': () => {
-        }
-      }*/
     QuillModule.forRoot({
       modules: {
         table: true,
