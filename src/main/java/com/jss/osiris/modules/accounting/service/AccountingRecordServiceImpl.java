@@ -560,7 +560,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
   @Override
   public void generateAccountingRecordsForRefundOnGeneration(Refund refund) throws OsirisException {
-    AccountingJournal salesJournal = constantService.getAccountingJournalSales();
+    AccountingJournal bankJournal = constantService.getAccountingJournalBank();
     AccountingAccount customerAccountingAccount = null;
     if (refund.getConfrere() != null) {
       customerAccountingAccount = getCustomerAccountingAccountForITiers(refund.getConfrere());
@@ -569,7 +569,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     }
     generateNewAccountingRecord(LocalDateTime.now(), refund.getId(), null, null, "Remboursement n°" + refund.getId(),
         refund.getRefundAmount(), null, customerAccountingAccount, null, null, null,
-        salesJournal, null, null, null);
+        bankJournal, null, null, null);
   }
 
   @Override
