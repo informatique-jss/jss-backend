@@ -164,6 +164,7 @@
                   formControlName="noticeHeader" [disabled]="!editMode" [(ngModel)]="announcement.noticeHeader" [init]="{
      height: 500,
      menubar: false,
+     entity_encoding : 'raw',
      plugins: [
        'table'
      ],
@@ -184,6 +185,7 @@
                   formControlName="notice" [disabled]="!editMode" [(ngModel)]="announcement.notice" [init]="{
      height: 500,
      menubar: false,
+     entity_encoding : 'raw',
      plugins: [
        'table'
      ],
