@@ -1087,7 +1087,7 @@ public class MailHelper {
             throw new OsirisException(e, "Unable to create temp file");
         }
         ITextRenderer renderer = new ITextRenderer();
-        renderer.setDocumentFromString(htmlContent.replaceAll("\\p{C}", " "));
+        renderer.setDocumentFromString(htmlContent.replaceAll("\\p{C}", " ").replaceAll("<col (.*?)>", ""));
         renderer.layout();
         try {
             renderer.createPDF(outputStream);
@@ -1140,7 +1140,7 @@ public class MailHelper {
             throw new OsirisException(e, "Unable to create temp file");
         }
         ITextRenderer renderer = new ITextRenderer();
-        renderer.setDocumentFromString(htmlContent.replaceAll("\\p{C}", " "));
+        renderer.setDocumentFromString(htmlContent.replaceAll("\\p{C}", " ").replaceAll("<col (.*?)>", ""));
         renderer.layout();
         try {
             renderer.createPDF(outputStream);
