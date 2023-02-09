@@ -113,7 +113,7 @@ public class MailHelper {
 
     private static final String PNG_MIME = "image/png";
 
-    private boolean disableCbLink = true;
+    private boolean disableCbLink = false;
 
     @Autowired
     private ApplicationContext applicationContext;
