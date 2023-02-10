@@ -69,6 +69,7 @@ const routes: Routes = [
   { path: 'order', component: QuotationComponent },
   { path: 'order/:id', component: QuotationComponent },
   { path: 'provision', component: ProvisionListComponent },
+  { path: 'provisions/:employeeId', component: ProvisionListComponent },
   { path: 'provision/:id', component: ProvisionComponent },
   { path: 'provision/:id/:idProvision', component: ProvisionComponent },
   { path: 'affaire', component: AffaireListComponent },

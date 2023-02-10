@@ -14,6 +14,7 @@ public interface ProvisionRepository extends CrudRepository<Provision, Integer> 
         @Query(nativeQuery = true, value = " " +
                         " select  " +
                         " e.firstname || ' '|| e.lastname as employeeName, " +
+                        " e.id as employeeId, " +
                         " coalesce(ans.aggregate_status,fos.aggregate_status,bos.aggregate_status, doms.aggregate_status,sps.aggregate_status) as aggregateStatus, "
                         +
                         " case  " +
@@ -41,7 +42,7 @@ public interface ProvisionRepository extends CrudRepository<Provision, Integer> 
                         " left join simple_provision_status sps on sps.id = sp.id_simple_provision_status " +
                         " where cs.code<>'ABANDONED' " +
                         " and p.id_employee in (:employeeIds) " +
-                        " group by e.firstname, e.lastname,ans.aggregate_status,fos.aggregate_status,bos.aggregate_status,doms.aggregate_status,sps.aggregate_status "
+                        " group by e.id, e.firstname, e.lastname,ans.aggregate_status,fos.aggregate_status,bos.aggregate_status,doms.aggregate_status,sps.aggregate_status "
                         +
                         "")
         List<ProvisionBoardResult> getDashboardEmployee(@Param("employeeIds") List<Integer> employeeIds);
