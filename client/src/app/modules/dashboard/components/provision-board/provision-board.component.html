@@ -12,8 +12,8 @@
         </tr>
       </table>
     </form>
-    <sort-table *ngIf="provisionBoardResultsAggregated" [columns]="displayedColumns"
-      [values]="provisionBoardResultsAggregated" tableName="Dashboard provision">
+    <sort-table *ngIf="provisionBoardResultsAggregatedWithTotal" [columns]="displayedColumns" [actions]="tableActions"
+      [values]="provisionBoardResultsAggregatedWithTotal" tableName="Dashboard provision">
     </sort-table>
   </div>
 </div>

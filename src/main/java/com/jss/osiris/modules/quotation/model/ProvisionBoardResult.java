@@ -2,6 +2,8 @@ package com.jss.osiris.modules.quotation.model;
 
 public interface ProvisionBoardResult {
 
+	public String getEmployeeId();
+
 	public String getEmployeeName();
 
 	public String getAggregateStatus();

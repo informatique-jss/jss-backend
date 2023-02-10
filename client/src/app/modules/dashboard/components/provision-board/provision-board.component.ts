@@ -3,6 +3,7 @@ import { FormBuilder } from '@angular/forms';
 import { AGGREGATE_STATUS_DONE, AGGREGATE_STATUS_IN_PROGRESS, AGGREGATE_STATUS_NEW, AGGREGATE_STATUS_WAITING } from 'src/app/libs/Constants';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { UserPreferenceService } from 'src/app/services/user.preference.service';
+import { SortTableAction } from '../../../miscellaneous/model/SortTableAction';
 import { Employee } from '../../../profile/model/Employee';
 import { ProvisionBoardResult } from '../../model/ProvisionBoardResult';
 import { ProvisionBoardResultAggregated } from '../../model/ProvisionBoardResultAggregated';
@@ -18,7 +19,9 @@ export class ProvisionBoardComponent implements OnInit {
   employeesSelected: Employee[] | undefined;
   provisionBoardResults: ProvisionBoardResult[] | undefined;
   provisionBoardResultsAggregated: ProvisionBoardResultAggregated[] | undefined;
+  provisionBoardResultsAggregatedWithTotal: ProvisionBoardResultAggregated[] | undefined;
   displayedColumns: SortTableColumn[] = [];
+  tableActions: SortTableAction[] = [];
 
   constructor(private provisionBoardResultService: ProvisionBoardResultService,
     private formBuilder: FormBuilder,
@@ -35,6 +38,14 @@ export class ProvisionBoardComponent implements OnInit {
     this.displayedColumns.push({ id: "aggregateStatusInProgress", fieldName: "aggregateStatusInProgress", label: "En cours" } as SortTableColumn);
     this.displayedColumns.push({ id: "aggregateStatusWaiting", fieldName: "aggregateStatusWaiting", label: "En attente" } as SortTableColumn);
     this.displayedColumns.push({ id: "aggregateStatusDone", fieldName: "aggregateStatusDone", label: "Terminé" } as SortTableColumn);
+
+    this.tableActions.push({
+      actionIcon: "visibility", actionName: "Voir le détail", actionLinkFunction: (action: SortTableAction, element: any) => {
+        if (element)
+          return ['/provisions/', element.employeeId];
+        return undefined;
+      }, display: true,
+    } as SortTableAction);
 
     this.employeesSelected = this.userPreferenceService.getUserSearchBookmark("provisionBoardEmployees") as Employee[];
     this.refreshData();
@@ -72,15 +83,43 @@ export class ProvisionBoardComponent implements OnInit {
         }
         if (!found)
           if (result.aggregateStatus == AGGREGATE_STATUS_NEW)
-            this.provisionBoardResultsAggregated.push({ employeeName: result.employeeName, type: result.type, aggregateStatusNewNumber: result.number } as ProvisionBoardResultAggregated)
+            this.provisionBoardResultsAggregated.push({ employeeName: result.employeeName, employeeId: result.employeeId, type: result.type, aggregateStatusNewNumber: result.number } as ProvisionBoardResultAggregated)
           else if (result.aggregateStatus == AGGREGATE_STATUS_IN_PROGRESS)
-            this.provisionBoardResultsAggregated.push({ employeeName: result.employeeName, type: result.type, aggregateStatusInProgress: result.number } as ProvisionBoardResultAggregated)
+            this.provisionBoardResultsAggregated.push({ employeeName: result.employeeName, employeeId: result.employeeId, type: result.type, aggregateStatusInProgress: result.number } as ProvisionBoardResultAggregated)
           else if (result.aggregateStatus == AGGREGATE_STATUS_WAITING)
-            this.provisionBoardResultsAggregated.push({ employeeName: result.employeeName, type: result.type, aggregateStatusWaiting: result.number } as ProvisionBoardResultAggregated)
+            this.provisionBoardResultsAggregated.push({ employeeName: result.employeeName, employeeId: result.employeeId, type: result.type, aggregateStatusWaiting: result.number } as ProvisionBoardResultAggregated)
           else if (result.aggregateStatus == AGGREGATE_STATUS_DONE)
-            this.provisionBoardResultsAggregated.push({ employeeName: result.employeeName, type: result.type, aggregateStatusDone: result.number } as ProvisionBoardResultAggregated)
+            this.provisionBoardResultsAggregated.push({ employeeName: result.employeeName, employeeId: result.employeeId, type: result.type, aggregateStatusDone: result.number } as ProvisionBoardResultAggregated)
       }
-      console.log(this.provisionBoardResultsAggregated);
+
+      this.provisionBoardResultsAggregated.sort((a, b) => { return a.employeeName.localeCompare(b.employeeName) });
+      this.provisionBoardResultsAggregatedWithTotal = [];
+      let currentEmployee = undefined;
+      let currentTotalLine: ProvisionBoardResultAggregated = {} as ProvisionBoardResultAggregated;
+      for (let line of this.provisionBoardResultsAggregated) {
+        if (currentEmployee && line.employeeName != currentEmployee) {
+          this.provisionBoardResultsAggregatedWithTotal.push(currentTotalLine);
+          currentEmployee = undefined;
+          currentTotalLine = {} as ProvisionBoardResultAggregated;
+        }
+        if (currentEmployee == undefined) {
+          currentEmployee = line.employeeName;
+          currentTotalLine.employeeId = line.employeeId;
+          currentTotalLine.aggregateStatusDone = 0;
+          currentTotalLine.aggregateStatusInProgress = 0;
+          currentTotalLine.aggregateStatusNewNumber = 0;
+          currentTotalLine.aggregateStatusWaiting = 0;
+          currentTotalLine.employeeName = "Total " + line.employeeName;
+        }
+        currentTotalLine.aggregateStatusDone += line.aggregateStatusDone ? line.aggregateStatusDone : 0;
+        currentTotalLine.aggregateStatusInProgress += line.aggregateStatusInProgress ? line.aggregateStatusInProgress : 0;
+        currentTotalLine.aggregateStatusNewNumber += line.aggregateStatusNewNumber ? line.aggregateStatusNewNumber : 0;
+        currentTotalLine.aggregateStatusWaiting += line.aggregateStatusWaiting ? line.aggregateStatusWaiting : 0;
+        this.provisionBoardResultsAggregatedWithTotal.push(line);
+      }
+      this.provisionBoardResultsAggregatedWithTotal.push(currentTotalLine);
+      currentEmployee = undefined;
+      currentTotalLine = {} as ProvisionBoardResultAggregated;
     }
   }
 }
