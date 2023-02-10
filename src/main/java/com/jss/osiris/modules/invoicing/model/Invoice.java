@@ -8,7 +8,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Index;
 import javax.persistence.JoinColumn;
@@ -16,6 +15,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.GenericGenerator;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -43,8 +44,13 @@ import com.jss.osiris.modules.tiers.model.TiersFollowup;
 public class Invoice implements IId, IAttachment {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	// @SequenceGenerator(name = "invoice_sequence", sequenceName =
+	// "invoice_sequence", allocationSize = 1)
 	@IndexedField
+	// @GeneratedValue(strategy = GenerationType.SEQUENCE, generator =
+	// "invoice_sequence")
+	@GenericGenerator(name = "invoice_id", strategy = "com.jss.osiris.modules.invoicing.model.InvoiceKeyGenerator")
+	@GeneratedValue(generator = "invoice_id")
 	private Integer id;
 
 	@Column(nullable = false)
@@ -158,6 +164,17 @@ public class Invoice implements IId, IAttachment {
 	@JsonIgnoreProperties(value = { "invoices", "providerInvoices" }, allowSetters = true)
 	@JoinColumn(name = "id_customer_order_for_inbound_invoice")
 	private CustomerOrder customerOrderForInboundInvoice;
+
+	private Boolean isCreditNote;
+
+	@OneToOne
+	@JoinColumn(name = "id_credit_note")
+	@JsonIgnoreProperties(value = { "reverseCreditNote" }, allowSetters = true)
+	private Invoice creditNote;
+
+	@OneToOne(mappedBy = "creditNote")
+	@JsonIgnoreProperties(value = { "creditNote", "customerOrder" }, allowSetters = true)
+	private Invoice reverseCreditNote;
 
 	public Integer getId() {
 		return id;
@@ -445,6 +462,30 @@ public class Invoice implements IId, IAttachment {
 
 	public void setCustomerOrderForInboundInvoice(CustomerOrder customerOrderForInboundInvoice) {
 		this.customerOrderForInboundInvoice = customerOrderForInboundInvoice;
+	}
+
+	public Boolean getIsCreditNote() {
+		return isCreditNote;
+	}
+
+	public void setIsCreditNote(Boolean isCreditNote) {
+		this.isCreditNote = isCreditNote;
+	}
+
+	public Invoice getCreditNote() {
+		return creditNote;
+	}
+
+	public void setCreditNote(Invoice creditNote) {
+		this.creditNote = creditNote;
+	}
+
+	public Invoice getReverseCreditNote() {
+		return reverseCreditNote;
+	}
+
+	public void setReverseCreditNote(Invoice reverseCreditNote) {
+		this.reverseCreditNote = reverseCreditNote;
 	}
 
 }

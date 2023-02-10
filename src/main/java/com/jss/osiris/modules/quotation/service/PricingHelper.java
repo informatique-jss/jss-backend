@@ -263,7 +263,9 @@ public class PricingHelper {
             // If billed, do not change items
             if (provision.getInvoiceItems().size() > 0 && provision.getInvoiceItems().get(0).getInvoice() != null
                     && !provision.getInvoiceItems().get(0).getInvoice().getInvoiceStatus().getId()
-                            .equals(constantService.getInvoiceStatusCancelled().getId()))
+                            .equals(constantService.getInvoiceStatusCancelled().getId())
+                    && !provision.getInvoiceItems().get(0).getInvoice().getInvoiceStatus().getId()
+                            .equals(constantService.getInvoiceStatusCreditNoteEmited().getId()))
                 return;
 
             ProvisionType provisionType = provisionTypeService.getProvisionType(provision.getProvisionType().getId());
@@ -416,9 +418,6 @@ public class PricingHelper {
         if (billingType.getId().equals(constantService.getBillingTypeBilan().getId())
                 && provision.getIsBilan() != null && provision.getIsBilan())
             return true;
-        if (billingType.getId().equals(constantService.getBillingTypeDocumentScanning().getId())
-                && provision.getIsDocumentScanning() != null && provision.getIsDocumentScanning())
-            return true;
         if (billingType.getId().equals(constantService.getBillingTypeEmergency().getId())
                 && provision.getIsEmergency() != null && provision.getIsEmergency())
             return true;
@@ -430,6 +429,18 @@ public class PricingHelper {
             return true;
         if (billingType.getId().equals(constantService.getBillingTypeEmergency().getId())
                 && provision.getIsEmergency() != null && provision.getIsEmergency())
+            return true;
+        if (billingType.getId().equals(constantService.getBillingtypeVacationDepositBeneficialOwners().getId())
+                && provision.getIsVacationDepositBeneficialOwners() != null && provision.getIsVacationDepositBeneficialOwners())
+            return true;
+        if (billingType.getId().equals(constantService.getBillingtypeVacationUpdateBeneficialOwners().getId())
+                && provision.getIsVacationUpdateBeneficialOwners() != null && provision.getIsVacationUpdateBeneficialOwners())
+            return true;
+        if (billingType.getId().equals(constantService.getBillingtypeFormalityAdditionalDeclaration().getId())
+                && provision.getIsFormalityAdditionalDeclaration() != null && provision.getIsFormalityAdditionalDeclaration())
+            return true;
+        if (billingType.getId().equals(constantService.getBillingtypeCorrespondenceFees().getId())
+                && provision.getIsCorrespondenceFees() != null && provision.getIsCorrespondenceFees())
             return true;
         if (billingType.getId().equals(constantService.getBillingTypePublicationPaper().getId())
                 && provision.getIsPublicationPaper() != null && provision.getIsPublicationPaper())

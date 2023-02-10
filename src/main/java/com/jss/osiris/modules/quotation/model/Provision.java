@@ -5,6 +5,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -46,24 +47,24 @@ public class Provision implements IId, IAttachment {
 	@IndexedField
 	private ProvisionFamilyType provisionFamilyType;
 
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_domiciliation")
 	private Domiciliation domiciliation;
 
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_announcement")
 	@IndexedField
 	private Announcement announcement;
 
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_simple_provision")
 	private SimpleProvision simpleProvision;
 
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_bodacc")
 	private Bodacc bodacc;
 
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_formalite")
 	private Formalite formalite;
 
@@ -160,6 +161,18 @@ public class Provision implements IId, IAttachment {
 
 	@Column(nullable = false)
 	private Boolean isEmergency;
+
+	@Column(nullable = false)
+	private Boolean isVacationDepositBeneficialOwners;
+
+	@Column(nullable = false)
+	private Boolean isVacationUpdateBeneficialOwners;
+
+	@Column(nullable = false)
+	private Boolean isFormalityAdditionalDeclaration;
+
+	@Column(nullable = false)
+	private Boolean isCorrespondenceFees;
 
 	@OneToMany(mappedBy = "provision")
 	@JsonIgnoreProperties(value = { "provision" }, allowSetters = true)
@@ -435,6 +448,38 @@ public class Provision implements IId, IAttachment {
 
 	public void setIsEmergency(Boolean isEmergency) {
 		this.isEmergency = isEmergency;
+	}
+
+	public Boolean getIsVacationDepositBeneficialOwners() {
+		return isVacationDepositBeneficialOwners;
+	}
+
+	public void setIsVacationDepositBeneficialOwners(Boolean isVacationDepositBeneficialOwners) {
+		this.isVacationDepositBeneficialOwners = isVacationDepositBeneficialOwners;
+	}
+
+	public Boolean getIsVacationUpdateBeneficialOwners() {
+		return isVacationUpdateBeneficialOwners;
+	}
+
+	public void setIsVacationUpdateBeneficialOwners(Boolean isVacationUpdateBeneficialOwners) {
+		this.isVacationUpdateBeneficialOwners = isVacationUpdateBeneficialOwners;
+	}
+
+	public Boolean getIsFormalityAdditionalDeclaration() {
+		return isFormalityAdditionalDeclaration;
+	}
+
+	public void setIsFormalityAdditionalDeclaration(Boolean isFormalityAdditionalDeclaration) {
+		this.isFormalityAdditionalDeclaration = isFormalityAdditionalDeclaration;
+	}
+
+	public Boolean getIsCorrespondenceFees() {
+		return isCorrespondenceFees;
+	}
+
+	public void setIsCorrespondenceFees(Boolean isCorrespondenceFees) {
+		this.isCorrespondenceFees = isCorrespondenceFees;
 	}
 
 	public Boolean getIsPublicationPaper() {

@@ -13,6 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
+import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module.Feature;
 import com.jss.osiris.libs.JacksonLocalDateDeserializer;
 import com.jss.osiris.libs.JacksonLocalDateSerializer;
 import com.jss.osiris.libs.JacksonLocalDateTimeDeserializer;
@@ -82,6 +84,9 @@ public class ConstantServiceImpl implements ConstantService {
         simpleModule.addDeserializer(LocalDateTime.class, new JacksonLocalDateTimeDeserializer());
         simpleModule.addDeserializer(LocalDate.class, new JacksonLocalDateDeserializer());
         objectMapper.registerModule(simpleModule);
+        Hibernate5Module module = new Hibernate5Module();
+        module.enable(Feature.FORCE_LAZY_LOADING);
+        objectMapper.registerModule(module);
         try {
             objectMapper.writeValueAsString(contants);
         } catch (JsonProcessingException e) {
@@ -212,6 +217,11 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public AttachmentType getAttachmentTypeInvoice() throws OsirisException {
         return getConstants().getAttachmentTypeInvoice();
+    }
+
+    @Override
+    public AttachmentType getAttachmentTypeCreditNote() throws OsirisException {
+        return getConstants().getAttachmentTypeCreditNote();
     }
 
     @Override
@@ -405,6 +415,26 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public BillingType getBillingtypeVacationDepositBeneficialOwners() throws OsirisException {
+        return getConstants().getBillingTypeVacationDepositBeneficialOwners();
+    }
+
+    @Override
+    public BillingType getBillingtypeVacationUpdateBeneficialOwners() throws OsirisException {
+        return getConstants().getBillingTypeVacationUpdateBeneficialOwners();
+    }
+
+    @Override
+    public BillingType getBillingtypeFormalityAdditionalDeclaration() throws OsirisException {
+        return getConstants().getBillingTypeFormalityAdditionalDeclaration();
+    }
+
+    @Override
+    public BillingType getBillingtypeCorrespondenceFees() throws OsirisException {
+        return getConstants().getBillingTypeCorrespondenceFees();
+    }
+
+    @Override
     public String getStringNantissementDepositFormeJuridiqueCode() throws OsirisException {
         return getConstants().getStringNantissementDepositFormeJuridiqueCode();
     }
@@ -422,6 +452,11 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public PaymentType getPaymentTypeEspeces() throws OsirisException {
         return getConstants().getPaymentTypeEspeces();
+    }
+
+    @Override
+    public PaymentType getPaymentTypeCheques() throws OsirisException {
+        return getConstants().getPaymentTypeCheques();
     }
 
     @Override
@@ -580,6 +615,21 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public CompetentAuthorityType getCompetentAuthorityTypeCci() throws OsirisException {
+        return getConstants().getCompetentAuthorityTypeCci();
+    }
+
+    @Override
+    public CompetentAuthorityType getCompetentAuthorityTypeChambreMetier() throws OsirisException {
+        return getConstants().getCompetentAuthorityTypeChambreMetier();
+    }
+
+    @Override
+    public CompetentAuthorityType getCompetentAuthorityTypeDireccte() throws OsirisException {
+        return getConstants().getCompetentAuthorityTypeDireccte();
+    }
+
+    @Override
     public CompetentAuthorityType getCompetentAuthorityTypeCfp() throws OsirisException {
         return getConstants().getCompetentAuthorityTypeCfp();
     }
@@ -602,6 +652,11 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public InvoiceStatus getInvoiceStatusCancelled() throws OsirisException {
         return getConstants().getInvoiceStatusCancelled();
+    }
+
+    @Override
+    public InvoiceStatus getInvoiceStatusCreditNoteEmited() throws OsirisException {
+        return getConstants().getInvoiceStatusCreditNoteEmited();
     }
 
     @Override

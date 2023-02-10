@@ -15,6 +15,7 @@ import javax.persistence.SequenceGenerator;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
+import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.miscellaneous.model.IAttachment;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 
@@ -36,6 +37,10 @@ public class SimpleProvision implements IId, IAttachment {
 	@OneToMany(mappedBy = "simpleProvision", cascade = CascadeType.REMOVE)
 	@JsonIgnoreProperties(value = { "simpleProvision" }, allowSetters = true)
 	private List<Attachment> attachments;
+
+	@ManyToOne
+	@JoinColumn(name = "id_waited_competent_authority")
+	private CompetentAuthority waitedCompetentAuthority;
 
 	public Integer getId() {
 		return id;
@@ -67,6 +72,14 @@ public class SimpleProvision implements IId, IAttachment {
 
 	public void setAttachments(List<Attachment> attachments) {
 		this.attachments = attachments;
+	}
+
+	public CompetentAuthority getWaitedCompetentAuthority() {
+		return waitedCompetentAuthority;
+	}
+
+	public void setWaitedCompetentAuthority(CompetentAuthority waitedCompetentAuthority) {
+		this.waitedCompetentAuthority = waitedCompetentAuthority;
 	}
 
 }

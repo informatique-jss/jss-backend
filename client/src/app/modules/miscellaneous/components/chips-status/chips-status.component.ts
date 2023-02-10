@@ -18,7 +18,7 @@ export class ChipsStatusComponent implements OnInit {
   @Input() value: string = '';
   statusType = 4;
 
-  okStatus: string[] = ["VALIDATED_BY_JSS", "VALIDATED_BY_CUSTOMER", "BILLED", "PAYED", "SENT", this.constantService.getInvoiceStatusPayed().code];
+  okStatus: string[] = ["VALIDATED_BY_JSS", "VALIDATED_BY_CUSTOMER", "BILLED", "PAYED", "SENT", this.constantService.getInvoiceStatusPayed().code, this.constantService.getInvoiceStatusCreditNoteEmited().code];
   warnStatus: string[] = ["TO_VERIFY", "WAITING_DEPOSIT", "WAITING", this.constantService.getInvoiceStatusSend().code, this.constantService.getInvoiceStatusReceived().code];
   koStatus: string[] = ["REFUSED_BY_CUSTOMER", this.constantService.getInvoiceStatusCancelled().code];
 

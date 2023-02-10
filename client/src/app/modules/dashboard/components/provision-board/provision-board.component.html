@@ -1,0 +1,19 @@
+<div class="mat-elevation-z2 form-div min-height">
+
+  <div class="full-width">
+    <form [formGroup]="provisionBoardForm">
+      <table class="full-width">
+        <tr>
+          <td>
+            <chips-employee label="Sélectionner les membres de l'équipe à visualiser" [(model)]="employeesSelected"
+              [form]="provisionBoardForm" [isMandatory]="true" [isDisabled]="false"
+              (modelChange)="refreshData()"></chips-employee>
+          </td>
+        </tr>
+      </table>
+    </form>
+    <sort-table *ngIf="provisionBoardResultsAggregatedWithTotal" [columns]="displayedColumns" [actions]="tableActions"
+      [values]="provisionBoardResultsAggregatedWithTotal" tableName="Dashboard provision">
+    </sort-table>
+  </div>
+</div>

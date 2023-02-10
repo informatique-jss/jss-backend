@@ -21,4 +21,5 @@ export interface IQuotation extends IAttachment, IDocument {
   firstReminderDateTime: Date;
   secondReminderDateTime: Date;
   thirdReminderDateTime: Date;
+  customerMailCustomMessage: string;
 }

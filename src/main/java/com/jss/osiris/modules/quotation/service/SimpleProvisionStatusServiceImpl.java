@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.modules.quotation.model.AggregateStatus;
 import com.jss.osiris.modules.quotation.model.SimpleProvisionStatus;
 import com.jss.osiris.modules.quotation.repository.SimpleProvisonStatusRepository;
 
@@ -55,15 +56,20 @@ public class SimpleProvisionStatusServiceImpl implements SimpleProvisionStatusSe
 
     @Override
     public void updateStatusReferential() throws OsirisException {
-        updateStatus(SimpleProvisionStatus.SIMPLE_PROVISION_NEW, "Nouveau", "auto_awesome", true, false);
-        updateStatus(SimpleProvisionStatus.SIMPLE_PROVISION_IN_PROGRESS, "En cours", "autorenew", false, false);
+        updateStatus(SimpleProvisionStatus.SIMPLE_PROVISION_NEW, "Nouveau", "auto_awesome", true, false,
+                AggregateStatus.AGGREGATE_STATUS_NEW);
+        updateStatus(SimpleProvisionStatus.SIMPLE_PROVISION_IN_PROGRESS, "En cours", "autorenew", false, false,
+                AggregateStatus.AGGREGATE_STATUS_IN_PROGRESS);
         updateStatus(SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_DOCUMENT, "En attente de documents",
                 "hourglass_top", false,
-                false);
+                false,
+                AggregateStatus.AGGREGATE_STATUS_WAITING);
         updateStatus(SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_DOCUMENT_AUTHORITY,
                 "En attente de l'autorité compétente", "pending",
-                false, false);
-        updateStatus(SimpleProvisionStatus.SIMPLE_PROVISION_DONE, "Terminé", "check_small", false, true);
+                false, false,
+                AggregateStatus.AGGREGATE_STATUS_WAITING);
+        updateStatus(SimpleProvisionStatus.SIMPLE_PROVISION_DONE, "Terminé", "check_small", false, true,
+                AggregateStatus.AGGREGATE_STATUS_DONE);
 
         setSuccessor(SimpleProvisionStatus.SIMPLE_PROVISION_NEW, SimpleProvisionStatus.SIMPLE_PROVISION_IN_PROGRESS);
         setSuccessor(SimpleProvisionStatus.SIMPLE_PROVISION_IN_PROGRESS,
@@ -83,7 +89,8 @@ public class SimpleProvisionStatusServiceImpl implements SimpleProvisionStatusSe
 
     }
 
-    protected void updateStatus(String code, String label, String icon, boolean isOpenState, boolean isCloseState) {
+    protected void updateStatus(String code, String label, String icon, boolean isOpenState, boolean isCloseState,
+            String aggregateLabel) {
         SimpleProvisionStatus simpleProvisionStatus = getSimpleProvisionStatusByCode(code);
         if (getSimpleProvisionStatusByCode(code) == null)
             simpleProvisionStatus = new SimpleProvisionStatus();
@@ -94,6 +101,7 @@ public class SimpleProvisionStatusServiceImpl implements SimpleProvisionStatusSe
         simpleProvisionStatus.setIcon(icon);
         simpleProvisionStatus.setIsCloseState(isCloseState);
         simpleProvisionStatus.setIsOpenState(isOpenState);
+        simpleProvisionStatus.setAggregateStatus(aggregateLabel);
         addOrUpdateSimpleProvisonStatus(simpleProvisionStatus);
     }
 

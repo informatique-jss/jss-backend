@@ -99,4 +99,25 @@ export class AddressingComponent implements OnInit {
     this.documentChange.emit(this.document);
   }
 
+  limitTextareaSizeClient(numberOfLine: number) {
+    if (this.document.clientAddress != null) {
+      var l = this.document.clientAddress.replace(/\r\n/g, "\n").replace(/\r/g, "").split(/\n/g);//split lines
+      var outValue = "";
+      if (l.length > numberOfLine) {
+        outValue = l.slice(0, numberOfLine).join("\n");
+        this.document.clientAddress = outValue;
+      }
+    }
+  }
+
+  limitTextareaSizeAffaire(numberOfLine: number) {
+    if (this.document.affaireAddress != null) {
+      var l = this.document.affaireAddress.replace(/\r\n/g, "\n").replace(/\r/g, "").split(/\n/g);//split lines
+      var outValue = "";
+      if (l.length > numberOfLine) {
+        outValue = l.slice(0, numberOfLine).join("\n");
+        this.document.affaireAddress = outValue;
+      }
+    }
+  }
 }

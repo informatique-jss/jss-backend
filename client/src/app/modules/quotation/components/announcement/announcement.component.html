@@ -158,22 +158,42 @@
               <td>
                 <p>En-tête :</p>
                 <div *ngIf="!editMode">
-                  <span [innerHTML]="announcement.noticeHeader | trustHtml"></span>
+                  <span [innerHTML]="announcement.noticeHeader | trustHtml" class="announce-container"></span>
                 </div>
-                <quill-editor *ngIf="editMode" [ngModel]="announcement.noticeHeader" formControlName="noticeHeader"
-                  (onContentChanged)="setNoticeHeaderModel($event)">
-                </quill-editor>
+                <editor apiKey="tuyvqqbiskpltllm13hwnc00n4gjq5sc3gzrhlocmr75s1fw" *ngIf="editMode"
+                  formControlName="noticeHeader" [disabled]="!editMode" [(ngModel)]="announcement.noticeHeader" [init]="{
+     height: 500,
+     menubar: false,
+     entity_encoding : 'raw',
+     plugins: [
+       'table'
+     ],
+     toolbar:
+       'undo redo | formatselect | bold italic backcolor | \
+       alignleft aligncenter alignright alignjustify | \
+       bullist numlist outdent indent | removeformat | help'
+   }"></editor>
               </td>
             </tr>
             <tr>
               <td>
                 <p>Annonce :</p>
                 <div *ngIf="!editMode">
-                  <span [innerHTML]="announcement.notice | trustHtml"></span>
+                  <span [innerHTML]="announcement.notice | trustHtml" class="announce-container"></span>
                 </div>
-                <quill-editor *ngIf="editMode" [ngModel]="announcement.notice" formControlName="notice"
-                  (onContentChanged)="setNoticeModel($event)">
-                </quill-editor>
+                <editor apiKey="tuyvqqbiskpltllm13hwnc00n4gjq5sc3gzrhlocmr75s1fw" *ngIf="editMode"
+                  formControlName="notice" [disabled]="!editMode" [(ngModel)]="announcement.notice" [init]="{
+     height: 500,
+     menubar: false,
+     entity_encoding : 'raw',
+     plugins: [
+       'table'
+     ],
+     toolbar:
+       'undo redo | formatselect | bold italic backcolor | \
+       alignleft aligncenter alignright alignjustify | \
+       bullist numlist outdent indent | removeformat | help'
+   }"></editor>
               </td>
             </tr>
           </table>
@@ -185,11 +205,11 @@
               </td>
               <td
                 *ngIf="announcement.confrere!=undefined && announcement.department!=undefined && announcement.publicationDate!=undefined">
-                Nombre de caractères : {{countCharacterNumber()}}
+                Nombre de caractères : {{characterNumber}}
               </td>
               <td
                 *ngIf="announcement.confrere!=undefined && announcement.department!=undefined && announcement.publicationDate!=undefined">
-                Prix total : {{countCharacterNumber()*characterPrice.price | number}} €
+                Prix total : {{characterNumber*characterPrice.price | number}} €
               </td>
             </tr>
           </table>

@@ -3,9 +3,11 @@ package com.jss.osiris.libs;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -32,7 +34,7 @@ public class PrintDelegate {
         PrintWriter dOut = null;
         try {
             socket = new Socket(printerIp, printerPort);
-            dOut = new PrintWriter(socket.getOutputStream());
+            dOut = new PrintWriter(socket.getOutputStream(), false, StandardCharsets.ISO_8859_1);
 
             // Handle manual adresses
             if (label.getBillingLabelCity() == null) {
@@ -49,30 +51,40 @@ public class PrintDelegate {
             dOut.flush();
             dOut.println();
             dOut.flush();
-            dOut.println("                       " + label.getBillingLabel() != null ? label.getBillingLabel() : "");
-            dOut.flush();
+            if (label.getBillingLabel() != null) {
+                List<String> labelLines = Arrays.asList(label.getBillingLabel().split("\\R"));
+                if (labelLines != null) {
+                    for (String line : labelLines)
+                        dOut.println("               " + StringUtils.stripAccents(line).toUpperCase());
+                    dOut.flush();
+                }
+            }
             dOut.println(
-                    "                       " + label.getBillingLabelAddress() != null ? label.getBillingLabelAddress()
-                            : "");
+                    "               " + (label.getBillingLabelAddress() != null ? label.getBillingLabelAddress()
+                            : ""));
             dOut.flush();
-            dOut.println("                       ");
+            dOut.println("               ");
             dOut.flush();
-            dOut.println("                       ");
+            dOut.println("               ");
             dOut.flush();
             dOut.println();
             dOut.flush();
             dOut.flush();
-            dOut.println("                       " + label.getBillingLabelPostalCode() != null
+            dOut.println("               " + (label.getBillingLabelPostalCode() != null
                     ? label.getBillingLabelPostalCode()
-                    : "" + " "
-                            + label.getBillingLabelCity() != null
-                                    ? label.getBillingLabelCity().getLabel()
-                                    : "" + " " + label.getCedexComplement() != null ? label.getCedexComplement()
-                                            : "" + " "
-                                                    + (label.getBillingLabelCountry() != null && label
-                                                            .getBillingLabelCountry().getId()
-                                                            .equals(constantService.getCountryFrance().getId()) ? ""
-                                                                    : label.getBillingLabelCountry().getLabel()));
+                    : "") + " "
+                    + (label.getBillingLabelCity() != null
+                            ? label.getBillingLabelCity().getLabel()
+                            : "")
+                    + " "
+                    + (label.getCedexComplement() != null
+                            ? StringUtils.stripAccents(label.getCedexComplement()).toUpperCase()
+                            : "")
+                    + " "
+                    + (label.getBillingLabelCountry() != null && label
+                            .getBillingLabelCountry().getId()
+                            .equals(constantService.getCountryFrance().getId()) ? ""
+                                    : label.getBillingLabelCountry().getLabel()));
         } catch (IOException e) {
             throw new OsirisException(e, "Error when printing");
         } finally {

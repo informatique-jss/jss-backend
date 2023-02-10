@@ -87,6 +87,8 @@ public interface ConstantService {
 
     public AttachmentType getAttachmentTypeInvoice() throws OsirisException;
 
+    public AttachmentType getAttachmentTypeCreditNote() throws OsirisException;
+
     public AttachmentType getAttachmentTypeKbisUpdated() throws OsirisException;
 
     public AttachmentType getAttachmentTypePublicationFlag() throws OsirisException;
@@ -163,6 +165,14 @@ public interface ConstantService {
 
     public BillingType getBillingTypeEmergency() throws OsirisException;
 
+    public BillingType getBillingtypeVacationDepositBeneficialOwners() throws OsirisException;
+
+    public BillingType getBillingtypeVacationUpdateBeneficialOwners() throws OsirisException;
+
+    public BillingType getBillingtypeFormalityAdditionalDeclaration() throws OsirisException;
+
+    public BillingType getBillingtypeCorrespondenceFees() throws OsirisException;
+
     public String getStringNantissementDepositFormeJuridiqueCode() throws OsirisException;
 
     public String getStrinSocialShareNantissementRedactionFormeJuridiqueCode() throws OsirisException;
@@ -172,6 +182,8 @@ public interface ConstantService {
     public PaymentType getPaymentTypeVirement() throws OsirisException;
 
     public PaymentType getPaymentTypeEspeces() throws OsirisException;
+
+    public PaymentType getPaymentTypeCheques() throws OsirisException;
 
     public PaymentType getPaymentTypeCB() throws OsirisException;
 
@@ -235,6 +247,12 @@ public interface ConstantService {
 
     public CompetentAuthorityType getCompetentAuthorityTypeCfp() throws OsirisException;
 
+    public CompetentAuthorityType getCompetentAuthorityTypeCci() throws OsirisException;
+
+    public CompetentAuthorityType getCompetentAuthorityTypeChambreMetier() throws OsirisException;
+
+    public CompetentAuthorityType getCompetentAuthorityTypeDireccte() throws OsirisException;
+
     public InvoiceStatus getInvoiceStatusSend() throws OsirisException;
 
     public InvoiceStatus getInvoiceStatusReceived() throws OsirisException;
@@ -242,6 +260,8 @@ public interface ConstantService {
     public InvoiceStatus getInvoiceStatusPayed() throws OsirisException;
 
     public InvoiceStatus getInvoiceStatusCancelled() throws OsirisException;
+
+    public InvoiceStatus getInvoiceStatusCreditNoteEmited() throws OsirisException;
 
     public PaymentWay getPaymentWayInbound() throws OsirisException;
 

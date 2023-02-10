@@ -281,7 +281,7 @@ public class DirectDebitTransfertServiceImpl implements DirectDebitTransfertServ
                 debitIdentifier.setMndtRltdInfBean(debitIdentifierDetails);
                 prelevement.setDrctDbtTxBean(debitIdentifier);
                 debitIdentifierDetails
-                        .setDtOfSgntr(completeTransfert.getSepaMandateSignatureDate().format(formatterDateTime));
+                        .setDtOfSgntr(completeTransfert.getSepaMandateSignatureDate().format(formatterDate));
                 debitIdentifierDetails
                         .setMndtId(completeTransfert.getSepaMandateReference());
 

@@ -22,7 +22,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule, Routes } from '@angular/router';
-import { QuillModule } from 'ngx-quill';
+import { EditorModule } from '@tinymce/tinymce-angular';
 import { DirectDebitTransfertListComponent } from 'src/app/modules/invoicing/components/direct-debit-transfert-list/direct-debit-transfert-list.component';
 import { MiscellaneousModule } from 'src/app/modules/miscellaneous/components/miscellaneous/miscellaneous.module';
 import { AddAffaireDialogComponent } from '../add-affaire-dialog/add-affaire-dialog.component';
@@ -37,6 +37,7 @@ import { BodaccMainComponent } from '../bodacc-main/bodacc-main.component';
 import { BodaccSaleComponent } from '../bodacc-sale/bodacc-sale.component';
 import { BodaccSplitComponent } from '../bodacc-split/bodacc-split.component';
 import { ChooseAssignedUserDialogComponent } from '../choose-assigned-user-dialog/choose-assigned-user-dialog.component';
+import { ChooseCompetentAuthorityDialogComponent } from '../choose-competent-authority-dialog/choose-competent-authority-dialog.component';
 import { CustomerOrderPaymentComponent } from '../customer-order-payment/customer-order-payment.component';
 import { DomiciliationComponent } from '../domiciliation/domiciliation.component';
 import { FormaliteComponent } from '../formalite/formalite.component';
@@ -68,6 +69,7 @@ const routes: Routes = [
   { path: 'order', component: QuotationComponent },
   { path: 'order/:id', component: QuotationComponent },
   { path: 'provision', component: ProvisionListComponent },
+  { path: 'provisions/:employeeId', component: ProvisionListComponent },
   { path: 'provision/:id', component: ProvisionComponent },
   { path: 'provision/:id/:idProvision', component: ProvisionComponent },
   { path: 'affaire', component: AffaireListComponent },
@@ -77,29 +79,8 @@ const routes: Routes = [
 @NgModule({
   imports: [
     RouterModule.forRoot(routes, { onSameUrlNavigation: 'reload' }),
-    QuillModule.forRoot({
-      modules: {
-        table: true,
-        syntax: false,
-        toolbar: {
-          container: [
-            ['bold', 'italic'],
-            [{ 'font': [] }],
-            [{ 'color': [] }],
-            [{ 'background': [] }],
-            [{ align: '' }, { align: 'center' }],
-            [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-            [{ 'size': [] }],
-            ['clean'],
-            //['link'],
-
-          ],
-        }
-      },
-      placeholder: '',
-    }),
     CommonModule,
+    EditorModule,
     FormsModule,
     ReactiveFormsModule,
     MatFormFieldModule,
@@ -155,6 +136,7 @@ const routes: Routes = [
     AddDebourComponent,
     SelectDeboursDialogComponent,
     DirectDebitTransfertListComponent,
+    ChooseCompetentAuthorityDialogComponent,
     // Guichet unique
     ContentComponent,
     NatureCreationComponent,

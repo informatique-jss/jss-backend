@@ -114,4 +114,9 @@ public class CompetentAuthorityServiceImpl implements CompetentAuthorityService 
     public List<CompetentAuthority> getCompetentAuthorityByCity(Integer cityId) {
         return competentAuthorityRepository.findByCity_Id(cityId);
     }
+
+    @Override
+    public List<CompetentAuthority> getCompetentAuthorityByAuthorityType(Integer competentAuthorityTypeId) {
+        return competentAuthorityRepository.findByCompetentAuthorityType_Id(competentAuthorityTypeId);
+    }
 }

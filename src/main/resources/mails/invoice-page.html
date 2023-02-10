@@ -47,8 +47,12 @@
     </table>
     <table style="table-layout: fixed;width: 690px;margin-top: 20px;">
         <tr>
-            <td style="text-align: center;">
-                <p>Facture n°<span th:text="${invoice.id}"></span></p>
+            <td style="text-align: left;">
+                <p th:if="${invoice.isCreditNote!=null} and ${invoice.isCreditNote==true}">Avoir n°<span
+                        th:text="${invoice.id}"></span></p>
+                <p th:if="${invoice.isCreditNote!=null} and ${invoice.isCreditNote==true}">Facture n°<span
+                        th:text="${reverseCreditNote.id}"></span></p>
+                <p th:if="${invoice.isCreditNote==false}">Facture n°<span th:text="${invoice.id}"></span></p>
                 <p>Commande n°<span th:text="${customerOrder.id}"></span></p>
                 <p th:if="${quotation!=null}">Devis n°<span th:text="${quotation.id}"></span></p>
                 <p>Paris le <span th:text="${invoiceCreatedDate}"></span></p>
@@ -70,6 +74,10 @@
             </td>
         </tr>
     </table>
+    <div th:if="${invoice.isCreditNote!=null} and ${invoice.isCreditNote==true}">
+        <p>Avoir n°<span th:text="${invoice.id}"></span> annulant la facture n°<span
+                th:text="${reverseCreditNote.id}">th:text="${invoice.id}"</span></p>
+    </div>
     <table style="border : solid; border-color: rgb(0,83,159);width: 680px;margin-top: 20px;">
         <th:block th:each="asso : ${assos}">
             <tr>
@@ -113,7 +121,14 @@
                             <span th:text="${debour.competentAuthority.label}"></span> : <span
                                 th:text="${debour.billingType.label}"></span>
                         </td>
-                        <td style="text-align: right;white-space: nowrap;">
+                        <td style="text-align: right;white-space: nowrap;"
+                            th:if="${debour.billingType.isNonTaxable==false}">
+                            <span
+                                th:text="${#numbers.formatDecimal(debour.debourAmount-(debour.debourAmount/(1f+(vatDebour.rate/100f)))*vatDebour.rate/100f,1,2)}"></span>
+                            €
+                        </td>
+                        <td style="text-align: right;white-space: nowrap;"
+                            th:if="${debour.billingType.isNonTaxable==true}">
                             <span th:text="${#numbers.formatDecimal(debour.debourAmount,1,2)}"></span>
                             €
                         </td>
@@ -174,20 +189,21 @@
                 €
             </td>
         </tr>
-    </table>
-    <table style="border : solid; border-color: rgb(0,83,159);width: 680px;margin-top: 20px;"
-        th:if="${deposits.size()>0}">
-        <tr th:each="deposit : ${deposits}">
+        <tr th:each="deposit : ${deposits}" th:if="${deposits.size()>0}">
             <td colspan="4" style="text-align: right">
-                Acompte
+                Acompte n°<span th:text="${deposit.id}"></span>
             </td>
-            <td style="text-align: right;white-space: nowrap;"> - <span
+            <td style="text-align: right;white-space: nowrap;" th:if="${deposit.originPayment!=null}"> - <span
+                    th:text="${#numbers.formatDecimal(deposit.originPayment.paymentAmount,1,2)}"></span>
+                €
+            </td>
+            <td style="text-align: right;white-space: nowrap;" th:if="${deposit.originPayment==null}"> - <span
                     th:text="${#numbers.formatDecimal(deposit.depositAmount,1,2)}"></span>
                 €
             </td>
         </tr>
 
-        <tr th:if="${remainingToPay>0}">
+        <tr th:if="${remainingToPay>0}  and ${invoice.isCreditNote==false} and ${deposits.size()>0}">
             <td colspan="4" style="text-align: right">
                 Restant dû
             </td>
@@ -196,12 +212,21 @@
                 €
             </td>
         </tr>
-        <tr th:if="${0>remainingToPay}">
+        <tr th:if="${0>remainingToPay}  and ${invoice.isCreditNote==false} and ${deposits.size()>0}">
             <td colspan="4" style="text-align: right">
                 Solde en votre faveur
             </td>
             <td style="text-align: right;white-space: nowrap;"><span
                     th:text="${#numbers.formatDecimal(-remainingToPay,1,2)}"></span>
+                €
+            </td>
+        </tr>
+        <tr th:if=" ${invoice.isCreditNote==true}">
+            <td colspan="4" style="text-align: right">
+                Net à créditer
+            </td>
+            <td style="text-align: right;white-space: nowrap;"><span
+                    th:text="${#numbers.formatDecimal(priceTotal-remainingToPay,1,2)}"></span>
                 €
             </td>
         </tr>

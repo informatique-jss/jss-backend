@@ -23,6 +23,10 @@ export class HabilitationsService {
     return true;
   }
 
+  canViewCompetentAuthorityModule() {
+    return true;
+  }
+
   canViewQuotationModule() {
     return true;
   }
