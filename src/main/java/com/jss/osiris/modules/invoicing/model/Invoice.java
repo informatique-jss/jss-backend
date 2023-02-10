@@ -8,15 +8,15 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.GenericGenerator;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -44,9 +44,13 @@ import com.jss.osiris.modules.tiers.model.TiersFollowup;
 public class Invoice implements IId, IAttachment {
 
 	@Id
-	@SequenceGenerator(name = "invoice_sequence", sequenceName = "invoice_sequence", allocationSize = 1)
+	// @SequenceGenerator(name = "invoice_sequence", sequenceName =
+	// "invoice_sequence", allocationSize = 1)
 	@IndexedField
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "invoice_sequence")
+	// @GeneratedValue(strategy = GenerationType.SEQUENCE, generator =
+	// "invoice_sequence")
+	@GenericGenerator(name = "invoice_id", strategy = "com.jss.osiris.modules.invoicing.model.InvoiceKeyGenerator")
+	@GeneratedValue(generator = "invoice_id")
 	private Integer id;
 
 	@Column(nullable = false)
