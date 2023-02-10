@@ -368,8 +368,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
         // Target : BILLED => generate invoice
         if (targetStatusCode.equals(CustomerOrderStatus.BILLED)) {
-            // save once customer order to recompute invoice item before set it in stone...
-            this.addOrUpdateCustomerOrder(customerOrder, true, true);
+            // save once customer order to recompute invoice item before set it in stone... 
+            this.addOrUpdateCustomerOrder(customerOrder, true, true); 
             Invoice invoice = generateInvoice(customerOrder);
             accountingRecordService.generateAccountingRecordsForSaleOnInvoiceGeneration(
                     getInvoice(customerOrder));
