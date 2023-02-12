@@ -1,9 +1,8 @@
 package com.jss.osiris.libs;
 
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.Socket;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -32,10 +31,10 @@ public class PrintDelegate {
     public void printMailingLabel(InvoiceLabelResult label) throws OsirisException {
 
         Socket socket = null;
-        PrintWriter dOut = null;
+        DataOutputStream dOut = null;
         try {
             socket = new Socket(printerIp, printerPort);
-            dOut = new PrintWriter(socket.getOutputStream(), false, StandardCharsets.ISO_8859_1);
+            dOut = new DataOutputStream(socket.getOutputStream());
 
             // Handle manual adresses
             if (label.getBillingLabelCity() == null) {
@@ -48,9 +47,9 @@ public class PrintDelegate {
                 }
             }
 
-            dOut.print("\r\n");
+            dOut.writeUTF("\r\n");
             dOut.flush();
-            dOut.print("\r\n");
+            dOut.writeUTF("\r\n");
             dOut.flush();
             if (label.getBillingLabel() != null) {
                 List<String> labelLines = Arrays.asList(label.getBillingLabel().split("\\R"));
@@ -62,25 +61,25 @@ public class PrintDelegate {
                         } else
                             lineToPrint.add(line);
                         for (String lin : lineToPrint) {
-                            dOut.print("               " + StringUtils.stripAccents(lin).toUpperCase());
-                            dOut.print("\r\n");
+                            dOut.writeUTF("               " + StringUtils.stripAccents(lin).toUpperCase());
+                            dOut.writeUTF("\r\n");
                             dOut.flush();
                         }
                     }
                 }
             }
-            dOut.print(
+            dOut.writeUTF(
                     "               " + (label.getBillingLabelAddress() != null ? label.getBillingLabelAddress()
                             : ""));
-            dOut.print("\r\n");
+            dOut.writeUTF("\r\n");
             dOut.flush();
-            dOut.print("\r\n");
+            dOut.writeUTF("\r\n");
             dOut.flush();
-            dOut.print("\r\n");
+            dOut.writeUTF("\r\n");
             dOut.flush();
-            dOut.print("\r\n");
+            dOut.writeUTF("\r\n");
             dOut.flush();
-            dOut.print("               " + (label.getBillingLabelPostalCode() != null
+            dOut.writeUTF("               " + (label.getBillingLabelPostalCode() != null
                     ? label.getBillingLabelPostalCode()
                     : "") + " "
                     + (label.getBillingLabelCity() != null
@@ -95,13 +94,17 @@ public class PrintDelegate {
                             .getBillingLabelCountry().getId()
                             .equals(constantService.getCountryFrance().getId()) ? ""
                                     : label.getBillingLabelCountry().getLabel()));
-            dOut.print("\r\n");
+            dOut.writeUTF("\r\n");
             dOut.flush();
         } catch (IOException e) {
             throw new OsirisException(e, "Error when printing");
         } finally {
             if (dOut != null)
-                dOut.close();
+                try {
+                    dOut.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
         }
 
         try {
