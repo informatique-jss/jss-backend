@@ -135,6 +135,10 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
       return;
     }
 
+    if (provision.announcement && provision.announcement.actuLegaleId)
+      this.appService.displaySnackBar("Il n'est pas possible de supprimer cette prestation : elle a déjà été publiée sur ActuLégale.", false, 15);
+
+
     asso.provisions.splice(asso.provisions.indexOf(provision), 1);
   }
 

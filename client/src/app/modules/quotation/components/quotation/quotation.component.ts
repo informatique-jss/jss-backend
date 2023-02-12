@@ -395,6 +395,9 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
       this.displaySnakBarLockProvision();
       return;
     }
+    if (provision.announcement && provision.announcement.actuLegaleId)
+      this.appService.displaySnackBar("Il n'est pas possible de supprimer cette prestation : elle a déjà été publiée sur ActuLégale.", false, 15);
+
     asso.provisions.splice(asso.provisions.indexOf(provision), 1);
   }
 
@@ -608,6 +611,11 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
   }
 
   deleteAffaire(affaire: Affaire) {
+    if (instanceOfCustomerOrder(this.quotation) && this.quotation.customerOrderStatus && (this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)) {
+      this.displaySnakBarLockProvision();
+      return;
+    }
+
     if (this.quotation && this.quotation.assoAffaireOrders)
       for (let i = 0; i < this.quotation.assoAffaireOrders.length; i++) {
         const asso = this.quotation.assoAffaireOrders[i];
