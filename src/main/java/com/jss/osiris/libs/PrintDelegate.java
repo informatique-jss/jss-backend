@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -47,30 +48,39 @@ public class PrintDelegate {
                 }
             }
 
-            dOut.println();
+            dOut.print("\r\n");
             dOut.flush();
-            dOut.println();
+            dOut.print("\r\n");
             dOut.flush();
             if (label.getBillingLabel() != null) {
                 List<String> labelLines = Arrays.asList(label.getBillingLabel().split("\\R"));
                 if (labelLines != null) {
-                    for (String line : labelLines)
-                        dOut.println("               " + StringUtils.stripAccents(line).toUpperCase());
-                    dOut.flush();
+                    for (String line : labelLines) {
+                        List<String> lineToPrint = new ArrayList<String>();
+                        if (line.contains("\r\n")) {
+                            lineToPrint = Arrays.asList(line.split("\r\n"));
+                        } else
+                            lineToPrint.add(line);
+                        for (String lin : lineToPrint) {
+                            dOut.print("               " + StringUtils.stripAccents(lin).toUpperCase());
+                            dOut.print("\r\n");
+                            dOut.flush();
+                        }
+                    }
                 }
             }
-            dOut.println(
+            dOut.print(
                     "               " + (label.getBillingLabelAddress() != null ? label.getBillingLabelAddress()
                             : ""));
+            dOut.print("\r\n");
             dOut.flush();
-            dOut.println("               ");
+            dOut.print("\r\n");
             dOut.flush();
-            dOut.println("               ");
+            dOut.print("\r\n");
             dOut.flush();
-            dOut.println();
+            dOut.print("\r\n");
             dOut.flush();
-            dOut.flush();
-            dOut.println("               " + (label.getBillingLabelPostalCode() != null
+            dOut.print("               " + (label.getBillingLabelPostalCode() != null
                     ? label.getBillingLabelPostalCode()
                     : "") + " "
                     + (label.getBillingLabelCity() != null
@@ -85,6 +95,8 @@ public class PrintDelegate {
                             .getBillingLabelCountry().getId()
                             .equals(constantService.getCountryFrance().getId()) ? ""
                                     : label.getBillingLabelCountry().getLabel()));
+            dOut.print("\r\n");
+            dOut.flush();
         } catch (IOException e) {
             throw new OsirisException(e, "Error when printing");
         } finally {

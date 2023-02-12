@@ -303,11 +303,12 @@ public class MailComputeHelper {
             } else if (customer instanceof Responsable
                     && ((Responsable) customer).getTiers().getAddress() != null
                     && ((Responsable) customer).getTiers().getCity() != null) {
+                Responsable responsable = ((Responsable) customer);
                 Tiers tiers = ((Responsable) customer).getTiers();
                 if (tiers.getMailRecipient() == null || tiers.getMailRecipient().length() == 0)
-                    invoiceLabelResult.setBillingLabel(
-                            tiers.getDenomination() != null ? tiers.getDenomination()
-                                    : tiers.getFirstname() + " " + tiers.getLastname());
+                    invoiceLabelResult.setBillingLabel((tiers.getDenomination() != null ? tiers.getDenomination()
+                            : tiers.getFirstname() + " " + tiers.getLastname()) + "\r\n"
+                            + responsable.getFirstname() + " " + responsable.getLastname());
                 else
                     invoiceLabelResult.setBillingLabel(tiers.getMailRecipient());
                 invoiceLabelResult.setBillingLabelAddress(tiers.getAddress());
