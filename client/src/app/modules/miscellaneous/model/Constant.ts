@@ -68,6 +68,7 @@ export interface Constant {
   attachmentTypeAnnouncement: AttachmentType;
   countryFrance: Country;
   countryMonaco: Country;
+  billingTypeDeboursNonTaxable: BillingType;
   billingTypeLogo: BillingType;
   billingTypeRedactedByJss: BillingType;
   billingTypeBaloPackage: BillingType;

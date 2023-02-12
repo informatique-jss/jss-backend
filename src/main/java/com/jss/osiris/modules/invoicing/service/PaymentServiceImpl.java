@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.ofx.OFXParser;
 import com.jss.osiris.libs.ofx.OFXStatement;
 import com.jss.osiris.libs.ofx.StatementTransaction;
@@ -137,13 +138,14 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void payementGrab()
-            throws OsirisException, OsirisClientMessageException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         automatchPaymentsInvoicesAndGeneratePaymentAccountingRecords();
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public List<Attachment> uploadOfxFile(InputStream file) throws OsirisException, OsirisClientMessageException {
+    public List<Attachment> uploadOfxFile(InputStream file)
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         OFXStatement operationList = ofxParser.parseOfx(file);
 
         if (operationList != null && operationList.getAccountStatements() != null
@@ -173,7 +175,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     private void automatchPaymentsInvoicesAndGeneratePaymentAccountingRecords()
-            throws OsirisException, OsirisClientMessageException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         List<Payment> payments = paymentRepository.findNotAssociatedPayments();
 
         for (Payment payment : payments) {
@@ -357,7 +359,7 @@ public class PaymentServiceImpl implements PaymentService {
             List<Invoice> correspondingInvoices,
             List<CustomerOrder> correspondingCustomerOrder, Affaire affaireRefund, ITiers tiersRefund,
             List<Float> byPassAmount)
-            throws OsirisException, OsirisClientMessageException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
 
         String refundLabelSuffix = "";
         float remainingMoney = payment.getPaymentAmount();
@@ -410,7 +412,7 @@ public class PaymentServiceImpl implements PaymentService {
             List<CustomerOrder> correspondingCustomerOrder,
             List<Invoice> correspondingInvoice,
             MutableBoolean generateWaitingAccountAccountingRecords, List<Float> byPassAmount, float remainingMoney)
-            throws OsirisException, OsirisClientMessageException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         Float remainingToPay = 0f;
         int amountIndex = 0;
         if (correspondingInvoice != null)
@@ -856,7 +858,8 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     @Transactional
-    public void unsetExternallyAssociated(Payment payment) throws OsirisException, OsirisClientMessageException {
+    public void unsetExternallyAssociated(Payment payment)
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         payment.setIsExternallyAssociated(false);
         addOrUpdatePayment(payment);
         automatchPaymentsInvoicesAndGeneratePaymentAccountingRecords();

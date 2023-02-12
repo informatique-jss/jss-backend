@@ -280,6 +280,11 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public BillingType getBillingTypeDeboursNonTaxable() throws OsirisException {
+        return getConstants().getBillingTypeDeboursNonTaxable();
+    }
+
+    @Override
     public BillingType getBillingTypeCentralPayFees() throws OsirisException {
         return getConstants().getBillingTypeCentralPayFees();
     }

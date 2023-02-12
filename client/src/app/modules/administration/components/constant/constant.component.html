@@ -260,6 +260,14 @@
           </tr>
           <tr>
             <td>
+              <autocomplete-billing-type [(model)]="constant.billingTypeDeboursNonTaxable"
+                label="Type de poste de facturation - Débours non taxables" [form]="constantForm"
+                propertyName="billingTypeDeboursNonTaxable" [isMandatory]="true" [isDisabled]="!editMode">
+              </autocomplete-billing-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <autocomplete-billing-type [(model)]="constant.billingTypeCentralPayFees"
                 label="Type de poste de facturation - Frais Central Pay" [form]="constantForm"
                 propertyName="billingTypeCentralPayFees" [isMandatory]="true" [isDisabled]="!editMode">

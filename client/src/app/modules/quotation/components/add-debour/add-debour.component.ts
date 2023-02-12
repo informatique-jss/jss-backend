@@ -48,6 +48,7 @@ export class AddDebourComponent implements OnInit {
     this.displayedColumns.push({ id: "paymentType", fieldName: "paymentType.label", label: "Type de paiement" } as SortTableColumn);
     this.displayedColumns.push({ id: "paymentDateTime", fieldName: "paymentDateTime", label: "Date de paiement", valueFonction: formatDateForSortTable } as SortTableColumn);
     this.displayedColumns.push({ id: "payment", fieldName: "payment.id", label: "Paiement associé" } as SortTableColumn);
+    this.displayedColumns.push({ id: "invoice", fieldName: "invoiceItem.invoice.id", label: "Facture associée" } as SortTableColumn);
     this.displayedColumns.push({ id: "comments", fieldName: "comments", label: "Commentaires", isShrinkColumn: true } as SortTableColumn);
     this.refreshTable.next();
   }
@@ -126,7 +127,7 @@ export class AddDebourComponent implements OnInit {
           total += parseFloat(debour.debourAmount + "");
       }
 
-    return total;
+    return Math.round(total * 100) / 100;
   }
 
   associateToPayment() {

@@ -95,7 +95,7 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
         } as SortTableAction);
         this.tableAction.push({
           actionIcon: "merge_type", actionName: "Associer le paiement", actionClick: (action: SortTableAction, element: any) => {
-            if ((!element.invoice && !element.customerOrder && !element.isExternallyAssociated))
+            if ((!element.invoice && !element.customerOrder && !element.isExternallyAssociated && !element.isCancelled && !element.isAssociated))
               this.openAssociationDialog(element);
           }, display: true,
         } as SortTableAction);

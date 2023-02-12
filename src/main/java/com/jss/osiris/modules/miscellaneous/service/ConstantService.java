@@ -111,6 +111,8 @@ public interface ConstantService {
 
     public Country getCountryMonaco() throws OsirisException;
 
+    public BillingType getBillingTypeDeboursNonTaxable() throws OsirisException;
+
     public BillingType getBillingTypeCentralPayFees() throws OsirisException;
 
     public BillingType getBillingTypeLogo() throws OsirisException;

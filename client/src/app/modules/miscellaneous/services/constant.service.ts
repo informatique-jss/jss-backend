@@ -170,6 +170,10 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.countryMonaco;
   }
 
+  getBillingTypeDeboursNonTaxable() {
+    return this.constant.billingTypeDeboursNonTaxable;
+  }
+
   getBillingTypeCentralPayFees() {
     return this.constant.billingTypeCentralPayFees;
   }

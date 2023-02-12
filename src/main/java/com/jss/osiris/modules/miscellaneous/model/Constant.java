@@ -178,6 +178,10 @@ public class Constant implements Serializable, IId {
 	private Country countryMonaco;
 
 	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_billing_type_debours_non_taxable")
+	private BillingType billingTypeDeboursNonTaxable;
+
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_billing_type_central_pay_fees")
 	private BillingType billingTypeCentralPayFees;
 
@@ -1785,6 +1789,14 @@ public class Constant implements Serializable, IId {
 
 	public void setPaymentTypeCheques(PaymentType paymentTypeCheques) {
 		this.paymentTypeCheques = paymentTypeCheques;
+	}
+
+	public BillingType getBillingTypeDeboursNonTaxable() {
+		return billingTypeDeboursNonTaxable;
+	}
+
+	public void setBillingTypeDeboursNonTaxable(BillingType billingTypeDeboursNonTaxable) {
+		this.billingTypeDeboursNonTaxable = billingTypeDeboursNonTaxable;
 	}
 
 }
