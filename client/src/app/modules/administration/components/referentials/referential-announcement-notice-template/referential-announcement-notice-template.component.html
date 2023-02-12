@@ -11,32 +11,32 @@
   </div>
 </div>
 <div class="mat-elevation-z2 form-div" *ngIf="selectedEntity ">
-  <form [formGroup]="entityForm">
+  <form [formGroup]="entityForm2">
     <div class="full-width">
       <fieldset [disabled]="editMode==false" class="fieldset-no-border">
         <table class="full-width">
           <tr *ngIf="selectedEntity.id">
             <td>
-              <generic-input [(model)]="selectedEntity.id" label="Identifiant technique" [form]="entityForm"
+              <generic-input [(model)]="selectedEntity.id" label="Identifiant technique" [form]="entityForm2"
                 propertyName="id" [isMandatory]="true" [isDisabled]="true"></generic-input>
             </td>
           </tr>
           <tr>
             <td>
-              <generic-input [(model)]="selectedEntity.code" label="Codification" [maxLength]="40" [form]="entityForm"
+              <generic-input [(model)]="selectedEntity.code" label="Codification" [maxLength]="40" [form]="entityForm2"
                 propertyName="code" [isMandatory]="true" [isDisabled]="!editMode"></generic-input>
             </td>
           </tr>
           <tr>
             <td>
               <generic-input [(model)]="selectedEntity.label" label="Nom fonctionnel" [maxLength]="100"
-                [form]="entityForm" propertyName="label" [isMandatory]="true" [isDisabled]="!editMode"></generic-input>
+                [form]="entityForm2" propertyName="label" [isMandatory]="true" [isDisabled]="!editMode"></generic-input>
             </td>
           </tr>
           <tr>
             <td>
               <chips-provision-family label="Familles de prestations associées"
-                [(model)]="selectedEntity.provisionFamilyTypes" [form]="entityForm" propertyName="provisionFamilyTypes"
+                [(model)]="selectedEntity.provisionFamilyTypes" [form]="entityForm2" propertyName="provisionFamilyTypes"
                 [isMandatory]="false" [isDisabled]="!editMode">
               </chips-provision-family>
             </td>
@@ -47,8 +47,19 @@
                 <p>Texte :</p>
                 <span [innerHTML]="selectedEntity.text| trustHtml" class="no-font"></span>
               </div>
-              <quill-editor *ngIf="editMode" formControlName="text" (onContentChanged)="setTextModel($event)">
-              </quill-editor>
+              <editor apiKey="tuyvqqbiskpltllm13hwnc00n4gjq5sc3gzrhlocmr75s1fw" *ngIf="editMode"
+                formControlName="notice" [disabled]="!editMode" [(ngModel)]="selectedEntity.text" [init]="{
+   height: 500,
+   menubar: false,
+   entity_encoding : 'raw',
+   plugins: [
+     'table'
+   ],
+   toolbar:
+     'undo redo | formatselect | bold italic backcolor | \
+     alignleft aligncenter alignright alignjustify | \
+     bullist numlist outdent indent | removeformat | help'
+ }"></editor>
             </td>
           </tr>
         </table>

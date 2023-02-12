@@ -167,7 +167,7 @@ public class DepositServiceImpl implements DepositService {
 
                 accountingRecordService.checkInvoiceForLettrage(invoice);
 
-                remainingMoney -= byPassAmount.get(i);
+                remainingMoney -= remainingToPayForInvoice;
                 refundLabelSuffix = "facture n°" + invoice.getId();
             }
             correspondingInvoiceSize += correspondingInvoices.size();
@@ -176,12 +176,10 @@ public class DepositServiceImpl implements DepositService {
         if (correspondingCustomerOrder != null)
             for (int i = 0; i < correspondingCustomerOrder.size(); i++) {
                 CustomerOrder customerOrder = correspondingCustomerOrder.get(i);
-                Float remainingToPayForCustomerOrder = Math.min(
-                        customerOrderService.getRemainingAmountToPayForCustomerOrder(customerOrder),
-                        byPassAmount.get(i + correspondingInvoiceSize));
+                Float remainingToPayForCustomerOrder = byPassAmount.get(i + correspondingInvoiceSize);
 
                 getNewDepositForCustomerOrder(remainingToPayForCustomerOrder, LocalDateTime.now(), customerOrder,
-                        deposit.getId(), null, true);
+                        deposit.getId(), deposit.getOriginPayment(), true);
 
                 // Try unlocked customer order
                 customerOrderService.unlockCustomerOrderFromDeposit(correspondingCustomerOrder.get(i));

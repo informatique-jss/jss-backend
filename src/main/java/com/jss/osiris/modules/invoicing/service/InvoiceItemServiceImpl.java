@@ -40,4 +40,20 @@ public class InvoiceItemServiceImpl implements InvoiceItemService {
         invoiceItemRepository.delete(invoiceItem);
     }
 
+    @Override
+    public InvoiceItem cloneInvoiceItem(InvoiceItem invoiceItem) {
+        InvoiceItem newInvoiceItem = new InvoiceItem();
+        newInvoiceItem.setBillingItem(invoiceItem.getBillingItem());
+        newInvoiceItem.setDiscountAmount(invoiceItem.getDiscountAmount());
+        newInvoiceItem.setInvoice(invoiceItem.getInvoice());
+        newInvoiceItem.setIsGifted(invoiceItem.getIsGifted());
+        newInvoiceItem.setIsOverridePrice(invoiceItem.getIsOverridePrice());
+        newInvoiceItem.setLabel(invoiceItem.getLabel());
+        newInvoiceItem.setPreTaxPrice(invoiceItem.getPreTaxPrice());
+        newInvoiceItem.setProvision(invoiceItem.getProvision());
+        newInvoiceItem.setVat(invoiceItem.getVat());
+        newInvoiceItem.setVatPrice(invoiceItem.getVatPrice());
+        return newInvoiceItem;
+    }
+
 }

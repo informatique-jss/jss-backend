@@ -193,20 +193,20 @@ tr.table-row:hover {
   display: contents;
 }
 
-.ql-align-right {
-  text-align: right;
+/* Trumbowyg styles */
+
+.announce-container>table,
+.announce-container>table>thead,
+.announce-container>table>tbody,
+.announce-container>table>thead>th,
+.announce-container>table>tbody>tr>td,
+.announce-container>table>tbody>tr {
+  border: 1px solid;
+  border-collapse: collapse;
 }
 
-.ql-align-center {
-  text-align: center;
-}
-
-.ql-align-left {
-  text-align: left;
-}
-
-.ql-align-justify {
-  text-align: justify;
+.announce-container>table>tbody>tr>td {
+  padding: 5px;
 }
 
 .avatar-select {

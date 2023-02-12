@@ -10,7 +10,16 @@ import { GenericFormComponent } from '../generic-form.components';
   styleUrls: ['./generic-textarea.component.css']
 })
 export class GenericTextareaComponent extends GenericFormComponent implements OnInit {
-
+  /**
+ * Max length of input
+ * No check if not devined
+ */
+  @Input() maxLength: number | undefined;
+  /**
+ * Min length of input
+ * No check if not devined
+ */
+  @Input() minLength: number | undefined;
   /**
   * Event triggered on keyup, keydown and paste
   */

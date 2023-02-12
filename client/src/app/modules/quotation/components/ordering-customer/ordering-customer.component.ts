@@ -110,6 +110,10 @@ export class OrderingCustomerComponent implements OnInit {
     this.quotation.overrideSpecialOffer = true;
   }
 
+  hideOverrideSpecialOffers() {
+    this.quotation.overrideSpecialOffer = false;
+  }
+
   initSpecialOffers() {
     this.quotation.specialOffers = [] as Array<SpecialOffer>;
     if (this.quotation.tiers && this.quotation.tiers.specialOffers)

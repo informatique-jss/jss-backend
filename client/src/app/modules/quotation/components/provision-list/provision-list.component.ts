@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { Employee } from 'src/app/modules/profile/model/Employee';
@@ -35,13 +36,16 @@ export class ProvisionListComponent implements OnInit {
     private employeeService: EmployeeService,
     private formBuilder: FormBuilder,
     private userPreferenceService: UserPreferenceService,
+    private activatedRoute: ActivatedRoute,
   ) { }
 
   ngOnInit() {
     this.availableColumns = [];
 
+
     this.employeeService.getEmployees().subscribe(employees => {
       this.allEmployees = employees;
+      let employeeId = this.activatedRoute.snapshot.params.employeeId;
 
       this.bookmark = this.userPreferenceService.getUserSearchBookmark("prestations") as AffaireSearch;
       if (!this.isForDashboard) {
@@ -52,6 +56,14 @@ export class ProvisionListComponent implements OnInit {
           this.affaireSearch.label = this.bookmark.label;
           this.affaireSearch.responsible = this.bookmark.responsible;
           this.affaireSearch.status = this.bookmark.status;
+        }
+
+        if (employeeId) {
+          this.affaireSearch = {} as AffaireSearch;
+          if (this.allEmployees)
+            for (let employee of this.allEmployees)
+              if (employee.id == employeeId)
+                this.affaireSearch.assignedTo = employee;
         }
       }
 
@@ -80,6 +92,7 @@ export class ProvisionListComponent implements OnInit {
       } as SortTableColumn);
       this.availableColumns.push({ id: "provisionType", fieldName: "provisionTypeLabel", label: "Prestation", colorWarnFunction: (element: any) => { return element.isEmergency } } as SortTableColumn);
       this.availableColumns.push({ id: "status", fieldName: "statusLabel", label: "Statut", colorWarnFunction: (element: any) => { return element.isEmergency } } as SortTableColumn);
+      this.availableColumns.push({ id: "waitedCompetentAuthorityLabel", fieldName: "waitedCompetentAuthorityLabel", label: "Autorité compétente en attente" } as SortTableColumn);
       this.getCurrentEmployee();
 
       this.setColumns();
@@ -92,7 +105,7 @@ export class ProvisionListComponent implements OnInit {
         }, display: true,
       } as SortTableAction);
 
-      if (this.isForDashboard && !this.affaires && this.affaireSearch)
+      if (this.isForDashboard && !this.affaires && this.affaireSearch || employeeId)
         this.searchAffaires();
     })
   }

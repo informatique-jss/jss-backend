@@ -151,6 +151,9 @@ public class CustomerOrder implements IQuotation {
 	@JsonIgnoreProperties(value = { "customerOrder" }, allowSetters = true)
 	private List<Invoice> providerInvoices;
 
+	@Column(columnDefinition = "TEXT")
+	private String customerMailCustomMessage;
+
 	public Integer getId() {
 		return id;
 	}
@@ -349,6 +352,14 @@ public class CustomerOrder implements IQuotation {
 
 	public void setProviderInvoices(List<Invoice> providerInvoices) {
 		this.providerInvoices = providerInvoices;
+	}
+
+	public String getCustomerMailCustomMessage() {
+		return customerMailCustomMessage;
+	}
+
+	public void setCustomerMailCustomMessage(String customerMailCustomMessage) {
+		this.customerMailCustomMessage = customerMailCustomMessage;
 	}
 
 }

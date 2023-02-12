@@ -53,6 +53,10 @@ export class ProvisionOptionsComponent implements OnInit {
   billingTypeBilan = this.constantService.getBillingTypeBilan();
   billingTypeDocumentScanning = this.constantService.getBillingTypeDocumentScanning();
   billingTypeEmergency = this.constantService.getBillingTypeEmergency();
+  billingTypeVacationDepositBeneficialOwners = this.constantService.getBillingTypeVacationDepositBeneficialOwners();
+  billingTypeVacationUpdateBeneficialOwners = this.constantService.getBillingTypeVacationUpdateBeneficialOwners();
+  billingTypeFormalityAdditionalDeclaration = this.constantService.getBillingTypeFormalityAdditionalDeclaration();
+  billingTypeCorrespondenceFees = this.constantService.getBillingTypeCorrespondenceFees();
 
 
   attachmentTypeLogo = this.constantService.getAttachmentTypeLogo();
@@ -100,11 +104,14 @@ export class ProvisionOptionsComponent implements OnInit {
       if (!this.provision.isBankCheque) this.provision.isBankCheque = false;
       if (!this.provision.isComplexeFile) this.provision.isComplexeFile = false;
       if (!this.provision.isBilan) this.provision.isBilan = false;
-      if (!this.provision.isDocumentScanning) this.provision.isDocumentScanning = false;
       if (!this.provision.isEmergency) this.provision.isEmergency = false;
       if (!this.provision.isComplexeFile) this.provision.isComplexeFile = false;
       if (!this.provision.isDocumentScanning) this.provision.isDocumentScanning = false;
       if (!this.provision.isEmergency) this.provision.isEmergency = false;
+      if (!this.provision.isVacationDepositBeneficialOwners) this.provision.isVacationDepositBeneficialOwners = false;
+      if (!this.provision.isVacationUpdateBeneficialOwners) this.provision.isVacationUpdateBeneficialOwners = false;
+      if (!this.provision.isFormalityAdditionalDeclaration) this.provision.isFormalityAdditionalDeclaration = false;
+      if (!this.provision.isCorrespondenceFees) this.provision.isCorrespondenceFees = false;
 
       this.fillPublicationPaperNumber();
     }
@@ -193,7 +200,9 @@ export class ProvisionOptionsComponent implements OnInit {
           if (this.provision.formalite.formeJuridique.code == code.trim())
             return true;
         }
-    }
+    } else if (this.provision && this.provision.simpleProvision)
+      return true;
+
     return false;
   }
   fillPublicationPaperNumber() {

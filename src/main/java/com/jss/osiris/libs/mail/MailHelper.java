@@ -113,7 +113,7 @@ public class MailHelper {
 
     private static final String PNG_MIME = "image/png";
 
-    private boolean disableCbLink = true;
+    private boolean disableCbLink = false;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -355,6 +355,7 @@ public class MailHelper {
         ctx.setVariable("subtitle", mail.getSubtitle());
         ctx.setVariable("label", mail.getLabel());
         ctx.setVariable("explaination", mail.getExplaination());
+        ctx.setVariable("customerMailCustomMessage", mail.getCustomerMailCustomMessage());
         ctx.setVariable("explainationElements",
                 mail.getExplainationElements() != null ? mail.getExplainationElements().split("forgetThis") : null);
         ctx.setVariable("explaination2", mail.getExplaination2());
@@ -525,6 +526,8 @@ public class MailHelper {
         mail.setHeaderPicture("images/quotation-header.png");
         mail.setTitle("Votre nouveau devis est prêt !");
         mail.setSubtitle("Il n'attend plus que votre validation.");
+        if (quotation.getCustomerMailCustomMessage() != null)
+            mail.setCustomerMailCustomMessage(quotation.getCustomerMailCustomMessage());
         mail.setLabel("Devis n°" + quotation.getId());
 
         MailComputeResult mailComputeResult = mailComputeHelper.computeMailForQuotationMail(quotation);
@@ -718,6 +721,8 @@ public class MailHelper {
 
         mail.setHeaderPicture("images/waiting-deposit-header.png");
         mail.setTitle("Votre commande est prête à être traitée");
+        if (customerOrder.getCustomerMailCustomMessage() != null)
+            mail.setCustomerMailCustomMessage(customerOrder.getCustomerMailCustomMessage());
 
         if (isDepositMandatory && remainingToPay > 0 && !isPaymentTypePrelevement)
             mail.setSubtitle("Elle n'attend plus que le paiement d'un acompte pour démarrer.");
@@ -755,7 +760,7 @@ public class MailHelper {
         if (remainingToPay > 0 && !isPaymentTypePrelevement) {
             if (isDepositMandatory) {
                 String complementary = "";
-                if (remainingToPay != mail.getPriceTotal())
+                if (Math.round(remainingToPay) != Math.round(mail.getPriceTotal()))
                     complementary = " complémentaire ";
                 mail.setPaymentExplaination(
                         "Dès réception de votre règlement d'acompte" + complementary + " d'un montant de "
@@ -907,8 +912,12 @@ public class MailHelper {
         mailService.addMailToQueue(mail);
     }
 
-    public File generateInvoicePdf(CustomerOrder customerOrder, Invoice invoice) throws OsirisException {
+    public File generateInvoicePdf(CustomerOrder customerOrder, Invoice invoice, Invoice originalInvoice)
+            throws OsirisException {
         final Context ctx = new Context();
+
+        if (originalInvoice != null)
+            ctx.setVariable("reverseCreditNote", originalInvoice);
 
         ctx.setVariable("preTaxPriceTotal", invoiceHelper.getPreTaxPriceTotal(invoice));
         if (Math.round(invoiceHelper.getDiscountTotal(invoice) * 100f) / 100f > 0)
@@ -989,17 +998,12 @@ public class MailHelper {
                                 vatmail.setBase(debour.getDebourAmount() / (1 + (vatDebour.getRate() / 100)));
                                 vats.add(vatmail);
                             }
-
-                            // Replace temporarely debour amount with amount without taxes to proper display
-                            debour.setDebourAmount(debour.getDebourAmount()
-                                    - (debour.getDebourAmount() / (1f + (vatDebour.getRate() / 100f)))
-                                            * vatDebour.getRate() / 100f);
                         }
                     }
                 }
             }
         }
-
+        ctx.setVariable("vatDebour", vatDebour);
         ctx.setVariable("vats", vats);
         ctx.setVariable("priceTotal", Math.round(invoiceHelper.getPriceTotal(invoice) * 100f) / 100f);
         ctx.setVariable("invoice", invoice);
@@ -1083,7 +1087,7 @@ public class MailHelper {
             throw new OsirisException(e, "Unable to create temp file");
         }
         ITextRenderer renderer = new ITextRenderer();
-        renderer.setDocumentFromString(htmlContent.replaceAll("\\p{C}", " "));
+        renderer.setDocumentFromString(htmlContent.replaceAll("\\p{C}", " ").replaceAll("<col (.*?)>", ""));
         renderer.layout();
         try {
             renderer.createPDF(outputStream);
@@ -1136,7 +1140,7 @@ public class MailHelper {
             throw new OsirisException(e, "Unable to create temp file");
         }
         ITextRenderer renderer = new ITextRenderer();
-        renderer.setDocumentFromString(htmlContent.replaceAll("\\p{C}", " "));
+        renderer.setDocumentFromString(htmlContent.replaceAll("\\p{C}", " ").replaceAll("<col (.*?)>", ""));
         renderer.layout();
         try {
             renderer.createPDF(outputStream);
@@ -1270,6 +1274,52 @@ public class MailHelper {
         mailService.addMailToQueue(mail);
     }
 
+    public void sendCreditNoteToCustomer(CustomerOrder customerOrder, boolean sendToMe, Invoice creditNote,
+            Invoice invoice)
+            throws OsirisException, OsirisClientMessageException {
+
+        CustomerMail mail = new CustomerMail();
+        mail.setCustomerOrder(customerOrder);
+        computeQuotationPrice(mail, customerOrder);
+
+        MailComputeResult mailComputeResult = mailComputeHelper
+                .computeMailForCustomerOrderFinalizationAndInvoice(customerOrder);
+
+        ITiers tiers = quotationService.getCustomerOrderOfQuotation(customerOrder);
+
+        List<Attachment> attachments = new ArrayList<Attachment>();
+        if (customerOrder != null && customerOrder.getAttachments() != null) {
+            for (Attachment attachment : attachmentService.sortAttachmentByDateDesc(customerOrder.getAttachments())) {
+                if (attachment.getAttachmentType().getId()
+                        .equals(constantService.getAttachmentTypeCreditNote().getId()))
+                    attachments.add(attachment);
+                break;
+            }
+        }
+
+        mail.setAttachments(attachments);
+
+        mail.setHeaderPicture("images/credit-note-header.png");
+        mail.setTitle("Votre avoir");
+
+        if (customerOrder != null)
+            mail.setLabel("Commande n°" + customerOrder.getId());
+
+        String explainationText = "Vous trouverez ci-joint l'avoir n°" + creditNote.getId()
+                + " correspondant à la facture n°" + invoice.getId() + ".";
+        mail.setExplaination(explainationText);
+
+        mail.setSubject("Votre avoir n°" + creditNote.getId());
+
+        mail.setGreetings("En vous remerciant pour votre confiance !");
+
+        mail.setReplyTo(tiers.getSalesEmployee());
+        mail.setSendToMe(sendToMe);
+        mail.setMailComputeResult(mailComputeResult);
+
+        mailService.addMailToQueue(mail);
+    }
+
     public void sendCustomerOrderAttachmentsToCustomer(CustomerOrder customerOrder, AssoAffaireOrder asso,
             boolean sendToMe,
             List<Attachment> attachmentsToSend)
@@ -1316,7 +1366,7 @@ public class MailHelper {
     }
 
     public void sendAnnouncementRequestToConfrere(CustomerOrder customerOrder, AssoAffaireOrder asso,
-            boolean sendToMe, Provision provision, Announcement announcement)
+            boolean sendToMe, Provision provision, Announcement announcement, boolean isReminder)
             throws OsirisException, OsirisClientMessageException {
 
         if (announcement == null || announcement.getConfrere() == null || announcement.getPublicationDate() == null
@@ -1353,18 +1403,18 @@ public class MailHelper {
         if (provision.getAssignedTo() != null)
             currentUserMail = provision.getAssignedTo().getMail();
 
-        mail.setExplaination(
-                "Vous trouverez en pièce jointe le texte d'insertion légale à faire paraître dans votre édition du "
-                        + announcement.getPublicationDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + " de "
-                        +
-                        confrere.getLabel() + " (département " + announcement.getDepartment().getCode() +
-                        ", rubrique "
-                        + String.join("/", announcement.getNoticeTypes().stream().map(NoticeType::getLabel).toList())
-                        + ") en composition économique. <br/>Cette dernière concerne la société "
-                        + (asso.getAffaire().getDenomination() != null ? asso.getAffaire().getDenomination()
-                                : (asso.getAffaire().getFirstname() + " "
-                                        + asso.getAffaire().getLastname()))
-                        + "<br/><br/>A cet effet, nous vous prions de bien vouloir nous adresser : ");
+        mail.setExplaination((isReminder ? "Pour relance, vous" : "Vous")
+                + " trouverez en pièce jointe le texte d'insertion légale à faire paraître dans votre édition du "
+                + announcement.getPublicationDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + " de "
+                +
+                confrere.getLabel() + " (département " + announcement.getDepartment().getCode() +
+                ", rubrique "
+                + String.join("/", announcement.getNoticeTypes().stream().map(NoticeType::getLabel).toList())
+                + ") en composition économique. <br/>Cette dernière concerne la société "
+                + (asso.getAffaire().getDenomination() != null ? asso.getAffaire().getDenomination()
+                        : (asso.getAffaire().getFirstname() + " "
+                                + asso.getAffaire().getLastname()))
+                + "<br/><br/>A cet effet, nous vous prions de bien vouloir nous adresser : ");
 
         ArrayList<String> explanationItems = new ArrayList<String>();
         explanationItems.add("Une attestation de parution par email à l'adresse " + currentUserMail);
@@ -1392,7 +1442,8 @@ public class MailHelper {
         mail.setSendToMe(sendToMe);
         mail.setMailComputeResult(mailComputeResult);
 
-        mail.setSubject("Commande n°" + customerOrder.getId() + " - demande de parution");
+        mail.setSubject(
+                "Commande n°" + customerOrder.getId() + " - demande de parution" + (isReminder ? " - Relance" : ""));
 
         mailService.addMailToQueue(mail);
     }
@@ -1430,7 +1481,7 @@ public class MailHelper {
                         }
 
         if (updateCustomerOrder)
-            customerOrderService.addOrUpdateCustomerOrder(customerOrder, false);
+            customerOrderService.addOrUpdateCustomerOrder(customerOrder, false, true);
 
         return attachments;
     }

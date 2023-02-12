@@ -100,6 +100,7 @@ import com.jss.osiris.modules.quotation.model.NoticeTypeFamily;
 import com.jss.osiris.modules.quotation.model.OrderingSearch;
 import com.jss.osiris.modules.quotation.model.OrderingSearchResult;
 import com.jss.osiris.modules.quotation.model.Provision;
+import com.jss.osiris.modules.quotation.model.ProvisionBoardResult;
 import com.jss.osiris.modules.quotation.model.ProvisionFamilyType;
 import com.jss.osiris.modules.quotation.model.ProvisionScreenType;
 import com.jss.osiris.modules.quotation.model.ProvisionType;
@@ -109,6 +110,7 @@ import com.jss.osiris.modules.quotation.model.QuotationSearchResult;
 import com.jss.osiris.modules.quotation.model.QuotationStatus;
 import com.jss.osiris.modules.quotation.model.RecordType;
 import com.jss.osiris.modules.quotation.model.Rna;
+import com.jss.osiris.modules.quotation.model.SimpleProvision;
 import com.jss.osiris.modules.quotation.model.SimpleProvisionStatus;
 import com.jss.osiris.modules.quotation.model.Siren;
 import com.jss.osiris.modules.quotation.model.Siret;
@@ -486,7 +488,7 @@ public class QuotationController {
     if (mailComputeResult.getRecipientsMailTo() == null || mailComputeResult.getRecipientsMailTo().size() == 0)
       throw new OsirisValidationException("MailTo");
 
-    mailHelper.sendAnnouncementRequestToConfrere(customerOrder, assoAffaireOrder, true, provision, announcement);
+    mailHelper.sendAnnouncementRequestToConfrere(customerOrder, assoAffaireOrder, true, provision, announcement, false);
     return new ResponseEntity<CustomerOrder>(new CustomerOrder(), HttpStatus.OK);
   }
 
@@ -764,6 +766,13 @@ public class QuotationController {
       throw new OsirisValidationException("department");
 
     return new ResponseEntity<CharacterPrice>(characterPriceService.getCharacterPrice(department, date), HttpStatus.OK);
+  }
+
+  @PostMapping(inputEntryPoint + "/character/number")
+  public ResponseEntity<Integer> getCharacterNumber(@RequestBody Provision provision)
+      throws OsirisValidationException {
+
+    return new ResponseEntity<Integer>(characterPriceService.getCharacterNumber(provision), HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/character-prices")
@@ -1519,18 +1528,25 @@ public class QuotationController {
             || status.getCode().equals(CustomerOrderStatus.WAITING_DEPOSIT))
           publicationDateVerification = null;
         else {
-          // If published : no verification but you can't modify the date
           if (currentAnnouncement != null)
-            if (announcement.getAnnouncementStatus().getCode().equals(AnnouncementStatus.ANNOUNCEMENT_PUBLISHED)
-                || announcement.getAnnouncementStatus().getCode().equals(AnnouncementStatus.ANNOUNCEMENT_DONE)) {
+            if (currentAnnouncement.getConfrere() != null
+                && currentAnnouncement.getConfrere().getId().equals(constantService.getConfrereJssSpel().getId())) {
+              if (currentAnnouncement.getAnnouncementStatus().getId()
+                  .equals(announcement.getAnnouncementStatus().getId())
+                  && announcement.getAnnouncementStatus().getCode().equals(AnnouncementStatus.ANNOUNCEMENT_PUBLISHED)
+                  || announcement.getAnnouncementStatus().getCode().equals(AnnouncementStatus.ANNOUNCEMENT_DONE)) {
+                publicationDateVerification = null;
+                announcement.setPublicationDate(currentAnnouncement.getPublicationDate());
+              }
+            } else {
+              // if not jss, no verification
               publicationDateVerification = null;
-              announcement.setPublicationDate(currentAnnouncement.getPublicationDate());
             }
         }
       }
 
       validationHelper.validateDateMin(announcement.getPublicationDate(), true, publicationDateVerification,
-          "PublicationDate");
+          "Date de publication de l'annonce");
       validationHelper.validateReferential(announcement.getDepartment(), !isOpen, "Department");
       validationHelper.validateReferential(announcement.getConfrere(), isCustomerOrder, "Confrere");
       validationHelper.validateReferential(announcement.getNoticeTypeFamily(), isCustomerOrder, "NoticeTypeFamily");
@@ -1770,6 +1786,13 @@ public class QuotationController {
           "TypeExploitation");
     }
 
+    // Simple provision
+    if (provision.getSimpleProvision() != null) {
+      SimpleProvision simpleProvision = provision.getSimpleProvision();
+      validationHelper.validateReferential(simpleProvision.getWaitedCompetentAuthority(), false,
+          "WaitedCompetentAuthority");
+    }
+
   }
 
   @PostMapping(inputEntryPoint + "/affaire")
@@ -1787,11 +1810,14 @@ public class QuotationController {
       validationHelper.validateReferential(affaire.getCivility(), true, "Civility");
       validationHelper.validateString(affaire.getFirstname(), true, 40, "Firstname");
       validationHelper.validateString(affaire.getLastname(), true, 40, "Lastname");
+      affaire.setDenomination(null);
       if (affaire.getLastname() != null)
         affaire.setLastname(affaire.getLastname().toUpperCase());
 
     } else {
       validationHelper.validateString(affaire.getDenomination(), true, 150, "Denomination");
+      affaire.setFirstname(null);
+      affaire.setLastname(null);
       if (affaire.getRna() != null
           && !validationHelper.validateRna(affaire.getRna().toUpperCase().replaceAll(" ", "")))
         throw new OsirisValidationException("RNA");
@@ -2063,6 +2089,20 @@ public class QuotationController {
     return new ResponseEntity<byte[]>(data, headers, HttpStatus.OK);
   }
 
+  @GetMapping(inputEntryPoint + "/publication/receipt/store")
+  public ResponseEntity<Provision> storePublicationReceipt(@RequestParam("idAnnouncement") Integer idAnnouncement,
+      @RequestParam("idProvision") Integer idProvision)
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+    Announcement announcement = announcementService.getAnnouncement(idAnnouncement);
+    Provision provision = provisionService.getProvision(idProvision);
+
+    if (announcement == null)
+      throw new OsirisValidationException("Annonce non trouvée");
+
+    announcementService.generateAndStorePublicationReceipt(announcement, provision);
+    return new ResponseEntity<Provision>(provision, HttpStatus.OK);
+  }
+
   @GetMapping(inputEntryPoint + "/proof/reading/download")
   public ResponseEntity<byte[]> downloadProofReading(@RequestParam("idAnnouncement") Integer idAnnouncement,
       @RequestParam("idProvision") Integer idProvision)
@@ -2164,6 +2204,38 @@ public class QuotationController {
     return new ResponseEntity<byte[]>(data, headers, HttpStatus.OK);
   }
 
+  @GetMapping(inputEntryPoint + "/publication/flag/store")
+  public ResponseEntity<Provision> storePublicationFlag(@RequestParam("idAnnouncement") Integer idAnnouncement,
+      @RequestParam(name = "idProvision", required = false) Integer idProvision)
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+    Announcement announcement = announcementService.getAnnouncement(idAnnouncement);
+    Provision provision = null;
+    if (idProvision == null) {
+      CustomerOrder customerOrder = customerOrderService.getCustomerOrderForAnnouncement(announcement);
+      // Get provision
+      if (customerOrder != null && customerOrder.getAssoAffaireOrders() != null)
+        for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
+          if (asso.getProvisions() != null)
+            for (Provision orderProvision : asso.getProvisions())
+              if (orderProvision.getAnnouncement() != null
+                  && orderProvision.getAnnouncement().getId().equals(announcement.getId())) {
+                provision = orderProvision;
+                break;
+              }
+    } else {
+      provision = provisionService.getProvision(idProvision);
+    }
+
+    if (announcement == null)
+      throw new OsirisValidationException("Annonce non trouvée");
+    if (provision == null)
+      throw new OsirisValidationException("Provision non trouvée");
+
+    announcementService.generateAndStorePublicationFlag(announcement, provision);
+
+    return new ResponseEntity<Provision>(provision, HttpStatus.OK);
+  }
+
   @GetMapping(inputEntryPoint + "/mail/generate/publication/receipt")
   public ResponseEntity<CustomerOrder> generatePublicationReceiptMail(@RequestParam Integer idCustomerOrder,
       @RequestParam Integer idAnnouncement)
@@ -2255,6 +2327,18 @@ public class QuotationController {
     customerOrderService.printMailingLabel(customerOrders);
 
     return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+  }
+
+  @PostMapping(inputEntryPoint + "/dashboard/employee")
+  public ResponseEntity<List<ProvisionBoardResult>> getDashboardEmployee(@RequestBody List<Employee> employees)
+      throws OsirisValidationException, OsirisException {
+    if (employees == null || employees.size() == 0)
+      throw new OsirisValidationException("employees");
+
+    for (Employee employee : employees)
+      validationHelper.validateReferential(employee, true, "Employee");
+    return new ResponseEntity<List<ProvisionBoardResult>>(provisionService.getDashboardEmployee(employees),
+        HttpStatus.OK);
   }
 
   @PostMapping(inputEntryPoint + "/debour/payment/associate")

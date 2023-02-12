@@ -209,6 +209,27 @@
                                                             </td>
                                                         </tr>
                                                     </table>
+                                                    <table class="text_block block-10" width="100%" border="0"
+                                                        th:if="${customerMailCustomMessage!=null}" cellpadding="10"
+                                                        cellspacing="0" role="presentation"
+                                                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;margin-top:20px;">
+                                                        <tr>
+                                                            <td class="pad"
+                                                                style="padding-left:10px;padding-right:10px;padding-top:75px;">
+                                                                <div style="font-family: Arial, sans-serif">
+                                                                    <div
+                                                                        style="font-size: 14px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; mso-line-height-alt: 16.8px; color: #233d56; line-height: 1.2;">
+                                                                        <p
+                                                                            style="margin: 0; font-size: 16px; text-align: center; mso-line-height-alt: 19.2px;">
+                                                                            <span style="font-size:16px;"
+                                                                                th:text="${customerMailCustomMessage}">
+                                                                            </span>
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
                                                     <table class="text_block block-9" width="100%" border="0"
                                                         th:if="${labelSubtitle!=null}" cellpadding="0" cellspacing="0"
                                                         role="presentation"

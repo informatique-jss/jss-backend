@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.quotation.model;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -84,6 +85,11 @@ public class Announcement implements IId, IAttachment, IDocument {
 	private Boolean isPublicationReciptAlreadySent;
 	private Boolean isPublicationFlagAlreadySent;
 	private Boolean isAnnouncementAlreadySentToConfrere;
+
+	private LocalDateTime firstConfrereSentMailDateTime;
+	private LocalDateTime firstConfrereReminderDateTime;
+	private LocalDateTime secondConfrereReminderDateTime;
+	private LocalDateTime thirdConfrereReminderDateTime;
 
 	private Integer actuLegaleId;
 
@@ -229,6 +235,38 @@ public class Announcement implements IId, IAttachment, IDocument {
 
 	public void setIsAnnouncementAlreadySentToConfrere(Boolean isAnnouncementAlreadySentToConfrere) {
 		this.isAnnouncementAlreadySentToConfrere = isAnnouncementAlreadySentToConfrere;
+	}
+
+	public LocalDateTime getFirstConfrereReminderDateTime() {
+		return firstConfrereReminderDateTime;
+	}
+
+	public void setFirstConfrereReminderDateTime(LocalDateTime firstConfrereReminderDateTime) {
+		this.firstConfrereReminderDateTime = firstConfrereReminderDateTime;
+	}
+
+	public LocalDateTime getSecondConfrereReminderDateTime() {
+		return secondConfrereReminderDateTime;
+	}
+
+	public void setSecondConfrereReminderDateTime(LocalDateTime secondConfrereReminderDateTime) {
+		this.secondConfrereReminderDateTime = secondConfrereReminderDateTime;
+	}
+
+	public LocalDateTime getThirdConfrereReminderDateTime() {
+		return thirdConfrereReminderDateTime;
+	}
+
+	public void setThirdConfrereReminderDateTime(LocalDateTime thirdConfrereReminderDateTime) {
+		this.thirdConfrereReminderDateTime = thirdConfrereReminderDateTime;
+	}
+
+	public LocalDateTime getFirstConfrereSentMailDateTime() {
+		return firstConfrereSentMailDateTime;
+	}
+
+	public void setFirstConfrereSentMailDateTime(LocalDateTime firstConfrereSentMailDateTime) {
+		this.firstConfrereSentMailDateTime = firstConfrereSentMailDateTime;
 	}
 
 }

@@ -1,0 +1,17 @@
+<h1 mat-dialog-title>{{title}}</h1>
+<div mat-dialog-content>
+  <p>{{label}}</p>
+  <table class="full-width ">
+    <tr>
+      <td>
+        <autocomplete-competent-authority [(model)]="competentAuthority" [form]="competentAuthorityForm"
+          propertyName="competentAuthority" [isMandatory]="true"
+          label="Autorité compétente"></autocomplete-competent-authority>
+      </td>
+    </tr>
+  </table>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-raised-button color="accent" (click)="closeDialog()">Annuler</button>
+  <button mat-raised-button color="warn" (click)="chooseCompetentAuthority()">Valider</button>
+</div>

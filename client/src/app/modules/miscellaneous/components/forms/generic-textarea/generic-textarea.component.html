@@ -1,7 +1,8 @@
 <mat-form-field class="full-width" [formGroup]="form!">
   <mat-label>{{label}}</mat-label>
   <textarea (keyup)="onInputChange()" (keydown)="onInputChange()" (paste)="onInputChange()" [rows]="numberOfLines"
-    matInput [formControlName]="propertyName" [placeholder]="label"></textarea>
+    matInput [formControlName]="propertyName" [placeholder]="label" [maxlength]="maxLength+''"
+    [minlength]="minLength+''"></textarea>
   <mat-icon matSuffix (click)="clearField()" *ngIf="!isDisabled && model!=undefined" class="pointer">
     close
   </mat-icon>

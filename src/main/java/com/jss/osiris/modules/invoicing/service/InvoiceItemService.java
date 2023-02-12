@@ -12,4 +12,6 @@ public interface InvoiceItemService {
     public InvoiceItem addOrUpdateInvoiceItem(InvoiceItem invoiceItem);
 
     public void deleteInvoiceItem(InvoiceItem invoiceItem);
+
+    public InvoiceItem cloneInvoiceItem(InvoiceItem invoiceItem);
 }

@@ -7,5 +7,6 @@ export interface IWorkflowElement {
   code: string;
   isOpenState: boolean;
   isCloseState: boolean;
+  aggregateStatus: string;
 }
 

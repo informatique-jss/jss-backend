@@ -4,9 +4,6 @@ import { UserNoteService } from "src/app/services/user.notes.service";
 
 @Directive()
 export abstract class GenericFormComponent implements OnInit {
-
-
-
   /**
    * The model of input property
    * Mandatory

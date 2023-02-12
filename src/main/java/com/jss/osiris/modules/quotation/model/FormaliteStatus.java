@@ -60,6 +60,8 @@ public class FormaliteStatus implements Serializable, IId {
 	@JsonIgnoreProperties(value = { "predecessors", "successors" })
 	private List<FormaliteStatus> predecessors;
 
+	private String aggregateStatus;
+
 	public static String getFORMALITE_NEW() {
 		return FORMALITE_NEW;
 	}
@@ -130,6 +132,14 @@ public class FormaliteStatus implements Serializable, IId {
 
 	public void setPredecessors(List<FormaliteStatus> predecessors) {
 		this.predecessors = predecessors;
+	}
+
+	public String getAggregateStatus() {
+		return aggregateStatus;
+	}
+
+	public void setAggregateStatus(String aggregateLabel) {
+		this.aggregateStatus = aggregateLabel;
 	}
 
 }

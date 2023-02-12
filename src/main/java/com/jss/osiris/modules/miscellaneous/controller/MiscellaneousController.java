@@ -431,6 +431,14 @@ public class MiscellaneousController {
                 "PrincipalAccountingAccountProvider");
         validationHelper.validateReferential(constant.getPrincipalAccountingAccountWaiting(), true,
                 "PrincipalAccountingAccountWaiting");
+        validationHelper.validateReferential(constant.getBillingTypeVacationDepositBeneficialOwners(), true,
+                "BillingTypeVacationDepositBeneficialOwners");
+        validationHelper.validateReferential(constant.getBillingTypeVacationUpdateBeneficialOwners(), true,
+                "BillingTypeVacationUpdateBeneficialOwners");
+        validationHelper.validateReferential(constant.getBillingTypeFormalityAdditionalDeclaration(), true,
+                "BillingTypeFormalityAdditionalDeclaration");
+        validationHelper.validateReferential(constant.getBillingTypeCorrespondenceFees(), true,
+                "BillingTypeCorrespondenceFees");
 
         return new ResponseEntity<Constant>(constantService.addOrUpdateConstant(constant), HttpStatus.OK);
     }
@@ -774,6 +782,16 @@ public class MiscellaneousController {
                 competentAuthorityService.getCompetentAuthorityByCity(cityId), HttpStatus.OK);
     }
 
+    @GetMapping(inputEntryPoint + "/competent-authorities/search/competent-authority-type")
+    public ResponseEntity<List<CompetentAuthority>> getCompetentAuthoritiesByType(Integer competentAuthorityTypeId)
+            throws OsirisValidationException {
+        if (competentAuthorityTypeId == null)
+            throw new OsirisValidationException("competentAuthorityTypeId");
+        return new ResponseEntity<List<CompetentAuthority>>(
+                competentAuthorityService.getCompetentAuthorityByAuthorityType(competentAuthorityTypeId),
+                HttpStatus.OK);
+    }
+
     @GetMapping(inputEntryPoint + "/competent-authority-types")
     public ResponseEntity<List<CompetentAuthorityType>> getCompetentAuthorityTypes() {
         return new ResponseEntity<List<CompetentAuthorityType>>(
@@ -801,7 +819,6 @@ public class MiscellaneousController {
                 HttpStatus.OK);
     }
 
-    @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
     @PostMapping(inputEntryPoint + "/competent-authority")
     public ResponseEntity<CompetentAuthority> addOrUpdateCompetentAuthority(
             @RequestBody CompetentAuthority competentAuthorities) throws OsirisValidationException, OsirisException {

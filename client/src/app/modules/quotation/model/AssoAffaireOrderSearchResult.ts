@@ -1,4 +1,3 @@
-import { Employee } from "../../profile/model/Employee";
 
 export interface AssoAffaireOrderSearchResult {
   affaireLabel: string;
@@ -9,8 +8,9 @@ export interface AssoAffaireOrderSearchResult {
   responsibleId: number;
   assignedToId: number;
   provisionTypeLabel: string;
-  statusLabel: Employee;
+  statusLabel: string;
   assoId: number;
   provisionId: number;
   isEmergency: boolean;
+  waitedCompetentAuthorityLabel: string;
 }

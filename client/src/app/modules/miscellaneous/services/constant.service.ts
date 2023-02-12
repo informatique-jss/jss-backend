@@ -122,6 +122,10 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.attachmentTypeInvoice;
   }
 
+  getAttachmentTypeCreditNote() {
+    return this.constant.attachmentTypeCreditNote;
+  }
+
   getAttachmentTypeKbisUpdated() {
     return this.constant.attachmentTypeKbisUpdated;
   }
@@ -274,6 +278,22 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.billingTypeEmergency;
   }
 
+  getBillingTypeVacationDepositBeneficialOwners() {
+    return this.constant.billingTypeVacationDepositBeneficialOwners;
+  }
+
+  getBillingTypeVacationUpdateBeneficialOwners() {
+    return this.constant.billingTypeVacationUpdateBeneficialOwners;
+  }
+
+  getBillingTypeFormalityAdditionalDeclaration() {
+    return this.constant.billingTypeFormalityAdditionalDeclaration;
+  }
+
+  getBillingTypeCorrespondenceFees() {
+    return this.constant.billingTypeCorrespondenceFees;
+  }
+
   getStringNantissementDepositFormeJuridiqueCode() {
     return this.constant.stringNantissementDepositFormeJuridiqueCode;
   }
@@ -286,6 +306,10 @@ export class ConstantService extends AppRestService<Constant>{
 
   getPaymentTypeEspeces() {
     return this.constant.paymentTypeEspeces;
+  }
+
+  getPaymentTypeCheques() {
+    return this.constant.paymentTypeCheques;
   }
 
   getPaymentTypeCB() {
@@ -416,12 +440,28 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.competentAuthorityTypeCfp;
   }
 
+  getCompetentAuthorityTypeCci() {
+    return this.constant.competentAuthorityTypeCci;
+  }
+
+  getCompetentAuthorityTypeChambreMetier() {
+    return this.constant.competentAuthorityTypeChambreMetier;
+  }
+
+  getCompetentAuthorityTypeDireccte() {
+    return this.constant.competentAuthorityTypeDireccte;
+  }
+
   getInvoiceStatusSend() {
     return this.constant.invoiceStatusSend;
   }
 
   getInvoiceStatusReceived() {
     return this.constant.invoiceStatusReceived;
+  }
+
+  getInvoiceStatusCreditNoteEmited() {
+    return this.constant.invoiceStatusCreditNoteEmited;
   }
 
   getPaymentWayInbound() {

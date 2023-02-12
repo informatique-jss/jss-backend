@@ -58,6 +58,8 @@ public class BodaccStatus implements Serializable, IId {
 	@JsonIgnoreProperties(value = { "predecessors", "successors" })
 	private List<BodaccStatus> predecessors;
 
+	private String aggregateStatus;
+
 	public Integer getId() {
 		return id;
 	}
@@ -120,6 +122,14 @@ public class BodaccStatus implements Serializable, IId {
 
 	public void setPredecessors(List<BodaccStatus> predecessors) {
 		this.predecessors = predecessors;
+	}
+
+	public String getAggregateStatus() {
+		return aggregateStatus;
+	}
+
+	public void setAggregateStatus(String aggregateLabel) {
+		this.aggregateStatus = aggregateLabel;
 	}
 
 }

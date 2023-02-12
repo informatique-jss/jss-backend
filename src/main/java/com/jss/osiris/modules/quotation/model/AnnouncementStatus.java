@@ -61,13 +61,7 @@ public class AnnouncementStatus implements Serializable, IId {
 	@JsonIgnoreProperties(value = { "predecessors", "successors" })
 	private List<AnnouncementStatus> predecessors;
 
-	public static String getANNOUNCEMENT_NEW() {
-		return ANNOUNCEMENT_NEW;
-	}
-
-	public static void setANNOUNCEMENT_NEW(String aNNOUNCEMENT_NEW) {
-		ANNOUNCEMENT_NEW = aNNOUNCEMENT_NEW;
-	}
+	private String aggregateStatus;
 
 	public Integer getId() {
 		return id;
@@ -131,6 +125,14 @@ public class AnnouncementStatus implements Serializable, IId {
 
 	public void setPredecessors(List<AnnouncementStatus> predecessors) {
 		this.predecessors = predecessors;
+	}
+
+	public String getAggregateStatus() {
+		return aggregateStatus;
+	}
+
+	public void setAggregateStatus(String aggregateStatus) {
+		this.aggregateStatus = aggregateStatus;
 	}
 
 }

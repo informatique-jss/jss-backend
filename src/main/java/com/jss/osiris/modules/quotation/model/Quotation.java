@@ -107,6 +107,9 @@ public class Quotation implements IQuotation {
 	private LocalDateTime secondReminderDateTime;
 	private LocalDateTime thirdReminderDateTime;
 
+	@Column(columnDefinition = "TEXT")
+	private String customerMailCustomMessage;
+
 	public Integer getId() {
 		return id;
 	}
@@ -281,6 +284,14 @@ public class Quotation implements IQuotation {
 
 	public void setOverrideSpecialOffer(Boolean overrideSpecialOffer) {
 		this.overrideSpecialOffer = overrideSpecialOffer;
+	}
+
+	public String getCustomerMailCustomMessage() {
+		return customerMailCustomMessage;
+	}
+
+	public void setCustomerMailCustomMessage(String customerMailCustomMessage) {
+		this.customerMailCustomMessage = customerMailCustomMessage;
 	}
 
 }
