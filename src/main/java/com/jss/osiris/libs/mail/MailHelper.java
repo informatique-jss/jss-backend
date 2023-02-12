@@ -327,7 +327,8 @@ public class MailHelper {
         ITextRenderer renderer = new ITextRenderer();
         try {
             renderer.setDocumentFromString(
-                    htmlContent.replaceAll("\\p{C}", " ").replaceAll("&", "<![CDATA[&]]>").replaceAll("&#160;", " "));
+                    htmlContent.replaceAll("\\p{C}", " ").replaceAll("&", "<![CDATA[&]]>")
+                            .replace("<![CDATA[&]]>amp;mail", "mail").replaceAll("&#160;", " "));
             renderer.setScaleToFit(true);
             renderer.layout();
             renderer.createPDF(outputStream);
