@@ -304,6 +304,7 @@ public class MailComputeHelper {
                     && ((Responsable) customer).getTiers().getAddress() != null
                     && ((Responsable) customer).getTiers().getCity() != null) {
                 Tiers tiers = ((Responsable) customer).getTiers();
+                Responsable responsable = ((Responsable) customer);
                 if (tiers.getMailRecipient() == null || tiers.getMailRecipient().length() == 0)
                     invoiceLabelResult.setBillingLabel(
                             tiers.getDenomination() != null ? tiers.getDenomination()
