@@ -19,7 +19,6 @@ export interface CompetentAuthority extends IReferential {
   jssAccount: string;
   cities: City[];
   regions: Region[];
-  hasAccount: boolean;
   contact: string;
   mailRecipient: string;
   address: string;

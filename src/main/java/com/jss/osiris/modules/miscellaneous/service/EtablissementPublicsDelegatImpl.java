@@ -109,8 +109,6 @@ public class EtablissementPublicsDelegatImpl implements EtablissementPublicsDele
         }
 
         competentAuthority.setCountry(constantService.getCountryFrance());
-        if (competentAuthority.getHasAccount() == null)
-            competentAuthority.setHasAccount(false);
         competentAuthority.setLabel(organisme.getProperties().getNom());
 
         if (organisme.getProperties().getEmail() != null
