@@ -81,18 +81,16 @@
             <tr>
               <td>
                 <generic-input [(model)]="selectedcompetentAuthority.iban" label="IBAN" [form]="entityForm2"
-                  propertyName="iban" [isMandatory]="true" [isDisabled]="!editMode"
-                  [conditionnalRequired]="selectedcompetentAuthority.hasAccount" [maxLength]="40"></generic-input>
+                  propertyName="iban" [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="40"></generic-input>
               </td>
               <td>
                 <generic-input [(model)]="selectedcompetentAuthority.bic" label="BIC" [form]="entityForm2"
-                  propertyName="bic" [isMandatory]="true" [isDisabled]="!editMode"
-                  [conditionnalRequired]="selectedcompetentAuthority.hasAccount" [maxLength]="40"></generic-input>
+                  propertyName="bic" [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="40"></generic-input>
               </td>
               <td>
                 <generic-input [(model)]="selectedcompetentAuthority.jssAccount" label="Compte du JSS chez AC"
-                  [form]="entityForm2" propertyName="jssAccount" [isMandatory]="true" [isDisabled]="!editMode"
-                  [conditionnalRequired]="selectedcompetentAuthority.hasAccount" [maxLength]="40"></generic-input>
+                  [form]="entityForm2" propertyName="jssAccount" [isMandatory]="false" [isDisabled]="!editMode"
+                  [maxLength]="40"></generic-input>
               </td>
             </tr>
           </table>
