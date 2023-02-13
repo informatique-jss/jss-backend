@@ -1827,4 +1827,12 @@ public class Constant implements Serializable, IId {
 		this.accountingAccountDirectCharge = accountingAccountDirectCharge;
 	}
 
+	public PaymentType getPaymentTypeAccount() {
+		return paymentTypeAccount;
+	}
+
+	public void setPaymentTypeAccount(PaymentType paymentTypeAccount) {
+		this.paymentTypeAccount = paymentTypeAccount;
+	}
+
 }
