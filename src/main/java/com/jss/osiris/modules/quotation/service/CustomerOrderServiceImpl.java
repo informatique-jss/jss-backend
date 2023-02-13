@@ -965,8 +965,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         if (customerOrders != null && customerOrders.size() > 0)
             for (String id : customerOrders) {
                 try {
+                    CustomerOrder customerOrder = getCustomerOrder(Integer.parseInt(id));
                     printDelegate.printMailingLabel(
-                            mailComputeHelper.computePaperLabelResult(getCustomerOrder(Integer.parseInt(id))));
+                            mailComputeHelper.computePaperLabelResult(customerOrder), customerOrder);
                 } catch (NumberFormatException e) {
                 } catch (Exception e) {
                     throw new OsirisException(e, "Error when printing label");
