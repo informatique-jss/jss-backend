@@ -549,6 +549,13 @@
           </tr>
           <tr>
             <td>
+              <select-payment-types [(model)]="constant.paymentTypeAccount" label="Type de paiement - en compte"
+                [form]="constantForm" propertyName="paymentTypeAccount" [isMandatory]="true"
+                [isDisabled]="!editMode"></select-payment-types>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <select-payment-types [(model)]="constant.paymentTypePrelevement" label="Type de paiement - prélèvement"
                 [form]="constantForm" propertyName="paymentTypePrelevement" [isMandatory]="true"
                 [isDisabled]="!editMode"></select-payment-types>
