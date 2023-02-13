@@ -27,6 +27,8 @@ import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.MailComputeHelper;
 import com.jss.osiris.modules.invoicing.model.BankTransfertSearch;
 import com.jss.osiris.modules.invoicing.model.BankTransfertSearchResult;
+import com.jss.osiris.modules.invoicing.model.DebourSearch;
+import com.jss.osiris.modules.invoicing.model.DebourSearchResult;
 import com.jss.osiris.modules.invoicing.model.Deposit;
 import com.jss.osiris.modules.invoicing.model.DirectDebitTransfertSearch;
 import com.jss.osiris.modules.invoicing.model.DirectDebitTransfertSearchResult;
@@ -56,6 +58,7 @@ import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.service.BankTransfertService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
+import com.jss.osiris.modules.quotation.service.DebourService;
 import com.jss.osiris.modules.quotation.service.DirectDebitTransfertService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.tiers.model.BillingLabelType;
@@ -110,6 +113,9 @@ public class InvoicingController {
 
     @Autowired
     DirectDebitTransfertService directDebitTransfertService;
+
+    @Autowired
+    DebourService debourService;
 
     @GetMapping(inputEntryPoint + "/payment-ways")
     public ResponseEntity<List<PaymentWay>> getPaymentWays() {
@@ -174,6 +180,18 @@ public class InvoicingController {
             throw new OsirisValidationException("paymentWays");
 
         return new ResponseEntity<List<PaymentSearchResult>>(paymentService.searchPayments(paymentSearch),
+                HttpStatus.OK);
+    }
+
+    @PostMapping(inputEntryPoint + "/debours/search")
+    public ResponseEntity<List<DebourSearchResult>> getDebours(@RequestBody DebourSearch debourSearch)
+            throws OsirisValidationException, OsirisException {
+        if (debourSearch == null)
+            throw new OsirisValidationException("debourSearch");
+
+        validationHelper.validateReferential(debourSearch.getCompetentAuthority(), false, "competentAuthority");
+
+        return new ResponseEntity<List<DebourSearchResult>>(debourService.searchDebours(debourSearch),
                 HttpStatus.OK);
     }
 
@@ -723,7 +741,8 @@ public class InvoicingController {
         validationHelper.validateReferential(invoice.getManualPaymentType(), invoice.getIsInvoiceFromProvider(),
                 "PaymentType");
         if (invoice.getIsInvoiceFromProvider()
-                && invoice.getManualPaymentType().getId().equals(constantService.getPaymentTypeVirement().getId())) {
+                && invoice.getManualPaymentType().getId().equals(constantService.getPaymentTypeVirement().getId())
+                && (invoice.getCompetentAuthority() == null || invoice.getCustomerOrderForInboundInvoice() == null)) {
             if (invoiceHelper.getIbanOfOrderingCustomer(invoice) == null)
                 throw new OsirisClientMessageException("Aucun IBAN trouvé sur le donneur d'ordre");
             if (invoiceHelper.getBicOfOrderingCustomer(invoice) == null)

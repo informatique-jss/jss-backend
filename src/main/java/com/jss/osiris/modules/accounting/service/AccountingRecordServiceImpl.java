@@ -21,6 +21,7 @@ import com.jss.osiris.libs.GlobalExceptionHandler;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisLog;
+import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.model.AccountingAccountClass;
@@ -591,7 +592,66 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
         "Paiement n°" + payment.getId(), payment.getPaymentAmount(), null,
         constantService.getAccountingAccountBankJss(),
         null, null, null, bankJournal, payment, null, null);
+  }
 
+  @Override
+  public void generateBankAccountingRecordsForOutboundDebourCheckPayment(Debour debour,
+      CustomerOrder customerOrder) throws OsirisException {
+    AccountingJournal bankJournal = constantService.getAccountingJournalBank();
+
+    generateNewAccountingRecord(LocalDateTime.now(), debour.getId(), null, null,
+        "Debour n°" + debour.getId(), debour.getDebourAmount(), null,
+        constantService.getAccountingAccountBankJss(),
+        null, null, customerOrder, bankJournal, null, null, debour);
+
+    if (debour.getCompetentAuthority().getCompetentAuthorityType().getIsDirectCharge())
+      generateNewAccountingRecord(LocalDateTime.now(), debour.getId(), null, null,
+          "Debour n°" + debour.getId(), null, debour.getDebourAmount(),
+          constantService.getAccountingAccountDirectCharge(),
+          null, null, customerOrder, bankJournal, null, null, debour);
+    else
+      generateNewAccountingRecord(LocalDateTime.now(), debour.getId(), null, null,
+          "Debour n°" + debour.getId(), null, debour.getDebourAmount(),
+          debour.getCompetentAuthority().getAccountingAccountProvider(),
+          null, null, customerOrder, bankJournal, null, null, debour);
+  }
+
+  @Override
+  public void generateBankAccountingRecordsForOutboundDebourCashPayment(Debour debour,
+      CustomerOrder customerOrder) throws OsirisException {
+    AccountingJournal bankJournal = constantService.getAccountingJournalBank();
+
+    generateNewAccountingRecord(LocalDateTime.now(), debour.getId(), null, null,
+        "Debour n°" + debour.getId(), debour.getDebourAmount(), null,
+        constantService.getAccountingAccountBankJss(),
+        null, null, customerOrder, bankJournal, null, null, debour);
+
+    if (debour.getCompetentAuthority().getCompetentAuthorityType().getIsDirectCharge())
+      generateNewAccountingRecord(LocalDateTime.now(), debour.getId(), null, null,
+          "Debour n°" + debour.getId(), null, debour.getDebourAmount(),
+          constantService.getAccountingAccountCaisse(),
+          null, null, customerOrder, bankJournal, null, null, debour);
+    else
+      generateNewAccountingRecord(LocalDateTime.now(), debour.getId(), null, null,
+          "Debour n°" + debour.getId(), null, debour.getDebourAmount(),
+          debour.getCompetentAuthority().getAccountingAccountProvider(),
+          null, null, customerOrder, bankJournal, null, null, debour);
+  }
+
+  @Override
+  public void generateBankAccountingRecordsForOutboundDebourAccountPayment(Debour debour,
+      CustomerOrder customerOrder) throws OsirisException {
+    AccountingJournal bankJournal = constantService.getAccountingJournalBank();
+
+    generateNewAccountingRecord(LocalDateTime.now(), debour.getId(), null, null,
+        "Debour n°" + debour.getId(), debour.getDebourAmount(), null,
+        constantService.getAccountingAccountBankJss(),
+        null, null, customerOrder, bankJournal, null, null, debour);
+
+    generateNewAccountingRecord(LocalDateTime.now(), debour.getId(), null, null,
+        "Debour n°" + debour.getId(), null, debour.getDebourAmount(),
+        debour.getCompetentAuthority().getAccountingAccountProvider(),
+        null, null, customerOrder, bankJournal, null, null, debour);
   }
 
   @Override
@@ -1107,7 +1167,8 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   }
 
   @Transactional
-  public void sendBillingClosureReceipt() throws OsirisException, OsirisClientMessageException {
+  public void sendBillingClosureReceipt()
+      throws OsirisException, OsirisClientMessageException, OsirisValidationException {
     List<Tiers> tiers = tiersService.findAllTiersTypeClient();
     if (tiers != null)
       for (Tiers tier : tiers) {

@@ -53,7 +53,8 @@ public class InvoiceItem implements Serializable, IId {
 
 	@ManyToOne
 	@JoinColumn(name = "id_invoice")
-	@JsonIgnoreProperties(value = { "invoiceItems", "accountingRecords", "customerOrder" }, allowSetters = true)
+	@JsonIgnoreProperties(value = { "invoiceItems", "accountingRecords", "customerOrder",
+			"customerOrderForInboundInvoice" }, allowSetters = true)
 	Invoice invoice;
 
 	public Integer getId() {

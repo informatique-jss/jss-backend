@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
@@ -100,12 +101,13 @@ public class QuotationServiceImpl implements QuotationService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Quotation addOrUpdateQuotationFromUser(Quotation quotation)
-            throws OsirisException, OsirisClientMessageException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         return addOrUpdateQuotation(quotation);
     }
 
     @Override
-    public Quotation addOrUpdateQuotation(Quotation quotation) throws OsirisException, OsirisClientMessageException {
+    public Quotation addOrUpdateQuotation(Quotation quotation)
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         quotation.setIsQuotation(true);
 
         if (quotation.getDocuments() != null)
@@ -148,7 +150,7 @@ public class QuotationServiceImpl implements QuotationService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Quotation addOrUpdateQuotationStatus(Quotation quotation, String targetStatusCode)
-            throws OsirisException, OsirisClientMessageException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         QuotationStatus targetQuotationStatus = quotationStatusService.getQuotationStatusByCode(targetStatusCode);
         if (targetQuotationStatus == null)
             throw new OsirisException(null, "Quotation status not found for code " + targetStatusCode);
@@ -260,7 +262,7 @@ public class QuotationServiceImpl implements QuotationService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public String getCardPaymentLinkForQuotationDeposit(Quotation quotation, String mail, String subject)
-            throws OsirisException, OsirisClientMessageException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
 
         if (quotation.getQuotationStatus().getCode().equals(QuotationStatus.ABANDONED))
             throw new OsirisException(null, "Impossible to pay an cancelled quotation n°" + quotation.getId());
@@ -310,7 +312,7 @@ public class QuotationServiceImpl implements QuotationService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Boolean validateCardPaymentLinkForQuotationDeposit(Quotation quotation)
-            throws OsirisException, OsirisClientMessageException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         if (quotation.getCentralPayPaymentRequestId() != null) {
             CentralPayPaymentRequest centralPayPaymentRequest = centralPayDelegateService
                     .getPaymentRequest(quotation.getCentralPayPaymentRequestId());
@@ -331,7 +333,7 @@ public class QuotationServiceImpl implements QuotationService {
     }
 
     private Quotation unlockQuotationFromDeposit(Quotation quotation, CentralPayPaymentRequest centralPayPaymentRequest)
-            throws OsirisException, OsirisClientMessageException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
 
         if (quotation.getQuotationStatus().getCode().equals(QuotationStatus.SENT_TO_CUSTOMER)) {
             // Generate customer order
@@ -373,7 +375,8 @@ public class QuotationServiceImpl implements QuotationService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void sendRemindersForQuotation() throws OsirisException, OsirisClientMessageException {
+    public void sendRemindersForQuotation()
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         List<Quotation> quotations = quotationRepository.findQuotationForReminder(
                 quotationStatusService.getQuotationStatusByCode(QuotationStatus.SENT_TO_CUSTOMER));
 

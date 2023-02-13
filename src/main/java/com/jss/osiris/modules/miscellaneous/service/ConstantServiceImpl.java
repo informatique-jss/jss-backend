@@ -280,6 +280,11 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public BillingType getBillingTypeDeboursNonTaxable() throws OsirisException {
+        return getConstants().getBillingTypeDeboursNonTaxable();
+    }
+
+    @Override
     public BillingType getBillingTypeCentralPayFees() throws OsirisException {
         return getConstants().getBillingTypeCentralPayFees();
     }
@@ -447,6 +452,11 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public String getStringBusinnessNantissementRedactionFormeJuridiqueCode() throws OsirisException {
         return getConstants().getStringNantissementDepositFormeJuridiqueCode();
+    }
+
+    @Override
+    public PaymentType getPaymentTypeAccount() throws OsirisException {
+        return getConstants().getPaymentTypeAccount();
     }
 
     @Override
@@ -832,6 +842,16 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public AccountingAccount getAccountingAccountBankJss() throws OsirisException {
         return getConstants().getAccountingAccountBankJss();
+    }
+
+    @Override
+    public AccountingAccount getAccountingAccountDirectCharge() throws OsirisException {
+        return getConstants().getAccountingAccountDirectCharge();
+    }
+
+    @Override
+    public AccountingAccount getAccountingAccountCaisse() throws OsirisException {
+        return getConstants().getAccountingAccountCaisse();
     }
 
 }

@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.ofx.OFXParser;
 import com.jss.osiris.libs.ofx.OFXStatement;
 import com.jss.osiris.libs.ofx.StatementTransaction;
@@ -137,13 +138,14 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void payementGrab()
-            throws OsirisException, OsirisClientMessageException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         automatchPaymentsInvoicesAndGeneratePaymentAccountingRecords();
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public List<Attachment> uploadOfxFile(InputStream file) throws OsirisException, OsirisClientMessageException {
+    public List<Attachment> uploadOfxFile(InputStream file)
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         OFXStatement operationList = ofxParser.parseOfx(file);
 
         if (operationList != null && operationList.getAccountStatements() != null
@@ -173,7 +175,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     private void automatchPaymentsInvoicesAndGeneratePaymentAccountingRecords()
-            throws OsirisException, OsirisClientMessageException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         List<Payment> payments = paymentRepository.findNotAssociatedPayments();
 
         for (Payment payment : payments) {
@@ -327,7 +329,7 @@ public class PaymentServiceImpl implements PaymentService {
                 if (refundFound != null)
                     associateOutboundPaymentAndRefund(payment, refundFound, generateWaitingAccountAccountingRecords);
 
-                // If not found, try to match debour
+                // If not found, try to match debour bank transfert
                 Debour debourFound = null;
                 if (correspondingEntities != null && correspondingEntities.size() > 0) {
                     for (IndexEntity foundEntity : correspondingEntities) {
@@ -357,7 +359,7 @@ public class PaymentServiceImpl implements PaymentService {
             List<Invoice> correspondingInvoices,
             List<CustomerOrder> correspondingCustomerOrder, Affaire affaireRefund, ITiers tiersRefund,
             List<Float> byPassAmount)
-            throws OsirisException, OsirisClientMessageException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
 
         String refundLabelSuffix = "";
         float remainingMoney = payment.getPaymentAmount();
@@ -410,7 +412,7 @@ public class PaymentServiceImpl implements PaymentService {
             List<CustomerOrder> correspondingCustomerOrder,
             List<Invoice> correspondingInvoice,
             MutableBoolean generateWaitingAccountAccountingRecords, List<Float> byPassAmount, float remainingMoney)
-            throws OsirisException, OsirisClientMessageException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         Float remainingToPay = 0f;
         int amountIndex = 0;
         if (correspondingInvoice != null)
@@ -615,12 +617,21 @@ public class PaymentServiceImpl implements PaymentService {
         // do counter part of waiting record
         if (payment.getAccountingRecords() != null && payment.getAccountingRecords().size() > 0)
             for (AccountingRecord record : payment.getAccountingRecords())
-                if (record.getIsCounterPart() == false
-                        && record.getAccountingAccount().getPrincipalAccountingAccount().getId()
-                                .equals(constantService.getPrincipalAccountingAccountWaiting().getId())) {
-                    accountingRecordService.letterWaitingRecords(record,
-                            accountingRecordService.generateCounterPart(record,
-                                    constantService.getAccountingJournalSales(), payment.getId()));
+                if (record.getIsCounterPart() == false) {
+                    if (record.getAccountingAccount().getPrincipalAccountingAccount().getId()
+                            .equals(constantService.getPrincipalAccountingAccountWaiting().getId())) {
+                        accountingRecordService.letterWaitingRecords(record,
+                                accountingRecordService.generateCounterPart(record,
+                                        constantService.getAccountingJournalSales(), payment.getId()));
+                    } else if (debours.get(0).getPaymentType().getId()
+                            .equals(constantService.getPaymentTypeCB().getId())
+                            || debours.get(0).getPaymentType().getId()
+                                    .equals(constantService.getPaymentTypeVirement().getId())) {
+                        // if bank transfert or CB, records generated when debour is filled
+                        // so payment must be counter parted totally
+                        accountingRecordService.generateCounterPart(record,
+                                constantService.getAccountingJournalSales(), payment.getId());
+                    }
                 }
         return 0f;
     }
@@ -643,7 +654,11 @@ public class PaymentServiceImpl implements PaymentService {
                     Debour inDebour = debourService.getDebour(debour.getId());
                     debour.setProvision(inDebour.getProvision());
                     generateWaitingAccountAccountingRecords.setFalse();
-                    accountingRecordService.generateAccountingRecordsForDebourOnDebour(inDebour);
+                    // generate only if bank transfert or CB
+                    // in other case, records generated when debour is filled
+                    if (debour.getPaymentType().getId().equals(constantService.getPaymentTypeCB().getId())
+                            || debour.getPaymentType().getId().equals(constantService.getPaymentTypeVirement().getId()))
+                        accountingRecordService.generateAccountingRecordsForDebourOnDebour(inDebour);
                     inDebour.setPayment(payment);
                     debourService.addOrUpdateDebour(inDebour);
                 }
@@ -856,7 +871,8 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     @Transactional
-    public void unsetExternallyAssociated(Payment payment) throws OsirisException, OsirisClientMessageException {
+    public void unsetExternallyAssociated(Payment payment)
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         payment.setIsExternallyAssociated(false);
         addOrUpdatePayment(payment);
         automatchPaymentsInvoicesAndGeneratePaymentAccountingRecords();

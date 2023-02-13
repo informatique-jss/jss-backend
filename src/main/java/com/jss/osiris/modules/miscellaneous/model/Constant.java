@@ -178,6 +178,10 @@ public class Constant implements Serializable, IId {
 	private Country countryMonaco;
 
 	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_billing_type_debours_non_taxable")
+	private BillingType billingTypeDeboursNonTaxable;
+
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_billing_type_central_pay_fees")
 	private BillingType billingTypeCentralPayFees;
 
@@ -311,6 +315,10 @@ public class Constant implements Serializable, IId {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_payment_type_cheques")
 	private PaymentType paymentTypeCheques;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_payment_type_account")
+	private PaymentType paymentTypeAccount;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_refund_type_virement")
@@ -594,6 +602,14 @@ public class Constant implements Serializable, IId {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_accounting_account_bank_jss")
 	private AccountingAccount accountingAccountBankJss;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_accounting_account_caisse")
+	private AccountingAccount accountingAccountCaisse;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_accounting_account_direct_charge")
+	private AccountingAccount accountingAccountDirectCharge;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_billing_type_vacation_deposit_beneficial_owners")
@@ -1785,6 +1801,30 @@ public class Constant implements Serializable, IId {
 
 	public void setPaymentTypeCheques(PaymentType paymentTypeCheques) {
 		this.paymentTypeCheques = paymentTypeCheques;
+	}
+
+	public BillingType getBillingTypeDeboursNonTaxable() {
+		return billingTypeDeboursNonTaxable;
+	}
+
+	public void setBillingTypeDeboursNonTaxable(BillingType billingTypeDeboursNonTaxable) {
+		this.billingTypeDeboursNonTaxable = billingTypeDeboursNonTaxable;
+	}
+
+	public AccountingAccount getAccountingAccountCaisse() {
+		return accountingAccountCaisse;
+	}
+
+	public void setAccountingAccountCaisse(AccountingAccount accountingAccountCaisse) {
+		this.accountingAccountCaisse = accountingAccountCaisse;
+	}
+
+	public AccountingAccount getAccountingAccountDirectCharge() {
+		return accountingAccountDirectCharge;
+	}
+
+	public void setAccountingAccountDirectCharge(AccountingAccount accountingAccountDirectCharge) {
+		this.accountingAccountDirectCharge = accountingAccountDirectCharge;
 	}
 
 }

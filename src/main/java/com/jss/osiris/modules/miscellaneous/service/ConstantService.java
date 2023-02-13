@@ -111,6 +111,8 @@ public interface ConstantService {
 
     public Country getCountryMonaco() throws OsirisException;
 
+    public BillingType getBillingTypeDeboursNonTaxable() throws OsirisException;
+
     public BillingType getBillingTypeCentralPayFees() throws OsirisException;
 
     public BillingType getBillingTypeLogo() throws OsirisException;
@@ -188,6 +190,8 @@ public interface ConstantService {
     public PaymentType getPaymentTypeCB() throws OsirisException;
 
     public PaymentType getPaymentTypePrelevement() throws OsirisException;
+
+    public PaymentType getPaymentTypeAccount() throws OsirisException;
 
     public RefundType getRefundTypeVirement() throws OsirisException;
 
@@ -332,4 +336,8 @@ public interface ConstantService {
     public AccountingAccount getAccountingAccountBankCentralPay() throws OsirisException;
 
     public AccountingAccount getAccountingAccountBankJss() throws OsirisException;
+
+    public AccountingAccount getAccountingAccountDirectCharge() throws OsirisException;
+
+    public AccountingAccount getAccountingAccountCaisse() throws OsirisException;
 }

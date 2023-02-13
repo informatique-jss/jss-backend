@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.accounting.model.AccountingAccountClass;
 import com.jss.osiris.modules.accounting.model.AccountingBalance;
@@ -95,6 +96,16 @@ public interface AccountingRecordService {
 
         public void generateBankAccountingRecordsForOutboundPayment(Payment payment) throws OsirisException;
 
+        public void generateBankAccountingRecordsForOutboundDebourCheckPayment(Debour debour,
+                        CustomerOrder customerOrder)
+                        throws OsirisException;
+
+        public void generateBankAccountingRecordsForOutboundDebourCashPayment(Debour debour,
+                        CustomerOrder customerOrder) throws OsirisException;
+
+        public void generateBankAccountingRecordsForOutboundDebourAccountPayment(Debour debour,
+                        CustomerOrder customerOrder) throws OsirisException;
+
         public void generateAccountingRecordsForRefundOnVirement(Refund refund) throws OsirisException;
 
         public void generateAccountingRecordsForDebourOnDebour(Debour debour) throws OsirisException;
@@ -127,7 +138,8 @@ public interface AccountingRecordService {
 
         public AccountingRecord unassociateCustomerOrderPayementAndDeposit(AccountingRecord accountingRecord);
 
-        public void sendBillingClosureReceipt() throws OsirisException, OsirisClientMessageException;
+        public void sendBillingClosureReceipt()
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
         public void generateAccountingRecordsForCentralPayPayment(
                         CentralPayPaymentRequest centralPayPaymentRequest,

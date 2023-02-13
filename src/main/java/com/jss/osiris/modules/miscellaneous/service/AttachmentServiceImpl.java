@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.CustomerMailService;
 import com.jss.osiris.libs.mail.model.CustomerMail;
 import com.jss.osiris.modules.invoicing.model.Invoice;
@@ -119,7 +120,7 @@ public class AttachmentServiceImpl implements AttachmentService {
     public List<Attachment> addAttachment(MultipartFile file, Integer idEntity, String entityType,
             AttachmentType attachmentType,
             String filename, Boolean replaceExistingAttachementType)
-            throws OsirisException, OsirisClientMessageException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         try {
             return addAttachment(file.getInputStream(), idEntity, entityType, attachmentType, filename,
                     replaceExistingAttachementType, filename);
@@ -132,7 +133,7 @@ public class AttachmentServiceImpl implements AttachmentService {
     public List<Attachment> addAttachment(InputStream file, Integer idEntity, String entityType,
             AttachmentType attachmentType,
             String filename, Boolean replaceExistingAttachementType, String description)
-            throws OsirisException, OsirisClientMessageException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
 
         if (entityType.equals("Ofx"))
             if (activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_GROUP)

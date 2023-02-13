@@ -124,7 +124,7 @@ public class PricingHelper {
         return null;
     }
 
-    private BillingItem getAppliableBillingItem(List<BillingItem> billingItems) {
+    public BillingItem getAppliableBillingItem(List<BillingItem> billingItems) {
         if (billingItems == null)
             return null;
 
@@ -431,13 +431,16 @@ public class PricingHelper {
                 && provision.getIsEmergency() != null && provision.getIsEmergency())
             return true;
         if (billingType.getId().equals(constantService.getBillingtypeVacationDepositBeneficialOwners().getId())
-                && provision.getIsVacationDepositBeneficialOwners() != null && provision.getIsVacationDepositBeneficialOwners())
+                && provision.getIsVacationDepositBeneficialOwners() != null
+                && provision.getIsVacationDepositBeneficialOwners())
             return true;
         if (billingType.getId().equals(constantService.getBillingtypeVacationUpdateBeneficialOwners().getId())
-                && provision.getIsVacationUpdateBeneficialOwners() != null && provision.getIsVacationUpdateBeneficialOwners())
+                && provision.getIsVacationUpdateBeneficialOwners() != null
+                && provision.getIsVacationUpdateBeneficialOwners())
             return true;
         if (billingType.getId().equals(constantService.getBillingtypeFormalityAdditionalDeclaration().getId())
-                && provision.getIsFormalityAdditionalDeclaration() != null && provision.getIsFormalityAdditionalDeclaration())
+                && provision.getIsFormalityAdditionalDeclaration() != null
+                && provision.getIsFormalityAdditionalDeclaration())
             return true;
         if (billingType.getId().equals(constantService.getBillingtypeCorrespondenceFees().getId())
                 && provision.getIsCorrespondenceFees() != null && provision.getIsCorrespondenceFees())

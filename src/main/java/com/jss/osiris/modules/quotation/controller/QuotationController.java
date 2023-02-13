@@ -2352,6 +2352,7 @@ public class QuotationController {
       throw new OsirisValidationException("debours");
 
     for (Debour debour : debours) {
+      debour = (Debour) validationHelper.validateReferential(debour, true, "debour");
       if (!debour.getCompetentAuthority().getCompetentAuthorityType().getIsDirectCharge())
         throw new OsirisClientMessageException(
             "Les autorités compétentes choisies ne sont pas à charge directe. L'association du paiement se fait sur le facture associée");
