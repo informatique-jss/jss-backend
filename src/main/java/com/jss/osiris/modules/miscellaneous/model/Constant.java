@@ -317,6 +317,10 @@ public class Constant implements Serializable, IId {
 	private PaymentType paymentTypeCheques;
 
 	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_payment_type_account")
+	private PaymentType paymentTypeAccount;
+
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_refund_type_virement")
 	private RefundType refundTypeVirement;
 
@@ -598,6 +602,14 @@ public class Constant implements Serializable, IId {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_accounting_account_bank_jss")
 	private AccountingAccount accountingAccountBankJss;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_accounting_account_caisse")
+	private AccountingAccount accountingAccountCaisse;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_accounting_account_direct_charge")
+	private AccountingAccount accountingAccountDirectCharge;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_billing_type_vacation_deposit_beneficial_owners")
@@ -1797,6 +1809,22 @@ public class Constant implements Serializable, IId {
 
 	public void setBillingTypeDeboursNonTaxable(BillingType billingTypeDeboursNonTaxable) {
 		this.billingTypeDeboursNonTaxable = billingTypeDeboursNonTaxable;
+	}
+
+	public AccountingAccount getAccountingAccountCaisse() {
+		return accountingAccountCaisse;
+	}
+
+	public void setAccountingAccountCaisse(AccountingAccount accountingAccountCaisse) {
+		this.accountingAccountCaisse = accountingAccountCaisse;
+	}
+
+	public AccountingAccount getAccountingAccountDirectCharge() {
+		return accountingAccountDirectCharge;
+	}
+
+	public void setAccountingAccountDirectCharge(AccountingAccount accountingAccountDirectCharge) {
+		this.accountingAccountDirectCharge = accountingAccountDirectCharge;
 	}
 
 }

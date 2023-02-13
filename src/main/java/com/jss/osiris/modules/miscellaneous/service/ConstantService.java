@@ -191,6 +191,8 @@ public interface ConstantService {
 
     public PaymentType getPaymentTypePrelevement() throws OsirisException;
 
+    public PaymentType getPaymentTypeAccount() throws OsirisException;
+
     public RefundType getRefundTypeVirement() throws OsirisException;
 
     public SubscriptionPeriodType getSubscriptionPeriodType12M() throws OsirisException;
@@ -334,4 +336,8 @@ public interface ConstantService {
     public AccountingAccount getAccountingAccountBankCentralPay() throws OsirisException;
 
     public AccountingAccount getAccountingAccountBankJss() throws OsirisException;
+
+    public AccountingAccount getAccountingAccountDirectCharge() throws OsirisException;
+
+    public AccountingAccount getAccountingAccountCaisse() throws OsirisException;
 }

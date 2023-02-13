@@ -108,6 +108,7 @@ export interface Constant {
   paymentTypeCB: PaymentType;
   paymentTypeEspeces: PaymentType;
   paymentTypeCheques: PaymentType;
+  paymentTypeAccount: PaymentType;
   refundTypeVirement: RefundType;
   subscriptionPeriodType12M: SubscriptionPeriodType;
   legalFormUnregistered: LegalForm;
@@ -180,4 +181,6 @@ export interface Constant {
   principalAccountingAccountProfit: PrincipalAccountingAccount;
   accountingAccountBankCentralPay: AccountingAccount;
   accountingAccountBankJss: AccountingAccount;
+  accountingAccountDirectCharge: AccountingAccount;
+  accountingAccountCaisse: AccountingAccount;
 }

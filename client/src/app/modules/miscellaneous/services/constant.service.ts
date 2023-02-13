@@ -308,6 +308,10 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.stringBusinnessNantissementRedactionFormeJuridiqueCode;
   }
 
+  getPaymentTypeAccount() {
+    return this.constant.paymentTypeAccount;
+  }
+
   getPaymentTypeEspeces() {
     return this.constant.paymentTypeEspeces;
   }
@@ -614,5 +618,13 @@ export class ConstantService extends AppRestService<Constant>{
 
   getAccountingAccountBankJss() {
     return this.constant.accountingAccountBankJss;
+  }
+
+  getAccountingAccountDirectCharge() {
+    return this.constant.accountingAccountDirectCharge;
+  }
+
+  getAccountingAccountCaisse() {
+    return this.constant.accountingAccountCaisse;
   }
 }

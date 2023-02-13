@@ -329,7 +329,7 @@ public class PaymentServiceImpl implements PaymentService {
                 if (refundFound != null)
                     associateOutboundPaymentAndRefund(payment, refundFound, generateWaitingAccountAccountingRecords);
 
-                // If not found, try to match debour
+                // If not found, try to match debour bank transfert
                 Debour debourFound = null;
                 if (correspondingEntities != null && correspondingEntities.size() > 0) {
                     for (IndexEntity foundEntity : correspondingEntities) {
@@ -617,12 +617,21 @@ public class PaymentServiceImpl implements PaymentService {
         // do counter part of waiting record
         if (payment.getAccountingRecords() != null && payment.getAccountingRecords().size() > 0)
             for (AccountingRecord record : payment.getAccountingRecords())
-                if (record.getIsCounterPart() == false
-                        && record.getAccountingAccount().getPrincipalAccountingAccount().getId()
-                                .equals(constantService.getPrincipalAccountingAccountWaiting().getId())) {
-                    accountingRecordService.letterWaitingRecords(record,
-                            accountingRecordService.generateCounterPart(record,
-                                    constantService.getAccountingJournalSales(), payment.getId()));
+                if (record.getIsCounterPart() == false) {
+                    if (record.getAccountingAccount().getPrincipalAccountingAccount().getId()
+                            .equals(constantService.getPrincipalAccountingAccountWaiting().getId())) {
+                        accountingRecordService.letterWaitingRecords(record,
+                                accountingRecordService.generateCounterPart(record,
+                                        constantService.getAccountingJournalSales(), payment.getId()));
+                    } else if (debours.get(0).getPaymentType().getId()
+                            .equals(constantService.getPaymentTypeCB().getId())
+                            || debours.get(0).getPaymentType().getId()
+                                    .equals(constantService.getPaymentTypeVirement().getId())) {
+                        // if bank transfert or CB, records generated when debour is filled
+                        // so payment must be counter parted totally
+                        accountingRecordService.generateCounterPart(record,
+                                constantService.getAccountingJournalSales(), payment.getId());
+                    }
                 }
         return 0f;
     }
@@ -645,7 +654,11 @@ public class PaymentServiceImpl implements PaymentService {
                     Debour inDebour = debourService.getDebour(debour.getId());
                     debour.setProvision(inDebour.getProvision());
                     generateWaitingAccountAccountingRecords.setFalse();
-                    accountingRecordService.generateAccountingRecordsForDebourOnDebour(inDebour);
+                    // generate only if bank transfert or CB
+                    // in other case, records generated when debour is filled
+                    if (debour.getPaymentType().getId().equals(constantService.getPaymentTypeCB().getId())
+                            || debour.getPaymentType().getId().equals(constantService.getPaymentTypeVirement().getId()))
+                        accountingRecordService.generateAccountingRecordsForDebourOnDebour(inDebour);
                     inDebour.setPayment(payment);
                     debourService.addOrUpdateDebour(inDebour);
                 }

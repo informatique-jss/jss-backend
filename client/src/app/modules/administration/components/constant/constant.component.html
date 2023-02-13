@@ -1117,6 +1117,20 @@
                 label="Compte comptable - Banque JSS"></autocomplete-accounting-account>
             </td>
           </tr>
+          <tr>
+            <td>
+              <autocomplete-accounting-account [(model)]="constant.accountingAccountDirectCharge" [form]="constantForm"
+                propertyName="accountingAccountDirectCharge" [isMandatory]="true" [isDisabled]="!editMode"
+                label="Compte comptable - charges directes"></autocomplete-accounting-account>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-accounting-account [(model)]="constant.accountingAccountCaisse" [form]="constantForm"
+                propertyName="accountingAccountCaisse" [isMandatory]="true" [isDisabled]="!editMode"
+                label="Compte comptable - Caisse"></autocomplete-accounting-account>
+            </td>
+          </tr>
         </table>
       </fieldset>
     </div>
