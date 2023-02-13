@@ -845,9 +845,9 @@ public class MiscellaneousController {
             for (Department department : competentAuthorities.getDepartments())
                 validationHelper.validateReferential(department, false, "department");
 
-        validationHelper.validateString(competentAuthorities.getIban(), competentAuthorities.getHasAccount(), 40,
+        validationHelper.validateString(competentAuthorities.getIban(), false, 40,
                 "Iban");
-        validationHelper.validateString(competentAuthorities.getBic(), competentAuthorities.getHasAccount(), 40,
+        validationHelper.validateString(competentAuthorities.getBic(), false, 40,
                 "Bic");
         validationHelper.validateString(competentAuthorities.getJssAccount(), false, 40, "JssAccount");
         validationHelper.validateString(competentAuthorities.getContact(), false, 40, "Contact");
