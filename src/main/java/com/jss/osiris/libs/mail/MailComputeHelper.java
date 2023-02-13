@@ -282,7 +282,8 @@ public class MailComputeHelper {
                     && customerOrder.getAssoAffaireOrders().get(0).getAffaire().getCity() != null) {
                 Affaire affaire = customerOrder.getAssoAffaireOrders().get(0).getAffaire();
                 invoiceLabelResult.setBillingLabel(affaire.getDenomination() != null ? affaire.getDenomination()
-                        : affaire.getFirstname() + " " + affaire.getLastname());
+                        : (affaire.getCivility() != null ? affaire.getCivility().getLabel() : "")
+                                + affaire.getFirstname() + " " + affaire.getLastname());
                 invoiceLabelResult.setBillingLabelAddress(affaire.getAddress());
                 invoiceLabelResult.setBillingLabelCity(affaire.getCity());
                 invoiceLabelResult.setBillingLabelComplementCedex(affaire.getCedexComplement());
@@ -306,9 +307,10 @@ public class MailComputeHelper {
                 Tiers tiers = ((Responsable) customer).getTiers();
                 Responsable responsable = ((Responsable) customer);
                 if (tiers.getMailRecipient() == null || tiers.getMailRecipient().length() == 0)
-                    invoiceLabelResult.setBillingLabel(
-                            tiers.getDenomination() != null ? tiers.getDenomination()
-                                    : tiers.getFirstname() + " " + tiers.getLastname());
+                    invoiceLabelResult.setBillingLabel((tiers.getDenomination() != null ? tiers.getDenomination()
+                            : tiers.getFirstname() + " " + tiers.getLastname()) + "\r\n"
+                            + (responsable.getCivility() != null ? responsable.getCivility().getLabel() : "")
+                            + responsable.getFirstname() + " " + responsable.getLastname());
                 else
                     invoiceLabelResult.setBillingLabel(tiers.getMailRecipient());
                 invoiceLabelResult.setBillingLabelAddress(tiers.getAddress());
