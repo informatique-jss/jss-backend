@@ -46,6 +46,7 @@ import com.jss.osiris.modules.quotation.model.SimpleProvision;
 import com.jss.osiris.modules.quotation.model.SimpleProvisionStatus;
 import com.jss.osiris.modules.quotation.model.guichetUnique.Formalite;
 import com.jss.osiris.modules.quotation.repository.AssoAffaireOrderRepository;
+import com.jss.osiris.modules.tiers.model.ITiers;
 
 @Service
 public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
@@ -414,6 +415,14 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
         if (affaireSearch.getLabel() == null)
             affaireSearch.setLabel("");
 
+        ArrayList<Integer> customerOrderId = new ArrayList<Integer>();
+        if (affaireSearch.getCustomerOrders() != null && affaireSearch.getCustomerOrders().size() > 0) {
+            for (ITiers tiers : affaireSearch.getCustomerOrders())
+                customerOrderId.add(tiers.getId());
+        } else {
+            customerOrderId.add(0);
+        }
+
         ArrayList<String> excludedCustomerOrderStatusCode = new ArrayList<String>();
         excludedCustomerOrderStatusCode.add(CustomerOrderStatus.OPEN);
         excludedCustomerOrderStatusCode.add(CustomerOrderStatus.WAITING_DEPOSIT);
@@ -421,7 +430,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
         return assoAffaireOrderRepository.findAsso(responsibleId,
                 assignedId, affaireSearch.getLabel(),
-                statusId, excludedCustomerOrderStatusCode);
+                statusId, excludedCustomerOrderStatusCode, customerOrderId);
     }
 
 }

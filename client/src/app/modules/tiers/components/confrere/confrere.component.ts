@@ -14,6 +14,7 @@ import { QuotationSearch } from 'src/app/modules/quotation/model/QuotationSearch
 import { ConfrereService } from 'src/app/modules/quotation/services/confrere.service';
 import { CONFRERE_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from '../../../../services/app.service';
+import { AffaireSearch } from '../../../quotation/model/AffaireSearch';
 import { ITiers } from '../../model/ITiers';
 
 @Component({
@@ -42,6 +43,7 @@ export class ConfrereComponent implements OnInit {
 
   orderingSearch: OrderingSearch = {} as OrderingSearch;
   quotationSearch: QuotationSearch = {} as QuotationSearch;
+  provisionSearch: AffaireSearch = {} as AffaireSearch;
   invoiceSearch: InvoiceSearch = {} as InvoiceSearch;
   responsableAccountSearch: ITiers | undefined;
 
@@ -81,6 +83,7 @@ export class ConfrereComponent implements OnInit {
 
     this.orderingSearch.customerOrders = [];
     this.quotationSearch.customerOrders = [];
+    this.provisionSearch.customerOrders = [];
     this.invoiceSearch.customerOrders = [];
     this.responsableAccountSearch = undefined;
 
@@ -91,6 +94,8 @@ export class ConfrereComponent implements OnInit {
         this.quotationSearch.customerOrders = [this.selectedConfrere!], 0);
       setTimeout(() =>
         this.invoiceSearch.customerOrders = [this.selectedConfrere!], 0);
+      setTimeout(() =>
+        this.provisionSearch.customerOrders = [this.selectedConfrere!], 0);
       setTimeout(() =>
         this.responsableAccountSearch = this.selectedConfrere, 0);
     }

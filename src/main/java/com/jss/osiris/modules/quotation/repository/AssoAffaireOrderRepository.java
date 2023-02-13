@@ -54,6 +54,7 @@ public interface AssoAffaireOrderRepository extends CrudRepository<AssoAffaireOr
                         " left join bodacc bo on bo.id = p.id_bodacc" +
                         " left join bodacc_status bos on bos.id = bo.id_bodacc_status" +
                         " where cs.code not in (:excludedCustomerOrderStatusCode) and (COALESCE(:responsible)=0 or asso.id_employee in (:responsible))"
+                        + " and ( COALESCE(:customerOrder)=0 or cf.id in (:customerOrder) or r.id in (:customerOrder) or t.id in (:customerOrder))"
                         +
                         " and ( COALESCE(:assignedTo) =0 or p.id_employee in (:assignedTo)) " +
                         " and (:label ='' or upper(a.denomination)  like '%' || upper(CAST(:label as text))  || '%'  or upper(a.firstname)  like '%' || upper(CAST(:label as text)) || '%' or upper(a.lastname)  like '%' || upper(CAST(:label as text)) || '%') "
@@ -62,5 +63,6 @@ public interface AssoAffaireOrderRepository extends CrudRepository<AssoAffaireOr
         ArrayList<AssoAffaireOrderSearchResult> findAsso(@Param("responsible") List<Integer> responsibleIds,
                         @Param("assignedTo") List<Integer> assignedToIds,
                         @Param("label") String label, @Param("status") ArrayList<Integer> status,
-                        @Param("excludedCustomerOrderStatusCode") List<String> excludedCustomerOrderStatusCode);
+                        @Param("excludedCustomerOrderStatusCode") List<String> excludedCustomerOrderStatusCode,
+                        @Param("customerOrder") List<Integer> customerOrder);
 }
