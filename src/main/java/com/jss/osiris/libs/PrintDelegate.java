@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.invoicing.model.InvoiceLabelResult;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
+import com.jss.osiris.modules.quotation.model.CustomerOrder;
 
 @Service
 public class PrintDelegate {
@@ -28,7 +29,7 @@ public class PrintDelegate {
     @Autowired
     ConstantService constantService;
 
-    public void printMailingLabel(InvoiceLabelResult label) throws OsirisException {
+    public void printMailingLabel(InvoiceLabelResult label, CustomerOrder customerOrder) throws OsirisException {
 
         Socket socket = null;
         DataOutputStream dOut = null;
@@ -47,6 +48,7 @@ public class PrintDelegate {
                 }
             }
 
+            dOut.writeUTF(" " + customerOrder.getId());
             dOut.writeUTF("\r\n");
             dOut.flush();
             dOut.writeUTF("\r\n");
@@ -69,8 +71,10 @@ public class PrintDelegate {
                 }
             }
             dOut.writeUTF(
-                    "               " + (label.getBillingLabelAddress() != null ? label.getBillingLabelAddress()
-                            : ""));
+                    "               " + StringUtils
+                            .stripAccents((label.getBillingLabelAddress() != null ? label.getBillingLabelAddress()
+                                    : ""))
+                            .toUpperCase());
             dOut.writeUTF("\r\n");
             dOut.flush();
             dOut.writeUTF("\r\n");
