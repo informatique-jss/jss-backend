@@ -472,9 +472,9 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
               let incomingProvision = assoIncoming.provisions[i];
               for (let j = 0; j < assoTarget.provisions.length; j++) {
                 let targetProvision = assoTarget.provisions[j];
-                if (incomingProvision.id && targetProvision.id && incomingProvision.id == targetProvision.id)
+                if (incomingProvision.id && targetProvision.id && incomingProvision.id == targetProvision.id && assoIncoming.affaire.id == assoTarget.affaire.id)
                   targetProvision.invoiceItems = incomingProvision.invoiceItems;
-                else if (i == j && incomingProvision.provisionType && targetProvision.provisionType && incomingProvision.provisionType.id == targetProvision.provisionType.id)
+                else if (i == j && incomingProvision.provisionType && targetProvision.provisionType && incomingProvision.provisionType.id == targetProvision.provisionType.id && assoIncoming.affaire.id == assoTarget.affaire.id)
                   targetProvision.invoiceItems = incomingProvision.invoiceItems;
               }
             }
