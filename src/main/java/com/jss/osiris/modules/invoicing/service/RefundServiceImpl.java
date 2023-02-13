@@ -321,6 +321,8 @@ public class RefundServiceImpl implements RefundService {
             xml = xmlMapper.writeValueAsString(document);
 
             xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + xml;
+            // Non supporting characters for bank ...
+            xml = xml.replaceAll("°", " ");
         } catch (JsonProcessingException e2) {
             throw new OsirisException(null, "Impossible to generate XML file for refund export");
         }
