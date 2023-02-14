@@ -9,10 +9,8 @@ import { ConstantService } from 'src/app/modules/miscellaneous/services/constant
 import { formatDateForSortTable, formatEurosForSortTable } from '../../../../libs/FormatHelper';
 import { CompetentAuthority } from '../../../miscellaneous/model/CompetentAuthority';
 import { Debour } from '../../model/Debour';
-import { DebourPaymentAssociationRequest } from '../../model/DebourPaymentAssociationRequest';
 import { Provision } from '../../model/Provision';
 import { DebourService } from '../../services/debour.service';
-import { SelectDeboursDialogComponent } from '../select-debours-dialog/select-debours-dialog.component';
 
 
 @Component({
@@ -31,6 +29,7 @@ export class AddDebourComponent implements OnInit {
   paymentTypeCb: PaymentType = this.constantService.getPaymentTypeCB();
   paymentTypeEspeces: PaymentType = this.constantService.getPaymentTypeEspeces();
   paymentTypeCheques: PaymentType = this.constantService.getPaymentTypeCheques();
+  paymentTypeAccount: PaymentType = this.constantService.getPaymentTypeAccount();
   refreshTable: Subject<void> = new Subject<void>();
 
   constructor(private formBuilder: FormBuilder,
@@ -129,18 +128,4 @@ export class AddDebourComponent implements OnInit {
 
     return Math.round(total * 100) / 100;
   }
-
-  associateToPayment() {
-    const dialogRef = this.selectDeboursDialog.open(SelectDeboursDialogComponent, {});
-    dialogRef.componentInstance.provision = this.provision;
-    dialogRef.afterClosed().subscribe((dialogResult: DebourPaymentAssociationRequest) => {
-      if (dialogResult) {
-        this.debourService.associateDeboursAndPayment(dialogResult).subscribe(response => {
-          if (this.provision)
-            this.provision.debours = response;
-        })
-      }
-    });
-  }
-
 }

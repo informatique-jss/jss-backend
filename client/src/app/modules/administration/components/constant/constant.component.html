@@ -29,14 +29,14 @@
             <td>
               <select-accounting-journal [(model)]="constant.accountingJournalANouveau" [form]="constantForm"
                 propertyName="accountingJournalANouveau" label="Journal de comptabilité - A Nouveau"
-                [isDisabled]="!editMode">
+                [isMandatory]="true" [isDisabled]="!editMode">
               </select-accounting-journal>
             </td>
           </tr>
           <tr>
             <td>
               <select-accounting-journal [(model)]="constant.accountingJournalMiscellaneousOperations"
-                [form]="constantForm" propertyName="accountingJournalMiscellaneousOperations"
+                [form]="constantForm" propertyName="accountingJournalMiscellaneousOperations" [isMandatory]="true"
                 label="Journal de comptabilité - Opérations diverses" [isDisabled]="!editMode">
               </select-accounting-journal>
             </td>
@@ -44,7 +44,7 @@
           <tr>
             <td>
               <select-accounting-journal [(model)]="constant.accountingJournalPurchases" [form]="constantForm"
-                propertyName="accountingJournalPurchases" label="Journal de comptabilité - Achats"
+                propertyName="accountingJournalPurchases" label="Journal de comptabilité - Achats" [isMandatory]="true"
                 [isDisabled]="!editMode">
               </select-accounting-journal>
             </td>
@@ -52,14 +52,24 @@
           <tr>
             <td>
               <select-accounting-journal [(model)]="constant.accountingJournalSales" [form]="constantForm"
-                propertyName="accountingJournalSales" label="Journal de comptabilité - Ventes" [isDisabled]="!editMode">
+                [isMandatory]="true" propertyName="accountingJournalSales" label="Journal de comptabilité - Ventes"
+                [isDisabled]="!editMode">
               </select-accounting-journal>
             </td>
           </tr>
           <tr>
             <td>
               <select-accounting-journal [(model)]="constant.accountingJournalBank" [form]="constantForm"
-                propertyName="accountingJournalBank" label="Journal de comptabilité - Banque" [isDisabled]="!editMode">
+                [isMandatory]="true" propertyName="accountingJournalBank" label="Journal de comptabilité - Banque"
+                [isDisabled]="!editMode">
+              </select-accounting-journal>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-accounting-journal [(model)]="constant.accountingJournalCash" [form]="constantForm"
+                [isMandatory]="true" propertyName="accountingJournalCash" label="Journal de comptabilité - Caisse"
+                [isDisabled]="!editMode">
               </select-accounting-journal>
             </td>
           </tr>

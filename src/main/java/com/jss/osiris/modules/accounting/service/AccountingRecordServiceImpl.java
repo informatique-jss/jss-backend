@@ -619,23 +619,23 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   @Override
   public void generateBankAccountingRecordsForOutboundDebourCashPayment(Debour debour,
       CustomerOrder customerOrder) throws OsirisException {
-    AccountingJournal bankJournal = constantService.getAccountingJournalBank();
+    AccountingJournal cashJournal = constantService.getAccountingJournalCash();
 
     generateNewAccountingRecord(LocalDateTime.now(), debour.getId(), null, null,
         "Debour n°" + debour.getId(), debour.getDebourAmount(), null,
-        constantService.getAccountingAccountBankJss(),
-        null, null, customerOrder, bankJournal, null, null, debour);
+        constantService.getAccountingAccountCaisse(),
+        null, null, customerOrder, cashJournal, null, null, debour);
 
     if (debour.getCompetentAuthority().getCompetentAuthorityType().getIsDirectCharge())
       generateNewAccountingRecord(LocalDateTime.now(), debour.getId(), null, null,
           "Debour n°" + debour.getId(), null, debour.getDebourAmount(),
           constantService.getAccountingAccountCaisse(),
-          null, null, customerOrder, bankJournal, null, null, debour);
+          null, null, customerOrder, cashJournal, null, null, debour);
     else
       generateNewAccountingRecord(LocalDateTime.now(), debour.getId(), null, null,
           "Debour n°" + debour.getId(), null, debour.getDebourAmount(),
           debour.getCompetentAuthority().getAccountingAccountProvider(),
-          null, null, customerOrder, bankJournal, null, null, debour);
+          null, null, customerOrder, cashJournal, null, null, debour);
   }
 
   @Override

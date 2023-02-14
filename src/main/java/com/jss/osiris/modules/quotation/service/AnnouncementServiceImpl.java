@@ -438,7 +438,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                             announcement.setSecondConfrereReminderDateTime(LocalDateTime.now());
                         }
                     } else if (announcement.getThirdConfrereReminderDateTime() == null) {
-                        if (announcement.getSecondConfrereReminderDateTime()
+                        if (announcement.getFirstConfrereSentMailDateTime()
                                 .isBefore(LocalDateTime.now().minusDays(1 * 7))) {
                             toSend = true;
                             announcement.setThirdConfrereReminderDateTime(LocalDateTime.now());

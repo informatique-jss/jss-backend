@@ -334,7 +334,8 @@ public class InvoiceServiceImpl implements InvoiceService {
                                                     debour.getDebourAmount() - debour.getNonTaxableAmount());
                                             debourService.addOrUpdateDebour(nonTaxableDebour);
                                         }
-                                        InvoiceItem invoiceItem = getInvoiceItemFromDebour(debour, true);
+                                        InvoiceItem invoiceItem = getInvoiceItemFromDebour(debour,
+                                                debour.getBillingType().getIsNonTaxable());
                                         invoiceItemService.addOrUpdateInvoiceItem(invoiceItem);
                                         invoice.getInvoiceItems().add(invoiceItem);
                                         debour.setInvoiceItem(invoiceItem);

@@ -127,7 +127,6 @@ export class AddInvoiceComponent implements OnInit {
     this.tableActionSelectedDebours.push({
       actionIcon: "delete", actionName: "Supprimer le débour de cette facture", actionClick: (action: SortTableAction, element: any) => {
         if (this.selectedDebours && this.debours) {
-          this.debours.push(element);
           this.selectedDebours.splice(this.selectedDebours.indexOf(element), 1);
         }
       }, display: true,
@@ -273,9 +272,19 @@ export class AddInvoiceComponent implements OnInit {
       return;
     }
     if (!this.selectedDebours || this.getIndexOfDebours(debour, this.selectedDebours) < 0) {
+      if (debour && debour.billingType.isNonTaxable) {
+        if (!this.selectedDebours)
+          this.selectedDebours = [];
+        this.selectedDebours.push(debour);
+        this.refreshTable.next();
+        return;
+      }
+
       const dialogRef = this.deboursAmontTaxableDialog.open(DeboursAmountTaxableDialogComponent, {
         maxWidth: "300px",
       });
+
+      dialogRef.componentInstance.maxAmount = debour.debourAmount;
 
       dialogRef.afterClosed().subscribe(dialogResult => {
         if (dialogResult != null && this.debours) {

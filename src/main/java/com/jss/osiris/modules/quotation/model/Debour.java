@@ -33,7 +33,7 @@ public class Debour implements Serializable, IId {
 
 	@ManyToOne
 	@JoinColumn(name = "id_provision")
-	@JsonIgnoreProperties(value = { "debours" }, allowSetters = true)
+	@JsonIgnoreProperties(value = { "debours", "assoAffaireOrder" }, allowSetters = true)
 	Provision provision;
 
 	@ManyToOne
@@ -73,7 +73,7 @@ public class Debour implements Serializable, IId {
 	private InvoiceItem invoiceItem;
 
 	@OneToMany(mappedBy = "debour")
-	@JsonIgnoreProperties(value = { "debour" }, allowSetters = true)
+	@JsonIgnoreProperties(value = { "debour", "customerOrder" }, allowSetters = true)
 	private List<AccountingRecord> accountingRecords;
 
 	public Integer getId() {

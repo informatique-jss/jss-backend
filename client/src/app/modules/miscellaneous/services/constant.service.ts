@@ -66,6 +66,10 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.accountingJournalBank;
   }
 
+  getAccountingJournalCash() {
+    return this.constant.accountingJournalCash;
+  }
+
   getTiersTypeProspect() {
     return this.constant.tiersTypeProspect;
   }

@@ -182,20 +182,23 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                     if (debour.getProvision() == null)
                         debour.setProvision(provision);
 
+                    boolean isNewDebour = debour.getId() == null;
+                    debourService.addOrUpdateDebour(debour);
+
                     if (debour.getBankTransfert() == null && debour.getPaymentType().getId()
                             .equals(constantService.getPaymentTypeVirement().getId())) {
                         debour = debourService.addOrUpdateDebour(debour);
                         debour.setBankTransfert(
                                 bankTransfertService.generateBankTransfertForDebour(debour, assoAffaireOrder));
-                    } else if (debour.getId() == null && debour.getPaymentType().getId()
+                    } else if (isNewDebour && debour.getPaymentType().getId()
                             .equals(constantService.getPaymentTypeCheques().getId())) {
                         accountingRecordService.generateBankAccountingRecordsForOutboundDebourCheckPayment(debour,
                                 (CustomerOrder) customerOrder);
-                    } else if (debour.getId() == null && debour.getPaymentType().getId()
+                    } else if (isNewDebour && debour.getPaymentType().getId()
                             .equals(constantService.getPaymentTypeEspeces().getId())) {
                         accountingRecordService.generateBankAccountingRecordsForOutboundDebourCashPayment(debour,
                                 (CustomerOrder) customerOrder);
-                    } else if (debour.getId() == null && debour.getPaymentType().getId()
+                    } else if (isNewDebour && debour.getPaymentType().getId()
                             .equals(constantService.getPaymentTypeAccount().getId())) {
                         accountingRecordService.generateBankAccountingRecordsForOutboundDebourAccountPayment(debour,
                                 (CustomerOrder) customerOrder);
