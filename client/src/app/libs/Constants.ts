@@ -5,7 +5,7 @@ export const SEARCH_KEY_CODE: string = "F8";
 export const NOTIFICATION_KEY_CODE: string = "F9";
 export const NOTIFICATION_REFRESH_INTERVAL: number = 30 * 1000;
 export const MAX_SIZE_UPLOAD_FILES = 5242880;
-export const INVOICING_PAYMENT_LIMIT_REFUND_EUROS: number = 1;
+export const INVOICING_PAYMENT_LIMIT_REFUND_EUROS: number = 2;
 
 // Screen types
 export const PROVISION_SCREEN_TYPE_BODACC = "BODACC";
