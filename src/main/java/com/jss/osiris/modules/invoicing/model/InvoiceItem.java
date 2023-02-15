@@ -25,7 +25,7 @@ public class InvoiceItem implements Serializable, IId {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "invoice_item_sequence")
 	private Integer id;
 
-	@Column(nullable = false, length = 200)
+	@Column(nullable = false, length = 1000)
 	private String label;
 
 	@ManyToOne
