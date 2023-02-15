@@ -624,10 +624,6 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.accountingAccountBankJss;
   }
 
-  getAccountingAccountDirectCharge() {
-    return this.constant.accountingAccountDirectCharge;
-  }
-
   getAccountingAccountCaisse() {
     return this.constant.accountingAccountCaisse;
   }

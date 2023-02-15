@@ -182,6 +182,5 @@ export interface Constant {
   principalAccountingAccountProfit: PrincipalAccountingAccount;
   accountingAccountBankCentralPay: AccountingAccount;
   accountingAccountBankJss: AccountingAccount;
-  accountingAccountDirectCharge: AccountingAccount;
   accountingAccountCaisse: AccountingAccount;
 }

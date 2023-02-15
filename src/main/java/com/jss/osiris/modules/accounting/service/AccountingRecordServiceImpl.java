@@ -599,6 +599,10 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
       CustomerOrder customerOrder) throws OsirisException {
     AccountingJournal bankJournal = constantService.getAccountingJournalBank();
 
+    if (debour.getBillingType().getAccountingAccountCharge() == null)
+      throw new OsirisException(
+          null, "No accounting account for charge for billing type n°" + debour.getBillingType().getId());
+
     generateNewAccountingRecord(LocalDateTime.now(), debour.getId(), null, null,
         "Debour n°" + debour.getId(), debour.getDebourAmount(), null,
         constantService.getAccountingAccountBankJss(),
@@ -607,7 +611,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     if (debour.getCompetentAuthority().getCompetentAuthorityType().getIsDirectCharge())
       generateNewAccountingRecord(LocalDateTime.now(), debour.getId(), null, null,
           "Debour n°" + debour.getId(), null, debour.getDebourAmount(),
-          constantService.getAccountingAccountDirectCharge(),
+          debour.getBillingType().getAccountingAccountCharge(),
           null, null, customerOrder, bankJournal, null, null, debour);
     else
       generateNewAccountingRecord(LocalDateTime.now(), debour.getId(), null, null,

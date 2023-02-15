@@ -850,11 +850,6 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
-    public AccountingAccount getAccountingAccountDirectCharge() throws OsirisException {
-        return getConstants().getAccountingAccountDirectCharge();
-    }
-
-    @Override
     public AccountingAccount getAccountingAccountCaisse() throws OsirisException {
         return getConstants().getAccountingAccountCaisse();
     }

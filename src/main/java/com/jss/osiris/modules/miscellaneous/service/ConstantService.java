@@ -339,7 +339,5 @@ public interface ConstantService {
 
     public AccountingAccount getAccountingAccountBankJss() throws OsirisException;
 
-    public AccountingAccount getAccountingAccountDirectCharge() throws OsirisException;
-
     public AccountingAccount getAccountingAccountCaisse() throws OsirisException;
 }
