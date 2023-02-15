@@ -633,7 +633,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     if (debour.getCompetentAuthority().getCompetentAuthorityType().getIsDirectCharge())
       generateNewAccountingRecord(LocalDateTime.now(), debour.getId(), null, null,
           "Debour n°" + debour.getId(), null, debour.getDebourAmount(),
-          constantService.getAccountingAccountCaisse(),
+          debour.getBillingType().getAccountingAccountCharge(),
           null, null, customerOrder, cashJournal, null, null, debour);
     else
       generateNewAccountingRecord(LocalDateTime.now(), debour.getId(), null, null,
