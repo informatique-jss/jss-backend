@@ -854,7 +854,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     public void generateDepositOnCustomerOrderForCbPayment(CustomerOrder customerOrder,
             CentralPayPaymentRequest centralPayPaymentRequest) throws OsirisException, OsirisClientMessageException {
         // Generate payment to materialize CB payment
-        Payment payment = getCentralPayPayment(centralPayPaymentRequest);
+        Payment payment = getCentralPayPayment(centralPayPaymentRequest, true);
 
         Deposit deposit = depositService.getNewDepositForCustomerOrder(payment.getPaymentAmount(), LocalDateTime.now(),
                 customerOrder, null, payment, true);
@@ -871,14 +871,15 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     private void generatePaymentOnInvoiceForCbPayment(Invoice invoice,
             CentralPayPaymentRequest centralPayPaymentRequest) throws OsirisException, OsirisClientMessageException {
         // Generate payment to materialize CB payment
-        Payment payment = getCentralPayPayment(centralPayPaymentRequest);
+        Payment payment = getCentralPayPayment(centralPayPaymentRequest, false);
 
         accountingRecordService.generateAccountingRecordsForSaleOnInvoicePayment(invoice, payment);
         accountingRecordService.generateAccountingRecordsForCentralPayPayment(centralPayPaymentRequest, payment,
                 null, invoice.getCustomerOrder(), invoice);
     }
 
-    private Payment getCentralPayPayment(CentralPayPaymentRequest centralPayPaymentRequest) throws OsirisException {
+    private Payment getCentralPayPayment(CentralPayPaymentRequest centralPayPaymentRequest, boolean isForDepostit)
+            throws OsirisException {
         Payment payment = new Payment();
         payment.setExternallyAssociated(false);
         payment.setLabel(centralPayPaymentRequest.getDescription());
@@ -886,6 +887,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         payment.setPaymentDate(centralPayPaymentRequest.getCreationDate());
         payment.setPaymentWay(constantService.getPaymentWayInbound());
         payment.setPaymentType(constantService.getPaymentTypeCB());
+        payment.setIsCancelled(isForDepostit);
         paymentService.addOrUpdatePayment(payment);
         return payment;
     }
