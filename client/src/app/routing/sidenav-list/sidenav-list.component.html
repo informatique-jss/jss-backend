@@ -1,11 +1,11 @@
 <div class="sidebar-header">
-  <div class="menu bug-report" id="jiraBugReporter" matTooltip="Délarer un bug ou une évolution">
+  <div class="menu bug-report" id="jiraBugReporter">
     <mat-icon>bug_report</mat-icon>
   </div>
-  <div class="menu" matTooltip="Rechercher (F8)">
+  <div class="menu">
     <mat-icon (click)="openSearch()">search</mat-icon>
   </div>
-  <div class="menu notif" matTooltip="Notifications (F9)">
+  <div class="menu notif">
     <mat-icon (click)="openNotificationDialog()" [matBadge]="getNotificationNumber()" matBadgePosition="below after"
       [matBadgeHidden]="getNotificationNumber()==0" matBadgeColor="warn" matBadgeSize="small">
       notifications</mat-icon>

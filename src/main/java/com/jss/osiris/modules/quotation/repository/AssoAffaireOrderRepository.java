@@ -24,6 +24,7 @@ public interface AssoAffaireOrderRepository extends CrudRepository<AssoAffaireOr
                         " e2.id as assignedToId," +
                         " pf.label ||' - '||pt.label as provisionTypeLabel," +
                         " coalesce(ans.label,fs.label,doms.label, bos.label,sps.label) as statusLabel," +
+                        " asso.id_customer_order as customerOrderId," +
                         " asso.id as assoId," +
                         " p.is_emergency as isEmergency," +
                         " p.id as provisionId, " +

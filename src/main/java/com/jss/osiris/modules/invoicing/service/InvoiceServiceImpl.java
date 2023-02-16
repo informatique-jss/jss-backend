@@ -334,13 +334,15 @@ public class InvoiceServiceImpl implements InvoiceService {
                                                     debour.getDebourAmount() - debour.getNonTaxableAmount());
                                             debourService.addOrUpdateDebour(nonTaxableDebour);
                                         }
-                                        InvoiceItem invoiceItem = getInvoiceItemFromDebour(debour,
-                                                debour.getBillingType().getIsNonTaxable());
-                                        invoiceItemService.addOrUpdateInvoiceItem(invoiceItem);
-                                        invoice.getInvoiceItems().add(invoiceItem);
-                                        debour.setInvoiceItem(invoiceItem);
-                                        debour.setProvision(provision);
-                                        debourService.addOrUpdateDebour(debour);
+                                        if (debour.getNonTaxableAmount() < debour.getDebourAmount()) {
+                                            InvoiceItem invoiceItem = getInvoiceItemFromDebour(debour,
+                                                    debour.getBillingType().getIsNonTaxable());
+                                            invoiceItemService.addOrUpdateInvoiceItem(invoiceItem);
+                                            invoice.getInvoiceItems().add(invoiceItem);
+                                            debour.setInvoiceItem(invoiceItem);
+                                            debour.setProvision(provision);
+                                            debourService.addOrUpdateDebour(debour);
+                                        }
 
                                         invoice.setManualPaymentType(debour.getPaymentType());
                                     }

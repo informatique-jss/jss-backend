@@ -275,6 +275,7 @@ export class AddInvoiceComponent implements OnInit {
       if (debour && debour.billingType.isNonTaxable) {
         if (!this.selectedDebours)
           this.selectedDebours = [];
+        debour.nonTaxableAmount = debour.debourAmount;
         this.selectedDebours.push(debour);
         this.refreshTable.next();
         return;

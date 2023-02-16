@@ -49,7 +49,7 @@ export class ProvisionListComponent implements OnInit {
       let employeeId = this.activatedRoute.snapshot.params.employeeId;
 
       this.bookmark = this.userPreferenceService.getUserSearchBookmark("prestations") as AffaireSearch;
-      if (!this.isForDashboard && !!this.isForTiersIntegration) {
+      if (!this.isForDashboard && !this.isForTiersIntegration) {
         this.appService.changeHeaderTitle("Prestations");
         if (this.bookmark && !this.isForDashboard && !this.isForTiersIntegration) {
           this.affaireSearch = {} as AffaireSearch;
@@ -68,6 +68,11 @@ export class ProvisionListComponent implements OnInit {
         }
       }
 
+      this.availableColumns.push({
+        id: "customerOrderId", fieldName: "customerOrderId", label: "N° de commande", actionLinkFunction: (column: SortTableColumn, element: any) => {
+          return ['/order/', element.customerOrderId];
+        }, actionIcon: "visibility", actionTooltip: "Voir la commande associée"
+      } as SortTableColumn);
       this.availableColumns.push({ id: "affaireLabel", fieldName: "affaireLabel", label: "Affaire", colorWarnFunction: (element: any) => { return element.isEmergency } } as SortTableColumn);
       this.availableColumns.push({ id: "affaireAddress", fieldName: "affaireAddress", label: "Adresse de l'affaire", colorWarnFunction: (element: any) => { return element.isEmergency } } as SortTableColumn);
       this.availableColumns.push({ id: "tiers", fieldName: "tiersLabel", label: "Tiers", colorWarnFunction: (element: any) => { return element.isEmergency } } as SortTableColumn);
