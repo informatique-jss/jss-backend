@@ -174,7 +174,7 @@ public class InvoiceServiceImpl implements InvoiceService {
             attachmentService.addAttachment(new FileInputStream(creditNotePdf), customerOrder.getId(),
                     CustomerOrder.class.getSimpleName(),
                     constantService.getAttachmentTypeCreditNote(),
-                    "Credit_note_" + formatter.format(LocalDateTime.now()) + ".pdf",
+                    "Credit_note_" + creditNote.getId() + "_" + formatter.format(LocalDateTime.now()) + ".pdf",
                     false, "Avoir n°" + creditNote.getId());
         } catch (FileNotFoundException e) {
             throw new OsirisException(e, "Impossible to read invoice PDF temp file");

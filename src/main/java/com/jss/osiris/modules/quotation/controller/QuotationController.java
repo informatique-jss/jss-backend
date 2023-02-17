@@ -1525,7 +1525,8 @@ public class QuotationController {
       if (isCustomerOrder) {
         CustomerOrderStatus status = ((CustomerOrder) quotation).getCustomerOrderStatus();
         if (status.getCode().equals(CustomerOrderStatus.OPEN)
-            || status.getCode().equals(CustomerOrderStatus.WAITING_DEPOSIT))
+            || status.getCode().equals(CustomerOrderStatus.WAITING_DEPOSIT)
+            || status.getCode().equals(CustomerOrderStatus.ABANDONED))
           publicationDateVerification = null;
         else {
           if (currentAnnouncement != null)

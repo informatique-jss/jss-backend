@@ -416,7 +416,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             }
             accountingRecordService.checkInvoiceForLettrage(invoice);
 
-            mailHelper.sendCustomerOrderFinalisationToCustomer(customerOrder, false, false, false);
+            mailHelper.sendCustomerOrderFinalisationToCustomer(getCustomerOrder(customerOrder.getId()), false, false,
+                    false);
         }
 
         // Target : going back to TO BILLED => cancel invoice
@@ -574,7 +575,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             attachmentService.addAttachment(new FileInputStream(invoicePdf), customerOrder.getId(),
                     CustomerOrder.class.getSimpleName(),
                     constantService.getAttachmentTypeInvoice(),
-                    "Invoice_" + formatter.format(LocalDateTime.now()) + ".pdf",
+                    "Invoice_" + invoice.getId() + "_" + formatter.format(LocalDateTime.now()) + ".pdf",
                     false, "Facture n°" + invoice.getId());
         } catch (FileNotFoundException e) {
             throw new OsirisException(e, "Impossible to read invoice PDF temp file");
