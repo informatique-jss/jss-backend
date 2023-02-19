@@ -17,6 +17,7 @@ import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.invoicing.service.InvoiceItemService;
+import com.jss.osiris.modules.invoicing.service.PaymentService;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
@@ -108,6 +109,9 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
     @Autowired
     AccountingRecordService accountingRecordService;
 
+    @Autowired
+    PaymentService paymentService;
+
     @Override
     public List<AssoAffaireOrder> getAssoAffaireOrders() {
         return IterableUtils.toList(assoAffaireOrderRepository.findAll());
@@ -183,7 +187,8 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                         debour.setProvision(provision);
 
                     boolean isNewDebour = debour.getId() == null;
-                    debourService.addOrUpdateDebour(debour);
+                    if (isNewDebour)
+                        debourService.addOrUpdateDebour(debour);
 
                     if (debour.getBankTransfert() == null && debour.getPaymentType().getId()
                             .equals(constantService.getPaymentTypeVirement().getId())) {
@@ -192,15 +197,15 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                                 bankTransfertService.generateBankTransfertForDebour(debour, assoAffaireOrder));
                     } else if (isNewDebour && debour.getPaymentType().getId()
                             .equals(constantService.getPaymentTypeCheques().getId())) {
-                        accountingRecordService.generateBankAccountingRecordsForOutboundDebourCheckPayment(debour,
-                                (CustomerOrder) customerOrder);
+                        if (debour.getCompetentAuthority().getCompetentAuthorityType().getIsDirectCharge())
+                            accountingRecordService.generateBankAccountingRecordsForOutboundDebourPayment(debour,
+                                    (CustomerOrder) customerOrder);
                     } else if (isNewDebour && debour.getPaymentType().getId()
                             .equals(constantService.getPaymentTypeEspeces().getId())) {
-                        accountingRecordService.generateBankAccountingRecordsForOutboundDebourCashPayment(debour,
-                                (CustomerOrder) customerOrder);
-                    } else if (isNewDebour && debour.getPaymentType().getId()
-                            .equals(constantService.getPaymentTypeAccount().getId())) {
-                        accountingRecordService.generateBankAccountingRecordsForOutboundDebourAccountPayment(debour,
+                        // Generate dummy payment on cash because it will not be declared on OFX files
+                        debour.setPayment(paymentService.generateNewPaymentFromDebour(debour));
+                        debourService.addOrUpdateDebour(debour);
+                        accountingRecordService.generateBankAccountingRecordsForOutboundDebourPayment(debour,
                                 (CustomerOrder) customerOrder);
                     }
                 }

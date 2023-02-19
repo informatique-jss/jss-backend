@@ -57,11 +57,12 @@ public class Debour implements Serializable, IId {
 	private String comments;
 
 	@Column(length = 100)
+	@IndexedField
 	private String checkNumber;
 
 	@ManyToOne
 	@JoinColumn(name = "id_payment")
-	@JsonIgnoreProperties(value = { "payment", "debours" }, allowSetters = true)
+	@JsonIgnoreProperties(value = { "payment", "debours", "invoice" }, allowSetters = true)
 	private Payment payment;
 
 	@ManyToOne

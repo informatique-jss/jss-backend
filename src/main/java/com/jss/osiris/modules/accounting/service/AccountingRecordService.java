@@ -96,19 +96,10 @@ public interface AccountingRecordService {
 
         public void generateBankAccountingRecordsForOutboundPayment(Payment payment) throws OsirisException;
 
-        public void generateBankAccountingRecordsForOutboundDebourCheckPayment(Debour debour,
-                        CustomerOrder customerOrder)
+        public void generateBankAccountingRecordsForOutboundDebourPayment(Debour debour, CustomerOrder customerOrder)
                         throws OsirisException;
 
-        public void generateBankAccountingRecordsForOutboundDebourCashPayment(Debour debour,
-                        CustomerOrder customerOrder) throws OsirisException;
-
-        public void generateBankAccountingRecordsForOutboundDebourAccountPayment(Debour debour,
-                        CustomerOrder customerOrder) throws OsirisException;
-
         public void generateAccountingRecordsForRefundOnVirement(Refund refund) throws OsirisException;
-
-        public void generateAccountingRecordsForDebourOnDebour(Debour debour) throws OsirisException;
 
         public List<AccountingRecord> getAccountingRecordsByTemporaryOperationId(Integer operationId);
 

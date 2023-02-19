@@ -100,6 +100,7 @@ import com.jss.osiris.modules.quotation.service.AffaireService;
 import com.jss.osiris.modules.quotation.service.AssoAffaireOrderService;
 import com.jss.osiris.modules.quotation.service.BankTransfertService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
+import com.jss.osiris.modules.quotation.service.DebourService;
 import com.jss.osiris.modules.quotation.service.DirectDebitTransfertService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.tiers.model.Responsable;
@@ -234,6 +235,9 @@ public class MiscellaneousController {
 
     @Autowired
     DirectDebitTransfertService directDebitTransfertService;
+
+    @Autowired
+    DebourService debourService;
 
     @GetMapping(inputEntryPoint + "/notifications")
     public ResponseEntity<List<Notification>> getNotifications(@RequestParam Boolean displayFuture) {
@@ -1043,6 +1047,7 @@ public class MiscellaneousController {
         assoAffaireOrderService.reindexAffaires();
         affaireService.reindexAffaire();
         bankTransfertService.reindexBankTransfert();
+        debourService.reindexDebours();
         directDebitTransfertService.reindexDirectDebitTransfert();
 
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);

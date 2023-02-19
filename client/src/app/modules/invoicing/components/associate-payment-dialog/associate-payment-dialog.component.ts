@@ -257,7 +257,7 @@ export class AssociatePaymentDialogComponent implements OnInit {
       });
 
       dialogRef.afterClosed().subscribe(dialogResult => {
-        if (dialogResult && this.payment && this.payment.paymentWay.id == this.paymentWayOutbound.id && debourIn.isAssociated == false && debourIn.isCompetentAuthorityDirectCharge == true) {
+        if (dialogResult && this.payment && this.payment.paymentWay.id == this.paymentWayOutbound.id && debourIn.isAssociated == false) {
           let association = {} as DebourPaymentAssociationRequest;
           association.payment = this.payment;
           association.debours = [{ id: debourIn.id } as Debour];
@@ -266,7 +266,7 @@ export class AssociatePaymentDialogComponent implements OnInit {
             this.onClose();
           })
         } else {
-          this.appService.displaySnackBar("Il n'est possible d'associer que des débours non associés et d'une autorité compétente à charge directe. Dans le cas contraire, il est nécessaire de passer par une facture libre", true, 15);
+          this.appService.displaySnackBar("Il n'est possible d'associer que des débours non associés.", true, 15);
         }
       });
     }

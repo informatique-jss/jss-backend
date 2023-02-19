@@ -3,6 +3,8 @@ package com.jss.osiris.modules.invoicing.service;
 import java.io.InputStream;
 import java.util.List;
 
+import org.apache.commons.lang3.mutable.MutableBoolean;
+
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
@@ -44,6 +46,12 @@ public interface PaymentService {
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
         public Float associateOutboundPaymentAndDebourFromUser(Payment payment, List<Debour> debours)
+                        throws OsirisException;
+
+        public Payment generateNewPaymentFromDebour(Debour debour) throws OsirisException;
+
+        public Float associateOutboundPaymentAndInvoice(Payment payment, Invoice correspondingInvoice,
+                        MutableBoolean generateWaitingAccountAccountingRecords, List<Float> byPassAmount)
                         throws OsirisException;
 
 }

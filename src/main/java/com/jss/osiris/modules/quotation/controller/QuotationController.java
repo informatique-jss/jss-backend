@@ -2352,11 +2352,10 @@ public class QuotationController {
     if (debours == null || debours.size() == 0)
       throw new OsirisValidationException("debours");
 
-    for (Debour debour : debours) {
-      debour = (Debour) validationHelper.validateReferential(debour, true, "debour");
-      if (!debour.getCompetentAuthority().getCompetentAuthorityType().getIsDirectCharge())
-        throw new OsirisClientMessageException(
-            "Les autorités compétentes choisies ne sont pas à charge directe. L'association du paiement se fait sur le facture associée");
+    ArrayList<Debour> deboursOut = new ArrayList<Debour>();
+    for (Debour debourIn : debours) {
+      Debour debour = (Debour) validationHelper.validateReferential(debourIn, true, "debour");
+      deboursOut.add(debour);
 
       if (debour.getPayment() != null)
         throw new OsirisClientMessageException("Un des débours a déjà été rapproché d'un paiement");
@@ -2365,7 +2364,7 @@ public class QuotationController {
     Payment payment = paymentService.getPayment(paymentId);
     if (payment == null)
       throw new OsirisValidationException("payment");
-    paymentService.associateOutboundPaymentAndDebourFromUser(payment, debours);
-    return new ResponseEntity<List<Debour>>(debours, HttpStatus.OK);
+    paymentService.associateOutboundPaymentAndDebourFromUser(payment, deboursOut);
+    return new ResponseEntity<List<Debour>>(deboursOut, HttpStatus.OK);
   }
 }

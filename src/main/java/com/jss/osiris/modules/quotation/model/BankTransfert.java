@@ -2,13 +2,16 @@ package com.jss.osiris.modules.quotation.model;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 
@@ -35,6 +38,10 @@ public class BankTransfert implements Serializable, IId {
 	private String transfertBic;
 
 	private Boolean isAlreadyExported;
+
+	@OneToMany(mappedBy = "bankTransfert")
+	@JsonIgnoreProperties(value = { "bankTransfert", "payment", "accountingRecords", "provision" })
+	List<Debour> debours;
 
 	public Integer getId() {
 		return id;
@@ -90,6 +97,14 @@ public class BankTransfert implements Serializable, IId {
 
 	public void setTransfertIban(String transfertIban) {
 		this.transfertIban = transfertIban;
+	}
+
+	public List<Debour> getDebours() {
+		return debours;
+	}
+
+	public void setDebours(List<Debour> debours) {
+		this.debours = debours;
 	}
 
 }

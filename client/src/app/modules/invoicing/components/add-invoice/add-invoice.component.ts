@@ -261,7 +261,7 @@ export class AddInvoiceComponent implements OnInit {
           for (let provision of asso.provisions)
             if (provision.debours)
               for (let debour of provision.debours)
-                if (debour.competentAuthority.id == this.invoice.competentAuthority.id && !debour.invoiceItem)
+                if (debour.competentAuthority.id == this.invoice.competentAuthority.id && debour.competentAuthority.competentAuthorityType.isDirectCharge == false && !debour.invoiceItem)
                   this.debours.push(debour);
     }
   }

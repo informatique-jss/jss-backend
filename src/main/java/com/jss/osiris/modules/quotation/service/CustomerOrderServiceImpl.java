@@ -904,7 +904,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     private Payment getCentralPayPayment(CentralPayPaymentRequest centralPayPaymentRequest, boolean isForDepostit)
             throws OsirisException {
         Payment payment = new Payment();
-        payment.setExternallyAssociated(false);
+        payment.setIsExternallyAssociated(false);
         payment.setLabel(centralPayPaymentRequest.getDescription());
         payment.setPaymentAmount(centralPayPaymentRequest.getTotalAmount() / 100f);
         payment.setPaymentDate(centralPayPaymentRequest.getCreationDate());

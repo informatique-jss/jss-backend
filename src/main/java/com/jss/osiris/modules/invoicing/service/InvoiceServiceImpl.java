@@ -7,11 +7,13 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
 import org.apache.commons.collections4.IterableUtils;
+import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -110,6 +112,9 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Autowired
     BillingItemService billingItemService;
+
+    @Autowired
+    PaymentService paymentService;
 
     @Override
     public List<Invoice> getAllInvoices() {
@@ -294,64 +299,88 @@ public class InvoiceServiceImpl implements InvoiceService {
                 && (invoice.getCompetentAuthority() == null || invoice.getCustomerOrderForInboundInvoice() == null))
             throw new OsirisException(null, "No invoice item found on manual invoice");
 
-        invoice.setCreatedDate(LocalDateTime.now());
-        invoice.setIsCreditNote(false);
+        boolean isNewInvoice = invoice.getId() == null;
+        HashMap<Integer, Debour> debourPayments = new HashMap<Integer, Debour>();
 
-        if (invoice.getInvoiceItems() != null && invoice.getInvoiceItems().size() > 0)
-            for (InvoiceItem invoiceItem : invoice.getInvoiceItems()) {
-                if (invoiceItem.getBillingItem().getBillingType().getIsNonTaxable())
-                    invoiceItem.setVatPrice(0f);
-                else
-                    invoiceItem.setVatPrice(invoiceItem.getVat().getRate() * invoiceItem.getPreTaxPrice() / 100f);
-            }
-        else if (invoice.getCompetentAuthority() != null && invoice.getCustomerOrderForInboundInvoice() != null) {
-            // Handle invoice item generation based on debours
-            if (invoice.getCustomerOrderForInboundInvoice().getAssoAffaireOrders() != null) {
-                invoice.setInvoiceItems(new ArrayList<InvoiceItem>());
-                for (AssoAffaireOrder asso : invoice.getCustomerOrderForInboundInvoice().getAssoAffaireOrders())
-                    if (asso.getProvisions() != null)
-                        for (Provision provision : asso.getProvisions())
-                            if (provision.getDebours() != null)
-                                for (Debour debour : provision.getDebours())
-                                    if (debour.getNonTaxableAmount() != null && debour.getInvoiceItem() == null) {
-                                        if (debour.getNonTaxableAmount() > 0) {
-                                            Debour nonTaxableDebour = new Debour();
-                                            nonTaxableDebour
-                                                    .setBillingType(constantService.getBillingTypeDeboursNonTaxable());
-                                            nonTaxableDebour.setCompetentAuthority(debour.getCompetentAuthority());
-                                            nonTaxableDebour.setDebourAmount(debour.getNonTaxableAmount());
-                                            nonTaxableDebour.setPaymentDateTime(debour.getPaymentDateTime());
-                                            nonTaxableDebour.setPaymentType(debour.getPaymentType());
-                                            nonTaxableDebour.setProvision(provision);
-                                            debourService.addOrUpdateDebour(nonTaxableDebour);
+        if (isNewInvoice) {
+            invoice.setCreatedDate(LocalDateTime.now());
+            invoice.setIsCreditNote(false);
 
-                                            InvoiceItem invoiceItem = getInvoiceItemFromDebour(nonTaxableDebour, true);
-                                            invoiceItemService.addOrUpdateInvoiceItem(invoiceItem);
-                                            invoice.getInvoiceItems().add(invoiceItem);
-                                            nonTaxableDebour.setInvoiceItem(invoiceItem);
+            if (invoice.getInvoiceItems() != null && invoice.getInvoiceItems().size() > 0)
+                for (InvoiceItem invoiceItem : invoice.getInvoiceItems()) {
+                    if (invoiceItem.getBillingItem().getBillingType().getIsNonTaxable())
+                        invoiceItem.setVatPrice(0f);
+                    else
+                        invoiceItem.setVatPrice(invoiceItem.getVat().getRate() * invoiceItem.getPreTaxPrice() / 100f);
+                }
+            else if (invoice.getCompetentAuthority() != null && invoice.getCustomerOrderForInboundInvoice() != null) {
+                // Handle invoice item generation based on debours
+                if (invoice.getCustomerOrderForInboundInvoice().getAssoAffaireOrders() != null) {
+                    invoice.setInvoiceItems(new ArrayList<InvoiceItem>());
+                    for (AssoAffaireOrder asso : invoice.getCustomerOrderForInboundInvoice().getAssoAffaireOrders())
+                        if (asso.getProvisions() != null)
+                            for (Provision provision : asso.getProvisions())
+                                if (provision.getDebours() != null)
+                                    for (Debour debour : provision.getDebours()) {
+                                        if (debour.getNonTaxableAmount() != null && debour.getInvoiceItem() == null) {
+                                            Debour nonTaxableDebour = null;
+                                            if (debour.getPayment() != null)
+                                                debourPayments.put(debour.getPayment().getId(), debour);
 
-                                            debour.setDebourAmount(
-                                                    debour.getDebourAmount() - debour.getNonTaxableAmount());
-                                            debourService.addOrUpdateDebour(nonTaxableDebour);
+                                            if (debour.getNonTaxableAmount() > 0
+                                                    && debour.getNonTaxableAmount() < debour.getDebourAmount()) {
+                                                nonTaxableDebour = new Debour();
+                                                nonTaxableDebour
+                                                        .setBillingType(
+                                                                constantService.getBillingTypeDeboursNonTaxable());
+                                                nonTaxableDebour.setCompetentAuthority(debour.getCompetentAuthority());
+                                                nonTaxableDebour.setDebourAmount(debour.getNonTaxableAmount());
+                                                nonTaxableDebour.setPaymentDateTime(debour.getPaymentDateTime());
+                                                nonTaxableDebour.setPaymentType(debour.getPaymentType());
+                                                nonTaxableDebour.setProvision(provision);
+                                                debourService.addOrUpdateDebour(nonTaxableDebour);
+
+                                                InvoiceItem invoiceItem = getInvoiceItemFromDebour(nonTaxableDebour,
+                                                        true);
+                                                invoiceItemService.addOrUpdateInvoiceItem(invoiceItem);
+                                                invoice.getInvoiceItems().add(invoiceItem);
+                                                nonTaxableDebour.setInvoiceItem(invoiceItem);
+
+                                                debour.setDebourAmount(
+                                                        debour.getDebourAmount() - debour.getNonTaxableAmount());
+                                                debourService.addOrUpdateDebour(nonTaxableDebour);
+                                            } else {
+                                                InvoiceItem invoiceItem = getInvoiceItemFromDebour(debour,
+                                                        debour.getBillingType().getIsNonTaxable());
+                                                invoiceItemService.addOrUpdateInvoiceItem(invoiceItem);
+                                                invoice.getInvoiceItems().add(invoiceItem);
+                                                debour.setInvoiceItem(invoiceItem);
+                                                debour.setProvision(provision);
+                                                debourService.addOrUpdateDebour(debour);
+                                            }
+                                            invoice.setManualPaymentType(debour.getPaymentType());
+
+                                            if (debour.getPaymentType().getId()
+                                                    .equals(constantService.getPaymentTypeAccount().getId())) {
+                                                accountingRecordService
+                                                        .generateBankAccountingRecordsForOutboundDebourPayment(debour,
+                                                                invoice.getCustomerOrderForInboundInvoice());
+                                                if (nonTaxableDebour != null)
+                                                    accountingRecordService
+                                                            .generateBankAccountingRecordsForOutboundDebourPayment(
+                                                                    debour,
+                                                                    invoice.getCustomerOrderForInboundInvoice());
+                                            }
                                         }
-                                        if (debour.getNonTaxableAmount() < debour.getDebourAmount()) {
-                                            InvoiceItem invoiceItem = getInvoiceItemFromDebour(debour,
-                                                    debour.getBillingType().getIsNonTaxable());
-                                            invoiceItemService.addOrUpdateInvoiceItem(invoiceItem);
-                                            invoice.getInvoiceItems().add(invoiceItem);
-                                            debour.setInvoiceItem(invoiceItem);
-                                            debour.setProvision(provision);
-                                            debourService.addOrUpdateDebour(debour);
-                                        }
-
-                                        invoice.setManualPaymentType(debour.getPaymentType());
                                     }
+                }
             }
-        }
 
-        Integer nbrOfDayFromDueDate = 30;
-        if (invoice.getDueDate() == null)
-            invoice.setDueDate(LocalDate.now().plusDays(nbrOfDayFromDueDate));
+            Integer nbrOfDayFromDueDate = 30;
+            if (invoice.getDueDate() == null)
+                invoice.setDueDate(LocalDate.now().plusDays(nbrOfDayFromDueDate));
+
+        }
 
         // Defined billing label
         if (!invoice.getIsInvoiceFromProvider()
@@ -367,10 +396,12 @@ public class InvoiceServiceImpl implements InvoiceService {
             invoiceHelper.setInvoiceLabel(invoice, billingDocument, null, customerOrder);
         }
 
-        if (invoice.getIsInvoiceFromProvider())
-            invoice.setInvoiceStatus(constantService.getInvoiceStatusReceived());
-        else
-            invoice.setInvoiceStatus(constantService.getInvoiceStatusSend());
+        if (isNewInvoice) {
+            if (invoice.getIsInvoiceFromProvider())
+                invoice.setInvoiceStatus(constantService.getInvoiceStatusReceived());
+            else
+                invoice.setInvoiceStatus(constantService.getInvoiceStatusSend());
+        }
 
         // Save before to have an ID on invoice
         addOrUpdateInvoice(invoice);
@@ -382,10 +413,12 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         invoiceHelper.setPriceTotal(invoice);
 
-        if (invoice.getIsInvoiceFromProvider())
-            accountingRecordService.generateAccountingRecordsForPurshaseOnInvoiceGeneration(invoice);
-        else
-            accountingRecordService.generateAccountingRecordsForSaleOnInvoiceGeneration(invoice);
+        if (isNewInvoice) {
+            if (invoice.getIsInvoiceFromProvider())
+                accountingRecordService.generateAccountingRecordsForPurshaseOnInvoiceGeneration(invoice);
+            else
+                accountingRecordService.generateAccountingRecordsForSaleOnInvoiceGeneration(invoice);
+        }
 
         // Do not generate bank transfert if invoice from Competent Authority
         // It's done when debour is filled in provision
@@ -395,6 +428,16 @@ public class InvoiceServiceImpl implements InvoiceService {
             bankTransfertService.generateBankTransfertForManualInvoice(invoice);
 
         addOrUpdateInvoice(invoice);
+
+        if (isNewInvoice && debourPayments.size() > 0) {
+            for (Integer paymentId : debourPayments.keySet()) {
+                Debour debour = debourPayments.get(paymentId);
+                if (debour.getPaymentType().getId().equals(constantService.getPaymentTypeCB().getId())
+                        || debour.getPaymentType().getId().equals(constantService.getPaymentTypeCheques().getId()))
+                    paymentService.associateOutboundPaymentAndInvoice(paymentService.getPayment(paymentId), invoice,
+                            new MutableBoolean(false), null);
+            }
+        }
         return invoice;
     }
 

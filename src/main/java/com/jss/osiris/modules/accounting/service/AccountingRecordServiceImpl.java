@@ -549,26 +549,6 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   }
 
   @Override
-  public void generateAccountingRecordsForDebourOnDebour(Debour debour) throws OsirisException {
-    AccountingJournal bankJournal = constantService.getAccountingJournalBank();
-    AccountingAccount customerAccountingAccount = null;
-    customerAccountingAccount = debour.getCompetentAuthority().getAccountingAccountProvider();
-
-    if (debour.getBillingType().getAccountingAccountCharge() == null)
-      throw new OsirisException(
-          null, "No accounting account for charge for billing type n°" + debour.getBillingType().getId());
-
-    if (debour.getCompetentAuthority().getCompetentAuthorityType().getIsDirectCharge())
-      generateNewAccountingRecord(LocalDateTime.now(), debour.getId(), null, null, "Débour n°" + debour.getId(),
-          null, debour.getDebourAmount(), debour.getBillingType().getAccountingAccountCharge(), null, null, null,
-          bankJournal, null, null, null);
-    else
-      generateNewAccountingRecord(LocalDateTime.now(), debour.getId(), null, null, "Débour n°" + debour.getId(),
-          null, debour.getDebourAmount(), customerAccountingAccount, null, null, null,
-          bankJournal, null, null, null);
-  }
-
-  @Override
   public void generateAccountingRecordsForRefundOnGeneration(Refund refund) throws OsirisException {
     AccountingJournal bankJournal = constantService.getAccountingJournalBank();
     AccountingAccount customerAccountingAccount = null;
@@ -604,7 +584,42 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   }
 
   @Override
-  public void generateBankAccountingRecordsForOutboundDebourCheckPayment(Debour debour,
+  public void generateBankAccountingRecordsForOutboundDebourPayment(Debour debour,
+      CustomerOrder customerOrder) throws OsirisException {
+    if (debour.getPaymentType() != null)
+      if (debour.getPaymentType().getId().equals(constantService.getPaymentTypeCheques().getId()))
+        generateBankAccountingRecordsForOutboundDebourCheckOrBankTransfertPayment(debour, customerOrder);
+      else if (debour.getPaymentType().getId().equals(constantService.getPaymentTypeCB().getId()))
+        generateBankAccountingRecordsForOutboundDebourCreditCardPayment(debour, customerOrder);
+      else if (debour.getPaymentType().getId().equals(constantService.getPaymentTypeVirement().getId()))
+        generateBankAccountingRecordsForOutboundDebourCheckOrBankTransfertPayment(debour, customerOrder);
+      else if (debour.getPaymentType().getId().equals(constantService.getPaymentTypeEspeces().getId()))
+        generateBankAccountingRecordsForOutboundDebourCashPayment(debour, customerOrder);
+      else if (debour.getPaymentType().getId().equals(constantService.getPaymentTypeAccount().getId()))
+        generateBankAccountingRecordsForOutboundDebourAccountPayment(debour, customerOrder);
+  }
+
+  private void generateBankAccountingRecordsForOutboundDebourCreditCardPayment(Debour debour,
+      CustomerOrder customerOrder) throws OsirisException {
+    AccountingJournal bankJournal = constantService.getAccountingJournalBank();
+
+    if (debour.getBillingType().getAccountingAccountCharge() == null)
+      throw new OsirisException(
+          null, "No accounting account for charge for billing type n°" + debour.getBillingType().getId());
+
+    if (debour.getCompetentAuthority().getCompetentAuthorityType().getIsDirectCharge())
+      generateNewAccountingRecord(LocalDateTime.now(), debour.getId(), null, null,
+          "Debour n°" + debour.getId(), null, debour.getDebourAmount(),
+          debour.getBillingType().getAccountingAccountCharge(),
+          null, null, customerOrder, bankJournal, null, null, debour);
+    else
+      generateNewAccountingRecord(LocalDateTime.now(), debour.getId(), null, null,
+          "Debour n°" + debour.getId(), null, debour.getDebourAmount(),
+          debour.getCompetentAuthority().getAccountingAccountProvider(),
+          null, null, customerOrder, bankJournal, null, null, debour);
+  }
+
+  private void generateBankAccountingRecordsForOutboundDebourCheckOrBankTransfertPayment(Debour debour,
       CustomerOrder customerOrder) throws OsirisException {
     AccountingJournal bankJournal = constantService.getAccountingJournalBank();
 
@@ -629,8 +644,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
           null, null, customerOrder, bankJournal, null, null, debour);
   }
 
-  @Override
-  public void generateBankAccountingRecordsForOutboundDebourCashPayment(Debour debour,
+  private void generateBankAccountingRecordsForOutboundDebourCashPayment(Debour debour,
       CustomerOrder customerOrder) throws OsirisException {
     AccountingJournal cashJournal = constantService.getAccountingJournalCash();
 
@@ -655,8 +669,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
           null, null, customerOrder, cashJournal, null, null, debour);
   }
 
-  @Override
-  public void generateBankAccountingRecordsForOutboundDebourAccountPayment(Debour debour,
+  private void generateBankAccountingRecordsForOutboundDebourAccountPayment(Debour debour,
       CustomerOrder customerOrder) throws OsirisException {
     AccountingJournal bankJournal = constantService.getAccountingJournalBank();
 

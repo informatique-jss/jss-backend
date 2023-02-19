@@ -149,7 +149,7 @@ public class InvoicingController {
             @RequestParam String label)
             throws OsirisValidationException, OsirisException, OsirisClientMessageException {
         Payment payment = new Payment();
-        payment.setExternallyAssociated(false);
+        payment.setIsExternallyAssociated(false);
         payment.setIsCancelled(false);
         payment.setLabel(label);
         payment.setPaymentAmount(amount);
