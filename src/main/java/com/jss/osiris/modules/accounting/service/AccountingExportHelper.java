@@ -1389,15 +1389,15 @@ public class AccountingExportHelper {
                         return 0;
                 // First, by operation id
                 if (a != null && b != null && a.getOperationId() != null && b.getOperationId() != null) {
-                        return (a.getOperationId() > b.getOperationId()) ? 1 : -1;
+                        return a.getOperationId().compareTo(b.getOperationId());
                 } else {
                         // Next by operation date
                         if (a != null && b != null) {
                                 if (a.getOperationDateTime() != null
                                                 && b.getOperationDateTime() != null) {
-                                        return (a.getOperationDateTime().isAfter(b.getOperationDateTime())) ? 1 : -1;
+                                        return a.getOperationDateTime().compareTo(b.getOperationDateTime());
                                 } else {
-                                        return (a.getId() > b.getId()) ? 1 : -1;
+                                        return a.getId().compareTo(b.getId());
                                 }
                         }
                 }

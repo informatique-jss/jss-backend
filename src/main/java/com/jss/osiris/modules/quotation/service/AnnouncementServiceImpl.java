@@ -423,20 +423,24 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                                 }
 
                     boolean toSend = false;
-                    if (announcement.getFirstConfrereReminderDateTime() == null
-                            && announcement.getFirstConfrereSentMailDateTime()
-                                    .isBefore(LocalDateTime.now().minusDays(1 * 3))) {
-                        toSend = true;
-                        announcement.setFirstConfrereReminderDateTime(LocalDateTime.now());
-                    } else if (announcement.getSecondConfrereReminderDateTime() == null
-                            && announcement.getFirstConfrereSentMailDateTime()
-                                    .isBefore(LocalDateTime.now().minusDays(1 * 4))) {
-                        toSend = true;
-                        announcement.setSecondConfrereReminderDateTime(LocalDateTime.now());
-                    } else if (announcement.getSecondConfrereReminderDateTime()
-                            .isBefore(LocalDateTime.now().minusDays(1 * 7))) {
-                        toSend = true;
-                        announcement.setThirdConfrereReminderDateTime(LocalDateTime.now());
+                    if (announcement.getFirstConfrereReminderDateTime() == null) {
+                        if (announcement.getFirstConfrereSentMailDateTime()
+                                .isBefore(LocalDateTime.now().minusDays(1 * 3))) {
+                            toSend = true;
+                            announcement.setFirstConfrereReminderDateTime(LocalDateTime.now());
+                        }
+                    } else if (announcement.getSecondConfrereReminderDateTime() == null) {
+                        if (announcement.getFirstConfrereSentMailDateTime()
+                                .isBefore(LocalDateTime.now().minusDays(1 * 4))) {
+                            toSend = true;
+                            announcement.setSecondConfrereReminderDateTime(LocalDateTime.now());
+                        }
+                    } else if (announcement.getThirdConfrereReminderDateTime() == null) {
+                        if (announcement.getFirstConfrereSentMailDateTime()
+                                .isBefore(LocalDateTime.now().minusDays(1 * 7))) {
+                            toSend = true;
+                            announcement.setThirdConfrereReminderDateTime(LocalDateTime.now());
+                        }
                     }
 
                     if (toSend) {
