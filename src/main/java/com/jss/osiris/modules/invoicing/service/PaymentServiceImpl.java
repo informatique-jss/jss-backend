@@ -340,9 +340,11 @@ public class PaymentServiceImpl implements PaymentService {
                     for (IndexEntity foundEntity : correspondingEntities) {
                         if (foundEntity.getEntityType().equals(Debour.class.getSimpleName())) {
                             Debour debour = debourService.getDebour(foundEntity.getEntityId());
-                            if (debour != null)
+                            if (debour != null) {
                                 // Check case
-                                if (debour.getCheckNumber() != null
+                                if (debour.getPaymentType().getId()
+                                        .equals(constantService.getPaymentTypeCheques().getId())
+                                        && debour.getCheckNumber() != null
                                         && payment.getLabel().contains(debour.getCheckNumber())) {
                                     associateOutboundPaymentAndDebour(payment, Arrays.asList(debour));
                                     generateWaitingAccountAccountingRecords = new MutableBoolean(false);
@@ -352,6 +354,12 @@ public class PaymentServiceImpl implements PaymentService {
                                         cancelPayment(payment);
                                     }
                                 }
+                                // Bank transfert case
+                                if (debour.getPaymentType().getId()
+                                        .equals(constantService.getPaymentTypeVirement().getId())) {
+                                    associateOutboundPaymentAndDebour(payment, Arrays.asList(debour));
+                                }
+                            }
                         }
                     }
                 }
@@ -936,9 +944,13 @@ public class PaymentServiceImpl implements PaymentService {
                 if (accountingRecord.getIsCounterPart() == null || !accountingRecord.getIsCounterPart())
                     if (!accountingRecord.getAccountingAccount().getPrincipalAccountingAccount().getId()
                             .equals(constantService.getPrincipalAccountingAccountBank().getId()))
-                        accountingRecordService.letterWaitingRecords(accountingRecord,
-                                accountingRecordService.generateCounterPart(accountingRecord, null,
-                                        operationIdCounterPart));
+                        if (accountingRecord.getAccountingId() == null) {
+                            accountingRecordService.deleteAccountingRecord(accountingRecord);
+                        } else {
+                            accountingRecordService.letterWaitingRecords(accountingRecord,
+                                    accountingRecordService.generateCounterPart(accountingRecord, null,
+                                            operationIdCounterPart));
+                        }
             }
         payment.setIsCancelled(true);
         payment.setInvoice(null);
