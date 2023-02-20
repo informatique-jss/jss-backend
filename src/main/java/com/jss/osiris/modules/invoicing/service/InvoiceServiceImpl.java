@@ -349,15 +349,16 @@ public class InvoiceServiceImpl implements InvoiceService {
                                                 debour.setDebourAmount(
                                                         debour.getDebourAmount() - debour.getNonTaxableAmount());
                                                 debourService.addOrUpdateDebour(nonTaxableDebour);
-                                            } else {
-                                                InvoiceItem invoiceItem = getInvoiceItemFromDebour(debour,
-                                                        debour.getBillingType().getIsNonTaxable());
-                                                invoiceItemService.addOrUpdateInvoiceItem(invoiceItem);
-                                                invoice.getInvoiceItems().add(invoiceItem);
-                                                debour.setInvoiceItem(invoiceItem);
-                                                debour.setProvision(provision);
-                                                debourService.addOrUpdateDebour(debour);
                                             }
+
+                                            InvoiceItem invoiceItem = getInvoiceItemFromDebour(debour,
+                                                    debour.getBillingType().getIsNonTaxable());
+                                            invoiceItemService.addOrUpdateInvoiceItem(invoiceItem);
+                                            invoice.getInvoiceItems().add(invoiceItem);
+                                            debour.setInvoiceItem(invoiceItem);
+                                            debour.setProvision(provision);
+                                            debourService.addOrUpdateDebour(debour);
+
                                             invoice.setManualPaymentType(debour.getPaymentType());
 
                                             if (debour.getPaymentType().getId()
@@ -371,6 +372,9 @@ public class InvoiceServiceImpl implements InvoiceService {
                                                                     debour,
                                                                     invoice.getCustomerOrderForInboundInvoice());
                                             }
+
+                                            debour.setNonTaxableAmount(null);
+                                            debourService.addOrUpdateDebour(debour);
                                         }
                                     }
                 }

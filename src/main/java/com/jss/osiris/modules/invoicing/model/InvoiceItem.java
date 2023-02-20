@@ -61,7 +61,7 @@ public class InvoiceItem implements Serializable, IId {
 	Invoice invoice;
 
 	@OneToMany(mappedBy = "invoiceItem")
-	@JsonIgnoreProperties(value = { "invoiceItem", "payment", "accountingRecords", "provision" })
+	@JsonIgnoreProperties(value = { "invoiceItem", "payment", "accountingRecords", "provision" }, allowSetters = true)
 	List<Debour> debours;
 
 	public Integer getId() {
