@@ -216,30 +216,29 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                     domiciliation.setDomiciliationStatus(domiciliationStatusService
                             .getDomiciliationStatusByCode(DomiciliationStatus.DOMICILIATION_NEW));
 
-                if (domiciliation.getEndDate() == null && domiciliation.getStartDate() != null) {
+                if (domiciliation.getEndDate() == null && domiciliation.getStartDate() != null)
                     domiciliation.setEndDate(domiciliation.getStartDate().plusYears(1));
 
-                    // If mails already exists, get their ids
-                    if (domiciliation != null && domiciliation.getMails() != null
-                            && domiciliation.getMails().size() > 0)
-                        mailService.populateMailIds(domiciliation.getMails());
+                // If mails already exists, get their ids
+                if (domiciliation != null && domiciliation.getMails() != null
+                        && domiciliation.getMails().size() > 0)
+                    mailService.populateMailIds(domiciliation.getMails());
 
-                    // If mails already exists, get their ids
-                    if (domiciliation != null && domiciliation.getActivityMails() != null
-                            && domiciliation.getActivityMails().size() > 0)
-                        mailService.populateMailIds(domiciliation.getActivityMails());
+                // If mails already exists, get their ids
+                if (domiciliation != null && domiciliation.getActivityMails() != null
+                        && domiciliation.getActivityMails().size() > 0)
+                    mailService.populateMailIds(domiciliation.getActivityMails());
 
-                    // If mails already exists, get their ids
-                    if (domiciliation != null
-                            && domiciliation.getLegalGardianMails() != null
-                            && domiciliation.getLegalGardianMails().size() > 0)
-                        mailService.populateMailIds(domiciliation.getLegalGardianMails());
+                // If mails already exists, get their ids
+                if (domiciliation != null
+                        && domiciliation.getLegalGardianMails() != null
+                        && domiciliation.getLegalGardianMails().size() > 0)
+                    mailService.populateMailIds(domiciliation.getLegalGardianMails());
 
-                    if (domiciliation != null
-                            && domiciliation.getLegalGardianPhones() != null
-                            && domiciliation.getLegalGardianPhones().size() > 0)
-                        phoneService.populatePhoneIds(domiciliation.getLegalGardianPhones());
-                }
+                if (domiciliation != null
+                        && domiciliation.getLegalGardianPhones() != null
+                        && domiciliation.getLegalGardianPhones().size() > 0)
+                    phoneService.populatePhoneIds(domiciliation.getLegalGardianPhones());
 
             }
 
