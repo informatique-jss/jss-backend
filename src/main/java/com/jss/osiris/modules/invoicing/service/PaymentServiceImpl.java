@@ -348,11 +348,8 @@ public class PaymentServiceImpl implements PaymentService {
                                         && payment.getLabel().contains(debour.getCheckNumber())) {
                                     associateOutboundPaymentAndDebour(payment, Arrays.asList(debour));
                                     generateWaitingAccountAccountingRecords = new MutableBoolean(false);
-                                    if (debour.getCompetentAuthority().getCompetentAuthorityType()
-                                            .getIsDirectCharge()) {
-                                        // If direct charge, cancel payment, all is already done when debour is created
-                                        cancelPayment(payment);
-                                    }
+                                    // Cancel payment, all is already done when debour is created
+                                    cancelPayment(payment);
                                 }
                                 // Bank transfert case
                                 if (debour.getPaymentType().getId()
@@ -622,10 +619,6 @@ public class PaymentServiceImpl implements PaymentService {
                     if (invoiceItem.getDebours() != null && invoiceItem.getDebours().size() > 0) {
                         for (Debour debour : invoiceItem.getDebours()) {
                             if (debour.getPaymentType().getId().equals(constantService.getPaymentTypeCB().getId())) {
-                                accountingRecordService.generateBankAccountingRecordsForOutboundDebourPayment(debour,
-                                        correspondingInvoice.getCustomerOrderForInboundInvoice());
-                            } else if (debour.getPaymentType().getId()
-                                    .equals(constantService.getPaymentTypeCheques().getId())) {
                                 accountingRecordService.generateBankAccountingRecordsForOutboundDebourPayment(debour,
                                         correspondingInvoice.getCustomerOrderForInboundInvoice());
                             }

@@ -79,12 +79,13 @@ public class CompetentAuthorityServiceImpl implements CompetentAuthorityService 
         if (competentAuthority.getId() == null
                 || competentAuthority.getAccountingAccountCustomer() == null
                         && competentAuthority.getAccountingAccountProvider() == null
-                        && competentAuthority.getAccountingAccountDeposit() == null) {
+                        && competentAuthority.getAccountingAccountDepositProvider() == null) {
             AccountingAccountTrouple accountingAccountCouple = accountingAccountService
-                    .generateAccountingAccountsForEntity(competentAuthority.getLabel());
+                    .generateAccountingAccountsForEntity(competentAuthority.getLabel(), true);
             competentAuthority.setAccountingAccountCustomer(accountingAccountCouple.getAccountingAccountCustomer());
             competentAuthority.setAccountingAccountProvider(accountingAccountCouple.getAccountingAccountProvider());
-            competentAuthority.setAccountingAccountDeposit(accountingAccountCouple.getAccountingAccountDeposit());
+            competentAuthority
+                    .setAccountingAccountDepositProvider(accountingAccountCouple.getAccountingAccountDeposit());
         }
         return competentAuthorityRepository.save(competentAuthority);
     }

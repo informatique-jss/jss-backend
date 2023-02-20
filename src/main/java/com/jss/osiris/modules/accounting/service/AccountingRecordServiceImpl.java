@@ -690,7 +690,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     else
       generateNewAccountingRecord(LocalDateTime.now(), debour.getId(), null, null,
           "Debour n°" + debour.getId(), null, debour.getDebourAmount(),
-          debour.getCompetentAuthority().getAccountingAccountProvider(),
+          debour.getCompetentAuthority().getAccountingAccountDepositProvider(),
           null, null, customerOrder, bankJournal, null, null, debour);
   }
 

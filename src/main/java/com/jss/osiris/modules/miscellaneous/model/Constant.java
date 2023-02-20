@@ -573,6 +573,10 @@ public class Constant implements Serializable, IId {
 	private PrincipalAccountingAccount principalAccountingAccountDeposit;
 
 	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_principal_accounting_account_deposit_provider")
+	private PrincipalAccountingAccount principalAccountingAccountDepositProvider;
+
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_principal_accounting_account_product")
 	private PrincipalAccountingAccount principalAccountingAccountProduct;
 
@@ -1833,6 +1837,15 @@ public class Constant implements Serializable, IId {
 
 	public void setAccountingJournalCash(AccountingJournal accountingJournalCash) {
 		this.accountingJournalCash = accountingJournalCash;
+	}
+
+	public PrincipalAccountingAccount getPrincipalAccountingAccountDepositProvider() {
+		return principalAccountingAccountDepositProvider;
+	}
+
+	public void setPrincipalAccountingAccountDepositProvider(
+			PrincipalAccountingAccount principalAccountingAccountDepositProvider) {
+		this.principalAccountingAccountDepositProvider = principalAccountingAccountDepositProvider;
 	}
 
 }

@@ -1065,6 +1065,14 @@
           </tr>
           <tr>
             <td>
+              <autocomplete-principal-accounting-account [(model)]="constant.principalAccountingAccountDepositProvider"
+                [form]="constantForm" propertyName="principalAccountingAccountDepositProvider" [isMandatory]="true"
+                label="Compte comptable principal - Acompte fournisseur"
+                [isDisabled]="!editMode"></autocomplete-principal-accounting-account>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <autocomplete-principal-accounting-account [(model)]="constant.principalAccountingAccountProvider"
                 [form]="constantForm" propertyName="principalAccountingAccountProvider" [isMandatory]="true"
                 label="Compte comptable principal - Fournisseur"

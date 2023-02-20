@@ -805,6 +805,11 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public PrincipalAccountingAccount getPrincipalAccountingAccountDepositProvider() throws OsirisException {
+        return getConstants().getPrincipalAccountingAccountDepositProvider();
+    }
+
+    @Override
     public PrincipalAccountingAccount getPrincipalAccountingAccountDeposit() throws OsirisException {
         return getConstants().getPrincipalAccountingAccountDeposit();
     }

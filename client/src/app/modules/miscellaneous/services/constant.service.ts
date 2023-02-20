@@ -592,6 +592,10 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.principalAccountingAccountDeposit;
   }
 
+  getPrincipalAccountingAccountDepositProvider() {
+    return this.constant.principalAccountingAccountDepositProvider;
+  }
+
   getPrincipalAccountingAccountProduct() {
     return this.constant.principalAccountingAccountProduct;
   }

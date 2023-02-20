@@ -174,6 +174,7 @@ export interface Constant {
   principalAccountingAccountProvider: PrincipalAccountingAccount;
   principalAccountingAccountCustomer: PrincipalAccountingAccount;
   principalAccountingAccountDeposit: PrincipalAccountingAccount;
+  principalAccountingAccountDepositProvider: PrincipalAccountingAccount;
   principalAccountingAccountProduct: PrincipalAccountingAccount;
   principalAccountingAccountCharge: PrincipalAccountingAccount;
   principalAccountingAccountBank: PrincipalAccountingAccount;

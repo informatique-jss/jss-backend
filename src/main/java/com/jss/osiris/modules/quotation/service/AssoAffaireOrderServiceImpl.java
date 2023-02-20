@@ -192,14 +192,20 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
                     if (debour.getBankTransfert() == null && debour.getPaymentType().getId()
                             .equals(constantService.getPaymentTypeVirement().getId())) {
-                        debour = debourService.addOrUpdateDebour(debour);
+
+                        // Generate dummy payment on virement, payment from OFX files will be deleted
+                        debour.setPayment(paymentService.generateNewPaymentFromDebour(debour));
+                        debourService.addOrUpdateDebour(debour);
+                        accountingRecordService.generateBankAccountingRecordsForOutboundDebourPayment(debour,
+                                (CustomerOrder) customerOrder);
+
                         debour.setBankTransfert(
                                 bankTransfertService.generateBankTransfertForDebour(debour, assoAffaireOrder));
+                        debour = debourService.addOrUpdateDebour(debour);
                     } else if (isNewDebour && debour.getPaymentType().getId()
                             .equals(constantService.getPaymentTypeCheques().getId())) {
-                        if (debour.getCompetentAuthority().getCompetentAuthorityType().getIsDirectCharge())
-                            accountingRecordService.generateBankAccountingRecordsForOutboundDebourPayment(debour,
-                                    (CustomerOrder) customerOrder);
+                        accountingRecordService.generateBankAccountingRecordsForOutboundDebourPayment(debour,
+                                (CustomerOrder) customerOrder);
                     } else if (isNewDebour && debour.getPaymentType().getId()
                             .equals(constantService.getPaymentTypeEspeces().getId())) {
                         // Generate dummy payment on cash because it will not be declared on OFX files

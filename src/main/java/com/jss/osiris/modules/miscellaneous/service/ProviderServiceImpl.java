@@ -50,7 +50,7 @@ public class ProviderServiceImpl implements ProviderService {
                 || provider.getAccountingAccountCustomer() == null && provider.getAccountingAccountProvider() == null
                         && provider.getAccountingAccountDeposit() == null) {
             AccountingAccountTrouple accountingAccountCouple = accountingAccountService
-                    .generateAccountingAccountsForEntity(provider.getLabel());
+                    .generateAccountingAccountsForEntity(provider.getLabel(), false);
             provider.setAccountingAccountCustomer(accountingAccountCouple.getAccountingAccountCustomer());
             provider.setAccountingAccountProvider(accountingAccountCouple.getAccountingAccountProvider());
             provider.setAccountingAccountDeposit(accountingAccountCouple.getAccountingAccountDeposit());
