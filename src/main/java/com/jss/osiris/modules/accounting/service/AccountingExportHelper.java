@@ -701,7 +701,7 @@ public class AccountingExportHelper {
                                 currentCell.setCellValue(accountingRecord.getPrincipalAccountingAccountCode());
                                 currentCell.setCellStyle(recordCellStyle);
                                 currentCell = currentRow.createCell(currentColumn++);
-                                currentCell.setCellValue(accountingRecord.getAccountingAccountSubNumber());
+                                currentCell.setCellValue(accountingRecord.getAccountingAccountSubNumber() + "");
                                 currentCell.setCellStyle(recordCellStyle);
                                 currentCell = currentRow.createCell(currentColumn++);
                                 currentCell.setCellValue(accountingRecord.getLabel());
