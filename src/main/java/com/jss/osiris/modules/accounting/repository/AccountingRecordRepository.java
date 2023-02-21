@@ -37,6 +37,7 @@ public interface AccountingRecordRepository extends CrudRepository<AccountingRec
         @Query(nativeQuery = true, value = "" +
                         " select  " +
                         " r.operation_id as operationId, " +
+                        " r.accounting_id  as id, " +
                         " r.temporary_operation_id as temporaryOperationId, " +
                         " r.accounting_date_time as accountingDateTime, " +
                         " r.operation_date_time as operationDateTime, " +
