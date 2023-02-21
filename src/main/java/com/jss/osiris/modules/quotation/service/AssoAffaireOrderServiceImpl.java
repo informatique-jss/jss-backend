@@ -196,9 +196,6 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                         // Generate dummy payment on virement, payment from OFX files will be deleted
                         debour.setPayment(paymentService.generateNewPaymentFromDebour(debour));
                         debourService.addOrUpdateDebour(debour);
-                        accountingRecordService.generateBankAccountingRecordsForOutboundDebourPayment(debour,
-                                (CustomerOrder) customerOrder);
-
                         debour.setBankTransfert(
                                 bankTransfertService.generateBankTransfertForDebour(debour, assoAffaireOrder));
                         debour = debourService.addOrUpdateDebour(debour);
@@ -213,6 +210,11 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                         debourService.addOrUpdateDebour(debour);
                         accountingRecordService.generateBankAccountingRecordsForOutboundDebourPayment(debour,
                                 (CustomerOrder) customerOrder);
+                    } else if (debour.getPaymentType().getId()
+                            .equals(constantService.getPaymentTypeAccount().getId())) {
+                        accountingRecordService
+                                .generateBankAccountingRecordsForOutboundDebourPayment(debour,
+                                        (CustomerOrder) customerOrder);
                     }
                 }
 

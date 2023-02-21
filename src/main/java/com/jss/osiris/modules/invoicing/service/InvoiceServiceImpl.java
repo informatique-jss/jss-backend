@@ -361,18 +361,6 @@ public class InvoiceServiceImpl implements InvoiceService {
 
                                             invoice.setManualPaymentType(debour.getPaymentType());
 
-                                            if (debour.getPaymentType().getId()
-                                                    .equals(constantService.getPaymentTypeAccount().getId())) {
-                                                accountingRecordService
-                                                        .generateBankAccountingRecordsForOutboundDebourPayment(debour,
-                                                                invoice.getCustomerOrderForInboundInvoice());
-                                                if (nonTaxableDebour != null)
-                                                    accountingRecordService
-                                                            .generateBankAccountingRecordsForOutboundDebourPayment(
-                                                                    debour,
-                                                                    invoice.getCustomerOrderForInboundInvoice());
-                                            }
-
                                             debour.setNonTaxableAmount(null);
                                             debourService.addOrUpdateDebour(debour);
                                         }
