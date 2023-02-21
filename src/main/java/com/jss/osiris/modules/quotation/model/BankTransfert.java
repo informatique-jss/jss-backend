@@ -40,7 +40,8 @@ public class BankTransfert implements Serializable, IId {
 	private Boolean isAlreadyExported;
 
 	@OneToMany(mappedBy = "bankTransfert")
-	@JsonIgnoreProperties(value = { "bankTransfert", "payment", "accountingRecords", "provision" }, allowSetters = true)
+	@JsonIgnoreProperties(value = { "bankTransfert", "payment", "accountingRecords", "provision",
+			"invoiceItem" }, allowSetters = true)
 	List<Debour> debours;
 
 	public Integer getId() {

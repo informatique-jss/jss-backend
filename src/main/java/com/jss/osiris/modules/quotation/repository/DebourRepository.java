@@ -39,7 +39,7 @@ public interface DebourRepository extends CrudRepository<Debour, Integer> {
                         " and  (:customerOrderId=0 or a.id_customer_order=:customerOrderId) " +
                         "  and (:minAmount is null or d.debour_amount>=CAST(CAST(:minAmount as text) as real) ) " +
                         "  and (:maxAmount is null or d.debour_amount<=CAST(CAST(:maxAmount as text) as real) )" +
-                        " and  (:isNonAssociated=false or d.id_payment is null and (:paymentTypeAccountId<>d.id_payment_type or d.id_invoice_item is null)) "
+                        " and  (:isNonAssociated=false or d.id_payment is null and (d.id_payment_type not in (:paymentTypeAccountId))) "
                         +
                         " and  (:isCompetentAuthorityDirectCharge=false or ct.is_direct_charge=true) " +
                         "")

@@ -355,6 +355,8 @@ public class PaymentServiceImpl implements PaymentService {
                                 if (debour.getPaymentType().getId()
                                         .equals(constantService.getPaymentTypeVirement().getId())) {
                                     associateOutboundPaymentAndDebour(payment, Arrays.asList(debour));
+                                    // Cancel payment, all is already done when debour is created
+                                    cancelPayment(payment);
                                 }
                             }
                         }

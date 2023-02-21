@@ -201,6 +201,8 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                         debour = debourService.addOrUpdateDebour(debour);
                     } else if (isNewDebour && debour.getPaymentType().getId()
                             .equals(constantService.getPaymentTypeCheques().getId())) {
+                        debour.setPayment(paymentService.generateNewPaymentFromDebour(debour));
+                        debourService.addOrUpdateDebour(debour);
                         accountingRecordService.generateBankAccountingRecordsForOutboundDebourPayment(debour,
                                 (CustomerOrder) customerOrder);
                     } else if (isNewDebour && debour.getPaymentType().getId()
@@ -210,11 +212,6 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                         debourService.addOrUpdateDebour(debour);
                         accountingRecordService.generateBankAccountingRecordsForOutboundDebourPayment(debour,
                                 (CustomerOrder) customerOrder);
-                    } else if (debour.getPaymentType().getId()
-                            .equals(constantService.getPaymentTypeAccount().getId())) {
-                        accountingRecordService
-                                .generateBankAccountingRecordsForOutboundDebourPayment(debour,
-                                        (CustomerOrder) customerOrder);
                     }
                 }
 

@@ -323,6 +323,13 @@ public class InvoiceServiceImpl implements InvoiceService {
                                 if (provision.getDebours() != null)
                                     for (Debour debour : provision.getDebours()) {
                                         if (debour.getNonTaxableAmount() != null && debour.getInvoiceItem() == null) {
+
+                                            if (debour.getPaymentType().getId()
+                                                    .equals(constantService.getPaymentTypeAccount().getId()))
+                                                accountingRecordService
+                                                        .generateBankAccountingRecordsForOutboundDebourPayment(debour,
+                                                                invoice.getCustomerOrderForInboundInvoice());
+
                                             Debour nonTaxableDebour = null;
                                             if (debour.getPayment() != null)
                                                 debourPayments.put(debour.getPayment().getId(), debour);
