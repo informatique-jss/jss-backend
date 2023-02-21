@@ -135,19 +135,23 @@ export class AccountingRecordComponent implements OnInit {
   }
 
   exportGrandLivre() {
-    this.accountingRecordService.exportGrandLivre(this.accountingRecordSearch.accountingClass, this.accountingRecordSearch.startDate!, this.accountingRecordSearch.endDate!);
+    if (this.accountingRecordSearch.startDate)
+      this.accountingRecordService.exportGrandLivre(this.accountingRecordSearch.accountingClass, new Date(this.accountingRecordSearch.startDate.setHours(12)), this.accountingRecordSearch.endDate!);
   }
 
   exportAllGrandLivre() {
-    this.accountingRecordService.exportAllGrandLivre(this.accountingRecordSearch.startDate!, this.accountingRecordSearch.endDate!);
+    if (this.accountingRecordSearch.startDate)
+      this.accountingRecordService.exportAllGrandLivre(new Date(this.accountingRecordSearch.startDate.setHours(12)), this.accountingRecordSearch.endDate!);
   }
 
   exportJournal() {
-    this.accountingRecordService.exportJournal(this.accountingRecordSearch.accountingJournal!, this.accountingRecordSearch.startDate!, this.accountingRecordSearch.endDate!);
+    if (this.accountingRecordSearch.startDate)
+      this.accountingRecordService.exportJournal(this.accountingRecordSearch.accountingJournal!, new Date(this.accountingRecordSearch.startDate.setHours(12)), this.accountingRecordSearch.endDate!);
   }
 
   exportAccountingAccount() {
-    this.accountingRecordService.exportAccountingAccount(this.accountingRecordSearch.accountingAccount!, this.accountingRecordSearch.startDate!, this.accountingRecordSearch.endDate!);
+    if (this.accountingRecordSearch.startDate)
+      this.accountingRecordService.exportAccountingAccount(this.accountingRecordSearch.accountingAccount!, new Date(this.accountingRecordSearch.startDate.setHours(12)), this.accountingRecordSearch.endDate!);
   }
 
   createAccountingRecords(event: any) {
@@ -166,6 +170,7 @@ export class AccountingRecordComponent implements OnInit {
         return;
       }
     }
+    this.accountingRecordSearch.startDate = new Date(this.accountingRecordSearch.startDate!.setHours(12));
     this.accountingRecordSearchService.searchAccountingRecords(this.accountingRecordSearch).subscribe(response => {
       this.accountingRecords = response;
       this.accountingRecords.sort((a, b) => this.sortRecords(a, b));
