@@ -73,6 +73,7 @@ export class AccountingBalanceComponent implements OnInit {
       this.appService.displaySnackBar("🙄 Merci de saisir une plage de recherche", false, 10);
       return;
     }
+    this.accountingBalanceSearch.startDate = new Date(this.accountingBalanceSearch.startDate.setHours(12));
     this.accountingBalanceService.searchAccountingBalance(this.accountingBalanceSearch).subscribe(response => {
       this.accountingBalances = response;
       this.computeBalanceAndDebitAndCreditAccumulation();
