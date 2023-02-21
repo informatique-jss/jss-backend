@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -56,6 +57,7 @@ import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.service.BankTransfertService;
 import com.jss.osiris.modules.quotation.service.CustomerOrderService;
+import com.jss.osiris.modules.quotation.service.DebourService;
 import com.jss.osiris.modules.quotation.service.DirectDebitTransfertService;
 import com.jss.osiris.modules.quotation.service.QuotationService;
 import com.jss.osiris.modules.tiers.model.BillingLabelType;
@@ -110,6 +112,12 @@ public class InvoicingController {
 
     @Autowired
     DirectDebitTransfertService directDebitTransfertService;
+
+    @Autowired
+    DebourService debourService;
+
+    @Value("${invoicing.payment.limit.refund.euros}")
+    private Integer payementLimitRefundInEuros;
 
     @GetMapping(inputEntryPoint + "/payment-ways")
     public ResponseEntity<List<PaymentWay>> getPaymentWays() {
@@ -380,7 +388,8 @@ public class InvoicingController {
         if (paymentAssociate.getPayment().getPaymentWay().getId()
                 .equals(constantService.getPaymentWayInbound().getId())) {
             if (paymentAssociate.getTiersRefund() == null && paymentAssociate.getConfrereRefund() == null
-                    && paymentAssociate.getPayment().getPaymentAmount() > totalAmount)
+                    && paymentAssociate.getPayment().getPaymentAmount() > totalAmount
+                    && paymentAssociate.getPayment().getPaymentAmount() > payementLimitRefundInEuros)
                 throw new OsirisValidationException("TiersRefund or ConfrereRefund");
             validationHelper.validateReferential(paymentAssociate.getTiersRefund(), false, "TiersRefund");
             validationHelper.validateReferential(paymentAssociate.getConfrereRefund(), false, "ConfrereRefund");
