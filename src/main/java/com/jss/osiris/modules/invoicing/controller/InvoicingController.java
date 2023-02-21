@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -116,6 +117,9 @@ public class InvoicingController {
 
     @Autowired
     DebourService debourService;
+
+    @Value("${invoicing.payment.limit.refund.euros}")
+    private Integer payementLimitRefundInEuros;
 
     @GetMapping(inputEntryPoint + "/payment-ways")
     public ResponseEntity<List<PaymentWay>> getPaymentWays() {
@@ -398,7 +402,8 @@ public class InvoicingController {
         if (paymentAssociate.getPayment().getPaymentWay().getId()
                 .equals(constantService.getPaymentWayInbound().getId())) {
             if (paymentAssociate.getTiersRefund() == null && paymentAssociate.getConfrereRefund() == null
-                    && paymentAssociate.getPayment().getPaymentAmount() > totalAmount)
+                    && paymentAssociate.getPayment().getPaymentAmount() > totalAmount
+                    && paymentAssociate.getPayment().getPaymentAmount() > payementLimitRefundInEuros)
                 throw new OsirisValidationException("TiersRefund or ConfrereRefund");
             validationHelper.validateReferential(paymentAssociate.getTiersRefund(), false, "TiersRefund");
             validationHelper.validateReferential(paymentAssociate.getConfrereRefund(), false, "ConfrereRefund");
