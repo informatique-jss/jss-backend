@@ -368,12 +368,12 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             notificationService.notifyCustomerOrderToBeingToBilled(customerOrder);
 
         // Target : BILLED => generate invoice
-        if (targetStatusCode.equals(CustomerOrderStatus.BILLED)) {
+        if (targetStatusCode.equals(CustomerOrderStatus.BILLED)) { 
             if (hasDebourNotAssociated(customerOrder))
                 throw new OsirisValidationException("Impossible de facturer : il reste des débours non associés");
-
-            // save once customer order to recompute invoice item before set it in stone...
-            this.addOrUpdateCustomerOrder(customerOrder, true, true);
+ 
+            // save once customer order to recompute invoice item before set it in stone... 
+            this.addOrUpdateCustomerOrder(customerOrder, true, true);  
             Invoice invoice = generateInvoice(customerOrder);
             accountingRecordService.generateAccountingRecordsForSaleOnInvoiceGeneration(
                     getInvoice(customerOrder));

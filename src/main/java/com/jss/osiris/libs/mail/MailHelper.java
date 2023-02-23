@@ -1035,7 +1035,6 @@ public class MailHelper {
                 }
             }
         }
-
         ctx.setVariable("vatDebour", vatDebour);
         ctx.setVariable("vats", vats);
         ctx.setVariable("priceTotal", Math.round(invoiceHelper.getPriceTotal(invoice) * 100f) / 100f);
