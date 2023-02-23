@@ -24,7 +24,7 @@ public interface DebourRepository extends CrudRepository<Debour, Integer> {
                         " d.id_payment as paymentId, " +
                         " i.id_invoice as invoiceId, " +
                         " d.check_number as checkNumber, " +
-                        " case when d.id_payment is not null or i.id_invoice is not null then true else false end as isAssociated, "
+                        " d.is_associated as isAssociated, "
                         +
                         " ct.is_direct_charge as isCompetentAuthorityDirectCharge " +
                         " from debour d " +
@@ -39,13 +39,12 @@ public interface DebourRepository extends CrudRepository<Debour, Integer> {
                         " and  (:customerOrderId=0 or a.id_customer_order=:customerOrderId) " +
                         "  and (:minAmount is null or d.debour_amount>=CAST(CAST(:minAmount as text) as real) ) " +
                         "  and (:maxAmount is null or d.debour_amount<=CAST(CAST(:maxAmount as text) as real) )" +
-                        " and  (:isNonAssociated=false or d.id_payment is null and (d.id_payment_type not in (:paymentTypeAccountId))) "
+                        " and  (:isNonAssociated=false or d.is_associated=false) "
                         +
                         " and  (:isCompetentAuthorityDirectCharge=false or ct.is_direct_charge=true) " +
                         "")
         List<DebourSearchResult> findDebours(@Param("competentAuthorityId") Integer competentAuthorityId,
                         @Param("customerOrderId") Integer customerOrderId, @Param("maxAmount") Float maxAmount,
                         @Param("minAmount") Float minAmount, @Param("isNonAssociated") boolean isNonAssociated,
-                        @Param("isCompetentAuthorityDirectCharge") boolean isCompetentAuthorityDirectCharge,
-                        @Param("paymentTypeAccountId") Integer paymentTypeAccountId);
+                        @Param("isCompetentAuthorityDirectCharge") boolean isCompetentAuthorityDirectCharge);
 }

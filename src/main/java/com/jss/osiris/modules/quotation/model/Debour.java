@@ -77,6 +77,8 @@ public class Debour implements Serializable, IId {
 	@JsonIgnoreProperties(value = { "debour", "customerOrder" }, allowSetters = true)
 	private List<AccountingRecord> accountingRecords;
 
+	private Boolean isAssociated;
+
 	public Integer getId() {
 		return id;
 	}
@@ -187,6 +189,14 @@ public class Debour implements Serializable, IId {
 
 	public void setAccountingRecords(List<AccountingRecord> accountingRecords) {
 		this.accountingRecords = accountingRecords;
+	}
+
+	public Boolean getIsAssociated() {
+		return isAssociated;
+	}
+
+	public void setIsAssociated(Boolean isAssociated) {
+		this.isAssociated = isAssociated;
 	}
 
 }

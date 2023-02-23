@@ -40,6 +40,8 @@ public class DebourServiceImpl implements DebourService {
     @Transactional(rollbackFor = Exception.class)
     public Debour addOrUpdateDebour(
             Debour debour) {
+        if (debour.getId() == null)
+            debour.setIsAssociated(false);
         debour = debourRepository.save(debour);
         indexEntityService.indexEntity(debour, debour.getId());
         return debour;
@@ -52,7 +54,7 @@ public class DebourServiceImpl implements DebourService {
                 debourSearch.getCustomerOrder() == null ? 0 : debourSearch.getCustomerOrder().getEntityId(),
                 debourSearch.getMaxAmount(),
                 debourSearch.getMinAmount(), debourSearch.getIsNonAssociated(),
-                debourSearch.getIsCompetentAuthorityDirectCharge(), constantService.getPaymentTypeAccount().getId());
+                debourSearch.getIsCompetentAuthorityDirectCharge());
     }
 
     @Override
@@ -61,5 +63,11 @@ public class DebourServiceImpl implements DebourService {
         if (debours != null)
             for (Debour debour : debours)
                 indexEntityService.indexEntity(debour, debour.getId());
+    }
+
+    @Override
+    public void setDebourAsAssociated(Debour debour) {
+        debour.setIsAssociated(true);
+        addOrUpdateDebour(debour);
     }
 }

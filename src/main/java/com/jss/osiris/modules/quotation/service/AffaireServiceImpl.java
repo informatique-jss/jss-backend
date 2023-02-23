@@ -44,6 +44,11 @@ public class AffaireServiceImpl implements AffaireService {
         return affaireRepository.findBySiret(siret);
     }
 
+    @Override
+    public List<Affaire> getAffairesBySiren(String siren) {
+        return affaireRepository.findBySiren(siren);
+    }
+
     @Autowired
     IndexEntityService indexEntityService;
 

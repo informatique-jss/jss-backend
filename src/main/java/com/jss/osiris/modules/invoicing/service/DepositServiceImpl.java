@@ -127,7 +127,7 @@ public class DepositServiceImpl implements DepositService {
         Integer operationIdCounterPart = ThreadLocalRandom.current().nextInt(1, 1000000000);
         if (deposit.getAccountingRecords() != null)
             for (AccountingRecord accountingRecord : deposit.getAccountingRecords()) {
-                if (accountingRecord.getIsCounterPart() == null || !accountingRecord.getIsCounterPart()
+                if ((accountingRecord.getIsCounterPart() == null || !accountingRecord.getIsCounterPart())
                         && !accountingRecord.getAccountingAccount().getPrincipalAccountingAccount().getId()
                                 .equals(constantService.getPrincipalAccountingAccountBank().getId()))
                     accountingRecordService.generateCounterPart(accountingRecord,

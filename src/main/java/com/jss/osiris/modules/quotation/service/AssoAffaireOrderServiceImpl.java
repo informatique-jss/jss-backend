@@ -210,6 +210,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                         // Generate dummy payment on cash because it will not be declared on OFX files
                         debour.setPayment(paymentService.generateNewPaymentFromDebour(debour));
                         debourService.addOrUpdateDebour(debour);
+                        debourService.setDebourAsAssociated(debour);
                         accountingRecordService.generateBankAccountingRecordsForOutboundDebourPayment(debour,
                                 (CustomerOrder) customerOrder);
                     }

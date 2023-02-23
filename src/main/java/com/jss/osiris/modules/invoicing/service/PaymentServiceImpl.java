@@ -514,7 +514,7 @@ public class PaymentServiceImpl implements PaymentService {
                     // if payment completly use and not cancelled, do counter part of waiting record
                     if (payment.getAccountingRecords() != null && payment.getAccountingRecords().size() > 0)
                         for (AccountingRecord record : payment.getAccountingRecords())
-                            if (record.getIsCounterPart() == false
+                            if ((record.getIsCounterPart() == null || !record.getIsCounterPart())
                                     && record.getAccountingAccount().getPrincipalAccountingAccount().getId()
                                             .equals(constantService.getPrincipalAccountingAccountWaiting().getId())) {
                                 accountingRecordService.letterWaitingRecords(record,
@@ -653,6 +653,7 @@ public class PaymentServiceImpl implements PaymentService {
                         if (debour.getPayment() == null) {
                             debour.setPayment(payment);
                             debourService.addOrUpdateDebour(debour);
+                            debourService.setDebourAsAssociated(debour);
                         }
         }
         return remainingMoney;
@@ -687,6 +688,7 @@ public class PaymentServiceImpl implements PaymentService {
         for (Debour debour : debours) {
             debour.setPayment(payment);
             debour = debourService.addOrUpdateDebour(debour);
+            debourService.setDebourAsAssociated(debour);
 
             // If debour associated with invoice, associate payment with invoice
             if (debour.getInvoiceItem() != null && debour.getInvoiceItem().getInvoice() != null
@@ -696,7 +698,7 @@ public class PaymentServiceImpl implements PaymentService {
                 // do counter part of waiting record
                 if (payment.getAccountingRecords() != null && payment.getAccountingRecords().size() > 0)
                     for (AccountingRecord record : payment.getAccountingRecords())
-                        if (record.getIsCounterPart() == false) {
+                        if (record.getIsCounterPart() == null || !record.getIsCounterPart()) {
                             if (record.getAccountingAccount().getPrincipalAccountingAccount().getId()
                                     .equals(constantService.getPrincipalAccountingAccountWaiting().getId())) {
                                 accountingRecordService.letterWaitingRecords(record,

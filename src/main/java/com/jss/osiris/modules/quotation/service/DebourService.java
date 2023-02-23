@@ -15,4 +15,6 @@ public interface DebourService {
     public List<DebourSearchResult> searchDebours(DebourSearch debourSearch) throws OsirisException;
 
     public void reindexDebours();
+
+    public void setDebourAsAssociated(Debour debour);
 }

@@ -1069,6 +1069,14 @@ public class QuotationController {
     return new ResponseEntity<Affaire>(affaireService.getAffaireBySiret(siret), HttpStatus.OK);
   }
 
+  @GetMapping(inputEntryPoint + "/affaire/siren")
+  public ResponseEntity<List<Affaire>> getAffairesBySiren(@RequestParam String siren) throws OsirisValidationException {
+    if (siren == null)
+      return null;
+
+    return new ResponseEntity<List<Affaire>>(affaireService.getAffairesBySiren(siren), HttpStatus.OK);
+  }
+
   @GetMapping(inputEntryPoint + "/affaires")
   public ResponseEntity<List<Affaire>> getAffaires() {
     return new ResponseEntity<List<Affaire>>(affaireService.getAffaires(), HttpStatus.OK);

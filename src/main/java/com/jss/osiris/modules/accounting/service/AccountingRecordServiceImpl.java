@@ -348,7 +348,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
         if (payment.getAccountingRecords() != null && payment.getAccountingRecords().size() > 0)
           for (AccountingRecord accountingRecord : payment.getAccountingRecords())
             // Counter part waiting account record
-            if (accountingRecord.getIsCounterPart() == null || !accountingRecord.getIsCounterPart()
+            if ((accountingRecord.getIsCounterPart() == null || !accountingRecord.getIsCounterPart())
                 && accountingRecord.getAccountingAccount().getId().equals(waitingAccountingAccount.getId()))
               letterWaitingRecords(accountingRecord,
                   generateCounterPart(accountingRecord, bankJournal, operationIdCounterPart));
@@ -607,6 +607,11 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
       throw new OsirisException(
           null, "No accounting account for charge for billing type n°" + debour.getBillingType().getId());
 
+    generateNewAccountingRecord(LocalDateTime.now(), debour.getId(), null, null,
+        "Debour n°" + debour.getId(), debour.getDebourAmount(), null,
+        constantService.getAccountingAccountBankJss(),
+        null, null, customerOrder, bankJournal, null, null, debour);
+
     if (debour.getCompetentAuthority().getCompetentAuthorityType().getIsDirectCharge())
       generateNewAccountingRecord(LocalDateTime.now(), debour.getId(), null, null,
           "Debour n°" + debour.getId(), null, debour.getDebourAmount(),
@@ -678,18 +683,18 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
           null, "No accounting account for charge for billing type n°" + debour.getBillingType().getId());
 
     generateNewAccountingRecord(LocalDateTime.now(), debour.getId(), null, null,
-        "Debour n°" + debour.getId(), debour.getDebourAmount(), null,
+        "Debour n°" + debour.getId(), null, debour.getDebourAmount(),
         debour.getCompetentAuthority().getAccountingAccountProvider(),
         null, null, customerOrder, bankJournal, null, null, debour);
 
     if (debour.getCompetentAuthority().getCompetentAuthorityType().getIsDirectCharge())
       generateNewAccountingRecord(LocalDateTime.now(), debour.getId(), null, null,
-          "Debour n°" + debour.getId(), null, debour.getDebourAmount(),
+          "Debour n°" + debour.getId(), debour.getDebourAmount(), null,
           debour.getBillingType().getAccountingAccountCharge(),
           null, null, customerOrder, bankJournal, null, null, debour);
     else
       generateNewAccountingRecord(LocalDateTime.now(), debour.getId(), null, null,
-          "Debour n°" + debour.getId(), null, debour.getDebourAmount(),
+          "Debour n°" + debour.getId(), debour.getDebourAmount(), null,
           debour.getCompetentAuthority().getAccountingAccountDepositProvider(),
           null, null, customerOrder, bankJournal, null, null, debour);
   }

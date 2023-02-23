@@ -395,6 +395,10 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
       this.displaySnakBarLockProvision();
       return;
     }
+    if (provision.debours && provision.debours.length > 0) {
+      this.appService.displaySnackBar("Impossible de supprimer cette prestation : des débours ont déjà été saisis", true, 15);
+      return;
+    }
     if (provision.announcement && provision.announcement.actuLegaleId)
       this.appService.displaySnackBar("Il n'est pas possible de supprimer cette prestation : elle a déjà été publiée sur ActuLégale.", false, 15);
 
@@ -615,6 +619,19 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
       this.displaySnakBarLockProvision();
       return;
     }
+
+    if (this.quotation && this.quotation.assoAffaireOrders)
+      for (let i = 0; i < this.quotation.assoAffaireOrders.length; i++) {
+        const asso = this.quotation.assoAffaireOrders[i];
+        if (asso.affaire && asso.affaire.id == affaire.id) {
+          if (asso.provisions) {
+            for (let provision of asso.provisions)
+              if (provision.debours && provision.debours.length > 0)
+                this.appService.displaySnackBar("Impossible de supprimer cette affaire : des débours ont déjà été saisis sur une prestation", true, 15);
+            return;
+          }
+        }
+      }
 
     if (this.quotation && this.quotation.assoAffaireOrders)
       for (let i = 0; i < this.quotation.assoAffaireOrders.length; i++) {
