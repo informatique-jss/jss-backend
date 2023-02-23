@@ -103,8 +103,11 @@ public class ProfileController {
 			throws OsirisValidationException, OsirisException {
 		Responsable responsable = responsableService.getResponsable(idResponsable);
 
-		if (responsable == null)
-			throw new OsirisValidationException("idResponsable");
+		if (responsable == null) {
+			responsable = responsableService.getResponsableByLoginWeb(idResponsable + "");
+			if (responsable == null)
+				throw new OsirisValidationException("idResponsable");
+		}
 		return new ResponseEntity<Boolean>(employeeService.renewResponsablePassword(responsable),
 				HttpStatus.OK);
 	}
