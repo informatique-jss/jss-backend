@@ -348,15 +348,11 @@ public class PaymentServiceImpl implements PaymentService {
                                         && payment.getLabel().contains(debour.getCheckNumber())) {
                                     associateOutboundPaymentAndDebour(payment, Arrays.asList(debour));
                                     generateWaitingAccountAccountingRecords = new MutableBoolean(false);
-                                    // Cancel payment, all is already done when debour is created
-                                    cancelPayment(payment);
                                 }
                                 // Bank transfert case
                                 if (debour.getPaymentType().getId()
                                         .equals(constantService.getPaymentTypeVirement().getId())) {
                                     associateOutboundPaymentAndDebour(payment, Arrays.asList(debour));
-                                    // Cancel payment, all is already done when debour is created
-                                    cancelPayment(payment);
                                 }
                             }
                         }

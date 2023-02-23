@@ -136,7 +136,8 @@
           </mat-tab>
           <mat-tab label="Débours" bodyClass="tab-height-limit" *ngIf="payment.paymentWay.id==paymentWayOutbound.id">
             <debour-list (actionBypass)="associateDebour($event)" [overrideIconAction]="'merge_type'"
-              [overrideTooltipAction]="'Associer ce débour au paiement'" [isForPaymentAssociation]="true"></debour-list>
+              [overrideTooltipAction]="'Associer ce débours au paiement'"
+              [isForPaymentAssociation]="true"></debour-list>
           </mat-tab>
         </mat-tab-group>
         <div class="top">

@@ -303,7 +303,9 @@ public class PricingHelper {
                             if (!invoiceItem.getIsOverridePrice() || !billingType.getCanOverridePrice()
                                     || invoiceItem.getPreTaxPrice() == null
                                     || invoiceItem.getPreTaxPrice() <= 0
-                                    || invoiceItem.getIsGifted() != null && invoiceItem.getIsGifted())
+                                    || invoiceItem.getIsGifted() != null && invoiceItem.getIsGifted()
+                                    || billingItem.getBillingType().getIsDebour()
+                                            && provision.getDebours() != null && provision.getDebours().size() > 0)
                                 setInvoiceItemPreTaxPriceAndLabel(invoiceItem, billingItem, provision);
                             computeInvoiceItemsVatAndDiscount(invoiceItem, quotation, provision);
 
