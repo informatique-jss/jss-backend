@@ -29,6 +29,11 @@
         [orderingSearch]="orderingSearch" [isForTiersIntegration]="true">
       </ordering-list>
     </mat-tab>
+    <mat-tab label="Prestations" *ngIf="tiers.id!=null && tiers.id!=undefined">
+      <provision-list class="integration-component" *ngIf="this.provisionSearch.customerOrders"
+        [affaireSearch]="provisionSearch" [isForTiersIntegration]="true">
+      </provision-list>
+    </mat-tab>
     <mat-tab label="Factures" *ngIf="invoiceSearch.customerOrders">
       <invoice-list [invoiceSearch]="invoiceSearch" [isForTiersIntegration]="true"></invoice-list>
     </mat-tab>

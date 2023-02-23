@@ -113,18 +113,18 @@ export class AnnouncementComponent implements OnInit {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes.announcement) {
-      if (!this.announcement!)
-        this.announcement! = {} as Announcement;
-      if (!this.announcement!.confrere)
-        this.announcement!.confrere = this.constantService.getConfrereJssSpel();
-      if (!this.announcement!.isHeader)
-        this.announcement!.isHeader = false;
-      if (!this.announcement!.isHeaderFree)
-        this.announcement!.isHeaderFree = false;
-      if (!this.announcement!.isProofReadingDocument)
-        this.announcement!.isProofReadingDocument = false;
-      if (this.announcement!.publicationDate)
+    if (changes.announcement && this.announcement) {
+      if (!this.announcement)
+        this.announcement = {} as Announcement;
+      if (!this.announcement.confrere)
+        this.announcement.confrere = this.constantService.getConfrereJssSpel();
+      if (!this.announcement.isHeader)
+        this.announcement.isHeader = false;
+      if (!this.announcement.isHeaderFree)
+        this.announcement.isHeaderFree = false;
+      if (!this.announcement.isProofReadingDocument)
+        this.announcement.isProofReadingDocument = false;
+      if (this.announcement.publicationDate)
         this.announcement.publicationDate = new Date(this.announcement.publicationDate);
       if (this.announcement.confrere && this.provision) {
         if (this.announcement.confrere.journalType.id == this.constantService.getJournalTypePaper().id)

@@ -25,6 +25,7 @@ export class ProvisionListComponent implements OnInit {
   tableAction: SortTableAction[] = [];
 
   @Input() isForDashboard: boolean = false;
+  @Input() isForTiersIntegration: boolean = false;
 
   currentEmployee: Employee | undefined;
   allEmployees: Employee[] = [] as Array<Employee>;
@@ -48,9 +49,9 @@ export class ProvisionListComponent implements OnInit {
       let employeeId = this.activatedRoute.snapshot.params.employeeId;
 
       this.bookmark = this.userPreferenceService.getUserSearchBookmark("prestations") as AffaireSearch;
-      if (!this.isForDashboard) {
+      if (!this.isForDashboard && !this.isForTiersIntegration) {
         this.appService.changeHeaderTitle("Prestations");
-        if (this.bookmark && !this.isForDashboard) {
+        if (this.bookmark && !this.isForDashboard && !this.isForTiersIntegration) {
           this.affaireSearch = {} as AffaireSearch;
           this.affaireSearch.assignedTo = this.bookmark.assignedTo;
           this.affaireSearch.label = this.bookmark.label;
@@ -67,6 +68,11 @@ export class ProvisionListComponent implements OnInit {
         }
       }
 
+      this.availableColumns.push({
+        id: "customerOrderId", fieldName: "customerOrderId", label: "N° de commande", actionLinkFunction: (column: SortTableColumn, element: any) => {
+          return ['/order/', element.customerOrderId];
+        }, actionIcon: "visibility", actionTooltip: "Voir la commande associée"
+      } as SortTableColumn);
       this.availableColumns.push({ id: "affaireLabel", fieldName: "affaireLabel", label: "Affaire", colorWarnFunction: (element: any) => { return element.isEmergency } } as SortTableColumn);
       this.availableColumns.push({ id: "affaireAddress", fieldName: "affaireAddress", label: "Adresse de l'affaire", colorWarnFunction: (element: any) => { return element.isEmergency } } as SortTableColumn);
       this.availableColumns.push({ id: "tiers", fieldName: "tiersLabel", label: "Tiers", colorWarnFunction: (element: any) => { return element.isEmergency } } as SortTableColumn);
@@ -105,7 +111,7 @@ export class ProvisionListComponent implements OnInit {
         }, display: true,
       } as SortTableAction);
 
-      if (this.isForDashboard && !this.affaires && this.affaireSearch || employeeId)
+      if (this.isForDashboard && !this.affaires && this.affaireSearch || employeeId || this.isForTiersIntegration)
         this.searchAffaires();
     })
   }
@@ -135,6 +141,7 @@ export class ProvisionListComponent implements OnInit {
       || this.affaireSearch.label
       || this.affaireSearch.responsible
       || this.affaireSearch.status
+      || this.affaireSearch.customerOrders
     )) {
       if (!this.isForDashboard)
         this.userPreferenceService.setUserSearchBookmark(this.affaireSearch, "prestations");

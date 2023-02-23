@@ -29,14 +29,14 @@
             <td>
               <select-accounting-journal [(model)]="constant.accountingJournalANouveau" [form]="constantForm"
                 propertyName="accountingJournalANouveau" label="Journal de comptabilité - A Nouveau"
-                [isDisabled]="!editMode">
+                [isMandatory]="true" [isDisabled]="!editMode">
               </select-accounting-journal>
             </td>
           </tr>
           <tr>
             <td>
               <select-accounting-journal [(model)]="constant.accountingJournalMiscellaneousOperations"
-                [form]="constantForm" propertyName="accountingJournalMiscellaneousOperations"
+                [form]="constantForm" propertyName="accountingJournalMiscellaneousOperations" [isMandatory]="true"
                 label="Journal de comptabilité - Opérations diverses" [isDisabled]="!editMode">
               </select-accounting-journal>
             </td>
@@ -44,7 +44,7 @@
           <tr>
             <td>
               <select-accounting-journal [(model)]="constant.accountingJournalPurchases" [form]="constantForm"
-                propertyName="accountingJournalPurchases" label="Journal de comptabilité - Achats"
+                propertyName="accountingJournalPurchases" label="Journal de comptabilité - Achats" [isMandatory]="true"
                 [isDisabled]="!editMode">
               </select-accounting-journal>
             </td>
@@ -52,14 +52,24 @@
           <tr>
             <td>
               <select-accounting-journal [(model)]="constant.accountingJournalSales" [form]="constantForm"
-                propertyName="accountingJournalSales" label="Journal de comptabilité - Ventes" [isDisabled]="!editMode">
+                [isMandatory]="true" propertyName="accountingJournalSales" label="Journal de comptabilité - Ventes"
+                [isDisabled]="!editMode">
               </select-accounting-journal>
             </td>
           </tr>
           <tr>
             <td>
               <select-accounting-journal [(model)]="constant.accountingJournalBank" [form]="constantForm"
-                propertyName="accountingJournalBank" label="Journal de comptabilité - Banque" [isDisabled]="!editMode">
+                [isMandatory]="true" propertyName="accountingJournalBank" label="Journal de comptabilité - Banque"
+                [isDisabled]="!editMode">
+              </select-accounting-journal>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-accounting-journal [(model)]="constant.accountingJournalCash" [form]="constantForm"
+                [isMandatory]="true" propertyName="accountingJournalCash" label="Journal de comptabilité - Caisse"
+                [isDisabled]="!editMode">
               </select-accounting-journal>
             </td>
           </tr>
@@ -256,6 +266,14 @@
             <td>
               <autocomplete-country [(model)]="constant.countryMonaco" [form]="constantForm" label="Pays - Monaco"
                 propertyName="countryMonaco" [isMandatory]="true" [isDisabled]="!editMode"></autocomplete-country>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-billing-type [(model)]="constant.billingTypeDeboursNonTaxable"
+                label="Type de poste de facturation - Débours non taxables" [form]="constantForm"
+                propertyName="billingTypeDeboursNonTaxable" [isMandatory]="true" [isDisabled]="!editMode">
+              </autocomplete-billing-type>
             </td>
           </tr>
           <tr>
@@ -537,6 +555,13 @@
                 propertyName="strinSocialShareNantissementRedactionFormeJuridiqueCode  " [isMandatory]="true"
                 hint="Liste de codes (séparés par ',') de forme juridique (référentiel INPI) pour l'affichage de l'option Rédaction de Bordereaux de nantissement de parts sociales"
                 [isDisabled]="!editMode" [maxLength]="255"></generic-input>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-payment-types [(model)]="constant.paymentTypeAccount" label="Type de paiement - en compte"
+                [form]="constantForm" propertyName="paymentTypeAccount" [isMandatory]="true"
+                [isDisabled]="!editMode"></select-payment-types>
             </td>
           </tr>
           <tr>
@@ -1040,6 +1065,14 @@
           </tr>
           <tr>
             <td>
+              <autocomplete-principal-accounting-account [(model)]="constant.principalAccountingAccountDepositProvider"
+                [form]="constantForm" propertyName="principalAccountingAccountDepositProvider" [isMandatory]="true"
+                label="Compte comptable principal - Acompte fournisseur"
+                [isDisabled]="!editMode"></autocomplete-principal-accounting-account>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <autocomplete-principal-accounting-account [(model)]="constant.principalAccountingAccountProvider"
                 [form]="constantForm" propertyName="principalAccountingAccountProvider" [isMandatory]="true"
                 label="Compte comptable principal - Fournisseur"
@@ -1107,6 +1140,13 @@
               <autocomplete-accounting-account [(model)]="constant.accountingAccountBankJss" [form]="constantForm"
                 propertyName="accountingAccountBankJss" [isMandatory]="true" [isDisabled]="!editMode"
                 label="Compte comptable - Banque JSS"></autocomplete-accounting-account>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-accounting-account [(model)]="constant.accountingAccountCaisse" [form]="constantForm"
+                propertyName="accountingAccountCaisse" [isMandatory]="true" [isDisabled]="!editMode"
+                label="Compte comptable - Caisse"></autocomplete-accounting-account>
             </td>
           </tr>
         </table>

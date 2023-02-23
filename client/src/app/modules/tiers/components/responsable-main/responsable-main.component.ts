@@ -9,6 +9,7 @@ import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAc
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { CityService } from 'src/app/modules/miscellaneous/services/city.service';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
+import { AffaireSearch } from 'src/app/modules/quotation/model/AffaireSearch';
 import { OrderingSearch } from 'src/app/modules/quotation/model/OrderingSearch';
 import { QuotationSearch } from 'src/app/modules/quotation/model/QuotationSearch';
 import { RESPONSABLE_ENTITY_TYPE } from 'src/app/routing/search/search.component';
@@ -54,6 +55,7 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
 
   orderingSearch: OrderingSearch = {} as OrderingSearch;
   quotationSearch: QuotationSearch = {} as QuotationSearch;
+  provisionSearch: AffaireSearch = {} as AffaireSearch;
   invoiceSearch: InvoiceSearch = {} as InvoiceSearch;
   responsableAccountSearch: ITiers | undefined;
 
@@ -155,6 +157,7 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
 
           this.orderingSearch.customerOrders = [];
           this.quotationSearch.customerOrders = [];
+          this.provisionSearch.customerOrders = [];
           this.invoiceSearch.customerOrders = [];
           this.responsableAccountSearch = undefined;
 
@@ -162,6 +165,8 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
             this.orderingSearch.customerOrders = [responsable], 0);
           setTimeout(() =>
             this.quotationSearch.customerOrders = [responsable], 0);
+          setTimeout(() =>
+            this.provisionSearch.customerOrders = [responsable], 0);
           setTimeout(() =>
             this.invoiceSearch.customerOrders = [responsable], 0);
           setTimeout(() =>

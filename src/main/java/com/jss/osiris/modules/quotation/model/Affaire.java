@@ -74,6 +74,7 @@ public class Affaire implements Serializable, IId {
 
 	@ManyToOne
 	@JoinColumn(name = "id_country")
+	@IndexedField
 	private Country country;
 
 	@Column(length = 100, nullable = false)

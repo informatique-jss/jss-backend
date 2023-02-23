@@ -20,6 +20,7 @@ import { AmountDialogComponent } from "../amount-dialog/amount-dialog.component"
 import { AssociateDepositDialogComponent } from '../associate-deposit-dialog/associate-deposit-dialog.component';
 import { AssociatePaymentDialogComponent } from "../associate-payment-dialog/associate-payment-dialog.component";
 import { BankTransfertListComponent } from '../bank-transfert-list/bank-transfert-list.component';
+import { DeboursAmountTaxableDialogComponent } from "../debours-amount-taxable-dialog/debours-amount-taxable-dialog.component";
 import { InvoiceDetailsComponent } from "../invoice-details/invoice-details.component";
 import { InvoiceListComponent } from "../invoice-list/invoice-list.component";
 import { InvoicePaymentTableComponent } from "../invoice-payment-table/invoice-payment-table.component";
@@ -63,6 +64,7 @@ const routes: Routes = [
     AddInvoiceComponent,
     AmountDialogComponent,
     BankTransfertListComponent,
+    DeboursAmountTaxableDialogComponent,
   ], exports: [
     InvoiceListComponent,
     InvoicePaymentTableComponent,

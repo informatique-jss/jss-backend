@@ -1,6 +1,7 @@
 import { AfterContentChecked, ChangeDetectorRef, Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, UrlSegment } from '@angular/router';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
+import { AffaireSearch } from 'src/app/modules/quotation/model/AffaireSearch';
 import { OrderingSearch } from 'src/app/modules/quotation/model/OrderingSearch';
 import { QuotationSearch } from 'src/app/modules/quotation/model/QuotationSearch';
 import { TIERS_ENTITY_TYPE } from 'src/app/routing/search/search.component';
@@ -30,6 +31,7 @@ export class TiersComponent implements OnInit, AfterContentChecked {
 
   orderingSearch: OrderingSearch = {} as OrderingSearch;
   quotationSearch: QuotationSearch = {} as QuotationSearch;
+  provisionSearch: AffaireSearch = {} as AffaireSearch;
   invoiceSearch: InvoiceSearch = {} as InvoiceSearch;
   responsableAccountSearch: Tiers | undefined;
 
@@ -86,11 +88,13 @@ export class TiersComponent implements OnInit, AfterContentChecked {
     this.orderingSearch.customerOrders = [this.tiers];
     this.invoiceSearch.customerOrders = [this.tiers];
     this.quotationSearch.customerOrders = [this.tiers];
+    this.provisionSearch.customerOrders = [this.tiers];
 
     if (this.tiers.responsables) {
       this.orderingSearch.customerOrders.push(...this.tiers.responsables);
       this.invoiceSearch.customerOrders.push(...this.tiers.responsables);
       this.quotationSearch.customerOrders.push(...this.tiers.responsables);
+      this.provisionSearch.customerOrders.push(...this.tiers.responsables);
     }
 
     this.responsableAccountSearch = this.tiers;

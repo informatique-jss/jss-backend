@@ -136,6 +136,12 @@
                 </autocomplete-accounting-account>
               </td>
               <td>
+                <autocomplete-accounting-account [(model)]="selectedcompetentAuthority.accountingAccountDepositProvider"
+                  [form]="entityForm2" propertyName="accountingAccountDepositProvider" [isMandatory]="false"
+                  [isDisabled]="!editMode" label="Compte comptable acompte fournisseur">
+                </autocomplete-accounting-account>
+              </td>
+              <td>
                 <generic-input [(model)]="selectedcompetentAuthority.reinvoicing" label="Refacturation (%)"
                   [form]="entityForm2" propertyName="reinvoicing" [isMandatory]="false" [isDisabled]="!editMode"
                   type="number"></generic-input>

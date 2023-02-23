@@ -104,7 +104,7 @@ public class TiersServiceImpl implements TiersService {
                 label = tiers.getDenomination();
             }
             AccountingAccountTrouple accountingAccountCouple = accountingAccountService
-                    .generateAccountingAccountsForEntity(label);
+                    .generateAccountingAccountsForEntity(label, false);
             tiers.setAccountingAccountCustomer(accountingAccountCouple.getAccountingAccountCustomer());
             tiers.setAccountingAccountProvider(accountingAccountCouple.getAccountingAccountProvider());
             tiers.setAccountingAccountDeposit(accountingAccountCouple.getAccountingAccountDeposit());

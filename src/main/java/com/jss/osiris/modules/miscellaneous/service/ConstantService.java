@@ -57,6 +57,8 @@ public interface ConstantService {
 
     public AccountingJournal getAccountingJournalBank() throws OsirisException;
 
+    public AccountingJournal getAccountingJournalCash() throws OsirisException;
+
     public AccountingJournal getAccountingJournalMiscellaneousOperations() throws OsirisException;
 
     public TiersType getTiersTypeProspect() throws OsirisException;
@@ -110,6 +112,8 @@ public interface ConstantService {
     public Country getCountryFrance() throws OsirisException;
 
     public Country getCountryMonaco() throws OsirisException;
+
+    public BillingType getBillingTypeDeboursNonTaxable() throws OsirisException;
 
     public BillingType getBillingTypeCentralPayFees() throws OsirisException;
 
@@ -188,6 +192,8 @@ public interface ConstantService {
     public PaymentType getPaymentTypeCB() throws OsirisException;
 
     public PaymentType getPaymentTypePrelevement() throws OsirisException;
+
+    public PaymentType getPaymentTypeAccount() throws OsirisException;
 
     public RefundType getRefundTypeVirement() throws OsirisException;
 
@@ -315,6 +321,8 @@ public interface ConstantService {
 
     public PrincipalAccountingAccount getPrincipalAccountingAccountDeposit() throws OsirisException;
 
+    public PrincipalAccountingAccount getPrincipalAccountingAccountDepositProvider() throws OsirisException;
+
     public PrincipalAccountingAccount getPrincipalAccountingAccountCustomer() throws OsirisException;
 
     public PrincipalAccountingAccount getPrincipalAccountingAccountProduct() throws OsirisException;
@@ -332,4 +340,6 @@ public interface ConstantService {
     public AccountingAccount getAccountingAccountBankCentralPay() throws OsirisException;
 
     public AccountingAccount getAccountingAccountBankJss() throws OsirisException;
+
+    public AccountingAccount getAccountingAccountCaisse() throws OsirisException;
 }

@@ -36,7 +36,7 @@ export class SelectPaymentTypesComponent extends GenericSelectComponent<PaymentT
         if (this.filteredPaymentType) {
           for (let paymentType of response) {
             for (let filter of this.filteredPaymentType)
-              if (filter.code == paymentType.code && this.types.indexOf(paymentType) < 0)
+              if (filter && filter.code == paymentType.code && this.types.indexOf(paymentType) < 0)
                 this.types.push(paymentType);
           }
         }

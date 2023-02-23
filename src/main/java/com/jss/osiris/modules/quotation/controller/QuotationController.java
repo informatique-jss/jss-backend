@@ -503,8 +503,10 @@ public class QuotationController {
     if (attachmentMailRequest.getAttachements() == null || attachmentMailRequest.getAttachements().size() == 0)
       throw new OsirisValidationException("attachments");
 
+    ArrayList<Attachment> outAttachment = new ArrayList<Attachment>();
     for (Attachment attachment : attachmentMailRequest.getAttachements())
-      validationHelper.validateReferential(attachment, true, "attachment n°" + attachment.getId());
+      outAttachment.add(
+          (Attachment) validationHelper.validateReferential(attachment, true, "attachment n°" + attachment.getId()));
 
     MailComputeResult mailComputeResult = mailComputeHelper
         .computeMailForSendNumericAttachment(attachmentMailRequest.getCustomerOrder());
@@ -513,7 +515,7 @@ public class QuotationController {
 
     mailHelper.sendCustomerOrderAttachmentsToCustomer(attachmentMailRequest.getCustomerOrder(),
         attachmentMailRequest.getAssoAffaireOrder(), attachmentMailRequest.getSendToMe(),
-        attachmentMailRequest.getAttachements());
+        outAttachment);
     return new ResponseEntity<CustomerOrder>(new CustomerOrder(), HttpStatus.OK);
   }
 
@@ -553,7 +555,7 @@ public class QuotationController {
 
     if (affaireSearch.getLabel() == null
         && affaireSearch.getAssignedTo() == null && affaireSearch.getResponsible() == null
-        && affaireSearch.getStatus() == null)
+        && affaireSearch.getStatus() == null && affaireSearch.getCustomerOrders() == null)
       throw new OsirisValidationException("Label or AssignedTo or Responsible or Status");
 
     if (affaireSearch.getLabel() == null)
@@ -1067,6 +1069,14 @@ public class QuotationController {
       return null;
 
     return new ResponseEntity<Affaire>(affaireService.getAffaireBySiret(siret), HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/affaire/siren")
+  public ResponseEntity<List<Affaire>> getAffairesBySiren(@RequestParam String siren) throws OsirisValidationException {
+    if (siren == null)
+      return null;
+
+    return new ResponseEntity<List<Affaire>>(affaireService.getAffairesBySiren(siren), HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/affaires")
@@ -2352,10 +2362,10 @@ public class QuotationController {
     if (debours == null || debours.size() == 0)
       throw new OsirisValidationException("debours");
 
-    for (Debour debour : debours) {
-      if (!debour.getCompetentAuthority().getCompetentAuthorityType().getIsDirectCharge())
-        throw new OsirisClientMessageException(
-            "Les autorités compétentes choisies ne sont pas à charge directe. L'association du paiement se fait sur le facture associée");
+    ArrayList<Debour> deboursOut = new ArrayList<Debour>();
+    for (Debour debourIn : debours) {
+      Debour debour = (Debour) validationHelper.validateReferential(debourIn, true, "debour");
+      deboursOut.add(debour);
 
       if (debour.getPayment() != null)
         throw new OsirisClientMessageException("Un des débours a déjà été rapproché d'un paiement");
@@ -2364,7 +2374,7 @@ public class QuotationController {
     Payment payment = paymentService.getPayment(paymentId);
     if (payment == null)
       throw new OsirisValidationException("payment");
-    paymentService.associateOutboundPaymentAndDebourFromUser(payment, debours);
-    return new ResponseEntity<List<Debour>>(debours, HttpStatus.OK);
+    paymentService.associateOutboundPaymentAndDebourFromUser(payment, deboursOut);
+    return new ResponseEntity<List<Debour>>(deboursOut, HttpStatus.OK);
   }
 }

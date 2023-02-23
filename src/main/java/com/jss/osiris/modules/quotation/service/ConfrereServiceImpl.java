@@ -92,7 +92,7 @@ public class ConfrereServiceImpl implements ConfrereService {
                         && confrere.getAccountingAccountProvider() == null
                         && confrere.getAccountingAccountDeposit() == null) {
             AccountingAccountTrouple accountingAccountCouple = accountingAccountService
-                    .generateAccountingAccountsForEntity(confrere.getLabel());
+                    .generateAccountingAccountsForEntity(confrere.getLabel(), false);
             confrere.setAccountingAccountCustomer(accountingAccountCouple.getAccountingAccountCustomer());
             confrere.setAccountingAccountProvider(accountingAccountCouple.getAccountingAccountProvider());
             confrere.setAccountingAccountDeposit(accountingAccountCouple.getAccountingAccountDeposit());

@@ -2,6 +2,7 @@ package com.jss.osiris.modules.quotation.model;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,9 +11,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.libs.search.model.IndexedField;
+import com.jss.osiris.modules.accounting.model.AccountingRecord;
+import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.miscellaneous.model.BillingType;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
@@ -29,7 +33,7 @@ public class Debour implements Serializable, IId {
 
 	@ManyToOne
 	@JoinColumn(name = "id_provision")
-	@JsonIgnoreProperties(value = { "debours" }, allowSetters = true)
+	@JsonIgnoreProperties(value = { "debours", "assoAffaireOrder" }, allowSetters = true)
 	Provision provision;
 
 	@ManyToOne
@@ -42,6 +46,8 @@ public class Debour implements Serializable, IId {
 
 	private Float debourAmount;
 
+	private Float nonTaxableAmount;
+
 	@ManyToOne
 	@JoinColumn(name = "id_payment_type")
 	private PaymentType paymentType;
@@ -51,16 +57,27 @@ public class Debour implements Serializable, IId {
 	private String comments;
 
 	@Column(length = 100)
+	@IndexedField
 	private String checkNumber;
 
 	@ManyToOne
 	@JoinColumn(name = "id_payment")
-	@JsonIgnoreProperties(value = { "payment", "debours" }, allowSetters = true)
+	@JsonIgnoreProperties(value = { "payment", "debours", "invoice" }, allowSetters = true)
 	private Payment payment;
 
 	@ManyToOne
 	@JoinColumn(name = "id_bank_transfert")
 	private BankTransfert bankTransfert;
+
+	@ManyToOne
+	@JoinColumn(name = "id_invoice_item")
+	private InvoiceItem invoiceItem;
+
+	@OneToMany(mappedBy = "debour")
+	@JsonIgnoreProperties(value = { "debour", "customerOrder" }, allowSetters = true)
+	private List<AccountingRecord> accountingRecords;
+
+	private Boolean isAssociated;
 
 	public Integer getId() {
 		return id;
@@ -148,6 +165,38 @@ public class Debour implements Serializable, IId {
 
 	public void setCheckNumber(String checkNumber) {
 		this.checkNumber = checkNumber;
+	}
+
+	public InvoiceItem getInvoiceItem() {
+		return invoiceItem;
+	}
+
+	public void setInvoiceItem(InvoiceItem invoiceItem) {
+		this.invoiceItem = invoiceItem;
+	}
+
+	public Float getNonTaxableAmount() {
+		return nonTaxableAmount;
+	}
+
+	public void setNonTaxableAmount(Float nonTaxableAmount) {
+		this.nonTaxableAmount = nonTaxableAmount;
+	}
+
+	public List<AccountingRecord> getAccountingRecords() {
+		return accountingRecords;
+	}
+
+	public void setAccountingRecords(List<AccountingRecord> accountingRecords) {
+		this.accountingRecords = accountingRecords;
+	}
+
+	public Boolean getIsAssociated() {
+		return isAssociated;
+	}
+
+	public void setIsAssociated(Boolean isAssociated) {
+		this.isAssociated = isAssociated;
 	}
 
 }

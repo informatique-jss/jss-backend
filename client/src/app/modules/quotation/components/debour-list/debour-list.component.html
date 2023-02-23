@@ -1,0 +1,41 @@
+<div class="mat-elevation-z2 form-div">
+  <div class=" full-width">
+    <table class="full-width table-fixed-layout">
+      <tr>
+        <td>
+          <autocomplete-competent-authority [(model)]="debourSearch.competentAuthority" [form]="debourForm"
+            propertyName="competentAuthority" [isMandatory]="false"
+            label="Autorité compétente"></autocomplete-competent-authority>
+        </td>
+        <td>
+          <generic-input [(model)]="debourSearch.minAmount" label="Montant minimum" [form]="debourForm"
+            propertyName="minAmount" [isMandatory]="false" [isDisabled]="false" type="number"></generic-input>
+        </td>
+        <td>
+          <generic-input [(model)]="debourSearch.maxAmount" label="Montant maximum" [form]="debourForm"
+            propertyName="maxAmount" [isMandatory]="false" [isDisabled]="false" type="number"></generic-input>
+        </td>
+        <td>
+          <autocomplete-customer-order [(model)]="debourSearch.customerOrder" [form]="debourForm"
+            label="Commande associée" propertyName="customerOrderId"
+            [isMandatory]="false"></autocomplete-customer-order>
+        </td>
+        <td>
+          <generic-toggle [(model)]="debourSearch.isNonAssociated" label="Masquer les débours associés ?"
+            [form]="debourForm" propertyName="isNonAssociated"></generic-toggle>
+        </td>
+        <td>
+          <generic-toggle [(model)]="debourSearch.isCompetentAuthorityDirectCharge" label="AC à charge directe ?"
+            [form]="debourForm" propertyName="isCompetentAuthorityDirectCharge"></generic-toggle>
+        </td>
+        <td class="fab-td-button">
+          <button mat-mini-fab color="warn" matTooltip="Rechercher" (click)="searchDebours()" class="add-button">
+            <mat-icon>search</mat-icon>
+          </button>
+        </td>
+      </tr>
+    </table>
+    <sort-table [actions]="tableAction" [columns]="displayedColumns" [values]="debours" tableName="Débours liste">
+    </sort-table>
+  </div>
+</div>

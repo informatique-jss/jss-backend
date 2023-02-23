@@ -4,7 +4,7 @@
       <table class="full-width">
         <tr>
           <td>
-            <select-billing-type-debour [(model)]="newDebour.billingType" label="Type de débour" [form]="debourForm"
+            <select-billing-type-debour [(model)]="newDebour.billingType" label="Type de débours" [form]="debourForm"
               propertyName="billingType" [isMandatory]="true" [isDisabled]="!editMode"></select-billing-type-debour>
           </td>
           <td>
@@ -19,6 +19,11 @@
           </td>
           <td>
             <select-payment-types [(model)]="newDebour.paymentType" label="Mode de paiement" [form]="debourForm"
+              *ngIf="newDebour.competentAuthority && !newDebour.competentAuthority.competentAuthorityType.isDirectCharge"
+              [filteredPaymentType]="[paymentTypeVirement,paymentTypeCb, paymentTypeCheques,paymentTypeEspeces,paymentTypeAccount]"
+              propertyName="paymentType" [isMandatory]="true" [isDisabled]="!editMode"></select-payment-types>
+            <select-payment-types [(model)]="newDebour.paymentType" label="Mode de paiement" [form]="debourForm"
+              *ngIf="newDebour.competentAuthority && newDebour.competentAuthority.competentAuthorityType.isDirectCharge"
               [filteredPaymentType]="[paymentTypeVirement,paymentTypeCb, paymentTypeCheques,paymentTypeEspeces]"
               propertyName="paymentType" [isMandatory]="true" [isDisabled]="!editMode"></select-payment-types>
           </td>
@@ -44,13 +49,8 @@
     </div>
   </form>
   <sort-table [refreshTable]="refreshTable" [columns]="displayedColumns" [values]="provision.debours"
-    tableName="Débours" class="margin-bottom"></sort-table>
-  <div class="row-field-container margin-bottom">
-    <button mat-raised-button *ngIf="!editMode" (click)="associateToPayment()" color="primary"
-      class="mini-fab-add">Associer un paiement aux débours
-    </button>
-  </div>
-  <div *ngIf="provision.debours && provision.debours.length>0">
+    tableName="Débours"></sort-table>
+  <div *ngIf="provision.debours && provision.debours.length>0" class="margin-top">
     <p>Total par authorité compétente</p>
     <ul *ngFor="let competentAuthority of getCompetentAuthorities()">
       <li>{{competentAuthority.label}} : {{getTotalForCompetentAuthority(competentAuthority)}} €</li>

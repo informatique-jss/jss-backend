@@ -1,8 +1,10 @@
 package com.jss.osiris.modules.quotation.model;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.jss.osiris.modules.profile.model.Employee;
+import com.jss.osiris.modules.tiers.model.Tiers;
 
 public class AffaireSearch {
 
@@ -10,6 +12,15 @@ public class AffaireSearch {
     private Employee assignedTo;
     private String label;
     private ArrayList<IWorkflowElement> status;
+    private List<Tiers> customerOrders;
+
+    public List<Tiers> getCustomerOrders() {
+        return customerOrders;
+    }
+
+    public void setCustomerOrders(List<Tiers> customerOrders) {
+        this.customerOrders = customerOrders;
+    }
 
     public Employee getResponsible() {
         return responsible;

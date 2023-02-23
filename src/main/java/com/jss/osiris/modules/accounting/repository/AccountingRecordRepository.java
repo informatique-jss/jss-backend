@@ -69,7 +69,7 @@ public interface AccountingRecordRepository extends CrudRepository<AccountingRec
                         " join principal_accounting_account pa on pa.id = a.id_principal_accounting_account " +
                         " left join tiers t on (t.id_accounting_account_customer = r.id_accounting_account  or t.id_accounting_account_deposit=r.id_accounting_account) "
                         + " left join confrere cf on (cf.id_accounting_account_customer = r.id_accounting_account  or cf.id_accounting_account_deposit=r.id_accounting_account) "
-                        +
+                        + // TODO AC et Provider
                         " left join accounting_record r2 on r2.id = r.id_contre_passe " +
                         " left join invoice i on i.id = r.id_invoice " +
                         " left join customer_order co on co.id = r.id_customer_order " +

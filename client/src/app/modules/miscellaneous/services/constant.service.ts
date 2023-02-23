@@ -66,6 +66,10 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.accountingJournalBank;
   }
 
+  getAccountingJournalCash() {
+    return this.constant.accountingJournalCash;
+  }
+
   getTiersTypeProspect() {
     return this.constant.tiersTypeProspect;
   }
@@ -168,6 +172,10 @@ export class ConstantService extends AppRestService<Constant>{
 
   getCountryMonaco() {
     return this.constant.countryMonaco;
+  }
+
+  getBillingTypeDeboursNonTaxable() {
+    return this.constant.billingTypeDeboursNonTaxable;
   }
 
   getBillingTypeCentralPayFees() {
@@ -302,6 +310,10 @@ export class ConstantService extends AppRestService<Constant>{
   }
   getStringBusinnessNantissementRedactionFormeJuridiqueCode() {
     return this.constant.stringBusinnessNantissementRedactionFormeJuridiqueCode;
+  }
+
+  getPaymentTypeAccount() {
+    return this.constant.paymentTypeAccount;
   }
 
   getPaymentTypeEspeces() {
@@ -580,6 +592,10 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.principalAccountingAccountDeposit;
   }
 
+  getPrincipalAccountingAccountDepositProvider() {
+    return this.constant.principalAccountingAccountDepositProvider;
+  }
+
   getPrincipalAccountingAccountProduct() {
     return this.constant.principalAccountingAccountProduct;
   }
@@ -610,5 +626,9 @@ export class ConstantService extends AppRestService<Constant>{
 
   getAccountingAccountBankJss() {
     return this.constant.accountingAccountBankJss;
+  }
+
+  getAccountingAccountCaisse() {
+    return this.constant.accountingAccountCaisse;
   }
 }

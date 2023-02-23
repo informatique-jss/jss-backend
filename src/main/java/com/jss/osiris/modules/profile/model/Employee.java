@@ -47,7 +47,7 @@ public class Employee implements Serializable, IId, AttributesMapper<Employee> {
 
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "asso_employee_backup", joinColumns = @JoinColumn(name = "id_employee"), inverseJoinColumns = @JoinColumn(name = "id_employee_backup"))
-	@JsonIgnoreProperties(value = { "backups" })
+	@JsonIgnoreProperties(value = { "backups" }, allowSetters = true)
 	private List<Employee> backups;
 
 	public Employee mapFromAttributes(Attributes attrs) throws NamingException {

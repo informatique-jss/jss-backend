@@ -3,8 +3,11 @@ package com.jss.osiris.modules.invoicing.service;
 import java.io.InputStream;
 import java.util.List;
 
+import org.apache.commons.lang3.mutable.MutableBoolean;
+
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.invoicing.model.Payment;
 import com.jss.osiris.modules.invoicing.model.PaymentSearch;
@@ -22,7 +25,7 @@ public interface PaymentService {
 
         public List<PaymentSearchResult> searchPayments(PaymentSearch payemntSearch);
 
-        public void payementGrab() throws OsirisException, OsirisClientMessageException;
+        public void payementGrab() throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
         public List<Payment> getAdvisedPaymentForInvoice(Invoice invoice);
 
@@ -32,15 +35,23 @@ public interface PaymentService {
                         List<Invoice> correspondingInvoices, List<CustomerOrder> correspondingCustomerOrder,
                         Affaire affaireRefund,
                         ITiers tiersRefund, List<Float> byPassAmount)
-                        throws OsirisException, OsirisClientMessageException;
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
         public void setExternallyAssociated(Payment payment);
 
-        public void unsetExternallyAssociated(Payment payment) throws OsirisException, OsirisClientMessageException;
+        public void unsetExternallyAssociated(Payment payment)
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
-        public List<Attachment> uploadOfxFile(InputStream file) throws OsirisException, OsirisClientMessageException;
+        public List<Attachment> uploadOfxFile(InputStream file)
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
         public Float associateOutboundPaymentAndDebourFromUser(Payment payment, List<Debour> debours)
+                        throws OsirisException;
+
+        public Payment generateNewPaymentFromDebour(Debour debour) throws OsirisException;
+
+        public Float associateOutboundPaymentAndInvoice(Payment payment, Invoice correspondingInvoice,
+                        MutableBoolean generateWaitingAccountAccountingRecords, List<Float> byPassAmount)
                         throws OsirisException;
 
 }

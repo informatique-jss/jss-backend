@@ -71,7 +71,8 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
         }
 
         @Override
-        public AccountingAccountTrouple generateAccountingAccountsForEntity(String label) throws OsirisException {
+        public AccountingAccountTrouple generateAccountingAccountsForEntity(String label, boolean isDepositForProvider)
+                        throws OsirisException {
 
                 AccountingAccountTrouple accountingAccountTrouple = new AccountingAccountTrouple();
 
@@ -81,9 +82,16 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
                 Integer currentMaxSubAccountProvider = accountingAccountRepository
                                 .findMaxSubAccontNumberForPrincipalAccountingAccount(
                                                 constantService.getPrincipalAccountingAccountProvider());
-                Integer currentMaxSubAccountDeposit = accountingAccountRepository
-                                .findMaxSubAccontNumberForPrincipalAccountingAccount(
-                                                constantService.getPrincipalAccountingAccountDeposit());
+
+                Integer currentMaxSubAccountDeposit = 0;
+                if (!isDepositForProvider)
+                        currentMaxSubAccountDeposit = accountingAccountRepository
+                                        .findMaxSubAccontNumberForPrincipalAccountingAccount(
+                                                        constantService.getPrincipalAccountingAccountDeposit());
+                else
+                        currentMaxSubAccountDeposit = accountingAccountRepository
+                                        .findMaxSubAccontNumberForPrincipalAccountingAccount(
+                                                        constantService.getPrincipalAccountingAccountDepositProvider());
 
                 Integer maxSubAccount = 0;
 
@@ -115,8 +123,14 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
                 accountingAccountTrouple.setAccountingAccountCustomer(accountingAccountCustomer);
 
                 AccountingAccount accountingAccountDeposit = new AccountingAccount();
-                accountingAccountDeposit
-                                .setPrincipalAccountingAccount(constantService.getPrincipalAccountingAccountDeposit());
+                if (!isDepositForProvider)
+                        accountingAccountDeposit
+                                        .setPrincipalAccountingAccount(
+                                                        constantService.getPrincipalAccountingAccountDeposit());
+                else
+                        accountingAccountDeposit
+                                        .setPrincipalAccountingAccount(
+                                                        constantService.getPrincipalAccountingAccountDepositProvider());
                 accountingAccountDeposit.setAccountingAccountSubNumber(maxSubAccount);
                 accountingAccountDeposit
                                 .setLabel("Acompte - " + (label != null ? label : ""));

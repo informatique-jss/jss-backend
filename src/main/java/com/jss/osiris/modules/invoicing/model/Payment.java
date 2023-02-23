@@ -68,7 +68,7 @@ public class Payment implements Serializable, IId {
 	private Boolean isCancelled;
 
 	@OneToMany(mappedBy = "payment")
-	@JsonIgnoreProperties(value = { "payment", "debours" }, allowSetters = true)
+	@JsonIgnoreProperties(value = { "payment", "debours", "invoiceItem" }, allowSetters = true)
 	private List<Debour> debours;
 
 	public Integer getId() {
@@ -125,14 +125,6 @@ public class Payment implements Serializable, IId {
 
 	public void setInvoice(Invoice invoice) {
 		this.invoice = invoice;
-	}
-
-	public boolean isExternallyAssociated() {
-		return isExternallyAssociated;
-	}
-
-	public void setExternallyAssociated(boolean isExternallyAssociated) {
-		this.isExternallyAssociated = isExternallyAssociated;
 	}
 
 	public Boolean getIsExternallyAssociated() {

@@ -28,7 +28,8 @@ public interface AccountingAccountService {
          * @throws OsirisException
          * 
          */
-        public AccountingAccountTrouple generateAccountingAccountsForEntity(String label) throws OsirisException;
+        public AccountingAccountTrouple generateAccountingAccountsForEntity(String label, boolean isDepositForProvider)
+                        throws OsirisException;
 
         public AccountingAccountBinome generateAccountingAccountsForBillingType(BillingType billingType)
                         throws OsirisException;

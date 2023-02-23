@@ -41,6 +41,7 @@ export interface Constant {
   accountingJournalPurchases: AccountingJournal;
   accountingJournalANouveau: AccountingJournal;
   accountingJournalBank: AccountingJournal;
+  accountingJournalCash: AccountingJournal;
   accountingJournalMiscellaneousOperations: AccountingJournal;
   tiersTypeProspect: TiersType;
   tiersTypeClient: TiersType;
@@ -68,6 +69,7 @@ export interface Constant {
   attachmentTypeAnnouncement: AttachmentType;
   countryFrance: Country;
   countryMonaco: Country;
+  billingTypeDeboursNonTaxable: BillingType;
   billingTypeLogo: BillingType;
   billingTypeRedactedByJss: BillingType;
   billingTypeBaloPackage: BillingType;
@@ -107,6 +109,7 @@ export interface Constant {
   paymentTypeCB: PaymentType;
   paymentTypeEspeces: PaymentType;
   paymentTypeCheques: PaymentType;
+  paymentTypeAccount: PaymentType;
   refundTypeVirement: RefundType;
   subscriptionPeriodType12M: SubscriptionPeriodType;
   legalFormUnregistered: LegalForm;
@@ -171,6 +174,7 @@ export interface Constant {
   principalAccountingAccountProvider: PrincipalAccountingAccount;
   principalAccountingAccountCustomer: PrincipalAccountingAccount;
   principalAccountingAccountDeposit: PrincipalAccountingAccount;
+  principalAccountingAccountDepositProvider: PrincipalAccountingAccount;
   principalAccountingAccountProduct: PrincipalAccountingAccount;
   principalAccountingAccountCharge: PrincipalAccountingAccount;
   principalAccountingAccountBank: PrincipalAccountingAccount;
@@ -179,4 +183,5 @@ export interface Constant {
   principalAccountingAccountProfit: PrincipalAccountingAccount;
   accountingAccountBankCentralPay: AccountingAccount;
   accountingAccountBankJss: AccountingAccount;
+  accountingAccountCaisse: AccountingAccount;
 }

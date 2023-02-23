@@ -4,6 +4,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
 import { CUSTOMER_ORDER_STATUS_ABANDONED, CUSTOMER_ORDER_STATUS_OPEN, INVOICING_PAYMENT_LIMIT_REFUND_EUROS } from 'src/app/libs/Constants';
 import { getDocument } from 'src/app/libs/DocumentHelper';
+import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
@@ -11,13 +12,17 @@ import { QuotationComponent } from 'src/app/modules/quotation/components/quotati
 import { Affaire } from 'src/app/modules/quotation/model/Affaire';
 import { Confrere } from 'src/app/modules/quotation/model/Confrere';
 import { CustomerOrder } from 'src/app/modules/quotation/model/CustomerOrder';
+import { Debour } from 'src/app/modules/quotation/model/Debour';
+import { DebourPaymentAssociationRequest } from 'src/app/modules/quotation/model/DebourPaymentAssociationRequest';
 import { Invoice } from 'src/app/modules/quotation/model/Invoice';
 import { ITiers } from 'src/app/modules/tiers/model/ITiers';
 import { Tiers } from 'src/app/modules/tiers/model/Tiers';
 import { AppService } from 'src/app/services/app.service';
 import { CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT } from '../../../../libs/Constants';
+import { DebourSearchResult } from '../../../quotation/model/DebourSearchResult';
 import { OrderingSearchResult } from '../../../quotation/model/OrderingSearchResult';
 import { CustomerOrderService } from '../../../quotation/services/customer.order.service';
+import { DebourService } from '../../../quotation/services/debour.service';
 import { AssociationSummaryTable } from '../../model/AssociationSummaryTable';
 import { InvoiceSearchResult } from '../../model/InvoiceSearchResult';
 import { Payment } from '../../model/Payment';
@@ -51,6 +56,7 @@ export class AssociatePaymentDialogComponent implements OnInit {
   invoiceStatusSend = this.constantService.getInvoiceStatusSend();
   invoiceStatusReceived = this.constantService.getInvoiceStatusReceived();
   paymentWayInbound = this.constantService.getPaymentWayInbound();
+  paymentWayOutbound = this.constantService.getPaymentWayOutbound();
 
   getAmountRemaining = getRemainingToPay;
 
@@ -58,10 +64,12 @@ export class AssociatePaymentDialogComponent implements OnInit {
     private appService: AppService,
     private invoiceService: InvoiceService,
     public amountDialog: MatDialog,
+    public confirmationDialog: MatDialog,
     private paymentService: PaymentService,
     private customerOrderService: CustomerOrderService,
     private constantService: ConstantService,
     private formBuilder: FormBuilder,
+    private debourService: DebourService,
   ) { }
 
   refundForm = this.formBuilder.group({
@@ -234,6 +242,34 @@ export class AssociatePaymentDialogComponent implements OnInit {
         }
       });
     })
+  }
+
+  associateDebour(debourIn: DebourSearchResult) {
+    if (this.payment && Math.round(debourIn.debourAmount * 100) == Math.round(this.payment.paymentAmount * 100)) {
+      const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
+        maxWidth: "400px",
+        data: {
+          title: "Associer le débour",
+          content: "Êtes-vous sûr de vouloir associer ce débour au paiement de " + this.payment?.paymentAmount + " € ?",
+          closeActionText: "Annuler",
+          validationActionText: "Confirmer"
+        }
+      });
+
+      dialogRef.afterClosed().subscribe(dialogResult => {
+        if (dialogResult && this.payment && this.payment.paymentWay.id == this.paymentWayOutbound.id && debourIn.isAssociated == false) {
+          let association = {} as DebourPaymentAssociationRequest;
+          association.payment = this.payment;
+          association.debours = [{ id: debourIn.id } as Debour];
+
+          this.debourService.associateDeboursAndPayment(association).subscribe(response => {
+            this.onClose();
+          })
+        } else {
+          this.appService.displaySnackBar("Il n'est possible d'associer que des débours non associés.", true, 15);
+        }
+      });
+    }
   }
 
   isSameCustomerOrder(newCustomerOrder: ITiers): boolean {
