@@ -537,13 +537,19 @@ public class MailHelper {
             Affaire affaire = quotation.getAssoAffaireOrders().get(0).getAffaire();
             mail.setExplaination("Vous trouverez ci-dessous le devis pour la société "
                     + (affaire.getDenomination() != null ? affaire.getDenomination()
-                            : (affaire.getFirstname() + " " + affaire.getLastname())));
+                            : (affaire.getFirstname() + " " + affaire.getLastname()))
+                    + " (" + (affaire.getAddress() + ", "
+                            + (affaire.getCity() != null ? affaire.getCity().getLabel() : "") + ")"));
         } else {
             mail.setExplaination("Vous trouverez ci-dessous le devis pour les sociétés suivantes :");
             ArrayList<String> details = new ArrayList<String>();
             for (AssoAffaireOrder asso : quotation.getAssoAffaireOrders())
-                details.add(asso.getAffaire().getDenomination() != null ? asso.getAffaire().getDenomination()
-                        : (asso.getAffaire().getFirstname() + " " + asso.getAffaire().getLastname()));
+                details.add((asso.getAffaire().getDenomination() != null ? asso.getAffaire().getDenomination()
+                        : (asso.getAffaire().getFirstname() + " " + asso.getAffaire().getLastname())) + " ("
+                        + (asso
+                                .getAffaire().getAddress() + ", "
+                                + (asso.getAffaire().getCity() != null ? asso.getAffaire().getCity().getLabel() : "")
+                                + ")"));
             mail.setExplainationElements(String.join("forgetThis", details));
         }
 
@@ -636,13 +642,20 @@ public class MailHelper {
                 Affaire affaire = quotation.getAssoAffaireOrders().get(0).getAffaire();
                 mail.setExplaination("Ce devis concerne la société "
                         + (affaire.getDenomination() != null ? affaire.getDenomination()
-                                : (affaire.getFirstname() + " " + affaire.getLastname())));
+                                : (affaire.getFirstname() + " " + affaire.getLastname()))
+                        + " (" + (affaire.getAddress() + ", "
+                                + (affaire.getCity() != null ? affaire.getCity().getLabel() : "") + ")"));
             } else {
                 mail.setExplaination("Ce devis concerne les sociétés suivantes :");
                 ArrayList<String> details = new ArrayList<String>();
                 for (AssoAffaireOrder asso : quotation.getAssoAffaireOrders())
-                    details.add(asso.getAffaire().getDenomination() != null ? asso.getAffaire().getDenomination()
-                            : (asso.getAffaire().getFirstname() + " " + asso.getAffaire().getLastname()));
+                    details.add((asso.getAffaire().getDenomination() != null ? asso.getAffaire().getDenomination()
+                            : (asso.getAffaire().getFirstname() + " " + asso.getAffaire().getLastname())) + " ("
+                            + (asso.getAffaire().getAddress() + ", "
+                                    + (asso.getAffaire().getCity() != null
+                                            ? asso.getAffaire().getCity().getLabel()
+                                            : "")
+                                    + ")"));
                 mail.setExplainationElements(String.join("forgetThis", details));
             }
 
@@ -745,16 +758,22 @@ public class MailHelper {
         if (customerOrder.getAssoAffaireOrders().size() == 1) {
             Affaire affaire = customerOrder.getAssoAffaireOrders().get(0).getAffaire();
             mail.setExplaination(explainationText + " concernant la société " +
-                    (affaire.getDenomination() != null ? affaire.getDenomination()
-                            : (affaire.getFirstname() + " " + affaire.getLastname()))
+                    ((affaire.getDenomination() != null ? affaire.getDenomination()
+                            : (affaire.getFirstname() + " " + affaire.getLastname())) + " ("
+                            + (affaire.getAddress() + ", "
+                                    + (affaire.getCity() != null ? affaire.getCity().getLabel() : "") + ")"))
                     + ".");
         } else {
             mail.setExplaination(explainationText + " concernant les sociétés indiquées ci-dessous.");
 
             ArrayList<String> details = new ArrayList<String>();
             for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
-                details.add(asso.getAffaire().getDenomination() != null ? asso.getAffaire().getDenomination()
-                        : (asso.getAffaire().getFirstname() + " " + asso.getAffaire().getLastname()));
+                details.add((asso.getAffaire().getDenomination() != null ? asso.getAffaire().getDenomination()
+                        : (asso.getAffaire().getFirstname() + " " + asso.getAffaire().getLastname())) + " ("
+                        + (asso
+                                .getAffaire().getAddress() + ", "
+                                + (asso.getAffaire().getCity() != null ? asso.getAffaire().getCity().getLabel() : "")
+                                + ")"));
             mail.setExplainationElements(String.join("forgetThis", details));
         }
 
@@ -840,16 +859,22 @@ public class MailHelper {
         if (customerOrder.getAssoAffaireOrders().size() == 1) {
             Affaire affaire = customerOrder.getAssoAffaireOrders().get(0).getAffaire();
             mail.setExplaination(explainationText + " concernant la société " +
-                    (affaire.getDenomination() != null ? affaire.getDenomination()
-                            : (affaire.getFirstname() + " " + affaire.getLastname()))
+                    ((affaire.getDenomination() != null ? affaire.getDenomination()
+                            : (affaire.getFirstname() + " " + affaire.getLastname())) + " ("
+                            + (affaire.getAddress() + ", "
+                                    + (affaire.getCity() != null ? affaire.getCity().getLabel() : "") + ")"))
                     + ".");
         } else {
             mail.setExplaination(explainationText + " concernant les sociétés indiquées ci-dessous.");
 
             ArrayList<String> details = new ArrayList<String>();
             for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
-                details.add(asso.getAffaire().getDenomination() != null ? asso.getAffaire().getDenomination()
-                        : (asso.getAffaire().getFirstname() + " " + asso.getAffaire().getLastname()));
+                details.add((asso.getAffaire().getDenomination() != null ? asso.getAffaire().getDenomination()
+                        : (asso.getAffaire().getFirstname() + " " + asso.getAffaire().getLastname())) + " ("
+                        + (asso
+                                .getAffaire().getAddress() + ", "
+                                + (asso.getAffaire().getCity() != null ? asso.getAffaire().getCity().getLabel() : "")
+                                + ")"));
             mail.setExplainationElements(String.join("forgetThis", details));
         }
 
@@ -881,10 +906,16 @@ public class MailHelper {
 
         String explainationText = "Pour nous permettre de continuer de traiter votre commande n°"
                 + customerOrder.getId() + " concernant la société " +
-                (provision.getAssoAffaireOrder().getAffaire().getDenomination() != null
+                ((provision.getAssoAffaireOrder().getAffaire().getDenomination() != null
                         ? provision.getAssoAffaireOrder().getAffaire().getDenomination()
                         : (provision.getAssoAffaireOrder().getAffaire().getFirstname() + " "
                                 + provision.getAssoAffaireOrder().getAffaire().getLastname()))
+                        + " ("
+                        + (provision.getAssoAffaireOrder().getAffaire().getAddress() + ", "
+                                + (provision.getAssoAffaireOrder().getAffaire().getCity() != null
+                                        ? provision.getAssoAffaireOrder().getAffaire().getCity().getLabel()
+                                        : "")
+                                + ")"))
                 + ", pouvez-vous nous faire parvenir les éléments indiqués ci-dessous en répondant simplement à ce mail ?";
 
         mail.setExplaination(explainationText);
@@ -1219,8 +1250,10 @@ public class MailHelper {
             Affaire affaire = customerOrder.getAssoAffaireOrders().get(0).getAffaire();
             explainationText = "Nous avons le plaisir de vous confirmer la finalisation de votre commande n°"
                     + customerOrder.getId() + " concernant la société "
-                    + (affaire.getDenomination() != null ? affaire.getDenomination()
-                            : (affaire.getFirstname() + " " + affaire.getLastname()))
+                    + ((affaire.getDenomination() != null ? affaire.getDenomination()
+                            : (affaire.getFirstname() + " " + affaire.getLastname())) + " ("
+                            + (affaire.getAddress() + ", "
+                                    + (affaire.getCity() != null ? affaire.getCity().getLabel() : "") + ")"))
                     + ". Vous trouverez en pièces-jointes les éléments suivants : ";
 
             ArrayList<String> attachementNames = new ArrayList<String>();
@@ -1348,7 +1381,9 @@ public class MailHelper {
                 + ", vous trouverez ci-joint les différentes pièces numériques pour la société "
                 + (asso.getAffaire().getDenomination() != null ? asso.getAffaire().getDenomination()
                         : (asso.getAffaire().getFirstname() + " "
-                                + asso.getAffaire().getLastname())));
+                                + asso.getAffaire().getLastname()))
+                + " (" + (asso.getAffaire().getAddress() + ", "
+                        + (asso.getAffaire().getCity() != null ? asso.getAffaire().getCity().getLabel() : "") + ")"));
 
         ArrayList<String> attachementNames = new ArrayList<String>();
         for (Attachment attachment : attachmentsToSend)
@@ -1413,9 +1448,14 @@ public class MailHelper {
                 ", rubrique "
                 + String.join("/", announcement.getNoticeTypes().stream().map(NoticeType::getLabel).toList())
                 + ") en composition économique. <br/>Cette dernière concerne la société "
-                + (asso.getAffaire().getDenomination() != null ? asso.getAffaire().getDenomination()
+                + ((asso.getAffaire().getDenomination() != null ? asso.getAffaire().getDenomination()
                         : (asso.getAffaire().getFirstname() + " "
                                 + asso.getAffaire().getLastname()))
+                        + " ("
+                        + (asso.getAffaire().getAddress() + ", "
+                                + (asso.getAffaire().getCity() != null ? asso.getAffaire().getCity().getLabel()
+                                        : "")
+                                + ")"))
                 + "<br/><br/>A cet effet, nous vous prions de bien vouloir nous adresser : ");
 
         ArrayList<String> explanationItems = new ArrayList<String>();
@@ -1507,9 +1547,15 @@ public class MailHelper {
                         if (provision.getAnnouncement() != null
                                 && provision.getAnnouncement().getId().equals(announcement.getId()))
                             mail.setExplaination(explainationText + " concernant la société " +
-                                    (asso.getAffaire().getDenomination() != null ? asso.getAffaire().getDenomination()
+                                    ((asso.getAffaire().getDenomination() != null ? asso.getAffaire().getDenomination()
                                             : (asso.getAffaire().getFirstname() + " "
                                                     + asso.getAffaire().getLastname()))
+                                            + " ("
+                                            + (asso.getAffaire().getAddress() + ", "
+                                                    + (asso.getAffaire().getCity() != null
+                                                            ? asso.getAffaire().getCity().getLabel()
+                                                            : "")
+                                                    + ")"))
                                     + ".");
 
         List<Attachment> attachments = new ArrayList<Attachment>();
@@ -1558,9 +1604,15 @@ public class MailHelper {
                         if (provision.getAnnouncement() != null
                                 && provision.getAnnouncement().getId().equals(announcement.getId()))
                             mail.setExplaination(explainationText + " concernant la société " +
-                                    (asso.getAffaire().getDenomination() != null ? asso.getAffaire().getDenomination()
+                                    ((asso.getAffaire().getDenomination() != null ? asso.getAffaire().getDenomination()
                                             : (asso.getAffaire().getFirstname() + " "
                                                     + asso.getAffaire().getLastname()))
+                                            + " ("
+                                            + (asso.getAffaire().getAddress() + ", "
+                                                    + (asso.getAffaire().getCity() != null
+                                                            ? asso.getAffaire().getCity().getLabel()
+                                                            : "")
+                                                    + ")"))
                                     + ".");
 
         List<Attachment> attachments = new ArrayList<Attachment>();
@@ -1609,9 +1661,15 @@ public class MailHelper {
                         if (provision.getAnnouncement() != null
                                 && provision.getAnnouncement().getId().equals(announcement.getId()))
                             mail.setExplaination(explainationText + " concernant la société " +
-                                    (asso.getAffaire().getDenomination() != null ? asso.getAffaire().getDenomination()
+                                    ((asso.getAffaire().getDenomination() != null ? asso.getAffaire().getDenomination()
                                             : (asso.getAffaire().getFirstname() + " "
                                                     + asso.getAffaire().getLastname()))
+                                            + " ("
+                                            + (asso.getAffaire().getAddress() + ", "
+                                                    + (asso.getAffaire().getCity() != null
+                                                            ? asso.getAffaire().getCity().getLabel()
+                                                            : "")
+                                                    + ")"))
                                     + ".");
 
         List<Attachment> attachments = new ArrayList<Attachment>();
