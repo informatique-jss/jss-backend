@@ -170,7 +170,8 @@ export class AccountingRecordComponent implements OnInit {
         return;
       }
     }
-    this.accountingRecordSearch.startDate = new Date(this.accountingRecordSearch.startDate!.setHours(12));
+    if (this.accountingRecordSearch.startDate)
+      this.accountingRecordSearch.startDate = new Date(this.accountingRecordSearch.startDate.setHours(12));
     this.accountingRecordSearchService.searchAccountingRecords(this.accountingRecordSearch).subscribe(response => {
       this.accountingRecords = response;
       this.accountingRecords.sort((a, b) => this.sortRecords(a, b));
