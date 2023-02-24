@@ -221,6 +221,7 @@ import { SelectProvisionTypeComponent } from '../forms/select-provision-type/sel
 import { SelectQuotationStatusComponent } from '../forms/select-quotation-status/select-quotation-status.component';
 import { SelectRefundTypeComponent } from '../forms/select-refund-type/select-refund-type.component';
 import { SelectRegionsComponent } from '../forms/select-regions/select-regions.component';
+import { SelectReportingDatasetComponent } from '../forms/select-reporting-dataset/select-reporting-dataset.component';
 import { SelectResponsableComponent } from '../forms/select-responsable/select-responsable.component';
 import { SelectSubscriptionPeriodComponent } from '../forms/select-subscription-period/select-subscription-period.component';
 import { SelectTiersCategoryComponent } from '../forms/select-tiers-category/select-tiers-category.component';
@@ -388,6 +389,7 @@ const routes: Routes = [
     TiersFollowupComponent,
     AutomaticMailListComponent,
     GenericChipsInputComponent,
+    SelectReportingDatasetComponent,
     //Guichet Unique
     AutocompleteTypeDocumentComponent,
     ChipsTypeDocumentComponent,
@@ -594,6 +596,7 @@ const routes: Routes = [
     AutomaticMailListComponent,
     AutocompletePrincipalAccountingAccountComponent,
     GenericChipsInputComponent,
+    SelectReportingDatasetComponent,
     //Guichet Unique
     AutocompleteTypeDocumentComponent,
     RadioGroupMotifRejetCmaComponent,

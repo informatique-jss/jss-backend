@@ -1,0 +1,58 @@
+package com.jss.osiris.modules.reporting.service;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.jss.osiris.modules.profile.model.Employee;
+import com.jss.osiris.modules.reporting.model.UserReporting;
+import com.jss.osiris.modules.reporting.repository.UserReportingRepository;
+
+@Service
+public class UserReportingServiceImpl implements UserReportingService {
+
+    @Autowired
+    UserReportingRepository userReportingRepository;
+
+    @Override
+    @Cacheable(value = "userReportingList", key = "#employee.id")
+    public List<UserReporting> getUserReportings(Employee employee) {
+        return userReportingRepository.findByEmployee(employee);
+    }
+
+    @Override
+    @Cacheable(value = "userReporting", key = "#id")
+    public UserReporting getUserReporting(Integer id) {
+        Optional<UserReporting> userReporting = userReportingRepository.findById(id);
+        if (userReporting.isPresent())
+            return userReporting.get();
+        return null;
+    }
+
+    @Override
+    @Caching(evict = {
+            @CacheEvict(value = "userReportingList", allEntries = true),
+            @CacheEvict(value = "userReporting", key = "#userReporting.id")
+    })
+    @Transactional(rollbackFor = Exception.class)
+    public UserReporting addOrUpdateUserReporting(
+            UserReporting userReporting) {
+        return userReportingRepository.save(userReporting);
+    }
+
+    @Override
+    public void copyUserReportingToUser(UserReporting userReporting, Employee employee) {
+        UserReporting userReportingOut = new UserReporting();
+        userReportingOut.setDataset(userReporting.getDataset());
+        userReportingOut.setEmployee(employee);
+        userReportingOut.setName(userReporting.getName());
+        userReportingOut.setSettings(userReporting.getSettings());
+        addOrUpdateUserReporting(userReportingOut);
+    }
+}

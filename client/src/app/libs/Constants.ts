@@ -60,3 +60,7 @@ export const CUSTOMER_ORDER_ASSO_AFFAIRE_ORDER_TO_ASSIGN = "CUSTOMER_ORDER_ASSO_
 export const CUSTOMER_ORDER_TO_BE_BILLED = "CUSTOMER_ORDER_TO_BE_BILLED";
 
 export const INVOICE_REMINDER_PAYMENT = "INVOICE_REMINDER_PAYMENT";
+
+
+// Reporting datasets
+export const REPORTING_DATASET_QUOTATION = "Donneur d'ordre / Commandes / Prestations / Facturation prévisionnelle - année calendaire courante";
