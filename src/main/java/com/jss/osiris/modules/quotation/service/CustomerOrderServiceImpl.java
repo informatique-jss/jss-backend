@@ -373,9 +373,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
         // Target : BILLED => generate invoice
         if (targetStatusCode.equals(CustomerOrderStatus.BILLED)) {
-            if (hasDebourNotAssociated(customerOrder))
-                throw new OsirisValidationException("Impossible de facturer : il reste des débours non associés");
-
             // save once customer order to recompute invoice item before set it in stone...
             this.addOrUpdateCustomerOrder(customerOrder, true, true);
             Invoice invoice = generateInvoice(customerOrder);
@@ -470,20 +467,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                                     invoiceItemService.addOrUpdateInvoiceItem(invoiceItem);
                                 }
             }
-    }
-
-    private boolean hasDebourNotAssociated(CustomerOrder customerOrder) {
-        if (customerOrder.getAssoAffaireOrders() != null)
-            for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders()) {
-                indexEntityService.indexEntity(assoAffaireOrder, assoAffaireOrder.getId());
-                if (assoAffaireOrder.getProvisions() != null)
-                    for (Provision provision : assoAffaireOrder.getProvisions())
-                        if (provision.getDebours() != null)
-                            for (Debour debour : provision.getDebours())
-                                if (debour.getPayment() == null && debour.getInvoiceItem() == null)
-                                    return true;
-            }
-        return false;
     }
 
     /**
