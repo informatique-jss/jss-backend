@@ -879,6 +879,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public List<Payment> getAdvisedPaymentForCustomerOrder(CustomerOrder customerOrder) {
         List<Payment> payments = paymentRepository.findNotAssociatedPayments();
         List<Payment> advisedPayments = new ArrayList<Payment>();
