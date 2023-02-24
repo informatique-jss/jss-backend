@@ -643,6 +643,12 @@ public class AccountingExportHelper {
                 currentCell.setCellValue("Lettrage");
                 currentCell.setCellStyle(headerCellStyle);
                 currentCell = currentRow.createCell(currentColumn++);
+                currentCell.setCellValue("Compte");
+                currentCell.setCellStyle(headerCellStyle);
+                currentCell = currentRow.createCell(currentColumn++);
+                currentCell.setCellValue("Sous-compte");
+                currentCell.setCellStyle(headerCellStyle);
+                currentCell = currentRow.createCell(currentColumn++);
                 currentCell.setCellValue("Libellé");
                 currentCell.setCellStyle(headerCellStyle);
                 currentCell = currentRow.createCell(currentColumn++);
@@ -687,7 +693,15 @@ public class AccountingExportHelper {
                                                                 : accountingRecord.getManualAccountingDocumentNumber());
                                 currentCell.setCellStyle(recordCellStyle);
                                 currentCell = currentRow.createCell(currentColumn++);
-                                currentCell.setCellValue("Lettrage : ?");
+                                currentCell.setCellValue((accountingRecord.getLetteringNumber() != null
+                                                ? accountingRecord.getLetteringNumber() + ""
+                                                : ""));
+                                currentCell.setCellStyle(recordCellStyle);
+                                currentCell = currentRow.createCell(currentColumn++);
+                                currentCell.setCellValue(accountingRecord.getPrincipalAccountingAccountCode());
+                                currentCell.setCellStyle(recordCellStyle);
+                                currentCell = currentRow.createCell(currentColumn++);
+                                currentCell.setCellValue(accountingRecord.getAccountingAccountSubNumber() + "");
                                 currentCell.setCellStyle(recordCellStyle);
                                 currentCell = currentRow.createCell(currentColumn++);
                                 currentCell.setCellValue(accountingRecord.getLabel());
@@ -1389,15 +1403,15 @@ public class AccountingExportHelper {
                         return 0;
                 // First, by operation id
                 if (a != null && b != null && a.getOperationId() != null && b.getOperationId() != null) {
-                        return (a.getOperationId() > b.getOperationId()) ? 1 : -1;
+                        return a.getOperationId().compareTo(b.getOperationId());
                 } else {
                         // Next by operation date
                         if (a != null && b != null) {
                                 if (a.getOperationDateTime() != null
                                                 && b.getOperationDateTime() != null) {
-                                        return (a.getOperationDateTime().isAfter(b.getOperationDateTime())) ? 1 : -1;
+                                        return a.getOperationDateTime().compareTo(b.getOperationDateTime());
                                 } else {
-                                        return (a.getId() > b.getId()) ? 1 : -1;
+                                        return a.getId().compareTo(b.getId());
                                 }
                         }
                 }

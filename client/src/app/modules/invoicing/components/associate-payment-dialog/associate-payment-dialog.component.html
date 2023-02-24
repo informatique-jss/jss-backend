@@ -126,11 +126,20 @@
         </div>
       </mat-step>
       <mat-step>
-        <ng-template matStepLabel>Choix d'une facture suplémentaire</ng-template>
+        <ng-template matStepLabel>Choix d'une facture/débours</ng-template>
         <p>Merci de choisir ci-dessous, la facture à associer avec ce solde.</p>
-        <invoice-list (actionBypass)="associateInvoice($event)" [overrideIconAction]="'merge_type'"
-          [overrideTooltipAction]="'Associer cette facture au paiement'"
-          [defaultStatusFilter]="[invoiceStatusSend]"></invoice-list>
+        <mat-tab-group animationDuration="0ms">
+          <mat-tab label="Factures" bodyClass="tab-height-limit">
+            <invoice-list (actionBypass)="associateInvoice($event)" [overrideIconAction]="'merge_type'"
+              [overrideTooltipAction]="'Associer cette facture au paiement'"
+              [defaultStatusFilter]="[invoiceStatusSend]"></invoice-list>
+          </mat-tab>
+          <mat-tab label="Débours" bodyClass="tab-height-limit" *ngIf="payment.paymentWay.id==paymentWayOutbound.id">
+            <debour-list (actionBypass)="associateDebour($event)" [overrideIconAction]="'merge_type'"
+              [overrideTooltipAction]="'Associer ce débours au paiement'"
+              [isForPaymentAssociation]="true"></debour-list>
+          </mat-tab>
+        </mat-tab-group>
         <div class="top">
           <button mat-raised-button color="accent" matStepperPrevious>Précédent</button>
           <button mat-raised-button color="warn" matStepperNext>Suivant</button>

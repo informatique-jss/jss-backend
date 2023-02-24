@@ -150,6 +150,11 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public AccountingJournal getAccountingJournalCash() throws OsirisException {
+        return getConstants().getAccountingJournalCash();
+    }
+
+    @Override
     public TiersType getTiersTypeProspect() throws OsirisException {
         return getConstants().getTiersTypeProspect();
     }
@@ -277,6 +282,11 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public Country getCountryMonaco() throws OsirisException {
         return getConstants().getCountryMonaco();
+    }
+
+    @Override
+    public BillingType getBillingTypeDeboursNonTaxable() throws OsirisException {
+        return getConstants().getBillingTypeDeboursNonTaxable();
     }
 
     @Override
@@ -447,6 +457,11 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public String getStringBusinnessNantissementRedactionFormeJuridiqueCode() throws OsirisException {
         return getConstants().getStringNantissementDepositFormeJuridiqueCode();
+    }
+
+    @Override
+    public PaymentType getPaymentTypeAccount() throws OsirisException {
+        return getConstants().getPaymentTypeAccount();
     }
 
     @Override
@@ -790,6 +805,11 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public PrincipalAccountingAccount getPrincipalAccountingAccountDepositProvider() throws OsirisException {
+        return getConstants().getPrincipalAccountingAccountDepositProvider();
+    }
+
+    @Override
     public PrincipalAccountingAccount getPrincipalAccountingAccountDeposit() throws OsirisException {
         return getConstants().getPrincipalAccountingAccountDeposit();
     }
@@ -832,6 +852,11 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public AccountingAccount getAccountingAccountBankJss() throws OsirisException {
         return getConstants().getAccountingAccountBankJss();
+    }
+
+    @Override
+    public AccountingAccount getAccountingAccountCaisse() throws OsirisException {
+        return getConstants().getAccountingAccountCaisse();
     }
 
 }

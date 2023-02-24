@@ -128,11 +128,12 @@
         <tr>
           <td>
             <select-payment-types [(model)]="invoice.manualPaymentType" label="Type de paiement" [form]="invoiceForm"
-              propertyName="manualPaymentType" [isMandatory]="true" [isDisabled]="!editMode"></select-payment-types>
+              *ngIf="!displayDeboursTable()" propertyName="manualPaymentType" [isMandatory]="true"
+              [isDisabled]="!editMode"></select-payment-types>
           </td>
           <td>
             <generic-datepicker [(model)]="invoice.dueDate" label="Date d'échéance" [form]="invoiceForm"
-              propertyName="dueDate" [isMandatory]="false"
+              *ngIf="!displayDeboursTable()" propertyName="dueDate" [isMandatory]="false"
               [isDisabled]="!editMode || invoice.id!=undefined"></generic-datepicker>
             <generic-datepicker [(model)]="invoice.manualAccountingDocumentDate" label="Date de la pièce comptable"
               [form]="invoiceForm" propertyName="manualAccountingDocumentDate" [isMandatory]="false"
@@ -146,17 +147,34 @@
           </td>
         </tr>
       </table>
+      <div class=" full-width padding-bottom" *ngIf="displayDeboursTable()">
+        <sort-table class="margin-bottom" (onRowClick)="selectDebour($event)" [columns]="displayedColumnsDebours"
+          [refreshTable]="refreshTable.asObservable()" [values]="debours" tableName="Débours">
+        </sort-table>
+      </div>
+      <div class=" full-width padding-bottom" *ngIf="displayDeboursTable() && this.selectedDebours">
+        <div>
+          <h3>Débours sélectionnés :</h3>
+        </div>
+        <sort-table class="margin-bottom" [columns]="displayedColumnsSelectedDebours"
+          [refreshTable]="refreshTable.asObservable()" [actions]="tableActionSelectedDebours" [values]="selectedDebours"
+          tableName="Débours">
+        </sort-table>
+      </div>
     </div>
   </div>
-  <div class=" full-width padding-bottom">
+  <div class=" full-width padding-bottom" *ngIf="!displayDeboursTable()">
     <sort-table [columns]="displayedColumns" [values]="invoiceItems" tableName="Facture Ajout" [actions]="tableAction"
       (onRowClick)="selectInvoiceItem($event)" [refreshTable]="refreshTable.asObservable()">
     </sort-table>
   </div>
-  <div class="align-right">
+  <div class="align-right" *ngIf="!displayDeboursTable()">
     <span class="mat-cell">Total TTC : {{getInvoiceTotal()}} €</span>
   </div>
-  <div>
+  <div class="align-right" *ngIf="displayDeboursTable()">
+    <span class="mat-cell">Total TTC : {{getDeboursTotal()}} €</span>
+  </div>
+  <div *ngIf="!displayDeboursTable()">
     <table class="full-width ">
       <tr>
         <td>

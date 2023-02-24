@@ -9,6 +9,7 @@ scp build/libs/workspace-osiris-*.jar osiris@app2.osiris.jss.fr:/appli/osiris/os
 ssh -t osiris@app2.osiris.jss.fr 'sudo  /usr/bin/systemctl start osiris.service;exit'
 
 cd client
+npm install
 ng build --configuration production
 ssh -t osiris@osiris.jss.fr 'rm -R /appli/osiris/*;exit'
 scp -r dist/osiris/* osiris@osiris.jss.fr:/appli/osiris/.

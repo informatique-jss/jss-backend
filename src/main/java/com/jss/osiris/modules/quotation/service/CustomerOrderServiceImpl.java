@@ -28,6 +28,7 @@ import com.jss.osiris.libs.JacksonLocalDateTimeSerializer;
 import com.jss.osiris.libs.PrintDelegate;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.MailComputeHelper;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.libs.search.service.IndexEntityService;
@@ -181,14 +182,14 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public CustomerOrder addOrUpdateCustomerOrderFromUser(CustomerOrder customerOrder)
-            throws OsirisException, OsirisClientMessageException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         return addOrUpdateCustomerOrder(customerOrder, true, true);
     }
 
     @Override
     public CustomerOrder addOrUpdateCustomerOrder(CustomerOrder customerOrder, boolean isFromUser,
             boolean checkAllProvisionEnded)
-            throws OsirisException, OsirisClientMessageException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         if (customerOrder.getId() == null) {
             customerOrder.setCreatedDate(LocalDateTime.now());
         }
@@ -249,7 +250,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Override
     public CustomerOrder checkAllProvisionEnded(CustomerOrder customerOrderIn)
-            throws OsirisException, OsirisClientMessageException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         CustomerOrder customerOrder = getCustomerOrder(customerOrderIn.getId());
         if (customerOrder != null && customerOrder.getAssoAffaireOrders() != null
                 && customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BEING_PROCESSED)) {
@@ -280,7 +281,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public CustomerOrder addOrUpdateCustomerOrderStatusFromUser(CustomerOrder customerOrder, String targetStatusCode)
-            throws OsirisException, OsirisClientMessageException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         return addOrUpdateCustomerOrderStatus(customerOrder, targetStatusCode, true);
     }
 
@@ -297,7 +298,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Override
     public CustomerOrder addOrUpdateCustomerOrderStatus(CustomerOrder customerOrder, String targetStatusCode,
             boolean isFromUser)
-            throws OsirisException, OsirisClientMessageException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         // Handle automatic workflow for Announcement created from website
         boolean onlyAnnonceLegale = isOnlyAnnouncement(customerOrder);
         boolean isFromWebsite = (customerOrder.getIsCreatedFromWebSite() != null
@@ -346,12 +347,16 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         // Target : BEING PROCESSED => notify customer
         if (targetStatusCode.equals(CustomerOrderStatus.BEING_PROCESSED)) {
             resetDeboursManuelAmount(customerOrder);
-            // Confirm deposit taken into account or customer order starting
-            if (!isFromUser
-                    && customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.WAITING_DEPOSIT)) {
-                mailHelper.sendCustomerOrderDepositConfirmationToCustomer(customerOrder, false);
-            } else
-                notificationService.notifyCustomerOrderToBeingProcessed(customerOrder, true);
+            // Confirm deposit taken into account or customer order starting and only if not
+            // from to billed
+            if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.TO_BILLED)) {
+                if (!isFromUser
+                        && customerOrder.getCustomerOrderStatus().getCode()
+                                .equals(CustomerOrderStatus.WAITING_DEPOSIT)) {
+                    mailHelper.sendCustomerOrderDepositConfirmationToCustomer(customerOrder, false);
+                } else
+                    notificationService.notifyCustomerOrderToBeingProcessed(customerOrder, true);
+            }
         }
 
         // Handle automatic workflow for Announcement created from website
@@ -412,7 +417,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             }
             accountingRecordService.checkInvoiceForLettrage(invoice);
 
-            mailHelper.sendCustomerOrderFinalisationToCustomer(customerOrder, false, false, false);
+            mailHelper.sendCustomerOrderFinalisationToCustomer(getCustomerOrder(customerOrder.getId()), false, false,
+                    false);
         }
 
         // Target : going back to TO BILLED => cancel invoice
@@ -467,9 +473,10 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
      * Return true if announcement is done at the end, false otherwise
      * 
      * @throws OsirisClientMessageException
+     * @throws OsirisValidationException
      */
     private boolean moveForwardAnnouncementFromWebsite(CustomerOrder customerOrder)
-            throws OsirisException, OsirisClientMessageException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         boolean allDone = true;
         if (customerOrder != null && customerOrder.getAssoAffaireOrders() != null)
             for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
@@ -515,7 +522,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Override
     public CustomerOrder unlockCustomerOrderFromDeposit(CustomerOrder customerOrder)
-            throws OsirisException, OsirisClientMessageException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.WAITING_DEPOSIT)) {
             addOrUpdateCustomerOrderStatus(customerOrder, CustomerOrderStatus.BEING_PROCESSED, false);
             notificationService.notifyCustomerOrderToBeingProcessed(customerOrder, false);
@@ -524,7 +531,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         return customerOrder;
     }
 
-    private Invoice generateInvoice(CustomerOrder customerOrder) throws OsirisException, OsirisClientMessageException {
+    private Invoice generateInvoice(CustomerOrder customerOrder)
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         if (!hasAtLeastOneInvoiceItemNotNull(customerOrder))
             throw new OsirisException(null, "No invoice item found on customer order " + customerOrder.getId());
 
@@ -554,7 +562,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             attachmentService.addAttachment(new FileInputStream(invoicePdf), customerOrder.getId(),
                     CustomerOrder.class.getSimpleName(),
                     constantService.getAttachmentTypeInvoice(),
-                    "Invoice_" + formatter.format(LocalDateTime.now()) + ".pdf",
+                    "Invoice_" + invoice.getId() + "_" + formatter.format(LocalDateTime.now()) + ".pdf",
                     false, "Facture n°" + invoice.getId());
         } catch (FileNotFoundException e) {
             throw new OsirisException(e, "Impossible to read invoice PDF temp file");
@@ -660,7 +668,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Override
     public CustomerOrder createNewCustomerOrderFromQuotation(Quotation quotation)
-            throws OsirisException, OsirisClientMessageException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         CustomerOrderStatus statusOpen = customerOrderStatusService
                 .getCustomerOrderStatusByCode(CustomerOrderStatus.OPEN);
         CustomerOrder customerOrder = new CustomerOrder(quotation.getTiers(), quotation.getResponsable(),
@@ -749,27 +757,28 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void generateInvoiceMail(CustomerOrder customerOrder) throws OsirisException, OsirisClientMessageException {
+    public void generateInvoiceMail(CustomerOrder customerOrder)
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         mailHelper.sendCustomerOrderFinalisationToCustomer(customerOrder, true, false, false);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public String getCardPaymentLinkForCustomerOrderDeposit(CustomerOrder customerOrder, String mail, String subject)
-            throws OsirisException, OsirisClientMessageException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         return getCardPaymentLinkForCustomerOrderPayment(customerOrder, mail, subject, paymentCbRedirectDeposit);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public String getCardPaymentLinkForPaymentInvoice(CustomerOrder customerOrder, String mail, String subject)
-            throws OsirisException, OsirisClientMessageException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         return getCardPaymentLinkForCustomerOrderPayment(customerOrder, mail, subject, paymentCbRedirectInvoice);
     }
 
     private String getCardPaymentLinkForCustomerOrderPayment(CustomerOrder customerOrder, String mail, String subject,
             String redirectEntrypoint)
-            throws OsirisException, OsirisClientMessageException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
 
         if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.ABANDONED))
             throw new OsirisException(null, "Impossible to pay an cancelled customer order n°" + customerOrder.getId());
@@ -820,7 +829,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Boolean validateCardPaymentLinkForCustomerOrder(CustomerOrder customerOrder)
-            throws OsirisException, OsirisClientMessageException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         if (customerOrder.getCentralPayPaymentRequestId() != null) {
             CentralPayPaymentRequest centralPayPaymentRequest = centralPayDelegateService
                     .getPaymentRequest(customerOrder.getCentralPayPaymentRequestId());
@@ -852,9 +861,10 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Override
     public void generateDepositOnCustomerOrderForCbPayment(CustomerOrder customerOrder,
-            CentralPayPaymentRequest centralPayPaymentRequest) throws OsirisException, OsirisClientMessageException {
+            CentralPayPaymentRequest centralPayPaymentRequest)
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         // Generate payment to materialize CB payment
-        Payment payment = getCentralPayPayment(centralPayPaymentRequest);
+        Payment payment = getCentralPayPayment(centralPayPaymentRequest, true);
 
         Deposit deposit = depositService.getNewDepositForCustomerOrder(payment.getPaymentAmount(), LocalDateTime.now(),
                 customerOrder, null, payment, true);
@@ -871,28 +881,31 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     private void generatePaymentOnInvoiceForCbPayment(Invoice invoice,
             CentralPayPaymentRequest centralPayPaymentRequest) throws OsirisException, OsirisClientMessageException {
         // Generate payment to materialize CB payment
-        Payment payment = getCentralPayPayment(centralPayPaymentRequest);
+        Payment payment = getCentralPayPayment(centralPayPaymentRequest, false);
 
         accountingRecordService.generateAccountingRecordsForSaleOnInvoicePayment(invoice, payment);
         accountingRecordService.generateAccountingRecordsForCentralPayPayment(centralPayPaymentRequest, payment,
                 null, invoice.getCustomerOrder(), invoice);
     }
 
-    private Payment getCentralPayPayment(CentralPayPaymentRequest centralPayPaymentRequest) throws OsirisException {
+    private Payment getCentralPayPayment(CentralPayPaymentRequest centralPayPaymentRequest, boolean isForDepostit)
+            throws OsirisException {
         Payment payment = new Payment();
-        payment.setExternallyAssociated(false);
+        payment.setIsExternallyAssociated(false);
         payment.setLabel(centralPayPaymentRequest.getDescription());
         payment.setPaymentAmount(centralPayPaymentRequest.getTotalAmount() / 100f);
         payment.setPaymentDate(centralPayPaymentRequest.getCreationDate());
         payment.setPaymentWay(constantService.getPaymentWayInbound());
         payment.setPaymentType(constantService.getPaymentTypeCB());
+        payment.setIsCancelled(isForDepostit);
         paymentService.addOrUpdatePayment(payment);
         return payment;
     }
 
     @Override
     @Transactional
-    public void sendRemindersForCustomerOrderDeposit() throws OsirisException, OsirisClientMessageException {
+    public void sendRemindersForCustomerOrderDeposit()
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         List<CustomerOrder> customerOrders = customerOrderRepository.findCustomerOrderForReminder(
                 customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.WAITING_DEPOSIT));
 
@@ -965,8 +978,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         if (customerOrders != null && customerOrders.size() > 0)
             for (String id : customerOrders) {
                 try {
+                    CustomerOrder customerOrder = getCustomerOrder(Integer.parseInt(id));
                     printDelegate.printMailingLabel(
-                            mailComputeHelper.computePaperLabelResult(getCustomerOrder(Integer.parseInt(id))));
+                            mailComputeHelper.computePaperLabelResult(customerOrder), customerOrder);
                 } catch (NumberFormatException e) {
                 } catch (Exception e) {
                     throw new OsirisException(e, "Error when printing label");

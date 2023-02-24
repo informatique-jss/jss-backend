@@ -118,12 +118,11 @@
             <tr>
               <td>
                 <generic-toggle [(model)]="announcement.isHeader" label="En-tête ?" [form]="announcementForm"
-                  propertyName="isHeader">
-                </generic-toggle>
+                  propertyName="isHeader" [isDisabled]="!editMode"></generic-toggle>
               </td>
               <td>
                 <generic-toggle *ngIf="announcement.isHeader" [(model)]="announcement.isHeaderFree"
-                  label="En-tête gratuit ?" [form]="announcementForm" propertyName="isHeader"></generic-toggle>
+                  label="En-tête gratuit ?" [form]="announcementForm" propertyName="isHeaderFree"></generic-toggle>
               </td>
             </tr>
           </table>

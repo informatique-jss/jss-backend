@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.quotation.model.Announcement;
 import com.jss.osiris.modules.quotation.model.AnnouncementListSearch;
 import com.jss.osiris.modules.quotation.model.AnnouncementSearch;
@@ -25,30 +26,31 @@ public interface AnnouncementService {
         public void publishAnnouncementsToActuLegale() throws OsirisException;
 
         public void generateStoreAndSendPublicationReceipt(CustomerOrder customerOrder, Announcement announcement)
-                        throws OsirisException, OsirisClientMessageException;
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
         public void generateAndStorePublicationReceipt(Announcement announcement,
                         Provision currentProvision)
-                        throws OsirisException, OsirisClientMessageException;
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
         public void generateStoreAndSendPublicationFlag(CustomerOrder customerOrder, Announcement announcement)
-                        throws OsirisException, OsirisClientMessageException;
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
         public void generateAndStorePublicationFlag(Announcement announcement,
                         Provision currentProvision)
-                        throws OsirisException, OsirisClientMessageException;
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
         public void generateStoreAndSendProofReading(Announcement announcement, CustomerOrder customerOrder)
-                        throws OsirisException, OsirisClientMessageException;
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
-        public void sendPublicationFlagNotSent() throws OsirisException, OsirisClientMessageException;
+        public void sendPublicationFlagNotSent()
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
         public List<Announcement> searchAnnouncements(AnnouncementListSearch announcementSearch)
                         throws OsirisException;
 
         public void generateAndStoreAnnouncementWordFile(CustomerOrder customerOrder, AssoAffaireOrder asso,
                         Provision provision, Announcement announcement)
-                        throws OsirisException, OsirisClientMessageException;
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
         public void sendRemindersToConfrereForAnnouncement() throws OsirisException, OsirisClientMessageException;
 

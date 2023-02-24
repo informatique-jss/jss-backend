@@ -129,6 +129,7 @@
                         "+entity.text.affaire.lastname)}}</mat-card-title>
                       <mat-card-subtitle>
                         <p> {{entity.text.affaire.address}} - {{entity.text.affaire.postalCode}} -
+                          {{entity.text.affaire.city?entity.text.affaire.city.label:""}} -
                           {{entity.text.affaire.country?entity.text.affaire.country.label:""}}{{entity.text.affaire.siren?("
                           - SIREN
                           : "+entity.text.affaire.siren):""}}{{entity.text.affaire.siret?(" - SIRET
@@ -152,6 +153,7 @@
                         "+entity.text.lastname)}}</mat-card-title>
                       <mat-card-subtitle>
                         <p> {{entity.text.address}} - {{entity.text.postalCode}} -
+                          {{entity.text.city?entity.text.city.label:""}} -
                           {{entity.text.country?entity.text.country.label:""}}{{entity.text.siren?("
                           - SIREN
                           : "+entity.text.siren):""}}{{entity.text.siret?(" - SIRET

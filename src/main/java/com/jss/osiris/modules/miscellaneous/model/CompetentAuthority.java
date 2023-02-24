@@ -72,9 +72,6 @@ public class CompetentAuthority implements Serializable, IId {
 	@JoinTable(name = "asso_competent_authority_region", joinColumns = @JoinColumn(name = "id_competent_authority"), inverseJoinColumns = @JoinColumn(name = "id_region"))
 	private List<Region> regions;
 
-	@Column(nullable = false)
-	private Boolean hasAccount;
-
 	@Column(length = 60)
 	private String mailRecipient;
 
@@ -104,8 +101,8 @@ public class CompetentAuthority implements Serializable, IId {
 	private AccountingAccount accountingAccountCustomer;
 
 	@ManyToOne
-	@JoinColumn(name = "id_accounting_account_deposit")
-	private AccountingAccount accountingAccountDeposit;
+	@JoinColumn(name = "id_accounting_account_deposit_provider")
+	private AccountingAccount accountingAccountDepositProvider;
 
 	private Integer reinvoicing;
 
@@ -174,14 +171,6 @@ public class CompetentAuthority implements Serializable, IId {
 
 	public void setCountry(Country country) {
 		this.country = country;
-	}
-
-	public Boolean getHasAccount() {
-		return hasAccount;
-	}
-
-	public void setHasAccount(Boolean hasAccount) {
-		this.hasAccount = hasAccount;
 	}
 
 	public List<Department> getDepartments() {
@@ -280,14 +269,6 @@ public class CompetentAuthority implements Serializable, IId {
 		this.reinvoicing = reinvoicing;
 	}
 
-	public AccountingAccount getAccountingAccountDeposit() {
-		return accountingAccountDeposit;
-	}
-
-	public void setAccountingAccountDeposit(AccountingAccount accountingAccountDeposit) {
-		this.accountingAccountDeposit = accountingAccountDeposit;
-	}
-
 	public String getSchedulle() {
 		return schedulle;
 	}
@@ -326,6 +307,14 @@ public class CompetentAuthority implements Serializable, IId {
 
 	public void setBic(String bic) {
 		this.bic = bic;
+	}
+
+	public AccountingAccount getAccountingAccountDepositProvider() {
+		return accountingAccountDepositProvider;
+	}
+
+	public void setAccountingAccountDepositProvider(AccountingAccount accountingAccountDepositProvider) {
+		this.accountingAccountDepositProvider = accountingAccountDepositProvider;
 	}
 
 }

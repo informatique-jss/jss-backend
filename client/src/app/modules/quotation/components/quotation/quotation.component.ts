@@ -395,6 +395,13 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
       this.displaySnakBarLockProvision();
       return;
     }
+    if (provision.debours && provision.debours.length > 0) {
+      this.appService.displaySnackBar("Impossible de supprimer cette prestation : des débours ont déjà été saisis", true, 15);
+      return;
+    }
+    if (provision.announcement && provision.announcement.actuLegaleId)
+      this.appService.displaySnackBar("Il n'est pas possible de supprimer cette prestation : elle a déjà été publiée sur ActuLégale.", false, 15);
+
     asso.provisions.splice(asso.provisions.indexOf(provision), 1);
   }
 
@@ -472,9 +479,9 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
               let incomingProvision = assoIncoming.provisions[i];
               for (let j = 0; j < assoTarget.provisions.length; j++) {
                 let targetProvision = assoTarget.provisions[j];
-                if (incomingProvision.id && targetProvision.id && incomingProvision.id == targetProvision.id)
+                if (incomingProvision.id && targetProvision.id && incomingProvision.id == targetProvision.id && assoIncoming.affaire.id == assoTarget.affaire.id)
                   targetProvision.invoiceItems = incomingProvision.invoiceItems;
-                else if (i == j && incomingProvision.provisionType && targetProvision.provisionType && incomingProvision.provisionType.id == targetProvision.provisionType.id)
+                else if (i == j && incomingProvision.provisionType && targetProvision.provisionType && incomingProvision.provisionType.id == targetProvision.provisionType.id && assoIncoming.affaire.id == assoTarget.affaire.id)
                   targetProvision.invoiceItems = incomingProvision.invoiceItems;
               }
             }
@@ -608,6 +615,24 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
   }
 
   deleteAffaire(affaire: Affaire) {
+    if (instanceOfCustomerOrder(this.quotation) && this.quotation.customerOrderStatus && (this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)) {
+      this.displaySnakBarLockProvision();
+      return;
+    }
+
+    if (this.quotation && this.quotation.assoAffaireOrders)
+      for (let i = 0; i < this.quotation.assoAffaireOrders.length; i++) {
+        const asso = this.quotation.assoAffaireOrders[i];
+        if (asso.affaire && asso.affaire.id == affaire.id) {
+          if (asso.provisions) {
+            for (let provision of asso.provisions)
+              if (provision.debours && provision.debours.length > 0)
+                this.appService.displaySnackBar("Impossible de supprimer cette affaire : des débours ont déjà été saisis sur une prestation", true, 15);
+            return;
+          }
+        }
+      }
+
     if (this.quotation && this.quotation.assoAffaireOrders)
       for (let i = 0; i < this.quotation.assoAffaireOrders.length; i++) {
         const asso = this.quotation.assoAffaireOrders[i];

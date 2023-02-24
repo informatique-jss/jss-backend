@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.invoicing.model.Deposit;
@@ -126,7 +127,7 @@ public class DepositServiceImpl implements DepositService {
         Integer operationIdCounterPart = ThreadLocalRandom.current().nextInt(1, 1000000000);
         if (deposit.getAccountingRecords() != null)
             for (AccountingRecord accountingRecord : deposit.getAccountingRecords()) {
-                if (accountingRecord.getIsCounterPart() == null || !accountingRecord.getIsCounterPart()
+                if ((accountingRecord.getIsCounterPart() == null || !accountingRecord.getIsCounterPart())
                         && !accountingRecord.getAccountingAccount().getPrincipalAccountingAccount().getId()
                                 .equals(constantService.getPrincipalAccountingAccountBank().getId()))
                     accountingRecordService.generateCounterPart(accountingRecord,
@@ -144,7 +145,7 @@ public class DepositServiceImpl implements DepositService {
             List<Invoice> correspondingInvoices,
             List<CustomerOrder> correspondingCustomerOrder, Affaire affaireRefund, ITiers tiersRefund,
             List<Float> byPassAmount)
-            throws OsirisException, OsirisClientMessageException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
 
         float remainingMoney = deposit.getDepositAmount();
 

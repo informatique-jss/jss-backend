@@ -9,10 +9,7 @@ import { ConstantService } from 'src/app/modules/miscellaneous/services/constant
 import { formatDateForSortTable, formatEurosForSortTable } from '../../../../libs/FormatHelper';
 import { CompetentAuthority } from '../../../miscellaneous/model/CompetentAuthority';
 import { Debour } from '../../model/Debour';
-import { DebourPaymentAssociationRequest } from '../../model/DebourPaymentAssociationRequest';
 import { Provision } from '../../model/Provision';
-import { DebourService } from '../../services/debour.service';
-import { SelectDeboursDialogComponent } from '../select-debours-dialog/select-debours-dialog.component';
 
 
 @Component({
@@ -31,11 +28,11 @@ export class AddDebourComponent implements OnInit {
   paymentTypeCb: PaymentType = this.constantService.getPaymentTypeCB();
   paymentTypeEspeces: PaymentType = this.constantService.getPaymentTypeEspeces();
   paymentTypeCheques: PaymentType = this.constantService.getPaymentTypeCheques();
+  paymentTypeAccount: PaymentType = this.constantService.getPaymentTypeAccount();
   refreshTable: Subject<void> = new Subject<void>();
 
   constructor(private formBuilder: FormBuilder,
     public confirmationDialog: MatDialog,
-    private debourService: DebourService,
     public selectDeboursDialog: MatDialog,
     private constantService: ConstantService,) { }
 
@@ -47,7 +44,9 @@ export class AddDebourComponent implements OnInit {
     this.displayedColumns.push({ id: "debourAmount", fieldName: "debourAmount", label: "Montant", valueFonction: formatEurosForSortTable } as SortTableColumn);
     this.displayedColumns.push({ id: "paymentType", fieldName: "paymentType.label", label: "Type de paiement" } as SortTableColumn);
     this.displayedColumns.push({ id: "paymentDateTime", fieldName: "paymentDateTime", label: "Date de paiement", valueFonction: formatDateForSortTable } as SortTableColumn);
+    this.displayedColumns.push({ id: "checkNumber", fieldName: "checkNumber", label: "N° de chèque" } as SortTableColumn);
     this.displayedColumns.push({ id: "payment", fieldName: "payment.id", label: "Paiement associé" } as SortTableColumn);
+    this.displayedColumns.push({ id: "invoice", fieldName: "invoiceItem.invoice.id", label: "Facture associée" } as SortTableColumn);
     this.displayedColumns.push({ id: "comments", fieldName: "comments", label: "Commentaires", isShrinkColumn: true } as SortTableColumn);
     this.refreshTable.next();
   }
@@ -126,20 +125,6 @@ export class AddDebourComponent implements OnInit {
           total += parseFloat(debour.debourAmount + "");
       }
 
-    return total;
+    return Math.round(total * 100) / 100;
   }
-
-  associateToPayment() {
-    const dialogRef = this.selectDeboursDialog.open(SelectDeboursDialogComponent, {});
-    dialogRef.componentInstance.provision = this.provision;
-    dialogRef.afterClosed().subscribe((dialogResult: DebourPaymentAssociationRequest) => {
-      if (dialogResult) {
-        this.debourService.associateDeboursAndPayment(dialogResult).subscribe(response => {
-          if (this.provision)
-            this.provision.debours = response;
-        })
-      }
-    });
-  }
-
 }

@@ -11,10 +11,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.libs.search.service.IndexEntityService;
+import com.jss.osiris.modules.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.invoicing.service.InvoiceItemService;
+import com.jss.osiris.modules.invoicing.service.PaymentService;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
@@ -44,6 +47,7 @@ import com.jss.osiris.modules.quotation.model.SimpleProvision;
 import com.jss.osiris.modules.quotation.model.SimpleProvisionStatus;
 import com.jss.osiris.modules.quotation.model.guichetUnique.Formalite;
 import com.jss.osiris.modules.quotation.repository.AssoAffaireOrderRepository;
+import com.jss.osiris.modules.tiers.model.ITiers;
 
 @Service
 public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
@@ -102,6 +106,12 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
     @Autowired
     DebourService debourService;
 
+    @Autowired
+    AccountingRecordService accountingRecordService;
+
+    @Autowired
+    PaymentService paymentService;
+
     @Override
     public List<AssoAffaireOrder> getAssoAffaireOrders() {
         return IterableUtils.toList(assoAffaireOrderRepository.findAll());
@@ -119,14 +129,14 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
     @Transactional(rollbackFor = Exception.class)
     public AssoAffaireOrder addOrUpdateAssoAffaireOrderFromUser(
             AssoAffaireOrder assoAffaireOrder)
-            throws OsirisException, OsirisClientMessageException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         return addOrUpdateAssoAffaireOrder(assoAffaireOrder);
     }
 
     @Override
     public AssoAffaireOrder addOrUpdateAssoAffaireOrder(
             AssoAffaireOrder assoAffaireOrder)
-            throws OsirisException, OsirisClientMessageException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         for (Provision provision : assoAffaireOrder.getProvisions()) {
             provision.setAssoAffaireOrder(assoAffaireOrder);
         }
@@ -157,7 +167,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
     @Override
     public AssoAffaireOrder completeAssoAffaireOrder(AssoAffaireOrder assoAffaireOrder, IQuotation customerOrder)
-            throws OsirisException, OsirisClientMessageException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         // Complete domiciliation end date
         int nbrAssignation = 0;
         Employee currentEmployee = null;
@@ -171,16 +181,35 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                     invoiceItemService.addOrUpdateInvoiceItem(invoiceItem);
                 }
 
-            if (provision.getId() != null && provision.getDebours() != null)
+            if (provision.getId() != null && provision.getDebours() != null && customerOrder instanceof CustomerOrder)
                 for (Debour debour : provision.getDebours()) {
                     if (debour.getProvision() == null)
                         debour.setProvision(provision);
 
+                    boolean isNewDebour = debour.getId() == null;
+                    if (isNewDebour)
+                        debourService.addOrUpdateDebour(debour);
+
                     if (debour.getBankTransfert() == null && debour.getPaymentType().getId()
                             .equals(constantService.getPaymentTypeVirement().getId())) {
-                        debour = debourService.addOrUpdateDebour(debour);
+
+                        debourService.addOrUpdateDebour(debour);
                         debour.setBankTransfert(
                                 bankTransfertService.generateBankTransfertForDebour(debour, assoAffaireOrder));
+                        debour = debourService.addOrUpdateDebour(debour);
+                    } else if (isNewDebour && debour.getPaymentType().getId()
+                            .equals(constantService.getPaymentTypeCheques().getId())) {
+                        debourService.addOrUpdateDebour(debour);
+                        accountingRecordService.generateBankAccountingRecordsForOutboundDebourPayment(debour,
+                                (CustomerOrder) customerOrder);
+                    } else if (isNewDebour && debour.getPaymentType().getId()
+                            .equals(constantService.getPaymentTypeEspeces().getId())) {
+                        // Generate dummy payment on cash because it will not be declared on OFX files
+                        debour.setPayment(paymentService.generateNewPaymentFromDebour(debour));
+                        debourService.addOrUpdateDebour(debour);
+                        debourService.setDebourAsAssociated(debour);
+                        accountingRecordService.generateBankAccountingRecordsForOutboundDebourPayment(debour,
+                                (CustomerOrder) customerOrder);
                     }
                 }
 
@@ -190,30 +219,29 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                     domiciliation.setDomiciliationStatus(domiciliationStatusService
                             .getDomiciliationStatusByCode(DomiciliationStatus.DOMICILIATION_NEW));
 
-                if (domiciliation.getEndDate() == null && domiciliation.getStartDate() != null) {
+                if (domiciliation.getEndDate() == null && domiciliation.getStartDate() != null)
                     domiciliation.setEndDate(domiciliation.getStartDate().plusYears(1));
 
-                    // If mails already exists, get their ids
-                    if (domiciliation != null && domiciliation.getMails() != null
-                            && domiciliation.getMails().size() > 0)
-                        mailService.populateMailIds(domiciliation.getMails());
+                // If mails already exists, get their ids
+                if (domiciliation != null && domiciliation.getMails() != null
+                        && domiciliation.getMails().size() > 0)
+                    mailService.populateMailIds(domiciliation.getMails());
 
-                    // If mails already exists, get their ids
-                    if (domiciliation != null && domiciliation.getActivityMails() != null
-                            && domiciliation.getActivityMails().size() > 0)
-                        mailService.populateMailIds(domiciliation.getActivityMails());
+                // If mails already exists, get their ids
+                if (domiciliation != null && domiciliation.getActivityMails() != null
+                        && domiciliation.getActivityMails().size() > 0)
+                    mailService.populateMailIds(domiciliation.getActivityMails());
 
-                    // If mails already exists, get their ids
-                    if (domiciliation != null
-                            && domiciliation.getLegalGardianMails() != null
-                            && domiciliation.getLegalGardianMails().size() > 0)
-                        mailService.populateMailIds(domiciliation.getLegalGardianMails());
+                // If mails already exists, get their ids
+                if (domiciliation != null
+                        && domiciliation.getLegalGardianMails() != null
+                        && domiciliation.getLegalGardianMails().size() > 0)
+                    mailService.populateMailIds(domiciliation.getLegalGardianMails());
 
-                    if (domiciliation != null
-                            && domiciliation.getLegalGardianPhones() != null
-                            && domiciliation.getLegalGardianPhones().size() > 0)
-                        phoneService.populatePhoneIds(domiciliation.getLegalGardianPhones());
-                }
+                if (domiciliation != null
+                        && domiciliation.getLegalGardianPhones() != null
+                        && domiciliation.getLegalGardianPhones().size() > 0)
+                    phoneService.populatePhoneIds(domiciliation.getLegalGardianPhones());
 
             }
 
@@ -397,6 +425,14 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
         if (affaireSearch.getLabel() == null)
             affaireSearch.setLabel("");
 
+        ArrayList<Integer> customerOrderId = new ArrayList<Integer>();
+        if (affaireSearch.getCustomerOrders() != null && affaireSearch.getCustomerOrders().size() > 0) {
+            for (ITiers tiers : affaireSearch.getCustomerOrders())
+                customerOrderId.add(tiers.getId());
+        } else {
+            customerOrderId.add(0);
+        }
+
         ArrayList<String> excludedCustomerOrderStatusCode = new ArrayList<String>();
         excludedCustomerOrderStatusCode.add(CustomerOrderStatus.OPEN);
         excludedCustomerOrderStatusCode.add(CustomerOrderStatus.WAITING_DEPOSIT);
@@ -404,7 +440,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
         return assoAffaireOrderRepository.findAsso(responsibleId,
                 assignedId, affaireSearch.getLabel(),
-                statusId, excludedCustomerOrderStatusCode);
+                statusId, excludedCustomerOrderStatusCode, customerOrderId);
     }
 
 }

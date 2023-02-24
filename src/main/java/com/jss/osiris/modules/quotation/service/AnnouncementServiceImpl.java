@@ -19,6 +19,7 @@ import com.jss.osiris.libs.PictureHelper;
 import com.jss.osiris.libs.WordGenerationHelper;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
@@ -172,7 +173,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
     @Override
     public void generateStoreAndSendPublicationReceipt(CustomerOrder customerOrder, Announcement announcement)
-            throws OsirisException, OsirisClientMessageException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
 
         // Get provision
         Provision currentProvision = null;
@@ -203,7 +204,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
     @Override
     public void generateAndStorePublicationReceipt(Announcement announcement, Provision currentProvision)
-            throws OsirisException, OsirisClientMessageException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
 
         if (announcement.getConfrere() != null
                 && announcement.getConfrere().getId().equals(constantService.getConfrereJssSpel().getId())) {
@@ -228,7 +229,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
     @Override
     public void generateStoreAndSendPublicationFlag(CustomerOrder customerOrder, Announcement announcement)
-            throws OsirisException, OsirisClientMessageException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
 
         // Get provision
         Provision currentProvision = null;
@@ -256,7 +257,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
     @Override
     public void generateAndStorePublicationFlag(Announcement announcement, Provision currentProvision)
-            throws OsirisException, OsirisClientMessageException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         if (announcement.getConfrere() != null
                 && announcement.getConfrere().getId().equals(constantService.getConfrereJssSpel().getId())) {
             File publicationReceiptPdf = mailHelper.generatePublicationFlagPdf(announcement, currentProvision);
@@ -279,7 +280,8 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void sendPublicationFlagNotSent() throws OsirisException, OsirisClientMessageException {
+    public void sendPublicationFlagNotSent()
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         List<Announcement> announcements = announcementRepository.getAnnouncementForPublicationFlagBatch(
                 announcementStatusService.getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_DONE),
                 LocalDate.now());
@@ -298,7 +300,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
     @Override
     public void generateStoreAndSendProofReading(Announcement announcement, CustomerOrder customerOrder)
-            throws OsirisException, OsirisClientMessageException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         // Check if publication receipt already exists
         boolean proofReading = false;
         if (announcement.getAttachments() != null)
@@ -344,7 +346,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     @Override
     public void generateAndStoreAnnouncementWordFile(CustomerOrder customerOrder, AssoAffaireOrder asso,
             Provision provision, Announcement announcement)
-            throws OsirisException, OsirisClientMessageException {
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         if (announcement.getIsAnnouncementAlreadySentToConfrere() == null
                 || !announcement.getIsAnnouncementAlreadySentToConfrere()) {
             if (announcement.getConfrere() != null
@@ -423,20 +425,24 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                                 }
 
                     boolean toSend = false;
-                    if (announcement.getFirstConfrereReminderDateTime() == null
-                            && announcement.getFirstConfrereSentMailDateTime()
-                                    .isBefore(LocalDateTime.now().minusDays(1 * 3))) {
-                        toSend = true;
-                        announcement.setFirstConfrereReminderDateTime(LocalDateTime.now());
-                    } else if (announcement.getSecondConfrereReminderDateTime() == null
-                            && announcement.getFirstConfrereSentMailDateTime()
-                                    .isBefore(LocalDateTime.now().minusDays(1 * 4))) {
-                        toSend = true;
-                        announcement.setSecondConfrereReminderDateTime(LocalDateTime.now());
-                    } else if (announcement.getSecondConfrereReminderDateTime()
-                            .isBefore(LocalDateTime.now().minusDays(1 * 7))) {
-                        toSend = true;
-                        announcement.setThirdConfrereReminderDateTime(LocalDateTime.now());
+                    if (announcement.getFirstConfrereReminderDateTime() == null) {
+                        if (announcement.getFirstConfrereSentMailDateTime()
+                                .isBefore(LocalDateTime.now().minusDays(1 * 3))) {
+                            toSend = true;
+                            announcement.setFirstConfrereReminderDateTime(LocalDateTime.now());
+                        }
+                    } else if (announcement.getSecondConfrereReminderDateTime() == null) {
+                        if (announcement.getFirstConfrereSentMailDateTime()
+                                .isBefore(LocalDateTime.now().minusDays(1 * 4))) {
+                            toSend = true;
+                            announcement.setSecondConfrereReminderDateTime(LocalDateTime.now());
+                        }
+                    } else if (announcement.getThirdConfrereReminderDateTime() == null) {
+                        if (announcement.getFirstConfrereSentMailDateTime()
+                                .isBefore(LocalDateTime.now().minusDays(1 * 7))) {
+                            toSend = true;
+                            announcement.setThirdConfrereReminderDateTime(LocalDateTime.now());
+                        }
                     }
 
                     if (toSend) {

@@ -19,7 +19,6 @@ export interface CompetentAuthority extends IReferential {
   jssAccount: string;
   cities: City[];
   regions: Region[];
-  hasAccount: boolean;
   contact: string;
   mailRecipient: string;
   address: string;
@@ -29,6 +28,7 @@ export interface CompetentAuthority extends IReferential {
   country: Country;
   accountingAccountProvider: AccountingAccount;
   accountingAccountCustomer: AccountingAccount;
+  accountingAccountDepositProvider: AccountingAccount
   reinvoicing: number;
   schedulle: string;
 }

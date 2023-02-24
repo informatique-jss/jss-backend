@@ -15,4 +15,6 @@ public interface AffaireService {
 
     public Affaire getAffaireBySiret(String siret);
 
+    public List<Affaire> getAffairesBySiren(String siren);
+
 }

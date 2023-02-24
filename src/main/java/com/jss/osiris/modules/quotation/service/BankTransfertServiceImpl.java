@@ -47,6 +47,7 @@ import com.jss.osiris.libs.transfer.PmtTpInfBean;
 import com.jss.osiris.libs.transfer.PstlAdrBean;
 import com.jss.osiris.libs.transfer.RmtInfBean;
 import com.jss.osiris.libs.transfer.SvcLvlBean;
+import com.jss.osiris.modules.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.invoicing.model.BankTransfertSearch;
 import com.jss.osiris.modules.invoicing.model.BankTransfertSearchResult;
 import com.jss.osiris.modules.invoicing.model.Invoice;
@@ -54,6 +55,7 @@ import com.jss.osiris.modules.invoicing.service.InvoiceHelper;
 import com.jss.osiris.modules.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.quotation.model.BankTransfert;
 import com.jss.osiris.modules.quotation.model.Debour;
+import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.repository.BankTransfertRepository;
 
 @Service
@@ -73,6 +75,12 @@ public class BankTransfertServiceImpl implements BankTransfertService {
 
     @Autowired
     InvoiceHelper invoiceHelper;
+
+    @Autowired
+    AccountingRecordService accountingRecordService;
+
+    @Autowired
+    ProvisionService provisionService;
 
     @Override
     public List<BankTransfert> getBankTransfers() {
@@ -282,6 +290,15 @@ public class BankTransfertServiceImpl implements BankTransfertService {
 
                 body.getCdtTrfTxInfBeanList().add(virement);
 
+                if (completeTransfert.getIsAlreadyExported() == false && completeTransfert.getDebours() != null
+                        && completeTransfert.getDebours().size() > 0) {
+                    for (Debour debour : completeTransfert.getDebours()) {
+                        Provision provision = provisionService.getProvision(debour.getProvision().getId());
+                        accountingRecordService.generateBankAccountingRecordsForOutboundDebourPayment(debour,
+                                provision.getAssoAffaireOrder().getCustomerOrder());
+                    }
+                }
+
                 completeTransfert.setIsAlreadyExported(true);
                 addOrUpdateBankTransfert(completeTransfert);
             }
@@ -289,6 +306,8 @@ public class BankTransfertServiceImpl implements BankTransfertService {
             xml = xmlMapper.writeValueAsString(document);
 
             xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + xml;
+            // Non supporting characters for bank ...
+            xml = xml.replaceAll("°", " ");
         } catch (JsonProcessingException e2) {
             throw new OsirisException(null, "Impossible to generate XML file for refund export");
         }

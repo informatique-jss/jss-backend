@@ -86,6 +86,8 @@ public class SimpleProvisionStatusServiceImpl implements SimpleProvisionStatusSe
                 SimpleProvisionStatus.SIMPLE_PROVISION_IN_PROGRESS);
         setPredecessor(SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_DOCUMENT,
                 SimpleProvisionStatus.SIMPLE_PROVISION_IN_PROGRESS);
+        setPredecessor(SimpleProvisionStatus.SIMPLE_PROVISION_DONE,
+                SimpleProvisionStatus.SIMPLE_PROVISION_IN_PROGRESS);
 
     }
 

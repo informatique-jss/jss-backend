@@ -14,4 +14,5 @@ export interface Payment {
   accountingRecords: AccountingRecord[];
   customerOrder: CustomerOrder;
   isExternallyAssociated: boolean;
+  isCancelled: boolean;
 }
