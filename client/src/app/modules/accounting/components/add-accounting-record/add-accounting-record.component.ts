@@ -110,8 +110,7 @@ export class AddAccountingRecordComponent implements OnInit {
       for (let accountingRecord of this.accountingRecords) {
         if (accountingRecord.creditAmount) {
           balance += parseFloat(accountingRecord.creditAmount + "");
-        }
-        if (accountingRecord.debitAmount) {
+        } else if (accountingRecord.debitAmount) {
           balance -= parseFloat(accountingRecord.debitAmount + '');
         }
       }
