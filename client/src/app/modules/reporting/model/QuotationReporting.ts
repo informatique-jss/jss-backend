@@ -9,4 +9,10 @@ export interface QuotationReporting {
   tiersLabel: string;
   preTaxPrice: number;
   taxedPrice: number;
+  provisionStatus: string;
+  provisionAssignedToLabel: string;
+  publicationDateMonth: string;
+  salesEmployeeLabel: string;
+  customerOrderStatusLabel: string;
+  customerOrderCreatedDateMonth: string;
 }

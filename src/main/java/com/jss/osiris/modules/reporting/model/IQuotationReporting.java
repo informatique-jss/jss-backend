@@ -20,4 +20,16 @@ public interface IQuotationReporting {
     public Float getPreTaxPrice();
 
     public Float getTaxedPrice();
+
+    public String getProvisionStatus();
+
+    public String getProvisionAssignedToLabel();
+
+    public String getPublicationDateMonth();
+
+    public String getSalesEmployeeLabel();
+
+    public String getCustomerOrderStatusLabel();
+
+    public String getCustomerOrderCreatedDateMonth();
 }

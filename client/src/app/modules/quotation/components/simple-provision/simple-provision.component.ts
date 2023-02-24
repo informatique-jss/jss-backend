@@ -40,7 +40,6 @@ export class SimpleProvisionComponent implements OnInit {
   }
 
   getFormStatus() {
-    console.log(this.simpleProvisionForm);
     this.simpleProvisionForm.markAllAsTouched();
     let status = this.simpleProvisionForm.valid;
 

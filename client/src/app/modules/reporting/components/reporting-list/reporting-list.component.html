@@ -1,0 +1,32 @@
+<div class="mat-elevation-z2 form-div">
+  <div>
+    <generic-input [(model)]="searchText" label="Rechercher" (onFormChange)="applyFilter()" [form]="reportingListForm"
+      propertyName="searchText" [isMandatory]="false" [isDisabled]="false"></generic-input>
+  </div>
+  <div class="table-container-scroll"><sort-table *ngIf="userReportings" [actions]="tableAction"
+      [refreshTable]="refreshTable.asObservable()" [columns]="displayedColumns" [values]="filteredUserReportings"
+      (onRowClick)="selectReporting($event)" tableName="Reporting">
+    </sort-table></div>
+</div>
+<reporting [hidden]="!dataToDisplay && !currentUserReporting" [dataToDisplay]="dataToDisplay"
+  [reportName]="currentUserReporting && currentUserReporting.name?currentUserReporting.name:''"
+  [settings]="currentUserReporting?currentUserReporting.settings:''"></reporting>
+<button matTooltip="Ajouter un rapport" mat-fab color="accent" class="fab-button" (click)="addReporting()">
+  <mat-icon>add</mat-icon>
+</button>
+<button matTooltip="Sauvegarder la nouvelle disposition" mat-fab color="warn" class="second-fab-button"
+  (click)="saveReportingLayout()" *ngIf="currentUserReporting">
+  <mat-icon>pivot_table_chart</mat-icon>
+</button>
+<button matTooltip="Modifier le rapport" mat-fab color="accent" class="third-fab-button" (click)="editReport()"
+  *ngIf="currentUserReporting">
+  <mat-icon>edit</mat-icon>
+</button>
+<button matTooltip="Copier pour un autre utilisateur" mat-fab color="accent" class="fourth-fab-button"
+  (click)="copyToUserReport()" *ngIf="currentUserReporting">
+  <mat-icon>share</mat-icon>
+</button>
+<button matTooltip="Cloner le rapport" mat-fab color="accent" class="fifth-fab-button" (click)="cloneReport()"
+  *ngIf="currentUserReporting">
+  <mat-icon>content_copy</mat-icon>
+</button>
