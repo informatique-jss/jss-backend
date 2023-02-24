@@ -347,12 +347,16 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         // Target : BEING PROCESSED => notify customer
         if (targetStatusCode.equals(CustomerOrderStatus.BEING_PROCESSED)) {
             resetDeboursManuelAmount(customerOrder);
-            // Confirm deposit taken into account or customer order starting
-            if (!isFromUser
-                    && customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.WAITING_DEPOSIT)) {
-                mailHelper.sendCustomerOrderDepositConfirmationToCustomer(customerOrder, false);
-            } else
-                notificationService.notifyCustomerOrderToBeingProcessed(customerOrder, true);
+            // Confirm deposit taken into account or customer order starting and only if not
+            // from to billed
+            if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.TO_BILLED)) {
+                if (!isFromUser
+                        && customerOrder.getCustomerOrderStatus().getCode()
+                                .equals(CustomerOrderStatus.WAITING_DEPOSIT)) {
+                    mailHelper.sendCustomerOrderDepositConfirmationToCustomer(customerOrder, false);
+                } else
+                    notificationService.notifyCustomerOrderToBeingProcessed(customerOrder, true);
+            }
         }
 
         // Handle automatic workflow for Announcement created from website
