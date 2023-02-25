@@ -43,6 +43,8 @@
           [quotationSearch]="quotationSearchToVerify" [isForDashboard]="true"></quotation-list>
         <quotation-list class="dashboard-box-component" *ngIf="item==QUOTATION_REFUSED"
           [quotationSearch]="quotationSearchRefused" [isForDashboard]="true"></quotation-list>
+        <quotation-list class="dashboard-box-component" *ngIf="item==QUOTATION_SENT"
+          [quotationSearch]="quotationSearchSent" [isForDashboard]="true"></quotation-list>
         <invoice-list class="dashboard-box-component" *ngIf="item==INVOICE_TO_ASSOCIATE"
           [invoiceSearch]="invoiceSearchToAssociate" [isForDashboard]="true"></invoice-list>
         <payment-list class="dashboard-box-component" *ngIf="item==PAYMENT_TO_ASSOCIATE"
