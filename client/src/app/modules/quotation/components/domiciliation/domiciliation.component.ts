@@ -114,6 +114,8 @@ export class DomiciliationComponent implements OnInit {
 
   getFormStatus(): boolean {
     this.domiciliationForm.markAllAsTouched();
+    if (this.domiciliation.legalGardianBirthdate)
+      this.domiciliation.legalGardianBirthdate = new Date(this.domiciliation.legalGardianBirthdate.setHours(12));
     return this.domiciliationForm.valid;
   }
 
