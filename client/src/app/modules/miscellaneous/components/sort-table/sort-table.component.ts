@@ -119,7 +119,7 @@ export class SortTableComponent implements OnInit {
                   // Date
                   let dateSplit = dateTimeSplit[0].split("/");
                   if (dateSplit.length == 3) {
-                    let dateTest = new Date(dateSplit[0], dateSplit[1], dateSplit[2]) as any;
+                    let dateTest = new Date(dateSplit[2], dateSplit[1] - 1, dateSplit[0]) as any;
                     if (dateTest != "Invalid Date") {
                       return dateTest.getTime();
                     }
@@ -128,16 +128,16 @@ export class SortTableComponent implements OnInit {
                   // Date time
                   let dateSplit = dateTimeSplit[0].split("/");
                   if (dateSplit.length == 3) {
-                    let dateTest = new Date(dateSplit[0], dateSplit[1], dateSplit[2]) as any;
+                    let dateTest = new Date(dateSplit[2], dateSplit[1] - 1, dateSplit[0]) as any;
                     if (dateTest != "Invalid Date") {
                       let timeSplit = dateTimeSplit[1].split(":");
                       if (dateSplit.length == 3) {
-                        dateTest = new Date(dateSplit[0], dateSplit[1], dateSplit[2], timeSplit[0], timeSplit[1], timeSplit[2]) as any;
+                        dateTest = new Date(dateSplit[2], dateSplit[1] - 1, dateSplit[0], timeSplit[0], timeSplit[1], timeSplit[2]) as any;
                         if (dateTest != "Invalid Date") {
                           return dateTest.getTime();
                         }
                       } else if (dateSplit.length == 2) {
-                        dateTest = new Date(dateSplit[0], dateSplit[1], dateSplit[2], timeSplit[0], timeSplit[1]) as any;
+                        dateTest = new Date(dateSplit[2], dateSplit[1] - 1, dateSplit[0], timeSplit[0], timeSplit[1]) as any;
                         if (dateTest != "Invalid Date") {
                           return dateTest.getTime();
                         }
