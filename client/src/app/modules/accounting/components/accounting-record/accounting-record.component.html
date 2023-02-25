@@ -1,26 +1,26 @@
 <div class="mat-elevation-z2 form-div">
   <div class=" full-width">
-    <table class="full-width table-fixed-layout" *ngIf="tiersToDisplay==undefined">
+    <table class="full-width table-fixed-layout">
       <tr>
         <td>
           <autocomplete-accounting-account [(model)]="accountingRecordSearch.accountingAccount"
             [form]="accountingRecordForm" propertyName="accountingAccounts" label="Compte comptable">
           </autocomplete-accounting-account>
         </td>
-        <td>
+        <td *ngIf="tiersToDisplay==undefined">
           <select-accounting-account-class [(model)]="accountingRecordSearch.accountingClass" label="Classe comptable"
             [form]="accountingRecordForm" propertyName="accountingClass"></select-accounting-account-class>
         </td>
-        <td>
+        <td *ngIf="tiersToDisplay==undefined">
           <select-accounting-journal [(model)]="accountingRecordSearch.accountingJournal" label="Journal"
             [form]="accountingRecordForm" propertyName="accountingJournal">
           </select-accounting-journal>
         </td>
-        <td>
+        <td class="toggle-td">
           <generic-toggle [(model)]="accountingRecordSearch.hideLettered" label="Cacher lettrées ?"
             [form]="accountingRecordForm" propertyName="hideLettered"></generic-toggle>
         </td>
-        <td>
+        <td *ngIf="tiersToDisplay==undefined">
           <generic-date-range-picker [(modelStart)]="accountingRecordSearch.startDate"
             [(modelEnd)]="accountingRecordSearch.endDate" label="Plage de recherche" [form]="accountingRecordForm"
             propertyNameStart="startDate" propertyNameEnd="endDate" (onDateChange)="putEndDateSameYear()">
