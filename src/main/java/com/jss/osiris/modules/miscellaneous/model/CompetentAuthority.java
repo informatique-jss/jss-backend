@@ -109,6 +109,9 @@ public class CompetentAuthority implements Serializable, IId {
 	@Column(length = 2000)
 	private String schedulle;
 
+	@Column(columnDefinition = "TEXT")
+	private String observations;
+
 	public Integer getId() {
 		return id;
 	}
@@ -315,6 +318,14 @@ public class CompetentAuthority implements Serializable, IId {
 
 	public void setAccountingAccountDepositProvider(AccountingAccount accountingAccountDepositProvider) {
 		this.accountingAccountDepositProvider = accountingAccountDepositProvider;
+	}
+
+	public String getObservations() {
+		return observations;
+	}
+
+	public void setObservations(String observations) {
+		this.observations = observations;
 	}
 
 }
