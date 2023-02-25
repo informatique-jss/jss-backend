@@ -32,4 +32,6 @@ public interface IQuotationReporting {
     public String getCustomerOrderStatusLabel();
 
     public String getCustomerOrderCreatedDateMonth();
+
+    public Integer getCharacterNumber();
 }

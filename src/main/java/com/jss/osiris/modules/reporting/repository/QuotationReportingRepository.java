@@ -28,6 +28,7 @@ public interface QuotationReportingRepository extends CrudRepository<Quotation, 
             " coalesce(ast.label, sps.label, ds.label, bs.label, fs.label) as provisionStatus, " +
             " e1.firstname || ' ' || e1.lastname as provisionAssignedToLabel, " +
             " e2.firstname || ' ' || e2.lastname as salesEmployeeLabel, " +
+            " max((substring(invoice_item.label,'(\\d+)(?=\\s*caract)'))) as characterNumber, " +
             " sum(coalesce(invoice_item.pre_tax_price,0)) as preTaxPrice, " +
             " sum(coalesce(invoice_item.pre_tax_price,0)+coalesce(invoice_item.vat_price,0)-coalesce(invoice_item.discount_amount,0)) as taxedPrice "
             +

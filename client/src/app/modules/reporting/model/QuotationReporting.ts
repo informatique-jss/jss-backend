@@ -15,4 +15,5 @@ export interface QuotationReporting {
   salesEmployeeLabel: string;
   customerOrderStatusLabel: string;
   customerOrderCreatedDateMonth: string;
+  characterNumber: number;
 }
