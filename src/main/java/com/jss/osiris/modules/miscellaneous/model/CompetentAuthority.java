@@ -14,6 +14,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 
+import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.accounting.model.AccountingAccount;
 
 @Entity
@@ -27,6 +28,7 @@ public class CompetentAuthority implements Serializable, IId {
 	private String apiId;
 
 	@Column(nullable = false, length = 200)
+	@IndexedField
 	private String label;
 
 	@Column(nullable = false, length = 20)

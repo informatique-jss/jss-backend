@@ -166,4 +166,18 @@ export class SearchComponent implements OnInit {
         out.push(provision.provisionFamilyType ? provision.provisionFamilyType.label : "") + " - " + (provision.provisionType ? provision.provisionType.label : "");
     return out.join(" / ");
   }
+
+  getOrderingCustomerForInvoice(entity: any) {
+    if (entity.text.tiers)
+      return entity.text.tiers.denomination ? entity.text.tiers.denomination : (entity.text.tiers.firstname + ' ' + entity.text.tiers.lastname);
+    if (entity.text.responsable)
+      return entity.text.responsable.firstname + ' ' + entity.text.responsable.lastname;
+    if (entity.text.confrere)
+      return entity.text.confrere.label;
+    if (entity.text.competentAuthority)
+      return entity.text.competentAuthority.label;
+    if (entity.text.provider)
+      return entity.text.provider.label;
+    return "";
+  }
 }
