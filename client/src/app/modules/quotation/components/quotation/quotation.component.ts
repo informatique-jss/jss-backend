@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
 import { ActivatedRoute, UrlSegment } from '@angular/router';
 import { Subject, Subscription } from 'rxjs';
-import { CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_TO_BILLED, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN, VALIDATED_BY_CUSTOMER } from 'src/app/libs/Constants';
+import { CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN, VALIDATED_BY_CUSTOMER } from 'src/app/libs/Constants';
 import { getDocument } from 'src/app/libs/DocumentHelper';
 import { instanceOfCustomerOrder } from 'src/app/libs/TypeHelper';
 import { getRemainingToPay } from 'src/app/modules/invoicing/components/invoice-tools';
@@ -26,17 +26,20 @@ import { Affaire } from '../../model/Affaire';
 import { AssoAffaireOrder } from '../../model/AssoAffaireOrder';
 import { CustomerOrder } from '../../model/CustomerOrder';
 import { CustomerOrderStatus } from '../../model/CustomerOrderStatus';
+import { OrderingSearch } from '../../model/OrderingSearch';
 import { Provision } from '../../model/Provision';
 import { QuotationStatus } from '../../model/QuotationStatus';
 import { VatBase } from '../../model/VatBase';
 import { AssoAffaireOrderService } from '../../services/asso.affaire.order.service';
 import { CustomerOrderService } from '../../services/customer.order.service';
 import { CustomerOrderStatusService } from '../../services/customer.order.status.service';
+import { OrderingSearchResultService } from '../../services/ordering.search.result.service';
 import { ProvisionService } from '../../services/provision.service';
 import { QuotationStatusService } from '../../services/quotation-status.service';
 import { QuotationService } from '../../services/quotation.service';
 import { AddAffaireDialogComponent } from '../add-affaire-dialog/add-affaire-dialog.component';
 import { ChooseAssignedUserDialogComponent } from '../choose-assigned-user-dialog/choose-assigned-user-dialog.component';
+import { OrderSimilaritiesDialogComponent } from '../order-similarities-dialog/order-similarities-dialog.component';
 import { OrderingCustomerComponent } from '../ordering-customer/ordering-customer.component';
 import { PrintLabelDialogComponent } from '../print-label-dialog/print-label-dialog.component';
 import { ProvisionItemComponent } from '../provision-item/provision-item.component';
@@ -94,6 +97,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     public mailLabelDialog: MatDialog,
     public addAffaireDialog: MatDialog,
     public quotationWorkflowDialog: MatDialog,
+    public orderSimilaritiesDialog: MatDialog,
     public customerOrderWorkflowDialog: MatDialog,
     private formBuilder: FormBuilder,
     private constantService: ConstantService,
@@ -101,6 +105,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     protected searchService: SearchService,
     public associateDepositDialog: MatDialog,
     private provisionService: ProvisionService,
+    private orderingSearchResultService: OrderingSearchResultService,
     private changeDetectorRef: ChangeDetectorRef) { }
 
   quotationForm = this.formBuilder.group({});
@@ -366,11 +371,36 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
         asso.provisions.push({} as Provision);
         if (!this.quotation.assoAffaireOrders)
           this.quotation.assoAffaireOrders = [] as Array<AssoAffaireOrder>;
-        this.quotation.assoAffaireOrders.push(asso);
-        this.selectedTabIndex = 1;
+
+        // Check if another quotation / affaire already exists
+        let orderingSearch = {} as OrderingSearch;
+        orderingSearch.affaires = [asso.affaire];
+        orderingSearch.customerOrderStatus = [];
+        if (this.customerOrderStatusList)
+          for (let status of this.customerOrderStatusList)
+            if ([CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_BEING_PROCESSED].indexOf(status.code) >= 0)
+              orderingSearch.customerOrderStatus.push(status);
+
+        this.orderingSearchResultService.getOrders(orderingSearch).subscribe(orders => {
+          if (orders && orders.length > 0) {
+            let dialogRef = this.orderSimilaritiesDialog.open(OrderSimilaritiesDialogComponent);
+            dialogRef.componentInstance.affaire = response;
+            dialogRef.afterClosed().subscribe(accept => {
+              if (accept) {
+                this.quotation.assoAffaireOrders.push(asso);
+                this.selectedTabIndex = 1;
+              }
+            });
+          } else {
+            this.quotation.assoAffaireOrders.push(asso);
+            this.selectedTabIndex = 1;
+          }
+        });
       }
     })
   }
+
+
 
   displayQuotationWorkflowDialog() {
     let dialogRef = this.quotationWorkflowDialog.open(WorkflowDialogComponent, {
