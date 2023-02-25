@@ -141,7 +141,7 @@ public class InvoiceServiceImpl implements InvoiceService {
             for (AccountingRecord accountingRecord : invoice.getAccountingRecords()) {
                 accountingRecordService.unassociateCustomerOrderPayementAndDeposit(accountingRecord);
                 if (accountingRecord.getIsCounterPart() == null || !accountingRecord.getIsCounterPart())
-                    accountingRecordService.generateCounterPart(accountingRecord, null, operationIdCounterPart);
+                    accountingRecordService.generateCounterPart(accountingRecord, operationIdCounterPart);
             }
 
         // Unlink invoice item from customer order

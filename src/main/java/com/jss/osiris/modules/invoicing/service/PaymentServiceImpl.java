@@ -514,8 +514,7 @@ public class PaymentServiceImpl implements PaymentService {
                                     && record.getAccountingAccount().getPrincipalAccountingAccount().getId()
                                             .equals(constantService.getPrincipalAccountingAccountWaiting().getId())) {
                                 accountingRecordService.letterWaitingRecords(record,
-                                        accountingRecordService.generateCounterPart(record,
-                                                constantService.getAccountingJournalSales(), payment.getId()));
+                                        accountingRecordService.generateCounterPart(record, payment.getId()));
                             }
                 }
                 newPayment.setInvoice(correspondingInvoices.get(i));
@@ -698,8 +697,7 @@ public class PaymentServiceImpl implements PaymentService {
                             if (record.getAccountingAccount().getPrincipalAccountingAccount().getId()
                                     .equals(constantService.getPrincipalAccountingAccountWaiting().getId())) {
                                 accountingRecordService.letterWaitingRecords(record,
-                                        accountingRecordService.generateCounterPart(record,
-                                                constantService.getAccountingJournalSales(), payment.getId()));
+                                        accountingRecordService.generateCounterPart(record, payment.getId()));
                             }
                         }
 
@@ -942,7 +940,7 @@ public class PaymentServiceImpl implements PaymentService {
                             accountingRecordService.deleteAccountingRecord(accountingRecord);
                         } else {
                             accountingRecordService.letterWaitingRecords(accountingRecord,
-                                    accountingRecordService.generateCounterPart(accountingRecord, null,
+                                    accountingRecordService.generateCounterPart(accountingRecord,
                                             operationIdCounterPart));
                         }
             }
