@@ -94,9 +94,9 @@ public class PrintDelegate {
                             ? StringUtils.stripAccents(label.getCedexComplement()).toUpperCase()
                             : "")
                     + " "
-                    + (label.getBillingLabelCountry() != null && label
+                    + ((label.getBillingLabelCountry() != null && label
                             .getBillingLabelCountry().getId()
-                            .equals(constantService.getCountryFrance().getId()) ? ""
+                            .equals(constantService.getCountryFrance().getId())) ? ""
                                     : label.getBillingLabelCountry().getLabel()));
             dOut.writeUTF("\r\n");
             dOut.flush();

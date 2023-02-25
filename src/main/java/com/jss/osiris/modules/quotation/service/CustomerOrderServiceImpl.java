@@ -973,6 +973,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void printMailingLabel(List<String> customerOrders)
             throws OsirisException, OsirisClientMessageException {
         if (customerOrders != null && customerOrders.size() > 0)
