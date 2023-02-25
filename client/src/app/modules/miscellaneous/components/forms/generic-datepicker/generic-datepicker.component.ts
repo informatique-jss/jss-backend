@@ -29,30 +29,31 @@ export class GenericDatepickerComponent extends GenericFormComponent implements 
     super(formBuilder3, userNoteService3);
   }
 
-  callOnNgInit(): void {
+  ngOnInit() {
+    if (this.form != undefined) {
+      this.form.addControl(this.propertyName, this.formBuilder3.control({ value: '', disabled: this.isDisabled, validators: this.customValidators }, { updateOn: 'blur' }));
+      this.form.addValidators(this.checkField());
+      if (this.isDisabled) {
+        this.form?.get(this.propertyName)?.disable();
+      } else {
+        this.form?.get(this.propertyName)?.enable();
+      }
+      this.form.get(this.propertyName)!.valueChanges.subscribe(
+        (newValue) => {
+          this.model = newValue;
+          this.modelChange.emit(this.model);
+          this.onFormChange.emit(this.model);
+        }
+      )
+      this.callOnNgInit();
+      this.form.get(this.propertyName)?.setValue(this.model);
+    }
   }
 
-  clearField(): void {
-    this.model = undefined;
-    this.modelChange.emit(this.model);
-    if (this.form)
-      this.form.get(this.propertyName)?.setValue(null);
+  callOnNgInit(): void {
   }
 
   dateChange(value: Date) {
     this.onDateChange.emit(value);
   }
-
-  setToday() {
-    this.model = new Date();
-    if (this.form) {
-      this.form.get(this.propertyName)?.setValue(this.model);
-    }
-    this.modelChange.emit(this.model);
-  }
-
-  getCurrentDate() {
-    return new Date();
-  }
-
 }
