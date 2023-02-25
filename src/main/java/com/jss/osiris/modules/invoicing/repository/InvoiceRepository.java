@@ -36,7 +36,8 @@ public interface InvoiceRepository extends CrudRepository<Invoice, Integer> {
                         + " co.id as confrereId, "
                         + " r1.id as responsableId, "
                         + " t.id as tiersId, "
-                        + " r1.firstname || ' '||r1.lastname  as responsableLable,"
+                        + " r1.firstname || ' '||r1.lastname  as responsableLabel,"
+                        + " coalesce( t.denomination,t.firstname || ' '||t.lastname )  as tiersLabel,"
                         + " STRING_AGG( case when af.denomination is not null and af.denomination!='' then af.denomination else af.firstname || ' '||af.lastname end || ' ('||city.label ||')',', ' order by 1) as affaireLabel,"
                         + "  i.billing_label as billingLabel,"
                         + "  i.created_date as createdDate,"
@@ -54,15 +55,17 @@ public interface InvoiceRepository extends CrudRepository<Invoice, Integer> {
                         + " left join asso_affaire_order asso on asso.id_customer_order = c.id"
                         + " left join affaire af on af.id = asso.id_affaire"
                         + " left join city on af.id_city = city.id"
-                        + " left join tiers t on t.id = c.id_tiers"
                         + " left join responsable r1 on r1.id = c.id_responsable"
+                        + " left join tiers t on t.id = c.id_tiers or r1.id_tiers =t.id "
                         + " left join confrere co on co.id = c.id_confrere"
                         + " left join provider pro on pro.id = i.id_provider"
                         + " left join payment p on p.id_invoice = i.id"
                         + " left join tiers_followup follow on follow.id_invoice = i.id"
                         + " where i.created_date>=:startDate and i.created_date<=:endDate "
                         + " and  ( COALESCE(:invoiceStatus)=0 or ist.id in (:invoiceStatus)) "
-                        + " and  ( COALESCE(:customerOrderId) =0 or t.id in (:customerOrderId) or r1.id in (:customerOrderId) or co.id in (:customerOrderId) ) "
+                        + " and  ( COALESCE(:customerOrderId)=0 or c.id in (:customerOrderId)) "
+                        + " and  ( COALESCE(:invoiceId)=0 or i.id in (:invoiceId)) "
+                        + " and  ( COALESCE(:customerOrderIds) =0 or t.id in (:customerOrderIds) or r1.id in (:customerOrderIds) or co.id in (:customerOrderIds) ) "
                         + " and (:minAmount is null or total_price>=CAST(CAST(:minAmount as text) as real) ) "
                         + " and (:maxAmount is null or total_price<=CAST(CAST(:maxAmount as text) as real) )"
                         + " and (:showToRecover is false or (  i.first_reminder_date_time is not null and  i.second_reminder_date_time  is not null and  i.third_reminder_date_time  is not null and i.id_invoice_status<>:invoicePayedStatusId ) )"
@@ -74,7 +77,9 @@ public interface InvoiceRepository extends CrudRepository<Invoice, Integer> {
                         @Param("minAmount") Float minAmount, @Param("maxAmount") Float maxAmount,
                         @Param("showToRecover") Boolean showToRecover,
                         @Param("invoicePayedStatusId") Integer invoicePayedStatusId,
-                        @Param("customerOrderId") List<Integer> customerOrderId);
+                        @Param("invoiceId") Integer invoiceId,
+                        @Param("customerOrderId") Integer customerOrderId,
+                        @Param("customerOrderIds") List<Integer> customerOrderIds);
 
         @Query(value = "select n from Invoice n where invoiceStatus=:invoiceStatus and thirdReminderDateTime is null ")
         List<Invoice> findInvoiceForReminder(@Param("invoiceStatus") InvoiceStatus invoiceStatus);

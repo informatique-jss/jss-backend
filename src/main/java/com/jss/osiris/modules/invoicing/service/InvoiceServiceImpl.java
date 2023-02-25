@@ -277,11 +277,18 @@ public class InvoiceServiceImpl implements InvoiceService {
             customerOrderId.add(0);
         }
 
+        if (invoiceSearch.getCustomerOrderId() == null)
+            invoiceSearch.setCustomerOrderId(0);
+
+        if (invoiceSearch.getInvoiceId() == null)
+            invoiceSearch.setInvoiceId(0);
+
         return invoiceRepository.findInvoice(statusId,
                 invoiceSearch.getStartDate().withHour(0).withMinute(0),
                 invoiceSearch.getEndDate().withHour(23).withMinute(59), invoiceSearch.getMinAmount(),
                 invoiceSearch.getMaxAmount(), invoiceSearch.getShowToRecover(),
-                constantService.getInvoiceStatusPayed().getId(), customerOrderId);
+                constantService.getInvoiceStatusPayed().getId(), invoiceSearch.getInvoiceId(),
+                invoiceSearch.getCustomerOrderId(), customerOrderId);
     }
 
     @Override

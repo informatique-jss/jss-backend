@@ -13,6 +13,8 @@ public class InvoiceSearch {
     private List<InvoiceStatus> invoiceStatus;
     private Boolean showToRecover;
     private List<Tiers> customerOrders;
+    private Integer invoiceId;
+    private Integer customerOrderId;
 
     public LocalDateTime getStartDate() {
         return startDate;
@@ -68,6 +70,22 @@ public class InvoiceSearch {
 
     public void setCustomerOrders(List<Tiers> customerOrders) {
         this.customerOrders = customerOrders;
+    }
+
+    public Integer getInvoiceId() {
+        return invoiceId;
+    }
+
+    public void setInvoiceId(Integer invoiceId) {
+        this.invoiceId = invoiceId;
+    }
+
+    public Integer getCustomerOrderId() {
+        return customerOrderId;
+    }
+
+    public void setCustomerOrderId(Integer customerOrderId) {
+        this.customerOrderId = customerOrderId;
     }
 
 }
