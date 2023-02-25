@@ -123,6 +123,10 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
 
   public AccountingRecord addOrUpdateAccountingRecord(
       AccountingRecord accountingRecord) {
+    if (accountingRecord.getId() == null
+        && (accountingRecord.getCreditAmount() == null || accountingRecord.getCreditAmount() == 0f)
+        && (accountingRecord.getDebitAmount() == null || accountingRecord.getDebitAmount() == 0f))
+      return null;
     return accountingRecordRepository.save(accountingRecord);
   }
 
