@@ -935,7 +935,8 @@ public class MailHelper {
 
         mail.setExplainationElements(String.join("forgetThis", details));
 
-        mail.setExplaination2(query.getComment());
+        if (query.getComment() != null)
+            mail.setExplaination2(query.getComment().replaceAll("\r?\n", "<br/>"));
 
         mail.setGreetings("Bonne journée !");
 
