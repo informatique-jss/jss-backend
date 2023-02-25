@@ -29,6 +29,7 @@ public interface AssoAffaireOrderRepository extends CrudRepository<AssoAffaireOr
                         " p.is_emergency as isEmergency," +
                         " p.id as provisionId, " +
                         " max(audit.datetime) as provisionStatusDatetime, " +
+                        " coalesce(min(audit2.datetime),c.created_date) as provisionCreatedDatetime, " +
                         " sp_ca.label as waitedCompetentAuthorityLabel " +
                         " from asso_affaire_order asso " +
                         " join affaire a on a.id = asso.id_affaire" +
@@ -66,6 +67,9 @@ public interface AssoAffaireOrderRepository extends CrudRepository<AssoAffaireOr
                         +
                         "  or audit.entity_id=bo.id and audit.entity = 'Bodacc' and audit.field_name = 'bodaccStatus' "
                         +
+                        " left join audit audit2 on " +
+                        "  audit2.entity_id=an.id and audit2.entity in ('Announcement','Formalite','Domiciliation','SimpleProvision','Bodacc') and audit2.field_name = 'id' "
+                        +
                         " where cs.code not in (:excludedCustomerOrderStatusCode) and (COALESCE(:responsible)=0 or asso.id_employee in (:responsible))"
                         + " and ( COALESCE(:customerOrder)=0 or cf.id in (:customerOrder) or r.id in (:customerOrder) or t.id in (:customerOrder))"
                         +
@@ -77,7 +81,7 @@ public interface AssoAffaireOrderRepository extends CrudRepository<AssoAffaireOr
                         "  t.denomination, t.firstname , t.lastname,  " +
                         "  t2.denomination, t2.firstname , t2.lastname,  " +
                         "  r.firstname , r.lastname, asso.id, " +
-                        "  a.address ,a.postal_Code ,ci.label ,  " +
+                        "  a.address ,a.postal_Code ,ci.label ,c.created_date,  " +
                         "  cf.label,e1.id,e2.id , pf.label ,pt.label,ans.label,fs.label,doms.label, bos.label,sps.label, "
                         +
                         " asso.id_customer_order,p.is_emergency,p.id  ,sp_ca.label " +

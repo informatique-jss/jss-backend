@@ -33,4 +33,6 @@ public interface AssoAffaireOrderSearchResult {
 	public String getWaitedCompetentAuthorityLabel();
 
 	public LocalDateTime getProvisionStatusDatetime();
+
+	public LocalDateTime getProvisionCreatedDatetime();
 }

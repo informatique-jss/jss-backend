@@ -15,4 +15,5 @@ export interface AssoAffaireOrderSearchResult {
   isEmergency: boolean;
   waitedCompetentAuthorityLabel: string;
   provisionStatusDatetime: Date;
+  provisionCreatedDatetime: Date;
 }
