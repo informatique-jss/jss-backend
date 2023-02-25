@@ -10,6 +10,7 @@ public class AttachmentTypeMailQuery {
     private List<TypeDocument> typeDocument;
     private String comment;
     private Boolean sendToMe;
+    private Boolean copyToMe;
 
     public List<AttachmentType> getAttachmentTypes() {
         return attachmentTypes;
@@ -41,6 +42,14 @@ public class AttachmentTypeMailQuery {
 
     public void setTypeDocument(List<TypeDocument> typeDocument) {
         this.typeDocument = typeDocument;
+    }
+
+    public Boolean getCopyToMe() {
+        return copyToMe;
+    }
+
+    public void setCopyToMe(Boolean copyToMe) {
+        this.copyToMe = copyToMe;
     }
 
 }

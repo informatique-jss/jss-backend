@@ -5,4 +5,5 @@ export interface AttachmentTypeMailQuery {
   typeDocument: TypeDocument[];
   comment: string;
   sendToMe: boolean;
+  copyToMe: boolean;
 }

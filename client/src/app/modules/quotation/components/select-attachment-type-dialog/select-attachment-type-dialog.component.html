@@ -8,8 +8,10 @@
     [isDisabled]="false"></chips-type-document>
   <generic-textarea [(model)]="query.comment" label="Commentaire additionnel (facultatif)" [form]="attachmentTypeForm"
     propertyName="comment" [isMandatory]="false" [isDisabled]="false"></generic-textarea>
-  <generic-toggle [(model)]="query.sendToMe" label="Me l'envoyer" [form]="attachmentTypeForm"
+  <generic-toggle [(model)]="query.sendToMe" label="Me l'envoyer ?" [form]="attachmentTypeForm"
     propertyName="sendToMe"></generic-toggle>
+  <generic-toggle [(model)]="query.copyToMe" label="Être en copie ?" [form]="attachmentTypeForm"
+    propertyName="copyToMe"></generic-toggle>
 </div>
 <div mat-dialog-actions align="end">
   <button mat-raised-button color="accent" (click)="closeDialog()">Annuler</button>

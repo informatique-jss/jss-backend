@@ -234,6 +234,10 @@ public class MailHelper {
 
             if (mail.getSendToMe() != null && mail.getSendToMe())
                 message.addTo(mail.getSendToMeEmployee().getMail());
+
+            if (mail.getCopyToMe() != null && mail.getCopyToMe())
+                message.addCc(mail.getSendToMeEmployee().getMail());
+
             else {
                 if (mail.getMailComputeResult().getRecipientsMailTo() == null
                         || mail.getMailComputeResult().getRecipientsMailTo().size() == 0)
@@ -938,6 +942,10 @@ public class MailHelper {
         mail.setReplyTo(provision.getAssignedTo());
         mail.setSendToMe(query.getSendToMe());
         mail.setMailComputeResult(mailComputeHelper.computeMailForGenericDigitalDocument(customerOrder));
+
+        if (query.getCopyToMe()) {
+            mail.setCopyToMe(true);
+        }
 
         mail.setSubject("Demande de pièces supplémentaires - commande n°" + customerOrder.getId());
 
