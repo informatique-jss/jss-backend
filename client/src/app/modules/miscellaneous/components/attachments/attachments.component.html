@@ -4,7 +4,11 @@
       <mat-form-field class="full-width">
         <input matInput (keyup)="applyFilter($event.target)" placeholder="Rechercher">
       </mat-form-field>
-      <button (click)="uploadFile()" mat-mini-fab color="warn" class="mini-fab-add">
+      <button (click)="downloadAllFiles()" mat-mini-fab color="accent" class="mini-fab-add"
+        matTooltip="Télécharger toutes les fichiers">
+        <mat-icon>download</mat-icon>
+      </button>
+      <button (click)="uploadFile()" mat-mini-fab color="warn" class="mini-fab-add" matTooltip="Uploader le fichier">
         <mat-icon>add</mat-icon>
       </button>
     </div>
