@@ -60,7 +60,6 @@ import { QuotationListComponent } from '../quotation-list/quotation-list.compone
 import { QuotationManagementComponent } from '../quotation-management/quotation-management.component';
 import { SelectAttachmentTypeDialogComponent } from '../select-attachment-type-dialog/select-attachment-type-dialog.component';
 import { SelectAttachmentsDialogComponent } from '../select-attachments-dialog/select-attachment-dialog.component';
-import { SelectDeboursDialogComponent } from '../select-debours-dialog/select-debours-dialog.component';
 import { SimpleProvisionComponent } from '../simple-provision/simple-provision.component';
 import { QuotationComponent } from './quotation.component';
 
@@ -135,7 +134,6 @@ const routes: Routes = [
     SelectAttachmentsDialogComponent,
     PrintLabelDialogComponent,
     AddDebourComponent,
-    SelectDeboursDialogComponent,
     DirectDebitTransfertListComponent,
     ChooseCompetentAuthorityDialogComponent,
     DebourListComponent,

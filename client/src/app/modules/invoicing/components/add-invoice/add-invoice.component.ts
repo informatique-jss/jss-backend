@@ -112,6 +112,7 @@ export class AddInvoiceComponent implements OnInit {
     this.displayedColumnsDebours.push({ id: "billingType", fieldName: "billingType.label", label: "Débour" } as SortTableColumn);
     this.displayedColumnsDebours.push({ id: "competentAuthority", fieldName: "competentAuthority.label", label: "Autorité compétente" } as SortTableColumn);
     this.displayedColumnsDebours.push({ id: "debourAmount", fieldName: "debourAmount", label: "Montant TTC", valueFonction: formatEurosForSortTable } as SortTableColumn);
+    this.displayedColumnsDebours.push({ id: "invoicedAmount", fieldName: "invoicedAmount", label: "Montant facuré TTC", valueFonction: formatEurosForSortTable } as SortTableColumn);
     this.displayedColumnsDebours.push({ id: "paymentType", fieldName: "paymentType.label", label: "Type de paiement" } as SortTableColumn);
     this.displayedColumnsDebours.push({ id: "paymentDateTime", fieldName: "paymentDateTime", label: "Date de paiement", valueFonction: formatDateForSortTable } as SortTableColumn);
     this.displayedColumnsDebours.push({ id: "comments", fieldName: "comments", label: "Commentaires", isShrinkColumn: true } as SortTableColumn);
@@ -121,6 +122,7 @@ export class AddInvoiceComponent implements OnInit {
     this.displayedColumnsSelectedDebours.push({ id: "billingType", fieldName: "billingType.label", label: "Débour" } as SortTableColumn);
     this.displayedColumnsSelectedDebours.push({ id: "competentAuthority", fieldName: "competentAuthority.label", label: "Autorité compétente" } as SortTableColumn);
     this.displayedColumnsSelectedDebours.push({ id: "debourAmount", fieldName: "debourAmount", label: "Montant TTC", valueFonction: formatEurosForSortTable } as SortTableColumn);
+    this.displayedColumnsSelectedDebours.push({ id: "invoicedAmount", fieldName: "invoicedAmount", label: "Montant facuré TTC", valueFonction: formatEurosForSortTable } as SortTableColumn);
     this.displayedColumnsSelectedDebours.push({ id: "nonTaxableAmount", fieldName: "nonTaxableAmount", label: "Dont montant non taxable", valueFonction: formatEurosForSortTable } as SortTableColumn);
     this.displayedColumnsSelectedDebours.push({ id: "paymentType", fieldName: "paymentType.label", label: "Type de paiement" } as SortTableColumn);
     this.displayedColumnsSelectedDebours.push({ id: "paymentDateTime", fieldName: "paymentDateTime", label: "Date de paiement", valueFonction: formatDateForSortTable } as SortTableColumn);
@@ -279,14 +281,23 @@ export class AddInvoiceComponent implements OnInit {
 
   selectDebour(debour: Debour) {
     if (debour.invoiceItem) {
-      this.appService.displaySnackBar("Ce débours a déjà été attaché à la facture n°" + debour.invoiceItem.invoice.id, false, 10);
+      this.appService.displaySnackBar("Ce débours/frais a déjà été attaché à la facture n°" + debour.invoiceItem.invoice.id, false, 10);
       return;
     }
     if (!this.selectedDebours || this.getIndexOfDebours(debour, this.selectedDebours) < 0) {
-      if (debour && debour.billingType.isNonTaxable) {
+      if (debour && !debour.billingType.isFee && debour.billingType.isNonTaxable) {
         if (!this.selectedDebours)
           this.selectedDebours = [];
         debour.nonTaxableAmount = debour.debourAmount;
+        this.selectedDebours.push(debour);
+        this.refreshTable.next();
+        return;
+      }
+
+      if (debour && debour.billingType.isFee) {
+        if (!this.selectedDebours)
+          this.selectedDebours = [];
+        debour.nonTaxableAmount = 0;
         this.selectedDebours.push(debour);
         this.refreshTable.next();
         return;
@@ -308,7 +319,7 @@ export class AddInvoiceComponent implements OnInit {
         }
       });
     } else {
-      this.appService.displaySnackBar("Ce débours a déjà été sélectionné", false, 10);
+      this.appService.displaySnackBar("Ce débours/frais a déjà été sélectionné", false, 10);
     }
   }
 
@@ -368,7 +379,7 @@ export class AddInvoiceComponent implements OnInit {
         invoiceItem.vat = billingItem.billingType.vat;
         return;
       }
-    if (billingItem.billingType && billingItem.billingType.isDebour)
+    if (billingItem.billingType && (billingItem.billingType.isDebour || billingItem.billingType.isFee))
       if (billingItem.billingType.isNonTaxable)
         invoiceItem.vat = this.contantService.getVatZero();
       else

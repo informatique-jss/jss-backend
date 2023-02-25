@@ -145,12 +145,6 @@
             </generic-toggle>
           </td>
         </tr>
-        <tr *ngIf="displayOption(billingTypeDisbursement)">
-          <td>
-            <generic-toggle [(model)]="provision.isDisbursement" label="Débours ?" [form]="optionForm"
-              (onToggleChange)="provisionChangeFunction()" propertyName="isDisbursement"></generic-toggle>
-          </td>
-        </tr>
         <tr *ngIf="displayOption(billingTypeFeasibilityStudy)">
           <td>
             <generic-toggle [(model)]="provision.isFeasibilityStudy" label="Etude de faisabilité ?" [form]="optionForm"

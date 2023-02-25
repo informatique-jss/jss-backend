@@ -211,15 +211,17 @@ public class PricingHelper {
                     invoiceItem.setPreTaxPrice(
                             Math.round(billingItem.getPreTaxPrice() * nbr * 100f) / 100f);
             }
-        } else if (billingItem.getBillingType().getIsDebour()
+        } else if ((billingItem.getBillingType().getIsDebour() || billingItem.getBillingType().getIsFee())
                 && provision.getDebours() != null && provision.getDebours().size() > 0) {
             // Compute debour prices
             Float total = 0f;
             for (Debour debour : provision.getDebours()) {
+                Float debourAmount = debour.getInvoicedAmount() != null ? debour.getInvoicedAmount()
+                        : debour.getDebourAmount();
                 if (debour.getBillingType().getIsNonTaxable())
-                    total += debour.getDebourAmount();
+                    total += debourAmount;
                 else
-                    total += debour.getDebourAmount() / ((100 + constantService.getVatDeductible().getRate()) / 100f);
+                    total += debourAmount / ((100 + constantService.getVatDeductible().getRate()) / 100f);
             }
             invoiceItem.setPreTaxPrice(Math.round(total * 100f) / 100f);
         } else {
@@ -304,7 +306,8 @@ public class PricingHelper {
                                     || invoiceItem.getPreTaxPrice() == null
                                     || invoiceItem.getPreTaxPrice() <= 0
                                     || invoiceItem.getIsGifted() != null && invoiceItem.getIsGifted()
-                                    || billingItem.getBillingType().getIsDebour()
+                                    || (billingItem.getBillingType().getIsDebour()
+                                            || billingItem.getBillingType().getIsFee())
                                             && provision.getDebours() != null && provision.getDebours().size() > 0)
                                 setInvoiceItemPreTaxPriceAndLabel(invoiceItem, billingItem, provision);
                             computeInvoiceItemsVatAndDiscount(invoiceItem, quotation, provision);
@@ -492,7 +495,8 @@ public class PricingHelper {
         if (invoiceItem.getBillingItem() != null && invoiceItem.getBillingItem().getBillingType() != null
                 && invoiceItem.getBillingItem().getBillingType().getIsOverrideVat()) {
             vat = invoiceItem.getBillingItem().getBillingType().getVat();
-        } else if (invoiceItem.getBillingItem().getBillingType().getIsDebour()) {
+        } else if (invoiceItem.getBillingItem().getBillingType().getIsDebour()
+                || invoiceItem.getBillingItem().getBillingType().getIsFee()) {
             vat = constantService.getVatDeductible();
         } else {
             if (billingDocument == null || billingDocument.getBillingLabelType() == null
@@ -523,12 +527,16 @@ public class PricingHelper {
         if (vat != null && (invoiceItem.getIsGifted() == null || !invoiceItem.getIsGifted())) {
             Float vatPrice = 0f;
             if (provision.getDebours() != null && provision.getDebours().size() > 0
-                    && invoiceItem.getBillingItem().getBillingType().getIsDebour()) {
+                    && (invoiceItem.getBillingItem().getBillingType().getIsDebour()
+                            || invoiceItem.getBillingItem().getBillingType().getIsFee())) {
                 vatPrice = 0f;
                 for (Debour debour : provision.getDebours())
-                    if (!debour.getBillingType().getIsNonTaxable())
-                        vatPrice += (constantService.getVatDeductible().getRate() / 100f) * debour.getDebourAmount()
+                    if (!debour.getBillingType().getIsNonTaxable()) {
+                        Float debourAmount = debour.getInvoicedAmount() != null ? debour.getInvoicedAmount()
+                                : debour.getDebourAmount();
+                        vatPrice += (constantService.getVatDeductible().getRate() / 100f) * debourAmount
                                 / ((100 + constantService.getVatDeductible().getRate()) / 100f);
+                    }
             } else {
                 vatPrice = vat.getRate() / 100
                         * ((invoiceItem.getPreTaxPrice() != null ? invoiceItem.getPreTaxPrice() : 0)

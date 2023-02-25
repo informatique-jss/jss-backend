@@ -45,6 +45,7 @@ public class Debour implements Serializable, IId {
 	private CompetentAuthority competentAuthority;
 
 	private Float debourAmount;
+	private Float invoicedAmount;
 
 	private Float nonTaxableAmount;
 
@@ -197,6 +198,14 @@ public class Debour implements Serializable, IId {
 
 	public void setIsAssociated(Boolean isAssociated) {
 		this.isAssociated = isAssociated;
+	}
+
+	public Float getInvoicedAmount() {
+		return invoicedAmount;
+	}
+
+	public void setInvoicedAmount(Float invoicedAmount) {
+		this.invoicedAmount = invoicedAmount;
 	}
 
 }

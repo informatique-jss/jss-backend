@@ -102,7 +102,7 @@
                     <td class="td-with-price"></td>
                 </tr>
                 <th:block th:each="invoiceItem : ${provision.invoiceItems}"
-                    th:if="${invoiceItem.billingItem.billingType.isDebour==false}">
+                    th:if="${invoiceItem.billingItem.billingType.isDebour==false} and ${invoiceItem.billingItem.billingType.isFee==false}">
                     <tr>
                         <td>
                             <span th:text="${invoiceItem.label}"></span>
@@ -122,7 +122,7 @@
                     </tr>
                 </th:block>
                 <th:block th:each="debour : ${provision.debours}" th:if="${provision.debours!=null}">
-                    <tr>
+                    <tr th:if="${debour.billingType.isFee==false}">
                         <td>
                             <span th:text="${debour.competentAuthority.label}"></span> : <span
                                 th:text="${debour.billingType.label}"></span>
@@ -136,6 +136,23 @@
                         <td class="td-with-price" style="text-align: right;white-space: nowrap;"
                             th:if="${debour.billingType.isNonTaxable==true}">
                             <span th:text="${#numbers.formatDecimal(debour.debourAmount,1,2)}"></span>
+                            €
+                        </td>
+                    </tr>
+                    <tr th:if="${debour.billingType.isFee==true}">
+                        <td>
+                            <span th:text="${debour.competentAuthority.label}"></span> : <span
+                                th:text="${debour.billingType.label}"></span>
+                        </td>
+                        <td class="td-with-price" style="text-align: right;white-space: nowrap;"
+                            th:if="${debour.billingType.isNonTaxable==false}">
+                            <span
+                                th:text="${#numbers.formatDecimal(debour.invoicedAmount-(debour.invoicedAmount/(1f+(vatDebour.rate/100f)))*vatDebour.rate/100f,1,2)}"></span>
+                            €
+                        </td>
+                        <td class="td-with-price" style="text-align: right;white-space: nowrap;"
+                            th:if="${debour.billingType.isNonTaxable==true}">
+                            <span th:text="${#numbers.formatDecimal(debour.invoicedAmount,1,2)}"></span>
                             €
                         </td>
                     </tr>

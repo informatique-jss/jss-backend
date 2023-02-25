@@ -6,6 +6,7 @@ export interface DebourSearchResult {
   billingTypeLabel: string;
   competentAuthorityLabel: string;
   debourAmount: number;
+  invoicedAmount: number;
   paymentTypeLabel: string;
   paymentDateTime: Date;
   paymentId: number;

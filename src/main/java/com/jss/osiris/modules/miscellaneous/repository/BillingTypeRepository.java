@@ -8,5 +8,5 @@ import com.jss.osiris.modules.miscellaneous.model.BillingType;
 
 public interface BillingTypeRepository extends CrudRepository<BillingType, Integer> {
 
-    List<BillingType> findByIsDebour(boolean isDebour);
+    List<BillingType> findByIsDebourOrIsFee(boolean isDebour, boolean isFee);
 }

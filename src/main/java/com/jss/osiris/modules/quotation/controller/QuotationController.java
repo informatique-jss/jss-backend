@@ -1457,6 +1457,8 @@ public class QuotationController {
         validationHelper.validateReferential(debour.getPaymentType(), true, "paymentType");
         validationHelper.validateString(debour.getComments(), false, 250, "comments");
         validationHelper.validateFloat(debour.getDebourAmount(), true, "debourAmount");
+        validationHelper.validateFloat(debour.getInvoicedAmount(), debour.getBillingType().getIsFee(),
+            "invoicedAmount");
 
         if (debour.getPaymentDateTime() == null)
           debour.setPaymentDateTime(LocalDateTime.now());
@@ -2368,7 +2370,7 @@ public class QuotationController {
       deboursOut.add(debour);
 
       if (debour.getPayment() != null)
-        throw new OsirisClientMessageException("Un des débours a déjà été rapproché d'un paiement");
+        throw new OsirisClientMessageException("Un des débours/frais a déjà été rapproché d'un paiement");
     }
 
     Payment payment = paymentService.getPayment(paymentId);

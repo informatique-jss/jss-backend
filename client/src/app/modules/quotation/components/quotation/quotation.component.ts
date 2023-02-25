@@ -410,7 +410,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
       return;
     }
     if (provision.debours && provision.debours.length > 0) {
-      this.appService.displaySnackBar("Impossible de supprimer cette prestation : des débours ont déjà été saisis", true, 15);
+      this.appService.displaySnackBar("Impossible de supprimer cette prestation : des débours/frais ont déjà été saisis", true, 15);
       return;
     }
     if (provision.announcement && provision.announcement.actuLegaleId)
@@ -588,7 +588,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
               for (let invoiceItem of provision.invoiceItems) {
                 if (invoiceItem.vat && invoiceItem.vatPrice && invoiceItem.vatPrice > 0) {
 
-                  if (!invoiceItem.billingItem.billingType.isDebour || !provision.debours || provision.debours.length == 0) {
+                  if (!invoiceItem.billingItem.billingType.isDebour && !invoiceItem.billingItem.billingType.isFee || !provision.debours || provision.debours.length == 0) {
                     let vatFound = false;
                     for (let vatBase of vatBases) {
                       if (vatBase.label == invoiceItem.vat.label) {
@@ -604,16 +604,17 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
                     for (let debour of provision.debours) {
                       if (!debour.billingType.isNonTaxable) {
                         let vatFound = false;
+                        let debourAmount = debour.invoicedAmount ? debour.invoicedAmount : debour.debourAmount;
 
                         for (let vatBase of vatBases) {
                           if (vatBase.label == debourVat.label) {
                             vatFound = true;
-                            vatBase.base += debour.debourAmount / (1 + (debourVat.rate / 100));
-                            vatBase.total += (debour.debourAmount / (1 + (debourVat.rate / 100))) * debourVat.rate / 100;
+                            vatBase.base += debourAmount / (1 + (debourVat.rate / 100));
+                            vatBase.total += (debourAmount / (1 + (debourVat.rate / 100))) * debourVat.rate / 100;
                           }
                         }
                         if (!vatFound) {
-                          vatBases.push({ label: debourVat.label, base: debour.debourAmount / (1 + (debourVat.rate / 100)), total: (debour.debourAmount / (1 + (debourVat.rate / 100))) * debourVat.rate / 100 });
+                          vatBases.push({ label: debourVat.label, base: debourAmount / (1 + (debourVat.rate / 100)), total: (debourAmount / (1 + (debourVat.rate / 100))) * debourVat.rate / 100 });
                         }
                       }
                     }
@@ -641,7 +642,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
           if (asso.provisions) {
             for (let provision of asso.provisions)
               if (provision.debours && provision.debours.length > 0)
-                this.appService.displaySnackBar("Impossible de supprimer cette affaire : des débours ont déjà été saisis sur une prestation", true, 15);
+                this.appService.displaySnackBar("Impossible de supprimer cette affaire : des débours/frais ont déjà été saisis sur une prestation", true, 15);
             return;
           }
         }

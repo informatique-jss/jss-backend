@@ -42,6 +42,7 @@ export class AddDebourComponent implements OnInit {
     this.displayedColumns.push({ id: "billingType", fieldName: "billingType.label", label: "Débour" } as SortTableColumn);
     this.displayedColumns.push({ id: "competentAuthority", fieldName: "competentAuthority.label", label: "Autorité compétente" } as SortTableColumn);
     this.displayedColumns.push({ id: "debourAmount", fieldName: "debourAmount", label: "Montant", valueFonction: formatEurosForSortTable } as SortTableColumn);
+    this.displayedColumns.push({ id: "invoicedAmount", fieldName: "invoicedAmount", label: "Montant facturé", valueFonction: formatEurosForSortTable } as SortTableColumn);
     this.displayedColumns.push({ id: "paymentType", fieldName: "paymentType.label", label: "Type de paiement" } as SortTableColumn);
     this.displayedColumns.push({ id: "paymentDateTime", fieldName: "paymentDateTime", label: "Date de paiement", valueFonction: formatDateForSortTable } as SortTableColumn);
     this.displayedColumns.push({ id: "checkNumber", fieldName: "checkNumber", label: "N° de chèque" } as SortTableColumn);
@@ -62,6 +63,11 @@ export class AddDebourComponent implements OnInit {
       this.newDebour = {} as Debour;
       this.refreshTable.next();
     }
+  }
+
+  fillInvoicedAmount() {
+    if (this.newDebour && this.newDebour.billingType && this.newDebour.billingType.isFee && this.newDebour.debourAmount)
+      this.newDebour.invoicedAmount = this.newDebour.debourAmount;
   }
 
   addDebour() {

@@ -435,6 +435,7 @@ public class MailHelper {
                     if (invoiceItem.getVat() != null && invoiceItem.getVatPrice() != null
                             && invoiceItem.getVatPrice() > 0
                             && (!invoiceItem.getBillingItem().getBillingType().getIsDebour()
+                                    && !invoiceItem.getBillingItem().getBillingType().getIsFee()
                                     || provision.getDebours() == null || provision.getDebours().size() == 0)) {
                         vatTotal += invoiceItem.getVatPrice();
                         boolean vatFound = false;
@@ -466,8 +467,10 @@ public class MailHelper {
                         }
                     } else if (provision.getDebours() != null && provision.getDebours().size() > 0) {
                         for (Debour debour : provision.getDebours()) {
+                            Float debourAmount = debour.getInvoicedAmount() != null ? debour.getInvoicedAmount()
+                                    : debour.getDebourAmount();
                             if (!debour.getBillingType().getIsNonTaxable()) {
-                                vatTotal += (debour.getDebourAmount() / (1f + (vatDebour.getRate() / 100f)))
+                                vatTotal += (debourAmount / (1f + (vatDebour.getRate() / 100f)))
                                         * vatDebour.getRate() / 100f;
                                 boolean vatFound = false;
                                 for (VatMail vatMail : vats) {
@@ -475,25 +478,25 @@ public class MailHelper {
                                         vatFound = true;
                                         if (vatMail.getTotal() == null) {
                                             vatMail.setTotal(
-                                                    (debour.getDebourAmount() / (1f + (vatDebour.getRate() / 100f)))
+                                                    (debourAmount / (1f + (vatDebour.getRate() / 100f)))
                                                             * vatDebour.getRate() / 100f);
                                             vatMail.setBase(
-                                                    debour.getDebourAmount() / (1 + (vatDebour.getRate() / 100)));
+                                                    debourAmount / (1 + (vatDebour.getRate() / 100)));
                                         } else {
                                             vatMail.setTotal(vatMail.getTotal()
-                                                    + (debour.getDebourAmount() / (1f + (vatDebour.getRate() / 100f)))
+                                                    + (debourAmount / (1f + (vatDebour.getRate() / 100f)))
                                                             * vatDebour.getRate() / 100f);
                                             vatMail.setBase(vatMail.getBase()
-                                                    + debour.getDebourAmount() / (1 + (vatDebour.getRate() / 100)));
+                                                    + debourAmount / (1 + (vatDebour.getRate() / 100)));
                                         }
                                     }
                                 }
                                 if (!vatFound) {
                                     VatMail vatmail = new VatMail();
-                                    vatmail.setTotal((debour.getDebourAmount() / (1f + (vatDebour.getRate() / 100f)))
+                                    vatmail.setTotal((debourAmount / (1f + (vatDebour.getRate() / 100f)))
                                             * vatDebour.getRate() / 100f);
                                     vatmail.setLabel(vatDebour.getLabel());
-                                    vatmail.setBase(debour.getDebourAmount() / (1 + (vatDebour.getRate() / 100)));
+                                    vatmail.setBase(debourAmount / (1 + (vatDebour.getRate() / 100)));
                                     vatmail.setCustomerMail(mail);
                                     vats.add(vatmail);
                                 }
@@ -974,7 +977,8 @@ public class MailHelper {
         Float vatTotal = 0f;
         for (InvoiceItem invoiceItem : invoice.getInvoiceItems()) {
             if (invoiceItem.getVat() != null && invoiceItem.getVatPrice() != null
-                    && invoiceItem.getVatPrice() > 0 && !invoiceItem.getBillingItem().getBillingType().getIsDebour()) {
+                    && invoiceItem.getVatPrice() > 0 && !invoiceItem.getBillingItem().getBillingType().getIsDebour()
+                    && !invoiceItem.getBillingItem().getBillingType().getIsFee()) {
                 vatTotal += invoiceItem.getVatPrice();
                 if (vats == null)
                     vats = new ArrayList<VatMail>();
@@ -1012,6 +1016,8 @@ public class MailHelper {
             for (Provision provision : asso.getProvisions()) {
                 if (provision.getDebours() != null && provision.getDebours().size() > 0) {
                     for (Debour debour : provision.getDebours()) {
+                        Float debourAmount = debour.getInvoicedAmount() != null ? debour.getInvoicedAmount()
+                                : debour.getDebourAmount();
                         if (!debour.getBillingType().getIsNonTaxable()) {
                             boolean vatFound = false;
                             for (VatMail vatMail : vats) {
@@ -1019,25 +1025,25 @@ public class MailHelper {
                                     vatFound = true;
                                     if (vatMail.getTotal() == null) {
                                         vatMail.setTotal(
-                                                (debour.getDebourAmount() / (1f + (vatDebour.getRate() / 100f)))
+                                                (debourAmount / (1f + (vatDebour.getRate() / 100f)))
                                                         * vatDebour.getRate() / 100f);
                                         vatMail.setBase(
-                                                debour.getDebourAmount() / (1 + (vatDebour.getRate() / 100)));
+                                                debourAmount / (1 + (vatDebour.getRate() / 100)));
                                     } else {
                                         vatMail.setTotal(vatMail.getTotal()
-                                                + (debour.getDebourAmount() / (1f + (vatDebour.getRate() / 100f)))
+                                                + (debourAmount / (1f + (vatDebour.getRate() / 100f)))
                                                         * vatDebour.getRate() / 100f);
                                         vatMail.setBase(vatMail.getBase()
-                                                + debour.getDebourAmount() / (1 + (vatDebour.getRate() / 100)));
+                                                + debourAmount / (1 + (vatDebour.getRate() / 100)));
                                     }
                                 }
                             }
                             if (!vatFound) {
                                 VatMail vatmail = new VatMail();
-                                vatmail.setTotal((debour.getDebourAmount() / (1f + (vatDebour.getRate() / 100f)))
+                                vatmail.setTotal((debourAmount / (1f + (vatDebour.getRate() / 100f)))
                                         * vatDebour.getRate() / 100f);
                                 vatmail.setLabel(vatDebour.getLabel());
-                                vatmail.setBase(debour.getDebourAmount() / (1 + (vatDebour.getRate() / 100)));
+                                vatmail.setBase(debourAmount / (1 + (vatDebour.getRate() / 100)));
                                 vats.add(vatmail);
                             }
                         }

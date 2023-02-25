@@ -151,7 +151,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     }
 
     if (provision.debours && provision.debours.length > 0) {
-      this.appService.displaySnackBar("Impossible de supprimer cette prestation : des débours ont déjà été saisis", true, 15);
+      this.appService.displaySnackBar("Impossible de supprimer cette prestation : des débours/frais ont déjà été saisis", true, 15);
       return;
     }
 

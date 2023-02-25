@@ -12,6 +12,7 @@ export interface Debour {
   billingType: BillingType;
   competentAuthority: CompetentAuthority;
   debourAmount: number;
+  invoicedAmount: number;
   nonTaxableAmount: number;
   paymentType: PaymentType;
   paymentDateTime: Date;
