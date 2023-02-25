@@ -58,6 +58,7 @@ import com.jss.osiris.modules.invoicing.service.InvoiceHelper;
 import com.jss.osiris.modules.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.AttachmentType;
+import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.model.Mail;
 import com.jss.osiris.modules.miscellaneous.model.Vat;
 import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
@@ -1049,6 +1050,12 @@ public class MailHelper {
         ctx.setVariable("vats", vats);
         ctx.setVariable("priceTotal", Math.round(invoiceHelper.getPriceTotal(invoice) * 100f) / 100f);
         ctx.setVariable("invoice", invoice);
+
+        Document billingDocument = documentService.getDocumentByDocumentType(customerOrder.getDocuments(),
+                constantService.getDocumentTypeBilling());
+        if (billingDocument != null && billingDocument.getExternalReference() != null)
+            ctx.setVariable("externalReference", billingDocument.getExternalReference());
+
         ctx.setVariable("customerOrder", customerOrder);
         ctx.setVariable("quotation",
                 customerOrder.getQuotations() != null && customerOrder.getQuotations().size() > 0

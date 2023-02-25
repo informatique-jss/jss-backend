@@ -55,6 +55,8 @@
                 <p th:if="${invoice.isCreditNote==false}">Facture n°<span th:text="${invoice.id}"></span></p>
                 <p>Commande n°<span th:text="${customerOrder.id}"></span></p>
                 <p th:if="${quotation!=null}">Devis n°<span th:text="${quotation.id}"></span></p>
+                <p th:if="${externalReference!=null}">Référence client : <span th:text="${externalReference}"></span>
+                </p>
                 <p>Paris le <span th:text="${invoiceCreatedDate}"></span></p>
                 <p th:if="${invoice.isCommandNumberMandatory}">Commande externe n°<span
                         th:text="${invoice.commandNumber}"></span></p>
