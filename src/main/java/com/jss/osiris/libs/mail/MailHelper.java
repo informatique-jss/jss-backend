@@ -1461,6 +1461,8 @@ public class MailHelper {
         ArrayList<String> explanationItems = new ArrayList<String>();
         explanationItems.add("Une attestation de parution par email à l'adresse " + currentUserMail);
         explanationItems.add("Un justificatif électronique par email à l'adresse " + currentUserMail);
+        if (announcement.getIsProofReadingDocument())
+            explanationItems.add("Un bon à tirer par email à l'adresse " + currentUserMail);
         if (provision.getIsPublicationPaper()) {
             int nbr = 0;
             if (provision.getPublicationPaperClientNumber() != null)
