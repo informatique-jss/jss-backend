@@ -142,7 +142,7 @@ export class ConfrereComponent implements OnInit {
     let filterValueCast = (filterValue as HTMLInputElement);
     filterValue = filterValueCast.value.trim();
     this.searchText = filterValue.toLowerCase();
-    if (this.searchText.length > 2) {
+    if (this.searchText.length > 1) {
       this.confrereService.getConfrereFilteredByDepartmentAndName(undefined, this.searchText).subscribe(response => this.confreres = response);
     }
   }
