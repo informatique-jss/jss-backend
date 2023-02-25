@@ -35,11 +35,19 @@ public class ReportingController {
 	@Autowired
 	EmployeeService employeeService;
 
-	@PostMapping(inputEntryPoint + "/quotation")
+	@GetMapping(inputEntryPoint + "/quotation")
 	public ResponseEntity<List<IQuotationReporting>> getQuotationReporting()
 			throws OsirisValidationException, OsirisException {
 
-		return new ResponseEntity<List<IQuotationReporting>>(quotationReportingService.getQuotationReporting(),
+		return new ResponseEntity<List<IQuotationReporting>>(quotationReportingService.getQuotationReporting(null),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/quotation/tiers")
+	public ResponseEntity<List<IQuotationReporting>> getQuotationReportingForTiers(@RequestParam Integer tiersId)
+			throws OsirisValidationException, OsirisException {
+
+		return new ResponseEntity<List<IQuotationReporting>>(quotationReportingService.getQuotationReporting(tiersId),
 				HttpStatus.OK);
 	}
 

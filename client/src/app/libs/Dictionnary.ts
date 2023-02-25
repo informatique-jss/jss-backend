@@ -17,6 +17,7 @@ export const Dictionnary = {
   "salesEmployeeLabel": "Commercial",
   "customerOrderStatusLabel": "Statut de la commande",
   "customerOrderCreatedDateMonth": "Mois de la commande",
+  "invoiceDateMonth": "Mois de la facture",
   "characterNumber": "Nombre de caractères",
 };
 

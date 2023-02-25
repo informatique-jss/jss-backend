@@ -80,7 +80,7 @@ export class ReportingListComponent implements OnInit {
 
   selectReporting(userReporting: UserReporting) {
     this.currentUserReporting = userReporting;
-    this.reportingService.getDataset(userReporting.dataset).subscribe(data => this.dataToDisplay = data)
+    this.reportingService.getDataset(userReporting.dataset, undefined).subscribe(data => this.dataToDisplay = data)
   }
 
   addReporting() {

@@ -33,5 +33,7 @@ public interface IQuotationReporting {
 
     public String getCustomerOrderCreatedDateMonth();
 
+    public String getInvoiceDateMonth();
+
     public Integer getCharacterNumber();
 }

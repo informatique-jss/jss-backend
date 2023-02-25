@@ -29,7 +29,9 @@ const routes: Routes = [
   declarations: [ReportingComponent,
     ReportingListComponent,
     ReportingAddComponent,
-  ]
+  ],
+  exports: [ReportingComponent,
+  ],
 })
 export class ReportingModule { }
 

@@ -87,14 +87,20 @@ export class ReportingComponent implements OnInit {
       renderersFr["Nuage de points"] = renderersEn["Scatter Chart"];
 
       options['renderers'] = renderersFr;
-      options['rendererOptions'] = { gchart: { width: 900, height: 600 } };
+      options['rendererOptions'] = {
+        gchart: {
+          width: 900, height: 600, chartArea: { width: "70%" }, vAxis: {
+            scaleType: 'linear', textPosition: 'out', format: 'decimal', viewWindowMode: 'pretty'
+          }
+        }
+      };
 
       if (this.data[0]["Mois de la commande"])
         this.addMonthSorterForColumn(options, "Mois de la commande");
       if (this.data[0]["Mois de publication"])
         this.addMonthSorterForColumn(options, "Mois de publication");
-
-      console.log(options);
+      if (this.data[0]["Mois de la facture"])
+        this.addMonthSorterForColumn(options, "Mois de la facture");
 
       this.targetElement.pivotUI(this.data, options, restoreSettings, "fr");
     }

@@ -1,5 +1,6 @@
 import { AfterContentChecked, ChangeDetectorRef, Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, UrlSegment } from '@angular/router';
+import { REPORTING_DATASET_QUOTATION_FOR_TIERS } from 'src/app/libs/Constants';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { AffaireSearch } from 'src/app/modules/quotation/model/AffaireSearch';
 import { OrderingSearch } from 'src/app/modules/quotation/model/OrderingSearch';
@@ -8,6 +9,7 @@ import { TIERS_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
 import { SearchService } from 'src/app/services/search.service';
 import { InvoiceSearch } from '../../../invoicing/model/InvoiceSearch';
+import { ReportingService } from '../../../reporting/services/reporting.service';
 import { Responsable } from '../../model/Responsable';
 import { Tiers } from '../../model/Tiers';
 import { TiersService } from '../../services/tiers.service';
@@ -35,6 +37,9 @@ export class TiersComponent implements OnInit, AfterContentChecked {
   invoiceSearch: InvoiceSearch = {} as InvoiceSearch;
   responsableAccountSearch: Tiers | undefined;
 
+  dataToDisplay: any | undefined;
+  reportingSettings: string = "";
+
   selectedTabIndex = 0;
 
   @ViewChild('tabs', { static: false }) tabs: any;
@@ -48,6 +53,7 @@ export class TiersComponent implements OnInit, AfterContentChecked {
     private activatedRoute: ActivatedRoute,
     protected searchService: SearchService,
     private constantService: ConstantService,
+    private reportingService: ReportingService,
     private changeDetectorRef: ChangeDetectorRef) { }
 
   ngOnInit() {
@@ -67,6 +73,7 @@ export class TiersComponent implements OnInit, AfterContentChecked {
         this.responsableMainComponent?.setSelectedResponsableId(idTiers);
 
         this.loadQuotationFilter();
+        this.loadReporting();
       })
       // Load by tiers
     } else if (idTiers != null && idTiers != undefined) {
@@ -75,6 +82,7 @@ export class TiersComponent implements OnInit, AfterContentChecked {
         this.tiersService.setCurrentViewedTiers(this.tiers);
         this.changeHeader();
         this.toggleTabs();
+        this.loadReporting();
 
         this.loadQuotationFilter();
       })
@@ -82,6 +90,11 @@ export class TiersComponent implements OnInit, AfterContentChecked {
       // Blank page
       this.appService.changeHeaderTitle("Tiers / Responsables");
     }
+  }
+
+  loadReporting() {
+    this.reportingSettings = '{"derivedAttributes":{},"hiddenAttributes":[],"hiddenFromAggregators":[],"hiddenFromDragDrop":[],"menuLimit":500,"cols":["Mois de la facture"],"rows":[],"vals":["Prix TTC"],"rowOrder":"key_a_to_z","colOrder":"key_a_to_z","exclusions":{},"inclusions":{},"unusedAttrsVertical":85,"autoSortUnusedAttrs":false,"onRefresh":null,"showUI":true,"sorters":{},"inclusionsInfo":{},"aggregatorName":"Somme","rendererName":"Tableau"}';
+    this.reportingService.getDataset(REPORTING_DATASET_QUOTATION_FOR_TIERS, this.tiers.id).subscribe(data => this.dataToDisplay = data)
   }
 
   loadQuotationFilter() {

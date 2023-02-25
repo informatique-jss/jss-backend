@@ -64,3 +64,4 @@ export const INVOICE_REMINDER_PAYMENT = "INVOICE_REMINDER_PAYMENT";
 
 // Reporting datasets
 export const REPORTING_DATASET_QUOTATION = "Donneur d'ordre / Commandes / Prestations / Facturation prévisionnelle - année calendaire courante";
+export const REPORTING_DATASET_QUOTATION_FOR_TIERS = "Donneur d'ordre / Commandes / Prestations / Facturation prévisionnelle - année calendaire courante pour un tiers";

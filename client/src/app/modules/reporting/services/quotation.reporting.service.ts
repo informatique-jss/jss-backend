@@ -13,6 +13,10 @@ export class QuotationReportingService extends AppRestService<QuotationReporting
   }
 
   getQuotationReporting() {
-    return this.postList(new HttpParams(), "quotation");
+    return this.getList(new HttpParams(), "quotation");
+  }
+
+  getQuotationReportingForTiers(tiersId: number) {
+    return this.getList(new HttpParams().set("tiersId", tiersId), "quotation/tiers");
   }
 }
