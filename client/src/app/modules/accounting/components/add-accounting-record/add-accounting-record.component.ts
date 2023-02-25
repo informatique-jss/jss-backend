@@ -1,7 +1,7 @@
 import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { formatDateForSortTable, formatEurosForSortTable } from 'src/app/libs/FormatHelper';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
@@ -38,6 +38,8 @@ export class AddAccountingRecordComponent implements OnInit {
   accountingJournalPurchases: AccountingJournal = this.constantService.getAccountingJournalPurchases();
   accountingJournalANouveau: AccountingJournal = this.constantService.getAccountingJournalANouveau();
 
+  saveObservableSubscription: Subscription = new Subscription;
+
   refreshTable: Subject<void> = new Subject<void>();
 
   ngOnInit() {
@@ -63,6 +65,15 @@ export class AddAccountingRecordComponent implements OnInit {
         this.accountingRecords.splice(this.accountingRecords.indexOf(element), 1);
       }, display: true,
     } as SortTableAction);
+
+    this.saveObservableSubscription = this.appService.saveObservable.subscribe(response => {
+      if (response)
+        this.saveOperations();
+    });
+  }
+
+  ngOnDestroy() {
+    this.saveObservableSubscription.unsubscribe();
   }
 
   addAccountingRecord() {

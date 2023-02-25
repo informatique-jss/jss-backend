@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { Subscription } from 'rxjs';
 import { City } from 'src/app/modules/miscellaneous/model/City';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { CityService } from 'src/app/modules/miscellaneous/services/city.service';
@@ -34,6 +35,9 @@ export class CompetentAuthorityComponent implements OnInit {
   displayedColumns: SortTableColumn[] = [];
   editMode: boolean = false;
 
+  saveObservableSubscription: Subscription = new Subscription;
+
+
   ngOnInit(): void {
     this.appService.changeHeaderTitle("Autorités compétentes");
 
@@ -42,6 +46,18 @@ export class CompetentAuthorityComponent implements OnInit {
     this.displayedColumns.push({ id: "code", fieldName: "code", label: "Codification fonctionnelle" } as SortTableColumn);
     this.displayedColumns.push({ id: "label", fieldName: "label", label: "Libellé" } as SortTableColumn);
     this.displayedColumns.push({ id: "competentAuthorityType", fieldName: "competentAuthorityType.label", label: "Type" } as SortTableColumn);
+
+    this.saveObservableSubscription = this.appService.saveObservable.subscribe(response => {
+      if (response)
+        if (this.editMode)
+          this.saveCompetentAuthority()
+        else if (this.selectedcompetentAuthority && this.selectedcompetentAuthority.id)
+          this.editCompetentAuthority()
+    });
+  }
+
+  ngOnDestroy() {
+    this.saveObservableSubscription.unsubscribe();
   }
 
   entityForm2 = this.formBuilder.group({

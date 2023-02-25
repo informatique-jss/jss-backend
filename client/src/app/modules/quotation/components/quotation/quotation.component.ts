@@ -3,7 +3,7 @@ import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
 import { ActivatedRoute, UrlSegment } from '@angular/router';
-import { Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_TO_BILLED, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN, VALIDATED_BY_CUSTOMER } from 'src/app/libs/Constants';
 import { getDocument } from 'src/app/libs/DocumentHelper';
 import { instanceOfCustomerOrder } from 'src/app/libs/TypeHelper';
@@ -82,6 +82,8 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
 
   idQuotation: number | undefined;
 
+  saveObservableSubscription: Subscription = new Subscription;
+
   constructor(private appService: AppService,
     private quotationService: QuotationService,
     private customerOrderService: CustomerOrderService,
@@ -154,6 +156,18 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
       // Blank page
       this.appService.changeHeaderTitle("Devis");
     }
+
+    this.saveObservableSubscription = this.appService.saveObservable.subscribe(response => {
+      if (response)
+        if (this.editMode)
+          this.saveQuotation()
+        else if (this.quotation.id)
+          this.editQuotation()
+    });
+  }
+
+  ngOnDestroy() {
+    this.saveObservableSubscription.unsubscribe();
   }
 
   toggleTabs() {
@@ -237,15 +251,15 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     replaceDocument(this.constantService.getDocumentTypePaper(), this.quotation, this.quotationManagementComponent?.getPaperDocument()!);
     if (this.getFormsStatus()) {
       if (!this.instanceOfCustomerOrder) {
+        this.editMode = false;
         this.quotationService.addOrUpdateQuotation(this.quotation).subscribe(response => {
           this.quotation = response;
-          this.editMode = false;
           this.appService.openRoute(null, '/quotation/' + this.quotation.id, null);
         })
       } else {
+        this.editMode = false;
         this.customerOrderService.addOrUpdateCustomerOrder(this.quotation).subscribe(response => {
           this.quotation = response;
-          this.editMode = false;
           this.appService.openRoute(null, '/order/' + this.quotation.id, null);
         })
       }

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { Subscription } from 'rxjs';
 import { AppService } from '../../../../services/app.service';
 import { Employee } from '../../model/Employee';
 import { EmployeeService } from '../../services/employee.service';
@@ -22,12 +23,26 @@ export class MyProfilComponent implements OnInit {
   currentEmployee: Employee | undefined;
   editMode: boolean = false;
 
+  saveObservableSubscription: Subscription = new Subscription;
+
   ngOnInit() {
     this.appService.changeHeaderTitle("Mon profil");
     this.employeeService.getCurrentEmployee().subscribe(response => {
       this.currentEmployee = response;
       this.appService.changeHeaderTitle("Mon profil : " + this.currentEmployee.firstname + " " + this.currentEmployee.lastname);
     })
+
+    this.saveObservableSubscription = this.appService.saveObservable.subscribe(response => {
+      if (response)
+        if (this.editMode)
+          this.saveEmployee()
+        else
+          this.editEmployee()
+    });
+  }
+
+  ngOnDestroy() {
+    this.saveObservableSubscription.unsubscribe();
   }
 
   editEmployee() {

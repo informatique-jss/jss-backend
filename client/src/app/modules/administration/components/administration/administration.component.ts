@@ -1,7 +1,7 @@
 import { AfterContentChecked, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute, UrlSegment } from '@angular/router';
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, Subscription } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { AppService } from 'src/app/services/app.service';
 import { HabilitationsService } from '../../../../services/habilitations.service';
@@ -23,6 +23,8 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
   saveEvent: Subject<void> = new Subject<void>();
   addEvent: Subject<void> = new Subject<void>();
   cloneEvent: Subject<void> = new Subject<void>();
+
+  saveObservableSubscription: Subscription = new Subscription;
 
   ACT_TYPE_REFERENTIAL = "Type d'actes";
   BODACC_PUBLICATION_TYPE_REFERENTIAL = "Type de publication";
@@ -153,6 +155,18 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
     if (url != undefined && url != null && url[0] != undefined && url[1] != undefined && url[1].path == "provider") {
       this.selectedReferential = this.PROVIDER_REFERENTIAL;
     }
+
+    this.saveObservableSubscription = this.appService.saveObservable.subscribe(response => {
+      if (response)
+        if (this.editMode)
+          this.saveEntity()
+        else if (this.selectedEntity)
+          this.editEntity()
+    });
+  }
+
+  ngOnDestroy() {
+    this.saveObservableSubscription.unsubscribe();
   }
 
   referentialForm = this.formBuilder.group({

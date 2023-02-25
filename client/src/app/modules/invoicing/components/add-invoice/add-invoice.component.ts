@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
-import { Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { formatDateForSortTable, formatEurosForSortTable } from 'src/app/libs/FormatHelper';
 import { Attachment } from 'src/app/modules/miscellaneous/model/Attachment';
 import { City } from 'src/app/modules/miscellaneous/model/City';
@@ -43,6 +43,8 @@ export class AddInvoiceComponent implements OnInit {
 
   countryFrance: Country = this.contantService.getCountryFrance();
   billingLableTypeOther = this.contantService.getBillingLabelTypeOther();
+
+  saveObservableSubscription: Subscription = new Subscription;
 
   constructor(private formBuilder: FormBuilder,
     private appService: AppService,
@@ -131,6 +133,15 @@ export class AddInvoiceComponent implements OnInit {
         }
       }, display: true,
     } as SortTableAction);
+
+    this.saveObservableSubscription = this.appService.saveObservable.subscribe(response => {
+      if (response)
+        this.saveInvoice()
+    });
+  }
+
+  ngOnDestroy() {
+    this.saveObservableSubscription.unsubscribe();
   }
 
   getVatPrice(element: any) {

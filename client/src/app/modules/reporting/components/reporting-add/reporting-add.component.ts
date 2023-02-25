@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { AppService } from '../../../../services/app.service';
 import { EmployeeService } from '../../../profile/services/employee.service';
 import { UserReporting } from '../../model/UserReporting';
@@ -20,6 +21,8 @@ export class ReportingAddComponent implements OnInit {
   dataToDisplay: any | undefined;
 
   @ViewChild(ReportingComponent) reportingComponent: ReportingComponent | undefined;
+
+  saveObservableSubscription: Subscription = new Subscription;
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -53,6 +56,15 @@ export class ReportingAddComponent implements OnInit {
       this.reporting = {} as UserReporting;
       this.employeeService.getCurrentEmployee().subscribe(user => this.reporting!.employee = user);
     }
+
+    this.saveObservableSubscription = this.appService.saveObservable.subscribe(response => {
+      if (response)
+        this.saveReporting()
+    });
+  }
+
+  ngOnDestroy() {
+    this.saveObservableSubscription.unsubscribe();
   }
 
   saveReporting() {

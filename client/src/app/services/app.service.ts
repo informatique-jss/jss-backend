@@ -11,6 +11,9 @@ export class AppService {
   private title: BehaviorSubject<string> = new BehaviorSubject<string>("title");
   titleObservable = this.title.asObservable();
 
+  private save: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  saveObservable = this.save.asObservable();
+
   private sidenavOpenState: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
   sidenavOpenStateObservable = this.sidenavOpenState.asObservable();
 
@@ -25,6 +28,10 @@ export class AppService {
 
   changeSidenavOpenState(sidenavOpenState: boolean) {
     this.sidenavOpenState.next(sidenavOpenState);
+  }
+
+  triggerSaveEvent() {
+    this.save.next(true);
   }
 
   displaySnackBar(message: string, isError: boolean, duration: number) {

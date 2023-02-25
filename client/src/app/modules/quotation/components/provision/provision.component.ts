@@ -3,6 +3,7 @@ import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
 import { ActivatedRoute } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { ANNOUNCEMENT_STATUS_DONE, ANNOUNCEMENT_STATUS_IN_PROGRESS, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN, SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT_AUTHORITY } from 'src/app/libs/Constants';
 import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
 import { WorkflowDialogComponent } from 'src/app/modules/miscellaneous/components/workflow-dialog/workflow-dialog.component';
@@ -59,6 +60,8 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
   journalTypeSpel = this.constantService.getJournalTypeSpel();
   getProvisionLabel = QuotationComponent.computeProvisionLabel;
 
+  saveObservableSubscription: Subscription = new Subscription;
+
   currentProvisionWorkflow: Provision | undefined;
 
   constructor(
@@ -96,6 +99,18 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     this.domiciliationStatusService.getDomiciliationStatus().subscribe(response => this.domiciliationStatus = response);
     this.announcementStatusService.getAnnouncementStatus().subscribe(response => this.announcementStatus = response);
     this.simpleProvisionStatusService.getSimpleProvisionStatus().subscribe(response => this.simpleProvisionStatus = response);
+
+    this.saveObservableSubscription = this.appService.saveObservable.subscribe(response => {
+      if (response)
+        if (this.editMode)
+          this.saveAsso()
+        else if (this.asso)
+          this.editAsso()
+    });
+  }
+
+  ngOnDestroy() {
+    this.saveObservableSubscription.unsubscribe();
   }
 
   ngAfterContentChecked(): void {

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { Subscription } from 'rxjs';
 import { Constant } from 'src/app/modules/miscellaneous/model/Constant';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { AppService } from 'src/app/services/app.service';
@@ -20,8 +21,22 @@ export class ConstantComponent implements OnInit {
   constantForm = this.formBuilder.group({});
   editMode: boolean = false;
 
+  saveObservableSubscription: Subscription = new Subscription;
+
   ngOnInit() {
     this.refreshConstant();
+
+    this.saveObservableSubscription = this.appService.saveObservable.subscribe(response => {
+      if (response)
+        if (this.editMode)
+          this.saveConstant()
+        else
+          this.editConstant()
+    });
+  }
+
+  ngOnDestroy() {
+    this.saveObservableSubscription.unsubscribe();
   }
 
   refreshConstant() {

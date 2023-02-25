@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatAccordion } from '@angular/material/expansion';
 import { ActivatedRoute } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { InvoiceSearch } from 'src/app/modules/invoicing/model/InvoiceSearch';
 import { City } from 'src/app/modules/miscellaneous/model/City';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
@@ -47,6 +48,8 @@ export class ConfrereComponent implements OnInit {
   invoiceSearch: InvoiceSearch = {} as InvoiceSearch;
   responsableAccountSearch: ITiers | undefined;
 
+  saveObservableSubscription: Subscription = new Subscription;
+
   ngOnInit(): void {
     this.appService.changeHeaderTitle("Confrères");
     let idConfrere = this.activatedRoute.snapshot.params.id;
@@ -63,6 +66,18 @@ export class ConfrereComponent implements OnInit {
     this.displayedColumns.push({ id: "id", fieldName: "id", label: "Identifiant technique" } as SortTableColumn);
     this.displayedColumns.push({ id: "code", fieldName: "code", label: "Codification fonctionnelle" } as SortTableColumn);
     this.displayedColumns.push({ id: "label", fieldName: "label", label: "Libellé" } as SortTableColumn);
+
+    this.saveObservableSubscription = this.appService.saveObservable.subscribe(response => {
+      if (response)
+        if (this.editMode)
+          this.saveConfrere()
+        else if (this.selectedConfrere && this.selectedConfrere.id)
+          this.editConfrere()
+    });
+  }
+
+  ngOnDestroy() {
+    this.saveObservableSubscription.unsubscribe();
   }
 
   entityForm2 = this.formBuilder.group({

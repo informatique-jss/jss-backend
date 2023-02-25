@@ -1,5 +1,6 @@
 import { AfterContentChecked, ChangeDetectorRef, Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, UrlSegment } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { REPORTING_DATASET_QUOTATION_FOR_TIERS } from 'src/app/libs/Constants';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { AffaireSearch } from 'src/app/modules/quotation/model/AffaireSearch';
@@ -39,6 +40,8 @@ export class TiersComponent implements OnInit, AfterContentChecked {
 
   dataToDisplay: any | undefined;
   reportingSettings: string = "";
+
+  saveObservableSubscription: Subscription = new Subscription;
 
   selectedTabIndex = 0;
 
@@ -90,6 +93,18 @@ export class TiersComponent implements OnInit, AfterContentChecked {
       // Blank page
       this.appService.changeHeaderTitle("Tiers / Responsables");
     }
+
+    this.saveObservableSubscription = this.appService.saveObservable.subscribe(response => {
+      if (response)
+        if (this.editMode)
+          this.saveTiers()
+        else if (this.tiers && this.tiers.id)
+          this.editTiers()
+    });
+  }
+
+  ngOnDestroy() {
+    this.saveObservableSubscription.unsubscribe();
   }
 
   loadReporting() {
