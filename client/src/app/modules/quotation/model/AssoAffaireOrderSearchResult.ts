@@ -14,4 +14,5 @@ export interface AssoAffaireOrderSearchResult {
   provisionId: number;
   isEmergency: boolean;
   waitedCompetentAuthorityLabel: string;
+  provisionStatusDatetime: Date;
 }

@@ -28,6 +28,7 @@ public interface AssoAffaireOrderRepository extends CrudRepository<AssoAffaireOr
                         " asso.id as assoId," +
                         " p.is_emergency as isEmergency," +
                         " p.id as provisionId, " +
+                        " max(audit.datetime) as provisionStatusDatetime, " +
                         " sp_ca.label as waitedCompetentAuthorityLabel " +
                         " from asso_affaire_order asso " +
                         " join affaire a on a.id = asso.id_affaire" +
@@ -54,13 +55,33 @@ public interface AssoAffaireOrderRepository extends CrudRepository<AssoAffaireOr
                         " left join competent_authority sp_ca on sp_ca.id = sp.id_waited_competent_authority " +
                         " left join bodacc bo on bo.id = p.id_bodacc" +
                         " left join bodacc_status bos on bos.id = bo.id_bodacc_status" +
+                        " left join audit on " +
+                        "  audit.entity_id=an.id and audit.entity = 'Announcement' and audit.field_name = 'announcementStatus' "
+                        +
+                        "  or audit.entity_id=fo.id and audit.entity = 'Formalite' and audit.field_name = 'formaliteStatus' "
+                        +
+                        "  or audit.entity_id=dom.id and audit.entity = 'Domiciliation' and audit.field_name = 'domiciliationStatus' "
+                        +
+                        "  or audit.entity_id=sp.id and audit.entity = 'SimpleProvision' and audit.field_name = 'simpleProvisionStatus' "
+                        +
+                        "  or audit.entity_id=bo.id and audit.entity = 'Bodacc' and audit.field_name = 'bodaccStatus' "
+                        +
                         " where cs.code not in (:excludedCustomerOrderStatusCode) and (COALESCE(:responsible)=0 or asso.id_employee in (:responsible))"
                         + " and ( COALESCE(:customerOrder)=0 or cf.id in (:customerOrder) or r.id in (:customerOrder) or t.id in (:customerOrder))"
                         +
                         " and ( COALESCE(:assignedTo) =0 or p.id_employee in (:assignedTo)) " +
                         " and (:label ='' or upper(a.denomination)  like '%' || upper(CAST(:label as text))  || '%'  or upper(a.firstname)  like '%' || upper(CAST(:label as text)) || '%' or upper(a.lastname)  like '%' || upper(CAST(:label as text)) || '%') "
                         +
-                        " and (COALESCE(:status) =0 or coalesce(ans.id,fs.id,doms.id, bos.id,sps.id) in (:status) )")
+                        " and (COALESCE(:status) =0 or coalesce(ans.id,fs.id,doms.id, bos.id,sps.id) in (:status) ) " +
+                        " group by a.denomination, a.firstname , a.lastname,  " +
+                        "  t.denomination, t.firstname , t.lastname,  " +
+                        "  t2.denomination, t2.firstname , t2.lastname,  " +
+                        "  r.firstname , r.lastname, asso.id, " +
+                        "  a.address ,a.postal_Code ,ci.label ,  " +
+                        "  cf.label,e1.id,e2.id , pf.label ,pt.label,ans.label,fs.label,doms.label, bos.label,sps.label, "
+                        +
+                        " asso.id_customer_order,p.is_emergency,p.id  ,sp_ca.label " +
+                        "")
         ArrayList<AssoAffaireOrderSearchResult> findAsso(@Param("responsible") List<Integer> responsibleIds,
                         @Param("assignedTo") List<Integer> assignedToIds,
                         @Param("label") String label, @Param("status") ArrayList<Integer> status,

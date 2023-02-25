@@ -7,6 +7,7 @@ import { Employee } from 'src/app/modules/profile/model/Employee';
 import { EmployeeService } from 'src/app/modules/profile/services/employee.service';
 import { AppService } from 'src/app/services/app.service';
 import { UserPreferenceService } from 'src/app/services/user.preference.service';
+import { formatDateTimeForSortTable } from '../../../../libs/FormatHelper';
 import { AffaireSearch } from '../../model/AffaireSearch';
 import { AssoAffaireOrderSearchResult } from '../../model/AssoAffaireOrderSearchResult';
 import { AssoAffaireOrderSearchResultService } from '../../services/asso.affaire.order.search.result.service';
@@ -98,6 +99,7 @@ export class ProvisionListComponent implements OnInit {
       } as SortTableColumn);
       this.availableColumns.push({ id: "provisionType", fieldName: "provisionTypeLabel", label: "Prestation", colorWarnFunction: (element: any) => { return element.isEmergency } } as SortTableColumn);
       this.availableColumns.push({ id: "status", fieldName: "statusLabel", label: "Statut", colorWarnFunction: (element: any) => { return element.isEmergency } } as SortTableColumn);
+      this.availableColumns.push({ id: "provisionStatusDatetime", fieldName: "provisionStatusDatetime", label: "Mise à jour", valueFonction: formatDateTimeForSortTable, colorWarnFunction: (element: any) => { return element.isEmergency } } as SortTableColumn);
       this.availableColumns.push({ id: "waitedCompetentAuthorityLabel", fieldName: "waitedCompetentAuthorityLabel", label: "Autorité compétente en attente" } as SortTableColumn);
       this.getCurrentEmployee();
 
