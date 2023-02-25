@@ -35,6 +35,10 @@
             line-height: 9px;
             font-size: 9px
         }
+
+        .td-with-price {
+            width: 130px;
+        }
     </style>
 </head>
 
@@ -83,7 +87,7 @@
     <table style="border : solid; border-color: rgb(0,83,159);width: 680px;margin-top: 20px;">
         <th:block th:each="asso : ${assos}">
             <tr>
-                <td colspan="4" style="padding-top: 20px;">
+                <td style="padding-top: 20px;">
                     <strong>Société <span th:text="${asso.affaire.denomination}"></span><span
                             th:text="${asso.affaire.firstname}"></span>
                         <span th:text="${asso.affaire.lastname}"></span></strong>
@@ -92,44 +96,44 @@
             </tr>
             <th:block th:each="provision : ${asso.provisions}">
                 <tr>
-                    <td colspan="4">
+                    <td>
                         <span th:text="${provision.provisionType.label}"></span>
                     </td>
-                    <td></td>
+                    <td class="td-with-price"></td>
                 </tr>
                 <th:block th:each="invoiceItem : ${provision.invoiceItems}"
                     th:if="${invoiceItem.billingItem.billingType.isDebour==false}">
                     <tr>
-                        <td colspan="4">
+                        <td>
                             <span th:text="${invoiceItem.label}"></span>
                         </td>
-                        <td style="text-align: right;white-space: nowrap;">
+                        <td class="td-with-price" style="text-align: right;white-space: nowrap;">
                             <span th:text="${#numbers.formatDecimal(invoiceItem.preTaxPrice,1,2)}"></span>
                             €
                         </td>
                     </tr>
                     <tr th:if="${invoiceItem.discountAmount!=null} and ${invoiceItem.discountAmount>0}">
-                        <td colspan="4">
+                        <td>
                             <span>Remise</span>
                         </td>
-                        <td style="text-align: right;white-space: nowrap;">
+                        <td class="td-with-price" style="text-align: right;white-space: nowrap;">
                             - <span th:text="${#numbers.formatDecimal(invoiceItem.discountAmount,1,2)}"></span>
                             €</td>
                     </tr>
                 </th:block>
                 <th:block th:each="debour : ${provision.debours}" th:if="${provision.debours!=null}">
                     <tr>
-                        <td colspan="4">
+                        <td>
                             <span th:text="${debour.competentAuthority.label}"></span> : <span
                                 th:text="${debour.billingType.label}"></span>
                         </td>
-                        <td style="text-align: right;white-space: nowrap;"
+                        <td class="td-with-price" style="text-align: right;white-space: nowrap;"
                             th:if="${debour.billingType.isNonTaxable==false}">
                             <span
                                 th:text="${#numbers.formatDecimal(debour.debourAmount-(debour.debourAmount/(1f+(vatDebour.rate/100f)))*vatDebour.rate/100f,1,2)}"></span>
                             €
                         </td>
-                        <td style="text-align: right;white-space: nowrap;"
+                        <td class="td-with-price" style="text-align: right;white-space: nowrap;"
                             th:if="${debour.billingType.isNonTaxable==true}">
                             <span th:text="${#numbers.formatDecimal(debour.debourAmount,1,2)}"></span>
                             €
@@ -142,92 +146,94 @@
     <p style="margin-top: 10px;">&#160;</p>
     <table style="border : solid; border-color: rgb(0,83,159);width: 680px;margin-top: 20px;">
         <tr>
-            <td colspan="4" style="text-align: right">
+            <td>
                 Prix total HT
             </td>
-            <td style="text-align: right;white-space: nowrap;"><span
+            <td class="td-with-price" style="text-align: right;white-space: nowrap;"><span
                     th:text="${#numbers.formatDecimal(preTaxPriceTotal,1,2)}"></span>
                 €
             </td>
         </tr>
 
         <tr th:if="${discountTotal!=null}">
-            <td colspan="4" style="text-align: right">
+            <td>
                 Remise totale
             </td>
-            <td style="text-align: right;white-space: nowrap;"> - <span
+            <td class="td-with-price" style="text-align: right;white-space: nowrap;"> - <span
                     th:text="${#numbers.formatDecimal(discountTotal,1,2)}"></span>
                 €
             </td>
         </tr>
 
         <tr th:if="${discountTotal!=null}">
-            <td colspan="4" style="text-align: right">
+            <td>
                 Total HT
             </td>
-            <td style="text-align: right;white-space: nowrap;"><span
+            <td class="td-with-price" style="text-align: right;white-space: nowrap;"><span
                     th:text="${#numbers.formatDecimal(preTaxPriceTotalWithDicount,1,2)}"></span>
                 €
             </td>
         </tr>
 
-        <tr th:if="${vats!=null}" th:each="vat : ${vats}" style="text-align: right">
-            <td colspan="4"><span th:text="${vat.label}"></span><span>
+        <tr th:if="${vats!=null}" th:each="vat : ${vats}">
+            <td><span th:text="${vat.label}"></span><span>
                     sur la base de </span><span th:text="${#numbers.formatDecimal(vat.base,1,2)}"></span>
                 €
             </td>
-            <td style="text-align: right;white-space: nowrap;"><span
+            <td class="td-with-price" style="text-align: right;white-space: nowrap;"><span
                     th:text="${#numbers.formatDecimal(vat.total,1,2)}"></span>
                 €
             </td>
         </tr>
 
         <tr>
-            <td colspan="4" style="text-align: right">
+            <td>
                 Prix TTC
             </td>
-            <td style="text-align: right;white-space: nowrap;"><span
+            <td class="td-with-price" style="text-align: right;white-space: nowrap;"><span
                     th:text="${#numbers.formatDecimal(priceTotal,1,2)}"></span>
                 €
             </td>
         </tr>
         <tr th:each="deposit : ${deposits}" th:if="${deposits.size()>0}">
-            <td colspan="4" style="text-align: right">
+            <td>
                 Acompte n°<span th:text="${deposit.id}"></span>
             </td>
-            <td style="text-align: right;white-space: nowrap;" th:if="${deposit.originPayment!=null}"> - <span
+            <td class="td-with-price" style="text-align: right;white-space: nowrap;"
+                th:if="${deposit.originPayment!=null}"> - <span
                     th:text="${#numbers.formatDecimal(deposit.originPayment.paymentAmount,1,2)}"></span>
                 €
             </td>
-            <td style="text-align: right;white-space: nowrap;" th:if="${deposit.originPayment==null}"> - <span
+            <td class="td-with-price" style="text-align: right;white-space: nowrap;"
+                th:if="${deposit.originPayment==null}"> - <span
                     th:text="${#numbers.formatDecimal(deposit.depositAmount,1,2)}"></span>
                 €
             </td>
         </tr>
 
         <tr th:if="${remainingToPay>0}  and ${invoice.isCreditNote==false} and ${deposits.size()>0}">
-            <td colspan="4" style="text-align: right">
+            <td>
                 Restant dû
             </td>
-            <td style="text-align: right;white-space: nowrap;"><span
+            <td class="td-with-price" style="text-align: right;white-space: nowrap;"><span
                     th:text="${#numbers.formatDecimal(remainingToPay,1,2)}"></span>
                 €
             </td>
         </tr>
         <tr th:if="${0>remainingToPay}  and ${invoice.isCreditNote==false} and ${deposits.size()>0}">
-            <td colspan="4" style="text-align: right">
+            <td>
                 Solde en votre faveur
             </td>
-            <td style="text-align: right;white-space: nowrap;"><span
+            <td class="td-with-price" style="text-align: right;white-space: nowrap;"><span
                     th:text="${#numbers.formatDecimal(-remainingToPay,1,2)}"></span>
                 €
             </td>
         </tr>
         <tr th:if=" ${invoice.isCreditNote==true}">
-            <td colspan="4" style="text-align: right">
+            <td>
                 Net à créditer
             </td>
-            <td style="text-align: right;white-space: nowrap;"><span
+            <td class="td-with-price" style="text-align: right;white-space: nowrap;"><span
                     th:text="${#numbers.formatDecimal(priceTotal-remainingToPay,1,2)}"></span>
                 €
             </td>
