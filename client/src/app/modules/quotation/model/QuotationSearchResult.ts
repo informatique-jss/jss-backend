@@ -11,6 +11,7 @@ export interface QuotationSearchResult {
   tiersId: number;
   confrereId: number;
   affaireLabel: string;
+  totalPrice: number;
 }
 
 

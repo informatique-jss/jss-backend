@@ -24,4 +24,6 @@ public interface OrderingSearchResult {
     public Integer getConfrereId();
 
     public String getAffaireLabel();
+
+    public Float getTotalPrice();
 }

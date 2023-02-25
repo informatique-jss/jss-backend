@@ -4,6 +4,7 @@ import { formatDateForSortTable, toIsoString } from 'src/app/libs/FormatHelper';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { AppService } from 'src/app/services/app.service';
+import { formatEurosForSortTable } from '../../../../libs/FormatHelper';
 import { UserPreferenceService } from '../../../../services/user.preference.service';
 import { Employee } from '../../../profile/model/Employee';
 import { EmployeeService } from '../../../profile/services/employee.service';
@@ -66,6 +67,7 @@ export class OrderingListComponent implements OnInit {
       this.availableColumns.push({ id: "customerOrderDescription", fieldName: "customerOrderDescription", label: "Description", isShrinkColumn: true } as SortTableColumn);
       this.availableColumns.push({ id: "tiersLabel", fieldName: "tiersLabel", label: "Tiers", actionLinkFunction: this.getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la fiche du tiers" } as SortTableColumn);
       this.availableColumns.push({ id: "customerOrderLabel", fieldName: "customerOrderLabel", label: "Donneur d'ordre", actionLinkFunction: this.getColumnLink, actionIcon: "visibility", actionTooltip: "Voir la fiche du donneur d'ordre" } as SortTableColumn);
+      this.availableColumns.push({ id: "totalPrice", fieldName: "totalPrice", label: "Prix TTC", valueFonction: formatEurosForSortTable } as SortTableColumn);
       this.availableColumns.push({
         id: "salesEmployee", fieldName: "salesEmployeeId", label: "Commercial", displayAsEmployee: true, valueFonction: (element: any) => {
           if (element && this.allEmployees) {

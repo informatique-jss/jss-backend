@@ -11,4 +11,5 @@ export interface OrderingSearchResult {
   tiersId: number;
   confrereId: number;
   affaireLabel: string;
+  totalPrice: number;
 }
