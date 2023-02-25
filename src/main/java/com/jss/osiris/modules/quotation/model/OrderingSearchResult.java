@@ -26,4 +26,10 @@ public interface OrderingSearchResult {
     public String getAffaireLabel();
 
     public Float getTotalPrice();
+
+    public Integer getQuotationId();
+
+    public String getAffaireSiren();
+
+    public String getAffaireAddress();
 }
