@@ -3,6 +3,7 @@ package com.jss.osiris.libs.transfer;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 
 public class PmtInfBean {
@@ -52,6 +53,7 @@ public class PmtInfBean {
 	CdtrSchmeIdBean cdtrSchmeIdBean;
 
 	@JacksonXmlProperty(localName = "CdtTrfTxInf")
+	@JacksonXmlElementWrapper(useWrapping = false)
 	List<CdtTrfTxInfBean> cdtTrfTxInfBeanList;
 
 	@JacksonXmlProperty(localName = "DrctDbtTxInf")
