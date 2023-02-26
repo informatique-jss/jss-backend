@@ -175,6 +175,11 @@ public class Confrere implements ITiers {
 	private Employee salesEmployee;
 
 	@ManyToOne
+	@JoinColumn(name = "id_default_customer_order_employee")
+	@IndexedField
+	private Employee defaultCustomerOrderEmployee;
+
+	@ManyToOne
 	@JoinColumn(name = "id_formaliste")
 	private Employee formalisteEmployee;
 
@@ -565,6 +570,14 @@ public class Confrere implements ITiers {
 
 	public void setSepaMandateSignatureDate(LocalDate sepaMandateSignatureDate) {
 		this.sepaMandateSignatureDate = sepaMandateSignatureDate;
+	}
+
+	public Employee getDefaultCustomerOrderEmployee() {
+		return defaultCustomerOrderEmployee;
+	}
+
+	public void setDefaultCustomerOrderEmployee(Employee defaultCustomerOrderEmployee) {
+		this.defaultCustomerOrderEmployee = defaultCustomerOrderEmployee;
 	}
 
 }

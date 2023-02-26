@@ -117,6 +117,11 @@ public class QuotationServiceImpl implements QuotationService {
                 mailService.populateMailIds(document.getMailsClient());
             }
 
+        // Set default customer order assignation to sales employee if not set
+        if (quotation.getAssignedTo() == null)
+            quotation.setAssignedTo(
+                    getCustomerOrderOfQuotation(quotation).getDefaultCustomerOrderEmployee());
+
         // Complete provisions
         if (quotation.getAssoAffaireOrders() != null)
             for (AssoAffaireOrder assoAffaireOrder : quotation.getAssoAffaireOrders()) {
@@ -222,6 +227,14 @@ public class QuotationServiceImpl implements QuotationService {
             salesEmployeeId.add(0);
         }
 
+        ArrayList<Integer> assignedToEmployeeId = new ArrayList<Integer>();
+        if (quotationSearch.getAssignedToEmployee() != null) {
+            for (Employee employee : employeeService.getMyHolidaymaker(quotationSearch.getAssignedToEmployee()))
+                assignedToEmployeeId.add(employee.getId());
+        } else {
+            assignedToEmployeeId.add(0);
+        }
+
         ArrayList<Integer> customerOrderId = new ArrayList<Integer>();
         if (quotationSearch.getCustomerOrders() != null && quotationSearch.getCustomerOrders().size() > 0) {
             for (ITiers tiers : quotationSearch.getCustomerOrders())
@@ -245,7 +258,7 @@ public class QuotationServiceImpl implements QuotationService {
             quotationSearch.setEndDate(LocalDateTime.now().plusYears(100));
 
         return quotationRepository.findQuotations(
-                salesEmployeeId,
+                salesEmployeeId, assignedToEmployeeId,
                 statusId,
                 quotationSearch.getStartDate().withHour(0).withMinute(0),
                 quotationSearch.getEndDate().withHour(23).withMinute(59), customerOrderId, affaireId);
@@ -429,4 +442,12 @@ public class QuotationServiceImpl implements QuotationService {
             }
 
     }
+
+    @Override
+    public void updateAssignedToForQuotation(Quotation quotation, Employee employee)
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+        quotation.setAssignedTo(employee);
+        addOrUpdateQuotation(quotation);
+    }
+
 }

@@ -22,6 +22,7 @@ public interface CustomerOrderRepository extends CrudRepository<CustomerOrder, I
                         + " cos.label as customerOrderStatus,"
                         + " co.created_date as createdDate,"
                         + " coalesce(cf.id_commercial,r.id_commercial,t.id_commercial,t2.id_commercial) as salesEmployeeId,"
+                        + " co.id_assigned_to as assignedToEmployeeId,"
                         + " co.id as customerOrderId,"
                         + " r.id as responsableId,"
                         + " min(quotation.id_quotation) as quotationId,"
@@ -47,12 +48,14 @@ public interface CustomerOrderRepository extends CrudRepository<CustomerOrder, I
                         + " left join tiers t2 on t2.id = r.id_tiers"
                         + " where ( COALESCE(:customerOrderStatus) =0 or co.id_customer_order_status in (:customerOrderStatus)) "
                         + " and co.created_date>=:startDate and co.created_date<=:endDate "
+                        + " and ( COALESCE(:assignedToEmployee) =0 or co.id_assigned_to=:assignedToEmployee)"
                         + " and ( COALESCE(:salesEmployee) =0 or cf.id_commercial in (:salesEmployee) or r.id_commercial in (:salesEmployee) or t.id_commercial in (:salesEmployee) or t.id_commercial is null and t2.id_commercial in (:salesEmployee))"
                         + " and ( COALESCE(:customerOrder)=0 or cf.id in (:customerOrder) or r.id in (:customerOrder) or t.id in (:customerOrder))"
                         + " and ( COALESCE(:affaire)=0 or af.id in (:affaire) )"
                         + " group by cf.id, cf.label, r.id, r.firstname, r.lastname, t.denomination, t.firstname, t.lastname, t2.denomination, t2.firstname, t2.lastname, cos.label, "
-                        + " co.created_date, cf.id_commercial, r.id_commercial, t.id_commercial, t2.id_commercial, co.id, r.id, t.id,t2.id, cf.id, co.description ")
+                        + " co.created_date, cf.id_commercial, r.id_commercial, t.id_commercial, t2.id_commercial, co.id, r.id, t.id,t2.id, cf.id, co.description,co.id_assigned_to ")
         List<OrderingSearchResult> findCustomerOrders(@Param("salesEmployee") List<Integer> salesEmployee,
+                        @Param("assignedToEmployee") List<Integer> assignedToEmployee,
                         @Param("customerOrderStatus") List<Integer> customerOrderStatus,
                         @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                         @Param("customerOrder") List<Integer> customerOrder, @Param("affaire") List<Integer> affaire);

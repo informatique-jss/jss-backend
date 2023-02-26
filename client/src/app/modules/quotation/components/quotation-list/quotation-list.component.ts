@@ -46,6 +46,7 @@ export class QuotationListComponent implements OnInit {
       if (this.bookmark && !this.isForDashboard && !this.isForTiersIntegration) {
         this.quotationSearch = {} as QuotationSearch;
         this.quotationSearch.salesEmployee = this.bookmark.salesEmployee;
+        this.quotationSearch.assignedToEmployee = this.bookmark.assignedToEmployee;
         this.quotationSearch.quotationStatus = this.bookmark.quotationStatus;
       }
 
@@ -68,6 +69,16 @@ export class QuotationListComponent implements OnInit {
           if (element && this.allEmployees) {
             for (let employee of this.allEmployees)
               if (employee.id == element.salesEmployeeId)
+                return employee;
+          }
+          return undefined;
+        }
+      } as SortTableColumn);
+      this.availableColumns.push({
+        id: "assignedToEmployee", fieldName: "assignedToEmployeeId", label: "Assigné à", displayAsEmployee: true, valueFonction: (element: any) => {
+          if (element && this.allEmployees) {
+            for (let employee of this.allEmployees)
+              if (employee.id == element.assignedToEmployeeId)
                 return employee;
           }
           return undefined;
@@ -97,15 +108,6 @@ export class QuotationListComponent implements OnInit {
     }
     else
       this.displayedColumns.push(...this.availableColumns);
-  }
-
-  getSalesEmployee(element: any): Employee | undefined {
-    if (element && this.allEmployees) {
-      for (let employee of this.allEmployees)
-        if (employee.id == element.salesEmployeeId)
-          return employee;
-    }
-    return undefined;
   }
 
   getActionLink(action: SortTableAction, element: any) {

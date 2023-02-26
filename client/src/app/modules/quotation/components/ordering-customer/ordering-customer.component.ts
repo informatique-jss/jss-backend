@@ -17,6 +17,7 @@ import { SortTableAction } from '../../../miscellaneous/model/SortTableAction';
 import { ResponsableService } from '../../../tiers/services/responsable.service';
 import { Confrere } from '../../model/Confrere';
 import { IQuotation } from '../../model/IQuotation';
+import { CustomerOrderService } from '../../services/customer.order.service';
 import { QuotationComponent } from '../quotation/quotation.component';
 
 @Component({
@@ -49,6 +50,7 @@ export class OrderingCustomerComponent implements OnInit {
     private responsableService: ResponsableService,
     private indexEntityService: IndexEntityService,
     protected documentTypeService: DocumentTypeService,
+    private customerOrderService: CustomerOrderService,
     public specialOfferDialog: MatDialog) { }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -180,4 +182,14 @@ export class OrderingCustomerComponent implements OnInit {
     this.appService.openRoute(event, link, null);
   }
 
+  updateAssignedToForCustomerOrder(employee: any) {
+    if (this.editMode)
+      return;
+    if (instanceOfCustomerOrder(this.quotation))
+      this.customerOrderService.updateAssignedToForCustomerOrder(this.quotation, employee).subscribe(response => {
+      });
+    if (instanceOfQuotation(this.quotation))
+      this.customerOrderService.updateAssignedToForQuotation(this.quotation, employee).subscribe(response => {
+      });
+  }
 }

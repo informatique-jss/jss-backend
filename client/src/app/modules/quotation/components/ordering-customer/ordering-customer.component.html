@@ -1,249 +1,257 @@
 <div class="mat-elevation-z2 form-div">
-  <fieldset [disabled]="editMode==false" class="fieldset-no-border">
-    <form [formGroup]="orderingCustomerForm">
-      <div class="full-width">
-        <fieldset [disabled]="editMode==false" class="fieldset-no-border">
+  <form [formGroup]="orderingCustomerForm">
+    <div class="full-width">
+      <table class="full-width">
+        <tr>
+          <td>
+            <div>
+              <autocomplete-employee [(model)]="quotation.assignedTo" [form]="orderingCustomerForm"
+                propertyName="assignedTo" [isMandatory]="false" [isDisabled]="false" label="Commande assignée à"
+                (onOptionSelected)="updateAssignedToForCustomerOrder($event)">
+              </autocomplete-employee>
+            </div>
+          </td>
+        </tr>
+      </table>
+      <fieldset [disabled]="editMode==false" class="fieldset-no-border">
+        <table class="full-width">
+          <tr>
+            <td *ngIf="!searchedResponsable && !quotation.confrere">
+              <autocomplete-tiers-individual [(model)]="searchedTiers" [form]="orderingCustomerForm" label="Tiers"
+                [isDisabled]="!editMode" propertyName="tiers" (onOptionSelected)="fillTiers($event)"
+                [isMandatory]="true" [conditionnalRequired]="!quotation.responsable && !quotation.confrere"
+                fieldToCheckAgainstForValidation="entityId">
+              </autocomplete-tiers-individual>
+            </td>
+            <td *ngIf="!searchedTiers && !quotation.confrere">
+              <autocomplete-responsable [(model)]="searchedResponsable" [form]="orderingCustomerForm"
+                label="Responsable" [isDisabled]="!editMode" propertyName="responsable" [isMandatory]="true"
+                [conditionnalRequired]="!quotation.tiers && !quotation.confrere"
+                fieldToCheckAgainstForValidation="entityId"
+                (onOptionSelected)="fillResponsable($event)"></autocomplete-responsable>
+            </td>
+            <td *ngIf="!searchedTiers && !searchedResponsable">
+              <autocomplete-confrere label="Confrère" [(model)]="quotation.confrere" [form]="orderingCustomerForm"
+                [isMandatory]="true" [conditionnalRequired]="!quotation.responsable && !quotation.tiers"
+                propertyName="confrere" [isDisabled]="!editMode" (onOptionSelected)="fillConfrere($event)">
+              </autocomplete-confrere>
+            </td>
+          </tr>
+        </table>
+        <div *ngIf="quotation.tiers ||quotation.confrere">
           <table class="full-width">
             <tr>
-              <td *ngIf="!searchedResponsable && !quotation.confrere">
-                <autocomplete-tiers-individual [(model)]="searchedTiers" [form]="orderingCustomerForm" label="Tiers"
-                  [isDisabled]="!editMode" propertyName="tiers" (onOptionSelected)="fillTiers($event)"
-                  [isMandatory]="true" [conditionnalRequired]="!quotation.responsable && !quotation.confrere"
-                  fieldToCheckAgainstForValidation="entityId">
-                </autocomplete-tiers-individual>
-              </td>
-              <td *ngIf="!searchedTiers && !quotation.confrere">
-                <autocomplete-responsable [(model)]="searchedResponsable" [form]="orderingCustomerForm"
-                  label="Responsable" [isDisabled]="!editMode" propertyName="responsable" [isMandatory]="true"
-                  [conditionnalRequired]="!quotation.tiers && !quotation.confrere"
-                  fieldToCheckAgainstForValidation="entityId"
-                  (onOptionSelected)="fillResponsable($event)"></autocomplete-responsable>
-              </td>
-              <td *ngIf="!searchedTiers && !searchedResponsable">
-                <autocomplete-confrere label="Confrère" [(model)]="quotation.confrere" [form]="orderingCustomerForm"
-                  [isMandatory]="true" [conditionnalRequired]="!quotation.responsable && !quotation.tiers"
-                  propertyName="confrere" [isDisabled]="!editMode" (onOptionSelected)="fillConfrere($event)">
-                </autocomplete-confrere>
+              <td *ngIf="quotation.tiers">Client : {{quotation.tiers.denomination?quotation.tiers.denomination :
+                (quotation.tiers.firstname+"
+                "+quotation.tiers.lastname)}} ({{quotation.tiers.id}}) <mat-icon matTooltip="Ouvrir le client"
+                  (click)="openRoute($event,'/tiers/'+quotation.tiers.id)"
+                  (auxclick)="openRoute($event,'/tiers/'+quotation.tiers.id)" class="pointer">
+                  visibility
+                </mat-icon>
               </td>
             </tr>
           </table>
-          <div *ngIf="quotation.tiers ||quotation.confrere">
-            <table class="full-width">
-              <tr>
-                <td *ngIf="quotation.tiers">Client : {{quotation.tiers.denomination?quotation.tiers.denomination :
-                  (quotation.tiers.firstname+"
-                  "+quotation.tiers.lastname)}} ({{quotation.tiers.id}}) <mat-icon matTooltip="Ouvrir le client"
-                    (click)="openRoute($event,'/tiers/'+quotation.tiers.id)"
-                    (auxclick)="openRoute($event,'/tiers/'+quotation.tiers.id)" class="pointer">
-                    visibility
-                  </mat-icon>
-                </td>
-              </tr>
-            </table>
-            <table class="full-width">
-              <tr *ngIf="quotation.tiers ">
-                <td>Commercial : {{quotation.tiers.salesEmployee?.firstname}}
-                  {{quotation.tiers.salesEmployee?.lastname}}
-                </td>
-              </tr>
-            </table>
-            <table class="full-width">
-              <tr *ngIf="quotation.tiers ">
-                <td>Adresse : {{quotation.tiers.address}} {{quotation.tiers.postalCode}}
-                  {{quotation.tiers.city?quotation.tiers.city.label:""}}
-                  {{quotation.tiers.country?quotation.tiers.country.label:""}}</td>
-              </tr>
-              <tr *ngIf="quotation.confrere && quotation.confrere.city && quotation.confrere.city ">
-                <td>Adresse : {{quotation.confrere.address}} {{quotation.confrere.postalCode}}
-                  {{quotation.confrere.city.label}}
-                  {{quotation.confrere.country.label}}</td>
-              </tr>
-            </table>
-            <table class="full-width">
-              <tr>
-                <td>
-                  <chips-mail [(model)]="getCustomerOrderForIQuotation(quotation).mails" label="Mails"
-                    [form]="orderingCustomerForm" propertyName="mails" [isDisabled]="true"></chips-mail>
-                </td>
-                <td>
-                  <chips-phone [(model)]="getCustomerOrderForIQuotation(quotation).phones" label="Téléphones"
-                    [form]="orderingCustomerForm" propertyName="phones" [isDisabled]="true"></chips-phone>
-                </td>
-              </tr>
-            </table>
-            <div class="div-customer-order"
-              *ngIf="quotation && instanceOfQuotation(quotation) && quotation.customerOrders && quotation.customerOrders.length>0">
-              <p>Commandes issues de ce devis</p>
-              <sort-table [actions]="customerOrderTableActions" [columns]="customerOrderDisplayedColumns"
-                [values]="quotation.customerOrders" tableName="Liste commandes">
-              </sort-table>
-            </div>
-            <div class="div-customer-order"
-              *ngIf="quotation && instanceOfCustomerOrder(quotation) && quotation.quotations && quotation.quotations.length>0">
-              <p>Devis issus de cette commande</p>
-              <sort-table [actions]="quotationTableActions" [columns]="quotationDisplayedColumns"
-                [values]="quotation.quotations" tableName="Liste devis">
-              </sort-table>
-            </div>
-            <table class="full-width">
-              <tr>
-                <td>Tarif special :
-                  <ul *ngIf="quotation.tiers ">
-                    <li *ngFor="let specialOffer of quotation.tiers.specialOffers">
-                      {{specialOffer? (specialOffer.code + " - " +specialOffer.label):"Aucun"}}
-                    </li>
-                  </ul>
-                  <ul *ngIf="quotation.confrere ">
-                    <li *ngFor="let specialOffer of quotation.confrere.specialOffers">
-                      {{specialOffer? (specialOffer.code + " - " +specialOffer.label):"Aucun"}}
-                    </li>
-                  </ul>
-                  <button *ngIf="editMode==true && !quotation.overrideSpecialOffer"
-                    matTooltip="Modifier le tarif spécial par défaut" (click)="displayOverrideSpecialOffers()"
-                    mat-icon-button color="accent">
-                    <mat-icon>edit</mat-icon>
-                  </button>
-                  <button *ngIf="editMode==true && quotation.overrideSpecialOffer"
-                    matTooltip="Ne pas modifier le tarif spécial par défaut" (click)="hideOverrideSpecialOffers()"
-                    mat-icon-button color="accent">
-                    <mat-icon>close</mat-icon>
-                  </button>
-                </td>
-              </tr>
-            </table>
-          </div>
-          <div *ngIf="quotation.responsable  && quotation.responsable.tiers">
-            <table class="full-width">
-              <tr>
-                <td>Client : {{quotation.responsable.tiers.denomination?quotation.responsable.tiers.denomination :
-                  (quotation.responsable.tiers.firstname+"
-                  "+quotation.responsable.tiers.lastname)}} ({{quotation.responsable.tiers.id}}) <mat-icon
-                    matTooltip="Ouvrir le client" (click)="openRoute($event,'/tiers/'+quotation.responsable.tiers.id)"
-                    (auxclick)="openRoute($event,'/tiers/'+quotation.responsable.tiers.id)" class="pointer">
-                    visibility
-                  </mat-icon>
-                </td>
-              </tr>
-            </table>
-            <table class="full-width">
-              <tr>
-                <td>Commercial : {{quotation.responsable.salesEmployee?.firstname}}
-                  {{quotation.responsable.salesEmployee?.lastname}}
-                </td>
-              </tr>
-            </table>
-            <table class="full-width">
-              <tr>
-                <td>Adresse : {{quotation.responsable.tiers.address}} {{quotation.responsable.tiers.postalCode}}
-                  {{quotation.responsable.tiers.city?quotation.responsable.tiers.city.label:""}}
-                  {{quotation.responsable.tiers.country?quotation.responsable.tiers.country.label:""}}</td>
-              </tr>
-            </table>
-            <table class="full-width">
-              <tr>
-                <td>
-                  <chips-mail [(model)]="getCustomerOrderForIQuotation(quotation).mails" label="Mails"
-                    [form]="orderingCustomerForm" propertyName="mails" [isDisabled]="true"></chips-mail>
-                </td>
-                <td>
-                  <chips-phone [(model)]="getCustomerOrderForIQuotation(quotation).phones" label="Téléphones"
-                    [form]="orderingCustomerForm" propertyName="phones" [isDisabled]="true"></chips-phone>
-                </td>
-              </tr>
-            </table>
-            <div class="div-customer-order"
-              *ngIf="quotation && instanceOfQuotation(quotation) && quotation.customerOrders && quotation.customerOrders.length>0">
-              <p>Commandes issues de ce devis</p>
-              <sort-table [actions]="customerOrderTableActions" [columns]="customerOrderDisplayedColumns"
-                [values]="quotation.customerOrders" tableName="Liste commandes">
-              </sort-table>
-            </div>
-            <div class="div-customer-order"
-              *ngIf="quotation && instanceOfCustomerOrder(quotation) && quotation.quotations && quotation.quotations.length>0">
-              <p>Devis issus de cette commande</p>
-              <sort-table [actions]="quotationTableActions" [columns]="quotationDisplayedColumns"
-                [values]="quotation.quotations" tableName="Liste devis">
-              </sort-table>
-            </div>
-            <table class="full-width">
-              <tr>
-                <td>Tarif special :
-                  <ul>
-                    <li *ngFor="let specialOffer of quotation.responsable.tiers.specialOffers">
-                      {{specialOffer? (specialOffer.code + " - " +specialOffer.label):"Aucun"}}
-                    </li>
-                  </ul>
-                  <button *ngIf="editMode==true && !quotation.overrideSpecialOffer"
-                    matTooltip="Modifier le tarif spécial par défaut" (click)="displayOverrideSpecialOffers()"
-                    mat-icon-button color="accent">
-                    <mat-icon>edit</mat-icon>
-                  </button>
-                  <button *ngIf="editMode==true && quotation.overrideSpecialOffer"
-                    matTooltip="Ne pas modifier le tarif spécial par défaut" (click)="hideOverrideSpecialOffers()"
-                    mat-icon-button color="accent">
-                    <mat-icon>close</mat-icon>
-                  </button>
-                </td>
-              </tr>
-            </table>
-          </div>
-          <table class="full-width" [hidden]="!quotation.overrideSpecialOffer">
-            <tr>
-              <td>
-                <chips-special-offers [(model)]="quotation.specialOffers" [form]="orderingCustomerForm"
-                  propertyName="specialOffer" [isDisabled]="!editMode"
-                  [conditionnalRequired]="quotation.overrideSpecialOffer">
-                </chips-special-offers>
+          <table class="full-width">
+            <tr *ngIf="quotation.tiers ">
+              <td>Commercial : {{quotation.tiers.salesEmployee?.firstname}}
+                {{quotation.tiers.salesEmployee?.lastname}}
               </td>
+            </tr>
+          </table>
+          <table class="full-width">
+            <tr *ngIf="quotation.tiers ">
+              <td>Adresse : {{quotation.tiers.address}} {{quotation.tiers.postalCode}}
+                {{quotation.tiers.city?quotation.tiers.city.label:""}}
+                {{quotation.tiers.country?quotation.tiers.country.label:""}}</td>
+            </tr>
+            <tr *ngIf="quotation.confrere && quotation.confrere.city && quotation.confrere.city ">
+              <td>Adresse : {{quotation.confrere.address}} {{quotation.confrere.postalCode}}
+                {{quotation.confrere.city.label}}
+                {{quotation.confrere.country.label}}</td>
             </tr>
           </table>
           <table class="full-width">
             <tr>
               <td>
-                <generic-textarea [(model)]="quotation.observations" label="Observations du tiers"
-                  [form]="orderingCustomerForm" propertyName="observations" [isDisabled]="!editMode"
-                  [numberOfLines]="4">
-                </generic-textarea>
+                <chips-mail [(model)]="getCustomerOrderForIQuotation(quotation).mails" label="Mails"
+                  [form]="orderingCustomerForm" propertyName="mails" [isDisabled]="true"></chips-mail>
               </td>
-            </tr>
-            <tr>
               <td>
-                <generic-textarea [(model)]="quotation.description" label="Description de la demande"
-                  [form]="orderingCustomerForm" propertyName="description" [isDisabled]="!editMode"
-                  [numberOfLines]="10">
-                </generic-textarea>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <generic-textarea [(model)]="quotation.customerMailCustomMessage"
-                  label="Message personnalisé à insérer dans le mail client" [form]="orderingCustomerForm"
-                  propertyName="customerMailCustomMessage" [isDisabled]="!editMode" [numberOfLines]="10">
-                </generic-textarea>
+                <chips-phone [(model)]="getCustomerOrderForIQuotation(quotation).phones" label="Téléphones"
+                  [form]="orderingCustomerForm" propertyName="phones" [isDisabled]="true"></chips-phone>
               </td>
             </tr>
           </table>
-          <div *ngIf=" instanceOfQuotation(quotation)">Devis créé le {{quotation.createdDate |date:'dd/MM/yyyy à
-            HH:mm'}}
+          <div class="div-customer-order"
+            *ngIf="quotation && instanceOfQuotation(quotation) && quotation.customerOrders && quotation.customerOrders.length>0">
+            <p>Commandes issues de ce devis</p>
+            <sort-table [actions]="customerOrderTableActions" [columns]="customerOrderDisplayedColumns"
+              [values]="quotation.customerOrders" tableName="Liste commandes">
+            </sort-table>
           </div>
-          <div *ngIf=" instanceOfCustomerOrder(quotation)">Commande créée le {{quotation.createdDate |date:'dd/MM/yyyy à
-            HH:mm'}}
+          <div class="div-customer-order"
+            *ngIf="quotation && instanceOfCustomerOrder(quotation) && quotation.quotations && quotation.quotations.length>0">
+            <p>Devis issus de cette commande</p>
+            <sort-table [actions]="quotationTableActions" [columns]="quotationDisplayedColumns"
+              [values]="quotation.quotations" tableName="Liste devis">
+            </sort-table>
           </div>
-          <div *ngIf="quotation.firstReminderDateTime">
-            <ul>
-              <li *ngIf="quotation.firstReminderDateTime">Relance n°1 : {{quotation.firstReminderDateTime
-                |date:'dd/MM/yyyy'}}
-              </li>
-              <li *ngIf="quotation.secondReminderDateTime">Relance n°2 : {{quotation.secondReminderDateTime
-                |date:'dd/MM/yyyy'}}
-              </li>
-              <li *ngIf="quotation.thirdReminderDateTime">Relance n°3 : {{quotation.thirdReminderDateTime
-                |date:'dd/MM/yyyy'}}
-              </li>
-            </ul>
+          <table class="full-width">
+            <tr>
+              <td>Tarif special :
+                <ul *ngIf="quotation.tiers ">
+                  <li *ngFor="let specialOffer of quotation.tiers.specialOffers">
+                    {{specialOffer? (specialOffer.code + " - " +specialOffer.label):"Aucun"}}
+                  </li>
+                </ul>
+                <ul *ngIf="quotation.confrere ">
+                  <li *ngFor="let specialOffer of quotation.confrere.specialOffers">
+                    {{specialOffer? (specialOffer.code + " - " +specialOffer.label):"Aucun"}}
+                  </li>
+                </ul>
+                <button *ngIf="editMode==true && !quotation.overrideSpecialOffer"
+                  matTooltip="Modifier le tarif spécial par défaut" (click)="displayOverrideSpecialOffers()"
+                  mat-icon-button color="accent">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button *ngIf="editMode==true && quotation.overrideSpecialOffer"
+                  matTooltip="Ne pas modifier le tarif spécial par défaut" (click)="hideOverrideSpecialOffers()"
+                  mat-icon-button color="accent">
+                  <mat-icon>close</mat-icon>
+                </button>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div *ngIf="quotation.responsable  && quotation.responsable.tiers">
+          <table class="full-width">
+            <tr>
+              <td>Client : {{quotation.responsable.tiers.denomination?quotation.responsable.tiers.denomination :
+                (quotation.responsable.tiers.firstname+"
+                "+quotation.responsable.tiers.lastname)}} ({{quotation.responsable.tiers.id}}) <mat-icon
+                  matTooltip="Ouvrir le client" (click)="openRoute($event,'/tiers/'+quotation.responsable.tiers.id)"
+                  (auxclick)="openRoute($event,'/tiers/'+quotation.responsable.tiers.id)" class="pointer">
+                  visibility
+                </mat-icon>
+              </td>
+            </tr>
+          </table>
+          <table class="full-width">
+            <tr>
+              <td>Commercial : {{quotation.responsable.salesEmployee?.firstname}}
+                {{quotation.responsable.salesEmployee?.lastname}}
+              </td>
+            </tr>
+          </table>
+          <table class="full-width">
+            <tr>
+              <td>Adresse : {{quotation.responsable.tiers.address}} {{quotation.responsable.tiers.postalCode}}
+                {{quotation.responsable.tiers.city?quotation.responsable.tiers.city.label:""}}
+                {{quotation.responsable.tiers.country?quotation.responsable.tiers.country.label:""}}</td>
+            </tr>
+          </table>
+          <table class="full-width">
+            <tr>
+              <td>
+                <chips-mail [(model)]="getCustomerOrderForIQuotation(quotation).mails" label="Mails"
+                  [form]="orderingCustomerForm" propertyName="mails" [isDisabled]="true"></chips-mail>
+              </td>
+              <td>
+                <chips-phone [(model)]="getCustomerOrderForIQuotation(quotation).phones" label="Téléphones"
+                  [form]="orderingCustomerForm" propertyName="phones" [isDisabled]="true"></chips-phone>
+              </td>
+            </tr>
+          </table>
+          <div class="div-customer-order"
+            *ngIf="quotation && instanceOfQuotation(quotation) && quotation.customerOrders && quotation.customerOrders.length>0">
+            <p>Commandes issues de ce devis</p>
+            <sort-table [actions]="customerOrderTableActions" [columns]="customerOrderDisplayedColumns"
+              [values]="quotation.customerOrders" tableName="Liste commandes">
+            </sort-table>
           </div>
-        </fieldset>
-      </div>
-    </form>
-  </fieldset>
+          <div class="div-customer-order"
+            *ngIf="quotation && instanceOfCustomerOrder(quotation) && quotation.quotations && quotation.quotations.length>0">
+            <p>Devis issus de cette commande</p>
+            <sort-table [actions]="quotationTableActions" [columns]="quotationDisplayedColumns"
+              [values]="quotation.quotations" tableName="Liste devis">
+            </sort-table>
+          </div>
+          <table class="full-width">
+            <tr>
+              <td>Tarif special :
+                <ul>
+                  <li *ngFor="let specialOffer of quotation.responsable.tiers.specialOffers">
+                    {{specialOffer? (specialOffer.code + " - " +specialOffer.label):"Aucun"}}
+                  </li>
+                </ul>
+                <button *ngIf="editMode==true && !quotation.overrideSpecialOffer"
+                  matTooltip="Modifier le tarif spécial par défaut" (click)="displayOverrideSpecialOffers()"
+                  mat-icon-button color="accent">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button *ngIf="editMode==true && quotation.overrideSpecialOffer"
+                  matTooltip="Ne pas modifier le tarif spécial par défaut" (click)="hideOverrideSpecialOffers()"
+                  mat-icon-button color="accent">
+                  <mat-icon>close</mat-icon>
+                </button>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <table class="full-width" [hidden]="!quotation.overrideSpecialOffer">
+          <tr>
+            <td>
+              <chips-special-offers [(model)]="quotation.specialOffers" [form]="orderingCustomerForm"
+                propertyName="specialOffer" [isDisabled]="!editMode"
+                [conditionnalRequired]="quotation.overrideSpecialOffer">
+              </chips-special-offers>
+            </td>
+          </tr>
+        </table>
+        <table class="full-width">
+          <tr>
+            <td>
+              <generic-textarea [(model)]="quotation.observations" label="Observations du tiers"
+                [form]="orderingCustomerForm" propertyName="observations" [isDisabled]="!editMode" [numberOfLines]="4">
+              </generic-textarea>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <generic-textarea [(model)]="quotation.description" label="Description de la demande"
+                [form]="orderingCustomerForm" propertyName="description" [isDisabled]="!editMode" [numberOfLines]="10">
+              </generic-textarea>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <generic-textarea [(model)]="quotation.customerMailCustomMessage"
+                label="Message personnalisé à insérer dans le mail client" [form]="orderingCustomerForm"
+                propertyName="customerMailCustomMessage" [isDisabled]="!editMode" [numberOfLines]="10">
+              </generic-textarea>
+            </td>
+          </tr>
+        </table>
+        <div *ngIf=" instanceOfQuotation(quotation)">Devis créé le {{quotation.createdDate |date:'dd/MM/yyyy à
+          HH:mm'}}
+        </div>
+        <div *ngIf=" instanceOfCustomerOrder(quotation)">Commande créée le {{quotation.createdDate |date:'dd/MM/yyyy à
+          HH:mm'}}
+        </div>
+        <div *ngIf="quotation.firstReminderDateTime">
+          <ul>
+            <li *ngIf="quotation.firstReminderDateTime">Relance n°1 : {{quotation.firstReminderDateTime
+              |date:'dd/MM/yyyy'}}
+            </li>
+            <li *ngIf="quotation.secondReminderDateTime">Relance n°2 : {{quotation.secondReminderDateTime
+              |date:'dd/MM/yyyy'}}
+            </li>
+            <li *ngIf="quotation.thirdReminderDateTime">Relance n°3 : {{quotation.thirdReminderDateTime
+              |date:'dd/MM/yyyy'}}
+            </li>
+          </ul>
+        </div>
+      </fieldset>
+    </div>
+  </form>
 </div>

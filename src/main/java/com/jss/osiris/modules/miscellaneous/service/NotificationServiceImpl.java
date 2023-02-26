@@ -101,22 +101,13 @@ public class NotificationServiceImpl implements NotificationService {
     private Notification genericNotificationForQuotation(Quotation quotation, String notificationType)
             throws OsirisException, OsirisClientMessageException {
         ITiers customerOrder = quotationService.getCustomerOrderOfQuotation(quotation);
-        Employee salesEmployee = customerOrder.getSalesEmployee();
-
-        if (salesEmployee == null)
-            throw new OsirisClientMessageException(
-                    "Commercial introuvable sur le donneur d'ordre. Merci de compléter avant de poursuivre.");
-
-        // If responsable, try to get Sales Employee of Tiers
-        if (customerOrder instanceof Responsable)
-            salesEmployee = ((Responsable) customerOrder).getTiers().getSalesEmployee();
 
         boolean createdByMe = false;
         List<Employee> compareEmployee = employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee());
 
         if (compareEmployee != null)
             for (Employee employee : compareEmployee)
-                if (employee.getId().equals(salesEmployee.getId()))
+                if (employee.getId().equals(quotation.getAssignedTo().getId()))
                     createdByMe = true;
 
         String customerOrderName = "";
@@ -133,7 +124,7 @@ public class NotificationServiceImpl implements NotificationService {
             customerOrderName = ((Confrere) customerOrder).getLabel();
 
         if (!createdByMe)
-            return generateNewNotification(employeeService.getCurrentEmployee(), salesEmployee,
+            return generateNewNotification(employeeService.getCurrentEmployee(), quotation.getAssignedTo(),
                     notificationType,
                     quotation, customerOrderName, null, false);
 
@@ -172,13 +163,8 @@ public class NotificationServiceImpl implements NotificationService {
             boolean notifyAffaireResponsibles, boolean notifySalesEmployee, boolean notifiyBillingResponsible,
             boolean isFromHuman) throws OsirisException {
         ITiers customerOrderTiers = quotationService.getCustomerOrderOfQuotation(customerOrder);
-        Employee salesEmployee = customerOrderTiers.getSalesEmployee();
 
         ArrayList<Notification> notifications = new ArrayList<Notification>();
-
-        // If responsable, try to get Sales Employee of Tiers
-        if (customerOrderTiers instanceof Responsable)
-            salesEmployee = ((Responsable) customerOrderTiers).getTiers().getSalesEmployee();
 
         boolean createdByMe = false;
         List<Employee> compareEmployee = employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee());
@@ -201,7 +187,7 @@ public class NotificationServiceImpl implements NotificationService {
         if (notifySalesEmployee) {
             if (compareEmployee != null)
                 for (Employee employee : compareEmployee)
-                    if (employee.getId().equals(salesEmployee.getId()))
+                    if (employee.getId().equals(customerOrder.getAssignedTo().getId()))
                         createdByMe = true;
 
             if (!createdByMe)
@@ -210,7 +196,7 @@ public class NotificationServiceImpl implements NotificationService {
                                 isFromHuman && employeeService.getCurrentEmployee() != null
                                         ? employeeService.getCurrentEmployee()
                                         : null,
-                                salesEmployee,
+                                customerOrder.getAssignedTo(),
                                 notificationType, customerOrder, customerOrderName, null, false));
         }
 

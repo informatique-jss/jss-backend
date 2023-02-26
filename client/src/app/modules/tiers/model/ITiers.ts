@@ -12,6 +12,7 @@ import { Employee } from "../../profile/model/Employee";
 export interface ITiers extends IAttachment, IDocument {
   id: number;
   salesEmployee: Employee | undefined;
+  defaultCustomerOrderEmployee: Employee | undefined;
   formalisteEmployee: Employee | undefined;
   insertionEmployee: Employee | undefined;
   mailRecipient: string | null;

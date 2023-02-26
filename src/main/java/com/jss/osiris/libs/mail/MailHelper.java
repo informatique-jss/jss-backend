@@ -64,7 +64,6 @@ import com.jss.osiris.modules.miscellaneous.model.Vat;
 import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.DocumentService;
-import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.profile.service.EmployeeService;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.Announcement;
@@ -626,8 +625,7 @@ public class MailHelper {
                 + " et sous réserve que les prestations à réaliser, au vu des documents transmis, correspondent à la demande de devis. Toute modification entraînera son actualisation.");
         mail.setGreetings("Bonne journée !");
 
-        ITiers customerOrder = quotationService.getCustomerOrderOfQuotation(quotation);
-        mail.setReplyTo(customerOrder.getSalesEmployee());
+        mail.setReplyTo(quotation.getAssignedTo());
         mail.setSendToMe(sendToMe);
         mail.setMailComputeResult(mailComputeResult);
 
@@ -828,7 +826,7 @@ public class MailHelper {
 
         mail.setGreetings("Bonne journée !");
 
-        mail.setReplyTo(tiers.getSalesEmployee());
+        mail.setReplyTo(customerOrder.getAssignedTo());
         mail.setSendToMe(sendToMe);
         mail.setMailComputeResult(mailComputeResult);
 
@@ -853,8 +851,6 @@ public class MailHelper {
         computeQuotationPrice(mail, customerOrder);
         Float remainingToPay = Math
                 .round(customerOrderService.getRemainingAmountToPayForCustomerOrder(customerOrder) * 100f) / 100f;
-
-        ITiers tiers = quotationService.getCustomerOrderOfQuotation(customerOrder);
 
         mail.setHeaderPicture("images/waiting-deposit-header.png");
         mail.setTitle("Votre acompte a bien été reçu !");
@@ -891,7 +887,7 @@ public class MailHelper {
 
         mail.setGreetings("Bonne journée !");
 
-        mail.setReplyTo(tiers.getSalesEmployee());
+        mail.setReplyTo(customerOrder.getAssignedTo());
         mail.setSendToMe(sendToMe);
         mail.setMailComputeResult(mailComputeHelper.computeMailForDepositConfirmation(customerOrder));
 
@@ -1319,7 +1315,7 @@ public class MailHelper {
 
         mail.setGreetings("En vous remerciant pour votre confiance !");
 
-        mail.setReplyTo(tiers.getSalesEmployee());
+        mail.setReplyTo(customerOrder.getAssignedTo());
         mail.setSendToMe(sendToMe);
         mail.setMailComputeResult(mailComputeResult);
 
@@ -1370,7 +1366,7 @@ public class MailHelper {
 
         mail.setGreetings("En vous remerciant pour votre confiance !");
 
-        mail.setReplyTo(tiers.getSalesEmployee());
+        mail.setReplyTo(customerOrder != null ? customerOrder.getAssignedTo() : tiers.getSalesEmployee());
         mail.setSendToMe(sendToMe);
         mail.setMailComputeResult(mailComputeResult);
 
@@ -1607,7 +1603,7 @@ public class MailHelper {
 
         mail.setGreetings("En vous remerciant pour votre confiance !");
 
-        mail.setReplyTo(quotationService.getCustomerOrderOfQuotation(customerOrder).getSalesEmployee());
+        mail.setReplyTo(currentProvision.getAssignedTo());
         mail.setSendToMe(sendToMe);
         mail.setMailComputeResult(mailComputeHelper.computeMailForPublicationReceipt(customerOrder));
 
@@ -1670,7 +1666,7 @@ public class MailHelper {
 
         mail.setGreetings("En vous remerciant pour votre confiance !");
 
-        mail.setReplyTo(quotationService.getCustomerOrderOfQuotation(customerOrder).getSalesEmployee());
+        mail.setReplyTo(currentProvision.getAssignedTo());
         mail.setSendToMe(sendToMe);
         mail.setMailComputeResult(mailComputeHelper.computeMailForPublicationFlag(customerOrder));
 
@@ -1733,17 +1729,7 @@ public class MailHelper {
         mail.setAttachments(attachments);
 
         mail.setGreetings("En vous remerciant pour votre confiance !");
-
-        Employee currentAssignee = null;
-        if (customerOrder != null && customerOrder.getAssoAffaireOrders() != null)
-            for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
-                if (asso.getProvisions() != null)
-                    for (Provision provision : asso.getProvisions())
-                        if (provision.getAnnouncement() != null && provision.getAssignedTo() != null)
-                            currentAssignee = provision.getAssignedTo();
-
-        mail.setReplyTo(currentAssignee != null ? currentAssignee
-                : quotationService.getCustomerOrderOfQuotation(customerOrder).getSalesEmployee());
+        mail.setReplyTo(currentProvision.getAssignedTo());
         mail.setSendToMe(sendToMe);
         mail.setMailComputeResult(mailComputeHelper.computeMailForReadingProof(customerOrder));
 

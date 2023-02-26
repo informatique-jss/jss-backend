@@ -9,6 +9,7 @@ import com.jss.osiris.modules.miscellaneous.model.IAttachment;
 import com.jss.osiris.modules.miscellaneous.model.IDocument;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 import com.jss.osiris.modules.miscellaneous.model.SpecialOffer;
+import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
@@ -16,6 +17,10 @@ public interface IQuotation extends IId, IAttachment, IDocument {
 	public Integer getId();
 
 	public void setId(Integer id);
+
+	public Employee getAssignedTo();
+
+	public void setAssignedTo(Employee assignedTo);
 
 	public Tiers getTiers();
 

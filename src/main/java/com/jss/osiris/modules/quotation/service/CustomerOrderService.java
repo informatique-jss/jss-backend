@@ -5,6 +5,7 @@ import java.util.List;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
+import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.quotation.model.Announcement;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.quotation.model.IQuotation;
@@ -72,5 +73,8 @@ public interface CustomerOrderService {
 
         public void printMailingLabel(List<String> customerOrders)
                         throws OsirisException, OsirisClientMessageException;
+
+        public void updateAssignedToForCustomerOrder(CustomerOrder customerOrder, Employee employee)
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
 }

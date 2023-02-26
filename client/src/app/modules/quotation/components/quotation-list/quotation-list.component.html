@@ -8,6 +8,11 @@
           </autocomplete-employee>
         </td>
         <td>
+          <autocomplete-employee [(model)]="quotationSearch.assignedToEmployee" label="Assigné à"
+            [form]="quotationSearchForm" propertyName="assignedToEmployee" [isMandatory]="false">
+          </autocomplete-employee>
+        </td>
+        <td>
           <select-quotation-status [(model)]="quotationSearch.quotationStatus" label="Statut"
             [form]="quotationSearchForm" propertyName="quotationStatus" [isMandatory]="false" [isDisabled]="false">
           </select-quotation-status>

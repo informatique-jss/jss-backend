@@ -51,6 +51,7 @@ export class OrderingListComponent implements OnInit {
       if (this.bookmark && !this.isForDashboard && !this.isForTiersIntegration) {
         this.orderingSearch = {} as OrderingSearch;
         this.orderingSearch.salesEmployee = this.bookmark.salesEmployee;
+        this.orderingSearch.assignedToEmployee = this.bookmark.assignedToEmployee;
         this.orderingSearch.customerOrderStatus = this.bookmark.customerOrderStatus;
       }
 
@@ -73,6 +74,16 @@ export class OrderingListComponent implements OnInit {
           if (element && this.allEmployees) {
             for (let employee of this.allEmployees)
               if (employee.id == element.salesEmployeeId)
+                return employee;
+          }
+          return undefined;
+        }
+      } as SortTableColumn);
+      this.availableColumns.push({
+        id: "assignedToEmployee", fieldName: "assignedToEmployeeId", label: "Assignée à", displayAsEmployee: true, valueFonction: (element: any) => {
+          if (element && this.allEmployees) {
+            for (let employee of this.allEmployees)
+              if (employee.id == element.assignedToEmployeeId)
                 return employee;
           }
           return undefined;
@@ -115,15 +126,6 @@ export class OrderingListComponent implements OnInit {
 
   orderingSearchForm = this.formBuilder.group({
   });
-
-  getSalesEmployee(element: any): Employee | undefined {
-    if (element && this.allEmployees) {
-      for (let employee of this.allEmployees)
-        if (employee.id == element.salesEmployeeId)
-          return employee;
-    }
-    return undefined;
-  }
 
   getColumnLink(column: SortTableColumn, element: any) {
     if (element && column.id == "tiersLabel") {

@@ -182,24 +182,24 @@ export class DashboardComponent implements OnInit {
         this.affaireSearchWaitingAuthority.assignedTo = this.currentEmployee;
         this.affaireSearchWaitingAuthority.status = this.simpleProvisionStatus.filter(stauts => stauts.code == SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT_AUTHORITY);
 
-        this.orderingSearchOpen.salesEmployee = this.currentEmployee!;
+        this.orderingSearchOpen.assignedToEmployee = this.currentEmployee!;
         this.orderingSearchOpen.customerOrderStatus = [this.customerOrderStatusService.getCustomerStatusByCode(this.customerOrderStatus, CUSTOMER_ORDER_STATUS_OPEN)!];
 
-        this.orderingSearchBeingProcessed.salesEmployee = this.currentEmployee!;
+        this.orderingSearchBeingProcessed.assignedToEmployee = this.currentEmployee!;
         this.orderingSearchBeingProcessed.customerOrderStatus = [this.customerOrderStatusService.getCustomerStatusByCode(this.customerOrderStatus, CUSTOMER_ORDER_STATUS_BEING_PROCESSED)!];
 
         this.orderingSearchToBilled.customerOrderStatus = [this.customerOrderStatusService.getCustomerStatusByCode(this.customerOrderStatus, CUSTOMER_ORDER_STATUS_TO_BILLED)!];
 
-        this.quotationSearchOpen.salesEmployee = this.currentEmployee!;
+        this.quotationSearchOpen.assignedToEmployee = this.currentEmployee!;
         this.quotationSearchOpen.quotationStatus = [this.quotationStatusService.getQuotationStatusByCode(this.quotationStatus, QUOTATION_STATUS_OPEN)!];
 
-        this.quotationSearchToVerify.salesEmployee = this.currentEmployee!;
+        this.quotationSearchToVerify.assignedToEmployee = this.currentEmployee!;
         this.quotationSearchToVerify.quotationStatus = [this.quotationStatusService.getQuotationStatusByCode(this.quotationStatus, QUOTATION_STATUS_TO_VERIFY)!];
 
-        this.quotationSearchRefused.salesEmployee = this.currentEmployee!;
+        this.quotationSearchRefused.assignedToEmployee = this.currentEmployee!;
         this.quotationSearchRefused.quotationStatus = [this.quotationStatusService.getQuotationStatusByCode(this.quotationStatus, QUOTATION_STATUS_REFUSED_BY_CUSTOMER)!];
 
-        this.quotationSearchSent.salesEmployee = this.currentEmployee!;
+        this.quotationSearchSent.assignedToEmployee = this.currentEmployee!;
         this.quotationSearchSent.quotationStatus = [this.quotationStatusService.getQuotationStatusByCode(this.quotationStatus, QUOTATION_STATUS_SENT_TO_CUSTOMER)!];
 
         this.invoiceSearchToAssociate.invoiceStatus = [this.constantService.getInvoiceStatusSend()];

@@ -197,6 +197,11 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         if (customerOrder.getIsCreatedFromWebSite() == null)
             customerOrder.setIsCreatedFromWebSite(false);
 
+        // Set default customer order assignation to sales employee if not set
+        if (customerOrder.getAssignedTo() == null)
+            customerOrder.setAssignedTo(
+                    quotationService.getCustomerOrderOfQuotation(customerOrder).getDefaultCustomerOrderEmployee());
+
         customerOrder.setIsQuotation(false);
 
         if (customerOrder.getDocuments() != null)
@@ -628,6 +633,14 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             salesEmployeeId.add(0);
         }
 
+        ArrayList<Integer> assignedToEmployeeId = new ArrayList<Integer>();
+        if (orderingSearch.getAssignedToEmployee() != null) {
+            for (Employee employee : employeeService.getMyHolidaymaker(orderingSearch.getAssignedToEmployee()))
+                assignedToEmployeeId.add(employee.getId());
+        } else {
+            assignedToEmployeeId.add(0);
+        }
+
         ArrayList<Integer> customerOrderId = new ArrayList<Integer>();
         if (orderingSearch.getCustomerOrders() != null && orderingSearch.getCustomerOrders().size() > 0) {
             for (ITiers tiers : orderingSearch.getCustomerOrders())
@@ -651,7 +664,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             orderingSearch.setEndDate(LocalDateTime.now().plusYears(100));
 
         List<OrderingSearchResult> customerOrders = customerOrderRepository.findCustomerOrders(
-                salesEmployeeId,
+                salesEmployeeId, assignedToEmployeeId,
                 statusId,
                 orderingSearch.getStartDate().withHour(0).withMinute(0),
                 orderingSearch.getEndDate().withHour(23).withMinute(59), customerOrderId, affaireId);
@@ -984,4 +997,11 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             }
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void updateAssignedToForCustomerOrder(CustomerOrder customerOrder, Employee employee)
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+        customerOrder.setAssignedTo(employee);
+        addOrUpdateCustomerOrder(customerOrder, true, false);
+    }
 }

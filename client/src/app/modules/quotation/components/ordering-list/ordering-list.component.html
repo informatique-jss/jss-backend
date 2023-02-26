@@ -8,6 +8,11 @@
           </autocomplete-employee>
         </td>
         <td>
+          <autocomplete-employee [(model)]="orderingSearch.assignedToEmployee" label="Assignée à"
+            [form]="orderingSearchForm" propertyName="assignedToEmployee" [isMandatory]="false">
+          </autocomplete-employee>
+        </td>
+        <td>
           <select-customer-order-status [(model)]="orderingSearch.customerOrderStatus" label="Statut"
             [form]="orderingSearchForm" propertyName="customerOrderStatus" [isMandatory]="false" [isDisabled]="false"
             [defaultCodesSelected]="defaultStatusFilter"></select-customer-order-status>

@@ -27,6 +27,7 @@ import com.jss.osiris.modules.invoicing.model.Invoice;
 import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.Document;
 import com.jss.osiris.modules.miscellaneous.model.SpecialOffer;
+import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.tiers.model.Responsable;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
@@ -69,6 +70,11 @@ public class CustomerOrder implements IQuotation {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@IndexedField
 	private Integer id;
+
+	@ManyToOne
+	@JoinColumn(name = "id_assigned_to")
+	@IndexedField
+	private Employee assignedTo;
 
 	@ManyToOne
 	@JoinColumn(name = "id_tiers")
@@ -360,6 +366,14 @@ public class CustomerOrder implements IQuotation {
 
 	public void setCustomerMailCustomMessage(String customerMailCustomMessage) {
 		this.customerMailCustomMessage = customerMailCustomMessage;
+	}
+
+	public Employee getAssignedTo() {
+		return assignedTo;
+	}
+
+	public void setAssignedTo(Employee assignedTo) {
+		this.assignedTo = assignedTo;
 	}
 
 }

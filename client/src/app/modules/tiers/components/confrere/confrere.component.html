@@ -74,6 +74,11 @@
                       </autocomplete-employee>
                     </td>
                     <td>
+                      <autocomplete-employee [(model)]="selectedConfrere.defaultCustomerOrderEmployee"
+                        [isDisabled]="!editMode" label="Assignation par défaut des commandes" [form]="entityForm2"
+                        propertyName="defaultCustomerOrderEmployee" [isMandatory]="false"></autocomplete-employee>
+                    </td>
+                    <td>
                       <autocomplete-employee [(model)]="selectedConfrere.formalisteEmployee" [isDisabled]="!editMode"
                         label="Formaliste" [isDisabled]="!editMode" [form]="entityForm2"
                         propertyName="formalisteEmployee">

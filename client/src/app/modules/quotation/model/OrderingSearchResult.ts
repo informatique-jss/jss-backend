@@ -5,6 +5,7 @@ export interface OrderingSearchResult {
   customerOrderStatus: string;
   createdDate: Date;
   salesEmployeeId: number;
+  assignedEmployeeId: number;
   customerOrderDescription: string;
   customerOrderId: number;
   responsableId: number;

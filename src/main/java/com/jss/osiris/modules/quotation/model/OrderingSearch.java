@@ -10,6 +10,7 @@ public class OrderingSearch {
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private Employee salesEmployee;
+    private Employee assignedToEmployee;
     private List<CustomerOrderStatus> customerOrderStatus;
     private List<Tiers> customerOrders;
     private List<Affaire> affaires;
@@ -60,6 +61,14 @@ public class OrderingSearch {
 
     public void setAffaires(List<Affaire> affaires) {
         this.affaires = affaires;
+    }
+
+    public Employee getAssignedToEmployee() {
+        return assignedToEmployee;
+    }
+
+    public void setAssignedToEmployee(Employee assignedToEmployee) {
+        this.assignedToEmployee = assignedToEmployee;
     }
 
 }

@@ -120,6 +120,10 @@ public class TiersServiceImpl implements TiersService {
 
         if (tiers.getResponsables() != null && tiers.getResponsables().size() > 0) {
             for (Responsable responsable : tiers.getResponsables()) {
+                // Set default customer order assignation to sales employee if not set
+                if (responsable.getDefaultCustomerOrderEmployee() == null)
+                    responsable.setDefaultCustomerOrderEmployee(responsable.getSalesEmployee());
+
                 // If mails already exists, get their ids
                 if (responsable.getMails() != null && responsable.getMails().size() > 0)
                     mailService.populateMailIds(responsable.getMails());
@@ -140,6 +144,10 @@ public class TiersServiceImpl implements TiersService {
                 }
             }
         }
+
+        // Set default customer order assignation to sales employee if not set
+        if (tiers.getDefaultCustomerOrderEmployee() == null)
+            tiers.setDefaultCustomerOrderEmployee(tiers.getSalesEmployee());
 
         tiers = tiersRepository.save(tiers);
         indexEntityService.indexEntity(tiers, tiers.getId());

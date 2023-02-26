@@ -60,6 +60,11 @@
                 [form]="principalForm" propertyName="salesEmployee" [isMandatory]="true"></autocomplete-employee>
             </td>
             <td>
+              <autocomplete-employee [(model)]="tiers.defaultCustomerOrderEmployee" [isDisabled]="!editMode"
+                label="Assignation par défaut des commandes" [form]="principalForm"
+                propertyName="defaultCustomerOrderEmployee" [isMandatory]="false"></autocomplete-employee>
+            </td>
+            <td>
               <autocomplete-employee [(model)]="tiers.formalisteEmployee" [isDisabled]="!editMode" label="Formaliste"
                 [isDisabled]="!editMode" [form]="principalForm" propertyName="formalisteEmployee">
               </autocomplete-employee>
@@ -75,7 +80,7 @@
           <tr>
             <td>
               <generic-textarea [(model)]="tiers.mailRecipient" label="Destinataires(s) courrier" [form]="principalForm"
-                propertyName="mailRecipient" (filterInput)="limitTextareaSize(3)">
+                propertyName="mailRecipient" (filterInput)="limitTextareaSize(3)" [isDisabled]="!editMode">
               </generic-textarea>
             </td>
             <td style="vertical-align: baseline;">
@@ -194,7 +199,7 @@
           <tr>
             <td>
               <generic-textarea [(model)]="tiers.instructions" label="Consignes" [form]="principalForm"
-                propertyName="instructions" [numberOfLines]="4"></generic-textarea>
+                [isDisabled]="!editMode" propertyName="instructions" [numberOfLines]="4"></generic-textarea>
             </td>
           </tr>
         </table>
@@ -203,7 +208,8 @@
           <tr>
             <td>
               <generic-textarea [(model)]="tiers.observations" label="Observations / Informations complémentaires"
-                [form]="principalForm" propertyName="observations" [numberOfLines]="8"></generic-textarea>
+                [isDisabled]="!editMode" [form]="principalForm" propertyName="observations"
+                [numberOfLines]="8"></generic-textarea>
             </td>
           </tr>
         </table>

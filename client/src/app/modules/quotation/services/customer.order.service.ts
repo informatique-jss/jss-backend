@@ -1,8 +1,11 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AppRestService } from 'src/app/services/appRest.service';
+import { Employee } from '../../profile/model/Employee';
 import { Announcement } from '../model/Announcement';
+import { CustomerOrder } from '../model/CustomerOrder';
 import { IQuotation } from '../model/IQuotation';
+import { Quotation } from '../model/Quotation';
 
 @Injectable({
   providedIn: 'root'
@@ -31,6 +34,14 @@ export class CustomerOrderService extends AppRestService<IQuotation>{
 
   generateMailingLabel(customerOrders: string[]) {
     return this.get(new HttpParams().set("customerOrders", customerOrders.join(",")), "customer-order/print/label", "Etiquettes en cours d'impression", "Erreur lors de l'impression");
+  }
+
+  updateAssignedToForCustomerOrder(customerOrder: CustomerOrder, employee: Employee) {
+    return this.get(new HttpParams().set("customerOrderId", customerOrder.id).set("employeeId", employee.id), "customer-order/assign");
+  }
+
+  updateAssignedToForQuotation(quotation: Quotation, employee: Employee) {
+    return this.get(new HttpParams().set("quotationId", quotation.id).set("employeeId", employee.id), "quotation/assign");
   }
 
 }

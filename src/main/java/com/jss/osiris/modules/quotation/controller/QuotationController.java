@@ -549,6 +549,40 @@ public class QuotationController {
     return new ResponseEntity<Boolean>(true, HttpStatus.OK);
   }
 
+  @GetMapping(inputEntryPoint + "/customer-order/assign")
+  public ResponseEntity<Boolean> updateAssignedToForCustomerOrder(@RequestParam Integer customerOrderId,
+      @RequestParam Integer employeeId)
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+
+    CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
+    if (customerOrder == null)
+      throw new OsirisValidationException("customerOrder");
+
+    Employee employee = employeeService.getEmployee(employeeId);
+    if (employee == null)
+      throw new OsirisValidationException("employee");
+
+    customerOrderService.updateAssignedToForCustomerOrder(customerOrder, employee);
+    return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/quotation/assign")
+  public ResponseEntity<Boolean> updateAssignedToForQuotation(@RequestParam Integer quotationId,
+      @RequestParam Integer employeeId)
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+
+    Quotation quotation = quotationService.getQuotation(quotationId);
+    if (quotation == null)
+      throw new OsirisValidationException("quotationId");
+
+    Employee employee = employeeService.getEmployee(employeeId);
+    if (employee == null)
+      throw new OsirisValidationException("employee");
+
+    quotationService.updateAssignedToForQuotation(quotation, employee);
+    return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+  }
+
   @PostMapping(inputEntryPoint + "/asso/affaire/order/search")
   public ResponseEntity<ArrayList<AssoAffaireOrderSearchResult>> searchForAsso(
       @RequestBody AffaireSearch affaireSearch) throws OsirisValidationException {
@@ -1260,6 +1294,8 @@ public class QuotationController {
       isOpen = quotationQuotation.getQuotationStatus() == null ||
           quotationQuotation.getQuotationStatus().getCode().equals(QuotationStatus.OPEN);
     }
+
+    validationHelper.validateReferential(quotation.getAssignedTo(), false, "AssignedTo");
 
     boolean isCustomerOrder = quotation instanceof CustomerOrder;
 
