@@ -60,6 +60,12 @@
                 propertyName="defaultEmployee" [isMandatory]="true" [isDisabled]="!editMode" label="Employé par défaut">
               </autocomplete-employee>
             </td>
+            <td>
+              <generic-input [(model)]="selectedEntity.assignationWeight" label="Poids de l'assignation"
+                hint="Lorsqu'un poids est défini sur au moins une prestation d'une affaire, alors l'ensemble des prestations de l'affaire et l'affaire est assigné au responsable de la prestation la plus lourde"
+                [form]="entityForm" propertyName="assignationWeight" [isMandatory]="false" [isDisabled]="!editMode"
+                type="number"></generic-input>
+            </td>
           </tr>
         </table>
         <table class="full-width" *ngIf="selectedEntity.billingTypes">

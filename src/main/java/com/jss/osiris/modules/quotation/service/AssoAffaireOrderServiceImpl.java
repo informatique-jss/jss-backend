@@ -171,6 +171,8 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
         // Complete domiciliation end date
         int nbrAssignation = 0;
         Employee currentEmployee = null;
+        Employee maxWeightEmployee = null;
+        Integer maxWeight = -1000000000;
 
         for (Provision provision : assoAffaireOrder.getProvisions()) {
             provision.setAssoAffaireOrder(assoAffaireOrder);
@@ -386,10 +388,23 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                     currentEmployee = employee;
                     nbrAssignation++;
                 }
+
+                // Handle weight
+                if (provision.getProvisionType().getAssignationWeight() != null
+                        && provision.getProvisionType().getAssignationWeight() > maxWeight) {
+                    maxWeight = provision.getProvisionType().getAssignationWeight();
+                    maxWeightEmployee = employee;
+                }
             }
         }
         if (nbrAssignation == 1)
             assoAffaireOrder.setAssignedTo(currentEmployee);
+
+        if (maxWeightEmployee != null) {
+            assoAffaireOrder.setAssignedTo(maxWeightEmployee);
+            for (Provision provision : assoAffaireOrder.getProvisions())
+                provision.setAssignedTo(maxWeightEmployee);
+        }
 
         return assoAffaireOrder;
     }

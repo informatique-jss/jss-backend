@@ -256,14 +256,14 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     replaceDocument(this.constantService.getDocumentTypePaper(), this.quotation, this.quotationManagementComponent?.getPaperDocument()!);
     if (this.getFormsStatus()) {
       if (!this.instanceOfCustomerOrder) {
-        this.editMode = false;
         this.quotationService.addOrUpdateQuotation(this.quotation).subscribe(response => {
+          this.editMode = false;
           this.quotation = response;
           this.appService.openRoute(null, '/quotation/' + this.quotation.id, null);
         })
       } else {
-        this.editMode = false;
         this.customerOrderService.addOrUpdateCustomerOrder(this.quotation).subscribe(response => {
+          this.editMode = false;
           this.quotation = response;
           this.appService.openRoute(null, '/order/' + this.quotation.id, null);
         })
