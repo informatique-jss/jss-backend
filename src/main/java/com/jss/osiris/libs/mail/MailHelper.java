@@ -48,6 +48,7 @@ import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.model.CustomerMail;
 import com.jss.osiris.libs.mail.model.CustomerMailAssoAffaireOrder;
+import com.jss.osiris.libs.mail.model.LetterModel;
 import com.jss.osiris.libs.mail.model.MailComputeResult;
 import com.jss.osiris.libs.mail.model.VatMail;
 import com.jss.osiris.modules.accounting.service.AccountingRecordService;
@@ -64,6 +65,7 @@ import com.jss.osiris.modules.miscellaneous.model.Vat;
 import com.jss.osiris.modules.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.miscellaneous.service.DocumentService;
+import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.profile.service.EmployeeService;
 import com.jss.osiris.modules.quotation.model.Affaire;
 import com.jss.osiris.modules.quotation.model.Announcement;
@@ -1199,6 +1201,74 @@ public class MailHelper {
         } catch (DocumentException | IOException e) {
             throw new OsirisException(e,
                     "Unable to create publication flag PDF file for announcement " + announcement.getId());
+        }
+        return tempFile;
+    }
+
+    public File generateLetterPdf(ArrayList<CustomerOrder> customerOrders)
+            throws OsirisException, OsirisClientMessageException {
+        final Context ctx = new Context();
+        ctx.setVariable("localDate", LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+
+        ArrayList<LetterModel> letterModels = new ArrayList<LetterModel>();
+
+        for (CustomerOrder customerOrder : customerOrders) {
+            Document billingDocument = documentService.getDocumentByDocumentType(customerOrder.getDocuments(),
+                    constantService.getDocumentTypeBilling());
+
+            LetterModel letterModel = new LetterModel();
+            letterModel.setCustomerOrder(customerOrder);
+            letterModel.setInvoiceLabelResult(mailComputeHelper.computePaperLabelResult(customerOrder));
+            letterModel.setCommandNumber(billingDocument.getCommandNumber());
+            letterModel.setCustomerReference(billingDocument.getExternalReference());
+
+            ArrayList<String> affaireLabels = new ArrayList<String>();
+            ArrayList<String> eventLabels = new ArrayList<String>();
+            Employee signatureEmployee = null;
+
+            for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders()) {
+                signatureEmployee = asso.getAssignedTo();
+                affaireLabels.add((asso.getAffaire().getDenomination() != null ? asso.getAffaire().getDenomination()
+                        : (asso.getAffaire().getCivility().getLabel() + " " + asso.getAffaire().getFirstname() + " "
+                                + asso.getAffaire().getLastname()))
+                        + "<br/>"
+                        + asso.getAffaire().getAddress() + "<br/>"
+                        + asso.getAffaire().getPostalCode() + " "
+                        + (asso.getAffaire().getCity() != null ? asso.getAffaire().getCity().getLabel() : ""));
+                for (Provision provision : asso.getProvisions()) {
+                    eventLabels.add(provision.getProvisionType().getLabel());
+                }
+            }
+
+            letterModel.setAffaireLabel(String.join("<br/>", affaireLabels));
+            letterModel.setEventLabel(String.join(" / ", eventLabels));
+            if (signatureEmployee != null)
+                letterModel.setSignatureLabel(signatureEmployee.getFirstname() + " " + signatureEmployee.getLastname()
+                        + "<br/>" + signatureEmployee.getTitle() + "<br/>" + signatureEmployee.getMail());
+            letterModels.add(letterModel);
+        }
+
+        ctx.setVariable("letterModels", letterModels);
+
+        // Create the HTML body using Thymeleaf
+        String htmlContent = emailTemplateEngine().process("letter-page", ctx);
+
+        File tempFile;
+        OutputStream outputStream;
+        try {
+            tempFile = File.createTempFile("invoice", "pdf");
+            outputStream = new FileOutputStream(tempFile);
+        } catch (IOException e) {
+            throw new OsirisException(e, "Unable to create temp file");
+        }
+        ITextRenderer renderer = new ITextRenderer();
+        renderer.setDocumentFromString(htmlContent.replaceAll("\\p{C}", " "));
+        renderer.layout();
+        try {
+            renderer.createPDF(outputStream);
+            outputStream.close();
+        } catch (DocumentException | IOException e) {
+            throw new OsirisException(e, "Unable to create PDF file for letters");
         }
         return tempFile;
     }

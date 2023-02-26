@@ -752,12 +752,6 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     });
 
     dialogRef.componentInstance.customerOrders.push(this.quotation.id + "");
-
-    dialogRef.afterClosed().subscribe(dialogResult => {
-      if (dialogResult) {
-        this.customerOrderService.generateMailingLabel(dialogResult).subscribe(response => { });
-      }
-    });
   }
 
   displayAffaire(event: any, affaire: Affaire) {

@@ -3,16 +3,22 @@ package com.jss.osiris.modules.quotation.service;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -982,19 +988,58 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void printMailingLabel(List<String> customerOrders)
+    public ResponseEntity<byte[]> printMailingLabel(List<String> customerOrdersIn, boolean printLabel,
+            boolean printLetters)
             throws OsirisException, OsirisClientMessageException {
-        if (customerOrders != null && customerOrders.size() > 0)
-            for (String id : customerOrders) {
+        ArrayList<CustomerOrder> customerOrders = new ArrayList<CustomerOrder>();
+        for (String id : customerOrdersIn) {
+            customerOrders.add(getCustomerOrder(Integer.parseInt(id)));
+        }
+
+        if (printLabel)
+            for (CustomerOrder customerOrder : customerOrders) {
                 try {
-                    CustomerOrder customerOrder = getCustomerOrder(Integer.parseInt(id));
-                    printDelegate.printMailingLabel(
-                            mailComputeHelper.computePaperLabelResult(customerOrder), customerOrder);
+                    printDelegate.printMailingLabel(mailComputeHelper.computePaperLabelResult(customerOrder),
+                            customerOrder);
                 } catch (NumberFormatException e) {
                 } catch (Exception e) {
                     throw new OsirisException(e, "Error when printing label");
                 }
             }
+        if (printLetters) {
+
+            byte[] data = null;
+            HttpHeaders headers = null;
+            File file = mailHelper.generateLetterPdf(customerOrders);
+
+            if (file != null) {
+                try {
+                    data = Files.readAllBytes(file.toPath());
+                } catch (IOException e) {
+                    throw new OsirisException(e, "Unable to read file " + file.getAbsolutePath());
+                }
+
+                headers = new HttpHeaders();
+                headers.setContentLength(data.length);
+                headers.add("filename", "Postal_letters_"
+                        + DateTimeFormatter.ofPattern("yyyyMMdd HHmm").format(LocalDateTime.now()) + ".pdf");
+                headers.setAccessControlExposeHeaders(Arrays.asList("filename"));
+
+                // Compute content type
+                String mimeType = null;
+                try {
+                    mimeType = Files.probeContentType(file.toPath());
+                } catch (IOException e) {
+                    throw new OsirisException(e, "Unable to read file " + file.getAbsolutePath());
+                }
+                if (mimeType == null)
+                    mimeType = "application/pdf";
+                headers.set("content-type", mimeType);
+                file.delete();
+            }
+            return new ResponseEntity<byte[]>(data, headers, HttpStatus.OK);
+        }
+        return new ResponseEntity<byte[]>(null, new HttpHeaders(), HttpStatus.OK);
     }
 
     @Override

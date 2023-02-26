@@ -32,8 +32,12 @@ export class CustomerOrderService extends AppRestService<IQuotation>{
     return this.get(new HttpParams().set("idAnnouncement", announcement.id), "customer-order/announcement");
   }
 
-  generateMailingLabel(customerOrders: string[]) {
-    return this.get(new HttpParams().set("customerOrders", customerOrders.join(",")), "customer-order/print/label", "Etiquettes en cours d'impression", "Erreur lors de l'impression");
+  generateMailingLabelDownload(customerOrders: string[], printLabel: boolean, printLetters: boolean) {
+    return this.downloadGet(new HttpParams().set("customerOrders", customerOrders.join(",")).set("printLabel", printLabel).set("printLetters", printLetters), "customer-order/print/label");
+  }
+
+  generateMailingLabel(customerOrders: string[], printLabel: boolean, printLetters: boolean) {
+    return this.get(new HttpParams().set("customerOrders", customerOrders.join(",")).set("printLabel", printLabel).set("printLetters", printLetters), "customer-order/print/label", "Etiquettes en cours d'impression", "Erreur lors de l'impression");
   }
 
   updateAssignedToForCustomerOrder(customerOrder: CustomerOrder, employee: Employee) {

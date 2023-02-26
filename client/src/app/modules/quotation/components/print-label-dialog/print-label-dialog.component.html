@@ -8,6 +8,18 @@
           propertyName="customerOrders" [isMandatory]="true" [isDisabled]="false"></generic-chips-input>
       </td>
     </tr>
+    <tr>
+      <td>
+        <generic-toggle [(model)]="printLabel" label="Imprimer les étiquettes ?" [form]="printLabelForm"
+          propertyName="printLabel"></generic-toggle>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <generic-toggle [(model)]="printLetters" label="Générer les lettres ?" [form]="printLabelForm"
+          propertyName="printLetters"></generic-toggle>
+      </td>
+    </tr>
   </table>
 </div>
 <div mat-dialog-actions align="end">
