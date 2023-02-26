@@ -397,6 +397,27 @@ public class PaymentServiceImpl implements PaymentService {
             if (cancelPayment) {
                 cancelPayment(payment);
             }
+
+            if (Math.abs(Math.round(remainingMoney * 100f) / 100f) > 0) {
+                boolean modifyPayment = false;
+                if (Math.abs(remainingMoney) <= Float.parseFloat(payementLimitRefundInEuros)) {
+                    if (correspondingInvoices != null && correspondingInvoices.size() > 0) {
+                        accountingRecordService.generateAppointForPayment(payment, remainingMoney,
+                                invoiceHelper.getCustomerOrder(correspondingInvoices.get(0)));
+                        modifyPayment = true;
+                    } else if (correspondingCustomerOrder != null && correspondingCustomerOrder.size() > 0) {
+                        accountingRecordService.generateAppointForPayment(payment, remainingMoney,
+                                quotationService.getCustomerOrderOfQuotation(correspondingCustomerOrder.get(0)));
+                        modifyPayment = true;
+                    }
+                    if (modifyPayment) {
+                        payment.setPaymentAmount(payment.getPaymentAmount() - remainingMoney);
+                    }
+                } else {
+                    refundService.generateRefund(tiersRefund, affaireRefund, payment, null, remainingMoney,
+                            refundLabelSuffix);
+                }
+            }
         } else {
             // Invoices to payed found
             if (correspondingInvoices != null && correspondingInvoices.size() > 0) {
@@ -404,20 +425,6 @@ public class PaymentServiceImpl implements PaymentService {
                         new MutableBoolean(true),
                         byPassAmount);
                 refundLabelSuffix = "facture n°" + correspondingInvoices.get(0).getId();
-            }
-        }
-
-        if (remainingMoney > 0) {
-            if (Math.abs(remainingMoney) <= Float.parseFloat(payementLimitRefundInEuros)) {
-                if (correspondingInvoices != null && correspondingInvoices.size() > 0)
-                    accountingRecordService.generateAppointForPayment(payment, remainingMoney,
-                            invoiceHelper.getCustomerOrder(correspondingInvoices.get(0)));
-                else if (correspondingCustomerOrder != null && correspondingCustomerOrder.size() > 0)
-                    accountingRecordService.generateAppointForPayment(payment, remainingMoney,
-                            quotationService.getCustomerOrderOfQuotation(correspondingCustomerOrder.get(0)));
-            } else {
-                refundService.generateRefund(tiersRefund, affaireRefund, payment, null, remainingMoney,
-                        refundLabelSuffix);
             }
         }
     }

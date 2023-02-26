@@ -188,14 +188,22 @@ public class DepositServiceImpl implements DepositService {
                 refundLabelSuffix = "commande n°" + customerOrder.getId();
             }
 
-        if (remainingMoney > 0) {
+        if (Math.abs(Math.round(remainingMoney * 100f) / 100f) > 0) {
             if (Math.abs(remainingMoney) <= Float.parseFloat(payementLimitRefundInEuros)) {
-                if (correspondingInvoices != null && correspondingInvoices.size() > 0)
+                boolean modifyDeposit = false;
+                if (correspondingInvoices != null && correspondingInvoices.size() > 0) {
                     accountingRecordService.generateAppointForDeposit(deposit, remainingMoney,
                             invoiceHelper.getCustomerOrder(correspondingInvoices.get(0)));
-                else if (correspondingCustomerOrder != null && correspondingCustomerOrder.size() > 0)
+                    modifyDeposit = true;
+                } else if (correspondingCustomerOrder != null && correspondingCustomerOrder.size() > 0) {
                     accountingRecordService.generateAppointForDeposit(deposit, remainingMoney,
                             quotationService.getCustomerOrderOfQuotation(correspondingCustomerOrder.get(0)));
+                    modifyDeposit = true;
+                }
+                if (modifyDeposit) {
+                    deposit.setDepositAmount(deposit.getDepositAmount() - remainingMoney);
+                    addOrUpdateDeposit(deposit);
+                }
             } else {
                 refundService.generateRefund(tiersRefund, affaireRefund, null, deposit, remainingMoney,
                         refundLabelSuffix);
