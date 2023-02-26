@@ -534,7 +534,8 @@ public class InvoiceServiceImpl implements InvoiceService {
                 }
 
                 if (toSend) {
-                    mailHelper.sendCustomerOrderFinalisationToCustomer(invoice.getCustomerOrder(), false, true,
+                    mailHelper.sendCustomerOrderFinalisationToCustomer(
+                            customerOrderService.getCustomerOrder(invoice.getCustomerOrder().getId()), false, true,
                             invoice.getThirdReminderDateTime() != null);
                     addOrUpdateInvoice(invoice);
                 }
@@ -549,12 +550,12 @@ public class InvoiceServiceImpl implements InvoiceService {
 
             if (invoice.getPayments() != null && invoice.getPayments().size() > 0)
                 for (Payment payment : invoice.getPayments())
-                    if (!payment.getIsCancelled())
+                    if (payment.getIsCancelled() == null || !payment.getIsCancelled())
                         total -= payment.getPaymentAmount();
 
             if (invoice.getDeposits() != null && invoice.getDeposits().size() > 0)
                 for (Deposit deposit : invoice.getDeposits())
-                    if (!deposit.getIsCancelled())
+                    if (deposit.getIsCancelled() == null || !deposit.getIsCancelled())
                         total -= deposit.getDepositAmount();
 
             return Math.round(total * 100f) / 100f;
