@@ -8,6 +8,7 @@ import { InvoiceService } from 'src/app/modules/invoicing/services/invoice.servi
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { AppService } from '../../../../services/app.service';
 import { CustomerOrder } from '../../model/CustomerOrder';
+import { Invoice } from '../../model/Invoice';
 import { InvoiceItem } from '../../model/InvoiceItem';
 import { InvoiceLabelResult } from '../../model/InvoiceLabelResult';
 import { IQuotation } from '../../model/IQuotation';
@@ -108,10 +109,8 @@ export class InvoiceManagementComponent implements OnInit {
     if (instanceOfCustomerOrder(this.quotation))
       if (this.quotation.customerOrderStatus.code != CUSTOMER_ORDER_STATUS_BILLED)
         return Math.round((QuotationComponent.computePriceTotal(this.quotation) - QuotationComponent.computePayed(this.quotation)) * 100) / 100;
-      else {
-        for (let invoice of this.quotation.invoices)
-          if (invoice.invoiceStatus.code != this.constantService.getInvoiceStatusCancelled().code)
-            return getRemainingToPay(invoice);
+      else if (this.getCurrentInvoiceForCustomerOrder() != undefined) {
+        return getRemainingToPay(this.getCurrentInvoiceForCustomerOrder()!);
       }
     return this.getPriceTotal();
   }
@@ -127,5 +126,13 @@ export class InvoiceManagementComponent implements OnInit {
           this.invoiceLabelResult = response;
       });
     }
+  }
+
+  getCurrentInvoiceForCustomerOrder(): Invoice | undefined {
+    if (instanceOfCustomerOrder(this.quotation) && this.quotation.invoices)
+      for (let invoice of this.quotation.invoices)
+        if (invoice.invoiceStatus && (invoice.invoiceStatus.id == this.constantService.getInvoiceStatusSend().id || invoice.invoiceStatus.id == this.constantService.getInvoiceStatusPayed().id))
+          return invoice;
+    return undefined;
   }
 }
