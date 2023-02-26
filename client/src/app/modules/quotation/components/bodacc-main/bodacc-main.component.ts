@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
-import { BODACC_ENTITY_TYPE } from 'src/app/routing/search/search.component';
+import { BODACC_ENTITY_TYPE, PROVISION_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { ActType } from '../../model/ActType';
 import { Affaire } from '../../model/Affaire';
 import { Bodacc } from '../../model/Bodacc';
@@ -36,6 +36,7 @@ export class BodaccMainComponent implements OnInit {
   @ViewChild('tabs', { static: false }) tabs: any;
 
   BODACC_ENTITY_TYPE = BODACC_ENTITY_TYPE;
+  PROVISION_ENTITY_TYPE = PROVISION_ENTITY_TYPE;
 
   bodaccPublicationTypeMerging: BodaccPublicationType = this.constantService.getBodaccPublicationTypeMerging();
   bodaccPublicationTypeSplit: BodaccPublicationType = this.constantService.getBodaccPublicationTypeSplit();

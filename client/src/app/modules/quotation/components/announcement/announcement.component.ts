@@ -12,6 +12,7 @@ import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAc
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { ANNOUNCEMENT_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { getDocument } from '../../../../libs/DocumentHelper';
+import { PROVISION_ENTITY_TYPE } from '../../../../routing/search/search.component';
 import { AppService } from '../../../../services/app.service';
 import { AttachmentType } from '../../../miscellaneous/model/AttachmentType';
 import { Document } from "../../../miscellaneous/model/Document";
@@ -50,6 +51,7 @@ export class AnnouncementComponent implements OnInit {
 
   SEPARATOR_KEY_CODES = SEPARATOR_KEY_CODES;
   ANNOUNCEMENT_ENTITY_TYPE = ANNOUNCEMENT_ENTITY_TYPE;
+  PROVISION_ENTITY_TYPE = PROVISION_ENTITY_TYPE;
 
   journalTypes: JournalType[] = [] as Array<JournalType>;
   journalTypeSpel: JournalType = this.constantService.getJournalTypeSpel();
@@ -302,8 +304,8 @@ export class AnnouncementComponent implements OnInit {
 
   updateAttachments(attachments: Attachment[]) {
     this.appService.displaySnackBar("N'oubliez pas de mettre à jours la date de publication de l'annonce !", false, 20);
-    if (attachments && this.announcement) {
-      this.announcement.attachments = attachments;
+    if (attachments && this.provision) {
+      this.provision.attachments = attachments;
     }
   }
 

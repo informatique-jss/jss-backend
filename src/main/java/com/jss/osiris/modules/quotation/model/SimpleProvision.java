@@ -1,8 +1,5 @@
 package com.jss.osiris.modules.quotation.model;
 
-import java.util.List;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,17 +7,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.jss.osiris.modules.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
-import com.jss.osiris.modules.miscellaneous.model.IAttachment;
 import com.jss.osiris.modules.miscellaneous.model.IId;
 
 @Entity
-public class SimpleProvision implements IId, IAttachment {
+public class SimpleProvision implements IId {
 
 	@Id
 	@SequenceGenerator(name = "simple_provision_sequence", sequenceName = "simple_provision_sequence", allocationSize = 1)
@@ -33,10 +26,6 @@ public class SimpleProvision implements IId, IAttachment {
 
 	@Column(columnDefinition = "TEXT")
 	private String observations;
-
-	@OneToMany(mappedBy = "simpleProvision", cascade = CascadeType.REMOVE)
-	@JsonIgnoreProperties(value = { "simpleProvision" }, allowSetters = true)
-	private List<Attachment> attachments;
 
 	@ManyToOne
 	@JoinColumn(name = "id_waited_competent_authority")
@@ -64,14 +53,6 @@ public class SimpleProvision implements IId, IAttachment {
 
 	public void setObservations(String observations) {
 		this.observations = observations;
-	}
-
-	public List<Attachment> getAttachments() {
-		return attachments;
-	}
-
-	public void setAttachments(List<Attachment> attachments) {
-		this.attachments = attachments;
 	}
 
 	public CompetentAuthority getWaitedCompetentAuthority() {

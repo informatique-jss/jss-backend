@@ -1441,7 +1441,7 @@ public class MailHelper {
         MailComputeResult mailComputeResult = mailComputeHelper.computeMailForSendAnnouncementToConfrere(announcement);
 
         List<Attachment> attachments = new ArrayList<Attachment>();
-        for (Attachment attachment : attachmentService.sortAttachmentByDateDesc(announcement.getAttachments()))
+        for (Attachment attachment : attachmentService.sortAttachmentByDateDesc(provision.getAttachments()))
             if (attachment.getAttachmentType().getId()
                     .equals(constantService.getAttachmentTypeAnnouncement()
                             .getId())
@@ -1533,14 +1533,14 @@ public class MailHelper {
                 if (asso.getProvisions() != null)
                     for (Provision provision : asso.getProvisions())
                         if (provision.getFormalite() != null) {
-                            if (provision.getFormalite().getAttachments() != null)
-                                for (Attachment attachment : provision.getFormalite().getAttachments())
+                            if (provision.getAttachments() != null)
+                                for (Attachment attachment : provision.getAttachments())
                                     if (attachment.getAttachmentType().getId()
                                             .equals(constantService.getAttachmentTypeKbisUpdated().getId()))
                                         attachments.add(attachment);
                         } else if (provision.getBodacc() != null) {
-                            if (provision.getBodacc().getAttachments() != null)
-                                for (Attachment attachment : provision.getBodacc().getAttachments())
+                            if (provision.getAttachments() != null)
+                                for (Attachment attachment : provision.getAttachments())
                                     if (attachment.getAttachmentType().getId()
                                             .equals(constantService.getAttachmentTypeKbisUpdated().getId()))
                                         attachments.add(attachment);
@@ -1564,12 +1564,13 @@ public class MailHelper {
         mail.setLabel("Commande n°" + customerOrder.getId());
         String explainationText = "Vous trouverez ci-joint l'attestation de parution ";
 
+        Provision currentProvision = null;
         if (customerOrder.getAssoAffaireOrders() != null && customerOrder.getAssoAffaireOrders().size() > 0)
             for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
                 if (asso.getProvisions() != null)
                     for (Provision provision : asso.getProvisions())
                         if (provision.getAnnouncement() != null
-                                && provision.getAnnouncement().getId().equals(announcement.getId()))
+                                && provision.getAnnouncement().getId().equals(announcement.getId())) {
                             mail.setExplaination(explainationText + " concernant la société " +
                                     ((asso.getAffaire().getDenomination() != null ? asso.getAffaire().getDenomination()
                                             : (asso.getAffaire().getFirstname() + " "
@@ -1581,10 +1582,15 @@ public class MailHelper {
                                                             : "")
                                                     + ")"))
                                     + ".");
+                            currentProvision = provision;
+                        }
+
+        if (currentProvision == null)
+            return;
 
         List<Attachment> attachments = new ArrayList<Attachment>();
-        if (announcement.getAttachments() != null) {
-            for (Attachment attachment : attachmentService.sortAttachmentByDateDesc(announcement.getAttachments()))
+        if (currentProvision.getAttachments() != null) {
+            for (Attachment attachment : attachmentService.sortAttachmentByDateDesc(currentProvision.getAttachments()))
                 if (attachment.getAttachmentType().getId()
                         .equals(constantService.getAttachmentTypePublicationReceipt()
                                 .getId())) {
@@ -1621,12 +1627,13 @@ public class MailHelper {
         mail.setLabel("Commande n°" + customerOrder.getId());
         String explainationText = "Vous trouverez ci-joint le témoin de publication ";
 
+        Provision currentProvision = null;
         if (customerOrder.getAssoAffaireOrders() != null && customerOrder.getAssoAffaireOrders().size() > 0)
             for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
                 if (asso.getProvisions() != null)
                     for (Provision provision : asso.getProvisions())
                         if (provision.getAnnouncement() != null
-                                && provision.getAnnouncement().getId().equals(announcement.getId()))
+                                && provision.getAnnouncement().getId().equals(announcement.getId())) {
                             mail.setExplaination(explainationText + " concernant la société " +
                                     ((asso.getAffaire().getDenomination() != null ? asso.getAffaire().getDenomination()
                                             : (asso.getAffaire().getFirstname() + " "
@@ -1638,9 +1645,14 @@ public class MailHelper {
                                                             : "")
                                                     + ")"))
                                     + ".");
+                            currentProvision = provision;
+                        }
+
+        if (currentProvision == null)
+            return;
 
         List<Attachment> attachments = new ArrayList<Attachment>();
-        for (Attachment attachment : attachmentService.sortAttachmentByDateDesc(announcement.getAttachments()))
+        for (Attachment attachment : attachmentService.sortAttachmentByDateDesc(currentProvision.getAttachments()))
             if (attachment.getAttachmentType().getId()
                     .equals(constantService.getAttachmentTypePublicationFlag()
                             .getId())
@@ -1678,12 +1690,13 @@ public class MailHelper {
         mail.setLabel("Commande n°" + customerOrder.getId());
         String explainationText = "Vous trouverez ci-joint votre épreuve de relecture pour validation ";
 
+        Provision currentProvision = null;
         if (customerOrder.getAssoAffaireOrders() != null && customerOrder.getAssoAffaireOrders().size() > 0)
             for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
                 if (asso.getProvisions() != null)
                     for (Provision provision : asso.getProvisions())
                         if (provision.getAnnouncement() != null
-                                && provision.getAnnouncement().getId().equals(announcement.getId()))
+                                && provision.getAnnouncement().getId().equals(announcement.getId())) {
                             mail.setExplaination(explainationText + " concernant la société " +
                                     ((asso.getAffaire().getDenomination() != null ? asso.getAffaire().getDenomination()
                                             : (asso.getAffaire().getFirstname() + " "
@@ -1695,9 +1708,14 @@ public class MailHelper {
                                                             : "")
                                                     + ")"))
                                     + ".");
+                            currentProvision = provision;
+                        }
+
+        if (currentProvision == null)
+            return;
 
         List<Attachment> attachments = new ArrayList<Attachment>();
-        for (Attachment attachment : attachmentService.sortAttachmentByDateDesc(announcement.getAttachments()))
+        for (Attachment attachment : attachmentService.sortAttachmentByDateDesc(currentProvision.getAttachments()))
             if (attachment.getAttachmentType().getId()
                     .equals(constantService.getAttachmentTypeProofReading()
                             .getId())) {

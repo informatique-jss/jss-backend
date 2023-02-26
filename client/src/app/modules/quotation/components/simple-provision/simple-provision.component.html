@@ -29,9 +29,8 @@
       <add-debour [editMode]="editMode" [(provision)]="provision">
       </add-debour>
     </mat-tab>
-    <mat-tab label="Documents" *ngIf="simpleProvision.id ">
-      <attachments [entity]="simpleProvision" [editMode]="editMode"
-        [entityType]="SIMPLE_PROVISION_ENTITY_TYPE.entityType">
+    <mat-tab label="Documents" *ngIf="simpleProvision.id && provision ">
+      <attachments [entity]="provision" [editMode]="editMode" [entityType]="PROVISION_ENTITY_TYPE.entityType">
       </attachments>
     </mat-tab>
     <mat-tab label="Historique" *ngIf="simpleProvision && simpleProvision.id">

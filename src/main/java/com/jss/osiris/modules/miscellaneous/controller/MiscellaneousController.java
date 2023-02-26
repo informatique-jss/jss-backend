@@ -87,15 +87,10 @@ import com.jss.osiris.modules.miscellaneous.service.VatService;
 import com.jss.osiris.modules.miscellaneous.service.WeekDayService;
 import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.profile.service.EmployeeService;
-import com.jss.osiris.modules.quotation.model.Announcement;
-import com.jss.osiris.modules.quotation.model.Bodacc;
 import com.jss.osiris.modules.quotation.model.Confrere;
 import com.jss.osiris.modules.quotation.model.CustomerOrder;
-import com.jss.osiris.modules.quotation.model.Domiciliation;
 import com.jss.osiris.modules.quotation.model.Provision;
 import com.jss.osiris.modules.quotation.model.Quotation;
-import com.jss.osiris.modules.quotation.model.SimpleProvision;
-import com.jss.osiris.modules.quotation.model.guichetUnique.Formalite;
 import com.jss.osiris.modules.quotation.service.AffaireService;
 import com.jss.osiris.modules.quotation.service.AssoAffaireOrderService;
 import com.jss.osiris.modules.quotation.service.BankTransfertService;
@@ -979,14 +974,9 @@ public class MiscellaneousController {
                 && !entityType.equals("Ofx")
                 && !entityType.equals(Responsable.class.getSimpleName())
                 && !entityType.equals(Quotation.class.getSimpleName())
-                && !entityType.equals(Announcement.class.getSimpleName())
-                && !entityType.equals(Domiciliation.class.getSimpleName())
                 && !entityType.equals(CustomerOrder.class.getSimpleName())
                 && !entityType.equals(Provision.class.getSimpleName())
-                && !entityType.equals(Formalite.class.getSimpleName())
-                && !entityType.equals(Invoice.class.getSimpleName())
-                && !entityType.equals(Bodacc.class.getSimpleName())
-                && !entityType.equals(SimpleProvision.class.getSimpleName()))
+                && !entityType.equals(Invoice.class.getSimpleName()))
             throw new OsirisValidationException("entityType");
 
         return new ResponseEntity<List<Attachment>>(

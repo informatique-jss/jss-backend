@@ -212,7 +212,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                     currentProvision);
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
             try {
-                announcement.setAttachments(
+                currentProvision.setAttachments(
                         attachmentService.addAttachment(new FileInputStream(publicationReceiptPdf),
                                 announcement.getId(),
                                 Announcement.class.getSimpleName(),
@@ -263,7 +263,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
             File publicationReceiptPdf = mailHelper.generatePublicationFlagPdf(announcement, currentProvision);
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
             try {
-                announcement.setAttachments(
+                currentProvision.setAttachments(
                         attachmentService.addAttachment(new FileInputStream(publicationReceiptPdf),
                                 announcement.getId(),
                                 Announcement.class.getSimpleName(),
@@ -301,14 +301,6 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     @Override
     public void generateStoreAndSendProofReading(Announcement announcement, CustomerOrder customerOrder)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
-        // Check if publication receipt already exists
-        boolean proofReading = false;
-        if (announcement.getAttachments() != null)
-            for (Attachment attachment : announcement.getAttachments())
-                if (attachment.getAttachmentType().getId()
-                        .equals(constantService.getAttachmentTypeProofReading().getId()))
-                    proofReading = true;
-
         // Get provision
         Provision currentProvision = null;
         if (customerOrder != null && customerOrder.getAssoAffaireOrders() != null)
@@ -321,12 +313,23 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                             break;
                         }
 
+        if (currentProvision == null)
+            return;
+
+        // Check if publication receipt already exists
+        boolean proofReading = false;
+        if (currentProvision.getAttachments() != null)
+            for (Attachment attachment : currentProvision.getAttachments())
+                if (attachment.getAttachmentType().getId()
+                        .equals(constantService.getAttachmentTypeProofReading().getId()))
+                    proofReading = true;
+
         if (!proofReading && announcement.getNotice() != null) {
             File publicationReceiptPdf = mailHelper.generatePublicationReceiptPdf(announcement, false,
                     currentProvision);
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
             try {
-                announcement.setAttachments(
+                currentProvision.setAttachments(
                         attachmentService.addAttachment(new FileInputStream(publicationReceiptPdf),
                                 announcement.getId(),
                                 Announcement.class.getSimpleName(),
@@ -373,7 +376,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
                 File wordFile = wordGenerationHelper.generateWordFromHtml(htmlContent);
                 try {
-                    announcement.setAttachments(
+                    provision.setAttachments(
                             attachmentService.addAttachment(new FileInputStream(wordFile),
                                     announcement.getId(),
                                     Announcement.class.getSimpleName(), constantService.getAttachmentTypeAnnouncement(),

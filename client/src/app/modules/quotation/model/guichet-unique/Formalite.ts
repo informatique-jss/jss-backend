@@ -1,4 +1,3 @@
-import { IAttachment } from "src/app/modules/miscellaneous/model/IAttachment";
 import { FormaliteStatus } from '../FormaliteStatus';
 import { Content } from "./Content";
 import { DiffusionINSEE } from "./referentials/DiffusionINSEE";
@@ -6,7 +5,8 @@ import { FormeJuridique } from "./referentials/FormeJuridique";
 import { TypeFormalite } from "./referentials/TypeFormalite";
 import { TypePersonne } from "./referentials/TypePersonne";
 
-export interface Formalite extends IAttachment {
+export interface Formalite {
+  id: number;
   formalityDraftId: number;
   companyName: string;
   content: Content;

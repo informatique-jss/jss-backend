@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { FORMALITE_ENTITY_TYPE } from 'src/app/routing/search/search.component';
+import { FORMALITE_ENTITY_TYPE, PROVISION_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { ConstantService } from '../../../miscellaneous/services/constant.service';
 import { Content } from '../../model/guichet-unique/Content';
 import { Formalite } from '../../model/guichet-unique/Formalite';
@@ -26,6 +26,7 @@ export class FormaliteComponent implements OnInit {
   @ViewChild(NatureCreationComponent) natureCreationComponent: NatureCreationComponent | undefined;
 
   FORMALITE_ENTITY_TYPE = FORMALITE_ENTITY_TYPE;
+  PROVISION_ENTITY_TYPE = PROVISION_ENTITY_TYPE;
 
   typePersonnePersonnePhysique = this.constantService.getTypePersonnePersonnePhysique();
   typePersonnePersonneMorale = this.constantService.getTypePersonnePersonneMorale();

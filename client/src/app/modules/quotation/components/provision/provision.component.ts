@@ -259,9 +259,9 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     return {} as IWorkflowElement;
   }
 
-  publicationReceiptFound(announcement: Announcement): boolean {
-    if (announcement && announcement.attachments && announcement.attachments.length > 0)
-      for (let attachement of announcement.attachments)
+  publicationReceiptFound(provision: Provision): boolean {
+    if (provision && provision.attachments && provision.attachments.length > 0)
+      for (let attachement of provision.attachments)
         if (attachement.attachmentType && attachement.attachmentType.id == this.constantService.getAttachmentTypePublicationReceipt().id)
           return true;
     return false;
@@ -277,7 +277,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     if (provision.announcement) {
       provision.announcement.announcementStatus = status;
       if (status.code == ANNOUNCEMENT_STATUS_IN_PROGRESS && !provision.announcement.isPublicationReciptAlreadySent && provision.announcement.confrere && provision.announcement.confrere.id == this.constantService.getConfrereJssSpel().id
-        || !provision.announcement.isPublicationReciptAlreadySent && provision.announcement.confrere && provision.announcement.confrere.id != this.constantService.getConfrereJssSpel().id && this.publicationReceiptFound(provision.announcement)) {
+        || !provision.announcement.isPublicationReciptAlreadySent && provision.announcement.confrere && provision.announcement.confrere.id != this.constantService.getConfrereJssSpel().id && this.publicationReceiptFound(provision)) {
         saveAsso = false;
         const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
           maxWidth: "400px",

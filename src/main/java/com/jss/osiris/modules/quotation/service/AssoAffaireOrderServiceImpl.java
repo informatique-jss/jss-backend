@@ -284,8 +284,8 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
                 boolean publicationProofFound = false;
                 if (announcement != null) {
-                    if (announcement.getAttachments() != null && announcement.getAttachments().size() > 0)
-                        for (Attachment attachment : announcement.getAttachments())
+                    if (provision.getAttachments() != null && provision.getAttachments().size() > 0)
+                        for (Attachment attachment : provision.getAttachments())
                             if (attachment.getAttachmentType().getId()
                                     .equals(constantService.getAttachmentTypePublicationProof().getId())) {
                                 publicationProofFound = true;
@@ -305,8 +305,8 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                         }
                     } else {
                         // Else send publication receipt when it's available and if user accept
-                        if (announcement.getAttachments() != null && announcement.getAttachments().size() > 0)
-                            for (Attachment attachment : announcement.getAttachments())
+                        if (provision.getAttachments() != null && provision.getAttachments().size() > 0)
+                            for (Attachment attachment : provision.getAttachments())
                                 if (attachment.getAttachmentType().getId()
                                         .equals(constantService.getAttachmentTypePublicationReceipt().getId())) {
                                     announcementService.generateStoreAndSendPublicationReceipt(

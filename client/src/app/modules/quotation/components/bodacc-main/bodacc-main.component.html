@@ -66,8 +66,8 @@
         *ngIf="bodacc.bodaccPublicationType &&  bodacc.bodaccPublicationType.id==bodaccPublicationTypeSplit.id">
       </bodacc-split>
     </mat-tab>
-    <mat-tab label="Documents">
-      <attachments [entity]="bodacc" [editMode]="editMode" [entityType]="BODACC_ENTITY_TYPE.entityType">
+    <mat-tab label="Documents" *ngIf="bodacc.id && provision">
+      <attachments [entity]="provision" [editMode]="editMode" [entityType]="PROVISION_ENTITY_TYPE.entityType">
       </attachments>
     </mat-tab>
   </mat-tab-group>

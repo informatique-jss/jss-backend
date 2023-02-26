@@ -723,26 +723,21 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                         provision.setId(null);
                         if (provision.getAnnouncement() != null) {
                             provision.getAnnouncement().setId(null);
-                            provision.getAnnouncement().setAttachments(null);
                             if (provision.getAnnouncement().getDocuments() != null)
                                 for (Document document : provision.getAnnouncement().getDocuments())
                                     document.setId(null);
                         }
                         if (provision.getBodacc() != null) {
                             provision.getBodacc().setId(null);
-                            provision.getBodacc().setAttachments(null);
                         }
                         if (provision.getFormalite() != null) {
                             provision.getFormalite().setId(null);
-                            provision.getFormalite().setAttachments(null);
                         }
                         if (provision.getSimpleProvision() != null) {
                             provision.getSimpleProvision().setId(null);
-                            provision.getSimpleProvision().setAttachments(null);
                         }
                         if (provision.getDomiciliation() != null) {
                             provision.getDomiciliation().setId(null);
-                            provision.getDomiciliation().setAttachments(null);
                         }
                         if (provision.getInvoiceItems() != null)
                             for (InvoiceItem invoiceItem : provision.getInvoiceItems())

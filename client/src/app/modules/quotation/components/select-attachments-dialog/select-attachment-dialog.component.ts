@@ -64,16 +64,7 @@ export class SelectAttachmentsDialogComponent implements OnInit {
 
   getAttachments() {
     if (this.provision) {
-      if (this.provision.announcement)
-        return this.provision.announcement.attachments;
-      if (this.provision.domiciliation)
-        return this.provision.domiciliation.attachments;
-      if (this.provision.formalite)
-        return this.provision.formalite.attachments;
-      if (this.provision.simpleProvision)
-        return this.provision.simpleProvision.attachments;
-      if (this.provision.bodacc)
-        return this.provision.bodacc.attachments;
+      this.provision.attachments
     }
     return [];
   }

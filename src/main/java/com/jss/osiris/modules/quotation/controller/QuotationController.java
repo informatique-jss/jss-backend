@@ -1577,8 +1577,8 @@ public class QuotationController {
           && announcement.getConfrere() != null
           && !announcement.getConfrere().getId().equals(constantService.getConfrereJssSpel().getId())) {
         boolean publicationProofFound = false;
-        if (announcement.getAttachments() != null && announcement.getAttachments().size() > 0)
-          for (Attachment attachment : announcement.getAttachments())
+        if (provision.getAttachments() != null && provision.getAttachments().size() > 0)
+          for (Attachment attachment : provision.getAttachments())
             if (attachment.getAttachmentType().getId()
                 .equals(constantService.getAttachmentTypePublicationFlag().getId())
                 || attachment.getAttachmentType().getId()

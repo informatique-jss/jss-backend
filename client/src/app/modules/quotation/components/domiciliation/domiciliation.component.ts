@@ -6,7 +6,7 @@ import { Civility } from 'src/app/modules/miscellaneous/model/Civility';
 import { CityService } from 'src/app/modules/miscellaneous/services/city.service';
 import { CivilityService } from 'src/app/modules/miscellaneous/services/civility.service';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
-import { DOMICILIATION_ENTITY_TYPE } from 'src/app/routing/search/search.component';
+import { DOMICILIATION_ENTITY_TYPE, PROVISION_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { BuildingDomiciliation } from '../../model/BuildingDomiciliation';
 import { Domiciliation } from '../../model/Domiciliation';
 import { DomiciliationContractType } from '../../model/DomiciliationContractType';
@@ -35,6 +35,7 @@ export class DomiciliationComponent implements OnInit {
   @ViewChild('tabs', { static: false }) tabs: any;
 
   DOMICILIATION_ENTITY_TYPE = DOMICILIATION_ENTITY_TYPE;
+  PROVISION_ENTITY_TYPE = PROVISION_ENTITY_TYPE;
   attachmentTypeKbis = this.constantService.getAttachmentTypeKbis();
   attachmentTypeCni = this.constantService.getAttachmentTypeCni();
   attachmentProofOfAddress = this.constantService.getAttachmentTypeProofOfAddress();
