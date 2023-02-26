@@ -39,7 +39,7 @@ public class SearchServiceImpl implements SearchService {
     }
 
     @Override
-    public List<IndexEntity> searchForEntities(String search, String entityType) {
+    public List<IndexEntity> searchForEntities(String search, String entityType, boolean onlyExactMatch) {
         List<IndexEntity> entities = null;
         try {
             entities = indexEntityRepository.searchForEntitiesByIdAndEntityType(Integer.parseInt(search.trim()),
@@ -48,9 +48,9 @@ public class SearchServiceImpl implements SearchService {
         }
         if (entities == null || entities.size() == 0)
             entities = indexEntityRepository.searchForEntities(search, entityType, maxNumberOfResults);
-        if (entities == null || entities.size() == 0)
+        if (entities == null || entities.size() == 0 && !onlyExactMatch)
             entities = indexEntityRepository.searchForContainsSimilarEntities(search, entityType, maxNumberOfResults);
-        if (entities == null || entities.size() == 0)
+        if (entities == null || entities.size() == 0 && !onlyExactMatch)
             entities = indexEntityRepository.searchForDeepSimilarEntities(search, entityType, maxNumberOfResults);
         return entities;
     }
@@ -62,7 +62,7 @@ public class SearchServiceImpl implements SearchService {
 
     @Override
     public List<IndexEntity> getActifResponsableByKeyword(String searchedValue, Boolean onlyActive) {
-        List<IndexEntity> responsables = searchForEntities(searchedValue, Responsable.class.getSimpleName());
+        List<IndexEntity> responsables = searchForEntities(searchedValue, Responsable.class.getSimpleName(), false);
         if (!onlyActive)
             return responsables;
 
@@ -76,12 +76,12 @@ public class SearchServiceImpl implements SearchService {
 
     @Override
     public List<IndexEntity> getCustomerOrdersByKeyword(String searchedValue) {
-        return searchForEntities(searchedValue, CustomerOrder.class.getSimpleName());
+        return searchForEntities(searchedValue, CustomerOrder.class.getSimpleName(), false);
     }
 
     @Override
     public List<IndexEntity> getIndividualTiersByKeyword(String searchedValue) {
-        List<IndexEntity> tiers = searchForEntities(searchedValue, Tiers.class.getSimpleName());
+        List<IndexEntity> tiers = searchForEntities(searchedValue, Tiers.class.getSimpleName(), false);
         List<IndexEntity> outTiers = new ArrayList<IndexEntity>();
 
         if (tiers != null && tiers.size() > 0)

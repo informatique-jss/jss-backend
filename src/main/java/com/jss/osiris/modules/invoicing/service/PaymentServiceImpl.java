@@ -752,7 +752,7 @@ public class PaymentServiceImpl implements PaymentService {
 
                 if (idToFind != null) {
                     tmpEntitiesFound = searchService.searchForEntitiesById(idToFind, entityTypesToSearch);
-                    debourFound = searchService.searchForEntities(idToFind + "", Debour.class.getSimpleName());
+                    debourFound = searchService.searchForEntities(idToFind + "", Debour.class.getSimpleName(), true);
                     if (debourFound != null && debourFound.size() > 0)
                         tmpEntitiesFound.addAll(debourFound);
                 }
