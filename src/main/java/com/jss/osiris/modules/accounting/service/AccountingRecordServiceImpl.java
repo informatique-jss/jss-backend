@@ -297,13 +297,16 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   @Override
   public void generateAccountingRecordsForSaleOnInvoicePayment(Invoice invoice, Payment payment)
       throws OsirisException {
-    AccountingJournal bankJournal = constantService.getAccountingJournalBank();
 
     if (invoice == null)
       throw new OsirisException(null, "No invoice provided");
 
     if (payment == null)
       throw new OsirisException(null, "No payments nor deposits provided with invoice " + invoice.getId());
+
+    AccountingJournal journal = constantService.getAccountingJournalBank();
+    if (payment.getPaymentType().getId().equals(constantService.getPaymentTypeEspeces().getId()))
+      journal = constantService.getAccountingJournalCash();
 
     AccountingAccount accountingAccountCustomer = getCustomerAccountingAccountForInvoice(invoice);
 
@@ -324,7 +327,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     // One write on customer account to equilibrate invoice
     generateNewAccountingRecord(LocalDateTime.now(), operationId, null, null,
         "Réglement de la facture n°" + invoice.getId(), payment.getPaymentAmount(), null,
-        accountingAccountCustomer, null, invoice, null, bankJournal, null, null, null);
+        accountingAccountCustomer, null, invoice, null, journal, null, null, null);
 
     // Trigger lettrage
     checkInvoiceForLettrage(invoice);
@@ -585,6 +588,16 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
         "Paiement n°" + payment.getId(), payment.getPaymentAmount(), null,
         constantService.getAccountingAccountBankJss(),
         null, null, null, bankJournal, payment, null, null);
+  }
+
+  @Override
+  public void generateBankAccountingRecordsForInboundCashPayment(Payment payment) throws OsirisException {
+    AccountingJournal cashJournal = constantService.getAccountingJournalCash();
+
+    generateNewAccountingRecord(LocalDateTime.now(), payment.getId(), null, null,
+        "Paiement n°" + payment.getId(), null, payment.getPaymentAmount(),
+        constantService.getAccountingAccountCaisse(),
+        null, null, null, cashJournal, payment, null, null);
   }
 
   @Override

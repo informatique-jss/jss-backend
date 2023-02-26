@@ -54,4 +54,9 @@ public interface PaymentService {
                         MutableBoolean generateWaitingAccountAccountingRecords, List<Float> byPassAmount)
                         throws OsirisException;
 
+        public void addCashPaymentForInvoice(Payment cashPayment, Invoice invoice) throws OsirisException;
+
+        public void addCashPaymentForCustomerOrder(Payment cashPayment, CustomerOrder customerOrder)
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException;
+
 }

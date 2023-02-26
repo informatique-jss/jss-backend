@@ -12,4 +12,35 @@
     <payment-list [overrideIconAction]="'merge_type'" [overrideTooltipAction]="'Associer le paiement'"
       (actionBypass)="openAssociationDialog($event)"></payment-list>
   </div>
+  <div class=" advise" *ngIf="displayAddCashPayment">
+    <h3>Déclarer un paiement en espèce</h3>
+    <div>
+      <form [formGroup]="invoicePaymentForm">
+        <div class="full-width">
+          <table>
+            <tr>
+              <td>
+                <generic-input [(model)]="newPayment.paymentAmount" label="Montant" [form]="invoicePaymentForm"
+                  propertyName="paymentAmount" [isMandatory]="true" [isDisabled]="true" type="number"></generic-input>
+              </td>
+              <td>
+                <generic-datetime-picker [(model)]="newPayment.paymentDate" label="Date de paiement"
+                  [form]="invoicePaymentForm" propertyName="paymentDate" [isMandatory]="true"
+                  [isDisabled]="false"></generic-datetime-picker>
+              </td>
+              <td>
+                <generic-input [(model)]="newPayment.label" label="Libellé du paiement" [form]="invoicePaymentForm"
+                  propertyName="label" [isMandatory]="true" [isDisabled]="false" [maxLength]="250"></generic-input>
+              </td>
+              <td class="button-td">
+                <button (click)="addCashPayment()" mat-mini-fab color="warn" class="mini-fab-add add-button">
+                  <mat-icon>add</mat-icon>
+                </button>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>

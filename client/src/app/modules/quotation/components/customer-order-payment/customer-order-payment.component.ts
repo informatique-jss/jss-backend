@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import { FormBuilder } from "@angular/forms";
 import { MatDialog } from "@angular/material/dialog";
 import { CUSTOMER_ORDER_STATUS_BILLED } from "src/app/libs/Constants";
 import { formatDateTimeForSortTable, formatEurosForSortTable } from "src/app/libs/FormatHelper";
@@ -9,6 +10,8 @@ import { PaymentService } from "src/app/modules/invoicing/services/payment.servi
 import { SortTableAction } from "src/app/modules/miscellaneous/model/SortTableAction";
 import { SortTableColumn } from "src/app/modules/miscellaneous/model/SortTableColumn";
 import { AppService } from "src/app/services/app.service";
+import { HabilitationsService } from '../../../../services/habilitations.service';
+import { ConstantService } from '../../../miscellaneous/services/constant.service';
 import { CustomerOrder } from "../../model/CustomerOrder";
 
 @Component({
@@ -22,6 +25,8 @@ export class CustomerOrderPaymentComponent implements OnInit {
   @Input() customerOrder: CustomerOrder = {} as CustomerOrder;
   displayedColumns: SortTableColumn[] = [];
   tableAction: SortTableAction[] = [];
+  newPayment: Payment = {} as Payment;
+  displayAddCashPayment = this.habilitationsService.canAddNewCashPayment();
 
   @Output() stateChanged = new EventEmitter<void>();
 
@@ -29,7 +34,13 @@ export class CustomerOrderPaymentComponent implements OnInit {
 
   constructor(private paymentService: PaymentService,
     private appService: AppService,
-    public associatePaymentDialog: MatDialog) { }
+    private constantService: ConstantService,
+    public associatePaymentDialog: MatDialog,
+    private formBuilder: FormBuilder,
+    private habilitationsService: HabilitationsService
+  ) { }
+
+  customerOrderPaymentForm = this.formBuilder.group({});
 
   ngOnInit() {
     this.displayedColumns = [];
@@ -70,5 +81,18 @@ export class CustomerOrderPaymentComponent implements OnInit {
         this.stateChanged.emit();
       });
     })
+  }
+
+
+  addCashPayment() {
+    if (this.newPayment && this.customerOrderPaymentForm.valid) {
+      this.newPayment.paymentWay = this.constantService.getPaymentWayInbound();
+      this.newPayment.paymentType = this.constantService.getPaymentTypeEspeces();
+      this.newPayment.isCancelled = false;
+      this.newPayment.isExternallyAssociated = false;
+      this.paymentService.addCashPaymentForCustomerOrder(this.newPayment, this.customerOrder).subscribe(reposne => {
+        this.stateChanged.emit();
+      })
+    }
   }
 }

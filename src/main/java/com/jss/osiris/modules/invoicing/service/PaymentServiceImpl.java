@@ -948,4 +948,24 @@ public class PaymentServiceImpl implements PaymentService {
         payment.setInvoice(null);
         return addOrUpdatePayment(payment);
     }
+
+    @Override
+    public void addCashPaymentForInvoice(Payment cashPayment, Invoice invoice) throws OsirisException {
+        addOrUpdatePayment(cashPayment);
+        accountingRecordService.generateBankAccountingRecordsForInboundCashPayment(cashPayment);
+
+        associateInboundPaymentAndInvoices(getPayment(cashPayment.getId()), Arrays.asList(invoice),
+                new MutableBoolean(false), null);
+    }
+
+    @Override
+    public void addCashPaymentForCustomerOrder(Payment cashPayment, CustomerOrder customerOrder)
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException {
+        addOrUpdatePayment(cashPayment);
+        accountingRecordService.generateBankAccountingRecordsForInboundCashPayment(cashPayment);
+
+        associateInboundPaymentAndCustomerOrders(getPayment(cashPayment.getId()), Arrays.asList(customerOrder),
+                new ArrayList<Invoice>(),
+                new MutableBoolean(false), null, cashPayment.getPaymentAmount());
+    }
 }
