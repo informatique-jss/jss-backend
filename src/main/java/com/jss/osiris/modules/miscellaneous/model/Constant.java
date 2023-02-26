@@ -270,6 +270,10 @@ public class Constant implements Serializable, IId {
 	private BillingType billingTypeChronopostFees;
 
 	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_billing_type_confrere_fees")
+	private BillingType billingTypeConfrereFees;
+
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_billing_type_application_fees")
 	private BillingType billingTypeApplicationFees;
 
@@ -1846,6 +1850,14 @@ public class Constant implements Serializable, IId {
 	public void setPrincipalAccountingAccountDepositProvider(
 			PrincipalAccountingAccount principalAccountingAccountDepositProvider) {
 		this.principalAccountingAccountDepositProvider = principalAccountingAccountDepositProvider;
+	}
+
+	public BillingType getBillingTypeConfrereFees() {
+		return billingTypeConfrereFees;
+	}
+
+	public void setBillingTypeConfrereFees(BillingType billingTypeConfrereFees) {
+		this.billingTypeConfrereFees = billingTypeConfrereFees;
 	}
 
 }

@@ -90,6 +90,7 @@ export interface Constant {
   billingTypeDisbursement: BillingType;
   billingTypeFeasibilityStudy: BillingType;
   billingTypeChronopostFees: BillingType;
+  billingTypeConfrereFees: BillingType;
   billingTypeApplicationFees: BillingType;
   billingTypeBankCheque: BillingType;
   billingTypeComplexeFile: BillingType;

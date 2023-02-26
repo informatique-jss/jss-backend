@@ -152,20 +152,6 @@ public class PricingHelper {
                         * characterPriceService.getCharacterNumber(provision);
                 invoiceItem.setPreTaxPrice(Math.round(price * 100f) / 100f);
 
-                // If it's an announcement published by a Confrere, apply additionnal fees and
-                // JSS markup
-                if (isNotJssConfrere(provision)) {
-                    Float additionnalFees = 0f;
-                    Confrere confrere = provision.getAnnouncement().getConfrere();
-                    if (confrere.getAdministrativeFees() != null)
-                        additionnalFees += confrere.getAdministrativeFees();
-
-                    invoiceItem.setPreTaxPrice(
-                            invoiceItem.getPreTaxPrice()
-                                    * (1 + (confrere.getReinvoicing() != null ? confrere.getReinvoicing() : 0f) / 100)
-                                    + additionnalFees);
-                }
-
                 // Add notice type indication for announcements
                 String noticeFamiliyType = (provision.getAnnouncement() != null
                         && provision.getAnnouncement().getNoticeTypeFamily() != null)
@@ -210,6 +196,28 @@ public class PricingHelper {
                 } else
                     invoiceItem.setPreTaxPrice(
                             Math.round(billingItem.getPreTaxPrice() * nbr * 100f) / 100f);
+            }
+        } else if (billingItem.getBillingType().getId()
+                .equals(constantService.getBillingTypeConfrereFees().getId())) {
+            // If it's an announcement published by a Confrere, apply additionnal fees and
+            // JSS markup
+            if (isNotJssConfrere(provision)) {
+                CharacterPrice characterPrice = characterPriceService.getCharacterPrice(provision);
+                Float price = 0f;
+                if (characterPrice != null) {
+                    price = characterPrice.getPrice()
+                            * characterPriceService.getCharacterNumber(provision);
+                }
+
+                Float additionnalFees = 0f;
+                Confrere confrere = provision.getAnnouncement().getConfrere();
+                if (confrere.getAdministrativeFees() != null)
+                    additionnalFees += confrere.getAdministrativeFees();
+
+                invoiceItem.setPreTaxPrice(
+                        (price != null ? price : 0f)
+                                * ((confrere.getReinvoicing() != null ? confrere.getReinvoicing() : 0f) / 100)
+                                + additionnalFees);
             }
         } else if ((billingItem.getBillingType().getIsDebour() || billingItem.getBillingType().getIsFee())
                 && provision.getDebours() != null && provision.getDebours().size() > 0) {
@@ -452,6 +460,9 @@ public class PricingHelper {
             return true;
         if (billingType.getId().equals(constantService.getBillingTypePublicationPaper().getId())
                 && provision.getIsPublicationPaper() != null && provision.getIsPublicationPaper())
+            return true;
+        if (billingType.getId().equals(constantService.getBillingTypeConfrereFees().getId())
+                && isNotJssConfrere(provision))
             return true;
 
         return false;
