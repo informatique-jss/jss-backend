@@ -1,14 +1,14 @@
 package com.jss.osiris.modules.quotation.model;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import com.jss.osiris.modules.miscellaneous.model.IId;
 
 public class IWorkflowElement implements IId {
 
     private Integer id;
-    private ArrayList<? extends IWorkflowElement> successors;
-    private ArrayList<? extends IWorkflowElement> predecessors;
+    private List<? extends IWorkflowElement> successors;
+    private List<? extends IWorkflowElement> predecessors;
     private String label;
     private String icon;
     private String code;
@@ -23,19 +23,19 @@ public class IWorkflowElement implements IId {
         this.id = id;
     }
 
-    public ArrayList<? extends IWorkflowElement> getSuccessors() {
+    public List<? extends IWorkflowElement> getSuccessors() {
         return successors;
     }
 
-    public void setSuccessors(ArrayList<? extends IWorkflowElement> successors) {
+    public void setSuccessors(List<? extends IWorkflowElement> successors) {
         this.successors = successors;
     }
 
-    public ArrayList<? extends IWorkflowElement> getPredecessors() {
+    public List<? extends IWorkflowElement> getPredecessors() {
         return predecessors;
     }
 
-    public void setPredecessors(ArrayList<? extends IWorkflowElement> predecessors) {
+    public void setPredecessors(List<? extends IWorkflowElement> predecessors) {
         this.predecessors = predecessors;
     }
 

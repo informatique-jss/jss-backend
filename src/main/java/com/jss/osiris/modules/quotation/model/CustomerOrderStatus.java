@@ -1,7 +1,7 @@
 package com.jss.osiris.modules.quotation.model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -47,13 +47,13 @@ public class CustomerOrderStatus extends IWorkflowElement implements Serializabl
 	@Fetch(FetchMode.SUBSELECT)
 	@JoinTable(name = "asso_customer_order_status_successor", joinColumns = @JoinColumn(name = "id_customer_order_status"), inverseJoinColumns = @JoinColumn(name = "id_customer_order_status_successor"))
 	@JsonIgnoreProperties(value = { "predecessors", "successors" })
-	private ArrayList<CustomerOrderStatus> successors;
+	private List<CustomerOrderStatus> successors;
 
 	@ManyToMany(fetch = FetchType.EAGER)
 	@Fetch(FetchMode.SUBSELECT)
 	@JoinTable(name = "asso_customer_order_status_predecessor", joinColumns = @JoinColumn(name = "id_customer_order_status"), inverseJoinColumns = @JoinColumn(name = "id_customer_order_status_predecessor"))
 	@JsonIgnoreProperties(value = { "predecessors", "successors" })
-	private ArrayList<CustomerOrderStatus> predecessors;
+	private List<CustomerOrderStatus> predecessors;
 
 	public Integer getId() {
 		return id;
@@ -135,22 +135,22 @@ public class CustomerOrderStatus extends IWorkflowElement implements Serializabl
 		TO_BILLED = tO_BILLED;
 	}
 
-	public ArrayList<CustomerOrderStatus> getSuccessors() {
+	public List<CustomerOrderStatus> getSuccessors() {
 		return successors;
 	}
 
 	@SuppressWarnings({ "unchecked" })
-	public void setSuccessors(ArrayList<? extends IWorkflowElement> successors) {
-		this.successors = (ArrayList<CustomerOrderStatus>) successors;
+	public void setSuccessors(List<? extends IWorkflowElement> successors) {
+		this.successors = (List<CustomerOrderStatus>) successors;
 	}
 
-	public ArrayList<CustomerOrderStatus> getPredecessors() {
+	public List<CustomerOrderStatus> getPredecessors() {
 		return predecessors;
 	}
 
 	@SuppressWarnings({ "unchecked" })
-	public void setPredecessors(ArrayList<? extends IWorkflowElement> predecessors) {
-		this.predecessors = (ArrayList<CustomerOrderStatus>) predecessors;
+	public void setPredecessors(List<? extends IWorkflowElement> predecessors) {
+		this.predecessors = (List<CustomerOrderStatus>) predecessors;
 	}
 
 }
