@@ -117,6 +117,8 @@ export class DomiciliationComponent implements OnInit {
     this.domiciliationForm.markAllAsTouched();
     if (this.domiciliation.legalGardianBirthdate)
       this.domiciliation.legalGardianBirthdate = new Date(this.domiciliation.legalGardianBirthdate.setHours(12));
+    if (this.domiciliation.startDate)
+      this.domiciliation.startDate = new Date(this.domiciliation.startDate.setHours(12));
     return this.domiciliationForm.valid;
   }
 
