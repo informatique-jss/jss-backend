@@ -20,6 +20,7 @@ import { CUSTOMER_ORDER_STATUS_ABANDONED, CUSTOMER_ORDER_STATUS_OPEN } from '../
 import { replaceDocument } from '../../../../libs/DocumentHelper';
 import { instanceOfQuotation } from '../../../../libs/TypeHelper';
 import { AssociateDepositDialogComponent } from '../../../invoicing/components/associate-deposit-dialog/associate-deposit-dialog.component';
+import { getCustomerOrderForIQuotation } from '../../../invoicing/components/invoice-tools';
 import { WorkflowDialogComponent } from '../../../miscellaneous/components/workflow-dialog/workflow-dialog.component';
 import { ITiers } from '../../../tiers/model/ITiers';
 import { Affaire } from '../../model/Affaire';
@@ -374,6 +375,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
 
         // Check if another quotation / affaire already exists
         let orderingSearch = {} as OrderingSearch;
+        orderingSearch.customerOrders = [getCustomerOrderForIQuotation(this.quotation)];
         orderingSearch.affaires = [asso.affaire];
         orderingSearch.customerOrderStatus = [];
         if (this.customerOrderStatusList)
