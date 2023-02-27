@@ -882,7 +882,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     accountingRecord.setIsCounterPart(false);
     accountingRecord.setDebour(debour);
     accountingRecord.setPayment(payment);
-    accountingRecordRepository.save(accountingRecord);
+    addOrUpdateAccountingRecord(accountingRecord);
     return accountingRecord;
   }
 
@@ -928,7 +928,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
             accountingRecord.setAccountingId(maxIdAccounting);
             accountingRecord.setOperationId(definitiveIdOperation.get(accountingRecord.getTemporaryOperationId()));
             accountingRecord.setIsTemporary(false);
-            accountingRecordRepository.save(accountingRecord);
+            addOrUpdateAccountingRecord(accountingRecord);
             maxIdAccounting++;
           }
         }
