@@ -80,6 +80,7 @@ public class CustomerMail {
     private String paymentExplainationWarning;
 
     @OneToMany(mappedBy = "customerMail", cascade = CascadeType.ALL)
+    @JsonIgnoreProperties(value = { "customerMail" }, allowSetters = true)
     private List<VatMail> vatMails;
 
     private Float preTaxPriceTotal;
@@ -126,6 +127,8 @@ public class CustomerMail {
 
     @ManyToOne
     @JoinColumn(name = "id_customer_order")
+    @JsonIgnoreProperties(value = { "assoAffaireOrders", "tiers", "responsable", "confrere", "invoices",
+            "providerInvoices" }, allowSetters = true)
     CustomerOrder customerOrder;
 
     @ManyToOne

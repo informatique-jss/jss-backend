@@ -42,6 +42,7 @@ public class Debour implements Serializable, IId {
 
 	@ManyToOne
 	@JoinColumn(name = "id_competent_authority")
+	@JsonIgnoreProperties(value = { "departments", "cities", "regions" }, allowSetters = true)
 	private CompetentAuthority competentAuthority;
 
 	private Float debourAmount;
@@ -72,6 +73,7 @@ public class Debour implements Serializable, IId {
 
 	@ManyToOne
 	@JoinColumn(name = "id_invoice_item")
+	@JsonIgnoreProperties(value = { "invoice", "provision", "debours" }, allowSetters = true)
 	private InvoiceItem invoiceItem;
 
 	@OneToMany(mappedBy = "debour")

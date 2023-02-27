@@ -29,6 +29,7 @@ public class SimpleProvision implements IId {
 
 	@ManyToOne
 	@JoinColumn(name = "id_waited_competent_authority")
+	@JsonIgnoreProperties(value = { "departments", "cities", "regions" }, allowSetters = true)
 	private CompetentAuthority waitedCompetentAuthority;
 
 	public Integer getId() {
