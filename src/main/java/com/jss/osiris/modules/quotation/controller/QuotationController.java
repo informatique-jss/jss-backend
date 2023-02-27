@@ -1345,7 +1345,7 @@ public class QuotationController {
     IDocument tiersDocument = ObjectUtils.firstNonNull(quotation.getConfrere(), quotation.getResponsable(),
         quotation.getTiers());
     Document billingDocument = documentService.getBillingDocument(tiersDocument.getDocuments());
-    if (documentService.getBillingDocument(quotation.getDocuments()) == null) {
+    if (documentService.getBillingDocument(quotation.getDocuments()) == null && billingDocument != null) {
       billingDocument = documentService.cloneDocument(billingDocument);
       billingDocument.setTiers(null);
       billingDocument.setResponsable(null);
@@ -1362,7 +1362,7 @@ public class QuotationController {
     Document digitalDocument = documentService.getDocumentByDocumentType(tiersDocument.getDocuments(),
         constantService.getDocumentTypeDigital());
     if (documentService.getDocumentByDocumentType(quotation.getDocuments(),
-        constantService.getDocumentTypeDigital()) == null) {
+        constantService.getDocumentTypeDigital()) == null && digitalDocument != null) {
       digitalDocument = documentService.cloneDocument(digitalDocument);
       digitalDocument.setTiers(null);
       digitalDocument.setResponsable(null);
@@ -1379,7 +1379,7 @@ public class QuotationController {
     Document paperDocument = documentService.getDocumentByDocumentType(tiersDocument.getDocuments(),
         constantService.getDocumentTypePaper());
     if (documentService.getDocumentByDocumentType(quotation.getDocuments(),
-        constantService.getDocumentTypePaper()) == null) {
+        constantService.getDocumentTypePaper()) == null && paperDocument != null) {
       paperDocument = documentService.cloneDocument(paperDocument);
       paperDocument.setTiers(null);
       paperDocument.setResponsable(null);

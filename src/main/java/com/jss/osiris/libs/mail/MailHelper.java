@@ -1666,8 +1666,12 @@ public class MailHelper {
         }
 
         if (attachments.size() == 0)
-            throw new OsirisException(null,
-                    "Publication receipt attachment not found for announcement n°" + announcement.getId());
+            if (announcement.getConfrere() != null
+                    && announcement.getConfrere().getId().equals(constantService.getConfrereJssSpel().getId()))
+                throw new OsirisException(null,
+                        "Publication receipt attachment not found for announcement n°" + announcement.getId());
+            else
+                throw new OsirisClientMessageException("Veuillez uploader le justificatif de parution !");
 
         mail.setAttachments(attachments);
 
@@ -1729,8 +1733,12 @@ public class MailHelper {
             }
 
         if (attachments.size() == 0)
-            throw new OsirisException(null,
-                    "Publication flag attachment not found for announcement n°" + announcement.getId());
+            if (announcement.getConfrere() != null
+                    && announcement.getConfrere().getId().equals(constantService.getConfrereJssSpel().getId()))
+                throw new OsirisException(null,
+                        "Publication flag attachment not found for announcement n°" + announcement.getId());
+            else
+                throw new OsirisClientMessageException("Veuillez uploader le témoin de publication !");
 
         mail.setAttachments(attachments);
 
