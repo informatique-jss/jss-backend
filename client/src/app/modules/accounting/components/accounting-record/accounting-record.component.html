@@ -4,6 +4,7 @@
       <tr>
         <td>
           <autocomplete-accounting-account [(model)]="accountingRecordSearch.accountingAccount"
+            [filteredAccountSubNumber]="tiersToDisplay && tiersToDisplay.accountingAccountCustomer?tiersToDisplay.accountingAccountCustomer.accountingAccountSubNumber:undefined"
             [form]="accountingRecordForm" propertyName="accountingAccounts" label="Compte comptable">
           </autocomplete-accounting-account>
         </td>

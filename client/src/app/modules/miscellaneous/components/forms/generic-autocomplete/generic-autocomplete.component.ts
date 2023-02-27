@@ -62,6 +62,7 @@ export abstract class GenericAutocompleteComponent<T, U> extends GenericFormComp
           this.trigger?.openPanel();
       });
       this.form.get(this.propertyName)?.setValue(this.model);
+      this.callOnNgInit();
     }
   }
 
