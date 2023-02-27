@@ -27,7 +27,7 @@ public interface QuotationRepository extends CrudRepository<Quotation, Integer> 
                         + " coalesce(t2.id,t.id) as tiersId,"
                         + " cf.id as confrereId,"
                         + " sum(COALESCE(i.pre_tax_price,0)+COALESCE(i.vat_price,0)-COALESCE(i.discount_amount,0)) as totalPrice ,"
-                        + " STRING_AGG( case when af.denomination is not null and af.denomination!='' then af.denomination else af.firstname || ' '||af.lastname end  || ' ('||city.label ||')' ,', ' order by 1) as affaireLabel,"
+                        + " STRING_AGG(DISTINCT case when af.denomination is not null and af.denomination!='' then af.denomination else af.firstname || ' '||af.lastname end  || ' ('||city.label ||')' ,', ') as affaireLabel,"
                         + " co.description as quotationDescription"
                         + " from quotation co"
                         + " join quotation_status cos on cos.id = co.id_quotation_status"
