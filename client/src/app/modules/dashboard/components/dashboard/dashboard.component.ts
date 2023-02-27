@@ -87,7 +87,7 @@ export class DashboardComponent implements OnInit {
   QUOTATION_OPEN = "Mes devis ouverts";
   QUOTATION_TO_VERIFY = "Mes devis à vérifier";
   QUOTATION_REFUSED = "Mes devis refusés";
-  QUOTATION_SENT = "Mes devis evoyés";
+  QUOTATION_SENT = "Mes devis envoyés";
   quotationSearchOpen: QuotationSearch = {} as QuotationSearch;
   quotationSearchToVerify: QuotationSearch = {} as QuotationSearch;
   quotationSearchRefused: QuotationSearch = {} as QuotationSearch;
