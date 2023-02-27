@@ -86,6 +86,7 @@ export class ReportingComponent implements OnInit {
       renderersFr["Graphique en aires"] = renderersEn["Area Chart"];
       renderersFr["Nuage de points"] = renderersEn["Scatter Chart"];
 
+      options['menuLimit'] = 50000;
       options['renderers'] = renderersFr;
       options['rendererOptions'] = {
         gchart: {
