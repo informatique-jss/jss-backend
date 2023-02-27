@@ -181,12 +181,13 @@
                 <generic-datepicker [(model)]="tiers.sepaMandateSignatureDate" label="Date de signature du mandat SEPA"
                   [form]="settlementBillingForm" propertyName="sepaMandateSignatureDate" [isMandatory]="true"
                   [isDisabled]="!editMode"
-                  [conditionnalRequired]="tiers.paymentType.id==paymentTypePrelevement.id"></generic-datepicker>
+                  [conditionnalRequired]="tiers.paymentType && tiers.paymentType.id==paymentTypePrelevement.id"></generic-datepicker>
               </td>
               <td>
                 <generic-input [(model)]="tiers.sepaMandateReference" label="Référence du mandat SEPA"
                   [form]="settlementBillingForm" propertyName="sepaMandateReference" [isMandatory]="true"
-                  [isDisabled]="!editMode" [conditionnalRequired]="tiers.paymentType.id==paymentTypePrelevement.id"
+                  [isDisabled]="!editMode"
+                  [conditionnalRequired]="tiers.paymentType && tiers.paymentType.id==paymentTypePrelevement.id"
                   [maxLength]="250"></generic-input>
               </td>
             </tr>
