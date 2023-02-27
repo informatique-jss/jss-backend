@@ -214,8 +214,8 @@ public class AnnouncementServiceImpl implements AnnouncementService {
             try {
                 currentProvision.setAttachments(
                         attachmentService.addAttachment(new FileInputStream(publicationReceiptPdf),
-                                announcement.getId(),
-                                Announcement.class.getSimpleName(),
+                                currentProvision.getId(),
+                                Provision.class.getSimpleName(),
                                 constantService.getAttachmentTypePublicationReceipt(),
                                 "Publication_receipt_" + formatter.format(LocalDateTime.now()) + ".pdf",
                                 false, "Attestation de parution n°" + announcement.getId()));
@@ -265,8 +265,8 @@ public class AnnouncementServiceImpl implements AnnouncementService {
             try {
                 currentProvision.setAttachments(
                         attachmentService.addAttachment(new FileInputStream(publicationReceiptPdf),
-                                announcement.getId(),
-                                Announcement.class.getSimpleName(),
+                                currentProvision.getId(),
+                                Provision.class.getSimpleName(),
                                 constantService.getAttachmentTypePublicationFlag(),
                                 "Publication_flag_" + formatter.format(LocalDateTime.now()) + ".pdf",
                                 false, "Témoin de publication n°" + announcement.getId()));
@@ -331,8 +331,8 @@ public class AnnouncementServiceImpl implements AnnouncementService {
             try {
                 currentProvision.setAttachments(
                         attachmentService.addAttachment(new FileInputStream(publicationReceiptPdf),
-                                announcement.getId(),
-                                Announcement.class.getSimpleName(),
+                                currentProvision.getId(),
+                                Provision.class.getSimpleName(),
                                 constantService.getAttachmentTypeProofReading(),
                                 "Proof_reading_" + formatter.format(LocalDateTime.now()) + ".pdf",
                                 false, "Bon à tirer n°" + announcement.getId()));
@@ -378,8 +378,8 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                 try {
                     provision.setAttachments(
                             attachmentService.addAttachment(new FileInputStream(wordFile),
-                                    announcement.getId(),
-                                    Announcement.class.getSimpleName(), constantService.getAttachmentTypeAnnouncement(),
+                                    provision.getId(),
+                                    Provision.class.getSimpleName(), constantService.getAttachmentTypeAnnouncement(),
                                     "announcement_" + announcement.getId()
                                             + DateTimeFormatter.ofPattern("yyyyMMdd HHmm").format(LocalDateTime.now())
                                             + ".docx",
