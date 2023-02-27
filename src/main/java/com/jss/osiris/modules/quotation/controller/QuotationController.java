@@ -93,6 +93,7 @@ import com.jss.osiris.modules.quotation.model.DomiciliationStatus;
 import com.jss.osiris.modules.quotation.model.FormaliteStatus;
 import com.jss.osiris.modules.quotation.model.FundType;
 import com.jss.osiris.modules.quotation.model.IQuotation;
+import com.jss.osiris.modules.quotation.model.IWorkflowElement;
 import com.jss.osiris.modules.quotation.model.JournalType;
 import com.jss.osiris.modules.quotation.model.MailRedirectionType;
 import com.jss.osiris.modules.quotation.model.NoticeType;
@@ -1222,9 +1223,9 @@ public class QuotationController {
   public ResponseEntity<CustomerOrder> addOrUpdateCustomerOrderStatus(@RequestBody CustomerOrder customerOrder,
       @RequestParam String targetStatusCode)
       throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+    customerOrder = customerOrderService.getCustomerOrder(customerOrder.getId());
     if (!targetStatusCode.equals(CustomerOrderStatus.ABANDONED))
       validateQuotationAndCustomerOrder(customerOrder, targetStatusCode);
-    customerOrder = customerOrderService.getCustomerOrder(customerOrder.getId());
     boolean found = true;
     if (customerOrder.getCustomerOrderStatus() != null) {
       if (customerOrder.getCustomerOrderStatus().getSuccessors() != null)
@@ -1247,9 +1248,9 @@ public class QuotationController {
   public ResponseEntity<Quotation> addOrUpdateQuotationStatus(@RequestBody Quotation quotation,
       @RequestParam String targetStatusCode)
       throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+    quotation = quotationService.getQuotation(quotation.getId());
     if (!targetStatusCode.equals(QuotationStatus.ABANDONED))
       validateQuotationAndCustomerOrder(quotation);
-    quotation = quotationService.getQuotation(quotation.getId());
     boolean found = true;
     if (quotation.getQuotationStatus() != null) {
       if (quotation.getQuotationStatus().getSuccessors() != null)
@@ -1296,6 +1297,29 @@ public class QuotationController {
     }
 
     validationHelper.validateReferential(quotation.getAssignedTo(), false, "AssignedTo");
+
+    if (targetStatusCode != null) {
+      IWorkflowElement status = null;
+      if (quotation instanceof CustomerOrder) {
+        status = ((CustomerOrder) quotation).getCustomerOrderStatus();
+      } else {
+        status = ((Quotation) quotation).getQuotationStatus();
+      }
+      boolean correctStatus = false;
+      if (status.getSuccessors() != null) {
+        for (IWorkflowElement successor : status.getSuccessors())
+          if (successor.getId().equals(status.getId()))
+            correctStatus = true;
+      }
+      if (!correctStatus && status.getPredecessors() != null) {
+        for (IWorkflowElement predecessor : status.getPredecessors())
+          if (predecessor.getId().equals(status.getId()))
+            correctStatus = true;
+      }
+
+      if (!correctStatus)
+        throw new OsirisValidationException("Wrong status : not set accordingly to workflow !");
+    }
 
     boolean isCustomerOrder = quotation instanceof CustomerOrder;
 

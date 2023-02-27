@@ -7,8 +7,8 @@ import com.jss.osiris.modules.miscellaneous.model.IId;
 public class IWorkflowElement implements IId {
 
     private Integer id;
-    private ArrayList<IWorkflowElement> successors;
-    private ArrayList<IWorkflowElement> predecessors;
+    private ArrayList<? extends IWorkflowElement> successors;
+    private ArrayList<? extends IWorkflowElement> predecessors;
     private String label;
     private String icon;
     private String code;
@@ -23,19 +23,19 @@ public class IWorkflowElement implements IId {
         this.id = id;
     }
 
-    public ArrayList<IWorkflowElement> getSuccessors() {
+    public ArrayList<? extends IWorkflowElement> getSuccessors() {
         return successors;
     }
 
-    public void setSuccessors(ArrayList<IWorkflowElement> successors) {
+    public void setSuccessors(ArrayList<? extends IWorkflowElement> successors) {
         this.successors = successors;
     }
 
-    public ArrayList<IWorkflowElement> getPredecessors() {
+    public ArrayList<? extends IWorkflowElement> getPredecessors() {
         return predecessors;
     }
 
-    public void setPredecessors(ArrayList<IWorkflowElement> predecessors) {
+    public void setPredecessors(ArrayList<? extends IWorkflowElement> predecessors) {
         this.predecessors = predecessors;
     }
 

@@ -1,7 +1,7 @@
 package com.jss.osiris.modules.quotation.model;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.ArrayList;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,11 +17,9 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.jss.osiris.modules.miscellaneous.model.IId;
 
 @Entity
-public class QuotationStatus implements Serializable, IId {
-
+public class QuotationStatus extends IWorkflowElement implements Serializable {
 	/**
 	 * WARNINNG : add update in QuotationStatutsService when adding a new status
 	 */
@@ -49,13 +47,13 @@ public class QuotationStatus implements Serializable, IId {
 	@Fetch(FetchMode.SUBSELECT)
 	@JoinTable(name = "asso_quotation_status_successor", joinColumns = @JoinColumn(name = "id_quotation_status"), inverseJoinColumns = @JoinColumn(name = "id_quotation_status_successor"))
 	@JsonIgnoreProperties(value = { "predecessors", "successors" })
-	private List<QuotationStatus> successors;
+	private ArrayList<QuotationStatus> successors;
 
 	@ManyToMany(fetch = FetchType.EAGER)
 	@Fetch(FetchMode.SUBSELECT)
 	@JoinTable(name = "asso_quotation_status_predecessor", joinColumns = @JoinColumn(name = "id_quotation_status"), inverseJoinColumns = @JoinColumn(name = "id_quotation_status_predecessor"))
 	@JsonIgnoreProperties(value = { "predecessors", "successors" })
-	private List<QuotationStatus> predecessors;
+	private ArrayList<QuotationStatus> predecessors;
 
 	public Integer getId() {
 		return id;
@@ -137,20 +135,22 @@ public class QuotationStatus implements Serializable, IId {
 		this.icon = icon;
 	}
 
-	public List<QuotationStatus> getSuccessors() {
+	public ArrayList<QuotationStatus> getSuccessors() {
 		return successors;
 	}
 
-	public void setSuccessors(List<QuotationStatus> successors) {
-		this.successors = successors;
+	@SuppressWarnings({ "unchecked" })
+	public void setSuccessors(ArrayList<? extends IWorkflowElement> successors) {
+		this.successors = (ArrayList<QuotationStatus>) successors;
 	}
 
-	public List<QuotationStatus> getPredecessors() {
+	public ArrayList<QuotationStatus> getPredecessors() {
 		return predecessors;
 	}
 
-	public void setPredecessors(List<QuotationStatus> predecessors) {
-		this.predecessors = predecessors;
+	@SuppressWarnings({ "unchecked" })
+	public void setPredecessors(ArrayList<? extends IWorkflowElement> predecessors) {
+		this.predecessors = (ArrayList<QuotationStatus>) predecessors;
 	}
 
 }

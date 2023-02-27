@@ -1,7 +1,7 @@
 package com.jss.osiris.modules.quotation.model;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.ArrayList;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,10 +17,9 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.jss.osiris.modules.miscellaneous.model.IId;
 
 @Entity
-public class CustomerOrderStatus implements Serializable, IId {
+public class CustomerOrderStatus extends IWorkflowElement implements Serializable {
 
 	/**
 	 * WARNINNG : add update in Service when adding a new status
@@ -48,13 +47,13 @@ public class CustomerOrderStatus implements Serializable, IId {
 	@Fetch(FetchMode.SUBSELECT)
 	@JoinTable(name = "asso_customer_order_status_successor", joinColumns = @JoinColumn(name = "id_customer_order_status"), inverseJoinColumns = @JoinColumn(name = "id_customer_order_status_successor"))
 	@JsonIgnoreProperties(value = { "predecessors", "successors" })
-	private List<CustomerOrderStatus> successors;
+	private ArrayList<CustomerOrderStatus> successors;
 
 	@ManyToMany(fetch = FetchType.EAGER)
 	@Fetch(FetchMode.SUBSELECT)
 	@JoinTable(name = "asso_customer_order_status_predecessor", joinColumns = @JoinColumn(name = "id_customer_order_status"), inverseJoinColumns = @JoinColumn(name = "id_customer_order_status_predecessor"))
 	@JsonIgnoreProperties(value = { "predecessors", "successors" })
-	private List<CustomerOrderStatus> predecessors;
+	private ArrayList<CustomerOrderStatus> predecessors;
 
 	public Integer getId() {
 		return id;
@@ -136,20 +135,22 @@ public class CustomerOrderStatus implements Serializable, IId {
 		TO_BILLED = tO_BILLED;
 	}
 
-	public List<CustomerOrderStatus> getSuccessors() {
+	public ArrayList<CustomerOrderStatus> getSuccessors() {
 		return successors;
 	}
 
-	public void setSuccessors(List<CustomerOrderStatus> successors) {
-		this.successors = successors;
+	@SuppressWarnings({ "unchecked" })
+	public void setSuccessors(ArrayList<? extends IWorkflowElement> successors) {
+		this.successors = (ArrayList<CustomerOrderStatus>) successors;
 	}
 
-	public List<CustomerOrderStatus> getPredecessors() {
+	public ArrayList<CustomerOrderStatus> getPredecessors() {
 		return predecessors;
 	}
 
-	public void setPredecessors(List<CustomerOrderStatus> predecessors) {
-		this.predecessors = predecessors;
+	@SuppressWarnings({ "unchecked" })
+	public void setPredecessors(ArrayList<? extends IWorkflowElement> predecessors) {
+		this.predecessors = (ArrayList<CustomerOrderStatus>) predecessors;
 	}
 
 }
