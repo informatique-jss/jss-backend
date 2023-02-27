@@ -537,8 +537,8 @@ public class InvoicingController {
 
         cashPayment.setPaymentType(constantService.getPaymentTypeEspeces());
         cashPayment.setPaymentWay(constantService.getPaymentWayInbound());
-        validationHelper.validateString(cashPayment.getLabel(), true, 250, "paymentType");
-        validationHelper.validateDateTimeMax(cashPayment.getPaymentDate(), true, LocalDateTime.now(), "paymentType");
+        validationHelper.validateString(cashPayment.getLabel(), true, 250, "paymentLabel");
+        validationHelper.validateDateTimeMax(cashPayment.getPaymentDate(), true, LocalDateTime.now(), "paymentDate");
 
         this.paymentService.addCashPaymentForCustomerOrder(cashPayment, customerOrder);
 

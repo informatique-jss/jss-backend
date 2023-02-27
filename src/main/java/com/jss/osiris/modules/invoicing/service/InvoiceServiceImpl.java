@@ -152,6 +152,7 @@ public class InvoiceServiceImpl implements InvoiceService {
             }
         }
 
+        invoice = getInvoice(invoice.getId());
         // Create credit note
         Invoice creditNote = cloneInvoice(invoice);
         creditNote = addOrUpdateInvoice(creditNote);
