@@ -74,6 +74,7 @@ export class ProvisionListComponent implements OnInit {
           return ['/order/', element.customerOrderId];
         }, actionIcon: "visibility", actionTooltip: "Voir la commande associée"
       } as SortTableColumn);
+      this.availableColumns.push({ id: "provisionCreatedDatetime", fieldName: "provisionCreatedDatetime", label: "Date de création", valueFonction: formatDateTimeForSortTable, colorWarnFunction: (element: any) => { return element.isEmergency } } as SortTableColumn);
       this.availableColumns.push({ id: "affaireLabel", fieldName: "affaireLabel", label: "Affaire", colorWarnFunction: (element: any) => { return element.isEmergency } } as SortTableColumn);
       this.availableColumns.push({ id: "affaireAddress", fieldName: "affaireAddress", label: "Adresse de l'affaire", colorWarnFunction: (element: any) => { return element.isEmergency } } as SortTableColumn);
       this.availableColumns.push({ id: "tiers", fieldName: "tiersLabel", label: "Tiers", colorWarnFunction: (element: any) => { return element.isEmergency } } as SortTableColumn);
@@ -100,7 +101,6 @@ export class ProvisionListComponent implements OnInit {
       this.availableColumns.push({ id: "provisionType", fieldName: "provisionTypeLabel", label: "Prestation", colorWarnFunction: (element: any) => { return element.isEmergency } } as SortTableColumn);
       this.availableColumns.push({ id: "status", fieldName: "statusLabel", label: "Statut", colorWarnFunction: (element: any) => { return element.isEmergency } } as SortTableColumn);
       this.availableColumns.push({ id: "provisionStatusDatetime", fieldName: "provisionStatusDatetime", label: "Date de mise à jour", valueFonction: formatDateTimeForSortTable, colorWarnFunction: (element: any) => { return element.isEmergency } } as SortTableColumn);
-      this.availableColumns.push({ id: "provisionCreatedDatetime", fieldName: "provisionCreatedDatetime", label: "Date de création", valueFonction: formatDateTimeForSortTable, colorWarnFunction: (element: any) => { return element.isEmergency } } as SortTableColumn);
       this.availableColumns.push({ id: "waitedCompetentAuthorityLabel", fieldName: "waitedCompetentAuthorityLabel", label: "Autorité compétente en attente" } as SortTableColumn);
       this.getCurrentEmployee();
 
