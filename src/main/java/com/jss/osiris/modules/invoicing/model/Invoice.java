@@ -83,6 +83,7 @@ public class Invoice implements IId, IAttachment {
 
 	@ManyToOne
 	@JoinColumn(name = "id_competent_authority")
+	@JsonIgnoreProperties(value = { "departments", "cities", "regions" }, allowSetters = true)
 	private CompetentAuthority competentAuthority;
 
 	@ManyToOne
