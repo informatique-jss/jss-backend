@@ -3,6 +3,7 @@ package com.jss.osiris.libs.transfer;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 
 public class CdtTrfTxInfBean {
@@ -16,9 +17,11 @@ public class CdtTrfTxInfBean {
 	AmtBean amtBean;
 
 	@JacksonXmlProperty(localName = "CdtrAgt")
+	@JacksonXmlElementWrapper(useWrapping = false)
 	List<CdtrAgtBean> cdtrAgtBeanList;
 
 	@JacksonXmlProperty(localName = "Cdtr")
+	@JacksonXmlElementWrapper(useWrapping = false)
 	List<CdtrBean> cdtrBeanList;
 
 	@JacksonXmlProperty(localName = "CdtrAcct")
