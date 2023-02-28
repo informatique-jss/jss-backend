@@ -82,6 +82,7 @@ public class DepositServiceImpl implements DepositService {
         deposit.setOriginPayment(payment);
         deposit = addOrUpdateDeposit(deposit);
         deposit.setInvoice(invoice);
+        deposit = addOrUpdateDeposit(deposit);
         accountingRecordService.generateAccountingRecordsForDepositOnInvoice(deposit, invoice,
                 overrideAccountingOperationId, isFromOriginPayment);
         return getDeposit(deposit.getId());
