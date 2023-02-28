@@ -176,6 +176,16 @@
           {{getPriceTotal()|number}} €
         </td>
       </tr>
+      <ng-container *ngIf="instanceOfCustomerOrderFn(quotation) && getCurrentInvoiceForCustomerOrder()==undefined">
+        <tr class="mat-row" *ngFor="let deposit of quotation.deposits">
+          <td class="mat-cell">
+            Acompte n°{{deposit.id}} - {{deposit.label}}
+          </td>
+          <td class="td-price mat-cell">
+            - {{deposit.depositAmount|number}} €
+          </td>
+        </tr>
+      </ng-container>
       <ng-container *ngIf="instanceOfCustomerOrderFn(quotation) && getCurrentInvoiceForCustomerOrder()!=undefined">
         <tr class="mat-row" *ngFor="let deposit of getCurrentInvoiceForCustomerOrder()!.deposits">
           <td class="mat-cell">

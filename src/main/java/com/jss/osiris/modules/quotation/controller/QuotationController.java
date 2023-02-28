@@ -1308,12 +1308,12 @@ public class QuotationController {
       boolean correctStatus = false;
       if (status.getSuccessors() != null) {
         for (IWorkflowElement successor : status.getSuccessors())
-          if (successor.getId().equals(status.getId()))
+          if (successor.getCode().equals(targetStatusCode))
             correctStatus = true;
       }
       if (!correctStatus && status.getPredecessors() != null) {
         for (IWorkflowElement predecessor : status.getPredecessors())
-          if (predecessor.getId().equals(status.getId()))
+          if (predecessor.getCode().equals(targetStatusCode))
             correctStatus = true;
       }
 

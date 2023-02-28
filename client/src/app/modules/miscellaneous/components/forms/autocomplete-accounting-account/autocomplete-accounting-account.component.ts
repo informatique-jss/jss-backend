@@ -43,6 +43,7 @@ export class AutocompleteAccountingAccountComponent extends GenericAutocompleteC
   }
 
   ngOnInit(): void {
+    super.ngOnInit();
     if (this.filteredAccountSubNumber)
       this.accountingAccountService.getAccountingAccountByLabel("-" + this.filteredAccountSubNumber).subscribe(response => {
         this.filteredTypes = this.mapResponse(response);
