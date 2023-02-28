@@ -159,6 +159,8 @@ public interface ConstantService {
 
     public BillingType getBillingTypeConfrereFees() throws OsirisException;
 
+    public BillingType getBillingTypeShippingCosts() throws OsirisException;
+
     public BillingType getBillingTypeApplicationFees() throws OsirisException;
 
     public BillingType getBillingTypeBankCheque() throws OsirisException;

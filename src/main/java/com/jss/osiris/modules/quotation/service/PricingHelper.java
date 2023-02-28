@@ -183,19 +183,11 @@ public class PricingHelper {
                 .equals(constantService.getBillingTypePublicationPaper().getId())) {
             Integer nbr = getPublicationPaperNbr(provision);
             if (nbr > 0) {
+                Confrere confrere = provision.getAnnouncement().getConfrere();
                 invoiceItem.setLabel(invoiceItem.getLabel() + " (quantité : " + nbr + ")");
 
-                Confrere confrere = provision.getAnnouncement().getConfrere();
-                if (isNotJssConfrere(provision) && confrere.getPaperPrice() != null) {
-                    invoiceItem
-                            .setPreTaxPrice(
-                                    Math.round((confrere.getPaperPrice() * nbr
-                                            + (confrere.getShippingCosts() != null ? confrere.getShippingCosts() : 0f))
-                                            * 100f)
-                                            / 100f);
-                } else
-                    invoiceItem.setPreTaxPrice(
-                            Math.round(billingItem.getPreTaxPrice() * nbr * 100f) / 100f);
+                invoiceItem.setPreTaxPrice(
+                        Math.round(confrere.getPaperPrice() * nbr * 100f) / 100f);
             }
         } else if (billingItem.getBillingType().getId()
                 .equals(constantService.getBillingTypeConfrereFees().getId())) {
@@ -219,6 +211,14 @@ public class PricingHelper {
                                 * ((confrere.getReinvoicing() != null ? confrere.getReinvoicing() : 0f) / 100)
                                 + additionnalFees);
             }
+        } else if (billingItem.getBillingType().getId()
+                .equals(constantService.getBillingTypeShippingCosts().getId())) {
+            Integer nbr = getPublicationPaperNbr(provision);
+            Confrere confrere = provision.getAnnouncement().getConfrere();
+            if (nbr > 0)
+                invoiceItem.setPreTaxPrice(Math
+                        .round(((confrere.getShippingCosts() != null ? confrere.getShippingCosts() : 0f)) * 100f)
+                        / 100f);
         } else if ((billingItem.getBillingType().getIsDebour() || billingItem.getBillingType().getIsFee())
                 && provision.getDebours() != null && provision.getDebours().size() > 0) {
             // Compute debour prices
@@ -463,6 +463,9 @@ public class PricingHelper {
             return true;
         if (billingType.getId().equals(constantService.getBillingTypeConfrereFees().getId())
                 && isNotJssConfrere(provision))
+            return true;
+        if (billingType.getId().equals(constantService.getBillingTypeShippingCosts().getId())
+                && getPublicationPaperNbr(provision) > 0)
             return true;
 
         return false;

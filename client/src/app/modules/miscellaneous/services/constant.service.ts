@@ -266,6 +266,10 @@ export class ConstantService extends AppRestService<Constant>{
     return this.constant.billingTypeConfrereFees;
   }
 
+  getBillingTypeShippingCosts() {
+    return this.constant.billingTypeShippingCosts;
+  }
+
   getBillingTypeApplicationFees() {
     return this.constant.billingTypeApplicationFees;
   }

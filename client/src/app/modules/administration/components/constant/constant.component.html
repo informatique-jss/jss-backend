@@ -457,6 +457,14 @@
           </tr>
           <tr>
             <td>
+              <autocomplete-billing-type [(model)]="constant.billingTypeShippingCosts"
+                label="Type de poste de facturation - Frais de ports" [form]="constantForm"
+                propertyName="billingTypeShippingCosts" [isMandatory]="true" [isDisabled]="!editMode">
+              </autocomplete-billing-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <autocomplete-billing-type [(model)]="constant.billingTypeApplicationFees"
                 label="Type de poste de facturation - Frais de dossier" [form]="constantForm"
                 propertyName="billingTypeApplicationFees" [isMandatory]="true" [isDisabled]="!editMode">
