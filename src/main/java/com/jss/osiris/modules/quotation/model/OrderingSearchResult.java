@@ -34,4 +34,14 @@ public interface OrderingSearchResult {
     public String getAffaireSiren();
 
     public String getAffaireAddress();
+
+    public Integer getAnnouncementNbr();
+
+    public Integer getFormaliteNbr();
+
+    public Integer getBodaccNbr();
+
+    public Integer getDomiciliationNbr();
+
+    public Integer getSimpleProvisionNbr();
 }

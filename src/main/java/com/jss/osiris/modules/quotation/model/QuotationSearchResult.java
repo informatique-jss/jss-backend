@@ -28,4 +28,14 @@ public interface QuotationSearchResult {
     public String getAffaireLabel();
 
     public Float getTotalPrice();
+
+    public Integer getAnnouncementNbr();
+
+    public Integer getFormaliteNbr();
+
+    public Integer getBodaccNbr();
+
+    public Integer getDomiciliationNbr();
+
+    public Integer getSimpleProvisionNbr();
 }
