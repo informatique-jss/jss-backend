@@ -3,6 +3,7 @@ package com.jss.osiris.modules.quotation.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.jss.osiris.modules.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.profile.model.Employee;
 import com.jss.osiris.modules.tiers.model.Tiers;
 
@@ -13,6 +14,7 @@ public class AffaireSearch {
     private String label;
     private ArrayList<IWorkflowElement> status;
     private List<Tiers> customerOrders;
+    private CompetentAuthority waitedCompetentAuthority;
 
     public List<Tiers> getCustomerOrders() {
         return customerOrders;
@@ -52,6 +54,14 @@ public class AffaireSearch {
 
     public void setStatus(ArrayList<IWorkflowElement> status) {
         this.status = status;
+    }
+
+    public CompetentAuthority getWaitedCompetentAuthority() {
+        return waitedCompetentAuthority;
+    }
+
+    public void setWaitedCompetentAuthority(CompetentAuthority waitedCompetentAuthority) {
+        this.waitedCompetentAuthority = waitedCompetentAuthority;
     }
 
 }

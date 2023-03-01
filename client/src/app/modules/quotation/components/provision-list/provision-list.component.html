@@ -22,6 +22,11 @@
           <generic-input [(model)]="affaireSearch.label" label="Libellé de l'affaire" [form]="affaireSearchForm"
             propertyName="label" [isMandatory]="false" [isDisabled]="false"></generic-input>
         </td>
+        <td>
+          <autocomplete-competent-authority [(model)]="affaireSearch.waitedCompetentAuthority"
+            [form]="affaireSearchForm" propertyName="waitedCompetentAuthority" [isMandatory]="false"
+            label="Autorité compétente en attente"></autocomplete-competent-authority>
+        </td>
         <td class="fab-td-button">
           <button mat-mini-fab color="warn" matTooltip="Rechercher" (click)="searchAffaires()" class="add-button">
             <mat-icon>search</mat-icon>

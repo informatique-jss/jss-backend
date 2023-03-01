@@ -448,6 +448,10 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
             customerOrderId.add(0);
         }
 
+        Integer waitedCompetentAuthorityId = 0;
+        if (affaireSearch.getWaitedCompetentAuthority() != null)
+            waitedCompetentAuthorityId = affaireSearch.getWaitedCompetentAuthority().getId();
+
         ArrayList<String> excludedCustomerOrderStatusCode = new ArrayList<String>();
         excludedCustomerOrderStatusCode.add(CustomerOrderStatus.OPEN);
         excludedCustomerOrderStatusCode.add(CustomerOrderStatus.WAITING_DEPOSIT);
@@ -455,7 +459,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
         return assoAffaireOrderRepository.findAsso(responsibleId,
                 assignedId, affaireSearch.getLabel(),
-                statusId, excludedCustomerOrderStatusCode, customerOrderId);
+                statusId, excludedCustomerOrderStatusCode, customerOrderId, waitedCompetentAuthorityId);
     }
 
 }
