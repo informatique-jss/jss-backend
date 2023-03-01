@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.invoicing.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
@@ -85,6 +86,12 @@ public class DepositServiceImpl implements DepositService {
         deposit = addOrUpdateDeposit(deposit);
         accountingRecordService.generateAccountingRecordsForDepositOnInvoice(deposit, invoice,
                 overrideAccountingOperationId, isFromOriginPayment);
+
+        if (invoice.getDeposits() == null)
+            invoice.setDeposits(new ArrayList<Deposit>());
+        invoice.getDeposits().add(deposit);
+        invoiceService.addOrUpdateInvoice(invoice);
+
         return getDeposit(deposit.getId());
     }
 
@@ -103,6 +110,11 @@ public class DepositServiceImpl implements DepositService {
         deposit = addOrUpdateDeposit(deposit);
         accountingRecordService.generateAccountingRecordsForDepositAndCustomerOrder(deposit, customerOrder,
                 overrideAccountingOperationId, isFromOriginPayment);
+
+        if (customerOrder.getDeposits() == null)
+            customerOrder.setDeposits(new ArrayList<Deposit>());
+        customerOrder.getDeposits().add(deposit);
+
         return getDeposit(deposit.getId());
     }
 
