@@ -1,9 +1,9 @@
 <table class="full-width" [formGroup]="provisionItemForm" *ngIf="provision">
   <tr>
     <td>
-      <select-provision-family (selectionChange)="changeProvisionType()" [(model)]="provision.provisionFamilyType"
-        label="Famille de service" [form]="provisionItemForm" propertyName="provisionFamilyType" [isMandatory]="true"
-        [isDisabled]="!editMode">
+      <select-provision-family (selectionChange)="changeProvisionFamilyType();changeProvisionType();"
+        [(model)]="provision.provisionFamilyType" label="Famille de service" [form]="provisionItemForm"
+        propertyName="provisionFamilyType" [isMandatory]="true" [isDisabled]="!editMode">
       </select-provision-family>
     </td>
     <td *ngIf="provision.provisionFamilyType">

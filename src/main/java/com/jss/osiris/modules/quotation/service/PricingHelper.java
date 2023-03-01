@@ -187,7 +187,8 @@ public class PricingHelper {
                 invoiceItem.setLabel(invoiceItem.getLabel() + " (quantité : " + nbr + ")");
 
                 invoiceItem.setPreTaxPrice(
-                        Math.round(confrere.getPaperPrice() * nbr * 100f) / 100f);
+                        Math.round((confrere.getPaperPrice() != null ? confrere.getPaperPrice() : 0f) * nbr * 100f)
+                                / 100f);
             }
         } else if (billingItem.getBillingType().getId()
                 .equals(constantService.getBillingTypeConfrereFees().getId())) {

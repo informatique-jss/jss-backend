@@ -109,6 +109,13 @@ export class ProvisionItemComponent implements OnInit {
   provisionItemForm = this.formBuilder.group({
   });
 
+  changeProvisionFamilyType() {
+    if (this.provision) {
+      if (this.provision.provisionType && this.provision.provisionFamilyType && this.provision.provisionType.provisionFamilyType.id != this.provision.provisionFamilyType.id)
+        this.provision.provisionType = undefined!;
+    }
+  }
+
   changeProvisionType() {
     if (this.provision) {
       if (!this.provision.provisionFamilyType || !this.provision.provisionType) {
