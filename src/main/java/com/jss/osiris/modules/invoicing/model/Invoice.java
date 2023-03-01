@@ -85,8 +85,8 @@ public class Invoice implements IId, IAttachment {
 	private Tiers tiers;
 
 	@ManyToOne
-	@JoinColumn(name = "id_competent_authority")
-	@IndexedField
+	@JoinColumn(name = "id_competent_authority") 
+	@IndexedField 
 	@JsonIgnoreProperties(value = { "departments", "cities", "regions" }, allowSetters = true)
 	private CompetentAuthority competentAuthority;
 
